@@ -59,6 +59,28 @@ const processStats = (
             row[stat] = ps.pntYds / ps.pnt;
         } else if (stat === "defTck") {
             row[stat] = ps.defTckSolo + ps.defTckAst;
+        } else if (stat === "qbRec") {
+            row[stat] = `${ps.qbW}-${ps.qbL}`;
+        } else if (stat === "pssTDPct") {
+            row[stat] = percentage(ps.pssTD, ps.pss);
+        } else if (stat === "pssIntPct") {
+            row[stat] = percentage(ps.pssInt, ps.pss);
+        } else if (stat === "pssYdsPerAtt") {
+            row[stat] = ps.pssYds / ps.pss;
+        } else if (stat === "pssAdjYdsPerAtt") {
+            row[stat] = (ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt) / ps.pss;
+        } else if (stat === "pssYdsPerCmp") {
+            row[stat] = ps.pssYds / ps.pssCmp;
+        } else if (stat === "pssYdsPerGame") {
+            row[stat] = ps.pssYds / ps.gp;
+        } else if (stat === "pssNetYdsPerAtt") {
+            row[stat] = (ps.pssYds - ps.pssSkYds) / (ps.pss + ps.pssSk);
+        } else if (stat === "pssAdjNetYdsPerAtt") {
+            row[stat] =
+                (ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt - ps.pssSkYds) /
+                (ps.pss + ps.pssSk);
+        } else if (stat === "pssSkPct") {
+            row[stat] = percentage(ps.pssSk, ps.pssSk + ps.pss);
         } else if (stat === "keyStats") {
             const defTck = ps.defTckSolo + ps.defTckAst;
             const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;

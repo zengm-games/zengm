@@ -791,11 +791,6 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
-              "stat:pssNetYdsPerAtt": {
-                  desc: "Passing Net Yards Per Attempt (passes and sacks)",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
               "stat:drives": {
                   desc: "Number of Drives",
                   sortSequence: ["desc", "asc"],
@@ -833,6 +828,58 @@ const sportSpecificCols: {
               },
               "stat:ptsPerDrive": {
                   desc: "Points Per Drive",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:qbRec": {
+                  desc: "Team record in games started at QB",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssTDPct": {
+                  desc: "Percentage of passes that result in touchdowns",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssIntPct": {
+                  desc: "Percentage of passes that result in interceptions",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssYdsPerAtt": {
+                  desc: "Pass Yards Per Attempt",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssAdjYdsPerAtt": {
+                  desc:
+                      "Adjusted Pass Yards Per Attempt ((yds + 20 * TD - 45 * int) / att)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssYdsPerCmp": {
+                  desc: "Pass Yards Per Completion",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssYdsPerGame": {
+                  desc: "Pass Yards Per Game",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssNetYdsPerAtt": {
+                  desc: "Net Pass Yards Per Attempt (passes and sacks)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssAdjNetYdsPerAtt": {
+                  desc:
+                      "Adjusted Net Pass Yards Per Attempt ((yds + 20 * TD - 45 * int - skYds) / (att + sk))",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssSkPct": {
+                  desc: "Percentage of times sacked when attempting a pass",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
@@ -1300,7 +1347,6 @@ const sportSpecificTitleOverrides =
               "stat:ply": "Ply",
               "stat:ydsPerPlay": "Y/P",
               "stat:tov": "TO",
-              "stat:pssNetYdsPerAtt": "NY/A",
               "stat:drives": "#Dr",
               "stat:drivesScoringPct": "Sc%",
               "stat:drivesTurnoverPct": "TO%",
@@ -1309,6 +1355,16 @@ const sportSpecificTitleOverrides =
               "stat:playsPerDrive": "Ply/D",
               "stat:ydsPerDrive": "Y/D",
               "stat:ptsPerDrive": "Pts/D",
+              "stat:qbRec": "QBRec",
+              "stat:pssTDPct": "TD%",
+              "stat:pssIntPct": "Int%",
+              "stat:pssYdsPerAtt": "Y/A",
+              "stat:pssAdjYdsPerAtt": "AY/A",
+              "stat:pssYdsPerCmp": "Y/C",
+              "stat:pssYdsPerGame": "Y/G",
+              "stat:pssNetYdsPerAtt": "NY/A",
+              "stat:pssAdjNetYdsPerAtt": "ANY/A",
+              "stat:pssSkPct": "Sk%",
           };
 
 const titleOverrides = {

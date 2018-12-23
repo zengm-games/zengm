@@ -21,6 +21,11 @@ const PlayerStats = ({
     const label = season !== undefined ? season : "Career Totals";
     setTitle(`Player Stats - ${label}`);
 
+    let tableName = `PlayerStats${statType === "advanced" ? "Adv" : ""}`;
+    if (process.env.SPORT === "football") {
+        tableName += statType;
+    }
+
     const cols = getCols(
         "Name",
         "Pos",
@@ -28,6 +33,21 @@ const PlayerStats = ({
         "Team",
         ...stats.map(stat => `stat:${stat}`),
     );
+
+    let sortCol = cols.length - 1;
+    if (process.env.SPORT === "football") {
+        if (statType === "passing") {
+            sortCol = 9;
+        } else if (statType === "rushing") {
+            sortCol = cols.length - 3;
+        } else if (statType === "defense") {
+            sortCol = 16;
+        } else if (statType === "kicking") {
+            sortCol = cols.length - 11;
+        } else if (statType === "returns") {
+            sortCol = 12;
+        }
+    }
 
     const rows = players.map(p => {
         let pos;
@@ -134,8 +154,8 @@ const PlayerStats = ({
 
             <DataTable
                 cols={cols}
-                defaultSort={[cols.length - 1, "desc"]}
-                name={`PlayerStats${statType === "advanced" ? "Adv" : ""}`}
+                defaultSort={[sortCol, "desc"]}
+                name={tableName}
                 rows={rows}
                 pagination
             />

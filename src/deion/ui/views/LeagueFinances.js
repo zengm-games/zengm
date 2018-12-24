@@ -23,6 +23,7 @@ const LeagueFinances = ({
         "Profit (YTD)",
         "Cash",
         "Payroll",
+        "Cap Space",
     );
 
     const rows = teams.map(t => {
@@ -43,6 +44,7 @@ const LeagueFinances = ({
                 helpers.formatCurrency(t.seasonAttrs.profit, "M"),
                 helpers.formatCurrency(t.seasonAttrs.cash, "M"),
                 helpers.formatCurrency(payroll, "M"),
+                helpers.formatCurrency(salaryCap - payroll, "M"),
             ],
             classNames: {
                 "table-info": t.tid === userTid,

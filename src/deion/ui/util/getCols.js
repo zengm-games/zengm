@@ -973,6 +973,10 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "Cap Space": {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
+    },
     Cash: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",

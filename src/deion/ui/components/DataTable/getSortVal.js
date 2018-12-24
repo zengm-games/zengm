@@ -26,6 +26,9 @@ const getSortVal = (value: any = null, sortType: SortType | void) => {
             if (sortVal === null) {
                 return -Infinity;
             }
+            if (typeof sortVal === "string") {
+                sortVal = sortVal.replace(/,/g, "");
+            }
             if (typeof sortVal !== "number") {
                 return parseFloat(sortVal);
             }

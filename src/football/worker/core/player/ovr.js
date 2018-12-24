@@ -16,7 +16,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 8 * ratings.thv +
                 4 * ratings.thp +
                 8 * ratings.tha +
-                ratings.bls +
+                ratings.bsc +
                 ratings.elu) /
             25;
     } else if (pos === "RB") {
@@ -27,7 +27,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 8 * ratings.elu +
                 ratings.rtr +
                 2 * ratings.hnd +
-                4 * ratings.bls +
+                4 * ratings.bsc +
                 ratings.rbk +
                 2 * ratings.pbk) /
             31;
@@ -40,7 +40,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 ratings.elu +
                 4 * ratings.rtr +
                 8 * ratings.hnd +
-                ratings.bls +
+                ratings.bsc +
                 ratings.rbk) /
             23;
     } else if (pos === "TE") {
@@ -52,7 +52,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 ratings.elu +
                 4 * ratings.rtr +
                 4 * ratings.hnd +
-                ratings.bls +
+                ratings.bsc +
                 2 * ratings.rbk +
                 2 * ratings.pbk) /
             25;
@@ -115,7 +115,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 4 * ratings.spd +
                 4 * ratings.elu +
                 2 * ratings.hnd +
-                8 * ratings.bls) /
+                8 * ratings.bsc) /
             19;
     } else if (pos === "PR") {
         rating =
@@ -123,7 +123,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 4 * ratings.spd +
                 4 * ratings.elu +
                 8 * ratings.hnd +
-                8 * ratings.bls) /
+                8 * ratings.bsc) /
             25;
     } else {
         throw new Error(`Unknown position: "${pos}"`);

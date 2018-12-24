@@ -134,7 +134,7 @@ export type PlayerRatings = {|
     thv: number,
     thp: number,
     tha: number,
-    bls: number,
+    bsc: number,
     elu: number,
     rtr: number,
     hnd: number,
@@ -168,7 +168,7 @@ export type RatingKey =
     | "thv"
     | "thp"
     | "tha"
-    | "bls"
+    | "bsc"
     | "elu"
     | "rtr"
     | "hnd"

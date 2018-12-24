@@ -90,7 +90,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         weights: [0.5, 1, 0.25],
     },
     ballSecurity: {
-        ratings: ["bls", "stre"],
+        ratings: ["bsc", "stre"],
         weights: [1, 0.2],
     },
     pace: {
@@ -321,7 +321,7 @@ const RATINGS: RatingKey[] = [
     "thv",
     "thp",
     "tha",
-    "bls",
+    "bsc",
     "elu",
     "rtr",
     "hnd",

@@ -18,7 +18,7 @@ const genRatings = (
         thv: random.randInt(0, 100),
         thp: random.randInt(0, 100),
         tha: random.randInt(0, 100),
-        bls: random.randInt(0, 100),
+        bsc: random.randInt(0, 100),
         elu: random.randInt(0, 100),
         rtr: random.randInt(0, 100),
         hnd: random.randInt(0, 100),

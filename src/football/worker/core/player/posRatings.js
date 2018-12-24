@@ -2,11 +2,11 @@
 
 const posRatings = (pos: string): string[] => {
     if (pos === "QB") {
-        return ["thv", "thp", "tha", "bls"];
+        return ["thv", "thp", "tha", "bsc"];
     }
 
     if (pos === "RB" || pos === "WR") {
-        return ["elu", "rtr", "hnd", "bls"];
+        return ["elu", "rtr", "hnd", "bsc"];
     }
 
     if (pos === "TE") {

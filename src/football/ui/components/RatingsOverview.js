@@ -52,7 +52,7 @@ const RatingsOverview = ({ ratings }) => {
                     <br />
                     Hands: {ratings[r].hnd}
                     <br />
-                    Ball Security: {ratings[r].bls}
+                    Ball Security: {ratings[r].bsc}
                 </div>
             </div>
             <div className="row mt-2">
@@ -100,7 +100,7 @@ RatingsOverview.propTypes = {
             thv: PropTypes.number.isRequired,
             thp: PropTypes.number.isRequired,
             tha: PropTypes.number.isRequired,
-            bls: PropTypes.number.isRequired,
+            bsc: PropTypes.number.isRequired,
             elu: PropTypes.number.isRequired,
             rtr: PropTypes.number.isRequired,
             hnd: PropTypes.number.isRequired,

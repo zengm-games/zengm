@@ -65,7 +65,7 @@ async function updatePlayers(
                       "thv",
                       "thp",
                       "tha",
-                      "bls",
+                      "bsc",
                       "elu",
                       "rtr",
                       "hnd",

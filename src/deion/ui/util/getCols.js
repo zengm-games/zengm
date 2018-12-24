@@ -316,7 +316,7 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
-              "rating:bls": {
+              "rating:bsc": {
                   desc: "Ball Security",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
@@ -1308,7 +1308,7 @@ const sportSpecificTitleOverrides =
               "rating:thv": "ThV",
               "rating:thp": "ThP",
               "rating:tha": "ThA",
-              "rating:bls": "BlS",
+              "rating:bsc": "BSc",
               "rating:elu": "Elu",
               "rating:rtr": "RtR",
               "rating:hnd": "Hnd",

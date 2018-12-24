@@ -13,17 +13,10 @@ async function updatePlayers(
         updateEvents.includes("firstRun") ||
         (updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
     ) {
-        const stats = [
-            "gp",
-            "min",
-            "trb",
-            "ast",
-            "pts",
-            "per",
-            "ewa",
-            "ws",
-            "ws48",
-        ];
+        const stats =
+            process.env.SPORT === "basketball"
+                ? ["gp", "min", "trb", "ast", "pts", "per", "ewa", "ws", "ws48"]
+                : ["keyStats"];
 
         let players = await idb.getCopies.players({
             retired: true,

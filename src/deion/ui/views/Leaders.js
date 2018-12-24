@@ -81,7 +81,10 @@ const Leaders = ({ categories, playoffs, season }) => {
                                             <td>
                                                 {cat.stat === "WS/48"
                                                     ? helpers.roundWinp(p.stat)
-                                                    : p.stat.toFixed(1)}
+                                                    : helpers.roundStat(
+                                                          p.stat,
+                                                          cat.statProp,
+                                                      )}
                                             </td>
                                         </tr>
                                     ))}

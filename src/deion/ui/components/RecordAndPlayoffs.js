@@ -13,6 +13,7 @@ const RecordAndPlayoffs = ({
     playoffRoundsWon,
     season,
     style,
+    tied,
     won,
 }: {
     abbrev: string,
@@ -23,6 +24,7 @@ const RecordAndPlayoffs = ({
     playoffRoundsWon?: number,
     season: number,
     style: { [key: string]: string },
+    tied?: number,
     won: number,
 }) => {
     const seasonText =
@@ -34,11 +36,15 @@ const RecordAndPlayoffs = ({
                 :{" "}
             </span>
         ) : null;
+
+    let record = `${won}-${lost}`;
+    if (typeof tied === "number" && !Number.isNaN(tied)) {
+        record += `-${tied}`;
+    }
     const recordText = (
-        <a href={helpers.leagueUrl(["standings", season])}>
-            {won}-{lost}
-        </a>
+        <a href={helpers.leagueUrl(["standings", season])}>{record}</a>
     );
+
     const extraText =
         numConfs !== undefined &&
         numPlayoffRounds !== undefined &&
@@ -76,6 +82,7 @@ RecordAndPlayoffs.propTypes = {
     playoffRoundsWon: PropTypes.number,
     season: PropTypes.number.isRequired,
     style: PropTypes.object,
+    tied: PropTypes.number,
     won: PropTypes.number.isRequired,
 };
 

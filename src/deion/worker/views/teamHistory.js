@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateTeamHistory(
@@ -14,8 +14,10 @@ async function updateTeamHistory(
         updateEvents.includes("gameSim") ||
         inputs.abbrev !== state.abbrev
     ) {
-        let bestRecord = null;
-        let worstRecord = null;
+        let bestRecord;
+        let worstRecord;
+        let bestWinp = -Infinity;
+        let worstWinp = Infinity;
 
         const teamSeasons = await idb.getCopies.teamSeasons({
             tid: inputs.tid,
@@ -23,6 +25,7 @@ async function updateTeamHistory(
         const history = [];
         let totalWon = 0;
         let totalLost = 0;
+        let totalTied = 0;
         let playoffAppearances = 0;
         let championships = 0;
         for (const teamSeason of teamSeasons) {
@@ -30,10 +33,12 @@ async function updateTeamHistory(
                 season: teamSeason.season,
                 won: teamSeason.won,
                 lost: teamSeason.lost,
+                tied: g.ties ? teamSeason.tied : undefined,
                 playoffRoundsWon: teamSeason.playoffRoundsWon,
             });
             totalWon += teamSeason.won;
             totalLost += teamSeason.lost;
+            totalTied += teamSeason.tied;
             if (teamSeason.playoffRoundsWon >= 0) {
                 playoffAppearances += 1;
             }
@@ -43,22 +48,22 @@ async function updateTeamHistory(
                 championships += 1;
             }
 
-            if (
-                bestRecord === null ||
-                bestRecord.won < history[history.length - 1].won
-            ) {
+            const winp = helpers.calcWinp(history[history.length - 1]);
+            if (winp > bestWinp) {
                 bestRecord = history[history.length - 1];
+                bestWinp = winp;
             }
-            if (
-                worstRecord === null ||
-                worstRecord.lost < history[history.length - 1].lost
-            ) {
+            if (winp < worstWinp) {
                 worstRecord = history[history.length - 1];
+                worstWinp = winp;
             }
         }
         history.reverse(); // Show most recent season first
 
-        const stats = ["gp", "min", "pts", "trb", "ast", "per", "ewa"];
+        const stats =
+            process.env.SPORT === "basketball"
+                ? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
+                : ["gp", "keyStats"];
 
         let players = await idb.getCopies.players({ statsTid: inputs.tid });
         players = await idb.getCopies.playersPlus(players, {
@@ -104,12 +109,14 @@ async function updateTeamHistory(
             },
             totalWon,
             totalLost,
+            totalTied,
             playoffAppearances,
             championships,
             bestRecord,
             worstRecord,
             numConfs: g.confs.length,
             numPlayoffRounds: g.numGamesPlayoffSeries.length,
+            ties: g.ties,
         };
     }
 }

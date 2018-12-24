@@ -21,7 +21,9 @@ const TeamHistory = ({
     playoffAppearances,
     stats,
     team,
+    ties,
     totalLost,
+    totalTied,
     totalWon,
     worstRecord,
 }) => {
@@ -42,6 +44,7 @@ const TeamHistory = ({
                         ? { fontWeight: "bold" }
                         : null
                 }
+                tied={h.tied}
                 won={h.won}
             />
         );
@@ -82,6 +85,11 @@ const TeamHistory = ({
         };
     });
 
+    let record = `${totalWon}-${totalLost}`;
+    if (ties) {
+        record += `-${totalTied}`;
+    }
+
     return (
         <>
             <Dropdown
@@ -109,7 +117,7 @@ const TeamHistory = ({
                 <div className="col-sm-3">
                     <h2>Overall</h2>
                     <p>
-                        Record: {totalWon}-{totalLost}
+                        Record: {record}
                         <br />
                         Playoff Appearances: {playoffAppearances}
                         <br />
@@ -120,6 +128,7 @@ const TeamHistory = ({
                             abbrev={abbrev}
                             lost={bestRecord.lost}
                             season={bestRecord.season}
+                            tied={bestRecord.tied}
                             won={bestRecord.won}
                         />
                         <br />
@@ -128,6 +137,7 @@ const TeamHistory = ({
                             abbrev={abbrev}
                             lost={worstRecord.lost}
                             season={worstRecord.season}
+                            tied={worstRecord.tied}
                             won={worstRecord.won}
                         />
                     </p>
@@ -173,11 +183,21 @@ TeamHistory.propTypes = {
     abbrev: PropTypes.string.isRequired,
     bestRecord: PropTypes.shape({
         lost: PropTypes.number.isRequired,
+        playoffRoundsWon: PropTypes.number.isRequired,
         season: PropTypes.number.isRequired,
+        tied: PropTypes.number,
         won: PropTypes.number.isRequired,
     }).isRequired,
     championships: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(PropTypes.object).isRequired,
+    history: PropTypes.arrayOf(
+        PropTypes.shape({
+            lost: PropTypes.number.isRequired,
+            playoffRoundsWon: PropTypes.number.isRequired,
+            season: PropTypes.number.isRequired,
+            tied: PropTypes.number,
+            won: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
     numConfs: PropTypes.number.isRequired,
     numPlayoffRounds: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -188,11 +208,15 @@ TeamHistory.propTypes = {
         region: PropTypes.string.isRequired,
         tid: PropTypes.number.isRequired,
     }).isRequired,
+    ties: PropTypes.bool.isRequired,
     totalLost: PropTypes.number.isRequired,
+    totalTied: PropTypes.number.isRequired,
     totalWon: PropTypes.number.isRequired,
     worstRecord: PropTypes.shape({
         lost: PropTypes.number.isRequired,
+        playoffRoundsWon: PropTypes.number.isRequired,
         season: PropTypes.number.isRequired,
+        tied: PropTypes.number,
         won: PropTypes.number.isRequired,
     }).isRequired,
 };

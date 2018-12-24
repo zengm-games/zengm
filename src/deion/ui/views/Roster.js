@@ -426,6 +426,7 @@ class Roster extends React.Component {
                         season={season}
                         won={t.seasonAttrs.won}
                         lost={t.seasonAttrs.lost}
+                        tied={t.seasonAttrs.tied}
                         playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
                         option="noSeason"
                         numConfs={numConfs}

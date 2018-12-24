@@ -85,7 +85,10 @@ async function updateTrade(): void | { [key: string]: any } {
         "untradable",
     ];
     const ratings = ["ovr", "pot", "skills", "pos"];
-    const stats = ["min", "pts", "trb", "ast", "per"];
+    const stats =
+        process.env.SPORT === "basketball"
+            ? ["min", "pts", "trb", "ast", "per"]
+            : ["keyStats"];
 
     userRoster = await idb.getCopies.playersPlus(userRoster, {
         attrs,

@@ -622,6 +622,11 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
             season: g.season,
         });
 
+        const stats =
+            process.env.SPORT === "basketball"
+                ? ["min", "pts", "trb", "ast", "per"]
+                : ["keyStats"];
+
         // Take the pids and dpids in each offer and get the info needed to display the offer
         return Promise.all(
             offers.map(async (offer, i) => {
@@ -642,7 +647,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                         "watch",
                     ],
                     ratings: ["ovr", "pot", "skills", "pos"],
-                    stats: ["min", "pts", "trb", "ast", "per"],
+                    stats,
                     season: g.season,
                     tid,
                     showNoStats: true,

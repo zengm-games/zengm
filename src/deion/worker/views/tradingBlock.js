@@ -13,7 +13,10 @@ async function updateUserRoster(
         updateEvents.includes("playerMovement") ||
         updateEvents.includes("gameSim")
     ) {
-        const stats = ["min", "pts", "trb", "ast", "per"];
+        const stats =
+            process.env.SPORT === "basketball"
+                ? ["min", "pts", "trb", "ast", "per"]
+                : ["keyStats"];
 
         let [userRoster, userPicks] = await Promise.all([
             idb.cache.players.indexGetAll("playersByTid", g.userTid),

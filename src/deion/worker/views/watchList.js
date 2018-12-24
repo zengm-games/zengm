@@ -21,21 +21,24 @@ async function updatePlayers(
         inputs.statType !== state.statType ||
         inputs.playoffs !== state.playoffs
     ) {
-        const stats = [
-            "gp",
-            "min",
-            "fgp",
-            "tpp",
-            "ftp",
-            "trb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "pts",
-            "per",
-            "ewa",
-        ];
+        const stats =
+            process.env.SPORT === "basketball"
+                ? [
+                      "gp",
+                      "min",
+                      "fgp",
+                      "tpp",
+                      "ftp",
+                      "trb",
+                      "ast",
+                      "tov",
+                      "stl",
+                      "blk",
+                      "pts",
+                      "per",
+                      "ewa",
+                  ]
+                : ["keyStats"];
 
         let players = await idb.getCopies.players({
             // In Firefox, objects have a "watch" function

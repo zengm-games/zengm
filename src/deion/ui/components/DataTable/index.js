@@ -390,10 +390,16 @@ class DataTable extends React.Component<Props, State> {
         return orderBy(
             rowsFiltered,
             this.state.sortBys.map(sortBy => row => {
-                return getSortVal(
-                    row.data[sortBy[0]],
-                    this.props.cols[sortBy[0]].sortType,
-                );
+                let i = sortBy[0];
+                if (
+                    typeof i !== "number" ||
+                    i >= row.data.length ||
+                    i >= this.props.cols.length
+                ) {
+                    i = 0;
+                }
+
+                return getSortVal(row.data[i], this.props.cols[i].sortType);
             }),
             this.state.sortBys.map(sortBy => sortBy[1]),
         );

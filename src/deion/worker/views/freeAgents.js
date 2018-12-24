@@ -14,7 +14,10 @@ async function updateFreeAgents(): void | { [key: string]: any } {
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
-    const stats = ["min", "pts", "trb", "ast", "per"];
+    const stats =
+        process.env.SPORT === "basketball"
+            ? ["min", "pts", "trb", "ast", "per"]
+            : ["keyStats"];
 
     players = await idb.getCopies.playersPlus(players, {
         attrs: [

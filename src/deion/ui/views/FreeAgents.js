@@ -188,7 +188,7 @@ class FreeAgents extends React.Component {
 
                 <DataTable
                     cols={cols}
-                    defaultSort={[10, "desc"]}
+                    defaultSort={[cols.length - 3, "desc"]}
                     name="FreeAgents"
                     pagination
                     rows={rows}

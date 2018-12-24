@@ -259,6 +259,8 @@ show game stats in player page
 
 ---
 
+customizable columns in DataTable would be great... especially for football, with presets like mogul
+
 "Shot Locations" should be just another stat type in player/team stats
 - need to handle super cols in PLAYER_STATS_TABLES
 

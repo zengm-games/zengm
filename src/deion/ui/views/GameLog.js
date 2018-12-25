@@ -28,9 +28,11 @@ StatsRow.propTypes = {
 const findPrevNextGids = (games = [], currentGid) => {
     let prevGid;
     let nextGid;
+    let currentGidInList = false;
 
     for (let i = 0; i < games.length; i++) {
         if (games[i].gid === currentGid) {
+            currentGidInList = true;
             if (i > 0) {
                 nextGid = games[i - 1].gid;
             }
@@ -41,7 +43,7 @@ const findPrevNextGids = (games = [], currentGid) => {
         }
     }
 
-    return { prevGid, nextGid };
+    return { currentGidInList, prevGid, nextGid };
 };
 
 const GamesList = ({ abbrev, currentSeason, gid, gamesList, season }) => {
@@ -146,7 +148,7 @@ const GameLog = ({
 }) => {
     setTitle(`Game Log - ${season}`);
 
-    const { nextGid, prevGid } = findPrevNextGids(
+    const { currentGidInList, nextGid, prevGid } = findPrevNextGids(
         gamesList.games,
         boxScore.gid,
     );
@@ -189,6 +191,7 @@ const GameLog = ({
                         <BoxScoreWrapper
                             abbrev={abbrev}
                             boxScore={boxScore}
+                            currentGidInList={currentGidInList}
                             nextGid={nextGid}
                             prevGid={prevGid}
                             showNextPrev

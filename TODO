@@ -42,8 +42,6 @@ game sim
 - special kick after safety
 - kickoff after halftime
 
-stats display - some things are per game, some are total, in same table! crazy
-
 bugsnag, google analytics keys in index.html
 
 depth chart
@@ -111,10 +109,6 @@ search for text basketball in deion
 split more from deion
 - processInputs for views only in one (depth, shot locations)
 - worker API functions only in one (depth)
-
-draft
-- option to disable lottery
-- number of picks per season, depends on sport
 
 Venatus - make sure correct before deploying
 

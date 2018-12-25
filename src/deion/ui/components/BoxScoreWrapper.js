@@ -1,7 +1,14 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, overrides, realtimeUpdate } from "../util";
+import { PHASE } from "../../common";
+import {
+    helpers,
+    overrides,
+    realtimeUpdate,
+    subscribeLocal,
+    toWorker,
+} from "../util";
 
 const HeadlineScore = ({ boxScore }) => {
     // Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
@@ -100,9 +107,101 @@ FourFactors.propTypes = {
     teams: PropTypes.array.isRequired,
 };
 
+class NextButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            autoGoToNext: false,
+            clickedGoToNext: false,
+        };
+        this.simNext = this.simNext.bind(this);
+    }
+
+    async simNext() {
+        this.setState({
+            autoGoToNext: true,
+            clickedGoToNext: true,
+        });
+        await toWorker(`actions.playMenu.day`);
+    }
+
+    async componentDidUpdate() {
+        if (this.state.autoGoToNext && this.props.nextGid !== undefined) {
+            // eslint-disable-next-line react/no-did-update-set-state
+            this.setState({
+                autoGoToNext: false,
+            });
+            await realtimeUpdate(
+                [],
+                helpers.leagueUrl([
+                    "game_log",
+                    this.props.abbrev,
+                    this.props.boxScore.season,
+                    this.props.nextGid,
+                ]),
+            );
+            // eslint-disable-next-line react/no-did-update-set-state
+            this.setState({
+                clickedGoToNext: false,
+            });
+        }
+    }
+
+    render() {
+        const { abbrev, boxScore, currentGidInList, nextGid } = this.props;
+        return subscribeLocal(local => {
+            const { phase, playMenuOptions, season } = local.state;
+
+            const canPlay = playMenuOptions.some(option => option.id === "day");
+
+            return (
+                <div className="ml-4">
+                    {boxScore.season === season &&
+                    currentGidInList &&
+                    (nextGid === undefined || this.state.clickedGoToNext) &&
+                    (phase === PHASE.REGULAR_SEASON ||
+                        phase === PHASE.PLAYOFFS) ? (
+                        <button
+                            className={classNames("btn", "btn-light-bordered", {
+                                disabled: !canPlay || this.state.autoGoToNext,
+                            })}
+                            onClick={this.simNext}
+                        >
+                            Sim
+                            <br />
+                            Next
+                        </button>
+                    ) : (
+                        <a
+                            className={classNames("btn", "btn-light-bordered", {
+                                disabled: nextGid === undefined,
+                            })}
+                            href={helpers.leagueUrl([
+                                "game_log",
+                                abbrev,
+                                boxScore.season,
+                                nextGid,
+                            ])}
+                        >
+                            Next
+                        </a>
+                    )}
+                </div>
+            );
+        });
+    }
+}
+NextButton.propTypes = {
+    abbrev: PropTypes.string,
+    boxScore: PropTypes.object.isRequired,
+    currentGidInList: PropTypes.bool.isRequired,
+    nextGid: PropTypes.number,
+};
+
 const DetailedScore = ({
     abbrev,
     boxScore,
+    currentGidInList,
     nextGid,
     prevGid,
     showNextPrev,
@@ -173,21 +272,12 @@ const DetailedScore = ({
                 ) : null}
             </div>
             {showNextPrev ? (
-                <div className="ml-4">
-                    <a
-                        className={classNames("btn", "btn-light-bordered", {
-                            disabled: nextGid === undefined,
-                        })}
-                        href={helpers.leagueUrl([
-                            "game_log",
-                            abbrev,
-                            boxScore.season,
-                            nextGid,
-                        ])}
-                    >
-                        Next
-                    </a>
-                </div>
+                <NextButton
+                    abbrev={abbrev}
+                    boxScore={boxScore}
+                    currentGidInList={currentGidInList}
+                    nextGid={nextGid}
+                />
             ) : null}
         </div>
     );
@@ -196,6 +286,7 @@ const DetailedScore = ({
 DetailedScore.propTypes = {
     abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
+    currentGidInList: PropTypes.bool.isRequired,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
     showNextPrev: PropTypes.bool,
@@ -259,6 +350,7 @@ class BoxScore extends React.Component {
         const {
             abbrev,
             boxScore,
+            currentGidInList,
             nextGid,
             prevGid,
             showNextPrev,
@@ -272,6 +364,7 @@ class BoxScore extends React.Component {
                     <DetailedScore
                         abbrev={abbrev}
                         boxScore={boxScore}
+                        currentGidInList={currentGidInList}
                         key={boxScore.gid}
                         nextGid={nextGid}
                         prevGid={prevGid}
@@ -288,6 +381,7 @@ class BoxScore extends React.Component {
 BoxScore.propTypes = {
     abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
+    currentGidInList: PropTypes.bool.isRequired,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
     showNextPrev: PropTypes.bool,

@@ -170,13 +170,12 @@ const playAmount = async (
 
     if (g.phase <= PHASE.PLAYOFFS) {
         await updateStatus("Playing..."); // For quick UI updating, before game.play
-        // Start playing games
-        game.play(numDays, conditions);
+        await game.play(numDays, conditions);
     } else if (g.phase === PHASE.FREE_AGENCY) {
         if (numDays > g.daysLeft) {
             numDays = g.daysLeft;
         }
-        freeAgents.play(numDays, conditions);
+        await freeAgents.play(numDays, conditions);
     }
 };
 

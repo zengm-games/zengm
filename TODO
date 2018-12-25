@@ -1,5 +1,17 @@
 # football
 
+new league is too slow, maybe use an estimate for pot
+
+initial player ratings
+
+player development
+
+better gamesim
+
+salaries
+
+---
+
 some guide for roster composition on the roster page, like ideal numbers of players at each position
 
 extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
@@ -30,8 +42,6 @@ game sim
 - special kick after safety
 - kickoff after halftime
 
-derived stats
-
 stats display - some things are per game, some are total, in same table! crazy
 
 bugsnag, google analytics keys in index.html
@@ -42,8 +52,6 @@ depth chart
 football code!
 - processStats in worker but used in ui
 - references to ../basketball
-
-new league is too slow, maybe use an estimate for pot
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api

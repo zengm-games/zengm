@@ -187,57 +187,11 @@ if (process.env.SPORT === "football") {
 
 --
 
-decide on player ratings
-
-ALL
-- hgt: height
-- stre: strength
-- spd: speed
-- endu: endurance
-
-QB
-- thv: throwing vision
-- thp: throwing power
-- tha: throwing accuracy
-- bls: ball security
-
-RB/WR/TE
-- elu: elusiveness
-- rtr: route running
-- hnd: hands
-- bls: ball security
-?- rnv: running vision
-
-T/G/C
-- rbk: run blocking
-- pbk: pass blocking
-- snp: snapping
-
-Defense
-- pcv: pass coverage
-- prs: pass rushing
-- rns: run stopping
-- hnd: hands
-?- tck: tackling
-
-K/P
-- kpw: kick power
-- kac: kick accuracy
-- ppw: punt power
-- pac: punt accuracy
-
-decide on player stats
-
-start implementing new stats and ratings
-
 schedule
 
 game sim
 
 player development (position dependent)
-
-draft
-- no lottery
 
 names US only
 

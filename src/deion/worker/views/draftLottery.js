@@ -47,7 +47,7 @@ async function updateDraftLottery(
         }
 
         // View projected draft lottery for this season
-        const draftLotteryResult = await draft.genOrder(true);
+        const draftLotteryResult = await draft.genOrderNBA(true);
 
         for (const pick of draftLotteryResult.result) {
             pick.pick = undefined;

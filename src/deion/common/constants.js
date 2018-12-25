@@ -35,7 +35,7 @@ const PHASE_TEXT = {
     "1": "regular season",
     "2": "regular season",
     "3": "playoffs",
-    "4": "draft lottery",
+    "4": process.env.SPORT === "basketball" ? "draft lottery" : "before draft",
     "5": "draft",
     "6": "after draft",
     "7": "re-sign players",

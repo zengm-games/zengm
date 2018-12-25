@@ -63,6 +63,9 @@ const defaultGameAttributes: GameAttributes = {
 
     // This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
     ties: false,
+
+    draftLottery: "nba",
+    numDraftRounds: 2,
 };
 
 if (process.env.SPORT === "football") {
@@ -88,6 +91,8 @@ if (process.env.SPORT === "football") {
         stopOnInjuryGames: 1,
         hardCap: true,
         ties: true,
+        draftLottery: "none",
+        numDraftRounds: 3,
     };
 
     Object.assign(defaultGameAttributes, footballOverrides);

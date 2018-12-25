@@ -294,10 +294,14 @@ class Draft extends React.Component {
                         Draft Summary
                     </a>{" "}
                     |{" "}
-                    <a href={helpers.leagueUrl(["draft_lottery"])}>
-                        Draft Lottery
-                    </a>{" "}
-                    |{" "}
+                    {process.env.SPORT === "basketball" ? (
+                        <>
+                            <a href={helpers.leagueUrl(["draft_lottery"])}>
+                                Draft Lottery
+                            </a>{" "}
+                            |{" "}
+                        </>
+                    ) : null}
                     <a href={helpers.leagueUrl(["draft_team_history"])}>
                         Team History
                     </a>

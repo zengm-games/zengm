@@ -95,6 +95,7 @@ export type GameAttributeKey =
     | "disableInjuries"
     | "difficulty"
     | "divs"
+    | "draftLottery"
     | "gameOver"
     | "godMode"
     | "godModeInPast"

@@ -99,7 +99,10 @@ const updatePlayMenu = async () => {
         }
     } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         // Offseason - pre draft
-        keys = ["viewDraftLottery", "untilDraft"];
+        keys =
+            process.env.SPORT === "basketball"
+                ? ["viewDraftLottery", "untilDraft"]
+                : ["untilDraft"];
     } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {
         // Draft
         const draftPicks = await draft.getOrder();

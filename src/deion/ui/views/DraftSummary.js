@@ -107,10 +107,14 @@ const DraftSummary = ({ players, season, stats, userTid }) => {
                     Future Draft Scouting
                 </a>{" "}
                 |{" "}
-                <a href={helpers.leagueUrl(["draft_lottery", season])}>
-                    Draft Lottery
-                </a>{" "}
-                |{" "}
+                {process.env.SPORT === "basketball" ? (
+                    <>
+                        <a href={helpers.leagueUrl(["draft_lottery", season])}>
+                            Draft Lottery
+                        </a>{" "}
+                        |{" "}
+                    </>
+                ) : null}
                 <a href={helpers.leagueUrl(["draft_team_history"])}>
                     Team History
                 </a>

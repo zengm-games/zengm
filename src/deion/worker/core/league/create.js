@@ -134,7 +134,7 @@ export const createWithoutSaving = (
         draftPicks = [];
         for (let i = 0; i < 4; i++) {
             for (let t = 0; t < teams.length; t++) {
-                for (let round = 1; round <= 2; round++) {
+                for (let round = 1; round <= g.numDraftRounds; round++) {
                     draftPicks.push({
                         tid: t,
                         originalTid: t,
@@ -541,9 +541,10 @@ export const createWithoutSaving = (
     }
 
     // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-    let createUndrafted1 = Math.round((70 * g.numTeams) / 30);
-    let createUndrafted2 = Math.round((70 * g.numTeams) / 30);
-    let createUndrafted3 = Math.round((70 * g.numTeams) / 30);
+    const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
+    let createUndrafted1 = baseNumPlayers;
+    let createUndrafted2 = baseNumPlayers;
+    let createUndrafted3 = baseNumPlayers;
     for (const p of players) {
         if (p.tid === PLAYER.UNDRAFTED) {
             createUndrafted1 -= 1;

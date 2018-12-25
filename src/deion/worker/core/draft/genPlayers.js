@@ -51,90 +51,94 @@ const genPlayers = async (
     }
 
     // Easter eggs!
-    if (Math.random() < 1 / 100000) {
-        const p = player.generate(tid, 19, draftYear, false, scoutingRank);
-        p.born.year = draftYear - 48;
-        p.born.loc = "Los Angeles, CA";
-        p.college = "Washington State University";
-        p.firstName = "LaVar";
-        p.hgt = 78;
-        p.imgURL = "/img/lavar.jpg";
-        p.lastName = "Ball";
-        p.weight = 250;
-        Object.assign(p.ratings[0], {
-            hgt: 43,
-            stre: 80,
-            spd: 80,
-            jmp: 80,
-            endu: 80,
-            ins: 80,
-            dnk: 80,
-            ft: 80,
-            fg: 80,
-            tp: 80,
-            oiq: 80,
-            diq: 80,
-            drb: 80,
-            pss: 80,
-            reb: 80,
-        });
-        player.develop(p, 0);
-        player.updateValues(p);
-        const pid = await idb.cache.players.add(p);
-        if (typeof pid === "number") {
-            await logEvent({
-                type: "playerFeat",
-                text: `<a href="${helpers.leagueUrl(["player", pid])}">${
-                    p.firstName
-                } ${
-                    p.lastName
-                }</a> got sick of the haters and decided to show the world how a big baller plays.`,
-                showNotification: false,
-                pids: [pid],
-                tids: [g.userTid],
+    if (process.env.SPORT === "basketball") {
+        if (Math.random() < 1 / 100000) {
+            const p = player.generate(tid, 19, draftYear, false, scoutingRank);
+            p.born.year = draftYear - 48;
+            p.born.loc = "Los Angeles, CA";
+            p.college = "Washington State University";
+            p.firstName = "LaVar";
+            p.hgt = 78;
+            p.imgURL = "/img/lavar.jpg";
+            p.lastName = "Ball";
+            p.weight = 250;
+            Object.assign(p.ratings[0], {
+                hgt: 43,
+                stre: 80,
+                spd: 80,
+                jmp: 80,
+                endu: 80,
+                ins: 80,
+                dnk: 80,
+                ft: 80,
+                fg: 80,
+                tp: 80,
+                oiq: 80,
+                diq: 80,
+                drb: 80,
+                pss: 80,
+                reb: 80,
             });
-        }
-    } else if (Math.random() < 1 / 100000) {
-        const p = player.generate(tid, 19, draftYear, false, scoutingRank);
-        p.born.year = draftYear - 71;
-        p.born.loc = "Queens, NY";
-        p.college = "Wharton";
-        p.firstName = "Donald";
-        p.hgt = 75;
-        p.imgURL = "/img/trump.jpg";
-        p.lastName = "Trump";
-        p.weight = 240;
-        Object.assign(p.ratings[0], {
-            hgt: 40,
-            stre: 80,
-            spd: 80,
-            jmp: 80,
-            endu: 80,
-            ins: 80,
-            dnk: 80,
-            ft: 80,
-            fg: 80,
-            tp: 80,
-            oiq: 80,
-            diq: 100,
-            drb: 80,
-            pss: 0,
-            reb: 80,
-        });
-        player.develop(p, 0);
-        player.updateValues(p);
-        p.ratings[0].skills = ["Dp"];
-        const pid = await idb.cache.players.add(p);
-        if (typeof pid === "number") {
-            await logEvent({
-                type: "playerFeat",
-                text: `<a href="${helpers.leagueUrl(["player", pid])}">${
-                    p.firstName
-                } ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
-                showNotification: false,
-                pids: [pid],
-                tids: [g.userTid],
+            player.develop(p, 0);
+            player.updateValues(p);
+            const pid = await idb.cache.players.add(p);
+            if (typeof pid === "number") {
+                await logEvent({
+                    type: "playerFeat",
+                    text: `<a href="${helpers.leagueUrl(["player", pid])}">${
+                        p.firstName
+                    } ${
+                        p.lastName
+                    }</a> got sick of the haters and decided to show the world how a big baller plays.`,
+                    showNotification: false,
+                    pids: [pid],
+                    tids: [g.userTid],
+                });
+            }
+        } else if (Math.random() < 1 / 100000) {
+            const p = player.generate(tid, 19, draftYear, false, scoutingRank);
+            p.born.year = draftYear - 71;
+            p.born.loc = "Queens, NY";
+            p.college = "Wharton";
+            p.firstName = "Donald";
+            p.hgt = 75;
+            p.imgURL = "/img/trump.jpg";
+            p.lastName = "Trump";
+            p.weight = 240;
+            Object.assign(p.ratings[0], {
+                hgt: 40,
+                stre: 80,
+                spd: 80,
+                jmp: 80,
+                endu: 80,
+                ins: 80,
+                dnk: 80,
+                ft: 80,
+                fg: 80,
+                tp: 80,
+                oiq: 80,
+                diq: 100,
+                drb: 80,
+                pss: 0,
+                reb: 80,
             });
+            player.develop(p, 0);
+            player.updateValues(p);
+            p.ratings[0].skills = ["Dp"];
+            const pid = await idb.cache.players.add(p);
+            if (typeof pid === "number") {
+                await logEvent({
+                    type: "playerFeat",
+                    text: `<a href="${helpers.leagueUrl(["player", pid])}">${
+                        p.firstName
+                    } ${
+                        p.lastName
+                    }</a> decided to Make Basketball GM Great Again.`,
+                    showNotification: false,
+                    pids: [pid],
+                    tids: [g.userTid],
+                });
+            }
         }
     }
 };

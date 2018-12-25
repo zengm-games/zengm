@@ -239,7 +239,7 @@ const deleteOldData = async (options: {
 };
 
 const draftLottery = async () => {
-    const draftLotteryResult = await draft.genOrder();
+    const draftLotteryResult = await draft.genOrderNBA();
 
     return draftLotteryResult.result;
 };
@@ -801,11 +801,12 @@ const handleUploadedDraftClass = async (
     );
 
     // "Top off" the draft class if <70 players imported
-    if (players.length < 70) {
+    const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
+    if (players.length < baseNumPlayers) {
         await draft.genPlayers(
             draftClassTid,
             scoutingRank,
-            70 - players.length,
+            baseNumPlayers - players.length,
         );
     }
 };

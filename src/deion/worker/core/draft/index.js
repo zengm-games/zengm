@@ -2,6 +2,7 @@
 
 import afterPicks from "./afterPicks";
 import genOrder from "./genOrder";
+import genOrderNBA from "./genOrderNBA";
 import genOrderFantasy from "./genOrderFantasy";
 import genPicks from "./genPicks";
 import genPlayers from "./genPlayers";
@@ -14,6 +15,7 @@ import selectPlayer from "./selectPlayer";
 export default {
     afterPicks,
     genOrder,
+    genOrderNBA,
     genOrderFantasy,
     genPicks,
     genPlayers,

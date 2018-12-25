@@ -8,7 +8,7 @@ import { idb } from "../../db";
 import { helpers } from "../../util";
 
 const getDraftTids = async () => {
-    await draft.genOrder();
+    await draft.genOrderNBA();
     const draftPicks = await draft.getOrder();
     assert.equal(draftPicks.length, 60);
 

@@ -37,8 +37,8 @@ const newPhaseDraft = async (conditions: Conditions) => {
     const draftLotteryResult = await idb.getCopy.draftLotteryResults({
         season: g.season,
     });
-    if (!draftLotteryResult) {
-        await draft.genOrder(false, conditions);
+    if (g.draftLottery === "nba" && !draftLotteryResult) {
+        await draft.genOrderNBA(false, conditions);
     }
 
     // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI

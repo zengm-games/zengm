@@ -19,6 +19,7 @@ const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
         playoffs,
         season: g.season,
         tid: p.tid,
+        yearsWithTeam: 1,
     };
 
     if (!overrides.core.player.stats) {

@@ -54,8 +54,19 @@ const genRatings = (
     season: number,
     scoutingRank: number,
     tid: number,
-    hgt: number,
-): PlayerRatings => {
+): { heightInInches: number, ratings: PlayerRatings } => {
+    // realHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
+    let heightInInches = random.heightDist() + Math.random() - 0.5; // Fraction of an inch
+
+    const wingspanAdjust = heightInInches + random.randInt(-1, 1);
+
+    // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
+    if (!overrides.core.player.heightToRating) {
+        throw new Error("Missing overrides.core.player.heightToRating");
+    }
+    const hgt = overrides.core.player.heightToRating(wingspanAdjust);
+    heightInInches = Math.round(heightInInches);
+
     // Pick type of player (point, wing, or big) based on height
     const randType = Math.random();
     let type;
@@ -186,7 +197,10 @@ const genRatings = (
     }
     ratings.pos = overrides.core.player.pos(ratings);
 
-    return ratings;
+    return {
+        heightInInches,
+        ratings,
+    };
 };
 
 export default genRatings;

@@ -1,7 +1,7 @@
 # football
 
 initial player ratings
-- move height generation inside genRatings
+- pick position based on https://bleacherreport.com/articles/1640782-the-anatomy-of-a-53-man-roster-in-the-nfl
 
 player development
 
@@ -15,6 +15,7 @@ salaries
 ---
 
 some guide for roster composition on the roster page, like ideal numbers of players at each position
+- https://bleacherreport.com/articles/1640782-the-anatomy-of-a-53-man-roster-in-the-nfl
 
 extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
 - set quarterLenght really low and you can see extra point being taken in next quarter
@@ -72,6 +73,8 @@ finish views
 - CustomizePlayer
 - LiveGame
 - way to specify routes for ShotLocations/Depth
+
+go through every file in football, make sure it's been updated (like heightToRating)
 
 how to get types working, options:
 - make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around

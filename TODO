@@ -1,12 +1,14 @@
 # football
 
-new league is too slow, maybe use an estimate for pot
-
 initial player ratings
+- move height generation inside genRatings
 
 player development
 
 better gamesim
+
+new league is too slow, maybe use an estimate for pot
+- artificially decreased NUM_SIMULATIONS, for now
 
 salaries
 

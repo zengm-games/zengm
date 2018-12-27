@@ -130,7 +130,6 @@ async function updateTeams(
                             value: t2.stats[stats[i]],
                         };
                     });
-                    console.log(teamStats);
                     att = t2.seasonAttrs.att;
                     revenue = t2.seasonAttrs.revenue;
                     profit = t2.seasonAttrs.profit;

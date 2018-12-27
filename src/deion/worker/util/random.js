@@ -8,9 +8,9 @@
  * @param {number} b Maximum integer that can be returned.
  * @return {number} Random integer between a and b.
  */
-function randInt(a: number, b: number): number {
+const randInt = (a: number, b: number): number => {
     return Math.floor(Math.random() * (1 + b - a)) + a;
-}
+};
 
 /**
  * Shuffles a list in place, returning nothing.
@@ -18,7 +18,7 @@ function randInt(a: number, b: number): number {
  * @memberOf util.random
  * @param {array} list List to be shuffled in place.
  */
-function shuffle(list: any[]) {
+const shuffle = (list: any[]) => {
     const l = list.length;
     for (let i = 1; i < l; i++) {
         const j = randInt(0, i);
@@ -28,7 +28,7 @@ function shuffle(list: any[]) {
             list[j] = t;
         }
     }
-}
+};
 
 /**
  * Returns a random number from an approximately Gaussian distribution.
@@ -42,7 +42,7 @@ function shuffle(list: any[]) {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-function gauss(mu?: number = 0, sigma?: number = 1): number {
+const gauss = (mu?: number = 0, sigma?: number = 1): number => {
     return (
         (Math.random() * 2 -
             1 +
@@ -51,7 +51,7 @@ function gauss(mu?: number = 0, sigma?: number = 1): number {
             sigma +
         mu
     );
-}
+};
 
 /**
  * Returns a random number from an actually Gaussian distribution.
@@ -71,7 +71,7 @@ function gauss(mu?: number = 0, sigma?: number = 1): number {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-function realGauss(mu?: number = 0, sigma?: number = 1): number {
+const realGauss = (mu?: number = 0, sigma?: number = 1): number => {
     let radius;
     let z1;
     let z2;
@@ -84,7 +84,21 @@ function realGauss(mu?: number = 0, sigma?: number = 1): number {
     const marsaglia = Math.sqrt((-2 * Math.log(radius)) / radius);
 
     return z1 * marsaglia * sigma + mu;
-}
+};
+
+const truncGauss = (
+    mu?: number = 0,
+    sigma?: number = 1,
+    lowerBound?: number = -Infinity,
+    upperBound?: number = Infinity,
+) => {
+    let x;
+    do {
+        x = realGauss(mu, sigma);
+    } while (x < lowerBound || x > upperBound);
+
+    return x;
+};
 
 /**
  * Get a random number selected from a uniform distribution.
@@ -94,9 +108,9 @@ function realGauss(mu?: number = 0, sigma?: number = 1): number {
  * @param {number} b Maximum number that can be returned.
  * @return {number} Random number from uniform distribution.
  */
-function uniform(a: number, b: number): number {
+const uniform = (a: number, b: number): number => {
     return Math.random() * (b - a) + a;
-}
+};
 
 /**
  * Choose a random element from a non-empty array.
@@ -104,7 +118,7 @@ function uniform(a: number, b: number): number {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-function choice<T>(x: T[], weightFunc?: T => number): T {
+const choice = <T>(x: T[], weightFunc?: T => number): T => {
     if (weightFunc === undefined) {
         return x[Math.floor(Math.random() * x.length)];
     }
@@ -122,7 +136,7 @@ function choice<T>(x: T[], weightFunc?: T => number): T {
     const rand = Math.random() * max;
     const ind = cumsums.findIndex(cumsum => cumsum > rand);
     return x[ind];
-}
+};
 
 /**
  * Custom probability distribution to determine player heights
@@ -136,7 +150,7 @@ function choice<T>(x: T[], weightFunc?: T => number): T {
  * by fitting the same data.  5'3" and 7'9" are the shortest and tallest anyone should
  * reasonably expect to see.  Anything beyond that comes around less than 1 in 700 draft classes.
  */
-function heightDist(): number {
+const heightDist = (): number => {
     const r = Math.random();
     if (r < 0.000000000051653) {
         return 54;
@@ -301,13 +315,14 @@ function heightDist(): number {
         return 107;
     }
     return 108;
-}
+};
 
 export default {
     randInt,
     shuffle,
     gauss,
     realGauss,
+    truncGauss,
     uniform,
     choice,
     heightDist,

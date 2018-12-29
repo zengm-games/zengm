@@ -149,6 +149,13 @@ const genRatings = (
         );
     }
 
+    if (pos !== "K" && pos !== "P" && Math.random() < 0.95) {
+        rawRatings.kpw = random.randInt(0, 10);
+        rawRatings.kac = random.randInt(0, 10);
+        rawRatings.ppw = random.randInt(0, 10);
+        rawRatings.pac = random.randInt(0, 10);
+    }
+
     const ratings = {
         hgt: rawRatings.hgt,
         stre: rawRatings.stre,

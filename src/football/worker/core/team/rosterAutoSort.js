@@ -17,7 +17,7 @@ const rosterAutoSort = async (tid: number, pos?: Position) => {
     );
     const players = await idb.getCopies.playersPlus(playersFromCache, {
         attrs: ["pid"],
-        ratings: ["ovrs"],
+        ratings: ["pos", "ovrs"],
         season: g.season,
         showNoStats: true,
         showRookies: true,
@@ -26,7 +26,19 @@ const rosterAutoSort = async (tid: number, pos?: Position) => {
 
     const positions = pos ? [pos] : POSITIONS;
     for (const pos2 of positions) {
-        players.sort((a, b) => b.ratings.ovrs[pos2] - a.ratings.ovrs[pos2]);
+        players.sort((a, b) => {
+            let aScore = a.ratings.ovrs[pos2];
+            if (a.ratings.pos === pos2) {
+                aScore += 5;
+            }
+
+            let bScore = b.ratings.ovrs[pos2];
+            if (b.ratings.pos === pos2) {
+                bScore += 5;
+            }
+
+            return bScore - aScore;
+        });
         t.depth[pos2] = players.map(p => p.pid);
     }
     await idb.cache.teams.put(t);

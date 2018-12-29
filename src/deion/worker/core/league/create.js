@@ -363,16 +363,8 @@ export const createWithoutSaving = (
             for (let i = 0; i < draftClass.length; i++) {
                 const p = draftClass[i];
 
-                let round = 0;
-                let pick = 0;
-
-                if (i < g.numTeams) {
-                    round = 1;
-                    pick = i + 1;
-                } else if (i < 2 * g.numTeams) {
-                    round = 2;
-                    pick = i - g.numTeams + 1;
-                }
+                const round = Math.ceil((i + 1) / g.numTeams);
+                const pick = (i + 1) % g.numTeams;
 
                 // Save these for later, because player.develop will overwrite them
                 const pot = p.ratings[0].pot;
@@ -415,30 +407,35 @@ export const createWithoutSaving = (
             }
         }
 
-        // 16 instead of 13 for wiggle room (need min contract FAs sometimes)
-        if (keptPlayers.length < 16 * g.numTeams) {
+        // (g.maxRosterSize + 1) for wiggle room (need min contract FAs sometimes)
+        if (keptPlayers.length < (g.maxRosterSize + 1) * g.numTeams) {
             throw new Error("Not enough players!");
         }
 
+        const numPlayerPerTeam = Math.round(
+            (g.minRosterSize + g.maxRosterSize) / 2,
+        ); // 13 for basketball
+        const maxNumFreeAgents = Math.round((g.numTeams / 3) * g.maxRosterSize); // 150 for basketball
+
         // Add players to teams or free agency
         keptPlayers.sort((a, b) => b.value - a.value);
-        const teamPlayers = keptPlayers.slice(0, 13 * g.numTeams);
+        const teamPlayers = keptPlayers.slice(0, numPlayerPerTeam * g.numTeams);
         const freeAgentPlayers = keptPlayers.slice(
-            13 * g.numTeams,
-            150 + 13 * g.numTeams,
-        ); // Up to 150 free agents
+            numPlayerPerTeam * g.numTeams,
+            maxNumFreeAgents + numPlayerPerTeam * g.numTeams,
+        );
         random.shuffle(teamPlayers);
 
         const probStillOnDraftTeam = p => {
             let prob = 0; // Probability a player is still on his draft team
             const numYearsAgo = g.season - p.draft.year;
-            if (p.draft.round === 1 || p.draft.round === 2) {
+            if (typeof p.draft.round === "number") {
                 if (numYearsAgo < 8) {
                     prob = (8 - numYearsAgo) / 8; // 87.5% for last year, 75% for 2 years ago, etc
                 } else {
                     prob = 0.125;
                 }
-                if (p.draft.round === 2) {
+                if (p.draft.round > 1) {
                     prob *= 0.75;
                 }
             }
@@ -481,7 +478,7 @@ export const createWithoutSaving = (
 
         // First add drafted players
         for (const p of teamPlayersDrafted) {
-            if (numPlayersByTid[p.draft.tid] < 13) {
+            if (numPlayersByTid[p.draft.tid] < numPlayerPerTeam) {
                 addPlayerToTeam(p, p.draft.tid);
             } else {
                 teamPlayersOther.push(p);
@@ -491,7 +488,7 @@ export const createWithoutSaving = (
         // Then add other players, up to the limit
         let currentTid = 0;
         for (const p of teamPlayersOther) {
-            while (numPlayersByTid[currentTid] >= 13) {
+            while (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
                 currentTid += 1;
             }
 

@@ -3,128 +3,132 @@
 import { helpers } from "../../../../deion/worker/util";
 import type { PlayerRatings } from "../../../common/types";
 
+const info = {
+    QB: {
+        hgt: [1, 1],
+        spd: [1, 1],
+        endu: [1, 1],
+        thv: [8, 1],
+        thp: [4, 1],
+        tha: [8, 1],
+        bsc: [1, 1],
+        elu: [1, 1],
+    },
+    RB: {
+        stre: [4, 1],
+        spd: [8, 1],
+        endu: [1, 1],
+        elu: [8, 1],
+        rtr: [1, 1],
+        hnd: [2, 1],
+        bsc: [4, 1],
+        rbk: [1, 1],
+        pbk: [2, 1],
+    },
+    WR: {
+        hgt: [2, 1],
+        stre: [1, 1],
+        spd: [4, 1],
+        endu: [1, 1],
+        elu: [1, 1],
+        rtr: [4, 1],
+        hnd: [8, 1],
+        bsc: [1, 1],
+        rbk: [1, 1],
+    },
+    TE: {
+        hgt: [4, 1],
+        stre: [4, 1],
+        spd: [2, 1],
+        endu: [1, 1],
+        elu: [1, 1],
+        rtr: [4, 1],
+        hnd: [4, 1],
+        bsc: [1, 1],
+        rbk: [2, 1],
+        pbk: [2, 1],
+    },
+    OL: {
+        hgt: [1, 1],
+        stre: [2, 3],
+        spd: [1, 1],
+        rbk: [2, 1],
+        pbk: [2, 1],
+    },
+    DL: {
+        hgt: [4, 1],
+        stre: [8, 3],
+        spd: [2, 1],
+        endu: [1, 1],
+        prs: [8, 1],
+        rns: [8, 1],
+        hnd: [1, 1],
+    },
+    LB: {
+        hgt: [2, 1],
+        stre: [4, 1],
+        spd: [4, 1],
+        endu: [1, 1],
+        pcv: [4, 1],
+        prs: [4, 1],
+        rns: [4, 1],
+        hnd: [2, 1],
+    },
+    CB: {
+        hgt: [1, 1],
+        stre: [1, 1],
+        spd: [8, 2],
+        endu: [1, 1],
+        pcv: [8, 1],
+        rns: [1, 1],
+        hnd: [2, 1],
+    },
+    S: {
+        hgt: [1, 1],
+        stre: [2, 1],
+        spd: [4, 1.5],
+        endu: [1, 1],
+        pcv: [4, 1],
+        rns: [4, 1],
+        hnd: [2, 1],
+    },
+    K: {
+        kpw: [1, 1],
+        kac: [1, 1],
+    },
+    P: {
+        ppw: [1, 1],
+        pac: [1, 1],
+    },
+    KR: {
+        stre: [1, 1],
+        spd: [4, 1],
+        elu: [4, 1],
+        hnd: [2, 1],
+        bsc: [8, 1],
+    },
+    PR: {
+        stre: [1, 1],
+        spd: [4, 1],
+        elu: [4, 1],
+        hnd: [8, 1],
+        bsc: [8, 1],
+    },
+};
+
 const ovr = (ratings: PlayerRatings, pos?: string): number => {
     pos = pos !== undefined ? pos : ratings.pos;
 
-    let rating;
+    let rating = 0;
 
-    if (pos === "QB") {
-        rating =
-            (ratings.hgt +
-                ratings.spd +
-                ratings.endu +
-                8 * ratings.thv +
-                4 * ratings.thp +
-                8 * ratings.tha +
-                ratings.bsc +
-                ratings.elu) /
-            25;
-    } else if (pos === "RB") {
-        rating =
-            (4 * ratings.stre +
-                8 * ratings.spd +
-                ratings.endu +
-                8 * ratings.elu +
-                ratings.rtr +
-                2 * ratings.hnd +
-                4 * ratings.bsc +
-                ratings.rbk +
-                2 * ratings.pbk) /
-            31;
-    } else if (pos === "WR") {
-        rating =
-            (2 * ratings.hgt +
-                ratings.stre +
-                4 * ratings.spd +
-                ratings.endu +
-                ratings.elu +
-                4 * ratings.rtr +
-                8 * ratings.hnd +
-                ratings.bsc +
-                ratings.rbk) /
-            23;
-    } else if (pos === "TE") {
-        rating =
-            (4 * ratings.hgt +
-                4 * ratings.stre +
-                2 * ratings.spd +
-                ratings.endu +
-                ratings.elu +
-                4 * ratings.rtr +
-                4 * ratings.hnd +
-                ratings.bsc +
-                2 * ratings.rbk +
-                2 * ratings.pbk) /
-            25;
-    } else if (pos === "OL") {
-        rating =
-            (ratings.hgt +
-                2 * ratings.stre +
-                ratings.spd +
-                2 * ratings.rbk +
-                2 * ratings.pbk) /
-            8;
-    } else if (pos === "DL") {
-        rating =
-            (4 * ratings.hgt +
-                8 * ratings.stre +
-                2 * ratings.spd +
-                ratings.endu +
-                8 * ratings.prs +
-                8 * ratings.rns +
-                ratings.hnd) /
-            32;
-    } else if (pos === "LB") {
-        rating =
-            (2 * ratings.hgt +
-                4 * ratings.stre +
-                4 * ratings.spd +
-                ratings.endu +
-                4 * ratings.pcv +
-                4 * ratings.prs +
-                4 * ratings.rns +
-                2 * ratings.hnd) /
-            25;
-    } else if (pos === "CB") {
-        rating =
-            (ratings.hgt +
-                ratings.stre +
-                8 * ratings.spd +
-                ratings.endu +
-                8 * ratings.pcv +
-                ratings.rns +
-                2 * ratings.hnd) /
-            22;
-    } else if (pos === "S") {
-        rating =
-            (ratings.hgt +
-                2 * ratings.stre +
-                4 * ratings.spd +
-                ratings.endu +
-                4 * ratings.pcv +
-                4 * ratings.rns +
-                2 * ratings.hnd) /
-            18;
-    } else if (pos === "K") {
-        rating = (ratings.kpw + ratings.kac) / 2;
-    } else if (pos === "P") {
-        rating = (ratings.ppw + ratings.pac) / 2;
-    } else if (pos === "KR") {
-        rating =
-            (ratings.stre +
-                4 * ratings.spd +
-                4 * ratings.elu +
-                2 * ratings.hnd +
-                8 * ratings.bsc) /
-            19;
-    } else if (pos === "PR") {
-        rating =
-            (ratings.stre +
-                4 * ratings.spd +
-                4 * ratings.elu +
-                8 * ratings.hnd +
-                8 * ratings.bsc) /
-            25;
+    if (info[pos]) {
+        let sumCoeffs = 0;
+        for (const [key, [coeff, power]] of Object.entries(info[pos])) {
+            const powerFactor = 100 / 100 ** power;
+            rating += coeff * powerFactor * ratings[key] ** power;
+            sumCoeffs += coeff;
+        }
+        rating /= sumCoeffs;
     } else {
         throw new Error(`Unknown position: "${pos}"`);
     }

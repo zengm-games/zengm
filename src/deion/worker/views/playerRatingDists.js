@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
@@ -29,25 +29,7 @@ async function updatePlayers(
         }
 
         players = await idb.getCopies.playersPlus(players, {
-            ratings: [
-                "ovr",
-                "pot",
-                "hgt",
-                "stre",
-                "spd",
-                "jmp",
-                "endu",
-                "ins",
-                "dnk",
-                "ft",
-                "fg",
-                "tp",
-                "oiq",
-                "diq",
-                "drb",
-                "pss",
-                "reb",
-            ],
+            ratings: ["ovr", "pot", ...overrides.constants.RATINGS],
             season: inputs.season,
             showNoStats: true,
             showRookies: true,

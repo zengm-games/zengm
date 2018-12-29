@@ -25,10 +25,10 @@ const powerFormula = {
 const iqFormula = {
     ageModifier: (age: number) => {
         if (age <= 21) {
-            return 4;
+            return 3;
         }
         if (age <= 23) {
-            return 3;
+            return 2;
         }
 
         // Reverse most of the age-related decline in calcBaseChange
@@ -124,11 +124,11 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 
     // Noise
     if (age <= 23) {
-        val += random.truncGauss(0, 5, -4, 20);
+        val += random.truncGauss(0, 5, -4, 15);
     } else if (age <= 25) {
-        val += random.truncGauss(0, 5, -4, 10);
+        val += random.truncGauss(0, 5, -4, 7);
     } else {
-        val += random.truncGauss(0, 3, -2, 4);
+        val += random.truncGauss(0, 3, -2, 3);
     }
 
     // Modulate by coaching. g.numTeams doesn't exist when upgrading DB, but that doesn't matter

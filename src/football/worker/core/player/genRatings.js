@@ -28,7 +28,7 @@ const getRatingsToBoost = (pos: string) => {
         return {
             hgt: 1,
             spd: 0.5,
-            thv: 1,
+            thv: 0.75,
             thp: 1,
             tha: 1,
             bsc: 0.25,
@@ -56,7 +56,7 @@ const getRatingsToBoost = (pos: string) => {
         return {
             hgt: 1,
             stre: 0.5,
-            spd: 1,
+            spd: 0.5,
             elu: 0.5,
             rtr: 1,
             hnd: 1,
@@ -105,19 +105,21 @@ const getRatingsToBoost = (pos: string) => {
     }
     if (pos === "K") {
         return {
-            kpw: 1,
-            kac: 1,
+            kpw: 1.5,
+            kac: 1.25,
         };
     }
     if (pos === "P") {
         return {
-            ppw: 1,
-            pac: 1,
+            ppw: 1.5,
+            pac: 1.25,
         };
     }
 
     throw new Error(`Invalid position "${pos}"`);
 };
+
+const info = {};
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -136,14 +138,14 @@ const genRatings = (
 
     const pos = getPos();
     const rawRatings = RATINGS.reduce((ratings, rating) => {
-        ratings[rating] = player.limitRating(random.truncGauss(20, 20, 0, 70));
+        ratings[rating] = player.limitRating(random.truncGauss(10, 20, 0, 70));
         return ratings;
     }, {});
 
     const ratingsToBoost = getRatingsToBoost(pos);
     for (const [rating, factor] of Object.entries(ratingsToBoost)) {
         rawRatings[rating] = player.limitRating(
-            (rawRatings[rating] += factor * random.truncGauss(20, 20, 10, 30)),
+            (rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
         );
     }
 
@@ -186,7 +188,11 @@ const genRatings = (
         throw new Error("Missing overrides.core.player.pos");
     }
     ratings.pos = overrides.core.player.pos(ratings);
-    console.log(pos, ratings.pos);
+    info[`${pos}->${ratings.pos}`] =
+        info[`${pos}->${ratings.pos}`] === undefined
+            ? 1
+            : info[`${pos}->${ratings.pos}`] + 1;
+    console.log(info);
 
     return {
         heightInInches,

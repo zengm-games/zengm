@@ -313,6 +313,20 @@ const POSITIONS = [
     "PR",
 ];
 
+const POSITION_COUNTS = {
+    QB: 3,
+    RB: 4,
+    WR: 6,
+    TE: 3,
+    OL: 9,
+    DL: 9,
+    LB: 7,
+    CB: 5,
+    S: 5,
+    K: 1,
+    P: 1,
+};
+
 const RATINGS: RatingKey[] = [
     "hgt",
     "stre",
@@ -339,6 +353,7 @@ const RATINGS: RatingKey[] = [
 export {
     COMPOSITE_WEIGHTS,
     PLAYER_STATS_TABLES,
+    POSITION_COUNTS,
     POSITIONS,
     RATINGS,
     TEAM_STATS_TABLES,

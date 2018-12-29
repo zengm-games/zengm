@@ -231,6 +231,8 @@ const TEAM_STATS_TABLES = {
 
 const POSITIONS = [];
 
+const POSITION_COUNTS = {};
+
 const RATINGS: RatingKey[] = [
     "hgt",
     "stre",
@@ -252,6 +254,7 @@ const RATINGS: RatingKey[] = [
 export {
     COMPOSITE_WEIGHTS,
     PLAYER_STATS_TABLES,
+    POSITION_COUNTS,
     POSITIONS,
     RATINGS,
     TEAM_STATS_TABLES,

@@ -2,9 +2,10 @@
 
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, random } from "../../../../deion/worker/util";
+import { RATINGS, POSITION_COUNTS } from "../../../common";
 import type { PlayerRatings, Position, RatingKey } from "../../../common/types";
 
-const shootingFormula = {
+const powerFormula = {
     ageModifier: (age: number) => {
         // Reverse most of the age-related decline in calcBaseChange
         if (age <= 27) {
@@ -18,7 +19,7 @@ const shootingFormula = {
         }
         return 2;
     },
-    changeLimits: () => [-3, 13],
+    changeLimits: () => [-3, 3],
 };
 
 const iqFormula = {
@@ -72,18 +73,6 @@ const ratingsFormulas: {
         },
         changeLimits: () => [-12, 2],
     },
-    jmp: {
-        ageModifier: (age: number) => {
-            if (age <= 26) {
-                return 0;
-            }
-            if (age <= 30) {
-                return -3;
-            }
-            return -5;
-        },
-        changeLimits: () => [-12, 2],
-    },
     endu: {
         ageModifier: (age: number) => {
             if (age <= 23) {
@@ -96,25 +85,22 @@ const ratingsFormulas: {
         },
         changeLimits: () => [-11, 19],
     },
-    dnk: shootingFormula,
-    ins: shootingFormula,
-    ft: shootingFormula,
-    fg: shootingFormula,
-    tp: shootingFormula,
-    oiq: iqFormula,
-    diq: iqFormula,
-    drb: {
-        ageModifier: shootingFormula.ageModifier,
-        changeLimits: () => [-2, 5],
-    },
-    pss: {
-        ageModifier: shootingFormula.ageModifier,
-        changeLimits: () => [-2, 5],
-    },
-    reb: {
-        ageModifier: shootingFormula.ageModifier,
-        changeLimits: () => [-2, 5],
-    },
+    thv: iqFormula,
+    thp: powerFormula,
+    tha: powerFormula,
+    bsc: {},
+    elu: iqFormula,
+    rtr: iqFormula,
+    hnd: iqFormula,
+    rbk: iqFormula,
+    pbk: iqFormula,
+    pcv: iqFormula,
+    prs: iqFormula,
+    rns: iqFormula,
+    kpw: powerFormula,
+    kac: powerFormula,
+    ppw: powerFormula,
+    pac: powerFormula,
 };
 
 const calcBaseChange = (age: number, coachingRank: number): number => {
@@ -138,11 +124,11 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 
     // Noise
     if (age <= 23) {
-        val += helpers.bound(random.realGauss(0, 5), -4, 20);
+        val += random.truncGauss(0, 5, -4, 20);
     } else if (age <= 25) {
-        val += helpers.bound(random.realGauss(0, 5), -4, 10);
+        val += random.truncGauss(0, 5, -4, 10);
     } else {
-        val += helpers.bound(random.realGauss(0, 3), -2, 4);
+        val += random.truncGauss(0, 3, -2, 4);
     }
 
     // Modulate by coaching. g.numTeams doesn't exist when upgrading DB, but that doesn't matter
@@ -161,7 +147,6 @@ const developSeason = (
     ratings: PlayerRatings,
     age: number,
     coachingRank?: number = (g.numTeams + 1) / 2,
-    pos: Position,
 ) => {
     // In young players, height can sometimes increase
     if (age <= 21) {
@@ -183,6 +168,15 @@ const developSeason = (
         const changeLimits = ratingsFormulas[key].changeLimits
             ? ratingsFormulas[key].changeLimits(age)
             : [-Infinity, Infinity];
+
+        if (ratings[key] < 30) {
+            if (changeLimits[0] < -2) {
+                changeLimits[0] = -2;
+            }
+            if (changeLimits[1] > 2) {
+                changeLimits[1] = 2;
+            }
+        }
 
         ratings[key] = player.limitRating(
             ratings[key] +

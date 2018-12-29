@@ -92,7 +92,9 @@ if (process.env.SPORT === "football") {
         hardCap: true,
         ties: true,
         draftLottery: "none",
-        numDraftRounds: 3,
+        numDraftRounds: 8,
+        minRosterSize: 40,
+        maxRosterSize: 53,
     };
 
     Object.assign(defaultGameAttributes, footballOverrides);

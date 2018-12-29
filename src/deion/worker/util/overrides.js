@@ -19,6 +19,7 @@ const overrides: {
     constants: {
         COMPOSITE_WEIGHTS: {},
         PLAYER_STATS_TABLES: {},
+        POSITION_COUNTS: {},
         POSITIONS: [],
         RATINGS: [],
         TEAM_STATS_TABLES: {},

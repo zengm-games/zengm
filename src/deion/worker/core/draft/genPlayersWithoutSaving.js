@@ -18,10 +18,8 @@ const genPlayersWithoutSaving = (
     draftYear: number,
     players: PlayerWithoutPid<MinimalPlayerRatings>[],
 } => {
-    const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
-
     if (numPlayers === null || numPlayers === undefined) {
-        numPlayers = Math.round((baseNumPlayers * g.numTeams) / 30); // Scale by number of teams
+        numPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
     }
 
     let draftYear = g.season;

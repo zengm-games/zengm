@@ -38,7 +38,7 @@ const info = {
     },
     TE: {
         hgt: [4, 1],
-        stre: [4, 1],
+        stre: [4, 2],
         spd: [2, 1],
         endu: [1, 1],
         elu: [1, 1],

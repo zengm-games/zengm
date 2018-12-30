@@ -93,6 +93,8 @@ const getRatingsToBoost = (pos: string) => {
         return {
             spd: 1,
             pcv: 1,
+            hnd: -0.5,
+            elu: -0.5,
         };
     }
     if (pos === "S") {
@@ -120,6 +122,8 @@ const getRatingsToBoost = (pos: string) => {
 };
 
 const info = {};
+const infoIn = {};
+const infoOut = {};
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -138,7 +142,7 @@ const genRatings = (
 
     const pos = getPos();
     const rawRatings = RATINGS.reduce((ratings, rating) => {
-        ratings[rating] = player.limitRating(random.truncGauss(10, 20, 0, 70));
+        ratings[rating] = player.limitRating(random.truncGauss(10, 20, 0, 50));
         return ratings;
     }, {});
 
@@ -199,7 +203,12 @@ const genRatings = (
         info[`${pos}->${ratings.pos}`] === undefined
             ? 1
             : info[`${pos}->${ratings.pos}`] + 1;
+    infoIn[pos] = infoIn[pos] === undefined ? 1 : infoIn[pos] + 1;
+    infoOut[ratings.pos] =
+        infoOut[ratings.pos] === undefined ? 1 : infoOut[ratings.pos] + 1;
     console.log(info);
+    console.log(infoIn);
+    console.log(infoOut);
 
     return {
         heightInInches,

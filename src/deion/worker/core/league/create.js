@@ -363,8 +363,13 @@ export const createWithoutSaving = (
             for (let i = 0; i < draftClass.length; i++) {
                 const p = draftClass[i];
 
-                const round = Math.ceil((i + 1) / g.numTeams);
-                const pick = (i + 1) % g.numTeams;
+                let round = 0;
+                let pick = 0;
+                const roundTemp = Math.ceil((i + 1) / g.numTeams);
+                if (roundTemp <= g.numDraftRounds) {
+                    round = roundTemp;
+                    pick = (i + 1) % g.numTeams;
+                }
 
                 // Save these for later, because player.develop will overwrite them
                 const pot = p.ratings[0].pot;

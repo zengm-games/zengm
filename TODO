@@ -1,7 +1,8 @@
 # football
 
 initial player ratings
-- pick position based on https://bleacherreport.com/articles/1640782-the-anatomy-of-a-53-man-roster-in-the-nfl
+- fix distributions of ratings (means, ranges)
+- artificially boost/suppress ovrs with constants
 - heightInInches
 
 player development

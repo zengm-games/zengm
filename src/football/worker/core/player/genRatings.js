@@ -28,9 +28,9 @@ const getRatingsToBoost = (pos: string) => {
         return {
             hgt: 1,
             spd: 0.5,
-            thv: 0.75,
-            thp: 1,
-            tha: 1,
+            thv: 0.85,
+            thp: 1.75,
+            tha: 1.75,
             bsc: 0.25,
         };
     }

@@ -397,6 +397,7 @@ class Roster extends React.Component {
                     numConfs={numConfs}
                     numPlayoffRounds={numPlayoffRounds}
                     openRosterSpots={maxRosterSize - players.length}
+                    players={players}
                     season={season}
                     payroll={payroll}
                     profit={profit}

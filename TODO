@@ -1,9 +1,5 @@
 # football
 
-roster UI
-- some guide for roster composition on the roster page, like ideal numbers of players at each position
-  - POSITION_COUNTS
-
 initial player ratings
 - pick position based on https://bleacherreport.com/articles/1640782-the-anatomy-of-a-53-man-roster-in-the-nfl
 - heightInInches
@@ -785,6 +781,7 @@ Achievements to add
   win title without making a trade
   career stat milestone for players on your team from draft to the milestone
   https://www.reddit.com/r/BasketballGM/comments/81g1tz/achievement_ideas/
+  https://www.reddit.com/r/BasketballGM/comments/aajsvu/suggestion_more_achievements/
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate

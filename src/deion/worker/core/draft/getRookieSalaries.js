@@ -75,11 +75,11 @@ const getRookieSalaries = (): number[] => {
         500,
     ];
 
-    while (g.numTeams * 2 > rookieSalaries.length) {
+    while (g.numTeams * g.numDraftRounds > rookieSalaries.length) {
         // Add min contracts on to end
         rookieSalaries.push(500);
     }
-    while (g.numTeams * 2 < rookieSalaries.length) {
+    while (g.numTeams * g.numDraftRounds < rookieSalaries.length) {
         // Remove smallest salaries
         rookieSalaries.pop();
     }

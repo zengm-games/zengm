@@ -3,7 +3,7 @@
 import { PHASE } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateRoster(
@@ -111,7 +111,16 @@ async function updateRoster(
             if (process.env.SPORT === "basketball") {
                 players.sort((a, b) => a.rosterOrder - b.rosterOrder);
             } else {
-                players.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+                const score = p => {
+                    const ind = overrides.constants.POSITIONS.indexOf(
+                        p.ratings.pos,
+                    );
+                    return (
+                        (overrides.constants.POSITIONS.length - ind) * 1000 +
+                        p.ratings.ovr
+                    );
+                };
+                players.sort((a, b) => score(b) - score(a));
             }
 
             for (let i = 0; i < players.length; i++) {

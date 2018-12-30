@@ -93,6 +93,10 @@ if (process.env.SPORT === "football") {
         ties: true,
         draftLottery: "none",
         numDraftRounds: 8,
+        salaryCap: 200000,
+        minPayroll: 150000,
+        minContract: 500,
+        maxContract: 30000,
         minRosterSize: 40,
         maxRosterSize: 53,
     };

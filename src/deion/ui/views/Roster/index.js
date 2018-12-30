@@ -11,49 +11,19 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import { PHASE } from "../../common";
-import { getCols, helpers, logEvent, setTitle, toWorker } from "../util";
+import { PHASE } from "../../../common";
 import {
     Dropdown,
     HelpPopover,
     NewWindowLink,
     PlayerNameLabels,
     RatingWithChange,
-    RecordAndPlayoffs,
     ResponsiveTableWrapper,
-} from "../components";
-import clickable from "../wrappers/clickable";
-
-const ptStyles = {
-    0: {
-        backgroundColor: "#dc3545",
-        color: "#fff",
-    },
-    0.75: {
-        backgroundColor: "#ffc107",
-        color: "#000",
-    },
-    1: {
-        backgroundColor: "rgb(204, 204, 204)",
-        color: "#000",
-    },
-    1.25: {
-        backgroundColor: "#17a2b8",
-        color: "#fff",
-    },
-    1.75: {
-        backgroundColor: "#007bff",
-        color: "#fff",
-    },
-};
-
-const handleAutoSort = async () => {
-    await toWorker("autoSortRoster");
-};
-
-const handleResetPT = async (tid: number) => {
-    await toWorker("resetPlayingTime", tid);
-};
+} from "../../components";
+import { getCols, helpers, logEvent, setTitle, toWorker } from "../../util";
+import PlayingTime, { ptStyles } from "./PlayingTime";
+import TopStuff from "./TopStuff";
+import clickable from "../../wrappers/clickable";
 
 // If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
 const justDrafted = (p, phase, season) => {
@@ -93,54 +63,6 @@ const handleRelease = async (p, phase, season) => {
             });
         }
     }
-};
-
-const handlePtChange = async (p, userTid, event) => {
-    const ptModifier = parseFloat(event.currentTarget.value);
-
-    if (Number.isNaN(ptModifier)) {
-        return;
-    }
-
-    // NEVER UPDATE AI TEAMS
-    // This shouldn't be necessary, but just in case...
-    if (p.tid !== userTid) {
-        return;
-    }
-
-    await toWorker("updatePlayingTime", p.pid, ptModifier);
-};
-
-const PlayingTime = ({ p, userTid }) => {
-    const ptModifiers = [
-        { text: "0", ptModifier: "0" },
-        { text: "-", ptModifier: "0.75" },
-        { text: " ", ptModifier: "1" },
-        { text: "+", ptModifier: "1.25" },
-        { text: "++", ptModifier: "1.75" },
-    ];
-
-    return (
-        <select
-            className="form-control pt-modifier-select"
-            value={p.ptModifier}
-            onChange={event => handlePtChange(p, userTid, event)}
-            style={ptStyles[String(p.ptModifier)]}
-        >
-            {ptModifiers.map(({ text, ptModifier }) => {
-                return (
-                    <option key={ptModifier} value={ptModifier}>
-                        {text}
-                    </option>
-                );
-            })}
-        </select>
-    );
-};
-
-PlayingTime.propTypes = {
-    p: PropTypes.object.isRequired,
-    userTid: PropTypes.number.isRequired,
 };
 
 const ReorderHandle = SortableHandle(({ i, isSorting }) => {
@@ -399,12 +321,6 @@ class Roster extends React.Component {
 
         setTitle(`${t.region} ${t.name} Roster - ${season}`);
 
-        const logoStyle = {};
-        if (t.imgURL) {
-            logoStyle.display = "inline";
-            logoStyle.backgroundImage = `url('${t.imgURL}')`;
-        }
-
         // Use the result of drag and drop to sort players, before the "official" order comes back as props
         let playersSorted;
         if (this.state.sortedPids !== undefined) {
@@ -416,26 +332,6 @@ class Roster extends React.Component {
         }
 
         const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
-
-        const recordAndPlayoffs =
-            t.seasonAttrs !== undefined ? (
-                <>
-                    Record:{" "}
-                    <RecordAndPlayoffs
-                        abbrev={abbrev}
-                        season={season}
-                        won={t.seasonAttrs.won}
-                        lost={t.seasonAttrs.lost}
-                        tied={t.seasonAttrs.tied}
-                        playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
-                        option="noSeason"
-                        numConfs={numConfs}
-                        numPlayoffRounds={numPlayoffRounds}
-                    />
-                </>
-            ) : (
-                "Season not found"
-            );
 
         const statCols = getCols(...stats.map(stat => `stat:${stat}`));
 
@@ -493,48 +389,21 @@ class Roster extends React.Component {
                         Transactions
                     </a>
                 </p>
-                <div className="team-picture" style={logoStyle} />
-                <div>
-                    <h3>{recordAndPlayoffs}</h3>
 
-                    {season === currentSeason ? (
-                        <p>
-                            {maxRosterSize - players.length} open roster spots
-                            <br />
-                            Payroll: {helpers.formatCurrency(payroll, "M")}
-                            <br />
-                            Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-                            <br />
-                            Profit: {helpers.formatCurrency(profit, "M")}
-                            <br />
-                            {showTradeFor ? `Strategy: ${t.strategy}` : null}
-                        </p>
-                    ) : null}
-                </div>
-                {editable ? (
-                    <p style={{ clear: "both" }}>
-                        Drag row handles to move players between the starting
-                        lineup <span className="table-info legend-square" /> and
-                        the bench{" "}
-                        <span className="table-secondary legend-square" />.
-                    </p>
-                ) : null}
-                {editable ? (
-                    <div className="btn-group mb-3">
-                        <button
-                            className="btn btn-light-bordered"
-                            onClick={handleAutoSort}
-                        >
-                            Auto sort roster
-                        </button>
-                        <button
-                            className="btn btn-light-bordered"
-                            onClick={() => handleResetPT(t.tid)}
-                        >
-                            Reset playing time
-                        </button>
-                    </div>
-                ) : null}
+                <TopStuff
+                    abbrev={abbrev}
+                    currentSeason={currentSeason}
+                    editable={editable}
+                    numConfs={numConfs}
+                    numPlayoffRounds={numPlayoffRounds}
+                    openRosterSpots={maxRosterSize - players.length}
+                    season={season}
+                    payroll={payroll}
+                    profit={profit}
+                    salaryCap={salaryCap}
+                    showTradeFor={showTradeFor}
+                    t={t}
+                />
 
                 <div className="clearfix" />
 

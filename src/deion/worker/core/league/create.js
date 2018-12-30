@@ -365,10 +365,10 @@ export const createWithoutSaving = (
 
                 let round = 0;
                 let pick = 0;
-                const roundTemp = Math.ceil((i + 1) / g.numTeams);
+                const roundTemp = Math.floor(i / g.numTeams) + 1;
                 if (roundTemp <= g.numDraftRounds) {
                     round = roundTemp;
-                    pick = (i + 1) % g.numTeams;
+                    pick = (i % g.numTeams) + 1;
                 }
 
                 // Save these for later, because player.develop will overwrite them

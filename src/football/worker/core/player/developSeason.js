@@ -19,7 +19,7 @@ const powerFormula = {
         }
         return 2;
     },
-    changeLimits: () => [-3, 3],
+    changeLimits: () => [-3, 6],
 };
 
 const iqFormula = {
@@ -98,9 +98,9 @@ const ratingsFormulas: {
     prs: iqFormula,
     rns: iqFormula,
     kpw: powerFormula,
-    kac: powerFormula,
+    kac: iqFormula,
     ppw: powerFormula,
-    pac: powerFormula,
+    pac: iqFormula,
 };
 
 const calcBaseChange = (age: number, coachingRank: number): number => {

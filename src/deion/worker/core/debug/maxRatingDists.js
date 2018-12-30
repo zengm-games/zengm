@@ -2,27 +2,14 @@
 
 import { PLAYER } from "../../../common";
 import { draft, player } from "..";
-import { g, helpers } from "../../util";
+import { g, helpers, overrides } from "../../util";
 
 const maxRatingDists = (numPlayers: number = 100) => {
     // Each player gets one entry per array: their career max in a rating
-    const ratings = {
-        ovr: [],
-        stre: [],
-        spd: [],
-        jmp: [],
-        endu: [],
-        ins: [],
-        dnk: [],
-        ft: [],
-        fg: [],
-        tp: [],
-        oiq: [],
-        diq: [],
-        drb: [],
-        pss: [],
-        reb: [],
-    };
+    const ratings = {};
+    for (const rating of ["ovr", ...overrides.constants.RATINGS]) {
+        ratings[rating] = [];
+    }
     const ages = helpers.deepCopy(ratings);
 
     let playersToProcess = [];

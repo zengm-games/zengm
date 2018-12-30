@@ -60,7 +60,15 @@ const processStats = (
         } else if (stat === "defTck") {
             row[stat] = ps.defTckSolo + ps.defTckAst;
         } else if (stat === "qbRec") {
-            row[stat] = `${ps.qbW}-${ps.qbL}-${ps.qbT}`;
+            if (
+                ps.qbW !== undefined &&
+                ps.qbL !== undefined &&
+                ps.qbT !== undefined
+            ) {
+                row[stat] = `${ps.qbW}-${ps.qbL}-${ps.qbT}`;
+            } else {
+                row[stat] = "0-0-0";
+            }
         } else if (stat === "pssTDPct") {
             row[stat] = percentage(ps.pssTD, ps.pss);
         } else if (stat === "pssIntPct") {

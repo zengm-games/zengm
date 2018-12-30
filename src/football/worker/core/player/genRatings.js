@@ -107,13 +107,13 @@ const getRatingsToBoost = (pos: string) => {
     }
     if (pos === "K") {
         return {
-            kpw: 1.5,
+            kpw: 1.75,
             kac: 1.25,
         };
     }
     if (pos === "P") {
         return {
-            ppw: 1.5,
+            ppw: 1.75,
             pac: 1.25,
         };
     }
@@ -160,6 +160,24 @@ const genRatings = (
         rawRatings.ppw = random.randInt(0, 10);
         rawRatings.pac = random.randInt(0, 10);
     }
+
+    for (const rating of ["hgt", "spd"]) {
+        rawRatings[rating] = player.limitRating(
+            rawRatings[rating] + random.truncGauss(20, 10, 0, 40),
+        );
+    }
+
+    rawRatings.endu = player.limitRating(
+        rawRatings.endu + random.truncGauss(12.5, 10, 0, 25),
+    );
+
+    rawRatings.stre = player.limitRating(
+        rawRatings.stre + random.truncGauss(10, 10, 0, 20),
+    );
+
+    rawRatings.bsc = player.limitRating(
+        rawRatings.bsc + random.truncGauss(10, 10, 0, 20),
+    );
 
     const ratings = {
         hgt: rawRatings.hgt,

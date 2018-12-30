@@ -124,6 +124,7 @@ const getRatingsToBoost = (pos: string) => {
 const info = {};
 const infoIn = {};
 const infoOut = {};
+let timeoutID;
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -142,7 +143,7 @@ const genRatings = (
 
     const pos = getPos();
     const rawRatings = RATINGS.reduce((ratings, rating) => {
-        ratings[rating] = player.limitRating(random.truncGauss(10, 20, 0, 50));
+        ratings[rating] = player.limitRating(random.truncGauss(10, 10, 0, 40));
         return ratings;
     }, {});
 
@@ -206,9 +207,16 @@ const genRatings = (
     infoIn[pos] = infoIn[pos] === undefined ? 1 : infoIn[pos] + 1;
     infoOut[ratings.pos] =
         infoOut[ratings.pos] === undefined ? 1 : infoOut[ratings.pos] + 1;
-    console.log(info);
-    console.log(infoIn);
-    console.log(infoOut);
+
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(() => {
+        console.log(info);
+        for (const pos2 of overrides.constants.POSITIONS) {
+            if (infoIn.hasOwnProperty(pos2)) {
+                console.log(pos2, infoIn[pos2], infoOut[pos2]);
+            }
+        }
+    }, 1000);
 
     return {
         heightInInches,

@@ -168,10 +168,14 @@ const genRatings = (
 
     if (pos === "DL") {
         rawRatings.stre = helpers.bound(rawRatings.stre, 60, Infinity);
+        rawRatings.prs = helpers.bound(rawRatings.prs, 40, Infinity);
+        rawRatings.rns = helpers.bound(rawRatings.rns, 40, Infinity);
     }
 
     if (pos === "OL") {
         rawRatings.stre = helpers.bound(rawRatings.stre, 60, Infinity);
+        rawRatings.rbk = helpers.bound(rawRatings.rbk, 40, Infinity);
+        rawRatings.pbk = helpers.bound(rawRatings.pbk, 40, Infinity);
     }
 
     for (const rating of ["hgt", "spd"]) {

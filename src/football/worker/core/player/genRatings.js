@@ -140,6 +140,11 @@ const getRatingsToBoost = (pos: string) => {
     throw new Error(`Invalid position "${pos}"`);
 };
 
+// 5'4" to 6'10"
+const heightToInches = (hgt: number) => {
+    return Math.round(64 + (hgt * (82 - 64)) / 100);
+};
+
 const info = {};
 const infoIn = {};
 const infoOut = {};
@@ -158,8 +163,6 @@ const genRatings = (
     scoutingRank: number,
     tid: number,
 ): { heightInInches: number, ratings: PlayerRatings } => {
-    const heightInInches = 72;
-
     const pos = getPos();
     const rawRatings = RATINGS.reduce((ratings, rating) => {
         ratings[rating] = player.limitRating(random.truncGauss(10, 10, 0, 40));
@@ -275,7 +278,7 @@ const genRatings = (
     }*/
 
     return {
-        heightInInches,
+        heightInInches: heightToInches(ratings.hgt),
         ratings,
     };
 };

@@ -88,8 +88,8 @@ const getRatingsToBoost = (pos: string) => {
             spd: 0.5,
             pcv: 0.5,
             tck: 1.25,
-            prs: 0.5,
-            rns: 0.5,
+            prs: 0.75,
+            rns: 0.75,
         };
     }
     if (pos === "CB") {

@@ -72,6 +72,7 @@ async function updatePlayers(
                       "rbk",
                       "pbk",
                       "pcv",
+                      "tck",
                       "prs",
                       "rns",
                       "kpw",

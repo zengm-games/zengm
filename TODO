@@ -2,6 +2,11 @@
 
 initial player ratings
 - talent balance - not enough good S/TE/LB/RB
+  - add interaction term to ovr
+    - te: hnd and stre
+    - s: pcv and stre
+    - rb: elu and spd
+    - lb: tck
 - artificially boost/suppress ovrs with constants to get positions balanced
   - main problems - too many LB and RB
     - need better metric! a lot of those are shitty players who immediately drop out of the league

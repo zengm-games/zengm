@@ -18,7 +18,7 @@ const info = {
         stre: [4, 1],
         spd: [8, 1],
         endu: [1, 1],
-        elu: [8, 1],
+        elu: [8, 2],
         rtr: [1, 1],
         hnd: [2, 1],
         bsc: [4, 1],

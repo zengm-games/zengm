@@ -17,6 +17,17 @@ const getPos = () => {
         // $FlowFixMe
         cumsum += count;
         if (rand < cumsum) {
+            // HACK HACK HACK: Too many OLs, too few QB and S
+            if (pos === "OL") {
+                const rand2 = Math.random();
+                if (rand2 < 0.1) {
+                    return "QB";
+                }
+                if (rand2 < 0.4) {
+                    return "S";
+                }
+            }
+
             return pos;
         }
     }

@@ -117,6 +117,15 @@ const info = {
     },
 };
 
+// Handle some nonlinear interactions
+const bonuses = {
+    RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 550, 0, 10),
+    TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 0, 10),
+    LB: ratings => helpers.bound(ratings.tck / 20, 0, 10),
+    S: ratings =>
+        helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 0, 10),
+};
+
 const ovr = (ratings: PlayerRatings, pos?: string): number => {
     pos = pos !== undefined ? pos : ratings.pos;
 
@@ -131,6 +140,10 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
             sumCoeffs += coeff;
         }
         r /= sumCoeffs;
+
+        if (bonuses[pos]) {
+            r += bonuses[pos](ratings);
+        }
     } else {
         throw new Error(`Unknown position: "${pos}"`);
     }

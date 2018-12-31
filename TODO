@@ -1,15 +1,7 @@
 # football
 
 initial player ratings
-- talent balance - not enough good S/TE/LB/RB
-  - add interaction term to ovr
-    - te: hnd and stre
-    - s: pcv and stre
-    - rb: elu and spd
-    - lb: tck
-- artificially boost/suppress ovrs with constants to get positions balanced
-  - main problems - too many LB and RB
-    - need better metric! a lot of those are shitty players who immediately drop out of the league
+- need better metric for leaguewide position balance! a lot of those are shitty players who immediately drop out of the league
 - heightInInches
 
 player development
@@ -23,6 +15,10 @@ new league is too slow, maybe use an estimate for pot
 salaries
 
 ---
+
+position balance for AIs building teams
+- new league
+- existing league
 
 extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
 - set quarterLenght really low and you can see extra point being taken in next quarter

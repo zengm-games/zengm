@@ -1,8 +1,7 @@
 # football
 
 initial player ratings
-- fix distributions of ratings (means, ranges)
-- artificially boost/suppress ovrs with constants
+- artificially boost/suppress ovrs with constants to get positions balanced
 - heightInInches
 
 player development
@@ -91,6 +90,8 @@ how will deionUI(overrides) work with types?
 yards after catch, other stats of interest
 
 new names and logos for KC and SA
+
+ssl https://blog.webfaction.com/2018/09/issue-lets-encrypt-ssl-certificates-with-the-control-panel/
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

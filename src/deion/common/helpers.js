@@ -455,7 +455,7 @@ function getTeamsDefault(): any[] {
                 cid: 0,
                 did: 2,
                 region: "Kansas City",
-                name: "Fountains",
+                name: "Sauce",
                 abbrev: "KC",
                 pop: 1.5,
                 imgURL: undefined,

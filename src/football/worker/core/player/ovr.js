@@ -122,6 +122,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
 
     if (info[pos]) {
         let sumCoeffs = 0;
+        // $FlowFixMe
         for (const [key, [coeff, power]] of Object.entries(info[pos])) {
             const powerFactor = 100 / 100 ** power;
             r += coeff * powerFactor * ratings[key] ** power;

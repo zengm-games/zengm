@@ -7,13 +7,14 @@ import { RATINGS, POSITION_COUNTS } from "../../../common";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const getPos = () => {
-    const numPlayers = Object.values(POSITION_COUNTS).reduce(
-        (sum, val) => sum + val,
-        0,
-    );
+    const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
+        // $FlowFixMe
+        return sum + val;
+    }, 0);
     const rand = Math.random() * numPlayers;
     let cumsum = 0;
     for (const [pos, count] of Object.entries(POSITION_COUNTS)) {
+        // $FlowFixMe
         cumsum += count;
         if (rand < cumsum) {
             return pos;

@@ -156,6 +156,7 @@ export type PlayerRatings = {|
     pots: {
         [key: Position]: number,
     },
+    pos: string,
     season: number,
     skills: string[],
 |};

@@ -4,6 +4,7 @@ import { PHASE } from "../../../../deion/common";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import formations from "./formations";
+import type { Position } from "../../../common/types";
 import type {
     ShotType,
     Stat,
@@ -69,32 +70,8 @@ class GameSim {
     team: [TeamGameSim, TeamGameSim];
 
     playersOnField: [
-        [
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-        ],
-        [
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-            PlayerGameSim,
-        ],
+        { [key: Position]: PlayerGameSim },
+        { [key: Position]: PlayerGameSim },
     ];
 
     subsEveryN: number;
@@ -478,6 +455,7 @@ class GameSim {
 
             this.playersOnField[t] = {};
             for (const pos of Object.keys(formation[side])) {
+                // $FlowFixMe
                 const numPlayers = formation[side][pos];
                 this.playersOnField[t][pos] = this.team[t].depth[pos]
                     .filter(pid => !pidsUsed.has(pid))

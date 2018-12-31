@@ -113,6 +113,7 @@ export type GameAttributeKey =
     | "minRosterSize"
     | "names"
     | "nextPhase"
+    | "numDraftRounds"
     | "numGames"
     | "numGamesPlayoffSeries"
     | "numPlayoffByes"
@@ -338,6 +339,8 @@ export type MinimalPlayerRatings = {
     pos: string,
     skills: string[],
     season: number,
+    ovrs: any,
+    pots: any,
     [key: string]: number,
 };
 
@@ -567,15 +570,20 @@ export type TeamSeason = {|
     cash: number,
     won: number,
     lost: number,
+    tied: number,
     wonHome: number,
     lostHome: number,
+    tiedHome: number,
     wonAway: number,
     lostAway: number,
+    tiedAway: number,
     wonDiv: number,
     lostDiv: number,
+    tiedDiv: number,
     wonConf: number,
     lostConf: number,
-    lastTen: (0 | 1)[],
+    tiedConf: number,
+    lastTen: (-1 | 0 | 1)[],
     streak: number,
     playoffRoundsWon: number, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
     hype: number,

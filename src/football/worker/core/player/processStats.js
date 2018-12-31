@@ -139,6 +139,7 @@ const processStats = (
             let role;
             let max = 0;
             for (const [key, value] of Object.entries(counts)) {
+                // $FlowFixMe
                 if (value > max) {
                     role = key;
                     max = value;

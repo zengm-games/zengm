@@ -26,12 +26,7 @@ export const bootstrapPot = (
             if (!overrides.core.player.developSeason) {
                 throw new Error("Missing overrides.core.player.developSeason");
             }
-            overrides.core.player.developSeason(
-                copiedRatings,
-                ageTemp,
-                undefined,
-                pos,
-            ); // Purposely no coachingRank
+            overrides.core.player.developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
             if (!overrides.core.player.ovr) {
                 throw new Error("Missing overrides.core.player.ovr");
             }

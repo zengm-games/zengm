@@ -136,7 +136,7 @@ NegotiationList.propTypes = {
     minContract: PropTypes.number.isRequired,
     numRosterSpots: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
-    statas: PropTypes.arrayOf(PropTypes.string).isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

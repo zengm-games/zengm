@@ -1,7 +1,7 @@
 // @flow
 
 import { PLAYER } from "../../../common";
-import { player, season, team } from "..";
+import { draft, player, season, team } from "..";
 import { idb } from "../../db";
 import {
     achievement,
@@ -104,6 +104,10 @@ const newPhaseBeforeDraft = async (
 
     const deltas = await season.updateOwnerMood();
     await genMessage(deltas);
+
+    if (g.draftLottery === "none") {
+        await draft.genOrder(false, conditions);
+    }
 
     // Don't redirect if we're viewing a live game now
     let url;

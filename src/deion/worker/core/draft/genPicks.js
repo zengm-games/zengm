@@ -11,7 +11,7 @@ const genPicks = async (
     existingDraftPicks?: DraftPick[] = [],
 ) => {
     for (let tid = 0; tid < g.numTeams; tid++) {
-        for (let round = 1; round <= 2; round++) {
+        for (let round = 1; round <= g.numDraftRounds; round++) {
             // If a pick already exists in the database, no need to create it
             const existingDraftPick = existingDraftPicks.find(dp => {
                 return (

@@ -183,7 +183,6 @@ class GameSim {
             }
         }
 
-        console.log(this.team);
         // this.checkGameWinner();
 
         // Delete stuff that isn't needed before returning
@@ -1016,6 +1015,13 @@ class GameSim {
             for (const pos of Object.keys(this.playersOnField[t])) {
                 // Update minutes (overall, court, and bench)
                 for (const p of this.playersOnField[t][pos]) {
+                    if (p === undefined) {
+                        console.log(p);
+                        console.log(this.playersOnField);
+                        throw new Error(
+                            "p is undefined, this should never happen!",
+                        );
+                    }
                     onField.add(p.id);
 
                     this.recordStat(t, p, "min", possessionTime);

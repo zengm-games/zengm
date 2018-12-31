@@ -8,7 +8,7 @@ async function updateDraftSummary(inputs: {
     season: number,
 }): void | { [key: string]: any } {
     const stats =
-        process.env.sport === "basketball"
+        process.env.SPORT === "basketball"
             ? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
             : ["gp", "keyStats"];
 

@@ -55,7 +55,7 @@ const info = {
         pbk: [2, 1],
     },
     DL: {
-        hgt: [4, 1],
+        hgt: [4, 3],
         stre: [8, 3],
         spd: [2, 1],
         endu: [1, 1],
@@ -64,7 +64,7 @@ const info = {
         hnd: [1, 1],
     },
     LB: {
-        hgt: [2, 1],
+        hgt: [2, 3],
         stre: [4, 1],
         spd: [4, 1],
         endu: [1, 1],
@@ -83,7 +83,7 @@ const info = {
         hnd: [2, 1],
     },
     S: {
-        hgt: [2, 1],
+        hgt: [1, 1],
         stre: [3, 1],
         spd: [4, 1.5],
         endu: [1, 1],

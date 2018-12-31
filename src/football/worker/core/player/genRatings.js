@@ -66,15 +66,15 @@ const getRatingsToBoost = (pos: string) => {
     if (pos === "OL") {
         return {
             hgt: 1,
-            stre: 1,
+            stre: 1.25,
             rbk: 1,
             pbk: 1,
         };
     }
     if (pos === "DL") {
         return {
-            hgt: 1,
-            stre: 1,
+            hgt: 1.5,
+            stre: 1.25,
             prs: 1,
             rns: 1,
         };

@@ -91,18 +91,22 @@ const getRatingsToBoost = (pos: string) => {
     }
     if (pos === "CB") {
         return {
-            spd: 1,
-            pcv: 1,
+            hgt: -0.5,
+            spd: 1.25,
+            pcv: 1.25,
             hnd: -0.5,
             elu: -0.5,
         };
     }
     if (pos === "S") {
         return {
-            stre: 0.25,
-            spd: 0.5,
-            pcv: 0.5,
+            hgt: -0.5,
+            stre: 0.5,
+            spd: 1,
+            pcv: 1,
             rns: 0.5,
+            hnd: -0.5,
+            elu: -0.5,
         };
     }
     if (pos === "K") {

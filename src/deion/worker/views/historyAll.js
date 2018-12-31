@@ -37,6 +37,17 @@ async function updateHistory(
             };
         });
 
+        // Use this rather than numGamesPlayoffSeries in case configuration changes during a league
+        const maxPlayoffRoundsWon = teams[0].seasonAttrs.map(
+            (seasonAttrs, i) => {
+                return teams.reduce((max, t) => {
+                    return t.seasonAttrs[i].playoffRoundsWon > max
+                        ? t.seasonAttrs[i].playoffRoundsWon
+                        : max;
+                }, 0);
+            },
+        );
+
         for (const t of teams) {
             // t.seasonAttrs has same season entries as the "seasons" array built from awards
             for (let i = 0; i < seasons.length; i++) {
@@ -54,8 +65,7 @@ async function updateHistory(
                 }
 
                 if (
-                    t.seasonAttrs[j].playoffRoundsWon ===
-                    g.numGamesPlayoffSeries.length
+                    t.seasonAttrs[j].playoffRoundsWon === maxPlayoffRoundsWon[j]
                 ) {
                     seasons[i].champ = {
                         tid: t.tid,
@@ -68,7 +78,7 @@ async function updateHistory(
                     };
                 } else if (
                     t.seasonAttrs[j].playoffRoundsWon ===
-                    g.numGamesPlayoffSeries.length - 1
+                    maxPlayoffRoundsWon[j] - 1
                 ) {
                     seasons[i].runnerUp = {
                         tid: t.tid,
@@ -83,10 +93,7 @@ async function updateHistory(
         }
 
         // Count up number of championships per team
-        const championshipsByTid = [];
-        for (let i = 0; i < g.numTeams; i++) {
-            championshipsByTid.push(0);
-        }
+        const championshipsByTid = Array(g.numTeams).fill(0);
         for (let i = 0; i < seasons.length; i++) {
             if (seasons[i].champ) {
                 championshipsByTid[seasons[i].champ.tid] += 1;

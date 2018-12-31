@@ -181,6 +181,11 @@ const genRatings = (
         rawRatings.pbk = helpers.bound(rawRatings.pbk, 40, Infinity);
     }
 
+    if (pos === "TE") {
+        rawRatings.stre = helpers.bound(rawRatings.stre, 40, Infinity);
+        rawRatings.rbk = helpers.bound(rawRatings.rbk, 30, Infinity);
+    }
+
     for (const rating of ["hgt", "spd"]) {
         rawRatings[rating] = player.limitRating(
             rawRatings[rating] + random.truncGauss(20, 10, 0, 40),

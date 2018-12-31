@@ -141,6 +141,7 @@ export type PlayerRatings = {|
     rbk: number,
     pbk: number,
     pcv: number,
+    tck: number,
     prs: number,
     rns: number,
     kpw: number,
@@ -176,6 +177,7 @@ export type RatingKey =
     | "rbk"
     | "pbk"
     | "pcv"
+    | "tck"
     | "prs"
     | "rns"
     | "kpw"

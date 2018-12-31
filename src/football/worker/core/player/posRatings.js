@@ -18,7 +18,7 @@ const posRatings = (pos: string): string[] => {
     }
 
     if (pos === "DL" || pos === "LB" || pos === "CB" || pos === "S") {
-        return ["pcv", "prs", "rns", "hnd"];
+        return ["pcv", "tck", "prs", "rns"];
     }
 
     if (pos === "K") {

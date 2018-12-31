@@ -95,6 +95,7 @@ const ratingsFormulas: {
     rbk: iqFormula,
     pbk: iqFormula,
     pcv: iqFormula,
+    tck: iqFormula,
     prs: iqFormula,
     rns: iqFormula,
     kpw: powerFormula,

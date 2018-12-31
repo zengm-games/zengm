@@ -4,8 +4,8 @@ initial player ratings
 - artificially boost/suppress ovrs with constants to get positions balanced
   - main problems - too many LB and RB
     - need better metric! a lot of those are shitty players who immediately drop out of the league
-- talent balance - not enough good TE, LB, S
-  - for LB/S, add tackling rating?
+- talent balance - not enough good TE, S
+  - TE: give more strength
 - heightInInches
 
 player development

@@ -76,6 +76,7 @@ const getRatingsToBoost = (pos: string) => {
         return {
             hgt: 1.5,
             stre: 1.25,
+            tck: 0.25,
             prs: 1.25,
             rns: 1.25,
         };
@@ -86,6 +87,7 @@ const getRatingsToBoost = (pos: string) => {
             stre: 0.5,
             spd: 0.5,
             pcv: 0.5,
+            tck: 1.25,
             prs: 0.5,
             rns: 0.5,
         };
@@ -105,6 +107,7 @@ const getRatingsToBoost = (pos: string) => {
             stre: 0.5,
             spd: 1,
             pcv: 1,
+            tck: 0.75,
             rns: 0.5,
             hnd: -0.5,
             elu: -0.5,
@@ -207,6 +210,7 @@ const genRatings = (
         rbk: rawRatings.rbk,
         pbk: rawRatings.pbk,
         pcv: rawRatings.pcv,
+        tck: rawRatings.tck,
         prs: rawRatings.prs,
         rns: rawRatings.rns,
         kpw: rawRatings.kpw,

@@ -346,6 +346,11 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "rating:tck": {
+                  desc: "Tackling",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
               "rating:prs": {
                   desc: "Pass Rushing",
                   sortSequence: ["desc", "asc"],
@@ -1318,6 +1323,7 @@ const sportSpecificTitleOverrides =
               "rating:rbk": "RBk",
               "rating:pbk": "PBk",
               "rating:pcv": "PCv",
+              "rating:tck": "Tck",
               "rating:prs": "PRs",
               "rating:rns": "RnS",
               "rating:kpw": "KPw",

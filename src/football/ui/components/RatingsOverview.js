@@ -68,6 +68,8 @@ const RatingsOverview = ({ ratings }) => {
                     <br />
                     Pass Coverage: {ratings[r].pcv}
                     <br />
+                    Tackling: {ratings[r].tck}
+                    <br />
                     Pass Rushing: {ratings[r].prs}
                     <br />
                     Run Stopping: {ratings[r].rns}

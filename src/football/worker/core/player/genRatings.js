@@ -29,9 +29,9 @@ const getRatingsToBoost = (pos: string) => {
         return {
             hgt: 1,
             spd: 0.5,
-            thv: 0.85,
-            thp: 1.75,
-            tha: 1.75,
+            thv: 1,
+            thp: 2,
+            tha: 2,
             bsc: 0.25,
         };
     }
@@ -77,8 +77,8 @@ const getRatingsToBoost = (pos: string) => {
             hgt: 1.5,
             stre: 1.25,
             tck: 0.25,
-            prs: 1.25,
-            rns: 1.25,
+            prs: 1,
+            rns: 1,
         };
     }
     if (pos === "LB") {

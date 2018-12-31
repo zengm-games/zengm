@@ -2,6 +2,7 @@
 
 initial player ratings
 - artificially boost/suppress ovrs with constants to get positions balanced
+  - main problems - too many LB and RB
 - heightInInches
 
 player development

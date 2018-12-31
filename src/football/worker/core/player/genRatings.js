@@ -76,8 +76,8 @@ const getRatingsToBoost = (pos: string) => {
         return {
             hgt: 1.5,
             stre: 1.25,
-            prs: 1,
-            rns: 1,
+            prs: 1.25,
+            rns: 1.25,
         };
     }
     if (pos === "LB") {
@@ -166,6 +166,14 @@ const genRatings = (
         rawRatings.pac = random.randInt(0, 10);
     }
 
+    if (pos === "DL") {
+        rawRatings.stre = helpers.bound(rawRatings.stre, 60, Infinity);
+    }
+
+    if (pos === "OL") {
+        rawRatings.stre = helpers.bound(rawRatings.stre, 60, Infinity);
+    }
+
     for (const rating of ["hgt", "spd"]) {
         rawRatings[rating] = player.limitRating(
             rawRatings[rating] + random.truncGauss(20, 10, 0, 40),
@@ -174,10 +182,6 @@ const genRatings = (
 
     rawRatings.endu = player.limitRating(
         rawRatings.endu + random.truncGauss(12.5, 10, 0, 25),
-    );
-
-    rawRatings.stre = player.limitRating(
-        rawRatings.stre + random.truncGauss(10, 10, 0, 20),
     );
 
     rawRatings.bsc = player.limitRating(
@@ -240,6 +244,11 @@ const genRatings = (
             }
         }
     }, 1000);
+
+    /*    if (pos === "DL" && ratings.pos === "LB") {
+        console.log(ratings);
+        debugger;
+    }*/
 
     return {
         heightInInches,

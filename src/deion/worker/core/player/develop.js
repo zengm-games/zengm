@@ -114,7 +114,7 @@ const develop = (
         }
     } else {
         let pos;
-        let maxOvr = 0;
+        let maxOvr = -Infinity;
 
         // A player can never have KR or PR as his main position
         const bannedPositions = ["KR", "PR"];

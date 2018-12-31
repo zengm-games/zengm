@@ -118,21 +118,46 @@ const info = {
 const ovr = (ratings: PlayerRatings, pos?: string): number => {
     pos = pos !== undefined ? pos : ratings.pos;
 
-    let rating = 0;
+    let r = 0;
 
     if (info[pos]) {
         let sumCoeffs = 0;
         for (const [key, [coeff, power]] of Object.entries(info[pos])) {
             const powerFactor = 100 / 100 ** power;
-            rating += coeff * powerFactor * ratings[key] ** power;
+            r += coeff * powerFactor * ratings[key] ** power;
             sumCoeffs += coeff;
         }
-        rating /= sumCoeffs;
+        r /= sumCoeffs;
     } else {
         throw new Error(`Unknown position: "${pos}"`);
     }
 
-    return helpers.bound(Math.round(rating), 0, 100);
+    // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
+    // +8 at 68
+    // +4 at 50
+    // -5 at 42
+    // -10 at 31
+    let fudgeFactor = 0;
+    if (r >= 68) {
+        fudgeFactor = 8;
+    } else if (r >= 50) {
+        fudgeFactor = 4 + (r - 50) * (4 / 18);
+    } else if (r >= 42) {
+        fudgeFactor = -5 + (r - 42) * (10 / 8);
+    } else if (r >= 31) {
+        fudgeFactor = -5 - (42 - r) * (5 / 11);
+    } else {
+        fudgeFactor = -10;
+    }
+
+    r = helpers.bound(Math.round(r + fudgeFactor), 0, 100);
+
+    // Feels silly that the highest rated players are kickers and punters
+    if (pos === "K" || pos === "P") {
+        r *= 0.75;
+    }
+
+    return r;
 };
 
 export default ovr;

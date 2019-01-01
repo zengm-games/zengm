@@ -1,5 +1,7 @@
 # football
 
+get flow working in PlayByPlay
+
 AV advanced stat
 - use in value?
 - OL and defense
@@ -12,13 +14,13 @@ better gamesim
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
 
-salaries
-
----
-
 position balance for AIs building teams
 - new league
 - existing league
+
+salaries
+
+---
 
 extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
 - set quarterLenght really low and you can see extra point being taken in next quarter

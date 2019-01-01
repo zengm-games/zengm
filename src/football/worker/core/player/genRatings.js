@@ -172,6 +172,7 @@ const genRatings = (
     const ratingsToBoost = getRatingsToBoost(pos);
     for (const [rating, factor] of Object.entries(ratingsToBoost)) {
         rawRatings[rating] = player.limitRating(
+            // $FlowFixMe
             (rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
         );
     }
@@ -242,6 +243,8 @@ const genRatings = (
         pot: 0,
         season,
         skills: [],
+        ovrs: {},
+        pots: {},
     };
 
     if (tid === PLAYER.UNDRAFTED_2) {

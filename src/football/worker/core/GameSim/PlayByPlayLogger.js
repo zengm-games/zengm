@@ -3,7 +3,12 @@
 import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types";
 
-const descriptionYdsTD = (yds, td, touchdownText, showYdsOnTD) => {
+const descriptionYdsTD = (
+    yds: number,
+    td: boolean,
+    touchdownText: string,
+    showYdsOnTD: boolean,
+) => {
     if (td && showYdsOnTD) {
         return `${yds} yards${td ? ` and ${touchdownText}!` : ""}`;
     }
@@ -284,6 +289,9 @@ class PlayByPlayLogger {
                 if (td === undefined) {
                     throw new Error("Missing td");
                 }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 if (safety) {
                     text = `${names[0]} completed a pass to ${
                         names[1]
@@ -316,6 +324,9 @@ class PlayByPlayLogger {
                 }
                 if (td === undefined) {
                     throw new Error("Missing td");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
                 }
                 if (safety) {
                     text = `${
@@ -387,7 +398,8 @@ class PlayByPlayLogger {
                 type: "init",
                 boxScore,
             },
-        ].concat(this.playByPlay);
+            ...this.playByPlay,
+        ];
     }
 }
 

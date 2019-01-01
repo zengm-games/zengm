@@ -5,7 +5,7 @@ import lotterySort from "./lotterySort";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 
-const genOrder = async (mock?: boolean = false): Promise<> => {
+const genOrder = async (mock?: boolean = false): Promise<void> => {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],

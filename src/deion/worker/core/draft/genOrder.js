@@ -16,7 +16,7 @@ import type { Conditions } from "../../../common/types";
 const genOrder = async (
     mock?: boolean = false,
     conditions?: Conditions,
-): Promise<> => {
+): Promise<void> => {
     if (g.draftLottery === "nba") {
         await genOrderNBA(mock, conditions);
     } else {

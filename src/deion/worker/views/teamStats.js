@@ -77,6 +77,7 @@ async function updateTeams(
         for (const table of Object.values(
             overrides.constants.TEAM_STATS_TABLES,
         )) {
+            // $FlowFixMe
             statTypes = statTypes.concat(table.stats);
         }
         const lowerIsBetter =

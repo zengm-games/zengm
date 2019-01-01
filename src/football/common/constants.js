@@ -1,7 +1,7 @@
 // @flow
 
 import type { CompositeWeights } from "../../deion/common/types";
-import type { RatingKey } from "./types";
+import type { Position, RatingKey } from "./types";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
     passingAccuracy: {
@@ -305,7 +305,7 @@ const TEAM_STATS_TABLES = {
     },
 };
 
-const POSITIONS = [
+const POSITIONS: Position[] = [
     "QB",
     "RB",
     "WR",

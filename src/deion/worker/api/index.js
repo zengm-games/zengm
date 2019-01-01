@@ -904,13 +904,14 @@ const removeLeague = async (lid: number) => {
 
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
     const t = await idb.cache.teams.get(g.userTid);
-    if (t.hasOwnProperty("depth") && t.depth.hasOwnProperty(pos)) {
-        t.depth[pos] = sortedPids;
-        await idb.cache.teams.put(t);
-        await toUI(["realtimeUpdate", ["playerMovement"]]);
-    } else {
-        throw new Error(`depth.${pos} property missing on team object`);
+    const depth = t.depth;
+    if (depth === undefined) {
+        throw new Error("Missing depth");
     }
+
+    depth[pos] = sortedPids;
+    await idb.cache.teams.put(t);
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const reorderRosterDrag = async (sortedPids: number[]) => {

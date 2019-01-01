@@ -141,7 +141,8 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
         }
         r /= sumCoeffs;
 
-        if (bonuses[pos]) {
+        if (bonuses.hasOwnProperty(pos)) {
+            // $FlowFixMe
             r += bonuses[pos](ratings);
         }
     } else {

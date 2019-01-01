@@ -76,6 +76,7 @@ export type Game = {|
     lost: {| tid: number, pts: number |},
     playoffs: boolean,
     overtimes: number,
+    scoringSummary?: any,
     season: number,
     teams: [Object, Object],
     won: {| tid: number, pts: number |},
@@ -675,11 +676,11 @@ export type WorkerOverridesConstants = {|
             stats: string[],
         },
     },
-    RATINGS: string[],
+    RATINGS: any[],
     POSITION_COUNTS: {
         [key: string]: number,
     },
-    POSITIONS: string[],
+    POSITIONS: any[],
     TEAM_STATS_TABLES: {
         [key: string]: {
             name: string,
@@ -701,16 +702,11 @@ export type WorkerOverridesCore = {|
             age: number,
             coachingRank?: number,
         ) => void,
-        genRatings?: (
-            season: number,
-            scoutingRank: number,
-            tid: number,
-            hgt: number,
-        ) => any,
+        genRatings?: (season: number, scoutingRank: number, tid: number) => any,
         genWeight?: (hgt: number, stre: number) => number,
         heightToRating?: (heightInInches: number) => number,
         madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
-        ovr?: any => number,
+        ovr?: (any, pos?: string) => number,
         pos?: any => string,
         processStats?: (
             ps: PlayerStats,
@@ -734,7 +730,7 @@ export type WorkerOverridesCore = {|
             playoffs: boolean,
             statType: TeamStatType,
         ) => any,
-        rosterAutoSort?: (tid: number) => Promise<void>,
+        rosterAutoSort?: (tid: number, pos?: any) => Promise<void>,
         stats?: {
             derived: string[],
             raw: string[],

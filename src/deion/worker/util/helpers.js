@@ -31,7 +31,7 @@ const calcWinp = ({
     won,
 }: {
     lost: number,
-    tied?: number,
+    tied: any,
     won: number,
 }) => {
     if (!g.ties || typeof tied !== "number") {

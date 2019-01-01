@@ -188,6 +188,11 @@ const processStats = (
                 row.tid = ps.tid;
             }
         } else if (stat === "age") {
+            if (bornYear === undefined) {
+                throw new Error(
+                    "You must supply bornYear to processStats if you want age",
+                );
+            }
             row.age = ps.season - bornYear;
         } else {
             row[stat] = ps[stat];

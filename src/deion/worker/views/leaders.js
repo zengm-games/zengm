@@ -388,6 +388,7 @@ async function updateLeaders(
 
         for (const cat of categories) {
             players.sort(
+                // $FlowFixMe
                 (a, b) => b.stats[cat.statProp] - a.stats[cat.statProp],
             );
             for (const p of players) {

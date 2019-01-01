@@ -123,7 +123,7 @@ class GameSim {
         this.id = gid;
         this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
 
-        this.playersOnField = [];
+        this.playersOnField = [{}, {}];
 
         // Record "gs" stat for starters
         this.o = 0;
@@ -510,7 +510,7 @@ class GameSim {
             const success = Math.random() < 0.1;
 
             if (success) {
-                let players = [];
+                let players: PlayerGameSim[] = [];
                 for (const playersAtPos of Object.values(
                     this.playersOnField[this.o],
                 )) {
@@ -531,7 +531,7 @@ class GameSim {
             } else {
                 this.possessionChange();
 
-                let players = [];
+                let players: PlayerGameSim[] = [];
                 for (const playersAtPos of Object.values(
                     this.playersOnField[this.o],
                 )) {
@@ -777,7 +777,7 @@ class GameSim {
 
         const lost = Math.random() > 0.5;
 
-        let playersDefense = [];
+        let playersDefense: PlayerGameSim[] = [];
         for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
             playersDefense = playersDefense.concat(playersAtPos);
         }
@@ -792,7 +792,7 @@ class GameSim {
 
         const recoveringTeam = lost ? this.d : this.o;
 
-        let players = [];
+        let players: PlayerGameSim[] = [];
         for (const playersAtPos of Object.values(
             this.playersOnField[recoveringTeam],
         )) {
@@ -923,7 +923,7 @@ class GameSim {
         this.recordStat(this.o, p, "defSk");
 
         if (safetyOrTouchback) {
-            return this.doSafety();
+            this.doSafety();
         }
     }
 
@@ -1006,7 +1006,7 @@ class GameSim {
             }
 
             if (safetyOrTouchback) {
-                return this.doSafety();
+                this.doSafety();
             }
         } else {
             this.playByPlay.logEvent("passIncomplete", {
@@ -1065,7 +1065,7 @@ class GameSim {
         }
 
         if (safetyOrTouchback) {
-            return this.doSafety();
+            this.doSafety();
         }
 
         return 5;
@@ -1158,7 +1158,7 @@ class GameSim {
      * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
      */
     ratingArray(rating: CompositeRating, t: TeamNum, power?: number = 1) {
-        const array = [0, 0, 0, 0, 0];
+        /*const array = [0, 0, 0, 0, 0];
         let total = 0;
 
         // Scale composite ratings
@@ -1179,7 +1179,7 @@ class GameSim {
             }
         }
 
-        return array;
+        return array;*/
     }
 
     // Pass undefined as p for some team-only stats

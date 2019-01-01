@@ -7,8 +7,9 @@ import type { Position } from "../../../common/types";
 
 const rosterAutoSort = async (tid: number, pos?: Position) => {
     const t = await idb.cache.teams.get(tid);
-    if (!t.hasOwnProperty("depth")) {
-        throw new Error("depth property missing on team object");
+    const depth = t.depth;
+    if (depth === undefined) {
+        throw new Error("Missing depth");
     }
 
     const playersFromCache = await idb.cache.players.indexGetAll(
@@ -39,7 +40,7 @@ const rosterAutoSort = async (tid: number, pos?: Position) => {
 
             return bScore - aScore;
         });
-        t.depth[pos2] = players.map(p => p.pid);
+        depth[pos2] = players.map(p => p.pid);
     }
     await idb.cache.teams.put(t);
 };

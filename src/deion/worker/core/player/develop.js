@@ -80,12 +80,7 @@ const develop = (
         if (!overrides.core.player.developSeason) {
             throw new Error("Missing overrides.core.player.developSeason");
         }
-        overrides.core.player.developSeason(
-            ratings,
-            age,
-            coachingRank,
-            ratings.pos,
-        );
+        overrides.core.player.developSeason(ratings, age, coachingRank);
     }
 
     // Run these even for players developing 0 seasons

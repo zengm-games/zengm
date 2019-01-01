@@ -128,6 +128,7 @@ const PLAYER_STATS_TABLES = {
             "pssNetYdsPerAtt",
             "pssAdjNetYdsPerAtt",
             "pssSkPct",
+            "av",
         ],
     },
     rushing: {
@@ -157,6 +158,7 @@ const PLAYER_STATS_TABLES = {
             "ydsFromScrimmage",
             "rusRecTD",
             "fmb",
+            "av",
         ],
     },
     defense: {
@@ -183,6 +185,7 @@ const PLAYER_STATS_TABLES = {
             "fmbLost",
             "pen",
             "penYds",
+            "av",
         ],
     },
     kicking: {
@@ -232,6 +235,7 @@ const PLAYER_STATS_TABLES = {
             "krLng",
             "krYdsPerAtt",
             "allPurposeYds",
+            "av",
         ],
     },
 };

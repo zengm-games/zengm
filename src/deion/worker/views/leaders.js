@@ -299,6 +299,15 @@ const getCategoriesAndStats = () => {
                       minStats: [],
                       minValue: [],
                   },
+                  {
+                      name: "Approximate Value",
+                      stat: "AV",
+                      statProp: "av",
+                      title: "Approximate Value",
+                      data: [],
+                      minStats: [],
+                      minValue: [],
+                  },
               ];
 
     const statsSet = new Set();

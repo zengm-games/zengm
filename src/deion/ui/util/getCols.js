@@ -939,6 +939,11 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:av": {
+                  desc: "Approximate Value",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1441,6 +1446,7 @@ const sportSpecificTitleOverrides =
               "stat:ydsFromScrimmage": "YScm",
               "stat:rusRecTD": "RRTD",
               "stat:allPurposeYds": "APY",
+              "stat:av": "AV",
           };
 
 const titleOverrides = {

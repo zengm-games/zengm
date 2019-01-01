@@ -105,6 +105,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 const PLAYER_STATS_TABLES = {
     passing: {
         name: "Passing",
+        onlyShowIf: ["pss"],
         stats: [
             "gp",
             "gs",
@@ -131,6 +132,7 @@ const PLAYER_STATS_TABLES = {
     },
     rushing: {
         name: "Rushing and Receiving",
+        onlyShowIf: ["rus", "rec"],
         stats: [
             "gp",
             "gs",
@@ -185,6 +187,7 @@ const PLAYER_STATS_TABLES = {
     },
     kicking: {
         name: "Kicking and Punting",
+        onlyShowIf: ["fga", "xpa", "pnt"],
         stats: [
             "gp",
             "gs",
@@ -214,6 +217,7 @@ const PLAYER_STATS_TABLES = {
     },
     returns: {
         name: "Kick and Punt Returns",
+        onlyShowIf: ["pr", "kr"],
         stats: [
             "gp",
             "gs",

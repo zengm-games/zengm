@@ -671,6 +671,7 @@ export type WorkerOverridesConstants = {|
     PLAYER_STATS_TABLES: {
         [key: string]: {
             name: string,
+            onlyShowIf?: string[],
             stats: string[],
         },
     },

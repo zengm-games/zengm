@@ -30,9 +30,23 @@ Relatives.propTypes = {
     relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const StatsTable = ({ name, p, playoffs = false, stats }) => {
+const StatsTable = ({ name, onlyShowIf, p, playoffs = false, stats }) => {
     const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
     const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
+
+    if (onlyShowIf !== undefined) {
+        let display = false;
+        for (const stat of onlyShowIf) {
+            if (careerStats[stat] > 0) {
+                display = true;
+                break;
+            }
+        }
+
+        if (!display) {
+            return null;
+        }
+    }
 
     return (
         <>
@@ -83,6 +97,7 @@ const StatsTable = ({ name, p, playoffs = false, stats }) => {
 
 StatsTable.propTypes = {
     name: PropTypes.string.isRequired,
+    onlyShowIf: PropTypes.arrayOf(PropTypes.string),
     p: PropTypes.object.isRequired,
     playoffs: PropTypes.bool,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -376,8 +391,14 @@ const Player = ({
             ) : null}
 
             <h2>Regular Season</h2>
-            {statTables.map(({ name, stats }) => (
-                <StatsTable key={name} name={name} stats={stats} p={player} />
+            {statTables.map(({ name, onlyShowIf, stats }) => (
+                <StatsTable
+                    key={name}
+                    name={name}
+                    onlyShowIf={onlyShowIf}
+                    stats={stats}
+                    p={player}
+                />
             ))}
             {process.env.SPORT === "basketball" ? (
                 <>
@@ -391,10 +412,11 @@ const Player = ({
             ) : null}
 
             <h2>Playoffs</h2>
-            {statTables.map(({ name, stats }) => (
+            {statTables.map(({ name, onlyShowIf, stats }) => (
                 <StatsTable
                     key={name}
                     name={name}
+                    onlyShowIf={onlyShowIf}
                     stats={stats}
                     p={player}
                     playoffs

@@ -1,7 +1,5 @@
 # football
 
-player development
-
 better gamesim
 - use ovr when possible
 
@@ -31,13 +29,10 @@ game sim
 - log clutch plays
 - scale dt by length (in yds) of play
 - pace
-- onside kicks
 - blocked fg
 - blocked punt
 - penalties
 - blocked/missed fg/xp return
-- update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily
-  - basically, do stuff more intelligently (log things when they happen (start of rushing attempt, then end of rushing attempt later with more info), update scrimmage when it happens, update possession when it happens, etc)
 - refactor
   - individual play simulation shouldn't be in main class
   - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
@@ -48,6 +43,10 @@ bugsnag, google analytics keys in index.html
 
 depth chart
 - links here from More, dropdowns, etc
+
+owner mood
+
+finances
 
 football code!
 - processStats in worker but used in ui

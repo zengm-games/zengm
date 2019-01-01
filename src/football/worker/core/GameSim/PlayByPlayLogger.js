@@ -48,6 +48,7 @@ class PlayByPlayLogger {
             names,
             quarter,
             safety,
+            success,
             t,
             td,
             touchback,
@@ -60,6 +61,7 @@ class PlayByPlayLogger {
             names?: string[],
             quarter?: number,
             safety?: boolean,
+            success?: boolean,
             t?: TeamNum,
             td?: boolean,
             touchback?: boolean,
@@ -145,6 +147,25 @@ class PlayByPlayLogger {
                 }
                 text = `${names[0]} returned the kickoff ${yds} yards${
                     td ? " for a touchdown!" : ""
+                }`;
+            } else if (type === "onsideKick") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                text = `${names[0]} gets ready to attempt an onside kick`;
+            } else if (type === "onsideKickRecovery") {
+                if (success === undefined) {
+                    throw new Error("Missing success");
+                }
+                if (td === undefined) {
+                    throw new Error("Missing td");
+                }
+                text = `The onside kick was recovered by ${
+                    success
+                        ? "the kicking team!"
+                        : `the recieving team${
+                              td ? " and returned for a touchdown!" : ""
+                          }`
                 }`;
             } else if (type === "punt") {
                 if (names === undefined) {

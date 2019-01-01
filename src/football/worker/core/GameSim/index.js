@@ -491,56 +491,124 @@ class GameSim {
         this.updatePlayersOnField("kickoff");
 
         const kicker = this.playersOnField[this.o].K[0];
-        const kickReturner = this.playersOnField[this.d].KR[0];
-
-        const touchback = Math.random() > 0.5;
-        const kickTo = random.randInt(-9, 10);
-
         let dt = 0;
 
-        this.playByPlay.logEvent("kickoff", {
-            clock: this.clock,
-            t: this.o,
-            names: [kicker.name],
-            touchback,
-            yds: kickTo,
-        });
+        const onside = Math.random() < 0.1;
 
-        this.possessionChange();
-
-        if (touchback) {
-            this.scrimmage = 25;
-            this.down = 1;
-            this.toGo = 10;
-        } else {
-            dt = 5;
-            const maxReturnLength = 100 - kickTo;
-            const returnLength = helpers.bound(
-                random.randInt(10, 109),
-                0,
-                maxReturnLength,
-            );
-            this.scrimmage = kickTo;
-            const { td } = this.advanceYds(returnLength);
-
-            this.recordStat(this.o, kickReturner, "kr");
-            this.recordStat(this.o, kickReturner, "krYds", returnLength);
-            this.recordStat(this.o, kickReturner, "krLng", returnLength);
-
-            this.playByPlay.logEvent("kickoffReturn", {
+        if (onside) {
+            this.playByPlay.logEvent("onsideKick", {
                 clock: this.clock,
                 t: this.o,
-                names: [kickReturner.name],
-                td,
-                yds: returnLength,
+                names: [kicker.name],
             });
 
-            if (td) {
-                this.awaitingAfterTouchdown = true;
-                this.recordStat(this.o, kickReturner, "krTD");
-            } else {
+            dt = 5;
+
+            const kickTo = random.randInt(40, 55);
+            this.scrimmage = kickTo;
+
+            const success = Math.random() < 0.1;
+
+            if (success) {
+                let players = [];
+                for (const playersAtPos of Object.values(
+                    this.playersOnField[this.o],
+                )) {
+                    players = players.concat(playersAtPos);
+                }
+                const recoverer = random.choice(players);
+
+                this.playByPlay.logEvent("onsideKickRecovery", {
+                    clock: this.clock,
+                    t: this.o,
+                    names: [recoverer.name],
+                    success: true,
+                    td: false,
+                });
+
                 this.down = 1;
                 this.toGo = 10;
+            } else {
+                this.possessionChange();
+
+                let players = [];
+                for (const playersAtPos of Object.values(
+                    this.playersOnField[this.o],
+                )) {
+                    players = players.concat(playersAtPos);
+                }
+                const kickReturner = random.choice(players);
+
+                const rawLength =
+                    Math.random() < 0.01 ? 100 : random.randInt(0, 5);
+                const returnLength = this.boundedYds(rawLength);
+                const { td } = this.advanceYds(returnLength);
+
+                this.recordStat(this.o, kickReturner, "kr");
+                this.recordStat(this.o, kickReturner, "krYds", returnLength);
+                this.recordStat(this.o, kickReturner, "krLng", returnLength);
+
+                this.playByPlay.logEvent("onsideKickRecovery", {
+                    clock: this.clock,
+                    t: this.o,
+                    names: [kickReturner.name],
+                    success: false,
+                    td,
+                });
+
+                if (td) {
+                    this.awaitingAfterTouchdown = true;
+                    this.recordStat(this.o, kickReturner, "krTD");
+                } else {
+                    this.down = 1;
+                    this.toGo = 10;
+                }
+            }
+        } else {
+            const kickReturner = this.playersOnField[this.d].KR[0];
+
+            const touchback = Math.random() > 0.5;
+            const kickTo = random.randInt(-9, 10);
+
+            this.playByPlay.logEvent("kickoff", {
+                clock: this.clock,
+                t: this.o,
+                names: [kicker.name],
+                touchback,
+                yds: kickTo,
+            });
+
+            this.possessionChange();
+
+            if (touchback) {
+                this.scrimmage = 25;
+                this.down = 1;
+                this.toGo = 10;
+            } else {
+                dt = 5;
+                this.scrimmage = kickTo;
+                const returnLength = this.boundedYds(random.randInt(10, 109));
+                const { td } = this.advanceYds(returnLength);
+
+                this.recordStat(this.o, kickReturner, "kr");
+                this.recordStat(this.o, kickReturner, "krYds", returnLength);
+                this.recordStat(this.o, kickReturner, "krLng", returnLength);
+
+                this.playByPlay.logEvent("kickoffReturn", {
+                    clock: this.clock,
+                    t: this.o,
+                    names: [kickReturner.name],
+                    td,
+                    yds: returnLength,
+                });
+
+                if (td) {
+                    this.awaitingAfterTouchdown = true;
+                    this.recordStat(this.o, kickReturner, "krTD");
+                } else {
+                    this.down = 1;
+                    this.toGo = 10;
+                }
             }
         }
 

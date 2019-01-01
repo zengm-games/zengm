@@ -18,7 +18,9 @@ export type PlayType =
     | "passComplete"
     | "passIncomplete"
     | "handoff"
-    | "run";
+    | "run"
+    | "onsideKick"
+    | "onsideKickRecovery";
 
 export type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
 

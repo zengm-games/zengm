@@ -149,17 +149,16 @@ async function updatePlayers(
 
                 return false;
             });
-        } else if (process.env.SPORT === "football") {
+        } else if (
+            inputs.abbrev !== "watch" &&
+            statsTable.onlyShowIf &&
+            process.env.SPORT === "football"
+        ) {
             // Ensure some non-zero stat for this position
             const obj = inputs.season === undefined ? "careerStats" : "stats";
-            const skipStats = ["gp", "gs", "fmbLost"];
             players = players.filter(p => {
-                for (const stat of stats) {
-                    if (
-                        typeof p[obj][stat] === "number" &&
-                        p[obj][stat] !== 0 &&
-                        !skipStats.includes(stat)
-                    ) {
+                for (const stat of statsTable.onlyShowIf) {
+                    if (typeof p[obj][stat] === "number" && p[obj][stat] > 0) {
                         return true;
                     }
                 }

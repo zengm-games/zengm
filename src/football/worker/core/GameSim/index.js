@@ -693,7 +693,7 @@ class GameSim {
         return 5;
     }
 
-    doFieldGoal(extraPoint) {
+    doFieldGoal(extraPoint?: boolean = false) {
         this.updatePlayersOnField("fieldGoal");
 
         const kicker = this.playersOnField[this.o].K[0];

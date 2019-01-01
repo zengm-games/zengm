@@ -356,7 +356,7 @@ class PlayByPlayLogger {
         });
     }
 
-    getPlayByPlay(boxScore) {
+    getPlayByPlay(boxScore: any) {
         if (!this.active) {
             return;
         }

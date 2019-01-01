@@ -75,7 +75,7 @@ const loadTeams = async () => {
                 synergy: { off: 0, def: 0, reb: 0 },
                 healthRank: teamSeason.expenses.health.rank,
                 compositeRating,
-                depth,
+                depth: undefined,
             };
 
             for (let i = 0; i < players.length; i++) {
@@ -89,6 +89,7 @@ const loadTeams = async () => {
 
                 const p = {
                     id: players[i].pid,
+                    pid: players[i].pid, // for getDepthPlayers, eventually do it all this way
                     name: `${players[i].firstName} ${players[i].lastName}`,
                     pos: rating.pos,
                     valueNoPot: players[i].valueNoPot,
@@ -129,6 +130,22 @@ const loadTeams = async () => {
                 };
 
                 t.player.push(p);
+            }
+
+            if (depth !== undefined) {
+                if (!overrides.core.player.getDepthPlayers) {
+                    throw new Error(
+                        "Missing overrides.core.player.getDepthPlayers",
+                    );
+                }
+                t.depth = overrides.core.player.getDepthPlayers(
+                    depth,
+                    t.player,
+                );
+            }
+
+            for (const p of t.player) {
+                delete p.pid;
             }
 
             // Number of players to factor into pace and defense rating calculation

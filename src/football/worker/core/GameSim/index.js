@@ -457,12 +457,12 @@ class GameSim {
                 // $FlowFixMe
                 const numPlayers = formation[side][pos];
                 this.playersOnField[t][pos] = this.team[t].depth[pos]
-                    .filter(pid => !pidsUsed.has(pid))
-                    .slice(0, numPlayers)
-                    .map(pid => {
-                        pidsUsed.add(pid);
-                        return this.team[t].player.find(p => p.id === pid);
-                    });
+                    .filter(id => !pidsUsed.has(id))
+                    .slice(0, numPlayers);
+
+                for (const p of this.playersOnField[t][pos]) {
+                    pidsUsed.add(p.id);
+                }
 
                 if (playType === "starters") {
                     for (const p of this.playersOnField[t][pos]) {

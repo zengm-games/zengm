@@ -1,17 +1,32 @@
 # football
 
-getDepthPlayers
-- test
-- use in gamesim
+game sim
+- log clutch plays
+- scale dt by length (in yds) of play
+- pace
+- blocked fg
+  - count as missed field goal
+- blocked punt
+- penalties
+- blocked/missed fg/xp return
+- refactor
+  - individual play simulation shouldn't be in main class
+  - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
+- special kick after safety
+- kickoff after halftime
+- fatigue
+  - subs
+  - players who can play offense and defense
+- more realistic stat distribution
+- pick plays from (down, toGo, scrimmage, score, quarter, time)
+- adjust probabilities based on stats
+  - use ovr when possible
 
 AV advanced stat
 - use in value?
 - OL and defense
   - need all pro modifier
   - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
-
-better gamesim
-- use ovr when possible
 
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
@@ -29,28 +44,6 @@ extra point or two point conversion should not take time off the clock, and shou
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 - but it needs getAbbrev from worker, ugh
-
-game sim
-- can't assume t.depth is accurate, make sure to prune + augment before use
-  - have function which does this, call in loadTeams, also use in depth (logic probably already there)
-- break into multiple files
-  - logging stuff
-  - anything not sport specific, to base class
-- log clutch plays
-- scale dt by length (in yds) of play
-- pace
-- blocked fg
-- blocked punt
-- penalties
-- blocked/missed fg/xp return
-- refactor
-  - individual play simulation shouldn't be in main class
-  - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
-- special kick after safety
-- kickoff after halftime
-- fatigue
-  - subs
-  - players who can play offense and defense
 
 bugsnag, google analytics keys in index.html
 

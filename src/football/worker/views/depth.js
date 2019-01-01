@@ -2,6 +2,7 @@
 
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
+import getDepthPlayers from "../core/player/getDepthPlayers";
 import posRatings from "../core/player/posRatings";
 import type { UpdateEvents } from "../../../deion/common/types";
 import type { Position } from "../../common/types";
@@ -104,18 +105,12 @@ async function updateDepth(
         if (!t.depth) {
             throw new Error("Missing depth");
         }
-        const depth = t.depth[pos];
-
-        // Start with players in depth, then add others in arbitrary order
-        const playersSorted = depth
-            .map(pid => players.find(p => p.pid === pid))
-            .concat(players.map(p => (depth.includes(p.pid) ? undefined : p)))
-            .filter(p => p !== undefined);
+        const depthPlayers = getDepthPlayers(t.depth, players);
 
         return {
             abbrev: g.teamAbbrevsCache[g.userTid],
             pos,
-            players: playersSorted,
+            players: depthPlayers[pos],
             ratings,
             season: g.season,
             stats: stats.hasOwnProperty(pos) ? stats[pos] : [],

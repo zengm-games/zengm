@@ -2,11 +2,9 @@
 
 AV advanced stat
 - use in value?
-- need all pro modifier for OL
-- defense
-- "Every player gets one point of approx_value for each kick or punt return TD."
-- for OL, filter out players with substantial rushing/receiving/passing stats, and don't let OL get stats from other stuff
-- career total - sum
+- OL and defense
+  - need all pro modifier
+  - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
 
 Filter players on player stats, same as player page
 
@@ -48,6 +46,9 @@ game sim
   - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
 - special kick after safety
 - kickoff after halftime
+- fatigue
+  - subs
+  - players who can play offense and defense
 
 bugsnag, google analytics keys in index.html
 

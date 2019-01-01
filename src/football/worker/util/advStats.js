@@ -9,7 +9,6 @@ const calculateAV = (players, teams, league) => {
     const teamOffPts = teams.map(
         t => (100 * t.stats.ptsPerDrive) / league.ptsPerDrive,
     );
-
     const teamPtsOL = teamOffPts.map(pts => (5 / 11) * pts);
     const teamPtsSkill = teams.map((t, i) => teamOffPts[i] - teamPtsOL[i]);
     const teamPtsRus = teams.map(
@@ -24,25 +23,54 @@ const calculateAV = (players, teams, league) => {
         (t, i) => (teamPtsSkill[i] - teamPtsRus[i]) * 0.74,
     );
 
+    const teamDefPts = teams.map(t => {
+        if (league.ptsPerDrive === 0) {
+            return 0;
+        }
+        const M = t.stats.oppPtsPerDrive / league.ptsPerDrive;
+        return (100 * (1 + 2 * M - M ** 2)) / (2 * M);
+    });
+    const teamPtsFront7 = teamDefPts.map(pts => (2 / 3) * pts);
+    const teamPtsSecondary = teamDefPts.map(pts => (1 / 3) * pts);
+
+    const defensivePositions = ["DL", "LB", "CB", "S"];
+    const tckConstant = {
+        DL: 0.6,
+        LB: 0.3,
+        CB: 0,
+        S: 0,
+    };
+    const teamIndividualPtsOL = Array(teams.length).fill(0);
+    const teamIndividualPtsFront7 = Array(teams.length).fill(0);
+    const teamIndividualPtsSecondary = Array(teams.length).fill(0);
     const individualPts = players.map(p => {
         let score = 0;
 
         if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
             const posMultiplier = p.ratings.pos === "OL" ? 1.1 : 0.2;
 
-            score += p.stats.gp + 5 * p.stats.gs * posMultiplier;
+            score = p.stats.gp + 5 * p.stats.gs * posMultiplier;
+
+            teamIndividualPtsOL[p.tid] += score;
+        } else if (defensivePositions.includes(p.ratings.pos)) {
+            score =
+                p.stats.gp +
+                5 * p.stats.gs +
+                p.stats.defSk +
+                4 * p.stats.defFmbRec +
+                4 * p.stats.defInt +
+                5 * (p.stats.defIntTD + p.stats.defFmbTD) +
+                tckConstant[p.ratings.pos] * p.stats.defTck;
+
+            if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
+                teamIndividualPtsFront7[p.tid] += score;
+            } else {
+                teamIndividualPtsSecondary[p.tid] += score;
+            }
         }
 
         return score;
     });
-
-    const teamIndividualPts = players.reduce((totals, p, i) => {
-        if (p.tid >= totals.length) {
-            throw new Error("Should never happen");
-        }
-        totals[p.tid] += individualPts[i];
-        return totals;
-    }, Array(teams.length).fill(0));
 
     const av = players.map((p, i) => {
         let score = 0;
@@ -55,7 +83,7 @@ const calculateAV = (players, teams, league) => {
         // OL
         if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
             score +=
-                (individualPts[i] / teamIndividualPts[p.tid]) *
+                (individualPts[i] / teamIndividualPtsOL[p.tid]) *
                 teamPtsOL[p.tid];
         }
 
@@ -89,6 +117,21 @@ const calculateAV = (players, teams, league) => {
             }
         }
 
+        // Defense
+        if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
+            score +=
+                (individualPts[i] / teamIndividualPtsFront7[p.tid]) *
+                teamPtsFront7[p.tid];
+        }
+        if (p.ratings.pos === "S" || p.ratings.pos === "CB") {
+            score +=
+                (individualPts[i] / teamIndividualPtsSecondary[p.tid]) *
+                teamPtsSecondary[p.tid];
+        }
+
+        // Returns
+        score += p.stats.prTD + p.stats.krTD;
+
         return score;
     });
 
@@ -116,6 +159,14 @@ const advStats = async () => {
             "rec",
             "recYds",
             "recYdsPerAtt",
+            "defSk",
+            "defFmbRec",
+            "defInt",
+            "defIntTD",
+            "defFmbTD",
+            "defTck",
+            "prTD",
+            "krTD",
         ],
         ratings: ["pos"],
         season: g.season,
@@ -125,7 +176,9 @@ const advStats = async () => {
 
     const teamStats = [
         "ptsPerDrive",
+        "oppPtsPerDrive",
         "pts",
+        "oppPts",
         "drives",
         "pss",
         "pssYds",

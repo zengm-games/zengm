@@ -51,8 +51,28 @@ async function updateSummary(vars) {
 }
 
 // Validate that the stored player IDs correspond with the active team ID
-async function validateSavedPids() {
+const validateTeams = async () => {
     const { teams } = await idb.cache.trade.get(0);
+
+    // Handle case where multi team mode is used to switch teams, but a trade was already happening with the team that was just switched to
+    if (teams[0].tid !== g.userTid) {
+        teams[1] = {
+            tid: g.userTid,
+            pids: [],
+            pidsExcluded: [],
+            dpids: [],
+            dpidsExcluded: [],
+        };
+    }
+    if (teams[1].tid === g.userTid) {
+        teams[1] = {
+            tid: g.userTid === 0 ? 1 : 0,
+            pids: [],
+            pidsExcluded: [],
+            dpids: [],
+            dpidsExcluded: [],
+        };
+    }
 
     // This is just for debugging
     team.valueChange(
@@ -65,10 +85,10 @@ async function validateSavedPids() {
         console.log(dv);
     });
     return trade.updatePlayers(teams);
-}
+};
 
 async function updateTrade(): void | { [key: string]: any } {
-    const teams = await validateSavedPids();
+    const teams = await validateTeams();
     let userRoster = await idb.cache.players.indexGetAll(
         "playersByTid",
         g.userTid,

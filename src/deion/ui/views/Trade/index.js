@@ -98,12 +98,16 @@ class Trade extends React.Component {
             {
                 tid: this.props.userTid,
                 pids: this.props.userPids,
+                pidsExcluded: this.props.userPidsExcluded,
                 dpids: this.props.userDpids,
+                dpidsExcluded: this.props.userDpidsExcluded,
             },
             {
                 tid: otherTid,
                 pids: [],
+                pidsExcluded: [],
                 dpids: [],
+                dpidsExcluded: [],
             },
         ];
 

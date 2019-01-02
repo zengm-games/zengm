@@ -1,6 +1,7 @@
 # football
 
 RatingsStats
+- use posRatings in UI to get the ratings to display
 
 game sim
 - refactor player selection
@@ -58,6 +59,7 @@ finances
 
 football code!
 - processStats in worker but used in ui
+  - same with posRatings
 - references to ../basketball
 
 worker/deion stuff that needs to have a process.env.SPORT case

@@ -1,8 +1,5 @@
 # football
 
-RatingsStats
-- use posRatings in UI to get the ratings to display
-
 game sim
 - refactor player selection
 - penalties

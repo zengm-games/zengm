@@ -27,12 +27,7 @@ PositionFraction.propTypes = {
 
 const RosterComposition = ({ players }) => {
     return (
-        <div
-            className="float-left ml-3"
-            style={{
-                whiteSpace: "nowrap",
-            }}
-        >
+        <div className="float-left ml-3 text-nowrap">
             <b>
                 Roster Composition{" "}
                 <HelpPopover placement="bottom" title="Roster Composition">

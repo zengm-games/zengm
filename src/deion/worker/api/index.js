@@ -848,10 +848,15 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
     // For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.season
     const season = p.draft.year > g.season ? p.draft.year : g.season;
 
+    const stats =
+        process.env.SPORT === "basketball"
+            ? ["pts", "trb", "ast", "blk", "stl", "tov", "min", "per", "ewa"]
+            : ["keyStats"];
+
     return idb.getCopy.playersPlus(p, {
         attrs: ["name"],
         ratings: ["pos", "ovr", "pot", ...overrides.constants.RATINGS],
-        stats: ["pts", "trb", "ast", "blk", "stl", "tov", "min", "per", "ewa"],
+        stats,
         season,
         showNoStats: true,
         showRetired: true,

@@ -30,42 +30,45 @@ const RatingsStats = ({ ratings, stats }: Props) => {
         ratingsBlock = (
             <div className="row">
                 <div className="col-4">
-                    <b>Ratings</b>
-                    <br />
+                    <div className="font-weight-bold mb-1">Ratings</div>
                     <span className={helpers.colorRating(ratings.ovr)}>
-                        Ovr: {ratings.ovr}
+                        <span title="Overall">Ovr</span>: {ratings.ovr}
                     </span>
                     <br />
                     <span className={helpers.colorRating(ratings.pot)}>
-                        Pot: {Math.round(ratings.pot)}
+                        <span title="Potential">Pot</span>:{" "}
+                        {Math.round(ratings.pot)}
                     </span>
                 </div>
-                <div className="col-4">
+                <div className="col-4 mt-1">
                     <br />
                     <span className={helpers.colorRating(ratings.hgt)}>
-                        Hgt: {ratings.hgt}
+                        <span title="Height">Hgt</span>: {ratings.hgt}
                     </span>
                     <br />
                     <span className={helpers.colorRating(ratings.stre)}>
-                        Str: {ratings.stre}
+                        <span title="Strength">Str</span>: {ratings.stre}
                     </span>
                     <br />
                     <span className={helpers.colorRating(ratings.spd)}>
-                        Spd: {ratings.spd}
+                        <span title="Speed">Spd</span>: {ratings.spd}
                     </span>
                     <br />
                     <span className={helpers.colorRating(ratings.endu)}>
-                        End: {ratings.endu}
+                        <span title="Endurance">End</span>: {ratings.endu}
                     </span>
                 </div>
-                <div className="col-4">
+                <div className="col-4 mt-1">
                     {extraRatings.map((rating, i) => (
                         <React.Fragment key={rating}>
                             <br />
                             <span
                                 className={helpers.colorRating(ratings[rating])}
                             >
-                                {cols[i].title}: {ratings[rating]}
+                                <span title={cols[i].desc}>
+                                    {cols[i].title}
+                                </span>
+                                : {ratings[rating]}
                             </span>
                         </React.Fragment>
                     ))}
@@ -88,48 +91,19 @@ const RatingsStats = ({ ratings, stats }: Props) => {
     }
 
     let statsBlock;
-    if (stats) {
+    if (stats && stats.keyStats !== "") {
         statsBlock = (
-            <div className="row mt-2">
-                <div className="col-4">
-                    <b>Stats</b>
-                    <br />
-                    PTS: {stats.pts.toFixed(1)}
-                    <br />
-                    TRB: {stats.trb.toFixed(1)}
-                    <br />
-                    AST: {stats.ast.toFixed(1)}
-                </div>
-                <div className="col-4">
-                    <br />
-                    BLK: {stats.blk.toFixed(1)}
-                    <br />
-                    STL: {stats.stl.toFixed(1)}
-                    <br />
-                    TO: {stats.tov.toFixed(1)}
-                </div>
-                <div className="col-4">
-                    <br />
-                    MP: {stats.min.toFixed(1)}
-                    <br />
-                    PER: {stats.per.toFixed(1)}
-                    <br />
-                    EWA: {stats.ewa.toFixed(1)}
-                </div>
+            <div
+                style={{
+                    whiteSpace: "normal",
+                }}
+            >
+                <div className="font-weight-bold mb-1">Stats</div>
+                {stats.keyStats}
             </div>
         );
     } else {
-        statsBlock = (
-            <div className="row mt-2">
-                <div className="col-12">
-                    <b>Stats</b>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                </div>
-            </div>
-        );
+        statsBlock = null;
     }
 
     return (

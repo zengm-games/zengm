@@ -2,8 +2,9 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
+import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
-import { helpers, overrides } from "../util";
+import { helpers } from "../util";
 import type { PlayerInjury } from "../../common/types";
 
 const PlayerNameLabels = ({
@@ -50,7 +51,7 @@ const PlayerNameLabels = ({
             <a href={helpers.leagueUrl(["player", pid])}>{children}</a>
             {injuryIcon}
             <SkillsBlock skills={skills} />
-            <overrides.components.RatingsStatsPopover pid={pid} watch={watch} />
+            <RatingsStatsPopover pid={pid} watch={watch} />
         </span>
     );
 };

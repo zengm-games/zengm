@@ -22,6 +22,7 @@ export { default as PlayerNameLabels } from "./PlayerNameLabels";
 export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
 export { default as RatingWithChange } from "./RatingWithChange";
+export { default as RatingsStatsPopover } from "./RatingsStatsPopover";
 export { default as RecordAndPlayoffs } from "./RecordAndPlayoffs";
 export { default as ResponsiveTableWrapper } from "./ResponsiveTableWrapper";
 export { default as RosterSalarySummary } from "./RosterSalarySummary";

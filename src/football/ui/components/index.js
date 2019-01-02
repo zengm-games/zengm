@@ -3,11 +3,11 @@
 import BoxScore from "./BoxScore";
 import BoxScoreRow from "./BoxScoreRow";
 import RatingsOverview from "./RatingsOverview";
-import RatingsStatsPopover from "../../../basketball/ui/components/RatingsStatsPopover";
+import RatingsStats from "../../../basketball/ui/components/RatingsStats";
 
 export default {
     BoxScore,
     BoxScoreRow,
     RatingsOverview,
-    RatingsStatsPopover,
+    RatingsStats,
 };

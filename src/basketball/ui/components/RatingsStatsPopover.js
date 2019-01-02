@@ -25,6 +25,7 @@ type State = {
     name: string | void,
     popoverOpen: boolean,
     ratings: {
+        pos: string,
         ovr: number,
         pot: number,
         hgt: number,
@@ -108,6 +109,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                     <a href={helpers.leagueUrl(["player", this.props.pid])}>
                         <b>{name}</b>
                     </a>
+                    {ratings !== undefined ? `, ${ratings.pos}` : null}
                     {typeof this.props.watch === "boolean" ? (
                         <WatchBlock
                             pid={this.props.pid}

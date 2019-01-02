@@ -53,7 +53,7 @@
         "react-dom": "^16.7.0",
         "react-overlays": "^0.8.3",
         "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
-        "reactstrap": "^7.0.2",
+        "reactstrap": "^6.5.0",
         "roman-numerals": "^0.3.2",
         "unstated": "^2.1.1",
         "url-search-params-polyfill": "^5.0.0",

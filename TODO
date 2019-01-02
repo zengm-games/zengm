@@ -1,10 +1,18 @@
 # football
 
+RatingsStatsPopover
+- share some code, at least!
+
 game sim
 - refactor player selection
 - penalties
-- scale dt by length (in yds) of play
-- pace
+- clock
+  - scale dt by length (in yds) of play
+  - handle stopping/running clock after some plays
+  - speed up or slow down towards end of half/game
+  - extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
+    - set quarterLenght really low and you can see extra point being taken in next quarter
+  - pace
 - special kick after safety
 - kickoff after halftime
 - fatigue
@@ -36,11 +44,6 @@ position balance for AIs building teams
 - existing league
 
 salaries
-
----
-
-extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
-- set quarterLenght really low and you can see extra point being taken in next quarter
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 - but it needs getAbbrev from worker, ugh

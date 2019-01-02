@@ -851,6 +851,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
     return idb.getCopy.playersPlus(p, {
         attrs: ["name"],
         ratings: [
+            "pos",
             "ovr",
             "pot",
             "hgt",

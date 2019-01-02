@@ -6,9 +6,10 @@ game sim
 - pace
 - blocked fg
   - count as missed field goal
+  - chance for either team to return (very slim for offense)
 - blocked punt
 - penalties
-- blocked/missed fg/xp return
+- missed fg/xp return
 - refactor
   - individual play simulation shouldn't be in main class
   - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns

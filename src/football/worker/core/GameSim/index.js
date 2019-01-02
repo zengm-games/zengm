@@ -741,7 +741,11 @@ class GameSim {
             this.awaitingKickoff = true;
         } else {
             this.possessionChange();
-            this.scrimmage = 100 - this.scrimmage - 7;
+            this.scrimmage = helpers.bound(
+                100 - this.scrimmage - 7,
+                20,
+                Infinity,
+            );
         }
 
         this.awaitingAfterTouchdown = false;

@@ -23,6 +23,7 @@ const overrides: {
         POSITIONS: [],
         RATINGS: [],
         TEAM_STATS_TABLES: {},
+        TIME_BETWEEN_GAMES: "",
     },
     core: {
         GameSim: undefined,

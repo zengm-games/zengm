@@ -687,6 +687,7 @@ export type WorkerOverridesConstants = {|
             stats: string[],
         },
     },
+    TIME_BETWEEN_GAMES: string,
 |};
 
 export type WorkerOverridesCore = {|

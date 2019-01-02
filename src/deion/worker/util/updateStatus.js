@@ -17,7 +17,7 @@ Args:
     status: A string containing the current status message to be pushed to
         the client.
 */
-async function updateStatus(statusText?: string, conditions?: Conditions) {
+const updateStatus = async (statusText?: string, conditions?: Conditions) => {
     if (statusText === undefined) {
         // This should only be triggered on loading a league from DB for now, but eventually this could actually
         // populate statusText in most situations (just call with no argument).
@@ -43,6 +43,6 @@ async function updateStatus(statusText?: string, conditions?: Conditions) {
     } else if (conditions !== undefined) {
         toUI(["updateLocal", { statusText }], conditions);
     }
-}
+};
 
 export default updateStatus;

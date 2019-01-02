@@ -203,9 +203,15 @@ const play = async (
     // Promise is resolved after games are run
     const cbPlayGames = async () => {
         if (numDays === 1) {
-            await updateStatus("Playing (1 day left)");
+            await updateStatus(
+                `Playing (1 ${overrides.constants.TIME_BETWEEN_GAMES} left)`,
+            );
         } else {
-            await updateStatus(`Playing (${numDays} days left)`);
+            await updateStatus(
+                `Playing (${numDays} ${
+                    overrides.constants.TIME_BETWEEN_GAMES
+                }s left)`,
+            );
         }
 
         let schedule = await season.getSchedule(true);

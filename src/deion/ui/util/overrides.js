@@ -16,6 +16,7 @@ const overrides: {
         POSITIONS: [],
         RATINGS: [],
         TEAM_STATS_TABLES: {},
+        TIME_BETWEEN_GAMES: "",
     },
     components: {},
     views: {},

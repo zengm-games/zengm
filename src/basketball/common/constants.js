@@ -251,6 +251,8 @@ const RATINGS: RatingKey[] = [
     "reb",
 ];
 
+const TIME_BETWEEN_GAMES = "day";
+
 export {
     COMPOSITE_WEIGHTS,
     PLAYER_STATS_TABLES,
@@ -258,4 +260,5 @@ export {
     POSITIONS,
     RATINGS,
     TEAM_STATS_TABLES,
+    TIME_BETWEEN_GAMES,
 };

@@ -146,30 +146,24 @@ type better
   - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
 - most MinimalPlayerRatings uses should be generic and take PlayerRatings
 
-eventually
-- football achievements
-  - some achievements could be common?
-    - add concept of "achievement belonging to a sport" (maybe refactor how they are stored too)
-    - participation/hacker - make global, not sport specific
-    - moneyball - share code between basketball/football
-
 schedule
-
-game sim
-
-player development (position dependent)
 
 names US only
 
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
 
-implementation
-- factory functions to generate different sports - hard to pass in overrides of functions/types without making everything awkward and passing them around manually
-- ENV variable like feature flag
+---
 
-RatingsOverview - could put in deion, with config to specify categories and names from getCols
+football achievements
+- some achievements could be common?
+  - add concept of "achievement belonging to a sport" (maybe refactor how they are stored too)
+  - participation/hacker - make global, not sport specific
+  - moneyball - share code between basketball/football
+- refactor achievements database (EAV)
 
 show game stats in player page
+
+RatingsOverview - could put in deion, with config to specify categories and names from getCols
 
 ---
 

@@ -156,7 +156,7 @@ class StoreAPI<Input, Output, ID> {
 class Cache {
     _data: { [key: Store]: any };
 
-    _deletes: { [key: Store]: Set<number> };
+    _deletes: { [key: Store]: Set<number | string> };
 
     _dirty: boolean;
 

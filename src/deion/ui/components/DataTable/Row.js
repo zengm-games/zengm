@@ -31,6 +31,7 @@ const Row = clickable<{
     );
 });
 
+// $FlowFixMe
 Row.propTypes = {
     row: PropTypes.shape({
         classNames: PropTypes.object,

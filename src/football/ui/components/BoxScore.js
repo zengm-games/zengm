@@ -246,7 +246,21 @@ const ScoringSummary = ({ events, teams }) => {
                                 <td>{teams[event.t].abbrev}</td>
                                 <td>{event.scoreType}</td>
                                 <td>
-                                    {event.score[0]}-{event.score[1]}
+                                    {event.t === 0 ? (
+                                        <>
+                                            <b>{event.score[0]}</b>-
+                                            <span className="text-muted">
+                                                {event.score[1]}
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="text-muted">
+                                                {event.score[0]}
+                                            </span>
+                                            -<b>{event.score[1]}</b>
+                                        </>
+                                    )}
                                 </td>
                                 <td>{event.time}</td>
                                 <td style={{ whiteSpace: "normal" }}>

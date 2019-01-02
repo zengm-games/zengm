@@ -1,18 +1,10 @@
 # football
 
 game sim
-- log clutch plays
+- refactor player selection
+- penalties
 - scale dt by length (in yds) of play
 - pace
-- blocked fg
-  - count as missed field goal
-  - chance for either team to return (very slim for offense)
-- blocked punt
-- penalties
-- missed fg/xp return
-- refactor
-  - individual play simulation shouldn't be in main class
-  - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
 - special kick after safety
 - kickoff after halftime
 - fatigue
@@ -22,6 +14,13 @@ game sim
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
   - use ovr when possible
+- later
+  - log clutch plays
+  - blocked fg
+    - count as missed field goal
+    - chance for either team to return (very slim for offense)
+  - blocked punt
+  - missed fg/xp return
 
 AV advanced stat
 - use in value?
@@ -93,9 +92,7 @@ how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 - Import modules from deion. Add things like extra views. Apply factories/generics.
 
-yards after catch, other stats of interest
-
-new names and logos for KC and SA
+new logos for KC and SA - in progress
 
 ssl https://blog.webfaction.com/2018/09/issue-lets-encrypt-ssl-certificates-with-the-control-panel/
 
@@ -140,8 +137,6 @@ statistical feats
 
 names distribution
 
-madeHof tests slow, why?
-
 type better
 - skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
 - PlayerStatType should be sport specific
@@ -156,50 +151,6 @@ eventually
     - add concept of "achievement belonging to a sport" (maybe refactor how they are stored too)
     - participation/hacker - make global, not sport specific
     - moneyball - share code between basketball/football
-
---
-
-const app = init<PlayerRatings>();
-
-- Forces me to change structure of nearly everything to be generic, passing the types through from the init function
-
-- Feels wrong to rearchitecture everything like this
-
-- Pick some internal stuff (like bonus.js) make generic, see what happens, at what point do i need to change structure
-
-
-Would be nice to avoid passing around the types to every single goddamn function, and apply the generics globally like
-
-/* @flow */
-
-type Foo<T> = T[];
-type Bar = Foo<string>;
-
-const x: Bar = ["a"];
-
-But how could I do that? Would need to do it at compile time or something, because otherwise don't know it's "string" until inside the init function, so then can no longer export, right?
-
-- maybe not a horrible idea. have sport-specific types defined in a file, and a compile step that concatenates them prior to running flow
-
---
-
-type PlayerRatings = PlayerRatingsBasketball | PlayerRatingsFootball;
-
-if (process.env.SPORT === "football") {
-  // Assume PlayerRatingsFootball
-} else {
-  // Assume PlayerRatingsBasketball
-}
-
-- Would get very messy!
-
-- Flow doesn't know what it means, so I'd have to add additional repetitive checks to help flow figure out types.
-
---
-
-
-
---
 
 schedule
 

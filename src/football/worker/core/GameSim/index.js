@@ -74,7 +74,9 @@ class GameSim {
     twoPointConversionTeam: number | void;
 
     scrimmage: number;
+
     down: number;
+
     toGo: number;
 
     constructor(
@@ -333,10 +335,10 @@ class GameSim {
             const tacklers =
                 Math.random() < 0.3
                     ? new Set([
-                          this.pickPlayer(1, "tackling"),
-                          this.pickPlayer(1, "tackling"),
+                          this.pickPlayer(this.d, "tackling"),
+                          this.pickPlayer(this.d, "tackling"),
                       ])
-                    : new Set([this.pickPlayer(1, "tackling")]);
+                    : new Set([this.pickPlayer(this.d, "tackling")]);
 
             for (const tackler of tacklers) {
                 this.recordStat(
@@ -476,13 +478,7 @@ class GameSim {
             const success = Math.random() < 0.1;
 
             if (success) {
-                let players: PlayerGameSim[] = [];
-                for (const playersAtPos of Object.values(
-                    this.playersOnField[this.o],
-                )) {
-                    players = players.concat(playersAtPos);
-                }
-                const recoverer = random.choice(players);
+                const recoverer = this.pickPlayer(this.o);
 
                 this.playByPlay.logEvent("onsideKickRecovery", {
                     clock: this.clock,
@@ -497,13 +493,7 @@ class GameSim {
             } else {
                 this.possessionChange();
 
-                let players: PlayerGameSim[] = [];
-                for (const playersAtPos of Object.values(
-                    this.playersOnField[this.o],
-                )) {
-                    players = players.concat(playersAtPos);
-                }
-                const kickReturner = random.choice(players);
+                const kickReturner = this.pickPlayer(this.o);
 
                 const rawLength =
                     Math.random() < 0.01 ? 100 : random.randInt(0, 5);
@@ -747,11 +737,7 @@ class GameSim {
 
         const lost = Math.random() > 0.5;
 
-        let playersDefense: PlayerGameSim[] = [];
-        for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
-            playersDefense = playersDefense.concat(playersAtPos);
-        }
-        const pForced = random.choice(playersDefense);
+        const pForced = this.pickPlayer(this.d, "tackling");
         this.recordStat(this.d, pForced, "defFmbFrc");
 
         this.playByPlay.logEvent("fumble", {
@@ -762,14 +748,7 @@ class GameSim {
 
         const recoveringTeam = lost ? this.d : this.o;
 
-        let players: PlayerGameSim[] = [];
-        for (const playersAtPos of Object.values(
-            this.playersOnField[recoveringTeam],
-        )) {
-            players = players.concat(playersAtPos);
-        }
-
-        const pRecovered = random.choice(players);
+        const pRecovered = this.pickPlayer(recoveringTeam);
         this.recordStat(recoveringTeam, pRecovered, "defFmbRec");
 
         if (lost) {
@@ -819,12 +798,7 @@ class GameSim {
             100,
         );
 
-        const p = random.choice([
-            ...this.playersOnField[this.o].DL,
-            ...this.playersOnField[this.o].LB,
-            ...this.playersOnField[this.o].CB,
-            ...this.playersOnField[this.o].S,
-        ]);
+        const p = this.pickPlayer(this.d, "passCoverage");
 
         const ydsRaw = random.randInt(0, 109);
         const yds = this.boundedYds(ydsRaw);
@@ -855,11 +829,10 @@ class GameSim {
     }
 
     doSafety() {
-        let playersDefense = [];
-        for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
-            playersDefense = playersDefense.concat(playersAtPos);
-        }
-        const p = random.choice(playersDefense);
+        const p = this.pickPlayer(
+            this.d,
+            Math.random < 0.5 ? "passRushing" : "runStopping",
+        );
         this.recordStat(this.d, p, "defSft");
 
         this.possessionChange();
@@ -867,12 +840,7 @@ class GameSim {
     }
 
     doSack(qb: PlayerGameSim) {
-        const p = random.choice([
-            ...this.playersOnField[this.d].DL,
-            ...this.playersOnField[this.d].LB,
-            ...this.playersOnField[this.d].CB,
-            ...this.playersOnField[this.d].S,
-        ]);
+        const p = this.pickPlayer(this.d, "passRushing");
 
         const ydsRaw = random.randInt(-1, -15);
         const yds = this.boundedYds(ydsRaw);
@@ -921,16 +889,15 @@ class GameSim {
             return 5;
         }
 
-        const target = random.choice([
-            ...this.playersOnField[this.o].WR,
-            ...this.playersOnField[this.o].TE,
-            ...this.playersOnField[this.o].RB,
-        ]);
-
-        const defender = random.choice([
-            ...this.playersOnField[this.d].CB,
-            ...this.playersOnField[this.d].S,
-            ...this.playersOnField[this.d].LB,
+        const target = this.pickPlayer(
+            this.o,
+            Math.random() < 0.2 ? "catching" : "gettingOpen",
+            ["WR", "TE", "RB"],
+        );
+        const defender = this.pickPlayer(this.d, "passCoverage", [
+            "CB",
+            "S",
+            "LB",
         ]);
 
         const interception = Math.random() < 0.05;
@@ -994,10 +961,16 @@ class GameSim {
     doRun() {
         this.updatePlayersOnField("run");
 
-        const p =
-            this.playersOnField[this.o].RB.length > 0
-                ? this.playersOnField[this.o].RB[0]
-                : this.playersOnField[this.o].QB[0];
+        // Usually do normal run, but sometimes do special stuff
+        const positions = ["RB"];
+        const rand = Math.random();
+        if (rand < 0.1 || this.playersOnField[this.o].RB.length === 0) {
+            positions.push("QB");
+        } else if (rand < 0.2 || this.playersOnField[this.o].RB.length === 0) {
+            positions.push("WR");
+        }
+
+        const p = this.pickPlayer(this.o, "rushing", positions);
         this.recordStat(this.o, p, "rus");
         const qb = this.playersOnField[this.o].QB[0];
 
@@ -1121,7 +1094,7 @@ class GameSim {
 
     pickPlayer(
         t: 0 | 1,
-        rating: CompositeRating,
+        rating?: CompositeRating,
         positions?: Position[] = POSITIONS,
         power?: number = 1,
     ) {
@@ -1132,11 +1105,15 @@ class GameSim {
                 players.push(...this.playersOnField[t][pos]);
             }
         }
-        return random.choice(
-            players,
-            p2 =>
-                (p2.compositeRating[rating] * fatigue(p2.stat.energy)) ** power,
-        );
+
+        const weightFunc =
+            rating !== undefined
+                ? p =>
+                      (p.compositeRating[rating] * fatigue(p.stat.energy)) **
+                      power
+                : undefined;
+
+        return random.choice(players, weightFunc);
     }
 
     // Pass undefined as p for some team-only stats

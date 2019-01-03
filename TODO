@@ -1,8 +1,9 @@
 # football
 
+not enough good WRs, too many good TEs
+
 game sim
-- refactor player selection
-  - use pickPlayer everywhere
+- reevaluate player selection
 - penalties
 - clock
   - scale dt by length (in yds) of play

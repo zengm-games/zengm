@@ -17,7 +17,7 @@ type Props = {
         [key: string]: number,
     } | void,
     stats: {
-        [key: string]: number,
+        keyStats: string,
     } | void,
 };
 

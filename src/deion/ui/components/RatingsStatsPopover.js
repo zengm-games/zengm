@@ -31,7 +31,11 @@ type State = {
     } | void,
 };
 
+let count = 0;
+
 class RatingsStatsPopover extends React.Component<Props, State> {
+    count: number;
+
     loadData: () => Promise<void>;
 
     toggle: () => void;
@@ -48,6 +52,9 @@ class RatingsStatsPopover extends React.Component<Props, State> {
 
         this.loadData = this.loadData.bind(this);
         this.toggle = this.toggle.bind(this);
+
+        this.count = count;
+        count += 1;
     }
 
     async loadData() {
@@ -102,7 +109,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                     className={classNames("glyphicon glyphicon-stats watch", {
                         "watch-active": this.props.watch === true, // Explicit true check is for Firefox 57 and older
                     })}
-                    id={`ratings-pop-${this.props.pid}`}
+                    id={`ratings-pop-${this.count}`}
                     onClick={this.toggle}
                     data-no-row-highlight="true"
                     title="View ratings and stats"
@@ -110,7 +117,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                 <Popover
                     placement="right"
                     isOpen={this.state.popoverOpen}
-                    target={`ratings-pop-${this.props.pid}`}
+                    target={`ratings-pop-${this.count}`}
                     toggle={this.toggle}
                 >
                     <PopoverBody>

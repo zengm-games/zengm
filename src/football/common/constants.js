@@ -32,7 +32,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
             label: "A",
         },
     },
-    running: {
+    rushing: {
         ratings: ["stre", "spd", "elu"],
         weights: [0.5, 1, 1],
         skill: {
@@ -84,6 +84,10 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         skill: {
             label: "L",
         },
+    },
+    tackling: {
+        ratings: ["spd", "stre", "tck"],
+        weights: [1, 1, 1],
     },
     avoidingSacks: {
         ratings: ["thv", "elu", "stre"],

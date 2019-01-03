@@ -2,6 +2,7 @@
 
 game sim
 - refactor player selection
+  - use pickPlayer everywhere
 - penalties
 - clock
   - scale dt by length (in yds) of play
@@ -18,7 +19,7 @@ game sim
 - more realistic stat distribution
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
-  - use ovr when possible
+  - use ovr when possible - can i put these in composite ratings?
 - later
   - log clutch plays
   - blocked fg

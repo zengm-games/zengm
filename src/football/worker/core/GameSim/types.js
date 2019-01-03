@@ -22,48 +22,27 @@ export type PlayType =
     | "onsideKick"
     | "onsideKickRecovery";
 
-export type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
-
-export type Stat =
-    | "ast"
-    | "ba"
-    | "benchTime"
-    | "blk"
-    | "courtTime"
-    | "drb"
-    | "energy"
-    | "fg"
-    | "fgAtRim"
-    | "fgLowPost"
-    | "fgMidRange"
-    | "fga"
-    | "fgaAtRim"
-    | "fgaLowPost"
-    | "fgaMidRange"
-    | "ft"
-    | "fta"
-    | "gs"
-    | "min"
-    | "orb"
-    | "pf"
-    | "pts"
-    | "stl"
-    | "tov"
-    | "tp"
-    | "tpa";
-
 export type PlayerNumOnCourt = 0 | 1 | 2 | 3 | 4;
 
 export type TeamNum = 0 | 1;
 
 export type CompositeRating =
-    | "blocking"
-    | "fouling"
-    | "passing"
-    | "rebounding"
-    | "stealing"
-    | "turnovers"
-    | "usage";
+    | "passingAccuracy"
+    | "passingDeep"
+    | "passingVision"
+    | "athleticism"
+    | "rushing"
+    | "catching"
+    | "gettingOpen"
+    | "passBlocking"
+    | "runBlocking"
+    | "passRushing"
+    | "runStopping"
+    | "passCoverage"
+    | "tackling"
+    | "avoidingSacks"
+    | "ballSecurity"
+    | "endurance";
 
 export type PlayerGameSim = {
     id: number,

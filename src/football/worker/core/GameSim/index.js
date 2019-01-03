@@ -2,52 +2,17 @@
 
 import { PHASE } from "../../../../deion/common";
 import { g, helpers, random } from "../../../../deion/worker/util";
+import { POSITIONS } from "../../../common";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import formations from "./formations";
 import type { Position } from "../../../common/types";
 import type {
-    ShotType,
-    Stat,
     PlayerNumOnCourt,
     TeamNum,
     CompositeRating,
     PlayerGameSim,
     TeamGameSim,
 } from "./types";
-
-/**
- * Pick a player to do something.
- *
- * @param {Array.<number>} ratios output of this.ratingArray.
- * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
- */
-const pickPlayer = (
-    ratios: [number, number, number, number, number],
-    exempt?: PlayerNumOnCourt,
-): PlayerNumOnCourt => {
-    if (exempt !== undefined) {
-        ratios[exempt] = 0;
-    }
-
-    const rand =
-        Math.random() *
-        (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4]);
-
-    let pick;
-    if (rand < ratios[0]) {
-        pick = 0;
-    } else if (rand < ratios[0] + ratios[1]) {
-        pick = 1;
-    } else if (rand < ratios[0] + ratios[1] + ratios[2]) {
-        pick = 2;
-    } else if (rand < ratios[0] + ratios[1] + ratios[2] + ratios[3]) {
-        pick = 3;
-    } else {
-        pick = 4;
-    }
-
-    return pick;
-};
 
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
@@ -364,13 +329,14 @@ class GameSim {
             )) {
                 playersDefense = playersDefense.concat(playersAtPos);
             }
+
             const tacklers =
                 Math.random() < 0.3
                     ? new Set([
-                          random.choice(playersDefense),
-                          random.choice(playersDefense),
+                          this.pickPlayer(1, "tackling"),
+                          this.pickPlayer(1, "tackling"),
                       ])
-                    : new Set([random.choice(playersDefense)]);
+                    : new Set([this.pickPlayer(1, "tackling")]);
 
             for (const tackler of tacklers) {
                 this.recordStat(
@@ -1153,41 +1119,28 @@ class GameSim {
         }*/
     }
 
-    /**
-     * Generate an array of composite ratings.
-     *
-     * @param {string} rating Key of this.team[t].player[p].compositeRating to use.
-     * @param {number} t Team (0 or 1, this.or or this.d).
-     * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
-     * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
-     */
-    ratingArray(rating: CompositeRating, t: TeamNum, power?: number = 1) {
-        /*const array = [0, 0, 0, 0, 0];
-        let total = 0;
+    pickPlayer(
+        t: 0 | 1,
+        rating: CompositeRating,
+        positions?: Position[] = POSITIONS,
+        power?: number = 1,
+    ) {
+        const players: PlayerGameSim[] = [];
 
-        // Scale composite ratings
-        for (let i = 0; i < 5; i++) {
-            const p = this.playersOnCourt[t][i];
-            array[i] =
-                (this.team[t].player[p].compositeRating[rating] *
-                    fatigue(this.team[t].player[p].stat.energy)) **
-                power;
-            total += array[i];
-        }
-
-        // Set floor (5% of total)
-        const floor = 0.05 * total;
-        for (let i = 0; i < 5; i++) {
-            if (array[i] < floor) {
-                array[i] = floor;
+        for (const pos of Object.keys(this.playersOnField[t])) {
+            if (positions.includes(pos)) {
+                players.push(...this.playersOnField[t][pos]);
             }
         }
-
-        return array;*/
+        return random.choice(
+            players,
+            p2 =>
+                (p2.compositeRating[rating] * fatigue(p2.stat.energy)) ** power,
+        );
     }
 
     // Pass undefined as p for some team-only stats
-    recordStat(t: TeamNum, p?: PlayerGameSim, s: Stat, amt?: number = 1) {
+    recordStat(t: TeamNum, p?: PlayerGameSim, s: string, amt?: number = 1) {
         const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
         // Special case for two point conversions

@@ -117,8 +117,11 @@ const loadTeams = async () => {
                         false,
                     );
                 }
-                // eslint-disable-next-line operator-assignment
-                p.compositeRating.usage = p.compositeRating.usage ** 1.9;
+
+                if (process.env.SPORT === "basketball") {
+                    // eslint-disable-next-line operator-assignment
+                    p.compositeRating.usage = p.compositeRating.usage ** 1.9;
+                }
 
                 p.stat = {
                     gs: 0,

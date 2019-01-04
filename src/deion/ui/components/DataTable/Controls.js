@@ -3,6 +3,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
+import Dropdown from "reactstrap/lib/Dropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import HelpPopover from "../HelpPopover";
 
 const Controls = ({
@@ -36,19 +41,11 @@ const Controls = ({
                 </p>
             </HelpPopover>
             <a
-                className="btn btn-sm btn-light-bordered"
-                onClick={onExportCSV}
-                style={{ marginRight: "6px" }}
-                title="Download Spreadsheet"
-            >
-                <span className="glyphicon glyphicon-download-alt" />
-            </a>
-            <a
                 className={classNames("btn btn-sm btn-light-bordered", {
                     active: enableFilters,
                 })}
                 onClick={onToggleFilters}
-                style={{ marginRight: "6px" }}
+                style={{ marginBottom: 1, marginRight: 6 }}
                 title="Filter"
             >
                 <span className="glyphicon glyphicon-filter" />
@@ -61,6 +58,24 @@ const Controls = ({
                     type="search"
                 />
             </label>
+            <UncontrolledDropdown className="float-right">
+                <DropdownToggle
+                    style={{
+                        cursor: "pointer",
+                        fontSize: 16,
+                        lineHeight: "30px",
+                        paddingLeft: 5,
+                    }}
+                    tag="span"
+                >
+                    <span className="glyphicon glyphicon-option-vertical text-muted" />
+                </DropdownToggle>
+                <DropdownMenu right>
+                    <DropdownItem onClick={onExportCSV}>
+                        Download Spreadsheet
+                    </DropdownItem>
+                </DropdownMenu>
+            </UncontrolledDropdown>
         </div>
     );
 };

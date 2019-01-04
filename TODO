@@ -1,6 +1,7 @@
 # football
 
 for position (or any small number of string values), turn filter box into a drop down rather than text entry
+- in loadStateFromCache, sort positions logically depending on sport
 
 not enough good WRs, too many good TEs
 

@@ -1,5 +1,6 @@
 // @flow
 
+import getSearchVal from "./getSearchVal";
 import type { Props, SortBy } from ".";
 
 const loadStateFromCache = (props: Props) => {
@@ -27,7 +28,23 @@ const loadStateFromCache = (props: Props) => {
         sortBys = [props.defaultSort];
     }
 
-    const defaultFilters: string[] = props.cols.map(() => "");
+    let allPositions;
+    let posInd;
+    const defaultFilters: string[] = props.cols.map((col, i) => {
+        if (col.title !== "Pos") {
+            return "";
+        }
+
+        // Special case stuff for position filter
+        posInd = i;
+        allPositions = new Set();
+        for (const row of props.rows) {
+            const val = getSearchVal(row.data[i], false);
+            allPositions.add(val);
+        }
+        allPositions = Array.from(allPositions).sort();
+        return allPositions;
+    });
     const filtersFromStorage = localStorage.getItem(
         `DataTableFilters:${props.name}`,
     );
@@ -47,7 +64,7 @@ const loadStateFromCache = (props: Props) => {
                 filters = defaultFilters;
             } else {
                 for (const filter of filters) {
-                    if (typeof filter !== "string") {
+                    if (typeof filter !== "string" && !Array.isArray(filter)) {
                         filters = defaultFilters;
                         break;
                     }
@@ -58,7 +75,15 @@ const loadStateFromCache = (props: Props) => {
         }
     }
 
+    // If using default, overwrite with default positions. If using saved filters with a text search (legacy), overwrite with default positions.
+    if (posInd !== undefined) {
+        if (filters === defaultFilters || !Array.isArray(filters[posInd])) {
+            filters[posInd] = allPositions;
+        }
+    }
+
     return {
+        allPositions,
         currentPage: 1,
         enableFilters: filters !== defaultFilters,
         filters,

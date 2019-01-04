@@ -2,8 +2,8 @@
 
 for position (or any small number of string values), turn filter box into a drop down rather than text entry
 - in loadStateFromCache, sort positions logically depending on sport
-- how make input clickable, just not activatable (no cursor inside ever)? disabled makes onClick fail. could wrap in div maybe?
-- close on click outside
+- add "Apply" button for after changing check boxes
+- flow
 
 not enough good WRs, too many good TEs
 

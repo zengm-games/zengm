@@ -14,6 +14,7 @@ class OptionsFilter extends React.Component {
         this.selectAll = this.selectAll.bind(this);
         this.selectNone = this.selectNone.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
     toggleOpen() {
@@ -50,6 +51,26 @@ class OptionsFilter extends React.Component {
                 this.props.i,
             );
         }
+    }
+
+    handleClickOutside(event) {
+        if (event.target.closest(".datatable-dropdown")) {
+            return;
+        }
+
+        if (this.state.open) {
+            this.setState({
+                open: false,
+            });
+        }
+    }
+
+    componentDidMount() {
+        document.addEventListener("click", this.handleClickOutside);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener("click", this.handleClickOutside);
     }
 
     render() {
@@ -90,7 +111,7 @@ class OptionsFilter extends React.Component {
         );
 
         if (!this.state.open) {
-            return button;
+            return <div className="datatable-dropdown">{button}</div>;
         }
 
         const options = (
@@ -129,10 +150,12 @@ class OptionsFilter extends React.Component {
         );
 
         return (
-            <>
+            <div className="datatable-dropdown">
                 {button}
-                <div className="datatable-dropdown">{options}</div>
-            </>
+                <div className="datatable-dropdown-options-parent">
+                    {options}
+                </div>
+            </div>
         );
     }
 }

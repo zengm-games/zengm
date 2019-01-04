@@ -3,6 +3,10 @@
 for position (or any small number of string values), turn filter box into a drop down rather than text entry
 - in loadStateFromCache, sort positions logically depending on sport
 - how make input clickable, just not activatable (no cursor inside ever)? disabled makes onClick fail. could wrap in div maybe?
+- height dynamic
+- close on click outside
+- when "none" is selected, table size shrinks to 0 and menu size is constrained by the table. should not be this way.
+  - would using a popover help with these issues?
 
 not enough good WRs, too many good TEs
 

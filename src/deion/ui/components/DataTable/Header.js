@@ -94,33 +94,40 @@ class OptionsFilter extends React.Component {
         }
 
         const options = (
-            <div>
-                <p>
-                    <a onClick={this.selectAll}>All</a> |{" "}
-                    <a onClick={this.selectNone}>None</a>
-                </p>
-                {allPositions.map(pos => (
-                    <div>
-                        <label className="form-check-label">
-                            <input
-                                className="form-check-input"
-                                checked={filter.includes(pos)}
-                                name={pos}
-                                onChange={this.handleSelect}
-                                type="checkbox"
-                            />
-                            {pos}
-                        </label>
-                    </div>
-                ))}
+            <div className="datatable-dropdown-options border">
+                <div>
+                    <a href="" onClick={this.selectAll}>
+                        All
+                    </a>{" "}
+                    |{" "}
+                    <a href="" onClick={this.selectNone}>
+                        None
+                    </a>
+                </div>
+                <div className="form-group form-check">
+                    {allPositions.map(pos => (
+                        <div key={pos}>
+                            <label className="form-check-label">
+                                <input
+                                    className="form-check-input"
+                                    checked={filter.includes(pos)}
+                                    name={pos}
+                                    onChange={this.handleSelect}
+                                    type="checkbox"
+                                />
+                                {pos}
+                            </label>
+                        </div>
+                    ))}
+                </div>
             </div>
         );
 
         return (
-            <>
+            <div className="datatable-dropdown">
                 {button}
                 {options}
-            </>
+            </div>
         );
     }
 }
@@ -148,8 +155,6 @@ const FilterHeader = ({
         number,
     ) => void,
 }) => {
-    console.log("FilterHeader allPositions", allPositions);
-
     return (
         <tr>
             {cols.map((col, i) => {

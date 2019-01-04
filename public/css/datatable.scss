@@ -60,6 +60,24 @@ ul.pagination {
     margin-bottom: 8px !important;
 }
 
+.datatable-dropdown {
+    position: relative;
+}
+
+.datatable-dropdown-options {
+    background-color: $gray-200;
+    position: absolute;
+    top: 21px;
+    left: 0;
+    width: 75px;
+    height: 400px;
+    padding: 0 4px;
+
+    input {
+        margin-top: 3px;
+    }
+}
+
 table.table {
     thead {
         .sorting,

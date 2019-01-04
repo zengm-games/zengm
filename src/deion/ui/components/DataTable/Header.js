@@ -4,45 +4,132 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
-const OptionsFilter = ({
-    allPositions,
-    filter,
-    handleFilterUpdateOptions,
-}: {
-    allPositions?: string[],
-    cols: Col[],
-    filter: string[],
-    handleFilterUpdateOptions: (string[], number) => void,
-    handleFilterUpdateText: (
-        SyntheticInputEvent<HTMLInputElement>,
-        number,
-    ) => void,
-}) => {
-    console.log("FilterHeader allPositions", allPositions);
-    return (
-        <div>
-            <p>All | None</p>
-            {allPositions.map(pos => (
-                <div>
-                    <input
-                        className="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="defaultCheck1"
-                    />
-                    <label className="form-check-label" htmlFor="defaultCheck1">
-                        {pos}
-                    </label>
-                </div>
-            ))}
-        </div>
-    );
-};
+class OptionsFilter extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false,
+        };
+        this.toggleOpen = this.toggleOpen.bind(this);
+        this.selectAll = this.selectAll.bind(this);
+        this.selectNone = this.selectNone.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+    }
+
+    toggleOpen() {
+        this.setState(state => {
+            return {
+                open: !state.open,
+            };
+        });
+    }
+
+    selectAll() {
+        this.props.handleFilterUpdateOptions(
+            this.props.allPositions,
+            this.props.i,
+        );
+    }
+
+    selectNone() {
+        this.props.handleFilterUpdateOptions([], this.props.i);
+    }
+
+    handleSelect(event) {
+        const value = event.target.checked;
+        const name = event.target.name;
+
+        if (value && !this.props.filter.includes(name)) {
+            this.props.handleFilterUpdateOptions(
+                [...this.props.filter, name],
+                this.props.i,
+            );
+        } else if (!value && this.props.filter.includes(name)) {
+            this.props.handleFilterUpdateOptions(
+                this.props.filter.filter(val => val !== name),
+                this.props.i,
+            );
+        }
+    }
+
+    render() {
+        const {
+            allPositions,
+            filter,
+        }: {
+            allPositions?: string[],
+            cols: Col[],
+            filter: string[],
+            handleFilterUpdateOptions: (string[], number) => void,
+            handleFilterUpdateText: (
+                SyntheticInputEvent<HTMLInputElement>,
+                number,
+            ) => void,
+        } = this.props;
+
+        let value = filter.join(",");
+        if (filter.length === 0) {
+            value = "None";
+        } else if (filter.length === allPositions.length) {
+            value = "All";
+        }
+
+        const button = (
+            <input
+                className="datatable-filter-input"
+                value={value}
+                title={value}
+                readOnly
+                onClick={this.toggleOpen}
+                style={{
+                    cursor: "pointer",
+                }}
+                tabIndex="-1"
+                type="text"
+            />
+        );
+
+        if (!this.state.open) {
+            return button;
+        }
+
+        const options = (
+            <div>
+                <p>
+                    <a onClick={this.selectAll}>All</a> |{" "}
+                    <a onClick={this.selectNone}>None</a>
+                </p>
+                {allPositions.map(pos => (
+                    <div>
+                        <label className="form-check-label">
+                            <input
+                                className="form-check-input"
+                                checked={filter.includes(pos)}
+                                name={pos}
+                                onChange={this.handleSelect}
+                                type="checkbox"
+                            />
+                            {pos}
+                        </label>
+                    </div>
+                ))}
+            </div>
+        );
+
+        return (
+            <>
+                {button}
+                {options}
+            </>
+        );
+    }
+}
 
 OptionsFilter.propTypes = {
     allPositions: PropTypes.arrayOf(PropTypes.string).isRequired,
     filter: PropTypes.arrayOf(PropTypes.string).isRequired,
     handleFilterUpdateOptions: PropTypes.func.isRequired,
+    i: PropTypes.number.isRequired,
 };
 
 const FilterHeader = ({
@@ -86,6 +173,7 @@ const FilterHeader = ({
                                     handleFilterUpdateOptions
                                 }
                                 filter={filter}
+                                i={i}
                             />
                         )}
                     </th>

@@ -94,7 +94,12 @@ class OptionsFilter extends React.Component {
         }
 
         const options = (
-            <div className="datatable-dropdown-options border">
+            <div
+                className="datatable-dropdown-options border"
+                style={{
+                    height: 2 + (allPositions.length + 1) * 19,
+                }}
+            >
                 <div>
                     <a href="" onClick={this.selectAll}>
                         All
@@ -124,10 +129,10 @@ class OptionsFilter extends React.Component {
         );
 
         return (
-            <div className="datatable-dropdown">
+            <>
                 {button}
-                {options}
-            </div>
+                <div className="datatable-dropdown">{options}</div>
+            </>
         );
     }
 }

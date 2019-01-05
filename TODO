@@ -3,15 +3,7 @@
 not enough good WRs, too many good TEs
 
 game sim
-- reevaluate player selection
 - penalties
-- clock
-  - handle stopping/running clock after some plays
-    - add state variable
-  - speed up or slow down towards end of half/game
-  - extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
-    - set quarterLenght really low and you can see extra point being taken in next quarter
-  - pace
 - special kick after safety
 - kickoff after halftime
 - fatigue
@@ -21,7 +13,11 @@ game sim
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
   - use ovr when possible - can i put these in composite ratings?
-- clock management, strategy
+- clock
+  - extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
+    - set quarterLenght really low and you can see extra point being taken in next quarter
+  - pace
+  - clock management, strategy
 - later
   - log clutch plays
   - blocked fg

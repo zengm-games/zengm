@@ -48,7 +48,8 @@ const processStats = (
             } else if (stat === "yds") {
                 row[stat] = ts.pssYds + ts.rusYds;
             } else if (stat === "ydsPerPlay") {
-                row[stat] = (ts.pssYds + ts.rusYds) / ts.ply;
+                row[stat] =
+                    (ts.pssYds + ts.rusYds) / (ts.pss + ts.rus + ts.pssSk);
             } else if (stat === "tov") {
                 row[stat] = ts.fmbLost + ts.pssInt;
             } else if (stat === "pssNetYdsPerAtt") {

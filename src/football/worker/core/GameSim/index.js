@@ -276,7 +276,7 @@ class GameSim {
 
         // Time between plays
         if (this.isClockRunning) {
-            dt += random.randInt(5, 40) / 60;
+            dt += random.randInt(15, 40) / 60;
         }
 
         // Clock

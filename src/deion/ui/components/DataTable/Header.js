@@ -103,7 +103,6 @@ class OptionsFilter extends React.Component<Props, State> {
 
         if (this.state.open) {
             this.setState({
-                dirty: false,
                 open: false,
             });
         }
@@ -111,6 +110,7 @@ class OptionsFilter extends React.Component<Props, State> {
 
     handleApply() {
         this.setState({
+            dirty: false,
             open: false,
         });
 
@@ -196,7 +196,7 @@ class OptionsFilter extends React.Component<Props, State> {
                     ))}
                 </div>
                 <button
-                    className="btn btn-primary btn-xs"
+                    className="btn btn-light-bordered btn-xs"
                     onClick={this.handleApply}
                 >
                     Apply

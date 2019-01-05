@@ -7,7 +7,6 @@ import PlayByPlayLogger from "./PlayByPlayLogger";
 import formations from "./formations";
 import type { Position } from "../../../common/types";
 import type {
-    PlayerNumOnCourt,
     TeamNum,
     CompositeRating,
     PlayerGameSim,
@@ -470,7 +469,7 @@ class GameSim {
                 names: [kicker.name],
             });
 
-            dt = 5;
+            dt = random.randInt(2, 5);
 
             const kickTo = random.randInt(40, 55);
             this.scrimmage = kickTo;
@@ -499,6 +498,7 @@ class GameSim {
                     Math.random() < 0.01 ? 100 : random.randInt(0, 5);
                 const returnLength = this.boundedYds(rawLength);
                 const { td } = this.advanceYds(returnLength);
+                dt += Math.abs(returnLength) / 8;
 
                 this.recordStat(this.o, kickReturner, "kr");
                 this.recordStat(this.o, kickReturner, "krYds", returnLength);
@@ -541,10 +541,10 @@ class GameSim {
                 this.down = 1;
                 this.toGo = 10;
             } else {
-                dt = 5;
                 this.scrimmage = kickTo;
                 const returnLength = this.boundedYds(random.randInt(10, 109));
                 const { td } = this.advanceYds(returnLength);
+                dt = Math.abs(returnLength) / 8;
 
                 this.recordStat(this.o, kickReturner, "kr");
                 this.recordStat(this.o, kickReturner, "krYds", returnLength);
@@ -589,6 +589,7 @@ class GameSim {
         const distance = random.randInt(35, 70);
         const kickTo = 100 - this.scrimmage - distance;
         const touchback = kickTo < 0;
+        let dt = random.randInt(5, 9);
 
         this.recordStat(this.o, punter, "pnt");
         this.recordStat(this.o, punter, "pntYds", distance);
@@ -621,6 +622,7 @@ class GameSim {
             );
             this.scrimmage = kickTo;
             const { td } = this.advanceYds(returnLength);
+            dt += Math.abs(returnLength) / 8;
 
             this.recordStat(this.o, puntReturner, "pr");
             this.recordStat(this.o, puntReturner, "prYds", returnLength);
@@ -646,7 +648,7 @@ class GameSim {
         this.recordStat(this.o, undefined, "drives");
         this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
 
-        return 5;
+        return dt;
     }
 
     doFieldGoal(extraPoint?: boolean = false) {
@@ -706,7 +708,7 @@ class GameSim {
 
         this.awaitingAfterTouchdown = false;
 
-        return extraPoint ? 0 : 5;
+        return extraPoint ? 0 : random.randInt(4, 6);
     }
 
     doTwoPointConversion() {
@@ -889,6 +891,8 @@ class GameSim {
             return 5;
         }
 
+        let dt = random.randInt(2, 6);
+
         const target = this.pickPlayer(
             this.o,
             Math.random() < 0.2 ? "catching" : "gettingOpen",
@@ -916,10 +920,12 @@ class GameSim {
             const fumble2 = Math.random() < 0.01;
             if (fumble2) {
                 this.doFumble(qb, yds);
-                return 5;
+                return dt;
             }
 
             const { safetyOrTouchback, td } = this.advanceYds(yds);
+            dt += Math.abs(yds) / 20;
+
             this.recordStat(this.o, qb, "pssCmp");
             this.recordStat(this.o, qb, "pssYds", yds);
             this.recordStat(this.o, qb, "pssLng", yds);
@@ -955,7 +961,7 @@ class GameSim {
             });
         }
 
-        return 5;
+        return dt;
     }
 
     doRun() {
@@ -985,6 +991,8 @@ class GameSim {
         this.recordStat(this.o, p, "rusYds", yds);
         this.recordStat(this.o, p, "rusLng", yds);
 
+        const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
+
         const fumble = Math.random() < 0.01;
         if (fumble) {
             this.doFumble(p, yds);
@@ -1011,7 +1019,7 @@ class GameSim {
             this.doSafety();
         }
 
-        return 5;
+        return dt;
     }
 
     updatePlayingTime(possessionTime: number) {
@@ -1093,7 +1101,7 @@ class GameSim {
     }
 
     pickPlayer(
-        t: 0 | 1,
+        t: TeamNum,
         rating?: CompositeRating,
         positions?: Position[] = POSITIONS,
         power?: number = 1,

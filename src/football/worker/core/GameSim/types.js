@@ -22,8 +22,6 @@ export type PlayType =
     | "onsideKick"
     | "onsideKickRecovery";
 
-export type PlayerNumOnCourt = 0 | 1 | 2 | 3 | 4;
-
 export type TeamNum = 0 | 1;
 
 export type CompositeRating =

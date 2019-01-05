@@ -6,12 +6,13 @@ game sim
 - reevaluate player selection
 - penalties
 - clock
-  - scale dt by length (in yds) of play
   - handle stopping/running clock after some plays
+    - add state variable
   - speed up or slow down towards end of half/game
   - extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
     - set quarterLenght really low and you can see extra point being taken in next quarter
   - pace
+  - handle fumble/int/safety/sack
 - special kick after safety
 - kickoff after halftime
 - fatigue
@@ -28,6 +29,8 @@ game sim
     - chance for either team to return (very slim for offense)
   - blocked punt
   - missed fg/xp return
+
+injuries
 
 AV advanced stat
 - use in value?

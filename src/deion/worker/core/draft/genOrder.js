@@ -17,7 +17,7 @@ const genOrder = async (
     mock?: boolean = false,
     conditions?: Conditions,
 ): Promise<void> => {
-    if (g.draftLottery === "nba") {
+    if (g.draftType === "nba") {
         await genOrderNBA(mock, conditions);
     } else {
         await genOrderNone(mock);

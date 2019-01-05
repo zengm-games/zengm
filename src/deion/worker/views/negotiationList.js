@@ -8,7 +8,7 @@ import { g } from "../util";
 async function updateNegotiationList(): void | { [key: string]: any } {
     const stats =
         process.env.SPORT === "basketball"
-            ? ["gp", "in", "pts", "trb", "ast", "per"]
+            ? ["gp", "min", "pts", "trb", "ast", "per"]
             : ["gp", "keyStats"];
 
     let negotiations = await idb.cache.negotiations.getAll();

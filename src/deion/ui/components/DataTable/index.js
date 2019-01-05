@@ -371,9 +371,13 @@ class DataTable extends React.Component<Props, State> {
                                   return false;
                               }
                           } else if (Array.isArray(filter)) {
-                              return filter.includes(
-                                  getSearchVal(row.data[i], false),
-                              );
+                              if (
+                                  !filter.includes(
+                                      getSearchVal(row.data[i], false),
+                                  )
+                              ) {
+                                  return false;
+                              }
                           } else {
                               if (Number.isNaN(filter.number)) {
                                   continue;

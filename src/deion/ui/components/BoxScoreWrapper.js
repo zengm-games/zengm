@@ -152,7 +152,9 @@ class NextButton extends React.Component {
         return subscribeLocal(local => {
             const { phase, playMenuOptions, season } = local.state;
 
-            const canPlay = playMenuOptions.some(option => option.id === "day");
+            const canPlay = playMenuOptions.some(
+                option => option.id === "day" || option.id === "week",
+            );
 
             return (
                 <div className="ml-4">
@@ -162,9 +164,8 @@ class NextButton extends React.Component {
                     (phase === PHASE.REGULAR_SEASON ||
                         phase === PHASE.PLAYOFFS) ? (
                         <button
-                            className={classNames("btn", "btn-light-bordered", {
-                                disabled: !canPlay || this.state.autoGoToNext,
-                            })}
+                            className="btn btn-light-bordered"
+                            disabled={!canPlay || this.state.autoGoToNext}
                             onClick={this.simNext}
                         >
                             Sim

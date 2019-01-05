@@ -193,6 +193,7 @@ TeamStats.propTypes = {
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     teamOpponent: PropTypes.oneOf(["advanced", "opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
+    ties: PropTypes.bool.isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

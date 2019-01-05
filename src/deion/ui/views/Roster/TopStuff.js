@@ -163,6 +163,7 @@ TopStuff.propTypes = {
     openRosterSpots: PropTypes.number.isRequired,
     payroll: PropTypes.number,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    profit: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     showTradeFor: PropTypes.bool.isRequired,

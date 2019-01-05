@@ -60,6 +60,8 @@ class GameSim {
 
     clock: number;
 
+    isClockRunning: boolean;
+
     o: TeamNum;
 
     d: TeamNum;
@@ -105,6 +107,7 @@ class GameSim {
         this.overtimes = 0;
 
         this.clock = g.quarterLength; // Game clock, in minutes
+        this.isClockRunning = false;
 
         this.awaitingAfterTouchdown = false;
         this.awaitingKickoff = true;
@@ -272,9 +275,9 @@ class GameSim {
         dt /= 60;
 
         // Time between plays
-        dt += random.randInt(5, 40) / 60;
-
-        dt = Math.round(dt);
+        if (this.isClockRunning) {
+            dt += random.randInt(5, 40) / 60;
+        }
 
         // Clock
         this.clock -= dt;
@@ -570,6 +573,7 @@ class GameSim {
         }
 
         this.awaitingKickoff = false;
+        this.isClockRunning = false;
 
         if (this.overtimeState === "initialKickoff") {
             this.overtimeState = "firstPossession";
@@ -649,6 +653,8 @@ class GameSim {
         this.recordStat(this.o, undefined, "drives");
         this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
 
+        this.isClockRunning = false;
+
         return dt;
     }
 
@@ -708,6 +714,7 @@ class GameSim {
         }
 
         this.awaitingAfterTouchdown = false;
+        this.isClockRunning = false;
 
         return extraPoint ? 0 : random.randInt(4, 6);
     }
@@ -724,11 +731,10 @@ class GameSim {
             this.doRun();
         }
 
-        this.awaitingAfterTouchdown = false;
         this.twoPointConversionTeam = undefined;
-
         this.awaitingAfterTouchdown = false;
         this.awaitingKickoff = true;
+        this.isClockRunning = false;
 
         return 0;
     }
@@ -758,6 +764,10 @@ class GameSim {
             this.recordStat(this.o, pFumbled, "fmbLost");
             this.possessionChange();
             this.scrimmage = 100 - this.scrimmage;
+            this.isClockRunning = false;
+        } else {
+            // Stops if fumbled out of bounds
+            this.isClockRunning = Math.random() > 0.05;
         }
 
         const ydsRaw = random.randInt(0, 109);
@@ -783,6 +793,7 @@ class GameSim {
             } else {
                 this.doSafety();
             }
+            this.isClockRunning = false;
         } else {
             this.recordStat(recoveringTeam, pRecovered, "defFmbYds", yds);
             this.recordStat(recoveringTeam, pRecovered, "defFmbLng", yds);
@@ -834,6 +845,8 @@ class GameSim {
             }
         }
 
+        this.isClockRunning = false;
+
         return dt;
     }
 
@@ -846,6 +859,7 @@ class GameSim {
 
         this.possessionChange();
         this.awaitingKickoff = true;
+        this.isClockRunning = false;
     }
 
     doSack(qb: PlayerGameSim) {
@@ -872,6 +886,8 @@ class GameSim {
         if (safetyOrTouchback) {
             this.doSafety();
         }
+
+        this.isClockRunning = Math.random() < 0.02;
 
         return random.randInt(3, 8);
     }
@@ -954,6 +970,8 @@ class GameSim {
                 this.recordStat(this.o, target, "recTD");
             }
 
+            this.isClockRunning = Math.random() < 0.75;
+
             if (safetyOrTouchback) {
                 this.doSafety();
             }
@@ -965,6 +983,8 @@ class GameSim {
                 twoPointConversionTeam: this.twoPointConversionTeam,
                 yds,
             });
+
+            this.isClockRunning = false;
         }
 
         return dt;
@@ -1019,6 +1039,8 @@ class GameSim {
         if (td) {
             this.recordStat(this.o, p, "rusTD");
         }
+
+        this.isClockRunning = Math.random() < 0.85;
 
         if (safetyOrTouchback) {
             this.doSafety();

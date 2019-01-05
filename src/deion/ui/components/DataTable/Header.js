@@ -4,17 +4,38 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
-class OptionsFilter extends React.Component {
+type Props = {};
+
+type State = {
+    dirty: boolean,
+    open: boolean,
+    currentSelection: string[],
+};
+
+class OptionsFilter extends React.Component<Props, State> {
     constructor(props) {
         super(props);
         this.state = {
+            dirty: false,
             open: false,
+            currentSelection: [],
         };
         this.toggleOpen = this.toggleOpen.bind(this);
         this.selectAll = this.selectAll.bind(this);
         this.selectNone = this.selectNone.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.handleApply = this.handleApply.bind(this);
+    }
+
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+        if (!prevState.dirty) {
+            return {
+                currentSelection: nextProps.filter,
+            };
+        }
+
+        return null;
     }
 
     toggleOpen() {
@@ -26,30 +47,35 @@ class OptionsFilter extends React.Component {
     }
 
     selectAll() {
-        this.props.handleFilterUpdateOptions(
-            this.props.allPositions,
-            this.props.i,
-        );
+        this.setState({
+            currentSelection: this.props.allPositions,
+            dirty: true,
+        });
     }
 
     selectNone() {
-        this.props.handleFilterUpdateOptions([], this.props.i);
+        this.setState({
+            currentSelection: [],
+            dirty: true,
+        });
     }
 
     handleSelect(event) {
         const value = event.target.checked;
         const name = event.target.name;
 
-        if (value && !this.props.filter.includes(name)) {
-            this.props.handleFilterUpdateOptions(
-                [...this.props.filter, name],
-                this.props.i,
-            );
-        } else if (!value && this.props.filter.includes(name)) {
-            this.props.handleFilterUpdateOptions(
-                this.props.filter.filter(val => val !== name),
-                this.props.i,
-            );
+        if (value && !this.state.currentSelection.includes(name)) {
+            this.setState(state => ({
+                currentSelection: [...state.currentSelection, name],
+                dirty: true,
+            }));
+        } else if (!value && this.state.currentSelection.includes(name)) {
+            this.setState(state => ({
+                currentSelection: state.currentSelection.filter(
+                    val => val !== name,
+                ),
+                dirty: true,
+            }));
         }
     }
 
@@ -60,9 +86,21 @@ class OptionsFilter extends React.Component {
 
         if (this.state.open) {
             this.setState({
+                dirty: false,
                 open: false,
             });
         }
+    }
+
+    handleApply() {
+        this.setState({
+            open: false,
+        });
+
+        this.props.handleFilterUpdateOptions(
+            this.state.currentSelection,
+            this.props.i,
+        );
     }
 
     componentDidMount() {
@@ -118,7 +156,7 @@ class OptionsFilter extends React.Component {
             <div
                 className="datatable-dropdown-options border"
                 style={{
-                    height: 2 + (allPositions.length + 1) * 19,
+                    height: 2 + (allPositions.length + 1) * 19 + 30,
                 }}
             >
                 <div>
@@ -130,13 +168,15 @@ class OptionsFilter extends React.Component {
                         None
                     </a>
                 </div>
-                <div className="form-group form-check">
+                <div className="form-group form-check mb-1">
                     {allPositions.map(pos => (
                         <div key={pos}>
                             <label className="form-check-label">
                                 <input
                                     className="form-check-input"
-                                    checked={filter.includes(pos)}
+                                    checked={this.state.currentSelection.includes(
+                                        pos,
+                                    )}
                                     name={pos}
                                     onChange={this.handleSelect}
                                     type="checkbox"
@@ -146,6 +186,12 @@ class OptionsFilter extends React.Component {
                         </div>
                     ))}
                 </div>
+                <button
+                    className="btn btn-primary btn-xs"
+                    onClick={this.handleApply}
+                >
+                    Apply
+                </button>
             </div>
         );
 

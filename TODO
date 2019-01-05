@@ -2,7 +2,7 @@
 
 for position (or any small number of string values), turn filter box into a drop down rather than text entry
 - in loadStateFromCache, sort positions logically depending on sport
-- add "Apply" button for after changing check boxes
+- closing and opening again should retain "dirty" choices
 - flow
 
 not enough good WRs, too many good TEs

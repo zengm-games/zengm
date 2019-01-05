@@ -197,7 +197,13 @@ const setupRoutes = () => {
             }
 
             if (!initialLoad) {
-                ads.refreshBanners();
+                if (window.useBBGMAds) {
+                    window.bbgmAds.cmd.push(() => {
+                        window.bbgmAds.refresh();
+                    });
+                } else {
+                    ads.refreshBanners();
+                }
             } else {
                 initialLoad = false;
             }

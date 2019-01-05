@@ -75,25 +75,58 @@ const initAds = (goldUntil: number | void) => {
             container.style.maxWidth = "100%";
         }
     } else {
-        // Show hidden divs. skyscraper has its own code elsewhere to manage display.
-        const showDivs = [
-            "bbgm-ads-top",
-            "bbgm-ads-bottom1",
-            "bbgm-ads-bottom2",
-            "skyscraper-wrapper",
-        ];
-        for (const id of showDivs) {
-            const div = document.getElementById(id);
-            if (div) {
-                div.style.removeProperty("display");
+        if (window.useBBGMAds) {
+            window.bbgmAds.cmd.push(() => {
+                // Show hidden divs. skyscraper has its own code elsewhere to manage display.
+                const showDivs = [
+                    "bbgm-ads-top",
+                    "bbgm-ads-bottom1",
+                    "bbgm-ads-bottom2",
+                    "skyscraper-wrapper",
+                ];
+                for (const id of showDivs) {
+                    const div = document.getElementById(id);
+                    if (div) {
+                        div.style.removeProperty("display");
+                    }
+                }
+
+                window.bbgmAds
+                    .init([
+                        "bbgm-ads-top",
+                        "bbgm-ads-bottom1",
+                        "bbgm-ads-bottom2",
+                        "bbgm-ads-skyscraper",
+                    ])
+                    .then(() => {
+                        // Show the logo too
+                        const logo = document.getElementById("bbgm-ads-logo");
+                        if (logo) {
+                            logo.style.display = "flex";
+                        }
+                    });
+            });
+        } else {
+            // Show hidden divs. skyscraper has its own code elsewhere to manage display.
+            const showDivs = [
+                "bbgm-ads-top",
+                "bbgm-ads-bottom1",
+                "bbgm-ads-bottom2",
+                "skyscraper-wrapper",
+            ];
+            for (const id of showDivs) {
+                const div = document.getElementById(id);
+                if (div) {
+                    div.style.removeProperty("display");
+                }
             }
-        }
 
-        ads.refreshBanners();
+            ads.refreshBanners();
 
-        const logo = document.getElementById("bbgm-ads-logo");
-        if (logo) {
-            logo.style.display = "flex";
+            const logo = document.getElementById("bbgm-ads-logo");
+            if (logo) {
+                logo.style.display = "flex";
+            }
         }
     }
 };

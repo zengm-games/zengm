@@ -1,6 +1,7 @@
 // @flow
 
 import getSearchVal from "./getSearchVal";
+import { overrides } from "../../util";
 import type { Props, SortBy } from ".";
 
 const loadStateFromCache = (props: Props) => {
@@ -42,7 +43,13 @@ const loadStateFromCache = (props: Props) => {
             const val = getSearchVal(row.data[i], false);
             allPositions.add(val);
         }
-        allPositions = Array.from(allPositions).sort();
+        allPositions = overrides.constants.POSITIONS.filter(pos =>
+            allPositions.has(pos),
+        ).concat(
+            Array.from(allPositions).filter(
+                pos => !overrides.constants.POSITIONS.includes(pos),
+            ),
+        );
         return allPositions;
     });
     const filtersFromStorage = localStorage.getItem(

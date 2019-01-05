@@ -1,7 +1,6 @@
 # football
 
 for position (or any small number of string values), turn filter box into a drop down rather than text entry
-- in loadStateFromCache, sort positions logically depending on sport
 - closing and opening again should retain "dirty" choices
 - flow
 

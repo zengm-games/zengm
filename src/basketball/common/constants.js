@@ -229,7 +229,7 @@ const TEAM_STATS_TABLES = {
     },
 };
 
-const POSITIONS = [];
+const POSITIONS = ["PG", "G", "SG", "GF", "SF", "F", "PF", "FC", "C"];
 
 const POSITION_COUNTS = {};
 

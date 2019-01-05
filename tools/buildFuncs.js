@@ -100,6 +100,14 @@ const setSport = () => {
             paths: ["build/index.html"],
             silent: true,
         });
+
+        // lol
+        replace({
+            regex: "football-gm.com/bbgm-ads",
+            replacement: "basketball-gm.com/bbgm-ads",
+            paths: ["build/index.html"],
+            silent: true,
+        });
     }
 };
 

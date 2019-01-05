@@ -12,7 +12,6 @@ game sim
   - extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
     - set quarterLenght really low and you can see extra point being taken in next quarter
   - pace
-  - handle fumble/int/safety/sack
 - special kick after safety
 - kickoff after halftime
 - fatigue

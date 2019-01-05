@@ -274,14 +274,15 @@ class GameSim {
         // Time between plays
         dt += random.randInt(5, 40) / 60;
 
+        dt = Math.round(dt);
+
         // Clock
         this.clock -= dt;
-        let playTime = dt;
         if (this.clock < 0) {
-            playTime += this.clock;
+            dt += this.clock;
             this.clock = 0;
         }
-        this.updatePlayingTime(playTime);
+        this.updatePlayingTime(dt);
 
         this.injuries();
 
@@ -762,6 +763,7 @@ class GameSim {
         const ydsRaw = random.randInt(0, 109);
         const yds = this.boundedYds(ydsRaw);
         const { safetyOrTouchback, td } = this.advanceYds(yds);
+        let dt = Math.abs(yds) / 6;
 
         this.playByPlay.logEvent("fumbleRecovery", {
             clock: this.clock,
@@ -787,9 +789,11 @@ class GameSim {
             if (td) {
                 this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
             } else if (Math.random() < 0.01) {
-                this.doFumble(pRecovered, 0);
+                dt += this.doFumble(pRecovered, 0);
             }
         }
+
+        return dt;
     }
 
     doInterception(passYdsRaw: number) {
@@ -805,6 +809,7 @@ class GameSim {
         const ydsRaw = random.randInt(0, 109);
         const yds = this.boundedYds(ydsRaw);
         const { safetyOrTouchback, td } = this.advanceYds(yds);
+        let dt = Math.abs(yds) / 8;
 
         this.recordStat(this.o, p, "defInt");
 
@@ -825,9 +830,11 @@ class GameSim {
             if (td) {
                 this.recordStat(this.o, p, "defIntTD");
             } else if (Math.random() < 0.01) {
-                this.doFumble(p, 0);
+                dt += this.doFumble(p, 0);
             }
         }
+
+        return dt;
     }
 
     doSafety() {
@@ -865,6 +872,8 @@ class GameSim {
         if (safetyOrTouchback) {
             this.doSafety();
         }
+
+        return random.randInt(3, 8);
     }
 
     doPass() {
@@ -878,20 +887,18 @@ class GameSim {
             names: [qb.name],
         });
 
+        let dt = random.randInt(2, 6);
+
         const fumble = Math.random() < 0.01;
         if (fumble) {
             const yds = random.randInt(-1, -10);
-            this.doFumble(qb, yds);
-            return 5;
+            return dt + this.doFumble(qb, yds);
         }
 
         const sack = Math.random() < 0.02;
         if (sack) {
-            this.doSack(qb);
-            return 5;
+            return this.doSack(qb);
         }
-
-        let dt = random.randInt(2, 6);
 
         const target = this.pickPlayer(
             this.o,
@@ -914,13 +921,12 @@ class GameSim {
         this.recordStat(this.d, defender, "defPssDef");
 
         if (interception) {
-            this.doInterception(yds);
+            dt += this.doInterception(yds);
             this.recordStat(this.o, qb, "pssInt");
         } else if (complete) {
             const fumble2 = Math.random() < 0.01;
             if (fumble2) {
-                this.doFumble(qb, yds);
-                return dt;
+                return dt + this.doFumble(qb, yds);
             }
 
             const { safetyOrTouchback, td } = this.advanceYds(yds);
@@ -995,8 +1001,7 @@ class GameSim {
 
         const fumble = Math.random() < 0.01;
         if (fumble) {
-            this.doFumble(p, yds);
-            return 5;
+            return dt + this.doFumble(p, yds);
         }
 
         const { safetyOrTouchback, td } = this.advanceYds(yds);

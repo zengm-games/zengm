@@ -831,7 +831,7 @@ class GameSim {
     doSafety() {
         const p = this.pickPlayer(
             this.d,
-            Math.random < 0.5 ? "passRushing" : "runStopping",
+            Math.random() < 0.5 ? "passRushing" : "runStopping",
         );
         this.recordStat(this.d, p, "defSft");
 

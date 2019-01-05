@@ -31,22 +31,22 @@ const loadStateFromCache = (props: Props) => {
 
     let allPositions;
     let posInd;
-    const defaultFilters: string[] = props.cols.map((col, i) => {
+    const defaultFilters: (string | string[])[] = props.cols.map((col, i) => {
         if (col.title !== "Pos") {
             return "";
         }
 
         // Special case stuff for position filter
         posInd = i;
-        allPositions = new Set();
+        const allPositionsSet = new Set();
         for (const row of props.rows) {
             const val = getSearchVal(row.data[i], false);
-            allPositions.add(val);
+            allPositionsSet.add(val);
         }
         allPositions = overrides.constants.POSITIONS.filter(pos =>
-            allPositions.has(pos),
+            allPositionsSet.has(pos),
         ).concat(
-            Array.from(allPositions).filter(
+            Array.from(allPositionsSet).filter(
                 pos => !overrides.constants.POSITIONS.includes(pos),
             ),
         );

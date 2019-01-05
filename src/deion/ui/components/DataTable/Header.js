@@ -4,7 +4,12 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
-type Props = {};
+type Props = {
+    allPositions?: string[],
+    filter: string[],
+    i: number,
+    handleFilterUpdateOptions: (string[], number) => void,
+};
 
 type State = {
     dirty: boolean,
@@ -13,6 +18,18 @@ type State = {
 };
 
 class OptionsFilter extends React.Component<Props, State> {
+    toggleOpen: Function;
+
+    selectAll: Function;
+
+    selectNone: Function;
+
+    handleSelect: Function;
+
+    handleClickOutside: Function;
+
+    handleApply: Function;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -112,19 +129,11 @@ class OptionsFilter extends React.Component<Props, State> {
     }
 
     render() {
-        const {
-            allPositions,
-            filter,
-        }: {
-            allPositions?: string[],
-            cols: Col[],
-            filter: string[],
-            handleFilterUpdateOptions: (string[], number) => void,
-            handleFilterUpdateText: (
-                SyntheticInputEvent<HTMLInputElement>,
-                number,
-            ) => void,
-        } = this.props;
+        const { allPositions, filter } = this.props;
+
+        if (!allPositions) {
+            throw new Error("allPositions should never be undefined");
+        }
 
         let value = filter.join(",");
         if (filter.length === 0) {

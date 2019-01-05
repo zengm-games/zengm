@@ -48,6 +48,7 @@ export type Props = {
 };
 
 type State = {
+    allPositions?: string[],
     currentPage: number,
     enableFilters: boolean,
     filters: (string | string[])[],
@@ -64,7 +65,9 @@ class DataTable extends React.Component<Props, State> {
 
     handleToggleFilters: Function;
 
-    handleFilterUpdate: Function;
+    handleFilterUpdateOptions: Function;
+
+    handleFilterUpdateText: Function;
 
     handlePagination: Function;
 
@@ -299,6 +302,9 @@ class DataTable extends React.Component<Props, State> {
                       this.props.cols[i].sortType === "number" ||
                       this.props.cols[i].sortType === "currency"
                   ) {
+                      if (Array.isArray(filter)) {
+                          throw new Error("Should never happen");
+                      }
                       let number = filter.replace(/[^0-9.<>]/g, "");
                       let direction;
                       if (
@@ -400,6 +406,9 @@ class DataTable extends React.Component<Props, State> {
                                   numericVal !== filter.number
                               ) {
                                   return false;
+                              }
+                              if (Array.isArray(filter.original)) {
+                                  throw new Error("Should never happen");
                               }
                               if (
                                   filter.direction === undefined &&

@@ -195,7 +195,7 @@ class NextButton extends React.Component {
 NextButton.propTypes = {
     abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
-    currentGidInList: PropTypes.bool.isRequired,
+    currentGidInList: PropTypes.bool,
     nextGid: PropTypes.number,
 };
 
@@ -287,7 +287,7 @@ const DetailedScore = ({
 DetailedScore.propTypes = {
     abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
-    currentGidInList: PropTypes.bool.isRequired,
+    currentGidInList: PropTypes.bool,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
     showNextPrev: PropTypes.bool,
@@ -382,7 +382,7 @@ class BoxScore extends React.Component {
 BoxScore.propTypes = {
     abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
-    currentGidInList: PropTypes.bool.isRequired,
+    currentGidInList: PropTypes.bool,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
     showNextPrev: PropTypes.bool,

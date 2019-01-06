@@ -5,7 +5,7 @@ const penalties = [
         name: "Holding",
         side: "offense",
         playTypes: [
-            "kickoff",
+            "kickoffReturn",
             "fieldGoal",
             "punt",
             "puntReturn",
@@ -71,7 +71,7 @@ const penalties = [
         name: "Unnecessary roughness",
         side: "defense",
         playTypes: [
-            "kickoff",
+            "kickoffReturn",
             "fieldGoal",
             "punt",
             "puntReturn",
@@ -92,7 +92,7 @@ const penalties = [
         name: "Unnecessary roughness",
         side: "offense",
         playTypes: [
-            "kickoff",
+            "kickoffReturn",
             "fieldGoal",
             "punt",
             "puntReturn",
@@ -171,7 +171,7 @@ const penalties = [
     {
         name: "Face mask",
         side: "defense",
-        playTypes: ["pass", "run", "kickoff", "puntReturn"],
+        playTypes: ["pass", "run", "kickoffReturn", "puntReturn"],
         probPerPlay: 0,
         numPerSeason: 80,
         yds: 15,
@@ -185,7 +185,7 @@ const penalties = [
     {
         name: "Face mask",
         side: "offense",
-        playTypes: ["pass", "run", "kickoff", "puntReturn"],
+        playTypes: ["pass", "run", "kickoffReturn", "puntReturn"],
         probPerPlay: 0,
         numPerSeason: 8,
         yds: 15,
@@ -200,7 +200,7 @@ const penalties = [
 
 // Total each season, to compare with penalty.numPerSeason for frequency calculation
 const numPlays = {
-    kickoff: 2500,
+    kickoffReturn: 2500,
     punt: 2000,
     puntReturn: 2000,
     fieldGoal: 2000, // Includes extra points

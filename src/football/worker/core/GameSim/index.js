@@ -5,6 +5,7 @@ import { g, helpers, random } from "../../../../deion/worker/util";
 import { POSITIONS } from "../../../common";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import formations from "./formations";
+import penalties from "./penalties";
 import type { Position } from "../../../common/types";
 import type {
     TeamNum,
@@ -557,13 +558,23 @@ class GameSim {
                 this.toGo = 10;
             } else {
                 this.scrimmage = kickTo;
-                const returnLength = this.boundedYds(random.randInt(10, 109));
-                const { td } = this.advanceYds(returnLength);
+                let returnLength = this.boundedYds(random.randInt(10, 109));
                 dt = Math.abs(returnLength) / 8;
+                let td = false;
 
-                this.recordStat(this.o, kickReturner, "kr");
-                this.recordStat(this.o, kickReturner, "krYds", returnLength);
-                this.recordStat(this.o, kickReturner, "krLng", returnLength);
+                const penInfo = this.checkPenalties(
+                    "kickoffReturn",
+                    kickReturner,
+                    returnLength,
+                );
+                if (penInfo && penInfo.type !== "offsetting") {
+                    if (penInfo.spotYds !== undefined) {
+                        returnLength = penInfo.spotYds;
+                    }
+                } else {
+                    const info = this.advanceYds(returnLength);
+                    td = info.td;
+                }
 
                 this.playByPlay.logEvent("kickoffReturn", {
                     clock: this.clock,
@@ -572,6 +583,15 @@ class GameSim {
                     td,
                     yds: returnLength,
                 });
+
+                this.recordStat(this.o, kickReturner, "kr");
+                this.recordStat(this.o, kickReturner, "krYds", returnLength);
+                this.recordStat(this.o, kickReturner, "krLng", returnLength);
+
+                if (penInfo && penInfo.type !== "offsetting") {
+                    console.log(penInfo);
+                    penInfo.doLog();
+                }
 
                 if (td) {
                     this.awaitingAfterTouchdown = true;
@@ -1064,7 +1084,7 @@ class GameSim {
     checkPenalties(
         playType:
             | "beforeSnap"
-            | "kickoff"
+            | "kickoffReturn"
             | "fieldGoal"
             | "punt"
             | "puntReturn"
@@ -1094,11 +1114,13 @@ class GameSim {
         const defensive = called.filter(pen => pen.side === "defense");
 
         if (offensive.length > 0 && defensive.length > 0) {
-            this.playByPlay.logEvent("offsettingPenalties", {
-                clock: this.clock,
-            });
             return {
                 type: "offsetting",
+                doLog: () => {
+                    this.playByPlay.logEvent("offsettingPenalties", {
+                        clock: this.clock,
+                    });
+                },
             };
         }
 
@@ -1119,7 +1141,7 @@ class GameSim {
                     spotYds = random.randInt(1, playYds);
                 } else if (pen.side === "defense") {
                     // Defensive spot foul - could be in secondary too
-                    spotYds = random.randInt(Math.floor(playYds / 4), playYds);
+                    spotYds = random.randInt(0, playYds);
                 }
 
                 if (spotYds !== undefined) {
@@ -1130,7 +1152,7 @@ class GameSim {
             totYds += pen.side === "defense" ? pen.yds : -pen.yds;
 
             return {
-                automaticFirstDown: pen.automaticFirstDown,
+                automaticFirstDown: !!pen.automaticFirstDown,
                 name: pen.name,
                 penYds: pen.yds,
                 posOdds: pen.posOdds,
@@ -1152,20 +1174,19 @@ class GameSim {
         if (side === "defense" && this.scrimmage + penInfo.totYds > 99) {
             // 1 yard line
             adjustment = this.scrimmage + penInfo.totYds - 99;
-        } else if (
-            side === "offense" &&
-            this.scrimmage - penInfo.totYds < this.scrimmage / 2
-        ) {
-            // Half distance to goal
+        } else if (side === "offense") {
+            // Half distance to goal?
             const spotOfFoul =
                 penInfo.spotYds === undefined
                     ? this.scrimmage
-                    : this.scrimmage - penInfo.spotYds;
+                    : this.scrimmage + penInfo.spotYds;
             if (spotOfFoul < 1) {
                 throw new Error("This should already have been a safety");
             }
             const halfYds = Math.round(spotOfFoul / 2);
-            adjustment = penInfo.penYds - halfYds;
+            if (penInfo.penYds > halfYds) {
+                adjustment = penInfo.penYds - halfYds;
+            }
         }
         penInfo.totYds -= adjustment;
         penInfo.penYds -= adjustment;
@@ -1185,36 +1206,28 @@ class GameSim {
             const positions = positionsOnField.filter(pos =>
                 positionsForPenalty.includes(pos),
             );
-            if (positions.length === 0) {
-                console.log(penInfo);
-                throw new Error("No positions found");
+            if (positions.length > 0) {
+                const pos = random.choice(
+                    positions,
+                    pos2 => penInfo.posOdds[pos2],
+                );
+                if (
+                    this.playersOnField[t][pos] !== undefined &&
+                    this.playersOnField[t][pos].length > 0
+                ) {
+                    p = random.choice(this.playersOnField[t][pos]);
+                }
             }
 
-            const pos = random.choice(positions, pos2 => penInfo.posOdds[pos2]);
-            if (this.playersOnField[t][pos] === undefined) {
-                throw new Error(
-                    `No players at position ${pos} on field in this formation`,
+            if (!p) {
+                console.log(
+                    "Using posOdds found nobody, so just pick randomly",
                 );
+                p = this.pickPlayer(t);
             }
-            if (this.playersOnField[t][pos].length === 0) {
-                console.log(penInfo);
-                throw new Error(`No player found at position ${pos}`);
-            }
-            p = random.choice(this.playersOnField[t][pos]);
 
             // Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
         }
-
-        this.recordStat(t, p, "pen");
-        this.recordStat(t, p, "penYds", recordedPenYds);
-        this.playByPlay.logEvent("penalty", {
-            clock: this.clock,
-            t,
-            players: p ? [p.name] : [],
-            automaticFirstDown: penInfo.automaticFirstDown,
-            penaltyName: penInfo.name,
-            yds: penInfo.recordedPenYds,
-        });
 
         console.log(penInfos);
 
@@ -1230,6 +1243,18 @@ class GameSim {
         return {
             type: "penalty",
             yds: penInfo.totYds,
+            doLog: () => {
+                this.recordStat(t, p, "pen");
+                this.recordStat(t, p, "penYds", recordedPenYds);
+                this.playByPlay.logEvent("penalty", {
+                    clock: this.clock,
+                    t,
+                    names: p ? [p.name] : [],
+                    automaticFirstDown: penInfo.automaticFirstDown,
+                    penaltyName: penInfo.name,
+                    yds: recordedPenYds,
+                });
+            },
         };
     }
 

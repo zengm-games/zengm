@@ -1,9 +1,18 @@
 # football
 
 not enough good WRs, too many good TEs
-
+checkPenalties(
+    playType:
+        | "beforeSnap"
+        | "kickoffReturn"
+        | "fieldGoal"
+        | "punt"
+        | "puntReturn"
+        | "pass"
+        | "run",
 game sim
 - penalties
+  - kickoff -> kickoffReturn
   - during extra point: retry
   - during 2pt conversion: Retry
   - during punt: retry punt or apply to end

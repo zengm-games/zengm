@@ -47,10 +47,12 @@ class PlayByPlayLogger {
     logEvent(
         type: PlayType,
         {
+            automaticFirstDown,
             clock,
             lost,
             made,
             names,
+            penaltyName,
             quarter,
             safety,
             success,
@@ -60,10 +62,12 @@ class PlayByPlayLogger {
             twoPointConversionTeam,
             yds,
         }: {
+            automaticFirstDown?: boolean,
             clock: number,
             lost?: boolean,
             made?: boolean,
             names?: string[],
+            penaltyName?: string,
             quarter?: number,
             safety?: boolean,
             success?: boolean,
@@ -342,6 +346,27 @@ class PlayByPlayLogger {
                     text = `${names[0]} rushed for ${result}`;
                     this.updateTwoPointConversionState(td);
                 }
+            } else if (type === "offsettingPenalties") {
+                text = "Offsetting penalties on the play";
+            } else if (type === "penalty") {
+                if (automaticFirstDown === undefined) {
+                    throw new Error("Missing automaticFirstDown");
+                }
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (penaltyName === undefined) {
+                    throw new Error("Missing penaltyName");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
+
+                text = `Penalty: ${penaltyName.toLowerCase()}${
+                    names.length > 0 ? ` on ${names[0]}` : ""
+                }, ${yds} yards${
+                    automaticFirstDown ? " and an automatic first down" : ""
+                }`;
             }
 
             if (text) {

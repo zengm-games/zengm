@@ -20,7 +20,9 @@ export type PlayType =
     | "handoff"
     | "run"
     | "onsideKick"
-    | "onsideKickRecovery";
+    | "onsideKickRecovery"
+    | "offsettingPenalties"
+    | "penalty";
 
 export type TeamNum = 0 | 1;
 
@@ -53,6 +55,11 @@ export type PlayerGameSim = {
     injured: boolean,
     ptModifier: number,
 };
+
+export type PlayersOnField = [
+    { [key: Position]: PlayerGameSim },
+    { [key: Position]: PlayerGameSim },
+];
 
 export type TeamGameSim = {
     id: number,

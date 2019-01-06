@@ -10,6 +10,7 @@ import type {
     TeamNum,
     CompositeRating,
     PlayerGameSim,
+    PlayersOnField,
     TeamGameSim,
 } from "./types";
 
@@ -33,10 +34,7 @@ class GameSim {
 
     team: [TeamGameSim, TeamGameSim];
 
-    playersOnField: [
-        { [key: Position]: PlayerGameSim },
-        { [key: Position]: PlayerGameSim },
-    ];
+    playersOnField: PlayersOnField;
 
     subsEveryN: number;
 
@@ -313,7 +311,18 @@ class GameSim {
         return yds;
     }
 
-    advanceYds(yds: number, { sack }: { sack: boolean } = {}) {
+    advanceYds(
+        yds: number,
+        {
+            automaticFirstDown,
+            repeatDown,
+            sack,
+        }: {
+            automaticFirstDown: boolean,
+            repeatDown: boolean,
+            sack: boolean,
+        } = {},
+    ) {
         // Touchdown?
         const ydsTD = 100 - this.scrimmage;
         if (yds >= ydsTD) {
@@ -364,7 +373,7 @@ class GameSim {
         }
 
         // First down?
-        if (yds >= this.toGo) {
+        if (yds >= this.toGo || automaticFirstDown) {
             this.down = 1;
             const maxToGo = 100 - this.scrimmage;
             this.toGo = maxToGo < 10 ? maxToGo : 10;
@@ -376,21 +385,23 @@ class GameSim {
         }
 
         // Turnover on downs?
-        if (this.down === 4) {
-            this.o = this.o === 0 ? 1 : 0;
-            this.d = this.d === 0 ? 1 : 0;
-            this.scrimmage = 100 - this.scrimmage;
-            this.down = 1;
-            const maxToGo = 100 - this.scrimmage;
-            this.toGo = maxToGo < 10 ? maxToGo : 10;
+        if (!repeatDown) {
+            if (this.down === 4) {
+                this.o = this.o === 0 ? 1 : 0;
+                this.d = this.d === 0 ? 1 : 0;
+                this.scrimmage = 100 - this.scrimmage;
+                this.down = 1;
+                const maxToGo = 100 - this.scrimmage;
+                this.toGo = maxToGo < 10 ? maxToGo : 10;
 
-            return {
-                safetyOrTouchback: false,
-                td: false,
-            };
+                return {
+                    safetyOrTouchback: false,
+                    td: false,
+                };
+            }
+
+            this.down += 1;
         }
-
-        this.down += 1;
         this.toGo -= yds;
 
         return {
@@ -1047,6 +1058,179 @@ class GameSim {
         }
 
         return dt;
+    }
+
+    // Call this before actually advancing the ball, because different logic will apply if it's a spot foul or not
+    checkPenalties(
+        playType:
+            | "beforeSnap"
+            | "kickoff"
+            | "fieldGoal"
+            | "punt"
+            | "puntReturn"
+            | "pass"
+            | "run",
+        ballCarrier?: PlayerGameSim,
+        playYds?: number,
+    ) {
+        // Handle plays in endzone
+        if (this.scrimmage + playYds > 99) {
+            playYds = 99 - this.scrimmage;
+        }
+
+        const called = penalties.filter(pen => {
+            if (!pen.playTypes.includes(playType)) {
+                return false;
+            }
+
+            return Math.random() < pen.probPerPlay;
+        });
+
+        if (called.length === 0) {
+            return;
+        }
+
+        const offensive = called.filter(pen => pen.side === "offense");
+        const defensive = called.filter(pen => pen.side === "defense");
+
+        if (offensive.length > 0 && defensive.length > 0) {
+            this.playByPlay.logEvent("offsettingPenalties", {
+                clock: this.clock,
+            });
+            return {
+                type: "offsetting",
+            };
+        }
+
+        const side = offensive.length > 0 ? "offense" : "defense";
+
+        const penInfos = called.map(pen => {
+            let spotYds;
+            let totYds = 0;
+            if (pen.spotFoul) {
+                if (playYds === undefined) {
+                    throw new Error(
+                        `playYds are required for spot foul "${pen.name}"`,
+                    );
+                }
+
+                if (pen.side === "offense" && playYds > 0) {
+                    // Offensive spot foul - only when past the line of scrimmage
+                    spotYds = random.randInt(1, playYds);
+                } else if (pen.side === "defense") {
+                    // Defensive spot foul - could be in secondary too
+                    spotYds = random.randInt(Math.floor(playYds / 4), playYds);
+                }
+
+                if (spotYds !== undefined) {
+                    totYds += spotYds;
+                }
+            }
+
+            totYds += pen.side === "defense" ? pen.yds : -pen.yds;
+
+            return {
+                automaticFirstDown: pen.automaticFirstDown,
+                name: pen.name,
+                penYds: pen.yds,
+                posOdds: pen.posOdds,
+                spotYds,
+                totYds,
+            };
+        });
+
+        // Pick penalty that gives the most yards
+        penInfos.sort((a, b) => {
+            return side === "defense"
+                ? b.totYds - a.totYds
+                : a.totYds - b.totYds;
+        });
+        const penInfo = penInfos[0];
+
+        // Adjust penalty yards when near endzones
+        let adjustment = 0;
+        if (side === "defense" && this.scrimmage + penInfo.totYds > 99) {
+            // 1 yard line
+            adjustment = this.scrimmage + penInfo.totYds - 99;
+        } else if (
+            side === "offense" &&
+            this.scrimmage - penInfo.totYds < this.scrimmage / 2
+        ) {
+            // Half distance to goal
+            const spotOfFoul =
+                penInfo.spotYds === undefined
+                    ? this.scrimmage
+                    : this.scrimmage - penInfo.spotYds;
+            if (spotOfFoul < 1) {
+                throw new Error("This should already have been a safety");
+            }
+            const halfYds = Math.round(spotOfFoul / 2);
+            adjustment = penInfo.penYds - halfYds;
+        }
+        penInfo.totYds -= adjustment;
+        penInfo.penYds -= adjustment;
+
+        // recordedPenYds also includes spotYds for defensive pass interference
+        const recordedPenYds =
+            side === "defense" && penInfo.name === "Pass interference"
+                ? penInfo.totYds
+                : penInfo.penYds;
+
+        const t = side === "offense" ? this.o : this.d;
+
+        let p;
+        if (penInfo.posOdds !== undefined) {
+            const positionsOnField = Object.keys(this.playersOnField[t]);
+            const positionsForPenalty = Object.keys(penInfo.posOdds);
+            const positions = positionsOnField.filter(pos =>
+                positionsForPenalty.includes(pos),
+            );
+            if (positions.length === 0) {
+                console.log(penInfo);
+                throw new Error("No positions found");
+            }
+
+            const pos = random.choice(positions, pos2 => penInfo.posOdds[pos2]);
+            if (this.playersOnField[t][pos] === undefined) {
+                throw new Error(
+                    `No players at position ${pos} on field in this formation`,
+                );
+            }
+            if (this.playersOnField[t][pos].length === 0) {
+                console.log(penInfo);
+                throw new Error(`No player found at position ${pos}`);
+            }
+            p = random.choice(this.playersOnField[t][pos]);
+
+            // Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
+        }
+
+        this.recordStat(t, p, "pen");
+        this.recordStat(t, p, "penYds", recordedPenYds);
+        this.playByPlay.logEvent("penalty", {
+            clock: this.clock,
+            t,
+            players: p ? [p.name] : [],
+            automaticFirstDown: penInfo.automaticFirstDown,
+            penaltyName: penInfo.name,
+            yds: penInfo.recordedPenYds,
+        });
+
+        console.log(penInfos);
+
+        this.advanceYds(penInfo.totYds, {
+            automaticFirstDown: penInfo.automaticFirstDown,
+            repeatDown: true,
+        });
+        if (this.automaticFirstDown) {
+            this.down = 1;
+            this.toGo = 1;
+        }
+
+        return {
+            type: "penalty",
+            yds: penInfo.totYds,
+        };
     }
 
     updatePlayingTime(possessionTime: number) {

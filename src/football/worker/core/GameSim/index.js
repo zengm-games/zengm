@@ -561,11 +561,10 @@ class GameSim {
                 dt = Math.abs(returnLength) / 8;
                 let td = false;
 
-                const penInfo = this.checkPenalties(
-                    "kickoffReturn",
-                    kickReturner,
-                    returnLength,
-                );
+                const penInfo = this.checkPenalties("kickoffReturn", {
+                    ballCarrier: kickReturner,
+                    playYds: returnLength,
+                });
                 if (penInfo && penInfo.type !== "offsetting") {
                     if (penInfo.spotYds !== undefined) {
                         returnLength = penInfo.spotYds;
@@ -638,7 +637,10 @@ class GameSim {
             yds: distance,
         });
 
-        const penInfo2 = this.checkPenalties("punt", punter, distance);
+        const penInfo2 = this.checkPenalties("punt", {
+            ballCarrier: punter,
+            playYds: distance,
+        });
         if (penInfo2) {
             penInfo2.doLog();
             return dt;
@@ -670,11 +672,10 @@ class GameSim {
             dt += Math.abs(returnLength) / 8;
             let td = false;
 
-            const penInfo3 = this.checkPenalties(
-                "kickoffReturn",
-                puntReturner,
-                returnLength,
-            );
+            const penInfo3 = this.checkPenalties("kickoffReturn", {
+                ballCarrier: puntReturner,
+                playYds: returnLength,
+            });
             if (penInfo3 && penInfo3.type !== "offsetting") {
                 if (penInfo3.spotYds !== undefined) {
                     returnLength = penInfo3.spotYds;
@@ -726,10 +727,17 @@ class GameSim {
         }
 
         const kicker = this.playersOnField[this.o].K[0];
-
         const distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
-
         const made = Math.random() < 0.8;
+        const dt = extraPoint ? 0 : random.randInt(4, 6);
+
+        const penInfo2 = this.checkPenalties("fieldGoal", {
+            made,
+        });
+        if (penInfo2) {
+            penInfo2.doLog();
+            return dt;
+        }
 
         this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
             clock: this.clock,
@@ -780,7 +788,7 @@ class GameSim {
         this.awaitingAfterTouchdown = false;
         this.isClockRunning = false;
 
-        return extraPoint ? 0 : random.randInt(4, 6);
+        return dt;
     }
 
     doTwoPointConversion() {
@@ -1014,7 +1022,10 @@ class GameSim {
             let safetyOrTouchback = false;
             let td = false;
 
-            const penInfo2 = this.checkPenalties("pass", target, yds);
+            const penInfo2 = this.checkPenalties("pass", {
+                ballCarrier: target,
+                playYds: yds,
+            });
             if (penInfo2) {
                 if (penInfo2.spotYds !== undefined) {
                     yds = penInfo2.spotYds;
@@ -1130,7 +1141,10 @@ class GameSim {
         let safetyOrTouchback = false;
         let td = false;
 
-        const penInfo2 = this.checkPenalties("run", p, yds);
+        const penInfo2 = this.checkPenalties("run", {
+            ballCarrier: p,
+            playYds: yds,
+        });
         if (penInfo2) {
             if (penInfo2.spotYds !== undefined) {
                 yds = penInfo2.spotYds;
@@ -1193,8 +1207,15 @@ class GameSim {
             | "puntReturn"
             | "pass"
             | "run",
-        ballCarrier?: PlayerGameSim,
-        playYds?: number,
+        {
+            ballCarrier,
+            made,
+            playYds,
+        }: {
+            ballCarrier?: PlayerGameSim,
+            made?: boolean,
+            playYds?: number,
+        } = {},
     ) {
         // Handle plays in endzone
         let wouldHaveBeenTD = false;
@@ -1237,6 +1258,17 @@ class GameSim {
         }
 
         const side = offensive.length > 0 ? "offense" : "defense";
+
+        if (playType === "fieldGoal") {
+            if (side === "offense" && !made) {
+                // Offensive penalty and missed field goal - decline
+                return;
+            }
+            if (side === "defense" && made) {
+                // Defensive penalty and made field goal - decline
+                return;
+            }
+        }
 
         if (wouldHaveBeenTD && side === "defense") {
             return;

@@ -3,13 +3,10 @@
 not enough good WRs, too many good TEs
 game sim
 - penalties
-  - implement fieldGoal
   - during extra point: retry
   - during 2pt conversion: Retry
   - during punt: retry punt or apply to end
   - during kickoff: apply to end
-  - during kickoff, treat all non-K players as equally at risk of penalty
-  - during punt, treat all non-P/OL players as equally at risk of penalty
   - TEST!
   - unit test to ensure odds sum up to 1
   - check safety before penalty. if safety, don't do penalty

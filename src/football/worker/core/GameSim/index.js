@@ -576,6 +576,10 @@ class GameSim {
                     td = info.td;
                 }
 
+                this.recordStat(this.o, kickReturner, "kr");
+                this.recordStat(this.o, kickReturner, "krYds", returnLength);
+                this.recordStat(this.o, kickReturner, "krLng", returnLength);
+
                 this.playByPlay.logEvent("kickoffReturn", {
                     clock: this.clock,
                     t: this.o,
@@ -584,12 +588,7 @@ class GameSim {
                     yds: returnLength,
                 });
 
-                this.recordStat(this.o, kickReturner, "kr");
-                this.recordStat(this.o, kickReturner, "krYds", returnLength);
-                this.recordStat(this.o, kickReturner, "krLng", returnLength);
-
                 if (penInfo && penInfo.type !== "offsetting") {
-                    console.log(penInfo);
                     penInfo.doLog();
                 }
 
@@ -619,6 +618,12 @@ class GameSim {
     doPunt() {
         this.updatePlayersOnField("punt");
 
+        const penInfo = this.checkPenalties("beforeSnap");
+        if (penInfo) {
+            penInfo.doLog();
+            return 0;
+        }
+
         const punter = this.playersOnField[this.o].P[0];
         const puntReturner = this.playersOnField[this.d].PR[0];
 
@@ -627,9 +632,6 @@ class GameSim {
         const touchback = kickTo < 0;
         let dt = random.randInt(5, 9);
 
-        this.recordStat(this.o, punter, "pnt");
-        this.recordStat(this.o, punter, "pntYds", distance);
-        this.recordStat(this.o, punter, "pntLng", distance);
         this.playByPlay.logEvent("punt", {
             clock: this.clock,
             t: this.o,
@@ -637,6 +639,16 @@ class GameSim {
             touchback,
             yds: distance,
         });
+
+        const penInfo2 = this.checkPenalties("punt", punter, distance);
+        if (penInfo2) {
+            penInfo2.doLog();
+            return dt;
+        }
+
+        this.recordStat(this.o, punter, "pnt");
+        this.recordStat(this.o, punter, "pntYds", distance);
+        this.recordStat(this.o, punter, "pntLng", distance);
 
         this.possessionChange();
 
@@ -651,14 +663,28 @@ class GameSim {
             }
 
             const maxReturnLength = 100 - kickTo;
-            const returnLength = helpers.bound(
+            let returnLength = helpers.bound(
                 random.randInt(0, 109),
                 0,
                 maxReturnLength,
             );
             this.scrimmage = kickTo;
-            const { td } = this.advanceYds(returnLength);
             dt += Math.abs(returnLength) / 8;
+            let td = false;
+
+            const penInfo3 = this.checkPenalties(
+                "kickoffReturn",
+                puntReturner,
+                returnLength,
+            );
+            if (penInfo3 && penInfo3.type !== "offsetting") {
+                if (penInfo3.spotYds !== undefined) {
+                    returnLength = penInfo.spotYds;
+                }
+            } else {
+                const info = this.advanceYds(returnLength);
+                td = info.td;
+            }
 
             this.recordStat(this.o, puntReturner, "pr");
             this.recordStat(this.o, puntReturner, "prYds", returnLength);
@@ -671,6 +697,10 @@ class GameSim {
                 td,
                 yds: returnLength,
             });
+
+            if (penInfo3 && penInfo3.type !== "offsetting") {
+                penInfo3.doLog();
+            }
 
             if (td) {
                 this.awaitingAfterTouchdown = true;
@@ -691,6 +721,12 @@ class GameSim {
 
     doFieldGoal(extraPoint?: boolean = false) {
         this.updatePlayersOnField("fieldGoal");
+
+        const penInfo = this.checkPenalties("beforeSnap");
+        if (penInfo) {
+            penInfo.doLog();
+            return 0;
+        }
 
         const kicker = this.playersOnField[this.o].K[0];
 
@@ -926,6 +962,12 @@ class GameSim {
     doPass() {
         this.updatePlayersOnField("pass");
 
+        const penInfo = this.checkPenalties("beforeSnap");
+        if (penInfo) {
+            penInfo.doLog();
+            return 0;
+        }
+
         const qb = this.playersOnField[this.o].QB[0];
 
         this.playByPlay.logEvent("dropback", {
@@ -1024,6 +1066,12 @@ class GameSim {
     doRun() {
         this.updatePlayersOnField("run");
 
+        const penInfo = this.checkPenalties("beforeSnap");
+        if (penInfo) {
+            penInfo.doLog();
+            return 0;
+        }
+
         // Usually do normal run, but sometimes do special stuff
         const positions = ["RB"];
         const rand = Math.random();
@@ -1109,6 +1157,8 @@ class GameSim {
         if (called.length === 0) {
             return;
         }
+
+        this.isClockRunning = false;
 
         const offensive = called.filter(pen => pen.side === "offense");
         const defensive = called.filter(pen => pen.side === "defense");

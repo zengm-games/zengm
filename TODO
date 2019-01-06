@@ -5,7 +5,6 @@ game sim
 - penalties
   - implement fieldGoal
   - implement pass
-  - implement run
   - during extra point: retry
   - during 2pt conversion: Retry
   - during punt: retry punt or apply to end

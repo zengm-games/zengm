@@ -679,7 +679,7 @@ class GameSim {
             );
             if (penInfo3 && penInfo3.type !== "offsetting") {
                 if (penInfo3.spotYds !== undefined) {
-                    returnLength = penInfo.spotYds;
+                    returnLength = penInfo3.spotYds;
                 }
             } else {
                 const info = this.advanceYds(returnLength);
@@ -1092,18 +1092,35 @@ class GameSim {
         });
 
         const ydsRaw = random.randInt(-5, 10);
-        const yds = this.boundedYds(ydsRaw);
-        this.recordStat(this.o, p, "rusYds", yds);
-        this.recordStat(this.o, p, "rusLng", yds);
+        let yds = this.boundedYds(ydsRaw);
 
         const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
+
+        let safetyOrTouchback = false;
+        let td = false;
+
+        const penInfo2 = this.checkPenalties("run", p, yds);
+        if (penInfo2) {
+            if (penInfo2.spotYds !== undefined) {
+                yds = penInfo2.spotYds;
+            } else if (penInfo2.side === "offense") {
+                // If it's an offensive penalty or a non-spot foul, it's as if the run never happened
+                penInfo2.doLog();
+                return dt;
+            }
+        } else {
+            const info = this.advanceYds(yds);
+            safetyOrTouchback = info.safetyOrTouchback;
+            td = info.td;
+        }
+
+        this.recordStat(this.o, p, "rusYds", yds);
+        this.recordStat(this.o, p, "rusLng", yds);
 
         const fumble = Math.random() < 0.01;
         if (fumble) {
             return dt + this.doFumble(p, yds);
         }
-
-        const { safetyOrTouchback, td } = this.advanceYds(yds);
 
         this.playByPlay.logEvent("run", {
             clock: this.clock,
@@ -1114,6 +1131,10 @@ class GameSim {
             td,
             yds,
         });
+
+        if (penInfo2) {
+            penInfo2.doLog();
+        }
 
         if (td) {
             this.recordStat(this.o, p, "rusTD");
@@ -1142,8 +1163,15 @@ class GameSim {
         playYds?: number,
     ) {
         // Handle plays in endzone
+        let wouldHaveBeenTD = false;
         if (this.scrimmage + playYds > 99) {
             playYds = 99 - this.scrimmage;
+            wouldHaveBeenTD = true;
+        }
+        let wouldHaveBeenSafety = false;
+        if (this.scrimmage + playYds < 1) {
+            playYds = 1 - this.scrimmage;
+            wouldHaveBeenSafety = true;
         }
 
         const called = penalties.filter(pen => {
@@ -1176,6 +1204,13 @@ class GameSim {
 
         const side = offensive.length > 0 ? "offense" : "defense";
 
+        if (wouldHaveBeenTD && side === "defense") {
+            return;
+        }
+        if (wouldHaveBeenSafety && side === "offense") {
+            return;
+        }
+
         const penInfos = called.map(pen => {
             let spotYds;
             let totYds = 0;
@@ -1189,6 +1224,16 @@ class GameSim {
                 if (pen.side === "offense" && playYds > 0) {
                     // Offensive spot foul - only when past the line of scrimmage
                     spotYds = random.randInt(1, playYds);
+
+                    // Don't let it be in the endzone, otherwise shit gets weird with safeties
+                    if (spotYds + this.scrimmage < 0) {
+                        spotYds += this.scrimmage + 1;
+
+                        // On kickoff returns, penalties are very unlikely to occur extremely deep
+                        if (playType === "kickoffReturn") {
+                            spotYds += random.randInt(20, playYds);
+                        }
+                    }
                 } else if (pen.side === "defense") {
                     // Defensive spot foul - could be in secondary too
                     spotYds = random.randInt(0, playYds);
@@ -1270,16 +1315,13 @@ class GameSim {
             }
 
             if (!p) {
-                console.log(
-                    "Using posOdds found nobody, so just pick randomly",
-                );
                 p = this.pickPlayer(t);
             }
 
             // Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
         }
 
-        console.log(penInfos);
+        console.log(playType, playYds, penInfo);
 
         this.advanceYds(penInfo.totYds, {
             automaticFirstDown: penInfo.automaticFirstDown,
@@ -1292,6 +1334,8 @@ class GameSim {
 
         return {
             type: "penalty",
+            side,
+            spotYds: penInfo.spotYds,
             yds: penInfo.totYds,
             doLog: () => {
                 this.recordStat(t, p, "pen");

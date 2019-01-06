@@ -279,7 +279,7 @@ class PlayByPlayLogger {
                     throw new Error("Missing yds");
                 }
                 text = `${names[0]} was sacked by ${names[1]} for a ${
-                    safety ? "safety!" : `${yds} yard loss`
+                    safety ? "safety!" : `${Math.abs(yds)} yard loss`
                 }`;
             } else if (type === "dropback") {
                 if (names === undefined) {
@@ -383,6 +383,7 @@ class PlayByPlayLogger {
                 };
 
                 this.playByPlay.push(event);
+                console.log(event.text);
 
                 if (
                     safety ||

@@ -529,7 +529,6 @@ class GameSim {
                 });
 
                 if (td) {
-                    this.awaitingAfterTouchdown = true;
                     this.recordStat(this.o, kickReturner, "krTD");
                 } else {
                     this.down = 1;
@@ -593,7 +592,6 @@ class GameSim {
                 }
 
                 if (td) {
-                    this.awaitingAfterTouchdown = true;
                     this.recordStat(this.o, kickReturner, "krTD");
                 } else {
                     this.down = 1;
@@ -703,7 +701,6 @@ class GameSim {
             }
 
             if (td) {
-                this.awaitingAfterTouchdown = true;
                 this.recordStat(this.o, puntReturner, "prTD");
             } else {
                 this.down = 1;
@@ -1003,61 +1000,95 @@ class GameSim {
         const interception = Math.random() < 0.05;
         const complete = Math.random() < 0.6;
         const ydsRaw = random.randInt(0, 30);
-        const yds = this.boundedYds(ydsRaw);
-
-        this.recordStat(this.o, qb, "pss");
-        this.recordStat(this.o, target, "tgt");
-        this.recordStat(this.d, defender, "defPssDef");
+        let yds = this.boundedYds(ydsRaw);
 
         if (interception) {
             dt += this.doInterception(yds);
             this.recordStat(this.o, qb, "pssInt");
-        } else if (complete) {
-            const fumble2 = Math.random() < 0.01;
-            if (fumble2) {
-                return dt + this.doFumble(qb, yds);
-            }
-
-            const { safetyOrTouchback, td } = this.advanceYds(yds);
+            this.recordStat(this.o, qb, "pss");
+            this.recordStat(this.o, target, "tgt");
+            this.recordStat(this.d, defender, "defPssDef");
+        } else {
             dt += Math.abs(yds) / 20;
 
-            this.recordStat(this.o, qb, "pssCmp");
-            this.recordStat(this.o, qb, "pssYds", yds);
-            this.recordStat(this.o, qb, "pssLng", yds);
-            this.recordStat(this.o, target, "rec");
-            this.recordStat(this.o, target, "recYds", yds);
-            this.recordStat(this.o, target, "recLng", yds);
+            let safetyOrTouchback = false;
+            let td = false;
 
-            this.playByPlay.logEvent("passComplete", {
-                clock: this.clock,
-                t: this.o,
-                names: [qb.name, target.name],
-                safety: safetyOrTouchback,
-                td,
-                twoPointConversionTeam: this.twoPointConversionTeam,
-                yds,
-            });
-
-            if (td) {
-                this.recordStat(this.o, qb, "pssTD");
-                this.recordStat(this.o, target, "recTD");
+            const penInfo2 = this.checkPenalties("pass", target, yds);
+            if (penInfo2) {
+                if (penInfo2.spotYds !== undefined) {
+                    yds = penInfo2.spotYds;
+                } else if (
+                    penInfo2.type === "offsetting" ||
+                    penInfo2.side === "offense" ||
+                    penInfo2.name === "Pass interference"
+                ) {
+                    penInfo2.doLog();
+                    return dt;
+                }
             }
 
-            this.isClockRunning = Math.random() < 0.75;
+            this.recordStat(this.o, qb, "pss");
+            this.recordStat(this.o, target, "tgt");
+            this.recordStat(this.d, defender, "defPssDef");
 
-            if (safetyOrTouchback) {
-                this.doSafety();
+            if (complete) {
+                if (!penInfo2) {
+                    const info = this.advanceYds(yds);
+                    safetyOrTouchback = info.safetyOrTouchback;
+                    td = info.td;
+                }
+
+                this.recordStat(this.o, qb, "pssCmp");
+                this.recordStat(this.o, qb, "pssYds", yds);
+                this.recordStat(this.o, qb, "pssLng", yds);
+                this.recordStat(this.o, target, "rec");
+                this.recordStat(this.o, target, "recYds", yds);
+                this.recordStat(this.o, target, "recLng", yds);
+
+                // Fumble after catch... only if nothing else is going on, too complicated otherwise
+                if (!penInfo2 && !td && !safetyOrTouchback) {
+                    const fumble2 = Math.random() < 0.01;
+                    if (fumble2) {
+                        return dt + this.doFumble(qb, yds);
+                    }
+                }
+
+                this.playByPlay.logEvent("passComplete", {
+                    clock: this.clock,
+                    t: this.o,
+                    names: [qb.name, target.name],
+                    safety: safetyOrTouchback,
+                    td,
+                    twoPointConversionTeam: this.twoPointConversionTeam,
+                    yds,
+                });
+
+                if (td) {
+                    this.recordStat(this.o, qb, "pssTD");
+                    this.recordStat(this.o, target, "recTD");
+                }
+
+                this.isClockRunning = Math.random() < 0.75;
+
+                if (safetyOrTouchback) {
+                    this.doSafety();
+                }
+            } else {
+                this.playByPlay.logEvent("passIncomplete", {
+                    clock: this.clock,
+                    t: this.o,
+                    names: [qb.name, target.name],
+                    twoPointConversionTeam: this.twoPointConversionTeam,
+                    yds,
+                });
+
+                this.isClockRunning = false;
             }
-        } else {
-            this.playByPlay.logEvent("passIncomplete", {
-                clock: this.clock,
-                t: this.o,
-                names: [qb.name, target.name],
-                twoPointConversionTeam: this.twoPointConversionTeam,
-                yds,
-            });
 
-            this.isClockRunning = false;
+            if (penInfo2) {
+                penInfo2.doLog();
+            }
         }
 
         return dt;
@@ -1103,7 +1134,10 @@ class GameSim {
         if (penInfo2) {
             if (penInfo2.spotYds !== undefined) {
                 yds = penInfo2.spotYds;
-            } else if (penInfo2.side === "offense") {
+            } else if (
+                penInfo2.type === "offsetting" ||
+                penInfo2.side === "offense"
+            ) {
                 // If it's an offensive penalty or a non-spot foul, it's as if the run never happened
                 penInfo2.doLog();
                 return dt;
@@ -1132,10 +1166,6 @@ class GameSim {
             yds,
         });
 
-        if (penInfo2) {
-            penInfo2.doLog();
-        }
-
         if (td) {
             this.recordStat(this.o, p, "rusTD");
         }
@@ -1144,6 +1174,10 @@ class GameSim {
 
         if (safetyOrTouchback) {
             this.doSafety();
+        }
+
+        if (penInfo2) {
+            penInfo2.doLog();
         }
 
         return dt;
@@ -1334,6 +1368,7 @@ class GameSim {
 
         return {
             type: "penalty",
+            name: penInfo.name,
             side,
             spotYds: penInfo.spotYds,
             yds: penInfo.totYds,

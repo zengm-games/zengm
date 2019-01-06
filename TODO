@@ -4,7 +4,6 @@ not enough good WRs, too many good TEs
 game sim
 - penalties
   - implement fieldGoal
-  - implement pass
   - during extra point: retry
   - during 2pt conversion: Retry
   - during punt: retry punt or apply to end

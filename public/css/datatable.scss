@@ -36,7 +36,6 @@
     border: 1px solid $gray-400;
     font-weight: normal;
     font-size: 12px;
-    padding-left: 2px;
     width: 100%;
 }
 
@@ -58,24 +57,6 @@ ul.pagination {
 
 .fix-margin-pagination {
     margin-bottom: 8px !important;
-}
-
-.datatable-dropdown-options-parent {
-    position: absolute;
-}
-
-.datatable-dropdown-options {
-    background-color: $gray-200;
-    font-weight: normal;
-    position: absolute;
-    top: -1px;
-    left: 0;
-    width: 75px;
-    padding: 0 4px;
-
-    input {
-        margin-top: 3px;
-    }
 }
 
 table.table {

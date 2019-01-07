@@ -1,7 +1,5 @@
 // @flow
 
-import getSearchVal from "./getSearchVal";
-import { overrides } from "../../util";
 import type { Props, SortBy } from ".";
 
 const loadStateFromCache = (props: Props) => {
@@ -29,29 +27,7 @@ const loadStateFromCache = (props: Props) => {
         sortBys = [props.defaultSort];
     }
 
-    let allPositions;
-    let posInd;
-    const defaultFilters: (string | string[])[] = props.cols.map((col, i) => {
-        if (col.title !== "Pos") {
-            return "";
-        }
-
-        // Special case stuff for position filter
-        posInd = i;
-        const allPositionsSet = new Set();
-        for (const row of props.rows) {
-            const val = getSearchVal(row.data[i], false);
-            allPositionsSet.add(val);
-        }
-        allPositions = overrides.constants.POSITIONS.filter(pos =>
-            allPositionsSet.has(pos),
-        ).concat(
-            Array.from(allPositionsSet).filter(
-                pos => !overrides.constants.POSITIONS.includes(pos),
-            ),
-        );
-        return allPositions;
-    });
+    const defaultFilters: string[] = props.cols.map(() => "");
     const filtersFromStorage = localStorage.getItem(
         `DataTableFilters:${props.name}`,
     );
@@ -71,7 +47,7 @@ const loadStateFromCache = (props: Props) => {
                 filters = defaultFilters;
             } else {
                 for (const filter of filters) {
-                    if (typeof filter !== "string" && !Array.isArray(filter)) {
+                    if (typeof filter !== "string") {
                         filters = defaultFilters;
                         break;
                     }
@@ -82,15 +58,7 @@ const loadStateFromCache = (props: Props) => {
         }
     }
 
-    // If using default, overwrite with default positions. If using saved filters with a text search (legacy), overwrite with default positions.
-    if (posInd !== undefined) {
-        if (filters === defaultFilters || !Array.isArray(filters[posInd])) {
-            filters[posInd] = allPositions;
-        }
-    }
-
     return {
-        allPositions,
         currentPage: 1,
         enableFilters: filters !== defaultFilters,
         filters,

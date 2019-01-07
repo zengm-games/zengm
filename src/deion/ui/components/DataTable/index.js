@@ -48,10 +48,9 @@ export type Props = {
 };
 
 type State = {
-    allPositions?: string[],
     currentPage: number,
     enableFilters: boolean,
-    filters: (string | string[])[],
+    filters: string[],
     prevName: string | void,
     perPage: number,
     searchText: string,
@@ -65,9 +64,7 @@ class DataTable extends React.Component<Props, State> {
 
     handleToggleFilters: Function;
 
-    handleFilterUpdateOptions: Function;
-
-    handleFilterUpdateText: Function;
+    handleFilterUpdate: Function;
 
     handlePagination: Function;
 
@@ -80,7 +77,6 @@ class DataTable extends React.Component<Props, State> {
 
         // https://github.com/facebook/react/issues/12523#issuecomment-378282856
         this.state = {
-            allPositions: undefined,
             currentPage: 0,
             enableFilters: false,
             filters: [],
@@ -93,10 +89,7 @@ class DataTable extends React.Component<Props, State> {
         this.handleColClick = this.handleColClick.bind(this);
         this.handleExportCSV = this.handleExportCSV.bind(this);
         this.handleToggleFilters = this.handleToggleFilters.bind(this);
-        this.handleFilterUpdateOptions = this.handleFilterUpdateOptions.bind(
-            this,
-        );
-        this.handleFilterUpdateText = this.handleFilterUpdateText.bind(this);
+        this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
         this.handlePagination = this.handlePagination.bind(this);
         this.handlePerPage = this.handlePerPage.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
@@ -199,20 +192,7 @@ class DataTable extends React.Component<Props, State> {
         }));
     }
 
-    handleFilterUpdateOptions(options: string[], i: number) {
-        const filters = helpers.deepCopy(this.state.filters); // eslint-disable-line react/no-access-state-in-setstate
-        filters[i] = options;
-        this.setState({
-            filters,
-        });
-
-        localStorage.setItem(
-            `DataTableFilters:${this.props.name}`,
-            JSON.stringify(filters),
-        );
-    }
-
-    handleFilterUpdateText(
+    handleFilterUpdate(
         event: SyntheticInputEvent<HTMLInputElement>,
         i: number,
     ) {
@@ -260,6 +240,7 @@ class DataTable extends React.Component<Props, State> {
             Object.assign(updatedState, loadStateFromCache(nextProps));
         }
 
+        console.log("nextProps.addFilters", nextProps.addFilters);
         // If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with prevState.filters and enable filters
         const filters = helpers.deepCopy(prevState.filters);
         let changed = false;
@@ -273,14 +254,7 @@ class DataTable extends React.Component<Props, State> {
                     changed = true;
                 } else if (!prevState.enableFilters) {
                     // If there is a saved but hidden filter, remove it
-                    if (Array.isArray(filters[i])) {
-                        filters[i] =
-                            prevState.allPositions !== undefined
-                                ? prevState.allPositions
-                                : [];
-                    } else {
-                        filters[i] = "";
-                    }
+                    filters[i] = "";
                 }
             }
         }
@@ -305,9 +279,6 @@ class DataTable extends React.Component<Props, State> {
                       this.props.cols[i].sortType === "number" ||
                       this.props.cols[i].sortType === "currency"
                   ) {
-                      if (Array.isArray(filter)) {
-                          throw new Error("Should never happen");
-                      }
                       let number = filter.replace(/[^0-9.<>]/g, "");
                       let direction;
                       if (
@@ -325,10 +296,6 @@ class DataTable extends React.Component<Props, State> {
                           original: filter,
                           number,
                       };
-                  }
-
-                  if (Array.isArray(filter)) {
-                      return filter;
                   }
 
                   return filter.toLowerCase();
@@ -373,14 +340,6 @@ class DataTable extends React.Component<Props, State> {
                               if (!getSearchVal(row.data[i]).includes(filter)) {
                                   return false;
                               }
-                          } else if (Array.isArray(filter)) {
-                              if (
-                                  !filter.includes(
-                                      getSearchVal(row.data[i], false),
-                                  )
-                              ) {
-                                  return false;
-                              }
                           } else {
                               if (Number.isNaN(filter.number)) {
                                   continue;
@@ -413,9 +372,6 @@ class DataTable extends React.Component<Props, State> {
                                   numericVal !== filter.number
                               ) {
                                   return false;
-                              }
-                              if (Array.isArray(filter.original)) {
-                                  throw new Error("Should never happen");
                               }
                               if (
                                   filter.direction === undefined &&
@@ -502,15 +458,11 @@ class DataTable extends React.Component<Props, State> {
                 >
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <Header
-                            allPositions={this.state.allPositions}
                             cols={cols}
                             enableFilters={this.state.enableFilters}
                             filters={this.state.filters}
                             handleColClick={this.handleColClick}
-                            handleFilterUpdateOptions={
-                                this.handleFilterUpdateOptions
-                            }
-                            handleFilterUpdateText={this.handleFilterUpdateText}
+                            handleFilterUpdate={this.handleFilterUpdate}
                             sortBys={this.state.sortBys}
                             superCols={superCols}
                         />

@@ -23,9 +23,10 @@ class FreeAgents extends React.Component {
     showAfforablePlayers() {
         const addFilters = new Array(8 + this.props.stats.length);
         if (this.props.capSpace * 1000 > this.props.minContract) {
-            addFilters[10] = `<${this.props.capSpace}`;
+            addFilters[addFilters.length - 3] = `<${this.props.capSpace}`;
         } else {
-            addFilters[10] = `<${this.props.minContract / 1000}`;
+            addFilters[addFilters.length - 3] = `<${this.props.minContract /
+                1000}`;
         }
 
         this.setState(

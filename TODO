@@ -4,7 +4,6 @@ not enough good WRs, too many good TEs
 game sim
 - more types of penalties
 - special kick after safety
-- kickoff after halftime
 - fatigue
   - subs
   - players who can play offense and defense
@@ -13,8 +12,6 @@ game sim
 - adjust probabilities based on stats
   - use ovr when possible - can i put these in composite ratings?
 - clock
-  - extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
-    - set quarterLenght really low and you can see extra point being taken in next quarter
   - pace
   - clock management, strategy
 - later

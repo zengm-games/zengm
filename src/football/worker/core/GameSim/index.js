@@ -181,19 +181,22 @@ class GameSim {
     }
 
     simRegulation() {
-        this.o = 0;
-        this.d = 1;
+        this.o = Math.random() < 0.5 ? 0 : 1;
+        this.d = this.o === 0 ? 1 : 0;
+        const oAfterHalftime = this.d;
         let quarter = 1;
 
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            while (this.clock > 0) {
+            while (this.clock > 0 || this.awaitingAfterTouchdown) {
                 this.simPlay();
             }
             quarter += 1;
 
             if (quarter === 3) {
                 this.awaitingKickoff = true;
+                this.o = oAfterHalftime;
+                this.d = this.o === 0 ? 1 : 0;
             } else if (quarter === 5) {
                 break;
             }
@@ -220,6 +223,7 @@ class GameSim {
 
         this.o = Math.random() < 0.5 ? 0 : 1;
         this.d = this.o === 0 ? 1 : 0;
+
         this.awaitingKickoff = true;
         while (this.clock > 0 && this.overtimeState !== "over") {
             this.simPlay();
@@ -1379,8 +1383,6 @@ class GameSim {
             // Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
         }
 
-        console.log(playType, playYds, penInfo);
-
         this.advanceYds(penInfo.totYds, {
             automaticFirstDown: penInfo.automaticFirstDown,
             repeatDown: true,
@@ -1423,13 +1425,6 @@ class GameSim {
             for (const pos of Object.keys(this.playersOnField[t])) {
                 // Update minutes (overall, court, and bench)
                 for (const p of this.playersOnField[t][pos]) {
-                    if (p === undefined) {
-                        console.log(p);
-                        console.log(this.playersOnField);
-                        throw new Error(
-                            "p is undefined, this should never happen!",
-                        );
-                    }
                     onField.add(p.id);
 
                     this.recordStat(t, p, "min", possessionTime);

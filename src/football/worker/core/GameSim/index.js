@@ -339,6 +339,7 @@ class GameSim {
             };
         }
 
+        console.log("this.scrimmage", this.scrimmage, this.scrimmage + yds);
         this.scrimmage += yds;
 
         // For non-sacks, record tackler(s)
@@ -396,6 +397,7 @@ class GameSim {
                 this.o = this.o === 0 ? 1 : 0;
                 this.d = this.d === 0 ? 1 : 0;
                 this.scrimmage = 100 - this.scrimmage;
+                console.log("this.scrimmage2", this.scrimmage);
                 this.down = 1;
                 const maxToGo = 100 - this.scrimmage;
                 this.toGo = maxToGo < 10 ? maxToGo : 10;
@@ -494,6 +496,7 @@ class GameSim {
 
             const kickTo = random.randInt(40, 55);
             this.scrimmage = kickTo;
+            console.log("this.scrimmage3", this.scrimmage);
 
             const success = Math.random() < 0.1;
 
@@ -562,6 +565,7 @@ class GameSim {
                 this.toGo = 10;
             } else {
                 this.scrimmage = kickTo;
+                console.log("this.scrimmage4", this.scrimmage);
                 let returnLength = this.boundedYds(random.randInt(10, 109));
                 dt = Math.abs(returnLength) / 8;
                 let td = false;
@@ -677,6 +681,7 @@ class GameSim {
                 maxReturnLength,
             );
             this.scrimmage = kickTo;
+            console.log("this.scrimmage5", this.scrimmage);
             dt += Math.abs(returnLength) / 8;
             let td = false;
 
@@ -794,6 +799,7 @@ class GameSim {
                 20,
                 Infinity,
             );
+            console.log("this.scrimmage6", this.scrimmage);
         }
 
         this.awaitingAfterTouchdown = false;
@@ -826,6 +832,7 @@ class GameSim {
         this.recordStat(this.o, pFumbled, "fmb");
 
         this.scrimmage = helpers.bound(this.scrimmage + priorYdsRaw, -9, 100);
+        console.log("this.scrimmage7", this.scrimmage);
 
         const lost = Math.random() > 0.5;
 
@@ -1143,7 +1150,7 @@ class GameSim {
         this.playByPlay.logEvent("handoff", {
             clock: this.clock,
             t: this.o,
-            names: [qb.name, p.name],
+            names: p === qb ? [qb.name] : [qb.name, p.name],
         });
 
         const ydsRaw = random.randInt(-5, 10);
@@ -1364,13 +1371,11 @@ class GameSim {
                 penInfo.spotYds === undefined
                     ? this.scrimmage
                     : this.scrimmage + penInfo.spotYds;
-            if (spotOfFoul < 1) {
-                debugger;
-                throw new Error("This should already have been a safety");
-            }
-            const halfYds = Math.round(spotOfFoul / 2);
-            if (penInfo.penYds > halfYds) {
-                adjustment = penInfo.penYds - halfYds;
+            if (spotOfFoul >= 1) {
+                const halfYds = Math.round(spotOfFoul / 2);
+                if (penInfo.penYds > halfYds) {
+                    adjustment = penInfo.penYds - halfYds;
+                }
             }
         }
         penInfo.totYds -= adjustment;

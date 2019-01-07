@@ -321,7 +321,11 @@ class PlayByPlayLogger {
                 if (names === undefined) {
                     throw new Error("Missing names");
                 }
-                text = `${names[0]} hands the ball off to ${names[1]}`;
+                if (names.length === 1) {
+                    text = `${names[0]} is looking to run`;
+                } else {
+                    text = `${names[0]} hands the ball off to ${names[1]}`;
+                }
             } else if (type === "run") {
                 if (names === undefined) {
                     throw new Error("Missing names");

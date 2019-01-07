@@ -292,6 +292,19 @@ const penalties: Penalty[] = [
             TE: 0.2,
         },
     },
+    {
+        name: "Illegal contact",
+        side: "defense",
+        playTypes: ["pass"],
+        probPerPlay: 0,
+        numPerSeason: 43,
+        yds: 5,
+        posOdds: {
+            LB: 0.1,
+            S: 0.1,
+            CB: 0.8,
+        },
+    },
 ];
 
 // Total each season, to compare with penalty.numPerSeason for frequency calculation

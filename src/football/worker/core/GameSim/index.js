@@ -571,7 +571,10 @@ class GameSim {
                     playYds: returnLength,
                 });
                 if (penInfo && penInfo.type !== "offsetting") {
-                    if (penInfo.spotYds !== undefined) {
+                    if (
+                        penInfo.side === "offense" &&
+                        penInfo.spotYds !== undefined
+                    ) {
                         returnLength = penInfo.spotYds;
                     }
                 } else {
@@ -682,7 +685,10 @@ class GameSim {
                 playYds: returnLength,
             });
             if (penInfo3 && penInfo3.type !== "offsetting") {
-                if (penInfo3.spotYds !== undefined) {
+                if (
+                    penInfo3.side === "offense" &&
+                    penInfo3.spotYds !== undefined
+                ) {
                     returnLength = penInfo3.spotYds;
                 }
             } else {
@@ -1033,7 +1039,9 @@ class GameSim {
             });
             if (penInfo2) {
                 if (penInfo2.spotYds !== undefined) {
-                    yds = penInfo2.spotYds;
+                    if (penInfo2.side === "offense") {
+                        yds = penInfo2.spotYds;
+                    }
                 } else if (
                     penInfo2.type === "offsetting" ||
                     penInfo2.side === "offense" ||
@@ -1152,7 +1160,9 @@ class GameSim {
         });
         if (penInfo2) {
             if (penInfo2.spotYds !== undefined) {
-                yds = penInfo2.spotYds;
+                if (penInfo2.side === "offense") {
+                    yds = penInfo2.spotYds;
+                }
             } else if (
                 penInfo2.type === "offsetting" ||
                 penInfo2.side === "offense"
@@ -1280,26 +1290,34 @@ class GameSim {
         const penInfos = called.map(pen => {
             let spotYds;
             let totYds = 0;
-            if (pen.spotFoul) {
+            if (
+                pen.spotFoul ||
+                ((playType === "kickoffReturn" || playType === "puntReturn") &&
+                    pen.side === "offense")
+            ) {
                 if (pen.side === "offense" && playYds > 0) {
                     // Offensive spot foul - only when past the line of scrimmage
                     spotYds = random.randInt(1, playYds);
 
                     // Don't let it be in the endzone, otherwise shit gets weird with safeties
-                    if (spotYds + this.scrimmage <= 0) {
-                        spotYds += this.scrimmage + 1;
-                    }
-
-                    // On kickoff returns, penalties are very unlikely to occur extremely deep
-                    if (
-                        playType === "kickoffReturn" &&
-                        spotYds + this.scrimmage <= 10
-                    ) {
-                        spotYds += random.randInt(10, playYds);
+                    if (spotYds + this.scrimmage < 1) {
+                        spotYds = 1 - this.scrimmage;
                     }
                 } else if (pen.side === "defense") {
                     // Defensive spot foul - could be in secondary too
                     spotYds = random.randInt(0, playYds);
+                }
+
+                // On kickoff returns, penalties are very unlikely to occur extremely deep
+                if (
+                    playType === "kickoffReturn" &&
+                    spotYds + this.scrimmage <= 10
+                ) {
+                    spotYds += random.randInt(10, playYds);
+                }
+
+                if (spotYds + this.scrimmage > 99) {
+                    spotYds = 99 - this.scrimmage;
                 }
 
                 if (spotYds !== undefined) {
@@ -1307,7 +1325,15 @@ class GameSim {
                 }
             }
 
-            totYds += pen.side === "defense" ? pen.yds : -pen.yds;
+            if (
+                (playType === "kickoffReturn" || playType === "puntReturn") &&
+                pen.side === "defense"
+            ) {
+                // Add to end of return
+                totYds = playYds + pen.yds;
+            } else {
+                totYds += pen.side === "defense" ? pen.yds : -pen.yds;
+            }
 
             return {
                 automaticFirstDown: !!pen.automaticFirstDown,
@@ -1339,6 +1365,7 @@ class GameSim {
                     ? this.scrimmage
                     : this.scrimmage + penInfo.spotYds;
             if (spotOfFoul < 1) {
+                debugger;
                 throw new Error("This should already have been a safety");
             }
             const halfYds = Math.round(spotOfFoul / 2);

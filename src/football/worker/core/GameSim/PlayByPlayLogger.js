@@ -383,7 +383,6 @@ class PlayByPlayLogger {
                 };
 
                 this.playByPlay.push(event);
-                console.log(event.text);
 
                 if (
                     safety ||

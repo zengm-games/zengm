@@ -2,14 +2,7 @@
 
 not enough good WRs, too many good TEs
 game sim
-- penalties
-  - during extra point: retry
-  - during 2pt conversion: Retry
-  - during punt: retry punt or apply to end
-  - during kickoff: apply to end
-  - TEST!
-  - check safety before penalty. if safety, don't do penalty
-  - more types of penalties
+- more types of penalties
 - special kick after safety
 - kickoff after halftime
 - fatigue
@@ -25,6 +18,7 @@ game sim
   - pace
   - clock management, strategy
 - later
+  - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
   - log clutch plays
   - blocked fg
     - count as missed field goal

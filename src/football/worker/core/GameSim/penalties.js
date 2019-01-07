@@ -10,12 +10,14 @@ type Penalty = {
     probPerPlay: number,
     numPerSeason: number,
     yds: number,
-    posOdds?: {
-        [key: Position]: number,
-    },
     automaticFirstDown?: true,
     notBallCarrier?: true,
     spotFoul?: true,
+
+    // undefined means no player is assigned the penalty (like delay of game). An empty object means all players will be given equal weight.
+    posOdds?: {
+        [key: Position]: number,
+    },
 };
 
 const penalties: Penalty[] = [
@@ -212,6 +214,82 @@ const penalties: Penalty[] = [
             WR: 0.3,
             OL: 0.25,
             TE: 0.15,
+        },
+    },
+    {
+        name: "Pass interference",
+        side: "offense",
+        playTypes: ["pass"],
+        probPerPlay: 0,
+        numPerSeason: 83,
+        yds: 10,
+        posOdds: {
+            WR: 0.82,
+            TE: 0.16,
+            RB: 0.02,
+        },
+    },
+    {
+        name: "Illegal formation",
+        side: "offense",
+        playTypes: ["pass", "run"],
+        probPerPlay: 0,
+        numPerSeason: 71,
+        yds: 5,
+    },
+    {
+        name: "Illegal use of hands",
+        side: "defense",
+        playTypes: ["pass", "run"],
+        probPerPlay: 0,
+        numPerSeason: 36,
+        yds: 5,
+        posOdds: {},
+        automaticFirstDown: true,
+    },
+    {
+        name: "Illegal use of hands",
+        side: "offense",
+        playTypes: ["pass", "run"],
+        probPerPlay: 0,
+        numPerSeason: 35,
+        yds: 10,
+        posOdds: {
+            RB: 0.1,
+            WR: 0.3,
+            OL: 0.5,
+            TE: 0.1,
+        },
+    },
+    {
+        name: "Unsportsmanlike conduct",
+        side: "defense",
+        playTypes: ["beforeSnap"],
+        probPerPlay: 0,
+        numPerSeason: 27,
+        yds: 15,
+        posOdds: {},
+    },
+    {
+        name: "Unsportsmanlike conduct",
+        side: "offense",
+        playTypes: ["beforeSnap"],
+        probPerPlay: 0,
+        numPerSeason: 26,
+        yds: 15,
+        posOdds: {},
+    },
+    {
+        name: "Illegal shift",
+        side: "offense",
+        playTypes: ["beforeSnap"],
+        probPerPlay: 0,
+        numPerSeason: 43,
+        yds: 5,
+        posOdds: {
+            RB: 0.2,
+            WR: 0.6,
+            TE: 0.2,
         },
     },
 ];

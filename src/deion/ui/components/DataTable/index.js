@@ -274,7 +274,10 @@ class DataTable extends React.Component<Props, State> {
                 } else if (!prevState.enableFilters) {
                     // If there is a saved but hidden filter, remove it
                     if (Array.isArray(filters[i])) {
-                        filters[i] = [];
+                        filters[i] =
+                            prevState.allPositions !== undefined
+                                ? prevState.allPositions
+                                : [];
                     } else {
                         filters[i] = "";
                     }

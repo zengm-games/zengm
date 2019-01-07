@@ -44,6 +44,15 @@ export type CompositeRating =
     | "ballSecurity"
     | "endurance";
 
+export type PenaltyPlayType =
+    | "beforeSnap"
+    | "kickoffReturn"
+    | "fieldGoal"
+    | "punt"
+    | "puntReturn"
+    | "pass"
+    | "run";
+
 export type PlayerGameSim = {
     id: number,
     name: string,

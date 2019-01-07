@@ -1,6 +1,24 @@
 // @flow
 
-const penalties = [
+import type { Position } from "../../../common/types";
+import type { PenaltyPlayType } from "./types";
+
+type Penalty = {
+    name: string,
+    side: "offense" | "defense",
+    playTypes: PenaltyPlayType[],
+    probPerPlay: number,
+    numPerSeason: number,
+    yds: number,
+    posOdds?: {
+        [key: Position]: number,
+    },
+    automaticFirstDown?: true,
+    notBallCarrier?: true,
+    spotFoul?: true,
+};
+
+const penalties: Penalty[] = [
     {
         name: "Holding",
         side: "offense",

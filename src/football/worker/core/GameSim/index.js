@@ -8,11 +8,12 @@ import formations from "./formations";
 import penalties from "./penalties";
 import type { Position } from "../../../common/types";
 import type {
-    TeamNum,
     CompositeRating,
+    PenaltyPlayType,
     PlayerGameSim,
     PlayersOnField,
     TeamGameSim,
+    TeamNum,
 } from "./types";
 
 /**
@@ -733,6 +734,7 @@ class GameSim {
 
         const penInfo2 = this.checkPenalties("fieldGoal", {
             made,
+            yds: 0,
         });
         if (penInfo2) {
             penInfo2.doLog();
@@ -1199,14 +1201,7 @@ class GameSim {
 
     // Call this before actually advancing the ball, because different logic will apply if it's a spot foul or not
     checkPenalties(
-        playType:
-            | "beforeSnap"
-            | "kickoffReturn"
-            | "fieldGoal"
-            | "punt"
-            | "puntReturn"
-            | "pass"
-            | "run",
+        playType: PenaltyPlayType,
         {
             ballCarrier,
             made,
@@ -1369,6 +1364,7 @@ class GameSim {
                 positionsForPenalty.includes(pos),
             );
             if (positions.length > 0) {
+                // $FlowFixMe
                 const pos = random.choice(positions, pos2 => posOdds[pos2]);
                 if (
                     this.playersOnField[t][pos] !== undefined &&

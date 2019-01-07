@@ -104,9 +104,9 @@ const penalties = [
         yds: 15,
         posOdds: {
             QB: 0.01,
-            RB: 0.19,
-            WR: 0.4,
-            TE: 0.2,
+            RB: 0.14,
+            WR: 0.3,
+            TE: 0.15,
             OL: 0.4,
         },
     },

@@ -8,7 +8,6 @@ game sim
   - during punt: retry punt or apply to end
   - during kickoff: apply to end
   - TEST!
-  - unit test to ensure odds sum up to 1
   - check safety before penalty. if safety, don't do penalty
   - more types of penalties
 - special kick after safety

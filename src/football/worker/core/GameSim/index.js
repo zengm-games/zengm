@@ -319,9 +319,9 @@ class GameSim {
             repeatDown,
             sack,
         }: {
-            automaticFirstDown: boolean,
-            repeatDown: boolean,
-            sack: boolean,
+            automaticFirstDown?: boolean,
+            repeatDown?: boolean,
+            sack?: boolean,
         } = {},
     ) {
         // Touchdown?
@@ -1316,7 +1316,7 @@ class GameSim {
                 automaticFirstDown: !!pen.automaticFirstDown,
                 name: pen.name,
                 penYds: pen.yds,
-                posOdds: pen.posOdds,
+                posOdds: pen.posOdds !== undefined ? pen.posOdds : undefined,
                 spotYds,
                 totYds,
             };
@@ -1361,17 +1361,15 @@ class GameSim {
         const t = side === "offense" ? this.o : this.d;
 
         let p;
-        if (penInfo.posOdds !== undefined) {
+        const posOdds = penInfo.posOdds;
+        if (posOdds !== undefined) {
             const positionsOnField = Object.keys(this.playersOnField[t]);
-            const positionsForPenalty = Object.keys(penInfo.posOdds);
+            const positionsForPenalty = Object.keys(posOdds);
             const positions = positionsOnField.filter(pos =>
                 positionsForPenalty.includes(pos),
             );
             if (positions.length > 0) {
-                const pos = random.choice(
-                    positions,
-                    pos2 => penInfo.posOdds[pos2],
-                );
+                const pos = random.choice(positions, pos2 => posOdds[pos2]);
                 if (
                     this.playersOnField[t][pos] !== undefined &&
                     this.playersOnField[t][pos].length > 0
@@ -1393,7 +1391,7 @@ class GameSim {
             automaticFirstDown: penInfo.automaticFirstDown,
             repeatDown: true,
         });
-        if (this.automaticFirstDown) {
+        if (penInfo.automaticFirstDown) {
             this.down = 1;
             this.toGo = 1;
         }

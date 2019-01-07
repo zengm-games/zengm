@@ -734,7 +734,6 @@ class GameSim {
 
         const penInfo2 = this.checkPenalties("fieldGoal", {
             made,
-            yds: 0,
         });
         if (penInfo2) {
             penInfo2.doLog();
@@ -1205,12 +1204,14 @@ class GameSim {
         {
             ballCarrier,
             made,
-            playYds,
+            playYds = 0,
         }: {
             ballCarrier?: PlayerGameSim,
             made?: boolean,
             playYds?: number,
-        } = {},
+        } = {
+            playYds: 0,
+        },
     ) {
         // Handle plays in endzone
         let wouldHaveBeenTD = false;
@@ -1276,24 +1277,21 @@ class GameSim {
             let spotYds;
             let totYds = 0;
             if (pen.spotFoul) {
-                if (playYds === undefined) {
-                    throw new Error(
-                        `playYds are required for spot foul "${pen.name}"`,
-                    );
-                }
-
                 if (pen.side === "offense" && playYds > 0) {
                     // Offensive spot foul - only when past the line of scrimmage
                     spotYds = random.randInt(1, playYds);
 
                     // Don't let it be in the endzone, otherwise shit gets weird with safeties
-                    if (spotYds + this.scrimmage < 0) {
+                    if (spotYds + this.scrimmage <= 0) {
                         spotYds += this.scrimmage + 1;
+                    }
 
-                        // On kickoff returns, penalties are very unlikely to occur extremely deep
-                        if (playType === "kickoffReturn") {
-                            spotYds += random.randInt(20, playYds);
-                        }
+                    // On kickoff returns, penalties are very unlikely to occur extremely deep
+                    if (
+                        playType === "kickoffReturn" &&
+                        spotYds + this.scrimmage <= 10
+                    ) {
+                        spotYds += random.randInt(10, playYds);
                     }
                 } else if (pen.side === "defense") {
                     // Defensive spot foul - could be in secondary too

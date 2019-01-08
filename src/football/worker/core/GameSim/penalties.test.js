@@ -8,7 +8,7 @@ describe("worker/core/GameSim", () => {
     describe("penalties", () => {
         it("posOdds sum to 1", () => {
             for (const pen of penalties) {
-                if (!pen.posOdds) {
+                if (!pen.posOdds || Object.keys(pen.posOdds).length === 0) {
                     continue;
                 }
                 const sumOdds = Object.values(pen.posOdds).reduce(

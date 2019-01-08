@@ -339,7 +339,6 @@ class GameSim {
             };
         }
 
-        console.log("this.scrimmage", this.scrimmage, this.scrimmage + yds);
         this.scrimmage += yds;
 
         // For non-sacks, record tackler(s)

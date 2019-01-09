@@ -70,6 +70,8 @@ class GameSim {
 
     awaitingAfterTouchdown: boolean;
 
+    awaitingAfterSafety: boolean;
+
     awaitingKickoff: boolean;
 
     twoPointConversionTeam: number | void;
@@ -110,6 +112,7 @@ class GameSim {
         this.isClockRunning = false;
 
         this.awaitingAfterTouchdown = false;
+        this.awaitingAfterSafety = false;
         this.awaitingKickoff = true;
 
         this.down = 1;
@@ -482,7 +485,7 @@ class GameSim {
         const kicker = this.playersOnField[this.o].K[0];
         let dt = 0;
 
-        const onside = Math.random() < 0.1;
+        const onside = !this.awaitingAfterSafety && Math.random() < 0.1;
 
         if (onside) {
             this.playByPlay.logEvent("onsideKick", {
@@ -546,7 +549,9 @@ class GameSim {
             const kickReturner = this.playersOnField[this.d].KR[0];
 
             const touchback = Math.random() > 0.5;
-            const kickTo = random.randInt(-9, 10);
+            const kickTo = this.awaitingAfterSafety
+                ? random.randInt(15, 35)
+                : random.randInt(-9, 10);
 
             this.playByPlay.logEvent("kickoff", {
                 clock: this.clock,
@@ -611,6 +616,7 @@ class GameSim {
         }
 
         this.awaitingKickoff = false;
+        this.awaitingAfterSafety = false;
         this.isClockRunning = false;
 
         if (this.overtimeState === "initialKickoff") {
@@ -948,6 +954,7 @@ class GameSim {
 
         this.possessionChange();
         this.awaitingKickoff = true;
+        this.awaitingAfterSafety = true;
         this.isClockRunning = false;
     }
 

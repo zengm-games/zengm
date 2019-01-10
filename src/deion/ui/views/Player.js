@@ -504,13 +504,21 @@ const Player = ({
                 </div>
                 <div className="col-sm-6">
                     <h2>Statistical Feats</h2>
-                    {feats.map(e => {
-                        return (
-                            <p key={e.eid}>
-                                <b>{e.season}</b>: <SafeHtml dirty={e.text} />
-                            </p>
-                        );
-                    })}
+                    <div
+                        style={{
+                            maxHeight: 500,
+                            overflowY: "scroll",
+                        }}
+                    >
+                        {feats.map(e => {
+                            return (
+                                <p key={e.eid}>
+                                    <b>{e.season}</b>:{" "}
+                                    <SafeHtml dirty={e.text} />
+                                </p>
+                            );
+                        })}
+                    </div>
                     {feats.length === 0 ? <p>None</p> : null}
                 </div>
             </div>

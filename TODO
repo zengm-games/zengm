@@ -3,10 +3,11 @@
 live game
 - sticky play by play log not working
 - football
-  - box score updating
   - scoring log updating
   - field with drive summary, football, direction, and last play
   - in play by play, show down, to go, score, and scrimmage
+  - final score
+  - switch status from "Live game in progress"
 
 not enough good WRs, too many good TEs
 

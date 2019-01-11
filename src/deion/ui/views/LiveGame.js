@@ -7,7 +7,9 @@ import { overrides, setTitle } from "../util";
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
-        return this.prevInGame || nextProps.p.inGame;
+        return process.env.SPORT === "basketball"
+            ? this.prevInGame || nextProps.p.inGame
+            : true;
     }
 
     render() {
@@ -16,10 +18,14 @@ class PlayerRow extends React.Component {
         // Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
         this.prevInGame = p.inGame;
 
-        const classes = classNames({
-            separator: i === 4,
-            "table-warning": p.inGame,
-        });
+        const classes =
+            process.env.SPORT === "basketball"
+                ? classNames({
+                      separator: i === 4,
+                      "table-warning": p.inGame,
+                  })
+                : null;
+
         return (
             <overrides.components.BoxScoreRow
                 className={classes}

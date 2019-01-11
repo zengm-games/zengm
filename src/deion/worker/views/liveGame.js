@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayByPlay(
@@ -20,59 +20,46 @@ async function updatePlayByPlay(
         );
 
         // Stats to set to 0
-        const resetStats = [
-            "min",
-            "fg",
-            "fga",
-            "tp",
-            "tpa",
-            "ft",
-            "fta",
-            "orb",
-            "drb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "ba",
-            "pf",
-            "pts",
-            "pm",
-        ];
+        if (!overrides.core.player.stats) {
+            throw new Error("Missing overrides.core.player.stats");
+        }
+        const resetStats = overrides.core.player.stats.raw;
 
         boxScore.overtime = "";
         boxScore.quarter = "1st quarter";
         boxScore.time = "12:00";
         boxScore.gameOver = false;
-        for (let i = 0; i < boxScore.teams.length; i++) {
+        for (const t of boxScore.teams) {
             // Team metadata
-            boxScore.teams[i].abbrev =
-                g.teamAbbrevsCache[boxScore.teams[i].tid];
-            boxScore.teams[i].region =
-                g.teamRegionsCache[boxScore.teams[i].tid];
-            boxScore.teams[i].name = g.teamNamesCache[boxScore.teams[i].tid];
+            t.abbrev = g.teamAbbrevsCache[t.tid];
+            t.region = g.teamRegionsCache[t.tid];
+            t.name = g.teamNamesCache[t.tid];
 
-            boxScore.teams[i].ptsQtrs = [0];
-            for (let s = 0; s < resetStats.length; s++) {
-                boxScore.teams[i][resetStats[s]] = 0;
+            t.ptsQtrs = [0];
+            for (const stat of resetStats) {
+                if (t.hasOwnProperty(stat)) {
+                    t[stat] = 0;
+                }
             }
-            for (let j = 0; j < boxScore.teams[i].players.length; j++) {
+            for (let j = 0; j < t.players.length; j++) {
+                const p = t.players[j];
                 // Fix for players who were hurt this game - don't show right away!
-                if (
-                    boxScore.teams[i].players[j].injury.type !== "Healthy" &&
-                    boxScore.teams[i].players[j].min > 0
-                ) {
-                    boxScore.teams[i].players[j].injury = {
+                if (p.injury.type !== "Healthy" && p.min > 0) {
+                    p.injury = {
                         type: "Healthy",
                         gamesRemaining: 0,
                     };
                 }
 
-                for (let s = 0; s < resetStats.length; s++) {
-                    boxScore.teams[i].players[j][resetStats[s]] = 0;
+                for (const stat of resetStats) {
+                    if (p.hasOwnProperty(stat)) {
+                        p[stat] = 0;
+                    }
                 }
 
-                boxScore.teams[i].players[j].inGame = j < 5;
+                if (process.env.SPORT === "basketball") {
+                    p.inGame = j < 5;
+                }
             }
         }
 

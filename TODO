@@ -1,10 +1,12 @@
 # football
 
 live game
-- move to deion
-- processToNextPause to overrides
-- make sure all args passed to BoxScoreRow
-- football field with drive summary, football, direction, and last play
+- sticky play by play log not working
+- football
+  - box score updating
+  - scoring log updating
+  - field with drive summary, football, direction, and last play
+  - in play by play, show down, to go, score, and scrimmage
 
 not enough good WRs, too many good TEs
 

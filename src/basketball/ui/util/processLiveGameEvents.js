@@ -33,7 +33,6 @@ const processLiveGameEvents = (events, boxScore, overtimes) => {
         } else if (e.type === "stat") {
             // Quarter-by-quarter score
             if (e.s === "pts") {
-                // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
                 const ptsQtrs = boxScore.teams[e.t].ptsQtrs;
                 if (ptsQtrs.length <= e.qtr) {
                     // Must be overtime! This updates ptsQtrs too.

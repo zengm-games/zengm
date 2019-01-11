@@ -15,25 +15,16 @@ const processLiveGameEvents = (events, boxScore, overtimes) => {
             }
 
             // Show score after scoring plays
-            if (text.includes("made")) {
+            /*            if (text.includes("made")) {
                 text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1].pts})`;
-            }
+            }*/
 
             boxScore.time = e.time;
 
             stop = true;
-        } else if (e.type === "sub") {
-            for (let i = 0; i < boxScore.teams[e.t].players.length; i++) {
-                if (boxScore.teams[e.t].players[i].pid === e.on) {
-                    boxScore.teams[e.t].players[i].inGame = true;
-                } else if (boxScore.teams[e.t].players[i].pid === e.off) {
-                    boxScore.teams[e.t].players[i].inGame = false;
-                }
-            }
         } else if (e.type === "stat") {
             // Quarter-by-quarter score
             if (e.s === "pts") {
-                // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
                 const ptsQtrs = boxScore.teams[e.t].ptsQtrs;
                 if (ptsQtrs.length <= e.qtr) {
                     // Must be overtime! This updates ptsQtrs too.
@@ -61,41 +52,15 @@ const processLiveGameEvents = (events, boxScore, overtimes) => {
             }
 
             // Everything else
-            if (
-                e.s === "min" ||
-                e.s === "fg" ||
-                e.s === "fga" ||
-                e.s === "tp" ||
-                e.s === "tpa" ||
-                e.s === "ft" ||
-                e.s === "fta" ||
-                e.s === "orb" ||
-                e.s === "drb" ||
-                e.s === "ast" ||
-                e.s === "tov" ||
-                e.s === "stl" ||
-                e.s === "blk" ||
-                e.s === "ba" ||
-                e.s === "pf" ||
-                e.s === "pts"
-            ) {
-                boxScore.teams[e.t].players[e.p][e.s] += e.amt;
-                boxScore.teams[e.t][e.s] += e.amt;
-
-                if (e.s === "pts") {
-                    for (let j = 0; j < 2; j++) {
-                        for (
-                            let k = 0;
-                            k < boxScore.teams[j].players.length;
-                            k++
-                        ) {
-                            if (boxScore.teams[j].players[k].inGame) {
-                                boxScore.teams[j].players[k].pm +=
-                                    e.t === j ? e.amt : -e.amt;
-                            }
-                        }
-                    }
+            console.log(e.s);
+            if (boxScore.teams[e.t].hasOwnProperty(e.s)) {
+                const p = boxScore.teams[e.t].players.find(
+                    p2 => p2.id === e.pid,
+                );
+                if (p) {
+                    p[e.s] += e.amt;
                 }
+                boxScore.teams[e.t][e.s] += e.amt;
             }
         }
     }

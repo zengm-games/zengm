@@ -3,6 +3,7 @@
 import deionUI from "../../deion/ui";
 import * as constants from "../common/constants";
 import components from "./components";
+import util from "./util";
 import views from "./views";
 
 (async () => {
@@ -10,6 +11,7 @@ import views from "./views";
         overrides: {
             constants,
             components,
+            util,
             views,
         },
     });

@@ -250,6 +250,9 @@ const deionUI = async (options: {
         components: {
             [key: string]: any,
         },
+        util: {
+            [key: string]: any,
+        },
         views: {
             [key: string]: any,
         },

@@ -1,5 +1,11 @@
 # football
 
+live game
+- move to deion
+- processToNextPause to overrides
+- make sure all args passed to BoxScoreRow
+- football field with drive summary, football, direction, and last play
+
 not enough good WRs, too many good TEs
 
 game sim
@@ -73,7 +79,6 @@ worker/deion stuff that needs to have a process.env.SPORT case
 
 finish views
 - CustomizePlayer
-- LiveGame
 - way to specify routes for ShotLocations/Depth
 
 go through every file in football, make sure it's been updated (like heightToRating)

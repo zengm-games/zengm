@@ -2,10 +2,8 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
-import { BoxScoreWrapper } from "../../../deion/ui/components";
-import { helpers, setTitle } from "../../../deion/ui/util";
-import components from "../components";
-const { BoxScoreRow } = components;
+import { BoxScoreWrapper } from "../components";
+import { overrides, setTitle } from "../util";
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -13,7 +11,7 @@ class PlayerRow extends React.Component {
     }
 
     render() {
-        const { i, p } = this.props;
+        const { i, p, ...props } = this.props;
 
         // Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
         this.prevInGame = p.inGame;
@@ -22,7 +20,14 @@ class PlayerRow extends React.Component {
             separator: i === 4,
             "table-warning": p.inGame,
         });
-        return <BoxScoreRow className={classes} p={p} />;
+        return (
+            <overrides.components.BoxScoreRow
+                className={classes}
+                i={i}
+                p={p}
+                {...props}
+            />
+        );
     }
 }
 
@@ -90,115 +95,15 @@ class LiveGame extends React.Component {
             // eslint-disable-next-line react/no-access-state-in-setstate
             const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
 
-            let stop = false;
-            let text = null;
-            while (!stop && events.length > 0) {
-                const e = events.shift();
+            const output = overrides.util.processLiveGameEvents(
+                events,
+                boxScore,
+                overtimes,
+            );
+            const text = output.text;
+            overtimes = output.overtimes;
 
-                if (e.type === "text") {
-                    if (e.t === 0 || e.t === 1) {
-                        text = `${e.time} - ${boxScore.teams[e.t].abbrev} - ${
-                            e.text
-                        }`;
-                    } else {
-                        text = e.text;
-                    }
-
-                    // Show score after scoring plays
-                    if (text.includes("made")) {
-                        text += ` (${boxScore.teams[0].pts}-${
-                            boxScore.teams[1].pts
-                        })`;
-                    }
-
-                    boxScore.time = e.time;
-
-                    stop = true;
-                } else if (e.type === "sub") {
-                    for (
-                        let i = 0;
-                        i < boxScore.teams[e.t].players.length;
-                        i++
-                    ) {
-                        if (boxScore.teams[e.t].players[i].pid === e.on) {
-                            boxScore.teams[e.t].players[i].inGame = true;
-                        } else if (
-                            boxScore.teams[e.t].players[i].pid === e.off
-                        ) {
-                            boxScore.teams[e.t].players[i].inGame = false;
-                        }
-                    }
-                } else if (e.type === "stat") {
-                    // Quarter-by-quarter score
-                    if (e.s === "pts") {
-                        // This is a hack because array elements are not made observable by default in the Knockout mapping plugin and I didn't want to write a really ugly mapping function.
-                        const ptsQtrs = boxScore.teams[e.t].ptsQtrs;
-                        if (ptsQtrs.length <= e.qtr) {
-                            // Must be overtime! This updates ptsQtrs too.
-                            boxScore.teams[0].ptsQtrs.push(0);
-                            boxScore.teams[1].ptsQtrs.push(0);
-
-                            if (ptsQtrs.length > 4) {
-                                overtimes += 1;
-                                if (overtimes === 1) {
-                                    boxScore.overtime = " (OT)";
-                                } else if (overtimes > 1) {
-                                    boxScore.overtime = ` (${overtimes}OT)`;
-                                }
-                                boxScore.quarter = `${helpers.ordinal(
-                                    overtimes,
-                                )} overtime`;
-                            } else {
-                                boxScore.quarter = `${helpers.ordinal(
-                                    ptsQtrs.length,
-                                )} quarter`;
-                            }
-                        }
-                        ptsQtrs[e.qtr] += e.amt;
-                        boxScore.teams[e.t].ptsQtrs = ptsQtrs;
-                    }
-
-                    // Everything else
-                    if (
-                        e.s === "min" ||
-                        e.s === "fg" ||
-                        e.s === "fga" ||
-                        e.s === "tp" ||
-                        e.s === "tpa" ||
-                        e.s === "ft" ||
-                        e.s === "fta" ||
-                        e.s === "orb" ||
-                        e.s === "drb" ||
-                        e.s === "ast" ||
-                        e.s === "tov" ||
-                        e.s === "stl" ||
-                        e.s === "blk" ||
-                        e.s === "ba" ||
-                        e.s === "pf" ||
-                        e.s === "pts"
-                    ) {
-                        boxScore.teams[e.t].players[e.p][e.s] += e.amt;
-                        boxScore.teams[e.t][e.s] += e.amt;
-
-                        if (e.s === "pts") {
-                            for (let j = 0; j < 2; j++) {
-                                for (
-                                    let k = 0;
-                                    k < boxScore.teams[j].players.length;
-                                    k++
-                                ) {
-                                    if (boxScore.teams[j].players[k].inGame) {
-                                        boxScore.teams[j].players[k].pm +=
-                                            e.t === j ? e.amt : -e.amt;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (text !== null) {
+            if (text !== undefined) {
                 const p = document.createElement("p");
                 const node = document.createTextNode(text);
                 if (text.startsWith("Start of")) {

@@ -7,6 +7,7 @@ const overrides: {
     components: {
         [key: string]: any,
     },
+    util: { [key: string]: any },
     views: { [key: string]: any },
 } = {
     constants: {
@@ -19,6 +20,7 @@ const overrides: {
         TIME_BETWEEN_GAMES: "",
     },
     components: {},
+    util: {},
     views: {},
 };
 

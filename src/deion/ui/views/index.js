@@ -29,6 +29,7 @@ import LeagueDashboard from "./LeagueDashboard";
 import LeagueFinances from "./LeagueFinances";
 import LeagueOptions from "./LeagueOptions";
 import Live from "./Live";
+import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";
 import Message from "./Message";
@@ -91,6 +92,7 @@ export default {
     LeagueFinances,
     LeagueOptions,
     Live,
+    LiveGame,
     LoginOrRegister,
     LostPassword,
     Message,

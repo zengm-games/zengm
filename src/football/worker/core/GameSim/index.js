@@ -399,7 +399,6 @@ class GameSim {
                 this.o = this.o === 0 ? 1 : 0;
                 this.d = this.d === 0 ? 1 : 0;
                 this.scrimmage = 100 - this.scrimmage;
-                console.log("this.scrimmage2", this.scrimmage);
                 this.down = 1;
                 const maxToGo = 100 - this.scrimmage;
                 this.toGo = maxToGo < 10 ? maxToGo : 10;
@@ -498,7 +497,6 @@ class GameSim {
 
             const kickTo = random.randInt(40, 55);
             this.scrimmage = kickTo;
-            console.log("this.scrimmage3", this.scrimmage);
 
             const success = Math.random() < 0.1;
 
@@ -569,7 +567,6 @@ class GameSim {
                 this.toGo = 10;
             } else {
                 this.scrimmage = kickTo;
-                console.log("this.scrimmage4", this.scrimmage);
                 let returnLength = this.boundedYds(random.randInt(10, 109));
                 dt = Math.abs(returnLength) / 8;
                 let td = false;
@@ -686,7 +683,6 @@ class GameSim {
                 maxReturnLength,
             );
             this.scrimmage = kickTo;
-            console.log("this.scrimmage5", this.scrimmage);
             dt += Math.abs(returnLength) / 8;
             let td = false;
 
@@ -804,7 +800,6 @@ class GameSim {
                 20,
                 Infinity,
             );
-            console.log("this.scrimmage6", this.scrimmage);
         }
 
         this.awaitingAfterTouchdown = false;
@@ -837,7 +832,6 @@ class GameSim {
         this.recordStat(this.o, pFumbled, "fmb");
 
         this.scrimmage = helpers.bound(this.scrimmage + priorYdsRaw, -9, 100);
-        console.log("this.scrimmage7", this.scrimmage);
 
         const lost = Math.random() > 0.5;
 

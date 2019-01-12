@@ -148,8 +148,9 @@ class LiveGame extends React.Component {
     render() {
         setTitle("Live Game Simulation");
 
+        // Needs to return actual div, not fragment, for AutoAffix!!!
         return (
-            <>
+            <div>
                 <h1>Live Game Simulation</h1>
 
                 <p className="text-danger">
@@ -172,6 +173,7 @@ class LiveGame extends React.Component {
                     </div>
                     <div className="col-md-3">
                         <AutoAffix viewportOffsetTop={60} container={this}>
+                            {/* Needs to return actual div, not fragment, for AutoAffix!!! */}
                             <div>
                                 <form>
                                     <label htmlFor="playByPlaySpeed">
@@ -199,7 +201,7 @@ class LiveGame extends React.Component {
                         </AutoAffix>
                     </div>
                 </div>
-            </>
+            </div>
         );
     }
 }

@@ -38,7 +38,7 @@ const BoxScoreRow = ({
 };
 
 BoxScoreRow.propTypes = {
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
     onClick: PropTypes.func,
     p: PropTypes.object.isRequired,
 };

@@ -409,7 +409,7 @@ class PlayByPlayLogger {
 
         this.playByPlay.push({
             type: "stat",
-            qtr: this.quarter,
+            quarter: this.quarter,
             t,
             pid,
             s,

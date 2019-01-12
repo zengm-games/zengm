@@ -24,7 +24,7 @@ class PlayerRow extends React.Component {
                       separator: i === 4,
                       "table-warning": p.inGame,
                   })
-                : null;
+                : undefined;
 
         return (
             <overrides.components.BoxScoreRow
@@ -92,7 +92,9 @@ class LiveGame extends React.Component {
 
     startLiveGame(events) {
         let overtimes = 0;
+        let quarters = new Set(["Q1"]);
 
+        console.log(events);
         const processToNextPause = () => {
             if (!this.componentIsMounted) {
                 return;
@@ -101,13 +103,15 @@ class LiveGame extends React.Component {
             // eslint-disable-next-line react/no-access-state-in-setstate
             const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
 
-            const output = overrides.util.processLiveGameEvents(
-                events,
+            const output = overrides.util.processLiveGameEvents({
                 boxScore,
+                events,
                 overtimes,
-            );
+                quarters,
+            });
             const text = output.text;
             overtimes = output.overtimes;
+            quarters = output.quarters;
 
             if (text !== undefined) {
                 const p = document.createElement("p");

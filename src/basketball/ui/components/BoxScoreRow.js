@@ -12,7 +12,7 @@ const BoxScoreRow = ({
     onClick,
     p,
 }: {
-    className: string,
+    className?: string,
     i: number,
     onClick?: Function,
     p: any,
@@ -60,7 +60,7 @@ const BoxScoreRow = ({
 };
 
 BoxScoreRow.propTypes = {
-    className: PropTypes.string.isRequired,
+    className: PropTypes.string,
     onClick: PropTypes.func,
     p: PropTypes.object.isRequired,
 };

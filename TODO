@@ -5,8 +5,7 @@ live game
   - scoring log updating
   - field with drive summary, football, direction, and last play
   - in play by play, show down, to go, score, and scrimmage
-  - final score
-  - switch status from "Live game in progress"
+  - switch status from "Live game in progress" at end
 
 sometimes t in event log is wrong
 - see "Can't find player" occurrances

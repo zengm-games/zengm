@@ -1604,9 +1604,10 @@ class GameSim {
                 }
             }
 
-            if (pts) {
+            if (pts !== undefined) {
                 this.team[t].stat.pts += pts;
                 this.team[t].stat.ptsQtrs[qtr] += pts;
+                this.playByPlay.logStat(qtr, t, undefined, "pts", pts);
 
                 if (this.overtimeState === "secondPossession") {
                     const t2 = t === 0 ? 1 : 0;

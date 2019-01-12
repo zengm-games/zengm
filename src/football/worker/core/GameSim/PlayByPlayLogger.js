@@ -402,7 +402,7 @@ class PlayByPlayLogger {
         }
     }
 
-    logStat(qtr: number, t: number, pid: number, s: string, amt: number) {
+    logStat(qtr: number, t: number, pid?: number, s: string, amt: number) {
         if (!this.active) {
             return;
         }

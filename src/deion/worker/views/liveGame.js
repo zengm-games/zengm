@@ -23,7 +23,11 @@ async function updatePlayByPlay(
         if (!overrides.core.player.stats) {
             throw new Error("Missing overrides.core.player.stats");
         }
-        const resetStats = overrides.core.player.stats.raw;
+        if (!overrides.core.team.stats) {
+            throw new Error("Missing overrides.core.team.stats");
+        }
+        const resetStatsPlayer = overrides.core.player.stats.raw;
+        const resetStatsTeam = overrides.core.team.stats.raw;
 
         boxScore.overtime = "";
         boxScore.quarter = "1st quarter";
@@ -36,7 +40,7 @@ async function updatePlayByPlay(
             t.name = g.teamNamesCache[t.tid];
 
             t.ptsQtrs = [0];
-            for (const stat of resetStats) {
+            for (const stat of resetStatsTeam) {
                 if (t.hasOwnProperty(stat)) {
                     t[stat] = 0;
                 }
@@ -51,7 +55,7 @@ async function updatePlayByPlay(
                     };
                 }
 
-                for (const stat of resetStats) {
+                for (const stat of resetStatsPlayer) {
                     if (p.hasOwnProperty(stat)) {
                         p[stat] = 0;
                     }

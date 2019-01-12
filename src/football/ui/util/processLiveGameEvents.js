@@ -54,14 +54,16 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 
             // Everything else
             if (boxScore.teams[e.t].hasOwnProperty(e.s) && e.s !== "min") {
-                const p = boxScore.teams[e.t].players.find(
-                    p2 => p2.pid === e.pid,
-                );
-                if (p === undefined) {
-                    console.log("Can't find player", e);
-                }
-                if (p) {
-                    p[e.s] += e.amt;
+                if (e.pid !== undefined) {
+                    const p = boxScore.teams[e.t].players.find(
+                        p2 => p2.pid === e.pid,
+                    );
+                    if (p === undefined) {
+                        console.log("Can't find player", e);
+                    }
+                    if (p) {
+                        p[e.s] += e.amt;
+                    }
                 }
                 boxScore.teams[e.t][e.s] += e.amt;
             }

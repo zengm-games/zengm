@@ -98,6 +98,10 @@ class GodMode extends React.Component {
         e.preventDefault();
 
         let numGamesPlayoffSeries;
+        let numPlayoffByes = parseInt(this.state.numPlayoffByes, 10);
+        if (Number.isNaN(numPlayoffByes)) {
+            numPlayoffByes = 0;
+        }
         try {
             numGamesPlayoffSeries = JSON.parse(
                 this.state.numGamesPlayoffSeries,
@@ -109,6 +113,15 @@ class GodMode extends React.Component {
                 if (!Number.isInteger(num)) {
                     throw new Error("Array must contain only integers");
                 }
+            }
+            const numRounds = numGamesPlayoffSeries.length;
+            const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+            if (numPlayoffTeams > this.props.numTeams) {
+                throw new Error(
+                    `${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${
+                        this.props.numTeams
+                    } teams in the league`,
+                );
             }
         } catch (error) {
             logEvent({
@@ -631,6 +644,7 @@ GodMode.propTypes = {
     minRosterSize: PropTypes.number.isRequired,
     maxRosterSize: PropTypes.number.isRequired,
     numGames: PropTypes.number.isRequired,
+    numTeams: PropTypes.number.isRequired,
     quarterLength: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,
     aiTrades: PropTypes.bool.isRequired,

@@ -15,6 +15,7 @@ async function updateGodMode(
             godMode: g.godMode,
             disableInjuries: g.disableInjuries,
             numGames: g.numGames,
+            numTeams: g.numTeams,
             quarterLength: g.quarterLength,
             maxRosterSize: g.maxRosterSize,
             minRosterSize: g.minRosterSize,

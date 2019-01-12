@@ -17,21 +17,30 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
         Infinity,
     );
 
+    const numRounds = g.numGamesPlayoffSeries.length;
+
     const tidPlayoffs = [];
-    const numPlayoffTeams =
-        2 ** g.numGamesPlayoffSeries.length - numPlayoffByes;
+    const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
     if (numPlayoffTeams <= 0) {
         throw new Error(
             "Invalid combination of numGamesPlayoffSeries and numPlayoffByes results in no playoff teams",
         );
     }
+    if (numPlayoffTeams > g.numTeams) {
+        if (numPlayoffTeams > g.numTeams) {
+            throw new Error(
+                `${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${
+                    g.numTeams
+                } teams in the league`,
+            );
+        }
+    }
 
-    const series = range(g.numGamesPlayoffSeries.length).map(() => []);
+    const series = range(numRounds).map(() => []);
     if (playoffsByConference) {
-        if (g.numGamesPlayoffSeries.length > 1) {
+        if (numRounds > 1) {
             // Default: top 50% of teams in each of the two conferences
-            const numSeriesPerConference =
-                2 ** g.numGamesPlayoffSeries.length / 4;
+            const numSeriesPerConference = 2 ** numRounds / 4;
             for (let cid = 0; cid < g.confs.length; cid++) {
                 const teamsConf = [];
                 for (let i = 0; i < teams.length; i++) {
@@ -111,7 +120,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
                 break;
             }
         }
-        const numSeries = 2 ** g.numGamesPlayoffSeries.length / 2;
+        const numSeries = 2 ** numRounds / 2;
         let numByesUsed = 0;
         for (let i = 0; i < numSeries; i++) {
             const j = i % 2 === 0 ? i : numSeries - i;

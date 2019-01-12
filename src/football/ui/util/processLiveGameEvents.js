@@ -2,7 +2,6 @@ import { helpers } from "../../../deion/ui/util";
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
 const cmpTime = (t1, t2) => {
-    console.log("cmpTime", t1, t2);
     const [min1, sec1] = t1.split(":").map(x => parseInt(x, 10));
     const [min2, sec2] = t2.split(":").map(x => parseInt(x, 10));
 
@@ -50,9 +49,14 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 
         if (e.type === "text") {
             if (e.t === 0 || e.t === 1) {
-                text = `${e.time} - ${boxScore.teams[e.t].abbrev} - ${e.text}`;
+                text = [
+                    `${e.time} - ${
+                        boxScore.teams[e.t].abbrev
+                    } ball, 1st & 10, own 25`,
+                    e.text,
+                ];
             } else {
-                text = e.text;
+                text = [e.text];
             }
 
             // Show score after scoring plays
@@ -90,8 +94,12 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
     }
 
     //  Handle filtering of scoringSummary
-    if (boxScore.scoringSummary) {
+    if (boxScore.scoringSummary && boxScore.time !== undefined) {
         for (const event of boxScore.scoringSummary) {
+            if (event.time === undefined) {
+                continue;
+            }
+
             if (event.hide === false) {
                 // Already past, no need to check again
                 continue;

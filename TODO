@@ -1,8 +1,12 @@
 # football
 
 live game
+- in play by play, show down, to go, and scrimmage
+  - might make sense to pass gamesim object to logger, if need more stuff
+  - or, send those as distinct logged objects, so there would be multiple intermediate events before it's displayed again (drop back, pass completion). this would also allow not showing that info for kickoffs, extra points, 2 point conversions
+    - then maybe undo text array stuff from last commit
+- don't need "min" in events
 - field with drive summary, football, direction, and last play
-- in play by play, show down, to go, score, and scrimmage
 - switch status from "Live game in progress" at end
 - why does time elapse between touchdown and extra point? is it that the timestamp is from the beginning of the play, not the end of the play?
 

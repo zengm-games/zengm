@@ -102,7 +102,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
     return {
         overtimes,
         quarters,
-        text,
+        text: [text],
     };
 };
 

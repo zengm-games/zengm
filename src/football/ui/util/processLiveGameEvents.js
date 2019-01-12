@@ -1,5 +1,26 @@
 import { helpers } from "../../../deion/ui/util";
 
+// For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
+const cmpTime = (t1, t2) => {
+    console.log("cmpTime", t1, t2);
+    const [min1, sec1] = t1.split(":").map(x => parseInt(x, 10));
+    const [min2, sec2] = t2.split(":").map(x => parseInt(x, 10));
+
+    if (min1 > min2) {
+        return 1;
+    }
+    if (min1 < min2) {
+        return -1;
+    }
+    if (sec1 > sec2) {
+        return 1;
+    }
+    if (sec1 < sec2) {
+        return -1;
+    }
+    return 0;
+};
+
 // Mutates boxScore!!!
 const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
     let stop = false;
@@ -8,10 +29,8 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
     while (!stop && events.length > 0) {
         const e = events.shift();
 
-        if (e.quarter !== undefined && !quarters.has(e.quarter)) {
-            console.log("new quarter", e.quarter);
-            quarters.add(e.quarter);
-            console.log("quarters", quarters);
+        if (e.quarter !== undefined && !quarters.includes(e.quarter)) {
+            quarters.push(e.quarter);
             boxScore.teams[0].ptsQtrs.push(0);
             boxScore.teams[1].ptsQtrs.push(0);
 
@@ -66,6 +85,27 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
                     }
                 }
                 boxScore.teams[e.t][e.s] += e.amt;
+            }
+        }
+    }
+
+    //  Handle filtering of scoringSummary
+    if (boxScore.scoringSummary) {
+        for (const event of boxScore.scoringSummary) {
+            if (event.hide === false) {
+                // Already past, no need to check again
+                continue;
+            }
+
+            if (!quarters.includes(event.quarter)) {
+                // Future quarters
+                event.hide = true;
+            } else if (event.quarter !== quarters[quarters.length - 1]) {
+                // Past quarters
+                event.hide = false;
+            } else {
+                // Current quarter
+                event.hide = cmpTime(event.time, boxScore.time) === -1;
             }
         }
     }

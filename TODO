@@ -1,11 +1,10 @@
 # football
 
 live game
-- football
-  - scoring log updating
-  - field with drive summary, football, direction, and last play
-  - in play by play, show down, to go, score, and scrimmage
-  - switch status from "Live game in progress" at end
+- field with drive summary, football, direction, and last play
+- in play by play, show down, to go, score, and scrimmage
+- switch status from "Live game in progress" at end
+- why does time elapse between touchdown and extra point? is it that the timestamp is from the beginning of the play, not the end of the play?
 
 sometimes t in event log is wrong
 - see "Can't find player" occurrances

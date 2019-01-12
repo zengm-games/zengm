@@ -92,9 +92,9 @@ class LiveGame extends React.Component {
 
     startLiveGame(events) {
         let overtimes = 0;
-        let quarters = new Set(["Q1"]);
+        let quarters = ["Q1"];
 
-        console.log(events);
+        console.log(events, this.state.boxScore);
         const processToNextPause = () => {
             if (!this.componentIsMounted) {
                 return;
@@ -135,6 +135,11 @@ class LiveGame extends React.Component {
             } else {
                 boxScore.time = "0:00";
                 boxScore.gameOver = true;
+                if (boxScore.scoringSummary) {
+                    for (const event of boxScore.scoringSummary) {
+                        event.hide = false;
+                    }
+                }
             }
 
             this.setState({

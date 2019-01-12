@@ -167,6 +167,10 @@ const processEvents = events => {
     const score = [0, 0];
 
     for (const event of events) {
+        if (event.hide) {
+            continue;
+        }
+
         const otherT = event.t === 0 ? 1 : 0;
 
         let scoreType = null;

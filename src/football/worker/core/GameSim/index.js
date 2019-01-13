@@ -155,6 +155,8 @@ class GameSim {
             }
         }
 
+        this.playByPlay.logEvent("gameOver");
+
         // this.checkGameWinner();
 
         // Delete stuff that isn't needed before returning
@@ -258,6 +260,17 @@ class GameSim {
     }
 
     simPlay() {
+        if (!this.awaitingAfterTouchdown) {
+            this.playByPlay.logClock({
+                awaitingKickoff: this.awaitingKickoff,
+                clock: this.clock,
+                down: this.down,
+                scrimmage: this.scrimmage,
+                t: this.o,
+                toGo: this.toGo,
+            });
+        }
+
         const playType = this.getPlayType();
 
         let dt;
@@ -293,17 +306,6 @@ class GameSim {
             this.clock = 0;
         }
         this.updatePlayingTime(dt);
-
-        if (!this.awaitingAfterTouchdown) {
-            this.playByPlay.logClock({
-                awaitingKickoff: this.awaitingKickoff,
-                clock: this.clock,
-                down: this.down,
-                scrimmage: this.scrimmage,
-                t: this.o,
-                toGo: this.toGo,
-            });
-        }
 
         this.injuries();
 
@@ -915,7 +917,7 @@ class GameSim {
             100,
         );
 
-        const p = this.pickPlayer(this.d, "passCoverage");
+        const p = this.pickPlayer(this.o, "passCoverage");
 
         const ydsRaw = random.randInt(0, 109);
         const yds = this.boundedYds(ydsRaw);
@@ -982,7 +984,7 @@ class GameSim {
 
         this.recordStat(this.o, qb, "pssSk");
         this.recordStat(this.o, qb, "pssSkYds", Math.abs(yds));
-        this.recordStat(this.o, p, "defSk");
+        this.recordStat(this.d, p, "defSk");
 
         if (safetyOrTouchback) {
             this.doSafety();
@@ -1040,11 +1042,11 @@ class GameSim {
         let yds = this.boundedYds(ydsRaw);
 
         if (interception) {
-            dt += this.doInterception(yds);
             this.recordStat(this.o, qb, "pssInt");
             this.recordStat(this.o, qb, "pss");
             this.recordStat(this.o, target, "tgt");
             this.recordStat(this.d, defender, "defPssDef");
+            dt += this.doInterception(yds);
         } else {
             dt += Math.abs(yds) / 20;
 

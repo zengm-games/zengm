@@ -142,6 +142,8 @@ class PlayByPlayLogger {
             } else if (type === "overtime") {
                 text = "Start of overtime";
                 this.quarter = "OT";
+            } else if (type === "gameOver") {
+                text = "End of game";
             } else if (type === "kickoff") {
                 if (names === undefined) {
                     throw new Error("Missing names");

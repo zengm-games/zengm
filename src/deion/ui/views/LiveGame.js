@@ -94,7 +94,6 @@ class LiveGame extends React.Component {
         let overtimes = 0;
         let quarters = ["Q1"];
 
-        console.log(events, this.state.boxScore);
         const processToNextPause = () => {
             if (!this.componentIsMounted) {
                 return;

@@ -118,15 +118,6 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
                 // Current quarter
                 event.hide = cmpTime(event.time, boxScore.time) === -1;
             }
-
-            if (event.hide === false) {
-                console.log(
-                    "showing",
-                    event,
-                    boxScore.time,
-                    cmpTime(event.time, boxScore.time),
-                );
-            }
         }
     }
 

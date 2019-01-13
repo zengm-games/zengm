@@ -807,7 +807,7 @@ class GameSim {
         } else {
             this.possessionChange();
             this.scrimmage = helpers.bound(
-                100 - this.scrimmage - 7,
+                100 - this.scrimmage + 7,
                 20,
                 Infinity,
             );

@@ -256,6 +256,10 @@ class ScoringSummary extends React.Component {
 
         const processedEvents = processEvents(events);
 
+        if (processedEvents.length === 0) {
+            return <p>None</p>;
+        }
+
         return (
             <table className="table table-sm border-bottom">
                 <tbody>

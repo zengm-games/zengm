@@ -1,13 +1,5 @@
 # football
 
-live game
-- initial clock log at start of game/half/overtime
-- field with drive summary, football, direction, and last play
-
-sometimes t in event log is wrong
-- see "Can't find player" occurrances
-  - interception return for touchdown
-
 not enough good WRs, too many good TEs
 
 game sim
@@ -168,6 +160,11 @@ football achievements
 show game stats in player page
 
 RatingsOverview - could put in deion, with config to specify categories and names from getCols
+
+---
+
+live game
+- field with drive summary, football, direction, and last play
 
 ---
 

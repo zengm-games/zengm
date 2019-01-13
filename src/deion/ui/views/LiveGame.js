@@ -87,7 +87,7 @@ class LiveGame extends React.Component {
     }
 
     setPlayByPlayDivHeight() {
-        this.playByPlayDiv.style.height = `${window.innerHeight - 104}px`;
+        this.playByPlayDiv.style.height = `${window.innerHeight - 113}px`;
     }
 
     startLiveGame(events) {

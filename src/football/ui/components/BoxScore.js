@@ -222,61 +222,96 @@ const processEvents = events => {
     return processedEvents;
 };
 
-const ScoringSummary = ({ events, teams }) => {
-    let prevQuarter;
+const reducer = (sum, event) => {
+    if (event.hide) {
+        return sum;
+    }
+    return sum + 1;
+};
 
-    const processedEvents = processEvents(events);
+class ScoringSummary extends React.Component {
+    constructor(props) {
+        super(props);
 
-    return (
-        <table className="table table-sm border-bottom">
-            <tbody>
-                {processedEvents.map((event, i) => {
-                    let quarterHeader = null;
-                    if (event.quarter !== prevQuarter) {
-                        prevQuarter = event.quarter;
-                        quarterHeader = (
-                            <tr>
-                                <td className="text-muted" colSpan="5">
-                                    {quarters[event.quarter]}
-                                </td>
-                            </tr>
+        this.state = {
+            count: 0,
+        };
+    }
+
+    static getDerivedStateFromProps(props) {
+        return {
+            count: props.events.reduce(reducer, 0),
+        };
+    }
+
+    shouldComponentUpdate(nextProps) {
+        const newCount = nextProps.events.reduce(reducer, 0);
+        return this.state.count !== newCount;
+    }
+
+    render() {
+        const { events, teams } = this.props;
+
+        let prevQuarter;
+
+        const processedEvents = processEvents(events);
+
+        return (
+            <table className="table table-sm border-bottom">
+                <tbody>
+                    {processedEvents.map((event, i) => {
+                        let quarterHeader = null;
+                        if (event.quarter !== prevQuarter) {
+                            prevQuarter = event.quarter;
+                            quarterHeader = (
+                                <tr>
+                                    <td className="text-muted" colSpan="5">
+                                        {quarters[event.quarter]}
+                                    </td>
+                                </tr>
+                            );
+                        }
+
+                        return (
+                            <React.Fragment key={i}>
+                                {quarterHeader}
+                                <tr>
+                                    <td>{teams[event.t].abbrev}</td>
+                                    <td>{event.scoreType}</td>
+                                    <td>
+                                        {event.t === 0 ? (
+                                            <>
+                                                <b>{event.score[0]}</b>-
+                                                <span className="text-muted">
+                                                    {event.score[1]}
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="text-muted">
+                                                    {event.score[0]}
+                                                </span>
+                                                -<b>{event.score[1]}</b>
+                                            </>
+                                        )}
+                                    </td>
+                                    <td>{event.time}</td>
+                                    <td style={{ whiteSpace: "normal" }}>
+                                        {event.text}
+                                    </td>
+                                </tr>
+                            </React.Fragment>
                         );
-                    }
+                    })}
+                </tbody>
+            </table>
+        );
+    }
+}
 
-                    return (
-                        <React.Fragment key={i}>
-                            {quarterHeader}
-                            <tr>
-                                <td>{teams[event.t].abbrev}</td>
-                                <td>{event.scoreType}</td>
-                                <td>
-                                    {event.t === 0 ? (
-                                        <>
-                                            <b>{event.score[0]}</b>-
-                                            <span className="text-muted">
-                                                {event.score[1]}
-                                            </span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <span className="text-muted">
-                                                {event.score[0]}
-                                            </span>
-                                            -<b>{event.score[1]}</b>
-                                        </>
-                                    )}
-                                </td>
-                                <td>{event.time}</td>
-                                <td style={{ whiteSpace: "normal" }}>
-                                    {event.text}
-                                </td>
-                            </tr>
-                        </React.Fragment>
-                    );
-                })}
-            </tbody>
-        </table>
-    );
+ScoringSummary.propTypes = {
+    events: PropTypes.array.isRequired,
+    teams: PropTypes.array.isRequired,
 };
 
 const BoxScore = ({ boxScore, Row }) => {
@@ -284,6 +319,7 @@ const BoxScore = ({ boxScore, Row }) => {
         <div className="mb-3">
             <h3>Scoring Summary</h3>
             <ScoringSummary
+                key={boxScore.gid}
                 events={boxScore.scoringSummary}
                 teams={boxScore.teams}
             />

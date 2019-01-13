@@ -115,21 +115,13 @@ class LiveGame extends React.Component {
 
             if (text !== undefined) {
                 const p = document.createElement("p");
-                const nodes = [document.createTextNode(text[0])];
-                for (let i = 1; i < text.length; i++) {
-                    nodes.push(document.createElement("br"));
-                    nodes.push(document.createTextNode(text[1]));
-                }
-                if (text[0].startsWith("Start of")) {
+                const node = document.createTextNode(text);
+                if (text.startsWith("Start of")) {
                     const b = document.createElement("b");
-                    for (const node of nodes) {
-                        b.appendChild(node);
-                    }
+                    b.appendChild(node);
                     p.appendChild(b);
                 } else {
-                    for (const node of nodes) {
-                        p.appendChild(node);
-                    }
+                    p.appendChild(node);
                 }
 
                 this.playByPlayDiv.insertBefore(

@@ -3,6 +3,15 @@
 import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types";
 
+// Convert clock in minutes to min:sec, like 1.5 -> 1:30
+const formatClock = (clock: number) => {
+    let sec = Math.floor((clock % 1) * 60);
+    if (sec < 10) {
+        sec = `0${sec}`;
+    }
+    return `${Math.floor(clock)}:${sec}`;
+};
+
 const descriptionYdsTD = (
     yds: number,
     td: boolean,
@@ -374,15 +383,11 @@ class PlayByPlayLogger {
             }
 
             if (text) {
-                let sec = Math.floor((clock % 1) * 60);
-                if (sec < 10) {
-                    sec = `0${sec}`;
-                }
                 const event = {
                     type: "text",
                     text,
                     t,
-                    time: `${Math.floor(clock)}:${sec}`,
+                    time: formatClock(clock),
                     quarter: this.quarter,
                 };
 
@@ -414,6 +419,36 @@ class PlayByPlayLogger {
             pid,
             s,
             amt,
+        });
+    }
+
+    logClock({
+        awaitingKickoff,
+        clock,
+        down,
+        scrimmage,
+        t,
+        toGo,
+    }: {
+        awaitingKickoff: boolean,
+        clock: number,
+        down: number,
+        scrimmage: number,
+        t: TeamNum,
+        toGo: number,
+    }) {
+        if (!this.active) {
+            return;
+        }
+
+        this.playByPlay.push({
+            type: "clock",
+            awaitingKickoff,
+            down,
+            scrimmage,
+            t,
+            time: formatClock(clock),
+            toGo,
         });
     }
 

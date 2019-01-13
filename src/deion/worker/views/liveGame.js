@@ -31,7 +31,7 @@ async function updatePlayByPlay(
 
         boxScore.overtime = "";
         boxScore.quarter = "1st quarter";
-        boxScore.time = "12:00";
+        boxScore.time = `${g.quarterLength}:00`;
         boxScore.gameOver = false;
         for (const t of boxScore.teams) {
             // Team metadata

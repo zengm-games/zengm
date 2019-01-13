@@ -48,24 +48,27 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
         }
 
         if (e.type === "text") {
-            if (e.t === 0 || e.t === 1) {
-                text = [
-                    `${e.time} - ${
-                        boxScore.teams[e.t].abbrev
-                    } ball, 1st & 10, own 25`,
-                    e.text,
-                ];
+            text = e.text;
+            stop = true;
+        } else if (e.type === "clock") {
+            if (e.awaitingKickoff) {
+                text = `${e.time} - ${boxScore.teams[e.t].abbrev} kicking off`;
             } else {
-                text = [e.text];
+                let fieldPos = "";
+                if (e.scrimmage === 50) {
+                    fieldPos = "50 yd line";
+                } else if (e.scrimmage > 50) {
+                    fieldPos = `opp ${100 - e.scrimmage}`;
+                } else {
+                    fieldPos = `own ${e.scrimmage}`;
+                }
+
+                text = `${e.time} - ${
+                    boxScore.teams[e.t].abbrev
+                } ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
             }
 
-            // Show score after scoring plays
-            /*            if (text.includes("made")) {
-                text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1].pts})`;
-            }*/
-
             boxScore.time = e.time;
-
             stop = true;
         } else if (e.type === "stat") {
             // Quarter-by-quarter score
@@ -114,6 +117,15 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
             } else {
                 // Current quarter
                 event.hide = cmpTime(event.time, boxScore.time) === -1;
+            }
+
+            if (event.hide === false) {
+                console.log(
+                    "showing",
+                    event,
+                    boxScore.time,
+                    cmpTime(event.time, boxScore.time),
+                );
             }
         }
     }

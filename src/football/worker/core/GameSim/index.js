@@ -294,6 +294,17 @@ class GameSim {
         }
         this.updatePlayingTime(dt);
 
+        if (!this.awaitingAfterTouchdown) {
+            this.playByPlay.logClock({
+                awaitingKickoff: this.awaitingKickoff,
+                clock: this.clock,
+                down: this.down,
+                scrimmage: this.scrimmage,
+                t: this.o,
+                toGo: this.toGo,
+            });
+        }
+
         this.injuries();
 
         if (
@@ -1617,7 +1628,7 @@ class GameSim {
                 }
             }
 
-            if (p !== undefined) {
+            if (p !== undefined && s !== "min") {
                 this.playByPlay.logStat(qtr, t, p.id, s, amt);
             }
         }

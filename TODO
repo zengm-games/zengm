@@ -2,7 +2,6 @@
 
 live game
 - field with drive summary, football, direction, and last play
-- switch status from "Live game in progress" at end
 
 sometimes t in event log is wrong
 - see "Can't find player" occurrances

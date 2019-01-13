@@ -330,9 +330,8 @@ class PlayByPlayLogger {
                 if (names === undefined) {
                     throw new Error("Missing names");
                 }
-                if (names.length === 1) {
-                    text = `${names[0]} is looking to run`;
-                } else {
+                if (names.length > 1) {
+                    // If names.length is 1, its a QB keeper, no need to log the handoff
                     text = `${names[0]} hands the ball off to ${names[1]}`;
                 }
             } else if (type === "run") {
@@ -380,6 +379,8 @@ class PlayByPlayLogger {
                 }, ${yds} yards${
                     automaticFirstDown ? " and an automatic first down" : ""
                 }`;
+            } else {
+                throw new Error(`No text for "${type}"`);
             }
 
             if (text) {
@@ -401,8 +402,6 @@ class PlayByPlayLogger {
                 ) {
                     this.scoringSummary.push(event);
                 }
-            } else {
-                throw new Error(`No text for "${type}"`);
             }
         }
     }

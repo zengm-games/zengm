@@ -2,6 +2,13 @@
 
 not enough good WRs, too many good TEs
 
+endurance as % of possessions a player can play
+- somehow sum multiple positions
+  - track # snaps (ignoring special teams) and adjust prob of playing (bounded low at maybe 25%) to reach target
+    - make sure not to write # snaps to database
+- not for qb/k/p/OL
+  - take endurance out of their ovrs
+
 game sim
 - fatigue/injury
   - subs
@@ -166,9 +173,19 @@ RatingsOverview - could put in deion, with config to specify categories and name
 live game
 - field with drive summary, football, direction, and last play
 
+more accurage game sim
+- State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
+
 ---
 
+everywhere contract is displayed, make it in italics if not guaranteed
+- currently only on roster i think. make a component!
+
+Add playoff seed # to the history page
+
 on past season rosters, highlight hall of fame players
+
+add end of game to live game sim in basketball, like it is for football
 
 option to have no draft, players just become FAs
 

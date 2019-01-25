@@ -42,6 +42,7 @@ const getDepthPlayers = <
         obj[pos] = depth[pos]
             .map(pid => players.find(p => p.pid === pid))
             .concat(
+                // $FlowFixMe
                 players.map(p => (depth[pos].includes(p.pid) ? undefined : p)),
             )
             .filter(p => p !== undefined);

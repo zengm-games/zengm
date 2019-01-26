@@ -215,6 +215,7 @@ better salary AI
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
+- https://davidgom.es/porting-30k-lines-of-code-from-flow-to-typescript/
 - https://github.com/bcherny/flow-to-typescript
   - might have to do this, do all in one
 - FlowFixMe

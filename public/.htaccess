@@ -24,6 +24,7 @@ RewriteBase /
 RewriteCond %{HTTP:X-Forwarded-SSL} !on
 RewriteCond %{HTTP_HOST} !=localhost
 RewriteCond %{HTTP_HOST} !\.dev$
+RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 RewriteRule ^manifest_hack$ manifest_hack.html
@@ -41,4 +42,5 @@ RewriteCond %{REQUEST_URI} !^/img
 RewriteCond %{REQUEST_URI} !^/manifest
 RewriteCond %{REQUEST_URI} !^/sw.js
 RewriteCond %{REQUEST_URI} !^/test
+RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^.*$ index.html

@@ -17,6 +17,8 @@ async function updateTeamInfo(): void | { [key: string]: any } {
 
     return {
         godMode: g.godMode,
+        numConfs: g.confs.length,
+        numDivs: g.divs.length,
         numTeams: g.numTeams,
         teams,
     };

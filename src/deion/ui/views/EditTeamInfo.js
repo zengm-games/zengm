@@ -114,10 +114,16 @@ class EditTeamInfo extends React.Component {
                             if (i !== newTeams[i].tid) {
                                 throw new Error(`Wrong tid, team ${i}`);
                             }
-                            if (newTeams[i].cid < 0 || newTeams[i].cid > 1) {
+                            if (
+                                newTeams[i].cid < 0 ||
+                                newTeams[i].cid >= this.props.numConfs
+                            ) {
                                 throw new Error(`Invalid cid, team ${i}`);
                             }
-                            if (newTeams[i].did < 0 || newTeams[i].did > 5) {
+                            if (
+                                newTeams[i].did < 0 ||
+                                newTeams[i].did >= this.props.numDivs
+                            ) {
                                 throw new Error(`Invalid did, team ${i}`);
                             }
                             if (typeof newTeams[i].region !== "string") {
@@ -344,6 +350,8 @@ class EditTeamInfo extends React.Component {
 
 EditTeamInfo.propTypes = {
     godMode: PropTypes.bool.isRequired,
+    numConfs: PropTypes.number.isRequired,
+    numDivs: PropTypes.number.isRequired,
     numTeams: PropTypes.number.isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

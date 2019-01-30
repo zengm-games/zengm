@@ -249,6 +249,8 @@ Don't allow play if versions in tabs don't match
 
 ---
 
+user reports - JS alert/confirm often fail on iOS. maybe rewrite with my own modal
+
 Tools > Frivolities
 - family trees
 - tragic deaths

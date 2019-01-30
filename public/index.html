@@ -32,7 +32,7 @@
     </script>
 
     <script type="text/javascript">
-      // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57+ has buggy shared workers
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57-64 has buggy shared workers
       function isBuggyFirefox() {
         var ua = navigator.userAgent;
         if (!ua || !ua.includes("Firefox") || !ua.includes("Gecko")) {
@@ -49,7 +49,7 @@
           return false;
         }
 
-        return version >= 57;
+        return version >= 57 && version <= 64;
       }
 
       window.bbgmVersion = "REV_GOES_HERE";

@@ -34,6 +34,7 @@ const stats = {
     raw: [
         "gp",
         "min",
+        "ba",
         ...teamAndOpp,
         ...teamAndOpp.map(stat => `opp${helpers.upperCaseFirstLetter(stat)}`),
     ],

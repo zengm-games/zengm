@@ -381,6 +381,148 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "rating:ovrQB": {
+                  desc: "Overall Rating (QB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrRB": {
+                  desc: "Overall Rating (RB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrWR": {
+                  desc: "Overall Rating (WR)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrTE": {
+                  desc: "Overall Rating (TE)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrOL": {
+                  desc: "Overall Rating (OL)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrDL": {
+                  desc: "Overall Rating (DL)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrLB": {
+                  desc: "Overall Rating (LB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrCB": {
+                  desc: "Overall Rating (CB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrS": {
+                  desc: "Overall Rating (S)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrK": {
+                  desc: "Overall Rating (K)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrP": {
+                  desc: "Overall Rating (P)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrKR": {
+                  desc: "Overall Rating (KR)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ovrPR": {
+                  desc: "Overall Rating (PR)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:potQB": {
+                  desc: "Potential Rating (QB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potRB": {
+                  desc: "Potential Rating (RB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potWR": {
+                  desc: "Potential Rating (WR)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potTE": {
+                  desc: "Potential Rating (TE)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potOL": {
+                  desc: "Potential Rating (OL)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potDL": {
+                  desc: "Potential Rating (DL)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potLB": {
+                  desc: "Potential Rating (LB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potCB": {
+                  desc: "Potential Rating (CB)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potS": {
+                  desc: "Potential Rating (S)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potK": {
+                  desc: "Potential Rating (K)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potP": {
+                  desc: "Potential Rating (P)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potKR": {
+                  desc: "Potential Rating (KR)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+
+              "rating:potPR": {
+                  desc: "Potential Rating (PR)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
               "stat:fmb": {
                   desc: "Fumbles",
                   sortSequence: ["desc", "asc"],
@@ -1335,6 +1477,32 @@ const sportSpecificTitleOverrides =
               "rating:kac": "KAc",
               "rating:ppw": "PPw",
               "rating:pac": "PAc",
+              "rating:ovrQB": "OvrQB",
+              "rating:ovrRB": "OvrRB",
+              "rating:ovrWR": "OvrWR",
+              "rating:ovrTE": "OvrTE",
+              "rating:ovrOL": "OvrOL",
+              "rating:ovrDL": "OvrDL",
+              "rating:ovrLB": "OvrLB",
+              "rating:ovrCB": "OvrCB",
+              "rating:ovrS": "OvrS",
+              "rating:ovrK": "OvrK",
+              "rating:ovrP": "OvrP",
+              "rating:ovrKR": "OvrKR",
+              "rating:ovrPR": "OvrPR",
+              "rating:potQB": "PotQB",
+              "rating:potRB": "PotRB",
+              "rating:potWR": "PotWR",
+              "rating:potTE": "PotTE",
+              "rating:potOL": "PotOL",
+              "rating:potDL": "PotDL",
+              "rating:potLB": "PotLB",
+              "rating:potCB": "PotCB",
+              "rating:potS": "PotS",
+              "rating:potK": "PotK",
+              "rating:potP": "PotP",
+              "rating:potKR": "PotKR",
+              "rating:potPR": "PotPR",
               "stat:fmb": "Fmb",
               "stat:fmbLost": "FL",
               "stat:pssCmp": "Cmp",

@@ -81,6 +81,9 @@ async function updatePlayers(
                       "pac",
                   ];
 
+        const extraRatings =
+            process.env.SPORT === "basketball" ? [] : ["ovrs", "pots"];
+
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "pid",
@@ -92,7 +95,14 @@ async function updatePlayers(
                 "hof",
                 "watch",
             ],
-            ratings: ["ovr", "pot", "skills", "pos", ...ratings],
+            ratings: [
+                "ovr",
+                "pot",
+                "skills",
+                "pos",
+                ...ratings,
+                ...extraRatings,
+            ],
             stats: ["abbrev", "tid"],
             season: inputs.season,
             showNoStats: true,

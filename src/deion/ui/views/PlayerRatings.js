@@ -7,10 +7,19 @@ import {
     NewWindowLink,
     PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, overrides, setTitle } from "../util";
 
 const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
     setTitle(`Player Ratings - ${season}`);
+
+    const ovrsPotsColNames = [];
+    if (process.env.SPORT === "football") {
+        for (const pos of overrides.constants.POSITIONS) {
+            for (const type of ["ovr", "pot"]) {
+                ovrsPotsColNames.push(`rating:${type}${pos}`);
+            }
+        }
+    }
 
     const cols = getCols(
         "Name",
@@ -20,10 +29,20 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
         ...(process.env.SPORT === "basketball" ? ["Country"] : []),
         "Ovr",
         "Pot",
+        ...ovrsPotsColNames,
         ...ratings.map(rating => `rating:${rating}`),
     );
 
     const rows = players.map(p => {
+        const ovrsPotsRatings = [];
+        if (process.env.SPORT === "football") {
+            for (const pos of overrides.constants.POSITIONS) {
+                for (const type of ["ovrs", "pots"]) {
+                    ovrsPotsRatings.push(p.ratings[type][pos]);
+                }
+            }
+        }
+
         return {
             key: p.pid,
             data: [
@@ -43,6 +62,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
                 ...(process.env.SPORT === "basketball" ? [p.born.loc] : []),
                 p.ratings.ovr,
                 p.ratings.pot,
+                ...ovrsPotsRatings,
                 ...ratings.map(rating => p.ratings[rating]),
             ],
             classNames: {

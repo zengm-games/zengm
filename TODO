@@ -108,8 +108,6 @@ what's the end state here? options:
   - do this, but try to also do the process.env.SPORT solution when possible
 - deion remains a set of functions/classes/modules, to be pulled in externally piecemeal. if something internal needs to be overriden, make it generic or a factory or DI or have it accept a parameter to allow overriding
 
-figure out dynamic import of schema in LeagueFileUpload.js
-
 search for text basketball in deion
 
 make it clear that accounts are shared, change name of Gold to something sport agnostic
@@ -139,6 +137,8 @@ type better
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
 
 ---
+
+football league-schema.json
 
 split more from deion
 - processInputs for views only in one sport (depth, shot locations)

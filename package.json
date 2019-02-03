@@ -71,6 +71,7 @@
         "@babel/plugin-transform-runtime": "^7.2.0",
         "@babel/preset-flow": "^7.0.0",
         "@babel/preset-react": "^7.0.0",
+        "aliasify": "^2.1.0",
         "babel-eslint": "^10.0.1",
         "babelify": "^10.0.0",
         "blacklistify": "^0.0.3",

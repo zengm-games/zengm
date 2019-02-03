@@ -1,5 +1,6 @@
 // @flow
 
+const aliasify = require("aliasify");
 const babelify = require("babelify");
 const browserify = require("browserify");
 const envify = require("envify/custom");
@@ -24,6 +25,11 @@ for (const name of ["ui", "worker"]) {
         .transform(babelify)
         .transform(envify({ NODE_ENV: "development", SPORT: sport }), {
             global: true,
+        })
+        .transform(aliasify, {
+            aliases: {
+                "league-schema.json": `./public/${sport}/files/league-schema.json`,
+            },
         })
         .plugin(watchify);
 

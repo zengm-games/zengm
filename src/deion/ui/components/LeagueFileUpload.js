@@ -4,8 +4,9 @@ import Ajv from "ajv";
 import PropTypes from "prop-types";
 import * as React from "react";
 
+// This is dynamically resolved with aliasify
 // eslint-disable-next-line
-const schema = require("../../../../public/basketball/files/league-schema.json");
+const schema = require("league-schema.json");
 
 const ajv = new Ajv({
     allErrors: true,

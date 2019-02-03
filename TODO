@@ -28,6 +28,7 @@ game sim
   - missed fg/xp return
 
 injuries
+- athleticism loss cutoff
 
 AV advanced stat
 - use in value?
@@ -75,6 +76,7 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - playersPlus: awardsOrder, weightByMinutes
 - loadTeams - synergy, pace, player/team stats
 - awardsOrder
+- awardType in Dropdown.js
 
 finish views
 - CustomizePlayer
@@ -96,7 +98,7 @@ how will deionUI(overrides) work with types?
 
 new logos for KC and SA - in progress
 
-ssl https://blog.webfaction.com/2018/09/issue-lets-encrypt-ssl-certificates-with-the-control-panel/
+cloudflare, ssl
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output
@@ -108,20 +110,7 @@ what's the end state here? options:
 
 figure out dynamic import of schema in LeagueFileUpload.js
 
-better way to pass awards to Dropdown.js
-
-yarn workspaces
-- see branch football-yarn-workspaces - all works except karma
-
-tests still running within deion? e.g. common/helpers.test.js
-
 search for text basketball in deion
-
-split more from deion
-- processInputs for views only in one (depth, shot locations)
-- worker API functions only in one (depth)
-
-Venatus - make sure correct before deploying
 
 make it clear that accounts are shared, change name of Gold to something sport agnostic
 - NagModal
@@ -147,13 +136,22 @@ type better
   - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
 - most MinimalPlayerRatings uses should be generic and take PlayerRatings
 
-schedule
-
-names US only
-
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
 
 ---
+
+split more from deion
+- processInputs for views only in one sport (depth, shot locations)
+- worker API functions only in one sport (depth)
+
+yarn workspaces
+- see branch football-yarn-workspaces - all works except karma
+
+tests still running within deion? e.g. common/helpers.test.js
+
+better football schedule
+
+better football player names
 
 football achievements
 - some achievements could be common?

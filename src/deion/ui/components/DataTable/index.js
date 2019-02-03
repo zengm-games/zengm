@@ -240,7 +240,6 @@ class DataTable extends React.Component<Props, State> {
             Object.assign(updatedState, loadStateFromCache(nextProps));
         }
 
-        console.log("nextProps.addFilters", nextProps.addFilters);
         // If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with prevState.filters and enable filters
         const filters = helpers.deepCopy(prevState.filters);
         let changed = false;

@@ -44,6 +44,8 @@ const getRatingsToBoost = (pos: string) => {
             thp: 2,
             tha: 2,
             bsc: 0.25,
+            elu: 0.25,
+            hnd: 0.25,
         };
     }
     if (pos === "RB") {
@@ -71,7 +73,7 @@ const getRatingsToBoost = (pos: string) => {
             spd: 0.5,
             elu: 0.5,
             rtr: 1,
-            hnd: 1,
+            hnd: 0.75,
             rbk: 0.5,
         };
     }

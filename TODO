@@ -1,10 +1,5 @@
 # football
 
-ratings tweaks
-- not enough good WRs, too many good TEs
-- too many defensive players with good hands
-- not enough QBs who can play WR
-
 endurance as % of possessions a player can play
 - somehow sum multiple positions
   - track # snaps (ignoring special teams) and adjust prob of playing (bounded low at maybe 25%) to reach target

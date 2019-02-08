@@ -5,8 +5,8 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 // This is dynamically resolved with aliasify
-// eslint-disable-next-line
-const schema = require("league-schema.json");
+// $FlowFixMe
+const schema = require("league-schema.json"); // eslint-disable-line
 
 const ajv = new Ajv({
     allErrors: true,

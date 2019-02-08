@@ -29,6 +29,7 @@ game sim
 
 injuries
 - athleticism loss cutoff
+- https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
 
 AV advanced stat
 - use in value?
@@ -84,17 +85,8 @@ finish views
 
 go through every file in football, make sure it's been updated (like heightToRating)
 
-how to get types working, options:
-- make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
-- pass around overrides manually everywhere, not making it a module
-- move everything inside deion
-
 History
 - for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team
-
-how will deionUI(overrides) work with types?
-- can pass them as generics, then apply them to factory functions
-- Import modules from deion. Add things like extra views. Apply factories/generics.
 
 new logos for KC and SA - in progress
 
@@ -124,8 +116,6 @@ HallOfFame criteria text
 statistical feats
 - text on PlayerFeats
 
-names distribution
-
 type better
 - skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
 - PlayerStatType should be sport specific
@@ -137,6 +127,17 @@ type better
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
 
 ---
+
+how to get types working, options:
+- make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
+- pass around overrides manually everywhere, not making it a module
+- move everything inside deion
+
+how will deionUI(overrides) work with types?
+- can pass them as generics, then apply them to factory functions
+- Import modules from deion. Add things like extra views. Apply factories/generics.
+
+names distribution
 
 football league-schema.json
 
@@ -243,6 +244,8 @@ Don't allow play if versions in tabs don't match
 - close worker?
 
 ---
+
+finals home court advantage should be based on record, not seed
 
 user reports - JS alert/confirm often fail on iOS. maybe rewrite with my own modal
 

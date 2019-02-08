@@ -50,7 +50,18 @@ module.exports = function(config) {
 
         browserify: {
             debug: true,
-            transform: ["babelify", ["envify", { SPORT: "basketball" }]],
+            transform: [
+                "babelify",
+                ["envify", { SPORT: "basketball" }],
+                [
+                    "aliasify",
+                    {
+                        aliases: {
+                            "league-schema.json": `./public/football/files/league-schema.json`,
+                        },
+                    },
+                ],
+            ],
         },
 
         browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes

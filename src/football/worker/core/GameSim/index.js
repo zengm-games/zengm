@@ -460,9 +460,29 @@ class GameSim {
             for (const pos of Object.keys(formation[side])) {
                 // $FlowFixMe
                 const numPlayers = formation[side][pos];
-                this.playersOnField[t][pos] = this.team[t].depth[pos]
-                    .filter(id => !pidsUsed.has(id))
-                    .slice(0, numPlayers);
+
+                const players = this.team[t].depth[pos]
+                    .filter(p => !p.injured)
+                    .filter(p => !pidsUsed.has(p.id))
+                    .filter(p => {
+                        // For some positions, filter out some players based on fatigue
+                        const positions = [
+                            "RB",
+                            "WR",
+                            "TE",
+                            "DL",
+                            "LB",
+                            "CB",
+                            "S",
+                        ];
+                        if (!positions.includes(pos)) {
+                            return true;
+                        }
+
+                        return Math.random() < fatigue(p.stat.energy);
+                    });
+
+                this.playersOnField[t][pos] = players.slice(0, numPlayers);
 
                 for (const p of this.playersOnField[t][pos]) {
                     pidsUsed.add(p.id);
@@ -1479,9 +1499,7 @@ class GameSim {
                         t,
                         p,
                         "energy",
-                        -possessionTime *
-                            0.06 *
-                            (1 - p.compositeRating.endurance),
+                        -0.08 * (1 - p.compositeRating.endurance),
                     );
                     if (p.stat.energy < 0) {
                         p.stat.energy = 0;
@@ -1492,7 +1510,7 @@ class GameSim {
             for (const p of this.team[t].player) {
                 if (!onField.has(p.id)) {
                     this.recordStat(t, p, "benchTime", possessionTime);
-                    this.recordStat(t, p, "energy", possessionTime * 0.1);
+                    this.recordStat(t, p, "energy", 0.5);
                     if (p.stat.energy > 1) {
                         p.stat.energy = 1;
                     }

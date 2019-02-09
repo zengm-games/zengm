@@ -1,12 +1,5 @@
 # football
 
-endurance as % of possessions a player can play
-- somehow sum multiple positions
-  - track # snaps (ignoring special teams) and adjust prob of playing (bounded low at maybe 25%) to reach target
-    - make sure not to write # snaps to database
-- not for qb/k/p/OL
-  - take endurance out of their ovrs
-
 game sim
 - fatigue/injury
   - subs
@@ -30,6 +23,8 @@ game sim
 injuries
 - athleticism loss cutoff
 - https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
+- happening?
+- don't put on field
 
 AV advanced stat
 - use in value?

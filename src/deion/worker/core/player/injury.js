@@ -15,13 +15,20 @@ const injury = (healthRank: number): PlayerInjury => {
     const rand = random.uniform(0, 10882);
     const i = injuries.cumSum.findIndex(cs => cs >= rand);
 
+    let gamesRemaining = Math.round(
+        ((0.7 * (healthRank - 1)) / (g.numTeams - 1) + 0.65) *
+            random.uniform(0.25, 1.75) *
+            injuries.gamesRemainings[i],
+    );
+
+    // Hack for football
+    if (process.env.SPORT === "football") {
+        gamesRemaining = Math.floor(gamesRemaining / 3);
+    }
+
     return {
         type: injuries.types[i],
-        gamesRemaining: Math.round(
-            ((0.7 * (healthRank - 1)) / (g.numTeams - 1) + 0.65) *
-                random.uniform(0.25, 1.75) *
-                injuries.gamesRemainings[i],
-        ),
+        gamesRemaining,
     };
 };
 

@@ -1524,27 +1524,32 @@ class GameSim {
             return;
         }
 
-        /*let newInjury = false;
-
         for (let t = 0; t < 2; t++) {
-            for (let p = 0; p < this.team[t].player.length; p++) {
-                // Only players on the court can be injured
-                if (this.playersOnCourt[t].includes(p)) {
-                    if (Math.random() < g.injuryRate) {
-                        this.team[t].player[p].injured = true;
-                        newInjury = true;
-                        this.playByPlay.logEvent("injury", t, [
-                            this.team[t].player[p].name,
-                        ]);
-                    }
+            // Get rid of this after making sure playersOnField is always set, even for special teams
+            if (this.playersOnField[t] === undefined) {
+                continue;
+            }
+
+            const onField = new Set();
+
+            for (const pos of Object.keys(this.playersOnField[t])) {
+                // Update minutes (overall, court, and bench)
+                for (const p of this.playersOnField[t][pos]) {
+                    onField.add(p);
+                }
+            }
+
+            for (const p of onField) {
+                if (Math.random() < g.injuryRate) {
+                    p.injured = true;
+                    this.playByPlay.logEvent("injury", {
+                        clock: this.clock,
+                        t,
+                        names: [p.name],
+                    });
                 }
             }
         }
-
-        // Sub out injured player
-        if (newInjury) {
-            this.updatePlayersOnCourt();
-        }*/
     }
 
     pickPlayer(

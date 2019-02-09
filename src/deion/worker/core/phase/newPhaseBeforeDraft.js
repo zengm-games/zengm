@@ -5,6 +5,7 @@ import { draft, player, season, team } from "..";
 import { idb } from "../../db";
 import {
     achievement,
+    defaultGameAttributes,
     g,
     genMessage,
     helpers,
@@ -78,10 +79,10 @@ const newPhaseBeforeDraft = async (
         // Heal injures
         if (p.injury.type !== "Healthy") {
             // This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
-            if (p.injury.gamesRemaining <= 82) {
+            if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
                 p.injury = { type: "Healthy", gamesRemaining: 0 };
             } else {
-                p.injury.gamesRemaining -= 82;
+                p.injury.gamesRemaining -= defaultGameAttributes.numGames;
             }
             update = true;
         }

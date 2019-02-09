@@ -1,9 +1,6 @@
 # football
 
 game sim
-- fatigue/injury
-  - subs
-  - players who can play offense and defense
 - more realistic stat distribution
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
@@ -19,12 +16,6 @@ game sim
     - chance for either team to return (very slim for offense)
   - blocked punt
   - missed fg/xp return
-
-injuries
-- athleticism loss cutoff
-- https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
-- happening?
-- don't put on field
 
 AV advanced stat
 - use in value?
@@ -48,6 +39,7 @@ bugsnag, google analytics keys in index.html
 
 depth chart
 - links here from More, dropdowns, etc
+- KR/PR - don't put pos in red
 
 owner mood
 
@@ -111,17 +103,12 @@ HallOfFame criteria text
 statistical feats
 - text on PlayerFeats
 
-type better
-- skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
-- PlayerStatType should be sport specific
-- getCopy/getCopies and Cache
-  - awards should return Awards
-  - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
-- most MinimalPlayerRatings uses should be generic and take PlayerRatings
-
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
 
 ---
+
+injuries
+- make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
 
 how to get types working, options:
 - make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
@@ -131,6 +118,14 @@ how to get types working, options:
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 - Import modules from deion. Add things like extra views. Apply factories/generics.
+
+type better
+- skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
+- PlayerStatType should be sport specific
+- getCopy/getCopies and Cache
+  - awards should return Awards
+  - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
+- most MinimalPlayerRatings uses should be generic and take PlayerRatings
 
 names distribution
 

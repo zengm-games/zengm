@@ -133,12 +133,16 @@ const writePlayerStats = async (
                         // Some chance of a loss of athleticism from serious injuries
                         // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
                         // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                        const gamesRemainingNormalized =
+                            process.env.SPORT === "basketball"
+                                ? p2.injury.gamesRemaining
+                                : p2.injury.gamesRemaining * 3;
                         if (
-                            p2.injury.gamesRemaining > 25 &&
-                            Math.random() < p2.injury.gamesRemaining / 150
+                            gamesRemainingNormalized > 25 &&
+                            Math.random() < gamesRemainingNormalized / 150
                         ) {
                             biggestRatingsLoss = Math.round(
-                                p2.injury.gamesRemaining / 10,
+                                gamesRemainingNormalized / 10,
                             );
                             if (biggestRatingsLoss > 10) {
                                 biggestRatingsLoss = 10;

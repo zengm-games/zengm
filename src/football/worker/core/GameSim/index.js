@@ -252,7 +252,7 @@ class GameSim {
             return "punt";
         }
 
-        if (Math.random() > 0.5) {
+        if (Math.random() > 0.57) {
             return "pass";
         }
 
@@ -294,9 +294,9 @@ class GameSim {
 
         dt /= 60;
 
-        // Time between plays
+        // Time between plays (can be more than 40 seconds because there is time before the play clock starts)
         if (this.isClockRunning) {
-            dt += random.randInt(15, 40) / 60;
+            dt += random.randInt(25, 50) / 60;
         }
 
         // Clock

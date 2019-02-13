@@ -26,6 +26,11 @@ AV advanced stat
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
 
+injury notifications
+- put pos in front of player name
+- bath injury notifications together
+  - still emit same notification as now for event log, but also emit another (non-saved) with all injuries in one
+
 position balance for AIs building teams
 - new league
 - existing league
@@ -164,6 +169,10 @@ more accurage game sim
 - State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
 
 ---
+
+draft lottery teams should only be non-playoff teams
+
+in table, sort position by constants.POSITIONS order (like roster page in football)
 
 revise re-signing - too many good young players become FAs
 

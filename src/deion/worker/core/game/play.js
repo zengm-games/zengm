@@ -91,6 +91,8 @@ const play = async (
         // Update ranks
         promises.push(finances.updateRanks(["expenses", "revenues"]));
 
+        const healedTexts = [];
+
         // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
         const players = await idb.cache.players.indexGetAll("playersByTid", [
             PLAYER.FREE_AGENT,
@@ -107,16 +109,20 @@ const play = async (
                 p.injury = { type: "Healthy", gamesRemaining: 0 };
                 changed = true;
 
+                const healedText = `${
+                    p.ratings[p.ratings.length - 1].pos
+                } <a href="${helpers.leagueUrl(["player", p.pid])}">${
+                    p.firstName
+                } ${p.lastName}</a>`;
+                if (p.tid === g.userTid) {
+                    healedTexts.push(healedText);
+                }
+
                 logEvent(
                     {
                         type: "healed",
-                        text: `<a href="${helpers.leagueUrl([
-                            "player",
-                            p.pid,
-                        ])}">${p.firstName} ${
-                            p.lastName
-                        }</a> has recovered from his injury.`,
-                        showNotification: p.tid === g.userTid,
+                        text: `${healedText} has recovered from his injury.`,
+                        showNotification: false,
                         pids: [p.pid],
                         tids: [p.tid],
                     },
@@ -136,6 +142,18 @@ const play = async (
             if (changed) {
                 await idb.cache.players.put(p);
             }
+        }
+
+        if (healedTexts.length > 0) {
+            logEvent(
+                {
+                    type: "healedList",
+                    text: healedTexts.join("<br>"),
+                    showNotification: true,
+                    saveToDb: false,
+                },
+                conditions,
+            );
         }
 
         await Promise.all(promises);

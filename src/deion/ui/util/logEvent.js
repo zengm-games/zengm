@@ -19,6 +19,10 @@ const showEvent = ({
         title = "Error!";
     } else if (type === "changes") {
         title = "Changes since your last visit";
+    } else if (type === "healedList") {
+        title = "Recovered from injury";
+    } else if (type === "injuredList") {
+        title = "Injured last game";
     }
 
     if (persistent && extraClass === undefined) {

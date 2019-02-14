@@ -35,6 +35,9 @@ const writePlayerStats = async (
         }
     }
 
+    let stopPlay = false;
+    const injuryTexts = [];
+
     await Promise.all(
         results.team.map(t =>
             Promise.all(
@@ -106,24 +109,27 @@ const writePlayerStats = async (
                         p2.injury = player.injury(t.healthRank);
                         p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
 
-                        const stopPlay =
-                            g.stopOnInjury &&
-                            p2.injury.gamesRemaining > g.stopOnInjuryGames &&
-                            local.autoPlaySeasons === 0 &&
-                            g.userTid === p2.tid;
+                        const injuryText = `${
+                            p.pos
+                        } <a href="${helpers.leagueUrl(["player", p2.pid])}">${
+                            p2.firstName
+                        } ${p2.lastName}</a> was injured! (${
+                            p2.injury.type
+                        }, out for ${p2.injury.gamesRemaining} games)`;
+                        if (g.userTid === p2.tid) {
+                            injuryTexts.push(injuryText);
+                            stopPlay =
+                                stopPlay ||
+                                (g.stopOnInjury &&
+                                    p2.injury.gamesRemaining >
+                                        g.stopOnInjuryGames &&
+                                    local.autoPlaySeasons === 0);
+                        }
                         logEvent(
                             {
                                 type: "injured",
-                                text: `<a href="${helpers.leagueUrl([
-                                    "player",
-                                    p2.pid,
-                                ])}">${p2.firstName} ${
-                                    p2.lastName
-                                }</a> was injured! (${
-                                    p2.injury.type
-                                }, out for ${p2.injury.gamesRemaining} games)`,
-                                showNotification: g.userTid === p2.tid,
-                                persistent: stopPlay,
+                                text: injuryText,
+                                showNotification: false,
                                 pids: [p2.pid],
                                 tids: [p2.tid],
                             },
@@ -199,6 +205,19 @@ const writePlayerStats = async (
             ),
         ),
     );
+
+    if (injuryTexts.length > 0) {
+        logEvent(
+            {
+                type: "injuredList",
+                text: injuryTexts.join("<br>"),
+                showNotification: true,
+                persistent: stopPlay,
+                saveToDb: false,
+            },
+            conditions,
+        );
+    }
 };
 
 export default writePlayerStats;

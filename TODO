@@ -26,11 +26,6 @@ AV advanced stat
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
 
-injury notifications
-- put pos in front of player name
-- bath injury notifications together
-  - still emit same notification as now for event log, but also emit another (non-saved) with all injuries in one
-
 position balance for AIs building teams
 - new league
 - existing league

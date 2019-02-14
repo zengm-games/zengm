@@ -8,7 +8,7 @@ const notify = (
     title,
     { extraClass, persistent = false, timeOut },
 ) => {
-    let timeoutRemaining = timeOut || 10000;
+    let timeoutRemaining = timeOut || 8000;
 
     let notificationElement = document.createElement("div");
     notificationElement.classList.add("notification");

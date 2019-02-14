@@ -115,7 +115,9 @@ const writePlayerStats = async (
                             p2.firstName
                         } ${p2.lastName}</a> was injured! (${
                             p2.injury.type
-                        }, out for ${p2.injury.gamesRemaining} games)`;
+                        }, out for ${p2.injury.gamesRemaining} ${
+                            p2.injury.gamesRemaining === 1 ? "game" : "games"
+                        })`;
                         if (g.userTid === p2.tid) {
                             injuryTexts.push(injuryText);
                             stopPlay =

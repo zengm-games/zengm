@@ -1056,9 +1056,12 @@ class GameSim {
             "LB",
         ]);
 
-        const interception = Math.random() < 0.05;
-        const complete = Math.random() < 0.6;
-        const ydsRaw = random.randInt(0, 30);
+        const interception = Math.random() < 0.035;
+        const complete = Math.random() < 0.65;
+        let ydsRaw = random.truncGauss(10, 7, -10, 100);
+        if (Math.random() < 0.05) {
+            ydsRaw += random.randInt(0, 100);
+        }
         let yds = this.boundedYds(ydsRaw);
 
         if (interception) {
@@ -1186,7 +1189,10 @@ class GameSim {
             names: p === qb ? [qb.name] : [qb.name, p.name],
         });
 
-        const ydsRaw = random.randInt(-5, 10);
+        let ydsRaw = random.truncGauss(2.9, 2, -5, 15);
+        if (Math.random() < 0.05) {
+            ydsRaw += random.randInt(0, 100);
+        }
         let yds = this.boundedYds(ydsRaw);
 
         const dt = random.randInt(2, 4) + Math.abs(yds) / 10;

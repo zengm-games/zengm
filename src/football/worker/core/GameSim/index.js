@@ -252,7 +252,7 @@ class GameSim {
             return "punt";
         }
 
-        if (Math.random() > 0.57) {
+        if (Math.random() < 0.57) {
             return "pass";
         }
 
@@ -552,7 +552,7 @@ class GameSim {
                 const kickReturner = this.pickPlayer(this.o);
 
                 const rawLength =
-                    Math.random() < 0.01 ? 100 : random.randInt(0, 5);
+                    Math.random() < 0.003 ? 100 : random.randInt(0, 5);
                 const returnLength = this.boundedYds(rawLength);
                 const { td } = this.advanceYds(returnLength);
                 dt += Math.abs(returnLength) / 8;
@@ -600,7 +600,13 @@ class GameSim {
                 this.toGo = 10;
             } else {
                 this.scrimmage = kickTo;
-                let returnLength = this.boundedYds(random.randInt(10, 109));
+
+                let ydsRaw = random.truncGauss(20, 5, -10, 109);
+                if (Math.random() < 0.02) {
+                    ydsRaw += random.randInt(0, 109);
+                }
+                let returnLength = this.boundedYds(ydsRaw);
+
                 dt = Math.abs(returnLength) / 8;
                 let td = false;
 
@@ -710,11 +716,11 @@ class GameSim {
             }
 
             const maxReturnLength = 100 - kickTo;
-            let returnLength = helpers.bound(
-                random.randInt(0, 109),
-                0,
-                maxReturnLength,
-            );
+            let ydsRaw = random.truncGauss(10, 10, -10, 109);
+            if (Math.random() < 0.03) {
+                ydsRaw += random.randInt(0, 109);
+            }
+            let returnLength = helpers.bound(ydsRaw, 0, maxReturnLength);
             this.scrimmage = kickTo;
             dt += Math.abs(returnLength) / 8;
             let td = false;
@@ -1060,7 +1066,7 @@ class GameSim {
         const complete = Math.random() < 0.65;
         let ydsRaw = random.truncGauss(10, 7, -10, 100);
         if (Math.random() < 0.05) {
-            ydsRaw += random.randInt(0, 100);
+            ydsRaw += random.randInt(0, 109);
         }
         let yds = this.boundedYds(ydsRaw);
 
@@ -1191,7 +1197,7 @@ class GameSim {
 
         let ydsRaw = random.truncGauss(2.9, 2, -5, 15);
         if (Math.random() < 0.05) {
-            ydsRaw += random.randInt(0, 100);
+            ydsRaw += random.randInt(0, 109);
         }
         let yds = this.boundedYds(ydsRaw);
 

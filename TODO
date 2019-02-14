@@ -2,7 +2,7 @@
 
 game sim
 - more realistic stat distribution
-  - kick returns
+  - round all from truncGauss
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
   - use ovr when possible - can i put these in composite ratings?

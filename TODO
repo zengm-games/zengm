@@ -4,7 +4,6 @@ rookie should not refuse to sign https://www.reddit.com/r/BasketballGM/comments/
 
 game sim
 - more realistic stat distribution
-  - round all from truncGauss
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
   - use ovr when possible - can i put these in composite ratings?

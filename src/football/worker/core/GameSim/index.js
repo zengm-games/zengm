@@ -601,7 +601,7 @@ class GameSim {
             } else {
                 this.scrimmage = kickTo;
 
-                let ydsRaw = random.truncGauss(20, 5, -10, 109);
+                let ydsRaw = Math.round(random.truncGauss(20, 5, -10, 109));
                 if (Math.random() < 0.02) {
                     ydsRaw += random.randInt(0, 109);
                 }
@@ -716,7 +716,7 @@ class GameSim {
             }
 
             const maxReturnLength = 100 - kickTo;
-            let ydsRaw = random.truncGauss(10, 10, -10, 109);
+            let ydsRaw = Math.round(random.truncGauss(10, 10, -10, 109));
             if (Math.random() < 0.03) {
                 ydsRaw += random.randInt(0, 109);
             }
@@ -1064,7 +1064,7 @@ class GameSim {
 
         const interception = Math.random() < 0.035;
         const complete = Math.random() < 0.65;
-        let ydsRaw = random.truncGauss(10, 7, -10, 100);
+        let ydsRaw = Math.round(random.truncGauss(10, 7, -10, 100));
         if (Math.random() < 0.05) {
             ydsRaw += random.randInt(0, 109);
         }
@@ -1195,7 +1195,7 @@ class GameSim {
             names: p === qb ? [qb.name] : [qb.name, p.name],
         });
 
-        let ydsRaw = random.truncGauss(2.9, 2, -5, 15);
+        let ydsRaw = Math.round(random.truncGauss(2.9, 2, -5, 15));
         if (Math.random() < 0.05) {
             ydsRaw += random.randInt(0, 109);
         }

@@ -95,7 +95,11 @@ const DepthRow = SortableElement(
                 <td onClick={toggleClicked}>{p.ratings.ovrs[pos]}</td>
                 <td onClick={toggleClicked}>{p.ratings.pots[pos]}</td>
                 {ratings.map(rating => (
-                    <td key={rating} onClick={toggleClicked}>
+                    <td
+                        key={rating}
+                        className="table-accent"
+                        onClick={toggleClicked}
+                    >
                         {p.ratings[rating]}
                     </td>
                 ))}
@@ -324,7 +328,11 @@ class Depth extends React.Component {
                                     Pot{pos}
                                 </th>
                                 {ratingCols.map(({ desc, title }, i) => (
-                                    <th key={ratings[i]} title={desc}>
+                                    <th
+                                        key={ratings[i]}
+                                        className="table-accent"
+                                        title={desc}
+                                    >
                                         {title}
                                     </th>
                                 ))}

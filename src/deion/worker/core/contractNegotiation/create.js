@@ -18,6 +18,7 @@ const create = async (
     pid: number,
     resigning: boolean,
     tid: number = g.userTid,
+    rookie?: boolean = false,
 ): Promise<string | void> => {
     if (
         g.phase >= PHASE.AFTER_TRADE_DEADLINE &&
@@ -50,7 +51,13 @@ const create = async (
         p.freeAgentMood[tid],
     );
 
-    if (helpers.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
+    if (
+        helpers.refuseToNegotiate(
+            playerAmount,
+            p.freeAgentMood[g.userTid],
+            rookie,
+        )
+    ) {
         return `<a href="${helpers.leagueUrl(["player", p.pid])}">${
             p.firstName
         } ${

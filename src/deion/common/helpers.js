@@ -846,7 +846,15 @@ function roundWinp(winp: number): string {
  * @param {number} mood Player's mood towards the team in question.
  * @return {boolean} Answer to the question.
  */
-const refuseToNegotiate = (amount: number, mood: number): boolean => {
+const refuseToNegotiate = (
+    amount: number,
+    mood: number,
+    rookie?: boolean = false,
+): boolean => {
+    if (rookie) {
+        return false;
+    }
+
     return amount * mood > 9500;
 };
 

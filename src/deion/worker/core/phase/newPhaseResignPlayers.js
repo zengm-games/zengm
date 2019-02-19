@@ -28,7 +28,12 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
             player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             await idb.cache.players.put(p);
 
-            const error = await contractNegotiation.create(p.pid, true, tid);
+            const error = await contractNegotiation.create(
+                p.pid,
+                true,
+                tid,
+                p.draft.year === g.season,
+            );
             if (error !== undefined && error) {
                 logEvent(
                     {

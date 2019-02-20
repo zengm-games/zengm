@@ -22,7 +22,7 @@ const showEvent = ({
     } else if (type === "healedList") {
         title = "Recovered from injury";
     } else if (type === "injuredList") {
-        title = "Injured last game";
+        title = "Injured this game";
     }
 
     if (persistent && extraClass === undefined) {

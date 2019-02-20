@@ -1195,11 +1195,12 @@ class GameSim {
             names: p === qb ? [qb.name] : [qb.name, p.name],
         });
 
-        let ydsRaw = Math.round(random.truncGauss(2.9, 2, -5, 15));
-        if (Math.random() < 0.05) {
+        let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
+        if (Math.random() < 0.01) {
             ydsRaw += random.randInt(0, 109);
         }
         let yds = this.boundedYds(ydsRaw);
+        console.log(yds, ydsRaw);
 
         const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
 

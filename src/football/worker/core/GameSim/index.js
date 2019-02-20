@@ -898,7 +898,10 @@ class GameSim {
             this.isClockRunning = Math.random() > 0.05;
         }
 
-        const ydsRaw = random.randInt(0, 109);
+        let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
+        if (Math.random() < 0.025) {
+            ydsRaw += random.randInt(0, 109);
+        }
         const yds = this.boundedYds(ydsRaw);
         const { safetyOrTouchback, td } = this.advanceYds(yds);
         let dt = Math.abs(yds) / 6;
@@ -945,7 +948,10 @@ class GameSim {
 
         const p = this.pickPlayer(this.o, "passCoverage");
 
-        const ydsRaw = random.randInt(0, 109);
+        let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
+        if (Math.random() < 0.075) {
+            ydsRaw += random.randInt(0, 109);
+        }
         const yds = this.boundedYds(ydsRaw);
         const { safetyOrTouchback, td } = this.advanceYds(yds);
         let dt = Math.abs(yds) / 8;
@@ -1195,12 +1201,11 @@ class GameSim {
             names: p === qb ? [qb.name] : [qb.name, p.name],
         });
 
-        let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
+        let ydsRaw = Math.round(random.truncGauss(3.5, 6, -5, 15));
         if (Math.random() < 0.01) {
             ydsRaw += random.randInt(0, 109);
         }
         let yds = this.boundedYds(ydsRaw);
-        console.log(yds, ydsRaw);
 
         const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
 

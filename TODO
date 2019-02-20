@@ -1,15 +1,13 @@
 # football
 
 game sim
-- more realistic stat distribution
-  - fumble/int returns
 - pick plays from (down, toGo, scrimmage, score, quarter, time)
 - adjust probabilities based on stats
   - use ovr when possible - can i put these in composite ratings?
-- clock
-  - pace
-  - clock management, strategy
 - later
+  - clock
+    - pace
+    - clock management, strategy
   - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
   - log clutch plays
   - blocked fg

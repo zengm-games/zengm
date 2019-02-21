@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { describe, it } from "mocha";
 import { findStarters } from "./rosterAutoSort";
 
 describe("worker/core/team/rosterAutoSort/findStarters", () => {

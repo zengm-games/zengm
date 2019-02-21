@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { before, describe, it } from "mocha";
 import { loadTeamSeasons } from "./common.test";
 import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";

@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { before, describe, it } from "mocha";
 import { getDraftTids, loadTeamSeasons } from "./common.test";
 
 describe("worker/core/draft/genOrder", () => {

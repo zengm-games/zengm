@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { afterEach, before, describe, it } from "mocha";
 import { PLAYER } from "../../../common";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";

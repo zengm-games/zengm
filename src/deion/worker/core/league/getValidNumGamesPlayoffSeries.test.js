@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { describe, it } from "mocha";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {

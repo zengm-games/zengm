@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { after, before, describe, it } from "mocha";
 import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 import season from "./index";

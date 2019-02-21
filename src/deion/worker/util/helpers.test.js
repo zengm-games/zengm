@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { before, describe, it } from "mocha";
 import { PLAYER } from "../../common";
 import g from "./g";
 import helpers from "./helpers";

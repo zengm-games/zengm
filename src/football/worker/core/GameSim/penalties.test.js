@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { describe, it } from "mocha";
 import penalties from "./penalties";
 
 describe("worker/core/GameSim", () => {

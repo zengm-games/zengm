@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import { describe, it } from "mocha";
 import { player } from "../../../../deion/worker/core";
 import madeHof from "./madeHof";
 

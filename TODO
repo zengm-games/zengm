@@ -1,8 +1,10 @@
 # football
 
 game sim
+- team composite ratings
+  - use to pick run/pass probabilities
 - adjust probabilities based on stats
-  - use ovr when possible - can i put these in composite ratings?
+  - use ovr when possible
   - sack
   - completion
   - run length
@@ -20,6 +22,14 @@ game sim
     - chance for either team to return (very slim for offense)
   - blocked punt
   - missed fg/xp return
+
+power rankings
+
+get rid of appcache
+
+Game result before injury or after recovery
+
+are AI teams re-signing players following hard cap?
 
 AV advanced stat
 - use in value?

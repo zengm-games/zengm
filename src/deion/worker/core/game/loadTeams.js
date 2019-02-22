@@ -99,6 +99,7 @@ const loadTeams = async () => {
                     injury: players[i].injury,
                     injured: players[i].injury.type !== "Healthy",
                     ptModifier: players[i].ptModifier,
+                    ovrs: rating.ovrs,
                 };
 
                 // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.

@@ -4,6 +4,8 @@ import { PHASE } from "../../../../deion/common";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import { POSITIONS } from "../../../common";
 import PlayByPlayLogger from "./PlayByPlayLogger";
+import getCompositeFactor from "./getCompositeFactor";
+import getPlayers from "./getPlayers";
 import formations from "./formations";
 import penalties from "./penalties";
 import type { Position } from "../../../common/types";
@@ -138,6 +140,91 @@ class GameSim {
                     this.team[t].player[p].compositeRating[r] *= factor;
                 }
             }
+        }
+    }
+
+    updateTeamCompositeRatings() {
+        // offPassing
+        // offRunning
+        // defPassing
+        // defRunning
+
+        for (let t = 0; t < 2; t++) {
+            const t2 = t === 0 ? 1 : 0;
+
+            this.team[t].compositeRating.offPassing = 0;
+            this.team[t].compositeRating.offRunning = 0;
+            this.team[t].compositeRating.defPassing = 0;
+            this.team[t].compositeRating.defRunning = 0;
+
+            // Top 3 receivers, plus a bit more for others
+            const receiverFactor = getCompositeFactor({
+                playersOnField: this.playersOnField[t],
+                positions: ["WR", "TE", "RB"],
+                orderField: "ovrs.WR",
+                weightsMain: [5, 3, 2],
+                weightsBonus: [0.5, 0.25],
+                valFunc: p => p.ovrs.WR / 100,
+            });
+
+            // Top 5 blockers, plus a bit more from TE/RB if they exist
+            const passBlockFactor = getCompositeFactor({
+                playersOnField: this.playersOnField[t],
+                positions: ["OL", "TE", "RB"],
+                orderField: "ovrs.OL",
+                weightsMain: [5, 4, 3, 3, 3],
+                weightsBonus: [1, 0.5],
+                valFunc: p =>
+                    (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
+            });
+
+            const passRushFactor = getCompositeFactor({
+                playersOnField: this.playersOnField[t2],
+                positions: ["DL", "LB"],
+                orderField: "ovrs.DL",
+                weightsMain: [5, 4, 3, 2, 1],
+                weightsBonus: [],
+                valFunc: p =>
+                    (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
+            });
+
+            const coverageFactor = getCompositeFactor({
+                playersOnField: this.playersOnField[t2],
+                positions: ["CB", "S", "LB"],
+                orderField: "ovrs.CB",
+                weightsMain: [5, 4, 3, 2],
+                weightsBonus: [1, 0.5],
+                valFunc: p =>
+                    (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
+            });
+
+            // Calculate offPassing only if there is a quarterback in the formation
+            if (this.playersOnField[t].QB) {
+                const qb = this.playersOnField[t].QB[0];
+                const qbFactor = qb ? qb.ovrs.QB / 100 : 0;
+
+                this.team[t].compositeRating.offPassing =
+                    (5 * qbFactor +
+                        receiverFactor +
+                        passBlockFactor +
+                        passRushFactor +
+                        coverageFactor) /
+                    9;
+
+                // Arbitrary rescale - .45-.7 -> .25-.75
+                this.team[t].compositeRating.offPassing = helpers.bound(
+                    (this.team[t].compositeRating.offPassing - 0.45) *
+                        (0.5 / 0.25) +
+                        0.25,
+                    0,
+                    1,
+                );
+                // if (this.clock === g.quarterLength) { console.log('offPassing', this.team[t].compositeRating.offPassing, qbFactor, receiverFactor, passBlockFactor, passRushFactor, coverageFactor) }
+            }
+
+            /*            this.team[t].compositeRating.offRunning
+            this.team[t].compositeRating.defPassing
+            this.team[t].compositeRating.defRunning*/
         }
     }
 
@@ -495,6 +582,8 @@ class GameSim {
                 }
             }
         }
+
+        this.updateTeamCompositeRatings();
     }
 
     possessionChange() {
@@ -1576,13 +1665,7 @@ class GameSim {
         positions?: Position[] = POSITIONS,
         power?: number = 1,
     ) {
-        const players: PlayerGameSim[] = [];
-
-        for (const pos of Object.keys(this.playersOnField[t])) {
-            if (positions.includes(pos)) {
-                players.push(...this.playersOnField[t][pos]);
-            }
-        }
+        const players = getPlayers(this.playersOnField[t], positions);
 
         const weightFunc =
             rating !== undefined

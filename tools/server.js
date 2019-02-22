@@ -30,9 +30,6 @@ const sendFile = (res, filename) => {
 const showStatic = (req, res) => {
     sendFile(res, req.url.substr(1));
 };
-const showStaticWithHtml = (req, res) => {
-    sendFile(res, `${req.url.substr(1)}.html`);
-};
 const showIndex = (req, res) => {
     sendFile(res, "index.html");
 };
@@ -47,7 +44,6 @@ const startsWith = (url, prefixes) => {
 };
 
 const server = http.createServer((req, res) => {
-    const prefixesStaticWithHtml = ["/export_3.3", "/test", "/test_case"];
     const prefixesStatic = [
         "/css/",
         "/files/",
@@ -55,11 +51,10 @@ const server = http.createServer((req, res) => {
         "/gen/",
         "/ico/",
         "/img/",
+        "/manifest",
     ];
 
-    if (startsWith(req.url, prefixesStaticWithHtml)) {
-        showStaticWithHtml(req, res);
-    } else if (startsWith(req.url, prefixesStatic)) {
+    if (startsWith(req.url, prefixesStatic)) {
         showStatic(req, res);
     } else {
         showIndex(req, res);

@@ -25,8 +25,6 @@ game sim
 
 power rankings
 
-get rid of appcache
-
 Game result before injury or after recovery
 
 are AI teams re-signing players following hard cap?
@@ -243,7 +241,7 @@ customize playoff series length
 
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
-- eventually delete appcache, but for now leave it there as an upgrade path
+  - workbox-window
 
 https://developers.google.com/web/fundamentals/app-install-banners/
 

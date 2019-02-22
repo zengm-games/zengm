@@ -27,11 +27,6 @@ RewriteCond %{HTTP_HOST} !\.dev$
 RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-RewriteRule ^manifest_hack$ manifest_hack.html
-RewriteRule ^test$ test.html
-RewriteRule ^test_case$ test_case.html
-
-RewriteCond %{REQUEST_URI} !^/bbgm.appcache
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/css
 RewriteCond %{REQUEST_URI} !^/files
@@ -41,6 +36,5 @@ RewriteCond %{REQUEST_URI} !^/ico
 RewriteCond %{REQUEST_URI} !^/img
 RewriteCond %{REQUEST_URI} !^/manifest
 RewriteCond %{REQUEST_URI} !^/sw.js
-RewriteCond %{REQUEST_URI} !^/test
 RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^.*$ index.html

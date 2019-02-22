@@ -143,136 +143,6 @@ class GameSim {
         }
     }
 
-    updateTeamCompositeRatings() {
-        // Hack!! Basically, we want to see what kind of talent we have, so put the starter (minus fatigue) out there and compute these
-        this.updatePlayersOnField("starters");
-
-        for (let t = 0; t < 2; t++) {
-            this.team[t].compositeRating.offPassing = 0;
-            this.team[t].compositeRating.offRushing = 0;
-            this.team[t].compositeRating.defPassing = 0;
-            this.team[t].compositeRating.defRushing = 0;
-
-            // Top 3 receivers, plus a bit more for others
-            const receiverFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["WR", "TE", "RB"],
-                orderField: "ovrs.WR",
-                weightsMain: [5, 3, 2],
-                weightsBonus: [0.5, 0.25],
-                valFunc: p => p.ovrs.WR / 100,
-            });
-
-            const runnerFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["RB", "WR"],
-                orderField: "ovrs.RB",
-                weightsMain: [1],
-                weightsBonus: [0.1],
-                valFunc: p => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
-            });
-
-            // Top 5 blockers, plus a bit more from TE/RB if they exist
-            const passBlockFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["OL", "TE", "RB"],
-                orderField: "ovrs.OL",
-                weightsMain: [5, 4, 3, 3, 3],
-                weightsBonus: [1, 0.5],
-                valFunc: p =>
-                    (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
-            });
-
-            const runBlockFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["OL", "TE", "RB"],
-                orderField: "ovrs.OL",
-                weightsMain: [5, 4, 3, 3, 3],
-                weightsBonus: [1, 0.5],
-                valFunc: p =>
-                    (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
-            });
-
-            const passRushFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["DL", "LB"],
-                orderField: "ovrs.DL",
-                weightsMain: [5, 4, 3, 2, 1],
-                weightsBonus: [],
-                valFunc: p =>
-                    (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
-            });
-
-            const runStopFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["DL", "LB", "S"],
-                orderField: "ovrs.DL",
-                weightsMain: [5, 4, 3, 2, 2, 1, 1],
-                weightsBonus: [0.5, 0.5],
-                valFunc: p =>
-                    (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
-            });
-
-            const coverageFactor = getCompositeFactor({
-                playersOnField: this.playersOnField[t],
-                positions: ["CB", "S", "LB"],
-                orderField: "ovrs.CB",
-                weightsMain: [5, 4, 3, 2],
-                weightsBonus: [1, 0.5],
-                valFunc: p =>
-                    (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
-            });
-
-            // Calculate offPassing only if there is a quarterback in the formation
-            if (this.playersOnField[t].QB) {
-                const qb = this.playersOnField[t].QB[0];
-                const qbFactor = qb ? qb.ovrs.QB / 100 : 0;
-
-                this.team[t].compositeRating.offPassing =
-                    (5 * qbFactor + receiverFactor + passBlockFactor) / 7;
-            }
-
-            this.team[t].compositeRating.offRushing =
-                (runnerFactor + runBlockFactor) / 2;
-            this.team[t].compositeRating.defPassing =
-                (passRushFactor + coverageFactor) / 2;
-            this.team[t].compositeRating.defRushing = runStopFactor;
-
-            // Arbitrary rescale - .45-.7 -> .25-.75
-            this.team[t].compositeRating.offPassing = helpers.bound(
-                (this.team[t].compositeRating.offPassing - 0.45) *
-                    (0.5 / 0.25) +
-                    0.25,
-                0,
-                1,
-            );
-
-            // Arbitrary rescale - .5-.7 -> .25-.75
-            this.team[t].compositeRating.offRushing = helpers.bound(
-                (this.team[t].compositeRating.offRushing - 0.5) * (0.5 / 0.2) +
-                    0.25,
-                0,
-                1,
-            );
-
-            // Arbitrary rescale - .4-.65 -> .25-.75
-            this.team[t].compositeRating.defPassing = helpers.bound(
-                (this.team[t].compositeRating.defPassing - 0.4) * (0.5 / 0.25) +
-                    0.25,
-                0,
-                1,
-            );
-
-            // Arbitrary rescale - .4-.6 -> .25-.75
-            this.team[t].compositeRating.defRushing = helpers.bound(
-                (this.team[t].compositeRating.defRushing - 0.4) * (0.5 / 0.2) +
-                    0.25,
-                0,
-                1,
-            );
-        }
-    }
-
     run() {
         // Simulate the game up to the end of regulation
         this.simRegulation();
@@ -367,34 +237,129 @@ class GameSim {
         }
     }
 
-    getPlayType() {
-        this.updateTeamCompositeRatings();
+    getPassOdds() {
+        // Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
+        this.updatePlayersOnField("starters");
 
-        if (this.awaitingKickoff) {
-            return "kickoff";
+        let offPassing = 0;
+        let offRushing = 0;
+        let defPassing = 0;
+        let defRushing = 0;
+
+        // Top 3 receivers, plus a bit more for others
+        const receiverFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.o],
+            positions: ["WR", "TE", "RB"],
+            orderField: "ovrs.WR",
+            weightsMain: [5, 3, 2],
+            weightsBonus: [0.5, 0.25],
+            valFunc: p => p.ovrs.WR / 100,
+        });
+
+        const runnerFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.o],
+            positions: ["RB", "WR"],
+            orderField: "ovrs.RB",
+            weightsMain: [1],
+            weightsBonus: [0.1],
+            valFunc: p => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
+        });
+
+        // Top 5 blockers, plus a bit more from TE/RB if they exist
+        const passBlockFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.o],
+            positions: ["OL", "TE", "RB"],
+            orderField: "ovrs.OL",
+            weightsMain: [5, 4, 3, 3, 3],
+            weightsBonus: [1, 0.5],
+            valFunc: p =>
+                (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
+        });
+
+        const runBlockFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.o],
+            positions: ["OL", "TE", "RB"],
+            orderField: "ovrs.OL",
+            weightsMain: [5, 4, 3, 3, 3],
+            weightsBonus: [1, 0.5],
+            valFunc: p => (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
+        });
+
+        const passRushFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.d],
+            positions: ["DL", "LB"],
+            orderField: "ovrs.DL",
+            weightsMain: [5, 4, 3, 2, 1],
+            weightsBonus: [],
+            valFunc: p => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
+        });
+
+        const runStopFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.d],
+            positions: ["DL", "LB", "S"],
+            orderField: "ovrs.DL",
+            weightsMain: [5, 4, 3, 2, 2, 1, 1],
+            weightsBonus: [0.5, 0.5],
+            valFunc: p => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
+        });
+
+        const coverageFactor = getCompositeFactor({
+            playersOnField: this.playersOnField[this.d],
+            positions: ["CB", "S", "LB"],
+            orderField: "ovrs.CB",
+            weightsMain: [5, 4, 3, 2],
+            weightsBonus: [1, 0.5],
+            valFunc: p =>
+                (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
+        });
+
+        // Calculate offPassing only if there is a quarterback in the formation
+        if (this.playersOnField[this.o].QB) {
+            const qb = this.playersOnField[this.o].QB[0];
+            const qbFactor = qb ? qb.ovrs.QB / 100 : 0;
+
+            offPassing = (5 * qbFactor + receiverFactor + passBlockFactor) / 7;
         }
 
-        if (this.awaitingAfterTouchdown) {
-            return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
-        }
+        offRushing = (runnerFactor + runBlockFactor) / 2;
+        defPassing = (passRushFactor + coverageFactor) / 2;
+        defRushing = runStopFactor;
 
-        if (this.down === 4) {
-            if (this.scrimmage >= 60) {
-                return "fieldGoal";
-            }
+        // Arbitrary rescale - .45-.7 -> .25-.75
+        offPassing = helpers.bound(
+            (offPassing - 0.45) * (0.5 / 0.25) + 0.25,
+            0,
+            1,
+        );
 
-            return "punt";
-        }
+        // Arbitrary rescale - .5-.7 -> .25-.75
+        offRushing = helpers.bound(
+            (offRushing - 0.5) * (0.5 / 0.2) + 0.25,
+            0,
+            1,
+        );
+
+        // Arbitrary rescale - .4-.65 -> .25-.75
+        defPassing = helpers.bound(
+            (defPassing - 0.4) * (0.5 / 0.25) + 0.25,
+            0,
+            1,
+        );
+
+        // Arbitrary rescale - .4-.6 -> .25-.75
+        defRushing = helpers.bound(
+            (defRushing - 0.4) * (0.5 / 0.2) + 0.25,
+            0,
+            1,
+        );
 
         const passingTendency = helpers.bound(
-            this.team[this.o].compositeRating.offPassing -
-                0.25 * this.team[this.d].compositeRating.defPassing,
+            offPassing - 0.25 * defPassing,
             0,
             1,
         );
         const rushingTendency = helpers.bound(
-            this.team[this.o].compositeRating.offRushing -
-                0.25 * this.team[this.d].compositeRating.defRushing,
+            offRushing - 0.25 * defRushing,
             0,
             1,
         );
@@ -411,7 +376,27 @@ class GameSim {
             );
         }
 
-        if (Math.random() < passOdds) {
+        return passOdds;
+    }
+
+    getPlayType() {
+        if (this.awaitingKickoff) {
+            return "kickoff";
+        }
+
+        if (this.awaitingAfterTouchdown) {
+            return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
+        }
+
+        if (this.down === 4) {
+            if (this.scrimmage >= 60) {
+                return "fieldGoal";
+            }
+
+            return "punt";
+        }
+
+        if (Math.random() < this.getPassOdds()) {
             return "pass";
         }
 

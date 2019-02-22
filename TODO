@@ -4,7 +4,10 @@ game sim
 - adjust probabilities based on stats
   - use ovr when possible
   - team composite ratings
+    - supposed to represent players on field, or lineup as a whole? currently lineup as a whole, for run/pass tendency. maybe need two kinds
+      - current one can be moved within selecting play type. then replace it with one called after play type is selected, for normal team composites
   - sack
+    - pass rushing vs pass blocking composite ratings
   - completion
   - run length
   - punt length

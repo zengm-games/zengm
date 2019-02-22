@@ -113,11 +113,9 @@ const writePlayerStats = async (
                             p.pos
                         } <a href="${helpers.leagueUrl(["player", p2.pid])}">${
                             p2.firstName
-                        } ${p2.lastName}</a> was injured! (${
-                            p2.injury.type
-                        }, out for ${p2.injury.gamesRemaining} ${
-                            p2.injury.gamesRemaining === 1 ? "game" : "games"
-                        })`;
+                        } ${p2.lastName}</a> - ${p2.injury.type}, ${
+                            p2.injury.gamesRemaining
+                        } ${p2.injury.gamesRemaining === 1 ? "game" : "games"}`;
                         if (g.userTid === p2.tid) {
                             injuryTexts.push(injuryText);
                             stopPlay =
@@ -130,7 +128,18 @@ const writePlayerStats = async (
                         logEvent(
                             {
                                 type: "injured",
-                                text: injuryText,
+                                text: `${p.pos} <a href="${helpers.leagueUrl([
+                                    "player",
+                                    p2.pid,
+                                ])}">${p2.firstName} ${
+                                    p2.lastName
+                                }</a> was injured! (${
+                                    p2.injury.type
+                                }, out for ${p2.injury.gamesRemaining} ${
+                                    p2.injury.gamesRemaining === 1
+                                        ? "game"
+                                        : "games"
+                                })`,
                                 showNotification: false,
                                 pids: [p2.pid],
                                 tids: [p2.tid],

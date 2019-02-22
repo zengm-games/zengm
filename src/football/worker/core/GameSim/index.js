@@ -144,6 +144,9 @@ class GameSim {
     }
 
     updateTeamCompositeRatings() {
+        // Hack!! Basically, we want to see what kind of talent we have, so put the starter (minus fatigue) out there and compute these
+        this.updatePlayersOnField("starters");
+
         for (let t = 0; t < 2; t++) {
             this.team[t].compositeRating.offPassing = 0;
             this.team[t].compositeRating.offRushing = 0;
@@ -365,6 +368,8 @@ class GameSim {
     }
 
     getPlayType() {
+        this.updateTeamCompositeRatings();
+
         if (this.awaitingKickoff) {
             return "kickoff";
         }
@@ -381,15 +386,32 @@ class GameSim {
             return "punt";
         }
 
-        const passingTendency =
+        const passingTendency = helpers.bound(
             this.team[this.o].compositeRating.offPassing -
-            0.25 * this.team[this.d].compositeRating.defPassing;
-        const rushingTendency =
+                0.25 * this.team[this.d].compositeRating.defPassing,
+            0,
+            1,
+        );
+        const rushingTendency = helpers.bound(
             this.team[this.o].compositeRating.offRushing -
-            0.25 * this.team[this.d].compositeRating.defRushing;
-        console.log(passingTendency, rushingTendency);
+                0.25 * this.team[this.d].compositeRating.defRushing,
+            0,
+            1,
+        );
 
-        if (Math.random() < 0.57) {
+        let passOdds = 0.57;
+
+        if (passingTendency > 0 || rushingTendency > 0) {
+            // Always pass at least 45% of the time, and always rush at least 35% of the time
+            passOdds = helpers.bound(
+                (1.5 * passingTendency) /
+                    (1.5 * passingTendency + rushingTendency),
+                0.45,
+                0.65,
+            );
+        }
+
+        if (Math.random() < passOdds) {
             return "pass";
         }
 
@@ -632,8 +654,6 @@ class GameSim {
                 }
             }
         }
-
-        this.updateTeamCompositeRatings();
     }
 
     possessionChange() {

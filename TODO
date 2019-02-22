@@ -1,17 +1,15 @@
 # football
 
 game sim
-- team composite ratings
-  - getCompositeFactor should not be based on playersOnField, since it will be called before playersOnField and in fact influences it. should be based on depth chart. can use t.depth, but need to account for fatigue (similar in assignment of playersOnField) and need to restrict sampled players by position (so you don't evaluate 7 OLs, but instead do 5 OLs, a TE, and a RB)
-  - use to pick run/pass probabilities
 - adjust probabilities based on stats
   - use ovr when possible
+  - team composite ratings
   - sack
   - completion
   - run length
   - punt length
   - fg
-- pick plays from (down, toGo, scrimmage, score, quarter, time)
+- pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
   - clock
     - pace

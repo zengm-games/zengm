@@ -381,6 +381,14 @@ class GameSim {
             return "punt";
         }
 
+        const passingTendency =
+            this.team[this.o].compositeRating.offPassing -
+            0.25 * this.team[this.d].compositeRating.defPassing;
+        const rushingTendency =
+            this.team[this.o].compositeRating.offRushing -
+            0.25 * this.team[this.d].compositeRating.defRushing;
+        console.log(passingTendency, rushingTendency);
+
         if (Math.random() < 0.57) {
             return "pass";
         }

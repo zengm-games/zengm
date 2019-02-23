@@ -237,7 +237,7 @@ class GameSim {
         }
     }
 
-    getPassOdds() {
+    probPass() {
         // Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
         this.updatePlayersOnField("starters");
         this.updateTeamCompositeRatings();
@@ -340,7 +340,7 @@ class GameSim {
             return "punt";
         }
 
-        if (Math.random() < this.getPassOdds()) {
+        if (Math.random() < this.probPass()) {
             return "pass";
         }
 
@@ -1157,7 +1157,7 @@ class GameSim {
     }
 
     doSack(qb: PlayerGameSim) {
-        const p = this.pickPlayer(this.d, "passRushing");
+        const p = this.pickPlayer(this.d, "passRushing", undefined, 2.5);
 
         const ydsRaw = random.randInt(-1, -15);
         const yds = this.boundedYds(ydsRaw);
@@ -1186,6 +1186,18 @@ class GameSim {
         return random.randInt(3, 8);
     }
 
+    probSack(qb: PlayerGameSim) {
+        const p =
+            (0.06 * this.team[this.d].compositeRating.passRushing) /
+            (0.5 *
+                (qb.compositeRating.passingVision +
+                    this.team[this.o].compositeRating.passBlocking));
+
+        console.log("probSack", p);
+
+        return p;
+    }
+
     doPass() {
         this.updatePlayersOnField("pass");
 
@@ -1211,7 +1223,7 @@ class GameSim {
             return dt + this.doFumble(qb, yds);
         }
 
-        const sack = Math.random() < 0.02;
+        const sack = Math.random() < this.probSack(qb);
         if (sack) {
             return this.doSack(qb);
         }

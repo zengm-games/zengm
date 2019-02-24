@@ -935,6 +935,94 @@ class GameSim {
         return dt;
     }
 
+    // eslint-disable-next-line
+    probMadeFieldGoal(kicker: PlayerGameSim, distance: number) {
+        let baseProb = 0;
+
+        // Kickers with strong/weak legs effectively have adjusted distances: -5 yds for 100, +15 yds for 0
+        distance += -(kicker.compositeRating.kickingPower - 0.75) * 20;
+
+        if (distance < 20) {
+            baseProb = 0.99;
+        } else if (distance < 30) {
+            baseProb = 0.98;
+        } else if (distance < 35) {
+            baseProb = 0.95;
+        } else if (distance < 37) {
+            baseProb = 0.94;
+        } else if (distance < 38) {
+            baseProb = 0.93;
+        } else if (distance < 39) {
+            baseProb = 0.92;
+        } else if (distance < 40) {
+            baseProb = 0.91;
+        } else if (distance < 41) {
+            baseProb = 0.89;
+        } else if (distance < 42) {
+            baseProb = 0.87;
+        } else if (distance < 43) {
+            baseProb = 0.85;
+        } else if (distance < 44) {
+            baseProb = 0.83;
+        } else if (distance < 45) {
+            baseProb = 0.81;
+        } else if (distance < 46) {
+            baseProb = 0.79;
+        } else if (distance < 47) {
+            baseProb = 0.77;
+        } else if (distance < 48) {
+            baseProb = 0.75;
+        } else if (distance < 49) {
+            baseProb = 0.73;
+        } else if (distance < 50) {
+            baseProb = 0.71;
+        } else if (distance < 51) {
+            baseProb = 0.69;
+        } else if (distance < 52) {
+            baseProb = 0.65;
+        } else if (distance < 53) {
+            baseProb = 0.61;
+        } else if (distance < 54) {
+            baseProb = 0.59;
+        } else if (distance < 55) {
+            baseProb = 0.55;
+        } else if (distance < 56) {
+            baseProb = 0.51;
+        } else if (distance < 57) {
+            baseProb = 0.47;
+        } else if (distance < 58) {
+            baseProb = 0.43;
+        } else if (distance < 59) {
+            baseProb = 0.39;
+        } else if (distance < 60) {
+            baseProb = 0.35;
+        } else if (distance < 61) {
+            baseProb = 0.3;
+        } else if (distance < 62) {
+            baseProb = 0.25;
+        } else if (distance < 63) {
+            baseProb = 0.2;
+        } else if (distance < 64) {
+            baseProb = 0.1;
+        } else if (distance < 65) {
+            baseProb = 0.05;
+        } else if (distance < 70) {
+            baseProb = 0.005;
+        } else if (distance < 75) {
+            baseProb = 0.0001;
+        } else if (distance < 80) {
+            baseProb = 0.000001;
+        } else {
+            baseProb = 0;
+        }
+
+        // Accurate kickers get a boost. Max boost is the min of (.1, (1-baseProb)/2, and baseProb/2)
+        const baseBoost = (kicker.compositeRating.kickingAccuracy - 0.7) / 3;
+        const boost = Math.min(baseBoost, (1 - baseProb) / 2, baseProb / 2);
+
+        return baseProb + boost;
+    }
+
     doFieldGoal(extraPoint?: boolean = false) {
         this.updatePlayersOnField("fieldGoal");
 
@@ -946,7 +1034,7 @@ class GameSim {
 
         const kicker = this.playersOnField[this.o].K[0];
         const distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
-        const made = Math.random() < 0.8;
+        const made = Math.random() < this.probMadeFieldGoal(kicker, distance);
         const dt = extraPoint ? 0 : random.randInt(4, 6);
 
         const penInfo2 = this.checkPenalties("fieldGoal", {

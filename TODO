@@ -1,10 +1,6 @@
 # football
 
 game sim
-- adjust probabilities based on stats
-  - use ovr when possible
-  - team composite ratings, representing players on field
-  - fg
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
   - clock
@@ -19,10 +15,13 @@ game sim
   - missed fg/xp return
 
 on player page, only show "Regular Season" and "Playoffs" headers for players who have stats
+- careerStats gp
 
 power rankings
 
 Game result before injury or after recovery
+- or both in same notification, after game
+- ignore 0 game injuries
 
 are AI teams re-signing players following hard cap?
 

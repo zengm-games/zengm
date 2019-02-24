@@ -105,12 +105,12 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         weights: [1, 1],
     },
     kickingPower: {
-        ratings: [50, "kpw"],
-        weights: [1, 1],
+        ratings: ["kpw"],
+        weights: [1],
     },
     kickingAccuracy: {
-        ratings: [50, "kac"],
-        weights: [1, 1],
+        ratings: ["kac"],
+        weights: [1],
     },
     punting: {
         ratings: ["ppw", "pac"],

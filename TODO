@@ -14,8 +14,6 @@ game sim
   - blocked punt
   - missed fg/xp return
 
-draft prospect ages
-
 Game result before injury or after recovery
 - or both in same notification, after game
 - ignore 0 game injuries
@@ -25,6 +23,7 @@ are AI teams re-signing players following hard cap?
 game -> week on injuryList
 
 player value formula - use stats? or just ratings?
+- starting-caliber QBs higher
 
 AV advanced stat
 - use in value?

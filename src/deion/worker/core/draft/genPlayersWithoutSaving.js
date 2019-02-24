@@ -56,9 +56,14 @@ const genPlayersWithoutSaving = (
     // Do one season at a time, keeping the lowest pot players in college for another season
     let enteringDraft = [];
     for (let i = 0; i < 4; i++) {
-        // Top 50% of players remaining enter draft, except in last year when all do
-        const cutoff =
-            i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
+        let cutoff = 0;
+
+        // For football, only juniors and seniors
+        if (process.env.SPORT === "basketball" || i >= 2) {
+            // Top 50% of players remaining enter draft, except in last year when all do
+            cutoff =
+                i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
+        }
 
         remaining.sort(
             (a, b) =>

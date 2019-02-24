@@ -1204,6 +1204,25 @@ class GameSim {
         );
     }
 
+    // eslint-disable-next-line
+    probComplete(
+        qb: PlayerGameSim,
+        target: PlayerGameSim,
+        defender: PlayerGameSim,
+    ) {
+        const p =
+            (0.6 *
+                (0.2 *
+                    (target.compositeRating.catching +
+                        target.compositeRating.gettingOpen +
+                        qb.compositeRating.passingAccuracy +
+                        qb.compositeRating.passingDeep +
+                        qb.compositeRating.passingVision))) /
+            defender.compositeRating.passCoverage;
+
+        return helpers.bound(p, 0, 0.95);
+    }
+
     doPass() {
         this.updatePlayersOnField("pass");
 
@@ -1287,7 +1306,8 @@ class GameSim {
             this.recordStat(this.o, target, "tgt");
             this.recordStat(this.d, defender, "defPssDef");
 
-            const complete = Math.random() < 0.65;
+            const complete =
+                Math.random() < this.probComplete(qb, target, defender);
 
             if (complete) {
                 if (!penInfo2) {

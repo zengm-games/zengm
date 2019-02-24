@@ -116,6 +116,7 @@ const PLAYER_STATS_TABLES = {
             "qbRec",
             "pssCmp",
             "pss",
+            "cmpPct",
             "pssYds",
             "pssTD",
             "pssTDPct",

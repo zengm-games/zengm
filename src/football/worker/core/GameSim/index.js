@@ -1265,8 +1265,8 @@ class GameSim {
         ]);
 
         const interception = Math.random() < this.probInt(qb);
-        let ydsRaw = Math.round(random.truncGauss(10, 7, -10, 100));
-        if (Math.random() < 0.05) {
+        let ydsRaw = Math.round(random.truncGauss(9.5, 7, -10, 100));
+        if (Math.random() < qb.compositeRating.passingDeep * 0.07) {
             ydsRaw += random.randInt(0, 109);
         }
         let yds = this.boundedYds(ydsRaw);

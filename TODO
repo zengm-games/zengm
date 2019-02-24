@@ -4,7 +4,6 @@ game sim
 - adjust probabilities based on stats
   - use ovr when possible
   - team composite ratings, representing players on field
-  - completion length
   - run length
   - punt length
   - fg

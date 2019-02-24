@@ -390,46 +390,54 @@ const Player = ({
                 </button>
             ) : null}
 
-            <h2>Regular Season</h2>
-            {statTables.map(({ name, onlyShowIf, stats }) => (
-                <StatsTable
-                    key={name}
-                    name={name}
-                    onlyShowIf={onlyShowIf}
-                    stats={stats}
-                    p={player}
-                />
-            ))}
-            {process.env.SPORT === "basketball" ? (
+            {player.careerStats.gp > 0 ? (
                 <>
-                    <h3>Shot Locations</h3>
-                    <ShotLocationsTable
-                        careerStats={player.careerStats}
-                        name="Player:ShotLocations"
-                        stats={statsRegularSeason}
-                    />
+                    <h2>Regular Season</h2>
+                    {statTables.map(({ name, onlyShowIf, stats }) => (
+                        <StatsTable
+                            key={name}
+                            name={name}
+                            onlyShowIf={onlyShowIf}
+                            stats={stats}
+                            p={player}
+                        />
+                    ))}
+                    {process.env.SPORT === "basketball" ? (
+                        <>
+                            <h3>Shot Locations</h3>
+                            <ShotLocationsTable
+                                careerStats={player.careerStats}
+                                name="Player:ShotLocations"
+                                stats={statsRegularSeason}
+                            />
+                        </>
+                    ) : null}
                 </>
             ) : null}
 
-            <h2>Playoffs</h2>
-            {statTables.map(({ name, onlyShowIf, stats }) => (
-                <StatsTable
-                    key={name}
-                    name={name}
-                    onlyShowIf={onlyShowIf}
-                    stats={stats}
-                    p={player}
-                    playoffs
-                />
-            ))}
-            {process.env.SPORT === "basketball" ? (
+            {player.careerStatsPlayoffs.gp > 0 ? (
                 <>
-                    <h3>Shot Locations</h3>
-                    <ShotLocationsTable
-                        careerStats={player.careerStatsPlayoffs}
-                        name="Player:PlayoffShotLocations"
-                        stats={statsPlayoffs}
-                    />
+                    <h2>Playoffs</h2>
+                    {statTables.map(({ name, onlyShowIf, stats }) => (
+                        <StatsTable
+                            key={name}
+                            name={name}
+                            onlyShowIf={onlyShowIf}
+                            stats={stats}
+                            p={player}
+                            playoffs
+                        />
+                    ))}
+                    {process.env.SPORT === "basketball" ? (
+                        <>
+                            <h3>Shot Locations</h3>
+                            <ShotLocationsTable
+                                careerStats={player.careerStatsPlayoffs}
+                                name="Player:PlayoffShotLocations"
+                                stats={statsPlayoffs}
+                            />
+                        </>
+                    ) : null}
                 </>
             ) : null}
 

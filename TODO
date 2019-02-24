@@ -14,10 +14,9 @@ game sim
   - blocked punt
   - missed fg/xp return
 
-on player page, only show "Regular Season" and "Playoffs" headers for players who have stats
-- careerStats gp
-
 power rankings
+
+draft prospect ages
 
 Game result before injury or after recovery
 - or both in same notification, after game

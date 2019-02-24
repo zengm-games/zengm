@@ -1399,7 +1399,14 @@ class GameSim {
             names: p === qb ? [qb.name] : [qb.name, p.name],
         });
 
-        let ydsRaw = Math.round(random.truncGauss(3.5, 6, -5, 15));
+        const meanYds =
+            (3.5 *
+                0.5 *
+                (p.compositeRating.rushing +
+                    this.team[this.o].compositeRating.runBlocking)) /
+            this.team[this.d].compositeRating.runStopping;
+
+        let ydsRaw = Math.round(random.truncGauss(meanYds, 6, -5, 15));
         if (Math.random() < 0.01) {
             ydsRaw += random.randInt(0, 109);
         }

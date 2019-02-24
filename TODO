@@ -4,7 +4,6 @@ game sim
 - adjust probabilities based on stats
   - use ovr when possible
   - team composite ratings, representing players on field
-  - run length
   - punt length
   - fg
 - pick playType from (down, toGo, scrimmage, score, quarter, time)

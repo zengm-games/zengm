@@ -25,9 +25,12 @@ const PlayerNameLabels = ({
     let injuryIcon = null;
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {
-            const title = `${injury.type} (out ${
-                injury.gamesRemaining
-            } more games)`;
+            const gameOrWeek =
+                process.env.SPORT === "basketball" ? "game" : "week";
+
+            const title = `${injury.type} (out ${injury.gamesRemaining} more ${
+                injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`
+            })`;
             injuryIcon = (
                 <span className="badge badge-danger badge-injury" title={title}>
                     {injury.gamesRemaining}

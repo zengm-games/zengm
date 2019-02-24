@@ -20,8 +20,6 @@ Game result before injury or after recovery
 
 are AI teams re-signing players following hard cap?
 
-game -> week on injuryList
-
 player value formula - use stats? or just ratings?
 - starting-caliber QBs higher
 
@@ -89,14 +87,6 @@ main logo - in progress
 
 cloudflare, ssl
 
-what's the end state here? options:
-- everything is in deion, and process.env.SPORT governs the output
-  - that'd be nice, but probably unrealistic
-- define minimal set of things that need to be overridden, and pass to deion like new DeionUI({...}) - probably this one!!!!!!!
-  - e.g. views.. put routes.js and views/index.js in deion. but views/index.js will only have common ones. for others, pass into DeionUI, and reference both sets of views in genPage in routes.js
-  - do this, but try to also do the process.env.SPORT solution when possible
-- deion remains a set of functions/classes/modules, to be pulled in externally piecemeal. if something internal needs to be overriden, make it generic or a factory or DI or have it accept a parameter to allow overriding
-
 search for text basketball in deion
 
 make it clear that accounts are shared, change name of Gold to something sport agnostic
@@ -118,6 +108,14 @@ switching positions - how to indicate in UI that player could handle multiple po
 version
 
 ---
+
+what's the end state here? options:
+- everything is in deion, and process.env.SPORT governs the output
+  - that'd be nice, but probably unrealistic
+- define minimal set of things that need to be overridden, and pass to deion like new DeionUI({...}) - probably this one!!!!!!!
+  - e.g. views.. put routes.js and views/index.js in deion. but views/index.js will only have common ones. for others, pass into DeionUI, and reference both sets of views in genPage in routes.js
+  - do this, but try to also do the process.env.SPORT solution when possible
+- deion remains a set of functions/classes/modules, to be pulled in externally piecemeal. if something internal needs to be overriden, make it generic or a factory or DI or have it accept a parameter to allow overriding
 
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf

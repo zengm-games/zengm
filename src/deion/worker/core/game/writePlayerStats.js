@@ -103,6 +103,9 @@ const writePlayerStats = async (
                     const injuredThisGame =
                         p.injured && p.injury.type === "Healthy";
 
+                    const gameOrWeek =
+                        process.env.SPORT === "basketball" ? "game" : "week";
+
                     // Injury crap - assign injury type if player does not already have an injury in the database
                     let biggestRatingsLoss;
                     if (injuredThisGame) {
@@ -115,7 +118,11 @@ const writePlayerStats = async (
                             p2.firstName
                         } ${p2.lastName}</a> - ${p2.injury.type}, ${
                             p2.injury.gamesRemaining
-                        } ${p2.injury.gamesRemaining === 1 ? "game" : "games"}`;
+                        } ${
+                            p2.injury.gamesRemaining === 1
+                                ? gameOrWeek
+                                : `${gameOrWeek}s`
+                        }`;
                         if (g.userTid === p2.tid) {
                             injuryTexts.push(injuryText);
                             stopPlay =
@@ -137,8 +144,8 @@ const writePlayerStats = async (
                                     p2.injury.type
                                 }, out for ${p2.injury.gamesRemaining} ${
                                     p2.injury.gamesRemaining === 1
-                                        ? "game"
-                                        : "games"
+                                        ? gameOrWeek
+                                        : `${gameOrWeek}s`
                                 })`,
                                 showNotification: false,
                                 pids: [p2.pid],

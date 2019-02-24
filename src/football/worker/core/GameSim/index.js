@@ -836,7 +836,10 @@ class GameSim {
         const punter = this.playersOnField[this.o].P[0];
         const puntReturner = this.playersOnField[this.d].PR[0];
 
-        const distance = random.randInt(35, 70);
+        const adjustment = (punter.compositeRating.punting - 0.6) * 20; // 100 ratings - 8 yd bonus. 0 ratings - 12 yard penalty
+        const distance = Math.round(
+            random.truncGauss(44 + adjustment, 8, 25, 90),
+        );
         const kickTo = 100 - this.scrimmage - distance;
         const touchback = kickTo < 0;
         let dt = random.randInt(5, 9);

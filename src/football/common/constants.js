@@ -104,6 +104,18 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         ratings: [50, "endu"],
         weights: [1, 1],
     },
+    kickingPower: {
+        ratings: [50, "kpw"],
+        weights: [1, 1],
+    },
+    kickingAccuracy: {
+        ratings: [50, "kac"],
+        weights: [1, 1],
+    },
+    punting: {
+        ratings: ["ppw", "pac"],
+        weights: [1, 1],
+    },
 };
 
 const PLAYER_STATS_TABLES = {

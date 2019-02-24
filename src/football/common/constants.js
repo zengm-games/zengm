@@ -180,6 +180,7 @@ const PLAYER_STATS_TABLES = {
     },
     defense: {
         name: "Defense, Fumbles, and Penalties",
+        onlyShowIf: ["gp"],
         stats: [
             "gp",
             "gs",

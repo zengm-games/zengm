@@ -18,6 +18,8 @@ game sim
   - blocked punt
   - missed fg/xp return
 
+on player page, only show "Regular Season" and "Playoffs" headers for players who have stats
+
 power rankings
 
 Game result before injury or after recovery

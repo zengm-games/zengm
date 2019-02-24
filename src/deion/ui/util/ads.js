@@ -2,41 +2,6 @@
 
 import emitter from "./emitter";
 
-const refreshBanners = () => {
-    window.top.__vm_add = window.top.__vm_add || [];
-    const venatusAds = [
-        {
-            divID: "bbgm-ads-top",
-            adID: "5bebecb946e0fb00015b4aaa",
-        },
-        {
-            divID: "bbgm-ads-bottom1",
-            adID: "5bebecc546e0fb000177eb10",
-        },
-        {
-            divID: "bbgm-ads-bottom2",
-            adID: "5bebecc546e0fb000177eb10",
-        },
-        {
-            divID: "bbgm-ads-skyscraper",
-            adID: "5bebecd346e0fb0001c54769",
-        },
-    ];
-    for (const { divID, adID } of venatusAds) {
-        const div = document.getElementById(divID);
-        if (div && div.style.display !== "none") {
-            const elm = document.createElement("div");
-            elm.classList.add("vm-placement");
-            elm.dataset.id = adID;
-            while (div.firstChild) {
-                div.removeChild(div.firstChild);
-            }
-            div.appendChild(elm);
-            window.top.__vm_add.push(elm);
-        }
-    }
-};
-
 function showGcs() {
     if (process.env.SPORT === "basketball") {
         window.TriggerPrompt(
@@ -53,7 +18,6 @@ function showModal() {
 }
 
 export default {
-    refreshBanners,
     showModal,
     showGcs,
 };

@@ -91,7 +91,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
     },
     avoidingSacks: {
         ratings: ["thv", "elu", "stre"],
-        weights: [0.5, 1, 0.25],
+        weights: [1, 1, 0.25],
     },
     ballSecurity: {
         ratings: ["bsc", "stre"],

@@ -1117,6 +1117,11 @@ class GameSim {
         return 0;
     }
 
+    // eslint-disable-next-line
+    probFumble(p: PlayerGameSim) {
+        return 0.0125 * (1.5 - p.compositeRating.ballSecurity);
+    }
+
     doFumble(pFumbled: PlayerGameSim, priorYdsRaw: number) {
         this.recordStat(this.o, pFumbled, "fmb");
 
@@ -1180,7 +1185,7 @@ class GameSim {
             this.recordStat(recoveringTeam, pRecovered, "defFmbLng", yds);
             if (td) {
                 this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
-            } else if (Math.random() < 0.01) {
+            } else if (Math.random() < this.probFumble(pRecovered)) {
                 dt += this.doFumble(pRecovered, 0);
             }
         }
@@ -1224,7 +1229,7 @@ class GameSim {
             this.recordStat(this.o, p, "defIntLng", yds);
             if (td) {
                 this.recordStat(this.o, p, "defIntTD");
-            } else if (Math.random() < 0.01) {
+            } else if (Math.random() < this.probFumble(p)) {
                 dt += this.doFumble(p, 0);
             }
         }
@@ -1281,7 +1286,7 @@ class GameSim {
         return (
             (0.06 * this.team[this.d].compositeRating.passRushing) /
             (0.5 *
-                (qb.compositeRating.passingVision +
+                (qb.compositeRating.avoidingSacks +
                     this.team[this.o].compositeRating.passBlocking))
         );
     }
@@ -1333,8 +1338,7 @@ class GameSim {
 
         let dt = random.randInt(2, 6);
 
-        const fumble = Math.random() < 0.01;
-        if (fumble) {
+        if (Math.random() < this.probFumble(qb)) {
             const yds = random.randInt(-1, -10);
             return dt + this.doFumble(qb, yds);
         }
@@ -1416,9 +1420,8 @@ class GameSim {
 
                 // Fumble after catch... only if nothing else is going on, too complicated otherwise
                 if (!penInfo2 && !td && !safetyOrTouchback) {
-                    const fumble2 = Math.random() < 0.01;
-                    if (fumble2) {
-                        return dt + this.doFumble(qb, yds);
+                    if (Math.random() < this.probFumble(target)) {
+                        return dt + this.doFumble(target, yds);
                     }
                 }
 
@@ -1534,8 +1537,7 @@ class GameSim {
         this.recordStat(this.o, p, "rusYds", yds);
         this.recordStat(this.o, p, "rusLng", yds);
 
-        const fumble = Math.random() < 0.01;
-        if (fumble) {
+        if (Math.random() < this.probFumble(p)) {
             return dt + this.doFumble(p, yds);
         }
 

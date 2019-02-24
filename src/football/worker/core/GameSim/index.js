@@ -1187,15 +1187,21 @@ class GameSim {
     }
 
     probSack(qb: PlayerGameSim) {
-        const p =
+        return (
             (0.06 * this.team[this.d].compositeRating.passRushing) /
             (0.5 *
                 (qb.compositeRating.passingVision +
-                    this.team[this.o].compositeRating.passBlocking));
+                    this.team[this.o].compositeRating.passBlocking))
+        );
+    }
 
-        console.log("probSack", p);
-
-        return p;
+    probInt(qb: PlayerGameSim) {
+        return (
+            (0.025 * this.team[this.d].compositeRating.passCoverage) /
+            (0.5 *
+                (qb.compositeRating.passingVision +
+                    qb.compositeRating.passingAccuracy))
+        );
     }
 
     doPass() {
@@ -1239,8 +1245,7 @@ class GameSim {
             "LB",
         ]);
 
-        const interception = Math.random() < 0.035;
-        const complete = Math.random() < 0.65;
+        const interception = Math.random() < this.probInt(qb);
         let ydsRaw = Math.round(random.truncGauss(10, 7, -10, 100));
         if (Math.random() < 0.05) {
             ydsRaw += random.randInt(0, 109);
@@ -1281,6 +1286,8 @@ class GameSim {
             this.recordStat(this.o, qb, "pss");
             this.recordStat(this.o, target, "tgt");
             this.recordStat(this.d, defender, "defPssDef");
+
+            const complete = Math.random() < 0.65;
 
             if (complete) {
                 if (!penInfo2) {

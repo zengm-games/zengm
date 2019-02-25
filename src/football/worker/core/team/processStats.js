@@ -75,7 +75,9 @@ const processStats = (
             } else if (stat === "oppYds") {
                 row[stat] = ts.oppPssYds + ts.oppRusYds;
             } else if (stat === "oppYdsPerPlay") {
-                row[stat] = (ts.oppPssYds + ts.oppRusYds) / ts.oppPly;
+                row[stat] =
+                    (ts.oppPssYds + ts.oppRusYds) /
+                    (ts.oppPss + ts.oppRus + ts.oppPssSk);
             } else if (stat === "oppTov") {
                 row[stat] = ts.oppFmbLost + ts.oppPssInt;
             } else if (stat === "oppPssNetYdsPerAtt") {

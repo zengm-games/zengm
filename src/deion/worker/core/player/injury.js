@@ -23,7 +23,7 @@ const injury = (healthRank: number): PlayerInjury => {
 
     // Hack for football
     if (process.env.SPORT === "football") {
-        gamesRemaining = Math.floor(gamesRemaining / 3);
+        gamesRemaining = Math.ceil(gamesRemaining / 3);
     }
 
     return {

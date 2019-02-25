@@ -338,7 +338,6 @@ async function updateLeaders(
         inputs.playoffs !== state.playoffs
     ) {
         const { categories, stats } = getCategoriesAndStats();
-        console.log(categories, stats);
 
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
         const teamSeasons = await idb.getCopies.teamSeasons({

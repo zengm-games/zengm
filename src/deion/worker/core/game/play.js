@@ -67,10 +67,15 @@ const play = async (
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
+        const {
+            injuryTexts,
+            pidsInjuredOneGameOrLess,
+            stopPlay,
+        } = await writePlayerStats(results, conditions); // Before writeGameStats, so injury is set correctly
+
         const gidsFinished = await Promise.all(
             results.map(async result => {
                 const att = await writeTeamStats(result);
-                await writePlayerStats(result, conditions); // Before writeGameStats, so injury is set correctly
                 await writeGameStats(result, att, conditions);
                 return result.gid;
             }),
@@ -90,6 +95,19 @@ const play = async (
 
         // Update ranks
         promises.push(finances.updateRanks(["expenses", "revenues"]));
+
+        if (injuryTexts.length > 0) {
+            logEvent(
+                {
+                    type: "injuredList",
+                    text: injuryTexts.join("<br>"),
+                    showNotification: true,
+                    persistent: stopPlay,
+                    saveToDb: false,
+                },
+                conditions,
+            );
+        }
 
         const healedTexts = [];
 
@@ -114,7 +132,10 @@ const play = async (
                 } <a href="${helpers.leagueUrl(["player", p.pid])}">${
                     p.firstName
                 } ${p.lastName}</a>`;
-                if (p.tid === g.userTid) {
+                if (
+                    p.tid === g.userTid &&
+                    !pidsInjuredOneGameOrLess.has(p.pid)
+                ) {
                     healedTexts.push(healedText);
                 }
 

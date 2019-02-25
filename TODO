@@ -14,12 +14,6 @@ game sim
   - blocked punt
   - missed fg/xp return
 
-Game result before injury or after recovery
-- or both in same notification, after game
-- ignore 0/1 game injuries
-- notification should show gamesRemaining - 1, because that number includes the current week
-- move injuries out of writePlayerStats, call before writing stats, save pids so they can be used to filter out healed messages
-
 are AI teams re-signing players following hard cap?
 
 AV advanced stat

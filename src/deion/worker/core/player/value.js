@@ -60,7 +60,7 @@ const value = (
     // 1. Account for stats (and current ratings if not enough stats)
     const ps = p.stats.filter(playerStats => !playerStats.playoffs);
     let current = pr.ovr; // No stats at all? Just look at ratings more, then.
-    if (ps.length > 0) {
+    if (process.env.SPORT === "basketball" && ps.length > 0) {
         const ps1 = ps[ps.length - 1]; // Most recent stats
 
         if (ps.length === 1 || ps[0].min >= 2000) {
@@ -95,7 +95,7 @@ const value = (
     }
 
     // 2. Potential
-    const potential = pr.pot;
+    let potential = pr.pot;
 
     let age;
     if (p.draft.year > g.season) {
@@ -105,9 +105,15 @@ const value = (
         age = g.season - p.born.year;
     }
 
+    // Quarterbacks are special
+    if (process.env.SPORT === "football" && pr.pos === "QB") {
+        current += 10;
+        potential += 10;
+    }
+
     // If performance is already exceeding predicted potential, just use that
-    if (current >= potential && age < 29) {
-        return current;
+    if (current >= potential) {
+        potential = current;
     }
 
     // Otherwise, combine based on age

@@ -1,5 +1,7 @@
 # football
 
+AI teams should re-sign players before user does, so teams have cap space available to trade
+
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later

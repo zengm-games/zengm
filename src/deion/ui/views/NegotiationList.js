@@ -14,6 +14,7 @@ const NegotiationList = ({
     minContract,
     numRosterSpots,
     players,
+    season,
     stats,
     userTid,
 }) => {
@@ -41,6 +42,7 @@ const NegotiationList = ({
             helpers.refuseToNegotiate(
                 p.contract.amount * 1000,
                 p.freeAgentMood[userTid],
+                p.draft.year === season,
             )
         ) {
             negotiateButton = "Refuses!";
@@ -136,6 +138,7 @@ NegotiationList.propTypes = {
     minContract: PropTypes.number.isRequired,
     numRosterSpots: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };

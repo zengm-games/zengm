@@ -33,6 +33,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
             "injury",
             "watch",
             "contract",
+            "draft",
         ],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats,
@@ -60,6 +61,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         minContract: g.minContract,
         numRosterSpots: g.maxRosterSize - userPlayers.length,
         players,
+        season: g.season,
         stats,
         userTid: g.userTid,
     };

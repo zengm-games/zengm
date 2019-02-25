@@ -33,8 +33,9 @@ const notify = (
         }
     };
 
+    // Auto hide transient notifications after timeout
+    let timeoutId;
     if (!persistent) {
-        let timeoutId;
         let timeoutStart;
 
         // Hide notification after timeout
@@ -60,17 +61,19 @@ const notify = (
         });
         notificationElement.addEventListener("mouseleave", notificationTimeout);
     } else {
-        // Add close link to persistent ones
-        const closeLink = document.createElement("button");
-        closeLink.classList.add("notification-close");
-        closeLink.innerHTML = "&times;";
-        closeLink.addEventListener("click", () => {
-            notificationElement.classList.add("notification-delete");
-        });
         notificationElement.classList.add("notification-persistent");
-
-        notificationElement.appendChild(closeLink);
     }
+
+    // All notifications get a "close" link, even transient ones
+    const closeLink = document.createElement("button");
+    closeLink.classList.add("notification-close");
+    closeLink.innerHTML = "&times;";
+    closeLink.addEventListener("click", () => {
+        notificationElement.classList.add("notification-delete");
+        window.clearTimeout(timeoutId);
+        setTimeout(remove, 1000);
+    });
+    notificationElement.appendChild(closeLink);
 
     // Empty string used in logEvent for when you want a normal black notification to be persistent
     if (extraClass !== undefined && extraClass !== "") {

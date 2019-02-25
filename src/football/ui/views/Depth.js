@@ -61,7 +61,8 @@ const DepthRow = SortableElement(
         } = props;
 
         const classes = classNames({
-            "text-danger": pos !== p.ratings.pos,
+            "text-danger":
+                pos !== "KR" && pos !== "PR" && pos !== p.ratings.pos,
         });
 
         return (

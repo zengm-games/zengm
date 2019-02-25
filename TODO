@@ -1,8 +1,5 @@
 # football
 
-in live game sim, a successful 2 point conversion showed up in the scoring summary, but not the score at the top (either headline or quarter by quarter)
-- happened twice, seems to be consistent
-
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later

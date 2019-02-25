@@ -1895,6 +1895,15 @@ class GameSim {
             if (s.endsWith("TD") && s !== "pssTD") {
                 this.team[t].stat.pts += 2;
                 this.team[t].stat.ptsQtrs[qtr] += 2;
+                this.playByPlay.logStat(qtr, t, undefined, "pts", 2);
+
+                if (this.overtimeState === "secondPossession") {
+                    const t2 = t === 0 ? 1 : 0;
+                    if (this.team[t].stat.pts > this.team[t2].stat.pts) {
+                        this.overtimeState = "over";
+                    }
+                }
+
                 this.twoPointConversionTeam = undefined;
             }
             return;

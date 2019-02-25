@@ -68,7 +68,7 @@ const stats: {
 };
 
 async function updateDepth(
-    { pos }: { pos: Position },
+    { abbrev, pos, tid }: { abbrev: string, pos: Position, tid: number },
     updateEvents: UpdateEvents,
     state: any,
 ): void | { [key: string]: any } {
@@ -76,8 +76,11 @@ async function updateDepth(
         updateEvents.includes("firstRun") ||
         updateEvents.includes("gameSim") ||
         updateEvents.includes("playerMovement") ||
-        pos !== state.pos
+        pos !== state.pos ||
+        abbrev !== state.abbrev
     ) {
+        const editable = tid === g.userTid;
+
         const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 
         let players = await idb.cache.players.indexGetAll(
@@ -108,7 +111,8 @@ async function updateDepth(
         const depthPlayers = getDepthPlayers(t.depth, players);
 
         return {
-            abbrev: g.teamAbbrevsCache[g.userTid],
+            abbrev,
+            editable,
             pos,
             players: depthPlayers[pos],
             ratings,

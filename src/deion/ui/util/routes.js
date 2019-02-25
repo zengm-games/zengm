@@ -165,7 +165,8 @@ const routes = () => {
         "/l/:lid/options": genPage("leagueOptions"),
         "/l/:lid/danger_zone": genPage("dangerZone"),
         "/l/:lid/depth": genPage("depth"),
-        "/l/:lid/depth/:pos": genPage("depth"),
+        "/l/:lid/depth/:abbrev": genPage("depth"),
+        "/l/:lid/depth/:abbrev/:pos": genPage("depth"),
     };
 };
 

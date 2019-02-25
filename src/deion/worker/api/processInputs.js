@@ -82,10 +82,20 @@ const deleteLeague = params => {
 };
 
 const depth = params => {
+    // Fix broken links
+    if (params.abbrev === "FA") {
+        return {
+            redirectUrl: helpers.leagueUrl(["free_agents"]),
+        };
+    }
+
+    const inputs = {};
+    [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
+
     const positions = overrides.constants.POSITIONS;
-    return {
-        pos: positions.includes(params.pos) ? params.pos : "QB",
-    };
+    inputs.pos = positions.includes(params.pos) ? params.pos : "QB";
+
+    return inputs;
 };
 
 const draft = () => {

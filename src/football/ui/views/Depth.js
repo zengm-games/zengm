@@ -13,6 +13,7 @@ import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import {
+    Dropdown,
     NewWindowLink,
     PlayerNameLabels,
     ResponsiveTableWrapper,
@@ -50,6 +51,7 @@ const DepthRow = SortableElement(
     clickable(props => {
         const {
             clicked,
+            editable,
             i,
             isSorting,
             numStarters,
@@ -74,11 +76,13 @@ const DepthRow = SortableElement(
                 })}
                 data-pid={p.pid}
             >
-                <ReorderHandle
-                    i={i}
-                    isSorting={isSorting}
-                    numStarters={numStarters}
-                />
+                {editable ? (
+                    <ReorderHandle
+                        i={i}
+                        isSorting={isSorting}
+                        numStarters={numStarters}
+                    />
+                ) : null}
                 <td onClick={toggleClicked}>
                     <PlayerNameLabels
                         pid={p.pid}
@@ -115,6 +119,7 @@ const DepthRow = SortableElement(
 );
 
 DepthRow.propTypes = {
+    editable: PropTypes.bool.isRequired,
     i: PropTypes.number.isRequired,
     isSorting: PropTypes.bool.isRequired,
     numStarters: PropTypes.number.isRequired,
@@ -125,12 +130,13 @@ DepthRow.propTypes = {
 };
 
 const TBody = SortableContainer(
-    ({ isSorting, numStarters, players, pos, ratings, stats }) => {
+    ({ editable, isSorting, numStarters, players, pos, ratings, stats }) => {
         return (
             <tbody id="roster-tbody">
                 {players.map((p, i) => {
                     return (
                         <DepthRow
+                            editable={editable}
                             key={p.pid}
                             i={i}
                             index={i}
@@ -149,6 +155,7 @@ const TBody = SortableContainer(
 );
 
 TBody.propTypes = {
+    editable: PropTypes.bool.isRequired,
     isSorting: PropTypes.bool.isRequired,
     numStarters: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -214,7 +221,15 @@ class Depth extends React.Component {
     }
 
     render() {
-        const { abbrev, players, pos, ratings, season, stats } = this.props;
+        const {
+            abbrev,
+            editable,
+            players,
+            pos,
+            ratings,
+            season,
+            stats,
+        } = this.props;
 
         setTitle(`Depth Chart - ${pos}`);
 
@@ -235,6 +250,7 @@ class Depth extends React.Component {
 
         return (
             <>
+                <Dropdown view="depth" fields={["teams"]} values={[abbrev]} />
                 <UncontrolledDropdown className="float-right my-1">
                     <DropdownToggle caret className="btn-light-bordered">
                         More Info
@@ -289,7 +305,11 @@ class Depth extends React.Component {
                                 className={classNames("nav-link", {
                                     active: pos === pos2,
                                 })}
-                                href={helpers.leagueUrl(["depth", pos2])}
+                                href={helpers.leagueUrl([
+                                    "depth",
+                                    abbrev,
+                                    pos2,
+                                ])}
                             >
                                 {pos2}
                             </a>
@@ -297,20 +317,22 @@ class Depth extends React.Component {
                     ))}
                 </ul>
 
-                <div className="btn-group mb-3">
-                    <button
-                        className="btn btn-light-bordered"
-                        onClick={() => handleAutoSort(pos)}
-                    >
-                        Auto sort {pos}
-                    </button>
-                    <button
-                        className="btn btn-light-bordered"
-                        onClick={handleAutoSortAll}
-                    >
-                        Auto sort all
-                    </button>
-                </div>
+                {editable ? (
+                    <div className="btn-group mb-3">
+                        <button
+                            className="btn btn-light-bordered"
+                            onClick={() => handleAutoSort(pos)}
+                        >
+                            Auto sort {pos}
+                        </button>
+                        <button
+                            className="btn btn-light-bordered"
+                            onClick={handleAutoSortAll}
+                        >
+                            Auto sort all
+                        </button>
+                    </div>
+                ) : null}
 
                 <div className="clearfix" />
 
@@ -318,7 +340,7 @@ class Depth extends React.Component {
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
-                                <th />
+                                {editable ? <th /> : null}
                                 <th>Name</th>
                                 <th title="Position">Pos</th>
                                 <th>Age</th>
@@ -346,6 +368,7 @@ class Depth extends React.Component {
                         </thead>
                         <TBody
                             players={playersSorted}
+                            editable={editable}
                             isSorting={this.state.isSorting}
                             numStarters={numStartersByPos[pos]}
                             onSortEnd={this.handleOnSortEnd}
@@ -365,6 +388,7 @@ class Depth extends React.Component {
 
 Depth.propTypes = {
     abbrev: PropTypes.string.isRequired,
+    editable: PropTypes.bool.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     pos: PropTypes.string.isRequired,
     season: PropTypes.number.isRequired,

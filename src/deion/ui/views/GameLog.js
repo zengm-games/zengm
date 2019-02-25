@@ -167,6 +167,14 @@ const GameLog = ({
 
             <p>
                 More:{" "}
+                {process.env.SPORT === "football" ? (
+                    <>
+                        <a href={helpers.leagueUrl(["depth", abbrev])}>
+                            Depth Chart
+                        </a>{" "}
+                        |{" "}
+                    </>
+                ) : null}
                 <a href={helpers.leagueUrl(["roster", abbrev, season])}>
                     Roster
                 </a>{" "}

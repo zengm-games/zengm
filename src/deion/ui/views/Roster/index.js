@@ -373,6 +373,14 @@ class Roster extends React.Component {
                 </h1>
                 <p>
                     More:{" "}
+                    {process.env.SPORT === "football" ? (
+                        <>
+                            <a href={helpers.leagueUrl(["depth", abbrev])}>
+                                Depth Chart
+                            </a>{" "}
+                            |{" "}
+                        </>
+                    ) : null}
                     <a href={helpers.leagueUrl(["team_finances", abbrev])}>
                         Finances
                     </a>{" "}

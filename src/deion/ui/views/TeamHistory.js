@@ -101,8 +101,16 @@ const TeamHistory = ({
                 {team.region} {team.name} History <NewWindowLink />
             </h1>
             <p>
-                More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a>{" "}
-                |{" "}
+                More:{" "}
+                {process.env.SPORT === "football" ? (
+                    <>
+                        <a href={helpers.leagueUrl(["depth", abbrev])}>
+                            Depth Chart
+                        </a>{" "}
+                        |{" "}
+                    </>
+                ) : null}
+                <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
                 <a href={helpers.leagueUrl(["team_finances", abbrev])}>
                     Finances
                 </a>{" "}

@@ -256,9 +256,6 @@ class Depth extends React.Component {
                         More Info
                     </DropdownToggle>
                     <DropdownMenu>
-                        <DropdownItem href={helpers.leagueUrl(["roster"])}>
-                            Roster
-                        </DropdownItem>
                         <DropdownItem
                             href={helpers.leagueUrl([
                                 "player_stats",
@@ -284,11 +281,21 @@ class Depth extends React.Component {
                     Depth Chart - {pos} <NewWindowLink />
                 </h1>
                 <p>
-                    More: <a href={helpers.leagueUrl(["roster"])}>Roster</a> |{" "}
-                    <a href={helpers.leagueUrl(["team_finances"])}>Finances</a>{" "}
-                    | <a href={helpers.leagueUrl(["game_log"])}>Game Log</a> |{" "}
-                    <a href={helpers.leagueUrl(["team_history"])}>History</a> |{" "}
-                    <a href={helpers.leagueUrl(["transactions"])}>
+                    More:{" "}
+                    <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
+                    <a href={helpers.leagueUrl(["team_finances", abbrev])}>
+                        Finances
+                    </a>{" "}
+                    |{" "}
+                    <a href={helpers.leagueUrl(["game_log", abbrev])}>
+                        Game Log
+                    </a>{" "}
+                    |{" "}
+                    <a href={helpers.leagueUrl(["team_history", abbrev])}>
+                        History
+                    </a>{" "}
+                    |{" "}
+                    <a href={helpers.leagueUrl(["transactions", abbrev])}>
                         Transactions
                     </a>
                 </p>

@@ -17,7 +17,7 @@ const statsByType = {
         "fmbLost",
     ],
     rushing: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
-    receiving: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng"],
+    receiving: ["tgt", "rec", "recYds", "recYdsPerAtt", "recLng", "recTD"],
     kicking: [
         "fg",
         "fga",

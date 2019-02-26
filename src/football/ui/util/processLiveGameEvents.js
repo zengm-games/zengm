@@ -90,7 +90,13 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
                         console.log("Can't find player", e);
                     }
                     if (p) {
-                        p[e.s] += e.amt;
+                        if (e.s.endsWith("Lng")) {
+                            if (e.amt > p[e.s]) {
+                                p[e.s] = e.amt;
+                            }
+                        } else {
+                            p[e.s] += e.amt;
+                        }
                     }
                 }
                 boxScore.teams[e.t][e.s] += e.amt;

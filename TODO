@@ -1,7 +1,5 @@
 # football
 
-"Lng" fields in live game sim are wrong (cumulative)
-
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later

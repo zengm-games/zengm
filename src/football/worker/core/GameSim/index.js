@@ -1306,15 +1306,16 @@ class GameSim {
         target: PlayerGameSim,
         defender: PlayerGameSim,
     ) {
-        const p =
-            (0.6 *
-                (0.2 *
-                    (target.compositeRating.catching +
-                        target.compositeRating.gettingOpen +
-                        qb.compositeRating.passingAccuracy +
-                        qb.compositeRating.passingDeep +
-                        qb.compositeRating.passingVision))) /
+        const factor =
+            (0.2 *
+                (target.compositeRating.catching +
+                    target.compositeRating.gettingOpen +
+                    qb.compositeRating.passingAccuracy +
+                    qb.compositeRating.passingDeep +
+                    qb.compositeRating.passingVision)) /
             defender.compositeRating.passCoverage;
+
+        const p = 0.57 * factor ** 1.25;
 
         return helpers.bound(p, 0, 0.95);
     }

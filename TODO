@@ -1,5 +1,12 @@
 # football
 
+awards
+- finals MVP broken?
+- leagueLeaders
+- UI to display
+
+depth chart is broken?
+
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
@@ -65,7 +72,7 @@ finish views
 go through every file in football, make sure it's been updated (like heightToRating)
 
 History
-- for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team
+- columns depend on sport
 
 new logos for KC and SA - in progress
 
@@ -90,6 +97,9 @@ statistical feats
 - text on PlayerFeats
 
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
+
+too many players playing both offense and defense
+- reassess after making roster construction better. if it's still a problem, only allow starter at one position
 
 version
 

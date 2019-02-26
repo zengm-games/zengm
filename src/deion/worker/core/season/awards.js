@@ -30,22 +30,26 @@ const getPlayers = async () => {
     ]);
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
-        stats: [
-            "gp",
-            "gs",
-            "min",
-            "pts",
-            "trb",
-            "ast",
-            "blk",
-            "stl",
-            "per",
-            "ewa",
-            "ws",
-            "dws",
-            "ws48",
-            "season",
-        ],
+        ratings: process.env.SPORT === "basketball" ? [] : ["pos"],
+        stats:
+            process.env.SPORT === "basketball"
+                ? [
+                      "gp",
+                      "gs",
+                      "min",
+                      "pts",
+                      "trb",
+                      "ast",
+                      "blk",
+                      "stl",
+                      "per",
+                      "ewa",
+                      "ws",
+                      "dws",
+                      "ws48",
+                      "season",
+                  ]
+                : ["keyStats", "av", "pntYds", "fg", "season"],
     });
 
     // Only keep players who actually have a stats entry for the latest season
@@ -58,6 +62,7 @@ const getPlayers = async () => {
     // For convenience later
     for (const p of players) {
         p.currentStats = p.stats[p.stats.length - 1];
+        p.pos = p.ratings[p.ratings.length - 1].pos;
     }
 
     return players;
@@ -172,7 +177,12 @@ const getTopPlayers = (
     });
 
     // For the ones returning multiple players (for all league teams), enforce length
-    if (!allowNone && actualAmount > 1 && players.length < actualAmount) {
+    if (
+        !allowNone &&
+        actualAmount !== Infinity &&
+        actualAmount > 1 &&
+        players.length < actualAmount
+    ) {
         throw new Error("Not enough players");
     }
 

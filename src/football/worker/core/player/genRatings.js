@@ -3,7 +3,7 @@
 import { PLAYER } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { helpers, overrides, random } from "../../../../deion/worker/util";
-import { RATINGS, POSITION_COUNTS } from "../../../common";
+import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const getPos = () => {
@@ -270,7 +270,7 @@ const genRatings = (
     clearTimeout(timeoutID);
     timeoutID = setTimeout(() => {
         console.log(info);
-        for (const pos2 of overrides.constants.POSITIONS) {
+        for (const pos2 of overrides.common.constants.POSITIONS) {
             if (infoIn.hasOwnProperty(pos2)) {
                 console.log(pos2, infoIn[pos2], infoOut[pos2]);
             }

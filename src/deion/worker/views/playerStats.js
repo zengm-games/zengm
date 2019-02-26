@@ -37,11 +37,11 @@ async function updatePlayers(
         if (process.env.SPORT === "basketball") {
             statsTable =
                 inputs.statType === "advanced"
-                    ? overrides.constants.PLAYER_STATS_TABLES.advanced
-                    : overrides.constants.PLAYER_STATS_TABLES.regular;
+                    ? overrides.common.constants.PLAYER_STATS_TABLES.advanced
+                    : overrides.common.constants.PLAYER_STATS_TABLES.regular;
         } else {
             statsTable =
-                overrides.constants.PLAYER_STATS_TABLES[inputs.statType];
+                overrides.common.constants.PLAYER_STATS_TABLES[inputs.statType];
         }
 
         if (!statsTable) {

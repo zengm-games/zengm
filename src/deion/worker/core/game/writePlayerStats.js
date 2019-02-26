@@ -9,9 +9,9 @@ import type { Conditions, GameResults } from "../../../common/types";
 const writePlayerStats = async (
     results: GameResults[],
     conditions: Conditions,
-): Promise<Set<number>> => {
+) => {
     const injuryTexts = [];
-    const pidsInjuredOneGameOrLess = new Set();
+    const pidsInjuredOneGameOrLess = new Set<number>();
     let stopPlay = false;
     let stoppedPlay = false;
 

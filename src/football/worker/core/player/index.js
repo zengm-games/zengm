@@ -10,7 +10,6 @@ import madeHof from "./madeHof";
 import ovr from "./ovr";
 import pos from "./pos";
 import posRatings from "./posRatings";
-import processStats from "./processStats";
 import stats from "./stats";
 
 export default {
@@ -24,6 +23,5 @@ export default {
     ovr,
     pos,
     posRatings,
-    processStats,
     stats,
 };

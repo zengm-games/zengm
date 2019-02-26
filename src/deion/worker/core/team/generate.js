@@ -94,7 +94,7 @@ const generate = (tm: any) => {
     };
 
     if (process.env.SPORT === "football") {
-        t.depth = overrides.constants.POSITIONS.reduce((depth, pos) => {
+        t.depth = overrides.common.constants.POSITIONS.reduce((depth, pos) => {
             depth[pos] = [];
             return depth;
         }, {});

@@ -16,10 +16,10 @@ async function updatePlayer(
         !state.retired ||
         state.pid !== inputs.pid
     ) {
-        const ratings = overrides.constants.RATINGS;
+        const ratings = overrides.common.constants.RATINGS;
 
         const statTables = Object.values(
-            overrides.constants.PLAYER_STATS_TABLES,
+            overrides.common.constants.PLAYER_STATS_TABLES,
         );
 
         let stats = Array.from(

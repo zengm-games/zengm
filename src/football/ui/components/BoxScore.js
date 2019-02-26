@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
-import { getCols } from "../../../deion/ui/util";
-import processStats from "../../worker/core/player/processStats";
+import { getCols, overrides } from "../../../deion/ui/util";
 
 const statsByType = {
     passing: [
@@ -103,9 +102,19 @@ const StatsTable = ({ Row, boxScore, type }) => {
                             <tbody>
                                 {t.players
                                     .map(p => {
+                                        if (
+                                            !overrides.common.processPlayerStats
+                                        ) {
+                                            throw new Error(
+                                                "Missing overrides.common.processPlayerStats",
+                                            );
+                                        }
                                         return {
                                             ...p,
-                                            processed: processStats(p, stats),
+                                            processed: overrides.common.processPlayerStats(
+                                                p,
+                                                stats,
+                                            ),
                                         };
                                     })
                                     .filter(p => {

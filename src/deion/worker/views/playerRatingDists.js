@@ -29,7 +29,7 @@ async function updatePlayers(
         }
 
         players = await idb.getCopies.playersPlus(players, {
-            ratings: ["ovr", "pot", ...overrides.constants.RATINGS],
+            ratings: ["ovr", "pot", ...overrides.common.constants.RATINGS],
             season: inputs.season,
             showNoStats: true,
             showRookies: true,

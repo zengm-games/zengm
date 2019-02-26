@@ -1,6 +1,6 @@
 // @flow
 
-import { POSITIONS } from "../../../common";
+import { POSITIONS } from "../../../common/constants";
 import type { Position } from "../../../common/types";
 import type { PlayerGameSim, PlayersOnField } from "./types";
 

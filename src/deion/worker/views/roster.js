@@ -112,11 +112,12 @@ async function updateRoster(
                 players.sort((a, b) => a.rosterOrder - b.rosterOrder);
             } else {
                 const score = p => {
-                    const ind = overrides.constants.POSITIONS.indexOf(
+                    const ind = overrides.common.constants.POSITIONS.indexOf(
                         p.ratings.pos,
                     );
                     return (
-                        (overrides.constants.POSITIONS.length - ind) * 1000 +
+                        (overrides.common.constants.POSITIONS.length - ind) *
+                            1000 +
                         p.ratings.ovr
                     );
                 };

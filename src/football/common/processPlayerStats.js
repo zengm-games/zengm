@@ -1,10 +1,7 @@
 // @flow
 
-import { PLAYER } from "../../../../deion/common";
-import type {
-    PlayerStats,
-    PlayerStatType,
-} from "../../../../deion/common/types";
+import { PLAYER } from "../../deion/common";
+import type { PlayerStats, PlayerStatType } from "../../deion/common/types";
 
 const percentage = (numerator, denominator) => {
     if (denominator > 0) {

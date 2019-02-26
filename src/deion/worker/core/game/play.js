@@ -243,12 +243,14 @@ const play = async (
     const cbPlayGames = async () => {
         if (numDays === 1) {
             await updateStatus(
-                `Playing (1 ${overrides.constants.TIME_BETWEEN_GAMES} left)`,
+                `Playing (1 ${
+                    overrides.common.constants.TIME_BETWEEN_GAMES
+                } left)`,
             );
         } else {
             await updateStatus(
                 `Playing (${numDays} ${
-                    overrides.constants.TIME_BETWEEN_GAMES
+                    overrides.common.constants.TIME_BETWEEN_GAMES
                 }s left)`,
             );
         }

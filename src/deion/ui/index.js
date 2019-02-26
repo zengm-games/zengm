@@ -242,7 +242,10 @@ const setupRoutes = () => {
 
 const deionUI = async (options: {
     overrides: {
-        constants: WorkerOverridesConstants,
+        common: {
+            constants: WorkerOverridesConstants,
+            [key: string]: any,
+        },
         components: {
             [key: string]: any,
         },

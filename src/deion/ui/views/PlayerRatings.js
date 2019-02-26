@@ -14,7 +14,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
 
     const ovrsPotsColNames = [];
     if (process.env.SPORT === "football") {
-        for (const pos of overrides.constants.POSITIONS) {
+        for (const pos of overrides.common.constants.POSITIONS) {
             for (const type of ["ovr", "pot"]) {
                 ovrsPotsColNames.push(`rating:${type}${pos}`);
             }
@@ -36,7 +36,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
     const rows = players.map(p => {
         const ovrsPotsRatings = [];
         if (process.env.SPORT === "football") {
-            for (const pos of overrides.constants.POSITIONS) {
+            for (const pos of overrides.common.constants.POSITIONS) {
                 for (const type of ["ovrs", "pots"]) {
                     ovrsPotsRatings.push(p.ratings[type][pos]);
                 }

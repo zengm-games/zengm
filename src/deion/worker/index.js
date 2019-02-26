@@ -21,7 +21,10 @@ self.bbgm = Object.assign({}, common, core, db, util);
 
 const deionWorker = async (options: {
     overrides: {
-        constants: WorkerOverridesConstants,
+        common: {
+            constants: WorkerOverridesConstants,
+            [key: string]: any,
+        },
         core: WorkerOverridesCore,
         names: Names,
         util: WorkerOverridesUtil,

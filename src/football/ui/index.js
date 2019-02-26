@@ -1,7 +1,7 @@
 // @flow
 
 import deionUI from "../../deion/ui";
-import * as constants from "../common/constants";
+import common from "../common";
 import components from "./components";
 import util from "./util";
 import views from "./views";
@@ -9,7 +9,7 @@ import views from "./views";
 (async () => {
     await deionUI({
         overrides: {
-            constants,
+            common,
             components,
             util,
             views,

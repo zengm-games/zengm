@@ -109,21 +109,24 @@ const develop = (
         // A player can never have KR or PR as his main position
         const bannedPositions = ["KR", "PR"];
 
-        ratings.ovrs = overrides.constants.POSITIONS.reduce((ovrs, pos2) => {
-            if (!overrides.core.player.ovr) {
-                throw new Error("Missing overrides.core.player.ovr");
-            }
-            ovrs[pos2] = overrides.core.player.ovr(ratings, pos2);
+        ratings.ovrs = overrides.common.constants.POSITIONS.reduce(
+            (ovrs, pos2) => {
+                if (!overrides.core.player.ovr) {
+                    throw new Error("Missing overrides.core.player.ovr");
+                }
+                ovrs[pos2] = overrides.core.player.ovr(ratings, pos2);
 
-            if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
-                pos = pos2;
-                maxOvr = ovrs[pos2];
-            }
+                if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
+                    pos = pos2;
+                    maxOvr = ovrs[pos2];
+                }
 
-            return ovrs;
-        }, {});
+                return ovrs;
+            },
+            {},
+        );
         if (!skipPot) {
-            ratings.pots = overrides.constants.POSITIONS.reduce(
+            ratings.pots = overrides.common.constants.POSITIONS.reduce(
                 (pots, pos2) => {
                     pots[pos2] = bootstrapPot(ratings, age, pos2);
 

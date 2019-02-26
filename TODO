@@ -1,6 +1,6 @@
 # football
 
-processStats to common, so can be used in BoxScore
+"Lng" fields in live game sim are wrong (cumulative)
 
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)

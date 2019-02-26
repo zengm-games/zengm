@@ -310,14 +310,14 @@ const Select = ({ field, handleChange, value }) => {
                 },
             ];
         } else if (field === "teamOpponentAdvanced") {
-            options = Object.keys(overrides.constants.TEAM_STATS_TABLES).map(
-                key => {
-                    return {
-                        val: helpers.upperCaseFirstLetter(key),
-                        key,
-                    };
-                },
-            );
+            options = Object.keys(
+                overrides.common.constants.TEAM_STATS_TABLES,
+            ).map(key => {
+                return {
+                    val: helpers.upperCaseFirstLetter(key),
+                    key,
+                };
+            });
         } else if (field === "teamRecordType") {
             options = [
                 {

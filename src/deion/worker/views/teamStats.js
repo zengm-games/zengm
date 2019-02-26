@@ -22,7 +22,7 @@ async function updateTeams(
         inputs.teamOpponent !== state.teamOpponent
     ) {
         const statsTable =
-            overrides.constants.TEAM_STATS_TABLES[inputs.teamOpponent];
+            overrides.common.constants.TEAM_STATS_TABLES[inputs.teamOpponent];
         if (!statsTable) {
             throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
         }
@@ -75,7 +75,7 @@ async function updateTeams(
         const allStats = {};
         let statTypes = seasonAttrs.slice();
         for (const table of Object.values(
-            overrides.constants.TEAM_STATS_TABLES,
+            overrides.common.constants.TEAM_STATS_TABLES,
         )) {
             // $FlowFixMe
             statTypes = statTypes.concat(table.stats);

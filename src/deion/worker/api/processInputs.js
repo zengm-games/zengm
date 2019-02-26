@@ -92,7 +92,7 @@ const depth = params => {
     const inputs = {};
     [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
 
-    const positions = overrides.constants.POSITIONS;
+    const positions = overrides.common.constants.POSITIONS;
     inputs.pos = positions.includes(params.pos) ? params.pos : "QB";
 
     return inputs;

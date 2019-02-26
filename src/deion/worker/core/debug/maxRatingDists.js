@@ -7,7 +7,7 @@ import { g, helpers, overrides } from "../../util";
 const maxRatingDists = (numPlayers: number = 100) => {
     // Each player gets one entry per array: their career max in a rating
     const ratings = {};
-    for (const rating of ["ovr", ...overrides.constants.RATINGS]) {
+    for (const rating of ["ovr", ...overrides.common.constants.RATINGS]) {
         ratings[rating] = [];
     }
     const ages = helpers.deepCopy(ratings);

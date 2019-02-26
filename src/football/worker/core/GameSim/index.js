@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../../deion/common";
 import { g, helpers, random } from "../../../../deion/worker/util";
-import { POSITIONS } from "../../../common";
+import { POSITIONS } from "../../../common/constants";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import getCompositeFactor from "./getCompositeFactor";
 import getPlayers from "./getPlayers";

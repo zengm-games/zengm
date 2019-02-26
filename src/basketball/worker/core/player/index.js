@@ -8,7 +8,6 @@ import heightToRating from "./heightToRating";
 import madeHof from "./madeHof";
 import ovr from "./ovr";
 import pos from "./pos";
-import processStats from "./processStats";
 import stats from "./stats";
 
 export default {
@@ -20,6 +19,5 @@ export default {
     madeHof,
     ovr,
     pos,
-    processStats,
     stats,
 };

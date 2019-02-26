@@ -6,7 +6,7 @@ import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
 
 const PositionFraction = ({ players, pos }) => {
     const count = players.filter(p => p.ratings.pos === pos).length;
-    const target = overrides.constants.POSITION_COUNTS[pos];
+    const target = overrides.common.constants.POSITION_COUNTS[pos];
     const ratio = count / target;
 
     let classes = null;

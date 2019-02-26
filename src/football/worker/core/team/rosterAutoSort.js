@@ -2,7 +2,7 @@
 
 import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
-import { POSITIONS } from "../../../common";
+import { POSITIONS } from "../../../common/constants";
 import type { Position } from "../../../common/types";
 
 const rosterAutoSort = async (tid: number, pos?: Position) => {

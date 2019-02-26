@@ -1,9 +1,5 @@
 # football
 
-awards
-- leagueLeaders
-- sorting for player page box
-
 flow/lint
 
 game sim
@@ -103,6 +99,9 @@ too many players playing both offense and defense
 version
 
 ---
+
+league leaders recorded in awards
+- see leagueLeaders call in doAwards, needs categories
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

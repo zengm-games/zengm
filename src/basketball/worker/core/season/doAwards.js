@@ -204,7 +204,15 @@ const doAwards = async (conditions: Conditions) => {
     const players = await getPlayers();
 
     const { bestRecord, bestRecordConfs } = teamAwards(teams);
-    leagueLeaders(players, awardsByPlayer);
+
+    const categories = [
+        { name: "League Scoring Leader", stat: "pts", minValue: 1400 },
+        { name: "League Rebounding Leader", stat: "trb", minValue: 800 },
+        { name: "League Assists Leader", stat: "ast", minValue: 400 },
+        { name: "League Steals Leader", stat: "stl", minValue: 125 },
+        { name: "League Blocks Leader", stat: "blk", minValue: 100 },
+    ];
+    leagueLeaders(players, categories, awardsByPlayer);
 
     const mvpScore = (p: PlayerFiltered) =>
         p.currentStats.ewa + p.currentStats.ws;

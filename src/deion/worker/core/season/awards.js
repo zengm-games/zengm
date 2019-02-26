@@ -118,18 +118,16 @@ const teamAwards = (teamsUnsorted: TeamFiltered[]) => {
 
 const leagueLeaders = (
     players: PlayerFiltered[],
+    categories: {
+        name: string,
+        stat: string,
+        minValue: number,
+    }[],
     awardsByPlayer: AwardsByPlayer,
 ) => {
     const factor =
         (g.numGames / defaultGameAttributes.numGames) *
         Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
-    const categories = [
-        { name: "League Scoring Leader", stat: "pts", minValue: 1400 },
-        { name: "League Rebounding Leader", stat: "trb", minValue: 800 },
-        { name: "League Assists Leader", stat: "ast", minValue: 400 },
-        { name: "League Steals Leader", stat: "stl", minValue: 125 },
-        { name: "League Blocks Leader", stat: "blk", minValue: 100 },
-    ];
     for (const cat of categories) {
         const p = players
             .filter(p2 => {

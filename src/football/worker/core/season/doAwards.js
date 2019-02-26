@@ -310,7 +310,8 @@ const doAwards = async (conditions: Conditions) => {
     const players = await getPlayers();
 
     const { bestRecord, bestRecordConfs } = teamAwards(teams);
-    // leagueLeaders(players, awardsByPlayer);
+
+    leagueLeaders(players, [], awardsByPlayer);
 
     const avScore = (p: PlayerFiltered) => p.currentStats.av;
 

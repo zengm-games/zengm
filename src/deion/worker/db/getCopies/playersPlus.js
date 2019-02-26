@@ -30,13 +30,15 @@ type PlayersPlusOptionsRequired = {
 
 const awardsOrder = [
     "Inducted into the Hall of Fame",
-    "Won Championship",
     "Most Valuable Player",
+    "Won Championship",
     "Finals MVP",
     "Defensive Player of the Year",
     "Sixth Man of the Year",
     "Most Improved Player",
     "Rookie of the Year",
+    "Offensive Rookie of the Year",
+    "Defensive Rookie of the Year",
     "League Scoring Leader",
     "League Rebounding Leader",
     "League Assists Leader",

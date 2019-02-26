@@ -4,10 +4,10 @@ import {
     Dropdown,
     JumpTo,
     NewWindowLink,
+    RetiredPlayers,
 } from "../../../../deion/ui/components";
 import { setTitle } from "../../../../deion/ui/util";
 import AwardsAndChamp from "./AwardsAndChamp";
-import RetiredPlayers from "./RetiredPlayers";
 import Team from "./Team";
 
 const History = ({

@@ -1,6 +1,6 @@
 # football
 
-flow/lint
+posRatings from worker used in UI
 
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
@@ -18,12 +18,6 @@ game sim
 
 are AI teams re-signing players following hard cap?
 
-AV advanced stat
-- use in value?
-- OL and defense
-  - need all pro modifier
-  - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
-
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
 
@@ -38,11 +32,6 @@ bugsnag, google analytics keys in index.html
 owner mood
 
 finances
-
-football code!
-- processStats in worker but used in ui
-  - same with posRatings
-- references to ../basketball
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api
@@ -102,6 +91,12 @@ version
 
 league leaders recorded in awards
 - see leagueLeaders call in doAwards, needs categories
+
+AV advanced stat
+- use in value?
+- OL and defense
+  - need all pro modifier - but this is circular reasoning, since that comes from AV!
+  - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

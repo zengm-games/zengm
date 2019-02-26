@@ -4,7 +4,7 @@ import { PLAYER } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { helpers, overrides, random } from "../../../../deion/worker/util";
 import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
-import type { PlayerRatings, RatingKey } from "../../../common/types";
+import type { PlayerRatings } from "../../../common/types";
 
 const getPos = () => {
     const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {

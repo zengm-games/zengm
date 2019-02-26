@@ -50,73 +50,10 @@ const getTopByPos = (
     }
 };
 
-const makeTeams = <T>(
-    players: T[],
+const makeTeams = (
+    players: PlayerFiltered[],
     rookie?: boolean = false,
-): [
-    {
-        title: "First Team",
-        players: [
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-        ],
-    },
-    {
-        title: "Second Team",
-        players: [
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-            T,
-        ],
-    },
-] => {
+): any => {
     const usedPids = new Set<number>();
 
     const teamPositions = [

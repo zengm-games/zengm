@@ -1,11 +1,6 @@
 // @flow
 
-import { g } from "../../../../deion/worker/util";
-import type {
-    TeamStatAttr,
-    TeamStatType,
-    TeamStats,
-} from "../../../../deion/common/types";
+import type { TeamStatAttr, TeamStats } from "../../../../deion/common/types";
 
 const percentage = (numerator, denominator) => {
     if (denominator > 0) {
@@ -19,7 +14,7 @@ const processStats = (
     ts: TeamStats,
     stats: TeamStatAttr[],
     playoffs: boolean,
-    statType: TeamStatType,
+    // statType: TeamStatType,
 ) => {
     const row = {};
 

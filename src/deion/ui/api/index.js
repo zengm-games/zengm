@@ -1,6 +1,6 @@
 // @flow
 
-import { ads, emitter, local, realtimeUpdate } from "../util";
+import { emitter, local, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,

@@ -147,7 +147,7 @@ const makeTeams = <T>(
     const kickers = getTopPlayers(
         {
             amount: 2,
-            score: (p: PlayerFiltered) => p.currentStats.fgm,
+            score: (p: PlayerFiltered) => p.currentStats.fg,
         },
         players,
     );
@@ -384,7 +384,6 @@ const doAwards = async (conditions: Conditions) => {
         allRookie,
         season: g.season,
     };
-    console.log(awards);
 
     const awardNames = {
         mvp: "Most Valuable Player",

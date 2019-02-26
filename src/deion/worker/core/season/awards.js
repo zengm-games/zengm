@@ -49,7 +49,17 @@ const getPlayers = async () => {
                       "ws48",
                       "season",
                   ]
-                : ["keyStats", "av", "pntYds", "fg", "season"],
+                : [
+                      "keyStats",
+                      "av",
+                      "pntYds",
+                      "fg",
+                      "krTD",
+                      "krYds",
+                      "prTD",
+                      "prYds",
+                      "season",
+                  ],
     });
 
     // Only keep players who actually have a stats entry for the latest season

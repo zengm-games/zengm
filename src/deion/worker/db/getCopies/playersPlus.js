@@ -347,12 +347,23 @@ const processPlayerStats = (p, statSums, stats, statType) => {
     if (!overrides.core.team.processStats) {
         throw new Error("Missing overrides.core.player.processStats");
     }
-    return overrides.core.player.processStats(
+    const output = overrides.core.player.processStats(
         statSums,
         stats,
         statType,
         p.born.year,
     );
+
+    // More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
+    if (stats.includes("abbrev")) {
+        if (statSums.tid === undefined) {
+            output.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
+        } else {
+            output.abbrev = helpers.getAbbrev(statSums.tid);
+        }
+    }
+
+    return output;
 };
 
 const processStats = (

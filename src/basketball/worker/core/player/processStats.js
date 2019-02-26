@@ -1,7 +1,6 @@
 // @flow
 
 import { PLAYER } from "../../../../deion/common";
-import { helpers } from "../../../../deion/worker/util";
 import type {
     PlayerStats,
     PlayerStatType,
@@ -69,12 +68,6 @@ const processStats = (
             row.season = ps.season;
         } else if (stat === "age") {
             row.age = ps.season - bornYear;
-        } else if (stat === "abbrev") {
-            if (ps.tid === undefined) {
-                row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
-            } else {
-                row.abbrev = helpers.getAbbrev(ps.tid);
-            }
         } else if (stat === "tid") {
             if (ps.tid === undefined) {
                 row.tid = PLAYER.FREE_AGENT;

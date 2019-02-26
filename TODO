@@ -1,5 +1,7 @@
 # football
 
+processStats to common, so can be used in BoxScore
+
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
@@ -30,9 +32,6 @@ position balance for AIs building teams
 - existing league
 
 salaries
-
-processStats to common, so can be used in BoxScore? or pre-process all players?
-- but it needs getAbbrev from worker, ugh
 
 bugsnag, google analytics keys in index.html
 

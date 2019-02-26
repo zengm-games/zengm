@@ -1,7 +1,6 @@
 // @flow
 
 import { PLAYER } from "../../../../deion/common";
-//import { helpers } from "../../../../deion/worker/util";
 import type {
     PlayerStats,
     PlayerStatType,
@@ -174,13 +173,6 @@ const processStats = (
             } else {
                 row[stat] = "";
             }
-        } else if (stat === "abbrev") {
-            /*if (ps.tid === undefined) {
-                row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
-            } else {
-                row.abbrev = helpers.getAbbrev(ps.tid);
-            }*/
-            row.abbrev = "???";
         } else if (stat === "tid") {
             if (ps.tid === undefined) {
                 row.tid = PLAYER.FREE_AGENT;

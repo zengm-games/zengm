@@ -19,7 +19,7 @@ import {
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
 import clickable from "../../../deion/ui/wrappers/clickable";
-import { POSITIONS } from "../../common";
+import { POSITIONS } from "../../common/constants";
 
 const handleAutoSort = async pos => {
     await toWorker("autoSortRoster", pos);

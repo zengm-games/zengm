@@ -5,7 +5,7 @@ awards
 - leagueLeaders
 - UI to display
 
-depth chart is broken?
+flow/lint
 
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)

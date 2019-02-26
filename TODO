@@ -1,7 +1,5 @@
 # football
 
-posRatings from worker used in UI
-
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later

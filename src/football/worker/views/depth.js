@@ -3,7 +3,7 @@
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
 import getDepthPlayers from "../core/player/getDepthPlayers";
-import posRatings from "../core/player/posRatings";
+import posRatings from "../../common/posRatings";
 import type { UpdateEvents } from "../../../deion/common/types";
 import type { Position } from "../../common/types";
 

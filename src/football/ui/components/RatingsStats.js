@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import posRatings from "../../worker/core/player/posRatings";
+import posRatings from "../../common/posRatings";
 import { getCols, helpers } from "../../../deion/ui/util";
 
 type Props = {

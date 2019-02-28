@@ -3,6 +3,8 @@
 QBs should be more impactful
 - bad ones like http://localhost/l/9/player/1467 should actually perform bad
 
+roster page should be broken up by position, like actually breaking it into multiple tables for readability
+
 position balance for AIs building teams
 - what about initial roster construction?
 

@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import { contractNegotiation, player } from "..";
+import { contractNegotiation, draft, player } from "..";
 import { idb } from "../../db";
 import { helpers } from "../../util";
 
@@ -21,6 +21,31 @@ const newPhaseFreeAgency = async () => {
         player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
         await idb.cache.players.put(p);
     }
+
+    // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
+    const players3 = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        PLAYER.UNDRAFTED_2,
+    );
+    for (const p of players3) {
+        p.tid = PLAYER.UNDRAFTED;
+        p.ratings[0].fuzz /= Math.sqrt(2);
+        player.develop(p, 0); // Update skills/pot based on fuzz
+        player.updateValues(p);
+        await idb.cache.players.put(p);
+    }
+    const players4 = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        PLAYER.UNDRAFTED_3,
+    );
+    for (const p of players4) {
+        p.tid = PLAYER.UNDRAFTED_2;
+        p.ratings[0].fuzz /= Math.sqrt(2);
+        player.develop(p, 0); // Update skills/pot based on fuzz
+        player.updateValues(p);
+        await idb.cache.players.put(p);
+    }
+    await draft.genPlayers(PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 };

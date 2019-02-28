@@ -1,8 +1,8 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../../common";
-import { contractNegotiation, draft, league, player } from "..";
+import { PHASE } from "../../../common";
+import { contractNegotiation, league, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
 import type { Conditions } from "../../../common/types";
@@ -111,31 +111,6 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
     await league.setGameAttributes({ daysLeft: 30 });
-
-    // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
-    const players3 = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        PLAYER.UNDRAFTED_2,
-    );
-    for (const p of players3) {
-        p.tid = PLAYER.UNDRAFTED;
-        p.ratings[0].fuzz /= Math.sqrt(2);
-        player.develop(p, 0); // Update skills/pot based on fuzz
-        player.updateValues(p);
-        await idb.cache.players.put(p);
-    }
-    const players4 = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        PLAYER.UNDRAFTED_3,
-    );
-    for (const p of players4) {
-        p.tid = PLAYER.UNDRAFTED_2;
-        p.ratings[0].fuzz /= Math.sqrt(2);
-        player.develop(p, 0); // Update skills/pot based on fuzz
-        player.updateValues(p);
-        await idb.cache.players.put(p);
-    }
-    await draft.genPlayers(PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 };

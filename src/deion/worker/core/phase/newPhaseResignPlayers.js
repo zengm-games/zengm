@@ -1,9 +1,10 @@
 // @flow
 
+import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, league, player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, helpers, local, logEvent, overrides } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseResignPlayers = async (conditions: Conditions) => {
@@ -22,7 +23,32 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
         0,
         Infinity,
     ]);
-    for (const p of players) {
+
+    // Figure out how many players are needed at each position, beyond who is already signed
+    const neededPositionsByTid = new Map();
+    if (Object.keys(overrides.common.constants.POSITION_COUNTS).length > 0) {
+        for (let tid = 0; tid < g.numTeams; tid++) {
+            const counts = {
+                ...overrides.common.constants.POSITION_COUNTS,
+            };
+            neededPositionsByTid.set(tid, counts);
+        }
+        for (const p of players) {
+            if (p.contract.exp > g.season) {
+                continue;
+            }
+
+            const counts = neededPositionsByTid.get(p.tid);
+            const pos = p.ratings[p.ratings.length - 1].pos;
+
+            if (counts !== undefined && counts[pos] !== undefined) {
+                counts[pos] -= 1;
+            }
+        }
+    }
+
+    const playersSorted = orderBy(players, "value", "desc");
+    for (const p of playersSorted) {
         if (p.contract.exp <= g.season) {
             if (g.userTids.includes(p.tid) && local.autoPlaySeasons === 0) {
                 const tid = p.tid;
@@ -52,11 +78,28 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                 // Automatically negotiate with teams
                 const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
 
+                let skipDueToPos = false;
+
+                const counts = neededPositionsByTid.get(p.tid);
+                const pos = p.ratings[p.ratings.length - 1].pos;
+
+                if (
+                    counts !== undefined &&
+                    counts[pos] !== undefined &&
+                    counts[pos] <= 0
+                ) {
+                    skipDueToPos = true;
+                }
+
                 // Should eventually be smarter than a coin flip
-                if (Math.random() < p.value / 100 - factor) {
+                if (!skipDueToPos && Math.random() < p.value / 100 - factor) {
                     const contract = player.genContract(p);
                     contract.exp += 1; // Otherwise contracts could expire this season
                     player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
+
+                    if (counts !== undefined && counts[pos] !== undefined) {
+                        counts[pos] -= 1;
+                    }
                 } else {
                     player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
                 }

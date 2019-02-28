@@ -1,5 +1,13 @@
 # football
 
+QBs should be more impactful
+- bad ones like http://localhost/l/9/player/1467 should actually perform bad
+
+position balance for AIs building teams
+- what about initial roster construction?
+
+in free agency, Play > One Week plays just one day
+
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
@@ -18,10 +26,6 @@ are AI teams re-signing players following hard cap?
 
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
-
-position balance for AIs building teams
-- new league
-- existing league
 
 salaries
 

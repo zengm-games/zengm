@@ -7,6 +7,34 @@ import { player, team } from "..";
 import { idb } from "../../db";
 import { g, local, random, overrides } from "../../util";
 
+const getNeededPositions = players => {
+    const neededPositions = new Set();
+
+    if (Object.keys(overrides.common.constants.POSITION_COUNTS).length === 0) {
+        return neededPositions;
+    }
+
+    const counts = {
+        ...overrides.common.constants.POSITION_COUNTS,
+    };
+
+    for (const p of players) {
+        const pos = p.ratings[p.ratings.length - 1].pos;
+
+        if (counts.hasOwnProperty(pos)) {
+            counts[pos] -= 1;
+        }
+    }
+
+    for (const [pos, numNeeded] of Object.entries(counts)) {
+        if (numNeeded > 0) {
+            neededPositions.add(pos);
+        }
+    }
+
+    return neededPositions;
+};
+
 /**
  * AI teams sign free agents.
  *
@@ -45,6 +73,7 @@ const autoSign = async () => {
 
         // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
         if (
+            process.env.SPORT === "basketball" &&
             g.phase === PHASE.FREE_AGENCY &&
             Math.random() < (0.99 * g.daysLeft) / 30
         ) {
@@ -52,7 +81,11 @@ const autoSign = async () => {
         }
 
         // Skip rebuilding teams sometimes
-        if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+        if (
+            process.env.SPORT === "basketball" &&
+            strategies[tid] === "rebuilding" &&
+            Math.random() < 0.7
+        ) {
             continue;
         }
 
@@ -63,9 +96,21 @@ const autoSign = async () => {
         const payroll = await team.getPayroll(tid);
         const numPlayersOnRoster = playersOnRoster.length;
 
+        const neededPositions = getNeededPositions(playersOnRoster);
+        const useNeededPositions = Math.random() < 0.9;
+
         if (numPlayersOnRoster < g.maxRosterSize) {
             for (let i = 0; i < playersSorted.length; i++) {
                 const p = playersSorted[i];
+
+                // Skip players if team already has enough at this position
+                if (neededPositions.size > 0 && useNeededPositions) {
+                    const pos = p.ratings[p.ratings.length - 1].pos;
+                    if (!neededPositions.has(pos)) {
+                        continue;
+                    }
+                }
+
                 // Don't sign minimum contract players to fill out the roster
                 if (
                     p.contract.amount + payroll <= g.salaryCap ||

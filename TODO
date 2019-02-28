@@ -10,21 +10,9 @@ position balance for AIs building teams
 
 in free agency, Play > One Week plays just one day
 
-game sim
-- pick playType from (down, toGo, scrimmage, score, quarter, time)
-- later
-  - clock
-    - pace
-    - clock management, strategy
-  - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
-  - log clutch plays
-  - blocked fg
-    - count as missed field goal
-    - chance for either team to return (very slim for offense)
-  - blocked punt
-  - missed fg/xp return
-
 are AI teams re-signing players following hard cap?
+
+talent distribution, free agents vs draft, etc
 
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
@@ -92,6 +80,20 @@ too many players playing both offense and defense
 version
 
 ---
+
+game sim
+- pick playType from (down, toGo, scrimmage, score, quarter, time)
+- later
+  - clock
+    - pace
+    - clock management, strategy
+  - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
+  - log clutch plays
+  - blocked fg
+    - count as missed field goal
+    - chance for either team to return (very slim for offense)
+  - blocked punt
+  - missed fg/xp return
 
 league leaders recorded in awards
 - see leagueLeaders call in doAwards, needs categories

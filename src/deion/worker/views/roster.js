@@ -6,6 +6,14 @@ import { idb } from "../db";
 import { g, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
+const footballScore = p => {
+    const ind = overrides.common.constants.POSITIONS.indexOf(p.ratings.pos);
+    return (
+        (overrides.common.constants.POSITIONS.length - ind) * 1000 +
+        p.ratings.ovr
+    );
+};
+
 async function updateRoster(
     inputs: { abbrev: string, season: number, tid: number },
     updateEvents: UpdateEvents,
@@ -111,17 +119,7 @@ async function updateRoster(
             if (process.env.SPORT === "basketball") {
                 players.sort((a, b) => a.rosterOrder - b.rosterOrder);
             } else {
-                const score = p => {
-                    const ind = overrides.common.constants.POSITIONS.indexOf(
-                        p.ratings.pos,
-                    );
-                    return (
-                        (overrides.common.constants.POSITIONS.length - ind) *
-                            1000 +
-                        p.ratings.ovr
-                    );
-                };
-                players.sort((a, b) => score(b) - score(a));
+                players.sort((a, b) => footballScore(b) - footballScore(a));
             }
 
             for (let i = 0; i < players.length; i++) {
@@ -156,9 +154,14 @@ async function updateRoster(
                 tid: inputs.tid,
                 fuzz: true,
             });
-            players.sort(
-                (a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
-            );
+            if (process.env.SPORT === "basketball") {
+                players.sort(
+                    (a, b) =>
+                        b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
+                );
+            } else {
+                players.sort((a, b) => footballScore(b) - footballScore(a));
+            }
 
             for (let i = 0; i < players.length; i++) {
                 players[i].canRelease = false;

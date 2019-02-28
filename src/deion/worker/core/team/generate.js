@@ -90,10 +90,10 @@ const generate = (tm: any) => {
             },
         },
         strategy,
-        depth: undefined,
+        depth: tm.depth,
     };
 
-    if (process.env.SPORT === "football") {
+    if (process.env.SPORT === "football" && tm.depth === undefined) {
         t.depth = overrides.common.constants.POSITIONS.reduce((depth, pos) => {
             depth[pos] = [];
             return depth;

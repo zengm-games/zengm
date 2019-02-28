@@ -83,10 +83,7 @@ async function updateDepth(
 
         const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 
-        let players = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            g.userTid,
-        );
+        let players = await idb.cache.players.indexGetAll("playersByTid", tid);
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "age", "injury", "watch"],
             ratings: [
@@ -104,7 +101,7 @@ async function updateDepth(
         });
 
         // Sort players based on current depth chart
-        const t = await idb.cache.teams.get(g.userTid);
+        const t = await idb.cache.teams.get(tid);
         if (!t.depth) {
             throw new Error("Missing depth");
         }

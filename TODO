@@ -1,7 +1,5 @@
 # football
 
-roster page should be broken up by position, like actually breaking it into multiple tables for readability
-
 position balance for AIs building teams
 - what about initial roster construction?
 
@@ -77,6 +75,9 @@ too many players playing both offense and defense
 version
 
 ---
+
+make roster page reorderable like in football mogul
+- it can update t.depth behind the scenes
 
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)

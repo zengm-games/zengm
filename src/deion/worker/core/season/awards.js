@@ -30,7 +30,7 @@ const getPlayers = async () => {
     ]);
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
-        ratings: process.env.SPORT === "basketball" ? [] : ["pos"],
+        ratings: ["pos"],
         stats:
             process.env.SPORT === "basketball"
                 ? [

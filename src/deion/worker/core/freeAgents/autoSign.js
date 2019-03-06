@@ -27,6 +27,7 @@ const getNeededPositions = players => {
     }
 
     for (const [pos, numNeeded] of Object.entries(counts)) {
+        // $FlowFixMe
         if (numNeeded > 0) {
             neededPositions.add(pos);
         }

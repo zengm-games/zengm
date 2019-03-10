@@ -127,6 +127,16 @@ const processAttrs = (
             season < g.season
         ) {
             output.injury = { type: "Healthy", gamesRemaining: 0 };
+        } else if (attr === "salary") {
+            output.salary = 0;
+
+            const s = season === undefined ? g.season : season;
+
+            for (const salary of p.salaries) {
+                if (salary.season === s) {
+                    output.salary += salary.amount / 1000;
+                }
+            }
         } else if (attr === "salaries") {
             output.salaries = helpers.deepCopy(p.salaries).map(salary => {
                 salary.amount /= 1000;

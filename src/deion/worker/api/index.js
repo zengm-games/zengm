@@ -286,12 +286,12 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
     }
 
     let output =
-        "pid,Name,Pos,DraftPick,Age,Team,Season,GP,GS,MP,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,ORB,DRB,TRB,AST,TO,STL,BLK,BA,PF,PTS,AtRimFG,AtRimFGA,AtRimFGP,LowPostFG,LowPostFGA,LowPostFGP,MidRangeFG,MidRangeFGA,MidRangeFGP,PER,EWA,ORtg,DRtg,OWS,DWS,WS,WS/48,TS%,3PAr,FTr,ORB%,DRB%,TRB%,AST%,STL%,BLK%,TOV%,USG%,+/-,OVR,POT,HGT,STRE,SPD,JMP,ENDU,INS,DNK,FT,FG,TP,OIQ,DIQ,DRB,PSS,REB\n";
+        "pid,Name,Pos,DraftPick,Age,Salary,Team,Season,GP,GS,MP,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,ORB,DRB,TRB,AST,TO,STL,BLK,BA,PF,PTS,AtRimFG,AtRimFGA,AtRimFGP,LowPostFG,LowPostFGA,LowPostFGP,MidRangeFG,MidRangeFGA,MidRangeFGP,PER,EWA,ORtg,DRtg,OWS,DWS,WS,WS/48,TS%,3PAr,FTr,ORB%,DRB%,TRB%,AST%,STL%,BLK%,TOV%,USG%,+/-,OVR,POT,HGT,STRE,SPD,JMP,ENDU,INS,DNK,FT,FG,TP,OIQ,DIQ,DRB,PSS,REB\n";
 
     for (const s of seasons) {
         console.log(s, new Date());
         const players2 = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "name", "age", "draft"],
+            attrs: ["pid", "name", "age", "draft", "salary"],
             ratings: [
                 "pos",
                 "ovr",
@@ -378,6 +378,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                     ? (p.draft.round - 1) * 30 + p.draft.pick
                     : "",
                 p.age,
+                p.salary,
                 p.stats.abbrev,
                 s,
                 p.stats.gp,

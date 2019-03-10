@@ -56,17 +56,6 @@ const initAds = (goldUntil: number | void) => {
         hideAds = true;
     }
 
-    // Hide ads on mobile, mobile is shitty enough already
-    if (window.screen && window.screen.width < 768) {
-        hideAds = true;
-    }
-
-    // Hide ads on iOS, at least until https://www.wired.com/story/pop-up-mobile-ads-surge-as-sites-scramble-to-stop-them/ is resolved
-    // https://stackoverflow.com/a/9039885/786644
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-        hideAds = true;
-    }
-
     if (hideAds) {
         // Get rid of margin saved for skyscraper on right
         const container = document.getElementsByClassName("bbgm-container")[0];
@@ -77,12 +66,15 @@ const initAds = (goldUntil: number | void) => {
     } else {
         window.bbgmAds.cmd.push(() => {
             // Show hidden divs. skyscraper has its own code elsewhere to manage display.
-            const showDivs = [
-                "bbgm-ads-top",
-                "bbgm-ads-bottom1",
-                "bbgm-ads-bottom2",
-                "skyscraper-wrapper",
-            ];
+            const showDivs =
+                window.screen && window.screen.width < 768
+                    ? ["bbgm-ads-mobile"]
+                    : [
+                          "bbgm-ads-top",
+                          "bbgm-ads-bottom1",
+                          "bbgm-ads-bottom2",
+                          "skyscraper-wrapper",
+                      ];
             for (const id of showDivs) {
                 const div = document.getElementById(id);
                 if (div) {
@@ -90,20 +82,25 @@ const initAds = (goldUntil: number | void) => {
                 }
             }
 
-            window.bbgmAds
-                .init([
-                    "bbgm-ads-top",
-                    "bbgm-ads-bottom1",
-                    "bbgm-ads-bottom2",
-                    "bbgm-ads-skyscraper",
-                ])
-                .then(() => {
+            const adDivs =
+                window.screen && window.screen.width < 768
+                    ? ["bbgm-ads-mobile"]
+                    : [
+                          "bbgm-ads-top",
+                          "bbgm-ads-bottom1",
+                          "bbgm-ads-bottom2",
+                          "bbgm-ads-skyscraper",
+                      ];
+
+            window.bbgmAds.init(adDivs).then(() => {
+                if (window.screen && window.screen.width >= 768) {
                     // Show the logo too
                     const logo = document.getElementById("bbgm-ads-logo");
                     if (logo) {
                         logo.style.display = "flex";
                     }
-                });
+                }
+            });
         });
     }
 };

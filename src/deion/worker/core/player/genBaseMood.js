@@ -2,10 +2,9 @@
 
 import { finances } from "..";
 import { g, helpers, random } from "../../util";
-import { PHASE } from "../../../common";
 import type { TeamSeason } from "../../../common/types";
 
-const genBaseMood = (teamSeason: TeamSeason): number => {
+const genBaseMood = (teamSeason: TeamSeason, reSigning: boolean): number => {
     // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
     if (
         teamSeason.playoffRoundsWon === g.numGamesPlayoffSeries.length &&
@@ -40,7 +39,7 @@ const genBaseMood = (teamSeason: TeamSeason): number => {
     }
 
     // Don't let difficulty have too crazy of an impact, for re-signing at least
-    if (g.phase === PHASE.AFTER_DRAFT) {
+    if (reSigning) {
         baseMood = helpers.bound(baseMood, 0, 1.5);
     } else if (g.difficulty > 0) {
         baseMood = helpers.bound(baseMood, 0, 1.5 + g.difficulty);

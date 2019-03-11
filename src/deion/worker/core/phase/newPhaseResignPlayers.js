@@ -10,7 +10,8 @@ import type { Conditions } from "../../../common/types";
 const newPhaseResignPlayers = async (conditions: Conditions) => {
     await idb.cache.negotiations.clear();
 
-    const baseMoods = await player.genBaseMoods();
+    const baseMoodsReSigning = await player.genBaseMoods(true);
+    const baseMoodsFreeAgents = await player.genBaseMoods(false);
 
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["strategy"],
@@ -54,7 +55,11 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                 const tid = p.tid;
 
                 // Add to free agents first, to generate a contract demand, then open negotiations with player
-                player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
+                player.addToFreeAgents(
+                    p,
+                    PHASE.RESIGN_PLAYERS,
+                    baseMoodsReSigning,
+                );
                 await idb.cache.players.put(p);
 
                 const error = await contractNegotiation.create(
@@ -101,7 +106,11 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                         counts[pos] -= 1;
                     }
                 } else {
-                    player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
+                    player.addToFreeAgents(
+                        p,
+                        PHASE.RESIGN_PLAYERS,
+                        baseMoodsFreeAgents,
+                    );
                 }
 
                 await idb.cache.players.put(p);

@@ -298,7 +298,9 @@ export const createWithoutSaving = (
         teamSeasons.filter(ts => ts.season === gameAttributes.season),
         ["tid"],
     );
-    const baseMoods = teamSeasonsForBaseMoods.map(ts => player.genBaseMood(ts));
+    const baseMoods = teamSeasonsForBaseMoods.map(ts =>
+        player.genBaseMood(ts, false),
+    );
 
     let players;
     if (leagueFile.hasOwnProperty("players")) {

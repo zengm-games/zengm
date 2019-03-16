@@ -21,11 +21,11 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
-RewriteCond %{HTTP:X-Forwarded-SSL} !on
+RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} !=localhost
 RewriteCond %{HTTP_HOST} !\.dev$
 RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/css

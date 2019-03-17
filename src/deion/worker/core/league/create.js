@@ -487,27 +487,33 @@ export const createWithoutSaving = (
         }
 
         // Then add other players, up to the limit
-        let currentTid = 0;
         while (true) {
-            while (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
-                currentTid += 1;
+            // Random order tids, so no team is a superpower
+            const tids = range(g.numTeams);
+            random.shuffle(tids);
+
+            let numTeamsDone = 0;
+            for (const currentTid of tids) {
+                if (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
+                    numTeamsDone += 1;
+                    continue;
+                }
+
+                const p = freeAgents.getBest(
+                    players.filter(p2 => p2.tid === currentTid),
+                    keptPlayers,
+                );
+
+                if (p) {
+                    addPlayerToTeam(p, currentTid);
+                } else {
+                    console.log(currentTid, "can't find player");
+                    numTeamsDone += 1;
+                }
             }
 
-            if (currentTid >= g.numTeams) {
-                // This should never happen!
+            if (numTeamsDone === g.numTeams) {
                 break;
-            }
-
-            const p = freeAgents.getBest(
-                players.filter(p2 => p2.tid === currentTid),
-                keptPlayers,
-            );
-
-            if (p) {
-                addPlayerToTeam(p, currentTid);
-            } else {
-                console.log(currentTid, "can't find player");
-                currentTid += 1;
             }
         }
 

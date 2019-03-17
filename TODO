@@ -2,10 +2,7 @@
 
 position balance for AIs building teams
 - what about initial roster construction?
-  - when adding non-drafted players, do tids in random order - already tracking size with numPlayersByTid
-  - need more S and RB
-- need a little more incentive for K/P - basically, positions with 0 players should be higher urgency
-- make sure basketball is still okay
+  - need more S and RB?
 
 after creating new league, too many players in roster page show up as "droppable" (italics contract) - i think it's not checking the draft year correctly, just team
 

@@ -4,37 +4,9 @@ import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
+import getBest from "./getBest";
 import { idb } from "../../db";
 import { g, local, random, overrides } from "../../util";
-
-const getNeededPositions = players => {
-    const neededPositions = new Set();
-
-    if (Object.keys(overrides.common.constants.POSITION_COUNTS).length === 0) {
-        return neededPositions;
-    }
-
-    const counts = {
-        ...overrides.common.constants.POSITION_COUNTS,
-    };
-
-    for (const p of players) {
-        const pos = p.ratings[p.ratings.length - 1].pos;
-
-        if (counts.hasOwnProperty(pos)) {
-            counts[pos] -= 1;
-        }
-    }
-
-    for (const [pos, numNeeded] of Object.entries(counts)) {
-        // $FlowFixMe
-        if (numNeeded > 0) {
-            neededPositions.add(pos);
-        }
-    }
-
-    return neededPositions;
-};
 
 /**
  * AI teams sign free agents.
@@ -94,46 +66,21 @@ const autoSign = async () => {
             "playersByTid",
             tid,
         );
-        const payroll = await team.getPayroll(tid);
-        const numPlayersOnRoster = playersOnRoster.length;
+        if (playersOnRoster.length < g.maxRosterSize) {
+            const payroll = await team.getPayroll(tid);
+            const p = getBest(playersOnRoster, playersSorted, payroll);
 
-        const neededPositions = getNeededPositions(playersOnRoster);
-        const useNeededPositions = Math.random() < 0.9;
+            if (p) {
+                player.sign(p, tid, p.contract, g.phase);
 
-        if (numPlayersOnRoster < g.maxRosterSize) {
-            for (let i = 0; i < playersSorted.length; i++) {
-                const p = playersSorted[i];
+                await idb.cache.players.put(p);
 
-                // Skip players if team already has enough at this position
-                if (neededPositions.size > 0 && useNeededPositions) {
-                    const pos = p.ratings[p.ratings.length - 1].pos;
-                    if (!neededPositions.has(pos)) {
-                        continue;
-                    }
+                if (!overrides.core.team.rosterAutoSort) {
+                    throw new Error(
+                        "Missing overrides.core.team.rosterAutoSort",
+                    );
                 }
-
-                // Don't sign minimum contract players to fill out the roster
-                if (
-                    p.contract.amount + payroll <= g.salaryCap ||
-                    (p.contract.amount === g.minContract &&
-                        numPlayersOnRoster < g.maxRosterSize - 2)
-                ) {
-                    player.sign(p, tid, p.contract, g.phase);
-
-                    playersSorted.splice(i, 1); // Remove from list of free agents
-
-                    await idb.cache.players.put(p);
-
-                    if (!overrides.core.team.rosterAutoSort) {
-                        throw new Error(
-                            "Missing overrides.core.team.rosterAutoSort",
-                        );
-                    }
-                    await overrides.core.team.rosterAutoSort(tid);
-
-                    // We found one, so stop looking for this team
-                    break;
-                }
+                await overrides.core.team.rosterAutoSort(tid);
             }
         }
     }

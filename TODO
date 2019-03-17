@@ -2,6 +2,9 @@
 
 position balance for AIs building teams
 - what about initial roster construction?
+  - getBest works pretty well. need more safeties, and need enough players to account for teams with higher tids
+    - don't break up into teamPlayers and freeAgentPlayers
+    - also ensure position balance of free agents, so maybe don't do pure value-based cutoff to eliminate players
 
 in free agency, Play > One Week plays just one day
 

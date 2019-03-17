@@ -31,6 +31,7 @@
         "no-await-in-loop": "off",
         "no-console": "off",
         "no-continue": "off",
+        "no-loop-func": "off",
         "no-mixed-operators": "off",
         "no-nested-ternary": "off",
         "no-param-reassign": "off",

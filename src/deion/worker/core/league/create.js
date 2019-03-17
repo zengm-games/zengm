@@ -4,7 +4,7 @@ import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
-import { draft, finances, league, player, team } from "..";
+import { draft, finances, freeAgents, league, player, team } from "..";
 import {
     defaultGameAttributes,
     g,
@@ -419,9 +419,7 @@ export const createWithoutSaving = (
             throw new Error("Not enough players!");
         }
 
-        const numPlayerPerTeam = Math.round(
-            (g.minRosterSize + g.maxRosterSize) / 2,
-        ); // 13 for basketball
+        const numPlayerPerTeam = g.maxRosterSize - 2; // 13 for basketball
         const maxNumFreeAgents = Math.round((g.numTeams / 3) * g.maxRosterSize); // 150 for basketball
 
         // Add players to teams or free agency
@@ -443,6 +441,15 @@ export const createWithoutSaving = (
                     prob = 0.125;
                 }
                 if (p.draft.round > 1) {
+                    prob *= 0.75;
+                }
+                if (p.draft.round > 3) {
+                    prob *= 0.75;
+                }
+                if (p.draft.round > 5) {
+                    prob *= 0.75;
+                }
+                if (p.draft.round > 7) {
                     prob *= 0.75;
                 }
             }
@@ -493,8 +500,9 @@ export const createWithoutSaving = (
         }
 
         // Then add other players, up to the limit
+        const playersSorted = orderBy(teamPlayersOther, "value", "desc");
         let currentTid = 0;
-        for (const p of teamPlayersOther) {
+        while (true) {
             while (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
                 currentTid += 1;
             }
@@ -504,7 +512,17 @@ export const createWithoutSaving = (
                 break;
             }
 
-            addPlayerToTeam(p, currentTid);
+            const p = freeAgents.getBest(
+                players.filter(p2 => p2.tid === currentTid),
+                playersSorted,
+            );
+
+            if (p) {
+                addPlayerToTeam(p, currentTid);
+            } else {
+                console.log(currentTid, "can't find player");
+                currentTid += 1;
+            }
         }
 
         // Adjustment for hard cap - lower contracts for teams above cap

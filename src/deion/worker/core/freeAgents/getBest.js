@@ -13,7 +13,6 @@ const getBest = (
     payroll?: number,
 ) => {
     const neededPositions = team.getNeededPositions(playersOnRoster);
-    console.log(neededPositions, playersAvailable.length);
     const useNeededPositions = Math.random() < 0.9;
 
     for (let i = 0; i < playersAvailable.length; i++) {
@@ -29,13 +28,6 @@ const getBest = (
 
         const salaryCapCheck =
             payroll === undefined || p.contract.amount + payroll <= g.salaryCap;
-        console.log(
-            p,
-            salaryCapCheck,
-            salaryCapCheck ||
-                (p.contract.amount <= g.minContract &&
-                    playersOnRoster.length < g.maxRosterSize - 2),
-        );
 
         // Don't sign minimum contract players to fill out the roster
         if (

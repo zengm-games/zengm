@@ -2,9 +2,12 @@
 
 position balance for AIs building teams
 - what about initial roster construction?
-  - getBest works pretty well. need more safeties, and need enough players to account for teams with higher tids
-    - don't break up into teamPlayers and freeAgentPlayers
-    - also ensure position balance of free agents, so maybe don't do pure value-based cutoff to eliminate players
+  - when adding non-drafted players, do tids in random order - already tracking size with numPlayersByTid
+  - need more S and RB
+- need a little more incentive for K/P - basically, positions with 0 players should be higher urgency
+- make sure basketball is still okay
+
+after creating new league, too many players in roster page show up as "droppable" (italics contract) - i think it's not checking the draft year correctly, just team
 
 in free agency, Play > One Week plays just one day
 

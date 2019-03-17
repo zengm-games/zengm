@@ -424,12 +424,28 @@ export const createWithoutSaving = (
 
         // Add players to teams or free agency
         keptPlayers.sort((a, b) => b.value - a.value);
-        const teamPlayers = keptPlayers.slice(0, numPlayerPerTeam * g.numTeams);
-        const freeAgentPlayers = keptPlayers.slice(
-            numPlayerPerTeam * g.numTeams,
-            maxNumFreeAgents + numPlayerPerTeam * g.numTeams,
-        );
-        random.shuffle(teamPlayers);
+
+        // Keep track of number of players on each team
+        const numPlayersByTid = {};
+        for (const tid2 of range(g.numTeams)) {
+            numPlayersByTid[tid2] = 0;
+        }
+
+        const addPlayerToTeam = (p, tid2: number) => {
+            numPlayersByTid[tid2] += 1;
+
+            p.tid = tid2;
+            player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+
+            // Keep rookie contract, or no?
+            if (p.contract.exp >= g.season) {
+                player.setContract(p, p.contract, true);
+            } else {
+                player.setContract(p, player.genContract(p, true), true);
+            }
+
+            players.push(p);
+        };
 
         const probStillOnDraftTeam = p => {
             let prob = 0; // Probability a player is still on his draft team
@@ -458,49 +474,19 @@ export const createWithoutSaving = (
         };
 
         // Drafted players kept with own team, with some probability
-        const teamPlayersDrafted = [];
-        const teamPlayersOther = [];
-        for (const p of teamPlayers) {
-            if (Math.random() < probStillOnDraftTeam(p)) {
-                teamPlayersDrafted.push(p);
-            } else {
-                teamPlayersOther.push(p);
-            }
-        }
-
-        // Keep track of number of players on each team
-        const numPlayersByTid = {};
-        for (const tid2 of range(g.numTeams)) {
-            numPlayersByTid[tid2] = 0;
-        }
-
-        const addPlayerToTeam = (p, tid2: number) => {
-            numPlayersByTid[tid2] += 1;
-
-            p.tid = tid2;
-            player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-
-            // Keep rookie contract, or no?
-            if (p.contract.exp >= g.season) {
-                player.setContract(p, p.contract, true);
-            } else {
-                player.setContract(p, player.genContract(p, true), true);
-            }
-
-            players.push(p);
-        };
-
-        // First add drafted players
-        for (const p of teamPlayersDrafted) {
-            if (numPlayersByTid[p.draft.tid] < numPlayerPerTeam) {
+        for (let i = 0; i < numPlayerPerTeam * g.numTeams; i++) {
+            const p = keptPlayers[i];
+            if (
+                p.draft.tid >= 0 &&
+                Math.random() < probStillOnDraftTeam(p) &&
+                numPlayersByTid[p.draft.tid] < numPlayerPerTeam
+            ) {
                 addPlayerToTeam(p, p.draft.tid);
-            } else {
-                teamPlayersOther.push(p);
+                keptPlayers.splice(i, 1);
             }
         }
 
         // Then add other players, up to the limit
-        const playersSorted = orderBy(teamPlayersOther, "value", "desc");
         let currentTid = 0;
         while (true) {
             while (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
@@ -514,7 +500,7 @@ export const createWithoutSaving = (
 
             const p = freeAgents.getBest(
                 players.filter(p2 => p2.tid === currentTid),
-                playersSorted,
+                keptPlayers,
             );
 
             if (p) {
@@ -553,8 +539,8 @@ export const createWithoutSaving = (
         }
 
         // Finally, free agents
-        for (let i = 0; i < freeAgentPlayers.length; i++) {
-            const p = freeAgentPlayers[i];
+        for (let i = 0; i < maxNumFreeAgents; i++) {
+            const p = keptPlayers[i];
             p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0; // So half will be eligible to retire after the first season
             player.setContract(p, player.genContract(p, false), false);
             player.addToFreeAgents(p, g.phase, baseMoods);

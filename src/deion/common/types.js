@@ -63,7 +63,6 @@ export type EventBBGM = any;
 export type Env = {|
     enableLogging: boolean,
     heartbeatID: string,
-    tld: string,
     useSharedWorker: boolean,
 
     // These are just legacy variables sent to the worker to be stored in idb.meta.attributes

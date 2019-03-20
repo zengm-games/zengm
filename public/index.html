@@ -51,10 +51,6 @@
       window.bbgmVersionWorker = "???";
       window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
 
-      // .com or .dev TLD
-      var splitUrl = window.location.hostname.split('.');
-      window.tld = splitUrl[splitUrl.length - 1];
-
       function loadCSS(filename){
         var el = document.createElement("link");
         el.setAttribute("rel", "stylesheet");

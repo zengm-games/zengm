@@ -2,7 +2,11 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../common";
+import {
+    ACCOUNT_API_URL,
+    STRIPE_PUBLISHABLE_KEY,
+    fetchWrapper,
+} from "../../common";
 import { getScript, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
@@ -72,9 +76,7 @@ class AccountUpdateCard extends React.Component {
 
                     try {
                         const data = await fetchWrapper({
-                            url: `//account.basketball-gm.${
-                                window.tld
-                            }/gold_card_update.php`,
+                            url: `${ACCOUNT_API_URL}/gold_card_update.php`,
                             method: "POST",
                             data: {
                                 sport: process.env.SPORT,

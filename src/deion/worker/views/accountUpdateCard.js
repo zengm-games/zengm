@@ -1,7 +1,7 @@
 // @flow
 
-import { fetchWrapper } from "../../common";
-import { checkAccount, env } from "../util";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
+import { checkAccount } from "../util";
 import type { Conditions, GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateAccountUpdateCard(
@@ -15,7 +15,7 @@ async function updateAccountUpdateCard(
 
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${env.tld}/gold_card_info.php`,
+                url: `${ACCOUNT_API_URL}/gold_card_info.php`,
                 method: "GET",
                 data: { sport: process.env.SPORT },
                 credentials: "include",

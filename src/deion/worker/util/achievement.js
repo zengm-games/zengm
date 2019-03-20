@@ -1,9 +1,8 @@
 // @flow
 
 /*eslint camelcase: 0*/
-import { fetchWrapper } from "../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { idb } from "../db";
-import env from "./env";
 import logEvent from "./logEvent";
 import overrides from "./overrides";
 import type { AchievementWhen, Conditions } from "../../common/types";
@@ -60,7 +59,7 @@ async function add(
 
     try {
         const data = await fetchWrapper({
-            url: `//account.basketball-gm.${env.tld}/add_achievements.php`,
+            url: `${ACCOUNT_API_URL}/add_achievements.php`,
             method: "POST",
             data: { achievements: slugs, sport: process.env.SPORT },
             credentials: "include",
@@ -106,7 +105,7 @@ async function getAll(): Promise<
     try {
         // Handle any achievements stored in the cloud
         const achievementsRemote = await fetchWrapper({
-            url: `//account.basketball-gm.${env.tld}/get_achievements.php`,
+            url: `${ACCOUNT_API_URL}/get_achievements.php`,
             method: "GET",
             data: { sport: process.env.SPORT },
             credentials: "include",

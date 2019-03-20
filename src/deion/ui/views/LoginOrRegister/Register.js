@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import React from "react";
-import { fetchWrapper } from "../../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { local, realtimeUpdate, setTitle, toWorker } from "../../util";
 
 type Props = {
@@ -53,7 +53,7 @@ class Register extends React.Component<Props, State> {
 
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/register.php`,
+                url: `${ACCOUNT_API_URL}/register.php`,
                 method: "POST",
                 data: formData,
                 credentials: "include",

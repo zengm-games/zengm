@@ -3,7 +3,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../common";
+import {
+    ACCOUNT_API_URL,
+    STRIPE_PUBLISHABLE_KEY,
+    fetchWrapper,
+} from "../../common";
 import { getScript, local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
@@ -46,9 +50,7 @@ class StripeButton extends React.Component<
                         token: async token => {
                             try {
                                 const data = await fetchWrapper({
-                                    url: `//account.basketball-gm.${
-                                        window.tld
-                                    }/gold_start.php`,
+                                    url: `${ACCOUNT_API_URL}/gold_start.php`,
                                     method: "POST",
                                     data: {
                                         sport: process.env.SPORT,
@@ -115,7 +117,7 @@ const handleCancel = async e => {
     if (result) {
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/gold_cancel.php`,
+                url: `${ACCOUNT_API_URL}/gold_cancel.php`,
                 method: "POST",
                 data: {
                     sport: process.env.SPORT,
@@ -167,7 +169,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
 
         try {
             await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/logout.php`,
+                url: `${ACCOUNT_API_URL}/logout.php`,
                 method: "POST",
                 data: { sport: process.env.SPORT },
                 credentials: "include",

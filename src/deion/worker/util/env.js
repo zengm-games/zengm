@@ -6,7 +6,6 @@ import type { Env } from "../../common/types";
 const env: Env = {
     enableLogging: false,
     heartbeatID: "",
-    tld: "com",
     fromLocalStorage: {},
     useSharedWorker: false,
 };

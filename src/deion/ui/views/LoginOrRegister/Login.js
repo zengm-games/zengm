@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { fetchWrapper } from "../../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { local, realtimeUpdate, toWorker } from "../../util";
 
 type Props = {
@@ -38,7 +38,7 @@ class Login extends React.Component<Props, State> {
 
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/login.php`,
+                url: `${ACCOUNT_API_URL}/login.php`,
                 method: "POST",
                 data: formData,
                 credentials: "include",

@@ -1,5 +1,7 @@
 // @flow
 
+const ACCOUNT_API_URL = "https://account.basketball-gm.com";
+
 const DIFFICULTY = {
     Easy: -0.25,
     Normal: 0,
@@ -45,4 +47,11 @@ const PHASE_TEXT = {
 // Test: pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI
 const STRIPE_PUBLISHABLE_KEY = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
-export { DIFFICULTY, PHASE, PLAYER, PHASE_TEXT, STRIPE_PUBLISHABLE_KEY };
+export {
+    ACCOUNT_API_URL,
+    DIFFICULTY,
+    PHASE,
+    PLAYER,
+    PHASE_TEXT,
+    STRIPE_PUBLISHABLE_KEY,
+};

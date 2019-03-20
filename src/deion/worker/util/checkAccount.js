@@ -1,9 +1,8 @@
 // @flow
 
-import { fetchWrapper } from "../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { idb } from "../db";
 import achievement from "./achievement";
-import env from "./env";
 import local from "./local";
 import toUI from "./toUI";
 import type { Conditions, PartialTopMenu } from "../../common/types";
@@ -13,7 +12,7 @@ const checkAccount = async (
 ): Promise<PartialTopMenu> => {
     try {
         const data = await fetchWrapper({
-            url: `//account.basketball-gm.${env.tld}/user_info.php`,
+            url: `${ACCOUNT_API_URL}/user_info.php`,
             method: "GET",
             data: { sport: process.env.SPORT },
             credentials: "include",

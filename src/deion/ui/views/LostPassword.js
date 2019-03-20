@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchWrapper } from "../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { setTitle } from "../util";
 
 const ajaxErrorMsg =
@@ -27,7 +27,7 @@ class LostPassword extends React.Component {
 
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/lost_password.php`,
+                url: `${ACCOUNT_API_URL}/lost_password.php`,
                 method: "POST",
                 data: formData,
                 credentials: "include",

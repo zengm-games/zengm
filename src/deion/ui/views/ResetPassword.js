@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { fetchWrapper } from "../../common";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
@@ -24,7 +24,7 @@ class ResetPassword extends React.Component {
         // First, see if this is a valid token
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/reset_password.php`,
+                url: `${ACCOUNT_API_URL}/reset_password.php`,
                 method: "POST",
                 data: {
                     action: "check_token",
@@ -75,7 +75,7 @@ class ResetPassword extends React.Component {
 
         try {
             const data = await fetchWrapper({
-                url: `//account.basketball-gm.${window.tld}/reset_password.php`,
+                url: `${ACCOUNT_API_URL}/reset_password.php`,
                 method: "POST",
                 data: formData,
                 credentials: "include",

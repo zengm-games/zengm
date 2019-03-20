@@ -46,7 +46,6 @@ async function add(
         return idb.meta.tx("achievements", "readwrite", tx => {
             for (const slug of slugs2) {
                 tx.achievements.add({ slug });
-                notify(slug);
             }
         });
     };

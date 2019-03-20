@@ -44,7 +44,7 @@ const PHASE_TEXT = {
     "8": "free agency",
 };
 
-// Test: pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI
+// Test: pk_test_Qbz0froGmHLp0dPCwHoYFY08
 const STRIPE_PUBLISHABLE_KEY = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 export {

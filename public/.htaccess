@@ -23,7 +23,7 @@ RewriteBase /
 
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP_HOST} !=localhost
-RewriteCond %{HTTP_HOST} !\.dev$
+RewriteCond %{HTTP_HOST} !\.test$
 RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301,NE]
 

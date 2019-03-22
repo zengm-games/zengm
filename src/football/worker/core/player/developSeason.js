@@ -2,8 +2,8 @@
 
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, random } from "../../../../deion/worker/util";
-import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
-import type { PlayerRatings, Position, RatingKey } from "../../../common/types";
+// import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const powerFormula = {
     ageModifier: (age: number) => {

@@ -6,7 +6,6 @@ import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";
 import {
-    ads,
     compareVersions,
     genStaticPage,
     helpers,

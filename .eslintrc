@@ -30,6 +30,7 @@
         "no-alert": "off",
         "no-await-in-loop": "off",
         "no-console": "off",
+        "no-constant-condition": ["error", { "checkLoops": false }],
         "no-continue": "off",
         "no-loop-func": "off",
         "no-mixed-operators": "off",

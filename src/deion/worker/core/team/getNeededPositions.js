@@ -4,7 +4,7 @@ import { overrides } from "../../util";
 import type { Player } from "../../../common/types";
 
 const getNeededPositions = (players: Player<>[]) => {
-    const neededPositions = new Set();
+    const neededPositions = new Set<string>();
 
     if (Object.keys(overrides.common.constants.POSITION_COUNTS).length === 0) {
         return neededPositions;

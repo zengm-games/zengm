@@ -10,15 +10,13 @@ async function updateUpcomingFreeAgents(inputs: {
 }): void | { [key: string]: any } {
     const stats = ["min", "pts", "trb", "ast", "per"];
 
-    let players: any[];
-    if (g.phase !== PHASE.RESIGN_PLAYERS) {
-        players = await idb.getCopies.players({
-            tid: [0, Infinity],
-            filter: p => p.contract.exp === inputs.season,
-        });
-    } else {
-        players = await idb.getCopies.players({ tid: PLAYER.FREE_AGENT });
-    }
+    let players: any[] =
+        g.phase === PHASE.RESIGN_PLAYERS
+            ? await idb.getCopies.players({ tid: PLAYER.FREE_AGENT })
+            : await idb.getCopies.players({
+                  tid: [0, Infinity],
+                  filter: p => p.contract.exp === inputs.season,
+              });
 
     // Done before filter so full player object can be passed to player.genContract.
     for (let i = 0; i < players.length; i++) {

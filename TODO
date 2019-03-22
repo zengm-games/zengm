@@ -1,5 +1,9 @@
 # football
 
+auto play rest of free agency
+- treat as AI team, like auto play seasons
+- modal warning it will add players automatically
+
 position balance for AIs building teams
 - what about initial roster construction?
   - need more S and RB?
@@ -36,12 +40,17 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - awardsOrder
 - awardType in Dropdown.js
 - upcoming free agents
+- hall of fame
 
 finish views
 - CustomizePlayer
 - way to specify routes for ShotLocations/Depth
 
 go through every file in football, make sure it's been updated (like heightToRating)
+
+relatives too much?? http://localhost/l/3/player/2548
+
+make PlayerNameLabels include pos as prefix?
 
 History
 - columns depend on sport

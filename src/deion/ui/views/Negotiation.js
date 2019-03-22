@@ -9,7 +9,8 @@ async function redirectNegotiationOrRoster(cancelled) {
     const count = await toWorker("countNegotiations");
     if (count > 0) {
         realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
-    } else if (cancelled) {
+    } else if (cancelled || process.env.SPORT === "football") {
+        // After signing player in football, go back to free agents screen, cause you probably need more
         realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
     } else {
         realtimeUpdate([], helpers.leagueUrl(["roster"]));

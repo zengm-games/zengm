@@ -97,6 +97,8 @@ async function updateDepth(
             ],
             stats: stats[pos],
             season: g.season,
+            showNoStats: true,
+            showRookies: true,
             fuzz: true,
         });
 

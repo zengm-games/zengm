@@ -4,8 +4,6 @@ position balance for AIs building teams
 - what about initial roster construction?
   - need more S and RB?
 
-after creating new league, too many players in roster page show up as "droppable" (italics contract) - i think it's not checking the draft year correctly, just team
-
 in free agency, Play > One Week plays just one day
 
 are AI teams re-signing players following hard cap?
@@ -38,6 +36,7 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - loadTeams - synergy, pace, player/team stats
 - awardsOrder
 - awardType in Dropdown.js
+- upcoming free agents
 
 finish views
 - CustomizePlayer

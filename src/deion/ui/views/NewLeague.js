@@ -114,7 +114,7 @@ class NewLeague extends React.Component {
         e.preventDefault();
         this.setState({ creating: true });
 
-        let startingSeason = 2018;
+        let startingSeason = 2019;
 
         let leagueFile;
         let randomizeRosters = false;

@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { PHASE } from "../../common";
 import {
     DataTable,
     Dropdown,
@@ -8,7 +9,7 @@ import {
 } from "../components";
 import { getCols, helpers, setTitle } from "../util";
 
-const UpcomingFreeAgents = ({ players, season, stats }) => {
+const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
     setTitle("Upcoming Free Agents");
 
     const cols = getCols(
@@ -72,10 +73,13 @@ const UpcomingFreeAgents = ({ players, season, stats }) => {
                 </a>
             </p>
 
-            <p>
-                Keep in mind that many of these players will choose to re-sign
-                with their current team rather than become free agents.
-            </p>
+            {phase !== PHASE.RESIGN_PLAYERS ? (
+                <p>
+                    Keep in mind that many of these players will choose to
+                    re-sign with their current team rather than become free
+                    agents.
+                </p>
+            ) : null}
 
             <DataTable
                 cols={cols}
@@ -89,6 +93,7 @@ const UpcomingFreeAgents = ({ players, season, stats }) => {
 };
 
 UpcomingFreeAgents.propTypes = {
+    phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,

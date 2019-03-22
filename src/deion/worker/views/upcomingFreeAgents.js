@@ -1,5 +1,6 @@
 // @flow
 
+import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -9,10 +10,15 @@ async function updateUpcomingFreeAgents(inputs: {
 }): void | { [key: string]: any } {
     const stats = ["min", "pts", "trb", "ast", "per"];
 
-    let players: any[] = await idb.getCopies.players({
-        tid: [0, Infinity],
-        filter: p => p.contract.exp === inputs.season,
-    });
+    let players: any[];
+    if (g.phase !== PHASE.RESIGN_PLAYERS) {
+        players = await idb.getCopies.players({
+            tid: [0, Infinity],
+            filter: p => p.contract.exp === inputs.season,
+        });
+    } else {
+        players = await idb.getCopies.players({ tid: PLAYER.FREE_AGENT });
+    }
 
     // Done before filter so full player object can be passed to player.genContract.
     for (let i = 0; i < players.length; i++) {
@@ -46,6 +52,7 @@ async function updateUpcomingFreeAgents(inputs: {
     });
 
     return {
+        phase: g.phase,
         players,
         season: inputs.season,
         stats,

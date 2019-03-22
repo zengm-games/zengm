@@ -159,7 +159,10 @@ const playAmount = async (
     if (amount === "day") {
         numDays = 1;
     } else if (amount === "week") {
-        numDays = process.env.SPORT === "basketball" ? 7 : 1;
+        numDays =
+            process.env.SPORT === "basketball" || g.phase === PHASE.FREE_AGENCY
+                ? 7
+                : 1;
     } else if (amount === "month") {
         numDays = process.env.SPORT === "basketball" ? 30 : 4;
     } else if (amount === "untilPreseason") {

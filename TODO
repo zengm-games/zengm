@@ -4,8 +4,6 @@ position balance for AIs building teams
 - what about initial roster construction?
   - need more S and RB?
 
-in free agency, Play > One Week plays just one day
-
 are AI teams re-signing players following hard cap?
 
 talent distribution, free agents vs draft, etc
@@ -14,6 +12,7 @@ new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
 
 salaries
+- K/P less
 
 bugsnag, google analytics keys in index.html
 

@@ -74,7 +74,7 @@ async function updatePowerRankings(
                     ]
                         .map(pid => players.find(p => p.pid === pid))
                         .reduce((sum, p) => {
-                            if (p === null) {
+                            if (p === null || p === undefined) {
                                 return sum;
                             }
 
@@ -90,7 +90,7 @@ async function updatePowerRankings(
                     ]
                         .map(pid => players.find(p => p.pid === pid))
                         .reduce((sum, p) => {
-                            if (p === null) {
+                            if (p === null || p === undefined) {
                                 return sum;
                             }
 

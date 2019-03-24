@@ -1,14 +1,10 @@
 # football
 
-auto play rest of free agency
-- treat as AI team, like auto play seasons
-- modal warning it will add players automatically
-
 position balance for AIs building teams
 - what about initial roster construction?
   - need more S and RB?
 
-are AI teams re-signing players following hard cap?
+button on free agents screen to fill out roster with players making up to 2x the minimum
 
 talent distribution, free agents vs draft, etc
 
@@ -17,6 +13,9 @@ new league is too slow, maybe use an estimate for pot
 
 salaries
 - K/P less
+  - actually this shoudl be done with value
+
+stadium size, attendance
 
 bugsnag, google analytics keys in index.html
 
@@ -177,6 +176,8 @@ more accurage game sim
 - State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
 
 ---
+
+when live simming last game of playoffs, redirect to season summary is disabled. so it should put it in the Play menu then, until you view it
 
 draft lottery teams should only be non-playoff teams
 

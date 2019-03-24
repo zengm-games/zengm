@@ -98,7 +98,7 @@ const processStats = (
         } else if (stat === "recYdsPerGame") {
             row[stat] = ps.recYds / ps.gp;
         } else if (stat === "recCatchPct") {
-            row[stat] = ps.rec / (ps.rec + ps.tgt);
+            row[stat] = percentage(ps.rec, ps.tgt);
         } else if (stat === "touches") {
             row[stat] = ps.rus + ps.rec;
         } else if (stat === "ydsPerTouch") {

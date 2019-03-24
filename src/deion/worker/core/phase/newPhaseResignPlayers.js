@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../../common";
-import { contractNegotiation, draft, league, player } from "..";
+import { contractNegotiation, draft, league, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
 import type { Conditions } from "../../../common/types";
@@ -59,6 +59,14 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
         }
     }
 
+    const payrollsByTid = new Map();
+    if (g.hardCap) {
+        for (let tid = 0; tid < g.numTeams; tid++) {
+            const payroll = await team.getPayroll(tid);
+            payrollsByTid.set(tid, payroll);
+        }
+    }
+
     const playersSorted = orderBy(players, "value", "desc");
     for (const p of playersSorted) {
         if (p.contract.exp <= g.season) {
@@ -91,9 +99,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                     );
                 }
             } else {
-                // Automatically negotiate with teams
-                const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
-
+                // AI teams
                 let skipDueToPos = false;
 
                 const counts = neededPositionsByTid.get(p.tid);
@@ -107,14 +113,34 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                     skipDueToPos = true;
                 }
 
+                const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
+                let probReSign = p.value / 100 - factor;
+
+                const payroll = payrollsByTid.get(p.tid);
+                const contract = player.genContract(p);
+
+                if (g.hardCap) {
+                    if (payroll === undefined) {
+                        throw new Error(
+                            "Payroll should always be defined if there is a hard cap",
+                        );
+                    }
+
+                    if (contract.amount + payroll > g.salaryCap) {
+                        probReSign = 0;
+                    }
+                }
+
                 // Should eventually be smarter than a coin flip
-                if (!skipDueToPos && Math.random() < p.value / 100 - factor) {
-                    const contract = player.genContract(p);
+                if (!skipDueToPos && Math.random() < probReSign) {
                     contract.exp += 1; // Otherwise contracts could expire this season
                     player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
 
                     if (counts !== undefined && counts[pos] !== undefined) {
                         counts[pos] -= 1;
+                    }
+                    if (payroll !== undefined) {
+                        payrollsByTid.set(p.tid, contract.amount + payroll);
                     }
                 } else {
                     player.addToFreeAgents(

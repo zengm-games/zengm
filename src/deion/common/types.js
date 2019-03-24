@@ -445,6 +445,7 @@ export type PlayoffSeriesTeam = {|
     cid: number,
     seed: number,
     region?: string,
+    pts?: number, // undefined means game hasn't happened yet
     tid: number,
     winp: number,
     won: number,

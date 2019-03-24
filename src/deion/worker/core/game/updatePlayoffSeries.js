@@ -28,8 +28,16 @@ const updatePlayoffSeries = async (
             if (!away) {
                 continue;
             }
+            if (home.pts === undefined) {
+                home.pts = 0;
+            }
+            if (away.pts === undefined) {
+                away.pts = 0;
+            }
 
             if (home.tid === result.team[0].id) {
+                home.pts += result.team[0].stat.pts;
+                away.pts += result.team[1].stat.pts;
                 if (won0) {
                     home.won += 1;
                 } else {
@@ -37,6 +45,8 @@ const updatePlayoffSeries = async (
                 }
                 break;
             } else if (away.tid === result.team[0].id) {
+                away.pts += result.team[0].stat.pts;
+                home.pts += result.team[1].stat.pts;
                 if (won0) {
                     away.won += 1;
                 } else {
@@ -56,15 +66,21 @@ const updatePlayoffSeries = async (
             series.away.won >= numGamesToWinSeries ||
             series.home.won >= numGamesToWinSeries
         ) {
+            let winnerPts;
             let winnerTid;
+            let loserPts;
             let loserTid;
             let loserWon;
             if (series.away.won >= numGamesToWinSeries) {
+                winnerPts = series.away.pts;
                 winnerTid = series.away.tid;
+                loserPts = series.home.pts;
                 loserTid = series.home.tid;
                 loserWon = series.home.won;
             } else {
+                winnerPts = series.home.pts;
                 winnerTid = series.home.tid;
+                loserPts = series.away.pts;
                 loserTid = series.away.tid;
                 loserWon = series.away.won;
             }
@@ -95,6 +111,14 @@ const updatePlayoffSeries = async (
                 )} round of the playoffs`;
             }
 
+            const showPts =
+                winnerPts !== undefined &&
+                loserPts !== undefined &&
+                numGamesToWinSeries === 1;
+            const score = showPts
+                ? `${winnerPts}-${loserPts}`
+                : `${numGamesToWinSeries}-${loserWon}`;
+
             const showNotification =
                 series.away.tid === g.userTid ||
                 series.home.tid === g.userTid ||
@@ -114,7 +138,7 @@ const updatePlayoffSeries = async (
                         g.season,
                     ])}">${
                         g.teamNamesCache[loserTid]
-                    }</a> in the ${currentRoundText}, ${numGamesToWinSeries}-${loserWon}.`,
+                    }</a> in the ${currentRoundText}, ${score}`,
                     showNotification,
                     tids: [winnerTid, loserTid],
                 },

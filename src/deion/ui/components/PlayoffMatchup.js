@@ -7,6 +7,7 @@ import { helpers } from "../util";
 type SeriesTeam = {
     abbrev: string,
     cid: number,
+    pts?: number,
     region: string,
     seed: number,
     tid: number,
@@ -17,12 +18,14 @@ type SeriesTeam = {
 const Team = ({
     team,
     season,
+    showPts,
     showWon,
     userTid,
     won,
 }: {
     team?: SeriesTeam,
     season: number,
+    showPts: boolean,
     showWon: boolean,
     userTid: number,
     won: boolean,
@@ -40,8 +43,9 @@ const Team = ({
             <a href={helpers.leagueUrl(["roster", team.abbrev, season])}>
                 {team.region}
             </a>
-            {showWon && team.hasOwnProperty("won") ? (
-                <span> {team.won}</span>
+            {showWon && team.hasOwnProperty("won") ? <> {team.won}</> : null}
+            {!showWon && showPts && team.hasOwnProperty("pts") ? (
+                <> {team.pts}</>
             ) : null}
         </span>
     );
@@ -78,12 +82,20 @@ const PlayoffMatchup = ({
         series.away.hasOwnProperty("won") &&
         series.away.won === numGamesToWinSeries;
 
+    const showPts =
+        !!series.away &&
+        series.away.pts !== undefined &&
+        series.home.pts !== undefined &&
+        numGamesToWinSeries === 1;
+    const showWon = !!series.away && numGamesToWinSeries > 1;
+
     return (
         <>
             <Team
                 team={series.home}
                 season={season}
-                showWon={!!series.away && numGamesToWinSeries > 1}
+                showPts={showPts}
+                showWon={showWon}
                 userTid={userTid}
                 won={homeWon}
             />
@@ -91,7 +103,8 @@ const PlayoffMatchup = ({
             <Team
                 team={series.away}
                 season={season}
-                showWon={!!series.away && numGamesToWinSeries > 1}
+                showPts={showPts}
+                showWon={showWon}
                 userTid={userTid}
                 won={awayWon}
             />

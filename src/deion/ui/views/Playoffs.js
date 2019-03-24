@@ -14,6 +14,7 @@ import { setTitle } from "../util";
 type SeriesTeam = {
     abbrev: string,
     cid: number,
+    pts?: number,
     region: string,
     seed: number,
     tid: number,

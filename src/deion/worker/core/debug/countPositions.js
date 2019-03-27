@@ -1,5 +1,3 @@
-// @flow
-
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
 import { idb } from "../../db";
@@ -11,17 +9,8 @@ const countPositions = async () => {
         .index("tid")
         .getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
 
-    const counts = {
-        PG: 0,
-        G: 0,
-        SG: 0,
-        GF: 0,
-        SF: 0,
-        F: 0,
-        PF: 0,
-        FC: 0,
-        C: 0,
-    };
+    const posCounts: { [key: string]: number } = {};
+    const posOvrs: { [key: string]: number } = {};
 
     for (const p of players) {
         const r = p.ratings[p.ratings.length - 1];
@@ -32,10 +21,43 @@ const countPositions = async () => {
         }
         const position = overrides.core.player.pos(r);
 
-        counts[position] += 1;
+        if (!posCounts[position]) {
+            posCounts[position] = 0;
+        }
+        if (!posOvrs[position]) {
+            posOvrs[position] = 0;
+        }
+
+        posCounts[position] += 1;
+        posOvrs[position] += r.ovr;
     }
 
-    console.table(counts);
+    for (const position of Object.keys(posOvrs)) {
+        posOvrs[position] /= posCounts[position];
+    }
+
+    if (process.env.SPORT === "football") {
+        let positionCountsTotal = 0;
+        for (const target of Object.values(
+            overrides.common.constants.POSITION_COUNTS,
+        )) {
+            positionCountsTotal += target;
+        }
+        for (const [position, target] of Object.entries(
+            overrides.common.constants.POSITION_COUNTS,
+        )) {
+            console.log(
+                position,
+                `${posCounts[position]} / ${Math.round(
+                    (players.length * target) / positionCountsTotal,
+                )}`,
+                Math.round(posOvrs[position]),
+            );
+        }
+    } else {
+        console.table(posCounts);
+        console.table(posOvrs);
+    }
 };
 
 export default countPositions;

@@ -20,6 +20,10 @@ const countPositions = async () => {
             throw new Error("Missing overrides.core.player.pos");
         }
         const position = overrides.core.player.pos(r);
+        if (!overrides.core.player.ovr) {
+            throw new Error("Missing overrides.core.player.ovr");
+        }
+        const ovr = overrides.core.player.ovr(r, position);
 
         if (!posCounts[position]) {
             posCounts[position] = 0;
@@ -29,7 +33,7 @@ const countPositions = async () => {
         }
 
         posCounts[position] += 1;
-        posOvrs[position] += r.ovr;
+        posOvrs[position] += ovr;
     }
 
     for (const position of Object.keys(posOvrs)) {

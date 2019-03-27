@@ -20,10 +20,10 @@ const getPos = () => {
             // HACK HACK HACK: Too many OLs, too few QB and S
             if (pos === "OL") {
                 const rand2 = Math.random();
-                if (rand2 < 0.1) {
+                if (rand2 < 0.09) {
                     return "QB";
                 }
-                if (rand2 < 0.4) {
+                if (rand2 < 0.3) {
                     return "S";
                 }
             }

@@ -119,13 +119,12 @@ const info = {
 
 // Handle some nonlinear interactions
 const bonuses = {
-    RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 550, 0, 20),
-    WR: ratings => helpers.bound((ratings.spd * ratings.hnd) / 550, 0, 10),
-    TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 0, 10),
-    LB: ratings => helpers.bound(ratings.tck / 10, 0, 20),
+    RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 550, 6, 25),
+    WR: ratings => helpers.bound((ratings.spd * ratings.hnd) / 550, 0, 5),
+    TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 2, 10),
+    LB: ratings => helpers.bound(ratings.tck / 30, 2, 5),
     S: ratings =>
-        helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 0, 10),
-    CB: ratings => helpers.bound((ratings.spd * ratings.pcv) / 550, 0, 5),
+        helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 2, 15),
 };
 
 const ovr = (ratings: PlayerRatings, pos?: string): number => {

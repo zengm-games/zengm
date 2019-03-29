@@ -33,6 +33,14 @@ const optionsTmp = [
         key: "roy",
     },
     {
+        val: "Offensive Rookie of the Year",
+        key: "oroy",
+    },
+    {
+        val: "Defensive Rookie of the Year",
+        key: "droy",
+    },
+    {
         val: "First Team All-League",
         key: "first_team",
     },

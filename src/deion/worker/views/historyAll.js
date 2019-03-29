@@ -21,7 +21,10 @@ async function updateHistory(
             }),
         ]);
 
-        const awardNames = ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"];
+        const awardNames =
+            process.env.SPORT === "basketball"
+                ? ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"]
+                : ["finalsMvp", "mvp", "dpoy", "oroy", "droy"];
 
         const seasons = awards.map(a => {
             return {
@@ -32,6 +35,8 @@ async function updateHistory(
                 smoy: a.smoy,
                 mip: a.mip,
                 roy: a.roy,
+                oroy: a.oroy,
+                droy: a.droy,
                 runnerUp: undefined,
                 champ: undefined,
             };

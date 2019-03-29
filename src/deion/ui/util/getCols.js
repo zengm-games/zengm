@@ -1373,6 +1373,16 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "count:oroy": {
+        desc: "Offensive Rookie of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:droy": {
+        desc: "Defensive Rookie of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "award:dpoy": {
         desc: "Defensive Player of the Year",
         sortType: "name",
@@ -1396,6 +1406,16 @@ const cols: {
     "award:smoy": {
         desc: "Sixth Man of the Year",
         sortType: "name",
+    },
+    "award:oroy": {
+        desc: "Offensive Rookie of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "award:droy": {
+        desc: "Defensive Rookie of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
     ...sportSpecificCols,
 };
@@ -1637,12 +1657,16 @@ const titleOverrides = {
     "count:mvp": "MVP",
     "count:roy": "ROY",
     "count:smoy": "SMOY",
+    "count:oroy": "OROY",
+    "count:droy": "DROY",
     "award:dpoy": "DPOY",
     "award:finalsMvp": "Finals MVP",
     "award:mip": "MIP",
     "award:mvp": "MVP",
     "award:roy": "ROY",
     "award:smoy": "SMOY",
+    "award:oroy": "OROY",
+    "award:droy": "DROY",
     ...sportSpecificTitleOverrides,
 };
 

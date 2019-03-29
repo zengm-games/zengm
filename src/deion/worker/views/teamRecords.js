@@ -57,6 +57,8 @@ function getTeamRecord(t, awards) {
         smoy: awards[t.tid] ? awards[t.tid].smoy : 0,
         mip: awards[t.tid] ? awards[t.tid].mip : 0,
         roy: awards[t.tid] ? awards[t.tid].roy : 0,
+        oroy: awards[t.tid] ? awards[t.tid].oroy : 0,
+        droy: awards[t.tid] ? awards[t.tid].droy : 0,
         bestRecord: awards[t.tid] ? awards[t.tid].bestRecord : 0,
         bestRecordConf: awards[t.tid] ? awards[t.tid].bestRecordConf : 0,
         allRookie: awards[t.tid] ? awards[t.tid].allRookie : 0,
@@ -73,6 +75,8 @@ function tallyAwards(awards) {
             smoy: 0,
             mip: 0,
             roy: 0,
+            oroy: 0,
+            droy: 0,
             allLeague: [0, 0, 0],
             allLeagueTotal: 0,
             allDefense: [0, 0, 0],
@@ -102,6 +106,12 @@ function tallyAwards(awards) {
         }
         if (a.roy && teams[a.roy.tid]) {
             teams[a.roy.tid].roy++;
+        }
+        if (a.oroy && teams[a.oroy.tid]) {
+            teams[a.oroy.tid].oroy++;
+        }
+        if (a.droy && teams[a.droy.tid]) {
+            teams[a.droy.tid].droy++;
         }
         if (a.bre && a.brw) {
             // For old league files, this format is obsolete now
@@ -148,12 +158,14 @@ function tallyAwards(awards) {
             }
         }
 
-        for (let i = 0; i < a.allDefensive.length; i++) {
-            for (const p of a.allDefensive[i].players) {
-                // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
-                if (teams[p.tid]) {
-                    teams[p.tid].allDefense[i]++;
-                    teams[p.tid].allDefenseTotal++;
+        if (a.allDefensive) {
+            for (let i = 0; i < a.allDefensive.length; i++) {
+                for (const p of a.allDefensive[i].players) {
+                    // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
+                    if (teams[p.tid]) {
+                        teams[p.tid].allDefense[i]++;
+                        teams[p.tid].allDefenseTotal++;
+                    }
                 }
             }
         }
@@ -233,18 +245,30 @@ async function updateTeamRecords(
             );
         }
 
-        const categories = [
-            "mvp",
-            "dpoy",
-            "smoy",
-            "mip",
-            "roy",
-            "bestRecord",
-            "bestRecordConf",
-            "allRookie",
-            "allLeague",
-            "allDefense",
-        ];
+        const categories =
+            process.env.SPORT === "basketball"
+                ? [
+                      "mvp",
+                      "dpoy",
+                      "smoy",
+                      "mip",
+                      "roy",
+                      "bestRecord",
+                      "bestRecordConf",
+                      "allRookie",
+                      "allLeague",
+                      "allDefense",
+                  ]
+                : [
+                      "mvp",
+                      "dpoy",
+                      "oroy",
+                      "droy",
+                      "bestRecord",
+                      "bestRecordConf",
+                      "allRookie",
+                      "allLeague",
+                  ];
 
         return {
             byType: inputs.byType,

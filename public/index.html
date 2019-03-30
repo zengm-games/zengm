@@ -72,13 +72,13 @@
       if (window.enableLogging) {
         var s = document.createElement("script");
         s.async = true;
-        s.src = "https://www.googletagmanager.com/gtag/js?id=UA-38759330-1";
+        s.src = "https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID";
         s.type = "text/javascript";
         document.head.appendChild(s);
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'UA-38759330-1', {
+        gtag('config', 'GOOGLE_ANALYTICS_ID', {
           'cookie_domain': 'basketball-gm.com'
         });
 
@@ -110,7 +110,7 @@
 
       if (window.bugsnag) {
         window.bugsnagClient = window.bugsnag({
-          apiKey: "c10b95290070cb8888a7a79cc5408555",
+          apiKey: "BUGSNAG_API_KEY",
           appVersion: window.bbgmVersion,
           autoCaptureSessions: false,
           beforeSend: function (report) {

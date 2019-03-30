@@ -161,6 +161,13 @@ const genRev = () => {
     return rev;
 };
 
+const getSport = () => {
+    if (typeof process.env.SPORT === "string") {
+        return process.env.SPORT;
+    }
+    return "basketball";
+};
+
 const minifyJS = (name /*: string */) => {
     const data = fs.readFileSync(`build/${name}`, "utf8");
 
@@ -191,10 +198,29 @@ const setTimestamps = () => {
 
     const rev = genRev();
 
+    const sport = getSport();
+
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
         paths: ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
+        silent: true,
+    });
+
+    replace({
+        regex: "GOOGLE_ANALYTICS_ID",
+        replacement: sport === "basketball" ? "UA-38759330-1" : "UA-38759330-2",
+        paths: ["build/index.html"],
+        silent: true,
+    });
+
+    replace({
+        regex: "BUGSNAG_API_KEY",
+        replacement:
+            sport === "basketball"
+                ? "c10b95290070cb8888a7a79cc5408555"
+                : "fed8957cbfca2d1c80997897b840e6cf",
+        paths: ["build/index.html"],
         silent: true,
     });
 
@@ -209,6 +235,7 @@ module.exports = {
     buildSW,
     copyFiles,
     genRev,
+    getSport,
     minifyJS,
     reset,
     setTimestamps,

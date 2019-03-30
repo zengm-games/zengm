@@ -11,8 +11,6 @@ salaries
 
 attendance
 
-bugsnag, google analytics keys in index.html
-
 owner mood
 
 finances
@@ -45,8 +43,6 @@ relatives too much?? http://localhost/l/3/player/2548
 
 new logos for KC and SA - in progress
 
-main logo - in progress
-
 cloudflare, ssl
 
 search for text basketball in deion
@@ -54,7 +50,7 @@ search for text basketball in deion
 make it clear that accounts are shared, change name of Gold to something sport agnostic
 - NagModal
 
-ads
+temp disable ads, then get them set up again
 - banner
 - gcs
 
@@ -71,6 +67,10 @@ too many players playing both offense and defense
 - reassess after making roster construction better. if it's still a problem, only allow starter at one position
 
 version
+
+football-gm.com
+- make monorepo with basketball-gm.com, to easily share common parts
+- logo in ~/Documents/BBGM/Football main logo
 
 ---
 

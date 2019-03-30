@@ -10,6 +10,7 @@ const browserify = require("browserify");
 const blacklistify = require("blacklistify/custom");
 const envify = require("envify/custom");
 const fs = require("fs");
+const build = require("./buildFuncs");
 
 console.log("Bundling JavaScript files...");
 
@@ -18,10 +19,7 @@ const BLACKLIST = {
     worker: [/.*\/ui.*/, /.*react.*/],
 };
 
-let sport = process.env.SPORT;
-if (typeof sport !== "string") {
-    sport = "basketball";
-}
+const sport = build.getSport();
 
 for (const name of ["ui", "worker"]) {
     browserify(`src/${sport}/${name}/index.js`, { debug: true })

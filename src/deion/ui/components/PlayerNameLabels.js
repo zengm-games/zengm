@@ -11,12 +11,14 @@ const PlayerNameLabels = ({
     children,
     injury,
     pid,
+    pos,
     skills,
     style,
     watch,
 }: {
     children: string,
     injury?: PlayerInjury,
+    pos?: string,
     pid: number,
     skills?: string[],
     style?: { [key: string]: string },
@@ -51,6 +53,7 @@ const PlayerNameLabels = ({
 
     return (
         <span style={style}>
+            {typeof pos === "string" ? `${pos} ` : null}
             <a href={helpers.leagueUrl(["player", pid])}>{children}</a>
             {injuryIcon}
             <SkillsBlock skills={skills} />
@@ -64,6 +67,7 @@ PlayerNameLabels.propTypes = {
         gamesRemaining: PropTypes.number.isRequired,
         type: PropTypes.string.isRequired,
     }),
+    pos: PropTypes.string,
     pid: PropTypes.number.isRequired,
     skills: PropTypes.arrayOf(PropTypes.string),
     style: PropTypes.object,

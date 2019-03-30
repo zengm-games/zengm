@@ -10,6 +10,7 @@ const Winner = ({ award, finals = false, season, userTid }) => {
     const nameAndStats = (
         <>
             <span className={award.tid === userTid ? "table-info" : null}>
+                {award.pos}{" "}
                 <b>
                     <a href={helpers.leagueUrl(["player", award.pid])}>
                         {award.name}

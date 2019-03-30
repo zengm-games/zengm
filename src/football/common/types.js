@@ -11,6 +11,7 @@ type AwardTeam = {|
 
 export type AwardPlayer = {|
     pid: number,
+    pos: string,
     name: string,
     tid: number,
     abbrev: string,

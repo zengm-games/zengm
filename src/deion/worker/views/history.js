@@ -63,6 +63,7 @@ async function updateHistory(
         retiredPlayers = await idb.getCopies.playersPlus(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
             season,
+            ratings: ["pos"],
             stats: ["tid", "abbrev"],
             showNoStats: true,
         });

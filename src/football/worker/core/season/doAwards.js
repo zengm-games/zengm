@@ -21,9 +21,9 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
     return {
         pid: p.pid,
         name: p.name,
+        pos: p.pos,
         tid: p.tid,
         abbrev: p.abbrev,
-        pos: p.pos,
         keyStats: p.currentStats.keyStats,
     };
 };

@@ -1,7 +1,5 @@
 # football
 
-button on free agents screen to fill out roster with players making up to 2x the minimum
-
 talent distribution, free agents vs draft, etc
 
 new league is too slow, maybe use an estimate for pot
@@ -45,8 +43,6 @@ go through every file in football, make sure it's been updated (like heightToRat
 
 relatives too much?? http://localhost/l/3/player/2548
 
-make PlayerNameLabels include pos as prefix?
-
 new logos for KC and SA - in progress
 
 main logo - in progress
@@ -77,6 +73,8 @@ too many players playing both offense and defense
 version
 
 ---
+
+button on free agents screen to fill out roster with players making up to 2x the minimum
 
 make roster page reorderable like in football mogul
 - it can update t.depth behind the scenes

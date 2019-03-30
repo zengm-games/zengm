@@ -21,6 +21,9 @@ const RetiredPlayers = ({ retiredPlayers, season, userTid }) => {
                             p.stats.tid === userTid ? "table-info" : null
                         }
                     >
+                        {process.env.SPORT === "football"
+                            ? `${p.ratings.pos} `
+                            : null}
                         <a href={helpers.leagueUrl(["player", p.pid])}>
                             {p.name}
                         </a>{" "}

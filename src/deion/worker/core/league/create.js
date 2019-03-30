@@ -189,7 +189,8 @@ export const createWithoutSaving = (
         for (const teamSeason of teamSeasonsLocal) {
             teamSeason.tid = t.tid;
             if (typeof teamSeason.stadiumCapacity !== "number") {
-                teamSeason.stadiumCapacity = 25000;
+                teamSeason.stadiumCapacity =
+                    defaultGameAttributes.defaultStadiumCapacity;
             }
             teamSeasons.push(teamSeason);
         }

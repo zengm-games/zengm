@@ -33,7 +33,7 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
         playoffRoundsWon: -1, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
         hype: Math.random(),
         pop: 0, // Needs to be set somewhere!
-        stadiumCapacity: 25000,
+        stadiumCapacity: g.defaultStadiumCapacity,
         revenues: {
             luxuryTaxShare: {
                 amount: 0,

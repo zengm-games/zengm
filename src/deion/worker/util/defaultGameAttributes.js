@@ -66,6 +66,7 @@ const defaultGameAttributes: GameAttributes = {
 
     draftType: "nba",
     numDraftRounds: 2,
+    defaultStadiumCapacity: 25000,
 };
 
 if (process.env.SPORT === "football") {
@@ -93,6 +94,7 @@ if (process.env.SPORT === "football") {
         ties: true,
         draftType: "noLottery",
         numDraftRounds: 8,
+        defaultStadiumCapacity: 70000,
         salaryCap: 200000,
         minPayroll: 150000,
         minContract: 500,

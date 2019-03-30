@@ -16,6 +16,7 @@ async function updateTeamInfo(): void | { [key: string]: any } {
     }
 
     return {
+        defaultStadiumCapacity: g.defaultStadiumCapacity,
         godMode: g.godMode,
         numConfs: g.confs.length,
         numDivs: g.divs.length,

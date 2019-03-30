@@ -154,7 +154,9 @@ class EditTeamInfo extends React.Component {
                                             `Invalid ${field}, team ${i}`,
                                         );
                                     } else if (field === "stadiumCapacity") {
-                                        newTeams[i][field] = 25000;
+                                        newTeams[i][
+                                            field
+                                        ] = this.props.defaultStadiumCapacity;
                                     }
                                 }
                             }
@@ -349,6 +351,7 @@ class EditTeamInfo extends React.Component {
 }
 
 EditTeamInfo.propTypes = {
+    defaultStadiumCapacity: PropTypes.number.isRequired,
     godMode: PropTypes.bool.isRequired,
     numConfs: PropTypes.number.isRequired,
     numDivs: PropTypes.number.isRequired,

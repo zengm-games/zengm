@@ -92,6 +92,7 @@ export type GameAttributeKey =
     | "confs"
     | "easyDifficultyInPast"
     | "daysLeft"
+    | "defaultStadiumCapacity"
     | "disableInjuries"
     | "difficulty"
     | "divs"

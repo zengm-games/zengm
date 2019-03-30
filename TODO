@@ -1,5 +1,9 @@
 # football
 
+CustomizePlayer
+- make ratings stuff sport agnostic
+- move to deion
+
 talent distribution, free agents vs draft, etc
 
 new league is too slow, maybe use an estimate for pot
@@ -34,7 +38,6 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - hall of fame
 
 finish views
-- CustomizePlayer
 - way to specify routes for ShotLocations/Depth
 
 go through every file in football, make sure it's been updated (like heightToRating)
@@ -42,8 +45,6 @@ go through every file in football, make sure it's been updated (like heightToRat
 relatives too much?? http://localhost/l/3/player/2548
 
 new logos for KC and SA - in progress
-
-cloudflare, ssl
 
 search for text basketball in deion
 

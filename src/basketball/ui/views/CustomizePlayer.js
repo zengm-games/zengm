@@ -5,12 +5,12 @@ import { PHASE } from "../../../deion/common";
 import { NewWindowLink, PlayerPicture } from "../../../deion/ui/components";
 import {
     helpers,
+    overrides,
     realtimeUpdate,
     setTitle,
     toWorker,
 } from "../../../deion/ui/util";
 
-const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
 const faceOptions = {
     eyes: [0, 1, 2, 3],
     nose: [0, 1, 2],
@@ -99,25 +99,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
                     target.ratings[r].pos = source.ratings[r].pos;
                     target.pos = source.ratings[r].pos; // Keep this way forever because fun
                 }
-            } else if (
-                [
-                    "diq",
-                    "dnk",
-                    "drb",
-                    "endu",
-                    "fg",
-                    "ft",
-                    "hgt",
-                    "ins",
-                    "jmp",
-                    "pss",
-                    "reb",
-                    "spd",
-                    "oiq",
-                    "stre",
-                    "tp",
-                ].includes(rating)
-            ) {
+            } else if (overrides.common.constants.RATINGS.includes(rating)) {
                 const val = helpers.bound(
                     parseInt(source.ratings[r][rating], 10),
                     0,
@@ -489,7 +471,11 @@ class CustomizePlayer extends React.Component {
                     whatever attributes and ratings you want. If you want to
                     make a whole league of custom players, you should probably
                     create a{" "}
-                    <a href="https://basketball-gm.com/manual/customization/">
+                    <a
+                        href={`https://${
+                            process.env.SPORT
+                        }-gm.com/manual/customization/`}
+                    >
                         custom League File
                     </a>
                     .
@@ -600,13 +586,18 @@ class CustomizePlayer extends React.Component {
                                         )}
                                         value={p.ratings[r].pos}
                                     >
-                                        {positions.map(pos => {
-                                            return (
-                                                <option key={pos} value={pos}>
-                                                    {pos}
-                                                </option>
-                                            );
-                                        })}
+                                        {overrides.common.constants.POSITIONS.map(
+                                            pos => {
+                                                return (
+                                                    <option
+                                                        key={pos}
+                                                        value={pos}
+                                                    >
+                                                        {pos}
+                                                    </option>
+                                                );
+                                            },
+                                        )}
                                     </select>
                                 </div>
                                 <div className="col-sm-3 form-group">

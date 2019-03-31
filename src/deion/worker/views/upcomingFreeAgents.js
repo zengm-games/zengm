@@ -8,7 +8,10 @@ import { g } from "../util";
 async function updateUpcomingFreeAgents(inputs: {
     season: number,
 }): void | { [key: string]: any } {
-    const stats = ["min", "pts", "trb", "ast", "per"];
+    const stats =
+        process.env.SPORT === "basketball"
+            ? ["min", "pts", "trb", "ast", "per"]
+            : ["gp", "keyStats", "av"];
 
     let players: any[] =
         g.phase === PHASE.RESIGN_PLAYERS

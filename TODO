@@ -19,14 +19,7 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - api
   - exportPlayerAveragesCsv
   - exportPlayerGamesCsv
-  - getTradingBlockOffers
-- views
-  - any with stats or ratings
 - playersPlus: weightByMinutes
-- loadTeams - synergy, pace, player/team stats
-- upcoming free agents
-- hall of fame
-  - use AV, different cutoff and different DF
 
 go through every file in football, make sure it's been updated (like heightToRating)
 

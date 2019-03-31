@@ -1,8 +1,6 @@
 # football
 
-CustomizePlayer
-- make ratings stuff sport agnostic
-- move to deion
+in league file where some teams have team.seasons specified and others don't, it should fill in default season for the ones without
 
 talent distribution, free agents vs draft, etc
 
@@ -158,6 +156,7 @@ football achievements
 show game stats in player page
 
 RatingsOverview - could put in deion, with config to specify categories and names from getCols
+- RatingsForm has this already! re-use
 
 ---
 

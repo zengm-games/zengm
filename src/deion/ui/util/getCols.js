@@ -16,12 +16,12 @@ const sportSpecificCols: {
     process.env.SPORT === "basketball"
         ? {
               "rating:fg": {
-                  desc: "Two-Point Shooting",
+                  desc: "Two Pointers",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
               "rating:tp": {
-                  desc: "Three-Point Shooting",
+                  desc: "Three Pointers",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
@@ -51,7 +51,7 @@ const sportSpecificCols: {
                   sortType: "number",
               },
               "rating:ft": {
-                  desc: "Free Throw Shooting",
+                  desc: "Free Throws",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },

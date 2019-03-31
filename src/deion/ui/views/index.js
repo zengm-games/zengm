@@ -4,6 +4,7 @@ import Account from "./Account";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardsRecords from "./AwardsRecords";
 import Changes from "./Changes";
+import CustomizePlayer from "./CustomizePlayer";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
 import DeleteLeague from "./DeleteLeague";
@@ -67,6 +68,7 @@ export default {
     AccountUpdateCard,
     AwardsRecords,
     Changes,
+    CustomizePlayer,
     DangerZone,
     Dashboard,
     DeleteLeague,

@@ -39,7 +39,7 @@ const RatingsOverview = ({ ratings }) => {
                 <div className="col-4">
                     <b>Shooting</b>
                     <br />
-                    Inside: {ratings[r].ins}
+                    Inside Scoring: {ratings[r].ins}
                     <br />
                     Dunks/Layups: {ratings[r].dnk}
                     <br />

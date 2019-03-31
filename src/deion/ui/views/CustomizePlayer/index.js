@@ -1,15 +1,16 @@
 import faces from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../../deion/common";
-import { NewWindowLink, PlayerPicture } from "../../../deion/ui/components";
+import { PHASE } from "../../../common";
+import { NewWindowLink, PlayerPicture } from "../../components";
 import {
     helpers,
     overrides,
     realtimeUpdate,
     setTitle,
     toWorker,
-} from "../../../deion/ui/util";
+} from "../../util";
+import RatingsForm from "./RatingsForm";
 
 const faceOptions = {
     eyes: [0, 1, 2, 3],
@@ -151,6 +152,7 @@ class CustomizePlayer extends React.Component {
             saving: false,
             p,
         };
+        this.handleChange = this.handleChange.bind(this);
         this.handleChangeAppearanceOption = this.handleChangeAppearanceOption.bind(
             this,
         );
@@ -735,212 +737,10 @@ class CustomizePlayer extends React.Component {
 
                             <p>All ratings are on a scale of 0 to 100.</p>
 
-                            <div className="row">
-                                <div className="col-4">
-                                    <h3>Physical</h3>
-                                    <div className="form-group">
-                                        <label>Height</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "hgt",
-                                            )}
-                                            value={p.ratings[r].hgt}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Strength</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "stre",
-                                            )}
-                                            value={p.ratings[r].stre}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Speed</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "spd",
-                                            )}
-                                            value={p.ratings[r].spd}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Jumping</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "jmp",
-                                            )}
-                                            value={p.ratings[r].jmp}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Endurance</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "endu",
-                                            )}
-                                            value={p.ratings[r].endu}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-4">
-                                    <h3>Shooting</h3>
-                                    <div className="form-group">
-                                        <label>Inside</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "ins",
-                                            )}
-                                            value={p.ratings[r].ins}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Dunks/Layups</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "dnk",
-                                            )}
-                                            value={p.ratings[r].dnk}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Free Throws</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "ft",
-                                            )}
-                                            value={p.ratings[r].ft}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Two Pointers</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "fg",
-                                            )}
-                                            value={p.ratings[r].fg}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Three Pointers</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "tp",
-                                            )}
-                                            value={p.ratings[r].tp}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-4">
-                                    <h3>Skill</h3>
-                                    <div className="form-group">
-                                        <label>Offensive IQ</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "oiq",
-                                            )}
-                                            value={p.ratings[r].oiq}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Defensive IQ</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "diq",
-                                            )}
-                                            value={p.ratings[r].diq}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Dribbling</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "drb",
-                                            )}
-                                            value={p.ratings[r].drb}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Passing</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "pss",
-                                            )}
-                                            value={p.ratings[r].pss}
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label>Rebounding</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "reb",
-                                            )}
-                                            value={p.ratings[r].reb}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            <RatingsForm
+                                handleChange={this.handleChange}
+                                ratingsRow={p.ratings[r]}
+                            />
                         </div>
                     </div>
 

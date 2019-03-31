@@ -181,6 +181,10 @@ export const createWithoutSaving = (
         let teamSeasonsLocal;
         if (teamInfo.hasOwnProperty("seasons")) {
             teamSeasonsLocal = teamInfo.seasons;
+            const last = teamSeasonsLocal[teamSeasonsLocal.length - 1];
+            if (last.season !== g.season) {
+                last.season = g.season;
+            }
         } else {
             teamSeasonsLocal = [team.genSeasonRow(t.tid)];
             teamSeasonsLocal[0].pop = teamInfo.pop;

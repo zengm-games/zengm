@@ -161,6 +161,11 @@ const StatsTable = ({ Row, boxScore, type }) => {
         </>
     );
 };
+StatsTable.propTypes = {
+    boxScore: PropTypes.object.isRequired,
+    Row: PropTypes.any,
+    type: PropTypes.string.isRequired,
+};
 
 const quarters = {
     Q1: "1st Quarter",

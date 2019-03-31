@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
 
@@ -95,6 +96,12 @@ const Summary = ({ accepted, message, salaryCap, summary }) => {
             ) : null}
         </>
     );
+};
+Summary.propTypes = {
+    accepted: PropTypes.bool.isRequired,
+    message: PropTypes.string,
+    salaryCap: PropTypes.number.isRequired,
+    summary: PropTypes.object.isRequired,
 };
 
 export default Summary;

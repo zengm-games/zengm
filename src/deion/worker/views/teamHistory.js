@@ -63,7 +63,7 @@ async function updateTeamHistory(
         const stats =
             process.env.SPORT === "basketball"
                 ? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
-                : ["gp", "keyStats"];
+                : ["gp", "keyStats", "av"];
 
         let players = await idb.getCopies.players({ statsTid: inputs.tid });
         players = await idb.getCopies.playersPlus(players, {

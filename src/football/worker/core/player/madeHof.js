@@ -4,50 +4,31 @@ import { g } from "../../../../deion/worker/util";
 import type { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 import type { PlayerRatings } from "../../../common/types";
 
-/**
- * Is a player worthy of the Hall of Fame?
- *
- * This calculation is based on http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine except it includes each playoff run as a separate season.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @return {boolean} Hall of Fame worthy?
- */
 const madeHof = (
     p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
 ): boolean => {
-    // Average together WS and EWA
-    const winShares = p.stats.map(ps => {
-        let sum = 0;
+    const av = p.stats
+        .filter(ps => {
+            // No playoff stats, because AV is scaled strangely there
+            return !ps.playoffs;
+        })
+        .map(ps => ps.av);
 
-        if (typeof ps.dws === "number") {
-            sum += ps.dws;
-        }
-        if (typeof ps.ows === "number") {
-            sum += ps.ows;
-        }
-        if (typeof ps.ewa === "number") {
-            sum += ps.ewa;
-        }
-
-        return sum / 2;
-    });
-
-    // Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
-    winShares.sort((a, b) => b - a); // Descending order
+    // Calculate career WS and "dominance factor" DF (top 5 years WS - 35)
+    av.sort((a, b) => b - a); // Descending order
     let total = 0;
-    let df = -50;
-    for (let i = 0; i < winShares.length; i++) {
-        total += winShares[i];
+    let df = -35;
+    for (let i = 0; i < av.length; i++) {
+        total += av[i];
         if (i < 5) {
-            df += winShares[i];
+            df += av[i];
         }
     }
 
     // Fudge factor for players generated when the league started
     const fudgeSeasons = g.startingSeason - p.draft.year - 5;
     if (fudgeSeasons > 0) {
-        total += winShares[0] * fudgeSeasons;
+        total += av[0] * fudgeSeasons;
     }
 
     // Final formula

@@ -8,7 +8,10 @@ async function updateDraftTeamHistory(inputs: {
     abbrev: string,
     tid: number,
 }): void | { [key: string]: any } {
-    const stats = ["gp", "min", "pts", "trb", "ast", "per", "ewa"];
+    const stats =
+        process.env.SPORT === "basketball"
+            ? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
+            : ["gp", "keyStats", "av"];
 
     let playersAll = await idb.getCopies.players({
         filter: p => p.draft.tid === inputs.tid,

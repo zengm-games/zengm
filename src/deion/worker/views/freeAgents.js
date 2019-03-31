@@ -17,7 +17,7 @@ async function updateFreeAgents(): void | { [key: string]: any } {
     const stats =
         process.env.SPORT === "basketball"
             ? ["min", "pts", "trb", "ast", "per"]
-            : ["keyStats"];
+            : ["gp", "keyStats", "av"];
 
     players = await idb.getCopies.playersPlus(players, {
         attrs: [

@@ -13,11 +13,11 @@ const HallOfFame = ({ players, stats, userTid }) => {
         },
         {
             title: "Best Season",
-            colspan: 11,
+            colspan: 2 + stats.length,
         },
         {
             title: "Career Stats",
-            colspan: 9,
+            colspan: stats.length,
         },
     ];
 

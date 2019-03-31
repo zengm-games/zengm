@@ -9,7 +9,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
     const stats =
         process.env.SPORT === "basketball"
             ? ["gp", "min", "pts", "trb", "ast", "per"]
-            : ["gp", "keyStats"];
+            : ["gp", "keyStats", "av"];
 
     let negotiations = await idb.cache.negotiations.getAll();
 

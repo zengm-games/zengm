@@ -16,7 +16,7 @@ async function updateUserRoster(
         const stats =
             process.env.SPORT === "basketball"
                 ? ["min", "pts", "trb", "ast", "per"]
-                : ["keyStats"];
+                : ["gp", "keyStats", "av"];
 
         let [userRoster, userPicks] = await Promise.all([
             idb.cache.players.indexGetAll("playersByTid", g.userTid),

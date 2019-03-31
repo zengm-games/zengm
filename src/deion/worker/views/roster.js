@@ -31,7 +31,7 @@ async function updateRoster(
         const stats =
             process.env.SPORT === "basketball"
                 ? ["gp", "min", "pts", "trb", "ast", "per"]
-                : ["gp", "keyStats"];
+                : ["gp", "keyStats", "av"];
 
         const editable =
             inputs.season === g.season &&

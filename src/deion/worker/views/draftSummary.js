@@ -10,7 +10,7 @@ async function updateDraftSummary(inputs: {
     const stats =
         process.env.SPORT === "basketball"
             ? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
-            : ["gp", "keyStats"];
+            : ["gp", "keyStats", "av"];
 
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll;

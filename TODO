@@ -20,14 +20,13 @@ worker/deion stuff that needs to have a process.env.SPORT case
   - exportPlayerAveragesCsv
   - exportPlayerGamesCsv
   - getTradingBlockOffers
-  - ratingsStatsPopoverInfo
 - views
   - any with stats or ratings
-- genPlayersWithoutSaving - draft class size, age distribution
 - playersPlus: weightByMinutes
 - loadTeams - synergy, pace, player/team stats
 - upcoming free agents
 - hall of fame
+  - use AV, different cutoff and different DF
 
 go through every file in football, make sure it's been updated (like heightToRating)
 
@@ -152,6 +151,8 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
+
+if a trade is highly unfavorable to the user, pop up a warning confirmation dialog
 
 live game
 - field with drive summary, football, direction, and last play

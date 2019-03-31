@@ -38,7 +38,7 @@ async function updatePlayers(
                       "per",
                       "ewa",
                   ]
-                : ["keyStats"];
+                : ["gp", "keyStats", "av"];
 
         let players = await idb.getCopies.players({
             // In Firefox, objects have a "watch" function

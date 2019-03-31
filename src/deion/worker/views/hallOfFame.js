@@ -16,7 +16,7 @@ async function updatePlayers(
         const stats =
             process.env.SPORT === "basketball"
                 ? ["gp", "min", "trb", "ast", "pts", "per", "ewa", "ws", "ws48"]
-                : ["keyStats"];
+                : ["keyStats", "av"];
 
         let players = await idb.getCopies.players({
             retired: true,
@@ -43,7 +43,10 @@ async function updatePlayers(
             p.teamSums = {};
             for (let j = 0; j < p.stats.length; j++) {
                 const tid = p.stats[j].tid;
-                const EWA = p.stats[j].ewa;
+                const EWA =
+                    process.env.SPORT === "basketball"
+                        ? p.stats[j].ewa
+                        : p.stats[j].av;
                 if (EWA > bestEWA) {
                     p.bestStats = p.stats[j];
                     bestEWA = EWA;

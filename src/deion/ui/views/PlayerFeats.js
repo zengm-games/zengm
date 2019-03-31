@@ -67,13 +67,21 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
                 Statistical Feats <NewWindowLink />
             </h1>
 
-            <p>
-                All games where a player got a triple double, a 5x5, 50 points,
-                25 rebounds, 20 assists, 10 steals, 10 blocks, or 10 threes are
-                listed here (if you change game length in God Mode, the cuttoffs
-                are scaled). Statistical feats from your players are{" "}
-                <span className="text-info">highlighted in blue</span>.
-            </p>
+            {process.env.SPORT === "basketball" ? (
+                <p>
+                    All games where a player got a triple double, a 5x5, 50
+                    points, 25 rebounds, 20 assists, 10 steals, 10 blocks, or 10
+                    threes are listed here (if you change game length in God
+                    Mode, the cuttoffs are scaled). Statistical feats from your
+                    players are{" "}
+                    <span className="text-info">highlighted in blue</span>.
+                </p>
+            ) : (
+                <p>
+                    Statistical feats are not yet implemented for football,
+                    sorry!
+                </p>
+            )}
 
             <DataTable
                 cols={cols}

@@ -69,29 +69,32 @@ async function updatePlayers(
             feat.stats.gmsc = helpers.gameScore(feat.stats);
         }
 
-        const stats = [
-            "gs",
-            "min",
-            "fg",
-            "fga",
-            "fgp",
-            "tp",
-            "tpa",
-            "tpp",
-            "ft",
-            "fta",
-            "ftp",
-            "orb",
-            "drb",
-            "trb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "pf",
-            "pts",
-            "gmsc",
-        ];
+        const stats =
+            process.env.SPORT === "basketball"
+                ? [
+                      "gs",
+                      "min",
+                      "fg",
+                      "fga",
+                      "fgp",
+                      "tp",
+                      "tpa",
+                      "tpp",
+                      "ft",
+                      "fta",
+                      "ftp",
+                      "orb",
+                      "drb",
+                      "trb",
+                      "ast",
+                      "tov",
+                      "stl",
+                      "blk",
+                      "pf",
+                      "pts",
+                      "gmsc",
+                  ]
+                : [];
 
         return {
             abbrev: inputs.abbrev,

@@ -43,13 +43,6 @@ temp disable ads, then get them set up again
 - banner
 - gcs
 
-contract demands and position assignments should be based on which position maximizes p.value, not which position maximizes ovr. would you rather have an 80 ovr qb or a 100 ovr kicker?
-
-HallOfFame criteria text
-
-statistical feats
-- text on PlayerFeats
-
 switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
 
 too many players playing both offense and defense
@@ -66,6 +59,8 @@ football-gm.com
 button on free agents screen to fill out roster with players making up to 2x the minimum
 
 way to specify routes for ShotLocations/Depth, so they aren't included in football/basketball routes
+
+statistical feats
 
 make roster page reorderable like in football mogul
 - it can update t.depth behind the scenes
@@ -146,6 +141,8 @@ football achievements
 - refactor achievements database (EAV)
 
 show game stats in player page
+
+contract demands and position assignments should be based on which position maximizes p.value, not which position maximizes ovr. would you rather have an 80 ovr qb or a 100 ovr kicker?
 
 RatingsOverview - could put in deion, with config to specify categories and names from getCols
 - RatingsForm has this already! re-use

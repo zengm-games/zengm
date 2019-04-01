@@ -95,7 +95,9 @@ class ExportStats extends React.Component {
                             onChange={this.resetState}
                         >
                             <option value="averages">Season Averages</option>
-                            <option value="games">Individual Games</option>
+                            {process.env.SPORT === "basketball" ? (
+                                <option value="games">Individual Games</option>
+                            ) : null}
                         </select>
                     </div>{" "}
                     <div className="form-group mr-2">

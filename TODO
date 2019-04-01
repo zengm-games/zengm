@@ -16,11 +16,11 @@ owner mood
 finances
 
 worker/deion stuff that needs to have a process.env.SPORT case
-- api
-  - exportPlayerGamesCsv
 - playersPlus: weightByMinutes
 
-go through every file in football, make sure it's been updated (like heightToRating)
+update these files in football
+- newSchedule, newSchedule.test
+- heightToRating
 
 relatives too much?? http://localhost/l/3/player/2548
 
@@ -49,6 +49,8 @@ football-gm.com
 ---
 
 button on free agents screen to fill out roster with players making up to 2x the minimum
+
+exportPlayerGamesCsv only supports basketball currently, and it's disabled in ExportStats.js. football box scores are more complicated, more derived stats
 
 use PLAYER_STATS_TABLES for shot locations
 - then DRY exportPlayerAveragesCsv, see comment there

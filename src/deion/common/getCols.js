@@ -1,7 +1,7 @@
 // @flow
 
 import { helpers } from ".";
-import type { SortOrder, SortType } from "../../common/types";
+import type { SortOrder, SortType } from "./types";
 
 type Col = {
     desc?: string,
@@ -291,6 +291,51 @@ const sportSpecificCols: {
               },
               "stat:ws48": {
                   desc: "Win Shares Per 48 Minutes",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgAtRim": {
+                  desc: "At Rim Made",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgaAtRim": {
+                  desc: "At Rim Attempted",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgpAtRim": {
+                  desc: "At Rim Percentage",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgLowPost": {
+                  desc: "Low Post Made",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgaLowPost": {
+                  desc: "Low Post Attempted",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgpLowPost": {
+                  desc: "Low Post Percentage",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgMidRange": {
+                  desc: "Mid Range Made",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgaMidRange": {
+                  desc: "Mid Range Attempted",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgpMidRange": {
+                  desc: "Mid Range Percentage",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
@@ -1478,6 +1523,15 @@ const sportSpecificTitleOverrides =
               "stat:usgp": "USG%",
               "stat:ws": "WS",
               "stat:ws48": "WS/48",
+              "stat:fgAtRim": "AtRimFG",
+              "stat:fgaAtRim": "AtRimFGA",
+              "stat:fgpAtRim": "AtRimFGP",
+              "stat:fgLowPost": "LowPostFG",
+              "stat:fgaLowPost": "LowPostFGA",
+              "stat:fgpLowPost": "LowPostFGP",
+              "stat:fgMidRange": "MidRangeFG",
+              "stat:fgaMidRange": "MidRangeFGA",
+              "stat:fgpMidRange": "MidRangeFGP",
           }
         : {
               "rating:thv": "ThV",
@@ -1684,7 +1738,9 @@ for (const key of Object.keys(cols)) {
 }
 
 export default (...titles: string[]): Col[] => {
+    console.log(titles);
     return titles.map(title => {
+        console.log(title);
         if (!cols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);
         }

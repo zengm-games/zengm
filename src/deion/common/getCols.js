@@ -1738,9 +1738,7 @@ for (const key of Object.keys(cols)) {
 }
 
 export default (...titles: string[]): Col[] => {
-    console.log(titles);
     return titles.map(title => {
-        console.log(title);
         if (!cols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);
         }

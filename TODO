@@ -17,7 +17,6 @@ finances
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api
-  - exportPlayerAveragesCsv
   - exportPlayerGamesCsv
 - playersPlus: weightByMinutes
 
@@ -50,6 +49,9 @@ football-gm.com
 ---
 
 button on free agents screen to fill out roster with players making up to 2x the minimum
+
+use PLAYER_STATS_TABLES for shot locations
+- then DRY exportPlayerAveragesCsv, see comment there
 
 way to specify routes for ShotLocations/Depth, so they aren't included in football/basketball routes
 

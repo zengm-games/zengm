@@ -3,7 +3,7 @@
 import { PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import type { GameResults } from "../../../common/types";
 
 const writeTeamStats = async (results: GameResults) => {
@@ -44,7 +44,9 @@ const writeTeamStats = async (results: GameResults) => {
             }
             ticketPrice = t.budget.ticketPrice.amount;
 
-            att *= defaultGameAttributes.defaultStadiumCapacity / 25000;
+            if (process.env.SPORT === "football") {
+                att *= 28;
+            }
         }
 
         // Some things are only paid for regular season games.

@@ -132,10 +132,10 @@ class FreeAgents extends React.Component {
                     ...stats.map(stat =>
                         helpers.roundStat(p.stats[stat], stat),
                     ),
-                    <span>
+                    <>
                         {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                         {p.contract.exp}
-                    </span>,
+                    </>,
                     <div
                         title={p.mood.text}
                         style={{

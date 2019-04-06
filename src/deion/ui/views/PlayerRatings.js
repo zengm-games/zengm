@@ -26,6 +26,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
         "Pos",
         "Team",
         "Age",
+        "Contract",
         ...(process.env.SPORT === "basketball" ? ["Country"] : []),
         "Ovr",
         "Pot",
@@ -59,6 +60,10 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
                     {p.stats.abbrev}
                 </a>,
                 p.age,
+                <>
+                    {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
+                    {p.contract.exp}
+                </>,
                 ...(process.env.SPORT === "basketball" ? [p.born.loc] : []),
                 p.ratings.ovr,
                 p.ratings.pot,

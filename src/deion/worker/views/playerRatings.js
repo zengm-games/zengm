@@ -90,6 +90,7 @@ async function updatePlayers(
                 "name",
                 "abbrev",
                 "age",
+                "contract",
                 "born",
                 "injury",
                 "hof",

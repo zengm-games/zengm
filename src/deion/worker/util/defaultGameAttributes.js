@@ -104,6 +104,9 @@ if (process.env.SPORT === "football") {
 
         // Arbitrary - 2 injuries per game. Divide over 1000 plays. Bump this up arbitrarily for some reason, wasn't getting 2 per game.
         injuryRate: (2 / 1000 / 22) * 30,
+
+        sonRate: 0.005,
+        brotherRate: 0.005,
     };
 
     Object.assign(defaultGameAttributes, footballOverrides);

@@ -56,6 +56,10 @@ const initAds = (goldUntil: number | void) => {
         hideAds = true;
     }
 
+    if (process.env.SPORT !== "basketball") {
+        hideAds = true;
+    }
+
     if (hideAds) {
         // Get rid of margin saved for skyscraper on right
         const container = document.getElementsByClassName("bbgm-container")[0];

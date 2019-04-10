@@ -1,6 +1,6 @@
-# football
+https://old.reddit.com/r/BasketballGM/comments/baz2vu/minor_mistake_on_player_pages_under_transactions/
 
-talent distribution, free agents vs draft, etc
+# football
 
 new league is too slow, maybe use an estimate for pot
 - artificially decreased NUM_SIMULATIONS, for now
@@ -27,10 +27,10 @@ search for text basketball in deion
 make it clear that accounts are shared, change name of Gold to something sport agnostic
 - NagModal
 
-switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
-
 too many players playing both offense and defense
 - reassess after making roster construction better. if it's still a problem, only allow starter at one position
+
+talent distribution, free agents vs draft, etc
 
 version
 

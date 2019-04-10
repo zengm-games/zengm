@@ -483,17 +483,21 @@ const advStats = async () => {
     ];
     const league = teams.reduce((memo, t) => {
         for (const key of leagueStats) {
+            // Special case for pace - scale by number of games
+            const value =
+                key === "pace" ? t.stats.pace * t.stats.gp : t.stats[key];
+
             if (memo.hasOwnProperty(key)) {
-                memo[key] += t.stats[key];
+                memo[key] += value;
             } else {
-                memo[key] = t.stats[key];
+                memo[key] = value;
             }
         }
         return memo;
     }, {});
 
-    // Special case for pace - average of all teams. This is slightly wrong due to overtime and different numbers of games played, but by the end of the season the difference should be really small.
-    league.pace /= g.numTeams;
+    // Special case for pace - scale by number of games
+    league.pace /= league.gp;
 
     // If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
     if (league.gp === 0) {

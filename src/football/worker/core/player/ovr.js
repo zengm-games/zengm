@@ -172,7 +172,7 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
 
     // Feels silly that the highest rated players are kickers and punters
     if (pos === "K" || pos === "P") {
-        r *= 0.75;
+        r = Math.round(r * 0.75);
     }
 
     return r;

@@ -105,10 +105,14 @@ const value = (
         age = g.season - p.born.year;
     }
 
-    // Quarterbacks are special
-    if (process.env.SPORT === "football" && pr.pos === "QB") {
-        current += 10;
-        potential += 10;
+    if (process.env.SPORT === "football") {
+        if (pr.pos === "QB") {
+            current *= 1.25;
+            potential *= 1.25;
+        } else if (pr.pos === "K" || pr.pos === "P") {
+            current *= 0.5;
+            potential *= 0.5;
+        }
     }
 
     // If performance is already exceeding predicted potential, just use that

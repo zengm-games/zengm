@@ -5,7 +5,7 @@ new league is too slow, maybe use an estimate for pot
 
 salaries
 - K/P less
-  - actually this shoudl be done with value
+  - confirm lowered value works
 
 owner mood
 
@@ -139,6 +139,8 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
+
+god mode option to disable refusing to negotiate
 
 during free agency, after you sign all your free agents it should automatically take you to the league free agents and skip the step of having to continue
 

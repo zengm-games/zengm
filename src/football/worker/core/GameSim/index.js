@@ -1293,7 +1293,7 @@ class GameSim {
 
     probInt(qb: PlayerGameSim) {
         return (
-            (0.025 * this.team[this.d].compositeRating.passCoverage) /
+            (0.03 * this.team[this.d].compositeRating.passCoverage) /
             (0.5 *
                 (qb.compositeRating.passingVision +
                     qb.compositeRating.passingAccuracy))

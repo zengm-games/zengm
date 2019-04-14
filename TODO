@@ -1,7 +1,6 @@
 # football
 
-new league is too slow, maybe use an estimate for pot
-- artificially decreased NUM_SIMULATIONS, for now
+move ovrX ratings right on ratings page
 
 salaries
 - K/P less
@@ -139,6 +138,8 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
+
+on import, check and make sure tid/cid/did are sequential
 
 god mode option to disable refusing to negotiate
 

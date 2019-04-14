@@ -125,7 +125,7 @@ if (process.env.SPORT === "football") {
 }
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
-const NUM_SIMULATIONS = process.env.SPORT === "basketball" ? 20 : 200; // Higher is more accurate, but slower. Low accuracy is fine, though!
+const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 export const bootstrapPot = (
     ratings: MinimalPlayerRatings,
     age: number,

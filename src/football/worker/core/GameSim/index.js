@@ -1315,7 +1315,7 @@ class GameSim {
                     qb.compositeRating.passingVision)) /
             defender.compositeRating.passCoverage;
 
-        const p = 0.57 * factor ** 1.25;
+        const p = 0.55 * factor ** 1.25;
 
         return helpers.bound(p, 0, 0.95);
     }

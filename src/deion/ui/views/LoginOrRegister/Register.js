@@ -3,7 +3,11 @@
 import classNames from "classnames";
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import { local, realtimeUpdate, setTitle, toWorker } from "../../util";
+import { helpers, local, realtimeUpdate, setTitle, toWorker } from "../../util";
+
+const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
+const otherSport =
+    process.env.SPORT === "basketball" ? "Football" : "Basketball";
 
 type Props = {
     ajaxErrorMsg: string,
@@ -100,6 +104,21 @@ class Register extends React.Component<Props, State> {
         return (
             <>
                 <h1>Register</h1>
+                <p className="alert alert-primary">
+                    Accounts are shared between {sport} GM and{" "}
+                    <a
+                        href={`https://play.${otherSport.toLowerCase()}-gm.com/`}
+                    >
+                        {otherSport} GM
+                    </a>
+                    , so if you already have a{" "}
+                    <a
+                        href={`https://play.${otherSport.toLowerCase()}-gm.com/`}
+                    >
+                        {otherSport} GM
+                    </a>{" "}
+                    account, you don't need to create a new one.
+                </p>
                 <form onSubmit={this.handleSubmit} id="register">
                     <input
                         type="hidden"
@@ -213,7 +232,7 @@ class Register extends React.Component<Props, State> {
                             className="form-check-label"
                             htmlFor="register-mailinglist"
                         >
-                            Join BBGM Mailing List (Only major announcements,
+                            Join the mailing list (Only major announcements,
                             about once/year)
                         </label>
                     </div>

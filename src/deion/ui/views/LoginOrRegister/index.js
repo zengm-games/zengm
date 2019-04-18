@@ -8,6 +8,9 @@ import Register from "./Register";
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
 
+const otherSport =
+    process.env.SPORT === "basketball" ? "Football" : "Basketball";
+
 const LoginOrRegister = () => {
     setTitle("Login or Register");
 
@@ -16,7 +19,7 @@ const LoginOrRegister = () => {
             <h1 />
             <div className="row">
                 <div className="col-sm-12 col-md-10 col-lg-8">
-                    <p>Basketball GM accounts enable two features:</p>
+                    <p>Creating an account enables two features:</p>
                     <ol>
                         <li>
                             Your achievements will be stored in the cloud. If
@@ -28,8 +31,14 @@ const LoginOrRegister = () => {
                             .
                         </li>
                         <li>
-                            You can sign up for Basketball GM Gold, which
-                            removes all ads from the game.
+                            You can sign up for GM Gold, which removes all ads
+                            from this game and{" "}
+                            <a
+                                href={`https://play.${otherSport.toLowerCase()}-gm.com/`}
+                            >
+                                {otherSport} GM
+                            </a>
+                            .
                         </li>
                     </ol>
                     <p>

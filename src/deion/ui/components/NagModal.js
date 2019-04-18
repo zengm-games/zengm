@@ -13,6 +13,8 @@ type Props = {
 };
 
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
+const otherSport =
+    process.env.SPORT === "basketball" ? "Football" : "Basketball";
 
 class NagModal extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
@@ -53,16 +55,22 @@ class NagModal extends React.Component<Props> {
                     </p>
                     <p>
                         If you want to support {sport} GM continuing to be a
-                        non-sucky game, sign up for {sport} GM Gold! It's only{" "}
+                        non-sucky game, sign up for GM Gold! It's only{" "}
                         <b>$5/month</b>. What do you get? More like, what don't
                         you get? You get no new features, no new improvements,
-                        no new anything. Just <b>no more ads</b>. That's it.
-                        Why? For basically the same reason I won't make {sport}{" "}
-                        GM freemium. I don't want the free version to become a
-                        crippled advertisement for the pay version. If you agree
-                        that the world is a better place when anyone anywhere
-                        can play {sport} GM, sign up for
-                        {sport} GM Gold today!
+                        no new anything. Just <b>no more ads</b>, both here and
+                        on{" "}
+                        <a
+                            href={`https://play.${otherSport.toLowerCase()}-gm.com/`}
+                        >
+                            {otherSport} GM
+                        </a>
+                        . That's it. Why? For basically the same reason I won't
+                        make {sport} GM freemium. I don't want the free version
+                        to become a crippled advertisement for the pay version.
+                        If you agree that the world is a better place when
+                        anyone anywhere can play {sport} GM and {otherSport} GM,
+                        sign up for GM Gold today!
                     </p>
                     <div className="text-center">
                         <a
@@ -70,7 +78,7 @@ class NagModal extends React.Component<Props> {
                             className="btn btn-primary"
                             onClick={close}
                         >
-                            Sign up for {sport} GM Gold from your account page
+                            Sign up for GM Gold from your account page
                         </a>
                     </div>
                 </ModalBody>

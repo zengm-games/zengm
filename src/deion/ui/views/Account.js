@@ -8,7 +8,7 @@ import {
     STRIPE_PUBLISHABLE_KEY,
     fetchWrapper,
 } from "../../common";
-import { getScript, local, realtimeUpdate, setTitle } from "../util";
+import { getScript, helpers, local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -80,7 +80,7 @@ class StripeButton extends React.Component<
     handleClick() {
         if (this.state.handler) {
             this.state.handler.open({
-                name: "Basketball GM Gold",
+                name: "GM Gold",
                 description: "",
                 amount: 500,
                 email: this.props.email,
@@ -97,7 +97,7 @@ class StripeButton extends React.Component<
                 disabled={!this.state.handler}
                 onClick={this.handleClick}
             >
-                Sign Up for Basketball GM Gold
+                Sign Up for GM Gold
             </button>
         );
     }
@@ -111,7 +111,7 @@ const handleCancel = async e => {
     e.preventDefault();
 
     const result = window.confirm(
-        "Are you sure you want to cancel your Basketball GM Gold subscription?",
+        "Are you sure you want to cancel your GM Gold subscription?",
     );
 
     if (result) {
@@ -217,9 +217,8 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                 <p className="text-danger">{this.state.logoutError}</p>
                 {showGoldActive ? (
                     <p>
-                        Basketball GM Gold: Active, renews for $5 on{" "}
-                        {goldUntilDateString} (
-                        <a href="/account/update_card">Update card</a> or{" "}
+                        GM Gold: Active, renews for $5 on {goldUntilDateString}{" "}
+                        (<a href="/account/update_card">Update card</a> or{" "}
                         <a href="" id="gold-cancel" onClick={handleCancel}>
                             cancel
                         </a>
@@ -227,10 +226,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                     </p>
                 ) : null}
                 {showGoldCancelled ? (
-                    <p>
-                        Basketball GM Gold: Cancelled, expires{" "}
-                        {goldUntilDateString}
-                    </p>
+                    <p>GM Gold: Cancelled, expires {goldUntilDateString}</p>
                 ) : null}
             </>
         );
@@ -277,9 +273,13 @@ const Account = ({
 
     let goldPitchDiv = null;
     if (showGoldPitch) {
+        const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
+        const otherSport =
+            process.env.SPORT === "basketball" ? "Football" : "Basketball";
+
         goldPitchDiv = (
             <>
-                <h2>Basketball GM Gold</h2>
+                <h2>GM Gold</h2>
 
                 <div className="row">
                     <div className="col-lg-8 col-md-10">
@@ -309,18 +309,23 @@ const Account = ({
                         </p>
 
                         <p>
-                            If you want to support Basketball GM continuing to
-                            be a non-sucky game, sign up for Basketball GM Gold!
-                            It's only <b>$5/month</b>. What do you get? More
-                            like, what don't you get? You get no new features,
-                            no new improvements, no new anything. Just{" "}
-                            <b>no more ads</b>. That's it. Why? For basically
-                            the same reason I won't make Basketball GM freemium.
-                            I don't want the free version to become a crippled
-                            advertisement for the pay version. If you agree that
-                            the world is a better place when anyone anywhere can
-                            play Basketball GM, sign up for Basketball GM Gold
-                            today!
+                            If you want to support {sport} GM continuing to be a
+                            non-sucky game, sign up for GM Gold! It's only{" "}
+                            <b>$5/month</b>. What do you get? More like, what
+                            don't you get? You get no new features, no new
+                            improvements, no new anything. Just{" "}
+                            <b>no more ads</b>, both here and on{" "}
+                            <a
+                                href={`https://play.${otherSport.toLowerCase()}-gm.com/`}
+                            >
+                                {otherSport} GM
+                            </a>
+                            . That's it. Why? For basically the same reason I
+                            won't make {sport} GM freemium. I don't want the
+                            free version to become a crippled advertisement for
+                            the pay version. If you agree that the world is a
+                            better place when anyone anywhere can play {sport}{" "}
+                            GM and {otherSport} GM, sign up for GM Gold today!
                         </p>
 
                         {!loggedIn || !email ? (
@@ -328,7 +333,7 @@ const Account = ({
                                 <a href="/account/login_or_register">
                                     Log in or create an account
                                 </a>{" "}
-                                to sign up for Basketball GM Gold.
+                                to sign up for GM Gold.
                             </p>
                         ) : (
                             <p>

@@ -30,8 +30,8 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
         ...(process.env.SPORT === "basketball" ? ["Country"] : []),
         "Ovr",
         "Pot",
-        ...ovrsPotsColNames,
         ...ratings.map(rating => `rating:${rating}`),
+        ...ovrsPotsColNames,
     );
 
     const rows = players.map(p => {
@@ -67,8 +67,8 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
                 ...(process.env.SPORT === "basketball" ? [p.born.loc] : []),
                 p.ratings.ovr,
                 p.ratings.pot,
-                ...ovrsPotsRatings,
                 ...ratings.map(rating => p.ratings[rating]),
+                ...ovrsPotsRatings,
             ],
             classNames: {
                 "table-danger": p.hof,

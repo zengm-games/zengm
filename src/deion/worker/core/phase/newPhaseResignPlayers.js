@@ -46,7 +46,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
             neededPositionsByTid.set(tid, counts);
         }
         for (const p of players) {
-            if (p.contract.exp > g.season) {
+            if (p.contract.exp <= g.season) {
                 continue;
             }
 
@@ -63,11 +63,16 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
     if (g.hardCap) {
         for (let tid = 0; tid < g.numTeams; tid++) {
             const payroll = await team.getPayroll(tid);
-            payrollsByTid.set(tid, payroll);
+
+            const expiringPayroll = players
+                .filter(p => p.tid === tid && p.contract.exp <= g.season)
+                .reduce((total, p) => total + p.contract.amount, 0);
+
+            payrollsByTid.set(tid, payroll - expiringPayroll);
         }
     }
 
-    const playersSorted = orderBy(players, "value", "desc");
+    const playersSorted = orderBy(players, ["tid", "value"], ["asc", "desc"]);
     for (const p of playersSorted) {
         if (p.contract.exp <= g.season) {
             if (g.userTids.includes(p.tid) && local.autoPlaySeasons === 0) {
@@ -100,21 +105,20 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                 }
             } else {
                 // AI teams
-                let skipDueToPos = false;
-
                 const counts = neededPositionsByTid.get(p.tid);
                 const pos = p.ratings[p.ratings.length - 1].pos;
 
+                const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
+                let probReSign = p.value / 100 - factor;
+
+                // Make it less likely to re-sign players based on roster needs
                 if (
                     counts !== undefined &&
                     counts[pos] !== undefined &&
                     counts[pos] <= 0
                 ) {
-                    skipDueToPos = true;
+                    probReSign -= 0.25;
                 }
-
-                const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
-                let probReSign = p.value / 100 - factor;
 
                 const payroll = payrollsByTid.get(p.tid);
                 const contract = player.genContract(p);
@@ -132,7 +136,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                 }
 
                 // Should eventually be smarter than a coin flip
-                if (!skipDueToPos && Math.random() < probReSign) {
+                if (Math.random() < probReSign) {
                     contract.exp += 1; // Otherwise contracts could expire this season
                     player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
 

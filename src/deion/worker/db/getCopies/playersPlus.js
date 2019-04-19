@@ -313,18 +313,21 @@ const processRatings = (
     }
 };
 
-const weightByMinutes = [
-    "per",
-    "astp",
-    "blkp",
-    "drbp",
-    "orbp",
-    "stlp",
-    "trbp",
-    "usgp",
-    "drtg",
-    "ortg",
-];
+const weightByMinutes =
+    process.env.SPORT === "basketball"
+        ? [
+              "per",
+              "astp",
+              "blkp",
+              "drbp",
+              "orbp",
+              "stlp",
+              "trbp",
+              "usgp",
+              "drtg",
+              "ortg",
+          ]
+        : [];
 const reduceCareerStats = (careerStats, attr, playoffs) => {
     return careerStats
         .filter(cs => cs.playoffs === playoffs)

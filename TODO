@@ -12,9 +12,6 @@ owner mood
 
 finances
 
-worker/deion stuff that needs to have a process.env.SPORT case
-- playersPlus: weightByMinutes
-
 update these files in football
 - newSchedule, newSchedule.test
 
@@ -32,7 +29,6 @@ version
 football-gm.com
 - make monorepo with basketball-gm.com, to easily share common parts
 - logo in ~/Documents/BBGM/Football main logo
-- https://github.com/11ty/eleventy/
 
 confirm subscription works from football-gm.com
 - Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account

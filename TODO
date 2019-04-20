@@ -1,6 +1,7 @@
 # football
 
-should always sign top rookies. maybe lower contracts a bit?
+talent distribution, free agents vs draft, etc
+- lower max salary to min.. are good FAs available still, better than draft?
 
 salaries
 - K/P less
@@ -19,8 +20,6 @@ search for text basketball in deion
 
 too many players playing both offense and defense
 - reassess after making roster construction better. if it's still a problem, only allow starter at one position
-
-talent distribution, free agents vs draft, etc
 
 version
 
@@ -134,6 +133,11 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
+
+redesign playoffs page, with logos
+
+god mode options for foul rate and foul outs - Jlebron13 on discord
+- other sport specific options, like shot tendencies, enabling/disabling 3 pointers, etc
 
 on import, check and make sure tid/cid/did are sequential
 

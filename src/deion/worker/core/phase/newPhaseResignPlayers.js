@@ -72,9 +72,21 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
         }
     }
 
-    const playersSorted = orderBy(players, ["tid", "value"], ["asc", "desc"]);
+    const playersSorted = orderBy(
+        players,
+        [
+            "tid",
+            p => {
+                return g.hardCap && p.draft.year === g.season ? 1 : -1;
+            },
+            "value",
+        ],
+        ["asc", "desc", "desc"],
+    );
     for (const p of playersSorted) {
         if (p.contract.exp <= g.season) {
+            const draftPick = g.hardCap && p.draft.year === g.season;
+
             if (g.userTids.includes(p.tid) && local.autoPlaySeasons === 0) {
                 const tid = p.tid;
 
@@ -84,6 +96,15 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
                     PHASE.RESIGN_PLAYERS,
                     baseMoodsReSigning,
                 );
+                if (draftPick) {
+                    p.contract.amount /= 2;
+                    if (p.contract.amount < g.minContract) {
+                        p.contract.amount = g.minContract;
+                    } else {
+                        p.contract.amount =
+                            50 * Math.round(p.contract.amount / 50); // Make it a multiple of 50k
+                    }
+                }
                 await idb.cache.players.put(p);
 
                 const error = await contractNegotiation.create(
@@ -122,6 +143,26 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
                 const payroll = payrollsByTid.get(p.tid);
                 const contract = player.genContract(p);
+
+                // Always sign rookies, and give them smaller contracts
+                if (draftPick) {
+                    contract.amount /= 2;
+                    if (contract.amount < g.minContract) {
+                        contract.amount = g.minContract;
+                    } else {
+                        contract.amount = 50 * Math.round(contract.amount / 50); // Make it a multiple of 50k
+                    }
+
+                    if (p.draft.round <= 3) {
+                        probReSign = 1;
+                    } else if (p.draft.round <= 5) {
+                        probReSign += 0.35;
+                    } else if (p.draft.round <= 7) {
+                        probReSign += 0.25;
+                    } else if (p.draft.round <= 8) {
+                        probReSign += 0.15;
+                    }
+                }
 
                 if (g.hardCap) {
                     if (payroll === undefined) {

@@ -9,6 +9,7 @@ import countPositions from "./countPositions";
 import countSkills from "./countSkills";
 import leagueAverageContract from "./leagueAverageContract";
 import maxRatingDists from "./maxRatingDists";
+import percentageDraftPicksSigned from "./percentageDraftPicksSigned";
 import recomputeFreeAgentContracts from "./recomputeFreeAgentContracts";
 import valueDiff from "./valueDiff";
 
@@ -20,6 +21,7 @@ export default {
     countSkills,
     leagueAverageContract,
     maxRatingDists,
+    percentageDraftPicksSigned,
     recomputeFreeAgentContracts,
     valueDiff,
 };

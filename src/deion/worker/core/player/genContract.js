@@ -24,7 +24,15 @@ const genContract = (
 ): PlayerContract => {
     const ratings = p.ratings[p.ratings.length - 1];
 
-    const factor = g.hardCap ? 2.6 : 3.4;
+    let factor = g.hardCap ? 1.75 : 3.4;
+
+    if (process.env.SPORT === "football") {
+        if (ratings.pos === "QB") {
+            factor *= 1.5;
+        } else if (ratings.pos === "K" || ratings.pos === "P") {
+            factor *= 0.25;
+        }
+    }
 
     let amount =
         (p.value / 100 - 0.47) * factor * (g.maxContract - g.minContract) +

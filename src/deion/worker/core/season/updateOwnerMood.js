@@ -23,6 +23,8 @@ const updateOwnerMood = async (): Promise<OwnerMoodDeltas> => {
         throw new Error("Invalid g.userTid");
     }
 
+    const numPlayoffRounds = g.numGamesPlayoffSeries.length;
+
     const deltas = {
         wins: (0.25 * (t.seasonAttrs.won - g.numGames / 2)) / (g.numGames / 2),
         playoffs: 0,
@@ -30,8 +32,9 @@ const updateOwnerMood = async (): Promise<OwnerMoodDeltas> => {
     };
     if (t.seasonAttrs.playoffRoundsWon < 0) {
         deltas.playoffs = -0.2;
-    } else if (t.seasonAttrs.playoffRoundsWon < 4) {
-        deltas.playoffs = 0.04 * t.seasonAttrs.playoffRoundsWon;
+    } else if (t.seasonAttrs.playoffRoundsWon < numPlayoffRounds) {
+        deltas.playoffs =
+            (0.16 / numPlayoffRounds) * t.seasonAttrs.playoffRoundsWon;
     } else {
         deltas.playoffs = 0.2;
     }

@@ -386,7 +386,14 @@ export const createWithoutSaving = (
                 // Develop player and see if he is still non-retired
                 player.develop(p, numYearsAgo, true);
                 player.updateValues(p);
-                if (!player.shouldRetire(p) || numYearsAgo <= 3) {
+                // Run shouldRetire 4 times to simulate past shouldRetire calls
+                if (
+                    (!player.shouldRetire(p) &&
+                        !player.shouldRetire(p) &&
+                        !player.shouldRetire(p) &&
+                        !player.shouldRetire(p)) ||
+                    numYearsAgo <= 3
+                ) {
                     // Do this before developing, to save ratings
                     p.draft = {
                         round,
@@ -552,10 +559,12 @@ export const createWithoutSaving = (
         // Finally, free agents
         for (let i = 0; i < maxNumFreeAgents; i++) {
             const p = keptPlayers[i];
-            p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0; // So half will be eligible to retire after the first season
-            player.setContract(p, player.genContract(p, false), false);
-            player.addToFreeAgents(p, g.phase, baseMoods);
-            players.push(p);
+            if (p) {
+                p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0; // So half will be eligible to retire after the first season
+                player.setContract(p, player.genContract(p, false), false);
+                player.addToFreeAgents(p, g.phase, baseMoods);
+                players.push(p);
+            }
         }
     }
 

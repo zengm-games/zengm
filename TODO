@@ -1,11 +1,10 @@
 # football
 
-talent distribution, free agents vs draft, etc
-- lower max salary to min.. are good FAs available still, better than draft?
-
 salaries
 - K/P less
   - confirm lowered value works
+- QB more
+- balance
 
 finances
 
@@ -28,7 +27,11 @@ football-gm.com
 confirm subscription works from football-gm.com
 - Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
 
+play test bbgm a lot before deploying
+
 ---
+
+why is free agency so slow?
 
 button on free agents screen to fill out roster with players making up to 2x the minimum
 

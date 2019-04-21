@@ -1,8 +1,5 @@
 # football
 
-"sign" button on FreeAgents and NegotiationList
-- only enabled if you have roon
-
 finances
 
 update these files in football
@@ -131,6 +128,8 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
+
+after draft, should forward to draft summary, not draft scouting
 
 redesign playoffs page, with logos and abbrevs
 

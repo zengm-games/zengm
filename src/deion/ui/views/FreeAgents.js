@@ -3,11 +3,12 @@ import React from "react";
 import { PHASE } from "../../common";
 import {
     DataTable,
+    NegotiateButtons,
     NewWindowLink,
     PlayerNameLabels,
     RosterSalarySummary,
 } from "../components";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle } from "../util";
 
 class FreeAgents extends React.Component {
     constructor(props) {
@@ -95,25 +96,6 @@ class FreeAgents extends React.Component {
         );
 
         const rows = players.map(p => {
-            let negotiateButton;
-            if (
-                helpers.refuseToNegotiate(
-                    p.contract.amount * 1000,
-                    p.freeAgentMood[userTid],
-                )
-            ) {
-                negotiateButton = "Refuses!";
-            } else {
-                negotiateButton = (
-                    <button
-                        className="btn btn-light-bordered btn-xs"
-                        disabled={gamesInProgress}
-                        onClick={() => toWorker("actions.negotiate", p.pid)}
-                    >
-                        Negotiate
-                    </button>
-                );
-            }
             return {
                 key: p.pid,
                 data: [
@@ -148,7 +130,13 @@ class FreeAgents extends React.Component {
                             {p.freeAgentMood[userTid]}
                         </span>
                     </div>,
-                    negotiateButton,
+                    <NegotiateButtons
+                        capSpace={capSpace}
+                        disabled={gamesInProgress}
+                        minContract={minContract}
+                        p={p}
+                        userTid={userTid}
+                    />,
                 ],
             };
         });

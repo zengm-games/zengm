@@ -1,5 +1,3 @@
-// @flow
-
 import { idb } from "../../db";
 import { g } from "../../util";
 

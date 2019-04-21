@@ -893,6 +893,11 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
     });
 };
 
+// Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!
+const realtimeUpdate = async (updateEvents: UpdateEvents) => {
+    await toUI(["realtimeUpdate", updateEvents]);
+};
+
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
     const players = await idb.cache.players.indexGetAll(
         "playersByTid",
@@ -973,6 +978,28 @@ const runBefore = async (
     }
 
     return [];
+};
+
+const sign = async (
+    pid: number,
+    amount: number,
+    exp: number,
+): Promise<?string> => {
+    // Kind of hacky that a negotiation is needed...
+    const negotiation = await idb.cache.negotiations.get(pid);
+    if (!negotiation) {
+        const errorMsg = await contractNegotiation.create(pid, false);
+        if (errorMsg !== undefined && errorMsg) {
+            return errorMsg;
+        }
+    }
+
+    const errorMsg = await contractNegotiation.accept(pid, amount, exp);
+    if (errorMsg !== undefined && errorMsg) {
+        return errorMsg;
+    }
+
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const startFantasyDraft = async (
@@ -1314,12 +1341,14 @@ export default {
     processInputs,
     proposeTrade,
     ratingsStatsPopoverInfo,
+    realtimeUpdate,
     releasePlayer,
     removeLeague,
     reorderDepthDrag,
     reorderRosterDrag,
     resetPlayingTime,
     runBefore,
+    sign,
     startFantasyDraft,
     switchTeam,
     tradeCounterOffer,

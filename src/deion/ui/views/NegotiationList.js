@@ -2,11 +2,12 @@ import PropTypes from "prop-types";
 import React from "react";
 import {
     DataTable,
+    NegotiateButtons,
     NewWindowLink,
     PlayerNameLabels,
     RosterSalarySummary,
 } from "../components";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle } from "../util";
 
 const NegotiationList = ({
     capSpace,
@@ -37,25 +38,6 @@ const NegotiationList = ({
     );
 
     const rows = players.map(p => {
-        let negotiateButton;
-        if (
-            helpers.refuseToNegotiate(
-                p.contract.amount * 1000,
-                p.freeAgentMood[userTid],
-                p.draft.year === season,
-            )
-        ) {
-            negotiateButton = "Refuses!";
-        } else {
-            negotiateButton = (
-                <button
-                    className="btn btn-light-bordered btn-xs"
-                    onClick={() => toWorker("actions.negotiate", p.pid)}
-                >
-                    Negotiate
-                </button>
-            );
-        }
         return {
             key: p.pid,
             data: [
@@ -88,7 +70,13 @@ const NegotiationList = ({
                         {p.freeAgentMood[userTid]}
                     </span>
                 </div>,
-                negotiateButton,
+                <NegotiateButtons
+                    capSpace={capSpace}
+                    minContract={minContract}
+                    p={p}
+                    season={season}
+                    userTid={userTid}
+                />,
             ],
         };
     });

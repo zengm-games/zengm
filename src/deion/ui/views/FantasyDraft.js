@@ -53,11 +53,11 @@ class FantasyDraft extends React.Component {
                 <p>
                     In a "fantasy draft", all non-retired players are put into
                     one big pool and teams take turns drafting players, similar
-                    to a fantasy basketball draft. At the beginning of the
-                    draft, the order of picks is randomized. During the draft,
-                    the order of picks snakes (reverses every other round). For
-                    example, the team that picks first in the first round picks
-                    last in the second round.
+                    to a fantasy {process.env.SPORT} draft. At the beginning of
+                    the draft, the order of picks is randomized. During the
+                    draft, the order of picks snakes (reverses every other
+                    round). For example, the team that picks first in the first
+                    round picks last in the second round.
                 </p>
 
                 <p>

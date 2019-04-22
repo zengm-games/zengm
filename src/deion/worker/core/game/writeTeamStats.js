@@ -66,18 +66,38 @@ const writeTeamStats = async (results: GameResults) => {
             coachingPaid = t.budget.coaching.amount / g.numGames;
             healthPaid = t.budget.health.amount / g.numGames;
             facilitiesPaid = t.budget.facilities.amount / g.numGames;
-            merchRevenue = ((g.salaryCap / 90000) * 4.5 * att) / 1000;
-            if (merchRevenue > 250) {
-                merchRevenue = 250;
-            }
-            sponsorRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
-            if (sponsorRevenue > 600) {
-                sponsorRevenue = 600;
-            }
-            nationalTvRevenue = (g.salaryCap / 90000) * 375;
-            localTvRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
-            if (localTvRevenue > 1200) {
-                localTvRevenue = 1200;
+
+            if (process.env.SPORT === "basketball") {
+                merchRevenue = ((g.salaryCap / 90000) * 4.5 * att) / 1000;
+                if (merchRevenue > 250) {
+                    merchRevenue = 250;
+                }
+                sponsorRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
+                if (sponsorRevenue > 600) {
+                    sponsorRevenue = 600;
+                }
+                nationalTvRevenue = (g.salaryCap / 90000) * 375;
+                localTvRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
+                if (localTvRevenue > 1200) {
+                    localTvRevenue = 1200;
+                }
+            } else {
+                // Football targets:
+                // expenses: $350M
+                // national TV: $170M
+                // local TV: $50M
+                // ticket: $75M
+                // sponsorship: $25M
+                // merchandise: $25M
+
+                nationalTvRevenue = 175000 / g.numGames;
+
+                localTvRevenue =
+                    ((5000 / g.numGames) * att) / g.defaultStadiumCapacity;
+                sponsorRevenue =
+                    ((2500 / g.numGames) * att) / g.defaultStadiumCapacity;
+                merchRevenue =
+                    ((2500 / g.numGames) * att) / g.defaultStadiumCapacity;
             }
         }
 

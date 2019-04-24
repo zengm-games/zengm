@@ -284,8 +284,8 @@ const Account = ({
                 <div className="row">
                     <div className="col-lg-8 col-md-10">
                         <p>
-                            Basketball GM is completely free. There will never
-                            be any{" "}
+                            {sport} GM is completely free. There will never be
+                            any{" "}
                             <a
                                 href="http://en.wikipedia.org/wiki/Freemium"
                                 rel="noopener noreferrer"

@@ -13,7 +13,7 @@ const sign = (
     phase: Phase,
 ) => {
     p.tid = tid;
-    p.gamesUntilTradable = 14;
+    p.gamesUntilTradable = Math.round(0.17 * g.numGames); // 14 for basketball, 3 for football
 
     // Handle stats if the season is in progress
     if (phase <= PHASE.PLAYOFFS) {

@@ -2,7 +2,7 @@
 
 import { team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { TradeSummary, TradeTeams } from "../../../common/types";
 
 /**
@@ -70,9 +70,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
                         if (dpids[i].includes(picks[j].dpid)) {
                             s.teams[i].picks.push({
                                 dpid: picks[j].dpid,
-                                desc: `${picks[j].season} ${
-                                    picks[j].round === 1 ? "1st" : "2nd"
-                                } round pick (${
+                                desc: `${picks[j].season} ${helpers.ordinal(
+                                    picks[j].round,
+                                )} round pick (${
                                     g.teamAbbrevsCache[picks[j].originalTid]
                                 })`,
                             });

@@ -94,7 +94,8 @@ const getSortVal = (value: any = null, sortType: SortType | void) => {
             }
 
             if (won + lost + tied > 0) {
-                return (10000 * (won + 0.5 * tied)) / (won + lost + tied) + won;
+                // Sort by wins, winp
+                return won + (won + 0.5 * tied) / (won + lost + tied);
             }
 
             return 0;

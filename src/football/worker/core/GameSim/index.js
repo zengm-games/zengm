@@ -1447,6 +1447,8 @@ class GameSim {
                     this.doSafety();
                 }
             } else {
+                this.advanceYds(0);
+
                 this.playByPlay.logEvent("passIncomplete", {
                     clock: this.clock,
                     t: this.o,

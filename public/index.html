@@ -70,6 +70,8 @@
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
       if (window.enableLogging) {
+        window.googleAnalyticsID = "GOOGLE_ANALYTICS_ID";
+
         var s = document.createElement("script");
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID";

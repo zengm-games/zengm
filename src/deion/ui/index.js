@@ -184,7 +184,7 @@ const setupRoutes = () => {
         if (!event.detail.context.state.noTrack) {
             if (window.enableLogging && window.gtag) {
                 if (!initialLoad) {
-                    window.gtag("config", "UA-38759330-1", {
+                    window.gtag("config", window.googleAnalyticsID, {
                         // Normalize league URLs to all look the same
                         page_path: event.detail.context.path.replace(
                             /^\/l\/[0-9]+?\//,

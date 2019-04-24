@@ -10,9 +10,6 @@ Fantasy Draft does not work: Unknown column: "stat:per"
 
 cannot trade recently acquired player for 14 or more games
 
-search for text basketball in deion
-- links to reddit/discord
-
 too many players playing both offense and defense
 - reassess after making roster construction better. if it's still a problem, only allow starter at one position
 
@@ -23,7 +20,7 @@ football-gm.com
 - logo in ~/Documents/BBGM/Football main logo
 
 confirm subscription works from football-gm.com
-- Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
+- Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-accountzg
 
 play test bbgm a lot before deploying
 
@@ -166,6 +163,8 @@ more accurage game sim
 - State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
 
 ---
+
+update discord links after creating football channel
 
 when live simming last game of playoffs, redirect to season summary is disabled. so it should put it in the Play menu then, until you view it
 

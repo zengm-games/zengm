@@ -182,7 +182,7 @@ class Draft extends React.Component {
                         p.stats &&
                         typeof p.stats[stat] === "number"
                             ? helpers.roundStat(p.stats[stat], stat)
-                            : null,
+                            : p.stats[stat],
                     ),
                 );
             }

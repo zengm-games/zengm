@@ -15,7 +15,13 @@ async function updateDraft(
         updateEvents.includes("playerMovement")
     ) {
         const fantasyDraft = g.phase === PHASE.FANTASY_DRAFT;
-        const stats = fantasyDraft ? ["per", "ewa"] : [];
+        let stats = [];
+        if (fantasyDraft) {
+            stats =
+                process.env.SPORT === "basketball"
+                    ? ["per", "ewa"]
+                    : ["gp", "keyStats", "av"];
+        }
 
         let undrafted = await idb.cache.players.indexGetAll(
             "playersByTid",

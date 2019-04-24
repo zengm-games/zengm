@@ -2,6 +2,7 @@ import html2canvas from "html2canvas";
 import { fetchWrapper } from "../../common";
 import { logEvent } from ".";
 
+console.log(555);
 const takeScreenshot = async () => {
     const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
 

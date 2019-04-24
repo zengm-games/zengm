@@ -92,6 +92,7 @@ class Register extends React.Component<Props, State> {
                 this.setState(updatedState);
             }
         } catch (err) {
+            console.log(err);
             this.setState({
                 errorMessageOverall: this.props.ajaxErrorMsg,
             });

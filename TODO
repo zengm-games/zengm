@@ -1,5 +1,7 @@
 # football
 
+registration works, but still shows error under form
+
 pass rushing should impact completion percentage and distance
 
 in the live sim holding penalties on punts result in the punting team getting the ball where the punt is downed
@@ -14,7 +16,8 @@ football-gm.com
 - logo in ~/Documents/BBGM/Football main logo
 
 confirm subscription works from football-gm.com
-- Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-accountzg
+- Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
+- cross promote in welcome emails
 
 play test bbgm a lot before deploying
 

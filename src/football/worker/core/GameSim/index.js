@@ -1400,7 +1400,10 @@ class GameSim {
 
             this.recordStat(this.o, qb, "pss");
             this.recordStat(this.o, target, "tgt");
-            this.recordStat(this.d, defender, "defPssDef");
+
+            if (Math.random() < 1 / 8) {
+                this.recordStat(this.d, defender, "defPssDef");
+            }
 
             const complete =
                 Math.random() < this.probComplete(qb, target, defender);

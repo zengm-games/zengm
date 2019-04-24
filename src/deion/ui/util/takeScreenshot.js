@@ -1,6 +1,7 @@
 import html2canvas from "html2canvas";
 import { fetchWrapper } from "../../common";
-import { logEvent } from ".";
+import helpers from "./helpers";
+import logEvent from "./logEvent";
 
 console.log(555);
 const takeScreenshot = async () => {
@@ -16,9 +17,11 @@ const takeScreenshot = async () => {
     const watermark = document.createElement("div");
     const logos = document.getElementsByClassName("spin");
     const logoHTML = logos.length > 0 ? `<img src="${logos[0].src}">` : "";
-    watermark.innerHTML = `<nav class="navbar navbar-light bg-light mb-3"><a class="navbar-brand mr-auto" href="#">${logoHTML} Basketball GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
+    watermark.innerHTML = `<nav class="navbar navbar-light bg-light mb-3"><a class="navbar-brand mr-auto" href="#">${logoHTML} ${helpers.upperCaseFirstLetter(
+        process.env.SPORT,
+    )} GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
         theme === "dark" ? "#fff" : "#000"
-    }; font-weight: bold">Play your own league free at basketball-gm.com</span></nav>`;
+    }; font-weight: bold">Play your own league free at {process.env.SPORT}-gm.com</span></nav>`;
     contentEl.insertBefore(watermark, contentEl.firstChild);
     contentEl.style.padding = "8px";
 

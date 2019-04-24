@@ -194,12 +194,12 @@ class PlayByPlayLogger {
                 if (yds === undefined) {
                     throw new Error("Missing yds");
                 }
-                text = `${names[0]} punted ${
+                text = `${names[0]} punted ${yds} yards${
                     touchback
-                        ? "for a touchback"
+                        ? " for a touchback"
                         : yds < 0
-                        ? "into the end zone"
-                        : `to the ${yds} yard line`
+                        ? " into the end zone"
+                        : ""
                 }`;
             } else if (type === "puntReturn") {
                 if (names === undefined) {

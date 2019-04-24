@@ -38,6 +38,7 @@ export type DraftLotteryResultArray = {|
     pick?: number,
     won: number,
     lost: number,
+    tied: number,
 |}[];
 
 export type DraftLotteryResult = {|

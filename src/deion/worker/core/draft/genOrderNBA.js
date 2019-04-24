@@ -159,9 +159,11 @@ const genOrder = async (
                 const t = teams.find(t2 => t2.tid === dp.tid);
                 let won = 0;
                 let lost = 0;
+                let tied = 0;
                 if (t) {
                     won = t.seasonAttrs.won;
                     lost = t.seasonAttrs.lost;
+                    tied = t.seasonAttrs.tied;
                 }
 
                 // For the original team
@@ -174,6 +176,7 @@ const genOrder = async (
                     pick: dp.pick,
                     won,
                     lost,
+                    tied,
                 };
             }),
     };

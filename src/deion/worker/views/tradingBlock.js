@@ -50,6 +50,7 @@ async function updateUserRoster(
             gameOver: g.gameOver,
             phase: g.phase,
             stats,
+            ties: g.ties,
             userPicks,
             userRoster,
         };

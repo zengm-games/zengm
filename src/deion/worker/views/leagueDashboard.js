@@ -51,6 +51,8 @@ async function updateTeam(
             abbrev: t.abbrev,
             won: latestSeason !== undefined ? latestSeason.won : 0,
             lost: latestSeason !== undefined ? latestSeason.lost : 0,
+            tied: latestSeason !== undefined ? latestSeason.tied : 0,
+            ties: g.ties,
             cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0, // [millions of dollars]
             salaryCap: g.salaryCap / 1000, // [millions of dollars]
             season: g.season,

@@ -646,7 +646,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["abbrev", "region", "name", "strategy"],
-            seasonAttrs: ["won", "lost"],
+            seasonAttrs: ["won", "lost", "tied"],
             season: g.season,
         });
 
@@ -699,6 +699,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                     strategy: teams[tid].strategy,
                     won: teams[tid].seasonAttrs.won,
                     lost: teams[tid].seasonAttrs.lost,
+                    tied: teams[tid].seasonAttrs.tied,
                     pids: offers[i].pids,
                     dpids: offers[i].dpids,
                     warning: offers[i].warning,

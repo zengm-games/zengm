@@ -61,6 +61,7 @@ async function updateDraftLottery(
         return {
             result: draftLotteryResult.result,
             season: draftLotteryResult.season,
+            ties: g.ties,
             type,
             userTid: g.userTid,
         };

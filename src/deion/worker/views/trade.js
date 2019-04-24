@@ -144,7 +144,7 @@ async function updateTrade(): void | { [key: string]: any } {
         tid: otherTid,
         season: g.season,
         attrs: ["strategy"],
-        seasonAttrs: ["won", "lost"],
+        seasonAttrs: ["won", "lost", "tied"],
     });
 
     if (t === undefined) {
@@ -194,6 +194,8 @@ async function updateTrade(): void | { [key: string]: any } {
         strategy: t.strategy,
         won: t.seasonAttrs.won,
         lost: t.seasonAttrs.lost,
+        tied: t.seasonAttrs.tied,
+        ties: g.ties,
         gameOver: g.gameOver,
         godMode: g.godMode,
         forceTrade: false,
@@ -220,6 +222,7 @@ async function updateTrade(): void | { [key: string]: any } {
     vars.showResigningMsg =
         g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
 
+    console.log(vars);
     return vars;
 }
 

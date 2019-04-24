@@ -166,11 +166,14 @@ class Trade extends React.Component {
             stats,
             strategy,
             teams,
+            tied,
+            ties,
             userPicks,
             userRoster,
             userTeamName,
             won,
         } = this.props;
+        console.log(this.props);
 
         setTitle("Trade");
 
@@ -213,7 +216,8 @@ class Trade extends React.Component {
                             ))}
                         </select>
                         <div style={{ paddingTop: 7 }}>
-                            {won}-{lost}, {strategy}
+                            {won}-{lost}
+                            {ties ? <>-{tied}</> : null}, {strategy}
                         </div>
                         <div className="clearfix" />
                         <AssetList
@@ -291,6 +295,8 @@ Trade.propTypes = {
             tid: PropTypes.number.isRequired,
         }),
     ).isRequired,
+    tied: PropTypes.number,
+    ties: PropTypes.bool.isRequired,
     userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
     userDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
     userPicks: PropTypes.array.isRequired,

@@ -87,6 +87,7 @@ const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
 type Props = {
     result: DraftLotteryResultArray | void,
     season: number,
+    ties: boolean,
     type: "completed" | "projected" | "readyToRun",
     userTid: number,
 };
@@ -165,7 +166,7 @@ class DraftLottery extends React.Component<Props, State> {
     }
 
     render() {
-        const { season, type, userTid } = this.props;
+        const { season, ties, type, userTid } = this.props;
         const result =
             this.state.result !== undefined
                 ? this.state.result
@@ -209,6 +210,7 @@ class DraftLottery extends React.Component<Props, State> {
                                         pick,
                                         won,
                                         lost,
+                                        tied,
                                     },
                                     i,
                                 ) => {
@@ -270,6 +272,7 @@ class DraftLottery extends React.Component<Props, State> {
                                                     ])}
                                                 >
                                                     {won}-{lost}
+                                                    {ties ? <>-{tied}</> : null}
                                                 </a>
                                             </td>
                                             <td>{chances}</td>
@@ -350,6 +353,7 @@ DraftLottery.propTypes = {
         }),
     ),
     season: PropTypes.number.isRequired,
+    ties: PropTypes.bool.isRequired,
     type: PropTypes.string.isRequired,
     userTid: PropTypes.number.isRequired,
 };

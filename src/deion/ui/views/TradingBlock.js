@@ -20,6 +20,8 @@ const Offer = props => {
         stats,
         strategy,
         tid,
+        tied,
+        ties,
         warning,
         won,
     } = props;
@@ -106,7 +108,8 @@ const Offer = props => {
                 </a>
             </h3>
             <p>
-                {won}-{lost}, {strategy},{" "}
+                {won}-{lost}
+                {ties ? <>-{tied}</> : null}, {strategy},{" "}
                 {helpers.formatCurrency(payroll / 1000, "M")} payroll
             </p>
             <p className="text-danger">{warning}</p>
@@ -144,6 +147,8 @@ Offer.propTypes = {
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     strategy: PropTypes.string.isRequired,
     tid: PropTypes.number.isRequired,
+    tied: PropTypes.number,
+    ties: PropTypes.bool.isRequired,
     warning: PropTypes.string,
     won: PropTypes.number.isRequired,
 };
@@ -237,7 +242,14 @@ class TradingBlock extends React.Component {
     }
 
     render() {
-        const { gameOver, phase, stats, userPicks, userRoster } = this.props;
+        const {
+            gameOver,
+            phase,
+            stats,
+            ties,
+            userPicks,
+            userRoster,
+        } = this.props;
 
         setTitle("Trading Block");
 
@@ -377,6 +389,7 @@ class TradingBlock extends React.Component {
                             handleClickNegotiate={this.handleClickNegotiate}
                             i={i}
                             stats={stats}
+                            ties={ties}
                             {...offer}
                         />
                     );
@@ -410,6 +423,7 @@ TradingBlock.propTypes = {
     gameOver: PropTypes.bool.isRequired,
     phase: PropTypes.number.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+    ties: PropTypes.bool.isRequired,
     userPicks: PropTypes.arrayOf(PropTypes.object).isRequired,
     userRoster: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

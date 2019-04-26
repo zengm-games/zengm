@@ -45,6 +45,7 @@ const value = (
     const s = p.ratings.length - 1; // Latest season
 
     // Fuzz?
+    pr.pos = p.ratings[s].pos;
     if (options.fuzz) {
         pr.ovr = fuzzRating(p.ratings[s].ovr, p.ratings[s].fuzz);
         pr.pot = fuzzRating(p.ratings[s].pot, p.ratings[s].fuzz);
@@ -89,13 +90,30 @@ const value = (
         current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
     }
 
+    // 2. Potential
+    let potential = pr.pot;
+
+    console.log(pr.pos, p, pr);
+    if (process.env.SPORT === "football") {
+        if (pr.pos === "QB") {
+            current *= 1.25;
+            potential *= 1.25;
+        } else if (pr.pos === "K" || pr.pos === "P") {
+            current *= 0.25;
+            potential *= 0.25;
+            console.log(p.pid, current, potential);
+        }
+    }
+
     // Short circuit if we don't care about potential
     if (options.noPot) {
         return current;
     }
 
-    // 2. Potential
-    let potential = pr.pot;
+    // If performance is already exceeding predicted potential, just use that
+    if (current >= potential) {
+        potential = current;
+    }
 
     let age;
     if (p.draft.year > g.season) {
@@ -103,21 +121,6 @@ const value = (
         age = p.draft.year - p.born.year;
     } else {
         age = g.season - p.born.year;
-    }
-
-    if (process.env.SPORT === "football") {
-        if (pr.pos === "QB") {
-            current *= 1.25;
-            potential *= 1.25;
-        } else if (pr.pos === "K" || pr.pos === "P") {
-            current *= 0.5;
-            potential *= 0.5;
-        }
-    }
-
-    // If performance is already exceeding predicted potential, just use that
-    if (current >= potential) {
-        potential = current;
     }
 
     // Otherwise, combine based on age

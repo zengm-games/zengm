@@ -467,6 +467,7 @@ export type ContractInfo = {|
     firstName: string,
     lastName: string,
     skills: string[],
+    pos: string,
     injury: PlayerInjury,
     amount: number,
     exp: number,

@@ -23,6 +23,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
             firstName: p.firstName,
             lastName: p.lastName,
             skills: p.ratings[p.ratings.length - 1].skills,
+            pos: p.ratings[p.ratings.length - 1].pos,
             injury: p.injury,
             watch: p.watch,
             amount: p.contract.amount,

@@ -418,6 +418,7 @@ const TeamFinances = ({
             <PlayerNameLabels
                 injury={p.injury}
                 pid={p.pid}
+                pos={p.pos}
                 skills={p.skills}
                 style={{ fontStyle: p.released ? "italic" : "normal" }}
                 watch={p.watch}

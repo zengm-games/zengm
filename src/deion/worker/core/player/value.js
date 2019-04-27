@@ -93,7 +93,6 @@ const value = (
     // 2. Potential
     let potential = pr.pot;
 
-    console.log(pr.pos, p, pr);
     if (process.env.SPORT === "football") {
         if (pr.pos === "QB") {
             current *= 1.25;
@@ -101,7 +100,6 @@ const value = (
         } else if (pr.pos === "K" || pr.pos === "P") {
             current *= 0.25;
             potential *= 0.25;
-            console.log(p.pid, current, potential);
         }
     }
 

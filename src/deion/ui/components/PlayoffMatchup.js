@@ -1,5 +1,6 @@
 // @flow
 
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { helpers } from "../util";
@@ -7,6 +8,7 @@ import { helpers } from "../util";
 type SeriesTeam = {
     abbrev: string,
     cid: number,
+    imgURL?: string,
     pts?: number,
     region: string,
     seed: number,
@@ -22,6 +24,7 @@ const Team = ({
     showWon,
     userTid,
     won,
+    lost,
 }: {
     team?: SeriesTeam,
     season: number,
@@ -29,25 +32,48 @@ const Team = ({
     showWon: boolean,
     userTid: number,
     won: boolean,
+    lost: boolean,
 }) => {
     if (!team) {
-        return <br />;
+        return null;
     }
 
     return (
-        <span
-            className={team.tid === userTid ? "table-info" : ""}
-            style={{ fontWeight: won ? "bold" : "normal" }}
+        <li
+            className={classNames("border border-bottom-0", {
+                "font-weight-bold": won,
+                "table-primary": team.tid === userTid,
+                "text-muted": lost,
+            })}
         >
-            {team.seed}.{" "}
-            <a href={helpers.leagueUrl(["roster", team.abbrev, season])}>
-                {team.region}
-            </a>
-            {showWon && team.hasOwnProperty("won") ? <> {team.won}</> : null}
-            {!showWon && showPts && team.hasOwnProperty("pts") ? (
-                <> {team.pts}</>
+            {team.imgURL ? (
+                <div
+                    className={classNames("playoff-matchup-logo", {
+                        "table-success": won,
+                    })}
+                >
+                    <img src={team.imgURL} alt="" />
+                </div>
             ) : null}
-        </span>
+            <div className="mx-1">
+                {team.seed}.{" "}
+                <a
+                    className={classNames({
+                        "text-muted": lost,
+                    })}
+                    href={helpers.leagueUrl(["roster", team.abbrev, season])}
+                >
+                    <span className="d-lg-none">{team.abbrev}</span>
+                    <span className="d-none d-lg-inline">{team.region}</span>
+                </a>
+            </div>
+            {showWon && team.hasOwnProperty("won") ? (
+                <div className="ml-auto mr-2">{team.won}</div>
+            ) : null}
+            {!showWon && showPts && team.hasOwnProperty("pts") ? (
+                <div className="ml-auto mr-2">{team.pts}</div>
+            ) : null}
+        </li>
     );
 };
 
@@ -90,7 +116,7 @@ const PlayoffMatchup = ({
     const showWon = !!series.away && numGamesToWinSeries > 1;
 
     return (
-        <>
+        <ul className="playoff-matchup border-bottom">
             <Team
                 team={series.home}
                 season={season}
@@ -98,8 +124,8 @@ const PlayoffMatchup = ({
                 showWon={showWon}
                 userTid={userTid}
                 won={homeWon}
+                lost={awayWon}
             />
-            {series.away ? <br /> : null}
             <Team
                 team={series.away}
                 season={season}
@@ -107,8 +133,9 @@ const PlayoffMatchup = ({
                 showWon={showWon}
                 userTid={userTid}
                 won={awayWon}
+                lost={homeWon}
             />
-        </>
+        </ul>
     );
 };
 

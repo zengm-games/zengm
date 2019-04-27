@@ -1,5 +1,7 @@
 # football
 
+Blizzard or Blizzards
+
 death rate scale number games
 
 Also I just had my rookie QB get onto the All-Rookie Team in the QB slot, but he was also slotted in as an All-Rookie punter, without having done any punts all season.
@@ -144,8 +146,6 @@ RatingsOverview - could put in deion, with config to specify categories and name
 on league import, override numTeams if teams are supplied in league file
 
 after draft, should forward to draft summary, not draft scouting
-
-redesign playoffs page, with logos and abbrevs
 
 Worst Record in the History section should not include ongoing season until it's over, otherwise you see 0-0. or consider worst to be losses - wins
 

@@ -373,7 +373,7 @@ async function updatePlayoffs(
 
         if (playoffSeries !== undefined) {
             const series = playoffSeries.series;
-            helpers.augmentSeries(series);
+            await helpers.augmentSeries(series);
 
             // Find the latest playoff series with the user's team in it
             let found = false;

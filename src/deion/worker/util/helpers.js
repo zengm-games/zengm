@@ -2,6 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import { PLAYER, helpers as commonHelpers } from "../../common";
+import { idb } from "../db";
 import g from "./g";
 import type {
     DraftPick,
@@ -10,17 +11,21 @@ import type {
     PlayoffSeriesTeam,
 } from "../../common/types";
 
-const augmentSeries = (
+const augmentSeries = async (
     series: {| away?: PlayoffSeriesTeam, home: PlayoffSeriesTeam |}[][],
 ) => {
+    const teams = await idb.cache.teams.getAll();
+
     for (const round of series) {
         for (const matchup of round) {
             if (matchup.away) {
                 matchup.away.abbrev = g.teamAbbrevsCache[matchup.away.tid];
                 matchup.away.region = g.teamRegionsCache[matchup.away.tid];
+                matchup.away.imgURL = teams[matchup.away.tid].imgURL;
             }
             matchup.home.abbrev = g.teamAbbrevsCache[matchup.home.tid];
             matchup.home.region = g.teamRegionsCache[matchup.home.tid];
+            matchup.home.imgURL = teams[matchup.home.tid].imgURL;
         }
     }
 };

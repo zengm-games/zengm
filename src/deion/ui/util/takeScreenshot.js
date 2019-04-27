@@ -20,7 +20,9 @@ const takeScreenshot = async () => {
         process.env.SPORT,
     )} GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
         theme === "dark" ? "#fff" : "#000"
-    }; font-weight: bold">Play your own league free at {process.env.SPORT}-gm.com</span></nav>`;
+    }; font-weight: bold">Play your own league free at ${
+        process.env.SPORT
+    }-gm.com</span></nav>`;
     contentEl.insertBefore(watermark, contentEl.firstChild);
     contentEl.style.padding = "8px";
 

@@ -218,7 +218,7 @@ TeamHistory.propTypes = {
     }).isRequired,
     ties: PropTypes.bool.isRequired,
     totalLost: PropTypes.number.isRequired,
-    totaltied: PropTypes.number,
+    totalTied: PropTypes.number,
     totalWon: PropTypes.number.isRequired,
     worstRecord: PropTypes.shape({
         lost: PropTypes.number.isRequired,

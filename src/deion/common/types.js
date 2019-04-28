@@ -445,9 +445,10 @@ export type Local = {|
 export type PlayoffSeriesTeam = {|
     abbrev?: string,
     cid: number,
-    seed: number,
-    region?: string,
+    imgURL?: string,
     pts?: number, // undefined means game hasn't happened yet
+    region?: string,
+    seed: number,
     tid: number,
     winp: number,
     won: number,

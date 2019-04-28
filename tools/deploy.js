@@ -3,6 +3,7 @@
 const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
 const build = require("./buildFuncs");
+// $FlowFixMe
 const cloudflareConfig = require("../../../.config/cloudflare.json");
 
 const getSubdomain = () => {

@@ -2230,7 +2230,7 @@ export default [
         cid: 1,
         did: 4,
         region: "Minneapolis",
-        name: "Blizzards",
+        name: "Blizzard",
         abbrev: "MIN",
         imgURL: "",
         stats: [

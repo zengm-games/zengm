@@ -87,7 +87,7 @@ describe("worker/api/processInputs", () => {
             "Earthquakes",
             "Aztecs",
             "Cyclones",
-            "Blizzards",
+            "Blizzard",
             "Mounties",
             "Bankers",
             "Cheesesteaks",

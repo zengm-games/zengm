@@ -87,7 +87,7 @@ describe("worker/util/helpers", () => {
             "Earthquakes",
             "Aztecs",
             "Cyclones",
-            "Blizzards",
+            "Blizzard",
             "Mounties",
             "Bankers",
             "Cheesesteaks",

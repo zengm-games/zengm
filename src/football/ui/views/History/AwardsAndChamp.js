@@ -37,8 +37,10 @@ Winner.propTypes = {
     season: PropTypes.number.isRequired,
     userTid: PropTypes.number.isRequired,
 };
+console.log("a");
 
 const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
+    console.log(awards.bestRecordConfs);
     return (
         <div className="row">
             <div className="col-sm-12 col-6">
@@ -97,7 +99,8 @@ const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
                             >
                                 {t.region} {t.name}
                             </a>{" "}
-                            ({t.won}-{t.lost})
+                            ({t.won}-{t.lost}
+                            {t.tied !== undefined ? <>-{t.tied}</> : null})
                         </span>
                         <br />
                     </p>

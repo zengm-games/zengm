@@ -92,6 +92,7 @@ const teamAwards = (teamsUnsorted: TeamFiltered[]) => {
         name: teams[0].name,
         won: teams[0].seasonAttrs.won,
         lost: teams[0].seasonAttrs.lost,
+        tied: g.ties ? teams[0].seasonAttrs.tied : undefined,
     };
 
     const bestRecordConfs = g.confs.map(c => {
@@ -110,6 +111,7 @@ const teamAwards = (teamsUnsorted: TeamFiltered[]) => {
             // Flow can't handle complexity of idb.getCopies.teams
             won: t.seasonAttrs ? t.seasonAttrs.won : 0,
             lost: t.seasonAttrs ? t.seasonAttrs.lost : 0,
+            tied: g.ties && t.seasonAttrs ? t.seasonAttrs.tied : undefined,
         };
     });
 

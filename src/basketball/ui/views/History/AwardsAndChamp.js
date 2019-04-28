@@ -104,7 +104,8 @@ const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
                             >
                                 {t.region} {t.name}
                             </a>{" "}
-                            ({t.won}-{t.lost})
+                            ({t.won}-{t.lost}
+                            {t.tied !== undefined ? <>-{t.tied}</> : null})
                         </span>
                         <br />
                     </p>

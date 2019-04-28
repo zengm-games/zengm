@@ -38,14 +38,15 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
     return ret;
 };
 
-const teamName = (t, season) => {
+const teamName = (t, season, ties) => {
     if (t) {
         return (
             <>
                 <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
                     {t.region}
                 </a>{" "}
-                ({t.won}-{t.lost})
+                ({t.won}-{t.lost}
+                {ties ? <>-{t.tied}</> : null})
             </>
         );
     }
@@ -54,7 +55,7 @@ const teamName = (t, season) => {
     return "N/A";
 };
 
-const HistoryAll = ({ awards, seasons, teamAbbrevsCache, userTid }) => {
+const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
     setTitle("League History");
 
     const cols = getCols(
@@ -82,7 +83,7 @@ const HistoryAll = ({ awards, seasons, teamAbbrevsCache, userTid }) => {
 
         let champEl = (
             <>
-                {teamName(s.champ, s.season)}
+                {teamName(s.champ, s.season, ties)}
                 {countText}
             </>
         );
@@ -93,7 +94,7 @@ const HistoryAll = ({ awards, seasons, teamAbbrevsCache, userTid }) => {
             };
         }
 
-        let runnerUpEl = teamName(s.runnerUp, s.season);
+        let runnerUpEl = teamName(s.runnerUp, s.season, ties);
         if (s.runnerUp && s.runnerUp.tid === userTid) {
             runnerUpEl = {
                 classNames: "table-info",
@@ -142,6 +143,7 @@ HistoryAll.propTypes = {
     awards: PropTypes.arrayOf(PropTypes.string).isRequired,
     seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
     teamAbbrevsCache: PropTypes.arrayOf(PropTypes.string).isRequired,
+    ties: PropTypes.bool.isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

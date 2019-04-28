@@ -241,7 +241,7 @@ const doAwards = async (conditions: Conditions) => {
 
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "abbrev", "region", "name", "cid"],
-        seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
+        seasonAttrs: ["won", "lost", "tied", "winp", "playoffRoundsWon"],
         season: g.season,
     });
     const players = await getPlayers();

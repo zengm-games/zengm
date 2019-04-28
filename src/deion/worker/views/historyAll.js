@@ -17,7 +17,13 @@ async function updateHistory(
             idb.getCopies.awards(),
             idb.getCopies.teamsPlus({
                 attrs: ["tid", "abbrev", "region", "name"],
-                seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
+                seasonAttrs: [
+                    "season",
+                    "playoffRoundsWon",
+                    "won",
+                    "lost",
+                    "tied",
+                ],
             }),
         ]);
 
@@ -79,6 +85,7 @@ async function updateHistory(
                         name: t.name,
                         won: t.seasonAttrs[j].won,
                         lost: t.seasonAttrs[j].lost,
+                        tied: t.seasonAttrs[j].tied,
                         count: 0,
                     };
                 } else if (
@@ -92,6 +99,7 @@ async function updateHistory(
                         name: t.name,
                         won: t.seasonAttrs[j].won,
                         lost: t.seasonAttrs[j].lost,
+                        tied: t.seasonAttrs[j].tied,
                     };
                 }
             }
@@ -111,6 +119,7 @@ async function updateHistory(
             awards: awardNames,
             seasons,
             teamAbbrevsCache: g.teamAbbrevsCache,
+            ties: g.ties,
             userTid: g.userTid,
         };
     }

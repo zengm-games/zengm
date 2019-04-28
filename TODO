@@ -1,7 +1,5 @@
 # football
 
-best record in season summary - show ties
-
 also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
 
 death rate scale number games
@@ -24,15 +22,9 @@ too many players playing both offense and defense
 
 version
 
-football-gm.com
-- make monorepo with basketball-gm.com, to easily share common parts
-- logo in ~/Documents/BBGM/Football main logo
-
 confirm subscription works from football-gm.com
 - Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
 - cross promote in welcome emails
-
-play test bbgm a lot before deploying
 
 ---
 

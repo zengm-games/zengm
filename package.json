@@ -35,11 +35,11 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.4.4",
+        "@bugsnag/plugin-react": "^6.2.0",
         "ajv": "^6.10.0",
         "backboard": "^1.0.9",
         "bbgm-router": "^1.0.1",
         "bootstrap": "^4.3.1",
-        "bugsnag-react": "^1.1.1",
         "classnames": "^2.2.6",
         "dompurify": "^1.0.9",
         "facesjs": "^1.0.1",

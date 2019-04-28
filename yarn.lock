@@ -380,6 +380,11 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@bugsnag/plugin-react@^6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@bugsnag/plugin-react/-/plugin-react-6.2.0.tgz#47941f434d9be547f89b139ce80781e7d5e7fe44"
+  integrity sha512-JI56D3ZhXGjH5UqeSTltdxVTPjMpfNI/Vd5XP0V/gBAJb6CeILX3hLe5G1VmxxZciVNEfG5724YKgadqp6/uWg==
+
 "@octokit/rest@^15.2.6":
   version "15.18.1"
   resolved "https://registry.yarnpkg.com/@octokit/rest/-/rest-15.18.1.tgz#ec7fb0f8775ef64dc095fae6635411d3fbff9b62"
@@ -1214,11 +1219,6 @@ buffers@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/buffers/-/buffers-0.1.1.tgz#b24579c3bed4d6d396aeee6d9a8ae7f5482ab7bb"
   integrity sha1-skV5w77U1tOWru5tmorn9Ugqt7s=
-
-bugsnag-react@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/bugsnag-react/-/bugsnag-react-1.1.1.tgz#da210c9102acfa427a3cdd00efa8cca785b87ea8"
-  integrity sha512-u+aodYDZwlmPMj0kCC+nZiO0Rhw4LaJ8ve1cYzEb5gcToPjuIkOfFIQO4T7QhR96V2Uy6UdVw7e04OEPR4/0wg==
 
 builtin-status-codes@^3.0.0:
   version "3.0.0"

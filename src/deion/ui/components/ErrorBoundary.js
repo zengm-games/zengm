@@ -1,6 +1,6 @@
 // @flow
 
-import createBugsnagErrorBoundary from "bugsnag-react";
+import bugsnagReact from "@bugsnag/plugin-react";
 import * as React from "react";
 
 const Fallback = ({ error, info }: { error: Error, info?: any }) => {
@@ -23,9 +23,9 @@ type State = {
 
 let ErrorBoundaryTemp;
 if (window.bugsnagClient) {
-    const ErrorBoundaryBugsnag = window.bugsnagClient.use(
-        createBugsnagErrorBoundary(React),
-    );
+    window.bugsnagClient.use(bugsnagReact, React);
+
+    const ErrorBoundaryBugsnag = window.bugsnagClient.getPlugin("react");
     ErrorBoundaryTemp = ({ children }: { children: any }) => (
         <ErrorBoundaryBugsnag FallbackComponent={Fallback}>
             {children}

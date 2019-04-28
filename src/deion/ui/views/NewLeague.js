@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
-import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
+import { helpers, logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
 
 const PopText = ({ teams, tid }) => {
     let msg = (
@@ -133,16 +133,27 @@ class NewLeague extends React.Component {
             ? this.state.difficulty
             : DIFFICULTY.Normal;
 
-        const lid = await toWorker(
-            "createLeague",
-            this.state.name,
-            this.state.tid,
-            leagueFile,
-            startingSeason,
-            randomizeRosters,
-            difficulty,
-        );
-        realtimeUpdate([], `/l/${lid}`);
+        try {
+            const lid = await toWorker(
+                "createLeague",
+                this.state.name,
+                this.state.tid,
+                leagueFile,
+                startingSeason,
+                randomizeRosters,
+                difficulty,
+            );
+            realtimeUpdate([], `/l/${lid}`);
+        } catch (err) {
+            this.setState({ creating: false });
+            console.log(err);
+            logEvent({
+                type: "error",
+                text: err.message,
+                persistent: true,
+                saveToDb: false,
+            });
+        }
     }
 
     onNewLeagueFile(err, leagueFile) {

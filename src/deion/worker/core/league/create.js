@@ -19,6 +19,30 @@ import {
 } from "../../util";
 import type { Conditions, GameAttributes } from "../../../common/types";
 
+const confirmSequential = (objs: any, key: string, objectName: string) => {
+    const values = new Set();
+
+    for (const obj of objs) {
+        const value = obj[key];
+        if (typeof value !== "number") {
+            throw new Error(`Missing or invalid ${key} for ${objectName}`);
+        }
+        values.add(value);
+    }
+
+    console.log(objs, key, objectName, values);
+    for (let i = 0; i < values.size; i++) {
+        console.log(objectName, key, i, values.size);
+        if (!values.has(i)) {
+            throw new Error(
+                `${key} values must be sequential with no gaps starting from 0, but no ${objectName} has a value of ${i}`,
+            );
+        }
+    }
+
+    return values;
+};
+
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = (
     leagueName: string,
@@ -113,6 +137,43 @@ export const createWithoutSaving = (
         gameAttributes.numTeams,
     );
     delete gameAttributes.numPlayoffRounds;
+
+    // Validation of some identifiers
+    confirmSequential(teamInfos, "tid", "team");
+    const cidsTeam = confirmSequential(teamInfos, "cid", "team");
+    const didsTeam = confirmSequential(teamInfos, "did", "team");
+    const cidsConfs = confirmSequential(
+        gameAttributes.confs,
+        "cid",
+        "conference",
+    );
+    const didsDivs = confirmSequential(gameAttributes.divs, "did", "division");
+    const cidsDivs = confirmSequential(gameAttributes.divs, "cid", "division");
+
+    // It's okay to have an empty conference or division, but you can't reference a conference or division that doesn't exist!
+    if (cidsConfs.size < cidsTeam.size) {
+        throw new Error(
+            `confs in game attributes only has ${
+                cidsConfs.size
+            } conferences, but your teams belong to ${
+                cidsTeam.size
+            } conferences`,
+        );
+    }
+    if (cidsConfs.size < cidsDivs.size) {
+        throw new Error(
+            `confs in game attributes only has ${
+                cidsConfs.size
+            } conferences, but divs references ${cidsDivs.size} conferences`,
+        );
+    }
+    if (didsDivs.size < didsTeam.size) {
+        throw new Error(
+            `divs in game attributes only has ${
+                didsDivs.size
+            } divisions, but your teams belong to ${didsTeam.size} divisions`,
+        );
+    }
 
     // Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
     helpers.resetG();

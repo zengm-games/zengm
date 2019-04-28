@@ -16,7 +16,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
             const start = process.hrtime();
 
             // If more Sass files are needed, then create them and @import them into this main Sass file.
-            const sassFilePath = `src/css/${filename}.scss`;
+            const sassFilePath = `public/css/${filename}.scss`;
             const sassResult = sass.renderSync({
                 file: sassFilePath,
             });
@@ -66,7 +66,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 // NOTE: This should be run *AFTER* all assets are built
 const buildSW = async () => {
     const { count, size, warnings } = await workboxBuild.injectManifest({
-        swSrc: "src/sw.js",
+        swSrc: "public/sw.js",
         swDest: "build/sw.js",
         globDirectory: "build",
         globPatterns: [
@@ -84,15 +84,42 @@ const buildSW = async () => {
     console.log(`${count} files will be precached, totaling ${size} bytes.`);
 };
 
-const copyFiles = () => {
-    console.log('Copying files from "src" directory to "build" directory...');
-    const foldersToIgnore = ["css", "js", "templates"];
+const setSport = () => {
+    if (process.env.SPORT === "football") {
+        replace({
+            regex: "basketball",
+            replacement: "football",
+            paths: ["build/index.html"],
+            silent: true,
+        });
+        replace({
+            regex: "Basketball",
+            replacement: "Football",
+            paths: ["build/index.html"],
+            silent: true,
+        });
 
-    fse.copySync("src", "build", {
+        // lol
+        replace({
+            regex: "football-gm.com/bbgm-ads",
+            replacement: "basketball-gm.com/bbgm-ads",
+            paths: ["build/index.html"],
+            silent: true,
+        });
+    }
+};
+
+const copyFiles = () => {
+    console.log(
+        'Copying files from "public" directory to "build" directory...',
+    );
+    const foldersToIgnore = ["basketball", "css", "football"];
+
+    fse.copySync("public", "build", {
         filter: filename => {
             // Loop through folders to ignore.
             for (const folder of foldersToIgnore) {
-                if (filename.indexOf(`src/${folder}`) === 0) {
+                if (filename.startsWith(path.join("public", folder))) {
                     return false;
                 }
             }
@@ -101,10 +128,19 @@ const copyFiles = () => {
         },
     });
 
+    let sport = process.env.SPORT;
+    if (typeof sport !== "string") {
+        sport = "basketball";
+    }
+
+    fse.copySync(path.join("public", sport), "build");
+
     // Remove the empty folders created by the "filter" function.
     for (const folder of foldersToIgnore) {
         fse.removeSync(`build/${folder}`);
     }
+
+    setSport();
 };
 
 const genRev = () => {
@@ -121,6 +157,19 @@ const genRev = () => {
     console.log(`rev ${rev}`);
 
     return rev;
+};
+
+const getSport = () => {
+    if (
+        process.env.SPORT === "football" ||
+        process.env.SPORT === "basketball"
+    ) {
+        return process.env.SPORT;
+    }
+    if (process.env.SPORT === undefined) {
+        return "basketball";
+    }
+    throw new Error(`Invalid SPORT: ${process.env.SPORT}`);
 };
 
 const minifyJS = (name /*: string */) => {
@@ -153,10 +202,29 @@ const setTimestamps = () => {
 
     const rev = genRev();
 
+    const sport = getSport();
+
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
         paths: ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
+        silent: true,
+    });
+
+    replace({
+        regex: "GOOGLE_ANALYTICS_ID",
+        replacement: sport === "basketball" ? "UA-38759330-1" : "UA-38759330-2",
+        paths: ["build/index.html"],
+        silent: true,
+    });
+
+    replace({
+        regex: "BUGSNAG_API_KEY",
+        replacement:
+            sport === "basketball"
+                ? "c10b95290070cb8888a7a79cc5408555"
+                : "fed8957cbfca2d1c80997897b840e6cf",
+        paths: ["build/index.html"],
         silent: true,
     });
 
@@ -171,6 +239,7 @@ module.exports = {
     buildSW,
     copyFiles,
     genRev,
+    getSport,
     minifyJS,
     reset,
     setTimestamps,

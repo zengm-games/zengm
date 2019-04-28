@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Basketball GM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FF7F2A"/>
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="shortcut icon" href="/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
+
+    <meta name="Description" content="A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
+
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
+
+    <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
+    <script async="async" src="https://basketball-gm.com/bbgm-ads/bbgm.js"></script>
+    <script type="text/javascript">
+      var googletag = googletag || {};
+      googletag.cmd = googletag.cmd || [];
+      var bbgmAds = bbgmAds || {};
+      bbgmAds.cmd = bbgmAds.cmd || [];
+    </script>
+
+    <script type="text/javascript">
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57-64 has buggy shared workers
+      function isBuggyFirefox() {
+        var ua = navigator.userAgent;
+        if (!ua || !ua.includes("Firefox") || !ua.includes("Gecko")) {
+          return false;
+        }
+
+        var matches = ua.match(/rv:(\d+)/);
+        if (matches.length !== 2) {
+          return false;
+        }
+
+        var version = parseInt(matches[1]);
+        if (isNaN(version)) {
+          return false;
+        }
+
+        return version >= 57 && version <= 64;
+      }
+
+      window.bbgmVersion = "REV_GOES_HERE";
+      window.bbgmVersionUI = "???";
+      window.bbgmVersionWorker = "???";
+      window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
+
+      function loadCSS(filename){
+        var el = document.createElement("link");
+        el.setAttribute("rel", "stylesheet");
+        el.setAttribute("href", "/" + filename);
+        document.getElementsByTagName("head")[0].appendChild(el);
+        return el;
+      }
+      function getTheme() {
+        try {
+          return localStorage.getItem("theme") === "dark" ? "dark" : "light";
+        } catch (err) {
+          return "light";
+        }
+      }
+      window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
+
+      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
+
+      if (window.enableLogging) {
+        window.googleAnalyticsID = "GOOGLE_ANALYTICS_ID";
+
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID";
+        s.type = "text/javascript";
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GOOGLE_ANALYTICS_ID', {
+          'cookie_domain': 'basketball-gm.com'
+        });
+
+        // Google Consumer Surveys
+        var TriggerPrompt = function(articleUrl, contentId) {
+          var ARTICLE_URL = articleUrl;
+          var CONTENT_ID = contentId || '';
+          var el = document.createElement('script');
+          var url = '//survey.g.doubleclick.net/survey?site=5945171946504192' +
+                    '&url=' + encodeURIComponent(ARTICLE_URL) +
+                    (CONTENT_ID ? '&cid=' + encodeURIComponent(CONTENT_ID) : '') +
+                    '&random=' + (new Date).getTime() +
+                    '&after=1';
+          el.setAttribute('src', url);
+          var head = document.getElementsByTagName('head')[0] ||
+              document.getElementsByTagName('body')[0];
+          head.appendChild(el);
+        };
+      }
+
+      var releaseStage = "unknown";
+      if (location.host.indexOf("localhost") === 0) {
+        releaseStage = "development";
+      } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
+        releaseStage = "beta";
+      } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
+        releaseStage = "production";
+      }
+
+      if (window.bugsnag) {
+        window.bugsnagClient = window.bugsnag({
+          apiKey: "BUGSNAG_API_KEY",
+          appVersion: window.bbgmVersion,
+          autoCaptureSessions: false,
+          beforeSend: function (report) {
+            // Normalize league URLs to all look the same
+            if (report && typeof report.context === "string") {
+              report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
+            }
+
+            if (report && typeof report.errorMessage === "string") {
+              var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop", "contentDocument", "Celtra", "AdBlock"];
+              for (var i = 0; i < skip.length; i++) {
+                if (report.errorMessage.includes(skip[i])) {
+                  report.ignore();
+                }
+              }
+            }
+          },
+          notifyReleaseStages: ["beta", "production"],
+          releaseStage: releaseStage
+        });
+      }
+    </script>
+  </head>
+
+  <body>
+
+    <div id="content">
+      <div style="margin: 0 15px">
+        <div style="max-width: 360px; margin: 0 auto">
+          <h1 style="text-align: center">Loading...</h1>
+
+          <p style="clear: both; margin-bottom: 3em"></p>
+
+          <div style="display: flex; flex-wrap: wrap; justify-content: center; margin: 0 -15px">
+            <div class="team-picture-splash" id="team-picture-0"></div>
+            <div class="team-picture-splash" id="team-picture-1"></div>
+            <div class="team-picture-splash" id="team-picture-2"></div>
+            <div class="team-picture-splash" id="team-picture-3"></div>
+            <div class="team-picture-splash" id="team-picture-4"></div>
+            <div class="team-picture-splash" id="team-picture-5"></div>
+            <div class="team-picture-splash" id="team-picture-6"></div>
+            <div class="team-picture-splash" id="team-picture-7"></div>
+            <div class="team-picture-splash" id="team-picture-8"></div>
+            <div class="team-picture-splash" id="team-picture-9"></div>
+            <div class="team-picture-splash" id="team-picture-10"></div>
+            <div class="team-picture-splash" id="team-picture-11"></div>
+          </div>
+
+          <p style="clear: both; margin-bottom: 3em"></p>
+
+          <p>Basketball GM vREV_GOES_HERE</p>
+          <div id="startup-browser">Checking browser...</div>
+          <div id="startup-ui"></div>
+          <p id="startup-worker"></p>
+
+          <div class="alert alert-danger" id="startup-error" style="display: none"></div>
+
+          <div class="alert alert-danger" id="startup-error-unknown" style="display: none">
+            <p>This should only take a few seconds on a fast connection.</p>
+            <p>If it gets stuck for a while, read <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and <a href="https://basketball-gm.com/contact/">ask for help</a> if it still isn't working.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var startupBrowser = document.getElementById("startup-browser");
+      var startupUI = document.getElementById("startup-ui");
+      var startupWorker = document.getElementById("startup-worker");
+      var startupError = document.getElementById("startup-error");
+      var startupErrorUnknown = document.getElementById("startup-error-unknown");
+
+      var timeoutID = setTimeout(function () {
+        startupErrorUnknown.style.display = "block";
+      }, 6000);
+
+      function withGoodBrowser() {
+        startupBrowser.innerHTML += " done!";
+        startupUI.innerHTML = "Loading UI...";
+        startupWorker.innerHTML = "Loading backend...";
+      }
+
+      var count = 0;
+      function withGoodUI() {
+        startupUI.innerHTML += " done!";
+        count += 1;
+        if (count === 2) {
+          clearTimeout(timeoutID);
+        }
+      }
+      function withGoodWorker() {
+        startupWorker.innerHTML += " done!";
+        count += 1;
+        if (count === 2) {
+          clearTimeout(timeoutID);
+        }
+      }
+
+      function shuffle(array) {
+        var counter = array.length;
+        while (counter > 0) {
+          var index = Math.floor(Math.random() * counter);
+          counter--;
+          var temp = array[counter];
+          array[counter] = array[index];
+          array[index] = temp;
+        }
+        return array;
+      }
+
+      var abbrevs = shuffle(['ATL', 'BAL', 'BOS', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'HOU', 'LV', 'LA', 'MXC', 'MIA', 'MIN', 'MON', 'NYC', 'PHI', 'PHO', 'PIT', 'POR', 'SAC', 'SD', 'SF', 'SEA', 'STL', 'TPA', 'TOR', 'VAN', 'WAS']);
+      for (var i = 0; i < 12; i++) {
+        document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
+      }
+
+      // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
+      var goodIDB = function (cb) {
+        try {
+          if (typeof window.indexedDB === "undefined") {
+            cb("bad");
+            return;
+          }
+        } catch (err) {
+          console.error("Error accessing window.indexedDB");
+          console.error(err);
+          cb("open-failed");
+          return;
+        }
+
+        var idb = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+        var keyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.mozIDBKeyRange;
+
+        try {
+          keyRange.only([1]);
+        } catch (e) {
+          cb("bad");
+          return;
+        }
+
+        var openRequest = idb.open('__detectIDB_test2', 1);
+
+        openRequest.onerror = function (evt) {
+          console.error("Error openining test database:");
+          console.error(evt.target.error);
+          if (evt.target.error.message.includes("aborted")) {
+            // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
+            cb("good");
+          } else {
+            cb("open-failed");
+          }
+        }
+
+        openRequest.onupgradeneeded = function (evt) {
+          var db = evt.target.result;
+          var one = db.createObjectStore('one', {
+            autoIncrement: true,
+            keyPath: 'key'
+          });
+          one.createIndex('one', 'one');
+          one.add({one: 1});
+          var two = db.createObjectStore('two', {
+            autoIncrement: true,
+            keyPath: 'key'
+          });
+          two.createIndex ('two', 'two');
+          two.add({two: 2});
+        };
+
+        openRequest.onsuccess = function (evt) {
+          var db = evt.target.result;
+          var transaction;
+          try {
+            transaction = db.transaction(['one', 'two'], 'readwrite');
+          } catch (e) {
+            cb("bad");
+            return;
+          }
+
+          var count = 0;
+          transaction.objectStore('one').index('one').openCursor().onsuccess = function (evt) {
+            cursor = evt.target.result;
+            if (cursor) {
+              count += 1;
+              cursor.continue();
+            }
+          };
+
+          transaction.oncomplete = function () {
+            db.close();
+            cb(count === 1 ? "good" : "bad"); // Will be 2 in Safari 10 https://bugs.webkit.org/show_bug.cgi?id=158833
+          };
+        };
+      };
+
+      var supportsArrowFunctions = function () {
+        try {
+          eval('let f = x => 1');
+          return true;
+        } catch (err) {
+          return false;
+        }
+      };
+
+      var supportsSymbol = function () {
+        try {
+          eval("const s = Symbol();");
+          return true;
+        } catch (err) {
+          return false;
+        }
+      };
+
+      goodIDB(function (idbResult) {
+        if (idbResult !== "good" || !supportsArrowFunctions() || !supportsSymbol()) {
+          var errorMsg;
+          if (idbResult === "open-failed") {
+            errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play Basketball GM.</p><p>If you\'re using Firefox\'s Private Browsing mode, there is currently a bug in Firefox that prevents Basketball GM from running. Either load Basketball GM outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
+          } else {
+            errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest version of <a href="https://www.google.com/chrome/">Google Chrome</a> works best.</p>';
+          }
+
+          // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
+          if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
+            errorMsg += '<p>If you\'re on an iPhone/iPad, upgrade to iOS 10.3 or higher to play Basketball GM. If you can\'t do that, then please come back on a desktop/laptop or a non-Apple mobile device!</p>';
+          }
+
+          startupError.innerHTML = errorMsg;
+          startupError.style.display = "block";
+          clearTimeout(timeoutID);
+        } else {
+          withGoodBrowser();
+
+          var body = document.getElementsByTagName('body').item(0);
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = "/gen/ui-" + bbgmVersion + ".js";
+          body.appendChild(script);
+
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

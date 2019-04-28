@@ -1,0 +1,840 @@
+// These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
+$dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
+$dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
+
+$font-size-base: 0.8125rem;
+$black: #000 !default;
+
+// Taken from bootstrap.scss, but with unused things deleted
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+@import "node_modules/bootstrap/scss/root";
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/type";
+@import "node_modules/bootstrap/scss/grid";
+@import "node_modules/bootstrap/scss/tables";
+@import "node_modules/bootstrap/scss/forms";
+@import "node_modules/bootstrap/scss/buttons";
+@import "node_modules/bootstrap/scss/dropdown";
+@import "node_modules/bootstrap/scss/button-group";
+@import "node_modules/bootstrap/scss/input-group";
+@import "node_modules/bootstrap/scss/nav";
+@import "node_modules/bootstrap/scss/navbar";
+@import "node_modules/bootstrap/scss/card";
+@import "node_modules/bootstrap/scss/pagination";
+@import "node_modules/bootstrap/scss/badge";
+@import "node_modules/bootstrap/scss/alert";
+@import "node_modules/bootstrap/scss/list-group";
+@import "node_modules/bootstrap/scss/close";
+@import "node_modules/bootstrap/scss/modal";
+@import "node_modules/bootstrap/scss/tooltip";
+@import "node_modules/bootstrap/scss/popover";
+@import "node_modules/bootstrap/scss/utilities";
+
+@import "datatable";
+@import "bbgm-notifications";
+@import "glyphicons";
+@import "sidebar";
+
+body {
+    padding-top: 58px;
+}
+
+.bbgm-container {
+    padding: 0 15px;
+    width: 100%;
+}
+#actual-actual-content {
+    min-height: 300px;
+}
+.skyscraper-wrapper {
+    display: none;
+}
+
+@include media-breakpoint-up(xl) {
+    .bbgm-container {
+        max-width: map-get($grid-breakpoints, xl);
+    }
+}
+@media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
+    .bbgm-container {
+        max-width: unset;
+        padding-right: 190px;
+    }
+    .skyscraper-wrapper {
+        display: block;
+        position: fixed;
+        top: 58px;
+        right: 0px;
+        height: 600px;
+        width: 190px;
+    }
+    #bbgm-ads-skyscraper {
+        width: 160px;
+        height: 600px;
+        margin: 0 auto;
+    }
+}
+
+.navbar-brand {
+    img {
+        vertical-align: -3px;
+    }
+
+    span {
+        padding-left: 5px;
+    }
+}
+
+// This is so "Football GM" takes up the same space as "Basketball GM", allowing the Play dropdown to align with the menu on the left.
+@include media-breakpoint-up(xl) {
+    .navbar-brand {
+        min-width: 129px;
+    }
+}
+
+.spin {
+    animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.god-mode,
+.sidebar a.god-mode {
+    background-color: $purple;
+    color: $white;
+}
+a.god-mode,
+.sidebar a.god-mode {
+    &:hover {
+        background-color: darken($purple, 10);
+        color: $white;
+        text-decoration: none;
+    }
+}
+.sidebar a.god-mode.active {
+    background-color: darken($purple, 10);
+    color: lighten($primary, 30);
+}
+
+.god-mode-text {
+    padding: 0 3px;
+}
+
+.play-button {
+    font-size: 1.01562rem;
+    margin: -8px 0;
+    height: 51px;
+    padding: 14px !important;
+
+    @extend .bg-success;
+    @extend .text-white;
+}
+
+.dropdown-item {
+    cursor: pointer;
+}
+
+.kbd-parent {
+    position: relative;
+    padding-right: 70px;
+}
+.kbd {
+    position: absolute;
+    right: 20px;
+    top: 4px;
+}
+
+ul.dashboard-boxes {
+    list-style: none;
+    margin: -0.5rem -1rem 0 0;
+    padding: 0;
+
+    li {
+        float: left;
+        margin: 1rem 1rem 0 0;
+        position: relative;
+        overflow: hidden;
+
+        strong {
+            white-space: nowrap;
+        }
+
+        a.league {
+            color: $gray-800;
+            display: block;
+            height: 77px;
+            line-height: 1.35;
+            padding: 2px 8px 6px;
+            text-align: left;
+            width: 151px;
+
+            &:hover {
+                color: $black;
+            }
+        }
+
+        a.league-active {
+            background: black;
+            animation: oscillate-bg 1.5s infinite;
+        }
+
+        .close {
+            border-radius: 0 4px;
+            position: absolute;
+            right: 5px;
+            top: 0;
+        }
+
+        &.dashboard-box-new {
+            a {
+                color: $white;
+
+                &:hover {
+                    color: $white;
+                }
+            }
+
+            h2 {
+                font-size: 20px;
+                line-height: 26px;
+                margin-top: 9px;
+            }
+        }
+    }
+}
+
+.dashboard-box-loading {
+    font-weight: bold;
+    margin-top: 26px;
+}
+
+@keyframes oscillate-bg {
+    0% {
+        background-color: lighten($primary, 40);
+    }
+
+    50% {
+        background-color: lighten($primary, 45);
+    }
+
+    100% {
+        background-color: lighten($primary, 40);
+    }
+}
+
+.negotiation-team-years {
+    width: 110px;
+}
+
+.negotiation-team-amount {
+    width: 180px;
+}
+
+// From the Bootstrap offcanvas example
+// http://getbootstrap.com/examples/offcanvas/
+@media screen and (max-width: 768px) {
+    .row-offcanvas {
+        position: relative;
+    }
+
+    .row-offcanvas-right .sidebar-offcanvas {
+        right: -100%;
+    }
+
+    .sidebar-offcanvas {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 769px) {
+    .row-offcanvas-force {
+        position: relative;
+    }
+
+    .row-offcanvas-right-force .sidebar-offcanvas-force {
+        right: -100%;
+    }
+
+    .sidebar-offcanvas-force {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
+}
+
+.help-icon {
+    cursor: pointer;
+    font-size: 13px;
+}
+
+table {
+    white-space: nowrap;
+}
+
+.table-bordered {
+    tbody tr.separator td {
+        border-bottom: 1px solid $gray-700;
+    }
+}
+
+.roster-handle {
+    cursor: pointer;
+    max-width: 36px;
+    min-width: 36px;
+    width: 36px;
+}
+
+.game-log-list {
+    tbody td.game-log-cell {
+        padding: 0;
+    }
+
+    td.game-log-cell a {
+        display: block;
+        // Expand to encompass normal td padding, which was set to 0 here above.
+        padding: 4px 5px;
+        text-decoration: none;
+    }
+}
+
+.game-log-list tbody tr:hover td.game-log-cell,
+.messages-table tbody tr:hover td {
+    @extend .table-active;
+    text-decoration: none;
+}
+
+@include media-breakpoint-down(xs) {
+    .mx-xs-auto {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
+.schedule-row {
+    @extend .d-flex;
+    color: $black;
+    font-size: 16px;
+    max-width: 400px;
+}
+
+.schedule-results {
+    width: 135px;
+    text-align: center;
+}
+
+.schedule-wl {
+    font-size: 22px;
+    text-decoration: underline;
+    width: 26px;
+    text-align: center;
+}
+
+.schedule-score {
+    @extend .flex-grow-1;
+    font-size: 14px;
+    margin-left: 16px;
+    margin-top: 8px;
+}
+
+.schedule-at {
+    font-size: 22px;
+}
+
+.schedule-extra {
+    font-size: 14px;
+}
+
+// Make table not stretch to 100% width automatically
+.table-nonfluid {
+    display: inline-block;
+    max-width: 100%;
+    width: unset;
+    .table {
+        width: 1px;
+    }
+}
+
+.trade-summary {
+    background-color: $white;
+}
+
+.select-team {
+    width: 203px;
+}
+
+.player-picture {
+    height: 150px;
+    float: left;
+    margin-right: 10px;
+    width: 100px;
+}
+
+.player-awards {
+    white-space: normal;
+}
+
+.team-picture {
+    display: none; // Hide by default, shown in views/roster.js
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin: 0.25rem 1rem 1rem 0;
+    width: 120px;
+    height: 120px;
+    float: left;
+}
+
+.team-picture-splash {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 90px;
+    height: 90px;
+    float: left;
+}
+
+.skill {
+    cursor: default;
+    font-size: 10px;
+    line-height: 18px;
+    margin-left: 5px;
+    vertical-align: 2%;
+}
+
+.skills-alone {
+    margin-left: -5px;
+    vertical-align: 2%;
+}
+
+.watch,
+.watch:hover {
+    color: $gray-500;
+    cursor: pointer;
+    margin-left: 5px;
+    text-decoration: none;
+}
+
+.watch-active,
+.watch-active:hover {
+    color: $danger;
+}
+
+.pt-modifier-select {
+    margin: 0;
+    width: auto;
+    padding: 0;
+    height: 20px;
+}
+
+// These colors are duplicated from Roster.js
+.pt-modifier-select {
+    option[value="1"] {
+        background-color: $gray-400;
+        color: $black;
+    }
+
+    option[value="1.75"] {
+        background-color: $blue;
+        color: $white;
+    }
+
+    option[value="1.25"] {
+        background-color: $cyan;
+        color: $white;
+    }
+
+    option[value="0.75"] {
+        background-color: $warning;
+        color: $black;
+    }
+
+    option[value="0"] {
+        background-color: $danger;
+        color: $white;
+    }
+}
+
+.bar-graph-small {
+    height: 40px;
+}
+
+.bar-graph-medium {
+    height: 60px;
+}
+
+.bar-graph-large {
+    height: 100px;
+}
+
+.bar-graph-1 {
+    background-color: $blue;
+}
+.bar-graph-2 {
+    background-color: $pink;
+}
+.bar-graph-3 {
+    background-color: $yellow;
+}
+.bar-graph-4 {
+    background-color: $cyan;
+}
+.bar-graph-5 {
+    background-color: $indigo;
+}
+.bar-graph-6 {
+    background-color: $red;
+}
+.bar-graph-7 {
+    background-color: $green;
+}
+.bar-graph-8 {
+    background-color: $orange;
+}
+
+.icon-question-sign {
+    cursor: pointer;
+}
+
+// Stupid fix for popover in h4
+.popover-body {
+    font-size: 13px;
+    font-weight: normal;
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.finances-settings-label {
+    line-height: 32px;
+    padding-right: 1em;
+    text-align: right;
+    width: 100px;
+}
+
+.finances-settings-text {
+    line-height: 32px;
+    padding-left: 1em;
+}
+
+.finances-settings-text-small {
+    font-size: 12px;
+    line-height: 15px;
+    padding-left: 1em;
+}
+
+.finances-settings-field {
+    width: 115px;
+}
+
+.finances-settings button {
+    display: none;
+}
+
+.badge-injury {
+    cursor: default;
+    margin-left: 5px;
+    vertical-align: 20%;
+}
+
+.trading-block-offer {
+    margin-top: 2em;
+
+    h2 {
+        float: left;
+        margin-right: 0.5em;
+    }
+}
+
+#messages-table {
+    table-layout: fixed;
+    width: 100%;
+
+    td {
+        padding: 0;
+
+        a {
+            color: $black;
+            display: block;
+            padding: 4px 5px;
+            text-decoration: none;
+        }
+    }
+
+    .year {
+        width: 40px;
+    }
+
+    .from {
+        width: 130px;
+    }
+
+    .text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: auto;
+    }
+}
+
+.new_window {
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .new_window {
+        display: none;
+    }
+}
+
+.alert p:last-child {
+    margin-bottom: 0;
+}
+
+.alert-top {
+    margin-top: 20px;
+    padding-bottom: 2px;
+    padding-top: 12px;
+
+    button {
+        margin-top: -4px;
+    }
+}
+
+.alert-changes {
+    h4 {
+        margin-top: 0;
+    }
+
+    ul {
+        margin-bottom: 9px;
+        padding-left: 18px;
+    }
+}
+
+// HACK so that other table classes can be overriden in teamHistory (and possibly elsewhere).
+tr.table-warning > td {
+    @extend .table-warning;
+}
+tr.table-warning:hover > td {
+    @extend .table-warning:hover;
+}
+
+// Affix stuff taken from Bootstrap docs and used for the play-by-play in live
+// gameSim.
+//
+// By default it's not affixed in mobile views, so undo that.
+.affix {
+    position: static;
+}
+
+// Show and affix the side nav when space allows it
+@media (min-width: 992px) {
+    // Widen the fixed sidebar
+    .affix,
+    .affix-bottom {
+        width: 213px;
+    }
+
+    .affix {
+        // Undo the static from mobile first approach
+        position: fixed;
+        top: 60px;
+    }
+
+    .affix-bottom {
+        // Undo the static from mobile first approach
+        position: absolute;
+    }
+}
+
+.multi-team-menu {
+    background-color: $white;
+    position: fixed;
+    right: 6px;
+    bottom: 6px;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+}
+
+.user-select-none {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.btn-xs {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 0.9;
+    border-radius: 0.2rem;
+}
+
+.btn-light-bordered {
+    @extend .btn-light;
+    background-color: $white;
+    border: 1px solid $gray-400 !important;
+    color: $gray-700 !important;
+}
+
+.navbar-border {
+    border-bottom: 1px solid $gray-200;
+}
+
+#top-dropdowns .nav-item,
+#top-user-block .nav-item {
+    margin: -8px 0;
+    height: 51px;
+}
+#top-dropdowns .dropdown.show.nav-item {
+    background-color: $gray-200;
+}
+#top-dropdowns .nav-link {
+    padding: 16px 8px;
+}
+@include media-breakpoint-up(xl) {
+    #top-dropdowns .nav-link {
+        padding: 16px;
+    }
+}
+
+#top-user-block .nav-link {
+    padding: 16px 0 16px 8px;
+}
+@include media-breakpoint-up(xl) {
+    #top-user-block .nav-link {
+        padding: 16px 0 16px 16px;
+    }
+}
+
+.nav-link {
+    cursor: pointer;
+}
+
+.navbar .dropdown-menu {
+    border-top-color: $gray-200;
+    border-radius: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+}
+
+// Needed to fix navbar nesting on xs - not sure why, maybe bug in Boostrap or Reactstrap?
+.navbar-nav {
+    .dropdown-menu {
+        position: absolute;
+    }
+}
+
+.legend-square {
+    bottom: -2.5px;
+    display: inline-block;
+    height: 15px;
+    position: relative;
+    width: 15px;
+}
+
+// https://github.com/twbs/bootstrap/issues/27493
+.table tfoot {
+    tr:first-child {
+        th {
+            border-top-width: 2px;
+        }
+    }
+}
+.table thead {
+    // Override default Bootstap, looks ugly to have 2px borders when there are two rows in thead
+    tr {
+        th {
+            border-bottom-width: 1px;
+        }
+    }
+    tr:last-child {
+        th {
+            border-bottom-width: 2px;
+        }
+    }
+}
+
+.table-responsive {
+    margin-bottom: 1rem;
+
+    .table {
+        margin-bottom: 0;
+    }
+}
+
+.table-accent {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+// Hack to get rid of annoying "Privacy Settings" tab from Quantcast CMP
+.qc-cmp-persistent-link {
+    display: none !important;
+}
+
+.playoff-matchup {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+
+    li {
+        height: 40px;
+        display: flex;
+        align-items: center;
+    }
+
+    li:last-child {
+        border: none;
+    }
+}
+.playoff-matchup-logo {
+    width: 40px;
+    height: 40px;
+
+    // For the image child
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
+
+@media (min-width: 1600px) {
+    .d-xxl-none {
+        display: none !important;
+    }
+    .d-xxl-inline {
+        display: inline !important;
+    }
+    /*.d-xxl-inline-block {
+    display: inline-block !important; }
+  .d-xxl-block {
+    display: block !important; }
+  .d-xxl-table {
+    display: table !important; }
+  .d-xxl-table-row {
+    display: table-row !important; }
+  .d-xxl-table-cell {
+    display: table-cell !important; }
+  .d-xxl-flex {
+    display: flex !important; }
+  .d-xxl-inline-flex {
+    display: inline-flex !important; } }*/
+}

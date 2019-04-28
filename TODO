@@ -1,73 +1,186 @@
 # football
 
-decide on player ratings
+also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
 
-ALL
-- hgt: height
-- stre: strength
-- spd: speed
-- endu: endurance
+Also I just had my rookie QB get onto the All-Rookie Team in the QB slot, but he was also slotted in as an All-Rookie punter, without having done any punts all season.
 
-QB
-- oiq: offensive iq
-- pvn: passing vision
-- thp: throwing power
-- tha: throwing accuracy
-- elu: elusiveness
+Average attendance doesn't seem to display properly. It just says 70000 in the finances page for me despite having several games of <50000 attendance shown in the box score page.
 
-RB/WR/TE
-- oiq: offensive iq
-- elu: elusiveness
-- bls: ball security
-- rtr: route running
-- hnd: hands
+registration works, but still shows error under form
+- added console.log of error message
 
-T/G/C
-- oiq: offensive iq
-- rbk: run blocking
-- pbk: pass blocking
-- snp: snapping
+stat distribution pages
 
-K/P
-- kpw: kick power
-- kac: kick accuracy
-- ppw: punt power
-- pac: punt accuracy
+pass rushing should impact completion percentage and distance
 
-All defensive players
-- pcv: pass coverage
-- tck: tackling
-- prs: pass rushing
-- rns: run stopping
-- hnd: hands
+in the live sim holding penalties on punts result in the punting team getting the ball where the punt is downed
 
-decide on player stats
+too many players playing both offense and defense
+- reassess after making roster construction better. if it's still a problem, only allow starter at one position
 
-start implementing new stats and ratings
+version
 
-new roster page
-- show one stats column with text of position stats, like football mogul
-- offense and defense side by side
-
-schedule
-
-game sim
-
-player development (position dependent)
-
-draft
-
-names US only
-
-switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
-
-implementation
-- factory functions to generate different sports - hard to pass in overrides of functions/types without making everything awkward and passing them around manually
-- ENV variable like feature flag
-
-change defaultGameAttributes
+confirm subscription works from football-gm.com
+- Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
+- cross promote in welcome emails
 
 ---
+
+why is free agency so slow?
+
+button on free agents screen to fill out roster with players making up to 2x the minimum
+
+update these files in football
+- newSchedule, newSchedule.test
+
+get ads set up
+- banner
+- gcs
+
+exportPlayerGamesCsv only supports basketball currently, and it's disabled in ExportStats.js. football box scores are more complicated, more derived stats
+
+use PLAYER_STATS_TABLES for shot locations
+- then DRY exportPlayerAveragesCsv, see comment there
+
+way to specify routes for ShotLocations/Depth, so they aren't included in football/basketball routes
+
+statistical feats
+
+make roster page reorderable like in football mogul
+- it can update t.depth behind the scenes
+
+game sim
+- pick playType from (down, toGo, scrimmage, score, quarter, time)
+- later
+  - clock
+    - pace
+    - clock management, strategy
+  - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
+  - log clutch plays
+  - blocked fg
+    - count as missed field goal
+    - chance for either team to return (very slim for offense)
+  - blocked punt
+  - missed fg/xp return
+
+league leaders recorded in awards
+- see leagueLeaders call in doAwards, needs categories
+
+AV advanced stat
+- use in value?
+- OL and defense
+  - need all pro modifier - but this is circular reasoning, since that comes from AV!
+  - in individualPts, check if they actually seem to apply (no substantial rushing/receiving/passing stats)
+
+what's the end state here? options:
+- everything is in deion, and process.env.SPORT governs the output
+  - that'd be nice, but probably unrealistic
+- define minimal set of things that need to be overridden, and pass to deion like new DeionUI({...}) - probably this one!!!!!!!
+  - e.g. views.. put routes.js and views/index.js in deion. but views/index.js will only have common ones. for others, pass into DeionUI, and reference both sets of views in genPage in routes.js
+  - do this, but try to also do the process.env.SPORT solution when possible
+- deion remains a set of functions/classes/modules, to be pulled in externally piecemeal. if something internal needs to be overriden, make it generic or a factory or DI or have it accept a parameter to allow overriding
+
+injuries
+- make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
+
+how to get types working, options:
+- make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
+- pass around overrides manually everywhere, not making it a module
+- move everything inside deion
+
+how will deionUI(overrides) work with types?
+- can pass them as generics, then apply them to factory functions
+- Import modules from deion. Add things like extra views. Apply factories/generics.
+
+type better
+- skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
+- PlayerStatType should be sport specific
+- getCopy/getCopies and Cache
+  - awards should return Awards
+  - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
+- most MinimalPlayerRatings uses should be generic and take PlayerRatings
+
+names distribution
+
+football league-schema.json
+
+split more from deion
+- processInputs for views only in one sport (depth, shot locations)
+- worker API functions only in one sport (depth)
+
+yarn workspaces
+- see branch football-yarn-workspaces - all works except karma
+
+tests still running within deion? e.g. common/helpers.test.js
+
+better football schedule
+
+better football player names
+
+football achievements
+- some achievements could be common?
+  - add concept of "achievement belonging to a sport" (maybe refactor how they are stored too)
+  - participation/hacker - make global, not sport specific
+  - moneyball - share code between basketball/football
+- refactor achievements database (EAV)
+
+show game stats in player page
+
+contract demands and position assignments should be based on which position maximizes p.value, not which position maximizes ovr. would you rather have an 80 ovr qb or a 100 ovr kicker?
+
+RatingsOverview - could put in deion, with config to specify categories and names from getCols
+- RatingsForm has this already! re-use
+
+---
+
+on league import, override numTeams if teams are supplied in league file
+
+Option to disable home court advantage @Spacemanspiff
+
+god mode options for foul rate and foul outs - Jlebron13 on discord
+- other sport specific options, like shot tendencies, enabling/disabling 3 pointers, etc
+
+god mode option to disable refusing to negotiate
+
+during free agency, after you sign all your free agents it should automatically take you to the league free agents and skip the step of having to continue
+
+if a trade is highly unfavorable to the user, pop up a warning confirmation dialog
+
+live game
+- field with drive summary, football, direction, and last play
+
+more accurage game sim
+- State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
+
+---
+
+update discord links after creating football channel
+
+when live simming last game of playoffs, redirect to season summary is disabled. so it should put it in the Play menu then, until you view it
+
+draft lottery teams should only be non-playoff teams
+
+in table, sort position by constants.POSITIONS order (like roster page in football)
+
+revise re-signing - too many good young players become FAs
+
+everywhere contract is displayed, make it in italics if not guaranteed
+- currently only on roster i think. make a component!
+
+Add playoff seed # to the history page
+
+on past season rosters, highlight hall of fame players
+
+add end of game to live game sim in basketball, like it is for football
+
+option to have no draft, players just become FAs
+
+customizable columns in DataTable would be great... especially for football, with presets like mogul
+
+"Shot Locations" should be just another stat type in player/team stats
+- need to handle super cols in PLAYER_STATS_TABLES
+
+"Accept Trade" button on trading block
 
 faces
 - http://biskup.biowiki.org/facesjs/
@@ -85,9 +198,11 @@ better salary AI
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
+- https://davidgom.es/porting-30k-lines-of-code-from-flow-to-typescript/
 - https://github.com/bcherny/flow-to-typescript
   - might have to do this, do all in one
 - FlowFixMe
+- - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?
@@ -105,7 +220,7 @@ customize playoff series length
 
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
-- eventually delete appcache, but for now leave it there as an upgrade path
+  - workbox-window
 
 https://developers.google.com/web/fundamentals/app-install-banners/
 
@@ -116,6 +231,14 @@ Don't allow play if versions in tabs don't match
 - close worker?
 
 ---
+
+finals home court advantage should be based on record, not seed
+
+user reports - JS alert/confirm often fail on iOS. maybe rewrite with my own modal
+
+Tools > Frivolities
+- family trees
+- tragic deaths
 
 redo mood system
 - make available throughout the year
@@ -177,6 +300,10 @@ persist fantasy draft results
 - viewable somehow - need to track when fantasy drafts happened and add them to draft results menu
 
 ---
+
+1. If there was a "select all" for not including draft picks in trades. So instead of going down 1 by 1 to check don't include you could just say NO to trading any of your 4,000 picks. 
+
+2. If searching player rating also included contracts. Usually you'll want to find a high potential guy on a cheap contract.
 
 career totals on player pages https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/duptp08/?context=3
 
@@ -385,6 +512,8 @@ Draft
     https://www.reddit.com/message/messages/6ip35c
 
 ---
+
+Tools > Export Stats only has latest team, for in-season trades
 
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
@@ -623,6 +752,7 @@ Achievements to add
   win title without making a trade
   career stat milestone for players on your team from draft to the milestone
   https://www.reddit.com/r/BasketballGM/comments/81g1tz/achievement_ideas/
+  https://www.reddit.com/r/BasketballGM/comments/aajsvu/suggestion_more_achievements/
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate

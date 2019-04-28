@@ -147,8 +147,6 @@ on league import, override numTeams if teams are supplied in league file
 
 after draft, should forward to draft summary, not draft scouting
 
-Worst Record in the History section should not include ongoing season until it's over, otherwise you see 0-0. or consider worst to be losses - wins
-
 Option to disable home court advantage @Spacemanspiff
 
 god mode options for foul rate and foul outs - Jlebron13 on discord

@@ -16,8 +16,8 @@ async function updateTeamHistory(
     ) {
         let bestRecord;
         let worstRecord;
-        let bestWinp = -Infinity;
-        let worstWinp = Infinity;
+        let mostWon = -Infinity;
+        let mostLost = -Infinity;
 
         const teamSeasons = await idb.getCopies.teamSeasons({
             tid: inputs.tid,
@@ -48,14 +48,19 @@ async function updateTeamHistory(
                 championships += 1;
             }
 
-            const winp = helpers.calcWinp(history[history.length - 1]);
-            if (winp > bestWinp) {
+            const won = g.ties
+                ? teamSeason.won + 0.5 * teamSeason.tied
+                : teamSeason.won;
+            const lost = g.ties
+                ? teamSeason.lost + 0.5 * teamSeason.tied
+                : teamSeason.lost;
+            if (won > mostWon) {
                 bestRecord = history[history.length - 1];
-                bestWinp = winp;
+                mostWon = won;
             }
-            if (winp < worstWinp) {
+            if (lost > mostLost) {
                 worstRecord = history[history.length - 1];
-                worstWinp = winp;
+                mostLost = lost;
             }
         }
         history.reverse(); // Show most recent season first

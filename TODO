@@ -143,6 +143,12 @@ RatingsOverview - could put in deion, with config to specify categories and name
 
 ---
 
+deploy script
+- build
+- rsync gen (delete disabled)
+- rsync other
+- invalidate cloudflare cache
+
 on league import, override numTeams if teams are supplied in league file
 
 after draft, should forward to draft summary, not draft scouting

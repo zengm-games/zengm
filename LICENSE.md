@@ -1,14 +1,15 @@
 Copyright (C) Jeremy Scheff. All rights reserved.
 
-**Basketball GM is not open source!** But it's not completely closed either.
+**This project is not open source!** But it's not completely closed either.
 It's somewhere in between. My goal here is to make my code as publicly available
 as possible without letting people distribute playable forked versions of the
-game that compete with <https://basketball-gm.com/>.
+game that compete with <https://basketball-gm.com/> or
+<https://football-gm.com/>.
 
 In order to receive this license, you must agree to its rules. The rules of this
-license are both obligations under that agreement and conditions to your license.
-You must not do anything with this software that triggers a rule that you cannot
-or will not follow.
+license are both obligations under that agreement and conditions to your
+license. You must not do anything with this software that triggers a rule that you
+cannot or will not follow.
 
 You must ensure that everyone who gets a copy of any part of this software from
 you, with or without changes, also gets the text of this license.
@@ -36,10 +37,11 @@ cannot do, based on the previous exhaustive list of things you are allowed to
 do.)
 
 - **Host a version of the software that others can access.**
-  <https://basketball-gm.com/> is the only publicly available version of the
-  software that can be easily used. If you want to make changes to the software
-  that other people can use, contribute them back to the project so they can go
-  live on <https://basketball-gm.com/>.
+  <https://basketball-gm.com/> and <https://football-gm.com/> are the only
+  publicly available version of the software that can be easily used. If you
+  want to make changes to the software that other people can use, contribute
+  them back to the project so they can go live on <https://basketball-gm.com/>
+  and <https://football-gm.com/>.
 
 - **Make any kind of redistributable installer.** For example, you can't wrap a
   version of the software in something like Phonegap to let people easily
@@ -53,7 +55,8 @@ do.)
   regret sharing my code.
 
 - Let me reiterate one more time: **you can't in any way deploy the software for
-  public use or compete with <https://basketball-gm.com/>**.
+  public use or compete with <https://basketball-gm.com/> or
+  <https://football-gm.com/>**.
 
 # No Liability
 

@@ -1,9 +1,9 @@
 # Contributor Agreement
 ## Entity Contributor exclusive License Agreement including the Traditional Patent License OPTION
 
-Thank you for your interest in contributing to Basketball GM ("We" or "Us").
+Thank you for your interest in contributing to Basketball GM and Football GM ("We" or "Us").
 
-The purpose of this contributor agreement ("Agreement") is to clarify and document the rights granted by contributors to Us. To make this document effective, please follow the instructions at <https://github.com/dumbmatter/basketball-gm/blob/master/README.md#license-and-contributor-license-agreement>.
+The purpose of this contributor agreement ("Agreement") is to clarify and document the rights granted by contributors to Us. To make this document effective, please follow the instructions at <https://github.com/dumbmatter/gm-games/blob/master/README.md#license-and-contributor-license-agreement>.
 
 ## 1. DEFINITIONS
 

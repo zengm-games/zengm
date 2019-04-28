@@ -1,34 +1,35 @@
-# Basketball GM 4.1.0
+# Basketball GM and Football GM
 
-A single-player basketball simulation game. Make trades, set rosters, draft
-players, and try to build the next dynasty, all from within your web browser.
-The game is implemented entirely in client-side JavaScript, backed by IndexedDB.
+Single-player sports simulation games. Make trades, set rosters, draft players,
+and try to build the next dynasty, all from within your web browser. The games
+are implemented entirely in client-side JavaScript, backed by IndexedDB.
 
 Copyright (C) Jeremy Scheff. All rights reserved.
 
 * Email: commissioner@basketball-gm.com
-* Website: <https://basketball-gm.com/>
-* Development: <https://github.com/dumbmatter/basketball-gm>
-* Discussion: <https://www.reddit.com/r/BasketballGM/> or <https://discord.gg/E9HUwbq>
+* Website: <https://basketball-gm.com/> and <https://football-gm.com/>
+* Development: <https://github.com/dumbmatter/gm-games>
+* Discussion: <https://www.reddit.com/r/BasketballGM/> or
+<https://www.reddit.com/r/Football_GM/> or <https://discord.gg/E9HUwbq>
 
-**Basketball GM is NOT open source, but it is also not completely closed. Please
+**This project is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
 
 ## Development Info
 
-If you just want to play the game, go to <https://basketball-gm.com/>.
-Instructions below are for developers who want to run a copy locally so they can
-make changes to the code.
+If you just want to play the game, go to <https://basketball-gm.com/> or
+<https://football-gm.com/>. Instructions below are for developers who want to
+run a copy locally so they can make changes to the code.
 
 If you want to contribute but get stuck somewhere, please contact me! I'm happy
 to help.
 
 ### License and Contributor License Agreement
 
-**Basketball GM is NOT open source, but it is also not completely closed. Please
+**This project is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
 
-If you want to contribute code to Basketball GM, you must sign a contributor
+If you want to contribute code to this project, you must sign a contributor
 license agreement. There are separate forms for individuals and entities (such
 as corporations):
 
@@ -51,8 +52,7 @@ from within this folder.
 
 ### Step 2 - Building
 
-Basketball GM uses Browserify for JS minification and clean-css for
-CSS minification. To build the app along with all its assets, run
+To build the app along with all its assets, run
 
     yarn run build
 
@@ -61,16 +61,21 @@ However during development, you probably would rather do
     yarn run start-watch
 
 which will start the server and watch JS and CSS files for changes and
-recompile. This simply runs both `yarn run start` and `yarn run watch` together, which
-alternatively can be run separately if you wish.
+recompile. This simply runs both `yarn run start` and `yarn run watch` together,
+which alternatively can be run separately if you wish.
 
-Open `package.json` to see all available scripts.
+By default this will build the basketball version of the game. For football, set
+the SPORT environment variable to "football", like:
+
+    SPORT=football yarn run start-watch
+
+Open `package.json` to see all available development scripts.
 
 ### Step 3 - Running
 
 To run the game locally, you need some way of running a web server to display
-the content. There are currently two ways to do it. It doesn't matter which
-you use as long as you can get it to run on your computer.
+the content. There are currently two ways to do it. It doesn't matter which you
+use as long as you can get it to run on your computer.
 
 #### 1. Node.js (easiest)
 
@@ -78,29 +83,28 @@ Run
 
     yarn run start
 
-and point your browser to <http://localhost:3000/>. If you use the command
-`yarn run start-watch` from above, then running the command `yarn run start` is not
+and point your browser to <http://localhost:3000/>. If you use the command `yarn
+run start-watch` from above, then running the command `yarn run start` is not
 necessary.
 
 #### 2. Apache
 
-The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
-GM. Everything should work if you point it at the `build` folder with
-mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
+The mod_rewrite rules in `.htaccess` let the game run in Apache. Everything
+should work if you point it at the `build` folder with mod_rewrite enabled.
 
 #### Service worker
 
-Basketball GM uses a service worker for offline caching. This can make
-development tricky, because if you load the game in your browser, make a change,
-wait for build/watch to finish, and then reload... you will not see your change
-because it will cache the original version and then not update it on a reload.
-This is the normal behavior for service workers (they only switch to a new
-version when you actually close the website and reopen it, not on a reload), but
-it makes development annoying.
+A service worker is used for offline caching. This can make development tricky,
+because if you load the game in your browser, make a change, wait for
+build/watch to finish, and then reload... you will not see your change because
+it will cache the original version and then not update it on a reload. This is
+the normal behavior for service workers (they only switch to a new version when
+you actually close the website and reopen it, not on a reload), but it makes
+development annoying.
 
-To work around that, in Chrome you can
-[use the "Update on reload" option][1] and keep your devtools open. Then
-reloading will always get you the latest version.
+To work around that, in Chrome you can [use the "Update on reload" option][1]
+and keep your devtools open. Then reloading will always get you the latest
+version.
 
 Even with that, ctrl+shift+r may be a good idea to make sure you're seeing your
 latest changes.
@@ -125,12 +129,12 @@ or
 
 ### Code Overview
 
-Basketball GM is a single-page app that runs almost entirely client-side by
-storing data in IndexedDB. The core of the game runs inside a Shared Worker (or
-a Web Worker in crappy browsers that don't support Shared Workers), and then
-each open tab runs only UI code that talks to the worker. The UI code is in the
-`src/js/ui` folder and the core game code is in the `src/js/worker` folder. They
-communicate through the `toUI` and `toWorker` functions.
+This is a single-page app that runs almost entirely client-side by storing data
+in IndexedDB. The core of the game runs inside a Shared Worker (or a Web Worker
+in crappy browsers that don't support Shared Workers), and then each open tab
+runs only UI code that talks to the worker. The UI code is in the `src/js/ui`
+folder and the core game code is in the `src/js/worker` folder. They communicate
+through the `toUI` and `toWorker` functions.
 
 The UI is built with React and Bootstrap.
 
@@ -147,8 +151,7 @@ mutate a value (like updating a player's stats), you need to remember to always
 write it back to the cache manually by calling `idb.cache.*.put`.
 
 Also in the worker, there is a global variable `self.bbgm` which gives you
-access to many of the internal functions of Basketball GM from within your
-browser.
+access to many of the internal functions of the game from within your browser.
 
 ### Git Workflow
 
@@ -158,15 +161,15 @@ GitHub. Then make your changes in a new branch. Confirm that the tests
 a pull request.
 
 It's also probably a good idea to create an [issue on
-GitHub](https://github.com/dumbmatter/basketball-gm/issues) before you start
-working on something to keep me in the loop.
+GitHub](https://github.com/dumbmatter/gm-games/issues) before you start working
+on something to keep me in the loop.
 
 ## Less Important Development Info
 
-### Basketball stuff
+### Sport-specific stuff
 
-Abbreviations of stats should be done like basketball-reference.com stat pages.
-For instance, "defensive rebounds" is "drb".
+Abbreviations of stats should be done like basketball-reference.com and
+football-reference.com stat pages. For instance, "defensive rebounds" is "drb".
 
 ### Thank you BrowserStack
 

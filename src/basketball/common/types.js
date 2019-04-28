@@ -7,7 +7,7 @@ type AwardTeam = {|
     name: string,
     won: number,
     lost: number,
-    tied: number | undefined,
+    tied: number | void,
 |};
 
 export type AwardPlayer = {|

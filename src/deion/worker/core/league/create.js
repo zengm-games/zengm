@@ -30,9 +30,7 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
         values.add(value);
     }
 
-    console.log(objs, key, objectName, values);
     for (let i = 0; i < values.size; i++) {
-        console.log(objectName, key, i, values.size);
         if (!values.has(i)) {
             throw new Error(
                 `${key} values must be sequential with no gaps starting from 0, but no ${objectName} has a value of ${i}`,

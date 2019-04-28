@@ -85,8 +85,6 @@ const buildSW = async () => {
 };
 
 const setSport = () => {
-    console.log("Setting sport...");
-
     if (process.env.SPORT === "football") {
         replace({
             regex: "basketball",
@@ -162,10 +160,16 @@ const genRev = () => {
 };
 
 const getSport = () => {
-    if (typeof process.env.SPORT === "string") {
+    if (
+        process.env.SPORT === "football" ||
+        process.env.SPORT === "basketball"
+    ) {
         return process.env.SPORT;
     }
-    return "basketball";
+    if (process.env.SPORT === undefined) {
+        return "basketball";
+    }
+    throw new Error(`Invalid SPORT: ${process.env.SPORT}`);
 };
 
 const minifyJS = (name /*: string */) => {

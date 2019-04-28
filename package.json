@@ -14,6 +14,7 @@
     "scripts": {
         "start": "node tools/server.js",
         "build": "node tools/build.js && node tools/build-js.js && node tools/minify-js.js && node tools/build-sw.js",
+        "deploy": "yarn run build && node tools/deploy.js",
         "start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
         "watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
         "watch-css": "node tools/watch-css.js",
@@ -79,6 +80,7 @@
         "cheerio": "^1.0.0-rc.3",
         "chokidar": "^2.1.5",
         "clean-css": "^4.2.1",
+        "cloudflare": "^2.4.1",
         "concurrently": "^4.1.0",
         "envify": "^4.1.0",
         "eslint": "^5.16.0",

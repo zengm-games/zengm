@@ -1,14 +1,6 @@
 # football
 
-deploy script
-- build
-- rsync gen (delete disabled)
-- rsync other
-- invalidate cloudflare cache
-- beta?
-- yarn run deploy beta.basketball-gm.com
-  - check if arg contains basketball or football or neither
-  - use for dir on server
+lint
 
 death rate scale number games
 

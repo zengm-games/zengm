@@ -1,8 +1,8 @@
 # football
 
-also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
+best record in season summary - show ties
 
-Draft summary doesn't work. Only shows 30 picks from 1st round and 30 picks from 2nd round.
+also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
 
 death rate scale number games
 
@@ -144,8 +144,6 @@ RatingsOverview - could put in deion, with config to specify categories and name
 ---
 
 on league import, override numTeams if teams are supplied in league file
-
-after draft, should forward to draft summary, not draft scouting
 
 Option to disable home court advantage @Spacemanspiff
 

@@ -101,7 +101,11 @@ const depth = params => {
 const draft = () => {
     if (g.phase !== PHASE.DRAFT && g.phase !== PHASE.FANTASY_DRAFT) {
         return {
-            redirectUrl: helpers.leagueUrl(["draft_scouting"]),
+            redirectUrl: helpers.leagueUrl([
+                g.phase === PHASE.AFTER_DRAFT
+                    ? "draft_summary"
+                    : "draft_scouting",
+            ]),
         };
     }
 };

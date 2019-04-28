@@ -24,10 +24,7 @@ async function updateDraftSummary(inputs: {
         playersAll = await idb.getCopies.players({ draftYear: inputs.season });
     }
     playersAll = playersAll.filter(p => {
-        return (
-            p.draft.year === inputs.season &&
-            (p.draft.round === 1 || p.draft.round === 2)
-        );
+        return p.draft.year === inputs.season && p.draft.round >= 1;
     });
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],

@@ -17,6 +17,10 @@ type SeriesTeam = {
     won?: number,
 };
 
+const faded = {
+    opacity: 0.3,
+};
+
 const Team = ({
     team,
     season,
@@ -47,12 +51,8 @@ const Team = ({
             })}
         >
             {team.imgURL ? (
-                <div
-                    className={classNames("playoff-matchup-logo", {
-                        "table-success": won,
-                    })}
-                >
-                    <img src={team.imgURL} alt="" />
+                <div className="playoff-matchup-logo">
+                    <img style={lost ? faded : null} src={team.imgURL} alt="" />
                 </div>
             ) : null}
             <div className="mx-1">

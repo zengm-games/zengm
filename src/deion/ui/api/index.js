@@ -42,8 +42,8 @@ const confirm = (message: string) => {
     return window.confirm(message);
 };
 
-const emit = (name: string, content: any) => {
-    emitter.emit(name, content);
+const emit = (name: string, ...args: any[]) => {
+    emitter.emit(name, ...args);
 };
 
 // Read from goldUntil rather than local because this is called before local is updated

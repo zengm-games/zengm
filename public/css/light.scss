@@ -815,3 +815,26 @@ tr.table-warning:hover > td {
         max-height: 100%;
     }
 }
+
+@media (min-width: 1500px) {
+    .d-xxl-none {
+        display: none !important;
+    }
+    .d-xxl-inline {
+        display: inline !important;
+    }
+    /*.d-xxl-inline-block {
+    display: inline-block !important; }
+  .d-xxl-block {
+    display: block !important; }
+  .d-xxl-table {
+    display: table !important; }
+  .d-xxl-table-row {
+    display: table-row !important; }
+  .d-xxl-table-cell {
+    display: table-cell !important; }
+  .d-xxl-flex {
+    display: flex !important; }
+  .d-xxl-inline-flex {
+    display: inline-flex !important; } }*/
+}

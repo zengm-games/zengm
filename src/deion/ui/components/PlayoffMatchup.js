@@ -63,8 +63,8 @@ const Team = ({
                     })}
                     href={helpers.leagueUrl(["roster", team.abbrev, season])}
                 >
-                    <span className="d-lg-none">{team.abbrev}</span>
-                    <span className="d-none d-lg-inline">{team.region}</span>
+                    <span className="d-xxl-none">{team.abbrev}</span>
+                    <span className="d-none d-xxl-inline">{team.region}</span>
                 </a>
             </div>
             {showWon && team.hasOwnProperty("won") ? (

@@ -1,3 +1,7 @@
+new draft lottery odds
+
+fantasy draft specify order of all teams Chiefs Keef
+
 # football
 
 also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
@@ -132,6 +136,8 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
+
+highlight hall of fame players on past rosters
 
 on league import, override numTeams if teams are supplied in league file
 

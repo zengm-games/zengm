@@ -38,10 +38,10 @@ async function updateDraftLottery(
                         : undefined;
 
                 // Past lotteries before draftLotteryResult.draftType were all 1994
-                const draftType =
-                    draftLotteryResult !== undefined
-                        ? draftLotteryResult.draftType
-                        : "nba1994";
+                let draftType;
+                if (draftLotteryResult !== undefined) {
+                    draftType = draftLotteryResult.draftType || "nba1994";
+                }
 
                 return {
                     draftType,

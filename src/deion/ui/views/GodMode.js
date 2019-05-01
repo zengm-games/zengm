@@ -346,7 +346,10 @@ class GodMode extends React.Component {
                         <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Draft Type{" "}
-                                <HelpPopover placement="right" title="Hard Cap">
+                                <HelpPopover
+                                    placement="right"
+                                    title="Draft Type"
+                                >
                                     <p>
                                         Currently this just changes the type of
                                         draft lottery.

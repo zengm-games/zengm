@@ -31,10 +31,28 @@ const genOrder = async (
 
     // Draft lottery
     lotterySort(teams);
-    const chances =
+    let chances =
         g.draftType === "nba1994"
             ? [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]
             : [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5];
+
+    // Change number of teams in lottery, based on number of playoff teams
+    const numPlayoffTeams =
+        2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
+    const minNumLotteryTeams = g.draftType === "nba1994" ? 3 : 4; // Otherwise would require changes to draft lottery algorithm
+    const numLotteryTeams = helpers.bound(
+        g.numTeams - numPlayoffTeams,
+        minNumLotteryTeams,
+        g.numTeams,
+    );
+    if (numLotteryTeams < chances.length) {
+        chances = chances.slice(0, numLotteryTeams);
+    } else {
+        while (numLotteryTeams > chances.length) {
+            chances.push(5);
+        }
+    }
+
     updateChances(chances, teams, true);
 
     const chanceTotal = chances.reduce((a, b) => a + b);
@@ -45,12 +63,13 @@ const genOrder = async (
     for (let i = 1; i < chancesCumsum.length; i++) {
         chancesCumsum[i] += chancesCumsum[i - 1];
     }
+    const totalChances = chancesCumsum[chancesCumsum.length - 1];
 
     // Pick first 3 or 4 picks based on chancesCumsum
     const numToPick = g.draftType === "nba1994" ? 3 : 4;
     const firstN = [];
     while (firstN.length < numToPick) {
-        const draw = random.randInt(0, 999);
+        const draw = random.randInt(0, totalChances - 1);
         const i = chancesCumsum.findIndex(chance => chance > draw);
         if (!firstN.includes(i) && i < teams.length) {
             // If one lottery winner, select after other tied teams;

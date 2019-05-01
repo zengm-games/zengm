@@ -22,10 +22,15 @@ const getProbs = (
 
     const topNCombos = new Map();
 
+    const totalChances = result.reduce(
+        (total, { chances }) => total + chances,
+        0,
+    );
+
     // Top N picks
     for (let i = 0; i < result.length; i++) {
         probs[i] = [];
-        probs[i][0] = result[i].chances / 1000; // First pick
+        probs[i][0] = result[i].chances / totalChances; // First pick
         probs[i][1] = 0; // Second pick
         probs[i][2] = 0; // Third pick
         if (draftType === "nba2019") {
@@ -35,17 +40,19 @@ const getProbs = (
         for (let k = 0; k < result.length; k++) {
             if (k !== i) {
                 probs[i][1] +=
-                    ((result[k].chances / 1000) * result[i].chances) /
-                    (1000 - result[k].chances);
+                    ((result[k].chances / totalChances) * result[i].chances) /
+                    (totalChances - result[k].chances);
 
                 for (let l = 0; l < result.length; l++) {
                     if (l !== i && l !== k) {
                         const combosTemp =
-                            ((result[k].chances / 1000) *
+                            ((result[k].chances / totalChances) *
                                 (result[l].chances /
-                                    (1000 - result[k].chances)) *
+                                    (totalChances - result[k].chances)) *
                                 result[i].chances) /
-                            (1000 - result[k].chances - result[l].chances);
+                            (totalChances -
+                                result[k].chances -
+                                result[l].chances);
                         probs[i][2] += combosTemp;
 
                         if (draftType === "nba2019") {
@@ -53,15 +60,16 @@ const getProbs = (
                             for (let m = 0; m < result.length; m++) {
                                 if (m !== i && m !== k && m !== l) {
                                     const combosTemp2 =
-                                        ((result[k].chances / 1000) *
+                                        ((result[k].chances / totalChances) *
                                             (result[l].chances /
-                                                (1000 - result[k].chances)) *
+                                                (totalChances -
+                                                    result[k].chances)) *
                                             (result[m].chances /
-                                                (1000 -
+                                                (totalChances -
                                                     result[k].chances -
                                                     result[l].chances)) *
                                             result[i].chances) /
-                                        (1000 -
+                                        (totalChances -
                                             result[k].chances -
                                             result[l].chances -
                                             result[m].chances);

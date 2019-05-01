@@ -30,13 +30,6 @@ class GodMode extends React.Component {
             numPlayoffByes: props.numPlayoffByes,
             draftType: props.draftType,
         };
-        console.log(
-            "hi",
-            this.state.draftType,
-            this.state,
-            props.draftType,
-            props,
-        );
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
             luxuryPayroll: this.handleChange.bind(this, "luxuryPayroll"),

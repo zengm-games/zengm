@@ -71,6 +71,7 @@ const NegotiationList = ({
                     </span>
                 </div>,
                 <NegotiateButtons
+                    canGoOverCap={!hardCap}
                     capSpace={capSpace}
                     minContract={minContract}
                     p={p}

@@ -8,6 +8,7 @@ import type { Player } from "../../common/types";
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
 // are willing to sign.
 const NegotiateButtons = ({
+    canGoOverCap,
     capSpace,
     disabled,
     minContract,
@@ -15,6 +16,7 @@ const NegotiateButtons = ({
     season,
     userTid,
 }: {
+    canGoOverCap?: boolean,
     capSpace: number,
     disabled?: boolean,
     minContract: number,
@@ -32,6 +34,12 @@ const NegotiateButtons = ({
         return "Refuses!";
     }
 
+    const signDisabled =
+        !canGoOverCap &&
+        (!!disabled ||
+            (p.contract.amount > capSpace &&
+                p.contract.amount > minContract / 1000));
+
     return (
         <div className="btn-group">
             <button
@@ -43,11 +51,7 @@ const NegotiateButtons = ({
             </button>
             <button
                 className="btn btn-light-bordered btn-xs"
-                disabled={
-                    !!disabled ||
-                    (p.contract.amount > capSpace &&
-                        p.contract.amount > minContract / 1000)
-                }
+                disabled={signDisabled}
                 onClick={async () => {
                     const errorMsg = await toWorker(
                         "sign",

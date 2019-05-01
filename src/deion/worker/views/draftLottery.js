@@ -41,6 +41,19 @@ async function updateDraftLottery(
                     draftType: draftLotteryResult.draftType || "nba1994", // Past lotteries before draftLotteryResult.draftType were all 1994
                     result,
                     season,
+                    ties: g.ties,
+                    type: "completed",
+                    userTid: g.userTid,
+                };
+            }
+
+            if (season < g.season) {
+                // Maybe there was no draft lottery done, or it was deleted from the database
+                return {
+                    draftType: "noLottery",
+                    result: undefined,
+                    season,
+                    ties: g.ties,
                     type: "completed",
                     userTid: g.userTid,
                 };

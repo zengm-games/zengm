@@ -360,10 +360,15 @@ class GodMode extends React.Component {
                                     </p>
                                     <p>
                                         NBA 2019 is the current NBA draft
-                                        lottery. NBA 1994 is the NBA draft
-                                        lottery that was used from 1994 to 2018.
-                                        No Lottery will just order teams based
-                                        on their record.
+                                        lottery.
+                                    </p>
+                                    <p>
+                                        NBA 1994 is the NBA draft lottery that
+                                        was used from 1994 to 2018.
+                                    </p>
+                                    <p>
+                                        No Lottery will order teams based on
+                                        their record.
                                     </p>
                                 </HelpPopover>
                             </label>

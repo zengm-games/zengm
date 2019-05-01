@@ -37,7 +37,7 @@ const newPhaseDraft = async (conditions: Conditions) => {
     const draftLotteryResult = await idb.getCopy.draftLotteryResults({
         season: g.season,
     });
-    if (g.draftType === "nba" && !draftLotteryResult) {
+    if (!draftLotteryResult) {
         await draft.genOrder(false, conditions);
     }
 

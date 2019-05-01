@@ -158,7 +158,23 @@ class DraftLottery extends React.Component<Props, State> {
             started: false,
             toReveal: [],
             indRevealed: -1,
+            season: props.season,
         };
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.season !== prevState.season) {
+            return {
+                draftType: undefined,
+                result: undefined,
+                started: false,
+                toReveal: [],
+                indRevealed: -1,
+                season: nextProps.season,
+            };
+        }
+
+        return null;
     }
 
     revealPick() {
@@ -216,6 +232,9 @@ class DraftLottery extends React.Component<Props, State> {
 
     render() {
         const { season, ties, type, userTid } = this.props;
+
+        setTitle(`${season} Draft Lottery`);
+
         const result =
             this.state.result !== undefined
                 ? this.state.result
@@ -224,8 +243,6 @@ class DraftLottery extends React.Component<Props, State> {
             this.state.draftType !== undefined
                 ? this.state.draftType
                 : this.props.draftType;
-
-        setTitle(`${season} Draft Lottery`);
 
         const probs =
             result !== undefined ? getProbs(result, draftType) : undefined;
@@ -341,7 +358,7 @@ class DraftLottery extends React.Component<Props, State> {
                 </ResponsiveTableWrapper>
             );
         } else {
-            table = <p>Can't find draft lottery results for {season}.</p>;
+            table = <p>No draft lottery results for {season}.</p>;
         }
 
         return (
@@ -396,7 +413,7 @@ class DraftLottery extends React.Component<Props, State> {
 }
 
 DraftLottery.propTypes = {
-    draftType: PropTypes.oneOf(["nba1994", "nba2019"]),
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
     result: PropTypes.arrayOf(
         PropTypes.shape({
             tid: PropTypes.number.isRequired,

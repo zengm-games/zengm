@@ -1,10 +1,8 @@
 new draft lottery odds
 - https://en.wikipedia.org/wiki/NBA_draft_lottery#Process
-- look through code for anywhere draftType was being used "nba"
 - more gracefully handle when number of non-playoff teams changes
 - make sure football still works
 - make sure past seasons display correctly for upgraded leagues
-- on DraftLottery page, gracefully handle past seasons with no lottery
 
 the sign button is faded out on Re-signing players when signing them would take you over the salary cap. Going into the negotiation page still works fine.
 

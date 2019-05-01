@@ -102,7 +102,7 @@ const updatePlayMenu = async () => {
     } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         // Offseason - pre draft
         keys =
-            process.env.SPORT === "basketball"
+            g.draftType !== "noLottery"
                 ? ["viewDraftLottery", "untilDraft"]
                 : ["untilDraft"];
     } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {

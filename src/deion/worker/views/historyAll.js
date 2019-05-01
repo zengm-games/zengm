@@ -52,7 +52,8 @@ async function updateHistory(
         const maxPlayoffRoundsWon = teams[0].seasonAttrs.map(
             (seasonAttrs, i) => {
                 return teams.reduce((max, t) => {
-                    return t.seasonAttrs[i].playoffRoundsWon > max
+                    return t.seasonAttrs[i] &&
+                        t.seasonAttrs[i].playoffRoundsWon > max
                         ? t.seasonAttrs[i].playoffRoundsWon
                         : max;
                 }, 0);

@@ -38,6 +38,7 @@ async function updateDraftLottery(
                         : undefined;
 
                 return {
+                    draftType: draftLotteryResult.draftType || "nba1994", // Past lotteries before draftLotteryResult.draftType were all 1994
                     result,
                     season,
                     type: "completed",
@@ -59,6 +60,7 @@ async function updateDraftLottery(
                 : "projected";
 
         return {
+            draftType: draftLotteryResult.draftType,
             result: draftLotteryResult.result,
             season: draftLotteryResult.season,
             ties: g.ties,

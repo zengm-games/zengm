@@ -43,6 +43,7 @@ export type DraftLotteryResultArray = {|
 
 export type DraftLotteryResult = {|
     season: number,
+    draftType?: "nba1994" | "nba2019",
     result: DraftLotteryResultArray,
 |};
 

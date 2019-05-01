@@ -31,7 +31,10 @@ const genOrder = async (
 
     // Draft lottery
     lotterySort(teams);
-    const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+    const chances =
+        g.draftType === "nba1994"
+            ? [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]
+            : [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5];
     updateChances(chances, teams, true);
 
     const chanceTotal = chances.reduce((a, b) => a + b);
@@ -43,15 +46,16 @@ const genOrder = async (
         chancesCumsum[i] += chancesCumsum[i - 1];
     }
 
-    // Pick first three picks based on chancesCumsum
-    const firstThree = [];
-    while (firstThree.length < 3) {
+    // Pick first 3 or 4 picks based on chancesCumsum
+    const numToPick = g.draftType === "nba1994" ? 3 : 4;
+    const firstN = [];
+    while (firstN.length < numToPick) {
         const draw = random.randInt(0, 999);
         const i = chancesCumsum.findIndex(chance => chance > draw);
-        if (!firstThree.includes(i) && i < teams.length) {
+        if (!firstN.includes(i) && i < teams.length) {
             // If one lottery winner, select after other tied teams;
             teams[i].randVal -= 30;
-            firstThree.push(i);
+            firstN.push(i);
         }
     }
 
@@ -91,8 +95,8 @@ const genOrder = async (
     }
 
     // First round - lottery winners
-    for (let i = 0; i < firstThree.length; i++) {
-        const dp = draftPicksIndexed[teams[firstThree[i]].tid][1];
+    for (let i = 0; i < firstN.length; i++) {
+        const dp = draftPicksIndexed[teams[firstN[i]].tid][1];
         if (dp === undefined) {
             throw new Error("No draft pick found for lottery winner");
         }
@@ -103,7 +107,7 @@ const genOrder = async (
                 chancePct,
                 teams,
                 dp.tid,
-                teams[firstThree[i]].tid,
+                teams[firstN[i]].tid,
                 i + 1,
                 conditions,
             );
@@ -111,9 +115,9 @@ const genOrder = async (
     }
 
     // First round - everyone else
-    let pick = 4;
+    let pick = firstN.length + 1;
     for (let i = 0; i < teams.length; i++) {
-        if (!firstThree.includes(i)) {
+        if (!firstN.includes(i)) {
             const dp = draftPicksIndexed[teams[i].tid][1];
             if (dp === undefined) {
                 throw new Error("No draft pick found for first round");
@@ -138,6 +142,7 @@ const genOrder = async (
     // Save draft lottery results separately
     const draftLotteryResult = {
         season: g.season,
+        draftType: g.draftType === "nba1994" ? "nba1994" : "nba2019",
         result: teams // Start with teams in lottery order
             .map(({ tid }) => {
                 return draftPicks.find(dp => {

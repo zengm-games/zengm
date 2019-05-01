@@ -64,7 +64,7 @@ const defaultGameAttributes: GameAttributes = {
     // This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
     ties: false,
 
-    draftType: "nba",
+    draftType: "nba2019",
     numDraftRounds: 2,
     defaultStadiumCapacity: 25000,
 };

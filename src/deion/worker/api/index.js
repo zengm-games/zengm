@@ -241,7 +241,7 @@ const deleteOldData = async (options: {
 const draftLottery = async () => {
     const draftLotteryResult = await draft.genOrderNBA();
 
-    return draftLotteryResult.result;
+    return draftLotteryResult;
 };
 
 const draftUser = async (pid: number, conditions: Conditions) => {

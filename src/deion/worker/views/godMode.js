@@ -33,6 +33,7 @@ async function updateGodMode(
             hardCap: g.hardCap,
             numGamesPlayoffSeries: g.numGamesPlayoffSeries,
             numPlayoffByes: g.numPlayoffByes,
+            draftType: g.draftType,
         };
     }
 }

@@ -14,17 +14,24 @@ import {
 import { helpers, setTitle, toWorker } from "../util";
 import type { DraftLotteryResultArray } from "../../common/types";
 
-const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
+const getProbs = (
+    result: DraftLotteryResultArray,
+    draftType: "nba1994" | "nba2019",
+): (number | void)[][] => {
     const probs = [];
 
-    const topThreeCombos = new Map();
+    const topNCombos = new Map();
 
-    // Top three picks
+    // Top N picks
     for (let i = 0; i < result.length; i++) {
         probs[i] = [];
         probs[i][0] = result[i].chances / 1000; // First pick
         probs[i][1] = 0; // Second pick
         probs[i][2] = 0; // Third pick
+        if (draftType === "nba2019") {
+            probs[i][3] = 0; // Fourth pick
+        }
+
         for (let k = 0; k < result.length; k++) {
             if (k !== i) {
                 probs[i][1] +=
@@ -39,28 +46,64 @@ const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
                                     (1000 - result[k].chances)) *
                                 result[i].chances) /
                             (1000 - result[k].chances - result[l].chances);
-                        const topThreeKey = JSON.stringify([i, k, l].sort());
-                        if (!topThreeCombos.has(topThreeKey)) {
-                            topThreeCombos.set(topThreeKey, combosTemp);
-                        } else {
-                            topThreeCombos.set(
-                                topThreeKey,
-                                topThreeCombos.get(topThreeKey) + combosTemp,
-                            );
-                        }
-
                         probs[i][2] += combosTemp;
+
+                        if (draftType === "nba2019") {
+                            // Go one level deeper
+                            for (let m = 0; m < result.length; m++) {
+                                if (m !== i && m !== k && m !== l) {
+                                    const combosTemp2 =
+                                        ((result[k].chances / 1000) *
+                                            (result[l].chances /
+                                                (1000 - result[k].chances)) *
+                                            (result[m].chances /
+                                                (1000 -
+                                                    result[k].chances -
+                                                    result[l].chances)) *
+                                            result[i].chances) /
+                                        (1000 -
+                                            result[k].chances -
+                                            result[l].chances -
+                                            result[m].chances);
+                                    probs[i][3] += combosTemp2;
+                                    const topFourKey = JSON.stringify(
+                                        [i, k, l, m].sort(),
+                                    );
+                                    if (!topNCombos.has(topFourKey)) {
+                                        topNCombos.set(topFourKey, combosTemp2);
+                                    } else {
+                                        topNCombos.set(
+                                            topFourKey,
+                                            topNCombos.get(topFourKey) +
+                                                combosTemp2,
+                                        );
+                                    }
+                                }
+                            }
+                        } else {
+                            const topThreeKey = JSON.stringify(
+                                [i, k, l].sort(),
+                            );
+                            if (!topNCombos.has(topThreeKey)) {
+                                topNCombos.set(topThreeKey, combosTemp);
+                            } else {
+                                topNCombos.set(
+                                    topThreeKey,
+                                    topNCombos.get(topThreeKey) + combosTemp,
+                                );
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    // Fill in picks 4+
+    // Fill in picks (N+1)+
     for (let i = 0; i < result.length; i++) {
-        const skipped = [0, 0, 0, 0]; // Probabilities of being "skipped" (lower prob team in top 3) 0/1/2/3 times
+        const skipped = [0, 0, 0, 0, 0]; // Probabilities of being "skipped" (lower prob team in top N) 0/1/2/3/4 times
 
-        for (const [key, prob] of topThreeCombos.entries()) {
+        for (const [key, prob] of topNCombos.entries()) {
             const inds = JSON.parse(key);
             let skipCount = 0;
             for (const ind of inds) {
@@ -73,9 +116,12 @@ const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
             }
         }
 
-        // Fill in table after first 3 picks
-        for (let j = 0; j < 4; j++) {
-            if (i + j > 2 && i + j < result.length) {
+        // Fill in table after first N picks
+        for (let j = 0; j < (draftType === "nba2019" ? 5 : 4); j++) {
+            if (
+                i + j > (draftType === "nba2019" ? 3 : 2) &&
+                i + j < result.length
+            ) {
                 probs[i][i + j] = skipped[j];
             }
         }
@@ -93,6 +139,7 @@ type Props = {
 };
 
 type State = {
+    draftType: "nba1994" | "nba2019" | void,
     result: DraftLotteryResultArray | void,
     started: boolean,
     toReveal: number[], // Values are indexes of this.props.result, starting with the 14th pick and ending with the 1st pick
@@ -106,6 +153,7 @@ class DraftLottery extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            draftType: undefined,
             result: undefined,
             started: false,
             toReveal: [],
@@ -135,7 +183,7 @@ class DraftLottery extends React.Component<Props, State> {
             started: true,
         });
 
-        const result = await toWorker("draftLottery");
+        const { draftType, result } = await toWorker("draftLottery");
 
         const toReveal = [];
         for (let i = 0; i < result.length; i++) {
@@ -147,6 +195,7 @@ class DraftLottery extends React.Component<Props, State> {
 
         this.setState(
             {
+                draftType,
                 result,
                 toReveal,
                 indRevealed: -1,
@@ -171,10 +220,15 @@ class DraftLottery extends React.Component<Props, State> {
             this.state.result !== undefined
                 ? this.state.result
                 : this.props.result;
+        const draftType =
+            this.state.draftType !== undefined
+                ? this.state.draftType
+                : this.props.draftType;
 
         setTitle(`${season} Draft Lottery`);
 
-        const probs = result !== undefined ? getProbs(result) : undefined;
+        const probs =
+            result !== undefined ? getProbs(result, draftType) : undefined;
 
         const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
 
@@ -342,6 +396,7 @@ class DraftLottery extends React.Component<Props, State> {
 }
 
 DraftLottery.propTypes = {
+    draftType: PropTypes.oneOf(["nba1994", "nba2019"]),
     result: PropTypes.arrayOf(
         PropTypes.shape({
             tid: PropTypes.number.isRequired,

@@ -17,10 +17,10 @@ const genOrder = async (
     mock?: boolean = false,
     conditions?: Conditions,
 ): Promise<void> => {
-    if (g.draftType === "nba") {
-        await genOrderNBA(mock, conditions);
-    } else {
+    if (g.draftType === "noLottery") {
         await genOrderNone(mock);
+    } else {
+        await genOrderNBA(mock, conditions);
     }
 };
 

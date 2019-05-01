@@ -28,7 +28,15 @@ class GodMode extends React.Component {
             hardCap: String(props.hardCap),
             numGamesPlayoffSeries: JSON.stringify(props.numGamesPlayoffSeries),
             numPlayoffByes: props.numPlayoffByes,
+            draftType: props.draftType,
         };
+        console.log(
+            "hi",
+            this.state.draftType,
+            this.state,
+            props.draftType,
+            props,
+        );
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
             luxuryPayroll: this.handleChange.bind(this, "luxuryPayroll"),
@@ -52,6 +60,7 @@ class GodMode extends React.Component {
                 "numGamesPlayoffSeries",
             ),
             numPlayoffByes: this.handleChange.bind(this, "numPlayoffByes"),
+            draftType: this.handleChange.bind(this, "draftType"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -81,6 +90,7 @@ class GodMode extends React.Component {
                     nextProps.numGamesPlayoffSeries,
                 ),
                 numPlayoffByes: nextProps.numPlayoffByes,
+                draftType: nextProps.draftType,
             };
         }
 
@@ -154,6 +164,7 @@ class GodMode extends React.Component {
             hardCap: this.state.hardCap === "true",
             numGamesPlayoffSeries,
             numPlayoffByes: parseInt(this.state.numPlayoffByes, 10),
+            draftType: this.state.draftType,
         });
 
         this.setState({
@@ -338,6 +349,34 @@ class GodMode extends React.Component {
                                 onChange={this.handleChanges.numPlayoffByes}
                                 value={this.state.numPlayoffByes}
                             />
+                        </div>
+                        <div className="col-sm-3 col-6 form-group">
+                            <label>
+                                Draft Type{" "}
+                                <HelpPopover placement="right" title="Hard Cap">
+                                    <p>
+                                        Currently this just changes the type of
+                                        draft lottery.
+                                    </p>
+                                    <p>
+                                        NBA 2019 is the current NBA draft
+                                        lottery. NBA 1994 is the NBA draft
+                                        lottery that was used from 1994 to 2018.
+                                        No Lottery will just order teams based
+                                        on their record.
+                                    </p>
+                                </HelpPopover>
+                            </label>
+                            <select
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.draftType}
+                                value={this.state.draftType}
+                            >
+                                <option value="nba2019">NBA 2019</option>
+                                <option value="nba1994">NBA 1994</option>
+                                <option value="noLottery">No Lottery</option>
+                            </select>
                         </div>
                     </div>
 
@@ -655,6 +694,7 @@ GodMode.propTypes = {
     hardCap: PropTypes.bool.isRequired,
     numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
     numPlayoffByes: PropTypes.number.isRequired,
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
 };
 
 export default GodMode;

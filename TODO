@@ -1,8 +1,20 @@
 new draft lottery odds
+- https://en.wikipedia.org/wiki/NBA_draft_lottery#Process
+- look through code for anywhere draftType was being used "nba"
+- more gracefully handle when number of non-playoff teams changes
+- make sure football still works
+- make sure past seasons display correctly for upgraded leagues
+- draft_lottery link should be shown based on draftType, not sport
+
+the sign button is faded out on Re-signing players when signing them would take you over the salary cap. Going into the negotiation page still works fine.
 
 fantasy draft specify order of all teams Chiefs Keef
 
 # football
+
+teams missing k/p
+
+recalculate weight as ratings change
 
 also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
 

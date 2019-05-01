@@ -43,6 +43,11 @@ const loadGameAttributes = async () => {
         }
     }
 
+    // Avoid IDB upgrade
+    if (g.draftType === "nba") {
+        g.draftType = "nba2019";
+    }
+
     await toUI(["setGameAttributes", g]);
 };
 

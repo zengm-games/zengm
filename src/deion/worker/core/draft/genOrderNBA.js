@@ -116,20 +116,19 @@ const genOrder = async (
     // First round - lottery winners
     for (let i = 0; i < firstN.length; i++) {
         const dp = draftPicksIndexed[teams[firstN[i]].tid][1];
-        if (dp === undefined) {
-            throw new Error("No draft pick found for lottery winner");
-        }
-        dp.pick = i + 1;
+        if (dp !== undefined) {
+            dp.pick = i + 1;
 
-        if (!mock) {
-            logLotteryWinners(
-                chancePct,
-                teams,
-                dp.tid,
-                teams[firstN[i]].tid,
-                i + 1,
-                conditions,
-            );
+            if (!mock) {
+                logLotteryWinners(
+                    chancePct,
+                    teams,
+                    dp.tid,
+                    teams[firstN[i]].tid,
+                    i + 1,
+                    conditions,
+                );
+            }
         }
     }
 
@@ -138,20 +137,19 @@ const genOrder = async (
     for (let i = 0; i < teams.length; i++) {
         if (!firstN.includes(i)) {
             const dp = draftPicksIndexed[teams[i].tid][1];
-            if (dp === undefined) {
-                throw new Error("No draft pick found for first round");
-            }
-            dp.pick = pick;
+            if (dp) {
+                dp.pick = pick;
 
-            if (pick < 15 && !mock) {
-                logLotteryWinners(
-                    chancePct,
-                    teams,
-                    dp.tid,
-                    teams[i].tid,
-                    pick,
-                    conditions,
-                );
+                if (pick < 15 && !mock) {
+                    logLotteryWinners(
+                        chancePct,
+                        teams,
+                        dp.tid,
+                        teams[i].tid,
+                        pick,
+                        conditions,
+                    );
+                }
             }
 
             pick += 1;
@@ -215,12 +213,13 @@ const genOrder = async (
     });
 
     // Second round
-    for (let i = 0; i < teams.length; i++) {
-        const dp = draftPicksIndexed[teams[i].tid][2];
-        if (dp === undefined) {
-            throw new Error("No draft pick found for second round");
+    for (let round = 2; round <= g.numDraftRounds; round++) {
+        for (let i = 0; i < teams.length; i++) {
+            const dp = draftPicksIndexed[teams[i].tid][round];
+            if (dp !== undefined) {
+                dp.pick = i + 1;
+            }
         }
-        dp.pick = i + 1;
     }
 
     if (!mock) {

@@ -37,7 +37,6 @@ Winner.propTypes = {
     season: PropTypes.number.isRequired,
     userTid: PropTypes.number.isRequired,
 };
-console.log("a");
 
 const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
     console.log(awards.bestRecordConfs);

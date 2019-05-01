@@ -139,6 +139,7 @@ const getProbs = (
 };
 
 type Props = {
+    draftType: "nba1994" | "nba2019" | "noLottery",
     result: DraftLotteryResultArray | void,
     season: number,
     ties: boolean,
@@ -147,8 +148,9 @@ type Props = {
 };
 
 type State = {
-    draftType: "nba1994" | "nba2019" | void,
+    draftType: "nba1994" | "nba2019" | "noLottery" | void,
     result: DraftLotteryResultArray | void,
+    season: number,
     started: boolean,
     toReveal: number[], // Values are indexes of this.props.result, starting with the 14th pick and ending with the 1st pick
     indRevealed: number,
@@ -170,7 +172,7 @@ class DraftLottery extends React.Component<Props, State> {
         };
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
         if (nextProps.season !== prevState.season) {
             return {
                 draftType: undefined,
@@ -253,7 +255,10 @@ class DraftLottery extends React.Component<Props, State> {
                 : this.props.draftType;
 
         const probs =
-            result !== undefined ? getProbs(result, draftType) : undefined;
+            result !== undefined &&
+            (draftType === "nba2019" || draftType === "nba1994")
+                ? getProbs(result, draftType)
+                : undefined;
 
         const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
 

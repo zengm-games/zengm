@@ -5,7 +5,7 @@ import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 const getDraftTids = async () => {
     await draft.genOrderNBA();
@@ -18,6 +18,8 @@ const getDraftTids = async () => {
 const loadTeamSeasons = async () => {
     testHelpers.resetG();
     await testHelpers.resetCache();
+
+    g.draftType = "nba1994";
 
     // Load static data
     for (const st of sampleTiebreakers) {

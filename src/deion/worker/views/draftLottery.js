@@ -37,8 +37,14 @@ async function updateDraftLottery(
                         ? draftLotteryResult.result
                         : undefined;
 
+                // Past lotteries before draftLotteryResult.draftType were all 1994
+                const draftType =
+                    draftLotteryResult !== undefined
+                        ? draftLotteryResult.draftType
+                        : "nba1994";
+
                 return {
-                    draftType: draftLotteryResult.draftType || "nba1994", // Past lotteries before draftLotteryResult.draftType were all 1994
+                    draftType,
                     result,
                     season,
                     ties: g.ties,

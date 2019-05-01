@@ -23,7 +23,7 @@ class DraftScouting extends React.Component {
     }
 
     render() {
-        const { seasons } = this.props;
+        const { draftType, seasons } = this.props;
 
         setTitle("Draft Scouting");
 
@@ -37,7 +37,7 @@ class DraftScouting extends React.Component {
 
                 <p>
                     More:{" "}
-                    {process.env.SPORT === "basketball" ? (
+                    {draftType !== "noLottery" ? (
                         <>
                             <a href={helpers.leagueUrl(["draft_lottery"])}>
                                 Draft Lottery
@@ -155,6 +155,7 @@ class DraftScouting extends React.Component {
 }
 
 DraftScouting.propTypes = {
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
     seasons: PropTypes.arrayOf(
         PropTypes.shape({
             players: PropTypes.arrayOf(PropTypes.object).isRequired,

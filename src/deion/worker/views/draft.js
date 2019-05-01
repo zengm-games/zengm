@@ -123,6 +123,7 @@ async function updateDraft(
         }
 
         return {
+            draftType: g.draftType,
             drafted,
             fantasyDraft,
             stats,

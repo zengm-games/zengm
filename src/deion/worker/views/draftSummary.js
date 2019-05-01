@@ -59,6 +59,7 @@ async function updateDraftSummary(inputs: {
     });
 
     return {
+        draftType: g.draftType,
         players,
         season: inputs.season,
         stats,

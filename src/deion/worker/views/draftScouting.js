@@ -69,6 +69,7 @@ async function updateDraftScouting(
         ]);
 
         return {
+            draftType: g.draftType,
             seasons,
         };
     }

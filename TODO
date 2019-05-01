@@ -4,7 +4,7 @@ new draft lottery odds
 - more gracefully handle when number of non-playoff teams changes
 - make sure football still works
 - make sure past seasons display correctly for upgraded leagues
-- draft_lottery link should be shown based on draftType, not sport
+- on DraftLottery page, gracefully handle past seasons with no lottery
 
 the sign button is faded out on Re-signing players when signing them would take you over the salary cap. Going into the negotiation page still works fine.
 

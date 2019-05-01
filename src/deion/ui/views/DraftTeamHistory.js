@@ -11,6 +11,7 @@ import { getCols, helpers, setTitle } from "../util";
 
 const DraftTeamHistory = ({
     abbrev,
+    draftType,
     name,
     players,
     region,
@@ -115,7 +116,7 @@ const DraftTeamHistory = ({
                 <a href={helpers.leagueUrl(["draft_scouting"])}>
                     Future Draft Scouting
                 </a>{" "}
-                {process.env.SPORT === "basketball" ? (
+                {draftType !== "noLottery" ? (
                     <>
                         <a href={helpers.leagueUrl(["draft_lottery"])}>
                             Draft Lottery
@@ -148,6 +149,7 @@ const DraftTeamHistory = ({
 
 DraftTeamHistory.propTypes = {
     abbrev: PropTypes.string.isRequired,
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
     name: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     region: PropTypes.string.isRequired,

@@ -56,6 +56,7 @@ async function updateDraftTeamHistory(inputs: {
 
     return {
         abbrev,
+        draftType: g.draftType,
         name,
         players,
         region,

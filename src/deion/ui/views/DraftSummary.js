@@ -10,7 +10,7 @@ import {
 } from "../components";
 import { getCols, helpers, setTitle } from "../util";
 
-const DraftSummary = ({ players, season, stats, userTid }) => {
+const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
     setTitle(`${season} Draft Summary`);
 
     const superCols = [
@@ -107,7 +107,7 @@ const DraftSummary = ({ players, season, stats, userTid }) => {
                     Future Draft Scouting
                 </a>{" "}
                 |{" "}
-                {process.env.SPORT === "basketball" ? (
+                {draftType !== "noLottery" ? (
                     <>
                         <a href={helpers.leagueUrl(["draft_lottery", season])}>
                             Draft Lottery
@@ -139,6 +139,7 @@ const DraftSummary = ({ players, season, stats, userTid }) => {
 };
 
 DraftSummary.propTypes = {
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -4,6 +4,7 @@ import orderBy from "lodash/orderBy";
 import { PLAYER, helpers as commonHelpers } from "../../common";
 import { idb } from "../db";
 import g from "./g";
+import random from "./random";
 import type {
     DraftPick,
     GameProcessed,
@@ -155,16 +156,29 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | void) => {
     return Math.ceil(numGamesPlayoffSeries / 2);
 };
 
-const orderByWinp = <T: { seasonAttrs: { winp: number, won: number } }>(
+const orderByWinp = <
+    T: { seasonAttrs: { winp: number, won: number }, tid: number },
+>(
     teams: T[],
+    season?: number = g.season,
 ): T[] => {
     return orderBy(
         teams,
         [
             t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
             t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+
+            // We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
+            t =>
+                random.uniformSeed(
+                    t.tid +
+                        season +
+                        (t.seasonAttrs
+                            ? t.seasonAttrs.won + t.seasonAttrs.winp
+                            : 0),
+                ),
         ],
-        ["desc", "desc"],
+        ["desc", "desc", "asc"],
     );
 };
 

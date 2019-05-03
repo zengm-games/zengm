@@ -112,6 +112,12 @@ const uniform = (a: number, b: number): number => {
     return Math.random() * (b - a) + a;
 };
 
+// https://stackoverflow.com/a/19303725/786644
+const uniformSeed = (seed: number): number => {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+};
+
 /**
  * Choose a random element from a non-empty array.
  *
@@ -324,6 +330,7 @@ export default {
     realGauss,
     truncGauss,
     uniform,
+    uniformSeed,
     choice,
     heightDist,
 };

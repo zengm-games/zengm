@@ -40,6 +40,7 @@ async function updateStandings(
                 ],
                 season: inputs.season,
             }),
+            inputs.season,
         );
 
         const numPlayoffTeams =

@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateTeamHistory(

@@ -38,6 +38,16 @@ async function updateFreeAgents(): void | { [key: string]: any } {
         oldStats: true,
     });
 
+    userPlayers = await idb.getCopies.playersPlus(userPlayers, {
+        attrs: [],
+        ratings: ["pos"],
+        stats: [],
+        season: g.season,
+        showNoStats: true,
+        showRookies: true,
+    });
+    console.log(userPlayers);
+
     for (const p of players) {
         p.contract.amount = freeAgents.amountWithMood(
             p.contract.amount,
@@ -55,6 +65,7 @@ async function updateFreeAgents(): void | { [key: string]: any } {
         phase: g.phase,
         players,
         stats,
+        userPlayers,
         userTid: g.userTid,
     };
 }

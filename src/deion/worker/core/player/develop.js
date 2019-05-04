@@ -193,6 +193,7 @@ const develop = (
         pos?: string,
         ratings: MinimalPlayerRatings[],
         tid: number,
+        weight: number,
     },
     years?: number = 1,
     newPlayer?: boolean = false,

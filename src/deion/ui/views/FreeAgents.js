@@ -6,6 +6,7 @@ import {
     NegotiateButtons,
     NewWindowLink,
     PlayerNameLabels,
+    RosterComposition,
     RosterSalarySummary,
 } from "../components";
 import { getCols, helpers, setTitle } from "../util";
@@ -55,6 +56,7 @@ class FreeAgents extends React.Component {
             phase,
             players,
             stats,
+            userPlayers,
             userTid,
         } = this.props;
         setTitle("Free Agents");
@@ -146,6 +148,13 @@ class FreeAgents extends React.Component {
                 <h1>
                     Free Agents <NewWindowLink />
                 </h1>
+                {process.env.SPORT === "football" ? (
+                    <RosterComposition
+                        className="float-right mb-3"
+                        players={userPlayers}
+                    />
+                ) : null}
+
                 <p>
                     More:{" "}
                     <a href={helpers.leagueUrl(["upcoming_free_agents"])}>
@@ -175,6 +184,8 @@ class FreeAgents extends React.Component {
                     </p>
                 ) : null}
 
+                <div className="clearfix" />
+
                 <DataTable
                     cols={cols}
                     defaultSort={[cols.length - 3, "desc"]}
@@ -197,6 +208,13 @@ FreeAgents.propTypes = {
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+    userPlayers: PropTypes.arrayOf(
+        PropTypes.shape({
+            ratings: PropTypes.shape({
+                pos: PropTypes.string,
+            }),
+        }),
+    ).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

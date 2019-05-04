@@ -27,6 +27,7 @@ export { default as RatingsStatsPopover } from "./RatingsStatsPopover";
 export { default as RecordAndPlayoffs } from "./RecordAndPlayoffs";
 export { default as ResponsiveTableWrapper } from "./ResponsiveTableWrapper";
 export { default as RetiredPlayers } from "./RetiredPlayers";
+export { default as RosterComposition } from "./RosterComposition";
 export { default as RosterSalarySummary } from "./RosterSalarySummary";
 export { default as SafeHtml } from "./SafeHtml";
 export { default as SideBar } from "./SideBar";

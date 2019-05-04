@@ -1863,6 +1863,11 @@ class GameSim {
 
             for (const p of onField) {
                 if (Math.random() < g.injuryRate) {
+                    // 50% as many injuries for QB
+                    if (p.pos === "QB" && Math.random() < 0.5) {
+                        continue;
+                    }
+
                     p.injured = true;
                     this.playByPlay.logEvent("injury", {
                         clock: this.clock,

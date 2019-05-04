@@ -210,6 +210,7 @@ const LeagueDashboard = ({
                                     <b>{seriesTitle}</b>
                                     <br />
                                     <PlayoffMatchup
+                                        expandTeamNames
                                         numGamesToWinSeries={
                                             numGamesToWinSeries
                                         }

@@ -22,6 +22,7 @@ const faded = {
 };
 
 const Team = ({
+    expandTeamName,
     team,
     season,
     showPts,
@@ -30,6 +31,7 @@ const Team = ({
     won,
     lost,
 }: {
+    expandTeamName: boolean,
     team?: SeriesTeam,
     season: number,
     showPts: boolean,
@@ -63,8 +65,16 @@ const Team = ({
                     })}
                     href={helpers.leagueUrl(["roster", team.abbrev, season])}
                 >
-                    <span className="d-xxl-none">{team.abbrev}</span>
-                    <span className="d-none d-xxl-inline">{team.region}</span>
+                    {expandTeamName ? (
+                        team.region
+                    ) : (
+                        <>
+                            <span className="d-xxl-none">{team.abbrev}</span>
+                            <span className="d-none d-xxl-inline">
+                                {team.region}
+                            </span>
+                        </>
+                    )}
                 </a>
             </div>
             {showWon && team.hasOwnProperty("won") ? (
@@ -78,11 +88,13 @@ const Team = ({
 };
 
 const PlayoffMatchup = ({
+    expandTeamNames = false,
     numGamesToWinSeries = 7,
     season,
     series,
     userTid,
 }: {
+    expandTeamNames?: boolean,
     numGamesToWinSeries?: number,
     season: number,
     series?: {
@@ -118,6 +130,7 @@ const PlayoffMatchup = ({
     return (
         <ul className="playoff-matchup border-bottom">
             <Team
+                expandTeamName={expandTeamNames}
                 team={series.home}
                 season={season}
                 showPts={showPts}
@@ -127,6 +140,7 @@ const PlayoffMatchup = ({
                 lost={awayWon}
             />
             <Team
+                expandTeamName={expandTeamNames}
                 team={series.away}
                 season={season}
                 showPts={showPts}
@@ -140,6 +154,7 @@ const PlayoffMatchup = ({
 };
 
 PlayoffMatchup.propTypes = {
+    expandTeamNames: PropTypes.bool,
     numGamesToWinSeries: PropTypes.number,
     season: PropTypes.number.isRequired,
     series: PropTypes.shape({

@@ -213,6 +213,25 @@ const develop = (
             throw new Error("Missing overrides.core.player.developSeason");
         }
         overrides.core.player.developSeason(ratings, age, coachingRank);
+
+        // In the NBA displayed weights seem to never change and seem inaccurate
+        if (process.env.SPORT === "football") {
+            if (!overrides.core.player.genWeight) {
+                throw new Error("Missing overrides.core.player.genWeight");
+            }
+            const newWeight = overrides.core.player.genWeight(
+                ratings.hgt,
+                ratings.stre,
+            );
+            const oldWeight = p.weight;
+            if (newWeight - oldWeight > 10) {
+                p.weight = oldWeight + 10;
+            } else if (newWeight - oldWeight < -10) {
+                p.weight = oldWeight - 10;
+            } else {
+                p.weight = newWeight;
+            }
+        }
     }
 
     // Run these even for players developing 0 seasons

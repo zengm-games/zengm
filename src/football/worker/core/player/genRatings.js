@@ -18,12 +18,15 @@ const getPos = () => {
         cumsum += count;
         if (rand < cumsum) {
             // HACK HACK HACK: Too many OLs, too few QB and S
-            if (pos === "OL") {
+            if (pos === "OL" || pos === "RB") {
                 const rand2 = Math.random();
-                if (rand2 < 0.09) {
-                    return "QB";
+                if (rand2 < 0.15) {
+                    return "S";
                 }
-                if (rand2 < 0.3) {
+            }
+            if (pos === "RB") {
+                const rand2 = Math.random();
+                if (rand2 < 0.5) {
                     return "S";
                 }
             }

@@ -1293,10 +1293,12 @@ class GameSim {
 
     probInt(qb: PlayerGameSim) {
         return (
-            (0.03 * this.team[this.d].compositeRating.passCoverage) /
-            (0.5 *
-                (qb.compositeRating.passingVision +
-                    qb.compositeRating.passingAccuracy))
+            (((0.03 * this.team[this.d].compositeRating.passCoverage) /
+                (0.5 *
+                    (qb.compositeRating.passingVision +
+                        qb.compositeRating.passingAccuracy))) *
+                this.team[this.d].compositeRating.passRushing) /
+            this.team[this.o].compositeRating.passBlocking
         );
     }
 
@@ -1307,13 +1309,19 @@ class GameSim {
         defender: PlayerGameSim,
     ) {
         const factor =
-            (0.2 *
+            ((0.2 *
                 (target.compositeRating.catching +
                     target.compositeRating.gettingOpen +
                     qb.compositeRating.passingAccuracy +
                     qb.compositeRating.passingDeep +
                     qb.compositeRating.passingVision)) /
-            defender.compositeRating.passCoverage;
+                (0.5 *
+                    (defender.compositeRating.passCoverage +
+                        this.team[this.d].compositeRating.passCoverage))) *
+            Math.sqrt(
+                this.team[this.d].compositeRating.passRushing /
+                    this.team[this.o].compositeRating.passBlocking,
+            );
 
         const p = 0.55 * factor ** 1.25;
 
@@ -1361,7 +1369,16 @@ class GameSim {
         ]);
 
         const interception = Math.random() < this.probInt(qb);
-        let ydsRaw = Math.round(random.truncGauss(10, 7, -10, 100));
+        let ydsRaw = Math.round(
+            random.truncGauss(
+                11 *
+                    (this.team[this.d].compositeRating.passRushing /
+                        this.team[this.o].compositeRating.passBlocking),
+                7,
+                -10,
+                100,
+            ),
+        );
         if (Math.random() < qb.compositeRating.passingDeep * 0.07) {
             ydsRaw += random.randInt(0, 109);
         }

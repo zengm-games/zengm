@@ -6,14 +6,10 @@ also im assuming its because of how drafted players are unsigned until all free 
 
 Also I just had my rookie QB get onto the All-Rookie Team in the QB slot, but he was also slotted in as an All-Rookie punter, without having done any punts all season.
 
-Average attendance doesn't seem to display properly. It just says 70000 in the finances page for me despite having several games of <50000 attendance shown in the box score page.
-
 registration works, but still shows error under form
 - added console.log of error message
 
 stat distribution pages
-
-pass rushing should impact completion percentage and distance
 
 in the live sim holding penalties on punts result in the punting team getting the ball where the punt is downed
 

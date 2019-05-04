@@ -22,6 +22,19 @@ const getNeededPositions = (players: Player<>[]) => {
         }
     }
 
+    // Special case - if there are some positions where 0 players are on roster, put those first with some probability. This ensures K/P is always on team.
+    if (Math.random() < 0.25) {
+        for (const [pos, numNeeded] of Object.entries(counts)) {
+            if (numNeeded === overrides.common.constants.POSITION_COUNTS[pos]) {
+                neededPositions.add(pos);
+            }
+        }
+
+        if (neededPositions.size > 0) {
+            return neededPositions;
+        }
+    }
+
     for (const [pos, numNeeded] of Object.entries(counts)) {
         // $FlowFixMe
         if (numNeeded > 0) {

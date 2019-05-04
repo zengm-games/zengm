@@ -18,10 +18,16 @@ const getBest = (
     for (let i = 0; i < playersAvailable.length; i++) {
         const p = playersAvailable[i];
 
-        // Skip players if team already has enough at this position
         if (neededPositions.size > 0 && useNeededPositions) {
+            // Skip players if team already has enough at this position
             const pos = p.ratings[p.ratings.length - 1].pos;
             if (!neededPositions.has(pos)) {
+                continue;
+            }
+        } else if (process.env.SPORT === "football" && !useNeededPositions) {
+            // Skip signing extra QBs, otherwise too many will be signed because values are higher
+            const pos = p.ratings[p.ratings.length - 1].pos;
+            if (pos === "QB") {
                 continue;
             }
         }

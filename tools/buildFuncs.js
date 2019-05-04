@@ -74,7 +74,7 @@ const buildSW = async () => {
             "fonts/*.woff2",
             "img/logos/*.png",
         ],
-        dontCacheBustUrlsMatching: new RegExp("gen/(ui|worker)-.*.js"),
+        dontCacheBustURLsMatching: new RegExp("gen/(ui|worker)-.*.js"),
 
         // Changing default is only needed for unminified versions from watch-js
         maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,

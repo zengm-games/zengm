@@ -2,7 +2,7 @@
 /* global workbox:false */
 
 importScripts(
-    "https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js",
+    "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js",
 );
 
 // Will be filled in by tools/build-sw.js
@@ -22,5 +22,12 @@ workbox.routing.registerNavigationRoute("/index.html", {
     ],
 });
 
-// https://github.com/GoogleChrome/workbox/issues/1186#issuecomment-421888789
-// workbox.googleAnalytics.initialize();
+// https://developers.google.com/web/tools/workbox/guides/migrations/migrate-from-v3
+workbox.precaching.cleanupOutdatedCaches();
+
+// https://github.com/GoogleChrome/workbox/issues/1646#issuecomment-434393288
+try {
+    workbox.googleAnalytics.initialize();
+} catch (e) {
+    // fail silently
+}

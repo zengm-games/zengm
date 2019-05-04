@@ -1003,11 +1003,8 @@ const sign = async (
     await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
-const startFantasyDraft = async (
-    position: number | "random",
-    conditions: Conditions,
-) => {
-    await phase.newPhase(PHASE.FANTASY_DRAFT, conditions, position);
+const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
+    await phase.newPhase(PHASE.FANTASY_DRAFT, conditions, tids);
 };
 
 const switchTeam = async (tid: number) => {

@@ -6,14 +6,11 @@ import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
 import type { Conditions } from "../../../common/types";
 
-const newPhaseFantasyDraft = async (
-    conditions: Conditions,
-    position: number,
-) => {
+const newPhaseFantasyDraft = async (conditions: Conditions, tids: number[]) => {
     local.fantasyDraftResults = [];
 
     await contractNegotiation.cancelAll();
-    await draft.genOrderFantasy(position);
+    await draft.genOrderFantasy(tids);
     await league.setGameAttributes({ nextPhase: g.phase });
     await idb.cache.releasedPlayers.clear();
 

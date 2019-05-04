@@ -1,12 +1,26 @@
 // @flow
 
-import { g } from "../util";
+import { idb } from "../db";
+import { g, random } from "../util";
+import type { UpdateEvents } from "../../common/types";
 
-async function updateFantasyDraft(): void | { [key: string]: any } {
-    return {
-        phase: g.phase,
-    };
-}
+const updateFantasyDraft = async (
+    inputs: {},
+    updateEvents: UpdateEvents,
+): void | { [key: string]: any } => {
+    if (updateEvents.includes("firstRun")) {
+        const teams = await idb.getCopies.teamsPlus({
+            attrs: ["tid", "abbrev", "region", "name"],
+        });
+
+        random.shuffle(teams);
+
+        return {
+            phase: g.phase,
+            teams,
+        };
+    }
+};
 
 export default {
     runBefore: [updateFantasyDraft],

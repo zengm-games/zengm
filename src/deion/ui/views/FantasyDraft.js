@@ -1,32 +1,165 @@
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
+import {
+    SortableContainer,
+    SortableElement,
+    SortableHandle,
+    arrayMove,
+} from "react-sortable-hoc";
 import { PHASE } from "../../common";
-import { NewWindowLink } from "../components";
-import { setTitle, toWorker } from "../util";
+import { NewWindowLink, ResponsiveTableWrapper } from "../components";
+import { helpers, setTitle, toWorker } from "../util";
+import clickable from "../wrappers/clickable";
+
+const ReorderHandle = SortableHandle(({ isSorting }) => {
+    return (
+        <td
+            className={classNames("roster-handle table-secondary", {
+                "user-select-none": isSorting,
+            })}
+        />
+    );
+});
+
+ReorderHandle.propTypes = {
+    isSorting: PropTypes.bool.isRequired,
+};
+
+const DepthRow = SortableElement(
+    clickable(props => {
+        const { clicked, i, isSorting, t, toggleClicked } = props;
+
+        return (
+            <tr
+                key={t.tid}
+                className={classNames({
+                    "table-warning": clicked,
+                })}
+            >
+                <ReorderHandle isSorting={isSorting} />
+                <td>{i + 1}</td>
+                <td onClick={toggleClicked}>
+                    <a href={helpers.leagueUrl(["roster", t.abbrev])}>
+                        {t.region} {t.name}
+                    </a>
+                </td>
+            </tr>
+        );
+    }),
+);
+
+DepthRow.propTypes = {
+    i: PropTypes.number.isRequired,
+    isSorting: PropTypes.bool.isRequired,
+    t: PropTypes.shape({
+        abbrev: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        region: PropTypes.string.isRequired,
+        tid: PropTypes.number.isRequired,
+    }),
+};
+
+const TBody = SortableContainer(({ isSorting, teams }) => {
+    return (
+        <tbody id="roster-tbody">
+            {teams.map((t, i) => {
+                return (
+                    <DepthRow
+                        key={t.tid}
+                        i={i}
+                        index={i}
+                        isSorting={isSorting}
+                        t={t}
+                    />
+                );
+            })}
+        </tbody>
+    );
+});
+
+TBody.propTypes = {
+    isSorting: PropTypes.bool.isRequired,
+    teams: PropTypes.arrayOf(
+        PropTypes.shape({
+            abbrev: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
+            tid: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
+};
+
+// Copied from worker/util/random lol
+const randInt = (a: number, b: number): number => {
+    return Math.floor(Math.random() * (1 + b - a)) + a;
+};
+const shuffle = (list: any[]) => {
+    const l = list.length;
+    for (let i = 1; i < l; i++) {
+        const j = randInt(0, i);
+        if (j !== i) {
+            const t = list[i]; // swap list[i] and list[j]
+            list[i] = list[j];
+            list[j] = t;
+        }
+    }
+};
 
 class FantasyDraft extends React.Component {
     constructor(props) {
         super(props);
         this.startDraft = this.startDraft.bind(this);
-        this.handlePositionChange = this.handlePositionChange.bind(this);
+        this.randomize = this.randomize.bind(this);
+        this.handleOnSortEnd = this.handleOnSortEnd.bind(this);
+        this.handleOnSortStart = this.handleOnSortStart.bind(this);
 
         this.state = {
-            position: "random",
+            isSorting: false,
+            sortedTids: props.teams.map(t => t.tid),
             starting: false,
         };
     }
 
-    startDraft() {
-        this.setState({ starting: true });
-        toWorker("startFantasyDraft", this.state.position);
+    randomize() {
+        this.setState(prevState => {
+            const sortedTids = [...prevState.sortedTids];
+            shuffle(sortedTids);
+            return {
+                sortedTids,
+            };
+        });
     }
 
-    handlePositionChange(event) {
-        const position =
-            event.currentTarget.value === "random"
-                ? "random"
-                : parseInt(event.currentTarget.value, 10);
-        this.setState({ position });
+    startDraft() {
+        this.setState({ starting: true });
+        toWorker("startFantasyDraft", this.state.sortedTids);
+    }
+
+    async handleOnSortEnd({ oldIndex, newIndex }) {
+        this.setState(prevState => {
+            const sortedTids = arrayMove(
+                prevState.sortedTids,
+                oldIndex,
+                newIndex,
+            );
+            return {
+                isSorting: false,
+                sortedTids,
+            };
+        });
+    }
+
+    handleOnSortStart({ clonedNode, node }) {
+        this.setState({ isSorting: true });
+
+        // Ideally, this wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
+        const clonedChildren = clonedNode.childNodes;
+        const children = node.childNodes;
+        for (let i = 0; i < children.length; i++) {
+            clonedChildren[i].style.padding = "5px";
+            clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
+        }
     }
 
     render() {
@@ -43,6 +176,11 @@ class FantasyDraft extends React.Component {
                 </>
             );
         }
+
+        // Use the result of drag and drop to sort players, before the "official" order comes back as props
+        const teamsSorted = this.state.sortedTids.map(tid => {
+            return this.props.teams.find(t => t.tid === tid);
+        });
 
         return (
             <>
@@ -66,50 +204,38 @@ class FantasyDraft extends React.Component {
                     draft.
                 </p>
 
-                <div className="form-group">
-                    <label htmlFor="position">
-                        What position do you want in the draft?
-                    </label>
-                    <select
-                        name="position"
-                        className="form-control"
-                        style={{ width: "110px" }}
-                        onChange={this.handlePositionChange}
-                        value={this.state.position}
-                    >
-                        <option value="random">Random</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                        <option value="26">26</option>
-                        <option value="27">27</option>
-                        <option value="28">28</option>
-                        <option value="29">29</option>
-                        <option value="30">30</option>
-                    </select>
-                </div>
+                <h2>Draft Order</h2>
+
+                <button
+                    className="btn btn-light-bordered mb-3"
+                    disabled={this.state.starting}
+                    onClick={this.randomize}
+                >
+                    Randomize
+                </button>
+
+                <div className="clearfix" />
+
+                <ResponsiveTableWrapper nonfluid>
+                    <table className="table table-striped table-bordered table-sm table-hover">
+                        <thead>
+                            <tr>
+                                <th />
+                                <th>#</th>
+                                <th>Team</th>
+                            </tr>
+                        </thead>
+                        <TBody
+                            teams={teamsSorted}
+                            isSorting={this.state.isSorting}
+                            onSortEnd={this.handleOnSortEnd}
+                            onSortStart={this.handleOnSortStart}
+                            transitionDuration={0}
+                            useDragHandle
+                        />
+                    </table>
+                </ResponsiveTableWrapper>
+
                 <p>
                     <button
                         className="btn btn-large btn-success"
@@ -131,6 +257,14 @@ class FantasyDraft extends React.Component {
 
 FantasyDraft.propTypes = {
     phase: PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(
+        PropTypes.shape({
+            abbrev: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
+            tid: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
 };
 
 export default FantasyDraft;

@@ -2,16 +2,12 @@
 
 add nonlinearity to QB salary, so not too many backups are highly paid
 
-also im assuming its because of how drafted players are unsigned until all free agents are signed, but searching for drafted players using team abbreviation during the draft doesnt show any results on the draft page
-
 Also I just had my rookie QB get onto the All-Rookie Team in the QB slot, but he was also slotted in as an All-Rookie punter, without having done any punts all season.
 
 registration works, but still shows error under form
 - added console.log of error message
 
 stat distribution pages
-
-in the live sim holding penalties on punts result in the punting team getting the ball where the punt is downed
 
 too many players playing both offense and defense
 - reassess after making roster construction better. if it's still a problem, only allow starter at one position
@@ -234,6 +230,10 @@ Don't allow play if versions in tabs don't match
 - close worker?
 
 ---
+
+better table sorting (don't use hack of looking at child)
+- DraftAbbrev
+- NegotiateButtons (search for negotiate/refuses)
 
 finals home court advantage should be based on record, not seed
 

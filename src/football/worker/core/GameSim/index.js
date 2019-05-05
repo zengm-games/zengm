@@ -765,9 +765,10 @@ class GameSim {
                     ydsRaw += random.randInt(0, 109);
                 }
                 let returnLength = this.boundedYds(ydsRaw);
-
                 dt = Math.abs(returnLength) / 8;
                 let td = false;
+
+                const returnLengthBeforePenalty = returnLength;
 
                 const penInfo = this.checkPenalties("kickoffReturn", {
                     ballCarrier: kickReturner,
@@ -794,7 +795,7 @@ class GameSim {
                     t: this.o,
                     names: [kickReturner.name],
                     td,
-                    yds: returnLength,
+                    yds: returnLengthBeforePenalty,
                 });
 
                 if (penInfo && penInfo.type !== "offsetting") {
@@ -887,6 +888,8 @@ class GameSim {
             dt += Math.abs(returnLength) / 8;
             let td = false;
 
+            const returnLengthBeforePenalty = returnLength;
+
             const penInfo3 = this.checkPenalties("kickoffReturn", {
                 ballCarrier: puntReturner,
                 playYds: returnLength,
@@ -912,7 +915,7 @@ class GameSim {
                 t: this.o,
                 names: [puntReturner.name],
                 td,
-                yds: returnLength,
+                yds: returnLengthBeforePenalty,
             });
 
             if (penInfo3 && penInfo3.type !== "offsetting") {

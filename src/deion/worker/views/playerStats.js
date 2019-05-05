@@ -156,7 +156,16 @@ async function updatePlayers(
         ) {
             // Ensure some non-zero stat for this position
             const onlyShowIf = statsTable.onlyShowIf;
-            const obj = inputs.season === undefined ? "careerStats" : "stats";
+            let obj;
+            if (inputs.season === undefined) {
+                if (inputs.playoffs === "playoffs") {
+                    obj = "careerStatsPlayoffs";
+                } else {
+                    obj = "careerStats";
+                }
+            } else {
+                obj = "stats";
+            }
             players = players.filter(p => {
                 for (const stat of onlyShowIf) {
                     if (typeof p[obj][stat] === "number" && p[obj][stat] > 0) {

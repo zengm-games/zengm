@@ -49,6 +49,9 @@ const getRatingsToBoost = (pos: string) => {
             bsc: 0.25,
             elu: 0.25,
             hnd: 0.25,
+            tck: -1,
+            prs: -1,
+            rns: -1,
         };
     }
     if (pos === "RB") {
@@ -58,6 +61,9 @@ const getRatingsToBoost = (pos: string) => {
             elu: 1,
             rtr: 0.5,
             hnd: 0.5,
+            tck: -1,
+            prs: -1,
+            rns: -1,
         };
     }
     if (pos === "WR") {
@@ -67,6 +73,9 @@ const getRatingsToBoost = (pos: string) => {
             elu: 0.5,
             rtr: 1,
             hnd: 1,
+            tck: -1,
+            prs: -1,
+            rns: -1,
         };
     }
     if (pos === "TE") {
@@ -74,38 +83,58 @@ const getRatingsToBoost = (pos: string) => {
             hgt: 1,
             stre: 0.5,
             spd: 0.5,
-            elu: 0.5,
+            elu: 0.25,
             rtr: 1,
             hnd: 0.75,
             rbk: 0.5,
+            tck: -1,
+            prs: -1,
+            rns: -1,
         };
     }
     if (pos === "OL") {
         return {
+            spd: -1.5,
             hgt: 1,
             stre: 1.25,
-            rbk: 1,
-            pbk: 1,
+            rbk: 1.1,
+            pbk: 1.1,
+            elu: -1,
+            bsc: -1,
+            hnd: -1,
+            tck: -1,
+            prs: -1,
+            rns: -1,
+            rtr: -1,
         };
     }
     if (pos === "DL") {
         return {
+            spd: -0.5,
             hgt: 1.5,
             stre: 1.25,
             tck: 0.25,
-            prs: 1,
-            rns: 1,
+            prs: 1.1,
+            rns: 1.1,
+            elu: -1,
+            bsc: -1,
+            hnd: -1,
+            rtr: -1,
         };
     }
     if (pos === "LB") {
         return {
             hgt: 0.5,
             stre: 0.5,
-            spd: 0.5,
+            spd: 0.25,
             pcv: 0.5,
-            tck: 1.25,
+            tck: 1.5,
             prs: 0.75,
             rns: 0.75,
+            elu: -0.5,
+            bsc: -1,
+            hnd: -1,
+            rtr: -0.75,
         };
     }
     if (pos === "CB") {
@@ -115,6 +144,8 @@ const getRatingsToBoost = (pos: string) => {
             pcv: 1.25,
             hnd: -0.5,
             elu: -0.5,
+            bsc: -0.5,
+            rtr: -0.25,
         };
     }
     if (pos === "S") {
@@ -127,18 +158,38 @@ const getRatingsToBoost = (pos: string) => {
             rns: 0.5,
             hnd: -0.5,
             elu: -0.5,
+            bsc: -0.5,
+            rtr: -0.5,
         };
     }
     if (pos === "K") {
         return {
             kpw: 1.75,
             kac: 1.25,
+            elu: -1,
+            bsc: -1,
+            hnd: -1,
+            rtr: -1,
+            tck: -1,
+            prs: -1,
+            rns: -1,
+            rbk: -1,
+            pbk: -1,
         };
     }
     if (pos === "P") {
         return {
             ppw: 1.75,
             pac: 1.25,
+            elu: -1,
+            bsc: -1,
+            hnd: -1,
+            rtr: -1,
+            tck: -1,
+            prs: -1,
+            rns: -1,
+            rbk: -1,
+            pbk: -1,
         };
     }
 

@@ -1,6 +1,8 @@
+add new logos to splash
+
 # football
 
-add nonlinearity to QB salary, so not too many backups are highly paid
+if paying a lot to a QB already, don't sign another expensive one
 
 Also I just had my rookie QB get onto the All-Rookie Team in the QB slot, but he was also slotted in as an All-Rookie punter, without having done any punts all season.
 
@@ -13,6 +15,8 @@ too many players playing both offense and defense
 - reassess after making roster construction better. if it's still a problem, only allow starter at one position
 - too many fat guys with elite speed, small guys with elite strength?
 
+weight formula is not very good
+
 lint
 
 version
@@ -20,6 +24,8 @@ version
 confirm subscription works from football-gm.com
 - Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
 - cross promote in welcome emails
+
+redo pot formulas?
 
 ---
 

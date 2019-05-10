@@ -299,7 +299,7 @@ class GodMode extends React.Component {
                         </div>
                         <div className="col-sm-3 col-6 form-group">
                             <label>
-                                Playoff Games{" "}
+                                # Playoff Games{" "}
                                 <HelpPopover
                                     placement="right"
                                     title="# Playoff Games"

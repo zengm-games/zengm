@@ -1193,6 +1193,12 @@ class GameSim {
             }
         }
 
+        // Since other things might have happened after this.possessionChange()
+        if (lost) {
+            this.down = 1;
+            this.toGo = 10;
+        }
+
         return dt;
     }
 
@@ -1238,6 +1244,10 @@ class GameSim {
         }
 
         this.isClockRunning = false;
+
+        // Since other things might have happened after this.possessionChange()
+        this.down = 1;
+        this.toGo = 10;
 
         return dt;
     }

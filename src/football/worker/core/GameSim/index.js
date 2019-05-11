@@ -1259,7 +1259,6 @@ class GameSim {
         );
         this.recordStat(this.d, p, "defSft");
 
-        this.possessionChange();
         this.awaitingKickoff = true;
         this.awaitingAfterSafety = true;
         this.isClockRunning = false;

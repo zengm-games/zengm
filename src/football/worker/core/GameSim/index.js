@@ -323,10 +323,47 @@ class GameSim {
         return passOdds;
     }
 
+    // Probability that a kickoff should be an onside kick
+    probOnside() {
+        if (this.awaitingAfterSafety) {
+            return 0;
+        }
+
+        // Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
+        if (this.team[0].stat.ptsQtrs.length <= 3) {
+            return 0.01;
+        }
+
+        // Does game situation dictate an onside kick in the 4th quarter?
+        if (this.team[0].stat.ptsQtrs.length !== 4) {
+            return 0;
+        }
+        const numScoresDown = Math.ceil(
+            (this.team[this.d].stat.pts - this.team[this.o].stat.pts) / 8,
+        );
+        if (numScoresDown <= 0 || numScoresDown >= 4) {
+            // Either winning, or being blown out so there's no point
+            return 0;
+        }
+        if (this.clock < 2) {
+            return 1;
+        }
+        if (numScoresDown >= 2 && this.clock < 2.5) {
+            return 0.9;
+        }
+        if (numScoresDown >= 3 && this.clock < 3.5) {
+            return 0.8;
+        }
+        if (numScoresDown >= 2 && this.clock < 5) {
+            return numScoresDown / 20;
+        }
+
+        return 0;
+    }
+
     getPlayType() {
         if (this.awaitingKickoff) {
-            const onside = !this.awaitingAfterSafety && Math.random() < 0.1;
-            return onside ? "onsideKick" : "kickoff";
+            return Math.random() < this.probOnside() ? "onsideKick" : "kickoff";
         }
 
         if (this.awaitingAfterTouchdown) {

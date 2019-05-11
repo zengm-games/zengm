@@ -325,7 +325,8 @@ class GameSim {
 
     getPlayType() {
         if (this.awaitingKickoff) {
-            return "kickoff";
+            const onside = !this.awaitingAfterSafety && Math.random() < 0.1;
+            return onside ? "onsideKick" : "kickoff";
         }
 
         if (this.awaitingAfterTouchdown) {
@@ -364,6 +365,8 @@ class GameSim {
         let dt;
         if (playType === "kickoff") {
             dt = this.doKickoff();
+        } else if (playType === "onsideKick") {
+            dt = this.doKickoff(true);
         } else if (playType === "extraPoint") {
             dt = this.doFieldGoal(true);
         } else if (playType === "twoPointConversion") {
@@ -670,13 +673,11 @@ class GameSim {
         this.toGo = 10;
     }
 
-    doKickoff() {
+    doKickoff(onside: boolean = false) {
         this.updatePlayersOnField("kickoff");
 
         const kicker = this.playersOnField[this.o].K[0];
         let dt = 0;
-
-        const onside = !this.awaitingAfterSafety && Math.random() < 0.1;
 
         if (onside) {
             this.playByPlay.logEvent("onsideKick", {

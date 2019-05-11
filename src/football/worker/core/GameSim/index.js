@@ -1806,7 +1806,7 @@ class GameSim {
         });
         if (penInfo.automaticFirstDown) {
             this.down = 1;
-            this.toGo = 1;
+            this.toGo = 10;
         }
 
         return {

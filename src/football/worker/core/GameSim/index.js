@@ -603,14 +603,14 @@ class GameSim {
             const diff =
                 this.team[this.o].stat.pts - this.team[this.d].stat.pts;
             // No point in the 4th quarter of a blowout
-            if (diff > 24) {
+            if (diff < 24) {
                 if (diff > 0) {
                     // If offense is winning, defense uses timeouts when near the end
                     if (this.clock < 2.5) {
                         this.doTimeout(this.d);
                     }
                 } else if (this.clock < 1.5) {
-                    // If offense is losing, offense uses timeouts when even nearer the end
+                    // If offense is losing or tied, offense uses timeouts when even nearer the end
                     this.doTimeout(this.o);
                 }
             }

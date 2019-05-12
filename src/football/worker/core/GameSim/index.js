@@ -659,6 +659,7 @@ class GameSim {
 
         if (
             this.overtimeState === "bothTeamsPossessed" &&
+            this.team[0].stat.pts !== this.team[1].stat.pts &&
             (!this.awaitingAfterTouchdown ||
                 Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 2)
         ) {

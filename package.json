@@ -52,7 +52,7 @@
         "react": "^16.8.6",
         "react-addons-text-content": "^0.0.4",
         "react-dom": "^16.8.6",
-        "react-overlays": "^0.8.3",
+        "react-overlays": "^1.2.0",
         "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
         "reactstrap": "^6.5.0",
         "roman-numerals": "^0.3.2",

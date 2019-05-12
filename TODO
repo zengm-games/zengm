@@ -141,6 +141,8 @@ RatingsOverview - could put in deion, with config to specify categories and name
 
 ---
 
+on import, error if any player/draftPick references an invalid tid
+
 highlight hall of fame players on past rosters
 
 on league import, override numTeams if teams are supplied in league file

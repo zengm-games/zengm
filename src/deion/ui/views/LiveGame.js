@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import AutoAffix from "react-overlays/lib/AutoAffix";
+import AutoAffix from "react-overlays/AutoAffix";
 import { BoxScoreWrapper } from "../components";
 import { overrides, setTitle } from "../util";
 

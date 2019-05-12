@@ -5,9 +5,12 @@ import { PlayType, TeamNum } from "./types";
 
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 const formatClock = (clock: number) => {
-    let sec = Math.floor((clock % 1) * 60);
+    let sec = Math.ceil((clock % 1) * 60);
     if (sec < 10) {
         sec = `0${sec}`;
+    }
+    if (sec >= 60) {
+        sec = 59;
     }
     return `${Math.floor(clock)}:${sec}`;
 };
@@ -61,6 +64,7 @@ class PlayByPlayLogger {
             lost,
             made,
             names,
+            offense,
             penaltyName,
             quarter,
             safety,
@@ -76,6 +80,7 @@ class PlayByPlayLogger {
             lost?: boolean,
             made?: boolean,
             names?: string[],
+            offense?: boolean,
             penaltyName?: string,
             quarter?: number,
             safety?: boolean,
@@ -381,6 +386,10 @@ class PlayByPlayLogger {
                 }, ${yds} yards${
                     automaticFirstDown ? " and an automatic first down" : ""
                 }`;
+            } else if (type === "timeout") {
+                text = `Time out, ${offense ? "offense" : "defense"}`;
+            } else if (type === "twoMinuteWarning") {
+                text = "Two minute warning";
             } else {
                 throw new Error(`No text for "${type}"`);
             }

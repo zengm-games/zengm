@@ -121,6 +121,9 @@ class GameSim {
         this.toGo = 10;
         this.scrimmage = 20;
 
+        this.timeouts = [3, 3];
+        this.twoMinuteWarningHappened = false;
+
         this.homeCourtAdvantage();
     }
 
@@ -202,6 +205,8 @@ class GameSim {
 
             if (quarter === 3) {
                 this.awaitingKickoff = true;
+                this.timeouts = [3, 3];
+                this.twoMinuteWarningHappened = false;
                 this.o = oAfterHalftime;
                 this.d = this.o === 0 ? 1 : 0;
             } else if (quarter === 5) {
@@ -224,6 +229,8 @@ class GameSim {
         this.overtimeState = "initialKickoff";
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
+        this.timeouts = [2, 2];
+        this.twoMinuteWarningHappened = false;
         this.playByPlay.logEvent("overtime", {
             clock: this.clock,
         });
@@ -425,6 +432,9 @@ class GameSim {
                 if (ptsDown === -5) {
                     return "twoPointConversion";
                 }
+                if (ptsDown === -6) {
+                    return "extraPoint";
+                }
                 if (ptsDown === -7) {
                     return "extraPoint";
                 }
@@ -564,14 +574,71 @@ class GameSim {
             throw new Error(`Unknown playType "${playType}"`);
         }
 
+        const quarter = this.team[0].stat.ptsQtrs.length;
+
         dt /= 60;
 
+        // Two minute warning
+        if (
+            (quarter === 2 || quarter >= 4) &&
+            this.clock - dt <= 2 &&
+            !this.twoMinuteWarningHappened
+        ) {
+            this.twoMinuteWarningHappened = true;
+            this.isClockRunning = false;
+            this.playByPlay.logEvent("twoMinuteWarning", {
+                clock: this.clock - dt,
+            });
+        }
+
+        // Timeouts - small chance at any time
+        if (Math.random() < 0.01) {
+            this.doTimeout(this.o);
+        } else if (Math.random() < 0.003) {
+            this.doTimeout(this.d);
+        }
+
+        // Timeouts - late in game when clock is running
+        if ((quarter === 2 || quarter >= 4) && this.isClockRunning) {
+            const diff =
+                this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+            // No point in the 4th quarter of a blowout
+            if (diff > 24) {
+                if (diff > 0) {
+                    // If offense is winning, defense uses timeouts when near the end
+                    if (this.clock < 2.5) {
+                        this.doTimeout(this.d);
+                    }
+                } else if (this.clock < 1.5) {
+                    // If offense is losing, offense uses timeouts when even nearer the end
+                    this.doTimeout(this.o);
+                }
+            }
+        }
+
         // Time between plays (can be more than 40 seconds because there is time before the play clock starts)
-        if (this.isClockRunning) {
-            dt += random.randInt(25, 50) / 60;
+        let dtClockRunning = this.isClockRunning
+            ? random.randInt(25, 50) / 60
+            : 0;
+
+        // Check two minute warning again
+        if (
+            (quarter === 2 || quarter >= 4) &&
+            this.clock - dt - dtClockRunning <= 2 &&
+            !this.twoMinuteWarningHappened
+        ) {
+            this.twoMinuteWarningHappened = true;
+            this.isClockRunning = false;
+            this.playByPlay.logEvent("twoMinuteWarning", {
+                clock: 2,
+            });
+
+            // Clock only runs until it hits 2 minutes exactly
+            dtClockRunning = helpers.bound(this.clock - dt - 2, 0, Infinity);
         }
 
         // Clock
+        dt += dtClockRunning;
         this.clock -= dt;
         if (this.clock < 0) {
             dt += this.clock;
@@ -852,6 +919,21 @@ class GameSim {
 
         this.down = 1;
         this.toGo = 10;
+    }
+
+    doTimeout(t: TeamNum) {
+        if (this.timeouts[t] <= 0) {
+            return;
+        }
+
+        this.timeouts[t] -= 1;
+        this.isClockRunning = false;
+
+        this.playByPlay.logEvent("timeout", {
+            clock: this.clock,
+            offense: t === this.o,
+            t,
+        });
     }
 
     doKickoff(onside: boolean = false) {

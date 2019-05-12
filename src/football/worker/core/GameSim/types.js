@@ -23,7 +23,9 @@ export type PlayType =
     | "onsideKick"
     | "onsideKickRecovery"
     | "offsettingPenalties"
-    | "penalty";
+    | "penalty"
+    | "timeout"
+    | "twoMinuteWarning";
 
 export type TeamNum = 0 | 1;
 

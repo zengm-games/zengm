@@ -478,8 +478,19 @@ class GameSim {
         if (this.down === 4) {
             // Don't kick a FG when we really need a touchdown!
             if (!needTouchdown) {
+                const probMadeFieldGoal = this.probMadeFieldGoal();
+
                 // If it's 4th and short, maybe go for it
                 const probGoForIt = (() => {
+                    // In overtime, if tied and a field goal would win, try it
+                    if (
+                        this.overtimeState !== "firstPossession" &&
+                        ptsDown === 0 &&
+                        probMadeFieldGoal >= 0.7
+                    ) {
+                        return 0;
+                    }
+
                     if (this.scrimmage < 40) {
                         return 0;
                     }
@@ -509,8 +520,6 @@ class GameSim {
                     return 0;
                 })();
                 if (Math.random() > probGoForIt) {
-                    const probMadeFieldGoal = this.probMadeFieldGoal();
-
                     // If it's a makeable field goal, take it
                     if (probMadeFieldGoal >= 0.7) {
                         return "fieldGoal";

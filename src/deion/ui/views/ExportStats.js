@@ -3,12 +3,11 @@ import React from "react";
 import { downloadFile, setTitle, toWorker } from "../util";
 
 function genFilename(leagueName, season, grouping) {
-    const filename = `BBGM_${leagueName.replace(
-        /[^a-z0-9]/gi,
-        "_",
-    )}_${season}_${season === "all" ? "seasons" : "season"}_${
-        grouping === "averages" ? "Average_Stats" : "Game_Stats"
-    }`;
+    const filename = `${
+        process.env.SPORT === "basketball" ? "B" : "F"
+    }BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${season}_${
+        season === "all" ? "seasons" : "season"
+    }_${grouping === "averages" ? "Average_Stats" : "Game_Stats"}`;
 
     return `${filename}.csv`;
 }

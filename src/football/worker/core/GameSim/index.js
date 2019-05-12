@@ -370,12 +370,77 @@ class GameSim {
             return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
         }
 
-        if (this.down === 4) {
-            if (this.scrimmage >= 60) {
-                return "fieldGoal";
-            }
+        // Don't kick a FG when we really need a touchdown!
+        const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+        const quarter = this.team[0].stat.ptsQtrs.length;
+        const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2;
 
-            return "punt";
+        // If there are under 6 seconds left in the half/overtime, maybe try a field goal
+        if (
+            this.clock <= 0.1 &&
+            quarter !== 1 &&
+            quarter !== 3 &&
+            !needTouchdown &&
+            this.probMadeFieldGoal() >= 0.05
+        ) {
+            return "fieldGoal";
+        }
+
+        if (this.down === 4) {
+            // Don't kick a FG when we really need a touchdown!
+            if (!needTouchdown) {
+                // If it's 4th and short, maybe go for it
+                const probGoForIt = (() => {
+                    if (this.scrimmage < 40) {
+                        return 0;
+                    }
+
+                    if (this.toGo <= 1) {
+                        return 0.75;
+                    }
+                    if (this.toGo <= 2) {
+                        return 0.5;
+                    }
+                    if (this.toGo <= 3) {
+                        return 0.35;
+                    }
+                    if (this.toGo <= 4) {
+                        return 0.2;
+                    }
+                    if (this.toGo <= 5) {
+                        return 0.05;
+                    }
+                    if (this.toGo <= 7) {
+                        return 0.01;
+                    }
+                    if (this.toGo <= 10) {
+                        return 0.001;
+                    }
+
+                    return 0;
+                })();
+                if (Math.random() > probGoForIt) {
+                    const probMadeFieldGoal = this.probMadeFieldGoal();
+
+                    // If it's a makeable field goal, take it
+                    if (probMadeFieldGoal >= 0.7) {
+                        return "fieldGoal";
+                    }
+
+                    // If it's a hard field goal, maybe take it
+                    const probTryFieldGoal = helpers.bound(
+                        (probMadeFieldGoal - 0.3) / 0.5,
+                        0,
+                        1,
+                    );
+                    if (Math.random() < probTryFieldGoal) {
+                        return "fieldGoal";
+                    }
+
+                    // Default option - punt
+                    return "punt";
+                }
+            }
         }
 
         if (Math.random() < this.probPass()) {
@@ -977,8 +1042,15 @@ class GameSim {
     }
 
     // eslint-disable-next-line
-    probMadeFieldGoal(kicker: PlayerGameSim, distance: number) {
+    probMadeFieldGoal(kicker?: PlayerGameSim, extraPoint?: boolean) {
+        kicker =
+            kicker !== undefined
+                ? kicker
+                : this.team[this.o].depth.K[0].find(p => !p.injured);
+
         let baseProb = 0;
+
+        let distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
 
         // Kickers with strong/weak legs effectively have adjusted distances: -5 yds for 100, +15 yds for 0
         distance += -(kicker.compositeRating.kickingPower - 0.75) * 20;
@@ -1073,9 +1145,9 @@ class GameSim {
             return 0;
         }
 
-        const kicker = this.playersOnField[this.o].K[0];
         const distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
-        const made = Math.random() < this.probMadeFieldGoal(kicker, distance);
+        const kicker = this.playersOnField[this.o].K[0];
+        const made = Math.random() < this.probMadeFieldGoal(kicker, extraPoint);
         const dt = extraPoint ? 0 : random.randInt(4, 6);
 
         const penInfo2 = this.checkPenalties("fieldGoal", {

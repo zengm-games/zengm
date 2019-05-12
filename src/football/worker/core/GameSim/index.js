@@ -366,13 +366,92 @@ class GameSim {
             return Math.random() < this.probOnside() ? "onsideKick" : "kickoff";
         }
 
+        const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+        const quarter = this.team[0].stat.ptsQtrs.length;
+
         if (this.awaitingAfterTouchdown) {
+            if (ptsDown === 2 && Math.random() < 0.7) {
+                return "twoPointConversion";
+            }
+            if (quarter >= 4) {
+                if (ptsDown === 0) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 1) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 2) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === 4) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 5) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === 7) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 8) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 10) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === 11) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 13) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === 14) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 15) {
+                    return "extraPoint";
+                }
+                if (ptsDown === 18) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === -1) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === -2) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -3) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -5) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === -7) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -8) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -9) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -10) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -12) {
+                    return "twoPointConversion";
+                }
+                if (ptsDown === -13) {
+                    return "extraPoint";
+                }
+                if (ptsDown === -14) {
+                    return "extraPoint";
+                }
+            }
+
             return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
         }
 
         // Don't kick a FG when we really need a touchdown!
-        const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
-        const quarter = this.team[0].stat.ptsQtrs.length;
         const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2;
 
         // If there are under 6 seconds left in the half/overtime, maybe try a field goal
@@ -1046,7 +1125,7 @@ class GameSim {
         kicker =
             kicker !== undefined
                 ? kicker
-                : this.team[this.o].depth.K[0].find(p => !p.injured);
+                : this.team[this.o].depth.K.find(p => !p.injured);
 
         let baseProb = 0;
 

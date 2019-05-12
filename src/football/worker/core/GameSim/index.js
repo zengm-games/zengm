@@ -1355,7 +1355,6 @@ class GameSim {
             if (!extraPoint) {
                 this.recordStat(this.o, kicker, "fgLng", distance);
             }
-            this.awaitingKickoff = true;
         } else {
             this.possessionChange();
             this.scrimmage = helpers.bound(
@@ -1363,6 +1362,10 @@ class GameSim {
                 20,
                 Infinity,
             );
+        }
+
+        if (extraPoint || made) {
+            this.awaitingKickoff = true;
         }
 
         this.awaitingAfterTouchdown = false;

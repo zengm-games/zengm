@@ -1895,7 +1895,7 @@ class GameSim {
     checkPenalties(
         playType: PenaltyPlayType,
         {
-            ballCarrier,
+            ballCarrier, // eslint-disable-line no-unused-vars
             made,
             playYds = 0,
         }: {
@@ -1903,6 +1903,8 @@ class GameSim {
             made?: boolean,
             playYds?: number,
         } = {
+            ballCarrier: undefined,
+            made: undefined,
             playYds: 0,
         },
     ) {

@@ -17,6 +17,7 @@ const NegotiationList = ({
     players,
     season,
     stats,
+    sumContracts,
     userTid,
 }) => {
     const title = hardCap
@@ -111,6 +112,13 @@ const NegotiationList = ({
                 numRosterSpots={numRosterSpots}
             />
 
+            {hardCap ? (
+                <p>
+                    Your unsigned players are asking for a total of{" "}
+                    <b>{helpers.formatCurrency(sumContracts, "M")}</b>.
+                </p>
+            ) : null}
+
             <DataTable
                 cols={cols}
                 defaultSort={[10, "desc"]}
@@ -129,6 +137,7 @@ NegotiationList.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+    sumContracts: PropTypes.number.isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

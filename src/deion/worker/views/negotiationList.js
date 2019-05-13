@@ -43,6 +43,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         fuzz: true,
     });
 
+    let sumContracts = 0;
     for (const p of players) {
         // Can use g.userTid instead of neogtiation.tid because only user can view this page
         p.contract.amount = freeAgents.amountWithMood(
@@ -50,6 +51,8 @@ async function updateNegotiationList(): void | { [key: string]: any } {
             p.freeAgentMood[g.userTid],
         );
         p.mood = player.moodColorText(p);
+
+        sumContracts += p.contract.amount;
     }
 
     const payroll = await team.getPayroll(g.userTid);
@@ -63,6 +66,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         players,
         season: g.season,
         stats,
+        sumContracts,
         userTid: g.userTid,
     };
 }

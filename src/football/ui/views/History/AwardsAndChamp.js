@@ -39,7 +39,6 @@ Winner.propTypes = {
 };
 
 const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
-    console.log(awards.bestRecordConfs);
     return (
         <div className="row">
             <div className="col-sm-12 col-6">

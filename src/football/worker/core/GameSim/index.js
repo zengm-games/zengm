@@ -84,6 +84,10 @@ class GameSim {
 
     toGo: number;
 
+    timeouts: [number, number];
+
+    twoMinuteWarningHappened: boolean;
+
     constructor(
         gid: number,
         team1: TeamGameSim,

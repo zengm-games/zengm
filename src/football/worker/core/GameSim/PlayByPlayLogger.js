@@ -6,11 +6,11 @@ import { PlayType, TeamNum } from "./types";
 // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 const formatClock = (clock: number) => {
     let sec = Math.ceil((clock % 1) * 60);
-    if (sec < 10) {
-        sec = `0${sec}`;
-    }
     if (sec >= 60) {
         sec = 59;
+    }
+    if (sec < 10) {
+        sec = `0${sec}`;
     }
     return `${Math.floor(clock)}:${sec}`;
 };

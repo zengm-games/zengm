@@ -1800,9 +1800,9 @@ class GameSim {
         // Usually do normal run, but sometimes do special stuff
         const positions = ["RB"];
         const rand = Math.random();
-        if (rand < 0.1 || this.playersOnField[this.o].RB.length === 0) {
+        if (rand < 0.05 || this.playersOnField[this.o].RB.length === 0) {
             positions.push("QB");
-        } else if (rand < 0.2 || this.playersOnField[this.o].RB.length === 0) {
+        } else if (rand < 0.15 || this.playersOnField[this.o].RB.length === 0) {
             positions.push("WR");
         }
 

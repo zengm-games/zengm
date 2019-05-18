@@ -83,11 +83,12 @@ const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
     return {
         gid: game.gid,
         overtime: game.overtime,
-        score: game.won
-            ? `${team0.pts}-${team1.pts}`
-            : `${team1.pts}-${team0.pts}`,
+        result: game.result,
+        score:
+            game.result === "W"
+                ? `${team0.pts}-${team1.pts}`
+                : `${team1.pts}-${team0.pts}`,
         teams: game.home ? [team1, team0] : [team0, team1],
-        won: game.won,
     };
 };
 

@@ -102,11 +102,7 @@ const GamesList = ({ abbrev, currentSeason, gid, gamesList, season }) => {
                                             gm.gid,
                                         ])}
                                     >
-                                        {gm.pts === gm.oppPts
-                                            ? "T"
-                                            : gm.won
-                                            ? "W"
-                                            : "L"}
+                                        {gm.result}
                                     </a>
                                 </td>
                                 <td className="game-log-cell">

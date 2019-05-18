@@ -70,7 +70,12 @@ async function getProcessedGameList(
                     oppPts: gm.teams[1].pts,
                     oppTid: gm.teams[1].tid,
                     pts: gm.teams[0].pts,
-                    won: gm.teams[0].pts > gm.teams[1].pts,
+                    result:
+                        gm.teams[0].pts > gm.teams[1].pts
+                            ? "W"
+                            : gm.teams[0].pts < gm.teams[1].pts
+                            ? "L"
+                            : "T",
                 });
             } else if (gm.teams[1].tid === tid) {
                 gameInfos.push({
@@ -82,7 +87,12 @@ async function getProcessedGameList(
                     oppPts: gm.teams[0].pts,
                     oppTid: gm.teams[0].tid,
                     pts: gm.teams[1].pts,
-                    won: gm.teams[1].pts > gm.teams[0].pts,
+                    result:
+                        gm.teams[1].pts > gm.teams[0].pts
+                            ? "W"
+                            : gm.teams[1].pts < gm.teams[0].pts
+                            ? "L"
+                            : "T",
                 });
             }
         }

@@ -54,7 +54,7 @@ const LeagueDashboard = ({
     setTitle("Dashboard");
 
     // Show the remaining number of games, only for the regular season.
-    const gamesPlayed = won + lost;
+    const gamesPlayed = won + lost + tied;
     const gamesRemaining = numGames - gamesPlayed;
     const percentComplete = gamesPlayed / numGames;
 
@@ -255,9 +255,9 @@ const LeagueDashboard = ({
                                     ({
                                         gid,
                                         overtime,
+                                        result,
                                         score,
                                         teams,
-                                        won: won2,
                                     }) => {
                                         return (
                                             <CompletedGame
@@ -266,10 +266,10 @@ const LeagueDashboard = ({
                                                 displayAbbrevs
                                                 gid={gid}
                                                 overtime={overtime}
+                                                result={result}
                                                 score={score}
                                                 season={season}
                                                 teams={teams}
-                                                won={won2}
                                             />
                                         );
                                     },

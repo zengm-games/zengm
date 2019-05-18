@@ -10,30 +10,31 @@ const CompletedGame = ({
     displayAbbrevs,
     gid,
     overtime,
+    result,
     score,
     season,
     teams,
-    won,
 }: {
     abbrev: string,
     displayAbbrevs: boolean | void,
     gid: number,
     overtime: string,
+    result: "W" | "L" | "T",
     score: string,
     season: number,
     teams: [
         { abbrev: string, region: string },
         { abbrev: string, region: string },
     ],
-    won: boolean,
 }) => {
     const classes = classNames("list-group-item", "schedule-row", {
-        "list-group-item-success": won,
-        "list-group-item-danger": !won,
+        "list-group-item-success": result === "W",
+        "list-group-item-danger": result === "L",
+        "list-group-item-warning": result === "T",
     });
     return (
         <li className={classes}>
-            <div className="schedule-wl">{won ? "W" : "L"}</div>
+            <div className="schedule-wl">{result}</div>
             <div className="schedule-score">
                 <a href={helpers.leagueUrl(["game_log", abbrev, season, gid])}>
                     {score}
@@ -58,6 +59,7 @@ CompletedGame.propTypes = {
     displayAbbrevs: PropTypes.bool,
     gid: PropTypes.number.isRequired,
     overtime: PropTypes.string.isRequired,
+    result: PropTypes.oneOf(["W", "L", "T"]).isRequired,
     score: PropTypes.string.isRequired,
     season: PropTypes.number.isRequired,
     teams: PropTypes.arrayOf(
@@ -66,7 +68,6 @@ CompletedGame.propTypes = {
             region: PropTypes.string.isRequired,
         }),
     ),
-    won: PropTypes.bool.isRequired,
 };
 
 export default CompletedGame;

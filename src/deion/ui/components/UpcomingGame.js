@@ -10,7 +10,7 @@ type InputTeam = {
     seasonAttrs?: { lost: number, won: number }, // Record only displayed when this is defined
 };
 
-const CompletedGame = ({ teams }: { teams: [InputTeam, InputTeam] }) => {
+const UpcomingGame = ({ teams }: { teams: [InputTeam, InputTeam] }) => {
     return (
         <li className="list-group-item schedule-row">
             <div>
@@ -38,7 +38,7 @@ const CompletedGame = ({ teams }: { teams: [InputTeam, InputTeam] }) => {
     );
 };
 
-CompletedGame.propTypes = {
+UpcomingGame.propTypes = {
     teams: PropTypes.arrayOf(
         PropTypes.shape({
             abbrev: PropTypes.string.isRequired,
@@ -51,4 +51,4 @@ CompletedGame.propTypes = {
     ),
 };
 
-export default CompletedGame;
+export default UpcomingGame;

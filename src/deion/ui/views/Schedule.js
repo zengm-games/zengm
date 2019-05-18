@@ -33,17 +33,17 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
                         {completed === undefined
                             ? "Loading..."
                             : completed.map(
-                                  ({ gid, overtime, score, teams, won }) => {
+                                  ({ gid, overtime, result, score, teams }) => {
                                       return (
                                           <CompletedGame
                                               key={gid}
                                               abbrev={abbrev}
                                               gid={gid}
                                               overtime={overtime}
+                                              result={result}
                                               score={score}
                                               season={season}
                                               teams={teams}
-                                              won={won}
                                           />
                                       );
                                   },

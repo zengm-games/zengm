@@ -154,17 +154,17 @@ export type GameProcessed = {|
     oppTid: number,
     oppAbbrev: number,
     overtime: string,
+    result: "W" | "L" | "T",
     tid?: number,
     pts: number,
-    won: boolean,
 |};
 
 export type GameProcessedCompleted = {|
     gid: number,
     overtime: string,
+    result: "W" | "L" | "T",
     score: string,
     teams: [Object, Object],
-    won: boolean,
 |};
 
 export type GetOutput = { [key: string]: ?(number | string) };

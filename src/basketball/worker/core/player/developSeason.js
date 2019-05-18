@@ -165,10 +165,10 @@ const developSeason = (
     // In young players, height can sometimes increase
     if (age <= 21) {
         const heightRand = Math.random();
-        if (heightRand > 0.99 && age <= 20) {
+        if (heightRand > 0.99 && age <= 20 && ratings.hgt <= 99) {
             ratings.hgt += 1;
         }
-        if (heightRand > 0.999) {
+        if (heightRand > 0.999 && ratings.hgt <= 99) {
             ratings.hgt += 1;
         }
     }

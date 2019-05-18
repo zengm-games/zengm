@@ -199,6 +199,7 @@ export type LogEventType =
     | "error"
     | "freeAgent"
     | "gameLost"
+    | "gameTied"
     | "gameWon"
     | "hallOfFame"
     | "healed"

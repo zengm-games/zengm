@@ -58,10 +58,20 @@ const writeGameStats = async (
     gameStats.won.pts = results.team[tw].stat.pts;
     gameStats.lost.pts = results.team[tl].stat.pts;
 
+    const tied = results.team[0].stat.pts === results.team[1].stat.pts;
+
     // Event log
     if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
         let text;
-        if (results.team[tw].id === g.userTid) {
+        if (tied) {
+            const otherTid =
+                results.team[0].id === g.userTid
+                    ? results.team[1].id
+                    : results.team[0].id;
+            text = `<span style="color: yellow; font-weight: bold; padding-right: 8px">T</span> Your team tied the <a href="${helpers.leagueUrl(
+                ["roster", g.teamAbbrevsCache[otherTid], g.season],
+            )}">${g.teamNamesCache[otherTid]}`;
+        } else if (results.team[tw].id === g.userTid) {
             text = `<span style="color: green; font-weight: bold; padding-right: 3px">W</span> Your team defeated the <a href="${helpers.leagueUrl(
                 ["roster", g.teamAbbrevsCache[results.team[tl].id], g.season],
             )}">${g.teamNamesCache[results.team[tl].id]}`;
@@ -76,10 +86,14 @@ const writeGameStats = async (
             g.season,
             results.gid,
         ])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
+
+        let type = results.team[tw].id === g.userTid ? "gameWon" : "gameLost";
+        if (tied) {
+            type = "gameTied";
+        }
         logEvent(
             {
-                type:
-                    results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
+                type,
                 text,
                 saveToDb: false,
                 tids: [results.team[0].id, results.team[1].id],

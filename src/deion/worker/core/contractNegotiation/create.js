@@ -1,7 +1,6 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import { freeAgents } from "..";
 import { idb } from "../../db";
 import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
 
@@ -45,15 +44,9 @@ const create = async (
         return `${p.firstName} ${p.lastName} is not a free agent.`;
     }
 
-    // Initial player proposal;
-    const playerAmount = freeAgents.amountWithMood(
-        p.contract.amount,
-        p.freeAgentMood[tid],
-    );
-
     if (
         helpers.refuseToNegotiate(
-            playerAmount,
+            p.contract.amount,
             p.freeAgentMood[g.userTid],
             rookie,
         )

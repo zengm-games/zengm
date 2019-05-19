@@ -11,6 +11,7 @@ import leagueAverageContract from "./leagueAverageContract";
 import maxRatingDists from "./maxRatingDists";
 import percentageDraftPicksSigned from "./percentageDraftPicksSigned";
 import recomputeFreeAgentContracts from "./recomputeFreeAgentContracts";
+import recomputeHallOfFame from "./recomputeHallOfFame";
 import valueDiff from "./valueDiff";
 
 export default {
@@ -23,5 +24,6 @@ export default {
     maxRatingDists,
     percentageDraftPicksSigned,
     recomputeFreeAgentContracts,
+    recomputeHallOfFame,
     valueDiff,
 };

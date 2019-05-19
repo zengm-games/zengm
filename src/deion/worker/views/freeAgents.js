@@ -46,7 +46,6 @@ async function updateFreeAgents(): void | { [key: string]: any } {
         showNoStats: true,
         showRookies: true,
     });
-    console.log(userPlayers);
 
     for (const p of players) {
         p.contract.amount = freeAgents.amountWithMood(

@@ -45,6 +45,7 @@ const create = async (
     }
 
     if (
+        !resigning &&
         helpers.refuseToNegotiate(
             p.contract.amount,
             p.freeAgentMood[g.userTid],

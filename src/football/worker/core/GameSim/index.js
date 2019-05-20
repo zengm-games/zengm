@@ -1742,6 +1742,7 @@ class GameSim {
                 // Fumble after catch... only if nothing else is going on, too complicated otherwise
                 if (!penInfo2 && !td && !safetyOrTouchback) {
                     if (Math.random() < this.probFumble(target)) {
+                        this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
                         return dt + this.doFumble(target, yds);
                     }
                 }
@@ -1861,6 +1862,7 @@ class GameSim {
         this.recordStat(this.o, p, "rusLng", yds);
 
         if (Math.random() < this.probFumble(p)) {
+            this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
             return dt + this.doFumble(p, yds);
         }
 

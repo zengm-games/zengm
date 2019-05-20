@@ -199,6 +199,7 @@ class DataTable extends React.Component<Props, State> {
         const filters = helpers.deepCopy(this.state.filters); // eslint-disable-line react/no-access-state-in-setstate
         filters[i] = event.currentTarget.value;
         this.setState({
+            currentPage: 1,
             filters,
         });
 

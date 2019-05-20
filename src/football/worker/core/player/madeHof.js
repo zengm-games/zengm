@@ -4,7 +4,7 @@ import { g } from "../../../../deion/worker/util";
 import type { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 import type { PlayerRatings } from "../../../common/types";
 
-const getMostCommonPos = (ratings: PlayerRatings) => {
+const getMostCommonPos = (ratings: PlayerRatings[]) => {
     const counts = new Map<string, number>();
 
     for (const { pos } of ratings) {

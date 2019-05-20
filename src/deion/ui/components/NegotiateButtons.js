@@ -37,7 +37,7 @@ const NegotiateButtons = ({
     const signDisabled =
         !canGoOverCap &&
         (!!disabled ||
-            (p.contract.amount > capSpace &&
+            (p.contract.amount > capSpace + 1 / 1000 &&
                 p.contract.amount > minContract / 1000));
 
     return (

@@ -148,6 +148,33 @@ class Dashboard extends React.Component<
                             </h2>
                         </a>
                     </li>
+                    <li>
+                        <a
+                            href={`https://play.${
+                                process.env.SPORT === "football"
+                                    ? "basketball"
+                                    : "football"
+                            }-gm.com/`}
+                            className="btn btn-light-bordered league"
+                            style={{
+                                backgroundImage: `url("https://play.${
+                                    process.env.SPORT === "football"
+                                        ? "basketball"
+                                        : "football"
+                                }-gm.com/ico/icon70.png")`,
+                                backgroundRepeat: "no-repeat",
+                                backgroundPosition:
+                                    process.env.SPORT === "football"
+                                        ? "100px 41px"
+                                        : "75px 41px",
+                                fontSize: "16px",
+                            }}
+                        >
+                            {process.env.SPORT === "football"
+                                ? "Play the original, Basketball GM!"
+                                : "Try the brand new Football GM!"}
+                        </a>
+                    </li>
                 </ul>
             </>
         );

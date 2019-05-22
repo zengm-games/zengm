@@ -1,6 +1,7 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
+import { freeAgents } from "..";
 import { idb } from "../../db";
 import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
 
@@ -47,7 +48,7 @@ const create = async (
     if (
         !resigning &&
         helpers.refuseToNegotiate(
-            p.contract.amount,
+            freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[tid]),
             p.freeAgentMood[g.userTid],
             rookie,
         )

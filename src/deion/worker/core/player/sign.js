@@ -23,9 +23,10 @@ const sign = (
 
     setContract(p, contract, true);
 
-    const eventType = phase === PHASE.RESIGN_PLAYERS ? "reSigned" : "freeAgent";
-    const signedOrReSigned =
-        phase === PHASE.RESIGN_PLAYERS ? "re-signed" : "signed";
+    const resigning =
+        phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.season;
+    const eventType = resigning ? "reSigned" : "freeAgent";
+    const signedOrReSigned = resigning ? "re-signed" : "signed";
 
     logEvent({
         type: eventType,

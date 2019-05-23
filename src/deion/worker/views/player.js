@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { g, helpers, overrides } from "../util";
@@ -150,7 +150,10 @@ async function updatePlayer(
         return {
             player: p,
             showTradeFor: p.tid !== g.userTid && p.tid >= 0,
-            freeAgent: p.tid === PLAYER.FREE_AGENT,
+            freeAgent:
+                p.tid === PLAYER.FREE_AGENT &&
+                (g.phase <= PHASE.REGULAR_SEASON ||
+                    g.phase >= PHASE.FREE_AGENCY),
             retired: p.tid === PLAYER.RETIRED,
             showContract:
                 p.tid !== PLAYER.UNDRAFTED &&

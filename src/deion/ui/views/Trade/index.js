@@ -173,7 +173,6 @@ class Trade extends React.Component {
             userTeamName,
             won,
         } = this.props;
-        console.log(this.props);
 
         setTitle("Trade");
 

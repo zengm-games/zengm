@@ -5,6 +5,7 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
+console.log("aaa");
 async function updatePlayers(
     inputs: { abbrev: string, season: number },
     updateEvents: UpdateEvents,
@@ -128,6 +129,7 @@ async function updatePlayers(
 
         return {
             abbrev: inputs.abbrev,
+            currentSeason: g.season,
             season: inputs.season,
             players,
             ratings,

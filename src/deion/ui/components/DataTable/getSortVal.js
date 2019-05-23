@@ -71,7 +71,7 @@ const getSortVal = (value: any = null, sortType: SortType | void) => {
             return lastName;
         }
         if (sortType === "currency") {
-            if (sortVal === null) {
+            if (sortVal === null || sortVal === "") {
                 return -Infinity;
             }
             // Drop $ and parseFloat will just keep the numeric part at the beginning of the string

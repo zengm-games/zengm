@@ -1,6 +1,15 @@
 Fingo discord - Would be nice to have the ability to sort by who I have selected to be traded in the trade view
 
+refuseToSign should be scaled for hard cap and max/min contracts
+
+when you are on a player's page, looking at contracts, it says that you have re-signed your rookies
+
+after a missed extra point, the wrong team kicked off
+
 # football
+
+when signing FA, should we do anything about depth automatically?
+- place pid in array above all worse ovrs
 
 Great players retire too early
 
@@ -16,9 +25,6 @@ situationally aware play calling
 if paying a lot to a QB already, don't sign another expensive one
 
 Also I just had my rookie QB get onto the All-Rookie Team in the QB slot, but he was also slotted in as an All-Rookie punter, without having done any punts all season.
-
-registration works, but still shows error under form
-- added console.log of error message
 
 stat distribution pages
 

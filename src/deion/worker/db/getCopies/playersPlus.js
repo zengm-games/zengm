@@ -58,6 +58,20 @@ const processAttrs = (
     p: Player,
     { attrs, fuzz, numGamesRemaining, season }: PlayersPlusOptionsRequired,
 ) => {
+    const getSalary = () => {
+        let total = 0;
+
+        const s = season === undefined ? g.season : season;
+
+        for (const salary of p.salaries) {
+            if (salary.season === s) {
+                total += salary.amount / 1000;
+            }
+        }
+
+        return total;
+    };
+
     for (const attr of attrs) {
         if (attr === "age") {
             const s = season === undefined ? g.season : season;
@@ -88,8 +102,15 @@ const processAttrs = (
         } else if (attr === "hgtIn") {
             output.hgtIn = p.hgt - 12 * Math.floor(p.hgt / 12);
         } else if (attr === "contract") {
-            output.contract = helpers.deepCopy(p.contract); // [millions of dollars]
-            output.contract.amount /= 1000; // [millions of dollars]
+            if (g.season === season || season === undefined) {
+                output.contract = helpers.deepCopy(p.contract);
+                output.contract.amount /= 1000; // [millions of dollars]
+            } else {
+                output.contract = {
+                    amount: getSalary(),
+                    exp: season,
+                };
+            }
         } else if (attr === "cashOwed") {
             output.cashOwed =
                 (player.contractSeasonsRemaining(
@@ -128,15 +149,7 @@ const processAttrs = (
         ) {
             output.injury = { type: "Healthy", gamesRemaining: 0 };
         } else if (attr === "salary") {
-            output.salary = 0;
-
-            const s = season === undefined ? g.season : season;
-
-            for (const salary of p.salaries) {
-                if (salary.season === s) {
-                    output.salary += salary.amount / 1000;
-                }
-            }
+            output.salary = getSalary();
         } else if (attr === "salaries") {
             output.salaries = helpers.deepCopy(p.salaries).map(salary => {
                 salary.amount /= 1000;

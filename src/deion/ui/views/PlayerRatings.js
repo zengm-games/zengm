@@ -9,7 +9,14 @@ import {
 } from "../components";
 import { getCols, helpers, overrides, setTitle } from "../util";
 
-const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
+const PlayerRatings = ({
+    abbrev,
+    currentSeason,
+    players,
+    ratings,
+    season,
+    userTid,
+}) => {
     setTitle(`Player Ratings - ${season}`);
 
     const ovrsPotsColNames = [];
@@ -61,8 +68,12 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
                 </a>,
                 p.age,
                 <>
-                    {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-                    {p.contract.exp}
+                    {p.contract.amount > 0
+                        ? helpers.formatCurrency(p.contract.amount, "M")
+                        : ""}
+                    {p.contract.amount > 0 && season === currentSeason
+                        ? ` thru ${p.contract.exp}`
+                        : ""}
                 </>,
                 ...(process.env.SPORT === "basketball" ? [p.born.loc] : []),
                 p.ratings.ovr,
@@ -116,6 +127,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
 
 PlayerRatings.propTypes = {
     abbrev: PropTypes.string.isRequired,
+    currentSeason: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
     season: PropTypes.number.isRequired,

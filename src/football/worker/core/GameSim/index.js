@@ -1369,7 +1369,7 @@ class GameSim {
             if (!extraPoint) {
                 this.recordStat(this.o, kicker, "fgLng", distance);
             }
-        } else {
+        } else if (!extraPoint) {
             this.possessionChange();
             this.scrimmage = helpers.bound(
                 100 - this.scrimmage + 7,

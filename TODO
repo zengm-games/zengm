@@ -1,8 +1,4 @@
-Fingo discord - Would be nice to have the ability to sort by who I have selected to be traded in the trade view
-
-refuseToSign should be scaled for hard cap and max/min contracts
-
-after a missed extra point, the wrong team kicked off
+refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 # football
 
@@ -488,6 +484,10 @@ event log refactor
 - react
 - keep state just on worker
 - "event log" page with ALL events, should be impossible to "miss" an event
+
+data table sorting shouldn't be based on children
+- would allow sorting by checked/unchecked for trade and trading block
+- get rid of awkward children stuff - PlayerNameLabels, mood, ...
 
 ----
 

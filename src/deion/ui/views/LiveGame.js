@@ -47,6 +47,7 @@ class LiveGame extends React.Component {
         super(props);
         this.state = {
             boxScore: props.initialBoxScore ? props.initialBoxScore : {},
+            paused: false,
             speed: 7,
             started: !!props.events,
         };
@@ -54,8 +55,14 @@ class LiveGame extends React.Component {
             this.startLiveGame(props.events.slice());
         }
 
+        this.overtimes = 0;
+        this.quarters = ["Q1"];
+
         this.handleSpeedChange = this.handleSpeedChange.bind(this);
         this.setPlayByPlayDivHeight = this.setPlayByPlayDivHeight.bind(this);
+        this.handlePause = this.handlePause.bind(this);
+        this.handlePlay = this.handlePlay.bind(this);
+        this.processToNextPause = this.processToNextPause.bind(this);
     }
 
     componentDidMount() {
@@ -91,66 +98,83 @@ class LiveGame extends React.Component {
     }
 
     startLiveGame(events) {
-        let overtimes = 0;
-        let quarters = ["Q1"];
+        this.events = events;
+        this.processToNextPause();
+    }
 
-        const processToNextPause = () => {
-            if (!this.componentIsMounted) {
-                return;
+    processToNextPause() {
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        // eslint-disable-next-line react/no-access-state-in-setstate
+        const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
+
+        const output = overrides.util.processLiveGameEvents({
+            boxScore,
+            events: this.events,
+            overtimes: this.overtimes,
+            quarters: this.quarters,
+        });
+        const text = output.text;
+        this.overtimes = output.overtimes;
+        this.quarters = output.quarters;
+
+        if (text !== undefined) {
+            const p = document.createElement("p");
+            const node = document.createTextNode(text);
+            if (text.startsWith("Start of")) {
+                const b = document.createElement("b");
+                b.appendChild(node);
+                p.appendChild(b);
+            } else {
+                p.appendChild(node);
             }
 
-            // eslint-disable-next-line react/no-access-state-in-setstate
-            const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
+            this.playByPlayDiv.insertBefore(p, this.playByPlayDiv.firstChild);
+        }
 
-            const output = overrides.util.processLiveGameEvents({
-                boxScore,
-                events,
-                overtimes,
-                quarters,
-            });
-            const text = output.text;
-            overtimes = output.overtimes;
-            quarters = output.quarters;
-
-            if (text !== undefined) {
-                const p = document.createElement("p");
-                const node = document.createTextNode(text);
-                if (text.startsWith("Start of")) {
-                    const b = document.createElement("b");
-                    b.appendChild(node);
-                    p.appendChild(b);
-                } else {
-                    p.appendChild(node);
-                }
-
-                this.playByPlayDiv.insertBefore(
-                    p,
-                    this.playByPlayDiv.firstChild,
+        if (this.events.length > 0) {
+            if (!this.state.paused) {
+                setTimeout(
+                    this.processToNextPause,
+                    4000 / 1.2 ** this.state.speed,
                 );
             }
-
-            if (events.length > 0) {
-                setTimeout(processToNextPause, 4000 / 1.2 ** this.state.speed);
-            } else {
-                boxScore.time = "0:00";
-                boxScore.gameOver = true;
-                if (boxScore.scoringSummary) {
-                    for (const event of boxScore.scoringSummary) {
-                        event.hide = false;
-                    }
+        } else {
+            boxScore.time = "0:00";
+            boxScore.gameOver = true;
+            if (boxScore.scoringSummary) {
+                for (const event of boxScore.scoringSummary) {
+                    event.hide = false;
                 }
             }
+        }
 
-            this.setState({
-                boxScore,
-            });
-        };
-
-        processToNextPause();
+        this.setState({
+            boxScore,
+        });
     }
 
     handleSpeedChange(e) {
         this.setState({ speed: e.target.value });
+    }
+
+    handlePause() {
+        this.setState({
+            paused: true,
+        });
+    }
+
+    handlePlay() {
+        this.setState(
+            {
+                paused: false,
+            },
+            () => {
+                this.processToNextPause();
+            },
+        );
     }
 
     render() {
@@ -183,21 +207,53 @@ class LiveGame extends React.Component {
                         <AutoAffix viewportOffsetTop={60} container={this}>
                             {/* Needs to return actual div, not fragment, for AutoAffix!!! */}
                             <div>
-                                <form>
-                                    <label htmlFor="playByPlaySpeed">
-                                        Play-By-Play Speed:
-                                    </label>
-                                    <input
-                                        type="range"
-                                        id="playByPlaySpeed"
-                                        min="1"
-                                        max="33"
-                                        step="1"
-                                        style={{ width: "100%" }}
-                                        value={this.state.speed}
-                                        onChange={this.handleSpeedChange}
-                                    />
-                                </form>
+                                {this.state.boxScore.gid >= 0 ? (
+                                    <div className="d-flex align-items-baseline mb-3">
+                                        <div className="btn-group mr-2">
+                                            {this.state.paused ? (
+                                                <button
+                                                    className="btn btn-light-bordered"
+                                                    onClick={this.handlePlay}
+                                                >
+                                                    <span className="glyphicon glyphicon-play" />
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    className="btn btn-light-bordered"
+                                                    onClick={this.handlePause}
+                                                >
+                                                    <span className="glyphicon glyphicon-pause" />
+                                                </button>
+                                            )}
+                                            <button
+                                                className="btn btn-light-bordered"
+                                                disabled={!this.state.paused}
+                                                onClick={
+                                                    this.processToNextPause
+                                                }
+                                            >
+                                                <span className="glyphicon glyphicon-step-forward" />
+                                            </button>
+                                        </div>
+                                        <div className="form-group flex-grow-1 mb-0">
+                                            <label htmlFor="playByPlaySpeed">
+                                                Speed:
+                                            </label>
+                                            <input
+                                                type="range"
+                                                className="form-control-range"
+                                                id="playByPlaySpeed"
+                                                min="1"
+                                                max="33"
+                                                step="1"
+                                                value={this.state.speed}
+                                                onChange={
+                                                    this.handleSpeedChange
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                ) : null}
 
                                 <div
                                     ref={c => {

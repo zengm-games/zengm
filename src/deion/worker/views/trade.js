@@ -222,7 +222,6 @@ async function updateTrade(): void | { [key: string]: any } {
     vars.showResigningMsg =
         g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
 
-    console.log(vars);
     return vars;
 }
 

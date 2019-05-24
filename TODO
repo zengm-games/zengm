@@ -1,9 +1,12 @@
+when live simming last game of playoffs, redirect to season summary is disabled. so it should put it in the Play menu then, until you view it
+
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 # football
 
 when signing FA, should we do anything about depth automatically?
 - place pid in array above all worse ovrs
+  - do the same for trades and draft picks! call rosterAutoSort(g.userTid, true);
 
 Great players retire too early
 
@@ -171,8 +174,6 @@ more accurage game sim
 ---
 
 update discord links after creating football channel
-
-when live simming last game of playoffs, redirect to season summary is disabled. so it should put it in the Play menu then, until you view it
 
 draft lottery teams should only be non-playoff teams
 

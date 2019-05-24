@@ -3,7 +3,7 @@
 import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, overrides } from "../../util";
 
 /**
  * Accept the player's offer.
@@ -64,6 +64,13 @@ const accept = async (
     await idb.cache.players.put(p);
 
     await cancel(pid);
+
+    // If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
+    // better than, without otherwise disturbing the depth chart order
+    if (!overrides.core.team.rosterAutoSort) {
+        throw new Error("Missing overrides.core.team.rosterAutoSort");
+    }
+    await overrides.core.team.rosterAutoSort(g.userTid, true);
 };
 
 export default accept;

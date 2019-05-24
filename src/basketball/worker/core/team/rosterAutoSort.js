@@ -64,7 +64,12 @@ export const findStarters = (positions: string[]): number[] => {
  * @param {number} tid Team ID.
  * @return {Promise}
  */
-const rosterAutoSort = async (tid: number) => {
+const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
+    if (onlyNewPlayers) {
+        // This option is just for football currently
+        return;
+    }
+
     // Get roster and sort by value (no potential included)
     const playersFromCache = await idb.cache.players.indexGetAll(
         "playersByTid",

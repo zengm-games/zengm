@@ -61,6 +61,7 @@ const autoSortRoster = async (pos?: string) => {
     }
     await overrides.core.team.rosterAutoSort(
         g.userTid,
+        false,
         typeof pos === "string" ? pos : undefined,
     );
     await toUI(["realtimeUpdate", ["playerMovement"]]);

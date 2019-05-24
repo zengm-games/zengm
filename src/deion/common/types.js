@@ -776,7 +776,11 @@ export type WorkerOverridesCore = {|
             playoffs: boolean,
             statType: TeamStatType,
         ) => any,
-        rosterAutoSort?: (tid: number, pos?: any) => Promise<void>,
+        rosterAutoSort?: (
+            tid: number,
+            onlyNewPlayers?: boolean,
+            pos?: any,
+        ) => Promise<void>,
         stats?: {
             derived: string[],
             raw: string[],

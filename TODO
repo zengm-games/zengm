@@ -4,10 +4,6 @@ refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 # football
 
-when signing FA, should we do anything about depth automatically?
-- place pid in array above all worse ovrs
-  - do the same for trades and draft picks! call rosterAutoSort(g.userTid, true);
-
 Great players retire too early
 
 rookie contracts too high still?

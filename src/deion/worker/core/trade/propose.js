@@ -59,16 +59,15 @@ const propose = async (
     if (outcome === "accepted") {
         await clear();
 
-        // Auto-sort CPU team roster
+        // Auto-sort team rosters
         for (const tid of tids) {
-            if (!g.userTids.includes(tid)) {
-                if (!overrides.core.team.rosterAutoSort) {
-                    throw new Error(
-                        "Missing overrides.core.team.rosterAutoSort",
-                    );
-                }
-                await overrides.core.team.rosterAutoSort(tid);
+            if (!overrides.core.team.rosterAutoSort) {
+                throw new Error("Missing overrides.core.team.rosterAutoSort");
             }
+            await overrides.core.team.rosterAutoSort(
+                tid,
+                g.userTids.includes(tid),
+            );
         }
 
         return [true, 'Trade accepted! "Nice doing business with you!"'];

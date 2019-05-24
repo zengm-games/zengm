@@ -4,7 +4,7 @@ import { PHASE } from "../../../common";
 import { player } from "..";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, helpers, local, logEvent, overrides } from "../../util";
 import type { DraftPick } from "../../../common/types";
 
 /**
@@ -111,6 +111,13 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
         pids: [p.pid],
         tids: [p.tid],
     });
+
+    if (g.userTids.includes(dp.tid)) {
+        if (!overrides.core.team.rosterAutoSort) {
+            throw new Error("Missing overrides.core.team.rosterAutoSort");
+        }
+        await overrides.core.team.rosterAutoSort(dp.tid, true);
+    }
 };
 
 export default selectPlayer;

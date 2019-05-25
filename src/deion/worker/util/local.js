@@ -12,6 +12,7 @@ const defaultLocal: Local = {
     phaseText: "",
     playingUntilEndOfRound: false,
     statusText: "Idle",
+    unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
 };
 
 const local: Local & { reset: () => void } = {
@@ -22,6 +23,8 @@ const local: Local & { reset: () => void } = {
     phaseText: defaultLocal.phaseText,
     playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
     statusText: defaultLocal.statusText,
+    unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
+
     reset: () => {
         local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
         local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
@@ -29,6 +32,7 @@ const local: Local & { reset: () => void } = {
         local.phaseText = defaultLocal.phaseText;
         local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
         local.statusText = defaultLocal.statusText;
+        local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;
 
         // Don't reset goldUntil because that persists across leagues. Probably it shouldn't be in this file, but should
         // be somewhere else (like how g used to have some variables not persisted to database).

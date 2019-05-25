@@ -440,6 +440,7 @@ export type Local = {|
     phaseText: string,
     playingUntilEndOfRound: boolean,
     statusText: string,
+    unviewedSeasonSummary: boolean,
 
     reset?: () => void,
 |};

@@ -1,6 +1,4 @@
-when live simming last game of playoffs, redirect to season summary is disabled. so it should put it in the Play menu then, until you view it
-- when doing redirect (or not), set some variable in local and use that to trigger the play menu
-- then base it on whether the summary was viewed or not
+next playoff series matchup should appear in playoffs view before game
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 

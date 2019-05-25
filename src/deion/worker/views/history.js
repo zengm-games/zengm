@@ -1,8 +1,13 @@
 // @flow
 
 import { idb } from "../db";
-import { g } from "../util";
+import { g, local, updatePlayMenu } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
+
+const viewedSeasonSummary = async () => {
+    local.unviewedSeasonSummary = false;
+    await updatePlayMenu();
+};
 
 async function updateHistory(
     inputs: GetOutput,
@@ -11,11 +16,17 @@ async function updateHistory(
 ): void | { [key: string]: any } {
     const { season } = inputs;
     if (typeof season !== "number") {
+        viewedSeasonSummary(); // Should never happen, but just in case
         return;
+    }
+
+    if (season === g.season && local.unviewedSeasonSummary) {
+        viewedSeasonSummary();
     }
 
     if (updateEvents.includes("firstRun") || state.season !== season) {
         if (season < g.startingSeason) {
+            viewedSeasonSummary(); // Should never happen, but just in case
             return {
                 invalidSeason: true,
                 season,

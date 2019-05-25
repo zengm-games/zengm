@@ -73,6 +73,10 @@ const updatePlayMenu = async () => {
             url: helpers.leagueUrl(["new_team"]),
             label: "Try again with a new team",
         },
+        seasonSummary: {
+            url: helpers.leagueUrl(["history"]),
+            label: "View season summary",
+        },
         stopAuto: {
             label: `Stop auto play (${local.autoPlaySeasons} seasons left)`,
         },
@@ -132,6 +136,9 @@ const updatePlayMenu = async () => {
 
     if (unreadMessage) {
         keys = ["message"];
+    }
+    if (local.unviewedSeasonSummary) {
+        keys = ["seasonSummary"];
     }
     if (lock.get("gameSim")) {
         keys = ["stop"];

@@ -9,6 +9,7 @@ import {
     g,
     genMessage,
     helpers,
+    local,
     overrides,
     toUI,
 } from "../../util";
@@ -114,6 +115,8 @@ const newPhaseBeforeDraft = async (
     let url;
     if (!liveGameSim) {
         url = helpers.leagueUrl(["history"]);
+    } else {
+        local.unviewedSeasonSummary = true;
     }
 
     toUI(["bbgmPing", "season", g.season], conditions);

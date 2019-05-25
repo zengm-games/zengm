@@ -116,10 +116,6 @@ class DraftScouting extends React.Component {
                                                 this.setState({
                                                     customize: undefined,
                                                 });
-
-                                                await realtimeUpdate([
-                                                    "playerMovement",
-                                                ]);
                                             }}
                                         />
                                         <p />

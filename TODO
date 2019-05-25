@@ -288,8 +288,6 @@ index updating
 - would be better: make _dirtyIndexes per index, not per store  
 - even better: incrementally update index
 
-ui shouldn't call realtimeupdate directly, or updates will only happen in one tab
-
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values
@@ -1108,11 +1106,7 @@ views.teamFinances should merge db call with team.filter to get seasonAttrs, but
 live play-by-play simulation
   slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
   change of possession with no rebound/turnover?
-  live box score
-    update injury icon when player is hurt - would be easy if injury.type was observable, but it's not and I have no idea why. force update with fake name update?
-    game clock using min - more accurate, but more complicated - does this even work?
   could fake where the shots are to display graphically
-  when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
   allow the user to make substitutions in realtime
 multi team trades
 

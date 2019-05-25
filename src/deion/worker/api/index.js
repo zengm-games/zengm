@@ -845,6 +845,8 @@ const handleUploadedDraftClass = async (
             baseNumPlayers - players.length,
         );
     }
+
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const init = async (inputEnv: Env, conditions: Conditions) => {

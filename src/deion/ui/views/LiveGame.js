@@ -213,6 +213,10 @@ class LiveGame extends React.Component {
                                             {this.state.paused ? (
                                                 <button
                                                     className="btn btn-light-bordered"
+                                                    disabled={
+                                                        this.state.boxScore
+                                                            .gameOver
+                                                    }
                                                     onClick={this.handlePlay}
                                                     title="Resume Simulation"
                                                 >
@@ -221,6 +225,10 @@ class LiveGame extends React.Component {
                                             ) : (
                                                 <button
                                                     className="btn btn-light-bordered"
+                                                    disabled={
+                                                        this.state.boxScore
+                                                            .gameOver
+                                                    }
                                                     onClick={this.handlePause}
                                                     title="Pause Simulation"
                                                 >
@@ -229,7 +237,10 @@ class LiveGame extends React.Component {
                                             )}
                                             <button
                                                 className="btn btn-light-bordered"
-                                                disabled={!this.state.paused}
+                                                disabled={
+                                                    !this.state.paused ||
+                                                    this.state.boxScore.gameOver
+                                                }
                                                 onClick={() => {
                                                     this.processToNextPause(
                                                         true,
@@ -244,6 +255,9 @@ class LiveGame extends React.Component {
                                             <input
                                                 type="range"
                                                 className="form-control-range"
+                                                disabled={
+                                                    this.state.boxScore.gameOver
+                                                }
                                                 min="1"
                                                 max="33"
                                                 step="1"

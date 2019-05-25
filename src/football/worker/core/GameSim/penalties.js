@@ -312,6 +312,7 @@ const penalties: Penalty[] = [
             S: 0.1,
             CB: 0.8,
         },
+        automaticFirstDown: true,
     },
     {
         name: "Too many men on the field",

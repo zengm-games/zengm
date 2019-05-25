@@ -181,6 +181,21 @@ const play = async (
 
         await overrides.util.advStats();
 
+        const updateEvents = ["gameSim"];
+
+        // Tragic deaths only happen during the regular season!
+        if (g.phase !== PHASE.PLAYOFFS && Math.random() < g.tragicDeathRate) {
+            await player.killOne(conditions);
+            if (g.stopOnInjury) {
+                lock.set("stopGameSim", true);
+            }
+            updateEvents.push("playerMovement");
+        }
+
+        const playoffsOver =
+            g.phase === PHASE.PLAYOFFS &&
+            (await season.newSchedulePlayoffsDay());
+
         // If there was a play by play done for one of these games, get it
         let raw;
         let url;
@@ -195,25 +210,12 @@ const play = async (
                 }
             }
 
-            await toUI(["realtimeUpdate", ["gameSim"], url, raw], conditions);
+            await toUI(["realtimeUpdate", updateEvents, url, raw], conditions);
         } else {
             url = undefined;
 
-            await toUI(["realtimeUpdate", ["gameSim"]]);
+            await toUI(["realtimeUpdate", updateEvents]);
         }
-
-        // Tragic deaths only happen during the regular season!
-        if (g.phase !== PHASE.PLAYOFFS && Math.random() < g.tragicDeathRate) {
-            await player.killOne(conditions);
-            if (g.stopOnInjury) {
-                lock.set("stopGameSim", true);
-            }
-            await toUI(["realtimeUpdate", ["playerMovement"]]);
-        }
-
-        const playoffsOver =
-            g.phase === PHASE.PLAYOFFS &&
-            (await season.newSchedulePlayoffsDay());
 
         if (numDays - 1 <= 0 || playoffsOver) {
             await cbNoGames(playoffsOver);

@@ -1587,7 +1587,7 @@ class GameSim {
             } else if (type === "fgMidRangeAndOne") {
                 texts = ["{0} made a mid-range shot and got fouled!"];
             } else if (type === "tp") {
-                texts = ["{0} made a three pointer shot"];
+                texts = ["{0} made a three pointer"];
             } else if (type === "tpAndOne") {
                 texts = ["{0} made a three pointer and got fouled!"];
             } else if (type === "blkAtRim") {

@@ -4,6 +4,8 @@ when live simming last game of playoffs, redirect to season summary is disabled.
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
+basketball gamesim - too many plays happen right at 0
+
 # football
 
 keyStats for OL should not show tiny # of tackles

@@ -1,3 +1,9 @@
+Tools > Frivolities
+- family trees
+- tragic deaths
+- Most Games, No Playoffs - https://www.basketball-reference.com/friv/most_g_no_playoffs.html
+- Roster Continuity - https://www.basketball-reference.com/friv/continuity.html
+
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 basketball gamesim - too many plays happen right at 0
@@ -249,10 +255,6 @@ better table sorting (don't use hack of looking at child)
 finals home court advantage should be based on record, not seed
 
 user reports - JS alert/confirm often fail on iOS. maybe rewrite with my own modal
-
-Tools > Frivolities
-- family trees
-- tragic deaths
 
 redo mood system
 - make available throughout the year

@@ -2,12 +2,17 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 5.0.0 (in progress)
+# 5.0.0 (2019-05-25)
 
 ## Gameplay and UI
 
+- This is no longer just Basketball GM, it's also Football GM!
 - ["Untouchable" players and picks in trades](https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/)
 - [New options: hard/soft cap and playoff byes](https://basketball-gm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes/)
+
+## Technical details
+
+- Refactored everything to support building Basketball GM and Football GM while sharing as much code as possible
 
 # 4.1.0 (2018-10-07)
 

@@ -29,8 +29,6 @@ too many players playing both offense and defense
 
 weight formula is not very good
 
-version
-
 confirm subscription works from football-gm.com
 - Basketball GM Gold -> GM Gold, BBGM Commissioner -> The Commissioner in bbgm-account
 - cross promote in welcome emails
@@ -229,9 +227,6 @@ login -> account -> doesn't say logged in, sometimes? but account shows in navba
 - happens if you log in in one tab while having another open, then in the 2nd tab go to achievements
   - only in firefox?
   - no, user says chrome too
-
-customize playoff series length
-- god mode options
 
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/

@@ -335,6 +335,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
             },
             {
                 type: "link",
+                active: pageID => pageID === "frivolities",
+                league: true,
+                path: ["frivolities"],
+                text: "Frivolities",
+            },
+            {
+                type: "link",
                 active: pageID => pageID === "godMode",
                 league: true,
                 path: ["god_mode"],

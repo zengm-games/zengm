@@ -167,6 +167,7 @@ const routes = () => {
         "/l/:lid/depth": genPage("depth"),
         "/l/:lid/depth/:abbrev": genPage("depth"),
         "/l/:lid/depth/:abbrev/:pos": genPage("depth"),
+        "/l/:lid/frivolities": genPage("frivolities"),
     };
 };
 

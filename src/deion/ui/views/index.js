@@ -20,6 +20,7 @@ import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
 import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
+import Frivolities from "./Frivolities";
 import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
@@ -84,6 +85,7 @@ export default {
     ExportStats,
     FantasyDraft,
     FreeAgents,
+    Frivolities,
     GameLog,
     GodMode,
     HallOfFame,

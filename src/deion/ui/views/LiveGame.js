@@ -102,8 +102,8 @@ class LiveGame extends React.Component {
         this.processToNextPause();
     }
 
-    processToNextPause() {
-        if (!this.componentIsMounted) {
+    processToNextPause(force) {
+        if (!this.componentIsMounted || (this.state.paused && !force)) {
             return;
         }
 
@@ -208,12 +208,13 @@ class LiveGame extends React.Component {
                             {/* Needs to return actual div, not fragment, for AutoAffix!!! */}
                             <div>
                                 {this.state.boxScore.gid >= 0 ? (
-                                    <div className="d-flex align-items-baseline mb-3">
+                                    <div className="d-flex align-items-center mb-3">
                                         <div className="btn-group mr-2">
                                             {this.state.paused ? (
                                                 <button
                                                     className="btn btn-light-bordered"
                                                     onClick={this.handlePlay}
+                                                    title="Resume Simulation"
                                                 >
                                                     <span className="glyphicon glyphicon-play" />
                                                 </button>
@@ -221,6 +222,7 @@ class LiveGame extends React.Component {
                                                 <button
                                                     className="btn btn-light-bordered"
                                                     onClick={this.handlePause}
+                                                    title="Pause Simulation"
                                                 >
                                                     <span className="glyphicon glyphicon-pause" />
                                                 </button>
@@ -228,21 +230,20 @@ class LiveGame extends React.Component {
                                             <button
                                                 className="btn btn-light-bordered"
                                                 disabled={!this.state.paused}
-                                                onClick={
-                                                    this.processToNextPause
-                                                }
+                                                onClick={() => {
+                                                    this.processToNextPause(
+                                                        true,
+                                                    );
+                                                }}
+                                                title="Show Next Play"
                                             >
                                                 <span className="glyphicon glyphicon-step-forward" />
                                             </button>
                                         </div>
                                         <div className="form-group flex-grow-1 mb-0">
-                                            <label htmlFor="playByPlaySpeed">
-                                                Speed:
-                                            </label>
                                             <input
                                                 type="range"
                                                 className="form-control-range"
-                                                id="playByPlaySpeed"
                                                 min="1"
                                                 max="33"
                                                 step="1"
@@ -250,6 +251,7 @@ class LiveGame extends React.Component {
                                                 onChange={
                                                     this.handleSpeedChange
                                                 }
+                                                title="Speed"
                                             />
                                         </div>
                                     </div>

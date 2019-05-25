@@ -2,9 +2,6 @@ when live simming last game of playoffs, redirect to season summary is disabled.
 - when doing redirect (or not), set some variable in local and use that to trigger the play menu
 - then base it on whether the summary was viewed or not
 
-add pause and forward buttons to live game sim, somehow
-- how get buttons aligned to bottom of div?
-
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 # football

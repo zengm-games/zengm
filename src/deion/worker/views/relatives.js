@@ -2,22 +2,41 @@
 
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
-    inputs: GetOutput,
+    { pid }: { pid?: number },
     updateEvents: UpdateEvents,
+    state: any,
 ): void | { [key: string]: any } {
     // In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-    if (updateEvents.includes("firstRun")) {
+    if (updateEvents.includes("firstRun") || pid !== state.pid) {
         const stats =
             process.env.SPORT === "basketball"
                 ? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
                 : ["gp", "keyStats", "av"];
 
-        let players = await idb.getCopies.players({
-            filter: p => p.relatives.length > 0,
-        });
+        let players = [];
+
+        if (typeof pid === "number") {
+            const target = await idb.getCopy.players({
+                pid,
+            });
+            if (target) {
+                const pids = new Set(target.relatives.map(rel => rel.pid));
+
+                const otherPlayers = await idb.getCopies.players({
+                    filter: p => pids.has(p.pid),
+                });
+
+                players = [target, ...otherPlayers];
+            }
+        } else {
+            players = await idb.getCopies.players({
+                filter: p => p.relatives.length > 0,
+            });
+        }
+
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "pid",
@@ -39,6 +58,7 @@ async function updatePlayers(
         processPlayersHallOfFame(players);
 
         return {
+            pid,
             players,
             stats,
             userTid: g.userTid,

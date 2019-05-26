@@ -168,10 +168,11 @@ const routes = () => {
         "/l/:lid/depth/:abbrev": genPage("depth"),
         "/l/:lid/depth/:abbrev/:pos": genPage("depth"),
         "/l/:lid/frivolities": genPage("frivolities"),
-        "/l/:lid/frivolities/relatives": genPage("relatives"),
         "/l/:lid/frivolities/most_games_no_playoffs": genPage(
             "mostGamesNoPlayoffs",
         ),
+        "/l/:lid/frivolities/relatives": genPage("relatives"),
+        "/l/:lid/frivolities/relatives/:pid": genPage("relatives"),
         "/l/:lid/frivolities/roster_continuity": genPage("rosterContinuity"),
         "/l/:lid/frivolities/tragic_deaths": genPage("tragicDeaths"),
     };

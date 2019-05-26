@@ -1,9 +1,8 @@
 Tools > Frivolities
 - relatives
-  - click details, and the table is filtered to just that player's relatives
-    - update text at top
   - link here from player pages?
 - blog, changelog, changes (in game)
+  - link from player page to relatives
 
 add relatives editor to customize player
 
@@ -13,6 +12,13 @@ basketball gamesim - too many plays happen right at 0
 
 put "re-sign" button on player pages - needs to check for refusing too!
 - does the normal free agent one need to do that check too? no, it shows notification. need to show same for re-signing, and change button text too!
+
+make localStorage fail gracefully on quota error
+- https://github.com/SonarSource/SonarJS/issues/623 describes issue - need to check all of those
+- if no library exists, write one
+  - https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js handles everything i think, but forces it to be async and bring in other stuff
+- safe-localstorage - weird fallback API
+- local-storage-fallback - only tests errors at initial usage, not subsequent
 
 # football
 

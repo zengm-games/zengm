@@ -1307,6 +1307,7 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
+    Relation: {},
     Result: {},
     Retired: {
         sortSequence: ["desc", "asc"],

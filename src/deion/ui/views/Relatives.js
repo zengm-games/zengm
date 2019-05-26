@@ -3,8 +3,14 @@ import React from "react";
 import { getCols, helpers, setTitle } from "../util";
 import { DataTable, NewWindowLink } from "../components";
 
-const Relatives = ({ players, stats, userTid }) => {
-    setTitle("Relatives");
+const Relatives = ({ pid, players, stats, userTid }) => {
+    const target =
+        pid !== undefined ? players.find(p => p.pid === pid) : undefined;
+
+    const title =
+        target === undefined ? "Relatives" : `${target.name}'s Family`;
+
+    setTitle(title);
 
     const superCols = [
         {
@@ -32,6 +38,7 @@ const Relatives = ({ players, stats, userTid }) => {
         "Retired",
         "Pick",
         "Peak Ovr",
+        ...(target !== undefined ? ["Relation"] : []),
         "Details",
         "# Fathers",
         "# Brothers",
@@ -43,6 +50,24 @@ const Relatives = ({ players, stats, userTid }) => {
     );
 
     const rows = players.map(p => {
+        const relationArray = [];
+        if (target) {
+            if (p.pid === pid) {
+                relationArray.push("Self");
+            } else {
+                const relation = target.relatives.find(
+                    rel => rel.pid === p.pid,
+                );
+                if (relation) {
+                    relationArray.push(
+                        helpers.upperCaseFirstLetter(relation.type),
+                    );
+                } else {
+                    relationArray.push("???");
+                }
+            }
+        }
+
         return {
             key: p.pid,
             data: [
@@ -52,7 +77,16 @@ const Relatives = ({ players, stats, userTid }) => {
                 p.retiredYear === Infinity ? null : p.retiredYear,
                 p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
                 p.peakOvr,
-                "Details",
+                ...relationArray,
+                <a
+                    href={helpers.leagueUrl([
+                        "frivolities",
+                        "relatives",
+                        p.pid,
+                    ])}
+                >
+                    Details
+                </a>,
                 p.numFathers,
                 p.numBrothers,
                 p.numSons,
@@ -86,13 +120,22 @@ const Relatives = ({ players, stats, userTid }) => {
     return (
         <>
             <h1>
-                Relatives <NewWindowLink />
+                {title} <NewWindowLink />
             </h1>
 
-            <p>
-                These are the players with a relative in the league. Click
-                "Details" for a player to see his relatives.
-            </p>
+            {target ? (
+                <p>
+                    More:{" "}
+                    <a href={helpers.leagueUrl(["frivolities", "relatives"])}>
+                        All Players With Relatives
+                    </a>
+                </p>
+            ) : (
+                <p>
+                    These are the players with a relative in the league. Click
+                    "Details" for a player to see his relatives.
+                </p>
+            )}
 
             <p>
                 Players who have played for your team are{" "}
@@ -116,6 +159,7 @@ const Relatives = ({ players, stats, userTid }) => {
 };
 
 Relatives.propTypes = {
+    pid: PropTypes.number,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,

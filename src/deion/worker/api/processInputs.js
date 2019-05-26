@@ -454,6 +454,7 @@ export default {
     playerStatDists: validateSeasonOnly,
     playerStats,
     playoffs: validateSeasonOnly,
+    relatives: player,
     resetPassword,
     roster,
     schedule,

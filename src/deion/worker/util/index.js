@@ -12,6 +12,7 @@ export { default as defaultGameAttributes } from "./defaultGameAttributes";
 export { default as env } from "./env";
 export { default as g } from "./g";
 export { default as genMessage } from "./genMessage";
+export { default as getProcessedGames } from "./getProcessedGames";
 export { default as helpers } from "./helpers";
 export { default as injuries } from "./injuries";
 export { default as loadNames } from "./loadNames";
@@ -19,7 +20,9 @@ export { default as local } from "./local";
 export { default as lock } from "./lock";
 export { default as logEvent } from "./logEvent";
 export { default as overrides } from "./overrides";
-export { default as getProcessedGames } from "./getProcessedGames";
+export {
+    default as processPlayersHallOfFame,
+} from "./processPlayersHallOfFame";
 export { default as random } from "./random";
 export { default as toUI } from "./toUI";
 export { default as updatePhase } from "./updatePhase";

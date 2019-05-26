@@ -7,9 +7,11 @@ import type { EventBBGM } from "../../../common/types";
 const getCopies = async ({
     pid,
     season,
+    filter = () => true,
 }: {
     pid?: number,
     season?: number,
+    filter?: Function,
 } = {}): Promise<EventBBGM[]> => {
     if (season !== undefined && pid !== undefined) {
         throw new Error("Can't currently filter by season and pid");
@@ -22,7 +24,7 @@ const getCopies = async ({
                 return event.season === season;
             }),
             idb.cache.storeInfos.events.pk,
-        );
+        ).filter(filter);
     }
 
     if (pid !== undefined) {
@@ -32,14 +34,14 @@ const getCopies = async ({
                 return event.pids !== undefined && event.pids.includes(pid);
             }),
             idb.cache.storeInfos.events.pk,
-        );
+        ).filter(filter);
     }
 
     return mergeByPk(
-        await getAll(idb.league.events),
+        await getAll(idb.league.events, undefined, filter),
         await idb.cache.events.getAll(),
         idb.cache.storeInfos.events.pk,
-    );
+    ).filter(filter);
 };
 
 export default getCopies;

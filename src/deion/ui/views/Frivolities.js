@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { NewWindowLink } from "../components";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 
 const Frivolities = () => {
     setTitle("Frivolities");
@@ -22,20 +22,59 @@ const Frivolities = () => {
             </p>
 
             <p>
-                <b>Family Trees</b> - see the family relationships between
-                players
+                <b>
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "family_trees",
+                        ])}
+                    >
+                        Family Trees
+                    </a>
+                </b>{" "}
+                - see the family relationships between players
             </p>
             <p>
-                <b>Most Games, No Playoffs</b> - see the most accomplished
-                players who never made the playoffs
+                <b>
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "most_games_no_playoffs",
+                        ])}
+                    >
+                        Most Games, No Playoffs
+                    </a>
+                </b>{" "}
+                - see the most accomplished players who never made the playoffs
             </p>
             <p>
-                <b>Roster Continuity</b> - color-coded visualization of
-                year-to-year changes in roster composition
+                <b>
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "roster_continuity",
+                        ])}
+                    >
+                        Roster Continuity
+                    </a>
+                </b>{" "}
+                - color-coded visualization of year-to-year changes in roster
+                composition
             </p>
             <p>
-                <b>Tragic Deaths</b> - view all the tragic deaths that have
-                occurred in your league
+                <b>
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "tragic_deaths",
+                        ])}
+                    >
+                        Tragic Deaths
+                    </a>
+                </b>{" "}
+                - view all the tragic deaths that have occurred in your league (
+                <span className="text-danger">Warning</span>: this is slow for
+                large leagues!)
             </p>
         </>
     );

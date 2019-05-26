@@ -6,7 +6,7 @@ import {
     NewWindowLink,
     PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, realtimeUpdate, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 class DraftScouting extends React.Component {
     constructor(props) {

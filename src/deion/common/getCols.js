@@ -1196,6 +1196,7 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
+    Details: {},
     Division: {},
     Draft: {
         sortSequence: [],

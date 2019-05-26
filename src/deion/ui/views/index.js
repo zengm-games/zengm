@@ -18,6 +18,7 @@ import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
+import FamilyTrees from "./FamilyTrees";
 import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
 import Frivolities from "./Frivolities";
@@ -35,6 +36,7 @@ import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";
 import Message from "./Message";
+import MostGamesNoPlayoffs from "./MostGamesNoPlayoffs";
 import MultiTeamMode from "./MultiTeamMode";
 import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
@@ -51,6 +53,7 @@ import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
 import ResetPassword from "./ResetPassword";
 import Roster from "./Roster";
+import RosterContinuity from "./RosterContinuity";
 import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
@@ -58,6 +61,7 @@ import TeamHistory from "./TeamHistory";
 import TeamRecords from "./TeamRecords";
 import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
+import TragicDeaths from "./TragicDeaths";
 import Trade from "./Trade";
 import TradingBlock from "./TradingBlock";
 import Transactions from "./Transactions";
@@ -83,6 +87,7 @@ export default {
     EventLog,
     ExportLeague,
     ExportStats,
+    FamilyTrees,
     FantasyDraft,
     FreeAgents,
     Frivolities,
@@ -100,6 +105,7 @@ export default {
     LoginOrRegister,
     LostPassword,
     Message,
+    MostGamesNoPlayoffs,
     MultiTeamMode,
     Negotiation,
     NegotiationList,
@@ -116,6 +122,7 @@ export default {
     PowerRankings,
     ResetPassword,
     Roster,
+    RosterContinuity,
     Schedule,
     Standings,
     TeamFinances,
@@ -125,6 +132,7 @@ export default {
     TeamStats,
     Trade,
     TradingBlock,
+    TragicDeaths,
     Transactions,
     UpcomingFreeAgents,
     WatchList,

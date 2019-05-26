@@ -34,7 +34,7 @@
         ]
     },
     "dependencies": {
-        "@babel/runtime": "^7.4.4",
+        "@babel/runtime": "^7.4.5",
         "@bugsnag/plugin-react": "^6.2.0",
         "ajv": "^6.10.0",
         "backboard": "^1.0.9",
@@ -61,7 +61,7 @@
         "whatwg-fetch": "^3.0.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.4.4",
+        "@babel/core": "^7.4.5",
         "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
         "@babel/plugin-transform-async-to-generator": "^7.4.4",
         "@babel/plugin-transform-destructuring": "^7.4.4",
@@ -86,7 +86,7 @@
         "eslint": "^5.16.0",
         "eslint-config-airbnb": "^17.1.0",
         "eslint-config-prettier": "^4.3.0",
-        "eslint-plugin-import": "^2.17.2",
+        "eslint-plugin-import": "^2.17.3",
         "eslint-plugin-jsx-a11y": "^6.2.1",
         "eslint-plugin-react": "^7.13.0",
         "flow-bin": "^0.98.1",

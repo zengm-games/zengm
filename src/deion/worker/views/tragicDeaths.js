@@ -21,7 +21,7 @@ async function tragicDeaths(
 
         const stats =
             process.env.SPORT === "basketball"
-                ? ["gp", "min", "trb", "ast", "pts", "per", "ewa", "ws", "ws48"]
+                ? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
                 : ["keyStats", "av"];
 
         let players = (await Promise.all(

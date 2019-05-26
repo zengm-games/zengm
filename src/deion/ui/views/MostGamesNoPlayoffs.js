@@ -79,7 +79,7 @@ const MostGamesNoPlayoffs = ({ players, stats, userTid }) => {
 
             <p>
                 These are the 100 players who played the most career games while
-                never playing in the playoffs.
+                never making the playoffs.
             </p>
 
             <p>
@@ -95,7 +95,6 @@ const MostGamesNoPlayoffs = ({ players, stats, userTid }) => {
                 cols={cols}
                 defaultSort={[5, "desc"]}
                 name="MostGamesNoPlayoffs"
-                pagination
                 rows={rows}
                 superCols={superCols}
             />

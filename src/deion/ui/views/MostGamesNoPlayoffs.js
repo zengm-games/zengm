@@ -93,7 +93,7 @@ const MostGamesNoPlayoffs = ({ players, stats, userTid }) => {
 
             <DataTable
                 cols={cols}
-                defaultSort={[20, "desc"]}
+                defaultSort={[5, "desc"]}
                 name="MostGamesNoPlayoffs"
                 pagination
                 rows={rows}

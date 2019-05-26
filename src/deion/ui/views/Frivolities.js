@@ -62,7 +62,9 @@ const Frivolities = () => {
                         </a>
                     </b>{" "}
                     - color-coded visualization of year-to-year changes in
-                    roster composition
+                    roster composition (
+                    <span className="text-danger">Warning</span>: this is slow
+                    for large leagues!)
                 </p>
             ) : null}
             <p>

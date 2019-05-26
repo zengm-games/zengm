@@ -100,7 +100,7 @@ const TragicDeaths = ({ players, stats, userTid }) => {
 
             <DataTable
                 cols={cols}
-                defaultSort={[20, "desc"]}
+                defaultSort={[4, "desc"]}
                 name="TragicDeaths"
                 pagination
                 rows={rows}

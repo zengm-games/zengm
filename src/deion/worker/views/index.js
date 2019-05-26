@@ -34,6 +34,7 @@ import liveGame from "./liveGame";
 import loginOrRegister from "./loginOrRegister";
 import lostPassword from "./lostPassword";
 import message from "./message";
+import mostGamesNoPlayoffs from "./mostGamesNoPlayoffs";
 import multiTeamMode from "./multiTeamMode";
 import negotiation from "./negotiation";
 import negotiationList from "./negotiationList";
@@ -98,6 +99,7 @@ export default {
     loginOrRegister,
     lostPassword,
     message,
+    mostGamesNoPlayoffs,
     multiTeamMode,
     negotiation,
     negotiationList,

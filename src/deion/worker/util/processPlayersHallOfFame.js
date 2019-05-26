@@ -9,7 +9,7 @@ const processPlayersHallOfFame = players => {
         }
 
         p.bestStats = {};
-        let bestEWA = 0;
+        let bestEWA = -Infinity;
         p.teamSums = {};
         for (let j = 0; j < p.stats.length; j++) {
             const tid = p.stats[j].tid;

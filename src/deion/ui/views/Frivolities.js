@@ -46,6 +46,8 @@ const Frivolities = () => {
                     </a>
                 </b>{" "}
                 - see the most accomplished players who never made the playoffs
+                (<span className="text-danger">Warning</span>: this is slow for
+                large leagues!)
             </p>
             <p>
                 <b>

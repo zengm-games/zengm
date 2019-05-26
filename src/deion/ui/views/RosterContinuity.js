@@ -29,7 +29,19 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
     const rows = seasons.map((seasonRow, i) => {
         return {
             key: season - i,
-            data: [season - i, ...seasonRow.map(pct => pct.toFixed(2))],
+            data: [
+                season - i,
+                ...seasonRow.map(pct => {
+                    return {
+                        classNames: {
+                            "table-danger": pct < 0.7,
+                            "table-warning": pct >= 0.7 && pct < 0.85,
+                            "table-success": pct >= 0.85,
+                        },
+                        value: pct.toFixed(2),
+                    };
+                }),
+            ],
         };
     });
 

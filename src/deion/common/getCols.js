@@ -1145,6 +1145,18 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "# Fathers": {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "# Brothers": {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "# Sons": {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     A: {
         desc: "Attempted",
         sortSequence: ["desc", "asc"],

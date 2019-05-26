@@ -8,7 +8,6 @@ const processPlayersHallOfFame = players => {
             }
         }
 
-        p.bestStats = {};
         let bestEWA = -Infinity;
         p.teamSums = {};
         for (let j = 0; j < p.stats.length; j++) {
@@ -27,6 +26,10 @@ const processPlayersHallOfFame = players => {
                 p.teamSums[tid] = EWA;
             }
         }
+        if (p.bestStats === undefined) {
+            p.bestStats = p.careerStats;
+        }
+
         p.legacyTid = parseInt(
             Object.keys(p.teamSums).reduce(
                 (teamA, teamB) =>

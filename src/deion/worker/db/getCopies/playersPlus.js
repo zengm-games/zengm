@@ -204,6 +204,18 @@ const processAttrs = (
             }
         } else if (attr === "untradable") {
             Object.assign(output, trade.isUntradable(p));
+        } else if (attr === "numBrothers") {
+            output.numBrothers = p.relatives.filter(
+                rel => rel.type === "brother",
+            ).length;
+        } else if (attr === "numFathers") {
+            output.numFathers = p.relatives.filter(
+                rel => rel.type === "father",
+            ).length;
+        } else if (attr === "numSons") {
+            output.numSons = p.relatives.filter(
+                rel => rel.type === "son",
+            ).length;
         } else {
             // Several other attrs are not primitive types, so deepCopy
             output[attr] = helpers.deepCopy(p[attr]);

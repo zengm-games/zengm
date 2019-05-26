@@ -17,6 +17,7 @@ import editTeamInfo from "./editTeamInfo";
 import eventLog from "./eventLog";
 import exportLeague from "./exportLeague";
 import exportStats from "./exportStats";
+import familyTrees from "./familyTrees";
 import fantasyDraft from "./fantasyDraft";
 import freeAgents from "./freeAgents";
 import gameLog from "./gameLog";
@@ -83,6 +84,7 @@ export default {
     eventLog,
     exportLeague,
     exportStats,
+    familyTrees,
     fantasyDraft,
     freeAgents,
     gameLog,

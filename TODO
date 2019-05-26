@@ -1,9 +1,9 @@
 Tools > Frivolities
 - family trees
-  - table of all players with relatives
-    - name, born year, small amount of stats, # fathers, # brothers, # sons
-  - click a player, and the table is filtered to just that player's relatives
+  - click details, and the table is filtered to just that player's relatives
+    - update text at top
   - link here from player pages?
+  - rename to relatives?
 - blog, changelog, changes (in game)
 
 add relatives editor to customize player

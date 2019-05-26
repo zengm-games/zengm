@@ -49,24 +49,21 @@ const Frivolities = () => {
                 (<span className="text-danger">Warning</span>: this is slow for
                 large leagues!)
             </p>
-            {process.env.SPORT === "basketball" ? (
-                <p>
-                    <b>
-                        <a
-                            href={helpers.leagueUrl([
-                                "frivolities",
-                                "roster_continuity",
-                            ])}
-                        >
-                            Roster Continuity
-                        </a>
-                    </b>{" "}
-                    - color-coded visualization of year-to-year changes in
-                    roster composition (
-                    <span className="text-danger">Warning</span>: this is slow
-                    for large leagues!)
-                </p>
-            ) : null}
+            <p>
+                <b>
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "roster_continuity",
+                        ])}
+                    >
+                        Roster Continuity
+                    </a>
+                </b>{" "}
+                - color-coded visualization of year-to-year changes in roster
+                composition (<span className="text-danger">Warning</span>: this
+                is slow for large leagues!)
+            </p>
             <p>
                 <b>
                     <a

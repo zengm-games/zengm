@@ -51,7 +51,9 @@ async function updateSeasons(
                             }
                         }
 
-                        return sumMinutesContinuity / sumMinutes;
+                        return sumMinutes > 0
+                            ? sumMinutesContinuity / sumMinutes
+                            : 1;
                     }),
                 );
                 // compare against previous season

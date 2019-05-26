@@ -34,11 +34,19 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
                 season - i,
                 ...seasonRow.map(pct => {
                     return {
-                        classNames: {
-                            "table-danger": pct < 0.7,
-                            "table-warning": pct >= 0.7 && pct < 0.85,
-                            "table-success": pct >= 0.85,
-                        },
+                        classNames:
+                            process.env.SPORT === "basketball"
+                                ? {
+                                      "table-danger": pct < 0.7,
+                                      "table-warning": pct >= 0.7 && pct < 0.85,
+                                      "table-success": pct >= 0.85,
+                                  }
+                                : {
+                                      "table-danger": pct < 0.725,
+                                      "table-warning":
+                                          pct >= 0.725 && pct < 0.825,
+                                      "table-success": pct >= 0.825,
+                                  },
                         value: pct.toFixed(2),
                     };
                 }),

@@ -4,9 +4,6 @@ Tools > Frivolities
     - name, born year, small amount of stats, # fathers, # brothers, # sons
   - click a player, and the table is filtered to just that player's relatives
   - link here from player pages?
-- Roster Continuity - https://www.basketball-reference.com/friv/continuity.html
-  - perf warning?
-  - enable for football, why ont
 - blog, changelog
 
 add relatives editor to customize player
@@ -14,6 +11,9 @@ add relatives editor to customize player
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 basketball gamesim - too many plays happen right at 0
+
+put "re-sign" button on player pages - needs to check for refusing too!
+- does the normal free agent one need to do that check too?
 
 # football
 

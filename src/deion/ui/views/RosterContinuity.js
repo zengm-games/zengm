@@ -52,6 +52,12 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
                 Roster Continuity <NewWindowLink />
             </h1>
 
+            <p>
+                Each cell in the table shows the percentage of minutes played
+                that season by players who were on the same team the previous
+                season.
+            </p>
+
             <DataTable
                 // $FlowFixMe
                 cols={cols}

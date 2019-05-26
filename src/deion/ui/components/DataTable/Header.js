@@ -108,13 +108,17 @@ const Header = ({
                         }
                         return (
                             <th
-                                className={classNames(className, colClassNames)}
+                                className={classNames(colClassNames)}
                                 key={i}
                                 onClick={event => handleColClick(event, i)}
                                 title={desc}
                                 width={width}
                             >
-                                {title}
+                                {className ? (
+                                    <div className={className}>{title}</div>
+                                ) : (
+                                    title
+                                )}
                             </th>
                         );
                     },

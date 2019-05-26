@@ -5,10 +5,8 @@ Tools > Frivolities
   - click a player, and the table is filtered to just that player's relatives
   - link here from player pages?
 - Roster Continuity - https://www.basketball-reference.com/friv/continuity.html
-  - confirm it looks okay mid season
-  - highlight user column - fails when sorted, why? background (with url image) overrides background-color
-    - make image in fake div or something, with background image there so it shows over the actual one?
   - perf warning?
+  - enable for football, why ont
 - fix default DataTable sort column for all of these!
 - blog, changelog
 

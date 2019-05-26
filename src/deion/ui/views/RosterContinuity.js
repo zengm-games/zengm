@@ -17,8 +17,9 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
 
     const cols = [
         ...getCols("Season"),
-        ...abbrevs.map(abbrev => {
+        ...abbrevs.map((abbrev, i) => {
             return {
+                classNames: userTid === i ? "table-info" : undefined,
                 sortSequence: ["desc", "asc"],
                 sortType: "number",
                 title: abbrev,

@@ -21,6 +21,7 @@ import type { SortOrder, SortType } from "../../../common/types";
 export type SortBy = [number, SortOrder];
 
 export type Col = {
+    classNames?: any,
     desc?: string,
     sortSequence?: SortOrder[],
     sortType?: SortType,

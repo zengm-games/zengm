@@ -1,5 +1,6 @@
 // @flow
 
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
 import type { Col, SortBy, SuperCol } from ".";
@@ -79,34 +80,45 @@ const Header = ({
                 </tr>
             ) : null}
             <tr>
-                {cols.map(({ desc, sortSequence, title, width }, i) => {
-                    let className;
-                    if (sortSequence && sortSequence.length === 0) {
-                        className = null;
-                    } else {
-                        className = "sorting";
-                        for (const sortBy of sortBys) {
-                            if (sortBy[0] === i) {
-                                className =
-                                    sortBy[1] === "asc"
-                                        ? "sorting_asc"
-                                        : "sorting_desc";
-                                break;
+                {cols.map(
+                    (
+                        {
+                            classNames: colClassNames,
+                            desc,
+                            sortSequence,
+                            title,
+                            width,
+                        },
+                        i,
+                    ) => {
+                        let className;
+                        if (sortSequence && sortSequence.length === 0) {
+                            className = null;
+                        } else {
+                            className = "sorting";
+                            for (const sortBy of sortBys) {
+                                if (sortBy[0] === i) {
+                                    className =
+                                        sortBy[1] === "asc"
+                                            ? "sorting_asc"
+                                            : "sorting_desc";
+                                    break;
+                                }
                             }
                         }
-                    }
-                    return (
-                        <th
-                            className={className}
-                            key={i}
-                            onClick={event => handleColClick(event, i)}
-                            title={desc}
-                            width={width}
-                        >
-                            {title}
-                        </th>
-                    );
-                })}
+                        return (
+                            <th
+                                className={classNames(className, colClassNames)}
+                                key={i}
+                                onClick={event => handleColClick(event, i)}
+                                title={desc}
+                                width={width}
+                            >
+                                {title}
+                            </th>
+                        );
+                    },
+                )}
             </tr>
             {enableFilters ? (
                 <FilterHeader

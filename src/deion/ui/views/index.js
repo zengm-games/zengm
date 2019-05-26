@@ -18,7 +18,6 @@ import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
-import FamilyTrees from "./FamilyTrees";
 import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
 import Frivolities from "./Frivolities";
@@ -51,6 +50,7 @@ import PlayerStatDists from "./PlayerStatDists";
 import PlayerStats from "./PlayerStats";
 import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
+import Relatives from "./Relatives";
 import ResetPassword from "./ResetPassword";
 import Roster from "./Roster";
 import RosterContinuity from "./RosterContinuity";
@@ -87,7 +87,6 @@ export default {
     EventLog,
     ExportLeague,
     ExportStats,
-    FamilyTrees,
     FantasyDraft,
     FreeAgents,
     Frivolities,
@@ -120,6 +119,7 @@ export default {
     PlayerStats,
     Playoffs,
     PowerRankings,
+    Relatives,
     ResetPassword,
     Roster,
     RosterContinuity,

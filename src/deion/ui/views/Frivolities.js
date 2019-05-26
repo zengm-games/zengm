@@ -26,19 +26,6 @@ const Frivolities = () => {
                     <a
                         href={helpers.leagueUrl([
                             "frivolities",
-                            "family_trees",
-                        ])}
-                    >
-                        Family Trees
-                    </a>
-                </b>{" "}
-                - see the family relationships between players
-            </p>
-            <p>
-                <b>
-                    <a
-                        href={helpers.leagueUrl([
-                            "frivolities",
                             "most_games_no_playoffs",
                         ])}
                     >
@@ -48,6 +35,14 @@ const Frivolities = () => {
                 - see the most accomplished players who never made the playoffs
                 (<span className="text-danger">Warning</span>: this is slow for
                 large leagues!)
+            </p>
+            <p>
+                <b>
+                    <a href={helpers.leagueUrl(["frivolities", "relatives"])}>
+                        Relatives
+                    </a>
+                </b>{" "}
+                - see the family relationships between players
             </p>
             <p>
                 <b>

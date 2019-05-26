@@ -3,8 +3,8 @@ import React from "react";
 import { getCols, helpers, setTitle } from "../util";
 import { DataTable, NewWindowLink } from "../components";
 
-const FamilyTrees = ({ players, stats, userTid }) => {
-    setTitle("Family Trees");
+const Relatives = ({ players, stats, userTid }) => {
+    setTitle("Relatives");
 
     const superCols = [
         {
@@ -86,7 +86,7 @@ const FamilyTrees = ({ players, stats, userTid }) => {
     return (
         <>
             <h1>
-                Family Trees <NewWindowLink />
+                Relatives <NewWindowLink />
             </h1>
 
             <p>
@@ -106,7 +106,7 @@ const FamilyTrees = ({ players, stats, userTid }) => {
             <DataTable
                 cols={cols}
                 defaultSort={[20, "desc"]}
-                name="FamilyTrees"
+                name="Relatives"
                 pagination
                 rows={rows}
                 superCols={superCols}
@@ -115,10 +115,10 @@ const FamilyTrees = ({ players, stats, userTid }) => {
     );
 };
 
-FamilyTrees.propTypes = {
+Relatives.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 
-export default FamilyTrees;
+export default Relatives;

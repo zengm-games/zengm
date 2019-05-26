@@ -35,7 +35,6 @@ async function updatePlayers(
             stats: ["season", "abbrev", "tid", ...stats],
             fuzz: true,
         });
-        console.log(players);
 
         processPlayersHallOfFame(players);
 

@@ -50,6 +50,7 @@ import playoffs from "./playoffs";
 import powerRankings from "./powerRankings";
 import resetPassword from "./resetPassword";
 import roster from "./roster";
+import rosterContinuity from "./rosterContinuity";
 import schedule from "./schedule";
 import standings from "./standings";
 import teamFinances from "./teamFinances";
@@ -115,6 +116,7 @@ export default {
     powerRankings,
     resetPassword,
     roster,
+    rosterContinuity,
     schedule,
     standings,
     teamFinances,

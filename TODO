@@ -5,6 +5,11 @@ Tools > Frivolities
   - click a player, and the table is filtered to just that player's relatives
   - link here from player pages?
 - Roster Continuity - https://www.basketball-reference.com/friv/continuity.html
+  - color cutoffs
+  - confirm it looks okay mid season
+  - highlight user column
+  - perf warning?
+- fix default DataTable sort column for all of these!
 - blog, changelog
 
 add relatives editor to customize player
@@ -64,7 +69,7 @@ exportPlayerGamesCsv only supports basketball currently, and it's disabled in Ex
 use PLAYER_STATS_TABLES for shot locations
 - then DRY exportPlayerAveragesCsv, see comment there
 
-way to specify routes for ShotLocations/Depth, so they aren't included in football/basketball routes
+way to specify routes for ShotLocations/RosterContinuity/Depth, so they aren't included in football/basketball routes
 
 statistical feats
 

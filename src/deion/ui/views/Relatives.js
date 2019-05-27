@@ -78,15 +78,17 @@ const Relatives = ({ pid, players, stats, userTid }) => {
                 p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
                 p.peakOvr,
                 ...relationArray,
-                <a
-                    href={helpers.leagueUrl([
-                        "frivolities",
-                        "relatives",
-                        p.pid,
-                    ])}
-                >
-                    Details
-                </a>,
+                p.pid !== pid ? (
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "relatives",
+                            p.pid,
+                        ])}
+                    >
+                        Details
+                    </a>
+                ) : null,
                 p.numFathers,
                 p.numBrothers,
                 p.numSons,

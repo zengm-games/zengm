@@ -29,6 +29,8 @@ type State = {
     stats: {
         [key: string]: number,
     } | void,
+    pid: number,
+    loadDataStarted: boolean,
 };
 
 let count = 0;
@@ -48,6 +50,8 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             ratings: undefined,
             stats: undefined,
             popoverOpen: false,
+            pid: props.pid,
+            loadDataStarted: false,
         };
 
         this.loadData = this.loadData.bind(this);
@@ -55,6 +59,15 @@ class RatingsStatsPopover extends React.Component<Props, State> {
 
         this.count = count;
         count += 1;
+    }
+
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+        if (prevState.pid !== nextProps.pid) {
+            return {
+                pid: nextProps.pid,
+                loadDataStarted: false,
+            };
+        }
     }
 
     async loadData() {
@@ -69,11 +82,12 @@ class RatingsStatsPopover extends React.Component<Props, State> {
 
     toggle() {
         this.setState(state => {
-            if (!state.popoverOpen) {
+            if (!state.popoverOpen && !state.loadDataStarted) {
                 this.loadData();
             }
 
             return {
+                loadDataStarted: true,
                 popoverOpen: !state.popoverOpen,
             };
         });

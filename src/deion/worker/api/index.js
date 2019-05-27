@@ -878,9 +878,19 @@ const lockSet = async (name: LockName, value: boolean) => {
 };
 
 const ratingsStatsPopoverInfo = async (pid: number) => {
+    const blankObj = {
+        name: undefined,
+        ratings: undefined,
+        stats: undefined,
+    };
+
+    if (Number.isNaN(pid) || typeof pid !== "number") {
+        return blankObj;
+    }
+
     const p = await idb.getCopy.players({ pid });
     if (p === undefined) {
-        throw new Error(`Invalid player ID ${pid}`);
+        return blankObj;
     }
 
     // For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.season
@@ -1262,6 +1272,20 @@ const upsertCustomizedPlayer = async (
         // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
         player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
     }
+
+    // Fill in player names for relatives
+    const relatives = [];
+    for (const rel of p.relatives) {
+        const p2 = await idb.getCopy.players({ pid: rel.pid });
+        if (p2) {
+            rel.name = `${p2.firstName} ${p2.lastName}`;
+        }
+        if (rel.name !== "") {
+            // This will keep names of deleted players too, just not blank entries
+            relatives.push(rel);
+        }
+    }
+    p.relatives = relatives;
 
     // Save to database, adding pid if it doesn't already exist
     await idb.cache.players.put(p);

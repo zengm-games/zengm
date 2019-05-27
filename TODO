@@ -1,5 +1,3 @@
-add relatives editor to customize player
-
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 basketball gamesim - too many plays happen right at 0
@@ -289,8 +287,6 @@ increase PG cutoff
 - https://www.reddit.com/r/BasketballGM/comments/8lfyuh/7_center_turns_into_pg_when_the_season_starts/
 
 option to edit AI trade rate https://www.reddit.com/r/BasketballGM/comments/8kqzl9/trade_frequency/
-
-"lineage" page to view all of a player's relatives
 
 index updating
 - currenty: check if the indexed property has changed, and only update a specific index then

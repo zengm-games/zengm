@@ -11,6 +11,7 @@ import {
     toWorker,
 } from "../../util";
 import RatingsForm from "./RatingsForm";
+import RelativesForm from "./RelativesForm";
 
 const faceOptions = {
     eyes: [0, 1, 2, 3],
@@ -134,6 +135,13 @@ const copyValidValues = (source, target, minContract, phase, season) => {
     }
 
     target.face.color = source.face.color;
+
+    target.relatives = source.relatives
+        .map(rel => {
+            rel.pid = parseInt(rel.pid, 10);
+            return rel;
+        })
+        .filter(rel => !Number.isNaN(rel.pid));
 
     return updatedRatingsOrAge;
 };
@@ -740,6 +748,13 @@ class CustomizePlayer extends React.Component {
                             <RatingsForm
                                 handleChange={this.handleChange}
                                 ratingsRow={p.ratings[r]}
+                            />
+
+                            <h2>Relatives</h2>
+
+                            <RelativesForm
+                                handleChange={this.handleChange}
+                                relatives={p.relatives}
                             />
                         </div>
                     </div>

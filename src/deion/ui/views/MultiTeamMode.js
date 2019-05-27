@@ -8,6 +8,7 @@ class MultiTeamMode extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
+        this.handleDisable = this.handleDisable.bind(this);
     }
 
     async handleChange(e) {
@@ -30,6 +31,12 @@ class MultiTeamMode extends React.Component {
 
             await toWorker("updateMultiTeamMode", gameAttributes);
         }
+    }
+
+    async handleDisable() {
+        await toWorker("updateMultiTeamMode", {
+            userTids: [this.props.userTid],
+        });
     }
 
     render() {
@@ -62,7 +69,8 @@ class MultiTeamMode extends React.Component {
             statusText = (
                 <span>
                     <b className="text-success">Multi team mode enabled!</b> To
-                    disable it, unselect all but one team.
+                    disable it, unselect all but one team or click the button
+                    below.
                 </span>
             );
         } else {
@@ -120,6 +128,16 @@ class MultiTeamMode extends React.Component {
                     ctrl+click (command+click on Mac) to select individual
                     teams.
                 </p>
+
+                {userTids.length > 1 ? (
+                    <button
+                        type="button"
+                        className="btn btn-danger mb-3"
+                        onClick={this.handleDisable}
+                    >
+                        Disable multi-team mode
+                    </button>
+                ) : null}
 
                 <div className="row">
                     <div className="col-sm-6">

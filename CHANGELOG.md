@@ -2,6 +2,12 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
+# 5.1.0 (in progress)
+
+## Gameplay and UI
+
+- [Frivolities](https://basketball-gm.com/blog/2019/05/frivolities/)
+
 # 5.0.0 (2019-05-25)
 
 ## Gameplay and UI

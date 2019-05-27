@@ -213,12 +213,17 @@ const changes = [
     {
         date: "2018-10-15",
         msg:
-            'You can mark players and picks as "untouchable" when making a trade, to see if the AI can make a counter offer without them. <a href="https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/">More details.</a>',
+            'You can mark players and picks as "untouchable" when making a trade, to see if the AI can make a counter offer without them. <a href="https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/">More details</a>',
     },
     {
         date: "2018-11-11",
         msg:
-            'New God Mode options: hard/soft cap and playoff byes. <a href="https://basketball-gm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes">More details.</a>',
+            'New God Mode options: hard/soft cap and playoff byes. <a href="https://basketball-gm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes">More details</a>',
+    },
+    {
+        date: "2019-05-27",
+        msg:
+            'A few fun tools are now available on the Tools > Frivolities page within a league. <a href="https://basketball-gm.com/blog/2019/05/frivolities/">More details</a>',
     },
 ];
 

@@ -38,7 +38,7 @@ const checkChanges = async (conditions: Conditions) => {
         }
 
         if (!linked) {
-            text += '<br><a href="/changes">View All Changes</a>';
+            text += '<br><a href="/changes">View all changes</a>';
         }
 
         logEvent(

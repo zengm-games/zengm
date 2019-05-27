@@ -42,7 +42,9 @@ const Frivolities = () => {
                         Relatives
                     </a>
                 </b>{" "}
-                - see the family relationships between players
+                - see the family relationships between players (
+                <span className="text-danger">Warning</span>: this is slow for
+                large leagues!)
             </p>
             <p>
                 <b>
@@ -57,7 +59,7 @@ const Frivolities = () => {
                 </b>{" "}
                 - color-coded visualization of year-to-year changes in roster
                 composition (<span className="text-danger">Warning</span>: this
-                is slow for large leagues!)
+                is <b>very</b> slow for large leagues!)
             </p>
             <p>
                 <b>
@@ -71,8 +73,8 @@ const Frivolities = () => {
                     </a>
                 </b>{" "}
                 - view all the tragic deaths that have occurred in your league (
-                <span className="text-danger">Warning</span>: this is slow for
-                large leagues!)
+                <span className="text-danger">Warning</span>: this is{" "}
+                <b>very</b> slow for large leagues!)
             </p>
         </>
     );

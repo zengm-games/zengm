@@ -17,10 +17,6 @@ const Relatives = ({ pid, relatives }) => {
 
     return (
         <>
-            <a href={helpers.leagueUrl(["frivolities", "relatives", pid])}>
-                Family:
-            </a>
-            <br />
             {relatives.map(rel => {
                 return (
                     <React.Fragment key={rel.pid}>
@@ -32,6 +28,10 @@ const Relatives = ({ pid, relatives }) => {
                     </React.Fragment>
                 );
             })}
+            <a href={helpers.leagueUrl(["frivolities", "relatives", pid])}>
+                (Family details)
+            </a>
+            <br />
         </>
     );
 };

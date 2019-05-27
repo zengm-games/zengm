@@ -17,6 +17,7 @@ make localStorage fail gracefully on quota error
   - https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js handles everything i think, but forces it to be async and bring in other stuff
 - safe-localstorage - weird fallback API
 - local-storage-fallback - only tests errors at initial usage, not subsequent
+- get rid of fromLocalStorage
 
 # football
 

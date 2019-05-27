@@ -9,6 +9,7 @@ import type { Player } from "../../../common/types";
 
 const getCopies = async ({
     pid,
+    pids,
     retired,
     activeAndRetired,
     activeSeason,
@@ -18,6 +19,7 @@ const getCopies = async ({
     filter = () => true,
 }: {
     pid?: number,
+    pids?: number[],
     retired?: boolean,
     activeAndRetired?: boolean,
     activeSeason?: number,
@@ -33,6 +35,61 @@ const getCopies = async ({
         }
 
         return [idb.league.players.get(pid)];
+    }
+
+    if (pids !== undefined) {
+        const sortedPids = [...pids].sort((a, b) => a - b);
+
+        const fromDB = await new Promise((resolve, reject) => {
+            idb.league.tx("players", tx => {
+                const players = [];
+
+                // Because backboard doesn't support passing an argument to cursor.continue
+                const objectStore = tx.players._rawObjectStore;
+
+                const range = backboard.bound(
+                    sortedPids[0],
+                    sortedPids[sortedPids.length - 1],
+                );
+
+                let i = 0;
+                const request = objectStore.openCursor(range);
+                request.onerror = e => {
+                    reject(e.target.error);
+                };
+                request.onsuccess = e => {
+                    const cursor = e.target.result;
+                    if (!cursor) {
+                        resolve(players);
+                        return;
+                    }
+
+                    const p = cursor.value;
+
+                    // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+                    if (sortedPids.includes(p.pid)) {
+                        players.push(p);
+                    }
+                    i += 1;
+
+                    if (i > sortedPids.length) {
+                        resolve(players);
+                        return;
+                    }
+
+                    cursor.continue(sortedPids[i]);
+                };
+            });
+        });
+
+        // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
+        return mergeByPk(
+            fromDB,
+            (await idb.cache.players.getAll()).filter(p =>
+                pids.includes(p.pid),
+            ),
+            idb.cache.storeInfos.players.pk,
+        );
     }
 
     if (retired === true) {

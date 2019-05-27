@@ -23,10 +23,10 @@ async function updatePlayers(
                 pid,
             });
             if (target) {
-                const pids = new Set(target.relatives.map(rel => rel.pid));
+                const pids = target.relatives.map(rel => rel.pid);
 
                 const otherPlayers = await idb.getCopies.players({
-                    filter: p => pids.has(p.pid),
+                    pids,
                 });
 
                 players = [target, ...otherPlayers];

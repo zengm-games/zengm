@@ -10,23 +10,34 @@ import {
 } from "../components";
 import { getCols, helpers, overrides, setTitle, toWorker } from "../util";
 
-const Relatives = ({ relatives }) => {
+const Relatives = ({ pid, relatives }) => {
     if (relatives.length === 0) {
         return null;
     }
 
-    return relatives.map(({ type, pid, name }) => {
-        return (
-            <span key={pid}>
-                {helpers.upperCaseFirstLetter(type)}:{" "}
-                <a href={helpers.leagueUrl(["player", pid])}>{name}</a>
-                <br />
-            </span>
-        );
-    });
+    return (
+        <>
+            <a href={helpers.leagueUrl(["frivolities", "relatives", pid])}>
+                Family:
+            </a>
+            <br />
+            {relatives.map(rel => {
+                return (
+                    <React.Fragment key={rel.pid}>
+                        {helpers.upperCaseFirstLetter(rel.type)}:{" "}
+                        <a href={helpers.leagueUrl(["player", rel.pid])}>
+                            {rel.name}
+                        </a>
+                        <br />
+                    </React.Fragment>
+                );
+            })}
+        </>
+    );
 };
 
 Relatives.propTypes = {
+    pid: PropTypes.number.isRequired,
     relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
@@ -332,7 +343,10 @@ const Player = ({
                                 <br />
                             </>
                         )}
-                        <Relatives relatives={player.relatives} />
+                        <Relatives
+                            pid={player.pid}
+                            relatives={player.relatives}
+                        />
                         {draftInfo}
                         {player.college && player.college !== "" ? (
                             <>

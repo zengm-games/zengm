@@ -139,7 +139,9 @@ const handleVersion = async () => {
 
 const setupEnv = async () => {
     // Heartbeat, used to keep only one tab open at a time for browsers where we have to use a Web
-    // Worker due to lack of Shared Worker support (currently just Safari)
+    // Worker due to lack of Shared Worker support (currently just Safari). Uses sessionStorage
+    // rather than a global variable to persist over page reloads, otherwise it'd be a race
+    // condition to distinguish between reloading the page and opening it in two tabs.
     let heartbeatID = sessionStorage.getItem("heartbeatID");
     if (heartbeatID === null || heartbeatID === undefined) {
         heartbeatID = Math.random()

@@ -2,9 +2,6 @@ refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 basketball gamesim - too many plays happen right at 0
 
-put "re-sign" button on player pages - needs to check for refusing too!
-- does the normal free agent one need to do that check too? no, it shows notification. need to show same for re-signing, and change button text too!
-
 make localStorage fail gracefully on quota error
 - https://github.com/SonarSource/SonarJS/issues/623 describes issue - need to check all of those
 - if no library exists, write one

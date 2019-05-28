@@ -238,6 +238,7 @@ const Player = ({
     showContract,
     showTradeFor,
     statTables,
+    willingToSign,
 }) => {
     setTitle(player.name);
 
@@ -396,12 +397,23 @@ const Player = ({
                 </span>
             ) : null}
             {freeAgent ? (
-                <button
-                    className="btn btn-light-bordered mb-3"
-                    onClick={() => toWorker("actions.negotiate", player.pid)}
+                <span
+                    title={
+                        willingToSign
+                            ? null
+                            : `${player.name} refuses to negotiate with you`
+                    }
                 >
-                    Sign Free Agent
-                </button>
+                    <button
+                        className="btn btn-light-bordered mb-3"
+                        disabled={!willingToSign}
+                        onClick={() =>
+                            toWorker("actions.negotiate", player.pid)
+                        }
+                    >
+                        Negotiate Contract
+                    </button>
+                </span>
             ) : null}
 
             {player.careerStats.gp > 0 ? (
@@ -613,6 +625,7 @@ Player.propTypes = {
             stats: PropTypes.arrayOf(PropTypes.string).isRequired,
         }),
     ).isRequired,
+    willingToSign: PropTypes.bool.isRequired,
 };
 
 export default Player;

@@ -117,6 +117,8 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             nameBlock = <p className="mb-2" />;
         }
 
+        console.log(name, ratings, stats);
+
         return (
             <>
                 <span

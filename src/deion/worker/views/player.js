@@ -147,13 +147,18 @@ async function updatePlayer(
         events.forEach(helpers.correctLinkLid.bind(null, g.lid));
         feats.forEach(helpers.correctLinkLid.bind(null, g.lid));
 
+        const willingToSign = !helpers.refuseToNegotiate(
+            p.contract.amount * 1000,
+            p.freeAgentMood[g.userTid],
+            g.phase === PHASE.RESIGN_PLAYERS
+                ? p.draft.year === g.season
+                : false,
+        );
+
         return {
             player: p,
             showTradeFor: p.tid !== g.userTid && p.tid >= 0,
-            freeAgent:
-                p.tid === PLAYER.FREE_AGENT &&
-                (g.phase <= PHASE.REGULAR_SEASON ||
-                    g.phase >= PHASE.FREE_AGENCY),
+            freeAgent: p.tid === PLAYER.FREE_AGENT,
             retired: p.tid === PLAYER.RETIRED,
             showContract:
                 p.tid !== PLAYER.UNDRAFTED &&
@@ -167,6 +172,7 @@ async function updatePlayer(
             feats,
             ratings,
             statTables,
+            willingToSign,
         };
     }
 }

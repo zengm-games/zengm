@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import * as React from "react";
 import Dropdown from "reactstrap/lib/Dropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";

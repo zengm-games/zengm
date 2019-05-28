@@ -366,7 +366,12 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
             }
             return cs[attr];
         })
-        .reduce((memo, num) => memo + num, 0);
+        .reduce((memo, num) => {
+            if (attr.endsWith("Lng")) {
+                return num > memo ? num : memo;
+            }
+            return memo + num;
+        }, 0);
 };
 
 const getPlayerStats = (playerStats, season, tid, playoffs, regularSeason) => {

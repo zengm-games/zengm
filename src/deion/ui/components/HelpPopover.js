@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import { UncontrolledPopover } from ".";

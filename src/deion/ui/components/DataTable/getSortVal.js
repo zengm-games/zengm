@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types";
 

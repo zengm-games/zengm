@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import { PHASE } from "../../common";
 import { helpers, overrides, subscribeLocal, realtimeUpdate } from "../util";
 

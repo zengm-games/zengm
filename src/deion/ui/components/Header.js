@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 
 // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 const widthCutoff = 1200 + 190;

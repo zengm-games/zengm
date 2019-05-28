@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import Controls from "./Controls";
 import Footer from "./Footer";
 import Header from "./Header";

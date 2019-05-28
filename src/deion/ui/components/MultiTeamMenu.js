@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 import { realtimeUpdate, subscribeLocal, toWorker } from "../util";
 
 const handleChange = async (e: SyntheticInputEvent<>) => {

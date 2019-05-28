@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 import helpers from "./helpers";
 
 // Most of this text came from basketball-gm.com and the FAQ

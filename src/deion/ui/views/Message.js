@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import { NewWindowLink, SafeHtml } from "../components";
 import { helpers, setTitle } from "../util";
 import type { Message as Message_ } from "../../common/types";

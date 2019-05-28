@@ -2,7 +2,7 @@
 
 import Ajv from "ajv";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 
 // This is dynamically resolved with aliasify
 // $FlowFixMe

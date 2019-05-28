@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";

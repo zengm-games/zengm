@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import posRatings from "../../common/posRatings";
 import { getCols, helpers } from "../../../deion/ui/util";
 

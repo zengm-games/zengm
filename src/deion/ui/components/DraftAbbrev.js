@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import { helpers, subscribeLocal } from "../util";
 
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.

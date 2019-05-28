@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 import { NewWindowLink } from "../components";
 import { helpers, setTitle } from "../util";
 

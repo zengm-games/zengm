@@ -2,7 +2,7 @@
 
 import faces from "facesjs";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 
 class PlayerPicture extends React.Component<{
     face: any,

@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 
 const Footer = ({ footer }: { footer?: any[] }) => {
     if (!footer) {

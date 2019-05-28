@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import { NewWindowLink } from "../components";
 import { helpers, setTitle } from "../util";
 import type { Message } from "../../common/types";

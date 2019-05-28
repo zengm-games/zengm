@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import "../common/polyfills";
 import router from "bbgm-router";
-import * as React from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";

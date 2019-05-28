@@ -15,6 +15,8 @@ make localStorage fail gracefully on quota error
 
 # football
 
+Longest receptions/runs are added when going thru career totals
+
 keyStats for OL should not show tiny # of tackles
 
 Great players retire too early

@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import clickable from "../../wrappers/clickable";
 
 const Row = clickable<{

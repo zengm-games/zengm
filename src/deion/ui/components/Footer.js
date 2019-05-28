@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 
 class Footer extends React.Component<{}> {
     // eslint-disable-next-line class-methods-use-this

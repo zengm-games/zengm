@@ -1,7 +1,7 @@
 // @flow
 
 import bugsnagReact from "@bugsnag/plugin-react";
-import * as React from "react";
+import React from "react";
 
 const Fallback = ({ error, info }: { error: Error, info?: any }) => {
     console.log(error, info);

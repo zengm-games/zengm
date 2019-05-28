@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from "react";
+import React from "react";
 import { setTitle, toWorker } from "../util";
 
 const DangerZone = () => {

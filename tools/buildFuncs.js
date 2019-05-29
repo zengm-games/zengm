@@ -219,6 +219,13 @@ const setTimestamps = () => {
     });
 
     replace({
+        regex: "BBGM_ADS_FILENAME",
+        replacement: sport === "basketball" ? "bbgm" : "fbgm",
+        paths: ["build/index.html"],
+        silent: true,
+    });
+
+    replace({
         regex: "BUGSNAG_API_KEY",
         replacement:
             sport === "basketball"

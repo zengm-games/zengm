@@ -197,7 +197,7 @@ const reset = () => {
     fs.mkdirSync("build/gen");
 };
 
-const setTimestamps = () => {
+const setTimestamps = (watch = false) => {
     console.log("Setting timestamps...");
 
     const rev = genRev();
@@ -207,7 +207,9 @@ const setTimestamps = () => {
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
-        paths: ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
+        paths: watch
+            ? ["build/index.html"]
+            : ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
         silent: true,
     });
 
@@ -235,8 +237,17 @@ const setTimestamps = () => {
         silent: true,
     });
 
-    fs.renameSync("build/gen/ui.js", `build/gen/ui-${rev}.js`);
-    fs.renameSync("build/gen/worker.js", `build/gen/worker-${rev}.js`);
+    if (watch) {
+        replace({
+            regex: '-" \\+ bbgmVersion \\+ "',
+            replacement: "",
+            paths: ["build/index.html"],
+            silent: true,
+        });
+    } else {
+        fs.renameSync("build/gen/ui.js", `build/gen/ui-${rev}.js`);
+        fs.renameSync("build/gen/worker.js", `build/gen/worker-${rev}.js`);
+    }
 
     return rev;
 };

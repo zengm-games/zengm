@@ -8,8 +8,6 @@ function showGcs() {
             "http://www.basketball-gm.com/",
             new Date().getTime(),
         );
-    } else {
-        console.log("Not sure what to do for non-basketball GCS");
     }
 }
 

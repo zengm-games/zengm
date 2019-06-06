@@ -12,7 +12,13 @@ make localStorage fail gracefully on quota error
 - local-storage-fallback - only tests errors at initial usage, not subsequent
 - get rid of fromLocalStorage
 
+in basketball gamesim
+- if all ratings are 0, why does one player dominate?
+- player with assist can be same as player who shoots
+
 # football
+
+blocked fg too uncommon?
 
 Just started playing the other day and it's pretty fun! A lot different than BBGM but the roster management is fun even if the games can feel kind of random. Few things stood out. Not sure if this is just for balance purposes, but teams are WAY stricter about giving up next year's 1st round picks than in real life. I can package 3 amazing players and the best I get offered is a 1st 4 years in the future. Meanwhile IRL 1st rounders get traded for much less (Cooper for a 1st straight up).
 

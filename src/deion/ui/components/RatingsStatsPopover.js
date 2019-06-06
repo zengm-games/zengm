@@ -68,6 +68,8 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                 loadDataStarted: false,
             };
         }
+
+        return null;
     }
 
     async loadData() {

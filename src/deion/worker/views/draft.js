@@ -33,7 +33,7 @@ async function updateDraft(
         for (const p of undrafted) {
             const season = p.ratings[0].season;
             if (season !== g.season && g.phase === PHASE.DRAFT) {
-                console.log("FIXING FUCKED UP DRAFT CLASS");
+                console.log("FIXING MESSED UP DRAFT CLASS");
                 console.log(season);
                 p.ratings[0].season = g.season;
                 p.draft.year = g.season;

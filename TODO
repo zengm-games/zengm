@@ -1,7 +1,5 @@
 downloadFile mime type option, but text/csv hardcoded
 
-god mode option to disable refusal chiefs keef
-
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 basketball gamesim - too many plays happen right at 0
@@ -172,8 +170,6 @@ Option to disable home court advantage @Spacemanspiff
 
 god mode options for foul rate and foul outs - Jlebron13 on discord
 - other sport specific options, like shot tendencies, enabling/disabling 3 pointers, etc
-
-god mode option to disable refusing to negotiate
 
 during free agency, after you sign all your free agents it should automatically take you to the league free agents and skip the step of having to continue
 

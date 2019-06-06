@@ -150,6 +150,7 @@ async function updatePlayer(
         const willingToSign = !helpers.refuseToNegotiate(
             p.contract.amount * 1000,
             p.freeAgentMood[g.userTid],
+            g.playersRefuseToNegotiate,
             g.phase === PHASE.RESIGN_PLAYERS
                 ? p.draft.year === g.season
                 : false,

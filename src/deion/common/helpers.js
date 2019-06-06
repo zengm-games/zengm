@@ -849,8 +849,13 @@ function roundWinp(winp: number): string {
 const refuseToNegotiate = (
     amount: number,
     mood: number,
+    playersRefuseToNegotiate: boolean,
     rookie?: boolean = false,
 ): boolean => {
+    if (!playersRefuseToNegotiate) {
+        return false;
+    }
+
     if (rookie) {
         return false;
     }

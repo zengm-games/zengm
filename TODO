@@ -1,3 +1,5 @@
+downloadFile mime type option, but text/csv hardcoded
+
 god mode option to disable refusal chiefs keef
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
@@ -14,7 +16,11 @@ make localStorage fail gracefully on quota error
 
 # football
 
-Longest receptions/runs are added when going thru career totals
+Just started playing the other day and it's pretty fun! A lot different than BBGM but the roster management is fun even if the games can feel kind of random. Few things stood out. Not sure if this is just for balance purposes, but teams are WAY stricter about giving up next year's 1st round picks than in real life. I can package 3 amazing players and the best I get offered is a 1st 4 years in the future. Meanwhile IRL 1st rounders get traded for much less (Cooper for a 1st straight up).
+
+Also I wonder if there is a way to present a player's value in regards to the position they play. What I mean is if I want to draft a good RB in the game I have to invest an early pick, but in the NFL teams find starting RBs day 3 on a pretty regular basis (although the argument there is OL is more important for the run game than the RB) so that might actually be pretty complicated to implement.
+
+Finally I saw dumbmatter mention this in the initial post, but there really should be guaranteed rookie contracts. They are basically standard in the NFL and I don't see why a simulation wouldn't mirror this. Just feels weird all my players only want 2 year contracts when they are usually stuck with the team for 4 years at least. Just some initial thoughts, great work overall!
 
 keyStats for OL should not show tiny # of tackles
 

@@ -124,6 +124,7 @@ export type GameAttributeKey =
     | "numTeams"
     | "ownerMood"
     | "phase"
+    | "playersRefuseToNegotiate"
     | "quarterLength"
     | "salaryCap"
     | "season"

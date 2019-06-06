@@ -197,7 +197,7 @@ const reset = () => {
     fs.mkdirSync("build/gen");
 };
 
-const setTimestamps = (watch = false) => {
+const setTimestamps = (watch /*: boolean*/ = false) => {
     console.log("Setting timestamps...");
 
     const rev = genRev();

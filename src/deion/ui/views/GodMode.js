@@ -29,6 +29,7 @@ class GodMode extends React.Component {
             numGamesPlayoffSeries: JSON.stringify(props.numGamesPlayoffSeries),
             numPlayoffByes: props.numPlayoffByes,
             draftType: props.draftType,
+            playersRefuseToNegotiate: props.playersRefuseToNegotiate,
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -54,6 +55,10 @@ class GodMode extends React.Component {
             ),
             numPlayoffByes: this.handleChange.bind(this, "numPlayoffByes"),
             draftType: this.handleChange.bind(this, "draftType"),
+            playersRefuseToNegotiate: this.handleChange.bind(
+                this,
+                "playersRefuseToNegotiate",
+            ),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -158,6 +163,8 @@ class GodMode extends React.Component {
             numGamesPlayoffSeries,
             numPlayoffByes: parseInt(this.state.numPlayoffByes, 10),
             draftType: this.state.draftType,
+            playersRefuseToNegotiate:
+                this.state.playersRefuseToNegotiate === "true",
         });
 
         this.setState({
@@ -568,6 +575,20 @@ class GodMode extends React.Component {
                             </select>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
+                            <label>Players Can Refuse To Sign Wth You</label>
+                            <select
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={
+                                    this.handleChanges.playersRefuseToNegotiate
+                                }
+                                value={this.state.playersRefuseToNegotiate}
+                            >
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Injury Rate{" "}
                                 <HelpPopover
@@ -696,6 +717,7 @@ GodMode.propTypes = {
     numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
     numPlayoffByes: PropTypes.number.isRequired,
     draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
+    playersRefuseToNegotiate: PropTypes.bool.isRequired,
 };
 
 export default GodMode;

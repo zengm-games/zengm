@@ -63,6 +63,7 @@ async function updateFreeAgents(): void | { [key: string]: any } {
         numRosterSpots: g.maxRosterSize - userPlayers.length,
         phase: g.phase,
         players,
+        playersRefuseToNegotiate: g.playersRefuseToNegotiate,
         stats,
         userPlayers,
         userTid: g.userTid,

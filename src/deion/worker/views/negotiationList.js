@@ -64,6 +64,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         minContract: g.minContract,
         numRosterSpots: g.maxRosterSize - userPlayers.length,
         players,
+        playersRefuseToNegotiate: g.playersRefuseToNegotiate,
         season: g.season,
         stats,
         sumContracts,

@@ -67,6 +67,7 @@ const defaultGameAttributes: GameAttributes = {
     draftType: "nba2019",
     numDraftRounds: 2,
     defaultStadiumCapacity: 25000,
+    playersRefuseToNegotiate: true,
 };
 
 if (process.env.SPORT === "football") {

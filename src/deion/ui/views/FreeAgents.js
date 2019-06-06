@@ -55,6 +55,7 @@ class FreeAgents extends React.Component {
             numRosterSpots,
             phase,
             players,
+            playersRefuseToNegotiate,
             stats,
             userPlayers,
             userTid,
@@ -137,6 +138,7 @@ class FreeAgents extends React.Component {
                         disabled={gamesInProgress}
                         minContract={minContract}
                         p={p}
+                        playersRefuseToNegotiate={playersRefuseToNegotiate}
                         userTid={userTid}
                     />,
                 ],
@@ -207,6 +209,7 @@ FreeAgents.propTypes = {
     numRosterSpots: PropTypes.number.isRequired,
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playersRefuseToNegotiate: PropTypes.bool.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userPlayers: PropTypes.arrayOf(
         PropTypes.shape({

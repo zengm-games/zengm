@@ -572,16 +572,15 @@ const genFilename = (data: any) => {
         filename += `_Round_${playoffSeries.currentRound + 1}`;
 
         // Find the latest playoff series with the user's team in it
-        const series = playoffSeries.series;
-        for (let i = 0; i < series[rnd].length; i++) {
-            if (series[rnd][i].home.tid === g.userTid) {
-                filename += `_${series[rnd][i].home.won}-${
-                    series[rnd][i].away.won
-                }`;
-            } else if (series[rnd][i].away.tid === g.userTid) {
-                filename += `_${series[rnd][i].away.won}-${
-                    series[rnd][i].home.won
-                }`;
+        for (const series of playoffSeries.series[rnd]) {
+            if (series.home.tid === g.userTid) {
+                if (series.away) {
+                    filename += `_${series.home.won}-${series.away.won}`;
+                } else {
+                    filename += "_bye";
+                }
+            } else if (series.away && series.away.tid === g.userTid) {
+                filename += `_${series.away.won}-${series.home.won}`;
             }
         }
     }

@@ -103,9 +103,9 @@ const getSortVal = (value: any = null, sortType: SortType | void) => {
         return sortVal;
     } catch (err) {
         console.error(
-            `getSortVal error on val "${String(value)}" and sortType "${String(
-                sortType,
-            )}"`,
+            `getSortVal error on value "${String(
+                value,
+            )}" and sortType "${String(sortType)}"`,
             err,
         );
         return null;

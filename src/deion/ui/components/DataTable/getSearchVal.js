@@ -28,7 +28,7 @@ const getSearchVal = (value: any, toLowerCase?: boolean = true) => {
         }
         return "";
     } catch (err) {
-        console.error(`getSearchVal error on val "${val}"`, err);
+        console.error(`getSearchVal error on value "${String(value)}"`, err);
         return "";
     }
 };

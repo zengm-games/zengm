@@ -1,3 +1,10 @@
+game highs
+- per season and career, like in basketball reference
+- link to box score
+- summary per team at bottom
+- somehow show in stats page
+- store in normal player stats object (like Lng in football)
+
 downloadFile mime type option, but text/csv hardcoded
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
@@ -17,6 +24,8 @@ in basketball gamesim
 - player with assist can be same as player who shoots
 
 # football
+
+automatically add ovrs and pots to players on import
 
 blocked fg too uncommon?
 

@@ -575,7 +575,7 @@ class GodMode extends React.Component {
                             </select>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
-                            <label>Players Can Refuse To Sign Wth You</label>
+                            <label>Players Can Refuse To Sign With You</label>
                             <select
                                 className="form-control"
                                 disabled={!godMode}

@@ -41,7 +41,7 @@ const ovr = (ratings: PlayerRatings): number => {
     } else if (r >= 50) {
         fudgeFactor = 4 + (r - 50) * (4 / 18);
     } else if (r >= 42) {
-        fudgeFactor = -5 + (r - 42) * (10 / 8);
+        fudgeFactor = -5 + (r - 42) * (9 / 8);
     } else if (r >= 31) {
         fudgeFactor = -5 - (42 - r) * (5 / 11);
     } else {

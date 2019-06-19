@@ -10,6 +10,7 @@ describe("worker/core/GameSim", () => {
                 if (!pen.posOdds || Object.keys(pen.posOdds).length === 0) {
                     continue;
                 }
+                // $FlowFixMe
                 const sumOdds = Object.values(pen.posOdds).reduce(
                     // $FlowFixMe
                     (sum, val) => sum + val,
@@ -17,9 +18,7 @@ describe("worker/core/GameSim", () => {
                 );
                 assert(
                     sumOdds > 0.999 && sumOdds < 1.001,
-                    `Sum of posOdds should be 1 but is ${sumOdds} for ${
-                        pen.name
-                    } (${pen.side})`,
+                    `Sum of posOdds should be 1 but is ${sumOdds} for ${pen.name} (${pen.side})`,
                 );
             }
         });

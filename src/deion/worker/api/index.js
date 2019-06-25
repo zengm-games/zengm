@@ -830,7 +830,6 @@ const handleUploadedDraftClass = async (
                 delete p.pid;
             }
 
-            player.updateValues(p);
             await idb.cache.players.add(p);
         }),
     );

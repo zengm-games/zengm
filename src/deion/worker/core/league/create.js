@@ -157,25 +157,17 @@ export const createWithoutSaving = (
     // It's okay to have an empty conference or division, but you can't reference a conference or division that doesn't exist!
     if (cidsConfs.size < cidsTeam.size) {
         throw new Error(
-            `confs in game attributes only has ${
-                cidsConfs.size
-            } conferences, but your teams belong to ${
-                cidsTeam.size
-            } conferences`,
+            `confs in game attributes only has ${cidsConfs.size} conferences, but your teams belong to ${cidsTeam.size} conferences`,
         );
     }
     if (cidsConfs.size < cidsDivs.size) {
         throw new Error(
-            `confs in game attributes only has ${
-                cidsConfs.size
-            } conferences, but divs references ${cidsDivs.size} conferences`,
+            `confs in game attributes only has ${cidsConfs.size} conferences, but divs references ${cidsDivs.size} conferences`,
         );
     }
     if (didsDivs.size < didsTeam.size) {
         throw new Error(
-            `divs in game attributes only has ${
-                didsDivs.size
-            } divisions, but your teams belong to ${didsTeam.size} divisions`,
+            `divs in game attributes only has ${didsDivs.size} divisions, but your teams belong to ${didsTeam.size} divisions`,
         );
     }
 
@@ -406,7 +398,6 @@ export const createWithoutSaving = (
                 scoutingRank,
                 leagueFile.version,
             );
-            player.updateValues(p);
 
             if (p.tid >= g.numTeams) {
                 p.tid = PLAYER.FREE_AGENT;

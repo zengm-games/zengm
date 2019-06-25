@@ -2,17 +2,17 @@
 
 import { PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
-import { bootstrapPot } from "./develop";
+import develop, { bootstrapPot } from "./develop";
+import genContract from "./genContract";
 import generate from "./generate";
 import setContract from "./setContract";
 import skills from "./skills";
+import updateValues from "./updateValues";
 import { g, overrides, random } from "../../util";
 import type { MinimalPlayerRatings, Player } from "../../../common/types";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
- *
- * This doesn't add the things from updateValues!
  *
  * @memberOf core.player
  * @param {Object} p Partial player object.
@@ -38,7 +38,6 @@ const augmentPartialPlayer = (
         "awards",
         "born",
         "college",
-        "contract",
         "draft",
         "face",
         "freeAgentMood",
@@ -61,15 +60,6 @@ const augmentPartialPlayer = (
     }
     if (p.retiredYear === null) {
         p.retiredYear = Infinity;
-    }
-    if (!p.hasOwnProperty("salaries")) {
-        p.salaries = [];
-        if (p.contract.exp < g.startingSeason) {
-            p.contract.exp = g.startingSeason;
-        }
-        if (p.tid >= 0) {
-            setContract(p, p.contract, true);
-        }
     }
     if (!p.hasOwnProperty("stats")) {
         p.stats = [];
@@ -236,6 +226,9 @@ const augmentPartialPlayer = (
         }
     }
 
+    // Kind of hacky... impose skills/ovr/pot/ovrs/pots, but only for latest season
+    develop(p, 0);
+
     // Handle old format position
     if (p.hasOwnProperty("pos")) {
         for (let i = 0; i < p.ratings.length; i++) {
@@ -246,11 +239,29 @@ const augmentPartialPlayer = (
     }
     // Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
-    // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-    p.contract.amount = Math.max(
-        10 * Math.round(p.contract.amount / 10),
-        g.minContract,
-    );
+    updateValues(p);
+
+    if (!p.hasOwnProperty("salaries")) {
+        p.salaries = [];
+    }
+
+    if (!p.hasOwnProperty("contract")) {
+        setContract(p, genContract(p, true), true);
+    } else {
+        // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
+        p.contract.amount = Math.max(
+            10 * Math.round(p.contract.amount / 10),
+            g.minContract,
+        );
+
+        if (p.contract.exp < g.startingSeason) {
+            p.contract.exp = g.startingSeason;
+        }
+
+        if (p.tid >= 0 && p.salaries.length === 0) {
+            setContract(p, p.contract, true);
+        }
+    }
 
     // If no stats in League File, create blank stats rows for active players if necessary
     if (!Array.isArray(p.stats)) {

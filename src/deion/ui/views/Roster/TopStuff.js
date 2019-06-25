@@ -72,6 +72,12 @@ const TopStuff = ({
                 ) : null}
             </div>
             <InstructionsAndSortButtons editable={editable} tid={t.tid} />
+            {season !== currentSeason ? (
+                <p>
+                    Players in the Hall of Fame are{" "}
+                    <span className="text-danger">highlighted in red</span>.
+                </p>
+            ) : null}
         </>
     );
 };

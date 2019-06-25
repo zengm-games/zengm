@@ -38,15 +38,9 @@ const handleRelease = async (p, phase, season) => {
 
     let releaseMessage;
     if (wasPlayerJustDrafted) {
-        releaseMessage = `Are you sure you want to release ${
-            p.name
-        }?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
+        releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
     } else {
-        releaseMessage = `Are you sure you want to release ${
-            p.name
-        }?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${
-            p.contract.exp
-        }.`;
+        releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp}.`;
     }
 
     if (window.confirm(releaseMessage)) {
@@ -106,6 +100,7 @@ const RosterRow = SortableElement(
                 className={classNames({
                     separator: process.env.SPORT === "basketball" && i === 4,
                     "table-warning": clicked,
+                    "table-danger": p.hof,
                 })}
                 data-pid={p.pid}
             >

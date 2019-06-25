@@ -82,6 +82,7 @@ async function updateRoster(
             "ptModifier",
             "watch",
             "untradable",
+            "hof",
         ]; // tid and draft are used for checking if a player can be released without paying his salary
         const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
         const stats2 = [...stats, "yearsWithTeam"];

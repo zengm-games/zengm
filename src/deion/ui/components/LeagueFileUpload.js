@@ -196,27 +196,31 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
     return (
         <>
             {enterURL ? (
-                <div className="form-inline">
-                    <input
-                        type="text"
-                        className="form-control mb-2 mr-sm-2"
-                        placeholder="URL"
-                        value={url}
-                        onChange={event => {
-                            setURL(event.target.value);
-                        }}
-                    />
-                    <button
-                        type="submit"
-                        className="btn btn-secondary mb-2"
-                        onClick={handleFileURL}
-                        disabled={
-                            state.status === "loading" ||
-                            state.status === "parsing"
-                        }
-                    >
-                        Load
-                    </button>
+                <div className="form-row">
+                    <div className="col">
+                        <input
+                            type="text"
+                            className="form-control mb-2 mr-2"
+                            placeholder="URL"
+                            value={url}
+                            onChange={event => {
+                                setURL(event.target.value);
+                            }}
+                        />
+                    </div>
+                    <div className="col-auto">
+                        <button
+                            type="submit"
+                            className="btn btn-secondary mb-2"
+                            onClick={handleFileURL}
+                            disabled={
+                                state.status === "loading" ||
+                                state.status === "parsing"
+                            }
+                        >
+                            Load
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <input

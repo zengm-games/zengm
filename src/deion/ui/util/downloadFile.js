@@ -6,7 +6,7 @@ const downloadFile = (fileName: string, contents: string, mimeType: string) => {
     const a = document.createElement("a");
     a.download = fileName;
     a.href = URL.createObjectURL(blob);
-    a.dataset.downloadurl = ["text/csv", a.download, a.href].join(":");
+    a.dataset.downloadurl = [mimeType, a.download, a.href].join(":");
     a.style.display = "none";
     if (!document.body) {
         throw new Error("Should never happen");

@@ -103,8 +103,9 @@ class NewLeague extends React.Component {
         const updatedState = {
             customize: e.target.value,
         };
-        if (updatedState.customize === "random") {
+        if (updatedState.customize !== this.state.customize) {
             updatedState.teams = defaultTeams;
+            updatedState.leagueFile = null;
         }
 
         this.setState(updatedState);
@@ -344,7 +345,7 @@ class NewLeague extends React.Component {
                                             });
                                         }}
                                         onDone={this.onNewLeagueFile}
-                                        url={customize === "custom-url"}
+                                        enterURL={customize === "custom-url"}
                                     />
                                     <div className="form-check mt-3">
                                         <label className="form-check-label">

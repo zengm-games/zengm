@@ -5,6 +5,9 @@
         "prettier",
         "prettier/react",
     ],
+    plugins: [
+        "react-hooks",
+    ],
     env: {
         browser: true,
         mocha: false,
@@ -52,6 +55,8 @@
         "react/no-unused-prop-types": "off", // Would be nice, but tons of false positives
         "react/require-default-props": "off", // Flow handles this better, I think
         "react/sort-comp": "off", // Flow type definition of props in a React class confuses it
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
         "spaced-comment": "off",
     },
     globals: {

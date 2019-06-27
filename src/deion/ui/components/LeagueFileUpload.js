@@ -2,7 +2,13 @@
 
 import Ajv from "ajv";
 import PropTypes from "prop-types";
-import React from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useReducer,
+    useRef,
+    useState,
+} from "react";
 
 // This is dynamically resolved with aliasify
 // $FlowFixMe
@@ -15,18 +21,19 @@ const ajv = new Ajv({
 const validate = ajv.compile(schema);
 
 type Props = {
-    // onLoading is called when it starts reading the file into memory
-    onLoading?: () => void,
-
     // onDone is called in errback style when parsing is done or when an error occurs
     onDone: (Error | null, any) => void,
+
+    enterURL?: boolean,
+
+    // onLoading is called when it starts reading the file into memory
+    onLoading?: () => void,
 };
 
 type State = {
     error: Error | null,
     jsonSchemaErrors: any[],
     status: "initial" | "loading" | "parsing" | "error" | "done",
-    url: string,
 };
 
 const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
@@ -35,219 +42,228 @@ const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
     event.target.value = "";
 };
 
-class LeagueFileUpload extends React.Component<Props, State> {
-    handleFile: Function;
+const initialState = {
+    error: null,
+    jsonSchemaErrors: [],
+    status: "initial",
+};
 
-    unmounted: boolean;
-
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            error: null,
-            jsonSchemaErrors: [],
-            status: "initial",
-            url: "",
-        };
-
-        this.handleFileURL = this.handleFileURL.bind(this);
-        this.handleFileUpload = this.handleFileUpload.bind(this);
-    }
-
-    componentWillUnmount() {
-        this.unmounted = true;
-    }
-
-    beforeFile() {
-        this.setState({
-            error: null,
-            jsonSchemaErrors: [],
-            status: "loading",
-        });
-
-        if (this.props.onLoading) {
-            this.props.onLoading();
-        }
-    }
-
-    async withLeagueFile(leagueFile) {
-        const valid = validate(leagueFile);
-        if (!valid && Array.isArray(validate.errors)) {
-            console.log("JSON Schema validation errors:");
-            console.log(validate.errors);
-            this.setState({
-                jsonSchemaErrors: validate.errors.slice(),
-            });
-        }
-
-        try {
-            await this.props.onDone(null, leagueFile);
-        } catch (err) {
-            if (!this.unmounted) {
-                this.setState({
-                    error: err,
-                    status: "error",
-                });
-            }
-            return;
-        }
-
-        if (!this.unmounted) {
-            this.setState({
-                error: null,
-                status: "done",
-            });
-        }
-    }
-
-    async handleFileURL() {
-        this.beforeFile();
-
-        let leagueFile;
-        try {
-            const response = await fetch(this.state.url);
-
-            this.setState({
-                error: null,
-                jsonSchemaErrors: [],
-                status: "parsing",
-            });
-
-            leagueFile = await response.json();
-        } catch (err) {
-            if (!this.unmounted) {
-                this.setState({
-                    error: err,
-                    status: "error",
-                });
-            }
-            this.props.onDone(err);
-            return;
-        }
-
-        await this.withLeagueFile(leagueFile);
-    }
-
-    handleFileUpload(event: SyntheticInputEvent<HTMLInputElement>) {
-        this.beforeFile();
-
-        const file = event.currentTarget.files[0];
-        if (!file) {
-            this.setState({
+const reducer = (state: State, action: any): State => {
+    switch (action.type) {
+        case "init":
+            return {
                 error: null,
                 jsonSchemaErrors: [],
                 status: "initial",
-            });
-            return;
-        }
-
-        const reader = new window.FileReader();
-        reader.readAsText(file);
-        reader.onload = async event2 => {
-            this.setState({
+            };
+        case "loading":
+            return {
+                error: null,
+                jsonSchemaErrors: [],
+                status: "loading",
+            };
+        case "jsonSchemaErrors":
+            console.log("JSON Schema validation errors:");
+            console.log(action.jsonSchemaErrors);
+            return {
+                ...state,
+                jsonSchemaErrors: action.jsonSchemaErrors,
+            };
+        case "error":
+            return {
+                ...state,
+                error: action.error,
+                status: "error",
+            };
+        case "done":
+            return {
+                ...state,
+                error: null,
+                status: "done",
+            };
+        case "parsing":
+            return {
                 error: null,
                 jsonSchemaErrors: [],
                 status: "parsing",
-            });
+            };
+        default:
+            throw new Error();
+    }
+};
 
-            let leagueFile;
-            try {
-                leagueFile = JSON.parse(event2.currentTarget.result);
-            } catch (err) {
-                this.setState({
-                    error: err,
-                    jsonSchemaErrors: [],
-                    status: "error",
+const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
+    const [url, setURL] = useState("");
+    const [state, dispatch] = useReducer(reducer, initialState);
+
+    const isMounted = useRef(true);
+    useEffect(() => {
+        return () => {
+            isMounted.current = false;
+        };
+    }, []);
+
+    // Reset status when switching between file upload
+    useEffect(() => {
+        dispatch({ type: "init" });
+    }, [enterURL]);
+
+    const beforeFile = useCallback(() => {
+        dispatch({ type: "loading" });
+        if (onLoading) {
+            onLoading();
+        }
+    }, [onLoading]);
+
+    const withLeagueFile = useCallback(
+        async leagueFile => {
+            const valid = validate(leagueFile);
+            if (!valid && Array.isArray(validate.errors)) {
+                dispatch({
+                    type: "jsonSchemaErrors",
+                    jsonSchemaErrors: validate.errors.slice(),
                 });
-                this.props.onDone(err);
+            }
+
+            try {
+                await onDone(null, leagueFile);
+            } catch (error) {
+                if (isMounted) {
+                    dispatch({ type: "error", error });
+                    onDone(error);
+                }
                 return;
             }
 
-            await this.withLeagueFile(leagueFile);
-        };
-    }
+            if (isMounted) {
+                dispatch({ type: "done" });
+            }
+        },
+        [onDone],
+    );
 
-    render() {
-        return (
-            <>
-                {this.props.url ? (
-                    <div className="form-inline">
-                        <input
-                            type="text"
-                            className="form-control mb-2 mr-sm-2"
-                            placeholder="URL"
-                            value={this.state.url}
-                            onChange={event => {
-                                this.setState({ url: event.target.value });
-                            }}
-                        />
-                        <button
-                            type="submit"
-                            className="btn btn-secondary mb-2"
-                            onClick={this.handleFileURL}
-                            disabled={
-                                this.state.status === "loading" ||
-                                this.state.status === "parsing"
-                            }
-                        >
-                            Load
-                        </button>
-                    </div>
-                ) : (
+    const handleFileURL = useCallback(async () => {
+        beforeFile();
+
+        let leagueFile;
+        try {
+            const response = await fetch(url);
+            dispatch({ type: "parsing" });
+            leagueFile = await response.json();
+        } catch (error) {
+            if (isMounted) {
+                dispatch({ type: "error", error });
+                onDone(error);
+            }
+            return;
+        }
+
+        await withLeagueFile(leagueFile);
+    }, [beforeFile, onDone, url, withLeagueFile]);
+
+    const handleFileUpload = useCallback(
+        (event: SyntheticInputEvent<HTMLInputElement>) => {
+            beforeFile();
+
+            const file = event.currentTarget.files[0];
+            if (!file) {
+                dispatch({ type: "init" });
+                return;
+            }
+
+            const reader = new window.FileReader();
+            reader.readAsText(file);
+            reader.onload = async event2 => {
+                dispatch({ type: "parsing" });
+
+                let leagueFile;
+                try {
+                    leagueFile = JSON.parse(event2.currentTarget.result);
+                } catch (error) {
+                    if (isMounted) {
+                        dispatch({ type: "error", error });
+                        onDone(error);
+                    }
+                    return;
+                }
+
+                await withLeagueFile(leagueFile);
+            };
+        },
+        [beforeFile, onDone, withLeagueFile],
+    );
+
+    return (
+        <>
+            {enterURL ? (
+                <div className="form-inline">
                     <input
-                        type="file"
-                        onClick={resetFileInput}
-                        onChange={this.handleFileUpload}
-                        disabled={
-                            this.state.status === "loading" ||
-                            this.state.status === "parsing"
-                        }
+                        type="text"
+                        className="form-control mb-2 mr-sm-2"
+                        placeholder="URL"
+                        value={url}
+                        onChange={event => {
+                            setURL(event.target.value);
+                        }}
                     />
-                )}
-                {this.state.status === "error" ? (
-                    <p className="alert alert-danger mt-3">
-                        Error:{" "}
-                        {this.state.error
-                            ? this.state.error.message
-                            : "Unknown error"}
-                    </p>
-                ) : null}
-                {this.state.jsonSchemaErrors.length > 0 ? (
-                    <p className="alert alert-warning mt-3">
-                        Warning: {this.state.jsonSchemaErrors.length} JSON
-                        schema validation errors. More detail is available in
-                        the JavaScript console. Also, see{" "}
-                        <a
-                            href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
-                        >
-                            the manual
-                        </a>{" "}
-                        for more information. You can still use this file, but
-                        these errors may cause bugs.
-                    </p>
-                ) : null}
-                {this.state.status === "loading" ? (
-                    <p className="alert alert-info mt-3">
-                        Loading league file...
-                    </p>
-                ) : null}
-                {this.state.status === "parsing" ? (
-                    <p className="alert alert-info mt-3">
-                        Parsing league file...
-                    </p>
-                ) : null}
-                {this.state.status === "done" ? (
-                    <p className="alert alert-success mt-3">Loaded!</p>
-                ) : null}
-            </>
-        );
-    }
-}
+                    <button
+                        type="submit"
+                        className="btn btn-secondary mb-2"
+                        onClick={handleFileURL}
+                        disabled={
+                            state.status === "loading" ||
+                            state.status === "parsing"
+                        }
+                    >
+                        Load
+                    </button>
+                </div>
+            ) : (
+                <input
+                    type="file"
+                    onClick={resetFileInput}
+                    onChange={handleFileUpload}
+                    disabled={
+                        state.status === "loading" || state.status === "parsing"
+                    }
+                />
+            )}
+            {state.status === "error" ? (
+                <p className="alert alert-danger mt-3">
+                    Error: {state.error ? state.error.message : "Unknown error"}
+                </p>
+            ) : null}
+            {state.jsonSchemaErrors.length > 0 ? (
+                <p className="alert alert-warning mt-3">
+                    Warning: {state.jsonSchemaErrors.length} JSON schema
+                    validation errors. More detail is available in the
+                    JavaScript console. Also, see{" "}
+                    <a
+                        href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
+                    >
+                        the manual
+                    </a>{" "}
+                    for more information. You can still use this file, but these
+                    errors may cause bugs.
+                </p>
+            ) : null}
+            {state.status === "loading" ? (
+                <p className="alert alert-info mt-3">Loading league file...</p>
+            ) : null}
+            {state.status === "parsing" ? (
+                <p className="alert alert-info mt-3">Parsing league file...</p>
+            ) : null}
+            {state.status === "done" ? (
+                <p className="alert alert-success mt-3">Loaded!</p>
+            ) : null}
+        </>
+    );
+};
 
 LeagueFileUpload.propTypes = {
+    enterURL: PropTypes.bool,
     onLoading: PropTypes.func,
     onDone: PropTypes.func.isRequired,
-    url: PropTypes.bool,
 };
 
 export default LeagueFileUpload;

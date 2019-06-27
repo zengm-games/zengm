@@ -259,7 +259,7 @@ class NewLeague extends React.Component {
                         <div className="form-group col-md-3 col-sm-6">
                             <label>Pick your team</label>
                             <select
-                                className="form-control"
+                                className="form-control mb-1"
                                 value={tid}
                                 onChange={this.handleChanges.tid}
                             >
@@ -277,7 +277,7 @@ class NewLeague extends React.Component {
                         <div className="form-group col-md-3 col-sm-6">
                             <label>Difficulty</label>
                             <select
-                                className="form-control"
+                                className="form-control mb-1"
                                 onChange={this.handleChanges.difficulty}
                                 value={difficulty}
                             >
@@ -308,7 +308,7 @@ class NewLeague extends React.Component {
                             <div className="form-group">
                                 <label>Customize</label>
                                 <select
-                                    className="form-control"
+                                    className="form-control mb-1"
                                     onChange={this.handleCustomizeChange}
                                     value={customize}
                                 >
@@ -318,33 +318,34 @@ class NewLeague extends React.Component {
                                     <option value="custom-rosters">
                                         Upload League File
                                     </option>
+                                    <option value="custom-url">
+                                        Enter League File URL
+                                    </option>
                                 </select>
                                 <span className="text-muted">
                                     Teams in your new league can either be
                                     filled by randomly-generated players or by
                                     players from a{" "}
                                     <a
-                                        href={`https://${
-                                            process.env.SPORT
-                                        }-gm.com/manual/customization/`}
+                                        href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
                                     >
                                         custom League File
                                     </a>{" "}
                                     you upload.
                                 </span>
                             </div>
-                            {customize === "custom-rosters" ? (
-                                <div>
-                                    <div>
-                                        <LeagueFileUpload
-                                            onLoading={() => {
-                                                this.setState({
-                                                    leagueFile: null,
-                                                });
-                                            }}
-                                            onDone={this.onNewLeagueFile}
-                                        />
-                                    </div>
+                            {customize === "custom-rosters" ||
+                            customize === "custom-url" ? (
+                                <>
+                                    <LeagueFileUpload
+                                        onLoading={() => {
+                                            this.setState({
+                                                leagueFile: null,
+                                            });
+                                        }}
+                                        onDone={this.onNewLeagueFile}
+                                        url={customize === "custom-url"}
+                                    />
                                     <div className="form-check mt-3">
                                         <label className="form-check-label">
                                             <input
@@ -359,7 +360,7 @@ class NewLeague extends React.Component {
                                             Shuffle Rosters
                                         </label>
                                     </div>
-                                </div>
+                                </>
                             ) : null}
                         </div>
                     </div>
@@ -370,7 +371,8 @@ class NewLeague extends React.Component {
                             className="btn btn-lg btn-primary mt-3"
                             disabled={
                                 creating ||
-                                (customize === "custom-rosters" &&
+                                ((customize === "custom-rosters" ||
+                                    customize === "custom-url") &&
                                     leagueFile === null)
                             }
                         >

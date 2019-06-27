@@ -26,6 +26,7 @@ type State = {
     error: Error | null,
     jsonSchemaErrors: any[],
     status: "initial" | "loading" | "parsing" | "error" | "done",
+    url: string,
 };
 
 const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
@@ -46,24 +47,89 @@ class LeagueFileUpload extends React.Component<Props, State> {
             error: null,
             jsonSchemaErrors: [],
             status: "initial",
+            url: "",
         };
 
-        this.handleFile = this.handleFile.bind(this);
+        this.handleFileURL = this.handleFileURL.bind(this);
+        this.handleFileUpload = this.handleFileUpload.bind(this);
     }
 
     componentWillUnmount() {
         this.unmounted = true;
     }
 
-    handleFile(event: SyntheticInputEvent<HTMLInputElement>) {
+    beforeFile() {
         this.setState({
             error: null,
             jsonSchemaErrors: [],
             status: "loading",
         });
+
         if (this.props.onLoading) {
             this.props.onLoading();
         }
+    }
+
+    async withLeagueFile(leagueFile) {
+        const valid = validate(leagueFile);
+        if (!valid && Array.isArray(validate.errors)) {
+            console.log("JSON Schema validation errors:");
+            console.log(validate.errors);
+            this.setState({
+                jsonSchemaErrors: validate.errors.slice(),
+            });
+        }
+
+        try {
+            await this.props.onDone(null, leagueFile);
+        } catch (err) {
+            if (!this.unmounted) {
+                this.setState({
+                    error: err,
+                    status: "error",
+                });
+            }
+            return;
+        }
+
+        if (!this.unmounted) {
+            this.setState({
+                error: null,
+                status: "done",
+            });
+        }
+    }
+
+    async handleFileURL() {
+        this.beforeFile();
+
+        let leagueFile;
+        try {
+            const response = await fetch(this.state.url);
+
+            this.setState({
+                error: null,
+                jsonSchemaErrors: [],
+                status: "parsing",
+            });
+
+            leagueFile = await response.json();
+        } catch (err) {
+            if (!this.unmounted) {
+                this.setState({
+                    error: err,
+                    status: "error",
+                });
+            }
+            this.props.onDone(err);
+            return;
+        }
+
+        await this.withLeagueFile(leagueFile);
+    }
+
+    handleFileUpload(event: SyntheticInputEvent<HTMLInputElement>) {
+        this.beforeFile();
 
         const file = event.currentTarget.files[0];
         if (!file) {
@@ -97,48 +163,47 @@ class LeagueFileUpload extends React.Component<Props, State> {
                 return;
             }
 
-            const valid = validate(leagueFile);
-            if (!valid && Array.isArray(validate.errors)) {
-                console.log("JSON Schema validation errors:");
-                console.log(validate.errors);
-                this.setState({
-                    jsonSchemaErrors: validate.errors.slice(),
-                });
-            }
-
-            try {
-                await this.props.onDone(null, leagueFile);
-            } catch (err) {
-                if (!this.unmounted) {
-                    this.setState({
-                        error: err,
-                        status: "error",
-                    });
-                }
-                return;
-            }
-
-            if (!this.unmounted) {
-                this.setState({
-                    error: null,
-                    status: "done",
-                });
-            }
+            await this.withLeagueFile(leagueFile);
         };
     }
 
     render() {
         return (
             <>
-                <input
-                    type="file"
-                    onClick={resetFileInput}
-                    onChange={this.handleFile}
-                    disabled={
-                        this.state.status === "loading" ||
-                        this.state.status === "parsing"
-                    }
-                />
+                {this.props.url ? (
+                    <div className="form-inline">
+                        <input
+                            type="text"
+                            className="form-control mb-2 mr-sm-2"
+                            placeholder="URL"
+                            value={this.state.url}
+                            onChange={event => {
+                                this.setState({ url: event.target.value });
+                            }}
+                        />
+                        <button
+                            type="submit"
+                            className="btn btn-secondary mb-2"
+                            onClick={this.handleFileURL}
+                            disabled={
+                                this.state.status === "loading" ||
+                                this.state.status === "parsing"
+                            }
+                        >
+                            Load
+                        </button>
+                    </div>
+                ) : (
+                    <input
+                        type="file"
+                        onClick={resetFileInput}
+                        onChange={this.handleFileUpload}
+                        disabled={
+                            this.state.status === "loading" ||
+                            this.state.status === "parsing"
+                        }
+                    />
+                )}
                 {this.state.status === "error" ? (
                     <p className="alert alert-danger mt-3">
                         Error:{" "}
@@ -153,9 +218,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
                         schema validation errors. More detail is available in
                         the JavaScript console. Also, see{" "}
                         <a
-                            href={`https://${
-                                process.env.SPORT
-                            }-gm.com/manual/customization/json-schema/`}
+                            href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
                         >
                             the manual
                         </a>{" "}
@@ -173,6 +236,9 @@ class LeagueFileUpload extends React.Component<Props, State> {
                         Parsing league file...
                     </p>
                 ) : null}
+                {this.state.status === "done" ? (
+                    <p className="alert alert-success mt-3">Loaded!</p>
+                ) : null}
             </>
         );
     }
@@ -181,6 +247,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
 LeagueFileUpload.propTypes = {
     onLoading: PropTypes.func,
     onDone: PropTypes.func.isRequired,
+    url: PropTypes.bool,
 };
 
 export default LeagueFileUpload;

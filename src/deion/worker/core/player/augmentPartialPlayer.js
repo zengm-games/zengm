@@ -226,8 +226,11 @@ const augmentPartialPlayer = (
         }
     }
 
-    // Kind of hacky... impose skills/ovr/pot/ovrs/pots, but only for latest season
-    develop(p, 0);
+    const r = p.ratings[p.ratings.length - 1];
+    if (process.env.SPORT === "football" && (!r.ovrs || !r.pots)) {
+        // Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
+        develop(p, 0);
+    }
 
     // Handle old format position
     if (p.hasOwnProperty("pos")) {

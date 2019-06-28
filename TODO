@@ -1,6 +1,13 @@
+bug reports
+- own team highlighting in player ratings broken https://old.reddit.com/r/BasketballGM/comments/c6f74x/pretty_good_season_for_atlanta_bug/es91uqc/
+
 load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automatic_nba_rosters_by_understanding/es28wcf/?context=3
 - explanation text?
 - docs
+  - The tricky part is https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS which generally prevents websites from loading data from other domains, for security reasons. As described at that link in excruciating detail, you can allow a file to be included in another domain (or any domain) with the "Access-Control-Allow-Origin" header. If you don't control your server, that's not very helpful. But I have noticed that GitHub does this automatically on githubusercontent.com, so if you make a GitHub repo, you can use a link like https://raw.githubusercontent.com/user_name/repo_name/branch_name/file.json
+- zipped files Jofish
+  - https://github.com/Stuk/jszip is a bit big
+
 
 make expansion teams easier
 - doesn't need to be a real draft

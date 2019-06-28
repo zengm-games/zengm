@@ -95,6 +95,7 @@ async function updatePlayers(
                 "injury",
                 "hof",
                 "watch",
+                "tid",
             ],
             ratings: [
                 "ovr",
@@ -121,6 +122,7 @@ async function updatePlayers(
 
             for (const p of players) {
                 p.stats.abbrev = p.abbrev;
+                p.stats.tid = p.tid;
             }
         } else if (tid !== undefined) {
             players = players.filter(p => p.stats.abbrev === inputs.abbrev);

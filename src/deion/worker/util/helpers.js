@@ -113,8 +113,15 @@ const getAbbrev = (tid: number | string): string => {
     if (tid === PLAYER.FREE_AGENT) {
         return "FA";
     }
+    if (
+        tid === PLAYER.UNDRAFTED ||
+        tid === PLAYER.UNDRAFTED_2 ||
+        tid === PLAYER.UNDRAFTED_3
+    ) {
+        return "DP";
+    }
     if (tid < 0 || Number.isNaN(tid)) {
-        // Draft prospect or retired
+        // Weird or retired
         return "";
     }
     if (tid >= g.teamAbbrevsCache.length) {

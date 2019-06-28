@@ -410,6 +410,12 @@ const processPlayerStats = (p, statSums, stats, statType) => {
         } else {
             output.abbrev = helpers.getAbbrev(statSums.tid);
         }
+    } else if (stats.includes("tid")) {
+        if (statSums.tid === undefined) {
+            output.tid = p.tid;
+        } else {
+            output.tid = statSums.tid;
+        }
     }
 
     return output;

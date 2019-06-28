@@ -88,6 +88,11 @@ const depth = params => {
             redirectUrl: helpers.leagueUrl(["free_agents"]),
         };
     }
+    if (params.abbrev === "DP") {
+        return {
+            redirectUrl: helpers.leagueUrl(["draft_scouting"]),
+        };
+    }
 
     const inputs = {};
     [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
@@ -319,6 +324,11 @@ const roster = params => {
     if (params.abbrev === "FA") {
         return {
             redirectUrl: helpers.leagueUrl(["free_agents"]),
+        };
+    }
+    if (params.abbrev === "DP") {
+        return {
+            redirectUrl: helpers.leagueUrl(["draft_scouting"]),
         };
     }
 

@@ -1,5 +1,9 @@
+during draft, should emit playerMovement after each pick(s) so player ratings table in another tab updates
+
 load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automatic_nba_rosters_by_understanding/es28wcf/?context=3
 - explanation text?
+- better cors err
+- docs
 
 game highs
 - per season and career, like in basketball reference

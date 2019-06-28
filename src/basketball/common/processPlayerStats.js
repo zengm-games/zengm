@@ -65,12 +65,6 @@ const processStats = (
             row.season = ps.season;
         } else if (stat === "age") {
             row.age = ps.season - bornYear;
-        } else if (stat === "tid") {
-            if (ps.tid === undefined) {
-                row.tid = PLAYER.FREE_AGENT;
-            } else {
-                row.tid = ps.tid;
-            }
         } else if (stat === "ws") {
             row.ws = ps.dws + ps.ows;
         } else if (stat === "ws48") {

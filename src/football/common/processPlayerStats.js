@@ -157,9 +157,9 @@ const processStats = (
                     ps.recYds / ps.rec
                 ).toFixed(1)} avg, ${ps.recTD} TD`;
             } else if (role === "defender") {
-                row[stat] = `${defTck} tackles, ${ps.defSk} sacks, ${
-                    ps.defPssDef
-                } PD, ${ps.defInt} int`;
+                row[
+                    stat
+                ] = `${defTck} tackles, ${ps.defSk} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
             } else if (role === "kicker") {
                 const fgm = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
                 row[stat] = `${fgm} FGs, ${percentage(fgm, fga).toFixed(1)}%`;
@@ -169,12 +169,6 @@ const processStats = (
                 )} yards avg`;
             } else {
                 row[stat] = "";
-            }
-        } else if (stat === "tid") {
-            if (ps.tid === undefined) {
-                row.tid = PLAYER.FREE_AGENT;
-            } else {
-                row.tid = ps.tid;
             }
         } else if (stat === "age") {
             if (bornYear === undefined) {

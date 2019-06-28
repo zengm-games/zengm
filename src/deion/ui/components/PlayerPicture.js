@@ -2,51 +2,29 @@
 
 import faces from "facesjs";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-class PlayerPicture extends React.Component<{
-    face: any,
-    imgURL: ?string,
-}> {
-    wrapper: ?HTMLDivElement;
+const imgStyle = { maxHeight: "100%", maxWidth: "100%" };
 
-    componentDidMount() {
-        if (this.wrapper) {
-            faces.display(this.wrapper, this.props.face);
+const PlayerPicture = ({ face, imgURL }: { face: any, imgURL: ?string }) => {
+    const [wrapper, setWrapper] = useState(null);
+
+    useEffect(() => {
+        if (face && !imgURL && wrapper) {
+            faces.display(wrapper, face);
         }
+    }, [face, imgURL, wrapper]);
+
+    if (imgURL) {
+        return <img alt="Player" src={imgURL} style={imgStyle} />;
     }
 
-    componentDidUpdate() {
-        if (this.wrapper) {
-            faces.display(this.wrapper, this.props.face);
-        }
+    if (face) {
+        return <div ref={setWrapper} />;
     }
 
-    render() {
-        if (this.props.imgURL) {
-            this.wrapper = null;
-            return (
-                <img
-                    alt="Player"
-                    src={this.props.imgURL}
-                    style={{ maxHeight: "100%", maxWidth: "100%" }}
-                />
-            );
-        }
-
-        if (this.props.face) {
-            return (
-                <div
-                    ref={wrapper => {
-                        this.wrapper = wrapper;
-                    }}
-                />
-            );
-        }
-
-        return <div />;
-    }
-}
+    return null;
+};
 
 PlayerPicture.propTypes = {
     face: PropTypes.object,

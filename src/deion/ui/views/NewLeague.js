@@ -119,7 +119,10 @@ class NewLeague extends React.Component {
 
         let leagueFile;
         let randomizeRosters = false;
-        if (this.state.customize === "custom-rosters") {
+        if (
+            this.state.customize === "custom-rosters" ||
+            this.state.customize === "custom-url"
+        ) {
             leagueFile = this.state.leagueFile;
             randomizeRosters = this.state.randomizeRosters;
             startingSeason =

@@ -142,38 +142,43 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
         [onDone],
     );
 
-    const handleFileURL = useCallback(async () => {
-        beforeFile();
+    const handleFileURL = useCallback(
+        async event => {
+            event.preventDefault();
 
-        let leagueFile;
-        let response;
-        try {
-            response = await fetch(url);
-        } catch (_) {
-            const error = new Error(
-                "Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
-            );
-            if (isMounted) {
-                dispatch({ type: "error", error });
-                onDone(error);
+            beforeFile();
+
+            let leagueFile;
+            let response;
+            try {
+                response = await fetch(url);
+            } catch (_) {
+                const error = new Error(
+                    "Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
+                );
+                if (isMounted) {
+                    dispatch({ type: "error", error });
+                    onDone(error);
+                }
+                return;
             }
-            return;
-        }
 
-        dispatch({ type: "parsing" });
+            dispatch({ type: "parsing" });
 
-        try {
-            leagueFile = await response.json();
-        } catch (error) {
-            if (isMounted) {
-                dispatch({ type: "error", error });
-                onDone(error);
+            try {
+                leagueFile = await response.json();
+            } catch (error) {
+                if (isMounted) {
+                    dispatch({ type: "error", error });
+                    onDone(error);
+                }
+                return;
             }
-            return;
-        }
 
-        await withLeagueFile(leagueFile);
-    }, [beforeFile, onDone, url, withLeagueFile]);
+            await withLeagueFile(leagueFile);
+        },
+        [beforeFile, onDone, url, withLeagueFile],
+    );
 
     const handleFileUpload = useCallback(
         (event: SyntheticInputEvent<HTMLInputElement>) => {
@@ -224,7 +229,6 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
                     </div>
                     <div className="col-auto">
                         <button
-                            type="submit"
                             className="btn btn-secondary mb-2"
                             onClick={handleFileURL}
                             disabled={

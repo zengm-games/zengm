@@ -18,7 +18,7 @@ async function updatePlayers(
         inputs.abbrev !== state.abbrev
     ) {
         let players;
-        if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
+        if (g.season === inputs.season) {
             players = await idb.cache.players.getAll();
             players = players.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
         } else {

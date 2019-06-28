@@ -146,9 +146,23 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
         beforeFile();
 
         let leagueFile;
+        let response;
         try {
-            const response = await fetch(url);
-            dispatch({ type: "parsing" });
+            response = await fetch(url);
+        } catch (_) {
+            const error = new Error(
+                "Could be a network error, an invalid URL, or an invalid Access-Control-Allow-Origin header",
+            );
+            if (isMounted) {
+                dispatch({ type: "error", error });
+                onDone(error);
+            }
+            return;
+        }
+
+        dispatch({ type: "parsing" });
+
+        try {
             leagueFile = await response.json();
         } catch (error) {
             if (isMounted) {

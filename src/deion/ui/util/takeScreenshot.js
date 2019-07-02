@@ -42,9 +42,6 @@ const takeScreenshot = async () => {
 
     const canvas = await html2canvas(contentEl, {
         backgroundColor: theme === "dark" ? "#212529" : "#fff",
-
-        // Should not be needed, but otherwise recent versions of html2canvas put a big blank vertical space at the top in Chrome
-        y: 58,
     });
 
     // Remove watermark

@@ -42,6 +42,9 @@ const takeScreenshot = async () => {
 
     const canvas = await html2canvas(contentEl, {
         backgroundColor: theme === "dark" ? "#212529" : "#fff",
+
+        // Should not be needed, but otherwise recent versions of html2canvas put a big blank vertical space at the top in Chrome
+        y: 58,
     });
 
     // Remove watermark
@@ -110,13 +113,9 @@ const takeScreenshot = async () => {
             err.responseJSON.error &&
             err.responseJSON.error.message
         ) {
-            errorMsg = `Error saving screenshot. Error message from Imgur: "${
-                err.responseJSON.error.message
-            }"`;
+            errorMsg = `Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`;
         } else if (err.message) {
-            errorMsg = `Error saving screenshot. Error message from Imgur: "${
-                err.message
-            }"`;
+            errorMsg = `Error saving screenshot. Error message from Imgur: "${err.message}"`;
         } else {
             errorMsg = "Error saving screenshot.";
         }

@@ -1,9 +1,22 @@
 // @flow
 
+import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
 import { helpers, overrides, subscribeLocal, realtimeUpdate } from "../util";
+
+const sortedTeams = local => {
+    return orderBy(
+        local.state.teamAbbrevsCache.map((abbrev, i) => {
+            return {
+                key: abbrev,
+                val: `${local.state.teamRegionsCache[i]} ${local.state.teamNamesCache[i]}`,
+            };
+        }),
+        "val",
+    );
+};
 
 const Select = ({ field, handleChange, value }) => {
     return subscribeLocal(local => {
@@ -12,30 +25,15 @@ const Select = ({ field, handleChange, value }) => {
             val: number | string,
         }[];
         if (field === "teams") {
-            options = [];
-            for (let j = 0; j < local.state.teamAbbrevsCache.length; j++) {
-                options[j] = {
-                    key: local.state.teamAbbrevsCache[j],
-                    val: `${local.state.teamRegionsCache[j]} ${
-                        local.state.teamNamesCache[j]
-                    }`,
-                };
-            }
+            options = sortedTeams(local);
         } else if (field === "teamsAndAll") {
             options = [
                 {
                     key: "all",
                     val: "All Teams",
                 },
+                ...sortedTeams(local),
             ];
-            for (let j = 0; j < local.state.teamAbbrevsCache.length; j++) {
-                options[j + 1] = {
-                    key: local.state.teamAbbrevsCache[j],
-                    val: `${local.state.teamRegionsCache[j]} ${
-                        local.state.teamNamesCache[j]
-                    }`,
-                };
-            }
         } else if (field === "teamsAndAllWatch") {
             options = [
                 {
@@ -46,15 +44,8 @@ const Select = ({ field, handleChange, value }) => {
                     key: "watch",
                     val: "Watch List",
                 },
+                ...sortedTeams(local),
             ];
-            for (let j = 0; j < local.state.teamAbbrevsCache.length; j++) {
-                options[j + 2] = {
-                    key: local.state.teamAbbrevsCache[j],
-                    val: `${local.state.teamRegionsCache[j]} ${
-                        local.state.teamNamesCache[j]
-                    }`,
-                };
-            }
         } else if (
             field === "seasons" ||
             field === "seasonsAndCareer" ||

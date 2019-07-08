@@ -360,7 +360,7 @@ const getCopies = async ({
     }
 
     const t = await idb.cache.teams.get(tid);
-    return [processTeam(t, options)];
+    return t ? [processTeam(t, options)] : [];
 };
 
 export default getCopies;

@@ -22,6 +22,7 @@ async function updateTeamInfo(): void | { [key: string]: any } {
         divs: g.divs,
         godMode: g.godMode,
         numTeams: g.numTeams,
+        phase: g.phase,
         teams,
     };
 }

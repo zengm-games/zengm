@@ -64,7 +64,7 @@ const validateTeams = async () => {
             dpidsExcluded: [],
         };
     }
-    if (teams[1].tid === g.userTid) {
+    if (teams[1].tid === g.userTid || teams[1].tid >= g.numTeams) {
         teams[1] = {
             tid: g.userTid === 0 ? 1 : 0,
             pids: [],

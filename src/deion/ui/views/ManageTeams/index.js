@@ -97,6 +97,8 @@ const ManageTeams = props => {
                 dispatch={dispatch}
                 confs={props.confs}
                 divs={props.divs}
+                phase={props.phase}
+                saving={saving}
             />
 
             <h2>Upload Teams File</h2>
@@ -361,6 +363,7 @@ ManageTeams.propTypes = {
     divs: PropTypes.arrayOf(PropTypes.object).isRequired,
     godMode: PropTypes.bool.isRequired,
     numTeams: PropTypes.number.isRequired,
+    phase: PropTypes.number.isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

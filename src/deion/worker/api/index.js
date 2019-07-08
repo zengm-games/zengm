@@ -94,6 +94,21 @@ const addTeam = async (
         teamNamesCache: [...g.teamNamesCache, t.name],
     });
 
+    const dpOffset = g.phase > PHASE.DRAFT ? 1 : 0;
+    for (let i = 0; i < 4; i++) {
+        for (let round = 1; round <= g.numDraftRounds; round++) {
+            await idb.cache.draftPicks.put({
+                tid: t.tid,
+                originalTid: t.tid,
+                round,
+                pick: 0,
+                season: g.season + dpOffset + i,
+            });
+        }
+    }
+
+    await idb.cache.flush();
+
     // Team format used in ManageTemas
     return {
         tid: t.tid,
@@ -991,11 +1006,29 @@ const removeLastTeam = async (): Promise<void> => {
     const tid = g.numTeams - 1;
 
     const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-
     const baseMoods = await player.genBaseMoods();
     for (const p of players) {
         player.addToFreeAgents(p, g.phase, baseMoods);
         await idb.cache.players.put(p);
+    }
+
+    // Delete draft picks, and return traded ones to original owner
+    const draftPicks = await idb.cache.draftPicks.getAll();
+    for (const dp of draftPicks) {
+        if (dp.originalTid === tid) {
+            await idb.cache.draftPicks.delete(dp.dpid);
+        } else if (dp.tid === tid) {
+            dp.tid = dp.originalTid;
+            await idb.cache.draftPicks.put(dp);
+        }
+    }
+
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+        "teamSeasonsByTidSeason",
+        [[tid], [tid, "Z"]],
+    );
+    for (const teamSeason of teamSeasons) {
+        await idb.cache.teamSeasons.delete(teamSeason.rid);
     }
 
     await idb.cache.teams.delete(tid);
@@ -1012,6 +1045,8 @@ const removeLastTeam = async (): Promise<void> => {
         ),
         teamNamesCache: g.teamNamesCache.slice(0, g.teamNamesCache.length - 1),
     });
+
+    await idb.cache.flush();
 };
 
 const removeLeague = async (lid: number) => {

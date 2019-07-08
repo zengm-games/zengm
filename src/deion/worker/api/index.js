@@ -84,8 +84,11 @@ const addTeam = async (
     teamSeason.pop = pop;
     teamSeason.stadiumCapacity = g.defaultStadiumCapacity;
 
+    const teamStats = team.genStatsRow(t.tid);
+
     await idb.cache.teams.put(t);
     await idb.cache.teamSeasons.put(teamSeason);
+    await idb.cache.teamStats.put(teamStats);
 
     await league.setGameAttributes({
         numTeams: g.numTeams + 1,
@@ -1029,6 +1032,20 @@ const removeLastTeam = async (): Promise<void> => {
     );
     for (const teamSeason of teamSeasons) {
         await idb.cache.teamSeasons.delete(teamSeason.rid);
+    }
+
+    const teamStats = [
+        ...(await idb.cache.teamStats.indexGetAll("teamStatsByPlayoffsTid", [
+            [false, tid],
+            [false, tid],
+        ])),
+        ...(await idb.cache.teamStats.indexGetAll("teamStatsByPlayoffsTid", [
+            [true, tid],
+            [true, tid],
+        ])),
+    ];
+    for (const teamStat of teamStats) {
+        await idb.cache.teamStats.delete(teamStat.rid);
     }
 
     await idb.cache.teams.delete(tid);

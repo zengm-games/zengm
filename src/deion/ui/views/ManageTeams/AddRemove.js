@@ -152,7 +152,7 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
                         <span className="text-danger font-weight-bold">
                             completely delete
                         </span>{" "}
-                        all references to the last team on the list below.
+                        all historical data for the last team on the list below.
                     </p>
 
                     <button

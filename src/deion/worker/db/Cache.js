@@ -871,6 +871,7 @@ class Cache {
                 "releasedPlayers",
                 "schedule",
                 "teamSeasons",
+                "teamStats",
                 "teams",
             ].includes(store)
         ) {

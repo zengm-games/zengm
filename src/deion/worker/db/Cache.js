@@ -871,6 +871,7 @@ class Cache {
                 "releasedPlayers",
                 "schedule",
                 "teamSeasons",
+                "teams",
             ].includes(store)
         ) {
             if (this._data[store].hasOwnProperty(id)) {

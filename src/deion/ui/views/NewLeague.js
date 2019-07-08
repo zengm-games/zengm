@@ -175,7 +175,7 @@ class NewLeague extends React.Component {
         let newTeams = helpers.deepCopy(leagueFile.teams);
         if (newTeams) {
             for (const t of newTeams) {
-                // Is pop hidden in season, like in editTeamInfo import?
+                // Is pop hidden in season, like in manageTeams import?
                 if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
                     t.pop = t.seasons[t.seasons.length - 1].pop;
                 }

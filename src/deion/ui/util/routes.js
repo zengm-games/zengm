@@ -58,7 +58,7 @@ const routes = () => {
         "/l/:lid/history": genPage("history"),
         "/l/:lid/history/:season": genPage("history"),
         "/l/:lid/hall_of_fame": genPage("hallOfFame"),
-        "/l/:lid/edit_team_info": genPage("editTeamInfo"),
+        "/l/:lid/manage_teams": genPage("manageTeams"),
         "/l/:lid/roster": genPage("roster"),
         "/l/:lid/roster/:abbrev": genPage("roster"),
         "/l/:lid/roster/:abbrev/:season": genPage("roster"),

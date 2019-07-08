@@ -299,14 +299,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
             },
             {
                 type: "link",
-                active: pageID => pageID === "editTeamInfo",
-                league: true,
-                godMode: true,
-                path: ["edit_team_info"],
-                text: "Edit Team Info",
-            },
-            {
-                type: "link",
                 active: pageID => pageID === "eventLog",
                 league: true,
                 path: ["event_log"],
@@ -346,6 +338,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 league: true,
                 path: ["god_mode"],
                 text: "God Mode",
+            },
+            {
+                type: "link",
+                active: pageID => pageID === "manageTeams",
+                league: true,
+                godMode: true,
+                path: ["manage_teams"],
+                text: "Manage Teams",
             },
             {
                 type: "link",
@@ -440,9 +440,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 type: "link",
                 league: true,
                 nonLeague: true,
-                path: `https://${
-                    process.env.SPORT
-                }-gm.com/manual/customization/`,
+                path: `https://${process.env.SPORT}-gm.com/manual/customization/`,
                 text: "Custom Rosters",
             },
             {

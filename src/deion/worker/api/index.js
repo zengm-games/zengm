@@ -55,6 +55,57 @@ const acceptContractNegotiation = async (
     return contractNegotiation.accept(pid, amount, exp);
 };
 
+const addTeam = async (
+    cid: number,
+    did: number,
+): Promise<{
+    tid: number,
+    abbrev: string,
+    region: string,
+    name: string,
+    imgURL?: string,
+    pop: number,
+    stadiumCapacity: number,
+}> => {
+    const pop = 1;
+
+    const t = team.generate({
+        tid: g.numTeams,
+        cid,
+        did,
+        region: "Region",
+        name: "Name",
+        abbrev: "ZZZ",
+        pop,
+        imgURL: undefined,
+    });
+
+    const teamSeason = team.genSeasonRow(t.tid);
+    teamSeason.pop = pop;
+    teamSeason.stadiumCapacity = g.defaultStadiumCapacity;
+
+    await idb.cache.teams.put(t);
+    await idb.cache.teamSeasons.put(teamSeason);
+
+    await league.setGameAttributes({
+        numTeams: g.numTeams + 1,
+        teamAbbrevsCache: [...g.teamAbbrevsCache, t.abbrev],
+        teamRegionsCache: [...g.teamRegionsCache, t.region],
+        teamNamesCache: [...g.teamNamesCache, t.name],
+    });
+
+    // Team format used in ManageTemas
+    return {
+        tid: t.tid,
+        abbrev: t.abbrev,
+        region: t.region,
+        name: t.name,
+        imgURL: t.imgURL,
+        pop: teamSeason.pop,
+        stadiumCapacity: teamSeason.stadiumCapacity,
+    };
+};
+
 const autoSortRoster = async (pos?: string) => {
     if (!overrides.core.team.rosterAutoSort) {
         throw new Error("Missing overrides.core.team.rosterAutoSort");
@@ -936,6 +987,33 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
     await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
+const removeLastTeam = async (): Promise<void> => {
+    const tid = g.numTeams - 1;
+
+    const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+
+    const baseMoods = await player.genBaseMoods();
+    for (const p of players) {
+        player.addToFreeAgents(p, g.phase, baseMoods);
+        await idb.cache.players.put(p);
+    }
+
+    await idb.cache.teams.delete(tid);
+
+    await league.setGameAttributes({
+        numTeams: g.numTeams - 1,
+        teamAbbrevsCache: g.teamAbbrevsCache.slice(
+            0,
+            g.teamAbbrevsCache.length - 1,
+        ),
+        teamRegionsCache: g.teamRegionsCache.slice(
+            0,
+            g.teamRegionsCache.length - 1,
+        ),
+        teamNamesCache: g.teamNamesCache.slice(0, g.teamNamesCache.length - 1),
+    });
+};
+
 const removeLeague = async (lid: number) => {
     await league.remove(lid);
 };
@@ -1344,6 +1422,7 @@ const updateTrade = async (teams: TradeTeams) => {
 export default {
     actions,
     acceptContractNegotiation,
+    addTeam,
     autoSortRoster,
     beforeViewLeague,
     beforeViewNonLeague,
@@ -1372,6 +1451,7 @@ export default {
     ratingsStatsPopoverInfo,
     realtimeUpdate,
     releasePlayer,
+    removeLastTeam,
     removeLeague,
     reorderDepthDrag,
     reorderRosterDrag,

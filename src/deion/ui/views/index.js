@@ -14,7 +14,6 @@ import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
 import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
-import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
@@ -34,6 +33,7 @@ import Live from "./Live";
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";
+import ManageTeams from "./ManageTeams";
 import Message from "./Message";
 import MostGamesNoPlayoffs from "./MostGamesNoPlayoffs";
 import MultiTeamMode from "./MultiTeamMode";
@@ -83,7 +83,6 @@ export default {
     DraftScouting,
     DraftSummary,
     DraftTeamHistory,
-    EditTeamInfo,
     EventLog,
     ExportLeague,
     ExportStats,
@@ -103,6 +102,7 @@ export default {
     LiveGame,
     LoginOrRegister,
     LostPassword,
+    ManageTeams,
     Message,
     MostGamesNoPlayoffs,
     MultiTeamMode,

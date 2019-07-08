@@ -10,16 +10,17 @@ async function updateTeamInfo(): void | { [key: string]: any } {
         season: g.season,
     });
 
-    for (let i = 0; i < teams.length; i++) {
-        teams[i].pop = parseFloat(teams[i].seasonAttrs.pop.toFixed(6));
-        teams[i].stadiumCapacity = teams[i].seasonAttrs.stadiumCapacity;
+    for (const t of teams) {
+        t.pop = parseFloat(t.seasonAttrs.pop.toFixed(6));
+        t.stadiumCapacity = t.seasonAttrs.stadiumCapacity;
+        delete t.seasonAttrs;
     }
 
     return {
         defaultStadiumCapacity: g.defaultStadiumCapacity,
+        confs: g.confs,
+        divs: g.divs,
         godMode: g.godMode,
-        numConfs: g.confs.length,
-        numDivs: g.divs.length,
         numTeams: g.numTeams,
         teams,
     };

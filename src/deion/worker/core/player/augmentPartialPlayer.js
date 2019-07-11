@@ -85,22 +85,28 @@ const augmentPartialPlayer = (
     }
 
     // Fix always-missing info
-    if (p.tid === PLAYER.UNDRAFTED_2) {
-        p.ratings[0].season = g.startingSeason + 1;
+    const offset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+    if (p.tid === PLAYER.UNDRAFTED) {
+        p.ratings[0].season = g.season + offset;
+        p.draft.year = p.ratings[0].season;
+    } else if (p.tid === PLAYER.UNDRAFTED_2) {
+        p.ratings[0].season = g.season + 1 + offset;
+        p.draft.year = p.ratings[0].season;
     } else if (p.tid === PLAYER.UNDRAFTED_3) {
-        p.ratings[0].season = g.startingSeason + 2;
+        p.ratings[0].season = g.season + 2 + offset;
+        p.draft.year = p.ratings[0].season;
     } else {
         if (!p.ratings[0].hasOwnProperty("season")) {
-            p.ratings[0].season = g.startingSeason;
+            p.ratings[0].season = g.season;
         }
 
         // Fix improperly-set season in ratings
         if (
             p.ratings.length === 1 &&
-            p.ratings[0].season < g.startingSeason &&
+            p.ratings[0].season < g.season &&
             p.tid !== PLAYER.RETIRED
         ) {
-            p.ratings[0].season = g.startingSeason;
+            p.ratings[0].season = g.season;
         }
     }
 
@@ -127,22 +133,6 @@ const augmentPartialPlayer = (
         }
     }
 
-    // See if we need to fix a fucked up ratings season for draft prospect
-    const isUndrafted = [
-        PLAYER.UNDRAFTED,
-        PLAYER.UNDRAFTED_2,
-        PLAYER.UNDRAFTED_3,
-        PLAYER.UNDRAFTED_FANTASY_TEMP,
-    ].includes(p.tid);
-    const fantasyDraft =
-        g.phase === PHASE.FANTASY_DRAFT && p.tid === PLAYER.UNDRAFTED;
-    if (p.ratings.length === 1 && isUndrafted && !fantasyDraft) {
-        const r = p.ratings[0];
-        if (typeof p.draft.year === "number" && p.draft.year !== r.season) {
-            r.season = p.draft.year;
-        }
-    }
-
     for (const r of p.ratings) {
         if (!r.hasOwnProperty("fuzz")) {
             r.fuzz = pg.ratings[0].fuzz;
@@ -158,6 +148,17 @@ const augmentPartialPlayer = (
         }
         if (!r.hasOwnProperty("pot") || r.pot < r.ovr) {
             r.pot = bootstrapPot(r, r.season - p.born.year);
+        }
+        if (!r.hasOwnProperty("pos") && process.env.SPORT !== "football") {
+            // Football is handled below with call to player.develop
+            if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+                r.pos = p.pos;
+            } else {
+                if (!overrides.core.player.pos) {
+                    throw new Error("Missing overrides.core.player.pos");
+                }
+                r.pos = overrides.core.player.pos(r);
+            }
         }
     }
 
@@ -227,7 +228,7 @@ const augmentPartialPlayer = (
     }
 
     const r = p.ratings[p.ratings.length - 1];
-    if (process.env.SPORT === "football" && (!r.ovrs || !r.pots)) {
+    if (process.env.SPORT === "football" && (!r.ovrs || !r.pots || !r.pos)) {
         // Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
         develop(p, 0);
     }

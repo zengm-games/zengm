@@ -112,6 +112,15 @@ const addTeam = async (
 
     await idb.cache.flush();
 
+    // Add new draft prospects to draft class - one for each round
+    for (const draftClassTid of [
+        PLAYER.UNDRAFTED,
+        PLAYER.UNDRAFTED_2,
+        PLAYER.UNDRAFTED_3,
+    ]) {
+        await draft.genPlayers(draftClassTid, undefined, g.numDraftRounds);
+    }
+
     // Team format used in ManageTemas
     return {
         tid: t.tid,

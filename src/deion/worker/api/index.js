@@ -1035,6 +1035,7 @@ const removeLastTeam = async (): Promise<void> => {
         }
     }
 
+    // $FlowFixMe
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
         "teamSeasonsByTidSeason",
         [[tid], [tid, "Z"]],

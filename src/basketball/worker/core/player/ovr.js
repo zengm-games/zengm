@@ -13,22 +13,22 @@ import type { PlayerRatings } from "../../../common/types";
 const ovr = (ratings: PlayerRatings): number => {
     // This formula is loosely based on linear regression of ratings to zscore(ws48)+zscore(per):
     const r =
-        (5 * ratings.hgt +
-            1 * ratings.stre +
-            4 * ratings.spd +
-            2 * ratings.jmp +
+        (4 * ratings.hgt +
+            8 * ratings.stre +
+            13 * ratings.spd +
+            3 * ratings.jmp +
             1 * ratings.endu +
-            1 * ratings.ins +
-            2 * ratings.dnk +
-            1 * ratings.ft +
-            1 * ratings.fg +
-            3 * ratings.tp +
-            7 * ratings.oiq +
-            3 * ratings.diq +
-            3 * ratings.drb +
-            3 * ratings.pss +
-            1 * ratings.reb) /
-        38;
+            9 * ratings.ins +
+            9 * ratings.dnk +
+            2 * ratings.ft +
+            2 * ratings.fg +
+            2 * ratings.tp +
+            16 * ratings.oiq +
+            2 * ratings.diq +
+            5 * ratings.drb +
+            16 * ratings.pss +
+            8 * ratings.reb) /
+        100;
 
     // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
     // +8 at 68

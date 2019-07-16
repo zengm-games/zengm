@@ -408,6 +408,7 @@ const getCountry = (misc, file) => {
         GO: "Brazil",
         Guadaloupe: "Guadeloupe",
         "Les Abymes": "Guadeloupe",
+        Macedonia: "North Macedonia",
         Nigera: "Nigeria",
         "Republic of Seychelles": "Seychelles",
         "Saint Vincent and Grenadines": "Saint Vincent and the Grenadines",
@@ -542,14 +543,7 @@ const namesByCountryCumsum = namesByCountry => {
 const fnsByCountryCumsum = namesByCountryCumsum(fnsByCountry);
 const lnsByCountryCumsum = namesByCountryCumsum(lnsByCountry);
 
-// This is to condense [name, cumsum] onto one line in output
-const displayNames = names => {
-    return JSON.stringify(names, null, 4)
-        .replace(/,\n {12}/g, ", ")
-        .replace(/\n {12}/g, "")
-        .replace(/\n {8}]/g, "]");
-};
-
 console.log(JSON.stringify(Object.keys(fnsByCountry).sort(), null, 4));
-console.log(`let first = ${displayNames(fnsByCountryCumsum)};\n`);
-console.log(`let last = ${displayNames(lnsByCountryCumsum)};`);
+console.log(
+    JSON.stringify({ first: fnsByCountryCumsum, last: lnsByCountryCumsum }),
+);

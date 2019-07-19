@@ -1,3 +1,5 @@
+on draft scouting page, year is wrong after the draft (like after 1962 draft, the 1963 upcoming class is labeled 1962)
+
 advance to free agency notification not showing up on mobile safari when someone is still negotiating
 - https://old.reddit.com/r/BasketballGM/comments/cc3lc8/player_refuses_to_negotiate_now_im_stuck_what_do/ - could be related to data being deleted, would that make the notification fail?
 - people say reloading fixes it
@@ -46,6 +48,9 @@ in basketball gamesim
 - player with assist can be same as player who shoots
 
 # football
+
+infinite AV is possible
+- https://media.discordapp.net/attachments/331882115119448065/600596243055509516/unknown.png?width=1440&height=423
 
 blocked fg too uncommon?
 

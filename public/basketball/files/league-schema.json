@@ -508,54 +508,11 @@
                     "tid": {
                         "type": "integer"
                     },
-                    "team": {
-                        "type": "object",
-                        "properties": {
-                            "amount": {
-                                "type": "number"
-                            },
-                            "years": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": ["amount", "years"]
-                    },
-                    "player": {
-                        "type": "object",
-                        "properties": {
-                            "amount": {
-                                "type": "number"
-                            },
-                            "years": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": ["amount", "years"]
-                    },
-                    "orig": {
-                        "type": "object",
-                        "properties": {
-                            "amount": {
-                                "type": "number"
-                            },
-                            "years": {
-                                "type": "integer"
-                            }
-                        },
-                        "required": ["amount", "years"]
-                    },
                     "resigning": {
                         "type": "boolean"
                     }
                 },
-                "required": [
-                    "pid",
-                    "tid",
-                    "team",
-                    "player",
-                    "orig",
-                    "resigning"
-                ]
+                "required": ["pid", "tid", "resigning"]
             }
         },
         "playerFeats": {

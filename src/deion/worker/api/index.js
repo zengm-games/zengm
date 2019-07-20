@@ -865,8 +865,7 @@ const handleUploadedDraftClass = async (
 
                 p.born.year = draftYear - 19;
             } else {
-                p.born.year = draftYear - (p.draft.year - uploadedSeason);
-                p.draft.year = draftYear;
+                p.born.year = draftYear - (uploadedSeason - p.born.year);
             }
 
             // Make sure player object is fully defined
@@ -877,6 +876,8 @@ const handleUploadedDraftClass = async (
             );
 
             p.tid = PLAYER.UNDRAFTED;
+            p.draft.year = draftYear;
+            p.ratings[p.ratings.length - 1].season = draftYear;
 
             if (p.hasOwnProperty("pid")) {
                 delete p.pid;

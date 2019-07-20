@@ -205,12 +205,12 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
     }
 
     // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
-    const players3 = await idb.cache.players.indexGetAll(
-        "playersByDraftYearRetiredYear",
-        [[g.season + 1], [g.season + 1, Infinity]],
+    const draftProspects = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        PLAYER.UNDRAFTED,
     );
-    for (const p of players3) {
-        if (p.tid !== PLAYER.UNDRAFTED) {
+    for (const p of draftProspects) {
+        if (p.draft.year !== g.season + 1) {
             continue;
         }
         p.ratings[0].fuzz /= Math.sqrt(2);
@@ -218,12 +218,8 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
         player.updateValues(p);
         await idb.cache.players.put(p);
     }
-    const players4 = await idb.cache.players.indexGetAll(
-        "playersByDraftYearRetiredYear",
-        [[g.season + 2], [g.season + 2, Infinity]],
-    );
-    for (const p of players4) {
-        if (p.tid !== PLAYER.UNDRAFTED) {
+    for (const p of draftProspects) {
+        if (p.draft.year !== g.season + 2) {
             continue;
         }
         p.ratings[0].fuzz /= Math.sqrt(2);
@@ -234,15 +230,21 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
     // Generate a new draft class, while leaving existing players in that draft class in place
     const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6);
-    const numPlayersAlreadyInDraftClass = (await idb.cache.players.indexGetAll(
-        "playersByDraftYearRetiredYear",
-        [[g.season + 3], [g.season + 3, Infinity]],
-    )).filter(p => p.tid === PLAYER.UNDRAFTED).length;
+    const numPlayersAlreadyInDraftClass = draftProspects.filter(
+        p => p.draft.year === g.season + 3,
+    ).length;
     await draft.genPlayers(
         g.season + 3,
         undefined,
         baseNumPlayers - numPlayersAlreadyInDraftClass,
     );
+
+    // Delete any old undrafted players that still somehow exist
+    for (const p of draftProspects) {
+        if (p.draft.year <= g.season) {
+            await idb.cache.delete(p.pid);
+        }
+    }
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
     await league.setGameAttributes({ daysLeft: 30 });

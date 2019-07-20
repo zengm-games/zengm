@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER } from "../../../../deion/common";
+import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
@@ -53,7 +53,6 @@ const typeFactors: {
 const genRatings = (
     season: number,
     scoutingRank: number,
-    tid: number,
 ): { heightInInches: number, ratings: PlayerRatings } => {
     // realHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
     let heightInInches = random.heightDist() + Math.random() - 0.5; // Fraction of an inch
@@ -188,7 +187,7 @@ const genRatings = (
 
     // Higher fuzz for draft prospects
     let factor = 1;
-    if (g.PHASE >= PHASE.RESIGN_PLAYERS) {
+    if (g.phase >= PHASE.RESIGN_PLAYERS) {
         if (season === g.season + 2) {
             factor = Math.sqrt(2);
         } else if (season >= g.season + 3) {

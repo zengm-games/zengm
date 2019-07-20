@@ -23,7 +23,6 @@ const generate = (
     const { heightInInches, ratings } = overrides.core.player.genRatings(
         newLeague ? g.startingSeason : draftYear,
         scoutingRank,
-        tid,
     );
 
     const { country, firstName, lastName } = name();

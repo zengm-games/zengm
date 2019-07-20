@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER } from "../../../../deion/common";
+import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
 import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
@@ -217,7 +217,6 @@ let timeoutID;
 const genRatings = (
     season: number,
     scoutingRank: number,
-    tid: number,
 ): { heightInInches: number, ratings: PlayerRatings } => {
     const pos = getPos();
     const rawRatings = RATINGS.reduce((ratings, rating) => {
@@ -304,7 +303,7 @@ const genRatings = (
     };
 
     // Higher fuzz for draft prospects
-    if (g.PHASE >= PHASE.RESIGN_PLAYERS) {
+    if (g.phase >= PHASE.RESIGN_PLAYERS) {
         if (season === g.season + 2) {
             ratings.fuzz *= Math.sqrt(2);
         } else if (season >= g.season + 3) {

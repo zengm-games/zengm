@@ -54,6 +54,7 @@ export type Store =
 type Index =
     | "draftPicksBySeason"
     | "draftPicksByTid"
+    | "playersByDraftYearRetiredYear"
     | "playersByTid"
     | "releasedPlayers"
     | "releasedPlayersByTid"
@@ -102,9 +103,10 @@ const getIndexKey = (index, row) => {
     return stringifyInfinity(
         index.key
             // $FlowFixMe
-            .map(field =>
-                field === "draft.year" ? row.draft.year : row[field],
-            ),
+            .map(field => {
+                // $FlowFixMe
+                return field === "draft.year" ? row.draft.year : row[field];
+            }),
     );
 };
 

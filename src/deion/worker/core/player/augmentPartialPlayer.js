@@ -88,7 +88,7 @@ const augmentPartialPlayer = (
     // Fix always-missing info
     const offset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
     if (p.tid === PLAYER.UNDRAFTED) {
-        if (version <= 32) {
+        if (version === undefined || version <= 32) {
             p.ratings[0].season = g.season + offset;
             p.draft.year = p.ratings[0].season;
         } else {

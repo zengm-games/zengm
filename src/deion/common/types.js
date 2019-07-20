@@ -713,7 +713,7 @@ export type WorkerOverridesCore = {|
             age: number,
             coachingRank?: number,
         ) => void,
-        genRatings?: (season: number, scoutingRank: number, tid: number) => any,
+        genRatings?: (season: number, scoutingRank: number) => any,
         genWeight?: (hgt: number, stre: number) => number,
         getDepthPlayers?: <
             // eslint-disable-next-line no-undef

@@ -101,7 +101,7 @@ const augmentPartialPlayer = (
             p.draft.year = p.ratings[0].season;
         } else {
             throw new Error(
-                `Invalid tid ${PLAYER.UNDRAFTED_2} (in version 33 or higher, all undrafter players should have a tid of ${PLAYER.UNDRAFTED})`,
+                `Invalid tid ${PLAYER.UNDRAFTED_2} (in version 33 or higher, all undrafted players should have a tid of ${PLAYER.UNDRAFTED})`,
             );
         }
     } else if (p.tid === PLAYER.UNDRAFTED_3) {
@@ -111,7 +111,7 @@ const augmentPartialPlayer = (
             p.draft.year = p.ratings[0].season;
         } else {
             throw new Error(
-                `Invalid tid ${PLAYER.UNDRAFTED_3} (in version 33 or higher, all undrafter players should have a tid of ${PLAYER.UNDRAFTED})`,
+                `Invalid tid ${PLAYER.UNDRAFTED_3} (in version 33 or higher, all undrafted players should have a tid of ${PLAYER.UNDRAFTED})`,
             );
         }
     } else {

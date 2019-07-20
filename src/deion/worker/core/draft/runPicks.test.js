@@ -1,6 +1,7 @@
 // @flow
 
 import assert from "assert";
+import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
@@ -10,10 +11,10 @@ import { getDraftTids, loadTeamSeasons } from "./common.test";
 const testRunPicks = async (numNow, numTotal) => {
     const pids = await draft.runPicks(false);
     assert.equal(pids.length, numNow);
-    const players = await idb.cache.players.indexGetAll(
+    const players = (await idb.cache.players.indexGetAll(
         "playersByDraftYearRetiredYear",
         [[g.season], [g.season, Infinity]],
-    );
+    )).filter(p => p.tid === PLAYER.UNDRAFTED);
     assert.equal(players.length, 70 - numTotal);
 };
 
@@ -30,10 +31,11 @@ const testDraftUser = async round => {
     }
     assert.equal(dp.tid, g.userTid);
 
-    const p = await idb.cache.players.indexGet(
+    const players = (await idb.cache.players.indexGetAll(
         "playersByDraftYearRetiredYear",
-        [g.season, Infinity],
-    );
+        [[g.season], [g.season, Infinity]],
+    )).filter(p => p.tid === PLAYER.UNDRAFTED);
+    const p = players[0];
     await draft.selectPlayer(dp, p.pid);
     assert.equal(p.tid, g.userTid);
 };

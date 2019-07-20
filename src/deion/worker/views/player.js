@@ -163,8 +163,6 @@ async function updatePlayer(
             retired: p.tid === PLAYER.RETIRED,
             showContract:
                 p.tid !== PLAYER.UNDRAFTED &&
-                p.tid !== PLAYER.UNDRAFTED_2 &&
-                p.tid !== PLAYER.UNDRAFTED_3 &&
                 p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
                 p.tid !== PLAYER.RETIRED,
             injured: p.injury.type !== "Healthy",

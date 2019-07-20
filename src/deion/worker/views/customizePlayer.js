@@ -21,9 +21,6 @@ async function updateCustomizePlayer(
             attrs: ["tid", "region", "name"],
         });
 
-        // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        const seasonOffset = g.phase < PHASE.FREE_AGENCY ? 0 : 1;
-
         for (let i = 0; i < teams.length; i++) {
             teams[i].text = `${teams[i].region} ${teams[i].name}`;
         }
@@ -32,16 +29,8 @@ async function updateCustomizePlayer(
             text: "Retired",
         });
         teams.unshift({
-            tid: PLAYER.UNDRAFTED_3,
-            text: `${g.season + seasonOffset + 2} Draft Prospect`,
-        });
-        teams.unshift({
-            tid: PLAYER.UNDRAFTED_2,
-            text: `${g.season + seasonOffset + 1} Draft Prospect`,
-        });
-        teams.unshift({
             tid: PLAYER.UNDRAFTED,
-            text: `${g.season + seasonOffset} Draft Prospect`,
+            text: "Draft Prospect",
         });
         teams.unshift({
             tid: PLAYER.FREE_AGENT,

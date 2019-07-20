@@ -1,3 +1,14 @@
+allow arbitrary draft classes
+- beta (ask for multiplayer leagues)
+- allow specifying draft.year in customizePlayer
+- database upgrade
+- test league file with far future draft class
+- documentation
+- blog post
+- should not keep draft classes 3+ years out in cache
+- in newPhaseResignPlayers, just top off future draft class (similar to new league), don't create 70 from scratch always
+- test draft class upload
+
 on draft scouting page, year is wrong after the draft (like after 1962 draft, the 1963 upcoming class is labeled 1962)
 
 advance to free agency notification not showing up on mobile safari when someone is still negotiating

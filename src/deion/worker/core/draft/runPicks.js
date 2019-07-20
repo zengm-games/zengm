@@ -27,7 +27,10 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
     const pids = [];
 
     const [playersAll, draftPicks] = await Promise.all([
-        idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED),
+        (await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+            [g.season],
+            [g.season, Infinity],
+        ])).filter(p => p.tid === PLAYER.UNDRAFTED),
         getOrder(),
     ]);
 

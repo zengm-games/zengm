@@ -99,27 +99,23 @@ const addTeam = async (
 
     const dpOffset = g.phase > PHASE.DRAFT ? 1 : 0;
     for (let i = 0; i < 4; i++) {
+        const draftYear = g.season + dpOffset + i;
+
         for (let round = 1; round <= g.numDraftRounds; round++) {
             await idb.cache.draftPicks.put({
                 tid: t.tid,
                 originalTid: t.tid,
                 round,
                 pick: 0,
-                season: g.season + dpOffset + i,
+                season: draftYear,
             });
         }
+
+        // Add new draft prospects to draft class
+        await draft.genPlayers(draftYear, undefined, g.numDraftRounds);
     }
 
     await idb.cache.flush();
-
-    // Add new draft prospects to draft class - one for each round
-    for (const draftClassTid of [
-        PLAYER.UNDRAFTED,
-        PLAYER.UNDRAFTED_2,
-        PLAYER.UNDRAFTED_3,
-    ]) {
-        await draft.genPlayers(draftClassTid, undefined, g.numDraftRounds);
-    }
 
     // Team format used in ManageTemas
     return {
@@ -806,20 +802,8 @@ const getVersionWorker = async () => {
 
 const handleUploadedDraftClass = async (
     uploadedFile: any,
-    seasonOffset: 0 | 1 | 2,
+    draftYear: number,
 ) => {
-    // What tid to replace?
-    let draftClassTid;
-    if (seasonOffset === 0) {
-        draftClassTid = PLAYER.UNDRAFTED;
-    } else if (seasonOffset === 1) {
-        draftClassTid = PLAYER.UNDRAFTED_2;
-    } else if (seasonOffset === 2) {
-        draftClassTid = PLAYER.UNDRAFTED_3;
-    } else {
-        throw new Error("Invalid draft class index");
-    }
-
     // Get all players from uploaded files
     let players = uploadedFile.players;
 
@@ -839,11 +823,13 @@ const handleUploadedDraftClass = async (
 
     // Delete old players from draft class
     const oldPlayers = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        draftClassTid,
+        "playersByDraftYearRetiredYear",
+        [[draftYear], [draftYear, Infinity]],
     );
     for (const p of oldPlayers) {
-        await idb.cache.players.delete(p.pid);
+        if (p.tid === PLAYER.UNDRAFTED) {
+            await idb.cache.players.delete(p.pid);
+        }
     }
 
     // Find season from uploaded file, for age adjusting
@@ -859,23 +845,10 @@ const handleUploadedDraftClass = async (
         uploadedSeason = uploadedFile.startingSeason;
     }
 
-    let seasonOffset2 = seasonOffset;
-    if (g.phase >= PHASE.FREE_AGENCY) {
-        // Already generated next year's draft, so bump up one
-        seasonOffset2 += 1;
-    }
-
-    const draftYear = g.season + seasonOffset2;
-
     // Add new players to database
     await Promise.all(
         players.map(async p => {
-            // Adjust age
-            if (uploadedSeason !== undefined) {
-                p.born.year += g.season - uploadedSeason + seasonOffset2;
-            }
-
-            // Adjust seasons
+            // Adjust age and seasons
             p.ratings[0].season = draftYear;
             if (!p.draft) {
                 // For college basketball imports
@@ -889,7 +862,10 @@ const handleUploadedDraftClass = async (
                     ovr: 0,
                     skills: [],
                 };
+
+                p.born.year = draftYear - 19;
             } else {
+                p.born.year = draftYear - (p.draft.year - uploadedSeason);
                 p.draft.year = draftYear;
             }
 
@@ -900,10 +876,8 @@ const handleUploadedDraftClass = async (
                 uploadedFile.version,
             );
 
-            // Manually set TID, since at this point it is always PLAYER.UNDRAFTED
-            p.tid = draftClassTid;
+            p.tid = PLAYER.UNDRAFTED;
 
-            // Manually remove PID, since all it can do is cause trouble
             if (p.hasOwnProperty("pid")) {
                 delete p.pid;
             }
@@ -916,7 +890,7 @@ const handleUploadedDraftClass = async (
     const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
     if (players.length < baseNumPlayers) {
         await draft.genPlayers(
-            draftClassTid,
+            draftYear,
             scoutingRank,
             baseNumPlayers - players.length,
         );
@@ -1333,21 +1307,11 @@ const upsertCustomizedPlayer = async (
     const r = p.ratings.length - 1;
 
     // Fix draft and ratings season
-    if (
-        p.tid === PLAYER.UNDRAFTED ||
-        p.tid === PLAYER.UNDRAFTED_2 ||
-        p.tid === PLAYER.UNDRAFTED_3
-    ) {
-        if (p.tid === PLAYER.UNDRAFTED) {
-            p.draft.year = season;
-        } else if (p.tid === PLAYER.UNDRAFTED_2) {
-            p.draft.year = season + 1;
-        } else if (p.tid === PLAYER.UNDRAFTED_3) {
-            p.draft.year = season + 2;
-        }
+    if (p.tid === PLAYER.UNDRAFTED) {
+        p.draft.year = season;
 
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        if (g.phase >= PHASE.FREE_AGENCY) {
+        if (g.phase >= PHASE.RESIGN_PLAYERS) {
             p.draft.year += 1;
         }
 
@@ -1375,12 +1339,7 @@ const upsertCustomizedPlayer = async (
     }
 
     // If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
-    if (
-        p.tid !== PLAYER.UNDRAFTED &&
-        p.tid !== PLAYER.UNDRAFTED_2 &&
-        p.tid !== PLAYER.UNDRAFTED_3 &&
-        g.phase < PHASE.FREE_AGENCY
-    ) {
+    if (p.tid !== PLAYER.UNDRAFTED && g.phase < PHASE.FREE_AGENCY) {
         // This makes sure it's only for created players, not edited players
         if (!p.hasOwnProperty("pid")) {
             p.draft.year = g.season - 1;
@@ -1389,11 +1348,7 @@ const upsertCustomizedPlayer = async (
     // Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
     if (
         p.tid !== PLAYER.UNDRAFTED &&
-        p.tid !== PLAYER.UNDRAFTED_2 &&
-        p.tid !== PLAYER.UNDRAFTED_3 &&
-        (originalTid === PLAYER.UNDRAFTED ||
-            originalTid === PLAYER.UNDRAFTED_2 ||
-            originalTid === PLAYER.UNDRAFTED_3) &&
+        originalTid === PLAYER.UNDRAFTED &&
         g.phase < PHASE.FREE_AGENCY
     ) {
         p.draft.year = g.season - 1;

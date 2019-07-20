@@ -113,11 +113,7 @@ const getAbbrev = (tid: number | string): string => {
     if (tid === PLAYER.FREE_AGENT) {
         return "FA";
     }
-    if (
-        tid === PLAYER.UNDRAFTED ||
-        tid === PLAYER.UNDRAFTED_2 ||
-        tid === PLAYER.UNDRAFTED_3
-    ) {
+    if (tid === PLAYER.UNDRAFTED) {
         return "DP";
     }
     if (tid < 0 || Number.isNaN(tid)) {

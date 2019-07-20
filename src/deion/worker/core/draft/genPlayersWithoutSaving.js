@@ -10,38 +10,24 @@ import type {
 } from "../../../common/types";
 
 const genPlayersWithoutSaving = (
-    tid: number,
+    draftYear: number,
     scoutingRank: number,
     numPlayers?: number,
-    newLeague?: boolean,
-): {
-    draftYear: number,
-    players: PlayerWithoutPid<MinimalPlayerRatings>[],
-} => {
+): PlayerWithoutPid<MinimalPlayerRatings>[] => {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
     }
 
-    let draftYear = g.season;
-
-    let baseAge = 19;
-    if (newLeague) {
-        // New league, creating players for draft in same season and following 2 seasons
-        if (tid === PLAYER.UNDRAFTED_2) {
-            baseAge -= 1;
-            draftYear += 1;
-        } else if (tid === PLAYER.UNDRAFTED_3) {
-            baseAge -= 2;
-            draftYear += 2;
-        }
-    } else if (tid === PLAYER.UNDRAFTED_3) {
-        // Player being generated after draft ends, for draft in 3 years
-        baseAge -= 3;
-        draftYear += 3;
-    }
+    const baseAge = 19 - (draftYear - g.season);
 
     let remaining = range(numPlayers).map(() => {
-        const p = player.generate(tid, baseAge, draftYear, false, scoutingRank);
+        const p = player.generate(
+            PLAYER.UNDRAFTED,
+            baseAge,
+            draftYear,
+            false,
+            scoutingRank,
+        );
 
         // Just for ovr/pot
         player.develop(p, 0);
@@ -97,10 +83,7 @@ const genPlayersWithoutSaving = (
         player.updateValues(p);
     }
 
-    return {
-        draftYear,
-        players: enteringDraft,
-    };
+    return enteringDraft;
 };
 
 export default genPlayersWithoutSaving;

@@ -409,18 +409,19 @@ export const createWithoutSaving = (
         players = [];
 
         // Generate past 20 years of draft classes
-        const NUM_PAST_SEASONS = 20; // Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
+        const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? -1 : 0;
+        const NUM_PAST_SEASONS = 20 + seasonOffset; // Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
         const rookieSalaries = draft.getRookieSalaries();
         const keptPlayers = [];
         for (
             let numYearsAgo = NUM_PAST_SEASONS;
-            numYearsAgo > 0;
+            numYearsAgo > seasonOffset;
             numYearsAgo--
         ) {
             let draftClass = draft.genPlayersWithoutSaving(
-                PLAYER.UNDRAFTED,
+                g.season,
                 scoutingRank,
-            ).players;
+            );
 
             // Very rough simulation of a draft
             draftClass = orderBy(draftClass, ["value"], ["desc"]);
@@ -633,45 +634,45 @@ export const createWithoutSaving = (
     let createUndrafted1 = baseNumPlayers;
     let createUndrafted2 = baseNumPlayers;
     let createUndrafted3 = baseNumPlayers;
+    const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
     for (const p of players) {
         if (p.tid === PLAYER.UNDRAFTED) {
-            createUndrafted1 -= 1;
-        } else if (p.tid === PLAYER.UNDRAFTED_2) {
-            createUndrafted2 -= 1;
-        } else if (p.tid === PLAYER.UNDRAFTED_3) {
-            createUndrafted3 -= 1;
+            if (p.draft.year === g.season + seasonOffset) {
+                createUndrafted1 -= 1;
+            } else if (p.draft.year === g.season + seasonOffset + 1) {
+                createUndrafted2 -= 1;
+            } else if (p.draft.year === g.season + seasonOffset + 2) {
+                createUndrafted3 -= 1;
+            }
         }
     }
     // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
     if (
         createUndrafted1 > 0 &&
-        (g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.FREE_AGENCY)
+        (g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.RESIGN_PLAYERS)
     ) {
         const draftClass = draft.genPlayersWithoutSaving(
-            PLAYER.UNDRAFTED,
+            g.season + seasonOffset,
             scoutingRank,
             createUndrafted1,
-            true,
         );
-        players = players.concat(draftClass.players);
+        players = players.concat(draftClass);
     }
     if (createUndrafted2 > 0) {
         const draftClass = draft.genPlayersWithoutSaving(
-            PLAYER.UNDRAFTED_2,
+            g.season + 1 + seasonOffset,
             scoutingRank,
             createUndrafted2,
-            true,
         );
-        players = players.concat(draftClass.players);
+        players = players.concat(draftClass);
     }
     if (createUndrafted3 > 0) {
         const draftClass = draft.genPlayersWithoutSaving(
-            PLAYER.UNDRAFTED_3,
+            g.season + 2 + seasonOffset,
             scoutingRank,
             createUndrafted3,
-            true,
         );
-        players = players.concat(draftClass.players);
+        players = players.concat(draftClass);
     }
 
     return Object.assign(leagueData, {

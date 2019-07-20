@@ -1,7 +1,6 @@
 // @flow
 
 import range from "lodash/range";
-import { PLAYER } from "../../../common";
 import { draft, player } from "..";
 
 const avgRatingDists = (numPlayers: number = 100) => {
@@ -30,12 +29,7 @@ const avgRatingDists = (numPlayers: number = 100) => {
     let playersToProcess = [];
     for (let i = 0; i < numPlayers; i++) {
         if (playersToProcess.length === 0) {
-            const { players } = draft.genPlayersWithoutSaving(
-                PLAYER.UNDRAFTED,
-                15.5,
-                70,
-                false,
-            );
+            const players = draft.genPlayersWithoutSaving(2019, 15.5, 70);
             playersToProcess = players;
         }
         const p = playersToProcess.pop();

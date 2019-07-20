@@ -56,11 +56,7 @@ class WatchList extends React.Component {
             let contract;
             if (p.tid === PLAYER.RETIRED) {
                 contract = "Retired";
-            } else if (
-                p.tid === PLAYER.UNDRAFTED ||
-                p.tid === PLAYER.UNDRAFTED_2 ||
-                p.tid === PLAYER.UNDRAFTED_3
-            ) {
+            } else if (p.tid === PLAYER.UNDRAFTED) {
                 contract = `${p.draft.year} Draft Prospect`;
             } else {
                 contract = `${helpers.formatCurrency(

@@ -23,10 +23,10 @@ async function updateDraft(
                     : ["gp", "keyStats", "av"];
         }
 
-        let undrafted = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            PLAYER.UNDRAFTED,
-        );
+        let undrafted = (await idb.cache.players.indexGetAll(
+            "playersByDraftYearRetiredYear",
+            [[g.season], [g.season, Infinity]],
+        )).filter(p => p.tid === PLAYER.UNDRAFTED);
 
         // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
         // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
@@ -36,7 +36,6 @@ async function updateDraft(
                 console.log("FIXING MESSED UP DRAFT CLASS");
                 console.log(season);
                 p.ratings[0].season = g.season;
-                p.draft.year = g.season;
                 await idb.cache.players.put(p);
             }
         }

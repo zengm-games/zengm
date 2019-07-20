@@ -59,6 +59,7 @@ const augmentPartialPlayer = (
         }
     }
     if (p.retiredYear === null) {
+        // Because JSON turns Infinity to null
         p.retiredYear = Infinity;
     }
     if (!p.hasOwnProperty("stats")) {
@@ -87,14 +88,32 @@ const augmentPartialPlayer = (
     // Fix always-missing info
     const offset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
     if (p.tid === PLAYER.UNDRAFTED) {
-        p.ratings[0].season = g.season + offset;
-        p.draft.year = p.ratings[0].season;
+        if (version <= 32) {
+            p.ratings[0].season = g.season + offset;
+            p.draft.year = p.ratings[0].season;
+        } else {
+            p.ratings[0].season = p.draft.year;
+        }
     } else if (p.tid === PLAYER.UNDRAFTED_2) {
-        p.ratings[0].season = g.season + 1 + offset;
-        p.draft.year = p.ratings[0].season;
+        if (version === undefined || version <= 32) {
+            p.tid = PLAYER.UNDRAFTED;
+            p.ratings[0].season = g.season + 1 + offset;
+            p.draft.year = p.ratings[0].season;
+        } else {
+            throw new Error(
+                `Invalid tid ${PLAYER.UNDRAFTED_2} (in version 33 or higher, all undrafter players should have a tid of ${PLAYER.UNDRAFTED})`,
+            );
+        }
     } else if (p.tid === PLAYER.UNDRAFTED_3) {
-        p.ratings[0].season = g.season + 2 + offset;
-        p.draft.year = p.ratings[0].season;
+        if (version === undefined || version <= 32) {
+            p.tid = PLAYER.UNDRAFTED;
+            p.ratings[0].season = g.season + 2 + offset;
+            p.draft.year = p.ratings[0].season;
+        } else {
+            throw new Error(
+                `Invalid tid ${PLAYER.UNDRAFTED_3} (in version 33 or higher, all undrafter players should have a tid of ${PLAYER.UNDRAFTED})`,
+            );
+        }
     } else {
         if (!p.ratings[0].hasOwnProperty("season")) {
             p.ratings[0].season = g.season;

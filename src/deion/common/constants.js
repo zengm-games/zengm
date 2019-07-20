@@ -26,9 +26,11 @@ const PLAYER = {
     FREE_AGENT: -1,
     UNDRAFTED: -2,
     RETIRED: -3,
+    UNDRAFTED_FANTASY_TEMP: -6, // Store current draft class here during fantasy draft
+
+    // THESE ARE OBSOLETE!
     UNDRAFTED_2: -4, // Next year's draft class
     UNDRAFTED_3: -5, // Next next year's draft class
-    UNDRAFTED_FANTASY_TEMP: -6, // Store current draft class here during fantasy draft
 };
 
 const PHASE_TEXT = {

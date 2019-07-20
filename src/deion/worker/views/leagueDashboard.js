@@ -267,7 +267,7 @@ async function updatePlayers(
                 : ["pssYds", "rusYds", "recYds"];
 
         let players = await idb.cache.players.indexGetAll("playersByTid", [
-            PLAYER.UNDRAFTED,
+            PLAYER.FREE_AGENT,
             Infinity,
         ]);
         players = await idb.getCopies.playersPlus(players, {

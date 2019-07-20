@@ -222,7 +222,7 @@ const getCopies = async ({
                 .index("draft.year, retiredYear")
                 .getAll(backboard.bound([draftYear, 0], [draftYear, Infinity])),
             (await idb.cache.players.indexGetAll("playersByTid", [
-                PLAYER.UNDRAFTED_3,
+                PLAYER.RETIRED,
                 Infinity,
             ])).filter(p => p.draft.year === draftYear),
             idb.cache.storeInfos.players.pk,

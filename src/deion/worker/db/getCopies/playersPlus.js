@@ -138,8 +138,6 @@ const processAttrs = (
                 output.teamName = "Free Agent";
             } else if (
                 p.tid === PLAYER.UNDRAFTED ||
-                p.tid === PLAYER.UNDRAFTED_2 ||
-                p.tid === PLAYER.UNDRAFTED_3 ||
                 p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
             ) {
                 output.teamName = "Draft Prospect";

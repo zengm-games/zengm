@@ -18,15 +18,16 @@ const getPickValues = async (): Promise<TradePickValues> => {
     const estValues = {};
 
     let maxLength = 0;
-    for (const tid of [
-        PLAYER.UNDRAFTED,
-        PLAYER.UNDRAFTED_2,
-        PLAYER.UNDRAFTED_3,
-    ]) {
-        const players = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            tid,
-        );
+    const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+    for (
+        let draftYear = g.season + seasonOffset;
+        draftYear < g.season + seasonOffset + 3;
+        draftYear++
+    ) {
+        const players = (await idb.cache.players.indexGetAll(
+            "playersByDraftYearRetiredYear",
+            [[draftYear], [draftYear, Infinity]],
+        )).filter(p => p.tid === PLAYER.UNDRAFTED);
         if (players.length > 0) {
             players.sort((a, b) => b.value - a.value);
             estValues[players[0].draft.year] = players.map(p => p.value + 4); // +4 is to generally make picks more valued

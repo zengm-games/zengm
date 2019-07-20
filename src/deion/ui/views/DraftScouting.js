@@ -110,7 +110,7 @@ class DraftScouting extends React.Component {
                                                 await toWorker(
                                                     "handleUploadedDraftClass",
                                                     leagueFile,
-                                                    seasonOffset,
+                                                    s.season,
                                                 );
 
                                                 this.setState({

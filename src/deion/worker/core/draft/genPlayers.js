@@ -1,5 +1,6 @@
 // @flow
 
+import { PLAYER } from "../../../common";
 import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
@@ -8,19 +9,18 @@ import { g, helpers, logEvent } from "../../util";
 /**
  * Generate a set of draft prospects.
  *
- * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
+ * This is called after draft classes are moved up a year, to create the new draft class. It's also called 3 times when a new league starts, to create 3 future draft classes.
  *
  * @memberOf core.draft
- * @param {number} tid Team ID number for the generated draft class. Should be PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, or PLAYER.UNDRAFTED_3.
+ * @param {number} draftYear Year for the draft class.
  * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
 const genPlayers = async (
-    tid: number,
+    draftYear: number,
     scoutingRank?: ?number = null,
     numPlayers?: number,
-    newLeague?: boolean = false,
 ) => {
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === undefined || scoutingRank === null) {
@@ -35,11 +35,10 @@ const genPlayers = async (
         );
     }
 
-    const { draftYear, players } = genPlayersWithoutSaving(
-        tid,
+    const players = genPlayersWithoutSaving(
+        draftYear,
         scoutingRank,
         numPlayers,
-        newLeague,
     );
 
     for (const p of players) {
@@ -53,7 +52,13 @@ const genPlayers = async (
     // Easter eggs!
     if (process.env.SPORT === "basketball") {
         if (Math.random() < 1 / 100000) {
-            const p = player.generate(tid, 19, draftYear, false, scoutingRank);
+            const p = player.generate(
+                PLAYER.UNDRAFTED,
+                19,
+                draftYear,
+                false,
+                scoutingRank,
+            );
             p.born.year = draftYear - 48;
             p.born.loc = "Los Angeles, CA";
             p.college = "Washington State University";
@@ -96,7 +101,13 @@ const genPlayers = async (
                 });
             }
         } else if (Math.random() < 1 / 100000) {
-            const p = player.generate(tid, 19, draftYear, false, scoutingRank);
+            const p = player.generate(
+                PLAYER.UNDRAFTED,
+                19,
+                draftYear,
+                false,
+                scoutingRank,
+            );
             p.born.year = draftYear - 71;
             p.born.loc = "Queens, NY";
             p.college = "Wharton";

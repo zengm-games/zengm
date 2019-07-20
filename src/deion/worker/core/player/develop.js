@@ -304,11 +304,7 @@ const develop = (
     }
     ratings.skills = skills(ratings);
 
-    if (
-        p.tid === PLAYER.UNDRAFTED ||
-        p.tid === PLAYER.UNDRAFTED_2 ||
-        p.tid === PLAYER.UNDRAFTED_3
-    ) {
+    if (p.tid === PLAYER.UNDRAFTED) {
         p.draft.ovr = ratings.ovr;
         if (!skipPot) {
             p.draft.pot = ratings.pot;

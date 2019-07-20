@@ -84,6 +84,14 @@ export const STORES: Store[] = [
 
 const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
 
+// Hacks to support stringifying/parsing an array containing strings and numbers, including Infinity. Currently used for retiredYear.
+const stringifyInfinity = array => {
+    return JSON.stringify(array);
+};
+const parseInfinity = string => {
+    return JSON.parse(string).map(val => (val === null ? Infinity : val));
+};
+
 const getIndexKey = (index, row) => {
     if (index.key.length === 1) {
         // $FlowFixMe
@@ -91,10 +99,12 @@ const getIndexKey = (index, row) => {
     }
 
     // Array keys are special, because they need to be stored in a JS object and then recovered
-    return JSON.stringify(
+    return stringifyInfinity(
         index.key
             // $FlowFixMe
-            .map(field => row[field]),
+            .map(field =>
+                field === "draft.year" ? row.draft.year : row[field],
+            ),
     );
 };
 
@@ -338,12 +348,7 @@ class Cache {
                             .getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
                         tx.players
                             .index("tid")
-                            .getAll(
-                                backboard.bound(
-                                    PLAYER.UNDRAFTED_FANTASY_TEMP,
-                                    PLAYER.UNDRAFTED_2,
-                                ),
-                            ),
+                            .getAll(PLAYER.UNDRAFTED_FANTASY_TEMP),
                     ]);
 
                     return players1.concat(players2);
@@ -352,6 +357,10 @@ class Cache {
                     {
                         name: "playersByTid",
                         key: ["tid"],
+                    },
+                    {
+                        name: "playersByDraftYearRetiredYear",
+                        key: ["draft.year", "retiredYear"],
                     },
                 ],
             },
@@ -753,7 +762,7 @@ class Cache {
         this._checkIndexFreshness(index);
 
         // Array keys are special, because they need to be stored in a JS object and then recovered
-        const actualKey = Array.isArray(key) ? JSON.stringify(key) : key;
+        const actualKey = Array.isArray(key) ? stringifyInfinity(key) : key;
 
         const val = this._indexes[index][actualKey];
 
@@ -788,7 +797,7 @@ class Cache {
             let keyParsed;
             // Array keys are special, because they need to be stored in a JS object and then recovered
             if (Array.isArray(min)) {
-                keyParsed = JSON.parse(keyString);
+                keyParsed = parseInfinity(keyString);
             } else if (typeof min === "number") {
                 keyParsed = parseFloat(keyString);
                 if (Number.isNaN(keyParsed)) {

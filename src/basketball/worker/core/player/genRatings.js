@@ -1,8 +1,8 @@
 // @flow
 
-import { PLAYER } from "../../../../deion/common";
+import { PHASE, PLAYER } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
-import { helpers, overrides, random } from "../../../../deion/worker/util";
+import { g, helpers, overrides, random } from "../../../../deion/worker/util";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const typeFactors: {
@@ -186,11 +186,23 @@ const genRatings = (
         ratings.pss = limitRating(ratings.pss + 10);
     }*/
 
-    if (tid === PLAYER.UNDRAFTED_2) {
-        ratings.fuzz *= Math.sqrt(2);
-    } else if (tid === PLAYER.UNDRAFTED_3) {
-        ratings.fuzz *= 2;
+    // Higher fuzz for draft prospects
+    let factor = 1;
+    if (g.PHASE >= PHASE.RESIGN_PLAYERS) {
+        if (season === g.season + 2) {
+            factor = Math.sqrt(2);
+        } else if (season >= g.season + 3) {
+            factor = 2;
+        }
+    } else {
+        // eslint-disable-next-line
+        if (season === g.season + 1) {
+            factor = Math.sqrt(2);
+        } else if (season >= g.season + 2) {
+            factor = 2;
+        }
     }
+    ratings.fuzz *= factor;
 
     if (!overrides.core.player.pos) {
         throw new Error("Missing overrides.core.player.pos");

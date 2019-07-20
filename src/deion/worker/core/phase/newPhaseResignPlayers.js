@@ -17,9 +17,13 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
     // KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
     const existingFreeAgents = await idb.cache.players.indexGetAll(
         "playersByTid",
-        [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT],
+        PLAYER.FREE_AGENT,
     );
-    for (const p of existingFreeAgents) {
+    const undraftedPlayers = (await idb.cache.players.indexGetAll(
+        "playersByDraftYearRetiredYear",
+        [[g.season], [g.season, Infinity]],
+    )).filter(p => p.tid === PLAYER.UNDRAFTED);
+    for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
         player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoodsFreeAgents);
         await idb.cache.players.put(p);
     }
@@ -202,28 +206,32 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
     // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
     const players3 = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        PLAYER.UNDRAFTED_2,
+        "playersByDraftYearRetiredYear",
+        [[g.season + 1], [g.season + 1, Infinity]],
     );
     for (const p of players3) {
-        p.tid = PLAYER.UNDRAFTED;
+        if (p.tid !== PLAYER.UNDRAFTED) {
+            continue;
+        }
         p.ratings[0].fuzz /= Math.sqrt(2);
         player.develop(p, 0); // Update skills/pot based on fuzz
         player.updateValues(p);
         await idb.cache.players.put(p);
     }
     const players4 = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        PLAYER.UNDRAFTED_3,
+        "playersByDraftYearRetiredYear",
+        [[g.season + 2], [g.season + 2, Infinity]],
     );
     for (const p of players4) {
-        p.tid = PLAYER.UNDRAFTED_2;
+        if (p.tid !== PLAYER.UNDRAFTED) {
+            continue;
+        }
         p.ratings[0].fuzz /= Math.sqrt(2);
         player.develop(p, 0); // Update skills/pot based on fuzz
         player.updateValues(p);
         await idb.cache.players.put(p);
     }
-    await draft.genPlayers(PLAYER.UNDRAFTED_3);
+    await draft.genPlayers(g.season + 3);
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
     await league.setGameAttributes({ daysLeft: 30 });

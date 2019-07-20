@@ -5,8 +5,17 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
-async function addSeason(season, tid) {
-    let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
+async function addSeason(season) {
+    // In fantasy draft, use temp tid
+    const tid =
+        g.phase === PHASE.FANTASY_DRAFT
+            ? PLAYER.UNDRAFTED_FANTASY_TEMP
+            : PLAYER.UNDRAFTED;
+
+    let playersAll = (await idb.cache.players.indexGetAll(
+        "playersByDraftYearRetiredYear",
+        [[season], [season, Infinity]],
+    )).filter(p => p.tid === tid);
 
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["pid", "nameAbbrev", "age", "valueFuzz", "watch"],
@@ -54,18 +63,12 @@ async function updateDraftScouting(
         updateEvents.includes("playerMovement")
     ) {
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        const seasonOffset = g.phase < PHASE.FREE_AGENCY ? 0 : 1;
-
-        // In fantasy draft, use temp tid
-        const firstUndraftedTid =
-            g.phase === PHASE.FANTASY_DRAFT
-                ? PLAYER.UNDRAFTED_FANTASY_TEMP
-                : PLAYER.UNDRAFTED;
+        const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
         const seasons = await Promise.all([
-            addSeason(g.season + seasonOffset, firstUndraftedTid),
-            addSeason(g.season + seasonOffset + 1, PLAYER.UNDRAFTED_2),
-            addSeason(g.season + seasonOffset + 2, PLAYER.UNDRAFTED_3),
+            addSeason(g.season + seasonOffset),
+            addSeason(g.season + seasonOffset + 1),
+            addSeason(g.season + seasonOffset + 2),
         ]);
 
         return {

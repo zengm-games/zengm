@@ -6,7 +6,6 @@ allow arbitrary draft classes
 - documentation
 - blog post
 - should not keep draft classes 3+ years out in cache
-- in newPhaseResignPlayers, just top off future draft class (similar to new league), don't create 70 from scratch always
 
 on draft scouting page, year is wrong after the draft (like after 1962 draft, the 1963 upcoming class is labeled 1962)
 

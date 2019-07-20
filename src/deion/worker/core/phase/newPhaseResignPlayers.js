@@ -231,7 +231,18 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
         player.updateValues(p);
         await idb.cache.players.put(p);
     }
-    await draft.genPlayers(g.season + 3);
+
+    // Generate a new draft class, while leaving existing players in that draft class in place
+    const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6);
+    const numPlayersAlreadyInDraftClass = (await idb.cache.players.indexGetAll(
+        "playersByDraftYearRetiredYear",
+        [[g.season + 3], [g.season + 3, Infinity]],
+    )).filter(p => p.tid === PLAYER.UNDRAFTED).length;
+    await draft.genPlayers(
+        g.season + 3,
+        undefined,
+        baseNumPlayers - numPlayersAlreadyInDraftClass,
+    );
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
     await league.setGameAttributes({ daysLeft: 30 });

@@ -1,7 +1,5 @@
 allow arbitrary draft classes
 - beta (ask for multiplayer leagues)
-- allow specifying draft.year in customizePlayer
-  - add field for draft year
 - database upgrade
 - documentation
 - blog post

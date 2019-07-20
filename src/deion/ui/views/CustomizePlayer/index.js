@@ -84,6 +84,17 @@ const copyValidValues = (source, target, minContract, phase, season) => {
     }
 
     {
+        console.log("source.draft.year", source.draft.year);
+        // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
+        const draftYear = parseInt(source.draft.year, 10);
+        console.log("draftYear", draftYear);
+        if (!Number.isNaN(draftYear)) {
+            console.log("set target.draft.year");
+            target.draft.year = draftYear;
+        }
+    }
+
+    {
         let gamesRemaining = parseInt(source.injury.gamesRemaining, 10);
         if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
             gamesRemaining = 0;
@@ -210,7 +221,7 @@ class CustomizePlayer extends React.Component {
 
             if (type === "root") {
                 p[field] = val;
-            } else if (["born", "contract", "injury"].includes(type)) {
+            } else if (["born", "contract", "draft", "injury"].includes(type)) {
                 p[type][field] = val;
             } else if (type === "rating") {
                 p.ratings[p.ratings.length - 1][field] = val;
@@ -482,9 +493,7 @@ class CustomizePlayer extends React.Component {
                     make a whole league of custom players, you should probably
                     create a{" "}
                     <a
-                        href={`https://${
-                            process.env.SPORT
-                        }-gm.com/manual/customization/`}
+                        href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
                     >
                         custom League File
                     </a>
@@ -649,6 +658,19 @@ class CustomizePlayer extends React.Component {
                                             "college",
                                         )}
                                         value={p.college}
+                                    />
+                                </div>
+                                <div className="col-sm-3 form-group">
+                                    <label>Draft Class</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={this.handleChange.bind(
+                                            this,
+                                            "draft",
+                                            "year",
+                                        )}
+                                        value={p.draft.year}
                                     />
                                 </div>
                                 <div className="col-sm-6 form-group">

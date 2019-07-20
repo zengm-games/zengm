@@ -1309,10 +1309,12 @@ const upsertCustomizedPlayer = async (
 
     // Fix draft and ratings season
     if (p.tid === PLAYER.UNDRAFTED) {
-        p.draft.year = season;
+        if (p.draft.year < season) {
+            p.draft.year = season;
+        }
 
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        if (g.phase >= PHASE.RESIGN_PLAYERS) {
+        if (p.draft.year === season && g.phase >= PHASE.RESIGN_PLAYERS) {
             p.draft.year += 1;
         }
 

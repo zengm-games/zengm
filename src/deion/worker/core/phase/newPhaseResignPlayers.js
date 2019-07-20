@@ -242,7 +242,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
     // Delete any old undrafted players that still somehow exist
     for (const p of draftProspects) {
         if (p.draft.year <= g.season) {
-            await idb.cache.delete(p.pid);
+            await idb.cache.players.delete(p.pid);
         }
     }
 

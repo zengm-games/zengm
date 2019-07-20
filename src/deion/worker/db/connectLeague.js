@@ -121,6 +121,59 @@ const upgrade31 = tx => {
     };
 };
 
+const upgrade33 = upgradeDB => {
+    const tx = upgradeDB._dbOrTx._rawTransaction;
+
+    tx.objectStore("gameAttributes").get("season").onsuccess = event => {
+        if (event.target.result === undefined) {
+            throw new Error("Missing season in gameAttributes during upgrade");
+        }
+        const season = event.target.result.value;
+        if (typeof season !== "number") {
+            throw new Error("Invalid season in gameAttributes during upgrade");
+        }
+
+        tx.objectStore("gameAttributes").get("phase").onsuccess = event2 => {
+            if (event2.target.result === undefined) {
+                throw new Error(
+                    "Missing phase in gameAttributes during upgrade",
+                );
+            }
+            const phase = event2.target.result.value;
+            if (typeof phase !== "number") {
+                throw new Error(
+                    "Invalid phase in gameAttributes during upgrade",
+                );
+            }
+
+            const offset = phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+            upgradeDB.players.iterate(p => {
+                if (p.tid === PLAYER.UNDRAFTED) {
+                    const draftYear = season + offset;
+                    if (
+                        p.ratings[0].season !== draftYear ||
+                        p.draft.year !== draftYear
+                    ) {
+                        p.ratings[0].season = draftYear;
+                        p.draft.year = draftYear;
+                        upgradeDB.players.put(p);
+                    }
+                } else if (p.tid === PLAYER.UNDRAFTED_2) {
+                    p.tid = PLAYER.UNDRAFTED;
+                    p.ratings[0].season = season + 1 + offset;
+                    p.draft.year = p.ratings[0].season;
+                    upgradeDB.players.put(p);
+                } else if (p.tid === PLAYER.UNDRAFTED_3) {
+                    p.tid = PLAYER.UNDRAFTED;
+                    p.ratings[0].season = season + 2 + offset;
+                    p.draft.year = p.ratings[0].season;
+                    upgradeDB.players.put(p);
+                }
+            });
+        };
+    };
+};
+
 /**
  * Create a new league database with the latest structure.
  *
@@ -208,9 +261,7 @@ const createLeague = (upgradeDB, lid: number) => {
  * @param {number} lid Integer league ID number.
  */
 const migrateLeague = (upgradeDB, lid) => {
-    let upgradeMsg = `Upgrading league${lid} database from version ${
-        upgradeDB.oldVersion
-    } to version ${upgradeDB.version}.`;
+    let upgradeMsg = `Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}.`;
 
     let slowUpgradeCalled = false;
     const slowUpgrade = () => {
@@ -508,11 +559,14 @@ const migrateLeague = (upgradeDB, lid) => {
             };
         };
     }
+    if (upgradeDB.oldVersion <= 32) {
+        upgrade33(upgradeDB);
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await backboard.open(`league${lid}`, 32, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 33, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

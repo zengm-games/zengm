@@ -1,6 +1,5 @@
 allow arbitrary draft classes
 - beta (ask for multiplayer leagues)
-- database upgrade
 - documentation
 - blog post
 - should not keep draft classes 3+ years out in cache

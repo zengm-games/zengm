@@ -804,11 +804,44 @@ const handleUploadedDraftClass = async (
     uploadedFile: any,
     draftYear: number,
 ) => {
+    // Find season from uploaded file, for age adjusting
+    let uploadedSeason;
+    if (uploadedFile.hasOwnProperty("gameAttributes")) {
+        for (let i = 0; i < uploadedFile.gameAttributes.length; i++) {
+            if (uploadedFile.gameAttributes[i].key === "season") {
+                uploadedSeason = uploadedFile.gameAttributes[i].value;
+                break;
+            }
+        }
+    } else if (uploadedFile.hasOwnProperty("startingSeason")) {
+        uploadedSeason = uploadedFile.startingSeason;
+    }
+
     // Get all players from uploaded files
     let players = uploadedFile.players;
 
     // Filter out any that are not draft prospects
     players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
+
+    // Handle draft format change in version 33, where PLAYER.UNDRAFTED has multiple draft classes
+    if (uploadedFile.version !== undefined && uploadedFile.version >= 33) {
+        let filtered = players.filter(
+            p =>
+                p.draft === undefined ||
+                p.draft.year === undefined ||
+                p.draft.year === uploadedSeason,
+        );
+        if (filtered.length === 0) {
+            // Try the next season, in case draft already happened
+            filtered = players.filter(
+                p =>
+                    p.draft === undefined ||
+                    p.draft.year === undefined ||
+                    p.draft.year === uploadedSeason + 1,
+            );
+        }
+        players = filtered;
+    }
 
     // Get scouting rank, which is used in a couple places below
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
@@ -830,19 +863,6 @@ const handleUploadedDraftClass = async (
         if (p.tid === PLAYER.UNDRAFTED) {
             await idb.cache.players.delete(p.pid);
         }
-    }
-
-    // Find season from uploaded file, for age adjusting
-    let uploadedSeason;
-    if (uploadedFile.hasOwnProperty("gameAttributes")) {
-        for (let i = 0; i < uploadedFile.gameAttributes.length; i++) {
-            if (uploadedFile.gameAttributes[i].key === "season") {
-                uploadedSeason = uploadedFile.gameAttributes[i].value;
-                break;
-            }
-        }
-    } else if (uploadedFile.hasOwnProperty("startingSeason")) {
-        uploadedSeason = uploadedFile.startingSeason;
     }
 
     // Add new players to database

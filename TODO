@@ -2,13 +2,18 @@ allow arbitrary draft classes
 - beta (ask for multiplayer leagues)
 - documentation
   - deploy with update
-- blog post
-  - design decisions
-  - mention doc changes
-  - share 100 draft class file
 - should not keep draft classes 3+ years out in cache
+  - could keep 4 years in the future, that's all that's needed for display and next season's. but it's kind of risky to use the draft year index for that - could result in missing players or duplicated players. not worth the trouble.
 
-on draft scouting page, year is wrong after the draft (like after 1962 draft, the 1963 upcoming class is labeled 1962)
+Achievements to add
+- longeivity: play 10, 100, 1000 seasons in a singel league
+- lucky/unlucky win/lose game 7 in OT
+- underdog: things like winning title as 8 seed, etc
+- win title without making a trade
+- career stat milestone for players on your team from draft to the milestone
+- https://www.reddit.com/r/BasketballGM/comments/81g1tz/achievement_ideas/
+- https://www.reddit.com/r/BasketballGM/comments/aajsvu/suggestion_more_achievements/
+- https://old.reddit.com/r/BasketballGM/comments/cfiacj/achievement_ideaschallenges_for_pros/
 
 advance to free agency notification not showing up on mobile safari when someone is still negotiating
 - https://old.reddit.com/r/BasketballGM/comments/cc3lc8/player_refuses_to_negotiate_now_im_stuck_what_do/ - could be related to data being deleted, would that make the notification fail?
@@ -395,9 +400,6 @@ somehow display synergy, maybe on roster page
 
 watch list players should result in notifications when things happen (FA salary drops, trades, signings, release, retire)
 - https://www.reddit.com/r/BasketballGM/comments/7h3eqy/simple_feature_request/
-
-sync achievements from IDB to account
-- should be happening in account.check, but is it?
 
 advanced team stats
 - strength of schedule: https://www.pro-football-reference.com/blog/index9e6d.html?p=37&cpage=1
@@ -822,14 +824,6 @@ account
   more pages
     account/edit
     account/:username (public profile showing achievements)
-Achievements to add
-  longeivity: play 10, 100, 1000 seasons in a singel league
-  lucky/unlucky win/lose game 7 in OT
-  underdog: things like winning title as 8 seed, etc
-  win title without making a trade
-  career stat milestone for players on your team from draft to the milestone
-  https://www.reddit.com/r/BasketballGM/comments/81g1tz/achievement_ideas/
-  https://www.reddit.com/r/BasketballGM/comments/aajsvu/suggestion_more_achievements/
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate

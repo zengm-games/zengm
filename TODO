@@ -1,7 +1,10 @@
 allow arbitrary draft classes
 - beta (ask for multiplayer leagues)
 - documentation
+  - deploy with update
 - blog post
+  - design decisions
+  - mention doc changes
   - share 100 draft class file
 - should not keep draft classes 3+ years out in cache
 

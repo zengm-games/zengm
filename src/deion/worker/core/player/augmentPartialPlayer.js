@@ -31,14 +31,19 @@ const augmentPartialPlayer = (
     }
 
     // This is used to get at default values for various attributes
-    const pg = generate(p.tid, age, g.startingSeason - age, true, scoutingRank);
+    const pg = generate(
+        p.tid,
+        age,
+        g.startingSeason - (age - 18),
+        true,
+        scoutingRank,
+    );
 
     // Optional things
     const simpleDefaults = [
         "awards",
         "born",
         "college",
-        "draft",
         "face",
         "freeAgentMood",
         "gamesUntilTradable",
@@ -71,6 +76,9 @@ const augmentPartialPlayer = (
             p.statsTids.push(p.tid);
         }
     }
+    if (!p.hasOwnProperty("draft")) {
+        p.draft = {};
+    }
 
     if (
         p.hasOwnProperty("name") &&
@@ -83,6 +91,32 @@ const augmentPartialPlayer = (
             .split(" ")
             .slice(1, p.name.split(" ").length)
             .join(" ");
+    }
+
+    if (typeof p.draft.year !== "number") {
+        if (p.tid === PLAYER.UNDRAFTED) {
+            p.draft.year = g.season;
+        } else {
+            p.draft.year = pg.draft.year;
+        }
+    }
+    if (typeof p.draft.tid !== "number") {
+        p.draft.tid = -1;
+    }
+    if (typeof p.draft.originalTid !== "number") {
+        p.draft.originalTid = p.draft.tid;
+    }
+    if (typeof p.draft.round !== "number") {
+        p.draft.round = 0;
+    }
+    if (typeof p.draft.pick !== "number") {
+        p.draft.pick = 0;
+    }
+    if (typeof p.draft.pot !== "number") {
+        p.draft.pot = 0;
+    }
+    if (typeof p.draft.ovr !== "number") {
+        p.draft.ovr = 0;
     }
 
     // Fix always-missing info
@@ -127,16 +161,6 @@ const augmentPartialPlayer = (
         ) {
             p.ratings[0].season = g.season;
         }
-    }
-
-    if (typeof p.draft.originalTid !== "number") {
-        p.draft.originalTid = p.draft.tid;
-    }
-    if (typeof p.draft.pot !== "number") {
-        p.draft.pot = 0;
-    }
-    if (typeof p.draft.ovr !== "number") {
-        p.draft.ovr = 0;
     }
     if (!Array.isArray(p.draft.skills)) {
         p.draft.skills = [];

@@ -244,8 +244,9 @@ const setupRoutes = () => {
                                     target="_blank"
                                 >
                                     make sure you have the latest version of the
-                                    game loaded.
+                                    game loaded
                                 </a>
+                                .
                             </h4>
                         </>
                     );

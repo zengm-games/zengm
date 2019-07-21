@@ -647,7 +647,7 @@
                                 }
                             }
                         },
-                        "required": ["round", "pick", "tid", "year"]
+                        "required": ["year"]
                     },
                     "face": {},
                     "firstName": {

@@ -1096,6 +1096,11 @@ const runBefore = async (
     prevData: any,
     conditions: Conditions,
 ): Promise<void | (void | { [key: string]: any })[]> => {
+    // Special case for errors, so that the condition right below (when league is loading) does not cause no update
+    if (viewId === "error") {
+        return [];
+    }
+
     if (typeof g.lid === "number" && !local.leagueLoaded) {
         return;
     }

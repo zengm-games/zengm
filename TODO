@@ -2,8 +2,8 @@ allow arbitrary draft classes
 - beta (ask for multiplayer leagues)
 - documentation
 - blog post
+  - share 100 draft class file
 - should not keep draft classes 3+ years out in cache
-- test with a giant league file, like 100 years of draft classes
 
 on draft scouting page, year is wrong after the draft (like after 1962 draft, the 1963 upcoming class is labeled 1962)
 

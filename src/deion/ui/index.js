@@ -224,6 +224,32 @@ const setupRoutes = () => {
                 }
                 console.error("Error from view:");
                 console.error(event.detail.error);
+
+                // As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
+                if (
+                    errMsg.includes("requested version") ||
+                    errMsg.includes("existing version") ||
+                    errMsg.includes("higher version") ||
+                    errMsg.includes("version requested") ||
+                    errMsg.includes("lower version")
+                ) {
+                    errMsg = (
+                        <>
+                            <h4>{errMsg}</h4>
+                            <h4>
+                                Please{" "}
+                                <a
+                                    href="https://basketball-gm.com/manual/faq/#latest-version"
+                                    rel="noopener noreferrer"
+                                    target="_blank"
+                                >
+                                    make sure you have the latest version of the
+                                    game loaded.
+                                </a>
+                            </h4>
+                        </>
+                    );
+                }
             }
 
             const ErrorPage = (

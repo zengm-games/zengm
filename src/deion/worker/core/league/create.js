@@ -294,8 +294,12 @@ export const createWithoutSaving = (
         throw new Error("scoutingRank should be defined");
     }
 
-    let trade = [];
-    if (leagueFile.hasOwnProperty("trade")) {
+    let trade;
+    if (
+        leagueFile.hasOwnProperty("trade") &&
+        Array.isArray(trade) &&
+        trade.length === 1
+    ) {
         trade = leagueFile.trade;
     } else {
         trade = [

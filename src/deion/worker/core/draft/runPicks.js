@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
@@ -26,13 +26,20 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 
     const pids = [];
 
-    const [playersAll, draftPicks] = await Promise.all([
-        (await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-            [g.season],
-            [g.season, Infinity],
-        ])).filter(p => p.tid === PLAYER.UNDRAFTED),
-        getOrder(),
-    ]);
+    const draftPicks = await getOrder();
+
+    let playersAll;
+    if (g.phase === PHASE.FANTASY_DRAFT) {
+        playersAll = await idb.cache.players.indexGetAll(
+            "playersByTid",
+            PLAYER.UNDRAFTED,
+        );
+    } else {
+        playersAll = (await idb.cache.players.indexGetAll(
+            "playersByDraftYearRetiredYear",
+            [[g.season], [g.season, Infinity]],
+        )).filter(p => p.tid === PLAYER.UNDRAFTED);
+    }
 
     playersAll.sort((a, b) => b.value - a.value);
 

@@ -18,6 +18,7 @@ const updateFantasyDraft = async (
         return {
             phase: g.phase,
             teams,
+            userTids: g.userTids,
         };
     }
 };

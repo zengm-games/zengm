@@ -15,28 +15,36 @@ async function updateDraft(
         updateEvents.includes("playerMovement")
     ) {
         const fantasyDraft = g.phase === PHASE.FANTASY_DRAFT;
-        let stats = [];
+
+        let stats;
+        let undrafted;
         if (fantasyDraft) {
             stats =
                 process.env.SPORT === "basketball"
                     ? ["per", "ewa"]
                     : ["gp", "keyStats", "av"];
-        }
 
-        let undrafted = (await idb.cache.players.indexGetAll(
-            "playersByDraftYearRetiredYear",
-            [[g.season], [g.season, Infinity]],
-        )).filter(p => p.tid === PLAYER.UNDRAFTED);
+            undrafted = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                PLAYER.UNDRAFTED,
+            );
+        } else {
+            stats = [];
+            undrafted = (await idb.cache.players.indexGetAll(
+                "playersByDraftYearRetiredYear",
+                [[g.season], [g.season, Infinity]],
+            )).filter(p => p.tid === PLAYER.UNDRAFTED);
 
-        // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
-        // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
-        for (const p of undrafted) {
-            const season = p.ratings[0].season;
-            if (season !== g.season && g.phase === PHASE.DRAFT) {
-                console.log("FIXING MESSED UP DRAFT CLASS");
-                console.log(season);
-                p.ratings[0].season = g.season;
-                await idb.cache.players.put(p);
+            // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
+            // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
+            for (const p of undrafted) {
+                const season = p.ratings[0].season;
+                if (season !== g.season && g.phase === PHASE.DRAFT) {
+                    console.log("FIXING MESSED UP DRAFT CLASS");
+                    console.log(season);
+                    p.ratings[0].season = g.season;
+                    await idb.cache.players.put(p);
+                }
             }
         }
 

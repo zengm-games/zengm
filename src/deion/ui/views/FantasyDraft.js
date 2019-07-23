@@ -12,10 +12,12 @@ import { NewWindowLink, ResponsiveTableWrapper } from "../components";
 import { helpers, setTitle, toWorker } from "../util";
 import clickable from "../wrappers/clickable";
 
-const ReorderHandle = SortableHandle(({ isSorting }) => {
+const ReorderHandle = SortableHandle(({ highlight, isSorting }) => {
     return (
         <td
-            className={classNames("roster-handle table-secondary", {
+            className={classNames("roster-handle", {
+                "table-info": highlight,
+                "table-secondary": !highlight,
                 "user-select-none": isSorting,
             })}
         />
@@ -28,7 +30,7 @@ ReorderHandle.propTypes = {
 
 const DepthRow = SortableElement(
     clickable(props => {
-        const { clicked, i, isSorting, t, toggleClicked } = props;
+        const { clicked, highlight, i, isSorting, t, toggleClicked } = props;
 
         return (
             <tr
@@ -37,7 +39,7 @@ const DepthRow = SortableElement(
                     "table-warning": clicked,
                 })}
             >
-                <ReorderHandle isSorting={isSorting} />
+                <ReorderHandle highlight={highlight} isSorting={isSorting} />
                 <td>{i + 1}</td>
                 <td onClick={toggleClicked}>
                     <a href={helpers.leagueUrl(["roster", t.abbrev])}>
@@ -50,6 +52,7 @@ const DepthRow = SortableElement(
 );
 
 DepthRow.propTypes = {
+    highlight: PropTypes.bool.isRequired,
     i: PropTypes.number.isRequired,
     isSorting: PropTypes.bool.isRequired,
     t: PropTypes.shape({
@@ -60,13 +63,14 @@ DepthRow.propTypes = {
     }),
 };
 
-const TBody = SortableContainer(({ isSorting, teams }) => {
+const TBody = SortableContainer(({ isSorting, userTids, teams }) => {
     return (
         <tbody id="roster-tbody">
             {teams.map((t, i) => {
                 return (
                     <DepthRow
                         key={t.tid}
+                        highlight={userTids.includes(t.tid)}
                         i={i}
                         index={i}
                         isSorting={isSorting}
@@ -80,6 +84,7 @@ const TBody = SortableContainer(({ isSorting, teams }) => {
 
 TBody.propTypes = {
     isSorting: PropTypes.bool.isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
     teams: PropTypes.arrayOf(
         PropTypes.shape({
             abbrev: PropTypes.string.isRequired,
@@ -226,6 +231,7 @@ class FantasyDraft extends React.Component {
                             </tr>
                         </thead>
                         <TBody
+                            userTids={this.props.userTids}
                             teams={teamsSorted}
                             isSorting={this.state.isSorting}
                             onSortEnd={this.handleOnSortEnd}
@@ -257,6 +263,7 @@ class FantasyDraft extends React.Component {
 
 FantasyDraft.propTypes = {
     phase: PropTypes.number.isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
     teams: PropTypes.arrayOf(
         PropTypes.shape({
             abbrev: PropTypes.string.isRequired,

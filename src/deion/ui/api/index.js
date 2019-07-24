@@ -120,8 +120,8 @@ const newLid = async (lid: number) => {
     }
 };
 
-const prompt = (message: string, defaultVal?: string) => {
-    return window.prompt(message, defaultVal);
+const prompt = (message: string, defaultVal?: string = "") => {
+    return confirm(message, defaultVal);
 };
 
 async function realtimeUpdate2(

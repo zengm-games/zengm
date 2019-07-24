@@ -116,6 +116,7 @@ const DraftTeamHistory = ({
                 <a href={helpers.leagueUrl(["draft_scouting"])}>
                     Future Draft Scouting
                 </a>{" "}
+                |{" "}
                 {draftType !== "noLottery" ? (
                     <>
                         <a href={helpers.leagueUrl(["draft_lottery"])}>
@@ -124,7 +125,6 @@ const DraftTeamHistory = ({
                         |{" "}
                     </>
                 ) : null}
-                |{" "}
                 <a href={helpers.leagueUrl(["draft_summary"])}>Draft Summary</a>
             </p>
 

@@ -8,7 +8,14 @@ import {
     STRIPE_PUBLISHABLE_KEY,
     fetchWrapper,
 } from "../../common";
-import { getScript, helpers, local, realtimeUpdate, setTitle } from "../util";
+import {
+    confirm,
+    getScript,
+    helpers,
+    local,
+    realtimeUpdate,
+    setTitle,
+} from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -110,7 +117,7 @@ StripeButton.propTypes = {
 const handleCancel = async e => {
     e.preventDefault();
 
-    const result = window.confirm(
+    const result = await confirm(
         "Are you sure you want to cancel your GM Gold subscription?",
     );
 

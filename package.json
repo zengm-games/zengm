@@ -51,6 +51,7 @@
         "promise-worker-bi": "^3.0.2",
         "react": "^16.8.6",
         "react-addons-text-content": "^0.0.4",
+        "react-confirm": "^0.1.18",
         "react-dom": "^16.8.6",
         "react-overlays": "^1.2.0",
         "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",

@@ -1,6 +1,6 @@
 // @flow
 
-import { emitter, local, realtimeUpdate } from "../util";
+import { confirm, emitter, local, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,
@@ -36,10 +36,6 @@ const bbgmPing = (
             });
         }
     }
-};
-
-const confirm = (message: string) => {
-    return window.confirm(message);
 };
 
 const emit = (name: string, ...args: any[]) => {

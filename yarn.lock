@@ -5654,6 +5654,11 @@ react-addons-text-content@^0.0.4:
   resolved "https://registry.yarnpkg.com/react-addons-text-content/-/react-addons-text-content-0.0.4.tgz#d2e259fdc951d1d8906c08902002108dce8792e5"
   integrity sha1-0uJZ/clR0diQbAiQIAIQjc6HkuU=
 
+react-confirm@^0.1.18:
+  version "0.1.18"
+  resolved "https://registry.yarnpkg.com/react-confirm/-/react-confirm-0.1.18.tgz#687ba3449112de2673ad1f67cd8930f17fe5a559"
+  integrity sha512-fHLvVj4uFrxQofEuJCQmQ7zRxANk6plyM9iWAHdnAml0o2ohR8oZNgYUoo9iSghRiW/KkVwRJoRBIaPEsAjlVw==
+
 react-context-toolbox@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/react-context-toolbox/-/react-context-toolbox-2.0.2.tgz#35637287cb23f801e6ed802c2bb7a97e1f04e3fb"

@@ -813,7 +813,8 @@ const handleUploadedDraftClass = async (
                 break;
             }
         }
-    } else if (uploadedFile.hasOwnProperty("startingSeason")) {
+    }
+    if (uploadedFile.hasOwnProperty("startingSeason")) {
         uploadedSeason = uploadedFile.startingSeason;
     }
 

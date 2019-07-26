@@ -41,6 +41,7 @@
         "bbgm-router": "^1.0.1",
         "bootstrap": "^4.3.1",
         "classnames": "^2.2.6",
+        "csv-stringify": "^5.3.0",
         "dompurify": "^1.0.11",
         "facesjs": "^1.0.1",
         "html2canvas": "^1.0.0-rc.1",

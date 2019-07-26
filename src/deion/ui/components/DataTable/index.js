@@ -1,6 +1,7 @@
 // @flow
 
 import classNames from "classnames";
+import csvStringify from "csv-stringify/lib/es5";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React from "react";
@@ -165,16 +166,26 @@ class DataTable extends React.Component<Props, State> {
     }
 
     handleExportCSV() {
-        const colNames = this.props.cols.map(col => col.title).join(",");
+        const columns = this.props.cols.map(col => col.title);
 
-        const rows = this.processRows()
-            .map(row => row.data.map(val => getSearchVal(val, false)))
-            .map(row => row.join(","))
-            .join("\n");
+        const rows = this.processRows().map(row =>
+            row.data.map(val => getSearchVal(val, false)),
+        );
 
-        const output = `${colNames}\n${rows}\n`;
+        csvStringify(
+            rows,
+            {
+                columns,
+                header: true,
+            },
+            (err, output) => {
+                if (err) {
+                    throw err;
+                }
 
-        downloadFile(`${this.props.name}.csv`, output, "text/csv");
+                downloadFile(`${this.props.name}.csv`, output, "text/csv");
+            },
+        );
     }
 
     handleToggleFilters() {

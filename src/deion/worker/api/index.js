@@ -1,5 +1,6 @@
 // @flow
 
+import csvStringify from "csv-stringify/lib/es5";
 import flatten from "lodash/flatten";
 import range from "lodash/range";
 import { PHASE, PHASE_TEXT, PLAYER, getCols } from "../../common";
@@ -520,15 +521,24 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                   "av",
               ];
 
-    let output = `pid,Name,Pos,DraftPick,Age,Salary,Team,Season,${getCols(
-        ...stats.map(stat => `stat:${stat}`),
-    )
-        .map(col => col.title)
-        .join(",")},Ovr,Pot,${getCols(
-        ...ratings.map(rating => `rating:${rating}`),
-    )
-        .map(col => col.title)
-        .join(",")}\n`;
+    const columns = [
+        "pid",
+        "Name",
+        "Pos",
+        "DraftPick",
+        "Age",
+        "Salary",
+        "Team",
+        "Season",
+        ...getCols(...stats.map(stat => `stat:${stat}`)).map(col => col.title),
+        "Ovr",
+        "Pot",
+        ...getCols(...ratings.map(rating => `rating:${rating}`)).map(
+            col => col.title,
+        ),
+    ];
+
+    const rows = [];
 
     for (const s of seasons) {
         console.log(s, new Date());
@@ -540,7 +550,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
         });
 
         for (const p of players2) {
-            output += `${[
+            rows.push([
                 p.pid,
                 p.name,
                 p.ratings.pos,
@@ -555,11 +565,26 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                 p.ratings.ovr,
                 p.ratings.pot,
                 ...ratings.map(rating => p.ratings[rating]),
-            ].join(",")}\n`;
+            ]);
         }
     }
 
-    return output;
+    return new Promise((resolve, reject) => {
+        csvStringify(
+            rows,
+            {
+                columns,
+                header: true,
+            },
+            (err, output) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(output);
+                }
+            },
+        );
+    });
 };
 
 // exportPlayerGamesCsv(2015) - just 2015 games
@@ -572,8 +597,40 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
         games = await idb.getCopies.games({ season });
     }
 
-    let output =
-        "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,MP,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,ORB,DRB,TRB,AST,TO,STL,BLK,BA,PF,PTS,+/-\n";
+    const columns = [
+        "pid",
+        "Name",
+        "Pos",
+        "Team",
+        "Opp",
+        "Score",
+        "WL",
+        "Season",
+        "Playoffs",
+        "MP",
+        "FGM",
+        "FGA",
+        "FG%",
+        "3PM",
+        "3PA",
+        "3P%",
+        "FTM",
+        "FTA",
+        "FT%",
+        "ORB",
+        "DRB",
+        "TRB",
+        "AST",
+        "TO",
+        "STL",
+        "BLK",
+        "BA",
+        "PF",
+        "PTS",
+        "+/-",
+    ];
+
+    const rows = [];
 
     const teams = games.map(gm => gm.teams);
     const seasons = games.map(gm => gm.season);
@@ -582,7 +639,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
             const t = teams[i][j];
             const t2 = teams[i][j === 0 ? 1 : 0];
             for (const p of t.players) {
-                output += `${[
+                rows.push([
                     p.pid,
                     p.name,
                     p.pos,
@@ -613,12 +670,27 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
                     p.pf,
                     p.pts,
                     p.pm,
-                ].join(",")}\n`;
+                ]);
             }
         }
     }
 
-    return output;
+    return new Promise((resolve, reject) => {
+        csvStringify(
+            rows,
+            {
+                columns,
+                header: true,
+            },
+            (err, output) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(output);
+                }
+            },
+        );
+    });
 };
 
 const genFilename = (data: any) => {

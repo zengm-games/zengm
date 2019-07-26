@@ -163,6 +163,7 @@ PlayoffMatchup.propTypes = {
             region: PropTypes.string.isRequired,
             seed: PropTypes.number.isRequired,
             tid: PropTypes.number.isRequired,
+            pts: PropTypes.number,
             won: PropTypes.number,
         }),
         home: PropTypes.shape({
@@ -170,6 +171,7 @@ PlayoffMatchup.propTypes = {
             region: PropTypes.string.isRequired,
             seed: PropTypes.number.isRequired,
             tid: PropTypes.number.isRequired,
+            pts: PropTypes.number,
             won: PropTypes.number,
         }),
     }),

@@ -109,6 +109,7 @@ RatingsOverview.propTypes = {
             rbk: PropTypes.number.isRequired,
             pbk: PropTypes.number.isRequired,
             pcv: PropTypes.number.isRequired,
+            tck: PropTypes.number.isRequired,
             prs: PropTypes.number.isRequired,
             rns: PropTypes.number.isRequired,
             kpw: PropTypes.number.isRequired,

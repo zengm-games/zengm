@@ -68,6 +68,8 @@ in basketball gamesim
 
 # football
 
+make retirement more gradual, rather than hard cutoff at 29 or whatever
+
 infinite AV is possible
 - https://media.discordapp.net/attachments/331882115119448065/600596243055509516/unknown.png?width=1440&height=423
 
@@ -611,8 +613,6 @@ different height distributions by country https://www.reddit.com/message/message
 make FAs less eager to sign with bad teams
   alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal
 
-display numerical owner mood somehow
-
 all time leaders https://www.reddit.com/r/BasketballGM/comments/4qjkys/simple_feature_suggestion_all_time_season/
 
 refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q/cant_sign_star_player/
@@ -1066,7 +1066,6 @@ trades
 god mode
   options
     disable ratings display
-    playoff round length
   edit other player attributes (draft, etc)
 export/import roster
   some way to specify startingSeason

@@ -3,6 +3,7 @@
 /*eslint camelcase: 0*/
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { idb } from "../db";
+import g from "./g";
 import logEvent from "./logEvent";
 import overrides from "./overrides";
 import type { AchievementWhen, Conditions } from "../../common/types";
@@ -33,9 +34,7 @@ async function add(
         logEvent(
             {
                 type: "achievement",
-                text: `"${
-                    achievement.name
-                }" achievement awarded! <a href="/account">View all achievements.</a>`,
+                text: `"${achievement.name}" achievement awarded! <a href="/account">View all achievements.</a>`,
                 saveToDb: false,
             },
             conditions,
@@ -90,9 +89,9 @@ async function getAll(): Promise<
             };
         },
     );
-    const achievementsLocal = await idb.meta.achievements.getAll();
 
     // Handle any achivements stored in IndexedDB
+    const achievementsLocal = await idb.meta.achievements.getAll();
     for (const achievementLocal of achievementsLocal) {
         for (const achievement of achievements) {
             if (achievement.slug === achievementLocal.slug) {
@@ -125,6 +124,10 @@ async function getAll(): Promise<
 }
 
 const check = async (when: AchievementWhen, conditions: Conditions) => {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
+        return;
+    }
+
     const awarded = [];
 
     for (const achievement of overrides.util.achievements) {

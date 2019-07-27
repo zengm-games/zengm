@@ -3,10 +3,6 @@ import { g } from "../../../deion/worker/util";
 import type { Achievement } from "../../../deion/common/types";
 
 async function checkDynasty(titles: number, years: number) {
-    if (g.easyDifficultyInPast || g.godModeInPast) {
-        return false;
-    }
-
     const teamSeasons = await idb.getCopies.teamSeasons({ tid: g.userTid });
 
     let titlesFound = 0;
@@ -30,10 +26,6 @@ async function checkDynasty(titles: number, years: number) {
 }
 
 const checkFoFoFo = async () => {
-    if (g.easyDifficultyInPast || g.godModeInPast) {
-        return false;
-    }
-
     if (g.numGamesPlayoffSeries.length < 3) {
         return false;
     }
@@ -74,9 +66,6 @@ const checkFoFoFo = async () => {
 };
 
 async function checkMoneyball(maxPayroll) {
-    if (g.easyDifficultyInPast || g.godModeInPast) {
-        return false;
-    }
     const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
@@ -111,10 +100,6 @@ const achievements: Achievement[] = [
         name: "Septuawinarian",
         desc: "Win 70+ games in the regular season.",
         async check() {
-            if (g.easyDifficultyInPast || g.godModeInPast) {
-                return false;
-            }
-
             const t = await idb.getCopy.teamsPlus({
                 seasonAttrs: ["won"],
                 season: g.season,
@@ -130,10 +115,6 @@ const achievements: Achievement[] = [
         name: "98 Degrees",
         desc: "Go 98-0 in the playoffs and regular season.",
         async check() {
-            if (g.easyDifficultyInPast || g.godModeInPast) {
-                return false;
-            }
-
             const awarded = await checkFoFoFo();
             if (awarded) {
                 const t = await idb.getCopy.teamsPlus({
@@ -206,10 +187,6 @@ const achievements: Achievement[] = [
         desc:
             "Players on your team win MVP, DPOY, SMOY, ROY, and Finals MVP in the same season.",
         async check() {
-            if (g.easyDifficultyInPast || g.godModeInPast) {
-                return false;
-            }
-
             const awards = await idb.getCopy.awards({ season: g.season });
 
             return (
@@ -233,10 +210,6 @@ const achievements: Achievement[] = [
         name: "Small Market",
         desc: "Win a title in a city with under 2 million people.",
         async check() {
-            if (g.easyDifficultyInPast || g.godModeInPast) {
-                return false;
-            }
-
             const t = await idb.getCopy.teamsPlus({
                 seasonAttrs: ["playoffRoundsWon", "pop"],
                 season: g.season,
@@ -258,10 +231,6 @@ const achievements: Achievement[] = [
         name: "Sleeper Pick",
         desc: "Use a non-lottery pick to draft the ROY.",
         async check() {
-            if (g.easyDifficultyInPast || g.godModeInPast) {
-                return false;
-            }
-
             const awards = await idb.getCopy.awards({ season: g.season });
             if (awards && awards.roy && awards.roy.tid === g.userTid) {
                 const p = await idb.cache.players.get(awards.roy.pid);

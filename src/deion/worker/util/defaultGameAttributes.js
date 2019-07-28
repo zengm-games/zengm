@@ -48,6 +48,8 @@ const defaultGameAttributes: GameAttributes = {
     // According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~200 possessions, that means each player on the court has P = 0.25 / 10 / 200 = 0.000125 probability of being injured this play.
     injuryRate: 0.25 / 10 / 200,
 
+    homeCourtAdvantage: 1,
+
     // The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season. With roughly 100 days in a season, the default is about one death every 50 years.
     tragicDeathRate: 1 / (100 * 50),
 

@@ -10,6 +10,7 @@ class GodMode extends React.Component {
         this.state = {
             dirty: false,
             disableInjuries: String(props.disableInjuries),
+            homeCourtAdvantage: props.homeCourtAdvantage,
             luxuryPayroll: props.luxuryPayroll,
             luxuryTax: props.luxuryTax,
             maxContract: props.maxContract,
@@ -49,6 +50,10 @@ class GodMode extends React.Component {
             brotherRate: this.handleChange.bind(this, "brotherRate"),
             sonRate: this.handleChange.bind(this, "sonRate"),
             hardCap: this.handleChange.bind(this, "hardCap"),
+            homeCourtAdvantage: this.handleChange.bind(
+                this,
+                "homeCourtAdvantage",
+            ),
             numGamesPlayoffSeries: this.handleChange.bind(
                 this,
                 "numGamesPlayoffSeries",
@@ -75,6 +80,7 @@ class GodMode extends React.Component {
                 minPayroll: nextProps.minPayroll,
                 minRosterSize: nextProps.minRosterSize,
                 maxRosterSize: nextProps.maxRosterSize,
+                homeCourtAdvantage: nextProps.homeCourtAdvantage,
                 numGames: nextProps.numGames,
                 quarterLength: nextProps.quarterLength,
                 salaryCap: nextProps.salaryCap,
@@ -126,9 +132,7 @@ class GodMode extends React.Component {
             const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
             if (numPlayoffTeams > this.props.numTeams) {
                 throw new Error(
-                    `${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${
-                        this.props.numTeams
-                    } teams in the league`,
+                    `${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${this.props.numTeams} teams in the league`,
                 );
             }
         } catch (error) {
@@ -155,6 +159,7 @@ class GodMode extends React.Component {
             minContract: parseInt(this.state.minContract * 1000, 10),
             maxContract: parseInt(this.state.maxContract * 1000, 10),
             aiTrades: this.state.aiTrades === "true",
+            homeCourtAdvantage: parseFloat(this.state.homeCourtAdvantage),
             injuryRate: parseFloat(this.state.injuryRate),
             tragicDeathRate: parseFloat(this.state.tragicDeathRate),
             brotherRate: parseFloat(this.state.brotherRate),
@@ -563,6 +568,27 @@ class GodMode extends React.Component {
                             </select>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
+                            <label>
+                                Home Court Advantage{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="homeCourtAdvantage"
+                                >
+                                    This will give the home team a boost in each
+                                    game. Any value above 10 results in defacto
+                                    auto-win for Home team - avoid anything
+                                    above 3!
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.homeCourtAdvantage}
+                                value={this.state.homeCourtAdvantage}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Trades Between AI Teams</label>
                             <select
                                 className="form-control"
@@ -712,6 +738,7 @@ GodMode.propTypes = {
     injuryRate: PropTypes.number.isRequired,
     tragicDeathRate: PropTypes.number.isRequired,
     brotherRate: PropTypes.number.isRequired,
+    homeCourtAdvantage: PropTypes.number.isRequired,
     sonRate: PropTypes.number.isRequired,
     hardCap: PropTypes.bool.isRequired,
     numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,

@@ -106,6 +106,7 @@ export type GameAttributeKey =
     | "godModeInPast"
     | "gracePeriodEnd"
     | "hardCap"
+    | "homeCourtAdvantage"
     | "injuryRate"
     | "leagueName"
     | "lid"

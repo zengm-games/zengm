@@ -210,6 +210,10 @@
                         "type": "number",
                         "minimum": 0
                     },
+                    "homeCourtAdvantage": {
+                        "type": "number",
+                        "minimum": 0
+                    },
                     "confs": {
                         "type": "array",
                         "items": {

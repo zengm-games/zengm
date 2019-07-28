@@ -388,7 +388,7 @@ const Account = ({
             </p>
 
             {Object.entries(groupBy(achievements, "category")).map(
-                ([category, catAchivements]) => {
+                ([category, catAchivements]: [any, any]) => {
                     return (
                         <React.Fragment key={category}>
                             <h3 className="mt-4">{category}</h3>

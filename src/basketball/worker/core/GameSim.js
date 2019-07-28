@@ -248,11 +248,11 @@ class GameSim {
      *
      */
     homeCourtAdvantage() {
-        var homeCourtModifier = 1.0 + g.homeCourtAdvantage / 100.0;
-
-        if (homeCourtModifier === 0.0) {
-            homeCourtModifier = 0.1; //watching out for divide by zeroes later on in the code
-        }
+        const homeCourtModifier = helpers.bound(
+            1 + g.homeCourtAdvantage / 100,
+            0.01,
+            Infinity,
+        );
 
         for (let t = 0; t < 2; t++) {
             let factor;

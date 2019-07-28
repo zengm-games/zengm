@@ -568,27 +568,6 @@ class GodMode extends React.Component {
                             </select>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
-                            <label>
-                                Home Court Advantage{" "}
-                                <HelpPopover
-                                    placement="right"
-                                    title="homeCourtAdvantage"
-                                >
-                                    This will give the home team a boost in each
-                                    game. Any value above 10 results in defacto
-                                    auto-win for Home team - avoid anything
-                                    above 3!
-                                </HelpPopover>
-                            </label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                disabled={!godMode}
-                                onChange={this.handleChanges.homeCourtAdvantage}
-                                value={this.state.homeCourtAdvantage}
-                            />
-                        </div>
-                        <div className="col-sm-3 col-6 form-group">
                             <label>Trades Between AI Teams</label>
                             <select
                                 className="form-control"
@@ -705,6 +684,36 @@ class GodMode extends React.Component {
                                 onChange={this.handleChanges.sonRate}
                                 value={this.state.sonRate}
                             />
+                        </div>
+                    </div>
+
+                    <h3 className="mt-2">Game Simulation</h3>
+                    <div className="row">
+                        <div className="col-sm-3 col-6 form-group">
+                            <label>
+                                Home Court Advantage{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="Home Court Advantage"
+                                >
+                                    This is the percentage boost/penalty given
+                                    to home/away player ratings. Default is 1%.
+                                </HelpPopover>
+                            </label>
+                            <div className="input-group">
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    disabled={!godMode}
+                                    onChange={
+                                        this.handleChanges.homeCourtAdvantage
+                                    }
+                                    value={this.state.homeCourtAdvantage}
+                                />
+                                <div className="input-group-append">
+                                    <div className="input-group-text">%</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

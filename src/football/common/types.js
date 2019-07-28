@@ -30,6 +30,7 @@ export type Awards = {|
     allRookie: (AwardPlayer | void)[],
     mvp: AwardPlayer | void,
     dpoy: AwardPlayer | void,
+    allStar: AwardPlayer[],
     allLeague: [
         {
             title: "First Team",

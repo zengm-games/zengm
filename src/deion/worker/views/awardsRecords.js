@@ -69,6 +69,10 @@ const optionsTmp = [
         key: "all_league",
     },
     {
+        val: "All-Star Team",
+        key: "allStar",
+    },
+    {
         val: "All-Defensive",
         key: "all_def",
     },

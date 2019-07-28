@@ -77,6 +77,7 @@ export type Awards = {|
         },
     ],
     dpoy: AwardPlayerDefense,
+    allStar: AwardPlayer[],
     allDefensive: [
         {
             title: "First Team",

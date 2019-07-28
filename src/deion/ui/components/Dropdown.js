@@ -228,6 +228,10 @@ const Select = ({ field, handleChange, value }) => {
                               key: "all_league",
                           },
                           {
+                              val: "All-Star Team",
+                              key: "allStar",
+                          },
+                          {
                               val: "First Team All-Defensive",
                               key: "first_def",
                           },
@@ -292,6 +296,10 @@ const Select = ({ field, handleChange, value }) => {
                           {
                               val: "All-League",
                               key: "all_league",
+                          },
+                          {
+                              val: "All-Star Team",
+                              key: "allStar",
                           },
                       ];
         } else if (field === "eventType") {

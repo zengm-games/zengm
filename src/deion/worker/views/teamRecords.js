@@ -64,6 +64,7 @@ function getTeamRecord(t, awards) {
         allRookie: awards[t.tid] ? awards[t.tid].allRookie : 0,
         allLeague: awards[t.tid] ? awards[t.tid].allLeagueTotal : 0,
         allDefense: awards[t.tid] ? awards[t.tid].allDefenseTotal : 0,
+        allStar: awards[t.tid] ? awards[t.tid].allStar : 0,
     };
 }
 
@@ -79,6 +80,7 @@ function tallyAwards(awards) {
             droy: 0,
             allLeague: [0, 0, 0],
             allLeagueTotal: 0,
+            allStar: 0,
             allDefense: [0, 0, 0],
             allDefenseTotal: 0,
             allRookie: 0,
@@ -94,6 +96,9 @@ function tallyAwards(awards) {
 
         if (teams[a.mvp.tid]) {
             teams[a.mvp.tid].mvp++;
+        }
+        if (teams[a.allStar.tid]) {
+            teams[a.allStar.tid].allStar++;
         }
         if (teams[a.dpoy.tid]) {
             teams[a.dpoy.tid].dpoy++;
@@ -258,6 +263,7 @@ async function updateTeamRecords(
                       "allRookie",
                       "allLeague",
                       "allDefense",
+                      "allStar",
                   ]
                 : [
                       "mvp",
@@ -268,6 +274,7 @@ async function updateTeamRecords(
                       "bestRecordConf",
                       "allRookie",
                       "allLeague",
+                      "allStar",
                   ];
 
         return {

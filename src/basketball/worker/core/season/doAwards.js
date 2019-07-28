@@ -219,13 +219,14 @@ const doAwards = async (conditions: Conditions) => {
 
     const mvpPlayers = getTopPlayersOffense(
         {
-            amount: 15,
+            amount: 24,
             score: mvpScore,
         },
         players,
     );
     const mvp = mvpPlayers[0];
     const allLeague = makeTeams(mvpPlayers);
+    const allStar = mvpPlayers.slice(0, 24);
 
     const [smoy] = getTopPlayersOffense(
         {
@@ -397,6 +398,7 @@ const doAwards = async (conditions: Conditions) => {
         roy,
         finalsMvp,
         allLeague,
+        allStar,
         allDefensive,
         allRookie,
         season: g.season,
@@ -412,6 +414,7 @@ const doAwards = async (conditions: Conditions) => {
         allLeague: "All-League",
         allDefensive: "All-Defensive",
         allRookie: "All Rookie Team",
+        allStar: "All-Star Team",
     };
 
     const simpleAwards = ["mvp", "roy", "smoy", "dpoy", "mip", "finalsMvp"];
@@ -434,10 +437,19 @@ const doAwards = async (conditions: Conditions) => {
     }
 
     // Special cases for teams
-    for (const key of ["allRookie", "allLeague", "allDefensive"]) {
+    for (const key of ["allRookie", "allLeague", "allDefensive", "allStar"]) {
         const type = awardNames[key];
         if (key === "allRookie") {
             for (const { pid, tid, name } of awards.allRookie) {
+                awardsByPlayer.push({
+                    pid,
+                    tid,
+                    name,
+                    type,
+                });
+            }
+        } else if (key === "allStar") {
+            for (const { pid, tid, name } of awards.allStar) {
                 awardsByPlayer.push({
                     pid,
                     tid,

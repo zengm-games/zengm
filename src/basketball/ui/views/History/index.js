@@ -68,6 +68,13 @@ const History = ({
                         team={awards.allRookie}
                         userTid={userTid}
                     />
+                    <Team
+                        className="mb-3"
+                        name="All-Star Team"
+                        season={season}
+                        team={awards.allStar}
+                        userTid={userTid}
+                    />
                 </div>
                 <div className="col-md-3 col-sm-4 col-6">
                     <Team

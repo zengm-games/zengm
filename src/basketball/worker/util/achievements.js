@@ -382,7 +382,7 @@ const achievements: Achievement[] = [
         category: "Meta",
     },
     {
-        slug: "longeivity",
+        slug: "longevity",
         name: "Longevity",
         desc: "Play 100 seasons in a single league.",
         category: "Multiple Seasons",
@@ -392,7 +392,7 @@ const achievements: Achievement[] = [
         when: "afterPlayoffs",
     },
     {
-        slug: "longeivity_2",
+        slug: "longevity_2",
         name: "Longevity 2",
         desc: "Play 1,000 seasons in a single league.",
         category: "Multiple Seasons",
@@ -402,7 +402,7 @@ const achievements: Achievement[] = [
         when: "afterPlayoffs",
     },
     {
-        slug: "longeivity_3",
+        slug: "longevity_3",
         name: "Longevity 3",
         desc: "Play 10,000 seasons in a single league.",
         category: "Multiple Seasons",

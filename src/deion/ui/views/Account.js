@@ -390,7 +390,7 @@ const Account = ({
             {Object.entries(groupBy(achievements, "category")).map(
                 ([category, catAchivements]) => {
                     return (
-                        <>
+                        <React.Fragment key={category}>
                             <h3 className="mt-4">{category}</h3>
                             <div
                                 className="row"
@@ -398,7 +398,10 @@ const Account = ({
                             >
                                 {catAchivements.map(achievement => {
                                     return (
-                                        <div className="col-sm-4">
+                                        <div
+                                            key={achievement.slug}
+                                            className="col-sm-4"
+                                        >
                                             <div
                                                 className={classNames(
                                                     "card mb-2",
@@ -435,7 +438,7 @@ const Account = ({
                                     );
                                 })}
                             </div>
-                        </>
+                        </React.Fragment>
                     );
                 },
             )}

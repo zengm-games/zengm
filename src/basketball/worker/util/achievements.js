@@ -677,7 +677,7 @@ const achievements: Achievement[] = [
         slug: "homegrown",
         name: "Homegrown",
         desc: "Win a title with only players you drafted.",
-        category: "Season",
+        category: "Team Composition",
         async check() {
             const wonTitle = await userWonTitle();
             if (!wonTitle) {

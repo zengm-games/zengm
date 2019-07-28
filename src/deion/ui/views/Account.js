@@ -393,33 +393,43 @@ const Account = ({
                         <>
                             <h3 className="mt-4">{category}</h3>
                             <div
-                                className="card-columns"
+                                className="row"
                                 style={{ marginBottom: "-0.5rem" }}
                             >
                                 {catAchivements.map(achievement => {
                                     return (
-                                        <div
-                                            className={classNames("card", {
-                                                "list-group-item-success":
-                                                    achievement.count > 0,
-                                                "text-muted":
-                                                    achievement.count === 0,
-                                            })}
-                                            key={achievement.slug}
-                                            style={{ minHeight: 109 }}
-                                        >
-                                            <div className="card-body">
-                                                <h5 className="card-title">
-                                                    {achievement.name}
-                                                    {achievement.count > 1 ? (
-                                                        <span className="badge badge-pill badge-secondary float-right">
-                                                            {achievement.count}
-                                                        </span>
-                                                    ) : null}
-                                                </h5>
-                                                <p className="card-text">
-                                                    {achievement.desc}
-                                                </p>
+                                        <div className="col-sm-4">
+                                            <div
+                                                className={classNames(
+                                                    "card mb-2",
+                                                    {
+                                                        "list-group-item-success":
+                                                            achievement.count >
+                                                            0,
+                                                        "text-muted":
+                                                            achievement.count ===
+                                                            0,
+                                                    },
+                                                )}
+                                                key={achievement.slug}
+                                                style={{ minHeight: 109 }}
+                                            >
+                                                <div className="card-body">
+                                                    <h5 className="card-title">
+                                                        {achievement.name}
+                                                        {achievement.count >
+                                                        1 ? (
+                                                            <span className="badge badge-pill badge-secondary float-right">
+                                                                {
+                                                                    achievement.count
+                                                                }
+                                                            </span>
+                                                        ) : null}
+                                                    </h5>
+                                                    <p className="card-text">
+                                                        {achievement.desc}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     );

@@ -105,8 +105,6 @@ if (process.env.SPORT === "football") {
         minRosterSize: 40,
         maxRosterSize: 53,
 
-        homeCourtAdvantage: 1,
-
         // Arbitrary - 2 injuries per game. Divide over 1000 plays. Bump this up arbitrarily for some reason, wasn't getting 2 per game.
         injuryRate: (2 / 1000 / 22) * 30,
 

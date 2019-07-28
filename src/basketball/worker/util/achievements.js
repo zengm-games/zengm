@@ -650,6 +650,7 @@ const achievements: Achievement[] = [
 
             return false;
         },
+        when: "afterAwards",
     },
     {
         slug: "golden_boy_2",

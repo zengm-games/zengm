@@ -248,12 +248,22 @@ class GameSim {
      *
      */
     homeCourtAdvantage() {
+        var homeCourtModifier = g.homeCourtAdvantage / 100.0;
+        /*
+        if (homeCourtModifier > .1) {
+          homeCourtModifier = .1;
+        }
+        else if (homeCourtModifier < 0) {
+          homeCourtModifier = 0;
+        }
+        */
+
         for (let t = 0; t < 2; t++) {
             let factor;
             if (t === 0) {
-                factor = 1.01; // Bonus for home team
+                factor = 1 + homeCourtModifier; // Bonus for home team
             } else {
-                factor = 0.99; // Penalty for away team
+                factor = 1 - homeCourtModifier; // Penalty for away team
             }
 
             for (let p = 0; p < this.team[t].player.length; p++) {

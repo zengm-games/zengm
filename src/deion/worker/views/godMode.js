@@ -27,6 +27,7 @@ async function updateGodMode(
             maxContract: g.maxContract / 1000,
             aiTrades: g.aiTrades,
             injuryRate: g.injuryRate,
+            homeCourtAdvantage: g.homeCourtAdvantage,
             tragicDeathRate: g.tragicDeathRate,
             brotherRate: g.brotherRate,
             sonRate: g.sonRate,

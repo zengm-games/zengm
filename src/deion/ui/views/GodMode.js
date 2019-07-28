@@ -159,7 +159,7 @@ class GodMode extends React.Component {
             minContract: parseInt(this.state.minContract * 1000, 10),
             maxContract: parseInt(this.state.maxContract * 1000, 10),
             aiTrades: this.state.aiTrades === "true",
-            homeCourtAdvantage: parseInt(this.state.homeCourtAdvantage, 10),
+            homeCourtAdvantage: parseFloat(this.state.homeCourtAdvantage),
             injuryRate: parseFloat(this.state.injuryRate),
             tragicDeathRate: parseFloat(this.state.tragicDeathRate),
             brotherRate: parseFloat(this.state.brotherRate),

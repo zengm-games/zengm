@@ -172,7 +172,7 @@ const achievements: Achievement[] = [
     },
     {
         slug: "fo_fo_fo_2",
-        name: "Fo Fo Fo",
+        name: "Fo Fo Fo 2",
         desc: "Go 16-0 in the playoffs, without the #1 seed.",
         category: "Playoffs",
         async check() {

@@ -7,6 +7,11 @@ number or not.
 ## Gameplay and UI
 
 - [Frivolities](https://basketball-gm.com/blog/2019/05/frivolities/)
+- [New achievements](https://basketball-gm.com/blog/2019/07/new-achievements/)
+
+## Technical details
+
+- [Refactored how draft classes are stored, allowing arbitrary future draft classes to be specified in a league file](https://basketball-gm.com/blog/2019/07/far-future-draft-classes/)
 
 # 5.0.0 (2019-05-25)
 

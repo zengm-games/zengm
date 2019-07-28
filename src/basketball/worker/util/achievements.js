@@ -153,6 +153,68 @@ const checkYoungGuns = async age => {
     return true;
 };
 
+const states = [
+    "AL",
+    "AK",
+    "AZ",
+    "AR",
+    "CA",
+    "CO",
+    "CT",
+    "DE",
+    "FL",
+    "GA",
+    "HI",
+    "ID",
+    "IL",
+    "IN",
+    "IA",
+    "KS",
+    "KY",
+    "LA",
+    "ME",
+    "MD",
+    "MA",
+    "MI",
+    "MN",
+    "MS",
+    "MO",
+    "MT",
+    "NE",
+    "NV",
+    "NH",
+    "NJ",
+    "NM",
+    "NY",
+    "NC",
+    "ND",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UT",
+    "VT",
+    "VA",
+    "WA",
+    "WV",
+    "WI",
+    "WY",
+];
+const isAmerican = loc => {
+    if (loc.endsWith("USA")) {
+        return true;
+    }
+
+    const parts = loc.split(", ");
+    const state = parts[parts.length - 1];
+    return states.includes(state);
+};
+
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const achievements: Achievement[] = [
     {
@@ -480,7 +542,7 @@ const achievements: Achievement[] = [
             }
 
             const playersAll = await idb.cache.players.getAll();
-            const countUSA = playersAll.filter(p => p.born.loc.endsWith("USA"))
+            const countUSA = playersAll.filter(p => isAmerican(p.born.loc))
                 .length;
             if (countUSA < playersAll.length / 2) {
                 // Handle custom rosters where nobody is from the USA by enforcing that the league must be at least half USA for this achievement to apply
@@ -493,7 +555,7 @@ const achievements: Achievement[] = [
             );
 
             for (const p of players) {
-                if (p.born.loc.endsWith("USA")) {
+                if (isAmerican(p.born.loc)) {
                     return false;
                 }
             }

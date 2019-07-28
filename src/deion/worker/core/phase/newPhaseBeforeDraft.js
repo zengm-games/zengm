@@ -107,6 +107,10 @@ const newPhaseBeforeDraft = async (
     const deltas = await season.updateOwnerMood();
     await genMessage(deltas);
 
+    if (g.gameOver) {
+        achievement.check("afterFired", conditions);
+    }
+
     if (g.draftType === "noLottery") {
         await draft.genOrder(false, conditions);
     }

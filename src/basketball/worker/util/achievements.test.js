@@ -1640,6 +1640,15 @@ describe("worker/util/account/checkAchievement", () => {
                     trb: 11.329268292682928,
                     ast: 0.6585365853658537,
                 },
+                mip: {
+                    pid: 280,
+                    name: "William Jarosz",
+                    tid: 7,
+                    abbrev: "PHI",
+                    pts: 28.951219512195124,
+                    trb: 11.329268292682928,
+                    ast: 0.6585365853658537,
+                },
                 smoy: {
                     pid: 505,
                     name: "Donald Gallager",
@@ -1695,6 +1704,15 @@ describe("worker/util/account/checkAchievement", () => {
                     trb: 11.329268292682928,
                     ast: 0.6585365853658537,
                 },
+                mip: {
+                    pid: 280,
+                    name: "William Jarosz",
+                    tid: 7,
+                    abbrev: "PHI",
+                    pts: 28.951219512195124,
+                    trb: 11.329268292682928,
+                    ast: 0.6585365853658537,
+                },
                 smoy: {
                     pid: 505,
                     name: "Donald Gallager",
@@ -1742,6 +1760,15 @@ describe("worker/util/account/checkAchievement", () => {
                     ast: 0.7972972972972973,
                 },
                 mvp: {
+                    pid: 280,
+                    name: "William Jarosz",
+                    tid: 8,
+                    abbrev: "PHI",
+                    pts: 28.951219512195124,
+                    trb: 11.329268292682928,
+                    ast: 0.6585365853658537,
+                },
+                mip: {
                     pid: 280,
                     name: "William Jarosz",
                     tid: 8,
@@ -1913,6 +1940,79 @@ describe("worker/util/account/checkAchievement", () => {
             await idb.cache.players.put(p);
 
             const awarded = await get("sleeper_pick").check();
+            assert.equal(awarded, false);
+        });
+    });
+
+    describe("homegrown", () => {
+        it("award achievement if user's team wins title with players it drafted", async () => {
+            const teamSeason = await idb.cache.teamSeasons.indexGet(
+                "teamSeasonsByTidSeason",
+                [g.userTid, g.season],
+            );
+            teamSeason.playoffRoundsWon = 4;
+            await idb.cache.teamSeasons.put(teamSeason);
+
+            for (const p of await idb.cache.players.getAll()) {
+                p.draft.tid = g.userTid;
+                p.tid = g.userTid;
+                await idb.cache.players.put(p);
+            }
+
+            const awarded = await get("homegrown").check();
+            assert.equal(awarded, true);
+        });
+        it("don't award achievement if user's team it has another team's drafted player", async () => {
+            const teamSeason = await idb.cache.teamSeasons.indexGet(
+                "teamSeasonsByTidSeason",
+                [g.userTid, g.season],
+            );
+            teamSeason.playoffRoundsWon = 4;
+            await idb.cache.teamSeasons.put(teamSeason);
+
+            const otherTid = 0;
+            const p = (await idb.cache.players.getAll())[0];
+            p.draft.tid = otherTid;
+            await idb.cache.players.put(p);
+
+            const awarded = await get("homegrown").check();
+            assert.equal(awarded, false);
+        });
+    });
+
+    describe("golden_oldies", () => {
+        it("award achievement if all players are old", async () => {
+            const teamSeason = await idb.cache.teamSeasons.indexGet(
+                "teamSeasonsByTidSeason",
+                [g.userTid, g.season],
+            );
+            teamSeason.playoffRoundsWon = 4;
+            await idb.cache.teamSeasons.put(teamSeason);
+
+            for (const p of await idb.cache.players.getAll()) {
+                p.tid = g.userTid;
+                p.draft.year = g.season - 30;
+                await idb.cache.players.put(p);
+            }
+
+            const awarded = await get("golden_oldies").check();
+            assert.equal(awarded, true);
+
+            const awarded2 = await get("golden_oldies_2").check();
+            assert.equal(awarded2, false);
+
+            const awarded3 = await get("golden_oldies_3").check();
+            assert.equal(awarded3, false);
+        });
+        it("don't award achievement if user's team didn't win title", async () => {
+            const teamSeason = await idb.cache.teamSeasons.indexGet(
+                "teamSeasonsByTidSeason",
+                [g.userTid, g.season],
+            );
+            teamSeason.playoffRoundsWon = 3;
+            await idb.cache.teamSeasons.put(teamSeason);
+
+            const awarded = await get("golden_oldies").check();
             assert.equal(awarded, false);
         });
     });

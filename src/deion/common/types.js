@@ -2,6 +2,7 @@
 
 export type AchievementWhen =
     | "afterAwards"
+    | "afterFired"
     | "afterPlayoffs"
     | "afterRegularSeason";
 

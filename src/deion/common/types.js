@@ -9,6 +9,7 @@ export type AchievementWhen =
 export type Achievement = {
     slug: string,
     name: string,
+    category: string,
     desc: string,
     check?: () => Promise<boolean>,
     when?: AchievementWhen,

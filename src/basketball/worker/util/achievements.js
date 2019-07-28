@@ -160,11 +160,13 @@ const achievements: Achievement[] = [
         name: "Participation",
         desc:
             "You get an achievement just for creating an account, you special snowflake!",
+        category: "Meta",
     },
     {
         slug: "fo_fo_fo",
         name: "Fo Fo Fo",
         desc: "Go 16-0 in the playoffs.",
+        category: "Playoffs",
         check: checkFoFoFo,
         when: "afterPlayoffs",
     },
@@ -172,6 +174,7 @@ const achievements: Achievement[] = [
         slug: "fo_fo_fo_2",
         name: "Fo Fo Fo",
         desc: "Go 16-0 in the playoffs, without the #1 seed.",
+        category: "Playoffs",
         async check() {
             const foFoFo = await checkFoFoFo();
             if (!foFoFo) {
@@ -187,6 +190,7 @@ const achievements: Achievement[] = [
         slug: "septuawinarian",
         name: "Septuawinarian",
         desc: "Win 70+ games in the regular season.",
+        category: "Season",
         async check() {
             const t = await idb.getCopy.teamsPlus({
                 seasonAttrs: ["won"],
@@ -202,6 +206,7 @@ const achievements: Achievement[] = [
         slug: "98_degrees",
         name: "98 Degrees",
         desc: "Go 98-0 in the playoffs and regular season.",
+        category: "Season",
         async check() {
             const awarded = await checkFoFoFo();
             if (awarded) {
@@ -228,6 +233,7 @@ const achievements: Achievement[] = [
         slug: "dynasty",
         name: "Dynasty",
         desc: "Win 6 championships in 8 years.",
+        category: "Multiple Seasons",
         check() {
             return checkDynasty(6, 8);
         },
@@ -237,6 +243,7 @@ const achievements: Achievement[] = [
         slug: "dynasty_2",
         name: "Dynasty 2",
         desc: "Win 8 championships in a row.",
+        category: "Multiple Seasons",
         check() {
             return checkDynasty(8, 8);
         },
@@ -246,6 +253,7 @@ const achievements: Achievement[] = [
         slug: "dynasty_3",
         name: "Dynasty 3",
         desc: "Win 11 championships in 13 years.",
+        category: "Multiple Seasons",
         check() {
             return checkDynasty(11, 13);
         },
@@ -255,6 +263,7 @@ const achievements: Achievement[] = [
         slug: "moneyball",
         name: "Moneyball",
         desc: "Win a title with a payroll under 2/3 of the salary cap.",
+        category: "Season",
         check() {
             return checkMoneyball((2 / 3) * g.salaryCap);
         },
@@ -264,6 +273,7 @@ const achievements: Achievement[] = [
         slug: "moneyball_2",
         name: "Moneyball 2",
         desc: "Win a title with a payroll under half of the salary cap.",
+        category: "Season",
         check() {
             return checkMoneyball(0.5 * g.salaryCap);
         },
@@ -274,6 +284,7 @@ const achievements: Achievement[] = [
         name: "Hardware Store",
         desc:
             "Players on your team win MVP, DPOY, SMOY, MIP, ROY, and Finals MVP in the same season.",
+        category: "Awards",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
 
@@ -299,6 +310,7 @@ const achievements: Achievement[] = [
         slug: "small_market",
         name: "Small Market",
         desc: "Win a title in a city with under 2 million people.",
+        category: "Season",
         async check() {
             const t = await idb.getCopy.teamsPlus({
                 seasonAttrs: ["playoffRoundsWon", "pop"],
@@ -320,6 +332,7 @@ const achievements: Achievement[] = [
         slug: "sleeper_pick",
         name: "Sleeper Pick",
         desc: "Use a non-lottery pick to draft the ROY.",
+        category: "Draft",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
             if (awards && awards.roy && awards.roy.tid === g.userTid) {
@@ -342,6 +355,7 @@ const achievements: Achievement[] = [
         slug: "sleeper_pick 2",
         name: "Sleeper Pick 2",
         desc: "Use a second round pick to draft the ROY.",
+        category: "Draft",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
             if (awards && awards.roy && awards.roy.tid === g.userTid) {
@@ -365,11 +379,13 @@ const achievements: Achievement[] = [
         name: "Hacker",
         desc:
             "Privately report a security issue in the account system or some other part of the site.",
+        category: "Meta",
     },
     {
         slug: "longeivity",
         name: "Longevity",
         desc: "Play 100 seasons in a single league.",
+        category: "Multiple Seasons",
         async check() {
             return g.season === g.startingSeason + 99;
         },
@@ -379,6 +395,7 @@ const achievements: Achievement[] = [
         slug: "longeivity_2",
         name: "Longevity 2",
         desc: "Play 1,000 seasons in a single league.",
+        category: "Multiple Seasons",
         async check() {
             return g.season === g.startingSeason + 999;
         },
@@ -388,6 +405,7 @@ const achievements: Achievement[] = [
         slug: "longeivity_3",
         name: "Longevity 3",
         desc: "Play 10,000 seasons in a single league.",
+        category: "Multiple Seasons",
         async check() {
             return g.season === g.startingSeason + 9999;
         },
@@ -397,6 +415,7 @@ const achievements: Achievement[] = [
         slug: "clutch_finish",
         name: "Clutch Finish",
         desc: "Win game 7 of the finals in OT.",
+        category: "Playoffs",
         async check() {
             const games = await idb.cache.games.getAll();
             const game = games[games.length - 1]; // Last game of finals
@@ -408,6 +427,7 @@ const achievements: Achievement[] = [
         slug: "unclutch_finish",
         name: "Unclutch Finish",
         desc: "Lose game 7 of the finals in OT.",
+        category: "Playoffs",
         async check() {
             const games = await idb.cache.games.getAll();
             const game = games[games.length - 1]; // Last game of finals
@@ -419,6 +439,7 @@ const achievements: Achievement[] = [
         slug: "underdog",
         name: "Underdog",
         desc: "Win a title as the 8th seed.",
+        category: "Playoffs",
         async check() {
             const wonTitle = await userWonTitle();
             if (!wonTitle) {
@@ -434,6 +455,7 @@ const achievements: Achievement[] = [
         slug: "trust_the_process",
         name: "Trust The Process",
         desc: "Have 3+ players on the All-Rookie Team.",
+        category: "Awards",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
 
@@ -450,6 +472,7 @@ const achievements: Achievement[] = [
         slug: "international",
         name: "International",
         desc: "Win a title with no American players on your team.",
+        category: "Team Composition",
         async check() {
             const wonTitle = await userWonTitle();
             if (!wonTitle) {
@@ -475,6 +498,7 @@ const achievements: Achievement[] = [
         slug: "so_close",
         name: "So Close",
         desc: "Lose in the finals four seasons in a row.",
+        category: "Playoffs",
         async check() {
             const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
                 "teamSeasonsByTidSeason",
@@ -499,6 +523,7 @@ const achievements: Achievement[] = [
         slug: "team_effort",
         name: "Team Effort",
         desc: "Win a title without a player on an All-League Team.",
+        category: "Awards",
         async check() {
             const wonTitle = await userWonTitle();
             if (!wonTitle) {
@@ -524,6 +549,7 @@ const achievements: Achievement[] = [
         slug: "super_team",
         name: "Super Team",
         desc: "Have 3+ players on the All-League First Team.",
+        category: "Awards",
         async check() {
             let count = 0;
 
@@ -544,6 +570,7 @@ const achievements: Achievement[] = [
         slug: "brick_wall",
         name: "Brick Wall",
         desc: "Have 3+ players on the All-Defensive First Team.",
+        category: "Awards",
         async check() {
             let count = 0;
 
@@ -564,6 +591,7 @@ const achievements: Achievement[] = [
         slug: "out_of_nowhere",
         name: "Out Of Nowhere",
         desc: "Have a player win both MIP and MVP in the same year.",
+        category: "Awards",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
 
@@ -582,6 +610,7 @@ const achievements: Achievement[] = [
         slug: "quit_on_top",
         name: "Quit On Top",
         desc: "Have a player retire while making the All-League First Team.",
+        category: "Awards",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
             if (awards && awards.allLeague && awards.allLeague[0]) {
@@ -603,6 +632,7 @@ const achievements: Achievement[] = [
         slug: "golden_boy",
         name: "Golden Boy",
         desc: "Have a rookie make the All-League Team.",
+        category: "Awards",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
             if (awards && awards.allLeague) {
@@ -625,6 +655,7 @@ const achievements: Achievement[] = [
         slug: "golden_boy_2",
         name: "Golden Boy 2",
         desc: "Have a rookie make the All-League First Team.",
+        category: "Awards",
         async check() {
             const awards = await idb.cache.awards.get(g.season);
             if (awards && awards.allLeague && awards.allLeague[0]) {
@@ -646,6 +677,7 @@ const achievements: Achievement[] = [
         slug: "homegrown",
         name: "Homegrown",
         desc: "Win a title with only players you drafted.",
+        category: "Season",
         async check() {
             const wonTitle = await userWonTitle();
             if (!wonTitle) {
@@ -671,6 +703,7 @@ const achievements: Achievement[] = [
         slug: "golden_oldies",
         name: "Golden Oldies",
         desc: "Win a title when your entire team is at least 30 years old.",
+        category: "Team Composition",
         async check() {
             const awarded = await checkGoldenOldies(30);
 
@@ -682,6 +715,7 @@ const achievements: Achievement[] = [
         slug: "golden_oldies_2",
         name: "Golden Oldies 2",
         desc: "Win a title when your entire team is at least 33 years old.",
+        category: "Team Composition",
         async check() {
             const awarded = await checkGoldenOldies(33);
 
@@ -693,6 +727,7 @@ const achievements: Achievement[] = [
         slug: "golden_oldies_3",
         name: "Golden Oldies 3",
         desc: "Win a title when your entire team is at least 36 years old.",
+        category: "Team Composition",
         async check() {
             const awarded = await checkGoldenOldies(36);
 
@@ -704,6 +739,7 @@ const achievements: Achievement[] = [
         slug: "young_guns",
         name: "Young Guns",
         desc: "Win a title when your entire team is at most 25 years old.",
+        category: "Team Composition",
         async check() {
             const awarded = await checkYoungGuns(25);
 
@@ -715,6 +751,7 @@ const achievements: Achievement[] = [
         slug: "young_guns_2",
         name: "Young Guns 2",
         desc: "Win a title when your entire team is at most 22 years old.",
+        category: "Team Composition",
         async check() {
             const awarded = await checkYoungGuns(22);
 
@@ -726,6 +763,7 @@ const achievements: Achievement[] = [
         slug: "finals_choke",
         name: "Finals Choke",
         desc: "Blow a 3-0 lead in the finals.",
+        category: "Playoffs",
         async check() {
             // Confirm lost finals
             const t = await idb.getCopy.teamsPlus({
@@ -773,6 +811,7 @@ const achievements: Achievement[] = [
         slug: "first_round_choke",
         name: "First Round Choke",
         desc: "Lose in the first round of the playoffs as the #1 seed.",
+        category: "Playoffs",
         async check() {
             // Confirm lost in first round
             const t = await idb.getCopy.teamsPlus({
@@ -793,6 +832,7 @@ const achievements: Achievement[] = [
         slug: "bittersweet_victoy",
         name: "Bittersweet Victory",
         desc: "Get fired the same year you won a title.",
+        category: "Playoffs",
         check: userWonTitle,
         when: "afterFired",
     },

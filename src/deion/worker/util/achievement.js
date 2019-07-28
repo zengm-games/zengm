@@ -73,6 +73,7 @@ async function add(
 
 async function getAll(): Promise<
     {
+        category: string,
         count: number,
         desc: string,
         name: string,
@@ -80,8 +81,9 @@ async function getAll(): Promise<
     }[],
 > {
     const achievements = overrides.util.achievements.map(
-        ({ desc, name, slug }) => {
+        ({ category, desc, name, slug }) => {
             return {
+                category,
                 count: 0,
                 desc,
                 name,

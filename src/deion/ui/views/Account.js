@@ -1,6 +1,7 @@
 // @flow
 
 import classNames from "classnames";
+import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
 import {
@@ -261,6 +262,7 @@ const Account = ({
     username,
 }: {
     achievements: {
+        category: string,
         count: number,
         desc: string,
         name: string,
@@ -385,33 +387,48 @@ const Account = ({
                 never used God Mode or set the difficulty to Easy.
             </p>
 
-            <div className="card-columns" style={{ marginBottom: "-0.5rem" }}>
-                {achievements.map(achievement => {
+            {Object.entries(groupBy(achievements, "category")).map(
+                ([category, catAchivements]) => {
                     return (
-                        <div
-                            className={classNames("card", {
-                                "list-group-item-success":
-                                    achievement.count > 0,
-                                "text-muted": achievement.count === 0,
-                            })}
-                            key={achievement.slug}
-                            style={{ minHeight: 109 }}
-                        >
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    {achievement.name}
-                                    {achievement.count > 1 ? (
-                                        <span className="badge badge-pill badge-secondary float-right">
-                                            {achievement.count}
-                                        </span>
-                                    ) : null}
-                                </h5>
-                                <p className="card-text">{achievement.desc}</p>
+                        <>
+                            <h3 className="mt-4">{category}</h3>
+                            <div
+                                className="card-columns"
+                                style={{ marginBottom: "-0.5rem" }}
+                            >
+                                {catAchivements.map(achievement => {
+                                    return (
+                                        <div
+                                            className={classNames("card", {
+                                                "list-group-item-success":
+                                                    achievement.count > 0,
+                                                "text-muted":
+                                                    achievement.count === 0,
+                                            })}
+                                            key={achievement.slug}
+                                            style={{ minHeight: 109 }}
+                                        >
+                                            <div className="card-body">
+                                                <h5 className="card-title">
+                                                    {achievement.name}
+                                                    {achievement.count > 1 ? (
+                                                        <span className="badge badge-pill badge-secondary float-right">
+                                                            {achievement.count}
+                                                        </span>
+                                                    ) : null}
+                                                </h5>
+                                                <p className="card-text">
+                                                    {achievement.desc}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
-                        </div>
+                        </>
                     );
-                })}
-            </div>
+                },
+            )}
         </>
     );
 };
@@ -419,6 +436,7 @@ const Account = ({
 Account.propTypes = {
     achievements: PropTypes.arrayOf(
         PropTypes.shape({
+            category: PropTypes.string.isRequired,
             count: PropTypes.number.isRequired,
             desc: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,

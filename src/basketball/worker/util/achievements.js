@@ -479,13 +479,21 @@ const achievements: Achievement[] = [
                 return false;
             }
 
+            const playersAll = await idb.cache.players.getAll();
+            const countUSA = playersAll.filter(p => p.born.loc.endsWith("USA"))
+                .length;
+            if (countUSA < playersAll.length / 2) {
+                // Handle custom rosters where nobody is from the USA by enforcing that the league must be at least half USA for this achievement to apply
+                return false;
+            }
+
             const players = await idb.cache.players.indexGetAll(
                 "playersByTid",
                 g.userTid,
             );
 
             for (const p of players) {
-                if (p.born.loc === "USA") {
+                if (p.born.loc.endsWith("USA")) {
                     return false;
                 }
             }

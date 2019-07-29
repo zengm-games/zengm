@@ -216,6 +216,25 @@ const isAmerican = loc => {
     return states.includes(state);
 };
 
+const checkSevenGameFinals = async () => {
+    // Confirm 4-3 finals
+    const playoffSeries = await idb.getCopy.playoffSeries({
+        season: g.season,
+    });
+    if (playoffSeries === undefined) {
+        return false;
+    }
+    const matchup = playoffSeries.series[playoffSeries.series.length - 1][0];
+    if (matchup === undefined) {
+        return false;
+    }
+    if (matchup.home.won < 3 || matchup.lost.won < 3) {
+        return false;
+    }
+
+    return true;
+};
+
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const achievements: Achievement[] = [
     {
@@ -480,6 +499,11 @@ const achievements: Achievement[] = [
         desc: "Win game 7 of the finals in OT.",
         category: "Playoffs",
         async check() {
+            const sevenGameFinals = await checkSevenGameFinals();
+            if (!sevenGameFinals) {
+                return false;
+            }
+
             const games = await idb.cache.games.getAll();
             const game = games[games.length - 1]; // Last game of finals
             return game.overtimes >= 1 && game.won.tid === g.userTid;
@@ -492,6 +516,11 @@ const achievements: Achievement[] = [
         desc: "Lose game 7 of the finals in OT.",
         category: "Playoffs",
         async check() {
+            const sevenGameFinals = await checkSevenGameFinals();
+            if (!sevenGameFinals) {
+                return false;
+            }
+
             const games = await idb.cache.games.getAll();
             const game = games[games.length - 1]; // Last game of finals
             return game.overtimes >= 1 && game.lost.tid === g.userTid;
@@ -850,19 +879,8 @@ const achievements: Achievement[] = [
                 return false;
             }
 
-            // Confirm 4-3 finals
-            const playoffSeries = await idb.getCopy.playoffSeries({
-                season: g.season,
-            });
-            if (playoffSeries === undefined) {
-                return false;
-            }
-            const matchup =
-                playoffSeries.series[playoffSeries.series.length - 1][0];
-            if (matchup === undefined) {
-                return false;
-            }
-            if (matchup.home.won < 3 || matchup.lost.won < 3) {
+            const sevenGameFinals = await checkSevenGameFinals();
+            if (!sevenGameFinals) {
                 return false;
             }
 

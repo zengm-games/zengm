@@ -2,11 +2,11 @@ import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
 import type { Achievement } from "../../../deion/common/types";
 
-async function checkDynasty(titles: number, years: number) {
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-        "teamSeasonsByTidSeason",
-        [[g.userTid, g.season - (years - 1)], [g.userTid, Infinity]],
-    );
+const checkDynasty = async (titles: number, years: number) => {
+    const teamSeasons = await idb.getCopies.teamSeasons({
+        tid: g.userTid,
+        seasons: [g.season - (years - 1), Infinity],
+    });
 
     let titlesFound = 0;
     // Look over past years
@@ -26,7 +26,7 @@ async function checkDynasty(titles: number, years: number) {
     }
 
     return titlesFound >= titles;
-}
+};
 
 const checkFoFoFo = async () => {
     if (g.numGamesPlayoffSeries.length < 3) {
@@ -600,10 +600,10 @@ const achievements: Achievement[] = [
         desc: "Lose in the finals four seasons in a row.",
         category: "Playoffs",
         async check() {
-            const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-                "teamSeasonsByTidSeason",
-                [[g.userTid, g.season - 3], [g.userTid, g.season]],
-            );
+            const teamSeasons = await idb.getCopies.teamSeasons({
+                tid: g.userTid,
+                seasons: [g.season - 3, g.season],
+            });
 
             let count = 0;
             for (const teamSeason of teamSeasons) {

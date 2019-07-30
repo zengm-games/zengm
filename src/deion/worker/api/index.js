@@ -598,6 +598,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
     }
 
     const columns = [
+        "gid",
         "pid",
         "Name",
         "Pos",
@@ -640,6 +641,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
             const t2 = teams[i][j === 0 ? 1 : 0];
             for (const p of t.players) {
                 rows.push([
+                    games[i].gid,
                     p.pid,
                     p.name,
                     p.pos,

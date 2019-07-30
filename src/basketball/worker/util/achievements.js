@@ -44,6 +44,7 @@ const checkFoFoFo = async () => {
         for (const series of round) {
             if (
                 series.away &&
+                series.home &&
                 series.away.won >= 4 &&
                 series.home.won === 0 &&
                 series.away.tid === g.userTid
@@ -52,8 +53,10 @@ const checkFoFoFo = async () => {
                 break;
             }
             if (
-                (!series.away ||
-                    (series.home.won >= 4 && series.away.won === 0)) &&
+                series.away &&
+                series.home &&
+                series.home.won >= 4 &&
+                series.away.won === 0 &&
                 series.home.tid === g.userTid
             ) {
                 found = true;
@@ -225,10 +228,14 @@ const checkSevenGameFinals = async () => {
         return false;
     }
     const matchup = playoffSeries.series[playoffSeries.series.length - 1][0];
-    if (matchup === undefined) {
+    if (
+        matchup === undefined ||
+        matchup.home === undefined ||
+        matchup.away === undefined
+    ) {
         return false;
     }
-    if (matchup.home.won < 3 || matchup.lost.won < 3) {
+    if (matchup.home.won < 3 || matchup.away.won < 3) {
         return false;
     }
 

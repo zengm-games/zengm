@@ -126,23 +126,28 @@ async function getAll(): Promise<
 }
 
 const check = async (when: AchievementWhen, conditions: Conditions) => {
-    if (g.easyDifficultyInPast || g.godModeInPast) {
-        return;
-    }
+    try {
+        if (g.easyDifficultyInPast || g.godModeInPast) {
+            return;
+        }
 
-    const awarded = [];
+        const awarded = [];
 
-    for (const achievement of overrides.util.achievements) {
-        if (achievement.when === when && achievement.check !== undefined) {
-            const result = await achievement.check();
-            if (result) {
-                awarded.push(achievement.slug);
+        for (const achievement of overrides.util.achievements) {
+            if (achievement.when === when && achievement.check !== undefined) {
+                const result = await achievement.check();
+                if (result) {
+                    awarded.push(achievement.slug);
+                }
             }
         }
-    }
 
-    if (awarded.length > 0) {
-        add(awarded, conditions);
+        if (awarded.length > 0) {
+            add(awarded, conditions);
+        }
+    } catch (error) {
+        console.error("Achievements error");
+        console.error(error);
     }
 };
 

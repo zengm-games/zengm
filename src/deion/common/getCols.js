@@ -1347,6 +1347,9 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    YWT: {
+        desc: "Years With Team"
+    },
     "rating:hgt": {
         desc: "Height",
         sortSequence: ["desc", "asc"],
@@ -1379,6 +1382,11 @@ const cols: {
     },
     "stat:mov": {
         desc: "Margin of Victory",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:yearsWithTeam": {
+        desc: "yearsWithTeam",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

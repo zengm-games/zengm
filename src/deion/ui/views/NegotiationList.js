@@ -27,10 +27,15 @@ const NegotiationList = ({
 
     setTitle(title);
 
+    stats = stats.filter((stat) => {
+        return stat !== "yearsWithTeam";
+    });
+
     const cols = getCols(
         "Name",
         "Pos",
         "Age",
+        "YWT",
         "Ovr",
         "Pot",
         ...stats.map(stat => `stat:${stat}`),
@@ -53,6 +58,7 @@ const NegotiationList = ({
                 </PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,
+                p.stats.yearsWithTeam,
                 p.ratings.ovr,
                 p.ratings.pot,
                 ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),

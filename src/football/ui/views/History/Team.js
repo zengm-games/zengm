@@ -3,6 +3,10 @@ import React from "react";
 import { helpers } from "../../../../deion/ui/util";
 
 const Player = ({ i, p, season, userTid }) => {
+    if (!p) {
+        return <div />;
+    }
+
     let pos = p.pos;
     if (i === 24) {
         pos = "KR";
@@ -27,7 +31,7 @@ const Player = ({ i, p, season, userTid }) => {
 
 Player.propTypes = {
     i: PropTypes.number.isRequired,
-    p: PropTypes.object.isRequired,
+    p: PropTypes.object,
     season: PropTypes.number.isRequired,
     userTid: PropTypes.number.isRequired,
 };

@@ -83,6 +83,7 @@ const makeTeams = (
 
     const kickers = getTopPlayers(
         {
+            allowNone: rookie,
             amount: 2,
             score: (p: PlayerFiltered) => p.currentStats.fg,
         },
@@ -90,6 +91,7 @@ const makeTeams = (
     );
     const punters = getTopPlayers(
         {
+            allowNone: rookie,
             amount: 2,
             score: (p: PlayerFiltered) => p.currentStats.pntYds,
         },
@@ -97,6 +99,7 @@ const makeTeams = (
     );
     const kickReturners = getTopPlayers(
         {
+            allowNone: rookie,
             amount: 2,
             score: (p: PlayerFiltered) =>
                 p.currentStats.krYds + 500 * p.currentStats.krTD,
@@ -105,6 +108,7 @@ const makeTeams = (
     );
     const puntReturners = getTopPlayers(
         {
+            allowNone: rookie,
             amount: 2,
             score: (p: PlayerFiltered) =>
                 p.currentStats.prYds + 500 * p.currentStats.prTD,

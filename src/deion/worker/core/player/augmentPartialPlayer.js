@@ -176,6 +176,12 @@ const augmentPartialPlayer = (
         }
     }
 
+    const r2 = p.ratings[p.ratings.length - 1];
+    if (process.env.SPORT === "football" && (!r2.ovrs || !r2.pots || !r2.pos)) {
+        // Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
+        develop(p, 0);
+    }
+
     for (const r of p.ratings) {
         if (!r.hasOwnProperty("fuzz")) {
             r.fuzz = pg.ratings[0].fuzz;
@@ -206,7 +212,10 @@ const augmentPartialPlayer = (
     }
 
     // Rating rescaling
-    if (version === undefined || version <= 26) {
+    if (
+        process.env.SPORT === "basketball" &&
+        (version === undefined || version <= 26)
+    ) {
         for (const r of p.ratings) {
             // Replace blk/stl with diq
             if (typeof r.diq !== "number") {
@@ -268,12 +277,6 @@ const augmentPartialPlayer = (
                 p.draft.pot = r.pot;
             }
         }
-    }
-
-    const r = p.ratings[p.ratings.length - 1];
-    if (process.env.SPORT === "football" && (!r.ovrs || !r.pots || !r.pos)) {
-        // Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
-        develop(p, 0);
     }
 
     // Handle old format position

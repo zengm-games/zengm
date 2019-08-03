@@ -68,6 +68,7 @@ const roundOverrides =
         ? {
               gp: "none",
               gs: "none",
+              yearsWithTeam: "none",
               gmsc: "oneDecimalPlace",
               fgp: "oneDecimalPlace",
               tpp: "oneDecimalPlace",
@@ -79,6 +80,7 @@ const roundOverrides =
         : {
               gp: "none",
               gs: "none",
+              yearsWithTeam: "none",
               cmpPct: "oneDecimalPlace",
               qbRat: "oneDecimalPlace",
               rusYdsPerAtt: "oneDecimalPlace",

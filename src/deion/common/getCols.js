@@ -1382,6 +1382,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:yearsWithTeam": {
+        desc: "Years With Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "count:allDefense": {
         desc: "All Defensive Team",
         sortSequence: ["desc", "asc"],
@@ -1715,6 +1720,7 @@ const titleOverrides = {
     "stat:gs": "GS",
     "stat:min": "MP",
     "stat:mov": "MOV",
+    "stat:yearsWithTeam": "YWT",
     "count:allDefense": "ADT",
     "count:allLeague": "ALT",
     "count:allRookie": "ART",

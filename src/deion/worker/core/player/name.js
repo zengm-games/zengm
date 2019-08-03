@@ -1,13 +1,14 @@
 // @flow
 
-import { loadNames, random } from "../../util";
-
-let playerNames;
+import { loadNames, local, random } from "../../util";
 
 const name = (): { country: string, firstName: string, lastName: string } => {
+    let playerNames = local.playerNames;
+
     if (playerNames === undefined) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
         playerNames = loadNames();
+        local.playerNames = playerNames;
     }
 
     // Country

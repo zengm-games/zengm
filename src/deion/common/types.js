@@ -436,12 +436,23 @@ export type PlayersPlusOptions = {
     statType?: PlayerStatType,
 };
 
+export type PlayerNames = {
+    countries: [string, number][],
+    first: {
+        [key: string]: [string, number][],
+    },
+    last: {
+        [key: string]: [string, number][],
+    },
+};
+
 export type Local = {|
     autoPlaySeasons: number,
     fantasyDraftResults: Player<any>[],
     goldUntil: number,
     leagueLoaded: boolean,
     phaseText: string,
+    playerNames: PlayerNames | void,
     playingUntilEndOfRound: boolean,
     statusText: string,
     unviewedSeasonSummary: boolean,

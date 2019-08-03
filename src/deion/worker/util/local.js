@@ -10,6 +10,7 @@ const defaultLocal: Local = {
     goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
     leagueLoaded: false,
     phaseText: "",
+    playerNames: undefined,
     playingUntilEndOfRound: false,
     statusText: "Idle",
     unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
@@ -21,6 +22,7 @@ const local: Local & { reset: () => void } = {
     goldUntil: defaultLocal.goldUntil,
     leagueLoaded: defaultLocal.leagueLoaded,
     phaseText: defaultLocal.phaseText,
+    playerNames: defaultLocal.playerNames,
     playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
     statusText: defaultLocal.statusText,
     unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
@@ -30,6 +32,7 @@ const local: Local & { reset: () => void } = {
         local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
         local.leagueLoaded = defaultLocal.leagueLoaded;
         local.phaseText = defaultLocal.phaseText;
+        local.playerNames = defaultLocal.playerNames;
         local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
         local.statusText = defaultLocal.statusText;
         local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;

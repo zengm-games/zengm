@@ -1,17 +1,8 @@
 // @flow
 
+import type { PlayerNames } from "../../common/types";
 import g from "./g";
 import overrides from "./overrides";
-
-type PlayerNames = {
-    countries: [string, number][],
-    first: {
-        [key: string]: [string, number][],
-    },
-    last: {
-        [key: string]: [string, number][],
-    },
-};
 
 const genCumSums = (names: {
     [key: string]: [string, number][],

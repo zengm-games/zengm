@@ -17,6 +17,9 @@ const genPlayersWithoutSaving = (
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
     }
+    if (numPlayers < 0) {
+        numPlayers = 0;
+    }
 
     const baseAge = 19 - (draftYear - g.season);
 

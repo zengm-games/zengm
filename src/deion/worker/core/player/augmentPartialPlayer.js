@@ -30,6 +30,19 @@ const augmentPartialPlayer = (
         age = g.startingSeason - p.born.year;
     }
 
+    if (
+        p.hasOwnProperty("name") &&
+        !p.hasOwnProperty("firstName") &&
+        !p.hasOwnProperty("lastName")
+    ) {
+        // parse and split names from roster file
+        p.firstName = p.name.split(" ")[0];
+        p.lastName = p.name
+            .split(" ")
+            .slice(1, p.name.split(" ").length)
+            .join(" ");
+    }
+
     // This is used to get at default values for various attributes
     const pg = generate(
         p.tid,
@@ -45,12 +58,14 @@ const augmentPartialPlayer = (
         "born",
         "college",
         "face",
+        "firstName",
         "freeAgentMood",
         "gamesUntilTradable",
         "hgt",
         "hof",
         "imgURL",
         "injury",
+        "lastName",
         "ptModifier",
         "retiredYear",
         "rosterOrder",
@@ -78,19 +93,6 @@ const augmentPartialPlayer = (
     }
     if (!p.hasOwnProperty("draft")) {
         p.draft = {};
-    }
-
-    if (
-        p.hasOwnProperty("name") &&
-        !p.hasOwnProperty("firstName") &&
-        !p.hasOwnProperty("lastName")
-    ) {
-        // parse and split names from roster file
-        p.firstName = p.name.split(" ")[0];
-        p.lastName = p.name
-            .split(" ")
-            .slice(1, p.name.split(" ").length)
-            .join(" ");
     }
 
     if (typeof p.draft.year !== "number") {

@@ -1130,7 +1130,7 @@ const removeLastTeam = async (): Promise<void> => {
 
     await idb.cache.teams.delete(tid);
 
-    await league.setGameAttributes({
+    const updatedGameAttributes = {
         numTeams: g.numTeams - 1,
         teamAbbrevsCache: g.teamAbbrevsCache.slice(
             0,
@@ -1141,7 +1141,17 @@ const removeLastTeam = async (): Promise<void> => {
             g.teamRegionsCache.length - 1,
         ),
         teamNamesCache: g.teamNamesCache.slice(0, g.teamNamesCache.length - 1),
-    });
+        userTids: g.userTids.filter(userTid => userTid !== tid),
+    };
+
+    if (g.userTid === tid && tid > 0) {
+        updatedGameAttributes.userTid = tid - 1;
+        if (!updatedGameAttributes.userTids.includes(tid - 1)) {
+            updatedGameAttributes.userTids.push(tid - 1);
+        }
+    }
+
+    await league.setGameAttributes(updatedGameAttributes);
 
     await idb.cache.flush();
 };

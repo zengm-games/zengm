@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
+import { PLAYOFF_STATUS } from "../../../common";
 import { helpers } from "../../util";
 
 const Standings = ({
@@ -40,6 +41,15 @@ const Standings = ({
                                 >
                                     {t.region}
                                 </a>
+                                <span>
+                                    {t.playoffStatusCode
+                                        ? ` - ${
+                                              PLAYOFF_STATUS[
+                                                  t.playoffStatusCode
+                                              ]
+                                          }`
+                                        : ""}
+                                </span>
                             </td>
                             <td className="text-right">{t.gb}</td>
                         </tr>

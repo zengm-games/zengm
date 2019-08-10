@@ -447,6 +447,7 @@ async function updateStandings(
             if (cid === teams[k].cid) {
                 confTeams.push(helpers.deepCopy(teams[k]));
                 confTeams[l].rank = l + 1;
+                confTeams[l].playoffStatusCode = null;
                 if (l === 0) {
                     confTeams[l].gb = 0;
                 } else {
@@ -461,6 +462,41 @@ async function updateStandings(
 
         const numPlayoffTeams =
             (2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes) / 2;
+
+        l = 0;
+        for (let k = 0; k < teams.length; k++) {
+            if (cid === teams[k].cid) {
+                if (l < numPlayoffTeams) {
+                    if (
+                        helpers.magicNumber(
+                            confTeams[l].seasonAttrs,
+                            confTeams[numPlayoffTeams].seasonAttrs,
+                        ) === 0
+                    ) {
+                        confTeams[l].playoffStatusCode = 1;
+                    }
+                } else {
+                    if (
+                        helpers.magicNumber(
+                            confTeams[numPlayoffTeams - 1].seasonAttrs,
+                            confTeams[l].seasonAttrs,
+                        ) === 0
+                    ) {
+                        confTeams[l].playoffStatusCode = -1;
+                    }
+                }
+                l += 1;
+            }
+        }
+
+        if (
+            helpers.magicNumber(
+                confTeams[0].seasonAttrs,
+                confTeams[1].seasonAttrs,
+            ) === 0
+        ) {
+            confTeams[0].playoffStatusCode = 3;
+        }
 
         const playoffsByConference = g.confs.length === 2;
 

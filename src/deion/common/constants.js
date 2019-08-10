@@ -46,6 +46,13 @@ const PHASE_TEXT = {
     "8": "free agency",
 };
 
+const PLAYOFF_STATUS = {
+    "-1": "e",
+    "1": "x",
+    "2": "d",
+    "3": "c",
+};
+
 // Test: pk_test_Qbz0froGmHLp0dPCwHoYFY08
 const STRIPE_PUBLISHABLE_KEY = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
@@ -56,4 +63,5 @@ export {
     PLAYER,
     PHASE_TEXT,
     STRIPE_PUBLISHABLE_KEY,
+    PLAYOFF_STATUS,
 };

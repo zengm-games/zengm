@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import { PLAYOFF_STATUS } from "../../common";
 import React from "react";
 import {
     Dropdown,
@@ -38,6 +39,11 @@ const DivStandingsRow = clickable(
                         {t.region} {t.name}
                     </a>
                     <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
+                    <span>
+                        {t.playoffStatusCode
+                            ? ` - ${PLAYOFF_STATUS[t.playoffStatusCode]}`
+                            : ""}
+                    </span>
                 </td>
                 <td>{t.seasonAttrs.won}</td>
                 <td>{t.seasonAttrs.lost}</td>

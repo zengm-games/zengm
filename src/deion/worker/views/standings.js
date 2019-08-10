@@ -56,6 +56,7 @@ async function updateStandings(
                     playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
                     confTeams.push(helpers.deepCopy(t));
                     confTeams[j].rank = j + 1;
+                    confTeams[j].playoffStatusCode = null;
                     if (j === 0) {
                         confTeams[j].gb = 0;
                     } else {
@@ -65,6 +66,48 @@ async function updateStandings(
                         );
                     }
                     confTeams[j].highlight = confTeams[j].tid === g.userTid;
+
+                    if (j >= numPlayoffTeams / 2) {
+                        //only look at teams currently outside of playoff picture
+                        if (
+                            helpers.magicNumber(
+                                confTeams[numPlayoffTeams / 2 - 1].seasonAttrs,
+                                confTeams[j].seasonAttrs,
+                            ) === 0
+                        ) {
+                            //if current team (outside of playoff picture) has masgic num of 0 vs last team in playoff picture, elim outsider
+                            confTeams[j].playoffStatusCode = -1;
+
+                            if (j === numPlayoffTeams / 2) {
+                                //set last team in playoff picture into playoffs, ONLY if Magic Number of 0 when comparing to next worst team. Example - #8 team in conf has MagicNum of 0 vs #9 team.
+                                confTeams[j - 1].playoffStatusCode = Math.max(
+                                    confTeams[j - 1].playoffStatusCode,
+                                    1,
+                                ); //Do the Max statement in case team has already clinched Conf or Div, and keep the highest/best status
+                            }
+                        }
+                    }
+
+                    j += 1;
+                }
+            }
+
+            j = 0;
+            for (const t of teams) {
+                if (g.confs[i].cid === t.cid) {
+                    if (j < numPlayoffTeams / 2) {
+                        if (
+                            helpers.magicNumber(
+                                confTeams[j].seasonAttrs,
+                                confTeams[numPlayoffTeams / 2].seasonAttrs,
+                            ) === 0
+                        ) {
+                            confTeams[j].playoffStatusCode = Math.max(
+                                confTeams[j].playoffStatusCode,
+                                1,
+                            );
+                        }
+                    }
                     j += 1;
                 }
             }
@@ -76,6 +119,16 @@ async function updateStandings(
                 teams: playoffsByConference ? confTeams : [],
             });
 
+            if (
+                helpers.magicNumber(
+                    confTeams[0].seasonAttrs,
+                    confTeams[1].seasonAttrs,
+                ) === 0
+            ) {
+                // If #1 team in conference has MagicNum of 0 vs #2 team in conference, #1 team has clinched
+                confs[i].teams[0].playoffStatusCode = 3;
+            }
+
             for (const div of g.divs) {
                 if (div.cid === g.confs[i].cid) {
                     const divTeams = [];
@@ -83,6 +136,10 @@ async function updateStandings(
                     for (const t of teams) {
                         if (div.did === t.did) {
                             divTeams.push(helpers.deepCopy(t));
+                            divTeams[k].playoffStatusCode =
+                                confs[i].teams[
+                                    playoffsRank[divTeams[k].tid] - 1
+                                ].playoffStatusCode;
                             if (k === 0) {
                                 divTeams[k].gb = 0;
                             } else {
@@ -107,6 +164,26 @@ async function updateStandings(
 
                             k += 1;
                         }
+                    }
+
+                    if (
+                        helpers.magicNumber(
+                            divTeams[0].seasonAttrs,
+                            divTeams[1].seasonAttrs,
+                        ) === 0
+                    ) {
+                        // If #1 team in division has MagicNum of 0 vs #2 team in division, #1 team has clinched
+                        confs[i].teams[
+                            divTeams[0].playoffsRank - 1
+                        ].playoffStatusCode = Math.max(
+                            2,
+                            confs[i].teams[divTeams[0].playoffsRank - 1]
+                                .playoffStatusCode,
+                        );
+                        divTeams[0].playoffStatusCode = Math.max(
+                            2,
+                            divTeams[0].playoffStatusCode,
+                        );
                     }
 
                     confs[i].divs.push({

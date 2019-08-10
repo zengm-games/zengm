@@ -95,7 +95,12 @@ const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
 // Calculate the number of games that team is behind team0
 type teamWonLost = { lost: number, won: number };
 const gb = (team0: teamWonLost, team: teamWonLost) => {
-    return (team0.won - team0.lost - (team.won - team.lost)) / 2;
+    return (team0.won - (team.won - team.lost) - team0.lost) / 2;
+};
+
+//G + 1 − WA − LB
+const magicNumber = (team0: teamWonLost, team: teamWonLost) => {
+    return Math.max(g.numGames + 1 - team0.won - team.lost, 0);
 };
 
 /**
@@ -265,6 +270,7 @@ const helpers = Object.assign({}, commonHelpers, {
     pickDesc,
     resetG,
     sigmoid,
+    magicNumber,
 });
 
 export default helpers;

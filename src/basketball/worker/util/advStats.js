@@ -504,12 +504,11 @@ const advStats = async () => {
         return;
     }
 
-    const updatedStats = Object.assign(
-        {},
-        calculatePER(players, teams, league),
-        calculatePercentages(players, teams),
-        calculateRatings(players, teams, league),
-    );
+    const updatedStats = {
+        ...calculatePER(players, teams, league),
+        ...calculatePercentages(players, teams),
+        ...calculateRatings(players, teams, league),
+    };
 
     // Save to database
     const keys = Object.keys(updatedStats);

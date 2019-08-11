@@ -220,13 +220,14 @@ const roundStat = (
     }
 };
 
-const helpers = Object.assign({}, commonHelpers, {
+const helpers = {
+    ...commonHelpers,
     colorRating,
     leagueUrl,
     numberWithCommas,
     plusMinus,
     roundStat,
     roundsWonText,
-});
+};
 
 export default helpers;

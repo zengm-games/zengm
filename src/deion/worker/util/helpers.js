@@ -250,7 +250,8 @@ const sigmoid = (x: number, a: number, b: number): number => {
     return 1 / (1 + Math.exp(-(a * (x - b))));
 };
 
-const helpers = Object.assign({}, commonHelpers, {
+const helpers = {
+    ...commonHelpers,
     augmentSeries,
     calcWinp,
     correctLinkLid,
@@ -265,6 +266,6 @@ const helpers = Object.assign({}, commonHelpers, {
     pickDesc,
     resetG,
     sigmoid,
-});
+};
 
 export default helpers;

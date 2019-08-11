@@ -180,7 +180,7 @@ class Controller extends React.Component<{}, State> {
 
             // No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
             // ctxBBGM is hacky!
-            const ctxBBGM = Object.assign({}, ctx.state);
+            const ctxBBGM = { ...ctx.state };
             delete ctxBBGM.err; // Can't send error to worker
             const inputs = await toWorker(
                 `processInputs.${args.id}`,

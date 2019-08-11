@@ -24,8 +24,8 @@ const maxRatingDists = (numPlayers: number = 100) => {
             console.log(`${Math.round((100 * i) / numPlayers)}%`);
         }
 
-        const maxRatings = Object.assign({}, p.ratings[0]);
-        const maxAges = Object.assign({}, ages);
+        const maxRatings = { ...p.ratings[0] };
+        const maxAges = { ...ages };
         for (const key of Object.keys(maxAges)) {
             maxAges[key] = g.season - p.draft.year;
         }

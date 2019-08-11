@@ -210,7 +210,9 @@ const advStats = async () => {
     league.rusYdsPerAtt = league.rusYds / league.rus;
     league.recYdsPerAtt = league.recYds / league.rec;
 
-    const updatedStats = Object.assign({}, calculateAV(players, teams, league));
+    const updatedStats = {
+        ...calculateAV(players, teams, league),
+    };
 
     // Save to database
     const keys = Object.keys(updatedStats);

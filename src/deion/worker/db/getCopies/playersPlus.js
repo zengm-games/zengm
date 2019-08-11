@@ -84,9 +84,10 @@ const processAttrs = (
             // Non-dead players wil not have any diedYear property
             output.diedYear = p.hasOwnProperty("diedYear") ? p.diedYear : null;
         } else if (attr === "draft") {
-            output.draft = Object.assign({}, p.draft, {
+            output.draft = {
+                ...p.draft,
                 age: p.draft.year - p.born.year,
-            });
+            };
             if (fuzz) {
                 output.draft.ovr = player.fuzzRating(
                     output.draft.ovr,

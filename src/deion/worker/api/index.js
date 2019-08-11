@@ -1130,7 +1130,7 @@ const removeLastTeam = async (): Promise<void> => {
 
     await idb.cache.teams.delete(tid);
 
-    const updatedGameAttributes = {
+    const updatedGameAttributes: any = {
         numTeams: g.numTeams - 1,
         teamAbbrevsCache: g.teamAbbrevsCache.slice(
             0,

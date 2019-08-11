@@ -22,7 +22,9 @@ const addRatingsRow = (
     p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
     scoutingRank: number,
 ) => {
-    const newRatings = Object.assign({}, p.ratings[p.ratings.length - 1]);
+    const newRatings = {
+        ...p.ratings[p.ratings.length - 1],
+    };
     newRatings.season = g.season;
     newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
     p.ratings.push(newRatings);

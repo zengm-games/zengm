@@ -27,13 +27,11 @@ async function realtimeUpdate(
     const inLeague = url.substr(0, 3) === "/l/";
     const refresh = url === window.location.pathname && inLeague;
 
-    const state = Object.assign(
-        {
-            noTrack: refresh || replace,
-            updateEvents,
-        },
-        raw,
-    );
+    const state = {
+        noTrack: refresh || replace,
+        updateEvents,
+        ...raw,
+    };
 
     await router.navigate(url, {
         state,

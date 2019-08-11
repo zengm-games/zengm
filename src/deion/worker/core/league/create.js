@@ -85,23 +85,20 @@ export const createWithoutSaving = (
         userTid = random.randInt(0, teamInfos.length - 1);
     }
 
-    const gameAttributes: GameAttributes = Object.assign(
-        {},
-        defaultGameAttributes,
-        {
-            userTid,
-            userTids: [userTid],
-            season: startingSeason,
-            startingSeason,
-            leagueName,
-            teamAbbrevsCache: teamInfos.map(t => t.abbrev),
-            teamRegionsCache: teamInfos.map(t => t.region),
-            teamNamesCache: teamInfos.map(t => t.name),
-            gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-            numTeams: teamInfos.length, // Will be 30 if the user doesn't supply custom rosters
-            difficulty,
-        },
-    );
+    const gameAttributes: GameAttributes = {
+        ...defaultGameAttributes,
+        userTid,
+        userTids: [userTid],
+        season: startingSeason,
+        startingSeason,
+        leagueName,
+        teamAbbrevsCache: teamInfos.map(t => t.abbrev),
+        teamRegionsCache: teamInfos.map(t => t.region),
+        teamNamesCache: teamInfos.map(t => t.name),
+        gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
+        numTeams: teamInfos.length, // Will be 30 if the user doesn't supply custom rosters
+        difficulty,
+    };
 
     if (leagueFile.hasOwnProperty("gameAttributes")) {
         for (let i = 0; i < leagueFile.gameAttributes.length; i++) {

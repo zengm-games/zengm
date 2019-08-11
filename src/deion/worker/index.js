@@ -17,7 +17,12 @@ import type {
 const overrides = util.overrides;
 
 // eslint-disable-next-line no-restricted-globals
-self.bbgm = Object.assign({}, common, core, db, util);
+self.bbgm = {
+    ...common,
+    ...core,
+    ...db,
+    ...util,
+};
 
 const deionWorker = async (options: {
     overrides: {

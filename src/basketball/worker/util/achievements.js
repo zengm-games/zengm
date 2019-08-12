@@ -441,7 +441,7 @@ const achievements: Achievement[] = [
         when: "afterAwards",
     },
     {
-        slug: "sleeper_pick 2",
+        slug: "sleeper_pick_2",
         name: "Sleeper Pick 2",
         desc: "Use a second round pick to draft the ROY.",
         category: "Draft",

@@ -51,7 +51,7 @@ const madeHof = (
     }
 
     // Final formula
-    return total + df > 110;
+    return total + df > 120;
 };
 
 export default madeHof;

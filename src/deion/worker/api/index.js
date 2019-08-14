@@ -162,10 +162,6 @@ const checkParticipationAchievement = async (
     force: boolean,
     conditions: Conditions,
 ) => {
-    if (process.env.SPORT !== "basketball") {
-        return;
-    }
-
     if (force) {
         await achievement.add(["participation"], conditions);
     } else {

@@ -84,12 +84,8 @@ const copyValidValues = (source, target, minContract, phase, season) => {
     }
 
     {
-        console.log("source.draft.year", source.draft.year);
-        // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
         const draftYear = parseInt(source.draft.year, 10);
-        console.log("draftYear", draftYear);
         if (!Number.isNaN(draftYear)) {
-            console.log("set target.draft.year");
             target.draft.year = draftYear;
         }
     }

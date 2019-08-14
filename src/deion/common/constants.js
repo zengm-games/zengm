@@ -1,6 +1,9 @@
 // @flow
 
-const ACCOUNT_API_URL = "https://account.basketball-gm.com";
+const ACCOUNT_API_URL =
+    process.env.NODE_ENV === "development"
+        ? "http://account.basketball-gm.test"
+        : "https://account.basketball-gm.com";
 
 const DIFFICULTY = {
     Easy: -0.25,

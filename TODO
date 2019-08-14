@@ -1,3 +1,5 @@
+teams don't readjust spending when you get fired
+
 +/- regression PR
 - try on 1000 seasons
 - how much does it actually change ovrs?
@@ -7,22 +9,11 @@ download draft summary?
 
 "if you edit a player (change nothing) and hit save changes any new relationships added  or edited will appear"
 
-Just finished playoffs 16-0. Didn't get awarded Fo Fo Fo.
-
 scale HoF based on number of games
 - https://old.reddit.com/r/BasketballGM/comments/ciwyek/new_achievements_in_version_201907280910/ev9z8j6/?context=3
 
 ovr based on regression of ratings to +/- (over 1000 years)
 - zscore individual ratings first
-
-football achievements
-- some achievements could be common?
-  - add concept of "achievement belonging to a sport" (maybe refactor how they are stored too)
-  - participation/hacker - make global, not sport specific
-  - moneyball - share code between basketball/football
-- checkParticipationAchievement unblock
-- add to php
-- blog
 
 option to control retirement rate
 

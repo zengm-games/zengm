@@ -21,7 +21,7 @@ describe("worker/core/player/madeHof", () => {
             {
                 dws: 5,
                 ows: 5,
-                ewa: 10,
+                ewa: 11,
             },
             {
                 dws: 7,

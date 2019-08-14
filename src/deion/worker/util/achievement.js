@@ -3,10 +3,16 @@
 /*eslint camelcase: 0*/
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { idb } from "../db";
+import achievements from "./achievements";
 import g from "./g";
 import logEvent from "./logEvent";
 import overrides from "./overrides";
 import type { AchievementWhen, Conditions } from "../../common/types";
+
+// Combine global and sport-specific achievements
+const getAchievements = () => {
+    return [...achievements, ...overrides.util.achievements];
+};
 
 /**
  * Records one or more achievements.
@@ -24,7 +30,7 @@ async function add(
     silent?: boolean = false,
 ) {
     const notify = slug => {
-        const achievement = overrides.util.achievements.find(
+        const achievement = getAchievements().find(
             achievement2 => slug === achievement2.slug,
         );
         if (!achievement) {
@@ -80,7 +86,7 @@ async function getAll(): Promise<
         slug: string,
     }[],
 > {
-    const achievements = overrides.util.achievements.map(
+    const achievements2 = getAchievements().map(
         ({ category, desc, name, slug }) => {
             return {
                 category,
@@ -95,7 +101,7 @@ async function getAll(): Promise<
     // Handle any achivements stored in IndexedDB
     const achievementsLocal = await idb.meta.achievements.getAll();
     for (const achievementLocal of achievementsLocal) {
-        for (const achievement of achievements) {
+        for (const achievement of achievements2) {
             if (achievement.slug === achievementLocal.slug) {
                 achievement.count += 1;
             }
@@ -112,16 +118,16 @@ async function getAll(): Promise<
         });
 
         // Merge local and remote achievements
-        for (const achievement of achievements) {
+        for (const achievement of achievements2) {
             if (achievementsRemote[achievement.slug] !== undefined) {
                 achievement.count += achievementsRemote[achievement.slug];
             }
         }
 
-        return achievements;
+        return achievements2;
     } catch (err) {
         // If remote fails, still return local achievements
-        return achievements;
+        return achievements2;
     }
 }
 
@@ -133,7 +139,7 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 
         const awarded = [];
 
-        for (const achievement of overrides.util.achievements) {
+        for (const achievement of getAchievements()) {
             if (achievement.when === when && achievement.check !== undefined) {
                 const result = await achievement.check();
                 if (result) {

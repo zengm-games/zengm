@@ -48,21 +48,21 @@ async function updateHistory(
             };
         });
 
-        // Use this rather than numGamesPlayoffSeries in case configuration changes during a league
-        const maxPlayoffRoundsWon = teams[0].seasonAttrs.map(
-            (seasonAttrs, i) => {
-                return teams.reduce((max, t) => {
-                    return t.seasonAttrs[i] &&
-                        t.seasonAttrs[i].playoffRoundsWon > max
-                        ? t.seasonAttrs[i].playoffRoundsWon
-                        : max;
-                }, 0);
-            },
-        );
+        for (let i = 0; i < seasons.length; i++) {
+            // Use this rather than numGamesPlayoffSeries in case configuration changes during a league
+            const maxPlayoffRoundsWon = teams.reduce((max, t) => {
+                for (const seasonAttrs of t.seasonAttrs) {
+                    if (seasonAttrs.season === seasons[i].season) {
+                        return seasonAttrs.playoffRoundsWon > max
+                            ? seasonAttrs.playoffRoundsWon
+                            : max;
+                    }
+                }
 
-        for (const t of teams) {
-            // t.seasonAttrs has same season entries as the "seasons" array built from awards
-            for (let i = 0; i < seasons.length; i++) {
+                return max;
+            }, 0);
+
+            for (const t of teams) {
                 // Find corresponding entries in seasons and t.seasonAttrs. Can't assume they are the same because they aren't if some data has been deleted (Delete Old Data)
                 let found = false;
                 let j;
@@ -76,9 +76,7 @@ async function updateHistory(
                     continue;
                 }
 
-                if (
-                    t.seasonAttrs[j].playoffRoundsWon === maxPlayoffRoundsWon[j]
-                ) {
+                if (t.seasonAttrs[j].playoffRoundsWon === maxPlayoffRoundsWon) {
                     seasons[i].champ = {
                         tid: t.tid,
                         abbrev: t.abbrev,
@@ -91,7 +89,7 @@ async function updateHistory(
                     };
                 } else if (
                     t.seasonAttrs[j].playoffRoundsWon ===
-                    maxPlayoffRoundsWon[j] - 1
+                    maxPlayoffRoundsWon - 1
                 ) {
                     seasons[i].runnerUp = {
                         tid: t.tid,

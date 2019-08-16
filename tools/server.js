@@ -11,10 +11,12 @@ const mimeTypes = {
     ".html": "text/html",
     ".ico": "image/x-icon",
     ".jpeg": "image/jpeg",
+    ".jpg": "image/jpeg",
     ".js": "text/javascript",
     ".map": "application/json",
     ".png": "image/png",
-    ".woff": "application/font-woff",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
 };
 const sendFile = (res, filename) => {
     const ext = path.extname(filename);

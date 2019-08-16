@@ -170,7 +170,8 @@ async function updateStandings(
                         helpers.magicNumber(
                             divTeams[0].seasonAttrs,
                             divTeams[1].seasonAttrs,
-                        ) === 0
+                        ) === 0 &&
+                        divTeams[0].playoffsRank != null
                     ) {
                         // If #1 team in division has MagicNum of 0 vs #2 team in division, #1 team has clinched
                         confs[i].teams[

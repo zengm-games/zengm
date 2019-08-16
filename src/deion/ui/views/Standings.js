@@ -141,6 +141,15 @@ const SmallStandings = ({ numPlayoffTeams, season, teams }) => {
                                 >
                                     {t.region}
                                 </a>
+                                <span>
+                                    {t.playoffStatusCode
+                                        ? ` - ${
+                                              PLAYOFF_STATUS[
+                                                  t.playoffStatusCode
+                                              ]
+                                          }`
+                                        : ""}
+                                </span>
                             </td>
                             <td style={{ textAlign: "right" }}>{t.gb}</td>
                         </tr>

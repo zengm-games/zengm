@@ -17,11 +17,14 @@ const Confirm = confirmable(({ show, proceed, confirmation, defaultValue }) => {
         [defaultValue, proceed],
     );
 
-    const input = useRef(null);
+    const inputRef = useRef(null);
+    const okRef = useRef(null);
 
     useEffect(() => {
-        if (input.current) {
-            input.current.select();
+        if (inputRef.current) {
+            inputRef.current.select();
+        } else if (okRef.current) {
+            okRef.current.focus();
         }
     }, []);
 
@@ -39,7 +42,7 @@ const Confirm = confirmable(({ show, proceed, confirmation, defaultValue }) => {
                             }}
                         >
                             <input
-                                ref={input}
+                                ref={inputRef}
                                 type="text"
                                 className="form-control"
                                 value={controlledValue}
@@ -54,7 +57,11 @@ const Confirm = confirmable(({ show, proceed, confirmation, defaultValue }) => {
                     <button className="btn btn-secondary" onClick={cancel}>
                         Cancel
                     </button>
-                    <button className="btn btn-primary" onClick={ok}>
+                    <button
+                        className="btn btn-primary"
+                        onClick={ok}
+                        ref={okRef}
+                    >
                         OK
                     </button>
                 </ModalFooter>

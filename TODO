@@ -3,9 +3,7 @@ teams don't readjust spending when you get fired
 +/- regression PR
 - try on 1000 seasons
 - how much does it actually change ovrs?
-
-download draft summary?
-- should be possible to download/filter/etc non-paginated tables
+- constrain reb and fg to be 0.01
 
 "if you edit a player (change nothing) and hit save changes any new relationships added  or edited will appear"
 

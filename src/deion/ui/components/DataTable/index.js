@@ -41,6 +41,7 @@ export type Props = {
     cols: Col[],
     defaultSort: SortBy,
     footer?: any[],
+    hideAllControls?: boolean,
     name: string,
     nonfluid?: boolean,
     pagination?: boolean,
@@ -423,6 +424,7 @@ class DataTable extends React.Component<Props, State> {
             className,
             cols,
             footer,
+            hideAllControls,
             nonfluid,
             pagination,
             rows,
@@ -449,21 +451,30 @@ class DataTable extends React.Component<Props, State> {
                     display: nonfluid ? "inline-block" : "block",
                 }}
             >
-                {pagination ? (
-                    <PerPage
-                        onChange={this.handlePerPage}
-                        value={this.state.perPage}
-                    />
+                {!hideAllControls ? (
+                    <>
+                        {pagination ? (
+                            <PerPage
+                                onChange={this.handlePerPage}
+                                value={this.state.perPage}
+                            />
+                        ) : (
+                            <Info
+                                end={end}
+                                numRows={numRowsFiltered}
+                                numRowsUnfiltered={rows.length}
+                                start={start}
+                            />
+                        )}
+                        <Controls
+                            enableFilters={this.state.enableFilters}
+                            onExportCSV={this.handleExportCSV}
+                            onSearch={this.handleSearch}
+                            onToggleFilters={this.handleToggleFilters}
+                        />
+                        {nonfluid ? <div className="clearFix" /> : null}
+                    </>
                 ) : null}
-                {pagination ? (
-                    <Controls
-                        enableFilters={this.state.enableFilters}
-                        onExportCSV={this.handleExportCSV}
-                        onSearch={this.handleSearch}
-                        onToggleFilters={this.handleToggleFilters}
-                    />
-                ) : null}
-                {nonfluid && pagination ? <div className="clearFix" /> : null}
                 <ResponsiveTableWrapper
                     className={pagination ? "fix-margin-pagination" : null}
                     nonfluid={nonfluid}
@@ -486,22 +497,28 @@ class DataTable extends React.Component<Props, State> {
                         <Footer footer={footer} />
                     </table>
                 </ResponsiveTableWrapper>
-                {nonfluid && pagination ? <div className="clearFix" /> : null}
-                {pagination ? (
-                    <Info
-                        end={end}
-                        numRows={numRowsFiltered}
-                        numRowsUnfiltered={rows.length}
-                        start={start}
-                    />
-                ) : null}
-                {pagination ? (
-                    <Pagination
-                        currentPage={this.state.currentPage}
-                        numRows={numRowsFiltered}
-                        onClick={this.handlePagination}
-                        perPage={this.state.perPage}
-                    />
+                {!hideAllControls ? (
+                    <>
+                        {nonfluid && pagination ? (
+                            <div className="clearFix" />
+                        ) : null}
+                        {pagination ? (
+                            <Info
+                                end={end}
+                                numRows={numRowsFiltered}
+                                numRowsUnfiltered={rows.length}
+                                start={start}
+                            />
+                        ) : null}
+                        {pagination ? (
+                            <Pagination
+                                currentPage={this.state.currentPage}
+                                numRows={numRowsFiltered}
+                                onClick={this.handlePagination}
+                                perPage={this.state.perPage}
+                            />
+                        ) : null}
+                    </>
                 ) : null}
             </div>
         );
@@ -517,6 +534,7 @@ DataTable.propTypes = {
     footer: PropTypes.array,
     name: PropTypes.string.isRequired,
     nonfluid: PropTypes.bool,
+    hideAllControls: PropTypes.bool,
     pagination: PropTypes.bool,
     rows: PropTypes.arrayOf(PropTypes.object).isRequired,
     superCols: PropTypes.array,

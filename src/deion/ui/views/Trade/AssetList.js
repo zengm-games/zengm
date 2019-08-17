@@ -122,8 +122,9 @@ const AssetList = ({ handleToggle, picks, roster, stats, userOrOther }) => {
             <div className="col-xl-3">
                 <DataTable
                     cols={pickCols}
-                    disableSorting
                     defaultSort={[1, "asc"]}
+                    disableSorting
+                    hideAllControls
                     name={`Trade:Picks:${userOrOtherKey}`}
                     rows={pickRows}
                 />

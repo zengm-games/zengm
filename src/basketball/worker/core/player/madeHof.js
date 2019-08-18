@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../../../deion/worker/util";
+import { defaultGameAttributes, g } from "../../../../deion/worker/util";
 import type { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 import type { PlayerRatings } from "../../../common/types";
 
@@ -50,8 +50,13 @@ const madeHof = (
         total += winShares[0] * fudgeSeasons;
     }
 
+    const scaleFactor =
+        (Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength) *
+            g.numGames) /
+        defaultGameAttributes.numGames;
+
     // Final formula
-    return total + df > 120;
+    return total + df > 120 * scaleFactor;
 };
 
 export default madeHof;

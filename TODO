@@ -5,9 +5,6 @@
 
 "if you edit a player (change nothing) and hit save changes any new relationships added  or edited will appear"
 
-scale HoF based on number of games
-- https://old.reddit.com/r/BasketballGM/comments/ciwyek/new_achievements_in_version_201907280910/ev9z8j6/?context=3
-
 ovr based on regression of ratings to +/- (over 1000 years)
 - zscore individual ratings first
 

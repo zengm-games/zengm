@@ -9,7 +9,11 @@ import {
     teamAwards,
 } from "../../../../deion/worker/core/season/awards";
 import { idb } from "../../../../deion/worker/db";
-import { g, helpers } from "../../../../deion/worker/util";
+import {
+    defaultGameAttributes,
+    g,
+    helpers,
+} from "../../../../deion/worker/util";
 import type {
     Conditions,
     PlayerFiltered,
@@ -264,7 +268,9 @@ const doAwards = async (conditions: Conditions) => {
     const dpoy = dpoyPlayers[0];
     const allDefensive = makeTeams(dpoyPlayers);
 
-    const mipFactor = g.numGames * Math.sqrt(g.quarterLength / 12);
+    const mipFactor =
+        g.numGames *
+        Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength);
     const [mip] = getTopPlayersOffense(
         {
             filter: p => {

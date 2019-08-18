@@ -1,6 +1,6 @@
 // @flow
 
-import { g, helpers, overrides } from "../../util";
+import { helpers, overrides } from "../../util";
 
 /**
  * Create a new team object.

@@ -30,21 +30,13 @@ const newPhasePreseason = async (conditions: Conditions) => {
             t.budget.ticketPrice.amount = defaultTicketPrice;
             updated = true;
         }
-        if (t.budget.scouting.amount !== defaultBudgetAmount) {
-            t.budget.scouting.amount = defaultBudgetAmount;
-            updated = true;
-        }
-        if (t.budget.coaching.amount !== defaultBudgetAmount) {
-            t.budget.coaching.amount = defaultBudgetAmount;
-            updated = true;
-        }
-        if (t.budget.health.amount !== defaultBudgetAmount) {
-            t.budget.health.amount = defaultBudgetAmount;
-            updated = true;
-        }
-        if (t.budget.facilities.amount !== defaultBudgetAmount) {
-            t.budget.facilities.amount = defaultBudgetAmount;
-            updated = true;
+
+        const keys = ["scouting", "coaching", "health", "facilities"];
+        for (const key of keys) {
+            if (t.budget[key].amount !== defaultBudgetAmount) {
+                t.budget[key].amount = defaultBudgetAmount;
+                updated = true;
+            }
         }
 
         if (updated) {
@@ -60,17 +52,17 @@ const newPhasePreseason = async (conditions: Conditions) => {
             // Only actually need 3 seasons for userTid, but get it for all just in case there is a
             // skipped season (alternatively could use cursor to just find most recent season, but this
             // is not performance critical code)
-            const teamSeasons = await idb.getCopies.teamSeasons({
+            const teamSeasons2 = await idb.getCopies.teamSeasons({
                 tid,
                 seasons: [g.season - 3, g.season - 1],
             });
-            const prevSeason = teamSeasons[teamSeasons.length - 1];
+            const prevSeason = teamSeasons2[teamSeasons2.length - 1];
 
             // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
             // This is done BEFORE a new season row is added.
             if (tid === g.userTid) {
                 scoutingRankTemp = finances.getRankLastThree(
-                    teamSeasons,
+                    teamSeasons2,
                     "expenses",
                     "scouting",
                 );

@@ -10,6 +10,7 @@ import type {
     GameProcessed,
     GameProcessedCompleted,
     PlayoffSeriesTeam,
+    TeamSeason,
 } from "../../common/types";
 
 const augmentSeries = async (
@@ -58,6 +59,24 @@ const calcWinp = ({
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
 const correctLinkLid = (lid: number, event: { text: string }) => {
     event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
+};
+
+const defaultBudgetAmount = (popRank: number) => {
+    return (
+        Math.round(
+            (g.salaryCap / 90000) * 1350 +
+                (900 * (g.numTeams - popRank)) / (g.numTeams - 1),
+        ) * 10
+    );
+};
+
+const defaultTicketPrice = (popRank: number) => {
+    return parseFloat(
+        (
+            (g.salaryCap / 90000) * 37 +
+            (25 * (g.numTeams - popRank)) / (g.numTeams - 1)
+        ).toFixed(2),
+    );
 };
 
 const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
@@ -125,6 +144,25 @@ const getAbbrev = (tid: number | string): string => {
     }
 
     return g.teamAbbrevsCache[tid];
+};
+
+// Prefer this to addPopRank in new code because it's not mutable
+const getPopRanks = (teamSeasons: TeamSeason[]): number[] => {
+    // Add popRank
+    const teamsSorted = teamSeasons.slice();
+    teamsSorted.sort((a, b) => b.pop - a.pop);
+
+    const popRanks = [];
+    for (let i = 0; i < teamSeasons.length; i++) {
+        for (let j = 0; j < teamsSorted.length; j++) {
+            if (teamSeasons[i].tid === teamsSorted[j].tid) {
+                popRanks[i] = j + 1;
+                break;
+            }
+        }
+    }
+
+    return popRanks;
 };
 
 const leagueUrl = (components: (number | string)[]): string =>
@@ -255,9 +293,12 @@ const helpers = {
     augmentSeries,
     calcWinp,
     correctLinkLid,
+    defaultBudgetAmount,
+    defaultTicketPrice,
     formatCompletedGame,
     gb,
     getAbbrev,
+    getPopRanks,
     leagueUrl,
     nullPad,
     numGamesToWinSeries,

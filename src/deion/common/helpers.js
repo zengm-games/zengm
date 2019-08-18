@@ -4,15 +4,10 @@
 
 import type { TeamBasic } from "./types";
 
-/**
- * Take a list of teams (similar to the output of getTeamsDefault) and add popRank properties, where 1 is the largest population and teams.length is the smallest.
- *
- * @param {Array.<Object>} teams Teams without popRank properties.
- * @return {Array.<Object>} Teams with added popRank properties.
- */
+// Prefer getPopRanks to this in new code because it's not mutable
 function addPopRank(teams: any[]): any[] {
     // Add popRank
-    const teamsSorted = teams.slice(); // Deep copy
+    const teamsSorted = teams.slice();
     teamsSorted.sort((a, b) => b.pop - a.pop);
     for (let i = 0; i < teams.length; i++) {
         for (let j = 0; j < teamsSorted.length; j++) {

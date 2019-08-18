@@ -1,6 +1,6 @@
 // @flow
 
-import { g, overrides } from "../../util";
+import { g, helpers, overrides } from "../../util";
 
 /**
  * Create a new team object.
@@ -29,13 +29,7 @@ const generate = (tm: any) => {
             ticketPrice: {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.ticketPrice.amount
-                    : parseFloat(
-                          (
-                              (g.salaryCap / 90000) * 37 +
-                              (25 * (g.numTeams - tm.popRank)) /
-                                  (g.numTeams - 1)
-                          ).toFixed(2),
-                      ),
+                    : helpers.defaultTicketPrice(tm.popRank),
                 rank: tm.hasOwnProperty("budget")
                     ? tm.budget.ticketPrice.rank
                     : tm.popRank,
@@ -43,11 +37,7 @@ const generate = (tm: any) => {
             scouting: {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.scouting.amount
-                    : Math.round(
-                          (g.salaryCap / 90000) * 1350 +
-                              (900 * (g.numTeams - tm.popRank)) /
-                                  (g.numTeams - 1),
-                      ) * 10,
+                    : helpers.defaultBudgetAmount(tm.popRank),
                 rank: tm.hasOwnProperty("budget")
                     ? tm.budget.scouting.rank
                     : tm.popRank,
@@ -55,11 +45,7 @@ const generate = (tm: any) => {
             coaching: {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.coaching.amount
-                    : Math.round(
-                          (g.salaryCap / 90000) * 1350 +
-                              (900 * (g.numTeams - tm.popRank)) /
-                                  (g.numTeams - 1),
-                      ) * 10,
+                    : helpers.defaultBudgetAmount(tm.popRank),
                 rank: tm.hasOwnProperty("budget")
                     ? tm.budget.coaching.rank
                     : tm.popRank,
@@ -67,11 +53,7 @@ const generate = (tm: any) => {
             health: {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.health.amount
-                    : Math.round(
-                          (g.salaryCap / 90000) * 1350 +
-                              (900 * (g.numTeams - tm.popRank)) /
-                                  (g.numTeams - 1),
-                      ) * 10,
+                    : helpers.defaultBudgetAmount(tm.popRank),
                 rank: tm.hasOwnProperty("budget")
                     ? tm.budget.health.rank
                     : tm.popRank,
@@ -79,11 +61,7 @@ const generate = (tm: any) => {
             facilities: {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.facilities.amount
-                    : Math.round(
-                          (g.salaryCap / 90000) * 1350 +
-                              (900 * (g.numTeams - tm.popRank)) /
-                                  (g.numTeams - 1),
-                      ) * 10,
+                    : helpers.defaultBudgetAmount(tm.popRank),
                 rank: tm.hasOwnProperty("budget")
                     ? tm.budget.facilities.rank
                     : tm.popRank,

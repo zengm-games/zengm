@@ -1,6 +1,5 @@
 // @flow
 
-import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
@@ -11,7 +10,49 @@ const newPhasePreseason = async (conditions: Conditions) => {
     await freeAgents.autoSign();
     await league.setGameAttributes({ season: g.season + 1 });
 
-    const tids: number[] = range(g.numTeams);
+    const teams = await idb.cache.teams.getAll();
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+        "teamSeasonsBySeasonTid",
+        [[g.season - 1], [g.season]],
+    );
+    const popRanks = helpers.getPopRanks(teamSeasons);
+    for (let i = 0; i < teamSeasons.length; i++) {
+        const t = teams.find(t2 => t2.tid === teamSeasons[i].tid);
+        if (!t || g.userTids.includes(t.tid)) {
+            continue;
+        }
+
+        const defaultTicketPrice = helpers.defaultTicketPrice(popRanks[i]);
+        const defaultBudgetAmount = helpers.defaultBudgetAmount(popRanks[i]);
+        let updated = false;
+
+        if (t.budget.ticketPrice.amount !== defaultTicketPrice) {
+            t.budget.ticketPrice.amount = defaultTicketPrice;
+            updated = true;
+        }
+        if (t.budget.scouting.amount !== defaultBudgetAmount) {
+            t.budget.scouting.amount = defaultBudgetAmount;
+            updated = true;
+        }
+        if (t.budget.coaching.amount !== defaultBudgetAmount) {
+            t.budget.coaching.amount = defaultBudgetAmount;
+            updated = true;
+        }
+        if (t.budget.health.amount !== defaultBudgetAmount) {
+            t.budget.health.amount = defaultBudgetAmount;
+            updated = true;
+        }
+        if (t.budget.facilities.amount !== defaultBudgetAmount) {
+            t.budget.facilities.amount = defaultBudgetAmount;
+            updated = true;
+        }
+
+        if (updated) {
+            await idb.cache.teams.put(t);
+        }
+    }
+
+    const tids: number[] = teams.map(t => t.tid);
 
     let scoutingRankTemp;
     await Promise.all(
@@ -44,10 +85,6 @@ const newPhasePreseason = async (conditions: Conditions) => {
         throw new Error("scoutingRank should be defined");
     }
 
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-        "teamSeasonsBySeasonTid",
-        [[g.season - 1], [g.season]],
-    );
     const coachingRanks = teamSeasons.map(
         teamSeason => teamSeason.expenses.coaching.rank,
     );

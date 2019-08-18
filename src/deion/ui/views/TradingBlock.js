@@ -70,6 +70,7 @@ const Offer = props => {
                 <DataTable
                     cols={cols}
                     defaultSort={[5, "desc"]}
+                    hideAllControls
                     name="TradingBlockOffer"
                     rows={rows}
                 />

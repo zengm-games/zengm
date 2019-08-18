@@ -79,6 +79,7 @@ const StatsTable = ({ name, onlyShowIf, p, playoffs = false, stats }) => {
                         helpers.roundStat(careerStats[stat], stat),
                     ),
                 ]}
+                hideAllControls
                 name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
                 rows={playerStats.map((ps, i) => {
                     return {
@@ -159,6 +160,7 @@ const ShotLocationsTable = ({ careerStats = {}, name, stats = [] }) => {
                 careerStats.tpa.toFixed(1),
                 careerStats.tpp.toFixed(1),
             ]}
+            hideAllControls
             name={name}
             rows={stats.map((ps, i) => {
                 return {
@@ -289,9 +291,7 @@ const Player = ({
                     <span
                         className="badge badge-danger badge-injury"
                         style={{ marginLeft: 0 }}
-                        title={`${player.injury.type} (out ${
-                            player.injury.gamesRemaining
-                        } more games)`}
+                        title={`${player.injury.type} (out ${player.injury.gamesRemaining} more games)`}
                     >
                         {player.injury.gamesRemaining}
                     </span>
@@ -481,6 +481,7 @@ const Player = ({
                     "Skills",
                 )}
                 defaultSort={[0, "asc"]}
+                hideAllControls
                 name="Player:Ratings"
                 rows={player.ratings.map(r => {
                     return {
@@ -568,6 +569,7 @@ const Player = ({
                             "Total",
                             helpers.formatCurrency(player.salariesTotal, "M"),
                         ]}
+                        hideAllControls
                         name="Player:Salaries"
                         rows={player.salaries.map((s, i) => {
                             return {

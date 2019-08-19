@@ -624,6 +624,7 @@ class Cache {
 
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill(season?: number) {
+        console.log("cache fill");
         //console.log('fill start');
         //performance.mark('fillStart');
         this._validateStatus("empty", "full");
@@ -659,11 +660,6 @@ class Cache {
                 return this._loadStore(store, idb.league);
             }),
         );
-
-        // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
-        if (this._maxIds.schedule < this._maxIds.games) {
-            this._maxIds.schedule = this._maxIds.games;
-        }
 
         this._dirty = false;
 
@@ -843,6 +839,14 @@ class Cache {
                 throw new Error(
                     `Primary key field "${pk}" is required for non-autoincrementing store "${store}"`,
                 );
+            }
+
+            // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
+            if (
+                store === "schedule" &&
+                this._maxIds.schedule < this._maxIds.games
+            ) {
+                this._maxIds.schedule = this._maxIds.games;
             }
 
             this._maxIds[store] += 1;

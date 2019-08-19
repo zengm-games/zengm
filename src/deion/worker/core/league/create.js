@@ -322,6 +322,7 @@ export const createWithoutSaving = (
         ];
     }
 
+    // This needs to be before schedule, so that games are added before schedule to the database, so the Cache._maxIds.schedule can be set to Cache.maxIds.game
     const games = leagueFile.hasOwnProperty("games") ? leagueFile.games : [];
     for (const gm of games) {
         // Fix missing +/-, blocks against in boxscore

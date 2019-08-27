@@ -117,16 +117,23 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
         }
 
         // Set home/away in the next round
-        let matchup;
-        if (
+        let firstTeamHome =
             team1.seed < team2.seed ||
-            (team1.seed === team2.seed && team1.winp > team2.winp)
-        ) {
-            matchup = { home: team1, away: team2 };
-        } else {
-            matchup = { home: team2, away: team1 };
+            (team1.seed === team2.seed && team1.winp >= team2.winp);
+
+        // Special case for the finals, do it by winp not seed
+        const playoffsByConference = g.confs.length === 2;
+        if (playoffsByConference) {
+            const numPlayoffRounds = g.numGamesPlayoffSeries.length;
+            // Minus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
+            if (numPlayoffRounds === playoffSeries.currentRound - 2) {
+                firstTeamHome = team1.winp >= team2.winp;
+            }
         }
 
+        const matchup = firstTeamHome
+            ? { home: team1, away: team2 }
+            : { home: team2, away: team1 };
         matchup.home.pts = undefined;
         matchup.away.pts = undefined;
         matchup.home.won = 0;

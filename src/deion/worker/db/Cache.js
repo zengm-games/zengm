@@ -624,7 +624,6 @@ class Cache {
 
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill(season?: number) {
-        console.log("cache fill");
         //console.log('fill start');
         //performance.mark('fillStart');
         this._validateStatus("empty", "full");

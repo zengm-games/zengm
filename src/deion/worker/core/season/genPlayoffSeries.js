@@ -4,6 +4,64 @@ import range from "lodash/range";
 import { g, helpers } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
+type Seed = [number, number | void];
+
+// Return the seeds (0 indexed) for the matchups, in order (undefined is a bye)
+const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
+    const numRounds = Math.log2(numPlayoffTeams + numPlayoffByes);
+    if (!Number.isInteger(numRounds)) {
+        throw new Error(
+            `Invalid genSeeds input: ${numPlayoffTeams} teams and ${numPlayoffByes} byes`,
+        );
+    }
+
+    // Handle byes - replace lowest seeds with undefined
+    const byeSeeds = [];
+    for (let i = 0; i < numPlayoffByes; i++) {
+        byeSeeds.push(numPlayoffTeams + i);
+    }
+
+    const addMatchup = (currentRound, team1, maxTeamInRound) => {
+        if (typeof team1 !== "number") {
+            throw Error("Invalid type");
+        }
+
+        const otherTeam = maxTeamInRound - team1;
+        currentRound.push([
+            team1,
+            byeSeeds.includes(otherTeam) ? undefined : otherTeam,
+        ]);
+    };
+
+    // Grow from the final matchup
+    let lastRound = [[0, 1]];
+    for (let i = 0; i < numRounds - 1; i++) {
+        // Add two matchups to currentRound, for the two teams in lastRound. The sum of the seeds in a matchup is constant for an entire round!
+        const numTeamsInRound = lastRound.length * 4;
+        const maxTeamInRound = numTeamsInRound - 1;
+
+        const currentRound = [];
+        for (const matchup of lastRound) {
+            // swapOrder stuff is just cosmetic, matchups would be the same without it, just displayed slightly differently
+            const swapOrder =
+                (currentRound.length / 2) % 2 === 1 && matchup[1] !== undefined;
+            addMatchup(
+                currentRound,
+                matchup[swapOrder ? 1 : 0],
+                maxTeamInRound,
+            );
+            addMatchup(
+                currentRound,
+                matchup[swapOrder ? 0 : 1],
+                maxTeamInRound,
+            );
+        }
+        lastRound = currentRound;
+    }
+
+    return lastRound;
+};
+
 const genPlayoffSeries = (teams: TeamFiltered[]) => {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences
     const playoffsByConference = g.confs.length === 2;
@@ -29,9 +87,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
     if (numPlayoffTeams > g.numTeams) {
         if (numPlayoffTeams > g.numTeams) {
             throw new Error(
-                `${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${
-                    g.numTeams
-                } teams in the league`,
+                `${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${g.numTeams} teams in the league`,
             );
         }
     }
@@ -39,8 +95,9 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
     const series = range(numRounds).map(() => []);
     if (playoffsByConference) {
         if (numRounds > 1) {
+            const seeds = genSeeds(numPlayoffTeams / 2, numPlayoffByes / 2);
+
             // Default: top 50% of teams in each of the two conferences
-            const numSeriesPerConference = 2 ** numRounds / 4;
             for (let cid = 0; cid < g.confs.length; cid++) {
                 const teamsConf = [];
                 for (let i = 0; i < teams.length; i++) {
@@ -55,38 +112,24 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 
                 if (teamsConf.length < numPlayoffTeams / 2) {
                     throw new Error(
-                        `Not enough teams for playoffs in conference ${cid} (${
-                            g.confs[cid].name
-                        })`,
+                        `Not enough teams for playoffs in conference ${cid} (${g.confs[cid].name})`,
                     );
                 }
 
-                let numByesUsed = 0;
-                for (let i = 0; i < numSeriesPerConference; i++) {
-                    const j = i % 2 === 0 ? i : numSeriesPerConference - i;
-                    if (i < numPlayoffByes / 2) {
-                        series[0][j + cid * numSeriesPerConference] = {
-                            home: teamsConf[i],
-                            away: undefined,
-                        };
-                        series[0][j + cid * numSeriesPerConference].home.seed =
-                            i + 1;
-
-                        numByesUsed += 1;
-                    } else {
-                        series[0][j + cid * numSeriesPerConference] = {
-                            home: teamsConf[i],
-                            away:
-                                teamsConf[
-                                    numPlayoffTeams / 2 - 1 - i + numByesUsed
-                                ],
-                        };
-                        series[0][j + cid * numSeriesPerConference].home.seed =
-                            i + 1;
-                        series[0][j + cid * numSeriesPerConference].away.seed =
-                            numPlayoffTeams / 2 - i + numByesUsed;
-                    }
-                }
+                series[0].push(
+                    ...seeds.map(matchup => {
+                        const home = teamsConf[matchup[0]];
+                        home.seed = matchup[0] + 1;
+                        const away =
+                            matchup[1] !== undefined
+                                ? teamsConf[matchup[1]]
+                                : undefined;
+                        if (away) {
+                            away.seed = matchup[1] + 1;
+                        }
+                        return { home, away };
+                    }),
+                );
             }
         } else {
             // Special case - if there is only one round, pick the best team in each conference to play
@@ -133,27 +176,18 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
             throw new Error("Not enough teams for playoffs");
         }
 
-        const numSeries = 2 ** numRounds / 2;
-        let numByesUsed = 0;
-        for (let i = 0; i < numSeries; i++) {
-            const j = i % 2 === 0 ? i : numSeries - i;
-            if (i < numPlayoffByes) {
-                series[0][j] = {
-                    home: teamsConf[i],
-                    away: undefined,
-                };
-                series[0][j].home.seed = i + 1;
+        const seeds = genSeeds(numPlayoffTeams, numPlayoffByes);
 
-                numByesUsed += 1;
-            } else {
-                series[0][j] = {
-                    home: teamsConf[i],
-                    away: teamsConf[numPlayoffTeams - 1 - i + numByesUsed],
-                };
-                series[0][j].home.seed = i + 1;
-                series[0][j].away.seed = numPlayoffTeams - i + numByesUsed;
+        series[0] = seeds.map(matchup => {
+            const home = teamsConf[matchup[0]];
+            home.seed = matchup[0] + 1;
+            const away =
+                matchup[1] !== undefined ? teamsConf[matchup[1]] : undefined;
+            if (away) {
+                away.seed = matchup[1] + 1;
             }
-        }
+            return { home, away };
+        });
     }
 
     return { series, tidPlayoffs };

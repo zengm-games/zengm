@@ -133,4 +133,53 @@ describe("worker/core/season/genPlayoffSeries", () => {
             }
         }
     });
+
+    it("handle 16 teams", () => {
+        const teams = [
+            { tid: 0, cid: 0 },
+            { tid: 1, cid: 0 },
+            { tid: 2, cid: 0 },
+            { tid: 3, cid: 0 },
+            { tid: 4, cid: 0 },
+            { tid: 5, cid: 0 },
+            { tid: 6, cid: 0 },
+            { tid: 7, cid: 0 },
+            { tid: 8, cid: 0 },
+            { tid: 9, cid: 0 },
+            { tid: 10, cid: 0 },
+            { tid: 11, cid: 0 },
+            { tid: 12, cid: 0 },
+            { tid: 13, cid: 0 },
+            { tid: 14, cid: 0 },
+            { tid: 15, cid: 0 },
+        ];
+        g.confs = [{ cid: 0, name: "Conference" }];
+        g.numGamesPlayoffSeries = [7, 7, 7, 7];
+        g.numPlayoffByes = 0;
+
+        const { series } = season.genPlayoffSeries(teams);
+
+        // A normal NCAA bracket would swap [2, 13] and [5, 10] but I'm not sure why
+        const tids = [
+            [0, 15],
+            [7, 8],
+            [4, 11],
+            [3, 12],
+            [2, 13],
+            [5, 10],
+            [6, 9],
+            [1, 14],
+        ];
+        assert.equal(series[0].length, tids.length);
+        for (let i = 0; i < series[0].length; i++) {
+            const { away, home } = series[0][i];
+
+            assert.equal(tids[i][0], home.tid);
+            if (away === undefined) {
+                assert.equal(tids[i][1], undefined);
+            } else {
+                assert.equal(tids[i][1], away.tid);
+            }
+        }
+    });
 });

@@ -2,8 +2,6 @@ show special events (game winners etc) in box score
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
 
-trade warning message in hard cap should never have that "125%" thing, instead it should warn about going over the cap
-
 +/- regression PR
 - try on 1000 seasons
 - how much does it actually change ovrs?

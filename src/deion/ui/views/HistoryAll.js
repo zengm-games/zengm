@@ -59,7 +59,7 @@ const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
     setTitle("League History");
 
     const cols = getCols(
-        "",
+        "Season",
         "League Champion",
         "Runner Up",
         ...awards.map(award => `award:${award}`),

@@ -1,8 +1,3 @@
-correct playoff seeding for football
-- if football, then add sorting based on boolean "is division leader"
-
-football schedule - at least get in division games right
-
 show special events (game winners etc) in box score
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
@@ -119,9 +114,6 @@ why is free agency so slow?
 
 button on free agents screen to fill out roster with players making up to 2x the minimum
 
-update these files in football
-- newSchedule, newSchedule.test
-
 get ads set up
 - banner
 - gcs
@@ -201,8 +193,6 @@ yarn workspaces
 - see branch football-yarn-workspaces - all works except karma
 
 tests still running within deion? e.g. common/helpers.test.js
-
-better football schedule
 
 better football player names
 

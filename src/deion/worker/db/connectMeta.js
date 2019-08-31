@@ -8,7 +8,7 @@ import Backboard from "backboard";
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  */
 const createMeta = upgradeDB => {
-    console.log("Creating meta database");
+    // console.log("Creating meta database");
 
     upgradeDB.createObjectStore("achievements", {
         keyPath: "aid",
@@ -32,9 +32,7 @@ const createMeta = upgradeDB => {
  */
 const migrateMeta = (upgradeDB, fromLocalStorage) => {
     console.log(
-        `Upgrading meta database from version ${
-            upgradeDB.oldVersion
-        } to version ${upgradeDB.version}`,
+        `Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`,
     );
 
     if (upgradeDB.oldVersion <= 6) {

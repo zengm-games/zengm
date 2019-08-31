@@ -8,7 +8,7 @@ import { g, helpers } from "../../../../deion/worker/util";
 
 const defaultTeams = helpers.getTeamsDefault();
 
-describe("worker/core/season/newSchedule", () => {
+describe("basketball/worker/core/season/newSchedule", () => {
     describe("newScheduleCrappy", () => {
         beforeEach(() => {
             testHelpers.resetG();

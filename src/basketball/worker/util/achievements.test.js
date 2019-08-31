@@ -15,7 +15,7 @@ const get = slug => {
     return achievement;
 };
 
-describe("worker/util/account/checkAchievement", () => {
+describe("basketball/worker/util/account/checkAchievement", () => {
     before(async () => {
         testHelpers.resetG();
         g.season = 2013;

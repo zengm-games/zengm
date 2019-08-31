@@ -23,107 +23,58 @@ const newScheduleDefault = (teams): [number, number][] => {
         homeGames[i] = 0;
         awayGames[i] = 0;
     }
-    for (let i = 0; i < teams.length; i++) {
-        for (let j = 0; j < teams.length; j++) {
-            if (teams[i].tid !== teams[j].tid) {
-                const game = [teams[i].tid, teams[j].tid];
+    for (const t of teams) {
+        for (const t2 of teams) {
+            if (t.tid !== t2.tid) {
+                const game = [t.tid, t2.tid];
 
-                // Constraint: 1 home game vs. each team in other conference
-                if (teams[i].cid !== teams[j].cid) {
+                // Constraint: 1 home game vs. each team in same division
+                if (t.did === t2.did) {
                     tids.push(game);
-                    homeGames[i] += 1;
-                    awayGames[j] += 1;
-                }
-
-                // Constraint: 2 home games vs. each team in same division
-                if (teams[i].did === teams[j].did) {
-                    tids.push(game);
-                    tids.push(game);
-                    homeGames[i] += 2;
-                    awayGames[j] += 2;
-                }
-
-                // Constraint: 1-2 home games vs. each team in same conference and different division
-                // Only do 1 now
-                if (
-                    teams[i].cid === teams[j].cid &&
-                    teams[i].did !== teams[j].did
-                ) {
-                    tids.push(game);
-                    homeGames[i] += 1;
-                    awayGames[j] += 1;
+                    homeGames[t.tid] += 1;
+                    awayGames[t2.tid] += 1;
                 }
             }
         }
     }
 
-    // Constraint: 1-2 home games vs. each team in same conference and different division
-    // Constraint: We need 8 more of these games per home team!
-    const tidsByConf = [[], []];
-    const dids = [[], []];
-    for (let i = 0; i < teams.length; i++) {
-        tidsByConf[teams[i].cid].push(i);
-        dids[teams[i].cid].push(teams[i].did);
-    }
+    // Constraint: 5 home games vs. teams from other divisions
+    let failures = 0;
+    while (true) {
+        const newTids = [];
+        let success = true;
 
-    for (let cid = 0; cid < g.confs.length; cid++) {
-        const matchups = [];
-        matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
-        let games = 0;
-        while (games < 8) {
-            let newMatchup = [];
-            let n = 0;
-            while (n <= 14) {
-                // 14 = num teams in conference - 1
-                let iters = 0;
-                // eslint-disable-next-line no-constant-condition
-                while (true) {
-                    const tryNum = random.randInt(0, 14);
-                    // Pick tryNum such that it is in a different division than n and has not been picked before
-                    if (
-                        dids[cid][tryNum] !== dids[cid][n] &&
-                        !newMatchup.includes(tryNum)
-                    ) {
-                        let good = true;
-                        // Check for duplicate games
-                        for (let j = 0; j < matchups.length; j++) {
-                            const matchup = matchups[j];
-                            if (matchup[n] === tryNum) {
-                                good = false;
-                                break;
-                            }
-                        }
-                        if (good) {
-                            newMatchup.push(tryNum);
-                            break;
-                        }
-                    }
-                    iters += 1;
-                    // Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
-                    // So, catch these situations and reset the newMatchup
-                    if (iters > 50) {
-                        newMatchup = [];
-                        n = -1;
-                        break;
-                    }
-                }
-                n += 1;
+        // Copy, so each iteration of the while loop this is reset
+        const homeGames2 = { ...homeGames };
+        const awayGames2 = { ...awayGames };
+
+        for (const t of teams) {
+            const nonDivisionTeams = teams.filter(t2 => t.did !== t2.did);
+            const withGamesLeft = nonDivisionTeams.filter(
+                t2 => awayGames2[t2.tid] < 8,
+            );
+            if (withGamesLeft.length < 5) {
+                success = false;
+                break;
             }
-            matchups.push(newMatchup);
-            games += 1;
+
+            random.shuffle(withGamesLeft);
+
+            for (let i = 0; i < 5; i++) {
+                const t2 = withGamesLeft[i];
+                newTids.push([t.tid, t2.tid]);
+                homeGames2[t.tid] += 1;
+                awayGames2[t2.tid] += 1;
+            }
         }
-        matchups.shift(); // Remove the first row in matchups
-        for (let j = 0; j < matchups.length; j++) {
-            const matchup = matchups[j];
-            for (let k = 0; k < matchup.length; k++) {
-                const t = matchup[k];
-                const ii = tidsByConf[cid][t];
-                const jj = tidsByConf[cid][matchup[t]];
-                const game = [teams[ii].tid, teams[jj].tid];
-                tids.push(game);
-                homeGames[ii] += 1;
-                awayGames[jj] += 1;
-            }
+
+        if (success) {
+            tids.push(...newTids);
+            break;
+        }
+        failures += 1;
+        if (failures > 100000) {
+            throw new Error("Failed generating scheudle");
         }
     }
 
@@ -217,10 +168,10 @@ export const newScheduleCrappy = (): [number, number][] => {
  */
 const newSchedule = (teams: Team[]): [number, number][] => {
     let tids;
-    let threeDivsPerConf = true;
+    let fourDivsPerConf = true;
     for (const conf of g.confs) {
-        if (g.divs.filter(div => div.cid === conf.cid).length !== 3) {
-            threeDivsPerConf = false;
+        if (g.divs.filter(div => div.cid === conf.cid).length !== 4) {
+            fourDivsPerConf = false;
             break;
         }
     }
@@ -232,10 +183,10 @@ const newSchedule = (teams: Team[]): [number, number][] => {
         }
     }
     if (
-        g.numTeams === 30 &&
-        g.numGames === 82 &&
+        g.numTeams === 32 &&
+        g.numGames === 16 &&
         g.confs.length === 2 &&
-        threeDivsPerConf &&
+        fourDivsPerConf &&
         twoConfsEvenTeams
     ) {
         tids = newScheduleDefault(teams);

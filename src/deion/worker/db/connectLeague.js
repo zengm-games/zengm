@@ -181,7 +181,7 @@ const upgrade33 = upgradeDB => {
  * @param {number} lid Integer league ID number for new league.
  */
 const createLeague = (upgradeDB, lid: number) => {
-    console.log(`Creating league${lid} database`);
+    // console.log(`Creating league${lid} database`);
 
     // rid ("row id") is used as the keyPath for objects without an innate unique identifier
     upgradeDB.createObjectStore("awards", { keyPath: "season" });

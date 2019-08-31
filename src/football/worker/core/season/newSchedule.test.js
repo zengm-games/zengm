@@ -8,7 +8,7 @@ import { g, helpers } from "../../../../deion/worker/util";
 
 const defaultTeams = helpers.getTeamsDefault();
 
-describe("worker/core/season/newSchedule", () => {
+describe("football/worker/core/season/newSchedule", () => {
     describe("newScheduleCrappy", () => {
         beforeEach(() => {
             testHelpers.resetG();
@@ -85,11 +85,11 @@ describe("worker/core/season/newSchedule", () => {
             testHelpers.resetG();
         });
 
-        it("schedule 1230 games (82 each for 30 teams)", () => {
-            assert.equal(newSchedule(defaultTeams).length, 1230);
+        it("schedule 256 games (16 each for 32 teams)", () => {
+            assert.equal(newSchedule(defaultTeams).length, 256);
         });
 
-        it("schedule 41 home games and 41 away games for each team", () => {
+        it("schedule 8 home games and 8 away games for each team", () => {
             const tids = newSchedule(defaultTeams);
 
             const home = Array(g.numTeams).fill(0); // Number of home games for each team
@@ -101,33 +101,12 @@ describe("worker/core/season/newSchedule", () => {
             }
 
             for (let i = 0; i < g.numTeams; i++) {
-                assert.equal(home[i], 41);
-                assert.equal(away[i], 41);
+                assert.equal(home[i], 8);
+                assert.equal(away[i], 8);
             }
         });
 
-        it("schedule each team one home game against every team in the other conference", () => {
-            const tids = newSchedule(defaultTeams);
-
-            const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
-            for (let i = 0; i < g.numTeams; i++) {
-                home.push(Array(g.numTeams).fill(0));
-            }
-
-            const teams = helpers.getTeamsDefault();
-            for (let i = 0; i < tids.length; i++) {
-                if (teams[tids[i][0]].cid !== teams[tids[i][1]].cid) {
-                    home[tids[i][1]][tids[i][0]] += 1;
-                }
-            }
-
-            for (let i = 0; i < g.numTeams; i++) {
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 15);
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 15);
-            }
-        });
-
-        it("schedule each team two home games against every team in the same division", () => {
+        it("schedule each team one home game against every team in the same division", () => {
             const tids = newSchedule(defaultTeams);
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
@@ -143,33 +122,8 @@ describe("worker/core/season/newSchedule", () => {
             }
 
             for (let i = 0; i < g.numTeams; i++) {
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 26);
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 4);
-            }
-        });
-
-        it("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
-            const tids = newSchedule(defaultTeams);
-
-            const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
-            for (let i = 0; i < g.numTeams; i++) {
-                home.push(Array(g.numTeams).fill(0));
-            }
-
-            const teams = helpers.getTeamsDefault();
-            for (let i = 0; i < tids.length; i++) {
-                if (
-                    teams[tids[i][0]].cid === teams[tids[i][1]].cid &&
-                    teams[tids[i][0]].did !== teams[tids[i][1]].did
-                ) {
-                    home[tids[i][1]][tids[i][0]] += 1;
-                }
-            }
-
-            for (let i = 0; i < g.numTeams; i++) {
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 20);
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 2);
-                assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 8);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 29);
+                assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 3);
             }
         });
     });

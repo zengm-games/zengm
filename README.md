@@ -108,6 +108,10 @@ or
 
     yarn run test-watch
 
+By default, this runs the generic tests and the basketball tests. For football
+tests, stick `SPORT=football ` in front. Eventually both sports should happen
+from one command. 
+
 ### Code Overview
 
 This is a single-page app that runs almost entirely client-side by storing data

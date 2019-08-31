@@ -204,7 +204,7 @@ const heightToInches = (hgt: number) => {
 const info = {};
 const infoIn = {};
 const infoOut = {};
-let timeoutID;
+// let timeoutID;
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -330,7 +330,7 @@ const genRatings = (
     infoOut[ratings.pos] =
         infoOut[ratings.pos] === undefined ? 1 : infoOut[ratings.pos] + 1;
 
-    clearTimeout(timeoutID);
+    /*clearTimeout(timeoutID);
     timeoutID = setTimeout(() => {
         console.log(info);
         for (const pos2 of overrides.common.constants.POSITIONS) {
@@ -338,7 +338,7 @@ const genRatings = (
                 console.log(pos2, infoIn[pos2], infoOut[pos2]);
             }
         }
-    }, 1000);
+    }, 1000);*/
 
     /*    if (pos === "DL" && ratings.pos === "LB") {
         console.log(ratings);

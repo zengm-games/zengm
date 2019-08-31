@@ -1,15 +1,27 @@
 /* eslint-env node */
 
+const build = require("./tools/buildFuncs");
+
+const sport = build.getSport();
+
+const files = [
+    "src/deion/test/index.js",
+    `src/${sport}/worker/index.js`, // For overrides
+    `src/${sport}/**/*.test.js`,
+    "src/deion/test/**/*.js",
+];
+
+if (sport === "basketball") {
+    // Some deion tests assume basketball
+    files.push("src/deion/**/*.test.js");
+}
+console.log(files);
+
 module.exports = function(config) {
     config.set({
         frameworks: ["mocha", "browserify", "source-map-support"],
 
-        files: [
-            "src/deion/test/index.js",
-            "src/basketball/worker/index.js", // For overrides
-            "src/**/*.test.js",
-            "src/deion/test/**/*.js",
-        ],
+        files,
 
         preprocessors: {
             "src/**/*.js": ["browserify"],
@@ -29,7 +41,7 @@ module.exports = function(config) {
             debug: true,
             transform: [
                 "babelify",
-                ["envify", { SPORT: "basketball" }],
+                ["envify", { SPORT: sport }],
                 [
                     "aliasify",
                     {

@@ -17,7 +17,7 @@ const newPhasePlayoffs = async (
     // Set playoff matchups
     const teams = helpers.orderByWinp(
         await idb.getCopies.teamsPlus({
-            attrs: ["tid", "cid"],
+            attrs: ["tid", "cid", "did"],
             seasonAttrs: ["winp", "won"],
             season: g.season,
         }),

@@ -24,7 +24,7 @@ const genOrder = async (
     conditions?: Conditions,
 ): Promise<DraftLotteryResult> => {
     const teams = await idb.getCopies.teamsPlus({
-        attrs: ["tid", "cid"],
+        attrs: ["tid", "cid", "did"],
         seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
         season: g.season,
     });

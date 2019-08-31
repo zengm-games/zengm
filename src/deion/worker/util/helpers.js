@@ -199,28 +199,46 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | void) => {
 };
 
 const orderByWinp = <
-    T: { seasonAttrs: { winp: number, won: number }, tid: number },
+    T: { did: number, seasonAttrs: { winp: number, won: number }, tid: number },
 >(
     teams: T[],
     season?: number = g.season,
 ): T[] => {
-    return orderBy(
-        teams,
-        [
-            t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
-            t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+    const defaultFuncs = [
+        t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
+        t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
 
-            // We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
-            t =>
-                random.uniformSeed(
-                    t.tid +
-                        season +
-                        (t.seasonAttrs
-                            ? t.seasonAttrs.won + t.seasonAttrs.winp
-                            : 0),
-                ),
-        ],
-        ["desc", "desc", "asc"],
+        // We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
+        t =>
+            random.uniformSeed(
+                t.tid +
+                    season +
+                    (t.seasonAttrs
+                        ? t.seasonAttrs.won + t.seasonAttrs.winp
+                        : 0),
+            ),
+    ];
+    const defaultOrders = ["desc", "desc", "asc"];
+
+    const sortedTeams = orderBy(teams, defaultFuncs, defaultOrders);
+
+    if (process.env.SPORT === "basketball") {
+        return sortedTeams;
+    }
+
+    // For football, sort by division leaders first
+
+    const divisionLeaders = new Map<number, number>();
+    for (const t of sortedTeams) {
+        if (!divisionLeaders.has(t.did)) {
+            divisionLeaders.set(t.did, t.tid);
+        }
+    }
+
+    return orderBy(
+        sortedTeams,
+        [t => (divisionLeaders.get(t.did) === t.tid ? 1 : 0), ...defaultFuncs],
+        ["desc", ...defaultOrders],
     );
 };
 

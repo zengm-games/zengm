@@ -7,7 +7,7 @@ import { g, helpers } from "../../util";
 
 const genOrder = async (mock?: boolean = false): Promise<void> => {
     const teams = await idb.getCopies.teamsPlus({
-        attrs: ["tid", "cid"],
+        attrs: ["tid", "cid", "did"],
         seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
         season: g.season,
     });

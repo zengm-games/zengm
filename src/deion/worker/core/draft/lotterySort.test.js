@@ -15,6 +15,7 @@ describe("worker/core/draft/lotterySort", () => {
             {
                 tid: 0,
                 cid: 0,
+                did: 0,
                 seasonAttrs: {
                     winp: 0.9,
                     playoffRoundsWon: -1,
@@ -25,6 +26,7 @@ describe("worker/core/draft/lotterySort", () => {
             {
                 tid: 1,
                 cid: 0,
+                did: 0,
                 seasonAttrs: {
                     winp: 0.8,
                     playoffRoundsWon: -1,
@@ -35,6 +37,7 @@ describe("worker/core/draft/lotterySort", () => {
             {
                 tid: 2,
                 cid: 1,
+                did: 1,
                 seasonAttrs: {
                     winp: 0.1,
                     playoffRoundsWon: -1,
@@ -45,6 +48,7 @@ describe("worker/core/draft/lotterySort", () => {
             {
                 tid: 3,
                 cid: 1,
+                did: 1,
                 seasonAttrs: {
                     winp: 0.2,
                     playoffRoundsWon: -1,

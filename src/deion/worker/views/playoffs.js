@@ -9,7 +9,7 @@ import type { UpdateEvents } from "../../common/types";
 const getProjectedSeries = async (inputSeason: number) => {
     const teams = helpers.orderByWinp(
         await idb.getCopies.teamsPlus({
-            attrs: ["tid", "cid", "abbrev", "name"],
+            attrs: ["tid", "cid", "did", "abbrev", "name"],
             seasonAttrs: ["winp", "won"],
             season: inputSeason,
         }),

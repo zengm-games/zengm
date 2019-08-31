@@ -106,7 +106,7 @@ async function updateTeams(
 
         const teams = helpers.orderByWinp(
             await idb.getCopies.teamsPlus({
-                attrs: ["tid", "cid"],
+                attrs: ["tid", "cid", "did"],
                 seasonAttrs: ["won", "winp", "att", "revenue", "profit"],
                 stats,
                 season: g.season,
@@ -426,7 +426,7 @@ async function updateStandings(
     if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
         const teams = helpers.orderByWinp(
             await idb.getCopies.teamsPlus({
-                attrs: ["tid", "cid", "abbrev", "region"],
+                attrs: ["tid", "cid", "did", "abbrev", "region"],
                 seasonAttrs: ["won", "lost", "winp"],
                 season: g.season,
             }),

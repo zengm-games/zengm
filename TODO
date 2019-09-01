@@ -1,3 +1,9 @@
+get rid of owner messages
+- if ownerMood is attached to message, display chart
+  - recharts
+    - bundle size?
+    - babel-plugin-recharts
+
 show special events (game winners etc) in box score
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/

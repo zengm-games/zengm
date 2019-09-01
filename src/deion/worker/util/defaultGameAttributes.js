@@ -6,13 +6,7 @@ const defaultGameAttributes: GameAttributes = {
     phase: 0,
     nextPhase: null, // Used only for fantasy draft
     daysLeft: 0, // Used only for free agency
-    ownerMood: {
-        wins: 0,
-        playoffs: 0,
-        money: 0,
-    },
     gameOver: false,
-    showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
     godMode: false,
     godModeInPast: false,
     salaryCap: 90000, // [thousands of dollars]

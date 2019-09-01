@@ -15,7 +15,6 @@ if (sport === "basketball") {
     // Some deion tests assume basketball
     files.push("src/deion/**/*.test.js");
 }
-console.log(files);
 
 module.exports = function(config) {
     config.set({
@@ -53,8 +52,8 @@ module.exports = function(config) {
             ],
         },
 
-        browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes
-        browserDisconnectTimeout: 5 * 60 * 1000, // 5 minutes
+        browserNoActivityTimeout: 15 * 60 * 1000, // 15 minutes
+        browserDisconnectTimeout: 15 * 60 * 1000, // 15 minutes
 
         reporters: ["mocha"],
 

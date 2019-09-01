@@ -180,8 +180,8 @@ const upgrade33 = upgradeDB => {
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  * @param {number} lid Integer league ID number for new league.
  */
-const createLeague = (upgradeDB, lid: number) => {
-    // console.log(`Creating league${lid} database`);
+const createLeague = upgradeDB => {
+    // console.log(`Creating league database`);
 
     // rid ("row id") is used as the keyPath for objects without an innate unique identifier
     upgradeDB.createObjectStore("awards", { keyPath: "season" });
@@ -568,7 +568,7 @@ const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
     const db = await backboard.open(`league${lid}`, 33, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
-            createLeague(upgradeDB, lid);
+            createLeague(upgradeDB);
         } else {
             migrateLeague(upgradeDB, lid);
         }

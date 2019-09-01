@@ -91,6 +91,11 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
             },
         },
         payrollEndOfSeason: -1,
+        ownerMood: {
+            wins: 0,
+            playoffs: 0,
+            money: 0,
+        },
     };
 
     if (prevSeason) {
@@ -99,6 +104,9 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
         newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
         newSeason.hype = prevSeason.hype;
         newSeason.cash = prevSeason.cash;
+        if (prevSeason.ownerMood && g.userTid === tid) {
+            newSeason.ownerMood = prevSeason.ownerMood;
+        }
     }
 
     return newSeason;

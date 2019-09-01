@@ -331,21 +331,6 @@
                         "type": "integer",
                         "minimum": 0
                     },
-                    "ownerMood": {
-                        "type": "object",
-                        "properties": {
-                            "wins": {
-                                "type": "number"
-                            },
-                            "playoffs": {
-                                "type": "number"
-                            },
-                            "money": {
-                                "type": "number"
-                            }
-                        },
-                        "required": ["wins", "playoffs", "money"]
-                    },
                     "phase": {
                         "type": "integer",
                         "minimum": -1,
@@ -361,9 +346,6 @@
                     },
                     "season": {
                         "type": "integer"
-                    },
-                    "showFirstOwnerMessage": {
-                        "type": "boolean"
                     },
                     "sonRate": {
                         "type": "number",
@@ -495,6 +477,27 @@
                     },
                     "year": {
                         "type": "integer"
+                    },
+                    "subject": {
+                        "type": "string"
+                    },
+                    "ownerMoods": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "wins": {
+                                    "type": "number"
+                                },
+                                "playoffs": {
+                                    "type": "number"
+                                },
+                                "money": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": ["wins", "playoffs", "money"]
+                        }
                     }
                 },
                 "required": ["from", "read", "text", "year"]
@@ -1176,6 +1179,21 @@
                                 },
                                 "payrollEndOfSeason": {
                                     "type": "integer"
+                                },
+                                "ownerMood": {
+                                    "type": "object",
+                                    "properties": {
+                                        "wins": {
+                                            "type": "number"
+                                        },
+                                        "playoffs": {
+                                            "type": "number"
+                                        },
+                                        "money": {
+                                            "type": "number"
+                                        }
+                                    },
+                                    "required": ["wins", "playoffs", "money"]
                                 }
                             },
                             "required": [

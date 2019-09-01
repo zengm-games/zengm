@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { season } from "..";
 import { idb } from "../../db";
-import { g, genMessage, helpers, local, overrides } from "../../util";
+import { g, helpers, local, overrides } from "../../util";
 
 const newPhaseRegularSeason = async () => {
     const teams = await idb.cache.teams.getAll();
@@ -28,10 +28,7 @@ const newPhaseRegularSeason = async () => {
     const subreddit =
         process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM";
 
-    // First message from owner
-    if (g.showFirstOwnerMessage) {
-        await genMessage({ wins: 0, playoffs: 0, money: 0 });
-    } else if (local.autoPlaySeasons === 0) {
+    if (local.autoPlaySeasons === 0) {
         const nagged = await idb.meta.attributes.get("nagged");
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
@@ -40,11 +37,7 @@ const newPhaseRegularSeason = async () => {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
-                text: `<p>Hi. Sorry to bother you, but I noticed that you've been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:commissioner@${
-                    process.env.SPORT
-                }-gm.com">Send an email</a> (commissioner@${
-                    process.env.SPORT
-                }-gm.com) or join the discussion on <a href="http://www.reddit.com/r/${subreddit}/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>`,
+                text: `<p>Hi. Sorry to bother you, but I noticed that you've been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:commissioner@${process.env.SPORT}-gm.com">Send an email</a> (commissioner@${process.env.SPORT}-gm.com) or join the discussion on <a href="http://www.reddit.com/r/${subreddit}/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>`,
             });
         } else if (
             (nagged === 1 && Math.random() < 0.125) ||

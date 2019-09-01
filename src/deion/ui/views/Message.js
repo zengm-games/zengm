@@ -21,14 +21,24 @@ const Message = ({ message }: MessageProps) => {
             </>
         );
     }
+    console.log(message);
 
     setTitle(`Message From ${message.from}`);
 
     return (
         <>
-            <h4>
-                From: {message.from}, {message.year} <NewWindowLink />
-            </h4>
+            {message.subject ? (
+                <>
+                    <h4>{message.subject}</h4>
+                    <h5 className="mb-3">
+                        From: {message.from}, {message.year} <NewWindowLink />
+                    </h5>
+                </>
+            ) : (
+                <h4 className="mb-3">
+                    From: {message.from}, {message.year} <NewWindowLink />
+                </h4>
+            )}
 
             <SafeHtml dirty={message.text} />
 
@@ -47,6 +57,7 @@ Message.propTypes = {
         from: PropTypes.string.isRequired,
         text: PropTypes.string.isRequired,
         year: PropTypes.number.isRequired,
+        subject: PropTypes.string,
     }),
 };
 

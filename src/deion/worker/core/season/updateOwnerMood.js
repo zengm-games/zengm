@@ -1,26 +1,33 @@
 // @flow
 
-import { league } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import type { OwnerMoodDeltas } from "../../../common/types";
+import type { OwnerMood } from "../../../common/types";
 
 /**
- * Update g.ownerMood based on performance this season.
+ * Update teamSeason.ownerMood based on performance this season, only for user's team.
  *
  * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
  *
  * @memberOf core.season
- * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
+ * @return {Promise.Object} Resolves to an object containing the changes in teamSeason.ownerMood this season.
  */
-const updateOwnerMood = async (): Promise<OwnerMoodDeltas> => {
+const updateOwnerMood = async (): Promise<OwnerMood> => {
     const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
         tid: g.userTid,
     });
     if (!t) {
-        throw new Error("Invalid g.userTid");
+        throw new Error("Team not found");
+    }
+
+    const teamSeason = await idb.cache.teamSeasons.indexGet(
+        "teamSeasonsByTidSeason",
+        [g.userTid, g.season],
+    );
+    if (!teamSeason) {
+        throw new Error("Team season not found");
     }
 
     const numPlayoffRounds = g.numGamesPlayoffSeries.length;
@@ -39,26 +46,32 @@ const updateOwnerMood = async (): Promise<OwnerMoodDeltas> => {
         deltas.playoffs = 0.2;
     }
 
-    // Only update owner mood if grace period is over
-    if (g.season >= g.gracePeriodEnd) {
-        const ownerMood = {
-            wins: g.ownerMood.wins + deltas.wins,
-            playoffs: g.ownerMood.playoffs + deltas.playoffs,
-            money: g.ownerMood.money + deltas.money,
+    if (!teamSeason.ownerMood) {
+        teamSeason.ownerMood = {
+            money: 0,
+            playoffs: 0,
+            wins: 0,
         };
+    }
 
-        // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-        if (ownerMood.wins > 1) {
-            ownerMood.wins = 1;
-        }
-        if (ownerMood.playoffs > 1) {
-            ownerMood.playoffs = 1;
-        }
-        if (ownerMood.money > 1) {
-            ownerMood.money = 1;
-        }
+    // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+    if (teamSeason.ownerMood.wins + deltas.wins > 1) {
+        deltas.wins = 1 - teamSeason.ownerMood.wins;
+    }
+    if (teamSeason.ownerMood.playoffs + deltas.playoffs > 1) {
+        deltas.playoffs = 1 - teamSeason.ownerMood.playoffs;
+    }
+    if (teamSeason.ownerMood.money + deltas.money > 1) {
+        deltas.money = 1 - teamSeason.ownerMood.money;
+    }
 
-        await league.setGameAttributes({ ownerMood });
+    // Only update owner mood if grace period is over
+    if (g.season >= g.gracePeriodEnd && !g.godMode) {
+        teamSeason.ownerMood.money += deltas.money;
+        teamSeason.ownerMood.playoffs += deltas.playoffs;
+        teamSeason.ownerMood.wins += deltas.wins;
+
+        await idb.cache.teamSeasons.put(teamSeason);
     }
 
     return deltas;

@@ -113,50 +113,60 @@ const LeagueDashboard = ({
                                         teamLeaders={teamLeaders}
                                     />
                                     <h3>Inbox</h3>
-                                    <table className="table table-bordered table-sm messages-table">
-                                        <tbody>
-                                            {messages.map(m => (
-                                                <tr
-                                                    key={m.mid}
-                                                    className={
-                                                        m.read
-                                                            ? null
-                                                            : "font-weight-bold"
-                                                    }
+                                    {messages.length === 0 ? (
+                                        <p>No messages!</p>
+                                    ) : (
+                                        <>
+                                            <table className="table table-bordered table-sm messages-table">
+                                                <tbody>
+                                                    {messages.map(m => (
+                                                        <tr
+                                                            key={m.mid}
+                                                            className={
+                                                                m.read
+                                                                    ? null
+                                                                    : "font-weight-bold"
+                                                            }
+                                                        >
+                                                            <td className="year">
+                                                                <a
+                                                                    href={helpers.leagueUrl(
+                                                                        [
+                                                                            "message",
+                                                                            m.mid,
+                                                                        ],
+                                                                    )}
+                                                                >
+                                                                    {m.year}
+                                                                </a>
+                                                            </td>
+                                                            <td className="from">
+                                                                <a
+                                                                    href={helpers.leagueUrl(
+                                                                        [
+                                                                            "message",
+                                                                            m.mid,
+                                                                        ],
+                                                                    )}
+                                                                >
+                                                                    {m.from}
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                            <p>
+                                                <a
+                                                    href={helpers.leagueUrl([
+                                                        "inbox",
+                                                    ])}
                                                 >
-                                                    <td className="year">
-                                                        <a
-                                                            href={helpers.leagueUrl(
-                                                                [
-                                                                    "message",
-                                                                    m.mid,
-                                                                ],
-                                                            )}
-                                                        >
-                                                            {m.year}
-                                                        </a>
-                                                    </td>
-                                                    <td className="from">
-                                                        <a
-                                                            href={helpers.leagueUrl(
-                                                                [
-                                                                    "message",
-                                                                    m.mid,
-                                                                ],
-                                                            )}
-                                                        >
-                                                            {m.from}
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                    <p>
-                                        <a href={helpers.leagueUrl(["inbox"])}>
-                                            » All Messages
-                                        </a>
-                                    </p>
+                                                    » All Messages
+                                                </a>
+                                            </p>
+                                        </>
+                                    )}
                                 </div>
                                 <div className="col-6">
                                     <TeamStats teamStats={teamStats} />

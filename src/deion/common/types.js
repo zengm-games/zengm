@@ -125,13 +125,11 @@ export type GameAttributeKey =
     | "numPlayoffByes"
     | "numPlayoffRounds" // Obsolete, just here for upgrade code
     | "numTeams"
-    | "ownerMood"
     | "phase"
     | "playersRefuseToNegotiate"
     | "quarterLength"
     | "salaryCap"
     | "season"
-    | "showFirstOwnerMessage"
     | "sonRate"
     | "startingSeason"
     | "stopOnInjury"
@@ -235,11 +233,19 @@ export type LogEventShowOptions = {|
     type: string,
 |};
 
+export type OwnerMood = {|
+    money: number,
+    playoffs: number,
+    wins: number,
+|};
+
 export type MessageWithoutMid = {|
     from: string,
     read: boolean,
     text: string,
     year: number,
+    subject?: string,
+    ownerMoods?: OwnerMood[],
 |};
 
 export type Message = {|
@@ -287,12 +293,6 @@ export type LocalStateUI = {|
     userTid: number,
     userTids: number[],
     username: string | void,
-|};
-
-export type OwnerMoodDeltas = {|
-    money: number,
-    playoffs: number,
-    wins: number,
 |};
 
 export type PartialTopMenu = {|
@@ -632,6 +632,7 @@ export type TeamSeason = {|
         facilities: BudgetItem,
     |},
     payrollEndOfSeason: number,
+    ownerMood?: OwnerMood,
 |};
 
 // opp stats (except Blk) can be undefined

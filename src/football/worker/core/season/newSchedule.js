@@ -45,8 +45,8 @@ const newScheduleDefault = (teams): [number, number][] => {
         let success = true;
 
         // Copy, so each iteration of the while loop this is reset
-        const homeGames2 = { ...homeGames };
-        const awayGames2 = { ...awayGames };
+        const homeGames2 = homeGames.slice();
+        const awayGames2 = awayGames.slice();
 
         for (const t of teams) {
             const nonDivisionTeams = teams.filter(t2 => t.did !== t2.did);

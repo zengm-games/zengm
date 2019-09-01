@@ -1249,15 +1249,12 @@ const switchTeam = async (tid: number) => {
     await updateStatus("Idle");
     updatePlayMenu();
 
+    // Used to set owner mood here, but now there's no need because a new team will always have all 0s
+
     await league.setGameAttributes({
         gameOver: false,
         userTid: tid,
         userTids: [tid],
-        ownerMood: {
-            wins: 0,
-            playoffs: 0,
-            money: 0,
-        },
         gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
     });
     league.updateMetaNameRegion(

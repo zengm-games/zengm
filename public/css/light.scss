@@ -838,3 +838,10 @@ tr.table-warning:hover > td {
   .d-xxl-inline-flex {
     display: inline-flex !important; } }*/
 }
+
+.chart-legend {
+    background-color: rgba($white, 0.75);
+    position: absolute;
+    top: 30px;
+    left: 20px;
+}

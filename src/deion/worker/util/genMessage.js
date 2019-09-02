@@ -8,8 +8,11 @@ import local from "./local";
 import type { OwnerMood } from "../../common/types";
 
 const getMoodText = (total: number) => {
-    if (total > 0.5) {
+    if (total > 2) {
         return "Excellent!";
+    }
+    if (total > 1) {
+        return "Good.";
     }
     if (total > 0) {
         return "Pretty good.";
@@ -105,7 +108,7 @@ const genMessage = async (deltas: OwnerMood) => {
         year: g.season,
         text: m,
         subject: "Annual performance evaluation",
-        ownerMoods: fired ? undefined : moods,
+        ownerMoods: moods,
     });
 };
 

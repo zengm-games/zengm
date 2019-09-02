@@ -3,6 +3,7 @@ get rid of owner messages
   - margin
   - responsive, resize
   - idb.cache.teamSeasons.indexGetAll in getMessage - needs to instead be going to IDB for 10 years!
+  - would it be better just as a bar chart, somehow showing the change since last year?
 
 move to rollup
 - karma

@@ -35,15 +35,16 @@ const OwnerMoodsChart = React.memo(
                 const allValues = [];
                 const years = [];
                 for (const row of data) {
-                    years.push(row.year);
                     allValues.push(
                         row.money,
                         row.playoffs,
-                        row.wins,
                         row.total,
+                        row.wins,
                     );
+                    years.push(row.year);
                 }
 
+                // totals span -1 to 3, others -3 to 1
                 const yDomain = [
                     Math.min(-1.3, ...allValues),
                     Math.max(3.3, ...allValues),
@@ -83,12 +84,17 @@ const OwnerMoodsChart = React.memo(
                         .style("stroke-dasharray", "5 5")
                         .attr("d", line2);
 
-                    svg.append("text")
-                        .attr("y", yScale(y) + (position === "above" ? -7 : 17))
-                        .attr("x", width - 4)
-                        .attr("text-anchor", "end")
-                        .style("fill", color)
-                        .text(text);
+                    if (text) {
+                        svg.append("text")
+                            .attr(
+                                "y",
+                                yScale(y) + (position === "above" ? -7 : 17),
+                            )
+                            .attr("x", width - 4)
+                            .attr("text-anchor", "end")
+                            .style("fill", color)
+                            .text(text);
+                    }
                 };
 
                 drawReferenceLine(3, "var(--success)", "Perfect", "above");
@@ -98,6 +104,9 @@ const OwnerMoodsChart = React.memo(
                     "You're fired!",
                     "below",
                 );
+
+                drawReferenceLine(3, "var(--success)", "Perfect", "above");
+                drawReferenceLine(0, "var(--secondary)");
 
                 const drawLine = (attr, color, strokeWidth = 1) => {
                     const line2 = line()
@@ -121,13 +130,13 @@ const OwnerMoodsChart = React.memo(
                         .style("stroke-width", strokeWidth)
                         .attr("cx", d => xScale(d.year))
                         .attr("cy", d => yScale(d[attr]))
-                        .attr("r", 3);
+                        .attr("r", 3 * Math.sqrt(strokeWidth));
                 };
 
                 drawLine("wins", "var(--danger)");
                 drawLine("playoffs", "var(--info)");
                 drawLine("money", "var(--success)");
-                drawLine("total", "var(--dark)", 3);
+                drawLine("total", "var(--dark)", 4);
 
                 svg.append("g")
                     .attr("class", "chart-axis")

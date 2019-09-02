@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import OwnerMoodsChart from "./OwnerMoodsChart_d3";
+import OwnerMoodsChart from "./OwnerMoodsChart";
 import { NewWindowLink, SafeHtml } from "../../components";
 import { helpers, setTitle } from "../../util";
 import type { Message as Message_ } from "../../../common/types";

@@ -1,19 +1,12 @@
 get rid of owner messages
 - if ownerMood is attached to message, display chart
-  - UI bundle size increases 25% :(
-    - rewrite in raw d3?
-      - import only certain modules
-      - x axis font size and color
-      - dark mode
   - margin
-  - in dark mode, points on lines have white center, why?
-  - responsive
-  - delete unused css
+  - responsive, resize
   - idb.cache.teamSeasons.indexGetAll in getMessage - needs to instead be going to IDB for 10 years!
 
 move to rollup
 - karma
-- code splitting: recharts, html2canvas, and ajv are all big things that are rarely used
+- code splitting: html2canvas and ajv are all big things that are rarely used
 - switch to es6 version of recharts dependency
 
 show special events (game winners etc) in box score

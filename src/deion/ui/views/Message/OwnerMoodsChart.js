@@ -2,7 +2,10 @@
 
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
-import * as d3 from "d3";
+import { axisBottom } from "d3-axis";
+import { scaleLinear, scalePoint } from "d3-scale";
+import { curveMonotoneX, line } from "d3-shape";
+import { select } from "d3-selection";
 import type { OwnerMood } from "../../../common/types";
 
 const OwnerMoodsChart = React.memo(
@@ -50,18 +53,15 @@ const OwnerMoodsChart = React.memo(
                 const width = node.clientWidth - margin.left - margin.right;
                 const height = 400;
 
-                const xScale = d3
-                    .scalePoint()
+                const xScale = scalePoint()
                     .domain(years)
                     .range([0, width]);
 
-                const yScale = d3
-                    .scaleLinear()
+                const yScale = scaleLinear()
                     .domain(yDomain)
                     .range([height, 0]);
 
-                const svg = d3
-                    .select(node)
+                const svg = select(node)
                     .append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.top + margin.bottom)
@@ -72,8 +72,7 @@ const OwnerMoodsChart = React.memo(
                     );
 
                 const drawReferenceLine = (y, color, text, position) => {
-                    const line = d3
-                        .line()
+                    const line2 = line()
                         .x(d => d)
                         .y(() => yScale(y));
 
@@ -82,7 +81,7 @@ const OwnerMoodsChart = React.memo(
                         .attr("class", "chart-line")
                         .style("stroke", color)
                         .style("stroke-dasharray", "5 5")
-                        .attr("d", line);
+                        .attr("d", line2);
 
                     svg.append("text")
                         .attr("y", yScale(y) + (position === "above" ? -7 : 17))
@@ -101,18 +100,17 @@ const OwnerMoodsChart = React.memo(
                 );
 
                 const drawLine = (attr, color, strokeWidth = 1) => {
-                    const line = d3
-                        .line()
+                    const line2 = line()
                         .x(d => xScale(d.year))
                         .y(d => yScale(d[attr]))
-                        .curve(d3.curveMonotoneX);
+                        .curve(curveMonotoneX);
 
                     svg.append("path")
                         .datum(data)
                         .attr("class", "chart-line")
                         .style("stroke", color)
                         .style("stroke-width", strokeWidth)
-                        .attr("d", line);
+                        .attr("d", line2);
 
                     svg.selectAll()
                         .data(data)
@@ -134,7 +132,7 @@ const OwnerMoodsChart = React.memo(
                 svg.append("g")
                     .attr("class", "chart-axis")
                     .attr("transform", `translate(0,${height})`)
-                    .call(d3.axisBottom(xScale));
+                    .call(axisBottom(xScale));
             }
         }, [node, ownerMoods, year]);
 

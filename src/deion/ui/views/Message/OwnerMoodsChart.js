@@ -6,6 +6,7 @@ import { axisBottom } from "d3-axis";
 import { scaleLinear, scalePoint } from "d3-scale";
 import { curveMonotoneX, line } from "d3-shape";
 import { select } from "d3-selection";
+import { HelpPopover } from "../../components";
 import type { OwnerMood } from "../../../common/types";
 
 const OwnerMoodsChart = React.memo(
@@ -50,7 +51,7 @@ const OwnerMoodsChart = React.memo(
                     Math.max(3.3, ...allValues),
                 ];
 
-                const margin = { top: 10, right: 15, bottom: 40, left: 15 };
+                const margin = { top: 0, right: 15, bottom: 30, left: 15 };
                 const width = node.clientWidth - margin.left - margin.right;
                 const height = 400;
 
@@ -146,7 +147,28 @@ const OwnerMoodsChart = React.memo(
         }, [node, ownerMoods, year]);
 
         return (
-            <div className="position-relative">
+            <div className="position-relative mt-n2">
+                <HelpPopover
+                    placement="right"
+                    title="Owner Mood History"
+                    style={{ position: "absolute", left: 15, top: 5 }}
+                >
+                    <p>
+                        This plot shows what the owner thinks of you and how
+                        that's changed over time.
+                    </p>
+                    <p>
+                        If your <b>Total</b> line drops below the{" "}
+                        <span className="text-danger">You're fired!</span>{" "}
+                        cutoff, then you're fired!
+                    </p>
+                    <p>
+                        The other lines (regular season, playoffs, finances)
+                        cannot individually get you fired. You only get fired
+                        based on thei combination, which is the <b>Total</b>{" "}
+                        line.
+                    </p>
+                </HelpPopover>
                 <div ref={getNode} style={{ maxWidth: 400 }} />
                 <div className="chart-legend">
                     <ul className="list-unstyled mb-0">

@@ -7,17 +7,17 @@ import helpers from "./helpers";
 import local from "./local";
 import type { OwnerMood } from "../../common/types";
 
-const getMoodText = (total: number) => {
-    if (total > 2) {
+const getMoodText = (total: number, deltas: boolean = false) => {
+    if (total > (deltas ? 0.5 : 2)) {
         return "Excellent!";
     }
-    if (total > 1) {
+    if (total > (deltas ? 0.25 : 1)) {
         return "Good.";
     }
     if (total > 0) {
         return "Pretty good.";
     }
-    if (total > -0.5) {
+    if (total > (deltas ? -0.25 : -0.5)) {
         return "Bad.";
     }
     return "Horrible!";
@@ -29,10 +29,11 @@ const genMessage = async (deltas: OwnerMood) => {
         return;
     }
 
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-        "teamSeasonsByTidSeason",
-        [[g.userTid, g.season - 9], [g.userTid, g.season]],
-    );
+    const teamSeasons = await idb.getCopies.teamSeasons({
+        tid: g.userTid,
+        seasons: [g.season - 9, g.season],
+    });
+    console.log("teamSeasons", teamSeasons);
 
     const moods = teamSeasons.map(ts => {
         return ts.ownerMood
@@ -63,9 +64,40 @@ const genMessage = async (deltas: OwnerMood) => {
         }
 
         const deltasTotal = deltas.wins + deltas.playoffs + deltas.money;
-        const thisYear = getMoodText(deltasTotal);
+        const thisYear = getMoodText(deltasTotal, true);
 
-        m += `<p>Overall: ${overall}</p><p>This year: ${thisYear}</p>`;
+        let text;
+        if (currentTotal > 0) {
+            if (deltas.playoffs > 0 && deltas.wins > 0) {
+                if (deltas.money < 0) {
+                    text =
+                        "Keep it up, but be careful about losing too much money.";
+                }
+            } else {
+                text = "Hopefully you'll win some more games next season.";
+            }
+        } else if (deltas.playoffs > 0 && deltas.wins > 0 && deltas.money > 0) {
+            text = "Keep it up.";
+        } else if (deltas.playoffs < 0 && deltas.money < 0) {
+            text = "Somehow you need to win more and make more money.";
+        } else if (deltas.playoffs < 0) {
+            text = "Win some more games next season.";
+        } else if (deltas.money < 0) {
+            text = "Be careful about losing too much money.";
+        }
+        if (currentTotal + deltas.money + deltas.playoffs + deltas.wins < -1) {
+            text = "Another season like that and you're fired!";
+        } else if (
+            currentTotal + 2 * (deltas.money + deltas.playoffs + deltas.wins) <
+            -1
+        ) {
+            text = "A couple more seasons like that and you're fired!";
+        }
+
+        m += `<p>This year: ${thisYear}</p><p>Overall: ${overall}</p>`;
+        if (text) {
+            m += `<p>${text}</p>`;
+        }
     } else {
         // Fired!
 

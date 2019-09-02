@@ -845,3 +845,20 @@ tr.table-warning:hover > td {
     top: 30px;
     left: 20px;
 }
+
+.chart-line {
+    fill: none;
+}
+.chart-point {
+    fill: $white;
+}
+.chart-axis {
+    line,
+    path {
+        stroke: $secondary;
+    }
+
+    text {
+        fill: $secondary;
+    }
+}

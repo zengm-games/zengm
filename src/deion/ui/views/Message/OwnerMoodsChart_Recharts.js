@@ -8,9 +8,7 @@ import XAxis from "recharts/lib/cartesian/XAxis";
 import YAxis from "recharts/lib/cartesian/YAxis";
 import Label from "recharts/lib/component/Label";
 import LineChart from "recharts/lib/chart/LineChart";
-import { NewWindowLink, SafeHtml } from "../components";
-import { helpers, setTitle } from "../util";
-import type { Message as Message_, OwnerMood } from "../../common/types";
+import type { OwnerMood } from "../../../common/types";
 
 const OwnerMoodsChart = ({
     ownerMoods,
@@ -51,22 +49,26 @@ const OwnerMoodsChart = ({
                     dataKey="wins"
                     yAxisId={0}
                     style={{ stroke: "var(--danger)" }}
+                    isAnimationActive={false}
                 />
                 <Line
                     dataKey="playoffs"
                     yAxisId={0}
                     style={{ stroke: "var(--info)" }}
+                    isAnimationActive={false}
                 />
                 <Line
                     dataKey="money"
                     yAxisId={0}
                     style={{ stroke: "var(--success)" }}
+                    isAnimationActive={false}
                 />
                 <Line
                     dataKey="total"
                     yAxisId={0}
                     strokeWidth={4}
                     style={{ stroke: "var(--dark)" }}
+                    isAnimationActive={false}
                 />
                 <ReferenceLine
                     y={3}
@@ -114,62 +116,4 @@ OwnerMoodsChart.propTypes = {
     year: PropTypes.number.isRequired,
 };
 
-const Message = ({ message }: { message: void | Message_ }) => {
-    if (!message) {
-        setTitle("Message");
-
-        return (
-            <>
-                <h1>Error</h1>
-                <p>Message not found.</p>
-            </>
-        );
-    }
-
-    setTitle(`Message From ${message.from}`);
-
-    return (
-        <>
-            {message.subject ? (
-                <>
-                    <h4>{message.subject}</h4>
-                    <h5 className="mb-3">
-                        From: {message.from}, {message.year} <NewWindowLink />
-                    </h5>
-                </>
-            ) : (
-                <h4 className="mb-3">
-                    From: {message.from}, {message.year} <NewWindowLink />
-                </h4>
-            )}
-
-            <SafeHtml dirty={message.text} />
-
-            {message.ownerMoods ? (
-                <OwnerMoodsChart
-                    ownerMoods={message.ownerMoods}
-                    year={message.year}
-                />
-            ) : null}
-
-            <p>
-                <a href="#" onClick={() => window.history.back()}>
-                    Previous Page
-                </a>{" "}
-                · <a href={helpers.leagueUrl(["inbox"])}>Inbox</a>
-            </p>
-        </>
-    );
-};
-
-Message.propTypes = {
-    message: PropTypes.shape({
-        from: PropTypes.string.isRequired,
-        text: PropTypes.string.isRequired,
-        year: PropTypes.number.isRequired,
-        subject: PropTypes.string,
-        ownerMoods: PropTypes.array,
-    }),
-};
-
-export default Message;
+export default OwnerMoodsChart;

@@ -38,7 +38,7 @@ const Message = ({ message }: { message: void | Message_ }) => {
 
             <SafeHtml dirty={message.text} />
 
-            {message.ownerMoods ? (
+            {message.ownerMoods && message.ownerMoods.length > 2 ? (
                 <OwnerMoodsChart
                     ownerMoods={message.ownerMoods}
                     year={message.year}

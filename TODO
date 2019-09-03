@@ -1,6 +1,8 @@
 get rid of owner messages
 - if ownerMood is attached to message, display chart
   - would it be better just as a bar chart, somehow showing the change since last year?
+- upgrade from g.?
+- blog
 
 move to rollup
 - karma

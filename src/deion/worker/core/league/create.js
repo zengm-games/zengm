@@ -250,6 +250,13 @@ export const createWithoutSaving = (
                 teamSeason.stadiumCapacity =
                     defaultGameAttributes.defaultStadiumCapacity;
             }
+            if (!teamSeason.ownerMood) {
+                teamSeason.ownerMood = {
+                    wins: 0,
+                    playoffs: 0,
+                    money: 0,
+                };
+            }
 
             // If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates
             delete teamSeason.rid;

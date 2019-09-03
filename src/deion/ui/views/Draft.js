@@ -114,7 +114,7 @@ class Draft extends React.Component {
 
         const remainingPicks = drafted.filter(p => p.pid < 0);
         const nextPick = remainingPicks[0];
-        const usersTurn = nextPick && userTids.includes(nextPick.draft.tid);
+        const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
         const userRemaining = remainingPicks.some(p =>
             userTids.includes(p.draft.tid),
         );

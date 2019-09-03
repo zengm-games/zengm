@@ -21,10 +21,6 @@ const OwnerMoodsChart = React.memo(
 
         useEffect(() => {
             if (node) {
-                if (ownerMoods.length < 3) {
-                    return;
-                }
-
                 const data = ownerMoods.map((mood, i) => {
                     return {
                         ...mood,
@@ -165,8 +161,12 @@ const OwnerMoodsChart = React.memo(
                     <p>
                         The other lines (regular season, playoffs, finances)
                         cannot individually get you fired. You only get fired
-                        based on thei combination, which is the <b>Total</b>{" "}
+                        based on the combination, which is the <b>Total</b>{" "}
                         line.
+                    </p>
+                    <p>
+                        The owner only starts judging you two years after you're
+                        hired.
                     </p>
                 </HelpPopover>
                 <div ref={getNode} style={{ maxWidth: 400 }} />

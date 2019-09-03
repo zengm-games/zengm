@@ -29,9 +29,15 @@ const genMessage = async (deltas: OwnerMood) => {
         return;
     }
 
+    // No need for seasons before you GMed this team or more than 10 years old, but also make sure we always have g.season
+    const minSeason = Math.min(
+        g.season,
+        Math.max(g.gracePeriodEnd - 2, g.season - 9),
+    );
+
     const teamSeasons = await idb.getCopies.teamSeasons({
         tid: g.userTid,
-        seasons: [g.season - 9, g.season],
+        seasons: [minSeason, g.season],
     });
     console.log("teamSeasons", teamSeasons);
 
@@ -120,8 +126,9 @@ const genMessage = async (deltas: OwnerMood) => {
             currentMood.wins < 0 &&
             currentMood.playoffs < 0
         ) {
-            m +=
-                "<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the court. We need a new direction. You're fired.</p>";
+            m += `<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the ${
+                process.env.SPORT === "basketball" ? "court" : "field"
+            }. We need a new direction. You're fired.</p>`;
         } else {
             m += "<p>You're fired.</p>";
         }

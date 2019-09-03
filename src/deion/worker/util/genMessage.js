@@ -39,7 +39,6 @@ const genMessage = async (deltas: OwnerMood) => {
         tid: g.userTid,
         seasons: [minSeason, g.season],
     });
-    console.log("teamSeasons", teamSeasons);
 
     const moods = teamSeasons.map(ts => {
         return ts.ownerMood

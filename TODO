@@ -1,7 +1,9 @@
 get rid of owner messages
 - if ownerMood is attached to message, display chart
   - would it be better just as a bar chart, somehow showing the change since last year?
-- upgrade from g.?
+- test upgrade vs commit 17019e414972c0b03e7534b20e8e3fc5c9a2824a
+  - upgrade before message (genMessage path)
+  - upgrade after message (genSeasonRow path)
 - blog
 
 move to rollup

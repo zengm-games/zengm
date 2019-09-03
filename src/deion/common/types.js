@@ -125,6 +125,7 @@ export type GameAttributeKey =
     | "numPlayoffByes"
     | "numPlayoffRounds" // Obsolete, just here for upgrade code
     | "numTeams"
+    | "ownerMood" // Obsolete, just here for upgrade code
     | "phase"
     | "playersRefuseToNegotiate"
     | "quarterLength"

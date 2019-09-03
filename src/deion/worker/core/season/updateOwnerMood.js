@@ -47,11 +47,13 @@ const updateOwnerMood = async (): Promise<OwnerMood> => {
     }
 
     if (!teamSeason.ownerMood) {
-        teamSeason.ownerMood = {
-            money: 0,
-            playoffs: 0,
-            wins: 0,
-        };
+        teamSeason.ownerMood = g.ownerMood
+            ? g.ownerMood
+            : {
+                  money: 0,
+                  playoffs: 0,
+                  wins: 0,
+              };
     }
 
     // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing

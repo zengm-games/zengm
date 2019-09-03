@@ -562,6 +562,8 @@ const migrateLeague = (upgradeDB, lid) => {
     if (upgradeDB.oldVersion <= 32) {
         upgrade33(upgradeDB);
     }
+
+    // Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js)
 };
 
 const connectLeague = async (lid: number) => {

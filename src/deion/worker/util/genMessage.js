@@ -75,11 +75,15 @@ const genMessage = async (deltas: OwnerMood) => {
         if (currentTotal > 0) {
             if (deltas.playoffs > 0 && deltas.wins > 0) {
                 if (deltas.money < 0) {
-                    text =
-                        "Keep it up, but be careful about losing too much money.";
+                    text = "Keep it up on the court, but I need more money.";
+                } else {
+                    text = "Keep it up.";
                 }
             } else {
                 text = "Hopefully you'll win some more games next season.";
+                if (deltas.money < 0) {
+                    text += " And try to make some more money too!";
+                }
             }
         } else if (deltas.playoffs > 0 && deltas.wins > 0 && deltas.money > 0) {
             text = "Keep it up.";

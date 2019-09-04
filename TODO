@@ -1,3 +1,5 @@
+owner message should be based on uncapped deltas, otherwise he thinks you're doing bad when you won your 10th title in a row
+
 move to rollup
 - karma
 - code splitting: html2canvas and ajv are all big things that are rarely used

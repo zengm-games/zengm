@@ -7,23 +7,24 @@ import helpers from "./helpers";
 import local from "./local";
 import type { OwnerMood } from "../../common/types";
 
-const getMoodText = (total: number, deltas: boolean = false) => {
-    if (total > (deltas ? 0.5 : 2)) {
-        return "Excellent!";
+const moodTexts = ["Horrible!", "Bad.", "Pretty good.", "Good.", "Excellent!"];
+const getMoodScore = (total: number, deltas: boolean = false) => {
+    if (total >= (deltas ? 0.5 : 2)) {
+        return 4;
     }
-    if (total > (deltas ? 0.25 : 1)) {
-        return "Good.";
+    if (total >= (deltas ? 0.25 : 1)) {
+        return 3;
     }
-    if (total > 0) {
-        return "Pretty good.";
+    if (total >= 0) {
+        return 2;
     }
     if (total > (deltas ? -0.25 : -0.5)) {
-        return "Bad.";
+        return 1;
     }
-    return "Horrible!";
+    return 0;
 };
 
-const genMessage = async (deltas: OwnerMood) => {
+const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
     // If auto play seasons or multi team mode, no messages
     if (local.autoPlaySeasons > 0 || g.userTids.length > 1) {
         return;
@@ -65,15 +66,26 @@ const genMessage = async (deltas: OwnerMood) => {
         } else if (g.godMode) {
             overall = "You're using God Mode, so who cares what I think?";
         } else {
-            overall = getMoodText(currentTotal);
+            overall = moodTexts[getMoodScore(currentTotal)];
         }
 
         const deltasTotal = deltas.wins + deltas.playoffs + deltas.money;
-        const thisYear = getMoodText(deltasTotal, true);
+        const deltasMoodScore = getMoodScore(deltasTotal, true);
+        const cappedDeltasTotal =
+            cappedDeltas.wins + cappedDeltas.playoffs + cappedDeltas.money;
+        const cappedDeltasMoodScore = getMoodScore(cappedDeltasTotal, true);
+
+        // Average the capped and uncapped scores, unless perfect
+        const avgMoodScore =
+            currentTotal >= 2.99
+                ? deltasMoodScore
+                : Math.round((deltasMoodScore + cappedDeltasMoodScore) / 2);
+
+        const thisYear = moodTexts[avgMoodScore];
 
         let text;
-        if (currentTotal > 0) {
-            if (deltas.playoffs > 0 && deltas.wins > 0) {
+        if (currentTotal >= 0) {
+            if (deltas.playoffs >= 0 && deltas.wins >= 0) {
                 if (deltas.money < 0) {
                     text = "Keep it up on the court, but I need more money.";
                 } else {
@@ -85,7 +97,11 @@ const genMessage = async (deltas: OwnerMood) => {
                     text += " And try to make some more money too!";
                 }
             }
-        } else if (deltas.playoffs > 0 && deltas.wins > 0 && deltas.money > 0) {
+        } else if (
+            deltas.playoffs >= 0 &&
+            deltas.wins >= 0 &&
+            deltas.money >= 0
+        ) {
             text = "Keep it up.";
         } else if (deltas.playoffs < 0 && deltas.money < 0) {
             text = "Somehow you need to win more and make more money.";

@@ -74,8 +74,7 @@ const Inbox = ({
                                             >
                                                 {subject ? (
                                                     <>
-                                                        <b>{subject}</b> -{" "}
-                                                        {text}
+                                                        {subject} - {text}
                                                     </>
                                                 ) : (
                                                     text

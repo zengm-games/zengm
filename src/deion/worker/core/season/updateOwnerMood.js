@@ -12,7 +12,10 @@ import type { OwnerMood } from "../../../common/types";
  * @memberOf core.season
  * @return {Promise.Object} Resolves to an object containing the changes in teamSeason.ownerMood this season.
  */
-const updateOwnerMood = async (): Promise<OwnerMood> => {
+const updateOwnerMood = async (): Promise<{
+    cappedDeltas: OwnerMood,
+    deltas: OwnerMood,
+}> => {
     const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
@@ -57,26 +60,30 @@ const updateOwnerMood = async (): Promise<OwnerMood> => {
     }
 
     // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-    if (teamSeason.ownerMood.wins + deltas.wins > 1) {
-        deltas.wins = 1 - teamSeason.ownerMood.wins;
+    const cappedDeltas = {
+        ...deltas,
+    };
+    if (teamSeason.ownerMood.money + cappedDeltas.money > 1) {
+        cappedDeltas.money = 1 - teamSeason.ownerMood.money;
     }
-    if (teamSeason.ownerMood.playoffs + deltas.playoffs > 1) {
-        deltas.playoffs = 1 - teamSeason.ownerMood.playoffs;
+    if (teamSeason.ownerMood.playoffs + cappedDeltas.playoffs > 1) {
+        cappedDeltas.playoffs = 1 - teamSeason.ownerMood.playoffs;
     }
-    if (teamSeason.ownerMood.money + deltas.money > 1) {
-        deltas.money = 1 - teamSeason.ownerMood.money;
+    if (teamSeason.ownerMood.wins + cappedDeltas.wins > 1) {
+        cappedDeltas.wins = 1 - teamSeason.ownerMood.wins;
     }
 
     // Only update owner mood if grace period is over
     if (g.season >= g.gracePeriodEnd && !g.godMode) {
-        teamSeason.ownerMood.money += deltas.money;
-        teamSeason.ownerMood.playoffs += deltas.playoffs;
-        teamSeason.ownerMood.wins += deltas.wins;
+        // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+        teamSeason.ownerMood.money += cappedDeltas.money;
+        teamSeason.ownerMood.playoffs += cappedDeltas.playoffs;
+        teamSeason.ownerMood.wins += cappedDeltas.wins;
 
         await idb.cache.teamSeasons.put(teamSeason);
     }
 
-    return deltas;
+    return { cappedDeltas, deltas };
 };
 
 export default updateOwnerMood;

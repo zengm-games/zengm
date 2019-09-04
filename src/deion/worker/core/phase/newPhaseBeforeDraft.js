@@ -104,8 +104,8 @@ const newPhaseBeforeDraft = async (
 
     achievement.check("afterAwards", conditions);
 
-    const deltas = await season.updateOwnerMood();
-    await genMessage(deltas);
+    const { cappedDeltas, deltas } = await season.updateOwnerMood();
+    await genMessage(deltas, cappedDeltas);
 
     if (g.gameOver) {
         achievement.check("afterFired", conditions);

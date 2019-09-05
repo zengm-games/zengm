@@ -37,9 +37,13 @@ const getCopies = async ({
 
     if (seasons !== undefined) {
         return mergeByPk(
-            await idb.league.teamSeasons
-                .index("tid, season")
-                .getAll(backboard.bound([tid, seasons[0]], [tid, seasons[1]])),
+            idb.league
+                ? await idb.league.teamSeasons
+                      .index("tid, season")
+                      .getAll(
+                          backboard.bound([tid, seasons[0]], [tid, seasons[1]]),
+                      )
+                : [],
             await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
                 [tid, seasons[0]],
                 [tid, seasons[1]],

@@ -855,6 +855,9 @@ const refuseToNegotiate = (
         return false;
     }
 
+    if (process.env.SPORT === "football") {
+        return amount * mood > 11000;
+    }
     return amount * mood > 9500;
 };
 

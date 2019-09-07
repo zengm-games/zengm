@@ -128,12 +128,6 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
         s.teams[i].payrollAfterTrade > s.teams[i].payrollBeforeTrade;
     const hardCapCondition =
         g.hardCap && (overCapAndIncreasing(0) || overCapAndIncreasing(1));
-    console.log(
-        hardCapCondition,
-        overCapAndIncreasing(0),
-        overCapAndIncreasing(1),
-    );
-    console.log(s.teams);
 
     if (softCapCondition) {
         // Which team is at fault?;

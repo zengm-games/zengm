@@ -1,5 +1,3 @@
-upgrade reactstrap (or switch back to react-bootstrap)
-
 move to rollup
 - karma
 - code splitting: html2canvas and ajv are all big things that are rarely used

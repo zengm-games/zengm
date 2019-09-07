@@ -60,7 +60,7 @@
         "react-dom": "^16.9.0",
         "react-overlays": "^1.2.0",
         "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
-        "reactstrap": "^6.5.0",
+        "reactstrap": "^8.0.1",
         "roman-numerals": "^0.3.2",
         "unstated": "^2.1.1",
         "url-search-params-polyfill": "^7.0.0",

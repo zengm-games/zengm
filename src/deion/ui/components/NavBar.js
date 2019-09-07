@@ -523,6 +523,7 @@ const NavBar = ({ pageID, updating }: Props) => {
                             local.update({ hasViewedALeague: true });
                             localStorage.setItem("hasViewedALeague", "true");
                         }}
+                        trigger="click"
                     >
                         <PopoverHeader className="text-primary font-weight-bold">
                             Welcome to {sport} GM!

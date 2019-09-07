@@ -22,6 +22,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
             {
                 name: "",
                 payrollAfterTrade: 0,
+                payrollBeforeTrade: 0,
                 picks: [],
                 total: 0,
                 trade: [],
@@ -29,6 +30,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
             {
                 name: "",
                 payrollAfterTrade: 0,
+                payrollBeforeTrade: 0,
                 picks: [],
                 total: 0,
                 trade: [],
@@ -105,9 +107,12 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
                 ratios[j] = 100;
             }
 
-            const payroll = await team.getPayroll(tids[j]);
+            s.teams[j].payrollBeforeTrade =
+                (await team.getPayroll(tids[j])) / 1000;
             s.teams[j].payrollAfterTrade =
-                payroll / 1000 + s.teams[k].total - s.teams[j].total;
+                s.teams[j].payrollBeforeTrade +
+                s.teams[k].total -
+                s.teams[j].total;
             if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
                 overCap[j] = true;
             }
@@ -118,20 +123,25 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
         !g.hardCap &&
         ((ratios[0] > 125 && overCap[0]) || (ratios[1] > 125 && overCap[1]));
 
-    const hardCapCondition = g.hardCap && (overCap[0] || overCap[1]);
+    const overCapAndIncreasing = i =>
+        overCap[i] &&
+        s.teams[i].payrollAfterTrade > s.teams[i].payrollBeforeTrade;
+    const hardCapCondition =
+        g.hardCap && (overCapAndIncreasing(0) || overCapAndIncreasing(1));
+    console.log(
+        hardCapCondition,
+        overCapAndIncreasing(0),
+        overCapAndIncreasing(1),
+    );
+    console.log(s.teams);
 
     if (softCapCondition) {
         // Which team is at fault?;
         const j = ratios[0] > 125 ? 0 : 1;
         s.warning = `The ${s.teams[j].name} are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${ratios[j]}%.`;
     } else if (hardCapCondition) {
-        let atFault = "both teams";
-        if (overCap[0] && !overCap[1]) {
-            atFault = `the ${s.teams[0].name}`;
-        } else if (overCap[1] && !overCap[0]) {
-            atFault = `the ${s.teams[1].name}`;
-        }
-        s.warning = `This trade is not allowed because ${atFault} are over the salary cap.`;
+        const j = overCapAndIncreasing(0) ? 0 : 1;
+        s.warning = `This trade is not allowed because it increases the payroll of the ${s.teams[j].name} and puts them over the salary cap.`;
     }
 
     return s;

@@ -3,8 +3,6 @@ move to rollup
 - code splitting: html2canvas and ajv are all big things that are rarely used
 - switch to es6 version of recharts dependency
 
-in dark mode, modal background is too light. honestly could still just make it darker
-
 show special events (game winners etc) in box score
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/

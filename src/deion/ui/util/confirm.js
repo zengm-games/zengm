@@ -21,11 +21,14 @@ const Confirm = confirmable(({ show, proceed, confirmation, defaultValue }) => {
     const okRef = useRef(null);
 
     useEffect(() => {
-        if (inputRef.current) {
-            inputRef.current.select();
-        } else if (okRef.current) {
-            okRef.current.focus();
-        }
+        // Ugly hack that became necessary when upgrading reactstrap from v6 to v8
+        setTimeout(() => {
+            if (inputRef.current) {
+                inputRef.current.select();
+            } else if (okRef.current) {
+                okRef.current.focus();
+            }
+        }, 0);
     }, []);
 
     return (

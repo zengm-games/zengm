@@ -651,6 +651,7 @@ export type TradePickValues = {
 type TradeSummaryTeam = {|
     name: string,
     payrollAfterTrade: number,
+    payrollBeforeTrade: number,
     picks: {|
         dpid: number,
         desc: string,

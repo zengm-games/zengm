@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import Popover from "reactstrap/lib/Popover";
-import { omit } from "reactstrap/lib/utils";
 
 // This is shit
 
@@ -27,6 +26,14 @@ export default class UncontrolledPopover extends React.Component {
 
     render() {
         const id = this.props.id.replace(/[^a-zA-Z]/g, "");
+
+        const passThroughProps = {};
+        for (const key of Object.keys(this.props)) {
+            if (!omitKeys.includes(key)) {
+                passThroughProps[key] = this.props[key];
+            }
+        }
+
         return (
             <>
                 <this.props.target id={id} onClick={this.toggle} />
@@ -34,7 +41,7 @@ export default class UncontrolledPopover extends React.Component {
                     isOpen={this.state.isOpen}
                     toggle={this.toggle}
                     target={id}
-                    {...omit(this.props, omitKeys)}
+                    {...passThroughProps}
                 />
             </>
         );

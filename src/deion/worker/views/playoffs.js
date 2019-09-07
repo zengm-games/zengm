@@ -58,7 +58,7 @@ async function updatePlayoffs(
             }
         }
 
-        await helpers.augmentSeries(series);
+        await helpers.augmentSeries(series, inputs.season);
 
         // Formatting for the table in playoffs.html
         const matchups = [];

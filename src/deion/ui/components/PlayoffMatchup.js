@@ -10,6 +10,11 @@ type SeriesTeam = {
     cid: number,
     imgURL?: string,
     pts?: number,
+    regularSeason: {
+        won: number,
+        lost: number,
+        tied?: number,
+    },
     region: string,
     seed: number,
     tid: number,
@@ -43,6 +48,7 @@ const Team = ({
     if (!team) {
         return null;
     }
+    console.log(team);
 
     return (
         <li
@@ -58,7 +64,10 @@ const Team = ({
                 </div>
             ) : null}
             <div className="mx-1">
-                {team.seed}.{" "}
+                {team.seed}.<br />
+                &nbsp;
+            </div>
+            <div className="mr-1">
                 <a
                     className={classNames({
                         "text-muted": lost,
@@ -76,6 +85,11 @@ const Team = ({
                         </>
                     )}
                 </a>
+                <br />
+                {team.regularSeason.won}-{team.regularSeason.lost}
+                {team.regularSeason.tied !== undefined ? (
+                    <>-{team.regularSeason.tied}</>
+                ) : null}
             </div>
             {showWon && team.hasOwnProperty("won") ? (
                 <div className="ml-auto mr-2">{team.won}</div>

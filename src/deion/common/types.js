@@ -467,6 +467,11 @@ export type PlayoffSeriesTeam = {|
     imgURL?: string,
     pts?: number, // undefined means game hasn't happened yet
     region?: string,
+    regularSeason?: {
+        won: number,
+        lost: number,
+        tied?: number,
+    },
     seed: number,
     tid: number,
     winp: number,

@@ -17,6 +17,11 @@ type SeriesTeam = {
     imgURL?: string,
     pts?: number,
     region: string,
+    regularSeason: {
+        won: number,
+        lost: number,
+        tied?: number,
+    },
     seed: number,
     tid: number,
     winp: number,

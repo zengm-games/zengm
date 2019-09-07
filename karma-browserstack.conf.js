@@ -1,6 +1,7 @@
 /* eslint-env node */
 
 const browserStack = require("../../.browserstack.json");
+const build = require("./tools/buildFuncs");
 
 const customLaunchers = [
     {
@@ -29,16 +30,25 @@ const customLaunchers = [
     return acc;
 }, {});
 
+const sport = build.getSport();
+
+const files = [
+    "src/deion/test/index.js",
+    `src/${sport}/worker/index.js`, // For overrides
+    `src/${sport}/**/*.test.js`,
+    "src/deion/test/**/*.js",
+];
+
+if (sport === "basketball") {
+    // Some deion tests assume basketball
+    files.push("src/deion/**/*.test.js");
+}
+
 module.exports = function(config) {
     config.set({
         frameworks: ["mocha", "browserify", "source-map-support"],
 
-        files: [
-            "src/deion/test/index.js",
-            "src/basketball/worker/index.js", // For overrides
-            "src/**/*.test.js",
-            "src/deion/test/**/*.js",
-        ],
+        files,
 
         preprocessors: {
             "src/**/*.js": ["browserify"],

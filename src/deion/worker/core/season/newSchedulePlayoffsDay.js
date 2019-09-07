@@ -127,7 +127,12 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
             const numPlayoffRounds = g.numGamesPlayoffSeries.length;
             // Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
             if (numPlayoffRounds === playoffSeries.currentRound + 2) {
-                firstTeamHome = team1.winp >= team2.winp;
+                firstTeamHome =
+                    team1.winp > team2.winp ||
+                    (team1.winp === team2.winp &&
+                        (team1.seed < team2.seed ||
+                            (team1.seed === team2.seed &&
+                                Math.random() > 0.5)));
             }
         }
 

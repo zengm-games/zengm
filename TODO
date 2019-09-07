@@ -1,6 +1,6 @@
-fbgm - make players more likely to be willing to re-sign
+fbgm - So in football-gm, you cant trade anymore at all if one of the teams is over the salary cap (the 125% thing was removed, right?). That's all fine, but even if you just trade draft pick for draft pick, the game doesn't let you trade if one team is over the cap :/
 
-if finals teams are tied, go with higher seed for home
+fbgm - make players more likely to be willing to re-sign
 
 upgrade reactstrap (or switch back to react-bootstrap)
 

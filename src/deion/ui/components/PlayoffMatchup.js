@@ -48,7 +48,6 @@ const Team = ({
     if (!team) {
         return null;
     }
-    console.log(team);
 
     return (
         <li

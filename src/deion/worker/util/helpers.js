@@ -19,10 +19,9 @@ const augmentSeries = async (
 ) => {
     const teams = await idb.cache.teams.getAll();
 
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-        "teamSeasonsBySeasonTid",
-        [[season], [season, "Z"]],
-    );
+    const teamSeasons = await idb.getCopies.teamSeasons({
+        season,
+    });
 
     const setAll = obj => {
         obj.abbrev = g.teamAbbrevsCache[obj.tid];

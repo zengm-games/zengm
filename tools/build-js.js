@@ -24,12 +24,18 @@ const sport = build.getSport();
 for (const name of ["ui", "worker"]) {
     browserify(`src/${sport}/${name}/index.js`, { debug: true })
         .on("error", console.error)
-        .transform(babelify)
+        .transform(babelify, {
+            // Workaround for https://github.com/d3/d3-array/issues/87
+            global: true,
+            ignore: [/\/node_modules\/(?!d3)/],
+        })
         .transform(blacklistify(BLACKLIST[name]))
         .transform(envify({ NODE_ENV: "production", SPORT: sport }), {
             global: true,
         })
         .transform(aliasify, {
+            // No idea why this is needed, but making babelify global seems to require this be global too
+            global: true,
             aliases: {
                 "league-schema.json": `./public/${sport}/files/league-schema.json`,
             },

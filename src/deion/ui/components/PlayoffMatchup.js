@@ -85,10 +85,12 @@ const Team = ({
                     )}
                 </a>
                 <br />
-                {team.regularSeason.won}-{team.regularSeason.lost}
-                {team.regularSeason.tied !== undefined ? (
-                    <>-{team.regularSeason.tied}</>
-                ) : null}
+                <span className="text-muted">
+                    {team.regularSeason.won}-{team.regularSeason.lost}
+                    {team.regularSeason.tied !== undefined ? (
+                        <>-{team.regularSeason.tied}</>
+                    ) : null}
+                </span>
             </div>
             {showWon && team.hasOwnProperty("won") ? (
                 <div className="ml-auto mr-2">{team.won}</div>

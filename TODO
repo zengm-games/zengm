@@ -1,3 +1,6 @@
+https://github.com/d3/d3-array/issues/87 is breaking compatibility with Firefox 48
+- https://github.com/babel/babelify#why-arent-files-in-node_modules-being-transformed
+
 football too many players retire
 
 move to rollup

@@ -41,7 +41,6 @@ export default class UncontrolledPopover extends React.Component {
                     isOpen={this.state.isOpen}
                     toggle={this.toggle}
                     target={id}
-                    trigger="legacy"
                     {...passThroughProps}
                 />
             </>

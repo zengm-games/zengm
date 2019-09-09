@@ -1,5 +1,7 @@
-maybe revert reactstrap to v6
-- https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/
+reactstrap upgrade notes
+- v8 has problems with popovers:
+  - https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/
+  - prev try commit: 393da63aec4a48728363138203aff81ea2082abc
 
 football too many players retire
 

@@ -1,5 +1,6 @@
 // @flow
 
+import { helpers } from "../../deion/common";
 import type { PlayerStats, PlayerStatType } from "../../deion/common/types";
 
 const percentage = (numerator, denominator) => {
@@ -11,10 +12,10 @@ const percentage = (numerator, denominator) => {
 };
 
 const qbRat = ps => {
-    const a = (ps.pssCmp / ps.pss - 0.3) * 5;
-    const b = (ps.pssYds / ps.pss - 3) * 0.25;
-    const c = (ps.pssTD / ps.pss) * 20;
-    const d = 2.375 - (ps.pssInt / ps.pss) * 25;
+    const a = helpers.bound((ps.pssCmp / ps.pss - 0.3) * 5, 0, 2.375);
+    const b = helpers.bound((ps.pssYds / ps.pss - 3) * 0.25, 0, 2.375);
+    const c = helpers.bound((ps.pssTD / ps.pss) * 20, 0, 2.375);
+    const d = helpers.bound(2.375 - (ps.pssInt / ps.pss) * 25, 0, 2.375);
 
     return ((a + b + c + d) / 6) * 100;
 };

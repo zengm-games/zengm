@@ -322,7 +322,6 @@ export const createWithoutSaving = (
         ];
     }
 
-    // This needs to be before schedule, so that games are added before schedule to the database, so the Cache._maxIds.schedule can be set to Cache.maxIds.game
     const games = leagueFile.hasOwnProperty("games") ? leagueFile.games : [];
     for (const gm of games) {
         // Fix missing +/-, blocks against in boxscore
@@ -339,6 +338,13 @@ export const createWithoutSaving = (
                     p.pm = 0;
                 }
             }
+        }
+    }
+
+    // Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are.
+    if (leagueFile.hasOwnProperty("schedule")) {
+        for (const matchup of leagueFile.schedule) {
+            delete matchup.gid;
         }
     }
 
@@ -760,7 +766,10 @@ const create = async (
     // the database native format in leagueData (object, not array like others).
     await league.setGameAttributes(leagueData.gameAttributes);
 
-    for (const [store, records] of Object.entries(leagueData)) {
+    // orderBy is to ensure games is before schedule, so that games are added before schedule to the database, so Cache._maxIds.schedule can be set to Cache.maxIds.game, so gids never conflict
+    const orderedLeagueData = orderBy(Object.entries(leagueData), 0);
+
+    for (const [store, records] of orderedLeagueData) {
         if (store === "gameAttributes" || !Array.isArray(records)) {
             continue;
         }

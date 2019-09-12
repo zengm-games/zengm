@@ -601,18 +601,25 @@ class GodMode extends React.Component {
                                     title="Injury Rate"
                                 >
                                     The injury rate is the probability that a
-                                    player is injured per possession. Based on{" "}
-                                    <a
-                                        href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445097/"
-                                        rel="noopener noreferrer"
-                                        target="_blank"
-                                    >
-                                        this article
-                                    </a>{" "}
-                                    there are about 0.25 injuries per team per
-                                    game, and with 10 players on the court and
-                                    ~200 possessions per game, that works out to
-                                    0.25/10/200 = 0.000125 by default.
+                                    player is injured per possession.
+                                    {process.env.SPORT === "basketball" ? (
+                                        <>
+                                            {" "}
+                                            Based on{" "}
+                                            <a
+                                                href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445097/"
+                                                rel="noopener noreferrer"
+                                                target="_blank"
+                                            >
+                                                this article
+                                            </a>{" "}
+                                            there are about 0.25 injuries per
+                                            team per game, and with 10 players
+                                            on the court and ~200 possessions
+                                            per game, that works out to
+                                            0.25/10/200 = 0.000125 by default.
+                                        </>
+                                    ) : null}
                                 </HelpPopover>
                             </label>
                             <input
@@ -633,13 +640,14 @@ class GodMode extends React.Component {
                                     The tragic death rate is the probability
                                     that a player will die a tragic death on a
                                     given regular season day. Yes, this only
-                                    happens in the regular season. With roughly
-                                    100 days in a season, the default is about
-                                    one death every 50 years, or 1/(50*100) =
-                                    0.0002. If you set it too high and run out
-                                    of players, then you'll have to use God Mode
-                                    to either create more or bring some back
-                                    from the dead.
+                                    happens in the regular season.
+                                    {process.env.SPORT === "basketball"
+                                        ? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
+                                        : null}{" "}
+                                    If you set it too high and run out of
+                                    players, then you'll have to use God Mode to
+                                    either create more or bring some back from
+                                    the dead.
                                 </HelpPopover>
                             </label>
                             <input

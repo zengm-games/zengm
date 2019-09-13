@@ -781,7 +781,7 @@ async-foreach@^0.1.3:
   resolved "https://registry.yarnpkg.com/async-foreach/-/async-foreach-0.1.3.tgz#36121f845c0578172de419a97dbeb1d16ec34542"
   integrity sha1-NhIfhFwFeBct5Bmpfb6x0W7DRUI=
 
-async-limiter@~1.0.0:
+async-limiter@^1.0.0, async-limiter@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
@@ -1570,10 +1570,10 @@ clone-response@1.0.2:
   dependencies:
     mimic-response "^1.0.0"
 
-cloudflare@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/cloudflare/-/cloudflare-2.5.1.tgz#cb3fd70d6e403316e81c04ed4eaa18f8c609e11c"
-  integrity sha512-+VS8ATI2E8MghVgnZSqbTEInwQAQhFZ0LSsA2eNvL4X/EBq2fXHswZ2kWYh5AnbzFLLjlMc9ZVx4nZG8r/jakQ==
+cloudflare@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/cloudflare/-/cloudflare-2.6.0.tgz#67ca0fcf56dec06f9b3d8a47999249959d8e830f"
+  integrity sha512-P4NgBBckLEmXkq1IVb1NgIcmqcW1PDV3YySXcDbDGJ3LsgzWzt3UHQ5P53ZO2KL2DWyhiAieeR0NFYEkf9quOg==
   dependencies:
     autocreate "^1.1.0"
     es-class "^2.1.1"
@@ -2498,10 +2498,10 @@ eslint-config-airbnb@^18.0.1:
     object.assign "^4.1.0"
     object.entries "^1.1.0"
 
-eslint-config-prettier@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.2.0.tgz#80e0b8714e3f6868c4ac2a25fbf39c02e73527a7"
-  integrity sha512-VLsgK/D+S/FEsda7Um1+N8FThec6LqE3vhcMyp8mlmto97y3fGf3DX7byJexGuOb1QY0Z/zz222U5t+xSfcZDQ==
+eslint-config-prettier@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-6.3.0.tgz#e73b48e59dc49d950843f3eb96d519e2248286a3"
+  integrity sha512-EWaGjlDAZRzVFveh2Jsglcere2KK5CJBhkNSa1xs3KfMUGdRiT7lG089eqPdvlzWHpAqaekubOsOMu8W8Yk71A==
   dependencies:
     get-stdin "^6.0.0"
 
@@ -2804,10 +2804,12 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-facesjs@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-1.0.1.tgz#9ec29f76f1af087bad515e5741165f091c23d781"
-  integrity sha1-nsKfdvGvCHutUV5XQRZfCRwj14E=
+facesjs@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-2.0.1.tgz#2dd67aeb468e567e49efbcb2d18a9567c3689990"
+  integrity sha512-tj7g1Nle3g/UOigOR09+A20qByTSxyN/r/iHGOo09ShcCgfjV5uFOG1/bXCIQO9iYfhLykA9Ia8Hb5YZHWQR3A==
+  dependencies:
+    ws "^7.1.2"
 
 falafel@^2.0.0:
   version "2.1.0"
@@ -6937,10 +6939,10 @@ temp-fs@^0.9.9:
   dependencies:
     rimraf "~2.5.2"
 
-terser@^4.2.1:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/terser/-/terser-4.2.1.tgz#1052cfe17576c66e7bc70fcc7119f22b155bdac1"
-  integrity sha512-cGbc5utAcX4a9+2GGVX4DsenG6v0x3glnDi5hx8816X1McEAwPlPgRtXPJzSBsbpILxZ8MQMT0KvArLuE0HP5A==
+terser@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/terser/-/terser-4.3.1.tgz#09820bcb3398299c4b48d9a86aefc65127d0ed65"
+  integrity sha512-pnzH6dnFEsR2aa2SJaKb1uSCl3QmIsJ8dEkj0Fky+2AwMMcC9doMqLOQIH6wVTEKaVfKVvLSk5qxPBEZT9mywg==
   dependencies:
     commander "^2.20.0"
     source-map "~0.6.1"
@@ -7585,6 +7587,13 @@ write@1.0.3:
   integrity sha512-/lg70HAjtkUgWPVZhZcm+T4hkL8Zbtp1nFNOn3lRrxnlv50SRBv7cR7RqR+GMsd3hUXy9hWBo4CHTbFTcOYwig==
   dependencies:
     mkdirp "^0.5.1"
+
+ws@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.1.2.tgz#c672d1629de8bb27a9699eb599be47aeeedd8f73"
+  integrity sha512-gftXq3XI81cJCgkUiAVixA0raD9IVmXqsylCrjRygw4+UOOGzPoxnQ6r/CnVL9i+mDncJo94tSkyrtuuQVBmrg==
+  dependencies:
+    async-limiter "^1.0.0"
 
 ws@~3.3.1:
   version "3.3.3"

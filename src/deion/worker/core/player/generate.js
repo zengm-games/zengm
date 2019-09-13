@@ -1,6 +1,6 @@
 // @flow
 
-import faces from "facesjs";
+import generateFace from "facesjs/build/commonjs/generate";
 import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";
@@ -54,7 +54,7 @@ const generate = (
             ovr: 0,
             skills: [],
         },
-        face: faces.generate(),
+        face: generateFace(),
         firstName,
         freeAgentMood: Array(g.numTeams).fill(0),
         gamesUntilTradable: 0,

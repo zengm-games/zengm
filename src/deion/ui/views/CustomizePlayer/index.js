@@ -1,4 +1,6 @@
-import faces from "facesjs";
+import convertFromV1 from "facesjs/build/commonjs/convertFromV1";
+import generateFace from "facesjs/build/commonjs/generate";
+import svgs from "facesjs/build/commonjs/svgs";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
@@ -14,10 +16,10 @@ import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
 
 const faceOptions = {
-    eyes: [0, 1, 2, 3],
-    nose: [0, 1, 2],
-    mouth: [0, 1, 2, 3, 4],
-    hair: [0, 1, 2, 3, 4],
+    eyes: Object.keys(svgs.eye),
+    nose: Object.keys(svgs.nose),
+    mouth: Object.keys(svgs.mouth),
+    hair: Object.keys(svgs.hair),
 };
 
 const copyValidValues = (source, target, minContract, phase, season) => {
@@ -124,24 +126,20 @@ const copyValidValues = (source, target, minContract, phase, season) => {
         }
     }
 
-    // These are already normalized, cause they are selects
-    for (const attr of ["eyes", "hair", "mouth", "nose"]) {
-        target.face[attr] = source.face[attr];
-    }
+    target.face = source.face;
 
     for (const attr of ["eye-angle", "fatness"]) {
         const val = parseFloat(source.face[attr]);
         if (!Number.isNaN(val)) {
             if (attr === "eye-angle") {
-                target.face.eyes[0].angle = val;
-                target.face.eyes[1].angle = val;
+                target.face.eye.angle = val;
             } else {
                 target.face[attr] = val;
             }
         }
     }
 
-    target.face.color = source.face.color;
+    target.face.head.color = source.face.head.color;
 
     target.relatives = source.relatives
         .map(rel => {
@@ -161,6 +159,9 @@ class CustomizePlayer extends React.Component {
         if (p !== undefined) {
             p.age = this.props.season - p.born.year;
             p.contract.amount /= 1000;
+        }
+        if (typeof p.face.head.id === "number") {
+            p.face = convertFromV1(p.face);
         }
         this.state = {
             appearanceOption: props.appearanceOption,
@@ -209,7 +210,7 @@ class CustomizePlayer extends React.Component {
     }
 
     handleChange(type, field, e) {
-        let val = e.target.value;
+        const val = e.target.value;
         const checked = e.target.checked;
 
         this.setState(prevState => {
@@ -222,30 +223,24 @@ class CustomizePlayer extends React.Component {
             } else if (type === "rating") {
                 p.ratings[p.ratings.length - 1][field] = val;
             } else if (type === "face") {
-                if (["eyes", "hair", "mouth", "nose"].includes(field)) {
-                    val = parseInt(val, 10);
-                    if (Number.isNaN(val)) {
-                        return;
-                    }
-
-                    if (field === "eyes") {
-                        p[type][field][0].id = val;
-                        p[type][field][1].id = val;
-                    } else {
-                        p[type][field].id = val;
-                    }
+                if (["eye", "hair", "mouth", "nose"].includes(field)) {
+                    p[type][field].id = val;
                 } else if (["eye-angle", "fatness"].includes(field)) {
                     if (field === "eye-angle") {
-                        p[type].eyes[0].angle = val;
-                        p[type].eyes[1].angle = val;
+                        p[type].eye.angle = val;
                     } else {
                         p[type][field] = val;
                     }
                 } else if (field === "color") {
-                    p[type][field] = val;
+                    p[type].head[field] = val;
                 } else if (field === "nose-flip") {
                     p[type].nose.flip = checked;
                 }
+            }
+
+            if (type === "face") {
+                // Force re-render of PlayerPicture
+                p.face = { ...p.face };
             }
 
             return {
@@ -263,12 +258,7 @@ class CustomizePlayer extends React.Component {
     randomizeFace(e) {
         e.preventDefault(); // Don't submit whole form
 
-        const face = faces.generate();
-
-        // Round long decimals
-        face.fatness = face.fatness.toFixed(2);
-        face.eyes[0].angle = face.eyes[0].angle.toFixed(1);
-        face.eyes[1].angle = face.eyes[1].angle.toFixed(1);
+        const face = generateFace();
 
         this.setState(prevState => {
             prevState.p.face = face;
@@ -344,7 +334,7 @@ class CustomizePlayer extends React.Component {
                                         "face",
                                         "color",
                                     )}
-                                    value={p.face.color}
+                                    value={p.face.head.color}
                                 />
                             </div>
                             <div className="col-6 form-group">
@@ -354,9 +344,9 @@ class CustomizePlayer extends React.Component {
                                     onChange={this.handleChange.bind(
                                         this,
                                         "face",
-                                        "eyes",
+                                        "eye",
                                     )}
-                                    value={p.face.eyes[0].id}
+                                    value={p.face.eye.id}
                                 >
                                     {faceOptions.eyes.map(val => (
                                         <option key={val} value={val}>
@@ -375,7 +365,7 @@ class CustomizePlayer extends React.Component {
                                         "face",
                                         "eye-angle",
                                     )}
-                                    value={p.face.eyes[0].angle}
+                                    value={p.face.eye.angle}
                                 />
                             </div>
                             <div className="col-6 form-group">

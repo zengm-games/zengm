@@ -1,6 +1,6 @@
 // @flow
 
-import faces from "facesjs";
+import display from "facesjs/build/commonjs/display";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
@@ -11,7 +11,7 @@ const PlayerPicture = ({ face, imgURL }: { face: any, imgURL: ?string }) => {
 
     useEffect(() => {
         if (face && !imgURL && wrapper) {
-            faces.display(wrapper, face);
+            display(wrapper, face);
         }
     }, [face, imgURL, wrapper]);
 

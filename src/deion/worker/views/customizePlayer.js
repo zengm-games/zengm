@@ -61,10 +61,6 @@ async function updateCustomizePlayer(
                 scoutingRank,
             );
 
-            p.face.fatness = p.face.fatness.toFixed(2);
-            p.face.eyes[0].angle = p.face.eyes[0].angle.toFixed(1);
-            p.face.eyes[1].angle = p.face.eyes[1].angle.toFixed(1);
-
             appearanceOption = "Cartoon Face";
             p.imgURL = "http://";
         } else if (typeof inputs.pid === "number") {

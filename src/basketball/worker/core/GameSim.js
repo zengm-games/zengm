@@ -451,19 +451,19 @@ class GameSim {
             let i = 0;
             for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
                 const p = this.playersOnCourt[t][pp];
+                const onCourtIsIneligible = ovrs[p] === -Infinity; // benchIsValidAndBetter already checks if bench player is eligible
                 this.playersOnCourt[t][i] = p;
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (let b = 0; b < this.team[t].player.length; b++) {
-                    if (
-                        !this.playersOnCourt[t].includes(b) &&
-                        ((this.team[t].player[p].stat.courtTime > 3 &&
-                            this.team[t].player[b].stat.benchTime > 3 &&
-                            ovrs[b] > ovrs[p]) ||
-                            ((this.team[t].player[p].injured ||
-                                this.team[t].player[p].stat.pf >= 6) &&
-                                (!this.team[t].player[b].injured &&
-                                    this.team[t].player[b].stat.pf < 6)))
-                    ) {
+                    if (this.playersOnCourt[t].includes(b)) {
+                        continue;
+                    }
+
+                    const benchIsValidAndBetter =
+                        this.team[t].player[p].stat.courtTime > 3 &&
+                        this.team[t].player[b].stat.benchTime > 3 &&
+                        ovrs[b] > ovrs[p];
+                    if (benchIsValidAndBetter || onCourtIsIneligible) {
                         // Check if position of substitute makes for a valid lineup
                         const pos = [];
                         for (
@@ -505,7 +505,8 @@ class GameSim {
                         ) {
                             if (
                                 fatigue(this.team[t].player[p].stat.energy) >
-                                0.7
+                                    0.7 &&
+                                !onCourtIsIneligible
                             ) {
                                 // Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
                                 continue;

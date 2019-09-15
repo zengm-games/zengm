@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 
 /**
  * Decrease contract demands for all free agents.
@@ -18,8 +18,16 @@ const decreaseDemands = async () => {
         PLAYER.FREE_AGENT,
     );
     for (const p of players) {
-        // Decrease free agent demands
-        p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
+        const baseAmount = 50 * Math.sqrt(g.maxContract / 20000);
+
+        // 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
+        const factor = g.phase !== PHASE.FREE_AGENCY ? 82 / g.numGames : 1;
+
+        p.contract.amount -= helpers.bound(
+            baseAmount * factor,
+            baseAmount,
+            Infinity,
+        );
         p.contract.amount = 10 * Math.round(p.contract.amount / 10); // Round to nearest 10k
         if (p.contract.amount < g.minContract) {
             p.contract.amount = g.minContract;

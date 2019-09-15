@@ -6,14 +6,26 @@ reactstrap upgrade notes
     - https://github.com/reactstrap/reactstrap/issues/1587
     - https://github.com/reactstrap/reactstrap/issues/1482
 
+some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
+
 football OL with 49 height listed as 5'7"
 
 football too many players retire
 
 move to rollup
 - karma
-- code splitting: html2canvas and ajv are all big things that are rarely used
-- switch to es6 version of recharts dependency
+- blacklist
+- watch
+- karma
+- karma-browserstack
+- rollup-plugin-terser
+- source maps
+- remove rollup-plugin-node-builtins
+- require of names json
+  - could use "replace" to rewrite?
+- remove unused browserify packages
+
+code splitting: html2canvas and ajv are all big things that are rarely used
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
 

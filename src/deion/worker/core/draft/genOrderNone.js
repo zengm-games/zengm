@@ -3,16 +3,18 @@
 import genPicks from "./genPicks";
 import lotterySort from "./lotterySort";
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers, random } from "../../util";
 
-const genOrder = async (mock?: boolean = false): Promise<void> => {
+const genOrderNone = async (mock?: boolean = false): Promise<void> => {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid", "did"],
         seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
         season: g.season,
     });
 
-    lotterySort(teams);
+    if (g.draftType !== "random") {
+        lotterySort(teams);
+    }
 
     let draftPicks = await idb.cache.draftPicks.indexGetAll(
         "draftPicksBySeason",
@@ -46,6 +48,10 @@ const genOrder = async (mock?: boolean = false): Promise<void> => {
     }
 
     for (let round = 1; round <= g.numDraftRounds; round++) {
+        if (g.draftType === "random") {
+            random.shuffle(teams);
+        }
+
         for (let i = 0; i < teams.length; i++) {
             const dp = draftPicksIndexed[teams[i].tid][round];
             if (dp === undefined) {
@@ -62,4 +68,4 @@ const genOrder = async (mock?: boolean = false): Promise<void> => {
     }
 };
 
-export default genOrder;
+export default genOrderNone;

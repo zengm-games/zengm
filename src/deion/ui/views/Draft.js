@@ -295,7 +295,7 @@ class Draft extends React.Component {
                         Draft Summary
                     </a>{" "}
                     |{" "}
-                    {draftType !== "noLottery" ? (
+                    {draftType !== "noLottery" && draftType !== "random" ? (
                         <>
                             <a href={helpers.leagueUrl(["draft_lottery"])}>
                                 Draft Lottery
@@ -370,7 +370,7 @@ class Draft extends React.Component {
 }
 
 Draft.propTypes = {
-    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
     drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
     fantasyDraft: PropTypes.bool.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,

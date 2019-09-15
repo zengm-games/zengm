@@ -37,7 +37,7 @@ class DraftScouting extends React.Component {
 
                 <p>
                     More:{" "}
-                    {draftType !== "noLottery" ? (
+                    {draftType !== "noLottery" && draftType !== "random" ? (
                         <>
                             <a href={helpers.leagueUrl(["draft_lottery"])}>
                                 Draft Lottery
@@ -151,7 +151,7 @@ class DraftScouting extends React.Component {
 }
 
 DraftScouting.propTypes = {
-    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
     seasons: PropTypes.arrayOf(
         PropTypes.shape({
             players: PropTypes.arrayOf(PropTypes.object).isRequired,

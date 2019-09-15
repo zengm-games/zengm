@@ -107,7 +107,7 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
                     Future Draft Scouting
                 </a>{" "}
                 |{" "}
-                {draftType !== "noLottery" ? (
+                {draftType !== "noLottery" && draftType !== "random" ? (
                     <>
                         <a href={helpers.leagueUrl(["draft_lottery", season])}>
                             Draft Lottery
@@ -139,7 +139,7 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
 };
 
 DraftSummary.propTypes = {
-    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -111,7 +111,7 @@ const newPhaseBeforeDraft = async (
         achievement.check("afterFired", conditions);
     }
 
-    if (g.draftType === "noLottery") {
+    if (g.draftType === "noLottery" || g.draftType === "random") {
         await draft.genOrder(false, conditions);
     }
 

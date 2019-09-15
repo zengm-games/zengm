@@ -378,6 +378,14 @@ class GodMode extends React.Component {
                                         No Lottery will order teams based on
                                         their record.
                                     </p>
+                                    <p>
+                                        Random Order will order the draft
+                                        completely randomly, with no regard for
+                                        team performance. Each round is
+                                        randomized independently, so a team
+                                        could get the first pick in one round
+                                        and the last pick in the next round.
+                                    </p>
                                 </HelpPopover>
                             </label>
                             <select
@@ -389,6 +397,7 @@ class GodMode extends React.Component {
                                 <option value="nba2019">NBA 2019</option>
                                 <option value="nba1994">NBA 1994</option>
                                 <option value="noLottery">No Lottery</option>
+                                <option value="random">Random Order</option>
                             </select>
                         </div>
                     </div>
@@ -760,7 +769,7 @@ GodMode.propTypes = {
     hardCap: PropTypes.bool.isRequired,
     numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
     numPlayoffByes: PropTypes.number.isRequired,
-    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
     playersRefuseToNegotiate: PropTypes.bool.isRequired,
 };
 

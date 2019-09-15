@@ -139,7 +139,7 @@ const getProbs = (
 };
 
 type Props = {
-    draftType: "nba1994" | "nba2019" | "noLottery",
+    draftType: "nba1994" | "nba2019" | "noLottery" | "random",
     result: DraftLotteryResultArray | void,
     season: number,
     ties: boolean,
@@ -148,7 +148,7 @@ type Props = {
 };
 
 type State = {
-    draftType: "nba1994" | "nba2019" | "noLottery" | void,
+    draftType: "nba1994" | "nba2019" | "noLottery" | "random" | void,
     result: DraftLotteryResultArray | void,
     season: number,
     started: boolean,
@@ -426,7 +426,7 @@ class DraftLottery extends React.Component<Props, State> {
 }
 
 DraftLottery.propTypes = {
-    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery"]),
+    draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
     result: PropTypes.arrayOf(
         PropTypes.shape({
             tid: PropTypes.number.isRequired,

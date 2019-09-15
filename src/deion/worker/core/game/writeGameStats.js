@@ -13,6 +13,7 @@ const writeGameStats = async (
     const gameStats = {
         gid: results.gid,
         att,
+        clutchPlays: [],
         season: g.season,
         playoffs: g.phase === PHASE.PLAYOFFS,
         overtimes: results.overtimes,
@@ -102,45 +103,42 @@ const writeGameStats = async (
         );
     }
 
-    if (results.clutchPlays.length > 0) {
-        for (let i = 0; i < results.clutchPlays.length; i++) {
-            if (results.clutchPlays[i].hasOwnProperty("tempText")) {
-                results.clutchPlays[i].text = results.clutchPlays[i].tempText;
-                if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
-                    results.clutchPlays[i].text += ` in ${
-                        results.team[tw].stat.pts.toString().charAt(0) === "8"
-                            ? "an"
-                            : "a"
-                    } <a href="${helpers.leagueUrl([
-                        "game_log",
-                        g.teamAbbrevsCache[results.team[tw].id],
-                        g.season,
-                        results.gid,
-                    ])}">${results.team[tw].stat.pts}-${
-                        results.team[tl].stat.pts
-                    }</a> win over the ${
-                        g.teamNamesCache[results.team[tl].id]
-                    }.`;
-                } else {
-                    results.clutchPlays[i].text += ` in ${
-                        results.team[tl].stat.pts.toString().charAt(0) === "8"
-                            ? "an"
-                            : "a"
-                    } <a href="${helpers.leagueUrl([
-                        "game_log",
-                        g.teamAbbrevsCache[results.team[tl].id],
-                        g.season,
-                        results.gid,
-                    ])}">${results.team[tl].stat.pts}-${
-                        results.team[tw].stat.pts
-                    }</a> loss to the ${
-                        g.teamNamesCache[results.team[tw].id]
-                    }.`;
-                }
-                delete results.clutchPlays[i].tempText;
-            }
-            logEvent(results.clutchPlays[i], conditions);
+    for (const clutchPlay of results.clutchPlays) {
+        // We want text at the beginning, because adding game information is redundant when attached to the box score
+        gameStats.clutchPlays.push(`${clutchPlay.text}.`);
+
+        if (clutchPlay.tids[0] === results.team[tw].id) {
+            clutchPlay.text += ` in ${
+                results.team[tw].stat.pts.toString().charAt(0) === "8"
+                    ? "an"
+                    : "a"
+            } <a href="${helpers.leagueUrl([
+                "game_log",
+                g.teamAbbrevsCache[results.team[tw].id],
+                g.season,
+                results.gid,
+            ])}">${results.team[tw].stat.pts}-${
+                results.team[tl].stat.pts
+            }</a> win over the ${g.teamNamesCache[results.team[tl].id]}.`;
+        } else {
+            clutchPlay.text += ` in ${
+                results.team[tl].stat.pts.toString().charAt(0) === "8"
+                    ? "an"
+                    : "a"
+            } <a href="${helpers.leagueUrl([
+                "game_log",
+                g.teamAbbrevsCache[results.team[tl].id],
+                g.season,
+                results.gid,
+            ])}">${results.team[tl].stat.pts}-${
+                results.team[tw].stat.pts
+            }</a> loss to the ${g.teamNamesCache[results.team[tw].id]}.`;
         }
+        logEvent(clutchPlay, conditions);
+    }
+
+    if (gameStats.clutchPlays.length > 0) {
+        console.log(gameStats.clutchPlays, gameStats);
     }
 
     await idb.cache.games.add(gameStats);

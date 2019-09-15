@@ -75,6 +75,7 @@ export type Env = {|
 
 export type Game = {|
     att: number,
+    clutchPlays?: string[],
     gid: number,
     lost: {| tid: number, pts: number |},
     playoffs: boolean,

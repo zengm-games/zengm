@@ -19,6 +19,9 @@ async function updatePlayByPlay(
             await idb.cache.games.get(inputs.gidPlayByPlay),
         );
 
+        // Hide clutch shots. Would be better to gradually reveal.
+        boxScore.clutchPlays = [];
+
         // Stats to set to 0
         if (!overrides.core.player.stats) {
             throw new Error("Missing overrides.core.player.stats");

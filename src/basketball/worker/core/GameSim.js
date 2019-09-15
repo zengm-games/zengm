@@ -174,22 +174,12 @@ class GameSim {
         time: number,
     }[];
 
-    clutchPlays: (
-        | {
-              type: "playerFeat",
-              text: string,
-              showNotification: boolean,
-              pids: [number],
-              tids: [number],
-          }
-        | {
-              type: "playerFeat",
-              tempText: string,
-              showNotification: boolean,
-              pids: [number],
-              tids: [number],
-          }
-    )[];
+    clutchPlays: {
+        text: string,
+        showNotification: boolean,
+        pids: [number],
+        tids: [number],
+    }[];
 
     o: TeamNum;
 
@@ -1258,8 +1248,7 @@ class GameSim {
         )} overtime`;
 
         this.clutchPlays.push({
-            type: "playerFeat",
-            tempText: eventText,
+            text: eventText,
             showNotification: team.id === g.userTid,
             pids: [player.id],
             tids: [team.id],
@@ -1327,7 +1316,7 @@ class GameSim {
                 let eventText = `<a href="${helpers.leagueUrl([
                     "player",
                     player.id,
-                ])}">${player.name}</a> made the game-winning ${shotType}`;
+                ])}">${player.name}</a> made a game-winning ${shotType}`;
                 if (play.time > 0) {
                     eventText += ` with ${play.time} seconds remaining`;
                 } else {
@@ -1336,21 +1325,8 @@ class GameSim {
                             ? " with no time on the clock"
                             : " at the buzzer";
                 }
-                eventText += ` in ${
-                    this.team[winner].stat.pts.toString().charAt(0) === "8"
-                        ? "an"
-                        : "a"
-                } <a href="${helpers.leagueUrl([
-                    "game_log",
-                    g.teamAbbrevsCache[team.id],
-                    g.season,
-                    this.id,
-                ])}">${this.team[winner].stat.pts}-${
-                    this.team[loser].stat.pts
-                }</a> win over the ${g.teamNamesCache[this.team[loser].id]}.`;
 
                 this.clutchPlays.push({
-                    type: "playerFeat",
                     text: eventText,
                     showNotification: team.id === g.userTid,
                     pids: [player.id],

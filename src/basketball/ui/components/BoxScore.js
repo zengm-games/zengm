@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
+import SafeHtml from "../../../deion/ui/components/SafeHtml";
 import { helpers } from "../../../deion/ui/util";
 
 const BoxScore = ({ boxScore, Row }) => {
@@ -119,6 +120,13 @@ const BoxScore = ({ boxScore, Row }) => {
                     </ResponsiveTableWrapper>
                 </div>
             ))}
+            {boxScore.clutchPlays && boxScore.clutchPlays.length > 0
+                ? boxScore.clutchPlays.map((text, i) => (
+                      <p key={i}>
+                          <SafeHtml dirty={text} />
+                      </p>
+                  ))
+                : null}
         </>
     );
 };

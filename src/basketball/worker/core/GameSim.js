@@ -451,7 +451,7 @@ class GameSim {
             let i = 0;
             for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
                 const p = this.playersOnCourt[t][pp];
-                const onCourtIsIneligible = ovrs[p] === -Infinity; // benchIsValidAndBetter already checks if bench player is eligible
+                const onCourtIsIneligible = ovrs[p] === -Infinity;
                 this.playersOnCourt[t][i] = p;
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (let b = 0; b < this.team[t].player.length; b++) {
@@ -463,7 +463,11 @@ class GameSim {
                         this.team[t].player[p].stat.courtTime > 3 &&
                         this.team[t].player[b].stat.benchTime > 3 &&
                         ovrs[b] > ovrs[p];
-                    if (benchIsValidAndBetter || onCourtIsIneligible) {
+                    const benchIsEligible = ovrs[b] !== -Infinity;
+                    if (
+                        benchIsValidAndBetter ||
+                        (onCourtIsIneligible && benchIsEligible)
+                    ) {
                         // Check if position of substitute makes for a valid lineup
                         const pos = [];
                         for (

@@ -108,7 +108,7 @@ const draft = () => {
         return {
             redirectUrl: helpers.leagueUrl([
                 g.phase === PHASE.AFTER_DRAFT
-                    ? "draft_summary"
+                    ? "draft_history"
                     : "draft_scouting",
             ]),
         };

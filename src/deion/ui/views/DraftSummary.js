@@ -11,7 +11,7 @@ import {
 import { getCols, helpers, setTitle } from "../util";
 
 const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
-    setTitle(`${season} Draft Summary`);
+    setTitle(`${season} Draft History`);
 
     const superCols = [
         {
@@ -92,13 +92,13 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
     return (
         <>
             <Dropdown
-                view="draft_summary"
+                view="draft_history"
                 fields={["seasonsAndOldDrafts"]}
                 values={[season]}
             />
             <JumpTo season={season} />
             <h1>
-                {season} Draft Summary <NewWindowLink />
+                {season} Draft History <NewWindowLink />
             </h1>
 
             <p>

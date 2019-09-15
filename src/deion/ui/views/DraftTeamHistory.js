@@ -61,7 +61,7 @@ const DraftTeamHistory = ({
         return {
             key: p.pid,
             data: [
-                <a href={helpers.leagueUrl(["draft_summary", p.draft.year])}>
+                <a href={helpers.leagueUrl(["draft_history", p.draft.year])}>
                     {p.draft.year}
                 </a>,
                 `${p.draft.round}-${p.draft.pick}`,
@@ -125,7 +125,7 @@ const DraftTeamHistory = ({
                         |{" "}
                     </>
                 ) : null}
-                <a href={helpers.leagueUrl(["draft_summary"])}>Draft Summary</a>
+                <a href={helpers.leagueUrl(["draft_history"])}>Draft History</a>
             </p>
 
             <p>

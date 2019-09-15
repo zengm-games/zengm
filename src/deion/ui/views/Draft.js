@@ -291,8 +291,8 @@ class Draft extends React.Component {
                         Future Draft Scouting
                     </a>{" "}
                     |{" "}
-                    <a href={helpers.leagueUrl(["draft_summary"])}>
-                        Draft Summary
+                    <a href={helpers.leagueUrl(["draft_history"])}>
+                        Draft History
                     </a>{" "}
                     |{" "}
                     {draftType !== "noLottery" && draftType !== "random" ? (

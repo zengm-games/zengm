@@ -42,7 +42,7 @@ const JumpTo = ({ season }: { season: number | "all" }) => {
                 <DropdownItem href={genUrl(["transactions", "all"], s)}>
                     Transactions
                 </DropdownItem>
-                <DropdownItem href={genUrl(["draft_summary"], s)}>
+                <DropdownItem href={genUrl(["draft_history"], s)}>
                     Draft
                 </DropdownItem>
                 <DropdownItem href={genUrl(["leaders"], s)}>

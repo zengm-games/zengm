@@ -251,7 +251,7 @@ const Player = ({
                 Draft:{" "}
                 <a
                     href={helpers.leagueUrl([
-                        "draft_summary",
+                        "draft_history",
                         player.draft.year,
                     ])}
                 >

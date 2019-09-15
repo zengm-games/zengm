@@ -45,8 +45,8 @@ class DraftScouting extends React.Component {
                             |{" "}
                         </>
                     ) : null}
-                    <a href={helpers.leagueUrl(["draft_summary"])}>
-                        Draft Summary
+                    <a href={helpers.leagueUrl(["draft_history"])}>
+                        Draft History
                     </a>{" "}
                     |{" "}
                     <a href={helpers.leagueUrl(["draft_team_history"])}>

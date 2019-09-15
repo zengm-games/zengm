@@ -104,7 +104,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
         } ${p.lastName}</a> with the ${helpers.ordinal(
             dp.pick + (dp.round - 1) * g.numTeams,
         )} pick in the <a href="${helpers.leagueUrl([
-            "draft_summary",
+            "draft_history",
             g.season,
         ])}">${draftName}</a>.`,
         showNotification: false,

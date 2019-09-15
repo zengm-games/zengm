@@ -12,13 +12,13 @@ import React, {
 
 // This is dynamically resolved with aliasify
 // $FlowFixMe
-const schema = require("league-schema.json"); // eslint-disable-line
+/*const schema = require("league-schema.json"); // eslint-disable-line
 
 const ajv = new Ajv({
     allErrors: true,
     verbose: true,
 });
-const validate = ajv.compile(schema);
+const validate = ajv.compile(schema);*/
 
 type Props = {
     // onDone is called in errback style when parsing is done or when an error occurs
@@ -117,13 +117,13 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
 
     const withLeagueFile = useCallback(
         async leagueFile => {
-            const valid = validate(leagueFile);
+            /*const valid = validate(leagueFile);
             if (!valid && Array.isArray(validate.errors)) {
                 dispatch({
                     type: "jsonSchemaErrors",
                     jsonSchemaErrors: validate.errors.slice(),
                 });
-            }
+            }*/
 
             try {
                 await onDone(null, leagueFile);

@@ -12,7 +12,6 @@ module.exports = api => {
             "@babel/plugin-transform-for-of",
             "@babel/plugin-transform-parameters",
             "@babel/plugin-transform-destructuring",
-            "@babel/plugin-transform-modules-commonjs",
             "@babel/plugin-transform-exponentiation-operator",
             "@babel/plugin-transform-async-to-generator",
             "@babel/plugin-proposal-object-rest-spread",

@@ -13,6 +13,11 @@ football OL with 49 height listed as 5'7"
 football too many players retire
 
 move to rollup
+- aliasify equivalent
+  - league-schema.json, player names json
+- get rid of rollup-plugin-node-builtins and rollup-plugin-node-globals
+- bundle size?
+- warning messages
 - karma
 - blacklist
 - watch
@@ -21,8 +26,6 @@ move to rollup
 - rollup-plugin-terser
 - source maps
 - remove rollup-plugin-node-builtins
-- require of names json
-  - could use "replace" to rewrite?
 - remove unused browserify packages
 
 code splitting: html2canvas and ajv are all big things that are rarely used

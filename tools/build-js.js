@@ -1,15 +1,15 @@
 // @flow
 
-// Used to be:
-// browserify -d -p [minifyify --map app.js.map --output gen/app.js.map] js/app.js -o gen/app.js
-// ...but then it got too complicated, and this seemed easier
-
-const aliasify = require("aliasify");
-const babelify = require("babelify");
-const browserify = require("browserify");
-const blacklistify = require("blacklistify/custom");
-const envify = require("envify/custom");
-const fs = require("fs");
+const React = require("react");
+const ReactDOM = require("react-dom");
+const rollup = require("rollup");
+const babel = require("rollup-plugin-babel");
+const commonjs = require("rollup-plugin-commonjs");
+const globals = require("rollup-plugin-node-globals");
+const json = require("rollup-plugin-json");
+const builtins = require("rollup-plugin-node-builtins");
+const resolve = require("rollup-plugin-node-resolve");
+const replace = require("rollup-plugin-replace");
 const build = require("./buildFuncs");
 
 console.log("Bundling JavaScript files...");
@@ -21,25 +21,39 @@ const BLACKLIST = {
 
 const sport = build.getSport();
 
-for (const name of ["ui", "worker"]) {
-    browserify(`src/${sport}/${name}/index.js`, { debug: true })
-        .on("error", console.error)
-        .transform(babelify, {
-            // Workaround for https://github.com/d3/d3-array/issues/87
-            global: true,
-            ignore: [/\/node_modules\/(?!d3)/],
-        })
-        .transform(blacklistify(BLACKLIST[name]))
-        .transform(envify({ NODE_ENV: "production", SPORT: sport }), {
-            global: true,
-        })
-        .transform(aliasify, {
-            // No idea why this is needed, but making babelify global seems to require this be global too
-            global: true,
-            aliases: {
-                "league-schema.json": `./public/${sport}/files/league-schema.json`,
-            },
-        })
-        .bundle()
-        .pipe(fs.createWriteStream(`build/gen/${name}.js`));
-}
+(async () => {
+    for (const name of ["ui", "worker"]) {
+        const bundle = await rollup.rollup({
+            input: `src/${sport}/${name}/index.js`,
+            plugins: [
+                replace({
+                    "process.env.NODE_ENV": JSON.stringify("production"),
+                    "process.env.SPORT": JSON.stringify(sport),
+                }),
+                babel({
+                    exclude: "node_modules/!(d3)**",
+                    runtimeHelpers: true,
+                }),
+                json({
+                    compact: true,
+                    namedExports: false,
+                }),
+                commonjs({
+                    namedExports: {
+                        react: Object.keys(React),
+                        "react-dom": Object.keys(ReactDOM),
+                    },
+                }),
+                resolve(),
+                globals(),
+                builtins(),
+            ],
+        });
+
+        await bundle.write({
+            name,
+            file: `build/gen/${name}.js`,
+            format: "iife",
+        });
+    }
+})();

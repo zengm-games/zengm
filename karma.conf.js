@@ -5,16 +5,10 @@ const build = require("./tools/buildFuncs");
 const sport = build.getSport();
 
 const files = [
-    "src/deion/test/index.js",
+    "src/deion/test/mocha.js",
     `src/${sport}/worker/index.js`, // For overrides
-    `src/${sport}/**/*.test.js`,
-    "src/deion/test/**/*.js",
+    "src/deion/test/smoke.js",
 ];
-
-if (sport === "basketball") {
-    // Some deion tests assume basketball
-    files.push("src/deion/**/*.test.js");
-}
 
 module.exports = function(config) {
     config.set({
@@ -54,8 +48,6 @@ module.exports = function(config) {
 
         browserNoActivityTimeout: 15 * 60 * 1000, // 15 minutes
         browserDisconnectTimeout: 15 * 60 * 1000, // 15 minutes
-
-        reporters: ["mocha"],
 
         browsers: ["ChromeHeadless", "FirefoxHeadless"],
     });

@@ -23,10 +23,10 @@
         "flow": "flow",
         "lint-js": "eslint '*.js' 'public/*.js' 'src/**/*.js' 'tools/**/*.js'",
         "prettier": "prettier --write '*.{js,json,scss}' 'public/**/*.{js,json,scss}' 'src/**/*.{js,json,scss}' 'tools/**/*.{js,json,scss}'",
-        "test": "karma start karma.conf.js",
-        "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
-        "test-browserstack": "karma start karma-browserstack.conf.js",
-        "jest": "jest src/basketball src/football src/deion/common src/deion/ui src/deion/worker"
+        "test": "jest src/basketball src/football src/deion/common src/deion/ui src/deion/worker",
+        "test-e2e": "karma start karma.conf.js",
+        "test-e2e-watch": "karma start karma.conf.js --auto-watch --no-single-run",
+        "test-e2e-browserstack": "karma start karma-browserstack.conf.js"
     },
     "lint-staged": {
         "*.{js,json,scss}": [
@@ -109,7 +109,6 @@
         "karma-chrome-launcher": "^3.1.0",
         "karma-firefox-launcher": "^1.2.0",
         "karma-mocha": "^1.3.0",
-        "karma-mocha-reporter": "^2.2.5",
         "karma-source-map-support": "^1.4.0",
         "lint-staged": "^9.2.5",
         "mocha": "^6.2.0",

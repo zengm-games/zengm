@@ -137,10 +137,6 @@ const writeGameStats = async (
         logEvent(clutchPlay, conditions);
     }
 
-    if (gameStats.clutchPlays.length > 0) {
-        console.log(gameStats.clutchPlays, gameStats);
-    }
-
     await idb.cache.games.add(gameStats);
 };
 

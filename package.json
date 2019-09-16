@@ -13,7 +13,7 @@
     },
     "scripts": {
         "start": "node tools/server.js",
-        "build": "node tools/build.js && node tools/build-js.js && node tools/minify-js.js && node tools/build-sw.js",
+        "build": "node tools/build.js && node tools/build-js.js && node tools/build-sw.js",
         "deploy": "yarn run build && node tools/deploy.js",
         "start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
         "watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
@@ -126,6 +126,7 @@
         "rollup-plugin-node-globals": "^1.4.0",
         "rollup-plugin-node-resolve": "^5.2.0",
         "rollup-plugin-replace": "^2.2.0",
+        "rollup-plugin-terser": "^5.1.2",
         "terser": "^4.3.1",
         "watchify": "^3.11.1",
         "workbox-build": "^4.3.1"

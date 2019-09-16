@@ -31,7 +31,7 @@ module.exports = {
         output: {
             format: "iife",
             name: "bbgm",
-            sourcemap: "inline",
+            sourcemap: true,
         },
     },
 

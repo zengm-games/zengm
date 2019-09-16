@@ -17,18 +17,20 @@ football OL with 49 height listed as 5'7"
 football too many players retire
 
 move to rollup
-- watch
-  - on error or fatal, overwrite bundle with that contents
-- source maps
+- watch performance
+  - https://github.com/rollup/rollup/issues/723
+  - treeshake: false
+  - indent: false
+  - watch.chokidar
 - remove browserify deps
 - blacklist
 - karma alias to run it for football, since i have to import overrides right in smoke.js
-- rollup-plugin-terser
 - remove rollup-plugin-node-builtins
 - remove unused browserify packages
 - somehow fix alias pointing right to json
 - get rid of rollup-plugin-node-builtins and rollup-plugin-node-globals
 - https://github.com/btd/rollup-plugin-visualizer
+- confirm old browsers still work
 
 code splitting: html2canvas and ajv are all big things that are rarely used
 

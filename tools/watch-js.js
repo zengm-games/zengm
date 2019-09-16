@@ -1,3 +1,4 @@
+const fs = require("fs");
 const rollup = require("rollup");
 const build = require("./buildFuncs");
 const rollupConfig = require("./rollupConfig");
@@ -17,6 +18,7 @@ for (const name of ["ui", "worker"]) {
             name,
             file,
             format: "iife",
+            sourcemap: true,
         },
     });
 
@@ -24,6 +26,7 @@ for (const name of ["ui", "worker"]) {
     watcher.on("event", event => {
         if (event.code === "START") {
             startTime = new Date().getTime();
+            fs.writeFileSync(file, 'console.log("Bundling...")');
         } else if (event.code === "END") {
             const delta = new Date().getTime() - startTime;
             console.log(
@@ -32,7 +35,10 @@ for (const name of ["ui", "worker"]) {
                 )} seconds) at ${new Date().toLocaleTimeString()}`,
             );
         } else if (event.code === "ERROR" || event.code === "FATAL") {
-            console.log(name, event);
+            fs.writeFileSync(
+                file,
+                `console.error(${JSON.stringify(event.error)})`,
+            );
         }
     });
 }

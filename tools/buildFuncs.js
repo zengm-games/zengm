@@ -197,10 +197,8 @@ const reset = () => {
     fs.mkdirSync("build/gen");
 };
 
-const setTimestamps = (watch /*: boolean*/ = false) => {
+const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
     console.log("Setting timestamps...");
-
-    const rev = genRev();
 
     const sport = getSport();
 
@@ -209,7 +207,11 @@ const setTimestamps = (watch /*: boolean*/ = false) => {
         replacement: rev,
         paths: watch
             ? ["build/index.html"]
-            : ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
+            : [
+                  "build/index.html",
+                  `build/gen/ui-${rev}.js`,
+                  `build/gen/worker-${rev}.js`,
+              ],
         silent: true,
     });
 
@@ -244,9 +246,6 @@ const setTimestamps = (watch /*: boolean*/ = false) => {
             paths: ["build/index.html"],
             silent: true,
         });
-    } else {
-        fs.renameSync("build/gen/ui.js", `build/gen/ui-${rev}.js`);
-        fs.renameSync("build/gen/worker.js", `build/gen/worker-${rev}.js`);
     }
 
     return rev;

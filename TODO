@@ -2,21 +2,8 @@ move most tests to node.js, except for the smoke test
 - then revisit rollup3 branch
 - try jest
   - coverage
-  - go over stuff in src/deion/test
   - jest assert library
   - slow tests?
-  - update readme about separate football tests - no more! (except e2e)
-- smoke test
-  - local
-  - browserstack
-  - could use karma still... but then i still need to use karma :)
-    - maybe it wouldn't be so bad to just run the smoke test only?
-    - TRY THIS FIRST! can at least merge to master with karma/mocha for e2e tests still
-  - otherwise, selenium seems like best choice (stable, cross browser, browserstack)
-    - test-e2e command
-    - browserstack: https://www.browserstack.com/docs?product=automate
-    - headless: https://stackoverflow.com/questions/53657215/running-selenium-with-headless-chrome-webdriver
-- remove deps, flow-typed mocha, etc
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

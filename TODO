@@ -1,7 +1,9 @@
 move most tests to node.js, except for the smoke test
 - then revisit rollup3 branch
 - try jest
-  - "testEnvironment": "node",
+  - environment
+    - for most tests: "testEnvironment": "node",
+    - for rare tests: fake-indexeddb
   - coverage
   - asserts actually working?
   - flow

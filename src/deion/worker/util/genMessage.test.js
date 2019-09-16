@@ -6,7 +6,7 @@ import g from "./g";
 import genMessage from "./genMessage";
 
 describe("worker/util/genMessage", () => {
-    it("even when already at the max, recognizes excellent performance", async () => {
+    test("even when already at the max, recognizes excellent performance", async () => {
         testHelpers.resetG();
         g.gracePeriodEnd = g.season;
         await testHelpers.resetCache({
@@ -42,7 +42,7 @@ describe("worker/util/genMessage", () => {
         assert(message.text.includes("Overall: Excellent!"));
     });
 
-    it("when at max for one component, message falls in between what you'd expect when using the uncapped or capped deltas alone", async () => {
+    test("when at max for one component, message falls in between what you'd expect when using the uncapped or capped deltas alone", async () => {
         testHelpers.resetG();
         g.gracePeriodEnd = g.season;
         await testHelpers.resetCache({

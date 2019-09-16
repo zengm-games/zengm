@@ -5,7 +5,7 @@ import random from "./random";
 
 describe("worker/util/random", () => {
     describe("choice", () => {
-        it("works", () => {
+        test("works", () => {
             const x = ["a", "b", "c", "d", "e"];
 
             const counts = {
@@ -29,7 +29,7 @@ describe("worker/util/random", () => {
             }
         });
 
-        it("works with weight function", () => {
+        test("works with weight function", () => {
             const x = ["a", "b", "c", "d", "e"];
 
             const counts = {

@@ -18,6 +18,9 @@ football too many players retire
 
 move to rollup
 - watch
+  - set NODE_ENV to development
+    - turn rollupConfig into a fucntion, accepting env
+  - on error or fatal, overwrite bundle with that contents
 - source maps
 - remove browserify deps
 - blacklist

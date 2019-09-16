@@ -26,7 +26,7 @@
         "test": "karma start karma.conf.js",
         "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
         "test-browserstack": "karma start karma-browserstack.conf.js",
-        "jest": "node_modules/.bin/jest src/basketball/worker/core/player/madeHof.test.js"
+        "jest": "node_modules/.bin/jest src/basketball/worker/core"
     },
     "lint-staged": {
         "*.{js,json,scss}": [

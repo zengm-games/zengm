@@ -4,6 +4,10 @@ move most tests to node.js, except for the smoke test
   - try jest
     - "testEnvironment": "node",
     - coverage
+    - asserts actually working?
+    - eslint
+    - flow
+    - jest assert library
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

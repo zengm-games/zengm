@@ -4,7 +4,7 @@ import assert from "assert";
 import { findStarters } from "./rosterAutoSort";
 
 describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
-    it("handle easy roster sorts", () => {
+    test("handle easy roster sorts", () => {
         let starters = findStarters([
             "PG",
             "SG",
@@ -61,7 +61,7 @@ describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
         ]);
         assert.deepEqual(starters, [0, 1, 2, 3, 4]);
     });
-    it("put two Gs in starting lineup", () => {
+    test("put two Gs in starting lineup", () => {
         let starters = findStarters([
             "PG",
             "F",
@@ -117,7 +117,7 @@ describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
         ]);
         assert.deepEqual(starters, [0, 1, 2, 8, 9]);
     });
-    it("put two Fs (or one F and one C) in starting lineup", () => {
+    test("put two Fs (or one F and one C) in starting lineup", () => {
         let starters = findStarters([
             "PG",
             "SG",
@@ -160,7 +160,7 @@ describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
         ]);
         assert.deepEqual(starters, [0, 1, 2, 4, 6]);
     });
-    it("never put two pure Cs in starting lineup", () => {
+    test("never put two pure Cs in starting lineup", () => {
         let starters = findStarters([
             "PG",
             "SG",

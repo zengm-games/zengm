@@ -1,4 +1,5 @@
 import "../common/polyfills";
+import build from "../../../tools/buildFuncs";
 
 // Hack because promise-worker-bi 2.2.1 always sends back hostID, but the worker tests don't run in an actual worker, so
 // self.postMessage causes an error because it requires a different number of arguments inside and outside of a worker.
@@ -14,3 +15,5 @@ window.postMessage = (...args) => {
         originalPostMessage(...args);
     }
 };
+
+process.env.SPORT = build.getSport();

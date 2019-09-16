@@ -1,5 +1,15 @@
 /* eslint-env node */
 
+const React = require("react");
+const ReactDOM = require("react-dom");
+const alias = require("rollup-plugin-alias");
+const babel = require("rollup-plugin-babel");
+const commonjs = require("rollup-plugin-commonjs");
+const globals = require("rollup-plugin-node-globals");
+const json = require("rollup-plugin-json");
+const builtins = require("rollup-plugin-node-builtins");
+const resolve = require("rollup-plugin-node-resolve");
+const replace = require("rollup-plugin-replace");
 const browserStack = require("../../.browserstack.json");
 const build = require("./tools/buildFuncs");
 
@@ -36,32 +46,70 @@ const files = ["src/deion/test/mocha.js", "src/deion/test/smoke.js"];
 
 module.exports = function(config) {
     config.set({
-        frameworks: ["mocha", "browserify", "source-map-support"],
+        frameworks: ["mocha", "source-map-support"],
 
-        files,
+        files: files.map(pattern => {
+            return {
+                pattern,
+                watched: false,
+            };
+        }),
 
         preprocessors: {
-            "src/**/*.js": ["browserify"],
+            "src/**/*.js": ["rollup"],
         },
 
         autoWatch: false,
 
         singleRun: true,
 
-        browserify: {
-            debug: true,
-            transform: [
-                "babelify",
-                ["envify", { SPORT: sport }],
-                [
-                    "aliasify",
-                    {
-                        aliases: {
-                            "league-schema.json": `./public/football/files/league-schema.json`,
+        rollupPreprocessor: {
+            plugins: [
+                alias({
+                    entries: [
+                        {
+                            find: "league-schema",
+                            replacement: `./../../../${sport}/ui/util/leagueSchema.js`,
                         },
+                        // This is so Karma doesn't crash when using the big names file.
+                        {
+                            find: "player-names",
+                            replacement:
+                                process.env.NODE_ENV === "test"
+                                    ? "./util/namesTest.js"
+                                    : "./util/names.js",
+                        },
+                    ],
+                }),
+                replace({
+                    "process.env.NODE_ENV": JSON.stringify("production"),
+                    "process.env.SPORT": JSON.stringify(sport),
+                }),
+                babel({
+                    exclude: "node_modules/!(d3)**",
+                    runtimeHelpers: true,
+                }),
+                json({
+                    compact: true,
+                    namedExports: false,
+                }),
+                commonjs({
+                    namedExports: {
+                        react: Object.keys(React),
+                        "react-dom": Object.keys(ReactDOM),
                     },
-                ],
+                }),
+                resolve({
+                    preferBuiltins: true,
+                }),
+                globals(),
+                builtins(),
             ],
+            output: {
+                format: "iife",
+                name: "bbgm",
+                sourcemap: "inline",
+            },
         },
 
         browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes

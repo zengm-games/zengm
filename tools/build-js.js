@@ -11,7 +11,7 @@ const sport = build.getSport();
 (async () => {
     for (const name of ["ui", "worker"]) {
         const bundle = await rollup.rollup({
-            ...rollupConfig,
+            ...rollupConfig("production"),
             input: `src/${sport}/${name}/index.js`,
         });
 

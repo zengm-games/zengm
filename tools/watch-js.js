@@ -11,7 +11,7 @@ for (const name of ["ui", "worker"]) {
     const file = `build/gen/${name}.js`;
 
     const watcher = rollup.watch({
-        ...rollupConfig,
+        ...rollupConfig("development"),
         input: `src/${sport}/${name}/index.js`,
         output: {
             name,

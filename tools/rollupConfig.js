@@ -17,52 +17,54 @@ const BLACKLIST = {
 
 const sport = build.getSport();
 
-module.exports = {
-    plugins: [
-        alias({
-            entries: [
-                {
-                    find: "league-schema",
-                    replacement: `./../../../${sport}/ui/util/leagueSchema.js`,
+module.exports = nodeEnv => {
+    return {
+        plugins: [
+            alias({
+                entries: [
+                    {
+                        find: "league-schema",
+                        replacement: `./../../../${sport}/ui/util/leagueSchema.js`,
+                    },
+                    // This is so Karma doesn't crash when using the big names file.
+                    {
+                        find: "player-names",
+                        replacement:
+                            nodeEnv === "test"
+                                ? "./util/namesTest.js"
+                                : "./util/names.js",
+                    },
+                ],
+            }),
+            replace({
+                "process.env.NODE_ENV": JSON.stringify(nodeEnv),
+                "process.env.SPORT": JSON.stringify(sport),
+            }),
+            babel({
+                exclude: "node_modules/!(d3)**",
+                runtimeHelpers: true,
+            }),
+            json({
+                compact: true,
+                namedExports: false,
+            }),
+            commonjs({
+                namedExports: {
+                    react: Object.keys(React),
+                    "react-dom": Object.keys(ReactDOM),
                 },
-                // This is so Karma doesn't crash when using the big names file.
-                {
-                    find: "player-names",
-                    replacement:
-                        process.env.NODE_ENV === "test"
-                            ? "./util/namesTest.js"
-                            : "./util/names.js",
-                },
-            ],
-        }),
-        replace({
-            "process.env.NODE_ENV": JSON.stringify("production"),
-            "process.env.SPORT": JSON.stringify(sport),
-        }),
-        babel({
-            exclude: "node_modules/!(d3)**",
-            runtimeHelpers: true,
-        }),
-        json({
-            compact: true,
-            namedExports: false,
-        }),
-        commonjs({
-            namedExports: {
-                react: Object.keys(React),
-                "react-dom": Object.keys(ReactDOM),
-            },
-        }),
-        resolve({
-            preferBuiltins: true,
-        }),
-        globals(),
-        builtins(),
-    ],
-    onwarn(warning, rollupWarn) {
-        // I don't like this, but there's too much damn baggage
-        if (warning.code !== "CIRCULAR_DEPENDENCY") {
-            rollupWarn(warning);
-        }
-    },
+            }),
+            resolve({
+                preferBuiltins: true,
+            }),
+            globals(),
+            builtins(),
+        ],
+        onwarn(warning, rollupWarn) {
+            // I don't like this, but there's too much damn baggage
+            if (warning.code !== "CIRCULAR_DEPENDENCY") {
+                rollupWarn(warning);
+            }
+        },
+    };
 };

@@ -27,7 +27,7 @@ module.exports = {
     singleRun: true,
 
     rollupPreprocessor: {
-        ...rollupConfig,
+        ...rollupConfig("test"),
         output: {
             format: "iife",
             name: "bbgm",

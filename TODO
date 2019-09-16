@@ -1,9 +1,5 @@
 move most tests to node.js, except for the smoke test
 - then revisit rollup3 branch
-- try jest
-  - coverage
-  - jest assert library
-  - slow tests?
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

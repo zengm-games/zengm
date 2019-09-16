@@ -134,7 +134,13 @@ const writeGameStats = async (
                 results.team[tw].stat.pts
             }</a> loss to the ${g.teamNamesCache[results.team[tw].id]}.`;
         }
-        logEvent(clutchPlay, conditions);
+        logEvent(
+            {
+                type: "playerFeat",
+                ...clutchPlay,
+            },
+            conditions,
+        );
     }
 
     await idb.cache.games.add(gameStats);

@@ -127,13 +127,15 @@ async function updatePlayer(
 
         events = events
             .filter(event => {
+                // undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
                 return !(
                     event.type === "award" ||
                     event.type === "injured" ||
                     event.type === "healed" ||
                     event.type === "hallOfFame" ||
                     event.type === "playerFeat" ||
-                    event.type === "tragedy"
+                    event.type === "tragedy" ||
+                    event.type === undefined
                 );
             })
             .map(event => {

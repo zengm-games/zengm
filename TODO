@@ -3,7 +3,6 @@ move most tests to node.js, except for the smoke test
 - try jest
   - environment
     - for most tests: "testEnvironment": "node",
-  - replace some fake-indexeddb/auto with just key range
   - coverage
   - asserts actually working?
   - flow

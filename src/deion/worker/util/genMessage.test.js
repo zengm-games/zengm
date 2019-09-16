@@ -1,5 +1,4 @@
 import assert from "assert";
-import "fake-indexeddb/auto";
 import testHelpers from "../../test/helpers";
 import { team } from "../core";
 import { idb } from "../db";

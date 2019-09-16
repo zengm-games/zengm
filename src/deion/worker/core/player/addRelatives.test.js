@@ -4,7 +4,6 @@ import assert from "assert";
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
-import "fake-indexeddb/auto";
 import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";

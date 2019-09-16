@@ -1,7 +1,6 @@
 // @flow
 
 import assert from "assert";
-import "fake-indexeddb/auto";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { idb } from "../../db";

@@ -17,7 +17,6 @@ football OL with 49 height listed as 5'7"
 football too many players retire
 
 move to rollup
-- blacklist
 - karma alias to run it for football, since i have to import overrides right in smoke.js
 - remove rollup-plugin-node-builtins
 - remove unused browserify packages

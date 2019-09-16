@@ -2,6 +2,7 @@ const React = require("react");
 const ReactDOM = require("react-dom");
 const alias = require("rollup-plugin-alias");
 const babel = require("rollup-plugin-babel");
+const blacklist = require("rollup-plugin-blacklist");
 const commonjs = require("rollup-plugin-commonjs");
 const globals = require("rollup-plugin-node-globals");
 const json = require("rollup-plugin-json");
@@ -11,14 +12,9 @@ const replace = require("rollup-plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
 const build = require("./buildFuncs");
 
-const BLACKLIST = {
-    ui: [/.*\/worker.*/],
-    worker: [/.*\/ui.*/, /.*react.*/],
-};
-
 const sport = build.getSport();
 
-module.exports = nodeEnv => {
+module.exports = (nodeEnv, blacklistOptions) => {
     const plugins = [
         alias({
             entries: [
@@ -67,6 +63,10 @@ module.exports = nodeEnv => {
                 safari10: true,
             }),
         );
+    }
+
+    if (blacklistOptions) {
+        plugins.splice(1, 0, blacklist(blacklistOptions));
     }
 
     return {

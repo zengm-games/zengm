@@ -1,10 +1,7 @@
 move most tests to node.js, except for the smoke test
 - then revisit rollup3 branch
 - try jest
-  - environment
-    - for most tests: "testEnvironment": "node",
   - coverage
-  - asserts actually working?
   - flow
     - get rid of mocha types
     - add jest types

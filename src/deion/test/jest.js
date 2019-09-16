@@ -1,6 +1,5 @@
 /* eslint-env node */
 import IDBKeyRange from "fake-indexeddb/build/FDBKeyRange";
-import "../common/polyfills";
 
 // When mockIDBLeague is used, sometimes IDBKeyRange still gets called even though there is no actual database
 global.IDBKeyRange = IDBKeyRange;

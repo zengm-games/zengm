@@ -6,7 +6,7 @@ import { player } from "../../../../deion/worker/core";
 import madeHof from "./madeHof";
 
 describe("basketball/worker/core/player/madeHof", () => {
-    it("narrowly make HoF based on dominance factor", () => {
+    test("narrowly make HoF based on dominance factor", () => {
         testHelpers.resetG();
 
         const p = player.generate(0, 19, 2012, false, 15.5);
@@ -56,7 +56,7 @@ describe("basketball/worker/core/player/madeHof", () => {
         assert.equal(madeHof(p), true);
     });
 
-    it("narrowly miss HoF based on dominance factor", () => {
+    test("narrowly miss HoF based on dominance factor", () => {
         const p = player.generate(0, 19, 2012, false, 15.5);
         p.stats = [
             {

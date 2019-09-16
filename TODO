@@ -1,5 +1,9 @@
 move most tests to node.js, except for the smoke test
 - then revisit rollup3 branch
+- jest, ava, or mocha?
+  - try jest
+    - "testEnvironment": "node",
+    - coverage
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

@@ -25,7 +25,8 @@
         "prettier": "prettier --write '*.{js,json,scss}' 'public/**/*.{js,json,scss}' 'src/**/*.{js,json,scss}' 'tools/**/*.{js,json,scss}'",
         "test": "karma start karma.conf.js",
         "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
-        "test-browserstack": "karma start karma-browserstack.conf.js"
+        "test-browserstack": "karma start karma-browserstack.conf.js",
+        "jest": "node_modules/.bin/jest src/basketball/worker/core/player/madeHof.test.js"
     },
     "lint-staged": {
         "*.{js,json,scss}": [
@@ -100,6 +101,7 @@
         "flow-typed": "^2.6.1",
         "fs-extra": "^8.1.0",
         "husky": "^3.0.5",
+        "jest": "^24.9.0",
         "karma": "^4.3.0",
         "karma-browserify": "^6.1.0",
         "karma-browserstack-launcher": "^1.5.1",

@@ -22,7 +22,6 @@ move to rollup
   - treeshake: false
   - indent: false
   - watch.chokidar
-- remove browserify deps
 - blacklist
 - karma alias to run it for football, since i have to import overrides right in smoke.js
 - remove rollup-plugin-node-builtins

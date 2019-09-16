@@ -3,7 +3,7 @@ move most tests to node.js, except for the smoke test
 - try jest
   - environment
     - for most tests: "testEnvironment": "node",
-    - for rare tests: fake-indexeddb
+  - replace some fake-indexeddb/auto with just key range
   - coverage
   - asserts actually working?
   - flow
@@ -15,7 +15,6 @@ move most tests to node.js, except for the smoke test
   - update readme about separate football tests - no more!
 - smoke test
 - remove deps
-- replace idb.league check in getCopies.teamSeasons with mockIDBLeague
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

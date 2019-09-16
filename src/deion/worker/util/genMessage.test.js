@@ -1,4 +1,5 @@
 import assert from "assert";
+import "fake-indexeddb/auto";
 import testHelpers from "../../test/helpers";
 import { team } from "../core";
 import { idb } from "../db";
@@ -6,13 +7,18 @@ import g from "./g";
 import genMessage from "./genMessage";
 
 describe("worker/util/genMessage", () => {
-    test("even when already at the max, recognizes excellent performance", async () => {
+    beforeEach(async () => {
         testHelpers.resetG();
         g.gracePeriodEnd = g.season;
+
         await testHelpers.resetCache({
             teamSeasons: [team.genSeasonRow(g.userTid)],
         });
 
+        idb.league = testHelpers.mockIDBLeague();
+    });
+
+    test("even when already at the max, recognizes excellent performance", async () => {
         const teamSeasons = await idb.cache.teamSeasons.getAll();
         assert.equal(teamSeasons.length, 1);
         teamSeasons[0].ownerMood = {
@@ -43,12 +49,6 @@ describe("worker/util/genMessage", () => {
     });
 
     test("when at max for one component, message falls in between what you'd expect when using the uncapped or capped deltas alone", async () => {
-        testHelpers.resetG();
-        g.gracePeriodEnd = g.season;
-        await testHelpers.resetCache({
-            teamSeasons: [team.genSeasonRow(g.userTid)],
-        });
-
         const teamSeasons = await idb.cache.teamSeasons.getAll();
         assert.equal(teamSeasons.length, 1);
         teamSeasons[0].ownerMood = {

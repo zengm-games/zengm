@@ -6,7 +6,7 @@ import player from "./index";
 import { g } from "../../util";
 
 describe("worker/core/player/getPlayerFakeAge", () => {
-    it("pick appropriate player to have a fake age", () => {
+    test("pick appropriate player to have a fake age", () => {
         testHelpers.resetG();
 
         const players: any = [

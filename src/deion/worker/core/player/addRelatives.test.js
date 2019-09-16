@@ -4,6 +4,7 @@ import assert from "assert";
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
+import "fake-indexeddb/auto";
 import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";
@@ -23,17 +24,17 @@ const genBrothers = () => {
 };
 
 describe("worker/core/player/addRelatives", () => {
-    before(() => {
+    beforeAll(() => {
         testHelpers.resetG();
         idb.league = testHelpers.mockIDBLeague();
     });
 
-    after(() => {
+    afterAll(() => {
         idb.league = undefined;
     });
 
     describe("makeBrother", () => {
-        it("make player the brother of another player", async () => {
+        test("make player the brother of another player", async () => {
             await testHelpers.resetCache({
                 players: [
                     player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
@@ -66,7 +67,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(p.born.loc, brother.born.loc);
         });
 
-        it("skip player if no possible brother exists", async () => {
+        test("skip player if no possible brother exists", async () => {
             await testHelpers.resetCache({
                 players: [
                     player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
@@ -79,7 +80,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(p.relatives.length, 0);
         });
 
-        it("handle case where target has a father", async () => {
+        test("handle case where target has a father", async () => {
             const initialBrothers = genBrothers();
             for (const p of initialBrothers) {
                 p.relatives.push({
@@ -128,7 +129,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(brother.relatives[1].pid, p.pid);
         });
 
-        it("handle case where source has a father", async () => {
+        test("handle case where source has a father", async () => {
             const initialPlayer = player.generate(
                 PLAYER.UNDRAFTED,
                 20,
@@ -181,7 +182,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(brother.relatives[1].pid, p.pid);
         });
 
-        it("handle case where both have fathers", async () => {
+        test("handle case where both have fathers", async () => {
             const players = [
                 player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
                 ...genBrothers(),
@@ -209,7 +210,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(brother, undefined);
         });
 
-        it("handle case where target has a brother", async () => {
+        test("handle case where target has a brother", async () => {
             // This is weirdly incestuous, but make initialP the son of extraBrother so that extraBrother is never
             // picked as the brother for initialP, it is always one of initialBrothers. But then extraBrother will be
             // added to initialP's relatives as a brother, via already being a brother of one of initialBrothers. Ugh,
@@ -271,7 +272,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(brother.relatives[2].pid, p.pid);
         });
 
-        it("handle case where source has a brother", async () => {
+        test("handle case where source has a brother", async () => {
             const initialPlayer = player.generate(
                 PLAYER.UNDRAFTED,
                 20,
@@ -308,7 +309,7 @@ describe("worker/core/player/addRelatives", () => {
     });
 
     describe("makeSon", () => {
-        it("make player the son of another player", async () => {
+        test("make player the son of another player", async () => {
             await testHelpers.resetCache({
                 players: [
                     // Son
@@ -343,7 +344,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(son.born.loc, father.born.loc);
         });
 
-        it("skip player if no possible father exists", async () => {
+        test("skip player if no possible father exists", async () => {
             await testHelpers.resetCache({
                 players: [
                     player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
@@ -356,7 +357,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(son.relatives.length, 0);
         });
 
-        it("skip player if he already has a father", async () => {
+        test("skip player if he already has a father", async () => {
             await testHelpers.resetCache({
                 players: [
                     // Son
@@ -388,7 +389,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.deepEqual(son.relatives[0], relFather);
         });
 
-        it("handle case where player already has a brother", async () => {
+        test("handle case where player already has a brother", async () => {
             await testHelpers.resetCache({
                 players: [
                     // Son
@@ -460,7 +461,7 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(brother2.born.loc, father.born.loc);
         });
 
-        it("handle case where father already has a son", async () => {
+        test("handle case where father already has a son", async () => {
             const initialFathers = genFathers();
             const initialOtherSons = initialFathers.map(() =>
                 player.generate(0, 25, season, true, 15.5),

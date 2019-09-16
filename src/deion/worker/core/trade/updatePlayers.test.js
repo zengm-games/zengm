@@ -4,13 +4,13 @@ import assert from "assert";
 import { trade } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { beforeTests, reset } from "./common.test";
+import { beforeTests, reset } from "./testHelpers";
 
 describe("worker/core/trade/updatePlayers", () => {
-    before(beforeTests);
+    beforeAll(beforeTests);
     afterEach(reset);
 
-    it("allow players from both teams to be set", async () => {
+    test("allow players from both teams to be set", async () => {
         await trade.create([
             {
                 tid: g.userTid,
@@ -49,7 +49,7 @@ describe("worker/core/trade/updatePlayers", () => {
         assert.deepEqual(teams[1].pids, otherPidsTest);
     });
 
-    it("filter out invalid players", async () => {
+    test("filter out invalid players", async () => {
         await trade.create([
             {
                 tid: g.userTid,
@@ -86,7 +86,7 @@ describe("worker/core/trade/updatePlayers", () => {
         assert.deepEqual(teams[1].pids, [3]);
     });
 
-    it("delete the other team's players, but not the user's players, from the trade when a new team is selected", async () => {
+    test("delete the other team's players, but not the user's players, from the trade when a new team is selected", async () => {
         await trade.create([
             {
                 tid: g.userTid,

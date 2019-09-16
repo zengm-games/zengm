@@ -1,17 +1,17 @@
 // @flow
 
 import assert from "assert";
-import { getDraftTids, loadTeamSeasons } from "./common.test";
+import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 
 describe("worker/core/draft/genOrder", () => {
-    before(loadTeamSeasons);
+    beforeAll(loadTeamSeasons);
 
-    it("schedule 60 draft picks", async () => {
+    test("schedule 60 draft picks", async () => {
         const draftTids = await getDraftTids();
         assert.equal(draftTids.length, 60);
     });
 
-    it("give the 3 teams with the lowest win percentage picks not lower than 6", async () => {
+    test("give the 3 teams with the lowest win percentage picks not lower than 6", async () => {
         const draftTids = await getDraftTids();
 
         const tids = [16, 28, 21]; // teams with lowest winp
@@ -22,7 +22,7 @@ describe("worker/core/draft/genOrder", () => {
         }
     });
 
-    it("give lottery team with better record than playoff teams a pick based on actual record for round 2", async () => {
+    test("give lottery team with better record than playoff teams a pick based on actual record for round 2", async () => {
         const draftTids = await getDraftTids();
 
         const pofteams = [23, 10, 18, 24, 14];
@@ -41,7 +41,7 @@ describe("worker/core/draft/genOrder", () => {
         }
     });
 
-    it("give reverse round 2 order for teams with the same record", async () => {
+    test("give reverse round 2 order for teams with the same record", async () => {
         const draftTids = await getDraftTids();
 
         const sameRec = [[3, 15, 25], [10, 18], [13, 26]];

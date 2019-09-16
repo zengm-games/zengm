@@ -7,11 +7,11 @@ import { createWithoutSaving } from "./create";
 
 describe("worker/core/league/create", () => {
     let leagueData;
-    before(() => {
+    beforeAll(() => {
         leagueData = createWithoutSaving("Test", 0, {}, 2015, false, 0);
     });
 
-    it("create all necessary object stores", () => {
+    test("create all necessary object stores", () => {
         assert.deepEqual(Object.keys(leagueData).sort(), [
             "awards",
             "draftLotteryResults",
@@ -33,7 +33,7 @@ describe("worker/core/league/create", () => {
         ]);
     });
 
-    it("initialize gameAttributes object store", async () => {
+    test("initialize gameAttributes object store", async () => {
         assert.equal(leagueData.gameAttributes.leagueName, "Test");
         assert.equal(leagueData.gameAttributes.phase, 0);
         assert.equal(
@@ -47,7 +47,7 @@ describe("worker/core/league/create", () => {
         assert.equal(Object.keys(leagueData.gameAttributes).length, 48);
     });
 
-    it("initialize teams object store", async () => {
+    test("initialize teams object store", async () => {
         const cids = leagueData.teams.map(t => t.cid);
         const dids = leagueData.teams.map(t => t.did);
 
@@ -70,21 +70,21 @@ describe("worker/core/league/create", () => {
         }
     });
 
-    it("initialize teamSeasons object store", async () => {
+    test("initialize teamSeasons object store", async () => {
         assert.equal(leagueData.teamSeasons.length, g.numTeams);
     });
 
-    it("initialize teamStats object store", async () => {
+    test("initialize teamStats object store", async () => {
         assert.equal(leagueData.teamStats.length, g.numTeams);
     });
 
-    it("initialize trade object store", async () => {
+    test("initialize trade object store", async () => {
         assert.equal(leagueData.trade.length, 1);
         assert.equal(leagueData.trade[0].rid, 0);
         assert.equal(leagueData.trade[0].teams.length, 2);
     });
 
-    it("initialize players object store", async () => {
+    test("initialize players object store", async () => {
         assert.equal(leagueData.players.length, 30 * 13 + 150 + 70 * 3);
     });
 });

@@ -1,16 +1,16 @@
 // @flow
 
 import assert from "assert";
-import { loadTeamSeasons } from "./common.test";
+import { loadTeamSeasons } from "./testHelpers";
 import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g } from "../../util";
 
 describe("worker/core/draft/updateChances", () => {
-    before(loadTeamSeasons);
+    beforeAll(loadTeamSeasons);
 
-    it("distribute combinations to teams with the same record", async () => {
+    test("distribute combinations to teams with the same record", async () => {
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "cid", "did"],
             seasonAttrs: ["winp", "playoffRoundsWon"],

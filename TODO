@@ -9,10 +9,13 @@ move most tests to node.js, except for the smoke test
   - flow
     - get rid of mocha types
     - add jest types
+  - go over stuff in src/deion/test
   - jest assert library
   - slow tests?
   - update readme about separate football tests - no more!
 - smoke test
+- remove deps
+- replace idb.league check in getCopies.teamSeasons with mockIDBLeague
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

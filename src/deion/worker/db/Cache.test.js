@@ -5,7 +5,7 @@ import { g } from "../util";
 import { idb } from ".";
 
 describe("worker/db/Cache", () => {
-    before(async () => {
+    beforeAll(async () => {
         testHelpers.resetG();
 
         await testHelpers.resetCache({
@@ -17,18 +17,18 @@ describe("worker/db/Cache", () => {
     });
 
     describe("get", () => {
-        it("retrieve an object", async () => {
+        test("retrieve an object", async () => {
             const p = (await idb.cache.players.getAll())[0];
             const p2 = await idb.cache.players.get(p.pid);
             assert.equal(p.pid, p2.pid);
         });
-        it("return undefined for invalid ID", async () => {
+        test("return undefined for invalid ID", async () => {
             const p = await idb.cache.players.get(-1);
             assert.equal(typeof p, "undefined");
         });
 
         for (const status of ["filling", "flushing"]) {
-            it(`wait until ${status} complete before resolving query`, async () => {
+            test(`wait until ${status} complete before resolving query`, async () => {
                 const p = (await idb.cache.players.getAll())[0];
 
                 idb.cache._status = status;

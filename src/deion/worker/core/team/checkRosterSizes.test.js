@@ -8,7 +8,7 @@ import { idb } from "../../db";
 import { g } from "../../util";
 
 describe("worker/core/team/checkRosterSizes", () => {
-    before(() => {
+    beforeAll(() => {
         testHelpers.resetG();
 
         // Two teams: user and AI
@@ -35,7 +35,7 @@ describe("worker/core/team/checkRosterSizes", () => {
         });
     };
 
-    it("add players to AI team under roster limit without returning error message", async () => {
+    test("add players to AI team under roster limit without returning error message", async () => {
         await resetCacheWithPlayers({
             "0": 10,
             "1": 9,
@@ -53,7 +53,7 @@ describe("worker/core/team/checkRosterSizes", () => {
         assert.equal(players.length, g.minRosterSize);
     });
 
-    it("return error message when AI team needs to add a player but there is none", async () => {
+    test("return error message when AI team needs to add a player but there is none", async () => {
         await resetCacheWithPlayers({ "0": 10, "1": 9 });
 
         // Confirm roster size under limit
@@ -64,7 +64,7 @@ describe("worker/core/team/checkRosterSizes", () => {
         );
     });
 
-    it("remove players to AI team over roster limit without returning error message", async () => {
+    test("remove players to AI team over roster limit without returning error message", async () => {
         await resetCacheWithPlayers({ "0": 10, "1": 24 });
 
         // Confirm roster size over limit
@@ -78,7 +78,7 @@ describe("worker/core/team/checkRosterSizes", () => {
         assert.equal(players.length, 15);
     });
 
-    it("return error message when user team is under roster limit", async () => {
+    test("return error message when user team is under roster limit", async () => {
         await resetCacheWithPlayers({
             "0": 9,
             "1": 10,
@@ -104,7 +104,7 @@ describe("worker/core/team/checkRosterSizes", () => {
         assert.equal(players.length, 9);
     });
 
-    it("return error message when user team is over roster limit", async () => {
+    test("return error message when user team is over roster limit", async () => {
         await resetCacheWithPlayers({ "0": 24, "1": 10 });
 
         // Confirm roster size over limit

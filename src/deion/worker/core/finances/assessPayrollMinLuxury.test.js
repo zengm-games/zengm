@@ -7,7 +7,7 @@ import { idb } from "../../db";
 import { g } from "../../util";
 
 describe("worker/core/finances/assessPayrollMinLuxury", () => {
-    it("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
+    test("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
         testHelpers.resetG();
 
         // Three teams. One above the luxury payroll, one below the minimum payroll, and one in between.

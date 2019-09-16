@@ -5,9 +5,9 @@ move most tests to node.js, except for the smoke test
     - "testEnvironment": "node",
     - coverage
     - asserts actually working?
-    - eslint
     - flow
     - jest assert library
+    - slow tests?
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

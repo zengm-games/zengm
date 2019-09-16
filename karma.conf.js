@@ -14,17 +14,7 @@ const build = require("./tools/buildFuncs");
 
 const sport = build.getSport();
 
-const files = [
-    "src/deion/test/index.js",
-    `src/${sport}/worker/index.js`, // For overrides
-    //    `src/${sport}/**/*.test.js`,
-    //    "src/deion/test/**/*.js",
-];
-
-if (sport === "basketball") {
-    // Some deion tests assume basketball
-    files.push("src/deion/**/*.test.js");
-}
+const files = ["src/deion/test/index.js", "src/deion/test/smoke.js"];
 
 module.exports = function(config) {
     config.set({

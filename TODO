@@ -14,7 +14,7 @@ football too many players retire
 
 move to rollup
 - karma
-  - gets crashy when i put in too many tests
+  - need alias to run it for football, since i have to import overrides right in smoke.js
 - share config between karma files and build-js.js
   - rollup.config.js?
 - source maps

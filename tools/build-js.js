@@ -61,10 +61,18 @@ const sport = build.getSport();
                         "react-dom": Object.keys(ReactDOM),
                     },
                 }),
-                resolve(),
+                resolve({
+                    preferBuiltins: true,
+                }),
                 globals(),
                 builtins(),
             ],
+            onwarn(warning, rollupWarn) {
+                // I don't like this, but there's too much damn baggage
+                if (warning.code !== "CIRCULAR_DEPENDENCY") {
+                    rollupWarn(warning);
+                }
+            },
         });
 
         await bundle.write({

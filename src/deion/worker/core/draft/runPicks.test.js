@@ -6,7 +6,7 @@ import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { getDraftTids, loadTeamSeasons } from "./common.test";
+import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 
 const testRunPicks = async (numNow, numTotal) => {
     const pids = await draft.runPicks(false);
@@ -41,7 +41,7 @@ const testDraftUser = async round => {
 };
 
 describe("worker/core/draft/runPicks", () => {
-    before(async () => {
+    beforeAll(async () => {
         await loadTeamSeasons();
         idb.league = testHelpers.mockIDBLeague();
 
@@ -51,27 +51,27 @@ describe("worker/core/draft/runPicks", () => {
         userPick1 = draftTids.indexOf(g.userTid) + 1;
         userPick2 = draftTids.lastIndexOf(g.userTid) + 1;
     });
-    after(() => {
+    afterAll(() => {
         idb.league = undefined;
     });
 
-    it("draft players before the user's team first round pick", () => {
+    test("draft players before the user's team first round pick", () => {
         return testRunPicks(userPick1 - 1, userPick1 - 1);
     });
 
-    it("then allow the user to draft in the first round", () => {
+    test("then allow the user to draft in the first round", () => {
         return testDraftUser(1);
     });
 
-    it("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
+    test("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
         return testRunPicks(userPick2 - userPick1 - 1, userPick2 - 1);
     });
 
-    it("then allow the user to draft in the second round", () => {
+    test("then allow the user to draft in the second round", () => {
         return testDraftUser(2);
     });
 
-    it("when called again after the user drafts, should draft more players to finish the draft", () => {
+    test("when called again after the user drafts, should draft more players to finish the draft", () => {
         const numAfter = 60 - userPick2;
         return testRunPicks(numAfter, userPick2 + numAfter);
     });

@@ -66,49 +66,53 @@ const defaultGameAttributes: GameAttributes = {
     playersRefuseToNegotiate: true,
 };
 
+// Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
+export const footballOverrides =
+    process.env.NODE_ENV === "test" || process.env.SPORT === "football"
+        ? {
+              numGames: 16,
+              quarterLength: 15,
+              confs: [
+                  { cid: 0, name: "American Conference" },
+                  { cid: 1, name: "National Conference" },
+              ],
+              divs: [
+                  { did: 0, cid: 0, name: "East" },
+                  { did: 1, cid: 0, name: "North" },
+                  { did: 2, cid: 0, name: "South" },
+                  { did: 3, cid: 0, name: "West" },
+                  { did: 4, cid: 1, name: "East" },
+                  { did: 5, cid: 1, name: "North" },
+                  { did: 6, cid: 1, name: "South" },
+                  { did: 7, cid: 1, name: "West" },
+              ],
+              numGamesPlayoffSeries: [1, 1, 1, 1],
+              numPlayoffByes: 4,
+              stopOnInjuryGames: 1,
+              hardCap: true,
+              ties: true,
+              draftType: "noLottery",
+              numDraftRounds: 8,
+              defaultStadiumCapacity: 70000,
+              salaryCap: 200000,
+              minPayroll: 150000,
+              minContract: 500,
+              maxContract: 30000,
+              minRosterSize: 40,
+              maxRosterSize: 53,
+
+              // Arbitrary - 2 injuries per game. Divide over 1000 plays. Bump this up arbitrarily for some reason, wasn't getting 2 per game.
+              injuryRate: (2 / 1000 / 22) * 30,
+
+              // The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season. With roughly 20 days in a season, the default is about one death every 50 years.
+              tragicDeathRate: 1 / (20 * 50),
+
+              sonRate: 0.005,
+              brotherRate: 0.005,
+          }
+        : {};
+
 if (process.env.SPORT === "football") {
-    const footballOverrides = {
-        numGames: 16,
-        quarterLength: 15,
-        confs: [
-            { cid: 0, name: "American Conference" },
-            { cid: 1, name: "National Conference" },
-        ],
-        divs: [
-            { did: 0, cid: 0, name: "East" },
-            { did: 1, cid: 0, name: "North" },
-            { did: 2, cid: 0, name: "South" },
-            { did: 3, cid: 0, name: "West" },
-            { did: 4, cid: 1, name: "East" },
-            { did: 5, cid: 1, name: "North" },
-            { did: 6, cid: 1, name: "South" },
-            { did: 7, cid: 1, name: "West" },
-        ],
-        numGamesPlayoffSeries: [1, 1, 1, 1],
-        numPlayoffByes: 4,
-        stopOnInjuryGames: 1,
-        hardCap: true,
-        ties: true,
-        draftType: "noLottery",
-        numDraftRounds: 8,
-        defaultStadiumCapacity: 70000,
-        salaryCap: 200000,
-        minPayroll: 150000,
-        minContract: 500,
-        maxContract: 30000,
-        minRosterSize: 40,
-        maxRosterSize: 53,
-
-        // Arbitrary - 2 injuries per game. Divide over 1000 plays. Bump this up arbitrarily for some reason, wasn't getting 2 per game.
-        injuryRate: (2 / 1000 / 22) * 30,
-
-        // The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season. With roughly 20 days in a season, the default is about one death every 50 years.
-        tragicDeathRate: 1 / (20 * 50),
-
-        sonRate: 0.005,
-        brotherRate: 0.005,
-    };
-
     Object.assign(defaultGameAttributes, footballOverrides);
 }
 

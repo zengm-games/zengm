@@ -6,15 +6,15 @@ import testHelpers from "../../../test/helpers";
 import season from "./index";
 
 describe("worker/core/season/genPlayoffSeries", () => {
-    before(() => {
+    beforeAll(() => {
         testHelpers.resetG();
     });
 
-    after(() => {
+    afterAll(() => {
         testHelpers.resetG();
     });
 
-    it("split teams by conference if there are two conferences", () => {
+    test("split teams by conference if there are two conferences", () => {
         const teams = [
             { tid: 0, cid: 0 },
             { tid: 2, cid: 0 },
@@ -37,7 +37,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
         assert.equal(series[0].length, 2);
     });
 
-    it("pick teams regardless of conference if there are not two conferences", () => {
+    test("pick teams regardless of conference if there are not two conferences", () => {
         const teams = [
             { tid: 0, cid: 0 },
             { tid: 2, cid: 0 },
@@ -61,7 +61,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
         assert.equal(series[0].length, 2);
     });
 
-    it("split teams by conference if there are two conferences, including byes", () => {
+    test("split teams by conference if there are two conferences, including byes", () => {
         const teams = [
             { tid: 0, cid: 0 },
             { tid: 2, cid: 0 },
@@ -97,7 +97,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
         }
     });
 
-    it("pick teams regardless of conference if there are not two conferences, including byes", () => {
+    test("pick teams regardless of conference if there are not two conferences, including byes", () => {
         const teams = [
             { tid: 0, cid: 0 },
             { tid: 2, cid: 0 },
@@ -134,7 +134,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
         }
     });
 
-    it("handle 16 teams", () => {
+    test("handle 16 teams", () => {
         const teams = [
             { tid: 0, cid: 0 },
             { tid: 1, cid: 0 },

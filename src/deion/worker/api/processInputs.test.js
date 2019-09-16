@@ -5,7 +5,7 @@ import { g } from "../util";
 import { validateAbbrev, validateSeason } from "./processInputs";
 
 describe("worker/api/processInputs", () => {
-    before(() => {
+    beforeAll(() => {
         g.userTid = 4;
         g.season = 2009;
         g.teamAbbrevsCache = [
@@ -108,12 +108,12 @@ describe("worker/api/processInputs", () => {
 
     // Relies on g.*Cache being populated
     describe("validateAbbrev", () => {
-        it("return team ID and abbrev when given valid abbrev", () => {
+        test("return team ID and abbrev when given valid abbrev", () => {
             const out = validateAbbrev("DAL");
             assert.equal(out[0], 6);
             assert.equal(out[1], "DAL");
         });
-        it("return user team ID and abbrev on invalid input", () => {
+        test("return user team ID and abbrev on invalid input", () => {
             let out = validateAbbrev("fuck");
             assert.equal(out[0], 4);
             assert.equal(out[1], "CIN");
@@ -124,11 +124,11 @@ describe("worker/api/processInputs", () => {
     });
 
     describe("validateSeason", () => {
-        it("return input season when given a valid season", () => {
+        test("return input season when given a valid season", () => {
             assert.equal(validateSeason(2008), 2008);
             assert.equal(validateSeason("2008"), 2008);
         });
-        it("return current season on invalid input", () => {
+        test("return current season on invalid input", () => {
             assert.equal(validateSeason("fuck"), 2009);
             assert.equal(validateSeason(), 2009);
         });

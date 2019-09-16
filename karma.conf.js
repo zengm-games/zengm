@@ -14,7 +14,7 @@ const build = require("./tools/buildFuncs");
 
 const sport = build.getSport();
 
-const files = ["src/deion/test/index.js", "src/deion/test/smoke.js"];
+const files = ["src/deion/test/mocha.js", "src/deion/test/smoke.js"];
 
 module.exports = function(config) {
     config.set({
@@ -92,8 +92,6 @@ module.exports = function(config) {
 
         browserNoActivityTimeout: 15 * 60 * 1000, // 15 minutes
         browserDisconnectTimeout: 15 * 60 * 1000, // 15 minutes
-
-        reporters: ["mocha"],
 
         browsers: ["ChromeHeadless", "FirefoxHeadless"],
     });

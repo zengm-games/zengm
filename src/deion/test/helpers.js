@@ -3,6 +3,7 @@
 import { Cache, idb } from "../worker/db";
 import { STORES } from "../worker/db/Cache";
 import { defaultGameAttributes, g, helpers } from "../worker/util";
+import { footballOverrides } from "../worker/util/defaultGameAttributes";
 import type { Store } from "../worker/db/Cache";
 
 const mockIDBLeague = (): any => {
@@ -96,7 +97,13 @@ const resetG = () => {
     const season = 2016;
     const teams = helpers.getTeamsDefault();
 
-    Object.assign(g, defaultGameAttributes, {
+    Object.assign(g, defaultGameAttributes);
+
+    if (process.env.SPORT === "football") {
+        Object.assign(g, footballOverrides);
+    }
+
+    Object.assign(g, {
         userTid: 0,
         userTids: [0],
         season,

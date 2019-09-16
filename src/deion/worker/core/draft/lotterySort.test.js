@@ -6,7 +6,7 @@ import lotterySort from "./lotterySort";
 import { g } from "../../util";
 
 describe("worker/core/draft/lotterySort", () => {
-    it("projects playoff appearances when sorting for a projected lottery", async () => {
+    test("projects playoff appearances when sorting for a projected lottery", async () => {
         testHelpers.resetG();
         g.numGamesPlayoffSeries = [7];
 

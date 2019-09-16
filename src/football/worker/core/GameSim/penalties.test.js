@@ -4,8 +4,12 @@ import assert from "assert";
 import penalties from "./penalties";
 
 describe("football/worker/core/GameSim", () => {
+    beforeAll(() => {
+        process.env.SPORT = "football";
+    });
+
     describe("penalties", () => {
-        it("posOdds sum to 1", () => {
+        test("posOdds sum to 1", () => {
             for (const pen of penalties) {
                 if (!pen.posOdds || Object.keys(pen.posOdds).length === 0) {
                     continue;

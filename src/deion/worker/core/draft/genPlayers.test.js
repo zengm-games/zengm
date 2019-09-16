@@ -8,7 +8,7 @@ import { g } from "../../util";
 import { draft } from "..";
 
 describe("worker/core/draft/genPlayers", () => {
-    it("generate 70 players for the draft", async () => {
+    test("generate 70 players for the draft", async () => {
         testHelpers.resetG();
         await testHelpers.resetCache();
         idb.league = testHelpers.mockIDBLeague();

@@ -5,14 +5,14 @@ import { PLAYER } from "../../../common";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { beforeTests, givePlayerMinContract } from "./common.test";
+import { beforeTests, givePlayerMinContract } from "./testHelpers";
 
 describe("worker/core/contractNegotiation/create", () => {
-    before(beforeTests);
+    beforeAll(beforeTests);
 
     afterEach(() => idb.cache.negotiations.clear());
 
-    it("start a negotiation with a free agent", async () => {
+    test("start a negotiation with a free agent", async () => {
         const pid = 0;
 
         await givePlayerMinContract(pid);
@@ -29,7 +29,7 @@ describe("worker/core/contractNegotiation/create", () => {
         assert.equal(negotiations[0].pid, pid);
     });
 
-    it("fail to start a negotiation with anyone but a free agent", async () => {
+    test("fail to start a negotiation with anyone but a free agent", async () => {
         const pid = 2;
 
         await givePlayerMinContract(pid);
@@ -41,7 +41,7 @@ describe("worker/core/contractNegotiation/create", () => {
         assert.equal(negotiations.length, 0);
     });
 
-    it("only allow one concurrent negotiation if resigning is false", async () => {
+    test("only allow one concurrent negotiation if resigning is false", async () => {
         const pid1 = 0;
         const pid2 = 1;
 
@@ -71,7 +71,7 @@ describe("worker/core/contractNegotiation/create", () => {
         assert.equal(negotiations[0].pid, pid2);
     });
 
-    it("allow multiple concurrent negotiations if resigning is true", async () => {
+    test("allow multiple concurrent negotiations if resigning is true", async () => {
         const pid1 = 0;
         const pid2 = 1;
 
@@ -103,7 +103,7 @@ describe("worker/core/contractNegotiation/create", () => {
     });
 
     // The use of txs here might cause race conditions
-    it("don't start negotiation if there are already 15 players on the user's roster, unless resigning is true", async () => {
+    test("don't start negotiation if there are already 15 players on the user's roster, unless resigning is true", async () => {
         const pid1 = 0;
         const pid2 = 1;
 

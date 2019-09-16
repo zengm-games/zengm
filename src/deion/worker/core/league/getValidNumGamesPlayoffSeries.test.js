@@ -4,7 +4,7 @@ import assert from "assert";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 
 describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
-    it("handles normal case", async () => {
+    test("handles normal case", async () => {
         const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
             [5, 7, 7, 7],
             undefined,
@@ -13,7 +13,7 @@ describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
         assert.deepEqual(numGamesPlayoffSeries, [5, 7, 7, 7]);
     });
 
-    it("handles lengthening playoffs when numPlayoffRounds is set", async () => {
+    test("handles lengthening playoffs when numPlayoffRounds is set", async () => {
         const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
             [3, 5],
             3,
@@ -22,7 +22,7 @@ describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
         assert.deepEqual(numGamesPlayoffSeries, [3, 5, 5]);
     });
 
-    it("handles truncating playoffs when numPlayoffRounds is set", async () => {
+    test("handles truncating playoffs when numPlayoffRounds is set", async () => {
         const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
             [5, 7],
             1,
@@ -31,7 +31,7 @@ describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
         assert.deepEqual(numGamesPlayoffSeries, [5]);
     });
 
-    it("handles truncating playoffs if not enough teams", async () => {
+    test("handles truncating playoffs if not enough teams", async () => {
         const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
             [5, 7, 7, 7],
             undefined,

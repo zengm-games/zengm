@@ -100,17 +100,17 @@ them on the entire codebase, run
     yarn run lint
 
 Integration and unit tests are bunched together in the `js/test` folder.
-Coverage is not great. They can be run from the command line in Karma with
+Coverage is not great. They can be run from the command line with
 
     yarn test
 
-or
+There is also a single end-to-end test which creates a league and simulates a
+season. To execute the end-to-end test, run
 
-    yarn run test-watch
+    yarn run test-e2e
 
-By default, this runs the generic tests and the basketball tests. For football
-tests, stick `SPORT=football ` in front. Eventually both sports should happen
-from one command. 
+For the end-to-end test, by default it is basketball. If you want it to do
+football, stick `SPORT=football ` in front.
 
 ### Code Overview
 

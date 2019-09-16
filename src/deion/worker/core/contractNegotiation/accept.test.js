@@ -4,14 +4,14 @@ import assert from "assert";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { beforeTests, givePlayerMinContract } from "./common.test";
+import { beforeTests, givePlayerMinContract } from "./testHelpers";
 
 describe("worker/core/contractNegotiation/accept", () => {
-    before(beforeTests);
+    beforeAll(beforeTests);
 
     afterEach(() => idb.cache.negotiations.clear());
 
-    it("no signing non-minimum contracts that cause team to exceed the salary cap", async () => {
+    test("no signing non-minimum contracts that cause team to exceed the salary cap", async () => {
         const pid = 1;
 
         await givePlayerMinContract(pid);

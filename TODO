@@ -1,3 +1,7 @@
+move most tests to node.js, except for the smoke test
+- then revisit rollup3 branch
+- jest is slower, why?
+
 reactstrap upgrade notes
 - v8 has problems with popovers:
   - https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/

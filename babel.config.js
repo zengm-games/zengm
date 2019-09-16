@@ -16,5 +16,10 @@ module.exports = api => {
             "@babel/plugin-transform-async-to-generator",
             "@babel/plugin-proposal-object-rest-spread",
         ],
+        env: {
+            test: {
+                plugins: ["@babel/plugin-transform-modules-commonjs"],
+            },
+        },
     };
 };

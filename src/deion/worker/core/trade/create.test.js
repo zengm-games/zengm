@@ -4,7 +4,7 @@ import assert from "assert";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { trade } from "..";
-import { beforeTests, reset } from "./common.test";
+import { beforeTests, reset } from "./testHelpers";
 
 const testCreateTrade = async (otherTidTest, userPidsTest, otherPidsTest) => {
     const { teams } = await idb.cache.trade.get(0);
@@ -14,10 +14,10 @@ const testCreateTrade = async (otherTidTest, userPidsTest, otherPidsTest) => {
 };
 
 describe("worker/core/trade/create", () => {
-    before(beforeTests);
+    beforeAll(beforeTests);
     afterEach(reset);
 
-    it("create trade with team ID", async () => {
+    test("create trade with team ID", async () => {
         await trade.create([
             {
                 tid: g.userTid,
@@ -37,7 +37,7 @@ describe("worker/core/trade/create", () => {
         await testCreateTrade(1, [], []);
     });
 
-    it("create trade with player ID", async () => {
+    test("create trade with player ID", async () => {
         await trade.create([
             {
                 tid: g.userTid,

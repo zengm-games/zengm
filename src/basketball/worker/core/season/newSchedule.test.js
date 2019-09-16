@@ -19,8 +19,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
         });
 
         test("when numTeams*numGames is even, everyone gets a full schedule", () => {
-            for (let numGames = 2; numGames < 100; numGames += 1) {
-                for (let numTeams = 2; numTeams < 100; numTeams += 1) {
+            for (let numGames = 2; numGames < 50; numGames += 1) {
+                for (let numTeams = 2; numTeams < 25; numTeams += 1) {
                     if ((numTeams * numGames) % 2 === 1) {
                         continue;
                     }
@@ -47,8 +47,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
         });
 
         test("when numTeams*numGames is odd, one team is a game short", () => {
-            for (let numGames = 2; numGames < 100; numGames += 1) {
-                for (let numTeams = 2; numTeams < 100; numTeams += 1) {
+            for (let numGames = 2; numGames < 50; numGames += 1) {
+                for (let numTeams = 2; numTeams < 25; numTeams += 1) {
                     if ((numTeams * numGames) % 2 === 0) {
                         continue;
                     }

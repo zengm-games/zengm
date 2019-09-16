@@ -6,15 +6,20 @@ import testHelpers from "../../../../deion/test/helpers";
 import newSchedule, { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
 
-const defaultTeams = helpers.getTeamsDefault();
+let defaultTeams;
 
 describe("football/worker/core/season/newSchedule", () => {
+    beforeAll(() => {
+        process.env.SPORT = "football";
+        defaultTeams = helpers.getTeamsDefault();
+    });
+
     describe("newScheduleCrappy", () => {
         beforeEach(() => {
             testHelpers.resetG();
         });
 
-        it("when numTeams*numGames is even, everyone gets a full schedule", () => {
+        test("when numTeams*numGames is even, everyone gets a full schedule", () => {
             for (let numGames = 2; numGames < 100; numGames += 1) {
                 for (let numTeams = 2; numTeams < 100; numTeams += 1) {
                     if ((numTeams * numGames) % 2 === 1) {
@@ -42,7 +47,7 @@ describe("football/worker/core/season/newSchedule", () => {
             }
         });
 
-        it("when numTeams*numGames is odd, one team is a game short", () => {
+        test("when numTeams*numGames is odd, one team is a game short", () => {
             for (let numGames = 2; numGames < 100; numGames += 1) {
                 for (let numTeams = 2; numTeams < 100; numTeams += 1) {
                     if ((numTeams * numGames) % 2 === 0) {
@@ -81,15 +86,15 @@ describe("football/worker/core/season/newSchedule", () => {
     });
 
     describe("newScheduleDefault", () => {
-        before(() => {
+        beforeAll(() => {
             testHelpers.resetG();
         });
 
-        it("schedule 256 games (16 each for 32 teams)", () => {
+        test("schedule 256 games (16 each for 32 teams)", () => {
             assert.equal(newSchedule(defaultTeams).length, 256);
         });
 
-        it("schedule 8 home games and 8 away games for each team", () => {
+        test("schedule 8 home games and 8 away games for each team", () => {
             const tids = newSchedule(defaultTeams);
 
             const home = Array(g.numTeams).fill(0); // Number of home games for each team
@@ -106,7 +111,7 @@ describe("football/worker/core/season/newSchedule", () => {
             }
         });
 
-        it("schedule each team one home game against every team in the same division", () => {
+        test("schedule each team one home game against every team in the same division", () => {
             const tids = newSchedule(defaultTeams);
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)

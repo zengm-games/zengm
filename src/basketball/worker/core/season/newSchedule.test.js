@@ -6,9 +6,13 @@ import testHelpers from "../../../../deion/test/helpers";
 import newSchedule, { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
 
-const defaultTeams = helpers.getTeamsDefault();
+let defaultTeams;
 
 describe("basketball/worker/core/season/newSchedule", () => {
+    beforeAll(() => {
+        defaultTeams = helpers.getTeamsDefault();
+    });
+
     describe("newScheduleCrappy", () => {
         beforeEach(() => {
             testHelpers.resetG();

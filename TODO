@@ -1,13 +1,16 @@
 move most tests to node.js, except for the smoke test
 - then revisit rollup3 branch
-- jest, ava, or mocha?
-  - try jest
-    - "testEnvironment": "node",
-    - coverage
-    - asserts actually working?
-    - flow
-    - jest assert library
-    - slow tests?
+- try jest
+  - "testEnvironment": "node",
+  - coverage
+  - asserts actually working?
+  - flow
+    - get rid of mocha types
+    - add jest types
+  - jest assert library
+  - slow tests?
+  - update readme about separate football tests - no more!
+- smoke test
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

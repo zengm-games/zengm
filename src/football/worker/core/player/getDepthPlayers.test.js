@@ -4,7 +4,11 @@ import assert from "assert";
 import getDepthPlayers from "./getDepthPlayers";
 
 describe("football/worker/core/player/getDepthPlayers", () => {
-    it("works", () => {
+    beforeAll(() => {
+        process.env.SPORT = "football";
+    });
+
+    test("works", () => {
         const depth = {
             QB: [1, 2, 3],
             RB: [1],

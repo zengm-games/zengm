@@ -18,9 +18,10 @@ const sport = build.getSport();
             });
 
             await bundle.write({
-                name,
                 file: `build/gen/${name}-${rev}.js`,
                 format: "iife",
+                indent: false,
+                name,
                 sourcemap: true,
             });
         }),

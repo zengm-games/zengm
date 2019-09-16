@@ -18,8 +18,10 @@ for (const name of ["ui", "worker"]) {
             name,
             file,
             format: "iife",
+            indent: false,
             sourcemap: true,
         },
+        treeshake: false,
     });
 
     let startTime;

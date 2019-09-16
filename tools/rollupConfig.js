@@ -77,5 +77,8 @@ module.exports = nodeEnv => {
                 rollupWarn(warning);
             }
         },
+        watch: {
+            chokidar: true,
+        },
     };
 };

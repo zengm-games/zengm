@@ -30,6 +30,7 @@ module.exports = {
         ...rollupConfig("test"),
         output: {
             format: "iife",
+            indent: false,
             name: "bbgm",
             sourcemap: true,
         },

@@ -1,3 +1,6 @@
+move most tests to node.js, except for the smoke test
+- then revisit rollup3 branch
+
 reactstrap upgrade notes
 - v8 has problems with popovers:
   - https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/
@@ -11,19 +14,6 @@ some indication of if a clutch play occurred in the playoffs or finals. Could ad
 football OL with 49 height listed as 5'7"
 
 football too many players retire
-
-move to rollup
-- karma
-- blacklist
-- watch
-- karma
-- karma-browserstack
-- rollup-plugin-terser
-- source maps
-- remove rollup-plugin-node-builtins
-- require of names json
-  - could use "replace" to rewrite?
-- remove unused browserify packages
 
 code splitting: html2canvas and ajv are all big things that are rarely used
 

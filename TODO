@@ -14,6 +14,9 @@ football too many players retire
 
 move to rollup
 - karma
+  - gets crashy when i put in too many tests
+- share config between karma files and build-js.js
+  - rollup.config.js?
 - source maps
 - blacklist
 - watch

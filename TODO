@@ -7,6 +7,14 @@ move most tests to node.js, except for the smoke test
   - slow tests?
   - update readme about separate football tests - no more!
 - smoke test
+  - local
+  - browserstack
+  - selenium seems like best choice (stable, cross browser, browserstack)
+    - test-e2e command
+    - browserstack: https://www.browserstack.com/docs?product=automate
+    - headless: https://stackoverflow.com/questions/53657215/running-selenium-with-headless-chrome-webdriver
+  - could use karma still... but then i still need to use karma :)
+    - maybe it wouldn't be so bad to just run the smoke test only?
 - remove deps, flow-typed mocha, etc
 
 reactstrap upgrade notes

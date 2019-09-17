@@ -1,6 +1,6 @@
 // @flow
 
-import generateFace from "facesjs/build/commonjs/generate";
+import generateFace from "facesjs/build/esmodules/generate";
 import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";

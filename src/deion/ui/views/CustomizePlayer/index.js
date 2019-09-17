@@ -1,6 +1,6 @@
-import convertFromV1 from "facesjs/build/commonjs/convertFromV1";
-import generateFace from "facesjs/build/commonjs/generate";
-import svgs from "facesjs/build/commonjs/svgs";
+import convertFromV1 from "facesjs/build/esmodules/convertFromV1";
+import generateFace from "facesjs/build/esmodules/generate";
+import svgs from "facesjs/build/esmodules/svgs";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";

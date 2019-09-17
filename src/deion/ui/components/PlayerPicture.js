@@ -1,6 +1,6 @@
 // @flow
 
-import display from "facesjs/build/commonjs/display";
+import display from "facesjs/build/esmodules/display";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 

@@ -1,7 +1,3 @@
-move most tests to node.js, except for the smoke test
-- then revisit rollup3 branch
-- jest is slower, why?
-
 reactstrap upgrade notes
 - v8 has problems with popovers:
   - https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/
@@ -17,10 +13,8 @@ football OL with 49 height listed as 5'7"
 football too many players retire
 
 move to rollup
-- karma alias to run it for football, since i have to import overrides right in smoke.js
-- remove rollup-plugin-node-builtins
-- remove unused browserify packages
 - somehow fix alias pointing right to json
+  - make minimal reproduction
 - get rid of rollup-plugin-node-builtins and rollup-plugin-node-globals
 - https://github.com/btd/rollup-plugin-visualizer
 - confirm old browsers still work

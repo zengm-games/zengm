@@ -6,7 +6,8 @@ import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
 import { g, local } from "../worker/util";
 
-import "../../basketball/worker"; // For overrides
+// eslint-disable-next-line
+import "smoke-test-overrides"; // For overrides
 
 describe("Smoke Tests", () => {
     let intervalID;

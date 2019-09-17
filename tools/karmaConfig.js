@@ -1,6 +1,22 @@
+const alias = require("rollup-plugin-alias");
+const build = require("./buildFuncs");
 const rollupConfig = require("./rollupConfig");
 
 const files = ["src/deion/test/mocha.js", "src/deion/test/smoke.js"];
+
+const sport = build.getSport();
+
+const rollupConfigTemp = rollupConfig("test");
+rollupConfigTemp.plugins.unshift(
+    alias({
+        entries: [
+            {
+                find: "smoke-test-overrides",
+                replacement: `./../../${sport}/worker/index.js`,
+            },
+        ],
+    }),
+);
 
 module.exports = {
     frameworks: ["mocha", "source-map-support"],
@@ -27,7 +43,7 @@ module.exports = {
     singleRun: true,
 
     rollupPreprocessor: {
-        ...rollupConfig("test"),
+        ...rollupConfigTemp,
         output: {
             format: "iife",
             indent: false,

@@ -106,7 +106,7 @@ const updatePlayMenu = async () => {
     } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         // Offseason - pre draft
         keys =
-            g.draftType !== "noLottery" && g.draftType !== "randomy"
+            g.draftType !== "noLottery" && g.draftType !== "random"
                 ? ["viewDraftLottery", "untilDraft"]
                 : ["untilDraft"];
     } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {

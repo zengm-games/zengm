@@ -3023,10 +3023,10 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-facesjs@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-2.0.2.tgz#fae52c98d2a52aa3b3508f0fd04802c136dd9ee1"
-  integrity sha512-MTHOUmwraMi+pMZTvUZW39e+Ds95ZOMJwUdrk8e3Yj0NhHBuZlYHHnwfOIeC0QE77mZeiNuDOBAuKV7KgZe49g==
+facesjs@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/facesjs/-/facesjs-2.0.3.tgz#9e4f357b0739259d4b0581409a84962a3f28b301"
+  integrity sha512-Zfx/Ntt6hC5j4+wM+7n6AGqnEzqyzyXX4X+MeWgtfomt627Yr2cxPqyq3FyrNrjyzJeaJ4Znb7GifTVZSy+A5g==
   dependencies:
     ws "^7.1.2"
 

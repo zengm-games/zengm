@@ -123,7 +123,7 @@ const augmentPartialPlayer = (
 
     // Fix always-missing info
     const offset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
-    if (p.tid === PLAYER.UNDRAFTED) {
+    if (p.tid === PLAYER.UNDRAFTED && g.phase !== PHASE.FANTASY_DRAFT) {
         if (version === undefined || version <= 32) {
             p.ratings[0].season = g.season + offset;
             p.draft.year = p.ratings[0].season;
@@ -150,7 +150,7 @@ const augmentPartialPlayer = (
                 `Invalid tid ${PLAYER.UNDRAFTED_3} (in version 33 or higher, all undrafted players should have a tid of ${PLAYER.UNDRAFTED})`,
             );
         }
-    } else {
+    } else if (g.phase !== PHASE.FANTASY_DRAFT) {
         if (!p.ratings[0].hasOwnProperty("season")) {
             p.ratings[0].season = g.season;
         }

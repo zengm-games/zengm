@@ -1,3 +1,24 @@
+# all star game
+
+somehow schedule game marked as special
+
+new play menu states
+- before all star game: "Play Until All Star Game" option
+
+new phase text states:
+- when all star game is next: "All Star Weekend"
+
+pick players based on same formula as MVP
+
+pick captains as two top. randomize rest of teams
+
+in game log, viewable under a pseudo-team "All Star Game"
+
+all star and all star mvp awards
+- add to award records somehow? would need to be in awards obj early
+
+---
+
 reactstrap upgrade notes
 - v8 has problems with popovers:
   - https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/

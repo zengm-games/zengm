@@ -657,6 +657,7 @@ export const createWithoutSaving = (
     // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
     if (
         createUndrafted1 > 0 &&
+        g.phase !== PHASE.FANTASY_DRAFT &&
         (g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.RESIGN_PLAYERS)
     ) {
         const draftClass = draft.genPlayersWithoutSaving(

@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../common";
-import { draft } from "../core";
+import { draft, season } from "../core";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
@@ -31,6 +31,11 @@ const updatePlayMenu = async () => {
         day: { label: "One day" },
         week: { label: "One week" },
         month: { label: "One month" },
+        untilAllStarGame: { label: "Until all-star game" },
+        viewAllStarSelections: {
+            url: helpers.leagueUrl(["all_star"]),
+            label: "View All-Star selections",
+        },
         untilPlayoffs: { label: "Until playoffs" },
         untilEndOfRound: { label: "Until end of round" },
         throughPlayoffs: { label: "Through playoffs" },
@@ -90,11 +95,43 @@ const updatePlayMenu = async () => {
         g.phase === PHASE.REGULAR_SEASON ||
         g.phase === PHASE.AFTER_TRADE_DEADLINE
     ) {
+        const schedule = await season.getSchedule();
+        console.log(schedule);
+        const allStarScheduled = schedule.some(
+            ({ homeTid, awayTid }) => homeTid === -1 && awayTid === -1,
+        );
+        const allStarNext =
+            schedule.length > 0 &&
+            schedule[0].homeTid === -1 &&
+            schedule[0].awayTid === -1;
+
+        const untilAllStarGame = [];
+        if (allStarScheduled && !allStarNext) {
+            untilAllStarGame.push("untilAllStarGame");
+        }
+
         // Regular season - pre trading deadline
         if (process.env.SPORT === "basketball") {
-            keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
+            keys = [
+                "day",
+                "dayLive",
+                "week",
+                "month",
+                ...untilAllStarGame,
+                "untilPlayoffs",
+            ];
         } else {
-            keys = ["week", "weekLive", "month", "untilPlayoffs"];
+            keys = [
+                "week",
+                "weekLive",
+                "month",
+                ...untilAllStarGame,
+                "untilPlayoffs",
+            ];
+        }
+
+        if (allStarNext) {
+            keys.unshift("viewAllStarSelections");
         }
     } else if (g.phase === PHASE.PLAYOFFS) {
         // Playoffs

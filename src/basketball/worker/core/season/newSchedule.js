@@ -271,6 +271,12 @@ const newSchedule = (teams: Team[]): [number, number][] => {
     random.shuffle(days); // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
     tids = flatten(days);
 
+    // Add an all-star game
+    if (g.allStarGame) {
+        const ind = Math.round(0.6 * tids.length);
+        tids.splice(ind, 0, [-1, -1]);
+    }
+
     return tids;
 };
 

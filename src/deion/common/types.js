@@ -92,6 +92,7 @@ export type GameResults = any;
 
 export type GameAttributeKey =
     | "aiTrades"
+    | "allStarGame"
     | "autoDeleteOldBoxScores"
     | "brotherRate"
     | "confs"

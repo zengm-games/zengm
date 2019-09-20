@@ -10,7 +10,6 @@ workbox.precaching.precacheAndRoute([]);
 
 workbox.routing.registerNavigationRoute("/index.html", {
     blacklist: [
-        new RegExp("^/bbgm.appcache"),
         new RegExp("^/files"),
         new RegExp("^/fonts"),
         new RegExp("^/gen"),

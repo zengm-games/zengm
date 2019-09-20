@@ -236,9 +236,17 @@ const playMenu = {
         await playAmount("month", conditions);
     },
 
+    untilAllStarGame: async (conditions: Conditions) => {
+        if (g.phase < PHASE.PLAYOFFS) {
+            await updateStatus("Playing...");
+            const numDays = await season.getDaysLeftSchedule(true);
+            game.play(numDays, conditions);
+        }
+    },
+
     untilPlayoffs: async (conditions: Conditions) => {
         if (g.phase < PHASE.PLAYOFFS) {
-            await updateStatus("Playing..."); // For quick UI updating, before await
+            await updateStatus("Playing...");
             const numDays = await season.getDaysLeftSchedule();
             game.play(numDays, conditions);
         }
@@ -246,7 +254,7 @@ const playMenu = {
 
     untilEndOfRound: async (conditions: Conditions) => {
         if (g.phase === PHASE.PLAYOFFS) {
-            await updateStatus("Playing..."); // For quick UI updating, before await
+            await updateStatus("Playing...");
             const playoffSeries = await idb.cache.playoffSeries.get(g.season);
             local.playingUntilEndOfRound = true;
 

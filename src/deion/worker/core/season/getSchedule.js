@@ -22,12 +22,22 @@ const getSchedule = async (
         const tids = [];
         let i;
         for (i = 0; i < schedule.length; i++) {
-            if (
-                !tids.includes(schedule[i].homeTid) &&
-                !tids.includes(schedule[i].awayTid)
-            ) {
-                tids.push(schedule[i].homeTid);
-                tids.push(schedule[i].awayTid);
+            const { awayTid, homeTid } = schedule[i];
+
+            // All-Star Game
+            if (awayTid === -1 && homeTid === -1) {
+                if (tids.length > 0) {
+                    // Play all games up to the All-Star Game
+                    break;
+                } else {
+                    // Return just the All-Star Game
+                    return schedule.slice(0, 1);
+                }
+            }
+
+            if (!tids.includes(homeTid) && !tids.includes(awayTid)) {
+                tids.push(homeTid);
+                tids.push(awayTid);
             } else {
                 break;
             }

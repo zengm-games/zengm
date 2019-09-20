@@ -8,7 +8,7 @@ import getSchedule from "./getSchedule";
  * @memberOf core.season
  * @return {Promise} The number of days left in the schedule.
  */
-const getDaysLeftSchedule = async () => {
+const getDaysLeftSchedule = async (untilAllStarGame: boolean) => {
     let schedule = await getSchedule();
 
     let numDays = 0;
@@ -18,12 +18,19 @@ const getDaysLeftSchedule = async () => {
         const tids = [];
         let i;
         for (i = 0; i < schedule.length; i++) {
-            if (
-                !tids.includes(schedule[i].homeTid) &&
-                !tids.includes(schedule[i].awayTid)
-            ) {
-                tids.push(schedule[i].homeTid);
-                tids.push(schedule[i].awayTid);
+            const { awayTid, homeTid } = schedule[i];
+
+            // All-Star Game
+            if (awayTid === -1 && homeTid === -1) {
+                if (untilAllStarGame) {
+                    return numDays + 1;
+                }
+                break;
+            }
+
+            if (!tids.includes(homeTid) && !tids.includes(awayTid)) {
+                tids.push(homeTid);
+                tids.push(awayTid);
             } else {
                 break;
             }

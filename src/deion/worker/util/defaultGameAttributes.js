@@ -64,6 +64,7 @@ const defaultGameAttributes: GameAttributes = {
     numDraftRounds: 2,
     defaultStadiumCapacity: 25000,
     playersRefuseToNegotiate: true,
+    allStarGame: true,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -109,6 +110,7 @@ export const footballOverrides =
 
               sonRate: 0.005,
               brotherRate: 0.005,
+              allStarGame: false,
           }
         : {};
 

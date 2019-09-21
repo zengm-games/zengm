@@ -2,6 +2,7 @@
 
 import account from "./account";
 import accountUpdateCard from "./accountUpdateCard";
+import allStars from "./allStars";
 import awardsRecords from "./awardsRecords";
 import changes from "./changes";
 import customizePlayer from "./customizePlayer";
@@ -69,6 +70,7 @@ import watchList from "./watchList";
 export default {
     account,
     accountUpdateCard,
+    allStars,
     awardsRecords,
     changes,
     customizePlayer,

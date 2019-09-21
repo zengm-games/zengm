@@ -6,8 +6,9 @@ import React from "react";
 import { Dropdown, NewWindowLink } from "../components";
 import { helpers, setTitle } from "../util";
 
-const AllStars = ({ season }: { season: number }) => {
+const AllStars = ({ allStars }) => {
     setTitle("All Stars");
+    console.log("allStars", allStars);
 
     return (
         <>
@@ -29,8 +30,6 @@ const AllStars = ({ season }: { season: number }) => {
     );
 };
 
-AllStars.propTypes = {
-    season: PropTypes.number.isRequired,
-};
+AllStars.propTypes = {};
 
 export default AllStars;

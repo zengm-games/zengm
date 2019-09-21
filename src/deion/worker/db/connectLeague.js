@@ -228,6 +228,7 @@ const createLeague = upgradeDB => {
     upgradeDB.createObjectStore("teams", { keyPath: "tid" });
     upgradeDB.createObjectStore("trade", { keyPath: "rid" });
     upgradeDB.createObjectStore("draftLotteryResults", { keyPath: "season" });
+    upgradeDB.createObjectStore("allStars", { keyPath: "season" });
 
     eventStore.createIndex("season", "season", { unique: false });
     eventStore.createIndex("pids", "pids", { unique: false, multiEntry: true });
@@ -562,13 +563,16 @@ const migrateLeague = (upgradeDB, lid) => {
     if (upgradeDB.oldVersion <= 32) {
         upgrade33(upgradeDB);
     }
+    if (upgradeDB.oldVersion <= 33) {
+        upgradeDB.createObjectStore("allStars", { keyPath: "season" });
+    }
 
     // Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js)
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await backboard.open(`league${lid}`, 33, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 34, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB);
         } else {

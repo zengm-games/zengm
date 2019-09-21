@@ -34,6 +34,7 @@ type Status = "empty" | "error" | "filling" | "full";
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 export type Store =
+    | "allStars"
     | "awards"
     | "draftLotteryResults"
     | "draftPicks"
@@ -64,6 +65,7 @@ type Index =
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
 export const STORES: Store[] = [
+    "allStars",
     "awards",
     "draftLotteryResults",
     "draftPicks",
@@ -214,6 +216,8 @@ class Cache {
         },
     };
 
+    allStars: StoreAPI<Object, Object, number>;
+
     awards: StoreAPI<Object, Object, number>;
 
     draftLotteryResults: StoreAPI<
@@ -276,6 +280,11 @@ class Cache {
         this._stopAutoFlush = false;
 
         this.storeInfos = {
+            allStars: {
+                pk: "season",
+                pkType: "number",
+                autoIncrement: false,
+            },
             awards: {
                 pk: "season",
                 pkType: "number",
@@ -468,6 +477,7 @@ class Cache {
             }
         }
 
+        this.allStars = new StoreAPI(this, "allStars");
         this.awards = new StoreAPI(this, "awards");
         this.draftLotteryResults = new StoreAPI(this, "draftLotteryResults");
         this.draftPicks = new StoreAPI(this, "draftPicks");

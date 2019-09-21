@@ -13,6 +13,15 @@ all star selections screen
   - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
+what am i storing in allStars object in database? player only, or stats/team too? probably stats/team makes sense
+- maybe just pid and tid?
+
+add allStars cache
+
+core.allStar.create
+- pick players and captain
+- optionally fill teams
+
 for upgrade issues, make sure special game doesn't break old version
 
 make sure play til end of season still works
@@ -35,6 +44,9 @@ phase text update during all star game?
 game sim - higher pace
 
 don't select injured players
+- better: leave them in remaining, don't let them be selected
+
+to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 
 ---
 
@@ -51,6 +63,8 @@ some indication of if a clutch play occurred in the playoffs or finals. Could ad
 football OL with 49 height listed as 5'7"
 
 football too many players retire
+
+football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
 
 move to rollup
 - somehow fix alias pointing right to json

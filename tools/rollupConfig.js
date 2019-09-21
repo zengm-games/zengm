@@ -26,7 +26,7 @@ module.exports = (nodeEnv, blacklistOptions) => {
                 {
                     find: "player-names",
                     replacement:
-                        nodeEnv === "test"
+                        nodeEnv !== "production"
                             ? "./util/namesTest.js"
                             : "./util/names.js",
                 },

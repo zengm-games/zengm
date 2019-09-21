@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../common";
-import { draft, season } from "../core";
+import { allStar, draft } from "../core";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
@@ -95,15 +95,8 @@ const updatePlayMenu = async () => {
         g.phase === PHASE.REGULAR_SEASON ||
         g.phase === PHASE.AFTER_TRADE_DEADLINE
     ) {
-        const schedule = await season.getSchedule();
-        console.log(schedule);
-        const allStarScheduled = schedule.some(
-            ({ homeTid, awayTid }) => homeTid === -1 && awayTid === -1,
-        );
-        const allStarNext =
-            schedule.length > 0 &&
-            schedule[0].homeTid === -1 &&
-            schedule[0].awayTid === -1;
+        const allStarScheduled = await allStar.futureGameIsAllStar();
+        const allStarNext = await allStar.nextGameIsAllStar();
 
         const untilAllStarGame = [];
         if (allStarScheduled && !allStarNext) {

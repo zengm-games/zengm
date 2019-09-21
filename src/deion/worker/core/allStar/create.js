@@ -54,6 +54,7 @@ const create = async (fillTeams: boolean = false, conditions: Conditions) => {
         allStars.remaining.splice(ind, 1);
     }
 
+    // $FlowFixMe
     allStars.teamNames = allStars.teams.map(teamPlayers => {
         const captainPID = teamPlayers[0].pid;
         const p = players.find(p2 => p2.pid === captainPID);
@@ -63,7 +64,7 @@ const create = async (fillTeams: boolean = false, conditions: Conditions) => {
         allStars.teamNames[1] += " 2";
     }
 
-    const awardsByPlayer = allStars.remaining.map(p => {
+    const awardsByPlayer = allStars.remaining.map((p: any) => {
         return {
             pid: p.pid,
             tid: p.tid,

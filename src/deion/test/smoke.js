@@ -6,8 +6,8 @@ import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
 import { g, local } from "../worker/util";
 
-// eslint-disable-next-line
-import "smoke-test-overrides"; // For overrides
+// $FlowFixMe
+import "smoke-test-overrides"; // eslint-disable-line
 
 describe("Smoke Tests", () => {
     let intervalID;

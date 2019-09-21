@@ -4,8 +4,8 @@ import React from "react";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 
-const PlayersTable = ({ name, players, stats, userTids }) => {
-    const showDraftCol = name === "Remaining";
+const PlayersTable = ({ draftType, name, players, stats, userTids }) => {
+    const showDraftCol = draftType === "user" && name === "Remaining";
 
     const colNames = [
         "Name",
@@ -68,6 +68,7 @@ const PlayersTable = ({ name, players, stats, userTids }) => {
 };
 
 PlayersTable.propTypes = {
+    draftType: PropTypes.oneOf(["auto", "user"]).isRequired,
     name: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -88,6 +89,10 @@ const AllStars = ({
     console.log("teamNames", teamNames);
     console.log("teams", teams);
     console.log("remaining", remaining);
+
+    const draftType = teams.some(t => userTids.includes(t[0].tid))
+        ? "user"
+        : "auto";
 
     return (
         <>
@@ -118,6 +123,7 @@ const AllStars = ({
                 <div className="col-4">
                     <h3>{teamNames[0]}</h3>
                     <PlayersTable
+                        draftType={draftType}
                         name="Team0"
                         players={teams[0]}
                         stats={stats}
@@ -127,6 +133,7 @@ const AllStars = ({
                 <div className="col-4">
                     <h3>{teamNames[1]}</h3>
                     <PlayersTable
+                        draftType={draftType}
                         name="Team1"
                         players={teams[1]}
                         stats={stats}
@@ -136,6 +143,7 @@ const AllStars = ({
                 <div className="col-4">
                     <h3>Remaining All Stars</h3>
                     <PlayersTable
+                        draftType={draftType}
                         name="Remaining"
                         players={remaining}
                         stats={stats}

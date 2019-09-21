@@ -13,6 +13,8 @@ all star selections screen
   - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
+2 draft modes: when user controls a captain, and when not
+
 draft buttons
 - disable for injured
 - disable when not your turn

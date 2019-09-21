@@ -2,35 +2,54 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 const PlayersTable = ({ name, players, stats, userTids }) => {
-    const cols = getCols(
+    const showDraftCol = name === "Remaining";
+
+    const colNames = [
         "Name",
         "Team",
         "Age",
         "Ovr",
         ...stats.map(stat => `stat:${stat}`),
-    );
+    ];
+    if (showDraftCol) {
+        colNames.unshift("Draft");
+    }
+    const cols = getCols(...colNames);
 
     const rows = players.map(p => {
+        const data = [
+            <PlayerNameLabels
+                pid={p.pid}
+                injury={p.injury}
+                pos={p.ratings.pos}
+                skills={p.skills}
+                watch={p.watch}
+            >
+                {p.name}
+            </PlayerNameLabels>,
+            p.abbrev,
+            p.age,
+            p.ratings.ovr,
+            ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+        ];
+        if (showDraftCol) {
+            data.unshift(
+                <button
+                    className="btn btn-xs btn-primary"
+                    disabled
+                    title="Draft player"
+                >
+                    Draft
+                </button>,
+            );
+        }
+
         return {
             key: p.pid,
-            data: [
-                <PlayerNameLabels
-                    pid={p.pid}
-                    injury={p.injury}
-                    pos={p.ratings.pos}
-                    skills={p.skills}
-                    watch={p.watch}
-                >
-                    {p.name}
-                </PlayerNameLabels>,
-                p.abbrev,
-                p.age,
-                p.ratings.ovr,
-                ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-            ],
+            data,
             classNames: {
                 "table-danger": p.hof,
                 "table-info": userTids.includes(p.tid),
@@ -41,7 +60,7 @@ const PlayersTable = ({ name, players, stats, userTids }) => {
     return (
         <DataTable
             cols={cols}
-            defaultSort={[3, "desc"]}
+            defaultSort={[showDraftCol ? 4 : 3, "desc"]}
             name={`AllStars:${name}`}
             rows={rows}
         />
@@ -76,10 +95,10 @@ const AllStars = ({
                 All-Star Selections <NewWindowLink />
             </h1>
             <p>
-                The top 24 players in the league play are selected to play in an
-                All-Star game. If any of them are injured, they are still
-                All-Stars, but an additional All-Star will be selected as a
-                replacement to play in the game.
+                The top 24 players in the league play in an All-Star game. If
+                any of them are injured, they are still All-Stars, but an
+                additional All-Star will be selected as a replacement to play in
+                the game.
             </p>
             <p>
                 The players are split into two teams, captained by the top two
@@ -87,6 +106,14 @@ const AllStars = ({
                 captain is on your team, you get to draft for him! Otherwise,
                 the captains get to choose.
             </p>
+            <button
+                className="btn btn-lg btn-success mb-3"
+                onClick={async () => {
+                    await toWorker("allStarDraftStart");
+                }}
+            >
+                Start draft
+            </button>
             <div className="row">
                 <div className="col-4">
                     <h3>{teamNames[0]}</h3>

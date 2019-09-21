@@ -28,7 +28,7 @@ const categories = [
     },
     {
         objectStores:
-            "trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats",
+            "trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats,allStars",
         name: "Game State",
         desc:
             "Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",
@@ -110,9 +110,7 @@ class ExportLeague extends React.Component {
                     to export, since any missing information will be filled in
                     with default values when it is used.{" "}
                     <a
-                        href={`http://${
-                            process.env.SPORT
-                        }-gm.com/manual/customization/`}
+                        href={`http://${process.env.SPORT}-gm.com/manual/customization/`}
                     >
                         Read the manual for more info.
                     </a>

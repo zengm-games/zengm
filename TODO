@@ -3,6 +3,15 @@
 all star selections screen
 - phase 1 - reveal all stars
 - phase 2 - reveal teams
+  - somehow persist the teams, then when playing the game check and make sure they exist
+    - in awards, or in separate object store? probably in separate store, so awards doesn't need to have more uncertainty in it
+- display season dropdown
+- 3 columns: captain, captain, unselected
+- tables show player, position, team, key stats
+- if player is on users team, let them pick players
+- how to store all stars?
+  - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
+  - update incrementally. if not updated when loading all star teams, finalize randomly
 
 for upgrade issues, make sure special game doesn't break old version
 
@@ -14,7 +23,7 @@ pick players based on same formula as MVP
 
 pick captains as two top. randomize rest of teams
 
-in game log, viewable under a pseudo-team "All Star Game"
+in game log, viewable under a pseudo-team "All-Star Game"
 
 all star and all star mvp awards
 - add to award records somehow? would need to be in awards obj early
@@ -22,6 +31,10 @@ all star and all star mvp awards
 god mode option for g.allStarGame
 
 phase text update during all star game?
+
+game sim - higher pace
+
+don't select injured players
 
 ---
 

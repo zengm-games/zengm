@@ -175,6 +175,7 @@ const routes = () => {
         "/l/:lid/frivolities/relatives/:pid": genPage("relatives"),
         "/l/:lid/frivolities/roster_continuity": genPage("rosterContinuity"),
         "/l/:lid/frivolities/tragic_deaths": genPage("tragicDeaths"),
+        "/l/:lid/all_stars": genPage("allStars"),
 
         // Backwards compatibility
         "/l/:lid/draft_summary": genPage("draftSummary"),

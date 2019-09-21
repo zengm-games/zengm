@@ -1,6 +1,7 @@
 // @flow
 
 import Account from "./Account";
+import AllStars from "./AllStars";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardsRecords from "./AwardsRecords";
 import Changes from "./Changes";
@@ -71,6 +72,7 @@ import WatchList from "./WatchList";
 export default {
     Account,
     AccountUpdateCard,
+    AllStars,
     AwardsRecords,
     Changes,
     CustomizePlayer,

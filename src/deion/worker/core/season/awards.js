@@ -29,7 +29,7 @@ const getPlayers = async () => {
         Infinity,
     ]);
     players = await idb.getCopies.playersPlus(players, {
-        attrs: ["pid", "name", "tid", "abbrev", "draft", "injury"],
+        attrs: ["pid", "name", "tid", "abbrev", "draft", "injury", "firstName"],
         ratings: ["pos"],
         stats:
             process.env.SPORT === "basketball"

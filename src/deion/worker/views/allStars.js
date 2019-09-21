@@ -5,7 +5,39 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
-console.log("fuck");
+const stats =
+    process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
+
+const getPlayerInfo = async (pid: number) => {
+    console.log("pid", pid);
+    const p = await idb.cache.players.get(pid);
+    return idb.getCopy.playersPlus(p, {
+        attrs: ["pid", "name", "tid", "abbrev", "injury", "watch", "age"],
+        ratings: ["ovr", "skills", "pos"],
+        season: g.season,
+        stats,
+        fuzz: true,
+    });
+};
+
+const augment = async allStars => {
+    const remaining = await Promise.all(
+        allStars.remaining.map(({ pid }) => getPlayerInfo(pid)),
+    );
+    const teams = await Promise.all(
+        allStars.teams.map(players =>
+            Promise.all(players.map(({ pid }) => getPlayerInfo(pid))),
+        ),
+    );
+
+    return {
+        finalized: allStars.finalized,
+        remaining,
+        teams,
+        teamNames: allStars.teamNames,
+    };
+};
+
 const updateAllStars = async (
     inputs: GetOutput,
     updateEvents: UpdateEvents,
@@ -33,8 +65,16 @@ const updateAllStars = async (
         }
         console.log("allStars", allStars);
 
-        return {
+        const { finalized, teams, teamNames, remaining } = await augment(
             allStars,
+        );
+
+        return {
+            finalized,
+            remaining,
+            stats,
+            teams,
+            teamNames,
         };
     }
 };

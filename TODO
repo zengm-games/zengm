@@ -13,13 +13,16 @@ all star selections screen
   - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
-what am i storing in allStars object in database? player only, or stats/team too? probably stats/team makes sense
-- maybe just pid and tid?
+highlight userTid players
 
-add allStars cache
+draft buttons
+- disable for injured
+- disable when not your turn
+- only even display this column when a userTid player is a captain
+
+explanation text at top
 
 core.allStar.create
-- pick players and captain
 - optionally fill teams
 
 for upgrade issues, make sure special game doesn't break old version

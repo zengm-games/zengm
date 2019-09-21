@@ -13,6 +13,7 @@ const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
 const create = async (fillTeams: boolean = false, conditions: Conditions) => {
     const allStars = {
         season: g.season,
+        teamNames: ["", ""],
         teams: [[], []],
         remaining: [],
         finalized: false,
@@ -33,7 +34,7 @@ const create = async (fillTeams: boolean = false, conditions: Conditions) => {
 
     let healthyCount = 0;
     for (const p of sortedPlayers) {
-        allStars.remaining.push(p);
+        allStars.remaining.push({ pid: p.pid, tid: p.tid });
         if (p.injury.gamesRemaining === 0) {
             healthyCount += 1;
         }
@@ -45,7 +46,21 @@ const create = async (fillTeams: boolean = false, conditions: Conditions) => {
 
     // Pick two captains
     for (const team of allStars.teams) {
-        team.push(allStars.remaining.shift());
+        const ind = allStars.remaining.findIndex(({ pid }) => {
+            const p = players.find(p2 => p2.pid === pid);
+            return p.injury.gamesRemaining === 0;
+        });
+        team.push(allStars.remaining[ind]);
+        allStars.remaining.splice(ind, 1);
+    }
+
+    allStars.teamNames = allStars.teams.map(teamPlayers => {
+        const captainPID = teamPlayers[0].pid;
+        const p = players.find(p2 => p2.pid === captainPID);
+        return `Team ${p.firstName}`;
+    });
+    if (allStars.teamNames[0] === allStars.teamNames[1]) {
+        allStars.teamNames[1] += " 2";
     }
 
     const awardsByPlayer = allStars.remaining.map(p => {

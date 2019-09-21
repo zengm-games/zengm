@@ -9,7 +9,6 @@ const stats =
     process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
 
 const getPlayerInfo = async (pid: number) => {
-    console.log("pid", pid);
     const p = await idb.cache.players.get(pid);
     return idb.getCopy.playersPlus(p, {
         attrs: ["pid", "name", "tid", "abbrev", "injury", "watch", "age"],
@@ -42,7 +41,6 @@ const updateAllStars = async (
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | { [key: string]: any } => {
-    console.log("updateEvents", updateEvents);
     if (
         updateEvents.includes("firstRun") ||
         updateEvents.includes("gameSim") ||
@@ -58,23 +56,24 @@ const updateAllStars = async (
 
         let allStars = await idb.cache.allStars.get(g.season);
 
-        if (true || !allStars) {
+        if (!allStars) {
             const conditions = undefined;
             allStars = await allStar.create(false, conditions);
             await idb.cache.allStars.put(allStars);
         }
-        console.log("allStars", allStars);
 
         const { finalized, teams, teamNames, remaining } = await augment(
             allStars,
         );
 
+        console.log("aaa");
         return {
             finalized,
             remaining,
             stats,
             teams,
             teamNames,
+            userTids: g.userTids,
         };
     }
 };

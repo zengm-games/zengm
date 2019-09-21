@@ -13,14 +13,10 @@ all star selections screen
   - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
-highlight userTid players
-
 draft buttons
 - disable for injured
 - disable when not your turn
 - only even display this column when a userTid player is a captain
-
-explanation text at top
 
 core.allStar.create
 - optionally fill teams
@@ -50,6 +46,8 @@ don't select injured players
 - better: leave them in remaining, don't let them be selected
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
+
+on selection screen, show # of all star appearances
 
 ---
 
@@ -299,6 +297,7 @@ live game
 
 more accurage game sim
 - State machine. Simulate flags. Distinguish scrimmage and ball position. Transaction rollbacks
+  - https://thisrobot.life/guides/comparison-with-xstate.html
 
 ---
 

@@ -4,7 +4,7 @@ import React from "react";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitle } from "../util";
 
-const PlayersTable = ({ name, players, stats }) => {
+const PlayersTable = ({ name, players, stats, userTids }) => {
     const cols = getCols(
         "Name",
         "Team",
@@ -31,6 +31,10 @@ const PlayersTable = ({ name, players, stats }) => {
                 p.ratings.ovr,
                 ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
             ],
+            classNames: {
+                "table-danger": p.hof,
+                "table-info": userTids.includes(p.tid),
+            },
         };
     });
 
@@ -48,10 +52,18 @@ PlayersTable.propTypes = {
     name: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
-const AllStars = ({ finalized, remaining, stats, teams, teamNames }) => {
-    setTitle("All Stars");
+const AllStars = ({
+    finalized,
+    remaining,
+    stats,
+    teams,
+    teamNames,
+    userTids,
+}) => {
+    setTitle("All-Star Selections");
 
     console.log("finalized", finalized);
     console.log("teamNames", teamNames);
@@ -61,8 +73,20 @@ const AllStars = ({ finalized, remaining, stats, teams, teamNames }) => {
     return (
         <>
             <h1>
-                All Stars <NewWindowLink />
+                All-Star Selections <NewWindowLink />
             </h1>
+            <p>
+                The top 24 players in the league play are selected to play in an
+                All-Star game. If any of them are injured, they are still
+                All-Stars, but an additional All-Star will be selected as a
+                replacement to play in the game.
+            </p>
+            <p>
+                The players are split into two teams, captained by the top two
+                players. The teams are filled by a draft. Just for fun, if a
+                captain is on your team, you get to draft for him! Otherwise,
+                the captains get to choose.
+            </p>
             <div className="row">
                 <div className="col-4">
                     <h3>{teamNames[0]}</h3>
@@ -70,6 +94,7 @@ const AllStars = ({ finalized, remaining, stats, teams, teamNames }) => {
                         name="Team0"
                         players={teams[0]}
                         stats={stats}
+                        userTids={userTids}
                     />
                 </div>
                 <div className="col-4">
@@ -78,6 +103,7 @@ const AllStars = ({ finalized, remaining, stats, teams, teamNames }) => {
                         name="Team1"
                         players={teams[1]}
                         stats={stats}
+                        userTids={userTids}
                     />
                 </div>
                 <div className="col-4">
@@ -86,6 +112,7 @@ const AllStars = ({ finalized, remaining, stats, teams, teamNames }) => {
                         name="Remaining"
                         players={remaining}
                         stats={stats}
+                        userTids={userTids}
                     />
                 </div>
             </div>
@@ -99,6 +126,7 @@ AllStars.propTypes = {
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     teams: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default AllStars;

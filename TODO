@@ -27,7 +27,7 @@ how does draft screen look in a small window?
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
 
-on selection screen, show # of all star appearances
+on selection screen, show # of all star appearances, taken from p.awards
 
 award records - add all star appearances and MVPs
 

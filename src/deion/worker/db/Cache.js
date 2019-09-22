@@ -284,6 +284,9 @@ class Cache {
                 pk: "season",
                 pkType: "number",
                 autoIncrement: false,
+
+                // Current season
+                getData: (tx: BackboardTx) => tx.allStars.getAll(this._season),
             },
             awards: {
                 pk: "season",

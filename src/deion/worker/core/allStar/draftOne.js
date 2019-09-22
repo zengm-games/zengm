@@ -30,7 +30,6 @@ const draftOne = async (): Promise<{
     } else {
         pick = remaining[3];
     }
-    console.log(remaining.length, pick);
 
     if (!pick) {
         throw new Error("No player found");

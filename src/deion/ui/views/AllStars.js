@@ -207,7 +207,6 @@ const AllStars = ({
         }
         teamInd = teamInd === 0 ? 1 : 0;
     }
-    console.log("actuallyFinalized", actuallyFinalized);
 
     const usersTurn =
         started &&

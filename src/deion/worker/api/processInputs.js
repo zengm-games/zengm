@@ -175,8 +175,13 @@ const freeAgents = () => {
 };
 
 const gameLog = params => {
+    const abbrev =
+        params.abbrev === "special"
+            ? "special"
+            : validateAbbrev(params.abbrev)[1];
+
     return {
-        abbrev: validateAbbrev(params.abbrev)[1],
+        abbrev,
         gid: params.gid !== undefined ? parseInt(params.gid, 10) : -1,
         season: validateSeason(params.season),
     };

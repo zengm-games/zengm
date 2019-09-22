@@ -28,12 +28,29 @@ async function boxScore(gid: number) {
         return {};
     }
 
+    const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
+    let allStars;
+    if (allStarGame) {
+        allStars = await idb.cache.allStars.get(g.season);
+    }
+
     for (let i = 0; i < game.teams.length; i++) {
         const t = game.teams[i];
 
-        t.abbrev = g.teamAbbrevsCache[t.tid];
-        t.region = g.teamRegionsCache[t.tid];
-        t.name = g.teamNamesCache[t.tid];
+        if (allStars) {
+            const ind = t.tid === -1 ? 0 : 1;
+
+            t.region = "Team";
+            t.name = allStars.teamNames[ind].replace("Team ", "");
+            t.abbrev = t.name.slice(0, 3).toUpperCase();
+            if (i === 1 && t.abbrev === game.teams[0].abbrev) {
+                t.abbrev = `${t.abbrev.slice(0, 2)}2`;
+            }
+        } else {
+            t.region = g.teamRegionsCache[t.tid];
+            t.name = g.teamNamesCache[t.tid];
+            t.abbrev = g.teamAbbrevsCache[t.tid];
+        }
 
         // Floating point errors make this off a bit
         t.min = Math.round(t.min);
@@ -50,13 +67,16 @@ async function boxScore(gid: number) {
         });
     }
 
-    // WARNING - this stuff is used to distinguish between GameLog and LiveGame in BoxScore, so be careful if you change it
-    game.won.region = g.teamRegionsCache[game.won.tid];
-    game.won.name = g.teamNamesCache[game.won.tid];
-    game.won.abbrev = g.teamAbbrevsCache[game.won.tid];
-    game.lost.region = g.teamRegionsCache[game.lost.tid];
-    game.lost.name = g.teamNamesCache[game.lost.tid];
-    game.lost.abbrev = g.teamAbbrevsCache[game.lost.tid];
+    const wonInd = game.won.tid === game.teams[0].tid ? 0 : 1;
+    const lostInd = wonInd === 0 ? 1 : 0;
+
+    // WARNING - won/lost . region/name/abbrev is used to distinguish between GameLog and LiveGame in BoxScore, so be careful if you change this!
+    game.won.region = game.teams[wonInd].region;
+    game.won.name = game.teams[wonInd].name;
+    game.won.abbrev = game.teams[wonInd].abbrev;
+    game.lost.region = game.teams[lostInd].region;
+    game.lost.name = game.teams[lostInd].name;
+    game.lost.abbrev = game.teams[lostInd].abbrev;
 
     if (game.overtimes === 1) {
         game.overtime = " (OT)";

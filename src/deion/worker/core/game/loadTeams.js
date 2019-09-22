@@ -1,6 +1,6 @@
 // @flow
 
-import { player } from "..";
+import { allStar, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, overrides } from "../../util";
 
@@ -155,26 +155,67 @@ const loadTeams = async (tids: number[]) => {
 
     const teams = {};
 
-    await Promise.all(
-        tids.map(async tid => {
-            const [players, team, teamSeason] = await Promise.all([
-                idb.cache.players.indexGetAll("playersByTid", tid),
-                idb.cache.teams.get(tid),
-                idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
-                    tid,
-                    g.season,
-                ]),
-            ]);
+    if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
+        // All-Star Game
+        const allStars = await allStar.getOrCreate();
+        if (!allStars.finalized) {
+            await allStar.draftAll();
+        }
+
+        for (const tid of tids) {
+            const allStarsTeamInd = tid === -1 ? 0 : 1;
+            const players = await Promise.all(
+                allStars.teams[allStarsTeamInd].map(async ({ pid }) => {
+                    const p = await idb.cache.players.get(pid);
+                    if (!p) {
+                        throw new Error(`Can't find player ${pid}`);
+                    }
+                    return p;
+                }),
+            );
 
             teams[tid] = processTeam(
-                team,
-                teamSeason,
+                {
+                    tid,
+                    cid: -1,
+                    did: -1,
+                },
+                {
+                    won: 0,
+                    lost: 0,
+                    expenses: {
+                        health: {
+                            rank: 1,
+                        },
+                    },
+                },
                 teamStats,
                 players,
                 playerStats,
             );
-        }),
-    );
+        }
+    } else {
+        await Promise.all(
+            tids.map(async tid => {
+                const [players, team, teamSeason] = await Promise.all([
+                    idb.cache.players.indexGetAll("playersByTid", tid),
+                    idb.cache.teams.get(tid),
+                    idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+                        tid,
+                        g.season,
+                    ]),
+                ]);
+
+                teams[tid] = processTeam(
+                    team,
+                    teamSeason,
+                    teamStats,
+                    players,
+                    playerStats,
+                );
+            }),
+        );
+    }
 
     return teams;
 };

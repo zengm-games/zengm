@@ -16,28 +16,35 @@ const writePlayerStats = async (
     let stoppedPlay = false;
 
     for (const result of results) {
+        const allStarGame =
+            result.team[0].id === -1 && result.team[1].id === -2;
+
         // Find QBs, for qbW, qbL, qbT
         const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
-        for (let i = 0; i < result.team.length; i++) {
-            let maxPss = 0;
-            let id;
-            for (const p of result.team[i].player) {
-                if (p.stat.pss > maxPss) {
-                    id = p.id;
-                    maxPss = p.stat.pss;
+        if (process.env.SPORT === "football") {
+            for (let i = 0; i < result.team.length; i++) {
+                let maxPss = 0;
+                let id;
+                for (const p of result.team[i].player) {
+                    if (p.stat.pss > maxPss) {
+                        id = p.id;
+                        maxPss = p.stat.pss;
+                    }
                 }
-            }
-            if (id !== undefined) {
-                let qbResult;
-                const j = i === 0 ? 1 : 0;
-                if (result.team[i].stat.pts > result.team[j].stat.pts) {
-                    qbResult = "qbW";
-                } else if (result.team[i].stat.pts < result.team[j].stat.pts) {
-                    qbResult = "qbL";
-                } else {
-                    qbResult = "qbT";
+                if (id !== undefined) {
+                    let qbResult;
+                    const j = i === 0 ? 1 : 0;
+                    if (result.team[i].stat.pts > result.team[j].stat.pts) {
+                        qbResult = "qbW";
+                    } else if (
+                        result.team[i].stat.pts < result.team[j].stat.pts
+                    ) {
+                        qbResult = "qbL";
+                    } else {
+                        qbResult = "qbT";
+                    }
+                    qbResults.set(id, qbResult);
                 }
-                qbResults.set(id, qbResult);
             }
         }
 
@@ -86,26 +93,33 @@ const writePlayerStats = async (
                         }
 
                         // Update stats
-                        for (const key of Object.keys(p.stat)) {
-                            if (!ps.hasOwnProperty(key)) {
-                                throw new Error(`Missing key "${key}" on ps`);
+                        if (!allStarGame) {
+                            for (const key of Object.keys(p.stat)) {
+                                if (!ps.hasOwnProperty(key)) {
+                                    throw new Error(
+                                        `Missing key "${key}" on ps`,
+                                    );
+                                }
+                                if (
+                                    process.env.SPORT === "football" &&
+                                    key.endsWith("Lng")
+                                ) {
+                                    if (p.stat[key] > ps[key]) {
+                                        ps[key] = p.stat[key];
+                                    }
+                                } else {
+                                    ps[key] += p.stat[key];
+                                }
                             }
+                            ps.gp += 1; // Already checked for non-zero minutes played above
+
                             if (
                                 process.env.SPORT === "football" &&
-                                key.endsWith("Lng")
+                                qbResults.has(p.id)
                             ) {
-                                if (p.stat[key] > ps[key]) {
-                                    ps[key] = p.stat[key];
-                                }
-                            } else {
-                                ps[key] += p.stat[key];
+                                const stat = qbResults.get(p.id);
+                                ps[stat] += 1;
                             }
-                        }
-                        ps.gp += 1; // Already checked for non-zero minutes played above
-
-                        if (qbResults.has(p.id)) {
-                            const stat = qbResults.get(p.id);
-                            ps[stat] += 1;
                         }
 
                         const injuredThisGame =

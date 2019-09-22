@@ -26,6 +26,14 @@ const Select = ({ field, handleChange, value }) => {
         }[];
         if (field === "teams") {
             options = sortedTeams(local);
+        } else if (field === "teamsAndSpecial") {
+            options = [
+                {
+                    key: "special",
+                    val: "All-Star Game",
+                },
+                ...sortedTeams(local),
+            ];
         } else if (field === "teamsAndAll") {
             options = [
                 {

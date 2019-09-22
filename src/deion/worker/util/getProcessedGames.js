@@ -19,9 +19,14 @@ async function getProcessedGameList(
     season: number,
     loadedGames: GameProcessed[] = [],
 ): Promise<GameProcessed[]> {
-    const tid = g.teamAbbrevsCache.indexOf(abbrev);
-    if (tid < 0) {
-        throw new Error(`Invalid abbrev: "${abbrev}"`);
+    let tid;
+    if (abbrev === "special") {
+        tid = -1;
+    } else {
+        tid = g.teamAbbrevsCache.indexOf(abbrev);
+        if (tid < 0) {
+            throw new Error(`Invalid abbrev: "${abbrev}"`);
+        }
     }
 
     let maxGid;
@@ -60,13 +65,17 @@ async function getProcessedGameList(
 
         // Check tid
         if (gm.teams[0].tid === tid || gm.teams[1].tid === tid) {
+            const oppAbbrevOverride = abbrev === "special" ? "ASG" : undefined;
+
             if (gm.teams[0].tid === tid) {
                 gameInfos.push({
                     gid: gm.gid,
                     overtime,
                     tid,
                     home: true,
-                    oppAbbrev: g.teamAbbrevsCache[gm.teams[1].tid],
+                    oppAbbrev:
+                        oppAbbrevOverride ||
+                        g.teamAbbrevsCache[gm.teams[1].tid],
                     oppPts: gm.teams[1].pts,
                     oppTid: gm.teams[1].tid,
                     pts: gm.teams[0].pts,
@@ -83,7 +92,9 @@ async function getProcessedGameList(
                     overtime,
                     tid,
                     home: false,
-                    oppAbbrev: g.teamAbbrevsCache[gm.teams[0].tid],
+                    oppAbbrev:
+                        oppAbbrevOverride ||
+                        g.teamAbbrevsCache[gm.teams[0].tid],
                     oppPts: gm.teams[0].pts,
                     oppTid: gm.teams[0].tid,
                     pts: gm.teams[1].pts,

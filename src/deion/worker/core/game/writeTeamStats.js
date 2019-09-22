@@ -7,6 +7,11 @@ import { g, helpers, random } from "../../util";
 import type { GameResults } from "../../../common/types";
 
 const writeTeamStats = async (results: GameResults) => {
+    const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
+    if (allStarGame) {
+        return g.defaultStadiumCapacity;
+    }
+
     let att = 0;
     let ticketPrice = 0;
 

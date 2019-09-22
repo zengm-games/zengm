@@ -154,7 +154,7 @@ const GameLog = ({
             <Dropdown
                 view="game_log"
                 extraParam={boxScore.gid}
-                fields={["teams", "seasons"]}
+                fields={["teamsAndSpecial", "seasons"]}
                 values={[abbrev, season]}
             />
             <h1>

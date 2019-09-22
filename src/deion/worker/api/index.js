@@ -7,6 +7,7 @@ import { PHASE, PHASE_TEXT, PLAYER, getCols } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
 import {
+    allStar,
     contractNegotiation,
     draft,
     finances,
@@ -128,6 +129,22 @@ const addTeam = async (
         pop: teamSeason.pop,
         stadiumCapacity: teamSeason.stadiumCapacity,
     };
+};
+
+const allStarDraftAll = async () => {
+    const pids = await allStar.draftAll();
+
+    return pids;
+};
+
+const allStarDraftOne = async () => {
+    const pid = await allStar.draftOne();
+
+    return pid;
+};
+
+const allStarDraftUser = async (pid: number) => {
+    await allStar.draftUser(pid);
 };
 
 const autoSortRoster = async (pos?: string) => {
@@ -1546,6 +1563,9 @@ export default {
     actions,
     acceptContractNegotiation,
     addTeam,
+    allStarDraftAll,
+    allStarDraftOne,
+    allStarDraftUser,
     autoSortRoster,
     beforeViewLeague,
     beforeViewNonLeague,

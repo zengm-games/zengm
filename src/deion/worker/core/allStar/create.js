@@ -34,10 +34,17 @@ const create = async (fillTeams: boolean = false, conditions: Conditions) => {
 
     let healthyCount = 0;
     for (const p of sortedPlayers) {
-        allStars.remaining.push({ pid: p.pid, tid: p.tid });
+        const obj: {
+            injured?: true,
+            pid: number,
+            tid: number,
+        } = { pid: p.pid, tid: p.tid };
         if (p.injury.gamesRemaining === 0) {
             healthyCount += 1;
+        } else {
+            obj.injured = true;
         }
+        allStars.remaining.push(obj);
 
         if (healthyCount >= NUM_ALL_STARS) {
             break;

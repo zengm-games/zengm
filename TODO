@@ -14,6 +14,8 @@ all star selections screen
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
 2 draft modes: when user controls a captain, and when not
+- in auto mode, do entire draft, send back to UI, and just reveal gradually
+- in user mode, do just the AI pick then send back control to UI
 
 draft buttons
 - disable for injured

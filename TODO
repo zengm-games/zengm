@@ -1,20 +1,5 @@
 # all star game
 
-all star selections screen
-- phase 1 - reveal all stars
-- phase 2 - reveal teams
-  - somehow persist the teams, then when playing the game check and make sure they exist
-    - in awards, or in separate object store? probably in separate store, so awards doesn't need to have more uncertainty in it
-- display season dropdown
-- 3 columns: captain, captain, unselected
-- tables show player, position, team, key stats
-- if player is on users team, let them pick players
-- how to store all stars?
-  - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
-  - update incrementally. if not updated when loading all star teams, finalize randomly
-
-display correctly on live game menu
-
 load teams
 - allStars object not created? call core.allStar.create, and then fill teams
 - not finalized? finish picking
@@ -37,7 +22,10 @@ make sure play til end of season still works
 
 for upgrade issues, make sure special game doesn't break old version
 
+how does draft screen look in a small window?
+
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
+- all calls to getOrCreate
 
 on selection screen, show # of all star appearances
 

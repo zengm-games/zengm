@@ -41,7 +41,6 @@ const updateAllStars = async (
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | { [key: string]: any } => {
-    console.log("updateEvents", updateEvents);
     if (
         updateEvents.includes("firstRun") ||
         updateEvents.includes("gameSim") ||
@@ -55,13 +54,7 @@ const updateAllStars = async (
             };
         }
 
-        let allStars = await idb.cache.allStars.get(g.season);
-
-        if (!allStars) {
-            const conditions = undefined;
-            allStars = await allStar.create(conditions);
-            await idb.cache.allStars.put(allStars);
-        }
+        const allStars = await allStar.getOrCreate();
 
         const { finalized, teams, teamNames, remaining } = await augment(
             allStars,

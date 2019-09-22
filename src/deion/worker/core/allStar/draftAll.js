@@ -10,7 +10,7 @@ const draftAll = async (): Promise<number[]> => {
     const pids = [];
     while (!allStars.finalized) {
         const { pid } = await draftOne();
-        if (!pid) {
+        if (pid === undefined) {
             break;
         }
         pids.push(pid);

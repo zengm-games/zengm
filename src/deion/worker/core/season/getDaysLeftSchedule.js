@@ -21,7 +21,7 @@ const getDaysLeftSchedule = async (untilAllStarGame: boolean) => {
             const { awayTid, homeTid } = schedule[i];
 
             // All-Star Game
-            if (awayTid === -1 && homeTid === -1) {
+            if (awayTid === -2 && homeTid === -1) {
                 if (untilAllStarGame) {
                     return numDays + 1;
                 }

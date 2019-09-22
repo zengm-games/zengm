@@ -25,7 +25,7 @@ const getSchedule = async (
             const { awayTid, homeTid } = schedule[i];
 
             // All-Star Game
-            if (awayTid === -1 && homeTid === -1) {
+            if (awayTid === -2 && homeTid === -1) {
                 if (tids.length > 0) {
                     // Play all games up to the All-Star Game
                     break;

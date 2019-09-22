@@ -7,7 +7,7 @@ const nextGameIsAllStar = async () => {
     return (
         schedule.length > 0 &&
         schedule[0].homeTid === -1 &&
-        schedule[0].awayTid === -1
+        schedule[0].awayTid === -2
     );
 };
 

@@ -274,7 +274,7 @@ const newSchedule = (teams: Team[]): [number, number][] => {
     // Add an all-star game
     if (g.allStarGame) {
         const ind = Math.round(0.6 * tids.length);
-        tids.splice(ind, 0, [-1, -1]);
+        tids.splice(ind, 0, [-1, -2]);
     }
 
     return tids;

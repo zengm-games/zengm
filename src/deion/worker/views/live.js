@@ -8,7 +8,7 @@ async function updateGamesList(): void | { [key: string]: any } {
     const games = helpers.deepCopy(await season.getSchedule(true));
 
     for (const game of games) {
-        if (game.awayTid === -1 && game.homeTid === -1) {
+        if (game.awayTid === -2 && game.homeTid === -1) {
             // Special case for All-Star Game
             const allStars = await allStar.getOrCreate();
 

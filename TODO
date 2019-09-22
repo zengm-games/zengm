@@ -12,7 +12,9 @@ after game sim
 - don't update team or player stats
 - save box score correctly
 
-in writeGameStats, clutch play text should reference ASG rather than team names
+in checkStatisticalFeat, add same ASG condition to text that is in writeGameStats
+
+notification should pop up with ASG result
 
 all star mvp award
 
@@ -45,7 +47,7 @@ reactstrap upgrade notes
 
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
 
-football roster balance issues https://imgur.com/HmK00EF
+football roster balance issues https://imgur.com/HmK00EF @Eddy
 
 football OL with 49 height listed as 5'7"
 

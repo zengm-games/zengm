@@ -27,6 +27,8 @@ const writeGameStats = async (
     gameStats.teams[1].tid = results.team[1].id;
     gameStats.teams[1].players = [];
 
+    const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
+
     for (let t = 0; t < 2; t++) {
         for (const key of Object.keys(results.team[t].stat)) {
             gameStats.teams[t][key] = results.team[t].stat[key];
@@ -107,34 +109,32 @@ const writeGameStats = async (
         // We want text at the beginning, because adding game information is redundant when attached to the box score
         gameStats.clutchPlays.push(`${clutchPlay.text}.`);
 
-        if (clutchPlay.tids[0] === results.team[tw].id) {
-            clutchPlay.text += ` in ${
-                results.team[tw].stat.pts.toString().charAt(0) === "8"
-                    ? "an"
-                    : "a"
-            } <a href="${helpers.leagueUrl([
-                "game_log",
-                g.teamAbbrevsCache[results.team[tw].id],
-                g.season,
-                results.gid,
-            ])}">${results.team[tw].stat.pts}-${
-                results.team[tl].stat.pts
-            }</a> win over the ${g.teamNamesCache[results.team[tl].id]}.`;
-        } else {
-            clutchPlay.text += ` in ${
-                results.team[tl].stat.pts.toString().charAt(0) === "8"
-                    ? "an"
-                    : "a"
-            } <a href="${helpers.leagueUrl([
-                "game_log",
-                g.teamAbbrevsCache[results.team[tl].id],
-                g.season,
-                results.gid,
-            ])}">${results.team[tl].stat.pts}-${
-                results.team[tw].stat.pts
-            }</a> loss to the ${g.teamNamesCache[results.team[tw].id]}.`;
-        }
+        const indTeam = clutchPlay.tids[0] === results.team[0].id ? 0 : 1;
+        const indOther = indTeam === 0 ? 1 : 0;
 
+        const won = indTeam === tw;
+        const score = won
+            ? `${results.team[indTeam].stat.pts}-${results.team[indOther].stat.pts}`
+            : `${results.team[indOther].stat.pts}-${results.team[indTeam].stat.pts}`;
+
+        const endPart = allStarGame
+            ? `${won ? "win" : "loss"} in the All-Star Game`
+            : `${won ? "win over" : "loss to"} the ${
+                  g.teamNamesCache[results.team[indOther].id]
+              }`;
+
+        clutchPlay.text += ` in ${
+            results.team[indTeam].stat.pts.toString().charAt(0) === "8"
+                ? "an"
+                : "a"
+        } <a href="${helpers.leagueUrl([
+            "game_log",
+            g.teamAbbrevsCache[results.team[indTeam].id],
+            g.season,
+            results.gid,
+        ])}">${score}</a> ${endPart}.`;
+
+        console.log(clutchPlay.text);
         logEvent(
             {
                 type: "playerFeat",

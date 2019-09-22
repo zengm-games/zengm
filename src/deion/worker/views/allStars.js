@@ -57,7 +57,7 @@ const updateAllStars = async (
 
         let allStars = await idb.cache.allStars.get(g.season);
 
-        if (true || !allStars) {
+        if (!allStars) {
             const conditions = undefined;
             allStars = await allStar.create(conditions);
             await idb.cache.allStars.put(allStars);

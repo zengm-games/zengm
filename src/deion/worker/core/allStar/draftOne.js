@@ -3,11 +3,16 @@
 import { idb } from "../../db";
 import { g } from "../../util";
 
-const draftOne = async (): Promise<number | void> => {
+const draftOne = async (): Promise<{
+    finalized: boolean,
+    pid?: number,
+}> => {
     const allStars = await idb.cache.allStars.get(g.season);
 
     if (allStars.finalized) {
-        return;
+        return {
+            finalized: allStars.finalized,
+        };
     }
 
     const teamInd = allStars.teams[0].length > allStars.teams[1].length ? 1 : 0;
@@ -40,7 +45,10 @@ const draftOne = async (): Promise<number | void> => {
 
     await idb.cache.allStars.put(allStars);
 
-    return pick.pid;
+    return {
+        finalized: allStars.finalized,
+        pid: pick.pid,
+    };
 };
 
 export default draftOne;

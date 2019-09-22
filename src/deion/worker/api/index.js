@@ -137,14 +137,18 @@ const allStarDraftAll = async () => {
     return pids;
 };
 
-const allStarDraftOne = async (): Promise<number | void> => {
-    const pid = await allStar.draftOne();
+const allStarDraftOne = async () => {
+    const { finalized, pid } = await allStar.draftOne();
 
-    return pid;
+    return {
+        finalized,
+        pid,
+    };
 };
 
 const allStarDraftUser = async (pid: number) => {
-    await allStar.draftUser(pid);
+    const finalized = await allStar.draftUser(pid);
+    return finalized;
 };
 
 const autoSortRoster = async (pos?: string) => {

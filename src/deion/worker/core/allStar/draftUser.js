@@ -3,7 +3,7 @@
 import { idb } from "../../db";
 import { g } from "../../util";
 
-const draftUser = async (pid: number) => {
+const draftUser = async (pid: number): Promise<boolean> => {
     const allStars = await idb.cache.allStars.get(g.season);
     const pick = allStars.remaining.find(p => p.pid === pid);
     if (!pick) {
@@ -20,6 +20,8 @@ const draftUser = async (pid: number) => {
     }
 
     await idb.cache.allStars.put(allStars);
+
+    return allStars.finalized;
 };
 
 export default draftUser;

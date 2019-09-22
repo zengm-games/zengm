@@ -13,41 +13,35 @@ all star selections screen
   - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
-show indication of when draft is over
-- pass "finalized" back from allStar.draft* functions
-- link to live game sim
+display correctly on live game menu
 
 load teams
 - allStars object not created? call core.allStar.create, and then fill teams
 - not finalized? finish picking
 
-for upgrade issues, make sure special game doesn't break old version
-
-make sure play til end of season still works
-
-somehow schedule game marked as special
-
-pick players based on same formula as MVP
-
-pick captains as two top. randomize rest of teams
-
 in game log, viewable under a pseudo-team "All-Star Game"
 
-all star and all star mvp awards
-- add to award records somehow? would need to be in awards obj early
+all star mvp award
 
 god mode option for g.allStarGame
 
 phase text update during all star game?
 
-game sim - higher pace
+game sim
+- higher pace?
+- better fg?
+- lower injuries
+- show team next to player name
 
-don't select injured players
-- better: leave them in remaining, don't let them be selected
+make sure play til end of season still works
+
+for upgrade issues, make sure special game doesn't break old version
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 
 on selection screen, show # of all star appearances
+
+award records - add all star appearances and MVPs
 
 ---
 

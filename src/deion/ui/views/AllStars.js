@@ -138,6 +138,7 @@ const AllStars = ({
         ? "user"
         : "auto";
 
+    const [actuallyFinalized, setActuallyFinalized] = useState(finalized);
     const [started, setStarted] = useState(teams[0].length > 1);
     const [revealed, setRevealed] = useState([]);
 
@@ -156,12 +157,16 @@ const AllStars = ({
                 }
                 reveal(pid);
             }
+            setActuallyFinalized(true);
             return;
         }
 
         if (!userTids.includes(teams[0][0].tid)) {
-            const pid = await toWorker("allStarDraftOne");
+            const { finalized: finalized2, pid } = await toWorker(
+                "allStarDraftOne",
+            );
             reveal(pid);
+            setActuallyFinalized(finalized2);
         }
     }, [draftType, reveal, teams, userTids]);
 
@@ -170,21 +175,25 @@ const AllStars = ({
         userTids.includes(teams[1][0].tid);
     const onDraft = useCallback(
         async pid => {
-            await toWorker("allStarDraftUser", pid);
+            const finalized2 = await toWorker("allStarDraftUser", pid);
             reveal(pid);
+            setActuallyFinalized(finalized2);
 
             if (!userDraftingBothTeams) {
-                const pid2 = await toWorker("allStarDraftOne");
+                const { finalized: finalized3, pid: pid2 } = await toWorker(
+                    "allStarDraftOne",
+                );
                 if (pid2) {
                     await wait(1000);
                     reveal(pid2);
                 }
+                setActuallyFinalized(finalized3);
             }
         },
         [reveal, userDraftingBothTeams],
     );
 
-    setTitle("All-Star Selections");
+    setTitle("All-Star Draft");
 
     // Split up revealed into the two teams
     const revealed0 = [];
@@ -198,18 +207,7 @@ const AllStars = ({
         }
         teamInd = teamInd === 0 ? 1 : 0;
     }
-    console.log(
-        "teams[0].length",
-        teams[0].length,
-        "revealed0.length",
-        revealed0.length,
-    );
-    console.log(
-        "teams[1].length",
-        teams[1].length,
-        "revealed1.length",
-        revealed1.length,
-    );
+    console.log("actuallyFinalized", actuallyFinalized);
 
     const usersTurn =
         started &&
@@ -224,10 +222,10 @@ const AllStars = ({
     return (
         <>
             <h1>
-                All-Star Selections <NewWindowLink />
+                All-Star Draft <NewWindowLink />
             </h1>
             <p>
-                The top 24 players in the league play in an All-Star game. If
+                The top 24 players in the league play in the All-Star Game. If
                 any of them are injured, they are still All-Stars, but an
                 additional All-Star will be selected as a replacement to play in
                 the game.
@@ -238,7 +236,13 @@ const AllStars = ({
                 captain is on your team, you get to draft for him! Otherwise,
                 the captains get to choose.
             </p>
-            {!finalized && !started ? (
+            {actuallyFinalized ? (
+                <p className="alert alert-primary d-inline-block">
+                    The All-Star draft is over! To watch the All-Star Game,{" "}
+                    <a href={helpers.leagueUrl(["live"])}>click here</a>.
+                </p>
+            ) : null}
+            {!actuallyFinalized && !started ? (
                 <button
                     className="btn btn-lg btn-success mb-3"
                     onClick={startDraft}

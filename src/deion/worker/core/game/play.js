@@ -245,15 +245,11 @@ const play = async (
     const cbPlayGames = async () => {
         if (numDays === 1) {
             await updateStatus(
-                `Playing (1 ${
-                    overrides.common.constants.TIME_BETWEEN_GAMES
-                } left)`,
+                `Playing (1 ${overrides.common.constants.TIME_BETWEEN_GAMES} left)`,
             );
         } else {
             await updateStatus(
-                `Playing (${numDays} ${
-                    overrides.common.constants.TIME_BETWEEN_GAMES
-                }s left)`,
+                `Playing (${numDays} ${overrides.common.constants.TIME_BETWEEN_GAMES}s left)`,
             );
         }
 
@@ -265,8 +261,12 @@ const play = async (
             return cbNoGames();
         }
 
-        // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-        const teams = await loadTeams();
+        const tids = new Set();
+        for (const matchup of schedule) {
+            tids.add(matchup.homeTid);
+            tids.add(matchup.awayTid);
+        }
+        const teams = await loadTeams(Array.from(tids));
 
         // Play games
         // Will loop through schedule and simulate all games

@@ -3,6 +3,7 @@
 load teams
 - allStars object not created? call core.allStar.create, and then fill teams
 - not finalized? finish picking
+- make -1 vs -2
 
 in game log, viewable under a pseudo-team "All-Star Game"
 

@@ -24,6 +24,9 @@ const PlayersTable = ({
         "Ovr",
         ...stats.map(stat => `stat:${stat}`),
     ];
+    if (name !== "Remaining") {
+        colNames.unshift("#");
+    }
     if (showDraftCol) {
         colNames.unshift("Draft");
     }
@@ -50,7 +53,7 @@ const PlayersTable = ({
             }
             return !pidsRemove.includes(p.pid);
         })
-        .map(p => {
+        .map((p, i) => {
             const data = [
                 <PlayerNameLabels
                     pid={p.pid}
@@ -66,11 +69,14 @@ const PlayersTable = ({
                 p.ratings.ovr,
                 ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
             ];
+            if (name !== "Remaining") {
+                data.unshift(i + 1);
+            }
             if (showDraftCol) {
                 data.unshift(
                     <button
                         className="btn btn-xs btn-primary"
-                        disabled={!usersTurn}
+                        disabled={!usersTurn || p.injury.gamesRemaining > 0}
                         onClick={() => {
                             onDraft(p.pid);
                         }}
@@ -94,7 +100,7 @@ const PlayersTable = ({
     return (
         <DataTable
             cols={cols}
-            defaultSort={[showDraftCol ? 4 : 3, "desc"]}
+            defaultSort={[0, "asc"]}
             name={`AllStars:${name}`}
             rows={rows}
         />
@@ -146,7 +152,7 @@ const AllStars = ({
             const pids = await toWorker("allStarDraftAll");
             for (const pid of pids) {
                 if (pid !== pids[0]) {
-                    await wait(500);
+                    await wait(1000);
                 }
                 reveal(pid);
             }
@@ -157,16 +163,25 @@ const AllStars = ({
             const pid = await toWorker("allStarDraftOne");
             reveal(pid);
         }
-
-        console.log("Prompt user to pick");
     }, [draftType, reveal, teams, userTids]);
 
+    const userDraftingBothTeams =
+        userTids.includes(teams[0][0].tid) &&
+        userTids.includes(teams[1][0].tid);
     const onDraft = useCallback(
         async pid => {
             await toWorker("allStarDraftUser", pid);
             reveal(pid);
+
+            if (!userDraftingBothTeams) {
+                const pid2 = await toWorker("allStarDraftOne");
+                if (pid2) {
+                    await wait(1000);
+                    reveal(pid2);
+                }
+            }
         },
-        [reveal],
+        [reveal, userDraftingBothTeams],
     );
 
     setTitle("All-Star Selections");
@@ -183,13 +198,28 @@ const AllStars = ({
         }
         teamInd = teamInd === 0 ? 1 : 0;
     }
+    console.log(
+        "teams[0].length",
+        teams[0].length,
+        "revealed0.length",
+        revealed0.length,
+    );
+    console.log(
+        "teams[1].length",
+        teams[1].length,
+        "revealed1.length",
+        revealed1.length,
+    );
 
     const usersTurn =
         started &&
         draftType === "user" &&
-        ((teams[0].length > teams[1].length &&
+        ((teams[0].length + revealed0.length >
+            teams[1].length + revealed1.length &&
             userTids.includes(teams[1][0].tid)) ||
-            userTids.includes(teams[0][0].tid));
+            (teams[0].length + revealed0.length <=
+                teams[1].length + revealed1.length &&
+                userTids.includes(teams[0][0].tid)));
 
     return (
         <>

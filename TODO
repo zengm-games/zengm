@@ -13,17 +13,13 @@ all star selections screen
   - allStars object store. key is season. value is { team1: number[], team2: number[], remaining: number[] }
   - update incrementally. if not updated when loading all star teams, finalize randomly
 
-2 draft modes: when user controls a captain, and when not
-- in auto mode, do entire draft, send back to UI, and just reveal gradually
-- in user mode, do just the AI pick then send back control to UI
+show indication of when draft is over
+- pass "finalized" back from allStar.draft* functions
+- link to live game sim
 
-draft buttons
-- disable for injured
-- disable when not your turn
-- only even display this column when a userTid player is a captain
-
-core.allStar.create
-- optionally fill teams
+load teams
+- allStars object not created? call core.allStar.create, and then fill teams
+- not finalized? finish picking
 
 for upgrade issues, make sure special game doesn't break old version
 

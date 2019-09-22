@@ -5,8 +5,21 @@ import { g } from "../../util";
 
 const draftUser = async (pid: number) => {
     const allStars = await idb.cache.allStars.get(g.season);
+    const pick = allStars.remaining.find(p => p.pid === pid);
+    if (!pick) {
+        throw new Error("Player not found");
+    }
 
-    console.log("draftUser", pid);
+    const teamInd = allStars.teams[0].length > allStars.teams[1].length ? 1 : 0;
+
+    allStars.teams[teamInd].push(pick);
+    allStars.remaining = allStars.remaining.filter(p => p.pid !== pick.pid);
+
+    if (allStars.remaining.every(({ injured }) => injured)) {
+        allStars.finalized = true;
+    }
+
+    await idb.cache.allStars.put(allStars);
 };
 
 export default draftUser;

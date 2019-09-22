@@ -3,8 +3,12 @@
 import { idb } from "../../db";
 import { g } from "../../util";
 
-const draftOne = async (): Promise<number> => {
+const draftOne = async (): Promise<number | void> => {
     const allStars = await idb.cache.allStars.get(g.season);
+
+    if (allStars.finalized) {
+        return;
+    }
 
     const teamInd = allStars.teams[0].length > allStars.teams[1].length ? 1 : 0;
 
@@ -28,9 +32,7 @@ const draftOne = async (): Promise<number> => {
     }
 
     allStars.teams[teamInd].push(pick);
-    allStars.remaining = allStars.remaining.filter(
-        ({ pid }) => pid !== pick.pid,
-    );
+    allStars.remaining = allStars.remaining.filter(p => p.pid !== pick.pid);
 
     if (allStars.remaining.every(({ injured }) => injured)) {
         allStars.finalized = true;

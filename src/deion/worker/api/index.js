@@ -137,7 +137,7 @@ const allStarDraftAll = async () => {
     return pids;
 };
 
-const allStarDraftOne = async () => {
+const allStarDraftOne = async (): Promise<number | void> => {
     const pid = await allStar.draftOne();
 
     return pid;
@@ -253,6 +253,7 @@ const deleteOldData = async (options: {
 }) => {
     await idb.league.tx(
         [
+            "allStars",
             "draftLotteryResults",
             "games",
             "teams",
@@ -273,6 +274,11 @@ const deleteOldData = async (options: {
                     }
                 });
                 tx.draftLotteryResults.clear();
+                tx.allStars.iterate(allStars => {
+                    if (allStars.season < g.season) {
+                        tx.allStars.delete(allStars.season);
+                    }
+                });
             }
 
             if (options.teamStats) {

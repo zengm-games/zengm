@@ -59,7 +59,7 @@ const updateAllStars = async (
 
         if (true || !allStars) {
             const conditions = undefined;
-            allStars = await allStar.create(false, conditions);
+            allStars = await allStar.create(conditions);
             await idb.cache.allStars.put(allStars);
         }
 

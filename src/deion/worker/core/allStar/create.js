@@ -10,7 +10,7 @@ import type { Conditions, PlayerFiltered } from "../../../common/types";
 
 const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
 
-const create = async (fillTeams: boolean = false, conditions: Conditions) => {
+const create = async (conditions: Conditions) => {
     const allStars = {
         season: g.season,
         teamNames: ["", ""],
@@ -81,10 +81,6 @@ const create = async (fillTeams: boolean = false, conditions: Conditions) => {
     });
 
     await saveAwardsByPlayer(awardsByPlayer, conditions);
-
-    if (fillTeams) {
-        console.log("FILL TEAMS");
-    }
 
     return allStars;
 };

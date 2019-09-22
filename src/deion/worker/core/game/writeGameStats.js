@@ -134,7 +134,6 @@ const writeGameStats = async (
             results.gid,
         ])}">${score}</a> ${endPart}.`;
 
-        console.log(clutchPlay.text);
         logEvent(
             {
                 type: "playerFeat",

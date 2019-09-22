@@ -34,6 +34,8 @@ const checkStatisticalFeat = (
     }
     const feat = overrides.core.player.checkStatisticalFeat(p);
 
+    const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
+
     if (feat) {
         const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
         const won = results.team[i].stat.pts > results.team[j].stat.pts;
@@ -45,7 +47,7 @@ const checkStatisticalFeat = (
             p.name
         }</a> had <a href="${helpers.leagueUrl([
             "game_log",
-            g.teamAbbrevsCache[tid],
+            tid < 0 ? "special" : g.teamAbbrevsCache[tid],
             g.season,
             results.gid,
         ])}">`;
@@ -60,11 +62,16 @@ const checkStatisticalFeat = (
                 featText += ", ";
             }
         }
+
+        const endPart = allStarGame
+            ? `${won ? "win" : "loss"} in the All-Star Game`
+            : `${won ? "win over the" : "loss to the"} ${
+                  g.teamNamesCache[results.team[j].id]
+              }`;
+
         featText += `</a> in ${
             results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
-        } ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${
-            won ? "win over the" : "loss to the"
-        } ${g.teamNamesCache[results.team[j].id]}.`;
+        } ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${endPart}.`;
 
         logFeat(featText);
 

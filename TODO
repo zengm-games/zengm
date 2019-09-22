@@ -3,16 +3,15 @@
 in live box score, team name and abbrev fix
 
 game sim
+- show team next to player name
 - higher pace?
 - better fg?
 - lower injuries
-- show team next to player name
+- no home court advantage
 
 after game sim
 - don't update team or player stats
 - save box score correctly
-
-in checkStatisticalFeat, add same ASG condition to text that is in writeGameStats
 
 notification should pop up with ASG result
 
@@ -24,8 +23,6 @@ phase text update during all star game?
 
 make sure play til end of season still works
 
-for upgrade issues, make sure special game doesn't break old version
-
 how does draft screen look in a small window?
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
@@ -34,6 +31,11 @@ to send notification to correct screen, need `conditions` in views/allStars. sho
 on selection screen, show # of all star appearances, taken from p.awards
 
 award records - add all star appearances and MVPs
+
+check statistical feats
+- game winners
+- statistical feats
+- player_feats UI
 
 ---
 

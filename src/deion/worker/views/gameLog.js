@@ -31,7 +31,10 @@ async function boxScore(gid: number) {
     const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
     let allStars;
     if (allStarGame) {
-        allStars = await idb.cache.allStars.get(g.season);
+        allStars = await idb.cache.allStars.get(game.season);
+        if (!allStars) {
+            return {};
+        }
     }
 
     for (let i = 0; i < game.teams.length; i++) {

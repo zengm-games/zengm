@@ -73,6 +73,16 @@ const showAd = (type: "modal", autoPlaySeasons: number) => {
     }
 };
 
+const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
+    setTitle("Error");
+    return (
+        <>
+            <h1>Error</h1>
+            <h2>{errorMessage}</h2>
+        </>
+    );
+};
+
 type Args = {
     Component: any,
     id: string,
@@ -251,22 +261,19 @@ class Controller extends React.Component<{}, State> {
             return;
         }
 
-        let Component = args.Component;
+        // If there was an error before, still show it unless we've recieved some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
+        if (results && results.some(result => !!result)) {
+            delete prevData.errorMessage;
+        }
+        let Component = prevData.errorMessage ? ErrorMessage : args.Component;
+
         for (const result of results) {
             if (
                 result &&
                 Object.keys(result).length === 1 &&
                 result.hasOwnProperty("errorMessage")
             ) {
-                Component = ({ errorMessage }: { errorMessage: string }) => {
-                    setTitle("Error");
-                    return (
-                        <>
-                            <h1>Error</h1>
-                            <h2>{errorMessage}</h2>
-                        </>
-                    );
-                };
+                Component = ErrorMessage;
             }
         }
 

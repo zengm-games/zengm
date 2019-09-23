@@ -23,6 +23,7 @@ const PlayersTable = ({
         "Age",
         "Ovr",
         ...stats.map(stat => `stat:${stat}`),
+        "#AS",
     ];
     if (name !== "Remaining") {
         colNames.unshift("#");
@@ -68,6 +69,7 @@ const PlayersTable = ({
                 p.age,
                 p.ratings.ovr,
                 ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+                p.numAllStar,
             ];
             if (name !== "Remaining") {
                 data.unshift(i + 1);

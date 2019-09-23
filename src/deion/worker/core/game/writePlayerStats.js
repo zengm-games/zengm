@@ -71,29 +71,30 @@ const writePlayerStats = async (
                         );
 
                         const p2 = await idb.cache.players.get(p.id);
-                        let ps = p2.stats[p2.stats.length - 1];
 
-                        // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
-                        const playoffs = g.phase === PHASE.PLAYOFFS;
-                        if (
-                            !ps ||
-                            ps.tid !== t.id ||
-                            ps.playoffs !== playoffs
-                        ) {
-                            player.addStatsRow(p2, playoffs);
-
-                            ps = p2.stats[p2.stats.length - 1];
-                        }
-
-                        // Since index is not on playoffs, manually check
-                        if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {
-                            throw new Error(
-                                `Missing playoff stats for player ${p.id}`,
-                            );
-                        }
-
-                        // Update stats
                         if (!allStarGame) {
+                            let ps = p2.stats[p2.stats.length - 1];
+
+                            // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+                            const playoffs = g.phase === PHASE.PLAYOFFS;
+                            if (
+                                !ps ||
+                                ps.tid !== t.id ||
+                                ps.playoffs !== playoffs
+                            ) {
+                                player.addStatsRow(p2, playoffs);
+
+                                ps = p2.stats[p2.stats.length - 1];
+                            }
+
+                            // Since index is not on playoffs, manually check
+                            if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {
+                                throw new Error(
+                                    `Missing playoff stats for player ${p.id}`,
+                                );
+                            }
+
+                            // Update stats
                             for (const key of Object.keys(p.stat)) {
                                 if (!ps.hasOwnProperty(key)) {
                                     throw new Error(

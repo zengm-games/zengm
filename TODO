@@ -2,8 +2,10 @@
 
 in live box score, team name and abbrev fix
 
-game sim
+box score
 - show team next to player name
+
+game sim
 - higher pace?
 - better fg?
 - lower injuries
@@ -28,11 +30,10 @@ how does draft screen look in a small window?
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
 
-on selection screen, show # of all star appearances, taken from p.awards
-
 award records - add all star appearances and MVPs
 
 check statistical feats
+- checkStatisticalFeat team ID
 - game winners
 - statistical feats
 - player_feats UI

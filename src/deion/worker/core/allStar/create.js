@@ -51,6 +51,17 @@ const create = async (conditions: Conditions) => {
         }
     }
 
+    // Do awards first, before picking captains, so remaining has all players
+    const awardsByPlayer = allStars.remaining.map((p: any) => {
+        return {
+            pid: p.pid,
+            tid: p.tid,
+            name: p.name,
+            type: "All-Star",
+        };
+    });
+    await saveAwardsByPlayer(awardsByPlayer, conditions);
+
     // Pick two captains
     for (const team of allStars.teams) {
         const ind = allStars.remaining.findIndex(({ pid }) => {
@@ -70,17 +81,6 @@ const create = async (conditions: Conditions) => {
     if (allStars.teamNames[0] === allStars.teamNames[1]) {
         allStars.teamNames[1] += " 2";
     }
-
-    const awardsByPlayer = allStars.remaining.map((p: any) => {
-        return {
-            pid: p.pid,
-            tid: p.tid,
-            name: p.name,
-            type: "All-Star",
-        };
-    });
-
-    await saveAwardsByPlayer(awardsByPlayer, conditions);
 
     return allStars;
 };

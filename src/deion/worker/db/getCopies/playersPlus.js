@@ -215,6 +215,10 @@ const processAttrs = (
             output.numSons = p.relatives.filter(
                 rel => rel.type === "son",
             ).length;
+        } else if (attr === "numAllStar") {
+            output.numAllStar = p.awards.filter(
+                a => a.type === "All-Star",
+            ).length;
         } else {
             // Several other attrs are not primitive types, so deepCopy
             output[attr] = helpers.deepCopy(p[attr]);

@@ -11,7 +11,16 @@ const stats =
 const getPlayerInfo = async (pid: number) => {
     const p = await idb.cache.players.get(pid);
     return idb.getCopy.playersPlus(p, {
-        attrs: ["pid", "name", "tid", "abbrev", "injury", "watch", "age"],
+        attrs: [
+            "pid",
+            "name",
+            "tid",
+            "abbrev",
+            "injury",
+            "watch",
+            "age",
+            "numAllStar",
+        ],
         ratings: ["ovr", "skills", "pos"],
         season: g.season,
         stats,

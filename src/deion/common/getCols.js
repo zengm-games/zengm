@@ -1140,6 +1140,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
     },
     "#": {},
+    "#AS": {
+        desc: "Number of All-Star Selections",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "%": {
         desc: "Percentage",
         sortSequence: ["desc", "asc"],

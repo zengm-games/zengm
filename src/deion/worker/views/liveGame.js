@@ -32,15 +32,37 @@ async function updatePlayByPlay(
         const resetStatsPlayer = overrides.core.player.stats.raw;
         const resetStatsTeam = overrides.core.team.stats.raw;
 
+        const allStarGame =
+            boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
+        let allStars;
+        if (allStarGame) {
+            allStars = await idb.cache.allStars.get(g.season);
+            if (!allStars) {
+                return {};
+            }
+        }
+
         boxScore.overtime = "";
         boxScore.quarter = "1st quarter";
         boxScore.time = `${g.quarterLength}:00`;
         boxScore.gameOver = false;
-        for (const t of boxScore.teams) {
-            // Team metadata
-            t.abbrev = g.teamAbbrevsCache[t.tid];
-            t.region = g.teamRegionsCache[t.tid];
-            t.name = g.teamNamesCache[t.tid];
+        for (let i = 0; i < boxScore.teams.length; i++) {
+            const t = boxScore.teams[i];
+
+            if (allStars) {
+                const ind = t.tid === -1 ? 0 : 1;
+
+                t.region = "Team";
+                t.name = allStars.teamNames[ind].replace("Team ", "");
+                t.abbrev = t.name.slice(0, 3).toUpperCase();
+                if (i === 1 && t.abbrev === boxScore.teams[0].abbrev) {
+                    t.abbrev = `${t.abbrev.slice(0, 2)}2`;
+                }
+            } else {
+                t.abbrev = g.teamAbbrevsCache[t.tid];
+                t.region = g.teamRegionsCache[t.tid];
+                t.name = g.teamNamesCache[t.tid];
+            }
 
             t.ptsQtrs = [0];
             for (const stat of resetStatsTeam) {

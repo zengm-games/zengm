@@ -1,9 +1,8 @@
 # all star game
 
-in live box score, team name and abbrev fix
-
 box score
 - show team next to player name
+  - add abbrev to each player (based on allStars) and show column if present
 
 game sim
 - higher pace?
@@ -29,6 +28,7 @@ how does draft screen look in a small window?
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
+- notification even being sent?
 
 award records - add all star appearances and MVPs
 

@@ -16,6 +16,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
     describe("newScheduleCrappy", () => {
         beforeEach(() => {
             testHelpers.resetG();
+            g.allStarGame = false;
         });
 
         test("when numTeams*numGames is even, everyone gets a full schedule", () => {
@@ -87,6 +88,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
     describe("newScheduleDefault", () => {
         beforeAll(() => {
             testHelpers.resetG();
+            g.allStarGame = false;
         });
 
         test("schedule 1230 games (82 each for 30 teams)", () => {

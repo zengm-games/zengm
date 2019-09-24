@@ -2,6 +2,7 @@
 
 import { idb } from "../db";
 import { g, helpers, overrides } from "../util";
+import { setTeamInfo } from "./gameLog";
 import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayByPlay(
@@ -49,20 +50,7 @@ async function updatePlayByPlay(
         for (let i = 0; i < boxScore.teams.length; i++) {
             const t = boxScore.teams[i];
 
-            if (allStars) {
-                const ind = t.tid === -1 ? 0 : 1;
-
-                t.region = "Team";
-                t.name = allStars.teamNames[ind].replace("Team ", "");
-                t.abbrev = t.name.slice(0, 3).toUpperCase();
-                if (i === 1 && t.abbrev === boxScore.teams[0].abbrev) {
-                    t.abbrev = `${t.abbrev.slice(0, 2)}2`;
-                }
-            } else {
-                t.abbrev = g.teamAbbrevsCache[t.tid];
-                t.region = g.teamRegionsCache[t.tid];
-                t.name = g.teamNamesCache[t.tid];
-            }
+            setTeamInfo(t, i, allStars, boxScore);
 
             t.ptsQtrs = [0];
             for (const stat of resetStatsTeam) {

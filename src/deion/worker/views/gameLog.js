@@ -4,6 +4,28 @@ import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
+export const setTeamInfo = (t, i, allStars, game) => {
+    if (allStars) {
+        const ind = t.tid === -1 ? 0 : 1;
+
+        t.region = "Team";
+        t.name = allStars.teamNames[ind].replace("Team ", "");
+        t.abbrev = t.name.slice(0, 3).toUpperCase();
+        if (i === 1 && t.abbrev === game.teams[0].abbrev) {
+            t.abbrev = `${t.abbrev.slice(0, 2)}2`;
+        }
+
+        for (const p of t.players) {
+            const entry = allStars.teams[ind].find(p2 => p2.pid === p.pid);
+            p.abbrev = entry ? g.teamAbbrevsCache[entry.tid] : "";
+        }
+    } else {
+        t.region = g.teamRegionsCache[t.tid];
+        t.name = g.teamNamesCache[t.tid];
+        t.abbrev = g.teamAbbrevsCache[t.tid];
+    }
+};
+
 /**
  * Generate a box score.
  *
@@ -40,20 +62,7 @@ async function boxScore(gid: number) {
     for (let i = 0; i < game.teams.length; i++) {
         const t = game.teams[i];
 
-        if (allStars) {
-            const ind = t.tid === -1 ? 0 : 1;
-
-            t.region = "Team";
-            t.name = allStars.teamNames[ind].replace("Team ", "");
-            t.abbrev = t.name.slice(0, 3).toUpperCase();
-            if (i === 1 && t.abbrev === game.teams[0].abbrev) {
-                t.abbrev = `${t.abbrev.slice(0, 2)}2`;
-            }
-        } else {
-            t.region = g.teamRegionsCache[t.tid];
-            t.name = g.teamNamesCache[t.tid];
-            t.abbrev = g.teamAbbrevsCache[t.tid];
-        }
+        setTeamInfo(t, i, allStars, game);
 
         // Floating point errors make this off a bit
         t.min = Math.round(t.min);

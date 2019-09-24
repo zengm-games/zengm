@@ -33,6 +33,13 @@ const BoxScoreRow = ({
                     {p.name}
                 </PlayerNameLabels>
             </td>
+            {typeof p.abbrev === "string" ? (
+                <td>
+                    <a href={helpers.leagueUrl(["roster", p.abbrev])}>
+                        {p.abbrev}
+                    </a>
+                </td>
+            ) : null}
             <td>{p.pos}</td>
             <td>{p.min.toFixed(1)}</td>
             <td>

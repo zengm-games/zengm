@@ -25,6 +25,9 @@ const BoxScore = ({ boxScore, Row }) => {
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    {typeof t.players[0].abbrev === "string" ? (
+                                        <th>Team</th>
+                                    ) : null}
                                     <th>Pos</th>
                                     <th>MP</th>
                                     <th>FG</th>
@@ -52,6 +55,9 @@ const BoxScore = ({ boxScore, Row }) => {
                                 <tr>
                                     <th>Total</th>
                                     <th />
+                                    {typeof t.players[0].abbrev === "string" ? (
+                                        <th />
+                                    ) : null}
                                     <th>
                                         {Number.isInteger(t.min)
                                             ? t.min
@@ -81,6 +87,9 @@ const BoxScore = ({ boxScore, Row }) => {
                                 <tr>
                                     <th>Percentages</th>
                                     <th />
+                                    {typeof t.players[0].abbrev === "string" ? (
+                                        <th />
+                                    ) : null}
                                     <th />
                                     <th>
                                         {helpers.roundStat(

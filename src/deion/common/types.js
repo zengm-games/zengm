@@ -157,7 +157,7 @@ export type GameProcessed = {|
     home: boolean,
     oppPts: number,
     oppTid: number,
-    oppAbbrev: number,
+    oppAbbrev: string,
     overtime: string,
     result: "W" | "L" | "T",
     tid?: number,

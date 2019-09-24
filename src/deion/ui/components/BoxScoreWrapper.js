@@ -10,6 +10,22 @@ import {
     toWorker,
 } from "../util";
 
+const TeamNameLink = ({ season, t }) => {
+    return t.tid >= 0 ? (
+        <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
+            {t.region} {t.name}
+        </a>
+    ) : (
+        <>
+            {t.region} {t.name}
+        </>
+    );
+};
+TeamNameLink.propTypes = {
+    season: PropTypes.number.isRequired,
+    t: PropTypes.object.isRequired,
+};
+
 const HeadlineScore = ({ boxScore }) => {
     // Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
     // won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
@@ -21,14 +37,8 @@ const HeadlineScore = ({ boxScore }) => {
 
     return (
         <h2>
-            <a href={helpers.leagueUrl(["roster", t0.abbrev, boxScore.season])}>
-                {t0.region} {t0.name}
-            </a>{" "}
-            {t0.pts},{" "}
-            <a href={helpers.leagueUrl(["roster", t1.abbrev, boxScore.season])}>
-                {t1.region} {t1.name}
-            </a>{" "}
-            {t1.pts}
+            <TeamNameLink season={boxScore.season} t={t0} /> {t0.pts},{" "}
+            <TeamNameLink season={boxScore.season} t={t1} /> {t1.pts}
             {boxScore.overtime}
         </h2>
     );
@@ -247,15 +257,19 @@ const DetailedScore = ({
                             {boxScore.teams.map(t => (
                                 <tr key={t.abbrev}>
                                     <th>
-                                        <a
-                                            href={helpers.leagueUrl([
-                                                "roster",
-                                                t.abbrev,
-                                                boxScore.season,
-                                            ])}
-                                        >
-                                            {t.abbrev}
-                                        </a>
+                                        {t.tid >= 0 ? (
+                                            <a
+                                                href={helpers.leagueUrl([
+                                                    "roster",
+                                                    t.abbrev,
+                                                    boxScore.season,
+                                                ])}
+                                            >
+                                                {t.abbrev}
+                                            </a>
+                                        ) : (
+                                            t.abbrev
+                                        )}
                                     </th>
                                     {t.ptsQtrs.map((pts, i) => (
                                         <td key={i}>{pts}</td>

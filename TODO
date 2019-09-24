@@ -1,8 +1,5 @@
 # all star game
 
-box score
-- don't link team names/abbrevs at top
-
 game sim
 - higher pace?
 - better fg?
@@ -38,7 +35,7 @@ check statistical feats
 - player_feats UI
 
 BoxScoreRow
-- link to team should be for the season of the ASG, not current season always
+- link to team should be for the season of the ASG, not current season always (in boxScore.season but not passed to Row)
 - highlight user team abbrev
 
 ---

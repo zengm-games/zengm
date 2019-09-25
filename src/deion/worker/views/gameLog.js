@@ -53,7 +53,11 @@ async function boxScore(gid: number) {
     const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
     let allStars;
     if (allStarGame) {
+        // Would be better to use getCopy
         allStars = await idb.cache.allStars.get(game.season);
+        if (!allStars) {
+            allStars = await idb.league.allStars.get(game.season);
+        }
         if (!allStars) {
             return {};
         }

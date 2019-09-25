@@ -151,6 +151,31 @@ const writeGameStats = async (
             },
             conditions,
         );
+    } else if (results.team[0].id === -1 && results.team[1].id === -2) {
+        const allStars = await idb.cache.allStars.get(g.season);
+        if (allStars) {
+            const text = `${allStars.teamNames[tw]} ${
+                tied ? "tied" : "defeated"
+            } ${allStars.teamNames[tl]} <a href="${helpers.leagueUrl([
+                "game_log",
+                "special",
+                g.season,
+                results.gid,
+            ])}">${results.team[tw].stat.pts}-${
+                results.team[tl].stat.pts
+            } in the All-Star Game</a>.`;
+
+            const type = tied ? "gameTied" : "gameWon";
+            logEvent(
+                {
+                    type,
+                    text,
+                    saveToDb: false,
+                    tids: [g.userTid],
+                },
+                conditions,
+            );
+        }
     }
 
     for (const clutchPlay of results.clutchPlays) {

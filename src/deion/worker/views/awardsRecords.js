@@ -3,96 +3,129 @@
 import { idb } from "../db";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
-const optionsTmp = [
-    {
-        val: "Won Championship",
-        key: "champion",
-    },
-    {
-        val: "Most Valuable Player",
-        key: "mvp",
-    },
-    {
-        val: "Finals MVP",
-        key: "finals_mvp",
-    },
-    {
-        val: "Defensive Player of the Year",
-        key: "dpoy",
-    },
-    {
-        val: "Sixth Man of the Year",
-        key: "smoy",
-    },
-    {
-        val: "Most Improved Player",
-        key: "mip",
-    },
-    {
-        val: "Rookie of the Year",
-        key: "roy",
-    },
-    {
-        val: "Offensive Rookie of the Year",
-        key: "oroy",
-    },
-    {
-        val: "Defensive Rookie of the Year",
-        key: "droy",
-    },
-    {
-        val: "First Team All-League",
-        key: "first_team",
-    },
-    {
-        val: "Second Team All-League",
-        key: "second_team",
-    },
-    {
-        val: "Third Team All-League",
-        key: "third_team",
-    },
-    {
-        val: "First Team All-Defensive",
-        key: "first_def",
-    },
-    {
-        val: "Second Team All-Defensive",
-        key: "second_def",
-    },
-    {
-        val: "Third Team All-Defensive",
-        key: "third_def",
-    },
-    {
-        val: "All-League",
-        key: "all_league",
-    },
-    {
-        val: "All-Defensive",
-        key: "all_def",
-    },
-    {
-        val: "League Scoring Leader",
-        key: "ppg_leader",
-    },
-    {
-        val: "League Rebounding Leader",
-        key: "rpg_leader",
-    },
-    {
-        val: "League Assists Leader",
-        key: "apg_leader",
-    },
-    {
-        val: "League Steals Leader",
-        key: "spg_leader",
-    },
-    {
-        val: "League Blocks Leader",
-        key: "bpg_leader",
-    },
-];
+// Keep in sync with Dropdown.js
+const optionsTmp =
+    process.env.SPORT === "basketball"
+        ? [
+              {
+                  val: "Won Championship",
+                  key: "champion",
+              },
+              {
+                  val: "Most Valuable Player",
+                  key: "mvp",
+              },
+              {
+                  val: "Finals MVP",
+                  key: "finals_mvp",
+              },
+              {
+                  val: "Defensive Player of the Year",
+                  key: "dpoy",
+              },
+              {
+                  val: "Sixth Man of the Year",
+                  key: "smoy",
+              },
+              {
+                  val: "Most Improved Player",
+                  key: "mip",
+              },
+              {
+                  val: "Rookie of the Year",
+                  key: "roy",
+              },
+              {
+                  val: "First Team All-League",
+                  key: "first_team",
+              },
+              {
+                  val: "Second Team All-League",
+                  key: "second_team",
+              },
+              {
+                  val: "Third Team All-League",
+                  key: "third_team",
+              },
+              {
+                  val: "All-League",
+                  key: "all_league",
+              },
+              {
+                  val: "First Team All-Defensive",
+                  key: "first_def",
+              },
+              {
+                  val: "Second Team All-Defensive",
+                  key: "second_def",
+              },
+              {
+                  val: "Third Team All-Defensive",
+                  key: "third_def",
+              },
+              {
+                  val: "All-Defensive",
+                  key: "all_def",
+              },
+              {
+                  val: "All-Star",
+                  key: "all_star",
+              },
+              {
+                  val: "All-Star MVP",
+                  key: "all_star_mvp",
+              },
+              {
+                  val: "League Scoring Leader",
+                  key: "ppg_leader",
+              },
+              {
+                  val: "League Rebounding Leader",
+                  key: "rpg_leader",
+              },
+              {
+                  val: "League Assists Leader",
+                  key: "apg_leader",
+              },
+              {
+                  val: "League Steals Leader",
+                  key: "spg_leader",
+              },
+              {
+                  val: "League Blocks Leader",
+                  key: "bpg_leader",
+              },
+          ]
+        : [
+              {
+                  val: "Won Championship",
+                  key: "champion",
+              },
+              {
+                  val: "Most Valuable Player",
+                  key: "mvp",
+              },
+              {
+                  val: "Finals MVP",
+                  key: "finals_mvp",
+              },
+              {
+                  val: "Defensive Player of the Year",
+                  key: "dpoy",
+              },
+              {
+                  val: "Offensive Rookie of the Year",
+                  key: "oroy",
+              },
+              {
+                  val: "Defensive Rookie of the Year",
+                  key: "droy",
+              },
+              {
+                  val: "All-League",
+                  key: "all_league",
+              },
+          ];
 
 const awardOptions = {};
 optionsTmp.forEach(o => {

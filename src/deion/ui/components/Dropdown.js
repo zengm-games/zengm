@@ -252,6 +252,14 @@ const Select = ({ field, handleChange, value }) => {
                               key: "all_def",
                           },
                           {
+                              val: "All-Star",
+                              key: "all_star",
+                          },
+                          {
+                              val: "All-Star MVP",
+                              key: "all_star_mvp",
+                          },
+                          {
                               val: "League Scoring Leader",
                               key: "ppg_leader",
                           },

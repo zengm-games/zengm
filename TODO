@@ -6,13 +6,10 @@ game sim
 - lower injuries
 - no home court advantage
 
-after game sim
-- don't update team or player stats
-- save box score correctly
-
 notification should pop up with ASG result
 
 all star mvp award
+- attach to box score, like feats
 
 god mode option for g.allStarGame
 
@@ -25,8 +22,6 @@ how does draft screen look in a small window?
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
 - notification even being sent?
-
-award records - add all star appearances and MVPs
 
 check statistical feats
 - checkStatisticalFeat team ID

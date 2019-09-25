@@ -1,9 +1,57 @@
 // @flow
 
 import { PHASE } from "../../../common";
+import { saveAwardsByPlayer } from "../season/awards";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import type { Conditions, GameResults } from "../../../common/types";
+import type { Conditions, Game, GameResults } from "../../../common/types";
+
+const allStarMVP = async (game: Game, conditions: Conditions) => {
+    let mvp;
+    let maxScore = -Infinity;
+
+    // Find MVP
+    for (const t of game.teams) {
+        const wonBonus = game.won.tid === t.tid ? 8 : 0;
+        for (const p of t.players) {
+            const score = helpers.gameScore(p) + p.pts / 2 + wonBonus;
+            if (score > maxScore) {
+                mvp = p;
+                maxScore = score;
+            }
+        }
+    }
+
+    if (!mvp) {
+        return;
+    }
+
+    // Save to clutchPlays (attached to ASG box score) and also store/notify normally
+    const p = await idb.cache.players.get(mvp.pid); // Needed for real tid
+    if (!p) {
+        return;
+    }
+    game.clutchPlays.push(
+        `<a href="${helpers.leagueUrl(["player", mvp.pid])}">${
+            mvp.name
+        }</a> (<a href="${helpers.leagueUrl([
+            "roster",
+            g.teamAbbrevsCache[p.tid],
+            g.season,
+        ])}">${g.teamAbbrevsCache[p.tid]}</a>) won the All-Star MVP award.`,
+    );
+    await saveAwardsByPlayer(
+        [
+            {
+                pid: mvp.pid,
+                tid: p.tid,
+                name: mvp.name,
+                type: "All-Star MVP",
+            },
+        ],
+        conditions,
+    );
+};
 
 const writeGameStats = async (
     results: GameResults,
@@ -141,6 +189,10 @@ const writeGameStats = async (
             },
             conditions,
         );
+    }
+
+    if (allStarGame) {
+        await allStarMVP(gameStats, conditions);
     }
 
     await idb.cache.games.add(gameStats);

@@ -8,11 +8,6 @@ game sim
 
 notification should pop up with ASG result
 
-all star mvp award
-- gmsc + pts/2 + (8 points if on winning team)
-- attach to box score, like feats
-  - will this work for live game? if not, need some other way to notify, since people will often watch live
-
 god mode option for g.allStarGame
 
 phase text update during all star game?
@@ -20,6 +15,8 @@ phase text update during all star game?
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
 - notification even being sent?
+
+schedule with 0 or 1 games fails?
 
 check statistical feats
 - checkStatisticalFeat team ID

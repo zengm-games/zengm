@@ -135,7 +135,9 @@ const BoxScore = ({ boxScore, Row }) => {
                     </ResponsiveTableWrapper>
                 </div>
             ))}
-            {boxScore.clutchPlays && boxScore.clutchPlays.length > 0
+            {boxScore.gameOver !== false &&
+            boxScore.clutchPlays &&
+            boxScore.clutchPlays.length > 0
                 ? boxScore.clutchPlays.map((text, i) => (
                       <p key={i}>
                           <SafeHtml dirty={text} />

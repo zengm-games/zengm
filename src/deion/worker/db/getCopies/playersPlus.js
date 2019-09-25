@@ -51,6 +51,8 @@ const awardsOrder = [
     "Second Team All-Defensive",
     "Third Team All-Defensive",
     "All Rookie Team",
+    "All-Star",
+    "All-Star MVP",
 ];
 
 const processAttrs = (

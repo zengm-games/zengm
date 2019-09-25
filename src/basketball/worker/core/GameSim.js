@@ -785,11 +785,16 @@ class GameSim {
 
         let newInjury = false;
 
+        const injuryRate =
+            this.team[0].id === -1 && this.team[1].id === -2
+                ? g.injuryRate / 4
+                : g.injuryRate;
+
         for (let t = 0; t < 2; t++) {
             for (let p = 0; p < this.team[t].player.length; p++) {
                 // Only players on the court can be injured
                 if (this.playersOnCourt[t].includes(p)) {
-                    if (Math.random() < g.injuryRate) {
+                    if (Math.random() < injuryRate) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
                         this.recordPlay("injury", t, [

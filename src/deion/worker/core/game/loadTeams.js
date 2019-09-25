@@ -5,6 +5,8 @@ import { idb } from "../../db";
 import { g, helpers, overrides } from "../../util";
 
 const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
+    const allStarGame = team.tid === -1 || team.tid === -2;
+
     players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
     // Initialize team composite rating object
@@ -110,6 +112,10 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
     }
     t.pace /= numPlayers;
     t.pace = t.pace * 15 + 100; // Scale between 100 and 115
+
+    if (allStarGame) {
+        t.pace *= 1.15;
+    }
 
     t.stat = {
         ...teamStats,

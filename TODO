@@ -1,10 +1,9 @@
 # all star game
 
 game sim
-- higher pace?
-- better fg?
-- lower injuries
+- ignore ptModifier
 - no home court advantage
+- better fg?
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
@@ -24,6 +23,7 @@ blog
 - similar to nba, except no conferences
 - draft, like nba
 - you control draft for your players
+- game sim - higher pace, lower injuries, no home court advantage
 - box score viewable in game log page
 - appearances and MVP show up on player pages and on awards records
 - god mode option to disable it

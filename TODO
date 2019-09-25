@@ -1,7 +1,6 @@
 # all star game
 
 game sim
-- ignore ptModifier
 - better fg?
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?

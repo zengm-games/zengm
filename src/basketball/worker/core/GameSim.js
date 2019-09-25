@@ -438,8 +438,11 @@ class GameSim {
                     ovrs[p] =
                         this.team[t].player[p].valueNoPot *
                         fatigue(this.team[t].player[p].stat.energy) *
-                        this.team[t].player[p].ptModifier *
                         random.uniform(0.9, 1.1);
+
+                    if (!this.allStarGame) {
+                        ovrs[p] *= this.team[t].player[p].ptModifier;
+                    }
                 }
             }
 

@@ -252,31 +252,35 @@ const AllStars = ({
                 </button>
             ) : null}
             <div className="row">
-                <div className="col-4">
-                    <h3>{teamNames[0]}</h3>
-                    <PlayersTable
-                        draftType={draftType}
-                        name="Team0"
-                        pidsAdd={revealed0}
-                        players={teams[0]}
-                        remaining={remaining}
-                        stats={stats}
-                        userTids={userTids}
-                    />
+                <div className="col-sm-6 col-md-8">
+                    <div className="row">
+                        <div className="col-md-6">
+                            <h3>{teamNames[0]}</h3>
+                            <PlayersTable
+                                draftType={draftType}
+                                name="Team0"
+                                pidsAdd={revealed0}
+                                players={teams[0]}
+                                remaining={remaining}
+                                stats={stats}
+                                userTids={userTids}
+                            />
+                        </div>
+                        <div className="col-md-6">
+                            <h3>{teamNames[1]}</h3>
+                            <PlayersTable
+                                draftType={draftType}
+                                name="Team1"
+                                pidsAdd={revealed1}
+                                players={teams[1]}
+                                remaining={remaining}
+                                stats={stats}
+                                userTids={userTids}
+                            />
+                        </div>
+                    </div>
                 </div>
-                <div className="col-4">
-                    <h3>{teamNames[1]}</h3>
-                    <PlayersTable
-                        draftType={draftType}
-                        name="Team1"
-                        pidsAdd={revealed1}
-                        players={teams[1]}
-                        remaining={remaining}
-                        stats={stats}
-                        userTids={userTids}
-                    />
-                </div>
-                <div className="col-4">
+                <div className="col-sm-6 col-md-4">
                     <h3>Remaining All Stars</h3>
                     <PlayersTable
                         draftType={draftType}

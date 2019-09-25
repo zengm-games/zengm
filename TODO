@@ -9,14 +9,13 @@ game sim
 notification should pop up with ASG result
 
 all star mvp award
-- game score + 10 for winner
+- gmsc + pts/2 + (8 points if on winning team)
 - attach to box score, like feats
+  - will this work for live game? if not, need some other way to notify, since people will often watch live
 
 god mode option for g.allStarGame
 
 phase text update during all star game?
-
-how does draft screen look in a small window?
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate

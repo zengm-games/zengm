@@ -2,7 +2,6 @@
 
 game sim
 - ignore ptModifier
-- no home court advantage
 - better fg?
 
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?

@@ -187,6 +187,8 @@ class GameSim {
 
     playByPlay: Object[];
 
+    allStarGame: boolean;
+
     /**
      * Initialize the two teams that are playing this game.
      *
@@ -225,10 +227,14 @@ class GameSim {
         // Parameters
         this.synergyFactor = 0.1; // How important is synergy?
 
-        this.homeCourtAdvantage();
-
         this.lastScoringPlay = [];
         this.clutchPlays = [];
+
+        this.allStarGame = this.team[0].id === -1 && this.team[1].id === -2;
+
+        if (!this.allStarGame) {
+            this.homeCourtAdvantage();
+        }
     }
 
     /**
@@ -785,10 +791,7 @@ class GameSim {
 
         let newInjury = false;
 
-        const injuryRate =
-            this.team[0].id === -1 && this.team[1].id === -2
-                ? g.injuryRate / 4
-                : g.injuryRate;
+        const injuryRate = this.allStarGame ? g.injuryRate / 4 : g.injuryRate;
 
         for (let t = 0; t < 2; t++) {
             for (let p = 0; p < this.team[t].player.length; p++) {

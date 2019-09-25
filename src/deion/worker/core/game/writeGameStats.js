@@ -28,7 +28,7 @@ const allStarMVP = async (game: Game, conditions: Conditions) => {
 
     // Save to clutchPlays (attached to ASG box score) and also store/notify normally
     const p = await idb.cache.players.get(mvp.pid); // Needed for real tid
-    if (!p) {
+    if (!p || !game.clutchPlays) {
         return;
     }
     game.clutchPlays.push(

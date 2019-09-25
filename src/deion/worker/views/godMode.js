@@ -36,6 +36,7 @@ async function updateGodMode(
             numPlayoffByes: g.numPlayoffByes,
             draftType: g.draftType,
             playersRefuseToNegotiate: g.playersRefuseToNegotiate,
+            allStarGame: g.allStarGame,
         };
     }
 }

@@ -6,15 +6,9 @@ game sim
 - lower injuries
 - no home court advantage
 
-god mode option for g.allStarGame
-
-phase text update during all star game?
-
 to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
 - all calls to getOrCreate
 - notification even being sent?
-
-schedule with 0 or 1 games fails?
 
 check statistical feats
 - checkStatisticalFeat team ID
@@ -25,6 +19,15 @@ check statistical feats
 BoxScoreRow
 - link to team should be for the season of the ASG, not current season always (in boxScore.season but not passed to Row)
 - highlight user team abbrev
+
+blog
+- similar to nba, except no conferences
+- draft, like nba
+- you control draft for your players
+- box score viewable in game log page
+- appearances and MVP show up on player pages and on awards records
+- god mode option to disable it
+- future - football? other events?
 
 ---
 

@@ -30,7 +30,8 @@ class GodMode extends React.Component {
             numGamesPlayoffSeries: JSON.stringify(props.numGamesPlayoffSeries),
             numPlayoffByes: props.numPlayoffByes,
             draftType: props.draftType,
-            playersRefuseToNegotiate: props.playersRefuseToNegotiate,
+            playersRefuseToNegotiate: String(props.playersRefuseToNegotiate),
+            allStarGame: String(props.allStarGame),
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -64,6 +65,7 @@ class GodMode extends React.Component {
                 this,
                 "playersRefuseToNegotiate",
             ),
+            allStarGame: this.handleChange.bind(this, "allStarGame"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -95,6 +97,10 @@ class GodMode extends React.Component {
                 ),
                 numPlayoffByes: nextProps.numPlayoffByes,
                 draftType: nextProps.draftType,
+                playersRefuseToNegotiate: String(
+                    nextProps.playersRefuseToNegotiate,
+                ),
+                allStarGame: String(nextProps.allStarGame),
             };
         }
 
@@ -170,6 +176,7 @@ class GodMode extends React.Component {
             draftType: this.state.draftType,
             playersRefuseToNegotiate:
                 this.state.playersRefuseToNegotiate === "true",
+            allStarGame: this.state.allStarGame === "true",
         });
 
         this.setState({
@@ -400,6 +407,32 @@ class GodMode extends React.Component {
                                 <option value="random">Random Order</option>
                             </select>
                         </div>
+                        {process.env.SPORT === "basketball" ? (
+                            <div className="col-sm-3 col-6 form-group">
+                                <label>
+                                    All-Star Game{" "}
+                                    <HelpPopover
+                                        placement="left"
+                                        title="All-Star Game"
+                                    >
+                                        <p>
+                                            Changing this will not affect an
+                                            in-progress season, only future
+                                            seasons.
+                                        </p>
+                                    </HelpPopover>
+                                </label>
+                                <select
+                                    className="form-control"
+                                    disabled={!godMode}
+                                    onChange={this.handleChanges.allStarGame}
+                                    value={this.state.allStarGame}
+                                >
+                                    <option value="true">Enabled</option>
+                                    <option value="false">Disabled</option>
+                                </select>
+                            </div>
+                        ) : null}
                     </div>
 
                     <h3 className="mt-2">Finance</h3>
@@ -771,6 +804,7 @@ GodMode.propTypes = {
     numPlayoffByes: PropTypes.number.isRequired,
     draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
     playersRefuseToNegotiate: PropTypes.bool.isRequired,
+    allStarGame: PropTypes.bool.isRequired,
 };
 
 export default GodMode;

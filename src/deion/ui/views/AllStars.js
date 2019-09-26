@@ -145,11 +145,13 @@ const AllStars = ({
     const [revealed, setRevealed] = useState([]);
 
     const reveal = useCallback(pid => {
+        console.log("reveal", pid);
         setRevealed(revealed2 => [...revealed2, pid]);
     }, []);
 
     const startDraft = useCallback(async () => {
         setStarted(true);
+        console.log("startDraft", draftType);
 
         if (draftType === "auto") {
             const pids = await toWorker("allStarDraftAll");
@@ -177,14 +179,19 @@ const AllStars = ({
         userTids.includes(teams[1][0].tid);
     const onDraft = useCallback(
         async pid => {
+            console.log("onDraft", pid);
             const finalized2 = await toWorker("allStarDraftUser", pid);
+            console.log("finalized2", finalized2);
             reveal(pid);
             setActuallyFinalized(finalized2);
 
+            console.log("userDraftingBothTeams", userDraftingBothTeams);
             if (!userDraftingBothTeams) {
                 const { finalized: finalized3, pid: pid2 } = await toWorker(
                     "allStarDraftOne",
                 );
+                console.log("finalized3", finalized3);
+                console.log("pid2", pid2);
                 if (pid2) {
                     await wait(1000);
                     reveal(pid2);

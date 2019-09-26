@@ -1,6 +1,8 @@
 # all star game
 
 some reports of the AI not making a pick at some point, when the user is drafting one of the teams
+- probably somehow draftOne is not returning a pid even though it's not finalized
+- console.logs added
 
 MVP below the box score is not discoverable. move above, for live game? or send notification after game ends?
 
@@ -18,6 +20,8 @@ blog
 - future - football? other events?
 
 ---
+
+@Jlebron13#9965 frivolity to show player who played for most teams
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

@@ -458,14 +458,7 @@ class DataTable extends React.Component<Props, State> {
                                 onChange={this.handlePerPage}
                                 value={this.state.perPage}
                             />
-                        ) : (
-                            <Info
-                                end={end}
-                                numRows={numRowsFiltered}
-                                numRowsUnfiltered={rows.length}
-                                start={start}
-                            />
-                        )}
+                        ) : null}
                         <Controls
                             enableFilters={this.state.enableFilters}
                             onExportCSV={this.handleExportCSV}

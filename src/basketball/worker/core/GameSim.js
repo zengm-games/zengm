@@ -939,6 +939,11 @@ class GameSim {
             probMissAndFoul = 0.02;
             probMake = shootingThreePointerScaled * 0.3 + 0.36;
             probAndOne = 0.01;
+
+            // Better shooting in the ASG, why not?
+            if (this.allStarGame) {
+                probMake += 0.02;
+            }
         } else {
             const r1 =
                 0.8 *
@@ -989,7 +994,7 @@ class GameSim {
 
             // Better shooting in the ASG, why not?
             if (this.allStarGame) {
-                probMake += 0.08;
+                probMake += 0.1;
             }
         }
 

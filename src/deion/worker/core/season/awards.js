@@ -220,6 +220,8 @@ const saveAwardsByPlayer = async (
                 .replace("League ", "")
                 .replace(" Leader", "")
                 .toLowerCase()}.`;
+        } else if (p.type === "All-Star") {
+            text += `made the All-Star team.`;
         } else {
             text += `won the ${p.type} award.`;
         }

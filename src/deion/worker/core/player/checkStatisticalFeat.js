@@ -21,7 +21,6 @@ const checkStatisticalFeat = (
         if (tid < 0 && results.team[0].id === -1 && results.team[1].id === -2) {
             allStars = await idb.cache.allStars.get(g.season);
         }
-        console.log("logFeat", allStars);
 
         let actualTid = tid;
         if (allStars) {
@@ -32,7 +31,6 @@ const checkStatisticalFeat = (
                 actualTid = entry.tid;
             }
         }
-        console.log("actualTid", tid, actualTid);
 
         logEvent(
             {

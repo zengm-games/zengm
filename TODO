@@ -1,12 +1,5 @@
 # all star game
 
-game sim
-- better fg?
-
-to send notification to correct screen, need `conditions` in views/allStars. should be possible right?
-- all calls to getOrCreate
-- notification even being sent?
-
 check statistical feats
 - checkStatisticalFeat team ID
 - game winners
@@ -21,7 +14,7 @@ blog
 - similar to nba, except no conferences
 - draft, like nba
 - you control draft for your players
-- game sim - higher pace, lower injuries, no home court advantage
+- game sim - higher pace, better 2 point shooting, lower injuries, no home court advantage
 - box score viewable in game log page
 - appearances and MVP show up on player pages and on awards records
 - god mode option to disable it
@@ -354,6 +347,8 @@ Don't allow play if versions in tabs don't match
 - close worker?
 
 ---
+
+to send notification to correct screen, need `conditions` in views/allStars (and other getOrCreate calls). should be possible right? yeah, could request hostID from shared worker, and then sent it to runBefore functions, but... is it worth it? maybe not
 
 better table sorting (don't use hack of looking at child)
 - DraftAbbrev

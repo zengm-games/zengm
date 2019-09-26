@@ -986,6 +986,11 @@ class GameSim {
                     0.37;
                 probAndOne = 0.15;
             }
+
+            // Better shooting in the ASG, why not?
+            if (this.allStarGame) {
+                probMake += 0.08;
+            }
         }
 
         const foulFactor =

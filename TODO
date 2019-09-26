@@ -1,10 +1,10 @@
 # all star game
 
 check statistical feats
-- checkStatisticalFeat team ID
-- game winners
-- statistical feats
+- checkStatisticalFeat - have wrong tid - do something similar to clutchPlays in writeGameStats to override
 - player_feats UI
+
+"won the All-Star award" ugh
 
 BoxScoreRow
 - link to team should be for the season of the ASG, not current season always (in boxScore.season but not passed to Row)

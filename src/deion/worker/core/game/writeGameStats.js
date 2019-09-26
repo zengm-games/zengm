@@ -76,6 +76,10 @@ const writeGameStats = async (
     gameStats.teams[1].players = [];
 
     const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
+    let allStars;
+    if (allStarGame) {
+        allStars = await idb.cache.allStars.get(g.season);
+    }
 
     for (let t = 0; t < 2; t++) {
         for (const key of Object.keys(results.team[t].stat)) {
@@ -152,7 +156,6 @@ const writeGameStats = async (
             conditions,
         );
     } else if (results.team[0].id === -1 && results.team[1].id === -2) {
-        const allStars = await idb.cache.allStars.get(g.season);
         if (allStars) {
             const text = `${allStars.teamNames[tw]} ${
                 tied ? "tied" : "defeated"
@@ -202,10 +205,23 @@ const writeGameStats = async (
                 : "a"
         } <a href="${helpers.leagueUrl([
             "game_log",
-            g.teamAbbrevsCache[results.team[indTeam].id],
+            allStarGame
+                ? "special"
+                : g.teamAbbrevsCache[results.team[indTeam].id],
             g.season,
             results.gid,
         ])}">${score}</a> ${endPart}.`;
+
+        if (allStars) {
+            // Fix team ID to actual team, not All-Star team
+            const entry = allStars.teams[indTeam].find(
+                p => p.pid === clutchPlay.pids[0],
+            );
+            if (entry) {
+                clutchPlay.tids = [entry.tid];
+                clutchPlay.showNotification = entry.tid === g.userTid;
+            }
+        }
 
         logEvent(
             {

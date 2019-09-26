@@ -16,14 +16,31 @@ const checkStatisticalFeat = (
     results: GameResults,
     conditions: Conditions,
 ) => {
-    const logFeat = text => {
+    const logFeat = async text => {
+        let allStars;
+        if (tid < 0 && results.team[0].id === -1 && results.team[1].id === -2) {
+            allStars = await idb.cache.allStars.get(g.season);
+        }
+        console.log("logFeat", allStars);
+
+        let actualTid = tid;
+        if (allStars) {
+            // Fix team ID to actual team, not All-Star team
+            const indTeam = tid === results.team[0].id ? 0 : 1;
+            const entry = allStars.teams[indTeam].find(p2 => p2.pid === pid);
+            if (entry) {
+                actualTid = entry.tid;
+            }
+        }
+        console.log("actualTid", tid, actualTid);
+
         logEvent(
             {
                 type: "playerFeat",
                 text,
-                showNotification: tid === g.userTid,
+                showNotification: actualTid === g.userTid,
                 pids: [pid],
-                tids: [tid],
+                tids: [actualTid],
             },
             conditions,
         );

@@ -41,7 +41,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
                 <a
                     href={helpers.leagueUrl([
                         "game_log",
-                        p.abbrev,
+                        p.abbrev === undefined ? "special" : p.abbrev,
                         p.season,
                         p.gid,
                     ])}

@@ -70,7 +70,6 @@ ResultText.propTypes = {
 const AllStarHistory = ({ allAllStars, userTid }) => {
     setTitle("All-Star History");
 
-    console.log(allAllStars);
     const cols = getCols(
         "Season",
         "Result",

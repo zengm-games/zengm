@@ -3,8 +3,6 @@
 by default, never delete ASG box scores
 - update DeleteOldData text
 
-when loading old allStars, use getCopy.allStars
-
 if i store player names in allStars, what does that get me?
 - all star history
 

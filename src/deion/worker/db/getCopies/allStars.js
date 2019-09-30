@@ -8,11 +8,11 @@ const getCopies = async ({ season }: { season?: number } = {}): Promise<
 > => {
     if (season !== undefined) {
         const awards = mergeByPk(
-            await idb.league.awards.getAll(season),
-            (await idb.cache.awards.getAll()).filter(event => {
-                return event.season === season;
+            await idb.league.allStars.getAll(season),
+            (await idb.cache.allStars.getAll()).filter(row => {
+                return row.season === season;
             }),
-            idb.cache.storeInfos.awards.pk,
+            idb.cache.storeInfos.allStars.pk,
         );
         return awards;
     }

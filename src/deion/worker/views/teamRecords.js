@@ -177,13 +177,11 @@ function tallyAwards(awards, allAllStars) {
     }
 
     for (const allStars of allAllStars) {
-        console.log(allStars);
         for (const { tid } of [
             ...allStars.remaining,
             ...allStars.teams[0],
             ...allStars.teams[1],
         ]) {
-            console.log(teams, tid);
             teams[tid].allStar += 1;
         }
 

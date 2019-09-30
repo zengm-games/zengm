@@ -8,10 +8,14 @@ number or not.
 
 - [Frivolities](https://basketball-gm.com/blog/2019/05/frivolities/)
 - [New achievements](https://basketball-gm.com/blog/2019/07/new-achievements/)
+- [Revamped owner messages](https://basketball-gm.com/blog/2019/09/owner-messages-revamp/)
+- [All-Star Game](https://basketball-gm.com/blog/2019/09/all-star-game/)
 
 ## Technical details
 
 - [Refactored how draft classes are stored, allowing arbitrary future draft classes to be specified in a league file](https://basketball-gm.com/blog/2019/07/far-future-draft-classes/)
+- [Moved from Browserify to Rollup, shrinking bundle size by 18%](https://basketball-gm.com/blog/2019/09/browserify-to-rollup/)
+
 
 # 5.0.0 (2019-05-25)
 

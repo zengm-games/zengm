@@ -230,6 +230,11 @@ const changes = [
         msg:
             'There are now tons of new achievements! View them on <a href="/account">your account page</a>.',
     },
+    {
+        date: "2019-09-30",
+        msg:
+            'The All-Star game is here! Keep playing and you\'ll see it, or <a href="https://basketball-gm.com/blog/2019/09/all-star-game/">read the blog for details</a>.',
+    },
 ];
 
 export default changes;

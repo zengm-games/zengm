@@ -32,8 +32,9 @@ function getTeamRecord(t, awards) {
         }
     }
 
-    const totalWP =
-        totalWon > 0 ? (totalWon / (totalWon + totalLost)).toFixed(3) : "0.000";
+    const totalWP = helpers.roundWinp(
+        totalWon > 0 ? totalWon / (totalWon + totalLost) : 0,
+    );
 
     return {
         id: t.tid,
@@ -64,10 +65,12 @@ function getTeamRecord(t, awards) {
         allRookie: awards[t.tid] ? awards[t.tid].allRookie : 0,
         allLeague: awards[t.tid] ? awards[t.tid].allLeagueTotal : 0,
         allDefense: awards[t.tid] ? awards[t.tid].allDefenseTotal : 0,
+        allStar: awards[t.tid] ? awards[t.tid].allStar : 0,
+        allStarMVP: awards[t.tid] ? awards[t.tid].allStarMVP : 0,
     };
 }
 
-function tallyAwards(awards) {
+function tallyAwards(awards, allAllStars) {
     const teams = range(g.numTeams).map(() => {
         return {
             mvp: 0,
@@ -82,6 +85,8 @@ function tallyAwards(awards) {
             allDefense: [0, 0, 0],
             allDefenseTotal: 0,
             allRookie: 0,
+            allStar: 0,
+            allStarMVP: 0,
             bestRecord: 0,
             bestRecordConf: 0,
         };
@@ -171,6 +176,22 @@ function tallyAwards(awards) {
         }
     }
 
+    for (const allStars of allAllStars) {
+        console.log(allStars);
+        for (const { tid } of [
+            ...allStars.remaining,
+            ...allStars.teams[0],
+            ...allStars.teams[1],
+        ]) {
+            console.log(teams, tid);
+            teams[tid].allStar += 1;
+        }
+
+        if (allStars.mvp) {
+            teams[allStars.mvp.tid].allStarMVP += 1;
+        }
+    }
+
     return teams;
 }
 
@@ -215,15 +236,16 @@ async function updateTeamRecords(
     state: any,
 ): void | { [key: string]: any } {
     if (updateEvents.includes("firstRun") || inputs.byType !== state.byType) {
-        const [teams, awards] = await Promise.all([
+        const [teams, awards, allStars] = await Promise.all([
             idb.getCopies.teamsPlus({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
             idb.getCopies.awards(),
+            idb.getCopies.allStars(),
         ]);
 
-        const awardsPerTeam = tallyAwards(awards);
+        const awardsPerTeam = tallyAwards(awards, allStars);
         const teamRecords = [];
         for (let i = 0; i < teams.length; i++) {
             teamRecords.push(getTeamRecord(teams[i], awardsPerTeam));
@@ -258,6 +280,8 @@ async function updateTeamRecords(
                       "allRookie",
                       "allLeague",
                       "allDefense",
+                      "allStar",
+                      "allStarMVP",
                   ]
                 : [
                       "mvp",

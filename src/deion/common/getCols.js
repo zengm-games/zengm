@@ -1417,6 +1417,16 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "count:allStar": {
+        desc: "All-Star",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:allStarMVP": {
+        desc: "All-Star MVP",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "count:bestRecord": {
         desc: "Best Record",
         sortSequence: ["desc", "asc"],
@@ -1739,6 +1749,8 @@ const titleOverrides = {
     "count:allDefense": "ADT",
     "count:allLeague": "ALT",
     "count:allRookie": "ART",
+    "count:allStar": "AS",
+    "count:allStarMVP": "ASMVP",
     "count:bestRecord": "BR",
     "count:bestRecordConf": "BRC",
     "count:dpoy": "DPOY",

@@ -41,6 +41,7 @@ const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
         cols[i].sortType = "number";
     }
 
+    console.log(teamRecords, categories);
     const rows = teamRecords.map(tr => {
         return {
             key: tr.id,

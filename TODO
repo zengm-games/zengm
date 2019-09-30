@@ -2,9 +2,7 @@
 
 by default, never delete ASG box scores
 - update DeleteOldData text
-
-if i store player names in allStars, what does that get me?
-- all star history
+- other games with feats?
 
 some reports of the AI not making a pick at some point, when the user is drafting one of the teams
 - probably somehow draftOne is not returning a pid even though it's not finalized

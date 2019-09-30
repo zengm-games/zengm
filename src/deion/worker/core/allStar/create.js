@@ -38,7 +38,8 @@ const create = async (conditions: Conditions) => {
             injured?: true,
             pid: number,
             tid: number,
-        } = { pid: p.pid, tid: p.tid };
+            name: string,
+        } = { pid: p.pid, tid: p.tid, name: p.name };
         if (p.injury.gamesRemaining === 0) {
             healthyCount += 1;
         } else {
@@ -53,11 +54,10 @@ const create = async (conditions: Conditions) => {
 
     // Do awards first, before picking captains, so remaining has all players
     const awardsByPlayer = allStars.remaining.map((p: any) => {
-        const p2 = sortedPlayers.find(p3 => p3.pid === p.pid);
         return {
             pid: p.pid,
             tid: p.tid,
-            name: p2 ? p2.name : "",
+            name: p.name,
             type: "All-Star",
         };
     });

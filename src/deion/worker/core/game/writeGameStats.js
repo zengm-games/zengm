@@ -39,6 +39,7 @@ const allStarMVP = async (
         allStars.mvp = {
             pid: p.pid,
             tid: p.tid,
+            name: `${p.firstName} ${p.lastName}`,
         };
         // Will be saved later
     }

@@ -4,33 +4,26 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
-const getPlayer = async ({ pid, tid }: { pid: number, tid: number }) => {
-    const p = await idb.cache.players.get(pid);
-    if (p) {
-        return {
-            abbrev: g.teamAbbrevsCache[tid],
-            pid,
-            name: `${p.firstName} ${p.lastName}`,
-            tid,
-        };
-    }
+const addAbbrev = (obj: any): any => {
+    return {
+        ...obj,
+        abbrev: g.teamAbbrevsCache[obj.tid],
+    };
 };
 
 const augment = allAllStars => {
-    return Promise.all(
-        allAllStars.map(async row => {
-            return {
-                gid: row.gid,
-                mvp: row.mvp ? await getPlayer(row.mvp) : undefined,
-                overtimes: row.overtimes,
-                score: row.score,
-                season: row.season,
-                teamNames: row.teamNames,
-                captain1: await getPlayer(row.teams[0][0]),
-                captain2: await getPlayer(row.teams[1][0]),
-            };
-        }),
-    );
+    return allAllStars.map(row => {
+        return {
+            gid: row.gid,
+            mvp: row.mvp ? addAbbrev(row.mvp) : undefined,
+            overtimes: row.overtimes,
+            score: row.score,
+            season: row.season,
+            teamNames: row.teamNames,
+            captain1: addAbbrev(row.teams[0][0]),
+            captain2: addAbbrev(row.teams[1][0]),
+        };
+    });
 };
 
 const updateAllStarHistory = async (
@@ -41,7 +34,7 @@ const updateAllStarHistory = async (
         const allAllStars = await idb.getCopies.allStars();
 
         return {
-            allAllStars: await augment(allAllStars),
+            allAllStars: augment(allAllStars),
             userTid: g.userTid,
         };
     }

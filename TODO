@@ -2,16 +2,15 @@
 
 All-Star history sub-page of Team History, like https://www.basketball-reference.com/allstar/
 - links to and from this page from other team history pages
-- highlight user tid on table
 
 by default, never delete ASG box scores
 - update DeleteOldData text
 
 add counts to team records
 
-rename AllStars to AllStarDraft
-
 redirect AllStarDraft to AllStarHistory on error
+
+in AllStarDraft, "reveal" keeps getting printed even after navigating away
 
 when loading old allStars, use getCopy.allStars
 

@@ -43,6 +43,7 @@ const updateAllStarHistory = async (
 
         return {
             allAllStars: await augment(allAllStars),
+            userTid: g.userTid,
         };
     }
 };

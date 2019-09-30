@@ -67,7 +67,7 @@ ResultText.propTypes = {
     teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const AllStarHistory = ({ allAllStars }) => {
+const AllStarHistory = ({ allAllStars, userTid }) => {
     setTitle("All-Star History");
 
     console.log(allAllStars);
@@ -83,6 +83,13 @@ const AllStarHistory = ({ allAllStars }) => {
     );
 
     const rows = allAllStars.map(row => {
+        const classNamesCaptain1 =
+            row.captain1 && row.captain1.tid === userTid ? "table-info" : "";
+        const classNamesCaptain2 =
+            row.captain2 && row.captain2.tid === userTid ? "table-info" : "";
+        const classNamesMVP =
+            row.mvp && row.mvp.tid === userTid ? "table-info" : "";
+
         return {
             key: row.season,
             data: [
@@ -94,24 +101,54 @@ const AllStarHistory = ({ allAllStars }) => {
                     season={row.season}
                     teamNames={row.teamNames}
                 />,
-                <PlayerName p={row.captain1}>
-                    {row.captain1 ? row.captain1.name : "???"}
-                </PlayerName>,
-                <PlayerTeam p={row.captain1} season={row.season}>
-                    {row.captain1 ? row.captain1.abbrev : "???"}
-                </PlayerTeam>,
-                <PlayerName p={row.captain2}>
-                    {row.captain2 ? row.captain2.name : "???"}
-                </PlayerName>,
-                <PlayerTeam p={row.captain2} season={row.season}>
-                    {row.captain2 ? row.captain2.abbrev : "???"}
-                </PlayerTeam>,
-                <PlayerName p={row.mvp}>
-                    {row.mvp ? row.mvp.name : "???"}
-                </PlayerName>,
-                <PlayerTeam p={row.mvp} season={row.season}>
-                    {row.mvp ? row.mvp.abbrev : "???"}
-                </PlayerTeam>,
+                {
+                    classNames: classNamesCaptain1,
+                    value: (
+                        <PlayerName p={row.captain1}>
+                            {row.captain1 ? row.captain1.name : "???"}
+                        </PlayerName>
+                    ),
+                },
+                {
+                    classNames: classNamesCaptain1,
+                    value: (
+                        <PlayerTeam p={row.captain1} season={row.season}>
+                            {row.captain1 ? row.captain1.abbrev : "???"}
+                        </PlayerTeam>
+                    ),
+                },
+                {
+                    classNames: classNamesCaptain2,
+                    value: (
+                        <PlayerName p={row.captain2}>
+                            {row.captain2 ? row.captain2.name : "???"}
+                        </PlayerName>
+                    ),
+                },
+                {
+                    classNames: classNamesCaptain2,
+                    value: (
+                        <PlayerTeam p={row.captain2} season={row.season}>
+                            {row.captain2 ? row.captain2.abbrev : "???"}
+                        </PlayerTeam>
+                    ),
+                },
+                {
+                    classNames: classNamesMVP,
+                    value: (
+                        <PlayerName p={row.mvp}>
+                            {row.mvp ? row.mvp.name : "???"}
+                        </PlayerName>
+                    ),
+                },
+                {
+                    classNames: classNamesMVP,
+                    value: (
+                        <PlayerTeam p={row.mvp} season={row.season}>
+                            {row.mvp ? row.mvp.abbrev : "???"}
+                        </PlayerTeam>
+                    ),
+                },
             ],
         };
     });
@@ -136,6 +173,7 @@ const AllStarHistory = ({ allAllStars }) => {
 
 AllStarHistory.propTypes = {
     allAllStars: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default AllStarHistory;

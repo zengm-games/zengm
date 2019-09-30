@@ -125,6 +125,10 @@ const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
                 <a href={helpers.leagueUrl(["team_records"])}>Team Records</a> |{" "}
                 <a href={helpers.leagueUrl(["awards_records"])}>
                     Awards Records
+                </a>{" "}
+                |{" "}
+                <a href={helpers.leagueUrl(["all_star_history"])}>
+                    All-Star History
                 </a>
             </p>
 

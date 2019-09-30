@@ -160,6 +160,17 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
             <h1>
                 All-Star History <NewWindowLink />
             </h1>
+
+            <p>
+                More:{" "}
+                <a href={helpers.leagueUrl(["history_all"])}>League History</a>{" "}
+                | <a href={helpers.leagueUrl(["team_records"])}>Team Records</a>{" "}
+                |{" "}
+                <a href={helpers.leagueUrl(["awards_records"])}>
+                    Awards Records
+                </a>
+            </p>
+
             <DataTable
                 cols={cols}
                 defaultSort={[0, "desc"]}

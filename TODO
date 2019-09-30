@@ -1,8 +1,5 @@
 # all star game
 
-All-Star history sub-page of Team History, like https://www.basketball-reference.com/allstar/
-- links to and from this page from other team history pages
-
 by default, never delete ASG box scores
 - update DeleteOldData text
 
@@ -34,6 +31,7 @@ blog
 - box score viewable in game log page
 - appearances and MVP show up on player pages and on awards records
 - god mode option to disable it
+- all star history, linked from league history page
 - future - football? other events?
 
 ---

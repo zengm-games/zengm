@@ -5,8 +5,6 @@ by default, never delete ASG box scores
 
 add counts to team records
 
-redirect AllStarDraft to AllStarHistory on error
-
 in AllStarDraft, "reveal" keeps getting printed even after navigating away
 
 when loading old allStars, use getCopy.allStars

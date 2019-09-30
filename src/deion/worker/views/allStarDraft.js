@@ -2,7 +2,7 @@
 
 import { allStar } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 const stats =
@@ -58,8 +58,7 @@ const updateAllStars = async (
         const nextGameIsAllStar = await allStar.nextGameIsAllStar();
         if (!nextGameIsAllStar) {
             return {
-                errorMessage:
-                    "You can only view this page right before the All-Star Game.",
+                redirectUrl: helpers.leagueUrl(["all_star_history"]),
             };
         }
 

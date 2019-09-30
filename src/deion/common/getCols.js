@@ -1186,6 +1186,12 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
+    "Captain 1": {
+        sortType: "name",
+    },
+    "Captain 2": {
+        sortType: "name",
+    },
     Cash: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -1262,6 +1268,10 @@ const cols: {
         sortType: "number",
     },
     Mood: {},
+    MVP: {
+        desc: "Most Valuable Player",
+        sortType: "name",
+    },
     Name: {
         sortType: "name",
     },

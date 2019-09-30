@@ -103,7 +103,7 @@ const PlayersTable = ({
         <DataTable
             cols={cols}
             defaultSort={[0, "asc"]}
-            name={`AllStars:${name}`}
+            name={`AllStarDraft:${name}`}
             rows={rows}
         />
     );

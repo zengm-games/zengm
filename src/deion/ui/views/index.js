@@ -1,7 +1,8 @@
 // @flow
 
 import Account from "./Account";
-import AllStars from "./AllStars";
+import AllStarDraft from "./AllStarDraft";
+import AllStarHistory from "./AllStarHistory";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardsRecords from "./AwardsRecords";
 import Changes from "./Changes";
@@ -72,7 +73,8 @@ import WatchList from "./WatchList";
 export default {
     Account,
     AccountUpdateCard,
-    AllStars,
+    AllStarDraft,
+    AllStarHistory,
     AwardsRecords,
     Changes,
     CustomizePlayer,

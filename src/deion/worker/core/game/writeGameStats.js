@@ -6,7 +6,11 @@ import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import type { Conditions, Game, GameResults } from "../../../common/types";
 
-const allStarMVP = async (game: Game, conditions: Conditions) => {
+const allStarMVP = async (
+    game: Game,
+    allStars: any,
+    conditions: Conditions,
+) => {
     let mvp;
     let maxScore = -Infinity;
 
@@ -26,9 +30,21 @@ const allStarMVP = async (game: Game, conditions: Conditions) => {
         return;
     }
 
-    // Save to clutchPlays (attached to ASG box score) and also store/notify normally
     const p = await idb.cache.players.get(mvp.pid); // Needed for real tid
-    if (!p || !game.clutchPlays) {
+    if (!p) {
+        return;
+    }
+
+    if (allStars) {
+        allStars.mvp = {
+            pid: p.pid,
+            tid: p.tid,
+        };
+        // Will be saved later
+    }
+
+    // Save to clutchPlays (attached to ASG box score) and also store/notify normally
+    if (!game.clutchPlays) {
         return;
     }
     game.clutchPlays.push(
@@ -233,7 +249,16 @@ const writeGameStats = async (
     }
 
     if (allStarGame) {
-        await allStarMVP(gameStats, conditions);
+        await allStarMVP(gameStats, allStars, conditions);
+        if (allStars) {
+            allStars.gid = results.gid;
+            allStars.score = [
+                results.team[0].stat.pts,
+                results.team[1].stat.pts,
+            ];
+            allStars.overtimes = results.overtimes;
+            await idb.cache.allStars.put(allStars);
+        }
     }
 
     await idb.cache.games.add(gameStats);

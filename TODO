@@ -1,5 +1,23 @@
 # all star game
 
+All-Star history sub-page of Team History, like https://www.basketball-reference.com/allstar/
+- links to and from this page from other team history pages
+- highlight user tid on table
+
+by default, never delete ASG box scores
+- update DeleteOldData text
+
+add counts to team records
+
+rename AllStars to AllStarDraft
+
+redirect AllStarDraft to AllStarHistory on error
+
+when loading old allStars, use getCopy.allStars
+
+if i store player names in allStars, what does that get me?
+- all star history
+
 some reports of the AI not making a pick at some point, when the user is drafting one of the teams
 - probably somehow draftOne is not returning a pid even though it's not finalized
 - console.logs added
@@ -22,6 +40,8 @@ blog
 ---
 
 @Jlebron13#9965 frivolity to show player who played for most teams
+
+@SLR52#7441 show playoff series record in box score
 
 reactstrap upgrade notes
 - v8 has problems with popovers:

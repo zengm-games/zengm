@@ -33,7 +33,7 @@ const updatePlayMenu = async () => {
         month: { label: "One month" },
         untilAllStarGame: { label: "Until All-Star Game" },
         viewAllStarSelections: {
-            url: helpers.leagueUrl(["all_stars"]),
+            url: helpers.leagueUrl(["all_star_draft"]),
             label: "View All-Star draft",
         },
         untilPlayoffs: { label: "Until playoffs" },

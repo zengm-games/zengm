@@ -140,7 +140,7 @@ const choice = <T>(x: T[], weightFunc?: T => number): T => {
     }, []);
     const max = cumsums[cumsums.length - 1];
     const rand = Math.random() * max;
-    const ind = cumsums.findIndex(cumsum => cumsum > rand);
+    const ind = cumsums.findIndex(cumsum => cumsum >= rand);
     return x[ind];
 };
 

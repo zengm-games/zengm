@@ -350,6 +350,7 @@ export const createWithoutSaving = (
 
     // These object stores are blank by default
     const toMaybeAdd = [
+        "allStars",
         "releasedPlayers",
         "awards",
         "schedule",

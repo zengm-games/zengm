@@ -1,5 +1,9 @@
 # all star game
 
+make playing time a little more balanced
+
+if user clicks "play until all-star game", redirect to draft page when it's available
+
 by default, never delete ASG box scores
 - update DeleteOldData text
 - other games with feats?

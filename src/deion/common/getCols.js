@@ -1101,7 +1101,7 @@ const sportSpecificCols: {
                   sortType: "number",
               },
               "stat:touches": {
-                  desc: "Tocuhes (Rushing Attempts And Receptions)",
+                  desc: "Touches (Rushing Attempts And Receptions)",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },

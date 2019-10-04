@@ -261,7 +261,7 @@ class Controller extends React.Component<{}, State> {
             return;
         }
 
-        // If there was an error before, still show it unless we've recieved some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
+        // If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
         if (results && results.some(result => !!result)) {
             delete prevData.errorMessage;
         }

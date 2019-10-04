@@ -188,7 +188,7 @@ class PlayByPlayLogger {
                 text = `The onside kick was recovered by ${
                     success
                         ? "the kicking team!"
-                        : `the recieving team${
+                        : `the receiving team${
                               td ? " and returned for a touchdown!" : ""
                           }`
                 }`;

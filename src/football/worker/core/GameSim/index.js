@@ -1627,8 +1627,8 @@ class GameSim {
                     (defender.compositeRating.passCoverage +
                         this.team[this.d].compositeRating.passCoverage))) *
             Math.sqrt(
-                this.team[this.d].compositeRating.passRushing /
-                    this.team[this.o].compositeRating.passBlocking,
+                this.team[this.o].compositeRating.passBlocking /
+                    this.team[this.d].compositeRating.passRushing,
             );
 
         const p = 0.55 * factor ** 1.25;
@@ -1680,8 +1680,8 @@ class GameSim {
         let ydsRaw = Math.round(
             random.truncGauss(
                 11 *
-                    (this.team[this.d].compositeRating.passRushing /
-                        this.team[this.o].compositeRating.passBlocking),
+                    (this.team[this.o].compositeRating.passBlocking /
+                        this.team[this.d].compositeRating.passRushing),
                 7,
                 -10,
                 100,

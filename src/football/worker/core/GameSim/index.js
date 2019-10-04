@@ -1631,7 +1631,7 @@ class GameSim {
                     this.team[this.d].compositeRating.passRushing,
             );
 
-        const p = 0.55 * factor ** 1.25;
+        const p = 0.02 + 0.54 * factor ** 1.25;
 
         return helpers.bound(p, 0, 0.95);
     }
@@ -1679,7 +1679,7 @@ class GameSim {
         const interception = Math.random() < this.probInt(qb);
         let ydsRaw = Math.round(
             random.truncGauss(
-                11 *
+                9.2 *
                     (this.team[this.o].compositeRating.passBlocking /
                         this.team[this.d].compositeRating.passRushing),
                 7,

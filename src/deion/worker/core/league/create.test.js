@@ -13,6 +13,7 @@ describe("worker/core/league/create", () => {
 
     test("create all necessary object stores", () => {
         assert.deepEqual(Object.keys(leagueData).sort(), [
+            "allStars",
             "awards",
             "draftLotteryResults",
             "draftPicks",

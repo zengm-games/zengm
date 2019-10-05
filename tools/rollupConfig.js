@@ -60,6 +60,9 @@ module.exports = (nodeEnv, blacklistOptions) => {
     if (nodeEnv === "production") {
         plugins.push(
             terser({
+                output: {
+                    comments: /^I DON'T WANT ANY COMMENTS$/,
+                },
                 safari10: true,
             }),
         );

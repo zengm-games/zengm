@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import AutoAffix from "react-overlays/AutoAffix";
 import { BoxScoreWrapper } from "../components";
 import { overrides, setTitle } from "../util";
 
@@ -73,7 +72,7 @@ class LiveGame extends React.Component {
         window.addEventListener("resize", this.setPlayByPlayDivHeight);
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.events && !this.state.started) {
             this.setState(
                 {
@@ -94,7 +93,12 @@ class LiveGame extends React.Component {
     }
 
     setPlayByPlayDivHeight() {
-        this.playByPlayDiv.style.height = `${window.innerHeight - 113}px`;
+        // Keep in sync with .live-game-affix
+        if (window.matchMedia("(min-width:768px)").matches) {
+            this.playByPlayDiv.style.height = `${window.innerHeight - 113}px`;
+        } else if (this.playByPlayDiv.style.height !== "") {
+            this.playByPlayDiv.style.removeProperty("height");
+        }
     }
 
     startLiveGame(events) {
@@ -204,81 +208,72 @@ class LiveGame extends React.Component {
                         )}
                     </div>
                     <div className="col-md-3">
-                        <AutoAffix viewportOffsetTop={60} container={this}>
-                            {/* Needs to return actual div, not fragment, for AutoAffix!!! */}
-                            <div>
-                                {this.state.boxScore.gid >= 0 ? (
-                                    <div className="d-flex align-items-center mb-3">
-                                        <div className="btn-group mr-2">
-                                            {this.state.paused ? (
-                                                <button
-                                                    className="btn btn-light-bordered"
-                                                    disabled={
-                                                        this.state.boxScore
-                                                            .gameOver
-                                                    }
-                                                    onClick={this.handlePlay}
-                                                    title="Resume Simulation"
-                                                >
-                                                    <span className="glyphicon glyphicon-play" />
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    className="btn btn-light-bordered"
-                                                    disabled={
-                                                        this.state.boxScore
-                                                            .gameOver
-                                                    }
-                                                    onClick={this.handlePause}
-                                                    title="Pause Simulation"
-                                                >
-                                                    <span className="glyphicon glyphicon-pause" />
-                                                </button>
-                                            )}
+                        <div className="live-game-affix">
+                            {this.state.boxScore.gid >= 0 ? (
+                                <div className="d-flex align-items-center mb-3">
+                                    <div className="btn-group mr-2">
+                                        {this.state.paused ? (
                                             <button
                                                 className="btn btn-light-bordered"
                                                 disabled={
-                                                    !this.state.paused ||
                                                     this.state.boxScore.gameOver
                                                 }
-                                                onClick={() => {
-                                                    this.processToNextPause(
-                                                        true,
-                                                    );
-                                                }}
-                                                title="Show Next Play"
+                                                onClick={this.handlePlay}
+                                                title="Resume Simulation"
                                             >
-                                                <span className="glyphicon glyphicon-step-forward" />
+                                                <span className="glyphicon glyphicon-play" />
                                             </button>
-                                        </div>
-                                        <div className="form-group flex-grow-1 mb-0">
-                                            <input
-                                                type="range"
-                                                className="form-control-range"
+                                        ) : (
+                                            <button
+                                                className="btn btn-light-bordered"
                                                 disabled={
                                                     this.state.boxScore.gameOver
                                                 }
-                                                min="1"
-                                                max="33"
-                                                step="1"
-                                                value={this.state.speed}
-                                                onChange={
-                                                    this.handleSpeedChange
-                                                }
-                                                title="Speed"
-                                            />
-                                        </div>
+                                                onClick={this.handlePause}
+                                                title="Pause Simulation"
+                                            >
+                                                <span className="glyphicon glyphicon-pause" />
+                                            </button>
+                                        )}
+                                        <button
+                                            className="btn btn-light-bordered"
+                                            disabled={
+                                                !this.state.paused ||
+                                                this.state.boxScore.gameOver
+                                            }
+                                            onClick={() => {
+                                                this.processToNextPause(true);
+                                            }}
+                                            title="Show Next Play"
+                                        >
+                                            <span className="glyphicon glyphicon-step-forward" />
+                                        </button>
                                     </div>
-                                ) : null}
+                                    <div className="form-group flex-grow-1 mb-0">
+                                        <input
+                                            type="range"
+                                            className="form-control-range"
+                                            disabled={
+                                                this.state.boxScore.gameOver
+                                            }
+                                            min="1"
+                                            max="33"
+                                            step="1"
+                                            value={this.state.speed}
+                                            onChange={this.handleSpeedChange}
+                                            title="Speed"
+                                        />
+                                    </div>
+                                </div>
+                            ) : null}
 
-                                <div
-                                    ref={c => {
-                                        this.playByPlayDiv = c;
-                                    }}
-                                    style={{ height: "100%", overflow: "auto" }}
-                                />
-                            </div>
-                        </AutoAffix>
+                            <div
+                                className="live-game-playbyplay"
+                                ref={c => {
+                                    this.playByPlayDiv = c;
+                                }}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

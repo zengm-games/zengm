@@ -1,3 +1,6 @@
+replace bootstrap-overlays with position: sticky
+- set height only when sticky
+
 # all star game
 
 make playing time a little more balanced

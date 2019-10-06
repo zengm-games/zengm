@@ -53,6 +53,7 @@
         "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
         "react/jsx-props-no-spreading": "off",
         "react/no-array-index-key": "off",
+        "react/no-did-update-set-state": "off",
         "react/no-multi-comp": "off",
         "react/no-unescaped-entities": "off",
         "react/no-unused-prop-types": "off", // Would be nice, but tons of false positives

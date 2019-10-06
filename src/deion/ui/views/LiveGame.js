@@ -5,6 +5,7 @@ import { BoxScoreWrapper } from "../components";
 import { overrides, setTitle } from "../util";
 
 class PlayerRow extends React.Component {
+    // Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
     shouldComponentUpdate(nextProps) {
         return process.env.SPORT === "basketball"
             ? this.prevInGame || nextProps.p.inGame
@@ -72,15 +73,15 @@ class LiveGame extends React.Component {
         window.addEventListener("resize", this.setPlayByPlayDivHeight);
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.events && !this.state.started) {
+    componentDidUpdate() {
+        if (this.props.events && !this.state.started) {
             this.setState(
                 {
-                    boxScore: nextProps.initialBoxScore,
+                    boxScore: this.props.initialBoxScore,
                     started: true,
                 },
                 () => {
-                    this.startLiveGame(nextProps.events.slice());
+                    this.startLiveGame(this.props.events.slice());
                 },
             );
         }

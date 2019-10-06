@@ -255,6 +255,8 @@ const calculateRatings = (players, teams, league) => {
 
             // Offensive rating
 
+            const ftRatio = p.stats.fta > 0 ? p.stats.ft / p.stats.fta : 0;
+
             const qAst =
                 (p.stats.min / (t.stats.min / 5)) *
                     (1.14 * ((t.stats.ast - p.stats.ast) / t.stats.fg)) +
@@ -273,8 +275,7 @@ const calculateRatings = (players, teams, league) => {
                 ((t.stats.pts - t.stats.ft - (p.stats.pts - p.stats.ft)) /
                     (2 * (t.stats.fga - p.stats.fga))) *
                 p.stats.ast;
-            const ftPart =
-                (1 - (1 - p.stats.ft / p.stats.fta) ** 2) * 0.4 * p.stats.fta;
+            const ftPart = (1 - (1 - ftRatio) ** 2) * 0.4 * p.stats.fta;
             const teamScoringPoss =
                 t.stats.fg +
                 (1 - (1 - t.stats.ft / t.stats.fta) ** 2) * t.stats.fta * 0.4;
@@ -297,8 +298,7 @@ const calculateRatings = (players, teams, league) => {
 
             const fgxPoss =
                 (p.stats.fga - p.stats.fg) * (1 - 1.07 * teamOrbPct);
-            const ftxPoss =
-                (1 - p.stats.ft / p.stats.fta) ** 2 * 0.4 * p.stats.fta;
+            const ftxPoss = (1 - ftRatio) ** 2 * 0.4 * p.stats.fta;
             const totPoss = scPoss + fgxPoss + ftxPoss + p.stats.tov;
 
             const pProdFgPart =

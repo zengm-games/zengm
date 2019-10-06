@@ -1,13 +1,15 @@
 // @flow
 
 import { season } from "..";
+import type { ScheduleGame } from "../../../common/types";
 
-const nextGameIsAllStar = async () => {
-    const schedule = await season.getSchedule();
+const nextGameIsAllStar = async (schedule?: ScheduleGame[]) => {
+    const schedule2 =
+        schedule === undefined ? await season.getSchedule() : schedule;
     return (
-        schedule.length > 0 &&
-        schedule[0].homeTid === -1 &&
-        schedule[0].awayTid === -2
+        schedule2.length > 0 &&
+        schedule2[0].homeTid === -1 &&
+        schedule2[0].awayTid === -2
     );
 };
 

@@ -1,7 +1,16 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import { finances, freeAgents, phase, player, season, team, trade } from "..";
+import {
+    allStar,
+    finances,
+    freeAgents,
+    phase,
+    player,
+    season,
+    team,
+    trade,
+} from "..";
 import loadTeams from "./loadTeams";
 import updatePlayoffSeries from "./updatePlayoffSeries";
 import writeGameStats from "./writeGameStats";
@@ -53,6 +62,18 @@ const play = async (
                     conditions,
                     gidPlayByPlay !== undefined,
                 );
+            } else {
+                const allStarNext = await allStar.nextGameIsAllStar(schedule);
+                if (allStarNext) {
+                    toUI(
+                        [
+                            "realtimeUpdate",
+                            [],
+                            helpers.leagueUrl(["all_star_draft"]),
+                        ],
+                        conditions,
+                    );
+                }
             }
         } else if (playoffsOver) {
             await phase.newPhase(

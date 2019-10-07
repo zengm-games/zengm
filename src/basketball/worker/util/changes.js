@@ -235,6 +235,11 @@ const changes = [
         msg:
             'The All-Star game is here! Keep playing and you\'ll see it, or <a href="https://basketball-gm.com/blog/2019/09/all-star-game/">read the blog for details</a>.',
     },
+    {
+        date: "2019-10-07",
+        msg:
+            "New feature: social media! Within a league, go to Tools > Social Media.",
+    },
 ];
 
 export default changes;

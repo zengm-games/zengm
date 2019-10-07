@@ -57,6 +57,7 @@ import ResetPassword from "./ResetPassword";
 import Roster from "./Roster";
 import RosterContinuity from "./RosterContinuity";
 import Schedule from "./Schedule";
+import SocialMedia from "./SocialMedia";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import TeamHistory from "./TeamHistory";
@@ -128,6 +129,7 @@ export default {
     Roster,
     RosterContinuity,
     Schedule,
+    SocialMedia,
     Standings,
     TeamFinances,
     TeamHistory,

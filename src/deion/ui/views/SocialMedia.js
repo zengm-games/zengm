@@ -100,10 +100,8 @@ const SocialMedia = ({ teamName }: { teamName: string }) => {
             });
             newReplies.push({
                 name: `@${teamName.replace(/ /g, "")}Owner`,
-                tweet: "You're fired.",
+                tweet: "You're this close to being fired.",
             });
-
-            await toWorker("updateGameAttributes", { gameOver: true });
         }
 
         setReplies(newReplies);
@@ -160,7 +158,7 @@ const SocialMedia = ({ teamName }: { teamName: string }) => {
                     <div className="card mt-3">
                         <div className="card-body">
                             <p className="card-text">
-                                Retweet some seeminly-innocuous message about
+                                Retweet some seemingly-innocuous message about
                                 supporting the protests in Hong Kong.
                             </p>
                             <button

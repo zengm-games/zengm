@@ -192,7 +192,7 @@ const AllStars = ({
                 );
                 console.log("finalized3", finalized3);
                 console.log("pid2", pid2);
-                if (pid2) {
+                if (pid2 !== undefined) {
                     await wait(1000);
                     reveal(pid2);
                 }

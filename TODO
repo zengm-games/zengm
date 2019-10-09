@@ -1,15 +1,13 @@
 # all star game
 
+ASG top 5 drafted players don't always start. why?
+- https://old.reddit.com/r/BasketballGM/comments/dbj8zt/new_in_version_201909301331_the_allstar_game/f33gxds/?context=3
+
 make playing time a little more balanced
 
 by default, never delete ASG box scores
 - update DeleteOldData text
 - other games with feats?
-
-some reports of the AI not making a pick at some point, when the user is drafting one of the teams
-- probably somehow draftOne is not returning a pid even though it's not finalized
-- console.logs added
-- or maybe it's "Player not found, pid" https://app.bugsnag.com/dumbmatter/basketball-gm/errors/5d8d264ade2e0400183e62ec?filters[event.since][0][type]=eq&filters[event.since][0][value]=30d&filters[error.status][0][type]=eq&filters[error.status][0][value]=open&filters[app.release_stage][0][value]=beta&filters[app.release_stage][0][type]=eq
 
 MVP below the box score is not discoverable. move above, for live game? or send notification after game ends?
 

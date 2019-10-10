@@ -1,5 +1,3 @@
-upgrade faces.js
-
 # all star game
 
 skip advanced stats for players with very low playing time, to avoid them from being all stars and having super huge PER

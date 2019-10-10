@@ -12,6 +12,7 @@ const generate = () => {
 
 const upgrade = async (p: Player<MinimalPlayerRatings>) => {
     if (!p.face || !p.face.accessories) {
+        // $FlowFixMe
         p.face2 = p.face;
         p.face = generate();
         await idb.cache.players.put(p);

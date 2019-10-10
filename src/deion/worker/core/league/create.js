@@ -58,6 +58,21 @@ export const createWithoutSaving = (
     // Any custom teams?
     let teamInfos: any;
     if (leagueFile.hasOwnProperty("teams")) {
+        for (let i = 0; i < leagueFile.teams.length; i++) {
+            const t = leagueFile.teams[i];
+            if (!t.colors) {
+                if (
+                    teamsDefault[i] &&
+                    teamsDefault[i].region === t.region &&
+                    teamsDefault[i].name === t.name
+                ) {
+                    t.colors = teamsDefault[i].colors;
+                } else {
+                    t.colors = ["#000", "#ccc", "#fff"];
+                }
+            }
+        }
+
         if (leagueFile.teams.length <= teamsDefault.length) {
             // This probably shouldn't be here, but oh well, backwards compatibility...
             teamInfos = leagueFile.teams.map((t, i) => {

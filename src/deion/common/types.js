@@ -565,6 +565,7 @@ export type Team = {|
         KR: number[],
         PR: number[],
     },
+    colors: [string, string, string],
 |};
 
 export type TeamBasic = {|
@@ -577,6 +578,7 @@ export type TeamBasic = {|
     pop: number,
     popRank?: number,
     imgURL?: string,
+    colors: [string, string, string],
 |};
 
 export type TeamAttr = string;

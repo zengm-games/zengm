@@ -6,7 +6,7 @@ import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
-import { logEvent, overrides } from "../util";
+import { helpers, logEvent, overrides } from "../util";
 
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
@@ -566,13 +566,32 @@ const migrateLeague = (upgradeDB, lid) => {
     if (upgradeDB.oldVersion <= 33) {
         upgradeDB.createObjectStore("allStars", { keyPath: "season" });
     }
+    if (upgradeDB.oldVersion <= 34) {
+        const teamsDefault = helpers.getTeamsDefault();
+
+        upgradeDB.teams.iterate(t => {
+            if (!t.colors) {
+                if (
+                    teamsDefault[t.tid] &&
+                    teamsDefault[t.tid].region === t.region &&
+                    teamsDefault[t.tid].name === t.name
+                ) {
+                    t.colors = teamsDefault[t.tid].colors;
+                } else {
+                    t.colors = ["#000", "#ccc", "#fff"];
+                }
+
+                upgradeDB.teams.put(t);
+            }
+        });
+    }
 
     // Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js)
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await backboard.open(`league${lid}`, 34, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 35, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB);
         } else {

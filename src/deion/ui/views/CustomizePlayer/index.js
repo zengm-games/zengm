@@ -1,4 +1,4 @@
-import { convertFromV1, generate as generateFace, svgs } from "facesjs";
+import { generate as generateFace, svgs } from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
@@ -158,8 +158,8 @@ class CustomizePlayer extends React.Component {
             p.age = this.props.season - p.born.year;
             p.contract.amount /= 1000;
         }
-        if (typeof p.face.head.id === "number") {
-            p.face = convertFromV1(p.face);
+        if (!p.face.accessories) {
+            p.face = generateFace();
         }
         this.state = {
             appearanceOption: props.appearanceOption,

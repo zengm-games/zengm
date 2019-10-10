@@ -77,11 +77,16 @@ const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
                 |{" "}
                 <a href={helpers.leagueUrl(["awards_records"])}>
                     Awards Records
-                </a>{" "}
-                |{" "}
-                <a href={helpers.leagueUrl(["all_star_history"])}>
-                    All-Star History
                 </a>
+                {process.env.SPORT === "basketball" ? (
+                    <>
+                        {" "}
+                        |{" "}
+                        <a href={helpers.leagueUrl(["all_star_history"])}>
+                            All-Star History
+                        </a>
+                    </>
+                ) : null}
             </p>
 
             <p>Totals over {seasonCount} seasons played.</p>

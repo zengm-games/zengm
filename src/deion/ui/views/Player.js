@@ -240,6 +240,7 @@ const Player = ({
     showContract,
     showTradeFor,
     statTables,
+    teamColors,
     willingToSign,
 }) => {
     setTitle(player.name);
@@ -320,6 +321,7 @@ const Player = ({
                         <PlayerPicture
                             face={player.face}
                             imgURL={player.imgURL}
+                            teamColors={teamColors}
                         />
                     </div>
                     <div style={{ float: "left" }}>
@@ -627,6 +629,7 @@ Player.propTypes = {
             stats: PropTypes.arrayOf(PropTypes.string).isRequired,
         }),
     ).isRequired,
+    teamColors: PropTypes.arrayOf(PropTypes.string),
     willingToSign: PropTypes.bool.isRequired,
 };
 

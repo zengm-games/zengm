@@ -1,7 +1,9 @@
 new faces
 - basketball/football overrides
-- team colors overrides
+  - on generate
+- pass teamColors to PlayerPicture from customize
 - convert to new face on use, save old face in face2
+  - do it in place, anywhere PlayerPicture is shown (player and customize)
 - editor
   - text box, randomize button
   - link to editor on dumbmatter.com

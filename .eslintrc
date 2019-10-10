@@ -45,6 +45,7 @@
         "no-prototype-builtins": "off",
         "no-restricted-syntax": "off",
         "no-underscore-dangle": "off",
+        "no-unneeded-ternary": "off",
         "prefer-const": ["error", {"destructuring": "all"}],
         "prefer-destructuring": "off", // Would be nice, but buggy
         "react/button-has-type": "off",

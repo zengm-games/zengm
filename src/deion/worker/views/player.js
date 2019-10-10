@@ -113,6 +113,14 @@ async function updatePlayer(
             );
         }
 
+        let teamColors;
+        if (p.tid >= 0) {
+            const t = await bbgm.idb.cache.teams.get(p.tid);
+            if (t) {
+                teamColors = t.colors;
+            }
+        }
+
         let events = await idb.getCopies.events({ pid: inputs.pid });
 
         const feats = events
@@ -173,6 +181,7 @@ async function updatePlayer(
             feats,
             ratings,
             statTables,
+            teamColors,
             willingToSign,
         };
     }

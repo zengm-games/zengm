@@ -10,6 +10,7 @@ number or not.
 - [New achievements](https://basketball-gm.com/blog/2019/07/new-achievements/)
 - [Revamped owner messages](https://basketball-gm.com/blog/2019/09/owner-messages-revamp/)
 - [All-Star Game](https://basketball-gm.com/blog/2019/09/all-star-game/)
+- New player faces, from faces.js v3.0.0
 
 ## Technical details
 

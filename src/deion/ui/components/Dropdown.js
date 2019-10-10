@@ -306,6 +306,14 @@ const Select = ({ field, handleChange, value }) => {
                               key: "droy",
                           },
                           {
+                              val: "First Team All-League",
+                              key: "first_team",
+                          },
+                          {
+                              val: "Second Team All-League",
+                              key: "second_team",
+                          },
+                          {
                               val: "All-League",
                               key: "all_league",
                           },

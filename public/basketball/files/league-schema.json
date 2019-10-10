@@ -1017,6 +1017,14 @@
                         "type": "integer",
                         "minimum": 0
                     },
+                    "colors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "maxItems": 3,
+                        "minItems": 3
+                    },
                     "seasons": {
                         "type": "array",
                         "items": {

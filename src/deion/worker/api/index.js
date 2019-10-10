@@ -25,6 +25,7 @@ import {
     checkChanges,
     checkNaNs,
     env,
+    face,
     g,
     helpers,
     local,
@@ -763,6 +764,10 @@ const exportLeague = async (stores: string[]) => {
     const data = await league.exportLeague(stores);
     const filename = genFilename(data);
     return { data, filename };
+};
+
+const generateFace = () => {
+    return face.generate();
 };
 
 const getLeagueName = async () => {
@@ -1592,6 +1597,7 @@ export default {
     exportLeague,
     exportPlayerAveragesCsv,
     exportPlayerGamesCsv,
+    generateFace,
     getLeagueName,
     getLocal,
     getTradingBlockOffers,

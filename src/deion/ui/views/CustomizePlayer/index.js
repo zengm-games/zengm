@@ -1,4 +1,3 @@
-import { generate as generateFace, svgs } from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
@@ -12,13 +11,6 @@ import {
 } from "../../util";
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
-
-const faceOptions = {
-    eyes: Object.keys(svgs.eye),
-    nose: Object.keys(svgs.nose),
-    mouth: Object.keys(svgs.mouth),
-    hair: Object.keys(svgs.hair),
-};
 
 const copyValidValues = (source, target, minContract, phase, season) => {
     for (const attr of ["hgt", "tid", "weight"]) {
@@ -124,20 +116,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
         }
     }
 
-    target.face = source.face;
-
-    for (const attr of ["eye-angle", "fatness"]) {
-        const val = parseFloat(source.face[attr]);
-        if (!Number.isNaN(val)) {
-            if (attr === "eye-angle") {
-                target.face.eye.angle = val;
-            } else {
-                target.face[attr] = val;
-            }
-        }
-    }
-
-    target.face.head.color = source.face.head.color;
+    target.face = JSON.parse(source.face);
 
     target.relatives = source.relatives
         .map(rel => {
@@ -157,9 +136,7 @@ class CustomizePlayer extends React.Component {
         if (p !== undefined) {
             p.age = this.props.season - p.born.year;
             p.contract.amount /= 1000;
-        }
-        if (!p.face.accessories) {
-            p.face = generateFace();
+            p.face = JSON.stringify(p.face, null, 2);
         }
         this.state = {
             appearanceOption: props.appearanceOption,
@@ -236,11 +213,6 @@ class CustomizePlayer extends React.Component {
                 }
             }
 
-            if (type === "face") {
-                // Force re-render of PlayerPicture
-                p.face = { ...p.face };
-            }
-
             return {
                 p,
             };
@@ -253,13 +225,13 @@ class CustomizePlayer extends React.Component {
         });
     }
 
-    randomizeFace(e) {
+    async randomizeFace(e) {
         e.preventDefault(); // Don't submit whole form
 
-        const face = generateFace();
+        const face = await toWorker("generateFace");
 
         this.setState(prevState => {
-            prevState.p.face = face;
+            prevState.p.face = JSON.stringify(face, null, 2);
             return {
                 p: prevState.p,
             };
@@ -295,145 +267,42 @@ class CustomizePlayer extends React.Component {
                 <div className="row">
                     <div className="col-sm-4">
                         <div style={{ maxHeight: "225px", maxWidth: "150px" }}>
-                            <PlayerPicture face={p.face} />
+                            <PlayerPicture face={JSON.parse(p.face)} />
                         </div>
-                        <center>
-                            <button
-                                type="button"
-                                className="btn btn-light-bordered"
-                                onClick={this.randomizeFace}
-                            >
-                                Randomize
-                            </button>
-                        </center>
                     </div>
                     <div className="col-sm-8">
-                        <div className="row">
-                            <div className="col-6 form-group">
-                                <label>Width (0 to 1)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "fatness",
-                                    )}
-                                    value={p.face.fatness}
-                                />
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Skin Color</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "color",
-                                    )}
-                                    value={p.face.head.color}
-                                />
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Eyes</label>
-                                <select
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "eye",
-                                    )}
-                                    value={p.face.eye.id}
-                                >
-                                    {faceOptions.eyes.map(val => (
-                                        <option key={val} value={val}>
-                                            {val}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Eye Angle (-20 to 30)</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "eye-angle",
-                                    )}
-                                    value={p.face.eye.angle}
-                                />
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Nose</label>
-                                <select
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "nose",
-                                    )}
-                                    value={p.face.nose.id}
-                                >
-                                    {faceOptions.nose.map(val => (
-                                        <option key={val} value={val}>
-                                            {val}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Nose Flip</label>
-                                <input
-                                    type="checkbox"
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "nose-flip",
-                                    )}
-                                    checked={p.face.nose.flip}
-                                />
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Mouth</label>
-                                <select
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "mouth",
-                                    )}
-                                    value={p.face.mouth.id}
-                                >
-                                    {faceOptions.mouth.map(val => (
-                                        <option key={val} value={val}>
-                                            {val}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="col-6 form-group">
-                                <label>Hair</label>
-                                <select
-                                    className="form-control"
-                                    onChange={this.handleChange.bind(
-                                        this,
-                                        "face",
-                                        "hair",
-                                    )}
-                                    value={p.face.hair.id}
-                                >
-                                    {faceOptions.hair.map(val => (
-                                        <option key={val} value={val}>
-                                            {val}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
+                        <p>
+                            You can edit this JSON here, but you'll probably
+                            find it easier to use{" "}
+                            <a
+                                href={`http://dumbmatter.com/facesjs/editor.html#${btoa(
+                                    JSON.stringify(JSON.parse(p.face)),
+                                )}`}
+                                rel="noopener noreferrer"
+                                target="_blank"
+                            >
+                                the face editor
+                            </a>{" "}
+                            and copy the results back here.
+                        </p>
+                        <textarea
+                            className="form-control"
+                            onChange={this.handleChange.bind(
+                                this,
+                                "root",
+                                "face",
+                            )}
+                            rows="10"
+                            value={p.face}
+                        />
+                        <button
+                            type="button"
+                            className="btn btn-light-bordered mt-1"
+                            onClick={this.randomizeFace}
+                        >
+                            Randomize
+                        </button>
+                        baaaa
                     </div>
                 </div>
             );

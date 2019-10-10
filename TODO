@@ -1,12 +1,8 @@
 new faces
 - customize
-  - pass teamColors to PlayerPicture
-  - generate face from worker, to save bundle size and have face.generate() override in one place
+  - allow json error in textarea
 - convert to new face on use, save old face in face2
   - do it in place, anywhere PlayerPicture is shown (player and customize)
-- editor
-  - text box, randomize button
-  - link to editor on dumbmatter.com
 
 # all star game
 

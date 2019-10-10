@@ -3,7 +3,7 @@
 import { PLAYER } from "../../common";
 import { finances, player } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { face, g } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateCustomizePlayer(
@@ -71,6 +71,7 @@ async function updateCustomizePlayer(
                     errorMessage: "Player not found.",
                 };
             }
+            await face.upgrade(p);
             if (p.imgURL.length > 0) {
                 appearanceOption = "Image URL";
             } else {

@@ -261,13 +261,24 @@ class CustomizePlayer extends React.Component {
 
         const r = p.ratings.length - 1;
 
+        let parsedFace;
+        try {
+            parsedFace = JSON.parse(p.face);
+        } catch (error) {}
+
+        const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
+
         let pictureDiv = null;
         if (appearanceOption === "Cartoon Face") {
             pictureDiv = (
                 <div className="row">
                     <div className="col-sm-4">
                         <div style={{ maxHeight: "225px", maxWidth: "150px" }}>
-                            <PlayerPicture face={JSON.parse(p.face)} />
+                            {parsedFace ? (
+                                <PlayerPicture face={parsedFace} />
+                            ) : (
+                                "Invalid JSON"
+                            )}
                         </div>
                     </div>
                     <div className="col-sm-8">
@@ -275,15 +286,14 @@ class CustomizePlayer extends React.Component {
                             You can edit this JSON here, but you'll probably
                             find it easier to use{" "}
                             <a
-                                href={`http://dumbmatter.com/facesjs/editor.html#${btoa(
-                                    JSON.stringify(JSON.parse(p.face)),
-                                )}`}
+                                href={`http://dumbmatter.com/facesjs/editor.html#${faceHash}`}
                                 rel="noopener noreferrer"
                                 target="_blank"
                             >
                                 the face editor
                             </a>{" "}
-                            and copy the results back here.
+                            and copy the results back here. Team colors set
+                            there will be overridden here.
                         </p>
                         <textarea
                             className="form-control"
@@ -302,7 +312,6 @@ class CustomizePlayer extends React.Component {
                         >
                             Randomize
                         </button>
-                        baaaa
                     </div>
                 </div>
             );

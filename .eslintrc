@@ -37,6 +37,7 @@
         "no-console": "off",
         "no-constant-condition": ["error", { "checkLoops": false }],
         "no-continue": "off",
+        "no-empty": "off",
         "no-loop-func": "off",
         "no-mixed-operators": "off",
         "no-nested-ternary": "off",

@@ -21,8 +21,8 @@ async function updateCustomizePlayer(
             attrs: ["tid", "region", "name"],
         });
 
-        for (let i = 0; i < teams.length; i++) {
-            teams[i].text = `${teams[i].region} ${teams[i].name}`;
+        for (const t of teams) {
+            t.text = `${t.region} ${t.name}`;
         }
         teams.unshift({
             tid: PLAYER.RETIRED,

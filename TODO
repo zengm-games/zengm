@@ -1,8 +1,4 @@
-new faces
-- customize
-  - allow json error in textarea
-- convert to new face on use, save old face in face2
-  - do it in place, anywhere PlayerPicture is shown (player and customize)
+upgrade faces.js
 
 # all star game
 

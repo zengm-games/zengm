@@ -1,7 +1,7 @@
 new faces
-- basketball/football overrides
-  - on generate
-- pass teamColors to PlayerPicture from customize
+- customize
+  - pass teamColors to PlayerPicture
+  - generate face from worker, to save bundle size and have face.generate() override in one place
 - convert to new face on use, save old face in face2
   - do it in place, anywhere PlayerPicture is shown (player and customize)
 - editor

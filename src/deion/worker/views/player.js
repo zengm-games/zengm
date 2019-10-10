@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
-import { g, helpers, overrides } from "../util";
+import { face, g, getTeamColors, helpers, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayer(
@@ -55,6 +55,7 @@ async function updatePlayer(
                 errorMessage: "Player not found.",
             };
         }
+        await face.upgrade(p);
         p = await idb.getCopy.playersPlus(p, {
             attrs: [
                 "pid",
@@ -113,13 +114,7 @@ async function updatePlayer(
             );
         }
 
-        let teamColors;
-        if (p.tid >= 0) {
-            const t = await bbgm.idb.cache.teams.get(p.tid);
-            if (t) {
-                teamColors = t.colors;
-            }
-        }
+        const teamColors = await getTeamColors(p.tid);
 
         let events = await idb.getCopies.events({ pid: inputs.pid });
 

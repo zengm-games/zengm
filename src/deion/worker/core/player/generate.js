@@ -1,10 +1,9 @@
 // @flow
 
-import { generate as generateFace } from "facesjs";
 import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";
-import { g, overrides } from "../../util";
+import { face, g, overrides } from "../../util";
 import type {
     MinimalPlayerRatings,
     PlayerWithoutPid,
@@ -54,7 +53,7 @@ const generate = (
             ovr: 0,
             skills: [],
         },
-        face: generateFace(),
+        face: face.generate(),
         firstName,
         freeAgentMood: Array(g.numTeams).fill(0),
         gamesUntilTradable: 0,

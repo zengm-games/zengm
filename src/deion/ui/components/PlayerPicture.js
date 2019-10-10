@@ -41,6 +41,7 @@ const PlayerPicture = ({
 PlayerPicture.propTypes = {
     face: PropTypes.object,
     imgURL: PropTypes.string,
+    teamColors: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default PlayerPicture;

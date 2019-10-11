@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { NewWindowLink } from "../components";
-import { setTitle, toWorker } from "../util";
+import { setTitle } from "../util";
 
 const SocialMedia = ({ teamName }: { teamName: string }) => {
     setTitle("Social Media");

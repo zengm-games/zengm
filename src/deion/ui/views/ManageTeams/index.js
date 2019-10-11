@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React, { useReducer } from "react";
-import { LeagueFileUpload } from "../../components";
 import { helpers, logEvent, setTitle, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
 

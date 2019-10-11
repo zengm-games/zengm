@@ -171,6 +171,7 @@ const routes = () => {
         "/l/:lid/frivolities/most_games_no_playoffs": genPage(
             "mostGamesNoPlayoffs",
         ),
+        "/l/:lid/frivolities/most_teams": genPage("mostTeams"),
         "/l/:lid/frivolities/relatives": genPage("relatives"),
         "/l/:lid/frivolities/relatives/:pid": genPage("relatives"),
         "/l/:lid/frivolities/roster_continuity": genPage("rosterContinuity"),

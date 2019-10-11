@@ -38,6 +38,16 @@ const Frivolities = () => {
             </p>
             <p>
                 <b>
+                    <a href={helpers.leagueUrl(["frivolities", "most_teams"])}>
+                        Most Teams
+                    </a>
+                </b>{" "}
+                - see the players who played for the largest number of teams (
+                <span className="text-danger">Warning</span>: this is slow for
+                large leagues!)
+            </p>
+            <p>
+                <b>
                     <a href={helpers.leagueUrl(["frivolities", "relatives"])}>
                         Relatives
                     </a>

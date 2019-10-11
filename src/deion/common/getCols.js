@@ -1162,6 +1162,10 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "# Teams": {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     A: {
         desc: "Attempted",
         sortSequence: ["desc", "asc"],

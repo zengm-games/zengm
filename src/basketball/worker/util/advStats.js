@@ -30,7 +30,7 @@ const calculatePER = (players, teams, league) => {
         const drbp = (league.trb - league.orb) / league.trb; // DRB%
 
         let uPER;
-        if (players[i].stats.min > 0) {
+        if (players[i].stats.min > 10) {
             uPER =
                 (1 / players[i].stats.min) *
                 (players[i].stats.tp +

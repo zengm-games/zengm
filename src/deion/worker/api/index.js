@@ -1372,6 +1372,7 @@ const updateTeamInfo = async (
         imgURL?: string,
         pop: number,
         stadiumCapacity: number,
+        colors: [string, string, string],
     }[],
 ) => {
     let userName;
@@ -1397,6 +1398,7 @@ const updateTeamInfo = async (
         if (newTeams[t.tid].hasOwnProperty("imgURL")) {
             t.imgURL = newTeams[t.tid].imgURL;
         }
+        t.colors = newTeams[t.tid].colors;
 
         await idb.cache.teams.put(t);
 

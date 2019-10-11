@@ -18,7 +18,13 @@ const reducer = (state, action) => {
             };
         case "updateTeam": {
             const newTeams = state.teams.slice();
-            newTeams[action.i][action.field] = action.value;
+
+            if (action.field.startsWith("colors")) {
+                newTeams[action.i].colors[action.field.replace("colors", "")] =
+                    action.value;
+            } else {
+                newTeams[action.i][action.field] = action.value;
+            }
             return {
                 ...state,
                 teams: newTeams,
@@ -213,32 +219,36 @@ const ManageTeams = props => {
 
             <h2>Manual Editing</h2>
 
-            <div className="row d-none d-md-flex font-weight-bold mb-2">
-                <div className="col-md-2">
+            <div className="row d-none d-lg-flex font-weight-bold mb-2">
+                <div className="col-lg-2">
                     <br />
                     Region
                 </div>
-                <div className="col-md-2">
+                <div className="col-lg-2">
                     <br />
                     Name
                 </div>
-                <div className="col-md-2 col-lg-1">
+                <div className="col-lg-1">
                     <br />
                     Abbrev
                 </div>
-                <div className="col-md-2">
+                <div className="col-lg-1">
                     Population
                     <br />
                     (millions)
                 </div>
-                <div className="col-md-2">
+                <div className="col-lg-1">
                     Stadium
                     <br />
                     Capacity
                 </div>
-                <div className="col-md-2 col-lg-3">
+                <div className="col-lg-2">
                     <br />
                     Logo URL
+                </div>
+                <div className="col-lg-3">
+                    <br />
+                    Colors
                 </div>
             </div>
 
@@ -246,9 +256,9 @@ const ManageTeams = props => {
                 <div className="row">
                     {teams.map((t, i) => (
                         <React.Fragment key={t.tid}>
-                            <div className="col-6 col-md-2">
+                            <div className="col-6 col-lg-2">
                                 <div className="form-group">
-                                    <label className="d-md-none">Region</label>
+                                    <label className="d-lg-none">Region</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -259,9 +269,9 @@ const ManageTeams = props => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-6 col-md-2">
+                            <div className="col-6 col-lg-2">
                                 <div className="form-group">
-                                    <label className="d-md-none">Name</label>
+                                    <label className="d-lg-none">Name</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -272,9 +282,9 @@ const ManageTeams = props => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-6 col-md-2 col-lg-1">
+                            <div className="col-6 col-lg-1">
                                 <div className="form-group">
-                                    <label className="d-md-none">Abbrev</label>
+                                    <label className="d-lg-none">Abbrev</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -285,9 +295,9 @@ const ManageTeams = props => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-6 col-md-2">
+                            <div className="col-6 col-lg-1">
                                 <div className="form-group">
-                                    <label className="d-md-none">
+                                    <label className="d-lg-none">
                                         Population (millions)
                                     </label>
                                     <input
@@ -300,9 +310,9 @@ const ManageTeams = props => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-6 col-md-2">
+                            <div className="col-6 col-lg-1">
                                 <div className="form-group">
-                                    <label className="d-md-none">
+                                    <label className="d-lg-none">
                                         Stadium Capacity
                                     </label>
                                     <input
@@ -319,9 +329,9 @@ const ManageTeams = props => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-6 col-md-2 col-lg-3">
+                            <div className="col-6 col-lg-2">
                                 <div className="form-group">
-                                    <label className="d-md-none">
+                                    <label className="d-lg-none">
                                         Logo URL
                                     </label>
                                     <input
@@ -334,8 +344,29 @@ const ManageTeams = props => {
                                     />
                                 </div>
                             </div>
+                            <div className="col-6 col-lg-3">
+                                <div className="form-group">
+                                    <label className="d-lg-none">Colors</label>
+                                    <div className="d-flex">
+                                        {[0, 1, 2].map(j => (
+                                            <input
+                                                type="color"
+                                                className="form-control"
+                                                onChange={e =>
+                                                    handleInputChange(
+                                                        i,
+                                                        `colors${j}`,
+                                                        e,
+                                                    )
+                                                }
+                                                value={t.colors[j]}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                             <div
-                                className="col-12 d-md-none"
+                                className="col-12 d-lg-none"
                                 style={{ marginTop: -12 }}
                             >
                                 <hr />

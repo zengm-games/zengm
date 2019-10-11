@@ -1186,6 +1186,10 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    Born: {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "Cap Space": {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -1224,6 +1228,10 @@ const cols: {
         sortType: "currency",
     },
     Details: {},
+    Died: {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     Division: {},
     Draft: {
         sortSequence: [],

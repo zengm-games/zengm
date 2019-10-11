@@ -44,6 +44,7 @@ import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
+import OldestFormerPlayers from "./OldestFormerPlayers";
 import Options from "./Options";
 import Player from "./Player";
 import PlayerFeats from "./PlayerFeats";
@@ -117,6 +118,7 @@ export default {
     NegotiationList,
     NewLeague,
     NewTeam,
+    OldestFormerPlayers,
     Options,
     Player,
     PlayerFeats,

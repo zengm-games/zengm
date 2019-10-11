@@ -48,6 +48,22 @@ const Frivolities = () => {
             </p>
             <p>
                 <b>
+                    <a
+                        href={helpers.leagueUrl([
+                            "frivolities",
+                            "oldest_former_players",
+                        ])}
+                    >
+                        Oldest Former Players
+                    </a>
+                </b>{" "}
+                - as in reality, players die in Basketball GM, even after their
+                careers end. See who made it the longest. (
+                <span className="text-danger">Warning</span>: this is slow for
+                large leagues!)
+            </p>
+            <p>
+                <b>
                     <a href={helpers.leagueUrl(["frivolities", "relatives"])}>
                         Relatives
                     </a>

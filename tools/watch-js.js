@@ -37,6 +37,8 @@ for (const name of ["ui", "worker"]) {
                 )} seconds) at ${new Date().toLocaleTimeString()}`,
             );
         } else if (event.code === "ERROR" || event.code === "FATAL") {
+            delete event.error.watchFiles;
+            console.log(event.error);
             fs.writeFileSync(
                 file,
                 `console.error(${JSON.stringify(event.error)})`,

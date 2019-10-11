@@ -5,7 +5,7 @@ import { idb } from "../db";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
 
 const generate = () => {
-    const overrides = {
+    const overrides: any = {
         jersey: {
             id: process.env.SPORT === "basketball" ? "jersey3" : "football",
         },

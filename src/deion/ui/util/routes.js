@@ -172,6 +172,9 @@ const routes = () => {
             "mostGamesNoPlayoffs",
         ),
         "/l/:lid/frivolities/most_teams": genPage("mostTeams"),
+        "/l/:lid/frivolities/oldest_former_players": genPage(
+            "oldestFormerPlayers",
+        ),
         "/l/:lid/frivolities/relatives": genPage("relatives"),
         "/l/:lid/frivolities/relatives/:pid": genPage("relatives"),
         "/l/:lid/frivolities/roster_continuity": genPage("rosterContinuity"),

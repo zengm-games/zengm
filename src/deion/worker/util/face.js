@@ -5,9 +5,17 @@ import { idb } from "../db";
 import type { MinimalPlayerRatings, Player } from "../../common/types";
 
 const generate = () => {
-    const id = process.env.SPORT === "basketball" ? "jersey3" : "football";
+    const overrides = {
+        jersey: {
+            id: process.env.SPORT === "basketball" ? "jersey3" : "football",
+        },
+    };
 
-    return generateFace({ jersey: { id } });
+    if (process.env.SPORT === "football") {
+        overrides.glasses = { id: "none" };
+    }
+
+    return generateFace(overrides);
 };
 
 const upgrade = async (p: Player<MinimalPlayerRatings>) => {

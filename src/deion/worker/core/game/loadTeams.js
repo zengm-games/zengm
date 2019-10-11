@@ -7,7 +7,9 @@ import { g, helpers, overrides } from "../../util";
 const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
     const allStarGame = team.tid === -1 || team.tid === -2;
 
-    players.sort((a, b) => a.rosterOrder - b.rosterOrder);
+    if (!allStarGame) {
+        players.sort((a, b) => a.rosterOrder - b.rosterOrder);
+    }
 
     // Initialize team composite rating object
     const compositeRating = {};

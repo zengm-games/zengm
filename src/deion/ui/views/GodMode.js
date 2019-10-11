@@ -234,7 +234,13 @@ class GodMode extends React.Component {
                         Force any trade to be accepted by checking the Force
                         Trade checkbox before proposing a trade
                     </li>
-                    <li>You can become the GM of another team at any time</li>
+                    <li>
+                        You can become the GM of another team at any time with
+                        Tools > Switch Team
+                    </li>
+                    <li>
+                        Add, remove and edit teams with Tools > Manage Teams
+                    </li>
                     <li>You will never be fired!</li>
                     <li>You will be able to change the options below</li>
                 </ul>

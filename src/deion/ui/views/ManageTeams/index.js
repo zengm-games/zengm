@@ -40,11 +40,6 @@ const reducer = (state, action) => {
                 ...state,
                 teams: state.teams.slice(0, state.teams.length - 1),
             };
-        case "updateTeams":
-            return {
-                ...state,
-                teams: action.teams,
-            };
         default:
             throw new Error(`Unknown action type "${action.type}"`);
     }
@@ -79,145 +74,39 @@ const ManageTeams = props => {
 
     setTitle("Manage Teams");
 
-    if (!props.godMode) {
-        return (
-            <div>
-                <h1>Error</h1>
-                <p>
-                    You can't edit teams unless you enable{" "}
-                    <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
-                </p>
-            </div>
-        );
-    }
-
     const { saving, teams } = state;
 
+    console.log("render", props.godMode);
     return (
         <>
             <h1>Manage Teams</h1>
 
+            {!props.godMode ? (
+                <div className="alert alert-warning">
+                    Some features here are disabled because you are not using{" "}
+                    <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+                </div>
+            ) : null}
+
             <h2>Add/Remove Teams</h2>
 
-            <AddRemove
-                dispatch={dispatch}
-                confs={props.confs}
-                divs={props.divs}
-                phase={props.phase}
-                saving={saving}
-            />
+            {props.godMode ? (
+                <AddRemove
+                    dispatch={dispatch}
+                    confs={props.confs}
+                    divs={props.divs}
+                    phase={props.phase}
+                    saving={saving}
+                />
+            ) : (
+                <p>
+                    Enable{" "}
+                    <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to
+                    add or remove teams.
+                </p>
+            )}
 
-            <h2>Upload Teams File</h2>
-
-            <p>
-                You can manually edit the teams below or you can upload a teams
-                file to specify all of the team info at once.
-            </p>
-
-            <p>
-                The JSON file format is described in{" "}
-                <a href="http://basketball-gm.com/manual/customization/teams/">
-                    the manual
-                </a>
-                . As an example, you can download{" "}
-                <a
-                    href="http://basketball-gm.com/files/old_teams.json"
-                    download
-                >
-                    a teams file containing the old (pre-2014) default teams
-                </a>{" "}
-                or{" "}
-                <a
-                    href="http://basketball-gm.com/files/new_teams.json"
-                    download
-                >
-                    one containing the current default teams
-                </a>
-                .
-            </p>
-
-            <p className="text-danger">
-                Warning: selecting a valid team file will instantly apply the
-                new team info to your league.
-            </p>
-
-            <LeagueFileUpload
-                onDone={async (err, leagueFile) => {
-                    if (err) {
-                        return;
-                    }
-
-                    const newTeams = leagueFile.teams;
-
-                    // Validate teams
-                    if (newTeams.length < props.numTeams) {
-                        throw new Error("Wrong number of teams");
-                    }
-                    for (let i = 0; i < newTeams.length; i++) {
-                        if (i !== newTeams[i].tid) {
-                            throw new Error(`Wrong tid, team ${i}`);
-                        }
-                        if (
-                            newTeams[i].cid < 0 ||
-                            newTeams[i].cid >= props.confs.length
-                        ) {
-                            throw new Error(`Invalid cid, team ${i}`);
-                        }
-                        if (
-                            newTeams[i].did < 0 ||
-                            newTeams[i].did >= props.divs.length
-                        ) {
-                            throw new Error(`Invalid did, team ${i}`);
-                        }
-                        if (typeof newTeams[i].region !== "string") {
-                            throw new Error(`Invalid region, team ${i}`);
-                        }
-                        if (typeof newTeams[i].name !== "string") {
-                            throw new Error(`Invalid name, team ${i}`);
-                        }
-                        if (typeof newTeams[i].abbrev !== "string") {
-                            throw new Error(`Invalid abbrev, team ${i}`);
-                        }
-
-                        // Check for pop/stadiumCapacity in either the root or the most recent season
-                        for (const field of ["pop", "stadiumCapacity"]) {
-                            if (
-                                !newTeams[i].hasOwnProperty(field) &&
-                                newTeams[i].hasOwnProperty("seasons")
-                            ) {
-                                newTeams[i][field] =
-                                    newTeams[i].seasons[
-                                        newTeams[i].seasons.length - 1
-                                    ][field];
-                            }
-
-                            if (typeof newTeams[i][field] !== "number") {
-                                if (field === "pop") {
-                                    throw new Error(
-                                        `Invalid ${field}, team ${i}`,
-                                    );
-                                } else if (field === "stadiumCapacity") {
-                                    newTeams[i][field] =
-                                        props.defaultStadiumCapacity;
-                                }
-                            }
-                        }
-                    }
-
-                    await toWorker("updateTeamInfo", newTeams);
-
-                    dispatch({ type: "updateTeams", teams: newTeams });
-
-                    logEvent({
-                        type: "success",
-                        text: "New team info successfully loaded.",
-                        saveToDb: false,
-                    });
-                }}
-            />
-            <p />
-
-            <h2>Manual Editing</h2>
+            <h2 className="mt-3">Edit Teams</h2>
 
             <div className="row d-none d-lg-flex font-weight-bold mb-2">
                 <div className="col-lg-2">
@@ -303,6 +192,7 @@ const ManageTeams = props => {
                                     <input
                                         type="text"
                                         className="form-control"
+                                        disabled={!props.godMode}
                                         onChange={e =>
                                             handleInputChange(i, "pop", e)
                                         }
@@ -318,6 +208,7 @@ const ManageTeams = props => {
                                     <input
                                         type="text"
                                         className="form-control"
+                                        disabled={!props.godMode}
                                         onChange={e =>
                                             handleInputChange(
                                                 i,
@@ -350,6 +241,7 @@ const ManageTeams = props => {
                                     <div className="d-flex">
                                         {[0, 1, 2].map(j => (
                                             <input
+                                                key={j}
                                                 type="color"
                                                 className="form-control"
                                                 onChange={e =>

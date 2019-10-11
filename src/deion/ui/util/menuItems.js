@@ -343,7 +343,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 type: "link",
                 active: pageID => pageID === "manageTeams",
                 league: true,
-                godMode: true,
                 path: ["manage_teams"],
                 text: "Manage Teams",
             },

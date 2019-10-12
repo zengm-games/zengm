@@ -42,7 +42,11 @@ async function updatePlayers(
             fuzz: true,
         });
 
-        players.sort((a, b) => b.age - a.age);
+        players.sort(
+            (a, b) =>
+                (typeof b.ageAtDeath === "number" ? b.ageAtDeath : b.age) -
+                (typeof a.ageAtDeath === "number" ? a.ageAtDeath : a.age),
+        );
         players = players.slice(0, 100);
 
         return {

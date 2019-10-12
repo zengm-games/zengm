@@ -578,7 +578,7 @@ const migrateLeague = (upgradeDB, lid) => {
                 ) {
                     t.colors = teamsDefault[t.tid].colors;
                 } else {
-                    t.colors = ["#000", "#ccc", "#fff"];
+                    t.colors = ["#000000", "#cccccc", "#ffffff"];
                 }
 
                 upgradeDB.teams.put(t);

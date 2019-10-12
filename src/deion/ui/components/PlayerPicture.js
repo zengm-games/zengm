@@ -20,7 +20,9 @@ const PlayerPicture = ({
     useEffect(() => {
         if (face && !imgURL && wrapper) {
             const overrides = {
-                teamColors: teamColors ? teamColors : ["#000", "#ccc", "#fff"],
+                teamColors: teamColors
+                    ? teamColors
+                    : ["#000000", "#cccccc", "#ffffff"],
             };
 
             display(wrapper, face, overrides);

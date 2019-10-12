@@ -69,7 +69,7 @@ const generate = (tm: any) => {
         },
         strategy,
         depth: tm.depth,
-        colors: tm.colors,
+        colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
     };
 
     if (process.env.SPORT === "football" && tm.depth === undefined) {

@@ -129,6 +129,7 @@ const addTeam = async (
         imgURL: t.imgURL,
         pop: teamSeason.pop,
         stadiumCapacity: teamSeason.stadiumCapacity,
+        colors: t.colors,
     };
 };
 

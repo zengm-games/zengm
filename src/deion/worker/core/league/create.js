@@ -68,7 +68,7 @@ export const createWithoutSaving = (
                 ) {
                     t.colors = teamsDefault[i].colors;
                 } else {
-                    t.colors = ["#000", "#ccc", "#fff"];
+                    t.colors = ["#000000", "#cccccc", "#ffffff"];
                 }
             }
         }

@@ -998,10 +998,13 @@ class GameSim {
             }
         }
 
-        const foulFactor =
+        let foulFactor =
             0.8 *
             (this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) **
                 2;
+        if (this.allStarGame) {
+            foulFactor *= 0.6;
+        }
         probMissAndFoul *= foulFactor;
         probAndOne *= foulFactor;
 

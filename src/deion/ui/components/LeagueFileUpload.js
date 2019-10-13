@@ -92,7 +92,7 @@ const reducer = (state: State, action: any): State => {
     }
 };
 
-const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
+const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
     const [url, setURL] = useState("");
     const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -232,6 +232,7 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
                             className="btn btn-secondary mb-2"
                             onClick={handleFileURL}
                             disabled={
+                                disabled ||
                                 state.status === "loading" ||
                                 state.status === "parsing"
                             }
@@ -246,7 +247,9 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
                     onClick={resetFileInput}
                     onChange={handleFileUpload}
                     disabled={
-                        state.status === "loading" || state.status === "parsing"
+                        disabled ||
+                        state.status === "loading" ||
+                        state.status === "parsing"
                     }
                 />
             )}
@@ -283,6 +286,7 @@ const LeagueFileUpload = ({ enterURL, onDone, onLoading }: Props) => {
 };
 
 LeagueFileUpload.propTypes = {
+    disabled: PropTypes.bool,
     enterURL: PropTypes.bool,
     onLoading: PropTypes.func,
     onDone: PropTypes.func.isRequired,

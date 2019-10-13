@@ -8,7 +8,8 @@ import {
 import { getCols, toWorker } from "../../util";
 
 const DraftClass = ({ offset, players, season }) => {
-    const [customize, setCustomize] = useState(false);
+    const [showImportForm, setShowImportForm] = useState(false);
+    const [status, setStatus] = useState();
 
     const cols = getCols("#", "Name", "Pos", "Age", "Ovr", "Pot");
 
@@ -32,17 +33,28 @@ const DraftClass = ({ offset, players, season }) => {
         <>
             <h2>{season}</h2>
 
-            <p>
+            <div className="btn-group mb-3">
                 <button
                     className="btn btn-light-bordered btn-xs"
-                    disabled={customize}
-                    onClick={() => setCustomize(true)}
+                    onClick={() => setShowImportForm(val => !val)}
                 >
-                    Customize
+                    Import
                 </button>
-            </p>
+                <button
+                    className="btn btn-light-bordered btn-xs"
+                    disabled={status === "exporting" || status === "loading"}
+                    onClick={() => {
+                        setStatus("exporting");
+                        setTimeout(() => {
+                            setStatus();
+                        }, 1000);
+                    }}
+                >
+                    Export
+                </button>
+            </div>
 
-            {customize ? (
+            {showImportForm ? (
                 <div>
                     <p>
                         To replace this draft class with players from a{" "}
@@ -56,6 +68,10 @@ const DraftClass = ({ offset, players, season }) => {
                         , select the file below.
                     </p>
                     <LeagueFileUpload
+                        disabled={status === "exporting"}
+                        onLoading={() => {
+                            setStatus("loading");
+                        }}
                         onDone={async (err, leagueFile) => {
                             if (err) {
                                 return;
@@ -67,7 +83,8 @@ const DraftClass = ({ offset, players, season }) => {
                                 season,
                             );
 
-                            setCustomize(false);
+                            setShowImportForm(false);
+                            setStatus();
                         }}
                     />
                     <p />

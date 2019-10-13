@@ -345,10 +345,6 @@ better table sorting (don't use hack of looking at child)
 - DraftAbbrev
 - NegotiateButtons (search for negotiate/refuses)
 
-finals home court advantage should be based on record, not seed
-
-user reports - JS alert/confirm often fail on iOS. maybe rewrite with my own modal
-
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes
@@ -591,8 +587,6 @@ flow
     https://codemix.github.io/flow-runtime/
   views: thru live
   views/views
-
-replace owner message text with numbers/chart
 
 ---
 

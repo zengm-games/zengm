@@ -38,6 +38,7 @@
         "@babel/runtime": "^7.6.3",
         "@bugsnag/plugin-react": "^6.4.0",
         "ajv": "^6.10.2",
+        "array-move": "^2.1.0",
         "backboard": "^1.0.9",
         "bbgm-router": "^1.0.1",
         "bootstrap": "^4.3.1",

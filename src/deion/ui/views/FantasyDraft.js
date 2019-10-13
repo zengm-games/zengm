@@ -1,3 +1,4 @@
+import arrayMove from "array-move";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
@@ -5,7 +6,6 @@ import {
     SortableContainer,
     SortableElement,
     SortableHandle,
-    arrayMove,
 } from "react-sortable-hoc";
 import { PHASE } from "../../common";
 import { NewWindowLink, ResponsiveTableWrapper } from "../components";

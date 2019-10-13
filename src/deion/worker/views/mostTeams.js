@@ -17,7 +17,7 @@ async function updatePlayers(
 
         let players = await idb.getCopies.players({
             filter: p => {
-                const teams = p.stats.map(s => s.tid);
+                const teams = p.stats.filter(s => s.gp > 0).map(s => s.tid);
                 p.numTeams = new Set(teams).size;
                 return p.numTeams >= 5;
             },

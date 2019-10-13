@@ -14,7 +14,7 @@ const updateChances = (
     teams: TeamFiltered[],
     isFinal?: boolean = false,
 ) => {
-    let wps = countBy(teams, t => t.seasonAttrs.winp);
+    let wps = countBy(teams.slice(0, chances.length), t => t.seasonAttrs.winp);
     wps = Object.entries(wps)
         .map(x => [Number(x[0]), Number(x[1])])
         .sort((a, b) => a[0] - b[0]);

@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React, { useCallback, useEffect } from "react";
 import Dropdown from "reactstrap/lib/Dropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
@@ -33,40 +33,25 @@ type TopMenuToggleProps = {
     toggle?: (SyntheticEvent<>) => void,
 };
 
-class TopMenuToggle extends React.Component<TopMenuToggleProps> {
-    handleMouseEnter: Function;
+const TopMenuToggle = ({ long, openId, short, toggle }: TopMenuToggleProps) => {
+    const handleMouseEnter = useCallback(
+        event => {
+            if (openId !== undefined && openId !== long && toggle) {
+                toggle(event);
+            }
+        },
+        [long, openId, toggle],
+    );
 
-    constructor(props: TopMenuToggleProps, context) {
-        super(props, context);
-        this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    }
-
-    handleMouseEnter(event) {
-        if (
-            this.props.openId !== undefined &&
-            this.props.openId !== this.props.long &&
-            this.props.toggle
-        ) {
-            this.props.toggle(event);
-        }
-    }
-
-    render() {
-        return (
-            <DropdownToggle caret nav onMouseEnter={this.handleMouseEnter}>
-                <span className="d-xs-inline d-sm-none d-md-inline">
-                    {this.props.long}
-                </span>
-                <span
-                    className="d-none d-sm-inline d-md-none"
-                    title={this.props.long}
-                >
-                    {this.props.short}
-                </span>
-            </DropdownToggle>
-        );
-    }
-}
+    return (
+        <DropdownToggle caret nav onMouseEnter={handleMouseEnter}>
+            <span className="d-xs-inline d-sm-none d-md-inline">{long}</span>
+            <span className="d-none d-sm-inline d-md-none" title={long}>
+                {short}
+            </span>
+        </DropdownToggle>
+    );
+};
 
 TopMenuToggle.propTypes = {
     long: PropTypes.string.isRequired,
@@ -347,74 +332,64 @@ type PlayMenuProps = {
     }[],
 };
 
-class PlayMenu extends React.Component<PlayMenuProps> {
-    handleAltP: Function;
+const PlayMenu = ({ lid, options }: PlayMenuProps) => {
+    const handleAltP = useCallback(
+        (e: SyntheticKeyboardEvent<>) => {
+            // alt + p
+            if (e.altKey && e.keyCode === 80) {
+                const option = options[0];
 
-    constructor(props) {
-        super(props);
-        this.handleAltP = this.handleAltP.bind(this);
-    }
+                if (!option) {
+                    return;
+                }
 
-    componentDidMount() {
-        document.addEventListener("keyup", this.handleAltP);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener("keyup", this.handleAltP);
-    }
-
-    handleAltP(e: SyntheticKeyboardEvent<>) {
-        // alt + p
-        if (e.altKey && e.keyCode === 80) {
-            const option = this.props.options[0];
-
-            if (!option) {
-                return;
+                if (option.url) {
+                    realtimeUpdate([], option.url);
+                } else {
+                    toWorker(`actions.playMenu.${option.id}`);
+                }
             }
+        },
+        [options],
+    );
 
-            if (option.url) {
-                realtimeUpdate([], option.url);
-            } else {
-                toWorker(`actions.playMenu.${option.id}`);
-            }
-        }
+    useEffect(() => {
+        document.addEventListener("keyup", handleAltP);
+
+        return () => {
+            document.removeEventListener("keyup", handleAltP);
+        };
+    }, [handleAltP]);
+
+    if (lid === undefined) {
+        return null;
     }
 
-    render() {
-        const { lid, options } = this.props;
-
-        if (lid === undefined) {
-            return <div />;
-        }
-
-        return (
-            <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret className="play-button">
-                    Play
-                </DropdownToggle>
-                <DropdownMenu>
-                    {options.map((option, i) => {
-                        return (
-                            <DropdownItem
-                                key={i}
-                                href={option.url}
-                                onClick={e => handleOptionClick(option, e)}
-                                className="kbd-parent"
-                            >
-                                {option.label}
-                                {i === 0 ? (
-                                    <span className="text-muted kbd">
-                                        Alt+P
-                                    </span>
-                                ) : null}
-                            </DropdownItem>
-                        );
-                    })}
-                </DropdownMenu>
-            </UncontrolledDropdown>
-        );
-    }
-}
+    return (
+        <UncontrolledDropdown nav inNavbar>
+            <DropdownToggle nav caret className="play-button">
+                Play
+            </DropdownToggle>
+            <DropdownMenu>
+                {options.map((option, i) => {
+                    return (
+                        <DropdownItem
+                            key={i}
+                            href={option.url}
+                            onClick={e => handleOptionClick(option, e)}
+                            className="kbd-parent"
+                        >
+                            {option.label}
+                            {i === 0 ? (
+                                <span className="text-muted kbd">Alt+P</span>
+                            ) : null}
+                        </DropdownItem>
+                    );
+                })}
+            </DropdownMenu>
+        </UncontrolledDropdown>
+    );
+};
 
 PlayMenu.propTypes = {
     lid: PropTypes.number,

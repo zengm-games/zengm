@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { downloadFile, helpers, setTitle, toWorker } from "../util";
 
 const categories = [
@@ -43,21 +43,13 @@ const categories = [
     },
 ];
 
-class ExportLeague extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            status: null,
-        };
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+const ExportLeague = () => {
+    const [status, setStatus] = useState();
 
-    async handleSubmit(e) {
+    const handleSubmit = useCallback(async e => {
         e.preventDefault();
 
-        this.setState({
-            status: "Exporting...",
-        });
+        setStatus("Exporting...");
 
         // Get array of object stores to export
         const objectStores = Array.from(e.target.getElementsByTagName("input"))
@@ -71,81 +63,73 @@ class ExportLeague extends React.Component {
         try {
             json = JSON.stringify(data, undefined, 2);
         } catch (err) {
-            this.setState({
-                status: (
-                    <span className="text-danger">
-                        Error converting league to JSON: "{err.message}
-                        ". You might have to select less things to export or{" "}
-                        <a href={helpers.leagueUrl(["delete_old_data"])}>
-                            delete old data
-                        </a>{" "}
-                        before exporting.
-                    </span>
-                ),
-            });
+            setStatus(
+                <span className="text-danger">
+                    Error converting league to JSON: "{err.message}
+                    ". You might have to select less things to export or{" "}
+                    <a href={helpers.leagueUrl(["delete_old_data"])}>
+                        delete old data
+                    </a>{" "}
+                    before exporting.
+                </span>,
+            );
             return;
         }
 
         downloadFile(filename, json, "application/json");
 
-        this.setState({
-            status: null,
-        });
-    }
+        setStatus();
+    }, []);
 
-    render() {
-        setTitle("Export League");
+    setTitle("Export League");
 
-        return (
-            <>
-                <h1>Export League</h1>
+    return (
+        <>
+            <h1>Export League</h1>
 
-                <p>
-                    Here you can export your entire league data to a single
-                    League File. A League File can serve many purposes. You can
-                    use it as a <b>backup</b>, to{" "}
-                    <b>copy a league from one computer to another</b>, or to use
-                    as the base for a <b>custom roster file</b> to share with
-                    others. Select as much or as little information as you want
-                    to export, since any missing information will be filled in
-                    with default values when it is used.{" "}
-                    <a
-                        href={`http://${process.env.SPORT}-gm.com/manual/customization/`}
-                    >
-                        Read the manual for more info.
-                    </a>
-                </p>
+            <p>
+                Here you can export your entire league data to a single League
+                File. A League File can serve many purposes. You can use it as a{" "}
+                <b>backup</b>, to{" "}
+                <b>copy a league from one computer to another</b>, or to use as
+                the base for a <b>custom roster file</b> to share with others.
+                Select as much or as little information as you want to export,
+                since any missing information will be filled in with default
+                values when it is used.{" "}
+                <a
+                    href={`http://${process.env.SPORT}-gm.com/manual/customization/`}
+                >
+                    Read the manual for more info.
+                </a>
+            </p>
 
-                <form onSubmit={this.handleSubmit}>
-                    {categories.map(cat => (
-                        <div key={cat.name} className="form-check">
-                            <label className="form-check-label">
-                                <input
-                                    className="form-check-input"
-                                    type="checkbox"
-                                    value={cat.objectStores}
-                                    defaultChecked={cat.checked}
-                                />
-                                {cat.name}
-                                <p className="text-muted">{cat.desc}</p>
-                            </label>
-                        </div>
-                    ))}
-                    <button
-                        type="submit"
-                        className="btn btn-primary"
-                        disabled={this.state.status === "Exporting..."}
-                    >
-                        Export League
-                    </button>
-                </form>
+            <form onSubmit={handleSubmit}>
+                {categories.map(cat => (
+                    <div key={cat.name} className="form-check">
+                        <label className="form-check-label">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={cat.objectStores}
+                                defaultChecked={cat.checked}
+                            />
+                            {cat.name}
+                            <p className="text-muted">{cat.desc}</p>
+                        </label>
+                    </div>
+                ))}
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={status === "Exporting..."}
+                >
+                    Export League
+                </button>
+            </form>
 
-                {this.state.status ? (
-                    <p className="mt-3">{this.state.status}</p>
-                ) : null}
-            </>
-        );
-    }
-}
+            {status ? <p className="mt-3">{status}</p> : null}
+        </>
+    );
+};
 
 export default ExportLeague;

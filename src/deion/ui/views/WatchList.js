@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
@@ -14,149 +14,130 @@ import {
     WatchBlock,
 } from "../components";
 
-class WatchList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            clearing: false,
-        };
-        this.clearWatchList = this.clearWatchList.bind(this);
-    }
+const WatchList = ({ players, playoffs, statType, stats }) => {
+    const [clearing, setClearing] = useState(false);
 
-    async clearWatchList() {
-        this.setState({
-            clearing: true,
-        });
-
+    const clearWatchList = useCallback(async () => {
+        setClearing(true);
         await toWorker("clearWatchList");
+        setClearing(false);
+    }, []);
 
-        this.setState({
-            clearing: false,
-        });
-    }
+    setTitle("Watch List");
 
-    render() {
-        const { players, playoffs, statType, stats } = this.props;
+    const cols = getCols(
+        "",
+        "Name",
+        "Pos",
+        "Age",
+        "Team",
+        "Ovr",
+        "Pot",
+        "Contract",
+        ...stats.map(stat => `stat:${stat}`),
+    );
 
-        setTitle("Watch List");
+    const rows = players.map(p => {
+        let contract;
+        if (p.tid === PLAYER.RETIRED) {
+            contract = "Retired";
+        } else if (p.tid === PLAYER.UNDRAFTED) {
+            contract = `${p.draft.year} Draft Prospect`;
+        } else {
+            contract = `${helpers.formatCurrency(
+                p.contract.amount,
+                "M",
+            )} thru ${p.contract.exp}`;
+        }
 
-        const cols = getCols(
-            "",
-            "Name",
-            "Pos",
-            "Age",
-            "Team",
-            "Ovr",
-            "Pot",
-            "Contract",
-            ...stats.map(stat => `stat:${stat}`),
-        );
-
-        const rows = players.map(p => {
-            let contract;
-            if (p.tid === PLAYER.RETIRED) {
-                contract = "Retired";
-            } else if (p.tid === PLAYER.UNDRAFTED) {
-                contract = `${p.draft.year} Draft Prospect`;
-            } else {
-                contract = `${helpers.formatCurrency(
-                    p.contract.amount,
-                    "M",
-                )} thru ${p.contract.exp}`;
-            }
-
-            return {
-                key: p.pid,
-                data: [
-                    <WatchBlock pid={p.pid} watch={p.watch} />,
-                    <PlayerNameLabels
-                        injury={p.injury}
-                        pid={p.pid}
-                        skills={p.ratings.skills}
-                        watch={p.watch}
-                    >
-                        {p.name}
-                    </PlayerNameLabels>,
-                    p.ratings.pos,
-                    p.age,
-                    <a href={helpers.leagueUrl(["roster", p.abbrev])}>
-                        {p.abbrev}
-                    </a>,
-                    p.ratings.ovr,
-                    p.ratings.pot,
-                    contract,
-                    ...stats.map(stat =>
-                        helpers.roundStat(
-                            p.stats[stat],
-                            stat,
-                            statType === "totals",
-                        ),
-                    ),
-                ],
-            };
-        });
-
-        return (
-            <>
-                <Dropdown
-                    view="watch_list"
-                    fields={["statTypes", "playoffs"]}
-                    values={[statType, playoffs]}
-                />
-                <UncontrolledDropdown className="float-right my-1">
-                    <DropdownToggle caret className="btn-light-bordered">
-                        Other Reports
-                    </DropdownToggle>
-                    <DropdownMenu>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["player_stats", "watch"])}
-                        >
-                            Player Stats
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl([
-                                "player_ratings",
-                                "watch",
-                            ])}
-                        >
-                            Player Ratings
-                        </DropdownItem>
-                    </DropdownMenu>
-                </UncontrolledDropdown>
-                <h1>
-                    Watch List <NewWindowLink />
-                </h1>
-
-                <p>
-                    Click the watch icon{" "}
-                    <span className="glyphicon glyphicon-flag" /> to add or
-                    remove a player from this list.
-                </p>
-                <p>
-                    On other pages, you can find the watch icon by clicking the
-                    info button <span className="glyphicon glyphicon-stats" />{" "}
-                    next to a player's name.
-                </p>
-
-                <button
-                    className="btn btn-danger mb-3"
-                    disabled={this.state.clearing}
-                    onClick={this.clearWatchList}
+        return {
+            key: p.pid,
+            data: [
+                <WatchBlock pid={p.pid} watch={p.watch} />,
+                <PlayerNameLabels
+                    injury={p.injury}
+                    pid={p.pid}
+                    skills={p.ratings.skills}
+                    watch={p.watch}
                 >
-                    Clear Watch List
-                </button>
+                    {p.name}
+                </PlayerNameLabels>,
+                p.ratings.pos,
+                p.age,
+                <a href={helpers.leagueUrl(["roster", p.abbrev])}>
+                    {p.abbrev}
+                </a>,
+                p.ratings.ovr,
+                p.ratings.pot,
+                contract,
+                ...stats.map(stat =>
+                    helpers.roundStat(
+                        p.stats[stat],
+                        stat,
+                        statType === "totals",
+                    ),
+                ),
+            ],
+        };
+    });
 
-                <DataTable
-                    cols={cols}
-                    defaultSort={[5, "desc"]}
-                    name="WatchList"
-                    pagination
-                    rows={rows}
-                />
-            </>
-        );
-    }
-}
+    return (
+        <>
+            <Dropdown
+                view="watch_list"
+                fields={["statTypes", "playoffs"]}
+                values={[statType, playoffs]}
+            />
+            <UncontrolledDropdown className="float-right my-1">
+                <DropdownToggle caret className="btn-light-bordered">
+                    Other Reports
+                </DropdownToggle>
+                <DropdownMenu>
+                    <DropdownItem
+                        href={helpers.leagueUrl(["player_stats", "watch"])}
+                    >
+                        Player Stats
+                    </DropdownItem>
+                    <DropdownItem
+                        href={helpers.leagueUrl(["player_ratings", "watch"])}
+                    >
+                        Player Ratings
+                    </DropdownItem>
+                </DropdownMenu>
+            </UncontrolledDropdown>
+            <h1>
+                Watch List <NewWindowLink />
+            </h1>
+
+            <p>
+                Click the watch icon{" "}
+                <span className="glyphicon glyphicon-flag" /> to add or remove a
+                player from this list.
+            </p>
+            <p>
+                On other pages, you can find the watch icon by clicking the info
+                button <span className="glyphicon glyphicon-stats" /> next to a
+                player's name.
+            </p>
+
+            <button
+                className="btn btn-danger mb-3"
+                disabled={clearing}
+                onClick={clearWatchList}
+            >
+                Clear Watch List
+            </button>
+
+            <DataTable
+                cols={cols}
+                defaultSort={[5, "desc"]}
+                name="WatchList"
+                pagination
+                rows={rows}
+            />
+        </>
+    );
+};
 
 WatchList.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,

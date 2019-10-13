@@ -1,4 +1,6 @@
-@Ethan#4029 export draft classes
+mostTeams filter on gp, football too?
+
+@wtp99#4759 @Ethan#4029 export draft classes
 
 # all star game
 
@@ -309,7 +311,8 @@ typescript
 - https://github.com/bcherny/flow-to-typescript
   - might have to do this, do all in one
 - FlowFixMe
-- - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
+- https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
+- https://medium.com/@adamterlson/migrating-a-flow-react-native-app-to-typescript-c74c7bceae7d
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?

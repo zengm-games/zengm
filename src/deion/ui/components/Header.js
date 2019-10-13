@@ -31,6 +31,7 @@ const resizeListener = () => {
     });
 };
 
+// $FlowFixMe
 const Header = React.memo(() => {
     useEffect(() => {
         updateSkyscraperDisplay();

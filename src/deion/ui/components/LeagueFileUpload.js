@@ -24,6 +24,7 @@ type Props = {
     // onDone is called in errback style when parsing is done or when an error occurs
     onDone: (Error | null, any) => void,
 
+    disabled?: boolean,
     enterURL?: boolean,
 
     // onLoading is called when it starts reading the file into memory

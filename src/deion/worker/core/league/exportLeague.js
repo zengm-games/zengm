@@ -10,7 +10,18 @@ import { g, local } from "../../util";
  * @param {string[]} stores Array of names of objectStores to include in export
  * @return {Promise} Resolve to all the exported league data.
  */
-const exportLeague = async (stores: string[]) => {
+const exportLeague = async (
+    stores: string[],
+    options?: {
+        meta: boolean,
+        filter: {
+            [key: string]: (any) => boolean,
+        },
+    } = {
+        meta: true,
+        filter: {},
+    },
+) => {
     // Always flush before export, so export is current!
     await idb.cache.flush();
 
@@ -21,11 +32,20 @@ const exportLeague = async (stores: string[]) => {
     // Row from leagueStore in meta db.
     // phaseText is needed if a phase is set in gameAttributes.
     // name is only used for the file name of the exported roster file.
-    exportedLeague.meta = { phaseText: local.phaseText, name: g.leagueName };
+    if (options.meta) {
+        exportedLeague.meta = {
+            phaseText: local.phaseText,
+            name: g.leagueName,
+        };
+    }
 
     await Promise.all(
         stores.map(async store => {
-            exportedLeague[store] = await getAll(idb.league[store]);
+            exportedLeague[store] = await getAll(
+                idb.league[store],
+                undefined,
+                options.filter[store],
+            );
         }),
     );
 

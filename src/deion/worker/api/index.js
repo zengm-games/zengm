@@ -767,6 +767,19 @@ const exportLeague = async (stores: string[]) => {
     return { data, filename };
 };
 
+const exportDraftClass = async (season: number) => {
+    const data = await league.exportLeague(["players"], {
+        meta: false,
+        filter: {
+            players: p => p.draft.year === season,
+        },
+    });
+
+    const filename = `BBGM_draft_class_${g.leagueName}_${season}.json`;
+
+    return { filename, json: JSON.stringify(data, null, 2) };
+};
+
 const generateFace = () => {
     return face.generate();
 };
@@ -1597,6 +1610,7 @@ export default {
     deleteOldData,
     draftLottery,
     draftUser,
+    exportDraftClass,
     exportLeague,
     exportPlayerAveragesCsv,
     exportPlayerGamesCsv,

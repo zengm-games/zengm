@@ -1,10 +1,5 @@
 mostTeams filter on gp, football too?
 
-@wtp99#4759 @Ethan#4029 export draft classes
-- add option to exportLeague for no meta
-- add option to exportLeague for a filter function, per object store
-- exportLeague DRY for error catching and download?
-
 # all star game
 
 by default, never delete ASG box scores

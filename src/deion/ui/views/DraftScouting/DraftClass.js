@@ -5,7 +5,7 @@ import {
     LeagueFileUpload,
     PlayerNameLabels,
 } from "../../components";
-import { getCols, toWorker } from "../../util";
+import { downloadFile, getCols, toWorker } from "../../util";
 
 const DraftClass = ({ offset, players, season }) => {
     const [showImportForm, setShowImportForm] = useState(false);
@@ -43,11 +43,16 @@ const DraftClass = ({ offset, players, season }) => {
                 <button
                     className="btn btn-light-bordered btn-xs"
                     disabled={status === "exporting" || status === "loading"}
-                    onClick={() => {
+                    onClick={async () => {
                         setStatus("exporting");
-                        setTimeout(() => {
-                            setStatus();
-                        }, 1000);
+
+                        const { filename, json } = await toWorker(
+                            "exportDraftClass",
+                            season,
+                        );
+                        downloadFile(filename, json, "application/json");
+
+                        setStatus();
                     }}
                 >
                     Export

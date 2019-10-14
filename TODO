@@ -1,3 +1,7 @@
+gold
+  add achievement
+  change basketball/football icon to gold color
+
 # all star game
 
 by default, never delete ASG box scores
@@ -278,10 +282,6 @@ customizable columns in DataTable would be great... especially for football, wit
 - need to handle super cols in PLAYER_STATS_TABLES
 
 "Accept Trade" button on trading block
-
-faces
-- http://biskup.biowiki.org/facesjs/
-- https://github.com/dumbmatter/facesjs/compare/master...ihh:master
 
 AI teams should adjust finances
 - and reset after user is fired
@@ -718,11 +718,9 @@ screenshot
   things can get cut off right, like wide tables in player pages
 
 BBGM Gold?
-  add achievement
   account page UI
     if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
       if not cancelled but timestamp too low
-  change basketball to gold coin
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding

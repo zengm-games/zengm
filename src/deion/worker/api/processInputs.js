@@ -271,8 +271,6 @@ const playerFeats = params => {
     return {
         abbrev,
         season,
-        playoffs:
-            params.playoffs !== undefined ? params.playoffs : "regularSeason",
     };
 };
 

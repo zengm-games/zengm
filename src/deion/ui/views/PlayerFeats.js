@@ -8,7 +8,7 @@ import {
 } from "../components";
 import { getCols, helpers, setTitle } from "../util";
 
-const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
+const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
     setTitle("Statistical Feats");
 
     const cols = getCols(
@@ -19,6 +19,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
         "Opp",
         "Result",
         "Season",
+        "Type",
     );
 
     const rows = feats.map(p => {
@@ -49,6 +50,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
                     {p.won ? "W" : "L"} {p.score}
                 </a>,
                 p.season,
+                p.type,
             ],
             classNames: {
                 "table-info": p.tid === userTid,
@@ -60,8 +62,8 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
         <>
             <Dropdown
                 view="player_feats"
-                fields={["teamsAndAll", "seasonsAndAll", "playoffs"]}
-                values={[abbrev, season, playoffs]}
+                fields={["teamsAndAll", "seasonsAndAll"]}
+                values={[abbrev, season]}
             />
             <h1>
                 Statistical Feats <NewWindowLink />
@@ -97,7 +99,6 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
 PlayerFeats.propTypes = {
     abbrev: PropTypes.string.isRequired,
     feats: PropTypes.arrayOf(PropTypes.object).isRequired,
-    playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
         .isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,

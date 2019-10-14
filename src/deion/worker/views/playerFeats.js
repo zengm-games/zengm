@@ -12,8 +12,7 @@ async function updatePlayers(
     if (
         updateEvents.includes("gameSim") ||
         inputs.abbrev !== state.abbrev ||
-        inputs.season !== state.season ||
-        inputs.playoffs !== state.playoffs
+        inputs.season !== state.season
     ) {
         let feats: any = await idb.getCopies.playerFeats();
 
@@ -38,14 +37,6 @@ async function updatePlayers(
         if (inputs.season !== "all") {
             feats = feats.filter(feat => feat.season === inputs.season);
         }
-        feats = feats.filter(feat => {
-            if (inputs.playoffs === "regularSeason") {
-                return !feat.playoffs;
-            }
-            if (inputs.playoffs === "playoffs") {
-                return feat.playoffs;
-            }
-        });
 
         for (const feat of feats) {
             feat.stats.trb = feat.stats.orb + feat.stats.drb;
@@ -67,6 +58,15 @@ async function updatePlayers(
             feat.oppAbbrev = g.teamAbbrevsCache[feat.oppTid];
 
             feat.stats.gmsc = helpers.gameScore(feat.stats);
+
+            // Type
+            if (feat.playoffs) {
+                feat.type = "Playoffs";
+            } else if (feat.tid === -1 || feat.tid === -2) {
+                feat.type = "All-Star";
+            } else {
+                feat.type = "Regular Season";
+            }
         }
 
         const stats =
@@ -99,7 +99,6 @@ async function updatePlayers(
         return {
             abbrev: inputs.abbrev,
             feats,
-            playoffs: inputs.playoffs,
             season: inputs.season,
             stats,
             userTid: g.userTid,

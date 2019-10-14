@@ -148,9 +148,6 @@ const routes = () => {
         "/l/:lid/player_feats": genPage("playerFeats"),
         "/l/:lid/player_feats/:abbrev": genPage("playerFeats"),
         "/l/:lid/player_feats/:abbrev/:season": genPage("playerFeats"),
-        "/l/:lid/player_feats/:abbrev/:season/:playoffs": genPage(
-            "playerFeats",
-        ),
         "/l/:lid/multi_team_mode": genPage("multiTeamMode"),
         "/l/:lid/team_records": genPage("teamRecords"),
         "/l/:lid/team_records/:byType": genPage("teamRecords"),

@@ -21,7 +21,7 @@ const Info = ({
 
     return (
         <div className="datatable-info d-none d-sm-block">
-            {start} to {end} of {numRows}
+            {numRows === 0 ? 0 : start} to {end} of {numRows}
             {filteredText}
         </div>
     );

@@ -9,6 +9,7 @@ MVP below the box score is not discoverable. move above, for live game? or send 
 ---
 
 @SLR52#7441 show playoff series record in box score
+show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
 
 reactstrap upgrade notes
 - v8 has problems with popovers:
@@ -35,17 +36,9 @@ move to rollup
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
 
-+/- regression PR
-- try on 1000 seasons
-- how much does it actually change ovrs?
-- constrain reb and fg to be 0.01
-
 Could you add a page which shows all the game results on any given day? Just the scores would be cool, maybe the top performer (best gamescore player, but show their pts/reb/ast) too, but mainly just a way to see what happened in every game that day without jumping around game logs.
 
 "if you edit a player (change nothing) and hit save changes any new relationships added  or edited will appear"
-
-ovr based on regression of ratings to +/- (over 1000 years)
-- zscore individual ratings first
 
 option to control retirement rate
 
@@ -533,12 +526,7 @@ rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename
 - get rid of new any types in types.js
 
-error page (like invalid pid) should show league UI if in league
-
 should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
-
-if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
-- not graceful now, see fill(season)
 
 get tests working
 - db.getCopy.teams
@@ -582,9 +570,6 @@ flow
   cache - similar issue as backboard, would be great to type inputs and outputs
   get rid of ScheduleGame.highlight
   get rid of any, Object, etc
-  ESLint
-  React components: proptype validation only works for class-based ones. for functions, need proptypes and flow. even for class-based components, flow can give more flexibility, but does not do runtime checking. https://github.com/gcanti/babel-plugin-tcomb could help with that, but seems to create too many false positives. until there is a better solution, it's not urgent to port React components to flow.
-    https://codemix.github.io/flow-runtime/
   views: thru live
   views/views
 
@@ -593,8 +578,6 @@ flow
 REACT later
 
 strict mode - blocked by reactstrap not supporting it
-
-https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
 
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 Trade Away button on your own players
@@ -619,8 +602,6 @@ Tools > Export Stats only has latest team, for in-season trades
 
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
-
-more keyboard shortcuts https://www.reddit.com/r/BasketballGM/comments/531utg/incredible_game_a_few_suggestions/
 
 make positions edited in god mode sticky, like custom roster
 
@@ -667,8 +648,6 @@ Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www
 
 team dropdown in dashboard
 
-feats table should show both playoffs and regular season by default
-
 https://www.reddit.com/r/BasketballGM/comments/3gjqgd/lets_brainstorm_a_bit_about_this_30_seasons/
 
 fantasy draft summary https://www.reddit.com/r/BasketballGM/comments/3g4p5a/issues_with_fantasy_draft_records/ (link is in player transactions)
@@ -684,8 +663,6 @@ gamesim rewrite
   game situation awareness (blowouts, close games, etc)
   balance
   minutes directly, not by +/-
-
-owner message bug: https://www.reddit.com/r/BasketballGM/comments/3fl46t/broken_owner/ctqfr1y
 
 use positions for roster building and rotations
   free agents and trades matters....
@@ -971,13 +948,10 @@ mode with ratings hidden
 MINOR FIXES
 -----------
 
-show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
-retired players should be eligible for season awards
 documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
 Add MVP and Titles columns to HoF table
 Make good young players much less likely to become FAs
-show team records in playoffs, conference standings
 don't need to store abbrev with awards, just tids
   fix display in season summary (correct in historyAll)
 show team records in playoffs page

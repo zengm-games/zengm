@@ -1359,6 +1359,9 @@ const cols: {
         sortType: "number",
     },
     Team: {},
+    Type: {
+        desc: "Type of game",
+    },
     W: {
         desc: "Wins",
         sortSequence: ["desc", "asc"],

@@ -4,7 +4,7 @@ const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
 const build = require("./buildFuncs");
 // $FlowFixMe
-const cloudflareConfig = require("../../../.config/cloudflare.json");
+const cloudflareConfig = require("../../../.config/cloudflare.json"); // eslint-disable-line import/no-unresolved
 
 const getSubdomain = () => {
     if (process.argv[2] === "beta" || process.argv[2] === "play") {

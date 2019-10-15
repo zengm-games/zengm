@@ -24,7 +24,7 @@ async function updateDraftSummary(inputs: {
         playersAll = await idb.getCopies.players({ draftYear: inputs.season });
     }
     playersAll = playersAll.filter(p => {
-        return p.draft.year === inputs.season && p.draft.round >= 1;
+        return p.draft.year === inputs.season;
     });
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
@@ -35,28 +35,32 @@ async function updateDraftSummary(inputs: {
         fuzz: true,
     });
 
-    const players = playersAll.map(p => {
-        const currentPr = p.ratings[p.ratings.length - 1];
+    const players = playersAll
+        .filter(p => {
+            return p.draft.round >= 1 || p.careerStats.gp > 0;
+        })
+        .map(p => {
+            const currentPr = p.ratings[p.ratings.length - 1];
 
-        return {
-            // Attributes
-            pid: p.pid,
-            name: p.name,
-            draft: p.draft,
-            currentAge: p.age,
-            currentAbbrev: p.abbrev,
-            hof: p.hof,
+            return {
+                // Attributes
+                pid: p.pid,
+                name: p.name,
+                draft: p.draft,
+                currentAge: p.age,
+                currentAbbrev: p.abbrev,
+                hof: p.hof,
 
-            // Ratings
-            currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
-            currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
-            currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
-            pos: currentPr.pos,
+                // Ratings
+                currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
+                currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
+                currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
+                pos: currentPr.pos,
 
-            // Stats
-            careerStats: p.careerStats,
-        };
-    });
+                // Stats
+                careerStats: p.careerStats,
+            };
+        });
 
     return {
         draftType: g.draftType,

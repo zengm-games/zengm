@@ -53,7 +53,7 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
         return {
             key: p.pid,
             data: [
-                `${p.draft.round}-${p.draft.pick}`,
+                p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
                 <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
                 p.pos,
                 <DraftAbbrev

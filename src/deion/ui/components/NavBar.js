@@ -89,7 +89,7 @@ TopMenuDropdown.propTypes = {
     short: PropTypes.string.isRequired,
 };
 
-const getText = (text): string | React.Element<any> => {
+const getText = (text): string | any => {
     if (text.hasOwnProperty("top")) {
         // $FlowFixMe
         return text.top;
@@ -362,9 +362,11 @@ const PlayMenu = ({ lid, options }: PlayMenuProps) => {
     );
 
     useEffect(() => {
+        // $FlowFixMe
         document.addEventListener("keyup", handleAltP);
 
         return () => {
+            // $FlowFixMe
             document.removeEventListener("keyup", handleAltP);
         };
     }, [handleAltP]);

@@ -10,7 +10,7 @@ class LocalContainer extends Container<LocalStateUI> {
     constructor() {
         super();
         this.state = {
-            gold: true,
+            gold: undefined,
             godMode: false,
             hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
             lid: undefined,

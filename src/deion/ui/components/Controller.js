@@ -60,7 +60,7 @@ const showAd = (type: "modal", autoPlaySeasons: number) => {
         }
 
         // No ads for Gold members
-        if (local.state.gold) {
+        if (local.state.gold !== false) {
             return;
         }
 

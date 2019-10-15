@@ -278,7 +278,7 @@ export type Option = {
 };
 
 export type LocalStateUI = {|
-    gold: boolean,
+    gold: boolean | void,
     godMode: boolean,
     hasViewedALeague: boolean,
     lid: number | void,

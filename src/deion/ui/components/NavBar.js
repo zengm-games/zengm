@@ -319,7 +319,7 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
 }
 
 LogoAndText.propTypes = {
-    gold: PropTypes.bool.isRequired,
+    gold: PropTypes.bool,
     lid: PropTypes.number,
     updating: PropTypes.bool.isRequired,
 };

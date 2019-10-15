@@ -1120,7 +1120,6 @@ hire/fire different coaches with different strategies
 boxplots for shot location stats, plus comparison to NBA data
 import/export stuff
   online "locker" that you can sync saved games to
-  https://unhosted.org/adventures/7/Adding-remote-storage-to-unhosted-web-apps.html
   league names
     "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
       move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then

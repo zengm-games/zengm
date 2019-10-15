@@ -21,10 +21,10 @@ jobs:
       uses: borales/actions-yarn@v2.0.0
       with:
         cmd: install
-    - name: Lint
+    - name: Lint JS
       uses: borales/actions-yarn@v2.0.0
       with:
-        cmd: lint
+        cmd: lint-js
     - name: Unit tests
       uses: borales/actions-yarn@v2.0.0
       with:

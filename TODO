@@ -1,12 +1,16 @@
-# all star game
-
-by default, never delete ASG box scores
-- update DeleteOldData text
-- other games with feats?
-
-MVP below the box score is not discoverable. move above, for live game? or send notification after game ends?
-
----
+situational awareness
+- penalty for fouls
+- play bench more in blowouts
+- play stars more at the end of close games
+- variable possession length
+  - end of quarter get up a shot before buzzer
+  - end of quarter two for one behavior
+  - end of game, speed up or slow down based on margin
+- end of game fouling to extend game
+- situations to shoot 3s or 2s at end of game
+- sometimes foul when up 3 and not much time left
+- sub in good FT shooters in late game situations
+- timeouts to advance ball (shorter possession) or make subs
 
 @SLR52#7441 show playoff series record in box score
 show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
@@ -30,8 +34,6 @@ football too many players retire
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
 
 move to rollup
-- somehow fix alias pointing right to json
-  - make minimal reproduction of problem
 - get rid of rollup-plugin-node-builtins and rollup-plugin-node-globals
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/

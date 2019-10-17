@@ -17,18 +17,19 @@ const sport = build.getSport();
 module.exports = (nodeEnv, blacklistOptions) => {
     const plugins = [
         alias({
+            resolve: [".json"],
             entries: [
                 {
                     find: "league-schema",
-                    replacement: `./../../../${sport}/ui/util/leagueSchema.js`,
+                    replacement: `./../../../../public/${sport}/files/league-schema.json`,
                 },
                 // This is so Karma doesn't crash when using the big names file.
                 {
                     find: "player-names",
                     replacement:
                         nodeEnv !== "production"
-                            ? "./util/namesTest.js"
-                            : "./util/names.js",
+                            ? "./../../deion/worker/data/names-test.json"
+                            : "./../../basketball/worker/data/names.json",
                 },
             ],
         }),

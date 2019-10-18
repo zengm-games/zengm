@@ -1,13 +1,3 @@
-zustand
-- anything using subscribeLocal should be function component
-  - SideBar - 2 renders per navigation, 1 on play menu click, many per game sim, none on open/close
-  - shouldComponentUpdate
-- local -> api
-- subscribeLocal -> useStore
-- test rendering
-
-strict mode - any blockers?
-
 nag modal for ad blocker
 - https://www.detectadblock.com/
 - switch nagmodal message if ad blocker is enabled
@@ -503,6 +493,9 @@ colors
 
 filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
+
+strict mode - any blockers?
+- findDOMNode in react-sortable-hoc
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding

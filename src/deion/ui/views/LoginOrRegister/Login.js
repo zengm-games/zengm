@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import { local, realtimeUpdate, toWorker } from "../../util";
+import { localActions, realtimeUpdate, toWorker } from "../../util";
 
 type Props = {
     ajaxErrorMsg: string,
@@ -46,7 +46,7 @@ class Login extends React.Component<Props, State> {
 
             if (data.success) {
                 const currentTimestamp = Math.floor(Date.now() / 1000);
-                local.update({
+                localActions.update({
                     gold: currentTimestamp <= data.gold_until,
                     username: data.username,
                 });

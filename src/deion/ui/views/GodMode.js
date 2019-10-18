@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { HelpPopover, NewWindowLink } from "../components";
-import { local, logEvent, setTitle, toWorker } from "../util";
+import { localActions, logEvent, setTitle, toWorker } from "../util";
 
 class GodMode extends React.Component {
     constructor(props) {
@@ -198,7 +198,7 @@ class GodMode extends React.Component {
         }
 
         await toWorker("updateGameAttributes", attrs);
-        local.update({ godMode: attrs.godMode });
+        localActions.update({ godMode: attrs.godMode });
     }
 
     render() {

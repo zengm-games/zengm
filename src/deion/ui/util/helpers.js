@@ -1,7 +1,7 @@
 // @flow
 
 import { helpers as commonHelpers } from "../../common";
-import local from "./local";
+import { local } from "./local";
 
 const colorRating = (rating: number) => {
     const classes = ["table-danger", "table-warning", null, "table-success"];
@@ -12,7 +12,7 @@ const colorRating = (rating: number) => {
 };
 
 const leagueUrl = (components: (number | string)[]): string => {
-    const lid = local.state.lid;
+    const lid = local.getState().lid;
     if (typeof lid !== "number") {
         return "/";
     }

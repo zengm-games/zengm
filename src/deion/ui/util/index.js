@@ -29,7 +29,13 @@ export { default as getCols } from "../../common/getCols"; // To save renaming a
 export { default as getScript } from "./getScript";
 export { default as helpers } from "./helpers";
 export { default as initView } from "./initView";
-export { default as local } from "./local";
+export {
+    local,
+    localActions,
+    useLocal,
+    useLocalActions,
+    useLocalShallow,
+} from "./local";
 export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as logEvent } from "./logEvent";
 export { default as menuItems } from "./menuItems";
@@ -39,6 +45,5 @@ export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as realtimeUpdate } from "./realtimeUpdate";
 export { default as routes } from "./routes";
 export { default as setTitle } from "./setTitle";
-export { default as subscribeLocal } from "./subscribeLocal";
 export { default as takeScreenshot } from "./takeScreenshot";
 export { default as toWorker } from "./toWorker";

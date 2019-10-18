@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
-import { local, realtimeUpdate, setTitle } from "../util";
+import { localActions, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -82,7 +82,7 @@ class ResetPassword extends React.Component {
             });
 
             if (data.success) {
-                local.update({ username: data.username });
+                localActions.update({ username: data.username });
 
                 realtimeUpdate([], "/account");
             } else {

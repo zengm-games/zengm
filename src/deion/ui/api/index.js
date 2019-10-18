@@ -1,6 +1,6 @@
 // @flow
 
-import { confirm, emitter, local, realtimeUpdate } from "../util";
+import { confirm, emitter, localActions, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,
@@ -116,7 +116,7 @@ const newLid = async (lid: number) => {
         parts[2] = String(lid);
         const newPathname = parts.join("/");
         await realtimeUpdate(["firstRun"], newPathname);
-        local.update({ lid });
+        localActions.update({ lid });
     }
 };
 
@@ -133,11 +133,11 @@ async function realtimeUpdate2(
 }
 
 const resetLeague = () => {
-    local.resetLeague();
+    localActions.resetLeague();
 };
 
 const setGameAttributes = (gameAttributes: GameAttributes) => {
-    local.updateGameAttributes(gameAttributes);
+    localActions.updateGameAttributes(gameAttributes);
 };
 
 const showEvent2 = (options: LogEventShowOptions) => {
@@ -145,7 +145,7 @@ const showEvent2 = (options: LogEventShowOptions) => {
 };
 
 const updateLocal = (obj: $Shape<LocalStateUI>) => {
-    local.update(obj);
+    localActions.update(obj);
 };
 
 export default {

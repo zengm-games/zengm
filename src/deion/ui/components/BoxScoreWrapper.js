@@ -6,8 +6,8 @@ import {
     helpers,
     overrides,
     realtimeUpdate,
-    subscribeLocal,
     toWorker,
+    useLocalShallow,
 } from "../util";
 
 const TeamNameLink = ({ season, t }) => {
@@ -156,46 +156,48 @@ const NextButton = ({ abbrev, boxScore, currentGidInList, nextGid }) => {
         };
     }, [abbrev, autoGoToNext, boxScore.season, nextGid]);
 
-    return subscribeLocal(local => {
-        const { phase, playMenuOptions, season } = local.state;
+    const { phase, playMenuOptions, season } = useLocalShallow(state => ({
+        phase: state.phase,
+        playMenuOptions: state.playMenuOptions,
+        season: state.season,
+    }));
 
-        const canPlay = playMenuOptions.some(
-            option => option.id === "day" || option.id === "week",
-        );
+    const canPlay = playMenuOptions.some(
+        option => option.id === "day" || option.id === "week",
+    );
 
-        return (
-            <div className="ml-4">
-                {boxScore.season === season &&
-                currentGidInList &&
-                (nextGid === undefined || clickedGoToNext) &&
-                (phase === PHASE.REGULAR_SEASON || phase === PHASE.PLAYOFFS) ? (
-                    <button
-                        className="btn btn-light-bordered"
-                        disabled={!canPlay || autoGoToNext}
-                        onClick={simNext}
-                    >
-                        Sim
-                        <br />
-                        Next
-                    </button>
-                ) : (
-                    <a
-                        className={classNames("btn", "btn-light-bordered", {
-                            disabled: nextGid === undefined,
-                        })}
-                        href={helpers.leagueUrl([
-                            "game_log",
-                            abbrev,
-                            boxScore.season,
-                            nextGid,
-                        ])}
-                    >
-                        Next
-                    </a>
-                )}
-            </div>
-        );
-    });
+    return (
+        <div className="ml-4">
+            {boxScore.season === season &&
+            currentGidInList &&
+            (nextGid === undefined || clickedGoToNext) &&
+            (phase === PHASE.REGULAR_SEASON || phase === PHASE.PLAYOFFS) ? (
+                <button
+                    className="btn btn-light-bordered"
+                    disabled={!canPlay || autoGoToNext}
+                    onClick={simNext}
+                >
+                    Sim
+                    <br />
+                    Next
+                </button>
+            ) : (
+                <a
+                    className={classNames("btn", "btn-light-bordered", {
+                        disabled: nextGid === undefined,
+                    })}
+                    href={helpers.leagueUrl([
+                        "game_log",
+                        abbrev,
+                        boxScore.season,
+                        nextGid,
+                    ])}
+                >
+                    Next
+                </a>
+            )}
+        </div>
+    );
 };
 NextButton.propTypes = {
     abbrev: PropTypes.string,

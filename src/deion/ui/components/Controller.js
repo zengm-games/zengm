@@ -2,11 +2,11 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { Provider } from "unstated";
 import {
     ads,
     emitter,
     local,
+    localActions,
     realtimeUpdate,
     setTitle,
     toWorker,
@@ -60,7 +60,7 @@ const showAd = (type: "modal", autoPlaySeasons: number) => {
         }
 
         // No ads for Gold members
-        if (local.state.gold !== false) {
+        if (local.getState().gold !== false) {
             return;
         }
 
@@ -134,7 +134,7 @@ class Controller extends React.Component<{}, State> {
         emitter.on("showAd", showAd);
         emitter.on("updateState", this.updateState);
 
-        if (local.state.popup && document.body) {
+        if (local.getState().popup && document.body) {
             if (document.body) {
                 document.body.style.paddingTop = "0";
             }
@@ -175,14 +175,18 @@ class Controller extends React.Component<{}, State> {
             const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
 
             if (args.inLeague) {
-                if (newLid !== local.state.lid) {
-                    await toWorker("beforeViewLeague", newLid, local.state.lid);
+                if (newLid !== local.getState().lid) {
+                    await toWorker(
+                        "beforeViewLeague",
+                        newLid,
+                        local.getState().lid,
+                    );
                 }
             } else {
                 // eslint-disable-next-line no-lonely-if
-                if (local.state.lid !== undefined) {
+                if (local.getState().lid !== undefined) {
                     await toWorker("beforeViewNonLeague");
-                    local.updateGameAttributes({
+                    localActions.updateGameAttributes({
                         lid: undefined,
                     });
                 }
@@ -334,7 +338,7 @@ class Controller extends React.Component<{}, State> {
         }
 
         return (
-            <Provider>
+            <>
                 <NavBar pageID={pageID} updating={loading} />
                 <div className="bbgm-container">
                     <Header />
@@ -352,7 +356,7 @@ class Controller extends React.Component<{}, State> {
                         show={this.state.showNagModal}
                     />
                 </div>
-            </Provider>
+            </>
         );
     }
 }

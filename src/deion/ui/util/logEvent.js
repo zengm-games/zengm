@@ -51,8 +51,8 @@ const showEvent = ({
         "notification-container",
     );
     if (
-        local.state.userTids !== undefined &&
-        local.state.userTids.length > 1 &&
+        local.getState().userTids !== undefined &&
+        local.getState().userTids.length > 1 &&
         notificationContainer &&
         !notificationContainer.classList.contains(
             "notification-container-extra-margin-bottom",
@@ -62,8 +62,8 @@ const showEvent = ({
             "notification-container-extra-margin-bottom",
         );
     } else if (
-        local.state.userTids !== undefined &&
-        local.state.userTids.length === 1 &&
+        local.getState().userTids !== undefined &&
+        local.getState().userTids.length === 1 &&
         notificationContainer &&
         notificationContainer.classList.contains(
             "notification-container-extra-margin-bottom",

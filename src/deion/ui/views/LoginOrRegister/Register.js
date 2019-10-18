@@ -3,7 +3,13 @@
 import classNames from "classnames";
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import { helpers, local, realtimeUpdate, setTitle, toWorker } from "../../util";
+import {
+    helpers,
+    localActions,
+    realtimeUpdate,
+    setTitle,
+    toWorker,
+} from "../../util";
 
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 const otherSport =
@@ -64,7 +70,7 @@ class Register extends React.Component<Props, State> {
             });
 
             if (data.success) {
-                local.update({ username: data.username });
+                localActions.update({ username: data.username });
 
                 await toWorker("checkParticipationAchievement", true);
                 realtimeUpdate([], "/account");

@@ -3,8 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { emitter, helpers, menuItems, subscribeLocal } from "../util";
 import type { Element, ElementRef } from "react";
+import { emitter, helpers, local, menuItems, useLocalShallow } from "../util";
 
 const getText = (text): string | Element<any> => {
     if (text.hasOwnProperty("side")) {
@@ -116,7 +116,7 @@ type Props = {
     pageID?: string,
 };
 
-// Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.state
+// Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.getState()
 // because then performance of the menu is independent of any other React performance issues - basically it's a hack to
 // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
 
@@ -219,30 +219,31 @@ const SideBar = React.memo(({ pageID }: Props) => {
         topUserBlockRef.current = document.getElementById("top-user-block");
     }, []);
 
-    return subscribeLocal(local => {
-        const { godMode, lid } = local.state;
+    const { godMode, lid } = useLocalShallow(state => ({
+        godMode: state.godMode,
+        lid: state.lid,
+    }));
 
-        return (
-            <>
-                <div ref={getNodeFade} className="sidebar-fade" />
-                <div className="bg-light sidebar" id="sidebar" ref={getNode}>
-                    <div className="sidebar-sticky">
-                        {menuItems.map((menuItem, i) => (
-                            <MenuItem
-                                godMode={godMode}
-                                key={i}
-                                lid={lid}
-                                menuItem={menuItem}
-                                onMenuItemClick={close}
-                                pageID={pageID}
-                                root
-                            />
-                        ))}
-                    </div>
+    return (
+        <>
+            <div ref={getNodeFade} className="sidebar-fade" />
+            <div className="bg-light sidebar" id="sidebar" ref={getNode}>
+                <div className="sidebar-sticky">
+                    {menuItems.map((menuItem, i) => (
+                        <MenuItem
+                            godMode={godMode}
+                            key={i}
+                            lid={lid}
+                            menuItem={menuItem}
+                            onMenuItemClick={close}
+                            pageID={pageID}
+                            root
+                        />
+                    ))}
                 </div>
-            </>
-        );
-    });
+            </div>
+        </>
+    );
 });
 
 // $FlowFixMe

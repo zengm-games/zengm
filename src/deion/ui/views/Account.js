@@ -13,7 +13,7 @@ import {
     confirm,
     getScript,
     helpers,
-    local,
+    localActions,
     realtimeUpdate,
     setTitle,
 } from "../util";
@@ -183,7 +183,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                 credentials: "include",
             });
 
-            local.update({ username: "" });
+            localActions.update({ username: "" });
             realtimeUpdate(["account"], "/");
         } catch (err) {
             this.setState({

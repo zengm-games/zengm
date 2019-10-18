@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { realtimeUpdate, subscribeLocal, toWorker } from "../util";
+import { realtimeUpdate, toWorker, useLocalShallow } from "../util";
 
 const setUserTid = async (userTid: number) => {
     await toWorker("updateGameAttributes", { userTid });
@@ -13,42 +13,38 @@ const handleChange = async (e: SyntheticInputEvent<>) => {
     await setUserTid(userTid);
 };
 
-const MultiTeamMenuInner = ({
-    local,
-}: {
-    local: {
-        state: {
-            teamNamesCache: string[],
-            teamRegionsCache: string[],
-            userTid: number,
-            userTids: number[],
-        },
-    },
-}) => {
+const MultiTeamMenu = () => {
+    const state = useLocalShallow(state2 => ({
+        teamNamesCache: state2.teamNamesCache,
+        teamRegionsCache: state2.teamRegionsCache,
+        userTid: state2.userTid,
+        userTids: state2.userTids,
+    }));
+
     const prev = useCallback(async () => {
-        const ind = local.state.userTids.indexOf(local.state.userTid);
-        const userTid = local.state.userTids[ind - 1];
+        const ind = state.userTids.indexOf(state.userTid);
+        const userTid = state.userTids[ind - 1];
         if (userTid !== undefined) {
             await setUserTid(userTid);
         }
-    }, [local.state.userTid, local.state.userTids]);
+    }, [state.userTid, state.userTids]);
 
     const next = useCallback(async () => {
-        const ind = local.state.userTids.indexOf(local.state.userTid);
-        const userTid = local.state.userTids[ind + 1];
+        const ind = state.userTids.indexOf(state.userTid);
+        const userTid = state.userTids[ind + 1];
         if (userTid !== undefined) {
             await setUserTid(userTid);
         }
-    }, [local.state.userTid, local.state.userTids]);
+    }, [state.userTid, state.userTids]);
 
     // Hide if not multi team or not loaded yet
-    if (local.state.userTids.length <= 1) {
+    if (state.userTids.length <= 1) {
         return null;
     }
 
-    const ind = local.state.userTids.indexOf(local.state.userTid);
+    const ind = state.userTids.indexOf(state.userTid);
     const prevDisabled = ind < 0 || ind === 0;
-    const nextDisabled = ind < 0 || ind === local.state.userTids.length - 1;
+    const nextDisabled = ind < 0 || ind === state.userTids.length - 1;
 
     return (
         <div className="multi-team-menu d-flex align-items-end">
@@ -69,12 +65,12 @@ const MultiTeamMenuInner = ({
                     className="form-control"
                     id="multi-team-select"
                     onChange={handleChange}
-                    value={local.state.userTid}
+                    value={state.userTid}
                 >
-                    {local.state.userTids.map(tid => (
+                    {state.userTids.map(tid => (
                         <option key={tid} value={tid}>
-                            {local.state.teamRegionsCache[tid]}{" "}
-                            {local.state.teamNamesCache[tid]}
+                            {state.teamRegionsCache[tid]}{" "}
+                            {state.teamNamesCache[tid]}
                         </option>
                     ))}
                 </select>
@@ -89,10 +85,6 @@ const MultiTeamMenuInner = ({
             </button>
         </div>
     );
-};
-
-const MultiTeamMenu = () => {
-    return subscribeLocal(local => <MultiTeamMenuInner local={local} />);
 };
 
 export default MultiTeamMenu;

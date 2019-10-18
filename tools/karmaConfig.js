@@ -9,12 +9,9 @@ const sport = build.getSport();
 const rollupConfigTemp = rollupConfig("test");
 rollupConfigTemp.plugins.unshift(
     alias({
-        entries: [
-            {
-                find: "smoke-test-overrides",
-                replacement: `./../../${sport}/worker/index.js`,
-            },
-        ],
+        entries: {
+            "smoke-test-overrides": `./../../${sport}/worker/index.js`,
+        },
     }),
 );
 

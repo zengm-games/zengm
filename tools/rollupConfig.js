@@ -18,20 +18,15 @@ module.exports = (nodeEnv, blacklistOptions) => {
     const plugins = [
         alias({
             resolve: [".json"],
-            entries: [
-                {
-                    find: "league-schema",
-                    replacement: `./../../../../public/${sport}/files/league-schema.json`,
-                },
+            entries: {
+                "league-schema": `./../../../../public/${sport}/files/league-schema.json`,
+
                 // This is so Karma doesn't crash when using the big names file.
-                {
-                    find: "player-names",
-                    replacement:
-                        nodeEnv !== "production"
-                            ? "./../../deion/worker/data/names-test.json"
-                            : "./../../basketball/worker/data/names.json",
-                },
-            ],
+                "player-names":
+                    nodeEnv !== "production"
+                        ? "./../../deion/worker/data/names-test.json"
+                        : "./../../basketball/worker/data/names.json",
+            },
         }),
         replace({
             "process.env.NODE_ENV": JSON.stringify(nodeEnv),

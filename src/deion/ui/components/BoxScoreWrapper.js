@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { PHASE } from "../../common";
 import {
     helpers,
@@ -117,91 +117,86 @@ FourFactors.propTypes = {
     teams: PropTypes.array.isRequired,
 };
 
-class NextButton extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            autoGoToNext: false,
-            clickedGoToNext: false,
+const NextButton = ({ abbrev, boxScore, currentGidInList, nextGid }) => {
+    const [autoGoToNext, setAutoGoToNext] = useState(false);
+    const [clickedGoToNext, setClickedGoToNext] = useState(false);
+
+    const simNext = useCallback(async () => {
+        setAutoGoToNext(true);
+        setClickedGoToNext(true);
+        await toWorker("actions.playMenu.day");
+    }, []);
+
+    useEffect(() => {
+        let mounted = true;
+        const whatever = async () => {
+            if (autoGoToNext && nextGid !== undefined) {
+                setAutoGoToNext(false);
+
+                await realtimeUpdate(
+                    [],
+                    helpers.leagueUrl([
+                        "game_log",
+                        abbrev,
+                        boxScore.season,
+                        nextGid,
+                    ]),
+                );
+
+                if (mounted) {
+                    setClickedGoToNext(false);
+                }
+            }
         };
-        this.simNext = this.simNext.bind(this);
-    }
 
-    async simNext() {
-        this.setState({
-            autoGoToNext: true,
-            clickedGoToNext: true,
-        });
-        await toWorker(`actions.playMenu.day`);
-    }
+        whatever();
 
-    async componentDidUpdate() {
-        if (this.state.autoGoToNext && this.props.nextGid !== undefined) {
-            // eslint-disable-next-line react/no-did-update-set-state
-            this.setState({
-                autoGoToNext: false,
-            });
-            await realtimeUpdate(
-                [],
-                helpers.leagueUrl([
-                    "game_log",
-                    this.props.abbrev,
-                    this.props.boxScore.season,
-                    this.props.nextGid,
-                ]),
-            );
-            // eslint-disable-next-line react/no-did-update-set-state
-            this.setState({
-                clickedGoToNext: false,
-            });
-        }
-    }
+        return () => {
+            mounted = false;
+        };
+    }, [abbrev, autoGoToNext, boxScore.season, nextGid]);
 
-    render() {
-        const { abbrev, boxScore, currentGidInList, nextGid } = this.props;
-        return subscribeLocal(local => {
-            const { phase, playMenuOptions, season } = local.state;
+    return subscribeLocal(local => {
+        const { phase, playMenuOptions, season } = local.state;
 
-            const canPlay = playMenuOptions.some(
-                option => option.id === "day" || option.id === "week",
-            );
+        const canPlay = playMenuOptions.some(
+            option => option.id === "day" || option.id === "week",
+        );
 
-            return (
-                <div className="ml-4">
-                    {boxScore.season === season &&
-                    currentGidInList &&
-                    (nextGid === undefined || this.state.clickedGoToNext) &&
-                    (phase === PHASE.REGULAR_SEASON ||
-                        phase === PHASE.PLAYOFFS) ? (
-                        <button
-                            className="btn btn-light-bordered"
-                            disabled={!canPlay || this.state.autoGoToNext}
-                            onClick={this.simNext}
-                        >
-                            Sim
-                            <br />
-                            Next
-                        </button>
-                    ) : (
-                        <a
-                            className={classNames("btn", "btn-light-bordered", {
-                                disabled: nextGid === undefined,
-                            })}
-                            href={helpers.leagueUrl([
-                                "game_log",
-                                abbrev,
-                                boxScore.season,
-                                nextGid,
-                            ])}
-                        >
-                            Next
-                        </a>
-                    )}
-                </div>
-            );
-        });
-    }
-}
+        return (
+            <div className="ml-4">
+                {boxScore.season === season &&
+                currentGidInList &&
+                (nextGid === undefined || clickedGoToNext) &&
+                (phase === PHASE.REGULAR_SEASON || phase === PHASE.PLAYOFFS) ? (
+                    <button
+                        className="btn btn-light-bordered"
+                        disabled={!canPlay || autoGoToNext}
+                        onClick={simNext}
+                    >
+                        Sim
+                        <br />
+                        Next
+                    </button>
+                ) : (
+                    <a
+                        className={classNames("btn", "btn-light-bordered", {
+                            disabled: nextGid === undefined,
+                        })}
+                        href={helpers.leagueUrl([
+                            "game_log",
+                            abbrev,
+                            boxScore.season,
+                            nextGid,
+                        ])}
+                    >
+                        Next
+                    </a>
+                )}
+            </div>
+        );
+    });
+};
 NextButton.propTypes = {
     abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,

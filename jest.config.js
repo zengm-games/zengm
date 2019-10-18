@@ -2,8 +2,8 @@
 module.exports = {
     moduleNameMapper: {
         // Football cause schema is empty currently, should be faster
-        "^league-schema$": "<rootDir>/src/football/ui/util/leagueSchema.js",
-        "^player-names$": "<rootDir>/src/basketball/worker/util/namesTest.js",
+        "^league-schema$": "<rootDir>/public/football/files/league-schema.json",
+        "^player-names$": "<rootDir>/src/deion/worker/data/names-test.json",
     },
     setupFilesAfterEnv: [
         "./src/deion/test/jest.js",

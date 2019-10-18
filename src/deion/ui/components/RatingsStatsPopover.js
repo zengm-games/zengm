@@ -135,6 +135,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                     isOpen={this.state.popoverOpen}
                     target={`ratings-pop-${this.count}`}
                     toggle={this.toggle}
+                    trigger="legacy"
                 >
                     <PopoverBody>
                         <div

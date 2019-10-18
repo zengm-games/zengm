@@ -5,7 +5,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";
-import {
+import * as util from "./util";
+import type { Env, WorkerOverridesConstants } from "../common/types";
+
+window.bbgm = {
+    ...util,
+};
+
+const {
     compareVersions,
     genStaticPage,
     helpers,
@@ -15,8 +22,7 @@ import {
     promiseWorker,
     routes,
     toWorker,
-} from "./util";
-import type { Env, WorkerOverridesConstants } from "../common/types";
+} = util;
 
 const handleVersion = async () => {
     window.addEventListener("storage", e => {

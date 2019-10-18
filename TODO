@@ -1,3 +1,10 @@
+strict mode - any blockers?
+
+nag modal for ad blocker
+- https://www.detectadblock.com/
+- switch nagmodal message if ad blocker is enabled
+- make sure nagmodal actually shows when there is an ad blocker
+
 situational awareness
 - penalty for fouls
 - play bench more in blowouts
@@ -14,14 +21,6 @@ situational awareness
 
 @SLR52#7441 show playoff series record in box score
 show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
-
-reactstrap upgrade notes
-- v8 has problems with popovers:
-  - https://old.reddit.com/r/BasketballGM/comments/d13z5q/not_a_fan_of_the_records_being_shown_during_the/ezhjepm/
-  - prev try commit: 393da63aec4a48728363138203aff81ea2082abc
-  - there are a bunch of open issues like:
-    - https://github.com/reactstrap/reactstrap/issues/1587
-    - https://github.com/reactstrap/reactstrap/issues/1482
 
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
 
@@ -574,8 +573,6 @@ flow
 ---
 
 REACT later
-
-strict mode - blocked by reactstrap not supporting it
 
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 Trade Away button on your own players

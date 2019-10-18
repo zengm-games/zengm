@@ -33,8 +33,6 @@ const customLaunchers = [
 module.exports = function(config) {
     config.set({
         ...karmaConfig,
-        autoWatch: false,
-        singleRun: true,
         browserStack,
         customLaunchers,
         browsers: Object.keys(customLaunchers),

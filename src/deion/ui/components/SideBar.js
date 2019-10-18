@@ -2,10 +2,11 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import * as React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { emitter, helpers, menuItems, subscribeLocal } from "../util";
+import type { Element, ElementRef } from "react";
 
-const getText = (text): string | React.Element<any> => {
+const getText = (text): string | Element<any> => {
     if (text.hasOwnProperty("side")) {
         // $FlowFixMe
         return text.side;
@@ -119,62 +120,57 @@ type Props = {
 // because then performance of the menu is independent of any other React performance issues - basically it's a hack to
 // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
 
-class SideBar extends React.Component<Props> {
-    close: Function;
+// $FlowFixMe
+const SideBar = React.memo(({ pageID }: Props) => {
+    const [node, setNode] = useState<null | ElementRef<"div">>(null);
+    const [nodeFade, setNodeFade] = useState<null | ElementRef<"div">>(null);
 
-    open: Function;
+    const topUserBlockRef = useRef<HTMLElement | null>(null);
 
-    toggle: Function;
-
-    ref: { current: null | React.ElementRef<"div"> };
-
-    refFade: { current: null | React.ElementRef<"div"> };
-
-    topUserBlockEl: HTMLElement | null;
-
-    constructor(props: Props) {
-        super(props);
-
-        this.close = this.close.bind(this);
-        this.open = this.open.bind(this);
-        this.toggle = this.toggle.bind(this);
-
-        this.ref = React.createRef();
-        this.refFade = React.createRef();
-    }
-
-    close() {
-        // These are flat conditions while open is nested, by design - clean up everything!
-        if (this.ref && this.ref.current) {
-            this.ref.current.classList.remove("sidebar-open");
+    const getNode = useCallback(node2 => {
+        if (node2 !== null) {
+            setNode(node2);
         }
-        if (this.refFade && this.refFade.current) {
-            this.refFade.current.classList.add("sidebar-fade-closing");
+    }, []);
+
+    const getNodeFade = useCallback(node2 => {
+        if (node2 !== null) {
+            setNodeFade(node2);
+        }
+    }, []);
+
+    const close = useCallback(() => {
+        // These are flat conditions while open is nested, by design - clean up everything!
+        if (node) {
+            node.classList.remove("sidebar-open");
+        }
+        if (nodeFade) {
+            nodeFade.classList.add("sidebar-fade-closing");
         }
         setTimeout(() => {
-            if (this.refFade && this.refFade.current) {
-                this.refFade.current.classList.remove("sidebar-fade-open");
+            if (nodeFade) {
+                nodeFade.classList.remove("sidebar-fade-open");
             }
-            if (this.refFade && this.refFade.current) {
-                this.refFade.current.classList.remove("sidebar-fade-closing");
+            if (nodeFade) {
+                nodeFade.classList.remove("sidebar-fade-closing");
             }
             if (document.body) {
                 document.body.classList.remove("modal-open");
             }
             if (document.body) {
                 document.body.style.paddingRight = "";
-                if (this.topUserBlockEl) {
-                    this.topUserBlockEl.style.paddingRight = "";
+                if (topUserBlockRef.current) {
+                    topUserBlockRef.current.style.paddingRight = "";
                 }
             }
         }, 300); // Keep time in sync with .sidebar-fade
-    }
+    }, [node, nodeFade]);
 
-    open() {
-        if (this.ref && this.ref.current) {
-            this.ref.current.classList.add("sidebar-open");
-            if (this.refFade && this.refFade.current) {
-                this.refFade.current.classList.add("sidebar-fade-open");
+    const open = useCallback(() => {
+        if (node) {
+            node.classList.add("sidebar-open");
+            if (nodeFade) {
+                nodeFade.classList.add("sidebar-fade-open");
 
                 if (document.body) {
                     const scrollbarWidth =
@@ -184,79 +180,72 @@ class SideBar extends React.Component<Props> {
                     }
                     if (document.body) {
                         document.body.style.paddingRight = `${scrollbarWidth}px`;
-                        if (this.topUserBlockEl) {
-                            this.topUserBlockEl.style.paddingRight = `${scrollbarWidth}px`;
+                        if (topUserBlockRef.current) {
+                            topUserBlockRef.current.style.paddingRight = `${scrollbarWidth}px`;
                         }
                     }
                 }
             }
         }
-    }
+    }, [node, nodeFade]);
 
-    toggle() {
-        if (this.ref && this.ref.current) {
-            if (this.ref.current.classList.contains("sidebar-open")) {
-                this.close();
+    const toggle = useCallback(() => {
+        if (node) {
+            if (node.classList.contains("sidebar-open")) {
+                close();
             } else {
-                this.open();
+                open();
             }
         }
-    }
+    }, [close, node, open]);
 
-    shouldComponentUpdate(nextProps: Props) {
-        return this.props.pageID !== nextProps.pageID;
-    }
-
-    componentDidMount() {
-        if (this.refFade && this.refFade.current) {
-            this.refFade.current.addEventListener("click", this.close);
+    useEffect(() => {
+        if (nodeFade) {
+            nodeFade.addEventListener("click", close);
         }
 
-        emitter.on("sidebar-toggle", this.toggle);
+        emitter.on("sidebar-toggle", toggle);
 
-        this.topUserBlockEl = document.getElementById("top-user-block");
-    }
+        return () => {
+            if (nodeFade) {
+                nodeFade.removeEventListener("click", close);
+            }
 
-    componentWillUnmount() {
-        if (this.refFade && this.refFade.current) {
-            this.refFade.current.removeEventListener("click", this.close);
-        }
+            emitter.removeListener("sidebar-toggle", toggle);
+        };
+    }, [close, nodeFade, toggle]);
 
-        emitter.removeListener("sidebar-toggle", this.toggle);
-    }
+    useEffect(() => {
+        topUserBlockRef.current = document.getElementById("top-user-block");
+    }, []);
 
-    render() {
-        return subscribeLocal(local => {
-            const { godMode, lid } = local.state;
+    return subscribeLocal(local => {
+        const { godMode, lid } = local.state;
 
-            return (
-                <>
-                    <div ref={this.refFade} className="sidebar-fade" />
-                    <div
-                        className="bg-light sidebar"
-                        id="sidebar"
-                        ref={this.ref}
-                    >
-                        <div className="sidebar-sticky">
-                            {menuItems.map((menuItem, i) => (
-                                <MenuItem
-                                    godMode={godMode}
-                                    key={i}
-                                    lid={lid}
-                                    menuItem={menuItem}
-                                    onMenuItemClick={this.close}
-                                    pageID={this.props.pageID}
-                                    root
-                                />
-                            ))}
-                        </div>
+        return (
+            <>
+                <div ref={getNodeFade} className="sidebar-fade" />
+                <div className="bg-light sidebar" id="sidebar" ref={getNode}>
+                    <div className="sidebar-sticky">
+                        {menuItems.map((menuItem, i) => (
+                            <MenuItem
+                                godMode={godMode}
+                                key={i}
+                                lid={lid}
+                                menuItem={menuItem}
+                                onMenuItemClick={close}
+                                pageID={pageID}
+                                root
+                            />
+                        ))}
                     </div>
-                </>
-            );
-        });
-    }
-}
+                </div>
+            </>
+        );
+    });
+});
 
+// $FlowFixMe
 SideBar.propTypes = {
     pageID: PropTypes.string,
 };

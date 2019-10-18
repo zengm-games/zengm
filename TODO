@@ -1,5 +1,7 @@
 zustand
 - anything using subscribeLocal should be function component
+  - SideBar - 2 renders per navigation, 1 on play menu click, many per game sim, none on open/close
+  - shouldComponentUpdate
 - local -> api
 - subscribeLocal -> useStore
 - test rendering

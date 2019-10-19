@@ -338,16 +338,29 @@ type PlayMenuProps = {
         id: string,
         label: string,
         url?: string,
+        key?: string,
     }[],
 };
 
-const PlayMenu = ({ lid, options }: PlayMenuProps) => {
-    const handleAltP = useCallback(
-        (e: SyntheticKeyboardEvent<>) => {
-            // alt + p
-            if (e.altKey && e.keyCode === 80) {
-                const option = options[0];
+const keyCodes = {
+    "65": "a",
+    "68": "d",
+    "76": "l",
+    "77": "m",
+    "80": "p",
+    "83": "s",
+    "87": "w",
+    "89": "y",
+};
 
+const PlayMenu = ({ lid, options }: PlayMenuProps) => {
+    useEffect(() => {
+        const handleKeyup = (event: SyntheticKeyboardEvent<>) => {
+            // alt + letter
+            if (event.altKey && keyCodes[event.keyCode]) {
+                const option = options.find(
+                    option2 => option2.key === keyCodes[event.keyCode],
+                );
                 if (!option) {
                     return;
                 }
@@ -358,19 +371,16 @@ const PlayMenu = ({ lid, options }: PlayMenuProps) => {
                     toWorker(`actions.playMenu.${option.id}`);
                 }
             }
-        },
-        [options],
-    );
+        };
 
-    useEffect(() => {
         // $FlowFixMe
-        document.addEventListener("keyup", handleAltP);
+        document.addEventListener("keyup", handleKeyup);
 
         return () => {
             // $FlowFixMe
-            document.removeEventListener("keyup", handleAltP);
+            document.removeEventListener("keyup", handleKeyup);
         };
-    }, [handleAltP]);
+    }, [options]);
 
     if (lid === undefined) {
         return null;
@@ -391,8 +401,10 @@ const PlayMenu = ({ lid, options }: PlayMenuProps) => {
                             className="kbd-parent"
                         >
                             {option.label}
-                            {i === 0 ? (
-                                <span className="text-muted kbd">Alt+P</span>
+                            {option.key ? (
+                                <span className="text-muted kbd">
+                                    Alt+{option.key.toUpperCase()}
+                                </span>
                             ) : null}
                         </DropdownItem>
                     );
@@ -409,6 +421,7 @@ PlayMenu.propTypes = {
             id: PropTypes.string.isRequired,
             label: PropTypes.string.isRequired,
             url: PropTypes.string,
+            key: PropTypes.string,
         }),
     ).isRequired,
 };

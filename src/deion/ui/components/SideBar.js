@@ -4,7 +4,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Element, ElementRef } from "react";
-import { emitter, helpers, local, menuItems, useLocalShallow } from "../util";
+import { emitter, helpers, menuItems, useLocalShallow } from "../util";
 
 const getText = (text): string | Element<any> => {
     if (text.hasOwnProperty("side")) {

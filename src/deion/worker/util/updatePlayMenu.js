@@ -25,30 +25,36 @@ const updatePlayMenu = async () => {
             id?: string,
             label: string,
             url?: string,
+            key?: string,
         },
     } = {
-        stop: { label: "Stop" },
-        day: { label: "One day" },
-        week: { label: "One week" },
-        month: { label: "One month" },
-        untilAllStarGame: { label: "Until All-Star Game" },
+        stop: { label: "Stop", key: "s" },
+        day: { label: "One day", key: "d" },
+        week: { label: "One week", key: "w" },
+        month: { label: "One month", key: "m" },
+        untilAllStarGame: { label: "Until All-Star Game", key: "a" },
         viewAllStarSelections: {
             url: helpers.leagueUrl(["all_star_draft"]),
             label: "View All-Star draft",
         },
-        untilPlayoffs: { label: "Until playoffs" },
-        untilEndOfRound: { label: "Until end of round" },
-        throughPlayoffs: { label: "Through playoffs" },
-        dayLive: { url: helpers.leagueUrl(["live"]), label: "One day (live)" },
+        untilPlayoffs: { label: "Until playoffs", key: "y" },
+        untilEndOfRound: { label: "Until end of round", key: "w" },
+        throughPlayoffs: { label: "Through playoffs", key: "y" },
+        dayLive: {
+            url: helpers.leagueUrl(["live"]),
+            label: "One day (live)",
+            key: "l",
+        },
         weekLive: {
             url: helpers.leagueUrl(["live"]),
             label: "One week (live)",
+            key: "l",
         },
         viewDraftLottery: {
             url: helpers.leagueUrl(["draft_lottery"]),
             label: "View draft lottery",
         },
-        untilDraft: { label: "Until draft" },
+        untilDraft: { label: "Until draft", key: "y" },
         onePick: { label: "One pick" },
         untilYourNextPick: { label: "Until your next pick" },
         untilEnd: { label: "Until end of draft" },
@@ -58,8 +64,8 @@ const updatePlayMenu = async () => {
                 ? "Re-sign players and sign rookies"
                 : "Re-sign players with expiring contracts",
         },
-        untilFreeAgency: { label: "Until free agency" },
-        untilPreseason: { label: "Until preseason" },
+        untilFreeAgency: { label: "Until free agency", key: "y" },
+        untilPreseason: { label: "Until preseason", key: "y" },
         untilRegularSeason: { label: "Until regular season" },
         contractNegotiation: {
             url: helpers.leagueUrl(["negotiation"]),
@@ -193,6 +199,11 @@ const updatePlayMenu = async () => {
         allOptions[id].id = id;
         return allOptions[id];
     });
+
+    // Set first key to always be p
+    if (someOptions.length > 0) {
+        someOptions[0].key = "p";
+    }
 
     toUI(["updateLocal", { playMenuOptions: someOptions }]);
 };

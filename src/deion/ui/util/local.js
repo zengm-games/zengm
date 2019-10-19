@@ -94,7 +94,8 @@ const [useLocal, local] = create(set => ({
     },
 }));
 
-const useLocalShallow = selector => useLocal(selector, shallow);
+const useLocalShallow = (selector: LocalStateUI => any) =>
+    useLocal(selector, shallow);
 
 const useLocalActions = () => useLocal(state => state.actions);
 

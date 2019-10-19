@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { setTitle } from "../util";
 
@@ -67,119 +67,90 @@ type Props = {
     }[],
 };
 
-class Dashboard extends React.Component<
-    Props,
-    {
-        activeLid: number | void,
-    },
-> {
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            activeLid: undefined,
-        };
-    }
+const Dashboard = ({ leagues }: Props) => {
+    const [activeLid, setActiveLid] = useState<number | void>();
 
-    setActiveLid(lid: number) {
-        this.setState({
-            activeLid: lid,
-        });
-    }
+    setTitle("Dashboard");
 
-    render() {
-        const { leagues } = this.props;
-
-        setTitle("Dashboard");
-
-        return (
-            <>
-                <ul className="dashboard-boxes">
-                    {leagues.map(l => (
-                        <li key={l.lid}>
-                            <a
-                                className={classNames(
-                                    "btn btn-light-bordered league",
-                                    {
-                                        "league-active":
-                                            l.lid === this.state.activeLid,
-                                    },
-                                )}
-                                href={`/l/${l.lid}`}
-                                onClick={() => this.setActiveLid(l.lid)}
-                                title={`${l.lid}. ${l.name}`}
-                            >
-                                {l.lid !== this.state.activeLid ? (
-                                    <div>
-                                        <b>
-                                            {l.lid}. {l.name}
-                                        </b>
-                                        <br />
-                                        {l.teamRegion} {l.teamName}
-                                        <br />
-                                        {l.phaseText}
-                                        <br />
-                                        <DifficultyText
-                                            difficulty={l.difficulty}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div className="dashboard-box-loading">
-                                        Loading...
-                                    </div>
-                                )}
-                            </a>
-                            <a
-                                className="close"
-                                href={`/delete_league/${l.lid}`}
-                            >
-                                &times;
-                            </a>
-                        </li>
-                    ))}
-                    <li className="dashboard-box-new">
+    return (
+        <>
+            <ul className="dashboard-boxes">
+                {leagues.map(l => (
+                    <li key={l.lid}>
                         <a
-                            href="/new_league"
-                            className="btn btn-primary league"
+                            className={classNames(
+                                "btn btn-light-bordered league",
+                                {
+                                    "league-active": l.lid === activeLid,
+                                },
+                            )}
+                            href={`/l/${l.lid}`}
+                            onClick={() => setActiveLid(l.lid)}
+                            title={`${l.lid}. ${l.name}`}
                         >
-                            <h2>
-                                Create new
-                                <br />
-                                league
-                            </h2>
+                            {l.lid !== activeLid ? (
+                                <div>
+                                    <b>
+                                        {l.lid}. {l.name}
+                                    </b>
+                                    <br />
+                                    {l.teamRegion} {l.teamName}
+                                    <br />
+                                    {l.phaseText}
+                                    <br />
+                                    <DifficultyText difficulty={l.difficulty} />
+                                </div>
+                            ) : (
+                                <div className="dashboard-box-loading">
+                                    Loading...
+                                </div>
+                            )}
+                        </a>
+                        <a className="close" href={`/delete_league/${l.lid}`}>
+                            &times;
                         </a>
                     </li>
-                    <li>
-                        <a
-                            href={`https://play.${
+                ))}
+                <li className="dashboard-box-new">
+                    <a href="/new_league" className="btn btn-primary league">
+                        <h2>
+                            Create new
+                            <br />
+                            league
+                        </h2>
+                    </a>
+                </li>
+                <li>
+                    <a
+                        href={`https://play.${
+                            process.env.SPORT === "football"
+                                ? "basketball"
+                                : "football"
+                        }-gm.com/`}
+                        className="btn btn-light-bordered league"
+                        style={{
+                            backgroundImage: `url("https://play.${
                                 process.env.SPORT === "football"
                                     ? "basketball"
                                     : "football"
-                            }-gm.com/`}
-                            className="btn btn-light-bordered league"
-                            style={{
-                                backgroundImage: `url("https://play.${
-                                    process.env.SPORT === "football"
-                                        ? "basketball"
-                                        : "football"
-                                }-gm.com/ico/icon70.png")`,
-                                backgroundRepeat: "no-repeat",
-                                backgroundPosition:
-                                    process.env.SPORT === "football"
-                                        ? "100px 41px"
-                                        : "75px 41px",
-                                fontSize: "16px",
-                            }}
-                        >
-                            {process.env.SPORT === "football"
-                                ? "Play the original, Basketball GM!"
-                                : "Try the brand new Football GM!"}
-                        </a>
-                    </li>
-                </ul>
-            </>
-        );
-    }
-}
+                            }-gm.com/ico/icon70.png")`,
+                            backgroundRepeat: "no-repeat",
+                            backgroundPosition:
+                                process.env.SPORT === "football"
+                                    ? "100px 41px"
+                                    : "75px 41px",
+                            fontSize: "16px",
+                        }}
+                    >
+                        {process.env.SPORT === "football"
+                            ? "Play the original, Basketball GM!"
+                            : "Try the brand new Football GM!"}
+                    </a>
+                </li>
+            </ul>
+        </>
+    );
+};
 
 Dashboard.propTypes = {
     leagues: PropTypes.arrayOf(

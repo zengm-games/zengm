@@ -276,49 +276,36 @@ type LogoAndTextProps = {
     updating: boolean,
 };
 
-class LogoAndText extends React.Component<LogoAndTextProps> {
-    shouldComponentUpdate(nextProps) {
-        return (
-            this.props.gold !== nextProps.gold ||
-            this.props.lid !== nextProps.lid ||
-            this.props.updating !== nextProps.updating
-        );
-    }
+const LogoAndText = React.memo(({ gold, lid, updating }: LogoAndTextProps) => {
+    return (
+        <a
+            className={
+                lid !== undefined
+                    ? "navbar-brand text-muted d-none d-md-inline"
+                    : "navbar-brand text-muted"
+            }
+            href="/"
+        >
+            <img
+                alt=""
+                className="spin"
+                width="18"
+                height="18"
+                src={gold ? logoImageGold : logoImage}
+                style={{
+                    animationPlayState: updating ? "running" : "paused",
+                    WebkitAnimationPlayState: updating ? "running" : "paused",
+                }}
+            />
+            <span className="d-none d-lg-inline">{sport} GM</span>
+            {lid === undefined ? (
+                <span className="d-lg-none">{sport} GM</span>
+            ) : null}
+        </a>
+    );
+});
 
-    render() {
-        const { gold, lid, updating } = this.props;
-
-        return (
-            <a
-                className={
-                    lid !== undefined
-                        ? "navbar-brand text-muted d-none d-md-inline"
-                        : "navbar-brand text-muted"
-                }
-                href="/"
-            >
-                <img
-                    alt=""
-                    className="spin"
-                    width="18"
-                    height="18"
-                    src={gold ? logoImageGold : logoImage}
-                    style={{
-                        animationPlayState: updating ? "running" : "paused",
-                        WebkitAnimationPlayState: updating
-                            ? "running"
-                            : "paused",
-                    }}
-                />
-                <span className="d-none d-lg-inline">{sport} GM</span>
-                {lid === undefined ? (
-                    <span className="d-lg-none">{sport} GM</span>
-                ) : null}
-            </a>
-        );
-    }
-}
-
+// $FlowFixMe
 LogoAndText.propTypes = {
     gold: PropTypes.bool,
     lid: PropTypes.number,

@@ -1,53 +1,41 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import Popover from "reactstrap/lib/Popover";
 
 // This is shit
 
-const omitKeys = ["defaultOpen", "id", "onEnter", "target"];
+const UncontrolledPopover = ({
+    defaultOpen,
+    id,
+    onEnter,
+    target: Target,
+    ...passThroughProps
+}) => {
+    const [open, setOpen] = useState(defaultOpen || false);
 
-export default class UncontrolledPopover extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = { isOpen: props.defaultOpen || false };
-        this.toggle = this.toggle.bind(this);
-    }
-
-    toggle() {
-        this.setState(state => {
-            const isOpen = !state.isOpen;
-            if (isOpen && this.props.onEnter) {
-                this.props.onEnter();
-            }
-            return { isOpen };
-        });
-    }
-
-    render() {
-        const id = this.props.id.replace(/[^a-zA-Z]/g, "");
-
-        const passThroughProps = {};
-        for (const key of Object.keys(this.props)) {
-            if (!omitKeys.includes(key)) {
-                passThroughProps[key] = this.props[key];
-            }
+    const toggle = useCallback(() => {
+        const newOpen = !open;
+        if (newOpen && onEnter) {
+            onEnter();
         }
+        setOpen(newOpen);
+    }, [open, onEnter]);
 
-        return (
-            <>
-                <this.props.target id={id} onClick={this.toggle} />
-                <Popover
-                    isOpen={this.state.isOpen}
-                    toggle={this.toggle}
-                    target={id}
-                    trigger="legacy"
-                    {...passThroughProps}
-                />
-            </>
-        );
-    }
-}
+    const id2 = id.replace(/[^a-zA-Z]/g, "");
+
+    return (
+        <>
+            <Target id={id2} onClick={toggle} />
+            <Popover
+                isOpen={open}
+                toggle={toggle}
+                target={id2}
+                trigger="legacy"
+                {...passThroughProps}
+            />
+        </>
+    );
+};
 
 UncontrolledPopover.propTypes = {
     defaultOpen: PropTypes.bool,
@@ -56,3 +44,5 @@ UncontrolledPopover.propTypes = {
     target: PropTypes.any,
     ...Popover.propTypes,
 };
+
+export default UncontrolledPopover;

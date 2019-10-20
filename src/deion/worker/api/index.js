@@ -1337,6 +1337,15 @@ const updateGameAttributes = async (gameAttributes: GameAttributes) => {
     await toUI(["realtimeUpdate", ["gameAttributes"]]);
 };
 
+const updateLeague = async (lid: number, obj: any) => {
+    const l = await idb.meta.leagues.get(lid);
+
+    await idb.meta.leagues.put({
+        ...l,
+        ...obj,
+    });
+};
+
 const updateMultiTeamMode = async (gameAttributes: {
     userTids: number[],
     userTid?: number,
@@ -1639,6 +1648,7 @@ export default {
     tradeCounterOffer,
     updateBudget,
     updateGameAttributes,
+    updateLeague,
     updateMultiTeamMode,
     updatePlayerWatch,
     updatePlayingTime,

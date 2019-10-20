@@ -179,18 +179,6 @@ ul.dashboard-boxes {
             }
         }
 
-        a.league-active {
-            background: black;
-            animation: oscillate-bg 1.5s infinite;
-        }
-
-        .close {
-            border-radius: 0 4px;
-            position: absolute;
-            right: 5px;
-            top: 0;
-        }
-
         &.dashboard-box-new {
             a {
                 color: $white;
@@ -214,17 +202,27 @@ ul.dashboard-boxes {
     margin-top: 26px;
 }
 
+.dashboard-controls {
+    padding: 0 0.5em !important;
+    vertical-align: middle !important;
+    text-align: center;
+}
+
+.dashboard-play-loading {
+    animation: oscillate-bg 1.5s infinite;
+}
+
 @keyframes oscillate-bg {
     0% {
-        background-color: lighten($primary, 40);
+        background-color: lighten($success, 7);
     }
 
     50% {
-        background-color: lighten($primary, 45);
+        background-color: darken($success, 7);
     }
 
     100% {
-        background-color: lighten($primary, 40);
+        background-color: lighten($success, 7);
     }
 }
 

@@ -2,9 +2,10 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
-import { setTitle } from "../util";
+import { DataTable } from "../components";
+import { getCols, setTitle, toWorker } from "../util";
 
 const difficultyText = (difficulty: number) => {
     let prevText: string | void;
@@ -35,7 +36,11 @@ const difficultyText = (difficulty: number) => {
     return "???";
 };
 
-const DifficultyText = ({ difficulty }: { difficulty: number | void }) => {
+const DifficultyText = ({
+    children: difficulty,
+}: {
+    children: number | void,
+}) => {
     if (difficulty === undefined) {
         return null;
     }
@@ -47,18 +52,91 @@ const DifficultyText = ({ difficulty }: { difficulty: number | void }) => {
                 "text-danger": difficulty >= DIFFICULTY.Insane,
             })}
         >
-            Difficulty: {difficultyText(difficulty)}
+            {difficultyText(difficulty)}
         </span>
     );
 };
 
 DifficultyText.propTypes = {
-    difficulty: PropTypes.number,
+    children: PropTypes.number,
+};
+
+const PlayButton = ({
+    lid,
+    loadingLID,
+    setLoadingLID,
+}: {
+    lid: number,
+    loadingLID?: number,
+    setLoadingLID: (number | void) => void,
+}) => {
+    if (loadingLID === undefined) {
+        return (
+            <a
+                className="btn btn-success"
+                href={`/l/${lid}`}
+                onClick={() => setLoadingLID(lid)}
+            >
+                Play
+            </a>
+        );
+    }
+
+    if (loadingLID === lid) {
+        return (
+            <button className="btn btn-success dashboard-play-loading">
+                Play
+            </button>
+        );
+    }
+
+    return (
+        <button className="btn btn-success" disabled>
+            Play
+        </button>
+    );
+};
+
+const starStyle = {
+    cursor: "pointer",
+    fontSize: "larger",
+};
+const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
+    const [actuallyStarred, setActuallyStarred] = useState<boolean>(!!starred);
+
+    const toggle = useCallback(async () => {
+        setActuallyStarred(!actuallyStarred);
+
+        await toWorker("updateLeague", lid, {
+            starred: !actuallyStarred,
+        });
+    }, [actuallyStarred, lid]);
+
+    if (actuallyStarred) {
+        return (
+            <span
+                className="glyphicon glyphicon-star text-primary"
+                data-no-row-highlight="true"
+                onClick={toggle}
+                style={starStyle}
+            />
+        );
+    }
+
+    return (
+        <span
+            className="glyphicon glyphicon-star-empty text-muted"
+            data-no-row-highlight="true"
+            onClick={toggle}
+            style={starStyle}
+        />
+    );
 };
 
 type Props = {
     leagues: {
         lid: number,
+        starred?: boolean,
         name: string,
         phaseText: string,
         teamName: string,
@@ -68,49 +146,74 @@ type Props = {
 };
 
 const Dashboard = ({ leagues }: Props) => {
-    const [activeLid, setActiveLid] = useState<number | void>();
+    const [loadingLID, setLoadingLID] = useState<number | void>();
 
     setTitle("Dashboard");
+
+    const cols = getCols(
+        "",
+        "",
+        "League",
+        "Team",
+        "Phase",
+        "Difficulty",
+        "Created",
+        "Last Played",
+        "",
+    );
+    cols[3].width = "100%";
+
+    const rows = leagues.map(league => {
+        return {
+            key: league.lid,
+            data: [
+                {
+                    classNames: "dashboard-controls",
+                    value: (
+                        <PlayButton
+                            lid={league.lid}
+                            loadingLID={loadingLID}
+                            setLoadingLID={setLoadingLID}
+                        />
+                    ),
+                },
+                <Star lid={league.lid} starred={league.starred} />,
+                league.name,
+                `${league.teamRegion} ${league.teamName}`,
+                league.phaseText,
+                <DifficultyText>{league.difficulty}</DifficultyText>,
+                new Date().toISOString().split("T")[0],
+                new Date().toISOString().split("T")[0],
+                {
+                    classNames: "dashboard-controls",
+                    value: (
+                        <div className="btn-group btn-group-sm">
+                            <a className="btn btn-light-bordered" href="#">
+                                Import
+                            </a>
+                            <a
+                                className="btn btn-light-bordered"
+                                href={`/l/${league.lid}/export_league`}
+                                onClick={() => setLoadingLID(league.lid)}
+                            >
+                                Export
+                            </a>
+                            <a
+                                className="btn btn-light-bordered"
+                                href={`/delete_league/${league.lid}`}
+                            >
+                                Delete
+                            </a>
+                        </div>
+                    ),
+                },
+            ],
+        };
+    });
 
     return (
         <>
             <ul className="dashboard-boxes">
-                {leagues.map(l => (
-                    <li key={l.lid}>
-                        <a
-                            className={classNames(
-                                "btn btn-light-bordered league",
-                                {
-                                    "league-active": l.lid === activeLid,
-                                },
-                            )}
-                            href={`/l/${l.lid}`}
-                            onClick={() => setActiveLid(l.lid)}
-                            title={`${l.lid}. ${l.name}`}
-                        >
-                            {l.lid !== activeLid ? (
-                                <div>
-                                    <b>
-                                        {l.lid}. {l.name}
-                                    </b>
-                                    <br />
-                                    {l.teamRegion} {l.teamName}
-                                    <br />
-                                    {l.phaseText}
-                                    <br />
-                                    <DifficultyText difficulty={l.difficulty} />
-                                </div>
-                            ) : (
-                                <div className="dashboard-box-loading">
-                                    Loading...
-                                </div>
-                            )}
-                        </a>
-                        <a className="close" href={`/delete_league/${l.lid}`}>
-                            &times;
-                        </a>
-                    </li>
-                ))}
                 <li className="dashboard-box-new">
                     <a href="/new_league" className="btn btn-primary league">
                         <h2>
@@ -148,6 +251,17 @@ const Dashboard = ({ leagues }: Props) => {
                     </a>
                 </li>
             </ul>
+
+            <div className="clearfix" />
+
+            <DataTable
+                cols={cols}
+                defaultSort={[6, "desc"]}
+                nonfluid
+                name="Dashboard"
+                small={false}
+                rows={rows}
+            />
         </>
     );
 };
@@ -159,6 +273,7 @@ Dashboard.propTypes = {
             lid: PropTypes.number.isRequired,
             name: PropTypes.string.isRequired,
             phaseText: PropTypes.string.isRequired,
+            starred: PropTypes.bool,
             teamName: PropTypes.string.isRequired,
             teamRegion: PropTypes.string.isRequired,
         }),

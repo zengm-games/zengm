@@ -5,14 +5,14 @@ import { idb } from "../db";
 async function updateDashboard(): void | { [key: string]: any } {
     const leagues = await idb.meta.leagues.getAll();
 
-    for (let i = 0; i < leagues.length; i++) {
-        if (leagues[i].teamRegion === undefined) {
-            leagues[i].teamRegion = "???";
+    for (const league of leagues) {
+        if (league.teamRegion === undefined) {
+            league.teamRegion = "???";
         }
-        if (leagues[i].teamName === undefined) {
-            leagues[i].teamName = "???";
+        if (league.teamName === undefined) {
+            league.teamName = "???";
         }
-        delete leagues[i].tid;
+        delete league.tid;
     }
 
     return {

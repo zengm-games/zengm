@@ -1,5 +1,3 @@
-feedback from ronen email
-
 situational awareness
 - penalty for fouls
 - play bench more in blowouts
@@ -16,7 +14,30 @@ situational awareness
 - then new ovr formula
 
 redesign dashboard
-- handle overwriting league
+- import: handle overwriting league
+- at top: prominent link to create league
+  - maybe also prominent links to recently played leagues
+- star col sortable
+- pagination
+- remove old css
+- horizontal scrollbar from dashboard-boxes
+- special UI for when there are no leagues
+
+table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
+- e.g. new dashboard
+
+prettier update
+
+global key info (salary, days until playoffs, team  etc)
+- league info: days until playoffs, standings/series
+- finance info: salary, relative to cap and luxury tax. expiring contracts
+- team info: needs (like... rebounding, perimeter defense, shooting, etc)
+- ronen
+
+condensed/composite rating views
+- athleticism, shooting, defense, playmaking
+- on ratings table, elsewhere?
+- ronen
 
 @SLR52#7441 show playoff series record in box score
 show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/

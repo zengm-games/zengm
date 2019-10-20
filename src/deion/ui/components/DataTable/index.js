@@ -46,6 +46,7 @@ export type Props = {
     nonfluid?: boolean,
     pagination?: boolean,
     rows: any[],
+    small?: boolean,
     superCols?: SuperCol[],
     addFilters?: (string | void)[],
 };
@@ -428,6 +429,7 @@ class DataTable extends React.Component<Props, State> {
             nonfluid,
             pagination,
             rows,
+            small,
             superCols,
         } = this.props;
 
@@ -472,7 +474,14 @@ class DataTable extends React.Component<Props, State> {
                     className={pagination ? "fix-margin-pagination" : null}
                     nonfluid={nonfluid}
                 >
-                    <table className="table table-striped table-bordered table-sm table-hover">
+                    <table
+                        className={classNames(
+                            "table table-striped table-bordered table-hover",
+                            {
+                                "table-sm": small !== false,
+                            },
+                        )}
+                    >
                         <Header
                             cols={cols}
                             enableFilters={this.state.enableFilters}
@@ -530,6 +539,7 @@ DataTable.propTypes = {
     hideAllControls: PropTypes.bool,
     pagination: PropTypes.bool,
     rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+    small: PropTypes.bool,
     superCols: PropTypes.array,
 };
 

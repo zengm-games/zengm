@@ -38,24 +38,30 @@
 .glyphicon-option-vertical:before {
     content: "\e235";
 }
+.glyphicon-pause:before {
+    content: "\e073";
+}
+.glyphicon-play:before {
+    content: "\e072";
+}
 .glyphicon-question-sign:before {
     content: "\e085";
 }
 .glyphicon-remove:before {
     content: "\e014";
 }
+.glyphicon-star:before {
+    content: "\e006";
+}
+.glyphicon-star-empty:before {
+    content: "\e007";
+}
 .glyphicon-stats:before {
     content: "\e185";
 }
-.glyphicon-user:before {
-    content: "\e008";
-}
-.glyphicon-play:before {
-    content: "\e072";
-}
-.glyphicon-pause:before {
-    content: "\e073";
-}
 .glyphicon-step-forward:before {
     content: "\e077";
+}
+.glyphicon-user:before {
+    content: "\e008";
 }

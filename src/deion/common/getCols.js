@@ -3,15 +3,23 @@
 import { helpers } from ".";
 import type { SortOrder, SortType } from "./types";
 
-type Col = {
+type ColTemp = {
     desc?: string,
     sortSequence?: SortOrder[],
     sortType?: SortType,
-    title?: string, // Should actually be required, but is only added later
+};
+
+type Col = {
+    classNames?: any,
+    desc?: string,
+    sortSequence?: SortOrder[],
+    sortType?: SortType,
+    title: string,
+    width?: string,
 };
 
 const sportSpecificCols: {
-    [key: string]: Col,
+    [key: string]: ColTemp,
 } =
     process.env.SPORT === "basketball"
         ? {
@@ -1219,6 +1227,10 @@ const cols: {
         sortType: "number",
     },
     Country: {},
+    Created: {
+        desc: "Created Date",
+        sortSequence: ["desc", "asc"],
+    },
     "Current Contract": {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -1231,6 +1243,9 @@ const cols: {
     Died: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
+    },
+    Difficulty: {
+        sortSequence: ["desc", "asc"],
     },
     Division: {},
     Draft: {
@@ -1262,6 +1277,10 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "Last Played": {
+        desc: "Last Played Date",
+        sortSequence: ["desc", "asc"],
+    },
     "Last Playoffs": {
         sortType: "number",
     },
@@ -1274,6 +1293,9 @@ const cols: {
         sortType: "number",
     },
     "League Champion": {},
+    League: {
+        desc: "League Name",
+    },
     M: {
         desc: "Made",
         sortSequence: ["desc", "asc"],
@@ -1312,6 +1334,10 @@ const cols: {
         desc: "Peak Overall Rating",
         sortSequence: ["desc", "asc"],
         sortType: "number",
+    },
+    Phase: {
+        desc: "League Season and Phase",
+        sortSequence: ["desc", "asc"],
     },
     Pick: {
         desc: "Draft Pick",
@@ -1786,26 +1812,36 @@ const titleOverrides = {
     ...sportSpecificTitleOverrides,
 };
 
+const actualCols: {
+    [key: string]: Col,
+} = {};
+
 for (const key of Object.keys(cols)) {
+    let title;
     if (
         key.startsWith("rating:") ||
         key.startsWith("stat:") ||
         key.startsWith("count:") ||
         key.startsWith("award:")
     ) {
-        cols[key].title = titleOverrides[key];
+        title = titleOverrides[key];
     } else {
-        cols[key].title = key;
+        title = key;
     }
+
+    actualCols[key] = {
+        ...cols[key],
+        title,
+    };
 }
 
 export default (...titles: string[]): Col[] => {
     return titles.map(title => {
-        if (!cols.hasOwnProperty(title)) {
+        if (!actualCols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);
         }
 
         // Deep copy so other properties can be set on col, like width
-        return helpers.deepCopy(cols[title]);
+        return helpers.deepCopy(actualCols[title]);
     });
 };

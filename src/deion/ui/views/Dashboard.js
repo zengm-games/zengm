@@ -188,18 +188,30 @@ const Dashboard = ({ leagues }: Props) => {
                     classNames: "dashboard-controls",
                     value: (
                         <div className="btn-group btn-group-sm">
-                            <a className="btn btn-light-bordered" href="#">
+                            <a
+                                className={classNames(
+                                    "btn btn-light-bordered",
+                                    { disabled: loadingLID !== undefined },
+                                )}
+                                href="#"
+                            >
                                 Import
                             </a>
                             <a
-                                className="btn btn-light-bordered"
+                                className={classNames(
+                                    "btn btn-light-bordered",
+                                    { disabled: loadingLID !== undefined },
+                                )}
                                 href={`/l/${league.lid}/export_league`}
                                 onClick={() => setLoadingLID(league.lid)}
                             >
                                 Export
                             </a>
                             <a
-                                className="btn btn-light-bordered"
+                                className={classNames(
+                                    "btn btn-light-bordered",
+                                    { disabled: loadingLID !== undefined },
+                                )}
                                 href={`/delete_league/${league.lid}`}
                             >
                                 Delete

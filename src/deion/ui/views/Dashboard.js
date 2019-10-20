@@ -99,6 +99,7 @@ const PlayButton = ({
 
 const glyphiconStyle = {
     cursor: "pointer",
+    fontSize: "larger",
 };
 const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
     const [actuallyStarred, setActuallyStarred] = useState<boolean>(!!starred);
@@ -128,6 +129,7 @@ const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
             data-no-row-highlight="true"
             onClick={toggle}
             style={glyphiconStyle}
+            title="Star"
         />
     );
 };
@@ -182,25 +184,27 @@ const LeagueName = ({
     const controlsBlock =
         mode === "viewing" ? (
             <span
-                className="glyphicon glyphicon-edit mx-2"
+                className="glyphicon glyphicon-edit text-muted"
                 data-no-row-highlight="true"
                 style={glyphiconStyle}
                 onClick={() => setMode("editing")}
+                title="Edit Name"
             />
         ) : (
             <span
-                className="glyphicon glyphicon-ok mx-2"
+                className="glyphicon glyphicon-ok text-success"
                 data-no-row-highlight="true"
                 style={glyphiconStyle}
                 onClick={handleSubmit}
+                title="Save Name"
             />
         );
 
     return (
-        <div className="d-flex">
-            <div className="flex-grow-1">{nameBlock}</div>
-            {controlsBlock}
+        <div className="d-flex align-items-center">
             <Star lid={lid} starred={starred} />
+            <div className="flex-grow-1 mx-2">{nameBlock}</div>
+            {controlsBlock}
         </div>
     );
 };

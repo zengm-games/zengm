@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
 import { getCols, setTitle, toWorker } from "../util";
@@ -152,6 +152,18 @@ const LeagueName = ({
     );
     const [liveName, setLiveName] = useState(name);
 
+    const wrapperEl = useRef(null);
+    const [savedWidth, setSavedWidth] = useState(100);
+
+    const handleEdit = useCallback(() => {
+        // When switching to edit mode, save width so it can be used to keep column size constant
+        if (wrapperEl.current) {
+            setSavedWidth(wrapperEl.current.offsetWidth);
+        }
+
+        setMode("editing");
+    }, []);
+
     const handleSubmit = useCallback(
         async event => {
             event.preventDefault();
@@ -187,7 +199,7 @@ const LeagueName = ({
                 className="glyphicon glyphicon-edit text-muted"
                 data-no-row-highlight="true"
                 style={glyphiconStyle}
-                onClick={() => setMode("editing")}
+                onClick={handleEdit}
                 title="Edit Name"
             />
         ) : (
@@ -201,7 +213,11 @@ const LeagueName = ({
         );
 
     return (
-        <div className="d-flex align-items-center">
+        <div
+            className="d-flex align-items-center"
+            ref={wrapperEl}
+            style={mode !== "viewing" ? { width: savedWidth } : null}
+        >
             <Star lid={lid} starred={starred} />
             <div className="flex-grow-1 mx-2">{nameBlock}</div>
             {controlsBlock}

@@ -26,6 +26,10 @@ redesign dashboard
 - edit league name
   - alignment of controls when editing
   - width - use JS to set!
+    - doens't work table reflows
+    - try setting width simultaneously in all rows
+      - doesn't work
+    - try setting width of td itself
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard

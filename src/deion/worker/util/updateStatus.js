@@ -18,31 +18,31 @@ Args:
         the client.
 */
 const updateStatus = async (statusText?: string, conditions?: Conditions) => {
-    if (statusText === undefined) {
-        // This should only be triggered on loading a league from DB for now, but eventually this could actually
-        // populate statusText in most situations (just call with no argument).
-        let defaultStatusText = "Idle";
-        if (g.gameOver) {
-            defaultStatusText = "You're fired!";
-        } else if (g.phase === PHASE.FREE_AGENCY) {
-            defaultStatusText = `${g.daysLeft} days left`;
-        } else if (g.phase === PHASE.DRAFT) {
-            const drafted = await idb.cache.players.indexGetAll(
-                "playersByTid",
-                [0, Infinity],
-            );
-            if (drafted.some(p => p.draft.year === g.season)) {
-                defaultStatusText = "Draft in progress...";
-            }
-        }
+	if (statusText === undefined) {
+		// This should only be triggered on loading a league from DB for now, but eventually this could actually
+		// populate statusText in most situations (just call with no argument).
+		let defaultStatusText = "Idle";
+		if (g.gameOver) {
+			defaultStatusText = "You're fired!";
+		} else if (g.phase === PHASE.FREE_AGENCY) {
+			defaultStatusText = `${g.daysLeft} days left`;
+		} else if (g.phase === PHASE.DRAFT) {
+			const drafted = await idb.cache.players.indexGetAll("playersByTid", [
+				0,
+				Infinity,
+			]);
+			if (drafted.some(p => p.draft.year === g.season)) {
+				defaultStatusText = "Draft in progress...";
+			}
+		}
 
-        toUI(["updateLocal", { statusText: defaultStatusText }]);
-    } else if (statusText !== local.statusText) {
-        local.statusText = statusText;
-        toUI(["updateLocal", { statusText }]);
-    } else if (conditions !== undefined) {
-        toUI(["updateLocal", { statusText }], conditions);
-    }
+		toUI(["updateLocal", { statusText: defaultStatusText }]);
+	} else if (statusText !== local.statusText) {
+		local.statusText = statusText;
+		toUI(["updateLocal", { statusText }]);
+	} else if (conditions !== undefined) {
+		toUI(["updateLocal", { statusText }], conditions);
+	}
 };
 
 export default updateStatus;

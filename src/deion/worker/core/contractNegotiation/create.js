@@ -15,70 +15,68 @@ import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
 const create = async (
-    pid: number,
-    resigning: boolean,
-    tid: number = g.userTid,
-    rookie?: boolean = false,
+	pid: number,
+	resigning: boolean,
+	tid: number = g.userTid,
+	rookie?: boolean = false,
 ): Promise<string | void> => {
-    if (
-        g.phase >= PHASE.AFTER_TRADE_DEADLINE &&
-        g.phase <= PHASE.RESIGN_PLAYERS &&
-        !resigning
-    ) {
-        return "You're not allowed to sign free agents now.";
-    }
+	if (
+		g.phase >= PHASE.AFTER_TRADE_DEADLINE &&
+		g.phase <= PHASE.RESIGN_PLAYERS &&
+		!resigning
+	) {
+		return "You're not allowed to sign free agents now.";
+	}
 
-    if (lock.get("gameSim")) {
-        return "You cannot initiate a new negotiaion while game simulation is in progress.";
-    }
+	if (lock.get("gameSim")) {
+		return "You cannot initiate a new negotiaion while game simulation is in progress.";
+	}
 
-    const playersOnRoster = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        g.userTid,
-    );
-    if (playersOnRoster.length >= g.maxRosterSize && !resigning) {
-        return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
-    }
+	const playersOnRoster = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		g.userTid,
+	);
+	if (playersOnRoster.length >= g.maxRosterSize && !resigning) {
+		return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
+	}
 
-    const p = await idb.cache.players.get(pid);
-    if (p.tid !== PLAYER.FREE_AGENT) {
-        return `${p.firstName} ${p.lastName} is not a free agent.`;
-    }
+	const p = await idb.cache.players.get(pid);
+	if (p.tid !== PLAYER.FREE_AGENT) {
+		return `${p.firstName} ${p.lastName} is not a free agent.`;
+	}
 
-    if (
-        !resigning &&
-        helpers.refuseToNegotiate(
-            freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[tid]),
-            p.freeAgentMood[g.userTid],
-            g.playersRefuseToNegotiate,
-            rookie,
-        )
-    ) {
-        return `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-            p.firstName
-        } ${
-            p.lastName
-        }</a> refuses to sign with you, no matter what you offer.`;
-    }
+	if (
+		!resigning &&
+		helpers.refuseToNegotiate(
+			freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[tid]),
+			p.freeAgentMood[g.userTid],
+			g.playersRefuseToNegotiate,
+			rookie,
+		)
+	) {
+		return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
+			p.lastName
+		}</a> refuses to sign with you, no matter what you offer.`;
+	}
 
-    const negotiation = {
-        pid,
-        tid,
-        resigning,
-    };
+	const negotiation = {
+		pid,
+		tid,
+		resigning,
+	};
 
-    // Except in re-signing phase, only one negotiation at a time
-    if (!resigning) {
-        await idb.cache.negotiations.clear();
-    }
+	// Except in re-signing phase, only one negotiation at a time
+	if (!resigning) {
+		await idb.cache.negotiations.clear();
+	}
 
-    await idb.cache.negotiations.add(negotiation);
+	await idb.cache.negotiations.add(negotiation);
 
-    // This will be handled by phase change when re-signing
-    if (!resigning) {
-        await updateStatus("Contract negotiation");
-        await updatePlayMenu();
-    }
+	// This will be handled by phase change when re-signing
+	if (!resigning) {
+		await updateStatus("Contract negotiation");
+		await updatePlayMenu();
+	}
 };
 
 export default create;

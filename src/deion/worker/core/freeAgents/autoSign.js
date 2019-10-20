@@ -17,73 +17,71 @@ import { g, local, random, overrides } from "../../util";
  * @return {Promise}
  */
 const autoSign = async () => {
-    const [teams, players] = await Promise.all([
-        idb.getCopies.teamsPlus({
-            attrs: ["strategy"],
-            season: g.season,
-        }),
-        idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
-    ]);
+	const [teams, players] = await Promise.all([
+		idb.getCopies.teamsPlus({
+			attrs: ["strategy"],
+			season: g.season,
+		}),
+		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
+	]);
 
-    if (players.length === 0) {
-        return;
-    }
+	if (players.length === 0) {
+		return;
+	}
 
-    const strategies = teams.map(t => t.strategy);
+	const strategies = teams.map(t => t.strategy);
 
-    // List of free agents, sorted by value
-    const playersSorted = orderBy(players, "value", "desc");
+	// List of free agents, sorted by value
+	const playersSorted = orderBy(players, "value", "desc");
 
-    // Randomly order teams
-    const tids = range(g.numTeams);
-    random.shuffle(tids);
+	// Randomly order teams
+	const tids = range(g.numTeams);
+	random.shuffle(tids);
 
-    for (const tid of tids) {
-        // Skip the user's team
-        if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
-            continue;
-        }
+	for (const tid of tids) {
+		// Skip the user's team
+		if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
+			continue;
+		}
 
-        // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-        if (
-            process.env.SPORT === "basketball" &&
-            g.phase === PHASE.FREE_AGENCY &&
-            Math.random() < (0.99 * g.daysLeft) / 30
-        ) {
-            continue;
-        }
+		// Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+		if (
+			process.env.SPORT === "basketball" &&
+			g.phase === PHASE.FREE_AGENCY &&
+			Math.random() < (0.99 * g.daysLeft) / 30
+		) {
+			continue;
+		}
 
-        // Skip rebuilding teams sometimes
-        if (
-            process.env.SPORT === "basketball" &&
-            strategies[tid] === "rebuilding" &&
-            Math.random() < 0.7
-        ) {
-            continue;
-        }
+		// Skip rebuilding teams sometimes
+		if (
+			process.env.SPORT === "basketball" &&
+			strategies[tid] === "rebuilding" &&
+			Math.random() < 0.7
+		) {
+			continue;
+		}
 
-        const playersOnRoster = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            tid,
-        );
-        if (playersOnRoster.length < g.maxRosterSize) {
-            const payroll = await team.getPayroll(tid);
-            const p = getBest(playersOnRoster, playersSorted, payroll);
+		const playersOnRoster = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			tid,
+		);
+		if (playersOnRoster.length < g.maxRosterSize) {
+			const payroll = await team.getPayroll(tid);
+			const p = getBest(playersOnRoster, playersSorted, payroll);
 
-            if (p) {
-                player.sign(p, tid, p.contract, g.phase);
+			if (p) {
+				player.sign(p, tid, p.contract, g.phase);
 
-                await idb.cache.players.put(p);
+				await idb.cache.players.put(p);
 
-                if (!overrides.core.team.rosterAutoSort) {
-                    throw new Error(
-                        "Missing overrides.core.team.rosterAutoSort",
-                    );
-                }
-                await overrides.core.team.rosterAutoSort(tid);
-            }
-        }
-    }
+				if (!overrides.core.team.rosterAutoSort) {
+					throw new Error("Missing overrides.core.team.rosterAutoSort");
+				}
+				await overrides.core.team.rosterAutoSort(tid);
+			}
+		}
+	}
 };
 
 export default autoSign;

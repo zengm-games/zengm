@@ -6,8 +6,8 @@ import cancelAll from "./cancelAll";
 import create from "./create";
 
 export default {
-    accept,
-    cancel,
-    cancelAll,
-    create,
+	accept,
+	cancel,
+	cancelAll,
+	create,
 };

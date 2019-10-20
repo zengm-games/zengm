@@ -3,20 +3,20 @@ import initView from "./initView";
 import setTitle from "./setTitle";
 
 const genStaticPage = (
-    name: string,
-    title: string,
-    content: React.Element<*>,
-    inLeague: boolean,
+	name: string,
+	title: string,
+	content: React.Element<*>,
+	inLeague: boolean,
 ) => {
-    return initView({
-        id: name,
-        inLeague,
-        Component: () => {
-            setTitle(title);
+	return initView({
+		id: name,
+		inLeague,
+		Component: () => {
+			setTitle(title);
 
-            return content;
-        },
-    });
+			return content;
+		},
+	});
 };
 
 export default genStaticPage;

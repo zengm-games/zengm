@@ -11,13 +11,13 @@ import pos from "./pos";
 import stats from "./stats";
 
 export default {
-    checkStatisticalFeat,
-    developSeason,
-    genRatings,
-    genWeight,
-    heightToRating,
-    madeHof,
-    ovr,
-    pos,
-    stats,
+	checkStatisticalFeat,
+	developSeason,
+	genRatings,
+	genWeight,
+	heightToRating,
+	madeHof,
+	ovr,
+	pos,
+	stats,
 };

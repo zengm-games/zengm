@@ -5,24 +5,24 @@ import { g, random } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 const updateFantasyDraft = async (
-    inputs: {},
-    updateEvents: UpdateEvents,
+	inputs: {},
+	updateEvents: UpdateEvents,
 ): void | { [key: string]: any } => {
-    if (updateEvents.includes("firstRun")) {
-        const teams = await idb.getCopies.teamsPlus({
-            attrs: ["tid", "abbrev", "region", "name"],
-        });
+	if (updateEvents.includes("firstRun")) {
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid", "abbrev", "region", "name"],
+		});
 
-        random.shuffle(teams);
+		random.shuffle(teams);
 
-        return {
-            phase: g.phase,
-            teams,
-            userTids: g.userTids,
-        };
-    }
+		return {
+			phase: g.phase,
+			teams,
+			userTids: g.userTids,
+		};
+	}
 };
 
 export default {
-    runBefore: [updateFantasyDraft],
+	runBefore: [updateFantasyDraft],
 };

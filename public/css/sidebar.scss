@@ -1,111 +1,111 @@
 // https://getbootstrap.com/docs/4.1/examples/dashboard/
 
 .sidebar {
-    display: none;
-    position: fixed;
-    top: 52px; // Height of Navbar
-    bottom: 0;
-    left: 0;
-    z-index: 1040;
-    border-right: 1px solid $gray-200;
-    width: 161px; // Line up with Play button
+	display: none;
+	position: fixed;
+	top: 52px; // Height of Navbar
+	bottom: 0;
+	left: 0;
+	z-index: 1040;
+	border-right: 1px solid $gray-200;
+	width: 161px; // Line up with Play button
 }
 
 .sidebar-sticky {
-    position: relative;
-    top: 0;
-    height: 100%;
-    padding: 0.5rem 0;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+	position: relative;
+	top: 0;
+	height: 100%;
+	padding: 0.5rem 0;
+	overflow-x: hidden;
+	overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
-    .sidebar-sticky {
-        position: -webkit-sticky;
-        position: sticky;
-    }
+	.sidebar-sticky {
+		position: -webkit-sticky;
+		position: sticky;
+	}
 }
 
 .sidebar .nav-link {
-    font-weight: 500;
-    color: $gray-900;
-    padding: 4px 16px;
+	font-weight: 500;
+	color: $gray-900;
+	padding: 4px 16px;
 }
 
 .sidebar .nav-link.active {
-    background-color: $gray-200;
-    color: $primary;
+	background-color: $gray-200;
+	color: $primary;
 }
 
 .sidebar .nav-link:hover {
-    background-color: $gray-200;
+	background-color: $gray-200;
 }
 
 .sidebar-heading {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    @extend .px-3;
-    @extend .mt-3;
-    @extend .mb-1;
-    @extend .text-muted;
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	@extend .px-3;
+	@extend .mt-3;
+	@extend .mb-1;
+	@extend .text-muted;
 }
 
 @include media-breakpoint-up(xl) {
-    .sidebar {
-        display: block;
-    }
-    #actual-content {
-        margin-left: 161px;
-    }
-    #bbgm-ads-top {
-        margin-left: 161px;
-    }
+	.sidebar {
+		display: block;
+	}
+	#actual-content {
+		margin-left: 161px;
+	}
+	#bbgm-ads-top {
+		margin-left: 161px;
+	}
 }
 
 @include media-breakpoint-down(lg) {
-    .sidebar {
-        display: block;
-        font-size: 1rem;
-        transition: left 0.3s ease-in-out;
-        left: -190px;
-        top: 0;
-        width: 190px;
-    }
-    .sidebar-heading {
-        font-size: 0.875rem;
-    }
-    .sidebar-open {
-        left: 0;
-    }
+	.sidebar {
+		display: block;
+		font-size: 1rem;
+		transition: left 0.3s ease-in-out;
+		left: -190px;
+		top: 0;
+		width: 190px;
+	}
+	.sidebar-heading {
+		font-size: 0.875rem;
+	}
+	.sidebar-open {
+		left: 0;
+	}
 
-    .navbar.fixed-top .navbar-toggler {
-        color: orange;
-        display: block;
-    }
+	.navbar.fixed-top .navbar-toggler {
+		color: orange;
+		display: block;
+	}
 }
 
 // Fade animation only works in one direction!
 .sidebar-fade {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    z-index: -1040;
-    background-color: $black;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	width: 0;
+	z-index: -1040;
+	background-color: $black;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
 }
 
 .sidebar-fade.sidebar-fade-open {
-    opacity: 0.2;
-    width: 100%;
-    z-index: 1040;
+	opacity: 0.2;
+	width: 100%;
+	z-index: 1040;
 }
 
 .sidebar-fade.sidebar-fade-closing {
-    opacity: 0;
-    width: 100%;
-    z-index: 1040;
+	opacity: 0;
+	width: 100%;
+	z-index: 1040;
 }

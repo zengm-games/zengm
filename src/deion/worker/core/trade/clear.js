@@ -9,16 +9,16 @@ import { idb } from "../../db";
  * @return {Promise}
  */
 const clear = async () => {
-    const tr = await idb.cache.trade.get(0);
+	const tr = await idb.cache.trade.get(0);
 
-    for (const t of tr.teams) {
-        t.pids = [];
-        t.pidsExcluded = [];
-        t.dpids = [];
-        t.dpidsExcluded = [];
-    }
+	for (const t of tr.teams) {
+		t.pids = [];
+		t.pidsExcluded = [];
+		t.dpids = [];
+		t.dpidsExcluded = [];
+	}
 
-    await idb.cache.trade.put(tr);
+	await idb.cache.trade.put(tr);
 };
 
 export default clear;

@@ -8,10 +8,10 @@ import setSchedule from "./setSchedule";
 import updateOwnerMood from "./updateOwnerMood";
 
 export default {
-    genPlayoffSeries,
-    getDaysLeftSchedule,
-    getSchedule,
-    newSchedulePlayoffsDay,
-    setSchedule,
-    updateOwnerMood,
+	genPlayoffSeries,
+	getDaysLeftSchedule,
+	getSchedule,
+	newSchedulePlayoffsDay,
+	setSchedule,
+	updateOwnerMood,
 };

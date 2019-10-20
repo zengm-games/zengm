@@ -13,15 +13,15 @@ import runPicks from "./runPicks";
 import selectPlayer from "./selectPlayer";
 
 export default {
-    afterPicks,
-    genOrder,
-    genOrderNBA,
-    genOrderFantasy,
-    genPicks,
-    genPlayers,
-    genPlayersWithoutSaving,
-    getOrder,
-    getRookieSalaries,
-    runPicks,
-    selectPlayer,
+	afterPicks,
+	genOrder,
+	genOrderNBA,
+	genOrderFantasy,
+	genPicks,
+	genPlayers,
+	genPlayersWithoutSaving,
+	getOrder,
+	getRookieSalaries,
+	runPicks,
+	selectPlayer,
 };

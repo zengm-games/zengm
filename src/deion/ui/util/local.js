@@ -8,94 +8,94 @@ import type { GameAttributes, LocalStateUI } from "../../common/types";
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
 
 const [useLocal, local] = create(set => ({
-    gold: undefined,
-    godMode: false,
-    hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
-    lid: undefined,
-    leagueName: "",
-    phase: 0,
-    phaseText: "",
-    playMenuOptions: [],
-    popup: window.location.search === "?w=popup",
-    season: 0,
-    startingSeason: 0,
-    statusText: "",
-    teamAbbrevsCache: [],
-    teamNamesCache: [],
-    teamRegionsCache: [],
-    userTid: 0,
-    userTids: [],
-    username: undefined,
+	gold: undefined,
+	godMode: false,
+	hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
+	lid: undefined,
+	leagueName: "",
+	phase: 0,
+	phaseText: "",
+	playMenuOptions: [],
+	popup: window.location.search === "?w=popup",
+	season: 0,
+	startingSeason: 0,
+	statusText: "",
+	teamAbbrevsCache: [],
+	teamNamesCache: [],
+	teamRegionsCache: [],
+	userTid: 0,
+	userTids: [],
+	username: undefined,
 
-    actions: {
-        // Reset any values specific to a league
-        resetLeague() {
-            set(state => ({
-                ...state,
-                godMode: false,
-                lid: undefined,
-                leagueName: "",
-                phase: 0,
-                phaseText: "",
-                playMenuOptions: [],
-                season: 0,
-                startingSeason: 0,
-                statusText: "",
-                teamAbbrevsCache: [],
-                teamNamesCache: [],
-                teamRegionsCache: [],
-                userTid: 0,
-                userTids: [],
-            }));
-        },
+	actions: {
+		// Reset any values specific to a league
+		resetLeague() {
+			set(state => ({
+				...state,
+				godMode: false,
+				lid: undefined,
+				leagueName: "",
+				phase: 0,
+				phaseText: "",
+				playMenuOptions: [],
+				season: 0,
+				startingSeason: 0,
+				statusText: "",
+				teamAbbrevsCache: [],
+				teamNamesCache: [],
+				teamRegionsCache: [],
+				userTid: 0,
+				userTids: [],
+			}));
+		},
 
-        update(obj: $Shape<LocalStateUI>) {
-            set(state => ({
-                ...state,
-                ...obj,
-            }));
-        },
+		update(obj: $Shape<LocalStateUI>) {
+			set(state => ({
+				...state,
+				...obj,
+			}));
+		},
 
-        updateGameAttributes(gameAttributes: GameAttributes) {
-            const updates = {};
+		updateGameAttributes(gameAttributes: GameAttributes) {
+			const updates = {};
 
-            const keys = [
-                "godMode",
-                "lid",
-                "leagueName",
-                "phase",
-                "season",
-                "startingSeason",
-                "teamAbbrevsCache",
-                "teamNamesCache",
-                "teamRegionsCache",
-                "userTid",
-                "userTids",
-            ];
+			const keys = [
+				"godMode",
+				"lid",
+				"leagueName",
+				"phase",
+				"season",
+				"startingSeason",
+				"teamAbbrevsCache",
+				"teamNamesCache",
+				"teamRegionsCache",
+				"userTid",
+				"userTids",
+			];
 
-            let update = false;
-            for (const key of keys) {
-                if (
-                    gameAttributes.hasOwnProperty(key) &&
-                    updates[key] !== gameAttributes[key]
-                ) {
-                    updates[key] = gameAttributes[key];
-                    update = true;
-                }
-            }
+			let update = false;
+			for (const key of keys) {
+				if (
+					gameAttributes.hasOwnProperty(key) &&
+					updates[key] !== gameAttributes[key]
+				) {
+					updates[key] = gameAttributes[key];
+					update = true;
+				}
+			}
 
-            if (update) {
-                set(state => ({
-                    ...state,
-                    ...updates,
-                }));
-            }
-        },
-    },
+			if (update) {
+				set(state => ({
+					...state,
+					...updates,
+				}));
+			}
+		},
+	},
 }));
 
 const useLocalShallow = (selector: LocalStateUI => any) =>
-    useLocal(selector, shallow);
+	useLocal(selector, shallow);
 
 const useLocalActions = () => useLocal(state => state.actions);
 

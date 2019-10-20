@@ -17,18 +17,18 @@ import views from "./views";
 import names from "player-names"; // eslint-disable-line
 
 (async () => {
-    await deionWorker({
-        overrides: {
-            common,
-            core: {
-                GameSim,
-                player,
-                season,
-                team,
-            },
-            names,
-            util,
-            views,
-        },
-    });
+	await deionWorker({
+		overrides: {
+			common,
+			core: {
+				GameSim,
+				player,
+				season,
+				team,
+			},
+			names,
+			util,
+			views,
+		},
+	});
 })();

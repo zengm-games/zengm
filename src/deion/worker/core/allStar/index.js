@@ -9,11 +9,11 @@ import getOrCreate from "./getOrCreate";
 import nextGameIsAllStar from "./nextGameIsAllStar";
 
 export default {
-    create,
-    draftAll,
-    draftOne,
-    draftUser,
-    futureGameIsAllStar,
-    getOrCreate,
-    nextGameIsAllStar,
+	create,
+	draftAll,
+	draftOne,
+	draftUser,
+	futureGameIsAllStar,
+	getOrCreate,
+	nextGameIsAllStar,
 };

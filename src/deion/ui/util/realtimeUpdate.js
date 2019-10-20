@@ -14,29 +14,27 @@ import type { UpdateEvents } from "../../common/types";
  * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
 async function realtimeUpdate(
-    updateEvents: UpdateEvents = [],
-    url?: string,
-    raw?: Object = {},
-    replace?: boolean = false,
+	updateEvents: UpdateEvents = [],
+	url?: string,
+	raw?: Object = {},
+	replace?: boolean = false,
 ) {
-    url =
-        url !== undefined
-            ? url
-            : window.location.pathname + window.location.search;
+	url =
+		url !== undefined ? url : window.location.pathname + window.location.search;
 
-    const inLeague = url.substr(0, 3) === "/l/";
-    const refresh = url === window.location.pathname && inLeague;
+	const inLeague = url.substr(0, 3) === "/l/";
+	const refresh = url === window.location.pathname && inLeague;
 
-    const state = {
-        noTrack: refresh || replace,
-        updateEvents,
-        ...raw,
-    };
+	const state = {
+		noTrack: refresh || replace,
+		updateEvents,
+		...raw,
+	};
 
-    await router.navigate(url, {
-        state,
-        replace: refresh || replace,
-    });
+	await router.navigate(url, {
+		state,
+		replace: refresh || replace,
+	});
 }
 
 export default realtimeUpdate;

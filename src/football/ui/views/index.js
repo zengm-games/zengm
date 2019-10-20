@@ -6,8 +6,8 @@ import PlayerShotLocations from "../../../basketball/ui/views/PlayerShotLocation
 import TeamShotLocations from "../../../basketball/ui/views/TeamShotLocations";
 
 export default {
-    Depth,
-    History,
-    PlayerShotLocations,
-    TeamShotLocations,
+	Depth,
+	History,
+	PlayerShotLocations,
+	TeamShotLocations,
 };

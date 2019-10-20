@@ -15,39 +15,39 @@ import type { Player } from "../../../common/types";
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  */
 const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
-    const statsRow = {
-        playoffs,
-        season: g.season,
-        tid: p.tid,
-        yearsWithTeam: 1,
-    };
+	const statsRow = {
+		playoffs,
+		season: g.season,
+		tid: p.tid,
+		yearsWithTeam: 1,
+	};
 
-    if (!overrides.core.player.stats) {
-        throw new Error("Missing overrides.core.player.stats");
-    }
-    for (const key of overrides.core.player.stats.derived) {
-        statsRow[key] = 0;
-    }
-    for (const key of overrides.core.player.stats.raw) {
-        statsRow[key] = 0;
-    }
+	if (!overrides.core.player.stats) {
+		throw new Error("Missing overrides.core.player.stats");
+	}
+	for (const key of overrides.core.player.stats.derived) {
+		statsRow[key] = 0;
+	}
+	for (const key of overrides.core.player.stats.raw) {
+		statsRow[key] = 0;
+	}
 
-    p.statsTids.push(p.tid);
-    p.statsTids = Array.from(new Set(p.statsTids));
+	p.statsTids.push(p.tid);
+	p.statsTids = Array.from(new Set(p.statsTids));
 
-    // Calculate yearsWithTeam
-    const playerStats = p.stats.filter(ps => !ps.playoffs);
-    if (playerStats.length > 0) {
-        const i = playerStats.length - 1;
-        if (
-            playerStats[i].season === g.season - 1 &&
-            playerStats[i].tid === p.tid
-        ) {
-            statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;
-        }
-    }
+	// Calculate yearsWithTeam
+	const playerStats = p.stats.filter(ps => !ps.playoffs);
+	if (playerStats.length > 0) {
+		const i = playerStats.length - 1;
+		if (
+			playerStats[i].season === g.season - 1 &&
+			playerStats[i].tid === p.tid
+		) {
+			statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;
+		}
+	}
 
-    p.stats.push(statsRow);
+	p.stats.push(statsRow);
 };
 
 export default addStatsRow;

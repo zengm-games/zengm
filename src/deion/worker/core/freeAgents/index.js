@@ -7,9 +7,9 @@ import getBest from "./getBest";
 import play from "./play";
 
 export default {
-    amountWithMood,
-    autoSign,
-    decreaseDemands,
-    getBest,
-    play,
+	amountWithMood,
+	autoSign,
+	decreaseDemands,
+	getBest,
+	play,
 };

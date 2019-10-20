@@ -12,17 +12,17 @@ import { g, random } from "../../util";
  * @return {number} Fuzz, between -5 and 5.
  */
 const genFuzz = (scoutingRank: number): number => {
-    const cutoff = 2 + (8 * (scoutingRank - 1)) / (g.numTeams - 1); // Max error is from 2 to 10, based on scouting rank
-    const sigma = 1 + (2 * (scoutingRank - 1)) / (g.numTeams - 1); // Stddev is from 1 to 3, based on scouting rank
+	const cutoff = 2 + (8 * (scoutingRank - 1)) / (g.numTeams - 1); // Max error is from 2 to 10, based on scouting rank
+	const sigma = 1 + (2 * (scoutingRank - 1)) / (g.numTeams - 1); // Stddev is from 1 to 3, based on scouting rank
 
-    let fuzz = random.gauss(0, sigma);
-    if (fuzz > cutoff) {
-        fuzz = cutoff;
-    } else if (fuzz < -cutoff) {
-        fuzz = -cutoff;
-    }
+	let fuzz = random.gauss(0, sigma);
+	if (fuzz > cutoff) {
+		fuzz = cutoff;
+	} else if (fuzz < -cutoff) {
+		fuzz = -cutoff;
+	}
 
-    return fuzz;
+	return fuzz;
 };
 
 export default genFuzz;

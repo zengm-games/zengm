@@ -6,83 +6,79 @@ import ModalBody from "reactstrap/lib/ModalBody";
 import ModalFooter from "reactstrap/lib/ModalFooter";
 
 const Confirm = confirmable(({ show, proceed, confirmation, defaultValue }) => {
-    const [controlledValue, setControlledValue] = useState(defaultValue);
+	const [controlledValue, setControlledValue] = useState(defaultValue);
 
-    const ok = useCallback(
-        () => proceed(defaultValue === undefined ? true : controlledValue),
-        [controlledValue, defaultValue, proceed],
-    );
-    const cancel = useCallback(
-        () => proceed(defaultValue === undefined ? false : null),
-        [defaultValue, proceed],
-    );
+	const ok = useCallback(
+		() => proceed(defaultValue === undefined ? true : controlledValue),
+		[controlledValue, defaultValue, proceed],
+	);
+	const cancel = useCallback(
+		() => proceed(defaultValue === undefined ? false : null),
+		[defaultValue, proceed],
+	);
 
-    const inputRef = useRef(null);
-    const okRef = useRef(null);
+	const inputRef = useRef(null);
+	const okRef = useRef(null);
 
-    useEffect(() => {
-        // Ugly hack that became necessary when upgrading reactstrap from v6 to v8
-        setTimeout(() => {
-            if (inputRef.current) {
-                inputRef.current.select();
-            } else if (okRef.current) {
-                okRef.current.focus();
-            }
-        }, 0);
-    }, []);
+	useEffect(() => {
+		// Ugly hack that became necessary when upgrading reactstrap from v6 to v8
+		setTimeout(() => {
+			if (inputRef.current) {
+				inputRef.current.select();
+			} else if (okRef.current) {
+				okRef.current.focus();
+			}
+		}, 0);
+	}, []);
 
-    return (
-        <div>
-            <Modal fade={false} isOpen={show} toggle={cancel}>
-                <ModalBody>
-                    {confirmation}
-                    {defaultValue !== undefined ? (
-                        <form
-                            className="mt-3"
-                            onSubmit={event => {
-                                event.preventDefault();
-                                ok();
-                            }}
-                        >
-                            <input
-                                ref={inputRef}
-                                type="text"
-                                className="form-control"
-                                value={controlledValue}
-                                onChange={event => {
-                                    setControlledValue(event.target.value);
-                                }}
-                            />
-                        </form>
-                    ) : null}
-                </ModalBody>
-                <ModalFooter>
-                    <button className="btn btn-secondary" onClick={cancel}>
-                        Cancel
-                    </button>
-                    <button
-                        className="btn btn-primary"
-                        onClick={ok}
-                        ref={okRef}
-                    >
-                        OK
-                    </button>
-                </ModalFooter>
-            </Modal>
-        </div>
-    );
+	return (
+		<div>
+			<Modal fade={false} isOpen={show} toggle={cancel}>
+				<ModalBody>
+					{confirmation}
+					{defaultValue !== undefined ? (
+						<form
+							className="mt-3"
+							onSubmit={event => {
+								event.preventDefault();
+								ok();
+							}}
+						>
+							<input
+								ref={inputRef}
+								type="text"
+								className="form-control"
+								value={controlledValue}
+								onChange={event => {
+									setControlledValue(event.target.value);
+								}}
+							/>
+						</form>
+					) : null}
+				</ModalBody>
+				<ModalFooter>
+					<button className="btn btn-secondary" onClick={cancel}>
+						Cancel
+					</button>
+					<button className="btn btn-primary" onClick={ok} ref={okRef}>
+						OK
+					</button>
+				</ModalFooter>
+			</Modal>
+		</div>
+	);
 });
 
 Confirm.propTypes = {
-    confirmation: PropTypes.string.isRequired,
-    defaultValue: PropTypes.string,
+	confirmation: PropTypes.string.isRequired,
+	defaultValue: PropTypes.string,
 };
 
 const confirmFunction = createConfirmation(Confirm);
 
 // Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
 const confirm = (message, defaultValue) => {
-    return confirmFunction({ confirmation: message, defaultValue });
+	return confirmFunction({ confirmation: message, defaultValue });
 };
 
 export default confirm;

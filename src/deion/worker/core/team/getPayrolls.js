@@ -11,7 +11,7 @@ import { g } from "../../util";
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
 const getPayrolls = (): Promise<number[]> => {
-    return Promise.all(range(g.numTeams).map(tid => getPayroll(tid)));
+	return Promise.all(range(g.numTeams).map(tid => getPayroll(tid)));
 };
 
 export default getPayrolls;

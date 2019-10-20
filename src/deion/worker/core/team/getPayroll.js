@@ -13,15 +13,15 @@ import getContracts from "./getContracts";
  * @return {Promise.<number>} Resolves to payroll in thousands of dollars.
  */
 async function getPayroll(input: number | ContractInfo[]): Promise<number> {
-    const contracts =
-        typeof input === "number" ? await getContracts(input) : input;
+	const contracts =
+		typeof input === "number" ? await getContracts(input) : input;
 
-    let payroll = 0;
-    for (let i = 0; i < contracts.length; i++) {
-        payroll += contracts[i].amount; // No need to check exp, since anyone without a contract for the current season will not have an entry
-    }
+	let payroll = 0;
+	for (let i = 0; i < contracts.length; i++) {
+		payroll += contracts[i].amount; // No need to check exp, since anyone without a contract for the current season will not have an entry
+	}
 
-    return payroll;
+	return payroll;
 }
 
 export default getPayroll;

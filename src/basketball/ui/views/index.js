@@ -5,7 +5,7 @@ import PlayerShotLocations from "./PlayerShotLocations";
 import TeamShotLocations from "./TeamShotLocations";
 
 export default {
-    History,
-    PlayerShotLocations,
-    TeamShotLocations,
+	History,
+	PlayerShotLocations,
+	TeamShotLocations,
 };

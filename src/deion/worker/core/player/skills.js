@@ -5,12 +5,12 @@ import { overrides } from "../../util";
 import type { MinimalPlayerRatings } from "../../../common/types";
 
 const hasSkill = (
-    ratings: MinimalPlayerRatings,
-    components: (string | number)[],
-    weights?: number[],
-    cutoff: number = 0.61,
+	ratings: MinimalPlayerRatings,
+	components: (string | number)[],
+	weights?: number[],
+	cutoff: number = 0.61,
 ): boolean => {
-    return compositeRating(ratings, components, weights, true) > cutoff;
+	return compositeRating(ratings, components, weights, true) > cutoff;
 };
 
 /**
@@ -32,26 +32,24 @@ const hasSkill = (
  * Keep cutoffs in sync with GameSim.js!
  */
 const skills = (playerRatings: MinimalPlayerRatings): string[] => {
-    const sk = [];
+	const sk = [];
 
-    for (const key of Object.keys(
-        overrides.common.constants.COMPOSITE_WEIGHTS,
-    )) {
-        const {
-            ratings,
-            skill,
-            weights,
-        } = overrides.common.constants.COMPOSITE_WEIGHTS[key];
-        if (skill) {
-            if (hasSkill(playerRatings, ratings, weights, skill.cutoff)) {
-                sk.push(skill.label);
-            }
-        }
-    }
+	for (const key of Object.keys(overrides.common.constants.COMPOSITE_WEIGHTS)) {
+		const {
+			ratings,
+			skill,
+			weights,
+		} = overrides.common.constants.COMPOSITE_WEIGHTS[key];
+		if (skill) {
+			if (hasSkill(playerRatings, ratings, weights, skill.cutoff)) {
+				sk.push(skill.label);
+			}
+		}
+	}
 
-    sk.sort();
+	sk.sort();
 
-    return sk;
+	return sk;
 };
 
 export default skills;

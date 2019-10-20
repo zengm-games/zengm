@@ -15,15 +15,15 @@ import recomputeHallOfFame from "./recomputeHallOfFame";
 import valueDiff from "./valueDiff";
 
 export default {
-    averageCareerArc,
-    avgRatingDists,
-    compositeRatingDists,
-    countPositions,
-    countSkills,
-    leagueAverageContract,
-    maxRatingDists,
-    percentageDraftPicksSigned,
-    recomputeFreeAgentContracts,
-    recomputeHallOfFame,
-    valueDiff,
+	averageCareerArc,
+	avgRatingDists,
+	compositeRatingDists,
+	countPositions,
+	countSkills,
+	leagueAverageContract,
+	maxRatingDists,
+	percentageDraftPicksSigned,
+	recomputeFreeAgentContracts,
+	recomputeHallOfFame,
+	valueDiff,
 };

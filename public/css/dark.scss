@@ -31,154 +31,154 @@ $text-muted: $gray-400;
 @import "light";
 
 .btn {
-    color: $black;
+	color: $black;
 
-    &:hover {
-        color: $black;
-    }
+	&:hover {
+		color: $black;
+	}
 
-    &:disabled {
-        color: $gray-700;
-    }
+	&:disabled {
+		color: $gray-700;
+	}
 }
 
 .text-danger {
-    color: lighten($red, 10) !important;
+	color: lighten($red, 10) !important;
 }
 
 .btn-danger {
-    border-color: darken($red, 20);
-    background-color: darken($red, 20);
+	border-color: darken($red, 20);
+	background-color: darken($red, 20);
 
-    &:not(:disabled):hover {
-        border-color: darken($red, 25);
-        background-color: darken($red, 25);
-    }
+	&:not(:disabled):hover {
+		border-color: darken($red, 25);
+		background-color: darken($red, 25);
+	}
 }
 
 .btn-primary {
-    border-color: darken($orange, 25);
-    background-color: darken($orange, 25);
-    color: #fff !important;
+	border-color: darken($orange, 25);
+	background-color: darken($orange, 25);
+	color: #fff !important;
 
-    &:not(:disabled):hover {
-        border-color: darken($orange, 30);
-        background-color: darken($orange, 30);
-    }
+	&:not(:disabled):hover {
+		border-color: darken($orange, 30);
+		background-color: darken($orange, 30);
+	}
 }
 
 .btn-success {
-    border-color: darken($green, 20);
-    background-color: darken($green, 20);
+	border-color: darken($green, 20);
+	background-color: darken($green, 20);
 
-    &:hover {
-        border-color: darken($green, 25);
-        background-color: darken($green, 25);
-    }
+	&:hover {
+		border-color: darken($green, 25);
+		background-color: darken($green, 25);
+	}
 }
 
 .btn-primary,
 .btn-secondary {
-    color: $white;
+	color: $white;
 
-    &:not(:disabled):hover {
-        color: $white;
-    }
+	&:not(:disabled):hover {
+		color: $white;
+	}
 
-    &:disabled {
-        color: $gray-200;
-    }
+	&:disabled {
+		color: $gray-200;
+	}
 }
 
 .btn-light-bordered:hover {
-    background-color: $gray-100;
+	background-color: $gray-100;
 }
 
 .badge-danger {
-    background-color: darken($red, 20);
-    color: $black;
+	background-color: darken($red, 20);
+	color: $black;
 }
 
 a.play-button {
-    color: $black !important;
-    background-color: darken($green, 20) !important;
+	color: $black !important;
+	background-color: darken($green, 20) !important;
 
-    &:hover,
-    &:active,
-    &:focus {
-        background-color: darken($green, 25) !important;
-    }
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: darken($green, 25) !important;
+	}
 }
 
 .notification {
-    box-shadow: #444 0 0 12px;
+	box-shadow: #444 0 0 12px;
 }
 
 .god-mode,
 .sidebar a.god-mode {
-    background-color: darken($purple, 20);
-    color: $black;
+	background-color: darken($purple, 20);
+	color: $black;
 }
 a.god-mode,
 .sidebar a.god-mode {
-    &:hover {
-        background-color: darken($purple, 10);
-        color: $black;
-        text-decoration: none;
-    }
+	&:hover {
+		background-color: darken($purple, 10);
+		color: $black;
+		text-decoration: none;
+	}
 }
 .sidebar a.god-mode.active {
-    background-color: darken($purple, 10);
-    color: $primary;
+	background-color: darken($purple, 10);
+	color: $primary;
 }
 
 .watch-active,
 .watch-active:hover {
-    color: darken($green, 10);
+	color: darken($green, 10);
 }
 
 @keyframes oscillate-bg {
-    0% {
-        background-color: darken($primary, 40);
-    }
+	0% {
+		background-color: darken($primary, 40);
+	}
 
-    50% {
-        background-color: darken($primary, 45);
-    }
+	50% {
+		background-color: darken($primary, 45);
+	}
 
-    100% {
-        background-color: darken($primary, 40);
-    }
+	100% {
+		background-color: darken($primary, 40);
+	}
 }
 
 table.table thead .sorting::after {
-    opacity: 0.4;
+	opacity: 0.4;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+	from {
+		opacity: 0;
+	}
 
-    to {
-        opacity: 0.92;
-    }
+	to {
+		opacity: 0.92;
+	}
 }
 
 @keyframes fadeOut {
-    from {
-        opacity: 0.92;
-    }
+	from {
+		opacity: 0.92;
+	}
 
-    to {
-        opacity: 0;
-    }
+	to {
+		opacity: 0;
+	}
 }
 
 .table-accent {
-    background-color: rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 .modal-backdrop.show {
-    opacity: 0.25; /* otherwise it is blindingly bright */
+	opacity: 0.25; /* otherwise it is blindingly bright */
 }

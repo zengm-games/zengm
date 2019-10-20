@@ -23,7 +23,7 @@ export { default as lock } from "./lock";
 export { default as logEvent } from "./logEvent";
 export { default as overrides } from "./overrides";
 export {
-    default as processPlayersHallOfFame,
+	default as processPlayersHallOfFame,
 } from "./processPlayersHallOfFame";
 export { default as random } from "./random";
 export { default as toUI } from "./toUI";

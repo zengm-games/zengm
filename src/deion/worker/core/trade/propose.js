@@ -18,70 +18,70 @@ import summary from "./summary";
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
 const propose = async (
-    forceTrade?: boolean = false,
+	forceTrade?: boolean = false,
 ): Promise<[boolean, ?string]> => {
-    if (g.phase >= PHASE.AFTER_TRADE_DEADLINE && g.phase <= PHASE.PLAYOFFS) {
-        return [false, "Error! You're not allowed to make trades now."];
-    }
+	if (g.phase >= PHASE.AFTER_TRADE_DEADLINE && g.phase <= PHASE.PLAYOFFS) {
+		return [false, "Error! You're not allowed to make trades now."];
+	}
 
-    const { teams } = await idb.cache.trade.get(0);
+	const { teams } = await idb.cache.trade.get(0);
 
-    const tids = [teams[0].tid, teams[1].tid];
-    const pids = [teams[0].pids, teams[1].pids];
-    const dpids = [teams[0].dpids, teams[1].dpids];
+	const tids = [teams[0].tid, teams[1].tid];
+	const pids = [teams[0].pids, teams[1].pids];
+	const dpids = [teams[0].dpids, teams[1].dpids];
 
-    // The summary will return a warning if (there is a problem. In that case,
-    // that warning will already be pushed to the user so there is no need to
-    // return a redundant message here.
-    const s = await summary(teams);
+	// The summary will return a warning if (there is a problem. In that case,
+	// that warning will already be pushed to the user so there is no need to
+	// return a redundant message here.
+	const s = await summary(teams);
 
-    if (s.warning && !forceTrade) {
-        return [false, null];
-    }
+	if (s.warning && !forceTrade) {
+		return [false, null];
+	}
 
-    let outcome = "rejected"; // Default
+	let outcome = "rejected"; // Default
 
-    const dv = await team.valueChange(
-        teams[1].tid,
-        teams[0].pids,
-        teams[1].pids,
-        teams[0].dpids,
-        teams[1].dpids,
-    );
+	const dv = await team.valueChange(
+		teams[1].tid,
+		teams[0].pids,
+		teams[1].pids,
+		teams[0].dpids,
+		teams[1].dpids,
+	);
 
-    if (dv > 0 || forceTrade) {
-        // Trade players
-        outcome = "accepted";
+	if (dv > 0 || forceTrade) {
+		// Trade players
+		outcome = "accepted";
 
-        await processTrade(s, tids, pids, dpids);
-    }
+		await processTrade(s, tids, pids, dpids);
+	}
 
-    if (outcome === "accepted") {
-        await clear();
+	if (outcome === "accepted") {
+		await clear();
 
-        // Auto-sort team rosters
-        for (const tid of tids) {
-            const onlyNewPlayers = g.userTids.includes(tid);
-            if (!overrides.core.team.rosterAutoSort) {
-                throw new Error("Missing overrides.core.team.rosterAutoSort");
-            }
-            await overrides.core.team.rosterAutoSort(tid, onlyNewPlayers);
-        }
+		// Auto-sort team rosters
+		for (const tid of tids) {
+			const onlyNewPlayers = g.userTids.includes(tid);
+			if (!overrides.core.team.rosterAutoSort) {
+				throw new Error("Missing overrides.core.team.rosterAutoSort");
+			}
+			await overrides.core.team.rosterAutoSort(tid, onlyNewPlayers);
+		}
 
-        return [true, 'Trade accepted! "Nice doing business with you!"'];
-    }
+		return [true, 'Trade accepted! "Nice doing business with you!"'];
+	}
 
-    // Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
-    let message;
-    if (dv > -5) {
-        message = "Close, but not quite good enough.";
-    } else if (dv > -10) {
-        message = "That's not a good deal for me.";
-    } else {
-        message = "What, are you crazy?!";
-    }
+	// Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
+	let message;
+	if (dv > -5) {
+		message = "Close, but not quite good enough.";
+	} else if (dv > -10) {
+		message = "That's not a good deal for me.";
+	} else {
+		message = "What, are you crazy?!";
+	}
 
-    return [false, `Trade rejected! "${message}"`];
+	return [false, `Trade rejected! "${message}"`];
 };
 
 export default propose;

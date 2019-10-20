@@ -13,52 +13,52 @@ import { g, helpers } from "../../util";
  * @return {Promise}
  */
 const decreaseDemands = async () => {
-    const players = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        PLAYER.FREE_AGENT,
-    );
-    for (const p of players) {
-        const baseAmount = 50 * Math.sqrt(g.maxContract / 20000);
+	const players = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		PLAYER.FREE_AGENT,
+	);
+	for (const p of players) {
+		const baseAmount = 50 * Math.sqrt(g.maxContract / 20000);
 
-        // 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
-        const factor = g.phase !== PHASE.FREE_AGENCY ? 82 / g.numGames : 1;
+		// 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
+		const factor = g.phase !== PHASE.FREE_AGENCY ? 82 / g.numGames : 1;
 
-        p.contract.amount -= helpers.bound(
-            baseAmount * factor,
-            baseAmount,
-            Infinity,
-        );
-        p.contract.amount = 10 * Math.round(p.contract.amount / 10); // Round to nearest 10k
-        if (p.contract.amount < g.minContract) {
-            p.contract.amount = g.minContract;
-        }
+		p.contract.amount -= helpers.bound(
+			baseAmount * factor,
+			baseAmount,
+			Infinity,
+		);
+		p.contract.amount = 10 * Math.round(p.contract.amount / 10); // Round to nearest 10k
+		if (p.contract.amount < g.minContract) {
+			p.contract.amount = g.minContract;
+		}
 
-        if (g.phase !== PHASE.FREE_AGENCY) {
-            // Since this is after the season has already started, ask for a short contract
-            if (p.contract.amount < 1000) {
-                p.contract.exp = g.season;
-            } else {
-                p.contract.exp = g.season + 1;
-            }
-        }
+		if (g.phase !== PHASE.FREE_AGENCY) {
+			// Since this is after the season has already started, ask for a short contract
+			if (p.contract.amount < 1000) {
+				p.contract.exp = g.season;
+			} else {
+				p.contract.exp = g.season + 1;
+			}
+		}
 
-        // Free agents' resistance to signing decays after every regular season game
-        for (let i = 0; i < p.freeAgentMood.length; i++) {
-            p.freeAgentMood[i] -= 0.075;
-            if (p.freeAgentMood[i] < 0) {
-                p.freeAgentMood[i] = 0;
-            }
-        }
+		// Free agents' resistance to signing decays after every regular season game
+		for (let i = 0; i < p.freeAgentMood.length; i++) {
+			p.freeAgentMood[i] -= 0.075;
+			if (p.freeAgentMood[i] < 0) {
+				p.freeAgentMood[i] = 0;
+			}
+		}
 
-        // Also, heal.
-        if (p.injury.gamesRemaining > 0) {
-            p.injury.gamesRemaining -= 1;
-        } else {
-            p.injury = { type: "Healthy", gamesRemaining: 0 };
-        }
+		// Also, heal.
+		if (p.injury.gamesRemaining > 0) {
+			p.injury.gamesRemaining -= 1;
+		} else {
+			p.injury = { type: "Healthy", gamesRemaining: 0 };
+		}
 
-        await idb.cache.players.put(p);
-    }
+		await idb.cache.players.put(p);
+	}
 };
 
 export default decreaseDemands;

@@ -18,69 +18,69 @@ import type { Conditions } from "../../../common/types";
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to an array of player IDs who were drafted during this function call, in order.
  */
 const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
-    if (lock.get("drafting")) {
-        return [];
-    }
+	if (lock.get("drafting")) {
+		return [];
+	}
 
-    lock.set("drafting", true);
+	lock.set("drafting", true);
 
-    const pids = [];
+	const pids = [];
 
-    const draftPicks = await getOrder();
+	const draftPicks = await getOrder();
 
-    let playersAll;
-    if (g.phase === PHASE.FANTASY_DRAFT) {
-        playersAll = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            PLAYER.UNDRAFTED,
-        );
-    } else {
-        playersAll = (await idb.cache.players.indexGetAll(
-            "playersByDraftYearRetiredYear",
-            [[g.season], [g.season, Infinity]],
-        )).filter(p => p.tid === PLAYER.UNDRAFTED);
-    }
+	let playersAll;
+	if (g.phase === PHASE.FANTASY_DRAFT) {
+		playersAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			PLAYER.UNDRAFTED,
+		);
+	} else {
+		playersAll = (await idb.cache.players.indexGetAll(
+			"playersByDraftYearRetiredYear",
+			[[g.season], [g.season, Infinity]],
+		)).filter(p => p.tid === PLAYER.UNDRAFTED);
+	}
 
-    playersAll.sort((a, b) => b.value - a.value);
+	playersAll.sort((a, b) => b.value - a.value);
 
-    // Called after either the draft is over or it's the user's pick
-    const afterDoneAuto = async () => {
-        // Is draft over?
-        await afterPicks(draftPicks.length === 0, conditions);
+	// Called after either the draft is over or it's the user's pick
+	const afterDoneAuto = async () => {
+		// Is draft over?
+		await afterPicks(draftPicks.length === 0, conditions);
 
-        lock.set("drafting", false);
+		lock.set("drafting", false);
 
-        return pids;
-    };
+		return pids;
+	};
 
-    // This will actually draft "untilUserOrEnd"
-    const autoSelectPlayer = async () => {
-        if (draftPicks.length > 0) {
-            const dp = draftPicks[0];
-            if (g.userTids.includes(dp.tid) && local.autoPlaySeasons === 0) {
-                return afterDoneAuto();
-            }
-            draftPicks.shift();
+	// This will actually draft "untilUserOrEnd"
+	const autoSelectPlayer = async () => {
+		if (draftPicks.length > 0) {
+			const dp = draftPicks[0];
+			if (g.userTids.includes(dp.tid) && local.autoPlaySeasons === 0) {
+				return afterDoneAuto();
+			}
+			draftPicks.shift();
 
-            const selection = helpers.bound(
-                Math.floor(Math.abs(random.realGauss(0, 1))),
-                0,
-                playersAll.length - 1,
-            ); // 0=best prospect, 1=next best prospect, etc.
-            const pid = playersAll[selection].pid;
-            await selectPlayer(dp, pid);
-            pids.push(pid);
-            playersAll.splice(selection, 1); // Delete from the list of undrafted players
+			const selection = helpers.bound(
+				Math.floor(Math.abs(random.realGauss(0, 1))),
+				0,
+				playersAll.length - 1,
+			); // 0=best prospect, 1=next best prospect, etc.
+			const pid = playersAll[selection].pid;
+			await selectPlayer(dp, pid);
+			pids.push(pid);
+			playersAll.splice(selection, 1); // Delete from the list of undrafted players
 
-            if (!onlyOne) {
-                return autoSelectPlayer();
-            }
-        }
+			if (!onlyOne) {
+				return autoSelectPlayer();
+			}
+		}
 
-        return afterDoneAuto();
-    };
+		return afterDoneAuto();
+	};
 
-    return autoSelectPlayer();
+	return autoSelectPlayer();
 };
 
 export default runPicks;

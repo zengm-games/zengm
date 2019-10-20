@@ -3,15 +3,15 @@
 import { idb } from "../db";
 
 const getTeamColors = async (tid: number) => {
-    let teamColors = ["#000000", "#cccccc", "#ffffff"];
-    if (tid >= 0) {
-        const t = await idb.cache.teams.get(tid);
-        if (t) {
-            teamColors = t.colors;
-        }
-    }
+	let teamColors = ["#000000", "#cccccc", "#ffffff"];
+	if (tid >= 0) {
+		const t = await idb.cache.teams.get(tid);
+		if (t) {
+			teamColors = t.colors;
+		}
+	}
 
-    return teamColors;
+	return teamColors;
 };
 
 export default getTeamColors;

@@ -14,49 +14,49 @@ import type { PlayerRatings } from "../../../common/types";
  * @return {boolean} Hall of Fame worthy?
  */
 const madeHof = (
-    p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
+	p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
 ): boolean => {
-    // Average together WS and EWA
-    const winShares = p.stats.map(ps => {
-        let sum = 0;
+	// Average together WS and EWA
+	const winShares = p.stats.map(ps => {
+		let sum = 0;
 
-        if (typeof ps.dws === "number") {
-            sum += ps.dws;
-        }
-        if (typeof ps.ows === "number") {
-            sum += ps.ows;
-        }
-        if (typeof ps.ewa === "number") {
-            sum += ps.ewa;
-        }
+		if (typeof ps.dws === "number") {
+			sum += ps.dws;
+		}
+		if (typeof ps.ows === "number") {
+			sum += ps.ows;
+		}
+		if (typeof ps.ewa === "number") {
+			sum += ps.ewa;
+		}
 
-        return sum / 2;
-    });
+		return sum / 2;
+	});
 
-    // Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
-    winShares.sort((a, b) => b - a); // Descending order
-    let total = 0;
-    let df = -50;
-    for (let i = 0; i < winShares.length; i++) {
-        total += winShares[i];
-        if (i < 5) {
-            df += winShares[i];
-        }
-    }
+	// Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
+	winShares.sort((a, b) => b - a); // Descending order
+	let total = 0;
+	let df = -50;
+	for (let i = 0; i < winShares.length; i++) {
+		total += winShares[i];
+		if (i < 5) {
+			df += winShares[i];
+		}
+	}
 
-    // Fudge factor for players generated when the league started
-    const fudgeSeasons = g.startingSeason - p.draft.year - 5;
-    if (fudgeSeasons > 0) {
-        total += winShares[0] * fudgeSeasons;
-    }
+	// Fudge factor for players generated when the league started
+	const fudgeSeasons = g.startingSeason - p.draft.year - 5;
+	if (fudgeSeasons > 0) {
+		total += winShares[0] * fudgeSeasons;
+	}
 
-    const scaleFactor =
-        (Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength) *
-            g.numGames) /
-        defaultGameAttributes.numGames;
+	const scaleFactor =
+		(Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength) *
+			g.numGames) /
+		defaultGameAttributes.numGames;
 
-    // Final formula
-    return total + df > 120 * scaleFactor;
+	// Final formula
+	return total + df > 120 * scaleFactor;
 };
 
 export default madeHof;

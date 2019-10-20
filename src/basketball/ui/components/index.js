@@ -6,8 +6,8 @@ import RatingsOverview from "./RatingsOverview";
 import RatingsStats from "./RatingsStats";
 
 export default {
-    BoxScore,
-    BoxScoreRow,
-    RatingsOverview,
-    RatingsStats,
+	BoxScore,
+	BoxScoreRow,
+	RatingsOverview,
+	RatingsStats,
 };

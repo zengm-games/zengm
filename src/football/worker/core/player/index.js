@@ -12,14 +12,14 @@ import pos from "./pos";
 import stats from "./stats";
 
 export default {
-    checkStatisticalFeat,
-    developSeason,
-    genRatings,
-    getDepthPlayers,
-    genWeight,
-    heightToRating,
-    madeHof,
-    ovr,
-    pos,
-    stats,
+	checkStatisticalFeat,
+	developSeason,
+	genRatings,
+	getDepthPlayers,
+	genWeight,
+	heightToRating,
+	madeHof,
+	ovr,
+	pos,
+	stats,
 };

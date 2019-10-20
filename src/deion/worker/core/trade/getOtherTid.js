@@ -9,8 +9,8 @@ import { idb } from "../../db";
  * @return {Promise<number>} Resolves to the other team's team ID.
  */
 const getOtherTid = async (): Promise<number> => {
-    const tr = await idb.cache.trade.get(0);
-    return tr.teams[1].tid;
+	const tr = await idb.cache.trade.get(0);
+	return tr.teams[1].tid;
 };
 
 export default getOtherTid;

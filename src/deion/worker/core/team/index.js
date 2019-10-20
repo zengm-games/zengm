@@ -12,14 +12,14 @@ import updateStrategies from "./updateStrategies";
 import valueChange from "./valueChange";
 
 export default {
-    checkRosterSizes,
-    genSeasonRow,
-    genStatsRow,
-    generate,
-    getContracts,
-    getNeededPositions,
-    getPayroll,
-    getPayrolls,
-    updateStrategies,
-    valueChange,
+	checkRosterSizes,
+	genSeasonRow,
+	genStatsRow,
+	generate,
+	getContracts,
+	getNeededPositions,
+	getPayroll,
+	getPayrolls,
+	updateStrategies,
+	valueChange,
 };

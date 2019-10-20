@@ -13,15 +13,15 @@ import summary from "./summary";
 import updatePlayers from "./updatePlayers";
 
 export default {
-    betweenAiTeams,
-    clear,
-    create,
-    getOtherTid,
-    getPickValues,
-    isUntradable,
-    makeItWork,
-    makeItWorkTrade,
-    propose,
-    summary,
-    updatePlayers,
+	betweenAiTeams,
+	clear,
+	create,
+	getOtherTid,
+	getPickValues,
+	isUntradable,
+	makeItWork,
+	makeItWorkTrade,
+	propose,
+	summary,
+	updatePlayers,
 };

@@ -11,19 +11,19 @@ import { g } from "../../util";
  * @return {number} Contract amoung adjusted for mood.
  */
 const amountWithMood = (amount: number, mood: number = 0.5): number => {
-    amount *= 1 + 0.2 * mood;
+	amount *= 1 + 0.2 * mood;
 
-    if (amount >= g.minContract) {
-        if (amount > g.maxContract) {
-            amount = g.maxContract;
-        }
-        return 0.05 * Math.round(amount / 0.05); // Make it a multiple of 50k
-    }
+	if (amount >= g.minContract) {
+		if (amount > g.maxContract) {
+			amount = g.maxContract;
+		}
+		return 0.05 * Math.round(amount / 0.05); // Make it a multiple of 50k
+	}
 
-    if (amount > g.maxContract / 1000) {
-        amount = g.maxContract / 1000;
-    }
-    return 0.05 * Math.round(amount / 0.05); // Make it a multiple of 50k
+	if (amount > g.maxContract / 1000) {
+		amount = g.maxContract / 1000;
+	}
+	return 0.05 * Math.round(amount / 0.05); // Make it a multiple of 50k
 };
 
 export default amountWithMood;

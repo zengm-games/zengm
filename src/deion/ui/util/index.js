@@ -3,20 +3,20 @@
 import PromiseWorker from "promise-worker-bi";
 
 const workerPath =
-    process.env.NODE_ENV === "production"
-        ? `/gen/worker-${window.bbgmVersion}.js`
-        : "/gen/worker.js";
+	process.env.NODE_ENV === "production"
+		? `/gen/worker-${window.bbgmVersion}.js`
+		: "/gen/worker.js";
 const worker = window.useSharedWorker
-    ? new SharedWorker(workerPath)
-    : new Worker(workerPath);
+	? new SharedWorker(workerPath)
+	: new Worker(workerPath);
 
 export const promiseWorker = new PromiseWorker(worker);
 promiseWorker.registerError(e => {
-    if (window.bugsnagClient) {
-        window.bugsnagClient.notify(e);
-    }
-    console.error("Error from worker:");
-    console.error(e);
+	if (window.bugsnagClient) {
+		window.bugsnagClient.notify(e);
+	}
+	console.error("Error from worker:");
+	console.error(e);
 });
 
 export { default as ads } from "./ads";
@@ -30,11 +30,11 @@ export { default as getScript } from "./getScript";
 export { default as helpers } from "./helpers";
 export { default as initView } from "./initView";
 export {
-    local,
-    localActions,
-    useLocal,
-    useLocalActions,
-    useLocalShallow,
+	local,
+	localActions,
+	useLocal,
+	useLocalActions,
+	useLocalShallow,
 } from "./local";
 export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as logEvent } from "./logEvent";

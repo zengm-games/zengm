@@ -1,108 +1,108 @@
 .notification-container {
-    position: fixed;
-    bottom: 0;
-    right: 6px;
-    z-index: 1000;
+	position: fixed;
+	bottom: 0;
+	right: 6px;
+	z-index: 1000;
 }
 
 .notification-container-extra-margin-bottom {
-    bottom: 65px;
+	bottom: 65px;
 }
 
 .notification {
-    background-color: #000;
-    border-radius: 3px;
-    box-shadow: #999 0 0 12px;
-    color: #fff;
-    margin: 0 0 6px;
-    opacity: 0.8;
-    padding: 6px 12px;
-    position: relative;
-    width: 300px;
+	background-color: #000;
+	border-radius: 3px;
+	box-shadow: #999 0 0 12px;
+	color: #fff;
+	margin: 0 0 6px;
+	opacity: 0.8;
+	padding: 6px 12px;
+	position: relative;
+	width: 300px;
 
-    &:hover {
-        box-shadow: #000 0 0 12px;
-        opacity: 1;
-    }
+	&:hover {
+		box-shadow: #000 0 0 12px;
+		opacity: 1;
+	}
 
-    a {
-        // Decrease saturation by 30, increase value by 10
-        color: #a5c7e3;
+	a {
+		// Decrease saturation by 30, increase value by 10
+		color: #a5c7e3;
 
-        &:hover {
-            // Decrease saturation by 30, increase value by 10
-            color: #a5c7e3;
-        }
-    }
+		&:hover {
+			// Decrease saturation by 30, increase value by 10
+			color: #a5c7e3;
+		}
+	}
 }
 
 .notification-fadein {
-    // This transition is for the hover, not original fade in
-    transition: opacity 0.25s ease-in-out;
+	// This transition is for the hover, not original fade in
+	transition: opacity 0.25s ease-in-out;
 
-    // Fade in on notification show
-    animation: fadeIn 0.75s;
+	// Fade in on notification show
+	animation: fadeIn 0.75s;
 }
 
 .notification .notification-close {
-    font-size: 20px;
-    background: transparent;
-    border: 0;
-    color: #fff !important;
-    cursor: pointer;
-    padding: 0 7px;
-    opacity: 0.7;
-    position: absolute;
-    top: 0;
-    right: 0;
+	font-size: 20px;
+	background: transparent;
+	border: 0;
+	color: #fff !important;
+	cursor: pointer;
+	padding: 0 7px;
+	opacity: 0.7;
+	position: absolute;
+	top: 0;
+	right: 0;
 
-    &:hover,
-    &:focus {
-        opacity: 1;
-    }
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
 }
 
 .notification-delete {
-    /* Keep in sync with notify.js setTimeout */
-    animation: fadeOut 0.75s;
+	/* Keep in sync with notify.js setTimeout */
+	animation: fadeOut 0.75s;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+	from {
+		opacity: 0;
+	}
 
-    to {
-        opacity: 0.8;
-    }
+	to {
+		opacity: 0.8;
+	}
 }
 
 @keyframes fadeOut {
-    from {
-        opacity: 0.8;
-    }
+	from {
+		opacity: 0.8;
+	}
 
-    to {
-        opacity: 0;
-    }
+	to {
+		opacity: 0;
+	}
 }
 
 // Colors are arbitrary, just whatever looks good
 
 .notification-danger {
-    color: #fff;
-    background-color: darkred;
+	color: #fff;
+	background-color: darkred;
 }
 
 .notification-primary {
-    color: #fff;
-    background-color: #0055a0;
+	color: #fff;
+	background-color: #0055a0;
 
-    a {
-        color: #fff;
+	a {
+		color: #fff;
 
-        &:hover {
-            color: #fff;
-        }
-    }
+		&:hover {
+			color: #fff;
+		}
+	}
 }

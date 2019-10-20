@@ -34,8 +34,6 @@ redesign dashboard
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard
 
-prettier update
-
 global key info (salary, days until playoffs, team  etc)
 - league info: days until playoffs, standings/series
 - finance info: salary, relative to cap and luxury tax. expiring contracts

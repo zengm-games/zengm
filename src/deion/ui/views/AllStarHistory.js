@@ -4,186 +4,182 @@ import { DataTable, NewWindowLink } from "../components";
 import { getCols, helpers, setTitle } from "../util";
 
 const PlayerName = ({ p }) => {
-    if (!p) {
-        return "???";
-    }
+	if (!p) {
+		return "???";
+	}
 
-    return <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>;
+	return <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>;
 };
 PlayerName.propTypes = {
-    p: PropTypes.shape({
-        abbrev: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        pid: PropTypes.number.isRequired,
-        tid: PropTypes.number.isRequired,
-    }),
+	p: PropTypes.shape({
+		abbrev: PropTypes.string.isRequired,
+		name: PropTypes.string.isRequired,
+		pid: PropTypes.number.isRequired,
+		tid: PropTypes.number.isRequired,
+	}),
 };
 
 const PlayerTeam = ({ p, season }) => {
-    if (!p) {
-        return "???";
-    }
+	if (!p) {
+		return "???";
+	}
 
-    return (
-        <a href={helpers.leagueUrl(["roster", p.abbrev, season])}>{p.abbrev}</a>
-    );
+	return (
+		<a href={helpers.leagueUrl(["roster", p.abbrev, season])}>{p.abbrev}</a>
+	);
 };
 PlayerTeam.propTypes = {
-    p: PropTypes.shape({
-        abbrev: PropTypes.string.isRequired,
-    }),
-    season: PropTypes.number.isRequired,
+	p: PropTypes.shape({
+		abbrev: PropTypes.string.isRequired,
+	}),
+	season: PropTypes.number.isRequired,
 };
 
 const ResultText = ({ gid, overtimes, score, season, teamNames }) => {
-    if (gid === undefined || overtimes === undefined || score === undefined) {
-        return "???";
-    }
+	if (gid === undefined || overtimes === undefined || score === undefined) {
+		return "???";
+	}
 
-    const tw = score[0] >= score[1] ? 0 : 1;
-    const tl = tw === 0 ? 1 : 0;
+	const tw = score[0] >= score[1] ? 0 : 1;
+	const tl = tw === 0 ? 1 : 0;
 
-    let overtimeText = "";
-    if (overtimes === 1) {
-        overtimeText = " (OT)";
-    } else if (overtimes > 1) {
-        overtimeText = ` (${overtimes}OT)`;
-    }
+	let overtimeText = "";
+	if (overtimes === 1) {
+		overtimeText = " (OT)";
+	} else if (overtimes > 1) {
+		overtimeText = ` (${overtimes}OT)`;
+	}
 
-    return (
-        <>
-            <a href={helpers.leagueUrl(["game_log", "special", season, gid])}>
-                {teamNames[tw]} {score[tw]}, {teamNames[tl]} {score[tl]}
-            </a>
-            {overtimeText}
-        </>
-    );
+	return (
+		<>
+			<a href={helpers.leagueUrl(["game_log", "special", season, gid])}>
+				{teamNames[tw]} {score[tw]}, {teamNames[tl]} {score[tl]}
+			</a>
+			{overtimeText}
+		</>
+	);
 };
 ResultText.propTypes = {
-    gid: PropTypes.number,
-    overtimes: PropTypes.number,
-    score: PropTypes.arrayOf(PropTypes.number),
-    season: PropTypes.number.isRequired,
-    teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+	gid: PropTypes.number,
+	overtimes: PropTypes.number,
+	score: PropTypes.arrayOf(PropTypes.number),
+	season: PropTypes.number.isRequired,
+	teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const AllStarHistory = ({ allAllStars, userTid }) => {
-    setTitle("All-Star History");
+	setTitle("All-Star History");
 
-    const cols = getCols(
-        "Season",
-        "Result",
-        "Captain 1",
-        "Team",
-        "Captain 2",
-        "Team",
-        "MVP",
-        "Team",
-    );
+	const cols = getCols(
+		"Season",
+		"Result",
+		"Captain 1",
+		"Team",
+		"Captain 2",
+		"Team",
+		"MVP",
+		"Team",
+	);
 
-    const rows = allAllStars.map(row => {
-        const classNamesCaptain1 =
-            row.captain1 && row.captain1.tid === userTid ? "table-info" : "";
-        const classNamesCaptain2 =
-            row.captain2 && row.captain2.tid === userTid ? "table-info" : "";
-        const classNamesMVP =
-            row.mvp && row.mvp.tid === userTid ? "table-info" : "";
+	const rows = allAllStars.map(row => {
+		const classNamesCaptain1 =
+			row.captain1 && row.captain1.tid === userTid ? "table-info" : "";
+		const classNamesCaptain2 =
+			row.captain2 && row.captain2.tid === userTid ? "table-info" : "";
+		const classNamesMVP =
+			row.mvp && row.mvp.tid === userTid ? "table-info" : "";
 
-        return {
-            key: row.season,
-            data: [
-                row.season,
-                <ResultText
-                    gid={row.gid}
-                    overtimes={row.overtimes}
-                    score={row.score}
-                    season={row.season}
-                    teamNames={row.teamNames}
-                />,
-                {
-                    classNames: classNamesCaptain1,
-                    value: (
-                        <PlayerName p={row.captain1}>
-                            {row.captain1 ? row.captain1.name : "???"}
-                        </PlayerName>
-                    ),
-                },
-                {
-                    classNames: classNamesCaptain1,
-                    value: (
-                        <PlayerTeam p={row.captain1} season={row.season}>
-                            {row.captain1 ? row.captain1.abbrev : "???"}
-                        </PlayerTeam>
-                    ),
-                },
-                {
-                    classNames: classNamesCaptain2,
-                    value: (
-                        <PlayerName p={row.captain2}>
-                            {row.captain2 ? row.captain2.name : "???"}
-                        </PlayerName>
-                    ),
-                },
-                {
-                    classNames: classNamesCaptain2,
-                    value: (
-                        <PlayerTeam p={row.captain2} season={row.season}>
-                            {row.captain2 ? row.captain2.abbrev : "???"}
-                        </PlayerTeam>
-                    ),
-                },
-                {
-                    classNames: classNamesMVP,
-                    value: (
-                        <PlayerName p={row.mvp}>
-                            {row.mvp ? row.mvp.name : "???"}
-                        </PlayerName>
-                    ),
-                },
-                {
-                    classNames: classNamesMVP,
-                    value: (
-                        <PlayerTeam p={row.mvp} season={row.season}>
-                            {row.mvp ? row.mvp.abbrev : "???"}
-                        </PlayerTeam>
-                    ),
-                },
-            ],
-        };
-    });
+		return {
+			key: row.season,
+			data: [
+				row.season,
+				<ResultText
+					gid={row.gid}
+					overtimes={row.overtimes}
+					score={row.score}
+					season={row.season}
+					teamNames={row.teamNames}
+				/>,
+				{
+					classNames: classNamesCaptain1,
+					value: (
+						<PlayerName p={row.captain1}>
+							{row.captain1 ? row.captain1.name : "???"}
+						</PlayerName>
+					),
+				},
+				{
+					classNames: classNamesCaptain1,
+					value: (
+						<PlayerTeam p={row.captain1} season={row.season}>
+							{row.captain1 ? row.captain1.abbrev : "???"}
+						</PlayerTeam>
+					),
+				},
+				{
+					classNames: classNamesCaptain2,
+					value: (
+						<PlayerName p={row.captain2}>
+							{row.captain2 ? row.captain2.name : "???"}
+						</PlayerName>
+					),
+				},
+				{
+					classNames: classNamesCaptain2,
+					value: (
+						<PlayerTeam p={row.captain2} season={row.season}>
+							{row.captain2 ? row.captain2.abbrev : "???"}
+						</PlayerTeam>
+					),
+				},
+				{
+					classNames: classNamesMVP,
+					value: (
+						<PlayerName p={row.mvp}>
+							{row.mvp ? row.mvp.name : "???"}
+						</PlayerName>
+					),
+				},
+				{
+					classNames: classNamesMVP,
+					value: (
+						<PlayerTeam p={row.mvp} season={row.season}>
+							{row.mvp ? row.mvp.abbrev : "???"}
+						</PlayerTeam>
+					),
+				},
+			],
+		};
+	});
 
-    const pagination = rows.length > 100;
+	const pagination = rows.length > 100;
 
-    return (
-        <>
-            <h1>
-                All-Star History <NewWindowLink />
-            </h1>
+	return (
+		<>
+			<h1>
+				All-Star History <NewWindowLink />
+			</h1>
 
-            <p>
-                More:{" "}
-                <a href={helpers.leagueUrl(["history_all"])}>League History</a>{" "}
-                | <a href={helpers.leagueUrl(["team_records"])}>Team Records</a>{" "}
-                |{" "}
-                <a href={helpers.leagueUrl(["awards_records"])}>
-                    Awards Records
-                </a>
-            </p>
+			<p>
+				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
+				<a href={helpers.leagueUrl(["team_records"])}>Team Records</a> |{" "}
+				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>
+			</p>
 
-            <DataTable
-                cols={cols}
-                defaultSort={[0, "desc"]}
-                name="AllStarHistory"
-                pagination={pagination}
-                rows={rows}
-            />
-        </>
-    );
+			<DataTable
+				cols={cols}
+				defaultSort={[0, "desc"]}
+				name="AllStarHistory"
+				pagination={pagination}
+				rows={rows}
+			/>
+		</>
+	);
 };
 
 AllStarHistory.propTypes = {
-    allAllStars: PropTypes.arrayOf(PropTypes.object).isRequired,
-    userTid: PropTypes.number.isRequired,
+	allAllStars: PropTypes.arrayOf(PropTypes.object).isRequired,
+	userTid: PropTypes.number.isRequired,
 };
 
 export default AllStarHistory;

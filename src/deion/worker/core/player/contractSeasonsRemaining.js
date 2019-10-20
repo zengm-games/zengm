@@ -10,14 +10,14 @@ import { g } from "../../util";
  * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
  */
 const contractSeasonsRemaining = (
-    exp: number,
-    numGamesRemaining: number,
+	exp: number,
+	numGamesRemaining: number,
 ): number => {
-    let frac = numGamesRemaining / g.numGames;
-    if (frac > 1) {
-        frac = 1;
-    } // This only happens if the user changed g.numGames mid season
-    return exp - g.season + frac;
+	let frac = numGamesRemaining / g.numGames;
+	if (frac > 1) {
+		frac = 1;
+	} // This only happens if the user changed g.numGames mid season
+	return exp - g.season + frac;
 };
 
 export default contractSeasonsRemaining;

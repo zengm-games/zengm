@@ -15,69 +15,69 @@ const build = require("./buildFuncs");
 const sport = build.getSport();
 
 module.exports = (nodeEnv, blacklistOptions) => {
-    const plugins = [
-        alias({
-            resolve: [".json"],
-            entries: {
-                "league-schema": `./../../../../public/${sport}/files/league-schema.json`,
+	const plugins = [
+		alias({
+			resolve: [".json"],
+			entries: {
+				"league-schema": `./../../../../public/${sport}/files/league-schema.json`,
 
-                // This is so Karma doesn't crash when using the big names file.
-                "player-names":
-                    nodeEnv !== "production"
-                        ? "./../../deion/worker/data/names-test.json"
-                        : "./../../basketball/worker/data/names.json",
-            },
-        }),
-        replace({
-            "process.env.NODE_ENV": JSON.stringify(nodeEnv),
-            "process.env.SPORT": JSON.stringify(sport),
-        }),
-        babel({
-            exclude: "node_modules/!(d3)**",
-            runtimeHelpers: true,
-        }),
-        json({
-            compact: true,
-            namedExports: false,
-        }),
-        commonjs({
-            namedExports: {
-                react: Object.keys(React),
-                "react-dom": Object.keys(ReactDOM),
-            },
-        }),
-        resolve({
-            preferBuiltins: true,
-        }),
-        globals(),
-        builtins(),
-    ];
+				// This is so Karma doesn't crash when using the big names file.
+				"player-names":
+					nodeEnv !== "production"
+						? "./../../deion/worker/data/names-test.json"
+						: "./../../basketball/worker/data/names.json",
+			},
+		}),
+		replace({
+			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
+			"process.env.SPORT": JSON.stringify(sport),
+		}),
+		babel({
+			exclude: "node_modules/!(d3)**",
+			runtimeHelpers: true,
+		}),
+		json({
+			compact: true,
+			namedExports: false,
+		}),
+		commonjs({
+			namedExports: {
+				react: Object.keys(React),
+				"react-dom": Object.keys(ReactDOM),
+			},
+		}),
+		resolve({
+			preferBuiltins: true,
+		}),
+		globals(),
+		builtins(),
+	];
 
-    if (nodeEnv === "production") {
-        plugins.push(
-            terser({
-                output: {
-                    comments: /^I DON'T WANT ANY COMMENTS$/,
-                },
-                safari10: true,
-            }),
-        );
-    }
+	if (nodeEnv === "production") {
+		plugins.push(
+			terser({
+				output: {
+					comments: /^I DON'T WANT ANY COMMENTS$/,
+				},
+				safari10: true,
+			}),
+		);
+	}
 
-    if (blacklistOptions) {
-        plugins.splice(1, 0, blacklist(blacklistOptions));
-    }
+	if (blacklistOptions) {
+		plugins.splice(1, 0, blacklist(blacklistOptions));
+	}
 
-    return {
-        plugins,
-        onwarn(warning, rollupWarn) {
-            // I don't like this, but there's too much damn baggage
-            if (warning.code !== "CIRCULAR_DEPENDENCY") {
-                rollupWarn(warning);
-            }
-        },
-        watch: {
-            chokidar: true,
-        },
-    };
+	return {
+		plugins,
+		onwarn(warning, rollupWarn) {
+			// I don't like this, but there's too much damn baggage
+			if (warning.code !== "CIRCULAR_DEPENDENCY") {
+				rollupWarn(warning);
+			}
+		},
+		watch: {
+			chokidar: true,
+		},
+	};
 };

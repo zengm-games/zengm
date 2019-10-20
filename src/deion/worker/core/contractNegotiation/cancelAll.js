@@ -12,9 +12,9 @@ import { updatePlayMenu, updateStatus } from "../../util";
  * @return {Promise}
  */
 const cancelAll = async () => {
-    await idb.cache.negotiations.clear();
-    await updateStatus("Idle");
-    await updatePlayMenu();
+	await idb.cache.negotiations.clear();
+	await updateStatus("Idle");
+	await updatePlayMenu();
 };
 
 export default cancelAll;

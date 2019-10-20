@@ -6,33 +6,33 @@ import type { Locks } from "../../common/types";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {
-    drafting: false,
-    gameSim: false,
-    newPhase: false,
-    stopGameSim: false,
+	drafting: false,
+	gameSim: false,
+	newPhase: false,
+	stopGameSim: false,
 };
 
 const reset = () => {
-    for (const key of Object.keys(locks)) {
-        locks[key] = false;
-    }
+	for (const key of Object.keys(locks)) {
+		locks[key] = false;
+	}
 };
 
 const get = (name: $Keys<Locks>): boolean => {
-    return locks[name];
+	return locks[name];
 };
 
 const set = (name: $Keys<Locks>, value: boolean) => {
-    if (locks[name] === value) {
-        // Short circuit to prevent realtimeUpdate
-        return;
-    }
+	if (locks[name] === value) {
+		// Short circuit to prevent realtimeUpdate
+		return;
+	}
 
-    locks[name] = value;
+	locks[name] = value;
 
-    if (name === "gameSim") {
-        toUI(["realtimeUpdate", ["lock.gameSim"]]);
-    }
+	if (name === "gameSim") {
+		toUI(["realtimeUpdate", ["lock.gameSim"]]);
+	}
 };
 
 /**
@@ -44,8 +44,8 @@ const set = (name: $Keys<Locks>, value: boolean) => {
  * @return {Promise.boolean}
  */
 async function negotiationInProgress(): Promise<boolean> {
-    const negotiations = await idb.cache.negotiations.getAll();
-    return negotiations.length > 0;
+	const negotiations = await idb.cache.negotiations.getAll();
+	return negotiations.length > 0;
 }
 
 /**
@@ -57,23 +57,23 @@ async function negotiationInProgress(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function canStartGames(): Promise<boolean> {
-    const negotiationInProgressBool = await negotiationInProgress();
-    if (negotiationInProgressBool) {
-        return false;
-    }
+	const negotiationInProgressBool = await negotiationInProgress();
+	if (negotiationInProgressBool) {
+		return false;
+	}
 
-    if (locks.newPhase) {
-        return false;
-    }
+	if (locks.newPhase) {
+		return false;
+	}
 
-    if (locks.gameSim) {
-        return false;
-    }
+	if (locks.gameSim) {
+		return false;
+	}
 
-    // Otherwise, doing it outside of this function would be a race condition if anything else async happened
-    locks.gameSim = true;
+	// Otherwise, doing it outside of this function would be a race condition if anything else async happened
+	locks.gameSim = true;
 
-    return true;
+	return true;
 }
 
 /**
@@ -85,20 +85,20 @@ async function canStartGames(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function unreadMessage(): Promise<boolean> {
-    const messages = await idb.getCopies.messages({ limit: 10 });
-    for (let i = 0; i < messages.length; i++) {
-        if (!messages[i].read) {
-            return true;
-        }
-    }
-    return false;
+	const messages = await idb.getCopies.messages({ limit: 10 });
+	for (let i = 0; i < messages.length; i++) {
+		if (!messages[i].read) {
+			return true;
+		}
+	}
+	return false;
 }
 
 export default {
-    reset,
-    get,
-    set,
-    negotiationInProgress,
-    canStartGames,
-    unreadMessage,
+	reset,
+	get,
+	set,
+	negotiationInProgress,
+	canStartGames,
+	unreadMessage,
 };

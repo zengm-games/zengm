@@ -3,9 +3,9 @@
 import genFuzz from "./genFuzz";
 import { g } from "../../util";
 import type {
-    MinimalPlayerRatings,
-    Player,
-    PlayerWithoutPid,
+	MinimalPlayerRatings,
+	Player,
+	PlayerWithoutPid,
 } from "../../../common/types";
 
 /**
@@ -19,15 +19,15 @@ import type {
  * @return {Object} Updated player object.
  */
 const addRatingsRow = (
-    p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
-    scoutingRank: number,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	scoutingRank: number,
 ) => {
-    const newRatings = {
-        ...p.ratings[p.ratings.length - 1],
-    };
-    newRatings.season = g.season;
-    newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
-    p.ratings.push(newRatings);
+	const newRatings = {
+		...p.ratings[p.ratings.length - 1],
+	};
+	newRatings.season = g.season;
+	newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
+	p.ratings.push(newRatings);
 };
 
 export default addRatingsRow;

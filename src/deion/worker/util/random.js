@@ -9,7 +9,7 @@
  * @return {number} Random integer between a and b.
  */
 const randInt = (a: number, b: number): number => {
-    return Math.floor(Math.random() * (1 + b - a)) + a;
+	return Math.floor(Math.random() * (1 + b - a)) + a;
 };
 
 /**
@@ -19,15 +19,15 @@ const randInt = (a: number, b: number): number => {
  * @param {array} list List to be shuffled in place.
  */
 const shuffle = (list: any[]) => {
-    const l = list.length;
-    for (let i = 1; i < l; i++) {
-        const j = randInt(0, i);
-        if (j !== i) {
-            const t = list[i]; // swap list[i] and list[j]
-            list[i] = list[j];
-            list[j] = t;
-        }
-    }
+	const l = list.length;
+	for (let i = 1; i < l; i++) {
+		const j = randInt(0, i);
+		if (j !== i) {
+			const t = list[i]; // swap list[i] and list[j]
+			list[i] = list[j];
+			list[j] = t;
+		}
+	}
 };
 
 /**
@@ -43,14 +43,14 @@ const shuffle = (list: any[]) => {
  * @return {number} Random number from Gaussian distribution.
  */
 const gauss = (mu?: number = 0, sigma?: number = 1): number => {
-    return (
-        (Math.random() * 2 -
-            1 +
-            (Math.random() * 2 - 1) +
-            (Math.random() * 2 - 1)) *
-            sigma +
-        mu
-    );
+	return (
+		(Math.random() * 2 -
+			1 +
+			(Math.random() * 2 - 1) +
+			(Math.random() * 2 - 1)) *
+			sigma +
+		mu
+	);
 };
 
 /**
@@ -72,32 +72,32 @@ const gauss = (mu?: number = 0, sigma?: number = 1): number => {
  * @return {number} Random number from Gaussian distribution.
  */
 const realGauss = (mu?: number = 0, sigma?: number = 1): number => {
-    let radius;
-    let z1;
-    let z2;
-    do {
-        z1 = 2 * Math.random() - 1;
-        z2 = 2 * Math.random() - 1;
-        radius = z1 * z1 + z2 * z2;
-    } while (radius >= 1 || radius === 0); // only use inside the unit circle
+	let radius;
+	let z1;
+	let z2;
+	do {
+		z1 = 2 * Math.random() - 1;
+		z2 = 2 * Math.random() - 1;
+		radius = z1 * z1 + z2 * z2;
+	} while (radius >= 1 || radius === 0); // only use inside the unit circle
 
-    const marsaglia = Math.sqrt((-2 * Math.log(radius)) / radius);
+	const marsaglia = Math.sqrt((-2 * Math.log(radius)) / radius);
 
-    return z1 * marsaglia * sigma + mu;
+	return z1 * marsaglia * sigma + mu;
 };
 
 const truncGauss = (
-    mu?: number = 0,
-    sigma?: number = 1,
-    lowerBound?: number = -Infinity,
-    upperBound?: number = Infinity,
+	mu?: number = 0,
+	sigma?: number = 1,
+	lowerBound?: number = -Infinity,
+	upperBound?: number = Infinity,
 ) => {
-    let x;
-    do {
-        x = realGauss(mu, sigma);
-    } while (x < lowerBound || x > upperBound);
+	let x;
+	do {
+		x = realGauss(mu, sigma);
+	} while (x < lowerBound || x > upperBound);
 
-    return x;
+	return x;
 };
 
 /**
@@ -109,13 +109,13 @@ const truncGauss = (
  * @return {number} Random number from uniform distribution.
  */
 const uniform = (a: number, b: number): number => {
-    return Math.random() * (b - a) + a;
+	return Math.random() * (b - a) + a;
 };
 
 // https://stackoverflow.com/a/19303725/786644
 const uniformSeed = (seed: number): number => {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
+	const x = Math.sin(seed) * 10000;
+	return x - Math.floor(x);
 };
 
 /**
@@ -125,23 +125,23 @@ const uniformSeed = (seed: number): number => {
  * @param {number} x Array to choose a random value from.
  */
 const choice = <T>(x: T[], weightFunc?: T => number): T => {
-    if (weightFunc === undefined) {
-        return x[Math.floor(Math.random() * x.length)];
-    }
+	if (weightFunc === undefined) {
+		return x[Math.floor(Math.random() * x.length)];
+	}
 
-    const weights = x.map(weightFunc);
-    const cumsums = weights.reduce((array, weight, i) => {
-        if (i === 0) {
-            array[0] = weight;
-        } else {
-            array[i] = array[i - 1] + weight;
-        }
-        return array;
-    }, []);
-    const max = cumsums[cumsums.length - 1];
-    const rand = Math.random() * max;
-    const ind = cumsums.findIndex(cumsum => cumsum >= rand);
-    return x[ind];
+	const weights = x.map(weightFunc);
+	const cumsums = weights.reduce((array, weight, i) => {
+		if (i === 0) {
+			array[0] = weight;
+		} else {
+			array[i] = array[i - 1] + weight;
+		}
+		return array;
+	}, []);
+	const max = cumsums[cumsums.length - 1];
+	const rand = Math.random() * max;
+	const ind = cumsums.findIndex(cumsum => cumsum >= rand);
+	return x[ind];
 };
 
 /**
@@ -157,180 +157,180 @@ const choice = <T>(x: T[], weightFunc?: T => number): T => {
  * reasonably expect to see.  Anything beyond that comes around less than 1 in 700 draft classes.
  */
 const heightDist = (): number => {
-    const r = Math.random();
-    if (r < 0.000000000051653) {
-        return 54;
-    }
-    if (r < 0.000000000258264) {
-        return 55;
-    }
-    if (r < 0.000000001084711) {
-        return 56;
-    }
-    if (r < 0.000000004390496) {
-        return 57;
-    }
-    if (r < 0.000000017561983) {
-        return 58;
-    }
-    if (r < 0.000000069214876) {
-        return 59;
-    }
-    if (r < 0.000000275826446) {
-        return 60;
-    }
-    if (r < 0.000001308884298) {
-        return 61;
-    }
-    if (r < 0.00001163946281) {
-        return 62;
-    }
-    if (r < 0.000063292355372) {
-        return 63;
-    }
-    if (r < 0.000218251033058) {
-        return 64;
-    }
-    if (r < 0.000476515495868) {
-        return 65;
-    }
-    if (r < 0.000838085743802) {
-        return 66;
-    }
-    if (r < 0.00130296177686) {
-        return 67;
-    }
-    if (r < 0.002066115702479) {
-        return 68;
-    }
-    if (r < 0.004132231404959) {
-        return 69;
-    }
-    if (r < 0.008780991735537) {
-        return 70;
-    }
-    if (r < 0.012913223140496) {
-        return 71;
-    }
-    if (r < 0.041838842975207) {
-        return 72;
-    }
-    if (r < 0.083161157024793) {
-        return 73;
-    }
-    if (r < 0.12654958677686) {
-        return 74;
-    }
-    if (r < 0.196797520661157) {
-        return 75;
-    }
-    if (r < 0.267045454545455) {
-        return 76;
-    }
-    if (r < 0.337809917355372) {
-        return 77;
-    }
-    if (r < 0.419421487603306) {
-        return 78;
-    }
-    if (r < 0.521694214876033) {
-        return 79;
-    }
-    if (r < 0.62396694214876) {
-        return 80;
-    }
-    if (r < 0.739669421487603) {
-        return 81;
-    }
-    if (r < 0.832128099173554) {
-        return 82;
-    }
-    if (r < 0.915805785123967) {
-        return 83;
-    }
-    if (r < 0.967458677685951) {
-        return 84;
-    }
-    if (r < 0.984504132231405) {
-        return 85;
-    }
-    if (r < 0.991735537190083) {
-        return 86;
-    }
-    if (r < 0.995351239669422) {
-        return 87;
-    }
-    if (r < 0.997417355371901) {
-        return 88;
-    }
-    if (r < 0.998243801652893) {
-        return 89;
-    }
-    if (r < 0.999018595041323) {
-        return 90;
-    }
-    if (r < 0.99974173553719) {
-        return 91;
-    }
-    if (r < 0.999870867097108) {
-        return 92;
-    }
-    if (r < 0.999917354700413) {
-        return 93;
-    }
-    if (r < 0.999950929080579) {
-        return 94;
-    }
-    if (r < 0.99997675552686) {
-        return 95;
-    }
-    if (r < 0.999988377427686) {
-        return 96;
-    }
-    if (r < 0.99999612536157) {
-        return 97;
-    }
-    if (r < 0.999999456973141) {
-        return 98;
-    }
-    if (r < 0.999999818543389) {
-        return 99;
-    }
-    if (r < 0.999999934762397) {
-        return 100;
-    }
-    if (r < 0.999999979958678) {
-        return 101;
-    }
-    if (r < 0.999999991580579) {
-        return 102;
-    }
-    if (r < 0.999999997572314) {
-        return 103;
-    }
-    if (r < 0.999999999225207) {
-        return 104;
-    }
-    if (r < 0.99999999963843) {
-        return 105;
-    }
-    if (r < 0.999999999845042) {
-        return 106;
-    }
-    if (r < 0.999999999948347) {
-        return 107;
-    }
-    return 108;
+	const r = Math.random();
+	if (r < 0.000000000051653) {
+		return 54;
+	}
+	if (r < 0.000000000258264) {
+		return 55;
+	}
+	if (r < 0.000000001084711) {
+		return 56;
+	}
+	if (r < 0.000000004390496) {
+		return 57;
+	}
+	if (r < 0.000000017561983) {
+		return 58;
+	}
+	if (r < 0.000000069214876) {
+		return 59;
+	}
+	if (r < 0.000000275826446) {
+		return 60;
+	}
+	if (r < 0.000001308884298) {
+		return 61;
+	}
+	if (r < 0.00001163946281) {
+		return 62;
+	}
+	if (r < 0.000063292355372) {
+		return 63;
+	}
+	if (r < 0.000218251033058) {
+		return 64;
+	}
+	if (r < 0.000476515495868) {
+		return 65;
+	}
+	if (r < 0.000838085743802) {
+		return 66;
+	}
+	if (r < 0.00130296177686) {
+		return 67;
+	}
+	if (r < 0.002066115702479) {
+		return 68;
+	}
+	if (r < 0.004132231404959) {
+		return 69;
+	}
+	if (r < 0.008780991735537) {
+		return 70;
+	}
+	if (r < 0.012913223140496) {
+		return 71;
+	}
+	if (r < 0.041838842975207) {
+		return 72;
+	}
+	if (r < 0.083161157024793) {
+		return 73;
+	}
+	if (r < 0.12654958677686) {
+		return 74;
+	}
+	if (r < 0.196797520661157) {
+		return 75;
+	}
+	if (r < 0.267045454545455) {
+		return 76;
+	}
+	if (r < 0.337809917355372) {
+		return 77;
+	}
+	if (r < 0.419421487603306) {
+		return 78;
+	}
+	if (r < 0.521694214876033) {
+		return 79;
+	}
+	if (r < 0.62396694214876) {
+		return 80;
+	}
+	if (r < 0.739669421487603) {
+		return 81;
+	}
+	if (r < 0.832128099173554) {
+		return 82;
+	}
+	if (r < 0.915805785123967) {
+		return 83;
+	}
+	if (r < 0.967458677685951) {
+		return 84;
+	}
+	if (r < 0.984504132231405) {
+		return 85;
+	}
+	if (r < 0.991735537190083) {
+		return 86;
+	}
+	if (r < 0.995351239669422) {
+		return 87;
+	}
+	if (r < 0.997417355371901) {
+		return 88;
+	}
+	if (r < 0.998243801652893) {
+		return 89;
+	}
+	if (r < 0.999018595041323) {
+		return 90;
+	}
+	if (r < 0.99974173553719) {
+		return 91;
+	}
+	if (r < 0.999870867097108) {
+		return 92;
+	}
+	if (r < 0.999917354700413) {
+		return 93;
+	}
+	if (r < 0.999950929080579) {
+		return 94;
+	}
+	if (r < 0.99997675552686) {
+		return 95;
+	}
+	if (r < 0.999988377427686) {
+		return 96;
+	}
+	if (r < 0.99999612536157) {
+		return 97;
+	}
+	if (r < 0.999999456973141) {
+		return 98;
+	}
+	if (r < 0.999999818543389) {
+		return 99;
+	}
+	if (r < 0.999999934762397) {
+		return 100;
+	}
+	if (r < 0.999999979958678) {
+		return 101;
+	}
+	if (r < 0.999999991580579) {
+		return 102;
+	}
+	if (r < 0.999999997572314) {
+		return 103;
+	}
+	if (r < 0.999999999225207) {
+		return 104;
+	}
+	if (r < 0.99999999963843) {
+		return 105;
+	}
+	if (r < 0.999999999845042) {
+		return 106;
+	}
+	if (r < 0.999999999948347) {
+		return 107;
+	}
+	return 108;
 };
 
 export default {
-    randInt,
-    shuffle,
-    gauss,
-    realGauss,
-    truncGauss,
-    uniform,
-    uniformSeed,
-    choice,
-    heightDist,
+	randInt,
+	shuffle,
+	gauss,
+	realGauss,
+	truncGauss,
+	uniform,
+	uniformSeed,
+	choice,
+	heightDist,
 };

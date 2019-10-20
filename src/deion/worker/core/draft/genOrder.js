@@ -14,14 +14,14 @@ import type { Conditions } from "../../../common/types";
  * @return {Promise}
  */
 const genOrder = async (
-    mock?: boolean = false,
-    conditions?: Conditions,
+	mock?: boolean = false,
+	conditions?: Conditions,
 ): Promise<void> => {
-    if (g.draftType === "noLottery" || g.draftType === "random") {
-        await genOrderNone(mock);
-    } else {
-        await genOrderNBA(mock, conditions);
-    }
+	if (g.draftType === "noLottery" || g.draftType === "random") {
+		await genOrderNone(mock);
+	} else {
+		await genOrderNBA(mock, conditions);
+	}
 };
 
 export default genOrder;

@@ -3,23 +3,23 @@
 import { idb } from "../db";
 
 async function updateDashboard(): void | { [key: string]: any } {
-    const leagues = await idb.meta.leagues.getAll();
+	const leagues = await idb.meta.leagues.getAll();
 
-    for (const league of leagues) {
-        if (league.teamRegion === undefined) {
-            league.teamRegion = "???";
-        }
-        if (league.teamName === undefined) {
-            league.teamName = "???";
-        }
-        delete league.tid;
-    }
+	for (const league of leagues) {
+		if (league.teamRegion === undefined) {
+			league.teamRegion = "???";
+		}
+		if (league.teamName === undefined) {
+			league.teamName = "???";
+		}
+		delete league.tid;
+	}
 
-    return {
-        leagues,
-    };
+	return {
+		leagues,
+	};
 }
 
 export default {
-    runBefore: [updateDashboard],
+	runBefore: [updateDashboard],
 };

@@ -5,7 +5,7 @@ import processStats from "./processStats";
 import rosterAutoSort from "./rosterAutoSort";
 
 export default {
-    stats,
-    processStats,
-    rosterAutoSort,
+	stats,
+	processStats,
+	rosterAutoSort,
 };

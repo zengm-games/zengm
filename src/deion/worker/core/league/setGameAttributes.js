@@ -5,11 +5,11 @@ import { g, helpers, toUI } from "../../util";
 import type { GameAttributes } from "../../../common/types";
 
 const updateMetaDifficulty = async (difficulty: number) => {
-    const l = await idb.meta.leagues.get(g.lid);
-    if (l) {
-        l.difficulty = difficulty;
-        await idb.meta.leagues.put(l);
-    }
+	const l = await idb.meta.leagues.get(g.lid);
+	if (l) {
+		l.difficulty = difficulty;
+		await idb.meta.leagues.put(l);
+	}
 };
 
 /**
@@ -21,30 +21,27 @@ const updateMetaDifficulty = async (difficulty: number) => {
  * @returns {Promise} Promise for when it finishes.
  */
 const setGameAttributes = async (gameAttributes: GameAttributes) => {
-    const toUpdate = [];
-    for (const key of helpers.keys(gameAttributes)) {
-        if (
-            g[key] !== gameAttributes[key] &&
-            !Number.isNaN(gameAttributes[key])
-        ) {
-            toUpdate.push(key);
-        }
-    }
+	const toUpdate = [];
+	for (const key of helpers.keys(gameAttributes)) {
+		if (g[key] !== gameAttributes[key] && !Number.isNaN(gameAttributes[key])) {
+			toUpdate.push(key);
+		}
+	}
 
-    for (const key of toUpdate) {
-        await idb.cache.gameAttributes.put({
-            key,
-            value: gameAttributes[key],
-        });
+	for (const key of toUpdate) {
+		await idb.cache.gameAttributes.put({
+			key,
+			value: gameAttributes[key],
+		});
 
-        g[key] = gameAttributes[key];
+		g[key] = gameAttributes[key];
 
-        if (key === "difficulty") {
-            await updateMetaDifficulty(gameAttributes[key]);
-        }
-    }
+		if (key === "difficulty") {
+			await updateMetaDifficulty(gameAttributes[key]);
+		}
+	}
 
-    await toUI(["setGameAttributes", gameAttributes]);
+	await toUI(["setGameAttributes", gameAttributes]);
 };
 
 export default setGameAttributes;

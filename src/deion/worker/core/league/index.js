@@ -12,14 +12,14 @@ import setGameAttributes from "./setGameAttributes";
 import updateMetaNameRegion from "./updateMetaNameRegion";
 
 export default {
-    autoPlay,
-    close,
-    create,
-    exportLeague,
-    getValidNumGamesPlayoffSeries,
-    initAutoPlay,
-    loadGameAttributes,
-    remove,
-    setGameAttributes,
-    updateMetaNameRegion,
+	autoPlay,
+	close,
+	create,
+	exportLeague,
+	getValidNumGamesPlayoffSeries,
+	initAutoPlay,
+	loadGameAttributes,
+	remove,
+	setGameAttributes,
+	updateMetaNameRegion,
 };

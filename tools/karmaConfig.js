@@ -8,49 +8,49 @@ const sport = build.getSport();
 
 const rollupConfigTemp = rollupConfig("test");
 rollupConfigTemp.plugins.unshift(
-    alias({
-        entries: {
-            "smoke-test-overrides": `./../../${sport}/worker/index.js`,
-        },
-    }),
+	alias({
+		entries: {
+			"smoke-test-overrides": `./../../${sport}/worker/index.js`,
+		},
+	}),
 );
 
 module.exports = {
-    frameworks: ["mocha", "source-map-support"],
+	frameworks: ["mocha", "source-map-support"],
 
-    files: files.map(pattern => {
-        return {
-            pattern,
-            watched: false,
-        };
-    }),
+	files: files.map(pattern => {
+		return {
+			pattern,
+			watched: false,
+		};
+	}),
 
-    preprocessors: {
-        "src/**/*.js": ["rollup"],
-    },
+	preprocessors: {
+		"src/**/*.js": ["rollup"],
+	},
 
-    // http://stackoverflow.com/a/42379383/786644
-    browserConsoleLogOptions: {
-        terminal: true,
-        level: "",
-    },
+	// http://stackoverflow.com/a/42379383/786644
+	browserConsoleLogOptions: {
+		terminal: true,
+		level: "",
+	},
 
-    autoWatch: false,
+	autoWatch: false,
 
-    singleRun: true,
+	singleRun: true,
 
-    rollupPreprocessor: {
-        ...rollupConfigTemp,
-        output: {
-            format: "iife",
-            indent: false,
-            name: "bbgm",
-            sourcemap: true,
-        },
-    },
+	rollupPreprocessor: {
+		...rollupConfigTemp,
+		output: {
+			format: "iife",
+			indent: false,
+			name: "bbgm",
+			sourcemap: true,
+		},
+	},
 
-    browserNoActivityTimeout: 15 * 60 * 1000, // 15 minutes
-    browserDisconnectTimeout: 15 * 60 * 1000, // 15 minutes
+	browserNoActivityTimeout: 15 * 60 * 1000, // 15 minutes
+	browserDisconnectTimeout: 15 * 60 * 1000, // 15 minutes
 
-    browsers: ["ChromeHeadless", "FirefoxHeadless"],
+	browsers: ["ChromeHeadless", "FirefoxHeadless"],
 };

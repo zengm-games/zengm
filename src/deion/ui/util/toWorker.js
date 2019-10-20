@@ -3,7 +3,7 @@
 import { promiseWorker } from ".";
 
 const toWorker = (...args: any[]) => {
-    return promiseWorker.postMessage(args);
+	return promiseWorker.postMessage(args);
 };
 
 export default toWorker;

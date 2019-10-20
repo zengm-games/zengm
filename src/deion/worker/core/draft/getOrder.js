@@ -12,14 +12,14 @@ import { g } from "../../util";
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 const getOrder = async () => {
-    const season = g.phase === PHASE.FANTASY_DRAFT ? "fantasy" : g.season;
+	const season = g.phase === PHASE.FANTASY_DRAFT ? "fantasy" : g.season;
 
-    const draftPicks = await idb.cache.draftPicks.indexGetAll(
-        "draftPicksBySeason",
-        season,
-    );
+	const draftPicks = await idb.cache.draftPicks.indexGetAll(
+		"draftPicksBySeason",
+		season,
+	);
 
-    return orderBy(draftPicks, ["round", "pick"]);
+	return orderBy(draftPicks, ["round", "pick"]);
 };
 
 export default getOrder;

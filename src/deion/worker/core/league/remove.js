@@ -13,11 +13,11 @@ import { g } from "../../util";
  * @param {function()=} cb Optional callback.
  */
 const remove = async (lid: number) => {
-    if (g.lid === lid) {
-        close(true);
-    }
-    idb.meta.leagues.delete(lid);
-    await backboard.delete(`league${lid}`);
+	if (g.lid === lid) {
+		close(true);
+	}
+	idb.meta.leagues.delete(lid);
+	await backboard.delete(`league${lid}`);
 };
 
 export default remove;

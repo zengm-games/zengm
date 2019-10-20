@@ -10,15 +10,15 @@ import { idb } from "../../db";
  * @return {Promise}
  */
 const setSchedule = async (tids: [number, number][]) => {
-    await idb.cache.schedule.clear();
-    await Promise.all(
-        tids.map(([homeTid, awayTid]) =>
-            idb.cache.schedule.add({
-                homeTid,
-                awayTid,
-            }),
-        ),
-    );
+	await idb.cache.schedule.clear();
+	await Promise.all(
+		tids.map(([homeTid, awayTid]) =>
+			idb.cache.schedule.add({
+				homeTid,
+				awayTid,
+			}),
+		),
+	);
 };
 
 export default setSchedule;

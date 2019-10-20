@@ -7,53 +7,53 @@ import { trade } from "..";
 import { beforeTests, reset } from "./testHelpers";
 
 const testCreateTrade = async (otherTidTest, userPidsTest, otherPidsTest) => {
-    const { teams } = await idb.cache.trade.get(0);
-    assert.deepEqual(teams[1].tid, otherTidTest);
-    assert.deepEqual(teams[0].pids, userPidsTest);
-    assert.deepEqual(teams[1].pids, otherPidsTest);
+	const { teams } = await idb.cache.trade.get(0);
+	assert.deepEqual(teams[1].tid, otherTidTest);
+	assert.deepEqual(teams[0].pids, userPidsTest);
+	assert.deepEqual(teams[1].pids, otherPidsTest);
 };
 
 describe("worker/core/trade/create", () => {
-    beforeAll(beforeTests);
-    afterEach(reset);
+	beforeAll(beforeTests);
+	afterEach(reset);
 
-    test("create trade with team ID", async () => {
-        await trade.create([
-            {
-                tid: g.userTid,
-                pids: [],
-                pidsExcluded: [],
-                dpids: [],
-                dpidsExcluded: [],
-            },
-            {
-                tid: 1,
-                pids: [],
-                pidsExcluded: [],
-                dpids: [],
-                dpidsExcluded: [],
-            },
-        ]);
-        await testCreateTrade(1, [], []);
-    });
+	test("create trade with team ID", async () => {
+		await trade.create([
+			{
+				tid: g.userTid,
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+			{
+				tid: 1,
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+		]);
+		await testCreateTrade(1, [], []);
+	});
 
-    test("create trade with player ID", async () => {
-        await trade.create([
-            {
-                tid: g.userTid,
-                pids: [],
-                pidsExcluded: [],
-                dpids: [],
-                dpidsExcluded: [],
-            },
-            {
-                tid: 2,
-                pids: [2],
-                pidsExcluded: [],
-                dpids: [],
-                dpidsExcluded: [],
-            },
-        ]);
-        await testCreateTrade(2, [], [2]);
-    });
+	test("create trade with player ID", async () => {
+		await trade.create([
+			{
+				tid: g.userTid,
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+			{
+				tid: 2,
+				pids: [2],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			},
+		]);
+		await testCreateTrade(2, [], [2]);
+	});
 });

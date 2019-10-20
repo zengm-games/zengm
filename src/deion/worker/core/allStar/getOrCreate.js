@@ -6,19 +6,19 @@ import create from "./create";
 import type { Conditions } from "../../../common/types";
 
 const getOrCreate = async (
-    conditions: Conditions,
+	conditions: Conditions,
 ): Promise<{
-    finalized: boolean,
-    pid?: number,
+	finalized: boolean,
+	pid?: number,
 }> => {
-    let allStars = await idb.cache.allStars.get(g.season);
+	let allStars = await idb.cache.allStars.get(g.season);
 
-    if (!allStars) {
-        allStars = await create(conditions);
-        await idb.cache.allStars.put(allStars);
-    }
+	if (!allStars) {
+		allStars = await create(conditions);
+		await idb.cache.allStars.put(allStars);
+	}
 
-    return allStars;
+	return allStars;
 };
 
 export default getOrCreate;

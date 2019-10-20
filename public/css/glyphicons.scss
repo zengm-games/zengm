@@ -1,70 +1,70 @@
 @font-face {
-    font-family: "Glyphicons Halflings";
-    src: url("../fonts/glyphicons-halflings-regular.woff2") format("woff2"),
-        url("../fonts/glyphicons-halflings-regular.woff") format("woff");
+	font-family: "Glyphicons Halflings";
+	src: url("../fonts/glyphicons-halflings-regular.woff2") format("woff2"),
+		url("../fonts/glyphicons-halflings-regular.woff") format("woff");
 }
 .glyphicon {
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-family: "Glyphicons Halflings";
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+	position: relative;
+	top: 1px;
+	display: inline-block;
+	font-family: "Glyphicons Halflings";
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 .glyphicon-camera:before {
-    content: "\e046";
+	content: "\e046";
 }
 .glyphicon-edit:before {
-    content: "\e065";
+	content: "\e065";
 }
 .glyphicon-filter:before {
-    content: "\e138";
+	content: "\e138";
 }
 .glyphicon-flag:before {
-    content: "\e034";
+	content: "\e034";
 }
 .glyphicon-home:before {
-    content: "\e021";
+	content: "\e021";
 }
 .glyphicon-menu-left:before {
-    content: "\e257";
+	content: "\e257";
 }
 .glyphicon-menu-right:before {
-    content: "\e258";
+	content: "\e258";
 }
 .glyphicon-ok:before {
-    content: "\e013";
+	content: "\e013";
 }
 .glyphicon-option-vertical:before {
-    content: "\e235";
+	content: "\e235";
 }
 .glyphicon-pause:before {
-    content: "\e073";
+	content: "\e073";
 }
 .glyphicon-play:before {
-    content: "\e072";
+	content: "\e072";
 }
 .glyphicon-question-sign:before {
-    content: "\e085";
+	content: "\e085";
 }
 .glyphicon-remove:before {
-    content: "\e014";
+	content: "\e014";
 }
 .glyphicon-star:before {
-    content: "\e006";
+	content: "\e006";
 }
 .glyphicon-star-empty:before {
-    content: "\e007";
+	content: "\e007";
 }
 .glyphicon-stats:before {
-    content: "\e185";
+	content: "\e185";
 }
 .glyphicon-step-forward:before {
-    content: "\e077";
+	content: "\e077";
 }
 .glyphicon-user:before {
-    content: "\e008";
+	content: "\e008";
 }

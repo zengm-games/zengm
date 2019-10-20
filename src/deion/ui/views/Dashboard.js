@@ -171,7 +171,7 @@ const LeagueName = ({
             <form onSubmit={handleSubmit}>
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     disabled={mode === "saving"}
                     value={liveName}
                     onChange={event => setLiveName(event.target.value)}
@@ -179,17 +179,29 @@ const LeagueName = ({
             </form>
         );
 
-    return (
-        <>
-            {nameBlock}
+    const controlsBlock =
+        mode === "viewing" ? (
             <span
                 className="glyphicon glyphicon-edit mx-2"
                 data-no-row-highlight="true"
                 style={glyphiconStyle}
                 onClick={() => setMode("editing")}
             />
+        ) : (
+            <span
+                className="glyphicon glyphicon-ok mx-2"
+                data-no-row-highlight="true"
+                style={glyphiconStyle}
+                onClick={handleSubmit}
+            />
+        );
+
+    return (
+        <div className="d-flex">
+            <div className="flex-grow-1">{nameBlock}</div>
+            {controlsBlock}
             <Star lid={lid} starred={starred} />
-        </>
+        </div>
     );
 };
 
@@ -237,13 +249,18 @@ const Dashboard = ({ leagues }: Props) => {
                         />
                     ),
                 },
-                <LeagueName
-                    lid={league.lid}
-                    name={league.name}
-                    starred={league.starred}
-                    loadingLID={loadingLID}
-                    setLoadingLID={setLoadingLID}
-                />,
+                {
+                    classNames: "dashboard-controls",
+                    value: (
+                        <LeagueName
+                            lid={league.lid}
+                            name={league.name}
+                            starred={league.starred}
+                            loadingLID={loadingLID}
+                            setLoadingLID={setLoadingLID}
+                        />
+                    ),
+                },
                 `${league.teamRegion} ${league.teamName}`,
                 league.phaseText,
                 <DifficultyText>{league.difficulty}</DifficultyText>,

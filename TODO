@@ -24,6 +24,8 @@ redesign dashboard
 - special UI for when there are no leagues
 - maybe try removing vertical lines and making it fluid
 - edit league name
+  - alignment of controls when editing
+  - width - use JS to set!
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard

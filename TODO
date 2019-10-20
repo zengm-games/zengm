@@ -22,6 +22,8 @@ redesign dashboard
 - remove old css
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
+- maybe try removing vertical lines and making it fluid
+- edit league name
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard
@@ -398,6 +400,7 @@ later
 
 NEED TO FIX TRADE AI
 - make tests of trades that should/shouldn't happen
+- example: should never offer a strictly worse pick for a better pick. or at least not commonly
 
 no POT mode, to make it harder
 

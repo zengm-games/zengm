@@ -37,6 +37,7 @@ export type SuperCol = {
 };
 
 export type Props = {
+    bordered?: boolean,
     className?: string,
     cols: Col[],
     defaultSort: SortBy,
@@ -422,6 +423,7 @@ class DataTable extends React.Component<Props, State> {
 
     render() {
         const {
+            bordered,
             className,
             cols,
             footer,
@@ -476,8 +478,9 @@ class DataTable extends React.Component<Props, State> {
                 >
                     <table
                         className={classNames(
-                            "table table-striped table-bordered table-hover",
+                            "table table-striped table-hover",
                             {
+                                "table-bordered": bordered !== false,
                                 "table-sm": small !== false,
                             },
                         )}
@@ -528,6 +531,7 @@ class DataTable extends React.Component<Props, State> {
 }
 
 DataTable.propTypes = {
+    bordered: PropTypes.bool,
     className: PropTypes.string,
     cols: PropTypes.array.isRequired,
     defaultSort: PropTypes.arrayOf(

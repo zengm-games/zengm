@@ -97,9 +97,8 @@ const PlayButton = ({
     );
 };
 
-const starStyle = {
+const glyphiconStyle = {
     cursor: "pointer",
-    fontSize: "larger",
 };
 const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
     const [actuallyStarred, setActuallyStarred] = useState<boolean>(!!starred);
@@ -118,7 +117,7 @@ const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
                 className="glyphicon glyphicon-star text-primary"
                 data-no-row-highlight="true"
                 onClick={toggle}
-                style={starStyle}
+                style={glyphiconStyle}
             />
         );
     }
@@ -128,8 +127,69 @@ const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
             className="glyphicon glyphicon-star-empty text-muted"
             data-no-row-highlight="true"
             onClick={toggle}
-            style={starStyle}
+            style={glyphiconStyle}
         />
+    );
+};
+
+const LeagueName = ({
+    lid,
+    name,
+    starred,
+    loadingLID,
+    setLoadingLID,
+}: {
+    lid: number,
+    name: string,
+    starred?: boolean,
+    loadingLid?: number,
+    setLoadingLID: (number | void) => void,
+}) => {
+    const [mode, setMode] = useState<"editing" | "saving" | "viewing">(
+        "viewing",
+    );
+    const [liveName, setLiveName] = useState(name);
+
+    const handleSubmit = useCallback(
+        async event => {
+            event.preventDefault();
+            setMode("saving");
+            await toWorker("updateLeague", lid, {
+                name: liveName,
+            });
+            setMode("viewing");
+        },
+        [lid, liveName],
+    );
+
+    const nameBlock =
+        mode === "viewing" ? (
+            <a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
+                {liveName}
+            </a>
+        ) : (
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    className="form-control"
+                    disabled={mode === "saving"}
+                    value={liveName}
+                    onChange={event => setLiveName(event.target.value)}
+                />
+            </form>
+        );
+
+    return (
+        <>
+            {nameBlock}
+            <span
+                className="glyphicon glyphicon-edit mx-2"
+                data-no-row-highlight="true"
+                style={glyphiconStyle}
+                onClick={() => setMode("editing")}
+            />
+            <Star lid={lid} starred={starred} />
+        </>
     );
 };
 
@@ -152,7 +212,6 @@ const Dashboard = ({ leagues }: Props) => {
 
     const cols = getCols(
         "",
-        "",
         "League",
         "Team",
         "Phase",
@@ -161,7 +220,8 @@ const Dashboard = ({ leagues }: Props) => {
         "Last Played",
         "",
     );
-    cols[3].width = "100%";
+    cols[0].width = "1%";
+    cols[7].width = "1%";
 
     const rows = leagues.map(league => {
         return {
@@ -177,8 +237,13 @@ const Dashboard = ({ leagues }: Props) => {
                         />
                     ),
                 },
-                <Star lid={league.lid} starred={league.starred} />,
-                league.name,
+                <LeagueName
+                    lid={league.lid}
+                    name={league.name}
+                    starred={league.starred}
+                    loadingLID={loadingLID}
+                    setLoadingLID={setLoadingLID}
+                />,
                 `${league.teamRegion} ${league.teamName}`,
                 league.phaseText,
                 <DifficultyText>{league.difficulty}</DifficultyText>,
@@ -267,9 +332,9 @@ const Dashboard = ({ leagues }: Props) => {
             <div className="clearfix" />
 
             <DataTable
+                bordered={false}
                 cols={cols}
                 defaultSort={[6, "desc"]}
-                nonfluid
                 name="Dashboard"
                 small={false}
                 rows={rows}

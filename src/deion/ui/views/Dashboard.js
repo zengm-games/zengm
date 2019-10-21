@@ -265,7 +265,16 @@ const Dashboard = ({ leagues }: Props) => {
 									>
 										Rename
 									</DropdownItem>
-									<DropdownItem href={`/delete_league/${league.lid}`}>
+									<DropdownItem
+										onClick={async () => {
+											const proceed = await confirm(
+												`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
+											);
+											if (proceed) {
+												await toWorker("removeLeague", league.lid);
+											}
+										}}
+									>
 										Delete
 									</DropdownItem>
 								</DropdownMenu>

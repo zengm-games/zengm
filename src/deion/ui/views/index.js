@@ -9,7 +9,6 @@ import Changes from "./Changes";
 import CustomizePlayer from "./CustomizePlayer";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
-import DeleteLeague from "./DeleteLeague";
 import DeleteOldData from "./DeleteOldData";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
@@ -83,7 +82,6 @@ export default {
 	CustomizePlayer,
 	DangerZone,
 	Dashboard,
-	DeleteLeague,
 	DeleteOldData,
 	Draft,
 	DraftLottery,

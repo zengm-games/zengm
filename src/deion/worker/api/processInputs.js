@@ -71,12 +71,6 @@ const customizePlayer = params => {
 	};
 };
 
-const deleteLeague = params => {
-	return {
-		lid: parseInt(params.lid, 10),
-	};
-};
-
 const depth = params => {
 	// Fix broken links
 	if (params.abbrev === "FA") {
@@ -431,7 +425,6 @@ export default {
 	account,
 	awardsRecords,
 	customizePlayer,
-	deleteLeague,
 	depth,
 	draft,
 	draftLottery,

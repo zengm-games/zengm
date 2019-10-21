@@ -8,7 +8,6 @@ import awardsRecords from "./awardsRecords";
 import changes from "./changes";
 import customizePlayer from "./customizePlayer";
 import dashboard from "./dashboard";
-import deleteLeague from "./deleteLeague";
 import deleteOldData from "./deleteOldData";
 import draft from "./draft";
 import draftLottery from "./draftLottery";
@@ -80,7 +79,6 @@ export default {
 	changes,
 	customizePlayer,
 	dashboard,
-	deleteLeague,
 	deleteOldData,
 	draft,
 	draftLottery,

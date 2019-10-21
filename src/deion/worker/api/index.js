@@ -1180,6 +1180,7 @@ const removeLastTeam = async (): Promise<void> => {
 
 const removeLeague = async (lid: number) => {
 	await league.remove(lid);
+	await toUI(["realtimeUpdate", ["leagues"]]);
 };
 
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {

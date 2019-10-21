@@ -8,6 +8,7 @@ import { draft, finances, freeAgents, league, player, team } from "..";
 import {
 	defaultGameAttributes,
 	g,
+	getLocalISODateString,
 	helpers,
 	local,
 	lock,
@@ -754,6 +755,8 @@ const create = async (
 		heartbeatID: undefined,
 		heartbeatTimestamp: undefined,
 		difficulty,
+		dateCreated: getLocalISODateString(),
+		dateLastPlayed: getLocalISODateString(),
 	});
 	idb.league = await connectLeague(lid);
 

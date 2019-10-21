@@ -184,6 +184,9 @@ export type League = {|
 	heartbeatID?: string,
 	heartbeatTimestamp?: number,
 	difficulty?: number,
+	starred?: boolean,
+	dateCreated?: string,
+	dateLastPlayed?: string,
 |};
 
 export type Locks = {|
@@ -534,6 +537,7 @@ export type SortOrder = "asc" | "desc";
 
 export type SortType =
 	| "currency"
+	| "dateString"
 	| "draftPick"
 	| "lastTen"
 	| "name"

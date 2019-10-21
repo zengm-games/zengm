@@ -179,13 +179,15 @@ const LeagueName = ({
 
 type Props = {
 	leagues: {
+		dateCreated?: string,
+		dateLastPlayed?: string,
+		difficulty?: number,
 		lid: number,
-		starred?: boolean,
 		name: string,
 		phaseText: string,
+		starred?: boolean,
 		teamName: string,
 		teamRegion: string,
-		difficulty?: number,
 	}[],
 };
 
@@ -237,8 +239,8 @@ const Dashboard = ({ leagues }: Props) => {
 				`${league.teamRegion} ${league.teamName}`,
 				league.phaseText,
 				<DifficultyText>{league.difficulty}</DifficultyText>,
-				new Date().toISOString().split("T")[0],
-				new Date().toISOString().split("T")[0],
+				league.dateCreated,
+				league.dateLastPlayed,
 				{
 					classNames: "dashboard-controls",
 					value: (
@@ -327,6 +329,8 @@ const Dashboard = ({ leagues }: Props) => {
 Dashboard.propTypes = {
 	leagues: PropTypes.arrayOf(
 		PropTypes.shape({
+			dateCreated: PropTypes.string,
+			dateLastPlayed: PropTypes.string,
 			difficulty: PropTypes.number,
 			lid: PropTypes.number.isRequired,
 			name: PropTypes.string.isRequired,

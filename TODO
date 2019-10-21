@@ -24,6 +24,7 @@ redesign dashboard
 - special UI for when there are no leagues
 - team logo
 - disable table caching, always sort by LastPlayed descending
+- when to update dateLastPlayed?
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard

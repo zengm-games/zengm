@@ -4,7 +4,7 @@ import { idb } from "../db";
 import type { UpdateEvents } from "../../common/types";
 
 const updateDashboard = async (
-	inputs,
+	inputs: {},
 	updateEvents: UpdateEvents,
 ): void | { [key: string]: any } => {
 	console.log("updateEvents", updateEvents);

@@ -142,23 +142,29 @@ const LeagueName = ({
 	lid: number,
 	children: string,
 	starred?: boolean,
-	loadingLid?: number,
+	loadingLID?: number,
 	setLoadingLID: (number | void) => void,
 }) => {
 	const handleEdit = useCallback(async () => {
 		const newName = await confirm("League name:", name);
-		await toWorker("updateLeague", lid, {
-			name: newName,
-		});
+		if (typeof newName === "string") {
+			await toWorker("updateLeague", lid, {
+				name: newName,
+			});
+		}
 	}, [lid, name]);
 
 	return (
 		<div className="d-flex align-items-center">
 			<Star lid={lid} starred={starred} />
 			<div className="flex-grow-1 mx-2">
-				<a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
-					{name}
-				</a>
+				{loadingLID === undefined ? (
+					<a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
+						{name}
+					</a>
+				) : (
+					name
+				)}
 			</div>
 			<span
 				className="glyphicon glyphicon-edit text-muted"
@@ -175,7 +181,7 @@ type Props = {
 	leagues: {
 		lid: number,
 		starred?: boolean,
-		children: string,
+		name: string,
 		phaseText: string,
 		teamName: string,
 		teamRegion: string,
@@ -241,7 +247,7 @@ const Dashboard = ({ leagues }: Props) => {
 								className={classNames("btn btn-light-bordered", {
 									disabled: loadingLID !== undefined,
 								})}
-								href="#"
+								href={`/new_league/${league.lid}`}
 							>
 								Import
 							</a>

@@ -148,15 +148,7 @@ const LeagueName = ({
 	const [mode, setMode] = useState<"editing" | "saving" | "viewing">("viewing");
 	const [liveName, setLiveName] = useState(name);
 
-	const wrapperEl = useRef(null);
-	const [savedWidth, setSavedWidth] = useState(100);
-
 	const handleEdit = useCallback(() => {
-		// When switching to edit mode, save width so it can be used to keep column size constant
-		if (wrapperEl.current) {
-			setSavedWidth(wrapperEl.current.offsetWidth);
-		}
-
 		setMode("editing");
 	}, []);
 
@@ -185,6 +177,7 @@ const LeagueName = ({
 					disabled={mode === "saving"}
 					value={liveName}
 					onChange={event => setLiveName(event.target.value)}
+					style={{ maxWidth: 200 }}
 				/>
 			</form>
 		);
@@ -209,11 +202,7 @@ const LeagueName = ({
 		);
 
 	return (
-		<div
-			className="d-flex align-items-center"
-			ref={wrapperEl}
-			style={mode !== "viewing" ? { width: savedWidth } : null}
-		>
+		<div className="d-flex align-items-center">
 			<Star lid={lid} starred={starred} />
 			<div className="flex-grow-1 mx-2">{nameBlock}</div>
 			{controlsBlock}

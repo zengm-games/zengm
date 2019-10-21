@@ -30,6 +30,8 @@ redesign dashboard
     - try setting width simultaneously in all rows
       - doesn't work
     - try setting width of td itself
+      - works, but react overwrites the style frequently so need to send it up in some real way, or use actual ref
+- team logo
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard

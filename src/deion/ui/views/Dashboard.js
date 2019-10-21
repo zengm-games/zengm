@@ -2,10 +2,11 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
 import { confirm, getCols, setTitle, toWorker } from "../util";
+import type { League } from "../../common/types";
 
 const difficultyText = (difficulty: number) => {
 	let prevText: string | void;
@@ -178,17 +179,7 @@ const LeagueName = ({
 };
 
 type Props = {
-	leagues: {
-		dateCreated?: string,
-		dateLastPlayed?: string,
-		difficulty?: number,
-		lid: number,
-		name: string,
-		phaseText: string,
-		starred?: boolean,
-		teamName: string,
-		teamRegion: string,
-	}[],
+	leagues: League[],
 };
 
 const Dashboard = ({ leagues }: Props) => {

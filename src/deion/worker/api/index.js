@@ -1316,7 +1316,6 @@ const updateGameAttributes = async (gameAttributes: GameAttributes) => {
 };
 
 const updateLeague = async (lid: number, obj: any) => {
-	console.log("updateLeague", lid, obj);
 	const l = await idb.meta.leagues.get(lid);
 
 	await idb.meta.leagues.put({
@@ -1325,7 +1324,6 @@ const updateLeague = async (lid: number, obj: any) => {
 	});
 
 	await toUI(["realtimeUpdate", ["leagues"]]);
-	console.log("end");
 };
 
 const updateMultiTeamMode = async (gameAttributes: {

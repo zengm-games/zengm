@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useRef, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
-import { getCols, setTitle, toWorker } from "../util";
+import { confirm, getCols, setTitle, toWorker } from "../util";
 
 const difficultyText = (difficulty: number) => {
 	let prevText: string | void;
@@ -134,56 +134,32 @@ const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
 
 const LeagueName = ({
 	lid,
-	name,
+	children: name,
 	starred,
 	loadingLID,
 	setLoadingLID,
 }: {
 	lid: number,
-	name: string,
+	children: string,
 	starred?: boolean,
 	loadingLid?: number,
 	setLoadingLID: (number | void) => void,
 }) => {
-	const [mode, setMode] = useState<"editing" | "saving" | "viewing">("viewing");
-	const [liveName, setLiveName] = useState(name);
+	const handleEdit = useCallback(async () => {
+		const newName = await confirm("League name:", name);
+		await toWorker("updateLeague", lid, {
+			name: newName,
+		});
+	}, [lid, name]);
 
-	const handleEdit = useCallback(() => {
-		setMode("editing");
-	}, []);
-
-	const handleSubmit = useCallback(
-		async event => {
-			event.preventDefault();
-			setMode("saving");
-			await toWorker("updateLeague", lid, {
-				name: liveName,
-			});
-			setMode("viewing");
-		},
-		[lid, liveName],
-	);
-
-	const nameBlock =
-		mode === "viewing" ? (
-			<a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
-				{liveName}
-			</a>
-		) : (
-			<form onSubmit={handleSubmit}>
-				<input
-					type="text"
-					className="form-control form-control-sm"
-					disabled={mode === "saving"}
-					value={liveName}
-					onChange={event => setLiveName(event.target.value)}
-					style={{ maxWidth: 200 }}
-				/>
-			</form>
-		);
-
-	const controlsBlock =
-		mode === "viewing" ? (
+	return (
+		<div className="d-flex align-items-center">
+			<Star lid={lid} starred={starred} />
+			<div className="flex-grow-1 mx-2">
+				<a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
+					{name}
+				</a>
+			</div>
 			<span
 				className="glyphicon glyphicon-edit text-muted"
 				data-no-row-highlight="true"
@@ -191,21 +167,6 @@ const LeagueName = ({
 				onClick={handleEdit}
 				title="Edit Name"
 			/>
-		) : (
-			<span
-				className="glyphicon glyphicon-ok text-success"
-				data-no-row-highlight="true"
-				style={glyphiconStyle}
-				onClick={handleSubmit}
-				title="Save Name"
-			/>
-		);
-
-	return (
-		<div className="d-flex align-items-center">
-			<Star lid={lid} starred={starred} />
-			<div className="flex-grow-1 mx-2">{nameBlock}</div>
-			{controlsBlock}
 		</div>
 	);
 };
@@ -214,7 +175,7 @@ type Props = {
 	leagues: {
 		lid: number,
 		starred?: boolean,
-		name: string,
+		children: string,
 		phaseText: string,
 		teamName: string,
 		teamRegion: string,
@@ -259,11 +220,12 @@ const Dashboard = ({ leagues }: Props) => {
 					value: (
 						<LeagueName
 							lid={league.lid}
-							name={league.name}
 							starred={league.starred}
 							loadingLID={loadingLID}
 							setLoadingLID={setLoadingLID}
-						/>
+						>
+							{league.name}
+						</LeagueName>
 					),
 				},
 				`${league.teamRegion} ${league.teamName}`,

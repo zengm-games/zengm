@@ -690,6 +690,7 @@ export type UpdateEvents = (
 	| "g.userTids"
 	| "gameAttributes"
 	| "gameSim"
+	| "leagues"
 	| "lock.gameSim"
 	| "newPhase"
 	| "playerMovement"

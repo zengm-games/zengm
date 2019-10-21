@@ -14,7 +14,6 @@ situational awareness
 - then new ovr formula
 
 redesign dashboard
-- confirm dialog - option to rename buttons
 - global "loading" and "deleting" per row, pass to subcomponents, use for disabling/throbbing
 - at top: prominent link to create league
   - maybe also prominent links to recently played leagues
@@ -23,7 +22,6 @@ redesign dashboard
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
 - disable table caching, always sort by LastPlayed descending
-- get rid of dedicated delete page, just move to dashboard
 - blog
   - dates
   - import

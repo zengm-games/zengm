@@ -50,7 +50,9 @@ const handleRelease = async (p, phase, season) => {
 		releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p.contract.exp}.`;
 	}
 
-	const proceed = await confirm(releaseMessage);
+	const proceed = await confirm(releaseMessage, {
+		okText: "Release Player",
+	});
 	if (proceed) {
 		const errorMsg = await toWorker(
 			"releasePlayer",

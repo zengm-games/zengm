@@ -747,7 +747,7 @@ const create = async (
 
 	const userTid = leagueData.gameAttributes.userTid;
 
-	const l = {
+	const l: any = {
 		name,
 		tid: userTid,
 		phaseText,

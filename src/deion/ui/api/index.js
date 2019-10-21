@@ -120,10 +120,6 @@ const newLid = async (lid: number) => {
 	}
 };
 
-const prompt = (message: string, defaultVal?: string = "") => {
-	return confirm(message, defaultVal);
-};
-
 async function realtimeUpdate2(
 	updateEvents: UpdateEvents = [],
 	url?: string,
@@ -154,7 +150,6 @@ export default {
 	emit,
 	initAds,
 	newLid,
-	prompt,
 	realtimeUpdate: realtimeUpdate2,
 	resetLeague,
 	setGameAttributes,

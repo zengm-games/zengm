@@ -322,6 +322,9 @@ const playMenu = {
 								? ""
 								: ", and you won't be able to go over the salary cap to sign them"
 						}.`,
+						{
+							okText: "Proceed",
+						},
 					],
 					conditions,
 				);
@@ -376,6 +379,9 @@ const toolsMenu = {
 			[
 				"confirm",
 				"Are you sure you want to delete ALL data in ALL of your leagues?",
+				{
+					okText: "Delete All Leagues",
+				},
 			],
 			conditions,
 		);

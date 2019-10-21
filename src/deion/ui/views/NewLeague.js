@@ -94,6 +94,8 @@ const NewLeague = props => {
 		setPrevlid(props.lid);
 	}
 
+	const title = props.lid === undefined ? "Create New League" : "Import League";
+
 	const handleSubmit = useCallback(
 		async event => {
 			event.preventDefault();
@@ -101,6 +103,9 @@ const NewLeague = props => {
 			if (props.lid !== undefined) {
 				const result = await confirm(
 					`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
+					{
+						okText: title,
+					},
 				);
 				if (!result) {
 					return;
@@ -228,7 +233,6 @@ const NewLeague = props => {
 		[tid],
 	);
 
-	const title = props.lid === undefined ? "Create New League" : "Import League";
 	setTitle(title);
 
 	return (

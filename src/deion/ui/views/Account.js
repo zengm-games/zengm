@@ -120,6 +120,10 @@ const handleCancel = async e => {
 
 	const result = await confirm(
 		"Are you sure you want to cancel your GM Gold subscription?",
+		{
+			okText: "Yes",
+			cancelText: "No",
+		},
 	);
 
 	if (result) {

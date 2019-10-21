@@ -252,10 +252,10 @@ const Dashboard = ({ leagues }: Props) => {
 									</DropdownItem>
 									<DropdownItem
 										onClick={async () => {
-											const newName = await confirm(
-												"League name:",
-												league.name,
-											);
+											const newName = await confirm("League name:", {
+												defaultValue: "league.name",
+												okText: "Rename League",
+											});
 											if (typeof newName === "string") {
 												await toWorker("updateLeague", league.lid, {
 													name: newName,
@@ -269,6 +269,9 @@ const Dashboard = ({ leagues }: Props) => {
 										onClick={async () => {
 											const proceed = await confirm(
 												`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
+												{
+													okText: "Delete League",
+												},
 											);
 											if (proceed) {
 												await toWorker("removeLeague", league.lid);

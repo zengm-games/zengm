@@ -1317,11 +1317,8 @@ const updateGameAttributes = async (gameAttributes: GameAttributes) => {
 
 const updateLeague = async (lid: number, obj: any) => {
 	const l = await idb.meta.leagues.get(lid);
-
-	await idb.meta.leagues.put({
-		...l,
-		...obj,
-	});
+	Object.assign(l, obj);
+	await idb.meta.leagues.put(l);
 
 	await toUI(["realtimeUpdate", ["leagues"]]);
 };

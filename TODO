@@ -17,14 +17,12 @@ redesign dashboard
 - import: handle overwriting league
 - at top: prominent link to create league
   - maybe also prominent links to recently played leagues
-- created and last played dates
 - pagination
 - remove old css
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
 - team logo
 - disable table caching, always sort by LastPlayed descending
-- when to update dateLastPlayed?
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard
@@ -44,6 +42,7 @@ condensed/composite rating views
 show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
 
 better retiring logic
+- base on data - fit model from NBA stats
 
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
 

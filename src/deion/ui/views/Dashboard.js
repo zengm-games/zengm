@@ -324,26 +324,30 @@ const Dashboard = ({ leagues }: Props) => {
 				}}
 			>
 				{process.env.SPORT === "football"
-					? "Play the original, Basketball GM!"
-					: "Try the brand new Football GM!"}
+					? "Try our other game, Basketball GM!"
+					: "Try our other game, Football GM!"}
 			</a>
 
-			<div
-				className={classNames("clearfix mb-3", {
-					"mb-sm-0": !pagination,
-				})}
-			/>
+			{rows.length > 0 ? (
+				<>
+					<div
+						className={classNames("clearfix mb-3", {
+							"mb-sm-0": !pagination,
+						})}
+					/>
 
-			<DataTable
-				bordered={false}
-				cols={cols}
-				disableSettingsCache
-				defaultSort={[6, "desc"]}
-				name="Dashboard"
-				pagination={pagination}
-				small={false}
-				rows={rows}
-			/>
+					<DataTable
+						bordered={false}
+						cols={cols}
+						disableSettingsCache
+						defaultSort={[6, "desc"]}
+						name="Dashboard"
+						pagination={pagination}
+						small={false}
+						rows={rows}
+					/>
+				</>
+			) : null}
 		</>
 	);
 };

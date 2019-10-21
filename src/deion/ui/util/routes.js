@@ -34,6 +34,7 @@ const routes = () => {
 		// Non-league views
 		"/": genPage("dashboard", false),
 		"/new_league": genPage("newLeague", false),
+		"/new_league/:lid": genPage("newLeague", false),
 		"/delete_league/:lid": genPage("deleteLeague", false),
 		"/changes": genPage("changes", false),
 		"/account": genPage("account", false),

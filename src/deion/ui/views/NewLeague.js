@@ -65,10 +65,12 @@ class NewLeague extends React.Component {
 
 		this.state = {
 			creating: false,
-			customize: "random",
-			difficulty: DIFFICULTY.Normal,
+			customize: props.importLid !== undefined ? "custom-rosters" : "random",
+			difficulty:
+				props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 			leagueFile: null,
 			name: props.name,
+			importLid: props.importLid,
 			randomizeRosters: false,
 			teams: defaultTeams,
 			tid: props.lastSelectedTid,
@@ -83,6 +85,32 @@ class NewLeague extends React.Component {
 		this.handleCustomizeChange = this.handleCustomizeChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.onNewLeagueFile = this.onNewLeagueFile.bind(this);
+	}
+
+	static getDerivedStateFromProps(nextProps, prevState) {
+		if (
+			nextProps.importLid === undefined &&
+			prevState.importLid !== undefined
+		) {
+			return {
+				customize: "random",
+				difficulty: DIFFICULTY.Normal,
+				importLid: undefined,
+			};
+		}
+
+		if (
+			nextProps.importLid !== undefined &&
+			prevState.importLid === undefined
+		) {
+			return {
+				customize: "custom-rosters",
+				difficulty: nextProps.difficulty,
+				importLid: nextProps.importLid,
+			};
+		}
+
+		return null;
 	}
 
 	handleChange(name, e) {
@@ -240,17 +268,39 @@ class NewLeague extends React.Component {
 			tid,
 		} = this.state;
 
-		setTitle("Create New League");
+		const { importLid } = this.props;
+
+		const title =
+			importLid === undefined ? "Create New League" : "Import League";
+		setTitle(title);
 
 		return (
 			<>
-				<h1>Create New League</h1>
+				<h1>{title}</h1>
+
+				{importLid !== undefined ? (
+					<div className="row">
+						<div className="col-md-9 col-lg-6">
+							<p>
+								Here you can upload a league file to overwrite one of your
+								existing leagues. This works just like deleting the existing
+								league and creating a new one, it's just a little more
+								convenient for people who do that a lot.
+							</p>
+							<p>
+								If you just want to create a new league,{" "}
+								<a href="/new_league">click here</a>.
+							</p>
+						</div>
+					</div>
+				) : null}
 
 				<form onSubmit={this.handleSubmit}>
 					<div className="row">
 						<div className="form-group col-md-3 col-sm-6">
-							<label>League name</label>
+							<label htmlFor="new-league-name">League name</label>
 							<input
+								id="new-league-name"
 								className="form-control"
 								type="text"
 								value={name}
@@ -259,8 +309,9 @@ class NewLeague extends React.Component {
 						</div>
 
 						<div className="form-group col-md-3 col-sm-6">
-							<label>Pick your team</label>
+							<label htmlFor="new-league-team">Pick your team</label>
 							<select
+								id="new-league-team"
 								className="form-control mb-1"
 								value={tid}
 								onChange={this.handleChanges.tid}
@@ -277,8 +328,9 @@ class NewLeague extends React.Component {
 						</div>
 
 						<div className="form-group col-md-3 col-sm-6">
-							<label>Difficulty</label>
+							<label htmlFor="new-league-difficulty">Difficulty</label>
 							<select
+								id="new-league-difficulty"
 								className="form-control mb-1"
 								onChange={this.handleChanges.difficulty}
 								value={difficulty}
@@ -301,13 +353,16 @@ class NewLeague extends React.Component {
 
 						<div className="col-md-3 col-sm-6">
 							<div className="form-group">
-								<label>Customize</label>
+								<label htmlFor="new-league-customize">Customize</label>
 								<select
+									id="new-league-customize"
 									className="form-control mb-1"
 									onChange={this.handleCustomizeChange}
 									value={customize}
 								>
-									<option value="random">Random Players</option>
+									{importLid === undefined ? (
+										<option value="random">Random Players</option>
+									) : null}
 									<option value="custom-rosters">Upload League File</option>
 									<option value="custom-url">Enter League File URL</option>
 								</select>
@@ -370,6 +425,8 @@ class NewLeague extends React.Component {
 }
 
 NewLeague.propTypes = {
+	importLid: PropTypes.number,
+	difficulty: PropTypes.number,
 	name: PropTypes.string.isRequired,
 	lastSelectedTid: PropTypes.number.isRequired,
 };

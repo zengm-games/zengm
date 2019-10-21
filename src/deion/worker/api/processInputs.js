@@ -236,6 +236,12 @@ const negotiationList = () => {
 	}
 };
 
+const newLeague = params => {
+	return {
+		lid: params.lid !== undefined ? parseInt(params.lid, 10) : undefined,
+	};
+};
+
 const player = params => {
 	return {
 		pid: params.pid !== undefined ? parseInt(params.pid, 10) : undefined,
@@ -442,6 +448,7 @@ export default {
 	message,
 	negotiation,
 	negotiationList,
+	newLeague,
 	player,
 	playerFeats,
 	playerRatingDists: validateSeasonOnly,

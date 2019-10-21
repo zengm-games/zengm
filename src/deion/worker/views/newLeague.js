@@ -2,7 +2,28 @@
 
 import { idb } from "../db";
 
-async function updateNewLeague(): void | { [key: string]: any } {
+async function updateNewLeague({
+	lid,
+}: {
+	lid?: number,
+}): void | { [key: string]: any } {
+	console.log("hi", lid);
+	if (lid !== undefined) {
+		// Importing!
+
+		const l = await idb.meta.leagues.get(lid);
+		console.log("hi", l);
+
+		if (l) {
+			return {
+				importLid: lid,
+				difficulty: l.difficulty,
+				name: l.name,
+				lastSelectedTid: l.tid,
+			};
+		}
+	}
+
 	let newLid = null;
 
 	// Find most recent league and add one to the LID
@@ -21,6 +42,8 @@ async function updateNewLeague(): void | { [key: string]: any } {
 	}
 
 	return {
+		importLid: undefined,
+		difficulty: undefined,
 		name: `League ${newLid}`,
 		lastSelectedTid,
 	};

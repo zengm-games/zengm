@@ -235,6 +235,7 @@ const createLeague = async (
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
+	importLid?: number,
 	conditions: Conditions,
 ): Promise<number> => {
 	return league.create(
@@ -244,6 +245,7 @@ const createLeague = async (
 		startingSeason,
 		randomizeRosters,
 		difficulty,
+		importLid,
 		conditions,
 	);
 };

@@ -14,9 +14,6 @@ situational awareness
 - then new ovr formula
 
 redesign dashboard
-- import
-  - delete old league before creating new one
-  - retain old values in league object: created, lastPlayed - does this make sense?
 - at top: prominent link to create league
   - maybe also prominent links to recently played leagues
 - pagination

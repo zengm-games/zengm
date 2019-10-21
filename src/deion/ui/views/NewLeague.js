@@ -135,6 +135,7 @@ const NewLeague = props => {
 					startingSeason,
 					actualRandomizeRosters,
 					actualDifficulty,
+					props.lid,
 				);
 				realtimeUpdate([], `/l/${lid}`);
 			} catch (err) {

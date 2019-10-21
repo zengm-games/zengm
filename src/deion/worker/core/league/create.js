@@ -5,6 +5,7 @@ import range from "lodash/range";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
 import { draft, finances, freeAgents, league, player, team } from "..";
+import remove from "./remove";
 import {
 	defaultGameAttributes,
 	g,
@@ -720,6 +721,7 @@ const create = async (
 	startingSeason: number,
 	randomizeRosters: boolean = false,
 	difficulty: number,
+	importLid?: number,
 	conditions: Conditions,
 ): Promise<number> => {
 	await idb.meta.attributes.put(tid, "lastSelectedTid");
@@ -745,7 +747,7 @@ const create = async (
 
 	const userTid = leagueData.gameAttributes.userTid;
 
-	const lid = await idb.meta.leagues.add({
+	const l = {
 		name,
 		tid: userTid,
 		phaseText,
@@ -756,7 +758,15 @@ const create = async (
 		difficulty,
 		created: new Date(),
 		lastPlayed: new Date(),
-	});
+	};
+	if (importLid !== undefined) {
+		const oldLeague = await idb.meta.leagues.get(importLid);
+		await remove(importLid);
+		l.lid = importLid;
+		l.created = oldLeague.created;
+	}
+
+	const lid = await idb.meta.leagues.add(l);
 	idb.league = await connectLeague(lid);
 
 	// These wouldn't be needed here, except the beforeView logic is fucked up

@@ -66,6 +66,7 @@ const Controls = ({
 						paddingLeft: 5,
 					}}
 					tag="span"
+					title="Actions"
 				>
 					<span className="glyphicon glyphicon-option-vertical text-muted" />
 				</DropdownToggle>

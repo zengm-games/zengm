@@ -3,6 +3,10 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import ago from "s-ago";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
@@ -231,48 +235,42 @@ const Dashboard = ({ leagues }: Props) => {
 				{
 					classNames: "dashboard-controls",
 					value: (
-						<div className="btn-group btn-group-sm">
-							<a
-								className={classNames("btn btn-light-bordered", {
-									disabled: loadingLID !== undefined,
-								})}
-								href={`/new_league/${league.lid}`}
-							>
-								Import
-							</a>
-							<a
-								className={classNames("btn btn-light-bordered", {
-									disabled: loadingLID !== undefined,
-								})}
-								href={`/l/${league.lid}/export_league`}
-								onClick={() => setLoadingLID(league.lid)}
-							>
-								Export
-							</a>
-							<a
-								className={classNames("btn btn-light-bordered cursor-pointer", {
-									disabled: loadingLID !== undefined,
-								})}
-								onClick={async () => {
-									const newName = await confirm("League name:", league.name);
-									if (typeof newName === "string") {
-										await toWorker("updateLeague", league.lid, {
-											name: newName,
-										});
-									}
-								}}
-							>
-								Rename
-							</a>
-							<a
-								className={classNames("btn btn-light-bordered", {
-									disabled: loadingLID !== undefined,
-								})}
-								href={`/delete_league/${league.lid}`}
-							>
-								Delete
-							</a>
-						</div>
+						<UncontrolledDropdown>
+							<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
+								<span className="glyphicon glyphicon-option-vertical text-muted" />
+							</DropdownToggle>
+							{loadingLID === undefined ? (
+								<DropdownMenu right>
+									<DropdownItem href={`/new_league/${league.lid}`}>
+										Import
+									</DropdownItem>
+									<DropdownItem
+										href={`/l/${league.lid}/export_league`}
+										onClick={() => setLoadingLID(league.lid)}
+									>
+										Export
+									</DropdownItem>
+									<DropdownItem
+										onClick={async () => {
+											const newName = await confirm(
+												"League name:",
+												league.name,
+											);
+											if (typeof newName === "string") {
+												await toWorker("updateLeague", league.lid, {
+													name: newName,
+												});
+											}
+										}}
+									>
+										Rename
+									</DropdownItem>
+									<DropdownItem href={`/delete_league/${league.lid}`}>
+										Delete
+									</DropdownItem>
+								</DropdownMenu>
+							) : null}
+						</UncontrolledDropdown>
 					),
 				},
 			],

@@ -21,7 +21,7 @@ redesign dashboard
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
 - disable table caching, always sort by LastPlayed descending
-- controls behind 3 dots, like spreadsheet option
+- get rid of dedicated delete page, just move to dashboard
 - blog
   - dates
   - import

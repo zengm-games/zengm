@@ -14,11 +14,7 @@ situational awareness
 - then new ovr formula
 
 redesign dashboard
-- at top: prominent link to create league
-  - maybe also prominent links to recently played leagues
 - pagination
-- remove old css
-- horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
 - blog
   - dates

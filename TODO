@@ -15,6 +15,7 @@ situational awareness
 
 redesign dashboard
 - import
+  - add confirmation dialog after clicking "Import"
   - delete old league before creating new one
   - retain old values in league object: created, lastPlayed - does this make sense?
 - at top: prominent link to create league

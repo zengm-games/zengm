@@ -16,7 +16,7 @@ async function updateNewLeague({
 
 		if (l) {
 			return {
-				importLid: lid,
+				lid,
 				difficulty: l.difficulty,
 				name: l.name,
 				lastSelectedTid: l.tid,
@@ -42,7 +42,7 @@ async function updateNewLeague({
 	}
 
 	return {
-		importLid: undefined,
+		lid: undefined,
 		difficulty: undefined,
 		name: `League ${newLid}`,
 		lastSelectedTid,

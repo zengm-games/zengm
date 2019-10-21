@@ -40,7 +40,7 @@ const Controls = ({
 				</p>
 			</HelpPopover>
 			<a
-				className={classNames("btn btn-sm btn-light-bordered", {
+				className={classNames("btn btn-sm btn-light-bordered cursor-pointer", {
 					active: enableFilters,
 				})}
 				onClick={onToggleFilters}

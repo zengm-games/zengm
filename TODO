@@ -15,7 +15,6 @@ situational awareness
 
 redesign dashboard
 - import
-  - add confirmation dialog after clicking "Import"
   - delete old league before creating new one
   - retain old values in league object: created, lastPlayed - does this make sense?
 - at top: prominent link to create league
@@ -25,6 +24,11 @@ redesign dashboard
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
 - disable table caching, always sort by LastPlayed descending
+- controls behind 3 dots, like spreadsheet option
+- blog
+  - dates
+  - import
+  - rename
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard

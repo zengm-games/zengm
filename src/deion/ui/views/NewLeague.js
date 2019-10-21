@@ -2,7 +2,14 @@ import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
-import { helpers, logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
+import {
+	confirm,
+	helpers,
+	logEvent,
+	realtimeUpdate,
+	setTitle,
+	toWorker,
+} from "../util";
 
 const PopText = ({ teams, tid }) => {
 	if (tid >= 0) {
@@ -90,6 +97,16 @@ const NewLeague = props => {
 	const handleSubmit = useCallback(
 		async event => {
 			event.preventDefault();
+
+			if (props.lid !== undefined) {
+				const result = await confirm(
+					`Are you sure you want to import this league? All the data currently in "${props.name}" will be overwritten.`,
+				);
+				if (!result) {
+					return;
+				}
+			}
+
 			setCreating(true);
 
 			let startingSeason = 2019;
@@ -131,7 +148,16 @@ const NewLeague = props => {
 				});
 			}
 		},
-		[customize, difficulty, leagueFile, name, randomizeRosters, tid],
+		[
+			customize,
+			difficulty,
+			leagueFile,
+			name,
+			props.lid,
+			props.name,
+			randomizeRosters,
+			tid,
+		],
 	);
 
 	const handleNewLeagueFile = useCallback(

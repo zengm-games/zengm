@@ -13,7 +13,6 @@ export { default as env } from "./env";
 export { default as face } from "./face";
 export { default as g } from "./g";
 export { default as genMessage } from "./genMessage";
-export { default as getLocalISODateString } from "./getLocalISODateString";
 export { default as getProcessedGames } from "./getProcessedGames";
 export { default as getTeamColors } from "./getTeamColors";
 export { default as helpers } from "./helpers";

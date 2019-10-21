@@ -4,7 +4,7 @@ import backboard from "backboard";
 import { PLAYER } from "../../common";
 import { idb } from ".";
 import cmp from "./cmp";
-import { g, getLocalISODateString, local, lock } from "../util";
+import { g, local, lock } from "../util";
 import type {
 	BackboardTx,
 	DraftLotteryResult,
@@ -683,14 +683,11 @@ class Cache {
 		if (this._dirty) {
 			this._dirty = false;
 
-			// Update dateLastPlayed
+			// Update lastPlayed
 			const l = await idb.meta.leagues.get(g.lid);
 			if (l) {
-				const dateLastPlayed = getLocalISODateString();
-				if (l.dateLastPlayed !== dateLastPlayed) {
-					l.dateLastPlayed = dateLastPlayed;
-					await idb.meta.leagues.put(l);
-				}
+				l.lastPlayed = new Date();
+				await idb.meta.leagues.put(l);
 			}
 		}
 		//performance.measure('flushTime', 'flushStart');

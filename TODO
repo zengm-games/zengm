@@ -25,6 +25,7 @@ redesign dashboard
 - disable table caching, always sort by LastPlayed descending
 - store date objects. format in UI - display human readable "ago" with timestamp tooltip, and use timestamp for sorting. then sorting will work in more detail
   - dateString still needed?
+- lastUpdated and created in league export/import
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely
 - e.g. new dashboard

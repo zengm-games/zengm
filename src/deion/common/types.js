@@ -185,8 +185,8 @@ export type League = {|
 	heartbeatTimestamp?: number,
 	difficulty?: number,
 	starred?: boolean,
-	dateCreated?: string,
-	dateLastPlayed?: string,
+	created?: Date,
+	lastPlayed?: Date,
 |};
 
 export type Locks = {|

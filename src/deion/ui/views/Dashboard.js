@@ -297,6 +297,8 @@ const Dashboard = ({ leagues }: Props) => {
 		};
 	});
 
+	const pagination = rows.length > 100;
+
 	return (
 		<>
 			<a
@@ -326,7 +328,11 @@ const Dashboard = ({ leagues }: Props) => {
 					: "Try the brand new Football GM!"}
 			</a>
 
-			<div className="clearfix mb-3 mb-sm-0" />
+			<div
+				className={classNames("clearfix mb-3", {
+					"mb-sm-0": !pagination,
+				})}
+			/>
 
 			<DataTable
 				bordered={false}
@@ -334,6 +340,7 @@ const Dashboard = ({ leagues }: Props) => {
 				disableSettingsCache
 				defaultSort={[6, "desc"]}
 				name="Dashboard"
+				pagination={pagination}
 				small={false}
 				rows={rows}
 			/>

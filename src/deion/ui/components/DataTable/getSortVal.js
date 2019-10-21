@@ -97,13 +97,6 @@ const getSortVal = (value: any = null, sortType: SortType | void) => {
 
 			return 0;
 		}
-		if (sortType === "dateString") {
-			// Move null/undefined to the end. Besides that, alphabetical
-			if (sortVal == null) {
-				return "0";
-			}
-			return sortVal;
-		}
 		return sortVal;
 	} catch (err) {
 		console.error(

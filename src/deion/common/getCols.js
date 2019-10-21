@@ -1229,7 +1229,7 @@ const cols: {
 	Created: {
 		desc: "Created Date",
 		sortSequence: ["desc", "asc"],
-		sortType: "dateString",
+		sortType: "number",
 	},
 	"Current Contract": {
 		sortSequence: ["desc", "asc"],
@@ -1280,7 +1280,7 @@ const cols: {
 	"Last Played": {
 		desc: "Last Played Date",
 		sortSequence: ["desc", "asc"],
-		sortType: "dateString",
+		sortType: "number",
 	},
 	"Last Playoffs": {
 		sortType: "number",

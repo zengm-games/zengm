@@ -3,6 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
+import ago from "s-ago";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
 import { confirm, getCols, setTitle, toWorker } from "../util";
@@ -178,6 +179,14 @@ const LeagueName = ({
 	);
 };
 
+const Ago = ({ date }: { date?: Date }) => {
+	if (date) {
+		return ago(date);
+	}
+
+	return null;
+};
+
 type Props = {
 	leagues: League[],
 };
@@ -230,8 +239,16 @@ const Dashboard = ({ leagues }: Props) => {
 				`${league.teamRegion} ${league.teamName}`,
 				league.phaseText,
 				<DifficultyText>{league.difficulty}</DifficultyText>,
-				league.created ? league.created.toISOString() : null,
-				league.lastPlayed ? league.lastPlayed.toISOString() : null,
+				<Ago date={league.created}>
+					{league.created && league.created.getTime
+						? league.created.getTime()
+						: 0}
+				</Ago>,
+				<Ago date={league.lastPlayed}>
+					{league.lastPlayed && league.lastPlayed.getTime
+						? league.lastPlayed.getTime()
+						: 0}
+				</Ago>,
 				{
 					classNames: "dashboard-controls",
 					value: (

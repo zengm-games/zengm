@@ -537,7 +537,6 @@ export type SortOrder = "asc" | "desc";
 
 export type SortType =
 	| "currency"
-	| "dateString"
 	| "draftPick"
 	| "lastTen"
 	| "name"

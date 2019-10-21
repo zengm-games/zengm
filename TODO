@@ -24,7 +24,6 @@ redesign dashboard
 - remove old css
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
-- team logo
 - disable table caching, always sort by LastPlayed descending
 
 table-responsive bottom padding is too much, or is nested enough that it can't fit in nicely

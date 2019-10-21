@@ -147,19 +147,9 @@ const LeagueName = ({
 	loadingLID?: number,
 	setLoadingLID: (number | void) => void,
 }) => {
-	const handleEdit = useCallback(async () => {
-		const newName = await confirm("League name:", name);
-		if (typeof newName === "string") {
-			await toWorker("updateLeague", lid, {
-				name: newName,
-			});
-		}
-	}, [lid, name]);
-
 	return (
 		<div className="d-flex align-items-center">
-			<Star lid={lid} starred={starred} />
-			<div className="flex-grow-1 mx-2">
+			<div className="mr-2">
 				{loadingLID === undefined ? (
 					<a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
 						{name}
@@ -168,13 +158,7 @@ const LeagueName = ({
 					name
 				)}
 			</div>
-			<span
-				className="glyphicon glyphicon-edit text-muted"
-				data-no-row-highlight="true"
-				style={glyphiconStyle}
-				onClick={handleEdit}
-				title="Edit Name"
-			/>
+			<Star lid={lid} starred={starred} />
 		</div>
 	);
 };
@@ -223,19 +207,14 @@ const Dashboard = ({ leagues }: Props) => {
 						/>
 					),
 				},
-				{
-					classNames: "dashboard-controls",
-					value: (
-						<LeagueName
-							lid={league.lid}
-							starred={league.starred}
-							loadingLID={loadingLID}
-							setLoadingLID={setLoadingLID}
-						>
-							{league.name}
-						</LeagueName>
-					),
-				},
+				<LeagueName
+					lid={league.lid}
+					starred={league.starred}
+					loadingLID={loadingLID}
+					setLoadingLID={setLoadingLID}
+				>
+					{league.name}
+				</LeagueName>,
 				`${league.teamRegion} ${league.teamName}`,
 				league.phaseText,
 				<DifficultyText>{league.difficulty}</DifficultyText>,
@@ -269,6 +248,21 @@ const Dashboard = ({ leagues }: Props) => {
 								onClick={() => setLoadingLID(league.lid)}
 							>
 								Export
+							</a>
+							<a
+								className={classNames("btn btn-light-bordered cursor-pointer", {
+									disabled: loadingLID !== undefined,
+								})}
+								onClick={async () => {
+									const newName = await confirm("League name:", league.name);
+									if (typeof newName === "string") {
+										await toWorker("updateLeague", league.lid, {
+											name: newName,
+										});
+									}
+								}}
+							>
+								Rename
 							</a>
 							<a
 								className={classNames("btn btn-light-bordered", {

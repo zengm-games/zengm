@@ -12,6 +12,7 @@ import Info from "./Info";
 import Row from "./Row";
 import Pagination from "./Pagination";
 import PerPage from "./PerPage";
+import SettingsCache from "./SettingsCache";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
@@ -41,6 +42,7 @@ export type Props = {
 	className?: string,
 	cols: Col[],
 	defaultSort: SortBy,
+	disableSettingsCache?: boolean,
 	footer?: any[],
 	hideAllControls?: boolean,
 	name: string,
@@ -77,6 +79,8 @@ class DataTable extends React.Component<Props, State> {
 
 	handleSearch: Function;
 
+	settingsCache: SettingsCache;
+
 	constructor(props: Props) {
 		super(props);
 
@@ -98,6 +102,11 @@ class DataTable extends React.Component<Props, State> {
 		this.handlePagination = this.handlePagination.bind(this);
 		this.handlePerPage = this.handlePerPage.bind(this);
 		this.handleSearch = this.handleSearch.bind(this);
+
+		this.settingsCache = new SettingsCache(
+			props.name,
+			!!props.disableSettingsCache,
+		);
 	}
 
 	handleColClick(event: SyntheticKeyboardEvent<>, i: number) {
@@ -154,10 +163,7 @@ class DataTable extends React.Component<Props, State> {
 			sortBys = [[i, col.sortSequence ? col.sortSequence[0] : "asc"]];
 		}
 
-		localStorage.setItem(
-			`DataTableSort:${this.props.name}`,
-			JSON.stringify(sortBys),
-		);
+		this.settingsCache.set("DataTableSort", sortBys);
 
 		this.setState({
 			currentPage: 1,
@@ -191,12 +197,9 @@ class DataTable extends React.Component<Props, State> {
 	handleToggleFilters() {
 		// Remove filter cache if hiding, add filter cache if displaying
 		if (this.state.enableFilters) {
-			localStorage.removeItem(`DataTableFilters:${this.props.name}`);
+			this.settingsCache.clear("DataTableFilters");
 		} else {
-			localStorage.setItem(
-				`DataTableFilters:${this.props.name}`,
-				JSON.stringify(this.state.filters),
-			);
+			this.settingsCache.set("DataTableFilters", this.state.filters);
 		}
 
 		this.setState(prevState => ({
@@ -212,10 +215,7 @@ class DataTable extends React.Component<Props, State> {
 			filters,
 		});
 
-		localStorage.setItem(
-			`DataTableFilters:${this.props.name}`,
-			JSON.stringify(filters),
-		);
+		this.settingsCache.set("DataTableFilters", filters);
 	}
 
 	handlePagination(newPage: number) {
@@ -268,10 +268,11 @@ class DataTable extends React.Component<Props, State> {
 			}
 		}
 		if (changed) {
-			localStorage.setItem(
-				`DataTableFilters:${nextProps.name}`,
-				JSON.stringify(filters),
+			const settingsCache = new SettingsCache(
+				nextProps.name,
+				!!nextProps.disableSettingsCache,
 			);
+			settingsCache.set("DataTableFilters", filters);
 			Object.assign(updatedState, {
 				enableFilters: true,
 				filters,
@@ -504,6 +505,7 @@ DataTable.propTypes = {
 	defaultSort: PropTypes.arrayOf(
 		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	).isRequired,
+	disableSettingsCache: PropTypes.bool,
 	footer: PropTypes.array,
 	name: PropTypes.string.isRequired,
 	nonfluid: PropTypes.bool,

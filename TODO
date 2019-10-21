@@ -20,7 +20,6 @@ redesign dashboard
 - remove old css
 - horizontal scrollbar from dashboard-boxes
 - special UI for when there are no leagues
-- disable table caching, always sort by LastPlayed descending
 - blog
   - dates
   - import

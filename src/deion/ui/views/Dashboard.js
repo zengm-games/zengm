@@ -337,6 +337,7 @@ const Dashboard = ({ leagues }: Props) => {
 			<DataTable
 				bordered={false}
 				cols={cols}
+				disableSettingsCache
 				defaultSort={[6, "desc"]}
 				name="Dashboard"
 				small={false}

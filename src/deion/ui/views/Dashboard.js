@@ -69,26 +69,24 @@ DifficultyText.propTypes = {
 
 const PlayButton = ({
 	lid,
-	loadingLID,
-	setLoadingLID,
+	disabled,
+	throbbing,
+	onClick,
 }: {
 	lid: number,
-	loadingLID?: number,
-	setLoadingLID: (number | void) => void,
+	disabled: boolean,
+	throbbing: boolean,
+	onClick: () => void,
 }) => {
-	if (loadingLID === undefined) {
+	if (!disabled && !throbbing) {
 		return (
-			<a
-				className="btn btn-success"
-				href={`/l/${lid}`}
-				onClick={() => setLoadingLID(lid)}
-			>
+			<a className="btn btn-success" href={`/l/${lid}`} onClick={onClick}>
 				Play
 			</a>
 		);
 	}
 
-	if (loadingLID === lid) {
+	if (throbbing) {
 		return (
 			<button className="btn btn-success dashboard-play-loading">Play</button>
 		);
@@ -142,20 +140,20 @@ const LeagueName = ({
 	lid,
 	children: name,
 	starred,
-	loadingLID,
-	setLoadingLID,
+	disabled,
+	onClick,
 }: {
 	lid: number,
 	children: string,
 	starred?: boolean,
-	loadingLID?: number,
-	setLoadingLID: (number | void) => void,
+	disabled: boolean,
+	onClick: () => void,
 }) => {
 	return (
 		<div className="d-flex align-items-center">
 			<div className="mr-2">
-				{loadingLID === undefined ? (
-					<a href={`/l/${lid}`} onClick={() => setLoadingLID(lid)}>
+				{!disabled ? (
+					<a href={`/l/${lid}`} onClick={onClick}>
 						{name}
 					</a>
 				) : (
@@ -181,6 +179,7 @@ type Props = {
 
 const Dashboard = ({ leagues }: Props) => {
 	const [loadingLID, setLoadingLID] = useState<number | void>();
+	const [deletingLID, setDeletingLID] = useState<number | void>();
 
 	setTitle("Dashboard");
 
@@ -198,6 +197,9 @@ const Dashboard = ({ leagues }: Props) => {
 	cols[7].width = "1%";
 
 	const rows = leagues.map(league => {
+		const disabled = deletingLID !== undefined || loadingLID !== undefined;
+		const throbbing = loadingLID === league.lid;
+
 		return {
 			key: league.lid,
 			data: [
@@ -206,16 +208,17 @@ const Dashboard = ({ leagues }: Props) => {
 					value: (
 						<PlayButton
 							lid={league.lid}
-							loadingLID={loadingLID}
-							setLoadingLID={setLoadingLID}
+							disabled={disabled}
+							throbbing={throbbing}
+							onClick={() => setLoadingLID(league.lid)}
 						/>
 					),
 				},
 				<LeagueName
 					lid={league.lid}
 					starred={league.starred}
-					loadingLID={loadingLID}
-					setLoadingLID={setLoadingLID}
+					disabled={disabled}
+					onClick={() => setLoadingLID(league.lid)}
 				>
 					{league.name}
 				</LeagueName>,
@@ -237,9 +240,12 @@ const Dashboard = ({ leagues }: Props) => {
 					value: (
 						<UncontrolledDropdown>
 							<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
-								<span className="glyphicon glyphicon-option-vertical text-muted" />
+								<span
+									className="glyphicon glyphicon-option-vertical text-muted"
+									data-no-row-highlight="true"
+								/>
 							</DropdownToggle>
-							{loadingLID === undefined ? (
+							{!disabled ? (
 								<DropdownMenu right>
 									<DropdownItem href={`/new_league/${league.lid}`}>
 										Import
@@ -253,7 +259,7 @@ const Dashboard = ({ leagues }: Props) => {
 									<DropdownItem
 										onClick={async () => {
 											const newName = await confirm("League name:", {
-												defaultValue: "league.name",
+												defaultValue: league.name,
 												okText: "Rename League",
 											});
 											if (typeof newName === "string") {
@@ -274,7 +280,9 @@ const Dashboard = ({ leagues }: Props) => {
 												},
 											);
 											if (proceed) {
+												setDeletingLID(league.lid);
 												await toWorker("removeLeague", league.lid);
+												setDeletingLID();
 											}
 										}}
 									>

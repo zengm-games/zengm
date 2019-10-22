@@ -509,7 +509,7 @@ const NavBar = ({ pageID, updating }: Props) => {
 					<PlayMenu lid={lid} options={playMenuOptions} />
 				</div>
 				<Popover
-					placement="right"
+					placement="bottom"
 					isOpen={!hasViewedALeague && lid === 1}
 					target="play-menu"
 					toggle={() => {

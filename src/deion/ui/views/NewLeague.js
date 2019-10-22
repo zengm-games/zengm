@@ -163,6 +163,7 @@ const NewLeague = props => {
 			props.name,
 			randomizeRosters,
 			tid,
+			title,
 		],
 	);
 

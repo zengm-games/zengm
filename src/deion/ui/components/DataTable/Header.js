@@ -21,12 +21,14 @@ const FilterHeader = ({
 
 				return (
 					<th key={i}>
-						<input
-							className="datatable-filter-input"
-							onChange={event => handleFilterUpdate(event, i)}
-							type="text"
-							value={filter}
-						/>
+						{col.noSearch ? null : (
+							<input
+								className="datatable-filter-input"
+								onChange={event => handleFilterUpdate(event, i)}
+								type="text"
+								value={filter}
+							/>
+						)}
 					</th>
 				);
 			})}

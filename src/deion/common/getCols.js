@@ -6,6 +6,7 @@ import type { Col } from "../ui/components/DataTable";
 
 type ColTemp = {
 	desc?: string,
+	noSearch?: boolean,
 	sortSequence?: SortOrder[],
 	sortType?: SortType,
 };
@@ -1136,7 +1137,8 @@ const cols: {
 	[key: string]: Col,
 } = {
 	"": {
-		sortSequence: ["desc", "asc"],
+		noSearch: true,
+		sortSequence: [],
 	},
 	"#": {},
 	"#AS": {
@@ -1241,6 +1243,7 @@ const cols: {
 	},
 	Division: {},
 	Draft: {
+		noSearch: true,
 		sortSequence: [],
 	},
 	"Draft Picks": {
@@ -1302,7 +1305,9 @@ const cols: {
 	Name: {
 		sortType: "name",
 	},
-	Negotiate: {},
+	Negotiate: {
+		noSearch: true,
+	},
 	O: {
 		desc: "Overall",
 		sortType: "number",
@@ -1388,6 +1393,7 @@ const cols: {
 	},
 	X: {
 		desc: "Exclude from counter offers",
+		noSearch: true,
 		sortSequence: [],
 	},
 	Year: {},

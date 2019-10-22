@@ -25,6 +25,7 @@ export type SortBy = [number, SortOrder];
 export type Col = {
 	classNames?: any,
 	desc?: string,
+	noSearch?: boolean,
 	sortSequence?: SortOrder[],
 	sortType?: SortType,
 	title: string,

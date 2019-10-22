@@ -19,10 +19,7 @@ DataTable
   - NegotiateButtons (search for negotiate/refuses)
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
-- filtering
-  - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
-    - also... Play button and Actions on Dashboard
-    - Trade and Trading Block
+- noSearch should affect the global DataTable search too, not just presence of filter boxes
 
 redesign dashboard
 - blog

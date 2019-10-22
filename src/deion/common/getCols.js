@@ -2,20 +2,12 @@
 
 import { helpers } from ".";
 import type { SortOrder, SortType } from "./types";
+import type { Col } from "../ui/components/DataTable";
 
 type ColTemp = {
 	desc?: string,
 	sortSequence?: SortOrder[],
 	sortType?: SortType,
-};
-
-type Col = {
-	classNames?: any,
-	desc?: string,
-	sortSequence?: SortOrder[],
-	sortType?: SortType,
-	title: string,
-	width?: string,
 };
 
 const sportSpecificCols: {

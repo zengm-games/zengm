@@ -183,6 +183,10 @@ a.god-mode,
 	animation: oscillate-bg 1.5s infinite;
 }
 
+.dashboard-table table td {
+	vertical-align: inherit;
+}
+
 @keyframes oscillate-bg {
 	0% {
 		background-color: lighten($success, 7);

@@ -80,7 +80,11 @@ const PlayButton = ({
 }) => {
 	if (!disabled && !throbbing) {
 		return (
-			<a className="btn btn-success" href={`/l/${lid}`} onClick={onClick}>
+			<a
+				className="btn btn-lg btn-success"
+				href={`/l/${lid}`}
+				onClick={onClick}
+			>
 				Play
 			</a>
 		);
@@ -88,12 +92,14 @@ const PlayButton = ({
 
 	if (throbbing) {
 		return (
-			<button className="btn btn-success dashboard-play-loading">Play</button>
+			<button className="btn btn-lg btn-success dashboard-play-loading">
+				Play
+			</button>
 		);
 	}
 
 	return (
-		<button className="btn btn-success" disabled>
+		<button className="btn btn-lg btn-success" disabled>
 			Play
 		</button>
 	);
@@ -117,7 +123,7 @@ const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
 	if (actuallyStarred) {
 		return (
 			<span
-				className="glyphicon glyphicon-star text-primary"
+				className="glyphicon glyphicon-star p-1 text-primary"
 				data-no-row-highlight="true"
 				onClick={toggle}
 				style={glyphiconStyle}
@@ -127,7 +133,7 @@ const Star = ({ lid, starred }: { lid: number, starred?: boolean }) => {
 
 	return (
 		<span
-			className="glyphicon glyphicon-star-empty text-muted"
+			className="glyphicon glyphicon-star-empty p-1 text-muted"
 			data-no-row-highlight="true"
 			onClick={toggle}
 			style={glyphiconStyle}
@@ -151,7 +157,7 @@ const LeagueName = ({
 }) => {
 	return (
 		<div className="d-flex align-items-center">
-			<div className="mr-2">
+			<div className="mr-1">
 				{!disabled ? (
 					<a href={`/l/${lid}`} onClick={onClick}>
 						{name}
@@ -206,17 +212,12 @@ const Dashboard = ({ leagues }: Props) => {
 		return {
 			key: league.lid,
 			data: [
-				{
-					classNames: "dashboard-controls",
-					value: (
-						<PlayButton
-							lid={league.lid}
-							disabled={disabled}
-							throbbing={throbbing}
-							onClick={() => setLoadingLID(league.lid)}
-						/>
-					),
-				},
+				<PlayButton
+					lid={league.lid}
+					disabled={disabled}
+					throbbing={throbbing}
+					onClick={() => setLoadingLID(league.lid)}
+				/>,
 				<LeagueName
 					lid={league.lid}
 					starred={league.starred}
@@ -238,64 +239,59 @@ const Dashboard = ({ leagues }: Props) => {
 						? league.lastPlayed.getTime()
 						: 0}
 				</Ago>,
-				{
-					classNames: "dashboard-controls",
-					value: (
-						<UncontrolledDropdown style={dropdownStyle}>
-							<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
-								<span
-									className="glyphicon glyphicon-option-vertical text-muted"
-									data-no-row-highlight="true"
-								/>
-							</DropdownToggle>
-							{!disabled ? (
-								<DropdownMenu right>
-									<DropdownItem href={`/new_league/${league.lid}`}>
-										Import
-									</DropdownItem>
-									<DropdownItem
-										href={`/l/${league.lid}/export_league`}
-										onClick={() => setLoadingLID(league.lid)}
-									>
-										Export
-									</DropdownItem>
-									<DropdownItem
-										onClick={async () => {
-											const newName = await confirm("League name:", {
-												defaultValue: league.name,
-												okText: "Rename League",
-											});
-											if (typeof newName === "string") {
-												await toWorker("updateLeague", league.lid, {
-													name: newName,
-												});
-											}
-										}}
-									>
-										Rename
-									</DropdownItem>
-									<DropdownItem
-										onClick={async () => {
-											const proceed = await confirm(
-												`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
-												{
-													okText: "Delete League",
-												},
-											);
-											if (proceed) {
-												setDeletingLID(league.lid);
-												await toWorker("removeLeague", league.lid);
-												setDeletingLID();
-											}
-										}}
-									>
-										Delete
-									</DropdownItem>
-								</DropdownMenu>
-							) : null}
-						</UncontrolledDropdown>
-					),
-				},
+				<UncontrolledDropdown style={dropdownStyle}>
+					<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
+						<span
+							className="glyphicon glyphicon-option-vertical text-muted p-2"
+							data-no-row-highlight="true"
+						/>
+					</DropdownToggle>
+					{!disabled ? (
+						<DropdownMenu right>
+							<DropdownItem href={`/new_league/${league.lid}`}>
+								Import
+							</DropdownItem>
+							<DropdownItem
+								href={`/l/${league.lid}/export_league`}
+								onClick={() => setLoadingLID(league.lid)}
+							>
+								Export
+							</DropdownItem>
+							<DropdownItem
+								onClick={async () => {
+									const newName = await confirm("League name:", {
+										defaultValue: league.name,
+										okText: "Rename League",
+									});
+									if (typeof newName === "string") {
+										await toWorker("updateLeague", league.lid, {
+											name: newName,
+										});
+									}
+								}}
+							>
+								Rename
+							</DropdownItem>
+							<DropdownItem
+								onClick={async () => {
+									const proceed = await confirm(
+										`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
+										{
+											okText: "Delete League",
+										},
+									);
+									if (proceed) {
+										setDeletingLID(league.lid);
+										await toWorker("removeLeague", league.lid);
+										setDeletingLID();
+									}
+								}}
+							>
+								Delete
+							</DropdownItem>
+						</DropdownMenu>
+					) : null}
+				</UncontrolledDropdown>,
 			],
 		};
 	});
@@ -342,6 +338,7 @@ const Dashboard = ({ leagues }: Props) => {
 					<DataTable
 						bordered={false}
 						cols={cols}
+						className="dashboard-table"
 						disableSettingsCache
 						defaultSort={[6, "desc"]}
 						name="Dashboard"

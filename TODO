@@ -19,7 +19,6 @@ DataTable
   - NegotiateButtons (search for negotiate/refuses)
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
-- noSearch should affect the global DataTable search too, not just presence of filter boxes
 
 redesign dashboard
 - blog

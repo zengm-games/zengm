@@ -319,6 +319,10 @@ class DataTable extends React.Component<Props, State> {
 					if (this.state.searchText !== "") {
 						let found = false;
 						for (let i = 0; i < row.data.length; i++) {
+							if (this.props.cols[i].noSearch) {
+								continue;
+							}
+
 							if (getSearchVal(row.data[i]).includes(this.state.searchText)) {
 								found = true;
 								break;
@@ -333,6 +337,10 @@ class DataTable extends React.Component<Props, State> {
 					// Filter
 					if (this.state.enableFilters) {
 						for (let i = 0; i < row.data.length; i++) {
+							if (this.props.cols[i].noSearch) {
+								continue;
+							}
+
 							const filter = filters[i];
 
 							if (typeof filter === "string") {

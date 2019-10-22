@@ -1222,6 +1222,7 @@ const cols: {
 	Country: {},
 	Created: {
 		desc: "Created Date",
+		noSearch: true,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1274,6 +1275,7 @@ const cols: {
 	},
 	"Last Played": {
 		desc: "Last Played Date",
+		noSearch: true,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

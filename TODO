@@ -13,18 +13,13 @@ situational awareness
 - timeouts to advance ball (shorter possession) or make subs
 - then new ovr formula
 
-DataTable
-- better DataTable sorting (don't use hack of looking at child, allow manual specification of overries for searching and sorting)
-  - DraftAbbrev
-  - NegotiateButtons (search for negotiate/refuses)
-  - sorting by skills on draft history
-  - Dashboard -> Ago (needs different search and sort values!)
-
-redesign dashboard
-- blog
-  - dates
-  - import
-  - rename
+injury stuff
+- injury history
+- log of ratings changes
+- older players get injured more
+- injury history leads to chance of reinjury
+- slowly ramp endurance up after injury
+  - really, the injury should just impact endurance and odds of reinjury. if you want to force someone to play through an injury, go for it
 
 global key info (salary, days until playoffs, team  etc)
 - league info: days until playoffs, standings/series
@@ -94,6 +89,8 @@ game highs
 - somehow show in stats page
 - store in normal player stats object (like Lng in football)
 
+add another season option to team stats, player stats, and leaders: All Seasons
+
 refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 basketball gamesim - too many plays happen right at 0
@@ -157,6 +154,13 @@ confirm subscription works from football-gm.com
 redo pot formulas?
 
 ---
+
+DataTable
+- better DataTable sorting (don't use hack of looking at child, allow manual specification of overries for searching and sorting)
+  - DraftAbbrev
+  - NegotiateButtons (search for negotiate/refuses)
+  - sorting by skills on draft history
+  - Dashboard -> Ago (needs different search and sort values!)
 
 why is free agency so slow?
 

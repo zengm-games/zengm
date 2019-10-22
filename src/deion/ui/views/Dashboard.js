@@ -173,7 +173,7 @@ const LeagueName = ({
 
 const Ago = ({ date }: { date?: Date }) => {
 	if (date) {
-		return ago(date);
+		return <span title={date}>{ago(date)}</span>;
 	}
 
 	return null;

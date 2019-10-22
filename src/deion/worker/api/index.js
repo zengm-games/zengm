@@ -1288,6 +1288,8 @@ const switchTeam = async (tid: number) => {
 		g.teamNamesCache[g.userTid],
 		g.teamRegionsCache[g.userTid],
 	);
+
+	await toUI(["realtimeUpdate", ["leagues"]]);
 };
 
 const updateBudget = async (budgetAmounts: {

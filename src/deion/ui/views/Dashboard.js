@@ -173,6 +173,9 @@ const Ago = ({ date }: { date?: Date }) => {
 	return null;
 };
 
+// https://stackoverflow.com/a/47417545/786644 hack because of overflow-x in table-responsive, otherwise menu gets chopped off if table has few rows
+const dropdownStyle = { position: "static" };
+
 type Props = {
 	leagues: League[],
 };
@@ -238,7 +241,7 @@ const Dashboard = ({ leagues }: Props) => {
 				{
 					classNames: "dashboard-controls",
 					value: (
-						<UncontrolledDropdown>
+						<UncontrolledDropdown style={dropdownStyle}>
 							<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
 								<span
 									className="glyphicon glyphicon-option-vertical text-muted"

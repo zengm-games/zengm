@@ -12,14 +12,17 @@ situational awareness
 - sub in good FT shooters in late game situations
 - timeouts to advance ball (shorter possession) or make subs
 - then new ovr formula
+  - use +/- per minute, not raw
 
 injury stuff
 - injury history
 - log of ratings changes
 - older players get injured more
+  - could be modeled as just players with lower endurance get injured more
 - injury history leads to chance of reinjury
 - slowly ramp endurance up after injury
   - really, the injury should just impact endurance and odds of reinjury. if you want to force someone to play through an injury, go for it
+- https://www.ncbi.nlm.nih.gov/pubmed/29771139
 
 global key info (salary, days until playoffs, team  etc)
 - league info: days until playoffs, standings/series

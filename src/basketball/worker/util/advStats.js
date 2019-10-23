@@ -315,13 +315,13 @@ const calculateRatings = (players, teams, league) => {
 			if (Number.isNaN(drtg[i]) || drtg === Infinity) {
 				drtg[i] = 0;
 			}
-			if (Number.isNaN(dws[i]) || dws === Infinity) {
+			if (Number.isNaN(dws[i]) || dws === Infinity || p.stats.min < 10) {
 				dws[i] = 0;
 			}
 			if (Number.isNaN(ortg[i]) || ortg === Infinity) {
 				ortg[i] = 0;
 			}
-			if (Number.isNaN(ows[i]) || ows === Infinity) {
+			if (Number.isNaN(ows[i]) || ows === Infinity || p.stats.min < 10) {
 				ows[i] = 0;
 			}
 		}

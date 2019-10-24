@@ -98,6 +98,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 	}
 
 	for (const p of t.player) {
+		// $FlowFixMe
 		delete p.pid;
 	}
 

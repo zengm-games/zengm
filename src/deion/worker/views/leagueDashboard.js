@@ -14,12 +14,13 @@ async function updateInbox(
 		const messages = await idb.getCopies.messages({ limit: 2 });
 		messages.reverse();
 
-		for (let i = 0; i < messages.length; i++) {
-			delete messages[i].text;
-		}
-
 		return {
-			messages,
+			messages: messages.map(message => ({
+				mid: message.mid,
+				read: message.read,
+				year: message.year,
+				from: message.from,
+			})),
 		};
 	}
 }

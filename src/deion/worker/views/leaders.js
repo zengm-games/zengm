@@ -429,7 +429,9 @@ async function updateLeaders(
 				}
 			}
 
+			// $FlowFixMe
 			delete cat.minStats;
+			// $FlowFixMe
 			delete cat.minValue;
 		}
 

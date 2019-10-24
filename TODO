@@ -41,6 +41,13 @@ show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dk
 better retiring logic
 - base on data - fit model from NBA stats
 
+more customize player options
+- fixed position
+- hof
+
+backboard -> idb
+- quota errors
+
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
@@ -262,8 +269,6 @@ RatingsOverview - could put in deion, with config to specify categories and name
 
 on import, error if any player/draftPick references an invalid tid
 
-highlight hall of fame players on past rosters
-
 on league import, override numTeams if teams are supplied in league file
 
 god mode options for foul rate and foul outs - Jlebron13 on discord
@@ -294,8 +299,6 @@ everywhere contract is displayed, make it in italics if not guaranteed
 - currently only on roster i think. make a component!
 
 Add playoff seed # to the history page
-
-on past season rosters, highlight hall of fame players
 
 add end of game to live game sim in basketball, like it is for football
 

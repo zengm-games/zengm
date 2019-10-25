@@ -139,15 +139,15 @@ a.god-mode,
 
 @keyframes oscillate-bg {
 	0% {
-		background-color: darken($primary, 40);
+		background-color: darken($success, 20);
 	}
 
 	50% {
-		background-color: darken($primary, 45);
+		background-color: lighten($success, 20);
 	}
 
 	100% {
-		background-color: darken($primary, 40);
+		background-color: darken($success, 20);
 	}
 }
 

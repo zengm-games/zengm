@@ -15,14 +15,12 @@ situational awareness
   - use +/- per minute, not raw
 
 injury stuff
-- on player page, toggle link to show only serious injuries (over some length cutoff)
-  - make into subcomponent
-  - add addFilters hack, with default value, always applied on initial load
 - log of ratings changes
   - in actual ratings table, with injury indicator
 - some "help" icon on player page, either at ratings or injury part, that explains severe injury ratings changes
 - older players get injured more
   - could be modeled as just players with lower endurance get injured more
+    - no, needs age too, since endurance increases when young
 - injury history leads to chance of reinjury
 - https://www.ncbi.nlm.nih.gov/pubmed/29771139
 - upgrade code for p.injuries

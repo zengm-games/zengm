@@ -7,8 +7,9 @@ import {
 	SafeHtml,
 	SkillsBlock,
 	WatchBlock,
-} from "../components";
-import { getCols, helpers, overrides, setTitle, toWorker } from "../util";
+} from "../../components";
+import Injuries from "./Injuries";
+import { getCols, helpers, overrides, setTitle, toWorker } from "../../util";
 
 const Relatives = ({ pid, relatives }) => {
 	if (relatives.length === 0) {
@@ -210,9 +211,6 @@ ShotLocationsTable.propTypes = {
 	stats: PropTypes.arrayOf(PropTypes.object),
 };
 
-const injuryCols = getCols("Year", "Type", "Games");
-injuryCols[1].width = "100%";
-
 const Player = ({
 	events,
 	feats,
@@ -304,7 +302,7 @@ const Player = ({
 							teamColors={teamColors}
 						/>
 					</div>
-					<div style={{ float: "left" }}>
+					<div className="float-left">
 						<strong>
 							{player.ratings[player.ratings.length - 1].pos},{" "}
 							{player.teamRegion} {player.teamName}
@@ -538,23 +536,7 @@ const Player = ({
 			<div className="row" style={{ marginBottom: "-1rem" }}>
 				<div className="col-sm-6 col-md-4 col-lg-3">
 					<h2>Injuries</h2>
-					{player.injuries.length === 0 ? (
-						<p>None</p>
-					) : (
-						<DataTable
-							className="mb-3"
-							cols={injuryCols}
-							defaultSort={[0, "asc"]}
-							hideAllControls
-							name="Player:Injuries"
-							rows={player.injuries.map((injury, i) => {
-								return {
-									key: i,
-									data: [injury.season, injury.type, injury.games],
-								};
-							})}
-						/>
-					)}
+					<Injuries injuries={player.injuries} />
 				</div>
 				<div className="col-sm-6 col-md-8 col-lg-9">
 					<h2>Transactions</h2>

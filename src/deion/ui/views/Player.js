@@ -210,6 +210,9 @@ ShotLocationsTable.propTypes = {
 	stats: PropTypes.arrayOf(PropTypes.object),
 };
 
+const injuryCols = getCols("Year", "Type", "Games");
+injuryCols[1].width = "100%";
+
 const Player = ({
 	events,
 	feats,
@@ -472,7 +475,7 @@ const Player = ({
 			/>
 
 			<div className="row">
-				<div className="col-sm-6">
+				<div className="col-6 col-md-3">
 					<h2>Awards</h2>
 					{player.awardsGrouped.length > 0 ? (
 						<table className="table table-nonfluid table-striped table-bordered table-sm player-awards">
@@ -492,7 +495,27 @@ const Player = ({
 					) : null}
 					{player.awardsGrouped.length === 0 ? <p>None</p> : null}
 				</div>
-				<div className="col-sm-6">
+				<div className="col-6 col-md-3">
+					<h2>Salaries</h2>
+					<DataTable
+						className="mb-3"
+						cols={getCols("Year", "Amount")}
+						defaultSort={[0, "asc"]}
+						footer={[
+							"Total",
+							helpers.formatCurrency(player.salariesTotal, "M"),
+						]}
+						hideAllControls
+						name="Player:Salaries"
+						rows={player.salaries.map((s, i) => {
+							return {
+								key: i,
+								data: [s.season, helpers.formatCurrency(s.amount, "M")],
+							};
+						})}
+					/>
+				</div>
+				<div className="col-md-6">
 					<h2>Statistical Feats</h2>
 					<div
 						style={{
@@ -513,27 +536,27 @@ const Player = ({
 			</div>
 
 			<div className="row" style={{ marginBottom: "-1rem" }}>
-				<div className="col-lg-2 col-md-3 col-sm-4">
-					<h2>Salaries</h2>
-					<DataTable
-						className="mb-3"
-						cols={getCols("Year", "Amount")}
-						defaultSort={[0, "asc"]}
-						footer={[
-							"Total",
-							helpers.formatCurrency(player.salariesTotal, "M"),
-						]}
-						hideAllControls
-						name="Player:Salaries"
-						rows={player.salaries.map((s, i) => {
-							return {
-								key: i,
-								data: [s.season, helpers.formatCurrency(s.amount, "M")],
-							};
-						})}
-					/>
+				<div className="col-sm-6 col-md-4 col-lg-3">
+					<h2>Injuries</h2>
+					{player.injuries.length === 0 ? (
+						<p>None</p>
+					) : (
+						<DataTable
+							className="mb-3"
+							cols={injuryCols}
+							defaultSort={[0, "asc"]}
+							hideAllControls
+							name="Player:Injuries"
+							rows={player.injuries.map((injury, i) => {
+								return {
+									key: i,
+									data: [injury.season, injury.type, injury.games],
+								};
+							})}
+						/>
+					)}
 				</div>
-				<div className="col-lg-10 col-md-9 col-sm-8">
+				<div className="col-sm-6 col-md-8 col-lg-9">
 					<h2>Transactions</h2>
 					{events.map(e => {
 						return (

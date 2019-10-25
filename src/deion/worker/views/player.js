@@ -75,6 +75,7 @@ async function updatePlayer(
 				"face",
 				"mood",
 				"injury",
+				"injuries",
 				"salaries",
 				"salariesTotal",
 				"awardsGrouped",

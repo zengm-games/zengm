@@ -1256,6 +1256,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Games: {
+		desc: "Number of Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	HOF: {
 		sortSequence: ["desc", "asc"],
 	},

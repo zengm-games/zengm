@@ -15,14 +15,19 @@ situational awareness
   - use +/- per minute, not raw
 
 injury stuff
-- injury history
+- on player page, toggle link to show only serious injuries (over some length cutoff)
+  - make into subcomponent
+  - add addFilters hack, with default value, always applied on initial load
 - log of ratings changes
+  - in actual ratings table, with injury indicator
+- some "help" icon on player page, either at ratings or injury part, that explains severe injury ratings changes
 - older players get injured more
   - could be modeled as just players with lower endurance get injured more
 - injury history leads to chance of reinjury
-- slowly ramp endurance up after injury
-  - really, the injury should just impact endurance and odds of reinjury. if you want to force someone to play through an injury, go for it
 - https://www.ncbi.nlm.nih.gov/pubmed/29771139
+- upgrade code for p.injuries
+
+replace emitter with zustand (or mitt)
 
 global key info (salary, days until playoffs, team  etc)
 - league info: days until playoffs, standings/series
@@ -171,6 +176,11 @@ DataTable
   - NegotiateButtons (search for negotiate/refuses)
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
+  - injuries on Player page, sort by index not year
+
+injury later
+- slowly ramp endurance up after injury
+  - really, the injury should just impact endurance and odds of reinjury. if you want to force someone to play through an injury, go for it
 
 why is free agency so slow?
 

@@ -114,6 +114,11 @@ const writePlayerStats = async (
 							if (p2.injury.gamesRemaining <= 1) {
 								pidsInjuredOneGameOrLess.add(p2.pid);
 							}
+							p2.injuries.push({
+								season: g.season,
+								games: p2.injury.gamesRemaining,
+								type: p2.injury.type,
+							});
 
 							const injuryText = `${p.pos} <a href="${helpers.leagueUrl([
 								"player",

@@ -61,6 +61,7 @@ const generate = (
 		hof: false,
 		imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
 		injury: { type: "Healthy", gamesRemaining: 0 },
+		injuries: [],
 		lastName,
 		ptModifier: 1,
 		relatives: [],

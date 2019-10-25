@@ -390,6 +390,11 @@ export type PlayerWithoutPid<PlayerRatings = any> = {|
 	hof: boolean,
 	imgURL: string,
 	injury: PlayerInjury,
+	injuries: {|
+		season: number,
+		games: number,
+		type: string,
+	|}[],
 	lastName: string,
 	pos?: string, // Only in players from custom league files
 	ptModifier: number,

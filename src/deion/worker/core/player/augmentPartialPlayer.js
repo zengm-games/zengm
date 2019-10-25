@@ -65,6 +65,7 @@ const augmentPartialPlayer = (
 		"hof",
 		"imgURL",
 		"injury",
+		"injuries",
 		"lastName",
 		"ptModifier",
 		"retiredYear",

@@ -34,38 +34,34 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		depth: undefined,
 	};
 
-	for (let i = 0; i < players.length; i++) {
-		let rating = players[i].ratings.find(r => r.season === g.season);
-		if (rating === undefined) {
-			// Sometimes this happens for unknown reasons, so gracefully handle it
-			rating = players[i].ratings[players[i].ratings.length - 1];
-		}
+	for (const p of players) {
+		const rating = p.ratings[p.ratings.length - 1];
 
-		const p = {
-			id: players[i].pid,
-			pid: players[i].pid, // for getDepthPlayers, eventually do it all this way
-			name: `${players[i].firstName} ${players[i].lastName}`,
+		const p2 = {
+			id: p.pid,
+			pid: p.pid, // for getDepthPlayers, eventually do it all this way
+			name: `${p.firstName} ${p.lastName}`,
 			pos: rating.pos,
-			valueNoPot: players[i].valueNoPot,
+			valueNoPot: p.valueNoPot,
 			stat: {},
 			compositeRating: {},
 			skills: rating.skills,
-			injury: players[i].injury,
-			injured: players[i].injury.type !== "Healthy",
-			ptModifier: players[i].ptModifier,
+			injury: p.injury,
+			injured: p.injury.type !== "Healthy",
+			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
 		};
 
 		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
 		if (!g.userTids.includes(t.id)) {
-			p.ptModifier = 1;
+			p2.ptModifier = 1;
 		}
 
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of helpers.keys(
 			overrides.common.constants.COMPOSITE_WEIGHTS,
 		)) {
-			p.compositeRating[k] = player.compositeRating(
+			p2.compositeRating[k] = player.compositeRating(
 				rating,
 				overrides.common.constants.COMPOSITE_WEIGHTS[k].ratings,
 				overrides.common.constants.COMPOSITE_WEIGHTS[k].weights,
@@ -75,10 +71,10 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 
 		if (process.env.SPORT === "basketball") {
 			// eslint-disable-next-line operator-assignment
-			p.compositeRating.usage = p.compositeRating.usage ** 1.9;
+			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
 
-		p.stat = {
+		p2.stat = {
 			gs: 0,
 			min: 0,
 			...playerStats,
@@ -87,7 +83,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 			energy: 1,
 		};
 
-		t.player.push(p);
+		t.player.push(p2);
 	}
 
 	if (team.depth !== undefined) {

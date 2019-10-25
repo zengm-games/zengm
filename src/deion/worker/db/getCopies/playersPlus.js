@@ -242,11 +242,23 @@ const processRatings = (
 		);
 	}
 
+	// Can't just check season alone, because of injury records. So find the last record in playerRatings that matches the season
+	const rowIndex =
+		season === undefined
+			? undefined
+			: playerRatings.reduceRight((foundIndex, pr, i) => {
+					if (pr.season === season && foundIndex === undefined) {
+						return i;
+					}
+
+					return foundIndex;
+			  }, undefined);
+
 	output.ratings = playerRatings
 		.map((pr, i) => {
 			const row = {};
 
-			if (season !== undefined && pr.season !== season) {
+			if (rowIndex !== undefined && rowIndex !== i) {
 				return undefined;
 			}
 
@@ -310,7 +322,7 @@ const processRatings = (
 		.filter(row => row !== undefined); // Filter at the end because dovr/dpot needs to look back
 
 	if (season !== undefined) {
-		output.ratings = output.ratings[0];
+		output.ratings = output.ratings[output.ratings.length - 1];
 
 		if (output.ratings === undefined && showRetired) {
 			const row = {};

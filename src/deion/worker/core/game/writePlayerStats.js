@@ -72,18 +72,15 @@ const doInjury = (
 			: p2.injury.gamesRemaining * 3;
 	if (
 		gamesRemainingNormalized > 25 &&
-		Math.random() < gamesRemainingNormalized / 150
+		Math.random() < gamesRemainingNormalized / 82
 	) {
 		ratingsLoss = true;
 
-		let biggestRatingsLoss = Math.round(gamesRemainingNormalized / 10);
-		if (biggestRatingsLoss > 10) {
-			biggestRatingsLoss = 10;
-		}
+		let biggestRatingsLoss = 20;
 
 		// Small chance of horrible things
 		if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
-			biggestRatingsLoss = 30;
+			biggestRatingsLoss = 50;
 		}
 
 		player.addRatingsRow(p2, undefined, p2.injury.type);
@@ -105,6 +102,30 @@ const doInjury = (
 			p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
 			1,
 			100,
+		);
+
+		// Update ovr and pot
+		player.develop(p2, 0);
+
+		// Bound pot - can't go up after injury!
+		const r2 = p2.ratings.length - 2;
+		if (p2.ratings[r].pot > p2.ratings[r2].pot) {
+			p2.ratings[r].pot = p2.ratings[r2].pot;
+		}
+		if (p2.ratings[r].pots) {
+			for (const pos of Object.keys(p2.ratings[r].pots)) {
+				if (p2.ratings[r].pots[pos] > p2.ratings[r2].pots[pos]) {
+					p2.ratings[r].pots[pos] = p2.ratings[r2].pots[pos];
+				}
+			}
+		}
+		console.log(
+			g.season,
+			"ratingsLoss",
+			p2.injury,
+			p2.pid,
+			p2.ratings[r2].ovr,
+			p2.ratings[r].ovr,
 		);
 	}
 

@@ -17,7 +17,6 @@ situational awareness
 injury stuff
 - player ratings table on player page
   - sorting fix
-- is ovr/pot being recomputed? value is
 - magnitude of ratings decreases?
 - older players get injured more
   - could be modeled as just players with lower endurance get injured more

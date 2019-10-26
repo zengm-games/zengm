@@ -357,6 +357,7 @@ export type MinimalPlayerRatings = {
 	season: number,
 	ovrs: any,
 	pots: any,
+	injury?: string,
 	[key: string]: number,
 };
 

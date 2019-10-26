@@ -451,11 +451,23 @@ const Player = ({
 				defaultSort={[0, "asc"]}
 				hideAllControls
 				name="Player:Ratings"
-				rows={player.ratings.map(r => {
+				rows={player.ratings.map((r, i) => {
 					return {
-						key: r.season,
+						key: i,
 						data: [
-							r.season,
+							r.injury ? (
+								<>
+									{r.season}
+									<span
+										className="badge badge-danger badge-injury"
+										title={r.injury}
+									>
+										+
+									</span>
+								</>
+							) : (
+								r.season
+							),
 							r.abbrev ? (
 								<a href={helpers.leagueUrl(["roster", r.abbrev, r.season])}>
 									{r.abbrev}

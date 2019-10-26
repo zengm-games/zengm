@@ -92,6 +92,7 @@ export type PlayerRatings = {|
 	pos: string,
 	season: number,
 	skills: string[],
+	injury?: string,
 |};
 
 export type RatingKey =

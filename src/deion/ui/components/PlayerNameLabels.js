@@ -41,7 +41,7 @@ const PlayerNameLabels = ({
 			// This is used in box scores, where it would be confusing to display "out X more games" in old box scores
 			injuryIcon = (
 				<span className="badge badge-danger badge-injury" title={injury.type}>
-					&nbsp;
+					+
 				</span>
 			);
 		}

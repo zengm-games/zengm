@@ -95,6 +95,7 @@ async function updatePlayer(
 				...ratings,
 				"skills",
 				"pos",
+				"injury",
 			],
 			stats: ["season", "tid", "abbrev", "age", ...stats],
 			playoffs: true,

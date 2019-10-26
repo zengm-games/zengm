@@ -6,6 +6,109 @@ import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults } from "../../../common/types";
 
+const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
+
+const doInjury = (
+	p,
+	p2,
+	healthRank,
+	pidsInjuredOneGameOrLess,
+	injuryTexts,
+	conditions,
+) => {
+	p2.injury = player.injury(healthRank);
+	p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
+
+	if (p2.injury.gamesRemaining <= 1) {
+		pidsInjuredOneGameOrLess.add(p2.pid);
+	}
+	p2.injuries.push({
+		season: g.season,
+		games: p2.injury.gamesRemaining,
+		type: p2.injury.type,
+	});
+
+	let stopPlay = false;
+
+	const injuryText = `${p.pos} <a href="${helpers.leagueUrl([
+		"player",
+		p2.pid,
+	])}">${p2.firstName} ${p2.lastName}</a> - ${p2.injury.type}, ${p2.injury
+		.gamesRemaining - 1} ${
+		p2.injury.gamesRemaining - 1 === 1 ? gameOrWeek : `${gameOrWeek}s`
+	}`;
+	if (g.userTid === p2.tid) {
+		if (p2.injury.gamesRemaining > 1) {
+			injuryTexts.push(injuryText);
+		}
+
+		stopPlay =
+			g.stopOnInjury &&
+			p2.injury.gamesRemaining > g.stopOnInjuryGames &&
+			local.autoPlaySeasons === 0;
+	}
+	logEvent(
+		{
+			type: "injured",
+			text: `${p.pos} <a href="${helpers.leagueUrl(["player", p2.pid])}">${
+				p2.firstName
+			} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${
+				p2.injury.gamesRemaining
+			} ${p2.injury.gamesRemaining === 1 ? gameOrWeek : `${gameOrWeek}s`})`,
+			showNotification: false,
+			pids: [p2.pid],
+			tids: [p2.tid],
+		},
+		conditions,
+	);
+
+	// Some chance of a loss of athleticism from serious injuries
+	// 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+	// 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+	let ratingsLoss = false;
+	const gamesRemainingNormalized =
+		process.env.SPORT === "basketball"
+			? p2.injury.gamesRemaining
+			: p2.injury.gamesRemaining * 3;
+	if (
+		gamesRemainingNormalized > 25 &&
+		Math.random() < gamesRemainingNormalized / 150
+	) {
+		ratingsLoss = true;
+
+		let biggestRatingsLoss = Math.round(gamesRemainingNormalized / 10);
+		if (biggestRatingsLoss > 10) {
+			biggestRatingsLoss = 10;
+		}
+
+		// Small chance of horrible things
+		if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
+			biggestRatingsLoss = 30;
+		}
+
+		const r = p2.ratings.length - 1;
+		p2.ratings[r].spd = helpers.bound(
+			p2.ratings[r].spd - random.randInt(0, biggestRatingsLoss),
+			0,
+			100,
+		);
+		p2.ratings[r].endu = helpers.bound(
+			p2.ratings[r].endu - random.randInt(0, biggestRatingsLoss),
+			0,
+			100,
+		);
+
+		const rating = process.env.SPORT === "basketball" ? "jmp" : "thp";
+		p2.ratings[r][rating] = helpers.bound(
+			p2.ratings[r][rating] - random.randInt(0, biggestRatingsLoss),
+			0,
+			100,
+		);
+	}
+
+	return { ratingsLoss, stopPlay };
+};
+
 const writePlayerStats = async (
 	results: GameResults[],
 	conditions: Conditions,
@@ -13,7 +116,6 @@ const writePlayerStats = async (
 	const injuryTexts = [];
 	const pidsInjuredOneGameOrLess = new Set<number>();
 	let stopPlay = false;
-	let stoppedPlay = false;
 
 	for (const result of results) {
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2;
@@ -102,114 +204,27 @@ const writePlayerStats = async (
 
 						const injuredThisGame = p.injured && p.injury.type === "Healthy";
 
-						const gameOrWeek =
-							process.env.SPORT === "basketball" ? "game" : "week";
-
 						// Injury crap - assign injury type if player does not already have an injury in the database
-						let biggestRatingsLoss;
+						let ratingsLoss = false;
 						if (injuredThisGame) {
-							p2.injury = player.injury(t.healthRank);
-							p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
-
-							if (p2.injury.gamesRemaining <= 1) {
-								pidsInjuredOneGameOrLess.add(p2.pid);
-							}
-							p2.injuries.push({
-								season: g.season,
-								games: p2.injury.gamesRemaining,
-								type: p2.injury.type,
-							});
-
-							const injuryText = `${p.pos} <a href="${helpers.leagueUrl([
-								"player",
-								p2.pid,
-							])}">${p2.firstName} ${p2.lastName}</a> - ${p2.injury.type}, ${p2
-								.injury.gamesRemaining - 1} ${
-								p2.injury.gamesRemaining - 1 === 1
-									? gameOrWeek
-									: `${gameOrWeek}s`
-							}`;
-							if (g.userTid === p2.tid) {
-								if (p2.injury.gamesRemaining > 1) {
-									injuryTexts.push(injuryText);
-								}
-
-								stopPlay =
-									stopPlay ||
-									(g.stopOnInjury &&
-										p2.injury.gamesRemaining > g.stopOnInjuryGames &&
-										local.autoPlaySeasons === 0);
-							}
-							logEvent(
-								{
-									type: "injured",
-									text: `${p.pos} <a href="${helpers.leagueUrl([
-										"player",
-										p2.pid,
-									])}">${p2.firstName} ${p2.lastName}</a> was injured! (${
-										p2.injury.type
-									}, out for ${p2.injury.gamesRemaining} ${
-										p2.injury.gamesRemaining === 1
-											? gameOrWeek
-											: `${gameOrWeek}s`
-									})`,
-									showNotification: false,
-									pids: [p2.pid],
-									tids: [p2.tid],
-								},
+							const output = doInjury(
+								p,
+								p2,
+								t.healthRank,
+								pidsInjuredOneGameOrLess,
+								injuryTexts,
 								conditions,
 							);
+							ratingsLoss = output.ratingsLoss;
 
-							// Some chance of a loss of athleticism from serious injuries
-							// 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
-							// 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
-							const gamesRemainingNormalized =
-								process.env.SPORT === "basketball"
-									? p2.injury.gamesRemaining
-									: p2.injury.gamesRemaining * 3;
-							if (
-								gamesRemainingNormalized > 25 &&
-								Math.random() < gamesRemainingNormalized / 150
-							) {
-								biggestRatingsLoss = Math.round(gamesRemainingNormalized / 10);
-								if (biggestRatingsLoss > 10) {
-									biggestRatingsLoss = 10;
-								}
-
-								// Small chance of horrible things
-								if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
-									biggestRatingsLoss = 30;
-								}
-
-								const r = p2.ratings.length - 1;
-								p2.ratings[r].spd = helpers.bound(
-									p2.ratings[r].spd - random.randInt(0, biggestRatingsLoss),
-									0,
-									100,
-								);
-								p2.ratings[r].endu = helpers.bound(
-									p2.ratings[r].endu - random.randInt(0, biggestRatingsLoss),
-									0,
-									100,
-								);
-
-								const rating =
-									process.env.SPORT === "basketball" ? "jmp" : "thp";
-								p2.ratings[r][rating] = helpers.bound(
-									p2.ratings[r][rating] - random.randInt(0, biggestRatingsLoss),
-									0,
-									100,
-								);
-							}
-
-							if (stopPlay && !stoppedPlay) {
+							if (output.stopPlay && !stopPlay) {
 								lock.set("stopGameSim", true);
-								stoppedPlay = true;
+								stopPlay = true;
 							}
 						}
 
 						// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-						if (g.phase !== PHASE.PLAYOFFS || biggestRatingsLoss) {
+						if (g.phase !== PHASE.PLAYOFFS || ratingsLoss) {
 							player.updateValues(p2);
 						}
 

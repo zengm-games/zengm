@@ -455,19 +455,22 @@ const Player = ({
 					return {
 						key: i,
 						data: [
-							r.injury ? (
-								<>
-									{r.season}
-									<span
-										className="badge badge-danger badge-injury"
-										title={r.injury}
-									>
-										+
-									</span>
-								</>
-							) : (
-								r.season
-							),
+							{
+								sortValue: i,
+								value: r.injury ? (
+									<>
+										{r.season}
+										<span
+											className="badge badge-danger badge-injury"
+											title={r.injury}
+										>
+											+
+										</span>
+									</>
+								) : (
+									r.season
+								),
+							},
 							r.abbrev ? (
 								<a href={helpers.leagueUrl(["roster", r.abbrev, r.season])}>
 									{r.abbrev}

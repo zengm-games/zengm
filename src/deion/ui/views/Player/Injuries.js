@@ -21,7 +21,14 @@ const Injuries = ({ injuries }) => {
 			rows={injuries.map((injury, i) => {
 				return {
 					key: i,
-					data: [injury.season, injury.type, injury.games],
+					data: [
+						{
+							sortValue: i,
+							value: injury.season,
+						},
+						injury.type,
+						injury.games,
+					],
 				};
 			})}
 		/>

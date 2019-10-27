@@ -17,11 +17,7 @@ situational awareness
 injury stuff
 - magnitude of ratings decreases?
 - change in injury probabilities
-  - older players get injured more
   - injury history leads to chance of reinjury
-  - https://www.ncbi.nlm.nih.gov/pubmed/29771139
-    - "injury odds increased by 3.03% (P = .04) for each year of NBA experience"
-    - the rest.. maybe just ignore
   - if there's anywhere that says injury probability is constant (code comment, help popover), change it
 - fix dovr, dpot calculation
 - test importing an export, make sure schema errors don't appear
@@ -30,6 +26,10 @@ injury stuff
   - injury log
   - ratings changes visible
   - older players
+    - https://www.ncbi.nlm.nih.gov/pubmed/29771139
+      - "injury odds increased by 3.03% (P = .04) for each year of NBA experience"
+      - the rest.. maybe just ignore
+    - 26 in bbgm, 25 in fbgm
 
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):

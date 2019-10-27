@@ -74,6 +74,7 @@ type CompositeRating =
 type PlayerGameSim = {
 	id: number,
 	name: string,
+	age: number,
 	pos: string,
 	valueNoPot: number,
 	stat: Object,
@@ -311,6 +312,8 @@ class GameSim {
 			// $FlowFixMe
 			delete this.team[t].pace;
 			for (let p = 0; p < this.team[t].player.length; p++) {
+				// $FlowFixMe
+				delete this.team[t].player[p].age;
 				// $FlowFixMe
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
@@ -755,12 +758,16 @@ class GameSim {
 
 		let newInjury = false;
 
-		const injuryRate = this.allStarGame ? g.injuryRate / 4 : g.injuryRate;
+		const baseRate = this.allStarGame ? g.injuryRate / 4 : g.injuryRate;
 
 		for (let t = 0; t < 2; t++) {
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
+					// Modulate injuryRate by age - assume default is 26 yo, and increase/decrease by 3%
+					const injuryRate =
+						baseRate * 1.03 ** (this.team[t].player[p].age - 26);
+
 					if (Math.random() < injuryRate) {
 						this.team[t].player[p].injured = true;
 						newInjury = true;

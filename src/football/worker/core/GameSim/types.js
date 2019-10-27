@@ -59,6 +59,7 @@ export type PenaltyPlayType =
 export type PlayerGameSim = {
 	id: number,
 	name: string,
+	age: number,
 	pos: string,
 	valueNoPot: number,
 	stat: Object,

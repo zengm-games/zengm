@@ -41,6 +41,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 			id: p.pid,
 			pid: p.pid, // for getDepthPlayers, eventually do it all this way
 			name: `${p.firstName} ${p.lastName}`,
+			age: g.season - p.born.year,
 			pos: rating.pos,
 			valueNoPot: p.valueNoPot,
 			stat: {},

@@ -179,6 +179,7 @@ class GameSim {
 			delete this.team[t].compositeRating;
 			delete this.team[t].pace;
 			for (let p = 0; p < this.team[t].player.length; p++) {
+				delete this.team[t].player[p].age;
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
 				delete this.team[t].player[p].ptModifier;
@@ -2122,7 +2123,11 @@ class GameSim {
 			}
 
 			for (const p of onField) {
-				if (Math.random() < g.injuryRate) {
+				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
+				const injuryRate =
+					g.injuryRate * 1.03 ** (this.team[t].player[p].age - 25);
+
+				if (Math.random() < injuryRate) {
 					// 50% as many injuries for QB
 					if (p.pos === "QB" && Math.random() < 0.5) {
 						continue;

@@ -242,94 +242,88 @@ const processRatings = (
 		);
 	}
 
-	// Can't just check season alone, because of injury records. So find the last record in playerRatings that matches the season
-	const rowIndex =
-		season === undefined
-			? undefined
-			: playerRatings.reduceRight((foundIndex, pr, i) => {
-					if (pr.season === season && foundIndex === undefined) {
-						return i;
-					}
-
-					return foundIndex;
-			  }, undefined);
-
-	output.ratings = playerRatings
-		.map((pr, i) => {
-			const row = {};
-
-			if (rowIndex !== undefined && rowIndex !== i) {
-				return undefined;
+	if (season !== undefined) {
+		// Can't just check season alone, because of injury records. So find the last record in playerRatings that matches the season
+		const rowIndex = playerRatings.reduceRight((foundIndex, pr, i) => {
+			if (pr.season === season && foundIndex === undefined) {
+				return i;
 			}
 
-			for (const attr of ratings) {
-				if (attr === "skills") {
-					row.skills = helpers.deepCopy(pr.skills);
-				} else if (attr === "dovr" || attr === "dpot") {
-					// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
-					const cat = attr.slice(1); // either ovr or pot
+			return foundIndex;
+		}, undefined);
+		playerRatings = rowIndex === undefined ? [] : [playerRatings[rowIndex]];
+	}
 
-					// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
-					let prevRow;
-					for (let j = 0; j < p.ratings.length; j++) {
-						if (p.ratings[j].season < pr.season) {
-							prevRow = p.ratings[j];
-						}
-					}
+	output.ratings = playerRatings.map(pr => {
+		const row = {};
 
-					if (prevRow) {
-						row[attr] =
-							player.fuzzRating(pr[cat], pr.fuzz) -
-							player.fuzzRating(prevRow[cat], prevRow.fuzz);
-					} else {
-						row[attr] = 0;
+		for (const attr of ratings) {
+			if (attr === "skills") {
+				row.skills = helpers.deepCopy(pr.skills);
+			} else if (attr === "dovr" || attr === "dpot") {
+				// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
+				const cat = attr.slice(1); // either ovr or pot
+
+				// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
+				let prevRow;
+				for (let j = 0; j < p.ratings.length; j++) {
+					if (p.ratings[j].season < pr.season) {
+						prevRow = p.ratings[j];
 					}
-				} else if (attr === "age") {
-					row.age = pr.season - p.born.year;
-				} else if (attr === "abbrev") {
-					// Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
-					if (!stats.includes("tid")) {
-						throw new Error(
-							'Crazy I know, but if you request "abbrev" from ratings, you must also request "tid" from stats',
-						);
-					}
-					let tidTemp;
-					for (const ps of output.stats) {
-						if (ps.season === pr.season && ps.playoffs === false) {
-							tidTemp = ps.tid;
-						}
-					}
-					if (tidTemp !== undefined) {
-						row.abbrev = helpers.getAbbrev(tidTemp);
-					} else {
-						row.abbrev = "";
-					}
-				} else if (attr === "ovrs" || attr === "pots") {
-					row[attr] = {
-						...pr[attr],
-					};
-					if (fuzz) {
-						for (const key of Object.keys(row[attr])) {
-							row[attr][key] = player.fuzzRating(row[attr][key], pr.fuzz);
-						}
-					}
-				} else if (
-					fuzz &&
-					attr !== "fuzz" &&
-					attr !== "season" &&
-					attr !== "hgt" &&
-					attr !== "pos" &&
-					attr !== "injuryIndex"
-				) {
-					row[attr] = player.fuzzRating(pr[attr], pr.fuzz);
-				} else {
-					row[attr] = pr[attr];
 				}
-			}
 
-			return row;
-		})
-		.filter(row => row !== undefined); // Filter at the end because dovr/dpot needs to look back (this isn't actually true - refactor!)
+				if (prevRow) {
+					row[attr] =
+						player.fuzzRating(pr[cat], pr.fuzz) -
+						player.fuzzRating(prevRow[cat], prevRow.fuzz);
+				} else {
+					row[attr] = 0;
+				}
+			} else if (attr === "age") {
+				row.age = pr.season - p.born.year;
+			} else if (attr === "abbrev") {
+				// Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
+				if (!stats.includes("tid")) {
+					throw new Error(
+						'Crazy I know, but if you request "abbrev" from ratings, you must also request "tid" from stats',
+					);
+				}
+				let tidTemp;
+				for (const ps of output.stats) {
+					if (ps.season === pr.season && ps.playoffs === false) {
+						tidTemp = ps.tid;
+					}
+				}
+				if (tidTemp !== undefined) {
+					row.abbrev = helpers.getAbbrev(tidTemp);
+				} else {
+					row.abbrev = "";
+				}
+			} else if (attr === "ovrs" || attr === "pots") {
+				row[attr] = {
+					...pr[attr],
+				};
+				if (fuzz) {
+					for (const key of Object.keys(row[attr])) {
+						row[attr][key] = player.fuzzRating(row[attr][key], pr.fuzz);
+					}
+				}
+			} else if (
+				fuzz &&
+				attr !== "fuzz" &&
+				attr !== "season" &&
+				attr !== "hgt" &&
+				attr !== "pos" &&
+				attr !== "injuryIndex"
+			) {
+				row[attr] = player.fuzzRating(pr[attr], pr.fuzz);
+			} else {
+				row[attr] = pr[attr];
+			}
+		}
+
+		return row;
+	});
 
 	if (season !== undefined) {
 		output.ratings = output.ratings[output.ratings.length - 1];

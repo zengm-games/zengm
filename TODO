@@ -19,7 +19,6 @@ injury stuff
 - change in injury probabilities
   - injury history leads to chance of reinjury
   - if there's anywhere that says injury probability is constant (code comment, help popover), change it
-- test importing an export, make sure schema errors don't appear
 - upgrade code for p.injuries
 - blog
   - injury log

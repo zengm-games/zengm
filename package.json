@@ -53,8 +53,6 @@
 		"html2canvas": "^1.0.0-rc.5",
 		"indexeddb-getall-shim": "^1.3.5",
 		"lodash": "^4.17.15",
-		"object.entries": "^1.1.0",
-		"object.values": "^1.1.0",
 		"promise-worker-bi": "^3.0.2",
 		"react": "^16.11.0",
 		"react-addons-text-content": "^0.0.4",

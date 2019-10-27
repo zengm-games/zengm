@@ -5,13 +5,33 @@
 // Safari 11 (because in 10.1 getAll crashes in a worker)
 import "indexeddb-getall-shim";
 
-// Chrome 54, Safari 10.1
-import objectEntries from "object.entries";
-import objectValues from "object.values";
-
 // Safari 10.1
 import "url-search-params-polyfill";
 import "whatwg-fetch";
 
-objectEntries.shim();
-objectValues.shim();
+// Chrome 54, Safari 10.1
+// Inlined from MDN, since object.entries and object.values npm packages were somehow adding 50kb to each bundle
+if (!Object.entries) {
+	// $FlowFixMe
+	Object.entries = obj => {
+		const ownProps = Object.keys(obj);
+		let i = ownProps.length;
+		const resArray = new Array(i); // preallocate the Array
+		while (i--) {
+			resArray[i] = [ownProps[i], obj[ownProps[i]]];
+		}
+		return resArray;
+	};
+}
+if (!Object.values) {
+	// $FlowFixMe
+	Object.values = obj => {
+		const ownProps = Object.keys(obj);
+		let i = ownProps.length;
+		const resArray = new Array(i); // preallocate the Array
+		while (i--) {
+			resArray[i] = obj[ownProps[i]];
+		}
+		return resArray;
+	};
+}

@@ -123,14 +123,6 @@ const doInjury = (
 			p2.ratings[r2].ovr - p2.ratings[r].ovr;
 		p2.injuries[p2.injuries.length - 1].potDrop =
 			p2.ratings[r2].pot - p2.ratings[r].pot;
-		console.log(
-			g.season,
-			"ratingsLoss",
-			p2.injury,
-			p2.pid,
-			p2.ratings[r2].ovr,
-			p2.ratings[r].ovr,
-		);
 	}
 
 	return { ratingsLoss, stopPlay };

@@ -14,16 +14,6 @@ situational awareness
 - then new ovr formula
   - use +/- per minute, not raw
 
-injury stuff
-- blog
-  - injury log
-  - ratings changes visible
-  - older players
-    - https://www.ncbi.nlm.nih.gov/pubmed/29771139
-      - "injury odds increased by 3.03% (P = .04) for each year of NBA experience"
-      - the rest.. maybe just ignore
-    - 26 in bbgm, 25 in fbgm
-
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):
   - any place with sortValue probably needs searchValue too

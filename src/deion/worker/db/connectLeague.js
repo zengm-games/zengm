@@ -560,13 +560,21 @@ const migrateLeague = (upgradeDB, lid) => {
 			}
 		});
 	}
+	if (upgradeDB.oldVersion <= 35) {
+		upgradeDB.players.iterate(p => {
+			if (!p.injuries) {
+				p.injuries = [];
+				upgradeDB.players.put(p);
+			}
+		});
+	}
 
-	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js)
+	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
 };
 
 const connectLeague = async (lid: number) => {
 	// Would like to await on migrateLeague and inside there, but Firefox
-	const db = await backboard.open(`league${lid}`, 35, upgradeDB => {
+	const db = await backboard.open(`league${lid}`, 36, upgradeDB => {
 		if (upgradeDB.oldVersion === 0) {
 			createLeague(upgradeDB);
 		} else {

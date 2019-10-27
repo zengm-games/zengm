@@ -268,10 +268,19 @@ const processRatings = (
 				} else if (attr === "dovr" || attr === "dpot") {
 					// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
 					const cat = attr.slice(1); // either ovr or pot
-					if (i > 0) {
+
+					// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
+					let prevRow;
+					for (let j = 0; j < p.ratings.length; j++) {
+						if (p.ratings[j].season < pr.season) {
+							prevRow = p.ratings[j];
+						}
+					}
+
+					if (prevRow) {
 						row[attr] =
 							player.fuzzRating(pr[cat], pr.fuzz) -
-							player.fuzzRating(p.ratings[i - 1][cat], p.ratings[i - 1].fuzz);
+							player.fuzzRating(prevRow[cat], prevRow.fuzz);
 					} else {
 						row[attr] = 0;
 					}
@@ -320,7 +329,7 @@ const processRatings = (
 
 			return row;
 		})
-		.filter(row => row !== undefined); // Filter at the end because dovr/dpot needs to look back
+		.filter(row => row !== undefined); // Filter at the end because dovr/dpot needs to look back (this isn't actually true - refactor!)
 
 	if (season !== undefined) {
 		output.ratings = output.ratings[output.ratings.length - 1];

@@ -671,6 +671,30 @@
 					"imgURL": {
 						"type": "string"
 					},
+					"injuries": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"season": {
+									"type": "integer"
+								},
+								"games": {
+									"type": "integer"
+								},
+								"type": {
+									"type": "string"
+								},
+								"ovrDrop": {
+									"type": "integer"
+								},
+								"potDrop": {
+									"type": "integer"
+								}
+							},
+							"required": ["season", "games", "type", "ovrDrop", "potDrop"]
+						}
+					},
 					"injury": {
 						"ref": "#/definitions/playerInjury"
 					},
@@ -736,6 +760,9 @@
 									"type": "number",
 									"minimum": 0,
 									"maximum": 100
+								},
+								"injuryIndex": {
+									"type": "integer"
 								},
 								"ins": {
 									"type": "number",

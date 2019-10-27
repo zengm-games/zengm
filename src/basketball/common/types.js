@@ -121,7 +121,7 @@ export type PlayerRatings = {|
 	ft: number,
 	fuzz: number,
 	hgt: number,
-	injury?: string,
+	injuryIndex?: number,
 	ins: number,
 	jmp: number,
 	oiq: number,

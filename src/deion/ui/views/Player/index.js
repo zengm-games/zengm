@@ -457,19 +457,21 @@ const Player = ({
 						data: [
 							{
 								sortValue: i,
-								value: r.injury ? (
-									<>
-										{r.season}
-										<span
-											className="badge badge-danger badge-injury"
-											title={r.injury}
-										>
-											+
-										</span>
-									</>
-								) : (
-									r.season
-								),
+								value:
+									r.injuryIndex !== undefined &&
+									player.injuries[r.injuryIndex] ? (
+										<>
+											{r.season}
+											<span
+												className="badge badge-danger badge-injury"
+												title={player.injuries[r.injuryIndex].type}
+											>
+												+
+											</span>
+										</>
+									) : (
+										r.season
+									),
 							},
 							r.abbrev ? (
 								<a href={helpers.leagueUrl(["roster", r.abbrev, r.season])}>
@@ -549,11 +551,11 @@ const Player = ({
 			</div>
 
 			<div className="row" style={{ marginBottom: "-1rem" }}>
-				<div className="col-sm-6 col-md-4 col-lg-3">
+				<div className="col-md-6 col-lg-4">
 					<h2>Injuries</h2>
 					<Injuries injuries={player.injuries} />
 				</div>
-				<div className="col-sm-6 col-md-8 col-lg-9">
+				<div className="col-md-6 col-lg-8">
 					<h2>Transactions</h2>
 					{events.map(e => {
 						return (

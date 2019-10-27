@@ -23,6 +23,8 @@ injury stuff
     - "injury odds increased by 3.03% (P = .04) for each year of NBA experience"
     - the rest.. maybe just ignore
   - if there's anywhere that says injury probability is constant (code comment, help popover), change it
+- fix dovr, dpot calculation
+- test importing an export, make sure schema errors don't appear
 - upgrade code for p.injuries
 - blog
   - injury log

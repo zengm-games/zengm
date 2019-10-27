@@ -18,20 +18,20 @@ import type {
 const addRatingsRow = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
 	scoutingRank?: number,
-	injury?: string,
+	injuryIndex?: number,
 ) => {
 	const newRatings = {
 		...p.ratings[p.ratings.length - 1],
 		season: g.season,
-		injury: undefined,
+		injuryIndex: undefined,
 	};
 
 	if (scoutingRank !== undefined) {
 		newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
 	}
 
-	if (injury !== undefined) {
-		newRatings.injury = injury;
+	if (injuryIndex !== undefined) {
+		newRatings.injuryIndex = injuryIndex;
 	}
 
 	p.ratings.push(newRatings);

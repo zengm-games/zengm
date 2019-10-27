@@ -357,7 +357,7 @@ export type MinimalPlayerRatings = {
 	season: number,
 	ovrs: any,
 	pots: any,
-	injury?: string,
+	injuryIndex?: number,
 	[key: string]: number,
 };
 
@@ -395,6 +395,8 @@ export type PlayerWithoutPid<PlayerRatings = any> = {|
 		season: number,
 		games: number,
 		type: string,
+		ovrDrop?: number,
+		potDrop?: number,
 	|}[],
 	lastName: string,
 	pos?: string, // Only in players from custom league files

@@ -1327,6 +1327,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"Ovr Drop": {
+		desc: "Decrease in Overall Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	P: {
 		desc: "Performance",
 		sortType: "number",
@@ -1358,6 +1363,11 @@ const cols: {
 	},
 	Pot: {
 		desc: "Potential Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Pot Drop": {
+		desc: "Decrease in Potential Rating",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

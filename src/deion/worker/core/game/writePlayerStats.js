@@ -83,7 +83,7 @@ const doInjury = (
 			biggestRatingsLoss = 50;
 		}
 
-		player.addRatingsRow(p2, undefined, p2.injury.type);
+		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
 
 		const r = p2.ratings.length - 1;
 		p2.ratings[r].spd = helpers.bound(
@@ -119,6 +119,10 @@ const doInjury = (
 				}
 			}
 		}
+		p2.injuries[p2.injuries.length - 1].ovrDrop =
+			p2.ratings[r2].ovr - p2.ratings[r].ovr;
+		p2.injuries[p2.injuries.length - 1].potDrop =
+			p2.ratings[r2].pot - p2.ratings[r].pot;
 		console.log(
 			g.season,
 			"ratingsLoss",

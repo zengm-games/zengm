@@ -310,7 +310,7 @@ const processRatings = (
 					attr !== "season" &&
 					attr !== "hgt" &&
 					attr !== "pos" &&
-					attr !== "injury"
+					attr !== "injuryIndex"
 				) {
 					row[attr] = player.fuzzRating(pr[attr], pr.fuzz);
 				} else {

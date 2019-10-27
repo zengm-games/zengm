@@ -584,24 +584,31 @@ class GodMode extends React.Component {
 							<label>
 								Injury Rate{" "}
 								<HelpPopover placement="right" title="Injury Rate">
-									The injury rate is the probability that a player is injured
-									per possession.
-									{process.env.SPORT === "basketball" ? (
-										<>
-											{" "}
-											Based on{" "}
-											<a
-												href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445097/"
-												rel="noopener noreferrer"
-												target="_blank"
-											>
-												this article
-											</a>{" "}
-											there are about 0.25 injuries per team per game, and with
-											10 players on the court and ~200 possessions per game,
-											that works out to 0.25/10/200 = 0.000125 by default.
-										</>
-									) : null}
+									<p>
+										The injury rate is the probability that a player is injured
+										per possession.
+										{process.env.SPORT === "basketball" ? (
+											<>
+												{" "}
+												Based on{" "}
+												<a
+													href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445097/"
+													rel="noopener noreferrer"
+													target="_blank"
+												>
+													this article
+												</a>{" "}
+												there are about 0.25 injuries per team per game, and
+												with 10 players on the court and ~200 possessions per
+												game, that works out to 0.25/10/200 = 0.000125 by
+												default.
+											</>
+										) : null}
+									</p>
+									<p>
+										This is just an average. Older players have a higher chance
+										of injury and younger players have a lower chance of injury.
+									</p>
 								</HelpPopover>
 							</label>
 							<input

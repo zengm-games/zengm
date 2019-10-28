@@ -6,7 +6,6 @@ const blacklist = require("rollup-plugin-blacklist");
 const commonjs = require("rollup-plugin-commonjs");
 const globals = require("rollup-plugin-node-globals");
 const json = require("rollup-plugin-json");
-const builtins = require("rollup-plugin-node-builtins");
 const resolve = require("rollup-plugin-node-resolve");
 const replace = require("rollup-plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
@@ -50,7 +49,6 @@ module.exports = (nodeEnv, blacklistOptions) => {
 			preferBuiltins: true,
 		}),
 		globals(),
-		builtins(),
 	];
 
 	if (nodeEnv === "production") {

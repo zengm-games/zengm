@@ -1,7 +1,7 @@
 // @flow
 
 import classNames from "classnames";
-import csvStringify from "csv-stringify/lib/es5";
+import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React from "react";
@@ -179,20 +179,8 @@ class DataTable extends React.Component<Props, State> {
 			row.data.map(val => getSearchVal(val, false)),
 		);
 
-		csvStringify(
-			rows,
-			{
-				columns,
-				header: true,
-			},
-			(err, output) => {
-				if (err) {
-					throw err;
-				}
-
-				downloadFile(`${this.props.name}.csv`, output, "text/csv");
-			},
-		);
+		const output = csvFormatRows([columns, ...rows]);
+		downloadFile(`${this.props.name}.csv`, output, "text/csv");
 	}
 
 	handleToggleFilters() {

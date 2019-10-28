@@ -25,8 +25,11 @@ DataTable
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
 
-replace emitter with zustand (or mitt)
-- get rid of node builtins?
+get rid of rollup-plugin-node-globals too?
+
+jersey numbers
+- retire
+  - could come with expiration date
 
 new league options
 - option to equalize cities when starting new league (equal spending and size)

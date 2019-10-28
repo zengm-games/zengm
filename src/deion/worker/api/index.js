@@ -1,6 +1,6 @@
 // @flow
 
-import csvStringify from "csv-stringify/lib/es5";
+import { csvFormatRows } from "d3-dsv";
 import flatten from "lodash/flatten";
 import range from "lodash/range";
 import { PHASE, PHASE_TEXT, PLAYER, getCols } from "../../common";
@@ -589,22 +589,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		}
 	}
 
-	return new Promise((resolve, reject) => {
-		csvStringify(
-			rows,
-			{
-				columns,
-				header: true,
-			},
-			(err, output) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(output);
-				}
-			},
-		);
-	});
+	return csvFormatRows([columns, ...rows]);
 };
 
 // exportPlayerGamesCsv(2015) - just 2015 games

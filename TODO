@@ -26,6 +26,7 @@ DataTable
   - Dashboard -> Ago (needs different search and sort values!)
 
 replace emitter with zustand (or mitt)
+- move most of get to initView?
 - get rid of node builtins?
 
 new league options

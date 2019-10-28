@@ -97,8 +97,7 @@ const Controller = () => {
 	const idLoaded = useRef(undefined);
 	const idLoading = useRef(undefined);
 
-	const { lid, popup, showNagModal } = useLocalShallow(state2 => ({
-		lid: state2.lid,
+	const { popup, showNagModal } = useLocalShallow(state2 => ({
 		popup: state2.popup,
 		showNagModal: state2.showNagModal,
 	}));
@@ -202,52 +201,20 @@ const Controller = () => {
 	const get = useCallback(
 		async (
 			args: Args,
-			ctx: RouterContext,
+			inputs: any,
+			updateEvents: any,
 			resolve: () => void,
 			reject: Error => void,
 		) => {
 			try {
-				const updateEvents =
-					ctx.state.updateEvents !== undefined ? ctx.state.updateEvents : [];
-				const newLidInt = parseInt(ctx.params.lid, 10);
-				const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
-
-				if (args.inLeague) {
-					if (newLid !== lid) {
-						await toWorker("beforeViewLeague", newLid, lid);
-					}
-				} else {
-					// eslint-disable-next-line no-lonely-if
-					if (lid !== undefined) {
-						await toWorker("beforeViewNonLeague");
-						localActions.updateGameAttributes({
-							lid: undefined,
-						});
-					}
-				}
-
-				// No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
-				// ctxBBGM is hacky!
-				const ctxBBGM = { ...ctx.state };
-				delete ctxBBGM.err; // Can't send error to worker
-				const inputs = await toWorker(
-					`processInputs.${args.id}`,
-					ctx.params,
-					ctxBBGM,
-				);
-
-				if (typeof inputs.redirectUrl === "string") {
-					await realtimeUpdate([], inputs.redirectUrl, {}, true);
-				} else {
-					await updatePage(args, inputs, updateEvents);
-				}
+				await updatePage(args, inputs, updateEvents);
 			} catch (err) {
 				reject(err);
 			}
 
 			resolve();
 		},
-		[lid, updatePage],
+		[updatePage],
 	);
 
 	useEffect(() => {

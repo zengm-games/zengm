@@ -25,8 +25,6 @@ DataTable
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
 
-get rid of rollup-plugin-node-globals too?
-
 jersey numbers
 - retire
   - could come with expiration date
@@ -68,9 +66,6 @@ football OL with 49 height listed as 5'7"
 football too many players retire
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
-
-move to rollup
-- get rid of rollup-plugin-node-builtins and rollup-plugin-node-globals
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
 

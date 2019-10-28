@@ -1,15 +1,15 @@
 // @flow
 
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import {
 	ads,
 	emitter,
-	local,
 	localActions,
 	realtimeUpdate,
 	setTitle,
 	toWorker,
+	useLocalShallow,
 } from "../util";
 import ErrorBoundary from "./ErrorBoundary";
 import Footer from "./Footer";
@@ -44,35 +44,6 @@ LeagueContent.propTypes = {
 	updating: PropTypes.bool.isRequired,
 };
 
-const showAd = (type: "modal", autoPlaySeasons: number) => {
-	if (type === "modal") {
-		if (!window.enableLogging) {
-			return;
-		}
-
-		if (window.inIframe) {
-			return;
-		}
-
-		// No ads during multi season auto sim
-		if (autoPlaySeasons > 0) {
-			return;
-		}
-
-		// No ads for Gold members
-		if (local.getState().gold !== false) {
-			return;
-		}
-
-		const r = Math.random();
-		if (r < 0.96) {
-			ads.showGcs();
-		} else {
-			ads.showModal();
-		}
-	}
-};
-
 const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
 	setTitle("Error");
 	return (
@@ -95,46 +66,229 @@ type State = {
 	loading: boolean,
 	inLeague: boolean,
 	data: { [key: string]: any },
-	showNagModal: boolean,
 };
 
-class Controller extends React.Component<{}, State> {
-	closeNagModal: Function;
-
-	get: Function;
-
-	updatePage: Function;
-
-	updateState: Function;
-
-	idLoaded: string | void;
-
-	idLoading: string | void;
-
-	constructor(props: {}) {
-		super(props);
-		this.state = {
-			Component: undefined,
-			loading: false,
-			inLeague: false,
-			data: {},
-			showNagModal: false,
-		};
-		this.idLoaded = undefined;
-		this.idLoading = undefined;
-
-		this.closeNagModal = this.closeNagModal.bind(this);
-		this.get = this.get.bind(this);
-		this.updatePage = this.updatePage.bind(this);
-		this.updateState = this.updateState.bind(this);
+const reducer = (state: State, action: any) => {
+	switch (action.type) {
+		case "startLoading":
+			return {
+				...state,
+				loading: true,
+			};
+		case "doneLoading":
+			return {
+				...state,
+				loading: false,
+			};
+		case "reset":
+			return action.vars;
+		default:
+			throw new Error(`Unknown action type "${action.type}"`);
 	}
+};
 
-	componentDidMount() {
-		emitter.on("get", this.get);
+const Controller = () => {
+	const [state, dispatch] = useReducer(reducer, {
+		Component: undefined,
+		loading: false,
+		inLeague: false,
+		data: {},
+	});
+
+	const idLoaded = useRef(undefined);
+	const idLoading = useRef(undefined);
+
+	const { gold, lid, popup, showNagModal } = useLocalShallow(state2 => ({
+		gold: state2.gold,
+		lid: state2.lid,
+		popup: state2.popup,
+		showNagModal: state2.showNagModal,
+	}));
+
+	const closeNagModal = useCallback(() => {
+		localActions.update({ showNagModal: false });
+	}, []);
+
+	const updatePage = useCallback(
+		async (args: Args, inputs: GetOutput, updateEvents: UpdateEvents) => {
+			let prevData;
+
+			// Reset league content and view model only if it's:
+			// (1) if it's not loaded and not loading yet
+			// (2) loaded, but loading something else
+			if (
+				(idLoaded.current !== args.id && idLoading.current !== args.id) ||
+				(idLoaded.current === args.id &&
+					idLoading.current !== args.id &&
+					idLoading.current !== undefined)
+			) {
+				if (!updateEvents.includes("firstRun")) {
+					updateEvents.push("firstRun");
+				}
+
+				prevData = {};
+			} else if (idLoading.current === args.id) {
+				// If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
+				return;
+			} else {
+				prevData = state.data;
+			}
+
+			dispatch({ type: "startLoading" });
+			idLoading.current = args.id;
+
+			// Resolve all the promises before updating the UI to minimize flicker
+			const results = await toWorker(
+				"runBefore",
+				args.id,
+				inputs,
+				updateEvents,
+				prevData,
+			);
+
+			// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
+			if (results === undefined) {
+				dispatch({ type: "doneLoading" });
+				idLoading.current = undefined;
+				return;
+			}
+
+			// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
+			if (results && results.some(result => !!result)) {
+				delete prevData.errorMessage;
+			}
+			let NewComponent = prevData.errorMessage ? ErrorMessage : args.Component;
+
+			for (const result of results) {
+				if (
+					result &&
+					Object.keys(result).length === 1 &&
+					result.hasOwnProperty("errorMessage")
+				) {
+					NewComponent = ErrorMessage;
+				}
+			}
+
+			const vars = {
+				Component: NewComponent,
+				data: Object.assign(prevData, ...results),
+				loading: false,
+				inLeague: args.inLeague,
+			};
+
+			if (vars.data && vars.data.redirectUrl !== undefined) {
+				// Reset idLoading, otherwise it will think loading is already in progress on redirect
+				dispatch({ type: "doneLoading" });
+				idLoading.current = undefined;
+
+				await realtimeUpdate([], vars.data.redirectUrl, {}, true);
+				return;
+			}
+
+			// Make sure user didn't navigate to another page while async stuff was happening
+			if (idLoading.current === args.id) {
+				dispatch({ type: "reset", vars });
+
+				idLoaded.current = args.id;
+				idLoading.current = undefined;
+
+				// Scroll to top if this load came from user clicking a link
+				if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
+					window.scrollTo(window.pageXOffset, 0);
+				}
+			}
+		},
+		[state.data],
+	);
+
+	const get = useCallback(
+		async (
+			args: Args,
+			ctx: RouterContext,
+			resolve: () => void,
+			reject: Error => void,
+		) => {
+			try {
+				const updateEvents =
+					ctx.state.updateEvents !== undefined ? ctx.state.updateEvents : [];
+				const newLidInt = parseInt(ctx.params.lid, 10);
+				const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
+
+				if (args.inLeague) {
+					if (newLid !== lid) {
+						await toWorker("beforeViewLeague", newLid, lid);
+					}
+				} else {
+					// eslint-disable-next-line no-lonely-if
+					if (lid !== undefined) {
+						await toWorker("beforeViewNonLeague");
+						localActions.updateGameAttributes({
+							lid: undefined,
+						});
+					}
+				}
+
+				// No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
+				// ctxBBGM is hacky!
+				const ctxBBGM = { ...ctx.state };
+				delete ctxBBGM.err; // Can't send error to worker
+				const inputs = await toWorker(
+					`processInputs.${args.id}`,
+					ctx.params,
+					ctxBBGM,
+				);
+
+				if (typeof inputs.redirectUrl === "string") {
+					await realtimeUpdate([], inputs.redirectUrl, {}, true);
+				} else {
+					await updatePage(args, inputs, updateEvents);
+				}
+			} catch (err) {
+				reject(err);
+			}
+
+			resolve();
+		},
+		[lid, updatePage],
+	);
+
+	const showAd = useCallback(
+		(type: "modal", autoPlaySeasons: number) => {
+			if (type === "modal") {
+				if (!window.enableLogging) {
+					return;
+				}
+
+				if (window.inIframe) {
+					return;
+				}
+
+				// No ads during multi season auto sim
+				if (autoPlaySeasons > 0) {
+					return;
+				}
+
+				// No ads for Gold members
+				if (gold !== false) {
+					return;
+				}
+
+				const r = Math.random();
+				if (r < 0.96) {
+					ads.showGcs();
+				} else {
+					ads.showModal();
+				}
+			}
+		},
+		[gold],
+	);
+
+	useEffect(() => {
+		emitter.on("get", get);
 		emitter.on("showAd", showAd);
-		emitter.on("updateState", this.updateState);
 
-		if (local.getState().popup && document.body) {
+		if (popup && document.body) {
 			if (document.body) {
 				document.body.style.paddingTop = "0";
 			}
@@ -146,204 +300,48 @@ class Controller extends React.Component<{}, State> {
 				document.body.appendChild(css);
 			}
 		}
-	}
 
-	componentWillUnmount() {
-		emitter.removeListener("get", this.get);
-		emitter.removeListener("showAd", showAd);
-		emitter.removeListener("updateState", this.updateState);
-	}
-
-	closeNagModal() {
-		this.setState({
-			showNagModal: false,
-		});
-	}
-
-	async get(
-		args: Args,
-		ctx: RouterContext,
-		resolve: () => void,
-		reject: Error => void,
-	) {
-		try {
-			const updateEvents =
-				ctx.state.updateEvents !== undefined ? ctx.state.updateEvents : [];
-			const newLidInt = parseInt(ctx.params.lid, 10);
-			const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
-
-			if (args.inLeague) {
-				if (newLid !== local.getState().lid) {
-					await toWorker("beforeViewLeague", newLid, local.getState().lid);
-				}
-			} else {
-				// eslint-disable-next-line no-lonely-if
-				if (local.getState().lid !== undefined) {
-					await toWorker("beforeViewNonLeague");
-					localActions.updateGameAttributes({
-						lid: undefined,
-					});
-				}
-			}
-
-			// No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
-			// ctxBBGM is hacky!
-			const ctxBBGM = { ...ctx.state };
-			delete ctxBBGM.err; // Can't send error to worker
-			const inputs = await toWorker(
-				`processInputs.${args.id}`,
-				ctx.params,
-				ctxBBGM,
-			);
-
-			if (typeof inputs.redirectUrl === "string") {
-				await realtimeUpdate([], inputs.redirectUrl, {}, true);
-			} else {
-				await this.updatePage(args, inputs, updateEvents);
-			}
-		} catch (err) {
-			reject(err);
-		}
-
-		resolve();
-	}
-
-	async updatePage(args: Args, inputs: GetOutput, updateEvents: UpdateEvents) {
-		let prevData;
-
-		// Reset league content and view model only if it's:
-		// (1) if it's not loaded and not loading yet
-		// (2) loaded, but loading something else
-		if (
-			(this.idLoaded !== args.id && this.idLoading !== args.id) ||
-			(this.idLoaded === args.id &&
-				this.idLoading !== args.id &&
-				this.idLoading !== undefined)
-		) {
-			if (!updateEvents.includes("firstRun")) {
-				updateEvents.push("firstRun");
-			}
-
-			prevData = {};
-		} else if (this.idLoading === args.id) {
-			// If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
-			return;
-		} else {
-			prevData = this.state.data;
-		}
-
-		this.setState({
-			loading: true,
-		});
-		this.idLoading = args.id;
-
-		// Resolve all the promises before updating the UI to minimize flicker
-		const results = await toWorker(
-			"runBefore",
-			args.id,
-			inputs,
-			updateEvents,
-			prevData,
-		);
-
-		// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
-		if (results === undefined) {
-			this.setState({
-				loading: false,
-			});
-			this.idLoading = undefined;
-			return;
-		}
-
-		// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
-		if (results && results.some(result => !!result)) {
-			delete prevData.errorMessage;
-		}
-		let Component = prevData.errorMessage ? ErrorMessage : args.Component;
-
-		for (const result of results) {
-			if (
-				result &&
-				Object.keys(result).length === 1 &&
-				result.hasOwnProperty("errorMessage")
-			) {
-				Component = ErrorMessage;
-			}
-		}
-
-		const vars = {
-			Component,
-			data: Object.assign(prevData, ...results),
-			loading: false,
-			inLeague: args.inLeague,
+		return () => {
+			emitter.removeListener("get", get);
+			emitter.removeListener("showAd", showAd);
 		};
+	}, [get, popup, showAd]);
 
-		if (vars.data && vars.data.redirectUrl !== undefined) {
-			// Reset idLoading, otherwise it will think loading is already in progress on redirect
-			this.setState({
-				loading: false,
-			});
-			this.idLoading = undefined;
+	const { Component, data, inLeague, loading } = state;
 
-			await realtimeUpdate([], vars.data.redirectUrl, {}, true);
-			return;
-		}
-
-		// Make sure user didn't navigate to another page while async stuff was happening
-		if (this.idLoading === args.id) {
-			this.setState(vars);
-
-			this.idLoaded = args.id;
-			this.idLoading = undefined;
-
-			// Scroll to top if this load came from user clicking a link
-			if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
-				window.scrollTo(window.pageXOffset, 0);
-			}
-		}
-	}
-
-	updateState(obj: State) {
-		this.setState(obj);
-	}
-
-	render() {
-		const { Component, data, loading, inLeague } = this.state;
-
-		let contents;
-		const pageID = this.idLoading || this.idLoaded; // idLoading, idLoaded, or undefined
-		if (!Component) {
-			contents = <h1 style={{ textAlign: "center" }}>Loading...</h1>; // Nice, aligned with splash screen
-		} else if (!inLeague) {
-			contents = <Component {...data} />;
-		} else {
-			contents = (
-				<>
-					<LeagueContent updating={loading}>
-						<Component {...data} />
-					</LeagueContent>
-					<MultiTeamMenu />
-				</>
-			);
-		}
-
-		return (
+	let contents;
+	const pageID = idLoading.current || idLoaded.current; // idLoading, idLoaded, or undefined
+	if (!Component) {
+		contents = <h1 style={{ textAlign: "center" }}>Loading...</h1>; // Nice, aligned with splash screen
+	} else if (!inLeague) {
+		contents = <Component {...data} />;
+	} else {
+		contents = (
 			<>
-				<NavBar pageID={pageID} updating={loading} />
-				<div className="bbgm-container">
-					<Header />
-					<SideBar pageID={pageID} />
-					<div className="p402_premium" id="actual-content">
-						<div id="actual-actual-content">
-							<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
-						</div>
-						<Footer />
-					</div>
-					<NagModal close={this.closeNagModal} show={this.state.showNagModal} />
-				</div>
+				<LeagueContent updating={loading}>
+					<Component {...data} />
+				</LeagueContent>
+				<MultiTeamMenu />
 			</>
 		);
 	}
-}
+
+	return (
+		<>
+			<NavBar pageID={pageID} updating={loading} />
+			<div className="bbgm-container">
+				<Header />
+				<SideBar pageID={pageID} />
+				<div className="p402_premium" id="actual-content">
+					<div id="actual-actual-content">
+						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
+					</div>
+					<Footer />
+				</div>
+				<NagModal close={closeNagModal} show={showNagModal} />
+			</div>
+		</>
+	);
+};
 
 export default Controller;

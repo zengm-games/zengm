@@ -1,16 +1,16 @@
 // @flow
 
-import emitter from "./emitter";
+import { localActions } from "./local";
 
-function showGcs() {
+const showGcs = () => {
 	if (process.env.SPORT === "basketball") {
 		window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());
 	}
-}
+};
 
-function showModal() {
-	emitter.emit("updateState", { showNagModal: true });
-}
+const showModal = () => {
+	localActions.update({ showNagModal: true });
+};
 
 export default {
 	showModal,

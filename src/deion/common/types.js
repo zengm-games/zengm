@@ -291,6 +291,7 @@ export type LocalStateUI = {|
 	playMenuOptions: Option[],
 	popup: boolean,
 	season: number,
+	showNagModal: boolean,
 	startingSeason: number,
 	statusText: string,
 	teamAbbrevsCache: string[],

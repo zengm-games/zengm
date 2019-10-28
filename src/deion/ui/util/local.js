@@ -18,6 +18,7 @@ const [useLocal, local] = create(set => ({
 	playMenuOptions: [],
 	popup: window.location.search === "?w=popup",
 	season: 0,
+	showNagModal: false,
 	startingSeason: 0,
 	statusText: "",
 	teamAbbrevsCache: [],

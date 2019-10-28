@@ -19,6 +19,7 @@ const [useLocal, local] = create(set => ({
 	popup: window.location.search === "?w=popup",
 	season: 0,
 	showNagModal: false,
+	sidebarOpen: false,
 	startingSeason: 0,
 	statusText: "",
 	teamAbbrevsCache: [],
@@ -47,6 +48,13 @@ const [useLocal, local] = create(set => ({
 				teamRegionsCache: [],
 				userTid: 0,
 				userTids: [],
+			}));
+		},
+
+		toggleSidebar() {
+			set(state => ({
+				...state,
+				sidebarOpen: !state.sidebarOpen,
 			}));
 		},
 

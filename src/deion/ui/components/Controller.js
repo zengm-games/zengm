@@ -3,7 +3,6 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import {
-	ads,
 	emitter,
 	localActions,
 	realtimeUpdate,
@@ -98,8 +97,7 @@ const Controller = () => {
 	const idLoaded = useRef(undefined);
 	const idLoading = useRef(undefined);
 
-	const { gold, lid, popup, showNagModal } = useLocalShallow(state2 => ({
-		gold: state2.gold,
+	const { lid, popup, showNagModal } = useLocalShallow(state2 => ({
 		lid: state2.lid,
 		popup: state2.popup,
 		showNagModal: state2.showNagModal,
@@ -252,41 +250,8 @@ const Controller = () => {
 		[lid, updatePage],
 	);
 
-	const showAd = useCallback(
-		(type: "modal", autoPlaySeasons: number) => {
-			if (type === "modal") {
-				if (!window.enableLogging) {
-					return;
-				}
-
-				if (window.inIframe) {
-					return;
-				}
-
-				// No ads during multi season auto sim
-				if (autoPlaySeasons > 0) {
-					return;
-				}
-
-				// No ads for Gold members
-				if (gold !== false) {
-					return;
-				}
-
-				const r = Math.random();
-				if (r < 0.96) {
-					ads.showGcs();
-				} else {
-					ads.showModal();
-				}
-			}
-		},
-		[gold],
-	);
-
 	useEffect(() => {
 		emitter.on("get", get);
-		emitter.on("showAd", showAd);
 
 		if (popup && document.body) {
 			if (document.body) {
@@ -303,9 +268,8 @@ const Controller = () => {
 
 		return () => {
 			emitter.removeListener("get", get);
-			emitter.removeListener("showAd", showAd);
 		};
-	}, [get, popup, showAd]);
+	}, [get, popup]);
 
 	const { Component, data, inLeague, loading } = state;
 

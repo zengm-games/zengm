@@ -160,8 +160,9 @@ const newPhasePreseason = async (conditions: Conditions) => {
 		local.autoPlaySeasons -= 1;
 	}
 
-	if (env.enableLogging) {
-		toUI(["emit", "showAd", "modal", local.autoPlaySeasons], conditions);
+	// No ads during multi season auto sim
+	if (env.enableLogging && local.autoPlaySeasons === 0) {
+		toUI(["showModal"], conditions);
 	}
 
 	return [undefined, ["playerMovement"]];

@@ -4,7 +4,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { Element, ElementRef } from "react";
-import { emitter, helpers, menuItems, useLocalShallow } from "../util";
+import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 
 const getText = (text): string | Element<any> => {
 	if (text.hasOwnProperty("side")) {
@@ -125,6 +125,12 @@ const SideBar = React.memo(({ pageID }: Props) => {
 
 	const topUserBlockRef = useRef<HTMLElement | null>(null);
 
+	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
+		godMode: state.godMode,
+		lid: state.lid,
+		sidebarOpen: state.sidebarOpen,
+	}));
+
 	const getNode = useCallback(node2 => {
 		if (node2 !== null) {
 			setNode(node2);
@@ -186,40 +192,36 @@ const SideBar = React.memo(({ pageID }: Props) => {
 		}
 	}, [node, nodeFade]);
 
-	const toggle = useCallback(() => {
+	useEffect(() => {
 		if (node) {
-			if (node.classList.contains("sidebar-open")) {
+			const opening = node.classList.contains("sidebar-open");
+			if (!sidebarOpen && opening) {
 				close();
-			} else {
+			} else if (sidebarOpen && !opening) {
 				open();
 			}
 		}
-	}, [close, node, open]);
+	}, [close, node, open, sidebarOpen]);
+
+	const closeHandler = useCallback(() => {
+		localActions.update({ sidebarOpen: false });
+	}, []);
 
 	useEffect(() => {
 		if (nodeFade) {
-			nodeFade.addEventListener("click", close);
+			nodeFade.addEventListener("click", closeHandler);
 		}
-
-		emitter.on("sidebar-toggle", toggle);
 
 		return () => {
 			if (nodeFade) {
-				nodeFade.removeEventListener("click", close);
+				nodeFade.removeEventListener("click", closeHandler);
 			}
-
-			emitter.removeListener("sidebar-toggle", toggle);
 		};
-	}, [close, nodeFade, toggle]);
+	}, [closeHandler, nodeFade]);
 
 	useEffect(() => {
 		topUserBlockRef.current = document.getElementById("top-user-block");
 	}, []);
-
-	const { godMode, lid } = useLocalShallow(state => ({
-		godMode: state.godMode,
-		lid: state.lid,
-	}));
 
 	return (
 		<>
@@ -232,7 +234,7 @@ const SideBar = React.memo(({ pageID }: Props) => {
 							key={i}
 							lid={lid}
 							menuItem={menuItem}
-							onMenuItemClick={close}
+							onMenuItemClick={closeHandler}
 							pageID={pageID}
 							root
 						/>

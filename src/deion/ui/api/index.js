@@ -1,6 +1,6 @@
 // @flow
 
-import { confirm, emitter, localActions, realtimeUpdate } from "../util";
+import { ads, confirm, local, localActions, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
 	GameAttributes,
@@ -36,10 +36,6 @@ const bbgmPing = (
 			});
 		}
 	}
-};
-
-const emit = (name: string, ...args: any[]) => {
-	emitter.emit(name, ...args);
 };
 
 // Read from goldUntil rather than local because this is called before local is updated
@@ -140,6 +136,28 @@ const showEvent2 = (options: LogEventShowOptions) => {
 	showEvent(options);
 };
 
+const showModal = () => {
+	if (!window.enableLogging) {
+		return;
+	}
+
+	if (window.inIframe) {
+		return;
+	}
+
+	// No ads for Gold members
+	if (local.getState().gold !== false) {
+		return;
+	}
+
+	const r = Math.random();
+	if (r < 0.96) {
+		ads.showGcs();
+	} else {
+		ads.showModal();
+	}
+};
+
 const updateLocal = (obj: $Shape<LocalStateUI>) => {
 	localActions.update(obj);
 };
@@ -147,12 +165,12 @@ const updateLocal = (obj: $Shape<LocalStateUI>) => {
 export default {
 	bbgmPing,
 	confirm,
-	emit,
 	initAds,
 	newLid,
 	realtimeUpdate: realtimeUpdate2,
 	resetLeague,
 	setGameAttributes,
 	showEvent: showEvent2,
+	showModal,
 	updateLocal,
 };

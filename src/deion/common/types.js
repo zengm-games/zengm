@@ -292,6 +292,7 @@ export type LocalStateUI = {|
 	popup: boolean,
 	season: number,
 	showNagModal: boolean,
+	sidebarOpen: boolean,
 	startingSeason: number,
 	statusText: string,
 	teamAbbrevsCache: string[],

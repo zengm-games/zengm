@@ -16,7 +16,6 @@ import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import {
-	emitter,
 	helpers,
 	localActions,
 	menuItems,
@@ -489,7 +488,7 @@ const NavBar = ({ pageID, updating }: Props) => {
 			<button
 				className="navbar-toggler mr-3"
 				onClick={() => {
-					emitter.emit("sidebar-toggle");
+					localActions.toggleSidebar();
 				}}
 				type="button"
 			>

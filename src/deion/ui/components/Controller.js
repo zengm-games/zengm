@@ -97,7 +97,8 @@ const Controller = () => {
 	const idLoaded = useRef(undefined);
 	const idLoading = useRef(undefined);
 
-	const { popup, showNagModal } = useLocalShallow(state2 => ({
+	const { lid, popup, showNagModal } = useLocalShallow(state2 => ({
+		lid: state2.lid,
 		popup: state2.popup,
 		showNagModal: state2.showNagModal,
 	}));
@@ -107,12 +108,18 @@ const Controller = () => {
 	}, []);
 
 	const updatePage = useCallback(
-		async (args: Args, inputs: GetOutput, updateEvents: UpdateEvents) => {
-			let prevData;
+		async (args: Args, context: RouterContext) => {
+			const updateEvents =
+				context.state.updateEvents !== undefined
+					? context.state.updateEvents
+					: [];
+			const newLidInt = parseInt(context.params.lid, 10);
+			const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
 
 			// Reset league content and view model only if it's:
 			// (1) if it's not loaded and not loading yet
 			// (2) loaded, but loading something else
+			let prevData;
 			if (
 				(idLoaded.current !== args.id && idLoading.current !== args.id) ||
 				(idLoaded.current === args.id &&
@@ -133,6 +140,37 @@ const Controller = () => {
 
 			dispatch({ type: "startLoading" });
 			idLoading.current = args.id;
+
+			if (args.inLeague) {
+				if (newLid !== lid) {
+					await toWorker("beforeViewLeague", newLid, lid);
+				}
+			} else {
+				// eslint-disable-next-line no-lonely-if
+				if (lid !== undefined) {
+					await toWorker("beforeViewNonLeague");
+					localActions.updateGameAttributes({
+						lid: undefined,
+					});
+				}
+			}
+
+			// No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
+			// ctxBBGM is hacky!
+			const ctxBBGM = { ...context.state };
+			delete ctxBBGM.err; // Can't send error to worker
+			const inputs = await toWorker(
+				`processInputs.${args.id}`,
+				context.params,
+				ctxBBGM,
+			);
+
+			if (typeof inputs.redirectUrl === "string") {
+				dispatch({ type: "doneLoading" });
+				idLoading.current = undefined;
+				await realtimeUpdate([], inputs.redirectUrl, {}, true);
+				return;
+			}
 
 			// Resolve all the promises before updating the UI to minimize flicker
 			const results = await toWorker(
@@ -195,24 +233,12 @@ const Controller = () => {
 				}
 			}
 		},
-		[state.data],
+		[lid, state.data],
 	);
 
 	const get = useCallback(
-		async (
-			args: Args,
-			inputs: any,
-			updateEvents: any,
-			resolve: () => void,
-			reject: Error => void,
-		) => {
-			try {
-				await updatePage(args, inputs, updateEvents);
-			} catch (err) {
-				reject(err);
-			}
-
-			resolve();
+		async (args: Args, context: RouterContext) => {
+			await updatePage(args, context);
 		},
 		[updatePage],
 	);

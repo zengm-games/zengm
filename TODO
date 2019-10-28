@@ -26,9 +26,6 @@ DataTable
   - Dashboard -> Ago (needs different search and sort values!)
 
 replace emitter with zustand (or mitt)
-- processInputs to worker?
-  - need to handle inputs.redirectUrl from within the worker, but also send appropriate signal back to UI that loading is done for this route
-  - remove from worker API
 - merge initView back to updatePage, so loading indicator can be set earlier
   - can put in custom hook(s)? reducer is only used there
 - test error page, redirect, etc

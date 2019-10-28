@@ -87,20 +87,6 @@ const deionWorker = async (options: {
 			return api.actions[subname](...params, conditions);
 		}
 
-		if (name.indexOf("processInputs.") === 0) {
-			const subname = name.replace("processInputs.", "");
-
-			if (!api.processInputs.hasOwnProperty(subname)) {
-				// processInputs is not needed for every page
-				return {};
-			}
-
-			const obj = api.processInputs[subname](...params, conditions);
-
-			// Return empty object rather than undefined
-			return obj === undefined ? {} : obj;
-		}
-
 		if (!api.hasOwnProperty(name)) {
 			throw new Error(
 				`API call to nonexistant worker function "${name}" with params ${JSON.stringify(

@@ -1219,7 +1219,8 @@ const resetPlayingTime = async (tid: number) => {
 
 const runBefore = async (
 	viewId: string,
-	inputs: GetOutput,
+	params: any,
+	ctxBBGM: any,
 	updateEvents: UpdateEvents,
 	prevData: any,
 	conditions: Conditions,
@@ -1233,8 +1234,21 @@ const runBefore = async (
 		return;
 	}
 
-	const view = views[viewId] ? views[viewId] : overrides.views[viewId];
+	let inputs;
+	if (processInputs.hasOwnProperty(viewId)) {
+		inputs = processInputs[viewId](params, ctxBBGM);
+	}
+	if (inputs === undefined) {
+		// Return empty object rather than undefined
+		inputs = {};
+	}
 
+	if (typeof inputs.redirectUrl === "string") {
+		// Short circuit from processInputs alone
+		return [{ redirectUrl: inputs.redirectUrl }];
+	}
+
+	const view = views[viewId] ? views[viewId] : overrides.views[viewId];
 	if (view && view.hasOwnProperty("runBefore")) {
 		return Promise.all(
 			view.runBefore.map(fn => {
@@ -1610,7 +1624,6 @@ export default {
 	handleUploadedDraftClass,
 	init,
 	lockSet,
-	processInputs,
 	proposeTrade,
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,

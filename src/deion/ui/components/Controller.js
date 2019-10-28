@@ -17,11 +17,7 @@ import MultiTeamMenu from "./MultiTeamMenu";
 import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
-import type {
-	GetOutput,
-	RouterContext,
-	UpdateEvents,
-} from "../../common/types";
+import type { GetOutput, RouterContext } from "../../common/types";
 
 type Props = {
 	children: any,
@@ -155,28 +151,16 @@ const Controller = () => {
 				}
 			}
 
-			// No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
 			// ctxBBGM is hacky!
 			const ctxBBGM = { ...context.state };
 			delete ctxBBGM.err; // Can't send error to worker
-			const inputs = await toWorker(
-				`processInputs.${args.id}`,
-				context.params,
-				ctxBBGM,
-			);
-
-			if (typeof inputs.redirectUrl === "string") {
-				dispatch({ type: "doneLoading" });
-				idLoading.current = undefined;
-				await realtimeUpdate([], inputs.redirectUrl, {}, true);
-				return;
-			}
 
 			// Resolve all the promises before updating the UI to minimize flicker
 			const results = await toWorker(
 				"runBefore",
 				args.id,
-				inputs,
+				context.params,
+				ctxBBGM,
 				updateEvents,
 				prevData,
 			);

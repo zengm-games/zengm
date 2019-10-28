@@ -24,17 +24,17 @@ type Props = {
 	updating: boolean,
 };
 
-class LeagueContent extends React.Component<Props> {
-	// eslint-disable-next-line class-methods-use-this
-	shouldComponentUpdate(nextProps) {
-		return !nextProps.updating;
-	}
+const LeagueContent = React.memo(
+	(props: Props) => {
+		return props.children;
+	},
+	(prevProps: Props, nextProps: Props) => {
+		// No point in rendering while updating contents
+		return nextProps.updating;
+	},
+);
 
-	render() {
-		return this.props.children;
-	}
-}
-
+// $FlowFixMe
 LeagueContent.propTypes = {
 	updating: PropTypes.bool.isRequired,
 };
@@ -220,15 +220,8 @@ const Controller = () => {
 		[lid, state.data],
 	);
 
-	const get = useCallback(
-		async (args: Args, context: RouterContext) => {
-			await updatePage(args, context);
-		},
-		[updatePage],
-	);
-
 	useEffect(() => {
-		emitter.on("get", get);
+		emitter.on("get", updatePage);
 
 		if (popup && document.body) {
 			if (document.body) {
@@ -244,9 +237,9 @@ const Controller = () => {
 		}
 
 		return () => {
-			emitter.removeListener("get", get);
+			emitter.removeListener("get", updatePage);
 		};
-	}, [get, popup]);
+	}, [updatePage, popup]);
 
 	const { Component, data, inLeague, loading } = state;
 

@@ -1,6 +1,6 @@
 // @flow
 
-import emitter from "./emitter";
+import { localActions } from "./local";
 import type { RouterContext } from "../../common/types";
 
 type InitArgs = {
@@ -10,14 +10,19 @@ type InitArgs = {
 };
 
 const initView = (args: InitArgs) => {
-	args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
-
 	if (!args.Component) {
 		throw new Error("Missing arg Component");
 	}
 
 	return async (context: RouterContext): Promise<void> => {
-		emitter.emit("get", args, context);
+		localActions.update({
+			viewInfo: {
+				Component: args.Component,
+				id: args.id,
+				inLeague: !!args.inLeague,
+				context,
+			},
+		});
 	};
 };
 

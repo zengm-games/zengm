@@ -280,6 +280,16 @@ export type Option = {
 	url?: string,
 };
 
+export type RouterContext = {|
+	params: {
+		[key: string]: string,
+	},
+	path: string,
+	state: {
+		[key: string]: any,
+	},
+|};
+
 export type LocalStateUI = {|
 	gold: boolean | void,
 	godMode: boolean,
@@ -301,6 +311,12 @@ export type LocalStateUI = {|
 	userTid: number,
 	userTids: number[],
 	username: string | void,
+	viewInfo: {
+		Component: any,
+		id: string,
+		inLeague: boolean,
+		context: RouterContext,
+	} | void,
 |};
 
 export type PartialTopMenu = {|
@@ -526,16 +542,6 @@ export type ReleasedPlayerWithoutRid = {|
 	pid: number,
 	tid: number,
 	contract: PlayerContract,
-|};
-
-export type RouterContext = {|
-	params: {
-		[key: string]: string,
-	},
-	path: string,
-	state: {
-		[key: string]: any,
-	},
 |};
 
 export type ScheduleGame = {|

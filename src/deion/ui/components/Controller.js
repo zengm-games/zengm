@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import {
-	emitter,
+	local,
 	localActions,
 	realtimeUpdate,
 	setTitle,
@@ -17,7 +17,7 @@ import MultiTeamMenu from "./MultiTeamMenu";
 import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
-import type { GetOutput, RouterContext } from "../../common/types";
+import type { RouterContext } from "../../common/types";
 
 type Props = {
 	children: any,
@@ -47,13 +47,6 @@ const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
 			<h2>{errorMessage}</h2>
 		</>
 	);
-};
-
-type Args = {
-	Component: any,
-	id: string,
-	inLeague: boolean,
-	get: (ctx: RouterContext) => ?GetOutput,
 };
 
 type State = {
@@ -104,7 +97,12 @@ const Controller = () => {
 	}, []);
 
 	const updatePage = useCallback(
-		async (args: Args, context: RouterContext) => {
+		async (
+			Component: any,
+			id: string,
+			inLeague: boolean,
+			context: RouterContext,
+		) => {
 			const updateEvents =
 				context.state.updateEvents !== undefined
 					? context.state.updateEvents
@@ -117,9 +115,9 @@ const Controller = () => {
 			// (2) loaded, but loading something else
 			let prevData;
 			if (
-				(idLoaded.current !== args.id && idLoading.current !== args.id) ||
-				(idLoaded.current === args.id &&
-					idLoading.current !== args.id &&
+				(idLoaded.current !== id && idLoading.current !== id) ||
+				(idLoaded.current === id &&
+					idLoading.current !== id &&
 					idLoading.current !== undefined)
 			) {
 				if (!updateEvents.includes("firstRun")) {
@@ -127,7 +125,7 @@ const Controller = () => {
 				}
 
 				prevData = {};
-			} else if (idLoading.current === args.id) {
+			} else if (idLoading.current === id) {
 				// If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
 				return;
 			} else {
@@ -135,9 +133,9 @@ const Controller = () => {
 			}
 
 			dispatch({ type: "startLoading" });
-			idLoading.current = args.id;
+			idLoading.current = id;
 
-			if (args.inLeague) {
+			if (inLeague) {
 				if (newLid !== lid) {
 					await toWorker("beforeViewLeague", newLid, lid);
 				}
@@ -158,7 +156,7 @@ const Controller = () => {
 			// Resolve all the promises before updating the UI to minimize flicker
 			const results = await toWorker(
 				"runBefore",
-				args.id,
+				id,
 				context.params,
 				ctxBBGM,
 				updateEvents,
@@ -176,7 +174,7 @@ const Controller = () => {
 			if (results && results.some(result => !!result)) {
 				delete prevData.errorMessage;
 			}
-			let NewComponent = prevData.errorMessage ? ErrorMessage : args.Component;
+			let NewComponent = prevData.errorMessage ? ErrorMessage : Component;
 
 			for (const result of results) {
 				if (
@@ -192,7 +190,7 @@ const Controller = () => {
 				Component: NewComponent,
 				data: Object.assign(prevData, ...results),
 				loading: false,
-				inLeague: args.inLeague,
+				inLeague,
 			};
 
 			if (vars.data && vars.data.redirectUrl !== undefined) {
@@ -205,10 +203,10 @@ const Controller = () => {
 			}
 
 			// Make sure user didn't navigate to another page while async stuff was happening
-			if (idLoading.current === args.id) {
+			if (idLoading.current === id) {
 				dispatch({ type: "reset", vars });
 
-				idLoaded.current = args.id;
+				idLoaded.current = id;
 				idLoading.current = undefined;
 
 				// Scroll to top if this load came from user clicking a link
@@ -221,8 +219,22 @@ const Controller = () => {
 	);
 
 	useEffect(() => {
-		emitter.on("get", updatePage);
+		return local.subscribe(
+			viewInfo => {
+				if (viewInfo !== undefined) {
+					updatePage(
+						viewInfo.Component,
+						viewInfo.id,
+						viewInfo.inLeague,
+						viewInfo.context,
+					);
+				}
+			},
+			state2 => state2.viewInfo,
+		);
+	}, [updatePage]);
 
+	useEffect(() => {
 		if (popup && document.body) {
 			if (document.body) {
 				document.body.style.paddingTop = "0";
@@ -235,11 +247,7 @@ const Controller = () => {
 				document.body.appendChild(css);
 			}
 		}
-
-		return () => {
-			emitter.removeListener("get", updatePage);
-		};
-	}, [updatePage, popup]);
+	}, [popup]);
 
 	const { Component, data, inLeague, loading } = state;
 

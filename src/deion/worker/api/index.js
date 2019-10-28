@@ -41,7 +41,6 @@ import type {
 	Conditions,
 	Env,
 	GameAttributes,
-	GetOutput,
 	Local,
 	LockName,
 	Player,

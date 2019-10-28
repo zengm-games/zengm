@@ -28,6 +28,7 @@ const [useLocal, local] = create(set => ({
 	userTid: 0,
 	userTids: [],
 	username: undefined,
+	viewInfo: undefined,
 
 	actions: {
 		// Reset any values specific to a league

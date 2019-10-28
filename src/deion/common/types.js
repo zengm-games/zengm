@@ -316,6 +316,7 @@ export type LocalStateUI = {|
 		id: string,
 		inLeague: boolean,
 		context: RouterContext,
+		cb: (Error | void) => void,
 	} | void,
 |};
 

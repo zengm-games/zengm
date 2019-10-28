@@ -220,14 +220,21 @@ const Controller = () => {
 
 	useEffect(() => {
 		return local.subscribe(
-			viewInfo => {
+			async viewInfo => {
 				if (viewInfo !== undefined) {
-					updatePage(
-						viewInfo.Component,
-						viewInfo.id,
-						viewInfo.inLeague,
-						viewInfo.context,
-					);
+					try {
+						await updatePage(
+							viewInfo.Component,
+							viewInfo.id,
+							viewInfo.inLeague,
+							viewInfo.context,
+						);
+					} catch (error) {
+						viewInfo.cb(error);
+						return;
+					}
+
+					viewInfo.cb();
 				}
 			},
 			state2 => state2.viewInfo,

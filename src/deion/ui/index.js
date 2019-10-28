@@ -250,6 +250,7 @@ const setupRoutes = () => {
 				}
 			}
 
+			console.log("here", errMsg);
 			const ErrorPage = (
 				<>
 					<h1>Error</h1>

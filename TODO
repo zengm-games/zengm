@@ -26,10 +26,6 @@ DataTable
   - Dashboard -> Ago (needs different search and sort values!)
 
 replace emitter with zustand (or mitt)
-- merge initView back to updatePage, so loading indicator can be set earlier
-  - can put in custom hook(s)? reducer is only used there
-- test error page, redirect, etc
-- test errors in various places, like in worker view. how did that used to work?
 - get rid of node builtins?
 
 new league options

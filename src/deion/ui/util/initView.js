@@ -15,13 +15,22 @@ const initView = (args: InitArgs) => {
 	}
 
 	return async (context: RouterContext): Promise<void> => {
-		localActions.update({
-			viewInfo: {
-				Component: args.Component,
-				id: args.id,
-				inLeague: !!args.inLeague,
-				context,
-			},
+		return new Promise((resolve, reject) => {
+			localActions.update({
+				viewInfo: {
+					Component: args.Component,
+					id: args.id,
+					inLeague: !!args.inLeague,
+					context,
+					cb: error => {
+						if (error) {
+							reject(error);
+						} else {
+							resolve();
+						}
+					},
+				},
+			});
 		});
 	};
 };

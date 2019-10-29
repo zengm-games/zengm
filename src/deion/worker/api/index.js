@@ -682,22 +682,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 		}
 	}
 
-	return new Promise((resolve, reject) => {
-		csvStringify(
-			rows,
-			{
-				columns,
-				header: true,
-			},
-			(err, output) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(output);
-				}
-			},
-		);
-	});
+	return csvFormatRows([columns, ...rows]);
 };
 
 const genFilename = (data: any) => {

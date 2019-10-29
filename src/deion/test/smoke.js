@@ -1,6 +1,5 @@
 // @flow
 
-import assert from "assert";
 import backboard from "backboard";
 import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
@@ -36,7 +35,9 @@ describe("Smoke Tests", () => {
 		clearInterval(intervalID);
 
 		await league.remove(g.lid);
-		assert.equal(g.lid, undefined);
+		if (g.lid !== undefined) {
+			throw new Error("g.lid should be undefined");
+		}
 
 		if (idb.meta !== undefined) {
 			idb.meta.close();

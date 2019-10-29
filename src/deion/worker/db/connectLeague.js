@@ -561,6 +561,7 @@ const migrateLeague = (upgradeDB, lid) => {
 		});
 	}
 	if (upgradeDB.oldVersion <= 35) {
+		slowUpgrade();
 		upgradeDB.players.iterate(p => {
 			if (!p.injuries) {
 				p.injuries = [];

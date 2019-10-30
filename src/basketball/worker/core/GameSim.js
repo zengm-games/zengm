@@ -167,7 +167,7 @@ class GameSim {
 
 	foulsLastTwoMinutes: [number, number];
 
-	avgPossessionLength: number;
+	averagePossessionLength: number;
 
 	synergyFactor: number;
 
@@ -229,7 +229,7 @@ class GameSim {
 		const numPossessions = Math.round(
 			(this.team[0].pace + this.team[1].pace) / 2,
 		);
-		this.avgPossessionLength = 48 / (2 * numPossessions); // [min]
+		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
 		this.synergyFactor = 0.1; // How important is synergy?
@@ -392,19 +392,68 @@ class GameSim {
 		}
 	}
 
+	getPossessionLength() {
+		const quarter = this.team[this.o].stat.ptsQtrs.length;
+		const pointDifferential =
+			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+
+		// Booleans that can influence possession length strategy
+		const holdForLastShot =
+			this.t <= 26 / 60 && (quarter <= 3 || pointDifferential >= 0);
+		const catchUp =
+			quarter >= 4 &&
+			((this.t <= 3 && pointDifferential <= 10) ||
+				(this.t <= 2 && pointDifferential <= 5) ||
+				(this.t <= 1 && pointDifferential < 0));
+		const maintainLead =
+			quarter >= 4 &&
+			((this.t <= 3 && pointDifferential > 10) ||
+				(this.t <= 2 && pointDifferential > 5) ||
+				(this.t <= 1 && pointDifferential > 0));
+		const twoForOne = this.t >= 32 / 60 && this.t <= 52 / 60;
+
+		let lowerBound = 1 / 60;
+		let upperBound = 24 / 60;
+
+		if (lowerBound > this.t) {
+			lowerBound = this.t;
+		}
+		if (upperBound > this.t) {
+			upperBound = this.t;
+		}
+
+		let possessionLength; // [min]
+		if (holdForLastShot) {
+			possessionLength = random.gauss(this.t, 5 / 60);
+		} else if (catchUp) {
+			possessionLength = random.gauss(
+				this.averagePossessionLength - 3 / 60,
+				5 / 60,
+			);
+		} else if (maintainLead) {
+			possessionLength = random.gauss(
+				this.averagePossessionLength + 3 / 60,
+				5 / 60,
+			);
+		} else {
+			possessionLength = random.gauss(this.averagePossessionLength, 5 / 60);
+		}
+
+		if (twoForOne && !catchUp && !maintainLead) {
+			if (Math.random() < 0.6) {
+				// There are between 32 and 52 seconds remaining, and we'd like to get the shot up somewhere between 29 and 35 seconds
+				lowerBound = this.t - 29 / 60;
+				upperBound = this.t - 35 / 60;
+			}
+		}
+
+		return helpers.bound(possessionLength, lowerBound, upperBound);
+	}
+
 	simPossession() {
 		// Clock
-		let possessionTime = random.truncGauss(
-			this.avgPossessionLength,
-			5,
-			1 / 60,
-			24 / 60,
-		); // [min]
-		this.t -= possessionTime;
-		if (this.t < 0) {
-			possessionTime += this.t;
-			this.t = 0;
-		}
+		const possessionLength = this.getPossessionLength();
+		this.t -= possessionLength;
 
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
@@ -420,7 +469,7 @@ class GameSim {
 			this.d = this.o === 1 ? 0 : 1;
 		}
 
-		this.updatePlayingTime(possessionTime);
+		this.updatePlayingTime(possessionLength);
 
 		this.injuries();
 
@@ -732,19 +781,19 @@ class GameSim {
 	 *
 	 * This should be called once every possession, at the end, to record playing time and bench time for players.
 	 */
-	updatePlayingTime(possessionTime: number) {
+	updatePlayingTime(possessionLength: number) {
 		for (let t = 0; t < 2; t++) {
 			// Update minutes (overall, court, and bench)
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				if (this.playersOnCourt[t].includes(p)) {
-					this.recordStat(t, p, "min", possessionTime);
-					this.recordStat(t, p, "courtTime", possessionTime);
+					this.recordStat(t, p, "min", possessionLength);
+					this.recordStat(t, p, "courtTime", possessionLength);
 					// This used to be 0.04. Increase more to lower PT
 					this.recordStat(
 						t,
 						p,
 						"energy",
-						-possessionTime *
+						-possessionLength *
 							0.06 *
 							(1 - this.team[t].player[p].compositeRating.endurance),
 					);
@@ -752,8 +801,8 @@ class GameSim {
 						this.team[t].player[p].stat.energy = 0;
 					}
 				} else {
-					this.recordStat(t, p, "benchTime", possessionTime);
-					this.recordStat(t, p, "energy", possessionTime * 0.1);
+					this.recordStat(t, p, "benchTime", possessionLength);
+					this.recordStat(t, p, "energy", possessionLength * 0.1);
 					if (this.team[t].player[p].stat.energy > 1) {
 						this.team[t].player[p].stat.energy = 1;
 					}

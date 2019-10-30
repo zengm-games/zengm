@@ -1,11 +1,7 @@
 situational awareness
 - possession length
-  - two for one at end of quarters
-  - hold for last shot (unless trying to catch up in the 4th quarter or OT)
-  - shorter for team trying to catch up
-  - longer for team trying to hold lead
   - if there is not much time left, it's possible that time will run out before the play concludes. especially in 4th quarter for winning team
-  - ? heaves at end of quarter
+  - ? heaves at end of quarter, or at least make shots lower probability if not much time left
   - ? timeouts to advance ball (shorter possession) or make subs
 - fouls
   - intentional foul when down late
@@ -30,6 +26,10 @@ re-norm other stats
 blog
 - possession length
   - add some variability
+  - two for one at end of quarters
+  - hold for last shot (unless trying to catch up in the 4th quarter or OT)
+  - shorter for team trying to catch up
+  - longer for team trying to hold lead
 - fouls
   - non-shooting fouls
   - bonus
@@ -80,6 +80,7 @@ better retiring logic
 more customize player options
 - fixed position
 - hof
+- awards
 
 backboard -> idb
 - quota errors

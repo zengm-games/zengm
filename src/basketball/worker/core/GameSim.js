@@ -150,8 +150,6 @@ class GameSim {
 
 	team: [TeamGameSim, TeamGameSim];
 
-	dt: number;
-
 	playersOnCourt: [
 		[number, number, number, number, number],
 		[number, number, number, number, number],
@@ -168,6 +166,8 @@ class GameSim {
 	foulsThisQuarter: [number, number];
 
 	foulsLastTwoMinutes: [number, number];
+
+	avgPossessionLength: number;
 
 	synergyFactor: number;
 
@@ -210,10 +210,6 @@ class GameSim {
 
 		this.id = gid;
 		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
-		const numPossessions = Math.round(
-			((this.team[0].pace + this.team[1].pace) / 2) * random.uniform(0.9, 1.1),
-		);
-		this.dt = 48 / (2 * numPossessions); // Time elapsed per possession
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
@@ -229,6 +225,11 @@ class GameSim {
 
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
+
+		const numPossessions = Math.round(
+			(this.team[0].pace + this.team[1].pace) / 2,
+		);
+		this.avgPossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
 		this.synergyFactor = 0.1; // How important is synergy?
@@ -393,8 +394,13 @@ class GameSim {
 
 	simPossession() {
 		// Clock
-		this.t -= this.dt;
-		let possessionTime = this.dt;
+		let possessionTime = random.truncGauss(
+			this.avgPossessionLength,
+			5,
+			1 / 60,
+			24 / 60,
+		); // [min]
+		this.t -= possessionTime;
 		if (this.t < 0) {
 			possessionTime += this.t;
 			this.t = 0;

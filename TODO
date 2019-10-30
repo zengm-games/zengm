@@ -1,10 +1,11 @@
 situational awareness
 - possession length
-  - add some variability
   - two for one at end of quarters
   - hold for last shot (unless trying to catch up in the 4th quarter or OT)
   - shorter for team trying to catch up
   - longer for team trying to hold lead
+  - if there is not much time left, it's possible that time will run out before the play concludes. especially in 4th quarter for winning team
+  - ? heaves at end of quarter
   - ? timeouts to advance ball (shorter possession) or make subs
 - fouls
   - intentional foul when down late
@@ -19,17 +20,23 @@ situational awareness
   - ? sub in good FT shooters in late game situations
 - shot selection
   - end of game situations when down 3, more likely to take 3
-- then new ovr formula
-  - use +/- per minute, not raw
 
 re-norm other stats
 - minutes distribution
 - scoring
+- then new ovr formula
+  - use +/- per minute, not raw
 
 blog
-- non-shooting fouls, bonus
+- possession length
+  - add some variability
+- fouls
+  - non-shooting fouls
+  - bonus
 
 ---
+
+button to randomize ratings on customize player screen
 
 strict mode - any blockers?
 - findDOMNode in react-sortable-hoc

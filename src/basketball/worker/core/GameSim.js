@@ -409,7 +409,7 @@ class GameSim {
 		const outcome = this.getPossessionOutcome();
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
-		if (outcome === "orb") {
+		if (outcome === "orb" || outcome === "nonShootingFoul") {
 			this.o = this.o === 1 ? 0 : 1;
 			this.d = this.o === 1 ? 0 : 1;
 		}
@@ -800,14 +800,30 @@ class GameSim {
 	 */
 	getPossessionOutcome() {
 		// Turnover?
-		if (this.probTov() > Math.random()) {
+		if (Math.random() < this.probTov()) {
 			return this.doTov(); // tov
 		}
 
-		// Shot if there is no turnover
 		const ratios = this.ratingArray("usage", this.o);
 		const shooter = pickPlayer(ratios);
 
+		// Non-shooting foul?
+		if (Math.random() < 0.08) {
+			this.doPf(this.d);
+
+			// In the bonus?
+			const inBonus =
+				(this.t <= 2 && this.foulsLastTwoMinutes[this.d] >= 2) ||
+				(this.overtimes >= 1 && this.foulsThisQuarter[this.d] >= 4) ||
+				this.foulsThisQuarter[this.d] >= 5;
+			if (inBonus) {
+				return this.doFt(shooter, 2); // fg, orb, or drb
+			}
+
+			return "nonShootingFoul";
+		}
+
+		// Shot!
 		return this.doShot(shooter); // fg, orb, or drb
 	}
 
@@ -1002,6 +1018,7 @@ class GameSim {
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
+			this.doPf(this.d);
 			if (type === "threePointer") {
 				return this.doFt(shooter, 3); // fg, orb, or drb
 			}
@@ -1143,6 +1160,7 @@ class GameSim {
 		}
 
 		if (andOne) {
+			this.doPf(this.d);
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
 		return "fg";
@@ -1364,7 +1382,6 @@ class GameSim {
 	 * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
 	 */
 	doFt(shooter: PlayerNumOnCourt, amount: number) {
-		this.doPf(this.d);
 		const p = this.playersOnCourt[this.o][shooter];
 
 		// 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%

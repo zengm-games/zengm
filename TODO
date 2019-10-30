@@ -7,11 +7,12 @@ situational awareness
   - longer for team trying to hold lead
   - ? timeouts to advance ball (shorter possession) or make subs
 - fouls
-  - non-shooting fouls
-  - track fouls in quarter (or last 2 minutes) for penalty
   - intentional foul when down late
   - ? sometimes foul when up 3 and not much time left
   - ? hack a shaq
+  - checks
+    - in total, should be avg of 21 team fouls
+    - make sure people aren't fouling out too much now
 - rotations
   - play bench more in blowouts
   - ? play stars more at the end of close games
@@ -21,6 +22,19 @@ situational awareness
 - then new ovr formula
   - use +/- per minute, not raw
 
+re-norm other stats
+- minutes distribution
+- scoring
+
+blog
+- non-shooting fouls, bonus
+
+---
+
+strict mode - any blockers?
+- findDOMNode in react-sortable-hoc
+  - switch to https://github.com/tajo/react-movable
+
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):
   - any place with sortValue probably needs searchValue too
@@ -28,6 +42,8 @@ DataTable
   - NegotiateButtons (search for negotiate/refuses)
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
+
+https://react-hook-form.com/ for forms
 
 jersey numbers
 - retire
@@ -521,9 +537,6 @@ AI propose trade to user
 colors
 - color ratings on ratings page (and tables), just like ratings popup
 - color stats in ratings popover
-
-strict mode - any blockers?
-- findDOMNode in react-sortable-hoc
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding

@@ -1,19 +1,23 @@
-go to roster, switch team, and the roster table floats to the right a bit
-- resize window and it fixes it
-
 situational awareness
-- penalty for fouls
-- play bench more in blowouts
-- play stars more at the end of close games
-- variable possession length
-  - end of quarter get up a shot before buzzer
-  - end of quarter two for one behavior
-  - end of game, speed up or slow down based on margin
-- end of game fouling to extend game
-- situations to shoot 3s or 2s at end of game
-- sometimes foul when up 3 and not much time left
-- sub in good FT shooters in late game situations
-- timeouts to advance ball (shorter possession) or make subs
+- possession length
+  - add some variability
+  - two for one at end of quarters
+  - hold for last shot (unless trying to catch up in the 4th quarter or OT)
+  - shorter for team trying to catch up
+  - longer for team trying to hold lead
+  - ? timeouts to advance ball (shorter possession) or make subs
+- fouls
+  - non-shooting fouls
+  - track fouls in quarter (or last 2 minutes) for penalty
+  - intentional foul when down late
+  - ? sometimes foul when up 3 and not much time left
+  - ? hack a shaq
+- rotations
+  - play bench more in blowouts
+  - ? play stars more at the end of close games
+  - ? sub in good FT shooters in late game situations
+- shot selection
+  - end of game situations when down 3, more likely to take 3
 - then new ovr formula
   - use +/- per minute, not raw
 
@@ -108,8 +112,6 @@ game highs
 add another season option to team stats, player stats, and leaders: All Seasons
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
-
-basketball gamesim - too many plays happen right at 0
 
 make localStorage fail gracefully on quota error
 - https://github.com/SonarSource/SonarJS/issues/623 describes issue - need to check all of those
@@ -678,7 +680,6 @@ different jump to menus for season and team specific pages?
     get rid of "More:" links
 
 gamesim rewrite
-  game situation awareness (blowouts, close games, etc)
   balance
   minutes directly, not by +/-
 
@@ -1094,15 +1095,6 @@ core.trade refactoring
   trade and clear buttons should be disabled during gameSim, with message like in team finances
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
-gameSim
-  use real clock (this.t) rather than number of possessions
-  teams should play quicker as the clock runs out
-    more generally, teams should have situational awareness
-  more penalty for really unbalanced rosters: http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cba743c?context=3
-  rename compositeRating to compositeRatings (or something better)
-    other plural issues in gameSim
-  playing time not adding up to 240?
-  bench players should get minutes in blowouts
 AI modules that contain functions which are called to determine actions
   things to regulate...
     draft picks

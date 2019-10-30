@@ -165,6 +165,10 @@ class GameSim {
 
 	t: number;
 
+	foulsThisQuarter: [number, number];
+
+	foulsLastTwoMinutes: [number, number];
+
 	synergyFactor: number;
 
 	lastScoringPlay: {
@@ -222,6 +226,9 @@ class GameSim {
 		this.overtimes = 0; // Number of overtime periods that have taken place
 
 		this.t = g.quarterLength; // Game clock, in minutes
+
+		this.foulsThisQuarter = [0, 0];
+		this.foulsLastTwoMinutes = [0, 0];
 
 		// Parameters
 		this.synergyFactor = 0.1; // How important is synergy?
@@ -354,13 +361,16 @@ class GameSim {
 			while (this.t > 0) {
 				this.simPossession();
 			}
-			quarter += 1;
 
+			quarter += 1;
 			if (quarter === 5) {
 				break;
 			}
+
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
+			this.foulsThisQuarter = [0, 0];
+			this.foulsLastTwoMinutes = [0, 0];
 			this.t = g.quarterLength;
 			this.lastScoringPlay = [];
 			this.recordPlay("quarter");
@@ -1403,6 +1413,11 @@ class GameSim {
 			// Force substitutions now
 			this.updatePlayersOnCourt();
 			this.updateSynergy();
+		}
+
+		this.foulsThisQuarter[t] += 1;
+		if (this.t <= 2) {
+			this.foulsLastTwoMinutes[t] += 1;
 		}
 	}
 

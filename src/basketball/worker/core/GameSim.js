@@ -461,7 +461,7 @@ class GameSim {
 
 		this.updateTeamCompositeRatings();
 
-		const outcome = this.getPossessionOutcome();
+		const outcome = this.getPossessionOutcome(possessionLength);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
@@ -853,7 +853,7 @@ class GameSim {
 	 *
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
-	getPossessionOutcome() {
+	getPossessionOutcome(possessionLength: number) {
 		// Turnover?
 		if (Math.random() < this.probTov()) {
 			return this.doTov(); // tov
@@ -879,7 +879,7 @@ class GameSim {
 		}
 
 		// Shot!
-		return this.doShot(shooter); // fg, orb, or drb
+		return this.doShot(shooter, possessionLength); // fg, orb, or drb
 	}
 
 	/**
@@ -951,7 +951,7 @@ class GameSim {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
 	 */
-	doShot(shooter: PlayerNumOnCourt) {
+	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
 		const p = this.playersOnCourt[this.o][shooter];
 
 		const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
@@ -1052,6 +1052,11 @@ class GameSim {
 				this.synergyFactor *
 					(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
 			currentFatigue;
+
+		// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+		if (this.t === 0 && possessionLength < 6 / 60) {
+			probMake *= Math.sqrt(possessionLength / (8 / 60));
+		}
 
 		// Assisted shots are easier
 		if (passer !== undefined) {

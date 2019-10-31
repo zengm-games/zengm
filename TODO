@@ -1,7 +1,6 @@
 situational awareness
 - possession length
   - if there is not much time left, it's possible that time will run out before the play concludes. especially in 4th quarter for winning team
-  - ? heaves at end of quarter, or at least make shots lower probability if not much time left
   - ? timeouts to advance ball (shorter possession) or make subs
 - fouls
   - intentional foul when down late
@@ -30,11 +29,17 @@ blog
   - hold for last shot (unless trying to catch up in the 4th quarter or OT)
   - shorter for team trying to catch up
   - longer for team trying to hold lead
+  - lower fg% for shots taken after getting the ball with only a few seconds left in a quarter
 - fouls
   - non-shooting fouls
   - bonus
 
 ---
+
+I'm in Windows, and in both Chrome and Firefox, Alt+D to advance one day in the All Star game draft doesn't work. Alt+D highlights the address bar, so this shortcut doesn't work in game. Just FYI
+
+better power rankings
+- derive "team rating" from player ratings
 
 button to randomize ratings on customize player screen
 
@@ -488,6 +493,7 @@ box plus/minus
   - for "BPM_Team_Adjustment", need team net rating (off rating - def rating). The sum term needs all players who played on a team this season, even if they are no longer on the team (annoying to implement, but doable)
     - net rating needs to be adjusted for SOS!
 - VORP
+- v2: https://twitter.com/DSMok1/status/1189954726034579457
 
 advanced stat table too confusing? needs vertical dividers/spacing?
 

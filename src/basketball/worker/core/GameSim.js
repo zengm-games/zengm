@@ -854,6 +854,21 @@ class GameSim {
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
 	getPossessionOutcome(possessionLength: number) {
+		// If winning at end of game, just run out the clock
+		if (
+			this.t === 0 &&
+			this.team[this.o].stat.pts > this.team[this.d].stat.pts
+		) {
+			return "endOfQuarter";
+		}
+
+		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
+		if (this.t === 0 && possessionLength < 6 / 60) {
+			if (Math.random() > (possessionLength / (8 / 60)) ** (1 / 4)) {
+				return "endOfQuarter";
+			}
+		}
+
 		// Turnover?
 		if (Math.random() < this.probTov()) {
 			return this.doTov(); // tov
@@ -1104,7 +1119,12 @@ class GameSim {
 			this.recordStat(this.o, p, "tpa");
 			this.recordPlay("missTp", this.o, [this.team[this.o].player[p].name]);
 		}
-		return this.doReb(); // orb or drb
+
+		if (this.t > 0) {
+			return this.doReb(); // orb or drb
+		}
+
+		return "endOfQuarter";
 	}
 
 	/**

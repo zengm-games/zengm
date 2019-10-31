@@ -1,24 +1,26 @@
 situational awareness
 - possession length
-  - if there is not much time left, it's possible that time will run out before the play concludes. especially in 4th quarter for winning team
   - ? timeouts to advance ball (shorter possession) or make subs
+  - ? shot clock violation
 - fouls
   - intentional foul when down late
   - ? sometimes foul when up 3 and not much time left
   - ? hack a shaq
   - checks
-    - in total, should be avg of 21 team fouls
-    - make sure people aren't fouling out too much now
 - rotations
   - play bench more in blowouts
   - ? play stars more at the end of close games
   - ? sub in good FT shooters in late game situations
 - shot selection
   - end of game situations when down 3, more likely to take 3
+  - shots at buzzer should be more likely to be 3 point heaves
 
 re-norm other stats
 - minutes distribution
 - scoring
+- fouls
+  - in total, should be avg of 21 team fouls
+  - make sure people aren't fouling out too much now
 - then new ovr formula
   - use +/- per minute, not raw
 
@@ -29,12 +31,16 @@ blog
   - hold for last shot (unless trying to catch up in the 4th quarter or OT)
   - shorter for team trying to catch up
   - longer for team trying to hold lead
-  - lower fg% for shots taken after getting the ball with only a few seconds left in a quarter
+  - for possessions at the end of a quarter, the less time there is on the clock for that possession, the lower the fg% and the higher the chance of not getting a shot off
+  - the winning team will not take a shot at the buzzer at the end of the game, they'll just dribble out the clock
 - fouls
   - non-shooting fouls
   - bonus
 
 ---
+
+request persistent https://dexie.org/docs/StorageManager
+- state/status typo?
 
 I'm in Windows, and in both Chrome and Firefox, Alt+D to advance one day in the All Star game draft doesn't work. Alt+D highlights the address bar, so this shortcut doesn't work in game. Just FYI
 

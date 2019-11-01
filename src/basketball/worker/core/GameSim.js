@@ -854,6 +854,21 @@ class GameSim {
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
 	getPossessionOutcome(possessionLength: number) {
+		const timeBeforePossession = this.t + possessionLength;
+		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+		const offenseWinningByABit = diff > 0 && diff <= 6;
+		const intentionalFoul =
+			offenseWinningByABit &&
+			this.team[0].stat.ptsQtrs.length >= 4 &&
+			timeBeforePossession < 25 / 60;
+		if (intentionalFoul) {
+			// HACK! Add some time back on the clock. Would be better if this was like football and time ticked off during the play, not predefined. BE CAREFUL ABOUT CHANGING STUFF BELOW THIS IN THIS FUNCTION, IT MAY DEPEND ON THIS. Like anything reading this.t or intentionalFoul.
+			const possessionLength2 = (Math.random() * 3) / 60;
+			if (possessionLength2 < timeBeforePossession) {
+				this.t = timeBeforePossession - possessionLength2;
+			}
+		}
+
 		// If winning at end of game, just run out the clock
 		if (
 			this.t === 0 &&
@@ -878,7 +893,7 @@ class GameSim {
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
-		if (Math.random() < 0.08) {
+		if (Math.random() < 0.08 || intentionalFoul) {
 			this.doPf(this.d);
 
 			// In the bonus?

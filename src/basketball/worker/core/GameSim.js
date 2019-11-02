@@ -488,7 +488,7 @@ class GameSim {
 	 *
 	 * @return {boolean} true if a substitution occurred, false otherwise.
 	 */
-	updatePlayersOnCourt() {
+	updatePlayersOnCourt(shooter?: PlayerNumOnCourt) {
 		let substitutions = false;
 
 		for (let t = 0; t < 2; t++) {
@@ -514,11 +514,16 @@ class GameSim {
 			}
 
 			// Loop through players on court (in inverse order of current roster position)
-			let i = 0;
 			for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
 				const p = this.playersOnCourt[t][pp];
 				const onCourtIsIneligible = ovrs[p] === -Infinity;
-				this.playersOnCourt[t][i] = p;
+				this.playersOnCourt[t][pp] = p;
+
+				// Don't sub out guy shooting FTs!
+				if (t === this.o && pp === shooter) {
+					continue;
+				}
+
 				// Loop through bench players (in order of current roster position) to see if any should be subbed in)
 				for (let b = 0; b < this.team[t].player.length; b++) {
 					if (this.playersOnCourt[t].includes(b)) {
@@ -574,7 +579,7 @@ class GameSim {
 						substitutions = true;
 
 						// Substitute player
-						this.playersOnCourt[t][i] = b;
+						this.playersOnCourt[t][pp] = b;
 
 						this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
 						this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
@@ -601,7 +606,6 @@ class GameSim {
 						break;
 					}
 				}
-				i += 1;
 			}
 		}
 
@@ -1108,7 +1112,7 @@ class GameSim {
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
-			this.doPf(this.d);
+			this.doPf(this.d, shooter);
 			if (type === "threePointer") {
 				return this.doFt(shooter, 3); // fg, orb, or drb
 			}
@@ -1255,7 +1259,7 @@ class GameSim {
 		}
 
 		if (andOne) {
-			this.doPf(this.d);
+			this.doPf(this.d, shooter);
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
 		return "fg";
@@ -1514,7 +1518,7 @@ class GameSim {
 	 *
 	 * @param {number} t Team (0 or 1, this.o or this.d).
 	 */
-	doPf(t: TeamNum) {
+	doPf(t: TeamNum, shooter?: PlayerNumOnCourt) {
 		const ratios = this.ratingArray("fouling", t, 2);
 		const p = this.playersOnCourt[t][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "pf");
@@ -1523,7 +1527,7 @@ class GameSim {
 		if (this.team[this.d].player[p].stat.pf >= 6) {
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
 			// Force substitutions now
-			this.updatePlayersOnCourt();
+			this.updatePlayersOnCourt(shooter);
 			this.updateSynergy();
 		}
 

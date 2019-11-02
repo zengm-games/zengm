@@ -3,7 +3,6 @@ situational awareness
   - ? timeouts to advance ball (shorter possession) or make subs
   - ? shot clock violation
 - fouls
-  - player can get subbed out after being fouled, then sub takes the free throw
   - ? sometimes foul when up 3 and not much time left
   - ? hack a shaq
 - rotations
@@ -37,6 +36,7 @@ blog
   - intentional foul when down late
   - non-shooting fouls
   - bonus
+  - fixed bug where FT shooter could be subbed out before shooting FTs if the guy who fouled him fouled out
 
 ---
 

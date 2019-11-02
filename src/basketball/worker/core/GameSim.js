@@ -1005,14 +1005,27 @@ class GameSim {
 				0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
 		}
 
+		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
+		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+		const quarter = this.team[this.o].stat.ptsQtrs.length;
+		const forceThreePointer =
+			(diff >= 3 &&
+				diff <= 10 &&
+				this.t <= 10 / 60 &&
+				quarter >= 4 &&
+				Math.random() > 0.9) ||
+			(quarter < 4 && this.t === 0 && possessionLength <= 2.5 / 60);
+
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
 		let probMake;
 		let probMissAndFoul;
 		let type;
 		if (
-			this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.35 &&
-			Math.random() < 0.67 * shootingThreePointerScaled
+			forceThreePointer ||
+			(this.team[this.o].player[p].compositeRating.shootingThreePointer >
+				0.35 &&
+				Math.random() < 0.67 * shootingThreePointerScaled)
 		) {
 			// Three pointer
 			type = "threePointer";

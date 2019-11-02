@@ -1551,7 +1551,7 @@ class GameSim {
 	 * @param {number} t Team (0 or 1, this.o or this.d).
 	 */
 	doPf(t: TeamNum, shooter?: PlayerNumOnCourt) {
-		const ratios = this.ratingArray("fouling", t, 2);
+		const ratios = this.ratingArray("fouling", t);
 		const p = this.playersOnCourt[t][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "pf");
 		this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);

@@ -12,30 +12,28 @@ situational awareness
 re-norm other stats
 - other team stats
 - minutes distribution
-- fouls
-  - make sure people aren't fouling out too much now
 - then new ovr formula
   - use +/- per minute, not raw
   - team ovr too
 
 blog
-- possession length
-  - add some variability
-  - two for one at end of quarters
-  - hold for last shot (unless trying to catch up in the 4th quarter or OT)
-  - shorter for team trying to catch up
-  - longer for team trying to hold lead
-  - for possessions at the end of a quarter, the less time there is on the clock for that possession, the lower the fg% and the higher the chance of not getting a shot off
-  - the winning team will not take a shot at the buzzer at the end of the game, they'll just dribble out the clock
-- fouls
-  - intentional foul when down late
-  - non-shooting fouls
-  - bonus
-  - fixed bug where FT shooter could be subbed out before shooting FTs if the guy who fouled him fouled out
-- shot selection
-  - in some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
-- rotations
-  - bench plays more during blowouts
+- Possession length
+  - Added some variability, rather than having all possessions be the same length
+  - Two for one at end of quarters
+  - Hold for last shot (unless trying to catch up in the 4th quarter or OT)
+  - Shorter for team trying to catch up
+  - Longer for team trying to hold lead
+  - For possessions at the end of a quarter, the less time there is on the clock for that possession, the lower the fg% and the higher the chance of not getting a shot off
+  - The winning team will not take a shot at the buzzer at the end of the game, they'll just dribble out the clock
+- Fouls
+  - Intentional foul when down late
+  - Non-shooting fouls
+  - Bonus
+  - Fixed bug where FT shooter could be subbed out before shooting FTs if the guy who fouled him fouled out
+- Shot selection
+  - In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
+- Rotations
+  - Bench plays more during blowouts
 - Stats
   - Increased FG% for all 2 pointers
   - More imbalanced scoring and rebounding (the best scorers/rebounders get more, the worst get less)

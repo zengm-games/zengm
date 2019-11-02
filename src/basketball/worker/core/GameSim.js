@@ -912,7 +912,7 @@ class GameSim {
 			return this.doTov(); // tov
 		}
 
-		const ratios = this.ratingArray("usage", this.o, 2);
+		const ratios = this.ratingArray("usage", this.o, 1.25);
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?

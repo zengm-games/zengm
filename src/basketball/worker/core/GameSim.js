@@ -226,9 +226,8 @@ class GameSim {
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 
-		const numPossessions = Math.round(
-			(this.team[0].pace + this.team[1].pace) / 2,
-		);
+		const numPossessions =
+			Math.round((this.team[0].pace + this.team[1].pace) / 2) * 1.09;
 		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
@@ -1105,10 +1104,10 @@ class GameSim {
 		}
 
 		let foulFactor =
-			0.8 *
+			0.65 *
 			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2;
 		if (this.allStarGame) {
-			foulFactor *= 0.6;
+			foulFactor *= 0.4;
 		}
 		probMissAndFoul *= foulFactor;
 		probAndOne *= foulFactor;

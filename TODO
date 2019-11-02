@@ -12,7 +12,6 @@ situational awareness
 re-norm other stats
 - other team stats
 - minutes distribution
-- scoring
 - fouls
   - make sure people aren't fouling out too much now
 - then new ovr formula
@@ -39,6 +38,7 @@ blog
   - bench plays more during blowouts
 - Stats
   - Increased FG% for all 2 pointers
+  - More imbalanced scoring and rebounding (the best scorers/rebounders get more, the worst get less)
 - UI
   - Added TS% to advanced team stats table
 
@@ -541,9 +541,6 @@ customizable columns in datatable
 - button to reset datatable
 - store all datatable params in one localstorage object
 - always return all stats and ratings?
-
-all caps columns, like b-r
-- PPG -> Pts, probably
 
 per 100 possessions and totals toggle on team stats page
 

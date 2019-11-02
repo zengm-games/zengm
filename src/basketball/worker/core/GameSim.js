@@ -912,7 +912,7 @@ class GameSim {
 			return this.doTov(); // tov
 		}
 
-		const ratios = this.ratingArray("usage", this.o);
+		const ratios = this.ratingArray("usage", this.o, 2);
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
@@ -1590,7 +1590,7 @@ class GameSim {
 				(2 + this.team[this.o].compositeRating.rebounding) >
 			Math.random()
 		) {
-			ratios = this.ratingArray("rebounding", this.d, 2);
+			ratios = this.ratingArray("rebounding", this.d, 3);
 			p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 			this.recordStat(this.d, p, "drb");
 			this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
@@ -1598,7 +1598,7 @@ class GameSim {
 			return "drb";
 		}
 
-		ratios = this.ratingArray("rebounding", this.o, 3);
+		ratios = this.ratingArray("rebounding", this.o, 5);
 		p = this.playersOnCourt[this.o][pickPlayer(ratios)];
 		this.recordStat(this.o, p, "orb");
 		this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);

@@ -1077,7 +1077,7 @@ class GameSim {
 				probMissAndFoul = 0.07;
 				probMake =
 					this.team[this.o].player[p].compositeRating.shootingMidRange * 0.32 +
-					0.32;
+					0.35;
 				probAndOne = 0.05;
 			} else if (r2 > r3) {
 				// Dunk, fast break or half court
@@ -1085,7 +1085,7 @@ class GameSim {
 				probMissAndFoul = 0.37;
 				probMake =
 					this.team[this.o].player[p].compositeRating.shootingAtRim * 0.32 +
-					0.52;
+					0.55;
 				probAndOne = 0.25;
 			} else {
 				// Post up
@@ -1093,7 +1093,7 @@ class GameSim {
 				probMissAndFoul = 0.33;
 				probMake =
 					this.team[this.o].player[p].compositeRating.shootingLowPost * 0.32 +
-					0.37;
+					0.42;
 				probAndOne = 0.15;
 			}
 

@@ -119,6 +119,8 @@ const processStats = (
 				row[stat] = percentage(ts.tpa, ts.fga);
 			} else if (stat === "ftr") {
 				row[stat] = percentage(ts.fta, ts.fga);
+			} else if (stat === "tsp") {
+				row[stat] = percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
 			} else if (stat === "season" || stat === "playoffs") {
 				row[stat] = ts[stat];
 			} else if (statType === "totals") {

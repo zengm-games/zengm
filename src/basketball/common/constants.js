@@ -225,7 +225,7 @@ const TEAM_STATS_TABLES = {
 	},
 	advanced: {
 		name: "Advanced",
-		stats: ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr"],
+		stats: ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr", "tsp"],
 	},
 };
 

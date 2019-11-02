@@ -817,7 +817,7 @@ class GameSim {
 						p,
 						"energy",
 						-possessionLength *
-							0.06 *
+							0.05 *
 							(1 - this.team[t].player[p].compositeRating.endurance),
 					);
 					if (this.team[t].player[p].stat.energy < 0) {

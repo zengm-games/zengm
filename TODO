@@ -3,9 +3,9 @@ situational awareness
   - ? timeouts to advance ball (shorter possession) or make subs
   - ? shot clock violation
 - fouls
+  - player can get subbed out after being fouled, then sub takes the free throw
   - ? sometimes foul when up 3 and not much time left
   - ? hack a shaq
-  - checks
 - rotations
   - play bench more in blowouts
   - ? play stars more at the end of close games
@@ -22,6 +22,7 @@ re-norm other stats
   - make sure people aren't fouling out too much now
 - then new ovr formula
   - use +/- per minute, not raw
+  - team ovr too
 
 blog
 - possession length
@@ -39,6 +40,11 @@ blog
 
 ---
 
+customize player -> add relative -> type something besides a number in the PID field -> error
+- @iLiKeLaZeRz#1657
+
+I know it is the smallest detail but in Team Records the winning % doesn't have a decimal in front of it and it kinda freaks me out
+
 request persistent https://dexie.org/docs/StorageManager
 - state/status typo?
 
@@ -52,6 +58,9 @@ button to randomize ratings on customize player screen
 strict mode - any blockers?
 - findDOMNode in react-sortable-hoc
   - switch to https://github.com/tajo/react-movable
+
+dashboard ui
+- make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?
 
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):

@@ -87,10 +87,11 @@ const augmentPartialPlayer = (
 		p.stats = [];
 	}
 	if (!p.hasOwnProperty("statsTids")) {
-		p.statsTids = [];
+		p.statsTids = Array.isArray(p.stats) ? p.stats.map(s => s.tid) : [];
 		if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
 			p.statsTids.push(p.tid);
 		}
+		p.statsTids = Array.from(new Set(p.statsTids));
 	}
 	if (!p.hasOwnProperty("draft")) {
 		p.draft = {};

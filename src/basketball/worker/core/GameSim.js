@@ -491,8 +491,23 @@ class GameSim {
 	updatePlayersOnCourt(shooter?: PlayerNumOnCourt) {
 		let substitutions = false;
 
+		let blowout = false;
+		if (this.o !== undefined && this.d !== undefined) {
+			const diff = Math.abs(
+				this.team[this.d].stat.pts - this.team[this.o].stat.pts,
+			);
+			const quarter = this.team[this.o].stat.ptsQtrs.length;
+			blowout =
+				quarter === 4 &&
+				((diff >= 30 && this.t < 12) ||
+					(diff >= 25 && this.t < 9) ||
+					(diff >= 20 && this.t < 7) ||
+					(diff >= 15 && this.t < 3) ||
+					(diff >= 10 && this.t < 1));
+		}
+
 		for (let t = 0; t < 2; t++) {
-			// Overall values scaled by fatigue
+			// Overall values scaled by fatigue, etc
 			const ovrs = [];
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				// Injured or fouled out players can't play
@@ -509,6 +524,11 @@ class GameSim {
 
 					if (!this.allStarGame) {
 						ovrs[p] *= this.team[t].player[p].ptModifier;
+					}
+
+					// Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
+					if (blowout) {
+						ovrs[p] *= (p + 1) / 10;
 					}
 				}
 			}

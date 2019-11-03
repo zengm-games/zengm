@@ -29,7 +29,7 @@ const updatePlayMenu = async () => {
 		},
 	} = {
 		stop: { label: "Stop", key: "s" },
-		day: { label: "One day", key: "d" },
+		day: { label: "One day", key: "y" },
 		week: { label: "One week", key: "w" },
 		month: { label: "One month", key: "m" },
 		untilAllStarGame: { label: "Until All-Star Game", key: "a" },

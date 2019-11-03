@@ -123,10 +123,10 @@ class FantasyDraft extends React.Component {
 							<th>Team</th>
 						</>
 					)}
-					row={({ index, value, widths }) => (
+					row={({ index, style, value }) => (
 						<>
-							<td style={{ padding: 5, width: widths[1] }}>{index + 1}</td>
-							<td style={{ padding: 5, width: widths[2] }}>
+							<td style={style(1)}>{index + 1}</td>
+							<td style={style(2)}>
 								<a href={helpers.leagueUrl(["roster", value.abbrev])}>
 									{value.region} {value.name}
 								</a>

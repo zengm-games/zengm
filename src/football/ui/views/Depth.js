@@ -1,12 +1,7 @@
-import arrayMove from "array-move";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	SortableContainer,
-	SortableElement,
-	SortableHandle,
-} from "react-sortable-hoc";
+import { arrayMove } from "react-movable";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
@@ -16,9 +11,8 @@ import {
 	Dropdown,
 	NewWindowLink,
 	PlayerNameLabels,
-	ResponsiveTableWrapper,
+	SortableTable,
 } from "../../../deion/ui/components";
-import clickable from "../../../deion/ui/wrappers/clickable";
 import { POSITIONS } from "../../common/constants";
 
 const handleAutoSort = async pos => {
@@ -27,136 +21,6 @@ const handleAutoSort = async pos => {
 
 const handleAutoSortAll = async () => {
 	await toWorker("autoSortRoster");
-};
-
-const ReorderHandle = SortableHandle(({ i, isSorting, numStarters }) => {
-	return (
-		<td
-			className={classNames("roster-handle", {
-				"table-info": i < numStarters,
-				"table-secondary": i >= numStarters,
-				"user-select-none": isSorting,
-			})}
-		/>
-	);
-});
-
-ReorderHandle.propTypes = {
-	i: PropTypes.number.isRequired,
-	isSorting: PropTypes.bool.isRequired,
-	numStarters: PropTypes.number.isRequired,
-};
-
-const DepthRow = SortableElement(
-	clickable(props => {
-		const {
-			clicked,
-			editable,
-			i,
-			isSorting,
-			numStarters,
-			p,
-			pos,
-			ratings,
-			stats,
-			toggleClicked,
-		} = props;
-
-		const classes = classNames({
-			"text-danger": pos !== "KR" && pos !== "PR" && pos !== p.ratings.pos,
-		});
-
-		return (
-			<tr
-				key={p.pid}
-				className={classNames({
-					separator: i === numStarters - 1,
-					"table-warning": clicked,
-				})}
-				data-pid={p.pid}
-			>
-				{editable ? (
-					<ReorderHandle
-						i={i}
-						isSorting={isSorting}
-						numStarters={numStarters}
-					/>
-				) : null}
-				<td onClick={toggleClicked}>
-					<PlayerNameLabels
-						pid={p.pid}
-						injury={p.injury}
-						skills={p.ratings.skills}
-						watch={p.watch}
-					>
-						{p.name}
-					</PlayerNameLabels>
-				</td>
-				<td className={classes} onClick={toggleClicked}>
-					{p.ratings.pos}
-				</td>
-				<td onClick={toggleClicked}>{p.age}</td>
-				<td onClick={toggleClicked}>{p.ratings.ovrs[pos]}</td>
-				<td onClick={toggleClicked}>{p.ratings.pots[pos]}</td>
-				{ratings.map(rating => (
-					<td key={rating} className="table-accent" onClick={toggleClicked}>
-						{p.ratings[rating]}
-					</td>
-				))}
-				{stats.map(stat => (
-					<td key={stat} onClick={toggleClicked}>
-						{helpers.roundStat(p.stats[stat], stat)}
-					</td>
-				))}
-			</tr>
-		);
-	}),
-);
-
-DepthRow.propTypes = {
-	editable: PropTypes.bool.isRequired,
-	i: PropTypes.number.isRequired,
-	isSorting: PropTypes.bool.isRequired,
-	numStarters: PropTypes.number.isRequired,
-	p: PropTypes.object.isRequired,
-	pos: PropTypes.string.isRequired,
-	ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-const TBody = SortableContainer(
-	({ editable, isSorting, numStarters, players, pos, ratings, stats }) => {
-		return (
-			<tbody>
-				{players.map((p, i) => {
-					return (
-						<DepthRow
-							editable={editable}
-							key={p.pid}
-							i={i}
-							index={i}
-							isSorting={isSorting}
-							numStarters={numStarters}
-							p={p}
-							pos={pos}
-							ratings={ratings}
-							stats={stats}
-						/>
-					);
-				})}
-			</tbody>
-		);
-	},
-);
-
-TBody.propTypes = {
-	editable: PropTypes.bool.isRequired,
-	isSorting: PropTypes.bool.isRequired,
-	numStarters: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	pos: PropTypes.string.isRequired,
-	ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const numStartersByPos = {
@@ -179,34 +43,8 @@ class Depth extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			isSorting: false,
 			sortedPids: undefined,
 		};
-
-		this.handleOnSortEnd = this.handleOnSortEnd.bind(this);
-		this.handleOnSortStart = this.handleOnSortStart.bind(this);
-	}
-
-	async handleOnSortEnd({ oldIndex, newIndex }) {
-		const pids = this.props.players.map(p => p.pid);
-		const sortedPids = arrayMove(pids, oldIndex, newIndex);
-		this.setState({
-			isSorting: false,
-			sortedPids,
-		});
-		await toWorker("reorderDepthDrag", this.props.pos, sortedPids);
-	}
-
-	handleOnSortStart({ clonedNode, node }) {
-		this.setState({ isSorting: true });
-
-		// Ideally, this wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
-		const clonedChildren = clonedNode.childNodes;
-		const children = node.childNodes;
-		for (let i = 0; i < children.length; i++) {
-			clonedChildren[i].style.padding = "5px";
-			clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
-		}
 	}
 
 	static getDerivedStateFromProps() {
@@ -312,43 +150,79 @@ class Depth extends React.Component {
 
 				<div className="clearfix" />
 
-				<ResponsiveTableWrapper nonfluid>
-					<table className="table table-striped table-bordered table-sm table-hover">
-						<thead>
-							<tr>
-								{editable ? <th /> : null}
-								<th>Name</th>
-								<th title="Position">Pos</th>
-								<th>Age</th>
-								<th title={`Overall Rating (${pos})`}>Ovr{pos}</th>
-								<th title={`Potential Rating (${pos})`}>Pot{pos}</th>
-								{ratingCols.map(({ desc, title }, i) => (
-									<th key={ratings[i]} className="table-accent" title={desc}>
-										{title}
-									</th>
-								))}
-								{statCols.map(({ desc, title }, i) => (
-									<th key={stats[i]} title={desc}>
-										{title}
-									</th>
-								))}
-							</tr>
-						</thead>
-						<TBody
-							players={playersSorted}
-							editable={editable}
-							isSorting={this.state.isSorting}
-							numStarters={numStartersByPos[pos]}
-							onSortEnd={this.handleOnSortEnd}
-							onSortStart={this.handleOnSortStart}
-							pos={pos}
-							ratings={ratings}
-							stats={stats}
-							transitionDuration={0}
-							useDragHandle
-						/>
-					</table>
-				</ResponsiveTableWrapper>
+				<SortableTable
+					disabled={!editable}
+					values={playersSorted}
+					highlightHandle={({ index }) => numStartersByPos[pos] < index + 1}
+					rowClassName={({ index }) =>
+						classNames({
+							separator: index === numStartersByPos[pos] - 1,
+						})
+					}
+					onChange={async ({ oldIndex, newIndex }) => {
+						const pids = this.props.players.map(p => p.pid);
+						const sortedPids = arrayMove(pids, oldIndex, newIndex);
+						this.setState({
+							sortedPids,
+						});
+						await toWorker("reorderDepthDrag", this.props.pos, sortedPids);
+					}}
+					cols={() => (
+						<>
+							<th>Name</th>
+							<th title="Position">Pos</th>
+							<th>Age</th>
+							<th title={`Overall Rating (${pos})`}>Ovr{pos}</th>
+							<th title={`Potential Rating (${pos})`}>Pot{pos}</th>
+							{ratingCols.map(({ desc, title }, i) => (
+								<th key={ratings[i]} className="table-accent" title={desc}>
+									{title}
+								</th>
+							))}
+							{statCols.map(({ desc, title }, i) => (
+								<th key={stats[i]} title={desc}>
+									{title}
+								</th>
+							))}
+						</>
+					)}
+					row={({ value: p, style }) => (
+						<>
+							<td style={style(1)}>
+								<PlayerNameLabels
+									pid={p.pid}
+									injury={p.injury}
+									skills={p.ratings.skills}
+									watch={p.watch}
+								>
+									{p.name}
+								</PlayerNameLabels>
+							</td>
+							<td
+								className={classNames({
+									"text-danger":
+										pos !== "KR" && pos !== "PR" && pos !== p.ratings.pos,
+								})}
+								style={style(2)}
+							>
+								{p.ratings.pos}
+							</td>
+							<td style={style(3)}>{p.age}</td>
+							<td style={style(4)}>{p.ratings.ovrs[pos]}</td>
+							<td style={style(5)}>{p.ratings.pots[pos]}</td>
+							{ratings.map((rating, i) => (
+								<td key={rating} className="table-accent" style={style(6 + i)}>
+									{p.ratings[rating]}
+								</td>
+							))}
+							{stats.map((stat, i) => (
+								<td key={stat} style={style(6 + ratings.length + i)}>
+									{helpers.roundStat(p.stats[stat], stat)}
+								</td>
+							))}
+						</>
+					)}
+				/>
 			</>
 		);
 	}

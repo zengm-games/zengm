@@ -63,7 +63,7 @@ strict mode - any blockers?
     - mobile test
     - no more array-move
     - SortableTable
-      - handle getDerivedStateFromProps from other ones
+      - Roster
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?

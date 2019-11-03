@@ -4,7 +4,15 @@ import React, { useState } from "react";
 import { List } from "react-movable";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 
-const SortableTable = ({ cols, highlightHandle, onChange, row, values }) => {
+const SortableTable = ({
+	cols,
+	disabled,
+	highlightHandle,
+	onChange,
+	row,
+	rowClassName,
+	values,
+}) => {
 	const [widths, setWidths] = useState([]);
 
 	return (
@@ -23,7 +31,7 @@ const SortableTable = ({ cols, highlightHandle, onChange, row, values }) => {
 					<table className="table table-striped table-bordered table-sm table-hover">
 						<thead>
 							<tr>
-								<th />
+								{disabled ? null : <th />}
 								{cols()}
 							</tr>
 						</thead>
@@ -32,26 +40,31 @@ const SortableTable = ({ cols, highlightHandle, onChange, row, values }) => {
 				</ResponsiveTableWrapper>
 			)}
 			renderItem={({ index, isDragged, props, value }) => {
-				const highlight = highlightHandle({ value });
+				const highlight = highlightHandle({ index, value });
 
 				const wholeRow = (
-					<tr {...props}>
-						<td
-							className={classNames("roster-handle", {
-								"table-info": highlight,
-								"table-secondary": !highlight,
-							})}
-							data-movable-handle
-							style={{
-								cursor: isDragged ? "grabbing" : "grab",
-								padding: 5,
-								width: widths[0],
-							}}
-						/>
+					<tr
+						{...props}
+						className={rowClassName ? rowClassName({ index }) : null}
+					>
+						{disabled ? null : (
+							<td
+								className={classNames("roster-handle", {
+									"table-info": highlight,
+									"table-secondary": !highlight,
+								})}
+								data-movable-handle
+								style={{
+									cursor: isDragged ? "grabbing" : "grab",
+									padding: 5,
+									width: widths[0],
+								}}
+							/>
+						)}
 						{row({
 							index,
 							value,
-							widths,
+							style: i => ({ padding: 5, width: widths[i] }),
 						})}
 					</tr>
 				);
@@ -64,16 +77,18 @@ const SortableTable = ({ cols, highlightHandle, onChange, row, values }) => {
 					wholeRow
 				);
 			}}
-			transitionDuration={100}
+			transitionDuration={0}
 		/>
 	);
 };
 
 SortableTable.propTypes = {
 	cols: PropTypes.func.isRequired,
+	disabled: PropTypes.bool,
 	highlightHandle: PropTypes.func.isRequired,
 	onChange: PropTypes.func.isRequired,
 	row: PropTypes.func.isRequired,
+	rowClassName: PropTypes.func,
 	values: PropTypes.array.isRequired,
 };
 

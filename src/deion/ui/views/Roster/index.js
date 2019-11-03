@@ -220,7 +220,7 @@ const TBody = SortableContainer(
 		userTid,
 	}) => {
 		return (
-			<tbody id="roster-tbody">
+			<tbody>
 				{players.map((p, i) => {
 					return (
 						<RosterRow

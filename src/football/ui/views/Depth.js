@@ -127,7 +127,7 @@ DepthRow.propTypes = {
 const TBody = SortableContainer(
 	({ editable, isSorting, numStarters, players, pos, ratings, stats }) => {
 		return (
-			<tbody id="roster-tbody">
+			<tbody>
 				{players.map((p, i) => {
 					return (
 						<DepthRow

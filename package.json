@@ -58,6 +58,7 @@
 		"react-addons-text-content": "^0.0.4",
 		"react-confirm": "^0.1.18",
 		"react-dom": "^16.11.0",
+		"react-movable": "^2.3.0",
 		"react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
 		"reactstrap": "^8.1.1",
 		"roman-numerals": "^0.3.2",

@@ -43,6 +43,8 @@ blog
 
 ---
 
+switch clickable to hook, add back to react-movable things
+
 update screenshots on website
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
@@ -59,6 +61,8 @@ strict mode - any blockers?
 - findDOMNode in react-sortable-hoc
   - switch to https://github.com/tajo/react-movable
     - mobile?
+    - no more array-move
+    - abstract to some shared component for all 3? SortableTable
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?

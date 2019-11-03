@@ -45,7 +45,7 @@ const SortableTable = ({
 				const wholeRow = (
 					<tr
 						{...props}
-						className={rowClassName ? rowClassName({ index }) : null}
+						className={rowClassName ? rowClassName({ index, value }) : null}
 					>
 						{disabled ? null : (
 							<td

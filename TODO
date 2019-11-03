@@ -10,6 +10,8 @@ situational awareness
   - ? sub in good FT shooters in late game situations
 
 re-norm other stats
+- player points
+  - test same league
 - then new ovr formula
   - use +/- per minute, not raw
   - team ovr too
@@ -44,9 +46,6 @@ blog
 update screenshots on website
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
-
-customize player -> add relative -> type something besides a number in the PID field -> error
-- @iLiKeLaZeRz#1657
 
 I know it is the smallest detail but in Team Records the winning % doesn't have a decimal in front of it and it kinda freaks me out
 
@@ -219,6 +218,10 @@ confirm subscription works from football-gm.com
 redo pot formulas?
 
 ---
+
+frivolities
+- highest paid @mattable#4273 @Jlebron13#9965
+- abstract code for "highest X"
 
 injury later
 - slowly ramp endurance up after injury

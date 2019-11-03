@@ -41,7 +41,8 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	const countLocal = useRef(count);
 	count += 1;
 
-	if (player.pid !== pid) {
+	// Object.is to handle NaN
+	if (!Object.is(player.pid, pid)) {
 		setLoadDataStarted(false);
 		setPlayer({ pid });
 	}

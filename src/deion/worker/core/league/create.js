@@ -764,6 +764,7 @@ const create = async (
 		await remove(importLid);
 		l.lid = importLid;
 		l.created = oldLeague.created;
+		l.starred = oldLeague.starred;
 	}
 
 	const lid = await idb.meta.leagues.add(l);

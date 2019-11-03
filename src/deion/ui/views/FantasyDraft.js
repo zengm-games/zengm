@@ -1,50 +1,9 @@
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { List, arrayMove } from "react-movable";
+import { arrayMove } from "react-movable";
 import { PHASE } from "../../common";
-import { NewWindowLink, ResponsiveTableWrapper } from "../components";
+import { NewWindowLink, SortableTable } from "../components";
 import { helpers, setTitle, toWorker } from "../util";
-
-const Row = React.forwardRef(
-	({ highlight, i, isDragged, t, widths, ...props }, ref) => {
-		return (
-			<tr ref={ref} {...props}>
-				<td
-					className={classNames("roster-handle", {
-						"table-info": highlight,
-						"table-secondary": !highlight,
-					})}
-					data-movable-handle
-					style={{
-						cursor: isDragged ? "grabbing" : "grab",
-						padding: 5,
-						width: widths[0],
-					}}
-				/>
-				<td style={{ padding: 5, width: widths[1] }}>{i + 1}</td>
-				<td style={{ padding: 5, width: widths[2] }}>
-					<a href={helpers.leagueUrl(["roster", t.abbrev])}>
-						{t.region} {t.name}
-					</a>
-				</td>
-			</tr>
-		);
-	},
-);
-
-Row.propTypes = {
-	highlight: PropTypes.bool.isRequired,
-	i: PropTypes.number.isRequired,
-	isDragged: PropTypes.bool.isRequired,
-	t: PropTypes.shape({
-		abbrev: PropTypes.string.isRequired,
-		name: PropTypes.string.isRequired,
-		region: PropTypes.string.isRequired,
-		tid: PropTypes.number.isRequired,
-	}),
-	widths: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
 
 // Copied from worker/util/random lol
 const randInt = (a: number, b: number): number => {
@@ -71,7 +30,6 @@ class FantasyDraft extends React.Component {
 		this.state = {
 			sortedTids: props.teams.map(t => t.tid),
 			starting: false,
-			widths: [],
 		};
 	}
 
@@ -142,15 +100,11 @@ class FantasyDraft extends React.Component {
 
 				<div className="clearfix" />
 
-				<List
+				<SortableTable
 					values={teamsSorted}
-					beforeDrag={({ elements, index }) => {
-						const cells = Array.from(elements[index].children);
-						const widths = cells.map(
-							cell => window.getComputedStyle(cell).width,
-						);
-						this.setState({ widths });
-					}}
+					highlightHandle={({ value }) =>
+						this.props.userTids.includes(value.tid)
+					}
 					onChange={({ oldIndex, newIndex }) => {
 						this.setState(prevState => {
 							const sortedTids = arrayMove(
@@ -163,44 +117,22 @@ class FantasyDraft extends React.Component {
 							};
 						});
 					}}
-					renderList={({ children, props }) => (
-						<ResponsiveTableWrapper nonfluid>
-							<table className="table table-striped table-bordered table-sm table-hover">
-								<thead>
-									<tr>
-										<th />
-										<th>#</th>
-										<th>Team</th>
-									</tr>
-								</thead>
-								<tbody {...props}>{children}</tbody>
-							</table>
-						</ResponsiveTableWrapper>
+					cols={() => (
+						<>
+							<th>#</th>
+							<th>Team</th>
+						</>
 					)}
-					renderItem={({ index, isDragged, props, value }) => {
-						const widths = isDragged ? this.state.widths : [];
-						const highlight = this.props.userTids.includes(value.tid);
-
-						const row = (
-							<Row
-								{...props}
-								highlight={highlight}
-								isDragged={isDragged}
-								i={index}
-								t={value}
-								widths={widths}
-							/>
-						);
-
-						return isDragged ? (
-							<table>
-								<tbody>{row}</tbody>
-							</table>
-						) : (
-							row
-						);
-					}}
-					transitionDuration={100}
+					row={({ index, value, widths }) => (
+						<>
+							<td style={{ padding: 5, width: widths[1] }}>{index + 1}</td>
+							<td style={{ padding: 5, width: widths[2] }}>
+								<a href={helpers.leagueUrl(["roster", value.abbrev])}>
+									{value.region} {value.name}
+								</a>
+							</td>
+						</>
+					)}
 				/>
 
 				<p>

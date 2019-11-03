@@ -60,9 +60,10 @@ button to randomize ratings on customize player screen
 strict mode - any blockers?
 - findDOMNode in react-sortable-hoc
   - switch to https://github.com/tajo/react-movable
-    - mobile?
+    - mobile test
     - no more array-move
-    - abstract to some shared component for all 3? SortableTable
+    - SortableTable
+      - handle getDerivedStateFromProps from other ones
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?

@@ -30,7 +30,7 @@ function getTeamRecord(t, awards) {
 		}
 	}
 
-	const totalWP = helpers.roundWinp(
+	const winp = helpers.roundWinp(
 		totalWon > 0 ? totalWon / (totalWon + totalLost) : 0,
 	);
 
@@ -45,7 +45,7 @@ function getTeamRecord(t, awards) {
 		did: t.did,
 		won: totalWon,
 		lost: totalLost,
-		winp: totalWP.slice(1),
+		winp,
 		playoffAppearances,
 		lastPlayoffAppearance,
 		championships,

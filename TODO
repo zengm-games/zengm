@@ -47,8 +47,6 @@ update screenshots on website
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
 
-I know it is the smallest detail but in Team Records the winning % doesn't have a decimal in front of it and it kinda freaks me out
-
 request persistent https://dexie.org/docs/StorageManager
 - state/status typo?
 
@@ -60,6 +58,7 @@ button to randomize ratings on customize player screen
 strict mode - any blockers?
 - findDOMNode in react-sortable-hoc
   - switch to https://github.com/tajo/react-movable
+    - mobile?
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?

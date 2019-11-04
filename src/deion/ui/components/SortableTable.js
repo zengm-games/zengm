@@ -3,6 +3,67 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { List } from "react-movable";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
+import useClickable from "../hooks/useClickable";
+
+const Row = React.forwardRef(
+	(
+		{
+			className,
+			disabled,
+			highlight,
+			index,
+			isDragged,
+			row,
+			value,
+			widths,
+			...props
+		},
+		ref,
+	) => {
+		const { clicked, toggleClicked } = useClickable();
+
+		return (
+			<tr
+				ref={ref}
+				{...props}
+				className={classNames(className, {
+					"table-warning": clicked,
+				})}
+				onClick={toggleClicked}
+			>
+				{disabled ? null : (
+					<td
+						className={classNames("roster-handle", {
+							"table-info": highlight,
+							"table-secondary": !highlight,
+						})}
+						data-movable-handle
+						style={{
+							cursor: isDragged ? "grabbing" : "grab",
+							width: widths[0],
+						}}
+					/>
+				)}
+				{row({
+					index,
+					value,
+					style: i => ({ width: widths[i] }),
+				})}
+			</tr>
+		);
+	},
+);
+
+Row.propTypes = {
+	className: PropTypes.string,
+	disabled: PropTypes.bool,
+	highlight: PropTypes.bool.isRequired,
+	index: PropTypes.number.isRequired,
+	isDragged: PropTypes.bool.isRequired,
+	row: PropTypes.func.isRequired,
+	value: PropTypes.object.isRequired,
+	widths: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 const SortableTable = ({
 	cols,
@@ -40,34 +101,23 @@ const SortableTable = ({
 				</ResponsiveTableWrapper>
 			)}
 			renderItem={({ index, isDragged, props, value }) => {
+				const className = rowClassName
+					? rowClassName({ index, isDragged, value })
+					: null;
 				const highlight = highlightHandle({ index, value });
 
 				const wholeRow = (
-					<tr
+					<Row
+						className={className}
+						disabled={disabled}
+						highlight={highlight}
+						index={index}
+						isDragged={isDragged}
+						row={row}
+						value={value}
+						widths={widths}
 						{...props}
-						className={
-							rowClassName ? rowClassName({ index, isDragged, value }) : null
-						}
-					>
-						{disabled ? null : (
-							<td
-								className={classNames("roster-handle", {
-									"table-info": highlight,
-									"table-secondary": !highlight,
-								})}
-								data-movable-handle
-								style={{
-									cursor: isDragged ? "grabbing" : "grab",
-									width: widths[0],
-								}}
-							/>
-						)}
-						{row({
-							index,
-							value,
-							style: i => ({ width: widths[i] }),
-						})}
-					</tr>
+					/>
 				);
 
 				return isDragged ? (

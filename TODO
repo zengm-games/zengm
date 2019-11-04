@@ -43,7 +43,8 @@ blog
 
 ---
 
-switch clickable to hook, add back to react-movable things
+clickable -> useClickable
+- elsewhere
 
 update screenshots on website
 

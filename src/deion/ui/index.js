@@ -173,9 +173,11 @@ const render = () => {
 	}
 
 	ReactDOM.render(
-		<ErrorBoundary>
-			<Controller />
-		</ErrorBoundary>,
+		<React.StrictMode>
+			<ErrorBoundary>
+				<Controller />
+			</ErrorBoundary>
+		</React.StrictMode>,
 		contentEl,
 	);
 };

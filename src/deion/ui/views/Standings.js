@@ -8,7 +8,7 @@ import {
 	ResponsiveTableWrapper,
 } from "../components";
 import { helpers, setTitle } from "../util";
-import clickable from "../wrappers/clickable";
+import useClickable from "../hooks/useClickable";
 
 const record = (seasonAttrs, type, ties) => {
 	const won = `won${type}`;
@@ -22,38 +22,38 @@ const record = (seasonAttrs, type, ties) => {
 	return val;
 };
 
-const DivStandingsRow = clickable(
-	({ clicked, season, t, ties, toggleClicked }) => {
-		return (
-			<tr
-				key={t.tid}
-				className={classNames({
-					"table-info": t.highlight,
-					"table-warning": clicked,
-				})}
-				onClick={toggleClicked}
-			>
-				<td>
-					<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
-						{t.region} {t.name}
-					</a>
-					<span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
-				</td>
-				<td>{t.seasonAttrs.won}</td>
-				<td>{t.seasonAttrs.lost}</td>
-				{ties ? <td>{t.seasonAttrs.tied}</td> : null}
-				<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
-				<td>{t.gb}</td>
-				<td>{record(t.seasonAttrs, "Home", ties)}</td>
-				<td>{record(t.seasonAttrs, "Away", ties)}</td>
-				<td>{record(t.seasonAttrs, "Div", ties)}</td>
-				<td>{record(t.seasonAttrs, "Conf", ties)}</td>
-				<td>{t.seasonAttrs.streak}</td>
-				<td>{t.seasonAttrs.lastTen}</td>
-			</tr>
-		);
-	},
-);
+const DivStandingsRow = ({ season, t, ties }) => {
+	const { clicked, toggleClicked } = useClickable();
+
+	return (
+		<tr
+			key={t.tid}
+			className={classNames({
+				"table-info": t.highlight,
+				"table-warning": clicked,
+			})}
+			onClick={toggleClicked}
+		>
+			<td>
+				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
+					{t.region} {t.name}
+				</a>
+				<span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
+			</td>
+			<td>{t.seasonAttrs.won}</td>
+			<td>{t.seasonAttrs.lost}</td>
+			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
+			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
+			<td>{t.gb}</td>
+			<td>{record(t.seasonAttrs, "Home", ties)}</td>
+			<td>{record(t.seasonAttrs, "Away", ties)}</td>
+			<td>{record(t.seasonAttrs, "Div", ties)}</td>
+			<td>{record(t.seasonAttrs, "Conf", ties)}</td>
+			<td>{t.seasonAttrs.streak}</td>
+			<td>{t.seasonAttrs.lastTen}</td>
+		</tr>
+	);
+};
 
 DivStandingsRow.propTypes = {
 	season: PropTypes.number.isRequired,
@@ -100,6 +100,35 @@ DivStandings.propTypes = {
 	ties: PropTypes.bool.isRequired,
 };
 
+const SmallStandingsRow = ({ i, numPlayoffTeams, season, t }) => {
+	const { clicked, toggleClicked } = useClickable();
+
+	return (
+		<tr
+			key={t.tid}
+			className={classNames({
+				"table-info": t.highlight,
+				"table-warning": clicked,
+				separator: i === numPlayoffTeams - 1,
+			})}
+			onClick={toggleClicked}
+		>
+			<td>
+				{t.rank}.{" "}
+				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.region}</a>
+			</td>
+			<td style={{ textAlign: "right" }}>{t.gb}</td>
+		</tr>
+	);
+};
+
+SmallStandingsRow.propTypes = {
+	i: PropTypes.number.isRequired,
+	numPlayoffTeams: PropTypes.number.isRequired,
+	season: PropTypes.number.isRequired,
+	t: PropTypes.object.isRequired,
+};
+
 const SmallStandings = ({ numPlayoffTeams, season, teams }) => {
 	return (
 		<table className="table table-striped table-bordered table-sm">
@@ -110,25 +139,15 @@ const SmallStandings = ({ numPlayoffTeams, season, teams }) => {
 				</tr>
 			</thead>
 			<tbody>
-				{teams.map((t, i) => {
-					return (
-						<tr
-							key={t.tid}
-							className={classNames({
-								"table-info": t.highlight,
-								separator: i === numPlayoffTeams - 1,
-							})}
-						>
-							<td>
-								{t.rank}.{" "}
-								<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
-									{t.region}
-								</a>
-							</td>
-							<td style={{ textAlign: "right" }}>{t.gb}</td>
-						</tr>
-					);
-				})}
+				{teams.map((t, i) => (
+					<SmallStandingsRow
+						key={t.tid}
+						i={i}
+						numPlayoffTeams={numPlayoffTeams}
+						season={season}
+						t={t}
+					/>
+				))}
 			</tbody>
 		</table>
 	);

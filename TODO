@@ -43,9 +43,6 @@ blog
 
 ---
 
-clickable -> useClickable
-- elsewhere
-
 update screenshots on website
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
@@ -59,6 +56,9 @@ better power rankings
 button to randomize ratings on customize player screen
 
 strict mode - any blockers?
+
+zipped files @Jofish#5051
+- https://github.com/Stuk/jszip is a bit big
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?
@@ -136,8 +136,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
 - explanation text?
 - docs
   - The tricky part is https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS which generally prevents websites from loading data from other domains, for security reasons. As described at that link in excruciating detail, you can allow a file to be included in another domain (or any domain) with the "Access-Control-Allow-Origin" header. If you don't control your server, that's not very helpful. But I have noticed that GitHub does this automatically on githubusercontent.com, so if you make a GitHub repo, you can use a link like https://raw.githubusercontent.com/user_name/repo_name/branch_name/file.json
-- zipped files Jofish
-  - https://github.com/Stuk/jszip is a bit big
 - https://uppy.io/
   - file sharing platforms are sources, but not destinations?
   - requires server side integration

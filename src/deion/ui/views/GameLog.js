@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import { BoxScoreWrapper, Dropdown, NewWindowLink } from "../components";
 import { helpers, overrides, setTitle } from "../util";
-import clickable from "../wrappers/clickable";
+import useClickable from "../hooks/useClickable";
 
-const StatsRow = clickable(({ clicked, i, p, toggleClicked, ...props }) => {
+const StatsRow = ({ i, p, ...props }) => {
+	const { clicked, toggleClicked } = useClickable();
+
 	const classes = classNames({
 		"table-warning": clicked,
 	});
@@ -18,7 +20,7 @@ const StatsRow = clickable(({ clicked, i, p, toggleClicked, ...props }) => {
 			{...props}
 		/>
 	);
-});
+};
 
 StatsRow.propTypes = {
 	i: PropTypes.number.isRequired,

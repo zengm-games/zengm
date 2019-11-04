@@ -3,14 +3,18 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import clickable from "../../wrappers/clickable";
+import useClickable from "../../hooks/useClickable";
 
-const Row = clickable<{
+const Row = ({
+	row,
+}: {
 	row: {
 		classNames: any,
 		data: any[],
 	},
-}>(({ clicked, row, toggleClicked }) => {
+}) => {
+	const { clicked, toggleClicked } = useClickable();
+
 	return (
 		<tr
 			className={classNames(row.classNames, { "table-warning": clicked })}
@@ -29,9 +33,8 @@ const Row = clickable<{
 			})}
 		</tr>
 	);
-});
+};
 
-// $FlowFixMe
 Row.propTypes = {
 	row: PropTypes.shape({
 		classNames: PropTypes.object,

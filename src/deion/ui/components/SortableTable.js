@@ -45,7 +45,9 @@ const SortableTable = ({
 				const wholeRow = (
 					<tr
 						{...props}
-						className={rowClassName ? rowClassName({ index, value }) : null}
+						className={
+							rowClassName ? rowClassName({ index, isDragged, value }) : null
+						}
 					>
 						{disabled ? null : (
 							<td
@@ -56,7 +58,6 @@ const SortableTable = ({
 								data-movable-handle
 								style={{
 									cursor: isDragged ? "grabbing" : "grab",
-									padding: 5,
 									width: widths[0],
 								}}
 							/>
@@ -64,13 +65,13 @@ const SortableTable = ({
 						{row({
 							index,
 							value,
-							style: i => ({ padding: 5, width: widths[i] }),
+							style: i => ({ width: widths[i] }),
 						})}
 					</tr>
 				);
 
 				return isDragged ? (
-					<table>
+					<table className="table table-bordered table-sm">
 						<tbody>{wholeRow}</tbody>
 					</table>
 				) : (

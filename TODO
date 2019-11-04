@@ -59,11 +59,6 @@ button to randomize ratings on customize player screen
 
 strict mode - any blockers?
 
-SortableTable
-- Roster
-  - test HoF highlight
-- put real class on dragged fake table - so it gets padding and border automatically, and can delete manual padding
-
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?
 

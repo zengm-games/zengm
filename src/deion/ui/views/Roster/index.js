@@ -176,9 +176,10 @@ class Roster extends React.Component {
 					disabled={!editable}
 					values={playersSorted}
 					highlightHandle={({ index }) => index <= 4}
-					rowClassName={({ index, value: p }) =>
+					rowClassName={({ index, isDragged, value: p }) =>
 						classNames({
-							separator: process.env.SPORT === "basketball" && index === 4,
+							separator:
+								process.env.SPORT === "basketball" && index === 4 && !isDragged,
 							"table-danger": p.hof,
 						})
 					}

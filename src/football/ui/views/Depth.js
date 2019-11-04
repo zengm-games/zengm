@@ -154,9 +154,9 @@ class Depth extends React.Component {
 					disabled={!editable}
 					values={playersSorted}
 					highlightHandle={({ index }) => numStartersByPos[pos] < index + 1}
-					rowClassName={({ index }) =>
+					rowClassName={({ index, isDragged }) =>
 						classNames({
-							separator: index === numStartersByPos[pos] - 1,
+							separator: index === numStartersByPos[pos] - 1 && !isDragged,
 						})
 					}
 					onChange={async ({ oldIndex, newIndex }) => {

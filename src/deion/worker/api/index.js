@@ -1259,8 +1259,6 @@ const switchTeam = async (tid: number) => {
 	await updateStatus("Idle");
 	updatePlayMenu();
 
-	// Used to set owner mood here, but now there's no need because a new team will always have all 0s
-
 	await league.setGameAttributes({
 		gameOver: false,
 		userTid: tid,
@@ -1271,6 +1269,17 @@ const switchTeam = async (tid: number) => {
 		g.teamNamesCache[g.userTid],
 		g.teamRegionsCache[g.userTid],
 	);
+
+	const teamSeason = await idb.cache.teamSeasons.indexGet(
+		"teamSeasonsByTidSeason",
+		[tid, g.season],
+	);
+	teamSeason.ownerMood = {
+		money: 0,
+		playoffs: 0,
+		wins: 0,
+	};
+	await idb.cache.teamSeasons.put(teamSeason);
 
 	await toUI(["realtimeUpdate", ["leagues"]]);
 };

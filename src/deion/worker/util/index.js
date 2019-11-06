@@ -1,7 +1,7 @@
 // @flow
 
-import PromiseWorker from "promise-worker-bi";
-export const promiseWorker = new PromiseWorker();
+import { PWBWorker } from "promise-worker-bi";
+export const promiseWorker = new PWBWorker();
 
 export { default as achievement } from "./achievement";
 export { default as beforeView } from "./beforeView";

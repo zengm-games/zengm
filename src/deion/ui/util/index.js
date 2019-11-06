@@ -1,6 +1,6 @@
 // @flow
 
-import PromiseWorker from "promise-worker-bi";
+import { PWBHost } from "promise-worker-bi";
 
 const workerPath =
 	process.env.NODE_ENV === "production"
@@ -10,7 +10,7 @@ const worker = window.useSharedWorker
 	? new SharedWorker(workerPath)
 	: new Worker(workerPath);
 
-export const promiseWorker = new PromiseWorker(worker);
+export const promiseWorker = new PWBHost(worker);
 promiseWorker.registerError(e => {
 	if (window.bugsnagClient) {
 		window.bugsnagClient.notify(e);

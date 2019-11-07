@@ -29,12 +29,6 @@ module.exports = {
 		"src/**/*.js": ["rollup"],
 	},
 
-	// http://stackoverflow.com/a/42379383/786644
-	browserConsoleLogOptions: {
-		terminal: true,
-		level: "",
-	},
-
 	autoWatch: false,
 
 	singleRun: true,

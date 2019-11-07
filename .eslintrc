@@ -16,10 +16,8 @@
     },
     rules: {
         "array-callback-return": "off", // False positives w/ async functions
-        "arrow-body-style": "off",
         "consistent-return": "off",
         "func-names": "off",
-        "import/newline-after-import": "off",
         "import/no-cycle": "off",
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}],
         "jsx-a11y/anchor-has-content": "off",
@@ -32,7 +30,6 @@
         "jsx-a11y/no-noninteractive-element-interactions": "off", // I don't care enough to fix it
         "jsx-a11y/no-static-element-interactions": "off",
         "max-classes-per-file": "off",
-        "no-alert": "off",
         "no-await-in-loop": "off",
         "no-console": "off",
         "no-constant-condition": ["error", { "checkLoops": false }],
@@ -56,12 +53,10 @@
         "react/jsx-props-no-spreading": "off",
         "react/no-array-index-key": "off",
         "react/no-did-update-set-state": "off",
-        "react/no-multi-comp": "off",
         "react/no-unescaped-entities": "off",
         "react/no-unused-prop-types": "off", // Would be nice, but tons of false positives
         "react/require-default-props": "off", // Flow handles this better, I think
         "react/sort-comp": "off", // Flow type definition of props in a React class confuses it
-        "react/state-in-constructor": "off",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
         "spaced-comment": "off",

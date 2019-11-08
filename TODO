@@ -19,6 +19,8 @@ re-norm other stats
     - show in trade UI somehow
     - ovr -> individual +/- -> sum? or just ovr -> MOV?
 
+changes (link to blog, ovr explnaation)
+
 blog
 - Possession length
   - Added some variability, rather than having all possessions be the same length
@@ -43,6 +45,9 @@ blog
   - More imbalanced scoring and rebounding (the best scorers/rebounders get more, the worst get less)
 - UI
   - Added TS% to advanced team stats table
+- New Ovr formula
+  - Explanation
+  - Comparison to previous one (ranks of importance)
 
 ---
 
@@ -54,6 +59,7 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 update screenshots on website
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
+- also, shouldn't be possible to select KR/PR as position
 
 SW stuff
 - dynamic rather than precache like https://github.com/GoogleChromeLabs/proxx/blob/master/src/sw/index.ts maybe

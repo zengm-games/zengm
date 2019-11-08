@@ -12,6 +12,7 @@ import maxRatingDists from "./maxRatingDists";
 import percentageDraftPicksSigned from "./percentageDraftPicksSigned";
 import recomputeFreeAgentContracts from "./recomputeFreeAgentContracts";
 import recomputeHallOfFame from "./recomputeHallOfFame";
+import recomputeOvr from "./recomputeOvr";
 import valueDiff from "./valueDiff";
 
 export default {
@@ -25,5 +26,6 @@ export default {
 	percentageDraftPicksSigned,
 	recomputeFreeAgentContracts,
 	recomputeHallOfFame,
+	recomputeOvr,
 	valueDiff,
 };

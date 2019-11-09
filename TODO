@@ -1,53 +1,4 @@
-situational awareness
-- possession length
-  - ? timeouts to advance ball (shorter possession) or make subs
-  - ? shot clock violation
-- fouls
-  - ? sometimes foul when up 3 and not much time left
-  - ? hack a shaq
-- rotations
-  - ? play stars more at the end of close games
-  - ? sub in good FT shooters in late game situations
-
-re-norm other stats
-- player points
-  - test same league
-- then new ovr formula
-  - use +/- per minute, not raw
-  - team ovr too
-    - disable injuries
-    - show in trade UI somehow
-    - ovr -> individual +/- -> sum? or just ovr -> MOV?
-
 changes (link to blog, ovr explnaation)
-
-blog
-- Possession length
-  - Added some variability, rather than having all possessions be the same length
-  - Two for one at end of quarters
-  - Hold for last shot (unless trying to catch up in the 4th quarter or OT)
-  - Shorter for team trying to catch up
-  - Longer for team trying to hold lead
-  - For possessions at the end of a quarter, the less time there is on the clock for that possession, the lower the fg% and the higher the chance of not getting a shot off
-  - The winning team will not take a shot at the buzzer at the end of the game, they'll just dribble out the clock
-- Fouls
-  - Intentional foul when down late
-  - Non-shooting fouls
-  - Bonus
-  - Fixed bug where FT shooter could be subbed out before shooting FTs if the guy who fouled him fouled out
-- Shot selection
-  - In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
-- Rotations
-  - Bench plays more during blowouts
-  - A little more playing time for better players
-- Stats
-  - Increased pace
-  - More imbalanced scoring and rebounding (the best scorers/rebounders get more, the worst get less)
-- UI
-  - Added TS% to advanced team stats table
-- New Ovr formula
-  - Explanation
-  - Comparison to previous one (ranks of importance)
 
 ---
 
@@ -55,6 +6,11 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
 - logit(Retire) = 0.3 + (1/146.35) * (max(Age-18,0)^2) - 0.961 * max(EstWS,WS)
+
+team ovr
+- disable injuries
+- show in trade UI somehow
+- ovr -> individual +/- -> sum? or just ovr -> MOV?
 
 update screenshots on website
 
@@ -644,6 +600,17 @@ data table sorting shouldn't be based on children
 - get rid of awkward children stuff - PlayerNameLabels, mood, ...
 
 ----
+
+situational awareness
+- possession length
+  - ? timeouts to advance ball (shorter possession) or make subs
+  - ? shot clock violation
+- fouls
+  - ? sometimes foul when up 3 and not much time left
+  - ? hack a shaq
+- rotations
+  - ? play stars more at the end of close games
+  - ? sub in good FT shooters in late game situations
 
 https://github.com/pinojs/pino
 

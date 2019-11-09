@@ -13,24 +13,42 @@ import type { PlayerRatings } from "../../../common/types";
 const ovr = (ratings: PlayerRatings): number => {
 	// This formula is loosely based on linear regression of zscore(ratings) to +/- per minute:
 	const r =
-		0.265 * (ratings.hgt - 47.5) +
-		0.129 * (ratings.stre - 50.2) +
-		0.205 * (ratings.spd - 50.8) +
-		0.085 * (ratings.jmp - 48.7) +
-		0.105 * (ratings.endu - 39.9) +
-		0.0211 * (ratings.ins - 42.4) +
-		0.0476 * (ratings.dnk - 49.5) +
-		0.0336 * (ratings.ft - 47.0) +
-		0.121 * (ratings.tp - 47.1) +
-		0.222 * (ratings.oiq - 46.8) +
-		0.264 * (ratings.diq - 46.7) +
-		0.0983 * (ratings.drb - 54.8) +
-		0.103 * (ratings.pss - 51.3) +
-		0.02 * (ratings.fg - 47.0) +
-		0.02 * (ratings.reb - 51.4) +
-		49.4;
+		0.159 * (ratings.hgt - 47.5) +
+		0.0777 * (ratings.stre - 50.2) +
+		0.123 * (ratings.spd - 50.8) +
+		0.051 * (ratings.jmp - 48.7) +
+		0.0632 * (ratings.endu - 39.9) +
+		0.0126 * (ratings.ins - 42.4) +
+		0.0286 * (ratings.dnk - 49.5) +
+		0.0202 * (ratings.ft - 47.0) +
+		0.0726 * (ratings.tp - 47.1) +
+		0.133 * (ratings.oiq - 46.8) +
+		0.159 * (ratings.diq - 46.7) +
+		0.059 * (ratings.drb - 54.8) +
+		0.062 * (ratings.pss - 51.3) +
+		0.01 * (ratings.fg - 47.0) +
+		0.01 * (ratings.reb - 51.4) +
+		48.5;
 
-	return helpers.bound(Math.round(r), 0, 100);
+	// Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
+	// +8 at 68
+	// +4 at 50
+	// -5 at 42
+	// -10 at 31
+	let fudgeFactor = 0;
+	if (r >= 68) {
+		fudgeFactor = 8;
+	} else if (r >= 50) {
+		fudgeFactor = 4 + (r - 50) * (4 / 18);
+	} else if (r >= 42) {
+		fudgeFactor = -5 + (r - 42) * (9 / 8);
+	} else if (r >= 31) {
+		fudgeFactor = -5 - (42 - r) * (5 / 11);
+	} else {
+		fudgeFactor = -10;
+	}
+
+	return helpers.bound(Math.round(r + fudgeFactor), 0, 100);
 };
 
 export default ovr;

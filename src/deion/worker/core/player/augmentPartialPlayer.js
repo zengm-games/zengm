@@ -340,6 +340,14 @@ const augmentPartialPlayer = (
 				ps.pm = 0;
 			}
 		}
+
+		// Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
+		if (g.phase === PHASE.PRESEASON) {
+			const lastSeason = p.stats[p.stats.length - 1].season;
+			if (lastSeason < g.season) {
+				addStatsRow(p, false);
+			}
+		}
 	}
 
 	if (!Array.isArray(p.relatives)) {

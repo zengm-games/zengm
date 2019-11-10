@@ -32,7 +32,6 @@ module.exports = (nodeEnv, blacklistOptions) => {
 		}),
 		babel({
 			exclude: "node_modules/!(d3)**",
-			runtimeHelpers: true,
 		}),
 		json({
 			compact: true,

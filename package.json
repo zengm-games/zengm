@@ -58,6 +58,7 @@
 		"react-dom": "^16.11.0",
 		"react-movable": "^2.3.0",
 		"reactstrap": "^8.1.1",
+		"rollup-plugin-visualizer": "^2.7.2",
 		"roman-numerals": "^0.3.2",
 		"s-ago": "^2.1.0",
 		"url-search-params-polyfill": "^7.0.0",

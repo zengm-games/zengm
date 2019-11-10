@@ -410,7 +410,11 @@ export const createWithoutSaving = (
 					p.tid = playerTids.pop();
 					if (p.stats && p.stats.length > 0) {
 						p.stats[p.stats.length - 1].tid = p.tid;
-						p.statsTids.push(p.tid);
+						if (p.statsTids) {
+							p.statsTids.push(p.tid);
+						} else {
+							p.statsTids = [p.tid];
+						}
 					}
 				}
 			}

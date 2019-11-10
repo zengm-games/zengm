@@ -76,9 +76,21 @@ const SortableTable = ({
 }) => {
 	const [widths, setWidths] = useState([]);
 
+	let actualValues = [];
+	if (disabled) {
+		for (const value of values) {
+			actualValues.push({
+				...value,
+				disabled: true,
+			});
+		}
+	} else {
+		actualValues = values;
+	}
+
 	return (
 		<List
-			values={values}
+			values={actualValues}
 			beforeDrag={({ elements, index }) => {
 				const cells = Array.from(elements[index].children);
 				const newWidths = cells.map(

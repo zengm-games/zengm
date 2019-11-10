@@ -19,7 +19,7 @@ const BLACKLIST = {
 		await Promise.all(
 			["ui", "worker"].map(async name => {
 				const bundle = await rollup.rollup({
-					...rollupConfig("production", BLACKLIST[name]),
+					...rollupConfig("production", BLACKLIST[name], `stats-${name}.html`),
 					input: `src/${sport}/${name}/index.js`,
 				});
 

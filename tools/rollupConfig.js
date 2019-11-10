@@ -8,12 +8,12 @@ const json = require("rollup-plugin-json");
 const resolve = require("rollup-plugin-node-resolve");
 const replace = require("rollup-plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
-// const visualizer = require("rollup-plugin-visualizer");
+const visualizer = require("rollup-plugin-visualizer");
 const build = require("./buildFuncs");
 
 const sport = build.getSport();
 
-module.exports = (nodeEnv, blacklistOptions) => {
+module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 	const plugins = [
 		alias({
 			resolve: [".json"],
@@ -47,9 +47,6 @@ module.exports = (nodeEnv, blacklistOptions) => {
 		resolve({
 			preferBuiltins: true,
 		}),
-		/*		visualizer({
-			filename: `stats-${Math.random()}.html`,
-		})*/
 	];
 
 	if (nodeEnv === "production") {
@@ -65,6 +62,14 @@ module.exports = (nodeEnv, blacklistOptions) => {
 
 	if (blacklistOptions) {
 		plugins.splice(1, 0, blacklist(blacklistOptions));
+	}
+
+	if (statsFilename) {
+		plugins.push(
+			visualizer({
+				filename: statsFilename,
+			}),
+		);
 	}
 
 	return {

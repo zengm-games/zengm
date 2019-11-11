@@ -14,9 +14,11 @@ team ovr
 
 update screenshots on website
 
-bundle size
-- lodash
-- idb
+bundle size by removing dependency (tested by adding to "external" in rollup config)
+- lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
+- backboard - 12kb in worker
+
+keep box scores with feats, and ASG
 
 hype revamp
 - make more transparent
@@ -43,6 +45,7 @@ zipped files @Jofish#5051
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?
+- team logos
 
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):
@@ -527,8 +530,6 @@ remove babel plugins
 remove polyfills
 - get rid of getAll polyfill when safari 10.x usage goes to 0
 - others too!
-
-keep box scores with feats
 
 add franchise leaders (stats) to team history page
 

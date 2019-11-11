@@ -151,6 +151,38 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	toUI(["realtimeUpdate", [], helpers.leagueUrl(["trade"])], conditions);
 };
 
+const getNumDaysThisRound = playoffSeries => {
+	let numDaysThisRound = 0;
+	for (const series of playoffSeries.series[playoffSeries.currentRound]) {
+		const num = series.away
+			? g.numGamesPlayoffSeries[playoffSeries.currentRound] -
+			  series.home.won -
+			  series.away.won
+			: 0;
+		if (num > numDaysThisRound) {
+			numDaysThisRound = num;
+		}
+	}
+
+	return numDaysThisRound;
+};
+
+const getNumDaysPlayoffs = async () => {
+	const playoffSeries = await idb.cache.playoffSeries.get(g.season);
+
+	// Max 7 days per round that hasn't started yet
+	let numDaysFutureRounds = 0;
+	for (
+		let i = playoffSeries.currentRound + 1;
+		i < g.numGamesPlayoffSeries.length;
+		i++
+	) {
+		numDaysFutureRounds += g.numGamesPlayoffSeries[i];
+	}
+
+	return numDaysFutureRounds + getNumDaysThisRound(playoffSeries);
+};
+
 const playAmount = async (
 	amount: "day" | "week" | "month" | "untilPreseason",
 	conditions: Conditions,
@@ -172,6 +204,13 @@ const playAmount = async (
 	}
 
 	if (g.phase <= PHASE.PLAYOFFS) {
+		const numDaysRemaining =
+			g.phase === PHASE.PLAYOFFS
+				? await getNumDaysPlayoffs()
+				: await season.getDaysLeftSchedule();
+		if (numDaysRemaining < numDays) {
+			numDays = numDaysRemaining;
+		}
 		await updateStatus("Playing..."); // For quick UI updating, before game.play
 		await game.play(numDays, conditions);
 	} else if (g.phase === PHASE.FREE_AGENCY) {
@@ -201,22 +240,6 @@ const runDraft = async (onlyOne: boolean, conditions: Conditions) => {
 	if (draftPicks.length === 0) {
 		await updateStatus("Idle");
 	}
-};
-
-const getNumDaysThisRound = playoffSeries => {
-	let numDaysThisRound = 0;
-	for (const series of playoffSeries.series[playoffSeries.currentRound]) {
-		const num = series.away
-			? g.numGamesPlayoffSeries[playoffSeries.currentRound] -
-			  series.home.won -
-			  series.away.won
-			: 0;
-		if (num > numDaysThisRound) {
-			numDaysThisRound = num;
-		}
-	}
-
-	return numDaysThisRound;
 };
 
 const playMenu = {
@@ -265,19 +288,7 @@ const playMenu = {
 	throughPlayoffs: async (conditions: Conditions) => {
 		if (g.phase === PHASE.PLAYOFFS) {
 			await updateStatus("Playing..."); // For quick UI updating, before await
-			const playoffSeries = await idb.cache.playoffSeries.get(g.season);
-
-			// Max 7 days per round that hasn't started yet
-			let numDaysFutureRounds = 0;
-			for (
-				let i = playoffSeries.currentRound + 1;
-				i < g.numGamesPlayoffSeries.length;
-				i++
-			) {
-				numDaysFutureRounds += g.numGamesPlayoffSeries[i];
-			}
-
-			const numDays = numDaysFutureRounds + getNumDaysThisRound(playoffSeries);
+			const numDays = await getNumDaysPlayoffs();
 			game.play(numDays, conditions);
 		}
 	},

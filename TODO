@@ -1,4 +1,5 @@
 changes (link to blog, ovr explnaation)
+- update blog too with release date
 
 ---
 
@@ -12,11 +13,11 @@ team ovr
 - show in trade UI somehow
 - ovr -> individual +/- -> sum? or just ovr -> MOV?
 
-update screenshots on website
+website updates
+- update screenshots on website
 
 bundle size by removing dependency (tested by adding to "external" in rollup config)
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
-- backboard - 12kb in worker
 
 keep box scores with feats, and ASG
 

@@ -48,6 +48,7 @@ const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
 					typeof value.amount === "number"
 				) {
 					// ticketPrice is the only thing in dollars always
+					// $FlowFixMe
 					value.amount /= 1000;
 				}
 			}
@@ -80,7 +81,10 @@ const processSeasonAttrs = async (
 		// Single season, from cache
 		seasons = await idb.cache.teamSeasons.indexGetAll(
 			"teamSeasonsBySeasonTid",
-			[[season, t.tid], [season, t.tid]],
+			[
+				[season, t.tid],
+				[season, t.tid],
+			],
 		);
 	} else {
 		// Single season, from database

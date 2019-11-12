@@ -103,6 +103,8 @@ async function updateHistory(
 		for (let i = 0; i < seasons.length; i++) {
 			if (seasons[i].champ) {
 				championshipsByTid[seasons[i].champ.tid] += 1;
+			}
+			if (seasons[i].champ) {
 				seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
 			}
 		}

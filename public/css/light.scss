@@ -506,6 +506,11 @@ table {
 
 .finances-settings-field {
 	width: 115px;
+
+	.input-group-append,
+	.input-group-prepend {
+		height: 27px;
+	}
 }
 
 .finances-settings button {

@@ -262,9 +262,7 @@ class FinancesForm extends React.Component {
 								disabled={formDisabled || this.state.saving}
 								style={{ lineHeight: "1.5em" }}
 							>
-								Save Revenue and
-								<br />
-								Expense Settings
+								Save Revenue and Expense Settings
 							</button>
 						</div>
 					</div>

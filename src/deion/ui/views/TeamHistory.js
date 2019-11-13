@@ -108,7 +108,7 @@ const TeamHistory = ({
 			</p>
 
 			<div className="row">
-				<div className="col-sm-3">
+				<div className="col-sm-5 col-md-3">
 					<h2>Overall</h2>
 					<p>
 						Record: {record}
@@ -148,7 +148,7 @@ const TeamHistory = ({
 						{historySeasons}
 					</p>
 				</div>
-				<div className="col-sm-9">
+				<div className="col-sm-7 col-md-9">
 					<h2>Players</h2>
 					<p>
 						Players currently on this team are{" "}

@@ -239,6 +239,10 @@ const changes = [
 		msg:
 			"New feature: social media! Within a league, go to Tools > Social Media.",
 	},
+	{
+		date: "2019-11-13",
+		msg: `More realistic play-by-plays in live game sim, and an improved ovr rating formula. <a href="https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/">More details</a>`,
+	},
 ];
 
 export default changes;

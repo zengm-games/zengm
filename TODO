@@ -1,5 +1,3 @@
-responsive table scrolling broken on safari
-
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
@@ -390,6 +388,11 @@ Don't allow play if versions in tabs don't match
 - close worker?
 
 ---
+
+React.StrictMode
+- react-sortable-hoc findDOMNode
+  - switch to react-movable works, except in Safari https://github.com/tajo/react-movable/issues/30
+- reactstrap findDOMNode
 
 to send notification to correct screen, need `conditions` in views/allStars (and other getOrCreate calls). should be possible right? yeah, could request hostID from shared worker, and then sent it to runBefore functions, but... is it worth it? maybe not
 

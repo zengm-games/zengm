@@ -1,68 +1,106 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
-import { List } from "react-movable";
+import React, { useCallback, useState } from "react";
+import {
+	SortableContainer,
+	SortableElement,
+	SortableHandle,
+} from "react-sortable-hoc";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 
-const Row = React.forwardRef(
-	(
-		{
-			className,
-			disabled,
-			highlight,
-			index,
-			isDragged,
-			row,
-			value,
-			widths,
-			...props
-		},
-		ref,
-	) => {
-		const { clicked, toggleClicked } = useClickable();
+const ReorderHandle = SortableHandle(({ highlight, isDragged }) => {
+	return (
+		<td
+			className={classNames("roster-handle", {
+				"table-info": highlight,
+				"table-secondary": !highlight,
+				"user-select-none": isDragged,
+			})}
+			data-movable-handle
+			style={{
+				cursor: isDragged ? "grabbing" : "grab",
+			}}
+		/>
+	);
+});
 
-		return (
-			<tr
-				ref={ref}
-				{...props}
-				className={classNames(className, {
-					"table-warning": clicked,
-				})}
-				onClick={toggleClicked}
-			>
-				{disabled ? null : (
-					<td
-						className={classNames("roster-handle", {
-							"table-info": highlight,
-							"table-secondary": !highlight,
-						})}
-						data-movable-handle
-						style={{
-							cursor: isDragged ? "grabbing" : "grab",
-							width: widths[0],
-						}}
-					/>
-				)}
-				{row({
-					index,
-					value,
-					style: i => ({ width: widths[i] }),
-				})}
-			</tr>
-		);
-	},
-);
+ReorderHandle.propTypes = {
+	isDragged: PropTypes.bool.isRequired,
+};
+
+const style = () => null;
+
+const Row = SortableElement(props => {
+	const { clicked, toggleClicked } = useClickable();
+
+	const { className, disabled2, highlight, i, isDragged, row, value } = props;
+
+	return (
+		<tr
+			className={classNames(className, {
+				"table-warning": clicked,
+			})}
+			onClick={toggleClicked}
+		>
+			{disabled2 ? null : (
+				<ReorderHandle highlight={highlight} isDragged={isDragged} />
+			)}
+			{row({
+				index: i,
+				style,
+				value,
+			})}
+		</tr>
+	);
+});
 
 Row.propTypes = {
 	className: PropTypes.string,
-	disabled: PropTypes.bool,
+	disabled2: PropTypes.bool,
 	highlight: PropTypes.bool.isRequired,
 	index: PropTypes.number.isRequired,
 	isDragged: PropTypes.bool.isRequired,
 	row: PropTypes.func.isRequired,
 	value: PropTypes.object.isRequired,
-	widths: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+const TBody = SortableContainer(
+	({ disabled, highlightHandle, isDragged, row, rowClassName, values }) => {
+		return (
+			<tbody>
+				{values.map((value, index) => {
+					const className = rowClassName
+						? rowClassName({ index, isDragged, value })
+						: null;
+					const highlight = highlightHandle({ index, value });
+
+					return (
+						<Row
+							className={className}
+							disabled2={disabled}
+							key={index}
+							highlight={highlight}
+							i={index}
+							index={index}
+							isDragged={isDragged}
+							row={row}
+							value={value}
+						/>
+					);
+				})}
+			</tbody>
+		);
+	},
+);
+
+TBody.propTypes = {
+	disabled: PropTypes.bool,
+	highlightHandle: PropTypes.func,
+	isDragged: PropTypes.bool.isRequired,
+	row: PropTypes.func.isRequired,
+	rowClassName: PropTypes.func,
+	values: PropTypes.array.isRequired,
 };
 
 const SortableTable = ({
@@ -74,74 +112,51 @@ const SortableTable = ({
 	rowClassName,
 	values,
 }) => {
-	const [widths, setWidths] = useState([]);
+	const [isDragged, setIsDragged] = useState(false);
 
-	let actualValues = [];
-	if (disabled) {
-		for (const value of values) {
-			actualValues.push({
-				...value,
-				disabled: true,
-			});
+	const onSortStart = useCallback(({ clonedNode, node }) => {
+		setIsDragged(true);
+
+		// Ideally, this wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
+		const clonedChildren = clonedNode.childNodes;
+		const children = node.childNodes;
+		for (let i = 0; i < children.length; i++) {
+			clonedChildren[i].style.padding = "5px";
+			clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
 		}
-	} else {
-		actualValues = values;
-	}
+	}, []);
+
+	const onSortEnd = useCallback(
+		({ oldIndex, newIndex }) => {
+			setIsDragged(false);
+			onChange({ oldIndex, newIndex });
+		},
+		[onChange],
+	);
 
 	return (
-		<List
-			values={actualValues}
-			beforeDrag={({ elements, index }) => {
-				const cells = Array.from(elements[index].children);
-				const newWidths = cells.map(
-					cell => window.getComputedStyle(cell).width,
-				);
-				setWidths(newWidths);
-			}}
-			onChange={onChange}
-			renderList={({ children, props }) => (
-				<ResponsiveTableWrapper nonfluid>
-					<table className="table table-striped table-bordered table-sm table-hover">
-						<thead>
-							<tr>
-								{disabled ? null : <th />}
-								{cols()}
-							</tr>
-						</thead>
-						<tbody {...props}>{children}</tbody>
-					</table>
-				</ResponsiveTableWrapper>
-			)}
-			renderItem={({ index, isDragged, props, value }) => {
-				const className = rowClassName
-					? rowClassName({ index, isDragged, value })
-					: null;
-				const highlight = highlightHandle({ index, value });
-
-				const wholeRow = (
-					<Row
-						className={className}
-						disabled={disabled}
-						highlight={highlight}
-						index={index}
-						isDragged={isDragged}
-						row={row}
-						value={value}
-						widths={widths}
-						{...props}
-					/>
-				);
-
-				return isDragged ? (
-					<table className="table table-bordered table-sm">
-						<tbody>{wholeRow}</tbody>
-					</table>
-				) : (
-					wholeRow
-				);
-			}}
-			transitionDuration={0}
-		/>
+		<ResponsiveTableWrapper nonfluid>
+			<table className="table table-striped table-bordered table-sm table-hover">
+				<thead>
+					<tr>
+						{disabled ? null : <th />}
+						{cols()}
+					</tr>
+				</thead>
+				<TBody
+					disabled={disabled}
+					highlightHandle={highlightHandle}
+					isDragged={isDragged}
+					onSortEnd={onSortEnd}
+					onSortStart={onSortStart}
+					row={row}
+					rowClassName={rowClassName}
+					transitionDuration={0}
+					values={values}
+					useDragHandle
+				/>
+			</table>
+		</ResponsiveTableWrapper>
 	);
 };
 

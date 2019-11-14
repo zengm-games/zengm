@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { arrayMove } from "react-movable";
+import arrayMove from "array-move";
 import { PHASE } from "../../common";
 import { NewWindowLink, SortableTable } from "../components";
 import { helpers, setTitle, toWorker } from "../util";

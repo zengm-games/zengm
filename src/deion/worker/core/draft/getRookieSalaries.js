@@ -11,7 +11,7 @@ import { g } from "../../util";
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
 const getRookieSalaries = (): number[] => {
-	// Default for 60 picks
+	// Default for first round
 	const firstRoundRookieSalaries = [
 		5000,
 		4500,
@@ -43,7 +43,8 @@ const getRookieSalaries = (): number[] => {
 		1000,
 		1000,
 		1000]
-	
+	  
+	  //default for all subsequent rounds
 	const otherRoundRookieSalaries = [
 		500,
 		500,

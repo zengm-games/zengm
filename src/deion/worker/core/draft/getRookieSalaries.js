@@ -12,7 +12,7 @@ import { g } from "../../util";
  */
 const getRookieSalaries = (): number[] => {
 	// Default for 60 picks
-	const rookieSalaries = [
+	const firstRoundRookieSalaries = [
 		5000,
 		4500,
 		4000,
@@ -42,7 +42,9 @@ const getRookieSalaries = (): number[] => {
 		1000,
 		1000,
 		1000,
-		1000,
+		1000]
+	
+	const otherRoundRookieSalaries = [
 		500,
 		500,
 		500,
@@ -75,14 +77,27 @@ const getRookieSalaries = (): number[] => {
 		500,
 	];
 
-	while (g.numTeams * g.numDraftRounds > rookieSalaries.length) {
+	while (g.numTeams > firstRoundRookieSalaries.length){
+		//add first round contracts on to end of first round
+		firstRoundRookieSalaries.push(1000);
+	}
+	
+	while (g.numTeams < firstRoundRookieSalaries.length){
+		//remove smallest first round salaries
+		firstRoundRookieSalaries.pop();
+	}
+	
+	while (g.numTeams * (g.numDraftRounds-1) > otherRoundRookieSalaries.length) {
 		// Add min contracts on to end
-		rookieSalaries.push(500);
+		otherRoundRookieSalaries.push(500);
 	}
-	while (g.numTeams * g.numDraftRounds < rookieSalaries.length) {
+	while (g.numTeams * (g.numDraftRounds-1) < otherRoundRookieSalaries.length) {
 		// Remove smallest salaries
-		rookieSalaries.pop();
+		otherRoundRookieSalaries.pop();
 	}
+	
+	//combine first round and other rounds
+	const rookieSalaries = firstRoundRookieSalaries.concat(otherRoundRookieSalaries);
 
 	if (g.minContract !== 500 || g.maxContract !== 20000) {
 		for (let i = 0; i < rookieSalaries.length; i++) {

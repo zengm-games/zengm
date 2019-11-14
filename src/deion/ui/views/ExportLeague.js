@@ -45,41 +45,48 @@ const categories = [
 
 const ExportLeague = () => {
 	const [status, setStatus] = useState();
+	const [compressed, setCompressed] = useState(true);
 
-	const handleSubmit = useCallback(async e => {
-		e.preventDefault();
+	const handleSubmit = useCallback(
+		async e => {
+			e.preventDefault();
 
-		setStatus("Exporting...");
+			setStatus("Exporting...");
 
-		// Get array of object stores to export
-		const objectStores = Array.from(e.target.getElementsByTagName("input"))
-			.filter(input => input.checked)
-			.map(input => input.value)
-			.join(",")
-			.split(",");
+			// Get array of object stores to export
+			const objectStores = Array.from(e.target.getElementsByTagName("input"))
+				.filter(input => input.checked && input.name !== "compressed")
+				.map(input => input.value)
+				.join(",")
+				.split(",");
 
-		const { data, filename } = await toWorker("exportLeague", objectStores);
-		let json;
-		try {
-			json = JSON.stringify(data, undefined, 2);
-		} catch (err) {
-			setStatus(
-				<span className="text-danger">
-					Error converting league to JSON: "{err.message}
-					". You might have to select less things to export or{" "}
-					<a href={helpers.leagueUrl(["delete_old_data"])}>
-						delete old data
-					</a>{" "}
-					before exporting.
-				</span>,
-			);
-			return;
-		}
+			try {
+				const { filename, json } = await toWorker(
+					"exportLeague",
+					objectStores,
+					compressed,
+				);
 
-		downloadFile(filename, json, "application/json");
+				downloadFile(filename, json, "application/json");
+			} catch (err) {
+				console.error(err);
+				setStatus(
+					<span className="text-danger">
+						Error exporting league: "{err.message}
+						". You might have to select less things to export or{" "}
+						<a href={helpers.leagueUrl(["delete_old_data"])}>
+							delete old data
+						</a>{" "}
+						before exporting.
+					</span>,
+				);
+				return;
+			}
 
-		setStatus();
-	}, []);
+			setStatus();
+		},
+		[compressed],
+	);
 
 	setTitle("Export League");
 
@@ -100,30 +107,58 @@ const ExportLeague = () => {
 			</p>
 
 			<form onSubmit={handleSubmit}>
-				{categories.map(cat => (
-					<div key={cat.name} className="form-check">
-						<label className="form-check-label">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								value={cat.objectStores}
-								defaultChecked={cat.checked}
-							/>
-							{cat.name}
-							<p className="text-muted">{cat.desc}</p>
-						</label>
+				<div className="row">
+					<div className="col-md-6 col-lg-5 col-xl-4">
+						<h2>Data</h2>
+						{categories.map(cat => (
+							<div key={cat.name} className="form-check">
+								<label className="form-check-label">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										value={cat.objectStores}
+										defaultChecked={cat.checked}
+									/>
+									{cat.name}
+									<p className="text-muted">{cat.desc}</p>
+								</label>
+							</div>
+						))}
 					</div>
-				))}
-				<button
-					type="submit"
-					className="btn btn-primary"
-					disabled={status === "Exporting..."}
-				>
-					Export League
-				</button>
+					<div className="col-md-6 col-lg-5 col-xl-4">
+						<h2>Format</h2>
+						<div className="form-check mb-3">
+							<label className="form-check-label">
+								<input
+									className="form-check-input"
+									type="checkbox"
+									name="compressed"
+									checked={compressed}
+									onChange={event => {
+										setCompressed(event.target.checked);
+									}}
+								/>
+								Compressed (no extra whitespace)
+							</label>
+						</div>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-lg-10 col-xl-8 text-center">
+						<button
+							type="submit"
+							className="btn btn-primary"
+							disabled={status === "Exporting..."}
+						>
+							{status === "Exporting..." ? "Exporting..." : "Export League"}
+						</button>
+					</div>
+				</div>
 			</form>
 
-			{status ? <p className="mt-3">{status}</p> : null}
+			{status && status !== "Exporting..." ? (
+				<p className="mt-3 text-center">{status}</p>
+			) : null}
 		</>
 	);
 };

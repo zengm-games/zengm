@@ -1,3 +1,9 @@
+roster
+- When I click the row containing Player A, this highlights the player so I can move him around and not get confused. But with the most recent update, the highlight now stays with the row itself, so if I replace him with Player B from off the bench, now Player B is highlighted.
+  - specify key?
+
+default lowerBound of possessionLength shouldn't be 1 second, normal possessions aren;t that short
+
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
@@ -208,10 +214,6 @@ can i get SideBar to have open state simply passed to it? performance might be o
 why is free agency so slow?
 
 button on free agents screen to fill out roster with players making up to 2x the minimum
-
-get ads set up
-- banner
-- gcs
 
 exportPlayerGamesCsv only supports basketball currently, and it's disabled in ExportStats.js. football box scores are more complicated, more derived stats
 

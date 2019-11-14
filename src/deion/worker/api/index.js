@@ -724,10 +724,11 @@ const genFilename = (data: any) => {
 	return `${filename}.json`;
 };
 
-const exportLeague = async (stores: string[]) => {
+const exportLeague = async (stores: string[], compressed: boolean) => {
 	const data = await league.exportLeague(stores);
 	const filename = genFilename(data);
-	return { data, filename };
+	const json = JSON.stringify(data, null, compressed ? null : 2);
+	return { filename, json };
 };
 
 const exportDraftClass = async (season: number) => {
@@ -916,7 +917,10 @@ const handleUploadedDraftClass = async (
 	// Get scouting rank, which is used in a couple places below
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
-		[[g.userTid, g.season - 2], [g.userTid, g.season]],
+		[
+			[g.userTid, g.season - 2],
+			[g.userTid, g.season],
+		],
 	);
 	const scoutingRank = finances.getRankLastThree(
 		teamSeasons,

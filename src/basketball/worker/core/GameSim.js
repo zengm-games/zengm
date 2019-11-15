@@ -212,7 +212,10 @@ class GameSim {
 		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
-		this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
+		this.playersOnCourt = [
+			[0, 1, 2, 3, 4],
+			[0, 1, 2, 3, 4],
+		];
 		this.startersRecorded = false; // Used to track whether the *real* starters have been recorded or not.
 		this.updatePlayersOnCourt();
 		this.updateSynergy();
@@ -411,7 +414,7 @@ class GameSim {
 				(this.t <= 1 && pointDifferential > 0));
 		const twoForOne = this.t >= 32 / 60 && this.t <= 52 / 60;
 
-		let lowerBound = 1 / 60;
+		let lowerBound = 4 / 60;
 		let upperBound = 24 / 60;
 
 		if (lowerBound > this.t) {

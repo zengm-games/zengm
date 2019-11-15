@@ -1,12 +1,12 @@
 const React = require("react");
 const ReactDOM = require("react-dom");
-const alias = require("rollup-plugin-alias");
+const alias = require("@rollup/plugin-alias");
 const babel = require("rollup-plugin-babel");
 const blacklist = require("rollup-plugin-blacklist");
 const commonjs = require("rollup-plugin-commonjs");
-const json = require("rollup-plugin-json");
+const json = require("@rollup/plugin-json"); // eslint-disable-line
 const resolve = require("rollup-plugin-node-resolve");
-const replace = require("rollup-plugin-replace");
+const replace = require("@rollup/plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
 const visualizer = require("rollup-plugin-visualizer");
 const build = require("./buildFuncs");
@@ -68,6 +68,8 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		plugins.push(
 			visualizer({
 				filename: statsFilename,
+				sourcemap: true,
+				template: "sunburst",
 			}),
 		);
 	}

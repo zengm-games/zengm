@@ -1,4 +1,4 @@
-const alias = require("rollup-plugin-alias");
+const alias = require("@rollup/plugin-alias");
 const build = require("./buildFuncs");
 const rollupConfig = require("./rollupConfig");
 

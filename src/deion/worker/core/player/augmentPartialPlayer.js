@@ -326,6 +326,14 @@ const augmentPartialPlayer = (
 			addStatsRow(p, g.phase === PHASE.PLAYOFFS);
 		}
 	} else {
+		if (!overrides.core.player.stats) {
+			throw new Error("Missing overrides.core.player.stats");
+		}
+		const statKeys = [
+			...overrides.core.player.stats.derived,
+			...overrides.core.player.stats.raw,
+		];
+
 		for (const ps of p.stats) {
 			// Could be calculated correctly if I wasn't lazy
 			if (!ps.hasOwnProperty("yearsWithTeam")) {
@@ -338,6 +346,13 @@ const augmentPartialPlayer = (
 			}
 			if (!ps.hasOwnProperty("pm")) {
 				ps.pm = 0;
+			}
+
+			// Handle any missing stats
+			for (const key of statKeys) {
+				if (!ps.hasOwnProperty(key)) {
+					ps[key] = 0;
+				}
 			}
 		}
 

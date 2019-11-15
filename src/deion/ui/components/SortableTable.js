@@ -75,11 +75,21 @@ const TBody = SortableContainer(
 						: null;
 					const highlight = highlightHandle({ index, value });
 
+					// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
+					let key;
+					if (value.hasOwnProperty("pid")) {
+						key = value.pid;
+					} else if (value.hasOwnProperty("tid")) {
+						key = value.tid;
+					} else {
+						key = index;
+					}
+
 					return (
 						<Row
 							className={className}
 							disabled2={disabled}
-							key={index}
+							key={key}
 							highlight={highlight}
 							i={index}
 							index={index}

@@ -1,6 +1,4 @@
-roster
-- When I click the row containing Player A, this highlights the player so I can move him around and not get confused. But with the most recent update, the highlight now stays with the row itself, so if I replace him with Player B from off the bench, now Player B is highlighted.
-  - specify key?
+alexnoob add default stats on import
 
 default lowerBound of possessionLength shouldn't be 1 second, normal possessions aren;t that short
 
@@ -13,6 +11,8 @@ team ovr
 - disable injuries, trades, deaths
 - show in trade UI somehow
 - ovr -> individual +/- -> sum? or just ovr -> MOV?
+- blog
+  - similar to estimating individual +/-, scaling minutes, and adding up. regression is kind of scaling minutes estimate, and ovr is +/- estimate.
 
 bundle size by removing dependency (tested by adding to "external" in rollup config)
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all

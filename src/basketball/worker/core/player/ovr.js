@@ -11,7 +11,7 @@ import type { PlayerRatings } from "../../../common/types";
  * @return {number} Overall rating.
  */
 const ovr = (ratings: PlayerRatings): number => {
-	// This formula is loosely based on linear regression of zscore(ratings) to +/- per minute:
+	// See analysis/player-ovr-basketball
 	const r =
 		0.159 * (ratings.hgt - 47.5) +
 		0.0777 * (ratings.stre - 50.2) +

@@ -7,6 +7,7 @@ team ovr
 - disable injuries, trades, deaths
 - show on roster screen somehow
 - show in trade UI somehow
+- changes
 - blog
   - similar to estimating individual +/-, scaling minutes, and adding up. regression is kind of scaling minutes estimate, and ovr is +/- estimate.
   - eventually https://projects.fivethirtyeight.com/2020-nba-predictions/

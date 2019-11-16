@@ -4,10 +4,11 @@ import { helpers } from "../../../../deion/worker/util";
 
 const ovr = (players: { ratings: { ovr: number } }[]) => {
 	const ovrs = players.map(p => p.ratings.ovr).sort((a, b) => b - a);
-	console.log(players, ovrs);
 	while (ovrs.length < 10) {
 		ovrs.push(0);
 	}
+
+	// See analysis/team-ovr-basketball
 	const predictedMOV =
 		-124.508969997621 +
 		0.4218802 * ovrs[0] +

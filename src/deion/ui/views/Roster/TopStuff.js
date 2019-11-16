@@ -1,8 +1,41 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { RecordAndPlayoffs, RosterComposition } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
+
+const fontSizeLarger = { fontSize: "larger" };
+
+const TeamRating = ({ ovr, ovrCurrent }) => {
+	const [showCurrent, setShowCurrent] = useState(true);
+
+	if (ovr === ovrCurrent) {
+		return `${ovr}/100`;
+	}
+
+	const title = showCurrent
+		? "Current rating, including injuries"
+		: "Rating when healthy";
+	const rating = showCurrent ? ovrCurrent : ovr;
+	const className = showCurrent ? "text-danger" : null;
+
+	return (
+		<>
+			<a
+				className="cursor-pointer"
+				title={title}
+				onClick={() => setShowCurrent(!showCurrent)}
+			>
+				<span className={className}>{rating}</span>/100
+			</a>
+		</>
+	);
+};
+
+TeamRating.propTypes = {
+	ovr: PropTypes.number.isRequired,
+	ovrCurrent: PropTypes.number.isRequired,
+};
 
 const TopStuff = ({
 	abbrev,
@@ -47,26 +80,36 @@ const TopStuff = ({
 
 	return (
 		<>
-			<div className="team-picture" style={logoStyle} />
-			<div>
-				<h3>{recordAndPlayoffs}</h3>
-
-				{season === currentSeason ? (
-					<div className="float-left">
-						{openRosterSpots} open roster spots
+			<div className="d-flex mb-3">
+				<div className="team-picture" style={logoStyle} />
+				<div>
+					<div style={fontSizeLarger}>
+						{recordAndPlayoffs}
 						<br />
-						Payroll: {helpers.formatCurrency(payroll, "M")}
-						<br />
-						Salary cap: {helpers.formatCurrency(salaryCap, "M")}
-						<br />
-						Profit: {helpers.formatCurrency(profit, "M")}
-						<br />
-						{showTradeFor ? `Strategy: ${t.strategy}` : null}
+						Team rating: <TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
 					</div>
-				) : null}
-				{process.env.SPORT === "football" ? (
-					<RosterComposition className="float-left ml-3" players={players} />
-				) : null}
+
+					{season === currentSeason || process.env.SPORT === "football" ? (
+						<div className="d-flex mt-3">
+							{season === currentSeason ? (
+								<div>
+									{openRosterSpots} open roster spots
+									<br />
+									Payroll: {helpers.formatCurrency(payroll, "M")}
+									<br />
+									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
+									<br />
+									Profit: {helpers.formatCurrency(profit, "M")}
+									<br />
+									{showTradeFor ? `Strategy: ${t.strategy}` : null}
+								</div>
+							) : null}
+							{process.env.SPORT === "football" ? (
+								<RosterComposition className="ml-3" players={players} />
+							) : null}
+						</div>
+					) : null}
+				</div>
 			</div>
 			<InstructionsAndSortButtons editable={editable} tid={t.tid} />
 			{season !== currentSeason ? (

@@ -5,13 +5,14 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 
 team ovr
 - disable injuries, trades, deaths
-- show on roster screen somehow
-- show in trade UI somehow
 - changes
 - blog
   - similar to estimating individual +/-, scaling minutes, and adding up. regression is kind of scaling minutes estimate, and ovr is +/- estimate.
   - eventually https://projects.fivethirtyeight.com/2020-nba-predictions/
   - screenshots of all changed views
+    - power rankings
+    - roster
+  - football blog post too!
 - football
   - in powerRankings, different formula to go from team ovr to MOV
 
@@ -20,12 +21,10 @@ bundle size by removing dependency (tested by adding to "external" in rollup con
 
 keep box scores with feats, and ASG
 
-hype revamp
-- make more transparent
-- YWT
-
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
 - also, shouldn't be possible to select KR/PR as position
+
+football statistical feats
 
 redo mood system
 - make available throughout the year
@@ -35,6 +34,10 @@ redo mood system
 
 SW stuff
 - dynamic rather than precache like https://github.com/GoogleChromeLabs/proxx/blob/master/src/sw/index.ts maybe
+
+hype revamp
+- make more transparent
+- YWT
 
 request persistent https://dexie.org/docs/StorageManager
 - state/status typo?
@@ -228,8 +231,6 @@ use PLAYER_STATS_TABLES for shot locations
 - then DRY exportPlayerAveragesCsv, see comment there
 
 way to specify routes for ShotLocations/RosterContinuity/Depth, so they aren't included in football/basketball routes
-
-statistical feats
 
 make roster page reorderable like in football mogul
 - it can update t.depth behind the scenes

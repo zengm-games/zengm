@@ -167,6 +167,19 @@ async function updateRoster(
 			vars.payroll = undefined;
 		}
 
+		if (!overrides.core.team.ovr) {
+			throw new Error("Missing overrides.core.team.ovr");
+		}
+		vars.t.ovr = overrides.core.team.ovr(vars.players);
+
+		const playersCurrent = vars.players.filter(
+			p => p.injury.gamesRemaining === 0,
+		);
+		if (!overrides.core.team.ovr) {
+			throw new Error("Missing overrides.core.team.ovr");
+		}
+		vars.t.ovrCurrent = overrides.core.team.ovr(playersCurrent);
+
 		return vars;
 	}
 }

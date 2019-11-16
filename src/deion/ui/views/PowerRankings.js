@@ -12,7 +12,7 @@ const PowerRankings = ({ teams, userTid }) => {
 			colspan: 2,
 		},
 		{
-			title: "Team Ovr",
+			title: "Team Rating",
 			colspan: 2,
 		},
 		{
@@ -69,8 +69,9 @@ const PowerRankings = ({ teams, userTid }) => {
 			</h1>
 
 			<p>
-				Ranks are a combination of recent performance, margin of victory, and
-				player ratings.
+				The power ranking is a combination of recent performance, margin of
+				victory, and team rating. Team rating is based only on the ratings of
+				players on each team.
 			</p>
 
 			<DataTable

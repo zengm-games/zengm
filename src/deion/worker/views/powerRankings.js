@@ -22,6 +22,7 @@ async function updatePowerRankings(
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: ["tid", "injury"],
 			ratings: ["ovr"],
+			fuzz: true,
 			season: g.season,
 		});
 

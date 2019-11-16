@@ -42,13 +42,13 @@ const PowerRankings = ({ teams, userTid }) => {
 				</a>,
 				t.ovr !== t.ovrCurrent ? (
 					<>
-						{t.ovr}
+						{t.ovrCurrent}
 						<span className="badge badge-danger badge-injury">+</span>
 					</>
 				) : (
-					t.ovr
+					t.ovrCurrent
 				),
-				t.ovrCurrent,
+				t.ovr,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
 				t.seasonAttrs.lastTen,

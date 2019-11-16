@@ -161,7 +161,7 @@ export const newScheduleCrappy = (): [number, number][] => {
 /**
  * Wrapper function to generate a new schedule with the appropriate algorithm based on the number of teams in the league.
  *
- * For leagues with NBA-like structure, use newScheduleDefault. Otherwise, newScheduleCrappy.
+ * For leagues with NFL-like structure, use newScheduleDefault. Otherwise, newScheduleCrappy.
  *
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.

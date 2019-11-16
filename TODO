@@ -9,6 +9,7 @@ team ovr
 - ovr -> individual +/- -> sum? or just ovr -> MOV?
 - blog
   - similar to estimating individual +/-, scaling minutes, and adding up. regression is kind of scaling minutes estimate, and ovr is +/- estimate.
+- football
 
 bundle size by removing dependency (tested by adding to "external" in rollup config)
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
@@ -21,6 +22,12 @@ hype revamp
 
 football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
 - also, shouldn't be possible to select KR/PR as position
+
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
 
 SW stuff
 - dynamic rather than precache like https://github.com/GoogleChromeLabs/proxx/blob/master/src/sw/index.ts maybe
@@ -397,11 +404,6 @@ to send notification to correct screen, need `conditions` in views/allStars (and
 BoxScoreRow
 - link to team should be for the season of the ASG, not current season always (in boxScore.season but not passed to Row)
 - highlight user team abbrev
-
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
 
 fix contracts old players too cheap
 

@@ -1226,6 +1226,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Current: {
+		desc: "Current Team Rating (With Injuries)",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"Current Contract": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
@@ -1258,6 +1263,11 @@ const cols: {
 	},
 	Games: {
 		desc: "Number of Games",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Healthy: {
+		desc: "Team Rating (When Healthy)",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1315,10 +1325,6 @@ const cols: {
 	Negotiate: {
 		noSearch: true,
 	},
-	O: {
-		desc: "Overall",
-		sortType: "number",
-	},
 	Opp: {
 		desc: "Opponent",
 	},
@@ -1330,10 +1336,6 @@ const cols: {
 	"Ovr Drop": {
 		desc: "Decrease in Overall Rating",
 		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
-	P: {
-		desc: "Performance",
 		sortType: "number",
 	},
 	Payroll: {
@@ -1390,10 +1392,6 @@ const cols: {
 		sortType: "number",
 	},
 	Skills: {},
-	Talent: {
-		desc: "Talent",
-		sortType: "number",
-	},
 	T: {
 		desc: "Ties",
 		sortSequence: ["desc", "asc"],

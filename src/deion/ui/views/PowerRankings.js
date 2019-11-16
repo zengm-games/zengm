@@ -6,21 +6,49 @@ import { DataTable, NewWindowLink } from "../components";
 const PowerRankings = ({ teams, userTid }) => {
 	setTitle("Power Rankings");
 
-	const cols = getCols("O", "P", "Talent", "Team", "W", "L", "L10", "stat:mov");
-	cols[3].width = "100%";
+	const superCols = [
+		{
+			title: "",
+			colspan: 2,
+		},
+		{
+			title: "Team Ovr",
+			colspan: 2,
+		},
+		{
+			title: "",
+			colspan: 4,
+		},
+	];
+
+	const cols = getCols(
+		"#",
+		"Team",
+		"Current",
+		"Healthy",
+		"W",
+		"L",
+		"L10",
+		"stat:mov",
+	);
 
 	const rows = teams.map(t => {
-		const performanceRank = t.stats.gp > 0 ? t.performanceRank : "-";
-
 		return {
 			key: t.tid,
 			data: [
-				t.overallRank,
-				performanceRank,
-				t.talentRank,
+				t.rank,
 				<a href={helpers.leagueUrl(["roster", t.abbrev])}>
 					{t.region} {t.name}
 				</a>,
+				t.ovr !== t.ovrCurrent ? (
+					<>
+						{t.ovr}
+						<span className="badge badge-danger badge-injury">+</span>
+					</>
+				) : (
+					t.ovr
+				),
+				t.ovrCurrent,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
 				t.seasonAttrs.lastTen,
@@ -41,9 +69,8 @@ const PowerRankings = ({ teams, userTid }) => {
 			</h1>
 
 			<p>
-				The "Performance" rating is based on point differential and recent team
-				performance. The "Talent" rating is based on player ratings and stats.
-				The "Overall" rating is a combination of the two.
+				Ranks are a combination of recent performance, margin of victory, and
+				player ratings.
 			</p>
 
 			<DataTable
@@ -52,6 +79,7 @@ const PowerRankings = ({ teams, userTid }) => {
 				name="PowerRankings"
 				nonfluid
 				rows={rows}
+				superCols={superCols}
 			/>
 		</>
 	);
@@ -62,8 +90,9 @@ PowerRankings.propTypes = {
 		PropTypes.shape({
 			abbrev: PropTypes.string.isRequired,
 			name: PropTypes.string.isRequired,
-			overallRank: PropTypes.number.isRequired,
-			performanceRank: PropTypes.number.isRequired,
+			ovr: PropTypes.number.isRequired,
+			ovrCurrent: PropTypes.number.isRequired,
+			rank: PropTypes.number.isRequired,
 			region: PropTypes.string.isRequired,
 			tid: PropTypes.number.isRequired,
 			seasonAttrs: PropTypes.shape({

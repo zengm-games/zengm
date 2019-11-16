@@ -5,15 +5,14 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 
 team ovr
 - disable injuries, trades, deaths
+- show on roster screen somehow
 - show in trade UI somehow
-- ovr -> individual +/- -> sum? or just ovr -> MOV?
 - blog
   - similar to estimating individual +/-, scaling minutes, and adding up. regression is kind of scaling minutes estimate, and ovr is +/- estimate.
   - eventually https://projects.fivethirtyeight.com/2020-nba-predictions/
   - screenshots of all changed views
 - football
   - in powerRankings, different formula to go from team ovr to MOV
-- move analysis scripts to git
 
 bundle size by removing dependency (tested by adding to "external" in rollup config)
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all

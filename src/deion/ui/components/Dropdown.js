@@ -412,64 +412,38 @@ type Props = {
 	view: string,
 };
 
-type State = {
-	values: (number | string)[],
-};
+const Dropdown = ({ extraParam, fields, values, view }: Props) => {
+	const handleChange = (
+		i: number,
+		event: SyntheticInputEvent<HTMLSelectElement>,
+	) => {
+		const newValues = values.slice();
+		newValues[i] = event.currentTarget.value;
 
-class Dropdown extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-
-		// Keep in state so it can update instantly on click, rather than waiting for round trip
-		this.state = {
-			values: props.values,
-		};
-	}
-
-	// Keep state synced with authoritative value from props
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (JSON.stringify(nextProps.values) !== JSON.stringify(prevState.values)) {
-			return {
-				values: nextProps.values,
-			};
-		}
-
-		return null;
-	}
-
-	handleChange(i: number, event: SyntheticInputEvent<HTMLSelectElement>) {
-		const values = this.props.values.slice();
-		values[i] = event.currentTarget.value;
-		this.setState({
-			values,
-		});
-
-		const parts = [this.props.view].concat(values);
-		if (this.props.extraParam !== undefined) {
-			parts.push(this.props.extraParam);
+		const parts = [view].concat(newValues);
+		if (extraParam !== undefined) {
+			parts.push(extraParam);
 		}
 
 		realtimeUpdate([], helpers.leagueUrl(parts));
-	}
+	};
 
-	render() {
-		return (
-			<form className="form-inline float-right my-1">
-				{this.props.fields.map((field, i) => {
-					return (
-						<div key={field} className="form-group ml-1">
-							<Select
-								field={field}
-								value={this.state.values[i]}
-								handleChange={event => this.handleChange(i, event)}
-							/>
-						</div>
-					);
-				})}
-			</form>
-		);
-	}
-}
+	return (
+		<form className="form-inline float-right my-1">
+			{fields.map((field, i) => {
+				return (
+					<div key={field} className="form-group ml-1">
+						<Select
+							field={field}
+							value={values[i]}
+							handleChange={event => handleChange(i, event)}
+						/>
+					</div>
+				);
+			})}
+		</form>
+	);
+};
 
 Dropdown.propTypes = {
 	extraParam: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

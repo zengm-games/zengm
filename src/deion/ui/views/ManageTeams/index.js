@@ -75,7 +75,6 @@ const ManageTeams = props => {
 
 	const { saving, teams } = state;
 
-	console.log("render", props.godMode);
 	return (
 		<>
 			<h1>Manage Teams</h1>

@@ -2,7 +2,7 @@
 
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Dropdown from "reactstrap/lib/Dropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
@@ -28,19 +28,19 @@ const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 
 type TopMenuToggleProps = {
 	long: string,
-	openId?: string,
+	openID?: string,
 	short: string,
-	toggle?: (SyntheticEvent<>) => void,
+	toggle?: (SyntheticMouseEvent<HTMLAnchorElement>) => void,
 };
 
-const TopMenuToggle = ({ long, openId, short, toggle }: TopMenuToggleProps) => {
+const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
 	const handleMouseEnter = useCallback(
 		event => {
-			if (openId !== undefined && openId !== long && toggle) {
+			if (openID !== undefined && openID !== long && toggle) {
 				toggle(event);
 			}
 		},
-		[long, openId, toggle],
+		[long, openID, toggle],
 	);
 
 	return (
@@ -55,20 +55,20 @@ const TopMenuToggle = ({ long, openId, short, toggle }: TopMenuToggleProps) => {
 
 TopMenuToggle.propTypes = {
 	long: PropTypes.string.isRequired,
-	openId: PropTypes.string,
+	openID: PropTypes.string,
 	short: PropTypes.string.isRequired,
 	toggle: PropTypes.func,
 };
 
-const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
-	const toggle = event => onToggle(long, event);
+const TopMenuDropdown = ({ children, long, short, openID, onToggle }) => {
+	const toggle = useCallback(event => onToggle(long, event), [long, onToggle]);
 	return (
-		<Dropdown isOpen={openId === long} nav inNavbar toggle={toggle}>
+		<Dropdown isOpen={openID === long} nav inNavbar toggle={toggle}>
 			<TopMenuToggle
 				bsRole="toggle"
 				long={long}
 				short={short}
-				openId={openId}
+				openID={openID}
 				toggle={toggle}
 			/>
 			<DropdownMenu right>
@@ -85,7 +85,7 @@ TopMenuDropdown.propTypes = {
 	children: PropTypes.any,
 	long: PropTypes.string.isRequired,
 	onToggle: PropTypes.func.isRequired,
-	openId: PropTypes.string,
+	openID: PropTypes.string,
 	short: PropTypes.string.isRequired,
 };
 
@@ -106,7 +106,7 @@ MenuGroup.propTypes = {
 	children: PropTypes.any.isRequired,
 };
 
-const MenuItem = ({ godMode, lid, menuItem, openId, onToggle, root }) => {
+const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
 	if (!menuItem.league && lid !== undefined) {
 		return null;
 	}
@@ -165,7 +165,7 @@ const MenuItem = ({ godMode, lid, menuItem, openId, onToggle, root }) => {
 					lid={lid}
 					key={i}
 					menuItem={child}
-					openId={openId}
+					openID={openID}
 					onToggle={onToggle}
 					root={false}
 				/>
@@ -179,7 +179,7 @@ const MenuItem = ({ godMode, lid, menuItem, openId, onToggle, root }) => {
 			<TopMenuDropdown
 				long={menuItem.long}
 				short={menuItem.short}
-				openId={openId}
+				openID={openID}
 				onToggle={onToggle}
 			>
 				{children}
@@ -195,65 +195,37 @@ type DropdownLinksProps = {
 	lid: number | void,
 };
 
-type DropdownLinksState = {
-	openId?: string,
-};
+const DropdownLinks = React.memo(({ godMode, lid }: DropdownLinksProps) => {
+	const [openID, setOpenID] = useState();
 
-class DropdownLinks extends React.Component<
-	DropdownLinksProps,
-	DropdownLinksState,
-> {
-	handleTopMenuToggle: Function;
+	const handleTopMenuToggle = useCallback(
+		(id: string, event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+			if (event.currentTarget && event.currentTarget.focus) {
+				event.currentTarget.focus();
+			}
+			setOpenID(id === openID ? undefined : id);
+		},
+		[openID],
+	);
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			openId: undefined,
-		};
-		this.handleTopMenuToggle = this.handleTopMenuToggle.bind(this);
-	}
+	return (
+		<Nav navbar id="top-dropdowns">
+			{menuItems.map((menuItem, i) => (
+				<MenuItem
+					godMode={godMode}
+					lid={lid}
+					key={i}
+					menuItem={menuItem}
+					openID={openID}
+					onToggle={handleTopMenuToggle}
+					root
+				/>
+			))}
+		</Nav>
+	);
+});
 
-	shouldComponentUpdate(nextProps, nextState: DropdownLinksState) {
-		return (
-			this.state.openId !== nextState.openId ||
-			this.props.lid !== nextProps.lid ||
-			this.props.godMode !== nextProps.godMode
-		);
-	}
-
-	handleTopMenuToggle(
-		id: string,
-		event: SyntheticMouseEvent<HTMLAnchorElement>,
-	) {
-		if (event.currentTarget && event.currentTarget.focus) {
-			event.currentTarget.focus();
-		}
-		this.setState(prevState => ({
-			openId: id === prevState.openId ? undefined : id,
-		}));
-	}
-
-	render() {
-		const { godMode, lid } = this.props;
-
-		return (
-			<Nav navbar id="top-dropdowns">
-				{menuItems.map((menuItem, i) => (
-					<MenuItem
-						godMode={godMode}
-						lid={lid}
-						key={i}
-						menuItem={menuItem}
-						openId={this.state.openId}
-						onToggle={this.handleTopMenuToggle}
-						root
-					/>
-				))}
-			</Nav>
-		);
-	}
-}
-
+// $FlowFixMe
 DropdownLinks.propTypes = {
 	godMode: PropTypes.bool.isRequired,
 	lid: PropTypes.number,

@@ -17,6 +17,13 @@ team ovr
 - football
   - in powerRankings, different formula to go from team ovr to MOV
 
+request persistent https://dexie.org/docs/StorageManager
+- state/status typo?
+- plan
+  - on load, if storage is not persistent, request persistent storage if it can be granted with no prompt
+  - put in options page - status, and button to request persistent storage, if not done yet
+  - maybe include some kind of in-game notification about the option
+
 bundle size by removing dependency (tested by adding to "external" in rollup config)
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
 
@@ -36,9 +43,6 @@ SW stuff
 hype revamp
 - make more transparent
 - YWT
-
-request persistent https://dexie.org/docs/StorageManager
-- state/status typo?
 
 better power rankings
 - derive "team rating" from player ratings

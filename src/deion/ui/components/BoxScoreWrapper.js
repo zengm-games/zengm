@@ -282,91 +282,62 @@ DetailedScore.propTypes = {
 	showNextPrev: PropTypes.bool,
 };
 
-class BoxScore extends React.Component {
-	constructor(props) {
-		super(props);
-		this.handleKeydown = this.handleKeydown.bind(this);
-	}
-
-	componentDidMount() {
-		if (this.props.showNextPrev) {
-			document.addEventListener("keydown", this.handleKeydown);
-		}
-	}
-
-	componentWillUnmount() {
-		if (this.props.showNextPrev) {
-			document.removeEventListener("keydown", this.handleKeydown);
-		}
-	}
-
-	handleKeydown(e) {
-		if (this.props.showNextPrev) {
-			if (
-				e.keyCode === 37 &&
-				this.props.boxScore &&
-				this.props.prevGid !== undefined
-			) {
-				// prev
-				realtimeUpdate(
-					[],
-					helpers.leagueUrl([
-						"game_log",
-						this.props.abbrev,
-						this.props.boxScore.season,
-						this.props.prevGid,
-					]),
-				);
-			} else if (
-				e.keyCode === 39 &&
-				this.props.boxScore &&
-				this.props.nextGid !== undefined
-			) {
-				// next
-				realtimeUpdate(
-					[],
-					helpers.leagueUrl([
-						"game_log",
-						this.props.abbrev,
-						this.props.boxScore.season,
-						this.props.nextGid,
-					]),
-				);
+const BoxScore = ({
+	abbrev,
+	boxScore,
+	currentGidInList,
+	nextGid,
+	prevGid,
+	showNextPrev,
+	Row,
+}) => {
+	const handleKeydown = useCallback(
+		e => {
+			if (showNextPrev) {
+				if (e.keyCode === 37 && boxScore && prevGid !== undefined) {
+					// prev
+					realtimeUpdate(
+						[],
+						helpers.leagueUrl(["game_log", abbrev, boxScore.season, prevGid]),
+					);
+				} else if (e.keyCode === 39 && boxScore && nextGid !== undefined) {
+					// next
+					realtimeUpdate(
+						[],
+						helpers.leagueUrl(["game_log", abbrev, boxScore.season, nextGid]),
+					);
+				}
 			}
-		}
-	}
+		},
+		[abbrev, boxScore, nextGid, prevGid, showNextPrev],
+	);
 
-	render() {
-		const {
-			abbrev,
-			boxScore,
-			currentGidInList,
-			nextGid,
-			prevGid,
-			showNextPrev,
-			Row,
-		} = this.props;
+	useEffect(() => {
+		document.addEventListener("keydown", handleKeydown);
+		return () => {
+			document.removeEventListener("keydown", handleKeydown);
+		};
+	}, [handleKeydown]);
 
-		return (
-			<>
-				<center>
-					<HeadlineScore boxScore={boxScore} />
-					<DetailedScore
-						abbrev={abbrev}
-						boxScore={boxScore}
-						currentGidInList={currentGidInList}
-						key={boxScore.gid}
-						nextGid={nextGid}
-						prevGid={prevGid}
-						showNextPrev={showNextPrev}
-					/>
-				</center>
-				<overrides.components.BoxScore boxScore={boxScore} Row={Row} />
-				Attendance: {helpers.numberWithCommas(boxScore.att)}
-			</>
-		);
-	}
-}
+	return (
+		<>
+			<center>
+				<HeadlineScore boxScore={boxScore} />
+				<DetailedScore
+					abbrev={abbrev}
+					boxScore={boxScore}
+					currentGidInList={currentGidInList}
+					key={boxScore.gid}
+					nextGid={nextGid}
+					prevGid={prevGid}
+					showNextPrev={showNextPrev}
+				/>
+			</center>
+			<overrides.components.BoxScore boxScore={boxScore} Row={Row} />
+			Attendance: {helpers.numberWithCommas(boxScore.att)}
+		</>
+	);
+};
 
 BoxScore.propTypes = {
 	abbrev: PropTypes.string,

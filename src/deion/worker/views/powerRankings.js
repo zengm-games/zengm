@@ -46,8 +46,8 @@ async function updatePowerRankings(
 
 		// Calculate score
 		for (const t of teams) {
-			// Start with MOV
-			t.score = t.stats.mov;
+			// Start with MOV, scaled for games played
+			t.score = (t.stats.mov * t.stats.gp) / g.numGames;
 
 			// Add estimated MOV from ovr (0/100 to -30/30)
 			const estimatedMOV = t.ovr * 0.6 - 30;

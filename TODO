@@ -6,6 +6,7 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 team ovr
 - disable injuries, trades, deaths
 - changes
+  - football too
 - blog
   - similar to estimating individual +/-, scaling minutes, and adding up. regression is kind of scaling minutes estimate, and ovr is +/- estimate.
   - eventually https://projects.fivethirtyeight.com/2020-nba-predictions/
@@ -20,9 +21,6 @@ bundle size by removing dependency (tested by adding to "external" in rollup con
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
 
 keep box scores with feats, and ASG
-
-football editing position does not update pot. then if i edit ratings, both ovr and pot are wrong
-- also, shouldn't be possible to select KR/PR as position
 
 football statistical feats
 

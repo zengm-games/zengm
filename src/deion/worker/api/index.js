@@ -1459,16 +1459,6 @@ const upsertCustomizedPlayer = async (
 		p.ratings[r].season = g.season;
 	}
 
-	// Set ovr, skills, and bound pot by ovr
-	if (!overrides.core.player.ovr) {
-		throw new Error("Missing overrides.core.player.ovr");
-	}
-	p.ratings[r].ovr = overrides.core.player.ovr(p.ratings[r]);
-	p.ratings[r].skills = player.skills(p.ratings[r]);
-	if (p.ratings[r].ovr > p.ratings[r].pot) {
-		p.ratings[r].pot = p.ratings[r].ovr;
-	}
-
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
 	if (originalTid === PLAYER.RETIRED) {
 		if (g.season - p.ratings[r].season > 0) {
@@ -1492,10 +1482,25 @@ const upsertCustomizedPlayer = async (
 		p.draft.year = g.season - 1;
 	}
 
-	// Recalculate player values if necessary
+	// Recalculate player ovr, pot, and values if necessary
+	const selectedPos = p.ratings[r].pos;
 	if (updatedRatingsOrAge) {
 		player.develop(p, 0);
 		player.updateValues(p);
+	}
+
+	// In case that develop call reset position, re-apply it here
+	p.ratings[r].pos = selectedPos;
+	if (process.env.SPORT === "football") {
+		if (
+			p.ratings[r].ovrs &&
+			p.ratings[r].ovrs.hasOwnProperty(selectedPos) &&
+			p.ratings[r].pots &&
+			p.ratings[r].pots.hasOwnProperty(selectedPos)
+		) {
+			p.ratings[r].ovr = p.ratings[r].ovrs[selectedPos];
+			p.ratings[r].pot = p.ratings[r].pots[selectedPos];
+		}
 	}
 
 	// Add regular season or playoffs stat row, if necessary

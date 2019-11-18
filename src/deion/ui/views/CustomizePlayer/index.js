@@ -12,6 +12,9 @@ import {
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
 
+// A player can never have KR or PR as his main position
+const bannedPositions = ["KR", "PR"];
+
 const copyValidValues = (source, target, minContract, phase, season) => {
 	for (const attr of ["hgt", "tid", "weight"]) {
 		const val = parseInt(source[attr], 10);
@@ -423,7 +426,15 @@ class CustomizePlayer extends React.Component {
 										onChange={this.handleChange.bind(this, "rating", "pos")}
 										value={p.ratings[r].pos}
 									>
-										{overrides.common.constants.POSITIONS.map(pos => {
+										{overrides.common.constants.POSITIONS.filter(pos => {
+											if (
+												process.env.SPORT === "football" &&
+												bannedPositions.includes(pos)
+											) {
+												return false;
+											}
+											return true;
+										}).map(pos => {
 											return (
 												<option key={pos} value={pos}>
 													{pos}

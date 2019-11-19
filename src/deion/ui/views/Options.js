@@ -1,6 +1,78 @@
+import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
-import { logEvent, setTitle } from "../util";
+import React, { useCallback, useEffect, useState } from "react";
+import { helpers, logEvent, setTitle } from "../util";
+
+const Storage = () => {
+	const [status, setStatus] = useState("loading...");
+
+	useEffect(() => {
+		const check = async () => {
+			if (navigator.storage && navigator.storage.persisted) {
+				const persisted = await navigator.storage.persisted();
+				if (persisted) {
+					setStatus("enabled");
+				} else {
+					setStatus("disabled");
+				}
+			} else {
+				setStatus("not supported by your browser");
+			}
+		};
+
+		check();
+	}, []);
+
+	const onClick = useCallback(async event => {
+		event.preventDefault();
+
+		if (navigator.storage && navigator.storage.persist) {
+			setStatus("loading");
+
+			const persisted = await navigator.storage.persist();
+			if (persisted) {
+				setStatus("enabled");
+			} else {
+				setStatus("disabled");
+			}
+		} else {
+			setStatus("not supported by your browser");
+		}
+	}, []);
+
+	return (
+		<>
+			<p>
+				Since {helpers.upperCaseFirstLetter(process.env.SPORT)} GM stores game
+				data in your browser profile,{" "}
+				<a href="https://basketball-gm.com/manual/faq/#missing-leagues">
+					sometimes it can be inadvertently deleted
+				</a>
+				. Enabling persistent storage helps protect against this.
+			</p>
+			<p>
+				Status:{" "}
+				<span
+					className={classNames({
+						"text-success": status === "enabled",
+						"text-danger": status === "disabled",
+					})}
+				>
+					{status}
+				</span>
+			</p>
+			{status === "loading..." || status === "disabled" ? (
+				<button
+					className="btn btn-light-bordered"
+					disabled={status === "loading..."}
+					onClick={onClick}
+				>
+					Enable
+				</button>
+			) : null}
+		</>
+	);
+};
 
 class Options extends React.Component {
 	constructor(props) {
@@ -60,6 +132,10 @@ class Options extends React.Component {
 								<option value="light">Light</option>
 								<option value="dark">Dark</option>
 							</select>
+						</div>
+						<div className="col-sm-3 col-6 form-group">
+							<label>Persistent Storage</label>
+							<Storage />
 						</div>
 					</div>
 

@@ -815,7 +815,7 @@ export type WorkerOverridesCore = {|
 		newSchedule?: (teams: Team[]) => [number, number][],
 	},
 	team: {
-		ovr?: (players: { ratings: { ovr: number } }[]) => number,
+		ovr?: (players: { ratings: { ovr: number, pos: string } }[]) => number,
 		processStats?: (
 			ts: TeamStats,
 			stats: TeamStatAttr[],

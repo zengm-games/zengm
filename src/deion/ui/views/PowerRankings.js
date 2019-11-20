@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitle } from "../util";
-import { DataTable, NewWindowLink } from "../components";
+import { DataTable, Dropdown, NewWindowLink } from "../components";
 
-const PowerRankings = ({ teams, userTid }) => {
+const PowerRankings = ({ season, teams, userTid }) => {
 	setTitle("Power Rankings");
 
 	const superCols = [
@@ -37,14 +37,11 @@ const PowerRankings = ({ teams, userTid }) => {
 			key: t.tid,
 			data: [
 				t.rank,
-				<a href={helpers.leagueUrl(["roster", t.abbrev])}>
+				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
 					{t.region} {t.name}
 				</a>,
 				t.ovr !== t.ovrCurrent ? (
-					<>
-						{t.ovrCurrent}
-						<span className="badge badge-danger badge-injury">+</span>
-					</>
+					<span className="text-danger">{t.ovrCurrent}</span>
 				) : (
 					t.ovrCurrent
 				),
@@ -64,6 +61,7 @@ const PowerRankings = ({ teams, userTid }) => {
 
 	return (
 		<>
+			<Dropdown view="power_rankings" fields={["seasons"]} values={[season]} />
 			<h1>
 				Power Rankings <NewWindowLink />
 			</h1>
@@ -87,6 +85,7 @@ const PowerRankings = ({ teams, userTid }) => {
 };
 
 PowerRankings.propTypes = {
+	season: PropTypes.number.isRequired,
 	teams: PropTypes.arrayOf(
 		PropTypes.shape({
 			abbrev: PropTypes.string.isRequired,

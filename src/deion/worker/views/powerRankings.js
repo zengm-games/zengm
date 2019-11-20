@@ -1,34 +1,49 @@
 // @flow
 
+import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 async function updatePowerRankings(
-	inputs: GetOutput,
+	{ season }: { season: number },
 	updateEvents: UpdateEvents,
+	state: any,
 ): void | { [key: string]: any } {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
-		const [teams, playersRaw] = await Promise.all([
-			idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev", "region", "name", "depth"],
-				seasonAttrs: ["won", "lost", "lastTen"],
-				stats: ["gp", "mov"],
-				season: g.season,
-			}),
-			idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-		]);
+	if (
+		(season === g.season && updateEvents.includes("gameSim")) ||
+		season !== state.season
+	) {
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid", "abbrev", "region", "name", "depth"],
+			seasonAttrs: ["won", "lost", "lastTen"],
+			stats: ["gp", "mov"],
+			season,
+		});
+
+		let playersRaw;
+		if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
+			playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
+				0,
+				Infinity,
+			]);
+		} else {
+			playersRaw = await idb.getCopies.players({
+				activeSeason: season,
+			});
+		}
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: ["tid", "injury"],
-			ratings: ["ovr"],
+			ratings: ["ovr", "pos"],
+			stats: ["tid"],
 			fuzz: true,
-			season: g.season,
+			season,
 		});
 
 		// Calculate team ovr ratings
 		for (const t of teams) {
-			const teamPlayers = players.filter(p => p.tid === t.tid);
+			const teamPlayers = players.filter(p => p.stats.tid === t.tid);
 			const teamPlayersCurrent = teamPlayers.filter(
 				p => p.injury.gamesRemaining === 0,
 			);
@@ -68,6 +83,7 @@ async function updatePowerRankings(
 		}
 
 		return {
+			season,
 			teams,
 			userTid: g.userTid,
 		};

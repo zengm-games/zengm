@@ -140,6 +140,7 @@ const routes = () => {
 		"/l/:lid/upcoming_free_agents/:season": genPage("upcomingFreeAgents"),
 		"/l/:lid/god_mode": genPage("godMode"),
 		"/l/:lid/power_rankings": genPage("powerRankings"),
+		"/l/:lid/power_rankings/:season": genPage("powerRankings"),
 		"/l/:lid/export_stats": genPage("exportStats"),
 		"/l/:lid/player_feats": genPage("playerFeats"),
 		"/l/:lid/player_feats/:abbrev": genPage("playerFeats"),

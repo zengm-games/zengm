@@ -147,8 +147,8 @@ print('r2: ', r2_score(dataset['mov'], dataset['mov_predicted']))
 print(dataset)
 
 
-# dataset.plot.hexbin(x='mov', y='mov_predicted', gridsize=20)
-dataset.plot.scatter(x='mov', y='mov_predicted', alpha=0.2)
+dataset.plot.hexbin(x='mov', y='mov_predicted', gridsize=20)
+# dataset.plot.scatter(x='mov', y='mov_predicted', alpha=0.2)
 plt.xlabel('Actual MOV')  
 plt.ylabel('Predicted MOV')  
 

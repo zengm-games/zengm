@@ -2,7 +2,7 @@
 
 import { helpers } from "../../../../deion/worker/util";
 
-const ovr = (players: { ratings: { ovr: number } }[]) => {
+const ovr = (players: { ratings: { ovr: number, pos: string } }[]) => {
 	const ovrs = players.map(p => p.ratings.ovr).sort((a, b) => b - a);
 	while (ovrs.length < 10) {
 		ovrs.push(0);

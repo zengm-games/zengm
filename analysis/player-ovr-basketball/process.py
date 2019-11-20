@@ -14,6 +14,7 @@ ratings = ratings_regression + ratings_skip
 
 dataset['pmPerMin'] = dataset['+/-'] / dataset['MP']
 
+# CRAP! normalize doesn't actually do zscore, so some of the stuff below is wrong! Might not matter much
 reg = LinearRegression(normalize=True)
 reg.fit(dataset[ratings], dataset['pmPerMin'])
 # print('Intercept: \n', reg.intercept_)

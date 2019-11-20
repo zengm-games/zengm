@@ -7,27 +7,37 @@ from sklearn.metrics import r2_score
 
 def get_cols():
     cols = {
-        "ovrQB": [],
-        "ovr0": [],
-        "ovr1": [],
-        "ovr2": [],
-        "ovr3": [],
-        "ovr4": [],
-        "ovr5": [],
-        "ovr6": [],
-        "ovr7": [],
-        "ovr8": [],
-        "ovr9": [],
-        "ovr10": [],
-        "ovr11": [],
-        "ovr12": [],
-        "ovr13": [],
-        "ovr14": [],
-        "ovr15": [],
-        "ovr16": [],
-        "ovr17": [],
-        "ovr18": [],
-        "ovr19": [],
+        'QB': [],
+        'RB1': [],
+        'RB2': [],
+        'TE1': [],
+        'TE2': [],
+        'WR1': [],
+        'WR2': [],
+        'WR3': [],
+        'WR4': [],
+        'WR5': [],
+        'OL1': [],
+        'OL2': [],
+        'OL3': [],
+        'OL4': [],
+        'OL5': [],
+        'CB1': [],
+        'CB2': [],
+        'CB3': [],
+        'S1': [],
+        'S2': [],
+        'S3': [],
+        'LB1': [],
+        'LB2': [],
+        'LB3': [],
+        'LB4': [],
+        'DL1': [],
+        'DL2': [],
+        'DL3': [],
+        'DL4': [],
+        'K': [],
+        'P': [],
         "mov": [],
     }
 
@@ -40,26 +50,29 @@ def get_cols():
             data = json.load(read_file)
 
         def get_ovrs(tid, season):
-            ovrs = []
-            ovr_qb = 0
+            ovrs_by_pos = {
+                'QB': [],
+                'RB': [],
+                'TE': [],
+                'WR': [],
+                'OL': [],
+                'CB': [],
+                'S': [],
+                'LB': [],
+                'DL': [],
+                'K': [],
+                'P': [],
+            }
 
             for p in data['players']:
                 if tid in p['statsTids']:
                     for ps in p['stats']:
                         if ps['season'] == season and ps['tid'] == tid:
-                            # Can use this to identify QB only because there are no trades/deaths/injuries
-                            qb_games = ps['qbW'] + ps['qbL'] + ps['qbT']
-
                             found_ratings = False
                             for pr in p['ratings']:
                                 if pr['season'] == season:
                                     found_ratings = True
-                                    if qb_games > 0:
-                                        if ovr_qb > 0:
-                                            raise Exception("Multiple QBs found")
-                                        ovr_qb = pr['ovrs']['QB']
-                                    else:
-                                        ovrs.append(pr['ovr'])
+                                    ovrs_by_pos[pr['pos']].append(pr['ovr'])
                                     break
                             if not found_ratings:
                                 raise Exception("No ratings found")
@@ -67,12 +80,10 @@ def get_cols():
                         elif ps['season'] > season:
                             break
 
-            if ovr_qb == 0:
-                raise Exception("No QB found")
+            for key in ovrs_by_pos.keys():
+                ovrs_by_pos[key].sort(reverse=True)
 
-            ovrs.sort(reverse=True)
-
-            return [ovr_qb, ovrs]
+            return ovrs_by_pos
 
         for t in data['teams']:
             tid = t['tid']
@@ -82,28 +93,41 @@ def get_cols():
                     mov = (ts['pts'] - ts['oppPts']) / ts['gp'];
                     cols['mov'].append(mov)
 
-                    [ovr_qb, ovrs] = get_ovrs(tid, season)
-                    cols['ovrQB'].append(ovr_qb)
-                    cols['ovr0'].append(ovrs[0])
-                    cols['ovr1'].append(ovrs[1])
-                    cols['ovr2'].append(ovrs[2])
-                    cols['ovr3'].append(ovrs[3])
-                    cols['ovr4'].append(ovrs[4])
-                    cols['ovr5'].append(ovrs[5])
-                    cols['ovr6'].append(ovrs[6])
-                    cols['ovr7'].append(ovrs[7])
-                    cols['ovr8'].append(ovrs[8])
-                    cols['ovr9'].append(ovrs[9])
-                    cols['ovr10'].append(ovrs[10])
-                    cols['ovr11'].append(ovrs[11])
-                    cols['ovr12'].append(ovrs[12])
-                    cols['ovr13'].append(ovrs[13])
-                    cols['ovr14'].append(ovrs[14])
-                    cols['ovr15'].append(ovrs[15])
-                    cols['ovr16'].append(ovrs[16])
-                    cols['ovr17'].append(ovrs[17])
-                    cols['ovr18'].append(ovrs[18])
-                    cols['ovr19'].append(ovrs[19])
+                    ovrs = get_ovrs(tid, season)
+
+                    default_ovr = 20
+
+                    cols['QB'].append(ovrs['QB'][0] if len(ovrs['QB']) >= 1 else default_ovr)
+                    cols['RB1'].append(ovrs['RB'][0] if len(ovrs['RB']) >= 1 else default_ovr)
+                    cols['RB2'].append(ovrs['RB'][1] if len(ovrs['RB']) >= 2 else default_ovr)
+                    cols['TE1'].append(ovrs['TE'][0] if len(ovrs['TE']) >= 1 else default_ovr)
+                    cols['TE2'].append(ovrs['TE'][1] if len(ovrs['TE']) >= 2 else default_ovr)
+                    cols['WR1'].append(ovrs['WR'][0] if len(ovrs['WR']) >= 1 else default_ovr)
+                    cols['WR2'].append(ovrs['WR'][1] if len(ovrs['WR']) >= 2 else default_ovr)
+                    cols['WR3'].append(ovrs['WR'][2] if len(ovrs['WR']) >= 3 else default_ovr)
+                    cols['WR4'].append(ovrs['WR'][3] if len(ovrs['WR']) >= 4 else default_ovr)
+                    cols['WR5'].append(ovrs['WR'][4] if len(ovrs['WR']) >= 5 else default_ovr)
+                    cols['OL1'].append(ovrs['OL'][0] if len(ovrs['OL']) >= 1 else default_ovr)
+                    cols['OL2'].append(ovrs['OL'][1] if len(ovrs['OL']) >= 2 else default_ovr)
+                    cols['OL3'].append(ovrs['OL'][2] if len(ovrs['OL']) >= 3 else default_ovr)
+                    cols['OL4'].append(ovrs['OL'][3] if len(ovrs['OL']) >= 4 else default_ovr)
+                    cols['OL5'].append(ovrs['OL'][4] if len(ovrs['OL']) >= 5 else default_ovr)
+                    cols['CB1'].append(ovrs['CB'][0] if len(ovrs['CB']) >= 1 else default_ovr)
+                    cols['CB2'].append(ovrs['CB'][1] if len(ovrs['CB']) >= 2 else default_ovr)
+                    cols['CB3'].append(ovrs['CB'][2] if len(ovrs['CB']) >= 3 else default_ovr)
+                    cols['S1'].append(ovrs['S'][0] if len(ovrs['S']) >= 1 else default_ovr)
+                    cols['S2'].append(ovrs['S'][1] if len(ovrs['S']) >= 2 else default_ovr)
+                    cols['S3'].append(ovrs['S'][2] if len(ovrs['S']) >= 3 else default_ovr)
+                    cols['LB1'].append(ovrs['LB'][0] if len(ovrs['LB']) >= 1 else default_ovr)
+                    cols['LB2'].append(ovrs['LB'][1] if len(ovrs['LB']) >= 2 else default_ovr)
+                    cols['LB3'].append(ovrs['LB'][2] if len(ovrs['LB']) >= 3 else default_ovr)
+                    cols['LB4'].append(ovrs['LB'][3] if len(ovrs['LB']) >= 4 else default_ovr)
+                    cols['DL1'].append(ovrs['DL'][0] if len(ovrs['DL']) >= 1 else default_ovr)
+                    cols['DL2'].append(ovrs['DL'][1] if len(ovrs['DL']) >= 2 else default_ovr)
+                    cols['DL3'].append(ovrs['DL'][2] if len(ovrs['DL']) >= 3 else default_ovr)
+                    cols['DL4'].append(ovrs['DL'][3] if len(ovrs['DL']) >= 4 else default_ovr)
+                    cols['K'].append(ovrs['K'][0] if len(ovrs['K']) >= 1 else default_ovr)
+                    cols['P'].append(ovrs['P'][0] if len(ovrs['P']) >= 1 else default_ovr)
 
     return cols
 
@@ -112,7 +136,7 @@ cols = get_cols()
 dataset = pd.DataFrame(cols)
 
 reg = LinearRegression(normalize=True)
-fit_cols = ['ovrQB', 'ovr0', 'ovr1', 'ovr2', 'ovr3', 'ovr4', 'ovr5', 'ovr6', 'ovr7', 'ovr8', 'ovr9', 'ovr10', 'ovr11', 'ovr12', 'ovr13', 'ovr14', 'ovr15', 'ovr16', 'ovr17', 'ovr18', 'ovr19']
+fit_cols = ['QB', 'RB1', 'RB2', 'TE1', 'TE2', 'WR1', 'WR2', 'WR3', 'WR4', 'WR5', 'OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'CB1', 'CB2', 'CB3', 'S1', 'S2', 'S3', 'LB1', 'LB2', 'LB3', 'LB4', 'DL1', 'DL2', 'DL3', 'DL4', 'K', 'P']
 reg.fit(dataset[fit_cols], dataset['mov'])
 dataset['mov_predicted'] = reg.predict(dataset[fit_cols])
 

@@ -1,6 +1,5 @@
 // @flow
 
-import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
@@ -21,29 +20,28 @@ async function updatePowerRankings(
 			season,
 		});
 
-		let playersRaw;
-		if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
-			playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-				0,
-				Infinity,
-			]);
-		} else {
-			playersRaw = await idb.getCopies.players({
-				activeSeason: season,
-			});
-		}
-
-		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["tid", "injury"],
-			ratings: ["ovr", "pos"],
-			stats: ["tid"],
-			fuzz: true,
-			season,
-		});
-
 		// Calculate team ovr ratings
 		for (const t of teams) {
-			const teamPlayers = players.filter(p => p.stats.tid === t.tid);
+			let teamPlayers;
+			if (g.season === season) {
+				teamPlayers = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					t.tid,
+				);
+			} else {
+				teamPlayers = await idb.getCopies.players({ statsTid: t.tid });
+			}
+			teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
+				attrs: ["tid", "injury"],
+				ratings: ["ovr", "pos"],
+				stats: ["season", "tid"],
+				season,
+				showNoStats: g.season === season,
+				showRookies: g.season === season,
+				fuzz: true,
+				tid: t.tid,
+			});
+
 			const teamPlayersCurrent = teamPlayers.filter(
 				p => p.injury.gamesRemaining === 0,
 			);

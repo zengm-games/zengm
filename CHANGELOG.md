@@ -12,6 +12,7 @@ number or not.
 - [All-Star Game](https://basketball-gm.com/blog/2019/09/all-star-game/)
 - New player faces, from faces.js v3.0.0
 - [More realistic play-by-plays in live game sim](https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/)
+- [Team ratings and improved power rankings](https://basketball-gm.com/blog/2019/11/team-ratings/)
 
 ## Technical details
 

@@ -11,6 +11,11 @@ const changes = [
 		msg:
 			'There are now achievements! View them on <a href="/account">your account page</a>.',
 	},
+	{
+		date: "2019-11-20",
+		msg:
+			'Each team now has a numeric rating from 0-100, viewable on the Roster page or on the new improved Power Rankings, which should be a lot more meaningful now than they used to be. <a href="https://basketball-gm.com/blog/2019/11/team-ratings/">More details</a>',
+	},
 ];
 
 export default changes;

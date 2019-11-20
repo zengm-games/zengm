@@ -3,13 +3,6 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 - EstWS = (1/64) * max(Pot-40,0)^2
 - logit(Retire) = 0.3 + (1/146.35) * (max(Age-18,0)^2) - 0.961 * max(EstWS,WS)
 
-team ovr
-- disable injuries, trades, deaths
-- changes
-  - football too
-- blog
-- historical power rankings screen
-
 persistent storage
 - some in-game notification about it
 

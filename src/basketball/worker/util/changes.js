@@ -243,6 +243,11 @@ const changes = [
 		date: "2019-11-13",
 		msg: `More realistic play-by-plays in live game sim, and an improved ovr rating formula. <a href="https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/">More details</a>`,
 	},
+	{
+		date: "2019-11-20",
+		msg:
+			'Each team now has a numeric rating from 0-100, viewable on the Roster page or on the new improved Power Rankings, which should be a lot more meaningful now than they used to be. <a href="https://basketball-gm.com/blog/2019/11/team-ratings/">More details</a>',
+	},
 ];
 
 export default changes;

@@ -16,9 +16,17 @@ team ovr
   - football blog post too!
 - football
   - in powerRankings, different formula to go from team ovr to MOV
+  - try doing it based on position
+    - use actual positions, to avoid any double counting - close enough!
 
 persistent storage
 - some in-game notification about it
+
+god mode options
+- population growth
+- salary cap growth
+- inflation of other revenue/expenses
+- make them constant, or from a random distribution?
 
 bundle size by removing dependency (tested by adding to "external" in rollup config)
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all

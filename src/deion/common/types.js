@@ -212,6 +212,7 @@ export type LogEventType =
 	| "hallOfFame"
 	| "healed"
 	| "healedList"
+	| "info"
 	| "injured"
 	| "injuredList"
 	| "playerFeat"

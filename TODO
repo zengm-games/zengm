@@ -3,9 +3,6 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 - EstWS = (1/64) * max(Pot-40,0)^2
 - logit(Retire) = 0.3 + (1/146.35) * (max(Age-18,0)^2) - 0.961 * max(EstWS,WS)
 
-persistent storage
-- some in-game notification about it
-
 team rating
 - currently for past seasons, includes traded players on both teams. so intead, store value at end of each season
   - stored value will also make power rankings simpler and faster

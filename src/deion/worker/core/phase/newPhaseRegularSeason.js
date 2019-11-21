@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { season } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, overrides } from "../../util";
+import { g, helpers, local, logEvent, overrides } from "../../util";
 
 const newPhaseRegularSeason = async () => {
 	const teams = await idb.cache.teams.getAll();
@@ -72,6 +72,45 @@ const newPhaseRegularSeason = async () => {
 				year: g.season,
 				text:
 					'<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="https://www.reddit.com/r/BasketballGM/wiki/basketball_gm_multiplayer_league_list">you can find a user-made list of them here</a>.</p>',
+			});
+		}
+	}
+
+	if (
+		// $FlowFixMe
+		navigator.storage &&
+		navigator.storage.persist &&
+		navigator.storage.persisted
+	) {
+		// $FlowFixMe
+		let persisted = await navigator.storage.persisted();
+
+		// If possible to get persistent storage without prompting the user, do it!
+		if (!persisted) {
+			try {
+				if (navigator.permissions && navigator.permissions.query) {
+					const permission = await navigator.permissions.query({
+						name: "persistent-storage",
+					});
+					if (permission.state === "granted") {
+						// $FlowFixMe
+						persisted = await navigator.storage.persist();
+					}
+				}
+			} catch (error) {
+				// Old browsers might error if they don't recognize the "persistent-storage" permission, but who cares
+				console.error(error);
+			}
+		}
+
+		// If still not persisted, notify user with some probabilitiy
+		if (!persisted && Math.random() < 0.1) {
+			logEvent({
+				extraClass: "",
+				persistent: true,
+				saveToDb: false,
+				text: `<b>Persistent Storage</b><br><div>Game data in your browser profile, so <a href="https://basketball-gm.com/manual/faq/#missing-leagues">sometimes it can be inadvertently deleted</a>. Enabling persistent storage helps protect against this.<br><center><button class="btn btn-primary mt-2" onClick="navigator.storage.persist().then((result) => { this.parentElement.parentElement.innerHTML = (result ? 'Success!' : 'Failed to enable persistent storage!') + ' You can always view your persistent storage settings by going to Tools > Options.'; })">Enable Persistent Storage</button></center></div>`,
+				type: "info",
 			});
 		}
 	}

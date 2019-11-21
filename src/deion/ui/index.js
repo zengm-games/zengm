@@ -303,25 +303,6 @@ const deionUI = async (options: {
 	render();
 
 	await setupRoutes();
-
-	// If possible to get persistent storage without prompting the user, do it!
-	if (
-		navigator.permissions &&
-		navigator.permissions.query &&
-		navigator.storage &&
-		navigator.storage.persist &&
-		navigator.storage.persisted
-	) {
-		const persisted = await navigator.storage.persisted();
-		if (!persisted) {
-			const permission = await navigator.permissions.query({
-				name: "persistent-storage",
-			});
-			if (permission.state === "granted") {
-				await navigator.storage.persist();
-			}
-		}
-	}
 };
 
 export default deionUI;

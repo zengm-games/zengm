@@ -2,7 +2,9 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 5.1.0 (in progress)
+# 5.2.0 (in progress)
+
+# 5.1.0 (2019-11-21)
 
 ## Gameplay and UI
 
@@ -18,7 +20,6 @@ number or not.
 
 - [Refactored how draft classes are stored, allowing arbitrary future draft classes to be specified in a league file](https://basketball-gm.com/blog/2019/07/far-future-draft-classes/)
 - [Moved from Browserify to Rollup, shrinking bundle size by 18%](https://basketball-gm.com/blog/2019/09/browserify-to-rollup/)
-
 
 # 5.0.0 (2019-05-25)
 

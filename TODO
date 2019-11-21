@@ -1,3 +1,6 @@
+use PLAYER_STATS_TABLES for shot locations
+- then DRY exportPlayerAveragesCsv, see comment there
+
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
@@ -5,6 +8,12 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 
 persistent storage
 - some in-game notification about it
+
+team rating
+- currently for past seasons, includes traded players on both teams. so intead, store value at end of each season
+  - stored value will also make power rankings simpler and faster
+- show on other pages, like team history
+- team potential rating?
 
 god mode options
 - population growth
@@ -216,9 +225,6 @@ why is free agency so slow?
 button on free agents screen to fill out roster with players making up to 2x the minimum
 
 exportPlayerGamesCsv only supports basketball currently, and it's disabled in ExportStats.js. football box scores are more complicated, more derived stats
-
-use PLAYER_STATS_TABLES for shot locations
-- then DRY exportPlayerAveragesCsv, see comment there
 
 way to specify routes for ShotLocations/RosterContinuity/Depth, so they aren't included in football/basketball routes
 

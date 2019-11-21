@@ -75,15 +75,6 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["player_stats", season])}>Main Stats</a>
-				{process.env.SPORT === "basketball" ? (
-					<>
-						{" "}
-						|{" "}
-						<a href={helpers.leagueUrl(["player_shot_locations", season])}>
-							Shot Locations
-						</a>
-					</>
-				) : null}
 			</p>
 
 			<p>

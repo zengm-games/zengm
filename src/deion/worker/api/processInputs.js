@@ -446,7 +446,6 @@ export default {
 	playerFeats,
 	playerRatingDists: validateSeasonOnly,
 	playerRatings,
-	playerShotLocations: validateSeasonOnly,
 	playerStatDists: validateSeasonOnly,
 	playerStats,
 	playoffs: validateSeasonOnly,

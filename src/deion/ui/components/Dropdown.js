@@ -163,6 +163,10 @@ const Select = ({ field, handleChange, value }) => {
 
 			if (field === "statTypesAdv") {
 				options.push({
+					val: "Shot Locations",
+					key: "shotLocations",
+				});
+				options.push({
 					val: "Advanced",
 					key: "advanced",
 				});

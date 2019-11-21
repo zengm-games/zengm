@@ -172,6 +172,49 @@ const PLAYER_STATS_TABLES = {
 			"pm",
 		],
 	},
+	shotLocations: {
+		name: "Shot Locations",
+		stats: [
+			"gp",
+			"gs",
+			"min",
+			"fgAtRim",
+			"fgaAtRim",
+			"fgpAtRim",
+			"fgLowPost",
+			"fgaLowPost",
+			"fgpLowPost",
+			"fgMidRange",
+			"fgaMidRange",
+			"fgpMidRange",
+			"tp",
+			"tpa",
+			"tpp",
+		],
+		superCols: [
+			{
+				title: "",
+				colspan: 7,
+			},
+			{
+				title: "At Rim",
+				colspan: 3,
+			},
+			{
+				title: "Low Post",
+				colspan: 3,
+			},
+			{
+				title: "Mid-Range",
+				colspan: 3,
+			},
+			{
+				title: "3PT",
+				desc: "Three-Pointers",
+				colspan: 3,
+			},
+		],
+	},
 };
 
 const TEAM_STATS_TABLES = {

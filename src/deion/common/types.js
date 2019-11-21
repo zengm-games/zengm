@@ -731,6 +731,7 @@ export type WorkerOverridesConstants = {|
 			name: string,
 			onlyShowIf?: string[],
 			stats: string[],
+			superCols?: any[],
 		},
 	},
 	RATINGS: any[],

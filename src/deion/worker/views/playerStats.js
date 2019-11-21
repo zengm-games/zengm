@@ -14,6 +14,7 @@ async function updatePlayers(
 			| "advanced"
 			| "per36"
 			| "perGame"
+			| "shotLocations"
 			| "totals"
 			| "passing"
 			| "rushing"
@@ -35,10 +36,14 @@ async function updatePlayers(
 	) {
 		let statsTable;
 		if (process.env.SPORT === "basketball") {
-			statsTable =
-				inputs.statType === "advanced"
-					? overrides.common.constants.PLAYER_STATS_TABLES.advanced
-					: overrides.common.constants.PLAYER_STATS_TABLES.regular;
+			if (inputs.statType === "advanced") {
+				statsTable = overrides.common.constants.PLAYER_STATS_TABLES.advanced;
+			} else if (inputs.statType === "shotLocations") {
+				statsTable =
+					overrides.common.constants.PLAYER_STATS_TABLES.shotLocations;
+			} else {
+				statsTable = overrides.common.constants.PLAYER_STATS_TABLES.regular;
+			}
 		} else {
 			statsTable =
 				overrides.common.constants.PLAYER_STATS_TABLES[inputs.statType];
@@ -180,6 +185,7 @@ async function updatePlayers(
 			statType: inputs.statType,
 			playoffs: inputs.playoffs,
 			stats,
+			superCols: statsTable.superCols,
 			userTid: g.userTid,
 		};
 	}

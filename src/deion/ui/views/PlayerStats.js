@@ -16,15 +16,11 @@ const PlayerStats = ({
 	season,
 	statType,
 	stats,
+	superCols,
 	userTid,
 }) => {
 	const label = season !== undefined ? season : "Career Totals";
 	setTitle(`Player Stats - ${label}`);
-
-	let tableName = `PlayerStats${statType === "advanced" ? "Adv" : ""}`;
-	if (process.env.SPORT === "football") {
-		tableName += statType;
-	}
 
 	const cols = getCols(
 		"Name",
@@ -33,6 +29,12 @@ const PlayerStats = ({
 		"Team",
 		...stats.map(stat => `stat:${stat}`),
 	);
+
+	if (statType === "shotLocations") {
+		cols[cols.length - 3].title = "M";
+		cols[cols.length - 2].title = "A";
+		cols[cols.length - 1].title = "%";
+	}
 
 	let sortCol = cols.length - 1;
 	if (process.env.SPORT === "football") {
@@ -149,8 +151,9 @@ const PlayerStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[sortCol, "desc"]}
-				name={tableName}
+				name={`PlayerStats${statType}`}
 				rows={rows}
+				superCols={superCols}
 				pagination
 			/>
 		</>
@@ -166,6 +169,7 @@ PlayerStats.propTypes = {
 		"advanced",
 		"per36",
 		"perGame",
+		"shotLocations",
 		"totals",
 		"passing",
 		"rushing",
@@ -174,6 +178,7 @@ PlayerStats.propTypes = {
 		"returns",
 	]).isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+	superCols: PropTypes.array,
 	userTid: PropTypes.number,
 };
 

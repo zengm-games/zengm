@@ -40,7 +40,14 @@ Relatives.propTypes = {
 	relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const StatsTable = ({ name, onlyShowIf, p, playoffs = false, stats }) => {
+const StatsTable = ({
+	name,
+	onlyShowIf,
+	p,
+	playoffs = false,
+	stats,
+	superCols,
+}) => {
 	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
 	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
 
@@ -58,17 +65,30 @@ const StatsTable = ({ name, onlyShowIf, p, playoffs = false, stats }) => {
 		}
 	}
 
+	const cols = getCols(
+		"Year",
+		"Team",
+		"Age",
+		...stats.map(stat => `stat:${stat}`),
+	);
+
+	if (superCols) {
+		// No name
+		superCols[0].colspan -= 1;
+	}
+
+	if (name === "Shot Locations") {
+		cols[cols.length - 3].title = "M";
+		cols[cols.length - 2].title = "A";
+		cols[cols.length - 1].title = "%";
+	}
+
 	return (
 		<>
 			<h3>{name}</h3>
 			<DataTable
 				className="mb-3"
-				cols={getCols(
-					"Year",
-					"Team",
-					"Age",
-					...stats.map(stat => `stat:${stat}`),
-				)}
+				cols={cols}
 				defaultSort={[0, "asc"]}
 				footer={[
 					"Career",
@@ -91,6 +111,7 @@ const StatsTable = ({ name, onlyShowIf, p, playoffs = false, stats }) => {
 						],
 					};
 				})}
+				superCols={superCols}
 			/>
 		</>
 	);
@@ -102,113 +123,7 @@ StatsTable.propTypes = {
 	p: PropTypes.object.isRequired,
 	playoffs: PropTypes.bool,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-
-const ShotLocationsTable = ({ careerStats = {}, name, stats = [] }) => {
-	return (
-		<DataTable
-			className="mb-3"
-			cols={getCols(
-				"Year",
-				"Team",
-				"Age",
-				"stat:gp",
-				"stat:gs",
-				"stat:min",
-				"M",
-				"A",
-				"%",
-				"M",
-				"A",
-				"%",
-				"M",
-				"A",
-				"%",
-				"M",
-				"A",
-				"%",
-			)}
-			defaultSort={[0, "asc"]}
-			footer={[
-				"Career",
-				null,
-				null,
-				careerStats.gp,
-				careerStats.gs,
-				careerStats.min.toFixed(1),
-				careerStats.fgAtRim.toFixed(1),
-				careerStats.fgaAtRim.toFixed(1),
-				careerStats.fgpAtRim.toFixed(1),
-				careerStats.fgLowPost.toFixed(1),
-				careerStats.fgaLowPost.toFixed(1),
-				careerStats.fgpLowPost.toFixed(1),
-				careerStats.fgMidRange.toFixed(1),
-				careerStats.fgaMidRange.toFixed(1),
-				careerStats.fgpMidRange.toFixed(1),
-				careerStats.tp.toFixed(1),
-				careerStats.tpa.toFixed(1),
-				careerStats.tpp.toFixed(1),
-			]}
-			hideAllControls
-			name={name}
-			rows={stats.map((ps, i) => {
-				return {
-					key: i,
-					data: [
-						ps.season,
-						<a href={helpers.leagueUrl(["roster", ps.abbrev, ps.season])}>
-							{ps.abbrev}
-						</a>,
-						ps.age,
-						ps.gp,
-						ps.gs,
-						ps.min.toFixed(1),
-						ps.fgAtRim.toFixed(1),
-						ps.fgaAtRim.toFixed(1),
-						ps.fgpAtRim.toFixed(1),
-						ps.fgLowPost.toFixed(1),
-						ps.fgaLowPost.toFixed(1),
-						ps.fgpLowPost.toFixed(1),
-						ps.fgMidRange.toFixed(1),
-						ps.fgaMidRange.toFixed(1),
-						ps.fgpMidRange.toFixed(1),
-						ps.tp.toFixed(1),
-						ps.tpa.toFixed(1),
-						ps.tpp.toFixed(1),
-					],
-				};
-			})}
-			superCols={[
-				{
-					title: "",
-					colspan: 6,
-				},
-				{
-					title: "At Rim",
-					colspan: 3,
-				},
-				{
-					title: "Low Post",
-					colspan: 3,
-				},
-				{
-					title: "Mid-Range",
-					colspan: 3,
-				},
-				{
-					title: "3PT",
-					desc: "Three-Pointers",
-					colspan: 3,
-				},
-			]}
-		/>
-	);
-};
-
-ShotLocationsTable.propTypes = {
-	careerStats: PropTypes.object,
-	name: PropTypes.string.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.object),
+	superCols: PropTypes.array,
 };
 
 const Player = ({
@@ -387,51 +302,33 @@ const Player = ({
 			{player.careerStats.gp > 0 ? (
 				<>
 					<h2>Regular Season</h2>
-					{statTables.map(({ name, onlyShowIf, stats }) => (
+					{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
 						<StatsTable
 							key={name}
 							name={name}
 							onlyShowIf={onlyShowIf}
 							stats={stats}
+							superCols={superCols}
 							p={player}
 						/>
 					))}
-					{process.env.SPORT === "basketball" ? (
-						<>
-							<h3>Shot Locations</h3>
-							<ShotLocationsTable
-								careerStats={player.careerStats}
-								name="Player:ShotLocations"
-								stats={statsRegularSeason}
-							/>
-						</>
-					) : null}
 				</>
 			) : null}
 
 			{player.careerStatsPlayoffs.gp > 0 ? (
 				<>
 					<h2>Playoffs</h2>
-					{statTables.map(({ name, onlyShowIf, stats }) => (
+					{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
 						<StatsTable
 							key={name}
 							name={name}
 							onlyShowIf={onlyShowIf}
 							stats={stats}
+							superCols={superCols}
 							p={player}
 							playoffs
 						/>
 					))}
-					{process.env.SPORT === "basketball" ? (
-						<>
-							<h3>Shot Locations</h3>
-							<ShotLocationsTable
-								careerStats={player.careerStatsPlayoffs}
-								name="Player:PlayoffShotLocations"
-								stats={statsPlayoffs}
-							/>
-						</>
-					) : null}
 				</>
 			) : null}
 

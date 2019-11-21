@@ -266,6 +266,86 @@ const TEAM_STATS_TABLES = {
 			"oppMov",
 		],
 	},
+	teamShotLocations: {
+		name: "Team Shot Locations",
+		stats: [
+			"fgAtRim",
+			"fgaAtRim",
+			"fgpAtRim",
+			"fgLowPost",
+			"fgaLowPost",
+			"fgpLowPost",
+			"fgMidRange",
+			"fgaMidRange",
+			"fgpMidRange",
+			"tp",
+			"tpa",
+			"tpp",
+		],
+		superCols: [
+			{
+				title: "",
+				colspan: 4,
+			},
+			{
+				title: "At Rim",
+				colspan: 3,
+			},
+			{
+				title: "Low Post",
+				colspan: 3,
+			},
+			{
+				title: "Mid-Range",
+				colspan: 3,
+			},
+			{
+				title: "3PT",
+				desc: "Three-Pointers",
+				colspan: 3,
+			},
+		],
+	},
+	opponentShotLocations: {
+		name: "Opponent Shot Locations",
+		stats: [
+			"oppFgAtRim",
+			"oppFgaAtRim",
+			"oppFgpAtRim",
+			"oppFgLowPost",
+			"oppFgaLowPost",
+			"oppFgpLowPost",
+			"oppFgMidRange",
+			"oppFgaMidRange",
+			"oppFgpMidRange",
+			"oppTp",
+			"oppTpa",
+			"oppTpp",
+		],
+		superCols: [
+			{
+				title: "",
+				colspan: 4,
+			},
+			{
+				title: "At Rim",
+				colspan: 3,
+			},
+			{
+				title: "Low Post",
+				colspan: 3,
+			},
+			{
+				title: "Mid-Range",
+				colspan: 3,
+			},
+			{
+				title: "3PT",
+				desc: "Three-Pointers",
+				colspan: 3,
+			},
+		],
+	},
 	advanced: {
 		name: "Advanced",
 		stats: ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr", "tsp"],

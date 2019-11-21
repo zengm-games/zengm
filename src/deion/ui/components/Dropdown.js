@@ -368,7 +368,7 @@ const Select = ({ field, handleChange, value }) => {
 		options = Object.keys(overrides.common.constants.TEAM_STATS_TABLES).map(
 			key => {
 				return {
-					val: helpers.upperCaseFirstLetter(key),
+					val: overrides.common.constants.TEAM_STATS_TABLES[key].name,
 					key,
 				};
 			},

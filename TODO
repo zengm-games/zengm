@@ -1,8 +1,4 @@
 use PLAYER_STATS_TABLES for shot locations
-- team stats
-  - team stats table
-  - remove link
-  - remove dedicated page
 - then DRY exportPlayerAveragesCsv, see comment there
 
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)

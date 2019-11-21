@@ -458,7 +458,6 @@ export default {
 	teamFinances,
 	teamHistory,
 	teamRecords,
-	teamShotLocations: teamStats,
 	teamStatDists: validateSeasonOnly,
 	teamStats,
 	transactions,

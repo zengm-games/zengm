@@ -108,14 +108,6 @@ const routes = () => {
 		"/l/:lid/player_stat_dists/:season": genPage("playerStatDists"),
 		"/l/:lid/team_stat_dists": genPage("teamStatDists"),
 		"/l/:lid/team_stat_dists/:season": genPage("teamStatDists"),
-		"/l/:lid/team_shot_locations": genPage("teamShotLocations"),
-		"/l/:lid/team_shot_locations/:season": genPage("teamShotLocations"),
-		"/l/:lid/team_shot_locations/:season/:teamOpponent": genPage(
-			"teamShotLocations",
-		),
-		"/l/:lid/team_shot_locations/:season/:teamOpponent/:playoffs": genPage(
-			"teamShotLocations",
-		),
 		"/l/:lid/export_league": genPage("exportLeague"),
 		"/l/:lid/fantasy_draft": genPage("fantasyDraft"),
 		"/l/:lid/live": genPage("live"),

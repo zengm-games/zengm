@@ -743,6 +743,7 @@ export type WorkerOverridesConstants = {|
 		[key: string]: {
 			name: string,
 			stats: string[],
+			superCols?: any[],
 		},
 	},
 	TIME_BETWEEN_GAMES: string,

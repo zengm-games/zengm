@@ -12,6 +12,7 @@ const TeamStats = ({
 	playoffs,
 	season,
 	stats,
+	superCols,
 	teamOpponent,
 	teams,
 	ties,
@@ -33,6 +34,12 @@ const TeamStats = ({
 			return `stat:${stat}`;
 		}),
 	);
+
+	if (teamOpponent.endsWith("ShotLocations")) {
+		cols[cols.length - 3].title = "M";
+		cols[cols.length - 2].title = "A";
+		cols[cols.length - 1].title = "%";
+	}
 
 	const teamCount = teams.length;
 	const rows = teams.map(t => {
@@ -139,14 +146,6 @@ const TeamStats = ({
 			<div className="row">
 				<div className="col-sm-4">
 					More:{" "}
-					{process.env.SPORT === "basketball" ? (
-						<>
-							<a href={helpers.leagueUrl(["team_shot_locations", season])}>
-								Shot Locations
-							</a>{" "}
-							|{" "}
-						</>
-					) : null}
 					<a href={helpers.leagueUrl(["team_stat_dists", season])}>
 						Stat Distributions
 					</a>
@@ -167,8 +166,9 @@ const TeamStats = ({
 			<DataTable
 				cols={cols}
 				defaultSort={[2, "desc"]}
-				name={`TeamStats${teamOpponent === "advanced" ? "Adv" : ""}`}
+				name={`TeamStats${teamOpponent}`}
 				rows={rows}
+				superCols={superCols}
 			/>
 		</>
 	);
@@ -179,7 +179,14 @@ TeamStats.propTypes = {
 	playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
 	season: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	teamOpponent: PropTypes.oneOf(["advanced", "opponent", "team"]).isRequired,
+	superCols: PropTypes.array,
+	teamOpponent: PropTypes.oneOf([
+		"advanced",
+		"opponent",
+		"team",
+		"teamShotLocations",
+		"opponentShotLocations",
+	]).isRequired,
 	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 	ties: PropTypes.bool.isRequired,
 	userTid: PropTypes.number.isRequired,

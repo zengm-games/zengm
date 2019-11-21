@@ -200,9 +200,6 @@ const Player = ({
 		);
 	}
 
-	const statsRegularSeason = player.stats.filter(ps => !ps.playoffs);
-	const statsPlayoffs = player.stats.filter(ps => ps.playoffs);
-
 	return (
 		<>
 			<div className="row mb-3">

@@ -30,14 +30,16 @@ async function updateTeams(
 
 		const seasonAttrs = g.ties ? ["won", "lost", "tied"] : ["won", "lost"];
 
-		const teams = (await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev"],
-			seasonAttrs,
-			stats: ["gp", ...stats],
-			season: inputs.season,
-			playoffs: inputs.playoffs === "playoffs",
-			regularSeason: inputs.playoffs !== "playoffs",
-		})).filter(t => {
+		const teams = (
+			await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev"],
+				seasonAttrs,
+				stats: ["gp", ...stats],
+				season: inputs.season,
+				playoffs: inputs.playoffs === "playoffs",
+				regularSeason: inputs.playoffs !== "playoffs",
+			})
+		).filter(t => {
 			// For playoffs, only show teams who actually made playoffs (gp > 0)
 			return inputs.playoffs !== "playoffs" || t.stats.gp > 0;
 		});
@@ -105,6 +107,18 @@ async function updateTeams(
 						"oppMov",
 						"pl",
 						"drtg",
+						"oppFgAtRim",
+						"oppFgaAtRim",
+						"oppFgpAtRim",
+						"oppFgLowPost",
+						"oppFgaLowPost",
+						"oppFgpLowPost",
+						"oppFgMidRange",
+						"oppFgaMidRange",
+						"oppFgpMidRange",
+						"oppTp",
+						"oppTpa",
+						"oppTpp",
 				  ]
 				: [
 						"lost",
@@ -187,6 +201,7 @@ async function updateTeams(
 			playoffs: inputs.playoffs,
 			season: inputs.season,
 			stats,
+			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			teams,
 			ties: g.ties,

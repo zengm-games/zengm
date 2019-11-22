@@ -110,7 +110,7 @@ const LeagueDashboard = ({
 										teamLeaders={teamLeaders}
 									/>
 									<h3>Inbox</h3>
-									{!messages || messages.length === 0 ? (
+									{messages.length === 0 ? (
 										<p>No messages!</p>
 									) : (
 										<>

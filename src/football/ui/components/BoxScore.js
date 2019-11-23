@@ -171,7 +171,7 @@ const processEvents = events => {
 		} else if (event.text.includes("touchdown")) {
 			scoreType = "TD";
 			score[event.t] += 6;
-		} else if (event.text.toLowerCase().includes("two")) {
+		} else if (event.text.toLowerCase().includes("two point")) {
 			scoreType = "2P";
 			if (!event.text.includes("failed")) {
 				score[event.t] += 2;

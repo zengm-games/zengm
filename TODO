@@ -1,3 +1,11 @@
+football gamesim issues
+
+football schema
+- somehow DRY with basketball
+  - script to generate schemas
+
+football statistical feats
+
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
@@ -22,8 +30,6 @@ bundle size by removing dependency (tested by adding to "external" in rollup con
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
 
 keep box scores with feats, and ASG
-
-football statistical feats
 
 redo mood system
 - make available throughout the year
@@ -1049,10 +1055,6 @@ mobile UI, bootstrap 3
 some kind of playoff series overview page, including box scores for easy access
 luxury tax money should be redistributed to non-taxpaying teams (or teams under the cap?)
 A year-to-date comparison of team finances with the previous year.
-better core.player.ovr formula
-  regression: player = require('core/player'); player.regressRatingsPer();
-    weight by minutes played
-  THIS NEEDS TO BE UPDATED WHEN PLAYER GENERATION/DEVELOPMENT OR GAMESIM CHANGES!
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
   player personality, team chemistry
   http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
@@ -1068,7 +1070,6 @@ finances
     owner should take profits each year
   AI teams should adjust spending
 player morale - punishment for tanking
-team colors, and uniforms in player icons
 harsher, more realistic luxury tax
 midlevel exception
 more refined control of playing time

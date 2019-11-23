@@ -159,7 +159,10 @@ const Player = ({
 	} else {
 		draftInfo = (
 			<>
-				Undrafted: {player.draft.year}
+				Undrafted:{" "}
+				<a href={helpers.leagueUrl(["draft_history", player.draft.year])}>
+					{player.draft.year}
+				</a>
 				<br />
 			</>
 		);

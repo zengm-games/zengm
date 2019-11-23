@@ -1,5 +1,3 @@
-alexnoob one suggestion: if a player is undrafted, on the player's page, there could be a link on the year ("Undrafted: 2013") to the related draft page, as undrafted players are now listed?
-
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
@@ -11,6 +9,8 @@ team rating
 - show on other pages, like team history
 - team potential rating?
 - somehow show everywhere, like how RatingsStatsPopover is for players
+- change scale, make it harder to get 100?
+  - but also don't make there be no variation in default leagues. maybe make it nonlinear 90+
 
 god mode options
 - population growth
@@ -209,6 +209,7 @@ redo pot formulas?
 frivolities
 - highest paid @mattable#4273 @Jlebron13#9965
 - abstract code for "highest X"
+- draft class aggregate stats alexnoob
 
 injury later
 - slowly ramp endurance up after injury

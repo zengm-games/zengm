@@ -38,11 +38,6 @@ hype revamp
 - make more transparent
 - YWT
 
-better power rankings
-- derive "team rating" from player ratings
-- and potential?
-- football
-
 button to randomize ratings on customize player screen
 
 zipped files @Jofish#5051
@@ -59,6 +54,8 @@ DataTable
   - NegotiateButtons (search for negotiate/refuses)
   - sorting by skills on draft history
   - Dashboard -> Ago (needs different search and sort values!)
+  - would allow sorting by checked/unchecked for trade and trading block
+  - get rid of awkward children stuff - PlayerNameLabels, mood, ...
 
 https://react-hook-form.com/ for forms
 
@@ -81,8 +78,14 @@ condensed/composite rating views
 - on ratings table, elsewhere?
 - ronen
 
-@SLR52#7441 show playoff series record in box score
-show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
+box score - more info
+- playoff series record
+- regular season team records http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
+- team ratings (for active players in game)
+- live
+  - clock
+  - timeouts
+  - football: position on field
 
 better retiring logic
 - base on data - fit model from NBA stats
@@ -343,9 +346,6 @@ option to have no draft, players just become FAs
 
 customizable columns in DataTable would be great... especially for football, with presets like mogul
 
-"Shot Locations" should be just another stat type in player/team stats
-- need to handle super cols in PLAYER_STATS_TABLES
-
 "Accept Trade" button on trading block
 
 AI teams should adjust finances
@@ -603,10 +603,6 @@ event log refactor
 - react
 - keep state just on worker
 - "event log" page with ALL events, should be impossible to "miss" an event
-
-data table sorting shouldn't be based on children
-- would allow sorting by checked/unchecked for trade and trading block
-- get rid of awkward children stuff - PlayerNameLabels, mood, ...
 
 ----
 
@@ -912,9 +908,6 @@ free agents going unsigned?
     this should be part of the daily updating. if everyone is capped out, drop all salaries to minimum.
 notification system
   customize: http://www.reddit.com/r/BasketballGM/comments/1re3ea/new_feature_notification_bubbles/cdmjdyn
-  "healed" should show after game, not before
-  when fading out, hover should stop animation, remove notification-delete, reset timer to 1s (or something)
-    hover on fading in should also stop animation so there is no stutter
   what about for small screens? maybe just show one at a time. is this actually a problem?
   also log these events:
     fired - log, but don't show
@@ -932,7 +925,6 @@ notification system
 BIG NEW FEATURES
 ----------------
 
-historic power rankings http://www.reddit.com/r/BasketballGM/comments/2f0ip2/historic_power_rankings_best_teams_of_all_time/
 player stat summaries http://www.reddit.com/r/BasketballGM/comments/2bf4z0/functionality_of_the_game_vs_2k/cj5ir16
 unlimited draft class support
   http://www.reddit.com/r/BasketballGM/comments/2ajw7c/about_custom_draft/civz0n6

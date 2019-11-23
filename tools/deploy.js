@@ -2,7 +2,7 @@
 
 const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
-const build = require("./buildFuncs");
+const build = require("./lib/buildFuncs");
 // $FlowFixMe
 const cloudflareConfig = require("../../../.config/cloudflare.json"); // eslint-disable-line import/no-unresolved
 
@@ -14,9 +14,7 @@ const getSubdomain = () => {
 		return "play";
 	}
 	throw new Error(
-		`Invalid subdomain ${
-			process.argv[2]
-		} - should be either beta or play (default is play)`,
+		`Invalid subdomain ${process.argv[2]} - should be either beta or play (default is play)`,
 	);
 };
 

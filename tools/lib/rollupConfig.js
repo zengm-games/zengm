@@ -18,7 +18,8 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		alias({
 			resolve: [".json"],
 			entries: {
-				"league-schema": `./../../../../public/${sport}/files/league-schema.json`,
+				// This is assumed to be generated prior to rollup being started
+				"league-schema": `./../../../../build/files/league-schema.json`,
 
 				// This is so Karma doesn't crash when using the big names file.
 				"player-names":

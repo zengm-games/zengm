@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-const karmaConfig = require("./tools/karmaConfig");
+const karmaConfig = require("./tools/lib/karmaConfig");
 const browserStack = require("../../.browserstack.json"); // eslint-disable-line import/no-unresolved
 
 const customLaunchers = [

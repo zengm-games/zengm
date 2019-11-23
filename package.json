@@ -16,17 +16,15 @@
 		"build": "node tools/build.js && node tools/build-js.js && node tools/build-sw.js",
 		"deploy": "yarn run build && node tools/deploy.js",
 		"start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
-		"watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
-		"watch-css": "node tools/watch-css.js",
-		"watch-js": "node tools/watch-js.js",
+		"watch": "node tools/pre-watch.js && concurrently --kill-others 'node tools/watch-css.js' 'node tools/watch-js.js' 'node tools/watch-json-schema.js'",
 		"lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
 		"flow": "flow",
 		"lint-js": "eslint '*.js' 'public/*.js' 'src/**/*.js' 'tools/**/*.js'",
 		"prettier": "prettier --write '*.{js,json,scss}' 'public/**/*.{js,json,scss}' 'src/**/*.{js,json,scss}' 'tools/**/*.{js,json,scss}'",
-		"test": "jest",
-		"test-e2e": "karma start karma.conf.js",
-		"test-e2e-watch": "karma start karma.conf.js --auto-watch --no-single-run",
-		"test-e2e-browserstack": "karma start karma-browserstack.conf.js"
+		"test": "node tools/pre-test.js && jest",
+		"test-e2e": "node tools/pre-test.js && karma start karma.conf.js",
+		"test-e2e-watch": "node tools/pre-test.js && karma start karma.conf.js --auto-watch --no-single-run",
+		"test-e2e-browserstack": "node tools/pre-test.js && karma start karma-browserstack.conf.js"
 	},
 	"lint-staged": {
 		"*.{js,json,scss}": [

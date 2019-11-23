@@ -1,6 +1,0 @@
-{
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://play.football-gm.com/files/league-schema.json",
-	"title": "Football GM League File Schema",
-	"description": "For use at https://play.football-gm.com/"
-}

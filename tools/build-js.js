@@ -1,8 +1,8 @@
 // @flow
 
 const rollup = require("rollup");
-const build = require("./buildFuncs");
-const rollupConfig = require("./rollupConfig");
+const build = require("./lib/buildFuncs");
+const rollupConfig = require("./lib/rollupConfig");
 
 console.log("Bundling JavaScript files...");
 

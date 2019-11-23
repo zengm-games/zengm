@@ -1,6 +1,6 @@
 // @flow
 
-const build = require("./buildFuncs");
+const build = require("./lib/buildFuncs");
 
 console.log("Generating sw.js...");
 

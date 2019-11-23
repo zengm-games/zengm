@@ -1,7 +1,7 @@
 // @flow
 
 const chokidar = require("chokidar");
-const build = require("./buildFuncs");
+const build = require("./lib/buildFuncs");
 
 console.log("Watching CSS files...");
 

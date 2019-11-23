@@ -1490,11 +1490,13 @@ class GameSim {
 		return dt;
 	}
 
-	doSafety() {
-		const p = this.pickPlayer(
-			this.d,
-			Math.random() < 0.5 ? "passRushing" : "runStopping",
-		);
+	doSafety(p?: PlayerGameSim) {
+		if (!p) {
+			p = this.pickPlayer(
+				this.d,
+				Math.random() < 0.5 ? "passRushing" : "runStopping",
+			);
+		}
 		this.recordStat(this.d, p, "defSft");
 
 		this.awaitingKickoff = this.o;
@@ -1524,7 +1526,7 @@ class GameSim {
 		this.recordStat(this.d, p, "defSk");
 
 		if (safetyOrTouchback) {
-			this.doSafety();
+			this.doSafety(p);
 		}
 
 		this.isClockRunning = Math.random() < 0.02;

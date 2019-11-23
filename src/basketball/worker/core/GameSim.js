@@ -783,8 +783,7 @@ class GameSim {
 						fatigue(this.team[t].player[p].stat.energy);
 				}
 
-				this.team[t].compositeRating[rating] =
-					this.team[t].compositeRating[rating] / 5;
+				this.team[t].compositeRating[rating] /= 5;
 			}
 
 			this.team[t].compositeRating.dribbling +=

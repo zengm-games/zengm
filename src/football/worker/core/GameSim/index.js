@@ -74,7 +74,7 @@ class GameSim {
 
 	awaitingAfterSafety: boolean;
 
-	awaitingKickoff: boolean;
+	awaitingKickoff: TeamNum | void;
 
 	twoPointConversionTeam: number | void;
 
@@ -119,7 +119,7 @@ class GameSim {
 
 		this.awaitingAfterTouchdown = false;
 		this.awaitingAfterSafety = false;
-		this.awaitingKickoff = true;
+		this.awaitingKickoff = Math.random() < 0.5 ? 0 : 1;
 
 		this.down = 1;
 		this.toGo = 10;
@@ -202,8 +202,6 @@ class GameSim {
 	}
 
 	simRegulation() {
-		this.o = Math.random() < 0.5 ? 0 : 1;
-		this.d = this.o === 0 ? 1 : 0;
 		const oAfterHalftime = this.d;
 		let quarter = 1;
 
@@ -215,7 +213,7 @@ class GameSim {
 			quarter += 1;
 
 			if (quarter === 3) {
-				this.awaitingKickoff = true;
+				this.awaitingKickoff = this.o;
 				this.timeouts = [3, 3];
 				this.twoMinuteWarningHappened = false;
 				this.o = oAfterHalftime;
@@ -249,7 +247,7 @@ class GameSim {
 		this.o = Math.random() < 0.5 ? 0 : 1;
 		this.d = this.o === 0 ? 1 : 0;
 
-		this.awaitingKickoff = true;
+		this.awaitingKickoff = this.o;
 		while (this.clock > 0 && this.overtimeState !== "over") {
 			this.simPlay();
 		}
@@ -355,7 +353,7 @@ class GameSim {
 	}
 
 	getPlayType() {
-		if (this.awaitingKickoff) {
+		if (this.awaitingKickoff !== undefined) {
 			return Math.random() < this.probOnside() ? "onsideKick" : "kickoff";
 		}
 
@@ -1052,7 +1050,7 @@ class GameSim {
 			}
 		}
 
-		this.awaitingKickoff = false;
+		this.awaitingKickoff = undefined;
 		this.awaitingAfterSafety = false;
 		this.isClockRunning = false;
 
@@ -1333,7 +1331,7 @@ class GameSim {
 		}
 
 		if (extraPoint || made) {
-			this.awaitingKickoff = true;
+			this.awaitingKickoff = this.o;
 		}
 
 		this.awaitingAfterTouchdown = false;
@@ -1348,6 +1346,9 @@ class GameSim {
 		this.down = 1;
 		this.scrimmage = 98;
 
+		// Put this before the play, in case there is a turnover during conversion!
+		this.awaitingKickoff = this.o;
+
 		if (Math.random() > 0.5) {
 			this.doPass();
 		} else {
@@ -1356,7 +1357,6 @@ class GameSim {
 
 		this.twoPointConversionTeam = undefined;
 		this.awaitingAfterTouchdown = false;
-		this.awaitingKickoff = true;
 		this.isClockRunning = false;
 
 		return 0;
@@ -1497,7 +1497,7 @@ class GameSim {
 		);
 		this.recordStat(this.d, p, "defSft");
 
-		this.awaitingKickoff = true;
+		this.awaitingKickoff = this.o;
 		this.awaitingAfterSafety = true;
 		this.isClockRunning = false;
 	}

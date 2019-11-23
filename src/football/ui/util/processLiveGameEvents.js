@@ -53,7 +53,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 			text = e.text;
 			stop = true;
 		} else if (e.type === "clock") {
-			if (e.awaitingKickoff) {
+			if (typeof e.awaitingKickoff === "number") {
 				text = `${e.time} - ${boxScore.teams[e.t].abbrev} kicking off`;
 			} else {
 				let fieldPos = "";

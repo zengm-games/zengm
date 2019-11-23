@@ -299,9 +299,7 @@ class PlayByPlayLogger {
 					throw new Error("Missing yds");
 				}
 				if (safety) {
-					text = `${names[0]} completed a pass to ${
-						names[1]
-					} but he was tackled in the endzone for a safety!`;
+					text = `${names[0]} completed a pass to ${names[1]} but he was tackled in the endzone for a safety!`;
 				} else {
 					const result = descriptionYdsTD(yds, td, touchdownText, showYdsOnTD);
 					text = `${names[0]} completed a pass to ${names[1]} for ${result}`;
@@ -412,7 +410,7 @@ class PlayByPlayLogger {
 		t,
 		toGo,
 	}: {
-		awaitingKickoff: boolean,
+		awaitingKickoff: TeamNum | void,
 		clock: number,
 		down: number,
 		scrimmage: number,

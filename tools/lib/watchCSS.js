@@ -4,8 +4,6 @@ const chokidar = require("chokidar");
 const build = require("./buildFuncs");
 
 const watchCSS = () => {
-	console.log("Watching CSS files...");
-
 	const watcher = chokidar.watch("public/css", {});
 
 	const buildCSS = () => {

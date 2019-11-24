@@ -1,10 +1,10 @@
 const alias = require("@rollup/plugin-alias");
-const build = require("./buildFuncs");
+const getSport = require("./getSport");
 const rollupConfig = require("./rollupConfig");
 
 const files = ["src/deion/test/mocha.js", "src/deion/test/smoke.js"];
 
-const sport = build.getSport();
+const sport = getSport();
 
 const rollupConfigTemp = rollupConfig("test");
 rollupConfigTemp.plugins.unshift(

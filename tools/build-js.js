@@ -2,12 +2,13 @@
 
 const rollup = require("rollup");
 const build = require("./lib/buildFuncs");
+const getSport = require("./lib/getSport");
 const rollupConfig = require("./lib/rollupConfig");
 
 console.log("Bundling JavaScript files...");
 
 const rev = build.genRev();
-const sport = build.getSport();
+const sport = getSport();
 
 const BLACKLIST = {
 	ui: [/\/worker/],

@@ -15,10 +15,11 @@ fs.unlinkSync("build/sw.js");
 const rev = build.genRev();
 build.setTimestamps(rev, true);
 
-watchCSS();
-
 // This will complete its initial write before watchJS runs, which is good because then the schema
 // file will be available to be included in the JS bundle.
 watchJSONSchema();
 
 watchJS();
+
+// Since watchJS is async, this will run in parallel
+watchCSS();

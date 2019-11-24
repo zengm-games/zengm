@@ -9,9 +9,9 @@ const resolve = require("rollup-plugin-node-resolve");
 const replace = require("@rollup/plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
 const visualizer = require("rollup-plugin-visualizer");
-const build = require("./buildFuncs");
+const getSport = require("./getSport");
 
-const sport = build.getSport();
+const sport = getSport();
 
 module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 	const plugins = [

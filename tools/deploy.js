@@ -2,7 +2,7 @@
 
 const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
-const build = require("./lib/buildFuncs");
+const getSport = require("./lib/getSport");
 // $FlowFixMe
 const cloudflareConfig = require("../../../.config/cloudflare.json"); // eslint-disable-line import/no-unresolved
 
@@ -35,7 +35,7 @@ const mySpawn = (command, args) => {
 
 (async () => {
 	const subdomain = getSubdomain();
-	const sport = build.getSport();
+	const sport = getSport();
 	const domain = `${subdomain}.${sport}-gm.com`;
 
 	console.log(`Deploying to ${domain}...`);

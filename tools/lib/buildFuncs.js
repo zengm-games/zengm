@@ -184,8 +184,7 @@ const reset = () => {
 	console.log('Resetting "build" directory...');
 
 	fse.removeSync("build");
-	fs.mkdirSync("build");
-	fs.mkdirSync("build/gen");
+	fs.mkdirSync("build/gen", { recursive: true });
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {

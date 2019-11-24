@@ -86,7 +86,7 @@ const genRatings = (sport /*: string*/) => {
 	return {
 		items: {
 			type: "object",
-			properties: properties,
+			properties,
 			required: ratings,
 		},
 	};

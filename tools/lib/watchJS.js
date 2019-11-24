@@ -25,17 +25,15 @@ const watchJS = () => {
 			treeshake: false,
 		});
 
-		let startTime;
 		watcher.on("event", event => {
 			if (event.code === "START") {
-				startTime = new Date().getTime();
 				fs.writeFileSync(file, 'console.log("Bundling...")');
-			} else if (event.code === "END") {
-				const delta = new Date().getTime() - startTime;
+			} else if (event.code === "BUNDLE_END") {
+				const { size } = fs.statSync(file);
 				console.log(
-					`Bundle written to ${file} (${(delta / 1000).toFixed(
-						2,
-					)} seconds) at ${new Date().toLocaleTimeString()}`,
+					`${(size / 1024 / 1024).toFixed(2)} MB written to ${file} (${(
+						event.duration / 1000
+					).toFixed(2)} seconds) at ${new Date().toLocaleTimeString()}`,
 				);
 			} else if (event.code === "ERROR" || event.code === "FATAL") {
 				delete event.error.watchFiles;

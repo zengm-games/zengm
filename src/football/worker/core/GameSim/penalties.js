@@ -108,6 +108,7 @@ const penalties: Penalty[] = [
 			S: 0.25,
 			CB: 0.25,
 		},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Unnecessary roughness",
@@ -180,6 +181,7 @@ const penalties: Penalty[] = [
 			S: 0.04,
 			CB: 0.02,
 		},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Delay of game",
@@ -210,6 +212,7 @@ const penalties: Penalty[] = [
 			S: 0.1,
 			CB: 0.1,
 		},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Face mask",
@@ -278,6 +281,7 @@ const penalties: Penalty[] = [
 		numPerSeason: 27,
 		yds: 15,
 		posOdds: {},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Unsportsmanlike conduct",
@@ -361,6 +365,7 @@ const penalties: Penalty[] = [
 		numPerSeason: 11,
 		yds: 15,
 		posOdds: {},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Lowering the head to initiate contact",
@@ -375,6 +380,7 @@ const penalties: Penalty[] = [
 			LB: 0.4,
 			DL: 0.1,
 		},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Ineligible receiver downfield",
@@ -400,6 +406,7 @@ const penalties: Penalty[] = [
 			LB: 0.4,
 			DL: 0.2,
 		},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Chop block",
@@ -453,6 +460,7 @@ const penalties: Penalty[] = [
 			LB: 0.3,
 			DL: 0.4,
 		},
+		automaticFirstDown: true,
 	},
 	{
 		name: "Illegal Substitution",

@@ -1,5 +1,3 @@
-football gamesim issues
-
 football statistical feats
 
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
@@ -101,6 +99,8 @@ backboard -> idb
 - quota errors
 
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
+
+football end of game clock management situations are not very good...
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
 

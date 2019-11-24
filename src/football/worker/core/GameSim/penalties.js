@@ -70,6 +70,7 @@ const penalties: Penalty[] = [
 			S: 0.3,
 			LB: 0.1,
 		},
+		automaticFirstDown: true,
 		spotFoul: true,
 	},
 	{

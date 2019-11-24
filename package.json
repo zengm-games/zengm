@@ -16,7 +16,7 @@
 		"build": "node tools/build.js && node tools/build-js.js && node tools/build-sw.js",
 		"deploy": "yarn run build && node tools/deploy.js",
 		"start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
-		"watch": "node tools/pre-watch.js && concurrently --kill-others 'node tools/watch-css.js' 'node tools/watch-js.js' 'node tools/watch-json-schema.js'",
+		"watch": "node tools/watch.js",
 		"lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
 		"flow": "flow",
 		"lint-js": "eslint '*.js' 'public/*.js' 'src/**/*.js' 'tools/**/*.js'",

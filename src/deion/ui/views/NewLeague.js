@@ -114,7 +114,7 @@ const NewLeague = props => {
 
 			setCreating(true);
 
-			let startingSeason = 2019;
+			let startingSeason = new Date().getFullYear();
 
 			let actualLeagueFile;
 			let actualRandomizeRosters = false;

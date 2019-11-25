@@ -77,6 +77,9 @@ async function updatePlayByPlay(
 			}
 		}
 
+		// Swap teams order, so home team is at bottom in box score
+		boxScore.teams.reverse();
+
 		return {
 			initialBoxScore: boxScore,
 			events: inputs.playByPlay,

@@ -28,6 +28,9 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 
+		// Swap teams order, so home team is at bottom in box score
+		const actualT = e.t === 0 ? 1 : 0;
+
 		if (e.quarter !== undefined && !quarters.includes(e.quarter)) {
 			quarters.push(e.quarter);
 			boxScore.teams[0].ptsQtrs.push(0);
@@ -54,7 +57,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 			stop = true;
 		} else if (e.type === "clock") {
 			if (typeof e.awaitingKickoff === "number") {
-				text = `${e.time} - ${boxScore.teams[e.t].abbrev} kicking off`;
+				text = `${e.time} - ${boxScore.teams[actualT].abbrev} kicking off`;
 			} else {
 				let fieldPos = "";
 				if (e.scrimmage === 50) {
@@ -66,7 +69,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 				}
 
 				text = `${e.time} - ${
-					boxScore.teams[e.t].abbrev
+					boxScore.teams[actualT].abbrev
 				} ball, ${helpers.ordinal(e.down)} & ${e.toGo}, ${fieldPos}`;
 			}
 
@@ -75,15 +78,17 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[e.t].ptsQtrs;
+				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
 				ptsQtrs[ptsQtrs.length - 1] += e.amt;
-				boxScore.teams[e.t].ptsQtrs = ptsQtrs;
+				boxScore.teams[actualT].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
-			if (boxScore.teams[e.t].hasOwnProperty(e.s) && e.s !== "min") {
+			if (boxScore.teams[actualT].hasOwnProperty(e.s) && e.s !== "min") {
 				if (e.pid !== undefined) {
-					const p = boxScore.teams[e.t].players.find(p2 => p2.pid === e.pid);
+					const p = boxScore.teams[actualT].players.find(
+						p2 => p2.pid === e.pid,
+					);
 					if (p === undefined) {
 						console.log("Can't find player", e);
 					}
@@ -97,7 +102,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 						}
 					}
 				}
-				boxScore.teams[e.t][e.s] += e.amt;
+				boxScore.teams[actualT][e.s] += e.amt;
 			}
 		}
 	}

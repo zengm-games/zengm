@@ -100,6 +100,11 @@ async function boxScore(gid: number) {
 
 	// Swap teams order, so home team is at bottom in box score
 	game.teams.reverse();
+	if (game.scoringSummary) {
+		for (const event of game.scoringSummary) {
+			event.t = event.t === 0 ? 1 : 0;
+		}
+	}
 
 	return game;
 }

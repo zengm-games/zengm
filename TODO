@@ -1,8 +1,3 @@
-football names
-- DRY with basketball - namesHelpers
-  - stuff at end to filter and format
-- high risk countries
-
 football statistical feats
 
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
@@ -290,8 +285,6 @@ type better
   - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
 - most MinimalPlayerRatings uses should be generic and take PlayerRatings
 
-names distribution
-
 split more from deion
 - processInputs for views only in one sport (depth, shot locations)
 - worker API functions only in one sport (depth)
@@ -300,8 +293,6 @@ yarn workspaces
 - see branch football-yarn-workspaces - all works except karma
 
 tests still running within deion? e.g. common/helpers.test.js
-
-better football player names
 
 show game stats in player page
 

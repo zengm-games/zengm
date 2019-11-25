@@ -1,5 +1,5 @@
 const path = require("path");
-const { Worker } = require("worker_threads");
+const { Worker } = require("worker_threads"); // eslint-disable-line
 const getSport = require("./getSport");
 
 const watchJS = () => {

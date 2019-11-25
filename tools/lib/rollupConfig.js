@@ -25,7 +25,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 				"player-names":
 					nodeEnv !== "production"
 						? "./../../deion/worker/data/names-test.json"
-						: "./../../basketball/worker/data/names.json",
+						: `./../../${sport}/worker/data/names.json`,
 			},
 		}),
 		replace({

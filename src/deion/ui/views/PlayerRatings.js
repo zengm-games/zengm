@@ -34,7 +34,7 @@ const PlayerRatings = ({
 		"Team",
 		"Age",
 		"Contract",
-		...(process.env.SPORT === "basketball" ? ["Country"] : []),
+		"Country",
 		"Ovr",
 		"Pot",
 		...ratings.map(rating => `rating:${rating}`),
@@ -75,7 +75,7 @@ const PlayerRatings = ({
 						? ` thru ${p.contract.exp}`
 						: ""}
 				</>,
-				...(process.env.SPORT === "basketball" ? [p.born.loc] : []),
+				p.born.loc,
 				p.ratings.ovr,
 				p.ratings.pot,
 				...ratings.map(rating => p.ratings[rating]),

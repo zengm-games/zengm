@@ -2,7 +2,12 @@ const _ = require("lodash");
 const cheerio = require("cheerio");
 const fs = require("fs");
 const path = require("path");
-const { provinces, states } = require("./lib/namesHelpers");
+const {
+	filterAndOutput,
+	juniors,
+	provinces,
+	states,
+} = require("./lib/namesHelpers");
 
 // Run this on the output of something like:
 // $ wget --mirror --convert-links --adjust-extension --no-parent http://www.draftexpress.com
@@ -34,7 +39,6 @@ const getName = (untrimmedName, file) => {
 	}
 
 	if (parts.length !== 2) {
-		const juniors = ["II", "III", "Jr", "Jr.", "Junior", "Sr", "Sr.", "Senior"];
 		if (parts.length === 3 && juniors.includes(parts[2])) {
 			return parts.slice(0, 2);
 		}
@@ -436,40 +440,4 @@ for (const filename of fs.readdirSync(folder)) {
 	}
 }
 
-// Minimum of (unique fns, unique lns) by country
-const countsByCountry = {};
-for (const country of Object.keys(fnsByCountry).sort()) {
-	countsByCountry[country] = Math.min(
-		Object.keys(fnsByCountry[country]).length,
-		Object.keys(lnsByCountry[country]).length,
-	);
-}
-
-// Restructure fns and lns so they are arrays of [name, cumsum] by country
-const namesByCountryCumsum = namesByCountry => {
-	const obj = {};
-
-	for (const country of Object.keys(namesByCountry).sort()) {
-		let cumsum = 0;
-		obj[country] = Object.keys(namesByCountry[country])
-			.sort()
-			.map(name => {
-				cumsum += namesByCountry[country][name];
-				return [name, cumsum];
-			});
-
-		if (cumsum < 5) {
-			console.log(`Dropping ${country} (${cumsum} players)`);
-			delete obj[country];
-		}
-	}
-
-	return obj;
-};
-const fnsByCountryCumsum = namesByCountryCumsum(fnsByCountry);
-const lnsByCountryCumsum = namesByCountryCumsum(lnsByCountry);
-
-console.log(JSON.stringify(Object.keys(fnsByCountry).sort(), null, 4));
-console.log(
-	JSON.stringify({ first: fnsByCountryCumsum, last: lnsByCountryCumsum }),
-);
+filterAndOutput(fnsByCountry, lnsByCountry);

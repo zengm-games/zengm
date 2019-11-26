@@ -124,15 +124,15 @@ const SortableTable = ({
 }) => {
 	const [isDragged, setIsDragged] = useState(false);
 
-	const onSortStart = useCallback(({ clonedNode, node }) => {
+	const onSortStart = useCallback(({ node }) => {
 		setIsDragged(true);
 
-		// Ideally, this wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
-		const clonedChildren = clonedNode.childNodes;
-		const children = node.childNodes;
-		for (let i = 0; i < children.length; i++) {
-			clonedChildren[i].style.padding = "5px";
-			clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
+		// https://github.com/clauderic/react-sortable-hoc/issues/361#issuecomment-471907612
+		const tds = document.getElementsByClassName("SortableHelper")[0].childNodes;
+		for (let i = 0; i < tds.length; i++) {
+			const childNode = node.childNodes[i];
+			tds[i].style.width = `${childNode.offsetWidth}px`;
+			tds[i].style.padding = "5px";
 		}
 	}, []);
 
@@ -155,6 +155,7 @@ const SortableTable = ({
 				</thead>
 				<TBody
 					disabled={disabled}
+					helperClass="SortableHelper"
 					highlightHandle={highlightHandle}
 					isDragged={isDragged}
 					onSortEnd={onSortEnd}

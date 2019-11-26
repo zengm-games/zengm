@@ -6324,9 +6324,10 @@ react-popper@^1.3.3:
     typed-styles "^0.0.7"
     warning "^4.0.2"
 
-react-sortable-hoc@dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart:
+react-sortable-hoc@^1.10.1:
   version "1.10.1"
-  resolved "https://codeload.github.com/dumbmatter/react-sortable-hoc/tar.gz/c03560c8761255f440c2a83f5400f64b9f6f0770"
+  resolved "https://registry.yarnpkg.com/react-sortable-hoc/-/react-sortable-hoc-1.10.1.tgz#c352f26263acbcff9cf266bc755653a56c983a38"
+  integrity sha512-eVyv5rrK6qY9bG60bboRY78In7OpdRRg+hxp4QMLIjC/UJaFSU7exTYd0764GtXvBqh+b+faYGzren5/ffRYKw==
   dependencies:
     "@babel/runtime" "^7.2.0"
     invariant "^2.2.4"

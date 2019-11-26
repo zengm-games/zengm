@@ -1,5 +1,16 @@
 football statistical feats
 
+Add "All Seasons" option to various stat/ratings pages
+- Player Ratings
+- Player Stats
+- Team Stats
+- League Leaders
+  - Also add "Career Totals" there
+
+god mode options for foul rate and foul outs - Jlebron13 on discord
+- other sport specific options, like shot tendencies, enabling/disabling 3 pointers, etc
+- have them as sliders, where 50 means "no effect", 0 means "never happens", and 100 means "always". then blend those rates with the default rates behind the scenes
+
 from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
@@ -231,9 +242,6 @@ exportPlayerGamesCsv only supports basketball currently, and it's disabled in Ex
 
 way to specify routes for ShotLocations/RosterContinuity/Depth, so they aren't included in football/basketball routes
 
-make roster page reorderable like in football mogul
-- it can update t.depth behind the scenes
-
 game sim
 - pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
@@ -292,8 +300,6 @@ split more from deion
 yarn workspaces
 - see branch football-yarn-workspaces - all works except karma
 
-tests still running within deion? e.g. common/helpers.test.js
-
 show game stats in player page
 
 contract demands and position assignments should be based on which position maximizes p.value, not which position maximizes ovr. would you rather have an 80 ovr qb or a 100 ovr kicker?
@@ -307,9 +313,6 @@ on import, error if any player/draftPick references an invalid tid
 
 on league import, override numTeams if teams are supplied in league file
 
-god mode options for foul rate and foul outs - Jlebron13 on discord
-- other sport specific options, like shot tendencies, enabling/disabling 3 pointers, etc
-
 during free agency, after you sign all your free agents it should automatically take you to the league free agents and skip the step of having to continue
 
 if a trade is highly unfavorable to the user, pop up a warning confirmation dialog
@@ -322,8 +325,6 @@ more accurage game sim
   - https://thisrobot.life/guides/comparison-with-xstate.html
 
 ---
-
-update discord links after creating football channel
 
 draft lottery teams should only be non-playoff teams
 
@@ -658,8 +659,6 @@ different height distributions by country https://www.reddit.com/message/message
 make FAs less eager to sign with bad teams
   alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal
 
-all time leaders https://www.reddit.com/r/BasketballGM/comments/4qjkys/simple_feature_suggestion_all_time_season/
-
 refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q/cant_sign_star_player/
 
 newScheduleCrappy should be better
@@ -672,8 +671,6 @@ backboard
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
-
-injuries on player page https://www.reddit.com/r/BasketballGM/comments/43jj76/injuries_can_have_longterm_effects/czinyzk
 
 more detailed negotiation screen https://www.reddit.com/r/BasketballGM/comments/416o5g/well_this_is_new/cz11w9v?context=3
 
@@ -689,8 +686,6 @@ pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qj
 
 Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www.reddit.com/r/BasketballGM/comments/3t4kl6/suggestion_add_free_agents_to_teams_dropdown_menu/
 
-"resign all" button https://www.reddit.com/r/BasketballGM/comments/40q8rc/help_beta_test_new_contract_negotiation_feature/cywki5q
-
 team dropdown in dashboard
 
 https://www.reddit.com/r/BasketballGM/comments/3gjqgd/lets_brainstorm_a_bit_about_this_30_seasons/
@@ -704,9 +699,7 @@ different jump to menus for season and team specific pages?
   add gamelog, roster, team finances
     get rid of "More:" links
 
-gamesim rewrite
-  balance
-  minutes directly, not by +/-
+minutes directly, not by +/-
 
 use positions for roster building and rotations
   free agents and trades matters....
@@ -741,8 +734,6 @@ no/fuzzier ratings mode http://www.reddit.com/r/BasketballGM/comments/35qftt/sta
 compact feats UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
   add subtype or something to feats
 
-refactor draft code
-
 expansion/contraction
 
 DEATH
@@ -760,11 +751,6 @@ screenshot
       also autocomplete hashtag
   add prompts to take screenshots at various points
   things can get cut off right, like wide tables in player pages
-
-BBGM Gold?
-  account page UI
-    if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
-      if not cancelled but timestamp too low
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding
@@ -842,19 +828,11 @@ great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_question
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
-total control mode
-  select draft pick for every team http://www.reddit.com/r/BasketballGM/comments/2b8g1d/new_multiplayer_league/cj31706
-    localStorage.noAutoPick http://www.reddit.com/r/BasketballGM/comments/2dqt3v/i_want_to_start_an_online_league_with_a_faster/cjs51dj
-  AI doesn't change roster http://www.reddit.com/message/messages/23pano
 season preview
   overview of user's players ratings changes
   overview of notable ratings changes in other players
   MVP race preview
   power rankings
-power rankings
-  cache values for preseason and after season
-    teamSeason.powerRankings = {overall, performance, talent, preseason}
-  only show live during regular season
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   http://datatables.net/extensions/fixedcolumns/
@@ -946,9 +924,7 @@ more detailed draft - slower picks, trades, etc.
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
   sort by generic value (current) or team-specific value
   trade picks - note that the code in teamValue will need to be modified to account for the lottery and available players in the draft class
-power rankings
-  preseason too
-  awards watch
+awards watch
 contests: post roster file and goal
 
 BIG NEW GAMEPLAY CHANGES

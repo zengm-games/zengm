@@ -199,7 +199,11 @@ const augmentPartialPlayer = (
 			}
 			r.ovr = overrides.core.player.ovr(p.ratings[0]);
 		}
-		if (!r.hasOwnProperty("pot") || r.pot < r.ovr) {
+		if (
+			process.env.SPORT === "basketball" &&
+			(!r.hasOwnProperty("pot") || r.pot < r.ovr)
+		) {
+			// Only basketball, in case position is not known at this point
 			r.pot = bootstrapPot(r, r.season - p.born.year);
 		}
 		if (!r.hasOwnProperty("pos") && process.env.SPORT !== "football") {

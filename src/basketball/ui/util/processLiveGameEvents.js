@@ -7,9 +7,12 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 
+		// Swap teams order, so home team is at bottom in box score
+		const actualT = e.t === 0 ? 1 : 0;
+
 		if (e.type === "text") {
-			if (e.t === 0 || e.t === 1) {
-				text = `${e.time} - ${boxScore.teams[e.t].abbrev} - ${e.text}`;
+			if (actualT === 0 || actualT === 1) {
+				text = `${e.time} - ${boxScore.teams[actualT].abbrev} - ${e.text}`;
 			} else {
 				text = e.text;
 			}
@@ -23,17 +26,17 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 
 			stop = true;
 		} else if (e.type === "sub") {
-			for (let i = 0; i < boxScore.teams[e.t].players.length; i++) {
-				if (boxScore.teams[e.t].players[i].pid === e.on) {
-					boxScore.teams[e.t].players[i].inGame = true;
-				} else if (boxScore.teams[e.t].players[i].pid === e.off) {
-					boxScore.teams[e.t].players[i].inGame = false;
+			for (let i = 0; i < boxScore.teams[actualT].players.length; i++) {
+				if (boxScore.teams[actualT].players[i].pid === e.on) {
+					boxScore.teams[actualT].players[i].inGame = true;
+				} else if (boxScore.teams[actualT].players[i].pid === e.off) {
+					boxScore.teams[actualT].players[i].inGame = false;
 				}
 			}
 		} else if (e.type === "stat") {
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
-				const ptsQtrs = boxScore.teams[e.t].ptsQtrs;
+				const ptsQtrs = boxScore.teams[actualT].ptsQtrs;
 				if (ptsQtrs.length <= e.qtr) {
 					// Must be overtime! This updates ptsQtrs too.
 					boxScore.teams[0].ptsQtrs.push(0);
@@ -52,7 +55,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 					}
 				}
 				ptsQtrs[e.qtr] += e.amt;
-				boxScore.teams[e.t].ptsQtrs = ptsQtrs;
+				boxScore.teams[actualT].ptsQtrs = ptsQtrs;
 			}
 
 			// Everything else
@@ -74,14 +77,15 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 				e.s === "pf" ||
 				e.s === "pts"
 			) {
-				boxScore.teams[e.t].players[e.p][e.s] += e.amt;
-				boxScore.teams[e.t][e.s] += e.amt;
+				boxScore.teams[actualT].players[e.p][e.s] += e.amt;
+				boxScore.teams[actualT][e.s] += e.amt;
 
 				if (e.s === "pts") {
 					for (let j = 0; j < 2; j++) {
 						for (let k = 0; k < boxScore.teams[j].players.length; k++) {
 							if (boxScore.teams[j].players[k].inGame) {
-								boxScore.teams[j].players[k].pm += e.t === j ? e.amt : -e.amt;
+								boxScore.teams[j].players[k].pm +=
+									actualT === j ? e.amt : -e.amt;
 							}
 						}
 					}

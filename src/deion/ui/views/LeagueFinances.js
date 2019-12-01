@@ -18,6 +18,7 @@ const LeagueFinances = ({
 
 	const cols = getCols(
 		"Team",
+		"Pop",
 		"Avg Attendance",
 		"Revenue (YTD)",
 		"Profit (YTD)",
@@ -39,6 +40,7 @@ const LeagueFinances = ({
 				<a href={helpers.leagueUrl(["team_finances", t.abbrev])}>
 					{t.region} {t.name}
 				</a>,
+				helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 				helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
 				helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
 				helpers.formatCurrency(t.seasonAttrs.profit, "M"),

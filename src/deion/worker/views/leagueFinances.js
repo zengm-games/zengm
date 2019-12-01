@@ -23,6 +23,7 @@ async function updateLeagueFinances(
 				"cash",
 				"payroll",
 				"salaryPaid",
+				"pop",
 			],
 			season: inputs.season,
 		});

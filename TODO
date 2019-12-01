@@ -16,6 +16,17 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 illness @mattable#4273
 - pass to teammates or opponents
 - list of diseases, each with a different average length and probability to spread
+- if can be fatal, make sure to always create new FAs
+  - playoffs?
+
+game highs
+- per season and career, like in basketball reference
+- link to box score
+- summary per team at bottom
+- somehow show in stats page
+- store in normal player stats object (like Lng in football)
+
+add more variance in player development with some kind of professionalism/ambition rating https://old.reddit.com/r/BasketballGM/comments/e15yuv/unpredictability_of_progression_and_the_football/
 
 team rating
 - currently for past seasons, includes traded players on both teams. so intead, store value at end of each season
@@ -149,13 +160,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
 make expansion teams easier
 - doesn't need to be a real draft
 
-game highs
-- per season and career, like in basketball reference
-- link to box score
-- summary per team at bottom
-- somehow show in stats page
-- store in normal player stats object (like Lng in football)
-
 add another season option to team stats, player stats, and leaders: All Seasons
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
@@ -239,6 +243,7 @@ injury later
 - slowly ramp endurance up after injury
   - really, the injury should just impact endurance and odds of reinjury. if you want to force someone to play through an injury, go for it
 - injury history leads to chance of reinjury
+- height influences injury probability (see same paper as age)
 
 can i get SideBar to have open state simply passed to it? performance might be ok now
 
@@ -372,6 +377,7 @@ typescript
 - FlowFixMe
 - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
 - https://medium.com/@adamterlson/migrating-a-flow-react-native-app-to-typescript-c74c7bceae7d
+- https://medium.com/@michaelsholty/migrating-500k-lines-of-flow-code-to-typescript-15a8cad43fec
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?

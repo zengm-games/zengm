@@ -1355,6 +1355,11 @@ const cols: {
 		desc: "Draft Pick",
 		sortType: "draftPick",
 	},
+	Pop: {
+		desc: "Region Population",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Playoffs: {
 		desc: "Playoff Appearances",
 		sortSequence: ["desc", "asc"],

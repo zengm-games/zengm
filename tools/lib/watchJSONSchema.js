@@ -2,7 +2,7 @@ const chokidar = require("chokidar");
 const fs = require("fs");
 const getSport = require("./getSport");
 
-const watchJSONSchema = (updateStart, updateEnd) => {
+const watchJSONSchema = (updateStart, updateEnd, updateError) => {
 	const sport = getSport();
 
 	const watcher = chokidar.watch("tools/lib/generateJSONSchema.js", {});
@@ -10,16 +10,20 @@ const watchJSONSchema = (updateStart, updateEnd) => {
 	const outFilename = "build/files/league-schema.json";
 
 	const buildJSONSchema = () => {
-		// Dynamically reload generateJSONSchema, cause that's what we're watching!
-		delete require.cache[require.resolve("./generateJSONSchema")];
-		// eslint-disable-next-line
-		const generateJSONSchema = require("./generateJSONSchema");
+		try {
+			// Dynamically reload generateJSONSchema, cause that's what we're watching!
+			delete require.cache[require.resolve("./generateJSONSchema")];
+			// eslint-disable-next-line
+			const generateJSONSchema = require("./generateJSONSchema");
 
-		const jsonSchema = generateJSONSchema(sport);
-		const output = JSON.stringify(jsonSchema, null, 2);
-		fs.writeFileSync(outFilename, output);
+			const jsonSchema = generateJSONSchema(sport);
+			const output = JSON.stringify(jsonSchema, null, 2);
+			fs.writeFileSync(outFilename, output);
 
-		updateEnd(outFilename);
+			updateEnd(outFilename);
+		} catch (error) {
+			updateError(outFilename, error);
+		}
 	};
 
 	updateStart(outFilename);

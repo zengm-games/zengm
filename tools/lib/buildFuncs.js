@@ -11,57 +11,49 @@ const Terser = require("terser");
 const getSport = require("./getSport");
 
 const buildCSS = (watch /*: boolean*/ = false) => {
-	try {
-		const filenames = ["light", "dark"];
-		for (const filename of filenames) {
-			const start = process.hrtime();
+	const filenames = ["light", "dark"];
+	for (const filename of filenames) {
+		const start = process.hrtime();
 
-			// If more Sass files are needed, then create them and @import them into this main Sass file.
-			const sassFilePath = `public/css/${filename}.scss`;
-			const sassResult = sass.renderSync({
-				file: sassFilePath,
-			});
-			const source = sassResult.css.toString();
+		// If more Sass files are needed, then create them and @import them into this main Sass file.
+		const sassFilePath = `public/css/${filename}.scss`;
+		const sassResult = sass.renderSync({
+			file: sassFilePath,
+		});
+		const source = sassResult.css.toString();
 
-			const outFilename = `build/gen/${filename}.css`;
+		const outFilename = `build/gen/${filename}.css`;
 
-			let output;
-			if (!watch) {
-				const result = new CleanCSS().minify(source);
-				if (result.errors.length > 0) {
-					console.log("clean-css errors", result.errors);
-				}
-				if (result.warnings.length > 0) {
-					console.log("clean-css warnings", result.warnings);
-				}
-				output = result.styles;
-			} else {
-				output = source;
+		let output;
+		if (!watch) {
+			const result = new CleanCSS().minify(source);
+			if (result.errors.length > 0) {
+				console.log("clean-css errors", result.errors);
 			}
-
-			fs.writeFileSync(outFilename, output);
-
-			if (!watch) {
-				const bytes = Buffer.byteLength(output, "utf8");
-
-				const diff = process.hrtime(start);
-				const NS_PER_SECOND = 10 ** 9;
-				const timeInS = diff[0] + diff[1] / NS_PER_SECOND;
-
-				console.log(
-					`${(bytes / 1024 / 1024).toFixed(
-						2,
-					)} MB written to ${outFilename} (${timeInS.toFixed(
-						2,
-					)} seconds) at ${new Date().toLocaleTimeString()}`,
-				);
+			if (result.warnings.length > 0) {
+				console.log("clean-css warnings", result.warnings);
 			}
-		}
-	} catch (err) {
-		if (watch) {
-			console.error("Error building CSS:", err);
+			output = result.styles;
 		} else {
-			throw err;
+			output = source;
+		}
+
+		fs.writeFileSync(outFilename, output);
+
+		if (!watch) {
+			const bytes = Buffer.byteLength(output, "utf8");
+
+			const diff = process.hrtime(start);
+			const NS_PER_SECOND = 10 ** 9;
+			const timeInS = diff[0] + diff[1] / NS_PER_SECOND;
+
+			console.log(
+				`${(bytes / 1024 / 1024).toFixed(
+					2,
+				)} MB written to ${outFilename} (${timeInS.toFixed(
+					2,
+				)} seconds) at ${new Date().toLocaleTimeString()}`,
+			);
 		}
 	}
 };

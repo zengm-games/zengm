@@ -2,7 +2,7 @@ const path = require("path");
 const { Worker } = require("worker_threads"); // eslint-disable-line
 const getSport = require("./getSport");
 
-const watchJS = (updateStart, updateEnd) => {
+const watchJS = (updateStart, updateEnd, updateError) => {
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
 
@@ -20,6 +20,9 @@ const watchJS = (updateStart, updateEnd) => {
 			}
 			if (message.type === "end") {
 				updateEnd(filename);
+			}
+			if (message.type === "error") {
+				updateError(filename, message.error);
 			}
 		});
 	}

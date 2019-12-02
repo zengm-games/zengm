@@ -33,7 +33,10 @@ watcher.on("event", event => {
 		});
 	} else if (event.code === "ERROR" || event.code === "FATAL") {
 		delete event.error.watchFiles;
-		console.log(event.error);
+		parentPort.postMessage({
+			type: "error",
+			error: event.error,
+		});
 		fs.writeFileSync(file, `console.error(${JSON.stringify(event.error)})`);
 	}
 });

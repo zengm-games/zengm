@@ -107,7 +107,6 @@ const setSport = () => {
 };
 
 const copyFiles = () => {
-	console.log('Copying files from "public" directory to "build" directory...');
 	const foldersToIgnore = ["basketball", "css", "football"];
 
 	fse.copySync("public", "build", {
@@ -149,7 +148,6 @@ const genRev = () => {
 		"0",
 	);
 	const rev = `${date}.${minutes}`;
-	console.log(`rev ${rev}`);
 
 	return rev;
 };
@@ -172,15 +170,11 @@ const minifyJS = (name /*: string */) => {
 };
 
 const reset = () => {
-	console.log('Resetting "build" directory...');
-
 	fse.removeSync("build");
 	fs.mkdirSync("build/gen", { recursive: true });
 };
 
 const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
-	console.log("Setting timestamps...");
-
 	const sport = getSport();
 
 	replace({

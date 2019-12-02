@@ -8,6 +8,8 @@ const rollupConfig = require("./lib/rollupConfig");
 console.log("Bundling JavaScript files...");
 
 const rev = build.genRev();
+console.log(rev);
+
 const sport = getSport();
 
 const BLACKLIST = {

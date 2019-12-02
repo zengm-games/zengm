@@ -2,13 +2,12 @@ const chokidar = require("chokidar");
 const fs = require("fs");
 const getSport = require("./getSport");
 
-const watchJSONSchema = (addFile, updateStart, updateEnd) => {
+const watchJSONSchema = (updateStart, updateEnd) => {
 	const sport = getSport();
 
 	const watcher = chokidar.watch("tools/lib/generateJSONSchema.js", {});
 
 	const outFilename = "build/files/league-schema.json";
-	addFile(outFilename);
 
 	const buildJSONSchema = () => {
 		// Dynamically reload generateJSONSchema, cause that's what we're watching!

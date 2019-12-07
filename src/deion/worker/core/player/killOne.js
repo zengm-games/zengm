@@ -22,7 +22,6 @@ const killOne = async (conditions: Conditions) => {
 		"was beheaded by ISIS",
 		"spontaneously combusted",
 		"had a stroke after reading about the owner's plans to trade him",
-		"laughed himself to death while watching Modern Family",
 		"died of exertion while trying to set the record for largest number of sex partners in one day",
 		"rode his Segway off a cliff",
 		"fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla",

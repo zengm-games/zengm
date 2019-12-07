@@ -303,29 +303,44 @@ const Dashboard = ({ leagues }: Props) => {
 			<a
 				href="/new_league"
 				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3"
+				style={{ height: 94 }}
 			>
 				Create new
 				<br />
 				league
 			</a>
-			<a
-				href={`https://play.${
-					process.env.SPORT === "football" ? "basketball" : "football"
-				}-gm.com/`}
-				className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
-				style={{
-					backgroundImage: `url("https://play.${
-						process.env.SPORT === "football" ? "basketball" : "football"
-					}-gm.com/ico/icon70.png")`,
-					backgroundRepeat: "no-repeat",
-					backgroundPosition:
-						process.env.SPORT === "football" ? "100px 41px" : "75px 41px",
-				}}
+			<div
+				className="btn-group-vertical dashboard-top-link"
+				style={{ height: 94 }}
 			>
-				{process.env.SPORT === "football"
-					? "Try our other game, Basketball GM!"
-					: "Try our other game, Football GM!"}
-			</a>
+				<a
+					href={`https://play.${
+						process.env.SPORT === "football" ? "basketball" : "football"
+					}-gm.com/`}
+					className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
+					style={{
+						backgroundImage: `url("https://play.${
+							process.env.SPORT === "football" ? "basketball" : "football"
+						}-gm.com/ico/icon70.png")`,
+						backgroundRepeat: "no-repeat",
+						backgroundPosition:
+							process.env.SPORT === "football" ? "115px 27px" : "100px 25px",
+						backgroundSize: 35,
+						width: 151,
+					}}
+				>
+					{process.env.SPORT === "football"
+						? "Try our other game, Basketball GM!"
+						: "Try our other game, Football GM!"}
+				</a>
+				<a
+					href="http://zengm.com/"
+					className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
+					style={{ width: 151 }}
+				>
+					Play even more sports at Zen GM
+				</a>
+			</div>
 
 			{rows.length > 0 ? (
 				<>

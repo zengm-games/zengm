@@ -151,22 +151,22 @@ a.god-mode,
 }
 
 .dashboard-top-link {
-	height: 77px;
 	line-height: 1.35;
 	margin-top: 0.5em;
 	padding: 5px 8px 6px;
 	text-align: left;
 	width: 151px;
+	height: 94px;
 }
 
 .dashboard-top-link-new {
-	font-size: 20px;
-	padding-top: 11px;
+	font-size: 24px;
+	padding-top: 14px;
 }
 
 .dashboard-top-link-other {
 	color: $gray-800;
-	font-size: 15px;
+	font-size: 13px;
 
 	&:hover {
 		color: $black;

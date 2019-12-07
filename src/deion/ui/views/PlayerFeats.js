@@ -56,6 +56,40 @@ const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
 		};
 	});
 
+	const superCols =
+		process.env.SPORT === "football"
+			? [
+					{
+						title: "",
+						colspan: 3,
+					},
+					{
+						title: "Passing",
+						colspan: 4,
+					},
+					{
+						title: "Rushing",
+						colspan: 3,
+					},
+					{
+						title: "Receiving",
+						colspan: 3,
+					},
+					{
+						title: "Defense",
+						colspan: 7,
+					},
+					{
+						title: "Returns",
+						colspan: 2,
+					},
+					{
+						title: "",
+						colspan: 4,
+					},
+			  ]
+			: undefined;
+
 	return (
 		<>
 			<Dropdown
@@ -84,6 +118,7 @@ const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
 				defaultSort={[23, "desc"]}
 				name="PlayerFeats"
 				rows={rows}
+				superCols={superCols}
 				pagination
 			/>
 		</>

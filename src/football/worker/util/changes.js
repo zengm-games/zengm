@@ -21,6 +21,11 @@ const changes = [
 		msg:
 			"Player names and countries are now more realistic for football, rather than just being copied from Basketball GM.",
 	},
+	{
+		date: "2019-12-07",
+		msg:
+			"I finally added Statistical Feats, which you can see in the Stats menu.",
+	},
 ];
 
 export default changes;

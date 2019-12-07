@@ -94,7 +94,27 @@ async function updatePlayers(
 						"pts",
 						"gmsc",
 				  ]
-				: [];
+				: [
+						"pssCmp",
+						"pss",
+						"pssYds",
+						"pssTD",
+						"rus",
+						"rusYds",
+						"rusTD",
+						"rec",
+						"recYds",
+						"recTD",
+						"defInt",
+						"defIntTD",
+						"defFmbFrc",
+						"defFmbRec",
+						"defFmbTD",
+						"defSk",
+						"defSft",
+						"prTD",
+						"krTD",
+				  ];
 
 		return {
 			abbrev: inputs.abbrev,

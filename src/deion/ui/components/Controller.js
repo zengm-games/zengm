@@ -282,7 +282,7 @@ const Controller = () => {
 				<Header />
 				<SideBar pageID={pageID} />
 				<div className="p402_premium" id="actual-content">
-					<div id="actual-actual-content">
+					<div id="actual-actual-content" className="clearfix">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
 					</div>
 					<Footer />

@@ -105,12 +105,22 @@ const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
 				<p>
 					All games where a player got a triple double, a 5x5, 50 points, 25
 					rebounds, 20 assists, 10 steals, 10 blocks, or 10 threes are listed
-					here (if you change game length in God Mode, the cuttoffs are scaled).
-					Statistical feats from your players are{" "}
+					here. If you changed quarter length to a non-default value in God
+					Mode, the cuttoffs are scaled. Statistical feats from your players are{" "}
 					<span className="text-info">highlighted in blue</span>.
 				</p>
 			) : (
-				<p>Statistical feats are not yet implemented for football, sorry!</p>
+				<p>
+					All games where a player got 400 passing yards, 6 passing TDs, 150
+					rushing yards, 3 rushing TDs, 150 receiving yards, 3 receiving TDs, 3
+					sacks, 2 interceptions, 2 fumble recoveries, 2 forced fumbles, 2
+					defensive TDs, 2 return TDs, 4 rushing/receiving TDs, 200
+					rushing/receiving yards, or 5 total TDs (where passing ones count
+					half) are listed here. If you changed quarter length to a non-default
+					value in God Mode, the cuttoffs are scaled. Statistical feats from
+					your players are{" "}
+					<span className="text-info">highlighted in blue</span>.
+				</p>
 			)}
 
 			<DataTable

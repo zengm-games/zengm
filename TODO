@@ -1,6 +1,5 @@
 use ink in watch
 - somehow init build prior to doing importJsx, cause there is a delay there
-- somehow get rid of watch-wrapper.js
 - handle updating colors after build has finished
 
 some way to equalize budget ranks

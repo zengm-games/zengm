@@ -12,5 +12,4 @@ const rev = build.genRev();
 build.setTimestamps(rev, true);
 
 const renderWatchProgress = importJsx("./lib/renderWatchProgress");
-
 renderWatchProgress();

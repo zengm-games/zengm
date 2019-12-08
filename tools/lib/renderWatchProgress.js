@@ -116,6 +116,7 @@ const File = ({ filename, info }) => {
 
 const Watch = () => {
 	const [files, dispatch] = useReducer(reducer, {});
+	const [forceUpdateCounter, forceUpdate] = useReducer(x => x + 1, 0);
 
 	useEffect(() => {
 		const updateStart = filename => {
@@ -150,11 +151,33 @@ const Watch = () => {
 		watchCSS(updateStart, updateEnd, updateError);
 	}, []);
 
-	const outputs = Object.entries(files).map(([filename, info]) => (
-		<File key={filename} filename={filename} info={info} />
-	));
+	useEffect(() => {
+		let id;
+		for (const info of Object.values(files)) {
+			const numMillisecondsSinceTime = new Date() - info.dateEnd;
+			if (numMillisecondsSinceTime < TIME_CUTOFF_YELLOW) {
+				// Make sure we check in a little if we need to update the color here, because otherwise there might not be another render to handle the color change
+				id = setTimeout(() => {
+					forceUpdate();
+				}, 2000);
+				break;
+			}
+		}
+		if (!id) {
+		}
 
-	return <>{outputs}</>;
+		return () => {
+			clearInterval(id);
+		};
+	}, [files, forceUpdateCounter]);
+
+	return (
+		<>
+			{Object.entries(files).map(([filename, info]) => (
+				<File key={filename} filename={filename} info={info} />
+			))}
+		</>
+	);
 };
 
 module.exports = () => {

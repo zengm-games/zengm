@@ -71,7 +71,7 @@ const StartingLineup = ({ starters, stats }) => {
 					</tbody>
 				</table>
 			</ResponsiveTableWrapper>
-			<div className="clearfix" />
+			<div />
 			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
 		</>
 	);

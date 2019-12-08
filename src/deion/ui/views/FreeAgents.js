@@ -157,8 +157,6 @@ const FreeAgents = ({
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 
-			<div className="clearfix" />
-
 			<DataTable
 				cols={cols}
 				defaultSort={[cols.length - 3, "desc"]}

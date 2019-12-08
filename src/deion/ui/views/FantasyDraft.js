@@ -75,14 +75,12 @@ const FantasyDraft = ({ phase, teams, userTids }) => {
 				returned to their original owners after the fantasy draft.
 			</p>
 
-			<h2>Draft Order</h2>
-
 			<button
 				className="btn btn-light-bordered mb-3"
 				disabled={starting}
 				onClick={randomize}
 			>
-				Randomize
+				Randomize order
 			</button>
 
 			<div className="clearfix" />

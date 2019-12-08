@@ -76,7 +76,7 @@ const ovr = (players: { ratings: { ovr: number, pos: string } }[]) => {
 	// Translate from -15/15 to 0/100 scale
 	const rawOVR = (predictedMOV * 100) / 30 + 50;
 
-	return helpers.bound(Math.round(rawOVR), 0, 100);
+	return helpers.bound(Math.round(rawOVR), 0, Infinity);
 };
 
 export default ovr;

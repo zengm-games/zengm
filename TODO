@@ -1,3 +1,8 @@
+use ink in watch
+- somehow init build prior to doing importJsx, cause there is a delay there
+- somehow get rid of watch-wrapper.js
+- handle updating colors after build has finished
+
 some way to equalize budget ranks
 - https://old.reddit.com/r/BasketballGM/comments/e5qq7l/thoughts_on_a_potential_no_finances_mode/
 

@@ -181,5 +181,5 @@ const Watch = () => {
 };
 
 module.exports = () => {
-	render(<Watch />);
+	render(<Watch />, { experimental: true });
 };

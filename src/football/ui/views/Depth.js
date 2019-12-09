@@ -153,7 +153,7 @@ class Depth extends React.Component {
 				<SortableTable
 					disabled={!editable}
 					values={playersSorted}
-					highlightHandle={({ index }) => numStartersByPos[pos] < index + 1}
+					highlightHandle={({ index }) => index < numStartersByPos[pos]}
 					rowClassName={({ index, isDragged }) =>
 						classNames({
 							separator: index === numStartersByPos[pos] - 1 && !isDragged,

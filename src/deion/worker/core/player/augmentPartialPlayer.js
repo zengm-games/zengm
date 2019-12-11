@@ -152,6 +152,12 @@ const augmentPartialPlayer = (
 				`Invalid tid ${PLAYER.UNDRAFTED_3} (in version 33 or higher, all undrafted players should have a tid of ${PLAYER.UNDRAFTED})`,
 			);
 		}
+	} else if (p.tid === PLAYER.RETIRED) {
+		for (const r of p.ratings) {
+			if (!r.hasOwnProperty("season")) {
+				r.season = typeof p.retiredYear === "number" ? p.retiredYear : g.season;
+			}
+		}
 	} else if (g.phase !== PHASE.FANTASY_DRAFT) {
 		if (!p.ratings[0].hasOwnProperty("season")) {
 			p.ratings[0].season = g.season;
@@ -363,7 +369,7 @@ const augmentPartialPlayer = (
 		// Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
 		if (g.phase === PHASE.PRESEASON) {
 			const lastSeason = p.stats[p.stats.length - 1].season;
-			if (lastSeason < g.season) {
+			if (p.tid >= 0 && lastSeason < g.season) {
 				addStatsRow(p, false);
 			}
 		}

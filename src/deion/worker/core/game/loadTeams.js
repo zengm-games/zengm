@@ -1,6 +1,6 @@
 // @flow
 
-import { allStar, player } from "..";
+import { allStar, finances, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, overrides } from "../../util";
 
@@ -29,7 +29,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		stat: {},
 		player: [],
 		synergy: { off: 0, def: 0, reb: 0 },
-		healthRank: teamSeason.expenses.health.rank,
+		healthRank: finances.getRankLastThree([teamSeason], "expenses", "health"),
 		compositeRating,
 		depth: undefined,
 	};

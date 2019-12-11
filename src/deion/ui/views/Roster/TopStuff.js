@@ -39,6 +39,7 @@ TeamRating.propTypes = {
 
 const TopStuff = ({
 	abbrev,
+	budget,
 	currentSeason,
 	editable,
 	numConfs,
@@ -99,8 +100,12 @@ const TopStuff = ({
 									<br />
 									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
 									<br />
-									Profit: {helpers.formatCurrency(profit, "M")}
-									<br />
+									{budget ? (
+										<>
+											Profit: {helpers.formatCurrency(profit, "M")}
+											<br />
+										</>
+									) : null}
 									{showTradeFor ? `Strategy: ${t.strategy}` : null}
 								</div>
 							) : null}
@@ -124,6 +129,7 @@ const TopStuff = ({
 
 TopStuff.propTypes = {
 	abbrev: PropTypes.string.isRequired,
+	budget: PropTypes.bool.isRequired,
 	currentSeason: PropTypes.number.isRequired,
 	editable: PropTypes.bool.isRequired,
 	numConfs: PropTypes.number.isRequired,

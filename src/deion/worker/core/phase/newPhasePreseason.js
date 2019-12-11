@@ -77,8 +77,8 @@ const newPhasePreseason = async (conditions: Conditions) => {
 		throw new Error("scoutingRank should be defined");
 	}
 
-	const coachingRanks = teamSeasons.map(
-		teamSeason => teamSeason.expenses.coaching.rank,
+	const coachingRanks = teamSeasons.map(teamSeason =>
+		finances.getRankLastThree([teamSeason], "expenses", "coaching"),
 	);
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [

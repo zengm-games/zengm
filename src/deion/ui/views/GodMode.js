@@ -32,6 +32,7 @@ class GodMode extends React.Component {
 			draftType: props.draftType,
 			playersRefuseToNegotiate: String(props.playersRefuseToNegotiate),
 			allStarGame: String(props.allStarGame),
+			budget: String(props.budget),
 		};
 		this.handleChanges = {
 			disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -63,6 +64,7 @@ class GodMode extends React.Component {
 				"playersRefuseToNegotiate",
 			),
 			allStarGame: this.handleChange.bind(this, "allStarGame"),
+			budget: this.handleChange.bind(this, "budget"),
 		};
 		this.handleFormSubmit = this.handleFormSubmit.bind(this);
 		this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -94,6 +96,7 @@ class GodMode extends React.Component {
 				draftType: nextProps.draftType,
 				playersRefuseToNegotiate: String(nextProps.playersRefuseToNegotiate),
 				allStarGame: String(nextProps.allStarGame),
+				budget: String(nextProps.budget),
 			};
 		}
 
@@ -167,6 +170,7 @@ class GodMode extends React.Component {
 			draftType: this.state.draftType,
 			playersRefuseToNegotiate: this.state.playersRefuseToNegotiate === "true",
 			allStarGame: this.state.allStarGame === "true",
+			budget: this.state.budget === "true",
 		});
 
 		this.setState({
@@ -534,6 +538,44 @@ class GodMode extends React.Component {
 								<option value="false">Disabled</option>
 							</select>
 						</div>
+						<div className="col-sm-3 col-6 form-group">
+							<label>
+								Budget{" "}
+								<HelpPopover placement="left" title="Budget">
+									<p>
+										By default, an important part of this game is managing your
+										team's budget. If you don't make enough profit, you can get
+										fired.
+									</p>
+									<p>
+										If instead you just want to manage the team without worrying
+										about that stuff, set this option to "Disabled".
+									</p>
+									<p>Disabling the budget does a few things:</p>
+									<ol>
+										<li>
+											Hides team cash, revenue, expenses, and profit from
+											various parts of the UI.
+										</li>
+										<li>Stops the owner from caring about profit</li>
+										<li>
+											Hides the expense categories (scouting, coaching, health,
+											facilities) and sets their effects for every team to the
+											league average.
+										</li>
+									</ol>
+								</HelpPopover>
+							</label>
+							<select
+								className="form-control"
+								disabled={!godMode}
+								onChange={this.handleChanges.budget}
+								value={this.state.budget}
+							>
+								<option value="true">Enabled</option>
+								<option value="false">Disabled</option>
+							</select>
+						</div>
 					</div>
 
 					<h3 className="mt-2">Events</h3>
@@ -736,6 +778,7 @@ GodMode.propTypes = {
 	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
 	allStarGame: PropTypes.bool.isRequired,
+	budget: PropTypes.bool.isRequired,
 };
 
 export default GodMode;

@@ -29,6 +29,7 @@ async function updateLeagueFinances(
 		});
 
 		return {
+			budget: g.budget,
 			currentSeason: g.season,
 			hardCap: g.hardCap,
 			season: inputs.season,

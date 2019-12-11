@@ -80,6 +80,7 @@ class Roster extends React.Component {
 	render() {
 		const {
 			abbrev,
+			budget,
 			currentSeason,
 			editable,
 			maxRosterSize,
@@ -156,6 +157,7 @@ class Roster extends React.Component {
 
 				<TopStuff
 					abbrev={abbrev}
+					budget={budget}
 					currentSeason={currentSeason}
 					editable={editable}
 					numConfs={numConfs}
@@ -343,6 +345,7 @@ class Roster extends React.Component {
 
 Roster.propTypes = {
 	abbrev: PropTypes.string.isRequired,
+	budget: PropTypes.bool.isRequired,
 	currentSeason: PropTypes.number.isRequired,
 	editable: PropTypes.bool.isRequired,
 	maxRosterSize: PropTypes.number.isRequired,

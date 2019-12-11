@@ -65,6 +65,7 @@ const defaultGameAttributes: GameAttributes = {
 	defaultStadiumCapacity: 25000,
 	playersRefuseToNegotiate: true,
 	allStarGame: true,
+	budget: true,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

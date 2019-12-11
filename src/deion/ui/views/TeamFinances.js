@@ -352,6 +352,7 @@ const TeamFinances = ({
 	abbrev,
 	barData,
 	barSeasons,
+	budget,
 	contractTotals,
 	contracts,
 	gamesInProgress,
@@ -473,6 +474,14 @@ const TeamFinances = ({
 				salaryCap={salaryCap}
 			/>
 
+			{budget ? null : (
+				<p className="text-danger">
+					The budget is disabled in this league, so most of the information
+					usually shown here is hidden. You can change the budget setting in{" "}
+					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+				</p>
+			)}
+
 			<div className="row">
 				<div className="col-md-3 col-sm-2">
 					<h4>Wins</h4>
@@ -526,80 +535,84 @@ const TeamFinances = ({
 						/>
 					</div>
 				</div>
-				<div className="col-lg-4 col-md-3 col-sm-3 mb-3">
-					<h4>Revenue</h4>
-					<div id="bar-graph-revenue" className="bar-graph-large">
-						<BarGraph
-							data={[
-								barData.revenues.nationalTv,
-								barData.revenues.localTv,
-								barData.revenues.ticket,
-								barData.revenues.sponsor,
-								barData.revenues.merch,
-								barData.revenues.luxuryTaxShare,
-							]}
-							labels={[
-								barSeasons,
-								[
-									"national TV revenue",
-									"local TV revenue",
-									"ticket revenue",
-									"corporate sponsorship revenue",
-									"merchandising revenue",
-									"luxury tax share revenue",
-								],
-							]}
-							tooltipCb={val => helpers.formatCurrency(val / 1000, "M", 1)}
+				{budget ? (
+					<div className="col-lg-4 col-md-3 col-sm-3 mb-3">
+						<h4>Revenue</h4>
+						<div id="bar-graph-revenue" className="bar-graph-large">
+							<BarGraph
+								data={[
+									barData.revenues.nationalTv,
+									barData.revenues.localTv,
+									barData.revenues.ticket,
+									barData.revenues.sponsor,
+									barData.revenues.merch,
+									barData.revenues.luxuryTaxShare,
+								]}
+								labels={[
+									barSeasons,
+									[
+										"national TV revenue",
+										"local TV revenue",
+										"ticket revenue",
+										"corporate sponsorship revenue",
+										"merchandising revenue",
+										"luxury tax share revenue",
+									],
+								]}
+								tooltipCb={val => helpers.formatCurrency(val / 1000, "M", 1)}
+							/>
+						</div>
+						<br />
+						<br />
+						<h4>Expenses</h4>
+						<div id="bar-graph-expenses" className="bar-graph-large">
+							<BarGraph
+								data={[
+									barData.expenses.salary,
+									barData.expenses.minTax,
+									barData.expenses.luxuryTax,
+									barData.expenses.scouting,
+									barData.expenses.coaching,
+									barData.expenses.health,
+									barData.expenses.facilities,
+								]}
+								labels={[
+									barSeasons,
+									[
+										"player salaries",
+										"minimum payroll tax",
+										"luxury tax",
+										"scouting",
+										"coaching",
+										"health",
+										"facilities",
+									],
+								]}
+								tooltipCb={val => helpers.formatCurrency(val / 1000, "M", 1)}
+							/>
+						</div>
+						<br />
+						<br />
+						<h4>Cash (cumulative)</h4>
+						<div id="bar-graph-cash" className="bar-graph-medium">
+							<BarGraph
+								data={barData.cash}
+								labels={barSeasons}
+								tooltipCb={val => helpers.formatCurrency(val, "M", 1)}
+							/>
+						</div>
+					</div>
+				) : null}
+				{budget ? (
+					<div className="col-lg-5 col-md-6 col-sm-7">
+						<FinancesForm
+							gamesInProgress={gamesInProgress}
+							t={t}
+							tid={tid}
+							userTid={userTid}
 						/>
 					</div>
-					<br />
-					<br />
-					<h4>Expenses</h4>
-					<div id="bar-graph-expenses" className="bar-graph-large">
-						<BarGraph
-							data={[
-								barData.expenses.salary,
-								barData.expenses.minTax,
-								barData.expenses.luxuryTax,
-								barData.expenses.scouting,
-								barData.expenses.coaching,
-								barData.expenses.health,
-								barData.expenses.facilities,
-							]}
-							labels={[
-								barSeasons,
-								[
-									"player salaries",
-									"minimum payroll tax",
-									"luxury tax",
-									"scouting",
-									"coaching",
-									"health",
-									"facilities",
-								],
-							]}
-							tooltipCb={val => helpers.formatCurrency(val / 1000, "M", 1)}
-						/>
-					</div>
-					<br />
-					<br />
-					<h4>Cash (cumulative)</h4>
-					<div id="bar-graph-cash" className="bar-graph-medium">
-						<BarGraph
-							data={barData.cash}
-							labels={barSeasons}
-							tooltipCb={val => helpers.formatCurrency(val, "M", 1)}
-						/>
-					</div>
-				</div>
-				<div className="col-lg-5 col-md-6 col-sm-7">
-					<FinancesForm
-						gamesInProgress={gamesInProgress}
-						t={t}
-						tid={tid}
-						userTid={userTid}
-					/>
-				</div>
+				) : null}
 			</div>
 
 			<h2>Player Salaries</h2>
@@ -626,6 +639,7 @@ TeamFinances.propTypes = {
 	abbrev: PropTypes.string.isRequired,
 	barData: PropTypes.object.isRequired,
 	barSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,
+	budget: PropTypes.bool.isRequired,
 	contractTotals: PropTypes.arrayOf(PropTypes.number).isRequired,
 	contracts: PropTypes.arrayOf(PropTypes.object).isRequired,
 	gamesInProgress: PropTypes.bool.isRequired,

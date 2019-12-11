@@ -95,6 +95,7 @@ export type GameAttributeKey =
 	| "allStarGame"
 	| "autoDeleteOldBoxScores"
 	| "brotherRate"
+	| "budget"
 	| "confs"
 	| "easyDifficultyInPast"
 	| "daysLeft"

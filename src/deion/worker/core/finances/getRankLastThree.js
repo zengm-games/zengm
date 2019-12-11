@@ -21,27 +21,29 @@ const getRankLastThree = (
 ): number => {
 	const defaultRank = (g.numTeams + 1) / 2;
 
-	const s = teamSeasons.length - 1; // Most recent season index
-	if (s > 1) {
-		// Use three seasons if possible
-		return (
-			(teamSeasons[s][category][item].rank +
-				teamSeasons[s - 1][category][item].rank +
-				teamSeasons[s - 2][category][item].rank) /
-			3
-		);
-	}
-	if (s > 0) {
-		// Use two seasons if possible
-		return (
-			(teamSeasons[s][category][item].rank +
-				teamSeasons[s - 1][category][item].rank +
-				defaultRank) /
-			3
-		);
-	}
-	if (s === 0) {
-		return (teamSeasons[s][category][item].rank + 2 * defaultRank) / 3;
+	if (g.budget) {
+		const s = teamSeasons.length - 1; // Most recent season index
+		if (s > 1) {
+			// Use three seasons if possible
+			return (
+				(teamSeasons[s][category][item].rank +
+					teamSeasons[s - 1][category][item].rank +
+					teamSeasons[s - 2][category][item].rank) /
+				3
+			);
+		}
+		if (s > 0) {
+			// Use two seasons if possible
+			return (
+				(teamSeasons[s][category][item].rank +
+					teamSeasons[s - 1][category][item].rank +
+					defaultRank) /
+				3
+			);
+		}
+		if (s === 0) {
+			return (teamSeasons[s][category][item].rank + 2 * defaultRank) / 3;
+		}
 	}
 
 	return defaultRank;

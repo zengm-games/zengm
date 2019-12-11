@@ -29,6 +29,7 @@ async function updateTeamFinances(
 			luxuryPayroll: g.luxuryPayroll / 1000,
 			luxuryTax: g.luxuryTax,
 			userTid: g.userTid,
+			budget: g.budget,
 		};
 
 		const contracts = await team.getContracts(inputs.tid);

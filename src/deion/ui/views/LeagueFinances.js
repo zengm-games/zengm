@@ -4,6 +4,7 @@ import { getCols, helpers, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const LeagueFinances = ({
+	budget,
 	currentSeason,
 	hardCap,
 	minPayroll,
@@ -16,16 +17,18 @@ const LeagueFinances = ({
 }) => {
 	setTitle(`League Finances - ${season}`);
 
-	const cols = getCols(
-		"Team",
-		"Pop",
-		"Avg Attendance",
-		"Revenue (YTD)",
-		"Profit (YTD)",
-		"Cash",
-		"Payroll",
-		"Cap Space",
-	);
+	const cols = budget
+		? getCols(
+				"Team",
+				"Pop",
+				"Avg Attendance",
+				"Revenue (YTD)",
+				"Profit (YTD)",
+				"Cash",
+				"Payroll",
+				"Cap Space",
+		  )
+		: getCols("Team", "Pop", "Avg Attendance", "Payroll", "Cap Space");
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
@@ -42,9 +45,13 @@ const LeagueFinances = ({
 				</a>,
 				helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 				helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
-				helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
-				helpers.formatCurrency(t.seasonAttrs.profit, "M"),
-				helpers.formatCurrency(t.seasonAttrs.cash, "M"),
+				...(budget
+					? [
+							helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
+							helpers.formatCurrency(t.seasonAttrs.profit, "M"),
+							helpers.formatCurrency(t.seasonAttrs.cash, "M"),
+					  ]
+					: []),
 				helpers.formatCurrency(payroll, "M"),
 				helpers.formatCurrency(salaryCap - payroll, "M"),
 			],
@@ -95,6 +102,7 @@ const LeagueFinances = ({
 };
 
 LeagueFinances.propTypes = {
+	budget: PropTypes.bool.isRequired,
 	currentSeason: PropTypes.number.isRequired,
 	hardCap: PropTypes.bool.isRequired,
 	minPayroll: PropTypes.number.isRequired,

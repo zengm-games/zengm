@@ -40,6 +40,7 @@ async function updateRoster(
 
 		const vars: any = {
 			abbrev: inputs.abbrev,
+			budget: g.budget,
 			currentSeason: g.season,
 			editable,
 			maxRosterSize: g.maxRosterSize,

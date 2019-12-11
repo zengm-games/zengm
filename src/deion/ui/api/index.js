@@ -61,14 +61,12 @@ const initAds = (goldUntil: number | void) => {
 			const showDivs =
 				window.screen && window.screen.width < 768
 					? ["bbgm-ads-mobile"]
-					: process.env.SPORT === "basketball"
-					? [
+					: [
 							"bbgm-ads-top",
 							"bbgm-ads-bottom1",
 							"bbgm-ads-bottom2",
 							"skyscraper-wrapper",
-					  ]
-					: ["bbgm-ads-top", "skyscraper-wrapper"];
+					  ];
 			for (const id of showDivs) {
 				const div = document.getElementById(id);
 				if (div) {
@@ -79,21 +77,15 @@ const initAds = (goldUntil: number | void) => {
 			const adDivs =
 				window.screen && window.screen.width < 768
 					? ["bbgm-ads-mobile"]
-					: process.env.SPORT === "basketball"
-					? [
+					: [
 							"bbgm-ads-top",
 							"bbgm-ads-bottom1",
 							"bbgm-ads-bottom2",
 							"bbgm-ads-skyscraper",
-					  ]
-					: ["bbgm-ads-top", "bbgm-ads-skyscraper"];
+					  ];
 
 			window.bbgmAds.init(adDivs).then(() => {
-				if (
-					window.screen &&
-					window.screen.width >= 768 &&
-					process.env.SPORT === "basketball"
-				) {
+				if (window.screen && window.screen.width >= 768) {
 					// Show the logo too
 					const logo = document.getElementById("bbgm-ads-logo");
 					if (logo) {

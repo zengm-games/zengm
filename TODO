@@ -1,3 +1,5 @@
+football end of game clock management situations are not very good...
+
 box score order
 - userTid always at top!
 
@@ -123,8 +125,6 @@ backboard -> idb
 - quota errors
 
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
-
-football end of game clock management situations are not very good...
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
 

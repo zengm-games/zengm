@@ -1,4 +1,12 @@
 football end of game clock management situations are not very good...
+- plan:
+  - hack gamesim to always put it in fg position with like 30 seconds left, run sim and see what happens
+  - then make changes in simPlay:
+    - if isClockRunning and in field goal range and field goal is needed (check needsTouchdown, and in quarter >=4 just run out the clock if winning), stop clock with a few seconds left
+  - make sure to confirm:
+    - never run out the clock trying to get closer at the end of the half/OT when a FG is already possible, unless needTouchdown
+    - when kicking a field goal at the end of a half/OT, make sure to let the clock run down so there is no time left after
+- add tests to confirm this stuff works!
 
 box score order
 - userTid always at top!
@@ -30,6 +38,8 @@ game highs
 - store in normal player stats object (like Lng in football)
 
 add more variance in player development with some kind of professionalism/ambition rating https://old.reddit.com/r/BasketballGM/comments/e15yuv/unpredictability_of_progression_and_the_football/
+
+metric option
 
 team rating
 - currently for past seasons, includes traded players on both teams. so intead, store value at end of each season
@@ -131,6 +141,8 @@ football roster balance issues https://imgur.com/HmK00EF @Eddy
 football OL with 49 height listed as 5'7"
 
 football too many players retire
+
+football goal line fumbles https://old.reddit.com/r/Football_GM/comments/e9qa0p/goal_line_fumbles/
 
 https://old.reddit.com/r/nfl/comments/ct3eph/im_dumbmatter_creator_of_football_gm_a_free/exjp0b9/
 

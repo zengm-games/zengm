@@ -454,7 +454,7 @@ class GameSim {
 			quarter !== 1 &&
 			quarter !== 3 &&
 			!needTouchdown &&
-			this.probMadeFieldGoal() >= 0.05
+			this.probMadeFieldGoal() >= 0.02
 		) {
 			return "fieldGoal";
 		}

@@ -6,6 +6,8 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2019-12-11: Added a "Budget" option to God Mode, which lets you equalize all the team spending effects (scouting, coaching, facilities, health) and ignore whether your team is making a profit or loss. [[1]](https://old.reddit.com/r/BasketballGM/comments/e5qq7l/thoughts_on_a_potential_no_finances_mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/e9d9xs/new_in_version_201912111267_a_budget_option_in/) [[3]](https://old.reddit.com/r/Football_GM/comments/e9dakv/new_in_version_201912111268_a_budget_option_in/)
 
+* 2019-12-07: Change team ovr ratings to be unbounded rather than 0-100, because some multiplayer leagues and custom roster files people use have very unflated ratings and half the league ends up at 100.
+
 * 2019-12-01: Show region population on league finances page.
 
 * 2019-11-25: Player names and countries are now more realistic in FBGM, rather than just being copied from BBGM. [[1]](https://old.reddit.com/r/Football_GM/comments/e1hocb/new_in_version_201911250934_player_names_and/)
@@ -59,3 +61,5 @@ Entries in bold are ones important enough that I would have put them in [the old
 * 2019-11-02:  Fix team history pages for players with no ratings for a team, only stats (like for custom rosters with historical stats)
 
 * **2019-11-02: Multiple improvements to BBGM game simulation, mostly related to more realistic behavior in the play-by-play. [[1]](https://old.reddit.com/r/BasketballGM/comments/dqoc8u/game_simulation_improvements_beta/) [[2]](https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/) [[3]](https://old.reddit.com/r/BasketballGM/comments/dtyef8/game_simulation_improvements_and_tweaks_to_ovr/)**
+
+Commits older than https://github.com/dumbmatter/gm-games/commits/master?after=41ed58eec17c0584e539d09b32ad3425bfb821ad+0 are not listed here. Maybe some day I will go through them and update this!

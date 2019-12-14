@@ -1,13 +1,3 @@
-football end of game clock management situations are not very good...
-- plan:
-  - hack gamesim to always put it in fg position with like 30 seconds left, run sim and see what happens
-  - then make changes in simPlay:
-    - if isClockRunning and in field goal range and field goal is needed (check needsTouchdown, and in quarter >=4 just run out the clock if winning), stop clock with a few seconds left
-  - make sure to confirm:
-    - never run out the clock trying to get closer at the end of the half/OT when a FG is already possible, unless needTouchdown
-    - when kicking a field goal at the end of a half/OT, make sure to let the clock run down so there is no time left after
-- add tests to confirm this stuff works!
-
 box score order
 - userTid always at top!
 

@@ -352,6 +352,17 @@ class GameSim {
 		return 0;
 	}
 
+	hurryUp() {
+		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+		const quarter = this.team[0].stat.ptsQtrs.length;
+
+		return (
+			((quarter === 2 && this.scrimmage >= 50) ||
+				(quarter >= 4 && ptsDown >= 0)) &&
+			this.clock <= 2
+		);
+	}
+
 	getPlayType() {
 		if (this.awaitingKickoff !== undefined) {
 			return Math.random() < this.probOnside() ? "onsideKick" : "kickoff";
@@ -448,9 +459,9 @@ class GameSim {
 		// Don't kick a FG when we really need a touchdown!
 		const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2;
 
-		// If there are under 6 seconds left in the half/overtime, maybe try a field goal
+		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
-			this.clock <= 0.1 &&
+			this.clock <= 10 / 60 &&
 			quarter !== 1 &&
 			quarter !== 3 &&
 			!needTouchdown &&
@@ -609,7 +620,19 @@ class GameSim {
 		}
 
 		// Time between plays (can be more than 40 seconds because there is time before the play clock starts)
-		let dtClockRunning = this.isClockRunning ? random.randInt(25, 50) / 60 : 0;
+		let dtClockRunning = 0;
+		if (this.isClockRunning) {
+			if (this.hurryUp()) {
+				dtClockRunning = random.randInt(5, 12) / 60;
+
+				// Leave some time for a FG attempt!
+				if (this.clock - dt - dtClockRunning < 0) {
+					dtClockRunning = random.randInt(0, 4) / 60;
+				}
+			} else {
+				dtClockRunning = random.randInt(26, 50) / 60;
+			}
+		}
 
 		// Check two minute warning again
 		if (

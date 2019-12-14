@@ -1425,7 +1425,7 @@ class GameSim {
 		}
 
 		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
-		if (Math.random() < 0.025) {
+		if (Math.random() < (lost ? 0.01 : 0.0001)) {
 			ydsRaw += random.randInt(0, 109);
 		}
 		const yds = this.boundedYds(ydsRaw);

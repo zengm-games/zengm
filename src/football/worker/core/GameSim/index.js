@@ -972,6 +972,7 @@ class GameSim {
 
 				if (td) {
 					this.recordStat(this.o, kickReturner, "krTD");
+					this.isClockRunning = false;
 				} else {
 					this.down = 1;
 					this.toGo = 10;
@@ -1043,6 +1044,7 @@ class GameSim {
 
 				if (td) {
 					this.recordStat(this.o, kickReturner, "krTD");
+					this.isClockRunning = false;
 				} else {
 					this.down = 1;
 					this.toGo = 10;
@@ -1158,6 +1160,7 @@ class GameSim {
 
 			if (td) {
 				this.recordStat(this.o, puntReturner, "prTD");
+				this.isClockRunning = false;
 			} else {
 				this.down = 1;
 				this.toGo = 10;
@@ -1430,6 +1433,7 @@ class GameSim {
 			this.recordStat(recoveringTeam, pRecovered, "defFmbLng", yds);
 			if (td) {
 				this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
+				this.isClockRunning = false;
 			} else if (Math.random() < this.probFumble(pRecovered)) {
 				dt += this.doFumble(pRecovered, 0);
 			}
@@ -1476,6 +1480,7 @@ class GameSim {
 			this.recordStat(this.o, p, "defIntLng", yds);
 			if (td) {
 				this.recordStat(this.o, p, "defIntTD");
+				this.isClockRunning = false;
 			} else if (Math.random() < this.probFumble(p)) {
 				dt += this.doFumble(p, 0);
 			}
@@ -1704,12 +1709,13 @@ class GameSim {
 					yds,
 				});
 
+				this.isClockRunning = Math.random() < 0.75;
+
 				if (td) {
 					this.recordStat(this.o, qb, "pssTD");
 					this.recordStat(this.o, target, "recTD");
+					this.isClockRunning = false;
 				}
-
-				this.isClockRunning = Math.random() < 0.75;
 
 				if (safetyOrTouchback) {
 					this.doSafety();
@@ -1823,11 +1829,12 @@ class GameSim {
 			yds,
 		});
 
+		this.isClockRunning = Math.random() < 0.85;
+
 		if (td) {
 			this.recordStat(this.o, p, "rusTD");
+			this.isClockRunning = false;
 		}
-
-		this.isClockRunning = Math.random() < 0.85;
 
 		if (safetyOrTouchback) {
 			this.doSafety();

@@ -330,8 +330,8 @@ const Dashboard = ({ leagues }: Props) => {
 					}}
 				>
 					{process.env.SPORT === "football"
-						? "Try our other game, Basketball GM!"
-						: "Try our other game, Football GM!"}
+						? "Try our other game, Basketball GM"
+						: "Try our other game, Football GM"}
 				</a>
 				<a
 					href="http://zengm.com/"

@@ -100,7 +100,7 @@ const addTeam = async (
 	});
 
 	const dpOffset = g.phase > PHASE.DRAFT ? 1 : 0;
-	for (let i = 0; i < 4; i++) {
+	for (let i = 0; i < g.numSeasonsFutureDraftPicks; i++) {
 		const draftYear = g.season + dpOffset + i;
 
 		for (let round = 1; round <= g.numDraftRounds; round++) {
@@ -1167,6 +1167,41 @@ const updateBudget = async (budgetAmounts: {
 };
 
 const updateGameAttributes = async (gameAttributes: GameAttributes) => {
+	if (
+		gameAttributes.numSeasonsFutureDraftPicks < g.numSeasonsFutureDraftPicks
+	) {
+		// This season and the next N-1 seasons
+		let maxSeason = g.season + gameAttributes.numSeasonsFutureDraftPicks - 1;
+		if (g.phase >= PHASE.AFTER_DRAFT) {
+			// ...and one more season, since the draft is over
+			maxSeason += 1;
+		}
+
+		// Delete draft picks beyond new numSeasonsFutureDraftPicks
+		const draftPicks = await idb.cache.draftPicks.getAll();
+		for (const dp of draftPicks) {
+			if (dp.season !== "fantasy" && dp.season > maxSeason) {
+				await idb.cache.draftPicks.delete(dp.dpid);
+			}
+		}
+	} else if (
+		gameAttributes.numSeasonsFutureDraftPicks > g.numSeasonsFutureDraftPicks
+	) {
+		// This season and the next N-1 seasons
+		let oldMaxSeason = g.season + g.numSeasonsFutureDraftPicks - 1;
+		if (g.phase >= PHASE.AFTER_DRAFT) {
+			// ...and one more season, since the draft is over
+			oldMaxSeason += 1;
+		}
+
+		const numSeasonsToAdd =
+			gameAttributes.numSeasonsFutureDraftPicks - g.numSeasonsFutureDraftPicks;
+		for (let i = 1; i <= numSeasonsToAdd; i++) {
+			const season = oldMaxSeason + i;
+			await draft.genPicks(season);
+		}
+	}
+
 	await league.setGameAttributes(gameAttributes);
 	await toUI(["realtimeUpdate", ["gameAttributes"]]);
 };

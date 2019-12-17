@@ -38,6 +38,7 @@ async function updateGodMode(
 			playersRefuseToNegotiate: g.playersRefuseToNegotiate,
 			allStarGame: g.allStarGame,
 			budget: g.budget,
+			numSeasonsFutureDraftPicks: g.numSeasonsFutureDraftPicks,
 		};
 	}
 }

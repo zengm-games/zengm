@@ -5,7 +5,7 @@ import { idb } from "../../db";
 import { g } from "../../util";
 
 const newPhaseAfterDraft = async () => {
-	await draft.genPicks(g.season + 4);
+	await draft.genPicks(g.season + g.numSeasonsFutureDraftPicks);
 
 	// Delete any old draft picks
 	const draftPicks = await idb.cache.draftPicks.getAll();

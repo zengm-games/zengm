@@ -45,7 +45,7 @@ describe("worker/core/league/create", () => {
 		assert.equal(leagueData.gameAttributes.gameOver, false);
 		assert.equal(leagueData.gameAttributes.daysLeft, 0);
 
-		assert.equal(Object.keys(leagueData.gameAttributes).length, 50);
+		assert.equal(Object.keys(leagueData.gameAttributes).length, 51);
 	});
 
 	test("initialize teams object store", async () => {

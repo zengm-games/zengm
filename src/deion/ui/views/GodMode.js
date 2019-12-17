@@ -33,6 +33,7 @@ class GodMode extends React.Component {
 			playersRefuseToNegotiate: String(props.playersRefuseToNegotiate),
 			allStarGame: String(props.allStarGame),
 			budget: String(props.budget),
+			numSeasonsFutureDraftPicks: props.numSeasonsFutureDraftPicks,
 		};
 		this.handleChanges = {
 			disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -65,6 +66,10 @@ class GodMode extends React.Component {
 			),
 			allStarGame: this.handleChange.bind(this, "allStarGame"),
 			budget: this.handleChange.bind(this, "budget"),
+			numSeasonsFutureDraftPicks: this.handleChange.bind(
+				this,
+				"numSeasonsFutureDraftPicks",
+			),
 		};
 		this.handleFormSubmit = this.handleFormSubmit.bind(this);
 		this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -97,6 +102,7 @@ class GodMode extends React.Component {
 				playersRefuseToNegotiate: String(nextProps.playersRefuseToNegotiate),
 				allStarGame: String(nextProps.allStarGame),
 				budget: String(nextProps.budget),
+				numSeasonsFutureDraftPicks: nextProps.numSeasonsFutureDraftPicks,
 			};
 		}
 
@@ -115,7 +121,7 @@ class GodMode extends React.Component {
 
 		let numGamesPlayoffSeries;
 		let numPlayoffByes = parseInt(this.state.numPlayoffByes, 10);
-		if (Number.isNaN(numPlayoffByes)) {
+		if (Number.isNaN(numPlayoffByes) || numPlayoffByes < 0) {
 			numPlayoffByes = 0;
 		}
 		try {
@@ -146,6 +152,17 @@ class GodMode extends React.Component {
 			return;
 		}
 
+		let numSeasonsFutureDraftPicks = parseInt(
+			this.state.numSeasonsFutureDraftPicks,
+			10,
+		);
+		if (
+			Number.isNaN(numSeasonsFutureDraftPicks) ||
+			numSeasonsFutureDraftPicks < 0
+		) {
+			numSeasonsFutureDraftPicks = 4;
+		}
+
 		await toWorker("updateGameAttributes", {
 			disableInjuries: this.state.disableInjuries === "true",
 			numGames: parseInt(this.state.numGames, 10),
@@ -166,11 +183,12 @@ class GodMode extends React.Component {
 			sonRate: parseFloat(this.state.sonRate),
 			hardCap: this.state.hardCap === "true",
 			numGamesPlayoffSeries,
-			numPlayoffByes: parseInt(this.state.numPlayoffByes, 10),
+			numPlayoffByes,
 			draftType: this.state.draftType,
 			playersRefuseToNegotiate: this.state.playersRefuseToNegotiate === "true",
 			allStarGame: this.state.allStarGame === "true",
 			budget: this.state.budget === "true",
+			numSeasonsFutureDraftPicks,
 		});
 
 		this.setState({
@@ -369,11 +387,28 @@ class GodMode extends React.Component {
 								<option value="random">Random Order</option>
 							</select>
 						</div>
+						<div className="col-sm-3 col-6 form-group">
+							<label>
+								# Tradable Draft Pick Seasons{" "}
+								<HelpPopover title="# Tradable Draft Pick Seasons">
+									Number of seasons in the future to generate tradable draft
+									picks for. The default value is 4. If you set this to 0, it
+									disables all trading of draft picks.
+								</HelpPopover>
+							</label>
+							<input
+								type="text"
+								className="form-control"
+								disabled={!godMode}
+								onChange={this.handleChanges.numSeasonsFutureDraftPicks}
+								value={this.state.numSeasonsFutureDraftPicks}
+							/>
+						</div>
 						{process.env.SPORT === "basketball" ? (
 							<div className="col-sm-3 col-6 form-group">
 								<label>
 									All-Star Game{" "}
-									<HelpPopover placement="left" title="All-Star Game">
+									<HelpPopover placement="right" title="All-Star Game">
 										<p>
 											Changing this will not affect an in-progress season, only
 											future seasons.
@@ -779,6 +814,7 @@ GodMode.propTypes = {
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
 	allStarGame: PropTypes.bool.isRequired,
 	budget: PropTypes.bool.isRequired,
+	numSeasonsFutureDraftPicks: PropTypes.number.isRequired,
 };
 
 export default GodMode;

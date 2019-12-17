@@ -4,9 +4,11 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2019-12-14: Fewer fumbles recovered by the offense will result in large yardage gains after recovery.
+* 2019-12-16: New God Mode option to set the number of seasons in the future that you can trade draft picks. [[1]](https://old.reddit.com/r/BasketballGM/comments/ebq59y/version_201912170204_new_god_mode_option_to_set/) [[2]](https://old.reddit.com/r/Football_GM/comments/ebq5at/version_201912170206_new_god_mode_option_to_set/)
 
-* 2019-12-14: Smarter end of half/game clock management in FBGM, most importantly resulting in more field goals as the clock runs out.
+* 2019-12-14: Fewer fumbles recovered by the offense will result in large yardage gains after recovery. [[1]](https://old.reddit.com/r/Football_GM/comments/eaosau/a_couple_game_simulation_improvements_in_version/)
+
+* 2019-12-14: Smarter end of half/game clock management in FBGM, most importantly resulting in more field goals as the clock runs out. [[1]](https://old.reddit.com/r/Football_GM/comments/eaosau/a_couple_game_simulation_improvements_in_version/)
 
 * 2019-12-11: Added a "Budget" option to God Mode, which lets you equalize all the team spending effects (scouting, coaching, facilities, health) and ignore whether your team is making a profit or loss. [[1]](https://old.reddit.com/r/BasketballGM/comments/e5qq7l/thoughts_on_a_potential_no_finances_mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/e9d9xs/new_in_version_201912111267_a_budget_option_in/) [[3]](https://old.reddit.com/r/Football_GM/comments/e9dakv/new_in_version_201912111268_a_budget_option_in/)
 

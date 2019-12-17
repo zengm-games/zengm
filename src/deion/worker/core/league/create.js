@@ -191,7 +191,7 @@ export const createWithoutSaving = (
 	// Needs to be done after g is set
 	const teams = teamInfos.map(t => team.generate(t));
 
-	// Draft picks for the first 4 years, as those are the ones can be traded initially
+	// Draft picks for the first g.numSeasonsFutureDraftPicks years, as those are the ones can be traded initially
 	let draftPicks: any;
 	if (leagueFile.hasOwnProperty("draftPicks")) {
 		draftPicks = leagueFile.draftPicks;
@@ -202,7 +202,7 @@ export const createWithoutSaving = (
 		}
 	} else {
 		draftPicks = [];
-		for (let i = 0; i < 4; i++) {
+		for (let i = 0; i < g.numSeasonsFutureDraftPicks; i++) {
 			for (let t = 0; t < teams.length; t++) {
 				for (let round = 1; round <= g.numDraftRounds; round++) {
 					draftPicks.push({

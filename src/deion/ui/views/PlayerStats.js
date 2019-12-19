@@ -53,7 +53,7 @@ const PlayerStats = ({
 
 	const rows = players.map(p => {
 		let pos;
-		if (p.ratings.constructor === Array) {
+		if (Array.isArray(p.ratings) && p.ratings.length > 0) {
 			pos = p.ratings[p.ratings.length - 1].pos;
 		} else if (p.ratings.pos) {
 			pos = p.ratings.pos;

@@ -27,10 +27,8 @@ const valueChange = async (
 	let add = [];
 	let remove = [];
 
-	// Get team strategy and population, for future use
 	const t = await idb.getCopy.teamsPlus({
 		attrs: ["strategy"],
-		seasonAttrs: ["pop"],
 		stats: ["gp"],
 		season: g.season,
 		tid,
@@ -40,10 +38,6 @@ const valueChange = async (
 	}
 
 	const strategy = t.strategy;
-	let pop = t.seasonAttrs.pop;
-	if (pop > 20) {
-		pop = 20;
-	}
 	const gpAvg = helpers.bound(t.stats.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
 
 	const payroll = await getPayroll(tid);

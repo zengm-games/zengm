@@ -226,6 +226,9 @@ class GameSim {
 
 		this.t = g.quarterLength; // Game clock, in minutes
 
+		this.foulRate = g.foulRate;
+		this.foulsNeededToFoulOut = g.foulsNeededToFoulOut;
+
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 
@@ -515,7 +518,7 @@ class GameSim {
 				// Injured or fouled out players can't play
 				if (
 					this.team[t].player[p].injured ||
-					this.team[t].player[p].stat.pf >= 6
+					this.team[t].player[p].stat.pf >= foulsNeededToFoulOut
 				) {
 					ovrs[p] = -Infinity;
 				} else {
@@ -1107,7 +1110,8 @@ class GameSim {
 
 		let foulFactor =
 			0.65 *
-			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2;
+			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
+			foulRate;
 		if (this.allStarGame) {
 			foulFactor *= 0.4;
 		}

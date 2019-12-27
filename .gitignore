@@ -9,3 +9,6 @@ build
 yarn-error.log
 local.log
 stats-*.html
+.idea/gm-games.iml
+.idea/modules.xml
+.idea/vcs.xml

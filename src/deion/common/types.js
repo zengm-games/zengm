@@ -105,7 +105,7 @@ export type GameAttributeKey =
 	| "divs"
 	| "draftType"
 	| "foulsNeededToFoulOut"
-	| "foulRate"
+	| "foulRateFactor"
 	| "gameOver"
 	| "godMode"
 	| "godModeInPast"

@@ -34,7 +34,7 @@ class GodMode extends React.Component {
 			allStarGame: String(props.allStarGame),
 			budget: String(props.budget),
 			numSeasonsFutureDraftPicks: props.numSeasonsFutureDraftPicks,
-			godModeFoulFactor: props.godModeFoulFactor,
+			foulRateFactor: props.foulRateFactor,
 			foulsNeededToFoulOut: props.foulsNeededToFoulOut,
 		};
 		this.handleChanges = {
@@ -72,7 +72,7 @@ class GodMode extends React.Component {
 				this,
 				"numSeasonsFutureDraftPicks",
 			),
-			godModeFoulFactor: this.handleChange.bind(this, "godModeFoulFactor"),
+			foulRateFactor: this.handleChange.bind(this, "foulRateFactor"),
 			foulsNeededToFoulOut: this.handleChange.bind(
 				this,
 				"foulsNeededToFoulOut",
@@ -110,7 +110,7 @@ class GodMode extends React.Component {
 				allStarGame: String(nextProps.allStarGame),
 				budget: String(nextProps.budget),
 				numSeasonsFutureDraftPicks: nextProps.numSeasonsFutureDraftPicks,
-				godModeFoulFactor: nextProps.godModeFoulFactor,
+				foulRateFactor: nextProps.foulRateFactor,
 				foulsNeededToFoulOut: nextProps.foulsNeededToFoulOut,
 			};
 		}
@@ -198,7 +198,7 @@ class GodMode extends React.Component {
 			allStarGame: this.state.allStarGame === "true",
 			budget: this.state.budget === "true",
 			numSeasonsFutureDraftPicks,
-			godModeFoulFactor: parseFloat(this.state.godModeFoulFactor),
+			foulRateFactor: parseFloat(this.state.foulRateFactor),
 			foulsNeededToFoulOut: parseInt(this.state.foulsNeededToFoulOut, 10),
 		});
 
@@ -762,44 +762,6 @@ class GodMode extends React.Component {
 								value={this.state.sonRate}
 							/>
 						</div>
-						{process.env.SPORT === "basketball" ? (
-							<div className="col-sm-3 col-6 form-group">
-								<label>
-									Foul Factor{" "}
-									<HelpPopover placement="right" title="Foul Factor">
-										Changes the likelihood that a foul occurs. Default = 1.
-									</HelpPopover>
-								</label>
-								<input
-									type="text"
-									className="form-control"
-									disabled={!godMode}
-									onChange={this.handleChanges.godModeFoulFactor}
-									value={this.state.godModeFoulFactor}
-								/>
-							</div>
-						) : null}
-						{process.env.SPORT === "basketball" ? (
-							<div className="col-sm-3 col-6 form-group">
-								<label>
-									Fouls Needed to Foul Out{" "}
-									<HelpPopover
-										placement="right"
-										title="Fouls Needed to Foul Out"
-									>
-										The number of fouls needed before a player fouls out of the
-										game.
-									</HelpPopover>
-								</label>
-								<input
-									type="text"
-									className="form-control"
-									disabled={!godMode}
-									onChange={this.handleChanges.foulsNeededToFoulOut}
-									value={this.state.foulsNeededToFoulOut}
-								/>
-							</div>
-						) : null}
 					</div>
 
 					<h3 className="mt-2">Game Simulation</h3>
@@ -825,6 +787,36 @@ class GodMode extends React.Component {
 								</div>
 							</div>
 						</div>
+						{process.env.SPORT === "basketball" ? (
+							<div className="col-sm-3 col-6 form-group">
+								<label>
+									Foul Rate Factor{" "}
+									<HelpPopover placement="right" title="Foul Rate Factor">
+										The baseline foul rates for shooting and non-shooting fouls
+										are multiplied by this number.
+									</HelpPopover>
+								</label>
+								<input
+									type="text"
+									className="form-control"
+									disabled={!godMode}
+									onChange={this.handleChanges.foulRateFactor}
+									value={this.state.foulRateFactor}
+								/>
+							</div>
+						) : null}
+						{process.env.SPORT === "basketball" ? (
+							<div className="col-sm-3 col-6 form-group">
+								<label># Fouls Needed to Foul Out</label>
+								<input
+									type="text"
+									className="form-control"
+									disabled={!godMode}
+									onChange={this.handleChanges.foulsNeededToFoulOut}
+									value={this.state.foulsNeededToFoulOut}
+								/>
+							</div>
+						) : null}
 					</div>
 
 					<button className="btn btn-primary mt-3" disabled={!godMode}>
@@ -864,6 +856,8 @@ GodMode.propTypes = {
 	allStarGame: PropTypes.bool.isRequired,
 	budget: PropTypes.bool.isRequired,
 	numSeasonsFutureDraftPicks: PropTypes.number.isRequired,
+	foulRateFactor: PropTypes.number.isRequired,
+	foulsNeededToFoulOut: PropTypes.number.isRequired,
 };
 
 export default GodMode;

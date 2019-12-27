@@ -918,7 +918,7 @@ class GameSim {
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
-		if (Math.random() < 0.08 * g.godModeFoulFactor || intentionalFoul) {
+		if (Math.random() < 0.08 * g.foulRateFactor || intentionalFoul) {
 			this.doPf(this.d);
 
 			// In the bonus?
@@ -1107,7 +1107,7 @@ class GameSim {
 		let foulFactor =
 			0.65 *
 			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
-			g.godModeFoulFactor;
+			g.foulRateFactor;
 		if (this.allStarGame) {
 			foulFactor *= 0.4;
 		}

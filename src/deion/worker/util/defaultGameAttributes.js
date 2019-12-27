@@ -68,7 +68,7 @@ const defaultGameAttributes: GameAttributes = {
 	budget: true,
 	numSeasonsFutureDraftPicks: 4,
 
-	foulRate: 1,
+	godModeFoulFactor: 1,
 	foulsNeededToFoulOut: 6,
 };
 

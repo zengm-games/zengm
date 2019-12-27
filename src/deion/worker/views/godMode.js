@@ -39,7 +39,7 @@ async function updateGodMode(
 			allStarGame: g.allStarGame,
 			budget: g.budget,
 			numSeasonsFutureDraftPicks: g.numSeasonsFutureDraftPicks,
-			foulRate: g.foulRate,
+			godModeFoulFactor: g.godModeFoulFactor,
 			foulsNeededToFoulOut: g.foulsNeededToFoulOut,
 		};
 	}

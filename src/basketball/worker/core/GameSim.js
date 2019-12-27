@@ -226,9 +226,6 @@ class GameSim {
 
 		this.t = g.quarterLength; // Game clock, in minutes
 
-		this.foulRate = g.foulRate;
-		this.foulsNeededToFoulOut = g.foulsNeededToFoulOut;
-
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 
@@ -921,7 +918,7 @@ class GameSim {
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
-		if (Math.random() < 0.08 * g.foulRate || intentionalFoul) {
+		if (Math.random() < 0.08 * g.godModeFoulFactor || intentionalFoul) {
 			this.doPf(this.d);
 
 			// In the bonus?
@@ -1107,15 +1104,10 @@ class GameSim {
 				probMake += 0.1;
 			}
 		}
-		let foulFactor;
-		if (g.foulRate > 0) {
-			foulFactor =
-				0.65 *
-				(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
-				g.foulRate;
-		} else {
-			foulFactor = 0;
-		}
+		let foulFactor =
+			0.65 *
+			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
+			g.godModeFoulFactor;
 		if (this.allStarGame) {
 			foulFactor *= 0.4;
 		}

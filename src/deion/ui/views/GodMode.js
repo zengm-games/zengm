@@ -34,7 +34,7 @@ class GodMode extends React.Component {
 			allStarGame: String(props.allStarGame),
 			budget: String(props.budget),
 			numSeasonsFutureDraftPicks: props.numSeasonsFutureDraftPicks,
-			foulRate: props.foulRate,
+			godModeFoulFactor: props.godModeFoulFactor,
 			foulsNeededToFoulOut: props.foulsNeededToFoulOut,
 		};
 		this.handleChanges = {
@@ -72,7 +72,7 @@ class GodMode extends React.Component {
 				this,
 				"numSeasonsFutureDraftPicks",
 			),
-			foulRate: this.handleChange.bind(this, "foulRate"),
+			godModeFoulFactor: this.handleChange.bind(this, "godModeFoulFactor"),
 			foulsNeededToFoulOut: this.handleChange.bind(
 				this,
 				"foulsNeededToFoulOut",
@@ -110,7 +110,7 @@ class GodMode extends React.Component {
 				allStarGame: String(nextProps.allStarGame),
 				budget: String(nextProps.budget),
 				numSeasonsFutureDraftPicks: nextProps.numSeasonsFutureDraftPicks,
-				foulRate: nextProps.foulRate,
+				godModeFoulFactor: nextProps.godModeFoulFactor,
 				foulsNeededToFoulOut: nextProps.foulsNeededToFoulOut,
 			};
 		}
@@ -198,7 +198,7 @@ class GodMode extends React.Component {
 			allStarGame: this.state.allStarGame === "true",
 			budget: this.state.budget === "true",
 			numSeasonsFutureDraftPicks,
-			foulRate: parseFloat(this.state.foulRate),
+			godModeFoulFactor: parseFloat(this.state.godModeFoulFactor),
 			foulsNeededToFoulOut: parseInt(this.state.foulsNeededToFoulOut, 10),
 		});
 
@@ -748,37 +748,6 @@ class GodMode extends React.Component {
 						</div>
 						<div className="col-sm-3 col-6 form-group">
 							<label>
-								Foul Rate{" "}
-								<HelpPopover placement="right" title="Foul Rate">
-									Changes the likelihood that a foul occurs. Default = 1.
-								</HelpPopover>
-							</label>
-							<input
-								type="text"
-								className="form-control"
-								disabled={!godMode}
-								onChange={this.handleChanges.foulRate}
-								value={this.state.foulRate}
-							/>
-						</div>
-						<div className="col-sm-3 col-6 form-group">
-							<label>
-								Fouls Needed to Foul Out{" "}
-								<HelpPopover placement="right" title="Fouls Needed to Foul Out">
-									The number of fouls needed before a player fouls out of the
-									game.
-								</HelpPopover>
-							</label>
-							<input
-								type="text"
-								className="form-control"
-								disabled={!godMode}
-								onChange={this.handleChanges.foulsNeededToFoulOut}
-								value={this.state.foulsNeededToFoulOut}
-							/>
-						</div>
-						<div className="col-sm-3 col-6 form-group">
-							<label>
 								Son Rate{" "}
 								<HelpPopover placement="right" title="Son Rate">
 									The probability that a new player will be the son of an
@@ -793,6 +762,44 @@ class GodMode extends React.Component {
 								value={this.state.sonRate}
 							/>
 						</div>
+						{process.env.SPORT === "basketball" ? (
+							<div className="col-sm-3 col-6 form-group">
+								<label>
+									Foul Factor{" "}
+									<HelpPopover placement="right" title="Foul Factor">
+										Changes the likelihood that a foul occurs. Default = 1.
+									</HelpPopover>
+								</label>
+								<input
+									type="text"
+									className="form-control"
+									disabled={!godMode}
+									onChange={this.handleChanges.godModeFoulFactor}
+									value={this.state.godModeFoulFactor}
+								/>
+							</div>
+						) : null}
+						{process.env.SPORT === "basketball" ? (
+							<div className="col-sm-3 col-6 form-group">
+								<label>
+									Fouls Needed to Foul Out{" "}
+									<HelpPopover
+										placement="right"
+										title="Fouls Needed to Foul Out"
+									>
+										The number of fouls needed before a player fouls out of the
+										game.
+									</HelpPopover>
+								</label>
+								<input
+									type="text"
+									className="form-control"
+									disabled={!godMode}
+									onChange={this.handleChanges.foulsNeededToFoulOut}
+									value={this.state.foulsNeededToFoulOut}
+								/>
+							</div>
+						) : null}
 					</div>
 
 					<h3 className="mt-2">Game Simulation</h3>

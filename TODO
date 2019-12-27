@@ -1,3 +1,9 @@
+FBGM rookie contract length
+- https://old.reddit.com/r/Football_GM/comments/eddhp1/fixing_ai_team_contract_logic/
+
+QB AV calculation problems
+- detailed description of problem: https://old.reddit.com/r/Football_GM/comments/eg68ot/av_calculation_is_broken_for_qbs/
+
 value should be more ovr-based
 - https://old.reddit.com/r/BasketballGM/comments/ecr0mw/20192020_nba_roster_v_11_traded_draft_picks_up_to/fbk80xj/?context=3
 
@@ -16,6 +22,7 @@ from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age 
 - maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
 - EstWS = (1/64) * max(Pot-40,0)^2
 - logit(Retire) = 0.3 + (1/146.35) * (max(Age-18,0)^2) - 0.961 * max(EstWS,WS)
+- at the same time, look at re-signing, particularly of players coming off rookie contracts. too often become FAs!
 
 illness @mattable#4273
 - pass to teammates or opponents

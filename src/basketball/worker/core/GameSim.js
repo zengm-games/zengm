@@ -921,7 +921,7 @@ class GameSim {
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
-		if (Math.random() < 0.08 || intentionalFoul) {
+		if (Math.random() < 0.08 * g.foulRate || intentionalFoul) {
 			this.doPf(this.d);
 
 			// In the bonus?

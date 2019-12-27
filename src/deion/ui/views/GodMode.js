@@ -72,8 +72,11 @@ class GodMode extends React.Component {
 				this,
 				"numSeasonsFutureDraftPicks",
 			),
-			foulRate: this.handleChange.bind(this, foulRate),
-			foulsNeededToFoulOut: this.handleChange.bind(this, foulsNeededToFoulOut),
+			foulRate: this.handleChange.bind(this, "foulRate"),
+			foulsNeededToFoulOut: this.handleChange.bind(
+				this,
+				"foulsNeededToFoulOut",
+			),
 		};
 		this.handleFormSubmit = this.handleFormSubmit.bind(this);
 		this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -196,7 +199,7 @@ class GodMode extends React.Component {
 			budget: this.state.budget === "true",
 			numSeasonsFutureDraftPicks,
 			foulRate: parseFloat(this.state.foulRate),
-			foulsNeededToFoulOut,
+			foulsNeededToFoulOut: parseInt(this.state.foulsNeededToFoulOut, 10),
 		});
 
 		this.setState({
@@ -747,7 +750,7 @@ class GodMode extends React.Component {
 							<label>
 								Foul Rate{" "}
 								<HelpPopover placement="right" title="Foul Rate">
-									The probability that a foul occurs.
+									Changes the likelihood that a foul occurs. Default = 1.
 								</HelpPopover>
 							</label>
 							<input

@@ -9,3 +9,4 @@ build
 yarn-error.log
 local.log
 stats-*.html
+.idea/

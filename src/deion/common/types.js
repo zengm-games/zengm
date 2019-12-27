@@ -104,6 +104,8 @@ export type GameAttributeKey =
 	| "difficulty"
 	| "divs"
 	| "draftType"
+	| "foulsNeededToFoulOut"
+	| "foulRate"
 	| "gameOver"
 	| "godMode"
 	| "godModeInPast"

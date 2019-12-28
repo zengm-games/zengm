@@ -106,13 +106,16 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 		} else if (deltas.money < 0) {
 			text = "Be careful about losing too much money.";
 		}
-		if (currentTotal + deltas.money + deltas.playoffs + deltas.wins < -1) {
-			text = "Another season like that and you're fired!";
-		} else if (
-			currentTotal + 2 * (deltas.money + deltas.playoffs + deltas.wins) <
-			-1
-		) {
-			text = "A couple more seasons like that and you're fired!";
+
+		if (g.season >= g.gracePeriodEnd) {
+			if (currentTotal + deltas.money + deltas.playoffs + deltas.wins < -1) {
+				text = "Another season like that and you're fired!";
+			} else if (
+				currentTotal + 2 * (deltas.money + deltas.playoffs + deltas.wins) <
+				-1
+			) {
+				text = "A couple more seasons like that and you're fired!";
+			}
 		}
 
 		m += `<p>This year: ${thisYear}</p><p>Overall: ${overall}</p>`;

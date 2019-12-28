@@ -515,7 +515,8 @@ class GameSim {
 				// Injured or fouled out players can't play
 				if (
 					this.team[t].player[p].injured ||
-					this.team[t].player[p].stat.pf >= g.foulsNeededToFoulOut
+					(g.foulsNeededToFoulOut > 0 &&
+						this.team[t].player[p].stat.pf >= g.foulsNeededToFoulOut)
 				) {
 					ovrs[p] = -Infinity;
 				} else {
@@ -1558,7 +1559,10 @@ class GameSim {
 		this.recordStat(this.d, p, "pf");
 		this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);
 		// Foul out
-		if (this.team[this.d].player[p].stat.pf >= g.foulsNeededToFoulOut) {
+		if (
+			g.foulsNeededToFoulOut > 0 &&
+			this.team[this.d].player[p].stat.pf >= g.foulsNeededToFoulOut
+		) {
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
 			// Force substitutions now
 			this.updatePlayersOnCourt(shooter);

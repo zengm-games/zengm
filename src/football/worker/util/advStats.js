@@ -109,10 +109,10 @@ const calculateAV = (players, teams, league) => {
 		// Passing
 		score += (p.stats.pssYds / t.stats.pssYds) * teamPtsPss[p.tid];
 		if (p.stats.pss / p.stats.gp >= 400 / 16) {
-			if (p.stats.pssYdsPerAtt > league.pssYdsPerAtt) {
-				score += 0.5 * (p.stats.pssYdsPerAtt - league.pssYdsPerAtt);
+			if (p.stats.pssAdjYdsPerAtt > league.pssAdjYdsPerAtt) {
+				score += 0.5 * (p.stats.pssAdjYdsPerAtt - league.pssAdjYdsPerAtt);
 			} else {
-				score += 2 * (p.stats.pssYdsPerAtt - league.pssYdsPerAtt);
+				score += 2 * (p.stats.pssAdjYdsPerAtt - league.pssAdjYdsPerAtt);
 			}
 		}
 
@@ -151,7 +151,7 @@ const advStats = async () => {
 			"gs",
 			"pss",
 			"pssYds",
-			"pssYdsPerAtt",
+			"pssAdjYdsPerAtt",
 			"rus",
 			"rusYds",
 			"rusYdsPerAtt",
@@ -181,6 +181,8 @@ const advStats = async () => {
 		"drives",
 		"pss",
 		"pssYds",
+		"pssTD",
+		"pssInt",
 		"rus",
 		"rusYds",
 		"rec",
@@ -205,7 +207,8 @@ const advStats = async () => {
 		return memo;
 	}, {});
 	league.ptsPerDrive = league.pts / league.drives;
-	league.pssYdsPerAtt = league.pssYds / league.pss;
+	league.pssAdjYdsPerAtt =
+		(league.pssYds + 20 * league.pssTD - 45 * league.pssInt) / league.pss;
 	league.rusYdsPerAtt = league.rusYds / league.rus;
 	league.recYdsPerAtt = league.recYds / league.rec;
 

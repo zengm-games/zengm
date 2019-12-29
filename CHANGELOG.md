@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2019-12-29: Fixed bugs in AV calculation.
+
 * 2019-12-27: New God Mode options to set the number of fouls needed to foul out and the foul rate. [[1]](https://old.reddit.com/r/BasketballGM/comments/egi54x/new_god_mode_options_to_set_the_number_of_fouls/)
 
 * 2019-12-16: New God Mode option to set the number of seasons in the future that you can trade draft picks. [[1]](https://old.reddit.com/r/BasketballGM/comments/ebq59y/version_201912170204_new_god_mode_option_to_set/) [[2]](https://old.reddit.com/r/Football_GM/comments/ebq5at/version_201912170206_new_god_mode_option_to_set/)

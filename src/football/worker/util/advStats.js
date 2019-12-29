@@ -88,31 +88,31 @@ const calculateAV = (players, teams, league) => {
 
 		// Rushing
 		score += (p.stats.rusYds / t.stats.rusYds) * teamPtsRus[p.tid];
-		if (p.stats.rus >= 200) {
+		if (p.stats.rus / p.stats.gp >= 200 / 16) {
 			if (p.stats.rusYdsPerAtt > league.rusYdsPerAtt) {
 				score += 0.75 * (p.stats.rusYdsPerAtt - league.rusYdsPerAtt);
 			} else {
-				score -= 2 * (p.stats.rusYdsPerAtt - league.rusYdsPerAtt);
+				score += 2 * (p.stats.rusYdsPerAtt - league.rusYdsPerAtt);
 			}
 		}
 
 		// Receiving
 		score += (p.stats.recYds / t.stats.recYds) * teamPtsRec[p.tid];
-		if (p.stats.rec >= 70) {
+		if (p.stats.rec / p.stats.gp >= 70 / 16) {
 			if (p.stats.recYdsPerAtt > league.recYdsPerAtt) {
 				score += 0.5 * (p.stats.recYdsPerAtt - league.recYdsPerAtt);
 			} else {
-				score -= 2 * (p.stats.recYdsPerAtt - league.recYdsPerAtt);
+				score += 2 * (p.stats.recYdsPerAtt - league.recYdsPerAtt);
 			}
 		}
 
 		// Passing
 		score += (p.stats.pssYds / t.stats.pssYds) * teamPtsPss[p.tid];
-		if (p.stats.pss >= 400) {
+		if (p.stats.pss / p.stats.gp >= 400 / 16) {
 			if (p.stats.pssYdsPerAtt > league.pssYdsPerAtt) {
 				score += 0.5 * (p.stats.pssYdsPerAtt - league.pssYdsPerAtt);
 			} else {
-				score -= 2 * (p.stats.pssYdsPerAtt - league.pssYdsPerAtt);
+				score += 2 * (p.stats.pssYdsPerAtt - league.pssYdsPerAtt);
 			}
 		}
 

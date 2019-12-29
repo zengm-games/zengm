@@ -630,7 +630,7 @@ class GameSim {
 					dtClockRunning = random.randInt(0, 4) / 60;
 				}
 			} else {
-				dtClockRunning = random.randInt(26, 50) / 60;
+				dtClockRunning = random.randInt(35, 60) / 60;
 			}
 		}
 

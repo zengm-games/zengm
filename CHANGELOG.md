@@ -4,7 +4,9 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2019-12-29: Fixed bugs in AV calculation.
+* 2019-12-29: Decreased pace in FBGM, to make it more similar to the NFL (~1000 plays/year per team, rather than ~1200).
+
+* 2019-12-29: Fixed bugs in AV calculation. [[1]](https://old.reddit.com/r/Football_GM/comments/eg68ot/av_calculation_is_broken_for_qbs/fchi9ld/)
 
 * 2019-12-27: New God Mode options to set the number of fouls needed to foul out and the foul rate. [[1]](https://old.reddit.com/r/BasketballGM/comments/egi54x/new_god_mode_options_to_set_the_number_of_fouls/)
 

@@ -73,6 +73,8 @@ const StatsTable = ({
 	);
 
 	if (superCols) {
+		superCols = helpers.deepCopy(superCols);
+
 		// No name
 		superCols[0].colspan -= 1;
 	}

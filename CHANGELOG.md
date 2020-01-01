@@ -74,4 +74,26 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * **2019-11-02: Multiple improvements to BBGM game simulation, mostly related to more realistic behavior in the play-by-play. [[1]](https://old.reddit.com/r/BasketballGM/comments/dqoc8u/game_simulation_improvements_beta/) [[2]](https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/) [[3]](https://old.reddit.com/r/BasketballGM/comments/dtyef8/game_simulation_improvements_and_tweaks_to_ovr/)**
 
-Commits older than https://github.com/dumbmatter/gm-games/commits/master?after=41ed58eec17c0584e539d09b32ad3425bfb821ad+0 are not listed here. Maybe some day I will go through them and update this!
+* **2019-10-27: Made long-term effects of injuries viewable on player pages, along with a log of all player injuries. [[1]](https://basketball-gm.com/blog/2019/10/improvements-injury-system/) [[2]](https://old.reddit.com/r/BasketballGM/comments/do0jtz/new_in_bbgm_201910271376_more_injury_info_and/) [[3]](https://old.reddit.com/r/Football_GM/comments/do0jss/new_in_version_201910271377_more_injury_info_and/)**
+
+* 2019-10-22: New UI for the dashboard. [[1]](https://basketball-gm.com/blog/2019/10/new-dashboard-ui/) [[2]](https://old.reddit.com/r/BasketballGM/comments/dlpkdr/new_dashboard_ui_in_version_201910221337/) [[3]](https://old.reddit.com/r/Football_GM/comments/dlpkqu/new_dashboard_ui_in_version_201910221338/)
+
+* 2019-10-19: Added more keyboard shortcuts to the items in the Play menu. [[1]](https://old.reddit.com/r/BasketballGM/comments/djyy10/more_keyboard_shortcuts_in_version_201910190261/) [[2]](https://old.reddit.com/r/Football_GM/comments/djyyl1/more_keyboard_shortcuts_in_version_201910190263/)
+
+* 2019-10-13: Added special gold basketball/football logos for Gold subscribers.
+
+* 2019-10-13: Added "Type" column to statistical feats table, allowing the display of regular season, playoff, and All-Star feats all in one table.
+
+* 2019-10-13: Fixed a rare bug in draft lottery odds.
+
+* 2019-10-13: Added an "Export" button for each draft class on the Draft Scouting page.
+
+* 2019-10-11: Revamped the Manage Teams page. Some features are available outside of God Mode, and team colors are editable. [[1]](https://old.reddit.com/r/BasketballGM/comments/dgk9d1/some_minor_updates_in_version_201910111184/)
+
+* 2019-10-11: Fixed bug where All-Star starters were incorrect. [[1]](https://old.reddit.com/r/BasketballGM/comments/dgk9d1/some_minor_updates_in_version_201910111184/)
+
+* 2019-10-11: New frivolities: Most Teams and Oldest Former Players. [[1]](https://old.reddit.com/r/BasketballGM/comments/dgk9d1/some_minor_updates_in_version_201910111184/)
+
+* **2019-10-10: New player faces! [[1]](https://old.reddit.com/r/BasketballGM/comments/dg1jrp/new_player_faces_in_version_201910101057/) [[2]](https://old.reddit.com/r/Football_GM/comments/dg1jqt/new_player_faces_in_version_201910101058/) [[3]](https://old.reddit.com/r/BasketballGM/comments/dfp99h/thoughts_on_changing_the_default_cartoon_faces_to/)**
+
+Commits older than https://github.com/dumbmatter/gm-games/commits/master?after=c7f56be87febd2c58f4f5ed61e34a461369c9532+0 are not listed here. Maybe some day I will go through them and update this!

@@ -670,33 +670,34 @@ export const createWithoutSaving = (
 		}
 	}
 	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
-	if (
-		createUndrafted1 > 0 &&
-		g.phase !== PHASE.FANTASY_DRAFT &&
-		(g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.RESIGN_PLAYERS)
-	) {
-		const draftClass = draft.genPlayersWithoutSaving(
-			g.season + seasonOffset,
-			scoutingRank,
-			createUndrafted1,
-		);
-		players = players.concat(draftClass);
-	}
-	if (createUndrafted2 > 0) {
-		const draftClass = draft.genPlayersWithoutSaving(
-			g.season + 1 + seasonOffset,
-			scoutingRank,
-			createUndrafted2,
-		);
-		players = players.concat(draftClass);
-	}
-	if (createUndrafted3 > 0) {
-		const draftClass = draft.genPlayersWithoutSaving(
-			g.season + 2 + seasonOffset,
-			scoutingRank,
-			createUndrafted3,
-		);
-		players = players.concat(draftClass);
+	if (g.phase !== PHASE.FANTASY_DRAFT) {
+		if (
+			createUndrafted1 > 0 &&
+			(g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.RESIGN_PLAYERS)
+		) {
+			const draftClass = draft.genPlayersWithoutSaving(
+				g.season + seasonOffset,
+				scoutingRank,
+				createUndrafted1,
+			);
+			players = players.concat(draftClass);
+		}
+		if (createUndrafted2 > 0) {
+			const draftClass = draft.genPlayersWithoutSaving(
+				g.season + 1 + seasonOffset,
+				scoutingRank,
+				createUndrafted2,
+			);
+			players = players.concat(draftClass);
+		}
+		if (createUndrafted3 > 0) {
+			const draftClass = draft.genPlayersWithoutSaving(
+				g.season + 2 + seasonOffset,
+				scoutingRank,
+				createUndrafted3,
+			);
+			players = players.concat(draftClass);
+		}
 	}
 
 	return Object.assign(leagueData, {

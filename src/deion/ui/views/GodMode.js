@@ -309,7 +309,7 @@ const options = [
 ];
 
 if (process.env.SPORT === "basketball") {
-	options.push([
+	options.push(
 		{
 			category: "League Structure",
 			key: "allStarGame",
@@ -337,7 +337,7 @@ if (process.env.SPORT === "basketball") {
 				}
 			},
 		},
-	]);
+	);
 }
 
 const encodeDecodeFunctions = {

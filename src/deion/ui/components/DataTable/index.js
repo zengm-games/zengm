@@ -13,6 +13,7 @@ import Row from "./Row";
 import Pagination from "./Pagination";
 import PerPage from "./PerPage";
 import SettingsCache from "./SettingsCache";
+import createFilterFunction from "./createFilterFunction";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
@@ -272,29 +273,10 @@ class DataTable extends React.Component<Props, State> {
 	}
 
 	processRows() {
-		const filters = this.state.enableFilters
-			? this.state.filters.map((filter, i) => {
-					if (
-						this.props.cols[i].sortType === "number" ||
-						this.props.cols[i].sortType === "currency"
-					) {
-						let number = filter.replace(/[^0-9.<>]/g, "");
-						let direction;
-						if (number[0] === ">" || number[0] === "<" || number[0] === "=") {
-							direction = number[0];
-							number = number.slice(1); // Remove first char
-						}
-						number = parseFloat(number);
-
-						return {
-							direction,
-							original: filter,
-							number,
-						};
-					}
-
-					return filter.toLowerCase();
-			  })
+		const filterFunctions = this.state.enableFilters
+			? this.state.filters.map((filter, i) =>
+					createFilterFunction(filter, this.props.cols[i].sortType),
+			  )
 			: [];
 
 		const skipFiltering =
@@ -329,43 +311,8 @@ class DataTable extends React.Component<Props, State> {
 								continue;
 							}
 
-							const filter = filters[i];
-
-							if (typeof filter === "string") {
-								if (filter === "") {
-									continue;
-								}
-
-								if (!getSearchVal(row.data[i]).includes(filter)) {
-									return false;
-								}
-							} else {
-								if (Number.isNaN(filter.number)) {
-									continue;
-								}
-
-								const numericVal = parseFloat(
-									getSortVal(row.data[i], this.props.cols[i].sortType),
-								);
-								if (Number.isNaN(numericVal)) {
-									continue;
-								}
-
-								if (filter.direction === ">" && numericVal < filter.number) {
-									return false;
-								}
-								if (filter.direction === "<" && numericVal > filter.number) {
-									return false;
-								}
-								if (filter.direction === "=" && numericVal !== filter.number) {
-									return false;
-								}
-								if (
-									filter.direction === undefined &&
-									!getSearchVal(row.data[i]).includes(filter.original)
-								) {
-									return false;
-								}
+							if (filterFunctions[i](row.data[i]) === false) {
+								return false;
 							}
 						}
 					}

@@ -5,48 +5,6 @@ import React, { useState } from "react";
 import { HelpPopover, NewWindowLink } from "../components";
 import { localActions, logEvent, setTitle, toWorker } from "../util";
 
-const encodeDecodeFunctions = {
-	bool: {
-		stringify: value => String(value),
-		parse: value => value === "true",
-	},
-	float: {
-		stringify: value => String(value),
-		parse: value => {
-			const parsed = parseFloat(value);
-			if (Number.isNaN(parsed)) {
-				throw new Error(`"${value}" is not a valid number`);
-			}
-			return parsed;
-		},
-	},
-	float1000: {
-		stringify: value => String(value / 1000),
-		parse: value => {
-			const parsed = parseFloat(value) * 1000;
-			if (Number.isNaN(parsed)) {
-				throw new Error(`"${value}" is not a valid number`);
-			}
-			return parsed;
-		},
-	},
-	int: {
-		stringify: value => String(value),
-		parse: value => {
-			const parsed = parseInt(value, 10);
-			if (Number.isNaN(parsed)) {
-				throw new Error(`"${value}" is not a valid integer`);
-			}
-			return parsed;
-		},
-	},
-	string: {},
-	jsonString: {
-		stringify: value => JSON.stringify(value),
-		parse: value => JSON.parse(value),
-	},
-};
-
 const options = [
 	{
 		category: "League Structure",
@@ -348,38 +306,81 @@ const options = [
 		helpText:
 			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 	},
-	...(process.env.SPORT === "basketball"
-		? [
-				{
-					category: "League Structure",
-					key: "allStarGame",
-					name: "All-Star Game",
-					type: "bool",
-					helpText:
-						"Changing this will not affect an in-progress season, only future seasons.",
-				},
-				{
-					category: "Game Simulation",
-					key: "foulRateFactor",
-					name: "Foul Rate Factor",
-					type: "float",
-					helpText:
-						"The baseline foul rates for shooting and non-shooting fouls are multiplied by this number.",
-				},
-				{
-					category: "Game Simulation",
-					key: "foulsNeededToFoulOut",
-					name: "# Fouls Needed to Foul Out",
-					type: "int",
-					validator: value => {
-						if (value < 0) {
-							throw new Error("Value cannot be less than 0");
-						}
-					},
-				},
-		  ]
-		: []),
 ];
+
+if (process.env.SPORT === "basketball") {
+	options.push([
+		{
+			category: "League Structure",
+			key: "allStarGame",
+			name: "All-Star Game",
+			type: "bool",
+			helpText:
+				"Changing this will not affect an in-progress season, only future seasons.",
+		},
+		{
+			category: "Game Simulation",
+			key: "foulRateFactor",
+			name: "Foul Rate Factor",
+			type: "float",
+			helpText:
+				"The baseline foul rates for shooting and non-shooting fouls are multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "foulsNeededToFoulOut",
+			name: "# Fouls Needed to Foul Out",
+			type: "int",
+			validator: value => {
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0");
+				}
+			},
+		},
+	]);
+}
+
+const encodeDecodeFunctions = {
+	bool: {
+		stringify: value => String(value),
+		parse: value => value === "true",
+	},
+	float: {
+		stringify: value => String(value),
+		parse: value => {
+			const parsed = parseFloat(value);
+			if (Number.isNaN(parsed)) {
+				throw new Error(`"${value}" is not a valid number`);
+			}
+			return parsed;
+		},
+	},
+	float1000: {
+		stringify: value => String(value / 1000),
+		parse: value => {
+			const parsed = parseFloat(value) * 1000;
+			if (Number.isNaN(parsed)) {
+				throw new Error(`"${value}" is not a valid number`);
+			}
+			return parsed;
+		},
+	},
+	int: {
+		stringify: value => String(value),
+		parse: value => {
+			const parsed = parseInt(value, 10);
+			if (Number.isNaN(parsed)) {
+				throw new Error(`"${value}" is not a valid integer`);
+			}
+			return parsed;
+		},
+	},
+	string: {},
+	jsonString: {
+		stringify: value => JSON.stringify(value),
+		parse: value => JSON.parse(value),
+	},
+};
 
 const groupedOptions = groupBy(options, "category");
 

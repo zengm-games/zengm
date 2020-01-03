@@ -10,7 +10,7 @@ const createFilterFunction = (
 ) => {
 	const filters = originalFilterText
 		.split("|")
-		.map(text => text.trim())
+		.map(text => text.trim().toLowerCase())
 		.filter(text => text !== "" && text !== "|")
 		.map(text => {
 			let direction;

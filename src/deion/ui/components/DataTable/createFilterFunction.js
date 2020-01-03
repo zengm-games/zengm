@@ -8,31 +8,44 @@ const createFilterFunction = (
 	originalFilterText: string,
 	sortType?: SortType,
 ) => {
-	const filterTexts = originalFilterText
+	const filters = originalFilterText
 		.split("|")
 		.map(text => text.trim())
-		.filter(text => text !== "" && text !== "|");
+		.filter(text => text !== "" && text !== "|")
+		.map(text => {
+			let direction;
+			let number;
 
-	// false - doesn't match. true - does match
-	return (value: any) => {
-		if (filterTexts.length === 0) {
-			return true;
-		}
-
-		for (const filterText of filterTexts) {
 			if (sortType === "number" || sortType === "currency") {
-				let number = filterText.replace(/[^0-9.<>]/g, "");
-				let direction;
+				number = text.replace(/[^0-9.<>]/g, "");
 				if (number[0] === ">" || number[0] === "<" || number[0] === "=") {
 					direction = number[0];
 					number = number.slice(1); // Remove first char
 				}
 				number = parseFloat(number);
+			}
 
-				if (Number.isNaN(number)) {
-					continue;
-				}
+			return {
+				direction,
+				number,
+				text,
+			};
+		})
+		.filter(({ number }) => {
+			if (sortType === "number" || sortType === "currency") {
+				return !Number.isNaN(number);
+			}
+			return true;
+		});
 
+	// false - doesn't match. true - does match
+	return (value: any) => {
+		if (filters.length === 0) {
+			return true;
+		}
+
+		for (const { direction, number, text } of filters) {
+			if (sortType === "number" || sortType === "currency") {
 				const numericVal = parseFloat(getSortVal(value, sortType));
 				if (Number.isNaN(numericVal)) {
 					continue;
@@ -47,13 +60,10 @@ const createFilterFunction = (
 				if (direction === "=" && numericVal === number) {
 					return true;
 				}
-				if (
-					direction === undefined &&
-					getSearchVal(value).includes(filterText)
-				) {
+				if (direction === undefined && getSearchVal(value).includes(text)) {
 					return true;
 				}
-			} else if (getSearchVal(value).includes(filterText)) {
+			} else if (getSearchVal(value).includes(text)) {
 				return true;
 			}
 		}

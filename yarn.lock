@@ -1404,11 +1404,6 @@ boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-boolean-parser@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/boolean-parser/-/boolean-parser-0.0.2.tgz#58721f1172e65fd132d6e6debbd00053deaffa12"
-  integrity sha1-WHIfEXLmX9Ey1ubeu9AAU96v+hI=
-
 bootstrap@^4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-4.4.1.tgz#8582960eea0c5cd2bede84d8b0baf3789c3e8b01"

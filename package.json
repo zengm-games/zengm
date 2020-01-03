@@ -38,7 +38,6 @@
 		"array-move": "^2.2.1",
 		"backboard": "^1.0.11",
 		"bbgm-router": "^2.0.1",
-		"boolean-parser": "^0.0.2",
 		"bootstrap": "^4.4.1",
 		"classnames": "^2.2.6",
 		"d3-axis": "^1.0.12",

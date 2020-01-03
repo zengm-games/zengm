@@ -20,6 +20,11 @@ const Controls = ({
 	onSearch: (SyntheticInputEvent<HTMLInputElement>) => void,
 	onToggleFilters: () => void,
 }) => {
+	const positionFilterText =
+		process.env.SPORT === "football"
+			? '"WR|TE" under a Position column to display wide receivers and tight ends'
+			: '"C|PF" under a Position column to display centers and power forwards';
+
 	return (
 		<div className="datatable-controls">
 			<HelpPopover
@@ -37,6 +42,10 @@ const Controls = ({
 					For numeric columns, you can enter "&gt;50" to show values greater
 					than or equal to 50, "&lt;50" for the opposite, and "=50" for values
 					exactly equal to 50.
+				</p>
+				<p>
+					You can also filter on multiple values at once. For example, enter{" "}
+					{positionFilterText}.
 				</p>
 			</HelpPopover>
 			<a

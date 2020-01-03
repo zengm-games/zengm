@@ -1,6 +1,4 @@
-some kind of support for boolean operators in filtering @Jackets#6913 @Kingben214#6428
-- https://github.com/riichard/boolean-parser-js/
-- more concise syntax
+allow specification of country frequencies independent of name frequencies
 
 get rid of injury disable option
 - already gone from god mode. eliminate from code too

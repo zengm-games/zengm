@@ -5,11 +5,13 @@ import { localActions } from "./local";
 let currentTitle;
 const setTitleBar = ({
 	title,
+	jumpTo,
 	jumpToSeason,
 	dropdownView,
 	dropdownFields = {},
 }: {
 	title: string,
+	jumpTo?: boolean,
 	jumpToSeason?: number,
 	dropdownView?: string,
 	dropdownFields?: {
@@ -23,6 +25,7 @@ const setTitleBar = ({
 
 	localActions.update({
 		title,
+		jumpTo,
 		jumpToSeason,
 		dropdownView,
 		dropdownFields,

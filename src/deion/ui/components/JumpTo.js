@@ -23,10 +23,10 @@ const JumpTo = ({ season }: { season: number | "all" }) => {
 
 	return (
 		<UncontrolledDropdown className="ml-auto">
-			<DropdownToggle caret className="btn-light-bordered">
+			<DropdownToggle caret tag="a">
 				Jump To
 			</DropdownToggle>
-			<DropdownMenu>
+			<DropdownMenu right>
 				<DropdownItem href={genUrl(["standings"], s)}>Standings</DropdownItem>
 				<DropdownItem href={genUrl(["playoffs"], s)}>Playoffs</DropdownItem>
 				<DropdownItem href={genUrl(["history"], s)}>

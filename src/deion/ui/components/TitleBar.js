@@ -7,29 +7,34 @@ import NewWindowLink from "./NewWindowLink";
 import { useLocalShallow } from "../util";
 
 const TitleBar = () => {
-	const { title, jumpToSeason, dropdownView, dropdownFields } = useLocalShallow(
-		state => ({
-			title: state.title,
-			jumpToSeason: state.jumpToSeason,
-			dropdownView: state.dropdownView,
-			dropdownFields: state.dropdownFields,
-		}),
-	);
+	const {
+		title,
+		jumpTo,
+		jumpToSeason,
+		dropdownView,
+		dropdownFields,
+	} = useLocalShallow(state => ({
+		title: state.title,
+		jumpTo: state.jumpTo,
+		jumpToSeason: state.jumpToSeason,
+		dropdownView: state.dropdownView,
+		dropdownFields: state.dropdownFields,
+	}));
 
 	return (
-		<div className="p-2 mb-2 bg-light title-bar d-flex">
+		<div className="py-2 mb-2 title-bar d-flex navbar-border">
 			<div>
 				<b>{title === undefined ? "..." : title}</b>
 				<NewWindowLink />
 			</div>
-			{dropdownView !== undefined ? (
+			{dropdownView ? (
 				<Dropdown
 					view={dropdownView}
 					fields={Object.keys(dropdownFields)}
 					values={Object.values(dropdownFields)}
 				/>
 			) : null}
-			{/*jumpToSeason !== undefined ? <JumpTo season={jumpToSeason} /> : null*/}
+			{jumpTo ? <JumpTo season={jumpToSeason} /> : null}
 		</div>
 	);
 };

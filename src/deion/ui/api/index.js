@@ -48,7 +48,6 @@ const initAds = (goldUntil: number | void) => {
 		hideAds = true;
 	}
 
-	hideAds = false;
 	if (hideAds) {
 		// Get rid of margin saved for skyscraper on right
 		const container = document.getElementsByClassName("bbgm-container")[0];
@@ -85,15 +84,15 @@ const initAds = (goldUntil: number | void) => {
 							"bbgm-ads-skyscraper",
 					  ];
 
-			/*window.bbgmAds.init(adDivs).then(() => {*/
-			if (window.screen && window.screen.width >= 768) {
-				// Show the logo too
-				const logo = document.getElementById("bbgm-ads-logo");
-				if (logo) {
-					logo.style.display = "flex";
+			window.bbgmAds.init(adDivs).then(() => {
+				if (window.screen && window.screen.width >= 768) {
+					// Show the logo too
+					const logo = document.getElementById("bbgm-ads-logo");
+					if (logo) {
+						logo.style.display = "flex";
+					}
 				}
-			}
-			//});
+			});
 		});
 	}
 };

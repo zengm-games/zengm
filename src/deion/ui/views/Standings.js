@@ -1,12 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	Dropdown,
-	JumpTo,
-	NewWindowLink,
-	ResponsiveTableWrapper,
-} from "../components";
+import { ResponsiveTableWrapper } from "../components";
 import { helpers, setTitleBar } from "../util";
 import useClickable from "../hooks/useClickable";
 
@@ -169,6 +164,7 @@ const Standings = ({
 }) => {
 	setTitleBar({
 		title: "Standings",
+		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "standings",
 		dropdownFields: {
@@ -178,11 +174,6 @@ const Standings = ({
 
 	return (
 		<>
-			<Dropdown view="standings" fields={["seasons"]} values={[season]} />
-			<JumpTo season={season} />
-			<h1>
-				Standings <NewWindowLink />
-			</h1>
 			<div className="row">
 				<div className={!playoffsByConference ? "col-md-9" : "col-12"}>
 					{confs.map((conf, i) => (

@@ -468,7 +468,7 @@ const Dropdown = ({ extraParam, fields, values, view }: Props) => {
 		<form className="form-inline">
 			{fields.map((field, i) => {
 				return (
-					<div key={field} className="form-group ml-1">
+					<div key={field} className="form-group ml-1 mb-0">
 						<Select
 							field={field}
 							value={values[i]}

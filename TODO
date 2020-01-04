@@ -3,7 +3,9 @@ redesign page titles
 - skyscraper overflow
 - test ads
 - replace all setTitle
+- shrink caret a bit, to match bootstrap
 - update title with all dropdown stuff
+- switch selects to bootstrap dropdowns, like top menu?
 
 allow specification of country frequencies independent of name frequencies
 

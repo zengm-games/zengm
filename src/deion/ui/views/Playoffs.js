@@ -2,14 +2,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	Dropdown,
-	JumpTo,
-	NewWindowLink,
-	PlayoffMatchup,
-	ResponsiveTableWrapper,
-} from "../components";
-import { setTitle } from "../util";
+import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
+import { setTitleBar } from "../util";
 
 type SeriesTeam = {
 	abbrev: string,
@@ -51,18 +45,20 @@ const Playoffs = ({
 	}[][],
 	userTid: number,
 }) => {
-	setTitle(`Playoffs - ${season}`);
+	setTitleBar({
+		title: "Playoffs",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "playoffs",
+		dropdownFields: {
+			seasons: season,
+		},
+	});
 
 	const numRounds = series.length;
 
 	return (
 		<>
-			<Dropdown view="playoffs" fields={["seasons"]} values={[season]} />
-			<JumpTo season={season} />
-			<h1>
-				Playoffs <NewWindowLink />
-			</h1>
-
 			{!finalMatchups ? (
 				<p>
 					This is what the playoff matchups would be if the season ended right

@@ -15,6 +15,7 @@ const PlayerStats = ({
 }) => {
 	setTitleBar({
 		title: "Player Stats",
+		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "player_stats",
 		dropdownFields: {

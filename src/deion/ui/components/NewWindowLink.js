@@ -21,15 +21,33 @@ const NewWindowLink = ({ parts }: Props) => {
 	}, [parts]);
 
 	return (
-		<img
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="12"
+			height="12"
+			viewBox="0 0 272.8 272.9"
 			alt="Open In New Window"
-			className="new_window"
+			className="new_window ml-1"
 			title="Open In New Window"
-			height="16"
-			width="16"
 			onClick={handleClick}
-			src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
-		/>
+		>
+			<path fill="none" stroke="#fff" strokeWidth="20" d="M60 10h203v203H60z" />
+			<path
+				d="M107 171L216 55v75-75h-75"
+				fill="none"
+				stroke="#fff"
+				strokeWidth="30"
+				strokeLinejoin="bevel"
+			/>
+			<path fill="#fff" d="M205 40h26v15h-26z" />
+			<path d="M10 50v223" fill="#fff" stroke="#fff" strokeWidth="20" />
+			<path
+				d="M10 263h213M1 60h60M213 220v46"
+				fill="#fff"
+				stroke="#fff"
+				strokeWidth="20"
+			/>
+		</svg>
 	);
 };
 

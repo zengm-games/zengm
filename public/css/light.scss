@@ -38,7 +38,7 @@ $black: #000 !default;
 @import "sidebar";
 
 body {
-	padding-top: 58px;
+	padding-top: 52px;
 }
 
 .bbgm-container {
@@ -563,6 +563,7 @@ table {
 
 .new_window {
 	cursor: pointer;
+	vertical-align: -1px;
 }
 
 @media (max-width: 768px) {

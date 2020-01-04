@@ -17,6 +17,7 @@ import MultiTeamMenu from "./MultiTeamMenu";
 import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
+import TitleBar from "./TitleBar";
 import type { RouterContext } from "../../common/types";
 
 type Props = {
@@ -278,6 +279,7 @@ const Controller = () => {
 	return (
 		<>
 			<NavBar pageID={pageID} updating={loading} />
+			<TitleBar />
 			<div className="bbgm-container">
 				<Header />
 				<SideBar pageID={pageID} />

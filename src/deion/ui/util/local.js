@@ -30,6 +30,8 @@ const [useLocal, local] = create(set => ({
 	username: undefined,
 	viewInfo: undefined,
 
+	title: undefined,
+
 	actions: {
 		// Reset any values specific to a league
 		resetLeague() {

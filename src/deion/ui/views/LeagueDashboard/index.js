@@ -51,7 +51,7 @@ const LeagueDashboard = ({
 	userTid,
 	won,
 }) => {
-	setTitle("Dashboard");
+	setTitle(`${region} ${name} Dashboard`);
 
 	// Show the remaining number of games, only for the regular season.
 	const gamesPlayed = won + lost + tied;
@@ -68,10 +68,6 @@ const LeagueDashboard = ({
 
 	return (
 		<>
-			<h1>
-				{region} {name} Dashboard <NewWindowLink />
-			</h1>
-
 			<div className="row">
 				<div className="col-md-8">
 					<div className="row">

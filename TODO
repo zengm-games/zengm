@@ -6,6 +6,7 @@ redesign page titles
   - Dropdown
   - JumpTo
   - h1
+    - hide new_window on some pages
 - shrink caret a bit, to match bootstrap
 - update document.title with all dropdown stuff
 - switch selects to bootstrap dropdowns, like top menu?

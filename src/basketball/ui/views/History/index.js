@@ -1,10 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	Dropdown,
-	JumpTo,
-	RetiredPlayers,
-} from "../../../../deion/ui/components";
+import { Dropdown, RetiredPlayers } from "../../../../deion/ui/components";
 import { setTitleBar } from "../../../../deion/ui/util";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
@@ -18,7 +14,7 @@ const History = ({
 	season,
 	userTid,
 }) => {
-	setTitleBar({ title: "Season Summary" });
+	setTitleBar({ title: "Season Summary", jumpTo: true, jumpToSeason: season });
 
 	if (invalidSeason) {
 		return (
@@ -32,7 +28,6 @@ const History = ({
 	return (
 		<>
 			<Dropdown view="history" fields={["seasonsHistory"]} values={[season]} />
-			<JumpTo season={season} />
 
 			<p />
 			<div className="row">

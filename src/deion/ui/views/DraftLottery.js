@@ -4,13 +4,7 @@ import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	DraftAbbrev,
-	Dropdown,
-	JumpTo,
-	NewWindowLink,
-	ResponsiveTableWrapper,
-} from "../components";
+import { DraftAbbrev, Dropdown, ResponsiveTableWrapper } from "../components";
 import { helpers, setTitleBar, toWorker } from "../util";
 import type { DraftLotteryResultArray } from "../../common/types";
 
@@ -230,7 +224,7 @@ class DraftLottery extends React.Component<Props, State> {
 	render() {
 		const { season, ties, type, userTid } = this.props;
 
-		setTitleBar({ title: "Draft Lottery" });
+		setTitleBar({ title: "Draft Lottery", jumpTo: true, jumpToSeason: season });
 
 		const result =
 			this.state.result !== undefined ? this.state.result : this.props.result;
@@ -342,7 +336,6 @@ class DraftLottery extends React.Component<Props, State> {
 		return (
 			<>
 				<Dropdown view="draft_lottery" fields={["seasons"]} values={[season]} />
-				<JumpTo season={season} />
 
 				<p>
 					More:{" "}

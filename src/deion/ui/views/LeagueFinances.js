@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitleBar } from "../util";
-import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
+import { DataTable, Dropdown } from "../components";
 
 const LeagueFinances = ({
 	budget,
@@ -15,7 +15,7 @@ const LeagueFinances = ({
 	teams,
 	userTid,
 }) => {
-	setTitleBar({ title: "League Finances" });
+	setTitleBar({ title: "League Finances", jumpTo: true, jumpToSeason: season });
 
 	const cols = budget
 		? getCols(
@@ -64,7 +64,6 @@ const LeagueFinances = ({
 	return (
 		<>
 			<Dropdown view="league_finances" fields={["seasons"]} values={[season]} />
-			<JumpTo season={season} />
 
 			<p>
 				Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b> (teams over

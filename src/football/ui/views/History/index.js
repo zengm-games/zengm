@@ -19,7 +19,7 @@ const History = ({
 	season,
 	userTid,
 }) => {
-	setTitleBar({ title: `Season Summary - ${season}` });
+	setTitleBar({ title: "Season Summary", jumpTo: true, jumpToSeason: season });
 
 	if (invalidSeason) {
 		return (
@@ -33,7 +33,6 @@ const History = ({
 	return (
 		<>
 			<Dropdown view="history" fields={["seasonsHistory"]} values={[season]} />
-			<JumpTo season={season} />
 
 			<p />
 			<div className="row">

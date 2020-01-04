@@ -1,16 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	DataTable,
-	DraftAbbrev,
-	Dropdown,
-	JumpTo,
-	SkillsBlock,
-} from "../components";
+import { DataTable, DraftAbbrev, Dropdown, SkillsBlock } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
-	setTitleBar({ title: "Draft History" });
+	setTitleBar({ title: "Draft History", jumpTo: true, jumpToSeason: season });
 
 	const superCols = [
 		{
@@ -93,7 +87,6 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
 				fields={["seasonsAndOldDrafts"]}
 				values={[season]}
 			/>
-			<JumpTo season={season} />
 
 			<p>
 				More:{" "}

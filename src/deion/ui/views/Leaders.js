@@ -3,14 +3,12 @@ import React from "react";
 import { helpers, setTitleBar } from "../util";
 import {
 	Dropdown,
-	JumpTo,
-	NewWindowLink,
 	PlayerNameLabels,
 	ResponsiveTableWrapper,
 } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
-	setTitleBar({ title: "League Leaders" });
+	setTitleBar({ title: "League Leaders", jumpTo: true, jumpToSeason: season });
 
 	return (
 		<>
@@ -19,7 +17,6 @@ const Leaders = ({ categories, playoffs, season }) => {
 				fields={["seasons", "playoffs"]}
 				values={[season, playoffs]}
 			/>
-			<JumpTo season={season} />
 
 			<p>
 				Only eligible players are shown (<i>e.g.</i>{" "}

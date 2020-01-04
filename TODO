@@ -4,7 +4,7 @@ redesign page titles
 - test ads
 - replace all
   - Dropdown
-  - JumpTo
+- "More Info" box
 - go over all title: `
 - shrink caret a bit, to match bootstrap
 - update document.title with all dropdown stuff

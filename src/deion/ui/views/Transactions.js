@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, JumpTo, SafeHtml } from "../components";
+import { Dropdown, SafeHtml } from "../components";
 import { helpers, setTitleBar } from "../util";
 
 const Transactions = ({ abbrev, eventType, events, season }) => {
-	setTitleBar({ title: "Transactions" });
+	setTitleBar({ title: "Transactions", jumpTo: true, jumpToSeason: season });
 
 	const moreLinks =
 		abbrev !== "all" ? (
@@ -29,7 +29,6 @@ const Transactions = ({ abbrev, eventType, events, season }) => {
 				fields={["teamsAndAll", "seasonsAndAll", "eventType"]}
 				values={[abbrev, season, eventType]}
 			/>
-			<JumpTo season={season} />
 
 			{moreLinks}
 

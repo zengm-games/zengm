@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, prefixStatOpp, setTitleBar } from "../util";
-import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
+import { DataTable, Dropdown, JumpTo } from "../components";
 
 const legendSquare = className => {
 	return <span className={`table-${className} legend-square ml-3`} />;
@@ -18,7 +18,7 @@ const TeamStats = ({
 	ties,
 	userTid,
 }) => {
-	setTitleBar({ title: `Team Stats - ${season}` });
+	setTitleBar({ title: "Team Stats" });
 
 	const basicColNames = ["Team", "stat:gp", "W", "L"];
 	if (ties) {
@@ -139,9 +139,6 @@ const TeamStats = ({
 				values={[season, teamOpponent, playoffs]}
 			/>
 			<JumpTo season={season} />
-			<h1>
-				Team Stats <NewWindowLink />
-			</h1>
 
 			<div className="row">
 				<div className="col-sm-4">

@@ -57,10 +57,6 @@ const FantasyDraft = ({ phase, teams, userTids }) => {
 
 	return (
 		<>
-			<h1>
-				Fantasy Draft <NewWindowLink />
-			</h1>
-
 			<p>
 				In a "fantasy draft", all non-retired players are put into one big pool
 				and teams take turns drafting players, similar to a fantasy{" "}

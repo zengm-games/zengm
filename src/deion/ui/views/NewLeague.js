@@ -238,8 +238,6 @@ const NewLeague = props => {
 
 	return (
 		<>
-			<h1>{title}</h1>
-
 			{props.lid !== undefined ? (
 				<div className="row">
 					<div className="col-md-9 col-lg-6">

@@ -615,10 +615,6 @@ const GodMode = props => {
 
 	return (
 		<>
-			<h1>
-				God Mode <NewWindowLink />
-			</h1>
-
 			<p>
 				God Mode is a collection of customization features that allow you to
 				kind of do whatever you want. If you enable God Mode, you get access to

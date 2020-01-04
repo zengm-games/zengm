@@ -209,9 +209,6 @@ const Player = ({
 		<>
 			<div className="row mb-3">
 				<div className="col-sm-6">
-					<h1>
-						{player.name} <NewWindowLink />
-					</h1>
 					<div className="player-picture">
 						<PlayerPicture
 							face={player.face}

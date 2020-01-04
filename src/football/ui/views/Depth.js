@@ -105,9 +105,6 @@ class Depth extends React.Component {
 					</DropdownMenu>
 				</UncontrolledDropdown>
 
-				<h1>
-					Depth Chart - {pos} <NewWindowLink />
-				</h1>
 				<p>
 					More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
 					<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}

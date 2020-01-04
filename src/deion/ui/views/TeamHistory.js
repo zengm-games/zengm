@@ -4,7 +4,6 @@ import { PLAYER } from "../../common";
 import {
 	Dropdown,
 	DataTable,
-	NewWindowLink,
 	PlayerNameLabels,
 	RecordAndPlayoffs,
 } from "../components";
@@ -91,9 +90,6 @@ const TeamHistory = ({
 	return (
 		<>
 			<Dropdown view="team_history" fields={["teams"]} values={[abbrev]} />
-			<h1>
-				{team.region} {team.name} History <NewWindowLink />
-			</h1>
 			<p>
 				More:{" "}
 				{process.env.SPORT === "football" ? (

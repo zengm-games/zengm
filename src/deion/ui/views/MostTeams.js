@@ -42,10 +42,6 @@ const MostTeams = ({ players, stats, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				Most Teams <NewWindowLink />
-			</h1>
-
 			<p>
 				These are the 100 players who played for the most teams (minimum: 5).
 			</p>

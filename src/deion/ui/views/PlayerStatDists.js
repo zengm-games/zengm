@@ -30,7 +30,7 @@ const proQuartiles =
 		: {};
 
 const PlayerStatDists = ({ numGames, season, statsAll }) => {
-	setTitleBar({ title: `Player Stat Distributions - ${season}` });
+	setTitleBar({ title: "Player Stat Distributions" });
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
 	const scale =
@@ -68,9 +68,6 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
 				fields={["seasons"]}
 				values={[season]}
 			/>
-			<h1>
-				Player Stat Distributions <NewWindowLink />
-			</h1>
 
 			<p>
 				More:{" "}

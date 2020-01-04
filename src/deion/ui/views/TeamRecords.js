@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { DataTable, Dropdown } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const teamLink = t => {
@@ -66,9 +66,6 @@ const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
 				fields={["teamRecordType"]}
 				values={[byType]}
 			/>
-			<h1>
-				Team Records <NewWindowLink />
-			</h1>
 
 			<p>
 				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}

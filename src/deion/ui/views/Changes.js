@@ -10,10 +10,6 @@ const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
 
 	return (
 		<>
-			<h1>
-				Changes <NewWindowLink />
-			</h1>
-
 			<p>
 				Only fairly significant user-facing changes are listed here, so you
 				won't get bugged for every little new feature.

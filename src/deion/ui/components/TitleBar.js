@@ -9,12 +9,14 @@ import { useLocalShallow } from "../util";
 const TitleBar = () => {
 	const {
 		title,
+		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
 		dropdownView,
 		dropdownFields,
 	} = useLocalShallow(state => ({
 		title: state.title,
+		hideNewWindow: state.hideNewWindow,
 		jumpTo: state.jumpTo,
 		jumpToSeason: state.jumpToSeason,
 		dropdownView: state.dropdownView,
@@ -25,7 +27,7 @@ const TitleBar = () => {
 		<div className="py-2 mb-2 title-bar d-flex navbar-border">
 			<div>
 				<b>{title === undefined ? "..." : title}</b>
-				<NewWindowLink />
+				{!hideNewWindow ? <NewWindowLink /> : null}
 			</div>
 			{dropdownView ? (
 				<Dropdown

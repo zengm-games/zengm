@@ -9,10 +9,6 @@ const DraftScouting = ({ draftType, seasons }) => {
 
 	return (
 		<>
-			<h1>
-				Draft Scouting <NewWindowLink />
-			</h1>
-
 			<p>
 				More:{" "}
 				{draftType !== "noLottery" && draftType !== "random" ? (

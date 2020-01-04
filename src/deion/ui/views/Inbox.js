@@ -18,10 +18,6 @@ const Inbox = ({
 
 	return (
 		<>
-			<h1>
-				Inbox <NewWindowLink />
-			</h1>
-
 			{anyUnread ? (
 				<p className="text-danger">
 					You have a new message. Read it before continuing.

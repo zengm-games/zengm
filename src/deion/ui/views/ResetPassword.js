@@ -110,7 +110,7 @@ class ResetPassword extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Reset Password" });
+		setTitleBar({ title: "Reset Password", hideNewWindow: true });
 
 		const form = (
 			<div className="row">
@@ -173,7 +173,6 @@ class ResetPassword extends React.Component {
 
 		return (
 			<>
-				<h1>Reset Password</h1>
 				{this.state.showForm ? form : null}
 				{this.state.globalMessage ? <p>{this.state.globalMessage}</p> : null}
 				<p>

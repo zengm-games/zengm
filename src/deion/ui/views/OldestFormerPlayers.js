@@ -46,10 +46,6 @@ const OldestFormerPlayers = ({ players, stats, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				Oldest Former Players <NewWindowLink />
-			</h1>
-
 			<p>
 				These are the 100 former players who lived the longest (minimum: 85).
 			</p>

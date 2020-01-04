@@ -92,8 +92,6 @@ const ExportLeague = () => {
 
 	return (
 		<>
-			<h1>Export League</h1>
-
 			<p>
 				Here you can export your entire league data to a single League File. A
 				League File can serve many purposes. You can use it as a <b>backup</b>,

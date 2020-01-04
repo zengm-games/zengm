@@ -114,11 +114,13 @@ class Options extends React.Component {
 	render() {
 		const title = this.props.title ? this.props.title : "Options";
 
-		setTitleBar({ title });
+		if (!this.props.title) {
+			setTitleBar({ title });
+		}
 
 		return (
 			<>
-				<h1>{title}</h1>
+				{this.props.title ? <h2>{title}</h2> : null}
 
 				<form onSubmit={this.handleFormSubmit}>
 					<div className="row">

@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, NewWindowLink } from "../components";
+import { DataTable } from "../components";
 import { getCols, setTitleBar } from "../util";
 
 type Props = {
@@ -55,10 +55,6 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
 
 	return (
 		<>
-			<h1>
-				Roster Continuity <NewWindowLink />
-			</h1>
-
 			<p>
 				Each cell in the table shows the percentage of minutes played that
 				season by players who were on the same team the previous season.

@@ -117,10 +117,6 @@ const Negotiation = ({
 
 	return (
 		<>
-			<h1>
-				Contract Negotiation <NewWindowLink />
-			</h1>
-
 			{message}
 
 			<p>

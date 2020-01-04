@@ -1,12 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import {
-	DataTable,
-	Dropdown,
-	NewWindowLink,
-	PlayerNameLabels,
-} from "../components";
+import { DataTable, Dropdown, PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
@@ -60,9 +55,6 @@ const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
 				fields={["seasonsUpcoming"]}
 				values={[season]}
 			/>
-			<h1>
-				Upcoming Free Agents <NewWindowLink />
-			</h1>
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["free_agents"])}>Current Free Agents</a>

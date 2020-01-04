@@ -180,13 +180,11 @@ class LiveGame extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Live Game Simulation" });
+		setTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
 
 		// Needs to return actual div, not fragment, for AutoAffix!!!
 		return (
 			<div>
-				<h1>Live Game Simulation</h1>
-
 				<p className="text-danger">
 					If you navigate away from this page, you won't be able to see these
 					play-by-play results again because they are not stored anywhere. The

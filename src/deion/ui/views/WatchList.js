@@ -9,7 +9,6 @@ import { getCols, helpers, setTitleBar, toWorker } from "../util";
 import {
 	DataTable,
 	Dropdown,
-	NewWindowLink,
 	PlayerNameLabels,
 	WatchBlock,
 } from "../components";
@@ -94,9 +93,6 @@ const WatchList = ({ players, playoffs, statType, stats }) => {
 					</DropdownItem>
 				</DropdownMenu>
 			</UncontrolledDropdown>
-			<h1>
-				Watch List <NewWindowLink />
-			</h1>
 
 			<p>
 				Click the watch icon <span className="glyphicon glyphicon-flag" /> to

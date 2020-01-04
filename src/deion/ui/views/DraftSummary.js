@@ -5,13 +5,12 @@ import {
 	DraftAbbrev,
 	Dropdown,
 	JumpTo,
-	NewWindowLink,
 	SkillsBlock,
 } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
-	setTitleBar({ title: `${season} Draft History` });
+	setTitleBar({ title: "Draft History" });
 
 	const superCols = [
 		{
@@ -95,9 +94,6 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
 				values={[season]}
 			/>
 			<JumpTo season={season} />
-			<h1>
-				{season} Draft History <NewWindowLink />
-			</h1>
 
 			<p>
 				More:{" "}

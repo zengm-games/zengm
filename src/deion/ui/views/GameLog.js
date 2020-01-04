@@ -141,7 +141,7 @@ const GameLog = ({
 	gamesList = { games: [] },
 	season,
 }) => {
-	setTitleBar({ title: `Game Log - ${season}` });
+	setTitleBar({ title: "Game Log" });
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(
 		gamesList.games,
@@ -159,9 +159,6 @@ const GameLog = ({
 				]}
 				values={[abbrev, season]}
 			/>
-			<h1>
-				Game Log <NewWindowLink />
-			</h1>
 
 			<p>
 				More:{" "}

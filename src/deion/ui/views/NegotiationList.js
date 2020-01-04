@@ -82,9 +82,6 @@ const NegotiationList = ({
 
 	return (
 		<>
-			<h1>
-				{title} <NewWindowLink />
-			</h1>
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["upcoming_free_agents"])}>

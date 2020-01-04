@@ -49,9 +49,6 @@ const FreeAgents = ({
 	if (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) {
 		return (
 			<div>
-				<h1>
-					Free Agents <NewWindowLink />
-				</h1>
 				<p>
 					More:{" "}
 					<a href={helpers.leagueUrl(["upcoming_free_agents"])}>
@@ -123,9 +120,6 @@ const FreeAgents = ({
 
 	return (
 		<>
-			<h1>
-				Free Agents <NewWindowLink />
-			</h1>
 			{process.env.SPORT === "football" ? (
 				<RosterComposition className="float-right mb-3" players={userPlayers} />
 			) : null}

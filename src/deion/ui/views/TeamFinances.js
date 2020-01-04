@@ -5,7 +5,6 @@ import {
 	DataTable,
 	Dropdown,
 	HelpPopover,
-	NewWindowLink,
 	PlayerNameLabels,
 } from "../components";
 import { getCols, helpers, logEvent, setTitleBar, toWorker } from "../util";
@@ -371,7 +370,7 @@ const TeamFinances = ({
 	tid,
 	userTid,
 }) => {
-	setTitleBar({ title: `${t.region} ${t.name} Finances` });
+	setTitleBar({ title: "Team Finances" });
 
 	const cols = getCols("Name").concat(
 		salariesSeasons.map(season => {
@@ -447,9 +446,6 @@ const TeamFinances = ({
 				fields={["teams", "shows"]}
 				values={[abbrev, show]}
 			/>
-			<h1>
-				{t.region} {t.name} Finances <NewWindowLink />
-			</h1>
 
 			<p>
 				More:{" "}

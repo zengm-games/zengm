@@ -9,10 +9,6 @@ const Frivolities = () => {
 
 	return (
 		<>
-			<h1>
-				Frivolities <NewWindowLink />
-			</h1>
-
 			<p>
 				In the spirit of{" "}
 				<a href="https://www.basketball-reference.com/friv/">

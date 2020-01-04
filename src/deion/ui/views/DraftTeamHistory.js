@@ -18,7 +18,7 @@ const DraftTeamHistory = ({
 	stats,
 	userAbbrev,
 }) => {
-	setTitleBar({ title: `${region} ${name} Draft History` });
+	setTitleBar({ title: "Draft History" });
 
 	const superCols = [
 		{
@@ -105,9 +105,6 @@ const DraftTeamHistory = ({
 				fields={["teams"]}
 				values={[abbrev]}
 			/>
-			<h1>
-				{region} {name} Draft History <NewWindowLink />
-			</h1>
 
 			<p>
 				More:{" "}

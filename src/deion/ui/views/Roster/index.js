@@ -98,7 +98,7 @@ class Roster extends React.Component {
 			userTid,
 		} = this.props;
 
-		setTitleBar({ title: `${t.region} ${t.name} - ${season}` });
+		setTitleBar({ title: "Roster" });
 
 		// Use the result of drag and drop to sort players, before the "official" order comes back as props
 		let playersSorted;
@@ -139,9 +139,6 @@ class Roster extends React.Component {
 					</DropdownMenu>
 				</UncontrolledDropdown>
 
-				<h1>
-					{t.region} {t.name} <NewWindowLink />
-				</h1>
 				<p>
 					More:{" "}
 					{process.env.SPORT === "football" ? (

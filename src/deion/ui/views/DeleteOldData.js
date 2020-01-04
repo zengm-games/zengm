@@ -62,10 +62,6 @@ class DeleteOldData extends React.Component {
 
 		return (
 			<>
-				<h1>
-					Delete Old Data <NewWindowLink />
-				</h1>
-
 				<p>
 					As you play multiple seasons in a league, the database can grow quite
 					large. This used to slow down performance, but doesn't much anymore.

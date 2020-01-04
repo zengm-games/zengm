@@ -2,7 +2,6 @@
 
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { NewWindowLink } from "../components";
 import { setTitleBar } from "../util";
 
 const SocialMedia = ({ teamName }: { teamName: string }) => {
@@ -104,102 +103,94 @@ const SocialMedia = ({ teamName }: { teamName: string }) => {
 	};
 
 	return (
-		<>
-			<h1>
-				Social Media <NewWindowLink />
-			</h1>
-
-			<div className="row">
-				<div className="col-md">
-					<div className="card">
-						<div className="card-body">
-							<p className="card-text">
-								Tweet some generic motivational quote.
-							</p>
-							<button
-								className="btn btn-primary"
-								onClick={() => sendTweet("motivtional")}
-							>
-								Tweet
-							</button>
-						</div>
-					</div>
-
-					<div className="card mt-3">
-						<div className="card-body">
-							<p className="card-text">Promote your team.</p>
-							<button
-								className="btn btn-primary"
-								onClick={() => sendTweet("promote")}
-							>
-								Tweet
-							</button>
-						</div>
-					</div>
-
-					<div className="card mt-3">
-						<div className="card-body">
-							<p className="card-text">
-								Try to slide into the DMs of some random thot.
-							</p>
-							<button
-								className="btn btn-primary"
-								onClick={() => sendTweet("slide")}
-							>
-								Tweet
-							</button>
-						</div>
-					</div>
-
-					<div className="card mt-3">
-						<div className="card-body">
-							<p className="card-text">
-								Retweet some seemingly-innocuous message about supporting the
-								protests in Hong Kong.
-							</p>
-							<button
-								className="btn btn-primary"
-								onClick={() => sendTweet("hongKong")}
-							>
-								Tweet
-							</button>
-						</div>
+		<div className="row">
+			<div className="col-md">
+				<div className="card">
+					<div className="card-body">
+						<p className="card-text">Tweet some generic motivational quote.</p>
+						<button
+							className="btn btn-primary"
+							onClick={() => sendTweet("motivtional")}
+						>
+							Tweet
+						</button>
 					</div>
 				</div>
-				<div className="col-md">
-					{tweet ? (
-						<div className="card">
-							<div className="card-body">
-								<h5 className="card-title">{`@${teamName.replace(
-									/ /g,
-									"",
-								)}GM`}</h5>
-								<p className="card-text">{tweet}</p>
-							</div>
-						</div>
-					) : null}
-					{replies.length > 0 ? (
-						<>
-							<h5 className="mt-3">Replies</h5>
-							{replies.map((reply, i) =>
-								reply.tweet === "...no reply!" ? (
-									<p key={i}>{reply.tweet}</p>
-								) : (
-									<div key={i} className="card mt-3">
-										<div className="card-body">
-											{reply.name ? (
-												<h5 className="card-title">{reply.name}</h5>
-											) : null}
-											<p className="card-text">{reply.tweet}</p>
-										</div>
-									</div>
-								),
-							)}
-						</>
-					) : null}
+
+				<div className="card mt-3">
+					<div className="card-body">
+						<p className="card-text">Promote your team.</p>
+						<button
+							className="btn btn-primary"
+							onClick={() => sendTweet("promote")}
+						>
+							Tweet
+						</button>
+					</div>
+				</div>
+
+				<div className="card mt-3">
+					<div className="card-body">
+						<p className="card-text">
+							Try to slide into the DMs of some random thot.
+						</p>
+						<button
+							className="btn btn-primary"
+							onClick={() => sendTweet("slide")}
+						>
+							Tweet
+						</button>
+					</div>
+				</div>
+
+				<div className="card mt-3">
+					<div className="card-body">
+						<p className="card-text">
+							Retweet some seemingly-innocuous message about supporting the
+							protests in Hong Kong.
+						</p>
+						<button
+							className="btn btn-primary"
+							onClick={() => sendTweet("hongKong")}
+						>
+							Tweet
+						</button>
+					</div>
 				</div>
 			</div>
-		</>
+			<div className="col-md">
+				{tweet ? (
+					<div className="card">
+						<div className="card-body">
+							<h5 className="card-title">{`@${teamName.replace(
+								/ /g,
+								"",
+							)}GM`}</h5>
+							<p className="card-text">{tweet}</p>
+						</div>
+					</div>
+				) : null}
+				{replies.length > 0 ? (
+					<>
+						<h5 className="mt-3">Replies</h5>
+						{replies.map((reply, i) =>
+							reply.tweet === "...no reply!" ? (
+								<p key={i}>{reply.tweet}</p>
+							) : (
+								<div key={i} className="card mt-3">
+									<div className="card-body">
+										{reply.name ? (
+											<h5 className="card-title">{reply.name}</h5>
+										) : null}
+										<p className="card-text">{reply.tweet}</p>
+									</div>
+								</div>
+							),
+						)}
+					</>
+				) : null}
+			</div>
+		</div>
 	);
 };
 

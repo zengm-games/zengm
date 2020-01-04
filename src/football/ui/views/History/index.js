@@ -34,9 +34,6 @@ const History = ({
 		<>
 			<Dropdown view="history" fields={["seasonsHistory"]} values={[season]} />
 			<JumpTo season={season} />
-			<h1>
-				Season Summary <NewWindowLink />
-			</h1>
 
 			<p />
 			<div className="row">

@@ -101,7 +101,7 @@ class AccountUpdateCard extends React.Component {
 	render() {
 		const { goldCancelled, expMonth, expYear, last4, username } = this.props;
 
-		setTitleBar({ title: "Update Card" });
+		setTitleBar({ title: "Update Card", hideNewWindow: true });
 
 		let errorMessage;
 		if (username === undefined || username === null || username === "") {
@@ -122,8 +122,6 @@ class AccountUpdateCard extends React.Component {
 
 		return (
 			<>
-				<h1>Update Card</h1>
-
 				<h3>Saved Card Info</h3>
 				<p>
 					Last 4 Digits: {last4}

@@ -71,10 +71,6 @@ const HallOfFame = ({ players, stats, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				Hall of Fame <NewWindowLink />
-			</h1>
-
 			<p>
 				Players are eligible to be inducted into the Hall of Fame after they
 				retire. The formula for inclusion is very similar to{" "}

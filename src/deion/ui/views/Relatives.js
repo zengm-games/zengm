@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitleBar } from "../util";
-import { DataTable, NewWindowLink } from "../components";
+import { DataTable } from "../components";
 
 const Relatives = ({ pid, players, stats, userTid }) => {
 	const target =
@@ -106,10 +106,6 @@ const Relatives = ({ pid, players, stats, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				{title} <NewWindowLink />
-			</h1>
-
 			{target ? (
 				<p>
 					More:{" "}

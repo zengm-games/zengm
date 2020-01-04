@@ -255,10 +255,6 @@ const Draft = ({
 
 	return (
 		<>
-			<h1>
-				Draft <NewWindowLink />
-			</h1>
-
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["draft_scouting"])}>

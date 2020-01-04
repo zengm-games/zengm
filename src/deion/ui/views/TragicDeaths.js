@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitleBar } from "../util";
-import { DataTable, NewWindowLink, SafeHtml } from "../components";
+import { DataTable, SafeHtml } from "../components";
 
 const TragicDeaths = ({ players, stats, userTid }) => {
 	setTitleBar({ title: "Tragic Deaths" });
@@ -82,10 +82,6 @@ const TragicDeaths = ({ players, stats, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				Tragic Deaths <NewWindowLink />
-			</h1>
-
 			<p>
 				Players who played for your team are{" "}
 				<span className="text-info">highlighted in blue</span>. Players who died

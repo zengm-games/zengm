@@ -3,13 +3,7 @@
 import classNames from "classnames";
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import {
-	helpers,
-	localActions,
-	realtimeUpdate,
-	setTitleBar,
-	toWorker,
-} from "../../util";
+import { helpers, localActions, realtimeUpdate, toWorker } from "../../util";
 
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 const otherSport =
@@ -106,8 +100,6 @@ class Register extends React.Component<Props, State> {
 	}
 
 	render() {
-		setTitleBar({ title: "Login or Register" });
-
 		return (
 			<>
 				<h1>Register</h1>

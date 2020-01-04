@@ -57,10 +57,6 @@ const AwardsRecords = ({
 				fields={["awardType"]}
 				values={[awardType]}
 			/>
-			<h1>
-				Awards
-				<NewWindowLink />
-			</h1>
 
 			<p>
 				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}

@@ -56,8 +56,6 @@ const ExportStats = ({ seasons }) => {
 
 	return (
 		<>
-			<h1>Export Stats</h1>
-
 			<p>
 				Here you can export your league's stats to CSV files which can be easily
 				viewed in any spreadsheet program like Excel or{" "}

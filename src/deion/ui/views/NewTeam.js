@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { NewWindowLink } from "../components";
 import { helpers, realtimeUpdate, setTitleBar, toWorker } from "../util";
 
 class NewTeam extends React.Component {
@@ -43,7 +42,7 @@ class NewTeam extends React.Component {
 	render() {
 		const { gameOver, godMode, phase, teams } = this.props;
 
-		setTitleBar({ title: "New Team" });
+		setTitleBar({ title: "Pick a New Team" });
 
 		if (!gameOver && !godMode) {
 			return (
@@ -91,10 +90,6 @@ class NewTeam extends React.Component {
 
 		return (
 			<>
-				<h1>
-					Pick a New Team <NewWindowLink />
-				</h1>
-
 				{message}
 
 				<div className="form-group">

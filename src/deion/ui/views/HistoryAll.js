@@ -113,9 +113,6 @@ const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				League History <NewWindowLink />
-			</h1>
 			<p>
 				More: <a href={helpers.leagueUrl(["team_records"])}>Team Records</a> |{" "}
 				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>

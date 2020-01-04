@@ -1,11 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	CompletedGame,
-	Dropdown,
-	NewWindowLink,
-	UpcomingGame,
-} from "../components";
+import { CompletedGame, Dropdown, UpcomingGame } from "../components";
 import { setTitleBar } from "../util";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
@@ -14,9 +9,6 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
 	return (
 		<>
 			<Dropdown view="schedule" fields={["teams"]} values={[abbrev]} />
-			<h1>
-				Schedule <NewWindowLink />
-			</h1>
 
 			<div className="row">
 				<div className="col-sm-6">

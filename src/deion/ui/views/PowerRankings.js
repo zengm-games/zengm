@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitleBar } from "../util";
-import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { DataTable, Dropdown } from "../components";
 
 const PowerRankings = ({ season, teams, userTid }) => {
 	setTitleBar({ title: "Power Rankings" });
@@ -62,9 +62,6 @@ const PowerRankings = ({ season, teams, userTid }) => {
 	return (
 		<>
 			<Dropdown view="power_rankings" fields={["seasons"]} values={[season]} />
-			<h1>
-				Power Rankings <NewWindowLink />
-			</h1>
 
 			<p>
 				The power ranking is a combination of recent performance, margin of

@@ -9,10 +9,6 @@ const Live = ({ games, gamesInProgress }) => {
 
 	return (
 		<>
-			<h1>
-				Live Game Simulation <NewWindowLink />
-			</h1>
-
 			<p>
 				To view a live play-by-play summary of a game, select one of tomorrow's
 				games below.

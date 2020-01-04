@@ -8,8 +8,6 @@ const DangerZone = () => {
 
 	return (
 		<>
-			<h1>Danger Zone</h1>
-
 			<p className="alert alert-danger">
 				<b>Warning!</b> This stuff might break your league! It's only here in
 				case your league is already broken, in which case sometimes these

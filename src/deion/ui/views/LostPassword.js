@@ -46,13 +46,12 @@ class LostPassword extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Lost Password" });
+		setTitleBar({ title: "Lost Password", hideNewWindow: true });
 
 		return (
 			<>
 				<div className="row">
 					<div className="col-lg-4 col-md-4 col-sm-6">
-						<h1>Lost Password</h1>
 						<p>
 							Enter your username or email address below to recover your login
 							information.

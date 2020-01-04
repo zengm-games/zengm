@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
-import { NewWindowLink } from "../../components";
 import { setTitleBar, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
@@ -183,10 +182,6 @@ class Trade extends React.Component {
 
 		return (
 			<>
-				<h1>
-					Trade <NewWindowLink />
-				</h1>
-
 				{showResigningMsg ? (
 					<p>
 						You can't trade players whose contracts expired this season, but

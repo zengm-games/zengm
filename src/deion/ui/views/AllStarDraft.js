@@ -225,9 +225,6 @@ const AllStars = ({
 
 	return (
 		<>
-			<h1>
-				All-Star Draft <NewWindowLink />
-			</h1>
 			<p>
 				The top 24 players in the league play in the All-Star Game. If any of
 				them are injured, they are still All-Stars, but an additional All-Star

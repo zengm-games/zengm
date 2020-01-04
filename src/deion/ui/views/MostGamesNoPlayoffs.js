@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitleBar } from "../util";
-import { DataTable, NewWindowLink } from "../components";
+import { DataTable } from "../components";
 
 const MostGamesNoPlayoffs = ({ players, stats, userTid }) => {
 	setTitleBar({ title: "Most Games, No Playoffs" });
@@ -69,10 +69,6 @@ const MostGamesNoPlayoffs = ({ players, stats, userTid }) => {
 
 	return (
 		<>
-			<h1>
-				Most Games, No Playoffs <NewWindowLink />
-			</h1>
-
 			<p>
 				These are the 100 players who played the most career games while never
 				making the playoffs.

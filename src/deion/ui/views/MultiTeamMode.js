@@ -73,10 +73,6 @@ const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
 
 	return (
 		<>
-			<h1>
-				Multi Team Mode <NewWindowLink />
-			</h1>
-
 			<p>
 				Here you can switch from controlling one team to controlling multiple
 				teams. Why would you want to do this? A few reasons I can think of:

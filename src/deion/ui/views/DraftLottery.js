@@ -230,7 +230,7 @@ class DraftLottery extends React.Component<Props, State> {
 	render() {
 		const { season, ties, type, userTid } = this.props;
 
-		setTitleBar({ title: `${season} Draft Lottery` });
+		setTitleBar({ title: "Draft Lottery" });
 
 		const result =
 			this.state.result !== undefined ? this.state.result : this.props.result;
@@ -343,9 +343,6 @@ class DraftLottery extends React.Component<Props, State> {
 			<>
 				<Dropdown view="draft_lottery" fields={["seasons"]} values={[season]} />
 				<JumpTo season={season} />
-				<h1>
-					{season} Draft Lottery <NewWindowLink />
-				</h1>
 
 				<p>
 					More:{" "}

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
 import { getCols, helpers, setTitleBar, toWorker } from "../util";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 
 const Offer = props => {
 	const {
@@ -304,10 +304,6 @@ class TradingBlock extends React.Component {
 
 		return (
 			<>
-				<h1>
-					Trading Block <NewWindowLink />
-				</h1>
-
 				<p>
 					Select some assets you want to trade away and other teams will make
 					you trade offers.

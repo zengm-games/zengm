@@ -91,7 +91,7 @@ class LeagueOptions extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "League Options" });
+		setTitleBar({ title: "Options" });
 
 		const disableDifficultyInput =
 			this.state.difficultySelect !== "custom" &&
@@ -101,7 +101,7 @@ class LeagueOptions extends React.Component {
 			<>
 				<Options title="Global Options" />
 
-				<h1 className="mt-5">League Options</h1>
+				<h2 className="mt-5">League Options</h2>
 
 				<form onSubmit={this.handleFormSubmit}>
 					<div className="row">

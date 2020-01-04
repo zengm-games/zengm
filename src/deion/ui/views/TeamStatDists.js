@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitleBar } from "../util";
-import { BoxPlot, Dropdown, NewWindowLink } from "../components";
+import { BoxPlot, Dropdown } from "../components";
 
 const proStatsAll =
 	process.env.SPORT === "basketball"
@@ -710,14 +710,11 @@ const scale =
 		: {};
 
 const TeamStatDists = ({ season, statsAll }) => {
-	setTitleBar({ title: `Team Stat Distributions - ${season}` });
+	setTitleBar({ title: "Team Stat Distributions" });
 
 	return (
 		<>
 			<Dropdown view="team_stat_dists" fields={["seasons"]} values={[season]} />
-			<h1>
-				Team Stat Distributions <NewWindowLink />
-			</h1>
 			<p>
 				More: <a href={helpers.leagueUrl(["team_stats", season])}>Main Stats</a>
 			</p>

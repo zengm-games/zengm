@@ -3,7 +3,6 @@ import React from "react";
 import {
 	Dropdown,
 	JumpTo,
-	NewWindowLink,
 	RetiredPlayers,
 } from "../../../../deion/ui/components";
 import { setTitleBar } from "../../../../deion/ui/util";
@@ -19,7 +18,7 @@ const History = ({
 	season,
 	userTid,
 }) => {
-	setTitleBar({ title: `Season Summary - ${season}` });
+	setTitleBar({ title: "Season Summary" });
 
 	if (invalidSeason) {
 		return (
@@ -34,9 +33,6 @@ const History = ({
 		<>
 			<Dropdown view="history" fields={["seasonsHistory"]} values={[season]} />
 			<JumpTo season={season} />
-			<h1>
-				Season Summary <NewWindowLink />
-			</h1>
 
 			<p />
 			<div className="row">

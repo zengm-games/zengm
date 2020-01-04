@@ -282,7 +282,7 @@ const Account = ({
 	showGoldPitch: boolean,
 	username?: string,
 }) => {
-	setTitleBar({ title: "Account" });
+	setTitleBar({ title: "Your Account", hideNewWindow: true });
 
 	let goldPitchDiv = null;
 	if (showGoldPitch) {
@@ -355,8 +355,6 @@ const Account = ({
 
 	return (
 		<>
-			<h1>Your Account</h1>
-
 			<div className="row">
 				<div className="col-lg-8 col-md-10 ">
 					<UserInfo

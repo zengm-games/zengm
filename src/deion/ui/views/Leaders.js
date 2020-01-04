@@ -10,7 +10,7 @@ import {
 } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
-	setTitleBar({ title: `League Leaders - ${season}` });
+	setTitleBar({ title: "League Leaders" });
 
 	return (
 		<>
@@ -20,9 +20,6 @@ const Leaders = ({ categories, playoffs, season }) => {
 				values={[season, playoffs]}
 			/>
 			<JumpTo season={season} />
-			<h1>
-				League Leaders <NewWindowLink />
-			</h1>
 
 			<p>
 				Only eligible players are shown (<i>e.g.</i>{" "}

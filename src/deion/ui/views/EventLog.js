@@ -4,7 +4,7 @@ import { Dropdown, NewWindowLink, SafeHtml } from "../components";
 import { setTitleBar } from "../util";
 
 const EventLog = ({ abbrev, events, season }) => {
-	setTitleBar({ title: `Event Log - ${season}` });
+	setTitleBar({ title: "Event Log" });
 
 	return (
 		<>
@@ -13,9 +13,6 @@ const EventLog = ({ abbrev, events, season }) => {
 				fields={["teams", "seasons"]}
 				values={[abbrev, season]}
 			/>
-			<h1>
-				Event Log <NewWindowLink />
-			</h1>
 
 			<ul>
 				{events.map(e => (

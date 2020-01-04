@@ -15,7 +15,7 @@ const LeagueFinances = ({
 	teams,
 	userTid,
 }) => {
-	setTitleBar({ title: `League Finances - ${season}` });
+	setTitleBar({ title: "League Finances" });
 
 	const cols = budget
 		? getCols(
@@ -65,9 +65,6 @@ const LeagueFinances = ({
 		<>
 			<Dropdown view="league_finances" fields={["seasons"]} values={[season]} />
 			<JumpTo season={season} />
-			<h1>
-				League Finances <NewWindowLink />
-			</h1>
 
 			<p>
 				Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b> (teams over

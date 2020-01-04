@@ -1,11 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	DataTable,
-	Dropdown,
-	NewWindowLink,
-	PlayerNameLabels,
-} from "../components";
+import { DataTable, Dropdown, PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
@@ -97,9 +92,6 @@ const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
 				fields={["teamsAndAll", "seasonsAndAll"]}
 				values={[abbrev, season]}
 			/>
-			<h1>
-				Statistical Feats <NewWindowLink />
-			</h1>
 
 			{process.env.SPORT === "basketball" ? (
 				<p>

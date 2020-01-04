@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
-import { NewWindowLink, PlayerPicture } from "../../components";
+import { PlayerPicture } from "../../components";
 import {
 	helpers,
 	overrides,
@@ -335,10 +335,6 @@ class CustomizePlayer extends React.Component {
 
 		return (
 			<>
-				<h1>
-					{title} <NewWindowLink />
-				</h1>
-
 				<p>
 					Here, you can{" "}
 					{originalTid === undefined

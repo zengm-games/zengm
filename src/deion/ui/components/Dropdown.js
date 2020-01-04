@@ -394,12 +394,7 @@ const Select = ({ field, handleChange, value }) => {
 
 	return (
 		<>
-			»
-			<select
-				value={value}
-				className="dropdown-select ml-1"
-				onChange={handleChange}
-			>
+			<select value={value} className="dropdown-select" onChange={handleChange}>
 				{options.map(opt => (
 					<option key={opt.key} value={opt.key}>
 						{opt.val}

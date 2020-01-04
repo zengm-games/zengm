@@ -21,7 +21,7 @@ const PlayerStats = ({
 			teamsAndAllWatch: abbrev,
 			seasonsAndCareer: season === undefined ? "career" : season,
 			statTypesAdv: statType,
-			playoffs: playoffs,
+			playoffs,
 		},
 	});
 

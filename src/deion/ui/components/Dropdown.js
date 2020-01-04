@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PHASE } from "../../common";
 import { helpers, overrides, realtimeUpdate, useLocalShallow } from "../util";
 
@@ -18,16 +18,7 @@ const sortedTeams = state => {
 	);
 };
 
-const Select = ({ field, handleChange, value }) => {
-	const state = useLocalShallow(state2 => ({
-		phase: state2.phase,
-		season: state2.season,
-		startingSeason: state2.startingSeason,
-		teamAbbrevsCache: state2.teamAbbrevsCache,
-		teamNamesCache: state2.teamNamesCache,
-		teamRegionsCache: state2.teamRegionsCache,
-	}));
-
+const getOptions = (field, state) => {
 	let options: {
 		key: number | string,
 		val: number | string,
@@ -392,9 +383,48 @@ const Select = ({ field, handleChange, value }) => {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}
 
+	return options;
+};
+
+const Select = ({ field, handleChange, value }) => {
+	const state = useLocalShallow(state2 => ({
+		phase: state2.phase,
+		season: state2.season,
+		startingSeason: state2.startingSeason,
+		teamAbbrevsCache: state2.teamAbbrevsCache,
+		teamNamesCache: state2.teamNamesCache,
+		teamRegionsCache: state2.teamRegionsCache,
+	}));
+
+	const options = getOptions(field, state);
+
+	const [width, setWidth] = useState();
+
+	useEffect(() => {
+		const el = document.createElement("span");
+		el.style.padding = "0 12px";
+		document.body.appendChild(el);
+
+		let currentValue;
+		for (const option of options) {
+			if (option.key === value) {
+				currentValue = option.val;
+			}
+		}
+
+		el.innerHTML = currentValue;
+		setWidth(el.offsetWidth);
+		document.body.removeChild(el);
+	}, [field, options, value]);
+
 	return (
 		<>
-			<select value={value} className="dropdown-select" onChange={handleChange}>
+			<select
+				value={value}
+				className="dropdown-select"
+				onChange={handleChange}
+				style={{ width }}
+			>
 				{options.map(opt => (
 					<option key={opt.key} value={opt.key}>
 						{opt.val}

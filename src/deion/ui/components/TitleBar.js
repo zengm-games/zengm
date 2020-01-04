@@ -17,7 +17,7 @@ const TitleBar = () => {
 	);
 
 	return (
-		<div className="p-2 mb-2 bg-primary text-white title-bar d-flex">
+		<div className="p-2 mb-2 bg-light title-bar d-flex">
 			<div>
 				<b>{title === undefined ? "..." : title}</b>
 				<NewWindowLink />

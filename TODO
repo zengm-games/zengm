@@ -4,15 +4,6 @@ redesign page titles
 - test ads
 - replace all setTitle
 - update title with all dropdown stuff
-- custom selects
-  - how to underline?
-  - how to make dynamic width?
-    - https://jsfiddle.net/1cwhL4sj/
-    - https://stackoverflow.com/questions/20091481/auto-resizing-the-select-element-according-to-selected-options-width
-  - how to show different font color for selected and options?
-  - maybe somehow entirely replace the displayed control
-    - react-select
-    - react-dropdown looks smaller and simpler
 
 allow specification of country frequencies independent of name frequencies
 

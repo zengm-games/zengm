@@ -7,7 +7,7 @@ import {
 	NewWindowLink,
 	ResponsiveTableWrapper,
 } from "../components";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitleBar } from "../util";
 import useClickable from "../hooks/useClickable";
 
 const record = (seasonAttrs, type, ties) => {
@@ -167,11 +167,14 @@ const Standings = ({
 	season,
 	ties,
 }) => {
-	if (season === undefined) {
-		setTitle("Standings");
-	} else {
-		setTitle(`Standings - ${season}`);
-	}
+	setTitleBar({
+		title: "Standings",
+		jumpToSeason: season,
+		dropdownView: "standings",
+		dropdownFields: {
+			seasons: season,
+		},
+	});
 
 	return (
 		<>

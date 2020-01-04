@@ -1,13 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
-import { helpers, setTitle } from "../../util";
-import {
-	CompletedGame,
-	NewWindowLink,
-	PlayoffMatchup,
-	UpcomingGame,
-} from "../../components";
+import { helpers, setTitleBar } from "../../util";
+import { CompletedGame, PlayoffMatchup, UpcomingGame } from "../../components";
 import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";
@@ -51,7 +46,7 @@ const LeagueDashboard = ({
 	userTid,
 	won,
 }) => {
-	setTitle(`${region} ${name} Dashboard`);
+	setTitleBar({ title: `${region} ${name} Dashboard` });
 
 	// Show the remaining number of games, only for the regular season.
 	const gamesPlayed = won + lost + tied;

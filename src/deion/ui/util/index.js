@@ -44,5 +44,6 @@ export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as realtimeUpdate } from "./realtimeUpdate";
 export { default as routes } from "./routes";
 export { default as setTitle } from "./setTitle";
+export { default as setTitleBar } from "./setTitleBar";
 export { default as takeScreenshot } from "./takeScreenshot";
 export { default as toWorker } from "./toWorker";

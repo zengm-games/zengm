@@ -73,7 +73,7 @@ const Select = ({ field, handleChange, value }) => {
 		for (let season = state.startingSeason; season <= state.season; season++) {
 			options.push({
 				key: season,
-				val: `${season} Season`,
+				val: `${season}`,
 			});
 		}
 		if (field === "seasonsAndCareer") {
@@ -97,7 +97,7 @@ const Select = ({ field, handleChange, value }) => {
 			) {
 				options.unshift({
 					key: season,
-					val: `${season} Season`,
+					val: `${season}`,
 				});
 			}
 
@@ -119,7 +119,7 @@ const Select = ({ field, handleChange, value }) => {
 		for (let j = 0 + offset; j < 5 + offset; j++) {
 			options.push({
 				key: state.season + j,
-				val: `${state.season + j} season`,
+				val: `${state.season + j}`,
 			});
 		}
 	} else if (field === "playoffs") {

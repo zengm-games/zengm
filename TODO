@@ -2,6 +2,7 @@ redesign page titles
 - get rid of new_window stuff
 - skyscraper overflow
 - test ads
+- replace all setTitle
 
 allow specification of country frequencies independent of name frequencies
 

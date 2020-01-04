@@ -1,5 +1,4 @@
 import React from "react";
-import { NewWindowLink } from "../components";
 import { helpers, logEvent, setTitleBar, toWorker } from "../util";
 
 class DeleteOldData extends React.Component {

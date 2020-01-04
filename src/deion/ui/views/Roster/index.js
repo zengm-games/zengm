@@ -10,7 +10,6 @@ import { PHASE } from "../../../common";
 import {
 	Dropdown,
 	HelpPopover,
-	NewWindowLink,
 	PlayerNameLabels,
 	RatingWithChange,
 	SortableTable,

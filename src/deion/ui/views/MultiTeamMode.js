@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import React, { useCallback } from "react";
 import { PHASE } from "../../common";
 import { setTitleBar, toWorker } from "../util";
-import { NewWindowLink } from "../components";
 
 const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
 	const handleChange = useCallback(

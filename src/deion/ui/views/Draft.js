@@ -2,12 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { getCols, helpers, setTitleBar, toWorker } from "../util";
-import {
-	DataTable,
-	DraftAbbrev,
-	NewWindowLink,
-	PlayerNameLabels,
-} from "../components";
+import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 
 const DraftButtons = ({ userRemaining, usersTurn }) => {
 	const untilText = userRemaining ? "your next pick" : "end of draft";

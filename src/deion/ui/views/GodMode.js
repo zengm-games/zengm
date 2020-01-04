@@ -2,7 +2,7 @@ import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { HelpPopover, NewWindowLink } from "../components";
+import { HelpPopover } from "../components";
 import { localActions, logEvent, setTitleBar, toWorker } from "../util";
 
 const options = [

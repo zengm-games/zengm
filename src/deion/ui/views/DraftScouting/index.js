@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { NewWindowLink } from "../../components";
 import DraftClass from "./DraftClass";
 import { helpers, setTitleBar } from "../../util";
 

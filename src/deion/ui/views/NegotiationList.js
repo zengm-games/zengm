@@ -3,7 +3,6 @@ import React from "react";
 import {
 	DataTable,
 	NegotiateButtons,
-	NewWindowLink,
 	PlayerNameLabels,
 	RosterSalarySummary,
 } from "../components";

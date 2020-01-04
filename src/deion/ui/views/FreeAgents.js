@@ -4,7 +4,6 @@ import { PHASE } from "../../common";
 import {
 	DataTable,
 	NegotiateButtons,
-	NewWindowLink,
 	PlayerNameLabels,
 	RosterComposition,
 	RosterSalarySummary,

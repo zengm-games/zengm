@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, NewWindowLink } from "../components";
+import { DataTable } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const PlayerName = ({ p }) => {

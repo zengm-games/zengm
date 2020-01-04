@@ -14,7 +14,6 @@ import {
 } from "../../../deion/ui/util";
 import {
 	Dropdown,
-	NewWindowLink,
 	PlayerNameLabels,
 	SortableTable,
 } from "../../../deion/ui/components";

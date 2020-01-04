@@ -1,7 +1,6 @@
 // @flow
 
 import React from "react";
-import { NewWindowLink } from "../components";
 import { helpers, setTitleBar } from "../util";
 
 const Frivolities = () => {

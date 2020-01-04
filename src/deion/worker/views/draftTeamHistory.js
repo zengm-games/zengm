@@ -49,17 +49,12 @@ async function updateDraftTeamHistory(inputs: {
 	});
 
 	const abbrev = inputs.abbrev;
-	const tid = g.teamAbbrevsCache.indexOf(abbrev);
-	const region = g.teamRegionsCache[tid];
-	const name = g.teamNamesCache[tid];
 	const userAbbrev = g.teamAbbrevsCache[g.userTid];
 
 	return {
 		abbrev,
 		draftType: g.draftType,
-		name,
 		players,
-		region,
 		stats,
 		userAbbrev,
 	};

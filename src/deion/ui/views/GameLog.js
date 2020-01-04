@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { BoxScoreWrapper, Dropdown, NewWindowLink } from "../components";
+import { BoxScoreWrapper, Dropdown } from "../components";
 import { helpers, overrides, setTitleBar } from "../util";
 import useClickable from "../hooks/useClickable";
 

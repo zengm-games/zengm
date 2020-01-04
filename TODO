@@ -8,6 +8,10 @@ redesign page titles
 - go over all title: `
 - shrink caret a bit, to match bootstrap
 - update document.title with all dropdown stuff
+  - getOptions -> useOptions
+  - setTitleBar -> useTitleBar?
+    - https://github.com/streamich/react-use/blob/master/src/useTitle.ts
+    - https://reactjs.org/docs/hooks-effect.html
 - switch selects to bootstrap dropdowns, like top menu?
   - what if there are thousands of entries in one?
 - hide on some pages, like dashboard?
@@ -16,6 +20,7 @@ redesign page titles
 - better initial loading state than ...
 - depth chart positions to dropdown
 - other uses of h1 - decrease size? if so, what about other h2/h3/etc?
+- owner messages
 
 allow specification of country frequencies independent of name frequencies
 

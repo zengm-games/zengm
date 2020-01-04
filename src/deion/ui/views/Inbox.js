@@ -3,7 +3,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { NewWindowLink } from "../components";
 import { helpers, setTitleBar } from "../util";
 import type { Message } from "../../common/types";
 

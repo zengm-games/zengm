@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitleBar, toWorker } from "../util";
 
 const PlayersTable = ({

@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { NewWindowLink, SafeHtml } from "../components";
+import { SafeHtml } from "../components";
 import { setTitleBar } from "../util";
 
 const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {

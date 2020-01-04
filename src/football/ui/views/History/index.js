@@ -1,11 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	Dropdown,
-	JumpTo,
-	NewWindowLink,
-	RetiredPlayers,
-} from "../../../../deion/ui/components";
+import { Dropdown, RetiredPlayers } from "../../../../deion/ui/components";
 import { setTitleBar } from "../../../../deion/ui/util";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";

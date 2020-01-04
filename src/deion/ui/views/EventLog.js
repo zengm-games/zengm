@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, NewWindowLink, SafeHtml } from "../components";
+import { Dropdown, SafeHtml } from "../components";
 import { setTitleBar } from "../util";
 
 const EventLog = ({ abbrev, events, season }) => {

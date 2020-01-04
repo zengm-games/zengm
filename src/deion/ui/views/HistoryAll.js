@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const awardName = (award, season, teamAbbrevsCache, userTid) => {

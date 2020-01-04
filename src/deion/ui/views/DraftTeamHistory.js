@@ -1,20 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	DataTable,
-	DraftAbbrev,
-	Dropdown,
-	NewWindowLink,
-	SkillsBlock,
-} from "../components";
+import { DataTable, DraftAbbrev, Dropdown, SkillsBlock } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const DraftTeamHistory = ({
 	abbrev,
 	draftType,
-	name,
 	players,
-	region,
 	stats,
 	userAbbrev,
 }) => {
@@ -142,9 +134,7 @@ const DraftTeamHistory = ({
 DraftTeamHistory.propTypes = {
 	abbrev: PropTypes.string.isRequired,
 	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
-	name: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	region: PropTypes.string.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userAbbrev: PropTypes.string.isRequired,
 };

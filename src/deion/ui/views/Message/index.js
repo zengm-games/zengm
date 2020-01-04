@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import OwnerMoodsChart from "./OwnerMoodsChart";
-import { NewWindowLink, SafeHtml } from "../../components";
+import { SafeHtml } from "../../components";
 import { helpers, setTitleBar } from "../../util";
 import type { Message as Message_ } from "../../../common/types";
 
@@ -27,12 +27,12 @@ const Message = ({ message }: { message: void | Message_ }) => {
 				<>
 					<h4>{message.subject}</h4>
 					<h5 className="mb-3">
-						From: {message.from}, {message.year} <NewWindowLink />
+						From: {message.from}, {message.year}
 					</h5>
 				</>
 			) : (
 				<h4 className="mb-3">
-					From: {message.from}, {message.year} <NewWindowLink />
+					From: {message.from}, {message.year}
 				</h4>
 			)}
 

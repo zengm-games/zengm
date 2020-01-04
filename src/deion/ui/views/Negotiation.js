@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { NewWindowLink } from "../components";
 import {
 	helpers,
 	logEvent,
@@ -130,7 +129,6 @@ const Negotiation = ({
 				<a href={helpers.leagueUrl(["player", player.pid])}>
 					{player.name}
 				</a>{" "}
-				<NewWindowLink parts={["player", player.pid]} />
 			</h2>
 			<p>
 				Mood: {mood}

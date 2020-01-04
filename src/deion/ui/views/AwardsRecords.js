@@ -1,7 +1,7 @@
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { DataTable, Dropdown } from "../components";
 import { getCols, helpers, setTitleBar } from "../util";
 
 const formatYear = year => {

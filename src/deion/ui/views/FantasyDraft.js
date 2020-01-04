@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import arrayMove from "array-move";
 import { PHASE } from "../../common";
-import { NewWindowLink, SortableTable } from "../components";
+import { SortableTable } from "../components";
 import { helpers, setTitleBar, toWorker } from "../util";
 
 // Copied from worker/util/random lol

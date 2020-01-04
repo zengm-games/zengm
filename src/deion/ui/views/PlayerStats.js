@@ -1,13 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	DataTable,
-	Dropdown,
-	JumpTo,
-	NewWindowLink,
-	PlayerNameLabels,
-} from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { DataTable, PlayerNameLabels } from "../components";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const PlayerStats = ({
 	abbrev,
@@ -19,8 +13,17 @@ const PlayerStats = ({
 	superCols,
 	userTid,
 }) => {
-	const label = season !== undefined ? season : "Career Totals";
-	setTitle(`Player Stats - ${label}`);
+	setTitleBar({
+		title: "Player Stats",
+		jumpToSeason: season,
+		dropdownView: "player_stats",
+		dropdownFields: {
+			teamsAndAllWatch: abbrev,
+			seasonsAndCareer: season === undefined ? "career" : season,
+			statTypesAdv: statType,
+			playoffs: playoffs,
+		},
+	});
 
 	const cols = getCols(
 		"Name",
@@ -107,25 +110,6 @@ const PlayerStats = ({
 
 	return (
 		<>
-			<Dropdown
-				view="player_stats"
-				fields={[
-					"teamsAndAllWatch",
-					"seasonsAndCareer",
-					"statTypesAdv",
-					"playoffs",
-				]}
-				values={[
-					abbrev,
-					season === undefined ? "career" : season,
-					statType,
-					playoffs,
-				]}
-			/>
-			<JumpTo season={season} />
-			<h1>
-				Player Stats <NewWindowLink />
-			</h1>
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["player_stat_dists", season])}>

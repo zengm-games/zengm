@@ -393,13 +393,20 @@ const Select = ({ field, handleChange, value }) => {
 	}
 
 	return (
-		<select value={value} className="form-control" onChange={handleChange}>
-			{options.map(opt => (
-				<option key={opt.key} value={opt.key}>
-					{opt.val}
-				</option>
-			))}
-		</select>
+		<>
+			»
+			<select
+				value={value}
+				className="dropdown-select ml-1"
+				onChange={handleChange}
+			>
+				{options.map(opt => (
+					<option key={opt.key} value={opt.key}>
+						{opt.val}
+					</option>
+				))}
+			</select>
+		</>
 	);
 };
 
@@ -433,7 +440,7 @@ const Dropdown = ({ extraParam, fields, values, view }: Props) => {
 	};
 
 	return (
-		<form className="form-inline float-right my-1">
+		<form className="form-inline">
 			{fields.map((field, i) => {
 				return (
 					<div key={field} className="form-group ml-1">

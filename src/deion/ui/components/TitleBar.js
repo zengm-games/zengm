@@ -17,9 +17,11 @@ const TitleBar = () => {
 	);
 
 	return (
-		<div className="p-2 mb-2 bg-primary text-white title-bar">
-			<b>{title === undefined ? "..." : title}</b>
-			<NewWindowLink />
+		<div className="p-2 mb-2 bg-primary text-white title-bar d-flex">
+			<div>
+				<b>{title === undefined ? "..." : title}</b>
+				<NewWindowLink />
+			</div>
 			{dropdownView !== undefined ? (
 				<Dropdown
 					view={dropdownView}
@@ -27,7 +29,7 @@ const TitleBar = () => {
 					values={Object.values(dropdownFields)}
 				/>
 			) : null}
-			{jumpToSeason !== undefined ? <JumpTo season={jumpToSeason} /> : null}
+			{/*jumpToSeason !== undefined ? <JumpTo season={jumpToSeason} /> : null*/}
 		</div>
 	);
 };

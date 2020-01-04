@@ -3,6 +3,13 @@ redesign page titles
 - skyscraper overflow
 - test ads
 - replace all setTitle
+- update title with all dropdown stuff
+- custom selects
+  - how to underline?
+  - how to make dynamic width?
+    - https://jsfiddle.net/1cwhL4sj/
+  - how to show different font color for selected and options?
+  - maybe somehow entirely replace the displayed control
 
 allow specification of country frequencies independent of name frequencies
 

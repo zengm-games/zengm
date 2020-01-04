@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitleBar } from "../util";
 import { BoxPlot, Dropdown, NewWindowLink } from "../components";
 
 const proStatsAll =
@@ -710,7 +710,7 @@ const scale =
 		: {};
 
 const TeamStatDists = ({ season, statsAll }) => {
-	setTitle(`Team Stat Distributions - ${season}`);
+	setTitleBar({ title: `Team Stat Distributions - ${season}` });
 
 	return (
 		<>

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitleBar, toWorker } from "../util";
 
 const PlayersTable = ({
 	draftType,
@@ -199,7 +199,7 @@ const AllStars = ({
 		[reveal, userDraftingBothTeams],
 	);
 
-	setTitle("All-Star Draft");
+	setTitleBar({ title: "All-Star Draft" });
 
 	// Split up revealed into the two teams
 	const revealed0 = [];

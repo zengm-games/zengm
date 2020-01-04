@@ -6,10 +6,10 @@ import {
 	NewWindowLink,
 	PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
-	setTitle("Statistical Feats");
+	setTitleBar({ title: "Statistical Feats" });
 
 	const cols = getCols(
 		"Name",

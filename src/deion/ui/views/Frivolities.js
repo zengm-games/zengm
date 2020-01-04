@@ -2,10 +2,10 @@
 
 import React from "react";
 import { NewWindowLink } from "../components";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitleBar } from "../util";
 
 const Frivolities = () => {
-	setTitle("Frivolities");
+	setTitleBar({ title: "Frivolities" });
 
 	return (
 		<>

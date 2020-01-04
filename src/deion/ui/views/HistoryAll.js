@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const awardName = (award, season, teamAbbrevsCache, userTid) => {
 	if (!award) {
@@ -54,7 +54,7 @@ const teamName = (t, season, ties) => {
 };
 
 const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
-	setTitle("League History");
+	setTitleBar({ title: "League History" });
 
 	const cols = getCols(
 		"Season",

@@ -9,7 +9,7 @@ import {
 	RosterComposition,
 	RosterSalarySummary,
 } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const FreeAgents = ({
 	capSpace,
@@ -44,7 +44,7 @@ const FreeAgents = ({
 		}, 0);
 	}, [capSpace, minContract, stats]);
 
-	setTitle("Free Agents");
+	setTitleBar({ title: "Free Agents" });
 
 	if (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) {
 		return (

@@ -8,7 +8,7 @@ import {
 	NewWindowLink,
 	PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, logEvent, setTitle, toWorker } from "../util";
+import { getCols, helpers, logEvent, setTitleBar, toWorker } from "../util";
 
 class FinancesForm extends React.Component {
 	constructor(props) {
@@ -371,7 +371,7 @@ const TeamFinances = ({
 	tid,
 	userTid,
 }) => {
-	setTitle(`${t.region} ${t.name} Finances`);
+	setTitleBar({ title: `${t.region} ${t.name} Finances` });
 
 	const cols = getCols("Name").concat(
 		salariesSeasons.map(season => {

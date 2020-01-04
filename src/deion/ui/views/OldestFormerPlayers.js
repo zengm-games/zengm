@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 import { DataTable, NewWindowLink } from "../components";
 
 const OldestFormerPlayers = ({ players, stats, userTid }) => {
-	setTitle("Oldest Former Players");
+	setTitleBar({ title: "Oldest Former Players" });
 
 	const cols = getCols(
 		"Name",

@@ -6,7 +6,7 @@ import {
 	NewWindowLink,
 	RetiredPlayers,
 } from "../../../../deion/ui/components";
-import { setTitle } from "../../../../deion/ui/util";
+import { setTitleBar } from "../../../../deion/ui/util";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
 
@@ -19,7 +19,7 @@ const History = ({
 	season,
 	userTid,
 }) => {
-	setTitle(`Season Summary - ${season}`);
+	setTitleBar({ title: `Season Summary - ${season}` });
 
 	if (invalidSeason) {
 		return (

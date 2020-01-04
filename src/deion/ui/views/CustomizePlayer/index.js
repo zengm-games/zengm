@@ -6,7 +6,7 @@ import {
 	helpers,
 	overrides,
 	realtimeUpdate,
-	setTitle,
+	setTitleBar,
 	toWorker,
 } from "../../util";
 import RatingsForm from "./RatingsForm";
@@ -247,7 +247,7 @@ class CustomizePlayer extends React.Component {
 
 		const title = originalTid === undefined ? "Create Player" : "Edit Player";
 
-		setTitle(title);
+		setTitleBar({ title });
 
 		if (!godMode) {
 			return (

@@ -8,10 +8,10 @@ import {
 	NewWindowLink,
 	SkillsBlock,
 } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
-	setTitle(`${season} Draft History`);
+	setTitleBar({ title: `${season} Draft History` });
 
 	const superCols = [
 		{

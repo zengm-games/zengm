@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useReducer } from "react";
-import { helpers, logEvent, setTitle, toWorker } from "../../util";
+import { helpers, logEvent, setTitleBar, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
 
 const reducer = (state, action) => {
@@ -71,7 +71,7 @@ const ManageTeams = props => {
 		dispatch({ type: "doneSaving" });
 	};
 
-	setTitle("Manage Teams");
+	setTitleBar({ title: "Manage Teams" });
 
 	const { saving, teams } = state;
 

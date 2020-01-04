@@ -20,7 +20,7 @@ import {
 	getCols,
 	helpers,
 	logEvent,
-	setTitle,
+	setTitleBar,
 	toWorker,
 } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
@@ -98,7 +98,7 @@ class Roster extends React.Component {
 			userTid,
 		} = this.props;
 
-		setTitle(`${t.region} ${t.name} - ${season}`);
+		setTitleBar({ title: `${t.region} ${t.name} - ${season}` });
 
 		// Use the result of drag and drop to sort players, before the "official" order comes back as props
 		let playersSorted;

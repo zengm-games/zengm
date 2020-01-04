@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
-import { localActions, realtimeUpdate, setTitle } from "../util";
+import { localActions, realtimeUpdate, setTitleBar } from "../util";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -110,7 +110,7 @@ class ResetPassword extends React.Component {
 	}
 
 	render() {
-		setTitle("Reset Password");
+		setTitleBar({ title: "Reset Password" });
 
 		const form = (
 			<div className="row">

@@ -2,10 +2,16 @@ redesign page titles
 - screenshot
 - skyscraper overflow
 - test ads
-- replace all setTitle
+- replace all
+  - Dropdown
+  - JumpTo
+  - h1
 - shrink caret a bit, to match bootstrap
-- update title with all dropdown stuff
+- update document.title with all dropdown stuff
 - switch selects to bootstrap dropdowns, like top menu?
+  - what if there are thousands of entries in one?
+- hide on some pages, like dashboard?
+- get rid of new_window?
 
 allow specification of country frequencies independent of name frequencies
 

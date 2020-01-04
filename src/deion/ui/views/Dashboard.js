@@ -10,7 +10,7 @@ import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import ago from "s-ago";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
-import { confirm, getCols, setTitle, toWorker } from "../util";
+import { confirm, getCols, setTitleBar, toWorker } from "../util";
 import type { League } from "../../common/types";
 
 const difficultyText = (difficulty: number) => {
@@ -190,7 +190,7 @@ const Dashboard = ({ leagues }: Props) => {
 	const [loadingLID, setLoadingLID] = useState<number | void>();
 	const [deletingLID, setDeletingLID] = useState<number | void>();
 
-	setTitle("Dashboard");
+	setTitleBar({ title: "Dashboard" });
 
 	const cols = getCols(
 		"",

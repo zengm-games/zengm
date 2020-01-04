@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { BoxScoreWrapper, Dropdown, NewWindowLink } from "../components";
-import { helpers, overrides, setTitle } from "../util";
+import { helpers, overrides, setTitleBar } from "../util";
 import useClickable from "../hooks/useClickable";
 
 const StatsRow = ({ i, p, ...props }) => {
@@ -141,7 +141,7 @@ const GameLog = ({
 	gamesList = { games: [] },
 	season,
 }) => {
-	setTitle(`Game Log - ${season}`);
+	setTitleBar({ title: `Game Log - ${season}` });
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(
 		gamesList.games,

@@ -6,7 +6,7 @@ import {
 	local,
 	localActions,
 	realtimeUpdate,
-	setTitle,
+	setTitleBar,
 	toWorker,
 	useLocalShallow,
 } from "../util";
@@ -41,7 +41,7 @@ LeagueContent.propTypes = {
 };
 
 const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
-	setTitle("Error");
+	setTitleBar({ title: "Error" });
 	return (
 		<>
 			<h1>Error</h1>

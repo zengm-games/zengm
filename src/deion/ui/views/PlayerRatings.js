@@ -7,7 +7,7 @@ import {
 	NewWindowLink,
 	PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, overrides, setTitle } from "../util";
+import { getCols, helpers, overrides, setTitleBar } from "../util";
 
 const PlayerRatings = ({
 	abbrev,
@@ -17,7 +17,7 @@ const PlayerRatings = ({
 	season,
 	userTid,
 }) => {
-	setTitle(`Player Ratings - ${season}`);
+	setTitleBar({ title: `Player Ratings - ${season}` });
 
 	const ovrsPotsColNames = [];
 	if (process.env.SPORT === "football") {

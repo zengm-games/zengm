@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitleBar } from "../util";
 import {
 	Dropdown,
 	JumpTo,
@@ -10,7 +10,7 @@ import {
 } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
-	setTitle(`League Leaders - ${season}`);
+	setTitleBar({ title: `League Leaders - ${season}` });
 
 	return (
 		<>

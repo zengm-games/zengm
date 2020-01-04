@@ -11,7 +11,7 @@ import {
 	NewWindowLink,
 	ResponsiveTableWrapper,
 } from "../components";
-import { helpers, setTitle, toWorker } from "../util";
+import { helpers, setTitleBar, toWorker } from "../util";
 import type { DraftLotteryResultArray } from "../../common/types";
 
 const getProbs = (
@@ -230,7 +230,7 @@ class DraftLottery extends React.Component<Props, State> {
 	render() {
 		const { season, ties, type, userTid } = this.props;
 
-		setTitle(`${season} Draft Lottery`);
+		setTitleBar({ title: `${season} Draft Lottery` });
 
 		const result =
 			this.state.result !== undefined ? this.state.result : this.props.result;

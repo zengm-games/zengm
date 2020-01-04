@@ -3,10 +3,10 @@
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { NewWindowLink } from "../components";
-import { setTitle } from "../util";
+import { setTitleBar } from "../util";
 
 const SocialMedia = ({ teamName }: { teamName: string }) => {
-	setTitle("Social Media");
+	setTitleBar({ title: "Social Media" });
 
 	const [tweet, setTweet] = useState();
 	const [replies, setReplies] = useState([]);

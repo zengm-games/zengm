@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitleBar, toWorker } from "../util";
 import {
 	DataTable,
 	DraftAbbrev,
@@ -101,7 +101,7 @@ const Draft = ({
 		}
 	};
 
-	setTitle("Draft");
+	setTitleBar({ title: "Draft" });
 
 	const remainingPicks = drafted.filter(p => p.pid < 0);
 	const nextPick = remainingPicks[0];

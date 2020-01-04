@@ -7,7 +7,7 @@ import {
 	helpers,
 	logEvent,
 	realtimeUpdate,
-	setTitle,
+	setTitleBar,
 	toWorker,
 } from "../util";
 
@@ -234,7 +234,7 @@ const NewLeague = props => {
 		[tid],
 	);
 
-	setTitle(title);
+	setTitleBar({ title });
 
 	return (
 		<>

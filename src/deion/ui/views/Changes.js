@@ -3,10 +3,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { NewWindowLink, SafeHtml } from "../components";
-import { setTitle } from "../util";
+import { setTitleBar } from "../util";
 
 const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
-	setTitle("Changes");
+	setTitleBar({ title: "Changes" });
 
 	return (
 		<>

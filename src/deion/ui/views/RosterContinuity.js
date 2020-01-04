@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, NewWindowLink } from "../components";
-import { getCols, setTitle } from "../util";
+import { getCols, setTitleBar } from "../util";
 
 type Props = {
 	abbrevs: string[],
@@ -13,7 +13,7 @@ type Props = {
 };
 
 const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
-	setTitle("Roster Continuity");
+	setTitleBar({ title: "Roster Continuity" });
 
 	const cols = [
 		...getCols("Season"),

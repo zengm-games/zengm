@@ -9,7 +9,7 @@ import {
 	WatchBlock,
 } from "../../components";
 import Injuries from "./Injuries";
-import { getCols, helpers, overrides, setTitle, toWorker } from "../../util";
+import { getCols, helpers, overrides, setTitleBar, toWorker } from "../../util";
 
 const Relatives = ({ pid, relatives }) => {
 	if (relatives.length === 0) {
@@ -143,7 +143,7 @@ const Player = ({
 	teamColors,
 	willingToSign,
 }) => {
-	setTitle(player.name);
+	setTitleBar({ title: player.name });
 
 	let draftInfo = null;
 	if (player.draft.round) {

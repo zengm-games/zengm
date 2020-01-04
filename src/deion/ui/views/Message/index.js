@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import React from "react";
 import OwnerMoodsChart from "./OwnerMoodsChart";
 import { NewWindowLink, SafeHtml } from "../../components";
-import { helpers, setTitle } from "../../util";
+import { helpers, setTitleBar } from "../../util";
 import type { Message as Message_ } from "../../../common/types";
 
 const Message = ({ message }: { message: void | Message_ }) => {
 	if (!message) {
-		setTitle("Message");
+		setTitleBar({ title: "Message" });
 
 		return (
 			<>
@@ -19,7 +19,7 @@ const Message = ({ message }: { message: void | Message_ }) => {
 		);
 	}
 
-	setTitle(`Message From ${message.from}`);
+	setTitleBar({ title: `Message From ${message.from}` });
 
 	return (
 		<>

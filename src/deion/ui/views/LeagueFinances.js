@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const LeagueFinances = ({
@@ -15,7 +15,7 @@ const LeagueFinances = ({
 	teams,
 	userTid,
 }) => {
-	setTitle(`League Finances - ${season}`);
+	setTitleBar({ title: `League Finances - ${season}` });
 
 	const cols = budget
 		? getCols(

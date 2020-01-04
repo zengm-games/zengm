@@ -7,7 +7,7 @@ import {
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 } from "../../common";
-import { getScript, realtimeUpdate, setTitle } from "../util";
+import { getScript, realtimeUpdate, setTitleBar } from "../util";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -101,7 +101,7 @@ class AccountUpdateCard extends React.Component {
 	render() {
 		const { goldCancelled, expMonth, expYear, last4, username } = this.props;
 
-		setTitle("Update Card");
+		setTitleBar({ title: "Update Card" });
 
 		let errorMessage;
 		if (username === undefined || username === null || username === "") {

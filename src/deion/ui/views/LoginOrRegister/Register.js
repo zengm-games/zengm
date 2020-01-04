@@ -7,7 +7,7 @@ import {
 	helpers,
 	localActions,
 	realtimeUpdate,
-	setTitle,
+	setTitleBar,
 	toWorker,
 } from "../../util";
 
@@ -106,7 +106,7 @@ class Register extends React.Component<Props, State> {
 	}
 
 	render() {
-		setTitle("Login or Register");
+		setTitleBar({ title: "Login or Register" });
 
 		return (
 			<>

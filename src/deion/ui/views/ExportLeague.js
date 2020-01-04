@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { downloadFile, helpers, setTitle, toWorker } from "../util";
+import { downloadFile, helpers, setTitleBar, toWorker } from "../util";
 
 const categories = [
 	{
@@ -88,7 +88,7 @@ const ExportLeague = () => {
 		[compressed],
 	);
 
-	setTitle("Export League");
+	setTitleBar({ title: "Export League" });
 
 	return (
 		<>

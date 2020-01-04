@@ -15,7 +15,7 @@ import {
 	helpers,
 	localActions,
 	realtimeUpdate,
-	setTitle,
+	setTitleBar,
 } from "../util";
 
 const ajaxErrorMsg =
@@ -282,7 +282,7 @@ const Account = ({
 	showGoldPitch: boolean,
 	username?: string,
 }) => {
-	setTitle("Account");
+	setTitleBar({ title: "Account" });
 
 	let goldPitchDiv = null;
 	if (showGoldPitch) {

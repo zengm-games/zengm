@@ -5,7 +5,7 @@ import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PLAYER } from "../../common";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitleBar, toWorker } from "../util";
 import {
 	DataTable,
 	Dropdown,
@@ -23,7 +23,7 @@ const WatchList = ({ players, playoffs, statType, stats }) => {
 		setClearing(false);
 	}, []);
 
-	setTitle("Watch List");
+	setTitleBar({ title: "Watch List" });
 
 	const cols = getCols(
 		"",

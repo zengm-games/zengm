@@ -7,7 +7,7 @@ import {
 	PlayerNameLabels,
 	RosterSalarySummary,
 } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const NegotiationList = ({
 	capSpace,
@@ -23,7 +23,7 @@ const NegotiationList = ({
 }) => {
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
 
-	setTitle(title);
+	setTitleBar({ title });
 
 	const cols = getCols(
 		"Name",

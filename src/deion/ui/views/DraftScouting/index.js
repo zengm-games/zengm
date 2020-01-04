@@ -2,10 +2,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import { NewWindowLink } from "../../components";
 import DraftClass from "./DraftClass";
-import { helpers, setTitle } from "../../util";
+import { helpers, setTitleBar } from "../../util";
 
 const DraftScouting = ({ draftType, seasons }) => {
-	setTitle("Draft Scouting");
+	setTitleBar({ title: "Draft Scouting" });
 
 	return (
 		<>

@@ -6,10 +6,10 @@ import {
 	NewWindowLink,
 	UpcomingGame,
 } from "../components";
-import { setTitle } from "../util";
+import { setTitleBar } from "../util";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
-	setTitle("Schedule");
+	setTitleBar({ title: "Schedule" });
 
 	return (
 		<>

@@ -2,10 +2,10 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { NewWindowLink } from "../components";
-import { setTitle, toWorker } from "../util";
+import { setTitleBar, toWorker } from "../util";
 
 const Live = ({ games, gamesInProgress }) => {
-	setTitle("Live Game Simulation");
+	setTitleBar({ title: "Live Game Simulation" });
 
 	return (
 		<>

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, Dropdown, NewWindowLink } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitleBar } from "../util";
 
 const teamLink = t => {
 	return (
@@ -12,7 +12,7 @@ const teamLink = t => {
 };
 
 const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
-	setTitle("Team Records");
+	setTitleBar({ title: "Team Records" });
 
 	let displayName;
 	if (byType === "conf") {

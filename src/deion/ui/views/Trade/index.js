@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
 import { NewWindowLink } from "../../components";
-import { setTitle, toWorker } from "../../util";
+import { setTitleBar, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
@@ -174,7 +174,7 @@ class Trade extends React.Component {
 			won,
 		} = this.props;
 
-		setTitle("Trade");
+		setTitleBar({ title: "Trade" });
 
 		const noTradingAllowed =
 			(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||

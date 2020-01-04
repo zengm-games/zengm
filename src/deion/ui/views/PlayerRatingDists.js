@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { BoxPlot, Dropdown, NewWindowLink } from "../components";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitleBar } from "../util";
 
 const PlayerRatingDists = ({ ratingsAll, season }) => {
-	setTitle(`Player Rating Distributions - ${season}`);
+	setTitleBar({ title: `Player Rating Distributions - ${season}` });
 
 	return (
 		<>

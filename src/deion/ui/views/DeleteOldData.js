@@ -1,6 +1,6 @@
 import React from "react";
 import { NewWindowLink } from "../components";
-import { helpers, logEvent, setTitle, toWorker } from "../util";
+import { helpers, logEvent, setTitleBar, toWorker } from "../util";
 
 class DeleteOldData extends React.Component {
 	constructor(props) {
@@ -58,7 +58,7 @@ class DeleteOldData extends React.Component {
 	}
 
 	render() {
-		setTitle("Delete Old Data");
+		setTitleBar({ title: "Delete Old Data" });
 
 		return (
 			<>

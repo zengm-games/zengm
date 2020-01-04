@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
-import { helpers, logEvent, setTitle } from "../util";
+import { helpers, logEvent, setTitleBar } from "../util";
 
 const Storage = () => {
 	const [status, setStatus] = useState("loading...");
@@ -114,7 +114,7 @@ class Options extends React.Component {
 	render() {
 		const title = this.props.title ? this.props.title : "Options";
 
-		setTitle(title);
+		setTitleBar({ title });
 
 		return (
 			<>

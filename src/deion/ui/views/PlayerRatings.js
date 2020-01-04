@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, Dropdown, PlayerNameLabels } from "../components";
-import { getCols, helpers, overrides, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers, overrides } from "../util";
 
 const PlayerRatings = ({
 	abbrev,
@@ -11,7 +12,7 @@ const PlayerRatings = ({
 	season,
 	userTid,
 }) => {
-	setTitleBar({ title: "Player Ratings", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "Player Ratings", jumpTo: true, jumpToSeason: season });
 
 	const ovrsPotsColNames = [];
 	if (process.env.SPORT === "football") {

@@ -2,7 +2,8 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { BoxScoreWrapper } from "../components";
-import { overrides, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { overrides } from "../util";
 
 class PlayerRow extends React.Component {
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
@@ -180,7 +181,7 @@ class LiveGame extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
+		useTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
 
 		// Needs to return actual div, not fragment, for AutoAffix!!!
 		return (

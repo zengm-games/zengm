@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { getCols, helpers, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers, toWorker } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 
 const DraftButtons = ({ userRemaining, usersTurn }) => {
@@ -96,7 +97,7 @@ const Draft = ({
 		}
 	};
 
-	setTitleBar({ title: "Draft" });
+	useTitleBar({ title: "Draft" });
 
 	const remainingPicks = drafted.filter(p => p.pid < 0);
 	const nextPick = remainingPicks[0];

@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const PlayerStats = ({
 	abbrev,
@@ -13,7 +14,7 @@ const PlayerStats = ({
 	superCols,
 	userTid,
 }) => {
-	setTitleBar({
+	useTitleBar({
 		title: "Player Stats",
 		jumpTo: true,
 		jumpToSeason: season,

@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
-import { downloadFile, helpers, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { downloadFile, helpers, toWorker } from "../util";
 
 const categories = [
 	{
@@ -88,7 +89,7 @@ const ExportLeague = () => {
 		[compressed],
 	);
 
-	setTitleBar({ title: "Export League" });
+	useTitleBar({ title: "Export League" });
 
 	return (
 		<>

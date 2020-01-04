@@ -2,7 +2,8 @@ import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, Dropdown } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const formatYear = year => {
 	return Object.keys(year).map((k, i) => {
@@ -33,7 +34,7 @@ const AwardsRecords = ({
 	awardsRecords,
 	playerCount,
 }) => {
-	setTitleBar({ title: "Awards Records" });
+	useTitleBar({ title: "Awards Records" });
 	const cols = getCols("Name", "Count", "Year", "Last", "Retired", "HOF");
 
 	const rows = awardsRecords.map(a => {

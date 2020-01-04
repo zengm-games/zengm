@@ -9,13 +9,13 @@ import {
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 } from "../../common";
+import useTitleBar from "../hooks/useTitleBar";
 import {
 	confirm,
 	getScript,
 	helpers,
 	localActions,
 	realtimeUpdate,
-	setTitleBar,
 } from "../util";
 
 const ajaxErrorMsg =
@@ -282,7 +282,7 @@ const Account = ({
 	showGoldPitch: boolean,
 	username?: string,
 }) => {
-	setTitleBar({ title: "Your Account", hideNewWindow: true });
+	useTitleBar({ title: "Your Account", hideNewWindow: true });
 
 	let goldPitchDiv = null;
 	if (showGoldPitch) {

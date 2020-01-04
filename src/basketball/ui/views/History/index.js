@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Dropdown, RetiredPlayers } from "../../../../deion/ui/components";
-import { setTitleBar } from "../../../../deion/ui/util";
+import useTitleBar from "../../../../deion/ui/hooks/useTitleBar";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
 
@@ -14,7 +14,7 @@ const History = ({
 	season,
 	userTid,
 }) => {
-	setTitleBar({ title: "Season Summary", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "Season Summary", jumpTo: true, jumpToSeason: season });
 
 	if (invalidSeason) {
 		return (

@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
-import { setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 
 type SeriesTeam = {
 	abbrev: string,
@@ -45,7 +45,7 @@ const Playoffs = ({
 	}[][],
 	userTid: number,
 }) => {
-	setTitleBar({
+	useTitleBar({
 		title: "Playoffs",
 		jumpTo: true,
 		jumpToSeason: season,

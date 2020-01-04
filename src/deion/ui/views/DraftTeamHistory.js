@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, DraftAbbrev, Dropdown, SkillsBlock } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -10,7 +11,7 @@ const DraftTeamHistory = ({
 	stats,
 	userAbbrev,
 }) => {
-	setTitleBar({ title: "Draft History" });
+	useTitleBar({ title: "Draft History" });
 
 	const superCols = [
 		{

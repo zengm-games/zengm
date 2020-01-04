@@ -1,6 +1,6 @@
 import React from "react";
+import useTitleBar from "../hooks/useTitleBar";
 import initView from "./initView";
-import setTitleBar from "./setTitleBar";
 
 const genStaticPage = (
 	name: string,
@@ -12,7 +12,7 @@ const genStaticPage = (
 		id: name,
 		inLeague,
 		Component: () => {
-			setTitleBar({ title });
+			useTitleBar({ title });
 
 			return content;
 		},

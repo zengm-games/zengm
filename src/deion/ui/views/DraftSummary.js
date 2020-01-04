@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, DraftAbbrev, Dropdown, SkillsBlock } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
-	setTitleBar({ title: "Draft History", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "Draft History", jumpTo: true, jumpToSeason: season });
 
 	const superCols = [
 		{

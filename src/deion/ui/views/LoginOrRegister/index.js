@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { setTitleBar } from "../../util";
+import useTitleBar from "../../hooks/useTitleBar";
 import Login from "./Login";
 import Register from "./Register";
 
@@ -12,7 +12,7 @@ const otherSport =
 	process.env.SPORT === "basketball" ? "Football" : "Basketball";
 
 const LoginOrRegister = () => {
-	setTitleBar({ title: "Login or Register" });
+	useTitleBar({ title: "Login or Register" });
 
 	return (
 		<>

@@ -3,7 +3,8 @@ import React, { useCallback, useState } from "react";
 import arrayMove from "array-move";
 import { PHASE } from "../../common";
 import { SortableTable } from "../components";
-import { helpers, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, toWorker } from "../util";
 
 // Copied from worker/util/random lol
 const randInt = (a: number, b: number): number => {
@@ -36,7 +37,7 @@ const FantasyDraft = ({ phase, teams, userTids }) => {
 		toWorker("startFantasyDraft", sortedTids);
 	}, [sortedTids]);
 
-	setTitleBar({ title: "Fantasy Draft" });
+	useTitleBar({ title: "Fantasy Draft" });
 
 	if (phase === PHASE.DRAFT) {
 		return (

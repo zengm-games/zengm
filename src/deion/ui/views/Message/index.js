@@ -4,13 +4,16 @@ import PropTypes from "prop-types";
 import React from "react";
 import OwnerMoodsChart from "./OwnerMoodsChart";
 import { SafeHtml } from "../../components";
-import { helpers, setTitleBar } from "../../util";
+import useTitleBar from "../../hooks/useTitleBar";
+import { helpers } from "../../util";
 import type { Message as Message_ } from "../../../common/types";
 
 const Message = ({ message }: { message: void | Message_ }) => {
-	if (!message) {
-		setTitleBar({ title: "Message" });
+	const title = message ? `Message From ${message.from}` : "Message";
 
+	useTitleBar({ title });
+
+	if (!message) {
 		return (
 			<>
 				<h1>Error</h1>
@@ -18,8 +21,6 @@ const Message = ({ message }: { message: void | Message_ }) => {
 			</>
 		);
 	}
-
-	setTitleBar({ title: `Message From ${message.from}` });
 
 	return (
 		<>

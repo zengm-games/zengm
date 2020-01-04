@@ -2,10 +2,10 @@
 
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 
 const SocialMedia = ({ teamName }: { teamName: string }) => {
-	setTitleBar({ title: "Social Media" });
+	useTitleBar({ title: "Social Media" });
 
 	const [tweet, setTweet] = useState();
 	const [replies, setReplies] = useState([]);

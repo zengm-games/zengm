@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 
 const HallOfFame = ({ players, stats, userTid }) => {
-	setTitleBar({ title: "Hall of Fame" });
+	useTitleBar({ title: "Hall of Fame" });
 
 	const superCols = [
 		{

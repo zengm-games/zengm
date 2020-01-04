@@ -7,7 +7,8 @@ import {
 	HelpPopover,
 	PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, logEvent, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers, logEvent, toWorker } from "../util";
 
 class FinancesForm extends React.Component {
 	constructor(props) {
@@ -370,7 +371,7 @@ const TeamFinances = ({
 	tid,
 	userTid,
 }) => {
-	setTitleBar({ title: "Team Finances" });
+	useTitleBar({ title: "Team Finances" });
 
 	const cols = getCols("Name").concat(
 		salariesSeasons.map(season => {

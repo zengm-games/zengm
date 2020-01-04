@@ -7,7 +7,8 @@ import {
 	PlayerNameLabels,
 	RecordAndPlayoffs,
 } from "../components";
-import { helpers, getCols, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, getCols } from "../util";
 
 const TeamHistory = ({
 	abbrev,
@@ -26,7 +27,7 @@ const TeamHistory = ({
 	totalWon,
 	worstRecord,
 }) => {
-	setTitleBar({ title: "Team History" });
+	useTitleBar({ title: "Team History" });
 
 	const historySeasons = history.map(h => {
 		const recordAndPlayoffs = (

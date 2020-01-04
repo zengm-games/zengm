@@ -3,7 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 import type { Message } from "../../common/types";
 
 const Inbox = ({
@@ -13,7 +14,7 @@ const Inbox = ({
 	anyUnread: boolean,
 	messages: Message[],
 }) => {
-	setTitleBar({ title: "Inbox" });
+	useTitleBar({ title: "Inbox" });
 
 	return (
 		<>

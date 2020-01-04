@@ -1,13 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	setTitleBar,
-	toWorker,
-} from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {
@@ -53,7 +48,7 @@ const Negotiation = ({
 	salaryCap,
 	userTid,
 }) => {
-	setTitleBar({ title: `Contract Negotiation - ${player.name}` });
+	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
 
 	// See views.freeAgents for moods as well
 	let mood;

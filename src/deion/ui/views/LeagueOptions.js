@@ -2,7 +2,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { DIFFICULTY } from "../../common";
 import { HelpPopover } from "../components";
-import { helpers, logEvent, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, logEvent, toWorker } from "../util";
 import Options from "./Options";
 
 const difficultyValues = Object.values(DIFFICULTY);
@@ -91,7 +92,7 @@ class LeagueOptions extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Options" });
+		useTitleBar({ title: "Options" });
 
 		const disableDifficultyInput =
 			this.state.difficultySelect !== "custom" &&

@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Dropdown, SafeHtml } from "../components";
-import { setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 
 const EventLog = ({ abbrev, events, season }) => {
-	setTitleBar({ title: "Event Log" });
+	useTitleBar({ title: "Event Log" });
 
 	return (
 		<>

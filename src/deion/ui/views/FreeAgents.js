@@ -8,7 +8,8 @@ import {
 	RosterComposition,
 	RosterSalarySummary,
 } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const FreeAgents = ({
 	capSpace,
@@ -43,7 +44,7 @@ const FreeAgents = ({
 		}, 0);
 	}, [capSpace, minContract, stats]);
 
-	setTitleBar({ title: "Free Agents" });
+	useTitleBar({ title: "Free Agents" });
 
 	if (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) {
 		return (

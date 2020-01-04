@@ -2,10 +2,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
 import { DataTable, Dropdown, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
-	setTitleBar({ title: "Upcoming Free Agents" });
+	useTitleBar({ title: "Upcoming Free Agents" });
 
 	const cols = getCols(
 		"Name",

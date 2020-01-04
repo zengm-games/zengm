@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import DraftClass from "./DraftClass";
-import { helpers, setTitleBar } from "../../util";
+import useTitleBar from "../../hooks/useTitleBar";
+import { helpers } from "../../util";
 
 const DraftScouting = ({ draftType, seasons }) => {
-	setTitleBar({ title: "Draft Scouting" });
+	useTitleBar({ title: "Draft Scouting" });
 
 	return (
 		<>

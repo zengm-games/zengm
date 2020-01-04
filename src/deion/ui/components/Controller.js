@@ -2,11 +2,11 @@
 
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useReducer, useRef } from "react";
+import useTitleBar from "../hooks/useTitleBar";
 import {
 	local,
 	localActions,
 	realtimeUpdate,
-	setTitleBar,
 	toWorker,
 	useLocalShallow,
 } from "../util";
@@ -41,7 +41,7 @@ LeagueContent.propTypes = {
 };
 
 const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
-	setTitleBar({ title: "Error" });
+	useTitleBar({ title: "Error" });
 	return (
 		<>
 			<h1>Error</h1>

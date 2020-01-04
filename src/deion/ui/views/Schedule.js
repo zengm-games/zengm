@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { CompletedGame, Dropdown, UpcomingGame } from "../components";
-import { setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
-	setTitleBar({ title: "Schedule" });
+	useTitleBar({ title: "Schedule" });
 
 	return (
 		<>

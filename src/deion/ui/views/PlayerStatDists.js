@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { BoxPlot, Dropdown } from "../components";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 
 const proQuartiles =
 	process.env.SPORT === "basketball"
@@ -30,7 +31,7 @@ const proQuartiles =
 		: {};
 
 const PlayerStatDists = ({ numGames, season, statsAll }) => {
-	setTitleBar({ title: "Player Stat Distributions" });
+	useTitleBar({ title: "Player Stat Distributions" });
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
 	const scale =

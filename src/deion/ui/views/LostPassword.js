@@ -1,6 +1,6 @@
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
-import { setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -46,7 +46,7 @@ class LostPassword extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Lost Password", hideNewWindow: true });
+		useTitleBar({ title: "Lost Password", hideNewWindow: true });
 
 		return (
 			<>

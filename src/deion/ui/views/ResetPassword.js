@@ -2,7 +2,8 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
-import { localActions, realtimeUpdate, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { localActions, realtimeUpdate } from "../util";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -110,7 +111,7 @@ class ResetPassword extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Reset Password", hideNewWindow: true });
+		useTitleBar({ title: "Reset Password", hideNewWindow: true });
 
 		const form = (
 			<div className="row">

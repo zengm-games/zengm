@@ -2,13 +2,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
 import { PlayerPicture } from "../../components";
-import {
-	helpers,
-	overrides,
-	realtimeUpdate,
-	setTitleBar,
-	toWorker,
-} from "../../util";
+import useTitleBar from "../../hooks/useTitleBar";
+import { helpers, overrides, realtimeUpdate, toWorker } from "../../util";
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
 
@@ -247,7 +242,7 @@ class CustomizePlayer extends React.Component {
 
 		const title = originalTid === undefined ? "Create Player" : "Edit Player";
 
-		setTitleBar({ title });
+		useTitleBar({ title });
 
 		if (!godMode) {
 			return (

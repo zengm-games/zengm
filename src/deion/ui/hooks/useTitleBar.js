@@ -1,9 +1,9 @@
 // @flow
 
-import { localActions } from "./local";
+import { useEffect } from "react";
+import { localActions } from "../util";
 
-let currentTitle;
-const setTitleBar = ({
+const useTitleBar = ({
 	title,
 	hideNewWindow,
 	jumpTo,
@@ -20,10 +20,9 @@ const setTitleBar = ({
 		[key: string]: number | string,
 	},
 }) => {
-	if (title !== currentTitle) {
-		currentTitle = title;
+	useEffect(() => {
 		document.title = title;
-	}
+	}, [title]);
 
 	localActions.update({
 		title,
@@ -35,4 +34,4 @@ const setTitleBar = ({
 	});
 };
 
-export default setTitleBar;
+export default useTitleBar;

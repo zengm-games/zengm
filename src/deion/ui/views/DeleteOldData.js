@@ -1,5 +1,6 @@
 import React from "react";
-import { helpers, logEvent, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, logEvent, toWorker } from "../util";
 
 class DeleteOldData extends React.Component {
 	constructor(props) {
@@ -57,7 +58,7 @@ class DeleteOldData extends React.Component {
 	}
 
 	render() {
-		setTitleBar({ title: "Delete Old Data" });
+		useTitleBar({ title: "Delete Old Data" });
 
 		return (
 			<>

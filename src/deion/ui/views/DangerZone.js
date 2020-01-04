@@ -1,10 +1,11 @@
 // @flow
 
 import React from "react";
-import { setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { toWorker } from "../util";
 
 const DangerZone = () => {
-	setTitleBar({ title: "Danger Zone" });
+	useTitleBar({ title: "Danger Zone" });
 
 	return (
 		<>

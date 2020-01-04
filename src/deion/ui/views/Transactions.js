@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Dropdown, SafeHtml } from "../components";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 
 const Transactions = ({ abbrev, eventType, events, season }) => {
-	setTitleBar({ title: "Transactions", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "Transactions", jumpTo: true, jumpToSeason: season });
 
 	const moreLinks =
 		abbrev !== "all" ? (

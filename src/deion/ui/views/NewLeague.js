@@ -2,14 +2,8 @@ import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
-import {
-	confirm,
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	setTitleBar,
-	toWorker,
-} from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 
 const PopText = ({ teams, tid }) => {
 	if (tid >= 0) {
@@ -234,7 +228,7 @@ const NewLeague = props => {
 		[tid],
 	);
 
-	setTitleBar({ title });
+	useTitleBar({ title });
 
 	return (
 		<>

@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React, { useCallback } from "react";
 import { PHASE } from "../../common";
-import { setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { toWorker } from "../util";
 
 const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
 	const handleChange = useCallback(
@@ -33,7 +34,7 @@ const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
 		});
 	}, [userTid]);
 
-	setTitleBar({ title: "Multi Team Mode" });
+	useTitleBar({ title: "Multi Team Mode" });
 
 	if (phase === PHASE.RESIGN_PLAYERS) {
 		return (

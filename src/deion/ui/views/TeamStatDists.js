@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 import { BoxPlot, Dropdown } from "../components";
 
 const proStatsAll =
@@ -710,7 +711,7 @@ const scale =
 		: {};
 
 const TeamStatDists = ({ season, statsAll }) => {
-	setTitleBar({ title: "Team Stat Distributions" });
+	useTitleBar({ title: "Team Stat Distributions" });
 
 	return (
 		<>

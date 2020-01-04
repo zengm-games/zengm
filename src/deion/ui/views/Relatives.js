@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 
 const Relatives = ({ pid, players, stats, userTid }) => {
@@ -9,7 +10,7 @@ const Relatives = ({ pid, players, stats, userTid }) => {
 
 	const title = target === undefined ? "Relatives" : `${target.name}'s Family`;
 
-	setTitleBar({ title });
+	useTitleBar({ title });
 
 	const superCols = [
 		{

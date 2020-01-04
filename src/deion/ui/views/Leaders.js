@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 import {
 	Dropdown,
 	PlayerNameLabels,
@@ -8,7 +9,7 @@ import {
 } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
-	setTitleBar({ title: "League Leaders", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "League Leaders", jumpTo: true, jumpToSeason: season });
 
 	return (
 		<>

@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 
 const MostTeams = ({ players, stats, userTid }) => {
-	setTitleBar({ title: "Most Teams" });
+	useTitleBar({ title: "Most Teams" });
 
 	const cols = getCols(
 		"Name",

@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
-import { helpers, logEvent, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, logEvent } from "../util";
 
 const Storage = () => {
 	const [status, setStatus] = useState("loading...");
@@ -115,7 +116,7 @@ class Options extends React.Component {
 		const title = this.props.title ? this.props.title : "Options";
 
 		if (!this.props.title) {
-			setTitleBar({ title });
+			useTitleBar({ title });
 		}
 
 		return (

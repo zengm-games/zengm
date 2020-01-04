@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { helpers, realtimeUpdate, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, realtimeUpdate, toWorker } from "../util";
 
 class NewTeam extends React.Component {
 	constructor(props) {
@@ -42,7 +43,7 @@ class NewTeam extends React.Component {
 	render() {
 		const { gameOver, godMode, phase, teams } = this.props;
 
-		setTitleBar({ title: "Pick a New Team" });
+		useTitleBar({ title: "Pick a New Team" });
 
 		if (!gameOver && !godMode) {
 			return (

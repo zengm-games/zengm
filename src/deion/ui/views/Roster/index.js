@@ -14,14 +14,8 @@ import {
 	RatingWithChange,
 	SortableTable,
 } from "../../components";
-import {
-	confirm,
-	getCols,
-	helpers,
-	logEvent,
-	setTitleBar,
-	toWorker,
-} from "../../util";
+import useTitleBar from "../../hooks/useTitleBar";
+import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
 
@@ -97,7 +91,7 @@ class Roster extends React.Component {
 			userTid,
 		} = this.props;
 
-		setTitleBar({ title: "Roster" });
+		useTitleBar({ title: "Roster" });
 
 		// Use the result of drag and drop to sort players, before the "official" order comes back as props
 		let playersSorted;

@@ -3,10 +3,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { SafeHtml } from "../components";
-import { setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 
 const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
-	setTitleBar({ title: "Changes" });
+	useTitleBar({ title: "Changes" });
 
 	return (
 		<>

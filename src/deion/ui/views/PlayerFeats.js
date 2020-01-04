@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, Dropdown, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 
 const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
-	setTitleBar({ title: "Statistical Feats" });
+	useTitleBar({ title: "Statistical Feats" });
 
 	const cols = getCols(
 		"Name",

@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, prefixStatOpp, setTitleBar } from "../util";
+import { getCols, helpers, prefixStatOpp } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
 import { DataTable, Dropdown } from "../components";
 
 const legendSquare = className => {
@@ -18,7 +19,7 @@ const TeamStats = ({
 	ties,
 	userTid,
 }) => {
-	setTitleBar({ title: "Team Stats", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "Team Stats", jumpTo: true, jumpToSeason: season });
 
 	const basicColNames = ["Team", "stat:gp", "W", "L"];
 	if (ties) {

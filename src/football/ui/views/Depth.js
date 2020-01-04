@@ -6,12 +6,8 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import {
-	getCols,
-	helpers,
-	setTitleBar,
-	toWorker,
-} from "../../../deion/ui/util";
+import useTitleBar from "../../../deion/ui/hooks/useTitleBar";
+import { getCols, helpers, toWorker } from "../../../deion/ui/util";
 import {
 	Dropdown,
 	PlayerNameLabels,
@@ -68,7 +64,7 @@ class Depth extends React.Component {
 			stats,
 		} = this.props;
 
-		setTitleBar({ title: `Depth Chart - ${pos}` });
+		useTitleBar({ title: `Depth Chart - ${pos}` });
 
 		// Use the result of drag and drop to sort players, before the "official" order comes back as props
 		let playersSorted;

@@ -2,7 +2,8 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { ResponsiveTableWrapper } from "../components";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 
 const record = (seasonAttrs, type, ties) => {
@@ -162,7 +163,7 @@ const Standings = ({
 	season,
 	ties,
 }) => {
-	setTitleBar({
+	useTitleBar({
 		title: "Standings",
 		jumpTo: true,
 		jumpToSeason: season,

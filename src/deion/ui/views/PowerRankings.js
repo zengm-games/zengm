@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 import { DataTable, Dropdown } from "../components";
 
 const PowerRankings = ({ season, teams, userTid }) => {
-	setTitleBar({ title: "Power Rankings" });
+	useTitleBar({ title: "Power Rankings" });
 
 	const superCols = [
 		{

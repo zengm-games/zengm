@@ -5,7 +5,8 @@ import range from "lodash/range";
 import PropTypes from "prop-types";
 import React from "react";
 import { DraftAbbrev, Dropdown, ResponsiveTableWrapper } from "../components";
-import { helpers, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, toWorker } from "../util";
 import type { DraftLotteryResultArray } from "../../common/types";
 
 const getProbs = (
@@ -224,7 +225,7 @@ class DraftLottery extends React.Component<Props, State> {
 	render() {
 		const { season, ties, type, userTid } = this.props;
 
-		setTitleBar({ title: "Draft Lottery", jumpTo: true, jumpToSeason: season });
+		useTitleBar({ title: "Draft Lottery", jumpTo: true, jumpToSeason: season });
 
 		const result =
 			this.state.result !== undefined ? this.state.result : this.props.result;

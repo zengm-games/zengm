@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers } from "../util";
 import { DataTable, Dropdown } from "../components";
 
 const LeagueFinances = ({
@@ -15,7 +16,7 @@ const LeagueFinances = ({
 	teams,
 	userTid,
 }) => {
-	setTitleBar({ title: "League Finances", jumpTo: true, jumpToSeason: season });
+	useTitleBar({ title: "League Finances", jumpTo: true, jumpToSeason: season });
 
 	const cols = budget
 		? getCols(

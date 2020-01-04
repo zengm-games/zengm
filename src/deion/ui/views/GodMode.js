@@ -3,7 +3,8 @@ import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { HelpPopover } from "../components";
-import { localActions, logEvent, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { localActions, logEvent, toWorker } from "../util";
 
 const options = [
 	{
@@ -600,7 +601,7 @@ GodModeOptions.propTypes = {
 const GodMode = props => {
 	const { godMode } = props;
 
-	setTitleBar({ title: "God Mode" });
+	useTitleBar({ title: "God Mode" });
 
 	const handleGodModeToggle = async () => {
 		const attrs = { godMode: !godMode };

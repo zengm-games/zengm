@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { BoxPlot, Dropdown } from "../components";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 
 const PlayerRatingDists = ({ ratingsAll, season }) => {
-	setTitleBar({ title: "Player Rating Distributions" });
+	useTitleBar({ title: "Player Rating Distributions" });
 
 	return (
 		<>

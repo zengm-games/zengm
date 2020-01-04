@@ -1,10 +1,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { toWorker } from "../util";
 
 const Live = ({ games, gamesInProgress }) => {
-	setTitleBar({ title: "Live Game Simulation" });
+	useTitleBar({ title: "Live Game Simulation" });
 
 	return (
 		<>

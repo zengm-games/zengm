@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { getCols, helpers, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 
 const Offer = props => {
@@ -243,7 +244,7 @@ class TradingBlock extends React.Component {
 	render() {
 		const { gameOver, phase, stats, ties, userPicks, userRoster } = this.props;
 
-		setTitleBar({ title: "Trading Block" });
+		useTitleBar({ title: "Trading Block" });
 
 		if (
 			(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||

@@ -1,10 +1,11 @@
 // @flow
 
 import React from "react";
-import { helpers, setTitleBar } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers } from "../util";
 
 const Frivolities = () => {
-	setTitleBar({ title: "Frivolities" });
+	useTitleBar({ title: "Frivolities" });
 
 	return (
 		<>

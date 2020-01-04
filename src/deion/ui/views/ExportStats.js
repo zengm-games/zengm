@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import { downloadFile, setTitleBar, toWorker } from "../util";
+import useTitleBar from "../hooks/useTitleBar";
+import { downloadFile, toWorker } from "../util";
 
 const genFilename = (leagueName, season, grouping) => {
 	const filename = `${
@@ -52,7 +53,7 @@ const ExportStats = ({ seasons }) => {
 		setStatus(null);
 	}, []);
 
-	setTitleBar({ title: "Export Stats" });
+	useTitleBar({ title: "Export Stats" });
 
 	return (
 		<>

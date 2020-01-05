@@ -24,9 +24,9 @@ const Message = ({ message }: { message: void | Message_ }) => {
 
 	return (
 		<>
-			<h5 className="my-3">
-				From: {message.from}, {message.year}
-			</h5>
+			<p>
+				<b>From: {message.from}</b>, {message.year}
+			</p>
 
 			<SafeHtml dirty={message.text} />
 

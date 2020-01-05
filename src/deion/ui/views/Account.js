@@ -401,14 +401,14 @@ const Account = ({
 												style={{ minHeight: 109 }}
 											>
 												<div className="card-body">
-													<h5 className="card-title">
+													<h4 className="card-title">
 														{achievement.name}
 														{achievement.count > 1 ? (
 															<span className="badge badge-pill badge-secondary float-right">
 																{achievement.count}
 															</span>
 														) : null}
-													</h5>
+													</h4>
 													<p className="card-text">{achievement.desc}</p>
 												</div>
 											</div>

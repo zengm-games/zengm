@@ -388,13 +388,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "socialMedia",
-				league: true,
-				path: ["social_media"],
-				text: "Social Media",
-			},
-			{
-				type: "link",
 				nonLeague: true,
 				async onClick() {
 					const response = await toWorker("actions.toolsMenu.resetDb");

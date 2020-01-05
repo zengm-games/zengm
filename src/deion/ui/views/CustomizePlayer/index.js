@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { PHASE } from "../../../common";
 import { PlayerPicture } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -126,67 +126,61 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 	return updatedRatingsOrAge;
 };
 
-class CustomizePlayer extends React.Component {
-	constructor(props) {
-		super(props);
-
+const CustomizePlayer = props => {
+	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
 		if (p !== undefined) {
-			p.age = this.props.season - p.born.year;
+			p.age = props.season - p.born.year;
 			p.contract.amount /= 1000;
 			p.face = JSON.stringify(p.face, null, 2);
 		}
-		this.state = {
+
+		return {
 			appearanceOption: props.appearanceOption,
 			saving: false,
 			p,
 		};
-		this.handleChange = this.handleChange.bind(this);
-		this.handleChangeAppearanceOption = this.handleChangeAppearanceOption.bind(
-			this,
-		);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.randomizeFace = this.randomizeFace.bind(this);
-	}
+	});
 
-	async handleSubmit(e) {
-		e.preventDefault();
-		this.setState({
+	const handleSubmit = async event => {
+		event.preventDefault();
+		setState(prevState => ({
+			...prevState,
 			saving: true,
-		});
+		}));
 
-		const p = this.props.p;
+		const p = props.p;
 
 		// Copy over values from state, if they're valid
 		const updatedRatingsOrAge = copyValidValues(
-			this.state.p,
+			state.p,
 			p,
-			this.props.minContract,
-			this.props.phase,
-			this.props.season,
+			props.minContract,
+			props.phase,
+			props.season,
 		);
 
 		// Only save image URL if it's selected
-		if (this.state.appearanceOption !== "Image URL") {
+		if (state.appearanceOption !== "Image URL") {
 			p.imgURL = "";
 		}
 
 		const pid = await toWorker(
 			"upsertCustomizedPlayer",
 			p,
-			this.props.originalTid,
-			this.props.season,
+			props.originalTid,
+			props.season,
 			updatedRatingsOrAge,
 		);
 
 		realtimeUpdate([], helpers.leagueUrl(["player", pid]));
-	}
+	};
 
-	handleChange(type, field, e) {
-		const val = e.target.value;
-		const checked = e.target.checked;
+	const handleChange = (type, field, event) => {
+		const val = event.target.value;
+		const checked = event.target.checked;
 
-		this.setState(prevState => {
+		setState(prevState => {
 			const p = prevState.p;
 
 			if (type === "root") {
@@ -212,373 +206,362 @@ class CustomizePlayer extends React.Component {
 			}
 
 			return {
+				...prevState,
 				p,
 			};
 		});
-	}
+	};
 
-	handleChangeAppearanceOption(e) {
-		this.setState({
-			appearanceOption: e.target.value,
-		});
-	}
+	const handleChangeAppearanceOption = event => {
+		setState(prevState => ({
+			...prevState,
+			appearanceOption: event.target.value,
+		}));
+	};
 
-	async randomizeFace(e) {
-		e.preventDefault(); // Don't submit whole form
+	const randomizeFace = async event => {
+		event.preventDefault(); // Don't submit whole form
 
 		const face = await toWorker("generateFace");
 
-		this.setState(prevState => {
+		setState(prevState => {
 			prevState.p.face = JSON.stringify(face, null, 2);
 			return {
+				...prevState,
 				p: prevState.p,
 			};
 		});
-	}
+	};
 
-	render() {
-		const { godMode, originalTid, teams } = this.props;
-		const { appearanceOption, p, saving } = this.state;
+	const { godMode, originalTid, teams } = props;
+	const { appearanceOption, p, saving } = state;
 
-		const title = originalTid === undefined ? "Create Player" : "Edit Player";
+	const title = originalTid === undefined ? "Create Player" : "Edit Player";
 
-		useTitleBar({ title });
+	useTitleBar({ title });
 
-		if (!godMode) {
-			return (
-				<div>
-					<h1>Error</h1>
-					<p>
-						You can't customize players unless you enable{" "}
-						<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
-					</p>
-				</div>
-			);
-		}
-
-		const r = p.ratings.length - 1;
-
-		let parsedFace;
-		try {
-			parsedFace = JSON.parse(p.face);
-		} catch (error) {}
-
-		const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
-
-		let pictureDiv = null;
-		if (appearanceOption === "Cartoon Face") {
-			pictureDiv = (
-				<div className="row">
-					<div className="col-sm-4">
-						<div style={{ maxHeight: "225px", maxWidth: "150px" }}>
-							{parsedFace ? (
-								<PlayerPicture face={parsedFace} />
-							) : (
-								"Invalid JSON"
-							)}
-						</div>
-					</div>
-					<div className="col-sm-8">
-						<p>
-							You can edit this JSON here, but you'll probably find it easier to
-							use{" "}
-							<a
-								href={`http://dumbmatter.com/facesjs/editor.html#${faceHash}`}
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								the face editor
-							</a>{" "}
-							and copy the results back here. Team colors set there will be
-							overridden here.
-						</p>
-						<textarea
-							className="form-control"
-							onChange={this.handleChange.bind(this, "root", "face")}
-							rows="10"
-							value={p.face}
-						/>
-						<button
-							type="button"
-							className="btn btn-light-bordered mt-1"
-							onClick={this.randomizeFace}
-						>
-							Randomize
-						</button>
-					</div>
-				</div>
-			);
-		} else {
-			pictureDiv = (
-				<div className="form-group">
-					<label>Image URL</label>
-					<input
-						type="text"
-						className="form-control"
-						onChange={this.handleChange.bind(this, "root", "imgURL")}
-						value={p.imgURL}
-					/>
-					<span className="text-muted">
-						Your image must be hosted externally. If you need to upload an
-						image, try using <a href="http://imgur.com/">imgur</a>. For ideal
-						display, crop your image so it has a 2:3 aspect ratio (such as 100px
-						wide and 150px tall).
-					</span>
-				</div>
-			);
-		}
-
+	if (!godMode) {
 		return (
-			<>
+			<div>
+				<h1>Error</h1>
 				<p>
-					Here, you can{" "}
-					{originalTid === undefined
-						? "create a custom player with"
-						: "edit a player to have"}{" "}
-					whatever attributes and ratings you want. If you want to make a whole
-					league of custom players, you should probably create a{" "}
-					<a href={`https://${process.env.SPORT}-gm.com/manual/customization/`}>
-						custom League File
-					</a>
-					.
+					You can't customize players unless you enable{" "}
+					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
 				</p>
-
-				<form onSubmit={this.handleSubmit}>
-					<div className="row">
-						<div className="col-md-7">
-							<h2>Attributes</h2>
-
-							<div className="row">
-								<div className="col-sm-3 form-group">
-									<label>First Name</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "firstName")}
-										value={p.firstName}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Last Name</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "lastName")}
-										value={p.lastName}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Age</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "age")}
-										value={p.age}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Team</label>
-									<select
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "tid")}
-										value={p.tid}
-									>
-										{teams.map(t => {
-											return (
-												<option key={t.tid} value={t.tid}>
-													{t.text}
-												</option>
-											);
-										})}
-									</select>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Height (inches)</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "hgt")}
-										value={p.hgt}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Weight (lbs)</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "weight")}
-										value={p.weight}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Position</label>
-									<select
-										className="form-control"
-										onChange={this.handleChange.bind(this, "rating", "pos")}
-										value={p.ratings[r].pos}
-									>
-										{overrides.common.constants.POSITIONS.filter(pos => {
-											if (
-												process.env.SPORT === "football" &&
-												bannedPositions.includes(pos)
-											) {
-												return false;
-											}
-											return true;
-										}).map(pos => {
-											return (
-												<option key={pos} value={pos}>
-													{pos}
-												</option>
-											);
-										})}
-									</select>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Hometown</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "born", "loc")}
-										value={p.born.loc}
-									/>
-								</div>
-								<div className="col-sm-6 form-group">
-									<label>Year of Death (blank for alive)</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "diedYear")}
-										value={p.diedYear}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>College</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "root", "college")}
-										value={p.college}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Draft Class</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "draft", "year")}
-										value={p.draft.year}
-									/>
-								</div>
-								<div className="col-sm-6 form-group">
-									<label>Contract Amount</label>
-									<div className="input-group">
-										<div className="input-group-append">
-											<div className="input-group-text">$</div>
-										</div>
-										<input
-											type="text"
-											className="form-control"
-											onChange={this.handleChange.bind(
-												this,
-												"contract",
-												"amount",
-											)}
-											value={p.contract.amount}
-										/>
-										<div className="input-group-append">
-											<div className="input-group-text">M per year</div>
-										</div>
-									</div>
-								</div>
-								<div className="col-sm-6 form-group">
-									<label>Contract Expiration</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "contract", "exp")}
-										value={p.contract.exp}
-									/>
-								</div>
-								<div className="col-sm-6 form-group">
-									<label>Injury</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(this, "injury", "type")}
-										value={p.injury.type}
-									/>
-								</div>
-								<div className="col-sm-3 form-group">
-									<label>Games Out</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={this.handleChange.bind(
-											this,
-											"injury",
-											"gamesRemaining",
-										)}
-										value={p.injury.gamesRemaining}
-									/>
-								</div>
-							</div>
-
-							<h2>Appearance</h2>
-
-							<div className="form-group">
-								<label>
-									You can either create a cartoon face or specify the URL to an
-									image.
-								</label>
-								<select
-									className="form-control"
-									onChange={this.handleChangeAppearanceOption}
-									style={{ maxWidth: "150px" }}
-									value={appearanceOption}
-								>
-									<option value="Cartoon Face">Cartoon Face</option>
-									<option value="Image URL">Image URL</option>
-								</select>
-							</div>
-
-							{pictureDiv}
-						</div>
-
-						<div className="col-md-5">
-							<h2>Ratings</h2>
-
-							<p>All ratings are on a scale of 0 to 100.</p>
-
-							<RatingsForm
-								handleChange={this.handleChange}
-								ratingsRow={p.ratings[r]}
-							/>
-
-							<h2>Relatives</h2>
-
-							<RelativesForm
-								handleChange={this.handleChange}
-								relatives={p.relatives}
-							/>
-						</div>
-					</div>
-
-					<br />
-					<center>
-						<button
-							type="submit"
-							className="btn btn-primary btn-lg"
-							disabled={saving}
-						>
-							{title}
-						</button>
-					</center>
-				</form>
-			</>
+			</div>
 		);
 	}
-}
+
+	const r = p.ratings.length - 1;
+
+	let parsedFace;
+	try {
+		parsedFace = JSON.parse(p.face);
+	} catch (error) {}
+
+	const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
+
+	let pictureDiv = null;
+	if (appearanceOption === "Cartoon Face") {
+		pictureDiv = (
+			<div className="row">
+				<div className="col-sm-4">
+					<div style={{ maxHeight: "225px", maxWidth: "150px" }}>
+						{parsedFace ? <PlayerPicture face={parsedFace} /> : "Invalid JSON"}
+					</div>
+				</div>
+				<div className="col-sm-8">
+					<p>
+						You can edit this JSON here, but you'll probably find it easier to
+						use{" "}
+						<a
+							href={`http://dumbmatter.com/facesjs/editor.html#${faceHash}`}
+							rel="noopener noreferrer"
+							target="_blank"
+						>
+							the face editor
+						</a>{" "}
+						and copy the results back here. Team colors set there will be
+						overridden here.
+					</p>
+					<textarea
+						className="form-control"
+						onChange={handleChange.bind(null, "root", "face")}
+						rows="10"
+						value={p.face}
+					/>
+					<button
+						type="button"
+						className="btn btn-light-bordered mt-1"
+						onClick={randomizeFace}
+					>
+						Randomize
+					</button>
+				</div>
+			</div>
+		);
+	} else {
+		pictureDiv = (
+			<div className="form-group">
+				<label>Image URL</label>
+				<input
+					type="text"
+					className="form-control"
+					onChange={handleChange.bind(null, "root", "imgURL")}
+					value={p.imgURL}
+				/>
+				<span className="text-muted">
+					Your image must be hosted externally. If you need to upload an image,
+					try using <a href="http://imgur.com/">imgur</a>. For ideal display,
+					crop your image so it has a 2:3 aspect ratio (such as 100px wide and
+					150px tall).
+				</span>
+			</div>
+		);
+	}
+
+	return (
+		<>
+			<p>
+				Here, you can{" "}
+				{originalTid === undefined
+					? "create a custom player with"
+					: "edit a player to have"}{" "}
+				whatever attributes and ratings you want. If you want to make a whole
+				league of custom players, you should probably create a{" "}
+				<a href={`https://${process.env.SPORT}-gm.com/manual/customization/`}>
+					custom League File
+				</a>
+				.
+			</p>
+
+			<form onSubmit={handleSubmit}>
+				<div className="row">
+					<div className="col-md-7">
+						<h2>Attributes</h2>
+
+						<div className="row">
+							<div className="col-sm-3 form-group">
+								<label>First Name</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "firstName")}
+									value={p.firstName}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Last Name</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "lastName")}
+									value={p.lastName}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Age</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "age")}
+									value={p.age}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Team</label>
+								<select
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "tid")}
+									value={p.tid}
+								>
+									{teams.map(t => {
+										return (
+											<option key={t.tid} value={t.tid}>
+												{t.text}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Height (inches)</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "hgt")}
+									value={p.hgt}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Weight (lbs)</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "weight")}
+									value={p.weight}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Position</label>
+								<select
+									className="form-control"
+									onChange={handleChange.bind(null, "rating", "pos")}
+									value={p.ratings[r].pos}
+								>
+									{overrides.common.constants.POSITIONS.filter(pos => {
+										if (
+											process.env.SPORT === "football" &&
+											bannedPositions.includes(pos)
+										) {
+											return false;
+										}
+										return true;
+									}).map(pos => {
+										return (
+											<option key={pos} value={pos}>
+												{pos}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Hometown</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "born", "loc")}
+									value={p.born.loc}
+								/>
+							</div>
+							<div className="col-sm-6 form-group">
+								<label>Year of Death (blank for alive)</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "diedYear")}
+									value={p.diedYear}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>College</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "college")}
+									value={p.college}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Draft Class</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "draft", "year")}
+									value={p.draft.year}
+								/>
+							</div>
+							<div className="col-sm-6 form-group">
+								<label>Contract Amount</label>
+								<div className="input-group">
+									<div className="input-group-append">
+										<div className="input-group-text">$</div>
+									</div>
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange.bind(null, "contract", "amount")}
+										value={p.contract.amount}
+									/>
+									<div className="input-group-append">
+										<div className="input-group-text">M per year</div>
+									</div>
+								</div>
+							</div>
+							<div className="col-sm-6 form-group">
+								<label>Contract Expiration</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "contract", "exp")}
+									value={p.contract.exp}
+								/>
+							</div>
+							<div className="col-sm-6 form-group">
+								<label>Injury</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "injury", "type")}
+									value={p.injury.type}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Games Out</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "injury", "gamesRemaining")}
+									value={p.injury.gamesRemaining}
+								/>
+							</div>
+						</div>
+
+						<h2>Appearance</h2>
+
+						<div className="form-group">
+							<label>
+								You can either create a cartoon face or specify the URL to an
+								image.
+							</label>
+							<select
+								className="form-control"
+								onChange={handleChangeAppearanceOption}
+								style={{ maxWidth: "150px" }}
+								value={appearanceOption}
+							>
+								<option value="Cartoon Face">Cartoon Face</option>
+								<option value="Image URL">Image URL</option>
+							</select>
+						</div>
+
+						{pictureDiv}
+					</div>
+
+					<div className="col-md-5">
+						<h2>Ratings</h2>
+
+						<p>All ratings are on a scale of 0 to 100.</p>
+
+						<RatingsForm
+							handleChange={handleChange}
+							ratingsRow={p.ratings[r]}
+						/>
+
+						<h2>Relatives</h2>
+
+						<RelativesForm
+							handleChange={handleChange}
+							relatives={p.relatives}
+						/>
+					</div>
+				</div>
+
+				<br />
+				<center>
+					<button
+						type="submit"
+						className="btn btn-primary btn-lg"
+						disabled={saving}
+					>
+						{title}
+					</button>
+				</center>
+			</form>
+		</>
+	);
+};
 
 CustomizePlayer.propTypes = {
 	appearanceOption: PropTypes.oneOf(["Cartoon Face", "Image URL"]),

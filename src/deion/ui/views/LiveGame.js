@@ -181,8 +181,6 @@ class LiveGame extends React.Component {
 	}
 
 	render() {
-		useTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
-
 		// Needs to return actual div, not fragment, for AutoAffix!!!
 		return (
 			<div>
@@ -276,4 +274,12 @@ LiveGame.propTypes = {
 	initialBoxScore: PropTypes.object,
 };
 
-export default LiveGame;
+const LiveGameWrapper = props => {
+	useTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
+
+	return <LiveGame {...props} />;
+};
+
+LiveGameWrapper.propTypes = LiveGame.propTypes;
+
+export default LiveGameWrapper;

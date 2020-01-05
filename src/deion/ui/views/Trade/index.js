@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { toWorker } from "../../util";
@@ -7,54 +7,34 @@ import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
 
-class Trade extends React.Component {
-	handleChangeAsset: Function;
+const Trade = props => {
+	const [state, setState] = useState({
+		accepted: false,
+		asking: false,
+		forceTrade: false,
+		message: null,
+	});
 
-	handleChangeTeam: Function;
-
-	handleClickAsk: Function;
-
-	handleClickClear: Function;
-
-	handleClickForceTrade: Function;
-
-	handleClickPropose: Function;
-
-	constructor(props) {
-		super(props);
-		this.state = {
-			accepted: false,
-			asking: false,
-			forceTrade: false,
-			message: null,
-		};
-		this.handleChangeAsset = this.handleChangeAsset.bind(this);
-		this.handleChangeTeam = this.handleChangeTeam.bind(this);
-		this.handleClickAsk = this.handleClickAsk.bind(this);
-		this.handleClickClear = this.handleClickClear.bind(this);
-		this.handleClickForceTrade = this.handleClickForceTrade.bind(this);
-		this.handleClickPropose = this.handleClickPropose.bind(this);
-	}
-
-	async handleChangeAsset(
+	const handleChangeAsset = async (
 		userOrOther: "other" | "user",
 		playerOrPick: "pick" | "player",
 		includeOrExclude: "include" | "exclude",
 		id,
-	) {
-		this.setState({
+	) => {
+		setState(prevState => ({
+			...prevState,
 			message: null,
-		});
+		}));
 
 		const ids = {
-			"user-pids": this.props.userPids,
-			"user-pids-excluded": this.props.userPidsExcluded,
-			"user-dpids": this.props.userDpids,
-			"user-dpids-excluded": this.props.userDpidsExcluded,
-			"other-pids": this.props.otherPids,
-			"other-pids-excluded": this.props.otherPidsExcluded,
-			"other-dpids": this.props.otherDpids,
-			"other-dpids-excluded": this.props.otherDpidsExcluded,
+			"user-pids": props.userPids,
+			"user-pids-excluded": props.userPidsExcluded,
+			"user-dpids": props.userDpids,
+			"user-dpids-excluded": props.userDpidsExcluded,
+			"other-pids": props.otherPids,
+			"other-pids-excluded": props.otherPidsExcluded,
+			"other-dpids": props.otherDpids,
+			"other-dpids-excluded": props.otherDpidsExcluded,
 		};
 
 		const idType = playerOrPick === "player" ? "pids" : "dpids";
@@ -69,14 +49,14 @@ class Trade extends React.Component {
 
 		const teams = [
 			{
-				tid: this.props.userTid,
+				tid: props.userTid,
 				pids: ids["user-pids"],
 				pidsExcluded: ids["user-pids-excluded"],
 				dpids: ids["user-dpids"],
 				dpidsExcluded: ids["user-dpids-excluded"],
 			},
 			{
-				tid: this.props.otherTid,
+				tid: props.otherTid,
 				pids: ids["other-pids"],
 				pidsExcluded: ids["other-pids-excluded"],
 				dpids: ids["other-dpids"],
@@ -85,22 +65,23 @@ class Trade extends React.Component {
 		];
 
 		await toWorker("updateTrade", teams);
-	}
+	};
 
-	async handleChangeTeam(event) {
-		this.setState({
+	const handleChangeTeam = async event => {
+		setState(prevState => ({
+			...prevState,
 			message: null,
-		});
+		}));
 
 		const otherTid = parseInt(event.currentTarget.value, 10);
 
 		const teams = [
 			{
-				tid: this.props.userTid,
-				pids: this.props.userPids,
-				pidsExcluded: this.props.userPidsExcluded,
-				dpids: this.props.userDpids,
-				dpidsExcluded: this.props.userDpidsExcluded,
+				tid: props.userTid,
+				pids: props.userPids,
+				pidsExcluded: props.userPidsExcluded,
+				dpids: props.userDpids,
+				dpidsExcluded: props.userDpidsExcluded,
 			},
 			{
 				tid: otherTid,
@@ -112,156 +93,161 @@ class Trade extends React.Component {
 		];
 
 		await toWorker("createTrade", teams);
-	}
+	};
 
-	async handleClickAsk() {
-		this.setState({
+	const handleClickAsk = async () => {
+		setState(prevState => ({
+			...prevState,
 			asking: true,
 			message: null,
-		});
+		}));
 
 		const message = await toWorker("tradeCounterOffer");
 
-		this.setState({
+		setState(prevState => ({
+			...prevState,
 			asking: false,
 			message,
-		});
-	}
+		}));
+	};
 
-	async handleClickClear() {
-		this.setState({
+	const handleClickClear = async () => {
+		setState(prevState => ({
+			...prevState,
 			message: null,
-		});
+		}));
 		await toWorker("clearTrade");
-	}
+	};
 
-	handleClickForceTrade() {
-		this.setState(prevState => ({ forceTrade: !prevState.forceTrade }));
-	}
+	const handleClickForceTrade = () => {
+		setState(prevState => ({
+			...prevState,
+			forceTrade: !prevState.forceTrade,
+		}));
+	};
 
-	async handleClickPropose() {
+	const handleClickPropose = async () => {
 		const [accepted, message] = await toWorker(
 			"proposeTrade",
-			this.state.forceTrade,
+			state.forceTrade,
 		);
 
-		this.setState({
+		setState(prevState => ({
+			...prevState,
 			accepted,
 			message,
-		});
-	}
+		}));
+	};
 
-	render() {
-		const {
-			gameOver,
-			godMode,
-			lost,
-			otherPicks,
-			otherRoster,
-			otherTid,
-			phase,
-			salaryCap,
-			summary,
-			showResigningMsg,
-			stats,
-			strategy,
-			teams,
-			tied,
-			ties,
-			userPicks,
-			userRoster,
-			userTeamName,
-			won,
-		} = this.props;
+	const {
+		gameOver,
+		godMode,
+		lost,
+		otherPicks,
+		otherRoster,
+		otherTid,
+		phase,
+		salaryCap,
+		summary,
+		showResigningMsg,
+		stats,
+		strategy,
+		teams,
+		tied,
+		ties,
+		userPicks,
+		userRoster,
+		userTeamName,
+		won,
+	} = props;
 
-		useTitleBar({ title: "Trade" });
+	useTitleBar({ title: "Trade" });
 
-		const noTradingAllowed =
-			(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
-			phase === PHASE.FANTASY_DRAFT ||
-			gameOver;
+	const noTradingAllowed =
+		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
+		phase === PHASE.FANTASY_DRAFT ||
+		gameOver;
 
-		return (
-			<>
-				{showResigningMsg ? (
-					<p>
-						You can't trade players whose contracts expired this season, but
-						their old contracts still count against team salary caps until they
-						are either re-signed or become free agents.
-					</p>
-				) : null}
-
+	return (
+		<>
+			{showResigningMsg ? (
 				<p>
-					If a player has been signed within the past 14 days, he is not allowed
-					to be traded.
+					You can't trade players whose contracts expired this season, but their
+					old contracts still count against team salary caps until they are
+					either re-signed or become free agents.
 				</p>
+			) : null}
 
-				<div className="row">
-					<div className="col-md-9">
-						<select
-							className="float-left form-control select-team mb-2 mr-2"
-							value={otherTid}
-							onChange={this.handleChangeTeam}
-						>
-							{teams.map(t => (
-								<option key={t.tid} value={t.tid}>
-									{t.region} {t.name}
-								</option>
-							))}
-						</select>
-						<div style={{ paddingTop: 7 }}>
-							{won}-{lost}
-							{ties ? <>-{tied}</> : null}, {strategy}
-						</div>
-						<div className="clearfix" />
-						<AssetList
-							handleToggle={this.handleChangeAsset}
-							picks={otherPicks}
-							roster={otherRoster}
-							stats={stats}
-							userOrOther="other"
-						/>
+			<p>
+				If a player has been signed within the past 14 days, he is not allowed
+				to be traded.
+			</p>
 
-						<h2 className="mt-3">{userTeamName}</h2>
-						<AssetList
-							handleToggle={this.handleChangeAsset}
-							picks={userPicks}
-							roster={userRoster}
-							stats={stats}
-							userOrOther="user"
-						/>
+			<div className="row">
+				<div className="col-md-9">
+					<select
+						className="float-left form-control select-team mb-2 mr-2"
+						value={otherTid}
+						onChange={handleChangeTeam}
+					>
+						{teams.map(t => (
+							<option key={t.tid} value={t.tid}>
+								{t.region} {t.name}
+							</option>
+						))}
+					</select>
+					<div style={{ paddingTop: 7 }}>
+						{won}-{lost}
+						{ties ? <>-{tied}</> : null}, {strategy}
 					</div>
-					<div className="col-md-3 trade-summary">
-						<Summary
-							accepted={this.state.accepted}
-							message={this.state.message}
-							salaryCap={salaryCap}
-							summary={summary}
-						/>
-						{!noTradingAllowed ? (
-							<center>
-								<Buttons
-									asking={this.state.asking}
-									enablePropose={summary.enablePropose}
-									forceTrade={this.state.forceTrade}
-									godMode={godMode}
-									handleClickAsk={this.handleClickAsk}
-									handleClickClear={this.handleClickClear}
-									handleClickForceTrade={this.handleClickForceTrade}
-									handleClickPropose={this.handleClickPropose}
-								/>
-							</center>
-						) : (
-							<p className="alert alert-danger">
-								You're not allowed to make trades now.
-							</p>
-						)}
-					</div>
+					<div className="clearfix" />
+					<AssetList
+						handleToggle={handleChangeAsset}
+						picks={otherPicks}
+						roster={otherRoster}
+						stats={stats}
+						userOrOther="other"
+					/>
+
+					<h2 className="mt-3">{userTeamName}</h2>
+					<AssetList
+						handleToggle={handleChangeAsset}
+						picks={userPicks}
+						roster={userRoster}
+						stats={stats}
+						userOrOther="user"
+					/>
 				</div>
-			</>
-		);
-	}
-}
+				<div className="col-md-3 trade-summary">
+					<Summary
+						accepted={state.accepted}
+						message={state.message}
+						salaryCap={salaryCap}
+						summary={summary}
+					/>
+					{!noTradingAllowed ? (
+						<center>
+							<Buttons
+								asking={state.asking}
+								enablePropose={summary.enablePropose}
+								forceTrade={state.forceTrade}
+								godMode={godMode}
+								handleClickAsk={handleClickAsk}
+								handleClickClear={handleClickClear}
+								handleClickForceTrade={handleClickForceTrade}
+								handleClickPropose={handleClickPropose}
+							/>
+						</center>
+					) : (
+						<p className="alert alert-danger">
+							You're not allowed to make trades now.
+						</p>
+					)}
+				</div>
+			</div>
+		</>
+	);
+};
 
 Trade.propTypes = {
 	gameOver: PropTypes.bool.isRequired,

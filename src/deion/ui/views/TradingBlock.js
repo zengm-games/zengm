@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useRef, useState } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
@@ -153,25 +153,18 @@ Offer.propTypes = {
 	won: PropTypes.number.isRequired,
 };
 
-class TradingBlock extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			asking: false,
-			offers: [],
-			pids: [],
-			dpids: [],
-		};
-		this.handleChangeAsset = this.handleChangeAsset.bind(this);
-		this.handleClickAsk = this.handleClickAsk.bind(this);
-		this.handleClickAskBottom = this.handleClickAskBottom.bind(this);
-		this.handleClickNegotiate = this.handleClickNegotiate.bind(this);
+const TradingBlock = props => {
+	const [state, setState] = useState({
+		asking: false,
+		offers: [],
+		pids: [],
+		dpids: [],
+	});
 
-		this.beforeOffersRef = React.createRef();
-	}
+	const beforeOffersRef = useRef();
 
-	async handleChangeAsset(type, id) {
-		this.setState(prevState => {
+	const handleChangeAsset = async (type, id) => {
+		setState(prevState => {
 			const ids = {
 				pids: helpers.deepCopy(prevState.pids),
 				dpids: helpers.deepCopy(prevState.dpids),
@@ -184,204 +177,200 @@ class TradingBlock extends React.Component {
 			}
 
 			return {
+				...prevState,
 				[type]: ids[type],
 			};
 		});
-	}
+	};
 
-	async handleClickAsk() {
-		this.setState({
+	const handleClickAsk = async () => {
+		setState(prevState => ({
+			...prevState,
 			asking: true,
 			offers: [],
-		});
+		}));
 
 		const offers = await toWorker(
 			"getTradingBlockOffers",
-			this.state.pids, // eslint-disable-line react/no-access-state-in-setstate
-			this.state.dpids, // eslint-disable-line react/no-access-state-in-setstate
+			state.pids,
+			state.dpids,
 		);
 
-		this.setState({
+		setState(prevState => ({
+			...prevState,
 			asking: false,
 			offers,
-		});
-	}
+		}));
+	};
 
-	async handleClickAskBottom() {
-		await this.handleClickAsk();
+	const handleClickAskBottom = async () => {
+		await handleClickAsk();
 
-		if (this.beforeOffersRef && this.beforeOffersRef.current) {
+		if (beforeOffersRef && beforeOffersRef.current) {
 			// This actually scrolls to above the button, because I don't want to worry about the fixed header offset
-			this.beforeOffersRef.current.scrollIntoView();
+			beforeOffersRef.current.scrollIntoView();
 		}
-	}
+	};
 
-	async handleClickNegotiate(tid, otherPids, otherDpids) {
+	const handleClickNegotiate = async (tid, otherPids, otherDpids) => {
 		await toWorker("actions.tradeFor", {
 			otherDpids,
 			otherPids,
 			tid,
-			userDpids: this.state.dpids,
-			userPids: this.state.pids,
+			userDpids: state.dpids,
+			userPids: state.pids,
 		});
-	}
+	};
 
-	render() {
-		const { gameOver, phase, stats, ties, userPicks, userRoster } = this.props;
+	const { gameOver, phase, stats, ties, userPicks, userRoster } = props;
 
-		useTitleBar({ title: "Trading Block" });
+	useTitleBar({ title: "Trading Block" });
 
-		if (
-			(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
-			phase === PHASE.FANTASY_DRAFT ||
-			gameOver
-		) {
-			return (
-				<div>
-					<h1>Error</h1>
-					<p>You're not allowed to make trades now.</p>
-				</div>
-			);
-		}
-
-		const cols = getCols(
-			"",
-			"Name",
-			"Pos",
-			"Age",
-			"Ovr",
-			"Pot",
-			"Contract",
-			...stats.map(stat => `stat:${stat}`),
-		);
-		cols[0].sortSequence = [];
-
-		const rows = userRoster.map(p => {
-			return {
-				key: p.pid,
-				data: [
-					<input
-						type="checkbox"
-						defaultChecked={this.state.pids.includes(p.pid)}
-						disabled={p.untradable}
-						onChange={() => this.handleChangeAsset("pids", p.pid)}
-						title={p.untradableMsg}
-					/>,
-					<PlayerNameLabels
-						injury={p.injury}
-						pid={p.pid}
-						skills={p.ratings.skills}
-						watch={p.watch}
-					>
-						{p.name}
-					</PlayerNameLabels>,
-					p.ratings.pos,
-					p.age,
-					p.ratings.ovr,
-					p.ratings.pot,
-					<>
-						{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-						{p.contract.exp}
-					</>,
-					...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				],
-			};
-		});
-
+	if (
+		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
+		phase === PHASE.FANTASY_DRAFT ||
+		gameOver
+	) {
 		return (
-			<>
-				<p>
-					Select some assets you want to trade away and other teams will make
-					you trade offers.
-				</p>
-
-				<div className="row mb-3">
-					<div className="col-md-9">
-						<DataTable
-							cols={cols}
-							defaultSort={[6, "desc"]}
-							name="TradingBlock"
-							rows={rows}
-						/>
-					</div>
-					<div className="col-md-3">
-						<table
-							className="table table-striped table-bordered table-sm"
-							id="picks-user"
-						>
-							<thead>
-								<tr>
-									<th />
-									<th width="100%">Draft Picks</th>
-								</tr>
-							</thead>
-							<tbody>
-								{userPicks.map(pick => (
-									<tr key={pick.dpid}>
-										<td>
-											<input
-												type="checkbox"
-												defaultChecked={this.state.dpids.includes(pick.dpid)}
-												onChange={() =>
-													this.handleChangeAsset("dpids", pick.dpid)
-												}
-											/>
-										</td>
-										<td>{pick.desc}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				</div>
-
-				<div ref={this.beforeOffersRef} />
-
-				<center>
-					<button
-						className="btn btn-lg btn-primary"
-						disabled={this.state.asking}
-						onClick={this.handleClickAsk}
-					>
-						{!this.state.asking ? "Ask For Trade Proposals" : "Asking..."}
-					</button>
-				</center>
-
-				{this.state.offers.map((offer, i) => {
-					return (
-						<Offer
-							key={offer.tid}
-							handleClickNegotiate={this.handleClickNegotiate}
-							i={i}
-							stats={stats}
-							ties={ties}
-							{...offer}
-						/>
-					);
-				})}
-
-				{this.state.offers.length > 0 ? (
-					<div>
-						<center>
-							<p>
-								Don't like those offers? Well maybe you'll get lucky if you...
-							</p>
-							<button
-								className="btn btn-lg btn-primary"
-								disabled={this.state.asking}
-								onClick={this.handleClickAskBottom}
-							>
-								{!this.state.asking
-									? "Ask For Trade Proposals Again"
-									: "Asking..."}
-							</button>
-						</center>
-					</div>
-				) : null}
-			</>
+			<div>
+				<h1>Error</h1>
+				<p>You're not allowed to make trades now.</p>
+			</div>
 		);
 	}
-}
+
+	const cols = getCols(
+		"",
+		"Name",
+		"Pos",
+		"Age",
+		"Ovr",
+		"Pot",
+		"Contract",
+		...stats.map(stat => `stat:${stat}`),
+	);
+	cols[0].sortSequence = [];
+
+	const rows = userRoster.map(p => {
+		return {
+			key: p.pid,
+			data: [
+				<input
+					type="checkbox"
+					defaultChecked={state.pids.includes(p.pid)}
+					disabled={p.untradable}
+					onChange={() => handleChangeAsset("pids", p.pid)}
+					title={p.untradableMsg}
+				/>,
+				<PlayerNameLabels
+					injury={p.injury}
+					pid={p.pid}
+					skills={p.ratings.skills}
+					watch={p.watch}
+				>
+					{p.name}
+				</PlayerNameLabels>,
+				p.ratings.pos,
+				p.age,
+				p.ratings.ovr,
+				p.ratings.pot,
+				<>
+					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
+				</>,
+				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+			],
+		};
+	});
+
+	return (
+		<>
+			<p>
+				Select some assets you want to trade away and other teams will make you
+				trade offers.
+			</p>
+
+			<div className="row mb-3">
+				<div className="col-md-9">
+					<DataTable
+						cols={cols}
+						defaultSort={[6, "desc"]}
+						name="TradingBlock"
+						rows={rows}
+					/>
+				</div>
+				<div className="col-md-3">
+					<table
+						className="table table-striped table-bordered table-sm"
+						id="picks-user"
+					>
+						<thead>
+							<tr>
+								<th />
+								<th width="100%">Draft Picks</th>
+							</tr>
+						</thead>
+						<tbody>
+							{userPicks.map(pick => (
+								<tr key={pick.dpid}>
+									<td>
+										<input
+											type="checkbox"
+											defaultChecked={state.dpids.includes(pick.dpid)}
+											onChange={() => handleChangeAsset("dpids", pick.dpid)}
+										/>
+									</td>
+									<td>{pick.desc}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div ref={beforeOffersRef} />
+
+			<center>
+				<button
+					className="btn btn-lg btn-primary"
+					disabled={state.asking}
+					onClick={handleClickAsk}
+				>
+					{!state.asking ? "Ask For Trade Proposals" : "Asking..."}
+				</button>
+			</center>
+
+			{state.offers.map((offer, i) => {
+				return (
+					<Offer
+						key={offer.tid}
+						handleClickNegotiate={handleClickNegotiate}
+						i={i}
+						stats={stats}
+						ties={ties}
+						{...offer}
+					/>
+				);
+			})}
+
+			{state.offers.length > 0 ? (
+				<div>
+					<center>
+						<p>
+							Don't like those offers? Well maybe you'll get lucky if you...
+						</p>
+						<button
+							className="btn btn-lg btn-primary"
+							disabled={state.asking}
+							onClick={handleClickAskBottom}
+						>
+							{!state.asking ? "Ask For Trade Proposals Again" : "Asking..."}
+						</button>
+					</center>
+				</div>
+			) : null}
+		</>
+	);
+};
 
 TradingBlock.propTypes = {
 	gameOver: PropTypes.bool.isRequired,

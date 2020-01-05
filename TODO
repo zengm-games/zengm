@@ -19,13 +19,11 @@ redesign page titles
 - other uses of h1 - decrease size? if so, what about other h2/h3/etc?
 - owner messages
 - useTitleBar can't be used in class component
-  - CustomizePlayer/index.js
-  - LiveGame.js
-  - TeamFinances.js
-  - Trade/index.js
-  - TradingBlock.js
   - Depth.js
 - test all login/register/account stuff
+- down arrow in dropdowns in dark mode
+- player name on player pages
+- bigger font for page title?
 
 allow specification of country frequencies independent of name frequencies
 

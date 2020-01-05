@@ -18,8 +18,6 @@ redesign page titles
 - depth chart positions to dropdown
 - other uses of h1 - decrease size? if so, what about other h2/h3/etc?
 - owner messages
-- useTitleBar can't be used in class component
-  - Depth.js
 - test all login/register/account stuff
 - player name on player pages
 - bigger font for page title?

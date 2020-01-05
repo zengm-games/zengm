@@ -76,8 +76,14 @@ const Roster = ({
 	userTid,
 }) => {
 	const [sortedPids, setSortedPids] = useState(undefined);
+	const [prevPlayers, setPrevPlayers] = useState(players);
 
 	useTitleBar({ title: "Roster" });
+
+	if (players !== prevPlayers) {
+		setSortedPids();
+		setPrevPlayers(players);
+	}
 
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	let playersSorted;

@@ -41,9 +41,9 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
 	useTitleBar({
-		title: `Depth Chart - ${pos}`,
+		title: "Depth Chart",
 		dropdownView: "depth",
-		dropdownFields: { teams: abbrev },
+		dropdownFields: { teams: abbrev, positions: pos },
 	});
 
 	if (pos !== prevPos) {
@@ -99,21 +99,6 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 				<span className="table-info legend-square" /> and the bench{" "}
 				<span className="table-secondary legend-square" />.
 			</p>
-
-			<ul className="nav nav-tabs mb-3">
-				{POSITIONS.map(pos2 => (
-					<li className="nav-item" key={pos2}>
-						<a
-							className={classNames("nav-link", {
-								active: pos === pos2,
-							})}
-							href={helpers.leagueUrl(["depth", abbrev, pos2])}
-						>
-							{pos2}
-						</a>
-					</li>
-				))}
-			</ul>
 
 			{editable ? (
 				<div className="btn-group mb-3">

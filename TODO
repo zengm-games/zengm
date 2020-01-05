@@ -7,14 +7,8 @@ redesign page titles
 - shrink caret a bit, to match bootstrap
 - switch selects to bootstrap dropdowns, like top menu?
   - what if there are thousands of entries in one?
-- hide on some pages, like dashboard?
-- title on options page within league
-- better initial loading state than ...
-- depth chart positions to dropdown
-- owner messages
-- test all login/register/account stuff
+- test all gold stuff
 - fix vertical alignment of elements in titlebar
-- bigger font for page title?
 
 allow specification of country frequencies independent of name frequencies
 

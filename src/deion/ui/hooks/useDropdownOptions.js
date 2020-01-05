@@ -98,6 +98,9 @@ export const getDropdownValue = (key: number | string, sortedTeams) => {
 	if (overrides.common.constants.TEAM_STATS_TABLES[key]) {
 		return overrides.common.constants.TEAM_STATS_TABLES[key].name;
 	}
+	if (overrides.common.constants.POSITIONS.includes(key)) {
+		return key;
+	}
 };
 
 const useDropdownOptions = (field: string) => {
@@ -241,6 +244,8 @@ const useDropdownOptions = (field: string) => {
 			keys = Object.keys(overrides.common.constants.TEAM_STATS_TABLES);
 		} else if (field === "teamRecordType") {
 			keys = ["by_team", "by_conf", "by_div"];
+		} else if (field === "positions") {
+			keys = overrides.common.constants.POSITIONS;
 		} else {
 			throw new Error(`Unknown Dropdown field: ${field}`);
 		}

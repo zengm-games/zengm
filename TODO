@@ -21,7 +21,6 @@ redesign page titles
 - useTitleBar can't be used in class component
   - CustomizePlayer/index.js
   - LiveGame.js
-  - NewTeam.js
   - TeamFinances.js
   - Trade/index.js
   - TradingBlock.js

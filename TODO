@@ -18,6 +18,19 @@ redesign page titles
 - depth chart positions to dropdown
 - other uses of h1 - decrease size? if so, what about other h2/h3/etc?
 - owner messages
+- useTitleBar can't be used in class component
+  - CustomizePlayer/index.js
+  - DraftLottery.js
+  - LeagueOptions.js
+  - LiveGame.js
+  - LostPassword.js
+  - NewTeam.js
+  - Options.js
+  - TeamFinances.js
+  - Trade/index.js
+  - TradingBlock.js
+  - Depth.js
+- test all login/register/account stuff
 
 allow specification of country frequencies independent of name frequencies
 

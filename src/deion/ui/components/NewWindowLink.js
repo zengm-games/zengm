@@ -23,11 +23,11 @@ const NewWindowLink = ({ parts }: Props) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="12"
-			height="12"
+			width="13"
+			height="13"
 			viewBox="0 0 272.8 272.9"
 			alt="Open In New Window"
-			className="new_window ml-1"
+			className="new_window ml-2"
 			title="Open In New Window"
 			onClick={handleClick}
 		>

@@ -9,7 +9,7 @@ import { helpers } from "../../util";
 import type { Message as Message_ } from "../../../common/types";
 
 const Message = ({ message }: { message: void | Message_ }) => {
-	const title = message ? `Message From ${message.from}` : "Message";
+	const title = message && message.subject ? message.subject : "Message";
 
 	useTitleBar({ title });
 
@@ -24,18 +24,9 @@ const Message = ({ message }: { message: void | Message_ }) => {
 
 	return (
 		<>
-			{message.subject ? (
-				<>
-					<h4>{message.subject}</h4>
-					<h5 className="mb-3">
-						From: {message.from}, {message.year}
-					</h5>
-				</>
-			) : (
-				<h4 className="mb-3">
-					From: {message.from}, {message.year}
-				</h4>
-			)}
+			<h5 className="my-3">
+				From: {message.from}, {message.year}
+			</h5>
 
 			<SafeHtml dirty={message.text} />
 

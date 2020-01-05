@@ -12,7 +12,8 @@ const Select = ({ field, handleChange, value }) => {
 
 	useEffect(() => {
 		const el = document.createElement("span");
-		el.style.padding = "0 12px";
+		el.style.padding = "0 14px";
+		el.style.fontSize = "14px";
 		document.body.appendChild(el);
 
 		let currentValue;

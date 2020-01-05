@@ -19,6 +19,8 @@ redesign page titles
 - test all login/register/account stuff
 - player name on player pages. roster too
 - bigger font for page title?
+- h2: 26px; h3: 22.75px
+  - used inconsistently, e.g. standings and playoffs
 
 allow specification of country frequencies independent of name frequencies
 

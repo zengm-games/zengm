@@ -28,7 +28,7 @@ const TitleBar = () => {
 	return (
 		<div className="py-2 mb-2 title-bar d-flex navbar-border">
 			<div>
-				<b>{title === undefined ? "..." : title}</b>
+				{title === undefined ? "..." : title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
 			</div>
 			{dropdownView ? (

@@ -564,7 +564,7 @@ table {
 .new_window {
 	cursor: pointer;
 	stroke: #000;
-	vertical-align: -1px;
+	vertical-align: 0;
 }
 
 @media (max-width: 768px) {
@@ -834,7 +834,15 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
+	font-size: 1.42188rem; /* Same as h3 */
 	padding: 0 15px;
+	select,
+	a {
+		font-size: 14px;
+	}
+	option {
+		font-size: 12px;
+	}
 }
 .dropdown-select {
 	display: block;
@@ -842,7 +850,7 @@ tr.table-warning:hover > td {
 	-moz-appearance: none;
 	-webkit-appearance: none;
 	appearance: none;
-	padding: 0 12px;
+	padding: 0 14px;
 	background-color: inherit;
 	border: 0;
 	color: inherit;

@@ -98,8 +98,6 @@ export const getDropdownValue = (key: number | string, sortedTeams) => {
 	if (overrides.common.constants.TEAM_STATS_TABLES[key]) {
 		return overrides.common.constants.TEAM_STATS_TABLES[key].name;
 	}
-
-	throw new Error(`Unknown dropdown key: "${key}"`);
 };
 
 const useDropdownOptions = (field: string) => {

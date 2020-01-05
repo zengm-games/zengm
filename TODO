@@ -15,9 +15,6 @@ redesign page titles
 - test all login/register/account stuff
 - fix vertical alignment of elements in titlebar
 - bigger font for page title?
-- other uses of h1 - decrease size? if so, what about other h2/h3/etc?
-  - check all h5
-- Switch from page with team dropdown to dashboard - Unknown dropdown key
 
 allow specification of country frequencies independent of name frequencies
 

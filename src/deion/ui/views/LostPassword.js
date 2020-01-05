@@ -1,29 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
 
-class LostPassword extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			errorMessage: undefined,
-			successMessage: undefined,
-		};
-		this.handleSubmit = this.handleSubmit.bind(this);
-	}
+const LostPassword = () => {
+	const [state, setState] = useState({
+		errorMessage: undefined,
+		successMessage: undefined,
+	});
 
-	async handleSubmit(e) {
-		e.preventDefault();
+	const handleSubmit = async event => {
+		event.preventDefault();
 
 		const formData = new FormData(document.getElementById("lostpw"));
 
-		this.setState({
+		setState(state2 => ({
+			...state2,
 			errorMessage: undefined,
 			successMessage: undefined,
-		});
+		}));
 
 		try {
 			const data = await fetchWrapper({
@@ -34,57 +31,55 @@ class LostPassword extends React.Component {
 			});
 
 			if (data.success) {
-				this.setState({
+				setState(state2 => ({
+					...state2,
 					successMessage: "Check your email for further instructions.",
-				});
+				}));
 			} else {
-				this.setState({ errorMessage: "Account not found." });
+				setState(state2 => ({ ...state2, errorMessage: "Account not found." }));
 			}
 		} catch (err) {
-			this.setState({ errorMessage: ajaxErrorMsg });
+			setState(state2 => ({ ...state2, errorMessage: ajaxErrorMsg }));
 		}
-	}
+	};
+	useTitleBar({ title: "Lost Password", hideNewWindow: true });
 
-	render() {
-		useTitleBar({ title: "Lost Password", hideNewWindow: true });
-
-		return (
-			<>
-				<div className="row">
-					<div className="col-lg-4 col-md-4 col-sm-6">
-						<p>
-							Enter your username or email address below to recover your login
-							information.
+	return (
+		<>
+			<div className="row">
+				<div className="col-lg-4 col-md-4 col-sm-6">
+					<p>
+						Enter your username or email address below to recover your login
+						information.
+					</p>
+					<form onSubmit={handleSubmit} id="lostpw">
+						<input type="hidden" name="sport" value={process.env.SPORT} />
+						<div className="form-group">
+							<label className="col-form-label" htmlFor="lostpw-entry">
+								Username or Email Address
+							</label>
+							<input
+								type="text"
+								className="form-control"
+								id="lostpw-entry"
+								name="entry"
+								required="required"
+							/>
+						</div>
+						<button type="submit" className="btn btn-primary">
+							Recover Login Info
+						</button>
+						<p className="text-danger mt-3" id="lostpw-error">
+							{state.errorMessage}
 						</p>
-						<form onSubmit={this.handleSubmit} id="lostpw">
-							<input type="hidden" name="sport" value={process.env.SPORT} />
-							<div className="form-group">
-								<label className="col-form-label" htmlFor="lostpw-entry">
-									Username or Email Address
-								</label>
-								<input
-									type="text"
-									className="form-control"
-									id="lostpw-entry"
-									name="entry"
-									required="required"
-								/>
-							</div>
-							<button type="submit" className="btn btn-primary">
-								Recover Login Info
-							</button>
-							<p className="text-danger mt-3" id="lostpw-error">
-								{this.state.errorMessage}
-							</p>
-							<p className="text-success mt-3" id="lostpw-success">
-								{this.state.successMessage}
-							</p>
-						</form>
-					</div>
+						<p className="text-success mt-3" id="lostpw-success">
+							{state.successMessage}
+						</p>
+					</form>
 				</div>
-			</>
-		);
-	}
-}
+			</div>
+		</>
+	);
+};
 
 export default LostPassword;

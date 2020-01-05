@@ -75,31 +75,26 @@ const Storage = () => {
 	);
 };
 
-class Options extends React.Component {
-	constructor(props) {
-		super(props);
-
+const Options = props => {
+	const [state, setState] = useState(() => {
 		const themeLocalStorage = localStorage.getItem("theme");
-
-		this.state = {
+		return {
 			theme: themeLocalStorage === "dark" ? "dark" : "light",
 		};
-		this.handleChanges = {
-			theme: this.handleChange.bind(this, "theme"),
-		};
-		this.handleFormSubmit = this.handleFormSubmit.bind(this);
-	}
+	});
 
-	handleChange(name, e) {
-		this.setState({
-			[name]: e.target.value,
-		});
-	}
+	const handleChange = name => event => {
+		const value = event.target.value;
+		setState(state2 => ({
+			...state2,
+			[name]: value,
+		}));
+	};
 
-	async handleFormSubmit(e) {
-		e.preventDefault();
+	const handleFormSubmit = async event => {
+		event.preventDefault();
 
-		const newTheme = this.state.theme === "dark" ? "dark" : "light";
+		const newTheme = state.theme === "dark" ? "dark" : "light";
 		localStorage.setItem("theme", newTheme);
 		if (window.themeCSSLink) {
 			window.themeCSSLink.href = `/gen/${newTheme}.css`;
@@ -110,44 +105,40 @@ class Options extends React.Component {
 			text: "Options successfully updated.",
 			saveToDb: false,
 		});
-	}
+	};
 
-	render() {
-		const title = this.props.title ? this.props.title : "Options";
+	const title = props.title ? props.title : "Options";
 
-		if (!this.props.title) {
-			useTitleBar({ title });
-		}
+	useTitleBar({ title: "Options" });
 
-		return (
-			<>
-				{this.props.title ? <h2>{title}</h2> : null}
+	return (
+		<>
+			{props.title ? <h2>{title}</h2> : null}
 
-				<form onSubmit={this.handleFormSubmit}>
-					<div className="row">
-						<div className="col-sm-3 col-6 form-group">
-							<label>Theme</label>
-							<select
-								className="form-control"
-								onChange={this.handleChanges.theme}
-								value={this.state.theme}
-							>
-								<option value="light">Light</option>
-								<option value="dark">Dark</option>
-							</select>
-						</div>
-						<div className="col-sm-3 col-6 form-group">
-							<label>Persistent Storage</label>
-							<Storage />
-						</div>
+			<form onSubmit={handleFormSubmit}>
+				<div className="row">
+					<div className="col-sm-3 col-6 form-group">
+						<label>Theme</label>
+						<select
+							className="form-control"
+							onChange={handleChange("theme")}
+							value={state.theme}
+						>
+							<option value="light">Light</option>
+							<option value="dark">Dark</option>
+						</select>
 					</div>
+					<div className="col-sm-3 col-6 form-group">
+						<label>Persistent Storage</label>
+						<Storage />
+					</div>
+				</div>
 
-					<button className="btn btn-primary">Save {title}</button>
-				</form>
-			</>
-		);
-	}
-}
+				<button className="btn btn-primary">Save {title}</button>
+			</form>
+		</>
+	);
+};
 
 Options.propTypes = {
 	title: PropTypes.string,

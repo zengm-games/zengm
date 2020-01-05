@@ -153,21 +153,6 @@ Offer.propTypes = {
 	won: PropTypes.number.isRequired,
 };
 
-const ProgressBar = ({ progress }) => {
-	return (
-		<div
-			className="progress progress-striped active"
-			style={{ width: "300px" }}
-		>
-			<div className="progress-bar" style={{ width: `${progress}%` }} />
-		</div>
-	);
-};
-
-ProgressBar.propTypes = {
-	progress: PropTypes.number.isRequired,
-};
-
 class TradingBlock extends React.Component {
 	constructor(props) {
 		super(props);

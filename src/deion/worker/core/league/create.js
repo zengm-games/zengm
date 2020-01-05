@@ -242,8 +242,8 @@ export const createWithoutSaving = (
 
 	// teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
 	let scoutingRankTemp;
-	let teamSeasons: any = [];
-	let teamStats: any = [];
+	const teamSeasons: any = [];
+	const teamStats: any = [];
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
 		const teamInfo = teamInfos[i];
@@ -270,7 +270,7 @@ export const createWithoutSaving = (
 			// If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates
 			delete teamSeason.rid;
 
-			teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
+			// teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
 			teamSeasons.push(teamSeason);
 		}
 
@@ -291,7 +291,7 @@ export const createWithoutSaving = (
 				ts.oppBlk = 0;
 			}
 
-			teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);
+			// teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);
 			teamStats.push(ts);
 		}
 

@@ -138,7 +138,7 @@ type State = {
 	indRevealed: number,
 };
 
-class DraftLottery extends React.Component<Props, State> {
+class DraftLotteryTable extends React.Component<Props, State> {
 	componentIsMounted: boolean;
 
 	constructor(props: Props) {
@@ -224,8 +224,6 @@ class DraftLottery extends React.Component<Props, State> {
 
 	render() {
 		const { season, ties, type, userTid } = this.props;
-
-		useTitleBar({ title: "Draft Lottery", jumpTo: true, jumpToSeason: season });
 
 		const result =
 			this.state.result !== undefined ? this.state.result : this.props.result;
@@ -336,27 +334,6 @@ class DraftLottery extends React.Component<Props, State> {
 
 		return (
 			<>
-				<Dropdown view="draft_lottery" fields={["seasons"]} values={[season]} />
-
-				<p>
-					More:{" "}
-					<a href={helpers.leagueUrl(["draft_scouting"])}>
-						Future Draft Scouting
-					</a>{" "}
-					|{" "}
-					<a href={helpers.leagueUrl(["draft_history", season])}>
-						Draft History
-					</a>{" "}
-					| <a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
-				</p>
-
-				{type === "projected" ? (
-					<p>
-						This is what the draft lottery probabilities would be if the lottery
-						was held right now.
-					</p>
-				) : null}
-
 				{type === "readyToRun" && !this.state.started ? (
 					<p>
 						<button
@@ -374,7 +351,7 @@ class DraftLottery extends React.Component<Props, State> {
 	}
 }
 
-DraftLottery.propTypes = {
+DraftLotteryTable.propTypes = {
 	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
 	result: PropTypes.arrayOf(
 		PropTypes.shape({
@@ -391,5 +368,46 @@ DraftLottery.propTypes = {
 	type: PropTypes.string.isRequired,
 	userTid: PropTypes.number.isRequired,
 };
+
+const DraftLottery = props => {
+	useTitleBar({
+		title: "Draft Lottery",
+		jumpTo: true,
+		jumpToSeason: props.season,
+	});
+
+	return (
+		<>
+			<Dropdown
+				view="draft_lottery"
+				fields={["seasons"]}
+				values={[props.season]}
+			/>
+
+			<p>
+				More:{" "}
+				<a href={helpers.leagueUrl(["draft_scouting"])}>
+					Future Draft Scouting
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["draft_history", props.season])}>
+					Draft History
+				</a>{" "}
+				| <a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
+			</p>
+
+			{props.type === "projected" ? (
+				<p>
+					This is what the draft lottery probabilities would be if the lottery
+					was held right now.
+				</p>
+			) : null}
+
+			<DraftLotteryTable {...props} />
+		</>
+	);
+};
+
+DraftLottery.propTypes = DraftLotteryTable.propTypes;
 
 export default DraftLottery;

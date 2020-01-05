@@ -19,6 +19,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		compositeRating[rating] = 0;
 	}
 
+	console.log(team, teamSeason, teamStats);
 	const t = {
 		id: team.tid,
 		pace: 0,

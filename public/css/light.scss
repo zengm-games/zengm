@@ -41,6 +41,22 @@ body {
 	padding-top: 52px;
 }
 
+h1 {
+	font-size: 24px;
+}
+h2 {
+	font-size: 20px;
+}
+h3 {
+	font-size: 16px;
+}
+h4 {
+	font-size: 14px;
+}
+h5 {
+	font-size: 12px;
+}
+
 .bbgm-container {
 	padding: 0 15px;
 	width: 100%;
@@ -522,15 +538,6 @@ table {
 	vertical-align: 20%;
 }
 
-.trading-block-offer {
-	margin-top: 2em;
-
-	h2 {
-		float: left;
-		margin-right: 0.5em;
-	}
-}
-
 #messages-table {
 	table-layout: fixed;
 	width: 100%;
@@ -834,7 +841,6 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
-	font-size: 1.42188rem; /* Same as h3 */
 	padding: 0 15px;
 	select,
 	a {

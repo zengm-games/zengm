@@ -25,12 +25,16 @@ const TitleBar = () => {
 		dropdownFields: state.dropdownFields,
 	}));
 
+	if (title === undefined) {
+		return null;
+	}
+
 	return (
 		<div className="py-2 mb-2 title-bar d-flex navbar-border">
-			<div>
-				{title === undefined ? "..." : title}
+			<h1 className="mb-0">
+				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
-			</div>
+			</h1>
 			{dropdownView ? (
 				<Dropdown
 					extraParam={dropdownExtraParam}

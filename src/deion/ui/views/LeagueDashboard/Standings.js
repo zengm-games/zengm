@@ -10,7 +10,6 @@ const Standings = ({
 	userTid,
 }) => (
 	<>
-		<h3 />
 		<table className="table table-striped table-bordered table-sm">
 			<thead>
 				<tr>

@@ -299,7 +299,7 @@ ScoringSummary.propTypes = {
 const BoxScore = ({ boxScore, Row }) => {
 	return (
 		<div className="mb-3">
-			<h3>Scoring Summary</h3>
+			<h2>Scoring Summary</h2>
 			<ScoringSummary
 				key={boxScore.gid}
 				events={boxScore.scoringSummary}
@@ -315,7 +315,7 @@ const BoxScore = ({ boxScore, Row }) => {
 				"Defense",
 			].map(title => (
 				<React.Fragment key={title}>
-					<h3>{title}</h3>
+					<h2>{title}</h2>
 					<StatsTable
 						Row={Row}
 						boxScore={boxScore}

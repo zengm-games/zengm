@@ -243,7 +243,7 @@ const CustomizePlayer = props => {
 	if (!godMode) {
 		return (
 			<div>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>
 					You can't customize players unless you enable{" "}
 					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>

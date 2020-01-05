@@ -47,7 +47,7 @@ const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
 	return (
 		<div className="row">
 			<div className="col-sm-12 col-6">
-				<h4>League Champions</h4>
+				<h2>League Champions</h2>
 				{champ ? (
 					<div>
 						<p>
@@ -76,7 +76,7 @@ const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
 				) : (
 					<p>???</p>
 				)}
-				<h4>Best Record</h4>
+				<h2>Best Record</h2>
 				{awards.bestRecordConfs.map((t, i) => (
 					<p key={t.tid}>
 						{confs[i].name}:<br />
@@ -90,17 +90,17 @@ const AwardsAndChamp = ({ awards, champ, confs, season, userTid }) => {
 						<br />
 					</p>
 				))}
-				<h4>Most Valuable Player</h4>
+				<h2>Most Valuable Player</h2>
 				<Winner award={awards.mvp} season={season} userTid={userTid} />
 			</div>
 			<div className="col-sm-12 col-6">
-				<h4>Defensive Player of the Year</h4>
+				<h2>Defensive Player of the Year</h2>
 				<Winner award={awards.dpoy} season={season} userTid={userTid} defense />
-				<h4>Sixth Man of the Year</h4>
+				<h2>Sixth Man of the Year</h2>
 				<Winner award={awards.smoy} season={season} userTid={userTid} />
-				<h4>Most Improved Player</h4>
+				<h2>Most Improved Player</h2>
 				<Winner award={awards.mip} season={season} userTid={userTid} />
-				<h4>Rookie of the Year</h4>
+				<h2>Rookie of the Year</h2>
 				<Winner award={awards.roy} season={season} userTid={userTid} />
 			</div>
 		</div>

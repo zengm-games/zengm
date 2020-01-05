@@ -250,12 +250,8 @@ const setupRoutes = () => {
 				}
 			}
 
-			console.log("here", errMsg);
 			const ErrorPage = (
-				<>
-					<h1>Error</h1>
-					{typeof errMsg === "string" ? <h3>{errMsg}</h3> : errMsg}
-				</>
+				<>{typeof errMsg === "string" ? <p>{errMsg}</p> : errMsg}</>
 			);
 			const errorPage = genStaticPage("error", "Error", ErrorPage, false);
 			errorPage(event.detail.context);

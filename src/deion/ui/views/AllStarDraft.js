@@ -251,7 +251,7 @@ const AllStars = ({
 				<div className="col-sm-6 col-md-8">
 					<div className="row">
 						<div className="col-md-6">
-							<h3>{teamNames[0]}</h3>
+							<h2>{teamNames[0]}</h2>
 							<PlayersTable
 								draftType={draftType}
 								name="Team0"
@@ -263,7 +263,7 @@ const AllStars = ({
 							/>
 						</div>
 						<div className="col-md-6">
-							<h3>{teamNames[1]}</h3>
+							<h2>{teamNames[1]}</h2>
 							<PlayersTable
 								draftType={draftType}
 								name="Team1"
@@ -277,7 +277,7 @@ const AllStars = ({
 					</div>
 				</div>
 				<div className="col-sm-6 col-md-4">
-					<h3>Remaining All Stars</h3>
+					<h2>Remaining All Stars</h2>
 					<PlayersTable
 						draftType={draftType}
 						name="Remaining"

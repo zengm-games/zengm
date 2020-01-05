@@ -16,7 +16,6 @@ const LoginOrRegister = () => {
 
 	return (
 		<>
-			<h1 />
 			<div className="row">
 				<div className="col-sm-12 col-md-10 col-lg-8">
 					<p>Creating an account enables two features:</p>

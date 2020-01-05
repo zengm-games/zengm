@@ -42,12 +42,7 @@ LeagueContent.propTypes = {
 
 const ErrorMessage = ({ errorMessage }: { errorMessage: string }) => {
 	useTitleBar({ title: "Error" });
-	return (
-		<>
-			<h1>Error</h1>
-			<h2>{errorMessage}</h2>
-		</>
-	);
+	return <p>{errorMessage}</p>;
 };
 
 type State = {
@@ -262,7 +257,7 @@ const Controller = () => {
 	let contents;
 	const pageID = idLoading.current || idLoaded.current; // idLoading, idLoaded, or undefined
 	if (!Component) {
-		contents = <h1 style={{ textAlign: "center" }}>Loading...</h1>; // Nice, aligned with splash screen
+		contents = null;
 	} else if (!inLeague) {
 		contents = <Component {...data} />;
 	} else {

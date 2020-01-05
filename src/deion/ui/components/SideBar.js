@@ -101,7 +101,7 @@ const MenuItem = ({
 
 		return (
 			<>
-				<h6 className="sidebar-heading px-3">{menuItem.long}</h6>
+				<h2 className="sidebar-heading px-3">{menuItem.long}</h2>
 				<MenuGroup>{children}</MenuGroup>
 			</>
 		);

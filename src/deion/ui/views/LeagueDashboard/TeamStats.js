@@ -20,7 +20,7 @@ TeamStat.propTypes = {
 
 const TeamStats = ({ teamStats }) => (
 	<>
-		<h3>Team Stats</h3>
+		<h2>Team Stats</h2>
 		<p>
 			{teamStats.map(teamStat => (
 				<TeamStat key={teamStat.stat} {...teamStat} />

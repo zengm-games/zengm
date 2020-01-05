@@ -27,7 +27,7 @@ const History = ({
 	if (invalidSeason) {
 		return (
 			<>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>Invalid season.</p>
 			</>
 		);

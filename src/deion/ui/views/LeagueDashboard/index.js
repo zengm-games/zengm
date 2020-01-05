@@ -67,7 +67,7 @@ const LeagueDashboard = ({
 			<div className="row">
 				<div className="col-md-8">
 					<div className="row">
-						<div className="col-sm-4 d-none d-sm-block mb-3">
+						<div className="col-sm-4 d-none d-sm-block mb-3 pt-2">
 							<Standings
 								confTeams={confTeams}
 								numPlayoffTeams={numPlayoffTeams}
@@ -101,7 +101,7 @@ const LeagueDashboard = ({
 										leagueLeaders={leagueLeaders}
 										teamLeaders={teamLeaders}
 									/>
-									<h3>Inbox</h3>
+									<h2>Inbox</h2>
 									{messages.length === 0 ? (
 										<p>No messages!</p>
 									) : (
@@ -137,7 +137,7 @@ const LeagueDashboard = ({
 								</div>
 								<div className="col-6">
 									<TeamStats teamStats={teamStats} />
-									<h3>Finances</h3>
+									<h2>Finances</h2>
 									<p>
 										Avg Attendance: {helpers.numberWithCommas(att)}
 										<br />
@@ -169,7 +169,7 @@ const LeagueDashboard = ({
 						<div className="col-sm-6 col-md-12 mb-3">
 							{showPlayoffSeries ? (
 								<>
-									<h3>Playoffs</h3>
+									<h2>Playoffs</h2>
 									<b>{seriesTitle}</b>
 									<br />
 									<PlayoffMatchup
@@ -184,7 +184,7 @@ const LeagueDashboard = ({
 								</>
 							) : (
 								<>
-									<h3>Upcoming Games</h3>
+									<h2>Upcoming Games</h2>
 									{gamesRemainingTag}
 									<ul className="list-group" style={{ marginBottom: "6px" }}>
 										{upcoming.map(({ gid, teams }) => (
@@ -197,7 +197,7 @@ const LeagueDashboard = ({
 							)}
 						</div>
 						<div className="col-sm-6 col-md-12 mb-3">
-							<h3>Completed Games</h3>
+							<h2>Completed Games</h2>
 							<ul className="list-group" style={{ marginBottom: "6px" }}>
 								{completed.map(({ gid, overtime, result, score, teams }) => {
 									return (

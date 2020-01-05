@@ -78,7 +78,7 @@ const ManageTeams = props => {
 
 	return (
 		<>
-			<h1>Manage Teams</h1>
+			<h2>Manage Teams</h2>
 
 			{!props.godMode ? (
 				<div className="alert alert-warning">

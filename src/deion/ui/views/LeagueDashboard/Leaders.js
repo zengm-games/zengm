@@ -32,14 +32,14 @@ Leader.propTypes = {
 
 const Leaders = ({ leagueLeaders, teamLeaders }) => (
 	<>
-		<h3>Team Leaders</h3>
+		<h2>Team Leaders</h2>
 		<p>
 			{teamLeaders.map(leader => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
 		</p>
-		<h3>League Leaders</h3>
+		<h2>League Leaders</h2>
 		<p>
 			{leagueLeaders.map(leader => (
 				<Leader key={leader.stat} {...leader} />

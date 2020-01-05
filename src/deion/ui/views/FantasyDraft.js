@@ -42,7 +42,7 @@ const FantasyDraft = ({ phase, teams, userTids }) => {
 	if (phase === PHASE.DRAFT) {
 		return (
 			<>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>
 					You can't start a fantasy draft while a regular draft is already in
 					progress.

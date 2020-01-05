@@ -195,7 +195,7 @@ class LiveGame extends React.Component {
 						{this.state.boxScore.gid >= 0 ? (
 							<BoxScoreWrapper boxScore={this.state.boxScore} Row={PlayerRow} />
 						) : (
-							<h1>Loading...</h1>
+							<h2>Loading...</h2>
 						)}
 					</div>
 					<div className="col-md-3">

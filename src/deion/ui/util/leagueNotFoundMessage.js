@@ -31,7 +31,7 @@ const leagueNotFoundMessage = (
 				</p>
 				<div className="row">
 					<div className="col-sm-6 col-md-12 col-lg-6">
-						<h4>You Set The Strategy</h4>
+						<h3>You Set The Strategy</h3>
 						<p>
 							Running a {process.env.SPORT} team requires you to make tough
 							decisions.
@@ -60,7 +60,7 @@ const leagueNotFoundMessage = (
 						</p>
 					</div>
 					<div className="col-sm-6 col-md-12 col-lg-6">
-						<h4>High Quality, No Junk</h4>
+						<h3>High Quality, No Junk</h3>
 						<p>
 							{sport} GM is completely 100% free. You can start as many leagues
 							as you want and play as many seasons as you want. No limits.

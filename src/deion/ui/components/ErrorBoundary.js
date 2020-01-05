@@ -2,15 +2,12 @@
 
 import bugsnagReact from "@bugsnag/plugin-react";
 import React from "react";
+import useTitleBar from "../hooks/useTitleBar";
 
 const Fallback = ({ error, info }: { error: Error, info?: any }) => {
 	console.log(error, info);
-	return (
-		<>
-			<h1>Error</h1>
-			<p>{error.message}</p>
-		</>
-	);
+	useTitleBar({ title: "Error", hideNewWindow: true });
+	return <p>{error.message}</p>;
 };
 
 type Props = {

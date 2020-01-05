@@ -9,8 +9,8 @@ const Summary = ({ accepted, message, salaryCap, summary }) => {
 			<div className="row">
 				{summary.teams.map((t, i) => (
 					<div key={i} className="col-md-12 col-6 mb-3">
-						<h4>{t.name}</h4>
-						<h5>Trade Away:</h5>
+						<h3>{t.name}</h3>
+						<h4>Trade Away:</h4>
 						<ul className="list-unstyled">
 							{t.trade.map(p => (
 								<li key={`p${p.pid}`}>
@@ -23,7 +23,7 @@ const Summary = ({ accepted, message, salaryCap, summary }) => {
 							))}
 							<li>{helpers.formatCurrency(t.total, "M")} Total</li>
 						</ul>
-						<h5>Receive:</h5>
+						<h4>Receive:</h4>
 						<ul className="list-unstyled">
 							{summary.teams[t.other].trade.map(p => (
 								<li key={`p${p.pid}`}>
@@ -39,11 +39,11 @@ const Summary = ({ accepted, message, salaryCap, summary }) => {
 								Total
 							</li>
 						</ul>
-						<h5>
+						<h4>
 							Payroll after trade:{" "}
 							{helpers.formatCurrency(t.payrollAfterTrade, "M")}
-						</h5>
-						<h5>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</h5>
+						</h4>
+						<h4>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</h4>
 					</div>
 				))}
 			</div>

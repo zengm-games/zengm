@@ -24,10 +24,11 @@ Player.propTypes = {
 const Teams = ({ className, name, nested = false, season, team, userTid }) => {
 	let content;
 
+	console.log("hi", nested);
 	if (nested) {
 		content = team.map(t => (
 			<div className="mb-3" key={t.title}>
-				<h5>{t.title}</h5>
+				<h3>{t.title}</h3>
 				{t.players.map(p => (
 					<Player key={p.pid} p={p} season={season} userTid={userTid} />
 				))}
@@ -43,7 +44,7 @@ const Teams = ({ className, name, nested = false, season, team, userTid }) => {
 
 	return (
 		<div className={className}>
-			<h4>{name}</h4>
+			<h2>{name}</h2>
 			{content}
 		</div>
 	);

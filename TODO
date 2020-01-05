@@ -8,18 +8,16 @@ redesign page titles
 - switch selects to bootstrap dropdowns, like top menu?
   - what if there are thousands of entries in one?
 - hide on some pages, like dashboard?
-- get rid of new_window?
 - title on options page within league
 - better initial loading state than ...
 - depth chart positions to dropdown
-- other uses of h1 - decrease size? if so, what about other h2/h3/etc?
 - owner messages
 - test all login/register/account stuff
-- player name on player pages. roster too
 - fix vertical alignment of elements in titlebar
 - bigger font for page title?
-- h2: 26px; h3: 22.75px
-  - used inconsistently, e.g. standings and playoffs
+- other uses of h1 - decrease size? if so, what about other h2/h3/etc?
+  - check all h5
+- Switch from page with team dropdown to dashboard - Unknown dropdown key
 
 allow specification of country frequencies independent of name frequencies
 

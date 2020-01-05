@@ -5,7 +5,7 @@ import { helpers } from "../util";
 const RetiredPlayers = ({ retiredPlayers, season, userTid }) => {
 	return (
 		<>
-			<h4>Retired Players</h4>
+			<h2>Retired Players</h2>
 			<p
 				style={{
 					MozColumnWidth: "12em",

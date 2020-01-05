@@ -528,7 +528,7 @@ const GodModeOptions = props => {
 			{Object.entries(groupedOptions).map(([category, catOptions], i) => {
 				return (
 					<React.Fragment key={category}>
-						<h3 className={i === 0 ? "mt-3" : "mt-2"}>{category}</h3>
+						<h2 className={i === 0 ? "mt-3" : "mt-2"}>{category}</h2>
 						<div className="row">
 							{catOptions.map(
 								({ decoration, helpText, key, name, type, values }) => (
@@ -656,7 +656,7 @@ const GodMode = props => {
 				{godMode ? "Disable God Mode" : "Enable God Mode"}
 			</button>
 
-			<h2 className="mt-3">God Mode Options</h2>
+			<h1 className="mt-3">God Mode Options</h1>
 
 			<p className="text-danger">
 				These options are not well tested and might make the AI do weird things.

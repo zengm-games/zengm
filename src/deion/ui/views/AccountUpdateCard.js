@@ -115,7 +115,7 @@ class AccountUpdateCard extends React.Component {
 		if (errorMessage) {
 			return (
 				<>
-					<h1>Error</h1>
+					<h2>Error</h2>
 					<p>{errorMessage}</p>
 				</>
 			);
@@ -123,7 +123,7 @@ class AccountUpdateCard extends React.Component {
 
 		return (
 			<>
-				<h3>Saved Card Info</h3>
+				<h2>Saved Card Info</h2>
 				<p>
 					Last 4 Digits: {last4}
 					<br />

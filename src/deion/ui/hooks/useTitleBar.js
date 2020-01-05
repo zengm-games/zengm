@@ -13,7 +13,7 @@ const useTitleBar = ({
 	dropdownView,
 	dropdownFields = {},
 }: {
-	title: string,
+	title?: string,
 	hideNewWindow?: boolean,
 	jumpTo?: boolean,
 	jumpToSeason?: number,
@@ -22,7 +22,7 @@ const useTitleBar = ({
 	dropdownFields?: {
 		[key: string]: number | string,
 	},
-}) => {
+} = {}) => {
 	const state = useLocalShallow(state2 => ({
 		teamAbbrevsCache: state2.teamAbbrevsCache,
 		teamNamesCache: state2.teamNamesCache,
@@ -30,7 +30,12 @@ const useTitleBar = ({
 	}));
 
 	useEffect(() => {
-		const parts = [title];
+		const parts = [];
+		if (title) {
+			parts.push(title);
+		} else {
+			parts.push("Basketball GM");
+		}
 
 		const sortedTeams = getSortedTeams(state);
 

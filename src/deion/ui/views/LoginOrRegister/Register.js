@@ -102,7 +102,7 @@ class Register extends React.Component<Props, State> {
 	render() {
 		return (
 			<>
-				<h1>Register</h1>
+				<h2>Register</h2>
 				<p className="alert alert-primary">
 					Accounts are shared between {sport} GM and{" "}
 					<a href={`https://play.${otherSport.toLowerCase()}-gm.com/`}>

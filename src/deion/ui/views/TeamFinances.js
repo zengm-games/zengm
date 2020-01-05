@@ -117,14 +117,14 @@ class FinancesForm extends React.Component {
 
 		return (
 			<form onSubmit={this.handleSubmit} className="mb-3">
-				<h4>
+				<h3>
 					Revenue Settings{" "}
 					<HelpPopover placement="bottom" title="Revenue Settings">
 						Set your ticket price too high, and attendance will decrease and
 						some fans will resent you for it. Set it too low, and you're not
 						maximizing your profit.
 					</HelpPopover>
-				</h4>
+				</h3>
 				{warningMessage}
 				<div className="row">
 					<div className="float-left finances-settings-label">Ticket Price</div>
@@ -145,7 +145,7 @@ class FinancesForm extends React.Component {
 					</div>
 				</div>
 				<p />
-				<h4>
+				<h3>
 					Expense Settings{" "}
 					<HelpPopover placement="bottom" title="Expense Settings">
 						<p>Scouting: Controls the accuracy of displayed player ratings.</p>
@@ -157,7 +157,7 @@ class FinancesForm extends React.Component {
 							attendance.
 						</p>
 					</HelpPopover>
-				</h4>
+				</h3>
 				{warningMessage}
 				<div className="row">
 					<div className="float-left finances-settings-label">Scouting</div>
@@ -478,7 +478,7 @@ const TeamFinances = ({
 
 			<div className="row">
 				<div className="col-md-3 col-sm-2">
-					<h4>Wins</h4>
+					<h3>Wins</h3>
 					<div className="bar-graph-small">
 						<BarGraph
 							data={barData.won}
@@ -488,7 +488,7 @@ const TeamFinances = ({
 					</div>
 					<br />
 					<br />
-					<h4>
+					<h3>
 						Hype{" "}
 						<HelpPopover placement="right" title="Hype">
 							"Hype" refers to fans' interest in your team. If your team is
@@ -497,7 +497,7 @@ const TeamFinances = ({
 							various revenue sources such as merchandising, and the attitude
 							players have towards your organization.
 						</HelpPopover>
-					</h4>
+					</h3>
 					<div id="bar-graph-hype" className="bar-graph-small">
 						<BarGraph
 							data={barData.hype}
@@ -508,7 +508,7 @@ const TeamFinances = ({
 					</div>
 					<br />
 					<br />
-					<h4>Region Population</h4>
+					<h3>Region Population</h3>
 					<div id="bar-graph-pop" className="bar-graph-small">
 						<BarGraph
 							data={barData.pop}
@@ -519,7 +519,7 @@ const TeamFinances = ({
 					</div>
 					<br />
 					<br />
-					<h4>Average Attendance</h4>
+					<h3>Average Attendance</h3>
 					<div id="bar-graph-att" className="bar-graph-small">
 						<BarGraph
 							data={barData.att}
@@ -531,7 +531,7 @@ const TeamFinances = ({
 				</div>
 				{budget ? (
 					<div className="col-lg-4 col-md-3 col-sm-3 mb-3">
-						<h4>Revenue</h4>
+						<h3>Revenue</h3>
 						<div id="bar-graph-revenue" className="bar-graph-large">
 							<BarGraph
 								data={[
@@ -558,7 +558,7 @@ const TeamFinances = ({
 						</div>
 						<br />
 						<br />
-						<h4>Expenses</h4>
+						<h3>Expenses</h3>
 						<div id="bar-graph-expenses" className="bar-graph-large">
 							<BarGraph
 								data={[
@@ -587,7 +587,7 @@ const TeamFinances = ({
 						</div>
 						<br />
 						<br />
-						<h4>Cash (cumulative)</h4>
+						<h3>Cash (cumulative)</h3>
 						<div id="bar-graph-cash" className="bar-graph-medium">
 							<BarGraph
 								data={barData.cash}

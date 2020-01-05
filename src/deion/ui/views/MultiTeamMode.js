@@ -39,7 +39,7 @@ const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
 	if (phase === PHASE.RESIGN_PLAYERS) {
 		return (
 			<div>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>
 					Changing your teams while re-signing players currently breaks things.
 					Please play until free agency and then you can switch teams.

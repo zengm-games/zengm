@@ -9,7 +9,7 @@ const BoxScore = ({ boxScore, Row }) => {
 		<>
 			{boxScore.teams.map(t => (
 				<div key={t.abbrev} className="mb-3">
-					<h3>
+					<h2>
 						{t.tid >= 0 ? (
 							<a
 								href={helpers.leagueUrl(["roster", t.abbrev, boxScore.season])}
@@ -21,7 +21,7 @@ const BoxScore = ({ boxScore, Row }) => {
 								{t.region} {t.name}
 							</>
 						)}
-					</h3>
+					</h2>
 					<ResponsiveTableWrapper>
 						<table className="table table-striped table-bordered table-sm table-hover">
 							<thead>

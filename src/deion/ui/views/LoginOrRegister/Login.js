@@ -67,7 +67,7 @@ class Login extends React.Component<Props, State> {
 	render() {
 		return (
 			<>
-				<h1>Login</h1>
+				<h2>Login</h2>
 				<form onSubmit={this.handleSubmit} id="login">
 					<input type="hidden" name="sport" value={process.env.SPORT} />
 					<div className="form-group">

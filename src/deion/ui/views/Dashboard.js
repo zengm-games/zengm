@@ -191,7 +191,7 @@ const Dashboard = ({ leagues }: Props) => {
 	const [loadingLID, setLoadingLID] = useState<number | void>();
 	const [deletingLID, setDeletingLID] = useState<number | void>();
 
-	useTitleBar({ title: "Dashboard" });
+	useTitleBar();
 
 	const cols = getCols(
 		"",

@@ -27,7 +27,7 @@ const NewTeam = ({ gameOver, godMode, phase, teams }) => {
 	if (!gameOver && !godMode) {
 		return (
 			<div>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>
 					You may only switch to another team after you're fired or when you're
 					in <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
@@ -39,7 +39,7 @@ const NewTeam = ({ gameOver, godMode, phase, teams }) => {
 	if (phase === PHASE.RESIGN_PLAYERS) {
 		return (
 			<div>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>
 					Changing your team while re-signing players currently breaks things.
 					Please play until free agency and then you can switch teams.

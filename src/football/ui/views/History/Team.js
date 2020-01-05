@@ -36,7 +36,7 @@ Player.propTypes = {
 const Teams = ({ className, name, season, team, userTid }) => {
 	return (
 		<div className={className}>
-			<h4>{name}</h4>
+			<h2>{name}</h2>
 			{team.map((p, i) => (
 				<Player key={i} i={i} p={p} season={season} userTid={userTid} />
 			))}

@@ -16,7 +16,7 @@ const Message = ({ message }: { message: void | Message_ }) => {
 	if (!message) {
 		return (
 			<>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>Message not found.</p>
 			</>
 		);

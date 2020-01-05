@@ -100,13 +100,13 @@ const Offer = props => {
 	}
 
 	return (
-		<div className="trading-block-offer">
-			<h3>
+		<div className="mt-4">
+			<h2>
 				Offer {i + 1}:{" "}
 				<a href={helpers.leagueUrl(["roster", abbrev])}>
 					{region} {name}
 				</a>
-			</h3>
+			</h2>
 			<p>
 				{won}-{lost}
 				{ties ? <>-{tied}</> : null}, {strategy},{" "}
@@ -233,7 +233,7 @@ const TradingBlock = props => {
 	) {
 		return (
 			<div>
-				<h1>Error</h1>
+				<h2>Error</h2>
 				<p>You're not allowed to make trades now.</p>
 			</div>
 		);

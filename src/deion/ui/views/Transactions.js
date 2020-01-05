@@ -1,11 +1,21 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, SafeHtml } from "../components";
+import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 
 const Transactions = ({ abbrev, eventType, events, season }) => {
-	useTitleBar({ title: "Transactions", jumpTo: true, jumpToSeason: season });
+	useTitleBar({
+		title: "Transactions",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "transactions",
+		dropdownFields: {
+			teamsAndAll: abbrev,
+			seasonsAndAll: season,
+			eventType,
+		},
+	});
 
 	const moreLinks =
 		abbrev !== "all" ? (
@@ -25,12 +35,6 @@ const Transactions = ({ abbrev, eventType, events, season }) => {
 
 	return (
 		<>
-			<Dropdown
-				view="transactions"
-				fields={["teamsAndAll", "seasonsAndAll", "eventType"]}
-				values={[abbrev, season, eventType]}
-			/>
-
 			{moreLinks}
 
 			<ul className="list-group">

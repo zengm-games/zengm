@@ -1,11 +1,15 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Dropdown, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 
 const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
-	useTitleBar({ title: "Statistical Feats" });
+	useTitleBar({
+		title: "Statistical Feats",
+		dropdownView: "player_feats",
+		dropdownFields: { teamsAndAll: abbrev, seasonsAndAll: season },
+	});
 
 	const cols = getCols(
 		"Name",
@@ -88,12 +92,6 @@ const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
 
 	return (
 		<>
-			<Dropdown
-				view="player_feats"
-				fields={["teamsAndAll", "seasonsAndAll"]}
-				values={[abbrev, season]}
-			/>
-
 			{process.env.SPORT === "basketball" ? (
 				<p>
 					All games where a player got a triple double, a 5x5, 50 points, 25

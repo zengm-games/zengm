@@ -1,12 +1,16 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { DataTable, Dropdown, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 
 const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
-	useTitleBar({ title: "Upcoming Free Agents" });
+	useTitleBar({
+		title: "Upcoming Free Agents",
+		dropdownView: "upcoming_free_agents",
+		dropdownFields: { seasonsUpcoming: season },
+	});
 
 	const cols = getCols(
 		"Name",
@@ -51,11 +55,6 @@ const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
 
 	return (
 		<>
-			<Dropdown
-				view="upcoming_free_agents"
-				fields={["seasonsUpcoming"]}
-				values={[season]}
-			/>
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["free_agents"])}>Current Free Agents</a>

@@ -4,7 +4,7 @@ import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
 import React from "react";
-import { DraftAbbrev, Dropdown, ResponsiveTableWrapper } from "../components";
+import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
 import type { DraftLotteryResultArray } from "../../common/types";
@@ -374,16 +374,14 @@ const DraftLottery = props => {
 		title: "Draft Lottery",
 		jumpTo: true,
 		jumpToSeason: props.season,
+		dropdownView: "draft_lottery",
+		dropdownFields: {
+			seasons: props.season,
+		},
 	});
 
 	return (
 		<>
-			<Dropdown
-				view="draft_lottery"
-				fields={["seasons"]}
-				values={[props.season]}
-			/>
-
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["draft_scouting"])}>

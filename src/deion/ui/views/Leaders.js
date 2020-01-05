@@ -2,23 +2,22 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
-import {
-	Dropdown,
-	PlayerNameLabels,
-	ResponsiveTableWrapper,
-} from "../components";
+import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
-	useTitleBar({ title: "League Leaders", jumpTo: true, jumpToSeason: season });
+	useTitleBar({
+		title: "League Leaders",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "leaders",
+		dropdownFields: {
+			seasons: season,
+			playoffs,
+		},
+	});
 
 	return (
 		<>
-			<Dropdown
-				view="leaders"
-				fields={["seasons", "playoffs"]}
-				values={[season, playoffs]}
-			/>
-
 			<p>
 				Only eligible players are shown (<i>e.g.</i>{" "}
 				{process.env.SPORT === "basketball"

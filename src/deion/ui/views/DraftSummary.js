@@ -1,11 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, DraftAbbrev, Dropdown, SkillsBlock } from "../components";
+import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 
 const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
-	useTitleBar({ title: "Draft History", jumpTo: true, jumpToSeason: season });
+	useTitleBar({
+		title: "Draft History",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "draft_history",
+		dropdownFields: { seasonsAndOldDrafts: season },
+	});
 
 	const superCols = [
 		{
@@ -83,12 +89,6 @@ const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
 
 	return (
 		<>
-			<Dropdown
-				view="draft_history"
-				fields={["seasonsAndOldDrafts"]}
-				values={[season]}
-			/>
-
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["draft_scouting"])}>

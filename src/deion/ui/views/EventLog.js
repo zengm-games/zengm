@@ -1,19 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, SafeHtml } from "../components";
+import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 
 const EventLog = ({ abbrev, events, season }) => {
-	useTitleBar({ title: "Event Log" });
+	useTitleBar({
+		title: "Event Log",
+		dropdownView: "event_log",
+		dropdownFields: { teams: abbrev, seasons: season },
+	});
 
 	return (
 		<>
-			<Dropdown
-				view="event_log"
-				fields={["teams", "seasons"]}
-				values={[abbrev, season]}
-			/>
-
 			<ul>
 				{events.map(e => (
 					<li key={e.eid}>

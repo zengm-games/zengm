@@ -2,8 +2,6 @@ redesign page titles
 - screenshot
 - skyscraper overflow
 - test ads
-- replace all
-  - Dropdown
 - "More Info" box
 - go over all title: `
 - shrink caret a bit, to match bootstrap
@@ -19,7 +17,7 @@ redesign page titles
 - other uses of h1 - decrease size? if so, what about other h2/h3/etc?
 - owner messages
 - test all login/register/account stuff
-- player name on player pages
+- player name on player pages. roster too
 - bigger font for page title?
 
 allow specification of country frequencies independent of name frequencies

@@ -2,10 +2,14 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, Dropdown } from "../components";
+import { DataTable } from "../components";
 
 const PowerRankings = ({ season, teams, userTid }) => {
-	useTitleBar({ title: "Power Rankings" });
+	useTitleBar({
+		title: "Power Rankings",
+		dropdownView: "power_rankings",
+		dropdownFields: { seasons: season },
+	});
 
 	const superCols = [
 		{
@@ -62,8 +66,6 @@ const PowerRankings = ({ season, teams, userTid }) => {
 
 	return (
 		<>
-			<Dropdown view="power_rankings" fields={["seasons"]} values={[season]} />
-
 			<p>
 				The power ranking is a combination of recent performance, margin of
 				victory, and team rating. Team rating is based only on the ratings of

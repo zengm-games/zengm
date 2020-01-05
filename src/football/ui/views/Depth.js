@@ -8,11 +8,7 @@ import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import useTitleBar from "../../../deion/ui/hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../../deion/ui/util";
-import {
-	Dropdown,
-	PlayerNameLabels,
-	SortableTable,
-} from "../../../deion/ui/components";
+import { PlayerNameLabels, SortableTable } from "../../../deion/ui/components";
 import { POSITIONS } from "../../common/constants";
 
 const handleAutoSort = async pos => {
@@ -44,7 +40,11 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 	const [prevPos, setPrevPos] = useState(pos);
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
-	useTitleBar({ title: `Depth Chart - ${pos}` });
+	useTitleBar({
+		title: `Depth Chart - ${pos}`,
+		dropdownView: "depth",
+		dropdownFields: { teams: abbrev },
+	});
 
 	if (pos !== prevPos) {
 		setSortedPids();
@@ -69,7 +69,6 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 
 	return (
 		<>
-			<Dropdown view="depth" fields={["teams"]} values={[abbrev]} />
 			<UncontrolledDropdown className="float-right my-1">
 				<DropdownToggle caret className="btn-light-bordered">
 					More Info

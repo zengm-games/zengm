@@ -8,6 +8,7 @@ const useTitleBar = ({
 	hideNewWindow,
 	jumpTo,
 	jumpToSeason,
+	dropdownExtraParam,
 	dropdownView,
 	dropdownFields = {},
 }: {
@@ -15,6 +16,7 @@ const useTitleBar = ({
 	hideNewWindow?: boolean,
 	jumpTo?: boolean,
 	jumpToSeason?: number,
+	dropdownExtraParam?: number | string,
 	dropdownView?: string,
 	dropdownFields?: {
 		[key: string]: number | string,
@@ -29,6 +31,7 @@ const useTitleBar = ({
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
+		dropdownExtraParam,
 		dropdownView,
 		dropdownFields,
 	});

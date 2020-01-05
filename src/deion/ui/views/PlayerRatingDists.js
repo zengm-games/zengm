@@ -1,20 +1,18 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { BoxPlot, Dropdown } from "../components";
+import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 
 const PlayerRatingDists = ({ ratingsAll, season }) => {
-	useTitleBar({ title: "Player Rating Distributions" });
+	useTitleBar({
+		title: "Player Rating Distributions",
+		dropdownView: "player_rating_dists",
+		dropdownFields: { seasons: season },
+	});
 
 	return (
 		<>
-			<Dropdown
-				view="player_rating_dists"
-				fields={["seasons"]}
-				values={[season]}
-			/>
-
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["player_ratings", season])}>Main Ratings</a>

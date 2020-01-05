@@ -8,7 +8,6 @@ import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PHASE } from "../../../common";
 import {
-	Dropdown,
 	HelpPopover,
 	PlayerNameLabels,
 	RatingWithChange,
@@ -78,7 +77,14 @@ const Roster = ({
 	const [sortedPids, setSortedPids] = useState(undefined);
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
-	useTitleBar({ title: "Roster" });
+	useTitleBar({
+		title: "Roster",
+		dropdownView: "roster",
+		dropdownFields: {
+			teams: abbrev,
+			seasons: season,
+		},
+	});
 
 	if (players !== prevPlayers) {
 		setSortedPids();
@@ -101,11 +107,6 @@ const Roster = ({
 
 	return (
 		<>
-			<Dropdown
-				view="roster"
-				fields={["teams", "seasons"]}
-				values={[abbrev, season]}
-			/>
 			<UncontrolledDropdown className="float-right my-1">
 				<DropdownToggle caret className="btn-light-bordered">
 					More Info

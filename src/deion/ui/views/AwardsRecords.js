@@ -1,7 +1,7 @@
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Dropdown } from "../components";
+import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 
@@ -34,7 +34,13 @@ const AwardsRecords = ({
 	awardsRecords,
 	playerCount,
 }) => {
-	useTitleBar({ title: "Awards Records" });
+	useTitleBar({
+		title: "Awards Records",
+		dropdownView: "awards_records",
+		dropdownFields: {
+			awardType,
+		},
+	});
 	const cols = getCols("Name", "Count", "Year", "Last", "Retired", "HOF");
 
 	const rows = awardsRecords.map(a => {
@@ -53,12 +59,6 @@ const AwardsRecords = ({
 
 	return (
 		<>
-			<Dropdown
-				view="awards_records"
-				fields={["awardType"]}
-				values={[awardType]}
-			/>
-
 			<p>
 				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
 				<a href={helpers.leagueUrl(["team_records"])}>Team Records</a>

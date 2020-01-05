@@ -1,15 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { CompletedGame, Dropdown, UpcomingGame } from "../components";
+import { CompletedGame, UpcomingGame } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
-	useTitleBar({ title: "Schedule" });
+	useTitleBar({
+		title: "Schedule",
+		dropdownView: "schedule",
+		dropdownFields: { teams: abbrev },
+	});
 
 	return (
 		<>
-			<Dropdown view="schedule" fields={["teams"]} values={[abbrev]} />
-
 			<div className="row">
 				<div className="col-sm-6">
 					<h2>Upcoming Games</h2>

@@ -7,12 +7,7 @@ import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
-import {
-	DataTable,
-	Dropdown,
-	PlayerNameLabels,
-	WatchBlock,
-} from "../components";
+import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
 
 const WatchList = ({ players, playoffs, statType, stats }) => {
 	const [clearing, setClearing] = useState(false);
@@ -23,7 +18,11 @@ const WatchList = ({ players, playoffs, statType, stats }) => {
 		setClearing(false);
 	}, []);
 
-	useTitleBar({ title: "Watch List" });
+	useTitleBar({
+		title: "Watch List",
+		dropdownView: "watch_list",
+		dropdownFields: { statTypes: statType, playoffs },
+	});
 
 	const cols = getCols(
 		"",
@@ -76,11 +75,6 @@ const WatchList = ({ players, playoffs, statType, stats }) => {
 
 	return (
 		<>
-			<Dropdown
-				view="watch_list"
-				fields={["statTypes", "playoffs"]}
-				values={[statType, playoffs]}
-			/>
 			<UncontrolledDropdown className="float-right my-1">
 				<DropdownToggle caret className="btn-light-bordered">
 					Other Reports

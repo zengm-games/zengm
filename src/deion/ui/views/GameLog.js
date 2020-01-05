@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { BoxScoreWrapper, Dropdown } from "../components";
+import { BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, overrides } from "../util";
 import useClickable from "../hooks/useClickable";
@@ -142,7 +142,17 @@ const GameLog = ({
 	gamesList = { games: [] },
 	season,
 }) => {
-	useTitleBar({ title: "Game Log" });
+	useTitleBar({
+		title: "Game Log",
+		dropdownView: "game_log",
+		dropdownFields: {
+			[process.env.SPORT === "basketball"
+				? "teamsAndSpecial"
+				: "teams"]: abbrev,
+			seasons: season,
+		},
+		dropdownExtraParam: boxScore.gid,
+	});
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(
 		gamesList.games,
@@ -151,16 +161,6 @@ const GameLog = ({
 
 	return (
 		<>
-			<Dropdown
-				view="game_log"
-				extraParam={boxScore.gid}
-				fields={[
-					process.env.SPORT === "basketball" ? "teamsAndSpecial" : "teams",
-					"seasons",
-				]}
-				values={[abbrev, season]}
-			/>
-
 			<p>
 				More:{" "}
 				{process.env.SPORT === "football" ? (

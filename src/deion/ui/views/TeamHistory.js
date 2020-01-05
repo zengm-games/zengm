@@ -1,12 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PLAYER } from "../../common";
-import {
-	Dropdown,
-	DataTable,
-	PlayerNameLabels,
-	RecordAndPlayoffs,
-} from "../components";
+import { DataTable, PlayerNameLabels, RecordAndPlayoffs } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
 
@@ -27,7 +22,11 @@ const TeamHistory = ({
 	totalWon,
 	worstRecord,
 }) => {
-	useTitleBar({ title: "Team History" });
+	useTitleBar({
+		title: "Team History",
+		dropdownView: "team_history",
+		dropdownFields: { teams: abbrev },
+	});
 
 	const historySeasons = history.map(h => {
 		const recordAndPlayoffs = (
@@ -90,7 +89,6 @@ const TeamHistory = ({
 
 	return (
 		<>
-			<Dropdown view="team_history" fields={["teams"]} values={[abbrev]} />
 			<p>
 				More:{" "}
 				{process.env.SPORT === "football" ? (

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Dropdown, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, overrides } from "../util";
 
@@ -12,7 +12,13 @@ const PlayerRatings = ({
 	season,
 	userTid,
 }) => {
-	useTitleBar({ title: "Player Ratings", jumpTo: true, jumpToSeason: season });
+	useTitleBar({
+		title: "Player Ratings",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "player_ratings",
+		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
+	});
 
 	const ovrsPotsColNames = [];
 	if (process.env.SPORT === "football") {
@@ -85,12 +91,6 @@ const PlayerRatings = ({
 
 	return (
 		<>
-			<Dropdown
-				view="player_ratings"
-				fields={["teamsAndAllWatch", "seasons"]}
-				values={[abbrev, season]}
-			/>
-
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["player_rating_dists", season])}>

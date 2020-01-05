@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, Dropdown } from "../components";
+import { DataTable } from "../components";
 
 const LeagueFinances = ({
 	budget,
@@ -16,7 +16,13 @@ const LeagueFinances = ({
 	teams,
 	userTid,
 }) => {
-	useTitleBar({ title: "League Finances", jumpTo: true, jumpToSeason: season });
+	useTitleBar({
+		title: "League Finances",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "league_finances",
+		dropdownFields: { seasons: season },
+	});
 
 	const cols = budget
 		? getCols(
@@ -64,8 +70,6 @@ const LeagueFinances = ({
 
 	return (
 		<>
-			<Dropdown view="league_finances" fields={["seasons"]} values={[season]} />
-
 			<p>
 				Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b> (teams over
 				this amount cannot sign {hardCap ? "players" : "free agents"} for more

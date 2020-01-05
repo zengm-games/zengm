@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Dropdown } from "../components";
+import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 
@@ -13,7 +13,11 @@ const teamLink = t => {
 };
 
 const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
-	useTitleBar({ title: "Team Records" });
+	useTitleBar({
+		title: "Team Records",
+		dropdownView: "team_records",
+		dropdownFields: { teamRecordType: byType },
+	});
 
 	let displayName;
 	if (byType === "conf") {
@@ -62,12 +66,6 @@ const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
 
 	return (
 		<>
-			<Dropdown
-				view="team_records"
-				fields={["teamRecordType"]}
-				values={[byType]}
-			/>
-
 			<p>
 				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
 				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>

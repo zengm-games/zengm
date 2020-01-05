@@ -12,6 +12,7 @@ const TitleBar = () => {
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
+		dropdownExtraParam,
 		dropdownView,
 		dropdownFields,
 	} = useLocalShallow(state => ({
@@ -19,6 +20,7 @@ const TitleBar = () => {
 		hideNewWindow: state.hideNewWindow,
 		jumpTo: state.jumpTo,
 		jumpToSeason: state.jumpToSeason,
+		dropdownExtraParam: state.dropdownExtraParam,
 		dropdownView: state.dropdownView,
 		dropdownFields: state.dropdownFields,
 	}));
@@ -31,6 +33,7 @@ const TitleBar = () => {
 			</div>
 			{dropdownView ? (
 				<Dropdown
+					extraParam={dropdownExtraParam}
 					view={dropdownView}
 					fields={Object.keys(dropdownFields)}
 					values={Object.values(dropdownFields)}

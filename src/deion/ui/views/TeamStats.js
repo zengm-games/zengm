@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
-import { DataTable, Dropdown } from "../components";
+import { DataTable } from "../components";
 
 const legendSquare = className => {
 	return <span className={`table-${className} legend-square ml-3`} />;
@@ -19,7 +19,17 @@ const TeamStats = ({
 	ties,
 	userTid,
 }) => {
-	useTitleBar({ title: "Team Stats", jumpTo: true, jumpToSeason: season });
+	useTitleBar({
+		title: "Team Stats",
+		jumpTo: true,
+		jumpToSeason: season,
+		dropdownView: "team_stats",
+		dropdownFields: {
+			seasons: season,
+			teamOpponentAdvanced: teamOpponent,
+			playoffs,
+		},
+	});
 
 	const basicColNames = ["Team", "stat:gp", "W", "L"];
 	if (ties) {
@@ -134,12 +144,6 @@ const TeamStats = ({
 
 	return (
 		<>
-			<Dropdown
-				view="team_stats"
-				fields={["seasons", "teamOpponentAdvanced", "playoffs"]}
-				values={[season, teamOpponent, playoffs]}
-			/>
-
 			<div className="row">
 				<div className="col-sm-4">
 					More:{" "}

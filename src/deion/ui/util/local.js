@@ -34,6 +34,7 @@ const [useLocal, local] = create(set => ({
 	hideNewWindow: false,
 	jumpTo: false,
 	jumpToSeason: undefined,
+	dropdownExtraParam: undefined,
 	dropdownView: undefined,
 	dropdownFields: {},
 

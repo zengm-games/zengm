@@ -3,7 +3,6 @@ import React from "react";
 import {
 	BarGraph,
 	DataTable,
-	Dropdown,
 	HelpPopover,
 	PlayerNameLabels,
 } from "../components";
@@ -371,7 +370,11 @@ const TeamFinances = ({
 	tid,
 	userTid,
 }) => {
-	useTitleBar({ title: "Team Finances" });
+	useTitleBar({
+		title: "Team Finances",
+		dropdownView: "team_finances",
+		dropdownFields: { teams: abbrev, shows: show },
+	});
 
 	const cols = getCols("Name").concat(
 		salariesSeasons.map(season => {
@@ -442,12 +445,6 @@ const TeamFinances = ({
 
 	return (
 		<>
-			<Dropdown
-				view="team_finances"
-				fields={["teams", "shows"]}
-				values={[abbrev, show]}
-			/>
-
 			<p>
 				More:{" "}
 				{process.env.SPORT === "football" ? (

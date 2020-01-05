@@ -2,14 +2,9 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import arrayMove from "array-move";
-import DropdownItem from "reactstrap/lib/DropdownItem";
-import DropdownMenu from "reactstrap/lib/DropdownMenu";
-import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import useTitleBar from "../../../deion/ui/hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../../deion/ui/util";
 import { PlayerNameLabels, SortableTable } from "../../../deion/ui/components";
-import { POSITIONS } from "../../common/constants";
 
 const handleAutoSort = async pos => {
 	await toWorker("autoSortRoster", pos);
@@ -44,6 +39,8 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 		title: "Depth Chart",
 		dropdownView: "depth",
 		dropdownFields: { teams: abbrev, positions: pos },
+		moreInfoAbbrev: abbrev,
+		moreInfoSeason: season,
 	});
 
 	if (pos !== prevPos) {
@@ -69,24 +66,6 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 
 	return (
 		<>
-			<UncontrolledDropdown className="float-right my-1">
-				<DropdownToggle caret className="btn-light-bordered">
-					More Info
-				</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem
-						href={helpers.leagueUrl(["player_stats", abbrev, season])}
-					>
-						Player Stats
-					</DropdownItem>
-					<DropdownItem
-						href={helpers.leagueUrl(["player_ratings", abbrev, season])}
-					>
-						Player Ratings
-					</DropdownItem>
-				</DropdownMenu>
-			</UncontrolledDropdown>
-
 			<p>
 				More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
 				<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}

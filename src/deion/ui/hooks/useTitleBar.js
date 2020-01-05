@@ -12,6 +12,8 @@ const useTitleBar = ({
 	dropdownExtraParam,
 	dropdownView,
 	dropdownFields = {},
+	moreInfoAbbrev,
+	moreInfoSeason,
 }: {
 	title?: string,
 	hideNewWindow?: boolean,
@@ -22,6 +24,8 @@ const useTitleBar = ({
 	dropdownFields?: {
 		[key: string]: number | string,
 	},
+	moreInfoAbbrev?: string,
+	moreInfoSeason?: number,
 } = {}) => {
 	const state = useLocalShallow(state2 => ({
 		teamAbbrevsCache: state2.teamAbbrevsCache,
@@ -61,6 +65,8 @@ const useTitleBar = ({
 		dropdownExtraParam,
 		dropdownView,
 		dropdownFields,
+		moreInfoAbbrev,
+		moreInfoSeason,
 	});
 };
 

@@ -37,6 +37,8 @@ const [useLocal, local] = create(set => ({
 	dropdownExtraParam: undefined,
 	dropdownView: undefined,
 	dropdownFields: {},
+	moreInfoAbbrev: undefined,
+	moreInfoSeason: undefined,
 
 	actions: {
 		// Reset any values specific to a league

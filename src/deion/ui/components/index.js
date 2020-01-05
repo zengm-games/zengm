@@ -14,6 +14,7 @@ export { default as Header } from "./Header";
 export { default as HelpPopover } from "./HelpPopover";
 export { default as JumpTo } from "./JumpTo";
 export { default as LeagueFileUpload } from "./LeagueFileUpload";
+export { default as MoreInfo } from "./MoreInfo";
 export { default as MultiTeamMenu } from "./MultiTeamMenu";
 export { default as NagModal } from "./NagModal";
 export { default as NavBar } from "./NavBar";

@@ -3,6 +3,7 @@
 import React from "react";
 import Dropdown from "./Dropdown";
 import JumpTo from "./JumpTo";
+import MoreInfo from "./MoreInfo";
 import NewWindowLink from "./NewWindowLink";
 import { useLocalShallow } from "../util";
 
@@ -15,6 +16,8 @@ const TitleBar = () => {
 		dropdownExtraParam,
 		dropdownView,
 		dropdownFields,
+		moreInfoAbbrev,
+		moreInfoSeason,
 	} = useLocalShallow(state => ({
 		title: state.title,
 		hideNewWindow: state.hideNewWindow,
@@ -23,6 +26,8 @@ const TitleBar = () => {
 		dropdownExtraParam: state.dropdownExtraParam,
 		dropdownView: state.dropdownView,
 		dropdownFields: state.dropdownFields,
+		moreInfoAbbrev: state.moreInfoAbbrev,
+		moreInfoSeason: state.moreInfoSeason,
 	}));
 
 	if (title === undefined) {
@@ -44,6 +49,9 @@ const TitleBar = () => {
 				/>
 			) : null}
 			{jumpTo ? <JumpTo season={jumpToSeason} /> : null}
+			{moreInfoAbbrev && moreInfoSeason !== undefined ? (
+				<MoreInfo abbrev={moreInfoAbbrev} season={moreInfoSeason} />
+			) : null}
 		</div>
 	);
 };

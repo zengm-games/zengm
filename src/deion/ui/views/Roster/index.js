@@ -2,10 +2,6 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import arrayMove from "array-move";
-import DropdownItem from "reactstrap/lib/DropdownItem";
-import DropdownMenu from "reactstrap/lib/DropdownMenu";
-import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PHASE } from "../../../common";
 import {
 	HelpPopover,
@@ -84,6 +80,8 @@ const Roster = ({
 			teams: abbrev,
 			seasons: season,
 		},
+		moreInfoAbbrev: abbrev,
+		moreInfoSeason: season,
 	});
 
 	if (players !== prevPlayers) {
@@ -107,24 +105,6 @@ const Roster = ({
 
 	return (
 		<>
-			<UncontrolledDropdown className="float-right my-1">
-				<DropdownToggle caret className="btn-light-bordered">
-					More Info
-				</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem
-						href={helpers.leagueUrl(["player_stats", abbrev, season])}
-					>
-						Player Stats
-					</DropdownItem>
-					<DropdownItem
-						href={helpers.leagueUrl(["player_ratings", abbrev, season])}
-					>
-						Player Ratings
-					</DropdownItem>
-				</DropdownMenu>
-			</UncontrolledDropdown>
-
 			<p>
 				More:{" "}
 				{process.env.SPORT === "football" ? (

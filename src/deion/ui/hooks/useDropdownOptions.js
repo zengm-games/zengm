@@ -5,16 +5,101 @@ import { useEffect, useState } from "react";
 import { PHASE } from "../../common";
 import { overrides, useLocalShallow } from "../util";
 
-const sortedTeams = state => {
-	return orderBy(
-		state.teamAbbrevsCache.map((abbrev, i) => {
+export const getSortedTeams = ({
+	teamAbbrevsCache,
+	teamRegionsCache,
+	teamNamesCache,
+}) => {
+	const array = orderBy(
+		teamAbbrevsCache.map((abbrev, i) => {
 			return {
-				key: abbrev,
-				val: `${state.teamRegionsCache[i]} ${state.teamNamesCache[i]}`,
+				abbrev,
+				name: `${teamRegionsCache[i]} ${teamNamesCache[i]}`,
 			};
 		}),
 		"val",
 	);
+
+	const object = {};
+
+	for (const { abbrev, name } of array) {
+		object[abbrev] = name;
+	}
+
+	return object;
+};
+
+const dropdownValues = {
+	special: "All-Star Game",
+	"all|||teams": "All Teams",
+	watch: "Watch List",
+	career: "Career Totals",
+	regularSeason: "Regular Season",
+	playoffs: "Playoffs",
+	10: "Past 10 Seasons",
+	"all|||seasons": "All Seasons",
+	perGame: "Per Game",
+	per36: "Per 36 Minutes",
+	totals: "Totals",
+	shotLocations: "Shot Locations",
+	advanced: "Advanced",
+	passing: "Passing",
+	rushing: "Rushing/Receiving",
+	defense: "Defense",
+	kicking: "Kicking",
+	returns: "Returns",
+	champion: "Won Championship",
+	mvp: "Most Valuable Player",
+	finals_mvp: "Finals MVP",
+	dpoy: "Defensive Player of the Year",
+	smoy: "Sixth Man of the Year",
+	mip: "Most Improved Player",
+	roy: "Rookie of the Year",
+	first_team: "First Team All-League",
+	second_team: "Second Team All-League",
+	third_team: "Third Team All-League",
+	all_league: "All-League",
+	first_def: "First Team All-Defensive",
+	second_def: "Second Team All-Defensive",
+	third_def: "Third Team All-Defensive",
+	all_def: "All-Defensive",
+	all_star: "All-Star",
+	all_star_mvp: "All-Star MVP",
+	ppg_leader: "League Scoring Leader",
+	rpg_leader: "League Rebounding Leader",
+	apg_leader: "League Assists Leader",
+	spg_leader: "League Steals Leader",
+	bpg_leader: "League Blocks Leader",
+	oroy: "Offensive Rookie of the Year",
+	droy: "Defensive Rookie of the Year",
+	"all|||types": "All Types",
+	draft: "Draft",
+	freeAgent: "FA Signed",
+	reSigned: "Re-signed",
+	release: "Released",
+	trade: "Trades",
+	team: "Team",
+	opponent: "Opponent",
+	by_team: "By Team",
+	by_conf: "By Conference",
+	by_div: "By Division",
+};
+
+export const getDropdownValue = (key: number | string, sortedTeams) => {
+	if (typeof key === "number") {
+		return String(key);
+	}
+	if (sortedTeams[key]) {
+		return sortedTeams[key];
+	}
+	if (dropdownValues[key]) {
+		return dropdownValues[key];
+	}
+	if (overrides.common.constants.TEAM_STATS_TABLES[key]) {
+		return overrides.common.constants.TEAM_STATS_TABLES[key].name;
+	}
+
+	throw new Error(`Unknown dropdown key: "${key}"`);
 };
 
 const useDropdownOptions = (field: string) => {
@@ -30,40 +115,17 @@ const useDropdownOptions = (field: string) => {
 	}));
 
 	useEffect(() => {
-		let newOptions: {
-			key: number | string,
-			val: number | string,
-		}[];
+		const sortedTeams = getSortedTeams(state);
+
+		let keys: (number | string)[];
 		if (field === "teams") {
-			newOptions = sortedTeams(state);
+			keys = Object.keys(sortedTeams);
 		} else if (field === "teamsAndSpecial") {
-			newOptions = [
-				{
-					key: "special",
-					val: "All-Star Game",
-				},
-				...sortedTeams(state),
-			];
+			keys = ["special", ...Object.keys(sortedTeams)];
 		} else if (field === "teamsAndAll") {
-			newOptions = [
-				{
-					key: "all",
-					val: "All Teams",
-				},
-				...sortedTeams(state),
-			];
+			keys = ["all|||teams", ...Object.keys(sortedTeams)];
 		} else if (field === "teamsAndAllWatch") {
-			newOptions = [
-				{
-					key: "all",
-					val: "All Teams",
-				},
-				{
-					key: "watch",
-					val: "Watch List",
-				},
-				...sortedTeams(state),
-			];
+			keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
 		} else if (
 			field === "seasons" ||
 			field === "seasonsAndCareer" ||
@@ -71,28 +133,19 @@ const useDropdownOptions = (field: string) => {
 			field === "seasonsAndOldDrafts" ||
 			field === "seasonsHistory"
 		) {
-			newOptions = [];
+			keys = [];
 			for (
 				let season = state.startingSeason;
 				season <= state.season;
 				season++
 			) {
-				newOptions.push({
-					key: season,
-					val: `${season}`,
-				});
+				keys.push(season);
 			}
 			if (field === "seasonsAndCareer") {
-				newOptions.unshift({
-					key: "career",
-					val: "Career Totals",
-				});
+				keys.push("career");
 			}
 			if (field === "seasonsAndAll") {
-				newOptions.unshift({
-					key: "all",
-					val: "All Seasons",
-				});
+				keys.unshift("all|||seasons");
 			}
 			if (field === "seasonsAndOldDrafts") {
 				const NUM_PAST_SEASONS = 20; // Keep synced with league/create.js
@@ -101,302 +154,110 @@ const useDropdownOptions = (field: string) => {
 					season >= state.startingSeason - NUM_PAST_SEASONS;
 					season--
 				) {
-					newOptions.unshift({
-						key: season,
-						val: `${season}`,
-					});
+					keys.unshift(season);
 				}
 
 				// Remove current season, if draft hasn't happened yet
 				if (state.phase < PHASE.DRAFT) {
-					newOptions.pop();
+					keys.pop();
 				}
 			}
 			if (field === "seasonsHistory") {
 				// Remove current season until playoffs end
 				if (state.phase <= PHASE.PLAYOFFS) {
-					newOptions.pop();
+					keys.pop();
 				}
 			}
 		} else if (field === "seasonsUpcoming") {
-			newOptions = [];
+			keys = [];
 			// For upcomingFreeAgents, bump up 1 if we're past the season
 			const offset = state.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
 			for (let j = 0 + offset; j < 5 + offset; j++) {
-				newOptions.push({
-					key: state.season + j,
-					val: `${state.season + j}`,
-				});
+				keys.push(state.season + j);
 			}
 		} else if (field === "playoffs") {
-			newOptions = [
-				{
-					val: "Regular Season",
-					key: "regularSeason",
-				},
-				{
-					val: "Playoffs",
-					key: "playoffs",
-				},
-			];
+			keys = ["regularSeason", "playoffs"];
 		} else if (field === "shows") {
-			newOptions = [
-				{
-					val: "Past 10 Seasons",
-					key: "10",
-				},
-				{
-					val: "All Seasons",
-					key: "all",
-				},
-			];
+			keys = ["10", "all|||seasons"];
 		} else if (field === "statTypes" || field === "statTypesAdv") {
 			if (process.env.SPORT === "basketball") {
-				newOptions = [
-					{
-						val: "Per Game",
-						key: "perGame",
-					},
-					{
-						val: "Per 36 Mins",
-						key: "per36",
-					},
-					{
-						val: "Totals",
-						key: "totals",
-					},
-				];
+				keys = ["perGame", "per36", "totals"];
 
 				if (field === "statTypesAdv") {
-					newOptions.push({
-						val: "Shot Locations",
-						key: "shotLocations",
-					});
-					newOptions.push({
-						val: "Advanced",
-						key: "advanced",
-					});
+					keys.push("shotLocations");
+					keys.push("advanced");
 				}
 			} else {
-				newOptions = [
-					{
-						val: "Passing",
-						key: "passing",
-					},
-					{
-						val: "Rushing/Receiving",
-						key: "rushing",
-					},
-					{
-						val: "Defense",
-						key: "defense",
-					},
-					{
-						val: "Kicking",
-						key: "kicking",
-					},
-					{
-						val: "Returns",
-						key: "returns",
-					},
-				];
+				keys = ["passing", "rushing", "defense", "kicking", "returns"];
 			}
 		} else if (field === "awardType") {
-			newOptions =
+			keys =
 				process.env.SPORT === "basketball"
 					? [
-							{
-								val: "Won Championship",
-								key: "champion",
-							},
-							{
-								val: "Most Valuable Player",
-								key: "mvp",
-							},
-							{
-								val: "Finals MVP",
-								key: "finals_mvp",
-							},
-							{
-								val: "Defensive Player of the Year",
-								key: "dpoy",
-							},
-							{
-								val: "Sixth Man of the Year",
-								key: "smoy",
-							},
-							{
-								val: "Most Improved Player",
-								key: "mip",
-							},
-							{
-								val: "Rookie of the Year",
-								key: "roy",
-							},
-							{
-								val: "First Team All-League",
-								key: "first_team",
-							},
-							{
-								val: "Second Team All-League",
-								key: "second_team",
-							},
-							{
-								val: "Third Team All-League",
-								key: "third_team",
-							},
-							{
-								val: "All-League",
-								key: "all_league",
-							},
-							{
-								val: "First Team All-Defensive",
-								key: "first_def",
-							},
-							{
-								val: "Second Team All-Defensive",
-								key: "second_def",
-							},
-							{
-								val: "Third Team All-Defensive",
-								key: "third_def",
-							},
-							{
-								val: "All-Defensive",
-								key: "all_def",
-							},
-							{
-								val: "All-Star",
-								key: "all_star",
-							},
-							{
-								val: "All-Star MVP",
-								key: "all_star_mvp",
-							},
-							{
-								val: "League Scoring Leader",
-								key: "ppg_leader",
-							},
-							{
-								val: "League Rebounding Leader",
-								key: "rpg_leader",
-							},
-							{
-								val: "League Assists Leader",
-								key: "apg_leader",
-							},
-							{
-								val: "League Steals Leader",
-								key: "spg_leader",
-							},
-							{
-								val: "League Blocks Leader",
-								key: "bpg_leader",
-							},
+							"champion",
+							"mvp",
+							"finals_mvp",
+							"dpoy",
+							"smoy",
+							"mip",
+							"roy",
+							"first_team",
+							"second_team",
+							"third_team",
+							"all_league",
+							"first_def",
+							"second_def",
+							"third_def",
+							"all_def",
+							"all_star",
+							"all_star_mvp",
+							"ppg_leader",
+							"rpg_leader",
+							"apg_leader",
+							"spg_leader",
+							"bpg_leader",
 					  ]
 					: [
-							{
-								val: "Won Championship",
-								key: "champion",
-							},
-							{
-								val: "Most Valuable Player",
-								key: "mvp",
-							},
-							{
-								val: "Finals MVP",
-								key: "finals_mvp",
-							},
-							{
-								val: "Defensive Player of the Year",
-								key: "dpoy",
-							},
-							{
-								val: "Offensive Rookie of the Year",
-								key: "oroy",
-							},
-							{
-								val: "Defensive Rookie of the Year",
-								key: "droy",
-							},
-							{
-								val: "First Team All-League",
-								key: "first_team",
-							},
-							{
-								val: "Second Team All-League",
-								key: "second_team",
-							},
-							{
-								val: "All-League",
-								key: "all_league",
-							},
+							"champion",
+							"mvp",
+							"finals_mvp",
+							"dpoy",
+							"oroy",
+							"droy",
+							"first_team",
+							"second_team",
+							"all_league",
 					  ];
 		} else if (field === "eventType") {
-			newOptions = [
-				{
-					val: "All Types",
-					key: "all",
-				},
-				{
-					val: "Draft",
-					key: "draft",
-				},
-				{
-					val: "FA Signed",
-					key: "freeAgent",
-				},
-				{
-					val: "Re-signed",
-					key: "reSigned",
-				},
-				{
-					val: "Released",
-					key: "release",
-				},
-				{
-					val: "Trades",
-					key: "trade",
-				},
+			keys = [
+				"all|||types",
+				"draft",
+				"freeAgent",
+				"reSigned",
+				"release",
+				"trade",
 			];
 		} else if (field === "teamOpponent") {
-			newOptions = [
-				{
-					val: "Team",
-					key: "team",
-				},
-				{
-					val: "Opponent",
-					key: "opponent",
-				},
-			];
+			keys = ["team", "opponent"];
 		} else if (field === "teamOpponentAdvanced") {
-			newOptions = Object.keys(
-				overrides.common.constants.TEAM_STATS_TABLES,
-			).map(key => {
-				return {
-					val: overrides.common.constants.TEAM_STATS_TABLES[key].name,
-					key,
-				};
-			});
+			keys = Object.keys(overrides.common.constants.TEAM_STATS_TABLES);
 		} else if (field === "teamRecordType") {
-			newOptions = [
-				{
-					val: "By Team",
-					key: "team",
-				},
-				{
-					val: "By Conference",
-					key: "conf",
-				},
-				{
-					val: "By Division",
-					key: "div",
-				},
-			];
+			keys = ["by_team", "by_conf", "by_div"];
 		} else {
 			throw new Error(`Unknown Dropdown field: ${field}`);
 		}
+
+		const newOptions = keys.map(rawKey => {
+			const key =
+				typeof rawKey === "string" && rawKey.includes("|||")
+					? rawKey.split("|||")[0]
+					: rawKey;
+
+			return {
+				key,
+				val: getDropdownValue(rawKey, sortedTeams),
+			};
+		});
 
 		setOptions(newOptions);
 	}, [field, state]);

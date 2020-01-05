@@ -349,7 +349,7 @@ const teamHistory = params => {
 
 const teamRecords = params => {
 	return {
-		byType: params.byType || "team",
+		byType: params.byType || "by_team",
 	};
 };
 

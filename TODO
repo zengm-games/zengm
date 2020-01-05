@@ -5,8 +5,6 @@ redesign page titles
 - "More Info" box
 - go over all title: `
 - shrink caret a bit, to match bootstrap
-- update document.title with all dropdown stuff
-  - getOptions -> useOptions
 - switch selects to bootstrap dropdowns, like top menu?
   - what if there are thousands of entries in one?
 - hide on some pages, like dashboard?
@@ -18,6 +16,7 @@ redesign page titles
 - owner messages
 - test all login/register/account stuff
 - player name on player pages. roster too
+- fix vertical alignment of elements in titlebar
 - bigger font for page title?
 - h2: 26px; h3: 22.75px
   - used inconsistently, e.g. standings and playoffs

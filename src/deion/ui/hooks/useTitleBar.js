@@ -1,7 +1,8 @@
 // @flow
 
 import { useEffect } from "react";
-import { localActions } from "../util";
+import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
+import { localActions, useLocalShallow } from "../util";
 
 const useTitleBar = ({
 	title,
@@ -22,9 +23,27 @@ const useTitleBar = ({
 		[key: string]: number | string,
 	},
 }) => {
+	const state = useLocalShallow(state2 => ({
+		teamAbbrevsCache: state2.teamAbbrevsCache,
+		teamNamesCache: state2.teamNamesCache,
+		teamRegionsCache: state2.teamRegionsCache,
+	}));
+
 	useEffect(() => {
-		document.title = title;
-	}, [title]);
+		const parts = [title];
+
+		const sortedTeams = getSortedTeams(state);
+
+		for (const key of Object.values(dropdownFields)) {
+			if (key === "all") {
+				// Not much use showing "All X" in the title, and also this saves us from having to dedupe all the "all|||" keys in getDropdownValue
+				continue;
+			}
+			parts.push(getDropdownValue(key, sortedTeams));
+		}
+
+		document.title = parts.join(" » ");
+	}, [dropdownFields, state, title]);
 
 	localActions.update({
 		title,

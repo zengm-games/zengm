@@ -251,9 +251,9 @@ async function updateTeamRecords(
 			.reduce((a, b) => Number(a) + Number(b));
 
 		let display;
-		if (inputs.byType === "team") {
+		if (inputs.byType === "by_team") {
 			display = teamRecords;
-		} else if (inputs.byType === "conf") {
+		} else if (inputs.byType === "by_conf") {
 			display = g.confs.map(conf =>
 				sumRecordsFor("cid", conf.cid, conf.name, teamRecords),
 			);

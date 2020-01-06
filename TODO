@@ -1,7 +1,4 @@
 redesign page titles
-- skyscraper overflow
-- test ads
-- go over all title: `
 - shrink caret a bit, to match bootstrap
 
 allow specification of country frequencies independent of name frequencies

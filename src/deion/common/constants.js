@@ -49,8 +49,10 @@ const PHASE_TEXT = {
 	"8": "free agency",
 };
 
-// Test: pk_test_Qbz0froGmHLp0dPCwHoYFY08
-const STRIPE_PUBLISHABLE_KEY = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
+const STRIPE_PUBLISHABLE_KEY =
+	process.env.NODE_ENV === "development"
+		? "pk_test_Qbz0froGmHLp0dPCwHoYFY08"
+		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 export {
 	ACCOUNT_API_URL,

@@ -275,7 +275,7 @@ const Controller = () => {
 		<>
 			<NavBar pageID={pageID} updating={loading} />
 			<TitleBar />
-			<div className="bbgm-container">
+			<div className="bbgm-container mt-2">
 				<Header />
 				<SideBar pageID={pageID} />
 				<div className="p402_premium" id="actual-content">

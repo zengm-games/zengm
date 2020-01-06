@@ -35,7 +35,7 @@ const TitleBar = () => {
 	}
 
 	return (
-		<div className="py-2 mb-2 title-bar d-flex navbar-border">
+		<nav className="navbar navbar-border">
 			<h1 className="mb-0">
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
@@ -52,7 +52,7 @@ const TitleBar = () => {
 			{moreInfoAbbrev && moreInfoSeason !== undefined ? (
 				<MoreInfo abbrev={moreInfoAbbrev} season={moreInfoSeason} />
 			) : null}
-		</div>
+		</nav>
 	);
 };
 

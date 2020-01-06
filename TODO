@@ -1,4 +1,5 @@
 TitleBar as bootstrap navbar?
+- abstract dropdown menu from NavBar
 
 allow specification of country frequencies independent of name frequencies
 

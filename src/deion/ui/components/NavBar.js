@@ -99,13 +99,6 @@ const getText = (text): string | any => {
 	return text;
 };
 
-const MenuGroup = ({ children }) => (
-	<ul className="nav flex-column">{children}</ul>
-);
-MenuGroup.propTypes = {
-	children: PropTypes.any.isRequired,
-};
-
 const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
 	if (!menuItem.league && lid !== undefined) {
 		return null;

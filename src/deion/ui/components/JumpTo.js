@@ -22,7 +22,7 @@ const JumpTo = ({ season }: { season: number | "all" }) => {
 	const s = typeof season === "number" ? String(season) : undefined;
 
 	return (
-		<UncontrolledDropdown className="ml-auto mt-1">
+		<UncontrolledDropdown className="ml-auto">
 			<DropdownToggle caret tag="a">
 				Jump To
 			</DropdownToggle>

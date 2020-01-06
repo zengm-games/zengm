@@ -2,31 +2,7 @@
 
 import * as React from "react";
 import { takeScreenshot, toWorker } from ".";
-
-type MenuItemLink = {|
-	type: "link",
-	active?: (string | void) => boolean,
-	league?: true,
-	godMode?: true,
-	nonLeague?: true,
-	onClick?: (SyntheticEvent<>) => void | false | Promise<void | false>, // Return false to leave sidebar open
-	path?: string | (number | string)[],
-	text:
-		| string
-		| React.Element<any>
-		| {
-				side: string | React.Element<any>,
-				top: string | React.Element<any>,
-		  },
-|};
-type MenuItemHeader = {|
-	type: "header",
-	long: string,
-	short: string,
-	league?: true,
-	nonLeague?: true,
-	children: MenuItemLink[],
-|};
+import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{

@@ -1,7 +1,12 @@
 TitleBar as bootstrap navbar?
-- abstract dropdown menu from NavBar
+- font color, font hover color, highlight color
+
+switch Dropdown to DropdownLinks rather than Select?
+- see how react-dropdown or react-select deal with tons of options
 
 flow
+
+I should add easter eggs so that real historical figures sometimes appear in the game if you're simulating at that time. How dope would it be if you're simulating the 12th century and Genghis Khan shows up in the draft
 
 allow specification of country frequencies independent of name frequencies
 

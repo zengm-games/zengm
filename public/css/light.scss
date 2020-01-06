@@ -667,19 +667,19 @@ tr.table-warning:hover > td {
 	border-bottom: 1px solid $gray-200;
 }
 
-#top-dropdowns .nav-item,
+.dropdown-links .nav-item,
 #top-user-block .nav-item {
 	margin: -8px 0;
 	height: 51px;
 }
-#top-dropdowns .dropdown.show.nav-item {
+.dropdown-links .dropdown.show.nav-item {
 	background-color: $gray-200;
 }
-#top-dropdowns .nav-link {
+.dropdown-links .nav-link {
 	padding: 16px 8px;
 }
 @include media-breakpoint-up(xl) {
-	#top-dropdowns .nav-link {
+	.dropdown-links .nav-link {
 		padding: 16px;
 	}
 }
@@ -841,9 +841,7 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
-	padding: 0 15px;
-	select,
-	a {
+	select {
 		font-size: 14px;
 	}
 	option {

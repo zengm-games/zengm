@@ -213,9 +213,10 @@ const CustomizePlayer = props => {
 	};
 
 	const handleChangeAppearanceOption = event => {
+		const value = event.target.value;
 		setState(prevState => ({
 			...prevState,
-			appearanceOption: event.target.value,
+			appearanceOption: value,
 		}));
 	};
 

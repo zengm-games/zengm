@@ -465,10 +465,11 @@ const GodModeOptions = props => {
 	});
 
 	const handleChange = name => event => {
-		setState({
-			...state,
-			[name]: event.target.value,
-		});
+		const value = event.target.value;
+		setState(prevState => ({
+			...prevState,
+			[name]: value,
+		}));
 	};
 
 	const handleFormSubmit = async event => {

@@ -28,7 +28,7 @@ const Select = ({ field, handleChange, value }) => {
 		el.appendChild(el2);
 		document.body.appendChild(el);
 		setWidth(el.offsetWidth);
-		// document.body.removeChild(el);
+		document.body.removeChild(el);
 		console.log(currentValue, el.offsetWidth);
 	}, [field, options, value]);
 

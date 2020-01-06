@@ -1,5 +1,5 @@
 redesign page titles
-- shrink caret a bit, to match bootstrap
+- make dropdowns full height of navbar
 
 allow specification of country frequencies independent of name frequencies
 

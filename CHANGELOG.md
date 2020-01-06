@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-01-05: Revamped the UI for page titles, dropdown options, and shortcut links between pages.
+
 * 2020-01-03: Added support for boolean "or" operations in table column filters, like "C|PF" to display centers and power forwards. [[1]](https://old.reddit.com/r/BasketballGM/comments/eji5hf/new_in_version_202001031015_boolean_or_operations/) [[2]](https://old.reddit.com/r/Football_GM/comments/eji5i9/new_in_version_202001031016_boolean_or_operations/)
 
 * 2020-01-02: Fixed bug where loading a league file during a fantasy draft created extra draft prospects.

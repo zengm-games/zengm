@@ -11,11 +11,6 @@ const Select = ({ field, handleChange, value }) => {
 	const [width, setWidth] = useState();
 
 	useEffect(() => {
-		const el = document.createElement("span");
-		el.style.padding = "0 13px";
-		el.style.fontSize = "14px";
-		document.body.appendChild(el);
-
 		let currentValue;
 		for (const option of options) {
 			if (option.key === value) {
@@ -23,9 +18,18 @@ const Select = ({ field, handleChange, value }) => {
 			}
 		}
 
-		el.innerHTML = currentValue;
+		const el = document.createElement("select");
+		el.style.display = "inline";
+		el.style.fontSize = "14px";
+		el.className = "dropdown-select";
+		const el2 = document.createElement("option");
+		el2.innerHTML = currentValue;
+
+		el.appendChild(el2);
+		document.body.appendChild(el);
 		setWidth(el.offsetWidth);
-		document.body.removeChild(el);
+		// document.body.removeChild(el);
+		console.log(currentValue, el.offsetWidth);
 	}, [field, options, value]);
 
 	return (

@@ -1,11 +1,8 @@
 redesign page titles
-- screenshot
 - skyscraper overflow
 - test ads
 - go over all title: `
 - shrink caret a bit, to match bootstrap
-- switch selects to bootstrap dropdowns, like top menu?
-  - what if there are thousands of entries in one?
 - test all gold stuff
 
 allow specification of country frequencies independent of name frequencies

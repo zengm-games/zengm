@@ -10,7 +10,7 @@ import { helpers } from "../util";
 
 const MoreInfo = ({ abbrev, season }: { abbrev: string, season: number }) => {
 	return (
-		<UncontrolledDropdown className="ml-auto">
+		<UncontrolledDropdown className="ml-auto mt-1">
 			<DropdownToggle caret tag="a">
 				More Info
 			</DropdownToggle>

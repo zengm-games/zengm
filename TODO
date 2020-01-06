@@ -7,7 +7,6 @@ redesign page titles
 - switch selects to bootstrap dropdowns, like top menu?
   - what if there are thousands of entries in one?
 - test all gold stuff
-- fix vertical alignment of elements in titlebar
 
 allow specification of country frequencies independent of name frequencies
 

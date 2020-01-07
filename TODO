@@ -1,8 +1,12 @@
+unify "More" links
+
 TitleBar as bootstrap navbar?
 - font color, font hover color, highlight color
 
 switch Dropdown to DropdownLinks rather than Select?
 - see how react-dropdown or react-select deal with tons of options
+  - what about on mobile?
+- https://stackoverflow.com/questions/40692950/how-to-make-long-bootstrap-dropdown-menus-vertically-scrollable
 
 flow
 

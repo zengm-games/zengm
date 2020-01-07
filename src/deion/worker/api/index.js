@@ -593,10 +593,11 @@ const exportDraftClass = async (season: number) => {
 			players: p => p.draft.year === season,
 		},
 	});
+	data.startingSeason = season;
 
 	const filename = `BBGM_draft_class_${g.leagueName}_${season}.json`;
 
-	return { filename, json: JSON.stringify(data, null, 2) };
+	return { filename, json: JSON.stringify(data) };
 };
 
 const generateFace = () => {

@@ -154,8 +154,7 @@ const TitleBar = () => {
 				<Dropdown
 					extraParam={dropdownExtraParam}
 					view={dropdownView}
-					fields={Object.keys(dropdownFields)}
-					values={Object.values(dropdownFields)}
+					fields={dropdownFields}
 				/>
 			) : null}
 			<DropdownLinks className="ml-auto" lid={lid} menuItems={menuItems} />

@@ -22,6 +22,7 @@ type Props = {
 	updating: boolean,
 };
 
+// $FlowFixMe
 const LogoAndText = React.memo(({ gold, lid, updating }: Props) => {
 	return (
 		<a

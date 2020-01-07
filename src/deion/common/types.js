@@ -349,6 +349,17 @@ export type LocalStateUI = {|
 		context: RouterContext,
 		cb: (Error | void) => void,
 	} | void,
+	title?: string,
+	hideNewWindow: boolean,
+	jumpTo: boolean,
+	jumpToSeason?: number,
+	dropdownExtraParam?: number | string,
+	dropdownView?: string,
+	dropdownFields?: {
+		[key: string]: number | string,
+	},
+	moreInfoAbbrev?: string,
+	moreInfoSeason?: number,
 |};
 
 export type PartialTopMenu = {|

@@ -45,7 +45,7 @@ const createFilterFunction = (
 		}
 
 		for (const { direction, number, text } of filters) {
-			if (sortType === "number" || sortType === "currency") {
+			if (typeof number === "number") {
 				const numericVal = parseFloat(getSortVal(value, sortType));
 				if (Number.isNaN(numericVal)) {
 					continue;

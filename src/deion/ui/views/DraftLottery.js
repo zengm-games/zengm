@@ -369,7 +369,7 @@ DraftLotteryTable.propTypes = {
 	userTid: PropTypes.number.isRequired,
 };
 
-const DraftLottery = props => {
+const DraftLottery = (props: Props) => {
 	useTitleBar({
 		title: "Draft Lottery",
 		jumpTo: true,

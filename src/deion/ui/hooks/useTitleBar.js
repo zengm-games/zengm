@@ -48,6 +48,7 @@ const useTitleBar = ({
 				// Not much use showing "All X" in the title, and also this saves us from having to dedupe all the "all|||" keys in getDropdownValue
 				continue;
 			}
+			// $FlowFixMe
 			const value = getDropdownValue(key, sortedTeams);
 			if (value !== undefined) {
 				parts.push(value);

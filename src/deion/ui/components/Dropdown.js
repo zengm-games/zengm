@@ -17,6 +17,9 @@ const Select = ({ field, handleChange, value }) => {
 				currentValue = option.val;
 			}
 		}
+		if (currentValue === undefined) {
+			currentValue = "";
+		}
 
 		const el = document.createElement("select");
 		el.style.display = "inline";
@@ -26,8 +29,10 @@ const Select = ({ field, handleChange, value }) => {
 		el2.innerHTML = currentValue;
 
 		el.appendChild(el2);
+		// $FlowFixMe
 		document.body.appendChild(el);
 		setWidth(el.offsetWidth);
+		// $FlowFixMe
 		document.body.removeChild(el);
 	}, [field, options, value]);
 
@@ -57,12 +62,16 @@ Select.propTypes = {
 
 type Props = {
 	extraParam?: number | string,
-	fields: string[],
-	values: (number | string)[],
+	fields: {
+		[key: string]: number | string,
+	},
 	view: string,
 };
 
-const Dropdown = ({ extraParam, fields, values, view }: Props) => {
+const Dropdown = ({ extraParam, fields, view }: Props) => {
+	const keys = Object.keys(fields);
+	const values = Object.values(fields);
+
 	const handleChange = (
 		i: number,
 		event: SyntheticInputEvent<HTMLSelectElement>,
@@ -75,16 +84,17 @@ const Dropdown = ({ extraParam, fields, values, view }: Props) => {
 			parts.push(extraParam);
 		}
 
+		// $FlowFixMe
 		realtimeUpdate([], helpers.leagueUrl(parts));
 	};
 
 	return (
 		<form className="form-inline">
-			{fields.map((field, i) => {
+			{keys.map((key, i) => {
 				return (
-					<div key={field} className="form-group ml-1 mb-0">
+					<div key={key} className="form-group ml-1 mb-0">
 						<Select
-							field={field}
+							field={key}
 							value={values[i]}
 							handleChange={event => handleChange(i, event)}
 						/>
@@ -97,8 +107,7 @@ const Dropdown = ({ extraParam, fields, values, view }: Props) => {
 
 Dropdown.propTypes = {
 	extraParam: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	fields: PropTypes.arrayOf(PropTypes.string).isRequired,
-	values: PropTypes.array.isRequired,
+	fields: PropTypes.object.isRequired,
 	view: PropTypes.string.isRequired,
 };
 

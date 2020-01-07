@@ -171,11 +171,13 @@ const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
 };
 
 type DropdownLinksProps = {
+	className?: string,
 	godMode?: boolean,
 	lid: number | void,
 	menuItems: (MenuItemLink | MenuItemHeader)[],
 };
 
+// $FlowFixMe
 const DropdownLinks = React.memo(
 	({ className, godMode, lid, menuItems }: DropdownLinksProps) => {
 		const [openID, setOpenID] = useState();

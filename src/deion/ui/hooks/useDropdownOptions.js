@@ -9,6 +9,10 @@ export const getSortedTeams = ({
 	teamAbbrevsCache,
 	teamRegionsCache,
 	teamNamesCache,
+}: {
+	teamAbbrevsCache: string[],
+	teamRegionsCache: string[],
+	teamNamesCache: string[],
 }) => {
 	const array = orderBy(
 		teamAbbrevsCache.map((abbrev, i) => {
@@ -36,7 +40,7 @@ const dropdownValues = {
 	career: "Career Totals",
 	regularSeason: "Regular Season",
 	playoffs: "Playoffs",
-	10: "Past 10 Seasons",
+	"10": "Past 10 Seasons",
 	"all|||seasons": "All Seasons",
 	perGame: "Per Game",
 	per36: "Per 36 Minutes",
@@ -85,7 +89,12 @@ const dropdownValues = {
 	by_div: "By Division",
 };
 
-export const getDropdownValue = (key: number | string, sortedTeams) => {
+export const getDropdownValue = (
+	key: number | string,
+	sortedTeams: {
+		[key: string]: string,
+	},
+) => {
 	if (typeof key === "number") {
 		return String(key);
 	}
@@ -104,7 +113,12 @@ export const getDropdownValue = (key: number | string, sortedTeams) => {
 };
 
 const useDropdownOptions = (field: string) => {
-	const [options, setOptions] = useState([]);
+	const [options, setOptions] = useState<
+		{
+			key: number | string,
+			val: string | void,
+		}[],
+	>([]);
 
 	const state = useLocalShallow(state2 => ({
 		phase: state2.phase,

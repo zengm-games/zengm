@@ -847,6 +847,9 @@ tr.table-warning:hover > td {
 	option {
 		font-size: 12px;
 	}
+	.dropdown-links .dropdown.show.nav-item {
+		background-color: $gray-100;
+	}
 }
 .dropdown-select {
 	display: block;

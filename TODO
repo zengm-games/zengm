@@ -5,14 +5,9 @@ switch Dropdown to DropdownLinks rather than Select?
   - what about on mobile?
 - https://stackoverflow.com/questions/40692950/how-to-make-long-bootstrap-dropdown-menus-vertically-scrollable
 
-flow
-
 I should add easter eggs so that real historical figures sometimes appear in the game if you're simulating at that time. How dope would it be if you're simulating the 12th century and Genghis Khan shows up in the draft
 
 allow specification of country frequencies independent of name frequencies
-
-get rid of injury disable option
-- already gone from god mode. eliminate from code too
 
 Salary cap trade stuff
 

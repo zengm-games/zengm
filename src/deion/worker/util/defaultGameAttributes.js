@@ -19,7 +19,6 @@ const defaultGameAttributes: GameAttributes = {
 	maxRosterSize: 15,
 	numGames: 82, // per season
 	quarterLength: 12, // [minutes]
-	disableInjuries: false,
 	confs: [
 		{ cid: 0, name: "Eastern Conference" },
 		{ cid: 1, name: "Western Conference" },

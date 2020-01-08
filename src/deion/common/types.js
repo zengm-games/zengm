@@ -100,7 +100,7 @@ export type GameAttributeKey =
 	| "easyDifficultyInPast"
 	| "daysLeft"
 	| "defaultStadiumCapacity"
-	| "disableInjuries"
+	| "disableInjuries" // Obsolete, should be removed in some subsequent update
 	| "difficulty"
 	| "divs"
 	| "draftType"

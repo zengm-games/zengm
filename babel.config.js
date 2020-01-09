@@ -3,7 +3,7 @@
 // Need this rather than .babelrc to run on d3 inside node_modules (see also rollup-plugin-babel config)
 
 module.exports = {
-	presets: ["@babel/preset-react", "@babel/preset-flow"],
+	presets: ["@babel/preset-react", "@babel/preset-typescript"],
 	plugins: [
 		"@babel/plugin-transform-for-of",
 		"@babel/plugin-transform-parameters",

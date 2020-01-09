@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "commonjs",
+		// "allowJs": true,
+		// "checkJs": true,
+		"jsx": "react",
+		"rootDir": "./src",
+		"noEmit": true,
+		// "strict": true,
+		"noImplicitAny": false,
+		"strictNullChecks": false,
+		"strictFunctionTypes": false,
+		"strictBindCallApply": false,
+		"strictPropertyInitialization": false,
+		"noImplicitThis": false,
+		"alwaysStrict": false,
+		// "noUnusedLocals": true,                /* Report errors on unused locals. */
+		// "noUnusedParameters": true,            /* Report errors on unused parameters. */
+		// "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
+		// "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
+		"moduleResolution": "node",
+		// "paths": {},
+		"esModuleInterop": true
+	}
+}

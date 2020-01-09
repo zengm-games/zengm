@@ -2,7 +2,7 @@ const alias = require("@rollup/plugin-alias");
 const getSport = require("./getSport");
 const rollupConfig = require("./rollupConfig");
 
-const files = ["src/deion/test/mocha.js", "src/deion/test/smoke.js"];
+const files = ["src/deion/test/mocha.js", "src/deion/test/smoke.ts"];
 
 const sport = getSport();
 
@@ -10,7 +10,7 @@ const rollupConfigTemp = rollupConfig("test");
 rollupConfigTemp.plugins.unshift(
 	alias({
 		entries: {
-			"smoke-test-overrides": `./../../${sport}/worker/index.js`,
+			"smoke-test-overrides": `./../../${sport}/worker/index.ts`,
 		},
 	}),
 );
@@ -26,7 +26,7 @@ module.exports = {
 	}),
 
 	preprocessors: {
-		"src/**/*.js": ["rollup"],
+		"src/**/*.{js,ts}": ["rollup"],
 	},
 
 	autoWatch: false,

@@ -1,3 +1,18 @@
+hash in css url
+- https://old.reddit.com/r/BasketballGM/comments/em1o5v/page_headers_cut_off/
+
+typescript
+- https://github.com/quizlet/ts-migration
+- https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
+  - this was hard, see typescript branch
+- https://davidgom.es/porting-30k-lines-of-code-from-flow-to-typescript/
+- https://github.com/bcherny/flow-to-typescript
+  - might have to do this, do all in one
+- FlowFixMe
+- https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
+- https://medium.com/@adamterlson/migrating-a-flow-react-native-app-to-typescript-c74c7bceae7d
+- https://medium.com/@michaelsholty/migrating-500k-lines-of-flow-code-to-typescript-15a8cad43fec
+
 unify "More" links
 
 switch Dropdown to DropdownLinks rather than Select?
@@ -385,18 +400,6 @@ better salary AI
   dynamically set based on cap space
   https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
   FAs less likely to sign https://www.reddit.com/r/BasketballGM/comments/4qla6t/free_agent_mood/d4ww715?context=3
-
-typescript
-- https://github.com/quizlet/ts-migration
-- https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
-  - this was hard, see typescript branch
-- https://davidgom.es/porting-30k-lines-of-code-from-flow-to-typescript/
-- https://github.com/bcherny/flow-to-typescript
-  - might have to do this, do all in one
-- FlowFixMe
-- https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
-- https://medium.com/@adamterlson/migrating-a-flow-react-native-app-to-typescript-c74c7bceae7d
-- https://medium.com/@michaelsholty/migrating-500k-lines-of-flow-code-to-typescript-15a8cad43fec
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?

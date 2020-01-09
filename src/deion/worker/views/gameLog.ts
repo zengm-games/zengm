@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
+
 export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
 	if (allStars) {
 		const ind = t.tid === -1 ? 0 : 1;

@@ -1,4 +1,5 @@
 import { g, helpers, random } from "../../../deion/worker/util";
+
 type PlayType =
 	| "ast"
 	| "blkAtRim"
@@ -145,34 +146,50 @@ const fatigue = (energy: number): number => {
 
 class GameSim {
 	id: number;
+
 	team: [TeamGameSim, TeamGameSim];
+
 	playersOnCourt: [
 		[number, number, number, number, number],
 		[number, number, number, number, number],
 	];
+
 	startersRecorded: boolean;
+
 	subsEveryN: number;
+
 	overtimes: number;
+
 	t: number;
+
 	foulsThisQuarter: [number, number];
+
 	foulsLastTwoMinutes: [number, number];
+
 	averagePossessionLength: number;
+
 	synergyFactor: number;
+
 	lastScoringPlay: {
 		team: number;
 		player: number;
 		type: ShotType;
 		time: number;
 	}[];
+
 	clutchPlays: {
 		text: string;
 		showNotification: boolean;
 		pids: [number];
 		tids: [number];
 	}[];
+
 	o: TeamNum;
+
 	d: TeamNum;
+
 	playByPlay: object[];
+
 	allStarGame: boolean;
 	/**
 	 * Initialize the two teams that are playing this game.

@@ -1,5 +1,6 @@
 import assert from "assert";
 import { helpers } from ".";
+
 describe("common/helpers", () => {
 	describe("getTeamsDefault", () => {
 		test("return correct length array", () => {

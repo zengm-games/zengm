@@ -1,4 +1,5 @@
 import { PWBHost } from "promise-worker-bi";
+
 const workerPath =
 	process.env.NODE_ENV === "production"
 		? `/gen/worker-${window.bbgmVersion}.js`

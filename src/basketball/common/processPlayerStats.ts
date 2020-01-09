@@ -1,4 +1,5 @@
 import { PlayerStats, PlayerStatType } from "../../deion/common/types";
+
 const straightThrough = [
 	"gp",
 	"gs",

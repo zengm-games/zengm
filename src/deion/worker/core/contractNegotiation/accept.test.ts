@@ -3,6 +3,7 @@ import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { beforeTests, givePlayerMinContract } from "./testHelpers";
+
 describe("worker/core/contractNegotiation/accept", () => {
 	beforeAll(beforeTests);
 	afterEach(() => idb.cache.negotiations.clear());

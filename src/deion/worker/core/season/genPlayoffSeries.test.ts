@@ -2,6 +2,7 @@ import assert from "assert";
 import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 import season from "./index";
+
 describe("worker/core/season/genPlayoffSeries", () => {
 	beforeAll(() => {
 		testHelpers.resetG();

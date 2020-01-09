@@ -2,6 +2,7 @@ import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
 import { PlayerRatings, RatingKey } from "../../../common/types";
+
 const typeFactors: {
 	[x: "point" | "wing" | "big"]: {
 		[key: RatingKey]: number;

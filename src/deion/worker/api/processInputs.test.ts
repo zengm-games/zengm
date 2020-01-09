@@ -1,6 +1,7 @@
 import assert from "assert";
 import { g } from "../util";
 import { validateAbbrev, validateSeason } from "./processInputs";
+
 describe("worker/api/processInputs", () => {
 	beforeAll(() => {
 		g.userTid = 4;

@@ -1,4 +1,5 @@
 import { helpers } from "../../../../deion/worker/util";
+
 const teamAndOpp = [
 	"fg",
 	"fga",

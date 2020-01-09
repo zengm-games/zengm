@@ -5,11 +5,12 @@ import {
 	leagueLeaders,
 	saveAwardsByPlayer,
 	teamAwards,
+	AwardsByPlayer,
 } from "../../../../deion/worker/core/season/awards";
 import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 import { Conditions, PlayerFiltered } from "../../../../deion/common/types";
-import { AwardsByPlayer } from "../../../../deion/worker/core/season/awards";
+
 import { AwardPlayer, Awards } from "../../../common/types";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {

@@ -3,6 +3,7 @@ import { trade } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { beforeTests, reset } from "./testHelpers";
+
 describe("worker/core/trade/updatePlayers", () => {
 	beforeAll(beforeTests);
 	afterEach(reset);

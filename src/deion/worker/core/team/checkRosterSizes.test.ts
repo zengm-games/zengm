@@ -4,6 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
+
 describe("worker/core/team/checkRosterSizes", () => {
 	beforeAll(() => {
 		testHelpers.resetG(); // Two teams: user and AI

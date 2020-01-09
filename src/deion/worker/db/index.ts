@@ -4,6 +4,7 @@ import getAll from "./getAll";
 import * as getCopies from "./getCopies";
 import * as getCopy from "./getCopy";
 import { logEvent } from "../util";
+
 Backboard.setPromiseConstructor(Promise);
 Backboard.on("quotaexceeded", () => {
 	logEvent({

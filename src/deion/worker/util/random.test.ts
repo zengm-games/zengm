@@ -1,5 +1,6 @@
 import assert from "assert";
 import random from "./random";
+
 describe("worker/util/random", () => {
 	describe("choice", () => {
 		test("works", () => {

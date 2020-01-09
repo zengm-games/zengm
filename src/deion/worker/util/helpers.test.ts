@@ -2,6 +2,7 @@ import assert from "assert";
 import { PLAYER } from "../../common";
 import g from "./g";
 import helpers from "./helpers";
+
 describe("worker/util/helpers", () => {
 	beforeAll(() => {
 		g.userTid = 4;

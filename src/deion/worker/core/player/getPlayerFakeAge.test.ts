@@ -2,6 +2,7 @@ import assert from "assert";
 import testHelpers from "../../../test/helpers";
 import player from "./index";
 import { g } from "../../util";
+
 describe("worker/core/player/getPlayerFakeAge", () => {
 	test("pick appropriate player to have a fake age", () => {
 		testHelpers.resetG();

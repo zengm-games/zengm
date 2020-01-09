@@ -2,6 +2,7 @@ import assert from "assert";
 import testHelpers from "../../../test/helpers";
 import { g } from "../../util";
 import { createWithoutSaving } from "./create";
+
 describe("worker/core/league/create", () => {
 	let leagueData;
 	beforeAll(() => {

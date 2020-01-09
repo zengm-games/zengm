@@ -6,6 +6,7 @@ import {
 	PlayerFiltered,
 	TeamFiltered,
 } from "../../../common/types";
+
 export type AwardsByPlayer = {
 	pid: number;
 	tid: number;

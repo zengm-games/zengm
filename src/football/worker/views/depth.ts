@@ -4,6 +4,7 @@ import getDepthPlayers from "../core/player/getDepthPlayers";
 import posRatings from "../../common/posRatings";
 import { UpdateEvents } from "../../../deion/common/types";
 import { Position } from "../../common/types";
+
 const defenseStats = [
 	"defTckSolo",
 	"defTckAst",

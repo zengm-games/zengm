@@ -11,6 +11,7 @@ import {
 	WorkerOverridesCore,
 	WorkerOverridesUtil,
 } from "../common/types";
+
 const overrides = util.overrides; // eslint-disable-next-line no-restricted-globals
 
 self.bbgm = { ...common, ...core, ...db, ...util };

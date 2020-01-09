@@ -2,6 +2,7 @@ import assert from "assert";
 import testHelpers from "../../../../deion/test/helpers";
 import { player } from "../../../../deion/worker/core";
 import madeHof from "./madeHof";
+
 describe("basketball/worker/core/player/madeHof", () => {
 	test("narrowly make HoF based on dominance factor", () => {
 		testHelpers.resetG();

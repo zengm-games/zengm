@@ -2,6 +2,7 @@ import { allStar } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
+
 const stats =
 	process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
 

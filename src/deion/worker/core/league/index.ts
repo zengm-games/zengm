@@ -8,6 +8,7 @@ import loadGameAttributes from "./loadGameAttributes";
 import remove from "./remove";
 import setGameAttributes from "./setGameAttributes";
 import updateMetaNameRegion from "./updateMetaNameRegion";
+
 export default {
 	autoPlay,
 	close,

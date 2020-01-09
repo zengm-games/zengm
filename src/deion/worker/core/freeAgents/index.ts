@@ -3,6 +3,7 @@ import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";
 import getBest from "./getBest";
 import play from "./play";
+
 export default {
 	amountWithMood,
 	autoSign,

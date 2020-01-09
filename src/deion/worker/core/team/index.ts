@@ -8,6 +8,7 @@ import getPayroll from "./getPayroll";
 import getPayrolls from "./getPayrolls";
 import updateStrategies from "./updateStrategies";
 import valueChange from "./valueChange";
+
 export default {
 	checkRosterSizes,
 	genSeasonRow,

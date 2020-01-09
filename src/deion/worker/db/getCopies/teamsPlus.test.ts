@@ -3,6 +3,7 @@ import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
 import { idb } from "..";
 import { g, helpers } from "../../util";
+
 describe("worker/db/getCopies/teamsPlus", () => {
 	beforeAll(async () => {
 		testHelpers.resetG();

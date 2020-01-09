@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
+
 type BudgetTypes = "budget" | "expenses" | "revenues";
 /**
  * Update the rankings of team budgets, expenses, and revenue sources.

@@ -5,6 +5,7 @@ import {
 } from "../season/awards";
 import { g } from "../../util";
 import { Conditions, PlayerFiltered } from "../../../common/types";
+
 const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
 
 const create = async (conditions: Conditions) => {

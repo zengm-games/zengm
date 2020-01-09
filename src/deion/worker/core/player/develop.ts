@@ -4,6 +4,7 @@ import { PLAYER } from "../../../common";
 import skills from "./skills";
 import { helpers, overrides, random } from "../../util";
 import { MinimalPlayerRatings } from "../../../common/types";
+
 let potEstimator;
 
 if (process.env.SPORT === "football") {

@@ -1,5 +1,6 @@
 import assert from "assert";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
+
 describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
 	test("handles normal case", async () => {
 		const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(

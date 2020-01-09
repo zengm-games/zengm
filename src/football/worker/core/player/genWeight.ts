@@ -1,4 +1,5 @@
 import { random } from "../../../../deion/worker/util";
+
 const MIN_WEIGHT = 155;
 const MAX_WEIGHT = 305;
 

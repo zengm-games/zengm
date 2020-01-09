@@ -1,5 +1,6 @@
 class SettingsCache {
 	disabled: boolean;
+
 	name: string;
 
 	constructor(name: string, disabled: boolean) {

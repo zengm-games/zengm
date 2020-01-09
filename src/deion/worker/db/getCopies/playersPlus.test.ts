@@ -4,6 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { player } from "../../core";
 import { idb } from "..";
 import { g } from "../../util";
+
 describe("worker/db/getCopies/playersPlus", () => {
 	let p;
 	beforeAll(async () => {

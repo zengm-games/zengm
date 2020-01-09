@@ -34,10 +34,15 @@ const descriptionYdsTD = (
 
 class PlayByPlayLogger {
 	active: boolean;
+
 	playByPlay: any[];
+
 	scoringSummary: any[];
+
 	twoPointConversionState: "attempting" | "converted" | void;
+
 	twoPointConversionTeam: number | void;
+
 	quarter: string;
 
 	constructor(active: boolean) {

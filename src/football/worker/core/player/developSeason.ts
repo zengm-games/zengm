@@ -2,6 +2,7 @@ import { player } from "../../../../deion/worker/core";
 import { g, helpers, random } from "../../../../deion/worker/util"; // import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
 
 import { PlayerRatings, RatingKey } from "../../../common/types";
+
 const powerFormula = {
 	ageModifier: (age: number) => {
 		// Reverse most of the age-related decline in calcBaseChange

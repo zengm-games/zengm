@@ -5,6 +5,7 @@ import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";
+
 const season = 2017;
 
 const genFathers = () => {

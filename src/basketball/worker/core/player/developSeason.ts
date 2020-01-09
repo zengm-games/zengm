@@ -1,6 +1,7 @@
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import { PlayerRatings, RatingKey } from "../../../common/types";
+
 const shootingFormula = {
 	ageModifier: (age: number) => {
 		// Reverse most of the age-related decline in calcBaseChange

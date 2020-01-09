@@ -27,6 +27,7 @@ import {
 	Team,
 	Trade,
 } from "../../common/types";
+
 type Status = "empty" | "error" | "filling" | "full"; // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 
 export type Store =
@@ -108,6 +109,7 @@ const getIndexKey = (index, row) => {
 class StoreAPI<Input, Output, ID> {
 	// eslint-disable-next-line no-use-before-define
 	cache: Cache;
+
 	store: Store; // eslint-disable-next-line no-use-before-define
 
 	constructor(cache: Cache, store: Store) {
@@ -162,26 +164,37 @@ class Cache {
 	_data: {
 		[key: Store]: any;
 	};
+
 	_deletes: {
 		[key: Store]: Set<number | string>;
 	};
+
 	_dirty: boolean;
+
 	_dirtyIndexes: Set<Store>;
+
 	_dirtyRecords: {
 		[key: Store]: Set<number | string>;
 	};
+
 	_index2store: {
 		[key: Index]: Store;
 	};
+
 	_indexes: {
 		[key: Index]: any;
 	};
+
 	_instanceNum: number;
+
 	_maxIds: {
 		[key: Store]: number;
 	};
+
 	newLeague: boolean;
+
 	_requestInd: number;
+
 	_requestQueue: Map<
 		number,
 		{
@@ -189,9 +202,13 @@ class Cache {
 			validStatuses: Status[];
 		}
 	>;
+
 	_status: Status;
+
 	_season: number;
+
 	_stopAutoFlush: boolean;
+
 	storeInfos: {
 		[key: Store]: {
 			pk: string;
@@ -206,31 +223,49 @@ class Cache {
 			}[];
 		};
 	};
+
 	allStars: StoreAPI<object, object, number>;
+
 	awards: StoreAPI<object, object, number>;
+
 	draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
+
 	draftPicks: StoreAPI<DraftPick | DraftPickWithoutDpid, DraftPick, number>;
+
 	events: StoreAPI<EventBBGM, EventBBGM, number>;
+
 	gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
+
 	games: StoreAPI<Game, Game, number>;
+
 	messages: StoreAPI<Message | MessageWithoutMid, Message, number>;
+
 	negotiations: StoreAPI<Negotiation, Negotiation, number>;
+
 	playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
+
 	players: StoreAPI<
 		Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
 		Player<MinimalPlayerRatings>,
 		number
 	>;
+
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
+
 	releasedPlayers: StoreAPI<
 		ReleasedPlayer | ReleasedPlayerWithoutRid,
 		ReleasedPlayer,
 		number
 	>;
+
 	schedule: StoreAPI<ScheduleGame, ScheduleGame, number>;
+
 	teamSeasons: StoreAPI<TeamSeason, TeamSeason, number>;
+
 	teamStats: StoreAPI<TeamStats, TeamStats, number>;
+
 	teams: StoreAPI<Team, Team, number>;
+
 	trade: StoreAPI<Trade, Trade, number>;
 
 	constructor() {

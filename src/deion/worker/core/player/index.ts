@@ -26,6 +26,7 @@ import sign from "./sign";
 import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import updateValues from "./updateValues";
+
 export default {
 	addRatingsRow,
 	addRelatives,

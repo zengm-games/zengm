@@ -4,6 +4,7 @@ import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g } from "../../util";
+
 describe("worker/core/draft/updateChances", () => {
 	beforeAll(loadTeamSeasons);
 	test("distribute combinations to teams with the same record", async () => {

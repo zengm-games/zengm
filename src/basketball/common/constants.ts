@@ -1,5 +1,6 @@
 import { CompositeWeights } from "../../deion/common/types";
 import { RatingKey } from "./types";
+
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {
 		ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],

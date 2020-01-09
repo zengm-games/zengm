@@ -1,6 +1,7 @@
 import range from "lodash/range";
 import { g, helpers } from "../../util";
 import { TeamFiltered } from "../../../common/types";
+
 type Seed = [number, number | void]; // Return the seeds (0 indexed) for the matchups, in order (undefined is a bye)
 
 const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {

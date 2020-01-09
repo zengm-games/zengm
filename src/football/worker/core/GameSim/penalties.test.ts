@@ -1,5 +1,6 @@
 import assert from "assert";
 import penalties from "./penalties";
+
 describe("football/worker/core/GameSim", () => {
 	beforeAll(() => {
 		process.env.SPORT = "football";

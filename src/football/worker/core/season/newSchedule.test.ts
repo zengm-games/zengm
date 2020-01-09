@@ -3,6 +3,7 @@ import flatten from "lodash/flatten";
 import testHelpers from "../../../../deion/test/helpers";
 import newSchedule, { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
+
 let defaultTeams;
 describe("football/worker/core/season/newSchedule", () => {
 	beforeAll(() => {

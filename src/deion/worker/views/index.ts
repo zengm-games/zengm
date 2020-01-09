@@ -66,6 +66,7 @@ import tragicDeaths from "./tragicDeaths";
 import transactions from "./transactions";
 import upcomingFreeAgents from "./upcomingFreeAgents";
 import watchList from "./watchList";
+
 export default {
 	account,
 	accountUpdateCard,

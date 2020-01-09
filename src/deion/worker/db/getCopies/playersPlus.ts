@@ -9,6 +9,7 @@ import {
 	PlayerStatType,
 	PlayersPlusOptions,
 } from "../../../common/types";
+
 type PlayersPlusOptionsRequired = {
 	season?: number;
 	tid?: number;

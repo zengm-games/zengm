@@ -8,6 +8,7 @@ import madeHof from "./madeHof";
 import ovr from "./ovr";
 import pos from "./pos";
 import stats from "./stats";
+
 export default {
 	checkStatisticalFeat,
 	developSeason,

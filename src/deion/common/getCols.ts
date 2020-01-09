@@ -1,6 +1,7 @@
 import { helpers } from ".";
 import { SortOrder, SortType } from "./types";
 import { Col } from "../ui/components/DataTable";
+
 type ColTemp = {
 	desc?: string;
 	noSearch?: boolean;

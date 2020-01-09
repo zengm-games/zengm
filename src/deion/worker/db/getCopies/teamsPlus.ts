@@ -13,6 +13,7 @@ import {
 	TeamStatType,
 	TeamStats,
 } from "../../../common/types";
+
 type TeamsPlusOptions = {
 	tid?: number;
 	season?: number;

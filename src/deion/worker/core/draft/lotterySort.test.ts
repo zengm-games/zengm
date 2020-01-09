@@ -2,6 +2,7 @@ import assert from "assert";
 import testHelpers from "../../../test/helpers";
 import lotterySort from "./lotterySort";
 import { g } from "../../util";
+
 describe("worker/core/draft/lotterySort", () => {
 	test("projects playoff appearances when sorting for a projected lottery", async () => {
 		testHelpers.resetG();

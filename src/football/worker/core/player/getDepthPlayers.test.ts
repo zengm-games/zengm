@@ -1,5 +1,6 @@
 import assert from "assert";
 import getDepthPlayers from "./getDepthPlayers";
+
 describe("football/worker/core/player/getDepthPlayers", () => {
 	beforeAll(() => {
 		process.env.SPORT = "football";

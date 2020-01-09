@@ -1,5 +1,6 @@
 import assert from "assert";
 import { getDraftTids, loadTeamSeasons } from "./testHelpers";
+
 describe("worker/core/draft/genOrder", () => {
 	beforeAll(loadTeamSeasons);
 	test("schedule 60 draft picks", async () => {

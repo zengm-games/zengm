@@ -3,6 +3,7 @@ import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import { Conditions, GameResults } from "../../../common/types";
+
 const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
 
 const doInjury = (

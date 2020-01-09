@@ -34,10 +34,15 @@ const fatigue = (energy: number): number => {
 
 class GameSim {
 	id: number;
+
 	team: [TeamGameSim, TeamGameSim];
+
 	playersOnField: PlayersOnField;
+
 	subsEveryN: number;
+
 	overtime: boolean;
+
 	overtimes: number;
 	/**
 	 * "initialKickoff" -> (right after kickoff) "firstPossession" -> (after next call to possessionChange) -> "secondPossession" -> (after next call to possessionChange) -> "bothTeamPossessed" -> (based on conditions below) "over"
@@ -53,19 +58,33 @@ class GameSim {
 		| "secondPossession"
 		| "bothTeamsPossessed"
 		| "over";
+
 	clock: number;
+
 	isClockRunning: boolean;
+
 	o: TeamNum;
+
 	d: TeamNum;
+
 	playByPlay: PlayByPlayLogger;
+
 	awaitingAfterTouchdown: boolean;
+
 	awaitingAfterSafety: boolean;
+
 	awaitingKickoff: TeamNum | void;
+
 	twoPointConversionTeam: number | void;
+
 	scrimmage: number;
+
 	down: number;
+
 	toGo: number;
+
 	timeouts: [number, number];
+
 	twoMinuteWarningHappened: boolean;
 
 	constructor(

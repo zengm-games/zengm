@@ -4,6 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { draft } from "..";
+
 describe("worker/core/draft/genPlayers", () => {
 	test("generate 70 players for the draft", async () => {
 		testHelpers.resetG();

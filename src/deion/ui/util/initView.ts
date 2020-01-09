@@ -1,5 +1,6 @@
 import { localActions } from "./local";
 import { RouterContext } from "../../common/types";
+
 type InitArgs = {
 	Component: any;
 	id: string;

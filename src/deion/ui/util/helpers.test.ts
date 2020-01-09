@@ -1,5 +1,6 @@
 import assert from "assert";
 import helpers from "./helpers";
+
 describe("ui/util/helpers", () => {
 	describe("numberWithCommas", () => {
 		test("work", () => {

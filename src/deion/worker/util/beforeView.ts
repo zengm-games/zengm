@@ -11,6 +11,7 @@ import {
 	updateStatus,
 } from ".";
 import { Conditions, League } from "../../common/types";
+
 let heartbeatIntervalID: IntervalID; // Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
 
 const getLeague = async (lid: number): Promise<League> => {

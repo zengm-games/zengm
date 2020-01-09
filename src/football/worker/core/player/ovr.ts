@@ -1,5 +1,6 @@
 import { helpers } from "../../../../deion/worker/util";
 import { PlayerRatings } from "../../../common/types";
+
 const info = {
 	QB: {
 		hgt: [1, 1],

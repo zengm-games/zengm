@@ -9,6 +9,7 @@ import getOrder from "./getOrder";
 import getRookieSalaries from "./getRookieSalaries";
 import runPicks from "./runPicks";
 import selectPlayer from "./selectPlayer";
+
 export default {
 	afterPicks,
 	genOrder,

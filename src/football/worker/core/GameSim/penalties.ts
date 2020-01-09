@@ -1,5 +1,6 @@
 import { Position } from "../../../common/types";
 import { PenaltyPlayType } from "./types";
+
 type Penalty = {
 	name: string;
 	side: "offense" | "defense";

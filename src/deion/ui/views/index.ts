@@ -68,6 +68,7 @@ import TradingBlock from "./TradingBlock";
 import Transactions from "./Transactions";
 import UpcomingFreeAgents from "./UpcomingFreeAgents";
 import WatchList from "./WatchList";
+
 export default {
 	Account,
 	AccountUpdateCard,

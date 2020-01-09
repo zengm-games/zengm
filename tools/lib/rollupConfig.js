@@ -13,6 +13,8 @@ const getSport = require("./getSport");
 
 const sport = getSport();
 
+const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
+
 module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 	const plugins = [
 		alias({
@@ -34,6 +36,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 		}),
 		babel({
 			exclude: "node_modules/!(d3)**",
+			extensions: extensions.filter(extension => extension !== ".json"),
 		}),
 		json({
 			compact: true,
@@ -46,6 +49,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			},
 		}),
 		resolve({
+			extensions,
 			preferBuiltins: true,
 		}),
 	];

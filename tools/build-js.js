@@ -23,7 +23,7 @@ const BLACKLIST = {
 			["ui", "worker"].map(async name => {
 				const bundle = await rollup.rollup({
 					...rollupConfig("production", BLACKLIST[name], `stats-${name}.html`),
-					input: `src/${sport}/${name}/index.js`,
+					input: `src/${sport}/${name}/index.ts`,
 				});
 
 				await bundle.write({

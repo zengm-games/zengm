@@ -8,6 +8,6 @@ module.exports = {
 	},
 	setupFilesAfterEnv: [
 		"./src/deion/test/jest.js",
-		"./src/basketball/worker/index.js",
+		"./src/basketball/worker/index.ts",
 	],
 };

@@ -1,5 +1,0 @@
-[ignore]
-<PROJECT_ROOT>/analysis/.*
-
-[libs]
-./flow-typed

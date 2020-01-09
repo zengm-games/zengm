@@ -76,9 +76,9 @@ async function updateDepth(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||

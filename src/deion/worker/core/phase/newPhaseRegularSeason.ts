@@ -100,8 +100,9 @@ const newPhaseRegularSeason = async () => {
 				// Old browsers might error if they don't recognize the "persistent-storage" permission, but who cares
 				console.error(error);
 			}
-		} // If still not persisted, notify user with some probabilitiy
+		}
 
+		// If still not persisted, notify user with some probabilitiy
 		if (!persisted && Math.random() < 0.1) {
 			logEvent({
 				extraClass: "",

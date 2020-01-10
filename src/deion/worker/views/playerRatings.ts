@@ -34,8 +34,9 @@ async function updatePlayers(
 
 		if (tid < 0) {
 			tid = undefined;
-		} // Show all teams
+		}
 
+		// Show all teams
 		if (!tid && inputs.abbrev === "watch") {
 			players = players.filter(p => p.watch && typeof p.watch !== "function");
 		}

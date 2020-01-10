@@ -48,8 +48,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			ovr: p.ratings[0].ovr,
 			skills: p.ratings[0].skills,
 		};
-	} // Contract
+	}
 
+	// Contract
 	if (g.phase !== PHASE.FANTASY_DRAFT) {
 		if (g.hardCap) {
 			// Make it an expiring contract, so player immediately becomes a free agent
@@ -75,8 +76,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 				true,
 			);
 		}
-	} // Add stats row if necessary (fantasy draft in ongoing season)
+	}
 
+	// Add stats row if necessary (fantasy draft in ongoing season)
 	if (g.phase === PHASE.FANTASY_DRAFT && g.nextPhase <= PHASE.PLAYOFFS) {
 		player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
 	}

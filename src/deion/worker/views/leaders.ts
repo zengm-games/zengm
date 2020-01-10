@@ -353,8 +353,9 @@ async function updateLeaders(
 				}
 
 				return teamSeason.gp - g.numGames;
-			} // Don't count playoff games
+			}
 
+			// Don't count playoff games
 			if (teamSeason.gp > g.numGames) {
 				return g.numGames;
 			}
@@ -406,8 +407,9 @@ async function updateLeaders(
 						playerValue = p.stats[cat.minStats[k]];
 					} else {
 						playerValue = p.stats[cat.minStats[k]] * p.stats.gp;
-					} // Compare against value normalized for team games played
+					}
 
+					// Compare against value normalized for team games played
 					if (
 						playerValue >=
 						Math.ceil(
@@ -426,13 +428,15 @@ async function updateLeaders(
 					delete leader.stats;
 					leader.userTeam = userAbbrev === leader.abbrev;
 					cat.data.push(leader);
-				} // Stop when we found 10
+				}
 
+				// Stop when we found 10
 				if (cat.data.length === 10) {
 					break;
 				}
-			} // $FlowFixMe
+			}
 
+			// $FlowFixMe
 			delete cat.minStats; // $FlowFixMe
 
 			delete cat.minValue;

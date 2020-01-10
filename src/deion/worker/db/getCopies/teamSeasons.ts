@@ -23,8 +23,9 @@ const getCopies = async ({
 						[season, "Z"],
 					]),
 				);
-			} // Single season, from database
+			}
 
+			// Single season, from database
 			return idb.league.teamSeasons
 				.index("season, tid")
 				.getAll(backboard.bound([season], [season, ""]));

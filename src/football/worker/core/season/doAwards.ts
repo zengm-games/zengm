@@ -164,8 +164,9 @@ const getRealFinalsMvp = async (
 
 	if (finalsGames.length === 0) {
 		return;
-	} // Calculate sum of game scores for each player
+	}
 
+	// Calculate sum of game scores for each player
 	const playerInfos: Map<
 		number,
 		{
@@ -326,8 +327,9 @@ const doAwards = async (conditions: Conditions) => {
 			name,
 			type,
 		});
-	} // Special cases for teams
+	}
 
+	// Special cases for teams
 	for (const key of ["allRookie", "allLeague"]) {
 		const type = awardNames[key];
 

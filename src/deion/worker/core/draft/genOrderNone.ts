@@ -25,8 +25,9 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 			"draftPicksBySeason",
 			g.season,
 		);
-	} // Because we're editing this later, and sometimes this is called with mock=true
+	}
 
+	// Because we're editing this later, and sometimes this is called with mock=true
 	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round
 
 	const draftPicksIndexed = [];

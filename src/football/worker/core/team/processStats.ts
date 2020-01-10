@@ -102,8 +102,9 @@ const processStats = (
 				row[stat] = 0;
 			}
 		}
-	} // Since they come in same stream, always need to be able to distinguish
+	}
 
+	// Since they come in same stream, always need to be able to distinguish
 	row.playoffs = ts.playoffs !== undefined ? ts.playoffs : playoffs;
 	return row;
 };

@@ -79,8 +79,9 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 
 		if (extraParam !== undefined) {
 			parts.push(extraParam);
-		} // $FlowFixMe
+		}
 
+		// $FlowFixMe
 		realtimeUpdate([], helpers.leagueUrl(parts));
 	};
 

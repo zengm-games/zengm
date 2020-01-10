@@ -10,8 +10,9 @@ describe("football/worker/core/GameSim", () => {
 			for (const pen of penalties) {
 				if (!pen.posOdds || Object.keys(pen.posOdds).length === 0) {
 					continue;
-				} // $FlowFixMe
+				}
 
+				// $FlowFixMe
 				const sumOdds = Object.values(pen.posOdds).reduce(
 					// $FlowFixMe
 					(sum, val) => sum + val,

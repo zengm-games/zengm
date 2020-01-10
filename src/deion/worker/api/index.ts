@@ -104,8 +104,9 @@ const addTeam = async (
 				pick: 0,
 				season: draftYear,
 			});
-		} // Add new draft prospects to draft class
+		}
 
+		// Add new draft prospects to draft class
 		await draft.genPlayers(draftYear, undefined, g.numDraftRounds);
 	}
 
@@ -199,8 +200,9 @@ const clearWatchList = async () => {
 		}
 
 		pids.add(p.pid);
-	} // For watched players not in cache, mark as unwatched an add to cache
+	}
 
+	// For watched players not in cache, mark as unwatched an add to cache
 	const promises = [];
 	await idb.league.players.iterate(p => {
 		if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
@@ -370,8 +372,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		players = await idb.getCopies.players({
 			activeSeason: season,
 		});
-	} // Array of seasons in stats, either just one or all of them
+	}
 
+	// Array of seasons in stats, either just one or all of them
 	let seasons;
 
 	if (season === "all") {
@@ -740,8 +743,9 @@ const handleUploadedDraftClass = async (
 
 	if (uploadedFile.hasOwnProperty("startingSeason")) {
 		uploadedSeason = uploadedFile.startingSeason;
-	} // Get all players from uploaded files
+	}
 
+	// Get all players from uploaded files
 	let players = uploadedFile.players; // Filter out any that are not draft prospects
 
 	players = players.filter(p => p.tid === PLAYER.UNDRAFTED); // Handle draft format change in version 33, where PLAYER.UNDRAFTED has multiple draft classes
@@ -765,8 +769,9 @@ const handleUploadedDraftClass = async (
 		}
 
 		players = filtered;
-	} // Get scouting rank, which is used in a couple places below
+	}
 
+	// Get scouting rank, which is used in a couple places below
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
 		[
@@ -789,8 +794,9 @@ const handleUploadedDraftClass = async (
 		if (p.tid === PLAYER.UNDRAFTED) {
 			await idb.cache.players.delete(p.pid);
 		}
-	} // Add new players to database
+	}
 
+	// Add new players to database
 	await Promise.all(
 		players.map(async p => {
 			// Adjust age and seasons
@@ -811,8 +817,9 @@ const handleUploadedDraftClass = async (
 				p.born.year = draftYear - 19;
 			} else {
 				p.born.year = draftYear - (uploadedSeason - p.born.year);
-			} // Make sure player object is fully defined
+			}
 
+			// Make sure player object is fully defined
 			p = player.augmentPartialPlayer(p, scoutingRank, uploadedFile.version);
 			p.tid = PLAYER.UNDRAFTED;
 			p.draft.year = draftYear;
@@ -881,8 +888,9 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 
 	if (p === undefined) {
 		return blankObj;
-	} // For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.season
+	}
 
+	// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.season
 	const season = p.draft.year > g.season ? p.draft.year : g.season;
 	const stats =
 		process.env.SPORT === "basketball"
@@ -932,8 +940,9 @@ const removeLastTeam = async (): Promise<void> => {
 	for (const p of players) {
 		player.addToFreeAgents(p, g.phase, baseMoods);
 		await idb.cache.players.put(p);
-	} // Delete draft picks, and return traded ones to original owner
+	}
 
+	// Delete draft picks, and return traded ones to original owner
 	const draftPicks = await idb.cache.draftPicks.getAll();
 
 	for (const dp of draftPicks) {
@@ -943,8 +952,9 @@ const removeLastTeam = async (): Promise<void> => {
 			dp.tid = dp.originalTid;
 			await idb.cache.draftPicks.put(dp);
 		}
-	} // $FlowFixMe
+	}
 
+	// $FlowFixMe
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
 		[[tid], [tid, "Z"]],
@@ -1181,8 +1191,9 @@ const updateGameAttributes = async (gameAttributes: GameAttributes) => {
 		if (g.phase >= PHASE.AFTER_DRAFT) {
 			// ...and one more season, since the draft is over
 			maxSeason += 1;
-		} // Delete draft picks beyond new numSeasonsFutureDraftPicks
+		}
 
+		// Delete draft picks beyond new numSeasonsFutureDraftPicks
 		const draftPicks = await idb.cache.draftPicks.getAll();
 
 		for (const dp of draftPicks) {
@@ -1346,8 +1357,9 @@ const upsertCustomizedPlayer = async (
 	if (p.tid === PLAYER.UNDRAFTED) {
 		if (p.draft.year < season) {
 			p.draft.year = season;
-		} // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
+		}
 
+		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
 		if (p.draft.year === season && g.phase >= PHASE.RESIGN_PLAYERS) {
 			p.draft.year += 1;
 		}
@@ -1356,36 +1368,41 @@ const upsertCustomizedPlayer = async (
 	} else {
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
 		p.ratings[r].season = g.season;
-	} // If player was retired, add ratings (but don't develop, because that would change ratings)
+	}
 
+	// If player was retired, add ratings (but don't develop, because that would change ratings)
 	if (originalTid === PLAYER.RETIRED) {
 		if (g.season - p.ratings[r].season > 0) {
 			player.addRatingsRow(p, 15);
 		}
-	} // If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
+	}
 
+	// If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
 	if (p.tid !== PLAYER.UNDRAFTED && g.phase < PHASE.FREE_AGENCY) {
 		// This makes sure it's only for created players, not edited players
 		if (!p.hasOwnProperty("pid")) {
 			p.draft.year = g.season - 1;
 		}
-	} // Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
+	}
 
+	// Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
 	if (
 		p.tid !== PLAYER.UNDRAFTED &&
 		originalTid === PLAYER.UNDRAFTED &&
 		g.phase < PHASE.FREE_AGENCY
 	) {
 		p.draft.year = g.season - 1;
-	} // Recalculate player ovr, pot, and values if necessary
+	}
 
+	// Recalculate player ovr, pot, and values if necessary
 	const selectedPos = p.ratings[r].pos;
 
 	if (updatedRatingsOrAge) {
 		player.develop(p, 0);
 		player.updateValues(p);
-	} // In case that develop call reset position, re-apply it here
+	}
 
+	// In case that develop call reset position, re-apply it here
 	p.ratings[r].pos = selectedPos;
 
 	if (process.env.SPORT === "football") {
@@ -1398,13 +1415,15 @@ const upsertCustomizedPlayer = async (
 			p.ratings[r].ovr = p.ratings[r].ovrs[selectedPos];
 			p.ratings[r].pot = p.ratings[r].pots[selectedPos];
 		}
-	} // Add regular season or playoffs stat row, if necessary
+	}
 
+	// Add regular season or playoffs stat row, if necessary
 	if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
 		// If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
 		player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-	} // Fill in player names for relatives
+	}
 
+	// Fill in player names for relatives
 	const relatives = [];
 
 	for (const rel of p.relatives) {

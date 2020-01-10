@@ -53,13 +53,15 @@ const checkHeartbeat = async (lid: number) => {
 	if (heartbeatID === undefined || heartbeatTimestamp === undefined) {
 		await startHeartbeat(l);
 		return;
-	} // If this is the same active tab (like on ctrl+R), no problem
+	}
 
+	// If this is the same active tab (like on ctrl+R), no problem
 	if (env.heartbeatID === heartbeatID) {
 		await startHeartbeat(l);
 		return;
-	} // Difference between now and stored heartbeat in milliseconds
+	}
 
+	// Difference between now and stored heartbeat in milliseconds
 	const diff = Date.now() - heartbeatTimestamp; // If diff is greater than 10 seconds, assume other tab was closed
 
 	if (diff > 5 * 1000) {
@@ -114,16 +116,18 @@ const beforeLeague = async (
 
 		if (loadingNewLid !== newLid) {
 			return;
-		} // Confirm league exists before proceeding
+		}
 
+		// Confirm league exists before proceeding
 		await getLeague(newLid);
 		g.lid = newLid;
 		idb.league = await connectLeague(g.lid);
 
 		if (loadingNewLid !== newLid) {
 			return;
-		} // Reuse existing cache, if it was just created while generating a new league
+		}
 
+		// Reuse existing cache, if it was just created while generating a new league
 		if (!idb.cache || !idb.cache.newLeague || switchingDatabaseLid) {
 			if (idb.cache) {
 				idb.cache.stopAutoFlush();
@@ -165,8 +169,9 @@ const beforeLeague = async (
 
 	if (loadingNewLid !== newLid) {
 		return;
-	} // If this is a Shared Worker, only one league can be open at a time
+	}
 
+	// If this is a Shared Worker, only one league can be open at a time
 	if (env.useSharedWorker) {
 		toUI(["newLid", g.lid]);
 	}

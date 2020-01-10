@@ -27,8 +27,9 @@ const genBaseMood = (teamSeason: TeamSeason, reSigning: boolean): number => {
 
 	if (g.userTids.includes(teamSeason.tid)) {
 		baseMood += g.difficulty;
-	} // Don't let difficulty have too crazy of an impact, for re-signing at least
+	}
 
+	// Don't let difficulty have too crazy of an impact, for re-signing at least
 	if (reSigning) {
 		baseMood = helpers.bound(baseMood, 0, 1.5);
 	} else if (g.difficulty > 0) {

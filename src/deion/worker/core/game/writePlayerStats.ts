@@ -193,12 +193,14 @@ const writePlayerStats = async (
 							if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
 								player.addStatsRow(p2, playoffs);
 								ps = p2.stats[p2.stats.length - 1];
-							} // Since index is not on playoffs, manually check
+							}
 
+							// Since index is not on playoffs, manually check
 							if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {
 								throw new Error(`Missing playoff stats for player ${p.id}`);
-							} // Update stats
+							}
 
+							// Update stats
 							for (const key of Object.keys(p.stat)) {
 								if (!ps.hasOwnProperty(key)) {
 									throw new Error(`Missing key "${key}" on ps`);
@@ -240,8 +242,9 @@ const writePlayerStats = async (
 								lock.set("stopGameSim", true);
 								stopPlay = true;
 							}
-						} // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
+						}
 
+						// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
 						if (g.phase !== PHASE.PLAYOFFS || ratingsLoss) {
 							player.updateValues(p2);
 						}

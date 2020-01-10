@@ -17,8 +17,9 @@ const valueChange = async (
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
 	if (dpidsRemove.length > 2) {
 		return -1;
-	} // Get value and skills for each player on team or involved in the proposed transaction
+	}
 
+	// Get value and skills for each player on team or involved in the proposed transaction
 	const roster = [];
 	let add = [];
 	let remove = [];
@@ -70,8 +71,9 @@ const valueChange = async (
 					age: g.season - p.born.year,
 				});
 			}
-		} // Get players to add
+		}
 
+		// Get players to add
 		for (const pid of pidsAdd) {
 			const p = await idb.cache.players.get(pid);
 			add.push({
@@ -148,8 +150,9 @@ const valueChange = async (
 				} else {
 					wps.push(rLast[0] / g.numGames);
 				}
-			} // Get rank order of wps http://stackoverflow.com/a/14834599/786644
+			}
 
+			// Get rank order of wps http://stackoverflow.com/a/14834599/786644
 			const sorted = wps.slice().sort((a, b) => a - b);
 			const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
 
@@ -182,8 +185,9 @@ const valueChange = async (
 					estPick = Math.round(
 						(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
 					);
-				} // No fudge factor, since this is coming from the user's team (or eventually, another AI)
+				}
 
+				// No fudge factor, since this is coming from the user's team (or eventually, another AI)
 				let value;
 
 				if (estValues[String(season)]) {
@@ -236,16 +240,18 @@ const valueChange = async (
 					estPick = Math.round(
 						(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
 					);
-				} // Set fudge factor with more confidence if it's the current season
+				}
 
+				// Set fudge factor with more confidence if it's the current season
 				let fudgeFactor;
 
 				if (seasons === 0 && gp >= g.numGames / 2) {
 					fudgeFactor = (1 - gp / g.numGames) * 10;
 				} else {
 					fudgeFactor = 10;
-				} // Use fudge factor: AI teams like their own picks
+				}
 
+				// Use fudge factor: AI teams like their own picks
 				let value;
 
 				if (estValues[String(season)]) {
@@ -357,8 +363,9 @@ const valueChange = async (
 					} else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
 						// Little bonus
 						test[i].value *= 1.025;
-					} // Account for redundancy in test
+					}
 
+					// Account for redundancy in test
 					rosterSkillsCount[s] += 1;
 				}
 			}
@@ -372,8 +379,9 @@ const valueChange = async (
 		const rosterAndAdd = roster.concat(add);
 		add = doSkillBonuses(add, rosterAndRemove);
 		remove = doSkillBonuses(remove, rosterAndAdd);
-	} // This actually doesn't do anything because I'm an idiot
+	}
 
+	// This actually doesn't do anything because I'm an idiot
 	const base = 1.25;
 
 	const sumValues = (players, includeInjuries) => {
@@ -407,14 +415,16 @@ const valueChange = async (
 				} else if (p.age >= 29) {
 					playerValue *= 0.9;
 				}
-			} // After the player development changes in early 2018, player.value is in a more compressed range (linear starting from ~30 rather than 0), so nonlinearity needs to be introduced here to make things "feel" similar to before.
+			}
 
+			// After the player development changes in early 2018, player.value is in a more compressed range (linear starting from ~30 rather than 0), so nonlinearity needs to be introduced here to make things "feel" similar to before.
 			playerValue -= 52;
 
 			if (playerValue > 0) {
 				playerValue **= 2;
-			} // Normalize for injuries
+			}
 
+			// Normalize for injuries
 			if (includeInjuries && tid !== g.userTid) {
 				if (p.injury.gamesRemaining > 75) {
 					playerValue -= playerValue * 0.75;
@@ -436,8 +446,9 @@ const valueChange = async (
 			} else {
 				// Raising < 1 to < 1 power would make this too large
 				contractValue *= contractSeasonsRemaining;
-			} // Really bad players will just get no PT
+			}
 
+			// Really bad players will just get no PT
 			if (playerValue < 0) {
 				playerValue = 0;
 			} //console.log([playerValue, contractValue]);

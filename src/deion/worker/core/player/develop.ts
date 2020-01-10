@@ -108,8 +108,9 @@ if (process.env.SPORT === "football") {
 			coeffs.interaction * age * ovr
 		);
 	};
-} // Repeatedly simulate aging up to 29, and pick the 75th percentile max
+}
 
+// Repeatedly simulate aging up to 29, and pick the 75th percentile max
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
 export const bootstrapPot = (
@@ -231,8 +232,9 @@ const develop = (
 				p.weight = newWeight;
 			}
 		}
-	} // Run these even for players developing 0 seasons
+	}
 
+	// Run these even for players developing 0 seasons
 	if (process.env.SPORT === "basketball") {
 		if (!overrides.core.player.ovr) {
 			throw new Error("Missing overrides.core.player.ovr");

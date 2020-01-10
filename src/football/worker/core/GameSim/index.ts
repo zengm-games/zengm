@@ -294,17 +294,20 @@ class GameSim {
 		}
 
 		return passOdds;
-	} // Probability that a kickoff should be an onside kick
+	}
 
+	// Probability that a kickoff should be an onside kick
 	probOnside() {
 		if (this.awaitingAfterSafety) {
 			return 0;
-		} // Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
+		}
 
+		// Roughly 1 surprise onside kick per season, but never in the 4th quarter because some of those could be really stupid
 		if (this.team[0].stat.ptsQtrs.length <= 3) {
 			return 0.01;
-		} // Does game situation dictate an onside kick in the 4th quarter?
+		}
 
+		// Does game situation dictate an onside kick in the 4th quarter?
 		if (this.team[0].stat.ptsQtrs.length !== 4) {
 			return 0;
 		}
@@ -463,8 +466,9 @@ class GameSim {
 			}
 
 			return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
-		} // Don't kick a FG when we really need a touchdown!
+		}
 
+		// Don't kick a FG when we really need a touchdown!
 		const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2; // If there are under 10 seconds left in the half/overtime, maybe try a field goal
 
 		if (
@@ -531,8 +535,9 @@ class GameSim {
 					// If it's a makeable field goal, take it
 					if (probMadeFieldGoal >= 0.7) {
 						return "fieldGoal";
-					} // If it's a hard field goal, maybe take it
+					}
 
+					// If it's a hard field goal, maybe take it
 					const probTryFieldGoal = helpers.bound(
 						(probMadeFieldGoal - 0.3) / 0.5,
 						0,
@@ -541,8 +546,9 @@ class GameSim {
 
 					if (Math.random() < probTryFieldGoal) {
 						return "fieldGoal";
-					} // Default option - punt
+					}
 
+					// Default option - punt
 					return "punt";
 				}
 			}
@@ -603,14 +609,16 @@ class GameSim {
 			this.playByPlay.logEvent("twoMinuteWarning", {
 				clock: this.clock - dt,
 			});
-		} // Timeouts - small chance at any time
+		}
 
+		// Timeouts - small chance at any time
 		if (Math.random() < 0.01) {
 			this.doTimeout(this.o);
 		} else if (Math.random() < 0.003) {
 			this.doTimeout(this.d);
-		} // Timeouts - late in game when clock is running
+		}
 
+		// Timeouts - late in game when clock is running
 		if ((quarter === 2 || quarter >= 4) && this.isClockRunning) {
 			const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts; // No point in the 4th quarter of a blowout
 
@@ -625,8 +633,9 @@ class GameSim {
 					this.doTimeout(this.o);
 				}
 			}
-		} // Time between plays (can be more than 40 seconds because there is time before the play clock starts)
+		}
 
+		// Time between plays (can be more than 40 seconds because there is time before the play clock starts)
 		let dtClockRunning = 0;
 
 		if (this.isClockRunning) {
@@ -639,8 +648,9 @@ class GameSim {
 			} else {
 				dtClockRunning = random.randInt(35, 60) / 60;
 			}
-		} // Check two minute warning again
+		}
 
+		// Check two minute warning again
 		if (
 			(quarter === 2 || quarter >= 4) &&
 			this.clock - dt - dtClockRunning <= 2 &&
@@ -653,8 +663,9 @@ class GameSim {
 			}); // Clock only runs until it hits 2 minutes exactly
 
 			dtClockRunning = helpers.bound(this.clock - dt - 2, 0, Infinity);
-		} // Clock
+		}
 
+		// Clock
 		dt += dtClockRunning;
 		this.clock -= dt;
 
@@ -742,15 +753,17 @@ class GameSim {
 					this.recordStat(this.d, tackler, "defTckLoss");
 				}
 			}
-		} // Safety or touchback?
+		}
 
+		// Safety or touchback?
 		if (this.scrimmage <= 0) {
 			return {
 				safetyOrTouchback: true,
 				td: false,
 			};
-		} // First down?
+		}
 
+		// First down?
 		if (yds >= this.toGo || automaticFirstDown) {
 			this.down = 1;
 			const maxToGo = 100 - this.scrimmage;
@@ -759,8 +772,9 @@ class GameSim {
 				safetyOrTouchback: false,
 				td: false,
 			};
-		} // Turnover on downs?
+		}
 
+		// Turnover on downs?
 		if (!repeatDown) {
 			if (this.down === 4) {
 				this.o = this.o === 0 ? 1 : 0;
@@ -1171,8 +1185,9 @@ class GameSim {
 		this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
 		this.isClockRunning = false;
 		return dt;
-	} // eslint-disable-next-line
+	}
 
+	// eslint-disable-next-line
 	probMadeFieldGoal(kicker?: PlayerGameSim, extraPoint?: boolean) {
 		kicker =
 			kicker !== undefined
@@ -1255,8 +1270,9 @@ class GameSim {
 			baseProb = 0.000001;
 		} else {
 			baseProb = 0;
-		} // Accurate kickers get a boost. Max boost is the min of (.1, (1-baseProb)/2, and baseProb/2)
+		}
 
+		// Accurate kickers get a boost. Max boost is the min of (.1, (1-baseProb)/2, and baseProb/2)
 		const baseBoost = (kicker.compositeRating.kickingAccuracy - 0.7) / 3;
 		const boost = Math.min(baseBoost, (1 - baseProb) / 2, baseProb / 2);
 		return baseProb + boost;
@@ -1353,8 +1369,9 @@ class GameSim {
 		this.awaitingAfterTouchdown = false;
 		this.isClockRunning = false;
 		return 0;
-	} // eslint-disable-next-line
+	}
 
+	// eslint-disable-next-line
 	probFumble(p: PlayerGameSim) {
 		return 0.0125 * (1.5 - p.compositeRating.ballSecurity);
 	}
@@ -1423,8 +1440,9 @@ class GameSim {
 			} else if (Math.random() < this.probFumble(pRecovered)) {
 				dt += this.doFumble(pRecovered, 0);
 			}
-		} // Since other things might have happened after this.possessionChange()
+		}
 
+		// Since other things might have happened after this.possessionChange()
 		if (lost) {
 			this.down = 1;
 			this.toGo = 10;
@@ -1535,8 +1553,9 @@ class GameSim {
 				this.team[this.d].compositeRating.passRushing) /
 			this.team[this.o].compositeRating.passBlocking
 		);
-	} // eslint-disable-next-line
+	}
 
+	// eslint-disable-next-line
 	probComplete(
 		qb: PlayerGameSim,
 		target: PlayerGameSim,
@@ -1720,8 +1739,9 @@ class GameSim {
 		if (penInfo) {
 			penInfo.doLog();
 			return 0;
-		} // Usually do normal run, but sometimes do special stuff
+		}
 
+		// Usually do normal run, but sometimes do special stuff
 		const positions = ["RB"];
 		const rand = Math.random();
 
@@ -1813,8 +1833,9 @@ class GameSim {
 		}
 
 		return dt;
-	} // Call this before actually advancing the ball, because different logic will apply if it's a spot foul or not
+	}
 
+	// Call this before actually advancing the ball, because different logic will apply if it's a spot foul or not
 	checkPenalties(
 		playType: PenaltyPlayType,
 		{
@@ -1915,8 +1936,9 @@ class GameSim {
 				} else if (pen.side === "defense") {
 					// Defensive spot foul - could be in secondary too
 					spotYds = random.randInt(0, playYds);
-				} // On kickoff returns, penalties are very unlikely to occur extremely deep
+				}
 
+				// On kickoff returns, penalties are very unlikely to occur extremely deep
 				if (playType === "kickoffReturn" && spotYds + this.scrimmage <= 10) {
 					spotYds += random.randInt(10, playYds);
 				}
@@ -2138,8 +2160,9 @@ class GameSim {
 				? p => (p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
 				: undefined;
 		return random.choice(players, weightFunc);
-	} // Pass undefined as p for some team-only stats
+	}
 
+	// Pass undefined as p for some team-only stats
 	recordStat(
 		t: TeamNum,
 		p: PlayerGameSim | undefined | null,

@@ -33,8 +33,9 @@ async function updateMessage(
 						redirectUrl: helpers.leagueUrl(["message", m.mid]),
 					};
 				}
-			} // Then look for any message
+			}
 
+			// Then look for any message
 			if (messages.length > 0) {
 				return {
 					redirectUrl: helpers.leagueUrl(["message", messages[0].mid]),

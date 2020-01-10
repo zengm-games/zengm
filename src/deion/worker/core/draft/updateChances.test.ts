@@ -33,8 +33,9 @@ describe("worker/core/draft/updateChances", () => {
 					assert.equal(value, chances[tids[j]]);
 				}
 			}
-		} // test if isFinal is true
+		}
 
+		// test if isFinal is true
 		updateChances(chances, teams, true);
 
 		for (let i = 0; i < sameRec.length; i++) {

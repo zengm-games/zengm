@@ -19,14 +19,14 @@
 		"watch": "node tools/watch.js",
 		"lint": "concurrently --raw 'yarn run tsc' 'yarn run lint-js'",
 		"lint-js": "eslint '*.{js,ts}' 'public/*.js' 'src/**/*.{js,ts}' 'tools/**/*.{js,ts}'",
-		"prettier": "prettier --write '*.{js,json,scss,ts}' 'public/**/*.{js,json,scss,ts}' 'src/**/*.{js,json,scss,ts}' 'tools/**/*.{js,json,scss,ts}'",
+		"prettier": "prettier --write '*.{js,json,scss,ts,tsx}' 'public/**/*.{js,json,scss,ts,tsx}' 'src/**/*.{js,json,scss,ts,tsx}' 'tools/**/*.{js,json,scss,ts,tsx}'",
 		"test": "node tools/pre-test.js && jest",
 		"test-e2e": "node tools/pre-test.js && karma start karma.conf.js",
 		"test-e2e-watch": "node tools/pre-test.js && karma start karma.conf.js --auto-watch --no-single-run",
 		"test-e2e-browserstack": "node tools/pre-test.js && karma start karma-browserstack.conf.js"
 	},
 	"lint-staged": {
-		"*.{js,json,scss,ts}": [
+		"*.{js,json,scss,ts,tsx}": [
 			"prettier --write",
 			"git add"
 		]

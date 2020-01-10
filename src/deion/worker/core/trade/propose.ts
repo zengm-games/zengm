@@ -65,8 +65,9 @@ const propose = async (
 		}
 
 		return [true, 'Trade accepted! "Nice doing business with you!"'];
-	} // Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
+	}
 
+	// Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
 	let message;
 
 	if (dv > -5) {

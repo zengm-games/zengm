@@ -135,8 +135,9 @@ async function updateRoster(
 					players[i].canRelease = true;
 				} else {
 					players[i].canRelease = false;
-				} // Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
+				}
 
+				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
 				players[i].ptModifier = String(players[i].ptModifier);
 			}
 

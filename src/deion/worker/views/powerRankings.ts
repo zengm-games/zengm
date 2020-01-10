@@ -63,8 +63,9 @@ async function updatePowerRankings(
 			}
 
 			t.ovrCurrent = overrides.core.team.ovr(teamPlayersCurrent);
-		} // Calculate score
+		}
 
+		// Calculate score
 		for (const t of teams) {
 			// Start with MOV, scaled for games played
 			t.score = (t.stats.mov * t.stats.gp) / g.numGames; // Add estimated MOV from ovr (0/100 to -30/30)
@@ -75,8 +76,9 @@ async function updatePowerRankings(
 
 			if (Number.isNaN(winsLastTen)) {
 				winsLastTen = 0;
-			} // Modulate point differential by recent record: +10 for 10-0 in last 10 and -10 for 0-10
+			}
 
+			// Modulate point differential by recent record: +10 for 10-0 in last 10 and -10 for 0-10
 			t.score += -10 + 2 * winsLastTen;
 		}
 

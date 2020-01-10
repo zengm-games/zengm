@@ -43,8 +43,9 @@ async function updateUpcoming(
 			upcoming,
 		};
 	}
-} // Based on views.gameLog.updateGamesList
+}
 
+// Based on views.gameLog.updateGamesList
 async function updateCompleted(
 	inputs: {
 		abbrev: string;

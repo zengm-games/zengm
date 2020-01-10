@@ -38,16 +38,18 @@ const decreaseDemands = async () => {
 			} else {
 				p.contract.exp = g.season + 1;
 			}
-		} // Free agents' resistance to signing decays after every regular season game
+		}
 
+		// Free agents' resistance to signing decays after every regular season game
 		for (let i = 0; i < p.freeAgentMood.length; i++) {
 			p.freeAgentMood[i] -= 0.075;
 
 			if (p.freeAgentMood[i] < 0) {
 				p.freeAgentMood[i] = 0;
 			}
-		} // Also, heal.
+		}
 
+		// Also, heal.
 		if (p.injury.gamesRemaining > 0) {
 			p.injury.gamesRemaining -= 1;
 		} else {

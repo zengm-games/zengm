@@ -55,8 +55,9 @@ const create = async (conditions: Conditions) => {
 		if (healthyCount >= NUM_ALL_STARS) {
 			break;
 		}
-	} // Do awards first, before picking captains, so remaining has all players
+	}
 
+	// Do awards first, before picking captains, so remaining has all players
 	const awardsByPlayer = allStars.remaining.map((p: any) => {
 		return {
 			pid: p.pid,
@@ -74,8 +75,9 @@ const create = async (conditions: Conditions) => {
 		});
 		team.push(allStars.remaining[ind]);
 		allStars.remaining.splice(ind, 1);
-	} // $FlowFixMe
+	}
 
+	// $FlowFixMe
 	allStars.teamNames = allStars.teams.map(teamPlayers => {
 		const captainPID = teamPlayers[0].pid;
 		const p = players.find(p2 => p2.pid === captainPID);

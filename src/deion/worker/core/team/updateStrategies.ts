@@ -16,8 +16,9 @@ const updateStrategies = async () => {
 		// Skip user's team
 		if (t.tid === g.userTid) {
 			continue;
-		} // Change in wins
+		}
 
+		// Change in wins
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
 			[g.season, t.tid],

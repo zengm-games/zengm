@@ -95,8 +95,9 @@ const getIndexKey = (index, row) => {
 	if (index.key.length === 1) {
 		// $FlowFixMe
 		return row[index.key[0]];
-	} // Array keys are special, because they need to be stored in a JS object and then recovered
+	}
 
+	// Array keys are special, because they need to be stored in a JS object and then recovered
 	return stringifyInfinity(
 		index.key // $FlowFixMe
 			.map(field => {
@@ -127,8 +128,9 @@ class StoreAPI<Input, Output, ID> {
 
 	getAll(): Promise<Output[]> {
 		return this.cache._getAll(this.store);
-	} // Not sure how to type key as ID in some methods below
+	}
 
+	// Not sure how to type key as ID in some methods below
 	indexGet(
 		index: Index,
 		key: number | string | (number | string | boolean)[],
@@ -608,8 +610,9 @@ class Cache {
 				}
 			})(),
 		]);
-	} // Load database from disk and save in cache, wiping out any prior values in cache
+	}
 
+	// Load database from disk and save in cache, wiping out any prior values in cache
 	async fill(season?: number) {
 		//console.log('fill start');
 		//performance.mark('fillStart');
@@ -650,8 +653,9 @@ class Cache {
 		this._setStatus("full"); //performance.measure('fillTime', 'fillStart');
 		//const entries = performance.getEntriesByName('fillTime');
 		//console.log(`${g.phase} fill duration: ${entries[entries.length - 1].duration / 1000} seconds`);
-	} // Take current contents in database and write to disk
+	}
 
+	// Take current contents in database and write to disk
 	async flush() {
 		//console.log('flush start');
 		//performance.mark('flushStart');
@@ -695,8 +699,9 @@ class Cache {
 	async _autoFlush() {
 		if (this._stopAutoFlush) {
 			return;
-		} // Only flush if cache is dirty and nothing is going on
+		}
 
+		// Only flush if cache is dirty and nothing is going on
 		if (this._dirty) {
 			const skipFlush =
 				lock.get("gameSim") ||
@@ -758,8 +763,9 @@ class Cache {
 		}
 
 		return val;
-	} // Key is kind of like IDB key range, except there is no "only" support for compound keys so in that case you have to query like [[2018, 1], [2018, 1]] instead of [2018, 1], otherwise it can't tell if it's an "only" compound key or a min/max range for a numeric key
+	}
 
+	// Key is kind of like IDB key range, except there is no "only" support for compound keys so in that case you have to query like [[2018, 1], [2018, 1]] instead of [2018, 1], otherwise it can't tell if it's an "only" compound key or a min/max range for a numeric key
 	async _indexGetAll(
 		index: Index,
 		key: number | string | [any, any] | any[],
@@ -833,8 +839,9 @@ class Cache {
 				throw new Error(
 					`Primary key field "${pk}" is required for non-autoincrementing store "${store}"`,
 				);
-			} // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
+			}
 
+			// HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
 			if (store === "schedule" && this._maxIds.schedule < this._maxIds.games) {
 				this._maxIds.schedule = this._maxIds.games;
 			}
@@ -884,8 +891,9 @@ class Cache {
 		) {
 			if (this._data[store].hasOwnProperty(id)) {
 				delete this._data[store][id];
-			} // Need to have the correct type here for IndexedDB
+			}
 
+			// Need to have the correct type here for IndexedDB
 			const idParsed =
 				this.storeInfos[store].pkType === "number" ? parseInt(id, 10) : id;
 

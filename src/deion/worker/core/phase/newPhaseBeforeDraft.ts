@@ -44,8 +44,9 @@ const newPhaseBeforeDraft = async (
 			});
 			await idb.cache.players.put(p);
 		}
-	} // Do annual tasks for each player, like checking for retirement
+	}
 
+	// Do annual tasks for each player, like checking for retirement
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,
 		Infinity,
@@ -57,8 +58,9 @@ const newPhaseBeforeDraft = async (
 		if (player.shouldRetire(p)) {
 			player.retire(p, conditions);
 			update = true;
-		} // Update "free agent years" counter and retire players who have been free agents for more than one years
+		}
 
+		// Update "free agent years" counter and retire players who have been free agents for more than one years
 		if (p.tid === PLAYER.FREE_AGENT) {
 			if (p.yearsFreeAgent >= 1) {
 				player.retire(p, conditions);
@@ -72,8 +74,9 @@ const newPhaseBeforeDraft = async (
 		} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
 			p.yearsFreeAgent = 0;
 			update = true;
-		} // Heal injures
+		}
 
+		// Heal injures
 		if (p.injury.type !== "Healthy") {
 			// This doesn't use g.numGames because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
 			if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
@@ -112,8 +115,9 @@ const newPhaseBeforeDraft = async (
 
 	if (g.draftType === "noLottery" || g.draftType === "random") {
 		await draft.genOrder(false, conditions);
-	} // Don't redirect if we're viewing a live game now
+	}
 
+	// Don't redirect if we're viewing a live game now
 	let url;
 
 	if (!liveGameSim) {

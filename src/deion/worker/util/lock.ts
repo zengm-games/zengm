@@ -66,8 +66,9 @@ async function canStartGames(): Promise<boolean> {
 
 	if (locks.gameSim) {
 		return false;
-	} // Otherwise, doing it outside of this function would be a race condition if anything else async happened
+	}
 
+	// Otherwise, doing it outside of this function would be a race condition if anything else async happened
 	locks.gameSim = true;
 	return true;
 }

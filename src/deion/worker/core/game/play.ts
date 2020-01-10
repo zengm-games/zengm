@@ -98,12 +98,14 @@ const play = async (
 
 		if (g.phase === PHASE.PLAYOFFS) {
 			promises.push(updatePlayoffSeries(results, conditions));
-		} // Delete finished games from schedule
+		}
 
+		// Delete finished games from schedule
 		for (let j = 0; j < gidsFinished.length; j++) {
 			promises.push(idb.cache.schedule.delete(gidsFinished[j]));
-		} // Update ranks
+		}
 
+		// Update ranks
 		promises.push(finances.updateRanks(["expenses", "revenues"]));
 
 		if (injuryTexts.length > 0) {
@@ -132,8 +134,9 @@ const play = async (
 			if (p.injury.gamesRemaining > 0) {
 				p.injury.gamesRemaining -= 1;
 				changed = true;
-			} // Is it already over?
+			}
 
+			// Is it already over?
 			if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
 				p.injury = {
 					type: "Healthy",
@@ -160,8 +163,9 @@ const play = async (
 					},
 					conditions,
 				);
-			} // Also check for gamesUntilTradable
+			}
 
+			// Also check for gamesUntilTradable
 			if (!p.hasOwnProperty("gamesUntilTradable")) {
 				p.gamesUntilTradable = 0; // Initialize for old leagues
 

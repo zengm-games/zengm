@@ -175,13 +175,15 @@ const processStats = (
 			row.age = ps.season - bornYear;
 		} else {
 			row[stat] = ps[stat];
-		} // For keepWithNoStats
+		}
 
+		// For keepWithNoStats
 		if (row[stat] === undefined || Number.isNaN(row[stat])) {
 			row[stat] = 0;
 		}
-	} // Since they come in same stream, always need to be able to distinguish
+	}
 
+	// Since they come in same stream, always need to be able to distinguish
 	row.playoffs = ps.playoffs;
 	return row;
 };

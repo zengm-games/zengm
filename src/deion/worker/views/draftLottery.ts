@@ -65,8 +65,9 @@ async function updateDraftLottery(
 					userTid: g.userTid,
 				};
 			}
-		} // View projected draft lottery for this season
+		}
 
+		// View projected draft lottery for this season
 		const draftLotteryResult = await draft.genOrderNBA(true);
 
 		for (const pick of draftLotteryResult.result) {

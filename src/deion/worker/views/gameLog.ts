@@ -40,8 +40,9 @@ async function boxScore(gid: number) {
 
 	if (!game) {
 		game = await idb.league.games.get(gid);
-	} // If game doesn't exist (bad gid or deleted box scores), show nothing
+	}
 
+	// If game doesn't exist (bad gid or deleted box scores), show nothing
 	if (!game) {
 		return {};
 	}
@@ -92,8 +93,9 @@ async function boxScore(gid: number) {
 		game.overtime = ` (${game.overtimes}OT)`;
 	} else {
 		game.overtime = "";
-	} // Swap teams order, so home team is at bottom in box score
+	}
 
+	// Swap teams order, so home team is at bottom in box score
 	game.teams.reverse();
 
 	if (game.scoringSummary) {

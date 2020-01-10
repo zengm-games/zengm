@@ -139,8 +139,9 @@ const Controller = () => {
 						lid: undefined,
 					});
 				}
-			} // ctxBBGM is hacky!
+			}
 
+			// ctxBBGM is hacky!
 			const ctxBBGM = { ...context.state };
 			delete ctxBBGM.err; // Can't send error to worker
 			// Resolve all the promises before updating the UI to minimize flicker
@@ -160,8 +161,9 @@ const Controller = () => {
 				});
 				idLoading.current = undefined;
 				return;
-			} // If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
+			}
 
+			// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
 			if (results && results.some(result => !!result)) {
 				delete prevData.errorMessage;
 			}
@@ -193,8 +195,9 @@ const Controller = () => {
 				idLoading.current = undefined;
 				await realtimeUpdate([], vars.data.redirectUrl, {}, true);
 				return;
-			} // Make sure user didn't navigate to another page while async stuff was happening
+			}
 
+			// Make sure user didn't navigate to another page while async stuff was happening
 			if (idLoading.current === id) {
 				dispatch({
 					type: "reset",

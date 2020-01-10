@@ -17,8 +17,9 @@ const newPhaseDraft = async (conditions: Conditions) => {
 			// Skip non-retired players and dead players
 			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
 				return;
-			} // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+			}
 
+			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
 			const probDeath =
 				0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
 
@@ -35,8 +36,9 @@ const newPhaseDraft = async (conditions: Conditions) => {
 
 	if (!draftLotteryResult) {
 		await draft.genOrder(false, conditions);
-	} // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
+	}
 
+	// This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
 	const players = await idb.cache.players.getAll();
 
 	for (const p of players) {

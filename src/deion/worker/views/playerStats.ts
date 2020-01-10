@@ -72,8 +72,9 @@ async function updatePlayers(
 
 		if (tid < 0) {
 			tid = undefined;
-		} // Show all teams
+		}
 
+		// Show all teams
 		let statType;
 
 		if (process.env.SPORT === "basketball") {
@@ -115,8 +116,9 @@ async function updatePlayers(
 				if (p.stats.gp > gp) {
 					gp = p.stats.gp;
 				}
-			} // Special case for career totals - use g.numGames games, unless this is the first season
+			}
 
+			// Special case for career totals - use g.numGames games, unless this is the first season
 			if (!inputs.season) {
 				if (g.season > g.startingSeason) {
 					gp = g.numGames;
@@ -143,8 +145,9 @@ async function updatePlayers(
 					if (min !== undefined && min > gp * 5) {
 						return true;
 					}
-				} // Or, keep players who played in playoffs
+				}
 
+				// Or, keep players who played in playoffs
 				if (inputs.playoffs === "playoffs") {
 					if (inputs.season) {
 						if (p.stats.gp > 0) {

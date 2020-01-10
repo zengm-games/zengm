@@ -63,8 +63,9 @@ async function updatePlayoffs(
 
 		for (let i = 0; i < 2 ** (series.length - 2); i++) {
 			matchups[i] = [];
-		} // Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
+		}
 
+		// Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
 		for (let i = 0; i < series.length; i++) {
 			let numGamesInSide = 2 ** (series.length - i - 2);
 

@@ -116,8 +116,9 @@ class DataTable extends React.Component<Props, State> {
 				}
 
 				return sortSequence[j];
-			} // Default asc/desc toggle
+			}
 
+			// Default asc/desc toggle
 			return sortBy[1] === "asc" ? "desc" : "asc";
 		}; // If this column is already in sortBys and shift is pressed, update
 
@@ -128,19 +129,22 @@ class DataTable extends React.Component<Props, State> {
 					found = true;
 					break;
 				}
-			} // If this column is not in sortBys and shift is pressed, append
+			}
 
+			// If this column is not in sortBys and shift is pressed, append
 			if (!found) {
 				sortBys.push([i, col.sortSequence ? col.sortSequence[0] : "asc"]);
 				found = true;
 			}
-		} // If this column is the only one in sortBys, update order
+		}
 
+		// If this column is the only one in sortBys, update order
 		if (!found && sortBys.length === 1 && sortBys[0][0] === i) {
 			sortBys[0][1] = nextOrder(col, sortBys[0]);
 			found = true;
-		} // Otherwise, reset to sorting only by this column, default order
+		}
 
+		// Otherwise, reset to sorting only by this column, default order
 		if (!found) {
 			sortBys = [[i, col.sortSequence ? col.sortSequence[0] : "asc"]];
 		}
@@ -217,8 +221,9 @@ class DataTable extends React.Component<Props, State> {
 
 		if (nextProps.name !== prevState.prevName) {
 			Object.assign(updatedState, loadStateFromCache(nextProps));
-		} // If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with prevState.filters and enable filters
+		}
 
+		// If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with prevState.filters and enable filters
 		const filters = helpers.deepCopy(prevState.filters);
 		let changed = false;
 
@@ -281,8 +286,9 @@ class DataTable extends React.Component<Props, State> {
 						if (!found) {
 							return false;
 						}
-					} // Filter
+					}
 
+					// Filter
 					if (this.state.enableFilters) {
 						for (let i = 0; i < row.data.length; i++) {
 							if (this.props.cols[i].noSearch) {

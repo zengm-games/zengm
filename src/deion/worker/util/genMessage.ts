@@ -31,8 +31,9 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	// If auto play seasons or multi team mode, no messages
 	if (local.autoPlaySeasons > 0 || g.userTids.length > 1) {
 		return;
-	} // No need for seasons before you GMed this team or more than 10 years old, but also make sure we always have g.season
+	}
 
+	// No need for seasons before you GMed this team or more than 10 years old, but also make sure we always have g.season
 	const minSeason = Math.min(
 		g.season,
 		Math.max(g.gracePeriodEnd - 2, g.season - 9),

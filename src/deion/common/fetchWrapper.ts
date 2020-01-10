@@ -26,8 +26,9 @@ const fetchWrapper = async ({
 		for (const key of Object.keys(data)) {
 			body.set(key, data[key]);
 		}
-	} // For GET request, append data to query string, since fetch doesn't like GET and body
+	}
 
+	// For GET request, append data to query string, since fetch doesn't like GET and body
 	if (method === "GET" && body !== undefined) {
 		url += `?${body.toString()}`;
 		body = undefined;

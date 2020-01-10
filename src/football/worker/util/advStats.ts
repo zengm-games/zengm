@@ -71,13 +71,15 @@ const calculateAV = (players, teams, league) => {
 
 		if (t === undefined) {
 			throw new Error("Should never happen");
-		} // OL
+		}
 
+		// OL
 		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
 			score +=
 				(individualPts[i] / teamIndividualPtsOL[p.tid]) * teamPtsOL[p.tid];
-		} // Rushing
+		}
 
+		// Rushing
 		score += (p.stats.rusYds / t.stats.rusYds) * teamPtsRus[p.tid];
 
 		if (p.stats.rus / p.stats.gp >= 200 / 16) {
@@ -86,8 +88,9 @@ const calculateAV = (players, teams, league) => {
 			} else {
 				score += 2 * (p.stats.rusYdsPerAtt - league.rusYdsPerAtt);
 			}
-		} // Receiving
+		}
 
+		// Receiving
 		score += (p.stats.recYds / t.stats.recYds) * teamPtsRec[p.tid];
 
 		if (p.stats.rec / p.stats.gp >= 70 / 16) {
@@ -96,8 +99,9 @@ const calculateAV = (players, teams, league) => {
 			} else {
 				score += 2 * (p.stats.recYdsPerAtt - league.recYdsPerAtt);
 			}
-		} // Passing
+		}
 
+		// Passing
 		score += (p.stats.pssYds / t.stats.pssYds) * teamPtsPss[p.tid];
 
 		if (p.stats.pss / p.stats.gp >= 400 / 16) {
@@ -106,8 +110,9 @@ const calculateAV = (players, teams, league) => {
 			} else {
 				score += 2 * (p.stats.pssAdjYdsPerAtt - league.pssAdjYdsPerAtt);
 			}
-		} // Defense
+		}
 
+		// Defense
 		if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
 			score +=
 				(individualPts[i] / teamIndividualPtsFront7[p.tid]) *
@@ -118,8 +123,9 @@ const calculateAV = (players, teams, league) => {
 			score +=
 				(individualPts[i] / teamIndividualPtsSecondary[p.tid]) *
 				teamPtsSecondary[p.tid];
-		} // Returns
+		}
 
+		// Returns
 		score += p.stats.prTD + p.stats.krTD;
 		return score;
 	});

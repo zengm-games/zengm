@@ -7,8 +7,9 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 
 	if (!allStarGame) {
 		players.sort((a, b) => a.rosterOrder - b.rosterOrder);
-	} // Initialize team composite rating object
+	}
 
+	// Initialize team composite rating object
 	const compositeRating = {};
 
 	for (const rating of Object.keys(
@@ -57,8 +58,9 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 
 		if (!g.userTids.includes(t.id)) {
 			p2.ptModifier = 1;
-		} // These use the same formulas as the skill definitions in player.skills!
+		}
 
+		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of helpers.keys(
 			overrides.common.constants.COMPOSITE_WEIGHTS,
 		)) {
@@ -97,14 +99,16 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 	for (const p of t.player) {
 		// $FlowFixMe
 		delete p.pid;
-	} // Number of players to factor into pace and defense rating calculation
+	}
 
+	// Number of players to factor into pace and defense rating calculation
 	let numPlayers = t.player.length;
 
 	if (numPlayers > 7) {
 		numPlayers = 7;
-	} // Would be better if these were scaled by average min played and endurancence
+	}
 
+	// Would be better if these were scaled by average min played and endurancence
 	t.pace = 0;
 
 	for (let i = 0; i < numPlayers; i++) {

@@ -251,8 +251,9 @@ const orderByWinp = <T extends any>(
 
 	if (process.env.SPORT === "basketball") {
 		return sortedTeams;
-	} // For football, sort by division leaders first
+	}
 
+	// For football, sort by division leaders first
 	const divisionLeaders = new Map<number, number>();
 
 	for (const t of sortedTeams) {

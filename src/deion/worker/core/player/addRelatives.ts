@@ -90,8 +90,9 @@ export const makeSon = async (p: Player) => {
 	// Sanity check - player must not already have father
 	if (hasRelative(p, "father")) {
 		return;
-	} // Find a player from a draft 21-40 years ago to make the father
+	}
 
+	// Find a player from a draft 21-40 years ago to make the father
 	const NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT = 20;
 	const maxYearsAgo = helpers.bound(
 		p.draft.year - (g.startingSeason - NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT),
@@ -199,8 +200,9 @@ export const makeBrother = async (p: Player) => {
 	// If p already has a brother, this would be hard to get right because the names of various players stored in Player.relatives would need to be updated. It's okay if the player picked to be p's brother has other brothers, though!
 	if (hasRelative(p, "brother")) {
 		return;
-	} // Find a player from a draft 0-5 years ago to make the brother
+	}
 
+	// Find a player from a draft 0-5 years ago to make the brother
 	const draftYear = p.draft.year - random.randInt(0, 5);
 	const existingRelativePids = p.relatives.map(rel => rel.pid);
 	const possibleBrothers = (
@@ -228,8 +230,9 @@ export const makeBrother = async (p: Player) => {
 
 	if (hasRelative(p, "father") && hasRelative(brother, "father")) {
 		return;
-	} // In case the brother is a Jr...
+	}
 
+	// In case the brother is a Jr...
 	const [brotherLastName] = parseLastName(brother.lastName);
 	p.lastName = brotherLastName;
 	p.born.loc = brother.born.loc;
@@ -254,8 +257,9 @@ export const makeBrother = async (p: Player) => {
 					name: `${otherBrother.firstName} ${otherBrother.lastName}`,
 				});
 			}
-		} // Handle case where one brother already has a father
+		}
 
+		// Handle case where one brother already has a father
 		if (hasRelative(brother1, "father")) {
 			const fathers = await getRelatives(brother1, "father");
 

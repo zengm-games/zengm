@@ -121,8 +121,9 @@ const newPhasePreseason = async (conditions: Conditions) => {
 			);
 			await idb.cache.players.put(p);
 		}
-	} // Loop through all non-retired players
+	}
 
+	// Loop through all non-retired players
 	for (const p of players) {
 		// Update ratings
 		player.addRatingsRow(p, scoutingRank);
@@ -132,8 +133,9 @@ const newPhasePreseason = async (conditions: Conditions) => {
 
 		if (p.tid >= 0) {
 			player.addStatsRow(p, false);
-		} // If player is a free agent, re-assess contract demands
+		}
 
+		// If player is a free agent, re-assess contract demands
 		if (p.tid === PLAYER.FREE_AGENT) {
 			const newContract = player.genContract(p);
 
@@ -151,8 +153,9 @@ const newPhasePreseason = async (conditions: Conditions) => {
 
 	if (local.autoPlaySeasons > 0) {
 		local.autoPlaySeasons -= 1;
-	} // No ads during multi season auto sim
+	}
 
+	// No ads during multi season auto sim
 	if (env.enableLogging && local.autoPlaySeasons === 0) {
 		toUI(["showModal"], conditions);
 	}

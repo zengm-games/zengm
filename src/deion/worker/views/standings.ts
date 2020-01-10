@@ -133,8 +133,9 @@ async function updateStandings(
 						t2.playoffsRank = i < numPlayoffTeams ? i + 1 : null;
 					}
 				}
-			} // If playoffs are not done by conference (instead to 16 or whatever make it from full league), we need a ranked list of all teams to display.
+			}
 
+			// If playoffs are not done by conference (instead to 16 or whatever make it from full league), we need a ranked list of all teams to display.
 			if (!playoffsByConference) {
 				let j = 0;
 

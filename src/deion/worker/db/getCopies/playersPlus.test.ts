@@ -284,8 +284,9 @@ describe("worker/db/getCopies/playersPlus", () => {
 
 		if (!pf) {
 			throw new Error("Missing player");
-		} // This will break if ovr + fuzz is over 100 (should check bounds), but that never happens in practice
+		}
 
+		// This will break if ovr + fuzz is over 100 (should check bounds), but that never happens in practice
 		assert.equal(
 			pf.ratings.ovr,
 			Math.round(p.ratings[1].ovr + p.ratings[1].fuzz),

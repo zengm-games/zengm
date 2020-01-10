@@ -118,8 +118,9 @@ class PlayByPlayLogger {
 		} else if (this.twoPointConversionState === undefined) {
 			this.twoPointConversionState = "attempting";
 			this.twoPointConversionTeam = twoPointConversionTeam;
-		} // Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
+		}
 
+		// Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
 		let touchdownText = "a touchdown";
 		let showYdsOnTD = true;
 

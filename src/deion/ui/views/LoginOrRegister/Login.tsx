@@ -28,8 +28,9 @@ class Login extends React.Component<Props, State> {
 
 		if (!el) {
 			return;
-		} // $FlowFixMe
+		}
 
+		// $FlowFixMe
 		const formData = new FormData(el);
 
 		try {

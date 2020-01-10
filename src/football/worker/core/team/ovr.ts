@@ -45,8 +45,9 @@ const ovr = (
 		}
 
 		ovrsByPos[pos] = ovrs;
-	} // See analysis/team-ovr-football
+	}
 
+	// See analysis/team-ovr-football
 	const predictedMOV =
 		-141.16249800360956 +
 		0.27475987 * ovrsByPos.QB[0] +

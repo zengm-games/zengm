@@ -36,8 +36,9 @@ function generateContractOptions(contract, ovr) {
 		contractOptions[0].amount = contract.amount;
 		contractOptions[0].smallestAmount = true;
 		found = 0;
-	} // From the desired contract, ask for more money for less or more years
+	}
 
+	// From the desired contract, ask for more money for less or more years
 	for (let i = 0; i < 5; i++) {
 		const factor = 1 + Math.abs(found - i) * growthFactor;
 		contractOptions[i].amount = contractOptions[found].amount * factor;

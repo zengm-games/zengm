@@ -36,8 +36,9 @@ const pos = (ratings: PlayerRatings): string => {
 		(ratings.spd >= 40 && ratings.pss >= 65 && ratings.drb >= 65)
 	) {
 		pg = true;
-	} // SG is secondary ball handler and at least one of: slasher or 3p shooter
+	}
 
+	// SG is secondary ball handler and at least one of: slasher or 3p shooter
 	if (
 		ratings.spd >= 50 &&
 		ratings.drb >= 50 &&
@@ -45,8 +46,9 @@ const pos = (ratings: PlayerRatings): string => {
 		(ratings.dnk >= 58 || ratings.tp >= 63)
 	) {
 		sg = true;
-	} // SF is similar to SG but must be taller and has lower dribble/speed requirements
+	}
 
+	// SF is similar to SG but must be taller and has lower dribble/speed requirements
 	if (
 		ratings.spd >= 40 &&
 		ratings.drb > 30 &&
@@ -54,8 +56,9 @@ const pos = (ratings: PlayerRatings): string => {
 		(ratings.dnk >= 58 || ratings.tp >= 63)
 	) {
 		sf = true;
-	} // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
+	}
 
+	// PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
 	if (
 		ratings.hgt >= 44 &&
 		ratings.stre >= 55 &&
@@ -63,8 +66,9 @@ const pos = (ratings: PlayerRatings): string => {
 		(ratings.hgt <= 63 || ratings.tp >= 60)
 	) {
 		pf = true;
-	} // C must be extra tall or is strong/shotblocker but not quite as tall
+	}
 
+	// C must be extra tall or is strong/shotblocker but not quite as tall
 	if (ratings.hgt >= 63 || (ratings.hgt >= 54 && ratings.stre >= 75)) {
 		c = true; // To make sure player will always be C or FC
 
@@ -82,8 +86,9 @@ const pos = (ratings: PlayerRatings): string => {
 		position = "PF";
 	} else if (!pg && !sg && !sf && !pf && c) {
 		position = "C";
-	} // Multiple positions
+	}
 
+	// Multiple positions
 	if ((pg || sg) && c) {
 		position = "F";
 	} else if ((pg || sg) && (sf || pf)) {

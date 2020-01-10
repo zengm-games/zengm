@@ -54,8 +54,9 @@ const genPlayersWithoutSaving = (
 		for (const p of remaining) {
 			player.develop(p, 1, true);
 		}
-	} // Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
+	}
 
+	// Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
 	const numSpecialPlayerChances = Math.round((4 / 70) * numPlayers);
 
 	for (let i = 0; i < numSpecialPlayerChances; i++) {

@@ -45,16 +45,18 @@ const genContract = (
 
 	if (years < 2) {
 		years = 2;
-	} // Bad players can only ask for short deals
+	}
 
+	// Bad players can only ask for short deals
 	if (ratings.pot < 40) {
 		years = 1;
 	} else if (ratings.pot < 50) {
 		years = 2;
 	} else if (ratings.pot < 60) {
 		years = 3;
-	} // Randomize expiration for contracts generated at beginning of new game
+	}
 
+	// Randomize expiration for contracts generated at beginning of new game
 	if (randomizeExp) {
 		years = random.randInt(1, years);
 	}

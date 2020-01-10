@@ -15,8 +15,9 @@ const contractSeasonsRemaining = (
 
 	if (frac > 1) {
 		frac = 1;
-	} // This only happens if the user changed g.numGames mid season
+	}
 
+	// This only happens if the user changed g.numGames mid season
 	return exp - g.season + frac;
 };
 

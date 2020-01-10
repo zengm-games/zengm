@@ -56,12 +56,14 @@ const updatePlayoffSeries = async (
 
 				break;
 			}
-		} // For flow, not really necessary
+		}
 
+		// For flow, not really necessary
 		if (series === undefined) {
 			continue;
-		} // Log result of playoff series
+		}
 
+		// Log result of playoff series
 		if (
 			series.away.won >= numGamesToWinSeries ||
 			series.home.won >= numGamesToWinSeries

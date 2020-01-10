@@ -21,8 +21,9 @@ const newPhaseFantasyDraft = async (conditions: Conditions, tids: number[]) => {
 	for (const p of playersUndrafted) {
 		p.tid = PLAYER.UNDRAFTED_FANTASY_TEMP;
 		await idb.cache.players.put(p);
-	} // Make all players draftable
+	}
 
+	// Make all players draftable
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,
 		Infinity,
@@ -31,8 +32,9 @@ const newPhaseFantasyDraft = async (conditions: Conditions, tids: number[]) => {
 	for (const p of players) {
 		p.tid = PLAYER.UNDRAFTED;
 		await idb.cache.players.put(p);
-	} // Return traded draft picks to original teams
+	}
 
+	// Return traded draft picks to original teams
 	const draftPicks = await idb.cache.draftPicks.getAll();
 
 	for (const dp of draftPicks) {

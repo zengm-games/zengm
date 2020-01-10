@@ -48,13 +48,15 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 				tids.push([away.tid, home.tid]);
 			}
 		}
-	} // If series are still in progress, write games and short circuit
+	}
 
+	// If series are still in progress, write games and short circuit
 	if (tids.length > 0) {
 		await setSchedule(tids);
 		return false;
-	} // If playoffs are over, update winner and go to next phase
+	}
 
+	// If playoffs are over, update winner and go to next phase
 	if (rnd === g.numGamesPlayoffSeries.length - 1) {
 		const { away, home } = series[rnd][0];
 		let key;
@@ -85,8 +87,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	if (local.playingUntilEndOfRound) {
 		lock.set("stopGameSim", true);
 		local.playingUntilEndOfRound = false;
-	} // Set matchups for next round
+	}
 
+	// Set matchups for next round
 	const tidsWon = [];
 
 	for (let i = 0; i < series[rnd].length; i += 2) {
@@ -110,8 +113,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		} else {
 			team2 = helpers.deepCopy(away2);
 			tidsWon.push(away2.tid);
-		} // Set home/away in the next round
+		}
 
+		// Set home/away in the next round
 		let firstTeamHome =
 			team1.seed < team2.seed ||
 			(team1.seed === team2.seed && team1.winp >= team2.winp); // Special case for the finals, do it by winp not seed

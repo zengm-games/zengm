@@ -45,8 +45,9 @@ const madeHof = (
 		if (i < 5) {
 			df += av[i];
 		}
-	} // Fudge factor for players generated when the league started
+	}
 
+	// Fudge factor for players generated when the league started
 	const fudgeSeasons = g.startingSeason - p.draft.year - 7;
 
 	if (fudgeSeasons > 0) {
@@ -87,8 +88,9 @@ const madeHof = (
 		threshold = 44;
 	} else if (pos === "CB") {
 		threshold = 40;
-	} // Final formula
+	}
 
+	// Final formula
 	return total + df > threshold;
 };
 

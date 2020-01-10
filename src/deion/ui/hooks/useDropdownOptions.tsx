@@ -171,8 +171,9 @@ const useDropdownOptions = (field: string) => {
 					season--
 				) {
 					keys.unshift(season);
-				} // Remove current season, if draft hasn't happened yet
+				}
 
+				// Remove current season, if draft hasn't happened yet
 				if (state.phase < PHASE.DRAFT) {
 					keys.pop();
 				}

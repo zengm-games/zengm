@@ -20,8 +20,9 @@ const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
 
 		if (!t.pidsExcluded) {
 			t.pidsExcluded = [];
-		} // Check players
+		}
 
+		// Check players
 		const players = await idb.getCopies.players({
 			tid: t.tid,
 		});

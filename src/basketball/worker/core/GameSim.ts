@@ -93,13 +93,13 @@ type TeamGameSim = {
 		reb: number;
 	};
 };
+
 /**
  * Pick a player to do something.
  *
  * @param {Array.<number>} ratios output of this.ratingArray.
  * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
  */
-
 const pickPlayer = (
 	ratios: [number, number, number, number, number],
 	exempt?: PlayerNumOnCourt,
@@ -126,13 +126,13 @@ const pickPlayer = (
 
 	return pick;
 };
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
  * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
  * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
  */
-
 const fatigue = (energy: number): number => {
 	energy += 0.05;
 
@@ -190,12 +190,12 @@ class GameSim {
 	playByPlay: object[];
 
 	allStarGame: boolean;
+
 	/**
 	 * Initialize the two teams that are playing this game.
 	 *
 	 * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
 	 */
-
 	constructor(
 		gid: number,
 		team1: TeamGameSim,
@@ -241,13 +241,13 @@ class GameSim {
 			this.homeCourtAdvantage();
 		}
 	}
+
 	/**
 	 * Home court advantage.
 	 *
 	 * Scales composite ratings, giving home players bonuses and away players penalties.
 	 *
 	 */
-
 	homeCourtAdvantage() {
 		const homeCourtModifier = helpers.bound(
 			1 + g.homeCourtAdvantage / 100,
@@ -273,6 +273,7 @@ class GameSim {
 			}
 		}
 	}
+
 	/**
 	 * Simulates the game and returns the results.
 	 *
@@ -300,7 +301,6 @@ class GameSim {
 	 *         ]
 	 *     }
 	 */
-
 	run() {
 		// Simulate the game up to the end of regulation
 		this.simRegulation(); // Play overtime periods if necessary
@@ -476,6 +476,7 @@ class GameSim {
 			}
 		}
 	}
+
 	/**
 	 * Perform appropriate substitutions.
 	 *
@@ -483,7 +484,6 @@ class GameSim {
 	 *
 	 * @return {boolean} true if a substitution occurred, false otherwise.
 	 */
-
 	updatePlayersOnCourt(shooter?: PlayerNumOnCourt) {
 		let substitutions = false;
 		let blowout = false;
@@ -522,14 +522,16 @@ class GameSim {
 
 					if (!this.allStarGame) {
 						ovrs[p] *= this.team[t].player[p].ptModifier;
-					} // Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
+					}
 
+					// Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
 					if (blowout) {
 						ovrs[p] *= (p + 1) / 10;
 					}
 				}
-			} // Loop through players on court (in inverse order of current roster position)
+			}
 
+			// Loop through players on court (in inverse order of current roster position)
 			for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
 				const p = this.playersOnCourt[t][pp];
 				const onCourtIsIneligible = ovrs[p] === -Infinity;
@@ -537,8 +539,9 @@ class GameSim {
 
 				if (t === this.o && pp === shooter) {
 					continue;
-				} // Loop through bench players (in order of current roster position) to see if any should be subbed in)
+				}
 
+				// Loop through bench players (in order of current roster position) to see if any should be subbed in)
 				for (let b = 0; b < this.team[t].player.length; b++) {
 					if (this.playersOnCourt[t].includes(b)) {
 						continue;
@@ -613,8 +616,9 @@ class GameSim {
 								on: this.team[t].player[b].id,
 								off: this.team[t].player[p].id,
 							});
-						} // It's only a "substitution" if it's not the starting lineup
+						}
 
+						// It's only a "substitution" if it's not the starting lineup
 						if (this.startersRecorded) {
 							this.recordPlay("sub", t, [
 								this.team[t].player[b].name,
@@ -626,8 +630,9 @@ class GameSim {
 					}
 				}
 			}
-		} // Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
+		}
 
+		// Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
 		if (!this.startersRecorded) {
 			for (let t = 0; t < 2; t++) {
 				for (let p = 0; p < this.team[t].player.length; p++) {
@@ -642,12 +647,12 @@ class GameSim {
 
 		return substitutions;
 	}
+
 	/**
 	 * Update synergy.
 	 *
 	 * This should be called after this.updatePlayersOnCourt as it only produces different output when the players on the court change.
 	 */
-
 	updateSynergy() {
 		for (let t = 0; t < 2; t++) {
 			// Count all the *fractional* skills of the active players on a team (including duplicates)
@@ -706,8 +711,9 @@ class GameSim {
 					15,
 					0.61,
 				);
-			} // Base offensive synergy
+			}
 
+			// Base offensive synergy
 			this.team[t].synergy.off = 0;
 			this.team[t].synergy.off += 5 * helpers.sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
 
@@ -756,12 +762,12 @@ class GameSim {
 			this.team[t].synergy.reb /= 4;
 		}
 	}
+
 	/**
 	 * Update team composite ratings.
 	 *
 	 * This should be called once every possession, after this.updatePlayersOnCourt and this.updateSynergy as they influence output, to update the team composite ratings based on the players currently on the court.
 	 */
-
 	updateTeamCompositeRatings() {
 		// Only update ones that are actually used
 		const toUpdate = [
@@ -802,12 +808,12 @@ class GameSim {
 				this.synergyFactor * this.team[t].synergy.def;
 		}
 	}
+
 	/**
 	 * Update playing time stats.
 	 *
 	 * This should be called once every possession, at the end, to record playing time and bench time for players.
 	 */
-
 	updatePlayingTime(possessionLength: number) {
 		for (let t = 0; t < 2; t++) {
 			// Update minutes (overall, court, and bench)
@@ -839,12 +845,12 @@ class GameSim {
 			}
 		}
 	}
+
 	/**
 	 * See if any injuries occurred this possession, and handle the consequences.
 	 *
 	 * This doesn't actually compute the type of injury, it just determines if a player is injured bad enough to miss the rest of the game.
 	 */
-
 	injuries() {
 		if (g.disableInjuries) {
 			return;
@@ -868,18 +874,19 @@ class GameSim {
 					}
 				}
 			}
-		} // Sub out injured player
+		}
 
+		// Sub out injured player
 		if (newInjury) {
 			this.updatePlayersOnCourt();
 		}
 	}
+
 	/**
 	 * Simulate a single possession.
 	 *
 	 * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
 	 */
-
 	getPossessionOutcome(possessionLength: number) {
 		const timeBeforePossession = this.t + possessionLength;
 		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
@@ -896,21 +903,24 @@ class GameSim {
 			if (possessionLength2 < timeBeforePossession) {
 				this.t = timeBeforePossession - possessionLength2;
 			}
-		} // If winning at end of game, just run out the clock
+		}
 
+		// If winning at end of game, just run out the clock
 		if (
 			this.t === 0 &&
 			this.team[this.o].stat.pts > this.team[this.d].stat.pts
 		) {
 			return "endOfQuarter";
-		} // With not much time on the clock at the end of a quarter, possession might end with the clock running out
+		}
 
+		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
 		if (this.t === 0 && possessionLength < 6 / 60) {
 			if (Math.random() > (possessionLength / (8 / 60)) ** (1 / 4)) {
 				return "endOfQuarter";
 			}
-		} // Turnover?
+		}
 
+		// Turnover?
 		if (Math.random() < this.probTov()) {
 			return this.doTov(); // tov
 		}
@@ -931,16 +941,17 @@ class GameSim {
 			}
 
 			return "nonShootingFoul";
-		} // Shot!
+		}
 
+		// Shot!
 		return this.doShot(shooter, possessionLength); // fg, orb, or drb
 	}
+
 	/**
 	 * Probability of the current possession ending in a turnover.
 	 *
 	 * @return {number} Probability from 0 to 1.
 	 */
-
 	probTov() {
 		return (
 			(0.14 * this.team[this.d].compositeRating.defense) /
@@ -949,12 +960,12 @@ class GameSim {
 					this.team[this.o].compositeRating.passing))
 		);
 	}
+
 	/**
 	 * Turnover.
 	 *
 	 * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
 	 */
-
 	doTov() {
 		const ratios = this.ratingArray("turnovers", this.o, 2);
 		const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
@@ -967,12 +978,12 @@ class GameSim {
 		this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
 		return "tov";
 	}
+
 	/**
 	 * Probability that a turnover occurring in this possession is a steal.
 	 *
 	 * @return {number} Probability from 0 to 1.
 	 */
-
 	probStl() {
 		return (
 			(0.55 * this.team[this.d].compositeRating.defensePerimeter) /
@@ -981,12 +992,12 @@ class GameSim {
 					this.team[this.o].compositeRating.passing))
 		);
 	}
+
 	/**
 	 * Steal.
 	 *
 	 * @return {string} Currently always returns "stl".
 	 */
-
 	doStl(pStoleFrom: number) {
 		const ratios = this.ratingArray("stealing", this.d, 5);
 		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
@@ -997,13 +1008,13 @@ class GameSim {
 		]);
 		return "stl";
 	}
+
 	/**
 	 * Shot.
 	 *
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
 	 */
-
 	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
 		const p = this.playersOnCourt[this.o][shooter];
 		const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy); // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
@@ -1013,16 +1024,18 @@ class GameSim {
 		if (this.probAst() > Math.random()) {
 			const ratios = this.ratingArray("passing", this.o, 10);
 			passer = pickPlayer(ratios, shooter);
-		} // Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
+		}
 
+		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
 		let shootingThreePointerScaled = this.team[this.o].player[p].compositeRating
 			.shootingThreePointer;
 
 		if (shootingThreePointerScaled > 0.55) {
 			shootingThreePointerScaled =
 				0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
-		} // In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
+		}
 
+		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
 		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const forceThreePointer =
@@ -1094,8 +1107,9 @@ class GameSim {
 					this.team[this.o].player[p].compositeRating.shootingLowPost * 0.32 +
 					0.42;
 				probAndOne = 0.15;
-			} // Better shooting in the ASG, why not?
+			}
 
+			// Better shooting in the ASG, why not?
 			if (this.allStarGame) {
 				probMake += 0.1;
 			}
@@ -1121,16 +1135,18 @@ class GameSim {
 
 		if (this.t === 0 && possessionLength < 6 / 60) {
 			probMake *= Math.sqrt(possessionLength / (8 / 60));
-		} // Assisted shots are easier
+		}
 
+		// Assisted shots are easier
 		if (passer !== undefined) {
 			probMake += 0.025;
 		}
 
 		if (this.probBlk() > Math.random()) {
 			return this.doBlk(shooter, type); // orb or drb
-		} // Make
+		}
 
+		// Make
 		if (probMake > Math.random()) {
 			// And 1
 			if (probAndOne > Math.random()) {
@@ -1138,8 +1154,9 @@ class GameSim {
 			}
 
 			return this.doFg(shooter, passer, type); // fg
-		} // Miss, but fouled
+		}
 
+		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
 			this.doPf(this.d, shooter);
 
@@ -1148,8 +1165,9 @@ class GameSim {
 			}
 
 			return this.doFt(shooter, 2); // fg, orb, or drb
-		} // Miss
+		}
 
+		// Miss
 		this.recordStat(this.o, p, "fga");
 
 		if (type === "atRim") {
@@ -1176,22 +1194,22 @@ class GameSim {
 
 		return "endOfQuarter";
 	}
+
 	/**
 	 * Probability that a shot taken this possession is blocked.
 	 *
 	 * @return {number} Probability from 0 to 1.
 	 */
-
 	probBlk() {
 		return 0.2 * this.team[this.d].compositeRating.blocking ** 2;
 	}
+
 	/**
 	 * Blocked shot.
 	 *
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Output of this.doReb.
 	 */
-
 	doBlk(shooter: PlayerNumOnCourt, type: ShotType) {
 		const p = this.playersOnCourt[this.o][shooter];
 		this.recordStat(this.o, p, "ba");
@@ -1235,6 +1253,7 @@ class GameSim {
 
 		return this.doReb(); // orb or drb
 	}
+
 	/**
 	 * Field goal.
 	 *
@@ -1245,7 +1264,6 @@ class GameSim {
 	 * @param {number} type 2 for a two pointer, 3 for a three pointer.
 	 * @return {string} fg, orb, or drb (latter two are for and ones)
 	 */
-
 	doFg(
 		shooter: PlayerNumOnCourt,
 		passer: PlayerNumOnCourt | undefined | null,
@@ -1316,8 +1334,9 @@ class GameSim {
 	checkGameTyingShot() {
 		if (this.lastScoringPlay.length === 0) {
 			return;
-		} // can assume that the last scoring play tied the game
+		}
 
+		// can assume that the last scoring play tied the game
 		const i = this.lastScoringPlay.length - 1;
 		const play = this.lastScoringPlay[i];
 		let shotType = "a basket";
@@ -1499,12 +1518,14 @@ class GameSim {
 		// only record plays in the fourth quarter or overtime...
 		if (this.team[0].stat.ptsQtrs.length < 4) {
 			return;
-		} // ...in the last 24 seconds...
+		}
 
+		// ...in the last 24 seconds...
 		if (time > 0.4) {
 			return;
-		} // ...when the lead is 3 or less
+		}
 
+		// ...when the lead is 3 or less
 		if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 4) {
 			return;
 		}
@@ -1528,6 +1549,7 @@ class GameSim {
 			this.lastScoringPlay.push(currPlay);
 		}
 	}
+
 	/**
 	 * Free throw.
 	 *
@@ -1537,7 +1559,6 @@ class GameSim {
 	 * @param {number} amount Integer representing the number of free throws to shoot
 	 * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
 	 */
-
 	doFt(shooter: PlayerNumOnCourt, amount: number) {
 		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 
@@ -1570,12 +1591,12 @@ class GameSim {
 
 		return outcome;
 	}
+
 	/**
 	 * Personal foul.
 	 *
 	 * @param {number} t Team (0 or 1, this.o or this.d).
 	 */
-
 	doPf(t: TeamNum, shooter?: PlayerNumOnCourt) {
 		const ratios = this.ratingArray("fouling", t);
 		const p = this.playersOnCourt[t][pickPlayer(ratios)];
@@ -1598,6 +1619,7 @@ class GameSim {
 			this.foulsLastTwoMinutes[t] += 1;
 		}
 	}
+
 	/**
 	 * Rebound.
 	 *
@@ -1605,7 +1627,6 @@ class GameSim {
 	 *
 	 * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
 	 */
-
 	doReb() {
 		let p;
 		let ratios;
@@ -1632,6 +1653,7 @@ class GameSim {
 		this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);
 		return "orb";
 	}
+
 	/**
 	 * Generate an array of composite ratings.
 	 *
@@ -1640,7 +1662,6 @@ class GameSim {
 	 * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
-
 	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
 		const array = [0, 0, 0, 0, 0];
 		let total = 0; // Scale composite ratings
@@ -1652,8 +1673,9 @@ class GameSim {
 					fatigue(this.team[t].player[p].stat.energy)) **
 				power;
 			total += array[i];
-		} // Set floor (5% of total)
+		}
 
+		// Set floor (5% of total)
 		const floor = 0.05 * total;
 
 		for (let i = 0; i < 5; i++) {
@@ -1664,6 +1686,7 @@ class GameSim {
 
 		return array;
 	}
+
 	/**
 	 * Increments a stat (s) for a player (p) on a team (t) by amount (default is 1).
 	 *
@@ -1672,7 +1695,6 @@ class GameSim {
 	 * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
 	 * @param {number} amt Amount to increment (default is 1).
 	 */
-
 	recordStat(t: TeamNum, p: number, s: Stat, amt: number = 1) {
 		this.team[t].player[p].stat[s] += amt;
 

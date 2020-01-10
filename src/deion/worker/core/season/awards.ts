@@ -190,8 +190,9 @@ const getTopPlayers = (
 		players.length < actualAmount
 	) {
 		throw new Error("Not enough players");
-	} // If all players are filtered out above (like MIP initial year), then this will return an empty array
+	}
 
+	// If all players are filtered out above (like MIP initial year), then this will return an empty array
 	return players.slice(0, actualAmount);
 };
 

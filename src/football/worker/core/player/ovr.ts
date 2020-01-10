@@ -168,8 +168,9 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
 
 	if (pos === "K" || pos === "P") {
 		r = Math.round(r * 0.75);
-	} // QB should never be KR/PR
+	}
 
+	// QB should never be KR/PR
 	if (ratings.pos === "QB" && (pos === "KR" || pos === "PR")) {
 		r = Math.round(r * 0.5);
 	}

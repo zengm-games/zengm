@@ -44,8 +44,9 @@ const madeHof = (
 		if (i < 5) {
 			df += winShares[i];
 		}
-	} // Fudge factor for players generated when the league started
+	}
 
+	// Fudge factor for players generated when the league started
 	const fudgeSeasons = g.startingSeason - p.draft.year - 5;
 
 	if (fudgeSeasons > 0) {

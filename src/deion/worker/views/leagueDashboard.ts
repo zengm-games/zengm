@@ -330,8 +330,9 @@ async function updatePlayers(
 					value: 0,
 				});
 			}
-		} // Team leaders
+		}
 
+		// Team leaders
 		const userPlayers = players.filter(p => p.tid === g.userTid);
 		const teamLeaders = [];
 

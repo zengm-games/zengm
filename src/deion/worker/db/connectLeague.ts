@@ -19,8 +19,9 @@ const upgrade29 = tx => {
 
 			if (!Array.isArray(p.relatives)) {
 				p.relatives = [];
-			} // This can be really slow, so need some UI for progress
+			}
 
+			// This can be really slow, so need some UI for progress
 			const century = Math.floor(p.draft.year / 100);
 
 			if (century > lastCentury) {
@@ -476,16 +477,18 @@ const migrateLeague = (upgradeDB, lid) => {
 					} else {
 						r.diq = 50;
 					}
-				} // Add oiq
+				}
 
+				// Add oiq
 				if (typeof r.oiq !== "number") {
 					r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
 
 					if (typeof r.oiq !== "number") {
 						r.oiq = 50;
 					}
-				} // Scale ratings
+				}
 
+				// Scale ratings
 				const ratingKeys = [
 					"stre",
 					"spd",

@@ -30,8 +30,9 @@ const iqFormula = {
 
 		if (age <= 23) {
 			return 2;
-		} // Reverse most of the age-related decline in calcBaseChange
+		}
 
+		// Reverse most of the age-related decline in calcBaseChange
 		if (age <= 27) {
 			return 0;
 		}
@@ -126,16 +127,18 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 		val = -3;
 	} else {
 		val = -4;
-	} // Noise
+	}
 
+	// Noise
 	if (age <= 23) {
 		val += random.truncGauss(0, 5, -4, 15);
 	} else if (age <= 25) {
 		val += random.truncGauss(0, 5, -4, 7);
 	} else {
 		val += random.truncGauss(0, 3, -2, 3);
-	} // Modulate by coaching. g.numTeams doesn't exist when upgrading DB, but that doesn't matter
+	}
 
+	// Modulate by coaching. g.numTeams doesn't exist when upgrading DB, but that doesn't matter
 	if (g.hasOwnProperty("numTeams")) {
 		if (val >= 0) {
 			val *= ((coachingRank - 1) * -0.5) / (g.numTeams - 1) + 1.25;

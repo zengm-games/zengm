@@ -110,8 +110,9 @@ async function updatePlayer(
 			return {
 				errorMessage: "Player not found.",
 			};
-		} // Account for extra free agent demands
+		}
 
+		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
 			p.contract.amount = freeAgents.amountWithMood(
 				p.contract.amount,

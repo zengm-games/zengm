@@ -38,16 +38,18 @@ const autoSign = async () => {
 		// Skip the user's team
 		if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
 			continue;
-		} // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+		}
 
+		// Small chance of actually trying to sign someone in free agency, gets greater as time goes on
 		if (
 			process.env.SPORT === "basketball" &&
 			g.phase === PHASE.FREE_AGENCY &&
 			Math.random() < (0.99 * g.daysLeft) / 30
 		) {
 			continue;
-		} // Skip rebuilding teams sometimes
+		}
 
+		// Skip rebuilding teams sometimes
 		if (
 			process.env.SPORT === "basketball" &&
 			strategies[tid] === "rebuilding" &&

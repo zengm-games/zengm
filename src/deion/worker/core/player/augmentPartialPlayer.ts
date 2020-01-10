@@ -40,8 +40,9 @@ const augmentPartialPlayer = (
 			.split(" ")
 			.slice(1, p.name.split(" ").length)
 			.join(" ");
-	} // This is used to get at default values for various attributes
+	}
 
+	// This is used to get at default values for various attributes
 	const pg = generate(
 		p.tid,
 		age,
@@ -131,8 +132,9 @@ const augmentPartialPlayer = (
 
 	if (typeof p.draft.ovr !== "number") {
 		p.draft.ovr = 0;
-	} // Fix always-missing info
+	}
 
+	// Fix always-missing info
 	const offset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
 	if (p.tid === PLAYER.UNDRAFTED && g.phase !== PHASE.FANTASY_DRAFT) {
@@ -171,8 +173,9 @@ const augmentPartialPlayer = (
 	} else if (g.phase !== PHASE.FANTASY_DRAFT) {
 		if (!p.ratings[0].hasOwnProperty("season")) {
 			p.ratings[0].season = g.season;
-		} // Fix improperly-set season in ratings
+		}
 
+		// Fix improperly-set season in ratings
 		if (
 			p.ratings.length === 1 &&
 			p.ratings[0].season < g.season &&
@@ -184,8 +187,9 @@ const augmentPartialPlayer = (
 
 	if (!Array.isArray(p.draft.skills)) {
 		p.draft.skills = [];
-	} // Height rescaling
+	}
 
+	// Height rescaling
 	if (version === undefined || version <= 23) {
 		for (const r of p.ratings) {
 			if (!overrides.core.player.heightToRating) {
@@ -240,8 +244,9 @@ const augmentPartialPlayer = (
 				r.pos = overrides.core.player.pos(r);
 			}
 		}
-	} // Rating rescaling
+	}
 
+	// Rating rescaling
 	if (
 		process.env.SPORT === "basketball" &&
 		(version === undefined || version <= 26)
@@ -256,16 +261,18 @@ const augmentPartialPlayer = (
 				} else {
 					r.diq = 50;
 				}
-			} // Add oiq
+			}
 
+			// Add oiq
 			if (typeof r.oiq !== "number") {
 				r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
 
 				if (typeof r.oiq !== "number") {
 					r.oiq = 50;
 				}
-			} // Scale ratings
+			}
 
+			// Scale ratings
 			const ratingKeys = [
 				"stre",
 				"spd",
@@ -309,16 +316,18 @@ const augmentPartialPlayer = (
 				p.draft.pot = r.pot;
 			}
 		}
-	} // Handle old format position
+	}
 
+	// Handle old format position
 	if (p.hasOwnProperty("pos")) {
 		for (let i = 0; i < p.ratings.length; i++) {
 			if (!p.ratings[i].hasOwnProperty("pos")) {
 				p.ratings[i].pos = p.pos;
 			}
 		}
-	} // Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
+	}
 
+	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 	updateValues(p);
 
 	if (!p.hasOwnProperty("salaries")) {
@@ -341,8 +350,9 @@ const augmentPartialPlayer = (
 		if (p.tid >= 0 && p.salaries.length === 0) {
 			setContract(p, p.contract, true);
 		}
-	} // If no stats in League File, create blank stats rows for active players if necessary
+	}
 
+	// If no stats in League File, create blank stats rows for active players if necessary
 	if (!Array.isArray(p.stats)) {
 		p.stats = [];
 	}
@@ -365,23 +375,26 @@ const augmentPartialPlayer = (
 			// Could be calculated correctly if I wasn't lazy
 			if (!ps.hasOwnProperty("yearsWithTeam")) {
 				ps.yearsWithTeam = 1;
-			} // If needed, set missing +/-, blocks against to 0
+			}
 
+			// If needed, set missing +/-, blocks against to 0
 			if (!ps.hasOwnProperty("ba")) {
 				ps.ba = 0;
 			}
 
 			if (!ps.hasOwnProperty("pm")) {
 				ps.pm = 0;
-			} // Handle any missing stats
+			}
 
+			// Handle any missing stats
 			for (const key of statKeys) {
 				if (!ps.hasOwnProperty(key)) {
 					ps[key] = 0;
 				}
 			}
-		} // Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
+		}
 
+		// Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
 		if (g.phase === PHASE.PRESEASON) {
 			const lastSeason = p.stats[p.stats.length - 1].season;
 

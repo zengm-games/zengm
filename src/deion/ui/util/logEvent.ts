@@ -26,8 +26,9 @@ const showEvent = ({
 
 	if (persistent && extraClass === undefined) {
 		extraClass = "notification-danger";
-	} // Don't show non-critical notification if we're viewing a live game now
+	}
 
+	// Don't show non-critical notification if we're viewing a live game now
 	if (!window.location.pathname.includes("/live") || persistent) {
 		notify(text, title, {
 			extraClass,
@@ -41,8 +42,9 @@ const showEvent = ({
 				}
 			});
 		}
-	} // Hacky way to make sure there is room for the multi team mode menu
+	}
 
+	// Hacky way to make sure there is room for the multi team mode menu
 	const notificationContainer = document.getElementById(
 		"notification-container",
 	);

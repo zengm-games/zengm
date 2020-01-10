@@ -85,8 +85,9 @@ const defaultYlim = (data, stacked) => {
 		if (x[i] > max) {
 			max = x[i];
 		}
-	} // Add on some padding
+	}
 
+	// Add on some padding
 	min -= 0.1 * (max - min);
 	max += 0.1 * (max - min); // Make sure 0 is in range
 
@@ -96,8 +97,9 @@ const defaultYlim = (data, stacked) => {
 
 	if (max < 0) {
 		max = 0;
-	} // For stacked plots, min is always 0
+	}
 
+	// For stacked plots, min is always 0
 	if (stacked) {
 		min = 0;
 	}
@@ -139,8 +141,9 @@ const BarGraph = (props: Props) => {
 
 	if (data.length === 0) {
 		return null;
-	} // Stacked plot or not?
+	}
 
+	// Stacked plot or not?
 	const stacked = data[0].hasOwnProperty("length");
 	const numBars = stacked ? data[0].length : data.length;
 
@@ -164,8 +167,9 @@ const BarGraph = (props: Props) => {
 				scaled[i][j] = scale(data[i][j], ylim);
 			}
 		}
-	} // Draw bars
+	}
 
+	// Draw bars
 	let bars;
 
 	if (!stacked) {
@@ -175,8 +179,9 @@ const BarGraph = (props: Props) => {
 
 			if (labels !== undefined) {
 				titleStart = `${labels[i]}: `;
-			} // Fix for negative values
+			}
 
+			// Fix for negative values
 			let bottom;
 			let cssClass;
 			let height;

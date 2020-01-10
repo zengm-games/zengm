@@ -72,8 +72,9 @@ async function updateTeams(
 					}
 				}
 			}
-		} // Sort stats so we can determine what percentile our team is in.
+		}
 
+		// Sort stats so we can determine what percentile our team is in.
 		const allStats = {};
 		let statTypes = seasonAttrs.slice();
 
@@ -168,8 +169,9 @@ async function updateTeams(
 					allStats[statType].push(value);
 				}
 			}
-		} // Sort stat types. "Better" values are at the start of the arrays.
+		}
 
+		// Sort stat types. "Better" values are at the start of the arrays.
 		for (const statType of Object.keys(allStats)) {
 			allStats[statType].sort((a, b) => {
 				// Sort lowest first.
@@ -183,8 +185,9 @@ async function updateTeams(
 					}
 
 					return 0;
-				} // Sort highest first.
+				}
 
+				// Sort highest first.
 				if (a < b) {
 					return 1;
 				}

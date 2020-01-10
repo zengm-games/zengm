@@ -45,8 +45,9 @@ const makeItWork = async (
 					});
 				}
 			}
-		} // Get all players not in otherPids
+		}
 
+		// Get all players not in otherPids
 		const players = await idb.getCopies.players({
 			tid: teams[1].tid,
 		});
@@ -86,8 +87,9 @@ const makeItWork = async (
 					});
 				}
 			}
-		} // Get all draft picks not in otherDpids
+		}
 
+		// Get all draft picks not in otherDpids
 		const draftPicks = await idb.cache.draftPicks.indexGetAll(
 			"draftPicksByTid",
 			teams[1].tid,
@@ -105,12 +107,14 @@ const makeItWork = async (
 					tid: teams[1].tid,
 				});
 			}
-		} // If we've already added 5 assets or there are no more to try, stop
+		}
 
+		// If we've already added 5 assets or there are no more to try, stop
 		if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
 			return;
-		} // Calculate the value for each asset added to the trade, for use in forward selection
+		}
 
+		// Calculate the value for each asset added to the trade, for use in forward selection
 		await Promise.all(
 			assets.map(async asset => {
 				const userPids = teams[0].pids.slice();

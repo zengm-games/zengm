@@ -96,8 +96,9 @@ async function updateHistory(
 					};
 				}
 			}
-		} // Count up number of championships per team
+		}
 
+		// Count up number of championships per team
 		const championshipsByTid = Array(g.numTeams).fill(0);
 
 		for (let i = 0; i < seasons.length; i++) {

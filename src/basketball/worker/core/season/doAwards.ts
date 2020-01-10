@@ -119,8 +119,9 @@ const getRealFinalsMvp = async (
 
 	if (finalsGames.length === 0) {
 		return;
-	} // Calculate sum of game scores for each player
+	}
 
+	// Calculate sum of game scores for each player
 	const playerInfos: Map<
 		number,
 		{
@@ -282,14 +283,16 @@ const doAwards = async (conditions: Conditions) => {
 				// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
 				if (p.draft.year + 2 >= g.season && p.draft.round === 1) {
 					return false;
-				} // Must have stats last year!
+				}
 
+				// Must have stats last year!
 				const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
 
 				if (oldStatsAll.length === 0) {
 					return false;
-				} // Sanity check, needed with PER, and easier to do here rather than in filter
+				}
 
+				// Sanity check, needed with PER, and easier to do here rather than in filter
 				const oldStats = oldStatsAll[oldStatsAll.length - 1];
 
 				if (
@@ -318,23 +321,27 @@ const doAwards = async (conditions: Conditions) => {
 
 				if (minOld < 15 * mipFactor) {
 					score -= 0.05 * (15 * mipFactor - minOld / g.numGames);
-				} // Penalty - lose additional 0.05 for every mpg last season under 10
+				}
 
+				// Penalty - lose additional 0.05 for every mpg last season under 10
 				if (minOld < 15 * mipFactor) {
 					score -= 0.05 * (15 * mipFactor - minOld / g.numGames);
-				} // Penalty - lose 0.01 for every mpg this season under 30
+				}
 
+				// Penalty - lose 0.01 for every mpg this season under 30
 				if (min < 30 * mipFactor) {
 					score -= 0.01 * (30 * mipFactor - min / g.numGames);
-				} // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
+				}
 
+				// Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
 				if (ewa < 1.25 * ewaMax) {
 					let ratio = 1;
 
 					if (ewaMax !== 0) {
 						ratio = ewa / ewaMax;
-					} // Sanity check... don't want two negative numbers blowing up the ratio
+					}
 
+					// Sanity check... don't want two negative numbers blowing up the ratio
 					if (ratio < 0 || (ewa < 0 && ewaMax < 0)) {
 						ratio = 0;
 					}
@@ -428,8 +435,9 @@ const doAwards = async (conditions: Conditions) => {
 			name,
 			type,
 		});
-	} // Special cases for teams
+	}
 
+	// Special cases for teams
 	for (const key of ["allRookie", "allLeague", "allDefensive"]) {
 		const type = awardNames[key];
 

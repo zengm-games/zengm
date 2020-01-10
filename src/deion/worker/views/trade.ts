@@ -42,8 +42,9 @@ async function updateSummary(vars) {
 		};
 	});
 	return vars;
-} // Validate that the stored player IDs correspond with the active team ID
+}
 
+// Validate that the stored player IDs correspond with the active team ID
 const validateTeams = async () => {
 	const { teams } = await idb.cache.trade.get(0); // Handle case where multi team mode is used to switch teams, but a trade was already happening with the team that was just switched to
 
@@ -65,8 +66,9 @@ const validateTeams = async () => {
 			dpids: [],
 			dpidsExcluded: [],
 		};
-	} // This is just for debugging
+	}
 
+	// This is just for debugging
 	team
 		.valueChange(
 			teams[1].tid,

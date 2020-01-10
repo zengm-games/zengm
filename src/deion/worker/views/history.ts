@@ -57,13 +57,15 @@ async function updateHistory(
 				trb: 0,
 				ast: 0,
 			};
-		} // Hack placeholder for old seasons before Finals MVP existed
+		}
 
+		// Hack placeholder for old seasons before Finals MVP existed
 		if (awards && !awards.hasOwnProperty("allRookie")) {
 			// $FlowFixMe
 			awards.allRookie = [];
-		} // For old league files, this format is obsolete now
+		}
 
+		// For old league files, this format is obsolete now
 		if (awards && awards.bre && awards.brw) {
 			// $FlowFixMe
 			awards.bestRecordConfs = [awards.bre, awards.brw];

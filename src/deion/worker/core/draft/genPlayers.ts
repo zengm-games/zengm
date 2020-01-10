@@ -43,8 +43,9 @@ const genPlayers = async (
 		// $FlowFixMe
 
 		await player.addRelatives(p);
-	} // Easter eggs!
+	}
 
+	// Easter eggs!
 	if (process.env.SPORT === "basketball") {
 		if (Math.random() < 1 / 100000) {
 			const p = player.generate(

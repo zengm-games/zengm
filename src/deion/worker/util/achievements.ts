@@ -20,8 +20,9 @@ const checkDynasty = async (titles: number, years: number) => {
 		// Don't overshoot
 		if (teamSeasons.length - 1 - i < 0) {
 			break;
-		} // Won title?
+		}
 
+		// Won title?
 		if (
 			teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon ===
 			g.numGamesPlayoffSeries.length

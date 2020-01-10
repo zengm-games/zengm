@@ -35,8 +35,9 @@ const OwnerMoodsChart = ({
 			for (const row of data) {
 				allValues.push(row.money, row.playoffs, row.total, row.wins);
 				years.push(row.year);
-			} // totals span -1 to 3, others -3 to 1
+			}
 
+			// totals span -1 to 3, others -3 to 1
 			const yDomain = [
 				Math.min(-1.3, ...allValues),
 				Math.max(3.3, ...allValues),

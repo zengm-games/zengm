@@ -37,8 +37,9 @@ describe("worker/core/player/getPlayerFakeAge", () => {
 			}
 
 			pidCounts[p.pid] += 1;
-		} // 40/81
+		}
 
+		// 40/81
 		assert(
 			pidCounts[0] >= 100,
 			`Player 0 picked ${pidCounts[0]} times, should be more than 100`,

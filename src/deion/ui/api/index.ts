@@ -139,8 +139,9 @@ const showModal = () => {
 
 	if (window.inIframe) {
 		return;
-	} // No ads for Gold members
+	}
 
+	// No ads for Gold members
 	if (local.getState().gold !== false) {
 		return;
 	}

@@ -742,8 +742,9 @@ function deepCopy<T>(obj: T): T {
 	}
 
 	return retVal;
-} // Hacky solution to http://stackoverflow.com/q/39683076/786644
+}
 
+// Hacky solution to http://stackoverflow.com/q/39683076/786644
 function keys<T extends string>(obj: any): Array<T> {
 	// $FlowFixMe
 	return Object.keys(obj);

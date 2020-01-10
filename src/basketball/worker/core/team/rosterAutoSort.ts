@@ -19,8 +19,9 @@ export const findStarters = (positions: string[]): number[] => {
 	for (let i = 0; i < positions.length; i++) {
 		if (starters.length === 5 || (numG >= 2 && numFC >= 2)) {
 			break;
-		} // Make sure we can get 2 G and 2 F/C
+		}
 
+		// Make sure we can get 2 G and 2 F/C
 		if (
 			5 - starters.length >
 				(2 - numG > 0 ? 2 - numG : 0) + (2 - numFC > 0 ? 2 - numFC : 0) ||
@@ -33,8 +34,9 @@ export const findStarters = (positions: string[]): number[] => {
 			numFC += positions[i].includes("F") || positions[i] === "C" ? 1 : 0;
 			numC += positions[i] === "C" ? 1 : 0;
 		}
-	} // Fill in after meeting requirements, but still not too many Cs!
+	}
 
+	// Fill in after meeting requirements, but still not too many Cs!
 	for (let i = 0; i < positions.length; i++) {
 		if (starters.length === 5) {
 			break;
@@ -66,8 +68,9 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 	if (onlyNewPlayers) {
 		// This option is just for football currently
 		return;
-	} // Get roster and sort by value (no potential included)
+	}
 
+	// Get roster and sort by value (no potential included)
 	const playersFromCache = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		tid,
@@ -84,8 +87,9 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
 	} else {
 		players.sort((a, b) => b.valueNoPot - a.valueNoPot);
-	} // Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
+	}
 
+	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
 	const positions = players.map(p => p.ratings.pos);
 	const starters = findStarters(positions);
 	const newPlayers = starters.map(i => players[i]);
@@ -101,8 +105,9 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 
 	for (let i = 0; i < players.length; i++) {
 		rosterOrders.set(players[i].pid, i);
-	} // Update rosterOrder
+	}
 
+	// Update rosterOrder
 	for (const p of playersFromCache) {
 		const rosterOrder = rosterOrders.get(p.pid); // Only write to DB if this actually changes
 

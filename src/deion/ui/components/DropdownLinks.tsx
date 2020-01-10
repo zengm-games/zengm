@@ -76,8 +76,9 @@ const getText = (text): string | any => {
 	if (text.hasOwnProperty("top")) {
 		// $FlowFixMe
 		return text.top;
-	} // $FlowFixMe
+	}
 
+	// $FlowFixMe
 	return text;
 };
 

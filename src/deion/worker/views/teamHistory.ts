@@ -95,8 +95,9 @@ async function updateTeamHistory(
 					p.lastYr = p.stats[j].season.toString();
 					break;
 				}
-			} // Handle case where ratings don't exist
+			}
 
+			// Handle case where ratings don't exist
 			p.pos = p.ratings.length > 0 ? p.ratings[p.ratings.length - 1].pos : "";
 			delete p.ratings;
 			delete p.stats;

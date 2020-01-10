@@ -94,8 +94,9 @@ const processAttrs = (
 					output.draft.pot,
 					p.ratings[0].fuzz,
 				);
-			} // Inject abbrevs
+			}
 
+			// Inject abbrevs
 			output.draft.abbrev = g.teamAbbrevsCache[output.draft.tid];
 			output.draft.originalAbbrev =
 				g.teamAbbrevsCache[output.draft.originalTid];
@@ -170,8 +171,9 @@ const processAttrs = (
 						),
 					});
 				}
-			} // Handle non-default awards, just for fun if someone wants to add more
+			}
 
+			// Handle non-default awards, just for fun if someone wants to add more
 			for (const award of Object.keys(awardsGroupedTemp).sort()) {
 				if (!awardsOrder.includes(award)) {
 					output.awardsGrouped.push({
@@ -495,8 +497,9 @@ const processStats = (
 				statSums[attr] = reduceCareerStats(careerStats, attr, false);
 				statSumsPlayoffs[attr] = reduceCareerStats(careerStats, attr, true);
 			}
-		} // Special case for some variables, weight by minutes
+		}
 
+		// Special case for some variables, weight by minutes
 		for (const attr of weightByMinutes) {
 			if (statSums.hasOwnProperty(attr)) {
 				statSums[attr] /= statSums.min;
@@ -546,8 +549,9 @@ const processPlayer = (p: Player, options: PlayersPlusOptions) => {
 		if (output.stats === undefined && !keepWithNoStats) {
 			return undefined;
 		}
-	} // processRatings must be after processStats for abbrev hack
+	}
 
+	// processRatings must be after processStats for abbrev hack
 	if (options.ratings.length > 0) {
 		processRatings(output, p, options); // This should be mostly redundant with hasRatingsSeason above
 

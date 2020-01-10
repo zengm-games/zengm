@@ -12,12 +12,14 @@ const loadGameAttributes = async () => {
 
 	for (let i = 0; i < gameAttributes.length; i++) {
 		g[gameAttributes[i].key] = gameAttributes[i].value;
-	} // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
+	}
 
+	// Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
 	if (g.userTids === undefined) {
 		g.userTids = [g.userTid];
-	} // Set defaults to avoid IndexedDB upgrade
+	}
 
+	// Set defaults to avoid IndexedDB upgrade
 	for (const key of helpers.keys(defaultGameAttributes)) {
 		if (g[key] === undefined) {
 			if (
@@ -37,8 +39,9 @@ const loadGameAttributes = async () => {
 				g[key] = defaultGameAttributes[key];
 			}
 		}
-	} // Avoid IDB upgrade
+	}
 
+	// Avoid IDB upgrade
 	if (g.draftType === "nba") {
 		g.draftType = "nba2019";
 	}

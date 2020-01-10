@@ -152,8 +152,9 @@ const updatePlayMenu = async () => {
 
 		if (allStarScheduled && !allStarNext) {
 			untilAllStarGame.push("untilAllStarGame");
-		} // Regular season - pre trading deadline
+		}
 
+		// Regular season - pre trading deadline
 		if (process.env.SPORT === "basketball") {
 			keys = [
 				"day",
@@ -233,8 +234,9 @@ const updatePlayMenu = async () => {
 
 	if (lock.get("newPhase")) {
 		keys = [];
-	} // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
+	}
 
+	// If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
 	if (g.gameOver && !unreadMessage) {
 		keys = ["newTeam", "newLeague"];
 	}

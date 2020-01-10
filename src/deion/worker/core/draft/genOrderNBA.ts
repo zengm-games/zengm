@@ -88,8 +88,9 @@ const genOrder = async (
 			"draftPicksBySeason",
 			g.season,
 		);
-	} // Because we're editing this later, and sometimes this is called with mock=true
+	}
 
+	// Because we're editing this later, and sometimes this is called with mock=true
 	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round
 
 	const draftPicksIndexed = [];
@@ -109,8 +110,9 @@ const genOrder = async (
 
 	if (!mock) {
 		logLotteryChances(chancePct, teams, draftPicksIndexed, conditions);
-	} // First round - lottery winners
+	}
 
+	// First round - lottery winners
 	for (let i = 0; i < firstN.length; i++) {
 		const dp = draftPicksIndexed[teams[firstN[i]].tid][1];
 
@@ -128,8 +130,9 @@ const genOrder = async (
 				);
 			}
 		}
-	} // First round - everyone else
+	}
 
+	// First round - everyone else
 	let pick = firstN.length + 1;
 
 	for (let i = 0; i < teams.length; i++) {
@@ -153,8 +156,9 @@ const genOrder = async (
 
 			pick += 1;
 		}
-	} // Save draft lottery results separately
+	}
 
+	// Save draft lottery results separately
 	const draftLotteryResult: DraftLotteryResult = {
 		season: g.season,
 		draftType: g.draftType === "nba1994" ? "nba1994" : "nba2019",
@@ -174,8 +178,9 @@ const genOrder = async (
 			.map(dp => {
 				if (dp === undefined) {
 					throw new Error("Should never happen");
-				} // For the team making the pick
+				}
 
+				// For the team making the pick
 				const t = teams.find(t2 => t2.tid === dp.tid);
 				let won = 0;
 				let lost = 0;
@@ -185,8 +190,9 @@ const genOrder = async (
 					won = t.seasonAttrs.won;
 					lost = t.seasonAttrs.lost;
 					tied = t.seasonAttrs.tied;
-				} // For the original team
+				}
 
+				// For the original team
 				const i = teams.findIndex(t2 => t2.tid === dp.originalTid);
 				return {
 					tid: dp.tid,
@@ -202,8 +208,9 @@ const genOrder = async (
 
 	if (!mock) {
 		await idb.cache.draftLotteryResults.put(draftLotteryResult);
-	} // Sort by winp with reverse randVal for tiebreakers.
+	}
 
+	// Sort by winp with reverse randVal for tiebreakers.
 	teams.sort((a, b) => {
 		const r = a.seasonAttrs.winp - b.seasonAttrs.winp;
 		return r === 0 ? b.randVal - a.randVal : r;

@@ -57,8 +57,9 @@ const updateOwnerMood = async (): Promise<{
 					playoffs: 0,
 					wins: 0,
 			  };
-	} // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
+	}
 
+	// Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
 	const cappedDeltas = { ...deltas };
 
 	if (teamSeason.ownerMood.money + cappedDeltas.money > 1) {
@@ -71,8 +72,9 @@ const updateOwnerMood = async (): Promise<{
 
 	if (teamSeason.ownerMood.wins + cappedDeltas.wins > 1) {
 		cappedDeltas.wins = 1 - teamSeason.ownerMood.wins;
-	} // Only update owner mood if grace period is over
+	}
 
+	// Only update owner mood if grace period is over
 	if (g.season >= g.gracePeriodEnd && !g.godMode) {
 		// Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
 		teamSeason.ownerMood.money += cappedDeltas.money;

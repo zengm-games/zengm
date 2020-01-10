@@ -8,8 +8,9 @@ const getText = (text): string | Element<any> => {
 	if (text.hasOwnProperty("side")) {
 		// $FlowFixMe
 		return text.side;
-	} // $FlowFixMe
+	}
 
+	// $FlowFixMe
 	return text;
 };
 

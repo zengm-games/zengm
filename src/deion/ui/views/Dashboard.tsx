@@ -22,8 +22,9 @@ const difficultyText = (difficulty: number) => {
 
 		if (difficulty === numeric) {
 			return text;
-		} // Iteration is in order, so if we're below the value, there will be no direct hit
+		}
 
+		// Iteration is in order, so if we're below the value, there will be no direct hit
 		if (difficulty < numeric) {
 			if (prevText !== undefined) {
 				return `${prevText}+`;

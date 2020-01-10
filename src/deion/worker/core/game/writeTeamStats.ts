@@ -47,8 +47,9 @@ const writeTeamStats = async (results: GameResults) => {
 			if (process.env.SPORT === "football") {
 				att *= 28;
 			}
-		} // Some things are only paid for regular season games.
+		}
 
+		// Some things are only paid for regular season games.
 		let salaryPaid = 0;
 		let scoutingPaid = 0;
 		let coachingPaid = 0;
@@ -99,8 +100,9 @@ const writeTeamStats = async (results: GameResults) => {
 				sponsorRevenue = ((2500 / g.numGames) * att) / g.defaultStadiumCapacity;
 				merchRevenue = ((2500 / g.numGames) * att) / g.defaultStadiumCapacity;
 			}
-		} // Attendance: base on home team
+		}
 
+		// Attendance: base on home team
 		if (t1 === 0) {
 			att = random.gauss(att, 1000);
 			att *= (45 * 50) / ((g.salaryCap / 90000) * ticketPrice ** 2); // Attendance depends on ticket price. Not sure if this formula is reasonable.
@@ -114,8 +116,9 @@ const writeTeamStats = async (results: GameResults) => {
 
 			att = helpers.bound(att, 0, teamSeason.stadiumCapacity);
 			att = Math.round(att);
-		} // This doesn't really make sense
+		}
 
+		// This doesn't really make sense
 		let ticketRevenue = (ticketPrice * att) / 1000; // [thousands of dollars]
 		// Hype - relative to the expectations of prior seasons
 
@@ -131,8 +134,9 @@ const writeTeamStats = async (results: GameResults) => {
 				winpOld /= teamSeasons.length - 1;
 			} else {
 				winpOld = 0.5; // Default for new games
-			} // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
+			}
 
+			// It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
 			if (Number.isNaN(winp)) {
 				winp = 0;
 			}
@@ -149,8 +153,9 @@ const writeTeamStats = async (results: GameResults) => {
 			} else if (teamSeason.hype < 0) {
 				teamSeason.hype = 0;
 			}
-		} // 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
+		}
 
+		// 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
 		const fudgeFactor = g.userTids.includes(results.team[t1].id)
 			? helpers.bound(1 - 0.2 * g.difficulty, 0, Infinity)
 			: 1;
@@ -175,8 +180,9 @@ const writeTeamStats = async (results: GameResults) => {
 
 			if (!teamSeason.hasOwnProperty("gpHome")) {
 				teamSeason.gpHome = Math.round(teamSeason.gp / 2);
-			} // See also team.js and teamFinances.js
+			}
 
+			// See also team.js and teamFinances.js
 			teamSeason.gpHome += 1;
 		}
 

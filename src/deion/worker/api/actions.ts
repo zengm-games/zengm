@@ -85,8 +85,9 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 
 		if (!p || p.tid < 0) {
 			return;
-		} // Start new trade for a single player, like a Trade For button
+		}
 
+		// Start new trade for a single player, like a Trade For button
 		teams = [
 			{
 				tid: g.userTid,
@@ -108,8 +109,9 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 
 		if (!dp) {
 			return;
-		} // Start new trade for a single player, like a Trade For button
+		}
 
+		// Start new trade for a single player, like a Trade For button
 		teams = [
 			{
 				tid: g.userTid,
@@ -144,8 +146,9 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 				dpidsExcluded: [],
 			},
 		];
-	} // Start a new trade based on a list of pids and dpids, like from the trading block
+	}
 
+	// Start a new trade based on a list of pids and dpids, like from the trading block
 	await trade.create(teams);
 	toUI(["realtimeUpdate", [], helpers.leagueUrl(["trade"])], conditions);
 };

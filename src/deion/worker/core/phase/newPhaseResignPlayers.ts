@@ -170,8 +170,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 					if (contract.amount + payroll > g.salaryCap) {
 						probReSign = 0;
 					}
-				} // Should eventually be smarter than a coin flip
+				}
 
+				// Should eventually be smarter than a coin flip
 				if (Math.random() < probReSign) {
 					contract.exp += 1; // Otherwise contracts could expire this season
 
@@ -191,8 +192,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 				await idb.cache.players.put(p);
 			}
 		}
-	} // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
+	}
 
+	// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
 	const draftProspects = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.UNDRAFTED,
@@ -220,8 +222,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
 		player.updateValues(p);
 		await idb.cache.players.put(p);
-	} // Generate a new draft class, while leaving existing players in that draft class in place
+	}
 
+	// Generate a new draft class, while leaving existing players in that draft class in place
 	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6);
 	const numPlayersAlreadyInDraftClass = draftProspects.filter(
 		p => p.draft.year === g.season + 3,
@@ -236,8 +239,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 		if (p.draft.year <= g.season) {
 			await idb.cache.players.delete(p.pid);
 		}
-	} // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
+	}
 
+	// Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
 	await league.setGameAttributes({
 		daysLeft: 30,
 	});

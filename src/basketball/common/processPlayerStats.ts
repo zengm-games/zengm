@@ -79,13 +79,15 @@ const processStats = (
 		} else {
 			const val = stat === "trb" ? ps.drb + ps.orb : ps[stat];
 			row[stat] = ps.gp > 0 ? val / ps.gp : 0;
-		} // For keepWithNoStats
+		}
 
+		// For keepWithNoStats
 		if (row[stat] === undefined || Number.isNaN(row[stat])) {
 			row[stat] = 0;
 		}
-	} // Since they come in same stream, always need to be able to distinguish
+	}
 
+	// Since they come in same stream, always need to be able to distinguish
 	row.playoffs = ps.playoffs;
 	return row;
 };

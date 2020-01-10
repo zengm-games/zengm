@@ -191,8 +191,9 @@ const roundStat = (
 	try {
 		if (typeof value === "string") {
 			return value;
-		} // Number of decimals for many stats
+		}
 
+		// Number of decimals for many stats
 		const d = totals ? 0 : 1;
 
 		if (Number.isNaN(value)) {

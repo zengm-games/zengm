@@ -45,8 +45,9 @@ async function getProcessedGameList(
 		games = await idb.cache.games.getAll();
 	} else {
 		games = await idb.league.games.index("season").getAll(season);
-	} // Iterate backwards, was more useful back when current season wasn't cached
+	}
 
+	// Iterate backwards, was more useful back when current season wasn't cached
 	for (let i = games.length - 1; i >= 0; i--) {
 		const gm = games[i];
 
@@ -62,8 +63,9 @@ async function getProcessedGameList(
 			overtime = ` (${gm.overtimes}OT)`;
 		} else {
 			overtime = "";
-		} // Check tid
+		}
 
+		// Check tid
 		if (gm.teams[0].tid === tid || gm.teams[1].tid === tid) {
 			const oppAbbrevOverride = abbrev === "special" ? "ASG" : undefined;
 

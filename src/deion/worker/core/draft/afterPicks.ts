@@ -18,8 +18,9 @@ const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {
 			for (const p of playersUndrafted) {
 				player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
 				await idb.cache.players.put(p);
-			} // Swap back in normal draft class
+			}
 
+			// Swap back in normal draft class
 			const players = await idb.cache.players.indexGetAll(
 				"playersByTid",
 				PLAYER.UNDRAFTED_FANTASY_TEMP,

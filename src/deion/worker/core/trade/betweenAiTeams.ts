@@ -77,12 +77,14 @@ const betweenAiTeams = async () => {
 
 	if (teams === undefined) {
 		return;
-	} // Don't do trades of just picks, it's weird usually
+	}
 
+	// Don't do trades of just picks, it's weird usually
 	if (teams[0].pids.length === 0 && teams[1].pids.length === 0) {
 		return;
-	} // Don't do trades for nothing, it's weird usually
+	}
 
+	// Don't do trades for nothing, it's weird usually
 	if (teams[1].pids.length === 0 && teams[1].dpids.length === 0) {
 		return;
 	}

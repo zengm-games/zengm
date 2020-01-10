@@ -107,8 +107,9 @@ const getCopies = async ({
 			) {
 				throw new Error("Not implemented");
 			}
-		} // This works if tid is a number or [min, max]
+		}
 
+		// This works if tid is a number or [min, max]
 		return helpers.deepCopy(
 			(await idb.cache.players.indexGetAll("playersByTid", tid)).filter(filter),
 		);

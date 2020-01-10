@@ -90,8 +90,9 @@ const getProbs = (
 				}
 			}
 		}
-	} // Fill in picks (N+1)+
+	}
 
+	// Fill in picks (N+1)+
 	for (let i = 0; i < result.length; i++) {
 		const skipped = [0, 0, 0, 0, 0]; // Probabilities of being "skipped" (lower prob team in top N) 0/1/2/3/4 times
 
@@ -108,8 +109,9 @@ const getProbs = (
 			if (!inds.includes(i)) {
 				skipped[skipCount] += prob;
 			}
-		} // Fill in table after first N picks
+		}
 
+		// Fill in table after first N picks
 		for (let j = 0; j < (draftType === "nba2019" ? 5 : 4); j++) {
 			if (i + j > (draftType === "nba2019" ? 3 : 2) && i + j < result.length) {
 				probs[i][i + j] = skipped[j];

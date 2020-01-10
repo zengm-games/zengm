@@ -37,8 +37,9 @@ const getPickValues = async (): Promise<TradePickValues> => {
 				maxLength = estValues[players[0].draft.year].length;
 			}
 		}
-	} // Handle case where draft is in progress
+	}
 
+	// Handle case where draft is in progress
 	if (g.phase === PHASE.DRAFT) {
 		// See what the lowest remaining pick is
 		const numPicks = 2 * g.numTeams;
@@ -52,8 +53,9 @@ const getPickValues = async (): Promise<TradePickValues> => {
 			const fakeValues = Array(diff).fill(50);
 			estValues[g.season] = fakeValues.concat(estValues[g.season]);
 		}
-	} // Defaults are the average of future drafts
+	}
 
+	// Defaults are the average of future drafts
 	const seasons = Object.keys(estValues);
 	estValues.default = range(maxLength).map(i => {
 		const vals = seasons

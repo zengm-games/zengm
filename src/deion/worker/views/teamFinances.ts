@@ -46,8 +46,9 @@ async function updateTeamFinances(
 			showInt = g.season - g.startingSeason + 1;
 		} else {
 			showInt = parseInt(inputs.show, 10);
-		} // Convert contract objects into table rows
+		}
 
+		// Convert contract objects into table rows
 		const contractTotals = [0, 0, 0, 0, 0];
 		let season = g.season;
 
@@ -120,14 +121,16 @@ async function updateTeamFinances(
 				}
 			}
 			/* eslint-enable no-loop-func */
-		} // Process some values
+		}
 
+		// Process some values
 		barData.att = barData.att.map((num, i) => {
 			if (teamSeasons[i] !== undefined) {
 				if (!teamSeasons[i].hasOwnProperty("gpHome")) {
 					teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2);
-				} // See also game.js and team.js
+				}
 
+				// See also game.js and team.js
 				if (teamSeasons[i].gpHome > 0) {
 					return num / teamSeasons[i].gpHome; // per game
 				}

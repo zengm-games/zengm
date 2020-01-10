@@ -90,8 +90,9 @@ const processSeasonAttrs = async (
 		seasons = await idb.league.teamSeasons
 			.index("season, tid")
 			.getAll([season, t.tid]);
-	} // If a season is requested but not in the database, make a fake season so at least some dummy values are returned
+	}
 
+	// If a season is requested but not in the database, make a fake season so at least some dummy values are returned
 	if (season !== undefined && seasons.length === 0) {
 		const dummySeason = team.genSeasonRow(t.tid);
 		dummySeason.season = season;
@@ -119,8 +120,9 @@ const processSeasonAttrs = async (
 
 					if (!ts.hasOwnProperty("gpHome")) {
 						ts.gpHome = Math.round(ts.gp / 2);
-					} // See also game.js and teamFinances.js
+					}
 
+					// See also game.js and teamFinances.js
 					if (ts.gpHome > 0) {
 						row.att = ts.att / ts.gpHome;
 					}
@@ -243,8 +245,9 @@ const processStats = async (
 		teamStats = await idb.league.teamStats
 			.index("season, tid")
 			.getAll([season, t.tid]);
-	} // Handle playoffs/regularSeason
+	}
 
+	// Handle playoffs/regularSeason
 	teamStats = filterOrderStats(teamStats, playoffs, regularSeason);
 
 	if (teamStats.length === 0) {

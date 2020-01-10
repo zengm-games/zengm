@@ -496,8 +496,9 @@ const achievements: Achievement[] = [
 
 			if (!sevenGameFinals) {
 				return false;
-			} // Confirm lost last 4 games
+			}
 
+			// Confirm lost last 4 games
 			const games = await idb.cache.games.getAll();
 			const last4 = games.slice(-4);
 

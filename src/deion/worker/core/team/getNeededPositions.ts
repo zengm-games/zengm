@@ -16,8 +16,9 @@ const getNeededPositions = (players: Player[]) => {
 		if (counts.hasOwnProperty(pos)) {
 			counts[pos] -= 1;
 		}
-	} // Special case - if there are some positions where 0 players are on roster, put those first with some probability. This ensures K/P is always on team.
+	}
 
+	// Special case - if there are some positions where 0 players are on roster, put those first with some probability. This ensures K/P is always on team.
 	if (Math.random() < 0.25) {
 		for (const [pos, numNeeded] of Object.entries(counts)) {
 			if (numNeeded === overrides.common.constants.POSITION_COUNTS[pos]) {

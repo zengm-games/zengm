@@ -90,8 +90,9 @@ const BoxPlot = ({
 
 	if (scale === undefined) {
 		scale = [Math.floor(val.min), Math.ceil(val.max)];
-	} // Scale the markers on the plot to be relative to the size of the canvas. All these values are percentages.
+	}
 
+	// Scale the markers on the plot to be relative to the size of the canvas. All these values are percentages.
 	const x = {
 		min: scaleValue(val.min, scale),
 		q1: scaleValue(val.q1, scale),

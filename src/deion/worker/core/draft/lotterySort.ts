@@ -20,8 +20,9 @@ const lotterySort = (teams: TeamFiltered[]) => {
 
 	for (let i = 0; i < teams.length; i++) {
 		teams[i].randVal = randValues[i];
-	} // If the playoffs haven't started yet, need to project who would be in the playoffs
+	}
 
+	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.phase < PHASE.PLAYOFFS) {
 		const { tidPlayoffs } = season.genPlayoffSeries(helpers.orderByWinp(teams));
 

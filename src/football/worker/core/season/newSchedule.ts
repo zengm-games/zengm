@@ -35,8 +35,9 @@ const newScheduleDefault = (teams): [number, number][] => {
 				}
 			}
 		}
-	} // Constraint: 5 home games vs. teams from other divisions
+	}
 
+	// Constraint: 5 home games vs. teams from other divisions
 	let failures = 0;
 
 	while (true) {
@@ -101,8 +102,9 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
 			if (tid0 !== "DUMMY" && tid1 !== "DUMMY") {
 				matchups.push([tid0, tid1]);
 			}
-		} // Permute tids for next round - take the last one and move it up to 2nd, leaving 1st in place
+		}
 
+		// Permute tids for next round - take the last one and move it up to 2nd, leaving 1st in place
 		tids.splice(1, 0, tids.pop());
 	}
 
@@ -147,8 +149,9 @@ export const newScheduleCrappy = (): [number, number][] => {
 
 				if (numRemaining[j] === 0) {
 					numWithRemaining -= 1;
-				} // Randomize which team is home or away. This is done because otherwise the first team could have all home games if numGames > numTeams
+				}
 
+				// Randomize which team is home or away. This is done because otherwise the first team could have all home games if numGames > numTeams
 				if (Math.random() > 0.5) {
 					matchups.push(matchup);
 				} else {
@@ -199,8 +202,9 @@ const newSchedule = (teams: Team[]): [number, number][] => {
 		tids = newScheduleDefault(teams);
 	} else {
 		tids = newScheduleCrappy();
-	} // Order the schedule so that it takes fewer days to play
+	}
 
+	// Order the schedule so that it takes fewer days to play
 	random.shuffle(tids);
 	const days = [[]];
 	const tidsInDays = [[]];

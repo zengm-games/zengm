@@ -79,8 +79,9 @@ const newPhasePlayoffs = async (
 		}
 
 		await idb.cache.teamSeasons.put(teamSeason);
-	} // Add row to player stats
+	}
 
+	// Add row to player stats
 	await Promise.all(
 		tidPlayoffs.map(async tid => {
 			const players = await idb.cache.players.indexGetAll("playersByTid", tid);

@@ -12,8 +12,9 @@ const ovr = (
 
 	while (ovrs.length < 10) {
 		ovrs.push(0);
-	} // See analysis/team-ovr-basketball
+	}
 
+	// See analysis/team-ovr-basketball
 	const predictedMOV =
 		-124.508969997621 +
 		0.4218802 * ovrs[0] +

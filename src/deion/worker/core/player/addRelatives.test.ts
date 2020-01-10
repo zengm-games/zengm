@@ -205,8 +205,9 @@ describe("worker/core/player/addRelatives", () => {
 
 			if (!brother) {
 				throw new Error("No brother found");
-			} // The 0th entry of both p.relatives and brother.relatives is the father, extraBrother. See comment above.
+			}
 
+			// The 0th entry of both p.relatives and brother.relatives is the father, extraBrother. See comment above.
 			assert.equal(p.relatives.length, 3);
 			assert.equal(p.relatives[1].type, "brother");
 			assert.equal(p.relatives[1].pid, 1);

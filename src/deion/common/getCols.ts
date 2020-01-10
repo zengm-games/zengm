@@ -1838,8 +1838,9 @@ export default (...titles: string[]): Col[] => {
 	return titles.map(title => {
 		if (!actualCols.hasOwnProperty(title)) {
 			throw new Error(`Unknown column: "${title}"`);
-		} // Deep copy so other properties can be set on col, like width
+		}
 
+		// Deep copy so other properties can be set on col, like width
 		return helpers.deepCopy(actualCols[title]);
 	});
 };

@@ -41,8 +41,9 @@ const allStarMVP = async (
 			tid: p.tid,
 			name: `${p.firstName} ${p.lastName}`,
 		}; // Will be saved later
-	} // Save to clutchPlays (attached to ASG box score) and also store/notify normally
+	}
 
+	// Save to clutchPlays (attached to ASG box score) and also store/notify normally
 	if (!game.clutchPlays) {
 		return;
 	}
@@ -120,8 +121,9 @@ const writeGameStats = async (
 				results.team[t].player[p].injury,
 			);
 		}
-	} // Store some extra junk to make box scores easy
+	}
 
+	// Store some extra junk to make box scores easy
 	const [tw, tl] =
 		results.team[0].stat.pts > results.team[1].stat.pts ? [0, 1] : [1, 0];
 	gameStats.won.tid = results.team[tw].id;

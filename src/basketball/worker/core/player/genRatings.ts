@@ -95,8 +95,9 @@ const genRatings = (
 		} else {
 			type = "wing";
 		}
-	} // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
+	}
 
+	// Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
 	const rawRatings = {
 		stre: 37,
 		spd: 40,
@@ -140,8 +141,9 @@ const genRatings = (
 		rawRatings[key] = player.limitRating(
 			factor * typeFactor * random.realGauss(rawRatings[key], 3),
 		);
-	} // Small chance of freakish ability in 2 categories
+	}
 
+	// Small chance of freakish ability in 2 categories
 	/*for (let i = 0; i < 2; i++) {
          if (Math.random() < 0.2) {
              const key = random.choice(Object.keys(rawRatings));

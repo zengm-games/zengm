@@ -11,8 +11,9 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 		throw new Error(
 			`Invalid genSeeds input: ${numPlayoffTeams} teams and ${numPlayoffByes} byes`,
 		);
-	} // Handle byes - replace lowest seeds with undefined
+	}
 
+	// Handle byes - replace lowest seeds with undefined
 	const byeSeeds = [];
 
 	for (let i = 0; i < numPlayoffByes; i++) {

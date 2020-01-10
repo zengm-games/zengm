@@ -11,8 +11,9 @@ const name = (): {
 		// This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
 		playerNames = loadNames();
 		local.playerNames = playerNames;
-	} // Country
+	}
 
+	// Country
 	const cRand = random.uniform(
 		0,
 		playerNames.countries[playerNames.countries.length - 1][1],

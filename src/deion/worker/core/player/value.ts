@@ -51,8 +51,9 @@ const value = (
 	} else {
 		pr.ovr = p.ratings[s].ovr;
 		pr.pot = p.ratings[s].pot;
-	} // From linear regression OVR ~ PER
+	}
 
+	// From linear regression OVR ~ PER
 	const slope = 1.531;
 	const intercept = 31.693; // 1. Account for stats (and current ratings if not enough stats)
 
@@ -88,8 +89,9 @@ const value = (
 		}
 
 		current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
-	} // 2. Potential
+	}
 
+	// 2. Potential
 	let potential = pr.pot;
 
 	if (process.env.SPORT === "football") {
@@ -100,12 +102,14 @@ const value = (
 			current *= 0.25;
 			potential *= 0.25;
 		}
-	} // Short circuit if we don't care about potential
+	}
 
+	// Short circuit if we don't care about potential
 	if (options.noPot) {
 		return current;
-	} // If performance is already exceeding predicted potential, just use that
+	}
 
+	// If performance is already exceeding predicted potential, just use that
 	if (current >= potential) {
 		potential = current;
 	}
@@ -117,8 +121,9 @@ const value = (
 		age = p.draft.year - p.born.year;
 	} else {
 		age = g.season - p.born.year;
-	} // Otherwise, combine based on age
+	}
 
+	// Otherwise, combine based on age
 	if (age <= 19) {
 		return 0.8 * potential + 0.2 * current;
 	}

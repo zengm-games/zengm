@@ -3,9 +3,9 @@ import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g, lock } from "../util";
 
-async function updateFreeAgents(): void | {
+async function updateFreeAgents(): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const payroll = await team.getPayroll(g.userTid);
 	let [userPlayers, players] = await Promise.all([
 		idb.cache.players.indexGetAll("playersByTid", g.userTid),

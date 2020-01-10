@@ -5,9 +5,9 @@ import { g } from "../util";
 async function updateDraftTeamHistory(inputs: {
 	abbrev: string;
 	tid: number;
-}): void | {
+}): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]

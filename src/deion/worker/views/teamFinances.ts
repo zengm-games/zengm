@@ -12,9 +12,9 @@ async function updateTeamFinances(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
@@ -171,9 +171,9 @@ function updateGamesInProgress(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("lock.gameSim") ||
 		inputs.tid !== state.tid ||

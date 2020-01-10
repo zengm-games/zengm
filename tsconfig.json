@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"module": "commonjs",
+		"resolveJsonModule": true,
 		// "allowJs": true,
 		// "checkJs": true,
 		"jsx": "react",
@@ -20,7 +21,11 @@
 		// "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
 		// "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
 		"moduleResolution": "node",
-		// "paths": {},
+		"baseUrl": ".",
+		"paths": {
+			"player-names": ["src/deion/worker/data/names-test.json"],
+			"league-schema": ["build/files/league-schema.json"]
+		},
 		"esModuleInterop": true
 	}
 }

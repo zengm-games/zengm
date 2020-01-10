@@ -5,9 +5,9 @@ import { GetOutput, UpdateEvents } from "../../common/types";
 async function updatePlayers(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const stats =

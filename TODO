@@ -31,6 +31,12 @@ typescript
     - https://github.com/Kiikurage/babel-plugin-flow-to-typescript
       - ...also used in https://github.com/quizlet/ts-migration
     - does fancy stuff to ensure flow types still work even for code moved to typescript... skip that
+- strict options
+- check JS option
+- more JS to TS
+- any
+- changelog
+- void - only in return of function
 
 unify "More" links
 
@@ -675,16 +681,6 @@ https://github.com/pinojs/pino
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
 
 Trade/Signing Negotiation Difficulty - Have from a scale of 1-100. 1 = Signing players will be easy and salary dump trades. 100 = Most players ask for max contracts, and trading and salary dumps will be harder. 50 = Normal
-
-flow
-  backboard
-    BackboardTx should specify object stores
-    should somehow specify contents of object stores
-  cache - similar issue as backboard, would be great to type inputs and outputs
-  get rid of ScheduleGame.highlight
-  get rid of any, Object, etc
-  views: thru live
-  views/views
 
 ---
 

@@ -9,7 +9,7 @@ const file = `build/gen/${name}.js`;
 
 const watcher = rollup.watch({
 	...rollupConfig("development"),
-	input: `src/${sport}/${name}/index.js`,
+	input: `src/${sport}/${name}/index.ts`,
 	output: {
 		name,
 		file,

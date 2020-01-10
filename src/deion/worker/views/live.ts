@@ -2,9 +2,9 @@ import { allStar, season } from "../core";
 import { g, helpers, lock } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updateGamesList(): void | {
+async function updateGamesList(): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const games = helpers.deepCopy(await season.getSchedule(true));
 
 	for (const game of games) {
@@ -38,9 +38,9 @@ async function updateGamesList(): void | {
 async function updateGamesInProgress(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("lock.gameSim")) {
 		return {
 			gamesInProgress: lock.get("gameSim"),

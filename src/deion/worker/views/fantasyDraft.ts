@@ -5,9 +5,9 @@ import { UpdateEvents } from "../../common/types";
 const updateFantasyDraft = async (
 	inputs: {},
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} => {
+}> => {
 	if (updateEvents.includes("firstRun")) {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],

@@ -19,9 +19,9 @@ async function updateRoster(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("watchList") ||
 		(inputs.season === g.season &&

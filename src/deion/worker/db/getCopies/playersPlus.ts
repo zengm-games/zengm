@@ -251,7 +251,7 @@ const processRatings = (
 	}
 
 	output.ratings = playerRatings.map(pr => {
-		const row = {};
+		const row: any = {};
 
 		for (const attr of ratings) {
 			if (attr === "skills") {
@@ -328,7 +328,7 @@ const processRatings = (
 		output.ratings = output.ratings[output.ratings.length - 1];
 
 		if (output.ratings === undefined && showRetired) {
-			const row = {};
+			const row: any = {};
 
 			for (const attr of ratings) {
 				if (attr === "skills") {

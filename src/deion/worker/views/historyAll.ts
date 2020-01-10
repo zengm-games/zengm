@@ -6,9 +6,9 @@ import { GetOutput, UpdateEvents } from "../../common/types";
 async function updateHistory(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)

@@ -52,9 +52,9 @@ async function addSeason(season) {
 async function updateDraftScouting(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")

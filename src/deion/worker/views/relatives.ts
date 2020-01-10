@@ -10,9 +10,9 @@ async function updatePlayers(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun") || pid !== state.pid) {
 		const stats =

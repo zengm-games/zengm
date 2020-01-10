@@ -79,6 +79,7 @@
 		"@rollup/plugin-node-resolve": "^7.0.0",
 		"@rollup/plugin-replace": "^2.3.0",
 		"@types/jest": "^24.0.25",
+		"@types/lodash": "^4.14.149",
 		"babel-eslint": "^10.0.3",
 		"cheerio": "^1.0.0-rc.3",
 		"chokidar": "^3.3.1",

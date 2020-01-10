@@ -6,9 +6,9 @@ async function updateAccount(
 	updateEvents: UpdateEvents,
 	state: any,
 	conditions: Conditions,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
 		const partialTopMenu = await checkAccount(conditions);
 		const loggedIn =
@@ -44,9 +44,9 @@ async function updateAccount(
 async function updateAchievements(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun")) {
 		const achievements = await achievement.getAll();
 		return {

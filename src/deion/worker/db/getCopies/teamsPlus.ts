@@ -14,7 +14,7 @@ import {
 	TeamStats,
 } from "../../../common/types";
 
-type TeamsPlusOptions = {
+export type TeamsPlusOptions = {
 	tid?: number;
 	season?: number;
 	attrs?: TeamAttr[];
@@ -100,7 +100,7 @@ const processSeasonAttrs = async (
 
 	output.seasonAttrs = await Promise.all(
 		seasons.map(async ts => {
-			const row = {}; // Revenue and expenses calculation
+			const row: any = {}; // Revenue and expenses calculation
 
 			const revenue = Object.keys(ts.revenues).reduce(
 				(memo, rev) => memo + ts.revenues[rev].amount,

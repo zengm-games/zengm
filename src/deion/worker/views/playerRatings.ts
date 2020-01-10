@@ -10,9 +10,9 @@ async function updatePlayers(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		(inputs.season === g.season && updateEvents.includes("playerMovement")) ||
 		(updateEvents.includes("newPhase") && g.phase === PHASE.PRESEASON) ||

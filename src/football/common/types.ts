@@ -5,11 +5,10 @@ type AwardTeam = {
 	name: string;
 	won: number;
 	lost: number;
-	tied: number | void;
+	tied: number | undefined;
 };
 export type AwardPlayer = {
 	pid: number;
-	pos: string;
 	name: string;
 	tid: number;
 	abbrev: string;
@@ -20,22 +19,22 @@ export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
 	bestRecordConfs: AwardTeam[];
-	oroy: AwardPlayer | void;
-	droy: AwardPlayer | void;
-	allRookie: (AwardPlayer | void)[];
-	mvp: AwardPlayer | void;
-	dpoy: AwardPlayer | void;
+	oroy: AwardPlayer | undefined;
+	droy: AwardPlayer | undefined;
+	allRookie: (AwardPlayer | undefined)[];
+	mvp: AwardPlayer | undefined;
+	dpoy: AwardPlayer | undefined;
 	allLeague: [
 		{
 			title: "First Team";
-			players: (AwardPlayer | void)[];
+			players: (AwardPlayer | undefined)[];
 		},
 		{
 			title: "Second Team";
-			players: (AwardPlayer | void)[];
+			players: (AwardPlayer | undefined)[];
 		},
 	];
-	finalsMvp: AwardPlayer | void;
+	finalsMvp: AwardPlayer | undefined;
 };
 export type Position =
 	| "QB"
@@ -76,12 +75,8 @@ export type PlayerRatings = {
 	fuzz: number;
 	ovr: number;
 	pot: number;
-	ovrs: {
-		[key: Position]: number;
-	};
-	pots: {
-		[key: Position]: number;
-	};
+	ovrs: Record<Position, number>;
+	pots: Record<Position, number>;
 	pos: string;
 	season: number;
 	skills: string[];

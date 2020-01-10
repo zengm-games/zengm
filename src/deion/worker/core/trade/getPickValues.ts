@@ -13,7 +13,7 @@ import { TradePickValues } from "../../../common/types";
  */
 
 const getPickValues = async (): Promise<TradePickValues> => {
-	const estValues = {};
+	const estValues: TradePickValues = {};
 	let maxLength = 0;
 	const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 

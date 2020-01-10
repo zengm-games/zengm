@@ -8,9 +8,9 @@ async function updateTeams(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		(inputs.season === g.season &&
 			(updateEvents.includes("gameSim") ||

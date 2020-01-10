@@ -7,9 +7,9 @@ import { GetOutput, UpdateEvents } from "../../common/types";
 async function updateInbox(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const messages = await idb.getCopies.messages({
 			limit: 2,
@@ -29,9 +29,9 @@ async function updateInbox(
 async function updateTeam(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -70,9 +70,9 @@ async function updateTeam(
 async function updatePayroll(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
@@ -87,9 +87,9 @@ async function updatePayroll(
 async function updateTeams(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -175,9 +175,9 @@ async function updateGames(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const NUM_SHOW_COMPLETED = 4;
 
 	if (updateEvents.includes("firstRun")) {
@@ -220,9 +220,9 @@ async function updateGames(
 async function updateSchedule(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -268,9 +268,9 @@ async function updateSchedule(
 async function updatePlayers(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -374,9 +374,9 @@ async function updatePlayers(
 async function updatePlayoffs(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		(g.phase >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
@@ -443,9 +443,9 @@ async function updatePlayoffs(
 async function updateStandings(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({

@@ -22,9 +22,7 @@ const defenseStats = [
 	"defFmbYds",
 	"defFmbTD",
 ];
-const stats: {
-	[key: Position]: string[];
-} = {
+const stats: Record<Position, string[]> = {
 	QB: [
 		"pssCmp",
 		"pss",

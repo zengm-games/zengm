@@ -234,7 +234,7 @@ const genRatings = (
 	ratings: PlayerRatings;
 } => {
 	const pos = getPos();
-	const rawRatings = RATINGS.reduce((ratings, rating) => {
+	const rawRatings: any = RATINGS.reduce((ratings, rating) => {
 		ratings[rating] = player.limitRating(random.truncGauss(10, 10, 0, 40));
 		return ratings;
 	}, {});

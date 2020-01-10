@@ -81,9 +81,9 @@ const validateTeams = async () => {
 	return trade.updatePlayers(teams);
 };
 
-async function updateTrade(): void | {
+async function updateTrade(): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const teams = await validateTeams();
 	let userRoster = await idb.cache.players.indexGetAll(
 		"playersByTid",

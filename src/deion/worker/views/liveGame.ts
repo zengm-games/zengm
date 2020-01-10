@@ -10,9 +10,9 @@ async function updatePlayByPlay(
 		playByPlay: any[];
 	},
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun") && !inputs.fromAction) {
 		return {
 			redirectUrl: helpers.leagueUrl(["live"]),

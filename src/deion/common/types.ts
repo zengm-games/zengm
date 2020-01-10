@@ -73,7 +73,7 @@ export type Game = {
 	overtimes: number;
 	scoringSummary?: any;
 	season: number;
-	teams: [object, object];
+	teams: [any, any];
 	won: {
 		tid: number;
 		pts: number;
@@ -162,7 +162,7 @@ export type GameProcessedCompleted = {
 	overtime: string;
 	result: "W" | "L" | "T";
 	score: string;
-	teams: [object, object];
+	teams: [any, any];
 };
 export type GetOutput = {
 	[key: string]: (number | string) | undefined | null;
@@ -408,7 +408,7 @@ export type PlayerWithoutPid<PlayerRatings = any> = {
 		ovr: number;
 		skills: string[];
 	};
-	face: object;
+	face: any;
 	firstName: string;
 	freeAgentMood: number[];
 	gamesUntilTradable: number;

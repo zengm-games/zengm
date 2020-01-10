@@ -11,9 +11,9 @@ async function updateHistory(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const { season } = inputs;
 
 	if (typeof season !== "number") {

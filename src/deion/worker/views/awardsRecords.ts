@@ -196,9 +196,9 @@ async function updateAwardsRecords(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.awardType !== state.awardType

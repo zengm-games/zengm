@@ -15,7 +15,7 @@ const ovr = (
 		"ovr",
 		"desc",
 	);
-	const ovrsByPos = groupBy(ratings, "pos"); // Pad to minimum lengths
+	const ratingsByPos = groupBy(ratings, "pos"); // Pad to minimum lengths
 
 	const minLengths = {
 		QB: 1,
@@ -31,12 +31,13 @@ const ovr = (
 		P: 1,
 	};
 
+	const ovrsByPos: Record<keyof typeof minLengths, number[]> = {};
 	for (const pos of Object.keys(minLengths)) {
-		if (!ovrsByPos[pos]) {
-			ovrsByPos[pos] = [];
+		if (!ratingsByPos[pos]) {
+			ratingsByPos[pos] = [];
 		}
 
-		const ovrs = ovrsByPos[pos].map(r => r.ovr);
+		const ovrs = ratingsByPos[pos].map(r => r.ovr);
 		const minLength = minLengths[pos];
 
 		while (ovrs.length < minLength) {

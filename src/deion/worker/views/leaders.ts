@@ -307,7 +307,7 @@ const getCategoriesAndStats = () => {
 						minValue: [],
 					},
 			  ];
-	const statsSet = new Set();
+	const statsSet = new Set<string>();
 
 	for (const { minStats, statProp } of categories) {
 		statsSet.add(statProp);
@@ -331,9 +331,9 @@ async function updateLeaders(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("watchList") ||

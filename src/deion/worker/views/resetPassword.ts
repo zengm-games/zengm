@@ -2,9 +2,9 @@ import { GetOutput } from "../../common/types";
 
 async function updateToken(
 	inputs: GetOutput,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	return {
 		token: inputs.token,
 	};

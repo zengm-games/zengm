@@ -11,9 +11,9 @@ async function updateEventLog(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.length >= 0 ||
 		inputs.season !== state.season ||

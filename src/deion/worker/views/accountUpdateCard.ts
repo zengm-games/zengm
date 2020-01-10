@@ -7,9 +7,9 @@ async function updateAccountUpdateCard(
 	updateEvents: UpdateEvents,
 	state: any,
 	conditions: Conditions,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
 		const partialTopMenu = await checkAccount(conditions);
 

@@ -3,9 +3,9 @@ import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateNegotiationList(): void | {
+async function updateNegotiationList(): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"]

@@ -7,9 +7,9 @@ import { g, local } from "../util";
 async function updateDraft(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")

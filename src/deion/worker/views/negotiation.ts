@@ -52,9 +52,9 @@ function generateContractOptions(contract, ovr) {
 
 async function updateNegotiation(
 	inputs: GetOutput,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const negotiations: any = await idb.cache.negotiations.getAll();
 	let negotiation;
 

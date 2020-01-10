@@ -4,9 +4,9 @@ import { GetOutput, UpdateEvents } from "../../common/types";
 async function updateExportStats(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const options = [
 			{

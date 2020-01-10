@@ -4,9 +4,9 @@ async function updateNewLeague({
 	lid,
 }: {
 	lid?: number;
-}): void | {
+}): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (lid !== undefined) {
 		// Importing!
 		const l = await idb.meta.leagues.get(lid);

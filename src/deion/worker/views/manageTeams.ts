@@ -1,9 +1,9 @@
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateTeamInfo(): void | {
+async function updateTeamInfo(): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors"],
 		seasonAttrs: ["pop", "stadiumCapacity"],

@@ -161,35 +161,23 @@ class StoreAPI<Input, Output, ID> {
 }
 
 class Cache {
-	_data: {
-		[key: Store]: any;
-	};
+	_data: Record<Store, any>;
 
-	_deletes: {
-		[key: Store]: Set<number | string>;
-	};
+	_deletes: Record<Store, Set<number | string>>;
 
 	_dirty: boolean;
 
 	_dirtyIndexes: Set<Store>;
 
-	_dirtyRecords: {
-		[key: Store]: Set<number | string>;
-	};
+	_dirtyRecords: Record<Store, Set<number | string>>;
 
-	_index2store: {
-		[key: Index]: Store;
-	};
+	_index2store: Record<Index, Store>;
 
-	_indexes: {
-		[key: Index]: any;
-	};
+	_indexes: Record<Index, any>;
 
 	_instanceNum: number;
 
-	_maxIds: {
-		[key: Store]: number;
-	};
+	_maxIds: Record<Store, number>;
 
 	newLeague: boolean;
 
@@ -209,8 +197,9 @@ class Cache {
 
 	_stopAutoFlush: boolean;
 
-	storeInfos: {
-		[key: Store]: {
+	storeInfos: Record<
+		Store,
+		{
 			pk: string;
 			pkType: "number" | "string";
 			autoIncrement: boolean;
@@ -221,12 +210,12 @@ class Cache {
 				key: string[];
 				unique?: boolean;
 			}[];
-		};
-	};
+		}
+	>;
 
-	allStars: StoreAPI<object, object, number>;
+	allStars: StoreAPI<any, any, number>;
 
-	awards: StoreAPI<object, object, number>;
+	awards: StoreAPI<any, any, number>;
 
 	draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
 
@@ -528,7 +517,7 @@ class Cache {
 		}
 	}
 
-	_markDirtyIndexes(store: Store, row: any) {
+	_markDirtyIndexes(store: Store, row?: any) {
 		if (!this.storeInfos[store].indexes || this._dirtyIndexes.has(store)) {
 			return;
 		}

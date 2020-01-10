@@ -30,9 +30,9 @@ async function updatePlayoffs(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||

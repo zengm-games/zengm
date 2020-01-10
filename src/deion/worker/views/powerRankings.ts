@@ -10,9 +10,9 @@ async function updatePowerRankings(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): void | {
+): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	if (
 		(season === g.season && updateEvents.includes("gameSim")) ||
 		season !== state.season

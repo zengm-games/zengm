@@ -5,9 +5,9 @@ import { g } from "../util";
 
 async function updateUpcomingFreeAgents(inputs: {
 	season: number;
-}): void | {
+}): Promise<void | {
 	[key: string]: any;
-} {
+}> {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]

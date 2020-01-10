@@ -16,6 +16,8 @@ typescript
 - to do
   - FlowFixMe
   - tools
+  - void - only in return of function
+  - helpers.keys
 - examples
   - https://medium.com/inato/migrating-from-flow-to-typescript-why-how-worth-it-5b7703d12089
     - some simple search and replace
@@ -36,7 +38,6 @@ typescript
 - more JS to TS
 - any
 - changelog
-- void - only in return of function
 
 unify "More" links
 

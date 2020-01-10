@@ -155,7 +155,7 @@ const genOrder = async (
 		}
 	} // Save draft lottery results separately
 
-	const draftLotteryResult = {
+	const draftLotteryResult: DraftLotteryResult = {
 		season: g.season,
 		draftType: g.draftType === "nba1994" ? "nba1994" : "nba2019",
 		result: teams // Start with teams in lottery order

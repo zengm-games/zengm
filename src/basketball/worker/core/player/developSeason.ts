@@ -54,12 +54,13 @@ const iqFormula = {
 		return [-3, 7 + 5 * (24 - age)];
 	},
 };
-const ratingsFormulas: {
-	[key: RatingKey]: {
+const ratingsFormulas: Record<
+	RatingKey,
+	{
 		ageModifier?: (a: number) => number;
 		changeLimits?: (a: number) => [number, number];
-	};
-} = {
+	}
+> = {
 	stre: {},
 	spd: {
 		ageModifier: (age: number) => {

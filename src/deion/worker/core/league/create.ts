@@ -40,12 +40,13 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 	}
 
 	return values;
-}; // Creates a league, writing nothing to the database.
+};
 
+// Creates a league, writing nothing to the database.
 export const createWithoutSaving = (
 	leagueName: string,
 	tid: number,
-	leagueFile: object,
+	leagueFile: any,
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
@@ -53,8 +54,9 @@ export const createWithoutSaving = (
 	gameAttributes: GameAttributes;
 	[key: string]: object[];
 } => {
-	const teamsDefault = helpers.getTeamsDefault(); // Any custom teams?
+	const teamsDefault = helpers.getTeamsDefault();
 
+	// Any custom teams?
 	let teamInfos: any;
 
 	if (leagueFile.hasOwnProperty("teams")) {
@@ -95,8 +97,9 @@ export const createWithoutSaving = (
 		teamInfos = helpers.addPopRank(teamInfos);
 	} else {
 		teamInfos = teamsDefault;
-	} // Handle random team
+	}
 
+	// Handle random team
 	let userTid = tid;
 
 	if (userTid === -1 || userTid >= teamInfos.length) {
@@ -131,30 +134,35 @@ export const createWithoutSaving = (
 				gameAttributes[leagueFile.gameAttributes[i].key] =
 					leagueFile.gameAttributes[i].value;
 			}
-		} // Special case for userTids - don't use saved value if userTid is not in it
+		}
 
+		// Special case for userTids - don't use saved value if userTid is not in it
 		if (!gameAttributes.userTids.includes(gameAttributes.userTid)) {
 			gameAttributes.userTids = [gameAttributes.userTid];
 		}
-	} // Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
-	// when creating a new league.
+	}
 
+	// Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
+	// when creating a new league.
 	if (difficulty <= DIFFICULTY.Easy) {
 		gameAttributes.easyDifficultyInPast = true;
-	} // Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
+	}
 
+	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
 	const oldNumGames = JSON.stringify(gameAttributes.numGamesPlayoffSeries);
 	gameAttributes.numGamesPlayoffSeries = league.getValidNumGamesPlayoffSeries(
 		gameAttributes.numGamesPlayoffSeries,
 		gameAttributes.numPlayoffRounds,
 		gameAttributes.numTeams,
 	);
-	delete gameAttributes.numPlayoffRounds; // If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
+	delete gameAttributes.numPlayoffRounds;
 
+	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
 	if (oldNumGames !== JSON.stringify(gameAttributes.numGamesPlayoffSeries)) {
 		gameAttributes.numPlayoffByes = 0;
-	} // Validation of some identifiers
+	}
 
+	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
 	const cidsTeam = confirmSequential(teamInfos, "cid", "team");
 	const didsTeam = confirmSequential(teamInfos, "did", "team");
@@ -164,8 +172,9 @@ export const createWithoutSaving = (
 		"conference",
 	);
 	const didsDivs = confirmSequential(gameAttributes.divs, "did", "division");
-	const cidsDivs = confirmSequential(gameAttributes.divs, "cid", "division"); // It's okay to have an empty conference or division, but you can't reference a conference or division that doesn't exist!
+	const cidsDivs = confirmSequential(gameAttributes.divs, "cid", "division");
 
+	// It's okay to have an empty conference or division, but you can't reference a conference or division that doesn't exist!
 	if (cidsConfs.size < cidsTeam.size) {
 		throw new Error(
 			`confs in game attributes only has ${cidsConfs.size} conferences, but your teams belong to ${cidsTeam.size} conferences`,
@@ -182,13 +191,16 @@ export const createWithoutSaving = (
 		throw new Error(
 			`divs in game attributes only has ${didsDivs.size} divisions, but your teams belong to ${didsTeam.size} divisions`,
 		);
-	} // Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
+	}
 
+	// Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
 	helpers.resetG();
-	Object.assign(g, gameAttributes); // Needs to be done after g is set
+	Object.assign(g, gameAttributes);
 
-	const teams = teamInfos.map(t => team.generate(t)); // Draft picks for the first g.numSeasonsFutureDraftPicks years, as those are the ones can be traded initially
+	// Needs to be done after g is set
+	const teams = teamInfos.map(t => team.generate(t));
 
+	// Draft picks for the first g.numSeasonsFutureDraftPicks years, as those are the ones can be traded initially
 	let draftPicks: any;
 
 	if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -215,8 +227,9 @@ export const createWithoutSaving = (
 				}
 			}
 		}
-	} // Import of legacy draftOrder data
+	}
 
+	// Import of legacy draftOrder data
 	if (
 		Array.isArray(leagueFile.draftOrder) &&
 		leagueFile.draftOrder.length > 0 &&
@@ -238,8 +251,9 @@ export const createWithoutSaving = (
 		"draftLotteryResults",
 	)
 		? leagueFile.draftLotteryResults
-		: []; // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
+		: [];
 
+	// teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
 	let scoutingRankTemp;
 	const teamSeasons: any = [];
 	const teamStats: any = [];
@@ -268,10 +282,12 @@ export const createWithoutSaving = (
 			if (typeof teamSeason.stadiumCapacity !== "number") {
 				teamSeason.stadiumCapacity =
 					defaultGameAttributes.defaultStadiumCapacity;
-			} // If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates
+			}
 
-			delete teamSeason.rid; // teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
+			// If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates
+			delete teamSeason.rid;
 
+			// teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
 			teamSeasons.push(teamSeason);
 		}
 
@@ -293,11 +309,13 @@ export const createWithoutSaving = (
 
 			if (typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) {
 				ts.oppBlk = 0;
-			} // teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);
+			}
 
+			// teamStats = teamStats.filter(ts2 => ts2.season !== ts.season);
 			teamStats.push(ts);
-		} // Save scoutingRank for later
+		}
 
+		// Save scoutingRank for later
 		if (i === userTid) {
 			scoutingRankTemp = finances.getRankLastThree(
 				teamSeasonsLocal,
@@ -366,14 +384,16 @@ export const createWithoutSaving = (
 				}
 			}
 		}
-	} // Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are.
+	}
 
+	// Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
 	if (leagueFile.hasOwnProperty("schedule")) {
 		for (const matchup of leagueFile.schedule) {
 			delete matchup.gid;
 		}
-	} // These object stores are blank by default
+	}
 
+	// These object stores are blank by default
 	const toMaybeAdd = [
 		"allStars",
 		"releasedPlayers",
@@ -392,8 +412,9 @@ export const createWithoutSaving = (
 		leagueData[store] = leagueFile.hasOwnProperty(store)
 			? leagueFile[store]
 			: [];
-	} // Do this weird shit rather than genBaseMoods to avoid database access
+	}
 
+	// Do this weird shit rather than genBaseMoods to avoid database access
 	const teamSeasonsForBaseMoods = orderBy(
 		teamSeasons.filter(ts => ts.season === gameAttributes.season),
 		["tid"],
@@ -410,7 +431,9 @@ export const createWithoutSaving = (
 			// Check tid to prevent draft prospects from being swapped with established players
 			const playerTids = leagueFile.players
 				.filter(p => p.tid > PLAYER.FREE_AGENT)
-				.map(p => p.tid); // Shuffle the teams that players are assigned to.
+				.map(p => p.tid);
+
+			// Shuffle the teams that players are assigned to.
 
 			random.shuffle(playerTids);
 
@@ -446,11 +469,14 @@ export const createWithoutSaving = (
 			return p;
 		});
 	} else {
-		players = []; // Generate past 20 years of draft classes
+		players = [];
+
+		// Generate past 20 years of draft classes
 
 		const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? -1 : 0;
-		const NUM_PAST_SEASONS = 20 + seasonOffset; // Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
+		const NUM_PAST_SEASONS = 20 + seasonOffset;
 
+		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();
 		const keptPlayers = [];
 
@@ -459,8 +485,9 @@ export const createWithoutSaving = (
 			numYearsAgo > seasonOffset;
 			numYearsAgo--
 		) {
-			let draftClass = draft.genPlayersWithoutSaving(g.season, scoutingRank); // Very rough simulation of a draft
+			let draftClass = draft.genPlayersWithoutSaving(g.season, scoutingRank);
 
+			// Very rough simulation of a draft
 			draftClass = orderBy(draftClass, ["value"], ["desc"]);
 			const tids = range(g.numTeams);
 			random.shuffle(tids);
@@ -474,15 +501,20 @@ export const createWithoutSaving = (
 				if (roundTemp <= g.numDraftRounds) {
 					round = roundTemp;
 					pick = (i % g.numTeams) + 1;
-				} // Save these for later, because player.develop will overwrite them
+				}
+
+				// Save these for later, because player.develop will overwrite them
 
 				const pot = p.ratings[0].pot;
 				const ovr = p.ratings[0].ovr;
-				const skills = p.ratings[0].skills; // Develop player and see if he is still non-retired
+				const skills = p.ratings[0].skills;
+
+				// Develop player and see if he is still non-retired
 
 				player.develop(p, numYearsAgo, true);
-				player.updateValues(p); // Run shouldRetire 4 times to simulate past shouldRetire calls
+				player.updateValues(p);
 
+				// Run shouldRetire 4 times to simulate past shouldRetire calls
 				if (
 					(!player.shouldRetire(p) &&
 						!player.shouldRetire(p) &&
@@ -506,8 +538,9 @@ export const createWithoutSaving = (
 						// Guarantee contracts for undrafted players are overwritten below
 						p.contract.exp = -Infinity;
 					} else {
-						const years = 4 - round; // 2 years for 2nd round, 3 years for 1st round;
+						const years = 4 - round;
 
+						// 2 years for 2nd round, 3 years for 1st round;
 						player.setContract(
 							p,
 							{
@@ -521,19 +554,23 @@ export const createWithoutSaving = (
 					keptPlayers.push(p);
 				}
 			}
-		} // (g.maxRosterSize + 1) for wiggle room (need min contract FAs sometimes)
+		}
 
+		// (g.maxRosterSize + 1) for wiggle room (need min contract FAs sometimes)
 		if (keptPlayers.length < (g.maxRosterSize + 1) * g.numTeams) {
 			throw new Error("Not enough players!");
 		}
 
-		const numPlayerPerTeam = g.maxRosterSize - 2; // 13 for basketball
+		const numPlayerPerTeam = g.maxRosterSize - 2;
 
-		const maxNumFreeAgents = Math.round((g.numTeams / 3) * g.maxRosterSize); // 150 for basketball
+		// 13 for basketball
+		const maxNumFreeAgents = Math.round((g.numTeams / 3) * g.maxRosterSize);
+
+		// 150 for basketball
 		// Add players to teams or free agency
+		keptPlayers.sort((a, b) => b.value - a.value);
 
-		keptPlayers.sort((a, b) => b.value - a.value); // Keep track of number of players on each team
-
+		// Keep track of number of players on each team
 		const numPlayersByTid = {};
 
 		for (const tid2 of range(g.numTeams)) {
@@ -543,7 +580,9 @@ export const createWithoutSaving = (
 		const addPlayerToTeam = (p, tid2: number) => {
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
-			player.addStatsRow(p, g.phase === PHASE.PLAYOFFS); // Keep rookie contract, or no?
+			player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+
+			// Keep rookie contract, or no?
 
 			if (p.contract.exp >= g.season) {
 				player.setContract(p, p.contract, true);
@@ -555,7 +594,9 @@ export const createWithoutSaving = (
 		};
 
 		const probStillOnDraftTeam = p => {
-			let prob = 0; // Probability a player is still on his draft team
+			let prob = 0;
+
+			// Probability a player is still on his draft team
 
 			const numYearsAgo = g.season - p.draft.year;
 
@@ -584,7 +625,9 @@ export const createWithoutSaving = (
 			}
 
 			return prob;
-		}; // Drafted players kept with own team, with some probability
+		};
+
+		// Drafted players kept with own team, with some probability
 
 		for (let i = 0; i < numPlayerPerTeam * g.numTeams; i++) {
 			const p = keptPlayers[i];
@@ -597,7 +640,9 @@ export const createWithoutSaving = (
 				addPlayerToTeam(p, p.draft.tid);
 				keptPlayers.splice(i, 1);
 			}
-		} // Then add other players, up to the limit
+		}
+
+		// Then add other players, up to the limit
 
 		while (true) {
 			// Random order tids, so no team is a superpower
@@ -627,7 +672,9 @@ export const createWithoutSaving = (
 			if (numTeamsDone === g.numTeams) {
 				break;
 			}
-		} // Adjustment for hard cap - lower contracts for teams above cap
+		}
+
+		// Adjustment for hard cap - lower contracts for teams above cap
 
 		if (g.hardCap) {
 			for (const tid2 of range(g.numTeams)) {
@@ -652,22 +699,30 @@ export const createWithoutSaving = (
 					}
 				}
 			}
-		} // Finally, free agents
+		}
+
+		// Finally, free agents
 
 		for (let i = 0; i < maxNumFreeAgents; i++) {
 			const p = keptPlayers[i];
 
 			if (p) {
-				p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0; // So half will be eligible to retire after the first season
+				p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;
+
+				// So half will be eligible to retire after the first season
 
 				player.setContract(p, player.genContract(p, false), false);
 				player.addToFreeAgents(p, g.phase, baseMoods);
 				players.push(p);
 			}
 		}
-	} // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
+	}
 
-	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
+	// See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
+
+	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6);
+
+	// 70 for basketball 2 round draft
 
 	let createUndrafted1 = baseNumPlayers;
 	let createUndrafted2 = baseNumPlayers;
@@ -684,7 +739,9 @@ export const createWithoutSaving = (
 				createUndrafted3 -= 1;
 			}
 		}
-	} // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
+	}
+
+	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
 
 	if (g.phase !== PHASE.FANTASY_DRAFT) {
 		if (
@@ -729,6 +786,7 @@ export const createWithoutSaving = (
 		trade,
 	});
 };
+
 /**
  * Create a new league.
  *
@@ -736,11 +794,10 @@ export const createWithoutSaving = (
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-
 const create = async (
 	name: string,
 	tid: number,
-	leagueFile: object = {},
+	leagueFile: any = {},
 	startingSeason: number,
 	randomizeRosters: boolean = false,
 	difficulty: number,
@@ -790,10 +847,14 @@ const create = async (
 	}
 
 	const lid = await idb.meta.leagues.add(l);
-	idb.league = await connectLeague(lid); // These wouldn't be needed here, except the beforeView logic is fucked up
+	idb.league = await connectLeague(lid);
+
+	// These wouldn't be needed here, except the beforeView logic is fucked up
 
 	lock.reset();
-	local.reset(); // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
+	local.reset();
+
+	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
 
 	helpers.resetG();
 	g.lid = lid;
@@ -805,11 +866,13 @@ const create = async (
 
 	idb.cache = new Cache();
 	idb.cache.newLeague = true;
-	await idb.cache.fill(leagueData.gameAttributes.season); // Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in
+	await idb.cache.fill(leagueData.gameAttributes.season);
+
+	// Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in
 	// the database native format in leagueData (object, not array like others).
+	await league.setGameAttributes(leagueData.gameAttributes);
 
-	await league.setGameAttributes(leagueData.gameAttributes); // orderBy is to ensure games is before schedule, so that games are added before schedule to the database, so Cache._maxIds.schedule can be set to Cache.maxIds.game, so gids never conflict
-
+	// orderBy is to ensure games is before schedule, so that games are added before schedule to the database, so Cache._maxIds.schedule can be set to Cache.maxIds.game, so gids never conflict
 	const orderedLeagueData = orderBy(Object.entries(leagueData), 0);
 
 	for (const [store, records] of orderedLeagueData) {
@@ -821,8 +884,9 @@ const create = async (
 			// $FlowFixMe
 			await idb.cache[store].put(record);
 		}
-	} // If no players were uploaded in custom league file, add some relatives!
+	}
 
+	// If no players were uploaded in custom league file, add some relatives!
 	if (leagueFile.players === undefined) {
 		const players = await idb.cache.players.getAll();
 
@@ -837,8 +901,9 @@ const create = async (
 
 	if (!skipNewPhase) {
 		await updatePhase();
-		await updateStatus("Idle"); // Auto sort rosters
+		await updateStatus("Idle");
 
+		// Auto sort rosters
 		await Promise.all(
 			leagueData.teams.map(t => {
 				if (!overrides.core.team.rosterAutoSort) {

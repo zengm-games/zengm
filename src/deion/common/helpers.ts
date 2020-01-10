@@ -34,8 +34,16 @@ const gameScore = (arg: { [key: string]: number }): number => {
 	);
 };
 
-function getTeamsDefault(): any[] {
-	const teamInfos = {
+function getTeamsDefault(): TeamBasic[] {
+	const teamInfos: {
+		[key: string]: {
+			region: string;
+			name: string;
+			abbrev: string;
+			pop: number;
+			colors: [string, string, string];
+		};
+	} = {
 		ATL: {
 			region: "Atlanta",
 			name: "Gold Club",

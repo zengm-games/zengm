@@ -23,7 +23,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 		doubles += 1;
 	}
 
-	const statArr = {};
+	const statArr: any = {};
 
 	if (
 		p.stat.pts >= FIVE &&

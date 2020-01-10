@@ -1,3 +1,22 @@
+export type Env = {
+	enableLogging: boolean;
+	heartbeatID: string;
+	useSharedWorker: boolean;
+	// These are just legacy variables sent to the worker to be stored in idb.meta.attributes
+	fromLocalStorage: {
+		[key: string]: string | undefined | null;
+	};
+};
+
+declare global {
+	interface Window {
+		bbgmAds: any;
+		enableLogging: boolean;
+		heartbeatID: string;
+		useSharedWorker: boolean;
+	}
+}
+
 export type AchievementWhen =
 	| "afterAwards"
 	| "afterFired"
@@ -52,15 +71,6 @@ export type DraftPick = {
 	dpid: number;
 } & DraftPickWithoutDpid;
 export type EventBBGM = any;
-export type Env = {
-	enableLogging: boolean;
-	heartbeatID: string;
-	useSharedWorker: boolean;
-	// These are just legacy variables sent to the worker to be stored in idb.meta.attributes
-	fromLocalStorage: {
-		[key: string]: string | undefined | null;
-	};
-};
 export type Game = {
 	att: number;
 	clutchPlays?: string[];
@@ -212,6 +222,7 @@ export type LogEventType =
 	| "release"
 	| "retired"
 	| "screenshot"
+	| "success"
 	| "trade"
 	| "tragedy"
 	| "upgrade";

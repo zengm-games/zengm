@@ -39,7 +39,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 			pid: releasedPlayer.pid,
 		});
 
-		if (p !== undefined) {
+		if (p) {
 			// If a player is deleted, such as if the user deletes retired players, this will be undefined
 			contracts.push({
 				pid: releasedPlayer.pid,
@@ -60,6 +60,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 				firstName: "Deleted",
 				lastName: "Player",
 				skills: [],
+				pos: "?",
 				injury: {
 					type: "Healthy",
 					gamesRemaining: 0,

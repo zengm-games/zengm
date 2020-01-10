@@ -38,7 +38,7 @@ const value = (
 	options.fuzz = !!options.fuzz;
 	options.withContract = !!options.withContract; // Current ratings
 
-	const pr = {}; // Start blank, add what we need (efficiency, wow!)
+	const pr: any = {}; // Start blank, add what we need (efficiency, wow!)
 
 	const s = p.ratings.length - 1; // Latest season
 	// Fuzz?

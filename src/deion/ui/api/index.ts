@@ -6,12 +6,12 @@ import {
 	LogEventShowOptions,
 	UpdateEvents,
 } from "../../common/types";
+
 /**
  * Ping a counter at basketball-gm.com.
  *
  * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
  */
-
 const bbgmPing = (
 	type: "league" | "season" | "version",
 	arg: number | void,
@@ -34,8 +34,9 @@ const bbgmPing = (
 			});
 		}
 	}
-}; // Read from goldUntil rather than local because this is called before local is updated
+};
 
+// Read from goldUntil rather than local because this is called before local is updated
 const initAds = (goldUntil: number | void) => {
 	let hideAds = false; // No ads for Gold members
 
@@ -95,8 +96,9 @@ const initAds = (goldUntil: number | void) => {
 			});
 		});
 	}
-}; // Should only be called from Shared Worker, to move other tabs to new league because only one can be open at a time
+};
 
+// Should only be called from Shared Worker, to move other tabs to new league because only one can be open at a time
 const newLid = async (lid: number) => {
 	const parts = window.location.pathname.split("/");
 

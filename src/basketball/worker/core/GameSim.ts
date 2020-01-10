@@ -74,8 +74,8 @@ type PlayerGameSim = {
 	age: number;
 	pos: string;
 	valueNoPot: number;
-	stat: object;
-	compositeRating: object;
+	stat: any;
+	compositeRating: any;
 	skills: string[];
 	injured: boolean;
 	ptModifier: number;
@@ -84,10 +84,9 @@ type TeamGameSim = {
 	id: number;
 	pace: number;
 	// mean number of possessions the team likes to have in a game
-	stat: object;
-	compositeRating: object;
+	stat: any;
+	compositeRating: any;
 	player: PlayerGameSim[];
-	compositeRating: object;
 	synergy: {
 		def: number;
 		off: number;

@@ -215,7 +215,7 @@ function sumRecordsFor(group, id, name, records) {
 		"winp",
 	];
 	const keys = Object.keys(records[0]);
-	const out = {};
+	const out: any = {};
 	const xRecords = records.filter(r => r[group] === id);
 
 	for (const k of keys) {

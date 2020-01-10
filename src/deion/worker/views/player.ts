@@ -52,7 +52,7 @@ async function updatePlayer(
 			pid: inputs.pid,
 		});
 
-		if (p === undefined) {
+		if (!p) {
 			return {
 				errorMessage: "Player not found.",
 			};
@@ -106,7 +106,7 @@ async function updatePlayer(
 			fuzz: true,
 		});
 
-		if (p === undefined) {
+		if (!p) {
 			return {
 				errorMessage: "Player not found.",
 			};

@@ -87,7 +87,7 @@ async function updateTrade(): Promise<void | {
 	[key: string]: any;
 }> {
 	const teams = await validateTeams();
-	let userRoster = await idb.cache.players.indexGetAll(
+	const userRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		g.userTid,
 	);
@@ -108,7 +108,7 @@ async function updateTrade(): Promise<void | {
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]
 			: ["gp", "keyStats", "av"];
-	userRoster = await idb.getCopies.playersPlus(userRoster, {
+	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 		attrs,
 		ratings,
 		stats,
@@ -132,7 +132,7 @@ async function updateTrade(): Promise<void | {
 
 	const otherTid = teams[1].tid; // Need to do this after knowing otherTid
 
-	let otherRoster = await idb.cache.players.indexGetAll(
+	let otherRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		otherTid,
 	);
@@ -152,7 +152,7 @@ async function updateTrade(): Promise<void | {
 		};
 	}
 
-	otherRoster = await idb.getCopies.playersPlus(otherRoster, {
+	const otherRoster = await idb.getCopies.playersPlus(otherRosterAll, {
 		attrs,
 		ratings,
 		stats,

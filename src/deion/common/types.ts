@@ -712,6 +712,7 @@ export type UpdateEvents = (
 	| "lock.gameSim"
 	| "newPhase"
 	| "playerMovement"
+	| "teamFinances"
 	| "watchList"
 )[];
 export type RunFunction = (

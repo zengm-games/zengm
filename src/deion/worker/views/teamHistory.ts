@@ -75,10 +75,10 @@ async function updateTeamHistory(
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
 				: ["gp", "keyStats", "av"];
-		let players = await idb.getCopies.players({
+		const playersAll = await idb.getCopies.players({
 			statsTid: inputs.tid,
 		});
-		players = await idb.getCopies.playersPlus(players, {
+		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
 			ratings: ["pos"],
 			stats: ["season", "abbrev", ...stats],

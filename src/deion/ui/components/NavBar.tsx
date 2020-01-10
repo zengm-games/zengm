@@ -54,8 +54,9 @@ const NavBar = ({ pageID, updating }: Props) => {
 			<span className="glyphicon glyphicon-user" />{" "}
 			<span className="d-none d-lg-inline">Login/Register</span>
 		</NavLink>
-	); // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
-	// game. This is needed because game sim happens before the results are displayed in liveGame.
+	);
+
+	// Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals	// game. This is needed because game sim happens before the results are displayed in liveGame.
 
 	const phaseStatusBlock =
 		pageID === "liveGame" ? (

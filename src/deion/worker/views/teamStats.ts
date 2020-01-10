@@ -42,8 +42,9 @@ async function updateTeams(
 		).filter(t => {
 			// For playoffs, only show teams who actually made playoffs (gp > 0)
 			return inputs.playoffs !== "playoffs" || t.stats.gp > 0;
-		}); // For playoffs, fix W/L to be playoff W/L not regular season
+		});
 
+		// For playoffs, fix W/L to be playoff W/L not regular season
 		if (inputs.playoffs === "playoffs") {
 			const playoffSeries = await idb.getCopy.playoffSeries({
 				season: inputs.season,

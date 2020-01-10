@@ -83,8 +83,9 @@ async function updateTeamHistory(
 			ratings: ["pos"],
 			stats: ["season", "abbrev", ...stats],
 			tid: inputs.tid,
-		}); // Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
+		});
 
+		// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
 		players = players.filter(p => p.careerStats.gp > 0);
 
 		for (const p of players) {

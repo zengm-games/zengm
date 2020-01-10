@@ -77,8 +77,9 @@ describe("worker/core/contractNegotiation/create", () => {
 		assert.equal(negotiations.length, 2);
 		assert.equal(negotiations[0].pid, pid1);
 		assert.equal(negotiations[1].pid, pid2);
-	}); // The use of txs here might cause race conditions
+	});
 
+	// The use of txs here might cause race conditions
 	test("don't start negotiation if there are already 15 players on the user's roster, unless resigning is true", async () => {
 		const pid1 = 0;
 		const pid2 = 1;

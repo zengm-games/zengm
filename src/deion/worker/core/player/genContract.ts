@@ -37,9 +37,10 @@ const genContract = (
 
 	if (randomizeAmount) {
 		amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
-	} // Expiration
-	// Players with high potentials want short contracts
+	}
 
+	// Expiration
+	// Players with high potentials want short contracts
 	const potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
 	let years = 5 - potentialDifference;
 

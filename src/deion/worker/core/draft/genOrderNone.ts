@@ -17,8 +17,9 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	let draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		g.season,
-	); // Sometimes picks just fail to generate or get lost, for reasons I don't understand
+	);
 
+	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
 	if (draftPicks.length < g.numDraftRounds * g.numTeams) {
 		await genPicks(g.season, draftPicks);
 		draftPicks = await idb.cache.draftPicks.indexGetAll(

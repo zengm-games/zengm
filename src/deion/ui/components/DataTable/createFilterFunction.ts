@@ -37,8 +37,9 @@ const createFilterFunction = (
 			}
 
 			return true;
-		}); // false - doesn't match. true - does match
+		});
 
+	// false - doesn't match. true - does match
 	return (value: any) => {
 		if (filters.length === 0) {
 			return true;

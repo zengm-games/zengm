@@ -84,9 +84,10 @@ const checkRosterSizes = async (): Promise<string | void> => {
 					numPlayersOnRoster += 1;
 				}
 			}
-		} // Auto sort rosters (except player's team)
-		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
+		}
 
+		// Auto sort rosters (except player's team)
+		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
 		if (!g.userTids.includes(tid) || local.autoPlaySeasons > 0) {
 			if (!overrides.core.team.rosterAutoSort) {
 				throw new Error("Missing overrides.core.team.rosterAutoSort");
@@ -99,8 +100,9 @@ const checkRosterSizes = async (): Promise<string | void> => {
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.FREE_AGENT,
-	); // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
+	);
 
+	// List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
 	for (let i = 0; i < players.length; i++) {
 		if (players[i].contract.amount === g.minContract) {
 			minFreeAgents.push(players[i]);

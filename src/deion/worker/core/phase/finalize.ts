@@ -32,8 +32,9 @@ const finalize = async (
 
 	await league.setGameAttributes({
 		phase,
-	}); // Fill only in preseason, because not much changes before then
+	});
 
+	// Fill only in preseason, because not much changes before then
 	await idb.cache.flush();
 
 	if (phase === PHASE.PRESEASON) {

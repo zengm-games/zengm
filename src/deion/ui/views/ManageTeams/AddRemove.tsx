@@ -27,8 +27,9 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
 	const [cid, setCID] = useState(confs[0].cid);
 	const [did, setDID] = useState(
 		divsInDefaultConf.length > 0 ? divsInDefaultConf[0].did : 0,
-	); // Force valid did
+	);
 
+	// Force valid did
 	useEffect(() => {
 		const divsInConf = divs.filter(div => div.cid === cid);
 

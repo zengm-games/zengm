@@ -22,8 +22,9 @@ async function updateSeasons(
 		for (let season = g.startingSeason; season <= g.season; season++) {
 			const players = await idb.getCopies.players({
 				activeSeason: season,
-			}); // Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
+			});
 
+			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
 			const minutesAll = range(g.numTeams).map(() => new Map());
 
 			for (const p of players) {
@@ -59,9 +60,9 @@ async function updateSeasons(
 
 						return sumMinutes > 0 ? sumMinutesContinuity / sumMinutes : 1;
 					}),
-				); // compare against previous season
+				);
+				// compare against previous season
 			}
-
 			prevMinutesAll = minutesAll;
 		}
 

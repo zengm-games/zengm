@@ -102,8 +102,9 @@ describe("worker/util/helpers", () => {
 			"Whalers",
 			"Monuments",
 		];
-	}); // Relies on g.*Cache being populated
+	});
 
+	// Relies on g.*Cache being populated
 	describe("getAbbrev", () => {
 		test("return abbrev when given valid team ID", () => {
 			assert.equal(helpers.getAbbrev(6), "DAL");

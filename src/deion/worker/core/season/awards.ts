@@ -57,12 +57,14 @@ const getPlayers = async () => {
 						"prYds",
 						"season",
 				  ],
-	}); // Only keep players who actually have a stats entry for the latest season
+	});
 
+	// Only keep players who actually have a stats entry for the latest season
 	players = players.filter(
 		p => p.stats.length > 0 && p.stats[p.stats.length - 1].season === g.season,
-	); // For convenience later
+	);
 
+	// For convenience later
 	for (const p of players) {
 		p.currentStats = p.stats[p.stats.length - 1];
 		p.pos = p.ratings[p.ratings.length - 1].pos;
@@ -181,8 +183,9 @@ const getTopPlayers = (
 		}
 
 		return bScore - aScore;
-	}); // For the ones returning multiple players (for all league teams), enforce length
+	});
 
+	// For the ones returning multiple players (for all league teams), enforce length
 	if (
 		!allowNone &&
 		actualAmount !== Infinity &&

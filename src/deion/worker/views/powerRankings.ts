@@ -22,8 +22,9 @@ async function updatePowerRankings(
 			seasonAttrs: ["won", "lost", "lastTen"],
 			stats: ["gp", "mov"],
 			season,
-		}); // Calculate team ovr ratings
+		});
 
+		// Calculate team ovr ratings
 		for (const t of teams) {
 			let teamPlayers;
 

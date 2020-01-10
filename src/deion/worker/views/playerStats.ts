@@ -106,8 +106,9 @@ async function updatePlayers(
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs !== "playoffs",
-		}); // Only keep players with more than 5 mpg in regular season, of any PT in playoffs
+		});
 
+		// Only keep players with more than 5 mpg in regular season, of any PT in playoffs
 		if (inputs.abbrev !== "watch" && process.env.SPORT === "basketball") {
 			// Find max gp to use for filtering
 			let gp = 0;

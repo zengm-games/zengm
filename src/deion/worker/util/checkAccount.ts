@@ -16,8 +16,9 @@ const checkAccount = async (
 				sport: process.env.SPORT,
 			},
 			credentials: "include",
-		}); // Keep track of latest here, for ads
+		});
 
+		// Keep track of latest here, for ads
 		local.goldUntil = data.gold_until;
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 		await toUI([

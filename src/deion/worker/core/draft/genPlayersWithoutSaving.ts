@@ -25,15 +25,17 @@ const genPlayersWithoutSaving = (
 			draftYear,
 			false,
 			scoutingRank,
-		); // Just for ovr/pot
+		);
 
+		// Just for ovr/pot
 		player.develop(p, 0); // Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
 		// seem quite large, but empirically it seems to work well.
 
 		p.fudgeFactor = random.randInt(-50, 50);
 		return p;
-	}); // Do one season at a time, keeping the lowest pot players in college for another season
+	});
 
+	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft = [];
 
 	for (let i = 0; i < 4; i++) {

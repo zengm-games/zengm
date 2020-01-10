@@ -40,9 +40,10 @@ const newScheduleDefault = (teams): [number, number][] => {
 					tids.push(game);
 					homeGames[i] += 2;
 					awayGames[j] += 2;
-				} // Constraint: 1-2 home games vs. each team in same conference and different division
-				// Only do 1 now
+				}
 
+				// Constraint: 1-2 home games vs. each team in same conference and different division
+				// Only do 1 now
 				if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
 					tids.push(game);
 					homeGames[i] += 1;
@@ -50,9 +51,10 @@ const newScheduleDefault = (teams): [number, number][] => {
 				}
 			}
 		}
-	} // Constraint: 1-2 home games vs. each team in same conference and different division
-	// Constraint: We need 8 more of these games per home team!
+	}
 
+	// Constraint: 1-2 home games vs. each team in same conference and different division
+	// Constraint: We need 8 more of these games per home team!
 	const tidsByConf = [[], []];
 	const dids = [[], []];
 

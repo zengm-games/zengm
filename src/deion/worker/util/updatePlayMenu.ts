@@ -248,8 +248,9 @@ const updatePlayMenu = async () => {
 	const someOptions = keys.map(id => {
 		allOptions[id].id = id;
 		return allOptions[id];
-	}); // Set first key to always be p
+	});
 
+	// Set first key to always be p
 	if (someOptions.length > 0) {
 		someOptions[0].key = "p";
 	}

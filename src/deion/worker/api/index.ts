@@ -328,8 +328,9 @@ const deleteOldData = async (options: {
 				});
 			}
 		},
-	); // Without this, cached values will still exist
+	);
 
+	// Without this, cached values will still exist
 	await idb.cache.fill();
 };
 
@@ -783,8 +784,9 @@ const handleUploadedDraftClass = async (
 		teamSeasons,
 		"expenses",
 		"scouting",
-	); // Delete old players from draft class
+	);
 
+	// Delete old players from draft class
 	const oldPlayers = await idb.cache.players.indexGetAll(
 		"playersByDraftYearRetiredYear",
 		[[draftYear], [draftYear, Infinity]],
@@ -831,8 +833,9 @@ const handleUploadedDraftClass = async (
 
 			await idb.cache.players.add(p);
 		}),
-	); // "Top off" the draft class if <70 players imported
+	);
 
+	// "Top off" the draft class if <70 players imported
 	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
 
 	if (players.length < baseNumPlayers) {

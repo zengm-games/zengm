@@ -46,8 +46,9 @@ class Login extends React.Component<Props, State> {
 				localActions.update({
 					gold: currentTimestamp <= data.gold_until,
 					username: data.username,
-				}); // Check for participation achievement, if this is the first time logging in to this sport
+				});
 
+				// Check for participation achievement, if this is the first time logging in to this sport
 				await toWorker("checkParticipationAchievement", false);
 				realtimeUpdate(["account"], "/account");
 			} else {

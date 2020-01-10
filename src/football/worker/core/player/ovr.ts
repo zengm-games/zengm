@@ -144,12 +144,13 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
 		}
 	} else {
 		throw new Error(`Unknown position: "${pos}"`);
-	} // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
+	}
+
+	// Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
 	// +8 at 68
 	// +4 at 50
 	// -5 at 42
 	// -10 at 31
-
 	let fudgeFactor = 0;
 
 	if (r >= 68) {

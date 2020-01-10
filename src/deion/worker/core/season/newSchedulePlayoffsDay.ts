@@ -1,7 +1,8 @@
 import setSchedule from "./setSchedule";
 import { idb } from "../../db";
-import { g, helpers, local, lock } from "../../util"; // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
+import { g, helpers, local, lock } from "../../util";
 
+// Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
 	// For series lengths like 3, 7, 11, 15, etc., special case last 3 games to ensure the home team always gets the last game
 	const needsSpecialEnding = (numGamesPlayoffSeries + 1) % 4 === 0;
@@ -19,13 +20,13 @@ const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
 	const num = Math.floor(gameNum / 2);
 	return num % 2 === 0;
 };
+
 /**
  * Create a single day's schedule for an in-progress playoffs.
  *
  * @memberOf core.season
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
-
 const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 	const series = playoffSeries.series;
@@ -33,8 +34,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	const tids = [];
 	const numGamesToWin = helpers.numGamesToWinSeries(
 		g.numGamesPlayoffSeries[rnd],
-	); // Try to schedule games if there are active series
+	);
 
+	// Try to schedule games if there are active series
 	for (let i = 0; i < series[rnd].length; i++) {
 		const { away, home } = series[rnd][i];
 
@@ -81,9 +83,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		await idb.cache.teamSeasons.put(teamSeason); // Playoffs are over! Return true!
 
 		return true;
-	} // Playoffs are not over! Make another round
-	// Handle "Play until end of round"
+	}
 
+	// Playoffs are not over! Make another round
+	// Handle "Play until end of round"
 	if (local.playingUntilEndOfRound) {
 		lock.set("stopGameSim", true);
 		local.playingUntilEndOfRound = false;
@@ -168,8 +171,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 			await idb.cache.teamSeasons.put(teamSeason);
 		}),
-	); // Next time, the schedule for the first day of the next round will be set
+	);
 
+	// Next time, the schedule for the first day of the next round will be set
 	return newSchedulePlayoffsDay();
 };
 

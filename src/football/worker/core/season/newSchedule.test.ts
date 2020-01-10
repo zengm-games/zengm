@@ -29,8 +29,9 @@ describe("football/worker/core/season/newSchedule", () => {
 						matchups.length * 2,
 						numGames * numTeams,
 						"Total number of games is wrong",
-					); // Number of games for each teams
+					);
 
+					// Number of games for each teams
 					const tids = flatten(matchups);
 
 					for (let tid = 0; tid < numTeams; tid++) {
@@ -55,8 +56,9 @@ describe("football/worker/core/season/newSchedule", () => {
 						matchups.length * 2 + 1,
 						numGames * numTeams,
 						"Total number of games is wrong",
-					); // Number of games for each teams
+					);
 
+					// Number of games for each teams
 					const tids = flatten(matchups);
 					let oneShort = false;
 

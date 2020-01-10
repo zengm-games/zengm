@@ -16,8 +16,9 @@ const getProbs = (
 	const totalChances = result.reduce(
 		(total, { chances }) => total + chances,
 		0,
-	); // Top N picks
+	);
 
+	// Top N picks
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = [];
 		probs[i][0] = result[i].chances / totalChances; // First pick

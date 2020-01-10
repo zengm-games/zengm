@@ -33,8 +33,9 @@ const showEvent = ({
 		notify(text, title, {
 			extraClass,
 			persistent,
-		}); // Persistent notifications are very rare and should stop game sim when displayed. Run async for performance
+		});
 
+		// Persistent notifications are very rare and should stop game sim when displayed. Run async for performance
 		if (persistent) {
 			toWorker("getLocal", "autoPlaySeasons").then(autoPlaySeasons => {
 				if (autoPlaySeasons <= 0) {

@@ -28,8 +28,9 @@ const newPhaseBeforeDraft = async (
 		attrs: ["tid"],
 		seasonAttrs: ["playoffRoundsWon"],
 		season: g.season,
-	}); // Give award to all players on the championship team
+	});
 
+	// Give award to all players on the championship team
 	const t = teams.find(
 		t2 => t2.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
 	);

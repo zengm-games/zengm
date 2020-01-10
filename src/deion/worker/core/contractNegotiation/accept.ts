@@ -35,9 +35,10 @@ const accept = async (
 		return `This contract would put you over the salary cap. You cannot go over the salary cap to sign ${
 			g.hardCap ? "players" : "free agents"
 		} to contracts higher than the minimum salary.`;
-	} // This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it
-	// wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
+	}
 
+	// This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it
+	// wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
 	if (negotiation.tid !== undefined && negotiation.tid !== g.userTid) {
 		return `This negotiation was started by the ${
 			g.teamRegionsCache[negotiation.tid]

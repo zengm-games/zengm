@@ -153,8 +153,9 @@ const Controller = () => {
 				ctxBBGM,
 				updateEvents,
 				prevData,
-			); // If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
+			);
 
+			// If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
 			if (results === undefined) {
 				dispatch({
 					type: "doneLoading",

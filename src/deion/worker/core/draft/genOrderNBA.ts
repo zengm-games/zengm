@@ -25,8 +25,9 @@ const genOrder = async (
 		attrs: ["tid", "cid", "did"],
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
 		season: g.season,
-	}); // Draft lottery
+	});
 
+	// Draft lottery
 	lotterySort(teams);
 	let chances =
 		g.draftType === "nba1994"
@@ -80,8 +81,9 @@ const genOrder = async (
 	let draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		g.season,
-	); // Sometimes picks just fail to generate or get lost, for reasons I don't understand
+	);
 
+	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
 	if (draftPicks.length < g.numDraftRounds * g.numTeams) {
 		await genPicks(g.season, draftPicks);
 		draftPicks = await idb.cache.draftPicks.indexGetAll(
@@ -214,8 +216,9 @@ const genOrder = async (
 	teams.sort((a, b) => {
 		const r = a.seasonAttrs.winp - b.seasonAttrs.winp;
 		return r === 0 ? b.randVal - a.randVal : r;
-	}); // Second round
+	});
 
+	// Second round
 	for (let round = 2; round <= g.numDraftRounds; round++) {
 		for (let i = 0; i < teams.length; i++) {
 			const dp = draftPicksIndexed[teams[i].tid][round];

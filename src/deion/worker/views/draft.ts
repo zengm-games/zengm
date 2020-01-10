@@ -108,9 +108,10 @@ async function updateDraft(
 
 				draftPicks = draftPicks2;
 			}
-		} // DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
-		// Not sure why this is needed! Maybe related to lottery running before the phase change?
+		}
 
+		// DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
+		// Not sure why this is needed! Maybe related to lottery running before the phase change?
 		if (draftPicks.some(dp => dp.pick === 0)) {
 			await draft.genOrder();
 			draftPicks = await draft.getOrder();

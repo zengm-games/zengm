@@ -43,8 +43,9 @@ const getCopies = async ({
 			fromDb,
 			getLastEntries(fromCache, constLimit),
 			idb.cache.storeInfos.messages.pk,
-		); // Need another getLastEntries because DB and cache will probably combine for (2 * limit) entries
+		);
 
+		// Need another getLastEntries because DB and cache will probably combine for (2 * limit) entries
 		return getLastEntries(messages, constLimit);
 	}
 

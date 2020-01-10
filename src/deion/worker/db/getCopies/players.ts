@@ -78,8 +78,9 @@ const getCopies = async ({
 					cursor.continue(sortedPids[i]);
 				};
 			});
-		}); // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
+		});
 
+		// $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
 		return mergeByPk(
 			fromDB,
 			(await idb.cache.players.getAll()).filter(p => pids.includes(p.pid)),
@@ -170,8 +171,9 @@ const getCopies = async ({
 					}
 				};
 			});
-		}); // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
+		});
 
+		// $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
 		return mergeByPk(
 			fromDB, // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
 			[]

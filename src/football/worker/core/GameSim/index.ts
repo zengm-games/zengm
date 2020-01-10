@@ -660,8 +660,9 @@ class GameSim {
 			this.isClockRunning = false;
 			this.playByPlay.logEvent("twoMinuteWarning", {
 				clock: 2,
-			}); // Clock only runs until it hits 2 minutes exactly
+			});
 
+			// Clock only runs until it hits 2 minutes exactly
 			dtClockRunning = helpers.bound(this.clock - dt - 2, 0, Infinity);
 		}
 
@@ -816,8 +817,9 @@ class GameSim {
 			weightsMain: [1],
 			weightsBonus: [0.1],
 			valFunc: p => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
-		}); // Top 5 blockers, plus a bit more from TE/RB if they exist
+		});
 
+		// Top 5 blockers, plus a bit more from TE/RB if they exist
 		this.team[this.o].compositeRating.passBlocking = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["OL", "TE", "RB"],
@@ -1970,8 +1972,9 @@ class GameSim {
 				spotYds,
 				totYds,
 			};
-		}); // Pick penalty that gives the most yards
+		});
 
+		// Pick penalty that gives the most yards
 		penInfos.sort((a, b) => {
 			return side === "defense" ? b.totYds - a.totYds : a.totYds - b.totYds;
 		});
@@ -2030,7 +2033,9 @@ class GameSim {
 
 			if (!p) {
 				p = this.pickPlayer(t);
-			} // Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
+			}
+
+			// Ideally, when notBallCarrier is set, we should ensure that p is not the ball carrier.
 		}
 
 		this.advanceYds(penInfo.totYds, {

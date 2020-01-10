@@ -27,8 +27,9 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 			exp: p.contract.exp,
 			released: false,
 		};
-	}); // Then, get any released players still owed money
+	});
 
+	// Then, get any released players still owed money
 	const releasedPlayers = await idb.cache.releasedPlayers.indexGetAll(
 		"releasedPlayersByTid",
 		tid,

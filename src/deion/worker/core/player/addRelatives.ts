@@ -57,8 +57,9 @@ const getRelatives = async (
 					pid,
 				}),
 			),
-	); // $FlowFixMe
+	);
 
+	// $FlowFixMe
 	return players.filter(p2 => p2 !== undefined);
 };
 

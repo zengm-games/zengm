@@ -31,8 +31,9 @@ const madeHof = (
 		}
 
 		return sum / 2;
-	}); // Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
+	});
 
+	// Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
 	winShares.sort((a, b) => b - a); // Descending order
 
 	let total = 0;

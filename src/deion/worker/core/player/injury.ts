@@ -16,8 +16,9 @@ const injury = (healthRank: number): PlayerInjury => {
 		((0.7 * (healthRank - 1)) / (g.numTeams - 1) + 0.65) *
 			random.uniform(0.25, 1.75) *
 			injuries.gamesRemainings[i],
-	); // Hack for football
+	);
 
+	// Hack for football
 	if (process.env.SPORT === "football") {
 		gamesRemaining = Math.ceil(gamesRemaining / 3);
 	}

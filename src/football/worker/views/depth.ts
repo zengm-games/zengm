@@ -95,8 +95,9 @@ async function updateDepth(
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
-		}); // Sort players based on current depth chart
+		});
 
+		// Sort players based on current depth chart
 		const t = await idb.cache.teams.get(tid);
 
 		if (!t.depth) {

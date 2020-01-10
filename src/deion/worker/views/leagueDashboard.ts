@@ -307,8 +307,9 @@ async function updatePlayers(
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
-		}); // League leaders
+		});
 
+		// League leaders
 		const leagueLeaders = [];
 
 		for (const stat of leaderStats) {
@@ -353,9 +354,10 @@ async function updatePlayers(
 					value: 0,
 				});
 			}
-		} // Roster
-		// Find starting 5 or top 5
+		}
 
+		// Roster
+		// Find starting 5 or top 5
 		if (process.env.SPORT === "basketball") {
 			userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
 		} else {
@@ -454,8 +456,9 @@ async function updateStandings(
 				seasonAttrs: ["won", "lost", "winp"],
 				season: g.season,
 			}),
-		); // Find user's conference
+		);
 
+		// Find user's conference
 		let cid;
 
 		for (const t of teams) {

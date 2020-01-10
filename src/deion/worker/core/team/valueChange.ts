@@ -42,8 +42,9 @@ const valueChange = async (
 		1 + 0.1 * g.difficulty,
 		0,
 		Infinity,
-	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
-	// Get players
+	);
+
+	// 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane	// Get players
 
 	const getPlayers = async () => {
 		// Fudge factor for AI overvaluing its own players
@@ -94,8 +95,9 @@ const valueChange = async (
 			const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
 				"teamSeasonsBySeasonTid",
 				[[g.season - 1], [g.season, "Z"]],
-			); // This part needs to be run every time so that gpAvg is available
+			);
 
+			// This part needs to be run every time so that gpAvg is available
 			const wps = []; // Contains estimated winning percentages for all teams by the end of the season
 
 			let gp = 0;
@@ -516,9 +518,10 @@ const valueChange = async (
 				dv -= (0.2 + (0.8 * g.daysLeft) / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
 			}
 		}
-	} // Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-	// This is a fudge factor, since it's one-sided to punish the player
+	}
 
+	// Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
+	// This is a fudge factor, since it's one-sided to punish the player
 	if (add.length > remove.length) {
 		dv -= add.length - remove.length;
 	}

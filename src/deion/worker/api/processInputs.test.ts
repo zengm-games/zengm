@@ -102,8 +102,9 @@ describe("worker/api/processInputs", () => {
 			"Whalers",
 			"Monuments",
 		];
-	}); // Relies on g.*Cache being populated
+	});
 
+	// Relies on g.*Cache being populated
 	describe("validateAbbrev", () => {
 		test("return team ID and abbrev when given valid abbrev", () => {
 			const out = validateAbbrev("DAL");

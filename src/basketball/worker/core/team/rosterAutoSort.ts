@@ -81,8 +81,9 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 		season: g.season,
 		showNoStats: true,
 		showRookies: true,
-	}); // Fuzz only for user's team
+	});
 
+	// Fuzz only for user's team
 	if (tid === g.userTid) {
 		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
 	} else {

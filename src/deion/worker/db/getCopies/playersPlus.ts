@@ -411,8 +411,9 @@ const processPlayerStats = (p, statSums, stats, statType) => {
 		stats,
 		statType,
 		p.born.year,
-	); // More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
+	);
 
+	// More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
 	if (stats.includes("abbrev")) {
 		if (statSums.tid === undefined) {
 			output.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
@@ -454,8 +455,9 @@ const processStats = (
 		tid,
 		playoffs,
 		regularSeason,
-	); // oldStats crap
+	);
 
+	// oldStats crap
 	if (oldStats && season !== undefined && playerStats.length === 0) {
 		const oldSeason = season - 1;
 		playerStats = getPlayerStats(

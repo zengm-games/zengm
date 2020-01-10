@@ -97,7 +97,9 @@ const beforeLeague = async (
 
 	if (loadingNewLid !== newLid) {
 		return;
-	} // Check after every async action
+	}
+
+	// Check after every async action
 	// If this is a Web Worker, only one tab of a league can be open at a time
 
 	if (!env.useSharedWorker) {

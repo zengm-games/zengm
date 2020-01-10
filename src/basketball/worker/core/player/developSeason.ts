@@ -49,9 +49,10 @@ const iqFormula = {
 	changeLimits: age => {
 		if (age > 24) {
 			return [-3, 9];
-		} // For 19: [-3, 32]
-		// For 23: [-3, 12]
+		}
 
+		// For 19: [-3, 32]
+		// For 23: [-3, 12]
 		return [-3, 7 + 5 * (24 - age)];
 	},
 };

@@ -104,8 +104,9 @@ async function updatePlayers(
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
-		}); // idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
-		// For the current season, use the current abbrev (including FA), not the last stats abbrev
+		});
+
+		// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually		// For the current season, use the current abbrev (including FA), not the last stats abbrev
 		// For other seasons, use the stats abbrev for filtering
 
 		if (g.season === inputs.season) {

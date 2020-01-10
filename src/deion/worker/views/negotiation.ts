@@ -79,8 +79,9 @@ async function updateNegotiation(
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
-	}); // This can happen if a negotiation is somehow started with a retired player
+	});
 
+	// This can happen if a negotiation is somehow started with a retired player
 	if (!p) {
 		contractNegotiation.cancel(negotiation.pid);
 		return {
@@ -91,8 +92,9 @@ async function updateNegotiation(
 	p.contract.amount = freeAgents.amountWithMood(
 		p.contract.amount,
 		p.freeAgentMood[g.userTid],
-	); // Generate contract options
+	);
 
+	// Generate contract options
 	const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 	const payroll = await team.getPayroll(g.userTid);
 	return {

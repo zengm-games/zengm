@@ -59,8 +59,9 @@ const doInjury = (
 			tids: [p2.tid],
 		},
 		conditions,
-	); // Some chance of a loss of athleticism from serious injuries
-	// 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+	);
+
+	// Some chance of a loss of athleticism from serious injuries	// 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
 	// 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
 
 	let ratingsLoss = false;
@@ -97,8 +98,9 @@ const doInjury = (
 			p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
 			1,
 			100,
-		); // Update ovr and pot
+		);
 
+		// Update ovr and pot
 		player.develop(p2, 0); // Bound pot - can't go up after injury!
 
 		const r2 = p2.ratings.length - 2;

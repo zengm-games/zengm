@@ -22,8 +22,9 @@ async function updatePlayByPlay(
 	if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
 		const boxScore: any = helpers.deepCopy(
 			await idb.cache.games.get(inputs.gidPlayByPlay),
-		); // Stats to set to 0
+		);
 
+		// Stats to set to 0
 		if (!overrides.core.player.stats) {
 			throw new Error("Missing overrides.core.player.stats");
 		}

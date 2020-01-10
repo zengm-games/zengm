@@ -260,8 +260,9 @@ const doAwards = async (conditions: Conditions) => {
 			score: mvpScore,
 		},
 		players,
-	); // Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
+	);
 
+	// Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
 	const roy = royPlayers[0];
 	const allRookie = royPlayers.slice(0, 5);
 	const dpoyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
@@ -364,8 +365,9 @@ const doAwards = async (conditions: Conditions) => {
 		let champPlayers = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			champTid,
-		); // Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
+		);
 
+		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
 		champPlayers = await idb.getCopies.playersPlus(champPlayers, {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
@@ -374,8 +376,9 @@ const doAwards = async (conditions: Conditions) => {
 			playoffs: true,
 			regularSeason: false,
 			tid: champTid,
-		}); // For symmetry with players array
+		});
 
+		// For symmetry with players array
 		for (const p of champPlayers) {
 			p.currentStats = p.stats;
 		}

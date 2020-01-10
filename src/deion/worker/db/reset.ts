@@ -13,8 +13,9 @@ const reset = async () => {
 			numDeleted += 1;
 			console.log(`Deleted ${numDeleted} of ${leagues.length} leagues`);
 		}),
-	); // Delete any current meta database
+	);
 
+	// Delete any current meta database
 	console.log("Deleting any current meta database...");
 	idb.meta.close();
 	await Backboard.delete("meta");

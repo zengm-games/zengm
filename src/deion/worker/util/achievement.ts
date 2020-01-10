@@ -99,8 +99,9 @@ async function getAll(): Promise<
 				slug,
 			};
 		},
-	); // Handle any achivements stored in IndexedDB
+	);
 
+	// Handle any achivements stored in IndexedDB
 	const achievementsLocal = await idb.meta.achievements.getAll();
 
 	for (const achievementLocal of achievementsLocal) {
@@ -120,8 +121,9 @@ async function getAll(): Promise<
 				sport: process.env.SPORT,
 			},
 			credentials: "include",
-		}); // Merge local and remote achievements
+		});
 
+		// Merge local and remote achievements
 		for (const achievement of achievements2) {
 			if (achievementsRemote[achievement.slug] !== undefined) {
 				achievement.count += achievementsRemote[achievement.slug];

@@ -10,8 +10,9 @@ describe("worker/core/team/checkRosterSizes", () => {
 		testHelpers.resetG(); // Two teams: user and AI
 
 		g.numTeams = 2;
-	}); // resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and
-	// 1 free agent with a minimum contract.
+	});
+
+	// resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and	// 1 free agent with a minimum contract.
 
 	const resetCacheWithPlayers = async (info: { [key: string]: number }) => {
 		const players = [];
@@ -40,8 +41,9 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"0": 10,
 			"1": 9,
 			[PLAYER.FREE_AGENT]: 1,
-		}); // Confirm roster size under limit
+		});
 
+		// Confirm roster size under limit
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.equal(players.length, 9);
 		const userTeamSizeError = await team.checkRosterSizes();
@@ -54,8 +56,9 @@ describe("worker/core/team/checkRosterSizes", () => {
 		await resetCacheWithPlayers({
 			"0": 10,
 			"1": 9,
-		}); // Confirm roster size under limit
+		});
 
+		// Confirm roster size under limit
 		const teamSizeError = await team.checkRosterSizes();
 		assert.equal(
 			teamSizeError,
@@ -66,8 +69,9 @@ describe("worker/core/team/checkRosterSizes", () => {
 		await resetCacheWithPlayers({
 			"0": 10,
 			"1": 24,
-		}); // Confirm roster size over limit
+		});
 
+		// Confirm roster size over limit
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.equal(players.length, 24); // Confirm no error message and roster size pruned to limit
 
@@ -81,8 +85,9 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"0": 9,
 			"1": 10,
 			[PLAYER.FREE_AGENT]: 1,
-		}); // Confirm roster size under limit
+		});
 
+		// Confirm roster size under limit
 		let players = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			g.userTid,
@@ -100,8 +105,9 @@ describe("worker/core/team/checkRosterSizes", () => {
 		await resetCacheWithPlayers({
 			"0": 24,
 			"1": 10,
-		}); // Confirm roster size over limit
+		});
 
+		// Confirm roster size over limit
 		let players = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			g.userTid,

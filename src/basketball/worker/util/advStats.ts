@@ -372,8 +372,9 @@ const advStats = async () => {
 		playoffs: PHASE.PLAYOFFS === g.phase,
 		regularSeason: PHASE.PLAYOFFS !== g.phase,
 		statType: "totals",
-	}); // Total team stats (not per game averages)
-	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts, pace
+	});
+
+	// Total team stats (not per game averages)	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts, pace
 	// For AST%: min, fg
 	// For BLK%: min, oppFga, oppTpa
 	// For DRB%: min, drb, oppOrb
@@ -422,8 +423,9 @@ const advStats = async () => {
 		playoffs: PHASE.PLAYOFFS === g.phase,
 		regularSeason: PHASE.PLAYOFFS !== g.phase,
 		statType: "totals",
-	}); // Total league stats (not per game averages)
-	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
+	});
+
+	// Total league stats (not per game averages)	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
 
 	const leagueStats = [
 		"gp",

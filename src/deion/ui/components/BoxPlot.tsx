@@ -155,8 +155,9 @@ const BoxPlot = ({
 				borderLeft: 0,
 			})}
 		/>
-	); // Labels
+	);
 
+	// Labels
 	let labelDivs = null;
 
 	if (labels) {

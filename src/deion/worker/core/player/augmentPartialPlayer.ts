@@ -49,8 +49,9 @@ const augmentPartialPlayer = (
 		g.startingSeason - (age - 18),
 		true,
 		scoutingRank,
-	); // Optional things
+	);
 
+	// Optional things
 	const simpleDefaults = [
 		"awards",
 		"born",

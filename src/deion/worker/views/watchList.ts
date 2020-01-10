@@ -67,8 +67,9 @@ async function updatePlayers(
 			showRookies: true,
 			showRetired: true,
 			oldStats: true,
-		}); // Add mood to free agent contracts
+		});
 
+		// Add mood to free agent contracts
 		for (let i = 0; i < players.length; i++) {
 			if (players[i].tid === PLAYER.FREE_AGENT) {
 				players[i].contract.amount = freeAgents.amountWithMood(

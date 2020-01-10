@@ -29,8 +29,9 @@ async function updatePlayer(
 					return allStats.concat(currentStats.stats);
 				}, []),
 			),
-		); // Needed because shot locations tables are "special" for now, unfortunately
+		);
 
+		// Needed because shot locations tables are "special" for now, unfortunately
 		if (process.env.SPORT === "basketball") {
 			stats = stats.concat([
 				"fgAtRim",

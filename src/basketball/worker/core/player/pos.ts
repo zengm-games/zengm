@@ -28,9 +28,10 @@ const pos = (ratings: PlayerRatings): string => {
 		position = "SG";
 	} else {
 		position = "G";
-	} // No height requirements for point guards
-	// PG is a fast ball handler, or a super ball handler
+	}
 
+	// No height requirements for point guards
+	// PG is a fast ball handler, or a super ball handler
 	if (
 		(ratings.spd >= 60 && ratings.pss >= 50 && ratings.drb >= 50) ||
 		(ratings.spd >= 40 && ratings.pss >= 65 && ratings.drb >= 65)

@@ -14,8 +14,9 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			teams: teamsDefault.map(team.generate),
 			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
 			teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
-		}); // $FlowFixMe
+		});
 
+		// $FlowFixMe
 		const teamStats = await idb.cache.teamSeasons.indexGet(
 			"teamStatsByPlayoffsTid",
 			[false, 4],

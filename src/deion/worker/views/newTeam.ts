@@ -8,8 +8,9 @@ async function updateTeamSelect(): Promise<void | {
 		attrs: ["tid", "region", "name"],
 		seasonAttrs: ["winp"],
 		season: g.season,
-	}); // Remove user's team (no re-hiring immediately after firing)
+	});
 
+	// Remove user's team (no re-hiring immediately after firing)
 	teams.splice(g.userTid, 1); // If not in god mode, user must have been fired
 
 	if (!g.godMode) {

@@ -4,8 +4,9 @@ import { GamePlayer } from "../../../../deion/common/types";
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = Math.sqrt(
 		g.quarterLength / defaultGameAttributes.quarterLength,
-	); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
+	);
 
+	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
 	const TEN = minFactor * 10;
 	const FIVE = minFactor * 5;
 	const TWENTY = minFactor * 20;

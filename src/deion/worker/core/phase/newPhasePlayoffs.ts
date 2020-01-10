@@ -17,8 +17,9 @@ const newPhasePlayoffs = async (
 			seasonAttrs: ["winp", "won"],
 			season: g.season,
 		}),
-	); // Add entry for wins for each team, delete seasonAttrs just used for sorting
+	);
 
+	// Add entry for wins for each team, delete seasonAttrs just used for sorting
 	for (let i = 0; i < teams.length; i++) {
 		teams[i].won = 0;
 		teams[i].winp = teams[i].seasonAttrs.winp;
@@ -52,8 +53,9 @@ const newPhasePlayoffs = async (
 		season: g.season,
 		currentRound: 0,
 		series,
-	}); // Add row to team stats and team season attributes
+	});
 
+	// Add row to team stats and team season attributes
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
 		[[g.season], [g.season, "Z"]],

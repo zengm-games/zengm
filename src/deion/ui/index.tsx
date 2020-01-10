@@ -61,8 +61,9 @@ const handleVersion = async () => {
 		if (window.withGoodWorker) {
 			window.withGoodWorker();
 		}
-	}); // Check if there are other tabs open with a different version
+	});
 
+	// Check if there are other tabs open with a different version
 	const bbgmVersionStored = localStorage.getItem("bbgmVersion");
 
 	if (bbgmVersionStored) {

@@ -5,6 +5,7 @@ import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
 import { g, helpers, local, lock, random } from "../../util";
 import { Conditions } from "../../../common/types";
+
 /**
  * Simulate draft picks until it's the user's turn or the draft is over.
  *
@@ -14,7 +15,6 @@ import { Conditions } from "../../../common/types";
  * @param {boolean} onlyOne If true, only do one pick. If false, do all picks until the user's next pick. Default false.
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to an array of player IDs who were drafted during this function call, in order.
  */
-
 const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	if (lock.get("drafting")) {
 		return [];

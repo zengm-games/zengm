@@ -4,6 +4,7 @@ import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";
 import { g, lock, updatePlayMenu, updateStatus, toUI } from "../../util";
 import { Conditions } from "../../../common/types";
+
 /**
  * Simulates one or more days of free agency.
  *
@@ -11,7 +12,6 @@ import { Conditions } from "../../../common/types";
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
-
 async function play(
 	numDays: number,
 	conditions: Conditions,

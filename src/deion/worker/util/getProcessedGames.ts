@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import g from "./g";
 import { GameProcessed } from "../../common/types";
+
 /**
  * Generate a game log list.
  *
@@ -11,7 +12,6 @@ import { GameProcessed } from "../../common/types";
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-
 async function getProcessedGameList(
 	abbrev: string,
 	season: number,

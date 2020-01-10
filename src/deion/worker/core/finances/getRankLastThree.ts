@@ -1,5 +1,6 @@
 import { g } from "../../util";
 import { TeamSeason } from "../../../common/types";
+
 /**
  * Gets the rank of some financial thing over the past 3 seasons, if available.
  *
@@ -11,7 +12,6 @@ import { TeamSeason } from "../../../common/types";
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
-
 const getRankLastThree = (
 	teamSeasons: TeamSeason[],
 	category: "expenses" | "revenues",

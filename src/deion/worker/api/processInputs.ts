@@ -1,5 +1,6 @@
 import { PHASE } from "../../common";
 import { g, helpers, overrides } from "../util";
+
 /**
  * Validate that a given abbreviation corresponds to a team.
  *
@@ -9,7 +10,6 @@ import { g, helpers, overrides } from "../util";
  * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
  * @return {Array} Array with two elements, the team ID and the validated abbreviation.
  */
-
 export const validateAbbrev = (abbrev?: string): [number, string] => {
 	let tid = g.teamAbbrevsCache.indexOf(abbrev);
 
@@ -20,6 +20,7 @@ export const validateAbbrev = (abbrev?: string): [number, string] => {
 
 	return [tid, abbrev];
 };
+
 /**
  * Validate the given season.
  *
@@ -29,7 +30,6 @@ export const validateAbbrev = (abbrev?: string): [number, string] => {
  * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.season is used.
  * @return {number} Validated season (same as input unless input is undefined, currently).
  */
-
 export const validateSeason = (season?: number | string): number => {
 	if (season === undefined) {
 		return g.season;

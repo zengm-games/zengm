@@ -2,6 +2,7 @@ import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, overrides } from "../../util";
+
 /**
  * Check roster size limits
  *
@@ -13,7 +14,6 @@ import { g, helpers, local, overrides } from "../../util";
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-
 const checkRosterSizes = async (): Promise<string | void> => {
 	const minFreeAgents = [];
 	let userTeamSizeError;

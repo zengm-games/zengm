@@ -50,7 +50,7 @@ const initAds = (goldUntil: number | void) => {
 		// Get rid of margin saved for skyscraper on right
 		const container = document.getElementsByClassName("bbgm-container")[0];
 
-		if (container) {
+		if (container instanceof HTMLElement) {
 			container.style.paddingRight = "15px";
 			container.style.maxWidth = "100%";
 		}

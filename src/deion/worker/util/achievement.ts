@@ -10,6 +10,7 @@ import { AchievementWhen, Conditions } from "../../common/types"; // Combine glo
 const getAchievements = () => {
 	return [...achievements, ...overrides.util.achievements];
 };
+
 /**
  * Records one or more achievements.
  *
@@ -20,7 +21,6 @@ const getAchievements = () => {
  * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
  * @return {Promise}
  */
-
 async function add(
 	slugs: string[],
 	conditions: Conditions,

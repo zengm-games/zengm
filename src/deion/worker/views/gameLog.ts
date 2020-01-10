@@ -23,6 +23,7 @@ export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
 		t.abbrev = g.teamAbbrevsCache[t.tid];
 	}
 };
+
 /**
  * Generate a box score.
  *
@@ -30,7 +31,6 @@ export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
  * @param {number} gid Integer game ID for the box score (a negative number means no box score).
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
-
 async function boxScore(gid: number) {
 	if (gid < 0) {
 		return {};
@@ -119,6 +119,7 @@ async function updateTeamSeason(
 		season: inputs.season,
 	};
 }
+
 /**
  * Update the displayed box score, as necessary.
  *
@@ -127,7 +128,6 @@ async function updateTeamSeason(
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-
 async function updateBoxScore(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
@@ -160,6 +160,7 @@ async function updateBoxScore(
 		return vars;
 	}
 }
+
 /**
  * Update the game log list, as necessary.
  *
@@ -170,7 +171,6 @@ async function updateBoxScore(
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-
 async function updateGamesList(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,

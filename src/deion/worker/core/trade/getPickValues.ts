@@ -3,6 +3,7 @@ import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { TradePickValues } from "../../../common/types";
+
 /**
  * Estimate draft pick values, based on the generated draft prospects in the database.
  *
@@ -11,7 +12,6 @@ import { TradePickValues } from "../../../common/types";
  * @memberOf core.trade
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
-
 const getPickValues = async (): Promise<TradePickValues> => {
 	const estValues: TradePickValues = {};
 	let maxLength = 0;

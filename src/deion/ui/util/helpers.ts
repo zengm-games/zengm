@@ -17,10 +17,10 @@ const leagueUrl = (components: (number | string)[]): string => {
 
 	return commonHelpers.leagueUrlFactory(lid, components);
 };
+
 /**
  * Format a number as an integer with commas in the thousands places.
  */
-
 const numberWithCommas = (x: number | string): string => {
 	return parseFloat(x)
 		.toFixed()

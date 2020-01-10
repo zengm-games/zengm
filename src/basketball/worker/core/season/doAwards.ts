@@ -181,6 +181,7 @@ const getRealFinalsMvp = async (
 		};
 	}
 };
+
 /**
  * Compute the awards (MVP, etc) after a season finishes.
  *
@@ -189,7 +190,6 @@ const getRealFinalsMvp = async (
  * @memberOf core.season
  * @return {Promise}
  */
-
 const doAwards = async (conditions: Conditions) => {
 	// Careful - this array is mutated in various functions called below
 	const awardsByPlayer: AwardsByPlayer = [];

@@ -1,5 +1,6 @@
 import { getAll, idb } from "../../db";
 import { g, local } from "../../util";
+
 /**
  * Export existing active league.
  *
@@ -7,7 +8,6 @@ import { g, local } from "../../util";
  * @param {string[]} stores Array of names of objectStores to include in export
  * @return {Promise} Resolve to all the exported league data.
  */
-
 const exportLeague = async (
 	stores: string[],
 	options: {

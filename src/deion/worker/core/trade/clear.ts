@@ -1,11 +1,11 @@
 import { idb } from "../../db";
+
 /**
  * Remove all players currently added to the trade.
  *
  * @memberOf core.trade
  * @return {Promise}
  */
-
 const clear = async () => {
 	const tr = await idb.cache.trade.get(0);
 

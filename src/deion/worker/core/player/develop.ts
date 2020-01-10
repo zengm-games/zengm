@@ -164,6 +164,7 @@ export const bootstrapPot = (
 	});
 	return orderBy(maxOvrs)[Math.floor(0.75 * NUM_SIMULATIONS)];
 };
+
 /**
  * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
  *
@@ -176,7 +177,6 @@ export const bootstrapPot = (
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-
 const develop = (
 	p: {
 		born: {

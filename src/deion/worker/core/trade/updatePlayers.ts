@@ -1,6 +1,7 @@
 import { idb } from "../../db";
 import { TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
+
 /**
  * Validates that players are allowed to be traded and updates the database.
  *
@@ -10,7 +11,6 @@ import isUntradable from "./isUntradable";
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
  */
-
 const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
 	// Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
 	for (const t of teams) {

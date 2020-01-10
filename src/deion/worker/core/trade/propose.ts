@@ -5,6 +5,7 @@ import { g, overrides } from "../../util";
 import clear from "./clear";
 import processTrade from "./processTrade";
 import summary from "./summary";
+
 /**
  * Proposes the current trade in the database.
  *
@@ -14,7 +15,6 @@ import summary from "./summary";
  * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
-
 const propose = async (
 	forceTrade: boolean = false,
 ): Promise<[boolean, string | undefined | null]> => {

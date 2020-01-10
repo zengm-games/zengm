@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { updatePlayMenu, updateStatus } from "../../util";
+
 /**
  * Cancel all ongoing contract negotiations.
  *
@@ -8,7 +9,6 @@ import { updatePlayMenu, updateStatus } from "../../util";
  * @memberOf core.contractNegotiation
  * @return {Promise}
  */
-
 const cancelAll = async () => {
 	await idb.cache.negotiations.clear();
 	await updateStatus("Idle");

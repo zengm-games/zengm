@@ -44,6 +44,7 @@ const boxPlotElementStyle = (color, style) => {
 	};
 	return Object.assign(baseStyle, style);
 };
+
 /**
  * Create a new box plot
  *
@@ -57,7 +58,6 @@ const boxPlotElementStyle = (color, style) => {
  *     color: color of the lines in the boxplot (default black)
  *     labels: boolean for whether to show numeric labels (default true)
  */
-
 const BoxPlot = ({
 	color = "#000000",
 	data,

@@ -2,6 +2,7 @@ import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import { TradeSummary, TradeTeams } from "../../../common/types";
+
 /**
  * Create a summary of the trade, for eventual display to the user.
  *
@@ -9,7 +10,6 @@ import { TradeSummary, TradeTeams } from "../../../common/types";
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  * @return {Promise.Object} Resolves to an object contianing the trade summary.
  */
-
 const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	const tids = [teams[0].tid, teams[1].tid];
 	const pids = [teams[0].pids, teams[1].pids];

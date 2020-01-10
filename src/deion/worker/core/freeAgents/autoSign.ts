@@ -5,6 +5,7 @@ import { player, team } from "..";
 import getBest from "./getBest";
 import { idb } from "../../db";
 import { g, local, random, overrides } from "../../util";
+
 /**
  * AI teams sign free agents.
  *
@@ -13,7 +14,6 @@ import { g, local, random, overrides } from "../../util";
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-
 const autoSign = async () => {
 	const [teams, players] = await Promise.all([
 		idb.getCopies.teamsPlus({

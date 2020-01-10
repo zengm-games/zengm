@@ -10,6 +10,7 @@ import {
 	updateStatus,
 } from "../../util";
 import { Conditions, Phase, UpdateEvents } from "../../../common/types";
+
 /**
  * Common tasks run after a new phrase is set.
  *
@@ -21,7 +22,6 @@ import { Conditions, Phase, UpdateEvents } from "../../../common/types";
  * @param {Array.<string>=} updateEvents Array of strings.
  * @return {Promise}
  */
-
 const finalize = async (
 	phase: Phase,
 	url: string,

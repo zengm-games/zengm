@@ -1,5 +1,6 @@
 import { g, injuries, random } from "../../util";
 import { PlayerInjury } from "../../../common/types";
+
 /**
  * Pick injury type and duration.
  *
@@ -8,7 +9,6 @@ import { PlayerInjury } from "../../../common/types";
  * @param {number} healthRank Between 1 and g.numTeams (default 30), 1 if the player's team has the highest health spending this season and g.numTeams if the player's team has the lowest.
  * @return {Object} Injury object (type and gamesRemaining)
  */
-
 const injury = (healthRank: number): PlayerInjury => {
 	const rand = random.uniform(0, 10882);
 	const i = injuries.cumSum.findIndex(cs => cs >= rand);

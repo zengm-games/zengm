@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 
 type BudgetTypes = "budget" | "expenses" | "revenues";
+
 /**
  * Update the rankings of team budgets, expenses, and revenue sources.
  *
@@ -13,7 +14,6 @@ type BudgetTypes = "budget" | "expenses" | "revenues";
  * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
  * @param {Promise}
  */
-
 const updateRanks = async (types: BudgetTypes[]) => {
 	const sortFn = (a, b) => b.amount - a.amount;
 

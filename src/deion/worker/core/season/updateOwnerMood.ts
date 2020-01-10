@@ -1,6 +1,7 @@
 import { idb } from "../../db";
 import { g } from "../../util";
 import { OwnerMood } from "../../../common/types";
+
 /**
  * Update teamSeason.ownerMood based on performance this season, only for user's team.
  *
@@ -9,7 +10,6 @@ import { OwnerMood } from "../../../common/types";
  * @memberOf core.season
  * @return {Promise.Object} Resolves to an object containing the changes in teamSeason.ownerMood this season.
  */
-
 const updateOwnerMood = async (): Promise<{
 	cappedDeltas: OwnerMood;
 	deltas: OwnerMood;

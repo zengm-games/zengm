@@ -303,6 +303,7 @@ const processTeam = async (
 	await Promise.all(promises);
 	return output;
 };
+
 /**
  * Retrieve a filtered copy of a team object, or an array of all team objects.
  *
@@ -322,7 +323,6 @@ const processTeam = async (
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-
 const getCopies = async ({
 	tid,
 	season,

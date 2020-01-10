@@ -1,5 +1,6 @@
 import { ContractInfo } from "../../../common/types";
 import getContracts from "./getContracts";
+
 /**
  * Get the total current payroll for a team.
  *
@@ -9,7 +10,6 @@ import getContracts from "./getContracts";
  * @param {number | ContractInfo[]} tid Team ID, or a list of contracts from getContracts.
  * @return {Promise.<number>} Resolves to payroll in thousands of dollars.
  */
-
 async function getPayroll(input: number | ContractInfo[]): Promise<number> {
 	const contracts =
 		typeof input === "number" ? await getContracts(input) : input;

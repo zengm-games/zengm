@@ -5,6 +5,7 @@ import {
 	PlayerContract,
 	PlayerWithoutPid,
 } from "../../../common/types";
+
 /**
  * Generate a contract for a player.
  *
@@ -13,7 +14,6 @@ import {
  * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
-
 const genContract = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
 	randomizeExp: boolean = false,

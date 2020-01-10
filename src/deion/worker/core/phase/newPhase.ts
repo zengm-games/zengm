@@ -11,6 +11,7 @@ import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
 import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
 import { Conditions, Phase } from "../../../common/types";
+
 /**
  * Set a new phase of the game.
  *
@@ -19,7 +20,6 @@ import { Conditions, Phase } from "../../../common/types";
  * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
  * @return {Promise}
  */
-
 const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 	// Prevent at least some cases of code running twice
 	if (phase === g.phase) {

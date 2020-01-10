@@ -1,6 +1,7 @@
 import { player } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
+
 /**
  * Calculates the base "mood" factor for any free agent towards a team.
  *
@@ -8,7 +9,6 @@ import { g } from "../../util";
  *
  * @return {Promise} Array of base moods, one for each team.
  */
-
 const genBaseMoods = async (reSigning: boolean = false): Promise<number[]> => {
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",

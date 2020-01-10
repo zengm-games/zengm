@@ -1,10 +1,10 @@
 import { PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, lock, updatePlayMenu, updateStatus } from "../../util";
+
 /**
  * Cancel contract negotiations with a player.
  */
-
 const cancel = async (pid: number) => {
 	await idb.cache.negotiations.delete(pid);
 	const negotiationInProgress = await lock.negotiationInProgress();

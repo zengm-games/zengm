@@ -9,13 +9,13 @@
 const randInt = (a: number, b: number): number => {
 	return Math.floor(Math.random() * (1 + b - a)) + a;
 };
+
 /**
  * Shuffles a list in place, returning nothing.
  *
  * @memberOf util.random
  * @param {array} list List to be shuffled in place.
  */
-
 const shuffle = (list: any[]) => {
 	const l = list.length;
 
@@ -30,6 +30,7 @@ const shuffle = (list: any[]) => {
 		}
 	}
 };
+
 /**
  * Returns a random number from an approximately Gaussian distribution.
  *
@@ -42,7 +43,6 @@ const shuffle = (list: any[]) => {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-
 const gauss = (mu: number = 0, sigma: number = 1): number => {
 	return (
 		(Math.random() * 2 -
@@ -53,6 +53,7 @@ const gauss = (mu: number = 0, sigma: number = 1): number => {
 		mu
 	);
 };
+
 /**
  * Returns a random number from an actually Gaussian distribution.
  *
@@ -71,7 +72,6 @@ const gauss = (mu: number = 0, sigma: number = 1): number => {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-
 const realGauss = (mu: number = 0, sigma: number = 1): number => {
 	let radius;
 	let z1;
@@ -101,6 +101,7 @@ const truncGauss = (
 
 	return x;
 };
+
 /**
  * Get a random number selected from a uniform distribution.
  *
@@ -109,7 +110,6 @@ const truncGauss = (
  * @param {number} b Maximum number that can be returned.
  * @return {number} Random number from uniform distribution.
  */
-
 const uniform = (a: number, b: number): number => {
 	return Math.random() * (b - a) + a;
 }; // https://stackoverflow.com/a/19303725/786644
@@ -118,13 +118,13 @@ const uniformSeed = (seed: number): number => {
 	const x = Math.sin(seed) * 10000;
 	return x - Math.floor(x);
 };
+
 /**
  * Choose a random element from a non-empty array.
  *
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-
 const choice = <T extends any>(x: T[], weightFunc?: (a: T) => number): T => {
 	if (weightFunc === undefined) {
 		return x[Math.floor(Math.random() * x.length)];
@@ -145,6 +145,7 @@ const choice = <T extends any>(x: T[], weightFunc?: (a: T) => number): T => {
 	const ind = cumsums.findIndex(cumsum => cumsum >= rand);
 	return x[ind];
 };
+
 /**
  * Custom probability distribution to determine player heights
  *
@@ -157,7 +158,6 @@ const choice = <T extends any>(x: T[], weightFunc?: (a: T) => number): T => {
  * by fitting the same data.  5'3" and 7'9" are the shortest and tallest anyone should
  * reasonably expect to see.  Anything beyond that comes around less than 1 in 700 draft classes.
  */
-
 const heightDist = (): number => {
 	const r = Math.random();
 

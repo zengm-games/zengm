@@ -167,13 +167,13 @@ const upgrade33 = upgradeDB => {
 		};
 	};
 };
+
 /**
  * Create a new league database with the latest structure.
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  * @param {number} lid Integer league ID number for new league.
  */
-
 const createLeague = upgradeDB => {
 	// console.log(`Creating league database`);
 	// rid ("row id") is used as the keyPath for objects without an innate unique identifier
@@ -279,13 +279,13 @@ const createLeague = upgradeDB => {
 		unique: false,
 	});
 };
+
 /**
  * Migrate a league database to the latest structure.
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  * @param {number} lid Integer league ID number.
  */
-
 const migrateLeague = (upgradeDB, lid) => {
 	let upgradeMsg = `Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}.`;
 	let slowUpgradeCalled = false;

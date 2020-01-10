@@ -4,6 +4,7 @@ import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
 import { DraftPick } from "../../../common/types";
+
 /**
  * Select a player for the current drafting team.
  *
@@ -14,7 +15,6 @@ import { DraftPick } from "../../../common/types";
  * @param {number} pid Integer player ID for the player to be drafted.
  * @return {Promise}
  */
-
 const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (dp.pick <= 0) {
 		throw new Error(`Invalid draft pick number "${dp.pick}"`);

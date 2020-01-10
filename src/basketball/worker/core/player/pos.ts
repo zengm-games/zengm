@@ -1,4 +1,5 @@
 import { PlayerRatings } from "../../../common/types";
+
 /**
  * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.
  *
@@ -6,7 +7,6 @@ import { PlayerRatings } from "../../../common/types";
  * @param {Object.<string, number>} ratings Ratings object.
  * @return {string} Position.
  */
-
 const pos = (ratings: PlayerRatings): string => {
 	let pg = false;
 	let sg = false;

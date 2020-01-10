@@ -26,6 +26,7 @@ import {
 	updateStatus,
 } from "../../util";
 import { Conditions } from "../../../common/types";
+
 /**
  * Play one or more days of games.
  *
@@ -36,7 +37,6 @@ import { Conditions } from "../../../common/types";
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
  */
-
 const play = async (
 	numDays: number,
 	conditions: Conditions,

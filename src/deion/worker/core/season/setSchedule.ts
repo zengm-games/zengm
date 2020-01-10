@@ -1,4 +1,5 @@
 import { idb } from "../../db";
+
 /**
  * Save the schedule to the database, overwriting what's currently there.
  *
@@ -6,7 +7,6 @@ import { idb } from "../../db";
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
  */
-
 const setSchedule = async (tids: [number, number][]) => {
 	await idb.cache.schedule.clear();
 	await Promise.all(

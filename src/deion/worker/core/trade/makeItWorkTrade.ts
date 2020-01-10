@@ -3,6 +3,7 @@ import { g, helpers } from "../../util";
 import getPickValues from "./getPickValues";
 import makeItWork from "./makeItWork";
 import summary from "./summary";
+
 /**
  * Make a trade work
  *
@@ -11,7 +12,6 @@ import summary from "./summary";
  * @memberOf core.trade
  * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
  */
-
 const makeItWorkTrade = async () => {
 	const [estValues, tr] = await Promise.all([
 		getPickValues(),

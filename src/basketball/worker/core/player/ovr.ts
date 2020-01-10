@@ -1,5 +1,6 @@
 import { helpers } from "../../../../deion/worker/util";
 import { PlayerRatings } from "../../../common/types";
+
 /**
  * Calculates the overall rating by averaging together all the other ratings.
  *
@@ -7,7 +8,6 @@ import { PlayerRatings } from "../../../common/types";
  * @param {Object.<string, number>} ratings Player's ratings object.
  * @return {number} Overall rating.
  */
-
 const ovr = (ratings: PlayerRatings): number => {
 	// See analysis/player-ovr-basketball
 	const r =

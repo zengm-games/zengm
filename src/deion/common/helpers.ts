@@ -720,12 +720,12 @@ function getTeamsDefault(): TeamBasic[] {
 	teams = addPopRank(teams);
 	return teams;
 }
+
 /**
  * Clones an object.
  *
  * Taken from http://stackoverflow.com/a/3284324/786644
  */
-
 function deepCopy<T>(obj: T): T {
 	if (typeof obj !== "object" || obj === null) {
 		return obj;
@@ -749,13 +749,13 @@ function keys<T extends string>(obj: any): Array<T> {
 	// $FlowFixMe
 	return Object.keys(obj);
 }
+
 /**
  * Create a URL for a page within a league.
  *
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-
 function leagueUrlFactory(
 	lid: number,
 	components: (number | string)[],
@@ -770,6 +770,7 @@ function leagueUrlFactory(
 
 	return url;
 }
+
 /**
  * Format a number as currency, correctly handling negative values.
  *
@@ -779,7 +780,6 @@ function leagueUrlFactory(
  * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
  * @return {string} Formatted currency string.
  */
-
 function formatCurrency(
 	amount: number,
 	append: string = "",
@@ -796,6 +796,7 @@ function formatCurrency(
 
 	return `$${amount.toFixed(precision)}${append}`;
 }
+
 /**
  * Bound a number so that it can't exceed min and max values.
  *
@@ -805,7 +806,6 @@ function formatCurrency(
  * @param {number} max Maximum bounding variable.
  * @return {number} Bounded number.
  */
-
 function bound(x: number, min: number, max: number): number {
 	if (x < min) {
 		return min;
@@ -886,6 +886,7 @@ function roundWinp(winp: number): string {
 
 	return output;
 }
+
 /**
  * Will a player negotiate with a team, or not?
  *
@@ -893,7 +894,6 @@ function roundWinp(winp: number): string {
  * @param {number} mood Player's mood towards the team in question.
  * @return {boolean} Answer to the question.
  */
-
 const refuseToNegotiate = (
 	amount: number,
 	mood: number,

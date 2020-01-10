@@ -1,6 +1,7 @@
 import { team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
+
 /**
  * Assess the payroll and apply minimum and luxury taxes.
  * Distribute half of the collected luxury taxes to teams under the salary cap.
@@ -8,7 +9,6 @@ import { g } from "../../util";
  * @memberOf core.finances
  * @return {Promise}
  */
-
 const assessPayrollMinLuxury = async () => {
 	let collectedTax = 0;
 	const payrolls = await team.getPayrolls();

@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { TradeTeams } from "../../../common/types";
+
 /**
  * Start a new trade with a team.
  *
@@ -7,7 +8,6 @@ import { TradeTeams } from "../../../common/types";
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs). If the other team's tid is null, it will automatically be determined from the pids.
  * @return {Promise}
  */
-
 const create = async (teams: TradeTeams) => {
 	const tr = await idb.cache.trade.get(0); // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
 

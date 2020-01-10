@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { ContractInfo } from "../../../common/types";
+
 /**
  * Gets all the contracts a team owes.
  *
@@ -9,7 +10,6 @@ import { ContractInfo } from "../../../common/types";
  * @param {number} tid Team ID.
  * @returns {Promise.Array} Array of objects containing contract information.
  */
-
 const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 	// First, get players currently on the roster
 	// $FlowFixMe

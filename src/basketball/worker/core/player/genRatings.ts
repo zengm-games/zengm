@@ -39,6 +39,7 @@ const typeFactors: {
 		diq: 1.2,
 	},
 };
+
 /**
  * Generate initial ratings for a newly-created player.
  *
@@ -47,7 +48,6 @@ const typeFactors: {
  * @param {number} tid [description]
  * @return {Object} Ratings object
  */
-
 const genRatings = (
 	season: number,
 	scoutingRank: number,

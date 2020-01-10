@@ -31,6 +31,7 @@ const set = (name: keyof Locks, value: boolean) => {
 		toUI(["realtimeUpdate", ["lock.gameSim"]]);
 	}
 };
+
 /**
  * Is a negotiation in progress?
  *
@@ -39,11 +40,11 @@ const set = (name: keyof Locks, value: boolean) => {
  * @memberOf util.lock
  * @return {Promise.boolean}
  */
-
 async function negotiationInProgress(): Promise<boolean> {
 	const negotiations = await idb.cache.negotiations.getAll();
 	return negotiations.length > 0;
 }
+
 /**
  * Can new game simulations be started?
  *
@@ -52,7 +53,6 @@ async function negotiationInProgress(): Promise<boolean> {
  * @memberOf util.lock
  * @return {Promise.boolean}
  */
-
 async function canStartGames(): Promise<boolean> {
 	const negotiationInProgressBool = await negotiationInProgress();
 
@@ -72,6 +72,7 @@ async function canStartGames(): Promise<boolean> {
 	locks.gameSim = true;
 	return true;
 }
+
 /**
  * Is there an undread message from the owner?
  *
@@ -80,7 +81,6 @@ async function canStartGames(): Promise<boolean> {
  * @memberOf util.lock
  * @return {Promise.boolean}
  */
-
 async function unreadMessage(): Promise<boolean> {
 	const messages = await idb.getCopies.messages({
 		limit: 10,

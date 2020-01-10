@@ -1,6 +1,7 @@
 import { idb } from "../../db";
 import { g } from "../../util";
 import { ScheduleGame } from "../../../common/types";
+
 /**
  * Get an array of games from the schedule.
  *
@@ -8,7 +9,6 @@ import { ScheduleGame } from "../../../common/types";
  * @param {boolean} options.oneDay Return just one day (true) or all days (false). Default false.
  * @return {Promise} Resolves to the requested schedule array.
  */
-
 const getSchedule = async (
 	oneDay: boolean = false,
 ): Promise<ScheduleGame[]> => {

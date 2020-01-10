@@ -6,6 +6,7 @@ import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import { Conditions, DraftLotteryResult } from "../../../common/types";
+
 /**
  * Sets draft order and save it to the draftPicks object store.
  *
@@ -16,7 +17,6 @@ import { Conditions, DraftLotteryResult } from "../../../common/types";
  * @memberOf core.draft
  * @return {Promise}
  */
-
 const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,

@@ -125,6 +125,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 	t.stat = { ...teamStats, pts: 0, ptsQtrs: [0] };
 	return t;
 };
+
 /**
  * Load the teams specified by tids into an object of team objects.
  *
@@ -134,7 +135,6 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
  * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
-
 const loadTeams = async (tids: number[]) => {
 	if (!overrides.core.player.stats) {
 		throw new Error("Missing overrides.core.player.stats");

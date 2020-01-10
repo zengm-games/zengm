@@ -1,5 +1,6 @@
 import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
+
 /**
  * Given a list of players sorted by ability, find the starters.
  *
@@ -8,7 +9,6 @@ import { g } from "../../../../deion/worker/util";
  * @param {Array.<string>} p Array positions of players on roster, sorted by value already.
  * @return {Array.<number>} Indexes of the starters from the input array. If this is of length < 5, then satisfactory starters couldn't be found and any players should be used to fill in the starting lineup.
  */
-
 export const findStarters = (positions: string[]): number[] => {
 	const starters = []; // Will be less than 5 in length if that's all it takes to meet requirements
 
@@ -56,6 +56,7 @@ export const findStarters = (positions: string[]): number[] => {
 
 	return starters;
 };
+
 /**
  * Sort a team's roster based on player ratings and stats.
  *
@@ -63,7 +64,6 @@ export const findStarters = (positions: string[]): number[] => {
  * @param {number} tid Team ID.
  * @return {Promise}
  */
-
 const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 	if (onlyNewPlayers) {
 		// This option is just for football currently

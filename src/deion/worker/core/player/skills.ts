@@ -10,6 +10,7 @@ const hasSkill = (
 ): boolean => {
 	return compositeRating(ratings, components, weights, true) > cutoff;
 };
+
 /**
  * Assign "skills" based on ratings.
  *
@@ -28,7 +29,6 @@ const hasSkill = (
  *
  * Keep cutoffs in sync with GameSim.js!
  */
-
 const skills = (playerRatings: MinimalPlayerRatings): string[] => {
 	const sk = [];
 

@@ -10,6 +10,7 @@ const updateMetaDifficulty = async (difficulty: number) => {
 		await idb.meta.leagues.put(l);
 	}
 };
+
 /**
  * Set values in the gameAttributes objectStore and update the global variable g.
  *
@@ -18,7 +19,6 @@ const updateMetaDifficulty = async (difficulty: number) => {
  * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
  * @returns {Promise} Promise for when it finishes.
  */
-
 const setGameAttributes = async (gameAttributes: GameAttributes) => {
 	const toUpdate = [];
 

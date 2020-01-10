@@ -1,6 +1,7 @@
 import { defaultGameAttributes, g } from "../../../../deion/worker/util";
 import { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 import { PlayerRatings } from "../../../common/types";
+
 /**
  * Is a player worthy of the Hall of Fame?
  *
@@ -10,7 +11,6 @@ import { PlayerRatings } from "../../../common/types";
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-
 const madeHof = (
 	p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
 ): boolean => {

@@ -1,11 +1,11 @@
 import getSchedule from "./getSchedule";
+
 /**
  * Get the number of days left in the regular season schedule.
  *
  * @memberOf core.season
  * @return {Promise} The number of days left in the schedule.
  */
-
 const getDaysLeftSchedule = async (untilAllStarGame: boolean) => {
 	const schedule = await getSchedule();
 	let numDays = 0;

@@ -2,6 +2,7 @@ import flatten from "lodash/flatten";
 import range from "lodash/range";
 import { g, random } from "../../../../deion/worker/util";
 import { Team } from "../../../../deion/common/types";
+
 /**
  * Creates a new regular season schedule for 30 teams.
  *
@@ -10,7 +11,6 @@ import { Team } from "../../../../deion/common/types";
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-
 const newScheduleDefault = (teams): [number, number][] => {
 	const tids = []; // tid_home, tid_away
 	// Collect info needed for scheduling
@@ -164,6 +164,7 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
 
 	return matchups;
 };
+
 /**
  * Creates a new regular season schedule for an arbitrary number of teams.
  *
@@ -172,7 +173,6 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-
 export const newScheduleCrappy = (): [number, number][] => {
 	const tids = range(g.numTeams);
 	random.shuffle(tids); // Number of games left to reschedule for each team
@@ -217,6 +217,7 @@ export const newScheduleCrappy = (): [number, number][] => {
 
 	return matchups;
 };
+
 /**
  * Wrapper function to generate a new schedule with the appropriate algorithm based on the number of teams in the league.
  *
@@ -225,7 +226,6 @@ export const newScheduleCrappy = (): [number, number][] => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-
 const newSchedule = (teams: Team[]): [number, number][] => {
 	let tids;
 	let threeDivsPerConf = true;

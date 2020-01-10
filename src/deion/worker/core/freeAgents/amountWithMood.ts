@@ -1,4 +1,5 @@
 import { g } from "../../util";
+
 /**
  * Get contract amount adjusted for mood.
  *
@@ -7,7 +8,6 @@ import { g } from "../../util";
  * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
  * @return {number} Contract amoung adjusted for mood.
  */
-
 const amountWithMood = (amount: number, mood: number = 0.5): number => {
 	amount *= 1 + 0.2 * mood;
 

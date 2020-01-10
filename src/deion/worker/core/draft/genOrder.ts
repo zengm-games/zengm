@@ -2,6 +2,7 @@ import genOrderNBA from "./genOrderNBA";
 import genOrderNone from "./genOrderNone";
 import { g } from "../../util";
 import { Conditions } from "../../../common/types";
+
 /**
  * Sets draft order and save it to the draftPicks object store.
  *
@@ -10,7 +11,6 @@ import { Conditions } from "../../../common/types";
  * @memberOf core.draft
  * @return {Promise}
  */
-
 const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,

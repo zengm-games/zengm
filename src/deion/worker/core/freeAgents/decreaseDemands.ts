@@ -1,6 +1,7 @@
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
+
 /**
  * Decrease contract demands for all free agents.
  *
@@ -9,7 +10,6 @@ import { g, helpers } from "../../util";
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-
 const decreaseDemands = async () => {
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",

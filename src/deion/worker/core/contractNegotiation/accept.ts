@@ -2,6 +2,7 @@ import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
 import { g, overrides } from "../../util";
+
 /**
  * Accept the player's offer.
  *
@@ -11,7 +12,6 @@ import { g, overrides } from "../../util";
  * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
-
 const accept = async (
 	pid: number,
 	amount: number,

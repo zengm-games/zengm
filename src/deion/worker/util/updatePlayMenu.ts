@@ -5,13 +5,13 @@ import helpers from "./helpers";
 import local from "./local";
 import lock from "./lock";
 import toUI from "./toUI";
+
 /**
  * Update play menu options based on game state.
  *
  * @memberOf ui
  * @return {Promise}
  */
-
 const updatePlayMenu = async () => {
 	// $FlowFixMe
 	if (typeof it === "function") {

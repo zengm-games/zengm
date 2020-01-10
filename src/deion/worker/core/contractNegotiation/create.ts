@@ -2,6 +2,7 @@ import { PHASE, PLAYER } from "../../../common";
 import { freeAgents } from "..";
 import { idb } from "../../db";
 import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
+
 /**
  * Start a new contract negotiation with a player.
  *
@@ -11,7 +12,6 @@ import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
-
 const create = async (
 	pid: number,
 	resigning: boolean,

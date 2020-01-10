@@ -1,5 +1,6 @@
 import { g, overrides } from "../../util";
 import { TeamStats } from "../../../common/types";
+
 /**
  * Generate a new row of team stats.
  *
@@ -9,7 +10,6 @@ import { TeamStats } from "../../../common/types";
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  * @return {Object} Team stats object.
  */
-
 const genStatsRow = (tid: number, playoffs: boolean = false): TeamStats => {
 	const statsRow = {
 		playoffs,

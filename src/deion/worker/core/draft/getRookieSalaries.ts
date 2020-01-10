@@ -1,4 +1,5 @@
 import { g } from "../../util";
+
 /**
  * Get a list of rookie salaries for all players in the draft.
  *
@@ -7,7 +8,6 @@ import { g } from "../../util";
  * @memberOf core.draft
  * @return {Array.<number>} Array of salaries, in thousands of dollars/year.
  */
-
 const getRookieSalaries = (): number[] => {
 	// Default for first round
 	const firstRoundRookieSalaries = [

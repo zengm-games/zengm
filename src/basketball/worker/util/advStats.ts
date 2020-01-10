@@ -323,6 +323,7 @@ const calculateRatings = (players, teams, league) => {
 		ows,
 	};
 };
+
 /**
  * Calcualte the advanced stats for each active player and write them to the database.
  *
@@ -331,7 +332,6 @@ const calculateRatings = (players, teams, league) => {
  * @memberOf util.advStats
  * @return {Promise}
  */
-
 const advStats = async () => {
 	// Total player stats (not per game averages)
 	// For PER: pos, min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf

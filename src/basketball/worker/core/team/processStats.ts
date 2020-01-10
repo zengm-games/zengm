@@ -37,7 +37,7 @@ const processStats = (
 	playoffs: boolean,
 	statType: TeamStatType,
 ) => {
-	const row = {};
+	const row: any = {};
 
 	if (ts.gp > 0) {
 		for (const stat of stats) {

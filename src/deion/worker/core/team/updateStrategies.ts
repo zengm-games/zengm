@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
+
 /**
  * Update team strategies (contending or rebuilding) for every team in the league.
  *
@@ -8,7 +9,6 @@ import { g } from "../../util";
  * @memberOf core.team
  * @return {Promise}
  */
-
 const updateStrategies = async () => {
 	const teams = await idb.cache.teams.getAll();
 

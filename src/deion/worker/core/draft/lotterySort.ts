@@ -3,12 +3,12 @@ import { PHASE } from "../../../common";
 import { season } from "..";
 import { g, helpers, random } from "../../util";
 import { TeamFiltered } from "../../../common/types";
+
 /**
  * Sort teams in place in correct order for lottery.
  *
  * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
  */
-
 const lotterySort = (teams: TeamFiltered[]) => {
 	/**
 	 * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html

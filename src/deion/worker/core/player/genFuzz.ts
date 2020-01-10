@@ -1,4 +1,5 @@
 import { g, random } from "../../util";
+
 /**
  * Generate fuzz.
  *
@@ -8,7 +9,6 @@ import { g, random } from "../../util";
  * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {number} Fuzz, between -5 and 5.
  */
-
 const genFuzz = (scoutingRank: number): number => {
 	const cutoff = 2 + (8 * (scoutingRank - 1)) / (g.numTeams - 1); // Max error is from 2 to 10, based on scouting rank
 

@@ -3,6 +3,7 @@ import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
+
 /**
  * Generate a set of draft prospects.
  *
@@ -14,7 +15,6 @@ import { g, helpers, logEvent } from "../../util";
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-
 const genPlayers = async (
 	draftYear: number,
 	scoutingRank: number | undefined | null = null,

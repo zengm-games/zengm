@@ -144,6 +144,7 @@ type teamWonLost = {
 const gb = (team0: teamWonLost, team: teamWonLost) => {
 	return (team0.won - team0.lost - (team.won - team.lost)) / 2;
 };
+
 /**
  * Get the team abbreviation for a team ID.
  *
@@ -153,7 +154,6 @@ const gb = (team0: teamWonLost, team: teamWonLost) => {
  * @param {number|string} tid Integer team ID.
  * @return {string} Abbreviation
  */
-
 const getAbbrev = (tid: number | string): string => {
 	tid = parseInt(tid, 10);
 
@@ -197,6 +197,7 @@ const getPopRanks = (teamSeasons: TeamSeason[]): number[] => {
 
 const leagueUrl = (components: (number | string)[]): string =>
 	commonHelpers.leagueUrlFactory(g.lid, components);
+
 /**
  * Pad an array with nulls or truncate it so that it has a fixed length.
  *
@@ -205,7 +206,6 @@ const leagueUrl = (components: (number | string)[]): string =>
  * @param {number} length Desired length.
  * @return {Array} Original array padded with null or truncated so that it has the required length.
  */
-
 function nullPad<T>(
 	array: (T | undefined | null)[],
 	length: number,
@@ -319,6 +319,7 @@ const pickDesc = (dp: DraftPick): string => {
 
 	return desc;
 };
+
 /**
  * Delete all the things from the global variable g that are not stored in league databases.
  *
@@ -326,7 +327,6 @@ const pickDesc = (dp: DraftPick): string => {
  *
  * @memberOf util.helpers
  */
-
 const resetG = () => {
 	for (const key of commonHelpers.keys(g)) {
 		if (key !== "lid") {

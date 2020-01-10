@@ -8,6 +8,7 @@ import skills from "./skills";
 import updateValues from "./updateValues";
 import { g, overrides, random } from "../../util";
 import { MinimalPlayerRatings, Player } from "../../../common/types";
+
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
  *
@@ -15,7 +16,6 @@ import { MinimalPlayerRatings, Player } from "../../../common/types";
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-
 const augmentPartialPlayer = (
 	p: any,
 	scoutingRank: number,

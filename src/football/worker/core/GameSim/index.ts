@@ -15,13 +15,13 @@ import {
 	TeamGameSim,
 	TeamNum,
 } from "./types";
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
  * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
  * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
  */
-
 const fatigue = (energy: number): number => {
 	energy += 0.05;
 

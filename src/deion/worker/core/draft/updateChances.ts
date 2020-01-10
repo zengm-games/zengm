@@ -1,12 +1,12 @@
 import countBy from "lodash/countBy";
 import { TeamFiltered } from "../../../common/types";
+
 /**
  * Divide the combinations between teams with tied records.
  *
  * If isFinal is true, the remainder value is distributed randomly instead
  * of being set as a decimal value on the result.
  */
-
 const updateChances = (
 	chances: number[],
 	teams: TeamFiltered[],

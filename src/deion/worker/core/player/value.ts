@@ -5,6 +5,7 @@ import {
 	Player,
 	PlayerWithoutPid,
 } from "../../../common/types";
+
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
  * (i.e. ignoring how well he fits in with his teammates and the team's strategy/finances). It
@@ -25,7 +26,6 @@ import {
  * @return {number} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-
 const value = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
 	options: {

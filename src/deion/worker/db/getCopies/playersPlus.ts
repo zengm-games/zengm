@@ -568,6 +568,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptions) => {
 
 	return output;
 };
+
 /**
  * Retrieve a filtered copy of a player object, or an array of filtered player objects.
  *
@@ -598,7 +599,6 @@ const processPlayer = (p: Player, options: PlayersPlusOptions) => {
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-
 const getCopies = async (
 	players: Player[],
 	{

@@ -1,10 +1,10 @@
 import Backboard from "backboard";
+
 /**
  * Create new meta database with the latest structure.
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  */
-
 const createMeta = upgradeDB => {
 	// console.log("Creating meta database");
 	upgradeDB.createObjectStore("achievements", {
@@ -20,12 +20,12 @@ const createMeta = upgradeDB => {
 	attributeStore.put(-1, "lastSelectedTid");
 	attributeStore.put(0, "nagged");
 };
+
 /**
  * Migrate meta database to the latest structure.
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
-
 const migrateMeta = (upgradeDB, fromLocalStorage) => {
 	console.log(
 		`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`,

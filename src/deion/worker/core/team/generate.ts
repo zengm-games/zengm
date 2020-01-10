@@ -1,4 +1,5 @@
 import { helpers, overrides } from "../../util";
+
 /**
  * Create a new team object.
  *
@@ -6,7 +7,6 @@ import { helpers, overrides } from "../../util";
  * @param {Object} tm Team metadata object, likely from core.league.create.
  * @return {Object} Team object to insert in the database.
  */
-
 const generate = (tm: any) => {
 	let strategy;
 

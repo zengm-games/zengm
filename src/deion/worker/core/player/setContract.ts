@@ -5,6 +5,7 @@ import {
 	PlayerContract,
 	PlayerWithoutPid,
 } from "../../../common/types";
+
 /**
  * Store a contract in a player object.
  *
@@ -14,7 +15,6 @@ import {
  * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
  * @return {Object} Updated player object.
  */
-
 const setContract = (
 	p: Player | PlayerWithoutPid,
 	contract: PlayerContract,

@@ -24,6 +24,7 @@ const mockIDBLeague = (): any => {
 
 	return league;
 };
+
 /**
  * Finds the number of times an element appears in an array.
  *
@@ -32,7 +33,6 @@ const mockIDBLeague = (): any => {
  * @param {*} x Element to search for
  * @return {number} The number of times x was found in array.
  */
-
 function numInArrayEqualTo<T>(array: T[], x: T): number {
 	let n = 0;
 	let idx = array.indexOf(x);

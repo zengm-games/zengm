@@ -298,19 +298,19 @@ const calculateRatings = (players, teams, league) => {
 				pProd - 0.92 * (league.pts / league.poss) * totPoss;
 			ows[i] = marginalOffense / marginalPtsPerWin;
 
-			if (Number.isNaN(drtg[i]) || drtg === Infinity) {
+			if (Number.isNaN(drtg[i]) || drtg[i] === Infinity) {
 				drtg[i] = 0;
 			}
 
-			if (Number.isNaN(dws[i]) || dws === Infinity || p.stats.min < 10) {
+			if (Number.isNaN(dws[i]) || dws[i] === Infinity || p.stats.min < 10) {
 				dws[i] = 0;
 			}
 
-			if (Number.isNaN(ortg[i]) || ortg === Infinity) {
+			if (Number.isNaN(ortg[i]) || ortg[i] === Infinity) {
 				ortg[i] = 0;
 			}
 
-			if (Number.isNaN(ows[i]) || ows === Infinity || p.stats.min < 10) {
+			if (Number.isNaN(ows[i]) || ows[i] === Infinity || p.stats.min < 10) {
 				ows[i] = 0;
 			}
 		}

@@ -335,4 +335,5 @@ Draft.propTypes = {
 	undrafted: PropTypes.arrayOf(PropTypes.object).isRequired,
 	userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
+
 export default Draft;

@@ -42,4 +42,5 @@ Changes.propTypes = {
 		}),
 	),
 };
+
 export default Changes;

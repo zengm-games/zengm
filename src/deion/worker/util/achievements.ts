@@ -518,4 +518,5 @@ const achievements: Achievement[] = [
 		when: "afterAwards",
 	},
 ];
+
 export default achievements;

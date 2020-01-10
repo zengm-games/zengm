@@ -137,4 +137,5 @@ FantasyDraft.propTypes = {
 		}),
 	).isRequired,
 };
+
 export default FantasyDraft;

@@ -41,4 +41,5 @@ const Footer = ({ footer }: { footer?: any[] }) => {
 Footer.propTypes = {
 	footer: PropTypes.array,
 };
+
 export default Footer;

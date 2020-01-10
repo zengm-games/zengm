@@ -25,4 +25,5 @@ const changes = [
 			"I finally added Statistical Feats, which you can see in the Stats menu.",
 	},
 ];
+
 export default changes;

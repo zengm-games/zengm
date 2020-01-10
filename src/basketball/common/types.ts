@@ -7,6 +7,7 @@ type AwardTeam = {
 	lost: number;
 	tied: number | void;
 };
+
 export type AwardPlayer = {
 	pid: number;
 	name: string;
@@ -16,6 +17,7 @@ export type AwardPlayer = {
 	trb: number;
 	ast: number;
 };
+
 export type AwardPlayerDefense = {
 	pid: number;
 	name: string;
@@ -25,6 +27,7 @@ export type AwardPlayerDefense = {
 	blk: number;
 	stl: number;
 };
+
 export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
@@ -107,6 +110,7 @@ export type Awards = {
 	];
 	finalsMvp: AwardPlayer | void;
 };
+
 export type PlayerRatings = {
 	diq: number;
 	dnk: number;
@@ -131,6 +135,7 @@ export type PlayerRatings = {
 	stre: number;
 	tp: number;
 };
+
 export type RatingKey =
 	| "diq"
 	| "dnk"

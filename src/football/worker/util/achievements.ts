@@ -154,4 +154,5 @@ const achievements: Achievement[] = [
 		when: "afterPlayoffs",
 	},
 ];
+
 export default achievements;

@@ -235,4 +235,5 @@ const helpers = {
 	roundStat,
 	roundsWonText,
 };
+
 export default helpers;

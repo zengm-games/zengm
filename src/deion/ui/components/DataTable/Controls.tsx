@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
@@ -15,7 +15,7 @@ const Controls = ({
 }: {
 	enableFilters: boolean;
 	onExportCSV: () => void;
-	onSearch: (a: SyntheticInputEvent<HTMLInputElement>) => void;
+	onSearch: (a: SyntheticEvent<HTMLInputElement>) => void;
 	onToggleFilters: () => void;
 }) => {
 	const positionFilterText =
@@ -90,11 +90,11 @@ const Controls = ({
 		</div>
 	);
 };
-
 Controls.propTypes = {
 	enableFilters: PropTypes.bool.isRequired,
 	onExportCSV: PropTypes.func.isRequired,
 	onSearch: PropTypes.func.isRequired,
 	onToggleFilters: PropTypes.func.isRequired,
 };
+
 export default Controls;

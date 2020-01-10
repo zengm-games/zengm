@@ -35,7 +35,11 @@ const idb: {
 	league: undefined,
 	meta: undefined,
 };
+
 export { Cache, getAll, idb };
+
 export { default as connectMeta } from "./connectMeta";
+
 export { default as connectLeague } from "./connectLeague";
+
 export { default as reset } from "./reset";

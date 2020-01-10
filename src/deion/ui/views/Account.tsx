@@ -453,4 +453,5 @@ Account.propTypes = {
 	showGoldPitch: PropTypes.bool.isRequired,
 	username: PropTypes.string,
 };
+
 export default Account;

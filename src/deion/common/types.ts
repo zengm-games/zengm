@@ -32,6 +32,7 @@ export type AchievementWhen =
 	| "afterFired"
 	| "afterPlayoffs"
 	| "afterRegularSeason";
+
 export type Achievement = {
 	slug: string;
 	name: string;
@@ -40,7 +41,9 @@ export type Achievement = {
 	check?: () => Promise<boolean>;
 	when?: AchievementWhen;
 };
+
 export type BackboardTx = any;
+
 export type CompositeWeights<RatingKey = string> = {
 	[key: string]: {
 		ratings: (RatingKey | number)[];
@@ -55,6 +58,7 @@ export type CompositeWeights<RatingKey = string> = {
 export type Conditions = {
 	hostID?: number;
 };
+
 export type DraftLotteryResultArray = {
 	tid: number;
 	originalTid: number;
@@ -64,11 +68,13 @@ export type DraftLotteryResultArray = {
 	lost: number;
 	tied: number;
 }[];
+
 export type DraftLotteryResult = {
 	season: number;
 	draftType?: "nba1994" | "nba2019";
 	result: DraftLotteryResultArray;
 };
+
 export type DraftPickWithoutDpid = {
 	tid: number;
 	originalTid: number;
@@ -77,10 +83,13 @@ export type DraftPickWithoutDpid = {
 	// 0 if not set
 	season: number | "fantasy";
 };
+
 export type DraftPick = {
 	dpid: number;
 } & DraftPickWithoutDpid;
+
 export type EventBBGM = any;
+
 export type Game = {
 	att: number;
 	clutchPlays?: string[];
@@ -99,7 +108,9 @@ export type Game = {
 		pts: number;
 	};
 };
+
 export type GamePlayer = any;
+
 export type GameResults = any;
 
 export type GameAttributes = {
@@ -161,11 +172,14 @@ export type GameAttributes = {
 	userTid: any;
 	userTids: any;
 };
+
 export type GameAttributeKey = keyof GameAttributes;
+
 export type GameAttribute = {
 	key: GameAttributeKey;
 	value: any;
 };
+
 export type GameProcessed = {
 	gid: number;
 	home: boolean;
@@ -177,6 +191,7 @@ export type GameProcessed = {
 	tid?: number;
 	pts: number;
 };
+
 export type GameProcessedCompleted = {
 	gid: number;
 	overtime: string;
@@ -184,9 +199,11 @@ export type GameProcessedCompleted = {
 	score: string;
 	teams: [any, any];
 };
+
 export type GetOutput = {
 	[key: string]: (number | string) | undefined | null;
 };
+
 export type League = {
 	lid: number;
 	name: string;
@@ -201,13 +218,16 @@ export type League = {
 	created?: Date;
 	lastPlayed?: Date;
 };
+
 export type Locks = {
 	drafting: boolean;
 	gameSim: boolean;
 	newPhase: boolean;
 	stopGameSim: boolean;
 };
+
 export type LockName = "drafting" | "newPhase" | "gameSim" | "stopGameSim";
+
 export type LogEventType =
 	| "achievement"
 	| "ageFraud"
@@ -236,23 +256,27 @@ export type LogEventType =
 	| "trade"
 	| "tragedy"
 	| "upgrade";
+
 export type LogEventSaveOptions = {
 	type: LogEventType;
 	text: string;
 	pids?: number[];
 	tids?: number[];
 };
+
 export type LogEventShowOptions = {
 	extraClass?: string;
 	persistent: boolean;
 	text: string;
 	type: string;
 };
+
 export type OwnerMood = {
 	money: number;
 	playoffs: number;
 	wins: number;
 };
+
 export type MessageWithoutMid = {
 	from: string;
 	read: boolean;
@@ -261,9 +285,11 @@ export type MessageWithoutMid = {
 	subject?: string;
 	ownerMoods?: OwnerMood[];
 };
+
 export type Message = {
 	mid: number;
 } & MessageWithoutMid;
+
 export type MenuItemLink = {
 	type: "link";
 	active?: (a: string | void) => boolean;
@@ -282,6 +308,7 @@ export type MenuItemLink = {
 				top: string | any;
 		  };
 };
+
 export type MenuItemHeader = {
 	type: "header";
 	long: string;
@@ -290,6 +317,7 @@ export type MenuItemHeader = {
 	nonLeague?: true;
 	children: MenuItemLink[];
 };
+
 export type Names = {
 	first: {
 		[key: string]: [string, number][];
@@ -298,16 +326,19 @@ export type Names = {
 		[key: string]: [string, number][];
 	};
 };
+
 export type Negotiation = {
 	pid: number;
 	tid: number;
 	resigning: boolean;
 };
+
 export type Option = {
 	id: string;
 	label: string;
 	url?: string;
 };
+
 export type RouterContext = {
 	params: {
 		[key: string]: string;
@@ -317,6 +348,7 @@ export type RouterContext = {
 		[key: string]: any;
 	};
 };
+
 export type LocalStateUI = {
 	gold: boolean | void;
 	godMode: boolean;
@@ -357,17 +389,21 @@ export type LocalStateUI = {
 	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
 };
+
 export type PartialTopMenu = {
 	email: string;
 	goldCancelled: boolean;
 	goldUntil: number;
 	username: string;
 };
+
 export type Phase = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
 export type PlayerContract = {
 	amount: number;
 	exp: number;
 };
+
 export type PlayerFeat = {
 	fid?: number;
 	pid: number;
@@ -383,7 +419,9 @@ export type PlayerFeat = {
 	score: string;
 	overtimes: number;
 };
+
 export type PlayerFiltered = any;
+
 export type PlayerInjury = {
 	gamesRemaining: number;
 	type: string;
@@ -394,7 +432,9 @@ type PlayerSalary = {
 }; // ***p stats can be undefined
 
 export type PlayerStats = any;
+
 export type RelativeType = "brother" | "father" | "son";
+
 export type MinimalPlayerRatings = {
 	ovr: number;
 	pot: number;
@@ -407,6 +447,7 @@ export type MinimalPlayerRatings = {
 	injuryIndex?: number;
 	[key: string]: number;
 };
+
 export type PlayerWithoutPid<PlayerRatings = any> = {
 	awards: {
 		season: number;
@@ -475,7 +516,9 @@ export type PlayerWithoutPid<PlayerRatings = any> = {
 export type Player<PlayerRatings = any> = {
 	pid: number;
 } & PlayerWithoutPid<PlayerRatings>;
+
 export type PlayerStatType = "per36" | "perGame" | "totals";
+
 export type PlayersPlusOptions = {
 	season?: number;
 	tid?: number;
@@ -492,6 +535,7 @@ export type PlayersPlusOptions = {
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 };
+
 export type PlayerNames = {
 	countries: [string, number][];
 	first: {
@@ -501,6 +545,7 @@ export type PlayerNames = {
 		[key: string]: [string, number][];
 	};
 };
+
 export type Local = {
 	autoPlaySeasons: number;
 	fantasyDraftResults: Player<any>[];
@@ -513,6 +558,7 @@ export type Local = {
 	unviewedSeasonSummary: boolean;
 	reset?: () => void;
 };
+
 export type PlayoffSeriesTeam = {
 	abbrev?: string;
 	cid: number;
@@ -530,6 +576,7 @@ export type PlayoffSeriesTeam = {
 	winp: number;
 	won: number;
 };
+
 export type PlayoffSeries = {
 	season: number;
 	currentRound: number;
@@ -538,6 +585,7 @@ export type PlayoffSeries = {
 		away?: PlayoffSeriesTeam;
 	}[][];
 };
+
 export type ContractInfo = {
 	pid: number;
 	firstName: string;
@@ -550,22 +598,27 @@ export type ContractInfo = {
 	released: boolean;
 	watch: boolean;
 };
+
 export type ReleasedPlayer = {
 	rid: number;
 	pid: number;
 	tid: number;
 	contract: PlayerContract;
 };
+
 export type ReleasedPlayerWithoutRid = {
 	pid: number;
 	tid: number;
 	contract: PlayerContract;
 };
+
 export type ScheduleGame = {
 	awayTid: number;
 	homeTid: number;
 };
+
 export type SortOrder = "asc" | "desc";
+
 export type SortType =
 	| "currency"
 	| "draftPick"
@@ -573,6 +626,7 @@ export type SortType =
 	| "name"
 	| "number"
 	| "record";
+
 export type Team = {
 	tid: number;
 	cid: number;
@@ -600,6 +654,7 @@ export type Team = {
 	};
 	colors: [string, string, string];
 };
+
 export type TeamBasic = {
 	tid: number;
 	cid: number;
@@ -612,15 +667,21 @@ export type TeamBasic = {
 	imgURL?: string;
 	colors: [string, string, string];
 };
+
 export type TeamAttr = string;
+
 export type TeamSeasonAttr = string;
+
 export type TeamStatAttr = string;
+
 export type TeamStatType = "perGame" | "totals";
+
 export type TeamFiltered = any;
 type BudgetItem = {
 	amount: number;
 	rank: number;
 };
+
 export type TeamSeason = {
 	tid: number;
 	season: number;
@@ -672,6 +733,7 @@ export type TeamSeason = {
 }; // opp stats (except Blk) can be undefined
 
 export type TeamStats = any;
+
 export type TradePickValues = {
 	[key: string]: number[];
 };
@@ -686,6 +748,7 @@ type TradeSummaryTeam = {
 	total: number;
 	trade: PlayerFiltered[];
 };
+
 export type TradeSummary = {
 	teams: [TradeSummaryTeam, TradeSummaryTeam];
 	warning: null | string;
@@ -697,11 +760,14 @@ type TradeTeam = {
 	pidsExcluded: number[];
 	tid: number;
 };
+
 export type TradeTeams = [TradeTeam, TradeTeam];
+
 export type Trade = {
 	rid: 0;
 	teams: TradeTeams;
 };
+
 export type UpdateEvents = (
 	| "account"
 	| "firstRun"
@@ -715,6 +781,7 @@ export type UpdateEvents = (
 	| "teamFinances"
 	| "watchList"
 )[];
+
 export type RunFunction = (
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
@@ -723,6 +790,7 @@ export type RunFunction = (
 ) => Promise<void | {
 	[key: string]: any;
 }>;
+
 export type WorkerOverridesConstants = {
 	COMPOSITE_WEIGHTS: CompositeWeights;
 	PLAYER_STATS_TABLES: {
@@ -747,6 +815,7 @@ export type WorkerOverridesConstants = {
 	};
 	TIME_BETWEEN_GAMES: string;
 };
+
 export type WorkerOverridesCore = {
 	GameSim: any;
 	player: {
@@ -853,6 +922,7 @@ export type WorkerOverridesCore = {
 		};
 	};
 };
+
 export type WorkerOverridesUtil = {
 	achievements: Achievement[];
 	advStats: () => Promise<void>;

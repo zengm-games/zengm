@@ -30,4 +30,5 @@ const overrides: {
 	util: {},
 	views: {},
 };
+
 export default overrides;

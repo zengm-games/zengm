@@ -367,6 +367,7 @@ const RATINGS: RatingKey[] = [
 	"reb",
 ];
 const TIME_BETWEEN_GAMES = "day";
+
 export {
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,

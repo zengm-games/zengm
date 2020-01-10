@@ -253,4 +253,5 @@ const SideBar = React.memo(({ pageID }: Props) => {
 SideBar.propTypes = {
 	pageID: PropTypes.string,
 };
+
 export default SideBar;

@@ -19,4 +19,5 @@ const stats = {
 		...teamAndOpp.map(stat => `opp${helpers.upperCaseFirstLetter(stat)}`),
 	],
 };
+
 export default stats;

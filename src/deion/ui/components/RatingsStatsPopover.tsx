@@ -122,4 +122,5 @@ RatingsStatsPopover.propTypes = {
 	pid: PropTypes.number.isRequired,
 	watch: PropTypes.bool,
 };
+
 export default RatingsStatsPopover;

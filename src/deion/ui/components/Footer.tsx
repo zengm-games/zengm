@@ -118,4 +118,5 @@ const Footer = React.memo(() => {
 		</div>
 	);
 });
+
 export default Footer;

@@ -78,4 +78,5 @@ Inbox.propTypes = {
 		}),
 	).isRequired,
 };
+
 export default Inbox;

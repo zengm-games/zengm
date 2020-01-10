@@ -106,4 +106,5 @@ Playoffs.propTypes = {
 	series: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
+
 export default Playoffs;

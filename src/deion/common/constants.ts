@@ -48,6 +48,7 @@ const STRIPE_PUBLISHABLE_KEY =
 	process.env.NODE_ENV === "development"
 		? "pk_test_Qbz0froGmHLp0dPCwHoYFY08"
 		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
+
 export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,

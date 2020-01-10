@@ -18,4 +18,5 @@ const SafeHtml = ({ dirty }: { dirty: string }) => {
 SafeHtml.propTypes = {
 	dirty: PropTypes.string.isRequired,
 };
+
 export default SafeHtml;

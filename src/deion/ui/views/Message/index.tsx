@@ -52,4 +52,5 @@ Message.propTypes = {
 		ownerMoods: PropTypes.array,
 	}),
 };
+
 export default Message;

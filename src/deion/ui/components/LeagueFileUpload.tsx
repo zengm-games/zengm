@@ -1,6 +1,7 @@
 import Ajv from "ajv";
 import PropTypes from "prop-types";
 import React, {
+	SyntheticEvent,
 	useCallback,
 	useEffect,
 	useReducer,
@@ -30,7 +31,7 @@ type State = {
 	status: "initial" | "loading" | "parsing" | "error" | "done";
 };
 
-const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
+const resetFileInput = (event: SyntheticEvent<HTMLInputElement>) => {
 	// Without this, then selecting the same file twice will do nothing because the browser dedupes by filename.
 	// That is very annoying when repeatedly editing/checking a file.
 	event.target.value = "";
@@ -186,7 +187,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 		[beforeFile, onDone, url, withLeagueFile],
 	);
 	const handleFileUpload = useCallback(
-		(event: SyntheticInputEvent<HTMLInputElement>) => {
+		(event: SyntheticEvent<HTMLInputElement>) => {
 			beforeFile();
 			const file = event.currentTarget.files[0];
 
@@ -301,4 +302,5 @@ LeagueFileUpload.propTypes = {
 	onLoading: PropTypes.func,
 	onDone: PropTypes.func.isRequired,
 };
+
 export default LeagueFileUpload;

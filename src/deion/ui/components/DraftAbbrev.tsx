@@ -38,4 +38,5 @@ DraftAbbrev.propTypes = {
 	season: PropTypes.number,
 	tid: PropTypes.number.isRequired,
 };
+
 export default DraftAbbrev;

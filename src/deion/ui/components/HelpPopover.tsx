@@ -42,4 +42,5 @@ HelpPopover.propTypes = {
 	style: PropTypes.object,
 	title: PropTypes.string.isRequired,
 };
+
 export default HelpPopover;

@@ -76,4 +76,5 @@ const showEvent = ({
 };
 
 const logEvent = createLogger(saveEvent, showEvent);
+
 export { logEvent as default, showEvent };

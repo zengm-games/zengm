@@ -72,4 +72,5 @@ const stats = {
 		"penYds",
 	],
 };
+
 export default stats;

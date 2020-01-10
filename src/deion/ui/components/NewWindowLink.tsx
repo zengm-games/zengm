@@ -45,4 +45,5 @@ NewWindowLink.propTypes = {
 		PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	),
 };
+
 export default NewWindowLink;

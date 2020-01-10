@@ -18,4 +18,5 @@ const logEvent = createLogger(
 		toUI(["showEvent", options], conditions);
 	},
 );
+
 export default logEvent;

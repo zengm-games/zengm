@@ -427,4 +427,5 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		],
 	},
 ];
+
 export default menuItems;

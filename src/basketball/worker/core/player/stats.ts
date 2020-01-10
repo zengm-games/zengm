@@ -45,4 +45,5 @@ const stats = {
 		"pts",
 	],
 };
+
 export default stats;

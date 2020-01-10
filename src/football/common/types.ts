@@ -7,6 +7,7 @@ type AwardTeam = {
 	lost: number;
 	tied: number | undefined;
 };
+
 export type AwardPlayer = {
 	pid: number;
 	name: string;
@@ -15,6 +16,7 @@ export type AwardPlayer = {
 	pos: string;
 	keyStats: string;
 };
+
 export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
@@ -36,6 +38,7 @@ export type Awards = {
 	];
 	finalsMvp: AwardPlayer | undefined;
 };
+
 export type Position =
 	| "QB"
 	| "RB"
@@ -50,6 +53,7 @@ export type Position =
 	| "P"
 	| "KR"
 	| "PR";
+
 export type PlayerRatings = {
 	hgt: number;
 	stre: number;
@@ -82,6 +86,7 @@ export type PlayerRatings = {
 	skills: string[];
 	injuryIndex?: number;
 };
+
 export type RatingKey =
 	| "hgt"
 	| "stre"

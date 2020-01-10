@@ -26,7 +26,9 @@ export type PlayType =
 	| "penalty"
 	| "timeout"
 	| "twoMinuteWarning";
+
 export type TeamNum = 0 | 1;
+
 export type CompositeRating =
 	| "passingAccuracy"
 	| "passingDeep"
@@ -44,6 +46,7 @@ export type CompositeRating =
 	| "avoidingSacks"
 	| "ballSecurity"
 	| "endurance";
+
 export type PenaltyPlayType =
 	| "beforeSnap"
 	| "kickoffReturn"
@@ -52,6 +55,7 @@ export type PenaltyPlayType =
 	| "puntReturn"
 	| "pass"
 	| "run";
+
 export type PlayerGameSim = {
 	id: number;
 	name: string;
@@ -64,6 +68,7 @@ export type PlayerGameSim = {
 	injured: boolean;
 	ptModifier: number;
 };
+
 export type PlayersOnField = [
 	{
 		[key: Position]: PlayerGameSim;
@@ -72,6 +77,7 @@ export type PlayersOnField = [
 		[key: Position]: PlayerGameSim;
 	},
 ];
+
 export type TeamGameSim = {
 	id: number;
 	pace: number;

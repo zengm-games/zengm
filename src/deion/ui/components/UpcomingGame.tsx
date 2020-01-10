@@ -50,4 +50,5 @@ UpcomingGame.propTypes = {
 		}),
 	),
 };
+
 export default UpcomingGame;

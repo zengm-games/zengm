@@ -111,4 +111,5 @@ RatingsStats.propTypes = {
 	ratings: PropTypes.object,
 	stats: PropTypes.object,
 };
+
 export default RatingsStats;

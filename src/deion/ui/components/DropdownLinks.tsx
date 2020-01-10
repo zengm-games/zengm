@@ -215,4 +215,5 @@ DropdownLinks.propTypes = {
 	lid: PropTypes.number,
 	menuItems: PropTypes.array.isRequired,
 };
+
 export default DropdownLinks;

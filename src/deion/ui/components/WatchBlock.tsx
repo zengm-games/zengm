@@ -38,4 +38,5 @@ WatchBlock.propTypes = {
 	pid: PropTypes.number.isRequired,
 	watch: PropTypes.bool.isRequired,
 };
+
 export default WatchBlock;

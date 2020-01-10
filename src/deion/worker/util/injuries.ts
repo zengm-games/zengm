@@ -149,6 +149,7 @@ const types = [
 	"Fractured Ankle",
 	"Torn ACL",
 ];
+
 export default {
 	cumSum,
 	gamesRemainings,

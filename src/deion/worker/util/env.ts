@@ -6,4 +6,5 @@ const env: Env = {
 	fromLocalStorage: {},
 	useSharedWorker: false,
 };
+
 export default env;

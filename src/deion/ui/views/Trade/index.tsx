@@ -258,4 +258,5 @@ Trade.propTypes = {
 	userTeamName: PropTypes.string.isRequired,
 	won: PropTypes.number.isRequired,
 };
+
 export default Trade;

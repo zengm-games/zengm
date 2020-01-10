@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { SyntheticEvent } from "react";
 
 const PerPage = ({
 	onChange,
 	value,
 }: {
-	onChange: (a: SyntheticInputEvent<HTMLSelectElement>) => void;
+	onChange: (a: SyntheticEvent<HTMLSelectElement>) => void;
 	value: number;
 }) => {
 	return (
@@ -31,4 +31,5 @@ PerPage.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	value: PropTypes.number.isRequired,
 };
+
 export default PerPage;

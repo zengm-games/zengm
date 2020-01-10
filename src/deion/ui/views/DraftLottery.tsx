@@ -407,4 +407,5 @@ const DraftLottery = (props: Props) => {
 };
 
 DraftLottery.propTypes = DraftLotteryTable.propTypes;
+
 export default DraftLottery;

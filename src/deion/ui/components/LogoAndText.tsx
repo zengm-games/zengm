@@ -48,4 +48,5 @@ LogoAndText.propTypes = {
 	lid: PropTypes.number,
 	updating: PropTypes.bool.isRequired,
 };
+
 export default LogoAndText;

@@ -32,4 +32,5 @@ RatingWithChange.propTypes = {
 	change: PropTypes.number.isRequired,
 	children: PropTypes.number.isRequired,
 };
+
 export default RatingWithChange;

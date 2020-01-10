@@ -77,4 +77,5 @@ RecordAndPlayoffs.propTypes = {
 	tied: PropTypes.number,
 	won: PropTypes.number.isRequired,
 };
+
 export default RecordAndPlayoffs;

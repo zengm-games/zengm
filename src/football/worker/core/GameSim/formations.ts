@@ -104,6 +104,7 @@ const punt = [
 		},
 	},
 ];
+
 export default {
 	fieldGoal,
 	kickoff,

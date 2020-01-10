@@ -184,4 +184,5 @@ PlayoffMatchup.propTypes = {
 	}),
 	userTid: PropTypes.number.isRequired,
 };
+
 export default PlayoffMatchup;

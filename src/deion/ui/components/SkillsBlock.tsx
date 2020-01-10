@@ -56,4 +56,5 @@ SkillsBlock.propTypes = {
 	className: PropTypes.string,
 	skills: PropTypes.arrayOf(PropTypes.string),
 };
+
 export default SkillsBlock;

@@ -82,4 +82,5 @@ Pagination.propTypes = {
 	onClick: PropTypes.func.isRequired,
 	perPage: PropTypes.number.isRequired,
 };
+
 export default Pagination;

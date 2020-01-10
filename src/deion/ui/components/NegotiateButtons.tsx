@@ -81,4 +81,5 @@ NegotiateButtons.propTypes = {
 	season: PropTypes.number,
 	userTid: PropTypes.number.isRequired,
 };
+
 export default NegotiateButtons;

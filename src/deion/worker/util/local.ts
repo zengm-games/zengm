@@ -36,4 +36,5 @@ const local: Local & {
 		// be somewhere else (like how g used to have some variables not persisted to database).
 	},
 };
+
 export default local;

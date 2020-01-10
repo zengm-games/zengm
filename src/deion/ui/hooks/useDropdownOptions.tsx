@@ -2,6 +2,7 @@ import orderBy from "lodash/orderBy";
 import { useEffect, useState } from "react";
 import { PHASE } from "../../common";
 import { overrides, useLocalShallow } from "../util";
+
 export const getSortedTeams = ({
 	teamAbbrevsCache,
 	teamRegionsCache,
@@ -83,6 +84,7 @@ const dropdownValues = {
 	by_conf: "By Conference",
 	by_div: "By Division",
 };
+
 export const getDropdownValue = (
 	key: number | string,
 	sortedTeams: {

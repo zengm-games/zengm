@@ -104,4 +104,5 @@ PlayMenu.propTypes = {
 		}),
 	).isRequired,
 };
+
 export default PlayMenu;

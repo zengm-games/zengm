@@ -42,4 +42,5 @@ RosterSalarySummary.propTypes = {
 	minContract: PropTypes.number.isRequired,
 	numRosterSpots: PropTypes.number.isRequired,
 };
+
 export default RosterSalarySummary;

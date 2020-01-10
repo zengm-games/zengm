@@ -30,4 +30,5 @@ Info.propTypes = {
 	numRowsUnfiltered: PropTypes.number.isRequired,
 	start: PropTypes.number.isRequired,
 };
+
 export default Info;

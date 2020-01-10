@@ -11,8 +11,9 @@ const quartile = (data, quart) => {
 
 const calculateValues = data => {
 	// Sort in ascending order
-	data.sort((a, b) => a - b); // Quartiles, min, max
+	data.sort((a, b) => a - b);
 
+	// Quartiles, min, max
 	return {
 		min: data[0],
 		q1: quartile(data, 1),
@@ -26,9 +27,8 @@ const scaleValue = (v, scale) => {
 	return Math.round(100 - ((v - scale[0]) / (scale[1] - scale[0])) * 100);
 };
 
-const round = (value, precision) => {
-	precision = precision !== undefined ? parseInt(precision, 10) : 1;
-	return parseFloat(value).toFixed(precision);
+const round = value => {
+	return parseFloat(value).toFixed(1);
 };
 
 const boxPlotElementStyle = (color, style) => {
@@ -288,4 +288,5 @@ BoxPlot.propTypes = {
 	quartiles: PropTypes.arrayOf(PropTypes.number),
 	scale: PropTypes.arrayOf(PropTypes.number),
 };
+
 export default BoxPlot;

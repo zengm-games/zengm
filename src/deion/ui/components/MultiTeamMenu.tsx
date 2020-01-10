@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { SyntheticEvent, useCallback } from "react";
 import { realtimeUpdate, toWorker, useLocalShallow } from "../util";
 
 const setUserTid = async (userTid: number) => {
@@ -8,7 +8,7 @@ const setUserTid = async (userTid: number) => {
 	realtimeUpdate(["firstRun"]);
 };
 
-const handleChange = async (e: SyntheticInputEvent) => {
+const handleChange = async (e: SyntheticEvent) => {
 	const userTid = parseInt(e.target.value, 10);
 	await setUserTid(userTid);
 };

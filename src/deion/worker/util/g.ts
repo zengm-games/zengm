@@ -3,4 +3,5 @@ import { GameAttributes } from "../../common/types"; // This will get filled by 
 const g: GameAttributes = {
 	lid: undefined,
 };
+
 export default g;

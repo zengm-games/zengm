@@ -384,4 +384,5 @@ Dashboard.propTypes = {
 		}),
 	).isRequired,
 };
+
 export default Dashboard;

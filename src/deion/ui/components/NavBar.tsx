@@ -157,4 +157,5 @@ NavBar.propTypes = {
 	pageID: PropTypes.string,
 	updating: PropTypes.bool.isRequired,
 };
+
 export default NavBar;

@@ -61,4 +61,5 @@ if (window.bugsnagClient) {
 }
 
 const ErrorBoundary = ErrorBoundaryTemp;
+
 export default ErrorBoundary;

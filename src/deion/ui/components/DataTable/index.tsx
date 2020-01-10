@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import Controls from "./Controls";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -18,7 +18,9 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers } from "../../util";
 import { SortOrder, SortType } from "../../../common/types";
+
 export type SortBy = [number, SortOrder];
+
 export type Col = {
 	classNames?: any;
 	desc?: string;
@@ -28,11 +30,13 @@ export type Col = {
 	title: string;
 	width?: string;
 };
+
 export type SuperCol = {
 	colspan: number;
 	desc?: string;
 	title: string;
 };
+
 export type Props = {
 	bordered?: boolean;
 	className?: string;
@@ -178,7 +182,7 @@ class DataTable extends React.Component<Props, State> {
 		}));
 	}
 
-	handleFilterUpdate(event: SyntheticInputEvent<HTMLInputElement>, i: number) {
+	handleFilterUpdate(event: SyntheticEvent<HTMLInputElement>, i: number) {
 		const filters = helpers.deepCopy(this.state.filters); // eslint-disable-line react/no-access-state-in-setstate
 
 		filters[i] = event.currentTarget.value;
@@ -197,7 +201,7 @@ class DataTable extends React.Component<Props, State> {
 		}
 	}
 
-	handlePerPage(event: SyntheticInputEvent<HTMLSelectElement>) {
+	handlePerPage(event: SyntheticEvent<HTMLSelectElement>) {
 		const perPage = parseInt(event.currentTarget.value, 10);
 
 		if (!Number.isNaN(perPage) && perPage !== this.state.perPage) {
@@ -209,7 +213,7 @@ class DataTable extends React.Component<Props, State> {
 		}
 	}
 
-	handleSearch(event: SyntheticInputEvent<HTMLInputElement>) {
+	handleSearch(event: SyntheticEvent<HTMLInputElement>) {
 		this.setState({
 			currentPage: 1,
 			searchText: event.currentTarget.value.toLowerCase(),
@@ -442,4 +446,5 @@ DataTable.propTypes = {
 	small: PropTypes.bool,
 	superCols: PropTypes.array,
 };
+
 export default DataTable;

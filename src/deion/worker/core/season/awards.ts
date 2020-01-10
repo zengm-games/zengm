@@ -13,6 +13,7 @@ export type AwardsByPlayer = {
 	name: string;
 	type: string;
 }[];
+
 export type GetTopPlayersOptions = {
 	allowNone?: boolean;
 	amount?: number;

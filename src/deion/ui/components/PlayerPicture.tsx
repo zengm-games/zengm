@@ -42,4 +42,5 @@ PlayerPicture.propTypes = {
 	imgURL: PropTypes.string,
 	teamColors: PropTypes.arrayOf(PropTypes.string),
 };
+
 export default PlayerPicture;

@@ -359,4 +359,5 @@ const helpers = {
 	resetG,
 	sigmoid,
 };
+
 export default helpers;

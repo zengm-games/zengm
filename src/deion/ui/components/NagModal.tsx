@@ -128,4 +128,5 @@ NagModal.propTypes = {
 	close: PropTypes.func.isRequired,
 	show: PropTypes.bool.isRequired,
 };
+
 export default NagModal;

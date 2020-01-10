@@ -74,4 +74,5 @@ RosterContinuity.propTypes = {
 	seasons: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.number)).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
+
 export default RosterContinuity;

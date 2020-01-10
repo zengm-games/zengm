@@ -34,4 +34,5 @@ BoxScoreRow.propTypes = {
 	onClick: PropTypes.func,
 	p: PropTypes.object.isRequired,
 };
+
 export default BoxScoreRow;

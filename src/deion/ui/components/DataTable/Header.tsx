@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { KeyboardEvent, SyntheticEvent } from "react";
 import { Col, SortBy, SuperCol } from ".";
 
 const FilterHeader = ({
@@ -10,10 +10,7 @@ const FilterHeader = ({
 }: {
 	cols: Col[];
 	filters: string[];
-	handleFilterUpdate: (
-		b: SyntheticInputEvent<HTMLInputElement>,
-		a: number,
-	) => void;
+	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 }) => {
 	return (
 		<tr>
@@ -58,11 +55,8 @@ const Header = ({
 	cols: Col[];
 	enableFilters: boolean;
 	filters: string[];
-	handleColClick: (b: SyntheticKeyboardEvent, a: number) => void;
-	handleFilterUpdate: (
-		b: SyntheticInputEvent<HTMLInputElement>,
-		a: number,
-	) => void;
+	handleColClick: (b: KeyboardEvent, a: number) => void;
+	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 	sortBys: SortBy[];
 	superCols?: SuperCol[];
 }) => {
@@ -159,4 +153,5 @@ Header.propTypes = {
 		}),
 	),
 };
+
 export default Header;

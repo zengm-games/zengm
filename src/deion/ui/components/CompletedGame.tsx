@@ -73,4 +73,5 @@ CompletedGame.propTypes = {
 		}),
 	),
 };
+
 export default CompletedGame;

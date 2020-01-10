@@ -197,6 +197,7 @@ export const makeSon = async (p: Player) => {
 	await idb.cache.players.put(p);
 	await idb.cache.players.put(father);
 };
+
 export const makeBrother = async (p: Player) => {
 	// If p already has a brother, this would be hard to get right because the names of various players stored in Player.relatives would need to be updated. It's okay if the player picked to be p's brother has other brothers, though!
 	if (hasRelative(p, "brother")) {

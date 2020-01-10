@@ -182,4 +182,5 @@ OwnerMoodsChart.propTypes = {
 	).isRequired,
 	year: PropTypes.number.isRequired,
 };
+
 export default OwnerMoodsChart;

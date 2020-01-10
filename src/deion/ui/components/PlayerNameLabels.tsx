@@ -70,4 +70,5 @@ PlayerNameLabels.propTypes = {
 	style: PropTypes.object,
 	watch: PropTypes.bool,
 };
+
 export default PlayerNameLabels;

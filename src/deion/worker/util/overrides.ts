@@ -45,4 +45,5 @@ const overrides: {
 	},
 	views: {},
 };
+
 export default overrides;

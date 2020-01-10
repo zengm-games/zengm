@@ -41,4 +41,5 @@ Row.propTypes = {
 		data: PropTypes.array.isRequired,
 	}).isRequired,
 };
+
 export default Row;

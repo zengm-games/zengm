@@ -45,4 +45,5 @@ InstructionsAndSortButtons.propTypes = {
 	editable: PropTypes.bool.isRequired,
 	tid: PropTypes.number.isRequired,
 };
+
 export default InstructionsAndSortButtons;

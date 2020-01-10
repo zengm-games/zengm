@@ -104,4 +104,5 @@ const useLocalShallow = (selector: (a: LocalStateUI) => any) =>
 const useLocalActions = () => useLocal(state => state.actions); // This assumes the actions object never changes!
 
 const localActions = local.getState().actions;
+
 export { local, localActions, useLocal, useLocalActions, useLocalShallow };

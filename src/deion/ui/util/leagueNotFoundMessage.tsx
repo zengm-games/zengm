@@ -107,4 +107,5 @@ const leagueNotFoundMessage = (
 		</div>
 	</>
 );
+
 export default leagueNotFoundMessage;

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 
@@ -71,7 +71,7 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 
 	const handleChange = (
 		i: number,
-		event: SyntheticInputEvent<HTMLSelectElement>,
+		event: SyntheticEvent<HTMLSelectElement>,
 	) => {
 		const newValues = values.slice();
 		newValues[i] = event.currentTarget.value;
@@ -107,4 +107,5 @@ Dropdown.propTypes = {
 	fields: PropTypes.object.isRequired,
 	view: PropTypes.string.isRequired,
 };
+
 export default Dropdown;

@@ -295,4 +295,5 @@ BarGraph.propTypes = {
 	tooltipCb: PropTypes.func,
 	ylim: PropTypes.arrayOf(PropTypes.number),
 };
+
 export default BarGraph;

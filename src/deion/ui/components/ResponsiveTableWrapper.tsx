@@ -27,4 +27,5 @@ ResponsiveTableWrapper.propTypes = {
 	className: PropTypes.string,
 	nonfluid: PropTypes.bool,
 };
+
 export default ResponsiveTableWrapper;

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback } from "react";
+import React, { SyntheticEvent, useCallback } from "react";
 import { toWorker } from "../util";
 type Props = {
 	pid: number;

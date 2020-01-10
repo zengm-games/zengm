@@ -33,8 +33,6 @@ class StripeButton extends React.Component<
 	StripeButtonProps,
 	StripeButtonState
 > {
-	handleClick: Function;
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -161,8 +159,6 @@ type UserInfoState = {
 };
 
 class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
-	handleLogout: Function;
-
 	constructor(props) {
 		super(props);
 		this.state = {

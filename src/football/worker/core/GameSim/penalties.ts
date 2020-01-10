@@ -12,7 +12,7 @@ type Penalty = {
 	notBallCarrier?: true;
 	spotFoul?: true;
 	// undefined means no player is assigned the penalty (like delay of game). An empty object means all players will be given equal weight.
-	posOdds?: Record<Position, number>;
+	posOdds?: Partial<Record<Position, number>>;
 };
 const penalties: Penalty[] = [
 	{

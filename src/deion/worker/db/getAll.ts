@@ -7,7 +7,7 @@
  **/
 const getAll = async (
 	store: any,
-	key: any,
+	key?: any,
 	cb?: (a: any) => boolean,
 ): Promise<any[]> => {
 	const objs = [];

@@ -1,3 +1,5 @@
+import { MouseEvent } from "react";
+
 export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
@@ -296,7 +298,7 @@ export type MenuItemLink = {
 	league?: true;
 	godMode?: true;
 	nonLeague?: true;
-	onClick?: (a: SyntheticEvent) => void | false | Promise<void | false>;
+	onClick?: (a: MouseEvent) => void | false | Promise<void | false>;
 	// Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:

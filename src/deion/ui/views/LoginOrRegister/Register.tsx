@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import React, { FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { helpers, localActions, realtimeUpdate, toWorker } from "../../util";
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
@@ -17,8 +17,6 @@ type State = {
 };
 
 class Register extends React.Component<Props, State> {
-	handleSubmit: Function;
-
 	constructor(props: Props) {
 		super(props);
 		this.state = {
@@ -31,7 +29,7 @@ class Register extends React.Component<Props, State> {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	async handleSubmit(e: SyntheticEvent) {
+	async handleSubmit(e: FormEvent) {
 		e.preventDefault();
 		this.setState({
 			errorMessageEmail: undefined,

@@ -54,8 +54,9 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 			injured: p.injury.type !== "Healthy",
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
-		}; // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
+		};
 
+		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
 		if (!g.userTids.includes(t.id)) {
 			p2.ptModifier = 1;
 		}

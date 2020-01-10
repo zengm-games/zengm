@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
 import { localActions, realtimeUpdate, toWorker } from "../../util";
 type Props = {
@@ -9,8 +9,6 @@ type State = {
 };
 
 class Login extends React.Component<Props, State> {
-	handleSubmit: Function;
-
 	constructor(props: Props) {
 		super(props);
 		this.state = {
@@ -19,7 +17,7 @@ class Login extends React.Component<Props, State> {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	async handleSubmit(e: SyntheticEvent) {
+	async handleSubmit(e: FormEvent) {
 		e.preventDefault();
 		this.setState({
 			errorMessage: undefined,

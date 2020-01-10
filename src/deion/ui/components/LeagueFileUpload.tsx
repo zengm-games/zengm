@@ -19,7 +19,7 @@ const ajv = new Ajv({
 const validate = ajv.compile(schema);
 type Props = {
 	// onDone is called in errback style when parsing is done or when an error occurs
-	onDone: (b: Error | null, a: any) => void;
+	onDone: (b: Error | null, a?: any) => void;
 	disabled?: boolean;
 	enterURL?: boolean;
 	// onLoading is called when it starts reading the file into memory

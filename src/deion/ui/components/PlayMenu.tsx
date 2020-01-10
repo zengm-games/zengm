@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import React, { KeyboardEvent, useEffect } from "react";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
@@ -35,7 +35,7 @@ const keyCodes = {
 
 const PlayMenu = ({ lid, options }: Props) => {
 	useEffect(() => {
-		const handleKeyup = (event: SyntheticKeyboardEvent) => {
+		const handleKeyup = (event: KeyboardEvent) => {
 			// alt + letter
 			if (event.altKey && keyCodes[event.keyCode]) {
 				const option = options.find(

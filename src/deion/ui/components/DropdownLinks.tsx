@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { MouseEvent, useCallback, useState } from "react";
 import Dropdown from "reactstrap/lib/Dropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
@@ -14,7 +14,7 @@ type TopMenuToggleProps = {
 	long: string;
 	openID?: string;
 	short: string;
-	toggle?: (a: SyntheticMouseEvent<HTMLAnchorElement>) => void;
+	toggle?: (a: MouseEvent<HTMLAnchorElement>) => void;
 };
 
 const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
@@ -182,7 +182,7 @@ const DropdownLinks = React.memo(
 	({ className, godMode, lid, menuItems }: DropdownLinksProps) => {
 		const [openID, setOpenID] = useState();
 		const handleTopMenuToggle = useCallback(
-			(id: string, event: SyntheticMouseEvent<HTMLAnchorElement>) => {
+			(id: string, event: MouseEvent<HTMLAnchorElement>) => {
 				if (event.currentTarget && event.currentTarget.focus) {
 					event.currentTarget.focus();
 				}

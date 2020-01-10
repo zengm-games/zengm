@@ -83,7 +83,6 @@ export type TeamGameSim = {
 	pace: number;
 	// mean number of possessions the team likes to have in a game
 	stat: object;
-	compositeRating: object;
 	player: PlayerGameSim[];
 	compositeRating: object;
 	depth: {

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, { SyntheticEvent } from "react";
+import React, { KeyboardEvent, SyntheticEvent } from "react";
 import Controls from "./Controls";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -64,13 +64,6 @@ type State = {
 };
 
 class DataTable extends React.Component<Props, State> {
-	handleColClick: Function;
-	handleExportCSV: Function;
-	handleToggleFilters: Function;
-	handleFilterUpdate: Function;
-	handlePagination: Function;
-	handlePerPage: Function;
-	handleSearch: Function;
 	settingsCache: SettingsCache;
 
 	constructor(props: Props) {
@@ -98,7 +91,7 @@ class DataTable extends React.Component<Props, State> {
 		);
 	}
 
-	handleColClick(event: SyntheticKeyboardEvent, i: number) {
+	handleColClick(event: KeyboardEvent, i: number) {
 		const col = this.props.cols[i]; // Ignore click on unsortable column
 
 		if (col.sortSequence && col.sortSequence.length === 0) {

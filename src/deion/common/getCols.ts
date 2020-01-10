@@ -1118,7 +1118,7 @@ const sportSpecificCols: {
 				},
 		  };
 const cols: {
-	[key: string]: Col;
+	[key: string]: ColTemp;
 } = {
 	"": {
 		noSearch: true,

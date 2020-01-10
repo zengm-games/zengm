@@ -10,10 +10,20 @@ export type Env = {
 
 declare global {
 	interface Window {
+		TriggerPrompt: any;
+		bbgm: any; // Just for debugging
 		bbgmAds: any;
+		bbgmVersion: string;
+		bbgmVersionUI: string;
+		bbgmVersionWorker: string;
+		bugsnagClient: any;
 		enableLogging: boolean;
+		googleAnalyticsID: string;
 		heartbeatID: string;
+		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
+		withGoodUI: () => void;
+		withGoodWorker: () => void;
 	}
 }
 

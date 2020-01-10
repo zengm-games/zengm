@@ -23,9 +23,9 @@ const propose = async (
 	}
 
 	const { teams } = await idb.cache.trade.get(0);
-	const tids = [teams[0].tid, teams[1].tid];
-	const pids = [teams[0].pids, teams[1].pids];
-	const dpids = [teams[0].dpids, teams[1].dpids]; // The summary will return a warning if (there is a problem. In that case,
+	const tids: [number, number] = [teams[0].tid, teams[1].tid];
+	const pids: [number[], number[]] = [teams[0].pids, teams[1].pids];
+	const dpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids]; // The summary will return a warning if (there is a problem. In that case,
 	// that warning will already be pushed to the user so there is no need to
 	// return a redundant message here.
 

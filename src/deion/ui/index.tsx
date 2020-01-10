@@ -93,7 +93,7 @@ const handleVersion = async () => {
 					window.bbgmVersion
 				}) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.`,
 			);
-			let registrations = [];
+			let registrations: readonly ServiceWorkerRegistration[] = [];
 
 			if (window.navigator.serviceWorker) {
 				registrations = await window.navigator.serviceWorker.getRegistrations();

@@ -17,7 +17,7 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 
 	let touchdownFeatFound = false;
 	let rusRecYdsFeatFound = false;
-	const statArr = {};
+	const statArr: any = {};
 
 	if (p.stat.pssYds >= FOUR_HUNDRED) {
 		statArr["passing yds"] = p.stat.pssYds;

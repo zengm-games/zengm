@@ -82,6 +82,7 @@
 		"@types/jest": "^24.0.25",
 		"@types/lodash": "^4.14.149",
 		"@types/mocha": "^5.2.7",
+		"@types/stripe-checkout": "^1.0.3",
 		"babel-eslint": "^10.0.3",
 		"cheerio": "^1.0.0-rc.3",
 		"chokidar": "^3.3.1",

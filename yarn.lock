@@ -805,6 +805,18 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
   integrity sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
 
+"@types/stripe-checkout@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/stripe-checkout/-/stripe-checkout-1.0.3.tgz#fdb8104536501d784deb5b5efd943a1e871f6822"
+  integrity sha512-7JIyo1ou6w6+ee2SETytZocTvYgtGkivv5NVQ53xKv8WbVIYYhNPWwVzg56E47E4S4O55L1UywRR4FC+XgXPWA==
+  dependencies:
+    "@types/stripe-v3" "*"
+
+"@types/stripe-v3@*":
+  version "3.1.14"
+  resolved "https://registry.yarnpkg.com/@types/stripe-v3/-/stripe-v3-3.1.14.tgz#5eefbec24754d23f6a039e8fb5c7ea0253007836"
+  integrity sha512-2hT1xOiS4312NsrT1dYuAM7qvoMcegS12wcQ78e7hdRrzetM4d91QJn6IYWP5qWP5v4Rc4acDfoIR9cbhpSgMA==
+
 "@types/yargs-parser@*":
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-13.1.0.tgz#c563aa192f39350a1d18da36c5a8da382bbd8228"

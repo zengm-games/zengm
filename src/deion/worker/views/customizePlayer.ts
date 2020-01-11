@@ -7,9 +7,7 @@ import { GetOutput, UpdateEvents } from "../../common/types";
 async function updateCustomizePlayer(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (!g.godMode) {
 		return {
 			godMode: g.godMode,

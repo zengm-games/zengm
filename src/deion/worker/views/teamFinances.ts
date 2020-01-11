@@ -7,14 +7,12 @@ import { GetOutput, UpdateEvents } from "../../common/types";
 async function updateTeamFinances(
 	inputs: {
 		abbrev: string;
-		show: number | "all";
+		show: string | "all";
 		tid: number;
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
@@ -99,7 +97,7 @@ async function updateTeamFinances(
 		}
 
 		let keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
-		const barData = {};
+		const barData: any = {};
 
 		for (let i = 0; i < keys.length; i++) {
 			/* eslint-disable no-loop-func */
@@ -174,9 +172,7 @@ function updateGamesInProgress(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("lock.gameSim") ||
 		inputs.tid !== state.tid ||

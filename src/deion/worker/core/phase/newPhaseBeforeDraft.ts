@@ -120,7 +120,6 @@ const newPhaseBeforeDraft = async (
 
 	// Don't redirect if we're viewing a live game now
 	let url;
-
 	if (!liveGameSim) {
 		url = helpers.leagueUrl(["history"]);
 	} else {

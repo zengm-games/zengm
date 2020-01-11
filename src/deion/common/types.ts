@@ -294,7 +294,7 @@ export type Message = {
 
 export type MenuItemLink = {
 	type: "link";
-	active?: (a: string | void) => boolean;
+	active?: (a?: string) => boolean;
 	league?: true;
 	godMode?: true;
 	nonLeague?: true;
@@ -352,10 +352,10 @@ export type RouterContext = {
 };
 
 export type LocalStateUI = {
-	gold: boolean | void;
+	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;
-	lid: number | void;
+	lid?: number;
 	leagueName: string;
 	phase: number;
 	phaseText: string;
@@ -371,14 +371,14 @@ export type LocalStateUI = {
 	teamRegionsCache: string[];
 	userTid: number;
 	userTids: number[];
-	username: string | void;
-	viewInfo: {
+	username?: string;
+	viewInfo?: {
 		Component: any;
 		id: string;
 		inLeague: boolean;
 		context: RouterContext;
-		cb: (a: Error | void) => void;
-	} | void;
+		cb: (a?: Error) => void;
+	};
 	title?: string;
 	hideNewWindow: boolean;
 	jumpTo: boolean;
@@ -554,7 +554,7 @@ export type Local = {
 	goldUntil: number;
 	leagueLoaded: boolean;
 	phaseText: string;
-	playerNames: PlayerNames | void;
+	playerNames?: PlayerNames;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

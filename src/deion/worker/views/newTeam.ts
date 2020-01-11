@@ -1,9 +1,7 @@
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateTeamSelect(): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateTeamSelect() {
 	let teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "region", "name"],
 		seasonAttrs: ["winp"],

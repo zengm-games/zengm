@@ -3,11 +3,7 @@ import { player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateUpcomingFreeAgents(inputs: {
-	season: number;
-}): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateUpcomingFreeAgents(inputs: { season: number }) {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]

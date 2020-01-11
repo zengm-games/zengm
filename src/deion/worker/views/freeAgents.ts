@@ -3,11 +3,9 @@ import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g, lock } from "../util";
 
-async function updateFreeAgents(): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateFreeAgents() {
 	const payroll = await team.getPayroll(g.userTid);
-	let [userPlayers, players] = await Promise.all([
+	const [userPlayersAll, playersAll] = await Promise.all([
 		idb.cache.players.indexGetAll("playersByTid", g.userTid),
 		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	]);
@@ -16,7 +14,7 @@ async function updateFreeAgents(): Promise<void | {
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]
 			: ["gp", "keyStats", "av"];
-	players = await idb.getCopies.playersPlus(players, {
+	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"name",
@@ -34,7 +32,7 @@ async function updateFreeAgents(): Promise<void | {
 		fuzz: true,
 		oldStats: true,
 	});
-	userPlayers = await idb.getCopies.playersPlus(userPlayers, {
+	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],
 		ratings: ["pos"],
 		stats: [],

@@ -2,7 +2,7 @@ import range from "lodash/range";
 import { g, helpers } from "../../util";
 import { TeamFiltered } from "../../../common/types";
 
-type Seed = [number, number | void]; // Return the seeds (0 indexed) for the matchups, in order (undefined is a bye)
+type Seed = [number, number | undefined]; // Return the seeds (0 indexed) for the matchups, in order (undefined is a bye)
 
 const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 	const numRounds = Math.log2(numPlayoffTeams + numPlayoffByes);
@@ -32,7 +32,7 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 		]);
 	}; // Grow from the final matchup
 
-	let lastRound = [[0, 1]];
+	let lastRound: Seed[] = [[0, 1]];
 
 	for (let i = 0; i < numRounds - 1; i++) {
 		// Add two matchups to currentRound, for the two teams in lastRound. The sum of the seeds in a matchup is constant for an entire round!

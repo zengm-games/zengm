@@ -3,7 +3,7 @@ import { draft, freeAgents, game, phase, season } from "..";
 import { g } from "../../util";
 import { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
 
-const autoPlay = async (conditions: Conditions) => {
+const autoPlay = async (conditions: Conditions = {}) => {
 	if (g.phase === PHASE.PRESEASON) {
 		await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
 	} else if (g.phase === PHASE.REGULAR_SEASON) {

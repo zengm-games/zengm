@@ -2,12 +2,7 @@ import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function tragicDeaths(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function tragicDeaths(inputs: GetOutput, updateEvents: UpdateEvents) {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const events = await idb.getCopies.events({
@@ -23,7 +18,7 @@ async function tragicDeaths(
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["keyStats", "av"];
-		let players = (
+		const playersAll = (
 			await Promise.all(
 				pids.map(pid =>
 					idb.getCopy.players({
@@ -32,7 +27,9 @@ async function tragicDeaths(
 				),
 			)
 		).filter(p => p !== undefined);
-		players = await idb.getCopies.playersPlus(players, {
+
+		// @ts-ignore
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",

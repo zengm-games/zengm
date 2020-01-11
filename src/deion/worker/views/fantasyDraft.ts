@@ -2,12 +2,7 @@ import { idb } from "../db";
 import { g, random } from "../util";
 import { UpdateEvents } from "../../common/types";
 
-const updateFantasyDraft = async (
-	inputs: {},
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> => {
+const updateFantasyDraft = async (inputs: {}, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun")) {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],

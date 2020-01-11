@@ -22,11 +22,11 @@ export type GetTopPlayersOptions = {
 };
 
 const getPlayers = async () => {
-	let players = await idb.cache.players.indexGetAll("playersByTid", [
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,
 		Infinity,
 	]);
-	players = await idb.getCopies.playersPlus(players, {
+	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: ["pid", "name", "tid", "abbrev", "draft", "injury", "firstName"],
 		ratings: ["pos"],
 		stats:

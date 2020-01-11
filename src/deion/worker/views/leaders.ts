@@ -331,9 +331,7 @@ async function updateLeaders(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("watchList") ||

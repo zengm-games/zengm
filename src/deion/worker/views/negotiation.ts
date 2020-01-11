@@ -51,11 +51,7 @@ function generateContractOptions(contract, ovr) {
 	);
 }
 
-async function updateNegotiation(
-	inputs: GetOutput,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateNegotiation(inputs: GetOutput) {
 	const negotiations: any = await idb.cache.negotiations.getAll();
 	let negotiation;
 
@@ -71,8 +67,8 @@ async function updateNegotiation(
 		};
 	}
 
-	let p = await idb.cache.players.get(negotiation.pid);
-	p = await idb.getCopy.playersPlus(p, {
+	const p2 = await idb.cache.players.get(negotiation.pid);
+	const p = await idb.getCopy.playersPlus(p2, {
 		attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
 		ratings: ["ovr", "pot"],
 		season: g.season,

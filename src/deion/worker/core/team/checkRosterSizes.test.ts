@@ -96,8 +96,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 
 		const userTeamSizeError = await team.checkRosterSizes();
 		assert.equal(typeof userTeamSizeError, "string");
-		assert(userTeamSizeError.includes("less"));
-		assert(userTeamSizeError.includes("minimum"));
+		if (userTeamSizeError) {
+			assert(userTeamSizeError.includes("less"));
+			assert(userTeamSizeError.includes("minimum"));
+		}
 		players = await idb.cache.players.indexGetAll("playersByTid", g.userTid);
 		assert.equal(players.length, 9);
 	});
@@ -116,8 +118,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 
 		const userTeamSizeError = await team.checkRosterSizes();
 		assert.equal(typeof userTeamSizeError, "string");
-		assert(userTeamSizeError.includes("more"));
-		assert(userTeamSizeError.includes("maximum"));
+		if (userTeamSizeError) {
+			assert(userTeamSizeError.includes("more"));
+			assert(userTeamSizeError.includes("maximum"));
+		}
 		players = await idb.cache.players.indexGetAll("playersByTid", g.userTid);
 		assert.equal(players.length, 24);
 	});

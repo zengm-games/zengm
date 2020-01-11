@@ -8,9 +8,7 @@ async function updateMessage(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	message?: Message;
-}> {
+) {
 	// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 	if (
 		updateEvents.includes("firstRun") ||

@@ -1,12 +1,7 @@
 import { idb } from "../db";
 import { UpdateEvents } from "../../common/types";
 
-const updateDashboard = async (
-	inputs: {},
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> => {
+const updateDashboard = async (inputs: {}, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("leagues")) {
 		const leagues = await idb.meta.leagues.getAll();
 

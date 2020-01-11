@@ -11,9 +11,7 @@ async function updatePlayers(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameSim") ||

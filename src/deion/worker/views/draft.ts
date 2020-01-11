@@ -4,12 +4,7 @@ import { draft } from "../core";
 import { idb } from "../db";
 import { g, local } from "../util";
 
-async function updateDraft(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateDraft(inputs: GetOutput, updateEvents: UpdateEvents) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")

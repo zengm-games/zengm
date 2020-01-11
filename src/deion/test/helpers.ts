@@ -45,7 +45,7 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
 	return n;
 }
 
-const resetCache = async (data?: Record<Store, any[]>) => {
+const resetCache = async (data?: Partial<Record<Store, any[]>>) => {
 	idb.cache = new Cache(); // We want these to do nothing while testing, usually
 	// $FlowFixMe
 

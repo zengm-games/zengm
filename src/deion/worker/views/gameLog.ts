@@ -107,11 +107,7 @@ async function boxScore(gid: number) {
 	return game;
 }
 
-async function updateTeamSeason(
-	inputs: GetOutput,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateTeamSeason(inputs: GetOutput) {
 	return {
 		// Needed for dropdown
 		abbrev: inputs.abbrev,
@@ -132,9 +128,7 @@ async function updateBoxScore(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	const { gid } = inputs;
 
 	if (typeof gid !== "number") {
@@ -175,9 +169,7 @@ async function updateGamesList(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	const { abbrev, season } = inputs;
 
 	if (typeof abbrev !== "string" || typeof season !== "number") {

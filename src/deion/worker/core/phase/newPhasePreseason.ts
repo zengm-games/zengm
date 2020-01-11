@@ -57,9 +57,10 @@ const newPhasePreseason = async (conditions: Conditions) => {
 				tid,
 				seasons: [g.season - 3, g.season - 1],
 			});
-			const prevSeason = teamSeasons2[teamSeasons2.length - 1]; // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
-			// This is done BEFORE a new season row is added.
+			const prevSeason = teamSeasons2[teamSeasons2.length - 1];
 
+			// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+			// This is done BEFORE a new season row is added.
 			if (tid === g.userTid) {
 				scoutingRankTemp = finances.getRankLastThree(
 					teamSeasons2,
@@ -84,12 +85,13 @@ const newPhasePreseason = async (conditions: Conditions) => {
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,
 		Infinity,
-	]); // Small chance that a player was lying about his age!
+	]);
 
+	// Small chance that a player was lying about his age!
 	if (Math.random() < 0.01) {
 		const p = player.getPlayerFakeAge(players);
 
-		if (p !== undefined) {
+		if (p) {
 			const years = random.randInt(1, 4);
 			const age0 = g.season - p.born.year;
 			p.born.year -= years;
@@ -127,10 +129,12 @@ const newPhasePreseason = async (conditions: Conditions) => {
 	for (const p of players) {
 		// Update ratings
 		player.addRatingsRow(p, scoutingRank);
-		player.develop(p, 1, false, coachingRanks[p.tid]); // Update player values after ratings changes
+		player.develop(p, 1, false, coachingRanks[p.tid]);
 
-		player.updateValues(p); // Add row to player stats if they are on a team
+		// Update player values after ratings changes
+		player.updateValues(p);
 
+		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
 			player.addStatsRow(p, false);
 		}

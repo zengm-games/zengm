@@ -24,9 +24,7 @@ const augment = allAllStars => {
 const updateAllStarHistory = async (
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> => {
+) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const allAllStars = await idb.getCopies.allStars();
 		return {

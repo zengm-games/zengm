@@ -2,11 +2,7 @@ import { PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateDraftSummary(inputs: {
-	season: number;
-}): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateDraftSummary(inputs: { season: number }) {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]

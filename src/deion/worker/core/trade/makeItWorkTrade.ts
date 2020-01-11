@@ -20,7 +20,7 @@ const makeItWorkTrade = async () => {
 	const teams0 = tr.teams;
 	const teams = await makeItWork(helpers.deepCopy(teams0), false, estValues);
 
-	if (teams === undefined) {
+	if (!teams) {
 		return `${
 			g.teamRegionsCache[teams0[1].tid]
 		} GM: "I can't afford to give up so much."`;

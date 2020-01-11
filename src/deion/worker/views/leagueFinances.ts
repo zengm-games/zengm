@@ -8,9 +8,7 @@ async function updateLeagueFinances(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||

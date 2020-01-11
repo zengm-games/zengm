@@ -1,12 +1,7 @@
 import { g } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updateGodMode(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateGodMode(inputs: GetOutput, updateEvents: UpdateEvents) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")

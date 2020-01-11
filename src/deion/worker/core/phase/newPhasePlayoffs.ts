@@ -7,10 +7,12 @@ const newPhasePlayoffs = async (
 	conditions: Conditions,
 	liveGameSim: boolean = false,
 ) => {
-	achievement.check("afterRegularSeason", conditions); // In case this was somehow set already
+	achievement.check("afterRegularSeason", conditions);
 
-	local.playingUntilEndOfRound = false; // Set playoff matchups
+	// In case this was somehow set already
+	local.playingUntilEndOfRound = false;
 
+	// Set playoff matchups
 	const teams = helpers.orderByWinp(
 		await idb.getCopies.teamsPlus({
 			attrs: ["tid", "cid", "did"],
@@ -64,8 +66,9 @@ const newPhasePlayoffs = async (
 	for (const teamSeason of teamSeasons) {
 		if (tidPlayoffs.includes(teamSeason.tid)) {
 			await idb.cache.teamStats.add(team.genStatsRow(teamSeason.tid, true));
-			teamSeason.playoffRoundsWon = 0; // More hype for making the playoffs
+			teamSeason.playoffRoundsWon = 0;
 
+			// More hype for making the playoffs
 			teamSeason.hype += 0.05;
 
 			if (teamSeason.hype > 1) {
@@ -97,10 +100,10 @@ const newPhasePlayoffs = async (
 	await Promise.all([
 		finances.assessPayrollMinLuxury(),
 		season.newSchedulePlayoffsDay(),
-	]); // Don't redirect if we're viewing a live game now
+	]);
 
+	// Don't redirect if we're viewing a live game now
 	let url;
-
 	if (!liveGameSim) {
 		url = helpers.leagueUrl(["playoffs"]);
 	}

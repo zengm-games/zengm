@@ -3,9 +3,7 @@ import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateNegotiationList(): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateNegotiationList() {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"]
@@ -16,12 +14,12 @@ async function updateNegotiationList(): Promise<void | {
 		negotiation => negotiation.tid === g.userTid,
 	);
 	const negotiationPids = negotiations.map(negotiation => negotiation.pid);
-	let [userPlayers, players] = await Promise.all([
+	let [userPlayers, playersAll] = await Promise.all([
 		idb.cache.players.indexGetAll("playersByTid", g.userTid),
 		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	]);
-	players = players.filter(p => negotiationPids.includes(p.pid));
-	players = await idb.getCopies.playersPlus(players, {
+	playersAll = playersAll.filter(p => negotiationPids.includes(p.pid));
+	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"name",

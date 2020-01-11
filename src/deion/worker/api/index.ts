@@ -66,6 +66,7 @@ const addTeam = async (
 	imgURL?: string;
 	pop: number;
 	stadiumCapacity: number;
+	colors: [string, string, string];
 }> => {
 	const pop = 1;
 	const t = team.generate({
@@ -688,14 +689,17 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					showRookies: true,
 					fuzz: true,
 				});
-				let picks: any = await idb.getCopies.draftPicks({
+				let picks = await idb.getCopies.draftPicks({
 					tid,
 				});
 				picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
 
-				for (const dp of picks) {
-					dp.desc = helpers.pickDesc(dp);
-				}
+				const picks2 = picks.map(dp => {
+					return {
+						...dp,
+						desc: helpers.pickDesc(dp),
+					};
+				});
 
 				const payroll = await team.getPayroll(tid);
 				return {
@@ -711,7 +715,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					dpids: offers[i].dpids,
 					warning: offers[i].warning,
 					payroll,
-					picks,
+					picks: picks2,
 					players,
 				};
 			}),
@@ -889,7 +893,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		pid,
 	});
 
-	if (p === undefined) {
+	if (!p) {
 		return blankObj;
 	}
 

@@ -7,9 +7,7 @@ async function updateUpcoming(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -52,9 +50,7 @@ async function updateCompleted(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		/*// Reset list, so old completed games don't temporarily show when switching team
           if (state.completed) {

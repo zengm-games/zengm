@@ -11,9 +11,7 @@ async function updateHistory(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	const { season } = inputs;
 
 	if (typeof season !== "number") {
@@ -45,8 +43,9 @@ async function updateHistory(
 				seasonAttrs: ["playoffRoundsWon"],
 				season,
 			}),
-		]); // Hack placeholder for old seasons before Finals MVP existed
+		]);
 
+		// Hack placeholder for old seasons before Finals MVP existed
 		if (awards && !awards.hasOwnProperty("finalsMvp")) {
 			awards.finalsMvp = {
 				pid: 0,
@@ -87,6 +86,7 @@ async function updateHistory(
 		const champ = teams.find(
 			t => t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
 		);
+
 		return {
 			awards,
 			champ,

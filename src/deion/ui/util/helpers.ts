@@ -22,9 +22,8 @@ const leagueUrl = (components: (number | string)[]): string => {
  * Format a number as an integer with commas in the thousands places.
  */
 const numberWithCommas = (x: number | string): string => {
-	return parseFloat(x)
-		.toFixed()
-		.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	const y = typeof x === "string" ? parseFloat(x) : x;
+	return y.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
 const plusMinus = (arg: number, d: number): string => {

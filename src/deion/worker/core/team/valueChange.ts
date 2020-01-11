@@ -386,9 +386,7 @@ const valueChange = async (
 	// This actually doesn't do anything because I'm an idiot
 	const base = 1.25;
 
-	const sumValues = (players, includeInjuries) => {
-		includeInjuries = includeInjuries !== undefined ? includeInjuries : false;
-
+	const sumValues = (players, includeInjuries = false) => {
 		if (players.length === 0) {
 			return 0;
 		}
@@ -475,9 +473,7 @@ const valueChange = async (
 	}; // Sum of contracts
 	// If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
 
-	const sumContracts = (players, onlyThisSeason) => {
-		onlyThisSeason = onlyThisSeason !== undefined ? onlyThisSeason : false;
-
+	const sumContracts = (players, onlyThisSeason = false) => {
 		if (players.length === 0) {
 			return 0;
 		}

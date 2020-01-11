@@ -76,14 +76,13 @@ const newPhaseRegularSeason = async () => {
 	}
 
 	if (
-		// $FlowFixMe
 		navigator.storage &&
 		navigator.storage.persist &&
 		navigator.storage.persisted
 	) {
-		// $FlowFixMe
-		let persisted = await navigator.storage.persisted(); // If possible to get persistent storage without prompting the user, do it!
+		let persisted = await navigator.storage.persisted();
 
+		// If possible to get persistent storage without prompting the user, do it!
 		if (!persisted) {
 			try {
 				if (navigator.permissions && navigator.permissions.query) {

@@ -28,8 +28,9 @@ const finalize = async (
 	updateEvents: UpdateEvents = [],
 	conditions: Conditions,
 ) => {
-	await updateStatus("Saving..."); // Set phase before saving to database
+	await updateStatus("Saving...");
 
+	// Set phase before saving to database
 	await league.setGameAttributes({
 		phase,
 	});
@@ -45,10 +46,11 @@ const finalize = async (
 	await updatePhase();
 	await updatePlayMenu();
 	await updateStatus("Idle");
-	updateEvents.push("newPhase"); // If auto-simulating, initiate next action but don't redirect to a new URL
+	updateEvents.push("newPhase");
 
+	// If auto-simulating, initiate next action but don't redirect to a new URL
 	if (local.autoPlaySeasons > 0) {
-		toUI(["realtimeUpdate", updateEvents]); // Not totally sure why setTimeout is needed, but why not?
+		toUI(["realtimeUpdate", updateEvents]);
 
 		await league.autoPlay(conditions);
 	} else {

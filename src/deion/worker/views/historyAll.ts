@@ -3,12 +3,7 @@ import { idb } from "../db";
 import { g } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updateHistory(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateHistory(inputs: GetOutput, updateEvents: UpdateEvents) {
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)

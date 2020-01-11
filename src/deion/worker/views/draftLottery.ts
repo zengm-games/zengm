@@ -34,14 +34,13 @@ async function updateDraftLottery(
 
 			// If season === g.season && g.phase === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
 			if (draftLotteryResult || g.phase > PHASE.DRAFT_LOTTERY) {
-				const result =
-					draftLotteryResult !== undefined
-						? draftLotteryResult.result
-						: undefined; // Past lotteries before draftLotteryResult.draftType were all 1994
+				const result = draftLotteryResult
+					? draftLotteryResult.result
+					: undefined; // Past lotteries before draftLotteryResult.draftType were all 1994
 
 				let draftType;
 
-				if (draftLotteryResult !== undefined) {
+				if (draftLotteryResult) {
 					draftType = draftLotteryResult.draftType || "nba1994";
 				}
 

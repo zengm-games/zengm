@@ -3,6 +3,12 @@ import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import { Player, RelativeType } from "../../../common/types";
 
+type Relative = {
+	type: RelativeType;
+	pid: number;
+	name: string;
+};
+
 const parseLastName = (lastName: string): [string, number | void] => {
 	const parts = lastName.split(" ");
 
@@ -59,18 +65,11 @@ const getRelatives = async (
 			),
 	);
 
-	// $FlowFixMe
-	return players.filter(p2 => p2 !== undefined);
+	// @ts-ignore
+	return players.filter(p2 => !!p2);
 };
 
-const addRelative = (
-	p: Player,
-	relative: {
-		type: RelativeType;
-		pid: number;
-		name: string;
-	},
-) => {
+const addRelative = (p: Player, relative: Relative) => {
 	// Don't add duplicate
 	if (
 		p.relatives.some(
@@ -118,7 +117,7 @@ export const makeSon = async (p: Player) => {
 	const father = random.choice(possibleFathers, ({ lastName }) => {
 		const out = parseLastName(lastName);
 
-		if (out[1] !== undefined) {
+		if (typeof out[1] === "number") {
 			// 10 for Sr, 15 for Jr, etc - make it more likely for older lineages to continue
 			return helpers.bound(5 + 10 * out[1], 0, 40);
 		}
@@ -127,7 +126,7 @@ export const makeSon = async (p: Player) => {
 	});
 	const [fatherLastName, fatherSuffixNumber] = parseLastName(father.lastName);
 	const sonSuffixNumber =
-		fatherSuffixNumber === undefined ? 2 : fatherSuffixNumber + 1;
+		typeof fatherSuffixNumber === "number" ? fatherSuffixNumber + 1 : 2;
 	const sonSuffix = getSuffix(sonSuffixNumber); // Only rename to be a Jr if the father has no son yet (first is always Jr)
 
 	if (!hasRelative(father, "son")) {
@@ -163,7 +162,7 @@ export const makeSon = async (p: Player) => {
 		}
 	}
 
-	const relFather = {
+	const relFather: Relative = {
 		type: "father",
 		pid: father.pid,
 		name: `${father.firstName} ${father.lastName}`,

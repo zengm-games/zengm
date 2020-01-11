@@ -2,19 +2,14 @@ import { idb } from "../db";
 import { g } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updatePlayers(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const stats =
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["gp", "keyStats", "av"];
-		let players = await idb.getCopies.players({
+		const playersAll = await idb.getCopies.players({
 			filter: p => {
 				const age =
 					typeof p.diedYear === "number"
@@ -23,7 +18,7 @@ async function updatePlayers(
 				return age >= 85;
 			},
 		});
-		players = await idb.getCopies.playersPlus(players, {
+		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",

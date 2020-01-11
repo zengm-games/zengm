@@ -6,9 +6,7 @@ async function updatePlayers(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("gameSim") ||
 		inputs.abbrev !== state.abbrev ||

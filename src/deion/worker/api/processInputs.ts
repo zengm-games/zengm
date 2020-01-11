@@ -35,7 +35,9 @@ export const validateSeason = (season?: number | string): number => {
 		return g.season;
 	}
 
-	season = parseInt(season, 10);
+	if (typeof season === "string") {
+		season = parseInt(season, 10);
+	}
 
 	if (Number.isNaN(season)) {
 		return g.season;
@@ -85,11 +87,10 @@ const depth = params => {
 		};
 	}
 
-	const inputs = {};
-	[inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	const positions = overrides.common.constants.POSITIONS;
-	inputs.pos = positions.includes(params.pos) ? params.pos : "QB";
-	return inputs;
+	const pos = positions.includes(params.pos) ? params.pos : "QB";
+	return { abbrev, pos, tid };
 };
 
 const draft = () => {
@@ -191,7 +192,11 @@ const leaders = params => {
 };
 
 const liveGame = (params, ctxBBGM) => {
-	const obj = {
+	const obj: {
+		fromAction: boolean;
+		gidPlayByPlay?: number;
+		playByPlay?: any[];
+	} = {
 		fromAction: !!ctxBBGM.fromAction,
 	};
 
@@ -318,30 +323,26 @@ const roster = params => {
 		};
 	}
 
-	const inputs = {};
-	[inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
-	inputs.season = validateSeason(params.season);
-	return inputs;
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	const season = validateSeason(params.season);
+	return { abbrev, season, tid };
 };
 
 const schedule = params => {
-	const inputs = {};
-	[inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
-	return inputs;
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, tid };
 };
 
 const teamFinances = params => {
-	const inputs = {};
-	inputs.show = params.show !== undefined ? params.show : "10";
-	[inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
-	return inputs;
+	const show = params.show !== undefined ? params.show : "10";
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, show, tid };
 };
 
 const teamHistory = params => {
-	const inputs = {};
-	inputs.show = params.show !== undefined ? params.show : "10";
-	[inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
-	return inputs;
+	const show = params.show !== undefined ? params.show : "10";
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, show, tid };
 };
 
 const teamRecords = params => {

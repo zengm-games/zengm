@@ -48,8 +48,9 @@ const play = async (
 		await updateStatus("Saving...");
 		await idb.cache.flush();
 		await updateStatus("Idle");
-		lock.set("gameSim", false); // Check to see if the season is over
+		lock.set("gameSim", false);
 
+		// Check to see if the season is over
 		if (g.phase < PHASE.PLAYOFFS) {
 			const schedule = await season.getSchedule();
 
@@ -78,15 +79,17 @@ const play = async (
 		}
 
 		await updatePlayMenu();
-	}; // Saves a vector of results objects for a day, as is output from cbSimGames
+	};
 
+	// Saves a vector of results objects for a day, as is output from cbSimGames
 	const cbSaveResults = async results => {
 		const {
 			injuryTexts,
 			pidsInjuredOneGameOrLess,
 			stopPlay,
-		} = await writePlayerStats(results, conditions); // Before writeGameStats, so injury is set correctly
+		} = await writePlayerStats(results, conditions);
 
+		// Before writeGameStats, so injury is set correctly
 		const gidsFinished = await Promise.all(
 			results.map(async result => {
 				const att = await writeTeamStats(result);
@@ -94,15 +97,18 @@ const play = async (
 				return result.gid;
 			}),
 		);
-		const promises = []; // Update playoff series W/L
+		const promises = [];
 
+		// Update playoff series W/L
 		if (g.phase === PHASE.PLAYOFFS) {
 			promises.push(updatePlayoffSeries(results, conditions));
 		}
 
 		// Delete finished games from schedule
-		for (let j = 0; j < gidsFinished.length; j++) {
-			promises.push(idb.cache.schedule.delete(gidsFinished[j]));
+		for (const gid of gidsFinished) {
+			if (typeof gid === "number") {
+				promises.push(idb.cache.schedule.delete(gid));
+			}
 		}
 
 		// Update ranks
@@ -121,8 +127,9 @@ const play = async (
 			);
 		}
 
-		const healedTexts = []; // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+		const healedTexts = [];
 
+		// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
@@ -194,8 +201,9 @@ const play = async (
 
 		await Promise.all(promises);
 		await overrides.util.advStats();
-		const updateEvents = ["gameSim"]; // Tragic deaths only happen during the regular season!
+		const updateEvents = ["gameSim"];
 
+		// Tragic deaths only happen during the regular season!
 		if (g.phase !== PHASE.PLAYOFFS && Math.random() < g.tragicDeathRate) {
 			await player.killOne(conditions);
 
@@ -207,11 +215,12 @@ const play = async (
 		}
 
 		const playoffsOver =
-			g.phase === PHASE.PLAYOFFS && (await season.newSchedulePlayoffsDay()); // If there was a play by play done for one of these games, get it
+			g.phase === PHASE.PLAYOFFS && (await season.newSchedulePlayoffsDay());
 
 		let raw;
 		let url;
 
+		// If there was a play by play done for one of these games, get it
 		if (gidPlayByPlay !== undefined) {
 			for (let i = 0; i < results.length; i++) {
 				if (results[i].playByPlay !== undefined) {
@@ -234,8 +243,9 @@ const play = async (
 		} else {
 			await play(numDays - 1, conditions, false);
 		}
-	}; // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
+	};
 
+	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (schedule, teams) => {
 		const results = [];
 
@@ -266,13 +276,13 @@ const play = async (
 		}
 
 		let schedule = await season.getSchedule(true); // Stop if no games
-		// This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
 
+		// This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
 		if (schedule.length === 0 && g.phase !== PHASE.PLAYOFFS) {
 			return cbNoGames();
 		}
 
-		const tids = new Set();
+		const tids = new Set<number>();
 
 		for (const matchup of schedule) {
 			tids.add(matchup.homeTid);
@@ -280,8 +290,8 @@ const play = async (
 		}
 
 		const teams = await loadTeams(Array.from(tids)); // Play games
-		// Will loop through schedule and simulate all games
 
+		// Will loop through schedule and simulate all games
 		if (schedule.length === 0 && g.phase === PHASE.PLAYOFFS) {
 			// Sometimes the playoff schedule isn't made the day before, so make it now
 			// This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
@@ -290,8 +300,9 @@ const play = async (
 		}
 
 		await cbSimGames(schedule, teams);
-	}; // This simulates a day, including game simulation and any other bookkeeping that needs to be done
+	};
 
+	// This simulates a day, including game simulation and any other bookkeeping that needs to be done
 	const cbRunDay = async () => {
 		// setTimeout is for responsiveness during gameSim with UI that doesn't hit IDB
 		if (numDays > 0) {
@@ -323,16 +334,17 @@ const play = async (
 			// If this is the last day, update play menu
 			await cbNoGames();
 		}
-	}; // If this is a request to start a new simulation... are we allowed to do
-	// that? If so, set the lock and update the play menu
+	};
 
+	// If this is a request to start a new simulation... are we allowed to do
+	// that? If so, set the lock and update the play menu
 	if (start) {
 		const canStartGames = await lock.canStartGames();
 
 		if (canStartGames) {
 			const userTeamSizeError = await team.checkRosterSizes();
 
-			if (userTeamSizeError === undefined) {
+			if (!userTeamSizeError) {
 				await updatePlayMenu();
 				await cbRunDay();
 			} else {

@@ -131,7 +131,7 @@ const optionsTmp =
 					key: "all_league",
 				},
 		  ];
-const awardOptions = {};
+const awardOptions: any = {};
 optionsTmp.forEach(o => {
 	awardOptions[o.key] = o.val;
 });
@@ -196,9 +196,7 @@ async function updateAwardsRecords(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.awardType !== state.awardType

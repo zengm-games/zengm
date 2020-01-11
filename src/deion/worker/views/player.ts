@@ -10,9 +10,7 @@ async function updatePlayer(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		!state.retired ||

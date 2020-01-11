@@ -19,9 +19,7 @@ async function updateRoster(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("watchList") ||
 		(inputs.season === g.season &&
@@ -89,7 +87,7 @@ async function updateRoster(
 
 		if (inputs.season === g.season) {
 			// Show players currently on the roster
-			let [schedule, players] = await Promise.all([
+			const [schedule, playersAll] = await Promise.all([
 				season.getSchedule(),
 				idb.cache.players.indexGetAll("playersByTid", inputs.tid),
 			]);
@@ -106,7 +104,7 @@ async function updateRoster(
 				}
 			}
 
-			players = await idb.getCopies.playersPlus(players, {
+			const players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
 				stats: stats2,
@@ -146,10 +144,10 @@ async function updateRoster(
 		} else {
 			// Show all players with stats for the given team and year
 			// Needs all seasons because of YWT!
-			let players = await idb.getCopies.players({
+			const playersAll = await idb.getCopies.players({
 				statsTid: inputs.tid,
 			});
-			players = await idb.getCopies.playersPlus(players, {
+			const players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
 				stats: stats2,

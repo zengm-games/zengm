@@ -8,9 +8,7 @@ async function updateSeasons(
 		season: number;
 	},
 	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||

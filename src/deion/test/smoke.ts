@@ -7,6 +7,7 @@ import "smoke-test-overrides"; // eslint-disable-line
 
 describe("Smoke Tests", () => {
 	let intervalID;
+
 	it("Create a new league and simuluate a season without error", async function() {
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
@@ -24,7 +25,8 @@ describe("Smoke Tests", () => {
 			}, 500);
 		});
 	});
-	after(async () => {
+
+	afterAll(async () => {
 		clearInterval(intervalID);
 		await league.remove(g.lid);
 

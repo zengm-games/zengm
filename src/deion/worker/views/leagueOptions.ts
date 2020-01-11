@@ -1,12 +1,7 @@
 import { g } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updateOptions(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateOptions(inputs: GetOutput, updateEvents: UpdateEvents) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")

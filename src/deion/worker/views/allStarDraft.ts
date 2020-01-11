@@ -46,9 +46,7 @@ const augment = async allStars => {
 const updateAllStars = async (
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> => {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||

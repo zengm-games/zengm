@@ -83,15 +83,13 @@ const validateTeams = async () => {
 	return trade.updatePlayers(teams);
 };
 
-async function updateTrade(): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateTrade() {
 	const teams = await validateTeams();
 	const userRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		g.userTid,
 	);
-	const userPicks: any = await idb.getCopies.draftPicks({
+	const userPicks = await idb.getCopies.draftPicks({
 		tid: g.userTid,
 	});
 	const attrs = [
@@ -124,11 +122,14 @@ async function updateTrade(): Promise<void | {
 		p.excluded = teams[0].pidsExcluded.includes(p.pid);
 	}
 
-	for (const dp of userPicks) {
-		dp.desc = helpers.pickDesc(dp);
-		dp.included = teams[0].dpids.includes(dp.dpid);
-		dp.excluded = teams[0].dpidsExcluded.includes(dp.dpid);
-	}
+	const userPicks2 = userPicks.map(dp => {
+		return {
+			...dp,
+			desc: helpers.pickDesc(dp),
+			included: teams[0].dpids.includes(dp.dpid),
+			excluded: teams[0].dpidsExcluded.includes(dp.dpid),
+		};
+	});
 
 	const otherTid = teams[1].tid; // Need to do this after knowing otherTid
 
@@ -136,7 +137,7 @@ async function updateTrade(): Promise<void | {
 		"playersByTid",
 		otherTid,
 	);
-	const otherPicks: any = await idb.getCopies.draftPicks({
+	const otherPicks = await idb.getCopies.draftPicks({
 		tid: otherTid,
 	});
 	const t = await idb.getCopy.teamsPlus({
@@ -168,23 +169,26 @@ async function updateTrade(): Promise<void | {
 		p.excluded = teams[1].pidsExcluded.includes(p.pid);
 	}
 
-	for (const dp of otherPicks) {
-		dp.desc = helpers.pickDesc(dp);
-		dp.included = teams[1].dpids.includes(dp.dpid);
-		dp.excluded = teams[1].dpidsExcluded.includes(dp.dpid);
-	}
+	const otherPicks2 = otherPicks.map(dp => {
+		return {
+			...dp,
+			desc: helpers.pickDesc(dp),
+			included: teams[1].dpids.includes(dp.dpid),
+			excluded: teams[1].dpidsExcluded.includes(dp.dpid),
+		};
+	});
 
 	let vars: any = {
 		salaryCap: g.salaryCap / 1000,
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,
-		userPicks,
+		userPicks: userPicks2,
 		userPids: teams[0].pids,
 		userPidsExcluded: teams[0].pidsExcluded,
 		userRoster,
 		otherDpids: teams[1].dpids,
 		otherDpidsExcluded: teams[1].dpidsExcluded,
-		otherPicks,
+		otherPicks: otherPicks2,
 		otherPids: teams[1].pids,
 		otherPidsExcluded: teams[1].pidsExcluded,
 		otherRoster,

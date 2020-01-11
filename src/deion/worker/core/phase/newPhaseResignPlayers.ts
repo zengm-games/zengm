@@ -8,9 +8,10 @@ import { Conditions } from "../../../common/types";
 const newPhaseResignPlayers = async (conditions: Conditions) => {
 	await idb.cache.negotiations.clear();
 	const baseMoodsReSigning = await player.genBaseMoods(true);
-	const baseMoodsFreeAgents = await player.genBaseMoods(false); // Reset contract demands of current free agents and undrafted players
-	// KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
+	const baseMoodsFreeAgents = await player.genBaseMoods(false);
 
+	// Reset contract demands of current free agents and undrafted players
+	// KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
 	const existingFreeAgents = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.FREE_AGENT,
@@ -31,13 +32,15 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 		attrs: ["strategy"],
 		season: g.season,
 	});
-	const strategies = teams.map(t => t.strategy); // Re-sign players on user's team, and some AI players
+	const strategies = teams.map(t => t.strategy);
 
+	// Re-sign players on user's team, and some AI players
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		0,
 		Infinity,
-	]); // Figure out how many players are needed at each position, beyond who is already signed
+	]);
 
+	// Figure out how many players are needed at each position, beyond who is already signed
 	const neededPositionsByTid = new Map();
 
 	if (Object.keys(overrides.common.constants.POSITION_COUNTS).length > 0) {
@@ -89,8 +92,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 			const draftPick = g.hardCap && p.draft.year === g.season;
 
 			if (g.userTids.includes(p.tid) && local.autoPlaySeasons === 0) {
-				const tid = p.tid; // Add to free agents first, to generate a contract demand, then open negotiations with player
+				const tid = p.tid;
 
+				// Add to free agents first, to generate a contract demand, then open negotiations with player
 				player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsReSigning);
 
 				if (draftPick) {
@@ -138,8 +142,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 				}
 
 				const payroll = payrollsByTid.get(p.tid);
-				const contract = player.genContract(p); // Always sign rookies, and give them smaller contracts
+				const contract = player.genContract(p);
 
+				// Always sign rookies, and give them smaller contracts
 				if (draftPick) {
 					contract.amount /= 2;
 

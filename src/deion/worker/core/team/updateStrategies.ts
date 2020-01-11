@@ -30,8 +30,11 @@ const updateStrategies = async () => {
 		const won = teamSeason.won;
 		const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0; // Young stars
 
-		let players = await idb.cache.players.indexGetAll("playersByTid", t.tid);
-		players = await idb.getCopies.playersPlus(players, {
+		const playersAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			t.tid,
+		);
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			season: g.season,
 			tid: t.tid,
 			attrs: ["age", "value", "contract"],

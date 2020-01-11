@@ -11,8 +11,9 @@ const newPhaseFantasyDraft = async (conditions: Conditions, tids: number[]) => {
 	await league.setGameAttributes({
 		nextPhase: g.phase,
 	});
-	await idb.cache.releasedPlayers.clear(); // Protect draft prospects from being included in this
+	await idb.cache.releasedPlayers.clear();
 
+	// Protect draft prospects from being included in this
 	const playersUndrafted = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.UNDRAFTED,

@@ -1,3 +1,5 @@
+import { Phase } from "./types";
+
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
@@ -8,7 +10,18 @@ const DIFFICULTY = {
 	Hard: 0.25,
 	Insane: 1,
 };
-const PHASE = {
+const PHASE: {
+	FANTASY_DRAFT: Phase;
+	PRESEASON: Phase;
+	REGULAR_SEASON: Phase;
+	AFTER_TRADE_DEADLINE: Phase;
+	PLAYOFFS: Phase;
+	DRAFT_LOTTERY: Phase;
+	DRAFT: Phase;
+	AFTER_DRAFT: Phase;
+	RESIGN_PLAYERS: Phase;
+	FREE_AGENCY: Phase;
+} = {
 	FANTASY_DRAFT: -1,
 	PRESEASON: 0,
 	REGULAR_SEASON: 1,

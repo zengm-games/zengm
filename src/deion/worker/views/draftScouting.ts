@@ -9,13 +9,13 @@ async function addSeason(season) {
 		g.phase === PHASE.FANTASY_DRAFT
 			? PLAYER.UNDRAFTED_FANTASY_TEMP
 			: PLAYER.UNDRAFTED;
-	let playersAll = (
+	const playersAll2 = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 			[season],
 			[season, Infinity],
 		])
 	).filter(p => p.tid === tid);
-	playersAll = await idb.getCopies.playersPlus(playersAll, {
+	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
 		attrs: ["pid", "nameAbbrev", "age", "valueFuzz", "watch"],
 		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
 		showNoStats: true,
@@ -52,9 +52,7 @@ async function addSeason(season) {
 async function updateDraftScouting(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")

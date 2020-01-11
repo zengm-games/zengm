@@ -28,8 +28,9 @@ const newPhaseDraft = async (conditions: Conditions) => {
 				promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
 			}
 		});
-	await Promise.all(promises); // Run lottery only if it hasn't been done yet
+	await Promise.all(promises);
 
+	// Run lottery only if it hasn't been done yet
 	const draftLotteryResult = await idb.getCopy.draftLotteryResults({
 		season: g.season,
 	});

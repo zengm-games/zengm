@@ -1,8 +1,6 @@
 import { idb } from "../db";
 
-async function updateInbox(): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateInbox() {
 	const messages = await idb.getCopies.messages();
 	messages.reverse();
 	let anyUnread = false;

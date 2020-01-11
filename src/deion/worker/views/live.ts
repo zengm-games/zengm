@@ -2,10 +2,8 @@ import { allStar, season } from "../core";
 import { g, helpers, lock } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updateGamesList(): Promise<void | {
-	[key: string]: any;
-}> {
-	const games = helpers.deepCopy(await season.getSchedule(true));
+async function updateGamesList() {
+	const games: any[] = helpers.deepCopy(await season.getSchedule(true));
 
 	for (const game of games) {
 		if (game.awayTid === -2 && game.homeTid === -1) {
@@ -38,9 +36,7 @@ async function updateGamesList(): Promise<void | {
 async function updateGamesInProgress(
 	inputs: GetOutput,
 	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+) {
 	if (updateEvents.includes("lock.gameSim")) {
 		return {
 			gamesInProgress: lock.get("gameSim"),

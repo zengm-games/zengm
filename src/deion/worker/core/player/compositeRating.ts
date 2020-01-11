@@ -17,18 +17,19 @@ const composoteRating = (
 	let denominator = 0;
 
 	for (let i = 0; i < components.length; i++) {
-		let factor: number;
+		const component = components[i];
 
-		if (typeof components[i] === "number") {
-			factor = components[i];
+		let factor: number;
+		if (typeof component === "number") {
+			factor = component;
 		} else if (fuzz) {
 			// Don't fuzz height
 			factor =
-				components[i] === "hgt"
-					? ratings[components[i]]
-					: fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+				component === "hgt"
+					? ratings[component]
+					: fuzzRating(ratings[component], ratings.fuzz);
 		} else {
-			factor = ratings[components[i]];
+			factor = ratings[component];
 		}
 
 		numerator += factor * weights[i];

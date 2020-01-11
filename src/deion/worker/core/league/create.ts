@@ -52,7 +52,7 @@ export const createWithoutSaving = (
 	difficulty: number,
 ): {
 	gameAttributes: GameAttributes;
-	[key: string]: object[];
+	[key: string]: any[];
 } => {
 	const teamsDefault = helpers.getTeamsDefault();
 

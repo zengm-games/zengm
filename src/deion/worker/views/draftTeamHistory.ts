@@ -2,20 +2,15 @@ import { PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateDraftTeamHistory(inputs: {
-	abbrev: string;
-	tid: number;
-}): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateDraftTeamHistory(inputs: { abbrev: string; tid: number }) {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
 			: ["gp", "keyStats", "av"];
-	let playersAll = await idb.getCopies.players({
+	const playersAll2 = await idb.getCopies.players({
 		filter: p => p.draft.tid === inputs.tid,
 	});
-	playersAll = await idb.getCopies.playersPlus(playersAll, {
+	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
 		attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,

@@ -2,12 +2,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updateUserRoster(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updateUserRoster(inputs: GetOutput, updateEvents: UpdateEvents) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
@@ -42,16 +37,19 @@ async function updateUserRoster(
 			fuzz: true,
 		});
 
-		for (const dp of userPicks) {
-			dp.desc = helpers.pickDesc(dp);
-		}
+		const userPicks2 = userPicks.map(dp => {
+			return {
+				...dp,
+				desc: helpers.pickDesc(dp),
+			};
+		});
 
 		return {
 			gameOver: g.gameOver,
 			phase: g.phase,
 			stats,
 			ties: g.ties,
-			userPicks,
+			userPicks: userPicks2,
 			userRoster,
 		};
 	}

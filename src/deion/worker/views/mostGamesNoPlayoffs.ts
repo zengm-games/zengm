@@ -2,12 +2,7 @@ import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import { GetOutput, UpdateEvents } from "../../common/types";
 
-async function updatePlayers(
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-): Promise<void | {
-	[key: string]: any;
-}> {
+async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const stats =

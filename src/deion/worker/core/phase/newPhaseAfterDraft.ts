@@ -3,10 +3,10 @@ import { idb } from "../../db";
 import { g } from "../../util";
 
 const newPhaseAfterDraft = async () => {
-	await draft.genPicks(g.season + g.numSeasonsFutureDraftPicks); // Delete any old draft picks
+	await draft.genPicks(g.season + g.numSeasonsFutureDraftPicks);
 
+	// Delete any old draft picks
 	const draftPicks = await idb.cache.draftPicks.getAll();
-
 	for (const dp of draftPicks) {
 		if (typeof dp.season !== "number" || dp.season <= g.season) {
 			await idb.cache.draftPicks.delete(dp.dpid);

@@ -778,11 +778,6 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
-"@types/mocha@^5.2.7":
-  version "5.2.7"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
-  integrity sha512-NYrtPht0wGzhwe9+/idPaBB+TqkY9AhTvOLMkThm0IoEfLaiVQZwBwyJ5puCkO3AUCWrmcoePjp2mbFocKy4SQ==
-
 "@types/node@*":
   version "13.1.5"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.5.tgz#4d5efc52a1d3e45d13e5ec9f911cbc5b089ccaec"
@@ -799,6 +794,11 @@
   integrity sha512-auApPaJf3NPfe18hSoJkp8EbZzer2ISk7o8mCC3M9he/a04+gbMF97NkpD2S8riMGvm4BMRI59/SZQSaLTKpsQ==
   dependencies:
     "@types/node" "*"
+
+"@types/sharedworker@^0.0.29":
+  version "0.0.29"
+  resolved "https://registry.yarnpkg.com/@types/sharedworker/-/sharedworker-0.0.29.tgz#69ce70764a0380f4c27ae036f6f9c4e2c75dbdac"
+  integrity sha512-vdlrZJKGrAedfcMt4Tn8gIa3tJxRhrTtwfEu9jmVtaCZHgbensRMEbpkZ+dY/6WpE12a8K00KaQnJV0lH9ZmdA==
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"

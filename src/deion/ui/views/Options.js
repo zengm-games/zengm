@@ -97,7 +97,7 @@ const Options = props => {
 		const newTheme = state.theme === "dark" ? "dark" : "light";
 		localStorage.setItem("theme", newTheme);
 		if (window.themeCSSLink) {
-			window.themeCSSLink.href = `/gen/${newTheme}.css`;
+			window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;
 		}
 
 		logEvent({

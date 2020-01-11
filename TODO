@@ -1,8 +1,5 @@
 when you create a player, the ratings will always turn out to be 0/0. if you change a rating by 1, it'll update
 
-hash in css url
-- https://old.reddit.com/r/BasketballGM/comments/em1o5v/page_headers_cut_off/
-
 typescript
 - https://github.com/quizlet/ts-migration
   - looks best

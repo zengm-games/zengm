@@ -20,6 +20,7 @@ declare global {
 		bbgmVersionWorker: string;
 		bugsnagClient: any;
 		enableLogging: boolean;
+		getTheme: (theme?: "light" | "dark") => string;
 		googleAnalyticsID: string;
 		heartbeatID: string;
 		themeCSSLink: HTMLLinkElement;

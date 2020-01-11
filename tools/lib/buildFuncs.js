@@ -2,6 +2,7 @@
 
 const workboxBuild = require("workbox-build");
 const CleanCSS = require("clean-css");
+const crypto = require("crypto");
 const fs = require("fs");
 const fse = require("fs-extra");
 const sass = require("node-sass");
@@ -11,6 +12,15 @@ const Terser = require("terser");
 const getSport = require("./getSport");
 
 const buildCSS = (watch /*: boolean*/ = false) => {
+	const fileHash = contents => {
+		// https://github.com/sindresorhus/rev-hash
+		return crypto
+			.createHash("md5")
+			.update(contents)
+			.digest("hex")
+			.slice(0, 10);
+	};
+
 	const filenames = ["light", "dark"];
 	for (const filename of filenames) {
 		const start = process.hrtime();
@@ -22,7 +32,27 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 		});
 		const source = sassResult.css.toString();
 
-		const outFilename = `build/gen/${filename}.css`;
+		let outFilename;
+		if (watch) {
+			outFilename = `build/gen/${filename}.css`;
+
+			replace({
+				regex: `-CSS_HASH_${filename.toUpperCase()}`,
+				replacement: "",
+				paths: ["build/index.html"],
+				silent: true,
+			});
+		} else {
+			const hash = fileHash(source);
+			outFilename = `build/gen/${filename}-${hash}.css`;
+
+			replace({
+				regex: `CSS_HASH_${filename.toUpperCase()}`,
+				replacement: hash,
+				paths: ["build/index.html"],
+				silent: true,
+			});
+		}
 
 		let output;
 		if (!watch) {
@@ -65,7 +95,7 @@ const buildSW = async () => {
 		swDest: "build/sw.js",
 		globDirectory: "build",
 		globPatterns: ["**/*.{js,css,html}", "fonts/*.woff2", "img/logos/*.png"],
-		dontCacheBustURLsMatching: new RegExp("gen/(ui|worker)-.*.js"),
+		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
 
 		// Changing default is only needed for unminified versions from watch-js
 		maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,

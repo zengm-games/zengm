@@ -59,10 +59,12 @@
         return el;
       }
       function getTheme() {
+        const dark = "dark-CSS_HASH_DARK";
+        const light = "light-CSS_HASH_LIGHT";
         try {
-          return localStorage.getItem("theme") === "dark" ? "dark" : "light";
+          return localStorage.getItem("theme") === "dark" ? dark : light;
         } catch (err) {
-          return "light";
+          return light;
         }
       }
       window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");

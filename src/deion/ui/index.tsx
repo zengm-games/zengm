@@ -39,10 +39,8 @@ const handleVersion = async () => {
 				});
 			}
 		} else if (e.key === "theme") {
-			const theme = e.newValue === "dark" ? "dark" : "light";
-
 			if (window.themeCSSLink) {
-				window.themeCSSLink.href = `/gen/${theme}.css`;
+				window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;
 			}
 		}
 	});

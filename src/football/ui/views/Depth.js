@@ -5,6 +5,7 @@ import arrayMove from "array-move";
 import useTitleBar from "../../../deion/ui/hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../../deion/ui/util";
 import { PlayerNameLabels, SortableTable } from "../../../deion/ui/components";
+import { POSITIONS } from "../../common/constants";
 
 const handleAutoSort = async pos => {
 	await toWorker("autoSortRoster", pos);
@@ -78,6 +79,21 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 				<span className="table-info legend-square" /> and the bench{" "}
 				<span className="table-secondary legend-square" />.
 			</p>
+
+			<ul className="nav nav-tabs mb-3 d-none d-sm-flex">
+				{POSITIONS.map(pos2 => (
+					<li className="nav-item" key={pos2}>
+						<a
+							className={classNames("nav-link", {
+								active: pos === pos2,
+							})}
+							href={helpers.leagueUrl(["depth", abbrev, pos2])}
+						>
+							{pos2}
+						</a>
+					</li>
+				))}
+			</ul>
 
 			{editable ? (
 				<div className="btn-group mb-3">

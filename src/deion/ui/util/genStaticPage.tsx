@@ -5,7 +5,7 @@ import initView from "./initView";
 const genStaticPage = (
 	name: string,
 	title: string,
-	content: React.Element<any>,
+	content: React.ReactNode,
 	inLeague: boolean,
 ) => {
 	return initView({

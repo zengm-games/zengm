@@ -27,7 +27,7 @@ const Buttons = ({
 						<input
 							type="checkbox"
 							onClick={handleClickForceTrade}
-							value={forceTrade}
+							checked={forceTrade}
 						/>
 						Force Trade
 					</label>

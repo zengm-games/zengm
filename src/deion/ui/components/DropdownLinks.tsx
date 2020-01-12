@@ -48,7 +48,6 @@ const TopMenuDropdown = ({ children, long, short, openID, onToggle }) => {
 	return (
 		<Dropdown isOpen={openID === long} nav inNavbar toggle={toggle}>
 			<TopMenuToggle
-				bsRole="toggle"
 				long={long}
 				short={short}
 				openID={openID}

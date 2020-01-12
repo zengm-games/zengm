@@ -2,6 +2,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
+
+const width100 = {
+	width: "100%",
+};
+
 type SeriesTeam = {
 	abbrev: string;
 	cid: number;
@@ -68,7 +73,7 @@ const Playoffs = ({
 			) : null}
 
 			<ResponsiveTableWrapper>
-				<table className="table-sm" width="100%">
+				<table className="table-sm" style={width100}>
 					<tbody>
 						{matchups.map((row, i) => (
 							<tr key={i}>
@@ -77,7 +82,7 @@ const Playoffs = ({
 										<td
 											key={j}
 											rowSpan={m.rowspan}
-											width={`${100 / (numRounds * 2 - 1)}%`}
+											style={{ width: `${100 / (numRounds * 2 - 1)}%` }}
 										>
 											<PlayoffMatchup
 												numGamesToWinSeries={numGamesToWinSeries[m.matchup[0]]}

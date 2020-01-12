@@ -3,6 +3,10 @@ import React from "react";
 import { PlayerNameLabels } from "../../../deion/ui/components";
 import { helpers } from "../../../deion/ui/util";
 
+const width100 = {
+	width: "100%",
+};
+
 const BoxScoreRow = ({
 	className,
 	onClick,
@@ -17,7 +21,7 @@ const BoxScoreRow = ({
 	return (
 		<tr className={className} onClick={onClick}>
 			<td>{p.pos}</td>
-			<td width="100%">
+			<td style={width100}>
 				<PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.skills}>
 					{p.name}
 				</PlayerNameLabels>

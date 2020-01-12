@@ -199,7 +199,7 @@ const Trade = props => {
 						summary={summary}
 					/>
 					{!noTradingAllowed ? (
-						<center>
+						<div className="text-center">
 							<Buttons
 								asking={state.asking}
 								enablePropose={summary.enablePropose}
@@ -210,7 +210,7 @@ const Trade = props => {
 								handleClickForceTrade={handleClickForceTrade}
 								handleClickPropose={handleClickPropose}
 							/>
-						</center>
+						</div>
 					) : (
 						<p className="alert alert-danger">
 							You're not allowed to make trades now.

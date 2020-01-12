@@ -44,8 +44,9 @@ const handleVersion = async () => {
 			}
 		}
 	});
-	api.bbgmPing("version"); // Put in DOM element and global variable because the former is used before React takes over and the latter is used after
+	api.bbgmPing("version");
 
+	// Put in DOM element and global variable because the former is used before React takes over and the latter is used after
 	const bbgmVersionUI = "REV_GOES_HERE";
 	window.bbgmVersionUI = bbgmVersionUI;
 
@@ -224,8 +225,9 @@ const setupRoutes = () => {
 				}
 
 				console.error("Error from view:");
-				console.error(event.detail.error); // As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
+				console.error(event.detail.error);
 
+				// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
 				if (
 					errMsg.includes("requested version") ||
 					errMsg.includes("existing version") ||

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { KeyboardEvent, useEffect } from "react";
+import React, { useEffect } from "react";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
@@ -52,11 +52,10 @@ const PlayMenu = ({ lid, options }: Props) => {
 					toWorker(`actions.playMenu.${option.id}`);
 				}
 			}
-		}; // $FlowFixMe
+		};
 
 		document.addEventListener("keyup", handleKeyup);
 		return () => {
-			// $FlowFixMe
 			document.removeEventListener("keyup", handleKeyup);
 		};
 	}, [options]);

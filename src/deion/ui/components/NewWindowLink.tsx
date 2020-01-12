@@ -11,7 +11,7 @@ const NewWindowLink = ({ parts }: Props) => {
 
 		window.open(
 			`${url}?w=popup`,
-			Date.now(),
+			String(Date.now()),
 			"height=600,width=800,scrollbars=yes",
 		);
 	}, [parts]);
@@ -21,11 +21,10 @@ const NewWindowLink = ({ parts }: Props) => {
 			width="13"
 			height="13"
 			viewBox="0 0 272.8 272.9"
-			alt="Open In New Window"
 			className="new_window ml-2"
-			title="Open In New Window"
 			onClick={handleClick}
 		>
+			<title>Open In New Window</title>
 			<path fill="none" strokeWidth="20" d="M60 10h203v203H60z" />
 			<path
 				d="M107 171L216 55v75-75h-75"

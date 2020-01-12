@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import * as React from "react";
+import React from "react";
 import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import { UncontrolledPopover } from ".";
@@ -11,7 +11,7 @@ const HelpPopover = ({
 	style,
 	title,
 }: {
-	children: string | React.Element<any> | React.Element<any>[];
+	children: React.ReactNode;
 	className?: string;
 	placement?: "bottom" | "left" | "right" | "top";
 	style?: {

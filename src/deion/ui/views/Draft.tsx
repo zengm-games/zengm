@@ -186,9 +186,12 @@ const Draft = ({
 	const rowsDrafted = drafted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
-			<DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid}>
-				{p.draft.tid} {p.draft.originalTid}
-			</DraftAbbrev>,
+			{
+				sortValue: `{p.draft.tid} {p.draft.originalTid}`,
+				value: (
+					<DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />
+				),
+			},
 			p.pid >= 0 ? (
 				<PlayerNameLabels
 					pid={p.pid}

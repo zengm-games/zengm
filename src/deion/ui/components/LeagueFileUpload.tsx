@@ -1,15 +1,16 @@
 import Ajv from "ajv";
 import PropTypes from "prop-types";
 import React, {
-	SyntheticEvent,
 	useCallback,
 	useEffect,
 	useReducer,
 	useRef,
 	useState,
-} from "react"; // This is dynamically resolved with rollup-plugin-alias
-// $FlowFixMe
+	MouseEvent,
+	ChangeEvent,
+} from "react";
 
+// This is dynamically resolved with rollup-plugin-alias
 import schema from "league-schema"; // eslint-disable-line
 
 const ajv = new Ajv({
@@ -31,13 +32,14 @@ type State = {
 	status: "initial" | "loading" | "parsing" | "error" | "done";
 };
 
-const resetFileInput = (event: SyntheticEvent<HTMLInputElement>) => {
+const resetFileInput = (event: MouseEvent<HTMLInputElement>) => {
 	// Without this, then selecting the same file twice will do nothing because the browser dedupes by filename.
 	// That is very annoying when repeatedly editing/checking a file.
+	// @ts-ignore
 	event.target.value = "";
 };
 
-const initialState = {
+const initialState: State = {
 	error: null,
 	jsonSchemaErrors: [],
 	status: "initial",
@@ -187,7 +189,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 		[beforeFile, onDone, url, withLeagueFile],
 	);
 	const handleFileUpload = useCallback(
-		(event: SyntheticEvent<HTMLInputElement>) => {
+		(event: ChangeEvent<HTMLInputElement>) => {
 			beforeFile();
 			const file = event.currentTarget.files[0];
 
@@ -208,6 +210,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 				let leagueFile;
 
 				try {
+					// @ts-ignore
 					leagueFile = JSON.parse(event2.currentTarget.result);
 				} catch (error) {
 					if (isMounted) {

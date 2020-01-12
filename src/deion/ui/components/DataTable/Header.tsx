@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { KeyboardEvent, SyntheticEvent } from "react";
+import React, { SyntheticEvent, MouseEvent } from "react";
 import { Col, SortBy, SuperCol } from ".";
 
 const FilterHeader = ({
@@ -55,7 +55,7 @@ const Header = ({
 	cols: Col[];
 	enableFilters: boolean;
 	filters: string[];
-	handleColClick: (b: KeyboardEvent, a: number) => void;
+	handleColClick: (b: MouseEvent, a: number) => void;
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 	sortBys: SortBy[];
 	superCols?: SuperCol[];
@@ -108,7 +108,7 @@ const Header = ({
 								key={i}
 								onClick={event => handleColClick(event, i)}
 								title={desc}
-								width={width}
+								style={{ width }}
 							>
 								{className ? <div className={className}>{title}</div> : title}
 							</th>

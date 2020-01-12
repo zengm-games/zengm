@@ -7,7 +7,7 @@ type LocalActions = {
 	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
-	updateGameAttributes: (gameAttributes: GameAttributes) => void;
+	updateGameAttributes: (gameAttributes: Partial<GameAttributes>) => void;
 };
 
 const [useLocal, local] = create<

@@ -82,6 +82,7 @@ class Register extends React.Component<Props, State> {
 					}
 				}
 
+				// @ts-ignore
 				this.setState(updatedState);
 			}
 		} catch (err) {

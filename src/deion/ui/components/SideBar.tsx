@@ -1,17 +1,14 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Element, ElementRef } from "react";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 import { MenuItemLink } from "../../common/types";
 
-const getText = (text): string | Element<any> => {
+const getText = (text): React.ReactNode => {
 	if (text.hasOwnProperty("side")) {
-		// $FlowFixMe
 		return text.side;
 	}
 
-	// $FlowFixMe
 	return text;
 };
 
@@ -140,8 +137,8 @@ type Props = {
 // $FlowFixMe
 
 const SideBar = React.memo(({ pageID }: Props) => {
-	const [node, setNode] = useState<null | ElementRef<"div">>(null);
-	const [nodeFade, setNodeFade] = useState<null | ElementRef<"div">>(null);
+	const [node, setNode] = useState<null | HTMLDivElement>(null);
+	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
 	const topUserBlockRef = useRef<HTMLElement | null>(null);
 	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
 		godMode: state.godMode,

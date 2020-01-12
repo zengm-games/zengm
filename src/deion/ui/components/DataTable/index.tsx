@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, { KeyboardEvent, SyntheticEvent } from "react";
+import React, { SyntheticEvent, MouseEvent } from "react";
 import Controls from "./Controls";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -91,7 +91,7 @@ class DataTable extends React.Component<Props, State> {
 		);
 	}
 
-	handleColClick(event: KeyboardEvent, i: number) {
+	handleColClick(event: MouseEvent, i: number) {
 		const col = this.props.cols[i]; // Ignore click on unsortable column
 
 		if (col.sortSequence && col.sortSequence.length === 0) {

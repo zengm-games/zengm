@@ -21,6 +21,10 @@ jobs:
       uses: borales/actions-yarn@v2.0.0
       with:
         cmd: install
+    - name: TypeScript
+      uses: borales/actions-yarn@v2.0.0
+      with:
+        cmd: tsc
     - name: Lint JS
       uses: borales/actions-yarn@v2.0.0
       with:

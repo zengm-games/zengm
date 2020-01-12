@@ -94,8 +94,8 @@ should work if you point it at the `build` folder with mod_rewrite enabled.
 
 ### Step 4 - Testing
 
-ESLint, Flow, and, stylelint are used to enforce some coding standards. To run
-them on the entire codebase, run
+TypeScript and ESLint are used to enforce some coding standards. To run them on
+the entire codebase, run
 
     yarn run lint
 

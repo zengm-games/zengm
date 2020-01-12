@@ -173,15 +173,17 @@ const LeagueName = ({
 
 const Ago = ({ date }: { date?: Date }) => {
 	if (date) {
-		return <span title={date}>{ago(date)}</span>;
+		return <span title={date.toLocaleString()}>{ago(date)}</span>;
 	}
 
 	return null;
-}; // https://stackoverflow.com/a/47417545/786644 hack because of overflow-x in table-responsive, otherwise menu gets chopped off if table has few rows
+};
 
+// https://stackoverflow.com/a/47417545/786644 hack because of overflow-x in table-responsive, otherwise menu gets chopped off if table has few rows
 const dropdownStyle = {
 	position: "static",
 };
+
 type Props = {
 	leagues: League[];
 };
@@ -225,16 +227,20 @@ const Dashboard = ({ leagues }: Props) => {
 				`${league.teamRegion} ${league.teamName}`,
 				league.phaseText,
 				<DifficultyText>{league.difficulty}</DifficultyText>,
-				<Ago date={league.created}>
-					{league.created && league.created.getTime
-						? league.created.getTime()
-						: 0}
-				</Ago>,
-				<Ago date={league.lastPlayed}>
-					{league.lastPlayed && league.lastPlayed.getTime
-						? league.lastPlayed.getTime()
-						: 0}
-				</Ago>,
+				{
+					sortValue:
+						league.created && league.created.getTime
+							? league.created.getTime()
+							: 0,
+					value: <Ago date={league.created} />,
+				},
+				{
+					sortValue:
+						league.lastPlayed && league.lastPlayed.getTime
+							? league.lastPlayed.getTime()
+							: 0,
+					value: <Ago date={league.lastPlayed} />,
+				},
 				<UncontrolledDropdown style={dropdownStyle}>
 					<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
 						<span
@@ -281,7 +287,7 @@ const Dashboard = ({ leagues }: Props) => {
 									if (proceed) {
 										setDeletingLID(league.lid);
 										await toWorker("removeLeague", league.lid);
-										setDeletingLID();
+										setDeletingLID(undefined);
 									}
 								}}
 							>

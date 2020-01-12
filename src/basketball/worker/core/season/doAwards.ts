@@ -1,5 +1,7 @@
 import orderBy from "lodash/orderBy";
 import {
+	AwardsByPlayer,
+	GetTopPlayersOptions,
 	getPlayers,
 	getTopPlayers,
 	leagueLeaders,
@@ -13,10 +15,6 @@ import {
 	helpers,
 } from "../../../../deion/worker/util";
 import { Conditions, PlayerFiltered } from "../../../../deion/common/types";
-import {
-	AwardsByPlayer,
-	GetTopPlayersOptions,
-} from "../../../../deion/worker/core/season/awards";
 import { AwardPlayer, AwardPlayerDefense, Awards } from "../../../common/types";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {

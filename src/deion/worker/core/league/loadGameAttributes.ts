@@ -1,6 +1,6 @@
 import { league } from "..";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers, toUI } from "../../util";
+import { defaultGameAttributes, g, toUI } from "../../util";
 
 /**
  * Load game attributes from the database and update the global variable g.

@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, helpers, toUI } from "../../util";
+import { g, toUI } from "../../util";
 import { GameAttributes } from "../../../common/types";
 
 const updateMetaDifficulty = async (difficulty: number) => {

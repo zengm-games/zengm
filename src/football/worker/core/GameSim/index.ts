@@ -1832,8 +1832,8 @@ class GameSim {
 	checkPenalties(
 		playType: PenaltyPlayType,
 		{
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			ballCarrier,
-			// eslint-disable-line no-unused-vars
 			made,
 			playYds = 0,
 		}: {

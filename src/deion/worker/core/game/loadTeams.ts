@@ -1,6 +1,6 @@
 import { allStar, finances, player } from "..";
 import { idb } from "../../db";
-import { g, helpers, overrides } from "../../util";
+import { g, overrides } from "../../util";
 
 const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 	const allStarGame = team.tid === -1 || team.tid === -2;

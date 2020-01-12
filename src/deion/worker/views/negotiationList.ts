@@ -14,11 +14,13 @@ async function updateNegotiationList() {
 		negotiation => negotiation.tid === g.userTid,
 	);
 	const negotiationPids = negotiations.map(negotiation => negotiation.pid);
-	let [userPlayers, playersAll] = await Promise.all([
-		idb.cache.players.indexGetAll("playersByTid", g.userTid),
-		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
-	]);
-	playersAll = playersAll.filter(p => negotiationPids.includes(p.pid));
+	const userPlayers = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		g.userTid,
+	);
+	const playersAll = (
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
+	).filter(p => negotiationPids.includes(p.pid));
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",

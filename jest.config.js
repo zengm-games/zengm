@@ -1,4 +1,3 @@
-/* eslint-env node */
 module.exports = {
 	moduleNameMapper: {
 		"^player-names$": "<rootDir>/src/deion/worker/data/names-test.json",

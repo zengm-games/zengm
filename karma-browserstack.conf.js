@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
 
 const karmaConfig = require("./tools/lib/karmaConfig");
 const browserStack = require("../../.browserstack.json"); // eslint-disable-line import/no-unresolved

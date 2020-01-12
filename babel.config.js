@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 // Need this rather than .babelrc to run on d3 inside node_modules (see also rollup-plugin-babel config)
 
 module.exports = {

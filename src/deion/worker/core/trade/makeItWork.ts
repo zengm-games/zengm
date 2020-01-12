@@ -20,8 +20,9 @@ const makeItWork = async (
 	estValuesCached?: TradePickValues,
 ): Promise<TradeTeams | void> => {
 	let initialSign;
-	let added = 0; // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
+	let added = 0;
 
+	// Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
 	const tryAddAsset = async () => {
 		const assets = [];
 
@@ -172,11 +173,13 @@ const makeItWork = async (
 			teams[1].dpids.push(asset.dpid);
 		}
 
-		added += 1; // eslint-disable-next-line no-use-before-define
+		added += 1;
 
+		// eslint-disable-next-line @typescript-eslint/no-use-before-define
 		return testTrade();
-	}; // See if the AI team likes the current trade. If not, try adding something to it.
+	};
 
+	// See if the AI team likes the current trade. If not, try adding something to it.
 	async function testTrade() {
 		const dv = await team.valueChange(
 			teams[1].tid,

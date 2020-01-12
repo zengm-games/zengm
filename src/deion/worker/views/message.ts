@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util";
-import { Message, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
 async function updateMessage(
 	inputs: {

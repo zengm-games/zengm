@@ -100,7 +100,6 @@ async function updateTeamFinances(
 		const barData: any = {};
 
 		for (let i = 0; i < keys.length; i++) {
-			/* eslint-disable no-loop-func */
 			if (typeof teamSeasons[0][keys[i]] !== "object") {
 				barData[keys[i]] = helpers.nullPad(
 					teamSeasons.map(ts => ts[keys[i]]),
@@ -118,7 +117,6 @@ async function updateTeamFinances(
 					);
 				}
 			}
-			/* eslint-enable no-loop-func */
 		}
 
 		// Process some values

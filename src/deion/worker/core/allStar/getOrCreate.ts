@@ -1,7 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
 import create from "./create";
-import { Conditions } from "../../../common/types";
 
 const getOrCreate = async () => {
 	let allStars = await idb.cache.allStars.get(g.season);

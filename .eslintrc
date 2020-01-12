@@ -1,104 +1,82 @@
 {
-    parser: "babel-eslint",
-    extends: [
-        "airbnb",
-        "prettier",
-        "prettier/react",
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "react-hooks"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".mjs", ".js", ".json", ".ts", ".tsx"]
+      }
+    },
+    "import/extensions": [
+      ".js",
+      ".mjs",
+      ".jsx",
+      ".ts",
+      ".tsx"
     ],
-    plugins: [
-        "react-hooks",
-    ],
-    env: {
-        browser: true,
-        mocha: false,
-        node: false,
-        worker: false,
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-inferrable-types": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/no-onchange": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "no-constant-condition": ["error", { "checkLoops": false }],
+    "no-empty": "off",
+    "no-prototype-builtins": "off",
+    "react/jsx-key": "off",
+    "react/no-unescaped-entities": "off",
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error"
+  },
+  "overrides": [{
+    "files": "**/*.test.{js,ts}",
+    "env": {
+      "jest": true
+    }
+  }, {
+    "files": ["*.js", "tools/**/*.{js,ts}"],
+    "env": {
+      "node": true
     },
-    settings: {
-      "import/resolver": {
-        node: {
-          extensions: [".mjs", ".js", ".json", ".ts", ".tsx"]
-        }
-      },
-      "import/extensions": [
-        ".js",
-        ".mjs",
-        ".jsx",
-        ".ts",
-        ".tsx"
-      ],
-    },
-    rules: {
-        "array-callback-return": "off", // False positives w/ async functions
-        "consistent-return": "off",
-        "func-names": "off",
-        "import/extensions": ["error", "ignorePackages", {
-          js: "never",
-          mjs: "never",
-          jsx: "never",
-          ts: "never",
-          tsx: "never",
-        }],
-        "import/no-cycle": "off",
-        "import/no-extraneous-dependencies": ["error", {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}],
-        "jsx-a11y/anchor-has-content": "off",
-        "jsx-a11y/anchor-is-valid": "off",
-        "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/control-has-associated-label": "off",
-        "jsx-a11y/heading-has-content": "off",
-        "jsx-a11y/label-has-associated-control": "off",
-        "jsx-a11y/label-has-for": "off",
-        "jsx-a11y/no-noninteractive-element-interactions": "off", // I don't care enough to fix it
-        "jsx-a11y/no-static-element-interactions": "off",
-        "max-classes-per-file": "off",
-        "no-await-in-loop": "off",
-        "no-console": "off",
-        "no-constant-condition": ["error", { "checkLoops": false }],
-        "no-continue": "off",
-        "no-empty": "off",
-        "no-loop-func": "off",
-        "no-mixed-operators": "off",
-        "no-nested-ternary": "off",
-        "no-param-reassign": "off",
-        "no-plusplus": "off",
-        "no-prototype-builtins": "off",
-        "no-restricted-syntax": "off",
-        "no-underscore-dangle": "off",
-        "no-unneeded-ternary": "off",
-        "prefer-const": ["error", {"destructuring": "all"}],
-        "prefer-destructuring": "off", // Would be nice, but buggy
-        "react/button-has-type": "off",
-        "react/destructuring-assignment": "off",
-        "react/forbid-prop-types": "off",
-        "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
-        "react/jsx-props-no-spreading": "off",
-        "react/no-array-index-key": "off",
-        "react/no-did-update-set-state": "off",
-        "react/no-unescaped-entities": "off",
-        "react/no-unused-prop-types": "off", // Would be nice, but tons of false positives
-        "react/require-default-props": "off", // Flow handles this better, I think
-        "react/sort-comp": "off", // Flow type definition of props in a React class confuses it
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
-        "spaced-comment": "off",
-    },
-    globals: {
-        "$Diff": false,
-        "$Keys": false,
-        "$Shape": false,
-        "Class": false,
-        "IntervalID": false,
-        "SyntheticEvent": false,
-        "SyntheticKeyboardEvent": false,
-        "SyntheticInputEvent": false,
-        "SyntheticMouseEvent": false,
-        "SyntheticTouchEvent": false,
-        "process": false,
-    },
-    overrides: [{
-        files: "**/*.test.js",
-        env: {
-            jest: true
-        },
-    }],
+    "rules": {
+      "@typescript-eslint/no-var-requires": "off"
+    }
+  }, {
+    "files": "src/deion/test/*.{js,ts}",
+    "env": {
+      "jest": true,
+      "mocha": true
+    }
+  }],
+  "globals": {
+      "process": false
+  }
 }

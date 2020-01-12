@@ -3,7 +3,6 @@
 const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
 const getSport = require("./lib/getSport");
-// $FlowFixMe
 const cloudflareConfig = require("../../../.config/cloudflare.json"); // eslint-disable-line import/no-unresolved
 
 const getSubdomain = () => {
@@ -72,6 +71,7 @@ const mySpawn = (command, args) => {
 		});
 
 		const response = await cf.zones.purgeCache(zone, {
+			// eslint-disable-next-line @typescript-eslint/camelcase
 			purge_everything: true,
 		});
 		if (!response.success) {

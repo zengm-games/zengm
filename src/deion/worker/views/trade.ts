@@ -134,7 +134,7 @@ async function updateTrade() {
 
 	const otherTid = teams[1].tid; // Need to do this after knowing otherTid
 
-	let otherRosterAll = await idb.cache.players.indexGetAll(
+	const otherRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		otherTid,
 	);

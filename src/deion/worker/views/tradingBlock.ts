@@ -12,13 +12,13 @@ async function updateUserRoster(inputs: GetOutput, updateEvents: UpdateEvents) {
 			process.env.SPORT === "basketball"
 				? ["min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"];
-		let [userRoster, userPicks] = await Promise.all([
+		const [userRosterAll, userPicks] = await Promise.all([
 			idb.cache.players.indexGetAll("playersByTid", g.userTid),
 			await idb.getCopies.draftPicks({
 				tid: g.userTid,
 			}),
 		]);
-		userRoster = await idb.getCopies.playersPlus(userRoster, {
+		const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 			attrs: [
 				"pid",
 				"name",

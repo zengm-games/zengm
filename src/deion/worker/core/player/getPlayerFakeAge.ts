@@ -1,5 +1,4 @@
 import { g, random } from "../../util";
-import { Player } from "../../../common/types";
 
 const getPlayerFakeAge = <T extends any>(players: T[]): T | void => {
 	// This list is very arbitrary, but certain countries are deemed more likely to have a player with a fake age

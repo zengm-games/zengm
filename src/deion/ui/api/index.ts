@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { ads, confirm, local, localActions, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import {

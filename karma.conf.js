@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 const karmaConfig = require("./tools/lib/karmaConfig");
 
 module.exports = function(config) {

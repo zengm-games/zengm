@@ -26,7 +26,6 @@ const recomputeOvr = async () => {
 		});
 	});
 
-	// $FlowFixMe
 	console.table(ovrs);
 	await idb.cache.fill();
 	await toUI(["realtimeUpdate", ["firstRun"]]);

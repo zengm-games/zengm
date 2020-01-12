@@ -81,7 +81,7 @@ const generate = (
 		valueFuzz: 0,
 		valueNoPotFuzz: 0,
 		valueWithContract: 0,
-	}; // $FlowFixMe
+	};
 
 	setContract(p, genContract(p), false);
 	return p;

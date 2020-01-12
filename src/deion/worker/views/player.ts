@@ -23,7 +23,6 @@ async function updatePlayer(
 		let stats = Array.from(
 			new Set(
 				statTables.reduce((allStats, currentStats) => {
-					// $FlowFixMe
 					return allStats.concat(currentStats.stats);
 				}, []),
 			),

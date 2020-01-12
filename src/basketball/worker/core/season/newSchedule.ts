@@ -139,7 +139,6 @@ const newScheduleDefault = (teams): [number, number][] => {
 // home/away. See https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
 
 const roundRobin = (tidsInput: number[]): [number, number][] => {
-	// $FlowFixMe
 	const tids: (number | "DUMMY")[] = tidsInput.slice();
 
 	if (tids.length % 2 === 1) {

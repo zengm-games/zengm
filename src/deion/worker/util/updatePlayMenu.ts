@@ -13,7 +13,6 @@ import toUI from "./toUI";
  * @return {Promise}
  */
 const updatePlayMenu = async () => {
-	// $FlowFixMe
 	if (typeof it === "function") {
 		return;
 	}

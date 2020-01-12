@@ -388,10 +388,7 @@ async function updateLeaders(
 			Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
 
 		for (const cat of categories) {
-			players.sort(
-				// $FlowFixMe
-				(a, b) => b.stats[cat.statProp] - a.stats[cat.statProp],
-			);
+			players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
 
 			for (const p of players) {
 				// Test if the player meets the minimum statistical requirements for this category
@@ -434,8 +431,7 @@ async function updateLeaders(
 				}
 			}
 
-			// $FlowFixMe
-			delete cat.minStats; // $FlowFixMe
+			delete cat.minStats;
 
 			delete cat.minValue;
 		}

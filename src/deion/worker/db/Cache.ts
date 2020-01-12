@@ -94,17 +94,14 @@ const parseInfinity = string => {
 
 const getIndexKey = (index, row) => {
 	if (index.key.length === 1) {
-		// $FlowFixMe
 		return row[index.key[0]];
 	}
 
 	// Array keys are special, because they need to be stored in a JS object and then recovered
 	return stringifyInfinity(
-		index.key // $FlowFixMe
-			.map(field => {
-				// $FlowFixMe
-				return field === "draft.year" ? row.draft.year : row[field];
-			}),
+		index.key.map(field => {
+			return field === "draft.year" ? row.draft.year : row[field];
+		}),
 	);
 };
 

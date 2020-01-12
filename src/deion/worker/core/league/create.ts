@@ -878,7 +878,6 @@ const create = async (
 		}
 
 		for (const record of records) {
-			// $FlowFixMe
 			await idb.cache[store].put(record);
 		}
 	}

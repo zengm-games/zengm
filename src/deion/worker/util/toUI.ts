@@ -2,7 +2,6 @@ import { promiseWorker } from ".";
 import { Conditions } from "../../common/types";
 
 const toUI = (args: any[], conditions: Conditions = {}): Promise<any> => {
-	// $FlowFixMe
 	if (typeof it === "function") {
 		return Promise.resolve();
 	}

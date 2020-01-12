@@ -50,7 +50,6 @@ const checkFoFoFo = async () => {
 };
 
 const getUserSeed = async () => {
-	// $FlowFixMe
 	const playoffSeries = await idb.getCopy.playoffSeries({
 		season: g.season,
 	});

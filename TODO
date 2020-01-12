@@ -5,7 +5,6 @@ typescript
   - @ts-nocheck
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
 - to do
-  - FlowFixMe
   - tools
   - getting object from cache should add primary key to it\
     - test with ts-ignore on teamSeason in worker/api/index.ts

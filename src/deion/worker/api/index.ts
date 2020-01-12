@@ -394,7 +394,6 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	for (const table of Object.values(
 		overrides.common.constants.PLAYER_STATS_TABLES,
 	)) {
-		// $FlowFixMe
 		stats.push(...table.stats);
 	}
 

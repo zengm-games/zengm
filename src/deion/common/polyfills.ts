@@ -7,7 +7,6 @@ import "whatwg-fetch"; // Chrome 54, Safari 10.1
 // Inlined from MDN, since object.entries and object.values npm packages were somehow adding 50kb to each bundle
 
 if (!Object.entries) {
-	// $FlowFixMe
 	Object.entries = obj => {
 		const ownProps = Object.keys(obj);
 		let i = ownProps.length;
@@ -22,7 +21,6 @@ if (!Object.entries) {
 }
 
 if (!Object.values) {
-	// $FlowFixMe
 	Object.values = obj => {
 		const ownProps = Object.keys(obj);
 		let i = ownProps.length;

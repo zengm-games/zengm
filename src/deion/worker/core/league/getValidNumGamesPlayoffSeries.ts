@@ -39,7 +39,6 @@ const getValidNumGamesPlayoffSeries = (
 	}
 
 	if (numGamesPlayoffSeries.length > numPlayoffRounds) {
-		// $FlowFixMe
 		return numGamesPlayoffSeries.slice(0, numPlayoffRounds);
 	}
 

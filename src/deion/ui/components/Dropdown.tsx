@@ -25,10 +25,10 @@ const Select = ({ field, handleChange, value }) => {
 		el.className = "dropdown-select";
 		const el2 = document.createElement("option");
 		el2.innerHTML = currentValue;
-		el.appendChild(el2); // $FlowFixMe
+		el.appendChild(el2);
 
 		document.body.appendChild(el);
-		setWidth(el.offsetWidth); // $FlowFixMe
+		setWidth(el.offsetWidth);
 
 		document.body.removeChild(el);
 	}, [field, options, value]);
@@ -81,7 +81,6 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 			parts.push(extraParam);
 		}
 
-		// $FlowFixMe
 		realtimeUpdate([], helpers.leagueUrl(parts));
 	};
 

@@ -317,16 +317,15 @@ class GameSim {
 
 		// Delete stuff that isn't needed before returning
 		for (const t of teamNums) {
-			delete this.team[t].compositeRating; // $FlowFixMe
+			delete this.team[t].compositeRating;
 
 			delete this.team[t].pace;
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
-				// $FlowFixMe
-				delete this.team[t].player[p].age; // $FlowFixMe
+				delete this.team[t].player[p].age;
 
 				delete this.team[t].player[p].valueNoPot;
-				delete this.team[t].player[p].compositeRating; // $FlowFixMe
+				delete this.team[t].player[p].compositeRating;
 
 				delete this.team[t].player[p].ptModifier;
 				delete this.team[t].player[p].stat.benchTime;

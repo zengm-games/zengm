@@ -877,7 +877,6 @@ class GameSim {
 			this.playersOnField[t] = {};
 
 			for (const pos of Object.keys(formation[side])) {
-				// $FlowFixMe
 				const numPlayers = formation[side][pos];
 				const players = this.team[t].depth[pos]
 					.filter(p => !p.injured)
@@ -2013,7 +2012,6 @@ class GameSim {
 			);
 
 			if (positions.length > 0) {
-				// $FlowFixMe
 				const pos = random.choice(positions, pos2 => posOdds[pos2]);
 
 				if (

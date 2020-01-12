@@ -29,7 +29,7 @@ const resizeListener = () => {
 		window.dispatchEvent(new CustomEvent("optimizedResize"));
 		running = false;
 	});
-}; // $FlowFixMe
+};
 
 const Header = React.memo(() => {
 	useEffect(() => {

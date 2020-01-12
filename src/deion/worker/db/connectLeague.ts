@@ -38,10 +38,7 @@ const upgrade29 = tx => {
 			tx
 				.objectStore("playerStats")
 				.index("pid, season, tid")
-				.getAll(
-					// $FlowFixMe
-					IDBKeyRange.bound([p.pid], [p.pid, ""]),
-				).onsuccess = event2 => {
+				.getAll(IDBKeyRange.bound([p.pid], [p.pid, ""])).onsuccess = event2 => {
 				// Index brings them back maybe out of order
 				p.stats = orderBy(event2.target.result, ["season", "playoffs", "psid"]);
 				cursor.update(p);

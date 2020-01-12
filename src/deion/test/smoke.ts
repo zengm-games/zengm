@@ -1,7 +1,7 @@
 import backboard from "backboard";
 import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
-import { g, local } from "../worker/util"; // $FlowFixMe
+import { g, local } from "../worker/util";
 
 import "smoke-test-overrides"; // eslint-disable-line
 

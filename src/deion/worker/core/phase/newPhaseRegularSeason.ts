@@ -91,7 +91,6 @@ const newPhaseRegularSeason = async () => {
 					});
 
 					if (permission.state === "granted") {
-						// $FlowFixMe
 						persisted = await navigator.storage.persist();
 					}
 				}

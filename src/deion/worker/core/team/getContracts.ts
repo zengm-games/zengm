@@ -12,7 +12,6 @@ import { ContractInfo } from "../../../common/types";
  */
 const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 	// First, get players currently on the roster
-	// $FlowFixMe
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const contracts = players.map(p => {
 		return {

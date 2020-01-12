@@ -12,9 +12,7 @@ describe("football/worker/core/GameSim", () => {
 					continue;
 				}
 
-				// $FlowFixMe
 				const sumOdds = Object.values(pen.posOdds).reduce(
-					// $FlowFixMe
 					(sum, val) => sum + val,
 					0,
 				);

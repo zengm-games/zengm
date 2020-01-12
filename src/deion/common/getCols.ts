@@ -1550,7 +1550,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	// $FlowFixMe
 	...sportSpecificCols,
 };
 const sportSpecificTitleOverrides =

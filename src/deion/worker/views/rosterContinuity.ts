@@ -43,7 +43,6 @@ async function updateSeasons(
 			if (prevMinutesAll) {
 				seasons.push(
 					minutesAll.map((minutes, i) => {
-						// $FlowFixMe
 						const prevMinutes = prevMinutesAll[i];
 						let sumMinutes = 0;
 						let sumMinutesContinuity = 0;

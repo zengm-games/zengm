@@ -80,7 +80,6 @@ async function updateTeams(
 		for (const table of Object.values(
 			overrides.common.constants.TEAM_STATS_TABLES,
 		)) {
-			// $FlowFixMe
 			statTypes = statTypes.concat(table.stats);
 		}
 

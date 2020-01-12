@@ -53,7 +53,6 @@ const avgRatingDists = (numPlayers: number = 100) => {
 
 	for (const key of Object.keys(ratings[0])) {
 		const ratingsForKey = ratings.map(r => {
-			// $FlowFixMe
 			return r[key].sort((a, b) => a - b);
 		});
 		const q1s = ratingsForKey.map(row => row[q1]);

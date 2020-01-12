@@ -55,8 +55,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 	console.log("Ranges are min/q1/median/q3/max");
 
 	for (const key of Object.keys(ratings)) {
-		// $FlowFixMe
-		ratings[key].sort((a, b) => a - b); // $FlowFixMe
+		ratings[key].sort((a, b) => a - b);
 
 		ages[key].sort((a, b) => a - b);
 		const ranges = [

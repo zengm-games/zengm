@@ -1,4 +1,4 @@
-import React from "react"; // $FlowFixMe
+import React from "react";
 
 const Footer = React.memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!

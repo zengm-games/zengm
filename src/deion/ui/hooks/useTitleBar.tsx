@@ -47,7 +47,6 @@ const useTitleBar = ({
 				continue;
 			}
 
-			// $FlowFixMe
 			const value = getDropdownValue(key, sortedTeams);
 
 			if (value !== undefined) {

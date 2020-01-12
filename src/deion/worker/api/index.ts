@@ -45,6 +45,7 @@ import {
 	PlayerWithoutPid,
 	UpdateEvents,
 	TradeTeams,
+	MinimalPlayerRatings,
 } from "../../common/types";
 
 const acceptContractNegotiation = async (
@@ -359,7 +360,7 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 // exportPlayerAveragesCsv("all") - all stats
 
 const exportPlayerAveragesCsv = async (season: number | "all") => {
-	let players;
+	let players: Player<MinimalPlayerRatings>[];
 
 	if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
 		players = await idb.cache.players.indexGetAll("playersByTid", [
@@ -614,7 +615,7 @@ const getLeagueName = async () => {
 	return l.name;
 };
 
-const getLocal = async (name: keyof Local): any => {
+const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
 
@@ -628,7 +629,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		const offers = [];
 
 		for (const tid of tids) {
-			let teams = [
+			const teams: TradeTeams = [
 				{
 					tid: g.userTid,
 					pids: userPids,
@@ -646,12 +647,13 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			];
 
 			if (tid !== g.userTid) {
-				teams = await trade.makeItWork(teams, true, estValues);
+				const teams2 = await trade.makeItWork(teams, true, estValues);
 
-				if (teams !== undefined) {
-					const summary = await trade.summary(teams);
-					teams[1].warning = summary.warning;
-					offers.push(teams[1]);
+				if (teams2) {
+					const summary = await trade.summary(teams2);
+					// @ts-ignore
+					teams2[1].warning = summary.warning;
+					offers.push(teams2[1]);
 				}
 			}
 		}
@@ -961,13 +963,13 @@ const removeLastTeam = async (): Promise<void> => {
 		}
 	}
 
-	// $FlowFixMe
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
 		[[tid], [tid, "Z"]],
 	);
 
 	for (const teamSeason of teamSeasons) {
+		// @ts-ignore
 		await idb.cache.teamSeasons.delete(teamSeason.rid);
 	}
 
@@ -1331,7 +1333,9 @@ const updateTeamInfo = async (
 			"teamSeasonsByTidSeason",
 			[t.tid, g.season],
 		);
+		// @ts-ignore
 		teamSeason.pop = parseFloat(newTeams[t.tid].pop);
+		// @ts-ignore
 		teamSeason.stadiumCapacity = parseInt(newTeams[t.tid].stadiumCapacity, 10);
 
 		if (Number.isNaN(teamSeason.pop)) {
@@ -1452,10 +1456,12 @@ const upsertCustomizedPlayer = async (
 
 	await idb.cache.players.put(p);
 
+	// @ts-ignore
 	if (typeof p.pid !== "number") {
 		throw new Error("Unknown pid");
 	}
 
+	// @ts-ignore
 	return p.pid;
 };
 

@@ -94,6 +94,8 @@ type TeamGameSim = {
 	};
 };
 
+const teamNums: [TeamNum, TeamNum] = [0, 1];
+
 /**
  * Pick a player to do something.
  *
@@ -255,7 +257,7 @@ class GameSim {
 			Infinity,
 		);
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			let factor;
 
 			if (t === 0) {
@@ -314,7 +316,7 @@ class GameSim {
 		this.checkGameWinner();
 
 		// Delete stuff that isn't needed before returning
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			delete this.team[t].compositeRating; // $FlowFixMe
 
 			delete this.team[t].pace;
@@ -508,7 +510,7 @@ class GameSim {
 					(diff >= 10 && this.t < 1));
 		}
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			// Overall values scaled by fatigue, etc
 			const ovrs = [];
 
@@ -643,7 +645,7 @@ class GameSim {
 
 		// Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
 		if (!this.startersRecorded) {
-			for (let t = 0; t < 2; t++) {
+			for (const t of teamNums) {
 				for (let p = 0; p < this.team[t].player.length; p++) {
 					if (this.playersOnCourt[t].includes(p)) {
 						this.recordStat(t, p, "gs");
@@ -663,7 +665,7 @@ class GameSim {
 	 * This should be called after this.updatePlayersOnCourt as it only produces different output when the players on the court change.
 	 */
 	updateSynergy() {
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			// Count all the *fractional* skills of the active players on a team (including duplicates)
 			const skillsCount = {
 				"3": 0,
@@ -790,7 +792,7 @@ class GameSim {
 			"blocking",
 		];
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			for (let j = 0; j < toUpdate.length; j++) {
 				const rating = toUpdate[j];
 				this.team[t].compositeRating[rating] = 0;
@@ -826,7 +828,7 @@ class GameSim {
 	 * This should be called once every possession, at the end, to record playing time and bench time for players.
 	 */
 	updatePlayingTime(possessionLength: number) {
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			// Update minutes (overall, court, and bench)
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				if (this.playersOnCourt[t].includes(p)) {
@@ -871,7 +873,7 @@ class GameSim {
 		let newInjury = false;
 		const baseRate = this.allStarGame ? g.injuryRate / 4 : g.injuryRate;
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
@@ -1681,7 +1683,7 @@ class GameSim {
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
 	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
-		const array = [0, 0, 0, 0, 0];
+		const array: [number, number, number, number, number] = [0, 0, 0, 0, 0];
 		let total = 0;
 
 		// Scale composite ratings

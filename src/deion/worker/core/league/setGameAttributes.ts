@@ -22,7 +22,7 @@ const updateMetaDifficulty = async (difficulty: number) => {
 const setGameAttributes = async (gameAttributes: Partial<GameAttributes>) => {
 	const toUpdate = [];
 
-	for (const key of helpers.keys(gameAttributes)) {
+	for (const key of Object.keys(gameAttributes)) {
 		if (g[key] !== gameAttributes[key] && !Number.isNaN(gameAttributes[key])) {
 			toUpdate.push(key);
 		}

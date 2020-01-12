@@ -34,7 +34,7 @@ const updateRanks = async (types: BudgetTypes[]) => {
 			return;
 		}
 
-		for (const item of helpers.keys(obj)) {
+		for (const item of Object.keys(obj)) {
 			for (let i = 0; i < byItem[item].length; i++) {
 				if (byItem[item][i].amount === obj[item].amount) {
 					obj[item].rank = i + 1;

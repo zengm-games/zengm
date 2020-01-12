@@ -6,7 +6,7 @@ export type PlayType =
 	| "gameOver"
 	| "injury"
 	| "kickoff"
-	| "kickoffReutrn"
+	| "kickoffReturn"
 	| "punt"
 	| "puntReturn"
 	| "extraPoint"
@@ -62,30 +62,22 @@ export type PlayerGameSim = {
 	age: number;
 	pos: string;
 	valueNoPot: number;
-	stat: object;
-	compositeRating: object;
+	stat: any;
+	compositeRating: any;
 	skills: string[];
 	injured: boolean;
 	ptModifier: number;
+	ovrs: Record<Position, number>;
 };
 
-export type PlayersOnField = [
-	{
-		[key: Position]: PlayerGameSim;
-	},
-	{
-		[key: Position]: PlayerGameSim;
-	},
-];
+export type PlayersOnField = Partial<Record<Position, PlayerGameSim>>;
 
 export type TeamGameSim = {
 	id: number;
 	pace: number;
 	// mean number of possessions the team likes to have in a game
-	stat: object;
+	stat: any;
 	player: PlayerGameSim[];
-	compositeRating: object;
-	depth: {
-		[key: Position]: number[];
-	};
+	compositeRating: any;
+	depth: Record<Position, number[]>;
 };

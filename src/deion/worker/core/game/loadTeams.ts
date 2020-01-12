@@ -62,9 +62,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		}
 
 		// These use the same formulas as the skill definitions in player.skills!
-		for (const k of helpers.keys(
-			overrides.common.constants.COMPOSITE_WEIGHTS,
-		)) {
+		for (const k of Object.keys(overrides.common.constants.COMPOSITE_WEIGHTS)) {
 			p2.compositeRating[k] = player.compositeRating(
 				rating,
 				overrides.common.constants.COMPOSITE_WEIGHTS[k].ratings,

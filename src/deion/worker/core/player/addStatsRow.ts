@@ -1,5 +1,5 @@
 import { g, overrides } from "../../util";
-import { Player } from "../../../common/types";
+import { Player, PlayerWithoutPid } from "../../../common/types";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -12,7 +12,10 @@ import { Player } from "../../../common/types";
  * @param {Object} p Player object.
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  */
-const addStatsRow = async (p: Player, playoffs: boolean = false) => {
+const addStatsRow = async (
+	p: Player | PlayerWithoutPid,
+	playoffs: boolean = false,
+) => {
 	const statsRow = {
 		playoffs,
 		season: g.season,

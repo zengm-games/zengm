@@ -12,7 +12,7 @@ const fetchWrapper = async ({
 	};
 	data: object;
 	credentials?: "include";
-}): any => {
+}): Promise<any> => {
 	let body;
 
 	if (
@@ -34,13 +34,9 @@ const fetchWrapper = async ({
 		body = undefined;
 	}
 
-	if (headers !== undefined) {
-		headers = new Headers(headers);
-	}
-
 	const response = await fetch(url, {
 		method,
-		headers,
+		headers: headers ? new Headers(headers) : undefined,
 		body,
 		credentials,
 	});

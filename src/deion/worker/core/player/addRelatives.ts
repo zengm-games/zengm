@@ -1,13 +1,7 @@
 import romanNumerals from "roman-numerals";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import { Player, RelativeType } from "../../../common/types";
-
-type Relative = {
-	type: RelativeType;
-	pid: number;
-	name: string;
-};
+import { Player, Relative, RelativeType } from "../../../common/types";
 
 const parseLastName = (lastName: string): [string, number | void] => {
 	const parts = lastName.split(" ");

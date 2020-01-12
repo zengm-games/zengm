@@ -25,7 +25,10 @@ describe("worker/core/contractNegotiation/create", () => {
 		const pid = 2;
 		await givePlayerMinContract(pid);
 		const error = await contractNegotiation.create(pid, false);
-		assert(error.includes("is not a free agent."));
+		assert(error);
+		if (error) {
+			assert(error.includes("is not a free agent."));
+		}
 		const negotiations = await idb.cache.negotiations.getAll();
 		assert.equal(negotiations.length, 0);
 	});

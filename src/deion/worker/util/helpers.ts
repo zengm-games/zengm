@@ -330,7 +330,7 @@ const pickDesc = (dp: DraftPick): string => {
  * @memberOf util.helpers
  */
 const resetG = () => {
-	for (const key of commonHelpers.keys(g)) {
+	for (const key of Object.keys(g)) {
 		if (key !== "lid") {
 			delete g[key];
 		}

@@ -26,7 +26,9 @@ describe("Smoke Tests", () => {
 		});
 	});
 
-	afterAll(async () => {
+	// Don't want to include Mocha and Jest types cause they conflict
+	// @ts-ignore
+	after(async () => {
 		clearInterval(intervalID);
 		await league.remove(g.lid);
 

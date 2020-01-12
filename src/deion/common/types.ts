@@ -453,6 +453,12 @@ export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";
 
+export type Relative = {
+	type: RelativeType;
+	pid: number;
+	name: string;
+};
+
 export type MinimalPlayerRatings = {
 	ovr: number;
 	pot: number;
@@ -463,7 +469,6 @@ export type MinimalPlayerRatings = {
 	ovrs: any;
 	pots: any;
 	injuryIndex?: number;
-	[key: string]: number;
 };
 
 export type PlayerWithoutPid<PlayerRatings = any> = {

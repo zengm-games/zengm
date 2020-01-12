@@ -39,9 +39,9 @@ class PlayByPlayLogger {
 
 	scoringSummary: any[];
 
-	twoPointConversionState: "attempting" | "converted" | void;
+	twoPointConversionState: "attempting" | "converted" | undefined;
 
-	twoPointConversionTeam: number | void;
+	twoPointConversionTeam: number | undefined;
 
 	quarter: string;
 
@@ -458,7 +458,7 @@ class PlayByPlayLogger {
 		t,
 		toGo,
 	}: {
-		awaitingKickoff: TeamNum | void;
+		awaitingKickoff: TeamNum | undefined;
 		clock: number;
 		down: number;
 		scrimmage: number;

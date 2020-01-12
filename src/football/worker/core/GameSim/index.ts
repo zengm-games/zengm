@@ -37,7 +37,7 @@ class GameSim {
 
 	team: [TeamGameSim, TeamGameSim];
 
-	playersOnField: PlayersOnField;
+	playersOnField: [PlayersOnField, PlayersOnField];
 
 	subsEveryN: number;
 
@@ -52,7 +52,7 @@ class GameSim {
 	 * - "bothTeamsPossessed": after each play, if (!this.awaitingAfterTouchdown or point differential is more than 2) then end game if score is not equal, set state to "over"
 	 */
 	overtimeState:
-		| void
+		| undefined
 		| "initialKickoff"
 		| "firstPossession"
 		| "secondPossession"
@@ -73,9 +73,9 @@ class GameSim {
 
 	awaitingAfterSafety: boolean;
 
-	awaitingKickoff: TeamNum | void;
+	awaitingKickoff: TeamNum | undefined;
 
-	twoPointConversionTeam: number | void;
+	twoPointConversionTeam: number | undefined;
 
 	scrimmage: number;
 
@@ -243,6 +243,7 @@ class GameSim {
 		this.d = this.o === 0 ? 1 : 0;
 		this.awaitingKickoff = this.o;
 
+		// @ts-ignore
 		while (this.clock > 0 && this.overtimeState !== "over") {
 			this.simPlay();
 		}

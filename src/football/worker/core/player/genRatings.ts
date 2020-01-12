@@ -1,19 +1,17 @@
 import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
-import { RATINGS, POSITION_COUNTS } from "../../../common/constants";
+import { POSITION_COUNTS } from "../../../common/constants";
 import { PlayerRatings } from "../../../common/types";
 
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
-		// $FlowFixMe
 		return sum + val;
 	}, 0);
 	const rand = Math.random() * numPlayers;
 	let cumsum = 0;
 
 	for (const [pos, count] of Object.entries(POSITION_COUNTS)) {
-		// $FlowFixMe
 		cumsum += count;
 
 		if (rand < cumsum) {
@@ -207,15 +205,37 @@ const getRatingsToBoost = (pos: string) => {
 	}
 
 	throw new Error(`Invalid position "${pos}"`);
-}; // 5'4" to 6'10"
+};
 
+// 5'4" to 6'10"
 const heightToInches = (hgt: number) => {
 	return Math.round(64 + (hgt * (82 - 64)) / 100);
 };
 
 const info = {};
 const infoIn = {};
-const infoOut = {}; // let timeoutID;
+const infoOut = {};
+
+// let timeoutID;
+
+const initialRating = () =>
+	player.limitRating(random.truncGauss(10, 10, 0, 40));
+
+const defaultOvrsOrPots = {
+	QB: 0,
+	RB: 0,
+	WR: 0,
+	TE: 0,
+	OL: 0,
+	DL: 0,
+	LB: 0,
+	CB: 0,
+	S: 0,
+	K: 0,
+	P: 0,
+	KR: 0,
+	PR: 0,
+};
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -225,7 +245,6 @@ const infoOut = {}; // let timeoutID;
  * @param {number} tid [description]
  * @return {Object} Ratings object
  */
-
 const genRatings = (
 	season: number,
 	scoutingRank: number,
@@ -234,15 +253,35 @@ const genRatings = (
 	ratings: PlayerRatings;
 } => {
 	const pos = getPos();
-	const rawRatings: any = RATINGS.reduce((ratings, rating) => {
-		ratings[rating] = player.limitRating(random.truncGauss(10, 10, 0, 40));
-		return ratings;
-	}, {});
+
+	const rawRatings = {
+		hgt: initialRating(),
+		stre: initialRating(),
+		spd: initialRating(),
+		endu: initialRating(),
+		thv: initialRating(),
+		thp: initialRating(),
+		tha: initialRating(),
+		bsc: initialRating(),
+		elu: initialRating(),
+		rtr: initialRating(),
+		hnd: initialRating(),
+		rbk: initialRating(),
+		pbk: initialRating(),
+		pcv: initialRating(),
+		tck: initialRating(),
+		prs: initialRating(),
+		rns: initialRating(),
+		kpw: initialRating(),
+		kac: initialRating(),
+		ppw: initialRating(),
+		pac: initialRating(),
+	};
+
 	const ratingsToBoost = getRatingsToBoost(pos);
 
 	for (const [rating, factor] of Object.entries(ratingsToBoost)) {
 		rawRatings[rating] = player.limitRating(
-			// $FlowFixMe
 			(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
 		);
 	}
@@ -311,10 +350,11 @@ const genRatings = (
 		pot: 0,
 		season,
 		skills: [],
-		ovrs: {},
-		pots: {},
-	}; // Higher fuzz for draft prospects
+		ovrs: { ...defaultOvrsOrPots },
+		pots: { ...defaultOvrsOrPots },
+	};
 
+	// Higher fuzz for draft prospects
 	if (g.phase >= PHASE.RESIGN_PLAYERS) {
 		if (season === g.season + 2) {
 			ratings.fuzz *= Math.sqrt(2);

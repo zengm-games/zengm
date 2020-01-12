@@ -735,6 +735,7 @@ function deepCopy<T>(obj: T): T {
 		return obj;
 	}
 
+	// @ts-ignore
 	const retVal = new obj.constructor();
 
 	for (const key of Object.keys(obj)) {
@@ -742,12 +743,6 @@ function deepCopy<T>(obj: T): T {
 	}
 
 	return retVal;
-}
-
-// Hacky solution to http://stackoverflow.com/q/39683076/786644
-function keys<T extends string>(obj: any): Array<T> {
-	// $FlowFixMe
-	return Object.keys(obj);
 }
 
 /**
@@ -926,7 +921,6 @@ export default {
 	deepCopy,
 	formatCurrency,
 	bound,
-	keys,
 	leagueUrlFactory,
 	ordinal,
 	yearRanges,

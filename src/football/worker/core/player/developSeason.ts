@@ -4,8 +4,8 @@ import { g, helpers, random } from "../../../../deion/worker/util"; // import { 
 import { PlayerRatings, RatingKey } from "../../../common/types";
 
 type RatingFormula = {
-	ageModifier?: (a: number) => number;
-	changeLimits?: (a: number) => [number, number];
+	ageModifier?: (age: number) => number;
+	changeLimits?: (age: number) => [number, number];
 };
 
 const powerFormula: RatingFormula = {

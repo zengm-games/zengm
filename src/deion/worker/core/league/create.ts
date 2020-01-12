@@ -50,10 +50,7 @@ export const createWithoutSaving = (
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
-): {
-	gameAttributes: GameAttributes;
-	[key: string]: any[];
-} => {
+) => {
 	const teamsDefault = helpers.getTeamsDefault();
 
 	// Any custom teams?
@@ -106,7 +103,7 @@ export const createWithoutSaving = (
 		userTid = random.randInt(0, teamInfos.length - 1);
 	}
 
-	const gameAttributes: GameAttributes = {
+	const gameAttributes: Partial<GameAttributes> = {
 		...defaultGameAttributes,
 		userTid,
 		userTids: [userTid],

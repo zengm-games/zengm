@@ -1,6 +1,9 @@
 import { defaultGameAttributes, g } from "../../../../deion/worker/util";
-import { Player, PlayerWithoutPid } from "../../../../deion/common/types";
-import { PlayerRatings } from "../../../common/types";
+import {
+	Player,
+	PlayerWithoutPid,
+	MinimalPlayerRatings,
+} from "../../../../deion/common/types";
 
 /**
  * Is a player worthy of the Hall of Fame?
@@ -12,7 +15,7 @@ import { PlayerRatings } from "../../../common/types";
  * @return {boolean} Hall of Fame worthy?
  */
 const madeHof = (
-	p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
 ): boolean => {
 	// Average together WS and EWA
 	const winShares = p.stats.map(ps => {
@@ -57,8 +60,9 @@ const madeHof = (
 	const scaleFactor =
 		(Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength) *
 			g.numGames) /
-		defaultGameAttributes.numGames; // Final formula
+		defaultGameAttributes.numGames;
 
+	// Final formula
 	return total + df > 120 * scaleFactor;
 };
 

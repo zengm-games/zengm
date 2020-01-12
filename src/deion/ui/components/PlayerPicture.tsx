@@ -13,8 +13,8 @@ const PlayerPicture = ({
 	teamColors,
 }: {
 	face: any;
-	imgURL: string | void;
-	teamColors: [string, string, string] | void;
+	imgURL: string | undefined;
+	teamColors: [string, string, string] | undefined;
 }) => {
 	const [wrapper, setWrapper] = useState(null);
 	useEffect(() => {

@@ -15,7 +15,7 @@ type Props = {
 	children: any;
 };
 type State = {
-	error: Error | void;
+	error: Error | undefined;
 };
 let ErrorBoundaryTemp;
 

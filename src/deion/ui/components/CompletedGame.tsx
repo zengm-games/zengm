@@ -14,7 +14,7 @@ const CompletedGame = ({
 	teams,
 }: {
 	abbrev: string;
-	displayAbbrevs: boolean | void;
+	displayAbbrevs: boolean | undefined;
 	gid: number;
 	overtime: string;
 	result: "W" | "L" | "T";

@@ -14,7 +14,7 @@ const handleOptionClick = (option, event) => {
 };
 
 type Props = {
-	lid: number | void;
+	lid: number | undefined;
 	options: {
 		id: string;
 		label: string;

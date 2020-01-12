@@ -3,7 +3,7 @@ import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 import { Player, Relative, RelativeType } from "../../../common/types";
 
-const parseLastName = (lastName: string): [string, number | void] => {
+const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
 
 	if (parts.length === 1) {

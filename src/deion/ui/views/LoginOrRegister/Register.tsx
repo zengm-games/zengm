@@ -122,8 +122,8 @@ class Register extends React.Component<Props, State> {
 							})}
 							id="register-username"
 							name="username"
-							required="required"
-							maxLength="15"
+							required
+							maxLength={15}
 							pattern="[A-Za-z-0-9-_]+"
 							title="Letters, numbers, dashes (-), and underscores (_) only"
 						/>
@@ -146,7 +146,7 @@ class Register extends React.Component<Props, State> {
 							})}
 							id="register-email"
 							name="email"
-							required="required"
+							required
 						/>
 						<span className="form-text">{this.state.errorMessageEmail}</span>
 					</div>
@@ -163,7 +163,7 @@ class Register extends React.Component<Props, State> {
 							})}
 							id="register-password"
 							name="password"
-							required="required"
+							required
 						/>
 						<span className="form-text">{this.state.errorMessagePassword}</span>
 					</div>
@@ -180,7 +180,7 @@ class Register extends React.Component<Props, State> {
 							})}
 							id="register-password2"
 							name="password2"
-							required="required"
+							required
 						/>
 						<span className="form-text">
 							{this.state.errorMessagePassword2}
@@ -189,7 +189,7 @@ class Register extends React.Component<Props, State> {
 					<div className="form-group form-check">
 						<input
 							type="checkbox"
-							defaultChecked="checked"
+							defaultChecked
 							className="form-check-input"
 							id="register-mailinglist"
 						/>

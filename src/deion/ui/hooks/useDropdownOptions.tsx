@@ -116,7 +116,7 @@ const useDropdownOptions = (field: string) => {
 	const [options, setOptions] = useState<
 		{
 			key: number | string;
-			val: string | void;
+			val: string | undefined;
 		}[]
 	>([]);
 	const state = useLocalShallow(state2 => ({

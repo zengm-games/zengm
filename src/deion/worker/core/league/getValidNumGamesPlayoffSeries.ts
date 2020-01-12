@@ -23,7 +23,7 @@ const getValidNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
 
 const getValidNumGamesPlayoffSeries = (
 	numGamesPlayoffSeries: number[],
-	initialNumPlayoffRounds: number | void,
+	initialNumPlayoffRounds: number | undefined,
 	numTeams: number,
 ) => {
 	const numPlayoffRounds = getValidNumPlayoffRounds(

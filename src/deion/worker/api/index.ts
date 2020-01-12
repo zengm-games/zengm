@@ -159,7 +159,7 @@ const autoSortRoster = async (pos?: string) => {
 
 const beforeViewLeague = async (
 	newLid: number,
-	loadedLid: number | void,
+	loadedLid: number | undefined,
 	conditions: Conditions,
 ) => {
 	return beforeView.league(newLid, loadedLid, conditions);
@@ -224,7 +224,7 @@ const countNegotiations = async () => {
 const createLeague = async (
 	name: string,
 	tid: number,
-	leagueFile: object | void,
+	leagueFile: object | undefined,
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,

@@ -198,7 +198,7 @@ const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
 type DropdownLinksProps = {
 	className?: string;
 	godMode?: boolean;
-	lid: number | void;
+	lid: number | undefined;
 	menuItems: (MenuItemLink | MenuItemHeader)[];
 };
 

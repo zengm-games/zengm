@@ -19,7 +19,7 @@ import { MinimalPlayerRatings, Player } from "../../../common/types";
 const augmentPartialPlayer = (
 	p: any,
 	scoutingRank: number,
-	version: number | void,
+	version: number | undefined,
 ): Player<MinimalPlayerRatings> => {
 	let age;
 

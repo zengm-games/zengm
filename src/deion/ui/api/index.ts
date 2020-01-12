@@ -14,7 +14,7 @@ import {
  */
 const bbgmPing = (
 	type: "league" | "season" | "version",
-	arg: number | void,
+	arg: number | undefined,
 ) => {
 	if (window.enableLogging && window.gtag) {
 		if (type === "league") {
@@ -37,7 +37,7 @@ const bbgmPing = (
 };
 
 // Read from goldUntil rather than local because this is called before local is updated
-const initAds = (goldUntil: number | void) => {
+const initAds = (goldUntil: number | undefined) => {
 	let hideAds = false; // No ads for Gold members
 
 	const currentTimestamp = Math.floor(Date.now() / 1000);

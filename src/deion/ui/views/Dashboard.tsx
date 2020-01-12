@@ -13,7 +13,7 @@ import { confirm, getCols, toWorker } from "../util";
 import { League } from "../../common/types";
 
 const difficultyText = (difficulty: number) => {
-	let prevText: string | void;
+	let prevText: string | undefined;
 
 	for (const [text, numeric] of Object.entries(DIFFICULTY)) {
 		if (typeof numeric !== "number") {
@@ -187,8 +187,8 @@ type Props = {
 };
 
 const Dashboard = ({ leagues }: Props) => {
-	const [loadingLID, setLoadingLID] = useState<number | void>();
-	const [deletingLID, setDeletingLID] = useState<number | void>();
+	const [loadingLID, setLoadingLID] = useState<number | undefined>();
+	const [deletingLID, setDeletingLID] = useState<number | undefined>();
 	useTitleBar();
 	const cols = getCols(
 		"",

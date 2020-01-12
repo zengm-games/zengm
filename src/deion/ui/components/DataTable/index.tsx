@@ -57,7 +57,7 @@ type State = {
 	currentPage: number;
 	enableFilters: boolean;
 	filters: string[];
-	prevName: string | void;
+	prevName: string | undefined;
 	perPage: number;
 	searchText: string;
 	sortBys: SortBy[];

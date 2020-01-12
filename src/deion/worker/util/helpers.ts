@@ -223,7 +223,7 @@ function nullPad<T>(
 	return array;
 }
 
-const numGamesToWinSeries = (numGamesPlayoffSeries: number | void) => {
+const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	if (
 		typeof numGamesPlayoffSeries !== "number" ||
 		Number.isNaN(numGamesPlayoffSeries)

@@ -5,7 +5,7 @@ type Props = {
 	ajaxErrorMsg: string;
 };
 type State = {
-	errorMessage: string | void;
+	errorMessage: string | undefined;
 };
 
 class Login extends React.Component<Props, State> {
@@ -73,7 +73,7 @@ class Login extends React.Component<Props, State> {
 							className="form-control"
 							id="login-username"
 							name="username"
-							required="required"
+							required
 						/>
 					</div>
 					<div className="form-group">
@@ -83,7 +83,7 @@ class Login extends React.Component<Props, State> {
 							className="form-control"
 							id="login-password"
 							name="password"
-							required="required"
+							required
 						/>
 					</div>
 					<button type="submit" className="btn btn-primary">

@@ -855,9 +855,11 @@ export type WorkerOverridesCore = {
 	player: {
 		checkStatisticalFeat?: (
 			p: GamePlayer,
-		) => {
-			[key: string]: number;
-		} | void;
+		) =>
+			| {
+					[key: string]: number;
+			  }
+			| undefined;
 		developSeason?: (ratings: any, age: number, coachingRank?: number) => void;
 		genRatings?: (season: number, scoutingRank: number) => any;
 		genWeight?: (hgt: number, stre: number) => number;

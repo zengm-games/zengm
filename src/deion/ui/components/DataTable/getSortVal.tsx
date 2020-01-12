@@ -2,7 +2,7 @@ import React from "react";
 import textContent from "react-addons-text-content";
 import { SortType } from "../../../common/types";
 
-const getSortVal = (value: any = null, sortType: SortType | void) => {
+const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 	try {
 		let val;
 		let sortVal; // Get the right 'value'.

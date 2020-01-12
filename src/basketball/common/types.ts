@@ -5,7 +5,7 @@ type AwardTeam = {
 	name: string;
 	won: number;
 	lost: number;
-	tied: number | void;
+	tied: number | undefined;
 };
 
 export type AwardPlayer = {
@@ -35,13 +35,13 @@ export type Awards = {
 	// Only in old leagues
 	bre?: AwardTeam;
 	brw?: AwardTeam;
-	roy: AwardPlayer | void;
+	roy: AwardPlayer | undefined;
 	allRookie: AwardPlayer[];
 	// If there are <5 rookies in a league file
-	mip: AwardPlayer | void;
+	mip: AwardPlayer | undefined;
 	// First season has no MIP
 	mvp: AwardPlayer;
-	smoy: AwardPlayer | void;
+	smoy: AwardPlayer | undefined;
 	// Some weird leagues could have only starters
 	allLeague: [
 		{
@@ -108,7 +108,7 @@ export type Awards = {
 			];
 		},
 	];
-	finalsMvp: AwardPlayer | void;
+	finalsMvp: AwardPlayer | undefined;
 };
 
 export type PlayerRatings = {

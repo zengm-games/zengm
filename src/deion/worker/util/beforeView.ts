@@ -89,7 +89,7 @@ const checkHeartbeat = async (lid: number) => {
 let loadingNewLid;
 const beforeLeague = async (
 	newLid: number,
-	loadedLid: number | void,
+	loadedLid: number | undefined,
 	conditions: Conditions,
 ) => {
 	// Make sure league template FOR THE CURRENT LEAGUE is showing

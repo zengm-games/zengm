@@ -1,5 +1,3 @@
-// @flow
-
 const workboxBuild = require("workbox-build");
 const CleanCSS = require("clean-css");
 const crypto = require("crypto");

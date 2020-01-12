@@ -1,5 +1,3 @@
-// @flow
-
 const getSport = () => {
 	if (process.env.SPORT === "football" || process.env.SPORT === "basketball") {
 		return process.env.SPORT;

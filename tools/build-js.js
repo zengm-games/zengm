@@ -1,5 +1,3 @@
-// @flow
-
 const rollup = require("rollup");
 const build = require("./lib/buildFuncs");
 const getSport = require("./lib/getSport");

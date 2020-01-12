@@ -1,5 +1,3 @@
-// @flow
-
 const { spawn } = require("child_process");
 const cloudflare = require("cloudflare");
 const getSport = require("./lib/getSport");

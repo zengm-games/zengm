@@ -1,5 +1,3 @@
-// @flow
-
 const fs = require("fs");
 const build = require("./lib/buildFuncs");
 const generateJSONSchema = require("./lib/generateJSONSchema");

@@ -208,8 +208,8 @@ class GameSim {
 
 		this.id = gid;
 		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
-		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 
+		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.playersOnCourt = [
 			[0, 1, 2, 3, 4],
 			[0, 1, 2, 3, 4],
@@ -229,8 +229,8 @@ class GameSim {
 		const numPossessions =
 			Math.round((this.team[0].pace + this.team[1].pace) / 2) * 1.09;
 		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
-		// Parameters
 
+		// Parameters
 		this.synergyFactor = 0.1; // How important is synergy?
 
 		this.lastScoringPlay = [];
@@ -303,15 +303,17 @@ class GameSim {
 	 */
 	run() {
 		// Simulate the game up to the end of regulation
-		this.simRegulation(); // Play overtime periods if necessary
+		this.simRegulation();
 
+		// Play overtime periods if necessary
 		while (this.team[0].stat.pts === this.team[1].stat.pts) {
 			this.checkGameTyingShot();
 			this.simOvertime();
 		}
 
-		this.checkGameWinner(); // Delete stuff that isn't needed before returning
+		this.checkGameWinner();
 
+		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
 			delete this.team[t].compositeRating; // $FlowFixMe
 
@@ -353,8 +355,9 @@ class GameSim {
 	simRegulation() {
 		this.o = 0;
 		this.d = 1;
-		let quarter = 1; // eslint-disable-next-line no-constant-condition
+		let quarter = 1;
 
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			while (this.t > 0) {
 				this.simPossession();
@@ -395,8 +398,9 @@ class GameSim {
 	getPossessionLength() {
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const pointDifferential =
-			this.team[this.o].stat.pts - this.team[this.d].stat.pts; // Booleans that can influence possession length strategy
+			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
+		// Booleans that can influence possession length strategy
 		const holdForLastShot =
 			this.t <= 26 / 60 && (quarter <= 3 || pointDifferential >= 0);
 		const catchUp =
@@ -453,13 +457,15 @@ class GameSim {
 	simPossession() {
 		// Clock
 		const possessionLength = this.getPossessionLength();
-		this.t -= possessionLength; // Possession change
+		this.t -= possessionLength;
 
+		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
 		this.updateTeamCompositeRatings();
-		const outcome = this.getPossessionOutcome(possessionLength); // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
+		const outcome = this.getPossessionOutcome(possessionLength);
 
+		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
 			this.o = this.o === 1 ? 0 : 1;
 			this.d = this.o === 1 ? 0 : 1;
@@ -566,8 +572,9 @@ class GameSim {
 							}
 						}
 
-						pos.push(this.team[t].player[b].pos); // Requre 2 Gs (or 1 PG) and 2 Fs (or 1 C)
+						pos.push(this.team[t].player[b].pos);
 
+						// Requre 2 Gs (or 1 PG) and 2 Fs (or 1 C)
 						let numG = 0;
 						let numPG = 0;
 						let numF = 0;
@@ -601,14 +608,16 @@ class GameSim {
 							}
 						}
 
-						substitutions = true; // Substitute player
+						substitutions = true;
 
+						// Substitute player
 						this.playersOnCourt[t][pp] = b;
 						this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
 						this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
 						this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
-						this.team[t].player[p].stat.benchTime = random.uniform(-2, 2); // Keep track of deviations from the normal starting lineup for the play-by-play
+						this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
 
+						// Keep track of deviations from the normal starting lineup for the play-by-play
 						if (this.playByPlay !== undefined) {
 							this.playByPlay.push({
 								type: "sub",
@@ -668,7 +677,9 @@ class GameSim {
 			};
 
 			for (let i = 0; i < 5; i++) {
-				const p = this.playersOnCourt[t][i]; // 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
+				const p = this.playersOnCourt[t][i];
+
+				// 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
 				// 0.61 is not always used - keep in sync with skills.js!
 
 				skillsCount["3"] += helpers.sigmoid(
@@ -820,8 +831,9 @@ class GameSim {
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				if (this.playersOnCourt[t].includes(p)) {
 					this.recordStat(t, p, "min", possessionLength);
-					this.recordStat(t, p, "courtTime", possessionLength); // This used to be 0.04. Increase more to lower PT
+					this.recordStat(t, p, "courtTime", possessionLength);
 
+					// This used to be 0.04. Increase more to lower PT
 					this.recordStat(
 						t,
 						p,
@@ -926,11 +938,13 @@ class GameSim {
 		}
 
 		const ratios = this.ratingArray("usage", this.o, 1.25);
-		const shooter = pickPlayer(ratios); // Non-shooting foul?
+		const shooter = pickPlayer(ratios);
 
+		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.foulRateFactor || intentionalFoul) {
-			this.doPf(this.d); // In the bonus?
+			this.doPf(this.d);
 
+			// In the bonus?
 			const inBonus =
 				(this.t <= 2 && this.foulsLastTwoMinutes[this.d] >= 2) ||
 				(this.overtimes >= 1 && this.foulsThisQuarter[this.d] >= 4) ||
@@ -1017,10 +1031,10 @@ class GameSim {
 	 */
 	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
 		const p = this.playersOnCourt[this.o][shooter];
-		const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy); // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
+		const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
 
+		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer;
-
 		if (this.probAst() > Math.random()) {
 			const ratios = this.ratingArray("passing", this.o, 10);
 			passer = pickPlayer(ratios, shooter);
@@ -1044,8 +1058,9 @@ class GameSim {
 				this.t <= 10 / 60 &&
 				quarter >= 4 &&
 				Math.random() > 0.9) ||
-			(quarter < 4 && this.t === 0 && possessionLength <= 2.5 / 60); // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
+			(quarter < 4 && this.t === 0 && possessionLength <= 2.5 / 60);
 
+		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
 		let probMake;
 		let probMissAndFoul;
@@ -1061,8 +1076,9 @@ class GameSim {
 			type = "threePointer";
 			probMissAndFoul = 0.02;
 			probMake = shootingThreePointerScaled * 0.3 + 0.36;
-			probAndOne = 0.01; // Better shooting in the ASG, why not?
+			probAndOne = 0.01;
 
+			// Better shooting in the ASG, why not?
 			if (this.allStarGame) {
 				probMake += 0.02;
 			}
@@ -1131,7 +1147,9 @@ class GameSim {
 				0.25 * this.team[this.d].compositeRating.defense +
 				this.synergyFactor *
 					(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
-			currentFatigue; // Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+			currentFatigue;
+
+		// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
 
 		if (this.t === 0 && possessionLength < 6 / 60) {
 			probMake *= Math.sqrt(possessionLength / (8 / 60));
@@ -1423,11 +1441,11 @@ class GameSim {
 
 		const winner = this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1;
 		const loser = winner === 0 ? 1 : 0;
-		let margin = this.team[winner].stat.pts - this.team[loser].stat.pts; // work backwards from last scoring plays, check if any resulted in a tie-break or lead change
+		let margin = this.team[winner].stat.pts - this.team[loser].stat.pts;
 
+		// work backwards from last scoring plays, check if any resulted in a tie-break or lead change
 		let pts = 0;
 		let shotType = "basket";
-
 		for (let i = this.lastScoringPlay.length - 1; i >= 0; i--) {
 			const play = this.lastScoringPlay[i];
 
@@ -1664,8 +1682,9 @@ class GameSim {
 	 */
 	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
 		const array = [0, 0, 0, 0, 0];
-		let total = 0; // Scale composite ratings
+		let total = 0;
 
+		// Scale composite ratings
 		for (let i = 0; i < 5; i++) {
 			const p = this.playersOnCourt[t][i];
 			array[i] =
@@ -1821,17 +1840,14 @@ class GameSim {
 						}
 					}
 				} else {
-					let sec = Math.floor((this.t % 1) * 60);
-
-					if (sec < 10) {
-						sec = `0${sec}`;
-					}
+					const sec = Math.floor((this.t % 1) * 60);
+					const secString = sec < 10 ? `0${sec}` : `${sec}`;
 
 					this.playByPlay.push({
 						type: "text",
 						text,
 						t,
-						time: `${Math.floor(this.t)}:${sec}`,
+						time: `${Math.floor(this.t)}:${secString}`,
 					});
 				}
 			} else {

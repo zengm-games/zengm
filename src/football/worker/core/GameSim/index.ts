@@ -44,13 +44,13 @@ class GameSim {
 	overtime: boolean;
 
 	overtimes: number;
+
 	/**
 	 * "initialKickoff" -> (right after kickoff) "firstPossession" -> (after next call to possessionChange) -> "secondPossession" -> (after next call to possessionChange) -> "bothTeamPossessed" -> (based on conditions below) "over"
 	 * - "initialKickoff", "firstPossession": when touchdown or safety is scored, set state to "over"
 	 * - "secondPossession": when any points are scored, if scoring team is winning, set state to "over"
 	 * - "bothTeamsPossessed": after each play, if (!this.awaitingAfterTouchdown or point differential is more than 2) then end game if score is not equal, set state to "over"
 	 */
-
 	overtimeState:
 		| void
 		| "initialKickoff"
@@ -97,8 +97,9 @@ class GameSim {
 		this.id = gid;
 		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
 
-		this.playersOnField = [{}, {}]; // Record "gs" stat for starters
+		this.playersOnField = [{}, {}];
 
+		// Record "gs" stat for starters
 		this.o = 0;
 		this.d = 1;
 		this.updatePlayersOnField("starters");
@@ -155,16 +156,18 @@ class GameSim {
 
 		while (this.team[0].stat.pts === this.team[1].stat.pts) {
 			// this.checkGameTyingShot();
-			this.simOvertime(); // Only one overtime period in regular season, but as many as needed in the playoffs
+			this.simOvertime();
 
+			// Only one overtime period in regular season, but as many as needed in the playoffs
 			if (g.phase !== PHASE.PLAYOFFS) {
 				break;
 			}
 		}
 
-		this.playByPlay.logEvent("gameOver"); // this.checkGameWinner();
-		// Delete stuff that isn't needed before returning
+		this.playByPlay.logEvent("gameOver");
+		// this.checkGameWinner();
 
+		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
 			delete this.team[t].compositeRating;
 			delete this.team[t].pace;
@@ -193,8 +196,9 @@ class GameSim {
 
 	simRegulation() {
 		const oAfterHalftime = this.d;
-		let quarter = 1; // eslint-disable-next-line no-constant-condition
+		let quarter = 1;
 
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			while (this.clock > 0 || this.awaitingAfterTouchdown) {
 				this.simPlay();
@@ -251,8 +255,9 @@ class GameSim {
 		let offPassing = 0;
 		let offRushing = 0;
 		let defPassing = 0;
-		let defRushing = 0; // Calculate offPassing only if there is a quarterback in the formation
+		let defRushing = 0;
 
+		// Calculate offPassing only if there is a quarterback in the formation
 		if (this.playersOnField[this.o].QB) {
 			const qb = this.playersOnField[this.o].QB[0];
 			const qbFactor = qb ? qb.ovrs.QB / 100 : 0;
@@ -271,19 +276,24 @@ class GameSim {
 			(this.team[this.d].compositeRating.passRushing +
 				this.team[this.d].compositeRating.passCoverage) /
 			2;
-		defRushing = this.team[this.d].compositeRating.runStopping; // Arbitrary rescale - .45-.7 -> .25-.75
+		defRushing = this.team[this.d].compositeRating.runStopping;
 
-		offPassing = helpers.bound((offPassing - 0.45) * (0.5 / 0.25) + 0.25, 0, 1); // Arbitrary rescale - .5-.7 -> .25-.75
+		// Arbitrary rescale - .45-.7 -> .25-.75
+		offPassing = helpers.bound((offPassing - 0.45) * (0.5 / 0.25) + 0.25, 0, 1);
 
-		offRushing = helpers.bound((offRushing - 0.5) * (0.5 / 0.2) + 0.25, 0, 1); // Arbitrary rescale - .4-.65 -> .25-.75
+		// Arbitrary rescale - .5-.7 -> .25-.75
+		offRushing = helpers.bound((offRushing - 0.5) * (0.5 / 0.2) + 0.25, 0, 1);
 
-		defPassing = helpers.bound((defPassing - 0.4) * (0.5 / 0.25) + 0.25, 0, 1); // Arbitrary rescale - .4-.6 -> .25-.75
+		// Arbitrary rescale - .4-.65 -> .25-.75
+		defPassing = helpers.bound((defPassing - 0.4) * (0.5 / 0.25) + 0.25, 0, 1);
 
+		// Arbitrary rescale - .4-.6 -> .25-.75
 		defRushing = helpers.bound((defRushing - 0.4) * (0.5 / 0.2) + 0.25, 0, 1);
+
 		const passingTendency = helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
 		const rushingTendency = helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
-		let passOdds = 0.57;
 
+		let passOdds = 0.57;
 		if (passingTendency > 0 || rushingTendency > 0) {
 			// Always pass at least 45% of the time, and always rush at least 35% of the time
 			passOdds = helpers.bound(
@@ -367,99 +377,75 @@ class GameSim {
 				if (ptsDown === 0) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 1) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 2) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === 4) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 5) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === 7) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 8) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 10) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === 11) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 13) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === 14) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 15) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === 18) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === -1) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === -2) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -3) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -5) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === -6) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -7) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -8) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -9) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -10) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -12) {
 					return "twoPointConversion";
 				}
-
 				if (ptsDown === -13) {
 					return "extraPoint";
 				}
-
 				if (ptsDown === -14) {
 					return "extraPoint";
 				}
@@ -484,8 +470,9 @@ class GameSim {
 		if (this.down === 4) {
 			// Don't kick a FG when we really need a touchdown!
 			if (!needTouchdown) {
-				const probMadeFieldGoal = this.probMadeFieldGoal(); // If it's 4th and short, maybe go for it
+				const probMadeFieldGoal = this.probMadeFieldGoal();
 
+				// If it's 4th and short, maybe go for it
 				const probGoForIt = (() => {
 					// In overtime, if tied and a field goal would win, try it
 					if (
@@ -495,39 +482,30 @@ class GameSim {
 					) {
 						return 0;
 					}
-
 					if (this.scrimmage < 40) {
 						return 0;
 					}
-
 					if (this.toGo <= 1) {
 						return 0.75;
 					}
-
 					if (this.toGo <= 2) {
 						return 0.5;
 					}
-
 					if (this.toGo <= 3) {
 						return 0.35;
 					}
-
 					if (this.toGo <= 4) {
 						return 0.2;
 					}
-
 					if (this.toGo <= 5) {
 						return 0.05;
 					}
-
 					if (this.toGo <= 7) {
 						return 0.01;
 					}
-
 					if (this.toGo <= 10) {
 						return 0.001;
 					}
-
 					return 0;
 				})();
 
@@ -597,8 +575,9 @@ class GameSim {
 		}
 
 		const quarter = this.team[0].stat.ptsQtrs.length;
-		dt /= 60; // Two minute warning
+		dt /= 60;
 
+		// Two minute warning
 		if (
 			(quarter === 2 || quarter >= 4) &&
 			this.clock - dt <= 2 &&
@@ -620,8 +599,9 @@ class GameSim {
 
 		// Timeouts - late in game when clock is running
 		if ((quarter === 2 || quarter >= 4) && this.isClockRunning) {
-			const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts; // No point in the 4th quarter of a blowout
+			const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
+			// No point in the 4th quarter of a blowout
 			if (diff < 24) {
 				if (diff > 0) {
 					// If offense is winning, defense uses timeouts when near the end
@@ -640,8 +620,9 @@ class GameSim {
 
 		if (this.isClockRunning) {
 			if (this.hurryUp()) {
-				dtClockRunning = random.randInt(5, 12) / 60; // Leave some time for a FG attempt!
+				dtClockRunning = random.randInt(5, 12) / 60;
 
+				// Leave some time for a FG attempt!
 				if (this.clock - dt - dtClockRunning < 0) {
 					dtClockRunning = random.randInt(0, 4) / 60;
 				}
@@ -726,8 +707,9 @@ class GameSim {
 			};
 		}
 
-		this.scrimmage += yds; // For non-sacks, record tackler(s)
+		this.scrimmage += yds;
 
+		// For non-sacks, record tackler(s)
 		if (!sack && Math.random() < 0.9) {
 			let playersDefense = [];
 
@@ -883,8 +865,9 @@ class GameSim {
 
 		for (let i = 0; i < 2; i++) {
 			const t = i === 0 ? this.o : this.d;
-			const side = sides[i]; // Don't let one player be used at two positions!
+			const side = sides[i];
 
+			// Don't let one player be used at two positions!
 			const pidsUsed = new Set();
 			this.playersOnField[t] = {};
 
@@ -1196,8 +1179,9 @@ class GameSim {
 				? kicker
 				: this.team[this.o].depth.K.find(p => !p.injured);
 		let baseProb = 0;
-		let distance = extraPoint ? 33 : 100 - this.scrimmage + 17; // Kickers with strong/weak legs effectively have adjusted distances: -5 yds for 100, +15 yds for 0
+		let distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
 
+		// Kickers with strong/weak legs effectively have adjusted distances: -5 yds for 100, +15 yds for 0
 		distance += -(kicker.compositeRating.kickingPower - 0.75) * 20;
 
 		if (distance < 20) {
@@ -1490,8 +1474,9 @@ class GameSim {
 			}
 		}
 
-		this.isClockRunning = false; // Since other things might have happened after this.possessionChange()
+		this.isClockRunning = false;
 
+		// Since other things might have happened after this.possessionChange()
 		this.down = 1;
 		this.toGo = 10;
 		return dt;
@@ -1684,8 +1669,9 @@ class GameSim {
 				this.recordStat(this.o, qb, "pssLng", yds);
 				this.recordStat(this.o, target, "rec");
 				this.recordStat(this.o, target, "recYds", yds);
-				this.recordStat(this.o, target, "recLng", yds); // Fumble after catch... only if nothing else is going on, too complicated otherwise
+				this.recordStat(this.o, target, "recLng", yds);
 
+				// Fumble after catch... only if nothing else is going on, too complicated otherwise
 				if (!penInfo2 && !td && !safetyOrTouchback) {
 					if (Math.random() < this.probFumble(target)) {
 						this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
@@ -1930,8 +1916,9 @@ class GameSim {
 			) {
 				if (pen.side === "offense" && playYds > 0) {
 					// Offensive spot foul - only when past the line of scrimmage
-					spotYds = random.randInt(1, playYds); // Don't let it be in the endzone, otherwise shit gets weird with safeties
+					spotYds = random.randInt(1, playYds);
 
+					// Don't let it be in the endzone, otherwise shit gets weird with safeties
 					if (spotYds + this.scrimmage < 1) {
 						spotYds = 1 - this.scrimmage;
 					}
@@ -2002,8 +1989,9 @@ class GameSim {
 		}
 
 		penInfo.totYds -= adjustment;
-		penInfo.penYds -= adjustment; // recordedPenYds also includes spotYds for defensive pass interference
+		penInfo.penYds -= adjustment;
 
+		// recordedPenYds also includes spotYds for defensive pass interference
 		const recordedPenYds =
 			side === "defense" && penInfo.name === "Pass interference"
 				? penInfo.totYds
@@ -2084,8 +2072,9 @@ class GameSim {
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p.id);
 					this.recordStat(t, p, "min", possessionTime);
-					this.recordStat(t, p, "courtTime", possessionTime); // This used to be 0.04. Increase more to lower PT
+					this.recordStat(t, p, "courtTime", possessionTime);
 
+					// This used to be 0.04. Increase more to lower PT
 					this.recordStat(
 						t,
 						p,
@@ -2174,8 +2163,9 @@ class GameSim {
 		s: string,
 		amt: number = 1,
 	) {
-		const qtr = this.team[t].stat.ptsQtrs.length - 1; // Special case for two point conversions
+		const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
+		// Special case for two point conversions
 		if (this.twoPointConversionTeam !== undefined) {
 			if (s.endsWith("TD") && s !== "pssTD") {
 				this.team[t].stat.pts += 2;

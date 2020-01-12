@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"start": "node tools/server.js",
-		"build": "node tools/build.js && node tools/build-js.js && node tools/build-sw.js",
+		"build": "yarn run lint && yarn test && node tools/build.js && node tools/build-js.js && node tools/build-sw.js",
 		"deploy": "yarn run build && node tools/deploy.js",
 		"start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
 		"watch": "node tools/watch.js",

@@ -4,6 +4,7 @@ import { idb } from ".";
 import cmp from "./cmp";
 import { g, local, lock } from "../util";
 import {
+	AllStars,
 	BackboardTx,
 	DraftLotteryResult,
 	DraftPick,
@@ -215,7 +216,7 @@ class Cache {
 		}
 	>;
 
-	allStars: StoreAPI<any, any, number>;
+	allStars: StoreAPI<AllStars, AllStars, number>;
 
 	awards: StoreAPI<any, any, number>;
 

@@ -12,7 +12,9 @@ import {
 } from ".";
 import { Conditions, League } from "../../common/types";
 
-let heartbeatIntervalID: IntervalID; // Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
+let heartbeatIntervalID: number;
+
+// Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
 
 const getLeague = async (lid: number): Promise<League> => {
 	// Make sure this league exists before proceeding
@@ -33,19 +35,21 @@ const runHeartbeat = async (l: League) => {
 
 const startHeartbeat = async (l: League) => {
 	// First one within this transaction
-	await runHeartbeat(l); // Then in new transaction
+	await runHeartbeat(l);
 
+	// Then in new transaction
 	const lid = l.lid;
 	setTimeout(() => {
 		clearInterval(heartbeatIntervalID); // Shouldn't be necessary, but just in case
 
-		heartbeatIntervalID = setInterval(async () => {
+		heartbeatIntervalID = window.setInterval(async () => {
 			const l2 = await getLeague(lid);
 			await runHeartbeat(l2);
 		}, 1000);
 	}, 1000);
-}; // Check if loaded in another tab
+};
 
+// Check if loaded in another tab
 const checkHeartbeat = async (lid: number) => {
 	const l = await getLeague(lid);
 	const { heartbeatID, heartbeatTimestamp } = l;
@@ -62,8 +66,9 @@ const checkHeartbeat = async (lid: number) => {
 	}
 
 	// Difference between now and stored heartbeat in milliseconds
-	const diff = Date.now() - heartbeatTimestamp; // If diff is greater than 10 seconds, assume other tab was closed
+	const diff = Date.now() - heartbeatTimestamp;
 
+	// If diff is greater than 5 seconds, assume other tab was closed
 	if (diff > 5 * 1000) {
 		await startHeartbeat(l);
 		return;
@@ -78,10 +83,10 @@ const checkHeartbeat = async (lid: number) => {
 	}
 
 	throw new Error(errorMessage);
-}; // beforeLeague runs when the user switches leagues (including the initial league selection).
+};
 
+// beforeLeague runs when the user switches leagues (including the initial league selection).
 let loadingNewLid;
-
 const beforeLeague = async (
 	newLid: number,
 	loadedLid: number | void,
@@ -153,22 +158,18 @@ const beforeLeague = async (
 		return;
 	}
 
-	local.leagueLoaded = true; // Update play menu
+	local.leagueLoaded = true;
 
+	// Update play menu
 	await updateStatus(undefined);
-
 	if (loadingNewLid !== newLid) {
 		return;
 	}
-
 	await updatePhase(conditions);
-
 	if (loadingNewLid !== newLid) {
 		return;
 	}
-
 	await updatePlayMenu();
-
 	if (loadingNewLid !== newLid) {
 		return;
 	}
@@ -177,10 +178,10 @@ const beforeLeague = async (
 	if (env.useSharedWorker) {
 		toUI(["newLid", g.lid]);
 	}
-}; // beforeNonLeague runs when the user clicks a link back to the dashboard while in a league. beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
+};
 
+// beforeNonLeague runs when the user clicks a link back to the dashboard while in a league. beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
 let beforeNonLeagueRunning = false;
-
 const beforeNonLeague = async (conditions: Conditions) => {
 	if (!beforeNonLeagueRunning) {
 		try {

@@ -9,7 +9,7 @@ const getCopies = async ({
 }: {
 	pid?: number;
 	season?: number;
-	filter?: Function;
+	filter?: (event: EventBBGM) => boolean;
 } = {}): Promise<EventBBGM[]> => {
 	if (season !== undefined && pid !== undefined) {
 		throw new Error("Can't currently filter by season and pid");

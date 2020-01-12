@@ -40,13 +40,9 @@ const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
 			output.budget = helpers.deepCopy(t.budget);
 
 			for (const [key, value] of Object.entries(output.budget)) {
-				if (
-					key !== "ticketPrice" &&
-					value &&
-					typeof value.amount === "number"
-				) {
+				if (key !== "ticketPrice") {
 					// ticketPrice is the only thing in dollars always
-					// $FlowFixMe
+					// @ts-ignore
 					value.amount /= 1000;
 				}
 			}
@@ -60,7 +56,7 @@ const processSeasonAttrs = async (
 	output: TeamFiltered,
 	t: Team,
 	seasonAttrs: TeamSeasonAttr[],
-	season: number | void,
+	season: number | undefined,
 ) => {
 	let seasons;
 

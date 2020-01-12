@@ -4,12 +4,17 @@ import {
 	saveAwardsByPlayer,
 } from "../season/awards";
 import { g } from "../../util";
-import { Conditions, PlayerFiltered } from "../../../common/types";
+import {
+	AllStars,
+	Conditions,
+	PlayerFiltered,
+	AllStarPlayer,
+} from "../../../common/types";
 
 const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
 
 const create = async (conditions: Conditions) => {
-	const allStars = {
+	const allStars: AllStars = {
 		season: g.season,
 		teamNames: ["", ""],
 		teams: [[], []],
@@ -33,12 +38,7 @@ const create = async (conditions: Conditions) => {
 	let healthyCount = 0;
 
 	for (const p of sortedPlayers) {
-		const obj: {
-			injured?: true;
-			pid: number;
-			tid: number;
-			name: string;
-		} = {
+		const obj: AllStarPlayer = {
 			pid: p.pid,
 			tid: p.tid,
 			name: p.name,
@@ -77,7 +77,7 @@ const create = async (conditions: Conditions) => {
 		allStars.remaining.splice(ind, 1);
 	}
 
-	// $FlowFixMe
+	// @ts-ignore
 	allStars.teamNames = allStars.teams.map(teamPlayers => {
 		const captainPID = teamPlayers[0].pid;
 		const p = players.find(p2 => p2.pid === captainPID);

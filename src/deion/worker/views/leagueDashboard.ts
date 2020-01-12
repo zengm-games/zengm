@@ -253,11 +253,11 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 			process.env.SPORT === "basketball"
 				? ["pts", "trb", "ast"]
 				: ["pssYds", "rusYds", "recYds"];
-		let players = await idb.cache.players.indexGetAll("playersByTid", [
+		const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
 		]);
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",

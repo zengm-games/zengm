@@ -490,8 +490,8 @@ const processStats = (
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things
 		const ignoredKeys = ["pid", "season", "tid", "yearsWithTeam"];
-		const statSums = {};
-		const statSumsPlayoffs = {};
+		const statSums: any = {};
+		const statSumsPlayoffs: any = {};
 		const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];
 
 		for (const attr of attrs) {
@@ -528,7 +528,7 @@ const processStats = (
 };
 
 const processPlayer = (p: Player, options: PlayersPlusOptions) => {
-	const output = {}; // Do this check before stats for a faster short circuit (no DB access)
+	const output: any = {}; // Do this check before stats for a faster short circuit (no DB access)
 
 	if (options.ratings.length > 0 && options.season !== undefined) {
 		const hasRatingsSeason = p.ratings.some(r => r.season === options.season);

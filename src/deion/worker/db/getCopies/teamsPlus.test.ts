@@ -16,8 +16,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
 		});
 
-		// $FlowFixMe
-		const teamStats = await idb.cache.teamSeasons.indexGet(
+		const teamStats = await idb.cache.teamStats.indexGet(
 			"teamStatsByPlayoffsTid",
 			[false, 4],
 		);

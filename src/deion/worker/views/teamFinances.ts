@@ -35,7 +35,7 @@ async function updateTeamFinances(
 			userTid: g.userTid,
 			budget: g.budget,
 		};
-		const contracts = await team.getContracts(inputs.tid);
+		const contracts: any = await team.getContracts(inputs.tid);
 		const payroll = await team.getPayroll(contracts);
 		vars.payroll = payroll / 1000;
 		let showInt;

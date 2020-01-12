@@ -155,7 +155,9 @@ const gb = (team0: teamWonLost, team: teamWonLost) => {
  * @return {string} Abbreviation
  */
 const getAbbrev = (tid: number | string): string => {
-	tid = parseInt(tid, 10);
+	if (typeof tid === "string") {
+		tid = parseInt(tid, 10);
+	}
 
 	if (tid === PLAYER.FREE_AGENT) {
 		return "FA";
@@ -246,7 +248,7 @@ const orderByWinp = <T extends any>(
 					(t.seasonAttrs ? t.seasonAttrs.won + t.seasonAttrs.winp : 0),
 			),
 	];
-	const defaultOrders = ["desc", "desc", "asc"];
+	const defaultOrders: Array<"asc" | "desc"> = ["desc", "desc", "asc"];
 	const sortedTeams = orderBy(teams, defaultFuncs, defaultOrders);
 
 	if (process.env.SPORT === "basketball") {

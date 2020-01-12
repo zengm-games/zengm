@@ -9,6 +9,7 @@ const getPlayers = (
 	const players: PlayerGameSim[] = [];
 
 	for (const pos of Object.keys(playersOnField)) {
+		// @ts-ignore
 		if (positions.includes(pos)) {
 			players.push(...playersOnField[pos]);
 		}

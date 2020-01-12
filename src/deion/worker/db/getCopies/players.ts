@@ -3,7 +3,7 @@ import { PLAYER } from "../../../common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";
-import { Player } from "../../../common/types";
+import { MinimalPlayerRatings, Player } from "../../../common/types";
 
 const getCopies = async ({
 	pid,
@@ -24,7 +24,7 @@ const getCopies = async ({
 	draftYear?: number;
 	statsTid?: number;
 	tid?: [number, number] | number;
-	filter?: Function;
+	filter?: (p: Player<MinimalPlayerRatings>) => boolean;
 } = {}): Promise<Player[]> => {
 	if (pid !== undefined) {
 		const cachedPlayer = await idb.cache.players.get(pid);
@@ -38,47 +38,49 @@ const getCopies = async ({
 
 	if (pids !== undefined) {
 		const sortedPids = [...pids].sort((a, b) => a - b);
-		const fromDB = await new Promise((resolve, reject) => {
-			idb.league.tx("players", tx => {
-				const players = []; // Because backboard doesn't support passing an argument to cursor.continue
+		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
+			(resolve, reject) => {
+				idb.league.tx("players", tx => {
+					const players = []; // Because backboard doesn't support passing an argument to cursor.continue
 
-				const objectStore = tx.players._rawObjectStore;
-				const range = backboard.bound(
-					sortedPids[0],
-					sortedPids[sortedPids.length - 1],
-				);
-				let i = 0;
-				const request = objectStore.openCursor(range);
+					const objectStore = tx.players._rawObjectStore;
+					const range = backboard.bound(
+						sortedPids[0],
+						sortedPids[sortedPids.length - 1],
+					);
+					let i = 0;
+					const request = objectStore.openCursor(range);
 
-				request.onerror = e => {
-					reject(e.target.error);
-				};
+					request.onerror = e => {
+						reject(e.target.error);
+					};
 
-				request.onsuccess = e => {
-					const cursor = e.target.result;
+					request.onsuccess = e => {
+						const cursor = e.target.result;
 
-					if (!cursor) {
-						resolve(players);
-						return;
-					}
+						if (!cursor) {
+							resolve(players);
+							return;
+						}
 
-					const p = cursor.value; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+						const p = cursor.value; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 
-					if (sortedPids.includes(p.pid)) {
-						players.push(p);
-					}
+						if (sortedPids.includes(p.pid)) {
+							players.push(p);
+						}
 
-					i += 1;
+						i += 1;
 
-					if (i > sortedPids.length) {
-						resolve(players);
-						return;
-					}
+						if (i > sortedPids.length) {
+							resolve(players);
+							return;
+						}
 
-					cursor.continue(sortedPids[i]);
-				};
-			});
-		});
+						cursor.continue(sortedPids[i]);
+					};
+				});
+			},
+		);
 
 		// $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
 		return mergeByPk(
@@ -137,45 +139,46 @@ const getCopies = async ({
 	}
 
 	if (activeSeason !== undefined) {
-		const fromDB = await new Promise((resolve, reject) => {
-			idb.league.tx("players", tx => {
-				const players = [];
+		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
+			(resolve, reject) => {
+				idb.league.tx("players", tx => {
+					const players = [];
 
-				const index = tx.players.index("draft.year, retiredYear")._rawIndex; // + 1 in upper range is because you don't accumulate stats until the year after the draft
+					const index = tx.players.index("draft.year, retiredYear")._rawIndex; // + 1 in upper range is because you don't accumulate stats until the year after the draft
 
-				const range = backboard.bound(
-					[0, activeSeason],
-					[activeSeason + 1, Infinity],
-				);
-				const request = index.openCursor(range);
+					const range = backboard.bound(
+						[0, activeSeason],
+						[activeSeason + 1, Infinity],
+					);
+					const request = index.openCursor(range);
 
-				request.onerror = e => {
-					reject(e.target.error);
-				};
+					request.onerror = e => {
+						reject(e.target.error);
+					};
 
-				request.onsuccess = e => {
-					const cursor = e.target.result;
+					request.onsuccess = e => {
+						const cursor = e.target.result;
 
-					if (!cursor) {
-						resolve(players);
-						return;
-					}
+						if (!cursor) {
+							resolve(players);
+							return;
+						}
 
-					const [draftYear2, retiredYear] = cursor.key; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+						const [draftYear2, retiredYear] = cursor.key; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 
-					if (retiredYear < activeSeason) {
-						cursor.continue([draftYear2, activeSeason]);
-					} else {
-						players.push(cursor.value);
-						cursor.continue();
-					}
-				};
-			});
-		});
+						if (retiredYear < activeSeason) {
+							cursor.continue([draftYear2, activeSeason]);
+						} else {
+							players.push(cursor.value);
+							cursor.continue();
+						}
+					};
+				});
+			},
+		);
 
-		// $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
 		return mergeByPk(
-			fromDB, // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
+			fromDB,
 			[]
 				.concat(
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),

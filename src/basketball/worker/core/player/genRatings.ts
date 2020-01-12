@@ -3,11 +3,10 @@ import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
 import { PlayerRatings, RatingKey } from "../../../common/types";
 
-const typeFactors: {
-	[x: "point" | "wing" | "big"]: {
-		[key: RatingKey]: number;
-	};
-} = {
+const typeFactors: Record<
+	"point" | "wing" | "big",
+	Partial<Record<RatingKey, number>>
+> = {
 	point: {
 		jmp: 1.65,
 		spd: 1.65,

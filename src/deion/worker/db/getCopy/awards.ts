@@ -1,10 +1,6 @@
 import { idb } from "..";
 
-const getCopy = async ({
-	season,
-}: {
-	season: number;
-}): Promise<object | void> => {
+const getCopy = async ({ season }: { season: number }): Promise<any | void> => {
 	const result = await idb.getCopies.awards({
 		season,
 	});

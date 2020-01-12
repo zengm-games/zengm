@@ -3,7 +3,12 @@ import { g, helpers, random } from "../../../../deion/worker/util"; // import { 
 
 import { PlayerRatings, RatingKey } from "../../../common/types";
 
-const powerFormula = {
+type RatingFormula = {
+	ageModifier?: (a: number) => number;
+	changeLimits?: (a: number) => [number, number];
+};
+
+const powerFormula: RatingFormula = {
 	ageModifier: (age: number) => {
 		// Reverse most of the age-related decline in calcBaseChange
 		if (age <= 27) {
@@ -22,7 +27,7 @@ const powerFormula = {
 	},
 	changeLimits: () => [-3, 6],
 };
-const iqFormula = {
+const iqFormula: RatingFormula = {
 	ageModifier: (age: number) => {
 		if (age <= 21) {
 			return 3;
@@ -57,12 +62,7 @@ const iqFormula = {
 		return [-3, 7 + 5 * (24 - age)];
 	},
 };
-const ratingsFormulas: {
-	[key: RatingKey]: {
-		ageModifier?: (a: number) => number;
-		changeLimits?: (a: number) => [number, number];
-	};
-} = {
+const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	stre: {},
 	spd: {
 		ageModifier: (age: number) => {

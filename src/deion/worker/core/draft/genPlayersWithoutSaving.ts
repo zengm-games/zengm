@@ -19,7 +19,7 @@ const genPlayersWithoutSaving = (
 
 	const baseAge = 19 - (draftYear - g.season);
 	let remaining = range(numPlayers).map(() => {
-		const p = player.generate(
+		const p: any = player.generate(
 			PLAYER.UNDRAFTED,
 			baseAge,
 			draftYear,

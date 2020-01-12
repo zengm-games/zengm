@@ -1,13 +1,7 @@
 when you create a player, the ratings will always turn out to be 0/0. if you change a rating by 1, it'll update
 
 typescript
-- https://github.com/quizlet/ts-migration
-  - looks best
-  - will it convert all .js to .ts, or just flow ones?
-- https://github.com/bcherny/flow-to-typescript
-  - might have to do this, do all in one
-- https://github.com/Khan/flow-to-ts
-- to konw
+- to know
   - @ts-nocheck
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
 - to do

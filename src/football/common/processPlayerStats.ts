@@ -23,7 +23,7 @@ const processStats = (
 	statType?: PlayerStatType,
 	bornYear?: number,
 ) => {
-	const row = {};
+	const row: any = {};
 
 	for (const stat of stats) {
 		if (stat === "cmpPct") {

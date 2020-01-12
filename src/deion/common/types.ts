@@ -45,6 +45,21 @@ export type Achievement = {
 	when?: AchievementWhen;
 };
 
+export type AllStarPlayer = {
+	injured?: true;
+	pid: number;
+	tid: number;
+	name: string;
+};
+
+export type AllStars = {
+	season: number;
+	teamNames: [string, string];
+	teams: [AllStarPlayer[], AllStarPlayer[]];
+	remaining: AllStarPlayer[];
+	finalized: boolean;
+};
+
 export type BackboardTx = any;
 
 export type CompositeWeights<RatingKey = string> = {
@@ -616,6 +631,7 @@ export type ReleasedPlayerWithoutRid = {
 };
 
 export type ScheduleGame = {
+	gid?: number;
 	awayTid: number;
 	homeTid: number;
 };
@@ -638,8 +654,14 @@ export type Team = {
 	name: string;
 	abbrev: string;
 	imgURL?: string;
-	budget: any;
-	strategy: any;
+	budget: Record<
+		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
+		{
+			amount: number;
+			rank: number;
+		}
+	>;
+	strategy: "contending" | "rebuilding";
 	depth?: {
 		QB: number[];
 		RB: number[];

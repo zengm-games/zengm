@@ -6,6 +6,7 @@ import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";
 import summary from "./summary";
+import { TradeTeams } from "../../../common/types";
 
 const betweenAiTeams = async () => {
 	if (!g.aiTrades) {
@@ -57,7 +58,7 @@ const betweenAiTeams = async () => {
 		dpids.push(random.choice(draftPicks).dpid);
 	}
 
-	const teams0 = [
+	const teams0: TradeTeams = [
 		{
 			dpids,
 			dpidsExcluded: [],
@@ -75,7 +76,7 @@ const betweenAiTeams = async () => {
 	];
 	const teams = await makeItWork(teams0, false);
 
-	if (teams === undefined) {
+	if (!teams) {
 		return;
 	}
 
@@ -105,9 +106,9 @@ const betweenAiTeams = async () => {
 			return;
 		}
 
-		const finalTids = [teams[0].tid, teams[1].tid];
-		const finalPids = [teams[0].pids, teams[1].pids];
-		const finalDpids = [teams[0].dpids, teams[1].dpids];
+		const finalTids: [number, number] = [teams[0].tid, teams[1].tid];
+		const finalPids: [number[], number[]] = [teams[0].pids, teams[1].pids];
+		const finalDpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];
 		await processTrade(tradeSummary, finalTids, finalPids, finalDpids);
 	}
 };

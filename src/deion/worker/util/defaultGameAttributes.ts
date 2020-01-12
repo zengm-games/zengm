@@ -1,6 +1,6 @@
 import { GameAttributes } from "../../common/types"; // Additional league-specific attributes (userTid, userTids, season, ...) are set when creating a new league
 
-const defaultGameAttributes: GameAttributes = {
+const defaultGameAttributes: Partial<GameAttributes> = {
 	phase: 0,
 	nextPhase: null,
 	// Used only for fantasy draft

@@ -9,14 +9,14 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["gp", "keyStats", "av"];
-		let players = await idb.getCopies.players({
-			filter: p => {
+		const playersAll = await idb.getCopies.players({
+			filter: (p: any) => {
 				const teams = p.stats.filter(s => s.gp > 0).map(s => s.tid);
 				p.numTeams = new Set(teams).size;
 				return p.numTeams >= 5;
 			},
 		});
-		players = await idb.getCopies.playersPlus(players, {
+		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",

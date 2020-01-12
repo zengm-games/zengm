@@ -39,9 +39,8 @@ const genPlayers = async (
 	const players = genPlayersWithoutSaving(draftYear, scoutingRank, numPlayers);
 
 	for (const p of players) {
-		await idb.cache.players.add(p); // Weird Flow type casing is because idb.cache.players.add will create the "pid" property, transforming PlayerWithoutPid to Player
-		// $FlowFixMe
-
+		await idb.cache.players.add(p); // idb.cache.players.add will create the "pid" property, transforming PlayerWithoutPid to Player
+		// @ts-ignore
 		await player.addRelatives(p);
 	}
 

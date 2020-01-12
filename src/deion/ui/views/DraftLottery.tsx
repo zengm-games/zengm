@@ -125,15 +125,15 @@ const getProbs = (
 
 type Props = {
 	draftType: "nba1994" | "nba2019" | "noLottery" | "random";
-	result: DraftLotteryResultArray | void;
+	result: DraftLotteryResultArray | undefined;
 	season: number;
 	ties: boolean;
 	type: "completed" | "projected" | "readyToRun";
 	userTid: number;
 };
 type State = {
-	draftType: "nba1994" | "nba2019" | "noLottery" | "random" | void;
-	result: DraftLotteryResultArray | void;
+	draftType: "nba1994" | "nba2019" | "noLottery" | "random" | undefined;
+	result: DraftLotteryResultArray | undefined;
 	season: number;
 	started: boolean;
 	toReveal: number[];
@@ -249,7 +249,7 @@ class DraftLotteryTable extends React.Component<Props, State> {
 					<table className="table table-striped table-bordered table-sm table-hover">
 						<thead>
 							<tr>
-								<th colSpan="3" />
+								<th colSpan={3} />
 								<th colSpan={NUM_PICKS} className="text-center">
 									Pick Probabilities
 								</th>
@@ -352,6 +352,7 @@ class DraftLotteryTable extends React.Component<Props, State> {
 	}
 }
 
+// @ts-ignore
 DraftLotteryTable.propTypes = {
 	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
 	result: PropTypes.arrayOf(
@@ -406,6 +407,7 @@ const DraftLottery = (props: Props) => {
 	);
 };
 
+// @ts-ignore
 DraftLottery.propTypes = DraftLotteryTable.propTypes;
 
 export default DraftLottery;

@@ -265,8 +265,9 @@ const SideBar = React.memo(({ pageID }: Props) => {
 			</div>
 		</>
 	);
-}); // $FlowFixMe
+});
 
+// @ts-ignore
 SideBar.propTypes = {
 	pageID: PropTypes.string,
 };

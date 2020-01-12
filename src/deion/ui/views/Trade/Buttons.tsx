@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 
 const Buttons = ({
 	asking,
@@ -14,10 +14,10 @@ const Buttons = ({
 	enablePropose: boolean;
 	forceTrade: boolean;
 	godMode: boolean;
-	handleClickAsk: Function;
-	handleClickClear: Function;
-	handleClickForceTrade: Function;
-	handleClickPropose: Function;
+	handleClickAsk: (MouseEvent) => void;
+	handleClickClear: (MouseEvent) => void;
+	handleClickForceTrade: (MouseEvent) => void;
+	handleClickPropose: (MouseEvent) => void;
 }) => {
 	return (
 		<>

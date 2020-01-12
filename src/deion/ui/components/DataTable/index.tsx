@@ -422,6 +422,7 @@ class DataTable extends React.Component<Props, State> {
 	}
 }
 
+// @ts-ignore
 DataTable.propTypes = {
 	bordered: PropTypes.bool,
 	className: PropTypes.string,

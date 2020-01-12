@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React, { SyntheticEvent, useCallback } from "react";
 import { toWorker } from "../util";
+
 type Props = {
 	pid: number;
 	watch: boolean;
-}; // $FlowFixMe
+};
 
 const WatchBlock = React.memo(({ pid, watch }: Props) => {
 	const handleClick = useCallback(
@@ -32,8 +33,9 @@ const WatchBlock = React.memo(({ pid, watch }: Props) => {
 			title="Add to Watch List"
 		/>
 	);
-}); // $FlowFixMe
+});
 
+// @ts-ignore
 WatchBlock.propTypes = {
 	pid: PropTypes.number.isRequired,
 	watch: PropTypes.bool.isRequired,

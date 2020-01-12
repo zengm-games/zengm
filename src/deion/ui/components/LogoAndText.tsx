@@ -10,12 +10,12 @@ const logoImageGold =
 	process.env.SPORT === "basketball"
 		? "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4woOAjcH+4xN5wAAA9VJREFUOMttlEtMlFcUx3/3ux8zzAOHt4OIAzgyQUAg6qitNhpTaEO1wVZjjN20aY0bm9Y06aKrJq7aVZMu7KKL2iix2tSiiU0aq9bgg6CNSABByoDDYxgGhoGZYb5XFwOmjf2vzs2953/O/zyu4GWI2pqy4/v31rRsWOf023O0EoddM+Lx+bnO30KZsYmlS6PPtW9ecvr3obm5qvG1XfVftbVu2zcdiaq6luTdA5tw5ybBiIIe5dxPvfrFzvG+yZnMez29md5VX7lq7N1d98apk+/8+NmnH2zd6A8oWxpqqQ346Lh0HwtJmXcNYNJY61DKik2vx6W1C315YCRsDb0gatzsrTt18u2OY0cP+pAFIAtBcaGqNpobKxkemeDmnSEa67wIdKrWSwafxd2vbBWvjoymbk9GmZQAx48EO05/3N6E4gKZB7IIFA9ggqXjq/BQWmTjhwvdVJS7yXNZRGcT7GyS+c+nk/67j4xzcue2dQfPfNFyuqgwX0WxgcgBoYIQYBlgpcFKk+eC7c3F3Ooa4l7PJLG5FL/+PkegGl80lulXg035hz0uzX75ym00w4XM8YDiwjBUpFQoL8vDX+mmtFAghOSt12vA8IAe4fzPKY612WXf4FK7Oh1J7OjuGaJtfxO5zrWgFID0gHCwnDEIh6d43DvA1FQYzCUsI4HfB8EGAAWEpMKrbFSDTXbRts8Ncg50ATIDVhKEA7uUVFdIqtdvALMQzHkw5hh+NkrHlVFu3VsgUKnidokS1ZmTEhgzgAFoYKVAWQSRm60XgKVla2UugpXE78vBrripWOtBlQvc6TGcaiKxEMGIbMw+XgYlCUoChGOFSMkGsTJMT8fo6g6RSCww/HeMzz9y4rRBY8AaV0PPl0bQI7uyktKgLIHiWsnIRiyuc/3GBBlNo6xU0rLbiSsXvj4b5eqNGEdalxmfsp6q95+YF0dCM0eqN6RzstksktYc3HqQYTJiUpBv41BrMbk2W1a6GSc8Ead+k8HcfJr+oVSm+zGXBCAOtdB1uJWdpqlgkovdbmfP9jV4Sx3ZmUIAFlg6WMt8dyHGh4eh72mCM2fNBx3X2KEC1miIE7rBL8cPmFWQBJIgUqDbV4iULBEmf3anCdZrCEvjYT/jdx/xyYtdm5xlenaBfptkz5YA+dlWZaNjpbLjYCXpG0oRntLYGzQ538no95c58dcAN/+z/aEwz4bHuD44QsBXTnlJAerqnWVB5x+wsAib/WhffsuNjqu8f/cxXf/7H61iWwNvBus5WuGl5mmI8tQytsp1jMUTDNx/wsWHT7i2ovUF/gGot5it14W3AAAAAABJRU5ErkJggg=="
 		: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH4woOAxEOQEwcUAAAAzNJREFUOMuFku1rlWUcxz/Xdd875z6P7myzzjaZCz3HNgu1cq3GxMSMCKOooBojCnohlGggQVGYviqM6IULQm2UKEoQWYOhhc6SwBajXGFsc+3BcdzcPM9P933dV2962GRsvz/g8/s+CZY/UbvSfCweX/VGOORd4+WarZVtSSGcxE2St9Li6OCw+4m5FCDeyJ76qHzl6Se3xTe27fP4AxEMUqzkU+oDpwD4qJv4sS+lXyxGqK7m7jV1fL7/Ne55fAs+V8Gt7GpumAcp0IzWmoh5jrusg0gKbOkQV4zbIfVRHmnbyOkzXayPNYiKS+eDhEKa6uo5qit6sHUNORUn5zSSdZqo8Zyj57y2F4Dq7qBtRxsnjn9AQ6lg8MPZIGhY21zENEEIRaV5EbRNyrmfglOLchT9vwyk5TxOdH2MY0cOUJ/LGPT1BrACLi3tebxevVC11U3UcwLXdZkqvUC2aDn/gTY1033yEHG0oO9sgEiNS/v2LMGwWrSJ1f4uQsYAjvKQV6sM+Y+lRzt3sjloCS5+F8Sy4N77CgixRKUo6vgQ5eRJZ9yEBGioM959vZOqClOTz0pat+UIV6olx1UqCsL+cYZ/O6oS03NdEmh8oPWZB0ftLmZzMZ54NkUwsDTEVVAuS7xezddnvhm+OpQ8Lls31+3duv25irRqYdLs5qbz1LJTT6cMQmHFTwPYI2Pl04AjTXdm08OxXiR5XLz8VXybidIeYPGAZmdMVlQqbAf2HeKPP0c5ACCrVtjhiPsZa42X8IpraK2ZKj7PeGHXAoB2ITlnEKlxEBJ2vcfk+BSvAg6A9FsE7ZIgZI3S5HsZn7iK1prJQgczpR0AlEuCTNqgskohBbzzMdN9l3lrIsHP/z6SQvzvwhA51vl34xVjaK0ZyuxlNnknrhKEKxWlMnS+yfjJHnYPj/PFfMUylRKFwLyWKmSSmH8/2nWwlY9Z+SKW3+XbC+TbO+jv+Z6dIxOcuj07MzErLvcP0tSyQRu5jMR1BYghotZXDF7fSm9Pzr10QV6ZmnaPjIxxGNCLDxS8G9bJw9Eq/ZAvoC1D4lGKdDrnyZWpvfHr79ffz2ScH5ebxN9ndU0C/HoSiAAAAABJRU5ErkJggg==";
+
 type Props = {
 	gold: boolean;
 	lid?: number;
 	updating: boolean;
-}; // $FlowFixMe
-
+};
 const LogoAndText = React.memo(({ gold, lid, updating }: Props) => {
 	return (
 		<a
@@ -41,8 +41,9 @@ const LogoAndText = React.memo(({ gold, lid, updating }: Props) => {
 			{lid === undefined ? <span className="d-lg-none">{sport} GM</span> : null}
 		</a>
 	);
-}); // $FlowFixMe
+});
 
+// @ts-ignore
 LogoAndText.propTypes = {
 	gold: PropTypes.bool,
 	lid: PropTypes.number,

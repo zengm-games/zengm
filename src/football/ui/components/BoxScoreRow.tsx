@@ -10,7 +10,7 @@ const BoxScoreRow = ({
 	stats,
 }: {
 	className: string;
-	onClick?: Function;
+	onClick?: (MouseEvent) => void;
 	p: any;
 	stats: string[];
 }) => {

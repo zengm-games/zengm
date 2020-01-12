@@ -15,11 +15,14 @@ import {
 	localActions,
 	realtimeUpdate,
 } from "../util";
+
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
+
 type StripeButtonProps = {
 	email: string;
 };
+
 type StripeButtonState = {
 	handler:
 		| {
@@ -108,6 +111,7 @@ class StripeButton extends React.Component<
 	}
 }
 
+// @ts-ignore
 StripeButton.propTypes = {
 	email: PropTypes.string.isRequired,
 };
@@ -241,6 +245,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
 	}
 }
 
+// @ts-ignore
 UserInfo.propTypes = {
 	goldUntilDateString: PropTypes.string.isRequired,
 	loggedIn: PropTypes.bool.isRequired,

@@ -12,7 +12,7 @@ const BoxScoreRow = ({
 }: {
 	className?: string;
 	i: number;
-	onClick?: Function;
+	onClick?: (MouseEvent) => void;
 	p: any;
 }) => {
 	return (

@@ -31,6 +31,8 @@ const LeagueContent = React.memo(
 		return nextProps.updating;
 	},
 );
+
+// @ts-ignore
 LeagueContent.propTypes = {
 	updating: PropTypes.bool.isRequired,
 };

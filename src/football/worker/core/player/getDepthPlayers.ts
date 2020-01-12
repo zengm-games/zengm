@@ -31,14 +31,11 @@ const getDepthPlayers = <T extends any>(
 	KR: T[];
 	PR: T[];
 } => {
-	// $FlowFixMe
+	// @ts-ignore
 	return Object.keys(depth).reduce((obj, pos) => {
 		obj[pos] = depth[pos]
 			.map(pid => players.find(p => p.pid === pid))
-			.concat(
-				// $FlowFixMe
-				players.map(p => (depth[pos].includes(p.pid) ? undefined : p)),
-			)
+			.concat(players.map(p => (depth[pos].includes(p.pid) ? undefined : p)))
 			.filter(p => p !== undefined);
 		return obj;
 	}, {});

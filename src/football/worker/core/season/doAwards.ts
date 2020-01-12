@@ -266,13 +266,13 @@ const doAwards = async (conditions: Conditions) => {
 
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		let champPlayers = await idb.cache.players.indexGetAll(
+		const champPlayersAll = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			champTid,
 		);
 
 		// Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
-		champPlayers = await idb.getCopies.playersPlus(champPlayers, {
+		const champPlayers = await idb.getCopies.playersPlus(champPlayersAll, {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
 			stats: ["pts", "trb", "ast", "ws", "ewa"],

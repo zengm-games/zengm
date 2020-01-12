@@ -10,7 +10,7 @@ import { DraftLotteryResultArray } from "../../common/types";
 const getProbs = (
 	result: DraftLotteryResultArray,
 	draftType: "nba1994" | "nba2019",
-): (number | void)[][] => {
+): (number | undefined)[][] => {
 	const probs = [];
 	const topNCombos = new Map();
 	const totalChances = result.reduce(

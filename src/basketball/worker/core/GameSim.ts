@@ -189,7 +189,7 @@ class GameSim {
 
 	d: TeamNum;
 
-	playByPlay: object[];
+	playByPlay: any[];
 
 	allStarGame: boolean;
 

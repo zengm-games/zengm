@@ -1,4 +1,3 @@
-// Typing is too hard due to https://github.com/facebook/flow/issues/183
 import groupBy from "lodash/groupBy";
 import { PLAYER } from "../../../common";
 import { player, trade } from "../../core";
@@ -229,8 +228,9 @@ const processRatings = (
 		tid,
 	}: PlayersPlusOptionsRequired,
 ) => {
-	let playerRatings = p.ratings; // If we're returning all seasons for a specific team, filter ratings to match stats
+	let playerRatings = p.ratings;
 
+	// If we're returning all seasons for a specific team, filter ratings to match stats
 	if (season === undefined && tid !== undefined) {
 		const statsSeasons = p.stats
 			.filter(ps => ps.tid === tid)
@@ -261,10 +261,9 @@ const processRatings = (
 			} else if (attr === "dovr" || attr === "dpot") {
 				// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
 				const cat = attr.slice(1); // either ovr or pot
+
 				// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
-
 				let prevRow;
-
 				for (let j = 0; j < p.ratings.length; j++) {
 					if (p.ratings[j].season < pr.season) {
 						prevRow = p.ratings[j];
@@ -527,9 +526,10 @@ const processStats = (
 	}
 };
 
-const processPlayer = (p: Player, options: PlayersPlusOptions) => {
-	const output: any = {}; // Do this check before stats for a faster short circuit (no DB access)
+const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
+	const output: any = {};
 
+	// Do this check before stats for a faster short circuit (no DB access)
 	if (options.ratings.length > 0 && options.season !== undefined) {
 		const hasRatingsSeason = p.ratings.some(r => r.season === options.season);
 
@@ -546,8 +546,9 @@ const processPlayer = (p: Player, options: PlayersPlusOptions) => {
 			(options.season === undefined || options.season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, keepWithNoStats, options); // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
+		processStats(output, p, keepWithNoStats, options);
 
+		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {
 			return undefined;
 		}
@@ -555,8 +556,9 @@ const processPlayer = (p: Player, options: PlayersPlusOptions) => {
 
 	// processRatings must be after processStats for abbrev hack
 	if (options.ratings.length > 0) {
-		processRatings(output, p, options); // This should be mostly redundant with hasRatingsSeason above
+		processRatings(output, p, options);
 
+		// This should be mostly redundant with hasRatingsSeason above
 		if (output.ratings === undefined) {
 			return undefined;
 		}
@@ -616,7 +618,7 @@ const getCopies = async (
 		oldStats = false,
 		numGamesRemaining = 0,
 		statType = "perGame",
-	}: PlayersPlusOptions = {},
+	}: PlayersPlusOptions,
 ): Promise<PlayerFiltered[]> => {
 	const options: PlayersPlusOptionsRequired = {
 		season,

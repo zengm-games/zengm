@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { PHASE } from "../../../common";
 import { logEvent, toWorker } from "../../util";
+import { Phase } from "../../../common/types";
+
 type Props = {
 	dispatch: any;
 	confs: {
@@ -12,7 +14,7 @@ type Props = {
 		did: number;
 		name: string;
 	}[];
-	phase: number;
+	phase: Phase;
 	saving: boolean;
 };
 

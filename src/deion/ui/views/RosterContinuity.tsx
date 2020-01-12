@@ -3,6 +3,8 @@ import React from "react";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols } from "../util";
+import { Col } from "../components/DataTable";
+
 type Props = {
 	abbrevs: string[];
 	season: number;
@@ -16,14 +18,16 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
 	});
 	const cols = [
 		...getCols("Season"),
-		...abbrevs.map((abbrev, i) => {
-			return {
-				classNames: userTid === i ? "table-info" : undefined,
-				sortSequence: ["desc", "asc"],
-				sortType: "number",
-				title: abbrev,
-			};
-		}),
+		...abbrevs.map(
+			(abbrev, i): Col => {
+				return {
+					classNames: userTid === i ? "table-info" : undefined,
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+					title: abbrev,
+				};
+			},
+		),
 	];
 	const rows = seasons.map((seasonRow, i) => {
 		return {
@@ -57,7 +61,7 @@ const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
 				season by players who were on the same team the previous season.
 			</p>
 
-			<DataTable // $FlowFixMe
+			<DataTable
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name="RosterContinuity"

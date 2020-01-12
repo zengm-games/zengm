@@ -10,7 +10,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 	}
 
 	// Initialize team composite rating object
-	const compositeRating = {};
+	const compositeRating: any = {};
 
 	for (const rating of Object.keys(
 		overrides.common.constants.COMPOSITE_WEIGHTS,
@@ -39,6 +39,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 
 	for (const p of players) {
 		const rating = p.ratings[p.ratings.length - 1];
+		const playerCompositeRatings: any = {};
 		const p2 = {
 			id: p.pid,
 			pid: p.pid,
@@ -48,7 +49,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 			pos: rating.pos,
 			valueNoPot: p.valueNoPot,
 			stat: {},
-			compositeRating: {},
+			compositeRating: playerCompositeRatings,
 			skills: rating.skills,
 			injury: p.injury,
 			injured: p.injury.type !== "Healthy",

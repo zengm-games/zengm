@@ -24,7 +24,6 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 			stre: number;
 			spd: number;
 			endu: number;
-			[key: string]: number;
 		};
 		stats?: {
 			[key: string]: number;

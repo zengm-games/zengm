@@ -28,8 +28,7 @@ class Login extends React.Component<Props, State> {
 			return;
 		}
 
-		// $FlowFixMe
-		const formData = new FormData(el);
+		const formData = new FormData(el as HTMLFormElement);
 
 		try {
 			const data = await fetchWrapper({

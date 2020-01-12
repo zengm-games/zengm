@@ -51,7 +51,7 @@ export type Props = {
 	rows: any[];
 	small?: boolean;
 	superCols?: SuperCol[];
-	addFilters?: (string | void)[];
+	addFilters?: (string | undefined)[];
 };
 type State = {
 	currentPage: number;

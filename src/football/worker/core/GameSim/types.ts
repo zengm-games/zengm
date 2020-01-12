@@ -70,7 +70,7 @@ export type PlayerGameSim = {
 	ovrs: Record<Position, number>;
 };
 
-export type PlayersOnField = Partial<Record<Position, PlayerGameSim>>;
+export type PlayersOnField = Partial<Record<Position, PlayerGameSim[]>>;
 
 export type TeamGameSim = {
 	id: number;
@@ -79,5 +79,5 @@ export type TeamGameSim = {
 	stat: any;
 	player: PlayerGameSim[];
 	compositeRating: any;
-	depth: Record<Position, number[]>;
+	depth: Record<Position, any[]>;
 };

@@ -16,21 +16,21 @@ import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import TitleBar from "./TitleBar";
-import { RouterContext } from "../../common/types";
-type Props = {
+import { RouterContext, LocalStateUI } from "../../common/types";
+
+type LeagueContentProps = {
 	children: any;
 	updating: boolean;
 };
 const LeagueContent = React.memo(
-	(props: Props) => {
+	(props: LeagueContentProps) => {
 		return props.children;
 	},
-	(prevProps: Props, nextProps: Props) => {
+	(prevProps: LeagueContentProps, nextProps: LeagueContentProps) => {
 		// No point in rendering while updating contents
 		return nextProps.updating;
 	},
-); // $FlowFixMe
-
+);
 LeagueContent.propTypes = {
 	updating: PropTypes.bool.isRequired,
 };
@@ -215,7 +215,7 @@ const Controller = () => {
 		[lid, state.data],
 	);
 	useEffect(() => {
-		return local.subscribe(
+		return local.subscribe<LocalStateUI["viewInfo"]>(
 			async viewInfo => {
 				if (viewInfo !== undefined) {
 					try {

@@ -74,12 +74,36 @@ TopMenuDropdown.propTypes = {
 
 const getText = (text): string | any => {
 	if (text.hasOwnProperty("top")) {
-		// $FlowFixMe
 		return text.top;
 	}
 
-	// $FlowFixMe
 	return text;
+};
+
+const makeAnchorProps = (menuItem: MenuItemLink) => {
+	let href;
+	let rel;
+	let target;
+
+	if (typeof menuItem.path === "string") {
+		href = menuItem.path;
+
+		if (menuItem.path.startsWith("http")) {
+			rel = "noopener noreferrer";
+			target = "_blank";
+		}
+	} else if (Array.isArray(menuItem.path)) {
+		href = helpers.leagueUrl(menuItem.path);
+	}
+
+	const onClick = menuItem.onClick;
+
+	return {
+		onClick,
+		href,
+		rel,
+		target,
+	};
 };
 
 const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
@@ -100,7 +124,7 @@ const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
 			return null;
 		}
 
-		const anchorProps = {};
+		const anchorProps = makeAnchorProps(menuItem);
 
 		if (typeof menuItem.path === "string") {
 			anchorProps.href = menuItem.path;

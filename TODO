@@ -32,6 +32,8 @@ typescript
 - any
 - changelog
 
+make dark mode obey operating system default
+
 unify "More" links
 
 switch Dropdown to DropdownLinks rather than Select?

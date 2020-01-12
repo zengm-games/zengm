@@ -16,6 +16,8 @@ import {
 	TeamNum,
 } from "./types";
 
+const teamNums: [TeamNum, TeamNum] = [0, 1];
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -164,7 +166,9 @@ class GameSim {
 			}
 		}
 
-		this.playByPlay.logEvent("gameOver");
+		this.playByPlay.logEvent("gameOver", {
+			clock: this.clock,
+		});
 		// this.checkGameWinner();
 
 		// Delete stuff that isn't needed before returning
@@ -1731,7 +1735,7 @@ class GameSim {
 		}
 
 		// Usually do normal run, but sometimes do special stuff
-		const positions = ["RB"];
+		const positions: Position[] = ["RB"];
 		const rand = Math.random();
 
 		if (rand < 0.05 || this.playersOnField[this.o].RB.length === 0) {
@@ -2062,7 +2066,7 @@ class GameSim {
 		this.recordStat(this.o, undefined, "timePos", possessionTime);
 		const onField = new Set();
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			// Get rid of this after making sure playersOnField is always set, even for special teams
 			if (this.playersOnField[t] === undefined) {
 				continue;
@@ -2107,13 +2111,13 @@ class GameSim {
 			return;
 		}
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			// Get rid of this after making sure playersOnField is always set, even for special teams
 			if (this.playersOnField[t] === undefined) {
 				continue;
 			}
 
-			const onField = new Set();
+			const onField = new Set<any>();
 
 			for (const pos of Object.keys(this.playersOnField[t])) {
 				// Update minutes (overall, court, and bench)

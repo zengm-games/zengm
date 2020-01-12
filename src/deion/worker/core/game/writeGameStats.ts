@@ -2,7 +2,12 @@ import { PHASE } from "../../../common";
 import { saveAwardsByPlayer } from "../season/awards";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import { Conditions, Game, GameResults } from "../../../common/types";
+import {
+	Conditions,
+	Game,
+	GameResults,
+	LogEventType,
+} from "../../../common/types";
 
 const allStarMVP = async (
 	game: Game,
@@ -75,15 +80,21 @@ const writeGameStats = async (
 	att: number,
 	conditions: Conditions,
 ) => {
-	const gameStats = {
+	const gameStats: Game = {
 		gid: results.gid,
 		att,
 		clutchPlays: [],
 		season: g.season,
 		playoffs: g.phase === PHASE.PLAYOFFS,
 		overtimes: results.overtimes,
-		won: {},
-		lost: {},
+		won: {
+			tid: 0,
+			pts: 0,
+		},
+		lost: {
+			tid: 0,
+			pts: 0,
+		},
 		scoringSummary: results.scoringSummary,
 		teams: [{}, {}],
 	};
@@ -159,7 +170,8 @@ const writeGameStats = async (
 			g.season,
 			results.gid,
 		])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
-		let type = results.team[tw].id === g.userTid ? "gameWon" : "gameLost";
+		let type: LogEventType =
+			results.team[tw].id === g.userTid ? "gameWon" : "gameLost";
 
 		if (tied) {
 			type = "gameTied";

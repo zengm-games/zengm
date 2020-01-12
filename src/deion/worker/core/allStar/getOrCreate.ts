@@ -3,10 +3,7 @@ import { g } from "../../util";
 import create from "./create";
 import { Conditions } from "../../../common/types";
 
-const getOrCreate = async (): Promise<{
-	finalized: boolean;
-	pid?: number;
-}> => {
+const getOrCreate = async () => {
 	let allStars = await idb.cache.allStars.get(g.season);
 
 	if (!allStars) {

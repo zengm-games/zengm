@@ -63,7 +63,7 @@ const OwnerMoodsChart = ({
 				.append("g")
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
-			const drawReferenceLine = (y, color, text, position) => {
+			const drawReferenceLine = (y, color, text?, position?) => {
 				const line2 = line()
 					.x(d => d)
 					.y(() => yScale(y));

@@ -2,10 +2,11 @@ import { PHASE } from "../../common";
 import { team, trade } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
+import { TradeTeams } from "../../common/types";
 
 async function updateSummary(vars) {
 	const otherTid = await trade.getOtherTid();
-	const teams = [
+	const teams: TradeTeams = [
 		{
 			tid: g.userTid,
 			pids: vars.userPids,

@@ -333,7 +333,7 @@ const POSITIONS: Position[] = [
 	"KR",
 	"PR",
 ];
-const POSITION_COUNTS = {
+const POSITION_COUNTS: Partial<Record<Position, number>> = {
 	QB: 3,
 	RB: 4,
 	WR: 6,

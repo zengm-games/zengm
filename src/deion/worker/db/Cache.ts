@@ -262,12 +262,17 @@ class Cache {
 
 	constructor() {
 		this._status = "empty";
+		// @ts-ignore
 		this._data = {};
+		// @ts-ignore
 		this._deletes = {};
 		this._dirty = false;
 		this._dirtyIndexes = new Set();
+		// @ts-ignore
 		this._dirtyRecords = {};
+		// @ts-ignore
 		this._indexes = {};
+		// @ts-ignore
 		this._maxIds = {};
 		this.newLeague = false;
 		this._requestQueue = new Map();
@@ -446,6 +451,7 @@ class Cache {
 				getData: (tx: BackboardTx) => tx.trade.getAll(),
 			},
 		};
+		// @ts-ignore
 		this._index2store = {};
 
 		for (const store of Object.keys(this.storeInfos)) {
@@ -621,6 +627,7 @@ class Cache {
 
 		this._setStatus("filling");
 
+		// @ts-ignore
 		this._data = {}; // This is crap and should be fixed ASAP
 
 		this._season = season !== undefined ? season : g.season;
@@ -875,7 +882,7 @@ class Cache {
 		return this._storeObj("put", store, obj);
 	}
 
-	async _delete(store: Store, id: number) {
+	async _delete(store: Store, id: number | string) {
 		await this._waitForStatus("full");
 
 		if (
@@ -896,7 +903,9 @@ class Cache {
 
 			// Need to have the correct type here for IndexedDB
 			const idParsed =
-				this.storeInfos[store].pkType === "number" ? parseInt(id, 10) : id;
+				this.storeInfos[store].pkType === "number" && typeof id === "string"
+					? parseInt(id, 10)
+					: id;
 
 			this._deletes[store].add(idParsed);
 

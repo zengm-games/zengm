@@ -469,6 +469,10 @@ export type MinimalPlayerRatings = {
 	ovrs: any;
 	pots: any;
 	injuryIndex?: number;
+	hgt: number;
+	stre: number;
+	spd: number;
+	endu: number;
 };
 
 export type PlayerWithoutPid<PlayerRatings = any> = {

@@ -1,5 +1,5 @@
 import { helpers } from "../../../../deion/worker/util";
-import { PlayerRatings } from "../../../common/types";
+import { PlayerRatings, Position } from "../../../common/types";
 
 const info = {
 	QB: {
@@ -113,8 +113,9 @@ const info = {
 		hnd: [8, 1],
 		bsc: [8, 1],
 	},
-}; // Handle some nonlinear interactions
+};
 
+// Handle some nonlinear interactions
 const bonuses = {
 	RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 300, 6, 20),
 	WR: ratings => helpers.bound((ratings.spd * ratings.hnd) / 550, 0, 5),
@@ -123,14 +124,15 @@ const bonuses = {
 	S: ratings => helpers.bound(((ratings.stre + 25) * ratings.pcv) / 550, 2, 15),
 };
 
-const ovr = (ratings: PlayerRatings, pos?: string): number => {
-	pos = pos !== undefined ? pos : ratings.pos;
+const ovr = (ratings: PlayerRatings, pos?: Position): number => {
+	const pos2 = pos !== undefined ? pos : ratings.pos;
 	let r = 0;
 
-	if (info[pos]) {
-		let sumCoeffs = 0; // $FlowFixMe
+	if (info[pos2]) {
+		let sumCoeffs = 0;
 
-		for (const [key, [coeff, power]] of Object.entries(info[pos])) {
+		// @ts-ignore
+		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
 			const powerFactor = 100 / 100 ** power;
 			r += coeff * powerFactor * ratings[key] ** power;
 			sumCoeffs += coeff;
@@ -138,12 +140,11 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
 
 		r /= sumCoeffs;
 
-		if (bonuses.hasOwnProperty(pos)) {
-			// $FlowFixMe
-			r += bonuses[pos](ratings);
+		if (bonuses.hasOwnProperty(pos2)) {
+			r += bonuses[pos2](ratings);
 		}
 	} else {
-		throw new Error(`Unknown position: "${pos}"`);
+		throw new Error(`Unknown position: "${pos2}"`);
 	}
 
 	// Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
@@ -165,8 +166,9 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
 		fudgeFactor = -10;
 	}
 
-	r = helpers.bound(Math.round(r + fudgeFactor), 0, 100); // Feels silly that the highest rated players are kickers and punters
+	r = helpers.bound(Math.round(r + fudgeFactor), 0, 100);
 
+	// Feels silly that the highest rated players are kickers and punters
 	if (pos === "K" || pos === "P") {
 		r = Math.round(r * 0.75);
 	}

@@ -3,7 +3,18 @@ import shallow from "zustand/shallow";
 import { GameAttributes, LocalStateUI } from "../../common/types"; // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
 
-const [useLocal, local] = create(set => ({
+type LocalActions = {
+	resetLeague: () => void;
+	toggleSidebar: () => void;
+	update: (obj: Partial<LocalStateUI>) => void;
+	updateGameAttributes: (gameAttributes: GameAttributes) => void;
+};
+
+const [useLocal, local] = create<
+	LocalStateUI & {
+		actions: LocalActions;
+	}
+>(set => ({
 	gold: undefined,
 	godMode: false,
 	hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
@@ -64,7 +75,7 @@ const [useLocal, local] = create(set => ({
 			set(state => ({ ...state, ...obj }));
 		},
 
-		updateGameAttributes(gameAttributes: GameAttributes) {
+		updateGameAttributes(gameAttributes: Partial<GameAttributes>) {
 			const updates = {};
 			const keys = [
 				"godMode",

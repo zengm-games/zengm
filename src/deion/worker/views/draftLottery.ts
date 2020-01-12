@@ -12,11 +12,7 @@ async function updateDraftLottery(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<{
-	result: DraftLotteryResultArray | void;
-	season: number;
-	type: "completed" | "projected" | "readyToRun";
-} | void> {
+) {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||

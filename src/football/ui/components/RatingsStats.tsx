@@ -2,20 +2,15 @@ import PropTypes from "prop-types";
 import React from "react";
 import posRatings from "../../common/posRatings";
 import { getCols, helpers } from "../../../deion/ui/util";
+import { RatingKey } from "../../common/types";
+
 type Props = {
-	ratings: {
+	ratings?: {
 		pos: string;
 		ovr: number;
 		pot: number;
-		hgt: number;
-		stre: number;
-		spd: number;
-		endu: number;
-		[key: string]: number;
-	} | void;
-	stats: {
-		keyStats: string;
-	} | void;
+	} & Record<RatingKey, number>;
+	stats: any;
 };
 
 const RatingsStats = ({ ratings, stats }: Props) => {

@@ -1,6 +1,15 @@
 import * as React from "react";
 import { takeScreenshot, toWorker } from ".";
 import { MenuItemLink, MenuItemHeader } from "../../common/types";
+
+const depthChart: MenuItemLink = {
+	type: "link",
+	active: pageID => pageID === "depth",
+	league: true,
+	path: ["depth"],
+	text: "Depth Chart",
+};
+
 const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{
 		type: "link",
@@ -94,17 +103,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["roster"],
 				text: "Roster",
 			},
-			...(process.env.SPORT === "football"
-				? [
-						{
-							type: "link",
-							active: pageID => pageID === "depth",
-							league: true,
-							path: ["depth"],
-							text: "Depth Chart",
-						},
-				  ]
-				: []),
+			...(process.env.SPORT === "football" ? [depthChart] : []),
 			{
 				type: "link",
 				active: pageID => pageID === "schedule",
@@ -367,7 +366,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				nonLeague: true,
 
-				async onClick() {
+				async onClick(): Promise<false> {
 					const response = await toWorker("actions.toolsMenu.resetDb");
 
 					if (response) {

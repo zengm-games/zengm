@@ -2,14 +2,15 @@ import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types"; // Convert clock in minutes to min:sec, like 1.5 -> 1:30
 
 const formatClock = (clock: number) => {
-	let sec = Math.ceil((clock % 1) * 60);
+	const secNum = Math.ceil((clock % 1) * 60);
 
+	let sec;
 	if (sec >= 60) {
-		sec = 59;
-	}
-
-	if (sec < 10) {
-		sec = `0${sec}`;
+		sec = "59";
+	} else if (sec < 10) {
+		sec = `0${secNum}`;
+	} else {
+		sec = `${secNum}`;
 	}
 
 	return `${Math.floor(clock)}:${sec}`;
@@ -92,7 +93,7 @@ class PlayByPlayLogger {
 			touchback?: boolean;
 			twoPointConversionTeam?: number;
 			yds?: number;
-		} = {},
+		},
 	) {
 		// This needs to run for scoring log, even when play-by-play logging is not active
 		// Two point conversions are tricky because you can have multiple events occuring within them that could lead to scores, like if there is an interception and then a fumble. So in the most general case, it can't be assumed to be "failed" until we get another event after the two point conversion attempt.

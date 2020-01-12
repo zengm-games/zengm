@@ -9,11 +9,11 @@ type Props = {
 	ajaxErrorMsg: string;
 };
 type State = {
-	errorMessageEmail: string | void;
-	errorMessageOverall: string | void;
-	errorMessagePassword: string | void;
-	errorMessagePassword2: string | void;
-	errorMessageUsername: string | void;
+	errorMessageEmail: string | undefined;
+	errorMessageOverall: string | undefined;
+	errorMessagePassword: string | undefined;
+	errorMessagePassword2: string | undefined;
+	errorMessageUsername: string | undefined;
 };
 
 class Register extends React.Component<Props, State> {
@@ -44,8 +44,7 @@ class Register extends React.Component<Props, State> {
 			return;
 		}
 
-		// $FlowFixMe
-		const formData = new FormData(el);
+		const formData = new FormData(el as HTMLFormElement);
 
 		try {
 			const data = await fetchWrapper({
@@ -62,7 +61,7 @@ class Register extends React.Component<Props, State> {
 				await toWorker("checkParticipationAchievement", true);
 				realtimeUpdate([], "/account");
 			} else {
-				const updatedState = {};
+				const updatedState: Partial<State> = {};
 
 				for (const error of Object.keys(data.errors)) {
 					if (error === "username") {

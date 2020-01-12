@@ -75,7 +75,7 @@ const Dropdown = ({ extraParam, fields, view }: Props) => {
 	) => {
 		const newValues = values.slice();
 		newValues[i] = event.currentTarget.value;
-		const parts = [view].concat(newValues);
+		const parts = [view, ...newValues];
 
 		if (extraParam !== undefined) {
 			parts.push(extraParam);

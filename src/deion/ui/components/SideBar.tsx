@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Element, ElementRef } from "react";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
+import { MenuItemLink } from "../../common/types";
 
 const getText = (text): string | Element<any> => {
 	if (text.hasOwnProperty("side")) {
@@ -20,6 +21,46 @@ const MenuGroup = ({ children }) => (
 
 MenuGroup.propTypes = {
 	children: PropTypes.any.isRequired,
+};
+
+const makeAnchorProps = (
+	menuItem: MenuItemLink,
+	onMenuItemClick: () => void,
+) => {
+	let href;
+	let rel;
+	let target;
+
+	if (typeof menuItem.path === "string") {
+		href = menuItem.path;
+
+		if (menuItem.path.startsWith("http")) {
+			rel = "noopener noreferrer";
+			target = "_blank";
+		}
+	} else if (Array.isArray(menuItem.path)) {
+		href = helpers.leagueUrl(menuItem.path);
+	}
+
+	const onClick = async e => {
+		if (menuItem.onClick) {
+			// Don't close menu if response is false
+			const response = await menuItem.onClick(e);
+
+			if (response !== false) {
+				onMenuItemClick();
+			}
+		} else {
+			onMenuItemClick();
+		}
+	};
+
+	return {
+		onClick,
+		href,
+		rel,
+		target,
+	};
 };
 
 const MenuItem = ({
@@ -43,31 +84,7 @@ const MenuItem = ({
 			return null;
 		}
 
-		const anchorProps = {};
-
-		if (typeof menuItem.path === "string") {
-			anchorProps.href = menuItem.path;
-
-			if (menuItem.path.startsWith("http")) {
-				anchorProps.rel = "noopener noreferrer";
-				anchorProps.target = "_blank";
-			}
-		} else if (Array.isArray(menuItem.path)) {
-			anchorProps.href = helpers.leagueUrl(menuItem.path);
-		}
-
-		anchorProps.onClick = async e => {
-			if (menuItem.onClick) {
-				// Don't close menu if response is false
-				const response = await menuItem.onClick(e);
-
-				if (response !== false) {
-					onMenuItemClick();
-				}
-			} else {
-				onMenuItemClick();
-			}
-		};
+		const anchorProps = makeAnchorProps(menuItem, onMenuItemClick);
 
 		const item = (
 			<li className="nav-item">

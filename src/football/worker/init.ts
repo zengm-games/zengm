@@ -5,9 +5,10 @@ import player from "./core/player";
 import season from "./core/season";
 import team from "./core/team";
 import util from "./util";
-import views from "./views"; // This is dynamically resolved with rollup-plugin-alias
-// $FlowFixMe
+import views from "./views";
+import { Names } from "../../deion/common/types";
 
+// This is dynamically resolved with rollup-plugin-alias
 import names from "player-names"; // eslint-disable-line
 
 const init = async () => {
@@ -20,7 +21,7 @@ const init = async () => {
 				season,
 				team,
 			},
-			names,
+			names: (names as unknown) as Names,
 			util,
 			views,
 		},

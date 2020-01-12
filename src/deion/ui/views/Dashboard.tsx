@@ -46,7 +46,7 @@ const difficultyText = (difficulty: number) => {
 const DifficultyText = ({
 	children: difficulty,
 }: {
-	children: number | void;
+	children: number | undefined;
 }) => {
 	if (difficulty === undefined) {
 		return null;

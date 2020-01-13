@@ -871,7 +871,6 @@ export type WorkerOverridesCore = {
 		genRatings?: (season: number, scoutingRank: number) => any;
 		genWeight?: (hgt: number, stre: number) => number;
 		getDepthPlayers?: <
-			// eslint-disable-next-line no-undef
 			T extends {
 				pid: number;
 			}
@@ -892,37 +891,24 @@ export type WorkerOverridesCore = {
 				PR: number[];
 			},
 			players: T[],
-		) => // eslint-disable-line no-undef
-		{
+		) => {
 			QB: T[];
-			// eslint-disable-line no-undef
 			RB: T[];
-			// eslint-disable-line no-undef
 			WR: T[];
-			// eslint-disable-line no-undef
 			TE: T[];
-			// eslint-disable-line no-undef
 			OL: T[];
-			// eslint-disable-line no-undef
 			DL: T[];
-			// eslint-disable-line no-undef
 			LB: T[];
-			// eslint-disable-line no-undef
 			CB: T[];
-			// eslint-disable-line no-undef
 			S: T[];
-			// eslint-disable-line no-undef
 			K: T[];
-			// eslint-disable-line no-undef
 			P: T[];
-			// eslint-disable-line no-undef
 			KR: T[];
-			// eslint-disable-line no-undef
 			PR: T[];
 		};
 		heightToRating?: (heightInInches: number) => number;
 		madeHof?: (p: Player | PlayerWithoutPid) => boolean;
-		ovr?: (a: any, pos?: string) => number;
+		ovr?: (a: any, pos?: any) => number;
 		pos?: (a: any) => string;
 		processStats?: (
 			ps: PlayerStats,

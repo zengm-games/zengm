@@ -73,7 +73,6 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		}
 
 		if (process.env.SPORT === "basketball") {
-			// eslint-disable-next-line operator-assignment
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
 

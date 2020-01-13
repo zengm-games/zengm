@@ -1,6 +1,6 @@
 const fs = require("fs");
 const rollup = require("rollup");
-const { parentPort, workerData } = require("worker_threads"); // eslint-disable-line
+const { parentPort, workerData } = require("worker_threads");
 const rollupConfig = require("./rollupConfig");
 
 const { name, sport } = workerData;

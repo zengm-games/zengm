@@ -172,7 +172,6 @@ const writePlayerStats = async (
 		}
 
 		await Promise.all(
-			// eslint-disable-next-line
 			result.team.map(t =>
 				Promise.all(
 					t.player.map(async p => {

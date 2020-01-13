@@ -193,7 +193,6 @@ const genRatings = (
 			factor = 2;
 		}
 	} else {
-		// eslint-disable-next-line
 		if (season === g.season + 1) {
 			factor = Math.sqrt(2);
 		} else if (season >= g.season + 2) {

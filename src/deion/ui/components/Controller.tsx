@@ -217,9 +217,9 @@ const Controller = () => {
 		[lid, state.data],
 	);
 	useEffect(() => {
-		return local.subscribe<LocalStateUI["viewInfo"]>(
-			async (viewInfo: LocalStateUI["viewInfo"]) => {
-				if (viewInfo !== undefined) {
+		return local.subscribe(
+			async (viewInfo: LocalStateUI["viewInfo"] | null) => {
+				if (viewInfo !== undefined && viewInfo !== null) {
 					try {
 						await updatePage(
 							viewInfo.Component,

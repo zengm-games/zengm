@@ -357,7 +357,6 @@ class GameSim {
 		this.d = 1;
 		let quarter = 1;
 
-		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			while (this.t > 0) {
 				this.simPossession();

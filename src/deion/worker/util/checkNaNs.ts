@@ -5,7 +5,8 @@ const checkObject = (obj, foundNaN, replace) => {
 
 	for (const prop of Object.keys(obj)) {
 		if (typeof obj[prop] === "object" && obj[prop] !== null) {
-			foundNaN = checkObject(obj[prop], foundNaN, replace); // eslint-disable-next-line no-self-compare
+			foundNaN = checkObject(obj[prop], foundNaN, replace);
+			// eslint-disable-next-line no-self-compare
 		} else if (obj[prop] !== obj[prop]) {
 			// NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
 			foundNaN = true;

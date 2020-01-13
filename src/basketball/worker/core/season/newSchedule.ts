@@ -73,7 +73,7 @@ const newScheduleDefault = teams => {
 
 			while (n <= 14) {
 				// 14 = num teams in conference - 1
-				let iters = 0; // eslint-disable-next-line no-constant-condition
+				let iters = 0;
 
 				while (true) {
 					const tryNum = random.randInt(0, 14); // Pick tryNum such that it is in a different division than n and has not been picked before
@@ -82,8 +82,9 @@ const newScheduleDefault = teams => {
 						dids[cid][tryNum] !== dids[cid][n] &&
 						!newMatchup.includes(tryNum)
 					) {
-						let good = true; // Check for duplicate games
+						let good = true;
 
+						// Check for duplicate games
 						for (let j = 0; j < matchups.length; j++) {
 							const matchup = matchups[j];
 
@@ -174,8 +175,9 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
  */
 export const newScheduleCrappy = () => {
 	const tids = range(g.numTeams);
-	random.shuffle(tids); // Number of games left to reschedule for each team
+	random.shuffle(tids);
 
+	// Number of games left to reschedule for each team
 	const numRemaining: number[] = [];
 
 	for (let i = 0; i < g.numTeams; i++) {
@@ -184,10 +186,11 @@ export const newScheduleCrappy = () => {
 
 	let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
 
-	const matchups: [number, number][] = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
+	const matchups: [number, number][] = [];
 
 	const potentialMatchups = roundRobin(tids);
 
+	// 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
 	while (numWithRemaining > 1) {
 		for (const matchup of potentialMatchups) {
 			const [i, j] = matchup;
@@ -286,10 +289,12 @@ const newSchedule = (teams: Team[]) => {
 		}
 	}
 
-	random.shuffle(days); // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
+	random.shuffle(days);
 
-	tids = flatten(days); // Add an All-Star Game
+	// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
+	tids = flatten(days);
 
+	// Add an All-Star Game
 	if (g.allStarGame) {
 		const ind = Math.round(0.6 * tids.length);
 		tids.splice(ind, 0, [-1, -2]);

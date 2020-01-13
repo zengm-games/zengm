@@ -8,14 +8,6 @@
 		"jsx": "react",
 		"rootDir": "./src",
 		"noEmit": true,
-		// "strict": true,
-		// "noImplicitAny": true,
-		"strictNullChecks": true,
-		// "strictFunctionTypes": true,
-		"strictBindCallApply": true,
-		// "strictPropertyInitialization": true,
-		"noImplicitThis": true,
-		"alwaysStrict": true,
 		"noUnusedLocals": true,
 		// "noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
@@ -25,6 +17,15 @@
 			"player-names": ["src/deion/worker/data/names-test.json"],
 			"league-schema": ["build/files/league-schema.json"]
 		},
-		"esModuleInterop": true
+		"esModuleInterop": true,
+
+		// "strict": true,
+		// "noImplicitAny": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"strictBindCallApply": true,
+		"strictNullChecks": true,
+		"strictFunctionTypes": true
+		// "strictPropertyInitialization": true,
 	}
 }

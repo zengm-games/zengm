@@ -1,12 +1,11 @@
 const path = require("path");
-const { Worker } = require("worker_threads"); // eslint-disable-line
+const { Worker } = require("worker_threads");
 const getSport = require("./getSport");
 
 const watchJS = (updateStart, updateEnd, updateError) => {
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
 
-		// eslint-disable-next-line
 		const worker = new Worker(path.join(__dirname, "watchJSWorker.js"), {
 			workerData: {
 				name,

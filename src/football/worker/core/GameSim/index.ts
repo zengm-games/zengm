@@ -1188,7 +1188,6 @@ class GameSim {
 		return dt;
 	}
 
-	// eslint-disable-next-line
 	probMadeFieldGoal(kickerInput?: PlayerGameSim, extraPoint?: boolean) {
 		const kicker =
 			kickerInput !== undefined
@@ -1378,7 +1377,6 @@ class GameSim {
 		return 0;
 	}
 
-	// eslint-disable-next-line
 	probFumble(p: PlayerGameSim) {
 		return 0.0125 * (1.5 - p.compositeRating.ballSecurity);
 	}
@@ -1563,7 +1561,6 @@ class GameSim {
 		);
 	}
 
-	// eslint-disable-next-line
 	probComplete(
 		qb: PlayerGameSim,
 		target: PlayerGameSim,

@@ -123,7 +123,7 @@ type Props = {
 	data: any;
 	// To get rid of this (and other below), would probably have to break up into two separate code paths, one for stacked and one for non-stacked
 	labels: string[];
-	tooltipCb: (val: string) => string;
+	tooltipCb: (val: string | number) => string;
 	ylim: [number, number];
 };
 let globalCounter = 0;
@@ -136,7 +136,12 @@ const BarGraph = (props: Props) => {
 		globalCounter += 1;
 	}
 
-	const { data = [], labels, tooltipCb = val => val, ylim: ylimArg } = props;
+	const {
+		data = [],
+		labels,
+		tooltipCb = val => String(val),
+		ylim: ylimArg,
+	} = props;
 	const gap = 2; // Gap between bars, in pixels
 
 	if (data.length === 0) {

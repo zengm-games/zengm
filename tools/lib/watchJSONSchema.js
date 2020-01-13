@@ -13,7 +13,6 @@ const watchJSONSchema = (updateStart, updateEnd, updateError) => {
 		try {
 			// Dynamically reload generateJSONSchema, cause that's what we're watching!
 			delete require.cache[require.resolve("./generateJSONSchema")];
-			// eslint-disable-next-line
 			const generateJSONSchema = require("./generateJSONSchema");
 
 			const jsonSchema = generateJSONSchema(sport);

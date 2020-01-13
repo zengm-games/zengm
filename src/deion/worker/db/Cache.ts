@@ -106,10 +106,9 @@ const getIndexKey = (index, row) => {
 };
 
 class StoreAPI<Input, Output, ID> {
-	// eslint-disable-next-line no-use-before-define
 	cache: Cache;
 
-	store: Store; // eslint-disable-next-line no-use-before-define
+	store: Store;
 
 	constructor(cache: Cache, store: Store) {
 		this.cache = cache;

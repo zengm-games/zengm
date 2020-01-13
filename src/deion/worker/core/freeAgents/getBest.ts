@@ -1,14 +1,14 @@
 import { team } from "..";
 import { g } from "../../util";
-import { Player, PlayerWithoutPid } from "../../../common/types"; // Find the best available free agent for a team.
+import { PlayerWithoutPid } from "../../../common/types"; // Find the best available free agent for a team.
 // playersAvailable should be sorted - best players first, worst players last. It will be mutated if a player is found, to remove the found player.
 // If payroll is not supplied, don't do salary cap check (like when creating new league).
 
-const getBest = (
-	playersOnRoster: Player[] | PlayerWithoutPid[],
-	playersAvailable: Player[] | PlayerWithoutPid[],
+const getBest = <T extends PlayerWithoutPid>(
+	playersOnRoster: T[],
+	playersAvailable: T[],
 	payroll?: number,
-) => {
+): T | void => {
 	const neededPositions = team.getNeededPositions(playersOnRoster);
 	const useNeededPositions = Math.random() < 0.9;
 

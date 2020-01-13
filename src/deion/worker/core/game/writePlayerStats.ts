@@ -181,10 +181,10 @@ const writePlayerStats = async (
 							return;
 						}
 
+						player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
+
 						const promises: Promise<any>[] = [];
-						promises.push(
-							player.checkStatisticalFeat(p.id, t.id, p, result, conditions),
-						);
+
 						const p2 = await idb.cache.players.get(p.id);
 
 						if (!allStarGame) {

@@ -36,7 +36,7 @@ const genPlayersWithoutSaving = (
 	});
 
 	// Do one season at a time, keeping the lowest pot players in college for another season
-	let enteringDraft = [];
+	let enteringDraft: typeof remaining = [];
 
 	for (let i = 0; i < 4; i++) {
 		let cutoff = 0; // For football, only juniors and seniors

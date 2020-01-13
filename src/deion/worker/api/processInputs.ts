@@ -18,6 +18,10 @@ export const validateAbbrev = (abbrev?: string): [number, string] => {
 		abbrev = g.teamAbbrevsCache[tid];
 	}
 
+	if (abbrev === undefined) {
+		abbrev = "???";
+	}
+
 	return [tid, abbrev];
 };
 

@@ -41,8 +41,9 @@ const getCopies = async ({
 		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
 			(resolve, reject) => {
 				idb.league.tx("players", tx => {
-					const players = []; // Because backboard doesn't support passing an argument to cursor.continue
+					const players: Player<MinimalPlayerRatings>[] = [];
 
+					// Because backboard doesn't support passing an argument to cursor.continue
 					const objectStore = tx.players._rawObjectStore;
 					const range = backboard.bound(
 						sortedPids[0],
@@ -122,12 +123,18 @@ const getCopies = async ({
 		// All except draft prospects
 		return mergeByPk(
 			[].concat(
-				await getAll(idb.league.players.index("tid"), PLAYER.RETIRED, filter),
+				// @ts-ignore
+				await getAll<Player<MinimalPlayerRatings>>(
+					idb.league.players.index("tid"),
+					PLAYER.RETIRED,
+					filter,
+				),
 				await idb.league.players
 					.index("tid")
 					.getAll(backboard.lowerBound(PLAYER.FREE_AGENT)),
 			),
 			[].concat(
+				// @ts-ignore
 				await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 				await idb.cache.players.indexGetAll("playersByTid", [
 					PLAYER.FREE_AGENT,
@@ -142,7 +149,7 @@ const getCopies = async ({
 		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
 			(resolve, reject) => {
 				idb.league.tx("players", tx => {
-					const players = [];
+					const players: Player<MinimalPlayerRatings>[] = [];
 
 					const index = tx.players.index("draft.year, retiredYear")._rawIndex; // + 1 in upper range is because you don't accumulate stats until the year after the draft
 
@@ -181,6 +188,7 @@ const getCopies = async ({
 			fromDB,
 			[]
 				.concat(
+					// @ts-ignore
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 					await idb.cache.players.indexGetAll("playersByTid", [
 						PLAYER.FREE_AGENT,
@@ -216,6 +224,7 @@ const getCopies = async ({
 			await getAll(idb.league.players.index("statsTids"), constStatsTid),
 			[]
 				.concat(
+					// @ts-ignore
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 					await idb.cache.players.indexGetAll("playersByTid", [
 						PLAYER.FREE_AGENT,

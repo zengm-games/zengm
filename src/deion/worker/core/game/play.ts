@@ -127,7 +127,7 @@ const play = async (
 			);
 		}
 
-		const healedTexts = [];
+		const healedTexts: string[] = [];
 
 		// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
@@ -247,7 +247,7 @@ const play = async (
 
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
 	const cbSimGames = async (schedule, teams) => {
-		const results = [];
+		const results: any[] = [];
 
 		for (let i = 0; i < schedule.length; i++) {
 			const doPlayByPlay = gidPlayByPlay === schedule[i].gid;

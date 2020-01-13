@@ -20,10 +20,11 @@ const updateMetaDifficulty = async (difficulty: number) => {
  * @returns {Promise} Promise for when it finishes.
  */
 const setGameAttributes = async (gameAttributes: Partial<GameAttributes>) => {
-	const toUpdate = [];
+	const toUpdate: (keyof GameAttributes)[] = [];
 
 	for (const key of Object.keys(gameAttributes)) {
 		if (g[key] !== gameAttributes[key] && !Number.isNaN(gameAttributes[key])) {
+			// @ts-ignore
 			toUpdate.push(key);
 		}
 	}

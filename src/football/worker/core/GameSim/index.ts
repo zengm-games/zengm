@@ -719,6 +719,7 @@ class GameSim {
 			let playersDefense = [];
 
 			for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
+				// @ts-ignore
 				playersDefense = playersDefense.concat(playersAtPos);
 			}
 

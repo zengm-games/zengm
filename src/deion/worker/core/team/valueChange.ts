@@ -3,9 +3,24 @@ import { PHASE } from "../../../common";
 import { draft, player, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import { TradePickValues } from "../../../common/types";
-import getPayroll from "./getPayroll"; // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
+import {
+	TradePickValues,
+	PlayerContract,
+	PlayerInjury,
+} from "../../../common/types";
+import getPayroll from "./getPayroll";
 
+type Asset = {
+	value: number;
+	skills: string[];
+	contract: PlayerContract;
+	worth: PlayerContract;
+	injury: PlayerInjury;
+	age: number;
+	draftPick?: true;
+};
+
+// estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
 const valueChange = async (
 	tid: number,
 	pidsAdd: number[],
@@ -20,9 +35,9 @@ const valueChange = async (
 	}
 
 	// Get value and skills for each player on team or involved in the proposed transaction
-	const roster = [];
-	let add = [];
-	let remove = [];
+	const roster: Asset[] = [];
+	let add: Asset[] = [];
+	let remove: Asset[] = [];
 	const t = await idb.getCopy.teamsPlus({
 		attrs: ["strategy"],
 		stats: ["gp"],
@@ -98,7 +113,7 @@ const valueChange = async (
 			);
 
 			// This part needs to be run every time so that gpAvg is available
-			const wps = []; // Contains estimated winning percentages for all teams by the end of the season
+			const wps: number[] = []; // Contains estimated winning percentages for all teams by the end of the season
 
 			let gp = 0;
 
@@ -237,8 +252,9 @@ const valueChange = async (
 				if (dp.pick > 0) {
 					estPick = dp.pick;
 				} else {
-					estPick = estPicks[dp.originalTid]; // For future draft picks, add some uncertainty
+					estPick = estPicks[dp.originalTid];
 
+					// For future draft picks, add some uncertainty
 					estPick = Math.round(
 						(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
 					);
@@ -324,8 +340,8 @@ const valueChange = async (
          }
           needToDrop -= 1;
      }*/
-	// This roughly corresponds with core.gameSim.updateSynergy
 
+	// This roughly corresponds with core.gameSim.updateSynergy
 	const skillsNeeded = {
 		"3": 5,
 		A: 5,
@@ -347,8 +363,9 @@ const valueChange = async (
 			}
 		}
 
-		const rosterSkillsCount = countBy(rosterSkills); // Sort test by value, so that the highest value players get bonuses applied first
+		const rosterSkillsCount = countBy(rosterSkills);
 
+		// Sort test by value, so that the highest value players get bonuses applied first
 		test.sort((a, b) => b.value - a.value);
 
 		for (let i = 0; i < test.length; i++) {
@@ -471,9 +488,10 @@ const valueChange = async (
 			(Math.abs(exponential) ** (1 / base) * Math.abs(exponential)) /
 			exponential
 		);
-	}; // Sum of contracts
-	// If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
+	};
 
+	// Sum of contracts
+	// If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
 	const sumContracts = (players, onlyThisSeason = false) => {
 		if (players.length === 0) {
 			return 0;

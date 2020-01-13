@@ -205,7 +205,7 @@ const processStats = async (
 
 	const teamStatsFromCache = async () => {
 		// Single season, from cache
-		let teamStats2 = [];
+		let teamStats2: TeamStats[] = [];
 
 		if (regularSeason) {
 			teamStats2 = teamStats2.concat(
@@ -341,7 +341,7 @@ const getCopies = async ({
 	};
 
 	// Does this require IDB?
-	const objectStores = [];
+	const objectStores: string[] = [];
 
 	if (
 		seasonAttrs.length > 0 &&

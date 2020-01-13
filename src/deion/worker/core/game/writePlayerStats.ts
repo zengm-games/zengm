@@ -219,9 +219,11 @@ const writePlayerStats = async (
 
 							ps.gp += 1; // Already checked for non-zero minutes played above
 
-							if (process.env.SPORT === "football" && qbResults.has(p.id)) {
+							if (process.env.SPORT === "football") {
 								const stat = qbResults.get(p.id);
-								ps[stat] += 1;
+								if (stat) {
+									ps[stat] += 1;
+								}
 							}
 						}
 

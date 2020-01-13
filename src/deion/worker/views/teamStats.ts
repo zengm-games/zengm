@@ -65,6 +65,7 @@ async function updateTeams(
 
 							if (t && series[ah] && series[ha]) {
 								t.seasonAttrs.won += series[ah].won;
+								// @ts-ignore
 								t.seasonAttrs.lost += series[ha].won;
 							}
 						}

@@ -282,6 +282,7 @@ const genRatings = (
 
 	for (const [rating, factor] of Object.entries(ratingsToBoost)) {
 		rawRatings[rating] = player.limitRating(
+			// @ts-ignore
 			(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
 		);
 	}

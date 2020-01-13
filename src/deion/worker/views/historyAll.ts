@@ -19,7 +19,7 @@ async function updateHistory(inputs: GetOutput, updateEvents: UpdateEvents) {
 			process.env.SPORT === "basketball"
 				? ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"]
 				: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"];
-		const seasons = awards.map(a => {
+		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,
 				finalsMvp: a.finalsMvp,

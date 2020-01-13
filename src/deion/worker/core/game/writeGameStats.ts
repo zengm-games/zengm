@@ -213,6 +213,7 @@ const writeGameStats = async (
 
 	for (const clutchPlay of results.clutchPlays) {
 		// We want text at the beginning, because adding game information is redundant when attached to the box score
+		// @ts-ignore
 		gameStats.clutchPlays.push(`${clutchPlay.text}.`);
 		const indTeam = clutchPlay.tids[0] === results.team[0].id ? 0 : 1;
 		const indOther = indTeam === 0 ? 1 : 0;

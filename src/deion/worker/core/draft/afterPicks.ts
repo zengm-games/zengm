@@ -4,7 +4,7 @@ import { idb } from "../../db";
 import { g, local, toUI, updatePlayMenu, updatePhase } from "../../util";
 import { Conditions } from "../../../common/types";
 
-const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {
+const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {
 		// Fantasy draft special case!
 		if (g.phase === PHASE.FANTASY_DRAFT) {

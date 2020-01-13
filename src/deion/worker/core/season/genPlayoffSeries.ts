@@ -84,7 +84,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 		}
 	}
 
-	const series = range(numRounds).map(() => []);
+	const series: any[][] = range(numRounds).map(() => []);
 
 	if (playoffsByConference) {
 		if (numRounds > 1) {
@@ -118,6 +118,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 							matchup[1] !== undefined ? teamsConf[matchup[1]] : undefined;
 
 						if (away) {
+							// @ts-ignore
 							away.seed = matchup[1] + 1;
 						}
 
@@ -130,7 +131,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 			}
 		} else {
 			// Special case - if there is only one round, pick the best team in each conference to play
-			const teamsConf = [];
+			const teamsConf: any[] = [];
 
 			for (let cid = 0; cid < g.confs.length; cid++) {
 				for (let i = 0; i < teams.length; i++) {
@@ -179,6 +180,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 			const away = matchup[1] !== undefined ? teamsConf[matchup[1]] : undefined;
 
 			if (away) {
+				// @ts-ignore
 				away.seed = matchup[1] + 1;
 			}
 

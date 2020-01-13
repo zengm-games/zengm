@@ -5,7 +5,7 @@ import { MinimalPlayerRatings } from "../../../common/types";
 const composoteRating = (
 	ratings: MinimalPlayerRatings,
 	components: (string | number)[],
-	weights: number[] | undefined | null,
+	weights: number[] | undefined,
 	fuzz: boolean,
 ): number => {
 	if (weights === undefined) {

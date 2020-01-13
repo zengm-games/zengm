@@ -8,18 +8,18 @@ const RatingsOverview = ({ ratings }) => {
 		<>
 			<div className="d-none d-lg-flex row">
 				<div className="col-lg-8">
-					<h3>Overall: {ratings[r].ovr}</h3>
+					<h2>Overall: {ratings[r].ovr}</h2>
 				</div>
 				<div className="col-lg-4">
-					<h3>Potential: {ratings[r].pot}</h3>
+					<h2>Potential: {ratings[r].pot}</h2>
 				</div>
 			</div>
 			<div className="d-lg-none row">
 				<div className="col-6">
-					<h3>Overall: {ratings[r].ovr}</h3>
+					<h2>Overall: {ratings[r].ovr}</h2>
 				</div>
 				<div className="col-6">
-					<h3 className="float-right">Potential: {ratings[r].pot}</h3>
+					<h2 className="float-right">Potential: {ratings[r].pot}</h2>
 				</div>
 			</div>
 			<div className="row">

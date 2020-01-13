@@ -126,7 +126,7 @@ const uniformSeed = (seed: number): number => {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-const choice = <T extends any>(x: T[], weightFunc?: (a: T) => number): T => {
+const choice = <T>(x: T[], weightFunc?: (a: T) => number): T => {
 	if (weightFunc === undefined) {
 		return x[Math.floor(Math.random() * x.length)];
 	}

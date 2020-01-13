@@ -2,7 +2,7 @@ import { PHASE } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util"; // http://www.basketball-reference.com/about/per.html
 
-const calculatePER = (players, teams, league) => {
+const calculatePER = (players: any[], teams: any[], league: any) => {
 	for (const t of teams) {
 		t.stats.paceAdj = league.pace / t.stats.pace; // Handle divide by 0 error
 

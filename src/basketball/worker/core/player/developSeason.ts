@@ -3,8 +3,8 @@ import { g, helpers, random } from "../../../../deion/worker/util";
 import { PlayerRatings, RatingKey } from "../../../common/types";
 
 type RatingFormula = {
-	ageModifier?: (age: number) => number;
-	changeLimits?: (age: number) => [number, number];
+	ageModifier: (age: number) => number;
+	changeLimits: (age: number) => [number, number];
 };
 
 const shootingFormula: RatingFormula = {
@@ -62,7 +62,10 @@ const iqFormula: RatingFormula = {
 	},
 };
 const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
-	stre: {},
+	stre: {
+		ageModifier: () => 0,
+		changeLimits: () => [-Infinity, Infinity],
+	},
 	spd: {
 		ageModifier: (age: number) => {
 			if (age <= 27) {
@@ -186,13 +189,10 @@ const developSeason = (
 
 	const baseChange = calcBaseChange(age, coachingRank);
 
-	for (const key of Object.keys(ratingsFormulas)) {
-		const ageModifier = ratingsFormulas[key].ageModifier
-			? ratingsFormulas[key].ageModifier(age)
-			: 0;
-		const changeLimits = ratingsFormulas[key].changeLimits
-			? ratingsFormulas[key].changeLimits(age)
-			: [-Infinity, Infinity];
+	for (const key of helpers.keys(ratingsFormulas)) {
+		const ageModifier = ratingsFormulas[key].ageModifier(age);
+		const changeLimits = ratingsFormulas[key].changeLimits(age);
+
 		ratings[key] = player.limitRating(
 			ratings[key] +
 				helpers.bound(

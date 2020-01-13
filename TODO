@@ -13,7 +13,7 @@ typescript
 - to do
   - getting object from cache should add primary key to it\
     - test with ts-ignore on teamSeason in worker/api/index.ts
-- noImplicitAny
+- yarn tsc --noImplicitAny > foo
 - more JS to TS
   - find src -name '*.js' > foo
   - find tools -name '*.js' > foo

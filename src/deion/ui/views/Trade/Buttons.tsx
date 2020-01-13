@@ -14,10 +14,10 @@ const Buttons = ({
 	enablePropose: boolean;
 	forceTrade: boolean;
 	godMode: boolean;
-	handleClickAsk: (MouseEvent) => void;
-	handleClickClear: (MouseEvent) => void;
-	handleClickForceTrade: (MouseEvent) => void;
-	handleClickPropose: (MouseEvent) => void;
+	handleClickAsk: (x: MouseEvent) => void;
+	handleClickClear: (x: MouseEvent) => void;
+	handleClickForceTrade: (x: MouseEvent) => void;
+	handleClickPropose: (x: MouseEvent) => void;
 }) => {
 	return (
 		<>

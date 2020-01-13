@@ -148,7 +148,7 @@ const TitleBar = () => {
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
 			</h1>
-			{dropdownView ? (
+			{dropdownView && dropdownFields ? (
 				<Dropdown
 					extraParam={dropdownExtraParam}
 					view={dropdownView}

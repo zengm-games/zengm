@@ -2,7 +2,7 @@ import { PHASE } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util"; // Approximate Value: https://www.pro-football-reference.com/blog/indexd961.html?page_id=8061
 
-const calculateAV = (players, teams, league) => {
+const calculateAV = (players: any[], teams: any[], league: any) => {
 	const teamOffPts = teams.map(
 		t => (100 * t.stats.ptsPerDrive) / league.ptsPerDrive,
 	);

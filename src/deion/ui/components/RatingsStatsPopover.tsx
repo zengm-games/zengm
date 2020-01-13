@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useRef, useState } from "react";
-import Popover from "reactstrap/lib/Popover";
-import PopoverBody from "reactstrap/lib/PopoverBody";
+import { Popover, PopoverBody } from "reactstrap";
+
 import WatchBlock from "./WatchBlock";
 import { helpers, overrides, toWorker } from "../util";
 type Props = {

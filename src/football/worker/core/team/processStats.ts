@@ -1,6 +1,6 @@
 import { TeamStatAttr, TeamStats } from "../../../../deion/common/types";
 
-const percentage = (numerator, denominator) => {
+const percentage = (numerator: number, denominator: number) => {
 	if (denominator > 0) {
 		return (100 * numerator) / denominator;
 	}

@@ -1,6 +1,9 @@
+// @ts-nocheck
+
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
-import UncontrolledTooltip from "reactstrap/lib/UncontrolledTooltip";
+import { UncontrolledTooltip } from "reactstrap";
+
 /**
  * Bar plots, both stacked and normal.
  *
@@ -57,15 +60,18 @@ import UncontrolledTooltip from "reactstrap/lib/UncontrolledTooltip";
  *         data={[[1, 5, 2], [5, 3, 1]]}
  *     />
  */
-// Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
 
-const defaultYlim = (data, stacked) => {
+// Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
+const defaultYlim = (
+	data: number[] | number[][],
+	stacked: boolean,
+): [number, number] => {
 	let min = Infinity;
 	let max = -Infinity; // If stacked, add up all the components
 
 	let x: number[] = [];
 
-	if (stacked) {
+	if (data[0].length) {
 		for (let i = 0; i < data[0].length; i++) {
 			x[i] = 0;
 
@@ -107,7 +113,7 @@ const defaultYlim = (data, stacked) => {
 	return [min, max];
 };
 
-const scale = (val, ylim) => {
+const scale = (val: number, ylim: [number, number]) => {
 	if (val > ylim[1]) {
 		return 100;
 	}
@@ -120,7 +126,7 @@ const scale = (val, ylim) => {
 };
 
 type Props = {
-	data: any;
+	data: number[] | number[][];
 	// To get rid of this (and other below), would probably have to break up into two separate code paths, one for stacked and one for non-stacked
 	labels: string[];
 	tooltipCb: (val: string | number) => string;
@@ -139,7 +145,7 @@ const BarGraph = (props: Props) => {
 	const {
 		data = [],
 		labels,
-		tooltipCb = val => String(val),
+		tooltipCb = (val: string | number) => String(val),
 		ylim: ylimArg,
 	} = props;
 	const gap = 2; // Gap between bars, in pixels

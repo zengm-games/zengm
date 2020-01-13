@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import Modal from "reactstrap/lib/Modal";
-import ModalBody from "reactstrap/lib/ModalBody";
-import ModalFooter from "reactstrap/lib/ModalFooter";
+import { Modal, ModalBody, ModalFooter } from "reactstrap";
+
 const Confirm = confirmable(
-	({ show, proceed, confirmation, defaultValue, okText, cancelText }) => {
+	({ show, proceed, confirmation, defaultValue, okText, cancelText }: any) => {
 		okText = okText !== undefined ? okText : "OK";
 		cancelText = cancelText !== undefined ? cancelText : "Cancel";
 		const [controlledValue, setControlledValue] = useState(defaultValue);
@@ -71,8 +70,10 @@ Confirm.propTypes = {
 	confirmation: PropTypes.string.isRequired,
 	defaultValue: PropTypes.string,
 };
-const confirmFunction = createConfirmation(Confirm); // Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
 
+const confirmFunction = createConfirmation(Confirm);
+
+// Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
 const confirm = (
 	message: string,
 	{

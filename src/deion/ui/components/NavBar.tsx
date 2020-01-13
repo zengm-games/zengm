@@ -1,12 +1,15 @@
 import PropTypes from "prop-types";
 import React from "react";
-import Nav from "reactstrap/lib/Nav";
-import NavItem from "reactstrap/lib/NavItem";
-import NavLink from "reactstrap/lib/NavLink";
-import Navbar from "reactstrap/lib/Navbar";
-import Popover from "reactstrap/lib/Popover";
-import PopoverBody from "reactstrap/lib/PopoverBody";
-import PopoverHeader from "reactstrap/lib/PopoverHeader";
+import {
+	Nav,
+	NavItem,
+	NavLink,
+	Navbar,
+	Popover,
+	PopoverBody,
+	PopoverHeader,
+} from "reactstrap";
+
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";

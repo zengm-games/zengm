@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
-import Popover from "reactstrap/lib/Popover";
+import { Popover } from "reactstrap";
 
 // This is shit
 

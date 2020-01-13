@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import PopoverBody from "reactstrap/lib/PopoverBody";
-import PopoverHeader from "reactstrap/lib/PopoverHeader";
+import { PopoverBody, PopoverHeader } from "reactstrap";
+
 import { UncontrolledPopover } from ".";
 
 const HelpPopover = ({

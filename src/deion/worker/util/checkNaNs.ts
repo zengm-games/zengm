@@ -1,5 +1,9 @@
 // Check all properties of an object for NaN
-const checkObject = (obj, foundNaN, replace) => {
+const checkObject = (
+	obj: any,
+	foundNaN?: boolean,
+	replace?: boolean,
+): boolean => {
 	foundNaN = foundNaN !== undefined ? foundNaN : false;
 	replace = replace !== undefined ? replace : false;
 
@@ -20,13 +24,13 @@ const checkObject = (obj, foundNaN, replace) => {
 	return foundNaN;
 };
 
-const wrap = (parent: IDBObjectStore | IDBCursor, name, wrapper) => {
+const wrap = (parent: any, name: any, wrapper: (x: any) => any) => {
 	const original = parent[name];
 	parent[name] = wrapper(original);
 };
 
-const wrapperNaNChecker = _super => {
-	return function(obj, ...args) {
+const wrapperNaNChecker = (_super: any) => {
+	return function(obj: any, ...args: any[]) {
 		/* Commented out becuse I'm not sure how to make this send just once from worker
           if (checkObject(obj)) {
               const err = new Error('NaN found before writing to IndexedDB');

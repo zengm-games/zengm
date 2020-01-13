@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { MouseEvent } from "react";
 import { PlayerNameLabels } from "../../../deion/ui/components";
 import { helpers } from "../../../deion/ui/util";
 
@@ -12,7 +12,7 @@ const BoxScoreRow = ({
 }: {
 	className?: string;
 	i: number;
-	onClick?: (MouseEvent) => void;
+	onClick?: (x: MouseEvent) => void;
 	p: any;
 }) => {
 	return (

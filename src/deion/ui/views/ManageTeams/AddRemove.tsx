@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, FormEvent, MouseEvent } from "react";
 import { PHASE } from "../../../common";
 import { logEvent, toWorker } from "../../util";
 import { Phase } from "../../../common/types";
@@ -46,7 +46,7 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
 		setDID(divsInConf[0].did);
 	}, [cid, did, divs]);
 
-	const addTeam = async e => {
+	const addTeam = async (e: FormEvent) => {
 		e.preventDefault();
 		dispatch({
 			type: "startSaving",
@@ -66,7 +66,7 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
 		});
 	};
 
-	const removeLastTeam = async e => {
+	const removeLastTeam = async (e: MouseEvent) => {
 		e.preventDefault();
 		dispatch({
 			type: "startSaving",

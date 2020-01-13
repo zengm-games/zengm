@@ -3,7 +3,9 @@ import { g, helpers, overrides } from "../../util";
 
 const maxRatingDists = (numPlayers: number = 100) => {
 	// Each player gets one entry per array: their career max in a rating
-	const ratings = {};
+	const ratings: {
+		[key: string]: number[];
+	} = {};
 
 	for (const rating of ["ovr", ...overrides.common.constants.RATINGS]) {
 		ratings[rating] = [];
@@ -25,7 +27,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 		}
 
 		const maxRatings = { ...p.ratings[0] };
-		const maxAges = { ...ages };
+		const maxAges: any = { ...ages };
 
 		for (const key of Object.keys(maxAges)) {
 			maxAges[key] = g.season - p.draft.year;

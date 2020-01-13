@@ -1,9 +1,12 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import DropdownItem from "reactstrap/lib/DropdownItem";
-import DropdownMenu from "reactstrap/lib/DropdownMenu";
-import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
+import {
+	DropdownItem,
+	DropdownMenu,
+	DropdownToggle,
+	UncontrolledDropdown,
+} from "reactstrap";
+
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";

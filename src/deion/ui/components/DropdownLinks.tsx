@@ -1,13 +1,16 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { MouseEvent, useCallback, useState } from "react";
-import Dropdown from "reactstrap/lib/Dropdown";
-import DropdownItem from "reactstrap/lib/DropdownItem";
-import DropdownMenu from "reactstrap/lib/DropdownMenu";
-import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import Nav from "reactstrap/lib/Nav";
-import NavItem from "reactstrap/lib/NavItem";
-import NavLink from "reactstrap/lib/NavLink";
+import {
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownToggle,
+	Nav,
+	NavItem,
+	NavLink,
+} from "reactstrap";
+
 import { helpers } from "../util";
 import { MenuItemLink, MenuItemHeader } from "../../common/types";
 type TopMenuToggleProps = {

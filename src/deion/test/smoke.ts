@@ -6,7 +6,7 @@ import { g, local } from "../worker/util";
 import "smoke-test-overrides"; // eslint-disable-line
 
 describe("Smoke Tests", () => {
-	let intervalID;
+	let intervalID: number;
 
 	it("Create a new league and simuluate a season without error", async function() {
 		// Don't want to include Mocha and Jest types cause they conflict
@@ -18,7 +18,7 @@ describe("Smoke Tests", () => {
 		local.autoPlaySeasons = 1;
 		league.autoPlay();
 		return new Promise(resolve => {
-			intervalID = setInterval(() => {
+			intervalID = window.setInterval(() => {
 				if (local.autoPlaySeasons === 0) {
 					clearInterval(intervalID); // Wait to let it finish whatever DB activity might still be ongoing (like flushing cache)
 

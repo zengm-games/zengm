@@ -1,10 +1,10 @@
 import assert from "assert";
 import random from "./random";
+import { helpers } from "../../common";
 
 describe("worker/util/random", () => {
 	describe("choice", () => {
 		test("works", () => {
-			const x = ["a", "b", "c", "d", "e"];
 			const counts = {
 				a: 0,
 				b: 0,
@@ -12,6 +12,7 @@ describe("worker/util/random", () => {
 				d: 0,
 				e: 0,
 			};
+			const x = helpers.keys(counts);
 			const N = 10000;
 
 			for (let i = 0; i < N; i++) {
@@ -25,7 +26,6 @@ describe("worker/util/random", () => {
 			}
 		});
 		test("works with weight function", () => {
-			const x = ["a", "b", "c", "d", "e"];
 			const counts = {
 				a: 0,
 				b: 0,
@@ -33,9 +33,11 @@ describe("worker/util/random", () => {
 				d: 0,
 				e: 0,
 			};
+			const x = helpers.keys(counts);
 			const N = 100000;
 
-			const weightFunc = letter => (letter === "e" ? 10 : 1);
+			const weightFunc = (letter: keyof typeof counts) =>
+				letter === "e" ? 10 : 1;
 
 			for (let i = 0; i < N; i++) {
 				const choice = random.choice(x, weightFunc);

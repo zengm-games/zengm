@@ -915,6 +915,11 @@ const upperCaseFirstLetter = (string: string): string => {
 	return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 };
 
+// https://medium.com/@_achou/dont-give-up-and-use-suppressimplicitanyindexerrors-ca6b208b9365
+const keys = <O extends object>(obj: O): Array<keyof O> => {
+	return Object.keys(obj) as Array<keyof O>;
+};
+
 export default {
 	addPopRank,
 	gameScore,
@@ -928,4 +933,5 @@ export default {
 	roundWinp,
 	refuseToNegotiate,
 	upperCaseFirstLetter,
+	keys,
 };

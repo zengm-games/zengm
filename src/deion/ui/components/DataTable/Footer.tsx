@@ -7,7 +7,7 @@ const Footer = ({ footer }: { footer?: any[] }) => {
 		return null;
 	}
 
-	let footers;
+	let footers: any[][];
 
 	if (Array.isArray(footer[0])) {
 		// There are multiple footers

@@ -2,8 +2,9 @@ import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 import { POSITIONS } from "../../../common/constants";
 import { Position } from "../../../common/types";
+import { PlayerFiltered } from "../../../../deion/common/types";
 
-const score = (p, pos) => {
+const score = (p: PlayerFiltered, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {

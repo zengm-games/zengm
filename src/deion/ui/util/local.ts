@@ -109,10 +109,11 @@ const [useLocal, local] = create<
 	},
 }));
 
-const useLocalShallow = (selector: (a: LocalStateUI) => any) =>
-	useLocal(selector, shallow);
+const useLocalShallow = <T>(selector: (a: LocalStateUI) => T) =>
+	useLocal<T>(selector, shallow);
 
-const useLocalActions = () => useLocal(state => state.actions); // This assumes the actions object never changes!
+// This assumes the actions object never changes!
+const useLocalActions = () => useLocal(state => state.actions);
 
 const localActions = local.getState().actions;
 

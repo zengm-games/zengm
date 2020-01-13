@@ -1,10 +1,13 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
-import DropdownItem from "reactstrap/lib/DropdownItem";
-import DropdownMenu from "reactstrap/lib/DropdownMenu";
-import DropdownToggle from "reactstrap/lib/DropdownToggle";
-import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
+import React, { useCallback, useState, CSSProperties } from "react";
+import {
+	DropdownItem,
+	DropdownMenu,
+	DropdownToggle,
+	UncontrolledDropdown,
+} from "reactstrap";
+
 import ago from "s-ago";
 import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
@@ -180,7 +183,7 @@ const Ago = ({ date }: { date?: Date }) => {
 };
 
 // https://stackoverflow.com/a/47417545/786644 hack because of overflow-x in table-responsive, otherwise menu gets chopped off if table has few rows
-const dropdownStyle = {
+const dropdownStyle: CSSProperties = {
 	position: "static",
 };
 

@@ -9,6 +9,8 @@ describe("Smoke Tests", () => {
 	let intervalID;
 
 	it("Create a new league and simuluate a season without error", async function() {
+		// Don't want to include Mocha and Jest types cause they conflict
+		// @ts-ignore
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
 		idb.meta = await connectMeta({});

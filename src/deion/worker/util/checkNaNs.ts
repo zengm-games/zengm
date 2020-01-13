@@ -19,13 +19,13 @@ const checkObject = (obj, foundNaN, replace) => {
 	return foundNaN;
 };
 
-const wrap = (parent: any, name, wrapper) => {
+const wrap = (parent: IDBObjectStore | IDBCursor, name, wrapper) => {
 	const original = parent[name];
 	parent[name] = wrapper(original);
 };
 
 const wrapperNaNChecker = _super => {
-	return function(obj, ...args) {
+	return function(this: IDBObjectStore | IDBCursor, obj, ...args) {
 		/* Commented out becuse I'm not sure how to make this send just once from worker
           if (checkObject(obj)) {
               const err = new Error('NaN found before writing to IndexedDB');

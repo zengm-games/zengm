@@ -9,17 +9,16 @@
 		"rootDir": "./src",
 		"noEmit": true,
 		// "strict": true,
-		"noImplicitAny": false,
-		"strictNullChecks": false,
-		"strictFunctionTypes": false,
-		"strictBindCallApply": false,
-		"strictPropertyInitialization": false,
-		"noImplicitThis": false,
-		"alwaysStrict": false,
-		// "noUnusedLocals": true,                /* Report errors on unused locals. */
-		// "noUnusedParameters": true,            /* Report errors on unused parameters. */
-		// "noImplicitReturns": true,             /* Report error when not all code paths in function return a value. */
-		// "noFallthroughCasesInSwitch": true,    /* Report errors for fallthrough cases in switch statement. */
+		// "noImplicitAny": true,
+		// "strictNullChecks": true,
+		// "strictFunctionTypes": true,
+		"strictBindCallApply": true,
+		// "strictPropertyInitialization": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
 		"moduleResolution": "node",
 		"baseUrl": ".",
 		"paths": {

@@ -1407,7 +1407,7 @@ const upsertCustomizedPlayer = async (
 	// Recalculate player ovr, pot, and values if necessary
 	const selectedPos = p.ratings[r].pos;
 
-	if (updatedRatingsOrAge) {
+	if (updatedRatingsOrAge || !p.hasOwnProperty("pid")) {
 		player.develop(p, 0);
 		player.updateValues(p);
 	}

@@ -1,5 +1,3 @@
-when you create a player, the ratings will always turn out to be 0/0. if you change a rating by 1, it'll update
-
 typescript
 - to know
   - @ts-nocheck

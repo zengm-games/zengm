@@ -34,8 +34,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			},
 		],
 		warning: null,
-	}; // Calculate properties of the trade
+	};
 
+	// Calculate properties of the trade
 	const promises: Promise<any>[] = [];
 	[0, 1].forEach(i => {
 		promises.push(

@@ -374,8 +374,9 @@ const valueChange = async (
 		}
 
 		return test;
-	}; // Apply bonuses based on skills coming in and leaving
+	};
 
+	// Apply bonuses based on skills coming in and leaving
 	if (process.env.SPORT === "basketball") {
 		const rosterAndRemove = roster.concat(remove);
 		const rosterAndAdd = roster.concat(add);

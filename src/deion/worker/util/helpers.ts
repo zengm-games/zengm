@@ -179,8 +179,9 @@ const getAbbrev = (tid: number | string): string => {
 	}
 
 	return g.teamAbbrevsCache[tid];
-}; // Prefer this to addPopRank in new code because it's not mutable
+};
 
+// Prefer this to addPopRank in new code because it's not mutable
 const getPopRanks = (teamSeasons: TeamSeason[]): number[] => {
 	// Add popRank
 	const teamsSorted = teamSeasons.slice();

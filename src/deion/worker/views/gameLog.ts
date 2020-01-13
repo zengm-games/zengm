@@ -143,8 +143,9 @@ async function updateBoxScore(
 		const game = await boxScore(gid);
 		const vars = {
 			boxScore: game,
-		}; // Either update the box score if we found one, or show placeholder
+		};
 
+		// Either update the box score if we found one, or show placeholder
 		if (!game.hasOwnProperty("teams")) {
 			vars.boxScore.gid = -1;
 		} else {

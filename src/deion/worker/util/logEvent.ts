@@ -10,8 +10,9 @@ import {
 
 const saveEvent = (event: LogEventSaveOptions) => {
 	idb.cache.events.add({ ...event, season: g.season });
-}; // conditions only needed when showNotification is true, otherwise this is never called
+};
 
+// conditions only needed when showNotification is true, otherwise this is never called
 const logEvent = createLogger(
 	saveEvent,
 	(options: LogEventShowOptions, conditions?: Conditions) => {

@@ -172,8 +172,9 @@ const genRatings = (
 		pot: 0,
 		season,
 		skills: [],
-	}; // Ugly hack: Tall people can't dribble/pass very well
+	};
 
+	// Ugly hack: Tall people can't dribble/pass very well
 	/*if (ratings.hgt > 40) {
          ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
          ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));

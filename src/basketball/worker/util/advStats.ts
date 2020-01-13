@@ -93,8 +93,9 @@ const calculatePER = (players, teams, league) => {
 		per: PER,
 		ewa: EWA,
 	};
-}; // https://www.basketball-reference.com/about/glossary.html
+};
 
+// https://www.basketball-reference.com/about/glossary.html
 const calculatePercentages = (players, teams) => {
 	const astp: number[] = [];
 	const blkp: number[] = [];
@@ -180,8 +181,9 @@ const calculatePercentages = (players, teams) => {
 		trbp,
 		usgp,
 	};
-}; // https://www.basketball-reference.com/about/ratings.html
+};
 
+// https://www.basketball-reference.com/about/ratings.html
 const calculateRatings = (players, teams, league) => {
 	const drtg: number[] = [];
 	const dws: number[] = [];
@@ -467,8 +469,9 @@ const advStats = async () => {
 		...calculatePER(players, teams, league),
 		...calculatePercentages(players, teams),
 		...calculateRatings(players, teams, league),
-	}; // Save to database
+	};
 
+	// Save to database
 	const keys = Object.keys(updatedStats);
 	await Promise.all(
 		players.map(async ({ pid }, i) => {

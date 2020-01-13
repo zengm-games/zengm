@@ -63,8 +63,9 @@ const create = async (
 		pid,
 		tid,
 		resigning,
-	}; // Except in re-signing phase, only one negotiation at a time
+	};
 
+	// Except in re-signing phase, only one negotiation at a time
 	if (!resigning) {
 		await idb.cache.negotiations.clear();
 	}

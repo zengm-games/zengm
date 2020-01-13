@@ -97,8 +97,9 @@ const defaultGameAttributes: Partial<GameAttributes> = {
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,
 	foulsNeededToFoulOut: 6,
-}; // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
+};
 
+// Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
 export const footballOverrides =
 	process.env.NODE_ENV === "test" || process.env.SPORT === "football"
 		? {

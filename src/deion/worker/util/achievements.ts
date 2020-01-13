@@ -103,8 +103,9 @@ const checkYoungGuns = async age => {
 	}
 
 	return true;
-}; // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
+};
 
+// IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const achievements: Achievement[] = [
 	{
 		slug: "participation",

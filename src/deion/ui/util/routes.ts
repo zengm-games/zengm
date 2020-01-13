@@ -24,8 +24,9 @@ const genPage = (id, inLeague = true) => {
 	return () => {
 		throw new Error(`Invalid component name: "${componentName}"`);
 	};
-}; // Needs to be deferred so overrides.views will exist
+};
 
+// Needs to be deferred so overrides.views will exist
 const routes = () => {
 	return {
 		// Non-league views

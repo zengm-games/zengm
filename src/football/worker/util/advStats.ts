@@ -205,8 +205,9 @@ const advStats = async () => {
 		(league.pssYds + 20 * league.pssTD - 45 * league.pssInt) / league.pss;
 	league.rusYdsPerAtt = league.rusYds / league.rus;
 	league.recYdsPerAtt = league.recYds / league.rec;
-	const updatedStats = { ...calculateAV(players, teams, league) }; // Save to database
+	const updatedStats = { ...calculateAV(players, teams, league) };
 
+	// Save to database
 	const keys = Object.keys(updatedStats);
 	await Promise.all(
 		players.map(async ({ pid }, i) => {

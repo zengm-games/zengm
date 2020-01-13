@@ -26,8 +26,9 @@ async function play(
 			await updateStatus("Idle");
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		}
-	}; // This simulates a day, including game simulation and any other bookkeeping that needs to be done
+	};
 
+	// This simulates a day, including game simulation and any other bookkeeping that needs to be done
 	const cbRunDay = async () => {
 		// This is called if there are remaining days to simulate
 		const cbYetAnother = async () => {

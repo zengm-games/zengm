@@ -181,8 +181,9 @@ const getRealFinalsMvp = async (
 				const info = playerInfos.get(p.pid) || {
 					pid: p.pid,
 					score: 0,
-				}; // 50% bonus for the winning team
+				};
 
+				// 50% bonus for the winning team
 				const factor = t.tid === champTid ? 1.5 : 1;
 				const ydsFromScrimmage = p.recYds + p.rusYds;
 				const otherTD =

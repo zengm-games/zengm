@@ -79,8 +79,9 @@ export type CompositeWeights<RatingKey = string> = {
 			cutoff?: number;
 		};
 	};
-}; // Not exact because https://github.com/facebook/flow/issues/2386 - same thing elsewhere
+};
 
+// Not exact because https://github.com/facebook/flow/issues/2386 - same thing elsewhere
 export type Conditions = {
 	hostID?: number;
 };
@@ -455,8 +456,9 @@ export type PlayerInjury = {
 type PlayerSalary = {
 	amount: number;
 	season: number;
-}; // ***p stats can be undefined
+};
 
+// ***p stats can be undefined
 export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";
@@ -768,8 +770,9 @@ export type TeamSeason = {
 	};
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;
-}; // opp stats (except Blk) can be undefined
+};
 
+// opp stats (except Blk) can be undefined
 export type TeamStats = any;
 
 export type TradePickValues = {

@@ -117,8 +117,9 @@ class DataTable extends React.Component<Props, State> {
 
 			// Default asc/desc toggle
 			return sortBy[1] === "asc" ? "desc" : "asc";
-		}; // If this column is already in sortBys and shift is pressed, update
+		};
 
+		// If this column is already in sortBys and shift is pressed, update
 		if (event.shiftKey) {
 			for (const sortBy of sortBys) {
 				if (sortBy[0] === i) {

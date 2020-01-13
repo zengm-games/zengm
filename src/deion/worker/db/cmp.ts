@@ -17,8 +17,9 @@ const getType = (x: any) => {
 
 	console.log(x);
 	throw new Error("Invalid type - should be number, string, boolean, or array");
-}; // Like indexedDB.cmp, but also support booleans (and is more restrictive in other ways, like not supporting date/binary types)
+};
 
+// Like indexedDB.cmp, but also support booleans (and is more restrictive in other ways, like not supporting date/binary types)
 const cmp = (first: any, second: any): -1 | 0 | 1 => {
 	if (second === undefined) {
 		throw new TypeError();

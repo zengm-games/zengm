@@ -166,8 +166,9 @@ const processSeasonAttrs = async (
 	if (season !== undefined) {
 		output.seasonAttrs = output.seasonAttrs[0];
 	}
-}; // Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
+};
 
+// Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
 const filterOrderStats = (
 	stats: TeamStats[],
 	playoffs: boolean,
@@ -337,8 +338,9 @@ const getCopies = async ({
 		playoffs,
 		regularSeason,
 		statType,
-	}; // Does this require IDB?
+	};
 
+	// Does this require IDB?
 	const objectStores = [];
 
 	if (

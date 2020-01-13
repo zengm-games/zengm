@@ -160,8 +160,9 @@ export const makeSon = async (p: Player) => {
 		type: "father",
 		pid: father.pid,
 		name: `${father.firstName} ${father.lastName}`,
-	}; // Handle case where son already has other brothers
+	};
 
+	// Handle case where son already has other brothers
 	if (hasRelative(p, "brother")) {
 		const brothers = await getRelatives(p, "brother");
 

@@ -915,8 +915,9 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		oldStats: true,
 		fuzz: true,
 	});
-}; // Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!
+};
 
+// Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!
 const realtimeUpdate = async (updateEvents: UpdateEvents) => {
 	await toUI(["realtimeUpdate", updateEvents]);
 };

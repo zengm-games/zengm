@@ -15,8 +15,9 @@ const updateSkyscraperDisplay = () => {
 			div.style.display = "none";
 		}
 	}
-}; // https://developer.mozilla.org/en-US/docs/Web/Events/resize
+};
 
+// https://developer.mozilla.org/en-US/docs/Web/Events/resize
 let running = false;
 
 const resizeListener = () => {

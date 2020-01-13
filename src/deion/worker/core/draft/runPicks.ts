@@ -46,8 +46,9 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 		await afterPicks(draftPicks.length === 0, conditions);
 		lock.set("drafting", false);
 		return pids;
-	}; // This will actually draft "untilUserOrEnd"
+	};
 
+	// This will actually draft "untilUserOrEnd"
 	const autoSelectPlayer = async () => {
 		if (draftPicks.length > 0) {
 			const dp = draftPicks[0];

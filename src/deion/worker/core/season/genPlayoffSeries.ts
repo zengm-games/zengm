@@ -30,8 +30,9 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 			team1,
 			byeSeeds.includes(otherTeam) ? undefined : otherTeam,
 		]);
-	}; // Grow from the final matchup
+	};
 
+	// Grow from the final matchup
 	let lastRound: Seed[] = [[0, 1]];
 
 	for (let i = 0; i < numRounds - 1; i++) {

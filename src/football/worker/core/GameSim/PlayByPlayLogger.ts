@@ -5,9 +5,9 @@ const formatClock = (clock: number) => {
 	const secNum = Math.ceil((clock % 1) * 60);
 
 	let sec;
-	if (sec >= 60) {
+	if (secNum >= 60) {
 		sec = "59";
-	} else if (sec < 10) {
+	} else if (secNum < 10) {
 		sec = `0${secNum}`;
 	} else {
 		sec = `${secNum}`;

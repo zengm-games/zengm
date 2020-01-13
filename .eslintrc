@@ -51,6 +51,10 @@
     "no-constant-condition": ["error", { "checkLoops": false }],
     "no-empty": "off",
     "no-prototype-builtins": "off",
+    "prefer-const": ["error", {
+        "destructuring": "all"
+    }],
+    "react/display-name": "off",
     "react/jsx-key": "off",
     "react/no-unescaped-entities": "off",
     "react-hooks/exhaustive-deps": "warn",

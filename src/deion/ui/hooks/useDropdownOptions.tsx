@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import orderBy from "lodash/orderBy";
 import { useEffect, useState } from "react";
 import { PHASE } from "../../common";

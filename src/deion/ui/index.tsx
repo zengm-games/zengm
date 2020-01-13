@@ -191,6 +191,7 @@ const setupRoutes = () => {
 				if (!initialLoad) {
 					window.gtag("config", window.googleAnalyticsID, {
 						// Normalize league URLs to all look the same
+						// eslint-disable-next-line @typescript-eslint/camelcase
 						page_path: event.detail.context.path.replace(
 							/^\/l\/[0-9]+?\//,
 							"/l/0/",

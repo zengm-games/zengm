@@ -25,7 +25,7 @@ const wrap = (parent: IDBObjectStore | IDBCursor, name, wrapper) => {
 };
 
 const wrapperNaNChecker = _super => {
-	return function(this: IDBObjectStore | IDBCursor, obj, ...args) {
+	return function(obj, ...args) {
 		/* Commented out becuse I'm not sure how to make this send just once from worker
           if (checkObject(obj)) {
               const err = new Error('NaN found before writing to IndexedDB');
@@ -45,6 +45,7 @@ const wrapperNaNChecker = _super => {
           }*/
 		checkObject(obj, false, true); // This will update obj
 
+		// @ts-ignore because annotating this seems to cause runtime errors
 		return _super.call(this, obj, ...args);
 	};
 };

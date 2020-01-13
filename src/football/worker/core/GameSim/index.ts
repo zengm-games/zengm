@@ -253,6 +253,16 @@ class GameSim {
 		}
 	}
 
+	getTopPlayerOnField(t: TeamNum, pos: Position) {
+		const players = this.playersOnField[t][pos];
+
+		if (!players || players.length === 0) {
+			throw new Error(`No player found at position ${pos}`);
+		}
+
+		return players[0];
+	}
+
 	probPass() {
 		// Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
 		this.updatePlayersOnField("starters");
@@ -264,7 +274,7 @@ class GameSim {
 
 		// Calculate offPassing only if there is a quarterback in the formation
 		if (this.playersOnField[this.o].QB) {
-			const qb = this.playersOnField[this.o].QB[0];
+			const qb = this.getTopPlayerOnField(this.o, "QB");
 			const qbFactor = qb ? qb.ovrs.QB / 100 : 0;
 			offPassing =
 				(5 * qbFactor +
@@ -460,8 +470,9 @@ class GameSim {
 		}
 
 		// Don't kick a FG when we really need a touchdown!
-		const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2; // If there are under 10 seconds left in the half/overtime, maybe try a field goal
+		const needTouchdown = quarter >= 4 && ptsDown > 3 && this.clock <= 2;
 
+		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
 			this.clock <= 10 / 60 &&
 			quarter !== 1 &&
@@ -938,7 +949,7 @@ class GameSim {
 
 	doKickoff(onside: boolean = false) {
 		this.updatePlayersOnField("kickoff");
-		const kicker = this.playersOnField[this.o].K[0];
+		const kicker = this.getTopPlayerOnField(this.o, "K");
 		let dt = 0;
 
 		if (onside) {
@@ -990,7 +1001,7 @@ class GameSim {
 				}
 			}
 		} else {
-			const kickReturner = this.playersOnField[this.d].KR[0];
+			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
 			const touchback = Math.random() > 0.5;
 			const kickTo = this.awaitingAfterSafety
 				? random.randInt(15, 35)
@@ -1081,8 +1092,8 @@ class GameSim {
 			return 0;
 		}
 
-		const punter = this.playersOnField[this.o].P[0];
-		const puntReturner = this.playersOnField[this.d].PR[0];
+		const punter = this.getTopPlayerOnField(this.o, "P");
+		const puntReturner = this.getTopPlayerOnField(this.d, "PR");
 		const adjustment = (punter.compositeRating.punting - 0.6) * 20; // 100 ratings - 8 yd bonus. 0 ratings - 12 yard penalty
 
 		const distance = Math.round(random.truncGauss(44 + adjustment, 8, 25, 90));
@@ -1178,13 +1189,18 @@ class GameSim {
 	}
 
 	// eslint-disable-next-line
-	probMadeFieldGoal(kicker?: PlayerGameSim, extraPoint?: boolean) {
-		kicker =
-			kicker !== undefined
-				? kicker
+	probMadeFieldGoal(kickerInput?: PlayerGameSim, extraPoint?: boolean) {
+		const kicker =
+			kickerInput !== undefined
+				? kickerInput
 				: this.team[this.o].depth.K.find(p => !p.injured);
 		let baseProb = 0;
 		let distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
+
+		if (!kicker) {
+			// Would take an absurd amount of injuries to get here, but technically possible
+			return 0;
+		}
 
 		// Kickers with strong/weak legs effectively have adjusted distances: -5 yds for 100, +15 yds for 0
 		distance += -(kicker.compositeRating.kickingPower - 0.75) * 20;
@@ -1279,7 +1295,7 @@ class GameSim {
 		}
 
 		const distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
-		const kicker = this.playersOnField[this.o].K[0];
+		const kicker = this.getTopPlayerOnField(this.o, "K");
 		const made = Math.random() < this.probMadeFieldGoal(kicker, extraPoint);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
 		const penInfo2 = this.checkPenalties("fieldGoal", {
@@ -1580,7 +1596,7 @@ class GameSim {
 			return 0;
 		}
 
-		const qb = this.playersOnField[this.o].QB[0];
+		const qb = this.getTopPlayerOnField(this.o, "QB");
 		this.playByPlay.logEvent("dropback", {
 			clock: this.clock,
 			t: this.o,
@@ -1738,15 +1754,17 @@ class GameSim {
 		const positions: Position[] = ["RB"];
 		const rand = Math.random();
 
-		if (rand < 0.05 || this.playersOnField[this.o].RB.length === 0) {
+		const rbs = this.playersOnField[this.o].RB || [];
+
+		if (rand < 0.025 || rbs.length === 0) {
 			positions.push("QB");
-		} else if (rand < 0.15 || this.playersOnField[this.o].RB.length === 0) {
+		} else if (rand < 0.1 || rbs.length === 0) {
 			positions.push("WR");
 		}
 
 		const p = this.pickPlayer(this.o, "rushing", positions);
 		this.recordStat(this.o, p, "rus");
-		const qb = this.playersOnField[this.o].QB[0];
+		const qb = this.getTopPlayerOnField(this.o, "QB");
 		this.playByPlay.logEvent("handoff", {
 			clock: this.clock,
 			t: this.o,

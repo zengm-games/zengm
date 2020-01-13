@@ -42,7 +42,7 @@ const startHeartbeat = async (l: League) => {
 	setTimeout(() => {
 		clearInterval(heartbeatIntervalID); // Shouldn't be necessary, but just in case
 
-		heartbeatIntervalID = window.setInterval(async () => {
+		heartbeatIntervalID = self.setInterval(async () => {
 			const l2 = await getLeague(lid);
 			await runHeartbeat(l2);
 		}, 1000);

@@ -189,7 +189,7 @@ class GameSim {
 
 	d: TeamNum;
 
-	playByPlay: any[];
+	playByPlay: any[] | undefined;
 
 	allStarGame: boolean;
 
@@ -242,6 +242,9 @@ class GameSim {
 		if (!this.allStarGame) {
 			this.homeCourtAdvantage();
 		}
+
+		this.o = 0;
+		this.d = 1;
 	}
 
 	/**
@@ -353,8 +356,6 @@ class GameSim {
 	}
 
 	simRegulation() {
-		this.o = 0;
-		this.d = 1;
 		let quarter = 1;
 
 		while (true) {

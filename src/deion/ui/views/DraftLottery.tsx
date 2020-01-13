@@ -142,7 +142,7 @@ type State = {
 };
 
 class DraftLotteryTable extends React.Component<Props, State> {
-	componentIsMounted: boolean;
+	componentIsMounted: boolean | undefined;
 
 	constructor(props: Props) {
 		super(props);

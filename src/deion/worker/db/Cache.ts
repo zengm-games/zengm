@@ -174,8 +174,6 @@ class Cache {
 
 	_indexes: Record<Index, any>;
 
-	_instanceNum: number;
-
 	_maxIds: Record<Store, number>;
 
 	newLeague: boolean;
@@ -192,7 +190,7 @@ class Cache {
 
 	_status: Status;
 
-	_season: number;
+	_season: number | undefined;
 
 	_stopAutoFlush: boolean;
 
@@ -399,6 +397,9 @@ class Cache {
 				autoIncrement: true,
 				// Past 3 seasons
 				getData: (tx: BackboardTx) => {
+					if (this._season === undefined) {
+						throw new Error("this._season is undefined");
+					}
 					return tx.teamSeasons
 						.index("season, tid")
 						.getAll(backboard.bound([this._season - 2], [this._season, ""]));

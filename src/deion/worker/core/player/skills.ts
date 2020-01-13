@@ -29,8 +29,8 @@ const hasSkill = (
  *
  * Keep cutoffs in sync with GameSim.js!
  */
-const skills = (playerRatings: MinimalPlayerRatings): string[] => {
-	const sk = [];
+const skills = (playerRatings: MinimalPlayerRatings) => {
+	const sk: string[] = [];
 
 	for (const key of Object.keys(overrides.common.constants.COMPOSITE_WEIGHTS)) {
 		const {

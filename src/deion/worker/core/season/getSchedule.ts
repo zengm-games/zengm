@@ -18,7 +18,7 @@ const getSchedule = async (
 		schedule = schedule.slice(0, g.numTeams / 2); // This is the maximum number of games possible in a day
 		// Only take the games up until right before a team plays for the second time that day
 
-		const tids = [];
+		const tids: number[] = [];
 		let i;
 
 		for (i = 0; i < schedule.length; i++) {

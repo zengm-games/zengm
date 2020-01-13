@@ -10,7 +10,7 @@ const getAll = async (
 	key?: any,
 	cb?: (a: any) => boolean,
 ): Promise<any[]> => {
-	const objs = [];
+	const objs: any[] = [];
 	await store.iterate(key, obj => {
 		if (cb === undefined || cb(obj)) {
 			objs.push(obj);

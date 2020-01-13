@@ -31,7 +31,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 	const series = playoffSeries.series;
 	const rnd = playoffSeries.currentRound;
-	const tids = [];
+	const tids: [number, number][] = [];
 	const numGamesToWin = helpers.numGamesToWinSeries(
 		g.numGamesPlayoffSeries[rnd],
 	);
@@ -93,7 +93,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	// Set matchups for next round
-	const tidsWon = [];
+	const tidsWon: number[] = [];
 
 	for (let i = 0; i < series[rnd].length; i += 2) {
 		const { away: away1, home: home1 } = series[rnd][i];

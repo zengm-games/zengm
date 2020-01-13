@@ -14,7 +14,7 @@ async function updateSeasons(
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement")
 	) {
-		const seasons = [];
+		const seasons: number[][] = [];
 		let prevMinutesAll;
 
 		for (let season = g.startingSeason; season <= g.season; season++) {

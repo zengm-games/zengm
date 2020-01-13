@@ -13,7 +13,7 @@ const getDaysLeftSchedule = async (untilAllStarGame: boolean = false) => {
 
 	while (iPrev < schedule.length) {
 		// Only take the games up until right before a team plays for the second time that day
-		const tids = [];
+		const tids: number[] = [];
 		let i;
 
 		for (i = iPrev; i < schedule.length; i++) {

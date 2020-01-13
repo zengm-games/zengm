@@ -524,12 +524,13 @@ class Cache {
 	}
 
 	_markDirtyIndexes(store: Store, row?: any) {
-		if (!this.storeInfos[store].indexes || this._dirtyIndexes.has(store)) {
+		const indexes = this.storeInfos[store].indexes;
+		if (!indexes || this._dirtyIndexes.has(store)) {
 			return;
 		}
 
 		if (row) {
-			for (const index of this.storeInfos[store].indexes) {
+			for (const index of indexes) {
 				const key = getIndexKey(index, row);
 
 				if (!index.unique) {

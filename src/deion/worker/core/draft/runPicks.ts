@@ -21,7 +21,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	}
 
 	lock.set("drafting", true);
-	const pids = [];
+	const pids: number[] = [];
 	const draftPicks = await getOrder();
 	let playersAll;
 

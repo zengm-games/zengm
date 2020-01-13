@@ -59,27 +59,33 @@ const updateOwnerMood = async (): Promise<{
 			  };
 	}
 
+	// This is just for TypeScript
+	const ownerMood = teamSeason.ownerMood;
+	if (!ownerMood) {
+		throw new Error("Should never happen");
+	}
+
 	// Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
 	const cappedDeltas = { ...deltas };
 
-	if (teamSeason.ownerMood.money + cappedDeltas.money > 1) {
-		cappedDeltas.money = 1 - teamSeason.ownerMood.money;
+	if (ownerMood.money + cappedDeltas.money > 1) {
+		cappedDeltas.money = 1 - ownerMood.money;
 	}
 
-	if (teamSeason.ownerMood.playoffs + cappedDeltas.playoffs > 1) {
-		cappedDeltas.playoffs = 1 - teamSeason.ownerMood.playoffs;
+	if (ownerMood.playoffs + cappedDeltas.playoffs > 1) {
+		cappedDeltas.playoffs = 1 - ownerMood.playoffs;
 	}
 
-	if (teamSeason.ownerMood.wins + cappedDeltas.wins > 1) {
-		cappedDeltas.wins = 1 - teamSeason.ownerMood.wins;
+	if (ownerMood.wins + cappedDeltas.wins > 1) {
+		cappedDeltas.wins = 1 - ownerMood.wins;
 	}
 
 	// Only update owner mood if grace period is over
 	if (g.season >= g.gracePeriodEnd && !g.godMode) {
 		// Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-		teamSeason.ownerMood.money += cappedDeltas.money;
-		teamSeason.ownerMood.playoffs += cappedDeltas.playoffs;
-		teamSeason.ownerMood.wins += cappedDeltas.wins;
+		ownerMood.money += cappedDeltas.money;
+		ownerMood.playoffs += cappedDeltas.playoffs;
+		ownerMood.wins += cappedDeltas.wins;
 		await idb.cache.teamSeasons.put(teamSeason);
 	}
 

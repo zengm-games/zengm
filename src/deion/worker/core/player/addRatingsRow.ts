@@ -18,7 +18,7 @@ const addRatingsRow = (
 	scoutingRank?: number,
 	injuryIndex?: number,
 ) => {
-	const newRatings = {
+	const newRatings: MinimalPlayerRatings = {
 		...p.ratings[p.ratings.length - 1],
 		season: g.season,
 		injuryIndex: undefined,

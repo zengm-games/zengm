@@ -1,5 +1,5 @@
 import { CompositeWeights } from "../../deion/common/types";
-import { Position, RatingKey } from "./types";
+import { Position, PrimaryPosition, RatingKey } from "./types";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	passingAccuracy: {
@@ -333,7 +333,7 @@ const POSITIONS: Position[] = [
 	"KR",
 	"PR",
 ];
-const POSITION_COUNTS: Partial<Record<Position, number>> = {
+const POSITION_COUNTS: Record<PrimaryPosition, number> = {
 	QB: 3,
 	RB: 4,
 	WR: 6,

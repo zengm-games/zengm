@@ -22,7 +22,13 @@ async function updateTeamHistory(
 		const teamSeasons = await idb.getCopies.teamSeasons({
 			tid: inputs.tid,
 		});
-		const history = [];
+		const history: {
+			season: number;
+			won: number;
+			lost: number;
+			tied?: number;
+			playoffRoundsWon: number;
+		}[] = [];
 		let totalWon = 0;
 		let totalLost = 0;
 		let totalTied = 0;

@@ -9,7 +9,12 @@ const ovr = (
 		};
 	}[],
 ) => {
-	const info = {
+	const info: {
+		[key: string]: {
+			ovrs: number[];
+			minLength: number;
+		};
+	} = {
 		QB: {
 			ovrs: [],
 			minLength: 1,

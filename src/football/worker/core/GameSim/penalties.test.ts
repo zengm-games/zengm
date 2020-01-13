@@ -12,7 +12,7 @@ describe("football/worker/core/GameSim", () => {
 					continue;
 				}
 
-				const sumOdds = Object.values(pen.posOdds).reduce(
+				const sumOdds = (Object.values(pen.posOdds) as number[]).reduce(
 					(sum, val) => sum + val,
 					0,
 				);

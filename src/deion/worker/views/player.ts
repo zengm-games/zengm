@@ -22,7 +22,7 @@ async function updatePlayer(
 		);
 		let stats = Array.from(
 			new Set(
-				statTables.reduce((allStats, currentStats) => {
+				statTables.reduce<string[]>((allStats, currentStats) => {
 					return allStats.concat(currentStats.stats);
 				}, []),
 			),

@@ -2,7 +2,7 @@ import { helpers as commonHelpers } from "../../common";
 import { local } from "./local";
 
 const colorRating = (rating: number) => {
-	const classes = ["table-danger", "table-warning", null, "table-success"];
+	const classes = ["table-danger", "table-warning", undefined, "table-success"];
 	const cutoffs = [30, 45, 60, Infinity];
 	const ind = cutoffs.findIndex(cutoff => rating < cutoff);
 	return classes[ind];

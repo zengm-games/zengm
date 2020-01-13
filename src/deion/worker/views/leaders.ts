@@ -4,7 +4,15 @@ import { defaultGameAttributes, g, helpers } from "../util";
 import { UpdateEvents } from "../../common/types";
 
 const getCategoriesAndStats = () => {
-	const categories =
+	const categories: {
+		name: string;
+		stat: string;
+		statProp: string;
+		title: string;
+		data: any[];
+		minStats: string[];
+		minValue: number[];
+	}[] =
 		process.env.SPORT === "basketball"
 			? [
 					{

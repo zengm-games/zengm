@@ -1,4 +1,3 @@
-/*eslint camelcase: 0*/
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { idb } from "../db";
 import achievements from "./achievements";
@@ -143,7 +142,7 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 			return;
 		}
 
-		const awarded = [];
+		const awarded: string[] = [];
 
 		for (const achievement of getAchievements()) {
 			if (achievement.when === when && achievement.check !== undefined) {

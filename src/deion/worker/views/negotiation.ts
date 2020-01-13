@@ -14,8 +14,13 @@ function generateContractOptions(contract, ovr) {
 		exp += 1;
 	}
 
-	const contractOptions = [];
-	let found = null;
+	const contractOptions: {
+		exp: number;
+		years: number;
+		amount: number;
+		smallestAmount: boolean;
+	}[] = [];
+	let found: number | undefined = undefined;
 
 	for (let i = 0; i < 5; i++) {
 		contractOptions[i] = {
@@ -32,7 +37,7 @@ function generateContractOptions(contract, ovr) {
 		}
 	}
 
-	if (found === null) {
+	if (found === undefined) {
 		contractOptions[0].amount = contract.amount;
 		contractOptions[0].smallestAmount = true;
 		found = 0;

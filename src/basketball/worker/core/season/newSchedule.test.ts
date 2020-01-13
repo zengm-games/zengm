@@ -107,7 +107,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 		});
 		test("schedule each team one home game against every team in the other conference", () => {
 			const tids = newSchedule(defaultTeams);
-			const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
+			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
 			for (let i = 0; i < g.numTeams; i++) {
 				home.push(Array(g.numTeams).fill(0));
@@ -128,7 +128,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 		});
 		test("schedule each team two home games against every team in the same division", () => {
 			const tids = newSchedule(defaultTeams);
-			const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
+			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
 			for (let i = 0; i < g.numTeams; i++) {
 				home.push(Array(g.numTeams).fill(0));
@@ -149,7 +149,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 		});
 		test("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
 			const tids = newSchedule(defaultTeams);
-			const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
+			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
 			for (let i = 0; i < g.numTeams; i++) {
 				home.push(Array(g.numTeams).fill(0));

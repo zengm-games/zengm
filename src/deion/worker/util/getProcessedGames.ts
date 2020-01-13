@@ -16,7 +16,7 @@ async function getProcessedGameList(
 	abbrev: string,
 	season: number,
 	loadedGames: GameProcessed[] = [],
-): Promise<GameProcessed[]> {
+) {
 	let tid;
 
 	if (abbrev === "special") {
@@ -37,7 +37,7 @@ async function getProcessedGameList(
 		maxGid = -1; // Load all games
 	}
 
-	const gameInfos = [];
+	const gameInfos: GameProcessed[] = [];
 	let games;
 
 	if (season === g.season) {

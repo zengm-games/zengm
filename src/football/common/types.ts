@@ -39,6 +39,19 @@ export type Awards = {
 	finalsMvp: AwardPlayer | undefined;
 };
 
+export type PrimaryPosition =
+	| "QB"
+	| "RB"
+	| "WR"
+	| "TE"
+	| "OL"
+	| "DL"
+	| "LB"
+	| "CB"
+	| "S"
+	| "K"
+	| "P";
+
 export type Position =
 	| "QB"
 	| "RB"

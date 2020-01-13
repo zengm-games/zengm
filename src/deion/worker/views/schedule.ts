@@ -24,7 +24,10 @@ async function updateUpcoming(
 			}),
 		]); // Loop through each game in the schedule.
 
-		const upcoming = [];
+		const upcoming: {
+			gid: number;
+			teams: [any, any];
+		}[] = [];
 
 		for (const game of schedule) {
 			if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {

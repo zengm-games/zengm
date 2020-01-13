@@ -140,8 +140,7 @@ async function updateTeamFinances(
 			barData[keys[i]] = barData[keys[i]].map(num => num / 1000); // convert to millions
 		}
 
-		const barSeasons = [];
-
+		const barSeasons: number[] = [];
 		for (let i = 0; i < showInt; i++) {
 			barSeasons[i] = g.season - i;
 		}

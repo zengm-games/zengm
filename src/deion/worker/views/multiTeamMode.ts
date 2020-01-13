@@ -10,7 +10,10 @@ async function updateMultiTeamMode(
 		updateEvents.includes("g.userTids") ||
 		updateEvents.includes("newPhase")
 	) {
-		const teams = [];
+		const teams: {
+			tid: number;
+			name: string;
+		}[] = [];
 
 		for (let i = 0; i < g.numTeams; i++) {
 			teams.push({

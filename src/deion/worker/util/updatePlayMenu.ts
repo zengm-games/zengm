@@ -136,7 +136,7 @@ const updatePlayMenu = async () => {
 			label: `Stop auto play (${local.autoPlaySeasons} seasons left)`,
 		},
 	};
-	let keys = [];
+	let keys: string[] = [];
 
 	if (g.phase === PHASE.PRESEASON) {
 		// Preseason
@@ -147,7 +147,7 @@ const updatePlayMenu = async () => {
 	) {
 		const allStarScheduled = await allStar.futureGameIsAllStar();
 		const allStarNext = await allStar.nextGameIsAllStar();
-		const untilAllStarGame = [];
+		const untilAllStarGame: string[] = [];
 
 		if (allStarScheduled && !allStarNext) {
 			untilAllStarGame.push("untilAllStarGame");

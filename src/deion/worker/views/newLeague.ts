@@ -15,14 +15,14 @@ async function updateNewLeague({ lid }: { lid?: number }) {
 		}
 	}
 
-	let newLid = null; // Find most recent league and add one to the LID
+	let newLid: number | undefined = undefined; // Find most recent league and add one to the LID
 
 	await idb.meta.leagues.iterate("prev", (l, shortCircuit) => {
 		newLid = l.lid + 1;
 		shortCircuit();
 	});
 
-	if (newLid === null) {
+	if (newLid === undefined) {
 		newLid = 1;
 	}
 

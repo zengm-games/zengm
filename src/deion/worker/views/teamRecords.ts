@@ -257,11 +257,7 @@ async function updateTeamRecords(
 			idb.getCopies.allStars(),
 		]);
 		const awardsPerTeam = tallyAwards(awards, allStars);
-		const teamRecords = [];
-
-		for (let i = 0; i < teams.length; i++) {
-			teamRecords.push(getTeamRecord(teams[i], awardsPerTeam));
-		}
+		const teamRecords = teams.map(t => getTeamRecord(t, awardsPerTeam));
 
 		const seasonCount = teamRecords
 			.map(tr => tr.championships)

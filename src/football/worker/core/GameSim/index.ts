@@ -2162,7 +2162,7 @@ class GameSim {
 	// Pass undefined as p for some team-only stats
 	recordStat(
 		t: TeamNum,
-		p: PlayerGameSim | undefined | null,
+		p: PlayerGameSim | undefined,
 		s: string,
 		amt: number = 1,
 	) {

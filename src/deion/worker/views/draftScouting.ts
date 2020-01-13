@@ -23,25 +23,20 @@ async function addSeason(season) {
 		fuzz: true,
 	});
 	playersAll.sort((a, b) => b.valueFuzz - a.valueFuzz);
-	const players = [];
 
-	for (let i = 0; i < playersAll.length; i++) {
-		const pa = playersAll[i];
-		players.push({
-			// Attributes
-			pid: pa.pid,
-			nameAbbrev: pa.nameAbbrev,
-			age: pa.age,
-			watch: pa.watch,
-			valueFuzz: pa.valueFuzz,
-			// Ratings - just take the only entry
-			ovr: pa.ratings[0].ovr,
-			pot: pa.ratings[0].pot,
-			skills: pa.ratings[0].skills,
-			pos: pa.ratings[0].pos,
-			rank: i + 1,
-		});
-	}
+	const players = playersAll.map((pa, i) => ({
+		pid: pa.pid,
+		nameAbbrev: pa.nameAbbrev,
+		age: pa.age,
+		watch: pa.watch,
+		valueFuzz: pa.valueFuzz,
+		// Ratings - just take the only entry
+		ovr: pa.ratings[0].ovr,
+		pot: pa.ratings[0].pot,
+		skills: pa.ratings[0].skills,
+		pos: pa.ratings[0].pos,
+		rank: i + 1,
+	}));
 
 	return {
 		players,

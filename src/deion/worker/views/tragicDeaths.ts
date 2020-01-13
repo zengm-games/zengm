@@ -8,7 +8,7 @@ async function tragicDeaths(inputs: GetOutput, updateEvents: UpdateEvents) {
 		const events = await idb.getCopies.events({
 			filter: event => event.type === "tragedy",
 		});
-		const pids = [];
+		const pids: number[] = [];
 
 		for (const event of events) {
 			pids.push(...event.pids);

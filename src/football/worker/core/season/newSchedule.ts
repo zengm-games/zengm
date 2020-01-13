@@ -11,12 +11,17 @@ import { Team } from "../../../../deion/common/types";
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newScheduleDefault = (teams): [number, number][] => {
-	const tids = []; // tid_home, tid_away
+const newScheduleDefault = (
+	teams: {
+		did: number;
+		tid: number;
+	}[],
+) => {
+	const tids: [number, number][] = []; // tid_home, tid_away
 	// Collect info needed for scheduling
 
-	const homeGames = [];
-	const awayGames = [];
+	const homeGames: number[] = [];
+	const awayGames: number[] = [];
 
 	for (let i = 0; i < teams.length; i++) {
 		homeGames[i] = 0;
@@ -26,7 +31,8 @@ const newScheduleDefault = (teams): [number, number][] => {
 	for (const t of teams) {
 		for (const t2 of teams) {
 			if (t.tid !== t2.tid) {
-				const game = [t.tid, t2.tid]; // Constraint: 1 home game vs. each team in same division
+				// Constraint: 1 home game vs. each team in same division
+				const game: [number, number] = [t.tid, t2.tid];
 
 				if (t.did === t2.did) {
 					tids.push(game);
@@ -41,7 +47,7 @@ const newScheduleDefault = (teams): [number, number][] => {
 	let failures = 0;
 
 	while (true) {
-		const newTids = [];
+		const newTids: [number, number][] = [];
 		let success = true; // Copy, so each iteration of the while loop this is reset
 
 		const homeGames2 = homeGames.slice();
@@ -84,14 +90,14 @@ const newScheduleDefault = (teams): [number, number][] => {
 }; // Takes all teams and returns all unique matchups between teams. This means 2 games per matchup, to deal with
 // home/away. See https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
 
-const roundRobin = (tidsInput: number[]): [number, number][] => {
+const roundRobin = (tidsInput: number[]) => {
 	const tids: (number | "DUMMY")[] = tidsInput.slice();
 
 	if (tids.length % 2 === 1) {
 		tids.push("DUMMY");
 	}
 
-	const matchups = []; // Take teams from first half (i) and second half (j)
+	const matchups: [number, number][] = []; // Take teams from first half (i) and second half (j)
 
 	for (let j = 0; j < tids.length - 1; j += 1) {
 		for (let i = 0; i < tids.length / 2; i += 1) {
@@ -104,6 +110,7 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
 		}
 
 		// Permute tids for next round - take the last one and move it up to 2nd, leaving 1st in place
+		// @ts-ignore
 		tids.splice(1, 0, tids.pop());
 	}
 
@@ -118,11 +125,11 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-export const newScheduleCrappy = (): [number, number][] => {
+export const newScheduleCrappy = () => {
 	const tids = range(g.numTeams);
 	random.shuffle(tids); // Number of games left to reschedule for each team
 
-	const numRemaining = [];
+	const numRemaining: number[] = [];
 
 	for (let i = 0; i < g.numTeams; i++) {
 		numRemaining[i] = g.numGames;
@@ -130,7 +137,7 @@ export const newScheduleCrappy = (): [number, number][] => {
 
 	let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
 
-	const matchups = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
+	const matchups: [number, number][] = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
 
 	const potentialMatchups = roundRobin(tids);
 
@@ -172,7 +179,7 @@ export const newScheduleCrappy = (): [number, number][] => {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 const newSchedule = (teams: Team[]): [number, number][] => {
-	let tids;
+	let tids: [number, number][];
 	let fourDivsPerConf = true;
 
 	for (const conf of g.confs) {
@@ -205,8 +212,8 @@ const newSchedule = (teams: Team[]): [number, number][] => {
 
 	// Order the schedule so that it takes fewer days to play
 	random.shuffle(tids);
-	const days = [[]];
-	const tidsInDays = [[]];
+	const days: [number, number][][] = [[]];
+	const tidsInDays: number[][] = [[]];
 	let jMax = 0;
 
 	for (let i = 0; i < tids.length; i++) {

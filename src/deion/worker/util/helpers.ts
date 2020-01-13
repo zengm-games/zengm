@@ -183,7 +183,7 @@ const getPopRanks = (teamSeasons: TeamSeason[]): number[] => {
 	// Add popRank
 	const teamsSorted = teamSeasons.slice();
 	teamsSorted.sort((a, b) => b.pop - a.pop);
-	const popRanks = [];
+	const popRanks: number[] = [];
 
 	for (let i = 0; i < teamSeasons.length; i++) {
 		for (let j = 0; j < teamsSorted.length; j++) {
@@ -305,7 +305,7 @@ const overtimeCounter = (n: number): string => {
 const pickDesc = (dp: DraftPick): string => {
 	const season = dp.season === "fantasy" ? "Fantasy draft" : dp.season;
 	let desc = `${season} ${commonHelpers.ordinal(dp.round)} round pick`;
-	const extras = [];
+	const extras: string[] = [];
 
 	if (dp.pick > 0) {
 		extras.push(commonHelpers.ordinal((dp.round - 1) * g.numTeams + dp.pick));

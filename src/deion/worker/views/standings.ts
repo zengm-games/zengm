@@ -43,11 +43,16 @@ async function updateStandings(
 		);
 		const numPlayoffTeams =
 			2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
-		const confs = [];
+		const confs: {
+			cid: number;
+			name: string;
+			divs: any[];
+			teams: any[];
+		}[] = [];
 
 		for (let i = 0; i < g.confs.length; i++) {
-			const playoffsRank = [];
-			const confTeams = [];
+			const playoffsRank: number[] = [];
+			const confTeams: any[] = [];
 			let j = 0;
 
 			for (const t of teams) {
@@ -80,7 +85,7 @@ async function updateStandings(
 
 			for (const div of g.divs) {
 				if (div.cid === g.confs[i].cid) {
-					const divTeams = [];
+					const divTeams: any[] = [];
 					let k = 0;
 
 					for (const t of teams) {
@@ -116,7 +121,7 @@ async function updateStandings(
 			}
 		}
 
-		const allTeams = [];
+		const allTeams: any[] = [];
 
 		if (!playoffsByConference) {
 			// Fix playoffsRank if conferences don't matter

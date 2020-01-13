@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, Player } from "../../common/types";
 
 async function updatePlayers(
 	{
@@ -17,7 +17,7 @@ async function updatePlayers(
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["gp", "keyStats", "av"];
-		let players = [];
+		let players: Player[] = [];
 
 		if (typeof pid === "number") {
 			const target = await idb.getCopy.players({

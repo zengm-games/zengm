@@ -7,7 +7,10 @@ typescript
 - to do
   - getting object from cache should add primary key to it\
     - test with ts-ignore on teamSeason in worker/api/index.ts
-- strict options
+- enable more strict options
+  - first strictNullChecks
+    - Object.keys/values/entries
+      - https://medium.com/@_achou/dont-give-up-and-use-suppressimplicitanyindexerrors-ca6b208b9365
 - more JS to TS
 - any
 - changelog

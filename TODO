@@ -8,7 +8,6 @@ typescript
   - getting object from cache should add primary key to it\
     - test with ts-ignore on teamSeason in worker/api/index.ts
 - strict options
-- check JS option
 - more JS to TS
 - any
 - changelog

@@ -5,7 +5,11 @@ import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import { Conditions, DraftLotteryResult } from "../../../common/types";
+import {
+	Conditions,
+	DraftLotteryResult,
+	DraftPick,
+} from "../../../common/types";
 
 /**
  * Sets draft order and save it to the draftPicks object store.
@@ -65,7 +69,7 @@ const genOrder = async (
 	const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
 
 	const numToPick = g.draftType === "nba1994" ? 3 : 4;
-	const firstN = [];
+	const firstN: number[] = [];
 
 	while (firstN.length < numToPick) {
 		const draw = random.randInt(0, totalChances - 1);
@@ -95,7 +99,7 @@ const genOrder = async (
 	// Because we're editing this later, and sometimes this is called with mock=true
 	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round
 
-	const draftPicksIndexed = [];
+	const draftPicksIndexed: DraftPick[][] = [];
 
 	for (const dp of draftPicks) {
 		const tid = dp.originalTid; // Initialize to an array

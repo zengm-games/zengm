@@ -178,7 +178,7 @@ export const newScheduleCrappy = () => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newSchedule = (teams: Team[]): [number, number][] => {
+const newSchedule = (teams: Team[]) => {
 	let tids: [number, number][];
 	let fourDivsPerConf = true;
 

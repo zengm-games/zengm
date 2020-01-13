@@ -3,6 +3,20 @@ import { idb } from "../../db";
 import { TradePickValues, TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 
+type AssetPlayer = {
+	type: "player";
+	dv: number;
+	pid: number;
+	tid: number;
+};
+type AssetPick = {
+	type: "draftPick";
+	dv: number;
+	dpid: number;
+	tid: number;
+};
+type Asset = AssetPlayer | AssetPick;
+
 /**
  * Make a trade work
  *
@@ -24,7 +38,7 @@ const makeItWork = async (
 
 	// Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
 	const tryAddAsset = async () => {
-		const assets = [];
+		const assets: Asset[] = [];
 
 		if (!holdUserConstant) {
 			// Get all players not in userPids

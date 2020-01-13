@@ -77,8 +77,9 @@ const calcWinp = ({
 	}
 
 	return 0;
-}; // Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
+};
 
+// Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
 const correctLinkLid = (
 	lid: number,
 	event: {
@@ -108,13 +109,14 @@ const defaultTicketPrice = (popRank: number) => {
 
 const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
 	// If not specified, assume user's team is playing
-	game.tid = game.tid !== undefined ? game.tid : g.userTid; // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
+	const tid: number = game.tid !== undefined ? game.tid : g.userTid;
 
+	// team0 and team1 are different than they are elsewhere! Here it refers to user and opponent, not home and away
 	const team0 = {
-		tid: game.tid,
-		abbrev: g.teamAbbrevsCache[game.tid],
-		region: g.teamRegionsCache[game.tid],
-		name: g.teamNamesCache[game.tid],
+		tid: tid,
+		abbrev: g.teamAbbrevsCache[tid],
+		region: g.teamRegionsCache[tid],
+		name: g.teamNamesCache[tid],
 		pts: game.pts,
 	};
 	const team1 = {
@@ -134,13 +136,13 @@ const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
 				: `${team1.pts}-${team0.pts}`,
 		teams: game.home ? [team1, team0] : [team0, team1],
 	};
-}; // Calculate the number of games that team is behind team0
+};
 
+// Calculate the number of games that team is behind team0
 type teamWonLost = {
 	lost: number;
 	won: number;
 };
-
 const gb = (team0: teamWonLost, team: teamWonLost) => {
 	return (team0.won - team0.lost - (team.won - team.lost)) / 2;
 };
@@ -240,7 +242,9 @@ const orderByWinp = <T extends any>(
 ): T[] => {
 	const defaultFuncs = [
 		t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
-		t => (t.seasonAttrs ? t.seasonAttrs.won : 0), // We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
+		t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+
+		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
 		t =>
 			random.uniformSeed(
 				t.tid +
@@ -335,8 +339,9 @@ const resetG = () => {
 			delete g[key];
 		}
 	}
-}; // x is value, a controls sharpness, b controls center
+};
 
+// x is value, a controls sharpness, b controls center
 const sigmoid = (x: number, a: number, b: number): number => {
 	return 1 / (1 + Math.exp(-(a * (x - b))));
 };

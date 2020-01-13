@@ -3,6 +3,7 @@ import Dropdown from "./Dropdown";
 import DropdownLinks from "./DropdownLinks";
 import NewWindowLink from "./NewWindowLink";
 import { useLocalShallow } from "../util";
+import { MenuItemHeader } from "../../common/types";
 
 const genPath = (parts, season) => {
 	if (season !== undefined) {
@@ -41,7 +42,7 @@ const TitleBar = () => {
 		return null;
 	}
 
-	const menuItems = [];
+	const menuItems: MenuItemHeader[] = [];
 
 	if (jumpTo) {
 		// Sometimes the season will be some nonsense like "all", in which case we can't generally use

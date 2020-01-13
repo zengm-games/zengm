@@ -287,7 +287,7 @@ const Account = ({
 		title: "Your Account",
 		hideNewWindow: true,
 	});
-	let goldPitchDiv = null;
+	let goldPitchDiv: React.ReactNode = null;
 
 	if (showGoldPitch) {
 		const sport = helpers.upperCaseFirstLetter(process.env.SPORT);

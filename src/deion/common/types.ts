@@ -28,6 +28,14 @@ declare global {
 		withGoodUI: () => void;
 		withGoodWorker: () => void;
 	}
+
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace NodeJS {
+		interface ProcessEnv {
+			NODE_ENV: "development" | "production" | "test";
+			SPORT: "basketball" | "football";
+		}
+	}
 }
 
 export type AchievementWhen =
@@ -517,11 +525,7 @@ export type PlayerWithoutPid<PlayerRatings = any> = {
 	// Only in players from custom league files
 	ptModifier: number;
 	ratings: PlayerRatings[];
-	relatives: {
-		type: RelativeType;
-		pid: number;
-		name: string;
-	}[];
+	relatives: Relative[];
 	retiredYear: number;
 	rosterOrder: number;
 	salaries: PlayerSalary[];

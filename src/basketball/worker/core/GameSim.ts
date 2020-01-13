@@ -339,12 +339,11 @@ class GameSim {
 			overtimes: this.overtimes,
 			team: this.team,
 			clutchPlays: this.clutchPlays,
-			playByPlay: undefined,
+			playByPlay: this.playByPlay,
 		};
 
-		if (this.playByPlay !== undefined) {
-			out.playByPlay = this.playByPlay;
-			this.playByPlay.unshift({
+		if (out.playByPlay !== undefined) {
+			out.playByPlay.unshift({
 				type: "init",
 				boxScore: this.team,
 			});
@@ -511,7 +510,7 @@ class GameSim {
 
 		for (const t of teamNums) {
 			// Overall values scaled by fatigue, etc
-			const ovrs = [];
+			const ovrs: number[] = [];
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				// Injured or fouled out players can't play
@@ -565,7 +564,7 @@ class GameSim {
 						(onCourtIsIneligible && benchIsEligible)
 					) {
 						// Check if position of substitute makes for a valid lineup
-						const pos = [];
+						const pos: string[] = [];
 
 						for (let j = 0; j < this.playersOnCourt[t].length; j++) {
 							if (j !== pp) {
@@ -1285,7 +1284,7 @@ class GameSim {
 	 */
 	doFg(
 		shooter: PlayerNumOnCourt,
-		passer: PlayerNumOnCourt | undefined | null,
+		passer: PlayerNumOnCourt | undefined,
 		type: ShotType,
 		andOne: boolean = false,
 	) {
@@ -1586,7 +1585,7 @@ class GameSim {
 			0,
 			0.95,
 		);
-		let outcome = null;
+		let outcome: string | null = null;
 
 		for (let i = 0; i < amount; i++) {
 			this.recordStat(this.o, p, "fta");

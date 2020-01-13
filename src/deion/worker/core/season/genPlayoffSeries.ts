@@ -14,7 +14,7 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 	}
 
 	// Handle byes - replace lowest seeds with undefined
-	const byeSeeds = [];
+	const byeSeeds: number[] = [];
 
 	for (let i = 0; i < numPlayoffByes; i++) {
 		byeSeeds.push(numPlayoffTeams + i);
@@ -66,7 +66,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 		Infinity,
 	);
 	const numRounds = g.numGamesPlayoffSeries.length;
-	const tidPlayoffs = [];
+	const tidPlayoffs: number[] = [];
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
 	if (numPlayoffTeams <= 0) {
@@ -90,7 +90,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 			const seeds = genSeeds(numPlayoffTeams / 2, numPlayoffByes / 2); // Default: top 50% of teams in each of the two conferences
 
 			for (let cid = 0; cid < g.confs.length; cid++) {
-				const teamsConf = [];
+				const teamsConf: TeamFiltered[] = [];
 
 				for (let i = 0; i < teams.length; i++) {
 					if (teams[i].cid === cid) {
@@ -156,7 +156,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 		}
 	} else {
 		// Alternative: top 50% of teams overall
-		const teamsConf = [];
+		const teamsConf: TeamFiltered[] = [];
 
 		for (let i = 0; i < teams.length; i++) {
 			teamsConf.push(teams[i]);

@@ -16,7 +16,12 @@ import {
 	updatePhase,
 	updateStatus,
 } from "../../util";
-import { Conditions, GameAttributes } from "../../../common/types";
+import {
+	Conditions,
+	GameAttributes,
+	PlayerWithoutPid,
+	MinimalPlayerRatings,
+} from "../../../common/types";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
 	const values = new Set();
@@ -475,7 +480,7 @@ export const createWithoutSaving = (
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();
-		const keptPlayers = [];
+		const keptPlayers: PlayerWithoutPid<MinimalPlayerRatings>[] = [];
 
 		for (
 			let numYearsAgo = NUM_PAST_SEASONS;
@@ -835,7 +840,7 @@ const create = async (
 		lastPlayed: new Date(),
 	};
 
-	if (importLid !== undefined) {
+	if (importLid !== undefined && importLid !== null) {
 		const oldLeague = await idb.meta.leagues.get(importLid);
 		await remove(importLid);
 		l.lid = importLid;

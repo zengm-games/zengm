@@ -191,7 +191,16 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 	const handleFileUpload = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => {
 			beforeFile();
-			const file = event.currentTarget.files[0];
+			const files = event.currentTarget.files;
+
+			if (!files) {
+				dispatch({
+					type: "init",
+				});
+				return;
+			}
+
+			const file = files[0];
 
 			if (!file) {
 				dispatch({

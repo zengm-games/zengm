@@ -181,7 +181,7 @@ const writePlayerStats = async (
 							return;
 						}
 
-						const promises = [];
+						const promises: Promise<any>[] = [];
 						promises.push(
 							player.checkStatisticalFeat(p.id, t.id, p, result, conditions),
 						);

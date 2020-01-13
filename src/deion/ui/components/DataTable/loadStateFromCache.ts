@@ -1,6 +1,7 @@
 import { Props, SortBy } from ".";
 
 const loadStateFromCache = (props: Props) => {
+	// @ts-ignore
 	let perPage = parseInt(localStorage.getItem("perPage"), 10);
 
 	if (Number.isNaN(perPage)) {

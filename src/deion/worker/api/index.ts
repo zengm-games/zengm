@@ -46,6 +46,7 @@ import {
 	UpdateEvents,
 	TradeTeams,
 	MinimalPlayerRatings,
+	Relative,
 } from "../../common/types";
 
 const acceptContractNegotiation = async (
@@ -205,7 +206,7 @@ const clearWatchList = async () => {
 	}
 
 	// For watched players not in cache, mark as unwatched an add to cache
-	const promises = [];
+	const promises: Promise<any>[] = [];
 	await idb.league.players.iterate(p => {
 		if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
 			p.watch = false;
@@ -389,7 +390,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	}
 
 	const ratings = overrides.common.constants.RATINGS;
-	let stats = [];
+	let stats: string[] = [];
 
 	for (const table of Object.values(
 		overrides.common.constants.PLAYER_STATS_TABLES,
@@ -414,7 +415,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 			col => col.title,
 		),
 	];
-	const rows = [];
+	const rows: any[] = [];
 
 	for (const s of seasons) {
 		console.log(s, new Date());
@@ -493,7 +494,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 		"PTS",
 		"+/-",
 	];
-	const rows = [];
+	const rows: any[] = [];
 	const teams = games.map(gm => gm.teams);
 	const seasons = games.map(gm => gm.season);
 
@@ -583,7 +584,7 @@ const genFilename = (data: any) => {
 const exportLeague = async (stores: string[], compressed: boolean) => {
 	const data = await league.exportLeague(stores);
 	const filename = genFilename(data);
-	const json = JSON.stringify(data, null, compressed ? null : 2);
+	const json = JSON.stringify(data, null, compressed ? undefined : 2);
 	return {
 		filename,
 		json,
@@ -625,7 +626,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		random.shuffle(tids);
 		tids.splice(10);
 		const estValues = await trade.getPickValues();
-		const offers = [];
+		const offers: TradeTeams[1][] = [];
 
 		for (const tid of tids) {
 			const teams: TradeTeams = [
@@ -1298,18 +1299,14 @@ const updateTeamInfo = async (
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		if (
-			newTeams[t.tid].hasOwnProperty("cid") &&
-			typeof newTeams[t.tid].cid === "number"
-		) {
-			t.cid = newTeams[t.tid].cid;
+		const { cid, did } = newTeams[t.tid];
+
+		if (cid !== undefined) {
+			t.cid = cid;
 		}
 
-		if (
-			newTeams[t.tid].hasOwnProperty("did") &&
-			typeof newTeams[t.tid].did === "number"
-		) {
-			t.did = newTeams[t.tid].did;
+		if (did !== undefined) {
+			t.did = did;
 		}
 
 		t.region = newTeams[t.tid].region;
@@ -1434,7 +1431,7 @@ const upsertCustomizedPlayer = async (
 	}
 
 	// Fill in player names for relatives
-	const relatives = [];
+	const relatives: Relative[] = [];
 
 	for (const rel of p.relatives) {
 		const p2 = await idb.getCopy.players({

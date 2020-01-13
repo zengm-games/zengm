@@ -731,6 +731,7 @@ function deepCopy<T>(obj: T): T {
 		return obj;
 	}
 
+	// @ts-ignore
 	if (obj.constructor === RegExp) {
 		return obj;
 	}
@@ -840,7 +841,7 @@ function yearRanges(arr: number[]): string[] {
 		return arr.map(String);
 	}
 
-	const runArr = [];
+	const runArr: string[] = [];
 	const tempArr = [[arr[0]]];
 
 	for (let i = 1; i < arr.length; i++) {

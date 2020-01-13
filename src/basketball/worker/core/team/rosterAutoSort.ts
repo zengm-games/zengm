@@ -10,7 +10,7 @@ import { g } from "../../../../deion/worker/util";
  * @return {Array.<number>} Indexes of the starters from the input array. If this is of length < 5, then satisfactory starters couldn't be found and any players should be used to fill in the starting lineup.
  */
 export const findStarters = (positions: string[]): number[] => {
-	const starters = []; // Will be less than 5 in length if that's all it takes to meet requirements
+	const starters: number[] = []; // Will be less than 5 in length if that's all it takes to meet requirements
 
 	let numG = 0;
 	let numFC = 0;

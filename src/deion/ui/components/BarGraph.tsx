@@ -63,7 +63,7 @@ const defaultYlim = (data, stacked) => {
 	let min = Infinity;
 	let max = -Infinity; // If stacked, add up all the components
 
-	let x = [];
+	let x: number[] = [];
 
 	if (stacked) {
 		for (let i = 0; i < data[0].length; i++) {
@@ -230,7 +230,7 @@ const BarGraph = (props: Props) => {
 	} else {
 		// Stacked
 		bars = [];
-		const offsets = [];
+		const offsets: number[] = [];
 
 		for (let j = 0; j < data.length; j++) {
 			for (let i = 0; i < data[j].length; i++) {

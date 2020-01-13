@@ -26,8 +26,8 @@ const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
 		const players = await idb.getCopies.players({
 			tid: t.tid,
 		});
-		const pidsGood = [];
-		const pidsExcludedGood = [];
+		const pidsGood: number[] = [];
+		const pidsExcludedGood: number[] = [];
 
 		for (const p of players) {
 			// Also, make sure player is not untradable
@@ -49,8 +49,8 @@ const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
 			"draftPicksByTid",
 			t.tid,
 		);
-		const dpidsGood = [];
-		const dpidsExcludedGood = [];
+		const dpidsGood: number[] = [];
+		const dpidsExcludedGood: number[] = [];
 
 		for (const dp of draftPicks) {
 			if (t.dpids.includes(dp.dpid)) {

@@ -11,8 +11,8 @@ const calculatePER = (players, teams, league) => {
 		}
 	}
 
-	const aPER = [];
-	const mins = [];
+	const aPER: number[] = [];
+	const mins: number[] = [];
 	league.aPER = 0;
 
 	for (let i = 0; i < players.length; i++) {
@@ -61,7 +61,7 @@ const calculatePER = (players, teams, league) => {
 	league.aPER /= league.gp * 5 * 4 * g.quarterLength;
 	const PER = aPER.map(num => num * (15 / league.aPER)); // Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
 
-	const EWA = []; // Position Replacement Levels
+	const EWA: number[] = []; // Position Replacement Levels
 
 	const prls = {
 		PG: 11,
@@ -96,13 +96,13 @@ const calculatePER = (players, teams, league) => {
 }; // https://www.basketball-reference.com/about/glossary.html
 
 const calculatePercentages = (players, teams) => {
-	const astp = [];
-	const blkp = [];
-	const drbp = [];
-	const orbp = [];
-	const stlp = [];
-	const trbp = [];
-	const usgp = [];
+	const astp: number[] = [];
+	const blkp: number[] = [];
+	const drbp: number[] = [];
+	const orbp: number[] = [];
+	const stlp: number[] = [];
+	const trbp: number[] = [];
+	const usgp: number[] = [];
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
@@ -183,10 +183,10 @@ const calculatePercentages = (players, teams) => {
 }; // https://www.basketball-reference.com/about/ratings.html
 
 const calculateRatings = (players, teams, league) => {
-	const drtg = [];
-	const dws = [];
-	const ortg = [];
-	const ows = [];
+	const drtg: number[] = [];
+	const dws: number[] = [];
+	const ortg: number[] = [];
+	const ows: number[] = [];
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];

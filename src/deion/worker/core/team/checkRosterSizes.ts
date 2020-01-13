@@ -2,6 +2,7 @@ import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, overrides } from "../../util";
+import { Player } from "../../../common/types";
 
 /**
  * Check roster size limits
@@ -15,7 +16,7 @@ import { g, helpers, local, overrides } from "../../util";
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
 const checkRosterSizes = async (): Promise<string | void> => {
-	const minFreeAgents = [];
+	const minFreeAgents: Player[] = [];
 	let userTeamSizeError;
 
 	const checkRosterSize = async tid => {
@@ -41,13 +42,9 @@ const checkRosterSizes = async (): Promise<string | void> => {
 				// Automatically drop lowest value players until we reach g.maxRosterSize
 				players.sort((a, b) => a.value - b.value); // Lowest first
 
-				const promises = [];
-
 				for (let i = 0; i < numPlayersOnRoster - g.maxRosterSize; i++) {
-					promises.push(player.release(players[i], false));
+					await player.release(players[i], false);
 				}
-
-				await Promise.all(promises);
 			}
 		} else if (numPlayersOnRoster < g.minRosterSize) {
 			if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {

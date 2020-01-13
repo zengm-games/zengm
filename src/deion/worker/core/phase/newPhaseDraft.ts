@@ -10,7 +10,7 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	// slower is fine). This assumes all killable players have no changes in the cache, which is almost certainly true,
 	// but under certain rare cases could cause a minor problem. For performance reasons, this also assumes that any
 	// player drafted more than 110 years ago is dead already. If that's not true, congrats on immortality!
-	const promises = [];
+	const promises: Promise<any>[] = [];
 	await idb.league.players
 		.index("draft.year, retiredYear")
 		.iterate(backboard.bound([g.season - 110], [""]), p => {

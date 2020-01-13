@@ -24,6 +24,10 @@ let userPick2;
 const testDraftUser = async round => {
 	const draftPicks = await draft.getOrder();
 	const dp = draftPicks.shift();
+	if (!dp) {
+		throw new Error("No draft pick");
+	}
+
 	assert.equal(dp.round, round);
 
 	if (round === 1) {

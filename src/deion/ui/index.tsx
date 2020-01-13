@@ -71,6 +71,7 @@ const handleVersion = async () => {
 		if (cmpResult === 1) {
 			// This version is newer than another tab's - send a signal to the other tabs
 			let conflictNum = parseInt(
+				// @ts-ignore
 				localStorage.getItem("bbgmVersionConflict"),
 				10,
 			);

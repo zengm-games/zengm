@@ -76,8 +76,8 @@ const Controller = () => {
 		inLeague: false,
 		data: {},
 	});
-	const idLoaded = useRef(undefined);
-	const idLoading = useRef(undefined);
+	const idLoaded = useRef<string | undefined>(undefined);
+	const idLoading = useRef<string | undefined>(undefined);
 	const { lid, popup, showNagModal } = useLocalShallow(state2 => ({
 		lid: state2.lid,
 		popup: state2.popup,
@@ -218,7 +218,7 @@ const Controller = () => {
 	);
 	useEffect(() => {
 		return local.subscribe<LocalStateUI["viewInfo"]>(
-			async viewInfo => {
+			async (viewInfo: LocalStateUI["viewInfo"]) => {
 				if (viewInfo !== undefined) {
 					try {
 						await updatePage(

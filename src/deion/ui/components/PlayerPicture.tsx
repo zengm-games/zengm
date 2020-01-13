@@ -1,6 +1,7 @@
 import { display } from "facesjs";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
+
 const imgStyle = {
 	marginTop: 20,
 	maxHeight: "100%",
@@ -16,7 +17,7 @@ const PlayerPicture = ({
 	imgURL: string | undefined;
 	teamColors: [string, string, string] | undefined;
 }) => {
-	const [wrapper, setWrapper] = useState(null);
+	const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
 	useEffect(() => {
 		if (face && !imgURL && wrapper) {
 			const overrides = {

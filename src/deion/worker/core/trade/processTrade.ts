@@ -5,7 +5,7 @@ import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
 import { TradeSummary } from "../../../common/types";
 
 const formatAssetsEventLog = t => {
-	const strings = [];
+	const strings: string[] = [];
 	t.trade.forEach(p =>
 		strings.push(
 			`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`,

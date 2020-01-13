@@ -22,7 +22,7 @@ const avgRatingDists = (numPlayers: number = 100) => {
 			reb: [],
 		};
 	});
-	let playersToProcess = [];
+	let playersToProcess: any[] = [];
 
 	for (let i = 0; i < numPlayers; i++) {
 		if (playersToProcess.length === 0) {

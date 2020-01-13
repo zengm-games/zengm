@@ -284,7 +284,7 @@ const processTeam = async (
 		processAttrs(output, t, attrs);
 	}
 
-	const promises = [];
+	const promises: Promise<any>[] = [];
 
 	if (seasonAttrs.length > 0) {
 		promises.push(processSeasonAttrs(output, t, seasonAttrs, season));

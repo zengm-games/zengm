@@ -14,7 +14,7 @@ const OwnerMoodsChart = ({
 	ownerMoods: OwnerMood[];
 	year: number;
 }) => {
-	const [node, setNode] = useState(null);
+	const [node, setNode] = useState<HTMLDivElement | null>(null);
 	const getNode = useCallback(node2 => {
 		if (node2 !== null) {
 			setNode(node2);
@@ -29,8 +29,8 @@ const OwnerMoodsChart = ({
 					year: String(year - ownerMoods.length + 1 + i),
 				};
 			});
-			const allValues = [];
-			const years = [];
+			const allValues: number[] = [];
+			const years: string[] = [];
 
 			for (const row of data) {
 				allValues.push(row.money, row.playoffs, row.total, row.wins);

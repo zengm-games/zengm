@@ -36,7 +36,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		warning: null,
 	}; // Calculate properties of the trade
 
-	const promises = [];
+	const promises: Promise<any>[] = [];
 	[0, 1].forEach(i => {
 		promises.push(
 			idb.cache.players

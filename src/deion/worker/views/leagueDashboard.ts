@@ -98,7 +98,12 @@ async function updateTeams(inputs: GetOutput, updateEvents: UpdateEvents) {
 		let rank = 1;
 		let revenue = 0;
 		let profit = 0;
-		let teamStats = [];
+		let teamStats: {
+			name: string;
+			rank: number;
+			stat: string;
+			value: number;
+		}[] = [];
 
 		for (const t2 of teams) {
 			if (t2.cid === cid) {
@@ -202,7 +207,23 @@ async function updateSchedule(inputs: GetOutput, updateEvents: UpdateEvents) {
 		updateEvents.includes("newPhase")
 	) {
 		const schedule = await season.getSchedule();
-		const games = [];
+		const games: {
+			gid?: number;
+			teams: [
+				{
+					tid: number;
+					abbrev: string;
+					region: string;
+					name: string;
+				},
+				{
+					tid: number;
+					abbrev: string;
+					region: string;
+					name: string;
+				},
+			];
+		}[] = [];
 		const numShowUpcoming = 3;
 
 		for (let i = 0; i < schedule.length; i++) {
@@ -278,7 +299,13 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 		});
 
 		// League leaders
-		const leagueLeaders = [];
+		const leagueLeaders: {
+			abbrev: string;
+			name: string;
+			pid: number;
+			stat: string;
+			value: number;
+		}[] = [];
 
 		for (const stat of leaderStats) {
 			if (players.length > 0) {
@@ -303,7 +330,12 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 
 		// Team leaders
 		const userPlayers = players.filter(p => p.tid === g.userTid);
-		const teamLeaders = [];
+		const teamLeaders: {
+			name: string;
+			pid: number;
+			stat: string;
+			value: number;
+		}[] = [];
 
 		for (const stat of leaderStats) {
 			if (userPlayers.length > 0) {
@@ -364,10 +396,8 @@ async function updatePlayoffs(inputs: GetOutput, updateEvents: UpdateEvents) {
 
 			for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
 				for (let i = 0; i < series[rnd].length; i++) {
-					if (
-						series[rnd][i].home.tid === g.userTid ||
-						(series[rnd][i].away && series[rnd][i].away.tid === g.userTid)
-					) {
+					const { away, home } = series[rnd][i];
+					if (home.tid === g.userTid || (away && away.tid === g.userTid)) {
 						foundSeries = series[rnd][i];
 						found = true;
 						showPlayoffSeries = true;
@@ -426,7 +456,7 @@ async function updateStandings(inputs: GetOutput, updateEvents: UpdateEvents) {
 			}
 		}
 
-		const confTeams = [];
+		const confTeams: any[] = [];
 		let l = 0;
 
 		for (let k = 0; k < teams.length; k++) {

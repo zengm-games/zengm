@@ -2,6 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../util";
+
 type SeriesTeam = {
 	abbrev: string;
 	cid: number;
@@ -18,6 +19,7 @@ type SeriesTeam = {
 	winp: number;
 	won?: number;
 };
+
 const faded = {
 	opacity: 0.3,
 };
@@ -55,7 +57,7 @@ const Team = ({
 		>
 			{team.imgURL ? (
 				<div className="playoff-matchup-logo">
-					<img style={lost ? faded : null} src={team.imgURL} alt="" />
+					<img style={lost ? faded : undefined} src={team.imgURL} alt="" />
 				</div>
 			) : null}
 			<div className="mx-1">

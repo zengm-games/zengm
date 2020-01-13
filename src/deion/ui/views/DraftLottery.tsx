@@ -11,7 +11,7 @@ const getProbs = (
 	result: DraftLotteryResultArray,
 	draftType: "nba1994" | "nba2019",
 ): (number | undefined)[][] => {
-	const probs = [];
+	const probs: number[][] = [];
 	const topNCombos = new Map();
 	const totalChances = result.reduce(
 		(total, { chances }) => total + chances,
@@ -195,7 +195,7 @@ class DraftLotteryTable extends React.Component<Props, State> {
 			started: true,
 		});
 		const { draftType, result } = await toWorker("draftLottery");
-		const toReveal = [];
+		const toReveal: number[] = [];
 
 		for (let i = 0; i < result.length; i++) {
 			const pick = result[i].pick;

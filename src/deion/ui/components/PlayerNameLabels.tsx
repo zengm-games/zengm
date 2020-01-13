@@ -24,7 +24,7 @@ const PlayerNameLabels = ({
 	};
 	watch?: boolean;
 }) => {
-	let injuryIcon = null;
+	let injuryIcon: React.ReactNode = null;
 
 	if (injury !== undefined) {
 		if (injury.gamesRemaining > 0) {

@@ -112,8 +112,9 @@ const truncGauss = (
  */
 const uniform = (a: number, b: number): number => {
 	return Math.random() * (b - a) + a;
-}; // https://stackoverflow.com/a/19303725/786644
+};
 
+// https://stackoverflow.com/a/19303725/786644
 const uniformSeed = (seed: number): number => {
 	const x = Math.sin(seed) * 10000;
 	return x - Math.floor(x);
@@ -131,7 +132,7 @@ const choice = <T extends any>(x: T[], weightFunc?: (a: T) => number): T => {
 	}
 
 	const weights = x.map(weightFunc);
-	const cumsums = weights.reduce((array, weight, i) => {
+	const cumsums = weights.reduce<number[]>((array, weight, i) => {
 		if (i === 0) {
 			array[0] = weight;
 		} else {

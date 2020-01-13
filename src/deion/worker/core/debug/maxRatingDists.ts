@@ -10,7 +10,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 	}
 
 	const ages = helpers.deepCopy(ratings);
-	let playersToProcess = [];
+	let playersToProcess: any[] = [];
 
 	for (let i = 0; i < numPlayers; i++) {
 		if (playersToProcess.length === 0) {

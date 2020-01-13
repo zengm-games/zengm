@@ -4,7 +4,7 @@ import draftOne from "./draftOne";
 
 const draftAll = async (): Promise<number[]> => {
 	const allStars = await idb.cache.allStars.get(g.season);
-	const pids = [];
+	const pids: number[] = [];
 
 	while (!allStars.finalized) {
 		const { pid } = await draftOne();

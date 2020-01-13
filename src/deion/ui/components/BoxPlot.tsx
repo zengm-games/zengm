@@ -158,7 +158,7 @@ const BoxPlot = ({
 	);
 
 	// Labels
-	let labelDivs = null;
+	let labelDivs;
 
 	if (labels) {
 		const minScaleLabel = (
@@ -259,6 +259,8 @@ const BoxPlot = ({
 			upperLabel,
 			maxScaleLabel,
 		];
+	} else {
+		labelDivs = null;
 	}
 
 	return (

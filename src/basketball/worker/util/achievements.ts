@@ -59,7 +59,7 @@ const getUserSeed = async () => {
 	}
 
 	for (const matchup of playoffSeries.series[0]) {
-		if (matchup.away.tid === g.userTid) {
+		if (matchup.away && matchup.away.tid === g.userTid) {
 			return matchup.away.seed;
 		}
 

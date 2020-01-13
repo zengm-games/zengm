@@ -17,8 +17,8 @@ const Confirm = confirmable(
 			() => proceed(defaultValue === undefined ? false : null),
 			[defaultValue, proceed],
 		);
-		const inputRef = useRef(null);
-		const okRef = useRef(null);
+		const inputRef = useRef<HTMLInputElement>(null);
+		const okRef = useRef<HTMLButtonElement>(null);
 		useEffect(() => {
 			// Ugly hack that became necessary when upgrading reactstrap from v6 to v8
 			setTimeout(() => {

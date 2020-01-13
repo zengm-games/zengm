@@ -97,7 +97,7 @@ const play = async (
 				return result.gid;
 			}),
 		);
-		const promises = [];
+		const promises: Promise<any>[] = [];
 
 		// Update playoff series W/L
 		if (g.phase === PHASE.PLAYOFFS) {

@@ -28,7 +28,7 @@ const Pagination = ({
 		lastShownPage = numPages;
 	}
 
-	const numberedPages = [];
+	const numberedPages: React.ReactNode[] = [];
 
 	for (let i = firstShownPage; i <= lastShownPage; i++) {
 		numberedPages.push(

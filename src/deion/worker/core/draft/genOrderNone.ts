@@ -2,6 +2,7 @@ import genPicks from "./genPicks";
 import lotterySort from "./lotterySort";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
+import { DraftPick } from "../../../common/types";
 
 const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -31,7 +32,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	// Because we're editing this later, and sometimes this is called with mock=true
 	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round
 
-	const draftPicksIndexed = [];
+	const draftPicksIndexed: DraftPick[][] = [];
 
 	for (const dp of draftPicks) {
 		const tid = dp.originalTid; // Initialize to an array

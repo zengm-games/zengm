@@ -31,7 +31,7 @@ const useTitleBar = ({
 		teamRegionsCache: state2.teamRegionsCache,
 	}));
 	useEffect(() => {
-		const parts = [];
+		const parts: string[] = [];
 
 		if (title) {
 			parts.push(title);

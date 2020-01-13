@@ -229,8 +229,9 @@ class DataTable extends React.Component<Props, State> {
 			nextProps.addFilters.length === prevState.filters.length
 		) {
 			for (let i = 0; i < nextProps.addFilters.length; i++) {
-				if (nextProps.addFilters[i] !== undefined) {
-					filters[i] = nextProps.addFilters[i];
+				const filter = nextProps.addFilters[i];
+				if (filter !== undefined) {
+					filters[i] = filter;
 					changed = true;
 				} else if (!prevState.enableFilters) {
 					// If there is a saved but hidden filter, remove it

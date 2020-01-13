@@ -11,12 +11,12 @@ import { Team } from "../../../../deion/common/types";
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newScheduleDefault = (teams): [number, number][] => {
-	const tids = []; // tid_home, tid_away
+const newScheduleDefault = teams => {
+	const tids: [number, number][] = []; // tid_home, tid_away
 	// Collect info needed for scheduling
 
-	const homeGames = [];
-	const awayGames = [];
+	const homeGames: number[] = [];
+	const awayGames: number[] = [];
 
 	for (let i = 0; i < teams.length; i++) {
 		homeGames[i] = 0;
@@ -26,7 +26,7 @@ const newScheduleDefault = (teams): [number, number][] => {
 	for (let i = 0; i < teams.length; i++) {
 		for (let j = 0; j < teams.length; j++) {
 			if (teams[i].tid !== teams[j].tid) {
-				const game = [teams[i].tid, teams[j].tid]; // Constraint: 1 home game vs. each team in other conference
+				const game: [number, number] = [teams[i].tid, teams[j].tid]; // Constraint: 1 home game vs. each team in other conference
 
 				if (teams[i].cid !== teams[j].cid) {
 					tids.push(game);
@@ -55,8 +55,8 @@ const newScheduleDefault = (teams): [number, number][] => {
 
 	// Constraint: 1-2 home games vs. each team in same conference and different division
 	// Constraint: We need 8 more of these games per home team!
-	const tidsByConf = [[], []];
-	const dids = [[], []];
+	const tidsByConf: [number[], number[]] = [[], []];
+	const dids: [number[], number[]] = [[], []];
 
 	for (let i = 0; i < teams.length; i++) {
 		tidsByConf[teams[i].cid].push(i);
@@ -64,12 +64,11 @@ const newScheduleDefault = (teams): [number, number][] => {
 	}
 
 	for (let cid = 0; cid < g.confs.length; cid++) {
-		const matchups = [];
-		matchups.push([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]);
+		const matchups = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]];
 		let games = 0;
 
 		while (games < 8) {
-			let newMatchup = [];
+			let newMatchup: number[] = [];
 			let n = 0;
 
 			while (n <= 14) {
@@ -126,7 +125,7 @@ const newScheduleDefault = (teams): [number, number][] => {
 				const t = matchup[k];
 				const ii = tidsByConf[cid][t];
 				const jj = tidsByConf[cid][matchup[t]];
-				const game = [teams[ii].tid, teams[jj].tid];
+				const game: [number, number] = [teams[ii].tid, teams[jj].tid];
 				tids.push(game);
 				homeGames[ii] += 1;
 				awayGames[jj] += 1;
@@ -145,7 +144,7 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
 		tids.push("DUMMY");
 	}
 
-	const matchups = []; // Take teams from first half (i) and second half (j)
+	const matchups: [number, number][] = []; // Take teams from first half (i) and second half (j)
 
 	for (let j = 0; j < tids.length - 1; j += 1) {
 		for (let i = 0; i < tids.length / 2; i += 1) {
@@ -158,6 +157,7 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
 		}
 
 		// Permute tids for next round - take the last one and move it up to 2nd, leaving 1st in place
+		// @ts-ignore
 		tids.splice(1, 0, tids.pop());
 	}
 
@@ -172,11 +172,11 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-export const newScheduleCrappy = (): [number, number][] => {
+export const newScheduleCrappy = () => {
 	const tids = range(g.numTeams);
 	random.shuffle(tids); // Number of games left to reschedule for each team
 
-	const numRemaining = [];
+	const numRemaining: number[] = [];
 
 	for (let i = 0; i < g.numTeams; i++) {
 		numRemaining[i] = g.numGames;
@@ -184,7 +184,7 @@ export const newScheduleCrappy = (): [number, number][] => {
 
 	let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
 
-	const matchups = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
+	const matchups: [number, number][] = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
 
 	const potentialMatchups = roundRobin(tids);
 
@@ -225,8 +225,8 @@ export const newScheduleCrappy = (): [number, number][] => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newSchedule = (teams: Team[]): [number, number][] => {
-	let tids;
+const newSchedule = (teams: Team[]) => {
+	let tids: [number, number][];
 	let threeDivsPerConf = true;
 
 	for (const conf of g.confs) {
@@ -259,8 +259,8 @@ const newSchedule = (teams: Team[]): [number, number][] => {
 
 	// Order the schedule so that it takes fewer days to play
 	random.shuffle(tids);
-	const days = [[]];
-	const tidsInDays = [[]];
+	const days: [number, number][][] = [[]];
+	const tidsInDays: number[][] = [[]];
 	let jMax = 0;
 
 	for (let i = 0; i < tids.length; i++) {

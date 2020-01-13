@@ -46,8 +46,8 @@ const betweenAiTeams = async () => {
 	}
 
 	const r = Math.random();
-	const pids = [];
-	const dpids = [];
+	const pids: number[] = [];
+	const dpids: number[] = [];
 
 	if (r < 0.33 || draftPicks.length === 0) {
 		pids.push(random.choice(players).pid);

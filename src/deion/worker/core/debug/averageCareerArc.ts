@@ -8,9 +8,9 @@ const averageCareerArc = (ratingToSave: string) => {
 	const numPlayers = 1000; // Number of players per profile
 
 	const numSeasons = 20;
-	const averageOvr = [];
-	const averagePot = [];
-	const averageRat = [];
+	const averageOvr: number[] = [];
+	const averagePot: number[] = [];
+	const averageRat: number[] = [];
 
 	for (let i = 0; i < numSeasons; i++) {
 		averageOvr[i] = 0;

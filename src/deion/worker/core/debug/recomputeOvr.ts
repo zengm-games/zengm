@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import { overrides, toUI } from "../../util";
 
 const recomputeOvr = async () => {
-	const ovrs = [];
+	const ovrs: any[] = [];
 	await idb.league.tx("players", "readwrite", async tx => {
 		await tx.players.iterate(p => {
 			const ratings = p.ratings[p.ratings.length - 1];

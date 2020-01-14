@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 import { UncontrolledTooltip } from "reactstrap";
@@ -61,17 +59,18 @@ import { UncontrolledTooltip } from "reactstrap";
  *     />
  */
 
+const isStacked = (data: number[] | number[][]): data is number[][] => {
+	return data[0].hasOwnProperty("length");
+};
+
 // Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
-const defaultYlim = (
-	data: number[] | number[][],
-	stacked: boolean,
-): [number, number] => {
+const defaultYlim = (data: number[] | number[][]): [number, number] => {
 	let min = Infinity;
 	let max = -Infinity; // If stacked, add up all the components
 
 	let x: number[] = [];
 
-	if (data[0].length) {
+	if (isStacked(data)) {
 		for (let i = 0; i < data[0].length; i++) {
 			x[i] = 0;
 
@@ -106,7 +105,7 @@ const defaultYlim = (
 	}
 
 	// For stacked plots, min is always 0
-	if (stacked) {
+	if (isStacked(data)) {
 		min = 0;
 	}
 
@@ -155,8 +154,7 @@ const BarGraph = (props: Props) => {
 	}
 
 	// Stacked plot or not?
-	const stacked = data[0].hasOwnProperty("length");
-	const numBars = stacked ? data[0].length : data.length;
+	const numBars = isStacked(data) ? data[0].length : data.length;
 
 	if (numBars === 0) {
 		return null;
@@ -164,12 +162,12 @@ const BarGraph = (props: Props) => {
 
 	const widthPct = 100 / numBars; // ylim specified or not?
 
-	const ylim = ylimArg === undefined ? defaultYlim(data, stacked) : ylimArg; // Convert heights to percentages
+	const ylim = ylimArg === undefined ? defaultYlim(data) : ylimArg; // Convert heights to percentages
 
 	const scaled: any = [];
 
 	for (let i = 0; i < data.length; i++) {
-		if (!stacked) {
+		if (!isStacked(data)) {
 			scaled[i] = scale(data[i], ylim);
 		} else {
 			scaled[i] = [];
@@ -183,7 +181,7 @@ const BarGraph = (props: Props) => {
 	// Draw bars
 	let bars;
 
-	if (!stacked) {
+	if (!isStacked(data)) {
 		// Not stacked
 		bars = data.map((val, i) => {
 			let titleStart = "";

@@ -1,9 +1,17 @@
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState, ChangeEvent } from "react";
 import useDropdownOptions from "../hooks/useDropdownOptions";
 import { helpers, realtimeUpdate } from "../util";
 
-const Select = ({ field, handleChange, value }) => {
+const Select = ({
+	field,
+	handleChange,
+	value,
+}: {
+	field: string;
+	handleChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+	value: number | string;
+}) => {
 	const options = useDropdownOptions(field);
 	const [width, setWidth] = useState();
 	useEffect(() => {
@@ -57,6 +65,7 @@ Select.propTypes = {
 	handleChange: PropTypes.func.isRequired,
 	value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
 };
+
 type Props = {
 	extraParam?: number | string;
 	fields: {

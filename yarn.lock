@@ -852,6 +852,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/roman-numerals@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@types/roman-numerals/-/roman-numerals-0.3.0.tgz#6e8ad8e7c0dc6e2d4f4d6aca9df6677f3b8e2282"
+  integrity sha512-sfO4vwDEH5hpm9GHQMkcJaRUWgcrlgJn9YLQv+6l9JBQk+Xe4nx9zfbHgS+3x1sMwZUnFc0sgTY0eAHr9Foqhw==
+
 "@types/sharedworker@^0.0.29":
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/sharedworker/-/sharedworker-0.0.29.tgz#69ce70764a0380f4c27ae036f6f9c4e2c75dbdac"

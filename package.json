@@ -88,6 +88,7 @@
 		"@types/react-confirm": "^0.1.4",
 		"@types/react-dom": "^16.9.4",
 		"@types/reactstrap": "^8.2.0",
+		"@types/roman-numerals": "^0.3.0",
 		"@types/sharedworker": "^0.0.29",
 		"@types/stripe-checkout": "^1.0.3",
 		"@typescript-eslint/eslint-plugin": "^2.15.0",

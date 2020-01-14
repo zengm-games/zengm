@@ -11,7 +11,7 @@ import { TeamStats } from "../../../common/types";
  * @return {Object} Team stats object.
  */
 const genStatsRow = (tid: number, playoffs: boolean = false): TeamStats => {
-	const statsRow = {
+	const statsRow: TeamStats = {
 		playoffs,
 		season: g.season,
 		tid,

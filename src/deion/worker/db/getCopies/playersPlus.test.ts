@@ -6,7 +6,7 @@ import { idb } from "..";
 import { g } from "../../util";
 
 describe("worker/db/getCopies/playersPlus", () => {
-	let p;
+	let p: any;
 	beforeAll(async () => {
 		testHelpers.resetG();
 		g.season = 2011;

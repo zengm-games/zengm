@@ -4,7 +4,11 @@ import { g } from "../../util";
 import { trade } from "..";
 import { beforeTests, reset } from "./testHelpers";
 
-const testCreateTrade = async (otherTidTest, userPidsTest, otherPidsTest) => {
+const testCreateTrade = async (
+	otherTidTest: number,
+	userPidsTest: number[],
+	otherPidsTest: number[],
+) => {
 	const { teams } = await idb.cache.trade.get(0);
 	assert.deepEqual(teams[1].tid, otherTidTest);
 	assert.deepEqual(teams[0].pids, userPidsTest);

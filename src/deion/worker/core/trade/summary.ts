@@ -107,7 +107,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		!g.hardCap &&
 		((ratios[0] > 125 && overCap[0]) || (ratios[1] > 125 && overCap[1]));
 
-	const overCapAndIncreasing = i =>
+	const overCapAndIncreasing = (i: 0 | 1) =>
 		overCap[i] && s.teams[i].payrollAfterTrade > s.teams[i].payrollBeforeTrade;
 
 	const hardCapCondition =

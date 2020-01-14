@@ -233,7 +233,7 @@ export const makeBrother = async (p: Player) => {
 	p.lastName = brotherLastName;
 	p.born.loc = brother.born.loc;
 
-	const edgeCases = async (brother1, brother2) => {
+	const edgeCases = async (brother1: Player, brother2: Player) => {
 		// Handle case where one brother already has a brother
 		if (hasRelative(brother1, "brother")) {
 			const brothers = await getRelatives(brother1, "brother");

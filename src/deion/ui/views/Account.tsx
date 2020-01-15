@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { MouseEvent } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
@@ -36,7 +36,7 @@ class StripeButton extends React.Component<
 	StripeButtonProps,
 	StripeButtonState
 > {
-	constructor(props) {
+	constructor(props: StripeButtonProps) {
 		super(props);
 		this.state = {
 			handler: null,
@@ -116,7 +116,7 @@ StripeButton.propTypes = {
 	email: PropTypes.string.isRequired,
 };
 
-const handleCancel = async e => {
+const handleCancel = async (e: MouseEvent) => {
 	e.preventDefault();
 	const result = await confirm(
 		"Are you sure you want to cancel your GM Gold subscription?",
@@ -163,7 +163,7 @@ type UserInfoState = {
 };
 
 class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
-	constructor(props) {
+	constructor(props: UserInfoProps) {
 		super(props);
 		this.state = {
 			logoutError: null,
@@ -171,7 +171,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
 		this.handleLogout = this.handleLogout.bind(this);
 	}
 
-	async handleLogout(e) {
+	async handleLogout(e: MouseEvent) {
 		e.preventDefault();
 		this.setState({
 			logoutError: null,
@@ -387,7 +387,7 @@ const Account = ({
 			</p>
 
 			{Object.entries(groupBy(achievements, "category")).map(
-				([category, catAchivements]: [any, any]) => {
+				([category, catAchivements]: [any, any[]]) => {
 					return (
 						<React.Fragment key={category}>
 							<h3 className="mt-4">{category}</h3>

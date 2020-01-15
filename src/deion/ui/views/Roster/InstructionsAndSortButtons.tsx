@@ -10,7 +10,13 @@ const handleResetPT = async (tid: number) => {
 	await toWorker("resetPlayingTime", tid);
 };
 
-const InstructionsAndSortButtons = ({ editable, tid }) => {
+const InstructionsAndSortButtons = ({
+	editable,
+	tid,
+}: {
+	editable: boolean;
+	tid: number;
+}) => {
 	if (!editable) {
 		return null;
 	}

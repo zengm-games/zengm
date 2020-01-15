@@ -5,7 +5,7 @@ import NewWindowLink from "./NewWindowLink";
 import { useLocalShallow } from "../util";
 import { MenuItemHeader } from "../../common/types";
 
-const genPath = (parts, season) => {
+const genPath = (parts: string[], season: string | undefined) => {
 	if (season !== undefined) {
 		return [...parts, season];
 	}

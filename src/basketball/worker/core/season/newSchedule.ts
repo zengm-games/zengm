@@ -11,7 +11,13 @@ import { Team } from "../../../../deion/common/types";
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newScheduleDefault = teams => {
+const newScheduleDefault = (
+	teams: {
+		cid: number;
+		did: number;
+		tid: number;
+	}[],
+) => {
 	const tids: [number, number][] = []; // tid_home, tid_away
 	// Collect info needed for scheduling
 

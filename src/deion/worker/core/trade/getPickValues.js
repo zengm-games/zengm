@@ -20,23 +20,36 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	let maxLength = 0;
 	const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 	for (
-		let draftYear = g.season + seasonOffset;
+		let draftYear = g.season + seasonOffset; //value the next three years?
 		draftYear < g.season + seasonOffset + 3;
 		draftYear++
 	) {
-		const players = (await idb.cache.players.indexGetAll(
-			"playersByDraftYearRetiredYear",
-			[[draftYear], [draftYear, Infinity]],
-		)).filter(p => p.tid === PLAYER.UNDRAFTED);
+		const players = (
+			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+				[draftYear],
+				[draftYear, Infinity],
+			])
+		).filter(p => p.tid === PLAYER.UNDRAFTED); //get undrafted players drafted in draftyear
 		if (players.length > 0) {
 			players.sort((a, b) => b.value - a.value);
-			estValues[players[0].draft.year] = players.map(p => p.value + 4); // +4 is to generally make picks more valued
+			const yearChangeFactor = 1.1 ** (draftYear - g.season);
+			estValues[players[0].draft.year] = players.map(
+				p => p.value / yearChangeFactor,
+			); // +4 is to generally make picks more valued
 
 			if (estValues[players[0].draft.year].length > maxLength) {
 				maxLength = estValues[players[0].draft.year].length;
 			}
 		}
 	}
+
+	//console.log(estValues);
+
+	/*
+		estValues is a hash table with keys corresponding to the years that players were drafted
+		the values are arrays holding the slightly overvalued player values for each pick
+		so like estValues[2015][0] is the value of the player drafted 1st in 2015
+	*/
 
 	// Handle case where draft is in progress
 	if (g.phase === PHASE.DRAFT) {

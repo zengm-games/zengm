@@ -1,12 +1,13 @@
 // @flow
 
-import countBy from "lodash/countBy";
+//import countBy from "lodash/countBy";
 import { PHASE } from "../../../common";
 import { draft, player, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { TradePickValues } from "../../../common/types";
 import getPayroll from "./getPayroll";
+import updateValues from "../player/updateValues";
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
 const valueChange = async (
@@ -34,12 +35,13 @@ const valueChange = async (
 		tid,
 	});
 	if (!t) {
+		//console.log("invalid team ID");
 		throw new Error("Invalid team ID");
 	}
 
 	const strategy = t.strategy;
-	const gpAvg = helpers.bound(t.stats.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
 
+	const gpAvg = helpers.bound(t.stats.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
 	const payroll = await getPayroll(tid);
 
 	const difficultyFudgeFactor = helpers.bound(
@@ -54,22 +56,29 @@ const valueChange = async (
 		const fudgeFactor = (tid !== g.userTid ? 1.05 : 1) * difficultyFudgeFactor;
 
 		// Get roster and players to remove
-		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+		const players = await idb.cache.players.indexGetAll("playersByTid", tid); //get all the players on tid
 		for (const p of players) {
+			//for each player
+			updateValues(p);
 			if (!pidsRemove.includes(p.pid)) {
+				//player from tid not in pidsRemove put on roster
 				roster.push({
-					value: p.value,
+					value: strategy === "contending" ? p.valueNoPot : p.value,
 					skills: p.ratings[p.ratings.length - 1].skills,
 					contract: p.contract,
+					overall: p.ratings[p.ratings.length - 1].ovr,
 					worth: player.genContract(p, false, false, true),
 					injury: p.injury,
 					age: g.season - p.born.year,
 				});
 			} else {
+				//player from tid in pidsRemove put in remove
 				remove.push({
-					value: p.value * fudgeFactor,
+					value:
+						fudgeFactor * (strategy === "contending" ? p.valueNoPot : p.value),
 					skills: p.ratings[p.ratings.length - 1].skills,
 					contract: p.contract,
+					overall: p.ratings[p.ratings.length - 1].ovr,
 					worth: player.genContract(p, false, false, true),
 					injury: p.injury,
 					age: g.season - p.born.year,
@@ -79,11 +88,14 @@ const valueChange = async (
 
 		// Get players to add
 		for (const pid of pidsAdd) {
+			//add players from other team to add
 			const p = await idb.cache.players.get(pid);
+			updateValues(p);
 			add.push({
-				value: p.valueWithContract,
+				value: strategy === "contending" ? p.valueNoPot : p.value,
 				skills: p.ratings[p.ratings.length - 1].skills,
 				contract: p.contract,
+				overall: p.ratings[p.ratings.length - 1].ovr,
 				worth: player.genContract(p, false, false, true),
 				injury: p.injury,
 				age: g.season - p.born.year,
@@ -180,12 +192,6 @@ const valueChange = async (
 					estPick = dp.pick;
 				} else {
 					estPick = estPicks[dp.originalTid];
-
-					// For future draft picks, add some uncertainty
-					const seasons = season - g.season;
-					estPick = Math.round(
-						(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
-					);
 				}
 
 				// No fudge factor, since this is coming from the user's team (or eventually, another AI)
@@ -223,40 +229,22 @@ const valueChange = async (
 					continue;
 				}
 				const season = dp.season === "fantasy" ? g.season : dp.season;
-				const seasons = season - g.season;
 				let estPick;
 				if (dp.pick > 0) {
 					estPick = dp.pick;
 				} else {
 					estPick = estPicks[dp.originalTid];
-
-					// For future draft picks, add some uncertainty
-					estPick = Math.round(
-						(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
-					);
 				}
 
-				// Set fudge factor with more confidence if it's the current season
-				let fudgeFactor;
-				if (seasons === 0 && gp >= g.numGames / 2) {
-					fudgeFactor = (1 - gp / g.numGames) * 10;
-				} else {
-					fudgeFactor = 10;
-				}
-
-				// Use fudge factor: AI teams like their own picks
 				let value;
 				if (estValues[String(season)]) {
 					value =
 						estValues[String(season)][
 							estPick - 1 + g.numTeams * (dp.round - 1)
-						] +
-						(tid !== g.userTid ? 1 : 0) * fudgeFactor * difficultyFudgeFactor;
+						];
 				}
 				if (value === undefined) {
-					value =
-						estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] +
-						(tid !== g.userTid ? 1 : 0) * fudgeFactor * difficultyFudgeFactor;
+					value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
 				}
 
 				remove.push({
@@ -283,38 +271,16 @@ const valueChange = async (
 	await getPlayers();
 	await getPicks();
 
-	/*    // Handle situations where the team goes over the roster size limit
-    if (roster.length + remove.length > g.maxRosterSize) {
-        // Already over roster limit, so don't worry unless this trade actually makes it worse
-        needToDrop = (roster.length + add.length) - (roster.length + remove.length);
-    } else {
-        needToDrop = (roster.length + add.length) - g.maxRosterSize;
-    }
-    roster.sort((a, b) => a.value - b.value); // Sort by value, ascending
-    add.sort((a, b) => a.value - b.value); // Sort by value, ascending
-    while (needToDrop > 0) {
-        // Find lowest value player, from roster or add. Delete him and move his salary to the second lowest value player.
-        if (roster[0].value < add[0].value) {
-            if (roster[1].value < add[0].value) {
-                roster[1].contract.amount += roster[0].contract.amount;
-            } else {
-                add[0].contract.amount += roster[0].contract.amount;
-            }
-            roster.shift(); // Remove from value calculation
-        } else {
-            if (add.length > 1 && add[1].value < roster[0].value) {
-                add[1].contract.amount += add[0].contract.amount;
-            } else {
-                roster[0].contract.amount += add[0].contract.amount;
-            }
-            add.shift(); // Remove from value calculation
-        }
+	/*
+	for(let i = 0; i < add.length; i++){
+		console.log(add[i]);
+	}
+	for(let i = 0; i < remove.length; i++){
+		console.log(remove[i]);
+	}
+	*/
 
-        needToDrop -= 1;
-    }*/
-
-	// This roughly corresponds with core.gameSim.updateSynergy
-	const skillsNeeded = {
+	const desiredNumOfSkills = {
 		"3": 5,
 		A: 5,
 		B: 3,
@@ -324,144 +290,106 @@ const valueChange = async (
 		Ps: 4,
 		R: 3,
 	};
-
-	const doSkillBonuses = (test, rosterLocal) => {
-		// What are current skills?
-		let rosterSkills = [];
-		for (let i = 0; i < rosterLocal.length; i++) {
-			if (rosterLocal[i].value >= 45) {
-				rosterSkills = rosterSkills.concat(rosterLocal[i].skills);
+	const rosterSkills = { "3": 0, A: 0, B: 0, Di: 0, Dp: 0, Po: 0, Ps: 0, R: 0 };
+	for (const p of roster) {
+		if (p.value >= 45) {
+			for (const s of p.skills) {
+				rosterSkills[s]++;
 			}
 		}
-		const rosterSkillsCount = countBy(rosterSkills);
+	}
 
-		// Sort test by value, so that the highest value players get bonuses applied first
-		test.sort((a, b) => b.value - a.value);
+	const doSkillBonuses = test => {
+		test.sort((a, b) => b.value - a.value); //do higher valued players first
 
 		for (let i = 0; i < test.length; i++) {
 			if (test[i].value >= 45) {
 				for (let j = 0; j < test[i].skills.length; j++) {
-					const s = test[i].skills[j];
+					const skill = test[i].skills[j];
+					const teamSkillNeed = desiredNumOfSkills[skill] - rosterSkills[skill];
+					//console.log(teamSkillNeed);
 
-					if (rosterSkillsCount[s] <= skillsNeeded[s] - 2) {
-						// Big bonus
-						test[i].value *= 1.1;
-					} else if (rosterSkillsCount[s] <= skillsNeeded[s] - 1) {
-						// Medium bonus
-						test[i].value *= 1.05;
-					} else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
-						// Little bonus
-						test[i].value *= 1.025;
+					if (teamSkillNeed > 0) {
+						//if the team needs the skill
+						test[i].value += 3 + 2 * teamSkillNeed;
+					} else {
+						//if the team has too much of that skill (unlikely, but just in case)
+						test[i].value -= 1 + teamSkillNeed;
 					}
-
-					// Account for redundancy in test
-					rosterSkillsCount[s] += 1;
+					rosterSkills[skill] += 1; //don't recount skills
 				}
 			}
 		}
-
 		return test;
 	};
 
-	// Apply bonuses based on skills coming in and leaving
 	if (process.env.SPORT === "basketball") {
-		const rosterAndRemove = roster.concat(remove);
-		const rosterAndAdd = roster.concat(add);
-		add = doSkillBonuses(add, rosterAndRemove);
-		remove = doSkillBonuses(remove, rosterAndAdd);
+		add = doSkillBonuses(add); //adjust values in add
+		remove = doSkillBonuses(remove); //adjust values in remove
 	}
 
-	// This actually doesn't do anything because I'm an idiot
-	const base = 1.25;
-
-	const sumValues = (players, includeInjuries) => {
-		includeInjuries = includeInjuries !== undefined ? includeInjuries : false;
-
+	const sumTradeValue = players => {
 		if (players.length === 0) {
 			return 0;
 		}
 
-		const exponential = players.reduce((memo, p) => {
-			let playerValue = p.value;
+		const valueContract = p => {
+			//adjust for age
+			const contractLength = p.contract.exp - g.season;
+			const contractValue = 34 - p.age + contractLength * (29 - p.age);
+			//young players on long contracts will get a boost
+			//old players on short contracts will be penalized less
 
-			if (strategy === "rebuilding") {
-				// Value young/cheap players and draft picks more. Penalize expensive/old players
-				if (p.draftPick) {
-					playerValue *= 1.15;
-				} else if (p.age <= 19) {
-					playerValue *= 1.15;
-				} else if (p.age === 20) {
-					playerValue *= 1.1;
-				} else if (p.age === 21) {
-					playerValue *= 1.075;
-				} else if (p.age === 22) {
-					playerValue *= 1.05;
-				} else if (p.age === 23) {
-					playerValue *= 1.025;
-				} else if (p.age === 27) {
-					playerValue *= 0.975;
-				} else if (p.age === 28) {
-					playerValue *= 0.95;
-				} else if (p.age >= 29) {
-					playerValue *= 0.9;
-				}
+			const max = g.maxContract - g.minContract;
+			const min = g.minContract - g.maxContract;
+			const v = p.worth.amount - p.contract.amount; //negative == overpaid, positive == underpaid
+			const worthFactor = (v - min) / (max - min) + 0.5; //overpaid --> wf < 1, underpaid --> wf > 1
+			//players who are underpaid will recieve a boost in contract value
+			//players who are overpaid will recieve a reduction in contract value
+
+			return contractValue * worthFactor;
+		};
+
+		const valueInjury = p => {
+			if (strategy === "contending" && p.injury.gamesRemaining >= 50) {
+				return 50;
 			}
+			const injuryFactor = strategy === "contending" ? 0.25 : 0;
+			return injuryFactor * p.injury.gamesRemaining;
+		};
 
-			// After the player development changes in early 2018, player.value is in a more compressed range (linear starting from ~30 rather than 0), so nonlinearity needs to be introduced here to make things "feel" similar to before.
-			playerValue -= 52;
-			if (playerValue > 0) {
-				playerValue **= 2;
+		let totalValue = 0;
+		const contractFactor = strategy === "contending" ? 0.75 : 1;
+		for (const p of players) {
+			let val = p.draftPick
+				? p.value
+				: contractFactor * valueContract(p) + p.value - valueInjury(p); //if a pick, don't factor in contract and no injuries
+			if (!p.draftPick && p.overall >= 60) {
+				//false if p is a draft pick
+				val *= p.overall / 45;
 			}
-
-			// Normalize for injuries
-			if (includeInjuries && tid !== g.userTid) {
-				if (p.injury.gamesRemaining > 75) {
-					playerValue -= playerValue * 0.75;
-				} else {
-					playerValue -= (playerValue * p.injury.gamesRemaining) / 100;
-				}
-			}
-
-			let contractValue = (p.worth.amount - p.contract.amount) / 1000;
-
-			// Account for duration
-			const contractSeasonsRemaining = player.contractSeasonsRemaining(
-				p.contract.exp,
-				g.numGames - gpAvg,
-			);
-			if (contractSeasonsRemaining > 1) {
-				// Don't make it too extreme
-				contractValue *= contractSeasonsRemaining ** 0.25;
-			} else {
-				// Raising < 1 to < 1 power would make this too large
-				contractValue *= contractSeasonsRemaining;
-			}
-
-			// Really bad players will just get no PT
-			if (playerValue < 0) {
-				playerValue = 0;
-			}
-			//console.log([playerValue, contractValue]);
-
-			const value = playerValue + 0.5 * contractValue;
-
-			if (value === 0) {
-				return memo;
-			}
-			return memo + (Math.abs(value) ** base * Math.abs(value)) / value;
-		}, 0);
-
-		if (exponential === 0) {
-			return exponential;
+			totalValue += val;
 		}
-		return (
-			(Math.abs(exponential) ** (1 / base) * Math.abs(exponential)) /
-			exponential
-		);
+		return totalValue;
 	};
 
-	// Sum of contracts
-	// If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
+	//testing
+	/*
+	for(let i = 0; i < add.length; i++){
+		console.log(add[i]);
+	}
+	for(let i = 0; i < remove.length; i++){
+		console.log(remove[i]);
+	}
+	*/
+
+	const valueAdded = sumTradeValue(add);
+	const valueRemoved = sumTradeValue(remove);
+	//console.log(valueAdded);
+	//console.log(valueRemoved);
+	let dv = valueAdded - valueRemoved;
+
+	// Aversion towards losing cap space in a trade during free agency
 	const sumContracts = (players, onlyThisSeason) => {
 		onlyThisSeason = onlyThisSeason !== undefined ? onlyThisSeason : false;
 
@@ -483,19 +411,6 @@ const valueChange = async (
 		}, 0);
 	};
 
-	const contractsFactor = strategy === "rebuilding" ? 0.3 : 0.1;
-
-	const salaryRemoved = sumContracts(remove) - sumContracts(add);
-
-	let dv =
-		sumValues(add, true) - sumValues(remove) + contractsFactor * salaryRemoved;
-	/*console.log("Added players/picks: " + sumValues(add, true));
-console.log("Removed players/picks: " + (-sumValues(remove)));
-console.log("Added contract quality: -" + contractExcessFactor + " * " + sumContractExcess(add));
-console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumContractExcess(remove));
-console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
-
-	// Aversion towards losing cap space in a trade during free agency
 	if (g.phase >= PHASE.RESIGN_PLAYERS || g.phase <= PHASE.FREE_AGENCY) {
 		// Only care if cap space is over 2 million
 		if (payroll + 2000 < g.salaryCap) {
@@ -509,17 +424,7 @@ console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved)
 		}
 	}
 
-	// Normalize for number of players, since 1 really good player is much better than multiple mediocre ones
-	// This is a fudge factor, since it's one-sided to punish the player
-	if (add.length > remove.length) {
-		dv -= add.length - remove.length;
-	}
-
-	return dv;
-	/*console.log('---');
-console.log([sumValues(add), sumContracts(add)]);
-console.log([sumValues(remove), sumContracts(remove)]);
-console.log(dv);*/
+	return dv; //return the difference between the value gained and value lost
 };
 
 export default valueChange;

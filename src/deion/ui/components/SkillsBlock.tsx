@@ -43,7 +43,9 @@ const SkillsBlock = ({
 				<span
 					key={skill}
 					className="skill"
-					title={tooltips.hasOwnProperty(skill) ? tooltips[skill] : null}
+					title={
+						tooltips.hasOwnProperty(skill) ? (tooltips as any)[skill] : null
+					}
 				>
 					{skill}
 				</span>

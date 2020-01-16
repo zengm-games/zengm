@@ -28,7 +28,9 @@ const HelpPopover = ({
 		<UncontrolledPopover
 			id={title}
 			placement={placement}
-			target={props => <span className={className} style={style} {...props} />}
+			target={(props: any) => (
+				<span className={className} style={style} {...props} />
+			)}
 		>
 			<PopoverHeader>{title}</PopoverHeader>
 			<PopoverBody>{children}</PopoverBody>

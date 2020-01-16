@@ -1,3 +1,4 @@
+import { Face } from "facesjs";
 import { MouseEvent } from "react";
 
 export type Env = {
@@ -507,7 +508,7 @@ export type PlayerWithoutPid<PlayerRatings = any> = {
 		ovr: number;
 		skills: string[];
 	};
-	face: any;
+	face: Face;
 	firstName: string;
 	freeAgentMood: number[];
 	gamesUntilTradable: number;

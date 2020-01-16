@@ -1,4 +1,4 @@
-import { display } from "facesjs";
+import { display, Face } from "facesjs";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
@@ -13,7 +13,7 @@ const PlayerPicture = ({
 	imgURL,
 	teamColors,
 }: {
-	face: any;
+	face: Face;
 	imgURL: string | undefined;
 	teamColors: [string, string, string] | undefined;
 }) => {

@@ -15,7 +15,6 @@ const updateValues = (
 	p.valueFuzz = value(p, { fuzz: true });
 	p.valueNoPotFuzz = value(p, { noPot: true, fuzz: true });
 	p.valueWithContract = value(p, { withContract: true });
-	//p.valueWithContractNoPot = value(p,{withContract: true, noPot: true})
 };
 
 export default updateValues;

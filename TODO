@@ -4,6 +4,8 @@ turnover in 2 point conversion -> wrong team still kicking off, wtf
 
 touchbacks on punts should only go back to the 20 yard line
 
+probGoForIt should account for being down by a FG or less late in the game
+
 pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
 
 add kneeling to run out the clock
@@ -15,6 +17,8 @@ typescript
 - to do
   - getting object from cache should add primary key to it\
     - test with ts-ignore on teamSeason in worker/api/index.ts
+  - types for PlayersPlus and TeamsPlus
+  - ReturnType to link processInputs, worker/views, and ui/views
 - yarn tsc --noImplicitAny > foo
 - more JS to TS
   - find src -name '*.js' > foo

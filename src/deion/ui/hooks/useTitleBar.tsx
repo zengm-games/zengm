@@ -2,6 +2,11 @@ import { useEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
 import { localActions, useLocalShallow } from "../util";
 
+// helpers.upperCaseFirst failed for some reason
+const sport = `${process.env.SPORT.charAt(
+	0,
+).toUpperCase()}${process.env.SPORT.slice(1)}`;
+
 const useTitleBar = ({
 	title,
 	hideNewWindow,
@@ -36,7 +41,7 @@ const useTitleBar = ({
 		if (title) {
 			parts.push(title);
 		} else {
-			parts.push("Basketball GM");
+			parts.push(`${sport} GM`);
 		}
 
 		const sortedTeams = getSortedTeams(state);

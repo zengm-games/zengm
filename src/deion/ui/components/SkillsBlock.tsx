@@ -44,6 +44,7 @@ const SkillsBlock = ({
 					key={skill}
 					className="skill"
 					title={
+						// https://github.com/microsoft/TypeScript/issues/21732
 						tooltips.hasOwnProperty(skill) ? (tooltips as any)[skill] : null
 					}
 				>

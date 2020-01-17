@@ -11,6 +11,10 @@ import {
 	DraftPick,
 } from "../../../common/types";
 
+type ReturnVal = DraftLotteryResult & {
+	draftType: "nba1994" | "nba2019";
+};
+
 /**
  * Sets draft order and save it to the draftPicks object store.
  *
@@ -24,7 +28,7 @@ import {
 const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
-): Promise<DraftLotteryResult> => {
+): Promise<ReturnVal> => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "cid", "did"],
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
@@ -165,7 +169,7 @@ const genOrder = async (
 	}
 
 	// Save draft lottery results separately
-	const draftLotteryResult: DraftLotteryResult = {
+	const draftLotteryResult: ReturnVal = {
 		season: g.season,
 		draftType: g.draftType === "nba1994" ? "nba1994" : "nba2019",
 		result: teams // Start with teams in lottery order

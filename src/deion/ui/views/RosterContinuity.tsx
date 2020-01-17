@@ -4,15 +4,15 @@ import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols } from "../util";
 import { Col } from "../components/DataTable";
+import { View } from "../../common/types";
+import rosterContinuity from "../../worker/views/rosterContinuity";
 
-type Props = {
-	abbrevs: string[];
-	season: number;
-	seasons: number[][];
-	userTid: number;
-};
-
-const RosterContinuity = ({ abbrevs, season, seasons, userTid }: Props) => {
+const RosterContinuity = ({
+	abbrevs,
+	season,
+	seasons,
+	userTid,
+}: View<typeof rosterContinuity>) => {
 	useTitleBar({
 		title: "Roster Continuity",
 	});

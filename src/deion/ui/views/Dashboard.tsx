@@ -13,7 +13,8 @@ import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
-import { League } from "../../common/types";
+import { View } from "../../common/types";
+import dashboard from "../../worker/views/dashboard";
 
 const difficultyText = (difficulty: number) => {
 	let prevText: string | undefined;
@@ -187,11 +188,7 @@ const dropdownStyle: CSSProperties = {
 	position: "static",
 };
 
-type Props = {
-	leagues: League[];
-};
-
-const Dashboard = ({ leagues }: Props) => {
+const Dashboard = ({ leagues }: View<typeof dashboard>) => {
 	const [loadingLID, setLoadingLID] = useState<number | undefined>();
 	const [deletingLID, setDeletingLID] = useState<number | undefined>();
 	useTitleBar();

@@ -3,15 +3,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
-import { Message } from "../../common/types";
+import { View } from "../../common/types";
+import inbox from "../../worker/views/inbox";
 
-const Inbox = ({
-	anyUnread,
-	messages,
-}: {
-	anyUnread: boolean;
-	messages: Message[];
-}) => {
+const Inbox = ({ anyUnread, messages }: View<typeof inbox>) => {
 	useTitleBar({
 		title: "Inbox",
 	});

@@ -2,15 +2,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
+import { View } from "../../common/types";
+import changesView from "../../worker/views/changes";
 
-const Changes = ({
-	changes,
-}: {
-	changes: {
-		date: string;
-		msg: string;
-	}[];
-}) => {
+const Changes = ({ changes }: View<typeof changesView>) => {
 	useTitleBar({
 		title: "Changes",
 	});

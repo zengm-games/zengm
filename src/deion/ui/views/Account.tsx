@@ -15,6 +15,8 @@ import {
 	localActions,
 	realtimeUpdate,
 } from "../util";
+import { View } from "../../common/types";
+import account from "../../worker/views/account";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -265,24 +267,7 @@ const Account = ({
 	showGoldCancelled,
 	showGoldPitch,
 	username,
-}: {
-	achievements: {
-		category: string;
-		count: number;
-		desc: string;
-		name: string;
-		slug: string;
-	}[];
-	email?: string;
-	goldMessage?: string;
-	goldSuccess?: boolean;
-	goldUntilDateString: string;
-	loggedIn: boolean;
-	showGoldActive: boolean;
-	showGoldCancelled: boolean;
-	showGoldPitch: boolean;
-	username?: string;
-}) => {
+}: View<typeof account>) => {
 	useTitleBar({
 		title: "Your Account",
 		hideNewWindow: true,

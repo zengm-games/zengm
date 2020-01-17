@@ -6,8 +6,10 @@ import { toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
+import { View } from "../../../common/types";
+import trade from "../../../worker/views/trade";
 
-const Trade = props => {
+const Trade = (props: View<typeof trade>) => {
 	const [state, setState] = useState({
 		accepted: false,
 		asking: false,

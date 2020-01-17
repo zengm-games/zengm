@@ -2,26 +2,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
+import { View } from "../../common/types";
+import playoffs from "../../worker/views/playoffs";
 
 const width100 = {
 	width: "100%",
-};
-
-type SeriesTeam = {
-	abbrev: string;
-	cid: number;
-	imgURL?: string;
-	pts?: number;
-	region: string;
-	regularSeason: {
-		won: number;
-		lost: number;
-		tied?: number;
-	};
-	seed: number;
-	tid: number;
-	winp: number;
-	won?: number;
 };
 
 const Playoffs = ({
@@ -32,21 +17,7 @@ const Playoffs = ({
 	season,
 	series,
 	userTid,
-}: {
-	confNames: string[];
-	finalMatchups: boolean;
-	matchups: {
-		matchup: [number, number];
-		rowspan: number;
-	}[][];
-	numGamesToWinSeries: number[];
-	season: number;
-	series: {
-		home: SeriesTeam;
-		away?: SeriesTeam;
-	}[][];
-	userTid: number;
-}) => {
+}: View<typeof playoffs>) => {
 	useTitleBar({
 		title: "Playoffs",
 		jumpTo: true,

@@ -9,12 +9,13 @@ import {
 	PopoverBody,
 	PopoverHeader,
 } from "reactstrap";
-
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
 import PlayMenu from "./PlayMenu";
+
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
+
 type Props = {
 	pageID?: string;
 	updating: boolean;
@@ -60,7 +61,6 @@ const NavBar = ({ pageID, updating }: Props) => {
 	);
 
 	// Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals	// game. This is needed because game sim happens before the results are displayed in liveGame.
-
 	const phaseStatusBlock =
 		pageID === "liveGame" ? (
 			<span

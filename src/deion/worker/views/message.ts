@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, Message } from "../../common/types";
 
 async function updateMessage(
 	inputs: {
@@ -8,7 +8,7 @@ async function updateMessage(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+): Promise<{ message: void | Message } | { redirectUrl: string } | void> {
 	// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 	if (
 		updateEvents.includes("firstRun") ||

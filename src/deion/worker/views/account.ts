@@ -28,7 +28,7 @@ async function updateAccount(
 		return {
 			email: partialTopMenu.email,
 			goldMessage: inputs.goldMessage,
-			goldSuccess: inputs.goldSuccess,
+			goldSuccess: !!inputs.goldSuccess,
 			goldUntilDateString,
 			loggedIn,
 			showGoldActive,

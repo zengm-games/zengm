@@ -4,6 +4,23 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { UpdateEvents } from "../../common/types";
 
+type SeriesTeam = {
+	abbrev: string;
+	cid: number;
+	imgURL?: string;
+	pts?: number;
+	region: string;
+	regularSeason: {
+		won: number;
+		lost: number;
+		tied?: number;
+	};
+	seed: number;
+	tid: number;
+	winp: number;
+	won?: number;
+};
+
 const getProjectedSeries = async (inputSeason: number) => {
 	const teams = helpers.orderByWinp(
 		await idb.getCopies.teamsPlus({
@@ -31,7 +48,21 @@ async function updatePlayoffs(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+): Promise<{
+	confNames: string[];
+	finalMatchups: boolean;
+	matchups: {
+		matchup: [number, number];
+		rowspan: number;
+	}[][];
+	numGamesToWinSeries: number[];
+	season: number;
+	series: {
+		home: SeriesTeam;
+		away?: SeriesTeam;
+	}[][];
+	userTid: number;
+} | void> {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||

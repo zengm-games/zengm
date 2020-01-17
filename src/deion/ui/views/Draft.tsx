@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
+import { View } from "../../common/types";
+import draft from "../../worker/views/draft";
 
 const DraftButtons = ({ userRemaining, usersTurn }) => {
 	const untilText = userRemaining ? "your next pick" : "end of draft";
@@ -88,7 +90,7 @@ const Draft = ({
 	stats,
 	undrafted,
 	userTids,
-}) => {
+}: View<typeof draft>) => {
 	const [drafting, setDrafting] = useState(false);
 
 	const draftUser = async (pid, simToNextUserPick = false) => {

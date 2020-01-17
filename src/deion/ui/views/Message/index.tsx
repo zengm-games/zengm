@@ -4,9 +4,10 @@ import OwnerMoodsChart from "./OwnerMoodsChart";
 import { SafeHtml } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
-import { Message as Message_ } from "../../../common/types";
+import { View } from "../../../common/types";
+import message_ from "../../../worker/views/message";
 
-const Message = ({ message }: { message: void | Message_ }) => {
+const Message = ({ message }: View<typeof message_>) => {
 	const title = message && message.subject ? message.subject : "Message";
 	useTitleBar({
 		title,

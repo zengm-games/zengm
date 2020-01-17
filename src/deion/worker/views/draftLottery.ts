@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, DraftLotteryResultArray } from "../../common/types";
 
 async function updateDraftLottery(
 	{
@@ -12,7 +12,14 @@ async function updateDraftLottery(
 	},
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+): Promise<{
+	draftType: "nba1994" | "nba2019" | "noLottery" | "random";
+	result: DraftLotteryResultArray | undefined;
+	season: number;
+	ties: boolean;
+	type: "completed" | "projected" | "readyToRun";
+	userTid: number;
+} | void> {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||

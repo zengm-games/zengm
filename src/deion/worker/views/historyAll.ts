@@ -116,6 +116,4 @@ async function updateHistory(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [updateHistory],
-};
+export default updateHistory;

@@ -452,6 +452,4 @@ async function updateLeaders(
 	}
 }
 
-export default {
-	runBefore: [updateLeaders],
-};
+export default updateLeaders;

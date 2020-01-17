@@ -31,6 +31,4 @@ async function updateMultiTeamMode(
 	}
 }
 
-export default {
-	runBefore: [updateMultiTeamMode],
-};
+export default updateMultiTeamMode;

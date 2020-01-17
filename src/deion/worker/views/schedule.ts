@@ -86,6 +86,10 @@ async function updateCompleted(
 	}
 }
 
-export default {
-	runBefore: [updateUpcoming, updateCompleted],
+export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
+	return Object.assign(
+		{},
+		await updateUpcoming(inputs, updateEvents, state),
+		await updateCompleted(inputs, updateEvents, state),
+	);
 };

@@ -51,6 +51,15 @@ async function updateAchievements(
 	}
 }
 
-export default {
-	runBefore: [updateAccount, updateAchievements],
+export default async (
+	inputs: GetOutput,
+	updateEvents: UpdateEvents,
+	state: any,
+	conditions: Conditions,
+) => {
+	return Object.assign(
+		{},
+		await updateAccount(inputs, updateEvents, state, conditions),
+		await updateAchievements(inputs, updateEvents),
+	);
 };

@@ -99,6 +99,4 @@ async function updatePlayByPlay(
 	}
 }
 
-export default {
-	runBefore: [updatePlayByPlay],
-};
+export default updatePlayByPlay;

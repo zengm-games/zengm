@@ -44,6 +44,10 @@ async function updateGamesInProgress(
 	}
 }
 
-export default {
-	runBefore: [updateGamesList, updateGamesInProgress],
+export default async (inputs: GetOutput, updateEvents: UpdateEvents) => {
+	return Object.assign(
+		{},
+		await updateGamesList(),
+		await updateGamesInProgress(inputs, updateEvents),
+	);
 };

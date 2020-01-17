@@ -42,6 +42,4 @@ async function updateLeagueFinances(
 	}
 }
 
-export default {
-	runBefore: [updateLeagueFinances],
-};
+export default updateLeagueFinances;

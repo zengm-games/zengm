@@ -67,6 +67,4 @@ async function updateNegotiationList() {
 	};
 }
 
-export default {
-	runBefore: [updateNegotiationList],
-};
+export default updateNegotiationList;

@@ -6,6 +6,4 @@ async function updateToken(inputs: GetOutput) {
 	};
 }
 
-export default {
-	runBefore: [updateToken],
-};
+export default updateToken;

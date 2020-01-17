@@ -108,6 +108,4 @@ async function updatePlayoffs(
 	}
 }
 
-export default {
-	runBefore: [updatePlayoffs],
-};
+export default updatePlayoffs;

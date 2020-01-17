@@ -39,6 +39,4 @@ async function updateAccountUpdateCard(
 	}
 }
 
-export default {
-	runBefore: [updateAccountUpdateCard],
-};
+export default updateAccountUpdateCard;

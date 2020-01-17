@@ -229,6 +229,4 @@ async function updateAwardsRecords(
 	}
 }
 
-export default {
-	runBefore: [updateAwardsRecords],
-};
+export default updateAwardsRecords;

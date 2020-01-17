@@ -181,6 +181,10 @@ function updateGamesInProgress(
 	}
 }
 
-export default {
-	runBefore: [updateTeamFinances, updateGamesInProgress],
+export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
+	return Object.assign(
+		{},
+		await updateTeamFinances(inputs, updateEvents, state),
+		await updateGamesInProgress(inputs, updateEvents, state),
+	);
 };

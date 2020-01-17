@@ -109,6 +109,4 @@ async function updateNegotiation(inputs: GetOutput) {
 	};
 }
 
-export default {
-	runBefore: [updateNegotiation],
-};
+export default updateNegotiation;

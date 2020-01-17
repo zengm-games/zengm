@@ -229,6 +229,4 @@ async function updateTrade() {
 	return vars;
 }
 
-export default {
-	runBefore: [updateTrade],
-};
+export default updateTrade;

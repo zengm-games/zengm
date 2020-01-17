@@ -121,6 +121,4 @@ async function updatePlayers(
 	}
 }
 
-export default {
-	runBefore: [updatePlayers],
-};
+export default updatePlayers;

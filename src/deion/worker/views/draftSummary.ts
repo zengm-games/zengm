@@ -65,6 +65,4 @@ async function updateDraftSummary(inputs: { season: number }) {
 	};
 }
 
-export default {
-	runBefore: [updateDraftSummary],
-};
+export default updateDraftSummary;

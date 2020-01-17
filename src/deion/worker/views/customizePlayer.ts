@@ -93,6 +93,4 @@ async function updateCustomizePlayer(
 	}
 }
 
-export default {
-	runBefore: [updateCustomizePlayer],
-};
+export default updateCustomizePlayer;

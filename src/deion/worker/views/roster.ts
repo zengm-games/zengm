@@ -190,6 +190,4 @@ async function updateRoster(
 	}
 }
 
-export default {
-	runBefore: [updateRoster],
-};
+export default updateRoster;

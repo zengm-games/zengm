@@ -65,6 +65,4 @@ async function updateMessage(
 	}
 }
 
-export default {
-	runBefore: [updateMessage],
-};
+export default updateMessage;

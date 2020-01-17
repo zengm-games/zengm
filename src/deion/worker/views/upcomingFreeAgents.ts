@@ -52,6 +52,4 @@ async function updateUpcomingFreeAgents(inputs: { season: number }) {
 	};
 }
 
-export default {
-	runBefore: [updateUpcomingFreeAgents],
-};
+export default updateUpcomingFreeAgents;

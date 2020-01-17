@@ -40,6 +40,4 @@ async function updateNewLeague({ lid }: { lid?: number }) {
 	};
 }
 
-export default {
-	runBefore: [updateNewLeague],
-};
+export default updateNewLeague;

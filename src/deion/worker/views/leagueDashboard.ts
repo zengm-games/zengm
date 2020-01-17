@@ -488,16 +488,17 @@ async function updateStandings(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [
-		updateInbox,
-		updateTeam,
-		updatePayroll,
-		updateTeams,
-		updateGames,
-		updateSchedule,
-		updatePlayers,
-		updatePlayoffs,
-		updateStandings,
-	],
+export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
+	return Object.assign(
+		{},
+		await updateInbox(inputs, updateEvents),
+		await updateTeam(inputs, updateEvents),
+		await updatePayroll(inputs, updateEvents),
+		await updateTeams(inputs, updateEvents),
+		await updateGames(inputs, updateEvents, state),
+		await updateSchedule(inputs, updateEvents),
+		await updatePlayers(inputs, updateEvents),
+		await updatePlayoffs(inputs, updateEvents),
+		await updateStandings(inputs, updateEvents),
+	);
 };

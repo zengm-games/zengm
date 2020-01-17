@@ -172,6 +172,4 @@ async function updateStandings(
 	}
 }
 
-export default {
-	runBefore: [updateStandings],
-};
+export default updateStandings;

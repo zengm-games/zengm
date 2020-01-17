@@ -73,6 +73,4 @@ const updateAllStars = async (
 	}
 };
 
-export default {
-	runBefore: [updateAllStars],
-};
+export default updateAllStars;

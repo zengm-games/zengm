@@ -15,10 +15,15 @@ typescript
   - @ts-nocheck
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
 - to do
-  - getting object from cache should add primary key to it\
+  - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus
-  - ReturnType to link processInputs, worker/views, and ui/views
+  - ReturnType to worker/views and ui/views
+    - then in ui:
+      type ThenArg<T> = T extends PromiseLike<infer U> ? U : T  
+      type Props2 = ThenArg<ReturnType<typeof account>
+  - ReturnType to link processInputs and worker/views
+
 - yarn tsc --noImplicitAny > foo
 - more JS to TS
   - find src -name '*.js' > foo

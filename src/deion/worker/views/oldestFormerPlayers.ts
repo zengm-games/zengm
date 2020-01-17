@@ -49,6 +49,4 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [updatePlayers],
-};
+export default updatePlayers;

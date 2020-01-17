@@ -115,6 +115,4 @@ async function updateDepth(
 	}
 }
 
-export default {
-	runBefore: [updateDepth],
-};
+export default updateDepth;

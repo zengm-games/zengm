@@ -15,6 +15,4 @@ async function updateOptions(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [updateOptions],
-};
+export default updateOptions;

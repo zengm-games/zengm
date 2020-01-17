@@ -25,6 +25,4 @@ async function updateTeamInfo() {
 	};
 }
 
-export default {
-	runBefore: [updateTeamInfo],
-};
+export default updateTeamInfo;

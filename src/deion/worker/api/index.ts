@@ -1066,15 +1066,12 @@ const runBefore = async (
 	updateEvents: UpdateEvents,
 	prevData: any,
 	conditions: Conditions,
-): Promise<
-	| void
-	| (void | {
-			[key: string]: any;
-	  })[]
-> => {
+): Promise<void | {
+	[key: string]: any;
+}> => {
 	// Special case for errors, so that the condition right below (when league is loading) does not cause no update
 	if (viewId === "error") {
-		return [];
+		return {};
 	}
 
 	if (typeof g.lid === "number" && !local.leagueLoaded) {
@@ -1103,15 +1100,11 @@ const runBefore = async (
 
 	const view = views[viewId] ? views[viewId] : overrides.views[viewId];
 
-	if (view && view.hasOwnProperty("runBefore")) {
-		return Promise.all(
-			view.runBefore.map(fn => {
-				return fn(inputs, updateEvents, prevData, conditions);
-			}),
-		);
+	if (view) {
+		return view(inputs, updateEvents, prevData, conditions);
 	}
 
-	return [];
+	return {};
 };
 
 const sign = async (

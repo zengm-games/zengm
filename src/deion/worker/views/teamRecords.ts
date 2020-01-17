@@ -311,6 +311,4 @@ async function updateTeamRecords(
 	}
 }
 
-export default {
-	runBefore: [updateTeamRecords],
-};
+export default updateTeamRecords;

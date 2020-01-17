@@ -21,6 +21,4 @@ const updateDashboard = async (inputs: {}, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default {
-	runBefore: [updateDashboard],
-};
+export default updateDashboard;

@@ -48,6 +48,4 @@ async function updateDraftTeamHistory(inputs: { abbrev: string; tid: number }) {
 	};
 }
 
-export default {
-	runBefore: [updateDraftTeamHistory],
-};
+export default updateDraftTeamHistory;

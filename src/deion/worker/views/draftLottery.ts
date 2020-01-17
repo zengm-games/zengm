@@ -85,6 +85,4 @@ async function updateDraftLottery(
 	}
 }
 
-export default {
-	runBefore: [updateDraftLottery],
-};
+export default updateDraftLottery;

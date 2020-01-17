@@ -64,6 +64,4 @@ async function updateFreeAgents() {
 	};
 }
 
-export default {
-	runBefore: [updateFreeAgents],
-};
+export default updateFreeAgents;

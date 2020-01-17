@@ -58,6 +58,4 @@ async function tragicDeaths(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [tragicDeaths],
-};
+export default tragicDeaths;

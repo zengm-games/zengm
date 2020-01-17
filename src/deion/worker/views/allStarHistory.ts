@@ -34,6 +34,4 @@ const updateAllStarHistory = async (
 	}
 };
 
-export default {
-	runBefore: [updateAllStarHistory],
-};
+export default updateAllStarHistory;

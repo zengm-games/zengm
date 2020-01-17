@@ -132,6 +132,4 @@ async function updateTeamHistory(
 	}
 }
 
-export default {
-	runBefore: [updateTeamHistory],
-};
+export default updateTeamHistory;

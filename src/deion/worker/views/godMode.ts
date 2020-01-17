@@ -39,6 +39,4 @@ async function updateGodMode(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [updateGodMode],
-};
+export default updateGodMode;

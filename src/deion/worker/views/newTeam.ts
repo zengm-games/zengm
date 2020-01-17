@@ -26,6 +26,4 @@ async function updateTeamSelect() {
 	};
 }
 
-export default {
-	runBefore: [updateTeamSelect],
-};
+export default updateTeamSelect;

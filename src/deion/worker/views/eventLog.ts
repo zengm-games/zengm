@@ -64,6 +64,4 @@ async function updateEventLog(
 	}
 }
 
-export default {
-	runBefore: [updateEventLog],
-};
+export default updateEventLog;

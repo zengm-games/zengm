@@ -19,6 +19,4 @@ async function updateInbox() {
 	};
 }
 
-export default {
-	runBefore: [updateInbox],
-};
+export default updateInbox;

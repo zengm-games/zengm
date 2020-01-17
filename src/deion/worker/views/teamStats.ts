@@ -213,6 +213,4 @@ async function updateTeams(
 	}
 }
 
-export default {
-	runBefore: [updateTeams],
-};
+export default updateTeams;

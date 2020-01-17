@@ -97,6 +97,4 @@ async function updateHistory(
 	}
 }
 
-export default {
-	runBefore: [updateHistory],
-};
+export default updateHistory;

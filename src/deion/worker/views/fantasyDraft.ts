@@ -16,6 +16,4 @@ const updateFantasyDraft = async (inputs: {}, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default {
-	runBefore: [updateFantasyDraft],
-};
+export default updateFantasyDraft;

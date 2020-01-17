@@ -216,6 +216,15 @@ async function updateGamesList(
 	}
 }
 
-export default {
-	runBefore: [updateBoxScore, updateGamesList, updateTeamSeason],
+export default async (
+	inputs: GetOutput,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
+	return Object.assign(
+		{},
+		await updateBoxScore(inputs, updateEvents, state),
+		await updateGamesList(inputs, updateEvents, state),
+		await updateTeamSeason(inputs),
+	);
 };

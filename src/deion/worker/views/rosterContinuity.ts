@@ -73,6 +73,4 @@ async function updateSeasons(
 	}
 }
 
-export default {
-	runBefore: [updateSeasons],
-};
+export default updateSeasons;

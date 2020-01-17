@@ -6,6 +6,4 @@ async function updateChanges() {
 	};
 }
 
-export default {
-	runBefore: [updateChanges],
-};
+export default updateChanges;

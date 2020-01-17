@@ -66,6 +66,4 @@ async function updateDraftScouting(
 	}
 }
 
-export default {
-	runBefore: [updateDraftScouting],
-};
+export default updateDraftScouting;

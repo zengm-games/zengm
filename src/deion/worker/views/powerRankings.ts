@@ -95,6 +95,4 @@ async function updatePowerRankings(
 	}
 }
 
-export default {
-	runBefore: [updatePowerRankings],
-};
+export default updatePowerRankings;

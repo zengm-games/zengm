@@ -166,26 +166,23 @@ const Controller = () => {
 				return;
 			}
 
-			// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack.
-			if (results && results.some(result => !!result)) {
+			// If there was an error before, still show it unless we've received some other data. Otherwise, noop refreshes (return undefined from view, for non-matching updateEvent) would clear the error. Clear it only when some data is returned... which still is not great, because maybe the data is from a runBefore function that's different than the one that produced the error. Ideally would either need to track which runBefore function produced the error, this is a hack. THIS MAY NO LONGER BE TRUE AFTER CONSOLIDATING RUNBEFORE INTO A SINGLE FUNCTION, ideally the worker/views function could then handle conflicts itself. But currently the only ones returning errorMessage have just one function so it's either all or nothing.
+			if (results && Object.keys(results).length > 0) {
 				delete prevData.errorMessage;
 			}
 
-			let NewComponent = prevData.errorMessage ? ErrorMessage : Component;
+			let NewComponent = Component;
 
-			for (const result of results) {
-				if (
-					result &&
-					Object.keys(result).length === 1 &&
-					result.hasOwnProperty("errorMessage")
-				) {
-					NewComponent = ErrorMessage;
-				}
+			if (
+				prevData.errorMessage ||
+				(results && results.hasOwnProperty("errorMessage"))
+			) {
+				NewComponent = ErrorMessage;
 			}
 
 			const vars = {
 				Component: NewComponent,
-				data: Object.assign(prevData, ...results),
+				data: Object.assign(prevData, results),
 				loading: false,
 				inLeague,
 			};

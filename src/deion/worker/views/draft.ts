@@ -138,6 +138,4 @@ async function updateDraft(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [updateDraft],
-};
+export default updateDraft;

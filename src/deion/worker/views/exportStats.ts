@@ -26,6 +26,4 @@ async function updateExportStats(
 	}
 }
 
-export default {
-	runBefore: [updateExportStats],
-};
+export default updateExportStats;

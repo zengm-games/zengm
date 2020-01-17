@@ -180,6 +180,4 @@ async function updatePlayer(
 	}
 }
 
-export default {
-	runBefore: [updatePlayer],
-};
+export default updatePlayer;

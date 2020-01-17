@@ -55,6 +55,4 @@ async function updateUserRoster(inputs: GetOutput, updateEvents: UpdateEvents) {
 	}
 }
 
-export default {
-	runBefore: [updateUserRoster],
-};
+export default updateUserRoster;

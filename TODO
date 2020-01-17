@@ -19,9 +19,11 @@ typescript
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus
   - ReturnType to link processInputs and worker/views
+    - how to type params from bbgm-router?
     - delete GetOutput
   - types for g
   - any -> unknown
+    - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo
 - more JS to TS
   - find src -name '*.js' > foo

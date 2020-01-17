@@ -16,7 +16,8 @@ import NagModal from "./NagModal";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import TitleBar from "./TitleBar";
-import { RouterContext, LocalStateUI } from "../../common/types";
+import { LocalStateUI } from "../../common/types";
+import { Context } from "bbgm-router";
 
 type LeagueContentProps = {
 	children: any;
@@ -89,23 +90,24 @@ const Controller = () => {
 		});
 	}, []);
 	const updatePage = useCallback(
-		async (
-			Component: any,
-			id: string,
-			inLeague: boolean,
-			context: RouterContext,
-		) => {
+		async (Component: any, id: string, inLeague: boolean, context: Context) => {
 			const updateEvents =
 				context.state.updateEvents !== undefined
 					? context.state.updateEvents
 					: [];
-			const newLidInt = parseInt(context.params.lid, 10);
-			const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt; // Reset league content and view model only if it's:
+
+			let newLid: number | undefined;
+			if (typeof context.params.lid === "string") {
+				const newLidInt = parseInt(context.params.lid, 10);
+				if (!Number.isNaN(newLidInt)) {
+					newLid = newLidInt;
+				}
+			}
+
+			// Reset league content and view model only if it's:
 			// (1) if it's not loaded and not loading yet
 			// (2) loaded, but loading something else
-
 			let prevData;
-
 			if (
 				(idLoaded.current !== id && idLoading.current !== id) ||
 				(idLoaded.current === id &&
@@ -146,8 +148,8 @@ const Controller = () => {
 			// ctxBBGM is hacky!
 			const ctxBBGM = { ...context.state };
 			delete ctxBBGM.err; // Can't send error to worker
-			// Resolve all the promises before updating the UI to minimize flicker
 
+			// Resolve all the promises before updating the UI to minimize flicker
 			const results = await toWorker(
 				"runBefore",
 				id,
@@ -204,8 +206,9 @@ const Controller = () => {
 					vars,
 				});
 				idLoaded.current = id;
-				idLoading.current = undefined; // Scroll to top if this load came from user clicking a link
+				idLoading.current = undefined;
 
+				// Scroll to top if this load came from user clicking a link
 				if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
 					window.scrollTo(window.pageXOffset, 0);
 				}

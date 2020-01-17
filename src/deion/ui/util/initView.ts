@@ -1,5 +1,5 @@
 import { localActions } from "./local";
-import { RouterContext } from "../../common/types";
+import { Context } from "bbgm-router";
 
 type InitArgs = {
 	Component: any;
@@ -12,7 +12,7 @@ const initView = (args: InitArgs) => {
 		throw new Error("Missing arg Component");
 	}
 
-	return async (context: RouterContext): Promise<void> => {
+	return async (context: Context): Promise<void> => {
 		return new Promise((resolve, reject) => {
 			localActions.update({
 				viewInfo: {

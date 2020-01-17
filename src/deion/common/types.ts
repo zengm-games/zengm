@@ -1,5 +1,6 @@
 import { Face } from "facesjs";
 import { MouseEvent } from "react";
+import { Context } from "bbgm-router";
 
 export type Env = {
 	enableLogging: boolean;
@@ -373,16 +374,6 @@ export type Option = {
 	url?: string;
 };
 
-export type RouterContext = {
-	params: {
-		[key: string]: string;
-	};
-	path: string;
-	state: {
-		[key: string]: any;
-	};
-};
-
 export type LocalStateUI = {
 	gold?: boolean;
 	godMode: boolean;
@@ -408,7 +399,7 @@ export type LocalStateUI = {
 		Component: any;
 		id: string;
 		inLeague: boolean;
-		context: RouterContext;
+		context: Context;
 		cb: (a?: Error) => void;
 	};
 	title?: string;

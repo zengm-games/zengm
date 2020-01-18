@@ -5,14 +5,13 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols } from "../util";
 import { Col } from "../components/DataTable";
 import { View } from "../../common/types";
-import rosterContinuity from "../../worker/views/rosterContinuity";
 
 const RosterContinuity = ({
 	abbrevs,
 	season,
 	seasons,
 	userTid,
-}: View<typeof rosterContinuity>) => {
+}: View<"rosterContinuity">) => {
 	useTitleBar({
 		title: "Roster Continuity",
 	});

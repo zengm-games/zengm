@@ -16,7 +16,6 @@ import {
 	realtimeUpdate,
 } from "../util";
 import { View } from "../../common/types";
-import account from "../../worker/views/account";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
@@ -267,7 +266,7 @@ const Account = ({
 	showGoldCancelled,
 	showGoldPitch,
 	username,
-}: View<typeof account>) => {
+}: View<"account">) => {
 	useTitleBar({
 		title: "Your Account",
 		hideNewWindow: true,

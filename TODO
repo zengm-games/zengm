@@ -12,13 +12,11 @@ add kneeling to run out the clock
 
 typescript
 - to know
-  - @ts-nocheck
-  - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
+  - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
   - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus
-  - make View generic like ViewInput?
   - types for g
   - any -> unknown
     - also in dependencies, like bbgm-router

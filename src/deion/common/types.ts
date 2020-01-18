@@ -2,6 +2,7 @@ import { Face } from "facesjs";
 import { MouseEvent } from "react";
 import { Context } from "bbgm-router";
 import processInputs from "../worker/api/processInputs";
+import views from "../worker/views";
 
 export type Env = {
 	enableLogging: boolean;
@@ -42,8 +43,8 @@ declare global {
 }
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-export type View<T extends (...args: any) => any> = Exclude<
-	ThenArg<ReturnType<T>>,
+export type View<T extends keyof typeof views> = Exclude<
+	ThenArg<ReturnType<typeof views[T]>>,
 	void | { redirectUrl: string }
 >;
 

@@ -4,9 +4,8 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { View } from "../../common/types";
-import inbox from "../../worker/views/inbox";
 
-const Inbox = ({ anyUnread, messages }: View<typeof inbox>) => {
+const Inbox = ({ anyUnread, messages }: View<"inbox">) => {
 	useTitleBar({
 		title: "Inbox",
 	});

@@ -6,7 +6,6 @@ import { SortableTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util"; // Copied from worker/util/random lol
 import { View } from "../../common/types";
-import fantasyDraft from "../../worker/views/fantasyDraft";
 
 const randInt = (a: number, b: number): number => {
 	return Math.floor(Math.random() * (1 + b - a)) + a;
@@ -27,11 +26,7 @@ const shuffle = (list: any[]) => {
 	}
 };
 
-const FantasyDraft = ({
-	phase,
-	teams,
-	userTids,
-}: View<typeof fantasyDraft>) => {
+const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(teams.map(t => t.tid));
 	const [starting, setStarting] = useState(false);
 	const randomize = useCallback(() => {

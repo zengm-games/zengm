@@ -5,9 +5,8 @@ import { SafeHtml } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
 import { View } from "../../../common/types";
-import message_ from "../../../worker/views/message";
 
-const Message = ({ message }: View<typeof message_>) => {
+const Message = ({ message }: View<"message">) => {
 	const title = message && message.subject ? message.subject : "Message";
 	useTitleBar({
 		title,

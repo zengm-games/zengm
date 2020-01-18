@@ -14,7 +14,6 @@ import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
 import { View } from "../../common/types";
-import dashboard from "../../worker/views/dashboard";
 
 const difficultyText = (difficulty: number) => {
 	let prevText: string | undefined;
@@ -188,7 +187,7 @@ const dropdownStyle: CSSProperties = {
 	position: "static",
 };
 
-const Dashboard = ({ leagues }: View<typeof dashboard>) => {
+const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const [loadingLID, setLoadingLID] = useState<number | undefined>();
 	const [deletingLID, setDeletingLID] = useState<number | undefined>();
 	useTitleBar();

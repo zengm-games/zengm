@@ -3,7 +3,6 @@ import React from "react";
 import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { View } from "../../common/types";
-import playoffs from "../../worker/views/playoffs";
 
 const width100 = {
 	width: "100%",
@@ -17,7 +16,7 @@ const Playoffs = ({
 	season,
 	series,
 	userTid,
-}: View<typeof playoffs>) => {
+}: View<"playoffs">) => {
 	useTitleBar({
 		title: "Playoffs",
 		jumpTo: true,

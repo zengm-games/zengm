@@ -6,7 +6,6 @@ import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
 import { DraftLotteryResultArray, View } from "../../common/types";
-import draftLottery from "../../worker/views/draftLottery";
 
 const getProbs = (
 	result: DraftLotteryResultArray,
@@ -124,7 +123,7 @@ const getProbs = (
 	return probs;
 };
 
-type Props = View<typeof draftLottery>;
+type Props = View<"draftLottery">;
 type State = {
 	draftType: "nba1994" | "nba2019" | "noLottery" | "random" | undefined;
 	result: DraftLotteryResultArray | undefined;

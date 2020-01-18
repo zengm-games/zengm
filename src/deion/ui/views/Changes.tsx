@@ -3,9 +3,8 @@ import React from "react";
 import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { View } from "../../common/types";
-import changesView from "../../worker/views/changes";
 
-const Changes = ({ changes }: View<typeof changesView>) => {
+const Changes = ({ changes }: View<"changes">) => {
 	useTitleBar({
 		title: "Changes",
 	});

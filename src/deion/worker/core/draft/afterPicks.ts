@@ -33,7 +33,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 
 			await league.setGameAttributes({
 				phase: g.nextPhase,
-				nextPhase: null,
+				nextPhase: undefined,
 			});
 			await updatePhase();
 			await updatePlayMenu();

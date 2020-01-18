@@ -2,7 +2,8 @@ import { GameAttributes } from "../../common/types";
 
 const defaultGameAttributes: GameAttributes = {
 	phase: 0,
-	nextPhase: null, // Used only for fantasy draft
+	nextPhase: undefined, // Used only for fantasy draft
+	names: undefined,
 	daysLeft: 0, // Used only for free agency
 	gameOver: false,
 	godMode: false,

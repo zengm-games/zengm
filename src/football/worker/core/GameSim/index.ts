@@ -2121,7 +2121,7 @@ class GameSim {
 	}
 
 	injuries() {
-		if (g.disableInjuries) {
+		if ((g as any).disableInjuries) {
 			return;
 		}
 

@@ -19,7 +19,8 @@ typescript
   - types for PlayersPlus and TeamsPlus
   - types for g
     - union of league and non-league
-    - how to switch between them?
+    - g.get which throws an error if not in league
+      - how to handle g.lid? keep as is (g.get only for league specific variables) or make g.get handle it?
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo

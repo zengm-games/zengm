@@ -30,11 +30,11 @@ const loadGameAttributes = async () => {
 				await league.setGameAttributes({
 					numGamesPlayoffSeries: league.getValidNumGamesPlayoffSeries(
 						defaultGameAttributes.numGamesPlayoffSeries,
-						g.numPlayoffRounds,
+						(g as any).numPlayoffRounds,
 						g.numTeams,
 					),
 				});
-				delete g.numPlayoffRounds;
+				delete (g as any).numPlayoffRounds;
 			} else {
 				g[key] = defaultGameAttributes[key];
 			}

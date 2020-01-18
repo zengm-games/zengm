@@ -108,8 +108,8 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
 		if (g.userTid === tid) {
 			if (prevSeason.ownerMood) {
 				newSeason.ownerMood = prevSeason.ownerMood;
-			} else if (g.ownerMood) {
-				newSeason.ownerMood = g.ownerMood;
+			} else if ((g as any).ownerMood) {
+				newSeason.ownerMood = (g as any).ownerMood;
 			}
 		}
 	}

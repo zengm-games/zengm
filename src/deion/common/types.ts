@@ -155,67 +155,68 @@ export type GamePlayer = any;
 
 export type GameResults = any;
 
-export type GameAttributes = {
-	aiTrades: any;
-	allStarGame: any;
-	autoDeleteOldBoxScores: any;
-	brotherRate: any;
-	budget: any;
-	confs: any;
-	easyDifficultyInPast: any;
-	daysLeft: any;
-	defaultStadiumCapacity: any;
-	disableInjuries?: boolean; // Obsolete, should be removed in some subsequent update
-	difficulty: any;
-	divs: any;
-	draftType: any;
-	foulsNeededToFoulOut: any;
-	foulRateFactor: any;
-	gameOver: any;
-	godMode: any;
-	godModeInPast: any;
-	gracePeriodEnd: any;
-	hardCap: any;
-	homeCourtAdvantage: any;
-	injuryRate: any;
-	leagueName: any;
-	lid: any;
-	luxuryPayroll: any;
-	luxuryTax: any;
-	maxContract: any;
-	maxRosterSize: any;
-	minContract: any;
-	minPayroll: any;
-	minRosterSize: any;
+export type GameAttributesNonLeague = { lid: undefined };
+
+export type GameAttributesLeague = {
+	aiTrades: boolean;
+	allStarGame: boolean;
+	autoDeleteOldBoxScores: boolean;
+	brotherRate: number;
+	budget: boolean;
+	confs: { cid: number; name: string }[];
+	easyDifficultyInPast: boolean;
+	daysLeft: number;
+	defaultStadiumCapacity: number;
+	difficulty: number;
+	divs: { cid: number; did: number; name: string }[];
+	draftType: "nba1994" | "nba2019" | "noLottery" | "random";
+	foulsNeededToFoulOut: number;
+	foulRateFactor: number;
+	gameOver: boolean;
+	godMode: boolean;
+	godModeInPast: boolean;
+	gracePeriodEnd: number;
+	hardCap: boolean;
+	homeCourtAdvantage: number;
+	injuryRate: number;
+	leagueName: string;
+	lid: number;
+	luxuryPayroll: number;
+	luxuryTax: number;
+	maxContract: number;
+	maxRosterSize: number;
+	minContract: number;
+	minPayroll: number;
+	minRosterSize: number;
 	names?: Names;
-	nextPhase: any;
-	numDraftRounds: any;
-	numGames: any;
-	numGamesPlayoffSeries: any;
-	numPlayoffByes: any;
-	numPlayoffRounds?: number; // Obsolete, just here for upgrade code
-	numTeams: any;
-	numSeasonsFutureDraftPicks: any;
-	ownerMood?: OwnerMood; // Obsolete, just here for upgrade code
-	phase: any;
-	playersRefuseToNegotiate: any;
-	quarterLength: any;
-	salaryCap: any;
-	season: any;
-	sonRate: any;
-	startingSeason: any;
-	stopOnInjury: any;
-	stopOnInjuryGames: any;
-	teamAbbrevsCache: any;
-	teamNamesCache: any;
-	teamRegionsCache: any;
-	ties: any;
-	tragicDeathRate: any;
-	userTid: any;
-	userTids: any;
+	nextPhase?: Phase;
+	numDraftRounds: number;
+	numGames: number;
+	numGamesPlayoffSeries: number[];
+	numPlayoffByes: number;
+	numTeams: number;
+	numSeasonsFutureDraftPicks: number;
+	phase: Phase;
+	playersRefuseToNegotiate: boolean;
+	quarterLength: number;
+	salaryCap: number;
+	season: number;
+	sonRate: number;
+	startingSeason: number;
+	stopOnInjury: boolean;
+	stopOnInjuryGames: number;
+	teamAbbrevsCache: string[];
+	teamNamesCache: string[];
+	teamRegionsCache: string[];
+	ties: boolean;
+	tragicDeathRate: number;
+	userTid: number;
+	userTids: number[];
 };
 
-export type GameAttributeKey = keyof GameAttributes;
+export type GameAttributes = GameAttributesNonLeague | GameAttributesLeague;
+
+export type GameAttributeKey = keyof GameAttributesLeague;
 
 export type GameAttribute = {
 	key: GameAttributeKey;

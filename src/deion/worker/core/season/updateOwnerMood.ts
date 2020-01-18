@@ -50,8 +50,8 @@ const updateOwnerMood = async (): Promise<{
 	}
 
 	if (!teamSeason.ownerMood) {
-		teamSeason.ownerMood = g.ownerMood
-			? g.ownerMood
+		teamSeason.ownerMood = (g as any).ownerMood
+			? (g as any).ownerMood
 			: {
 					money: 0,
 					playoffs: 0,

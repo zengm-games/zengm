@@ -1,7 +1,6 @@
 import { GameAttributes } from "../../common/types";
 
-// Additional league-specific attributes (userTid, userTids, season, ...) are set when creating a new league
-const defaultGameAttributes: Partial<GameAttributes> = {
+const defaultGameAttributes: GameAttributes = {
 	phase: 0,
 	nextPhase: null, // Used only for fantasy draft
 	daysLeft: 0, // Used only for free agency
@@ -74,8 +73,7 @@ const defaultGameAttributes: Partial<GameAttributes> = {
 	// The probability that a new player will be the son or brother of an existing player. In practice, the observed number may be smaller than this because sometimes a valid match will not be found.
 	sonRate: 0.02,
 	brotherRate: 0.02,
-	// See constants.DIFFICULTY for values
-	difficulty: 0,
+
 	easyDifficultyInPast: false,
 	hardCap: false,
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
@@ -89,6 +87,20 @@ const defaultGameAttributes: Partial<GameAttributes> = {
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,
 	foulsNeededToFoulOut: 6,
+
+	// These will always be overwritten when creating a league, just here for TypeScript
+	lid: 0,
+	userTid: 0,
+	userTids: [0],
+	season: 0,
+	startingSeason: 0,
+	leagueName: "",
+	teamAbbrevsCache: [],
+	teamRegionsCache: [],
+	teamNamesCache: [],
+	gracePeriodEnd: 0,
+	numTeams: 0,
+	difficulty: 0, // See constants.DIFFICULTY for values
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

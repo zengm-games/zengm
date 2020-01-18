@@ -18,6 +18,8 @@ typescript
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus
   - types for g
+    - union of league and non-league
+    - how to switch between them?
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo

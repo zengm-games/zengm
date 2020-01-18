@@ -165,7 +165,7 @@ export type GameAttributes = {
 	easyDifficultyInPast: any;
 	daysLeft: any;
 	defaultStadiumCapacity: any;
-	disableInjuries: any; // Obsolete, should be removed in some subsequent update
+	disableInjuries?: any; // Obsolete, should be removed in some subsequent update
 	difficulty: any;
 	divs: any;
 	draftType: any;
@@ -187,16 +187,16 @@ export type GameAttributes = {
 	minContract: any;
 	minPayroll: any;
 	minRosterSize: any;
-	names: any;
+	names?: any;
 	nextPhase: any;
 	numDraftRounds: any;
 	numGames: any;
 	numGamesPlayoffSeries: any;
 	numPlayoffByes: any;
-	numPlayoffRounds: any; // Obsolete, just here for upgrade code
+	numPlayoffRounds?: any; // Obsolete, just here for upgrade code
 	numTeams: any;
 	numSeasonsFutureDraftPicks: any;
-	ownerMood: any; // Obsolete, just here for upgrade code
+	ownerMood?: any; // Obsolete, just here for upgrade code
 	phase: any;
 	playersRefuseToNegotiate: any;
 	quarterLength: any;

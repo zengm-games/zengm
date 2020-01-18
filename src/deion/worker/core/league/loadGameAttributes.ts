@@ -23,7 +23,6 @@ const loadGameAttributes = async () => {
 	// Set defaults to avoid IndexedDB upgrade
 	for (const key of helpers.keys(defaultGameAttributes)) {
 		if (g[key] === undefined) {
-			console.log(key);
 			if (
 				key === "numGamesPlayoffSeries" &&
 				g.hasOwnProperty("numPlayoffRounds")

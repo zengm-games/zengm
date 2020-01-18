@@ -1105,11 +1105,9 @@ const runBefore = async (
 
 	if (typeof inputs.redirectUrl === "string") {
 		// Short circuit from processInputs alone
-		return [
-			{
-				redirectUrl: inputs.redirectUrl,
-			},
-		];
+		return {
+			redirectUrl: inputs.redirectUrl,
+		};
 	}
 
 	const view = views[viewId] ? views[viewId] : overrides.views[viewId];

@@ -77,18 +77,22 @@ const Controller = () => {
 		inLeague: false,
 		data: {},
 	});
+
 	const idLoaded = useRef<string | undefined>(undefined);
 	const idLoading = useRef<string | undefined>(undefined);
+
 	const { lid, popup, showNagModal } = useLocalShallow(state2 => ({
 		lid: state2.lid,
 		popup: state2.popup,
 		showNagModal: state2.showNagModal,
 	}));
+
 	const closeNagModal = useCallback(() => {
 		localActions.update({
 			showNagModal: false,
 		});
 	}, []);
+
 	const updatePage = useCallback(
 		async (Component: any, id: string, inLeague: boolean, context: Context) => {
 			const updateEvents =
@@ -216,6 +220,7 @@ const Controller = () => {
 		},
 		[lid, state.data],
 	);
+
 	useEffect(() => {
 		return local.subscribe(
 			async (viewInfo: LocalStateUI["viewInfo"] | null) => {
@@ -238,6 +243,7 @@ const Controller = () => {
 			state2 => state2.viewInfo,
 		);
 	}, [updatePage]);
+
 	useEffect(() => {
 		if (popup && document.body) {
 			if (document.body) {
@@ -253,6 +259,7 @@ const Controller = () => {
 			}
 		}
 	}, [popup]);
+
 	const { Component, data, inLeague, loading } = state;
 	let contents;
 	const pageID = idLoading.current || idLoaded.current; // idLoading, idLoaded, or undefined

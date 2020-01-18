@@ -10,8 +10,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("playerMovement")
 	) {
 		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
-		let stats;
-		let undrafted;
+		let stats: string[];
+		let undrafted: any[];
 
 		if (fantasyDraft) {
 			stats =
@@ -54,7 +54,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showRookies: true,
 			fuzz: true,
 		});
-		let drafted;
+		let drafted: any[];
 
 		if (fantasyDraft) {
 			drafted = local.fantasyDraftResults;

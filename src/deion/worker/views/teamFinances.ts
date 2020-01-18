@@ -2,17 +2,13 @@ import { PHASE } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers, lock } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateTeamFinances(
-	inputs: {
-		abbrev: string;
-		show: string | "all";
-		tid: number;
-	},
+const updateTeamFinances = async (
+	inputs: ViewInput<"teamFinances">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
@@ -163,13 +159,13 @@ async function updateTeamFinances(
 		}, 0);
 		return vars;
 	}
-}
+};
 
-function updateGamesInProgress(
-	inputs: GetOutput,
+const updateGamesInProgress = (
+	inputs: ViewInput<"teamFinances">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("lock.gameSim") ||
 		inputs.tid !== state.tid ||
@@ -179,7 +175,7 @@ function updateGamesInProgress(
 			gamesInProgress: lock.get("gameSim"),
 		};
 	}
-}
+};
 
 export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
 	return Object.assign(

@@ -1,8 +1,8 @@
 import { idb } from "../db";
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const stats =
@@ -47,6 +47,6 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayers;

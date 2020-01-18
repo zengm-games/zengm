@@ -1,14 +1,12 @@
 import { idb } from "../db";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util";
-import { UpdateEvents, Message } from "../../common/types";
+import { UpdateEvents, Message, ViewInput } from "../../common/types";
 
-async function updateMessage(
-	inputs: {
-		mid?: number;
-	},
+const updateMessage = async (
+	inputs: ViewInput<"message">,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<{ message: void | Message } | { redirectUrl: string } | void> {
+): Promise<{ message: void | Message } | { redirectUrl: string } | void> => {
 	// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 	if (
 		updateEvents.includes("firstRun") ||
@@ -63,6 +61,6 @@ async function updateMessage(
 			message,
 		};
 	}
-}
+};
 
 export default updateMessage;

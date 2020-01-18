@@ -2,7 +2,7 @@ import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
 import getDepthPlayers from "../core/player/getDepthPlayers";
 import posRatings from "../../common/posRatings";
-import { UpdateEvents } from "../../../deion/common/types";
+import { UpdateEvents, ViewInput } from "../../../deion/common/types";
 import { Position } from "../../common/types";
 
 const defenseStats = [
@@ -63,15 +63,7 @@ const stats: Record<Position, string[]> = {
 };
 
 async function updateDepth(
-	{
-		abbrev,
-		pos,
-		tid,
-	}: {
-		abbrev: string;
-		pos: Position;
-		tid: number;
-	},
+	{ abbrev, pos, tid }: ViewInput<"depth">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) {
@@ -83,11 +75,13 @@ async function updateDepth(
 		abbrev !== state.abbrev
 	) {
 		const editable = tid === g.userTid;
+		// @ts-ignore
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 		let players = await idb.cache.players.indexGetAll("playersByTid", tid);
 		players = await idb.getCopies.playersPlus(players, {
 			attrs: ["pid", "name", "age", "injury", "watch"],
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
+			// @ts-ignore
 			stats: stats[pos],
 			season: g.season,
 			showNoStats: true,
@@ -107,9 +101,11 @@ async function updateDepth(
 			abbrev,
 			editable,
 			pos,
+			// @ts-ignore
 			players: depthPlayers[pos],
 			ratings,
 			season: g.season,
+			// @ts-ignore
 			stats: stats.hasOwnProperty(pos) ? stats[pos] : [],
 		};
 	}

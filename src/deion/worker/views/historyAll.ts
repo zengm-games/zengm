@@ -1,9 +1,9 @@
 import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateHistory(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
@@ -114,6 +114,6 @@ async function updateHistory(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updateHistory;

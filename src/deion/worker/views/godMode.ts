@@ -1,7 +1,7 @@
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateGodMode(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
@@ -37,6 +37,6 @@ async function updateGodMode(inputs: GetOutput, updateEvents: UpdateEvents) {
 			foulsNeededToFoulOut: g.foulsNeededToFoulOut,
 		};
 	}
-}
+};
 
 export default updateGodMode;

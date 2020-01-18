@@ -1,12 +1,12 @@
 import { achievement, checkAccount } from "../util";
-import { Conditions, GetOutput, UpdateEvents } from "../../common/types";
+import { Conditions, UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateAccount(
-	inputs: GetOutput,
+const updateAccount = async (
+	inputs: ViewInput<"account">,
 	updateEvents: UpdateEvents,
-	state: any,
+	state: unknown,
 	conditions: Conditions,
-) {
+) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
 		const partialTopMenu = await checkAccount(conditions);
 		const loggedIn =
@@ -37,22 +37,22 @@ async function updateAccount(
 			username: partialTopMenu.username,
 		};
 	}
-}
+};
 
-async function updateAchievements(
-	inputs: GetOutput,
+const updateAchievements = async (
+	inputs: unknown,
 	updateEvents: UpdateEvents,
-) {
+) => {
 	if (updateEvents.includes("firstRun")) {
 		const achievements = await achievement.getAll();
 		return {
 			achievements,
 		};
 	}
-}
+};
 
 export default async (
-	inputs: GetOutput,
+	inputs: ViewInput<"account">,
 	updateEvents: UpdateEvents,
 	state: any,
 	conditions: Conditions,

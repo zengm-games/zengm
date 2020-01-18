@@ -2,8 +2,11 @@ import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
+import { ViewInput } from "../../common/types";
 
-async function updateUpcomingFreeAgents(inputs: { season: number }) {
+const updateUpcomingFreeAgents = async (
+	inputs: ViewInput<"upcomingFreeAgents">,
+) => {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]
@@ -50,6 +53,6 @@ async function updateUpcomingFreeAgents(inputs: { season: number }) {
 		season: inputs.season,
 		stats,
 	};
-}
+};
 
 export default updateUpcomingFreeAgents;

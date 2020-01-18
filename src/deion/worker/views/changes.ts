@@ -1,9 +1,9 @@
 import { overrides } from "../util";
 
-async function updateChanges() {
+const updateChanges = async () => {
 	return {
 		changes: overrides.util.changes.slice(0).reverse(),
 	};
-}
+};
 
 export default updateChanges;

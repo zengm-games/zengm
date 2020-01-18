@@ -2,14 +2,14 @@ import { PHASE } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents, DraftLotteryResultArray } from "../../common/types";
+import {
+	UpdateEvents,
+	DraftLotteryResultArray,
+	ViewInput,
+} from "../../common/types";
 
-async function updateDraftLottery(
-	{
-		season,
-	}: {
-		season: number;
-	},
+const updateDraftLottery = async (
+	{ season }: ViewInput<"draftLottery">,
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<{
@@ -19,7 +19,7 @@ async function updateDraftLottery(
 	ties: boolean;
 	type: "completed" | "projected" | "readyToRun";
 	userTid: number;
-} | void> {
+} | void> => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||
@@ -90,6 +90,6 @@ async function updateDraftLottery(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updateDraftLottery;

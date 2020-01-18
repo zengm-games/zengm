@@ -1,17 +1,17 @@
 import { idb } from "../db";
 import { g, local, updatePlayMenu } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
 	await updatePlayMenu();
 };
 
-async function updateHistory(
-	inputs: GetOutput,
+const updateHistory = async (
+	inputs: ViewInput<"history">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	const { season } = inputs;
 
 	if (typeof season !== "number") {
@@ -95,6 +95,6 @@ async function updateHistory(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updateHistory;

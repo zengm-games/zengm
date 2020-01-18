@@ -1,6 +1,7 @@
 import { Face } from "facesjs";
 import { MouseEvent } from "react";
 import { Context } from "bbgm-router";
+import processInputs from "../worker/api/processInputs";
 
 export type Env = {
 	enableLogging: boolean;
@@ -44,6 +45,11 @@ type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 export type View<T extends (...args: any) => any> = Exclude<
 	ThenArg<ReturnType<T>>,
 	void | { redirectUrl: string }
+>;
+
+export type ViewInput<T extends keyof typeof processInputs> = Exclude<
+	ReturnType<typeof processInputs[T]>,
+	{ redirectUrl: string }
 >;
 
 export type AchievementWhen =
@@ -233,10 +239,6 @@ export type GameProcessedCompleted = {
 	result: "W" | "L" | "T";
 	score: string;
 	teams: [any, any];
-};
-
-export type GetOutput = {
-	[key: string]: (number | string) | undefined | null;
 };
 
 export type League = {
@@ -820,15 +822,6 @@ export type UpdateEvents = (
 	| "teamFinances"
 	| "watchList"
 )[];
-
-export type RunFunction = (
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-	state: any,
-	setState: (state: any) => void,
-) => Promise<void | {
-	[key: string]: any;
-}>;
 
 export type WorkerOverridesConstants = {
 	COMPOSITE_WEIGHTS: CompositeWeights;

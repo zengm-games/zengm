@@ -1,6 +1,7 @@
 import { PHASE } from "../../common";
 import { g, helpers, overrides } from "../util";
 import { Params } from "bbgm-router";
+import { PlayerStatType } from "../../common/types";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -189,10 +190,13 @@ const history = (params: Params) => {
 };
 
 const leaders = (params: Params) => {
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
 	return {
 		season:
 			params.season === "career" ? undefined : validateSeason(params.season),
-		playoffs: params.playoffs !== undefined ? params.playoffs : "regularSeason",
+		playoffs,
 	};
 };
 
@@ -305,6 +309,9 @@ const playerStats = (params: Params) => {
 		abbrev = "all";
 	}
 
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
 	const defaultStatType =
 		process.env.SPORT === "basketball" ? "perGame" : "passing";
 	return {
@@ -312,7 +319,7 @@ const playerStats = (params: Params) => {
 		season:
 			params.season === "career" ? undefined : validateSeason(params.season),
 		statType: params.statType !== undefined ? params.statType : defaultStatType,
-		playoffs: params.playoffs !== undefined ? params.playoffs : "regularSeason",
+		playoffs,
 	};
 };
 
@@ -322,7 +329,11 @@ const resetPassword = (params: Params) => {
 	};
 };
 
-const roster = (params: Params) => {
+const roster = (
+	params: Params,
+):
+	| { redirectUrl: string }
+	| { abbrev: string; season: number; tid: number } => {
 	// Fix broken links
 	if (params.abbrev === "FA") {
 		return {
@@ -365,17 +376,20 @@ const teamRecords = (params: Params) => {
 };
 
 const teamStats = (params: Params) => {
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
 	return {
 		season: validateSeason(params.season),
 		teamOpponent:
 			params.teamOpponent !== undefined ? params.teamOpponent : "team",
-		playoffs: params.playoffs !== undefined ? params.playoffs : "regularSeason",
+		playoffs,
 	};
 };
 
 const transactions = (params: Params) => {
-	let abbrev;
-	let tid;
+	let abbrev: string;
+	let tid: number;
 
 	if (params.abbrev && params.abbrev !== "all") {
 		[tid, abbrev] = validateAbbrev(params.abbrev);
@@ -387,7 +401,7 @@ const transactions = (params: Params) => {
 		abbrev = g.teamAbbrevsCache[tid];
 	}
 
-	let season;
+	let season: number | "all";
 
 	if (params.season && params.season !== "all") {
 		season = validateSeason(params.season);
@@ -422,10 +436,19 @@ const upcomingFreeAgents = (params: Params) => {
 };
 
 const watchList = (params: Params) => {
-	return {
-		statType: params.statType !== undefined ? params.statType : "perGame",
-		playoffs: params.playoffs !== undefined ? params.playoffs : "regularSeason",
-	};
+	let statType: PlayerStatType;
+	if (params.statType === "per36") {
+		statType = params.statType;
+	} else if (params.statType === "totals") {
+		statType = params.statType;
+	} else {
+		statType = "perGame";
+	}
+
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	return { playoffs, statType };
 };
 
 const validateSeasonOnly = (params: Params) => {

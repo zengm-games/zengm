@@ -3,7 +3,7 @@ import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g, lock } from "../util";
 
-async function updateFreeAgents() {
+const updateFreeAgents = async () => {
 	const payroll = await team.getPayroll(g.userTid);
 	const [userPlayersAll, playersAll] = await Promise.all([
 		idb.cache.players.indexGetAll("playersByTid", g.userTid),
@@ -62,6 +62,6 @@ async function updateFreeAgents() {
 		userPlayers,
 		userTid: g.userTid,
 	};
-}
+};
 
 export default updateFreeAgents;

@@ -3,7 +3,7 @@ import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateNegotiationList() {
+const updateNegotiationList = async () => {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"]
@@ -65,6 +65,6 @@ async function updateNegotiationList() {
 		sumContracts,
 		userTid: g.userTid,
 	};
-}
+};
 
 export default updateNegotiationList;

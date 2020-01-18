@@ -2,16 +2,13 @@ import { PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { PlayerStatType, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayers(
-	inputs: {
-		playoffs: "playoffs" | "regularSeasons";
-		statType: PlayerStatType;
-	},
+const updatePlayers = async (
+	inputs: ViewInput<"watchList">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameSim") ||
@@ -84,6 +81,6 @@ async function updatePlayers(
 			stats,
 		};
 	}
-}
+};
 
 export default updatePlayers;

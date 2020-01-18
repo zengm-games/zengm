@@ -1,13 +1,13 @@
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { checkAccount } from "../util";
-import { Conditions, GetOutput, UpdateEvents } from "../../common/types";
+import { Conditions, UpdateEvents } from "../../common/types";
 
-async function updateAccountUpdateCard(
-	inputs: GetOutput,
+const updateAccountUpdateCard = async (
+	inputs: unknown,
 	updateEvents: UpdateEvents,
-	state: any,
+	state: unknown,
 	conditions: Conditions,
-) {
+) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
 		const partialTopMenu = await checkAccount(conditions);
 
@@ -37,6 +37,6 @@ async function updateAccountUpdateCard(
 			};
 		}
 	}
-}
+};
 
 export default updateAccountUpdateCard;

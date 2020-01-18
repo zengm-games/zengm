@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
 const footballScore = p => {
 	const ind = overrides.common.constants.POSITIONS.indexOf(p.ratings.pos);
@@ -11,15 +11,11 @@ const footballScore = p => {
 	);
 };
 
-async function updateRoster(
-	inputs: {
-		abbrev: string;
-		season: number;
-		tid: number;
-	},
+const updateRoster = async (
+	inputs: ViewInput<"roster">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("watchList") ||
 		(inputs.season === g.season &&
@@ -188,6 +184,6 @@ async function updateRoster(
 		vars.t.ovrCurrent = overrides.core.team.ovr(playersCurrent);
 		return vars;
 	}
-}
+};
 
 export default updateRoster;

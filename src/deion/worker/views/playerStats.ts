@@ -1,28 +1,13 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayers(
-	inputs: {
-		abbrev: string;
-		playoffs: "playoffs" | "regularSeason";
-		season: number;
-		statType:
-			| "advanced"
-			| "per36"
-			| "perGame"
-			| "shotLocations"
-			| "totals"
-			| "passing"
-			| "rushing"
-			| "defense"
-			| "kicking"
-			| "returns";
-	},
+const updatePlayers = async (
+	inputs: ViewInput<"playerStats">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		(inputs.season === g.season &&
 			(updateEvents.includes("gameSim") ||
@@ -200,6 +185,6 @@ async function updatePlayers(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayers;

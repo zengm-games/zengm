@@ -1,16 +1,13 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayers(
-	inputs: {
-		abbrev: string;
-		season: number;
-	},
+const updatePlayers = async (
+	inputs: ViewInput<"playerRatings">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		(inputs.season === g.season && updateEvents.includes("playerMovement")) ||
 		(updateEvents.includes("newPhase") && g.phase === PHASE.PRESEASON) ||
@@ -129,6 +126,6 @@ async function updatePlayers(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayers;

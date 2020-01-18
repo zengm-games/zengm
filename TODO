@@ -18,9 +18,7 @@ typescript
   - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus
-  - ReturnType to link processInputs and worker/views
-    - how to type params from bbgm-router?
-    - delete GetOutput
+  - make View generic like ViewInput?
   - types for g
   - any -> unknown
     - also in dependencies, like bbgm-router

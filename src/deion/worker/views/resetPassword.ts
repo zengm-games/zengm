@@ -1,9 +1,9 @@
-import { GetOutput } from "../../common/types";
+import { ViewInput } from "../../common/types";
 
-async function updateToken(inputs: GetOutput) {
+const updateToken = async (inputs: ViewInput<"resetPassword">) => {
 	return {
 		token: inputs.token,
 	};
-}
+};
 
 export default updateToken;

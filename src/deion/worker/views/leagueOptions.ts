@@ -1,7 +1,7 @@
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateOptions(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes")
@@ -13,6 +13,6 @@ async function updateOptions(inputs: GetOutput, updateEvents: UpdateEvents) {
 			stopOnInjuryGames: g.stopOnInjuryGames,
 		};
 	}
-}
+};
 
 export default updateOptions;

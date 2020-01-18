@@ -1,7 +1,7 @@
 import { allStar } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
 const stats =
 	process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
@@ -43,10 +43,7 @@ const augment = async allStars => {
 	};
 };
 
-const updateAllStars = async (
-	inputs: GetOutput,
-	updateEvents: UpdateEvents,
-) => {
+const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||

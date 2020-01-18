@@ -1,9 +1,9 @@
 import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
@@ -29,6 +29,6 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayers;

@@ -1,15 +1,13 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayers(
-	inputs: {
-		season: number;
-	},
+const updatePlayers = async (
+	inputs: ViewInput<"playerStatDists">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		(inputs.season === g.season &&
 			(updateEvents.includes("gameSim") ||
@@ -78,6 +76,6 @@ async function updatePlayers(
 			statsAll,
 		};
 	}
-}
+};
 
 export default updatePlayers;

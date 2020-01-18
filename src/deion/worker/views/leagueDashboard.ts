@@ -2,9 +2,9 @@ import { PHASE, PLAYER } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateInbox(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const messages = await idb.getCopies.messages({
 			limit: 2,
@@ -19,9 +19,9 @@ async function updateInbox(inputs: GetOutput, updateEvents: UpdateEvents) {
 			})),
 		};
 	}
-}
+};
 
-async function updateTeam(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -55,9 +55,9 @@ async function updateTeam(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
-async function updatePayroll(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
@@ -67,9 +67,9 @@ async function updatePayroll(inputs: GetOutput, updateEvents: UpdateEvents) {
 			payroll: payroll / 1000, // [millions of dollars]
 		};
 	}
-}
+};
 
-async function updateTeams(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -154,13 +154,13 @@ async function updateTeams(inputs: GetOutput, updateEvents: UpdateEvents) {
 			teamStats,
 		};
 	}
-}
+};
 
-async function updateGames(
-	inputs: GetOutput,
+const updateGames = async (
+	inputs: unknown,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	const NUM_SHOW_COMPLETED = 4;
 
 	if (updateEvents.includes("firstRun")) {
@@ -198,9 +198,9 @@ async function updateGames(
 			completed,
 		};
 	}
-}
+};
 
-async function updateSchedule(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -257,9 +257,9 @@ async function updateSchedule(inputs: GetOutput, updateEvents: UpdateEvents) {
 			upcoming: games,
 		};
 	}
-}
+};
 
-async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -372,9 +372,9 @@ async function updatePlayers(inputs: GetOutput, updateEvents: UpdateEvents) {
 			startersStats,
 		};
 	}
-}
+};
 
-async function updatePlayoffs(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(g.phase >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
@@ -434,9 +434,9 @@ async function updatePlayoffs(inputs: GetOutput, updateEvents: UpdateEvents) {
 			showPlayoffSeries,
 		};
 	}
-}
+};
 
-async function updateStandings(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
@@ -486,9 +486,13 @@ async function updateStandings(inputs: GetOutput, updateEvents: UpdateEvents) {
 			playoffsByConference,
 		};
 	}
-}
+};
 
-export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
+export default async (
+	inputs: unknown,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
 	return Object.assign(
 		{},
 		await updateInbox(inputs, updateEvents),

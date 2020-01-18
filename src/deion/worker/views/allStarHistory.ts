@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
 const addAbbrev = (obj: any): any => {
 	return { ...obj, abbrev: g.teamAbbrevsCache[obj.tid] };
@@ -22,7 +22,7 @@ const augment = allAllStars => {
 };
 
 const updateAllStarHistory = async (
-	inputs: GetOutput,
+	inputs: unknown,
 	updateEvents: UpdateEvents,
 ) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {

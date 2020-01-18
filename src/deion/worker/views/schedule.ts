@@ -1,13 +1,13 @@
 import { season } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateUpcoming(
-	inputs: GetOutput,
+const updateUpcoming = async (
+	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -44,16 +44,14 @@ async function updateUpcoming(
 			upcoming,
 		};
 	}
-}
+};
 
 // Based on views.gameLog.updateGamesList
-async function updateCompleted(
-	inputs: {
-		abbrev: string;
-	},
+const updateCompleted = async (
+	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		/*// Reset list, so old completed games don't temporarily show when switching team
           if (state.completed) {
@@ -84,9 +82,13 @@ async function updateCompleted(
 			completed,
 		};
 	}
-}
+};
 
-export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
+export default async (
+	inputs: ViewInput<"schedule">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
 	return Object.assign(
 		{},
 		await updateUpcoming(inputs, updateEvents, state),

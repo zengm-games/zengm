@@ -1,8 +1,11 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateUserRoster(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateUserRoster = async (
+	inputs: unknown,
+	updateEvents: UpdateEvents,
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement") ||
@@ -53,6 +56,6 @@ async function updateUserRoster(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userRoster,
 		};
 	}
-}
+};
 
 export default updateUserRoster;

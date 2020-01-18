@@ -2,20 +2,24 @@ import { PHASE, PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { face, g, getTeamColors, helpers, overrides } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayer(
-	inputs: {
-		pid: number;
-	},
+const updatePlayer = async (
+	inputs: ViewInput<"player">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		!state.retired ||
 		state.pid !== inputs.pid
 	) {
+		if (inputs.pid === undefined) {
+			return {
+				errorMessage: "Player not found.",
+			};
+		}
+
 		const ratings = overrides.common.constants.RATINGS;
 		const statTables = Object.values(
 			overrides.common.constants.PLAYER_STATS_TABLES,
@@ -178,6 +182,6 @@ async function updatePlayer(
 			willingToSign,
 		};
 	}
-}
+};
 
 export default updatePlayer;

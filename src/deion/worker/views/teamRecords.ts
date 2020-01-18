@@ -1,9 +1,9 @@
 import range from "lodash/range";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-function getTeamRecord(t, awards) {
+const getTeamRecord = (t, awards) => {
 	let totalWon = 0;
 	let totalLost = 0;
 	let playoffAppearances = 0;
@@ -69,7 +69,7 @@ function getTeamRecord(t, awards) {
 		allStar: awards[t.tid] ? awards[t.tid].allStar : 0,
 		allStarMVP: awards[t.tid] ? awards[t.tid].allStarMVP : 0,
 	};
-}
+};
 
 function tallyAwards(awards, allAllStars) {
 	const teams = range(g.numTeams).map(() => {
@@ -204,7 +204,7 @@ function tallyAwards(awards, allAllStars) {
 	return teams;
 }
 
-function sumRecordsFor(group, id, name, records) {
+const sumRecordsFor = (group, id, name, records) => {
 	const except = [
 		"id",
 		"lastChampionship",
@@ -238,15 +238,13 @@ function sumRecordsFor(group, id, name, records) {
 	}
 
 	return out;
-}
+};
 
-async function updateTeamRecords(
-	inputs: {
-		byType: string;
-	},
+const updateTeamRecords = async (
+	inputs: ViewInput<"teamRecords">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (updateEvents.includes("firstRun") || inputs.byType !== state.byType) {
 		const [teams, awards, allStars] = await Promise.all([
 			idb.getCopies.teamsPlus({
@@ -309,6 +307,6 @@ async function updateTeamRecords(
 			teamRecords: display,
 		};
 	}
-}
+};
 
 export default updateTeamRecords;

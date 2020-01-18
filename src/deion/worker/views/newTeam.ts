@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g } from "../util";
 
-async function updateTeamSelect() {
+const updateTeamSelect = async () => {
 	let teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "region", "name"],
 		seasonAttrs: ["winp"],
@@ -24,6 +24,6 @@ async function updateTeamSelect() {
 		phase: g.phase,
 		teams,
 	};
-}
+};
 
 export default updateTeamSelect;

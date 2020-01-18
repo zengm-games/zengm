@@ -1,16 +1,12 @@
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePowerRankings(
-	{
-		season,
-	}: {
-		season: number;
-	},
+const updatePowerRankings = async (
+	{ season }: ViewInput<"powerRankings">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		(season === g.season && updateEvents.includes("gameSim")) ||
 		season !== state.season
@@ -93,6 +89,6 @@ async function updatePowerRankings(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePowerRankings;

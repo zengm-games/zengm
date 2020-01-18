@@ -1,7 +1,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { defaultGameAttributes, g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
 const getCategoriesAndStats = () => {
 	const categories: {
@@ -332,14 +332,11 @@ const getCategoriesAndStats = () => {
 	};
 };
 
-async function updateLeaders(
-	inputs: {
-		playoffs: "playoffs" | "regularSeason";
-		season: number;
-	},
+const updateLeaders = async (
+	inputs: ViewInput<"leaders">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("watchList") ||
@@ -450,6 +447,6 @@ async function updateLeaders(
 			season: inputs.season,
 		};
 	}
-}
+};
 
 export default updateLeaders;

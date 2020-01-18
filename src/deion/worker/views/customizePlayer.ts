@@ -2,12 +2,12 @@ import { PLAYER } from "../../common";
 import { finances, player } from "../core";
 import { idb } from "../db";
 import { face, g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateCustomizePlayer(
-	inputs: GetOutput,
+const updateCustomizePlayer = async (
+	inputs: ViewInput<"customizePlayer">,
 	updateEvents: UpdateEvents,
-) {
+) => {
 	if (!g.godMode) {
 		return {
 			godMode: g.godMode,
@@ -91,6 +91,6 @@ async function updateCustomizePlayer(
 			teams,
 		};
 	}
-}
+};
 
 export default updateCustomizePlayer;

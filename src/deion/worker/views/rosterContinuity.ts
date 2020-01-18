@@ -4,9 +4,7 @@ import { g } from "../util";
 import { UpdateEvents } from "../../common/types";
 
 async function updateSeasons(
-	inputs: {
-		season: number;
-	},
+	inputs: unknown,
 	updateEvents: UpdateEvents,
 ): Promise<{
 	abbrevs: string[];

@@ -1,12 +1,12 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayers(
-	inputs: GetOutput,
+const updatePlayers = async (
+	inputs: ViewInput<"playerFeats">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("gameSim") ||
 		inputs.abbrev !== state.abbrev ||
@@ -119,6 +119,6 @@ async function updatePlayers(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayers;

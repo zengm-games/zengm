@@ -1,23 +1,23 @@
 import { idb } from "../db";
 import { g, helpers, overrides } from "../util";
 import { setTeamInfo } from "./gameLog";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updatePlayByPlay(
-	inputs: {
-		fromAction: boolean;
-		gidPlayByPlay: number;
-		playByPlay: any[];
-	},
+const updatePlayByPlay = async (
+	inputs: ViewInput<"liveGame">,
 	updateEvents: UpdateEvents,
-) {
+) => {
 	if (updateEvents.includes("firstRun") && !inputs.fromAction) {
 		return {
 			redirectUrl: helpers.leagueUrl(["live"]),
 		};
 	}
 
-	if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
+	if (
+		inputs.gidPlayByPlay !== undefined &&
+		inputs.playByPlay !== undefined &&
+		inputs.playByPlay.length > 0
+	) {
 		const boxScore: any = helpers.deepCopy(
 			await idb.cache.games.get(inputs.gidPlayByPlay),
 		);
@@ -97,6 +97,6 @@ async function updatePlayByPlay(
 			events: inputs.playByPlay,
 		};
 	}
-}
+};
 
 export default updatePlayByPlay;

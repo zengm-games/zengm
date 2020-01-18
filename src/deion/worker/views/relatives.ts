@@ -1,16 +1,12 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { UpdateEvents, Player } from "../../common/types";
+import { UpdateEvents, Player, ViewInput } from "../../common/types";
 
-async function updatePlayers(
-	{
-		pid,
-	}: {
-		pid?: number;
-	},
+const updatePlayers = async (
+	{ pid }: ViewInput<"relatives">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun") || pid !== state.pid) {
 		const stats =
@@ -62,6 +58,6 @@ async function updatePlayers(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayers;

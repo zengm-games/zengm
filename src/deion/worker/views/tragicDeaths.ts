@@ -1,8 +1,8 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function tragicDeaths(inputs: GetOutput, updateEvents: UpdateEvents) {
+const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 	if (updateEvents.includes("firstRun")) {
 		const events = await idb.getCopies.events({
@@ -56,6 +56,6 @@ async function tragicDeaths(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default tragicDeaths;

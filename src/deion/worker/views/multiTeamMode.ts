@@ -1,10 +1,10 @@
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateMultiTeamMode(
-	inputs: GetOutput,
+const updateMultiTeamMode = async (
+	inputs: unknown,
 	updateEvents: UpdateEvents,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("g.userTids") ||
@@ -29,6 +29,6 @@ async function updateMultiTeamMode(
 			userTids: g.userTids,
 		};
 	}
-}
+};
 
 export default updateMultiTeamMode;

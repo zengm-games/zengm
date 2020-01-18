@@ -2,9 +2,9 @@ import { PHASE } from "../../common";
 import { contractNegotiation, freeAgents, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { GetOutput } from "../../common/types";
+import { ViewInput } from "../../common/types";
 
-function generateContractOptions(contract, ovr) {
+const generateContractOptions = (contract, ovr) => {
 	let growthFactor = 0.15; // Modulate contract amounts based on last digit of ovr (add some deterministic noise)
 
 	growthFactor += (ovr % 10) * 0.01 - 0.05;
@@ -54,9 +54,9 @@ function generateContractOptions(contract, ovr) {
 	return contractOptions.filter(
 		contractOption => contractOption.amount * 1000 <= g.maxContract,
 	);
-}
+};
 
-async function updateNegotiation(inputs: GetOutput) {
+const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
 	const negotiations: any = await idb.cache.negotiations.getAll();
 	let negotiation;
 
@@ -107,6 +107,6 @@ async function updateNegotiation(inputs: GetOutput) {
 		salaryCap: g.salaryCap / 1000,
 		userTid: g.userTid,
 	};
-}
+};
 
 export default updateNegotiation;

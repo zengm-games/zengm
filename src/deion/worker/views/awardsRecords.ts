@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { GetOutput, UpdateEvents } from "../../common/types"; // Keep in sync with Dropdown.js
+import { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sync with Dropdown.js
 
 const optionsTmp =
 	process.env.SPORT === "basketball"
@@ -192,11 +192,11 @@ function getPlayerAwards(p, awardType) {
 	};
 }
 
-async function updateAwardsRecords(
-	inputs: GetOutput,
+const updateAwardsRecords = async (
+	inputs: ViewInput<"awardsRecords">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.awardType !== state.awardType
@@ -227,6 +227,6 @@ async function updateAwardsRecords(
 			awardType,
 		};
 	}
-}
+};
 
 export default updateAwardsRecords;

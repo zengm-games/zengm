@@ -4,7 +4,7 @@ import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
 import { TradeTeams } from "../../common/types";
 
-async function updateSummary(vars) {
+const updateSummary = async vars => {
 	const otherTid = await trade.getOtherTid();
 	const teams: TradeTeams = [
 		{
@@ -43,7 +43,7 @@ async function updateSummary(vars) {
 		};
 	});
 	return vars;
-}
+};
 
 // Validate that the stored player IDs correspond with the active team ID
 const validateTeams = async () => {
@@ -84,7 +84,7 @@ const validateTeams = async () => {
 	return trade.updatePlayers(teams);
 };
 
-async function updateTrade() {
+const updateTrade = async () => {
 	const teams = await validateTeams();
 	const userRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
@@ -227,6 +227,6 @@ async function updateTrade() {
 	vars.showResigningMsg =
 		g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
 	return vars;
-}
+};
 
 export default updateTrade;

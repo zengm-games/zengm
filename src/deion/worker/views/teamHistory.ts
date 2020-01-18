@@ -1,15 +1,12 @@
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateTeamHistory(
-	inputs: {
-		abbrev: string;
-		tid: number;
-	},
+const updateTeamHistory = async (
+	inputs: ViewInput<"teamHistory">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
@@ -130,6 +127,6 @@ async function updateTeamHistory(
 			ties: g.ties,
 		};
 	}
-}
+};
 
 export default updateTeamHistory;

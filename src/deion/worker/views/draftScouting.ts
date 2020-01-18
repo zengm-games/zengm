@@ -1,9 +1,9 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function addSeason(season) {
+const addSeason = async season => {
 	// In fantasy draft, use temp tid
 	const tid =
 		g.phase === PHASE.FANTASY_DRAFT
@@ -42,12 +42,12 @@ async function addSeason(season) {
 		players,
 		season,
 	};
-}
+};
 
-async function updateDraftScouting(
-	inputs: GetOutput,
+const updateDraftScouting = async (
+	inputs: unknown,
 	updateEvents: UpdateEvents,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
@@ -64,6 +64,6 @@ async function updateDraftScouting(
 			seasons,
 		};
 	}
-}
+};
 
 export default updateDraftScouting;

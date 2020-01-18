@@ -1,14 +1,12 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateStandings(
-	inputs: {
-		season: number;
-	},
+const updateStandings = async (
+	inputs: ViewInput<"standings">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		(inputs.season === g.season && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season
@@ -170,6 +168,6 @@ async function updateStandings(
 			ties: g.ties,
 		};
 	}
-}
+};
 
 export default updateStandings;

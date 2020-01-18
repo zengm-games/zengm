@@ -1,6 +1,6 @@
 import { idb } from "../db";
 
-async function updateInbox() {
+const updateInbox = async () => {
 	const messages = await idb.getCopies.messages();
 	messages.reverse();
 	let anyUnread = false;
@@ -17,6 +17,6 @@ async function updateInbox() {
 		anyUnread,
 		messages,
 	};
-}
+};
 
 export default updateInbox;

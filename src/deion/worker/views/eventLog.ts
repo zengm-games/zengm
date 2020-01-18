@@ -1,16 +1,12 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateEventLog(
-	inputs: {
-		abbrev: string;
-		season: number;
-		tid: number;
-	},
+const updateEventLog = async (
+	inputs: ViewInput<"eventLog">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.length >= 0 ||
 		inputs.season !== state.season ||
@@ -62,6 +58,6 @@ async function updateEventLog(
 			};
 		}
 	}
-}
+};
 
 export default updateEventLog;

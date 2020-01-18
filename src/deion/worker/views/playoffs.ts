@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -42,10 +42,8 @@ const getProjectedSeries = async (inputSeason: number) => {
 	return result.series;
 };
 
-async function updatePlayoffs(
-	inputs: {
-		season: number;
-	},
+const updatePlayoffs = async (
+	inputs: ViewInput<"playoffs">,
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<{
@@ -62,7 +60,7 @@ async function updatePlayoffs(
 		away?: SeriesTeam;
 	}[][];
 	userTid: number;
-} | void> {
+} | void> => {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||
@@ -137,6 +135,6 @@ async function updatePlayoffs(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updatePlayoffs;

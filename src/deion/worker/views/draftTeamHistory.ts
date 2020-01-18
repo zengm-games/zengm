@@ -1,8 +1,11 @@
 import { PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
+import { ViewInput } from "../../common/types";
 
-async function updateDraftTeamHistory(inputs: { abbrev: string; tid: number }) {
+const updateDraftTeamHistory = async (
+	inputs: ViewInput<"draftTeamHistory">,
+) => {
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
@@ -46,6 +49,6 @@ async function updateDraftTeamHistory(inputs: { abbrev: string; tid: number }) {
 		stats,
 		userAbbrev,
 	};
-}
+};
 
 export default updateDraftTeamHistory;

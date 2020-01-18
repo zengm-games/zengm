@@ -1,10 +1,10 @@
 import { g } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 
-async function updateExportStats(
-	inputs: GetOutput,
+const updateExportStats = async (
+	inputs: unknown,
 	updateEvents: UpdateEvents,
-) {
+) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
 		const options = [
 			{
@@ -24,6 +24,6 @@ async function updateExportStats(
 			seasons: options,
 		};
 	}
-}
+};
 
 export default updateExportStats;

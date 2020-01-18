@@ -1,10 +1,10 @@
 import { PHASE, PLAYER } from "../../common";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g, local } from "../util";
 
-async function updateDraft(inputs: GetOutput, updateEvents: UpdateEvents) {
+const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
@@ -136,6 +136,6 @@ async function updateDraft(inputs: GetOutput, updateEvents: UpdateEvents) {
 			userTids: g.userTids,
 		};
 	}
-}
+};
 
 export default updateDraft;

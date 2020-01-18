@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { GetOutput, UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
 export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
 	if (allStars) {
@@ -31,7 +31,7 @@ export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
  * @param {number} gid Integer game ID for the box score (a negative number means no box score).
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
-async function boxScore(gid: number) {
+const boxScore = async (gid: number) => {
 	if (gid < 0) {
 		return {};
 	}
@@ -105,16 +105,16 @@ async function boxScore(gid: number) {
 	}
 
 	return game;
-}
+};
 
-async function updateTeamSeason(inputs: GetOutput) {
+const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
 	return {
 		// Needed for dropdown
 		abbrev: inputs.abbrev,
 		currentSeason: g.season,
 		season: inputs.season,
 	};
-}
+};
 
 /**
  * Update the displayed box score, as necessary.
@@ -124,11 +124,11 @@ async function updateTeamSeason(inputs: GetOutput) {
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-async function updateBoxScore(
-	inputs: GetOutput,
+const updateBoxScore = async (
+	inputs: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	const { gid } = inputs;
 
 	if (typeof gid !== "number") {
@@ -154,7 +154,7 @@ async function updateBoxScore(
 
 		return vars;
 	}
-}
+};
 
 /**
  * Update the game log list, as necessary.
@@ -166,11 +166,11 @@ async function updateBoxScore(
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-async function updateGamesList(
-	inputs: GetOutput,
+const updateGamesList = async (
+	inputs: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	const { abbrev, season } = inputs;
 
 	if (typeof abbrev !== "string" || typeof season !== "number") {
@@ -214,10 +214,10 @@ async function updateGamesList(
 			},
 		};
 	}
-}
+};
 
 export default async (
-	inputs: GetOutput,
+	inputs: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {

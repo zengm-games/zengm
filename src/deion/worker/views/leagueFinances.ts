@@ -1,14 +1,12 @@
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateLeagueFinances(
-	inputs: {
-		season: number;
-	},
+const updateLeagueFinances = async (
+	inputs: ViewInput<"leagueFinances">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||
@@ -40,6 +38,6 @@ async function updateLeagueFinances(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updateLeagueFinances;

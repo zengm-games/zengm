@@ -1,16 +1,12 @@
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
-async function updateTeams(
-	inputs: {
-		playoffs: "playoffs" | "regularSeason";
-		season: number;
-		teamOpponent: "advanced" | "opponent" | "team";
-	},
+const updateTeams = async (
+	inputs: ViewInput<"teamStats">,
 	updateEvents: UpdateEvents,
 	state: any,
-) {
+) => {
 	if (
 		(inputs.season === g.season &&
 			(updateEvents.includes("gameSim") ||
@@ -211,6 +207,6 @@ async function updateTeams(
 			userTid: g.userTid,
 		};
 	}
-}
+};
 
 export default updateTeams;

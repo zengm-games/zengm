@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
+import { AllStarPlayer } from "../../../common/types";
 
 const draftOne = async (): Promise<{
 	finalized: boolean;
@@ -15,9 +16,9 @@ const draftOne = async (): Promise<{
 
 	const teamInd = allStars.teams[0].length > allStars.teams[1].length ? 1 : 0;
 	const remaining = allStars.remaining.filter(p => !p.injured);
-	const r = Math.random();
-	let pick;
 
+	let pick: AllStarPlayer;
+	const r = Math.random();
 	if (r < 0.4 || remaining.length === 1) {
 		pick = remaining[0];
 	} else if (r < 0.7 || remaining.length === 2) {

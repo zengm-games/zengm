@@ -22,6 +22,7 @@ const loadGameAttributes = async () => {
 
 	// Set defaults to avoid IndexedDB upgrade
 	for (const key of helpers.keys(defaultGameAttributes)) {
+		// @ts-ignore
 		if (g[key] === undefined) {
 			if (
 				key === "numGamesPlayoffSeries" &&

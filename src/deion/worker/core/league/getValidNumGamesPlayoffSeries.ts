@@ -1,6 +1,9 @@
 import range from "lodash/range";
 
-const getValidNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
+const getValidNumPlayoffRounds = (
+	numPlayoffRounds: number,
+	numTeams: number,
+) => {
 	if (
 		typeof numPlayoffRounds !== "number" ||
 		Number.isNaN(numPlayoffRounds) ||
@@ -18,9 +21,10 @@ const getValidNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
 	}
 
 	throw new Error("Cannot find numPlayoffTeams less than numTeams");
-}; // Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams. And if numPlayoffRounds is
-// specified (old leagues), use that to set numGamesPlayoffSeries.
+};
 
+// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams. And if numPlayoffRounds is
+// specified (old leagues), use that to set numGamesPlayoffSeries.
 const getValidNumGamesPlayoffSeries = (
 	numGamesPlayoffSeries: number[],
 	initialNumPlayoffRounds: number | undefined,

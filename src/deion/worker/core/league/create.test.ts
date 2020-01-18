@@ -4,7 +4,7 @@ import { g } from "../../util";
 import { createWithoutSaving } from "./create";
 
 describe("worker/core/league/create", () => {
-	let leagueData;
+	let leagueData: ReturnType<typeof createWithoutSaving>;
 	beforeAll(() => {
 		leagueData = createWithoutSaving("Test", 0, {}, 2015, false, 0);
 	});

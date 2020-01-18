@@ -5,8 +5,9 @@ import { SortType } from "../../../common/types";
 const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 	try {
 		let val;
-		let sortVal; // Get the right 'value'.
+		let sortVal: string;
 
+		// Get the right 'value'.
 		if (value !== null && value.hasOwnProperty("sortValue")) {
 			val = value.sortValue;
 		} else if (value !== null && value.hasOwnProperty("value")) {

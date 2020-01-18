@@ -6,7 +6,7 @@ import { idb } from "../../db";
 import { g } from "../../util";
 import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 
-const testRunPicks = async (numNow, numTotal) => {
+const testRunPicks = async (numNow: number, numTotal: number) => {
 	const pids = await draft.runPicks(false);
 	assert.equal(pids.length, numNow);
 	const players = (
@@ -18,10 +18,10 @@ const testRunPicks = async (numNow, numTotal) => {
 	assert.equal(players.length, 70 - numTotal);
 };
 
-let userPick1;
-let userPick2;
+let userPick1: number;
+let userPick2: number;
 
-const testDraftUser = async round => {
+const testDraftUser = async (round: number) => {
 	const draftPicks = await draft.getOrder();
 	const dp = draftPicks.shift();
 	if (!dp) {

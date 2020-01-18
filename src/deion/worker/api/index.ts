@@ -1093,11 +1093,9 @@ const runBefore = async (
 	}
 
 	let inputs;
-
 	if (processInputs.hasOwnProperty(viewId)) {
 		inputs = processInputs[viewId](params, ctxBBGM);
 	}
-
 	if (inputs === undefined) {
 		// Return empty object rather than undefined
 		inputs = {};

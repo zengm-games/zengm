@@ -27,8 +27,9 @@ const checkAccount = async (
 				gold: currentTimestamp <= data.gold_until,
 				username: data.username,
 			},
-		]); // If user is logged in, upload any locally saved achievements
+		]);
 
+		// If user is logged in, upload any locally saved achievements
 		if (data.username !== "") {
 			// Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
 			// risk is very small.

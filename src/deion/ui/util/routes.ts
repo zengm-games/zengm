@@ -3,11 +3,13 @@ import initView from "./initView";
 import overrides from "./overrides";
 import views from "../views";
 
-const genPage = (id, inLeague = true) => {
+const genPage = (id: string, inLeague = true) => {
 	const componentName = helpers.upperCaseFirstLetter(id);
 	let Component;
 
+	// @ts-ignore
 	if (views[componentName]) {
+		// @ts-ignore
 		Component = views[componentName];
 	} else if (overrides.views[componentName]) {
 		Component = overrides.views[componentName];

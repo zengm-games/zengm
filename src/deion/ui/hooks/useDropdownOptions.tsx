@@ -22,8 +22,8 @@ export const getSortedTeams = ({
 		}),
 		"val",
 	);
-	const object = {};
 
+	const object = {};
 	for (const { abbrev, name } of array) {
 		object[abbrev] = name;
 	}

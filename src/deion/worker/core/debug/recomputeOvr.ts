@@ -1,10 +1,11 @@
 import { idb } from "../../db";
 import { overrides, toUI } from "../../util";
+import { Player } from "../../../common/types";
 
 const recomputeOvr = async () => {
 	const ovrs: any[] = [];
 	await idb.league.tx("players", "readwrite", async tx => {
-		await tx.players.iterate(p => {
+		await tx.players.iterate((p: Player) => {
 			const ratings = p.ratings[p.ratings.length - 1];
 
 			if (!overrides.core.player.ovr) {

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import React, { useEffect, MouseEvent } from "react";
 import {
 	DropdownItem,
 	DropdownMenu,
@@ -9,22 +9,25 @@ import {
 
 import { realtimeUpdate, toWorker } from "../util";
 
-const handleOptionClick = (option, event) => {
+type Option = {
+	id: string;
+	label: string;
+	url?: string;
+	key?: string;
+};
+
+type Props = {
+	lid: number | undefined;
+	options: Option[];
+};
+
+const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
 		event.preventDefault();
 		toWorker(`actions.playMenu.${option.id}`);
 	}
 };
 
-type Props = {
-	lid: number | undefined;
-	options: {
-		id: string;
-		label: string;
-		url?: string;
-		key?: string;
-	}[];
-};
 const keyCodes = {
 	"65": "a",
 	"68": "d",
@@ -40,8 +43,10 @@ const PlayMenu = ({ lid, options }: Props) => {
 	useEffect(() => {
 		const handleKeyup = (event: KeyboardEvent) => {
 			// alt + letter
-			if (event.altKey && keyCodes[event.keyCode]) {
+			if (event.altKey && keyCodes.hasOwnProperty(event.keyCode)) {
 				const option = options.find(
+					// https://github.com/microsoft/TypeScript/issues/21732
+					// @ts-ignore
 					option2 => option2.key === keyCodes[event.keyCode],
 				);
 

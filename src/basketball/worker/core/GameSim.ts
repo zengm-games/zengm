@@ -105,14 +105,14 @@ const teamNums: [TeamNum, TeamNum] = [0, 1];
 const pickPlayer = (
 	ratios: [number, number, number, number, number],
 	exempt?: PlayerNumOnCourt,
-): PlayerNumOnCourt => {
+) => {
 	if (exempt !== undefined) {
 		ratios[exempt] = 0;
 	}
 
 	const rand =
 		Math.random() * (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4]);
-	let pick;
+	let pick: PlayerNumOnCourt;
 
 	if (rand < ratios[0]) {
 		pick = 0;
@@ -1036,7 +1036,7 @@ class GameSim {
 		const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-		let passer;
+		let passer: PlayerNumOnCourt | undefined;
 		if (this.probAst() > Math.random()) {
 			const ratios = this.ratingArray("passing", this.o, 10);
 			passer = pickPlayer(ratios, shooter);
@@ -1066,7 +1066,7 @@ class GameSim {
 		let probAndOne;
 		let probMake;
 		let probMissAndFoul;
-		let type;
+		let type: ShotType;
 
 		if (
 			forceThreePointer ||

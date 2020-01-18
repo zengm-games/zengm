@@ -24,13 +24,13 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 	p.tid = dp.tid;
 
-	if (g.phase === PHASE.FANTASY_DRAFT) {
+	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 		const fakeP = helpers.deepCopy(p);
 		fakeP.draft = {
 			round: dp.round,
 			pick: dp.pick,
 			tid: dp.tid,
-			year: g.season,
+			year: g.get("season"),
 			originalTid: dp.originalTid,
 			pot: p.ratings[p.ratings.length - 1].pot,
 			ovr: p.ratings[p.ratings.length - 1].ovr,
@@ -42,7 +42,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			round: dp.round,
 			pick: dp.pick,
 			tid: dp.tid,
-			year: g.season,
+			year: g.get("season"),
 			originalTid: dp.originalTid,
 			pot: p.ratings[0].pot,
 			ovr: p.ratings[0].ovr,
@@ -51,27 +51,27 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	}
 
 	// Contract
-	if (g.phase !== PHASE.FANTASY_DRAFT) {
-		if (g.hardCap) {
+	if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
+		if (g.get("hardCap")) {
 			// Make it an expiring contract, so player immediately becomes a free agent
 			player.setContract(
 				p,
 				{
-					amount: g.minContract,
-					exp: g.season,
+					amount: g.get("minContract"),
+					exp: g.get("season"),
 				},
 				true,
 			);
 		} else {
 			const rookieSalaries = getRookieSalaries();
-			const i = dp.pick - 1 + g.numTeams * (dp.round - 1);
+			const i = dp.pick - 1 + g.get("numTeams") * (dp.round - 1);
 			const years = 4 - dp.round; // 2 years for 2nd round, 3 years for 1st round;
 
 			player.setContract(
 				p,
 				{
 					amount: rookieSalaries[i],
-					exp: g.season + years,
+					exp: g.get("season") + years,
 				},
 				true,
 			);
@@ -79,37 +79,42 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	}
 
 	// Add stats row if necessary (fantasy draft in ongoing season)
-	if (g.phase === PHASE.FANTASY_DRAFT && g.nextPhase <= PHASE.PLAYOFFS) {
-		player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
+	const nextPhase = g.get("nextPhase");
+	if (
+		g.get("phase") === PHASE.FANTASY_DRAFT &&
+		nextPhase !== undefined && nextPhase <= PHASE.PLAYOFFS
+	) {
+		player.addStatsRow(p, g.get("nextPhase") === PHASE.PLAYOFFS);
 	}
 
 	await idb.cache.players.put(p);
 	await idb.cache.draftPicks.delete(dp.dpid);
 	const draftName =
-		g.phase === PHASE.FANTASY_DRAFT
-			? `${g.season} fantasy draft`
-			: `${g.season} draft`;
+		g.get("phase") === PHASE.FANTASY_DRAFT
+			? `${g.get("season")} fantasy draft`
+			: `${g.get("season")} draft`;
 	logEvent({
 		type: "draft",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[dp.tid],
-			g.season,
-		])}">${g.teamNamesCache[dp.tid]}</a> selected <a href="${helpers.leagueUrl([
-			"player",
-			p.pid,
-		])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(
-			dp.pick + (dp.round - 1) * g.numTeams,
+			g.get("teamAbbrevsCache")[dp.tid],
+			g.get("season"),
+		])}">${
+			g.get("teamNamesCache")[dp.tid]
+		}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${
+			p.firstName
+		} ${p.lastName}</a> with the ${helpers.ordinal(
+			dp.pick + (dp.round - 1) * g.get("numTeams"),
 		)} pick in the <a href="${helpers.leagueUrl([
 			"draft_history",
-			g.season,
+			g.get("season"),
 		])}">${draftName}</a>.`,
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],
 	});
 
-	if (g.userTids.includes(dp.tid)) {
+	if (g.get("userTids").includes(dp.tid)) {
 		if (!overrides.core.team.rosterAutoSort) {
 			throw new Error("Missing overrides.core.team.rosterAutoSort");
 		}

@@ -7,7 +7,7 @@ const getCopy = async ({
 }: {
 	season: number;
 }): Promise<PlayoffSeries> => {
-	if (season === g.season) {
+	if (season === g.get("season")) {
 		return helpers.deepCopy(await idb.cache.playoffSeries.get(season));
 	}
 

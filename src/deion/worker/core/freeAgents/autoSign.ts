@@ -18,7 +18,7 @@ const autoSign = async () => {
 	const [teams, players] = await Promise.all([
 		idb.getCopies.teamsPlus({
 			attrs: ["strategy"],
-			season: g.season,
+			season: g.get("season"),
 		}),
 		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	]);
@@ -31,20 +31,20 @@ const autoSign = async () => {
 
 	const playersSorted = orderBy(players, "value", "desc"); // Randomly order teams
 
-	const tids = range(g.numTeams);
+	const tids = range(g.get("numTeams"));
 	random.shuffle(tids);
 
 	for (const tid of tids) {
 		// Skip the user's team
-		if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
+		if (g.get("userTids").includes(tid) && local.autoPlaySeasons === 0) {
 			continue;
 		}
 
 		// Small chance of actually trying to sign someone in free agency, gets greater as time goes on
 		if (
 			process.env.SPORT === "basketball" &&
-			g.phase === PHASE.FREE_AGENCY &&
-			Math.random() < (0.99 * g.daysLeft) / 30
+			g.get("phase") === PHASE.FREE_AGENCY &&
+			Math.random() < (0.99 * g.get("daysLeft")) / 30
 		) {
 			continue;
 		}
@@ -63,12 +63,12 @@ const autoSign = async () => {
 			tid,
 		);
 
-		if (playersOnRoster.length < g.maxRosterSize) {
+		if (playersOnRoster.length < g.get("maxRosterSize")) {
 			const payroll = await team.getPayroll(tid);
 			const p = getBest(playersOnRoster, playersSorted, payroll);
 
 			if (p) {
-				player.sign(p, tid, p.contract, g.phase);
+				player.sign(p, tid, p.contract, g.get("phase"));
 				await idb.cache.players.put(p);
 
 				if (!overrides.core.team.rosterAutoSort) {

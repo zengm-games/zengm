@@ -13,7 +13,7 @@ import { TeamStats } from "../../../common/types";
 const genStatsRow = (tid: number, playoffs: boolean = false): TeamStats => {
 	const statsRow: TeamStats = {
 		playoffs,
-		season: g.season,
+		season: g.get("season"),
 		tid,
 	};
 

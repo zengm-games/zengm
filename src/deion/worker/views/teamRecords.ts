@@ -23,12 +23,15 @@ const getTeamRecord = (t, awards) => {
 
 		if (
 			t.seasonAttrs[i].playoffRoundsWon >=
-			g.numGamesPlayoffSeries.length - 1
+			g.get("numGamesPlayoffSeries").length - 1
 		) {
 			finals++;
 		}
 
-		if (t.seasonAttrs[i].playoffRoundsWon === g.numGamesPlayoffSeries.length) {
+		if (
+			t.seasonAttrs[i].playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries").length
+		) {
 			championships++;
 			lastChampionship = t.seasonAttrs[i].season;
 		}
@@ -72,7 +75,7 @@ const getTeamRecord = (t, awards) => {
 };
 
 function tallyAwards(awards, allAllStars) {
-	const teams = range(g.numTeams).map(() => {
+	const teams = range(g.get("numTeams")).map(() => {
 		return {
 			mvp: 0,
 			dpoy: 0,
@@ -265,13 +268,13 @@ const updateTeamRecords = async (
 		if (inputs.byType === "by_team") {
 			display = teamRecords;
 		} else if (inputs.byType === "by_conf") {
-			display = g.confs.map(conf =>
-				sumRecordsFor("cid", conf.cid, conf.name, teamRecords),
-			);
+			display = g
+				.get("confs")
+				.map(conf => sumRecordsFor("cid", conf.cid, conf.name, teamRecords));
 		} else {
-			display = g.divs.map(div =>
-				sumRecordsFor("did", div.did, div.name, teamRecords),
-			);
+			display = g
+				.get("divs")
+				.map(div => sumRecordsFor("did", div.did, div.name, teamRecords));
 		}
 
 		const categories =

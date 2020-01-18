@@ -17,9 +17,10 @@ const decreaseDemands = async () => {
 	);
 
 	for (const p of players) {
-		const baseAmount = 50 * Math.sqrt(g.maxContract / 20000); // 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
+		const baseAmount = 50 * Math.sqrt(g.get("maxContract") / 20000); // 82 is purposely not defaultGameAttributes.numGames so it works across basketball and football
 
-		const factor = g.phase !== PHASE.FREE_AGENCY ? 82 / g.numGames : 1;
+		const factor =
+			g.get("phase") !== PHASE.FREE_AGENCY ? 82 / g.get("numGames") : 1;
 		p.contract.amount -= helpers.bound(
 			baseAmount * factor,
 			baseAmount,
@@ -27,16 +28,16 @@ const decreaseDemands = async () => {
 		);
 		p.contract.amount = 10 * Math.round(p.contract.amount / 10); // Round to nearest 10k
 
-		if (p.contract.amount < g.minContract) {
-			p.contract.amount = g.minContract;
+		if (p.contract.amount < g.get("minContract")) {
+			p.contract.amount = g.get("minContract");
 		}
 
-		if (g.phase !== PHASE.FREE_AGENCY) {
+		if (g.get("phase") !== PHASE.FREE_AGENCY) {
 			// Since this is after the season has already started, ask for a short contract
 			if (p.contract.amount < 1000) {
-				p.contract.exp = g.season;
+				p.contract.exp = g.get("season");
 			} else {
-				p.contract.exp = g.season + 1;
+				p.contract.exp = g.get("season") + 1;
 			}
 		}
 

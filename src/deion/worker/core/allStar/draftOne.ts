@@ -5,7 +5,7 @@ const draftOne = async (): Promise<{
 	finalized: boolean;
 	pid?: number;
 }> => {
-	const allStars = await idb.cache.allStars.get(g.season);
+	const allStars = await idb.cache.allStars.get(g.get("season"));
 
 	if (allStars.finalized) {
 		return {

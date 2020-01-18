@@ -20,13 +20,17 @@ async function updateSeasons(
 		const seasons: number[][] = [];
 		let prevMinutesAll;
 
-		for (let season = g.startingSeason; season <= g.season; season++) {
+		for (
+			let season = g.get("startingSeason");
+			season <= g.get("season");
+			season++
+		) {
 			const players = await idb.getCopies.players({
 				activeSeason: season,
 			});
 
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
-			const minutesAll = range(g.numTeams).map(() => new Map());
+			const minutesAll = range(g.get("numTeams")).map(() => new Map());
 
 			for (const p of players) {
 				const stats = p.stats.filter(
@@ -68,10 +72,10 @@ async function updateSeasons(
 
 		seasons.reverse();
 		return {
-			abbrevs: g.teamAbbrevsCache,
-			season: g.season,
+			abbrevs: g.get("teamAbbrevsCache"),
+			season: g.get("season"),
 			seasons,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 }

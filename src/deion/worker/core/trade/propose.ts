@@ -18,7 +18,10 @@ import summary from "./summary";
 const propose = async (
 	forceTrade: boolean = false,
 ): Promise<[boolean, string | undefined | null]> => {
-	if (g.phase >= PHASE.AFTER_TRADE_DEADLINE && g.phase <= PHASE.PLAYOFFS) {
+	if (
+		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
+		g.get("phase") <= PHASE.PLAYOFFS
+	) {
 		return [false, "Error! You're not allowed to make trades now."];
 	}
 
@@ -55,7 +58,7 @@ const propose = async (
 		await clear(); // Auto-sort team rosters
 
 		for (const tid of tids) {
-			const onlyNewPlayers = g.userTids.includes(tid);
+			const onlyNewPlayers = g.get("userTids").includes(tid);
 
 			if (!overrides.core.team.rosterAutoSort) {
 				throw new Error("Missing overrides.core.team.rosterAutoSort");

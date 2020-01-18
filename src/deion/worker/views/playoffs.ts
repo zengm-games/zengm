@@ -64,12 +64,12 @@ const updatePlayoffs = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||
-		(inputs.season === g.season && updateEvents.includes("gameSim"))
+		(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
 		let finalMatchups = false;
 		let series; // If in the current season and before playoffs started, display projected matchups
 
-		if (inputs.season === g.season && g.phase < PHASE.PLAYOFFS) {
+		if (inputs.season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 			series = await getProjectedSeries(inputs.season);
 		} else {
 			const playoffSeries = await idb.getCopy.playoffSeries({
@@ -121,18 +121,18 @@ const updatePlayoffs = async (
 			}
 		}
 
-		const confNames = g.confs.map(conf => conf.name); // Display the current or archived playoffs
+		const confNames = g.get("confs").map(conf => conf.name); // Display the current or archived playoffs
 
 		return {
 			finalMatchups,
 			matchups,
-			numGamesToWinSeries: g.numGamesPlayoffSeries.map(
-				helpers.numGamesToWinSeries,
-			),
+			numGamesToWinSeries: g
+				.get("numGamesPlayoffSeries")
+				.map(helpers.numGamesToWinSeries),
 			confNames,
 			season: inputs.season,
 			series,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

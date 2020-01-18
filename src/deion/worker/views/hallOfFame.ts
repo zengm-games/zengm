@@ -6,7 +6,8 @@ import { UpdateEvents } from "../../common/types";
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		(updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
+		(updateEvents.includes("newPhase") &&
+			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
 		const stats =
 			process.env.SPORT === "basketball"
@@ -26,7 +27,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			players,
 			stats,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

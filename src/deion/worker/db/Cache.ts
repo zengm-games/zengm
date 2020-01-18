@@ -628,7 +628,13 @@ class Cache {
 		// @ts-ignore
 		this._data = {}; // This is crap and should be fixed ASAP
 
-		this._season = season !== undefined ? season : g.season;
+		this._season = season;
+
+		if (this._season === undefined) {
+			try {
+				this._season = g.get("season");
+			} catch (err) {}
+		}
 
 		if (this._season === undefined) {
 			const seasonAttr = await idb.league.gameAttributes.get("season");
@@ -641,7 +647,6 @@ class Cache {
 		if (this._season === undefined) {
 			// Seems that gameAttributes is empty when this happens, possibly due to Chrome inappropriately deleting things?
 			console.log("Passed season", season);
-			console.log("g.season", season);
 			console.log(
 				"game attributes",
 				JSON.stringify(await idb.league.gameAttributes.getAll(), undefined, 2),
@@ -658,7 +663,7 @@ class Cache {
 
 		this._setStatus("full"); //performance.measure('fillTime', 'fillStart');
 		//const entries = performance.getEntriesByName('fillTime');
-		//console.log(`${g.phase} fill duration: ${entries[entries.length - 1].duration / 1000} seconds`);
+		//console.log(`${g.get("phase")} fill duration: ${entries[entries.length - 1].duration / 1000} seconds`);
 	}
 
 	// Take current contents in database and write to disk
@@ -691,7 +696,7 @@ class Cache {
 		if (this._dirty) {
 			this._dirty = false; // Update lastPlayed
 
-			const l = await idb.meta.leagues.get(g.lid);
+			const l = await idb.meta.leagues.get(g.get("lid"));
 
 			if (l) {
 				l.lastPlayed = new Date();
@@ -699,7 +704,7 @@ class Cache {
 			}
 		} //performance.measure('flushTime', 'flushStart');
 		//const entries = performance.getEntriesByName('flushTime');
-		//console.log(`${g.phase} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
+		//console.log(`${g.get("phase")} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
 	}
 
 	async _autoFlush() {

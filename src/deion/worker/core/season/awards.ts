@@ -62,7 +62,9 @@ const getPlayers = async () => {
 
 	// Only keep players who actually have a stats entry for the latest season
 	players = players.filter(
-		p => p.stats.length > 0 && p.stats[p.stats.length - 1].season === g.season,
+		p =>
+			p.stats.length > 0 &&
+			p.stats[p.stats.length - 1].season === g.get("season"),
 	);
 
 	// For convenience later
@@ -88,9 +90,9 @@ const teamAwards = (teamsUnsorted: TeamFiltered[]) => {
 		name: teams[0].name,
 		won: teams[0].seasonAttrs.won,
 		lost: teams[0].seasonAttrs.lost,
-		tied: g.ties ? teams[0].seasonAttrs.tied : undefined,
+		tied: g.get("ties") ? teams[0].seasonAttrs.tied : undefined,
 	};
-	const bestRecordConfs = g.confs.map(c => {
+	const bestRecordConfs = g.get("confs").map(c => {
 		const t = teams.find(t2 => t2.cid === c.cid);
 
 		if (!t) {
@@ -105,7 +107,7 @@ const teamAwards = (teamsUnsorted: TeamFiltered[]) => {
 			// Flow can't handle complexity of idb.getCopies.teams
 			won: t.seasonAttrs ? t.seasonAttrs.won : 0,
 			lost: t.seasonAttrs ? t.seasonAttrs.lost : 0,
-			tied: g.ties && t.seasonAttrs ? t.seasonAttrs.tied : undefined,
+			tied: g.get("ties") && t.seasonAttrs ? t.seasonAttrs.tied : undefined,
 		};
 	});
 	return {
@@ -124,8 +126,8 @@ const leagueLeaders = (
 	awardsByPlayer: AwardsByPlayer,
 ) => {
 	const factor =
-		(g.numGames / defaultGameAttributes.numGames) *
-		Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
+		(g.get("numGames") / defaultGameAttributes.numGames) *
+		Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
 		const p = players
@@ -210,9 +212,9 @@ const saveAwardsByPlayer = async (
 			p.name
 		}</a> (<a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[p.tid],
-			g.season,
-		])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
+			g.get("teamAbbrevsCache")[p.tid],
+			g.get("season"),
+		])}">${g.get("teamAbbrevsCache")[p.tid]}</a>) `;
 
 		if (p.type.includes("Team")) {
 			text += `made the ${p.type}.`;
@@ -247,7 +249,7 @@ const saveAwardsByPlayer = async (
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {
 					p.awards.push({
-						season: g.season,
+						season: g.get("season"),
 						type: awardByPlayer.type,
 					});
 				}

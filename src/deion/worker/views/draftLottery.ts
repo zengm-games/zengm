@@ -24,19 +24,19 @@ const updateDraftLottery = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||
 		season !== state.season ||
-		(season === g.season && updateEvents.includes("gameSim"))
+		(season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
 		// View completed draft lottery
 		if (
-			season < g.season ||
-			(season === g.season && g.phase >= PHASE.DRAFT_LOTTERY)
+			season < g.get("season") ||
+			(season === g.get("season") && g.get("phase") >= PHASE.DRAFT_LOTTERY)
 		) {
 			const draftLotteryResult = await idb.getCopy.draftLotteryResults({
 				season,
 			});
 
-			// If season === g.season && g.phase === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
-			if (draftLotteryResult || g.phase > PHASE.DRAFT_LOTTERY) {
+			// If season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
+			if (draftLotteryResult || g.get("phase") > PHASE.DRAFT_LOTTERY) {
 				const result = draftLotteryResult
 					? draftLotteryResult.result
 					: undefined; // Past lotteries before draftLotteryResult.draftType were all 1994
@@ -51,21 +51,21 @@ const updateDraftLottery = async (
 					draftType,
 					result,
 					season,
-					ties: g.ties,
+					ties: g.get("ties"),
 					type: "completed",
-					userTid: g.userTid,
+					userTid: g.get("userTid"),
 				};
 			}
 
-			if (season < g.season) {
+			if (season < g.get("season")) {
 				// Maybe there was no draft lottery done, or it was deleted from the database
 				return {
 					draftType: "noLottery",
 					result: undefined,
 					season,
-					ties: g.ties,
+					ties: g.get("ties"),
 					type: "completed",
-					userTid: g.userTid,
+					userTid: g.get("userTid"),
 				};
 			}
 		}
@@ -78,16 +78,16 @@ const updateDraftLottery = async (
 		}
 
 		const type =
-			season === g.season && g.phase === PHASE.DRAFT_LOTTERY
+			season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY
 				? "readyToRun"
 				: "projected";
 		return {
 			draftType: draftLotteryResult.draftType,
 			result: draftLotteryResult.result,
 			season: draftLotteryResult.season,
-			ties: g.ties,
+			ties: g.get("ties"),
 			type,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

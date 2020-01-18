@@ -5,20 +5,20 @@ import { g } from "../../util";
  *
  * @memberOf core.player
  * @param {Object} exp Contract expiration year.
- * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
+ * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.get("numGames")).
  */
 const contractSeasonsRemaining = (
 	exp: number,
 	numGamesRemaining: number,
 ): number => {
-	let frac = numGamesRemaining / g.numGames;
+	let frac = numGamesRemaining / g.get("numGames");
 
 	if (frac > 1) {
 		frac = 1;
 	}
 
-	// This only happens if the user changed g.numGames mid season
-	return exp - g.season + frac;
+	// This only happens if the user changed g.get("numGames") mid season
+	return exp - g.get("season") + frac;
 };
 
 export default contractSeasonsRemaining;

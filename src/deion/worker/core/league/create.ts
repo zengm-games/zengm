@@ -18,9 +18,9 @@ import {
 } from "../../util";
 import {
 	Conditions,
-	GameAttributes,
 	PlayerWithoutPid,
 	MinimalPlayerRatings,
+	GameAttributesLeague,
 } from "../../../common/types";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
@@ -108,7 +108,7 @@ export const createWithoutSaving = (
 		userTid = random.randInt(0, teamInfos.length - 1);
 	}
 
-	const gameAttributes: Partial<GameAttributes> = {
+	const gameAttributes: GameAttributesLeague = {
 		...defaultGameAttributes,
 		userTid,
 		userTids: [userTid],
@@ -154,10 +154,10 @@ export const createWithoutSaving = (
 	const oldNumGames = JSON.stringify(gameAttributes.numGamesPlayoffSeries);
 	gameAttributes.numGamesPlayoffSeries = league.getValidNumGamesPlayoffSeries(
 		gameAttributes.numGamesPlayoffSeries,
-		gameAttributes.numPlayoffRounds,
+		(gameAttributes as any).numPlayoffRounds,
 		gameAttributes.numTeams,
 	);
-	delete gameAttributes.numPlayoffRounds;
+	delete (gameAttributes as any).numPlayoffRounds;
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
 	if (oldNumGames !== JSON.stringify(gameAttributes.numGamesPlayoffSeries)) {
@@ -202,7 +202,7 @@ export const createWithoutSaving = (
 	// Needs to be done after g is set
 	const teams = teamInfos.map(t => team.generate(t));
 
-	// Draft picks for the first g.numSeasonsFutureDraftPicks years, as those are the ones can be traded initially
+	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: any;
 
 	if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -216,9 +216,9 @@ export const createWithoutSaving = (
 	} else {
 		draftPicks = [];
 
-		for (let i = 0; i < g.numSeasonsFutureDraftPicks; i++) {
+		for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
 			for (let t = 0; t < teams.length; t++) {
-				for (let round = 1; round <= g.numDraftRounds; round++) {
+				for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 					draftPicks.push({
 						tid: t,
 						originalTid: t,
@@ -236,13 +236,13 @@ export const createWithoutSaving = (
 		Array.isArray(leagueFile.draftOrder) &&
 		leagueFile.draftOrder.length > 0 &&
 		Array.isArray(leagueFile.draftOrder[0].draftOrder) &&
-		(g.phase === PHASE.DRAFT_LOTTERY || g.phase === PHASE.DRAFT)
+		(g.get("phase") === PHASE.DRAFT_LOTTERY || g.get("phase") === PHASE.DRAFT)
 	) {
 		for (const dp of leagueFile.draftOrder[0].draftOrder) {
-			if (g.phase === PHASE.FANTASY_DRAFT) {
+			if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 				dp.season = "fantasy";
 			} else {
-				dp.season = g.season;
+				dp.season = g.get("season");
 			}
 
 			draftPicks.push(dp);
@@ -269,8 +269,8 @@ export const createWithoutSaving = (
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal[teamSeasonsLocal.length - 1];
 
-			if (last.season !== g.season) {
-				last.season = g.season;
+			if (last.season !== g.get("season")) {
+				last.season = g.get("season");
 			}
 		} else {
 			teamSeasonsLocal = [team.genSeasonRow(t.tid)];
@@ -464,7 +464,7 @@ export const createWithoutSaving = (
 				leagueFile.version,
 			);
 
-			if (p.tid >= g.numTeams) {
+			if (p.tid >= g.get("numTeams")) {
 				p.tid = PLAYER.FREE_AGENT;
 			}
 
@@ -475,7 +475,7 @@ export const createWithoutSaving = (
 
 		// Generate past 20 years of draft classes
 
-		const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? -1 : 0;
+		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? -1 : 0;
 		const NUM_PAST_SEASONS = 20 + seasonOffset;
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
@@ -487,22 +487,25 @@ export const createWithoutSaving = (
 			numYearsAgo > seasonOffset;
 			numYearsAgo--
 		) {
-			let draftClass = draft.genPlayersWithoutSaving(g.season, scoutingRank);
+			let draftClass = draft.genPlayersWithoutSaving(
+				g.get("season"),
+				scoutingRank,
+			);
 
 			// Very rough simulation of a draft
 			draftClass = orderBy(draftClass, ["value"], ["desc"]);
-			const tids = range(g.numTeams);
+			const tids = range(g.get("numTeams"));
 			random.shuffle(tids);
 
 			for (let i = 0; i < draftClass.length; i++) {
 				const p = draftClass[i];
 				let round = 0;
 				let pick = 0;
-				const roundTemp = Math.floor(i / g.numTeams) + 1;
+				const roundTemp = Math.floor(i / g.get("numTeams")) + 1;
 
-				if (roundTemp <= g.numDraftRounds) {
+				if (roundTemp <= g.get("numDraftRounds")) {
 					round = roundTemp;
-					pick = (i % g.numTeams) + 1;
+					pick = (i % g.get("numTeams")) + 1;
 				}
 
 				// Save these for later, because player.develop will overwrite them
@@ -529,7 +532,7 @@ export const createWithoutSaving = (
 						round,
 						pick,
 						tid: round === 0 ? -1 : tids[pick - 1],
-						year: g.season - numYearsAgo,
+						year: g.get("season") - numYearsAgo,
 						originalTid: round === 0 ? -1 : tids[pick - 1],
 						pot,
 						ovr,
@@ -547,7 +550,7 @@ export const createWithoutSaving = (
 							p,
 							{
 								amount: rookieSalaries[i],
-								exp: g.season - numYearsAgo + years,
+								exp: g.get("season") - numYearsAgo + years,
 							},
 							false,
 						);
@@ -558,15 +561,17 @@ export const createWithoutSaving = (
 			}
 		}
 
-		// (g.maxRosterSize + 1) for wiggle room (need min contract FAs sometimes)
-		if (keptPlayers.length < (g.maxRosterSize + 1) * g.numTeams) {
+		// (g.get("maxRosterSize") + 1) for wiggle room (need min contract FAs sometimes)
+		if (keptPlayers.length < (g.get("maxRosterSize") + 1) * g.get("numTeams")) {
 			throw new Error("Not enough players!");
 		}
 
-		const numPlayerPerTeam = g.maxRosterSize - 2;
+		const numPlayerPerTeam = g.get("maxRosterSize") - 2;
 
 		// 13 for basketball
-		const maxNumFreeAgents = Math.round((g.numTeams / 3) * g.maxRosterSize);
+		const maxNumFreeAgents = Math.round(
+			(g.get("numTeams") / 3) * g.get("maxRosterSize"),
+		);
 
 		// 150 for basketball
 		// Add players to teams or free agency
@@ -575,18 +580,18 @@ export const createWithoutSaving = (
 		// Keep track of number of players on each team
 		const numPlayersByTid = {};
 
-		for (const tid2 of range(g.numTeams)) {
+		for (const tid2 of range(g.get("numTeams"))) {
 			numPlayersByTid[tid2] = 0;
 		}
 
 		const addPlayerToTeam = (p, tid2: number) => {
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
-			player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+			player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 
 			// Keep rookie contract, or no?
 
-			if (p.contract.exp >= g.season) {
+			if (p.contract.exp >= g.get("season")) {
 				player.setContract(p, p.contract, true);
 			} else {
 				player.setContract(p, player.genContract(p, true), true);
@@ -600,7 +605,7 @@ export const createWithoutSaving = (
 
 			// Probability a player is still on his draft team
 
-			const numYearsAgo = g.season - p.draft.year;
+			const numYearsAgo = g.get("season") - p.draft.year;
 
 			if (typeof p.draft.round === "number") {
 				if (numYearsAgo < 8) {
@@ -631,7 +636,7 @@ export const createWithoutSaving = (
 
 		// Drafted players kept with own team, with some probability
 
-		for (let i = 0; i < numPlayerPerTeam * g.numTeams; i++) {
+		for (let i = 0; i < numPlayerPerTeam * g.get("numTeams"); i++) {
 			const p = keptPlayers[i];
 
 			if (
@@ -648,7 +653,7 @@ export const createWithoutSaving = (
 
 		while (true) {
 			// Random order tids, so no team is a superpower
-			const tids = range(g.numTeams);
+			const tids = range(g.get("numTeams"));
 			random.shuffle(tids);
 			let numTeamsDone = 0;
 
@@ -671,23 +676,23 @@ export const createWithoutSaving = (
 				}
 			}
 
-			if (numTeamsDone === g.numTeams) {
+			if (numTeamsDone === g.get("numTeams")) {
 				break;
 			}
 		}
 
 		// Adjustment for hard cap - lower contracts for teams above cap
 
-		if (g.hardCap) {
-			for (const tid2 of range(g.numTeams)) {
+		if (g.get("hardCap")) {
+			for (const tid2 of range(g.get("numTeams"))) {
 				const roster = players.filter(p => p.tid === tid2);
 				let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
 
-				while (payroll > g.salaryCap) {
+				while (payroll > g.get("salaryCap")) {
 					let foundAny = false;
 
 					for (const p of roster) {
-						if (p.contract.amount >= g.minContract + 50) {
+						if (p.contract.amount >= g.get("minContract") + 50) {
 							p.contract.amount -= 50;
 							payroll -= 50;
 							foundAny = true;
@@ -714,7 +719,7 @@ export const createWithoutSaving = (
 				// So half will be eligible to retire after the first season
 
 				player.setContract(p, player.genContract(p, false), false);
-				player.addToFreeAgents(p, g.phase, baseMoods);
+				player.addToFreeAgents(p, g.get("phase"), baseMoods);
 				players.push(p);
 			}
 		}
@@ -722,22 +727,24 @@ export const createWithoutSaving = (
 
 	// See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
 
-	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6);
+	const baseNumPlayers = Math.round(
+		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+	);
 
 	// 70 for basketball 2 round draft
 
 	let createUndrafted1 = baseNumPlayers;
 	let createUndrafted2 = baseNumPlayers;
 	let createUndrafted3 = baseNumPlayers;
-	const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
 	for (const p of players) {
 		if (p.tid === PLAYER.UNDRAFTED) {
-			if (p.draft.year === g.season + seasonOffset) {
+			if (p.draft.year === g.get("season") + seasonOffset) {
 				createUndrafted1 -= 1;
-			} else if (p.draft.year === g.season + seasonOffset + 1) {
+			} else if (p.draft.year === g.get("season") + seasonOffset + 1) {
 				createUndrafted2 -= 1;
-			} else if (p.draft.year === g.season + seasonOffset + 2) {
+			} else if (p.draft.year === g.get("season") + seasonOffset + 2) {
 				createUndrafted3 -= 1;
 			}
 		}
@@ -745,13 +752,14 @@ export const createWithoutSaving = (
 
 	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
 
-	if (g.phase !== PHASE.FANTASY_DRAFT) {
+	if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (
 			createUndrafted1 > 0 &&
-			(g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.RESIGN_PLAYERS)
+			(g.get("phase") <= PHASE.DRAFT_LOTTERY ||
+				g.get("phase") >= PHASE.RESIGN_PLAYERS)
 		) {
 			const draftClass = draft.genPlayersWithoutSaving(
-				g.season + seasonOffset,
+				g.get("season") + seasonOffset,
 				scoutingRank,
 				createUndrafted1,
 			);
@@ -760,7 +768,7 @@ export const createWithoutSaving = (
 
 		if (createUndrafted2 > 0) {
 			const draftClass = draft.genPlayersWithoutSaving(
-				g.season + 1 + seasonOffset,
+				g.get("season") + 1 + seasonOffset,
 				scoutingRank,
 				createUndrafted2,
 			);
@@ -769,7 +777,7 @@ export const createWithoutSaving = (
 
 		if (createUndrafted3 > 0) {
 			const draftClass = draft.genPlayersWithoutSaving(
-				g.season + 2 + seasonOffset,
+				g.get("season") + 2 + seasonOffset,
 				scoutingRank,
 				createUndrafted3,
 			);
@@ -852,14 +860,13 @@ const create = async (
 	idb.league = await connectLeague(lid);
 
 	// These wouldn't be needed here, except the beforeView logic is fucked up
-
 	lock.reset();
 	local.reset();
 
 	// Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
-
 	helpers.resetG();
-	g.lid = lid;
+	g.setWithoutSavingToDB("lid", lid);
+	leagueData.gameAttributes.lid = lid;
 	await toUI(["resetLeague"]);
 
 	if (idb.cache) {

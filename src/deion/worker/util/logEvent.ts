@@ -9,7 +9,7 @@ import {
 } from "../../common/types";
 
 const saveEvent = (event: LogEventSaveOptions) => {
-	idb.cache.events.add({ ...event, season: g.season });
+	idb.cache.events.add({ ...event, season: g.get("season") });
 };
 
 // conditions only needed when showNotification is true, otherwise this is never called

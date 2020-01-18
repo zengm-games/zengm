@@ -11,16 +11,16 @@ import { g } from "../../util";
 const amountWithMood = (amount: number, mood: number = 0.5): number => {
 	amount *= 1 + 0.2 * mood;
 
-	if (amount >= g.minContract) {
-		if (amount > g.maxContract) {
-			amount = g.maxContract;
+	if (amount >= g.get("minContract")) {
+		if (amount > g.get("maxContract")) {
+			amount = g.get("maxContract");
 		}
 
 		return 0.05 * Math.round(amount / 0.05); // Make it a multiple of 50k
 	}
 
-	if (amount > g.maxContract / 1000) {
-		amount = g.maxContract / 1000;
+	if (amount > g.get("maxContract") / 1000) {
+		amount = g.get("maxContract") / 1000;
 	}
 
 	return 0.05 * Math.round(amount / 0.05); // Make it a multiple of 50k

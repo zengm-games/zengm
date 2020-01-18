@@ -10,14 +10,16 @@ const genPlayersWithoutSaving = (
 	numPlayers?: number,
 ): PlayerWithoutPid<MinimalPlayerRatings>[] => {
 	if (numPlayers === null || numPlayers === undefined) {
-		numPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
+		numPlayers = Math.round(
+			(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+		); // 70 for basketball 2 round draft
 	}
 
 	if (numPlayers < 0) {
 		numPlayers = 0;
 	}
 
-	const baseAge = 19 - (draftYear - g.season);
+	const baseAge = 19 - (draftYear - g.get("season"));
 	let remaining = range(numPlayers).map(() => {
 		const p: any = player.generate(
 			PLAYER.UNDRAFTED,

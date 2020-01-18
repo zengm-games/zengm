@@ -89,7 +89,8 @@ export const makeSon = async (p: Player) => {
 	// Find a player from a draft 21-40 years ago to make the father
 	const NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT = 20;
 	const maxYearsAgo = helpers.bound(
-		p.draft.year - (g.startingSeason - NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT),
+		p.draft.year -
+			(g.get("startingSeason") - NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT),
 		21,
 		40,
 	);
@@ -295,11 +296,11 @@ export const makeBrother = async (p: Player) => {
 };
 
 const addRelatives = async (p: Player) => {
-	if (Math.random() < g.sonRate) {
+	if (Math.random() < g.get("sonRate")) {
 		await makeSon(p);
 	}
 
-	if (Math.random() < g.brotherRate) {
+	if (Math.random() < g.get("brotherRate")) {
 		await makeBrother(p);
 	}
 };

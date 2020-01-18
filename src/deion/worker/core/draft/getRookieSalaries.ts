@@ -76,18 +76,18 @@ const getRookieSalaries = (): number[] => {
 		500,
 	];
 
-	while (g.numTeams > firstRoundRookieSalaries.length) {
+	while (g.get("numTeams") > firstRoundRookieSalaries.length) {
 		//add first round contracts on to end of first round
 		firstRoundRookieSalaries.push(1000);
 	}
 
-	while (g.numTeams < firstRoundRookieSalaries.length) {
+	while (g.get("numTeams") < firstRoundRookieSalaries.length) {
 		//remove smallest first round salaries
 		firstRoundRookieSalaries.pop();
 	}
 
 	while (
-		g.numTeams * (g.numDraftRounds - 1) >
+		g.get("numTeams") * (g.get("numDraftRounds") - 1) >
 		otherRoundRookieSalaries.length
 	) {
 		// Add min contracts on to end
@@ -95,7 +95,7 @@ const getRookieSalaries = (): number[] => {
 	}
 
 	while (
-		g.numTeams * (g.numDraftRounds - 1) <
+		g.get("numTeams") * (g.get("numDraftRounds") - 1) <
 		otherRoundRookieSalaries.length
 	) {
 		// Remove smallest salaries
@@ -106,14 +106,15 @@ const getRookieSalaries = (): number[] => {
 		otherRoundRookieSalaries,
 	);
 
-	if (g.minContract !== 500 || g.maxContract !== 20000) {
+	if (g.get("minContract") !== 500 || g.get("maxContract") !== 20000) {
 		for (let i = 0; i < rookieSalaries.length; i++) {
 			// Subtract min
 			rookieSalaries[i] -= 500; // Scale so max will be 1/4 the max contract
 
-			rookieSalaries[i] *= (0.25 * g.maxContract - g.minContract) / 4500; // Add min back
+			rookieSalaries[i] *=
+				(0.25 * g.get("maxContract") - g.get("minContract")) / 4500; // Add min back
 
-			rookieSalaries[i] += g.minContract;
+			rookieSalaries[i] += g.get("minContract");
 			rookieSalaries[i] = Math.round(rookieSalaries[i] / 50) * 50;
 		}
 	}

@@ -7,10 +7,10 @@ describe("worker/core/player/getPlayerFakeAge", () => {
 	test("pick appropriate player to have a fake age", () => {
 		testHelpers.resetG();
 		const players: any = [
-			player.generate(0, 19, g.season, false, 15.5),
-			player.generate(0, 25, g.season, false, 15.5), // Should get filtered out, too old
-			player.generate(0, 22, g.season, false, 15.5),
-			player.generate(0, 20, g.season, false, 15.5),
+			player.generate(0, 19, g.get("season"), false, 15.5),
+			player.generate(0, 25, g.get("season"), false, 15.5), // Should get filtered out, too old
+			player.generate(0, 22, g.get("season"), false, 15.5),
+			player.generate(0, 20, g.get("season"), false, 15.5),
 		];
 		players[0].pid = 0;
 		players[0].born.loc = "Ghana";

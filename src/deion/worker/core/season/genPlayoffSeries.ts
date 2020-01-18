@@ -57,16 +57,16 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 
 const genPlayoffSeries = (teams: TeamFiltered[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	const playoffsByConference = g.confs.length === 2; // Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
+	const playoffsByConference = g.get("confs").length === 2; // Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
 
 	const numPlayoffByes = helpers.bound(
-		playoffsByConference && g.numPlayoffByes % 2 === 1
-			? g.numPlayoffByes - 1
-			: g.numPlayoffByes,
+		playoffsByConference && g.get("numPlayoffByes") % 2 === 1
+			? g.get("numPlayoffByes") - 1
+			: g.get("numPlayoffByes"),
 		0,
 		Infinity,
 	);
-	const numRounds = g.numGamesPlayoffSeries.length;
+	const numRounds = g.get("numGamesPlayoffSeries").length;
 	const tidPlayoffs: number[] = [];
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
@@ -76,10 +76,12 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 		);
 	}
 
-	if (numPlayoffTeams > g.numTeams) {
-		if (numPlayoffTeams > g.numTeams) {
+	if (numPlayoffTeams > g.get("numTeams")) {
+		if (numPlayoffTeams > g.get("numTeams")) {
 			throw new Error(
-				`${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${g.numTeams} teams in the league`,
+				`${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${g.get(
+					"numTeams",
+				)} teams in the league`,
 			);
 		}
 	}
@@ -90,7 +92,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 		if (numRounds > 1) {
 			const seeds = genSeeds(numPlayoffTeams / 2, numPlayoffByes / 2); // Default: top 50% of teams in each of the two conferences
 
-			for (let cid = 0; cid < g.confs.length; cid++) {
+			for (let cid = 0; cid < g.get("confs").length; cid++) {
 				const teamsConf: TeamFiltered[] = [];
 
 				for (let i = 0; i < teams.length; i++) {
@@ -106,7 +108,9 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 
 				if (teamsConf.length < numPlayoffTeams / 2) {
 					throw new Error(
-						`Not enough teams for playoffs in conference ${cid} (${g.confs[cid].name})`,
+						`Not enough teams for playoffs in conference ${cid} (${
+							g.get("confs")[cid].name
+						})`,
 					);
 				}
 
@@ -133,7 +137,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 			// Special case - if there is only one round, pick the best team in each conference to play
 			const teamsConf: any[] = [];
 
-			for (let cid = 0; cid < g.confs.length; cid++) {
+			for (let cid = 0; cid < g.get("confs").length; cid++) {
 				for (let i = 0; i < teams.length; i++) {
 					if (teams[i].cid === cid) {
 						teamsConf.push(teams[i]);

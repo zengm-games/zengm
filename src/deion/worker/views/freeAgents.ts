@@ -4,12 +4,13 @@ import { idb } from "../db";
 import { g, lock } from "../util";
 
 const updateFreeAgents = async () => {
-	const payroll = await team.getPayroll(g.userTid);
+	const payroll = await team.getPayroll(g.get("userTid"));
 	const [userPlayersAll, playersAll] = await Promise.all([
-		idb.cache.players.indexGetAll("playersByTid", g.userTid),
+		idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),
 		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	]);
-	const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
+	const capSpace =
+		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]
@@ -26,7 +27,7 @@ const updateFreeAgents = async () => {
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
-		season: g.season,
+		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
@@ -36,7 +37,7 @@ const updateFreeAgents = async () => {
 		attrs: [],
 		ratings: ["pos"],
 		stats: [],
-		season: g.season,
+		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 	});
@@ -44,7 +45,7 @@ const updateFreeAgents = async () => {
 	for (const p of players) {
 		p.contract.amount = freeAgents.amountWithMood(
 			p.contract.amount,
-			p.freeAgentMood[g.userTid],
+			p.freeAgentMood[g.get("userTid")],
 		);
 		p.mood = player.moodColorText(p);
 	}
@@ -52,15 +53,15 @@ const updateFreeAgents = async () => {
 	return {
 		capSpace,
 		gamesInProgress: lock.get("gameSim"),
-		hardCap: g.hardCap,
-		minContract: g.minContract,
-		numRosterSpots: g.maxRosterSize - userPlayers.length,
-		phase: g.phase,
+		hardCap: g.get("hardCap"),
+		minContract: g.get("minContract"),
+		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
+		phase: g.get("phase"),
 		players,
-		playersRefuseToNegotiate: g.playersRefuseToNegotiate,
+		playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 		stats,
 		userPlayers,
-		userTid: g.userTid,
+		userTid: g.get("userTid"),
 	};
 };
 

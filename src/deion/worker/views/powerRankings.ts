@@ -8,7 +8,7 @@ const updatePowerRankings = async (
 	state: any,
 ) => {
 	if (
-		(season === g.season && updateEvents.includes("gameSim")) ||
+		(season === g.get("season") && updateEvents.includes("gameSim")) ||
 		season !== state.season
 	) {
 		const teams = await idb.getCopies.teamsPlus({
@@ -22,7 +22,7 @@ const updatePowerRankings = async (
 		for (const t of teams) {
 			let teamPlayers;
 
-			if (g.season === season) {
+			if (g.get("season") === season) {
 				teamPlayers = await idb.cache.players.indexGetAll(
 					"playersByTid",
 					t.tid,
@@ -38,8 +38,8 @@ const updatePowerRankings = async (
 				ratings: ["ovr", "pos"],
 				stats: ["season", "tid"],
 				season,
-				showNoStats: g.season === season,
-				showRookies: g.season === season,
+				showNoStats: g.get("season") === season,
+				showRookies: g.get("season") === season,
 				fuzz: true,
 				tid: t.tid,
 			});
@@ -63,7 +63,7 @@ const updatePowerRankings = async (
 		// Calculate score
 		for (const t of teams) {
 			// Start with MOV, scaled for games played
-			t.score = (t.stats.mov * t.stats.gp) / g.numGames; // Add estimated MOV from ovr (0/100 to -30/30)
+			t.score = (t.stats.mov * t.stats.gp) / g.get("numGames"); // Add estimated MOV from ovr (0/100 to -30/30)
 
 			const estimatedMOV = t.ovr * 0.6 - 30;
 			t.score += estimatedMOV;
@@ -86,7 +86,7 @@ const updatePowerRankings = async (
 		return {
 			season,
 			teams,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

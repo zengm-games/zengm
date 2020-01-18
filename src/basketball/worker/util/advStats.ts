@@ -58,7 +58,7 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 		mins[i] = players[i].stats.min; // Save for EWA calculation
 	}
 
-	league.aPER /= league.gp * 5 * 4 * g.quarterLength;
+	league.aPER /= league.gp * 5 * 4 * g.get("quarterLength");
 	const PER = aPER.map(num => num * (15 / league.aPER)); // Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
 
 	const EWA: number[] = []; // Position Replacement Levels
@@ -370,9 +370,9 @@ const advStats = async () => {
 			"pts",
 		],
 		ratings: ["pos"],
-		season: g.season,
-		playoffs: PHASE.PLAYOFFS === g.phase,
-		regularSeason: PHASE.PLAYOFFS !== g.phase,
+		season: g.get("season"),
+		playoffs: PHASE.PLAYOFFS === g.get("phase"),
+		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 		statType: "totals",
 	});
 
@@ -421,9 +421,9 @@ const advStats = async () => {
 			"tp",
 			"poss",
 		],
-		season: g.season,
-		playoffs: PHASE.PLAYOFFS === g.phase,
-		regularSeason: PHASE.PLAYOFFS !== g.phase,
+		season: g.get("season"),
+		playoffs: PHASE.PLAYOFFS === g.get("phase"),
+		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 		statType: "totals",
 	});
 

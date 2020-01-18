@@ -17,7 +17,7 @@ const newPhasePlayoffs = async (
 		await idb.getCopies.teamsPlus({
 			attrs: ["tid", "cid", "did"],
 			seasonAttrs: ["winp", "won"],
-			season: g.season,
+			season: g.get("season"),
 		}),
 	);
 
@@ -36,15 +36,15 @@ const newPhasePlayoffs = async (
 				type: "playoffs",
 				text: `The <a href="${helpers.leagueUrl([
 					"roster",
-					g.teamAbbrevsCache[tid],
-					g.season,
+					g.get("teamAbbrevsCache")[tid],
+					g.get("season"),
 				])}">${
-					g.teamNamesCache[tid]
+					g.get("teamNamesCache")[tid]
 				}</a> made the <a href="${helpers.leagueUrl([
 					"playoffs",
-					g.season,
+					g.get("season"),
 				])}">playoffs</a>.`,
-				showNotification: tid === g.userTid,
+				showNotification: tid === g.get("userTid"),
 				tids: [tid],
 			},
 			conditions,
@@ -52,7 +52,7 @@ const newPhasePlayoffs = async (
 	}
 
 	await idb.cache.playoffSeries.put({
-		season: g.season,
+		season: g.get("season"),
 		currentRound: 0,
 		series,
 	});
@@ -60,7 +60,7 @@ const newPhasePlayoffs = async (
 	// Add row to team stats and team season attributes
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
-		[[g.season], [g.season, "Z"]],
+		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 
 	for (const teamSeason of teamSeasons) {

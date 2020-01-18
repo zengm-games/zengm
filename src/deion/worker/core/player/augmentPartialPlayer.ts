@@ -26,7 +26,7 @@ const augmentPartialPlayer = (
 	if (!p.hasOwnProperty("born")) {
 		age = random.randInt(19, 35);
 	} else {
-		age = g.startingSeason - p.born.year;
+		age = g.get("startingSeason") - p.born.year;
 	}
 
 	if (
@@ -46,7 +46,7 @@ const augmentPartialPlayer = (
 	const pg = generate(
 		p.tid,
 		age,
-		g.startingSeason - (age - 18),
+		g.get("startingSeason") - (age - 18),
 		true,
 		scoutingRank,
 	);
@@ -92,7 +92,7 @@ const augmentPartialPlayer = (
 	if (!p.hasOwnProperty("statsTids")) {
 		p.statsTids = Array.isArray(p.stats) ? p.stats.map(s => s.tid) : [];
 
-		if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
+		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
 			p.statsTids.push(p.tid);
 		}
 
@@ -105,7 +105,7 @@ const augmentPartialPlayer = (
 
 	if (typeof p.draft.year !== "number") {
 		if (p.tid === PLAYER.UNDRAFTED) {
-			p.draft.year = g.season;
+			p.draft.year = g.get("season");
 		} else {
 			p.draft.year = pg.draft.year;
 		}
@@ -136,11 +136,11 @@ const augmentPartialPlayer = (
 	}
 
 	// Fix always-missing info
-	const offset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+	const offset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
-	if (p.tid === PLAYER.UNDRAFTED && g.phase !== PHASE.FANTASY_DRAFT) {
+	if (p.tid === PLAYER.UNDRAFTED && g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (version === undefined || version <= 32) {
-			p.ratings[0].season = g.season + offset;
+			p.ratings[0].season = g.get("season") + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			p.ratings[0].season = p.draft.year;
@@ -148,7 +148,7 @@ const augmentPartialPlayer = (
 	} else if (p.tid === PLAYER.UNDRAFTED_2) {
 		if (version === undefined || version <= 32) {
 			p.tid = PLAYER.UNDRAFTED;
-			p.ratings[0].season = g.season + 1 + offset;
+			p.ratings[0].season = g.get("season") + 1 + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			throw new Error(
@@ -158,7 +158,7 @@ const augmentPartialPlayer = (
 	} else if (p.tid === PLAYER.UNDRAFTED_3) {
 		if (version === undefined || version <= 32) {
 			p.tid = PLAYER.UNDRAFTED;
-			p.ratings[0].season = g.season + 2 + offset;
+			p.ratings[0].season = g.get("season") + 2 + offset;
 			p.draft.year = p.ratings[0].season;
 		} else {
 			throw new Error(
@@ -168,21 +168,22 @@ const augmentPartialPlayer = (
 	} else if (p.tid === PLAYER.RETIRED) {
 		for (const r of p.ratings) {
 			if (!r.hasOwnProperty("season")) {
-				r.season = typeof p.retiredYear === "number" ? p.retiredYear : g.season;
+				r.season =
+					typeof p.retiredYear === "number" ? p.retiredYear : g.get("season");
 			}
 		}
-	} else if (g.phase !== PHASE.FANTASY_DRAFT) {
+	} else if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (!p.ratings[0].hasOwnProperty("season")) {
-			p.ratings[0].season = g.season;
+			p.ratings[0].season = g.get("season");
 		}
 
 		// Fix improperly-set season in ratings
 		if (
 			p.ratings.length === 1 &&
-			p.ratings[0].season < g.season &&
+			p.ratings[0].season < g.get("season") &&
 			p.tid !== PLAYER.RETIRED
 		) {
-			p.ratings[0].season = g.season;
+			p.ratings[0].season = g.get("season");
 		}
 	}
 
@@ -341,11 +342,11 @@ const augmentPartialPlayer = (
 		// Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
 		p.contract.amount = Math.max(
 			10 * Math.round(p.contract.amount / 10),
-			g.minContract,
+			g.get("minContract"),
 		);
 
-		if (p.contract.exp < g.startingSeason) {
-			p.contract.exp = g.startingSeason;
+		if (p.contract.exp < g.get("startingSeason")) {
+			p.contract.exp = g.get("startingSeason");
 		}
 
 		if (p.tid >= 0 && p.salaries.length === 0) {
@@ -359,8 +360,8 @@ const augmentPartialPlayer = (
 	}
 
 	if (p.stats.length === 0) {
-		if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
-			addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
+			addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 		}
 	} else {
 		if (!overrides.core.player.stats) {
@@ -396,10 +397,10 @@ const augmentPartialPlayer = (
 		}
 
 		// Add stats row if this is the preseason and all stats are historical, mostly for people making rosters by hand
-		if (g.phase === PHASE.PRESEASON) {
+		if (g.get("phase") === PHASE.PRESEASON) {
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
-			if (p.tid >= 0 && lastSeason < g.season) {
+			if (p.tid >= 0 && lastSeason < g.get("season")) {
 				addStatsRow(p, false);
 			}
 		}

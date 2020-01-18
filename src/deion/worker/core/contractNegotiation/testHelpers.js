@@ -7,7 +7,7 @@ import { g } from "../../util";
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async pid => {
 	const p = await idb.cache.players.get(pid);
-	p.contract.amount = g.minContract;
+	p.contract.amount = g.get("minContract");
 	await idb.cache.players.put(p);
 };
 
@@ -24,20 +24,20 @@ const beforeTests = async () => {
 			player.generate(12, 30, 2017, true, 15.5),
 
 			// User's team - 14 players
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
-			player.generate(g.userTid, 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
+			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
 		],
 	});
 };

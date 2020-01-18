@@ -51,15 +51,15 @@ const madeHof = (
 	}
 
 	// Fudge factor for players generated when the league started
-	const fudgeSeasons = g.startingSeason - p.draft.year - 5;
+	const fudgeSeasons = g.get("startingSeason") - p.draft.year - 5;
 
 	if (fudgeSeasons > 0) {
 		total += winShares[0] * fudgeSeasons;
 	}
 
 	const scaleFactor =
-		(Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength) *
-			g.numGames) /
+		(Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength) *
+			g.get("numGames")) /
 		defaultGameAttributes.numGames;
 
 	// Final formula

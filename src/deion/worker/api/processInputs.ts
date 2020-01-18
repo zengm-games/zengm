@@ -6,18 +6,21 @@ import { PlayerStatType } from "../../common/types";
 /**
  * Validate that a given abbreviation corresponds to a team.
  *
- * If the abbreviation is not valid, then g.userTid and its correspodning abbreviation will be returned.
+ * If the abbreviation is not valid, then g.get("userTid") and its correspodning abbreviation will be returned.
  *
  * @memberOf util.helpers
  * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
  * @return {Array} Array with two elements, the team ID and the validated abbreviation.
  */
 export const validateAbbrev = (abbrev?: string): [number, string] => {
-	let tid = g.teamAbbrevsCache.indexOf(abbrev);
+	let tid: number = -1;
+	if (abbrev !== undefined) {
+		tid = g.get("teamAbbrevsCache").indexOf(abbrev);
+	}
 
 	if (tid < 0 || abbrev === undefined) {
-		tid = g.userTid;
-		abbrev = g.teamAbbrevsCache[tid];
+		tid = g.get("userTid");
+		abbrev = g.get("teamAbbrevsCache")[tid];
 	}
 
 	if (abbrev === undefined) {
@@ -30,15 +33,15 @@ export const validateAbbrev = (abbrev?: string): [number, string] => {
 /**
  * Validate the given season.
  *
- * Currently this doesn't really do anything except replace "undefined" with g.season.
+ * Currently this doesn't really do anything except replace "undefined" with g.get("season").
  *
  * @memberOf util.helpers
- * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.season is used.
+ * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.get("season") is used.
  * @return {number} Validated season (same as input unless input is undefined, currently).
  */
 export const validateSeason = (season?: number | string): number => {
 	if (season === undefined) {
-		return g.season;
+		return g.get("season");
 	}
 
 	if (typeof season === "string") {
@@ -46,7 +49,7 @@ export const validateSeason = (season?: number | string): number => {
 	}
 
 	if (Number.isNaN(season)) {
-		return g.season;
+		return g.get("season");
 	}
 
 	return season;
@@ -100,10 +103,15 @@ const depth = (params: Params) => {
 };
 
 const draft = () => {
-	if (g.phase !== PHASE.DRAFT && g.phase !== PHASE.FANTASY_DRAFT) {
+	if (
+		g.get("phase") !== PHASE.DRAFT &&
+		g.get("phase") !== PHASE.FANTASY_DRAFT
+	) {
 		return {
 			redirectUrl: helpers.leagueUrl([
-				g.phase === PHASE.AFTER_DRAFT ? "draft_history" : "draft_scouting",
+				g.get("phase") === PHASE.AFTER_DRAFT
+					? "draft_history"
+					: "draft_scouting",
 			]),
 		};
 	}
@@ -119,10 +127,10 @@ const draftLottery = (params: Params) => {
 const draftSummary = (params: Params) => {
 	let season = validateSeason(params.season); // Draft hasn't happened yet this year
 
-	if (g.phase < PHASE.DRAFT) {
-		if (season === g.season) {
+	if (g.get("phase") < PHASE.DRAFT) {
+		if (season === g.get("season")) {
 			// View last season by default
-			season = g.season - 1;
+			season = g.get("season") - 1;
 		}
 	}
 
@@ -149,7 +157,7 @@ const eventLog = (params: Params) => {
 };
 
 const fantasyDraft = () => {
-	if (g.phase === PHASE.FANTASY_DRAFT) {
+	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 		return {
 			redirectUrl: helpers.leagueUrl(["draft"]),
 		};
@@ -157,7 +165,7 @@ const fantasyDraft = () => {
 };
 
 const freeAgents = () => {
-	if (g.phase === PHASE.RESIGN_PLAYERS) {
+	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		return {
 			redirectUrl: helpers.leagueUrl(["negotiation"]),
 		};
@@ -177,9 +185,9 @@ const gameLog = (params: Params) => {
 const history = (params: Params) => {
 	let season = validateSeason(params.season); // If playoffs aren't over, season awards haven't been set
 
-	if (g.phase <= PHASE.PLAYOFFS) {
+	if (g.get("phase") <= PHASE.PLAYOFFS) {
 		// View last season by default
-		if (season === g.season) {
+		if (season === g.get("season")) {
 			season -= 1;
 		}
 	}
@@ -239,7 +247,7 @@ const negotiation = (params: Params) => {
 };
 
 const negotiationList = () => {
-	if (g.phase !== PHASE.RESIGN_PLAYERS) {
+	if (g.get("phase") !== PHASE.RESIGN_PLAYERS) {
 		return {
 			redirectUrl: helpers.leagueUrl(["negotiation", -1]),
 		};
@@ -261,7 +269,10 @@ const player = (params: Params) => {
 const playerFeats = (params: Params) => {
 	let abbrev;
 
-	if (g.teamAbbrevsCache.includes(params.abbrev)) {
+	if (
+		params.abbrev !== undefined &&
+		g.get("teamAbbrevsCache").includes(params.abbrev)
+	) {
 		abbrev = params.abbrev;
 	} else {
 		abbrev = "all";
@@ -284,7 +295,10 @@ const playerFeats = (params: Params) => {
 const playerRatings = (params: Params) => {
 	let abbrev;
 
-	if (g.teamAbbrevsCache.includes(params.abbrev)) {
+	if (
+		params.abbrev !== undefined &&
+		g.get("teamAbbrevsCache").includes(params.abbrev)
+	) {
 		abbrev = params.abbrev;
 	} else if (params.abbrev && params.abbrev === "watch") {
 		abbrev = "watch";
@@ -301,7 +315,10 @@ const playerRatings = (params: Params) => {
 const playerStats = (params: Params) => {
 	let abbrev;
 
-	if (g.teamAbbrevsCache.includes(params.abbrev)) {
+	if (
+		params.abbrev !== undefined &&
+		g.get("teamAbbrevsCache").includes(params.abbrev)
+	) {
 		abbrev = params.abbrev;
 	} else if (params.abbrev && params.abbrev === "watch") {
 		abbrev = "watch";
@@ -397,8 +414,8 @@ const transactions = (params: Params) => {
 		tid = -1;
 		abbrev = "all";
 	} else {
-		tid = g.userTid;
-		abbrev = g.teamAbbrevsCache[tid];
+		tid = g.get("userTid");
+		abbrev = g.get("teamAbbrevsCache")[tid];
 	}
 
 	let season: number | "all";
@@ -408,7 +425,7 @@ const transactions = (params: Params) => {
 	} else if (params.season && params.season === "all") {
 		season = "all";
 	} else {
-		season = g.season;
+		season = g.get("season");
 	}
 
 	return {
@@ -422,12 +439,12 @@ const transactions = (params: Params) => {
 const upcomingFreeAgents = (params: Params) => {
 	let season = validateSeason(params.season);
 
-	if (g.phase <= PHASE.RESIGN_PLAYERS) {
-		if (season < g.season) {
-			season = g.season;
+	if (g.get("phase") <= PHASE.RESIGN_PLAYERS) {
+		if (season < g.get("season")) {
+			season = g.get("season");
 		}
-	} else if (season < g.season + 1) {
-		season = g.season + 1;
+	} else if (season < g.get("season") + 1) {
+		season = g.get("season") + 1;
 	}
 
 	return {

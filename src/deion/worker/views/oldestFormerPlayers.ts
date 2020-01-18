@@ -14,7 +14,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				const age =
 					typeof p.diedYear === "number"
 						? p.diedYear - p.born.year
-						: g.season - p.born.year;
+						: g.get("season") - p.born.year;
 				return age >= 85;
 			},
 		});
@@ -44,7 +44,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			players,
 			stats,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

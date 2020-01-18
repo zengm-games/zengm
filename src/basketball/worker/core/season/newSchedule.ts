@@ -69,7 +69,7 @@ const newScheduleDefault = (
 		dids[teams[i].cid].push(teams[i].did);
 	}
 
-	for (let cid = 0; cid < g.confs.length; cid++) {
+	for (let cid = 0; cid < g.get("confs").length; cid++) {
 		const matchups = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]];
 		let games = 0;
 
@@ -180,17 +180,17 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 export const newScheduleCrappy = () => {
-	const tids = range(g.numTeams);
+	const tids = range(g.get("numTeams"));
 	random.shuffle(tids);
 
 	// Number of games left to reschedule for each team
 	const numRemaining: number[] = [];
 
-	for (let i = 0; i < g.numTeams; i++) {
-		numRemaining[i] = g.numGames;
+	for (let i = 0; i < g.get("numTeams"); i++) {
+		numRemaining[i] = g.get("numGames");
 	}
 
-	let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
+	let numWithRemaining = g.get("numTeams"); // Number of teams with numRemaining > 0
 
 	const matchups: [number, number][] = [];
 
@@ -238,16 +238,16 @@ const newSchedule = (teams: Team[]) => {
 	let tids: [number, number][];
 	let threeDivsPerConf = true;
 
-	for (const conf of g.confs) {
-		if (g.divs.filter(div => div.cid === conf.cid).length !== 3) {
+	for (const conf of g.get("confs")) {
+		if (g.get("divs").filter(div => div.cid === conf.cid).length !== 3) {
 			threeDivsPerConf = false;
 			break;
 		}
 	}
 
-	let twoConfsEvenTeams = g.confs.length === 2;
+	let twoConfsEvenTeams = g.get("confs").length === 2;
 
-	for (const conf of g.confs) {
+	for (const conf of g.get("confs")) {
 		if (teams.filter(t => t.cid === conf.cid).length !== teams.length / 2) {
 			twoConfsEvenTeams = false;
 			break;
@@ -255,9 +255,9 @@ const newSchedule = (teams: Team[]) => {
 	}
 
 	if (
-		g.numTeams === 30 &&
-		g.numGames === 82 &&
-		g.confs.length === 2 &&
+		g.get("numTeams") === 30 &&
+		g.get("numGames") === 82 &&
+		g.get("confs").length === 2 &&
 		threeDivsPerConf &&
 		twoConfsEvenTeams
 	) {
@@ -301,7 +301,7 @@ const newSchedule = (teams: Team[]) => {
 	tids = flatten(days);
 
 	// Add an All-Star Game
-	if (g.allStarGame) {
+	if (g.get("allStarGame")) {
 		const ind = Math.round(0.6 * tids.length);
 		tids.splice(ind, 0, [-1, -2]);
 	}

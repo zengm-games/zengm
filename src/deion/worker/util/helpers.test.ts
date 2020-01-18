@@ -5,8 +5,8 @@ import helpers from "./helpers";
 
 describe("worker/util/helpers", () => {
 	beforeAll(() => {
-		g.userTid = 4;
-		g.teamAbbrevsCache = [
+		g.setWithoutSavingToDB("userTid", 4);
+		g.setWithoutSavingToDB("teamAbbrevsCache", [
 			"ATL",
 			"BAL",
 			"BOS",
@@ -37,8 +37,8 @@ describe("worker/util/helpers", () => {
 			"TOR",
 			"VAN",
 			"WAS",
-		];
-		g.teamRegionsCache = [
+		]);
+		g.setWithoutSavingToDB("teamRegionsCache", [
 			"Atlanta",
 			"Baltimore",
 			"Boston",
@@ -69,8 +69,8 @@ describe("worker/util/helpers", () => {
 			"Toronto",
 			"Vancouver",
 			"Washington",
-		];
-		g.teamNamesCache = [
+		]);
+		g.setWithoutSavingToDB("teamNamesCache", [
 			"Gold Club",
 			"Crabs",
 			"Massacre",
@@ -101,7 +101,7 @@ describe("worker/util/helpers", () => {
 			"Beavers",
 			"Whalers",
 			"Monuments",
-		];
+		]);
 	});
 
 	// Relies on g.*Cache being populated

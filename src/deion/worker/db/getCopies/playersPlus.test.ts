@@ -9,14 +9,14 @@ describe("worker/db/getCopies/playersPlus", () => {
 	let p: any;
 	beforeAll(async () => {
 		testHelpers.resetG();
-		g.season = 2011;
+		g.setWithoutSavingToDB("season", 2011);
 		p = player.generate(PLAYER.UNDRAFTED, 19, 2011, false, 28);
 		p.tid = 4;
-		g.season = 2012;
+		g.setWithoutSavingToDB("season", 2012);
 		await testHelpers.resetCache({
 			players: [p],
 		});
-		p.contract.exp = g.season + 1;
+		p.contract.exp = g.get("season") + 1;
 		player.addStatsRow(p);
 		player.addStatsRow(p, true);
 		player.addStatsRow(p);
@@ -245,7 +245,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.equal(typeof pf, "object");
 	});
 	test("not return undefined with options.showRookies if the player was drafted this season", async () => {
-		g.season = 2011;
+		g.setWithoutSavingToDB("season", 2011);
 		let pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
 			tid: 5,
@@ -253,7 +253,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			showRookies: true,
 		});
 		assert.equal(typeof pf, "object");
-		g.season = 2012;
+		g.setWithoutSavingToDB("season", 2012);
 		pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
 			tid: 5,
@@ -293,7 +293,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		);
 	});
 	test("return stats from previous season if options.oldStats is true and current season has no stats record", async () => {
-		g.season = 2013;
+		g.setWithoutSavingToDB("season", 2013);
 		let pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
 			tid: 0,
@@ -314,7 +314,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			oldStats: false,
 		});
 		assert.equal(typeof pf, "undefined");
-		g.season = 2014;
+		g.setWithoutSavingToDB("season", 2014);
 		pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
 			tid: 0,
@@ -328,10 +328,10 @@ describe("worker/db/getCopies/playersPlus", () => {
 
 		assert.equal(pf.stats.gp, 8);
 		assert.equal(pf.stats.fg, 7);
-		g.season = 2012;
+		g.setWithoutSavingToDB("season", 2012);
 	});
 	test("adjust cashOwed by options.numGamesRemaining", async () => {
-		g.season = 2012;
+		g.setWithoutSavingToDB("season", 2012);
 		let pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["cashOwed"],
 			tid: 4,

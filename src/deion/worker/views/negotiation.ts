@@ -8,9 +8,9 @@ const generateContractOptions = (contract, ovr) => {
 	let growthFactor = 0.15; // Modulate contract amounts based on last digit of ovr (add some deterministic noise)
 
 	growthFactor += (ovr % 10) * 0.01 - 0.05;
-	let exp = g.season;
+	let exp = g.get("season");
 
-	if (g.phase > PHASE.AFTER_TRADE_DEADLINE) {
+	if (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE) {
 		exp += 1;
 	}
 
@@ -52,7 +52,7 @@ const generateContractOptions = (contract, ovr) => {
 	}
 
 	return contractOptions.filter(
-		contractOption => contractOption.amount * 1000 <= g.maxContract,
+		contractOption => contractOption.amount * 1000 <= g.get("maxContract"),
 	);
 };
 
@@ -76,7 +76,7 @@ const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
 	const p = await idb.getCopy.playersPlus(p2, {
 		attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
 		ratings: ["ovr", "pot"],
-		season: g.season,
+		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
@@ -92,20 +92,20 @@ const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
 
 	p.contract.amount = freeAgents.amountWithMood(
 		p.contract.amount,
-		p.freeAgentMood[g.userTid],
+		p.freeAgentMood[g.get("userTid")],
 	);
 
 	// Generate contract options
 	const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
-	const payroll = await team.getPayroll(g.userTid);
+	const payroll = await team.getPayroll(g.get("userTid"));
 	return {
 		contractOptions,
-		hardCap: g.hardCap,
+		hardCap: g.get("hardCap"),
 		payroll: payroll / 1000,
 		player: p,
 		resigning: negotiation.resigning,
-		salaryCap: g.salaryCap / 1000,
-		userTid: g.userTid,
+		salaryCap: g.get("salaryCap") / 1000,
+		userTid: g.get("userTid"),
 	};
 };
 

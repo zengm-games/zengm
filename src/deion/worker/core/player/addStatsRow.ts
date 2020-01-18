@@ -18,7 +18,7 @@ const addStatsRow = async (
 ) => {
 	const statsRow = {
 		playoffs,
-		season: g.season,
+		season: g.get("season"),
 		tid: p.tid,
 		yearsWithTeam: 1,
 	};
@@ -44,7 +44,7 @@ const addStatsRow = async (
 		const i = playerStats.length - 1;
 
 		if (
-			playerStats[i].season === g.season - 1 &&
+			playerStats[i].season === g.get("season") - 1 &&
 			playerStats[i].tid === p.tid
 		) {
 			statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;

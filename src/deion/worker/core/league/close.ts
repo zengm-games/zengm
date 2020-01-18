@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, local, lock, updateStatus } from "../../util"; // Flush cache, disconnect from league database, and unset g.lid
+import { g, local, lock, updateStatus } from "../../util"; // Flush cache, disconnect from league database, and unset g.get("lid")
 
 const close = async (disconnect?: boolean) => {
 	const gameSim = lock.get("gameSim");
@@ -15,7 +15,7 @@ const close = async (disconnect?: boolean) => {
 		});
 	}
 
-	if (g.lid !== undefined && idb.league !== undefined) {
+	if (g.get("lid") !== undefined && idb.league !== undefined) {
 		if (local.leagueLoaded) {
 			await updateStatus("Saving...");
 			await idb.cache.flush();
@@ -32,7 +32,10 @@ const close = async (disconnect?: boolean) => {
 	if (disconnect) {
 		lock.reset();
 		local.reset();
-		g.lid = undefined;
+
+		// Probably this should delete all other properties on g and reset it to GameAttributesNonLeague by calling helpers.resetG, but I don't want to mess with it now and maybe break stuff.
+		// @ts-ignore
+		g.setWithoutSavingToDB("lid", undefined);
 	}
 };
 

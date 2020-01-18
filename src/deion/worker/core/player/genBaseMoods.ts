@@ -12,7 +12,7 @@ import { g } from "../../util";
 const genBaseMoods = async (reSigning: boolean = false): Promise<number[]> => {
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
-		[[g.season], [g.season, "Z"]],
+		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 	return teamSeasons.map(ts => player.genBaseMood(ts, reSigning));
 };

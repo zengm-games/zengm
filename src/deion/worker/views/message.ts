@@ -50,7 +50,7 @@ const updateMessage = async (
 		}
 
 		if (readThisPageview) {
-			if (g.gameOver) {
+			if (g.get("gameOver")) {
 				await updateStatus("You're fired!");
 			}
 

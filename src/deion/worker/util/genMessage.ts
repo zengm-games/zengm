@@ -29,18 +29,18 @@ const getMoodScore = (total: number, deltas: boolean = false) => {
 
 const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	// If auto play seasons or multi team mode, no messages
-	if (local.autoPlaySeasons > 0 || g.userTids.length > 1) {
+	if (local.autoPlaySeasons > 0 || g.get("userTids").length > 1) {
 		return;
 	}
 
-	// No need for seasons before you GMed this team or more than 10 years old, but also make sure we always have g.season
+	// No need for seasons before you GMed this team or more than 10 years old, but also make sure we always have g.get("season")
 	const minSeason = Math.min(
-		g.season,
-		Math.max(g.gracePeriodEnd - 2, g.season - 9),
+		g.get("season"),
+		Math.max(g.get("gracePeriodEnd") - 2, g.get("season") - 9),
 	);
 	const teamSeasons = await idb.getCopies.teamSeasons({
-		tid: g.userTid,
-		seasons: [minSeason, g.season],
+		tid: g.get("userTid"),
+		seasons: [minSeason, g.get("season")],
 	});
 	const moods = teamSeasons.map(ts => {
 		return ts.ownerMood
@@ -55,15 +55,17 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	const currentTotal =
 		currentMood.wins + currentMood.playoffs + currentMood.money;
 	const fired =
-		currentTotal <= -1 && g.season >= g.gracePeriodEnd && !g.godMode;
+		currentTotal <= -1 &&
+		g.get("season") >= g.get("gracePeriodEnd") &&
+		!g.get("godMode");
 	let m = "";
 
 	if (!fired) {
 		let overall;
 
-		if (g.season < g.gracePeriodEnd) {
+		if (g.get("season") < g.get("gracePeriodEnd")) {
 			overall = "It's too early to judge you.";
-		} else if (g.godMode) {
+		} else if (g.get("godMode")) {
 			overall = "You're using God Mode, so who cares what I think?";
 		} else {
 			overall = moodTexts[getMoodScore(currentTotal)];
@@ -106,7 +108,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 			text = "Be careful about losing too much money.";
 		}
 
-		if (g.season >= g.gracePeriodEnd) {
+		if (g.get("season") >= g.get("gracePeriodEnd")) {
 			if (currentTotal + deltas.money + deltas.playoffs + deltas.wins < -1) {
 				text = "Another season like that and you're fired!";
 			} else if (
@@ -160,7 +162,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	await idb.cache.messages.add({
 		read: false,
 		from: "The Owner",
-		year: g.season,
+		year: g.get("season"),
 		text: m,
 		subject: "Annual performance evaluation",
 		ownerMoods: moods,

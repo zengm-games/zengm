@@ -10,8 +10,8 @@ const cancel = async (pid: number) => {
 	const negotiationInProgress = await lock.negotiationInProgress();
 
 	if (!negotiationInProgress) {
-		if (g.phase === PHASE.FREE_AGENCY) {
-			await updateStatus(`${g.daysLeft} days left`);
+		if (g.get("phase") === PHASE.FREE_AGENCY) {
+			await updateStatus(`${g.get("daysLeft")} days left`);
 		} else {
 			await updateStatus("Idle");
 		}

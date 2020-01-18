@@ -20,12 +20,12 @@ const updateHistory = async (
 		return;
 	}
 
-	if (season === g.season && local.unviewedSeasonSummary) {
+	if (season === g.get("season") && local.unviewedSeasonSummary) {
 		viewedSeasonSummary();
 	}
 
 	if (updateEvents.includes("firstRun") || state.season !== season) {
-		if (season < g.startingSeason) {
+		if (season < g.get("startingSeason")) {
 			viewedSeasonSummary(); // Should never happen, but just in case
 
 			return {
@@ -82,17 +82,19 @@ const updateHistory = async (
 		retiredPlayers.sort((a, b) => b.age - a.age); // Get champs
 
 		const champ = teams.find(
-			t => t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
+			t =>
+				t.seasonAttrs.playoffRoundsWon ===
+				g.get("numGamesPlayoffSeries").length,
 		);
 
 		return {
 			awards,
 			champ,
-			confs: g.confs,
+			confs: g.get("confs"),
 			invalidSeason: false,
 			retiredPlayers,
 			season,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

@@ -3,7 +3,7 @@ import { g } from "../../util";
 import draftOne from "./draftOne";
 
 const draftAll = async (): Promise<number[]> => {
-	const allStars = await idb.cache.allStars.get(g.season);
+	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const pids: number[] = [];
 
 	while (!allStars.finalized) {

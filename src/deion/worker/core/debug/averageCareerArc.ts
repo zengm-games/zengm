@@ -19,7 +19,7 @@ const averageCareerArc = (ratingToSave: string) => {
 	}
 
 	for (let i = 0; i < numPlayers; i++) {
-		const p = player.generate(0, 19, g.season, true, 15);
+		const p = player.generate(0, 19, g.get("season"), true, 15);
 
 		for (let k = 0; k < numSeasons; k++) {
 			averageOvr[k] += p.ratings[0].ovr;

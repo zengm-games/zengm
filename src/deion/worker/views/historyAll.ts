@@ -6,7 +6,8 @@ import { UpdateEvents } from "../../common/types";
 const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		(updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
+		(updateEvents.includes("newPhase") &&
+			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
 		const [awards, teams] = await Promise.all([
 			idb.getCopies.awards(),
@@ -94,7 +95,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		// Count up number of championships per team
-		const championshipsByTid = Array(g.numTeams).fill(0);
+		const championshipsByTid = Array(g.get("numTeams")).fill(0);
 
 		for (let i = 0; i < seasons.length; i++) {
 			if (seasons[i].champ) {
@@ -109,9 +110,9 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			awards: awardNames,
 			seasons,
-			teamAbbrevsCache: g.teamAbbrevsCache,
-			ties: g.ties,
-			userTid: g.userTid,
+			teamAbbrevsCache: g.get("teamAbbrevsCache"),
+			ties: g.get("ties"),
+			userTid: g.get("userTid"),
 		};
 	}
 };

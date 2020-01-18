@@ -38,7 +38,7 @@ import views from "../views";
 import {
 	Conditions,
 	Env,
-	GameAttributes,
+	GameAttributesLeague,
 	Local,
 	LockName,
 	Player,
@@ -72,7 +72,7 @@ const addTeam = async (
 }> => {
 	const pop = 1;
 	const t = team.generate({
-		tid: g.numTeams,
+		tid: g.get("numTeams"),
 		cid,
 		did,
 		region: "Region",
@@ -83,23 +83,23 @@ const addTeam = async (
 	});
 	const teamSeason = team.genSeasonRow(t.tid);
 	teamSeason.pop = pop;
-	teamSeason.stadiumCapacity = g.defaultStadiumCapacity;
+	teamSeason.stadiumCapacity = g.get("defaultStadiumCapacity");
 	const teamStats = team.genStatsRow(t.tid);
 	await idb.cache.teams.put(t);
 	await idb.cache.teamSeasons.put(teamSeason);
 	await idb.cache.teamStats.put(teamStats);
 	await league.setGameAttributes({
-		numTeams: g.numTeams + 1,
-		teamAbbrevsCache: [...g.teamAbbrevsCache, t.abbrev],
-		teamRegionsCache: [...g.teamRegionsCache, t.region],
-		teamNamesCache: [...g.teamNamesCache, t.name],
+		numTeams: g.get("numTeams") + 1,
+		teamAbbrevsCache: [...g.get("teamAbbrevsCache"), t.abbrev],
+		teamRegionsCache: [...g.get("teamRegionsCache"), t.region],
+		teamNamesCache: [...g.get("teamNamesCache"), t.name],
 	});
-	const dpOffset = g.phase > PHASE.DRAFT ? 1 : 0;
+	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
 
-	for (let i = 0; i < g.numSeasonsFutureDraftPicks; i++) {
-		const draftYear = g.season + dpOffset + i;
+	for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
+		const draftYear = g.get("season") + dpOffset + i;
 
-		for (let round = 1; round <= g.numDraftRounds; round++) {
+		for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 			await idb.cache.draftPicks.put({
 				tid: t.tid,
 				originalTid: t.tid,
@@ -110,7 +110,7 @@ const addTeam = async (
 		}
 
 		// Add new draft prospects to draft class
-		await draft.genPlayers(draftYear, undefined, g.numDraftRounds);
+		await draft.genPlayers(draftYear, undefined, g.get("numDraftRounds"));
 	}
 
 	await idb.cache.flush(); // Team format used in ManageTemas
@@ -151,7 +151,7 @@ const autoSortRoster = async (pos?: string) => {
 	}
 
 	await overrides.core.team.rosterAutoSort(
-		g.userTid,
+		g.get("userTid"),
 		false,
 		typeof pos === "string" ? pos : undefined,
 	);
@@ -271,13 +271,13 @@ const deleteOldData = async (options: {
 
 			if (options.teamHistory) {
 				tx.teamSeasons.iterate(teamSeason => {
-					if (teamSeason.season < g.season) {
+					if (teamSeason.season < g.get("season")) {
 						tx.teamSeasons.delete(teamSeason.rid);
 					}
 				});
 				tx.draftLotteryResults.clear();
 				tx.allStars.iterate(allStars => {
-					if (allStars.season < g.season) {
+					if (allStars.season < g.get("season")) {
 						tx.allStars.delete(allStars.season);
 					}
 				});
@@ -285,7 +285,7 @@ const deleteOldData = async (options: {
 
 			if (options.teamStats) {
 				tx.teamStats.iterate(teamStats => {
-					if (teamStats.season < g.season) {
+					if (teamStats.season < g.get("season")) {
 						tx.teamStats.delete(teamStats.rid);
 					}
 				});
@@ -297,7 +297,10 @@ const deleteOldData = async (options: {
 				});
 			} else if (options.retiredPlayersUnnotable) {
 				tx.players.index("tid").iterate(PLAYER.RETIRED, p => {
-					if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
+					if (
+						p.awards.length === 0 &&
+						!p.statsTids.includes(g.get("userTid"))
+					) {
 						tx.players.delete(p.pid);
 					}
 				});
@@ -317,7 +320,10 @@ const deleteOldData = async (options: {
 				});
 			} else if (options.playerStatsUnnotable) {
 				tx.players.iterate(p => {
-					if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
+					if (
+						p.awards.length === 0 &&
+						!p.statsTids.includes(g.get("userTid"))
+					) {
 						if (p.ratings.length > 0) {
 							p.ratings = [p.ratings[p.ratings.length - 1]];
 						}
@@ -350,7 +356,7 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	const draftPicks = await draft.getOrder();
 	const dp = draftPicks[0];
 
-	if (dp && g.userTids.includes(dp.tid)) {
+	if (dp && g.get("userTids").includes(dp.tid)) {
 		draftPicks.shift();
 		await draft.selectPlayer(dp, pid);
 		await draft.afterPicks(draftPicks.length === 0, conditions);
@@ -363,7 +369,7 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 const exportPlayerAveragesCsv = async (season: number | "all") => {
 	let players: Player<MinimalPlayerRatings>[];
 
-	if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
+	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 		players = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
@@ -509,8 +515,8 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					p.pid,
 					p.name,
 					p.pos,
-					g.teamAbbrevsCache[t.tid],
-					g.teamAbbrevsCache[t2.tid],
+					g.get("teamAbbrevsCache")[t.tid],
+					g.get("teamAbbrevsCache")[t2.tid],
 					`${t.pts}-${t2.pts}`,
 					t.pts > t2.pts ? "W" : "L",
 					seasons[i],
@@ -546,33 +552,38 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 
 const genFilename = (data: any) => {
 	const leagueName =
-		data.meta !== undefined ? data.meta.name : `League ${g.lid}`;
+		data.meta !== undefined ? data.meta.name : `League ${g.get("lid")}`;
 	let filename = `${
 		process.env.SPORT === "basketball" ? "B" : "F"
-	}BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${g.season}_${PHASE_TEXT[
-		g.phase
-	].replace(/[^a-z0-9]/gi, "_")}`;
+	}BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${g.get(
+		"season",
+	)}_${PHASE_TEXT[g.get("phase")].replace(/[^a-z0-9]/gi, "_")}`;
 
-	if (g.phase === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
+	if (g.get("phase") === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
 		const season =
-			data.teams[g.userTid].seasons[data.teams[g.userTid].seasons.length - 1];
+			data.teams[g.get("userTid")].seasons[
+				data.teams[g.get("userTid")].seasons.length - 1
+			];
 		filename += `_${season.won}-${season.lost}`;
 	}
 
-	if (g.phase === PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
+	if (
+		g.get("phase") === PHASE.PLAYOFFS &&
+		data.hasOwnProperty("playoffSeries")
+	) {
 		// Most recent series info
 		const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
 		const rnd = playoffSeries.currentRound;
 		filename += `_Round_${playoffSeries.currentRound + 1}`; // Find the latest playoff series with the user's team in it
 
 		for (const series of playoffSeries.series[rnd]) {
-			if (series.home.tid === g.userTid) {
+			if (series.home.tid === g.get("userTid")) {
 				if (series.away) {
 					filename += `_${series.home.won}-${series.away.won}`;
 				} else {
 					filename += "_bye";
 				}
-			} else if (series.away && series.away.tid === g.userTid) {
+			} else if (series.away && series.away.tid === g.get("userTid")) {
 				filename += `_${series.away.won}-${series.home.won}`;
 			}
 		}
@@ -599,7 +610,7 @@ const exportDraftClass = async (season: number) => {
 		},
 	});
 	data.startingSeason = season;
-	const filename = `BBGM_draft_class_${g.leagueName}_${season}.json`;
+	const filename = `BBGM_draft_class_${g.get("leagueName")}_${season}.json`;
 	return {
 		filename,
 		json: JSON.stringify(data),
@@ -611,7 +622,7 @@ const generateFace = () => {
 };
 
 const getLeagueName = async () => {
-	const l = await idb.meta.leagues.get(g.lid);
+	const l = await idb.meta.leagues.get(g.get("lid"));
 	return l.name;
 };
 
@@ -621,8 +632,8 @@ const getLocal = async (name: keyof Local) => {
 
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	const getOffers = async (userPids, userDpids) => {
-		// Pick 10 random teams to try (or all teams, if g.numTeams < 10)
-		const tids = range(g.numTeams);
+		// Pick 10 random teams to try (or all teams, if g.get("numTeams") < 10)
+		const tids = range(g.get("numTeams"));
 		random.shuffle(tids);
 		tids.splice(10);
 		const estValues = await trade.getPickValues();
@@ -631,7 +642,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		for (const tid of tids) {
 			const teams: TradeTeams = [
 				{
-					tid: g.userTid,
+					tid: g.get("userTid"),
 					pids: userPids,
 					pidsExcluded: [],
 					dpids: userDpids,
@@ -646,7 +657,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 				},
 			];
 
-			if (tid !== g.userTid) {
+			if (tid !== g.get("userTid")) {
 				const teams2 = await trade.makeItWork(teams, true, estValues);
 
 				if (teams2) {
@@ -669,7 +680,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["abbrev", "region", "name", "strategy"],
 			seasonAttrs: ["won", "lost", "tied"],
-			season: g.season,
+			season: g.get("season"),
 		});
 		const stats =
 			process.env.SPORT === "basketball"
@@ -685,7 +696,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 					attrs: ["pid", "name", "age", "contract", "injury", "watch"],
 					ratings: ["ovr", "pot", "skills", "pos"],
 					stats,
-					season: g.season,
+					season: g.get("season"),
 					tid,
 					showNoStats: true,
 					showRookies: true,
@@ -782,8 +793,8 @@ const handleUploadedDraftClass = async (
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
 		[
-			[g.userTid, g.season - 2],
-			[g.userTid, g.season],
+			[g.get("userTid"), g.get("season") - 2],
+			[g.get("userTid"), g.get("season")],
 		],
 	);
 	const scoutingRank = finances.getRankLastThree(
@@ -842,7 +853,9 @@ const handleUploadedDraftClass = async (
 	);
 
 	// "Top off" the draft class if <70 players imported
-	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6); // 70 for basketball 2 round draft
+	const baseNumPlayers = Math.round(
+		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+	); // 70 for basketball 2 round draft
 
 	if (players.length < baseNumPlayers) {
 		await draft.genPlayers(
@@ -899,8 +912,9 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		return blankObj;
 	}
 
-	// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.season
-	const season = p.draft.year > g.season ? p.draft.year : g.season;
+	// For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.get("season")
+	const season =
+		p.draft.year > g.get("season") ? p.draft.year : g.get("season");
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["pts", "trb", "ast", "blk", "stl", "tov", "min", "per", "ewa"]
@@ -925,7 +939,7 @@ const realtimeUpdate = async (updateEvents: UpdateEvents) => {
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.userTid,
+		g.get("userTid"),
 	);
 
 	if (players.length <= 5) {
@@ -934,7 +948,7 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 
 	const p = await idb.cache.players.get(pid); // Don't let the user update CPU-controlled rosters
 
-	if (p.tid !== g.userTid) {
+	if (p.tid !== g.get("userTid")) {
 		return "You aren't allowed to do this.";
 	}
 
@@ -943,12 +957,12 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 };
 
 const removeLastTeam = async (): Promise<void> => {
-	const tid = g.numTeams - 1;
+	const tid = g.get("numTeams") - 1;
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const baseMoods = await player.genBaseMoods();
 
 	for (const p of players) {
-		player.addToFreeAgents(p, g.phase, baseMoods);
+		player.addToFreeAgents(p, g.get("phase"), baseMoods);
 		await idb.cache.players.put(p);
 	}
 
@@ -991,20 +1005,20 @@ const removeLastTeam = async (): Promise<void> => {
 
 	await idb.cache.teams.delete(tid);
 	const updatedGameAttributes: any = {
-		numTeams: g.numTeams - 1,
-		teamAbbrevsCache: g.teamAbbrevsCache.slice(
-			0,
-			g.teamAbbrevsCache.length - 1,
-		),
-		teamRegionsCache: g.teamRegionsCache.slice(
-			0,
-			g.teamRegionsCache.length - 1,
-		),
-		teamNamesCache: g.teamNamesCache.slice(0, g.teamNamesCache.length - 1),
-		userTids: g.userTids.filter(userTid => userTid !== tid),
+		numTeams: g.get("numTeams") - 1,
+		teamAbbrevsCache: g
+			.get("teamAbbrevsCache")
+			.slice(0, g.get("teamAbbrevsCache").length - 1),
+		teamRegionsCache: g
+			.get("teamRegionsCache")
+			.slice(0, g.get("teamRegionsCache").length - 1),
+		teamNamesCache: g
+			.get("teamNamesCache")
+			.slice(0, g.get("teamNamesCache").length - 1),
+		userTids: g.get("userTids").filter(userTid => userTid !== tid),
 	};
 
-	if (g.userTid === tid && tid > 0) {
+	if (g.get("userTid") === tid && tid > 0) {
 		updatedGameAttributes.userTid = tid - 1;
 
 		if (!updatedGameAttributes.userTids.includes(tid - 1)) {
@@ -1022,7 +1036,7 @@ const removeLeague = async (lid: number) => {
 };
 
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
-	const t = await idb.cache.teams.get(g.userTid);
+	const t = await idb.cache.teams.get(g.get("userTid"));
 	const depth = t.depth;
 
 	if (depth === undefined) {
@@ -1074,7 +1088,7 @@ const runBefore = async (
 		return {};
 	}
 
-	if (typeof g.lid === "number" && !local.leagueLoaded) {
+	if (typeof g.get("lid") === "number" && !local.leagueLoaded) {
 		return;
 	}
 
@@ -1143,15 +1157,15 @@ const switchTeam = async (tid: number) => {
 		gameOver: false,
 		userTid: tid,
 		userTids: [tid],
-		gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
+		gracePeriodEnd: g.get("season") + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
 	});
 	league.updateMetaNameRegion(
-		g.teamNamesCache[g.userTid],
-		g.teamRegionsCache[g.userTid],
+		g.get("teamNamesCache")[g.get("userTid")],
+		g.get("teamRegionsCache")[g.get("userTid")],
 	);
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsByTidSeason",
-		[tid, g.season],
+		[tid, g.get("season")],
 	);
 	teamSeason.ownerMood = {
 		money: 0,
@@ -1169,7 +1183,7 @@ const updateBudget = async (budgetAmounts: {
 	scouting: number;
 	ticketPrice: number;
 }) => {
-	const t = await idb.cache.teams.get(g.userTid);
+	const t = await idb.cache.teams.get(g.get("userTid"));
 
 	for (const key of Object.keys(budgetAmounts)) {
 		// Check for NaN before updating
@@ -1184,14 +1198,16 @@ const updateBudget = async (budgetAmounts: {
 	await toUI(["realtimeUpdate", ["teamFinances"]]);
 };
 
-const updateGameAttributes = async (gameAttributes: GameAttributes) => {
+const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	if (
-		gameAttributes.numSeasonsFutureDraftPicks < g.numSeasonsFutureDraftPicks
+		gameAttributes.numSeasonsFutureDraftPicks <
+		g.get("numSeasonsFutureDraftPicks")
 	) {
 		// This season and the next N-1 seasons
-		let maxSeason = g.season + gameAttributes.numSeasonsFutureDraftPicks - 1;
+		let maxSeason =
+			g.get("season") + gameAttributes.numSeasonsFutureDraftPicks - 1;
 
-		if (g.phase >= PHASE.AFTER_DRAFT) {
+		if (g.get("phase") >= PHASE.AFTER_DRAFT) {
 			// ...and one more season, since the draft is over
 			maxSeason += 1;
 		}
@@ -1205,18 +1221,21 @@ const updateGameAttributes = async (gameAttributes: GameAttributes) => {
 			}
 		}
 	} else if (
-		gameAttributes.numSeasonsFutureDraftPicks > g.numSeasonsFutureDraftPicks
+		gameAttributes.numSeasonsFutureDraftPicks >
+		g.get("numSeasonsFutureDraftPicks")
 	) {
 		// This season and the next N-1 seasons
-		let oldMaxSeason = g.season + g.numSeasonsFutureDraftPicks - 1;
+		let oldMaxSeason =
+			g.get("season") + g.get("numSeasonsFutureDraftPicks") - 1;
 
-		if (g.phase >= PHASE.AFTER_DRAFT) {
+		if (g.get("phase") >= PHASE.AFTER_DRAFT) {
 			// ...and one more season, since the draft is over
 			oldMaxSeason += 1;
 		}
 
 		const numSeasonsToAdd =
-			gameAttributes.numSeasonsFutureDraftPicks - g.numSeasonsFutureDraftPicks;
+			gameAttributes.numSeasonsFutureDraftPicks -
+			g.get("numSeasonsFutureDraftPicks");
 
 		for (let i = 1; i <= numSeasonsToAdd; i++) {
 			const season = oldMaxSeason + i;
@@ -1243,8 +1262,8 @@ const updateMultiTeamMode = async (gameAttributes: {
 
 	if (gameAttributes.userTids.length === 1) {
 		league.updateMetaNameRegion(
-			g.teamNamesCache[gameAttributes.userTids[0]],
-			g.teamRegionsCache[gameAttributes.userTids[0]],
+			g.get("teamNamesCache")[gameAttributes.userTids[0]],
+			g.get("teamRegionsCache")[gameAttributes.userTids[0]],
 		);
 	} else {
 		league.updateMetaNameRegion("Multi Team Mode", "");
@@ -1314,14 +1333,14 @@ const updateTeamInfo = async (
 		t.colors = newTeams[t.tid].colors;
 		await idb.cache.teams.put(t);
 
-		if (t.tid === g.userTid) {
+		if (t.tid === g.get("userTid")) {
 			userName = t.name;
 			userRegion = t.region;
 		}
 
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
-			[t.tid, g.season],
+			[t.tid, g.get("season")],
 		);
 		// @ts-ignore
 		teamSeason.pop = parseFloat(newTeams[t.tid].pop);
@@ -1361,28 +1380,28 @@ const upsertCustomizedPlayer = async (
 		}
 
 		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-		if (p.draft.year === season && g.phase >= PHASE.RESIGN_PLAYERS) {
+		if (p.draft.year === season && g.get("phase") >= PHASE.RESIGN_PLAYERS) {
 			p.draft.year += 1;
 		}
 
 		p.ratings[r].season = p.draft.year;
 	} else {
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
-		p.ratings[r].season = g.season;
+		p.ratings[r].season = g.get("season");
 	}
 
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
 	if (originalTid === PLAYER.RETIRED) {
-		if (g.season - p.ratings[r].season > 0) {
+		if (g.get("season") - p.ratings[r].season > 0) {
 			player.addRatingsRow(p, 15);
 		}
 	}
 
 	// If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
-	if (p.tid !== PLAYER.UNDRAFTED && g.phase < PHASE.FREE_AGENCY) {
+	if (p.tid !== PLAYER.UNDRAFTED && g.get("phase") < PHASE.FREE_AGENCY) {
 		// This makes sure it's only for created players, not edited players
 		if (!p.hasOwnProperty("pid")) {
-			p.draft.year = g.season - 1;
+			p.draft.year = g.get("season") - 1;
 		}
 	}
 
@@ -1390,9 +1409,9 @@ const upsertCustomizedPlayer = async (
 	if (
 		p.tid !== PLAYER.UNDRAFTED &&
 		originalTid === PLAYER.UNDRAFTED &&
-		g.phase < PHASE.FREE_AGENCY
+		g.get("phase") < PHASE.FREE_AGENCY
 	) {
-		p.draft.year = g.season - 1;
+		p.draft.year = g.get("season") - 1;
 	}
 
 	// Recalculate player ovr, pot, and values if necessary
@@ -1419,9 +1438,9 @@ const upsertCustomizedPlayer = async (
 	}
 
 	// Add regular season or playoffs stat row, if necessary
-	if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
+	if (p.tid >= 0 && p.tid !== originalTid && g.get("phase") <= PHASE.PLAYOFFS) {
 		// If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-		player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+		player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 	}
 
 	// Fill in player names for relatives

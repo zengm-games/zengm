@@ -31,7 +31,7 @@ const exportLeague = async (
 	if (options.meta) {
 		exportedLeague.meta = {
 			phaseText: local.phaseText,
-			name: g.leagueName,
+			name: g.get("leagueName"),
 		};
 	}
 
@@ -92,7 +92,7 @@ const exportLeague = async (
 		);
 	} else {
 		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-		exportedLeague.startingSeason = g.startingSeason;
+		exportedLeague.startingSeason = g.get("startingSeason");
 	}
 
 	return exportedLeague;

@@ -4,6 +4,10 @@ const g: GameAttributes & {
 	get: <T extends keyof GameAttributesLeague>(
 		key: T,
 	) => GameAttributesLeague[T];
+	setWithoutSavingToDB: <T extends keyof GameAttributesLeague>(
+		key: T,
+		value: GameAttributesLeague[T],
+	) => void;
 } = {
 	lid: undefined,
 
@@ -13,7 +17,13 @@ const g: GameAttributes & {
 			return g[key];
 		}
 
-		throw new Error(`Attempt to access g.${key} while it is not set`);
+		throw new Error(`Attempt to get g.${key} while it is not already set`);
+	},
+
+	setWithoutSavingToDB: (key, value) => {
+		// Should this error when setting a key that doesn't exist, like setting a value form GameAttributesLeague when not in a league? Maybe, but need a way to initialize it first.
+		// @ts-ignore
+		g[key] = value;
 	},
 };
 

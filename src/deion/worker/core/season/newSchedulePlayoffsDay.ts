@@ -28,12 +28,12 @@ const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 const newSchedulePlayoffsDay = async (): Promise<boolean> => {
-	const playoffSeries = await idb.cache.playoffSeries.get(g.season);
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	const series = playoffSeries.series;
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
 	const numGamesToWin = helpers.numGamesToWinSeries(
-		g.numGamesPlayoffSeries[rnd],
+		g.get("numGamesPlayoffSeries")[rnd],
 	);
 
 	// Try to schedule games if there are active series
@@ -44,7 +44,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
 			const gameNum = home.won + away.won;
 
-			if (betterSeedHome(g.numGamesPlayoffSeries[rnd], gameNum)) {
+			if (betterSeedHome(g.get("numGamesPlayoffSeries")[rnd], gameNum)) {
 				tids.push([home.tid, away.tid]);
 			} else {
 				tids.push([away.tid, home.tid]);
@@ -59,7 +59,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	// If playoffs are over, update winner and go to next phase
-	if (rnd === g.numGamesPlayoffSeries.length - 1) {
+	if (rnd === g.get("numGamesPlayoffSeries").length - 1) {
 		const { away, home } = series[rnd][0];
 		let key;
 
@@ -71,9 +71,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
-			[g.season, key],
+			[g.get("season"), key],
 		);
-		teamSeason.playoffRoundsWon = g.numGamesPlayoffSeries.length;
+		teamSeason.playoffRoundsWon = g.get("numGamesPlayoffSeries").length;
 		teamSeason.hype += 0.05;
 
 		if (teamSeason.hype > 1) {
@@ -123,10 +123,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			team1.seed < team2.seed ||
 			(team1.seed === team2.seed && team1.winp >= team2.winp); // Special case for the finals, do it by winp not seed
 
-		const playoffsByConference = g.confs.length === 2;
+		const playoffsByConference = g.get("confs").length === 2;
 
 		if (playoffsByConference) {
-			const numPlayoffRounds = g.numGamesPlayoffSeries.length; // Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries").length; // Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
 
 			if (numPlayoffRounds === playoffSeries.currentRound + 2) {
 				firstTeamHome =
@@ -160,7 +160,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		tidsWon.map(async tid => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsBySeasonTid",
-				[g.season, tid],
+				[g.get("season"), tid],
 			);
 			teamSeason.playoffRoundsWon = playoffSeries.currentRound;
 			teamSeason.hype += 0.05;

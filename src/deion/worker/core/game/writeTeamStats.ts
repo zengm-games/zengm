@@ -8,7 +8,7 @@ const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 
 	if (allStarGame) {
-		return g.defaultStadiumCapacity;
+		return g.get("defaultStadiumCapacity");
 	}
 
 	let att = 0;
@@ -20,11 +20,11 @@ const writeTeamStats = async (results: GameResults) => {
 		const [t, teamSeasons, teamStats] = await Promise.all([
 			idb.cache.teams.get(results.team[t1].id),
 			idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-				[results.team[t1].id, g.season - 2],
-				[results.team[t1].id, g.season],
+				[results.team[t1].id, g.get("season") - 2],
+				[results.team[t1].id, g.get("season")],
 			]),
 			idb.cache.teamStats.indexGet("teamStatsByPlayoffsTid", [
-				g.phase === PHASE.PLAYOFFS,
+				g.get("phase") === PHASE.PLAYOFFS,
 				results.team[t1].id,
 			]),
 		]);
@@ -38,7 +38,7 @@ const writeTeamStats = async (results: GameResults) => {
 				10000 +
 				(0.1 + 0.9 * teamSeason.hype ** 2) * teamSeason.pop * 1000000 * 0.01; // Base attendance - between 2% and 0.2% of the region
 
-			if (g.phase === PHASE.PLAYOFFS) {
+			if (g.get("phase") === PHASE.PLAYOFFS) {
 				att *= 1.5; // Playoff bonus
 			}
 
@@ -60,29 +60,29 @@ const writeTeamStats = async (results: GameResults) => {
 		let nationalTvRevenue = 0;
 		let localTvRevenue = 0;
 
-		if (g.phase !== PHASE.PLAYOFFS) {
+		if (g.get("phase") !== PHASE.PLAYOFFS) {
 			// All in [thousands of dollars]
-			salaryPaid = payroll / g.numGames;
-			scoutingPaid = t.budget.scouting.amount / g.numGames;
-			coachingPaid = t.budget.coaching.amount / g.numGames;
-			healthPaid = t.budget.health.amount / g.numGames;
-			facilitiesPaid = t.budget.facilities.amount / g.numGames;
+			salaryPaid = payroll / g.get("numGames");
+			scoutingPaid = t.budget.scouting.amount / g.get("numGames");
+			coachingPaid = t.budget.coaching.amount / g.get("numGames");
+			healthPaid = t.budget.health.amount / g.get("numGames");
+			facilitiesPaid = t.budget.facilities.amount / g.get("numGames");
 
 			if (process.env.SPORT === "basketball") {
-				merchRevenue = ((g.salaryCap / 90000) * 4.5 * att) / 1000;
+				merchRevenue = ((g.get("salaryCap") / 90000) * 4.5 * att) / 1000;
 
 				if (merchRevenue > 250) {
 					merchRevenue = 250;
 				}
 
-				sponsorRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
+				sponsorRevenue = ((g.get("salaryCap") / 90000) * 15 * att) / 1000;
 
 				if (sponsorRevenue > 600) {
 					sponsorRevenue = 600;
 				}
 
-				nationalTvRevenue = (g.salaryCap / 90000) * 375;
-				localTvRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
+				nationalTvRevenue = (g.get("salaryCap") / 90000) * 375;
+				localTvRevenue = ((g.get("salaryCap") / 90000) * 15 * att) / 1000;
 
 				if (localTvRevenue > 1200) {
 					localTvRevenue = 1200;
@@ -95,24 +95,27 @@ const writeTeamStats = async (results: GameResults) => {
 				// ticket: $75M
 				// sponsorship: $25M
 				// merchandise: $25M
-				nationalTvRevenue = 175000 / g.numGames;
-				localTvRevenue = ((5000 / g.numGames) * att) / g.defaultStadiumCapacity;
-				sponsorRevenue = ((2500 / g.numGames) * att) / g.defaultStadiumCapacity;
-				merchRevenue = ((2500 / g.numGames) * att) / g.defaultStadiumCapacity;
+				nationalTvRevenue = 175000 / g.get("numGames");
+				localTvRevenue =
+					((5000 / g.get("numGames")) * att) / g.get("defaultStadiumCapacity");
+				sponsorRevenue =
+					((2500 / g.get("numGames")) * att) / g.get("defaultStadiumCapacity");
+				merchRevenue =
+					((2500 / g.get("numGames")) * att) / g.get("defaultStadiumCapacity");
 			}
 		}
 
 		// Attendance: base on home team
 		if (t1 === 0) {
 			att = random.gauss(att, 1000);
-			att *= (45 * 50) / ((g.salaryCap / 90000) * ticketPrice ** 2); // Attendance depends on ticket price. Not sure if this formula is reasonable.
+			att *= (45 * 50) / ((g.get("salaryCap") / 90000) * ticketPrice ** 2); // Attendance depends on ticket price. Not sure if this formula is reasonable.
 
 			att *=
 				1 +
 				(0.075 *
-					(g.numTeams -
+					(g.get("numTeams") -
 						finances.getRankLastThree(teamSeasons, "expenses", "facilities"))) /
-					(g.numTeams - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
+					(g.get("numTeams") - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
 
 			att = helpers.bound(att, 0, teamSeason.stadiumCapacity);
 			att = Math.round(att);
@@ -122,7 +125,7 @@ const writeTeamStats = async (results: GameResults) => {
 		let ticketRevenue = (ticketPrice * att) / 1000; // [thousands of dollars]
 		// Hype - relative to the expectations of prior seasons
 
-		if (teamSeason.gp > 5 && g.phase !== PHASE.PLAYOFFS) {
+		if (teamSeason.gp > 5 && g.get("phase") !== PHASE.PLAYOFFS) {
 			let winp = helpers.calcWinp(teamSeason);
 			let winpOld = 0; // Avg winning percentage of last 0-2 seasons (as available)
 
@@ -156,8 +159,8 @@ const writeTeamStats = async (results: GameResults) => {
 		}
 
 		// 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
-		const fudgeFactor = g.userTids.includes(results.team[t1].id)
-			? helpers.bound(1 - 0.2 * g.difficulty, 0, Infinity)
+		const fudgeFactor = g.get("userTids").includes(results.team[t1].id)
+			? helpers.bound(1 - 0.2 * g.get("difficulty"), 0, Infinity)
 			: 1;
 		merchRevenue *= fudgeFactor;
 		sponsorRevenue *= fudgeFactor;
@@ -225,11 +228,11 @@ const writeTeamStats = async (results: GameResults) => {
 
 		teamStats.gp += 1;
 
-		if (teamSeason.lastTen.length === 10 && g.phase !== PHASE.PLAYOFFS) {
+		if (teamSeason.lastTen.length === 10 && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.lastTen.pop();
 		}
 
-		if (won && g.phase !== PHASE.PLAYOFFS) {
+		if (won && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.won += 1;
 
 			if (results.team[0].did === results.team[1].did) {
@@ -253,7 +256,7 @@ const writeTeamStats = async (results: GameResults) => {
 			} else {
 				teamSeason.streak = 1;
 			}
-		} else if (lost && g.phase !== PHASE.PLAYOFFS) {
+		} else if (lost && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.lost += 1;
 
 			if (results.team[0].did === results.team[1].did) {
@@ -277,7 +280,7 @@ const writeTeamStats = async (results: GameResults) => {
 			} else {
 				teamSeason.streak = -1;
 			}
-		} else if (g.ties && g.phase !== PHASE.PLAYOFFS) {
+		} else if (g.get("ties") && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.tied += 1;
 
 			if (results.team[0].did === results.team[1].did) {

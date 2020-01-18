@@ -224,7 +224,7 @@ class GameSim {
 
 		this.overtimes = 0; // Number of overtime periods that have taken place
 
-		this.t = g.quarterLength; // Game clock, in minutes
+		this.t = g.get("quarterLength"); // Game clock, in minutes
 
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
@@ -255,7 +255,7 @@ class GameSim {
 	 */
 	homeCourtAdvantage() {
 		const homeCourtModifier = helpers.bound(
-			1 + g.homeCourtAdvantage / 100,
+			1 + g.get("homeCourtAdvantage") / 100,
 			0.01,
 			Infinity,
 		);
@@ -373,14 +373,14 @@ class GameSim {
 			this.team[1].stat.ptsQtrs.push(0);
 			this.foulsThisQuarter = [0, 0];
 			this.foulsLastTwoMinutes = [0, 0];
-			this.t = g.quarterLength;
+			this.t = g.get("quarterLength");
 			this.lastScoringPlay = [];
 			this.recordPlay("quarter");
 		}
 	}
 
 	simOvertime() {
-		this.t = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
+		this.t = Math.ceil(0.4 * g.get("quarterLength")); // 5 minutes by default, but scales
 
 		this.lastScoringPlay = [];
 		this.overtimes += 1;
@@ -516,8 +516,8 @@ class GameSim {
 				// Injured or fouled out players can't play
 				if (
 					this.team[t].player[p].injured ||
-					(g.foulsNeededToFoulOut > 0 &&
-						this.team[t].player[p].stat.pf >= g.foulsNeededToFoulOut)
+					(g.get("foulsNeededToFoulOut") > 0 &&
+						this.team[t].player[p].stat.pf >= g.get("foulsNeededToFoulOut"))
 				) {
 					ovrs[p] = -Infinity;
 				} else {
@@ -869,7 +869,9 @@ class GameSim {
 		}
 
 		let newInjury = false;
-		const baseRate = this.allStarGame ? g.injuryRate / 4 : g.injuryRate;
+		const baseRate = this.allStarGame
+			? g.get("injuryRate") / 4
+			: g.get("injuryRate");
 
 		for (const t of teamNums) {
 			for (let p = 0; p < this.team[t].player.length; p++) {
@@ -941,7 +943,7 @@ class GameSim {
 		const shooter = pickPlayer(ratios);
 
 		// Non-shooting foul?
-		if (Math.random() < 0.08 * g.foulRateFactor || intentionalFoul) {
+		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
 			this.doPf(this.d);
 
 			// In the bonus?
@@ -1134,7 +1136,7 @@ class GameSim {
 		let foulFactor =
 			0.65 *
 			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
-			g.foulRateFactor;
+			g.get("foulRateFactor");
 
 		if (this.allStarGame) {
 			foulFactor *= 0.4;
@@ -1428,7 +1430,7 @@ class GameSim {
 		)} overtime`;
 		this.clutchPlays.push({
 			text: eventText,
-			showNotification: team.id === g.userTid,
+			showNotification: team.id === g.get("userTid"),
 			pids: [player.id],
 			tids: [team.id],
 		});
@@ -1518,7 +1520,7 @@ class GameSim {
 
 				this.clutchPlays.push({
 					text: eventText,
-					showNotification: team.id === g.userTid,
+					showNotification: team.id === g.get("userTid"),
 					pids: [player.id],
 					tids: [team.id],
 				});
@@ -1622,8 +1624,8 @@ class GameSim {
 		this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]); // Foul out
 
 		if (
-			g.foulsNeededToFoulOut > 0 &&
-			this.team[this.d].player[p].stat.pf >= g.foulsNeededToFoulOut
+			g.get("foulsNeededToFoulOut") > 0 &&
+			this.team[this.d].player[p].stat.pf >= g.get("foulsNeededToFoulOut")
 		) {
 			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]); // Force substitutions now
 

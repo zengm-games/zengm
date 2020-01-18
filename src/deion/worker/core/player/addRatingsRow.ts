@@ -11,7 +11,7 @@ import {
  *
  * @memberOf core.player
  * @param {Object} p Player object.
- * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+ * @param {number} scoutingRank Between 1 and g.get("numTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  */
 const addRatingsRow = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
@@ -20,7 +20,7 @@ const addRatingsRow = (
 ) => {
 	const newRatings: MinimalPlayerRatings = {
 		...p.ratings[p.ratings.length - 1],
-		season: g.season,
+		season: g.get("season"),
 		injuryIndex: undefined,
 	};
 

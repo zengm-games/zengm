@@ -20,7 +20,7 @@ const getPlayerInfo = async (pid: number) => {
 			"numAllStar",
 		],
 		ratings: ["ovr", "skills", "pos"],
-		season: g.season,
+		season: g.get("season"),
 		stats,
 		fuzz: true,
 	});
@@ -65,7 +65,7 @@ const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats,
 			teams,
 			teamNames,
-			userTids: g.userTids,
+			userTids: g.get("userTids"),
 		};
 	}
 };

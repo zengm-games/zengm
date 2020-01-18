@@ -1,9 +1,10 @@
 import { idb } from "../../db";
 import { g, toUI } from "../../util";
-import { GameAttributes } from "../../../common/types";
+import { GameAttributesLeague } from "../../../common/types";
+import { helpers } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {
-	const l = await idb.meta.leagues.get(g.lid);
+	const l = await idb.meta.leagues.get(g.get("lid"));
 
 	if (l) {
 		l.difficulty = difficulty;
@@ -19,12 +20,17 @@ const updateMetaDifficulty = async (difficulty: number) => {
  * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
  * @returns {Promise} Promise for when it finishes.
  */
-const setGameAttributes = async (gameAttributes: Partial<GameAttributes>) => {
-	const toUpdate: (keyof GameAttributes)[] = [];
+const setGameAttributes = async (
+	gameAttributes: Partial<GameAttributesLeague>,
+) => {
+	const toUpdate: (keyof GameAttributesLeague)[] = [];
 
-	for (const key of Object.keys(gameAttributes)) {
-		if (g[key] !== gameAttributes[key] && !Number.isNaN(gameAttributes[key])) {
+	for (const key of helpers.keys(gameAttributes)) {
+		if (
+			(gameAttributes[key] === undefined || g[key] !== gameAttributes[key]) &&
 			// @ts-ignore
+			!Number.isNaN(gameAttributes[key])
+		) {
 			toUpdate.push(key);
 		}
 	}
@@ -34,10 +40,10 @@ const setGameAttributes = async (gameAttributes: Partial<GameAttributes>) => {
 			key,
 			value: gameAttributes[key],
 		});
-		g[key] = gameAttributes[key];
+		g.setWithoutSavingToDB(key, gameAttributes[key]);
 
 		if (key === "difficulty") {
-			await updateMetaDifficulty(gameAttributes[key]);
+			await updateMetaDifficulty(g.get(key));
 		}
 	}
 

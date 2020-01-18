@@ -174,7 +174,7 @@ export const bootstrapPot = (
  * @param {Object} p Player object.
  * @param {number=} years Number of years to develop (default 1).
  * @param {boolean=} newPlayer Generating a new player? (default false). If true, then the player's age is also updated based on years.
- * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
+ * @param {number=} coachingRank From 1 to g.get("numTeams") (default 30), where 1 is best coaching staff and g.get("numTeams") is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
 const develop = (

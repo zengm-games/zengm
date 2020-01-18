@@ -18,8 +18,8 @@ describe("worker/core/contractNegotiation/accept", () => {
 		);
 		const error2 = await contractNegotiation.accept(
 			pid,
-			g.salaryCap,
-			g.season + 1,
+			g.get("salaryCap"),
+			g.get("season") + 1,
 		);
 		assert.equal(
 			error2,

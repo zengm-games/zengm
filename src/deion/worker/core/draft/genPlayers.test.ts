@@ -10,10 +10,10 @@ describe("worker/core/draft/genPlayers", () => {
 		testHelpers.resetG();
 		await testHelpers.resetCache();
 		idb.league = testHelpers.mockIDBLeague();
-		await draft.genPlayers(g.season, 15.5);
+		await draft.genPlayers(g.get("season"), 15.5);
 		const players = await idb.cache.players.indexGetAll(
 			"playersByDraftYearRetiredYear",
-			[[g.season], [g.season, Infinity]],
+			[[g.get("season")], [g.get("season"), Infinity]],
 		);
 		assert.equal(players.length, 70); // 70 players in a draft class
 

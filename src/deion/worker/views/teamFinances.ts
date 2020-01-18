@@ -19,17 +19,17 @@ const updateTeamFinances = async (
 		const vars: any = {
 			abbrev: inputs.abbrev,
 			gamesInProgress: lock.get("gameSim"),
-			hardCap: g.hardCap,
-			numGames: g.numGames,
+			hardCap: g.get("hardCap"),
+			numGames: g.get("numGames"),
 			tid: inputs.tid,
 			show: inputs.show,
-			salaryCap: g.salaryCap / 1000,
-			minContract: g.minContract,
-			minPayroll: g.minPayroll / 1000,
-			luxuryPayroll: g.luxuryPayroll / 1000,
-			luxuryTax: g.luxuryTax,
-			userTid: g.userTid,
-			budget: g.budget,
+			salaryCap: g.get("salaryCap") / 1000,
+			minContract: g.get("minContract"),
+			minPayroll: g.get("minPayroll") / 1000,
+			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			luxuryTax: g.get("luxuryTax"),
+			userTid: g.get("userTid"),
+			budget: g.get("budget"),
 		};
 		const contracts: any = await team.getContracts(inputs.tid);
 		const payroll = await team.getPayroll(contracts);
@@ -37,16 +37,16 @@ const updateTeamFinances = async (
 		let showInt;
 
 		if (inputs.show === "all") {
-			showInt = g.season - g.startingSeason + 1;
+			showInt = g.get("season") - g.get("startingSeason") + 1;
 		} else {
 			showInt = parseInt(inputs.show, 10);
 		}
 
 		// Convert contract objects into table rows
 		const contractTotals = [0, 0, 0, 0, 0];
-		let season = g.season;
+		let season = g.get("season");
 
-		if (g.phase >= PHASE.DRAFT) {
+		if (g.get("phase") >= PHASE.DRAFT) {
 			// After the draft, don't show old contract year
 			season += 1;
 		}
@@ -138,7 +138,7 @@ const updateTeamFinances = async (
 
 		const barSeasons: number[] = [];
 		for (let i = 0; i < showInt; i++) {
-			barSeasons[i] = g.season - i;
+			barSeasons[i] = g.get("season") - i;
 		}
 
 		vars.barData = barData;
@@ -147,7 +147,7 @@ const updateTeamFinances = async (
 		vars.t = await idb.getCopy.teamsPlus({
 			attrs: ["region", "name", "abbrev", "budget"],
 			seasonAttrs: ["expenses"],
-			season: g.season,
+			season: g.get("season"),
 			tid: inputs.tid,
 		});
 		vars.maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {

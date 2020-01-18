@@ -21,8 +21,8 @@ describe("football/worker/core/season/newSchedule", () => {
 						continue;
 					}
 
-					g.numGames = numGames;
-					g.numTeams = numTeams;
+					g.setWithoutSavingToDB("numGames", numGames);
+					g.setWithoutSavingToDB("numTeams", numTeams);
 					const matchups = newScheduleCrappy(); // Total number of games
 
 					assert.equal(
@@ -48,8 +48,8 @@ describe("football/worker/core/season/newSchedule", () => {
 						continue;
 					}
 
-					g.numGames = numGames;
-					g.numTeams = numTeams;
+					g.setWithoutSavingToDB("numGames", numGames);
+					g.setWithoutSavingToDB("numTeams", numTeams);
 					const matchups = newScheduleCrappy(); // Total number of games
 
 					assert.equal(
@@ -90,16 +90,16 @@ describe("football/worker/core/season/newSchedule", () => {
 		});
 		test("schedule 8 home games and 8 away games for each team", () => {
 			const tids = newSchedule(defaultTeams);
-			const home = Array(g.numTeams).fill(0); // Number of home games for each team
+			const home = Array(g.get("numTeams")).fill(0); // Number of home games for each team
 
-			const away = Array(g.numTeams).fill(0); // Number of away games for each team
+			const away = Array(g.get("numTeams")).fill(0); // Number of away games for each team
 
 			for (let i = 0; i < tids.length; i++) {
 				home[tids[i][0]] += 1;
 				away[tids[i][1]] += 1;
 			}
 
-			for (let i = 0; i < g.numTeams; i++) {
+			for (let i = 0; i < g.get("numTeams"); i++) {
 				assert.equal(home[i], 8);
 				assert.equal(away[i], 8);
 			}
@@ -108,8 +108,8 @@ describe("football/worker/core/season/newSchedule", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
-			for (let i = 0; i < g.numTeams; i++) {
-				home.push(Array(g.numTeams).fill(0));
+			for (let i = 0; i < g.get("numTeams"); i++) {
+				home.push(Array(g.get("numTeams")).fill(0));
 			}
 
 			const teams = helpers.getTeamsDefault();
@@ -120,7 +120,7 @@ describe("football/worker/core/season/newSchedule", () => {
 				}
 			}
 
-			for (let i = 0; i < g.numTeams; i++) {
+			for (let i = 0; i < g.get("numTeams"); i++) {
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 29);
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 3);
 			}

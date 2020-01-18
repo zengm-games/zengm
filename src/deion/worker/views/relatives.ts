@@ -55,7 +55,7 @@ const updatePlayers = async (
 			pid,
 			players,
 			stats,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

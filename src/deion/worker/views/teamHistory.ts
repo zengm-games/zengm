@@ -37,7 +37,7 @@ const updateTeamHistory = async (
 				season: teamSeason.season,
 				won: teamSeason.won,
 				lost: teamSeason.lost,
-				tied: g.ties ? teamSeason.tied : undefined,
+				tied: g.get("ties") ? teamSeason.tied : undefined,
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
 			});
 			totalWon += teamSeason.won;
@@ -48,14 +48,16 @@ const updateTeamHistory = async (
 				playoffAppearances += 1;
 			}
 
-			if (teamSeason.playoffRoundsWon === g.numGamesPlayoffSeries.length) {
+			if (
+				teamSeason.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
+			) {
 				championships += 1;
 			}
 
-			const won = g.ties
+			const won = g.get("ties")
 				? teamSeason.won + 0.5 * teamSeason.tied
 				: teamSeason.won;
-			const lost = g.ties
+			const lost = g.get("ties")
 				? teamSeason.lost + 0.5 * teamSeason.tied
 				: teamSeason.lost;
 
@@ -93,7 +95,7 @@ const updateTeamHistory = async (
 			p.stats.reverse();
 
 			for (let j = 0; j < p.stats.length; j++) {
-				if (p.stats[j].abbrev === g.teamAbbrevsCache[inputs.tid]) {
+				if (p.stats[j].abbrev === g.get("teamAbbrevsCache")[inputs.tid]) {
 					p.lastYr = p.stats[j].season.toString();
 					break;
 				}
@@ -111,8 +113,8 @@ const updateTeamHistory = async (
 			players,
 			stats,
 			team: {
-				name: g.teamNamesCache[inputs.tid],
-				region: g.teamRegionsCache[inputs.tid],
+				name: g.get("teamNamesCache")[inputs.tid],
+				region: g.get("teamRegionsCache")[inputs.tid],
 				tid: inputs.tid,
 			},
 			totalWon,
@@ -122,9 +124,9 @@ const updateTeamHistory = async (
 			championships,
 			bestRecord,
 			worstRecord,
-			numConfs: g.confs.length,
-			numPlayoffRounds: g.numGamesPlayoffSeries.length,
-			ties: g.ties,
+			numConfs: g.get("confs").length,
+			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
+			ties: g.get("ties"),
 		};
 	}
 };

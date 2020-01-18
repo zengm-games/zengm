@@ -89,7 +89,7 @@ describe("worker/core/contractNegotiation/create", () => {
 		await givePlayerMinContract(pid1);
 		await givePlayerMinContract(pid2);
 		const p = await idb.cache.players.get(pid1);
-		p.tid = g.userTid;
+		p.tid = g.get("userTid");
 		await idb.cache.players.put(p);
 		let error = await contractNegotiation.create(pid2, false);
 		assert.equal(

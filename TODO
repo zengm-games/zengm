@@ -19,8 +19,8 @@ typescript
   - types for PlayersPlus and TeamsPlus
   - types for g
     - union of league and non-league
-    - g.get which throws an error if not in league
-      - how to handle g.lid? keep as is (g.get only for league specific variables) or make g.get handle it?
+    - g.get("get") which throws an error if not in league
+      - how to handle g.get("lid")? keep as is (g.get("get") only for league specific variables) or make g.get("get") handle it?
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo
@@ -639,7 +639,7 @@ get tests working
   - confirm operations that don't require IDB
   - confirm getAll updates from cache
 
-how do caches based on g.season work in preseason?
+how do caches based on g.get("season") work in preseason?
 
 refactor
 - clear, delete need to handle indexes

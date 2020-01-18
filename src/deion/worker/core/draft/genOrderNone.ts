@@ -8,24 +8,24 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "cid", "did"],
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
-		season: g.season,
+		season: g.get("season"),
 	});
 
-	if (g.draftType !== "random") {
+	if (g.get("draftType") !== "random") {
 		lotterySort(teams);
 	}
 
 	let draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
-		g.season,
+		g.get("season"),
 	);
 
 	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	if (draftPicks.length < g.numDraftRounds * g.numTeams) {
-		await genPicks(g.season, draftPicks);
+	if (draftPicks.length < g.get("numDraftRounds") * g.get("numTeams")) {
+		await genPicks(g.get("season"), draftPicks);
 		draftPicks = await idb.cache.draftPicks.indexGetAll(
 			"draftPicksBySeason",
-			g.season,
+			g.get("season"),
 		);
 	}
 
@@ -47,8 +47,8 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	for (let round = 1; round <= g.numDraftRounds; round++) {
-		if (g.draftType === "random") {
+	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
+		if (g.get("draftType") === "random") {
 			random.shuffle(teams);
 		}
 

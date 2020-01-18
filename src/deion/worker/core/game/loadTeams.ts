@@ -45,7 +45,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 			pid: p.pid,
 			// for getDepthPlayers, eventually do it all this way
 			name: `${p.firstName} ${p.lastName}`,
-			age: g.season - p.born.year,
+			age: g.get("season") - p.born.year,
 			pos: rating.pos,
 			valueNoPot: p.valueNoPot,
 			stat: {},
@@ -58,7 +58,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		};
 
 		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-		if (!g.userTids.includes(t.id)) {
+		if (!g.get("userTids").includes(t.id)) {
 			p2.ptModifier = 1;
 		}
 
@@ -206,7 +206,7 @@ const loadTeams = async (tids: number[]) => {
 					idb.cache.teams.get(tid),
 					idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
 						tid,
-						g.season,
+						g.get("season"),
 					]),
 				]);
 				teams[tid] = processTeam(

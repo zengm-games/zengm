@@ -163,9 +163,9 @@ const advStats = async () => {
 			"krTD",
 		],
 		ratings: ["pos"],
-		season: g.season,
-		playoffs: PHASE.PLAYOFFS === g.phase,
-		regularSeason: PHASE.PLAYOFFS !== g.phase,
+		season: g.get("season"),
+		playoffs: PHASE.PLAYOFFS === g.get("phase"),
+		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 	});
 	const teamStats = [
 		"ptsPerDrive",
@@ -185,9 +185,9 @@ const advStats = async () => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		stats: teamStats,
-		season: g.season,
-		playoffs: PHASE.PLAYOFFS === g.phase,
-		regularSeason: PHASE.PLAYOFFS !== g.phase,
+		season: g.get("season"),
+		playoffs: PHASE.PLAYOFFS === g.get("phase"),
+		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 	});
 	const league = teams.reduce((memo, t) => {
 		for (const key of teamStats) {

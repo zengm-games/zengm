@@ -25,7 +25,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	const draftPicks = await getOrder();
 	let playersAll;
 
-	if (g.phase === PHASE.FANTASY_DRAFT) {
+	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 		playersAll = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			PLAYER.UNDRAFTED,
@@ -33,8 +33,8 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	} else {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-				[g.season],
-				[g.season, Infinity],
+				[g.get("season")],
+				[g.get("season"), Infinity],
 			])
 		).filter(p => p.tid === PLAYER.UNDRAFTED);
 	}
@@ -53,7 +53,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 		if (draftPicks.length > 0) {
 			const dp = draftPicks[0];
 
-			if (g.userTids.includes(dp.tid) && local.autoPlaySeasons === 0) {
+			if (g.get("userTids").includes(dp.tid) && local.autoPlaySeasons === 0) {
 				return afterDoneAuto();
 			}
 

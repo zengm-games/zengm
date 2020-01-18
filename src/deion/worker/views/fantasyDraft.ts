@@ -12,9 +12,9 @@ const updateFantasyDraft = async (
 		});
 		random.shuffle(teams);
 		return {
-			phase: g.phase,
+			phase: g.get("phase"),
 			teams,
-			userTids: g.userTids,
+			userTids: g.get("userTids"),
 		};
 	}
 };

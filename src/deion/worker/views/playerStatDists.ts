@@ -9,14 +9,14 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.season &&
+		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		inputs.season !== state.season
 	) {
 		let players;
 
-		if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
+		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
 			players = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
 				Infinity,
@@ -71,7 +71,7 @@ const updatePlayers = async (
 			return memo;
 		}, {});
 		return {
-			numGames: g.numGames,
+			numGames: g.get("numGames"),
 			season: inputs.season,
 			statsAll,
 		};

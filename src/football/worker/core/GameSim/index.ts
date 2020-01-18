@@ -112,7 +112,7 @@ class GameSim {
 
 		this.overtime = false;
 		this.overtimes = 0;
-		this.clock = g.quarterLength; // Game clock, in minutes
+		this.clock = g.get("quarterLength"); // Game clock, in minutes
 
 		this.isClockRunning = false;
 		this.awaitingAfterTouchdown = false;
@@ -128,7 +128,7 @@ class GameSim {
 
 	homeCourtAdvantage() {
 		const homeCourtModifier = helpers.bound(
-			1 + g.homeCourtAdvantage / 100,
+			1 + g.get("homeCourtAdvantage") / 100,
 			0.01,
 			Infinity,
 		);
@@ -161,7 +161,7 @@ class GameSim {
 			this.simOvertime();
 
 			// Only one overtime period in regular season, but as many as needed in the playoffs
-			if (g.phase !== PHASE.PLAYOFFS) {
+			if (g.get("phase") !== PHASE.PLAYOFFS) {
 				break;
 			}
 		}
@@ -222,7 +222,7 @@ class GameSim {
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
-			this.clock = g.quarterLength;
+			this.clock = g.get("quarterLength");
 			this.playByPlay.logEvent("quarter", {
 				clock: this.clock,
 				quarter: this.team[0].stat.ptsQtrs.length,
@@ -231,7 +231,7 @@ class GameSim {
 	}
 
 	simOvertime() {
-		this.clock = Math.ceil((g.quarterLength * 2) / 3); // 10 minutes by default, but scales
+		this.clock = Math.ceil((g.get("quarterLength") * 2) / 3); // 10 minutes by default, but scales
 
 		this.overtime = true;
 		this.overtimes += 1;
@@ -2142,7 +2142,7 @@ class GameSim {
 
 			for (const p of onField) {
 				// Modulate injuryRate by age - assume default is 25 yo, and increase/decrease by 3%
-				const injuryRate = g.injuryRate * 1.03 ** (p.age - 25);
+				const injuryRate = g.get("injuryRate") * 1.03 ** (p.age - 25);
 
 				if (Math.random() < injuryRate) {
 					// 50% as many injuries for QB

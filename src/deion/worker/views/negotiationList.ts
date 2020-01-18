@@ -11,12 +11,12 @@ const updateNegotiationList = async () => {
 	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
 
 	negotiations = negotiations.filter(
-		negotiation => negotiation.tid === g.userTid,
+		negotiation => negotiation.tid === g.get("userTid"),
 	);
 	const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 	const userPlayers = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.userTid,
+		g.get("userTid"),
 	);
 	const playersAll = (
 		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
@@ -34,36 +34,37 @@ const updateNegotiationList = async () => {
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 		showNoStats: true,
 		fuzz: true,
 	});
 	let sumContracts = 0;
 
 	for (const p of players) {
-		// Can use g.userTid instead of neogtiation.tid because only user can view this page
+		// Can use g.get("userTid") instead of neogtiation.tid because only user can view this page
 		p.contract.amount = freeAgents.amountWithMood(
 			p.contract.amount,
-			p.freeAgentMood[g.userTid],
+			p.freeAgentMood[g.get("userTid")],
 		);
 		p.mood = player.moodColorText(p);
 		sumContracts += p.contract.amount;
 	}
 
-	const payroll = await team.getPayroll(g.userTid);
-	const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
+	const payroll = await team.getPayroll(g.get("userTid"));
+	const capSpace =
+		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
 	return {
 		capSpace,
-		hardCap: g.hardCap,
-		minContract: g.minContract,
-		numRosterSpots: g.maxRosterSize - userPlayers.length,
+		hardCap: g.get("hardCap"),
+		minContract: g.get("minContract"),
+		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
 		players,
-		playersRefuseToNegotiate: g.playersRefuseToNegotiate,
-		season: g.season,
+		playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
+		season: g.get("season"),
 		stats,
 		sumContracts,
-		userTid: g.userTid,
+		userTid: g.get("userTid"),
 	};
 };
 

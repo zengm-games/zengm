@@ -9,7 +9,7 @@ const newPhaseFantasyDraft = async (conditions: Conditions, tids: number[]) => {
 	await contractNegotiation.cancelAll();
 	await draft.genOrderFantasy(tids);
 	await league.setGameAttributes({
-		nextPhase: g.phase,
+		nextPhase: g.get("phase"),
 	});
 	await idb.cache.releasedPlayers.clear();
 

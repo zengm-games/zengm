@@ -8,11 +8,11 @@ const isUntradable = (
 	untradable: boolean;
 	untradableMsg: string;
 } => {
-	if (!g.godMode) {
+	if (!g.get("godMode")) {
 		if (
-			p.contract.exp <= g.season &&
-			g.phase > PHASE.PLAYOFFS &&
-			g.phase < PHASE.FREE_AGENCY
+			p.contract.exp <= g.get("season") &&
+			g.get("phase") > PHASE.PLAYOFFS &&
+			g.get("phase") < PHASE.FREE_AGENCY
 		) {
 			// If the season is over, can't trade players whose contracts are expired
 			return {

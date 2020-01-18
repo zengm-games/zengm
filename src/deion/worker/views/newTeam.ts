@@ -5,13 +5,13 @@ const updateTeamSelect = async () => {
 	let teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "region", "name"],
 		seasonAttrs: ["winp"],
-		season: g.season,
+		season: g.get("season"),
 	});
 
 	// Remove user's team (no re-hiring immediately after firing)
-	teams.splice(g.userTid, 1); // If not in god mode, user must have been fired
+	teams.splice(g.get("userTid"), 1); // If not in god mode, user must have been fired
 
-	if (!g.godMode) {
+	if (!g.get("godMode")) {
 		// Order by worst record
 		teams.sort((a, b) => a.seasonAttrs.winp - b.seasonAttrs.winp); // Only get option of 5 worst
 
@@ -19,9 +19,9 @@ const updateTeamSelect = async () => {
 	}
 
 	return {
-		gameOver: g.gameOver,
-		godMode: g.godMode,
-		phase: g.phase,
+		gameOver: g.get("gameOver"),
+		godMode: g.get("godMode"),
+		phase: g.get("phase"),
 		teams,
 	};
 };

@@ -118,7 +118,7 @@ const updatePlayer = async (
 		if (p.tid === PLAYER.FREE_AGENT) {
 			p.contract.amount = freeAgents.amountWithMood(
 				p.contract.amount,
-				p.freeAgentMood[g.userTid],
+				p.freeAgentMood[g.get("userTid")],
 			);
 		}
 
@@ -155,17 +155,19 @@ const updatePlayer = async (
 					text: event.text,
 				};
 			});
-		events.forEach(helpers.correctLinkLid.bind(null, g.lid));
-		feats.forEach(helpers.correctLinkLid.bind(null, g.lid));
+		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
+		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		const willingToSign = !helpers.refuseToNegotiate(
 			p.contract.amount * 1000,
-			p.freeAgentMood[g.userTid],
-			g.playersRefuseToNegotiate,
-			g.phase === PHASE.RESIGN_PLAYERS ? p.draft.year === g.season : false,
+			p.freeAgentMood[g.get("userTid")],
+			g.get("playersRefuseToNegotiate"),
+			g.get("phase") === PHASE.RESIGN_PLAYERS
+				? p.draft.year === g.get("season")
+				: false,
 		);
 		return {
 			player: p,
-			showTradeFor: p.tid !== g.userTid && p.tid >= 0,
+			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
 			freeAgent: p.tid === PLAYER.FREE_AGENT,
 			retired: p.tid === PLAYER.RETIRED,
 			showContract:
@@ -173,7 +175,7 @@ const updatePlayer = async (
 				p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
 				p.tid !== PLAYER.RETIRED,
 			injured: p.injury.type !== "Healthy",
-			godMode: g.godMode,
+			godMode: g.get("godMode"),
 			events,
 			feats,
 			ratings,

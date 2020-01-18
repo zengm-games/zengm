@@ -15,7 +15,7 @@ const getCopies = async ({
 } = {}): Promise<TeamSeason[]> => {
 	if (tid === undefined) {
 		if (season !== undefined) {
-			if (season >= g.season - 2) {
+			if (season >= g.get("season") - 2) {
 				// Single season, from cache
 				return helpers.deepCopy(
 					await idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [

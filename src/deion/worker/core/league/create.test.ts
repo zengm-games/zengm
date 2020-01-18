@@ -40,12 +40,12 @@ describe("worker/core/league/create", () => {
 		assert.equal(leagueData.gameAttributes.userTid, 0);
 		assert.equal(leagueData.gameAttributes.gameOver, false);
 		assert.equal(leagueData.gameAttributes.daysLeft, 0);
-		assert.equal(Object.keys(leagueData.gameAttributes).length, 52);
+		assert.equal(Object.keys(leagueData.gameAttributes).length, 54);
 	});
 	test("initialize teams object store", async () => {
 		const cids = leagueData.teams.map(t => t.cid);
 		const dids = leagueData.teams.map(t => t.did);
-		assert.equal(leagueData.teams.length, g.numTeams);
+		assert.equal(leagueData.teams.length, g.get("numTeams"));
 
 		for (let i = 0; i < 2; i++) {
 			assert.equal(testHelpers.numInArrayEqualTo(cids, i), 15);
@@ -66,10 +66,10 @@ describe("worker/core/league/create", () => {
 		}
 	});
 	test("initialize teamSeasons object store", async () => {
-		assert.equal(leagueData.teamSeasons.length, g.numTeams);
+		assert.equal(leagueData.teamSeasons.length, g.get("numTeams"));
 	});
 	test("initialize teamStats object store", async () => {
-		assert.equal(leagueData.teamStats.length, g.numTeams);
+		assert.equal(leagueData.teamStats.length, g.get("numTeams"));
 	});
 	test("initialize trade object store", async () => {
 		assert.equal(leagueData.trade.length, 1);

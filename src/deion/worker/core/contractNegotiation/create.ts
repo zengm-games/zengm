@@ -9,18 +9,18 @@ import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
  * @memberOf core.contractNegotiation
  * @param {number} pid An integer that must correspond with the player ID of a free agent.
  * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
- * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
+ * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.get("userTid").
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
 const create = async (
 	pid: number,
 	resigning: boolean,
-	tid: number = g.userTid,
+	tid: number = g.get("userTid"),
 	rookie: boolean = false,
 ): Promise<string | void> => {
 	if (
-		g.phase >= PHASE.AFTER_TRADE_DEADLINE &&
-		g.phase <= PHASE.RESIGN_PLAYERS &&
+		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
+		g.get("phase") <= PHASE.RESIGN_PLAYERS &&
 		!resigning
 	) {
 		return "You're not allowed to sign free agents now.";
@@ -32,10 +32,10 @@ const create = async (
 
 	const playersOnRoster = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.userTid,
+		g.get("userTid"),
 	);
 
-	if (playersOnRoster.length >= g.maxRosterSize && !resigning) {
+	if (playersOnRoster.length >= g.get("maxRosterSize") && !resigning) {
 		return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
 	}
 
@@ -49,8 +49,8 @@ const create = async (
 		!resigning &&
 		helpers.refuseToNegotiate(
 			freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[tid]),
-			p.freeAgentMood[g.userTid],
-			g.playersRefuseToNegotiate,
+			p.freeAgentMood[g.get("userTid")],
+			g.get("playersRefuseToNegotiate"),
 			rookie,
 		)
 	) {

@@ -22,7 +22,7 @@ async function play(
 		lock.set("gameSim", false);
 		await updatePlayMenu(); // Check to see if free agency is over
 
-		if (g.daysLeft === 0) {
+		if (g.get("daysLeft") === 0) {
 			await updateStatus("Idle");
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		}
@@ -35,12 +35,12 @@ async function play(
 			await decreaseDemands();
 			await autoSign();
 			await league.setGameAttributes({
-				daysLeft: g.daysLeft - 1,
+				daysLeft: g.get("daysLeft") - 1,
 			});
 
-			if (g.daysLeft > 0 && numDays > 0) {
+			if (g.get("daysLeft") > 0 && numDays > 0) {
 				await toUI(["realtimeUpdate", ["playerMovement"]]);
-				await updateStatus(`${g.daysLeft} days left`);
+				await updateStatus(`${g.get("daysLeft")} days left`);
 				await trade.betweenAiTeams();
 				play(numDays - 1, conditions, false);
 			} else {

@@ -21,7 +21,7 @@ const genContract = (
 	noLimit: boolean = false,
 ): PlayerContract => {
 	const ratings = p.ratings[p.ratings.length - 1];
-	let factor = g.hardCap ? 1.75 : 3.4;
+	let factor = g.get("hardCap") ? 1.75 : 3.4;
 
 	if (process.env.SPORT === "football") {
 		if (ratings.pos === "QB") {
@@ -32,8 +32,10 @@ const genContract = (
 	}
 
 	let amount =
-		(p.value / 100 - 0.47) * factor * (g.maxContract - g.minContract) +
-		g.minContract;
+		(p.value / 100 - 0.47) *
+			factor *
+			(g.get("maxContract") - g.get("minContract")) +
+		g.get("minContract");
 
 	if (randomizeAmount) {
 		amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
@@ -62,13 +64,13 @@ const genContract = (
 		years = random.randInt(1, years);
 	}
 
-	const expiration = g.season + years - 1;
+	const expiration = g.get("season") + years - 1;
 
 	if (!noLimit) {
-		if (amount < g.minContract * 1.1) {
-			amount = g.minContract;
-		} else if (amount > g.maxContract) {
-			amount = g.maxContract;
+		if (amount < g.get("minContract") * 1.1) {
+			amount = g.get("minContract");
+		} else if (amount > g.get("maxContract")) {
+			amount = g.get("maxContract");
 		}
 	} else if (amount < 0) {
 		// Well, at least keep it positive

@@ -7,7 +7,7 @@ import { g, helpers } from "../../util";
 describe("worker/db/getCopies/teamsPlus", () => {
 	beforeAll(async () => {
 		testHelpers.resetG();
-		g.season = 2013;
+		g.setWithoutSavingToDB("season", 2013);
 		const teamsDefault = helpers.getTeamsDefault();
 		await testHelpers.resetCache({
 			players: [player.generate(4, 30, 2010, true, 15.5)],
@@ -41,7 +41,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			seasonAttrs: ["season", "won", "payroll"],
 			stats: ["gp", "fg", "fgp"],
 			tid: 4,
-			season: g.season,
+			season: g.get("season"),
 		});
 
 		if (!t) {
@@ -53,7 +53,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			tid: 4,
 			abbrev: "CIN",
 			seasonAttrs: {
-				season: g.season,
+				season: g.get("season"),
 				won: 0,
 				payroll: t.seasonAttrs.payroll,
 			},
@@ -70,15 +70,15 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won"],
 			stats: ["gp", "fg", "fgp"],
-			season: g.season,
+			season: g.get("season"),
 		});
-		assert.equal(teams.length, g.numTeams);
+		assert.equal(teams.length, g.get("numTeams"));
 		const t = teams[4];
 		assert.deepEqual(t, {
 			tid: 4,
 			abbrev: "CIN",
 			seasonAttrs: {
-				season: g.season,
+				season: g.get("season"),
 				won: 0,
 			},
 			stats: {
@@ -94,11 +94,11 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			seasonAttrs: ["season", "won"],
 			stats: ["gp", "fg", "fgp"],
 			tid: 4,
-			season: g.season,
+			season: g.get("season"),
 		});
 		assert.deepEqual(t, {
 			seasonAttrs: {
-				season: g.season,
+				season: g.get("season"),
 				won: 0,
 			},
 			stats: {
@@ -114,7 +114,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			attrs: ["tid", "abbrev"],
 			stats: ["gp", "fg", "fgp"],
 			tid: 4,
-			season: g.season,
+			season: g.get("season"),
 		});
 		assert.deepEqual(t, {
 			tid: 4,
@@ -132,13 +132,13 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			attrs: ["tid", "abbrev"],
 			seasonAttrs: ["season", "won"],
 			tid: 4,
-			season: g.season,
+			season: g.get("season"),
 		});
 		assert.deepEqual(t, {
 			tid: 4,
 			abbrev: "CIN",
 			seasonAttrs: {
-				season: g.season,
+				season: g.get("season"),
 				won: 0,
 			},
 		});
@@ -147,7 +147,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		const t = await idb.getCopy.teamsPlus({
 			stats: ["gp", "fg", "fga", "fgp"],
 			tid: 4,
-			season: g.season,
+			season: g.get("season"),
 			statType: "totals",
 		});
 		assert.deepEqual(t, {
@@ -164,7 +164,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		const t = await idb.getCopy.teamsPlus({
 			stats: ["gp", "fg", "fga", "fgp"],
 			tid: 4,
-			season: g.season,
+			season: g.get("season"),
 			playoffs: true,
 			regularSeason: false,
 		});

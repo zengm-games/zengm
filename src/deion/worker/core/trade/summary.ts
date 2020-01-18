@@ -46,7 +46,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 					let players = playersTemp.filter(p => pids[i].includes(p.pid));
 					players = await idb.getCopies.playersPlus(players, {
 						attrs: ["pid", "name", "contract"],
-						season: g.season,
+						season: g.get("season"),
 						tid: tids[i],
 						showRookies: true,
 						showNoStats: true,
@@ -68,7 +68,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 								dpid: picks[j].dpid,
 								desc: `${picks[j].season} ${helpers.ordinal(
 									picks[j].round,
-								)} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`,
+								)} round pick (${
+									g.get("teamAbbrevsCache")[picks[j].originalTid]
+								})`,
 							});
 						}
 					}
@@ -82,8 +84,8 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	await Promise.all(
 		[0, 1].map(async j => {
 			const k = j === 0 ? 1 : 0;
-			s.teams[j].name = `${g.teamRegionsCache[tids[j]]} ${
-				g.teamNamesCache[tids[j]]
+			s.teams[j].name = `${g.get("teamRegionsCache")[tids[j]]} ${
+				g.get("teamNamesCache")[tids[j]]
 			}`;
 
 			if (s.teams[j].total > 0) {
@@ -98,20 +100,20 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			s.teams[j].payrollAfterTrade =
 				s.teams[j].payrollBeforeTrade + s.teams[k].total - s.teams[j].total;
 
-			if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
+			if (s.teams[j].payrollAfterTrade > g.get("salaryCap") / 1000) {
 				overCap[j] = true;
 			}
 		}),
 	);
 	const softCapCondition =
-		!g.hardCap &&
+		!g.get("hardCap") &&
 		((ratios[0] > 125 && overCap[0]) || (ratios[1] > 125 && overCap[1]));
 
 	const overCapAndIncreasing = (i: 0 | 1) =>
 		overCap[i] && s.teams[i].payrollAfterTrade > s.teams[i].payrollBeforeTrade;
 
 	const hardCapCondition =
-		g.hardCap && (overCapAndIncreasing(0) || overCapAndIncreasing(1));
+		g.get("hardCap") && (overCapAndIncreasing(0) || overCapAndIncreasing(1));
 
 	if (softCapCondition) {
 		// Which team is at fault?;

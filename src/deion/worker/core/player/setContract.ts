@@ -22,16 +22,16 @@ const setContract = (
 ) => {
 	// Sigh, don't know why this is needed, but people tell me that sometimes the #1 pick has a massively negative contract
 	if (contract.amount < 0) {
-		contract.amount = g.minContract;
+		contract.amount = g.get("minContract");
 	}
 
 	p.contract = contract; // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
 
 	if (signed) {
 		// Is this contract beginning with an in-progress season, or next season?
-		let start = g.season;
+		let start = g.get("season");
 
-		if (g.phase > PHASE.AFTER_TRADE_DEADLINE) {
+		if (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE) {
 			start += 1;
 		}
 

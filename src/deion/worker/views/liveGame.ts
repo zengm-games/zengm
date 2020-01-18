@@ -38,7 +38,7 @@ const updatePlayByPlay = async (
 		let allStars;
 
 		if (allStarGame) {
-			allStars = await idb.cache.allStars.get(g.season);
+			allStars = await idb.cache.allStars.get(g.get("season"));
 
 			if (!allStars) {
 				return {};
@@ -47,7 +47,7 @@ const updatePlayByPlay = async (
 
 		boxScore.overtime = "";
 		boxScore.quarter = "1st quarter";
-		boxScore.time = `${g.quarterLength}:00`;
+		boxScore.time = `${g.get("quarterLength")}:00`;
 		boxScore.gameOver = false;
 
 		for (let i = 0; i < boxScore.teams.length; i++) {

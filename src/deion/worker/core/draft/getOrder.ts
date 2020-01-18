@@ -10,7 +10,8 @@ import { g } from "../../util";
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 const getOrder = async () => {
-	const season = g.phase === PHASE.FANTASY_DRAFT ? "fantasy" : g.season;
+	const season =
+		g.get("phase") === PHASE.FANTASY_DRAFT ? "fantasy" : g.get("season");
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		season,

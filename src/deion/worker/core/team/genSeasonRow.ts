@@ -2,10 +2,10 @@ import { g, random } from "../../util";
 import { TeamSeason } from "../../../common/types";
 
 const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
-	const defaultRank = (g.numTeams + 1) / 2;
+	const defaultRank = (g.get("numTeams") + 1) / 2;
 	const newSeason = {
 		tid,
-		season: g.season,
+		season: g.get("season"),
 		gp: 0,
 		gpHome: 0,
 		att: 0,
@@ -32,7 +32,7 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
 		hype: Math.random(),
 		pop: 0,
 		// Needs to be set somewhere!
-		stadiumCapacity: g.defaultStadiumCapacity,
+		stadiumCapacity: g.get("defaultStadiumCapacity"),
 		revenues: {
 			luxuryTaxShare: {
 				amount: 0,
@@ -105,7 +105,7 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
 		newSeason.hype = prevSeason.hype;
 		newSeason.cash = prevSeason.cash;
 
-		if (g.userTid === tid) {
+		if (g.get("userTid") === tid) {
 			if (prevSeason.ownerMood) {
 				newSeason.ownerMood = prevSeason.ownerMood;
 			} else if ((g as any).ownerMood) {

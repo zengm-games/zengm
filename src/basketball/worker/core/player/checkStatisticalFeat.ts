@@ -3,7 +3,7 @@ import { GamePlayer } from "../../../../deion/common/types";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = Math.sqrt(
-		g.quarterLength / defaultGameAttributes.quarterLength,
+		g.get("quarterLength") / defaultGameAttributes.quarterLength,
 	);
 
 	// sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596

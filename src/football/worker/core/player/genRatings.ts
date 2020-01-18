@@ -241,7 +241,7 @@ const defaultOvrsOrPots = {
  * Generate initial ratings for a newly-created player.
  *
  * @param {number} season [description]
- * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+ * @param {number} scoutingRank Between 1 and g.get("numTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @param {number} tid [description]
  * @return {Object} Ratings object
  */
@@ -356,16 +356,16 @@ const genRatings = (
 	};
 
 	// Higher fuzz for draft prospects
-	if (g.phase >= PHASE.RESIGN_PLAYERS) {
-		if (season === g.season + 2) {
+	if (g.get("phase") >= PHASE.RESIGN_PLAYERS) {
+		if (season === g.get("season") + 2) {
 			ratings.fuzz *= Math.sqrt(2);
-		} else if (season >= g.season + 3) {
+		} else if (season >= g.get("season") + 3) {
 			ratings.fuzz *= 2;
 		}
 	} else {
-		if (season === g.season + 1) {
+		if (season === g.get("season") + 1) {
 			ratings.fuzz *= Math.sqrt(2);
-		} else if (season >= g.season + 2) {
+		} else if (season >= g.get("season") + 2) {
 			ratings.fuzz *= 2;
 		}
 	}

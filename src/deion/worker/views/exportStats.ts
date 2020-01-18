@@ -13,7 +13,11 @@ const updateExportStats = async (
 			},
 		];
 
-		for (let season = g.startingSeason; season <= g.season; season++) {
+		for (
+			let season = g.get("startingSeason");
+			season <= g.get("season");
+			season++
+		) {
 			options.push({
 				key: String(season),
 				val: `${season} season`,

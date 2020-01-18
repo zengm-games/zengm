@@ -3,7 +3,7 @@ import { g } from "../util";
 import { UpdateEvents } from "../../common/types";
 
 const addAbbrev = (obj: any): any => {
-	return { ...obj, abbrev: g.teamAbbrevsCache[obj.tid] };
+	return { ...obj, abbrev: g.get("teamAbbrevsCache")[obj.tid] };
 };
 
 const augment = allAllStars => {
@@ -29,7 +29,7 @@ const updateAllStarHistory = async (
 		const allAllStars = await idb.getCopies.allStars();
 		return {
 			allAllStars: augment(allAllStars),
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

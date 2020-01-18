@@ -5,10 +5,12 @@ import { Achievement } from "../../../deion/common/types";
 const userWonTitle = async () => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["playoffRoundsWon"],
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 	});
-	return t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length;
+	return (
+		t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
+	);
 };
 
 const achievements: Achievement[] = [
@@ -24,8 +26,8 @@ const achievements: Achievement[] = [
 			if (wonTitle) {
 				const t = await idb.getCopy.teamsPlus({
 					seasonAttrs: ["won", "lost"],
-					season: g.season,
-					tid: g.userTid,
+					season: g.get("season"),
+					tid: g.get("userTid"),
 				});
 
 				if (
@@ -51,7 +53,7 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 			return (
 				awards &&
 				awards.mvp &&
@@ -59,11 +61,11 @@ const achievements: Achievement[] = [
 				awards.oroy &&
 				awards.droy &&
 				awards.finalsMvp &&
-				awards.mvp.tid === g.userTid &&
-				awards.dpoy.tid === g.userTid &&
-				awards.oroy.tid === g.userTid &&
-				awards.droy.tid === g.userTid &&
-				awards.finalsMvp.tid === g.userTid
+				awards.mvp.tid === g.get("userTid") &&
+				awards.dpoy.tid === g.get("userTid") &&
+				awards.oroy.tid === g.get("userTid") &&
+				awards.droy.tid === g.get("userTid") &&
+				awards.finalsMvp.tid === g.get("userTid")
 			);
 		},
 
@@ -76,15 +78,15 @@ const achievements: Achievement[] = [
 		category: "Draft",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
-			if (awards && awards.roy && awards.roy.tid === g.userTid) {
+			if (awards && awards.roy && awards.roy.tid === g.get("userTid")) {
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
-					p.tid === g.userTid &&
-					p.draft.tid === g.userTid &&
-					p.draft.year === g.season - 1 &&
+					p.tid === g.get("userTid") &&
+					p.draft.tid === g.get("userTid") &&
+					p.draft.year === g.get("season") - 1 &&
 					p.draft.round >= 3
 				) {
 					return true;
@@ -103,15 +105,15 @@ const achievements: Achievement[] = [
 		category: "Draft",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
-			if (awards && awards.roy && awards.roy.tid === g.userTid) {
+			if (awards && awards.roy && awards.roy.tid === g.get("userTid")) {
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
-					p.tid === g.userTid &&
-					p.draft.tid === g.userTid &&
-					p.draft.year === g.season - 1 &&
+					p.tid === g.get("userTid") &&
+					p.draft.tid === g.get("userTid") &&
+					p.draft.year === g.get("season") - 1 &&
 					p.draft.round >= 6
 				) {
 					return true;
@@ -133,7 +135,7 @@ const achievements: Achievement[] = [
 			const games = await idb.cache.games.getAll();
 			const game = games[games.length - 1]; // Last game of finals
 
-			return game.overtimes >= 1 && game.won.tid === g.userTid;
+			return game.overtimes >= 1 && game.won.tid === g.get("userTid");
 		},
 
 		when: "afterPlayoffs",
@@ -148,7 +150,7 @@ const achievements: Achievement[] = [
 			const games = await idb.cache.games.getAll();
 			const game = games[games.length - 1]; // Last game of finals
 
-			return game.overtimes >= 1 && game.lost.tid === g.userTid;
+			return game.overtimes >= 1 && game.lost.tid === g.get("userTid");
 		},
 
 		when: "afterPlayoffs",

@@ -9,12 +9,12 @@ import summary from "./summary";
 import { TradeTeams } from "../../../common/types";
 
 const betweenAiTeams = async () => {
-	if (!g.aiTrades) {
+	if (!g.get("aiTrades")) {
 		return;
 	}
 
-	const aiTids = range(g.numTeams).filter(i => {
-		return !g.userTids.includes(i);
+	const aiTids = range(g.get("numTeams")).filter(i => {
+		return !g.get("userTids").includes(i);
 	});
 
 	if (aiTids.length === 0) {
@@ -22,8 +22,8 @@ const betweenAiTeams = async () => {
 	}
 
 	const tid = random.choice(aiTids);
-	const otherTids = range(g.numTeams).filter(i => {
-		return i !== tid && !g.userTids.includes(i);
+	const otherTids = range(g.get("numTeams")).filter(i => {
+		return i !== tid && !g.get("userTids").includes(i);
 	});
 
 	if (otherTids.length === 0) {

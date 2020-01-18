@@ -107,7 +107,7 @@ const processStats = (
 				row[stat] = percentage(ts.pts - ts.oppPts, possessions);
 			} else if (stat === "pace") {
 				if (ts.min > 0) {
-					row.pace = (g.quarterLength * 4 * poss(ts)) / (ts.min / 5);
+					row.pace = (g.get("quarterLength") * 4 * poss(ts)) / (ts.min / 5);
 				} else {
 					row.pace = 0;
 				}

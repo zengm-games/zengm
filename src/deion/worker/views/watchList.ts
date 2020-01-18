@@ -53,7 +53,7 @@ const updatePlayers = async (
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
-			season: g.season,
+			season: g.get("season"),
 			statType: inputs.statType,
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs !== "playoffs",
@@ -69,7 +69,7 @@ const updatePlayers = async (
 			if (players[i].tid === PLAYER.FREE_AGENT) {
 				players[i].contract.amount = freeAgents.amountWithMood(
 					players[i].contract.amount,
-					players[i].freeAgentMood[g.userTid],
+					players[i].freeAgentMood[g.get("userTid")],
 				);
 			}
 		}

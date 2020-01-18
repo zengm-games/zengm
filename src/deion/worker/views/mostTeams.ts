@@ -35,7 +35,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			players,
 			stats,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

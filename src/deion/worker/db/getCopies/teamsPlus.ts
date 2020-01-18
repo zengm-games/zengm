@@ -72,7 +72,7 @@ const processSeasonAttrs = async (
 			]),
 			idb.cache.storeInfos.teamSeasons.pk,
 		);
-	} else if (season >= g.season - 2) {
+	} else if (season >= g.get("season") - 2) {
 		// Single season, from cache
 		seasons = await idb.cache.teamSeasons.indexGetAll(
 			"teamSeasonsBySeasonTid",
@@ -131,7 +131,7 @@ const processSeasonAttrs = async (
 				} else if (attr === "salaryPaid") {
 					row.salaryPaid = ts.expenses.salary.amount / 1000; // [millions of dollars]
 				} else if (attr === "payroll") {
-					if (season === g.season) {
+					if (season === g.get("season")) {
 						row.payroll = (await team.getPayroll(t.tid)) / 1000;
 					} else {
 						row.payroll = undefined;
@@ -141,7 +141,7 @@ const processSeasonAttrs = async (
 					const lastTenLost = ts.lastTen.filter(x => x === 0).length;
 					row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
-					if (g.ties) {
+					if (g.get("ties")) {
 						const lastTenTied = ts.lastTen.filter(x => x === -1).length;
 						row.lastTen += `-${lastTenTied}`;
 					}
@@ -235,7 +235,7 @@ const processStats = async (
 			await teamStatsFromCache(),
 			idb.cache.storeInfos.teamStats.pk,
 		);
-	} else if (season === g.season) {
+	} else if (season === g.get("season")) {
 		teamStats = await teamStatsFromCache();
 	} else {
 		// Single season, from database
@@ -345,12 +345,12 @@ const getCopies = async ({
 
 	if (
 		seasonAttrs.length > 0 &&
-		(season === undefined || season < g.season - 2)
+		(season === undefined || season < g.get("season") - 2)
 	) {
 		objectStores.push("teamSeasons");
 	}
 
-	if (stats.length > 0 && season !== g.season) {
+	if (stats.length > 0 && season !== g.get("season")) {
 		objectStores.push("teamStats");
 	}
 

@@ -1,6 +1,6 @@
-import { GameAttributes } from "../../common/types";
+import { GameAttributesLeague } from "../../common/types";
 
-const defaultGameAttributes: GameAttributes = {
+const defaultGameAttributes: GameAttributesLeague = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft
 	names: undefined,

@@ -118,7 +118,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 };
 
 const calcBaseChange = (age: number, coachingRank: number): number => {
-	let val;
+	let val: number;
 
 	if (age <= 21) {
 		val = 2;
@@ -145,12 +145,12 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 		val += random.truncGauss(0, 3, -2, 3);
 	}
 
-	// Modulate by coaching. g.numTeams doesn't exist when upgrading DB, but that doesn't matter
+	// Modulate by coaching. g.get("numTeams") doesn't exist when upgrading DB, but that doesn't matter
 	if (g.hasOwnProperty("numTeams")) {
 		if (val >= 0) {
-			val *= ((coachingRank - 1) * -0.5) / (g.numTeams - 1) + 1.25;
+			val *= ((coachingRank - 1) * -0.5) / (g.get("numTeams") - 1) + 1.25;
 		} else {
-			val *= ((coachingRank - 1) * 0.5) / (g.numTeams - 1) + 0.75;
+			val *= ((coachingRank - 1) * 0.5) / (g.get("numTeams") - 1) + 0.75;
 		}
 	}
 
@@ -160,7 +160,7 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 const developSeason = (
 	ratings: PlayerRatings,
 	age: number,
-	coachingRank: number = (g.numTeams + 1) / 2,
+	coachingRank: number = (g.get("numTeams") + 1) / 2,
 ) => {
 	// In young players, height can sometimes increase
 	if (age <= 21) {

@@ -227,7 +227,7 @@ const doAwards = async (conditions: Conditions) => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "abbrev", "region", "name", "cid", "did"],
 		seasonAttrs: ["won", "lost", "tied", "winp", "playoffRoundsWon"],
-		season: g.season,
+		season: g.get("season"),
 	});
 	const players = await getPlayers();
 	const { bestRecord, bestRecordConfs } = teamAwards(teams);
@@ -251,7 +251,7 @@ const doAwards = async (conditions: Conditions) => {
 			amount: Infinity,
 			filter: p => {
 				// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-				return p.draft.year === g.season - 1;
+				return p.draft.year === g.get("season") - 1;
 			},
 			score: avScore,
 		},
@@ -262,7 +262,8 @@ const doAwards = async (conditions: Conditions) => {
 	const allRookie = makeTeams(royPlayers, true);
 	let finalsMvp;
 	const champTeam = teams.find(
-		t => t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
+		t =>
+			t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length,
 	);
 
 	if (champTeam) {
@@ -277,7 +278,7 @@ const doAwards = async (conditions: Conditions) => {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
 			stats: ["pts", "trb", "ast", "ws", "ewa"],
-			season: g.season,
+			season: g.get("season"),
 			playoffs: true,
 			regularSeason: false,
 			tid: champTid,
@@ -301,7 +302,7 @@ const doAwards = async (conditions: Conditions) => {
 		finalsMvp,
 		allLeague,
 		allRookie,
-		season: g.season,
+		season: g.get("season"),
 	};
 	const awardNames = {
 		mvp: "Most Valuable Player",

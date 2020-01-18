@@ -18,8 +18,8 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 	);
 	const undraftedPlayers = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-			[g.season],
-			[g.season, Infinity],
+			[g.get("season")],
+			[g.get("season"), Infinity],
 		])
 	).filter(p => p.tid === PLAYER.UNDRAFTED);
 
@@ -30,7 +30,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["strategy"],
-		season: g.season,
+		season: g.get("season"),
 	});
 	const strategies = teams.map(t => t.strategy);
 
@@ -44,13 +44,13 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 	const neededPositionsByTid = new Map();
 
 	if (Object.keys(overrides.common.constants.POSITION_COUNTS).length > 0) {
-		for (let tid = 0; tid < g.numTeams; tid++) {
+		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			const counts = { ...overrides.common.constants.POSITION_COUNTS };
 			neededPositionsByTid.set(tid, counts);
 		}
 
 		for (const p of players) {
-			if (p.contract.exp <= g.season) {
+			if (p.contract.exp <= g.get("season")) {
 				continue;
 			}
 
@@ -65,11 +65,11 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 
 	const payrollsByTid = new Map();
 
-	if (g.hardCap) {
-		for (let tid = 0; tid < g.numTeams; tid++) {
+	if (g.get("hardCap")) {
+		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			const payroll = await team.getPayroll(tid);
 			const expiringPayroll = players
-				.filter(p => p.tid === tid && p.contract.exp <= g.season)
+				.filter(p => p.tid === tid && p.contract.exp <= g.get("season"))
 				.reduce((total, p) => total + p.contract.amount, 0);
 			payrollsByTid.set(tid, payroll - expiringPayroll);
 		}
@@ -80,7 +80,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 		[
 			"tid",
 			p => {
-				return g.hardCap && p.draft.year === g.season ? 1 : -1;
+				return g.get("hardCap") && p.draft.year === g.get("season") ? 1 : -1;
 			},
 			"value",
 		],
@@ -88,10 +88,10 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 	);
 
 	for (const p of playersSorted) {
-		if (p.contract.exp <= g.season) {
-			const draftPick = g.hardCap && p.draft.year === g.season;
+		if (p.contract.exp <= g.get("season")) {
+			const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
 
-			if (g.userTids.includes(p.tid) && local.autoPlaySeasons === 0) {
+			if (g.get("userTids").includes(p.tid) && local.autoPlaySeasons === 0) {
 				const tid = p.tid;
 
 				// Add to free agents first, to generate a contract demand, then open negotiations with player
@@ -100,8 +100,8 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 				if (draftPick) {
 					p.contract.amount /= 2;
 
-					if (p.contract.amount < g.minContract) {
-						p.contract.amount = g.minContract;
+					if (p.contract.amount < g.get("minContract")) {
+						p.contract.amount = g.get("minContract");
 					} else {
 						p.contract.amount = 50 * Math.round(p.contract.amount / 50); // Make it a multiple of 50k
 					}
@@ -112,7 +112,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 					p.pid,
 					true,
 					tid,
-					p.draft.year === g.season,
+					p.draft.year === g.get("season"),
 				);
 
 				if (error !== undefined && error) {
@@ -148,8 +148,8 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 				if (draftPick) {
 					contract.amount /= 2;
 
-					if (contract.amount < g.minContract) {
-						contract.amount = g.minContract;
+					if (contract.amount < g.get("minContract")) {
+						contract.amount = g.get("minContract");
 					} else {
 						contract.amount = 50 * Math.round(contract.amount / 50); // Make it a multiple of 50k
 					}
@@ -165,14 +165,14 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 					}
 				}
 
-				if (g.hardCap) {
+				if (g.get("hardCap")) {
 					if (payroll === undefined) {
 						throw new Error(
 							"Payroll should always be defined if there is a hard cap",
 						);
 					}
 
-					if (contract.amount + payroll > g.salaryCap) {
+					if (contract.amount + payroll > g.get("salaryCap")) {
 						probReSign = 0;
 					}
 				}
@@ -206,7 +206,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 	);
 
 	for (const p of draftProspects) {
-		if (p.draft.year !== g.season + 1) {
+		if (p.draft.year !== g.get("season") + 1) {
 			continue;
 		}
 
@@ -218,7 +218,7 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 	}
 
 	for (const p of draftProspects) {
-		if (p.draft.year !== g.season + 2) {
+		if (p.draft.year !== g.get("season") + 2) {
 			continue;
 		}
 
@@ -230,19 +230,21 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
 	}
 
 	// Generate a new draft class, while leaving existing players in that draft class in place
-	const baseNumPlayers = Math.round((g.numDraftRounds * g.numTeams * 7) / 6);
+	const baseNumPlayers = Math.round(
+		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+	);
 	const numPlayersAlreadyInDraftClass = draftProspects.filter(
-		p => p.draft.year === g.season + 3,
+		p => p.draft.year === g.get("season") + 3,
 	).length;
 	await draft.genPlayers(
-		g.season + 3,
+		g.get("season") + 3,
 		undefined,
 		baseNumPlayers - numPlayersAlreadyInDraftClass,
 	);
 
 	// Delete any old undrafted players that still somehow exist
 	for (const p of draftProspects) {
-		if (p.draft.year <= g.season) {
+		if (p.draft.year <= g.get("season")) {
 			await idb.cache.players.delete(p.pid);
 		}
 	}

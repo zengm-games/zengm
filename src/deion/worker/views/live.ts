@@ -15,16 +15,19 @@ const updateGamesList = async () => {
 			game.homeRegion = "Team";
 			game.homeName = allStars.teamNames[0].replace("Team ", "");
 		} else {
-			if (game.awayTid === g.userTid || game.homeTid === g.userTid) {
+			if (
+				game.awayTid === g.get("userTid") ||
+				game.homeTid === g.get("userTid")
+			) {
 				game.highlight = true;
 			} else {
 				game.highlight = false;
 			}
 
-			game.awayRegion = g.teamRegionsCache[game.awayTid];
-			game.awayName = g.teamNamesCache[game.awayTid];
-			game.homeRegion = g.teamRegionsCache[game.homeTid];
-			game.homeName = g.teamNamesCache[game.homeTid];
+			game.awayRegion = g.get("teamRegionsCache")[game.awayTid];
+			game.awayName = g.get("teamNamesCache")[game.awayTid];
+			game.homeRegion = g.get("teamRegionsCache")[game.homeTid];
+			game.homeName = g.get("teamNamesCache")[game.homeTid];
 		}
 	}
 

@@ -11,7 +11,7 @@ const sign = (
 	phase: Phase,
 ) => {
 	p.tid = tid;
-	p.gamesUntilTradable = Math.round(0.17 * g.numGames); // 14 for basketball, 3 for football
+	p.gamesUntilTradable = Math.round(0.17 * g.get("numGames")); // 14 for basketball, 3 for football
 	// Handle stats if the season is in progress
 
 	if (phase <= PHASE.PLAYOFFS) {
@@ -20,17 +20,18 @@ const sign = (
 	}
 
 	setContract(p, contract, true);
-	const resigning = phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.season;
+	const resigning =
+		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
 	const eventType = resigning ? "reSigned" : "freeAgent";
 	const signedOrReSigned = resigning ? "re-signed" : "signed";
 	logEvent({
 		type: eventType,
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[p.tid],
-			g.season,
+			g.get("teamAbbrevsCache")[p.tid],
+			g.get("season"),
 		])}">${
-			g.teamNamesCache[p.tid]
+			g.get("teamNamesCache")[p.tid]
 		}</a> ${signedOrReSigned} <a href="${helpers.leagueUrl([
 			"player",
 			p.pid,

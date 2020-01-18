@@ -4,9 +4,9 @@ import { validateAbbrev, validateSeason } from "./processInputs";
 
 describe("worker/api/processInputs", () => {
 	beforeAll(() => {
-		g.userTid = 4;
-		g.season = 2009;
-		g.teamAbbrevsCache = [
+		g.setWithoutSavingToDB("userTid", 4);
+		g.setWithoutSavingToDB("season", 2009);
+		g.setWithoutSavingToDB("teamAbbrevsCache", [
 			"ATL",
 			"BAL",
 			"BOS",
@@ -37,8 +37,8 @@ describe("worker/api/processInputs", () => {
 			"TOR",
 			"VAN",
 			"WAS",
-		];
-		g.teamRegionsCache = [
+		]);
+		g.setWithoutSavingToDB("teamRegionsCache", [
 			"Atlanta",
 			"Baltimore",
 			"Boston",
@@ -69,8 +69,8 @@ describe("worker/api/processInputs", () => {
 			"Toronto",
 			"Vancouver",
 			"Washington",
-		];
-		g.teamNamesCache = [
+		]);
+		g.setWithoutSavingToDB("teamNamesCache", [
 			"Gold Club",
 			"Crabs",
 			"Massacre",
@@ -101,7 +101,7 @@ describe("worker/api/processInputs", () => {
 			"Beavers",
 			"Whalers",
 			"Monuments",
-		];
+		]);
 	});
 
 	// Relies on g.*Cache being populated

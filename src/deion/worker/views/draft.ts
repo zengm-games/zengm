@@ -9,7 +9,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
 	) {
-		const fantasyDraft = g.phase === PHASE.FANTASY_DRAFT;
+		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
 		let stats;
 		let undrafted;
 
@@ -26,8 +26,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats = [];
 			undrafted = (
 				await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-					[g.season],
-					[g.season, Infinity],
+					[g.get("season")],
+					[g.get("season"), Infinity],
 				])
 			).filter(p => p.tid === PLAYER.UNDRAFTED); // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
 			// This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
@@ -35,10 +35,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			for (const p of undrafted) {
 				const season = p.ratings[0].season;
 
-				if (season !== g.season && g.phase === PHASE.DRAFT) {
+				if (season !== g.get("season") && g.get("phase") === PHASE.DRAFT) {
 					console.log("FIXING MESSED UP DRAFT CLASS");
 					console.log(season);
-					p.ratings[0].season = g.season;
+					p.ratings[0].season = g.get("season");
 					await idb.cache.players.put(p);
 				}
 			}
@@ -49,7 +49,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			attrs: ["pid", "name", "age", "injury", "contract", "watch"],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
-			season: g.season,
+			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
@@ -63,7 +63,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				0,
 				Infinity,
 			]);
-			drafted = drafted.filter(p => p.draft.year === g.season);
+			drafted = drafted.filter(p => p.draft.year === g.get("season"));
 			drafted.sort(
 				(a, b) =>
 					100 * a.draft.round +
@@ -85,16 +85,16 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats: ["per", "ewa"],
-			season: g.season,
+			season: g.get("season"),
 			showRookies: true,
 			fuzz: true,
 		});
 		let draftPicks = await draft.getOrder(); // DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
 
-		if (!fantasyDraft && draftPicks.length > 2 * g.numTeams) {
+		if (!fantasyDraft && draftPicks.length > 2 * g.get("numTeams")) {
 			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
 
-			if (draftPicks2.length === 2 * g.numTeams) {
+			if (draftPicks2.length === 2 * g.get("numTeams")) {
 				const toDelete = draftPicks.filter(dp => dp.pick === 0);
 
 				for (const dp of toDelete) {
@@ -128,12 +128,12 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			draftType: g.draftType,
+			draftType: g.get("draftType"),
 			drafted,
 			fantasyDraft,
 			stats,
 			undrafted,
-			userTids: g.userTids,
+			userTids: g.get("userTids"),
 		};
 	}
 };

@@ -8,10 +8,10 @@ import genMessage from "./genMessage";
 describe("worker/util/genMessage", () => {
 	beforeEach(async () => {
 		testHelpers.resetG();
-		g.gracePeriodEnd = g.season;
+		g.setWithoutSavingToDB("gracePeriodEnd", g.get("season"));
 
 		await testHelpers.resetCache({
-			teamSeasons: [team.genSeasonRow(g.userTid)],
+			teamSeasons: [team.genSeasonRow(g.get("userTid"))],
 		});
 
 		idb.league = testHelpers.mockIDBLeague();

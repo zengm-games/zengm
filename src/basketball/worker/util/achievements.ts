@@ -3,11 +3,11 @@ import { g } from "../../../deion/worker/util";
 import { Achievement } from "../../../deion/common/types";
 
 const checkFoFoFo = async () => {
-	if (g.numGamesPlayoffSeries.length < 3) {
+	if (g.get("numGamesPlayoffSeries").length < 3) {
 		return false;
 	}
 
-	const playoffSeries = await idb.cache.playoffSeries.get(g.season);
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 
 	if (playoffSeries === undefined) {
 		// Should only happen if playoffs are skipped
@@ -23,7 +23,7 @@ const checkFoFoFo = async () => {
 				series.home &&
 				series.away.won >= 4 &&
 				series.home.won === 0 &&
-				series.away.tid === g.userTid
+				series.away.tid === g.get("userTid")
 			) {
 				found = true;
 				break;
@@ -34,7 +34,7 @@ const checkFoFoFo = async () => {
 				series.home &&
 				series.home.won >= 4 &&
 				series.away.won === 0 &&
-				series.home.tid === g.userTid
+				series.home.tid === g.get("userTid")
 			) {
 				found = true;
 				break;
@@ -51,7 +51,7 @@ const checkFoFoFo = async () => {
 
 const getUserSeed = async () => {
 	const playoffSeries = await idb.getCopy.playoffSeries({
-		season: g.season,
+		season: g.get("season"),
 	});
 
 	if (playoffSeries === undefined) {
@@ -59,11 +59,11 @@ const getUserSeed = async () => {
 	}
 
 	for (const matchup of playoffSeries.series[0]) {
-		if (matchup.away && matchup.away.tid === g.userTid) {
+		if (matchup.away && matchup.away.tid === g.get("userTid")) {
 			return matchup.away.seed;
 		}
 
-		if (matchup.home.tid === g.userTid) {
+		if (matchup.home.tid === g.get("userTid")) {
 			return matchup.home.seed;
 		}
 	}
@@ -72,11 +72,11 @@ const getUserSeed = async () => {
 const userWonTitle = async () => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["playoffRoundsWon"],
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 	});
 	return t
-		? t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length
+		? t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
 		: false;
 };
 
@@ -147,7 +147,7 @@ const isAmerican = loc => {
 const checkSevenGameFinals = async () => {
 	// Confirm 4-3 finals
 	const playoffSeries = await idb.getCopy.playoffSeries({
-		season: g.season,
+		season: g.get("season"),
 	});
 
 	if (playoffSeries === undefined) {
@@ -209,8 +209,8 @@ const achievements: Achievement[] = [
 		async check() {
 			const t = await idb.getCopy.teamsPlus({
 				seasonAttrs: ["won"],
-				season: g.season,
-				tid: g.userTid,
+				season: g.get("season"),
+				tid: g.get("userTid"),
 			});
 			return !!(t && t.seasonAttrs && t.seasonAttrs.won >= 70);
 		},
@@ -229,8 +229,8 @@ const achievements: Achievement[] = [
 			if (awarded) {
 				const t = await idb.getCopy.teamsPlus({
 					seasonAttrs: ["won", "lost"],
-					season: g.season,
-					tid: g.userTid,
+					season: g.get("season"),
+					tid: g.get("userTid"),
 				});
 
 				if (
@@ -256,7 +256,7 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 			return (
 				awards &&
 				awards.mvp &&
@@ -265,12 +265,12 @@ const achievements: Achievement[] = [
 				awards.mip &&
 				awards.roy &&
 				awards.finalsMvp &&
-				awards.mvp.tid === g.userTid &&
-				awards.dpoy.tid === g.userTid &&
-				awards.smoy.tid === g.userTid &&
-				awards.mip.tid === g.userTid &&
-				awards.roy.tid === g.userTid &&
-				awards.finalsMvp.tid === g.userTid
+				awards.mvp.tid === g.get("userTid") &&
+				awards.dpoy.tid === g.get("userTid") &&
+				awards.smoy.tid === g.get("userTid") &&
+				awards.mip.tid === g.get("userTid") &&
+				awards.roy.tid === g.get("userTid") &&
+				awards.finalsMvp.tid === g.get("userTid")
 			);
 		},
 
@@ -283,15 +283,15 @@ const achievements: Achievement[] = [
 		category: "Draft",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
-			if (awards && awards.roy && awards.roy.tid === g.userTid) {
+			if (awards && awards.roy && awards.roy.tid === g.get("userTid")) {
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
-					p.tid === g.userTid &&
-					p.draft.tid === g.userTid &&
-					p.draft.year === g.season - 1 &&
+					p.tid === g.get("userTid") &&
+					p.draft.tid === g.get("userTid") &&
+					p.draft.year === g.get("season") - 1 &&
 					(p.draft.round > 1 || p.draft.pick >= 15)
 				) {
 					return true;
@@ -310,15 +310,15 @@ const achievements: Achievement[] = [
 		category: "Draft",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
-			if (awards && awards.roy && awards.roy.tid === g.userTid) {
+			if (awards && awards.roy && awards.roy.tid === g.get("userTid")) {
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
-					p.tid === g.userTid &&
-					p.draft.tid === g.userTid &&
-					p.draft.year === g.season - 1 &&
+					p.tid === g.get("userTid") &&
+					p.draft.tid === g.get("userTid") &&
+					p.draft.year === g.get("season") - 1 &&
 					p.draft.round > 1
 				) {
 					return true;
@@ -346,7 +346,7 @@ const achievements: Achievement[] = [
 			const games = await idb.cache.games.getAll();
 			const game = games[games.length - 1]; // Last game of finals
 
-			return game.overtimes >= 1 && game.won.tid === g.userTid;
+			return game.overtimes >= 1 && game.won.tid === g.get("userTid");
 		},
 
 		when: "afterPlayoffs",
@@ -367,7 +367,7 @@ const achievements: Achievement[] = [
 			const games = await idb.cache.games.getAll();
 			const game = games[games.length - 1]; // Last game of finals
 
-			return game.overtimes >= 1 && game.lost.tid === g.userTid;
+			return game.overtimes >= 1 && game.lost.tid === g.get("userTid");
 		},
 
 		when: "afterPlayoffs",
@@ -414,7 +414,7 @@ const achievements: Achievement[] = [
 
 			const players = await idb.cache.players.indexGetAll(
 				"playersByTid",
-				g.userTid,
+				g.get("userTid"),
 			);
 
 			for (const p of players) {
@@ -436,11 +436,11 @@ const achievements: Achievement[] = [
 
 		async check() {
 			let count = 0;
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
 			if (awards && awards.allDefensive && awards.allDefensive[0]) {
 				for (const p of awards.allDefensive[0].players) {
-					if (p.tid === g.userTid) {
+					if (p.tid === g.get("userTid")) {
 						count += 1;
 					}
 				}
@@ -458,13 +458,13 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 			return (
 				awards &&
 				awards.mvp &&
 				awards.mip &&
-				awards.mvp.tid === g.userTid &&
-				awards.mip.tid === g.userTid &&
+				awards.mvp.tid === g.get("userTid") &&
+				awards.mip.tid === g.get("userTid") &&
 				awards.mvp.pid === awards.mip.pid
 			);
 		},
@@ -481,13 +481,14 @@ const achievements: Achievement[] = [
 			// Confirm lost finals
 			const t = await idb.getCopy.teamsPlus({
 				seasonAttrs: ["playoffRoundsWon"],
-				season: g.season,
-				tid: g.userTid,
+				season: g.get("season"),
+				tid: g.get("userTid"),
 			});
 
 			if (
 				!t ||
-				t.seasonAttrs.playoffRoundsWon !== g.numGamesPlayoffSeries.length - 1
+				t.seasonAttrs.playoffRoundsWon !==
+					g.get("numGamesPlayoffSeries").length - 1
 			) {
 				return false;
 			}
@@ -503,7 +504,7 @@ const achievements: Achievement[] = [
 			const last4 = games.slice(-4);
 
 			for (const game of last4) {
-				if (game.lost.tid !== g.userTid) {
+				if (game.lost.tid !== g.get("userTid")) {
 					return false;
 				}
 			}
@@ -523,8 +524,8 @@ const achievements: Achievement[] = [
 			// Confirm lost in first round
 			const t = await idb.getCopy.teamsPlus({
 				seasonAttrs: ["playoffRoundsWon"],
-				season: g.season,
-				tid: g.userTid,
+				season: g.get("season"),
+				tid: g.get("userTid"),
 			});
 
 			if (!t || t.seasonAttrs.playoffRoundsWon !== 0) {

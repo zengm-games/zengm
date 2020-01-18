@@ -33,7 +33,7 @@ const rosterAutoSort = async (
 	const players = await idb.getCopies.playersPlus(playersFromCache, {
 		attrs: ["pid"],
 		ratings: ["pos", "ovrs"],
-		season: g.season,
+		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,

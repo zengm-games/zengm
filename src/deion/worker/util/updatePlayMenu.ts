@@ -93,7 +93,7 @@ const updatePlayMenu = async () => {
 			label: "View draft",
 		},
 		untilResignPlayers: {
-			label: g.hardCap
+			label: g.get("hardCap")
 				? "Re-sign players and sign rookies"
 				: "Re-sign players with expiring contracts",
 		},
@@ -138,12 +138,12 @@ const updatePlayMenu = async () => {
 	};
 	let keys: string[] = [];
 
-	if (g.phase === PHASE.PRESEASON) {
+	if (g.get("phase") === PHASE.PRESEASON) {
 		// Preseason
 		keys = ["untilRegularSeason"];
 	} else if (
-		g.phase === PHASE.REGULAR_SEASON ||
-		g.phase === PHASE.AFTER_TRADE_DEADLINE
+		g.get("phase") === PHASE.REGULAR_SEASON ||
+		g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
 	) {
 		const allStarScheduled = await allStar.futureGameIsAllStar();
 		const allStarNext = await allStar.nextGameIsAllStar();
@@ -176,38 +176,41 @@ const updatePlayMenu = async () => {
 		if (allStarNext) {
 			keys.unshift("viewAllStarSelections");
 		}
-	} else if (g.phase === PHASE.PLAYOFFS) {
+	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		// Playoffs
 		if (process.env.SPORT === "basketball") {
 			keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
 		} else {
 			keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];
 		}
-	} else if (g.phase === PHASE.DRAFT_LOTTERY) {
+	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		// Offseason - pre draft
 		keys =
-			g.draftType !== "noLottery" && g.draftType !== "random"
+			g.get("draftType") !== "noLottery" && g.get("draftType") !== "random"
 				? ["viewDraftLottery", "untilDraft"]
 				: ["untilDraft"];
-	} else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {
+	} else if (
+		g.get("phase") === PHASE.DRAFT ||
+		g.get("phase") === PHASE.FANTASY_DRAFT
+	) {
 		// Draft
 		const draftPicks = await draft.getOrder();
 		const nextPick = draftPicks[0];
 
-		if (nextPick && g.userTids.includes(nextPick.tid)) {
+		if (nextPick && g.get("userTids").includes(nextPick.tid)) {
 			keys = ["viewDraft"];
-		} else if (draftPicks.some(dp => g.userTids.includes(dp.tid))) {
+		} else if (draftPicks.some(dp => g.get("userTids").includes(dp.tid))) {
 			keys = ["onePick", "untilYourNextPick", "viewDraft"];
 		} else {
 			keys = ["onePick", "untilEnd", "viewDraft"];
 		}
-	} else if (g.phase === PHASE.AFTER_DRAFT) {
+	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft
 		keys = ["untilResignPlayers"];
-	} else if (g.phase === PHASE.RESIGN_PLAYERS) {
+	} else if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		// Offseason - re-sign players
 		keys = ["contractNegotiationList", "untilFreeAgency"];
-	} else if (g.phase === PHASE.FREE_AGENCY) {
+	} else if (g.get("phase") === PHASE.FREE_AGENCY) {
 		// Offseason - free agency
 		keys = ["day", "week", "untilPreseason"];
 	}
@@ -227,7 +230,7 @@ const updatePlayMenu = async () => {
 		keys = ["stop"];
 	}
 
-	if (negotiationInProgress && g.phase !== PHASE.RESIGN_PLAYERS) {
+	if (negotiationInProgress && g.get("phase") !== PHASE.RESIGN_PLAYERS) {
 		keys = ["contractNegotiation"];
 	}
 
@@ -236,7 +239,7 @@ const updatePlayMenu = async () => {
 	}
 
 	// If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.
-	if (g.gameOver && !unreadMessage) {
+	if (g.get("gameOver") && !unreadMessage) {
 		keys = ["newTeam", "newLeague"];
 	}
 

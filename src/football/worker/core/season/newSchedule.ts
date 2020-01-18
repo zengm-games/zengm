@@ -126,16 +126,16 @@ const roundRobin = (tidsInput: number[]) => {
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
 export const newScheduleCrappy = () => {
-	const tids = range(g.numTeams);
+	const tids = range(g.get("numTeams"));
 	random.shuffle(tids); // Number of games left to reschedule for each team
 
 	const numRemaining: number[] = [];
 
-	for (let i = 0; i < g.numTeams; i++) {
-		numRemaining[i] = g.numGames;
+	for (let i = 0; i < g.get("numTeams"); i++) {
+		numRemaining[i] = g.get("numGames");
 	}
 
-	let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
+	let numWithRemaining = g.get("numTeams"); // Number of teams with numRemaining > 0
 
 	const matchups: [number, number][] = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
 
@@ -182,16 +182,16 @@ const newSchedule = (teams: Team[]) => {
 	let tids: [number, number][];
 	let fourDivsPerConf = true;
 
-	for (const conf of g.confs) {
-		if (g.divs.filter(div => div.cid === conf.cid).length !== 4) {
+	for (const conf of g.get("confs")) {
+		if (g.get("divs").filter(div => div.cid === conf.cid).length !== 4) {
 			fourDivsPerConf = false;
 			break;
 		}
 	}
 
-	let twoConfsEvenTeams = g.confs.length === 2;
+	let twoConfsEvenTeams = g.get("confs").length === 2;
 
-	for (const conf of g.confs) {
+	for (const conf of g.get("confs")) {
 		if (teams.filter(t => t.cid === conf.cid).length !== teams.length / 2) {
 			twoConfsEvenTeams = false;
 			break;
@@ -199,9 +199,9 @@ const newSchedule = (teams: Team[]) => {
 	}
 
 	if (
-		g.numTeams === 32 &&
-		g.numGames === 16 &&
-		g.confs.length === 2 &&
+		g.get("numTeams") === 32 &&
+		g.get("numGames") === 16 &&
+		g.get("confs").length === 2 &&
 		fourDivsPerConf &&
 		twoConfsEvenTeams
 	) {

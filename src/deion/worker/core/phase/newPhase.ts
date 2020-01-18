@@ -22,7 +22,7 @@ import { Conditions, Phase } from "../../../common/types";
  */
 const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 	// Prevent at least some cases of code running twice
-	if (phase === g.phase) {
+	if (phase === g.get("phase")) {
 		return;
 	}
 

@@ -32,24 +32,24 @@ const genOrder = async (
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "cid", "did"],
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
-		season: g.season,
+		season: g.get("season"),
 	});
 
 	// Draft lottery
 	lotterySort(teams);
 	let chances =
-		g.draftType === "nba1994"
+		g.get("draftType") === "nba1994"
 			? [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]
 			: [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5]; // Change number of teams in lottery, based on number of playoff teams
 
 	const numPlayoffTeams =
-		2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
-	const minNumLotteryTeams = g.draftType === "nba1994" ? 3 : 4; // Otherwise would require changes to draft lottery algorithm
+		2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
+	const minNumLotteryTeams = g.get("draftType") === "nba1994" ? 3 : 4; // Otherwise would require changes to draft lottery algorithm
 
 	const numLotteryTeams = helpers.bound(
-		g.numTeams - numPlayoffTeams,
+		g.get("numTeams") - numPlayoffTeams,
 		minNumLotteryTeams,
-		g.numTeams,
+		g.get("numTeams"),
 	);
 
 	if (numLotteryTeams < chances.length) {
@@ -72,7 +72,7 @@ const genOrder = async (
 
 	const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
 
-	const numToPick = g.draftType === "nba1994" ? 3 : 4;
+	const numToPick = g.get("draftType") === "nba1994" ? 3 : 4;
 	const firstN: number[] = [];
 
 	while (firstN.length < numToPick) {
@@ -88,15 +88,15 @@ const genOrder = async (
 
 	let draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
-		g.season,
+		g.get("season"),
 	);
 
 	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	if (draftPicks.length < g.numDraftRounds * g.numTeams) {
-		await genPicks(g.season, draftPicks);
+	if (draftPicks.length < g.get("numDraftRounds") * g.get("numTeams")) {
+		await genPicks(g.get("season"), draftPicks);
 		draftPicks = await idb.cache.draftPicks.indexGetAll(
 			"draftPicksBySeason",
-			g.season,
+			g.get("season"),
 		);
 	}
 
@@ -170,8 +170,8 @@ const genOrder = async (
 
 	// Save draft lottery results separately
 	const draftLotteryResult: ReturnVal = {
-		season: g.season,
-		draftType: g.draftType === "nba1994" ? "nba1994" : "nba2019",
+		season: g.get("season"),
+		draftType: g.get("draftType") === "nba1994" ? "nba1994" : "nba2019",
 		result: teams // Start with teams in lottery order
 			.map(({ tid }) => {
 				return draftPicks.find(dp => {
@@ -227,7 +227,7 @@ const genOrder = async (
 	});
 
 	// Second round
-	for (let round = 2; round <= g.numDraftRounds; round++) {
+	for (let round = 2; round <= g.get("numDraftRounds"); round++) {
 		for (let i = 0; i < teams.length; i++) {
 			const dp = draftPicksIndexed[teams[i].tid][round];
 

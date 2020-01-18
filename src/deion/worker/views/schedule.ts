@@ -20,7 +20,7 @@ const updateUpcoming = async (
 			idb.getCopies.teamsPlus({
 				attrs: ["abbrev", "name", "region"],
 				seasonAttrs: ["won", "lost"],
-				season: g.season,
+				season: g.get("season"),
 			}),
 		]); // Loop through each game in the schedule.
 
@@ -40,7 +40,7 @@ const updateUpcoming = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			season: g.season,
+			season: g.get("season"),
 			upcoming,
 		};
 	}
@@ -58,7 +58,7 @@ const updateCompleted = async (
               setState({completed: undefined});
           }*/
 		// Load all games in list
-		const games = await getProcessedGames(inputs.abbrev, g.season);
+		const games = await getProcessedGames(inputs.abbrev, g.get("season"));
 		const completed = games.map(game => helpers.formatCompletedGame(game));
 		return {
 			completed,
@@ -70,7 +70,7 @@ const updateCompleted = async (
 
 		const games = await getProcessedGames(
 			inputs.abbrev,
-			g.season,
+			g.get("season"),
 			state.completed,
 		);
 

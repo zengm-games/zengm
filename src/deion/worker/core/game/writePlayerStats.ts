@@ -22,7 +22,7 @@ const doInjury = (
 	}
 
 	p2.injuries.push({
-		season: g.season,
+		season: g.get("season"),
 		games: p2.injury.gamesRemaining,
 		type: p2.injury.type,
 	});
@@ -35,14 +35,14 @@ const doInjury = (
 		p2.injury.gamesRemaining - 1 === 1 ? gameOrWeek : `${gameOrWeek}s`
 	}`;
 
-	if (g.userTid === p2.tid) {
+	if (g.get("userTid") === p2.tid) {
 		if (p2.injury.gamesRemaining > 1) {
 			injuryTexts.push(injuryText);
 		}
 
 		stopPlay =
-			g.stopOnInjury &&
-			p2.injury.gamesRemaining > g.stopOnInjuryGames &&
+			g.get("stopOnInjury") &&
+			p2.injury.gamesRemaining > g.get("stopOnInjuryGames") &&
 			local.autoPlaySeasons === 0;
 	}
 
@@ -189,7 +189,7 @@ const writePlayerStats = async (
 						if (!allStarGame) {
 							let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
 
-							const playoffs = g.phase === PHASE.PLAYOFFS;
+							const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 							if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
 								player.addStatsRow(p2, playoffs);
@@ -197,7 +197,7 @@ const writePlayerStats = async (
 							}
 
 							// Since index is not on playoffs, manually check
-							if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {
+							if (ps.playoffs !== (g.get("phase") === PHASE.PLAYOFFS)) {
 								throw new Error(`Missing playoff stats for player ${p.id}`);
 							}
 
@@ -248,7 +248,7 @@ const writePlayerStats = async (
 						}
 
 						// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-						if (g.phase !== PHASE.PLAYOFFS || ratingsLoss) {
+						if (g.get("phase") !== PHASE.PLAYOFFS || ratingsLoss) {
 							player.updateValues(p2);
 						}
 

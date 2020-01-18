@@ -29,7 +29,7 @@ const updatePlayers = async (
 
 		if (inputs.abbrev !== "all") {
 			feats = feats.filter(
-				feat => g.teamAbbrevsCache[feat.tid] === inputs.abbrev,
+				feat => g.get("teamAbbrevsCache")[feat.tid] === inputs.abbrev,
 			);
 		}
 
@@ -52,8 +52,8 @@ const updatePlayers = async (
 				feat.score += ` (${feat.overtimes}OT)`;
 			}
 
-			feat.abbrev = g.teamAbbrevsCache[feat.tid];
-			feat.oppAbbrev = g.teamAbbrevsCache[feat.oppTid];
+			feat.abbrev = g.get("teamAbbrevsCache")[feat.tid];
+			feat.oppAbbrev = g.get("teamAbbrevsCache")[feat.oppTid];
 			feat.stats.gmsc = helpers.gameScore(feat.stats); // Type
 
 			if (feat.playoffs) {
@@ -116,7 +116,7 @@ const updatePlayers = async (
 			feats,
 			season: inputs.season,
 			stats,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

@@ -14,18 +14,18 @@ const updateStrategies = async () => {
 
 	for (const t of teams) {
 		// Skip user's team
-		if (t.tid === g.userTid) {
+		if (t.tid === g.get("userTid")) {
 			continue;
 		}
 
 		// Change in wins
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
-			[g.season, t.tid],
+			[g.get("season"), t.tid],
 		);
 		const teamSeasonOld = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
-			[g.season - 1, t.tid],
+			[g.get("season") - 1, t.tid],
 		);
 		const won = teamSeason.won;
 		const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0; // Young stars
@@ -35,7 +35,7 @@ const updateStrategies = async () => {
 			t.tid,
 		);
 		const players = await idb.getCopies.playersPlus(playersAll, {
-			season: g.season,
+			season: g.get("season"),
 			tid: t.tid,
 			attrs: ["age", "value", "contract"],
 			stats: ["min"],
@@ -52,7 +52,7 @@ const updateStrategies = async () => {
 
 			if (
 				players[i].value > 65 &&
-				players[i].contract.exp === g.season + 1 &&
+				players[i].contract.exp === g.get("season") + 1 &&
 				players[i].contract.amount <= 5 &&
 				players[i].age <= 25
 			) {
@@ -63,7 +63,10 @@ const updateStrategies = async () => {
 		const age = numerator / denominator; // Average age, weighted by minutes played
 
 		const score =
-			0.8 * dWon + (won - g.numGames / 2) + 5 * (26 - age) + youngStar * 20;
+			0.8 * dWon +
+			(won - g.get("numGames") / 2) +
+			5 * (26 - age) +
+			youngStar * 20;
 		let updated = false;
 
 		if (score > 20 && t.strategy === "rebuilding") {

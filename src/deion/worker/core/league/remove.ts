@@ -11,7 +11,7 @@ import { g } from "../../util";
  * @param {function()=} cb Optional callback.
  */
 const remove = async (lid: number) => {
-	if (g.lid === lid) {
+	if (g.get("lid") === lid) {
 		close(true);
 	}
 

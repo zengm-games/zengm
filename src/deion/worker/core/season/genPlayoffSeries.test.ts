@@ -41,7 +41,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 1,
 			},
 		];
-		g.confs = [
+		g.setWithoutSavingToDB("confs", [
 			{
 				cid: 0,
 				name: "Eastern Conference",
@@ -50,9 +50,9 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 1,
 				name: "Western Conference",
 			},
-		];
-		g.numGamesPlayoffSeries = [7, 7];
-		g.numPlayoffByes = 0;
+		]);
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
+		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
 		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
 		assert.equal(series[0].length, 2);
@@ -88,7 +88,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 1,
 			},
 		];
-		g.confs = [
+		g.setWithoutSavingToDB("confs", [
 			{
 				cid: 0,
 				name: "Eastern Conference",
@@ -101,9 +101,9 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 2,
 				name: "Whatever",
 			},
-		];
-		g.numGamesPlayoffSeries = [7, 7];
-		g.numPlayoffByes = 0;
+		]);
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
+		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
 		assert.deepEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
 		assert.equal(series[0].length, 2);
@@ -143,7 +143,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 1,
 			},
 		];
-		g.confs = [
+		g.setWithoutSavingToDB("confs", [
 			{
 				cid: 0,
 				name: "Eastern Conference",
@@ -152,9 +152,9 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 1,
 				name: "Western Conference",
 			},
-		];
-		g.numGamesPlayoffSeries = [7, 7, 7];
-		g.numPlayoffByes = 2;
+		]);
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
+		g.setWithoutSavingToDB("numPlayoffByes", 2);
 		const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
 		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 4, 5]);
 		const tids = [
@@ -211,7 +211,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 1,
 			},
 		];
-		g.confs = [
+		g.setWithoutSavingToDB("confs", [
 			{
 				cid: 0,
 				name: "Eastern Conference",
@@ -224,9 +224,9 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 2,
 				name: "Whatever",
 			},
-		];
-		g.numGamesPlayoffSeries = [7, 7, 7];
-		g.numPlayoffByes = 2;
+		]);
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
+		g.setWithoutSavingToDB("numPlayoffByes", 2);
 		const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
 		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 5, 6]);
 		const tids = [
@@ -315,14 +315,14 @@ describe("worker/core/season/genPlayoffSeries", () => {
 				cid: 0,
 			},
 		];
-		g.confs = [
+		g.setWithoutSavingToDB("confs", [
 			{
 				cid: 0,
 				name: "Conference",
 			},
-		];
-		g.numGamesPlayoffSeries = [7, 7, 7, 7];
-		g.numPlayoffByes = 0;
+		]);
+		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7, 7]);
+		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series } = season.genPlayoffSeries(teams); // A normal NCAA bracket would swap [2, 13] and [5, 10] but I'm not sure why
 
 		const tids = [

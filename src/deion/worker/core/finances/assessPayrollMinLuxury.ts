@@ -14,34 +14,39 @@ const assessPayrollMinLuxury = async () => {
 	const payrolls = await team.getPayrolls();
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
-		[[g.season], [g.season, "Z"]],
+		[[g.get("season")], [g.get("season"), "Z"]],
 	);
 
 	for (const teamSeason of teamSeasons) {
 		// Store payroll
 		teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid]; // Assess minimum payroll tax and luxury tax
 
-		if (payrolls[teamSeason.tid] < g.minPayroll) {
+		if (payrolls[teamSeason.tid] < g.get("minPayroll")) {
 			teamSeason.expenses.minTax.amount =
-				g.minPayroll - payrolls[teamSeason.tid];
+				g.get("minPayroll") - payrolls[teamSeason.tid];
 			teamSeason.cash -= teamSeason.expenses.minTax.amount;
-		} else if (payrolls[teamSeason.tid] > g.luxuryPayroll && !g.hardCap) {
+		} else if (
+			payrolls[teamSeason.tid] > g.get("luxuryPayroll") &&
+			!g.get("hardCap")
+		) {
 			// Only apply luxury tax if hard cap is disabled!
-			const amount = g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
+			const amount =
+				g.get("luxuryTax") *
+				(payrolls[teamSeason.tid] - g.get("luxuryPayroll"));
 			collectedTax += amount;
 			teamSeason.expenses.luxuryTax.amount = amount;
 			teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
 		}
 	}
 
-	const defaultRank = (g.numTeams + 1) / 2;
-	const payteams = payrolls.filter(x => x <= g.salaryCap);
+	const defaultRank = (g.get("numTeams") + 1) / 2;
+	const payteams = payrolls.filter(x => x <= g.get("salaryCap"));
 
 	if (payteams.length > 0 && collectedTax > 0) {
 		const distribute = (collectedTax * 0.5) / payteams.length;
 
 		for (const teamSeason of teamSeasons) {
-			if (payrolls[teamSeason.tid] <= g.salaryCap) {
+			if (payrolls[teamSeason.tid] <= g.get("salaryCap")) {
 				teamSeason.revenues.luxuryTaxShare = {
 					amount: distribute,
 					rank: defaultRank,

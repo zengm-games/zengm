@@ -6,7 +6,7 @@ import { UpdateEvents } from "../../common/types";
 const addSeason = async season => {
 	// In fantasy draft, use temp tid
 	const tid =
-		g.phase === PHASE.FANTASY_DRAFT
+		g.get("phase") === PHASE.FANTASY_DRAFT
 			? PLAYER.UNDRAFTED_FANTASY_TEMP
 			: PLAYER.UNDRAFTED;
 	const playersAll2 = (
@@ -53,14 +53,14 @@ const updateDraftScouting = async (
 		updateEvents.includes("playerMovement")
 	) {
 		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-		const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 		const seasons = await Promise.all([
-			addSeason(g.season + seasonOffset),
-			addSeason(g.season + seasonOffset + 1),
-			addSeason(g.season + seasonOffset + 2),
+			addSeason(g.get("season") + seasonOffset),
+			addSeason(g.get("season") + seasonOffset + 1),
+			addSeason(g.get("season") + seasonOffset + 2),
 		]);
 		return {
-			draftType: g.draftType,
+			draftType: g.get("draftType"),
 			seasons,
 		};
 	}

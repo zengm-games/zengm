@@ -11,8 +11,8 @@ const testRunPicks = async (numNow, numTotal) => {
 	assert.equal(pids.length, numNow);
 	const players = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-			[g.season],
-			[g.season, Infinity],
+			[g.get("season")],
+			[g.get("season"), Infinity],
 		])
 	).filter(p => p.tid === PLAYER.UNDRAFTED);
 	assert.equal(players.length, 70 - numTotal);
@@ -36,26 +36,26 @@ const testDraftUser = async round => {
 		assert.equal(dp.pick, userPick2 - 30);
 	}
 
-	assert.equal(dp.tid, g.userTid);
+	assert.equal(dp.tid, g.get("userTid"));
 	const players = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-			[g.season],
-			[g.season, Infinity],
+			[g.get("season")],
+			[g.get("season"), Infinity],
 		])
 	).filter(p => p.tid === PLAYER.UNDRAFTED);
 	const p = players[0];
 	await draft.selectPlayer(dp, p.pid);
-	assert.equal(p.tid, g.userTid);
+	assert.equal(p.tid, g.get("userTid"));
 };
 
 describe("worker/core/draft/runPicks", () => {
 	beforeAll(async () => {
 		await loadTeamSeasons();
 		idb.league = testHelpers.mockIDBLeague();
-		await draft.genPlayers(g.season, 15.5);
+		await draft.genPlayers(g.get("season"), 15.5);
 		const draftTids = await getDraftTids();
-		userPick1 = draftTids.indexOf(g.userTid) + 1;
-		userPick2 = draftTids.lastIndexOf(g.userTid) + 1;
+		userPick1 = draftTids.indexOf(g.get("userTid")) + 1;
+		userPick2 = draftTids.lastIndexOf(g.get("userTid")) + 1;
 	});
 	afterAll(() => {
 		idb.league = undefined;

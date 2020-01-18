@@ -59,7 +59,7 @@ const processAttrs = (
 ) => {
 	const getSalary = () => {
 		let total = 0;
-		const s = season === undefined ? g.season : season;
+		const s = season === undefined ? g.get("season") : season;
 
 		for (const salary of p.salaries) {
 			if (salary.season === s) {
@@ -72,7 +72,7 @@ const processAttrs = (
 
 	for (const attr of attrs) {
 		if (attr === "age") {
-			const s = season === undefined ? g.season : season;
+			const s = season === undefined ? g.get("season") : season;
 			output.age = s - p.born.year;
 		} else if (attr === "ageAtDeath") {
 			output.ageAtDeath =
@@ -95,15 +95,16 @@ const processAttrs = (
 			}
 
 			// Inject abbrevs
-			output.draft.abbrev = g.teamAbbrevsCache[output.draft.tid];
-			output.draft.originalAbbrev =
-				g.teamAbbrevsCache[output.draft.originalTid];
+			output.draft.abbrev = g.get("teamAbbrevsCache")[output.draft.tid];
+			output.draft.originalAbbrev = g.get("teamAbbrevsCache")[
+				output.draft.originalTid
+			];
 		} else if (attr === "hgtFt") {
 			output.hgtFt = Math.floor(p.hgt / 12);
 		} else if (attr === "hgtIn") {
 			output.hgtIn = p.hgt - 12 * Math.floor(p.hgt / 12);
 		} else if (attr === "contract") {
-			if (g.season === season || season === undefined) {
+			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);
 				output.contract.amount /= 1000; // [millions of dollars]
 			} else {
@@ -121,13 +122,13 @@ const processAttrs = (
 			output.abbrev = helpers.getAbbrev(p.tid);
 		} else if (attr === "teamRegion") {
 			if (p.tid >= 0) {
-				output.teamRegion = g.teamRegionsCache[p.tid];
+				output.teamRegion = g.get("teamRegionsCache")[p.tid];
 			} else {
 				output.teamRegion = "";
 			}
 		} else if (attr === "teamName") {
 			if (p.tid >= 0) {
-				output.teamName = g.teamNamesCache[p.tid];
+				output.teamName = g.get("teamNamesCache")[p.tid];
 			} else if (p.tid === PLAYER.FREE_AGENT) {
 				output.teamName = "Free Agent";
 			} else if (
@@ -138,7 +139,11 @@ const processAttrs = (
 			} else if (p.tid === PLAYER.RETIRED) {
 				output.teamName = "Retired";
 			}
-		} else if (attr === "injury" && season !== undefined && season < g.season) {
+		} else if (
+			attr === "injury" &&
+			season !== undefined &&
+			season < g.get("season")
+		) {
 			output.injury = {
 				type: "Healthy",
 				gamesRemaining: 0,
@@ -539,8 +544,8 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 
 	const keepWithNoStats =
 		(options.showRookies &&
-			p.draft.year >= g.season &&
-			(options.season === g.season || options.season === undefined)) ||
+			p.draft.year >= g.get("season") &&
+			(options.season === g.get("season") || options.season === undefined)) ||
 		(options.showNoStats &&
 			(options.season === undefined || options.season > p.draft.year));
 
@@ -592,7 +597,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
  * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false.
  * @param {boolean=} options.regularSeason Boolean representing whether to return regular season stats or not; default is true.
  * @param {boolean=} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as  players who were just traded for, free agents, etc.); this applies only for regular season stats. To show draft prospects, options.showRookies is needed. Default is false, but if options.stats is empty, this is always true.
- * @param {boolean=} options.showRookies If true (default false), then future draft prospects and rookies drafted in the current season (g.season) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc; and also so prospects can be shown in the watch list. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
+ * @param {boolean=} options.showRookies If true (default false), then future draft prospects and rookies drafted in the current season (g.get("season")) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc; and also so prospects can be shown in the watch list. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
  * @param {boolean=} options.showRetired If true (default false), then players with no ratings for the current season are still returned, with either 0 for every rating and a blank array for skills (retired players) or future ratings (draft prospects). This is currently only used for the watch list, so retired players (and future draft prospects!) can still be watched.
  * @param {boolean=} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
  * @param {boolean=} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.

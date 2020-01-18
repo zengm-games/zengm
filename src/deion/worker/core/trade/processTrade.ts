@@ -50,8 +50,8 @@ const processTrade = async (
 
 			p.ptModifier = 1; // Reset
 
-			if (g.phase <= PHASE.PLAYOFFS) {
-				player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+			if (g.get("phase") <= PHASE.PLAYOFFS) {
+				player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 			}
 
 			await idb.cache.players.put(p);
@@ -66,7 +66,7 @@ const processTrade = async (
 
 	await toUI(["realtimeUpdate", ["playerMovement"]]); // If draft pick was changed...
 
-	if (g.phase === PHASE.DRAFT) {
+	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();
 	}
 
@@ -74,15 +74,15 @@ const processTrade = async (
 		type: "trade",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[tids[0]],
-			g.season,
-		])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(
+			g.get("teamAbbrevsCache")[tids[0]],
+			g.get("season"),
+		])}">${g.get("teamNamesCache")[tids[0]]}</a> traded ${formatAssetsEventLog(
 			tradeSummary.teams[0],
 		)} to the <a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[tids[1]],
-			g.season,
-		])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(
+			g.get("teamAbbrevsCache")[tids[1]],
+			g.get("season"),
+		])}">${g.get("teamNamesCache")[tids[1]]}</a> for ${formatAssetsEventLog(
 			tradeSummary.teams[1],
 		)}.`,
 		showNotification: false,

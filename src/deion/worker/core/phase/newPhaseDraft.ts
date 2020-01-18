@@ -13,7 +13,7 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	const promises: Promise<any>[] = [];
 	await idb.league.players
 		.index("draft.year, retiredYear")
-		.iterate(backboard.bound([g.season - 110], [""]), p => {
+		.iterate(backboard.bound([g.get("season") - 110], [""]), p => {
 			// Skip non-retired players and dead players
 			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
 				return;
@@ -21,10 +21,10 @@ const newPhaseDraft = async (conditions: Conditions) => {
 
 			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
 			const probDeath =
-				0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
+				0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
 
 			if (Math.random() < probDeath) {
-				p.diedYear = g.season;
+				p.diedYear = g.get("season");
 				promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
 			}
 		});
@@ -32,7 +32,7 @@ const newPhaseDraft = async (conditions: Conditions) => {
 
 	// Run lottery only if it hasn't been done yet
 	const draftLotteryResult = await idb.getCopy.draftLotteryResults({
-		season: g.season,
+		season: g.get("season"),
 	});
 
 	if (!draftLotteryResult) {
@@ -43,7 +43,7 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	const players = await idb.cache.players.getAll();
 
 	for (const p of players) {
-		if (p.draft.year === g.season && p.tid >= 0) {
+		if (p.draft.year === g.get("season") && p.tid >= 0) {
 			p.draft.year -= 1;
 			await idb.cache.players.put(p);
 		}

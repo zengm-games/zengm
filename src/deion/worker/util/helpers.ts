@@ -16,7 +16,7 @@ const augmentSeries = async (
 		away?: PlayoffSeriesTeam;
 		home: PlayoffSeriesTeam;
 	}[][],
-	season: number = g.season,
+	season: number = g.get("season"),
 ) => {
 	const teams = await idb.cache.teams.getAll();
 	const teamSeasons = await idb.getCopies.teamSeasons({
@@ -24,21 +24,21 @@ const augmentSeries = async (
 	});
 
 	const setAll = obj => {
-		obj.abbrev = g.teamAbbrevsCache[obj.tid];
-		obj.region = g.teamRegionsCache[obj.tid];
+		obj.abbrev = g.get("teamAbbrevsCache")[obj.tid];
+		obj.region = g.get("teamRegionsCache")[obj.tid];
 		obj.imgURL = teams[obj.tid].imgURL;
 		const teamSeason = teamSeasons[obj.tid];
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
-			tied: g.ties ? 0 : undefined,
+			tied: g.get("ties") ? 0 : undefined,
 		};
 
 		if (teamSeason) {
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
 
-			if (g.ties) {
+			if (g.get("ties")) {
 				obj.regularSeason.tied = teamSeason.tied;
 			}
 		}
@@ -64,7 +64,7 @@ const calcWinp = ({
 	tied: any;
 	won: number;
 }) => {
-	if (!g.ties || typeof tied !== "number") {
+	if (!g.get("ties") || typeof tied !== "number") {
 		if (won + lost > 0) {
 			return won / (won + lost);
 		}
@@ -92,8 +92,8 @@ const correctLinkLid = (
 const defaultBudgetAmount = (popRank: number) => {
 	return (
 		Math.round(
-			(g.salaryCap / 90000) * 1350 +
-				(900 * (g.numTeams - popRank)) / (g.numTeams - 1),
+			(g.get("salaryCap") / 90000) * 1350 +
+				(900 * (g.get("numTeams") - popRank)) / (g.get("numTeams") - 1),
 		) * 10
 	);
 };
@@ -101,29 +101,29 @@ const defaultBudgetAmount = (popRank: number) => {
 const defaultTicketPrice = (popRank: number) => {
 	return parseFloat(
 		(
-			(g.salaryCap / 90000) * 37 +
-			(25 * (g.numTeams - popRank)) / (g.numTeams - 1)
+			(g.get("salaryCap") / 90000) * 37 +
+			(25 * (g.get("numTeams") - popRank)) / (g.get("numTeams") - 1)
 		).toFixed(2),
 	);
 };
 
 const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
 	// If not specified, assume user's team is playing
-	const tid: number = game.tid !== undefined ? game.tid : g.userTid;
+	const tid: number = game.tid !== undefined ? game.tid : g.get("userTid");
 
 	// team0 and team1 are different than they are elsewhere! Here it refers to user and opponent, not home and away
 	const team0 = {
 		tid: tid,
-		abbrev: g.teamAbbrevsCache[tid],
-		region: g.teamRegionsCache[tid],
-		name: g.teamNamesCache[tid],
+		abbrev: g.get("teamAbbrevsCache")[tid],
+		region: g.get("teamRegionsCache")[tid],
+		name: g.get("teamNamesCache")[tid],
 		pts: game.pts,
 	};
 	const team1 = {
 		tid: game.oppTid,
-		abbrev: g.teamAbbrevsCache[game.oppTid],
-		region: g.teamRegionsCache[game.oppTid],
-		name: g.teamNamesCache[game.oppTid],
+		abbrev: g.get("teamAbbrevsCache")[game.oppTid],
+		region: g.get("teamRegionsCache")[game.oppTid],
+		name: g.get("teamNamesCache")[game.oppTid],
 		pts: game.oppPts,
 	};
 	return {
@@ -174,11 +174,11 @@ const getAbbrev = (tid: number | string): string => {
 		return "";
 	}
 
-	if (tid >= g.teamAbbrevsCache.length) {
-		tid = g.userTid;
+	if (tid >= g.get("teamAbbrevsCache").length) {
+		tid = g.get("userTid");
 	}
 
-	return g.teamAbbrevsCache[tid];
+	return g.get("teamAbbrevsCache")[tid];
 };
 
 // Prefer this to addPopRank in new code because it's not mutable
@@ -201,7 +201,7 @@ const getPopRanks = (teamSeasons: TeamSeason[]): number[] => {
 };
 
 const leagueUrl = (components: (number | string)[]): string =>
-	commonHelpers.leagueUrlFactory(g.lid, components);
+	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
 /**
  * Pad an array with nulls or truncate it so that it has a fixed length.
@@ -239,7 +239,7 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 
 const orderByWinp = <T extends any>(
 	teams: T[],
-	season: number = g.season,
+	season: number = g.get("season"),
 ): T[] => {
 	const defaultFuncs = [
 		t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
@@ -313,11 +313,13 @@ const pickDesc = (dp: DraftPick): string => {
 	const extras: string[] = [];
 
 	if (dp.pick > 0) {
-		extras.push(commonHelpers.ordinal((dp.round - 1) * g.numTeams + dp.pick));
+		extras.push(
+			commonHelpers.ordinal((dp.round - 1) * g.get("numTeams") + dp.pick),
+		);
 	}
 
 	if (dp.tid !== dp.originalTid) {
-		extras.push(`from ${g.teamAbbrevsCache[dp.originalTid]}`);
+		extras.push(`from ${g.get("teamAbbrevsCache")[dp.originalTid]}`);
 	}
 
 	if (extras.length > 0) {
@@ -336,7 +338,7 @@ const pickDesc = (dp: DraftPick): string => {
  */
 const resetG = () => {
 	for (const key of Object.keys(g)) {
-		if (key !== "lid") {
+		if (key !== "lid" && typeof g[key] !== "function") {
 			delete g[key];
 		}
 	}

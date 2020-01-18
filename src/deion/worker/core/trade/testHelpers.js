@@ -5,7 +5,7 @@ import { player, trade } from "..";
 const beforeTests = async () => {
 	testHelpers.resetG();
 
-	g.numTeams = 3;
+	g.setWithoutSavingToDB("numTeams", 3);
 
 	await testHelpers.resetCache({
 		players: [
@@ -45,7 +45,7 @@ const beforeTests = async () => {
 const reset = async () => {
 	// Set to a trade with team 1 and no players;
 	await trade.create([
-		{ tid: g.userTid, pids: [], dpids: [] },
+		{ tid: g.get("userTid"), pids: [], dpids: [] },
 		{ tid: 1, pids: [], dpids: [] },
 	]);
 	await trade.clear();

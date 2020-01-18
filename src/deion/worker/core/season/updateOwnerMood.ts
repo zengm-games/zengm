@@ -16,8 +16,8 @@ const updateOwnerMood = async (): Promise<{
 }> => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["won", "playoffRoundsWon", "profit"],
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 	});
 
 	if (!t) {
@@ -26,18 +26,20 @@ const updateOwnerMood = async (): Promise<{
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsByTidSeason",
-		[g.userTid, g.season],
+		[g.get("userTid"), g.get("season")],
 	);
 
 	if (!teamSeason) {
 		throw new Error("Team season not found");
 	}
 
-	const numPlayoffRounds = g.numGamesPlayoffSeries.length;
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
 	const deltas = {
-		wins: (0.25 * (t.seasonAttrs.won - g.numGames / 2)) / (g.numGames / 2),
+		wins:
+			(0.25 * (t.seasonAttrs.won - g.get("numGames") / 2)) /
+			(g.get("numGames") / 2),
 		playoffs: 0,
-		money: g.budget ? (t.seasonAttrs.profit - 15) / 100 : 0,
+		money: g.get("budget") ? (t.seasonAttrs.profit - 15) / 100 : 0,
 	};
 
 	if (t.seasonAttrs.playoffRoundsWon < 0) {
@@ -81,7 +83,7 @@ const updateOwnerMood = async (): Promise<{
 	}
 
 	// Only update owner mood if grace period is over
-	if (g.season >= g.gracePeriodEnd && !g.godMode) {
+	if (g.get("season") >= g.get("gracePeriodEnd") && !g.get("godMode")) {
 		// Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
 		ownerMood.money += cappedDeltas.money;
 		ownerMood.playoffs += cappedDeltas.playoffs;

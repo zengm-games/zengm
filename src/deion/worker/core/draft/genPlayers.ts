@@ -11,7 +11,7 @@ import { g, helpers, logEvent } from "../../util";
  *
  * @memberOf core.draft
  * @param {number} draftYear Year for the draft class.
- * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
+ * @param {?number=} scoutingRank Between 1 and g.get("numTeams"), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
@@ -25,8 +25,8 @@ const genPlayers = async (
 		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 			"teamSeasonsByTidSeason",
 			[
-				[g.userTid, g.season - 2],
-				[g.userTid, g.season],
+				[g.get("userTid"), g.get("season") - 2],
+				[g.get("userTid"), g.get("season")],
 			],
 		);
 		scoutingRank = finances.getRankLastThree(
@@ -93,7 +93,7 @@ const genPlayers = async (
 					}</a> got sick of the haters and decided to show the world how a big baller plays.`,
 					showNotification: false,
 					pids: [pid],
-					tids: [g.userTid],
+					tids: [g.get("userTid")],
 				});
 			}
 		} else if (Math.random() < 1 / 100000) {
@@ -142,7 +142,7 @@ const genPlayers = async (
 					} ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
 					showNotification: false,
 					pids: [pid],
-					tids: [g.userTid],
+					tids: [g.get("userTid")],
 				});
 			}
 		}

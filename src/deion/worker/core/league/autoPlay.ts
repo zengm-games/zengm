@@ -4,25 +4,25 @@ import { g } from "../../util";
 import { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
 
 const autoPlay = async (conditions: Conditions = {}) => {
-	if (g.phase === PHASE.PRESEASON) {
+	if (g.get("phase") === PHASE.PRESEASON) {
 		await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
-	} else if (g.phase === PHASE.REGULAR_SEASON) {
+	} else if (g.get("phase") === PHASE.REGULAR_SEASON) {
 		const numDays = await season.getDaysLeftSchedule();
 		await game.play(numDays, conditions);
-	} else if (g.phase === PHASE.PLAYOFFS) {
+	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		await game.play(100, conditions);
-	} else if (g.phase === PHASE.DRAFT_LOTTERY) {
+	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		await phase.newPhase(PHASE.DRAFT, conditions);
-	} else if (g.phase === PHASE.DRAFT) {
+	} else if (g.get("phase") === PHASE.DRAFT) {
 		await draft.runPicks(false, conditions);
-	} else if (g.phase === PHASE.AFTER_DRAFT) {
+	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
-	} else if (g.phase === PHASE.RESIGN_PLAYERS) {
+	} else if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		await phase.newPhase(PHASE.FREE_AGENCY, conditions);
-	} else if (g.phase === PHASE.FREE_AGENCY) {
-		await freeAgents.play(g.daysLeft, conditions);
+	} else if (g.get("phase") === PHASE.FREE_AGENCY) {
+		await freeAgents.play(g.get("daysLeft"), conditions);
 	} else {
-		throw new Error(`Unknown phase: ${g.phase}`);
+		throw new Error(`Unknown phase: ${g.get("phase")}`);
 	}
 };
 

@@ -195,7 +195,7 @@ const doAwards = async (conditions: Conditions) => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "abbrev", "region", "name", "cid", "did"],
 		seasonAttrs: ["won", "lost", "tied", "winp", "playoffRoundsWon"],
-		season: g.season,
+		season: g.get("season"),
 	});
 	const players = await getPlayers();
 	const { bestRecord, bestRecordConfs } = teamAwards(teams);
@@ -254,7 +254,7 @@ const doAwards = async (conditions: Conditions) => {
 			amount: 5,
 			filter: p => {
 				// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-				return p.draft.year === g.season - 1;
+				return p.draft.year === g.get("season") - 1;
 			},
 			score: mvpScore,
 		},
@@ -275,18 +275,20 @@ const doAwards = async (conditions: Conditions) => {
 	const dpoy = dpoyPlayers[0];
 	const allDefensive = makeTeams(dpoyPlayers);
 	const mipFactor =
-		g.numGames *
-		Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength);
+		g.get("numGames") *
+		Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength);
 	const [mip] = getTopPlayersOffense(
 		{
 			filter: p => {
 				// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
-				if (p.draft.year + 2 >= g.season && p.draft.round === 1) {
+				if (p.draft.year + 2 >= g.get("season") && p.draft.round === 1) {
 					return false;
 				}
 
 				// Must have stats last year!
-				const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
+				const oldStatsAll = p.stats.filter(
+					ps => ps.season === g.get("season") - 1,
+				);
 
 				if (oldStatsAll.length === 0) {
 					return false;
@@ -305,7 +307,9 @@ const doAwards = async (conditions: Conditions) => {
 				return true;
 			},
 			score: p => {
-				const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
+				const oldStatsAll = p.stats.filter(
+					ps => ps.season === g.get("season") - 1,
+				);
 				const oldStats = oldStatsAll[oldStatsAll.length - 1];
 				const ewaAllPrev = p.stats.slice(0, -1).map(ps => ps.ewa);
 				const min = p.currentStats.min * p.currentStats.gp;
@@ -320,17 +324,17 @@ const doAwards = async (conditions: Conditions) => {
 				let score = 0.02 * (ewa - ewaOld) + 0.03 * (per - perOld); // Penalty - lose 0.05 for every mpg last season under 15
 
 				if (minOld < 15 * mipFactor) {
-					score -= 0.05 * (15 * mipFactor - minOld / g.numGames);
+					score -= 0.05 * (15 * mipFactor - minOld / g.get("numGames"));
 				}
 
 				// Penalty - lose additional 0.05 for every mpg last season under 10
 				if (minOld < 15 * mipFactor) {
-					score -= 0.05 * (15 * mipFactor - minOld / g.numGames);
+					score -= 0.05 * (15 * mipFactor - minOld / g.get("numGames"));
 				}
 
 				// Penalty - lose 0.01 for every mpg this season under 30
 				if (min < 30 * mipFactor) {
-					score -= 0.01 * (30 * mipFactor - min / g.numGames);
+					score -= 0.01 * (30 * mipFactor - min / g.get("numGames"));
 				}
 
 				// Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
@@ -356,7 +360,8 @@ const doAwards = async (conditions: Conditions) => {
 	);
 	let finalsMvp;
 	const champTeam = teams.find(
-		t => t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
+		t =>
+			t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length,
 	);
 
 	if (champTeam) {
@@ -371,7 +376,7 @@ const doAwards = async (conditions: Conditions) => {
 			// Only the champions, only playoff stats
 			attrs: ["pid", "name", "tid", "abbrev"],
 			stats: ["pts", "trb", "ast", "ws", "ewa"],
-			season: g.season,
+			season: g.get("season"),
 			playoffs: true,
 			regularSeason: false,
 			tid: champTid,
@@ -406,7 +411,7 @@ const doAwards = async (conditions: Conditions) => {
 		allLeague,
 		allDefensive,
 		allRookie,
-		season: g.season,
+		season: g.get("season"),
 	};
 	const awardNames = {
 		mvp: "Most Valuable Player",

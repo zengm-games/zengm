@@ -8,9 +8,9 @@ const updateCustomizePlayer = async (
 	inputs: ViewInput<"customizePlayer">,
 	updateEvents: UpdateEvents,
 ) => {
-	if (!g.godMode) {
+	if (!g.get("godMode")) {
 		return {
-			godMode: g.godMode,
+			godMode: g.get("godMode"),
 		};
 	}
 
@@ -44,8 +44,8 @@ const updateCustomizePlayer = async (
 			const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 				"teamSeasonsByTidSeason",
 				[
-					[g.userTid, g.season - 2],
-					[g.userTid, g.season],
+					[g.get("userTid"), g.get("season") - 2],
+					[g.get("userTid"), g.get("season")],
 				],
 			);
 			const scoutingRank = finances.getRankLastThree(
@@ -53,7 +53,13 @@ const updateCustomizePlayer = async (
 				"expenses",
 				"scouting",
 			);
-			p = player.generate(PLAYER.FREE_AGENT, 20, g.season, false, scoutingRank);
+			p = player.generate(
+				PLAYER.FREE_AGENT,
+				20,
+				g.get("season"),
+				false,
+				scoutingRank,
+			);
 			appearanceOption = "Cartoon Face";
 			p.imgURL = "http://";
 		} else if (typeof inputs.pid === "number") {
@@ -82,12 +88,12 @@ const updateCustomizePlayer = async (
 
 		return {
 			appearanceOption,
-			godMode: g.godMode,
-			minContract: g.minContract,
+			godMode: g.get("godMode"),
+			minContract: g.get("minContract"),
 			originalTid,
 			p,
-			phase: g.phase,
-			season: g.season,
+			phase: g.get("phase"),
+			season: g.get("season"),
 			teams,
 		};
 	}

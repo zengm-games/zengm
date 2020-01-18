@@ -58,9 +58,9 @@ const allStarMVP = async (
 			mvp.name
 		}</a> (<a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[p.tid],
-			g.season,
-		])}">${g.teamAbbrevsCache[p.tid]}</a>) won the All-Star MVP award.`,
+			g.get("teamAbbrevsCache")[p.tid],
+			g.get("season"),
+		])}">${g.get("teamAbbrevsCache")[p.tid]}</a>) won the All-Star MVP award.`,
 	);
 	await saveAwardsByPlayer(
 		[
@@ -84,8 +84,8 @@ const writeGameStats = async (
 		gid: results.gid,
 		att,
 		clutchPlays: [],
-		season: g.season,
-		playoffs: g.phase === PHASE.PLAYOFFS,
+		season: g.get("season"),
+		playoffs: g.get("phase") === PHASE.PLAYOFFS,
 		overtimes: results.overtimes,
 		won: {
 			tid: 0,
@@ -106,7 +106,7 @@ const writeGameStats = async (
 	let allStars;
 
 	if (allStarGame) {
-		allStars = await idb.cache.allStars.get(g.season);
+		allStars = await idb.cache.allStars.get(g.get("season"));
 	}
 
 	for (let t = 0; t < 2; t++) {
@@ -143,35 +143,46 @@ const writeGameStats = async (
 	gameStats.lost.pts = results.team[tl].stat.pts;
 	const tied = results.team[0].stat.pts === results.team[1].stat.pts; // Event log
 
-	if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
+	if (
+		results.team[0].id === g.get("userTid") ||
+		results.team[1].id === g.get("userTid")
+	) {
 		let text;
 
 		if (tied) {
 			const otherTid =
-				results.team[0].id === g.userTid
+				results.team[0].id === g.get("userTid")
 					? results.team[1].id
 					: results.team[0].id;
 			text = `<span style="color: yellow; font-weight: bold; padding-right: 8px">T</span> Your team tied the <a href="${helpers.leagueUrl(
-				["roster", g.teamAbbrevsCache[otherTid], g.season],
-			)}">${g.teamNamesCache[otherTid]}`;
-		} else if (results.team[tw].id === g.userTid) {
+				["roster", g.get("teamAbbrevsCache")[otherTid], g.get("season")],
+			)}">${g.get("teamNamesCache")[otherTid]}`;
+		} else if (results.team[tw].id === g.get("userTid")) {
 			text = `<span style="color: green; font-weight: bold; padding-right: 3px">W</span> Your team defeated the <a href="${helpers.leagueUrl(
-				["roster", g.teamAbbrevsCache[results.team[tl].id], g.season],
-			)}">${g.teamNamesCache[results.team[tl].id]}`;
+				[
+					"roster",
+					g.get("teamAbbrevsCache")[results.team[tl].id],
+					g.get("season"),
+				],
+			)}">${g.get("teamNamesCache")[results.team[tl].id]}`;
 		} else {
 			text = `<span style="color: red; font-weight: bold; padding-right: 8px">L</span> Your team lost to the <a href="${helpers.leagueUrl(
-				["roster", g.teamAbbrevsCache[results.team[tw].id], g.season],
-			)}">${g.teamNamesCache[results.team[tw].id]}`;
+				[
+					"roster",
+					g.get("teamAbbrevsCache")[results.team[tw].id],
+					g.get("season"),
+				],
+			)}">${g.get("teamNamesCache")[results.team[tw].id]}`;
 		}
 
 		text += `</a> <a href="${helpers.leagueUrl([
 			"game_log",
-			g.teamAbbrevsCache[g.userTid],
-			g.season,
+			g.get("teamAbbrevsCache")[g.get("userTid")],
+			g.get("season"),
 			results.gid,
 		])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
 		let type: LogEventType =
-			results.team[tw].id === g.userTid ? "gameWon" : "gameLost";
+			results.team[tw].id === g.get("userTid") ? "gameWon" : "gameLost";
 
 		if (tied) {
 			type = "gameTied";
@@ -193,7 +204,7 @@ const writeGameStats = async (
 			} <a href="${helpers.leagueUrl([
 				"game_log",
 				"special",
-				g.season,
+				g.get("season"),
 				results.gid,
 			])}">${results.team[tw].stat.pts}-${
 				results.team[tl].stat.pts
@@ -204,7 +215,7 @@ const writeGameStats = async (
 					type,
 					text,
 					saveToDb: false,
-					tids: [g.userTid],
+					tids: [g.get("userTid")],
 				},
 				conditions,
 			);
@@ -224,14 +235,16 @@ const writeGameStats = async (
 		const endPart = allStarGame
 			? `${won ? "win" : "loss"} in the All-Star Game`
 			: `${won ? "win over" : "loss to"} the ${
-					g.teamNamesCache[results.team[indOther].id]
+					g.get("teamNamesCache")[results.team[indOther].id]
 			  }`;
 		clutchPlay.text += ` in ${
 			results.team[indTeam].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
 		} <a href="${helpers.leagueUrl([
 			"game_log",
-			allStarGame ? "special" : g.teamAbbrevsCache[results.team[indTeam].id],
-			g.season,
+			allStarGame
+				? "special"
+				: g.get("teamAbbrevsCache")[results.team[indTeam].id],
+			g.get("season"),
 			results.gid,
 		])}">${score}</a> ${endPart}.`;
 
@@ -243,7 +256,7 @@ const writeGameStats = async (
 
 			if (entry) {
 				clutchPlay.tids = [entry.tid];
-				clutchPlay.showNotification = entry.tid === g.userTid;
+				clutchPlay.showNotification = entry.tid === g.get("userTid");
 			}
 		}
 

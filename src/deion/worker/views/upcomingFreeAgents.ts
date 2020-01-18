@@ -12,7 +12,7 @@ const updateUpcomingFreeAgents = async (
 			? ["min", "pts", "trb", "ast", "per"]
 			: ["gp", "keyStats", "av"];
 	let players: any[] =
-		g.phase === PHASE.RESIGN_PLAYERS
+		g.get("phase") === PHASE.RESIGN_PLAYERS
 			? await idb.getCopies.players({
 					tid: PLAYER.FREE_AGENT,
 			  })
@@ -25,7 +25,7 @@ const updateUpcomingFreeAgents = async (
 		players[i].contractDesired = player.genContract(players[i], false, false); // No randomization
 
 		players[i].contractDesired.amount /= 1000;
-		players[i].contractDesired.exp += inputs.season - g.season;
+		players[i].contractDesired.exp += inputs.season - g.get("season");
 	}
 
 	players = await idb.getCopies.playersPlus(players, {
@@ -42,13 +42,13 @@ const updateUpcomingFreeAgents = async (
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
-		season: g.season,
+		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
 	});
 	return {
-		phase: g.phase,
+		phase: g.get("phase"),
 		players,
 		season: inputs.season,
 		stats,

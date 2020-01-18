@@ -30,7 +30,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 		const maxAges: any = { ...ages };
 
 		for (const key of Object.keys(maxAges)) {
-			maxAges[key] = g.season - p.draft.year;
+			maxAges[key] = g.get("season") - p.draft.year;
 		}
 
 		for (let j = 0; j < 20; j++) {
@@ -40,7 +40,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 			for (const key of Object.keys(ratings)) {
 				if (p.ratings[0][key] > maxRatings[key]) {
 					maxRatings[key] = p.ratings[0][key];
-					maxAges[key] = g.season - p.born.year;
+					maxAges[key] = g.get("season") - p.born.year;
 				}
 			}
 		}

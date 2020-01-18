@@ -8,10 +8,10 @@ const updateStandings = async (
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.season && updateEvents.includes("gameSim")) ||
+		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season
 	) {
-		const playoffsByConference = g.confs.length === 2;
+		const playoffsByConference = g.get("confs").length === 2;
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
@@ -40,7 +40,7 @@ const updateStandings = async (
 			inputs.season,
 		);
 		const numPlayoffTeams =
-			2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
+			2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
 		const confs: {
 			cid: number;
 			name: string;
@@ -48,13 +48,13 @@ const updateStandings = async (
 			teams: any[];
 		}[] = [];
 
-		for (let i = 0; i < g.confs.length; i++) {
+		for (let i = 0; i < g.get("confs").length; i++) {
 			const playoffsRank: number[] = [];
 			const confTeams: any[] = [];
 			let j = 0;
 
 			for (const t of teams) {
-				if (g.confs[i].cid === t.cid) {
+				if (g.get("confs")[i].cid === t.cid) {
 					playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
 
 					confTeams.push(helpers.deepCopy(t));
@@ -69,20 +69,20 @@ const updateStandings = async (
 						);
 					}
 
-					confTeams[j].highlight = confTeams[j].tid === g.userTid;
+					confTeams[j].highlight = confTeams[j].tid === g.get("userTid");
 					j += 1;
 				}
 			}
 
 			confs.push({
-				cid: g.confs[i].cid,
-				name: g.confs[i].name,
+				cid: g.get("confs")[i].cid,
+				name: g.get("confs")[i].name,
 				divs: [],
 				teams: playoffsByConference ? confTeams : [],
 			});
 
-			for (const div of g.divs) {
-				if (div.cid === g.confs[i].cid) {
+			for (const div of g.get("divs")) {
+				if (div.cid === g.get("confs")[i].cid) {
 					const divTeams: any[] = [];
 					let k = 0;
 
@@ -105,7 +105,7 @@ const updateStandings = async (
 								divTeams[k].playoffsRank = null;
 							}
 
-							divTeams[k].highlight = divTeams[k].tid === g.userTid;
+							divTeams[k].highlight = divTeams[k].tid === g.get("userTid");
 							k += 1;
 						}
 					}
@@ -153,7 +153,7 @@ const updateStandings = async (
 						);
 					}
 
-					allTeams[j].highlight = allTeams[j].tid === g.userTid;
+					allTeams[j].highlight = allTeams[j].tid === g.get("userTid");
 					j += 1;
 				}
 			}
@@ -165,7 +165,7 @@ const updateStandings = async (
 			numPlayoffTeams,
 			playoffsByConference,
 			season: inputs.season,
-			ties: g.ties,
+			ties: g.get("ties"),
 		};
 	}
 };

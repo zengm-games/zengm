@@ -32,18 +32,19 @@ const release = async (p: Player, justDrafted: boolean) => {
 		type: "release",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.teamAbbrevsCache[p.tid],
-			g.season,
-		])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl([
-			"player",
-			p.pid,
-		])}">${p.firstName} ${p.lastName}</a>.`,
+			g.get("teamAbbrevsCache")[p.tid],
+			g.get("season"),
+		])}">${
+			g.get("teamNamesCache")[p.tid]
+		}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${
+			p.firstName
+		} ${p.lastName}</a>.`,
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],
 	});
 	const baseMoods = await genBaseMoods();
-	addToFreeAgents(p, g.phase, baseMoods);
+	addToFreeAgents(p, g.get("phase"), baseMoods);
 	await idb.cache.players.put(p);
 };
 

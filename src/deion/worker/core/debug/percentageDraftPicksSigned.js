@@ -5,8 +5,8 @@ const percentageDraftPicksSigned = async () => {
 	const players = await idb.getCopies.players();
 
 	const counts = {};
-	for (let round = 1; round <= g.numDraftRounds; round++) {
-		for (let pick = 1; pick <= g.numTeams; pick++) {
+	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
+		for (let pick = 1; pick <= g.get("numTeams"); pick++) {
 			counts[`${round}-${pick}`] = {
 				signed: 0,
 				total: 0,
@@ -18,7 +18,7 @@ const percentageDraftPicksSigned = async () => {
 		if (
 			p.draft.round >= 1 &&
 			p.draft.pick >= 1 &&
-			p.draft.year >= g.startingSeason
+			p.draft.year >= g.get("startingSeason")
 		) {
 			const key = `${p.draft.round}-${p.draft.pick}`;
 			counts[key].total += 1;

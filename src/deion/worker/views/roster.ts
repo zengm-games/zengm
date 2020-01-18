@@ -18,7 +18,7 @@ const updateRoster = async (
 ) => {
 	if (
 		updateEvents.includes("watchList") ||
-		(inputs.season === g.season &&
+		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement") ||
 				updateEvents.includes("newPhase"))) ||
@@ -30,29 +30,31 @@ const updateRoster = async (
 				? ["gp", "min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"];
 		const editable =
-			inputs.season === g.season &&
-			inputs.tid === g.userTid &&
+			inputs.season === g.get("season") &&
+			inputs.tid === g.get("userTid") &&
 			process.env.SPORT === "basketball";
-		const showRelease = inputs.season === g.season && inputs.tid === g.userTid;
+		const showRelease =
+			inputs.season === g.get("season") && inputs.tid === g.get("userTid");
 		const vars: any = {
 			abbrev: inputs.abbrev,
-			budget: g.budget,
-			currentSeason: g.season,
+			budget: g.get("budget"),
+			currentSeason: g.get("season"),
 			editable,
-			maxRosterSize: g.maxRosterSize,
-			numConfs: g.confs.length,
-			numPlayoffRounds: g.numGamesPlayoffSeries.length,
-			phase: g.phase,
-			salaryCap: g.salaryCap / 1000,
+			maxRosterSize: g.get("maxRosterSize"),
+			numConfs: g.get("confs").length,
+			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
+			phase: g.get("phase"),
+			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
 			showRelease,
-			showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
+			showTradeFor:
+				inputs.season === g.get("season") && inputs.tid !== g.get("userTid"),
 			stats,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 		const seasonAttrs = ["profit", "won", "lost", "playoffRoundsWon"];
 
-		if (g.ties) {
+		if (g.get("ties")) {
 			seasonAttrs.push("tied");
 		}
 
@@ -81,13 +83,13 @@ const updateRoster = async (
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
 		const stats2 = [...stats, "yearsWithTeam"];
 
-		if (inputs.season === g.season) {
+		if (inputs.season === g.get("season")) {
 			// Show players currently on the roster
 			const [schedule, playersAll] = await Promise.all([
 				season.getSchedule(),
 				idb.cache.players.indexGetAll("playersByTid", inputs.tid),
 			]);
-			const payroll = await team.getPayroll(inputs.tid); // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
+			const payroll = await team.getPayroll(inputs.tid); // numGamesRemaining doesn't need to be calculated except for g.get("userTid"), but it is.
 
 			let numGamesRemaining = 0;
 
@@ -121,9 +123,10 @@ const updateRoster = async (
 			for (let i = 0; i < players.length; i++) {
 				// Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
 				if (
-					inputs.tid === g.userTid &&
-					(g.phase !== PHASE.PLAYOFFS || players.length > g.maxRosterSize) &&
-					!g.gameOver &&
+					inputs.tid === g.get("userTid") &&
+					(g.get("phase") !== PHASE.PLAYOFFS ||
+						players.length > g.get("maxRosterSize")) &&
+					!g.get("gameOver") &&
 					players.length > 5
 				) {
 					players[i].canRelease = true;

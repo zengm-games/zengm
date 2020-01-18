@@ -16,7 +16,7 @@ const generate = (
 	}
 
 	const { heightInInches, ratings } = overrides.core.player.genRatings(
-		newLeague ? g.startingSeason : draftYear,
+		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingRank,
 	);
 	const { country, firstName, lastName } = name();
@@ -29,7 +29,7 @@ const generate = (
 	const p = {
 		awards: [],
 		born: {
-			year: g.season - age,
+			year: g.get("season") - age,
 			loc: country,
 		},
 		college: "",
@@ -50,7 +50,7 @@ const generate = (
 		},
 		face: face.generate(),
 		firstName,
-		freeAgentMood: Array(g.numTeams).fill(0),
+		freeAgentMood: Array(g.get("numTeams")).fill(0),
 		gamesUntilTradable: 0,
 		hgt: heightInInches,
 		hof: false,

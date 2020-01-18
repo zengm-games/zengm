@@ -10,7 +10,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 	beforeAll(() => {
 		testHelpers.resetG(); // Two teams: user and AI
 
-		g.numTeams = 2;
+		g.setWithoutSavingToDB("numTeams", 2);
 	});
 
 	// resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and	// 1 free agent with a minimum contract.
@@ -25,7 +25,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 				const p = player.generate(tid, 30, 2017, true, 15.5);
 
 				if (tid === PLAYER.FREE_AGENT) {
-					p.contract.amount = g.minContract;
+					p.contract.amount = g.get("minContract");
 				}
 
 				players.push(p);
@@ -51,7 +51,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		assert.equal(userTeamSizeError, undefined); // Confirm players added up to limit
 
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
-		assert.equal(players.length, g.minRosterSize);
+		assert.equal(players.length, g.get("minRosterSize"));
 	});
 	test("return error message when AI team needs to add a player but there is none", async () => {
 		await resetCacheWithPlayers({
@@ -91,7 +91,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		// Confirm roster size under limit
 		let players = await idb.cache.players.indexGetAll(
 			"playersByTid",
-			g.userTid,
+			g.get("userTid"),
 		);
 		assert.equal(players.length, 9); // Confirm roster size error and no auto-signing of players
 
@@ -101,7 +101,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 			assert(userTeamSizeError.includes("less"));
 			assert(userTeamSizeError.includes("minimum"));
 		}
-		players = await idb.cache.players.indexGetAll("playersByTid", g.userTid);
+		players = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
 		assert.equal(players.length, 9);
 	});
 	test("return error message when user team is over roster limit", async () => {
@@ -113,7 +116,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		// Confirm roster size over limit
 		let players = await idb.cache.players.indexGetAll(
 			"playersByTid",
-			g.userTid,
+			g.get("userTid"),
 		);
 		assert.equal(players.length, 24); // Confirm roster size error and no auto-release of players
 
@@ -123,7 +126,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 			assert(userTeamSizeError.includes("more"));
 			assert(userTeamSizeError.includes("maximum"));
 		}
-		players = await idb.cache.players.indexGetAll("playersByTid", g.userTid);
+		players = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			g.get("userTid"),
+		);
 		assert.equal(players.length, 24);
 	});
 });

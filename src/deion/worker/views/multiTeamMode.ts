@@ -15,18 +15,18 @@ const updateMultiTeamMode = async (
 			name: string;
 		}[] = [];
 
-		for (let i = 0; i < g.numTeams; i++) {
+		for (let i = 0; i < g.get("numTeams"); i++) {
 			teams.push({
 				tid: i,
-				name: `${g.teamRegionsCache[i]} ${g.teamNamesCache[i]}`,
+				name: `${g.get("teamRegionsCache")[i]} ${g.get("teamNamesCache")[i]}`,
 			});
 		}
 
 		return {
-			phase: g.phase,
+			phase: g.get("phase"),
 			teams,
-			userTid: g.userTid,
-			userTids: g.userTids,
+			userTid: g.get("userTid"),
+			userTids: g.get("userTids"),
 		};
 	}
 };

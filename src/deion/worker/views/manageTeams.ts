@@ -5,7 +5,7 @@ const updateTeamInfo = async () => {
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors"],
 		seasonAttrs: ["pop", "stadiumCapacity"],
-		season: g.season,
+		season: g.get("season"),
 	});
 
 	for (const t of teams) {
@@ -15,12 +15,12 @@ const updateTeamInfo = async () => {
 	}
 
 	return {
-		defaultStadiumCapacity: g.defaultStadiumCapacity,
-		confs: g.confs,
-		divs: g.divs,
-		godMode: g.godMode,
-		numTeams: g.numTeams,
-		phase: g.phase,
+		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
+		confs: g.get("confs"),
+		divs: g.get("divs"),
+		godMode: g.get("godMode"),
+		numTeams: g.get("numTeams"),
+		phase: g.get("phase"),
 		teams,
 	};
 };

@@ -18,8 +18,8 @@ const get = slug => {
 describe("basketball/worker/util/account/checkAchievement", () => {
 	beforeAll(async () => {
 		testHelpers.resetG();
-		g.season = 2013;
-		g.userTid = 7;
+		g.setWithoutSavingToDB("season", 2013);
+		g.setWithoutSavingToDB("userTid", 7);
 
 		const teamsDefault = helpers.getTeamsDefault();
 		await testHelpers.resetCache({
@@ -830,7 +830,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
-				[g.userTid, g.season],
+				[g.get("userTid"), g.get("season")],
 			);
 			teamSeason.won = 70;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -1101,7 +1101,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			await idb.cache.playoffSeries.put(ps);
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
-				[g.userTid, g.season],
+				[g.get("userTid"), g.get("season")],
 			);
 			teamSeason.won = 82;
 			teamSeason.lost = 0;
@@ -1113,7 +1113,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 		test("don't award achievement without 82-0 regular season", async () => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
-				[g.userTid, g.season],
+				[g.get("userTid"), g.get("season")],
 			);
 			teamSeason.won = 82;
 			teamSeason.lost = 1;
@@ -1389,7 +1389,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			await idb.cache.playoffSeries.put(ps);
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
-				[g.userTid, g.season],
+				[g.get("userTid"), g.get("season")],
 			);
 			teamSeason.won = 82;
 			teamSeason.lost = 0;
@@ -1601,11 +1601,11 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			assert.equal(awarded, false);
 
 			const p = (await idb.cache.players.getAll())[0];
-			p.tid = g.userTid;
-			p.draft.tid = g.userTid;
+			p.tid = g.get("userTid");
+			p.draft.tid = g.get("userTid");
 			p.draft.round = 1;
 			p.draft.pick = 20;
-			p.draft.year = g.season - 1;
+			p.draft.year = g.get("season") - 1;
 			await idb.cache.players.put(p);
 
 			// ROY is pid 1 on tid 7
@@ -1637,7 +1637,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 		});
 		test("don't award achievement if not drafted by user", async () => {
 			const p = (await idb.cache.players.getAll())[0];
-			p.tid = g.userTid;
+			p.tid = g.get("userTid");
 			p.draft.tid = 15;
 			await idb.cache.players.put(p);
 
@@ -1646,7 +1646,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 		});
 		test("don't award achievement if lottery pick", async () => {
 			const p = (await idb.cache.players.getAll())[0];
-			p.draft.tid = g.userTid;
+			p.draft.tid = g.get("userTid");
 			p.draft.pick = 7;
 			await idb.cache.players.put(p);
 
@@ -1656,7 +1656,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 		test("don't award achievement if old pick", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 			p.draft.pick = 15;
-			p.draft.year = g.season - 2;
+			p.draft.year = g.get("season") - 2;
 			await idb.cache.players.put(p);
 
 			const awarded = await get("sleeper_pick").check();
@@ -1680,7 +1680,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			};
 			await idb.cache.awards.put(awards);
 
-			p.draft.year = g.season - 1;
+			p.draft.year = g.get("season") - 1;
 			await idb.cache.players.put(p);
 
 			const awarded = await get("sleeper_pick").check();

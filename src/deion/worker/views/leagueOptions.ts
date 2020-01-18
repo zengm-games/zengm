@@ -7,10 +7,10 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("gameAttributes")
 	) {
 		return {
-			autoDeleteOldBoxScores: g.autoDeleteOldBoxScores,
-			difficulty: g.difficulty,
-			stopOnInjury: g.stopOnInjury,
-			stopOnInjuryGames: g.stopOnInjuryGames,
+			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
+			difficulty: g.get("difficulty"),
+			stopOnInjury: g.get("stopOnInjury"),
+			stopOnInjuryGames: g.get("stopOnInjuryGames"),
 		};
 	}
 };

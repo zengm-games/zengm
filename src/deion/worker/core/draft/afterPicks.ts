@@ -7,7 +7,7 @@ import { Conditions } from "../../../common/types";
 const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {
 		// Fantasy draft special case!
-		if (g.phase === PHASE.FANTASY_DRAFT) {
+		if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 			// Undrafted players become free agents
 			const baseMoods = await player.genBaseMoods();
 			const playersUndrafted = await idb.cache.players.indexGetAll(
@@ -32,7 +32,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 			}
 
 			await league.setGameAttributes({
-				phase: g.nextPhase,
+				phase: g.get("nextPhase"),
 				nextPhase: undefined,
 			});
 			await updatePhase();

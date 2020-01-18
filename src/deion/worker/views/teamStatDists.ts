@@ -8,7 +8,7 @@ const updateTeams = async (
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.season &&
+		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		inputs.season !== state.season

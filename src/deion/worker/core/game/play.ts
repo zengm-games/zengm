@@ -51,7 +51,7 @@ const play = async (
 		lock.set("gameSim", false);
 
 		// Check to see if the season is over
-		if (g.phase < PHASE.PLAYOFFS) {
+		if (g.get("phase") < PHASE.PLAYOFFS) {
 			const schedule = await season.getSchedule();
 
 			if (schedule.length === 0) {
@@ -100,7 +100,7 @@ const play = async (
 		const promises: Promise<any>[] = [];
 
 		// Update playoff series W/L
-		if (g.phase === PHASE.PLAYOFFS) {
+		if (g.get("phase") === PHASE.PLAYOFFS) {
 			promises.push(updatePlayoffSeries(results, conditions));
 		}
 
@@ -156,7 +156,10 @@ const play = async (
 					p.lastName
 				}</a>`;
 
-				if (p.tid === g.userTid && !pidsInjuredOneGameOrLess.has(p.pid)) {
+				if (
+					p.tid === g.get("userTid") &&
+					!pidsInjuredOneGameOrLess.has(p.pid)
+				) {
 					healedTexts.push(healedText);
 				}
 
@@ -204,10 +207,13 @@ const play = async (
 		const updateEvents = ["gameSim"];
 
 		// Tragic deaths only happen during the regular season!
-		if (g.phase !== PHASE.PLAYOFFS && Math.random() < g.tragicDeathRate) {
+		if (
+			g.get("phase") !== PHASE.PLAYOFFS &&
+			Math.random() < g.get("tragicDeathRate")
+		) {
 			await player.killOne(conditions);
 
-			if (g.stopOnInjury) {
+			if (g.get("stopOnInjury")) {
 				lock.set("stopGameSim", true);
 			}
 
@@ -215,7 +221,8 @@ const play = async (
 		}
 
 		const playoffsOver =
-			g.phase === PHASE.PLAYOFFS && (await season.newSchedulePlayoffsDay());
+			g.get("phase") === PHASE.PLAYOFFS &&
+			(await season.newSchedulePlayoffsDay());
 
 		let raw;
 		let url;
@@ -277,8 +284,8 @@ const play = async (
 
 		let schedule = await season.getSchedule(true); // Stop if no games
 
-		// This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-		if (schedule.length === 0 && g.phase !== PHASE.PLAYOFFS) {
+		// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
+		if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {
 			return cbNoGames();
 		}
 
@@ -292,7 +299,7 @@ const play = async (
 		const teams = await loadTeams(Array.from(tids)); // Play games
 
 		// Will loop through schedule and simulate all games
-		if (schedule.length === 0 && g.phase === PHASE.PLAYOFFS) {
+		if (schedule.length === 0 && g.get("phase") === PHASE.PLAYOFFS) {
 			// Sometimes the playoff schedule isn't made the day before, so make it now
 			// This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 			await season.newSchedulePlayoffsDay();
@@ -316,7 +323,7 @@ const play = async (
 					lock.set("stopGameSim", false);
 				}
 
-				if (g.phase !== PHASE.PLAYOFFS) {
+				if (g.get("phase") !== PHASE.PLAYOFFS) {
 					await freeAgents.decreaseDemands();
 					await freeAgents.autoSign();
 

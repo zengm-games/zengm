@@ -15,11 +15,11 @@ import { TradePickValues } from "../../../common/types";
 const getPickValues = async (): Promise<TradePickValues> => {
 	const estValues: TradePickValues = {};
 	let maxLength = 0;
-	const seasonOffset = g.phase >= PHASE.RESIGN_PLAYERS ? 1 : 0;
+	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
 	for (
-		let draftYear = g.season + seasonOffset;
-		draftYear < g.season + seasonOffset + 3;
+		let draftYear = g.get("season") + seasonOffset;
+		draftYear < g.get("season") + seasonOffset + 3;
 		draftYear++
 	) {
 		const players = (
@@ -40,18 +40,20 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	}
 
 	// Handle case where draft is in progress
-	if (g.phase === PHASE.DRAFT) {
+	if (g.get("phase") === PHASE.DRAFT) {
 		// See what the lowest remaining pick is
-		const numPicks = 2 * g.numTeams;
+		const numPicks = 2 * g.get("numTeams");
 		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
-			dp => dp.season === g.season,
+			dp => dp.season === g.get("season"),
 		);
 		const diff = numPicks - draftPicks.length;
 
 		if (diff > 0) {
 			// Value of 50 is arbitrary since these entries should never appear in a trade since the picks don't exist anymore
 			const fakeValues = Array(diff).fill(50);
-			estValues[g.season] = fakeValues.concat(estValues[g.season]);
+			estValues[g.get("season")] = fakeValues.concat(
+				estValues[g.get("season")],
+			);
 		}
 	}
 
@@ -62,8 +64,8 @@ const getPickValues = async (): Promise<TradePickValues> => {
 			.filter(season => {
 				// Hacky, because 50 could be the placeholder or a real value
 				if (
-					g.phase === PHASE.DRAFT &&
-					season === String(g.season) &&
+					g.get("phase") === PHASE.DRAFT &&
+					season === String(g.get("season")) &&
 					estValues[season][i] === 50
 				) {
 					return false;

@@ -15,7 +15,7 @@ const getDraftTids = async () => {
 const loadTeamSeasons = async () => {
 	testHelpers.resetG();
 	await testHelpers.resetCache();
-	g.draftType = "nba1994"; // Load static data
+	g.setWithoutSavingToDB("draftType", "nba1994"); // Load static data
 
 	for (const st of sampleTiebreakers) {
 		const t = helpers.deepCopy(st);

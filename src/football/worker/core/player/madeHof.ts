@@ -48,7 +48,7 @@ const madeHof = (
 	}
 
 	// Fudge factor for players generated when the league started
-	const fudgeSeasons = g.startingSeason - p.draft.year - 7;
+	const fudgeSeasons = g.get("startingSeason") - p.draft.year - 7;
 
 	if (fudgeSeasons > 0) {
 		total += av[0] * fudgeSeasons;

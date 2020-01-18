@@ -28,7 +28,7 @@ const [useLocal, local] = create<
 	showNagModal: false,
 	sidebarOpen: false,
 	startingSeason: 0,
-	statusText: "",
+	statusText: "Idle",
 	teamAbbrevsCache: [],
 	teamNamesCache: [],
 	teamRegionsCache: [],
@@ -45,6 +45,7 @@ const [useLocal, local] = create<
 	dropdownFields: {},
 	moreInfoAbbrev: undefined,
 	moreInfoSeason: undefined,
+
 	actions: {
 		// Reset any values specific to a league
 		resetLeague() {
@@ -58,7 +59,7 @@ const [useLocal, local] = create<
 				playMenuOptions: [],
 				season: 0,
 				startingSeason: 0,
-				statusText: "",
+				statusText: "Idle",
 				teamAbbrevsCache: [],
 				teamNamesCache: [],
 				teamRegionsCache: [],

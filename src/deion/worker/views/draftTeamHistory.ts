@@ -41,10 +41,10 @@ const updateDraftTeamHistory = async (
 		};
 	});
 	const abbrev = inputs.abbrev;
-	const userAbbrev = g.teamAbbrevsCache[g.userTid];
+	const userAbbrev = g.get("teamAbbrevsCache")[g.get("userTid")];
 	return {
 		abbrev,
-		draftType: g.draftType,
+		draftType: g.get("draftType"),
 		players,
 		stats,
 		userAbbrev,

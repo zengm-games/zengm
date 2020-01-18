@@ -10,7 +10,7 @@ const updateLeagueFinances = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.season !== state.season ||
-		inputs.season === g.season
+		inputs.season === g.get("season")
 	) {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],
@@ -26,16 +26,16 @@ const updateLeagueFinances = async (
 			season: inputs.season,
 		});
 		return {
-			budget: g.budget,
-			currentSeason: g.season,
-			hardCap: g.hardCap,
+			budget: g.get("budget"),
+			currentSeason: g.get("season"),
+			hardCap: g.get("hardCap"),
 			season: inputs.season,
-			salaryCap: g.salaryCap / 1000,
-			minPayroll: g.minPayroll / 1000,
-			luxuryPayroll: g.luxuryPayroll / 1000,
-			luxuryTax: g.luxuryTax,
+			salaryCap: g.get("salaryCap") / 1000,
+			minPayroll: g.get("minPayroll") / 1000,
+			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			luxuryTax: g.get("luxuryTax"),
 			teams,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

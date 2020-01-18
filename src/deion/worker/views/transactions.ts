@@ -44,7 +44,7 @@ const updateEventLog = async (
 			events = events.filter(event => event.type === inputs.eventType);
 		}
 
-		events.forEach(helpers.correctLinkLid.bind(null, g.lid));
+		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		return {
 			abbrev: inputs.abbrev,
 			events,

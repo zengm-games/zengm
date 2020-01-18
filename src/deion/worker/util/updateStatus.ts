@@ -21,17 +21,17 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 		// populate statusText in most situations (just call with no argument).
 		let defaultStatusText = "Idle";
 
-		if (g.gameOver) {
+		if (g.get("gameOver")) {
 			defaultStatusText = "You're fired!";
-		} else if (g.phase === PHASE.FREE_AGENCY) {
-			defaultStatusText = `${g.daysLeft} days left`;
-		} else if (g.phase === PHASE.DRAFT) {
+		} else if (g.get("phase") === PHASE.FREE_AGENCY) {
+			defaultStatusText = `${g.get("daysLeft")} days left`;
+		} else if (g.get("phase") === PHASE.DRAFT) {
 			const drafted = await idb.cache.players.indexGetAll("playersByTid", [
 				0,
 				Infinity,
 			]);
 
-			if (drafted.some(p => p.draft.year === g.season)) {
+			if (drafted.some(p => p.draft.year === g.get("season"))) {
 				defaultStatusText = "Draft in progress...";
 			}
 		}

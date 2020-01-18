@@ -12,7 +12,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 	describe("newScheduleCrappy", () => {
 		beforeEach(() => {
 			testHelpers.resetG();
-			g.allStarGame = false;
+			g.setWithoutSavingToDB("allStarGame", false);
 		});
 		test("when numTeams*numGames is even, everyone gets a full schedule", () => {
 			for (let numGames = 2; numGames < 50; numGames += 1) {
@@ -21,8 +21,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
 						continue;
 					}
 
-					g.numGames = numGames;
-					g.numTeams = numTeams;
+					g.setWithoutSavingToDB("numGames", numGames);
+					g.setWithoutSavingToDB("numTeams", numTeams);
 					const matchups = newScheduleCrappy(); // Total number of games
 
 					assert.equal(
@@ -48,8 +48,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
 						continue;
 					}
 
-					g.numGames = numGames;
-					g.numTeams = numTeams;
+					g.setWithoutSavingToDB("numGames", numGames);
+					g.setWithoutSavingToDB("numTeams", numTeams);
 					const matchups = newScheduleCrappy(); // Total number of games
 
 					assert.equal(
@@ -84,23 +84,23 @@ describe("basketball/worker/core/season/newSchedule", () => {
 	describe("newScheduleDefault", () => {
 		beforeAll(() => {
 			testHelpers.resetG();
-			g.allStarGame = false;
+			g.setWithoutSavingToDB("allStarGame", false);
 		});
 		test("schedule 1230 games (82 each for 30 teams)", () => {
 			assert.equal(newSchedule(defaultTeams).length, 1230);
 		});
 		test("schedule 41 home games and 41 away games for each team", () => {
 			const tids = newSchedule(defaultTeams);
-			const home = Array(g.numTeams).fill(0); // Number of home games for each team
+			const home = Array(g.get("numTeams")).fill(0); // Number of home games for each team
 
-			const away = Array(g.numTeams).fill(0); // Number of away games for each team
+			const away = Array(g.get("numTeams")).fill(0); // Number of away games for each team
 
 			for (let i = 0; i < tids.length; i++) {
 				home[tids[i][0]] += 1;
 				away[tids[i][1]] += 1;
 			}
 
-			for (let i = 0; i < g.numTeams; i++) {
+			for (let i = 0; i < g.get("numTeams"); i++) {
 				assert.equal(home[i], 41);
 				assert.equal(away[i], 41);
 			}
@@ -109,8 +109,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
-			for (let i = 0; i < g.numTeams; i++) {
-				home.push(Array(g.numTeams).fill(0));
+			for (let i = 0; i < g.get("numTeams"); i++) {
+				home.push(Array(g.get("numTeams")).fill(0));
 			}
 
 			const teams = helpers.getTeamsDefault();
@@ -121,7 +121,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				}
 			}
 
-			for (let i = 0; i < g.numTeams; i++) {
+			for (let i = 0; i < g.get("numTeams"); i++) {
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 15);
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 15);
 			}
@@ -130,8 +130,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
-			for (let i = 0; i < g.numTeams; i++) {
-				home.push(Array(g.numTeams).fill(0));
+			for (let i = 0; i < g.get("numTeams"); i++) {
+				home.push(Array(g.get("numTeams")).fill(0));
 			}
 
 			const teams = helpers.getTeamsDefault();
@@ -142,7 +142,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				}
 			}
 
-			for (let i = 0; i < g.numTeams; i++) {
+			for (let i = 0; i < g.get("numTeams"); i++) {
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 26);
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 4);
 			}
@@ -151,8 +151,8 @@ describe("basketball/worker/core/season/newSchedule", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
-			for (let i = 0; i < g.numTeams; i++) {
-				home.push(Array(g.numTeams).fill(0));
+			for (let i = 0; i < g.get("numTeams"); i++) {
+				home.push(Array(g.get("numTeams")).fill(0));
 			}
 
 			const teams = helpers.getTeamsDefault();
@@ -166,7 +166,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				}
 			}
 
-			for (let i = 0; i < g.numTeams; i++) {
+			for (let i = 0; i < g.get("numTeams"); i++) {
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 20);
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 2);
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 8);

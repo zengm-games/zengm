@@ -16,9 +16,9 @@ const updateUserRoster = async (
 				? ["min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"];
 		const [userRosterAll, userPicks] = await Promise.all([
-			idb.cache.players.indexGetAll("playersByTid", g.userTid),
+			idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),
 			await idb.getCopies.draftPicks({
-				tid: g.userTid,
+				tid: g.get("userTid"),
 			}),
 		]);
 		const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
@@ -33,8 +33,8 @@ const updateUserRoster = async (
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
-			season: g.season,
-			tid: g.userTid,
+			season: g.get("season"),
+			tid: g.get("userTid"),
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
@@ -48,10 +48,10 @@ const updateUserRoster = async (
 		});
 
 		return {
-			gameOver: g.gameOver,
-			phase: g.phase,
+			gameOver: g.get("gameOver"),
+			phase: g.get("phase"),
 			stats,
-			ties: g.ties,
+			ties: g.get("ties"),
 			userPicks: userPicks2,
 			userRoster,
 		};

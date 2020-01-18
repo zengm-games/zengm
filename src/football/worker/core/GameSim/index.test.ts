@@ -10,7 +10,7 @@ import initBasketball from "../../../../basketball/worker/init";
 
 const genTwoTeams = async () => {
 	testHelpers.resetG();
-	g.season = 2013;
+	g.setWithoutSavingToDB("season", 2013);
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 2);
 	await testHelpers.resetCache({
 		players: [

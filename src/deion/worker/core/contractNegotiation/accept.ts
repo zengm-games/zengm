@@ -23,41 +23,41 @@ const accept = async (
 		return `No negotiation with player ${pid} found.`;
 	}
 
-	const payroll = await team.getPayroll(g.userTid);
-	const birdException = negotiation.resigning && !g.hardCap; // If this contract brings team over the salary cap, it's not a minimum contract, and it's not re-signing a current
+	const payroll = await team.getPayroll(g.get("userTid"));
+	const birdException = negotiation.resigning && !g.get("hardCap"); // If this contract brings team over the salary cap, it's not a minimum contract, and it's not re-signing a current
 	// player with the Bird exception, ERROR!
 
 	if (
 		!birdException &&
-		payroll + amount - 1 > g.salaryCap &&
-		amount - 1 > g.minContract
+		payroll + amount - 1 > g.get("salaryCap") &&
+		amount - 1 > g.get("minContract")
 	) {
 		return `This contract would put you over the salary cap. You cannot go over the salary cap to sign ${
-			g.hardCap ? "players" : "free agents"
+			g.get("hardCap") ? "players" : "free agents"
 		} to contracts higher than the minimum salary.`;
 	}
 
 	// This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it
 	// wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
-	if (negotiation.tid !== undefined && negotiation.tid !== g.userTid) {
+	if (negotiation.tid !== undefined && negotiation.tid !== g.get("userTid")) {
 		return `This negotiation was started by the ${
-			g.teamRegionsCache[negotiation.tid]
-		} ${g.teamNamesCache[negotiation.tid]} but you are the ${
-			g.teamRegionsCache[g.userTid]
+			g.get("teamRegionsCache")[negotiation.tid]
+		} ${g.get("teamNamesCache")[negotiation.tid]} but you are the ${
+			g.get("teamRegionsCache")[g.get("userTid")]
 		} ${
-			g.teamNamesCache[g.userTid]
+			g.get("teamNamesCache")[g.get("userTid")]
 		}. Either switch teams or cancel this negotiation.`;
 	}
 
 	const p = await idb.cache.players.get(pid);
 	player.sign(
 		p,
-		g.userTid,
+		g.get("userTid"),
 		{
 			amount,
 			exp,
 		},
-		g.phase,
+		g.get("phase"),
 	);
 	await idb.cache.players.put(p);
 	await cancel(pid); // If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
@@ -67,7 +67,7 @@ const accept = async (
 		throw new Error("Missing overrides.core.team.rosterAutoSort");
 	}
 
-	await overrides.core.team.rosterAutoSort(g.userTid, true);
+	await overrides.core.team.rosterAutoSort(g.get("userTid"), true);
 };
 
 export default accept;

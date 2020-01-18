@@ -29,10 +29,10 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("newPhase")
 	) {
 		const [t, latestSeason] = await Promise.all([
-			idb.cache.teams.get(g.userTid),
+			idb.cache.teams.get(g.get("userTid")),
 			idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
-				g.season,
-				g.userTid,
+				g.get("season"),
+				g.get("userTid"),
 			]),
 		]);
 		return {
@@ -42,17 +42,17 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
-			ties: g.ties,
+			ties: g.get("ties"),
 			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
 			// [millions of dollars]
-			salaryCap: g.salaryCap / 1000,
+			salaryCap: g.get("salaryCap") / 1000,
 			// [millions of dollars]
-			season: g.season,
+			season: g.get("season"),
 			playoffRoundsWon:
 				latestSeason !== undefined ? latestSeason.playoffRoundsWon : 0,
-			numGames: g.numGames,
-			phase: g.phase,
-			userTid: g.userTid,
+			numGames: g.get("numGames"),
+			phase: g.get("phase"),
+			userTid: g.get("userTid"),
 		};
 	}
 };
@@ -62,7 +62,7 @@ const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
 	) {
-		const payroll = await team.getPayroll(g.userTid);
+		const payroll = await team.getPayroll(g.get("userTid"));
 		return {
 			payroll: payroll / 1000, // [millions of dollars]
 		};
@@ -89,10 +89,10 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				attrs: ["tid", "cid", "did"],
 				seasonAttrs: ["won", "winp", "att", "revenue", "profit"],
 				stats,
-				season: g.season,
+				season: g.get("season"),
 			}),
 		);
-		const t = teams.find(t2 => t2.tid === g.userTid);
+		const t = teams.find(t2 => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.cid : undefined;
 		let att = 0;
 		let rank = 1;
@@ -107,7 +107,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		for (const t2 of teams) {
 			if (t2.cid === cid) {
-				if (t2.tid === g.userTid) {
+				if (t2.tid === g.get("userTid")) {
 					teamStats = stats.map((stat, i) => {
 						return {
 							name: statNames[i],
@@ -130,14 +130,14 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			teams.sort((a, b) => b.stats[stat] - a.stats[stat]);
 
 			for (let j = 0; j < teams.length; j++) {
-				if (teams[j].tid === g.userTid) {
+				if (teams[j].tid === g.get("userTid")) {
 					const entry = teamStats.find(teamStat => teamStat.stat === stat);
 
 					if (entry) {
 						entry.rank = j + 1;
 
 						if (stat.startsWith("opp")) {
-							entry.rank = g.numTeams + 1 - entry.rank;
+							entry.rank = g.get("numTeams") + 1 - entry.rank;
 						}
 					}
 
@@ -166,8 +166,8 @@ const updateGames = async (
 	if (updateEvents.includes("firstRun")) {
 		// Load all games in list - would be more efficient to just load NUM_SHOW_COMPLETED
 		const games = await getProcessedGames(
-			g.teamAbbrevsCache[g.userTid],
-			g.season,
+			g.get("teamAbbrevsCache")[g.get("userTid")],
+			g.get("season"),
 		);
 		const completed = games
 			.slice(0, NUM_SHOW_COMPLETED)
@@ -181,8 +181,8 @@ const updateGames = async (
 		const completed = Array.isArray(state.completed) ? state.completed : []; // Partial update of only new games
 
 		const games = await getProcessedGames(
-			g.teamAbbrevsCache[g.userTid],
-			g.season,
+			g.get("teamAbbrevsCache")[g.get("userTid")],
+			g.get("season"),
 			state.completed,
 		);
 
@@ -229,18 +229,21 @@ const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		for (let i = 0; i < schedule.length; i++) {
 			const game = schedule[i];
 
-			if (g.userTid === game.homeTid || g.userTid === game.awayTid) {
+			if (
+				g.get("userTid") === game.homeTid ||
+				g.get("userTid") === game.awayTid
+			) {
 				const team0 = {
 					tid: game.homeTid,
-					abbrev: g.teamAbbrevsCache[game.homeTid],
-					region: g.teamRegionsCache[game.homeTid],
-					name: g.teamNamesCache[game.homeTid],
+					abbrev: g.get("teamAbbrevsCache")[game.homeTid],
+					region: g.get("teamRegionsCache")[game.homeTid],
+					name: g.get("teamNamesCache")[game.homeTid],
 				};
 				const team1 = {
 					tid: game.awayTid,
-					abbrev: g.teamAbbrevsCache[game.awayTid],
-					region: g.teamRegionsCache[game.awayTid],
-					name: g.teamNamesCache[game.awayTid],
+					abbrev: g.get("teamAbbrevsCache")[game.awayTid],
+					region: g.get("teamRegionsCache")[game.awayTid],
+					name: g.get("teamNamesCache")[game.awayTid],
 				};
 				games.push({
 					gid: game.gid,
@@ -292,7 +295,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			],
 			ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
 			stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
-			season: g.season,
+			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
@@ -319,7 +322,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				});
 			} else {
 				leagueLeaders.push({
-					abbrev: g.teamAbbrevsCache[g.userTid],
+					abbrev: g.get("teamAbbrevsCache")[g.get("userTid")],
 					name: "",
 					pid: 0,
 					stat,
@@ -329,7 +332,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		// Team leaders
-		const userPlayers = players.filter(p => p.tid === g.userTid);
+		const userPlayers = players.filter(p => p.tid === g.get("userTid"));
 		const teamLeaders: {
 			name: string;
 			pid: number;
@@ -377,11 +380,11 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		(g.phase >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
-		(updateEvents.includes("newPhase") && g.phase === PHASE.PLAYOFFS)
+		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
+		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PLAYOFFS)
 	) {
 		const playoffSeries = await idb.getCopy.playoffSeries({
-			season: g.season,
+			season: g.get("season"),
 		});
 		let foundSeries;
 		let seriesTitle = "";
@@ -397,7 +400,10 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
 				for (let i = 0; i < series[rnd].length; i++) {
 					const { away, home } = series[rnd][i];
-					if (home.tid === g.userTid || (away && away.tid === g.userTid)) {
+					if (
+						home.tid === g.get("userTid") ||
+						(away && away.tid === g.get("userTid"))
+					) {
 						foundSeries = series[rnd][i];
 						found = true;
 						showPlayoffSeries = true;
@@ -413,7 +419,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						}
 
 						numGamesToWinSeries = helpers.numGamesToWinSeries(
-							g.numGamesPlayoffSeries[rnd],
+							g.get("numGamesPlayoffSeries")[rnd],
 						);
 						break;
 					}
@@ -426,9 +432,9 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			numConfs: g.confs.length,
+			numConfs: g.get("confs").length,
 			numGamesToWinSeries,
-			numPlayoffRounds: g.numGamesPlayoffSeries.length,
+			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
 			series: foundSeries,
 			seriesTitle,
 			showPlayoffSeries,
@@ -442,7 +448,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid", "cid", "did", "abbrev", "region"],
 				seasonAttrs: ["won", "lost", "winp"],
-				season: g.season,
+				season: g.get("season"),
 			}),
 		);
 
@@ -450,7 +456,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		let cid;
 
 		for (const t of teams) {
-			if (t.tid === g.userTid) {
+			if (t.tid === g.get("userTid")) {
 				cid = t.cid;
 				break;
 			}
@@ -478,8 +484,9 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const numPlayoffTeams =
-			(2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes) / 2;
-		const playoffsByConference = g.confs.length === 2;
+			(2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes")) /
+			2;
+		const playoffsByConference = g.get("confs").length === 2;
 		return {
 			confTeams,
 			numPlayoffTeams,

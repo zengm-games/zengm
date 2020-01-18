@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import { g } from "../../util";
 
 const draftUser = async (pid: number): Promise<boolean> => {
-	const allStars = await idb.cache.allStars.get(g.season);
+	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const pick = allStars.remaining.find(p => p.pid === pid);
 
 	if (!pick) {

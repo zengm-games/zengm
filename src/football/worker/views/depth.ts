@@ -74,7 +74,7 @@ async function updateDepth(
 		pos !== state.pos ||
 		abbrev !== state.abbrev
 	) {
-		const editable = tid === g.userTid;
+		const editable = tid === g.get("userTid");
 		// @ts-ignore
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 		let players = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -83,7 +83,7 @@ async function updateDepth(
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 			// @ts-ignore
 			stats: stats[pos],
-			season: g.season,
+			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
 			fuzz: true,
@@ -104,7 +104,7 @@ async function updateDepth(
 			// @ts-ignore
 			players: depthPlayers[pos],
 			ratings,
-			season: g.season,
+			season: g.get("season"),
 			// @ts-ignore
 			stats: stats.hasOwnProperty(pos) ? stats[pos] : [],
 		};

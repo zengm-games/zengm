@@ -10,16 +10,16 @@ import { TeamSeason } from "../../../common/types";
  * @param {Object} t Team object
  * @param {string} category Currently either "expenses" or "revenues", but could be extended to allow "budget" if needed.
  * @param {string} item Item inside the category
- * @return {number} Rank, from 1 to g.numTeams (default 30)
+ * @return {number} Rank, from 1 to g.get("numTeams") (default 30)
  */
 const getRankLastThree = (
 	teamSeasons: TeamSeason[],
 	category: "expenses" | "revenues",
 	item: string,
 ): number => {
-	const defaultRank = (g.numTeams + 1) / 2;
+	const defaultRank = (g.get("numTeams") + 1) / 2;
 
-	if (g.budget) {
+	if (g.get("budget")) {
 		const s = teamSeasons.length - 1; // Most recent season index
 
 		if (s > 1) {

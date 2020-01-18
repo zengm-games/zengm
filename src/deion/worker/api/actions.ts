@@ -90,7 +90,7 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 		// Start new trade for a single player, like a Trade For button
 		teams = [
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
@@ -114,7 +114,7 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 		// Start new trade for a single player, like a Trade For button
 		teams = [
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
@@ -132,7 +132,7 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 		// Start a new trade with everything specified, from the trading block
 		teams = [
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: arg.userPids,
 				pidsExcluded: [],
 				dpids: arg.userDpids,
@@ -158,7 +158,7 @@ const getNumDaysThisRound = playoffSeries => {
 
 	for (const series of playoffSeries.series[playoffSeries.currentRound]) {
 		const num = series.away
-			? g.numGamesPlayoffSeries[playoffSeries.currentRound] -
+			? g.get("numGamesPlayoffSeries")[playoffSeries.currentRound] -
 			  series.home.won -
 			  series.away.won
 			: 0;
@@ -172,16 +172,16 @@ const getNumDaysThisRound = playoffSeries => {
 };
 
 const getNumDaysPlayoffs = async () => {
-	const playoffSeries = await idb.cache.playoffSeries.get(g.season); // Max 7 days per round that hasn't started yet
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season")); // Max 7 days per round that hasn't started yet
 
 	let numDaysFutureRounds = 0;
 
 	for (
 		let i = playoffSeries.currentRound + 1;
-		i < g.numGamesPlayoffSeries.length;
+		i < g.get("numGamesPlayoffSeries").length;
 		i++
 	) {
-		numDaysFutureRounds += g.numGamesPlayoffSeries[i];
+		numDaysFutureRounds += g.get("numGamesPlayoffSeries")[i];
 	}
 
 	return numDaysFutureRounds + getNumDaysThisRound(playoffSeries);
@@ -197,20 +197,20 @@ const playAmount = async (
 		numDays = 1;
 	} else if (amount === "week") {
 		numDays =
-			process.env.SPORT === "basketball" || g.phase === PHASE.FREE_AGENCY
+			process.env.SPORT === "basketball" || g.get("phase") === PHASE.FREE_AGENCY
 				? 7
 				: 1;
 	} else if (amount === "month") {
 		numDays = process.env.SPORT === "basketball" ? 30 : 4;
 	} else if (amount === "untilPreseason") {
-		numDays = g.daysLeft;
+		numDays = g.get("daysLeft");
 	} else {
 		throw new Error(`Invalid amount: ${amount}`);
 	}
 
-	if (g.phase <= PHASE.PLAYOFFS) {
+	if (g.get("phase") <= PHASE.PLAYOFFS) {
 		const numDaysRemaining =
-			g.phase === PHASE.PLAYOFFS
+			g.get("phase") === PHASE.PLAYOFFS
 				? await getNumDaysPlayoffs()
 				: await season.getDaysLeftSchedule();
 
@@ -221,9 +221,9 @@ const playAmount = async (
 		await updateStatus("Playing..."); // For quick UI updating, before game.play
 
 		await game.play(numDays, conditions);
-	} else if (g.phase === PHASE.FREE_AGENCY) {
-		if (numDays > g.daysLeft) {
-			numDays = g.daysLeft;
+	} else if (g.get("phase") === PHASE.FREE_AGENCY) {
+		if (numDays > g.get("daysLeft")) {
+			numDays = g.get("daysLeft");
 		}
 
 		await freeAgents.play(numDays, conditions);
@@ -233,7 +233,7 @@ const playAmount = async (
 const playStop = async () => {
 	lock.set("stopGameSim", true);
 
-	if (g.phase !== PHASE.FREE_AGENCY) {
+	if (g.get("phase") !== PHASE.FREE_AGENCY) {
 		// This is needed because we can't be sure if core.game.play will be called again
 		await updateStatus("Idle");
 	}
@@ -266,29 +266,29 @@ const playMenu = {
 		await playAmount("month", conditions);
 	},
 	untilAllStarGame: async (conditions: Conditions) => {
-		if (g.phase < PHASE.PLAYOFFS) {
+		if (g.get("phase") < PHASE.PLAYOFFS) {
 			await updateStatus("Playing...");
 			const numDays = await season.getDaysLeftSchedule(true);
 			game.play(numDays, conditions);
 		}
 	},
 	untilPlayoffs: async (conditions: Conditions) => {
-		if (g.phase < PHASE.PLAYOFFS) {
+		if (g.get("phase") < PHASE.PLAYOFFS) {
 			await updateStatus("Playing...");
 			const numDays = await season.getDaysLeftSchedule();
 			game.play(numDays, conditions);
 		}
 	},
 	untilEndOfRound: async (conditions: Conditions) => {
-		if (g.phase === PHASE.PLAYOFFS) {
+		if (g.get("phase") === PHASE.PLAYOFFS) {
 			await updateStatus("Playing...");
-			const playoffSeries = await idb.cache.playoffSeries.get(g.season);
+			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 			local.playingUntilEndOfRound = true;
 			game.play(getNumDaysThisRound(playoffSeries), conditions);
 		}
 	},
 	throughPlayoffs: async (conditions: Conditions) => {
-		if (g.phase === PHASE.PLAYOFFS) {
+		if (g.get("phase") === PHASE.PLAYOFFS) {
 			await updateStatus("Playing..."); // For quick UI updating, before await
 
 			const numDays = await getNumDaysPlayoffs();
@@ -296,7 +296,7 @@ const playMenu = {
 		}
 	},
 	untilDraft: async (conditions: Conditions) => {
-		if (g.phase === PHASE.DRAFT_LOTTERY) {
+		if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 			await phase.newPhase(PHASE.DRAFT, conditions);
 		}
 	},
@@ -310,12 +310,12 @@ const playMenu = {
 		await runDraft(false, conditions);
 	},
 	untilResignPlayers: async (conditions: Conditions) => {
-		if (g.phase === PHASE.AFTER_DRAFT) {
+		if (g.get("phase") === PHASE.AFTER_DRAFT) {
 			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 		}
 	},
 	untilFreeAgency: async (conditions: Conditions) => {
-		if (g.phase === PHASE.RESIGN_PLAYERS) {
+		if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 			const negotiations = await idb.cache.negotiations.getAll();
 			const numRemaining = negotiations.length; // Show warning dialog only if there are players remaining un-re-signed
 
@@ -326,7 +326,7 @@ const playMenu = {
 					[
 						"confirm",
 						`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
-							g.hardCap
+							g.get("hardCap")
 								? ""
 								: ", and you won't be able to go over the salary cap to sign them"
 						}.`,
@@ -340,7 +340,7 @@ const playMenu = {
 
 			if (proceed) {
 				await phase.newPhase(PHASE.FREE_AGENCY, conditions);
-				await updateStatus(`${g.daysLeft} days left`);
+				await updateStatus(`${g.get("daysLeft")} days left`);
 			}
 		}
 	},
@@ -348,7 +348,7 @@ const playMenu = {
 		await playAmount("untilPreseason", conditions);
 	},
 	untilRegularSeason: async (conditions: Conditions) => {
-		if (g.phase === PHASE.PRESEASON) {
+		if (g.get("phase") === PHASE.PRESEASON) {
 			await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
 		}
 	},

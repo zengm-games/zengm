@@ -340,7 +340,7 @@ const updateLeaders = async (
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("watchList") ||
-		(inputs.season === g.season && updateEvents.includes("gameSim")) ||
+		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
 		inputs.playoffs !== state.playoffs
 	) {
@@ -351,23 +351,23 @@ const updateLeaders = async (
 		});
 		const gps = teamSeasons.map(teamSeason => {
 			if (inputs.playoffs === "playoffs") {
-				if (teamSeason.gp < g.numGames) {
+				if (teamSeason.gp < g.get("numGames")) {
 					return 0;
 				}
 
-				return teamSeason.gp - g.numGames;
+				return teamSeason.gp - g.get("numGames");
 			}
 
 			// Don't count playoff games
-			if (teamSeason.gp > g.numGames) {
-				return g.numGames;
+			if (teamSeason.gp > g.get("numGames")) {
+				return g.get("numGames");
 			}
 
 			return teamSeason.gp;
 		});
 		let players;
 
-		if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
+		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
 			players = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
 				Infinity,
@@ -386,11 +386,11 @@ const updateLeaders = async (
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs !== "playoffs",
 		});
-		const userAbbrev = helpers.getAbbrev(g.userTid); // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
+		const userAbbrev = helpers.getAbbrev(g.get("userTid")); // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
 
 		const factor =
-			(g.numGames / defaultGameAttributes.numGames) *
-			Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
+			(g.get("numGames") / defaultGameAttributes.numGames) *
+			Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
 
 		for (const cat of categories) {
 			players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
@@ -413,7 +413,7 @@ const updateLeaders = async (
 					if (
 						playerValue >=
 						Math.ceil(
-							(cat.minValue[k] * factor * gps[p.stats.tid]) / g.numGames,
+							(cat.minValue[k] * factor * gps[p.stats.tid]) / g.get("numGames"),
 						)
 					) {
 						pass = true;

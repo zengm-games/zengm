@@ -6,10 +6,10 @@ const updatePlayoffSeries = async (
 	results: GameResults,
 	conditions: Conditions,
 ) => {
-	const playoffSeries = await idb.cache.playoffSeries.get(g.season);
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 	const numGamesToWinSeries = helpers.numGamesToWinSeries(
-		g.numGamesPlayoffSeries[playoffSeries.currentRound],
+		g.get("numGamesPlayoffSeries")[playoffSeries.currentRound],
 	);
 
 	for (const result of results) {
@@ -94,17 +94,17 @@ const updatePlayoffSeries = async (
 				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
 			} else if (
 				playoffSeries.currentRound ===
-				g.numGamesPlayoffSeries.length - 3
+				g.get("numGamesPlayoffSeries").length - 3
 			) {
 				currentRoundText = "quarterfinals";
 			} else if (
 				playoffSeries.currentRound ===
-				g.numGamesPlayoffSeries.length - 2
+				g.get("numGamesPlayoffSeries").length - 2
 			) {
 				currentRoundText = "semifinals";
 			} else if (
 				playoffSeries.currentRound ===
-				g.numGamesPlayoffSeries.length - 1
+				g.get("numGamesPlayoffSeries").length - 1
 			) {
 				currentRoundText = "finals";
 			} else {
@@ -121,24 +121,24 @@ const updatePlayoffSeries = async (
 				? `${winnerPts}-${loserPts}`
 				: `${numGamesToWinSeries}-${loserWon}`;
 			const showNotification =
-				series.away.tid === g.userTid ||
-				series.home.tid === g.userTid ||
+				series.away.tid === g.get("userTid") ||
+				series.home.tid === g.get("userTid") ||
 				playoffSeries.currentRound === 3;
 			logEvent(
 				{
 					type: "playoffs",
 					text: `The <a href="${helpers.leagueUrl([
 						"roster",
-						g.teamAbbrevsCache[winnerTid],
-						g.season,
+						g.get("teamAbbrevsCache")[winnerTid],
+						g.get("season"),
 					])}">${
-						g.teamNamesCache[winnerTid]
+						g.get("teamNamesCache")[winnerTid]
 					}</a> defeated the <a href="${helpers.leagueUrl([
 						"roster",
-						g.teamAbbrevsCache[loserTid],
-						g.season,
+						g.get("teamAbbrevsCache")[loserTid],
+						g.get("season"),
 					])}">${
-						g.teamNamesCache[loserTid]
+						g.get("teamNamesCache")[loserTid]
 					}</a> in the ${currentRoundText}, ${score}`,
 					showNotification,
 					tids: [winnerTid, loserTid],

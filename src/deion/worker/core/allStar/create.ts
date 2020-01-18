@@ -15,7 +15,7 @@ const NUM_ALL_STARS = 2 * (process.env.SPORT === "football" ? 40 : 12);
 
 const create = async (conditions: Conditions) => {
 	const allStars: AllStars = {
-		season: g.season,
+		season: g.get("season"),
 		teamNames: ["", ""],
 		teams: [[], []],
 		remaining: [],

@@ -78,13 +78,13 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 	let players = await idb.getCopies.playersPlus(playersFromCache, {
 		attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
 		ratings: ["pos"],
-		season: g.season,
+		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 	});
 
 	// Fuzz only for user's team
-	if (tid === g.userTid) {
+	if (tid === g.get("userTid")) {
 		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
 	} else {
 		players.sort((a, b) => b.valueNoPot - a.valueNoPot);

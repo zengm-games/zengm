@@ -15,7 +15,7 @@ const lotterySort = (teams: TeamFiltered[]) => {
 	 *
 	 * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
 	 */
-	const randValues = range(g.numTeams);
+	const randValues = range(g.get("numTeams"));
 	random.shuffle(randValues);
 
 	for (let i = 0; i < teams.length; i++) {
@@ -23,7 +23,7 @@ const lotterySort = (teams: TeamFiltered[]) => {
 	}
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
-	if (g.phase < PHASE.PLAYOFFS) {
+	if (g.get("phase") < PHASE.PLAYOFFS) {
 		const { tidPlayoffs } = season.genPlayoffSeries(helpers.orderByWinp(teams));
 
 		for (const t of teams) {

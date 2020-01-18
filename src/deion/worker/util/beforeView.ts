@@ -94,7 +94,7 @@ const beforeLeague = async (
 ) => {
 	// Make sure league template FOR THE CURRENT LEAGUE is showing
 	loadingNewLid = newLid;
-	const switchingDatabaseLid = newLid !== g.lid;
+	const switchingDatabaseLid = newLid !== g.get("lid");
 
 	if (switchingDatabaseLid) {
 		await league.close(true);
@@ -127,8 +127,8 @@ const beforeLeague = async (
 
 		// Confirm league exists before proceeding
 		await getLeague(newLid);
-		g.lid = newLid;
-		idb.league = await connectLeague(g.lid);
+		g.setWithoutSavingToDB("lid", newLid);
+		idb.league = await connectLeague(g.get("lid"));
 
 		if (loadingNewLid !== newLid) {
 			return;
@@ -176,7 +176,7 @@ const beforeLeague = async (
 
 	// If this is a Shared Worker, only one league can be open at a time
 	if (env.useSharedWorker) {
-		toUI(["newLid", g.lid]);
+		toUI(["newLid", g.get("lid")]);
 	}
 };
 

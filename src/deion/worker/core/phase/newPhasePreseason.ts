@@ -7,19 +7,19 @@ import { Conditions } from "../../../common/types";
 const newPhasePreseason = async (conditions: Conditions) => {
 	await freeAgents.autoSign();
 	await league.setGameAttributes({
-		season: g.season + 1,
+		season: g.get("season") + 1,
 	});
 	const teams = await idb.cache.teams.getAll();
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
-		[[g.season - 1], [g.season]],
+		[[g.get("season") - 1], [g.get("season")]],
 	);
 	const popRanks = helpers.getPopRanks(teamSeasons);
 
 	for (let i = 0; i < teamSeasons.length; i++) {
 		const t = teams.find(t2 => t2.tid === teamSeasons[i].tid);
 
-		if (!t || g.userTids.includes(t.tid)) {
+		if (!t || g.get("userTids").includes(t.tid)) {
 			continue;
 		}
 
@@ -55,13 +55,13 @@ const newPhasePreseason = async (conditions: Conditions) => {
 			// is not performance critical code)
 			const teamSeasons2 = await idb.getCopies.teamSeasons({
 				tid,
-				seasons: [g.season - 3, g.season - 1],
+				seasons: [g.get("season") - 3, g.get("season") - 1],
 			});
 			const prevSeason = teamSeasons2[teamSeasons2.length - 1];
 
 			// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
 			// This is done BEFORE a new season row is added.
-			if (tid === g.userTid) {
+			if (tid === g.get("userTid")) {
 				scoutingRankTemp = finances.getRankLastThree(
 					teamSeasons2,
 					"expenses",
@@ -93,9 +93,9 @@ const newPhasePreseason = async (conditions: Conditions) => {
 
 		if (p) {
 			const years = random.randInt(1, 4);
-			const age0 = g.season - p.born.year;
+			const age0 = g.get("season") - p.born.year;
 			p.born.year -= years;
-			const age1 = g.season - p.born.year;
+			const age1 = g.get("season") - p.born.year;
 			const name = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
 			} ${p.lastName}</a>`;
@@ -114,7 +114,7 @@ const newPhasePreseason = async (conditions: Conditions) => {
 				{
 					type: "ageFraud",
 					text: `${reason} is actually ${age1} years old, not ${age0} as was previously thought.`,
-					showNotification: p.tid === g.userTid,
+					showNotification: p.tid === g.get("userTid"),
 					pids: [p.pid],
 					tids: [p.tid],
 					persistent: true,

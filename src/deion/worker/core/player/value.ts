@@ -116,11 +116,11 @@ const value = (
 
 	let age;
 
-	if (p.draft.year > g.season) {
+	if (p.draft.year > g.get("season")) {
 		// Draft prospect
 		age = p.draft.year - p.born.year;
 	} else {
-		age = g.season - p.born.year;
+		age = g.get("season") - p.born.year;
 	}
 
 	// Otherwise, combine based on age

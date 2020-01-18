@@ -14,7 +14,7 @@ const checkStatisticalFeat = (
 		let allStars;
 
 		if (tid < 0 && results.team[0].id === -1 && results.team[1].id === -2) {
-			allStars = await idb.cache.allStars.get(g.season);
+			allStars = await idb.cache.allStars.get(g.get("season"));
 		}
 
 		let actualTid = tid;
@@ -33,7 +33,7 @@ const checkStatisticalFeat = (
 			{
 				type: "playerFeat",
 				text,
-				showNotification: actualTid === g.userTid,
+				showNotification: actualTid === g.get("userTid"),
 				pids: [pid],
 				tids: [actualTid],
 			},
@@ -56,8 +56,8 @@ const checkStatisticalFeat = (
 			p.name
 		}</a> had <a href="${helpers.leagueUrl([
 			"game_log",
-			tid < 0 ? "special" : g.teamAbbrevsCache[tid],
-			g.season,
+			tid < 0 ? "special" : g.get("teamAbbrevsCache")[tid],
+			g.get("season"),
 			results.gid,
 		])}">`;
 
@@ -76,7 +76,7 @@ const checkStatisticalFeat = (
 		const endPart = allStarGame
 			? `${won ? "win" : "loss"} in the All-Star Game`
 			: `${won ? "win over the" : "loss to the"} ${
-					g.teamNamesCache[results.team[j].id]
+					g.get("teamNamesCache")[results.team[j].id]
 			  }`;
 		featText += `</a> in ${
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
@@ -86,10 +86,10 @@ const checkStatisticalFeat = (
 			pid,
 			name: p.name,
 			pos: p.pos,
-			season: g.season,
+			season: g.get("season"),
 			tid,
 			oppTid: results.team[j].id,
-			playoffs: g.phase === PHASE.PLAYOFFS,
+			playoffs: g.get("phase") === PHASE.PLAYOFFS,
 			gid: results.gid,
 			stats: p.stat,
 			won,

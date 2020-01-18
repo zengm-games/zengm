@@ -32,9 +32,9 @@ describe("Smoke Tests", () => {
 	// @ts-ignore
 	after(async () => {
 		clearInterval(intervalID);
-		await league.remove(g.lid);
+		await league.remove(g.get("lid"));
 
-		if (g.lid !== undefined) {
+		if (g.get("lid") !== undefined) {
 			throw new Error("g.lid should be undefined");
 		}
 

@@ -8,7 +8,7 @@ const updateSummary = async vars => {
 	const otherTid = await trade.getOtherTid();
 	const teams: TradeTeams = [
 		{
-			tid: g.userTid,
+			tid: g.get("userTid"),
 			pids: vars.userPids,
 			pidsExcluded: vars.userPidsExcluded,
 			dpids: vars.userDpids,
@@ -49,9 +49,9 @@ const updateSummary = async vars => {
 const validateTeams = async () => {
 	const { teams } = await idb.cache.trade.get(0); // Handle case where multi team mode is used to switch teams, but a trade was already happening with the team that was just switched to
 
-	if (teams[0].tid !== g.userTid) {
+	if (teams[0].tid !== g.get("userTid")) {
 		teams[1] = {
-			tid: g.userTid,
+			tid: g.get("userTid"),
 			pids: [],
 			pidsExcluded: [],
 			dpids: [],
@@ -59,9 +59,9 @@ const validateTeams = async () => {
 		};
 	}
 
-	if (teams[1].tid === g.userTid || teams[1].tid >= g.numTeams) {
+	if (teams[1].tid === g.get("userTid") || teams[1].tid >= g.get("numTeams")) {
 		teams[1] = {
-			tid: g.userTid === 0 ? 1 : 0,
+			tid: g.get("userTid") === 0 ? 1 : 0,
 			pids: [],
 			pidsExcluded: [],
 			dpids: [],
@@ -88,10 +88,10 @@ const updateTrade = async () => {
 	const teams = await validateTeams();
 	const userRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.userTid,
+		g.get("userTid"),
 	);
 	const userPicks = await idb.getCopies.draftPicks({
-		tid: g.userTid,
+		tid: g.get("userTid"),
 	});
 	const attrs = [
 		"pid",
@@ -111,8 +111,8 @@ const updateTrade = async () => {
 		attrs,
 		ratings,
 		stats,
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
@@ -143,7 +143,7 @@ const updateTrade = async () => {
 	});
 	const t = await idb.getCopy.teamsPlus({
 		tid: otherTid,
-		season: g.season,
+		season: g.get("season"),
 		attrs: ["strategy"],
 		seasonAttrs: ["won", "lost", "tied"],
 	});
@@ -158,7 +158,7 @@ const updateTrade = async () => {
 		attrs,
 		ratings,
 		stats,
-		season: g.season,
+		season: g.get("season"),
 		tid: otherTid,
 		showNoStats: true,
 		showRookies: true,
@@ -180,7 +180,7 @@ const updateTrade = async () => {
 	});
 
 	let vars: any = {
-		salaryCap: g.salaryCap / 1000,
+		salaryCap: g.get("salaryCap") / 1000,
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,
 		userPicks: userPicks2,
@@ -199,33 +199,33 @@ const updateTrade = async () => {
 		won: t.seasonAttrs.won,
 		lost: t.seasonAttrs.lost,
 		tied: t.seasonAttrs.tied,
-		ties: g.ties,
-		gameOver: g.gameOver,
-		godMode: g.godMode,
+		ties: g.get("ties"),
+		gameOver: g.get("gameOver"),
+		godMode: g.get("godMode"),
 		forceTrade: false,
-		phase: g.phase,
-		userTid: g.userTid,
+		phase: g.get("phase"),
+		userTid: g.get("userTid"),
 	};
 	vars = await updateSummary(vars); // Always run this, for multi team mode
 
 	vars.teams = [];
 
-	for (let tid = 0; tid < g.numTeams; tid++) {
+	for (let tid = 0; tid < g.get("numTeams"); tid++) {
 		vars.teams[tid] = {
-			name: g.teamNamesCache[tid],
-			region: g.teamRegionsCache[tid],
+			name: g.get("teamNamesCache")[tid],
+			region: g.get("teamRegionsCache")[tid],
 			tid,
 		};
 	}
 
-	vars.teams.splice(g.userTid, 1); // Can't trade with yourself
+	vars.teams.splice(g.get("userTid"), 1); // Can't trade with yourself
 
-	vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${
-		g.teamNamesCache[g.userTid]
+	vars.userTeamName = `${g.get("teamRegionsCache")[g.get("userTid")]} ${
+		g.get("teamNamesCache")[g.get("userTid")]
 	}`; // If the season is over, can't trade players whose contracts are expired
 
 	vars.showResigningMsg =
-		g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
+		g.get("phase") > PHASE.PLAYOFFS && g.get("phase") < PHASE.FREE_AGENCY;
 	return vars;
 };
 

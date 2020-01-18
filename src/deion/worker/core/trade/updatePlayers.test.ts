@@ -10,7 +10,7 @@ describe("worker/core/trade/updatePlayers", () => {
 	test("allow players from both teams to be set", async () => {
 		await trade.create([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
@@ -28,7 +28,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		const otherPidsTest = [2, 3];
 		const teams = await trade.updatePlayers([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: userPidsTest,
 				pidsExcluded: [],
 				dpids: [],
@@ -48,7 +48,7 @@ describe("worker/core/trade/updatePlayers", () => {
 	test("filter out invalid players", async () => {
 		await trade.create([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
@@ -64,7 +64,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		]);
 		const teams = await trade.updatePlayers([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [1, 16, 20, 48, 50, 90],
 				pidsExcluded: [],
 				dpids: [],
@@ -84,7 +84,7 @@ describe("worker/core/trade/updatePlayers", () => {
 	test("delete the other team's players, but not the user's players, from the trade when a new team is selected", async () => {
 		await trade.create([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
@@ -102,7 +102,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		const otherPidsTest = [2, 3];
 		let teams = await trade.updatePlayers([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: userPidsTest,
 				pidsExcluded: [],
 				dpids: [],
@@ -120,7 +120,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		assert.deepEqual(teams[1].pids, otherPidsTest);
 		await trade.create([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],

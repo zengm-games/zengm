@@ -15,12 +15,12 @@ export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
 
 		for (const p of t.players) {
 			const entry = allStars.teams[ind].find(p2 => p2.pid === p.pid);
-			p.abbrev = entry ? g.teamAbbrevsCache[entry.tid] : "";
+			p.abbrev = entry ? g.get("teamAbbrevsCache")[entry.tid] : "";
 		}
 	} else {
-		t.region = g.teamRegionsCache[t.tid];
-		t.name = g.teamNamesCache[t.tid];
-		t.abbrev = g.teamAbbrevsCache[t.tid];
+		t.region = g.get("teamRegionsCache")[t.tid];
+		t.name = g.get("teamNamesCache")[t.tid];
+		t.abbrev = g.get("teamAbbrevsCache")[t.tid];
 	}
 };
 
@@ -111,7 +111,7 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
 	return {
 		// Needed for dropdown
 		abbrev: inputs.abbrev,
-		currentSeason: g.season,
+		currentSeason: g.get("season"),
 		season: inputs.season,
 	};
 };
@@ -182,7 +182,7 @@ const updateGamesList = async (
 		!state.gamesList ||
 		abbrev !== state.gamesList.abbrev ||
 		season !== state.gamesList.season ||
-		(updateEvents.includes("gameSim") && season === g.season)
+		(updateEvents.includes("gameSim") && season === g.get("season"))
 	) {
 		let games;
 

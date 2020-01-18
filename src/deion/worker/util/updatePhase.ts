@@ -6,7 +6,7 @@ import toUI from "./toUI";
 import { Conditions } from "../../common/types"; // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 
 async function updatePhase(conditions?: Conditions) {
-	const phaseText = `${g.season} ${PHASE_TEXT[g.phase]}`;
+	const phaseText = `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`;
 
 	if (phaseText !== local.phaseText) {
 		local.phaseText = phaseText;
@@ -19,7 +19,7 @@ async function updatePhase(conditions?: Conditions) {
 
 		(async () => {
 			if (idb.meta) {
-				const l = await idb.meta.leagues.get(g.lid);
+				const l = await idb.meta.leagues.get(g.get("lid"));
 				l.phaseText = phaseText;
 				await idb.meta.leagues.put(l);
 			}

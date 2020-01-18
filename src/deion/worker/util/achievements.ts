@@ -11,8 +11,8 @@ const trustTheProcessCutoff = process.env.SPORT === "basketball" ? 3 : 7;
 
 const checkDynasty = async (titles: number, years: number) => {
 	const teamSeasons = await idb.getCopies.teamSeasons({
-		tid: g.userTid,
-		seasons: [g.season - (years - 1), Infinity],
+		tid: g.get("userTid"),
+		seasons: [g.get("season") - (years - 1), Infinity],
 	});
 	let titlesFound = 0; // Look over past years
 
@@ -25,7 +25,7 @@ const checkDynasty = async (titles: number, years: number) => {
 		// Won title?
 		if (
 			teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon ===
-			g.numGamesPlayoffSeries.length
+			g.get("numGamesPlayoffSeries").length
 		) {
 			titlesFound += 1;
 		}
@@ -37,13 +37,13 @@ const checkDynasty = async (titles: number, years: number) => {
 const checkMoneyball = async maxPayroll => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["expenses", "playoffRoundsWon"],
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 	});
 	return !!(
 		t &&
 		t.seasonAttrs &&
-		t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length &&
+		t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length &&
 		t.seasonAttrs.expenses.salary.amount <= maxPayroll
 	);
 };
@@ -51,11 +51,11 @@ const checkMoneyball = async maxPayroll => {
 const userWonTitle = async () => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["playoffRoundsWon"],
-		season: g.season,
-		tid: g.userTid,
+		season: g.get("season"),
+		tid: g.get("userTid"),
 	});
 	return t
-		? t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length
+		? t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
 		: false;
 };
 
@@ -68,11 +68,11 @@ const checkGoldenOldies = async age => {
 
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.userTid,
+		g.get("userTid"),
 	);
 
 	for (const p of players) {
-		const playerAge = g.season - p.born.year;
+		const playerAge = g.get("season") - p.born.year;
 
 		if (playerAge < age) {
 			return false;
@@ -91,11 +91,11 @@ const checkYoungGuns = async age => {
 
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.userTid,
+		g.get("userTid"),
 	);
 
 	for (const p of players) {
-		const playerAge = g.season - p.born.year;
+		const playerAge = g.get("season") - p.born.year;
 
 		if (playerAge > age) {
 			return false;
@@ -157,7 +157,7 @@ const achievements: Achievement[] = [
 		category: "Season",
 
 		check() {
-			return checkMoneyball((2 / 3) * g.salaryCap);
+			return checkMoneyball((2 / 3) * g.get("salaryCap"));
 		},
 
 		when: "afterPlayoffs",
@@ -169,7 +169,7 @@ const achievements: Achievement[] = [
 		category: "Season",
 
 		check() {
-			return checkMoneyball(0.5 * g.salaryCap);
+			return checkMoneyball(0.5 * g.get("salaryCap"));
 		},
 
 		when: "afterPlayoffs",
@@ -183,13 +183,14 @@ const achievements: Achievement[] = [
 		async check() {
 			const t = await idb.getCopy.teamsPlus({
 				seasonAttrs: ["playoffRoundsWon", "pop"],
-				season: g.season,
-				tid: g.userTid,
+				season: g.get("season"),
+				tid: g.get("userTid"),
 			});
 			return !!(
 				t &&
 				t.seasonAttrs &&
-				t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length &&
+				t.seasonAttrs.playoffRoundsWon ===
+					g.get("numGamesPlayoffSeries").length &&
 				t.seasonAttrs.pop <= 2
 			);
 		},
@@ -210,7 +211,7 @@ const achievements: Achievement[] = [
 		category: "Multiple Seasons",
 
 		async check() {
-			return g.season === g.startingSeason + 99;
+			return g.get("season") === g.get("startingSeason") + 99;
 		},
 
 		when: "afterPlayoffs",
@@ -222,7 +223,7 @@ const achievements: Achievement[] = [
 		category: "Multiple Seasons",
 
 		async check() {
-			return g.season === g.startingSeason + 999;
+			return g.get("season") === g.get("startingSeason") + 999;
 		},
 
 		when: "afterPlayoffs",
@@ -234,7 +235,7 @@ const achievements: Achievement[] = [
 		category: "Multiple Seasons",
 
 		async check() {
-			return g.season === g.startingSeason + 9999;
+			return g.get("season") === g.get("startingSeason") + 9999;
 		},
 
 		when: "afterPlayoffs",
@@ -247,15 +248,15 @@ const achievements: Achievement[] = [
 
 		async check() {
 			const teamSeasons = await idb.getCopies.teamSeasons({
-				tid: g.userTid,
-				seasons: [g.season - 3, g.season],
+				tid: g.get("userTid"),
+				seasons: [g.get("season") - 3, g.get("season")],
 			});
 			let count = 0;
 
 			for (const teamSeason of teamSeasons) {
 				if (
 					teamSeason.playoffRoundsWon ===
-					g.numGamesPlayoffSeries.length - 1
+					g.get("numGamesPlayoffSeries").length - 1
 				) {
 					count += 1;
 				}
@@ -281,11 +282,11 @@ const achievements: Achievement[] = [
 
 			const players = await idb.cache.players.indexGetAll(
 				"playersByTid",
-				g.userTid,
+				g.get("userTid"),
 			);
 
 			for (const p of players) {
-				if (p.draft.tid !== g.userTid) {
+				if (p.draft.tid !== g.get("userTid")) {
 					return false;
 				}
 			}
@@ -381,12 +382,12 @@ const achievements: Achievement[] = [
 				return false;
 			}
 
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
 			if (awards && awards.allLeague) {
 				for (const team of awards.allLeague) {
 					for (const p of team.players) {
-						if (p.tid === g.userTid) {
+						if (p.tid === g.get("userTid")) {
 							return false;
 						}
 					}
@@ -406,11 +407,11 @@ const achievements: Achievement[] = [
 
 		async check() {
 			let count = 0;
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
 			if (awards && awards.allLeague && awards.allLeague[0]) {
 				for (const p of awards.allLeague[0].players) {
-					if (p.tid === g.userTid) {
+					if (p.tid === g.get("userTid")) {
 						count += 1;
 					}
 				}
@@ -428,14 +429,14 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
 			if (awards && awards.allLeague && awards.allLeague[0]) {
 				for (const { pid, tid } of awards.allLeague[0].players) {
-					if (tid === g.userTid) {
+					if (tid === g.get("userTid")) {
 						const p = await idb.cache.players.get(pid);
 
-						if (p.retiredYear === g.season) {
+						if (p.retiredYear === g.get("season")) {
 							return true;
 						}
 					}
@@ -454,15 +455,15 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
 			if (awards && awards.allLeague) {
 				for (const team of awards.allLeague) {
 					for (const { pid, tid } of team.players) {
-						if (tid === g.userTid) {
+						if (tid === g.get("userTid")) {
 							const p = await idb.cache.players.get(pid);
 
-							if (p.draft.year === g.season - 1) {
+							if (p.draft.year === g.get("season") - 1) {
 								return true;
 							}
 						}
@@ -482,14 +483,14 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 
 			if (awards && awards.allLeague && awards.allLeague[0]) {
 				for (const { pid, tid } of awards.allLeague[0].players) {
-					if (tid === g.userTid) {
+					if (tid === g.get("userTid")) {
 						const p = await idb.cache.players.get(pid);
 
-						if (p.draft.year === g.season - 1) {
+						if (p.draft.year === g.get("season") - 1) {
 							return true;
 						}
 					}
@@ -508,10 +509,10 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			const awards = await idb.cache.awards.get(g.season);
+			const awards = await idb.cache.awards.get(g.get("season"));
 			const count =
 				awards && awards.allRookie
-					? awards.allRookie.filter(p => p.tid === g.userTid).length
+					? awards.allRookie.filter(p => p.tid === g.get("userTid")).length
 					: 0;
 			return count >= trustTheProcessCutoff;
 		},

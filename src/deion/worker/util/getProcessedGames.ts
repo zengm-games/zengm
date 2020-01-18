@@ -22,7 +22,7 @@ async function getProcessedGameList(
 	if (abbrev === "special") {
 		tid = -1;
 	} else {
-		tid = g.teamAbbrevsCache.indexOf(abbrev);
+		tid = g.get("teamAbbrevsCache").indexOf(abbrev);
 
 		if (tid < 0) {
 			throw new Error(`Invalid abbrev: "${abbrev}"`);
@@ -40,7 +40,7 @@ async function getProcessedGameList(
 	const gameInfos: GameProcessed[] = [];
 	let games;
 
-	if (season === g.season) {
+	if (season === g.get("season")) {
 		games = await idb.cache.games.getAll();
 	} else {
 		games = await idb.league.games.index("season").getAll(season);
@@ -74,7 +74,8 @@ async function getProcessedGameList(
 					overtime,
 					tid,
 					home: true,
-					oppAbbrev: oppAbbrevOverride || g.teamAbbrevsCache[gm.teams[1].tid],
+					oppAbbrev:
+						oppAbbrevOverride || g.get("teamAbbrevsCache")[gm.teams[1].tid],
 					oppPts: gm.teams[1].pts,
 					oppTid: gm.teams[1].tid,
 					pts: gm.teams[0].pts,
@@ -91,7 +92,8 @@ async function getProcessedGameList(
 					overtime,
 					tid,
 					home: false,
-					oppAbbrev: oppAbbrevOverride || g.teamAbbrevsCache[gm.teams[0].tid],
+					oppAbbrev:
+						oppAbbrevOverride || g.get("teamAbbrevsCache")[gm.teams[0].tid],
 					oppPts: gm.teams[0].pts,
 					oppTid: gm.teams[0].tid,
 					pts: gm.teams[1].pts,

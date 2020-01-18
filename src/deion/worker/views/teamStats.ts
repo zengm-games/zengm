@@ -8,7 +8,7 @@ const updateTeams = async (
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.season &&
+		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		inputs.playoffs !== state.playoffs ||
@@ -23,7 +23,9 @@ const updateTeams = async (
 		}
 
 		const stats = statsTable.stats;
-		const seasonAttrs = g.ties ? ["won", "lost", "tied"] : ["won", "lost"];
+		const seasonAttrs = g.get("ties")
+			? ["won", "lost", "tied"]
+			: ["won", "lost"];
 		const teams = (
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
@@ -203,8 +205,8 @@ const updateTeams = async (
 			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			teams,
-			ties: g.ties,
-			userTid: g.userTid,
+			ties: g.get("ties"),
+			userTid: g.get("userTid"),
 		};
 	}
 };

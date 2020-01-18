@@ -24,7 +24,7 @@ function retire(
 				text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 					p.firstName
 				} ${p.lastName}</a> retired.`,
-				showNotification: p.tid === g.userTid,
+				showNotification: p.tid === g.get("userTid"),
 				pids: [p.pid],
 				tids: [p.tid],
 			},
@@ -33,7 +33,7 @@ function retire(
 	}
 
 	p.tid = PLAYER.RETIRED;
-	p.retiredYear = g.season; // Add to Hall of Fame?
+	p.retiredYear = g.get("season"); // Add to Hall of Fame?
 
 	if (!overrides.core.player.madeHof) {
 		throw new Error("Missing overrides.core.player.madeHof");
@@ -42,7 +42,7 @@ function retire(
 	if (conditions && overrides.core.player.madeHof(p)) {
 		p.hof = true;
 		p.awards.push({
-			season: g.season,
+			season: g.get("season"),
 			type: "Inducted into the Hall of Fame",
 		});
 		logEvent(
@@ -53,7 +53,7 @@ function retire(
 				} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl([
 					"hall_of_fame",
 				])}">Hall of Fame</a>.`,
-				showNotification: p.statsTids.includes(g.userTid),
+				showNotification: p.statsTids.includes(g.get("userTid")),
 				pids: [p.pid],
 				tids: p.statsTids,
 			},

@@ -41,7 +41,7 @@ const valueChange = async (
 	const t = await idb.getCopy.teamsPlus({
 		attrs: ["strategy"],
 		stats: ["gp"],
-		season: g.season,
+		season: g.get("season"),
 		tid,
 	});
 
@@ -50,11 +50,11 @@ const valueChange = async (
 	}
 
 	const strategy = t.strategy;
-	const gpAvg = helpers.bound(t.stats.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
+	const gpAvg = helpers.bound(t.stats.gp, 0, g.get("numGames")); // Ideally would be done separately for each team, but close enough
 
 	const payroll = await getPayroll(tid);
 	const difficultyFudgeFactor = helpers.bound(
-		1 + 0.1 * g.difficulty,
+		1 + 0.1 * g.get("difficulty"),
 		0,
 		Infinity,
 	);
@@ -63,7 +63,8 @@ const valueChange = async (
 
 	const getPlayers = async () => {
 		// Fudge factor for AI overvaluing its own players
-		const fudgeFactor = (tid !== g.userTid ? 1.05 : 1) * difficultyFudgeFactor; // Get roster and players to remove
+		const fudgeFactor =
+			(tid !== g.get("userTid") ? 1.05 : 1) * difficultyFudgeFactor; // Get roster and players to remove
 
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
@@ -75,7 +76,7 @@ const valueChange = async (
 					contract: p.contract,
 					worth: player.genContract(p, false, false, true),
 					injury: p.injury,
-					age: g.season - p.born.year,
+					age: g.get("season") - p.born.year,
 				});
 			} else {
 				remove.push({
@@ -84,7 +85,7 @@ const valueChange = async (
 					contract: p.contract,
 					worth: player.genContract(p, false, false, true),
 					injury: p.injury,
-					age: g.season - p.born.year,
+					age: g.get("season") - p.born.year,
 				});
 			}
 		}
@@ -98,7 +99,7 @@ const valueChange = async (
 				contract: p.contract,
 				worth: player.genContract(p, false, false, true),
 				injury: p.injury,
-				age: g.season - p.born.year,
+				age: g.get("season") - p.born.year,
 			});
 		}
 	};
@@ -109,7 +110,7 @@ const valueChange = async (
 			// Estimate the order of the picks by team
 			const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
 				"teamSeasonsBySeasonTid",
-				[[g.season - 1], [g.season, "Z"]],
+				[[g.get("season") - 1], [g.get("season"), "Z"]],
 			);
 
 			// This part needs to be run every time so that gpAvg is available
@@ -117,7 +118,7 @@ const valueChange = async (
 
 			let gp = 0;
 
-			for (let tid2 = 0; tid2 < g.numTeams; tid2++) {
+			for (let tid2 = 0; tid2 < g.get("numTeams"); tid2++) {
 				const teamSeasons = allTeamSeasons.filter(
 					teamSeason => teamSeason.tid === tid2,
 				);
@@ -131,19 +132,22 @@ const valueChange = async (
 						rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
 					} else {
 						// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-						rCurrent = tid2 === g.userTid ? [g.numGames, 0] : [0, g.numGames];
+						rCurrent =
+							tid2 === g.get("userTid")
+								? [g.get("numGames"), 0]
+								: [0, g.get("numGames")];
 					}
 
-					if (tid2 === g.userTid) {
+					if (tid2 === g.get("userTid")) {
 						rLast = [
-							Math.round(0.6 * g.numGames),
-							Math.round(0.4 * g.numGames),
+							Math.round(0.6 * g.get("numGames")),
+							Math.round(0.4 * g.get("numGames")),
 						];
 					} else {
 						// Assume a losing season to minimize bad trades
 						rLast = [
-							Math.round(0.4 * g.numGames),
-							Math.round(0.6 * g.numGames),
+							Math.round(0.4 * g.get("numGames")),
+							Math.round(0.6 * g.get("numGames")),
 						];
 					}
 				} else {
@@ -155,17 +159,17 @@ const valueChange = async (
 				gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
 				// If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
 
-				const halfSeason = Math.round(0.5 * g.numGames);
+				const halfSeason = Math.round(0.5 * g.get("numGames"));
 
 				if (gp >= halfSeason) {
 					wps.push(rCurrent[0] / gp);
 				} else if (gp > 0) {
 					wps.push(
 						((gp / halfSeason) * rCurrent[0]) / gp +
-							(((halfSeason - gp) / halfSeason) * rLast[0]) / g.numGames,
+							(((halfSeason - gp) / halfSeason) * rLast[0]) / g.get("numGames"),
 					);
 				} else {
-					wps.push(rLast[0] / g.numGames);
+					wps.push(rLast[0] / g.get("numGames"));
 				}
 			}
 
@@ -190,7 +194,7 @@ const valueChange = async (
 					continue;
 				}
 
-				const season = dp.season === "fantasy" ? g.season : dp.season;
+				const season = dp.season === "fantasy" ? g.get("season") : dp.season;
 				let estPick;
 
 				if (dp.pick > 0) {
@@ -198,7 +202,7 @@ const valueChange = async (
 				} else {
 					estPick = estPicks[dp.originalTid]; // For future draft picks, add some uncertainty
 
-					const seasons = season - g.season;
+					const seasons = season - g.get("season");
 					estPick = Math.round(
 						(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
 					);
@@ -210,23 +214,26 @@ const valueChange = async (
 				if (estValues[String(season)]) {
 					value =
 						estValues[String(season)][
-							estPick - 1 + g.numTeams * (dp.round - 1)
+							estPick - 1 + g.get("numTeams") * (dp.round - 1)
 						];
 				}
 
 				if (value === undefined) {
-					value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
+					value =
+						estValues.default[estPick - 1 + g.get("numTeams") * (dp.round - 1)];
 				}
 
 				add.push({
 					value,
 					skills: [],
 					contract: {
-						amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
+						amount:
+							rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)],
 						exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 					},
 					worth: {
-						amount: rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)],
+						amount:
+							rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)],
 						exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 					},
 					injury: {
@@ -245,8 +252,8 @@ const valueChange = async (
 					continue;
 				}
 
-				const season = dp.season === "fantasy" ? g.season : dp.season;
-				const seasons = season - g.season;
+				const season = dp.season === "fantasy" ? g.get("season") : dp.season;
+				const seasons = season - g.get("season");
 				let estPick;
 
 				if (dp.pick > 0) {
@@ -263,8 +270,8 @@ const valueChange = async (
 				// Set fudge factor with more confidence if it's the current season
 				let fudgeFactor;
 
-				if (seasons === 0 && gp >= g.numGames / 2) {
-					fudgeFactor = (1 - gp / g.numGames) * 10;
+				if (seasons === 0 && gp >= g.get("numGames") / 2) {
+					fudgeFactor = (1 - gp / g.get("numGames")) * 10;
 				} else {
 					fudgeFactor = 10;
 				}
@@ -275,15 +282,21 @@ const valueChange = async (
 				if (estValues[String(season)]) {
 					value =
 						estValues[String(season)][
-							estPick - 1 + g.numTeams * (dp.round - 1)
+							estPick - 1 + g.get("numTeams") * (dp.round - 1)
 						] +
-						(tid !== g.userTid ? 1 : 0) * fudgeFactor * difficultyFudgeFactor;
+						(tid !== g.get("userTid") ? 1 : 0) *
+							fudgeFactor *
+							difficultyFudgeFactor;
 				}
 
 				if (value === undefined) {
 					value =
-						estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] +
-						(tid !== g.userTid ? 1 : 0) * fudgeFactor * difficultyFudgeFactor;
+						estValues.default[
+							estPick - 1 + g.get("numTeams") * (dp.round - 1)
+						] +
+						(tid !== g.get("userTid") ? 1 : 0) *
+							fudgeFactor *
+							difficultyFudgeFactor;
 				}
 
 				remove.push({
@@ -291,12 +304,14 @@ const valueChange = async (
 					skills: [],
 					contract: {
 						amount:
-							rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
+							rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)] /
+							1000,
 						exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 					},
 					worth: {
 						amount:
-							rookieSalaries[estPick - 1 + g.numTeams * (dp.round - 1)] / 1000,
+							rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)] /
+							1000,
 						exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 					},
 					injury: {
@@ -313,11 +328,11 @@ const valueChange = async (
 	await getPlayers();
 	await getPicks();
 	/*    // Handle situations where the team goes over the roster size limit
-     if (roster.length + remove.length > g.maxRosterSize) {
+     if (roster.length + remove.length > g.get("maxRosterSize")) {
          // Already over roster limit, so don't worry unless this trade actually makes it worse
          needToDrop = (roster.length + add.length) - (roster.length + remove.length);
      } else {
-         needToDrop = (roster.length + add.length) - g.maxRosterSize;
+         needToDrop = (roster.length + add.length) - g.get("maxRosterSize");
      }
      roster.sort((a, b) => a.value - b.value); // Sort by value, ascending
      add.sort((a, b) => a.value - b.value); // Sort by value, ascending
@@ -443,7 +458,7 @@ const valueChange = async (
 			}
 
 			// Normalize for injuries
-			if (includeInjuries && tid !== g.userTid) {
+			if (includeInjuries && tid !== g.get("userTid")) {
 				if (p.injury.gamesRemaining > 75) {
 					playerValue -= playerValue * 0.75;
 				} else {
@@ -455,7 +470,7 @@ const valueChange = async (
 
 			const contractSeasonsRemaining = player.contractSeasonsRemaining(
 				p.contract.exp,
-				g.numGames - gpAvg,
+				g.get("numGames") - gpAvg,
 			);
 
 			if (contractSeasonsRemaining > 1) {
@@ -505,7 +520,10 @@ const valueChange = async (
 			return (
 				memo +
 				(p.contract.amount / 1000) *
-					player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg) **
+					player.contractSeasonsRemaining(
+						p.contract.exp,
+						g.get("numGames") - gpAvg,
+					) **
 						(0.25 - (onlyThisSeason ? 0.25 : 0))
 			);
 		}, 0);
@@ -522,15 +540,18 @@ const valueChange = async (
   console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
 	// Aversion towards losing cap space in a trade during free agency
 
-	if (g.phase >= PHASE.RESIGN_PLAYERS || g.phase <= PHASE.FREE_AGENCY) {
+	if (
+		g.get("phase") >= PHASE.RESIGN_PLAYERS ||
+		g.get("phase") <= PHASE.FREE_AGENCY
+	) {
 		// Only care if cap space is over 2 million
-		if (payroll + 2000 < g.salaryCap) {
+		if (payroll + 2000 < g.get("salaryCap")) {
 			const salaryAddedThisSeason =
 				sumContracts(add, true) - sumContracts(remove, true); // Only care if cap space is being used
 
 			if (salaryAddedThisSeason > 0) {
-				//console.log("Free agency penalty: -" + (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason);
-				dv -= (0.2 + (0.8 * g.daysLeft) / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
+				//console.log("Free agency penalty: -" + (0.2 + 0.8 * g.get("daysLeft") / 30) * salaryAddedThisSeason);
+				dv -= (0.2 + (0.8 * g.get("daysLeft")) / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
 			}
 		}
 	}

@@ -32,12 +32,13 @@ const getBest = <T extends PlayerWithoutPid>(
 		}
 
 		const salaryCapCheck =
-			payroll === undefined || p.contract.amount + payroll <= g.salaryCap; // Don't sign minimum contract players to fill out the roster
+			payroll === undefined ||
+			p.contract.amount + payroll <= g.get("salaryCap"); // Don't sign minimum contract players to fill out the roster
 
 		if (
 			salaryCapCheck ||
-			(p.contract.amount <= g.minContract &&
-				playersOnRoster.length < g.maxRosterSize - 2)
+			(p.contract.amount <= g.get("minContract") &&
+				playersOnRoster.length < g.get("maxRosterSize") - 2)
 		) {
 			playersAvailable.splice(i, 1); // Remove from list of free agents
 

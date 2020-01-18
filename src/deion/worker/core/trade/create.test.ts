@@ -21,7 +21,7 @@ describe("worker/core/trade/create", () => {
 	test("create trade with team ID", async () => {
 		await trade.create([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],
@@ -40,7 +40,7 @@ describe("worker/core/trade/create", () => {
 	test("create trade with player ID", async () => {
 		await trade.create([
 			{
-				tid: g.userTid,
+				tid: g.get("userTid"),
 				pids: [],
 				pidsExcluded: [],
 				dpids: [],

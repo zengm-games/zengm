@@ -17,23 +17,26 @@ const genCumSums = (names: {
 const loadNames = (): PlayerNames => {
 	let { first, last } = overrides.names;
 
-	if (g.names && g.names.first) {
-		if (Array.isArray(g.names.first)) {
-			first = {
-				USA: g.names.first,
-			};
-		} else {
-			first = g.names.first;
+	const gNames = g.get("names");
+	if (gNames) {
+		if (gNames.first) {
+			if (Array.isArray(gNames.first)) {
+				first = {
+					USA: gNames.first,
+				};
+			} else {
+				first = gNames.first;
+			}
 		}
-	}
 
-	if (g.names && g.names.last) {
-		if (Array.isArray(g.names.last)) {
-			last = {
-				USA: g.names.last,
-			};
-		} else {
-			last = g.names.last;
+		if (gNames.last) {
+			if (Array.isArray(gNames.last)) {
+				last = {
+					USA: gNames.last,
+				};
+			} else {
+				last = gNames.last;
+			}
 		}
 	}
 

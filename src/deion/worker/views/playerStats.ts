@@ -9,7 +9,7 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.season &&
+		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
 		inputs.abbrev !== state.abbrev ||
@@ -40,7 +40,7 @@ const updatePlayers = async (
 		const stats = statsTable.stats;
 		let players;
 
-		if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
+		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
 			players = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
 				Infinity,
@@ -51,7 +51,9 @@ const updatePlayers = async (
 			});
 		}
 
-		let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
+		let tid: number | undefined = g
+			.get("teamAbbrevsCache")
+			.indexOf(inputs.abbrev);
 
 		if (tid < 0) {
 			tid = undefined;
@@ -102,10 +104,10 @@ const updatePlayers = async (
 				}
 			}
 
-			// Special case for career totals - use g.numGames games, unless this is the first season
+			// Special case for career totals - use g.get("numGames") games, unless this is the first season
 			if (!inputs.season) {
-				if (g.season > g.startingSeason) {
-					gp = g.numGames;
+				if (g.get("season") > g.get("startingSeason")) {
+					gp = g.get("numGames");
 				}
 			}
 
@@ -182,7 +184,7 @@ const updatePlayers = async (
 			playoffs: inputs.playoffs,
 			stats,
 			superCols: statsTable.superCols,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

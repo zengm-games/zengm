@@ -9,14 +9,15 @@ const updatePlayers = async (
 	state: any,
 ) => {
 	if (
-		(inputs.season === g.season && updateEvents.includes("playerMovement")) ||
-		(updateEvents.includes("newPhase") && g.phase === PHASE.PRESEASON) ||
+		(inputs.season === g.get("season") &&
+			updateEvents.includes("playerMovement")) ||
+		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
 		let players;
 
-		if (g.season === inputs.season) {
+		if (g.get("season") === inputs.season) {
 			players = await idb.cache.players.getAll();
 			players = players.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
 		} else {
@@ -25,7 +26,9 @@ const updatePlayers = async (
 			});
 		}
 
-		let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
+		let tid: number | undefined = g
+			.get("teamAbbrevsCache")
+			.indexOf(inputs.abbrev);
 
 		if (tid < 0) {
 			tid = undefined;
@@ -104,7 +107,7 @@ const updatePlayers = async (
 		// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually		// For the current season, use the current abbrev (including FA), not the last stats abbrev
 		// For other seasons, use the stats abbrev for filtering
 
-		if (g.season === inputs.season) {
+		if (g.get("season") === inputs.season) {
 			if (tid !== undefined) {
 				players = players.filter(p => p.abbrev === inputs.abbrev);
 			}
@@ -119,11 +122,11 @@ const updatePlayers = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			currentSeason: g.season,
+			currentSeason: g.get("season"),
 			season: inputs.season,
 			players,
 			ratings,
-			userTid: g.userTid,
+			userTid: g.get("userTid"),
 		};
 	}
 };

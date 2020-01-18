@@ -138,7 +138,7 @@ async function getAll(): Promise<
 
 const check = async (when: AchievementWhen, conditions: Conditions) => {
 	try {
-		if (g.easyDifficultyInPast || g.godModeInPast) {
+		if (g.get("easyDifficultyInPast") || g.get("godModeInPast")) {
 			return;
 		}
 

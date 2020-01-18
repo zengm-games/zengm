@@ -12,7 +12,7 @@ const minPot = process.env.SPORT === "basketball" ? 40 : 50;
 const shouldRetire = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
 ): boolean => {
-	const age = g.season - p.born.year;
+	const age = g.get("season") - p.born.year;
 	const { pos, pot } = p.ratings[p.ratings.length - 1];
 
 	if (process.env.SPORT === "football") {

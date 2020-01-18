@@ -3,30 +3,21 @@ import { GameAttributes } from "../../common/types";
 // Additional league-specific attributes (userTid, userTids, season, ...) are set when creating a new league
 const defaultGameAttributes: Partial<GameAttributes> = {
 	phase: 0,
-	nextPhase: null,
-	// Used only for fantasy draft
-	daysLeft: 0,
-	// Used only for free agency
+	nextPhase: null, // Used only for fantasy draft
+	daysLeft: 0, // Used only for free agency
 	gameOver: false,
 	godMode: false,
 	godModeInPast: false,
-	salaryCap: 90000,
-	// [thousands of dollars]
-	minPayroll: 60000,
-	// [thousands of dollars]
-	luxuryPayroll: 100000,
-	// [thousands of dollars]
+	salaryCap: 90000, // [thousands of dollars]
+	minPayroll: 60000, // [thousands of dollars]
+	luxuryPayroll: 100000, // [thousands of dollars]
 	luxuryTax: 1.5,
-	minContract: 750,
-	// [thousands of dollars]
-	maxContract: 30000,
-	// [thousands of dollars]
+	minContract: 750, // [thousands of dollars]
+	maxContract: 30000, // [thousands of dollars]
 	minRosterSize: 10,
 	maxRosterSize: 15,
-	numGames: 82,
-	// per season
-	quarterLength: 12,
-	// [minutes]
+	numGames: 82, // per season
+	quarterLength: 12, // [minutes]
 	confs: [
 		{
 			cid: 0,

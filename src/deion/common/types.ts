@@ -165,7 +165,7 @@ export type GameAttributes = {
 	easyDifficultyInPast: any;
 	daysLeft: any;
 	defaultStadiumCapacity: any;
-	disableInjuries?: any; // Obsolete, should be removed in some subsequent update
+	disableInjuries?: boolean; // Obsolete, should be removed in some subsequent update
 	difficulty: any;
 	divs: any;
 	draftType: any;
@@ -187,16 +187,16 @@ export type GameAttributes = {
 	minContract: any;
 	minPayroll: any;
 	minRosterSize: any;
-	names?: any;
+	names?: Names;
 	nextPhase: any;
 	numDraftRounds: any;
 	numGames: any;
 	numGamesPlayoffSeries: any;
 	numPlayoffByes: any;
-	numPlayoffRounds?: any; // Obsolete, just here for upgrade code
+	numPlayoffRounds?: number; // Obsolete, just here for upgrade code
 	numTeams: any;
 	numSeasonsFutureDraftPicks: any;
-	ownerMood?: any; // Obsolete, just here for upgrade code
+	ownerMood?: OwnerMood; // Obsolete, just here for upgrade code
 	phase: any;
 	playersRefuseToNegotiate: any;
 	quarterLength: any;
@@ -570,14 +570,8 @@ export type PlayersPlusOptions = {
 	statType?: PlayerStatType;
 };
 
-export type PlayerNames = {
+export type PlayerNames = Names & {
 	countries: [string, number][];
-	first: {
-		[key: string]: [string, number][];
-	};
-	last: {
-		[key: string]: [string, number][];
-	};
 };
 
 export type Local = {

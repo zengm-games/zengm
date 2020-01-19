@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import orderBy from "lodash/orderBy";
 import { mergeByPk } from "./helpers";
 import { team } from "../../core";
@@ -65,7 +64,7 @@ const processSeasonAttrs = async (
 		seasons = mergeByPk(
 			await idb.league.teamSeasons
 				.index("tid, season")
-				.getAll(backboard.bound([t.tid], [t.tid, ""])),
+				.getAll(IDBKeyRange.bound([t.tid], [t.tid, ""])),
 			await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 				[t.tid],
 				[t.tid, "Z"],

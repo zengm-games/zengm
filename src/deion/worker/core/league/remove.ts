@@ -1,22 +1,23 @@
-import backboard from "backboard";
+import { deleteDB } from "idb";
 import close from "./close";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, logEvent } from "../../util";
 
-/**
- * Delete an existing league.
- *
- * @memberOf core.league
- * @param {number} lid League ID.
- * @param {function()=} cb Optional callback.
- */
 const remove = async (lid: number) => {
 	if (g.get("lid") === lid) {
 		close(true);
 	}
 
 	await idb.meta.delete("leagues", lid);
-	await backboard.delete(`league${lid}`);
+	await deleteDB(`league${lid}`, {
+		blocked() {
+			logEvent({
+				type: "error",
+				text: "Please close any other open tabs.",
+				saveToDb: false,
+			});
+		},
+	});
 };
 
 export default remove;

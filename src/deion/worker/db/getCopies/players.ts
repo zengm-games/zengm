@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { PLAYER } from "../../../common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
@@ -45,7 +44,7 @@ const getCopies = async ({
 
 					// Because backboard doesn't support passing an argument to cursor.continue
 					const objectStore = tx.players._rawObjectStore;
-					const range = backboard.bound(
+					const range = IDBKeyRange.bound(
 						sortedPids[0],
 						sortedPids[sortedPids.length - 1],
 					);
@@ -131,7 +130,7 @@ const getCopies = async ({
 				),
 				await idb.league.players
 					.index("tid")
-					.getAll(backboard.lowerBound(PLAYER.FREE_AGENT)),
+					.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT)),
 			),
 			[].concat(
 				// @ts-ignore
@@ -153,7 +152,7 @@ const getCopies = async ({
 
 					const index = tx.players.index("draft.year, retiredYear")._rawIndex; // + 1 in upper range is because you don't accumulate stats until the year after the draft
 
-					const range = backboard.bound(
+					const range = IDBKeyRange.bound(
 						[0, activeSeason],
 						[activeSeason + 1, Infinity],
 					);
@@ -206,7 +205,7 @@ const getCopies = async ({
 		return mergeByPk(
 			await idb.league.players
 				.index("draft.year, retiredYear")
-				.getAll(backboard.bound([draftYear, 0], [draftYear, Infinity])),
+				.getAll(IDBKeyRange.bound([draftYear, 0], [draftYear, Infinity])),
 			(
 				await idb.cache.players.indexGetAll("playersByTid", [
 					PLAYER.RETIRED,

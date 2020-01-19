@@ -21,6 +21,7 @@ typescript
     - test after league
       - check firefox support (after meta port, still works back to 47)
       - quota errors
+    - get rid of BackboardTx
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo

@@ -25,7 +25,7 @@ async function add(
 	conditions: Conditions,
 	silent: boolean = false,
 ) {
-	const notify = slug => {
+	const notify = (slug: string) => {
 		const achievement = getAchievements().find(
 			achievement2 => slug === achievement2.slug,
 		);

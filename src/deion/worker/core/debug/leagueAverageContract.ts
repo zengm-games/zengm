@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db"; // Returns the average contract for the active players in the league
@@ -8,7 +7,7 @@ const leagueAverageContract = async () => {
 	// All non-retired players
 	const players = await idb.league.players
 		.index("tid")
-		.getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 	let total = 0;
 
 	for (let i = 0; i < players.length; i++) {

@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { season } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
@@ -17,7 +16,7 @@ const newPhaseRegularSeason = async () => {
 			// Delete all games except past 3 seasons
 			return tx.games
 				.index("season")
-				.iterate(backboard.upperBound(g.get("season") - 3), ({ gid }) => {
+				.iterate(IDBKeyRange.upperBound(g.get("season") - 3), ({ gid }) => {
 					tx.games.delete(gid);
 				});
 		});

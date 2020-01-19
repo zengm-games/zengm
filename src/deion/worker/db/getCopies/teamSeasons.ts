@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
 import { g, helpers } from "../../util";
@@ -28,7 +27,7 @@ const getCopies = async ({
 			// Single season, from database
 			return idb.league.teamSeasons
 				.index("season, tid")
-				.getAll(backboard.bound([season], [season, ""]));
+				.getAll(IDBKeyRange.bound([season], [season, ""]));
 		}
 
 		throw new Error(
@@ -40,7 +39,7 @@ const getCopies = async ({
 		return mergeByPk(
 			await idb.league.teamSeasons
 				.index("tid, season")
-				.getAll(backboard.bound([tid, seasons[0]], [tid, seasons[1]])),
+				.getAll(IDBKeyRange.bound([tid, seasons[0]], [tid, seasons[1]])),
 			await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 				[tid, seasons[0]],
 				[tid, seasons[1]],
@@ -52,7 +51,7 @@ const getCopies = async ({
 	return mergeByPk(
 		await idb.league.teamSeasons
 			.index("tid, season")
-			.getAll(backboard.bound([tid], [tid, ""])),
+			.getAll(IDBKeyRange.bound([tid], [tid, ""])),
 		await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 			[tid],
 			[tid, "Z"],

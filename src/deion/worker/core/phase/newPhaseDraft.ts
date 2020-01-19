@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { PLAYER } from "../../../common";
 import { draft } from "..";
 import { idb } from "../../db";
@@ -13,7 +12,7 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	const promises: Promise<any>[] = [];
 	await idb.league.players
 		.index("draft.year, retiredYear")
-		.iterate(backboard.bound([g.get("season") - 110], [""]), p => {
+		.iterate(IDBKeyRange.bound([g.get("season") - 110], [""]), p => {
 			// Skip non-retired players and dead players
 			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
 				return;

@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { PLAYER } from "../../common";
 import { idb } from ".";
 import cmp from "./cmp";
@@ -350,7 +349,7 @@ class Cache {
 					const [players1, players2] = await Promise.all([
 						tx.players
 							.index("tid")
-							.getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
+							.getAll(IDBKeyRange.lowerBound(PLAYER.UNDRAFTED)),
 						tx.players.index("tid").getAll(PLAYER.UNDRAFTED_FANTASY_TEMP),
 					]);
 					return players1.concat(players2);
@@ -402,7 +401,7 @@ class Cache {
 					}
 					return tx.teamSeasons
 						.index("season, tid")
-						.getAll(backboard.bound([this._season - 2], [this._season, ""]));
+						.getAll(IDBKeyRange.bound([this._season - 2], [this._season, ""]));
 				},
 				indexes: [
 					{
@@ -425,7 +424,7 @@ class Cache {
 				getData: (tx: BackboardTx) => {
 					return tx.teamStats
 						.index("season, tid")
-						.getAll(backboard.bound([this._season], [this._season, ""]));
+						.getAll(IDBKeyRange.bound([this._season], [this._season, ""]));
 				},
 				indexes: [
 					{

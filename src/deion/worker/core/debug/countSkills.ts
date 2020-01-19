@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
@@ -7,7 +6,7 @@ const countSkills = async () => {
 	// All non-retired players
 	const players = await idb.league.players
 		.index("tid")
-		.getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 	const counts = {
 		"3": 0,
 		A: 0,

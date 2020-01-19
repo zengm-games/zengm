@@ -1,4 +1,3 @@
-import backboard from "backboard";
 import { PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { overrides } from "../../util";
@@ -7,7 +6,7 @@ const countPositions = async () => {
 	// All non-retired players
 	const players = await idb.league.players
 		.index("tid")
-		.getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 	const posCounts: {
 		[key: string]: number;
 	} = {};

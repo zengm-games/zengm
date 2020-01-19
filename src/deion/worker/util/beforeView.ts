@@ -160,7 +160,6 @@ const beforeLeague = async (
 
 	local.leagueLoaded = true;
 
-	// Update play menu
 	await updateStatus(undefined);
 	if (loadingNewLid !== newLid) {
 		return;

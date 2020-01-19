@@ -24,7 +24,6 @@ Player.propTypes = {
 const Teams = ({ className, name, nested = false, season, team, userTid }) => {
 	let content;
 
-	console.log("hi", nested);
 	if (nested) {
 		content = team.map(t => (
 			<div className="mb-3" key={t.title}>

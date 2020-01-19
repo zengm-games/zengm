@@ -879,9 +879,14 @@ const create = async (
 	idb.cache.newLeague = true;
 	await idb.cache.fill(leagueData.gameAttributes.season);
 
-	// Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in
-	// the database native format in leagueData (object, not array like others).
-	await league.setGameAttributes(leagueData.gameAttributes);
+	// Hack! Need to not include lid in the update here, because then it gets sent to the UI and is seen in Controller before the URL changes, which interferes with running beforeLeague when the first view in the new league is loaded. lol
+	const gameAttributesToUpdate: Partial<GameAttributesLeague> = {
+		...leagueData.gameAttributes,
+	};
+	delete gameAttributesToUpdate.lid;
+
+	// Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
+	await league.setGameAttributes(gameAttributesToUpdate);
 
 	// orderBy is to ensure games is before schedule, so that games are added before schedule to the database, so Cache._maxIds.schedule can be set to Cache.maxIds.game, so gids never conflict
 	const orderedLeagueData = orderBy(Object.entries(leagueData), 0);

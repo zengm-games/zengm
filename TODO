@@ -14,7 +14,6 @@ typescript
 - to know
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
-  - reload page on dashboard. create new league. play menu doesn't work. why?
   - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus

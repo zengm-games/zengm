@@ -82,7 +82,8 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	const nextPhase = g.get("nextPhase");
 	if (
 		g.get("phase") === PHASE.FANTASY_DRAFT &&
-		nextPhase !== undefined && nextPhase <= PHASE.PLAYOFFS
+		nextPhase !== undefined &&
+		nextPhase <= PHASE.PLAYOFFS
 	) {
 		player.addStatsRow(p, g.get("nextPhase") === PHASE.PLAYOFFS);
 	}

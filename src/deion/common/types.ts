@@ -38,7 +38,7 @@ declare global {
 	}
 }
 
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
+export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 export type View<T extends keyof typeof views> = Exclude<
 	ThenArg<ReturnType<typeof views[T]>>,
 	void | { redirectUrl: string }
@@ -240,7 +240,7 @@ export type GameProcessedCompleted = {
 };
 
 export type League = {
-	lid: number;
+	lid?: number;
 	name: string;
 	tid: number;
 	phaseText: string;

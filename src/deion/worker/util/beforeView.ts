@@ -10,13 +10,13 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from ".";
-import { Conditions, League } from "../../common/types";
+import { Conditions, League, ThenArg } from "../../common/types";
 
 let heartbeatIntervalID: number;
 
 // Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
 
-const getLeague = async (lid: number): Promise<League> => {
+const getLeague = async (lid: number) => {
 	// Make sure this league exists before proceeding
 	const l = await idb.meta.get("leagues", lid);
 
@@ -33,7 +33,7 @@ const runHeartbeat = async (l: League) => {
 	await idb.meta.put("leagues", l);
 };
 
-const startHeartbeat = async (l: League) => {
+const startHeartbeat = async (l: ThenArg<ReturnType<typeof getLeague>>) => {
 	// First one within this transaction
 	await runHeartbeat(l);
 

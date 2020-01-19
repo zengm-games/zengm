@@ -16,6 +16,7 @@ export interface MetaDB extends DBSchema {
 	leagues: {
 		value: League;
 		key: number;
+		autoIncrementKeyPath: "lid";
 	};
 }
 

@@ -21,6 +21,7 @@ import {
 	PlayerWithoutPid,
 	MinimalPlayerRatings,
 	GameAttributesLeague,
+	League,
 } from "../../../common/types";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
@@ -835,7 +836,7 @@ const create = async (
 	}
 
 	const userTid = leagueData.gameAttributes.userTid;
-	const l: any = {
+	const l: League = {
 		name,
 		tid: userTid,
 		phaseText,

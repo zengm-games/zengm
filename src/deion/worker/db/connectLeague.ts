@@ -4,11 +4,12 @@ import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
-import { helpers, logEvent, overrides } from "../util"; // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
+import { helpers, logEvent, overrides } from "../util";
 import { unwrap } from "idb";
+
+// I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
 // that.
-
 const upgrade29 = tx => {
 	let lastCentury = 0; // Iterate over players
 
@@ -463,8 +464,9 @@ const migrateLeague = (upgradeDB, lid) => {
 	}
 
 	if (upgradeDB.oldVersion <= 26) {
-		slowUpgrade(); // Only non-retired players, for efficiency
+		slowUpgrade();
 
+		// Only non-retired players, for efficiency
 		upgradeDB.players.iterate(p => {
 			for (const r of p.ratings) {
 				// Replace blk/stl with diq
@@ -522,8 +524,9 @@ const migrateLeague = (upgradeDB, lid) => {
 				}
 
 				r.ovr = overrides.core.player.ovr(r);
-				r.skills = player.skills(r); // For performance, only calculate pot for non-retired players
+				r.skills = player.skills(r);
 
+				// For performance, only calculate pot for non-retired players
 				if (p.tid === PLAYER.RETIRED) {
 					r.pot = r.ovr;
 				} else {
@@ -643,7 +646,9 @@ const migrateLeague = (upgradeDB, lid) => {
 				upgradeDB.players.put(p);
 			}
 		});
-	} // Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
+	}
+
+	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
 };
 
 const connectLeague = async (lid: number) => {

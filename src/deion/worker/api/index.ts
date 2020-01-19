@@ -1116,7 +1116,8 @@ const runBefore = async (
 	const view = views[viewId] ? views[viewId] : overrides.views[viewId];
 
 	if (view) {
-		return view(inputs, updateEvents, prevData, conditions);
+		const data = await view(inputs, updateEvents, prevData, conditions);
+		return data === undefined ? {} : data;
 	}
 
 	return {};

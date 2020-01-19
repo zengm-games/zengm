@@ -4,10 +4,14 @@ import overrides from "./overrides";
 import { Conditions } from "../../common/types";
 
 const checkChanges = async (conditions: Conditions) => {
-	const changesRead = await idb.meta.attributes.get("changesRead"); // Don't show anything on first visit
+	const changesRead = await idb.meta.get("attributes", "changesRead"); // Don't show anything on first visit
 
-	if (changesRead < 0) {
-		await idb.meta.attributes.put(overrides.util.changes.length, "changesRead");
+	if (changesRead === undefined || changesRead < 0) {
+		await idb.meta.put(
+			"attributes",
+			overrides.util.changes.length,
+			"changesRead",
+		);
 		return;
 	}
 
@@ -46,7 +50,11 @@ const checkChanges = async (conditions: Conditions) => {
 			},
 			conditions,
 		);
-		await idb.meta.attributes.put(overrides.util.changes.length, "changesRead");
+		await idb.meta.put(
+			"attributes",
+			overrides.util.changes.length,
+			"changesRead",
+		);
 	}
 };
 

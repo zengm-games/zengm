@@ -1,11 +1,12 @@
-import Backboard from "backboard";
 import { league } from "../core";
 import { idb } from ".";
+import { deleteDB } from "idb";
+import { logEvent } from "../util";
 
 const reset = async () => {
 	// Delete any current league databases
 	console.log("Deleting any current league databases...");
-	const leagues = await idb.meta.leagues.getAll();
+	const leagues = await idb.meta.getAll("leagues");
 	let numDeleted = 0;
 	await Promise.all(
 		leagues.map(async l => {
@@ -18,7 +19,15 @@ const reset = async () => {
 	// Delete any current meta database
 	console.log("Deleting any current meta database...");
 	idb.meta.close();
-	await Backboard.delete("meta");
+	await deleteDB("meta", {
+		blocked() {
+			logEvent({
+				type: "error",
+				text: "Please close any other open tabs.",
+				saveToDb: false,
+			});
+		},
+	});
 };
 
 export default reset;

@@ -8,10 +8,6 @@ export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
 	useSharedWorker: boolean;
-	// These are just legacy variables sent to the worker to be stored in idb.meta.attributes
-	fromLocalStorage: {
-		[key: string]: string | undefined | null;
-	};
 };
 
 declare global {

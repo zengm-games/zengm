@@ -5,6 +5,7 @@ import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
 import { helpers, logEvent, overrides } from "../util"; // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
+import { unwrap } from "idb";
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
 // that.
 
@@ -595,13 +596,12 @@ const migrateLeague = (upgradeDB, lid) => {
 				value: difficulty,
 			});
 
-			idb.meta._rawDb
-				.transaction("leagues")
-				.objectStore("leagues")
-				.get(lid).onsuccess = event2 => {
+			unwrap(idb.meta.transaction("leagues").objectStore("leagues")).get(
+				lid,
+			).onsuccess = (event2: any) => {
 				const l = event2.target.result;
 				l.difficulty = difficulty;
-				idb.meta.leagues.put(l);
+				idb.meta.put("leagues", l);
 			};
 		};
 	}

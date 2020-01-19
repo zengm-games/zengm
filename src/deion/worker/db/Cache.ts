@@ -696,11 +696,11 @@ class Cache {
 		if (this._dirty) {
 			this._dirty = false; // Update lastPlayed
 
-			const l = await idb.meta.leagues.get(g.get("lid"));
+			const l = await idb.meta.get("leagues", g.get("lid"));
 
 			if (l) {
 				l.lastPlayed = new Date();
-				await idb.meta.leagues.put(l);
+				await idb.meta.put("leagues", l);
 			}
 		} //performance.measure('flushTime', 'flushStart');
 		//const entries = performance.getEntriesByName('flushTime');

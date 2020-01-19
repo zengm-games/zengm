@@ -814,7 +814,7 @@ const create = async (
 	importLid: number | undefined | null,
 	conditions: Conditions,
 ): Promise<number> => {
-	await idb.meta.attributes.put(tid, "lastSelectedTid");
+	await idb.meta.put("attributes", tid, "lastSelectedTid");
 	const leagueData = createWithoutSaving(
 		name,
 		tid,
@@ -849,14 +849,16 @@ const create = async (
 	};
 
 	if (importLid !== undefined && importLid !== null) {
-		const oldLeague = await idb.meta.leagues.get(importLid);
+		const oldLeague = await idb.meta.get("leagues", importLid);
 		await remove(importLid);
 		l.lid = importLid;
-		l.created = oldLeague.created;
-		l.starred = oldLeague.starred;
+		if (oldLeague) {
+			l.created = oldLeague.created;
+			l.starred = oldLeague.starred;
+		}
 	}
 
-	const lid = await idb.meta.leagues.add(l);
+	const lid = await idb.meta.add("leagues", l);
 	idb.league = await connectLeague(lid);
 
 	// These wouldn't be needed here, except the beforeView logic is fucked up

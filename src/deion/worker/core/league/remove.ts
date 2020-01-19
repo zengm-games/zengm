@@ -15,7 +15,7 @@ const remove = async (lid: number) => {
 		close(true);
 	}
 
-	idb.meta.leagues.delete(lid);
+	await idb.meta.delete("leagues", lid);
 	await backboard.delete(`league${lid}`);
 };
 

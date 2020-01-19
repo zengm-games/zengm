@@ -3,7 +3,6 @@ import { Env } from "../../common/types"; // Default values, to be overwritten o
 const env: Env = {
 	enableLogging: false,
 	heartbeatID: "",
-	fromLocalStorage: {},
 	useSharedWorker: false,
 };
 

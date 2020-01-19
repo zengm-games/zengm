@@ -4,7 +4,7 @@ import { ViewInput } from "../../common/types";
 const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
 	if (lid !== undefined) {
 		// Importing!
-		const l = await idb.meta.leagues.get(lid);
+		const l = await idb.meta.get("leagues", lid);
 
 		if (l) {
 			return {
@@ -16,18 +16,21 @@ const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
 		}
 	}
 
-	let newLid: number | undefined = undefined; // Find most recent league and add one to the LID
+	let newLid: number | undefined = undefined;
 
-	await idb.meta.leagues.iterate("prev", (l, shortCircuit) => {
-		newLid = l.lid + 1;
-		shortCircuit();
-	});
+	// Find most recent league and add one to the LID
+	const cursor = await idb.meta
+		.transaction("leagues")
+		.store.openCursor(undefined, "prev");
+	if (cursor) {
+		newLid = cursor.value.lid;
+	}
 
 	if (newLid === undefined) {
 		newLid = 1;
 	}
 
-	let lastSelectedTid = await idb.meta.attributes.get("lastSelectedTid");
+	let lastSelectedTid = await idb.meta.get("attributes", "lastSelectedTid");
 
 	if (typeof lastSelectedTid !== "number" || Number.isNaN(lastSelectedTid)) {
 		lastSelectedTid = -1;

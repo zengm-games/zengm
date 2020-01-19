@@ -1,9 +1,9 @@
-import backboard from "backboard";
 import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
 import { g, local } from "../worker/util";
 
 import "smoke-test-overrides"; // eslint-disable-line
+import { deleteDB } from "idb";
 
 describe("Smoke Tests", () => {
 	let intervalID: number;
@@ -13,7 +13,7 @@ describe("Smoke Tests", () => {
 		// @ts-ignore
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
-		idb.meta = await connectMeta({});
+		idb.meta = await connectMeta();
 		await league.create("Test", 0, undefined, 2016, false, 0, undefined, {});
 		local.autoPlaySeasons = 1;
 		league.autoPlay();
@@ -42,7 +42,8 @@ describe("Smoke Tests", () => {
 			idb.meta.close();
 		}
 
-		await backboard.delete("meta");
+		await deleteDB("meta");
+		// @ts-ignore
 		idb.meta = undefined;
 	});
 });

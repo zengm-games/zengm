@@ -1,12 +1,25 @@
-import Backboard from "backboard";
+import { openDB, DBSchema, IDBPDatabase } from "idb";
+import { logEvent } from "../util";
+import { League } from "../../common/types";
 
-/**
- * Create new meta database with the latest structure.
- *
- * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
- */
-const createMeta = upgradeDB => {
-	// console.log("Creating meta database");
+export interface MetaDB extends DBSchema {
+	achievements: {
+		key: number;
+		value: {
+			slug: string;
+		};
+	};
+	attributes: {
+		value: number;
+		key: "changesRead" | "lastSelectedTid" | "nagged";
+	};
+	leagues: {
+		value: League;
+		key: number;
+	};
+}
+
+const createMeta = (upgradeDB: IDBPDatabase<MetaDB>) => {
 	upgradeDB.createObjectStore("achievements", {
 		keyPath: "aid",
 		autoIncrement: true,
@@ -21,51 +34,55 @@ const createMeta = upgradeDB => {
 	attributeStore.put(0, "nagged");
 };
 
-/**
- * Migrate meta database to the latest structure.
- *
- * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
- */
-const migrateMeta = (upgradeDB, fromLocalStorage) => {
+const migrateMeta = (upgradeDB: IDBPDatabase<MetaDB>, oldVersion: number) => {
 	console.log(
-		`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`,
+		`Upgrading meta database from version ${oldVersion} to version ${upgradeDB.version}`,
 	);
 
-	if (upgradeDB.oldVersion <= 6) {
+	if (oldVersion <= 6) {
 		upgradeDB.createObjectStore("achievements", {
 			keyPath: "aid",
 			autoIncrement: true,
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 7) {
+	if (oldVersion <= 7) {
 		const attributeStore = upgradeDB.createObjectStore("attributes");
 		attributeStore.put(-1, "changesRead");
 		attributeStore.put(-1, "lastSelectedTid");
 		attributeStore.put(0, "nagged");
-
-		for (const key of Object.keys(fromLocalStorage)) {
-			const int = parseInt(fromLocalStorage[key], 10);
-
-			if (!Number.isNaN(int)) {
-				attributeStore.put(int, key);
-			}
-		}
 	}
 };
 
-const connectMeta = async (fromLocalStorage: {
-	[key: string]: string | undefined | null;
-}) => {
+const connectMeta = async () => {
 	// Would like to await on createMeta/migrateMeta and inside those functions, but Firefox
-	const db = await Backboard.open("meta", 8, upgradeDB => {
-		if (upgradeDB.oldVersion === 0) {
-			createMeta(upgradeDB);
-		} else {
-			migrateMeta(upgradeDB, fromLocalStorage);
-		}
+	const db = await openDB<MetaDB>("meta", 8, {
+		upgrade(db, oldVersion) {
+			if (oldVersion === 0) {
+				createMeta(db);
+			} else {
+				migrateMeta(db, oldVersion);
+			}
+		},
+		blocked() {
+			logEvent({
+				type: "error",
+				text: "Please close any other open tabs.",
+				saveToDb: false,
+			});
+		},
+		blocking() {
+			db.close();
+		},
+		terminated() {
+			logEvent({
+				type: "error",
+				text: "Something bad happened...",
+				saveToDb: false,
+			});
+		},
 	});
-	db.on("versionchange", () => db.close());
+
 	return db;
 };
 

@@ -622,8 +622,12 @@ const generateFace = () => {
 };
 
 const getLeagueName = async () => {
-	const l = await idb.meta.leagues.get(g.get("lid"));
-	return l.name;
+	const l = await idb.meta.get("leagues", g.get("lid"));
+	if (l) {
+		return l.name;
+	}
+
+	return "Unknown league";
 };
 
 const getLocal = async (name: keyof Local) => {
@@ -873,8 +877,9 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
 	if (idb.meta === undefined) {
 		checkNaNs();
-		idb.meta = await connectMeta(inputEnv.fromLocalStorage); // Account and changes checks can be async
+		idb.meta = await connectMeta();
 
+		// Account and changes checks can be async
 		checkChanges(conditions);
 		checkAccount(conditions).then(() => {
 			return toUI(["initAds", local.goldUntil], conditions);
@@ -1244,9 +1249,12 @@ const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 };
 
 const updateLeague = async (lid: number, obj: any) => {
-	const l = await idb.meta.leagues.get(lid);
+	const l = await idb.meta.get("leagues", lid);
+	if (!l) {
+		throw new Error(`No league with lid ${lid} found`);
+	}
 	Object.assign(l, obj);
-	await idb.meta.leagues.put(l);
+	await idb.meta.put("leagues", l);
 	await toUI(["realtimeUpdate", ["leagues"]]);
 };
 

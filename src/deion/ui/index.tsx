@@ -159,12 +159,6 @@ const setupEnv = async () => {
 		enableLogging: window.enableLogging,
 		heartbeatID,
 		useSharedWorker: window.useSharedWorker,
-		// These are just legacy variables sent to the worker to be stored in idb.meta.attributes
-		fromLocalStorage: {
-			changesRead: localStorage.getItem("changesRead"),
-			lastSelectedTid: localStorage.getItem("lastSelectedTid"),
-			nagged: localStorage.getItem("nagged"),
-		},
 	};
 	await toWorker("init", env);
 };

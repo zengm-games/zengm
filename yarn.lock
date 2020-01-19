@@ -717,6 +717,17 @@
   dependencies:
     slash "^3.0.0"
 
+"@rollup/plugin-commonjs@^11.0.1":
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/@rollup/plugin-commonjs/-/plugin-commonjs-11.0.1.tgz#6056a6757286901cc6c1599123e6680a78cad6c2"
+  integrity sha512-SaVUoaLDg3KnIXC5IBNIspr1APTYDzk05VaYcI6qz+0XX3ZlSCwAkfAhNSOxfd5GAdcm/63Noi4TowOY9MpcDg==
+  dependencies:
+    "@rollup/pluginutils" "^3.0.0"
+    estree-walker "^0.6.1"
+    is-reference "^1.1.2"
+    magic-string "^0.25.2"
+    resolve "^1.11.0"
+
 "@rollup/plugin-json@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-json/-/plugin-json-4.0.1.tgz#223898c6c37993886da06989b0e93ceef52aa3ce"
@@ -3822,6 +3833,13 @@ iconv-lite@0.4, iconv-lite@0.4.24, iconv-lite@^0.4.24:
   integrity sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
+
+idb@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/idb/-/idb-5.0.0.tgz#b93d1e499d932959358a49fb6dd1c23c1157ef55"
+  integrity sha512-TmUY6ogQgb9xbsIZzJx/rV6r9gAP0qIEmrGQz1ZpBOkgoG7a7E+H35P1wAn6DXI9rG3guBbt80sGHEv/LBUzGw==
+  dependencies:
+    "@rollup/plugin-commonjs" "^11.0.1"
 
 ignore@^4.0.6:
   version "4.0.6"

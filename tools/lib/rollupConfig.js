@@ -35,7 +35,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			"process.env.SPORT": JSON.stringify(sport),
 		}),
 		babel({
-			exclude: "node_modules/!(d3)**",
+			exclude: "node_modules/!(d3|idb)**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 		}),
 		json({

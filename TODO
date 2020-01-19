@@ -14,11 +14,14 @@ typescript
 - to know
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
+  - reload page on dashboard. create new league. play menu doesn't work. why?
   - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
   - types for PlayersPlus and TeamsPlus
   - backboard -> idb
-    - check firefox support
+    - test after league
+      - check firefox support (after meta port, still works back to 47)
+      - quota errors
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo
@@ -174,9 +177,6 @@ more customize player options
 - hof
 - awards
 
-backboard -> idb
-- quota errors
-
 some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
@@ -224,7 +224,6 @@ make localStorage fail gracefully on quota error
   - https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js handles everything i think, but forces it to be async and bring in other stuff
 - safe-localstorage - weird fallback API
 - local-storage-fallback - only tests errors at initial usage, not subsequent
-- get rid of fromLocalStorage
 
 in basketball gamesim
 - if all ratings are 0, why does one player dominate?
@@ -707,9 +706,6 @@ newScheduleCrappy should be better
 international names
   accurate faces (race)
   in player ratings table, show country abbrevs not full names
-
-backboard
-  investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 

@@ -19,9 +19,12 @@ async function updatePhase(conditions?: Conditions) {
 
 		(async () => {
 			if (idb.meta) {
-				const l = await idb.meta.leagues.get(g.get("lid"));
+				const l = await idb.meta.get("leagues", g.get("lid"));
+				if (!l) {
+					throw new Error(`No league with lid ${g.get("lid")} found`);
+				}
 				l.phaseText = phaseText;
-				await idb.meta.leagues.put(l);
+				await idb.meta.put("leagues", l);
 			}
 		})();
 	} else if (conditions !== undefined) {

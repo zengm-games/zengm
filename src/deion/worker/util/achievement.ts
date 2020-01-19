@@ -44,14 +44,14 @@ async function add(
 		);
 	};
 
-	const addToIndexedDB = slugs2 => {
-		return idb.meta.tx("achievements", "readwrite", tx => {
-			for (const slug of slugs2) {
-				tx.achievements.add({
-					slug,
-				});
-			}
-		});
+	const addToIndexedDB = async (slugs2: string[]) => {
+		const tx = idb.meta.transaction("achievements", "readwrite");
+		for (const slug of slugs2) {
+			tx.store.add({
+				slug,
+			});
+		}
+		await tx.done;
 	};
 
 	if (!silent) {
@@ -101,7 +101,7 @@ async function getAll(): Promise<
 	);
 
 	// Handle any achivements stored in IndexedDB
-	const achievementsLocal = await idb.meta.achievements.getAll();
+	const achievementsLocal = await idb.meta.getAll("achievements");
 
 	for (const achievementLocal of achievementsLocal) {
 		for (const achievement of achievements2) {

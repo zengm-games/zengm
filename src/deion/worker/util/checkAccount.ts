@@ -33,11 +33,11 @@ const checkAccount = async (
 		if (data.username !== "") {
 			// Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
 			// risk is very small.
-			const achievements = await idb.meta.achievements.getAll();
+			const achievements = await idb.meta.getAll("achievements");
 			const slugs = achievements.map(({ slug }) => slug); // If any exist, delete and upload
 
 			if (slugs.length > 0) {
-				await idb.meta.achievements.clear(); // If this fails to save remotely, will be added to IDB again
+				await idb.meta.clear("achievements"); // If this fails to save remotely, will be added to IDB again
 
 				await achievement.add(slugs, conditions, true);
 			}

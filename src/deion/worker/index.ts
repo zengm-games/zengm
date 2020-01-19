@@ -1,3 +1,4 @@
+console.log("hi");
 /* eslint-disable import/first */
 import "../common/polyfills";
 import api from "./api";

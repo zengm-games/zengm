@@ -18,7 +18,7 @@ let heartbeatIntervalID: number;
 
 const getLeague = async (lid: number): Promise<League> => {
 	// Make sure this league exists before proceeding
-	const l = await idb.meta.leagues.get(lid);
+	const l = await idb.meta.get("leagues", lid);
 
 	if (l === undefined) {
 		throw new Error("League not found.");
@@ -30,7 +30,7 @@ const getLeague = async (lid: number): Promise<League> => {
 const runHeartbeat = async (l: League) => {
 	l.heartbeatID = env.heartbeatID;
 	l.heartbeatTimestamp = Date.now();
-	await idb.meta.leagues.put(l);
+	await idb.meta.put("leagues", l);
 };
 
 const startHeartbeat = async (l: League) => {

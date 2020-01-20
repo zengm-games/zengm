@@ -24,10 +24,11 @@ const exportLeague = async (
 	await idb.cache.flush();
 	const exportedLeague: any = {
 		version: idb.league.version,
-	}; // Row from leagueStore in meta db.
+	};
+
+	// Row from leagueStore in meta db.
 	// phaseText is needed if a phase is set in gameAttributes.
 	// name is only used for the file name of the exported roster file.
-
 	if (options.meta) {
 		exportedLeague.meta = {
 			phaseText: local.phaseText,
@@ -38,7 +39,7 @@ const exportLeague = async (
 	await Promise.all(
 		stores.map(async store => {
 			exportedLeague[store] = await getAll(
-				idb.league[store],
+				idb.league.transaction(store).store,
 				undefined,
 				options.filter[store],
 			);

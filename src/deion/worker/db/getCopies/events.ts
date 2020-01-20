@@ -42,7 +42,7 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await getAll(idb.league.events, undefined, filter),
+		await getAll(idb.league.transaction("events").store, undefined, filter),
 		await idb.cache.events.getAll(),
 		idb.cache.storeInfos.events.pk,
 	).filter(filter);

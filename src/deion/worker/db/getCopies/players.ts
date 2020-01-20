@@ -97,7 +97,11 @@ const getCopies = async ({
 	if (retired === true) {
 		// Get all from cache, and filter later, in case cache differs from database
 		return mergeByPk(
-			await getAll(idb.league.players.index("tid"), PLAYER.RETIRED, filter),
+			await getAll(
+				idb.league.transaction("players").store.index("tid"),
+				PLAYER.RETIRED,
+				filter,
+			),
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 			idb.cache.storeInfos.players.pk,
 		).filter(filter);
@@ -127,8 +131,8 @@ const getCopies = async ({
 		return mergeByPk(
 			[].concat(
 				// @ts-ignore
-				await getAll<Player<MinimalPlayerRatings>>(
-					idb.league.players.index("tid"),
+				await getAll(
+					idb.league.transaction("players").store.index("tid"),
 					PLAYER.RETIRED,
 					filter,
 				),
@@ -226,7 +230,10 @@ const getCopies = async ({
 
 	if (constStatsTid !== undefined) {
 		return mergeByPk(
-			await getAll(idb.league.players.index("statsTids"), constStatsTid),
+			await getAll(
+				idb.league.transaction("players").store.index("statsTids"),
+				constStatsTid,
+			),
 			[]
 				.concat(
 					// @ts-ignore
@@ -242,7 +249,7 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await getAll(idb.league.players, undefined, filter),
+		await getAll(idb.league.transaction("players").store, undefined, filter),
 		await idb.cache.players.getAll(),
 		idb.cache.storeInfos.players.pk,
 	).filter(filter);

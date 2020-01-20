@@ -54,7 +54,7 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await getAll(idb.league.messages),
+		await getAll(idb.league.transaction("messages").store),
 		await idb.cache.messages.getAll(),
 		idb.cache.storeInfos.messages.pk,
 	);

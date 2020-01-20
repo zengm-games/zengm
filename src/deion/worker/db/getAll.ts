@@ -1,3 +1,12 @@
+import {
+	IDBPObjectStore,
+	IDBPIndex,
+	StoreNames,
+	StoreValue,
+	IndexNames,
+} from "idb";
+import { LeagueDB } from "./connectLeague";
+
 /**
  * This is used for two separate purposes.
  *
@@ -5,17 +14,28 @@
  *
  * Second use case: Sometimes you really do want to read all of an object store (or index) into memory. In that case, IDBObjectStore.getAll is appropriate, even if it's slow and uses a lot of memory. However Chrome will error with "Maximum IPC message size exceeded" if the requested data is too large. This happens even when the data is easily small enough to fit in memory. To work around that, you can't use getAll, instead you need to iterate over records and build the array yourself. This is how this function works if you leave off the "cb" argument.
  **/
-const getAll = async <T = any>(
-	store: any,
+const getAll = async <StoreName extends StoreNames<LeagueDB>>(
+	store:
+		| IDBPObjectStore<LeagueDB, StoreNames<LeagueDB>[], StoreName>
+		| IDBPIndex<
+				LeagueDB,
+				StoreNames<LeagueDB>[],
+				StoreName,
+				IndexNames<LeagueDB, StoreName>
+		  >,
 	key?: any,
 	cb?: (a: any) => boolean,
-): Promise<T[]> => {
-	const objs: T[] = [];
-	await store.iterate(key, obj => {
-		if (cb === undefined || cb(obj)) {
-			objs.push(obj);
+) => {
+	const objs: StoreValue<LeagueDB, StoreName>[] = [];
+
+	let cursor = await store.openCursor(key);
+	if (cursor) {
+		if (cb === undefined || cb(cursor.value)) {
+			objs.push(cursor.value);
 		}
-	});
+		cursor = await cursor.continue();
+	}
+
 	return objs;
 };
 

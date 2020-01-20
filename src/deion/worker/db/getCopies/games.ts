@@ -21,7 +21,7 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await getAll(idb.league.games),
+		await getAll(idb.league.transaction("games").store),
 		await idb.cache.games.getAll(),
 		idb.cache.storeInfos.games.pk,
 	);

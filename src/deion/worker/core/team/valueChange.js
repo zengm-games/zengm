@@ -63,7 +63,10 @@ const valueChange = async (
 			if (!pidsRemove.includes(p.pid)) {
 				//player from tid not in pidsRemove put on roster
 				roster.push({
-					value: strategy === "contending" ? p.valueNoPot : p.value,
+					value:
+						strategy === "contending"
+							? 0.75 * p.valueNoPot + 0.25 * p.value
+							: p.value,
 					skills: p.ratings[p.ratings.length - 1].skills,
 					contract: p.contract,
 					overall: p.ratings[p.ratings.length - 1].ovr,
@@ -75,7 +78,10 @@ const valueChange = async (
 				//player from tid in pidsRemove put in remove
 				remove.push({
 					value:
-						fudgeFactor * (strategy === "contending" ? p.valueNoPot : p.value),
+						fudgeFactor *
+						(strategy === "contending"
+							? 0.75 * p.valueNoPot + 0.25 * p.value
+							: p.value),
 					skills: p.ratings[p.ratings.length - 1].skills,
 					contract: p.contract,
 					overall: p.ratings[p.ratings.length - 1].ovr,
@@ -92,7 +98,10 @@ const valueChange = async (
 			const p = await idb.cache.players.get(pid);
 			updateValues(p);
 			add.push({
-				value: strategy === "contending" ? p.valueNoPot : p.value,
+				value:
+					strategy === "contending"
+						? 0.75 * p.valueNoPot + 0.25 * p.value
+						: p.value,
 				skills: p.ratings[p.ratings.length - 1].skills,
 				contract: p.contract,
 				overall: p.ratings[p.ratings.length - 1].ovr,

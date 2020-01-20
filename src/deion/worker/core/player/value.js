@@ -41,13 +41,6 @@ const value = (
 	options.fuzz = !!options.fuzz;
 	options.withContract = !!options.withContract;
 
-	const round = (num, digitsAfterDecimal) => {
-		const power = 10 ** digitsAfterDecimal;
-		num *= power;
-		num = Math.round(num);
-		return num / power;
-	};
-
 	// Current ratings
 	const pr = {}; // Start blank, add what we need (efficiency, wow!)
 	const s = p.ratings.length - 1; // Latest season
@@ -72,18 +65,20 @@ const value = (
 	let current = pr.ovr; // No stats at all? Just look at ratings more, then.
 	if (process.env.SPORT === "basketball" && ps.length > 0) {
 		const ps1 = ps[ps.length - 1]; // Most recent stats
+		let PER2OVR;
 		if (ps.length === 1) {
 			// Only one year of stats
+			PER2OVR = intercept + ps1.per * slope;
 			if (ps1.min > 14 * ps1.gp) {
 				//high mpg
-				current = 0.6 * current + 0.4 * ps1.per;
+				current = 0.6 * current + 0.4 * PER2OVR;
 			} else {
 				//low mpg
-				current = 0.875 * current + 0.125 * ps1.per;
+				current = 0.875 * current + 0.125 * PER2OVR;
 			}
 		} else {
 			const ps2 = ps[ps.length - 2]; // Two most recent seasons
-			const PER2OVR =
+			PER2OVR =
 				intercept +
 				((ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min)) * slope;
 			if (ps1.min + ps2.min > 1250) {
@@ -94,22 +89,6 @@ const value = (
 			}
 		}
 	}
-
-	/*
-	//lets value differently for w/ contract vs w/o
-	if(options.withContract){
-		p.worth = player.genContract(p, false, false, true); //do we want to add this to the player anyway? Where else do we need this
-		const getContractValue = (playerWorth,playerContract) => {
-			return (50/(g.maxContract - g.minContract))*(playerWorth-playerContract)+50; 
-			//if the player is paid his worth --> his contract has nuetral or 50 value
-			//if the player is paid more than his worth --> his contract has negative or less than 50 value
-			// vice versa for a player paid less than his worth
-		}
-		const contractValue = getContractValue(p.worth.amount,p.contract.amount);
-		current = .7*current + .3*contractValue;
-		//current contract effects current value, not future value, so don't worry about potential
-	}
-	*/
 
 	// 2. Potential
 	let potential = pr.pot;
@@ -126,7 +105,7 @@ const value = (
 
 	// Short circuit if we don't care about potential
 	if (options.noPot) {
-		return round(current, 2);
+		return current;
 	}
 
 	// If performance is already exceeding predicted potential, just use that
@@ -143,18 +122,53 @@ const value = (
 	}
 
 	// Otherwise, combine based on age
-	if (age >= 19 && age <= 24) {
-		//the player is young and have time for development
-		const factor = -0.05 * age + 1.7; //when 19, .75 of your value is potential based; when 24, .5 of your value is potential based
-		return round(potential * factor + current * (1 - factor), 2);
+	if (age === 19) {
+		return 0.75 * potential + 0.25 * current;
 	}
-	if (age > 24 && age <= 29) {
-		//the player is in their prime
-		const factor = -0.1 * age + 2.9; //when 25 .4 of your value is potential based; when 29, 0 of your value is potential based
-		return round(potential * factor + current * (1 - factor), 2);
+	if (age === 20) {
+		return 0.7 * potential + 0.3 * current;
 	}
-	const factor = -0.025 * age + 1.725; //as you get older... your value decreases and is soley based on overall
-	return round(current * factor, 2);
+	if (age === 21) {
+		return 0.65 * potential + 0.35 * current;
+	}
+	if (age === 22) {
+		return 0.6 * potential + 0.4 * current;
+	}
+	if (age === 23) {
+		return 0.55 * potential + 0.45 * current;
+	}
+	if (age === 24) {
+		return 0.5 * potential + 0.5 * current;
+	}
+	if (age === 25) {
+		return 0.4 * potential + 0.6 * current;
+	}
+	if (age === 26) {
+		return 0.3 * potential + 0.7 * current;
+	}
+	if (age === 27) {
+		return 0.2 * potential + 0.8 * current;
+	}
+	if (age === 28) {
+		return 0.1 * potential + 0.9 * current;
+	}
+	if (age === 29) {
+		return current; //peak
+	}
+	if (age === 30) {
+		return current; //peak
+	}
+	if (age === 31) {
+		return current; //peak
+	}
+	if (age === 32) {
+		return 0.975 * current;
+	}
+	if (age === 33) {
+		return 0.95 * current;
+	}
+	const ageFactor = 0.9 - 0.05 * (age - 34);
+	return ageFactor * current; //final case --> age >= 34
 };
 
 export default value;

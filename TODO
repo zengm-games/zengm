@@ -20,18 +20,15 @@ typescript
     - also like idb, cache get functions should all be | void
   - types for PlayersPlus and TeamsPlus
   - backboard -> idb
-    - league upgrade code - revisit after figuring out how to deal with old firefox iterate calls, if necessary
-      - how much does this matter elsewhere?
     - test after league
-      - deleteOldData
-      - recomputeHallOfFame
       - check safari support (after meta port, safari 10 is now broken, not sure why, maybe the same problem that uglify has?)
         - leagues[Symbol.iterator] is not a function. (In 'leagues[Symbol.iterator]()', 'leagues[Symbol.iterator]' is undefined)
-          - https://github.com/Financial-Times/polyfill-service/issues/1019
-          - https://github.com/Financial-Times/polyfill-service/issues/1159
+          - result of idb.meta.getAll("leagues") is a promise-like object, not an array. why?
+          - if can't fix this, remove safari 10 polyfills and add safari 10 detection to index.html
         - generated updateDashboard code is almost the same, what changed??
           - importing backboard doesn't change anything
       - quota errors
+        - https://stackoverflow.com/questions/53027713/how-to-test-indexeddb-quotaexceedederror-without-filling-disk
     - remove backboard dependency
   - any -> unknown
     - also in dependencies, like bbgm-router

@@ -4,23 +4,29 @@ import { defaultGameAttributes, g, helpers } from "../worker/util";
 import { footballOverrides } from "../worker/util/defaultGameAttributes";
 
 const mockIDBLeague = (): any => {
-	const league = {};
+	const store = {
+		index() {
+			return {
+				getAll() {
+					return [];
+				},
+			};
+		},
+	};
 
-	for (const store of STORES) {
-		league[store] = {
-			getAll() {
-				return [];
-			},
-
-			index() {
-				return {
-					getAll() {
-						return [];
-					},
-				};
-			},
-		};
-	}
+	const league = {
+		getAll() {
+			return [];
+		},
+		transaction() {
+			return {
+				store,
+				objectStore() {
+					return store;
+				},
+			};
+		},
+	};
 
 	return league;
 };

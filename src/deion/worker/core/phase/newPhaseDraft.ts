@@ -19,17 +19,15 @@ const newPhaseDraft = async (conditions: Conditions) => {
 		const p = cursor.value;
 
 		// Skip non-retired players and dead players
-		if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
-			return;
-		}
+		if (p.tid === PLAYER.RETIRED && typeof p.diedYear !== "number") {
+			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+			const probDeath =
+				0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
 
-		// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-		const probDeath =
-			0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
-
-		if (Math.random() < probDeath) {
-			p.diedYear = g.get("season");
-			promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
+			if (Math.random() < probDeath) {
+				p.diedYear = g.get("season");
+				promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
+			}
 		}
 
 		cursor = await cursor.continue();

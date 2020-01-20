@@ -22,11 +22,12 @@ typescript
   - backboard -> idb
     - league upgrade code - revisit after figuring out how to deal with old firefox iterate calls, if necessary
       - how much does this matter elsewhere?
-    - mockIDBLeague
     - test after league
       - deleteOldData
       - recomputeHallOfFame
       - check firefox support (after meta port, still works back to 47)
+        - newPhaseDraft cursor await breaks any firefox < 60
+          - write iterate helper function, similar to getAll, that works like old iterate! should have done this in the first place lol
       - check safari support (after meta port, safari 10 is now broken, not sure why, maybe the same problem that uglify has?)
       - quota errors
   - any -> unknown

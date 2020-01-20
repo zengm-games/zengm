@@ -25,11 +25,14 @@ typescript
     - test after league
       - deleteOldData
       - recomputeHallOfFame
-      - check firefox support (after meta port, still works back to 47)
-        - newPhaseDraft cursor await breaks any firefox < 60
-          - write iterate helper function, similar to getAll, that works like old iterate! should have done this in the first place lol
       - check safari support (after meta port, safari 10 is now broken, not sure why, maybe the same problem that uglify has?)
+        - leagues[Symbol.iterator] is not a function. (In 'leagues[Symbol.iterator]()', 'leagues[Symbol.iterator]' is undefined)
+          - https://github.com/Financial-Times/polyfill-service/issues/1019
+          - https://github.com/Financial-Times/polyfill-service/issues/1159
+        - generated updateDashboard code is almost the same, what changed??
+          - importing backboard doesn't change anything
       - quota errors
+    - remove backboard dependency
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo

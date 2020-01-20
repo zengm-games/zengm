@@ -1,7 +1,6 @@
 import Backboard from "backboard";
 import { IDBPDatabase } from "idb";
 import Cache from "./Cache";
-import getAll from "./getAll";
 import connectLeague, { LeagueDB } from "./connectLeague";
 import connectMeta, { MetaDB } from "./connectMeta";
 import * as getCopies from "./getCopies";
@@ -41,5 +40,7 @@ const idb: {
 	meta: undefined,
 };
 
-export { Cache, connectLeague, connectMeta, getAll, idb };
+export { Cache, connectLeague, connectMeta, idb };
+export { default as getAll } from "./getAll";
+export { default as iterate } from "./iterate";
 export { default as reset } from "./reset";

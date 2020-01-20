@@ -1,5 +1,5 @@
 import { season } from "..";
-import { idb } from "../../db";
+import { idb, iterate } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
 
 const newPhaseRegularSeason = async () => {
@@ -15,14 +15,14 @@ const newPhaseRegularSeason = async () => {
 		const transaction = idb.league.transaction("games", "readwrite");
 
 		// Delete all games except past 3 seasons
-		let cursor = await transaction.store
-			.index("season")
-			.openCursor(IDBKeyRange.upperBound(g.get("season") - 3));
-		while (cursor) {
-			const { gid } = cursor.value;
-			transaction.objectStore("games").delete(gid);
-			cursor = await cursor.continue();
-		}
+		await iterate(
+			transaction.store.index("season"),
+			IDBKeyRange.upperBound(g.get("season") - 3),
+			undefined,
+			({ gid }) => {
+				transaction.objectStore("games").delete(gid);
+			},
+		);
 
 		await transaction.done;
 	}

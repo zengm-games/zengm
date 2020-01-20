@@ -15,7 +15,7 @@ import {
 	team,
 	trade,
 } from "../core";
-import { connectMeta, idb } from "../db";
+import { connectMeta, idb, iterate } from "../db";
 import {
 	achievement,
 	beforeView,
@@ -208,17 +208,17 @@ const clearWatchList = async () => {
 	// For watched players not in cache, mark as unwatched an add to cache
 	const promises: Promise<any>[] = [];
 
-	let cursor = await idb.league.transaction("players").store.openCursor();
-	while (cursor) {
-		const p = cursor.value;
-
-		if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
-			p.watch = false;
-			promises.push(idb.cache.players.add(p)); // Can't await here because of Firefox IndexedDB issues
-		}
-
-		cursor = await cursor.continue();
-	}
+	await iterate(
+		idb.league.transaction("players").store,
+		undefined,
+		undefined,
+		p => {
+			if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
+				p.watch = false;
+				promises.push(idb.cache.players.add(p)); // Can't await here because of Firefox IndexedDB issues
+			}
+		},
+	);
 
 	await Promise.all(promises);
 	await toUI(["realtimeUpdate", ["playerMovement", "watchList"]]);
@@ -278,98 +278,111 @@ const deleteOldData = async (options: {
 	}
 
 	if (options.teamHistory) {
-		let cursor = await transaction.objectStore("teamSeasons").openCursor();
-		while (cursor) {
-			const teamSeason = cursor.value;
-			if (teamSeason.season < g.get("season")) {
-				transaction.objectStore("teamSeasons").delete(teamSeason.rid);
-			}
-			cursor = await cursor.continue();
-		}
+		await iterate(
+			transaction.objectStore("teamSeasons"),
+			undefined,
+			undefined,
+			teamSeason => {
+				if (teamSeason.season < g.get("season")) {
+					transaction.objectStore("teamSeasons").delete(teamSeason.rid);
+				}
+			},
+		);
 
 		transaction.objectStore("draftLotteryResults").clear();
 
-		let cursor2 = await transaction.objectStore("allStars").openCursor();
-		while (cursor2) {
-			const allStars = cursor2.value;
-			if (allStars.season < g.get("season")) {
-				transaction.objectStore("allStars").delete(allStars.season);
-			}
-			cursor2 = await cursor2.continue();
-		}
+		await iterate(
+			transaction.objectStore("allStars"),
+			undefined,
+			undefined,
+			allStars => {
+				if (allStars.season < g.get("season")) {
+					transaction.objectStore("allStars").delete(allStars.season);
+				}
+			},
+		);
 	}
 
 	if (options.teamStats) {
-		let cursor = await transaction.objectStore("teamStats").openCursor();
-		while (cursor) {
-			const teamStats = cursor.value;
-			if (teamStats.season < g.get("season")) {
-				transaction.objectStore("teamStats").delete(teamStats.rid);
-			}
-			cursor = await cursor.continue();
-		}
+		await iterate(
+			transaction.objectStore("teamStats"),
+			undefined,
+			undefined,
+			teamStats => {
+				if (teamStats.season < g.get("season")) {
+					transaction.objectStore("teamStats").delete(teamStats.rid);
+				}
+			},
+		);
 	}
 
 	if (options.retiredPlayers) {
-		let cursor = await transaction
-			.objectStore("players")
-			.index("tid")
-			.openCursor(PLAYER.RETIRED);
-		while (cursor) {
-			const p = cursor.value;
-			transaction.objectStore("players").delete(p.pid);
-			cursor = await cursor.continue();
-		}
-	} else if (options.retiredPlayersUnnotable) {
-		let cursor = await transaction
-			.objectStore("players")
-			.index("tid")
-			.openCursor(PLAYER.RETIRED);
-		while (cursor) {
-			const p = cursor.value;
-			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+		await iterate(
+			transaction.objectStore("players").index("tid"),
+			PLAYER.RETIRED,
+			undefined,
+			p => {
 				transaction.objectStore("players").delete(p.pid);
-			}
-			cursor = await cursor.continue();
-		}
+			},
+		);
+	} else if (options.retiredPlayersUnnotable) {
+		await iterate(
+			transaction.objectStore("players").index("tid"),
+			PLAYER.RETIRED,
+			undefined,
+			p => {
+				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+					transaction.objectStore("players").delete(p.pid);
+				}
+			},
+		);
 	}
 
 	if (options.playerStats) {
-		let cursor = await transaction.objectStore("players").openCursor();
-		while (cursor) {
-			const p = cursor.value;
-			if (p.ratings.length > 0) {
-				p.ratings = [p.ratings[p.ratings.length - 1]];
-			}
-
-			if (p.stats.length > 0) {
-				p.stats = [p.stats[p.stats.length - 1]];
-			}
-			cursor.update(p);
-			cursor = await cursor.continue();
-		}
-	} else if (options.playerStatsUnnotable) {
-		let cursor = await transaction.objectStore("players").openCursor();
-		while (cursor) {
-			const p = cursor.value;
-			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+		await iterate(
+			transaction.objectStore("players"),
+			undefined,
+			undefined,
+			p => {
 				let updated = false;
 				if (p.ratings.length > 0) {
+					updated = true;
 					p.ratings = [p.ratings[p.ratings.length - 1]];
-					updated = true;
 				}
-
 				if (p.stats.length > 0) {
-					p.stats = [p.stats[p.stats.length - 1]];
 					updated = true;
+					p.stats = [p.stats[p.stats.length - 1]];
 				}
 
 				if (updated) {
-					cursor.update(p);
+					return p;
 				}
-			}
-			cursor = await cursor.continue();
-		}
+			},
+		);
+	} else if (options.playerStatsUnnotable) {
+		await iterate(
+			transaction.objectStore("players"),
+			undefined,
+			undefined,
+			p => {
+				if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+					let updated = false;
+					if (p.ratings.length > 0) {
+						p.ratings = [p.ratings[p.ratings.length - 1]];
+						updated = true;
+					}
+
+					if (p.stats.length > 0) {
+						p.stats = [p.stats[p.stats.length - 1]];
+						updated = true;
+					}
+
+					if (updated) {
+						return p;
+					}
+				}
+			},
+		);
 	}
 
 	await transaction.done;

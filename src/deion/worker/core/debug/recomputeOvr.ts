@@ -1,4 +1,4 @@
-import { idb } from "../../db";
+import { idb, iterate } from "../../db";
 import { overrides, toUI } from "../../util";
 
 const recomputeOvr = async () => {
@@ -11,10 +11,7 @@ const recomputeOvr = async () => {
 
 	const transaction = idb.league.transaction("players", "readwrite");
 
-	let cursor = await transaction.store.openCursor(undefined, "prev");
-	while (cursor) {
-		const p = cursor.value;
-
+	await iterate(transaction.store, undefined, "prev", p => {
 		const ratings = p.ratings[p.ratings.length - 1];
 
 		if (!overrides.core.player.ovr) {
@@ -31,11 +28,9 @@ const recomputeOvr = async () => {
 
 		if (ratings.ovr !== ovr) {
 			ratings.ovr = ovr;
-			cursor.update(p);
+			return p;
 		}
-
-		cursor = await cursor.continue();
-	}
+	});
 
 	await transaction.done;
 

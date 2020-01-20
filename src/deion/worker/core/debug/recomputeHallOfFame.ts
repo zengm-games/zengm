@@ -1,13 +1,10 @@
-import { idb } from "../../db";
+import { idb, iterate } from "../../db";
 import { overrides, toUI } from "../../util";
 
 const recomputeHallOfFame = async () => {
 	const transaction = idb.league.transaction("players", "readwrite");
 
-	let cursor = await transaction.store.openCursor(undefined, "prev");
-	while (cursor) {
-		const p = cursor.value;
-
+	await iterate(transaction.store, undefined, "prev", p => {
 		if (!overrides.core.player.madeHof) {
 			throw new Error("Missing overrides.core.player.madeHof");
 		}
@@ -15,11 +12,9 @@ const recomputeHallOfFame = async () => {
 
 		if (p.hof !== madeHof) {
 			p.hof = madeHof;
-			cursor.update(p);
+			return p;
 		}
-
-		cursor = await cursor.continue();
-	}
+	});
 
 	await transaction.done;
 

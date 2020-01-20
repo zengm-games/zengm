@@ -1,4 +1,4 @@
-import { getAll, idb } from "..";
+import { getAll, idb, iterate } from "..";
 import { mergeByPk } from "./helpers";
 import { Message } from "../../../common/types";
 
@@ -21,7 +21,7 @@ const getCopies = async ({
 
 		const message2 = await idb.league.get("messages", mid);
 		if (message2) {
-			return [message];
+			return [message2];
 		}
 
 		return [];
@@ -29,13 +29,17 @@ const getCopies = async ({
 
 	if (limit !== undefined) {
 		const fromDb: Message[] = [];
-		let cursor = await idb.league
-			.transaction("messages")
-			.store.openCursor(undefined, "prev");
-		while (cursor && fromDb.length < limit) {
-			fromDb.unshift(cursor.value);
-			cursor = await cursor.continue();
-		}
+		await iterate(
+			idb.league.transaction("messages").store,
+			undefined,
+			"prev",
+			(message, shortCircuit) => {
+				fromDb.unshift(message);
+				if (fromDb.length >= limit) {
+					shortCircuit();
+				}
+			},
+		);
 
 		const fromCache = await idb.cache.messages.getAll();
 

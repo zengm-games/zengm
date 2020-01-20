@@ -1,6 +1,6 @@
 import { PLAYER } from "../../../common";
 import { draft } from "..";
-import { idb } from "../../db";
+import { idb, iterate } from "../../db";
 import { g, helpers } from "../../util";
 import { Conditions } from "../../../common/types";
 
@@ -11,15 +11,16 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	// player drafted more than 110 years ago is dead already. If that's not true, congrats on immortality!
 	const promises: Promise<any>[] = [];
 
-	let cursor = await idb.league
-		.transaction("players")
-		.store.index("draft.year, retiredYear")
-		.openCursor(IDBKeyRange.bound([g.get("season") - 110], [""]));
-	while (cursor) {
-		const p = cursor.value;
+	await iterate(
+		idb.league.transaction("players").store.index("draft.year, retiredYear"),
+		IDBKeyRange.bound([g.get("season") - 110], [""]),
+		undefined,
+		p => {
+			// Skip non-retired players and dead players
+			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
+				return;
+			}
 
-		// Skip non-retired players and dead players
-		if (p.tid === PLAYER.RETIRED && typeof p.diedYear !== "number") {
 			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
 			const probDeath =
 				0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
@@ -28,10 +29,8 @@ const newPhaseDraft = async (conditions: Conditions) => {
 				p.diedYear = g.get("season");
 				promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
 			}
-		}
-
-		cursor = await cursor.continue();
-	}
+		},
+	);
 
 	await Promise.all(promises);
 

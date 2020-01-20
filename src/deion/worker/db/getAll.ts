@@ -6,6 +6,7 @@ import {
 	IndexNames,
 } from "idb";
 import { LeagueDB } from "./connectLeague";
+import iterate from "./iterate";
 
 /**
  * This is used for two separate purposes.
@@ -24,17 +25,15 @@ const getAll = async <StoreName extends StoreNames<LeagueDB>>(
 				IndexNames<LeagueDB, StoreName>
 		  >,
 	key?: any,
-	cb?: (a: any) => boolean,
+	cb?: (a: StoreValue<LeagueDB, StoreName>) => boolean,
 ) => {
 	const objs: StoreValue<LeagueDB, StoreName>[] = [];
 
-	let cursor = await store.openCursor(key);
-	if (cursor) {
-		if (cb === undefined || cb(cursor.value)) {
-			objs.push(cursor.value);
+	await iterate(store, key, undefined, value => {
+		if (cb === undefined || cb(value)) {
+			objs.push(value);
 		}
-		cursor = await cursor.continue();
-	}
+	});
 
 	return objs;
 };

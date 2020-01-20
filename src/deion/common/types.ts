@@ -79,8 +79,6 @@ export type AllStars = {
 	finalized: boolean;
 };
 
-export type BackboardTx = any;
-
 export type CompositeWeights<RatingKey = string> = {
 	[key: string]: {
 		ratings: (RatingKey | number)[];

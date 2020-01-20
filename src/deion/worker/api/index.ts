@@ -260,7 +260,7 @@ const deleteOldData = async (options: {
 	playerStatsUnnotable: boolean;
 	playerStats: boolean;
 }) => {
-	await idb.league.tx(
+	const transaction = idb.league.transaction(
 		[
 			"allStars",
 			"draftLotteryResults",
@@ -271,80 +271,108 @@ const deleteOldData = async (options: {
 			"players",
 		],
 		"readwrite",
-		tx => {
-			if (options.boxScores) {
-				tx.games.clear();
-			}
-
-			if (options.teamHistory) {
-				tx.teamSeasons.iterate(teamSeason => {
-					if (teamSeason.season < g.get("season")) {
-						tx.teamSeasons.delete(teamSeason.rid);
-					}
-				});
-				tx.draftLotteryResults.clear();
-				tx.allStars.iterate(allStars => {
-					if (allStars.season < g.get("season")) {
-						tx.allStars.delete(allStars.season);
-					}
-				});
-			}
-
-			if (options.teamStats) {
-				tx.teamStats.iterate(teamStats => {
-					if (teamStats.season < g.get("season")) {
-						tx.teamStats.delete(teamStats.rid);
-					}
-				});
-			}
-
-			if (options.retiredPlayers) {
-				tx.players.index("tid").iterate(PLAYER.RETIRED, p => {
-					tx.players.delete(p.pid);
-				});
-			} else if (options.retiredPlayersUnnotable) {
-				tx.players.index("tid").iterate(PLAYER.RETIRED, p => {
-					if (
-						p.awards.length === 0 &&
-						!p.statsTids.includes(g.get("userTid"))
-					) {
-						tx.players.delete(p.pid);
-					}
-				});
-			}
-
-			if (options.playerStats) {
-				tx.players.iterate(p => {
-					if (p.ratings.length > 0) {
-						p.ratings = [p.ratings[p.ratings.length - 1]];
-					}
-
-					if (p.stats.length > 0) {
-						p.stats = [p.stats[p.stats.length - 1]];
-					}
-
-					return p;
-				});
-			} else if (options.playerStatsUnnotable) {
-				tx.players.iterate(p => {
-					if (
-						p.awards.length === 0 &&
-						!p.statsTids.includes(g.get("userTid"))
-					) {
-						if (p.ratings.length > 0) {
-							p.ratings = [p.ratings[p.ratings.length - 1]];
-						}
-
-						if (p.stats.length > 0) {
-							p.stats = [p.stats[p.stats.length - 1]];
-						}
-					}
-
-					return p;
-				});
-			}
-		},
 	);
+
+	if (options.boxScores) {
+		transaction.objectStore("games").clear();
+	}
+
+	if (options.teamHistory) {
+		let cursor = await transaction.objectStore("teamSeasons").openCursor();
+		while (cursor) {
+			const teamSeason = cursor.value;
+			if (teamSeason.season < g.get("season")) {
+				transaction.objectStore("teamSeasons").delete(teamSeason.rid);
+			}
+			cursor = await cursor.continue();
+		}
+
+		transaction.objectStore("draftLotteryResults").clear();
+
+		let cursor2 = await transaction.objectStore("allStars").openCursor();
+		while (cursor2) {
+			const allStars = cursor2.value;
+			if (allStars.season < g.get("season")) {
+				transaction.objectStore("allStars").delete(allStars.season);
+			}
+			cursor2 = await cursor2.continue();
+		}
+	}
+
+	if (options.teamStats) {
+		let cursor = await transaction.objectStore("teamStats").openCursor();
+		while (cursor) {
+			const teamStats = cursor.value;
+			if (teamStats.season < g.get("season")) {
+				transaction.objectStore("teamStats").delete(teamStats.rid);
+			}
+			cursor = await cursor.continue();
+		}
+	}
+
+	if (options.retiredPlayers) {
+		let cursor = await transaction
+			.objectStore("players")
+			.index("tid")
+			.openCursor(PLAYER.RETIRED);
+		while (cursor) {
+			const p = cursor.value;
+			transaction.objectStore("players").delete(p.pid);
+			cursor = await cursor.continue();
+		}
+	} else if (options.retiredPlayersUnnotable) {
+		let cursor = await transaction
+			.objectStore("players")
+			.index("tid")
+			.openCursor(PLAYER.RETIRED);
+		while (cursor) {
+			const p = cursor.value;
+			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+				transaction.objectStore("players").delete(p.pid);
+			}
+			cursor = await cursor.continue();
+		}
+	}
+
+	if (options.playerStats) {
+		let cursor = await transaction.objectStore("players").openCursor();
+		while (cursor) {
+			const p = cursor.value;
+			if (p.ratings.length > 0) {
+				p.ratings = [p.ratings[p.ratings.length - 1]];
+			}
+
+			if (p.stats.length > 0) {
+				p.stats = [p.stats[p.stats.length - 1]];
+			}
+			cursor.update(p);
+			cursor = await cursor.continue();
+		}
+	} else if (options.playerStatsUnnotable) {
+		let cursor = await transaction.objectStore("players").openCursor();
+		while (cursor) {
+			const p = cursor.value;
+			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
+				let updated = false;
+				if (p.ratings.length > 0) {
+					p.ratings = [p.ratings[p.ratings.length - 1]];
+					updated = true;
+				}
+
+				if (p.stats.length > 0) {
+					p.stats = [p.stats[p.stats.length - 1]];
+					updated = true;
+				}
+
+				if (updated) {
+					cursor.update(p);
+				}
+			}
+			cursor = await cursor.continue();
+		}
+	}
+
+	await transaction.done;
 
 	// Without this, cached values will still exist
 	await idb.cache.fill();

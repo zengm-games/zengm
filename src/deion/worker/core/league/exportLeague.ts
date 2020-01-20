@@ -39,7 +39,7 @@ const exportLeague = async (
 	await Promise.all(
 		stores.map(async store => {
 			exportedLeague[store] = await getAll(
-				idb.league.transaction(store).store,
+				idb.league.transaction(store as any).store,
 				undefined,
 				options.filter[store],
 			);

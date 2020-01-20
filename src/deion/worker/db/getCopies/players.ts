@@ -3,6 +3,7 @@ import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";
 import { MinimalPlayerRatings, Player } from "../../../common/types";
+import { unwrap } from "idb";
 
 const getCopies = async ({
 	pid,
@@ -43,50 +44,50 @@ const getCopies = async ({
 		const sortedPids = [...pids].sort((a, b) => a - b);
 		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
 			(resolve, reject) => {
-				idb.league.tx("players", tx => {
-					const players: Player<MinimalPlayerRatings>[] = [];
+				const transaction = idb.league.transaction("players");
 
-					// Because backboard doesn't support passing an argument to cursor.continue
-					const objectStore = tx.players._rawObjectStore;
-					const range = IDBKeyRange.bound(
-						sortedPids[0],
-						sortedPids[sortedPids.length - 1],
-					);
-					let i = 0;
-					const request = objectStore.openCursor(range);
+				const players: Player<MinimalPlayerRatings>[] = [];
 
-					request.onerror = e => {
-						reject(e.target.error);
-					};
+				// Because backboard doesn't support passing an argument to cursor.continue
+				const objectStore = unwrap(transaction.objectStore("players"));
+				const range = IDBKeyRange.bound(
+					sortedPids[0],
+					sortedPids[sortedPids.length - 1],
+				);
+				let i = 0;
+				const request = objectStore.openCursor(range);
 
-					request.onsuccess = e => {
-						const cursor = e.target.result;
+				request.onerror = (e: any) => {
+					reject(e.target.error);
+				};
 
-						if (!cursor) {
-							resolve(players);
-							return;
-						}
+				request.onsuccess = (e: any) => {
+					const cursor = e.target.result;
 
-						const p = cursor.value; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+					if (!cursor) {
+						resolve(players);
+						return;
+					}
 
-						if (sortedPids.includes(p.pid)) {
-							players.push(p);
-						}
+					const p = cursor.value;
 
-						i += 1;
+					// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+					if (sortedPids.includes(p.pid)) {
+						players.push(p);
+					}
 
-						if (i > sortedPids.length) {
-							resolve(players);
-							return;
-						}
+					i += 1;
 
-						cursor.continue(sortedPids[i]);
-					};
-				});
+					if (i > sortedPids.length) {
+						resolve(players);
+						return;
+					}
+
+					cursor.continue(sortedPids[i]);
+				};
 			},
 		);
 
-		// $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
 		return mergeByPk(
 			fromDB,
 			(await idb.cache.players.getAll()).filter(p => pids.includes(p.pid)),
@@ -156,39 +157,42 @@ const getCopies = async ({
 	if (activeSeason !== undefined) {
 		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
 			(resolve, reject) => {
-				idb.league.tx("players", tx => {
-					const players: Player<MinimalPlayerRatings>[] = [];
+				const transaction = idb.league.transaction("players");
 
-					const index = tx.players.index("draft.year, retiredYear")._rawIndex; // + 1 in upper range is because you don't accumulate stats until the year after the draft
+				const players: Player<MinimalPlayerRatings>[] = [];
 
-					const range = IDBKeyRange.bound(
-						[0, activeSeason],
-						[activeSeason + 1, Infinity],
-					);
-					const request = index.openCursor(range);
+				const index = unwrap(
+					transaction.objectStore("players").index("draft.year, retiredYear"),
+				);
 
-					request.onerror = e => {
-						reject(e.target.error);
-					};
+				// + 1 in upper range is because you don't accumulate stats until the year after the draft
+				const range = IDBKeyRange.bound(
+					[0, activeSeason],
+					[activeSeason + 1, Infinity],
+				);
+				const request = index.openCursor(range);
 
-					request.onsuccess = e => {
-						const cursor = e.target.result;
+				request.onerror = (e: any) => {
+					reject(e.target.error);
+				};
 
-						if (!cursor) {
-							resolve(players);
-							return;
-						}
+				request.onsuccess = (e: any) => {
+					const cursor = e.target.result;
 
-						const [draftYear2, retiredYear] = cursor.key; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+					if (!cursor) {
+						resolve(players);
+						return;
+					}
 
-						if (retiredYear < activeSeason) {
-							cursor.continue([draftYear2, activeSeason]);
-						} else {
-							players.push(cursor.value);
-							cursor.continue();
-						}
-					};
-				});
+					const [draftYear2, retiredYear] = cursor.key; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+
+					if (retiredYear < activeSeason) {
+						cursor.continue([draftYear2, activeSeason]);
+					} else {
+						players.push(cursor.value);
+						cursor.continue();
+					}
+				};
 			},
 		);
 

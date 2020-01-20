@@ -1,31 +1,43 @@
 import { idb } from "../../db";
 import { overrides, toUI } from "../../util";
-import { Player } from "../../../common/types";
 
 const recomputeOvr = async () => {
-	const ovrs: any[] = [];
-	await idb.league.tx("players", "readwrite", async tx => {
-		await tx.players.iterate((p: Player) => {
-			const ratings = p.ratings[p.ratings.length - 1];
+	const ovrs: {
+		pid: number;
+		old: number;
+		new: number;
+		diff: number;
+	}[] = [];
 
-			if (!overrides.core.player.ovr) {
-				throw new Error("Missing overrides.core.player.ovr");
-			}
+	const transaction = idb.league.transaction("players", "readwrite");
 
-			const ovr = overrides.core.player.ovr(ratings);
-			ovrs.push({
-				pid: p.pid,
-				old: ratings.ovr,
-				new: ovr,
-				diff: ovr - ratings.ovr,
-			});
+	let cursor = await transaction.store.openCursor(undefined, "prev");
+	while (cursor) {
+		const p = cursor.value;
 
-			if (ratings.ovr !== ovr) {
-				ratings.ovr = ovr;
-				return p;
-			}
+		const ratings = p.ratings[p.ratings.length - 1];
+
+		if (!overrides.core.player.ovr) {
+			throw new Error("Missing overrides.core.player.ovr");
+		}
+
+		const ovr = overrides.core.player.ovr(ratings);
+		ovrs.push({
+			pid: p.pid,
+			old: ratings.ovr,
+			new: ovr,
+			diff: ovr - ratings.ovr,
 		});
-	});
+
+		if (ratings.ovr !== ovr) {
+			ratings.ovr = ovr;
+			cursor.update(p);
+		}
+
+		cursor = await cursor.continue();
+	}
+
+	await transaction.done;
 
 	console.table(ovrs);
 	await idb.cache.fill();

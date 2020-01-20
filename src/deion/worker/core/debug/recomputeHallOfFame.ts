@@ -1,23 +1,30 @@
 import { idb } from "../../db";
 import { overrides, toUI } from "../../util";
 
-const recomputeFreeAgentContracts = async () => {
-	await idb.league.tx("players", "readwrite", async tx => {
-		await tx.players.iterate(p => {
-			if (!overrides.core.player.madeHof) {
-				throw new Error("Missing overrides.core.player.madeHof");
-			}
+const recomputeHallOfFame = async () => {
+	const transaction = idb.league.transaction("players", "readwrite");
 
-			const madeHof = overrides.core.player.madeHof(p);
+	let cursor = await transaction.store.openCursor(undefined, "prev");
+	while (cursor) {
+		const p = cursor.value;
 
-			if (p.hof !== madeHof) {
-				p.hof = madeHof;
-				return p;
-			}
-		});
-	});
+		if (!overrides.core.player.madeHof) {
+			throw new Error("Missing overrides.core.player.madeHof");
+		}
+		const madeHof = overrides.core.player.madeHof(p);
+
+		if (p.hof !== madeHof) {
+			p.hof = madeHof;
+			cursor.update(p);
+		}
+
+		cursor = await cursor.continue();
+	}
+
+	await transaction.done;
+
 	await idb.cache.fill();
 	await toUI(["realtimeUpdate", ["firstRun"]]);
 };
 
-export default recomputeFreeAgentContracts;
+export default recomputeHallOfFame;

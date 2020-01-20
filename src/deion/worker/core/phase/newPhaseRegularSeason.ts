@@ -12,14 +12,19 @@ const newPhaseRegularSeason = async () => {
 	await season.setSchedule(overrides.core.season.newSchedule(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
-		await idb.league.tx("games", "readwrite", tx => {
-			// Delete all games except past 3 seasons
-			return tx.games
-				.index("season")
-				.iterate(IDBKeyRange.upperBound(g.get("season") - 3), ({ gid }) => {
-					tx.games.delete(gid);
-				});
-		});
+		const transaction = idb.league.transaction("games", "readwrite");
+
+		// Delete all games except past 3 seasons
+		let cursor = await transaction.store
+			.index("season")
+			.openCursor(IDBKeyRange.upperBound(g.get("season") - 3));
+		while (cursor) {
+			const { gid } = cursor.value;
+			transaction.objectStore("games").delete(gid);
+			cursor = await cursor.continue();
+		}
+
+		await transaction.done;
 	}
 
 	const sport = helpers.upperCaseFirstLetter(process.env.SPORT);

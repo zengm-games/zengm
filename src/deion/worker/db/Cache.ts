@@ -4,7 +4,6 @@ import cmp from "./cmp";
 import { g, local, lock } from "../util";
 import {
 	AllStars,
-	BackboardTx,
 	DraftLotteryResult,
 	DraftPick,
 	DraftPickWithoutDpid,
@@ -27,6 +26,8 @@ import {
 	Team,
 	Trade,
 } from "../../common/types";
+import { IDBPTransaction } from "idb";
+import { LeagueDB } from "./connectLeague";
 
 type Status = "empty" | "error" | "filling" | "full"; // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 
@@ -199,7 +200,7 @@ class Cache {
 			pk: string;
 			pkType: "number" | "string";
 			autoIncrement: boolean;
-			getData?: (a: BackboardTx) => Promise<any[]> | any[];
+			getData?: (a: IDBPTransaction<LeagueDB>) => Promise<any[]> | any[];
 			indexes?: {
 				name: Index;
 				filter?: (a: any) => boolean;
@@ -277,7 +278,8 @@ class Cache {
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: BackboardTx) => tx.allStars.getAll(this._season),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("allStars").getAll(this._season),
 			},
 			awards: {
 				pk: "season",
@@ -293,7 +295,8 @@ class Cache {
 				pk: "dpid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: BackboardTx) => tx.draftPicks.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("draftPicks").getAll(),
 				indexes: [
 					{
 						name: "draftPicksBySeason",
@@ -314,15 +317,19 @@ class Cache {
 				pk: "key",
 				pkType: "string",
 				autoIncrement: false,
-				getData: (tx: BackboardTx) => tx.gameAttributes.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("gameAttributes").getAll(),
 			},
 			games: {
 				pk: "gid",
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: BackboardTx) =>
-					tx.games.index("season").getAll(this._season),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx
+						.objectStore("games")
+						.index("season")
+						.getAll(this._season),
 			},
 			messages: {
 				pk: "mid",
@@ -333,7 +340,8 @@ class Cache {
 				pk: "pid",
 				pkType: "number",
 				autoIncrement: false,
-				getData: (tx: BackboardTx) => tx.negotiations.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("negotiations").getAll(),
 			},
 			playerFeats: {
 				pk: "fid",
@@ -344,13 +352,17 @@ class Cache {
 				pk: "pid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: async (tx: BackboardTx) => {
+				getData: async (tx: IDBPTransaction<LeagueDB>) => {
 					// Non-retired players
 					const [players1, players2] = await Promise.all([
-						tx.players
+						tx
+							.objectStore("players")
 							.index("tid")
 							.getAll(IDBKeyRange.lowerBound(PLAYER.UNDRAFTED)),
-						tx.players.index("tid").getAll(PLAYER.UNDRAFTED_FANTASY_TEMP),
+						tx
+							.objectStore("players")
+							.index("tid")
+							.getAll(PLAYER.UNDRAFTED_FANTASY_TEMP),
 					]);
 					return players1.concat(players2);
 				},
@@ -370,13 +382,15 @@ class Cache {
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: BackboardTx) => tx.playoffSeries.getAll(this._season),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("playoffSeries").getAll(this._season),
 			},
 			releasedPlayers: {
 				pk: "rid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: BackboardTx) => tx.releasedPlayers.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("releasedPlayers").getAll(),
 				indexes: [
 					{
 						name: "releasedPlayersByTid",
@@ -388,18 +402,20 @@ class Cache {
 				pk: "gid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: BackboardTx) => tx.schedule.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("schedule").getAll(),
 			},
 			teamSeasons: {
 				pk: "rid",
 				pkType: "number",
 				autoIncrement: true,
 				// Past 3 seasons
-				getData: (tx: BackboardTx) => {
+				getData: (tx: IDBPTransaction<LeagueDB>) => {
 					if (this._season === undefined) {
 						throw new Error("this._season is undefined");
 					}
-					return tx.teamSeasons
+					return tx
+						.objectStore("teamSeasons")
 						.index("season, tid")
 						.getAll(IDBKeyRange.bound([this._season - 2], [this._season, ""]));
 				},
@@ -421,8 +437,9 @@ class Cache {
 				pkType: "number",
 				autoIncrement: true,
 				// Current season
-				getData: (tx: BackboardTx) => {
-					return tx.teamStats
+				getData: (tx: IDBPTransaction<LeagueDB>) => {
+					return tx
+						.objectStore("teamStats")
 						.index("season, tid")
 						.getAll(IDBKeyRange.bound([this._season], [this._season, ""]));
 				},
@@ -438,13 +455,15 @@ class Cache {
 				pk: "tid",
 				pkType: "number",
 				autoIncrement: false,
-				getData: (tx: BackboardTx) => tx.teams.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("teams").getAll(),
 			},
 			trade: {
 				pk: "rid",
 				pkType: "number",
 				autoIncrement: false,
-				getData: (tx: BackboardTx) => tx.trade.getAll(),
+				getData: (tx: IDBPTransaction<LeagueDB>) =>
+					tx.objectStore("trade").getAll(),
 			},
 		};
 		// @ts-ignore
@@ -582,15 +601,18 @@ class Cache {
 		}
 	}
 
-	async _loadStore(store: Store, tx: BackboardTx) {
+	async _loadStore(store: Store, transaction: IDBPTransaction<LeagueDB>) {
 		const storeInfo = this.storeInfos[store];
 		this._deletes[store] = new Set();
-		this._dirtyRecords[store] = new Set(); // Load data and do maxIds calculation in parallel
+		this._dirtyRecords[store] = new Set();
 
+		// Load data and do maxIds calculation in parallel
 		await Promise.all([
 			(async () => {
 				// No getData implies no need to store any records in cache except new ones
-				const data = storeInfo.getData ? await storeInfo.getData(tx) : [];
+				const data = storeInfo.getData
+					? await storeInfo.getData(transaction)
+					: [];
 				this._data[store] = {};
 
 				for (const row of data) {
@@ -604,13 +626,13 @@ class Cache {
 				// Special case for games is due to interaction with schedule (see hack below)
 				if (storeInfo.autoIncrement || store === "games") {
 					this._maxIds[store] = -1;
-					await tx[store].iterate(null, "prev", (row, shortCircuit) => {
-						if (row) {
-							this._maxIds[store] = row[storeInfo.pk];
-						}
 
-						shortCircuit();
-					});
+					const cursor = await transaction
+						.objectStore(store)
+						.openCursor(undefined, "prev");
+					if (cursor) {
+						this._maxIds[store] = cursor.value[storeInfo.pk];
+					}
 				}
 			})(),
 		]);
@@ -625,8 +647,9 @@ class Cache {
 		this._setStatus("filling");
 
 		// @ts-ignore
-		this._data = {}; // This is crap and should be fixed ASAP
+		this._data = {};
 
+		// This is crap and should be fixed ASAP
 		this._season = season;
 
 		if (this._season === undefined) {
@@ -655,12 +678,13 @@ class Cache {
 
 		await Promise.all(
 			STORES.map(store => {
-				return this._loadStore(store, idb.league);
+				return this._loadStore(store, idb.league.transaction([store]));
 			}),
 		);
 		this._dirty = false;
 
-		this._setStatus("full"); //performance.measure('fillTime', 'fillStart');
+		this._setStatus("full");
+		//performance.measure('fillTime', 'fillStart');
 		//const entries = performance.getEntriesByName('fillTime');
 		//console.log(`${g.get("phase")} fill duration: ${entries[entries.length - 1].duration / 1000} seconds`);
 	}
@@ -671,37 +695,41 @@ class Cache {
 		//performance.mark('flushStart');
 		this._validateStatus("full");
 
-		await idb.league.tx(STORES, "readwrite", tx => {
-			// This is synchronous not because of Firefox, but to prevent any race condition
-			for (const store of STORES) {
-				for (const id of this._deletes[store]) {
-					tx[store].delete(id);
-				}
+		const transaction = idb.league.transaction(STORES, "readwrite");
 
-				this._deletes[store].clear();
-
-				for (const id of this._dirtyRecords[store]) {
-					const record = this._data[store][id]; // If record was deleted after being marked as dirty, it will be undefined here
-
-					if (record !== undefined) {
-						tx[store].put(record);
-					}
-				}
-
-				this._dirtyRecords[store].clear();
+		// This is synchronous not because of Firefox, but to prevent any race condition
+		for (const store of STORES) {
+			for (const id of this._deletes[store]) {
+				transaction.objectStore(store).delete(id);
 			}
-		});
+
+			this._deletes[store].clear();
+
+			for (const id of this._dirtyRecords[store]) {
+				const record = this._data[store][id];
+
+				// If record was deleted after being marked as dirty, it will be undefined here
+				if (record !== undefined) {
+					transaction.objectStore(store).put(record);
+				}
+			}
+
+			this._dirtyRecords[store].clear();
+		}
+
+		await transaction.done;
 
 		if (this._dirty) {
-			this._dirty = false; // Update lastPlayed
+			this._dirty = false;
 
+			// Update lastPlayed
 			const l = await idb.meta.get("leagues", g.get("lid"));
-
 			if (l) {
 				l.lastPlayed = new Date();
 				await idb.meta.put("leagues", l);
 			}
-		} //performance.measure('flushTime', 'flushStart');
+		}
+		//performance.measure('flushTime', 'flushStart');
 		//const entries = performance.getEntriesByName('flushTime');
 		//console.log(`${g.get("phase")} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
 	}
@@ -763,8 +791,9 @@ class Cache {
 	): Promise<any> {
 		await this._waitForStatus("full");
 
-		this._checkIndexFreshness(index); // Array keys are special, because they need to be stored in a JS object and then recovered
+		this._checkIndexFreshness(index);
 
+		// Array keys are special, because they need to be stored in a JS object and then recovered
 		const actualKey = Array.isArray(key) ? stringifyInfinity(key) : key;
 		const val = this._indexes[index][actualKey];
 
@@ -802,8 +831,9 @@ class Cache {
 		let output = [];
 
 		for (const keyString of Object.keys(this._indexes[index])) {
-			let keyParsed; // Array keys are special, because they need to be stored in a JS object and then recovered
+			let keyParsed;
 
+			// Array keys are special, because they need to be stored in a JS object and then recovered
 			if (Array.isArray(min)) {
 				keyParsed = parseInfinity(keyString);
 			} else if (typeof min === "number") {
@@ -860,8 +890,9 @@ class Cache {
 			obj[pk] = this._maxIds[store];
 		}
 
-		this._data[store][obj[pk]] = obj; // Need to have the correct type here for IndexedDB
+		this._data[store][obj[pk]] = obj;
 
+		// Need to have the correct type here for IndexedDB
 		const idParsed =
 			this.storeInfos[store].pkType === "number"
 				? parseInt(obj[pk], 10)
@@ -928,8 +959,9 @@ class Cache {
 			)
 		) {
 			for (const id of Object.keys(this._data[store])) {
-				delete this._data[store][id]; // Need to have the correct type here for IndexedDB
+				delete this._data[store][id];
 
+				// Need to have the correct type here for IndexedDB
 				const idParsed =
 					this.storeInfos[store].pkType === "number" ? parseInt(id, 10) : id;
 

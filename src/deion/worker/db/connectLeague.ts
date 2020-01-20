@@ -1,4 +1,4 @@
-import { openDB, DBSchema, IDBPDatabase, IDBPTransaction, unwrap } from "idb";
+import { DBSchema, IDBPDatabase, IDBPTransaction, unwrap } from "idb";
 import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
@@ -26,6 +26,7 @@ import {
 	Team,
 	Trade,
 } from "../../common/types";
+import connectIndexedDB from "./connectIndexedDB";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -298,69 +299,69 @@ const upgrade33 = (transaction: IDBPTransaction<LeagueDB>) => {
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  * @param {number} lid Integer league ID number for new league.
  */
-const createLeague = (upgradeDB: IDBPDatabase<LeagueDB>) => {
+const create = (db: IDBPDatabase<LeagueDB>) => {
 	// rid ("row id") is used as the keyPath for objects without an innate unique identifier
-	upgradeDB.createObjectStore("awards", {
+	db.createObjectStore("awards", {
 		keyPath: "season",
 	});
-	upgradeDB.createObjectStore("draftPicks", {
+	db.createObjectStore("draftPicks", {
 		keyPath: "dpid",
 		autoIncrement: true,
 	});
-	const eventStore = upgradeDB.createObjectStore("events", {
+	const eventStore = db.createObjectStore("events", {
 		keyPath: "eid",
 		autoIncrement: true,
 	});
-	upgradeDB.createObjectStore("gameAttributes", {
+	db.createObjectStore("gameAttributes", {
 		keyPath: "key",
 	});
-	const gameStore = upgradeDB.createObjectStore("games", {
+	const gameStore = db.createObjectStore("games", {
 		keyPath: "gid",
 	});
-	upgradeDB.createObjectStore("messages", {
+	db.createObjectStore("messages", {
 		keyPath: "mid",
 		autoIncrement: true,
 	});
-	upgradeDB.createObjectStore("negotiations", {
+	db.createObjectStore("negotiations", {
 		keyPath: "pid",
 	});
-	upgradeDB.createObjectStore("playerFeats", {
+	db.createObjectStore("playerFeats", {
 		keyPath: "fid",
 		autoIncrement: true,
 	});
-	const playerStore = upgradeDB.createObjectStore("players", {
+	const playerStore = db.createObjectStore("players", {
 		keyPath: "pid",
 		autoIncrement: true,
 	});
-	upgradeDB.createObjectStore("playoffSeries", {
+	db.createObjectStore("playoffSeries", {
 		keyPath: "season",
 	});
-	upgradeDB.createObjectStore("releasedPlayers", {
+	db.createObjectStore("releasedPlayers", {
 		keyPath: "rid",
 		autoIncrement: true,
 	});
-	upgradeDB.createObjectStore("schedule", {
+	db.createObjectStore("schedule", {
 		keyPath: "gid",
 		autoIncrement: true,
 	});
-	const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {
+	const teamSeasonsStore = db.createObjectStore("teamSeasons", {
 		keyPath: "rid",
 		autoIncrement: true,
 	});
-	const teamStatsStore = upgradeDB.createObjectStore("teamStats", {
+	const teamStatsStore = db.createObjectStore("teamStats", {
 		keyPath: "rid",
 		autoIncrement: true,
 	});
-	upgradeDB.createObjectStore("teams", {
+	db.createObjectStore("teams", {
 		keyPath: "tid",
 	});
-	upgradeDB.createObjectStore("trade", {
+	db.createObjectStore("trade", {
 		keyPath: "rid",
 	});
-	upgradeDB.createObjectStore("draftLotteryResults", {
+	db.createObjectStore("draftLotteryResults", {
 		keyPath: "season",
 	});
-	upgradeDB.createObjectStore("allStars", {
+	db.createObjectStore("allStars", {
 		keyPath: "season",
 	});
 	eventStore.createIndex("season", "season", {
@@ -403,20 +404,19 @@ const createLeague = (upgradeDB: IDBPDatabase<LeagueDB>) => {
 	});
 };
 
-/**
- * Migrate a league database to the latest structure.
- *
- * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
- * @param {number} lid Integer league ID number.
- */
-const migrateLeague = (
-	upgradeDB: IDBPDatabase<LeagueDB>,
-	lid: number,
-	oldVersion: number,
-	transaction: IDBPTransaction<LeagueDB>,
-) => {
-	console.log(upgradeDB, lid, oldVersion, transaction);
-	let upgradeMsg = `Upgrading league${lid} database from version ${oldVersion} to version ${upgradeDB.version}.`;
+const migrate = ({
+	db,
+	lid,
+	oldVersion,
+	transaction,
+}: {
+	db: IDBPDatabase<LeagueDB>;
+	lid: number;
+	oldVersion: number;
+	transaction: IDBPTransaction<LeagueDB>;
+}) => {
+	console.log(db, lid, oldVersion, transaction);
+	let upgradeMsg = `Upgrading league${lid} database from version ${oldVersion} to version ${db.version}.`;
 	let slowUpgradeCalled = false;
 
 	const slowUpgrade = () => {
@@ -439,11 +439,11 @@ const migrateLeague = (
 	}
 
 	if (oldVersion <= 16) {
-		const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {
+		const teamSeasonsStore = db.createObjectStore("teamSeasons", {
 			keyPath: "rid",
 			autoIncrement: true,
 		});
-		const teamStatsStore = upgradeDB.createObjectStore("teamStats", {
+		const teamStatsStore = db.createObjectStore("teamStats", {
 			keyPath: "rid",
 			autoIncrement: true,
 		});
@@ -540,7 +540,7 @@ const migrateLeague = (
 	}
 
 	if (oldVersion <= 22) {
-		upgradeDB.createObjectStore("draftLotteryResults", {
+		db.createObjectStore("draftLotteryResults", {
 			keyPath: "season",
 		});
 	}
@@ -757,7 +757,7 @@ const migrateLeague = (
 	}
 
 	if (oldVersion <= 33) {
-		upgradeDB.createObjectStore("allStars", {
+		db.createObjectStore("allStars", {
 			keyPath: "season",
 		});
 	}
@@ -794,35 +794,13 @@ const migrateLeague = (
 	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
 };
 
-const connectLeague = async (lid: number) => {
-	const db = await openDB<LeagueDB>(`league${lid}`, 36, {
-		upgrade(db, oldVersion, newVerison, transaction) {
-			if (oldVersion === 0) {
-				createLeague(db);
-			} else {
-				migrateLeague(db, lid, oldVersion, transaction);
-			}
-		},
-		blocked() {
-			logEvent({
-				type: "error",
-				text: "Please close any other open tabs.",
-				saveToDb: false,
-			});
-		},
-		blocking() {
-			db.close();
-		},
-		terminated() {
-			logEvent({
-				type: "error",
-				text: "Something bad happened...",
-				saveToDb: false,
-			});
-		},
+const connectLeague = (lid: number) =>
+	connectIndexedDB<LeagueDB>({
+		name: `league${lid}`,
+		version: 36,
+		lid,
+		create,
+		migrate,
 	});
-
-	return db;
-};
 
 export default connectLeague;

@@ -36,7 +36,6 @@
 		"@bugsnag/plugin-react": "^6.5.0",
 		"ajv": "^6.10.2",
 		"array-move": "^2.2.1",
-		"backboard": "^1.0.11",
 		"bbgm-router": "^2.0.2",
 		"bootstrap": "^4.4.1",
 		"classnames": "^2.2.6",

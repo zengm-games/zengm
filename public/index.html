@@ -259,7 +259,7 @@
         openRequest.onerror = function (evt) {
           console.error("Error openining test database:");
           console.error(evt.target.error);
-          if (evt.target.error.message.includes("aborted")) {
+          if (evt.target.error.message.includes("aborted") || evt.target.error.message.includes("full")) {
             // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
             cb("good");
           } else {

@@ -34,13 +34,13 @@ const notify = (
 	};
 
 	// Auto hide transient notifications after timeout
-	let timeoutId;
+	let timeoutID;
 	if (!persistent) {
 		let timeoutStart;
 
 		// Hide notification after timeout
 		const notificationTimeout = () => {
-			timeoutId = setTimeout(() => {
+			timeoutID = setTimeout(() => {
 				if (container.contains(notificationElement)) {
 					notificationElement.classList.add("notification-delete");
 
@@ -56,7 +56,7 @@ const notify = (
 
 		// When hovering over, don't count towards timeout
 		notificationElement.addEventListener("mouseenter", () => {
-			window.clearTimeout(timeoutId);
+			window.clearTimeout(timeoutID);
 			timeoutRemaining -= new Date() - timeoutStart;
 		});
 		notificationElement.addEventListener("mouseleave", notificationTimeout);
@@ -70,7 +70,7 @@ const notify = (
 	closeLink.innerHTML = "&times;";
 	closeLink.addEventListener("click", () => {
 		notificationElement.classList.add("notification-delete");
-		window.clearTimeout(timeoutId);
+		window.clearTimeout(timeoutID);
 		setTimeout(remove, 1000);
 	});
 	notificationElement.appendChild(closeLink);

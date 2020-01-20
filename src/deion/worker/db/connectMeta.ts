@@ -1,6 +1,6 @@
-import { openDB, DBSchema, IDBPDatabase } from "idb";
-import { logEvent } from "../util";
+import { DBSchema, IDBPDatabase } from "idb";
 import { League } from "../../common/types";
+import connectIndexedDB from "./connectIndexedDB";
 
 export interface MetaDB extends DBSchema {
 	achievements: {
@@ -20,13 +20,13 @@ export interface MetaDB extends DBSchema {
 	};
 }
 
-const createMeta = (upgradeDB: IDBPDatabase<MetaDB>) => {
-	upgradeDB.createObjectStore("achievements", {
+const create = (db: IDBPDatabase<MetaDB>) => {
+	db.createObjectStore("achievements", {
 		keyPath: "aid",
 		autoIncrement: true,
 	});
-	const attributeStore = upgradeDB.createObjectStore("attributes");
-	upgradeDB.createObjectStore("leagues", {
+	const attributeStore = db.createObjectStore("attributes");
+	db.createObjectStore("leagues", {
 		keyPath: "lid",
 		autoIncrement: true,
 	});
@@ -35,56 +35,39 @@ const createMeta = (upgradeDB: IDBPDatabase<MetaDB>) => {
 	attributeStore.put(0, "nagged");
 };
 
-const migrateMeta = (upgradeDB: IDBPDatabase<MetaDB>, oldVersion: number) => {
+const migrate = ({
+	db,
+	oldVersion,
+}: {
+	db: IDBPDatabase<MetaDB>;
+	oldVersion: number;
+}) => {
 	console.log(
-		`Upgrading meta database from version ${oldVersion} to version ${upgradeDB.version}`,
+		`Upgrading meta database from version ${oldVersion} to version ${db.version}`,
 	);
 
 	if (oldVersion <= 6) {
-		upgradeDB.createObjectStore("achievements", {
+		db.createObjectStore("achievements", {
 			keyPath: "aid",
 			autoIncrement: true,
 		});
 	}
 
 	if (oldVersion <= 7) {
-		const attributeStore = upgradeDB.createObjectStore("attributes");
+		const attributeStore = db.createObjectStore("attributes");
 		attributeStore.put(-1, "changesRead");
 		attributeStore.put(-1, "lastSelectedTid");
 		attributeStore.put(0, "nagged");
 	}
 };
 
-const connectMeta = async () => {
-	// Would like to await on createMeta/migrateMeta and inside those functions, but Firefox
-	const db = await openDB<MetaDB>("meta", 8, {
-		upgrade(db, oldVersion) {
-			if (oldVersion === 0) {
-				createMeta(db);
-			} else {
-				migrateMeta(db, oldVersion);
-			}
-		},
-		blocked() {
-			logEvent({
-				type: "error",
-				text: "Please close any other open tabs.",
-				saveToDb: false,
-			});
-		},
-		blocking() {
-			db.close();
-		},
-		terminated() {
-			logEvent({
-				type: "error",
-				text: "Something bad happened...",
-				saveToDb: false,
-			});
-		},
+const connectMeta = () =>
+	connectIndexedDB<MetaDB>({
+		name: "meta",
+		version: 8,
+		lid: -1,
+		create,
+		migrate,
 	});
-
-	return db;
-};
 
 export default connectMeta;

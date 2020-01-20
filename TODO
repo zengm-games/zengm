@@ -27,9 +27,6 @@ typescript
           - if can't fix this, remove safari 10 polyfills and add safari 10 detection to index.html
         - generated updateDashboard code is almost the same, what changed??
           - importing backboard doesn't change anything
-      - quota errors
-        - https://stackoverflow.com/questions/53027713/how-to-test-indexeddb-quotaexceedederror-without-filling-disk
-    - remove backboard dependency
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo

@@ -10,24 +10,31 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	// but under certain rare cases could cause a minor problem. For performance reasons, this also assumes that any
 	// player drafted more than 110 years ago is dead already. If that's not true, congrats on immortality!
 	const promises: Promise<any>[] = [];
-	await idb.league
+
+	let cursor = await idb.league
 		.transaction("players")
 		.store.index("draft.year, retiredYear")
-		.iterate(IDBKeyRange.bound([g.get("season") - 110], [""]), p => {
-			// Skip non-retired players and dead players
-			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
-				return;
-			}
+		.openCursor(IDBKeyRange.bound([g.get("season") - 110], [""]));
+	while (cursor) {
+		const p = cursor.value;
 
-			// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-			const probDeath =
-				0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
+		// Skip non-retired players and dead players
+		if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {
+			return;
+		}
 
-			if (Math.random() < probDeath) {
-				p.diedYear = g.get("season");
-				promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
-			}
-		});
+		// Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+		const probDeath =
+			0.0001165111 * Math.exp(0.0761889274 * (g.get("season") - p.born.year));
+
+		if (Math.random() < probDeath) {
+			p.diedYear = g.get("season");
+			promises.push(idb.cache.players.put(p)); // Can't await here because of Firefox IndexedDB issues
+		}
+
+		cursor = await cursor.continue();
+	}
+
 	await Promise.all(promises);
 
 	// Run lottery only if it hasn't been done yet

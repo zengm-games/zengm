@@ -27,30 +27,26 @@ const getCopies = async ({
 		return [];
 	}
 
-	const constLimit = limit; // For flow
-
-	if (constLimit !== undefined) {
+	if (limit !== undefined) {
 		const fromDb: Message[] = [];
-		await idb.league.messages.iterate(
-			undefined,
-			"prev",
-			(message: Message, shortCircuit) => {
-				fromDb.unshift(message);
+		let cursor = await idb.league
+			.transaction("messages")
+			.store.openCursor(undefined, "prev");
+		while (cursor && fromDb.length < limit) {
+			fromDb.unshift(cursor.value);
+			cursor = await cursor.continue();
+		}
 
-				if (fromDb.length >= constLimit) {
-					shortCircuit();
-				}
-			},
-		);
 		const fromCache = await idb.cache.messages.getAll();
+
 		const messages = mergeByPk(
 			fromDb,
-			getLastEntries(fromCache, constLimit),
+			getLastEntries(fromCache, limit),
 			idb.cache.storeInfos.messages.pk,
 		);
 
 		// Need another getLastEntries because DB and cache will probably combine for (2 * limit) entries
-		return getLastEntries(messages, constLimit);
+		return getLastEntries(messages, limit);
 	}
 
 	return mergeByPk(

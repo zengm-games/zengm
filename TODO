@@ -21,7 +21,6 @@ typescript
   - types for PlayersPlus and TeamsPlus
   - backboard -> idb
     - league
-      - iterate
       - tx
     - league upgrade code - revisit after figuring out how to deal with old firefox iterate calls, if necessary
       - how much does this matter elsewhere?

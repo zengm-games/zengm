@@ -27,6 +27,7 @@ describe("worker/core/player/addRelatives", () => {
 		idb.league = testHelpers.mockIDBLeague();
 	});
 	afterAll(() => {
+		// @ts-ignore
 		idb.league = undefined;
 	});
 	describe("makeBrother", () => {

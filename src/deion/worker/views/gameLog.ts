@@ -39,7 +39,7 @@ const boxScore = async (gid: number) => {
 	let game: any = helpers.deepCopy(await idb.cache.games.get(gid)); // Only this season is in cache
 
 	if (!game) {
-		game = await idb.league.games.get(gid);
+		game = await idb.league.get("games", gid);
 	}
 
 	// If game doesn't exist (bad gid or deleted box scores), show nothing

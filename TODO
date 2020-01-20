@@ -16,10 +16,20 @@ typescript
 - to do
   - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
+    - do the same as whatever i end up doing with idb
+    - also like idb, cache get functions should all be | void
   - types for PlayersPlus and TeamsPlus
   - backboard -> idb
+    - league
+      - getAll
+      - iterate
+      - tx
+    - league upgrade code - revisit after figuring out how to deal with old firefox iterate calls, if necessary
+      - how much does this matter elsewhere?
+    - mockIDBLeague
     - test after league
       - check firefox support (after meta port, still works back to 47)
+      - check safari support (after meta port, safari 10 is now broken, not sure why)
       - quota errors
     - get rid of BackboardTx
   - any -> unknown

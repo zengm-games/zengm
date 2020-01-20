@@ -62,8 +62,9 @@ const processSeasonAttrs = async (
 	if (season === undefined) {
 		// All seasons
 		seasons = mergeByPk(
-			await idb.league.teamSeasons
-				.index("tid, season")
+			await idb.league
+				.transaction("teamSeasons")
+				.store.index("tid, season")
 				.getAll(IDBKeyRange.bound([t.tid], [t.tid, ""])),
 			await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 				[t.tid],
@@ -82,8 +83,9 @@ const processSeasonAttrs = async (
 		);
 	} else {
 		// Single season, from database
-		seasons = await idb.league.teamSeasons
-			.index("season, tid")
+		seasons = await idb.league
+			.transaction("teamSeasons")
+			.store.index("season, tid")
 			.getAll([season, t.tid]);
 	}
 
@@ -230,7 +232,10 @@ const processStats = async (
 	if (season === undefined) {
 		// All seasons
 		teamStats = mergeByPk(
-			await idb.league.teamStats.index("tid").getAll(t.tid),
+			await idb.league
+				.transaction("teamStats")
+				.store.index("tid")
+				.getAll(t.tid),
 			await teamStatsFromCache(),
 			idb.cache.storeInfos.teamStats.pk,
 		);
@@ -238,8 +243,9 @@ const processStats = async (
 		teamStats = await teamStatsFromCache();
 	} else {
 		// Single season, from database
-		teamStats = await idb.league.teamStats
-			.index("season, tid")
+		teamStats = await idb.league
+			.transaction("teamStats")
+			.store.index("season, tid")
 			.getAll([season, t.tid]);
 	}
 

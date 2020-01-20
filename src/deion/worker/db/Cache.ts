@@ -636,7 +636,7 @@ class Cache {
 		}
 
 		if (this._season === undefined) {
-			const seasonAttr = await idb.league.gameAttributes.get("season");
+			const seasonAttr = await idb.league.get("gameAttributes", "season");
 
 			if (seasonAttr) {
 				this._season = seasonAttr.value;
@@ -648,7 +648,7 @@ class Cache {
 			console.log("Passed season", season);
 			console.log(
 				"game attributes",
-				JSON.stringify(await idb.league.gameAttributes.getAll(), undefined, 2),
+				JSON.stringify(await idb.league.getAll("gameAttributes"), undefined, 2),
 			);
 			throw new Error("Undefined season");
 		}

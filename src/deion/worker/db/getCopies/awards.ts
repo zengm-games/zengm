@@ -8,7 +8,7 @@ const getCopies = async ({
 } = {}): Promise<object[]> => {
 	if (season !== undefined) {
 		const awards = mergeByPk(
-			await idb.league.awards.getAll(season),
+			await idb.league.getAll("awards", season),
 			(await idb.cache.awards.getAll()).filter(event => {
 				return event.season === season;
 			}),
@@ -18,7 +18,7 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await idb.league.awards.getAll(),
+		await idb.league.getAll("awards"),
 		await idb.cache.awards.getAll(),
 		idb.cache.storeInfos.awards.pk,
 	);

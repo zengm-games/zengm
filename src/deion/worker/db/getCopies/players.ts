@@ -26,13 +26,17 @@ const getCopies = async ({
 	filter?: (p: Player<MinimalPlayerRatings>) => boolean;
 } = {}): Promise<Player[]> => {
 	if (pid !== undefined) {
-		const cachedPlayer = await idb.cache.players.get(pid);
-
-		if (cachedPlayer) {
-			return [helpers.deepCopy(cachedPlayer)];
+		const p = await idb.cache.players.get(pid);
+		if (p) {
+			return [helpers.deepCopy(p)];
 		}
 
-		return [idb.league.players.get(pid)];
+		const p2 = await idb.league.get("players", pid);
+		if (p2) {
+			return [p2];
+		}
+
+		return [];
 	}
 
 	if (pids !== undefined) {
@@ -128,8 +132,9 @@ const getCopies = async ({
 					PLAYER.RETIRED,
 					filter,
 				),
-				await idb.league.players
-					.index("tid")
+				await idb.league
+					.transaction("players")
+					.store.index("tid")
 					.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT)),
 			),
 			[].concat(
@@ -203,8 +208,9 @@ const getCopies = async ({
 
 	if (draftYear !== undefined) {
 		return mergeByPk(
-			await idb.league.players
-				.index("draft.year, retiredYear")
+			await idb.league
+				.transaction("players")
+				.store.index("draft.year, retiredYear")
 				.getAll(IDBKeyRange.bound([draftYear, 0], [draftYear, Infinity])),
 			(
 				await idb.cache.players.indexGetAll("playersByTid", [

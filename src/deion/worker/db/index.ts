@@ -2,6 +2,7 @@ import Backboard from "backboard";
 import { IDBPDatabase } from "idb";
 import Cache from "./Cache";
 import getAll from "./getAll";
+import connectLeague, { LeagueDB } from "./connectLeague";
 import connectMeta, { MetaDB } from "./connectMeta";
 import * as getCopies from "./getCopies";
 import * as getCopy from "./getCopy";
@@ -28,17 +29,17 @@ const idb: {
 	cache: Cache;
 	getCopies: typeof getCopies;
 	getCopy: typeof getCopy;
-	league: any;
+	league: IDBPDatabase<LeagueDB>;
 	meta: IDBPDatabase<MetaDB>;
 } = {
 	cache: new Cache(),
 	getCopies,
 	getCopy,
+	// @ts-ignore
 	league: undefined,
 	// @ts-ignore
 	meta: undefined,
 };
 
-export { Cache, connectMeta, getAll, idb };
-export { default as connectLeague } from "./connectLeague";
+export { Cache, connectLeague, connectMeta, getAll, idb };
 export { default as reset } from "./reset";

@@ -14,13 +14,17 @@ const getCopies = async ({
 	mid?: number;
 } = {}): Promise<Message[]> => {
 	if (mid !== undefined) {
-		let message = await idb.cache.messages.get(mid);
-
-		if (!message) {
-			message = await idb.league.messages.get(mid);
+		const message = await idb.cache.messages.get(mid);
+		if (message) {
+			return [message];
 		}
 
-		return [message];
+		const message2 = await idb.league.get("messages", mid);
+		if (message2) {
+			return [message];
+		}
+
+		return [];
 	}
 
 	const constLimit = limit; // For flow

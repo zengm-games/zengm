@@ -43,7 +43,10 @@ async function getProcessedGameList(
 	if (season === g.get("season")) {
 		games = await idb.cache.games.getAll();
 	} else {
-		games = await idb.league.games.index("season").getAll(season);
+		games = await idb.league
+			.transaction("games")
+			.store.index("season")
+			.getAll(season);
 	}
 
 	// Iterate backwards, was more useful back when current season wasn't cached

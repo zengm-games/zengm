@@ -1,19 +1,143 @@
-import backboard from "backboard";
-import orderBy from "lodash/orderBy";
+import { openDB, DBSchema, IDBPDatabase, IDBPTransaction } from "idb";
+/*import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
-import { helpers, logEvent, overrides } from "../util";
-import { unwrap } from "idb";
+import { helpers, logEvent, overrides } from "../util";*/
+import { logEvent } from "../util";
+import {
+	DraftLotteryResult,
+	DraftPickWithoutDpid,
+	ReleasedPlayerWithoutRid,
+	AllStars,
+	EventBBGM,
+	GameAttribute,
+	Game,
+	Message,
+	Negotiation,
+	PlayerFeat,
+	PlayerWithoutPid,
+	MinimalPlayerRatings,
+	PlayoffSeries,
+	ScheduleGame,
+	TeamSeason,
+	TeamStats,
+	Team,
+	Trade,
+} from "../../common/types";
+
+export interface LeagueDB extends DBSchema {
+	allStars: {
+		key: number;
+		value: AllStars;
+	};
+	awards: {
+		key: number;
+		value: any;
+	};
+	draftLotteryResults: {
+		key: number;
+		value: DraftLotteryResult;
+	};
+	draftPicks: {
+		key: number;
+		value: DraftPickWithoutDpid;
+		autoIncrementKeyPath: "dpid";
+	};
+	events: {
+		key: number;
+		value: EventBBGM;
+		autoIncrementKeyPath: "eid";
+		indexes: {
+			pids: number;
+			season: number;
+		};
+	};
+	gameAttributes: {
+		key: string;
+		value: GameAttribute;
+	};
+	games: {
+		key: number;
+		value: Game;
+		indexes: {
+			season: number;
+		};
+	};
+	messages: {
+		key: number;
+		value: Message;
+		autoIncrementKeyPath: "mid";
+	};
+	negotiations: {
+		key: number;
+		value: Negotiation;
+	};
+	playerFeats: {
+		key: number;
+		value: PlayerFeat;
+		autoIncrementKeyPath: "fid";
+	};
+	players: {
+		key: number;
+		value: PlayerWithoutPid<MinimalPlayerRatings>;
+		autoIncrementKeyPath: "pid";
+		indexes: {
+			"draft.year, retiredYear": [number, number];
+			statsTids: number;
+			tid: number;
+		};
+	};
+	playoffSeries: {
+		key: number;
+		value: PlayoffSeries;
+	};
+	releasedPlayers: {
+		key: number;
+		value: ReleasedPlayerWithoutRid;
+		autoIncrementKeyPath: "rid";
+	};
+	schedule: {
+		key: number;
+		value: ScheduleGame;
+		autoIncrementKeyPath: "gid";
+	};
+	teamSeasons: {
+		key: number;
+		value: TeamSeason;
+		autoIncrementKeyPath: "rid";
+		indexes: {
+			"season, tid": [number, number];
+			"tid, season": [number, number];
+		};
+	};
+	teamStats: {
+		key: number;
+		value: TeamStats;
+		autoIncrementKeyPath: "rid";
+		indexes: {
+			"season, tid": [number, number];
+			tid: number;
+		};
+	};
+	teams: {
+		key: number;
+		value: Team;
+	};
+	trade: {
+		key: number;
+		value: Trade;
+	};
+}
 
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
 // that.
-const upgrade29 = tx => {
+/*const upgrade29 = (tx: IDBTransaction) => {
 	let lastCentury = 0; // Iterate over players
 
-	tx.objectStore("players").openCursor().onsuccess = event => {
+	tx.objectStore("players").openCursor().onsuccess = (event: any) => {
 		const cursor = event.target.result;
 
 		if (cursor) {
@@ -40,7 +164,7 @@ const upgrade29 = tx => {
 			tx
 				.objectStore("playerStats")
 				.index("pid, season, tid")
-				.getAll(IDBKeyRange.bound([p.pid], [p.pid, ""])).onsuccess = event2 => {
+				.getAll(IDBKeyRange.bound([p.pid], [p.pid, ""])).onsuccess = (event2: any) => {
 				// Index brings them back maybe out of order
 				p.stats = orderBy(event2.target.result, ["season", "playoffs", "psid"]);
 				cursor.update(p);
@@ -53,8 +177,8 @@ const upgrade29 = tx => {
 	};
 };
 
-const upgrade31 = tx => {
-	tx.objectStore("gameAttributes").get("season").onsuccess = event => {
+const upgrade31 = (tx: IDBTransaction) => {
+	tx.objectStore("gameAttributes").get("season").onsuccess = (event: any) => {
 		if (event.target.result === undefined) {
 			throw new Error("Missing season in gameAttributes during upgrade");
 		}
@@ -65,7 +189,7 @@ const upgrade31 = tx => {
 			throw new Error("Invalid season in gameAttributes during upgrade");
 		}
 
-		tx.objectStore("gameAttributes").get("phase").onsuccess = event2 => {
+		tx.objectStore("gameAttributes").get("phase").onsuccess = (event2: any) => {
 			if (event2.target.result === undefined) {
 				throw new Error("Missing phase in gameAttributes during upgrade");
 			}
@@ -76,7 +200,7 @@ const upgrade31 = tx => {
 				throw new Error("Invalid phase in gameAttributes during upgrade");
 			}
 
-			tx.objectStore("draftOrder").get(0).onsuccess = event3 => {
+			tx.objectStore("draftOrder").get(0).onsuccess = (event3: any) => {
 				if (event3.target.result === undefined) {
 					throw new Error(
 						"Missing draftOrder in gameAttributes during upgrade",
@@ -91,7 +215,7 @@ const upgrade31 = tx => {
 					);
 				}
 
-				tx.objectStore("draftPicks").openCursor().onsuccess = event4 => {
+				tx.objectStore("draftPicks").openCursor().onsuccess = (event4: any) => {
 					const cursor = event4.target.result;
 
 					if (cursor) {
@@ -116,10 +240,9 @@ const upgrade31 = tx => {
 	};
 };
 
-const upgrade33 = upgradeDB => {
-	const tx = upgradeDB._dbOrTx._rawTransaction;
-
-	tx.objectStore("gameAttributes").get("season").onsuccess = event => {
+const upgrade33 = (transaction: IDBPTransaction<LeagueDB>) => {
+	const tx = unwrap(transaction)
+	tx.objectStore("gameAttributes").get("season").onsuccess = (event: any) => {
 		if (event.target.result === undefined) {
 			throw new Error("Missing season in gameAttributes during upgrade");
 		}
@@ -130,7 +253,7 @@ const upgrade33 = upgradeDB => {
 			throw new Error("Invalid season in gameAttributes during upgrade");
 		}
 
-		tx.objectStore("gameAttributes").get("phase").onsuccess = event2 => {
+		tx.objectStore("gameAttributes").get("phase").onsuccess = (event2: any) => {
 			if (event2.target.result === undefined) {
 				throw new Error("Missing phase in gameAttributes during upgrade");
 			}
@@ -149,23 +272,23 @@ const upgrade33 = upgradeDB => {
 					if (p.ratings[0].season !== draftYear || p.draft.year !== draftYear) {
 						p.ratings[0].season = draftYear;
 						p.draft.year = draftYear;
-						upgradeDB.players.put(p);
+						transaction.objectStore("players").put(p);
 					}
 				} else if (p.tid === PLAYER.UNDRAFTED_2) {
 					p.tid = PLAYER.UNDRAFTED;
 					p.ratings[0].season = season + 1 + offset;
 					p.draft.year = p.ratings[0].season;
-					upgradeDB.players.put(p);
+					transaction.objectStore("players").put(p);
 				} else if (p.tid === PLAYER.UNDRAFTED_3) {
 					p.tid = PLAYER.UNDRAFTED;
 					p.ratings[0].season = season + 2 + offset;
 					p.draft.year = p.ratings[0].season;
-					upgradeDB.players.put(p);
+					transaction.objectStore("players").put(p);
 				}
 			});
 		};
 	};
-};
+};*/
 
 /**
  * Create a new league database with the latest structure.
@@ -173,8 +296,7 @@ const upgrade33 = upgradeDB => {
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  * @param {number} lid Integer league ID number for new league.
  */
-const createLeague = upgradeDB => {
-	// console.log(`Creating league database`);
+const createLeague = (upgradeDB: IDBPDatabase<LeagueDB>) => {
 	// rid ("row id") is used as the keyPath for objects without an innate unique identifier
 	upgradeDB.createObjectStore("awards", {
 		keyPath: "season",
@@ -285,8 +407,14 @@ const createLeague = upgradeDB => {
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  * @param {number} lid Integer league ID number.
  */
-const migrateLeague = (upgradeDB, lid) => {
-	let upgradeMsg = `Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}.`;
+const migrateLeague = (
+	upgradeDB: IDBPDatabase<LeagueDB>,
+	lid: number,
+	oldVersion: number,
+	transaction: IDBPTransaction<LeagueDB>,
+) => {
+	console.log(upgradeDB, lid, oldVersion, transaction);
+	/*	let upgradeMsg = `Upgrading league${lid} database from version ${oldVersion} to version ${upgradeDB.version}.`;
 	let slowUpgradeCalled = false;
 
 	const slowUpgrade = () => {
@@ -304,13 +432,13 @@ const migrateLeague = (upgradeDB, lid) => {
 		});
 	};
 
-	if (upgradeDB.oldVersion <= 15) {
+	if (oldVersion <= 15) {
 		throw new Error(
-			`League is too old to upgrade (version ${upgradeDB.oldVersion})`,
+			`League is too old to upgrade (version ${oldVersion})`,
 		);
 	}
 
-	if (upgradeDB.oldVersion <= 16) {
+	if (oldVersion <= 16) {
 		const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {
 			keyPath: "rid",
 			autoIncrement: true,
@@ -339,25 +467,25 @@ const migrateLeague = (upgradeDB, lid) => {
 					teamStats.ba = 0;
 				}
 
-				upgradeDB.teamStats.add(teamStats);
+				upgradeDB.add("teamStats", teamStats);
 			}
 
 			for (const teamSeason of t.seasons) {
 				teamSeason.tid = t.tid;
-				upgradeDB.teamSeasons.add(teamSeason);
+				upgradeDB.add("teamSeasons", teamSeason);
 			}
 
 			delete t.stats;
 			delete t.seasons;
-			upgradeDB.teams.put(t);
+			upgradeDB.put("teams", t);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 17) {
+	if (oldVersion <= 17) {
 		// This used to upgrade team logos to the new ones, but Firefox
 	}
 
-	if (upgradeDB.oldVersion <= 18) {
+	if (oldVersion <= 18) {
 		// Split old single string p.name into two names
 		upgradeDB.players.iterate(p => {
 			if (p.name) {
@@ -367,11 +495,11 @@ const migrateLeague = (upgradeDB, lid) => {
 				delete p.name;
 			}
 
-			upgradeDB.players.put(p);
+			upgradeDB.put("players", p);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 19) {
+	if (oldVersion <= 19) {
 		// New best records format in awards
 		upgradeDB.awards.iterate(a => {
 			if (a.bre && a.brw) {
@@ -379,25 +507,25 @@ const migrateLeague = (upgradeDB, lid) => {
 				a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
 				delete a.bre;
 				delete a.brw;
-				upgradeDB.awards.put(a);
+				upgradeDB.put("awards", a);
 			}
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 20) {
+	if (oldVersion <= 20) {
 		// Removing indexes when upgrading to cache version
-		upgradeDB.draftPicks.deleteIndex("season");
-		upgradeDB.draftPicks.deleteIndex("tid");
-		upgradeDB.playerFeats.deleteIndex("pid");
-		upgradeDB.playerFeats.deleteIndex("tid");
-		upgradeDB.players.deleteIndex("draft.year");
-		upgradeDB.players.deleteIndex("retiredYear");
-		upgradeDB.releasedPlayers.deleteIndex("tid");
-		upgradeDB.releasedPlayers.deleteIndex("contract.exp");
+		transaction.objectStore("draftPicks").deleteIndex("season");
+		transaction.objectStore("draftPicks").deleteIndex("tid");
+		transaction.objectStore("playerFeats").deleteIndex("pid");
+		transaction.objectStore("playerFeats").deleteIndex("tid");
+		transaction.objectStore("players").deleteIndex("draft.year");
+		transaction.objectStore("players").deleteIndex("retiredYear");
+		transaction.objectStore("releasedPlayers").deleteIndex("tid");
+		transaction.objectStore("releasedPlayers").deleteIndex("contract.exp");
 	}
 
-	if (upgradeDB.oldVersion <= 21) {
-		upgradeDB.players.createIndex(
+	if (oldVersion <= 21) {
+		transaction.objectStore("players").createIndex(
 			"draft.year, retiredYear",
 			["draft.year", "retiredYear"],
 			{
@@ -407,18 +535,18 @@ const migrateLeague = (upgradeDB, lid) => {
 		upgradeDB.players.iterate(p => {
 			if (p.retiredYear === null || p.retiredYear === undefined) {
 				p.retiredYear = Infinity;
-				upgradeDB.players.put(p);
+				upgradeDB.put("players", p);
 			}
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 22) {
+	if (oldVersion <= 22) {
 		upgradeDB.createObjectStore("draftLotteryResults", {
 			keyPath: "season",
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 23) {
+	if (oldVersion <= 23) {
 		upgradeDB.players.iterate(p => {
 			for (const r of p.ratings) {
 				if (!overrides.core.player.heightToRating) {
@@ -428,19 +556,19 @@ const migrateLeague = (upgradeDB, lid) => {
 				r.hgt = overrides.core.player.heightToRating(p.hgt);
 			}
 
-			upgradeDB.players.put(p);
+			upgradeDB.put("players", p);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 24) {
+	if (oldVersion <= 24) {
 		upgradeDB.teamStats.iterate(ts => {
 			ts.oppBlk = ts.ba;
 			delete ts.ba;
-			upgradeDB.teamStats.put(ts);
+			upgradeDB.put("teamStats", ts);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 25) {
+	if (oldVersion <= 25) {
 		upgradeDB.games.iterate(gm => {
 			for (const t of gm.teams) {
 				delete t.trb;
@@ -450,20 +578,20 @@ const migrateLeague = (upgradeDB, lid) => {
 				}
 			}
 
-			upgradeDB.games.put(gm);
+			upgradeDB.put("games", gm);
 		});
 		upgradeDB.playerStats.iterate(ps => {
 			delete ps.trb;
-			upgradeDB.playerStats.put(ps);
+			upgradeDB.put("playerStats", ps);
 		});
 		upgradeDB.teamStats.iterate(ts => {
 			delete ts.trb;
 			delete ts.oppTrb;
-			upgradeDB.teamStats.put(ts);
+			upgradeDB.put("teamStats", ts);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 26) {
+	if (oldVersion <= 26) {
 		slowUpgrade();
 
 		// Only non-retired players, for efficiency
@@ -544,44 +672,44 @@ const migrateLeague = (upgradeDB, lid) => {
 				p.relatives = [];
 			}
 
-			upgradeDB.players.put(p);
+			upgradeDB.put("players", p);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 27) {
+	if (oldVersion <= 27) {
 		upgradeDB.teamSeasons.iterate(teamSeason => {
 			if (typeof teamSeason.stadiumCapacity !== "number") {
 				teamSeason.stadiumCapacity = 25000;
 			}
 
-			upgradeDB.teamSeasons.put(teamSeason);
+			upgradeDB.put("teamSeasons", teamSeason);
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 28) {
+	if (oldVersion <= 28) {
 		slowUpgrade();
-		upgrade29(upgradeDB._dbOrTx._rawTransaction);
+		upgrade29(unwrap(transaction));
 	}
 
-	if (upgradeDB.oldVersion === 29) {
+	if (oldVersion === 29) {
 		// === rather than <= is to prevent the 30 and 27/29 upgrades from having a race condition on updating players
 		upgradeDB.players.iterate(p => {
 			if (!Array.isArray(p.relatives)) {
 				p.relatives = [];
-				upgradeDB.players.put(p);
+				upgradeDB.put("players", p);
 			}
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 30) {
-		upgrade31(upgradeDB._dbOrTx._rawTransaction);
+	if (oldVersion <= 30) {
+		upgrade31(unwrap(transaction));
 	}
 
-	if (upgradeDB.oldVersion <= 31) {
+	if (oldVersion <= 31) {
 		// Gets need to use raw IDB API because Firefox < 60
-		const tx = upgradeDB._dbOrTx._rawTransaction;
+		const tx = unwrap(transaction);
 
-		tx.objectStore("gameAttributes").get("difficulty").onsuccess = event => {
+		tx.objectStore("gameAttributes").get("difficulty").onsuccess = (event: any) => {
 			let difficulty =
 				event.target.result !== undefined
 					? event.target.result.value
@@ -594,7 +722,7 @@ const migrateLeague = (upgradeDB, lid) => {
 				difficulty = 0;
 			}
 
-			upgradeDB.gameAttributes.put({
+			upgradeDB.put("gameAttributes", {
 				key: "difficulty",
 				value: difficulty,
 			});
@@ -609,17 +737,17 @@ const migrateLeague = (upgradeDB, lid) => {
 		};
 	}
 
-	if (upgradeDB.oldVersion <= 32) {
-		upgrade33(upgradeDB);
+	if (oldVersion <= 32) {
+		upgrade33(transaction);
 	}
 
-	if (upgradeDB.oldVersion <= 33) {
+	if (oldVersion <= 33) {
 		upgradeDB.createObjectStore("allStars", {
 			keyPath: "season",
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 34) {
+	if (oldVersion <= 34) {
 		const teamsDefault = helpers.getTeamsDefault();
 		upgradeDB.teams.iterate(t => {
 			if (!t.colors) {
@@ -633,34 +761,52 @@ const migrateLeague = (upgradeDB, lid) => {
 					t.colors = ["#000000", "#cccccc", "#ffffff"];
 				}
 
-				upgradeDB.teams.put(t);
+				upgradeDB.put("teams", t);
 			}
 		});
 	}
 
-	if (upgradeDB.oldVersion <= 35) {
+	if (oldVersion <= 35) {
 		slowUpgrade();
 		upgradeDB.players.iterate(p => {
 			if (!p.injuries) {
 				p.injuries = [];
-				upgradeDB.players.put(p);
+				upgradeDB.put("players", p);
 			}
 		});
-	}
+	}*/
 
 	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
 };
 
 const connectLeague = async (lid: number) => {
-	// Would like to await on migrateLeague and inside there, but Firefox
-	const db = await backboard.open(`league${lid}`, 36, upgradeDB => {
-		if (upgradeDB.oldVersion === 0) {
-			createLeague(upgradeDB);
-		} else {
-			migrateLeague(upgradeDB, lid);
-		}
+	const db = await openDB<LeagueDB>(`league${lid}`, 36, {
+		upgrade(db, oldVersion, newVerison, transaction) {
+			if (oldVersion === 0) {
+				createLeague(db);
+			} else {
+				migrateLeague(db, lid, oldVersion, transaction);
+			}
+		},
+		blocked() {
+			logEvent({
+				type: "error",
+				text: "Please close any other open tabs.",
+				saveToDb: false,
+			});
+		},
+		blocking() {
+			db.close();
+		},
+		terminated() {
+			logEvent({
+				type: "error",
+				text: "Something bad happened...",
+				saveToDb: false,
+			});
+		},
 	});
-	db.on("versionchange", () => db.close());
+
 	return db;
 };
 

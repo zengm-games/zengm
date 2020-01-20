@@ -4,8 +4,9 @@ import { idb } from "../../db"; // For debugging changes in the player value for
 
 const valueDiff = async () => {
 	// All non-retired players
-	const players = await idb.league.players
-		.index("tid")
+	const players = await idb.league
+		.transaction("players")
+		.store.index("tid")
 		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 
 	for (const p of players) {

@@ -1284,9 +1284,11 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 		cachedPlayer.watch = watch;
 		await idb.cache.players.put(cachedPlayer);
 	} else {
-		const p = await idb.league.players.get(pid);
-		p.watch = watch;
-		await idb.cache.players.add(p);
+		const p = await idb.league.get("players", pid);
+		if (p) {
+			p.watch = watch;
+			await idb.cache.players.add(p);
+		}
 	}
 
 	await toUI(["realtimeUpdate", ["playerMovement", "watchList"]]);

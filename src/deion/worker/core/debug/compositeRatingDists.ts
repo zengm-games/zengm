@@ -5,8 +5,9 @@ import { overrides } from "../../util";
 
 const compositeRatingDists = async () => {
 	// All non-retired players
-	const players = await idb.league.players
-		.index("tid")
+	const players = await idb.league
+		.transaction("players")
+		.store.index("tid")
 		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 	const compositeRatings = players
 		.map(p => {

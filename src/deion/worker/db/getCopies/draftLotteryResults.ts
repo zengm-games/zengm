@@ -9,7 +9,7 @@ const getCopies = async ({
 } = {}): Promise<DraftLotteryResult[]> => {
 	if (season !== undefined) {
 		const draftLotteryResults = mergeByPk(
-			await idb.league.draftLotteryResults.getAll(season),
+			await idb.league.getAll("draftLotteryResults", season),
 			(await idb.cache.draftLotteryResults.getAll()).filter(event => {
 				return event.season === season;
 			}),
@@ -19,7 +19,7 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await idb.league.draftLotteryResults.getAll(),
+		await idb.league.getAll("draftLotteryResults"),
 		await idb.cache.draftLotteryResults.getAll(),
 		idb.cache.storeInfos.draftLotteryResults.pk,
 	);

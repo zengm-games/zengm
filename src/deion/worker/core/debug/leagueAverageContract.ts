@@ -5,8 +5,9 @@ import { idb } from "../../db"; // Returns the average contract for the active p
 
 const leagueAverageContract = async () => {
 	// All non-retired players
-	const players = await idb.league.players
-		.index("tid")
+	const players = await idb.league
+		.transaction("players")
+		.store.index("tid")
 		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 	let total = 0;
 

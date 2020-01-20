@@ -10,8 +10,9 @@ const newPhaseDraft = async (conditions: Conditions) => {
 	// but under certain rare cases could cause a minor problem. For performance reasons, this also assumes that any
 	// player drafted more than 110 years ago is dead already. If that's not true, congrats on immortality!
 	const promises: Promise<any>[] = [];
-	await idb.league.players
-		.index("draft.year, retiredYear")
+	await idb.league
+		.transaction("players")
+		.store.index("draft.year, retiredYear")
 		.iterate(IDBKeyRange.bound([g.get("season") - 110], [""]), p => {
 			// Skip non-retired players and dead players
 			if (p.tid !== PLAYER.RETIRED || typeof p.diedYear === "number") {

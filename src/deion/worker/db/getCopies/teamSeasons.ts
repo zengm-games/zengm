@@ -25,8 +25,9 @@ const getCopies = async ({
 			}
 
 			// Single season, from database
-			return idb.league.teamSeasons
-				.index("season, tid")
+			return idb.league
+				.transaction("teamSeasons")
+				.store.index("season, tid")
 				.getAll(IDBKeyRange.bound([season], [season, ""]));
 		}
 
@@ -37,8 +38,9 @@ const getCopies = async ({
 
 	if (seasons !== undefined) {
 		return mergeByPk(
-			await idb.league.teamSeasons
-				.index("tid, season")
+			await idb.league
+				.transaction("teamSeasons")
+				.store.index("tid, season")
 				.getAll(IDBKeyRange.bound([tid, seasons[0]], [tid, seasons[1]])),
 			await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 				[tid, seasons[0]],
@@ -49,8 +51,9 @@ const getCopies = async ({
 	}
 
 	return mergeByPk(
-		await idb.league.teamSeasons
-			.index("tid, season")
+		await idb.league
+			.transaction("teamSeasons")
+			.store.index("tid, season")
 			.getAll(IDBKeyRange.bound([tid], [tid, ""])),
 		await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
 			[tid],

@@ -58,6 +58,7 @@ describe("worker/core/draft/runPicks", () => {
 		userPick2 = draftTids.lastIndexOf(g.get("userTid")) + 1;
 	});
 	afterAll(() => {
+		// @ts-ignore
 		idb.league = undefined;
 	});
 	test("draft players before the user's team first round pick", () => {

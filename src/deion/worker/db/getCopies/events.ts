@@ -17,7 +17,10 @@ const getCopies = async ({
 
 	if (season !== undefined) {
 		return mergeByPk(
-			await idb.league.events.index("season").getAll(season),
+			await idb.league
+				.transaction("events")
+				.store.index("season")
+				.getAll(season),
 			(await idb.cache.events.getAll()).filter(event => {
 				return event.season === season;
 			}),
@@ -27,7 +30,10 @@ const getCopies = async ({
 
 	if (pid !== undefined) {
 		return mergeByPk(
-			await idb.league.events.index("pids").getAll(pid),
+			await idb.league
+				.transaction("events")
+				.store.index("pids")
+				.getAll(pid),
 			(await idb.cache.events.getAll()).filter(event => {
 				return event.pids !== undefined && event.pids.includes(pid);
 			}),

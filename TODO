@@ -19,6 +19,7 @@ typescript
     - do the same as whatever i end up doing with idb
     - also like idb, cache get functions should all be | void
   - types for PlayersPlus and TeamsPlus
+    - https://mail.google.com/mail/u/0/#inbox/FMfcgxwGCklMsckKcVMNqvgFsXjnvJfn?compose=GTvVlcSMSqJlMTcsPhMHZLnPtfslpGMZBHKpdmkbTlFzWxVDrcwjFjFTdpjqDnrHzWRKZRvxRnFlZ
   - backboard -> idb
     - my branch has two fixes:
       - https://github.com/jakearchibald/idb/pull/151

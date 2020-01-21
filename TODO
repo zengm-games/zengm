@@ -20,13 +20,9 @@ typescript
     - also like idb, cache get functions should all be | void
   - types for PlayersPlus and TeamsPlus
   - backboard -> idb
-    - test after league
-      - check safari support (after meta port, safari 10 is now broken, not sure why, maybe the same problem that uglify has?)
-        - leagues[Symbol.iterator] is not a function. (In 'leagues[Symbol.iterator]()', 'leagues[Symbol.iterator]' is undefined)
-          - result of idb.meta.getAll("leagues") is a promise-like object, not an array. why?
-          - if can't fix this, remove safari 10 polyfills and add safari 10 detection to index.html
-        - generated updateDashboard code is almost the same, what changed??
-          - importing backboard doesn't change anything
+    - my branch has two fixes:
+      - https://github.com/jakearchibald/idb/pull/151
+      - https://github.com/jakearchibald/idb/issues/152
   - any -> unknown
     - also in dependencies, like bbgm-router
 - yarn tsc --noImplicitAny > foo

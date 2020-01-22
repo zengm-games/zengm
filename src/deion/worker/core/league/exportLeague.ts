@@ -89,7 +89,7 @@ const exportLeague = async (
 			"teamRegionsCache",
 		];
 		exportedLeague.gameAttributes = exportedLeague.gameAttributes.filter(
-			gameAttribute => !keysToDelete.includes(gameAttribute.key),
+			(gameAttribute: any) => !keysToDelete.includes(gameAttribute.key),
 		);
 	} else {
 		// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default

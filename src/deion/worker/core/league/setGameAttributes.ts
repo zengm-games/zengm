@@ -27,6 +27,7 @@ const setGameAttributes = async (
 
 	for (const key of helpers.keys(gameAttributes)) {
 		if (
+			// @ts-ignore
 			(gameAttributes[key] === undefined || g[key] !== gameAttributes[key]) &&
 			// @ts-ignore
 			!Number.isNaN(gameAttributes[key])

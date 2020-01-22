@@ -329,16 +329,13 @@ export type MenuItemLink = {
 	league?: true;
 	godMode?: true;
 	nonLeague?: true;
-	onClick?: (a: MouseEvent) => void | false | Promise<void | false>;
-	// Return false to leave sidebar open
+	onClick?: (a: MouseEvent) => void | false | Promise<void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:
-		| string
-		| any // React.Element<any>
+		| Exclude<React.ReactNode, null | undefined | number | boolean>
 		| {
-				side: string | any;
-				// React.Element<any>
-				top: string | any;
+				side: Exclude<React.ReactNode, null | undefined | number | boolean>;
+				top: Exclude<React.ReactNode, null | undefined | number | boolean>;
 		  };
 };
 
@@ -651,6 +648,11 @@ export type SortType =
 	| "number"
 	| "record";
 
+type BudgetItem = {
+	amount: number;
+	rank: number;
+};
+
 export type Team = {
 	tid: number;
 	cid: number;
@@ -661,10 +663,7 @@ export type Team = {
 	imgURL?: string;
 	budget: Record<
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
-		{
-			amount: number;
-			rank: number;
-		}
+		BudgetItem
 	>;
 	strategy: "contending" | "rebuilding";
 	depth?: {
@@ -707,10 +706,6 @@ export type TeamStatAttr = string;
 export type TeamStatType = "perGame" | "totals";
 
 export type TeamFiltered = any;
-type BudgetItem = {
-	amount: number;
-	rank: number;
-};
 
 export type TeamSeason = {
 	tid: number;
@@ -784,12 +779,14 @@ export type TradeSummary = {
 	teams: [TradeSummaryTeam, TradeSummaryTeam];
 	warning: null | string;
 };
-type TradeTeam = {
+
+export type TradeTeam = {
 	dpids: number[];
 	dpidsExcluded: number[];
 	pids: number[];
 	pidsExcluded: number[];
 	tid: number;
+	warning?: string | null;
 };
 
 export type TradeTeams = [TradeTeam, TradeTeam];

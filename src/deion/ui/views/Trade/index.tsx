@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { toWorker } from "../../util";
@@ -20,7 +20,7 @@ const Trade = (props: View<"trade">) => {
 		userOrOther: "other" | "user",
 		playerOrPick: "pick" | "player",
 		includeOrExclude: "include" | "exclude",
-		id,
+		id: number,
 	) => {
 		setState(prevState => ({ ...prevState, message: null }));
 		const ids = {
@@ -62,7 +62,7 @@ const Trade = (props: View<"trade">) => {
 		await toWorker("updateTrade", teams);
 	};
 
-	const handleChangeTeam = async event => {
+	const handleChangeTeam = async (event: ChangeEvent<HTMLSelectElement>) => {
 		setState(prevState => ({ ...prevState, message: null }));
 		const otherTid = parseInt(event.currentTarget.value, 10);
 		const teams = [

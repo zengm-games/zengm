@@ -34,7 +34,7 @@ const checkDynasty = async (titles: number, years: number) => {
 	return titlesFound >= titles;
 };
 
-const checkMoneyball = async maxPayroll => {
+const checkMoneyball = async (maxPayroll: number) => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["expenses", "playoffRoundsWon"],
 		season: g.get("season"),
@@ -59,7 +59,7 @@ const userWonTitle = async () => {
 		: false;
 };
 
-const checkGoldenOldies = async age => {
+const checkGoldenOldies = async (age: number) => {
 	const wonTitle = await userWonTitle();
 
 	if (!wonTitle) {
@@ -82,7 +82,7 @@ const checkGoldenOldies = async age => {
 	return true;
 };
 
-const checkYoungGuns = async age => {
+const checkYoungGuns = async (age: number) => {
 	const wonTitle = await userWonTitle();
 
 	if (!wonTitle) {
@@ -512,7 +512,8 @@ const achievements: Achievement[] = [
 			const awards = await idb.cache.awards.get(g.get("season"));
 			const count =
 				awards && awards.allRookie
-					? awards.allRookie.filter(p => p.tid === g.get("userTid")).length
+					? awards.allRookie.filter((p: any) => p.tid === g.get("userTid"))
+							.length
 					: 0;
 			return count >= trustTheProcessCutoff;
 		},

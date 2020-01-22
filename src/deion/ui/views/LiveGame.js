@@ -268,7 +268,7 @@ class LiveGame extends React.Component {
 LiveGame.propTypes = {
 	events: PropTypes.arrayOf(
 		PropTypes.shape({
-			type: PropTypes.string.isRequried,
+			type: PropTypes.string.isRequired,
 		}),
 	),
 	initialBoxScore: PropTypes.object,

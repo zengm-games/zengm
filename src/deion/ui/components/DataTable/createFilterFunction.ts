@@ -32,7 +32,7 @@ const createFilterFunction = (
 			};
 		})
 		.filter(({ number }) => {
-			if (sortType === "number" || sortType === "currency") {
+			if (number !== undefined) {
 				return !Number.isNaN(number);
 			}
 

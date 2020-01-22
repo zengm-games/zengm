@@ -80,6 +80,7 @@
 		"@rollup/plugin-node-resolve": "^7.0.0",
 		"@rollup/plugin-replace": "^2.3.0",
 		"@types/classnames": "^2.2.9",
+		"@types/d3-dsv": "^1.0.36",
 		"@types/dompurify": "^2.0.1",
 		"@types/gtag.js": "^0.0.3",
 		"@types/jest": "^24.9.0",

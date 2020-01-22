@@ -32,12 +32,12 @@ const makeItWork = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
 	estValuesCached?: TradePickValues,
-): Promise<TradeTeams | void> => {
-	let initialSign;
+) => {
+	let initialSign: -1 | 1;
 	let added = 0;
 
 	// Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
-	const tryAddAsset = async () => {
+	const tryAddAsset = async (): Promise<TradeTeams | void> => {
 		const assets: Asset[] = [];
 
 		if (!holdUserConstant) {
@@ -194,7 +194,7 @@ const makeItWork = async (
 	};
 
 	// See if the AI team likes the current trade. If not, try adding something to it.
-	async function testTrade() {
+	const testTrade = async () => {
 		const dv = await team.valueChange(
 			teams[1].tid,
 			teams[0].pids,
@@ -220,7 +220,7 @@ const makeItWork = async (
 		}
 
 		return tryAddAsset();
-	}
+	};
 
 	const dv = await team.valueChange(
 		teams[1].tid,

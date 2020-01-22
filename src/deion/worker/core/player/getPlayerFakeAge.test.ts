@@ -36,6 +36,7 @@ describe("worker/core/player/getPlayerFakeAge", () => {
 				);
 			}
 
+			// @ts-ignore
 			pidCounts[p.pid] += 1;
 		}
 

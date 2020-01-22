@@ -20,7 +20,11 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 		byeSeeds.push(numPlayoffTeams + i);
 	}
 
-	const addMatchup = (currentRound, team1, maxTeamInRound) => {
+	const addMatchup = (
+		currentRound: Seed[],
+		team1: number | undefined,
+		maxTeamInRound: number,
+	) => {
 		if (typeof team1 !== "number") {
 			throw Error("Invalid type");
 		}
@@ -39,7 +43,7 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 		// Add two matchups to currentRound, for the two teams in lastRound. The sum of the seeds in a matchup is constant for an entire round!
 		const numTeamsInRound = lastRound.length * 4;
 		const maxTeamInRound = numTeamsInRound - 1;
-		const currentRound = [];
+		const currentRound: Seed[] = [];
 
 		for (const matchup of lastRound) {
 			// swapOrder stuff is just cosmetic, matchups would be the same without it, just displayed slightly differently

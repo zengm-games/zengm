@@ -1,7 +1,6 @@
 import flatten from "lodash/flatten";
 import range from "lodash/range";
 import { g, random } from "../../../../deion/worker/util";
-import { Team } from "../../../../deion/common/types";
 
 /**
  * Creates a new regular season schedule for 30 teams.
@@ -234,7 +233,13 @@ export const newScheduleCrappy = () => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newSchedule = (teams: Team[]) => {
+const newSchedule = (
+	teams: {
+		cid: number;
+		did: number;
+		tid: number;
+	}[],
+) => {
 	let tids: [number, number][];
 	let threeDivsPerConf = true;
 

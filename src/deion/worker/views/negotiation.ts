@@ -20,7 +20,7 @@ const generateContractOptions = (contract, ovr) => {
 		amount: number;
 		smallestAmount: boolean;
 	}[] = [];
-	let found: number | undefined = undefined;
+	let found: number | undefined;
 
 	for (let i = 0; i < 5; i++) {
 		contractOptions[i] = {

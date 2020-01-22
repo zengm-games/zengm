@@ -3,8 +3,9 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
+import { View } from "../../common/types";
 
-const Live = ({ games, gamesInProgress }) => {
+const Live = ({ games, gamesInProgress }: View<"live">) => {
 	useTitleBar({ title: "Live Game Simulation" });
 
 	return (
@@ -44,12 +45,12 @@ const Live = ({ games, gamesInProgress }) => {
 Live.propTypes = {
 	games: PropTypes.arrayOf(
 		PropTypes.shape({
-			awayName: PropTypes.string.isRequried,
-			awayRegion: PropTypes.string.isRequried,
-			gid: PropTypes.number.isRequried,
-			highlight: PropTypes.bool.isRequried,
-			homeName: PropTypes.string.isRequried,
-			homeRegion: PropTypes.string.isRequried,
+			awayName: PropTypes.string.isRequired,
+			awayRegion: PropTypes.string.isRequired,
+			gid: PropTypes.number.isRequired,
+			highlight: PropTypes.bool.isRequired,
+			homeName: PropTypes.string.isRequired,
+			homeRegion: PropTypes.string.isRequired,
 		}),
 	),
 	gamesInProgress: PropTypes.bool,

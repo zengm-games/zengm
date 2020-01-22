@@ -1,3 +1,5 @@
+import helpers from "./helpers";
+
 const fetchWrapper = async ({
 	url,
 	method,
@@ -23,7 +25,7 @@ const fetchWrapper = async ({
 	} else if (data !== undefined) {
 		body = new URLSearchParams();
 
-		for (const key of Object.keys(data)) {
+		for (const key of helpers.keys(data)) {
 			body.set(key, data[key]);
 		}
 	}

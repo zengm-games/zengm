@@ -16,7 +16,7 @@ const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
 		}
 	}
 
-	let newLid: number | undefined = undefined;
+	let newLid: number | undefined;
 
 	// Find most recent league and add one to the LID
 	const cursor = await idb.meta

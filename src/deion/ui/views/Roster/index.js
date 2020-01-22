@@ -220,9 +220,9 @@ const Roster = ({
 						{showTradeFor ? <th>Trade For</th> : null}
 					</>
 				)}
-				row={({ value: p, style }) => (
+				row={({ value: p }) => (
 					<>
-						<td style={style(1)}>
+						<td>
 							<PlayerNameLabels
 								pid={p.pid}
 								injury={p.injury}
@@ -232,15 +232,15 @@ const Roster = ({
 								{p.name}
 							</PlayerNameLabels>
 						</td>
-						<td style={style(2)}>{p.ratings.pos}</td>
-						<td style={style(3)}>{p.age}</td>
-						<td style={style(4)}>{p.stats.yearsWithTeam}</td>
-						<td style={style(5)}>
+						<td>{p.ratings.pos}</td>
+						<td>{p.age}</td>
+						<td>{p.stats.yearsWithTeam}</td>
+						<td>
 							<RatingWithChange change={p.ratings.dovr}>
 								{p.ratings.ovr}
 							</RatingWithChange>
 						</td>
-						<td style={style(6)}>
+						<td>
 							<RatingWithChange change={p.ratings.dpot}>
 								{p.ratings.pot}
 							</RatingWithChange>
@@ -248,7 +248,6 @@ const Roster = ({
 						{season === currentSeason ? (
 							<td
 								style={{
-									...style(7),
 									fontStyle: justDrafted(p, phase, currentSeason)
 										? "italic"
 										: "normal",
@@ -263,18 +262,16 @@ const Roster = ({
 								{p.contract.exp}
 							</td>
 						) : null}
-						{stats.map((stat, i) => (
-							<td key={stat} style={style(8 + i)}>
-								{helpers.roundStat(p.stats[stat], stat)}
-							</td>
+						{stats.map(stat => (
+							<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 						))}
 						{editable ? (
-							<td style={style(8 + stats.length)}>
+							<td>
 								<PlayingTime p={p} userTid={userTid} />
 							</td>
 						) : null}
 						{showRelease ? (
-							<td style={style(9 + stats.length)}>
+							<td>
 								<button
 									className="btn btn-light-bordered btn-xs"
 									disabled={!p.canRelease}

@@ -1,6 +1,7 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import { TeamBasic } from "./types"; // Prefer getPopRanks to this in new code because it's not mutable
+import { TeamBasic } from "./types";
 
+// Prefer getPopRanks to this in new code because it's not mutable
 function addPopRank(teams: any[]): any[] {
 	// Add popRank
 	const teamsSorted = teams.slice();
@@ -740,6 +741,7 @@ function deepCopy<T>(obj: T): T {
 	const retVal = new obj.constructor();
 
 	for (const key of Object.keys(obj)) {
+		// @ts-ignore
 		retVal[key] = deepCopy(obj[key]);
 	}
 

@@ -6,7 +6,13 @@ import { getCols, helpers, toWorker } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 import { View } from "../../common/types";
 
-const DraftButtons = ({ userRemaining, usersTurn }) => {
+const DraftButtons = ({
+	userRemaining,
+	usersTurn,
+}: {
+	userRemaining: boolean;
+	usersTurn: boolean;
+}) => {
 	const untilText = userRemaining ? "your next pick" : "end of draft";
 	return (
 		<div className="btn-group mb-3">
@@ -37,7 +43,17 @@ DraftButtons.propTypes = {
 	usersTurn: PropTypes.bool.isRequired,
 };
 
-const TradeButton = ({ disabled, dpid, tid, visible }) => {
+const TradeButton = ({
+	disabled,
+	dpid,
+	tid,
+	visible,
+}: {
+	disabled: boolean;
+	dpid: number;
+	tid: number;
+	visible: boolean;
+}) => {
 	return visible ? (
 		<button
 			className="btn btn-xs btn-light-bordered"
@@ -92,7 +108,7 @@ const Draft = ({
 }: View<"draft">) => {
 	const [drafting, setDrafting] = useState(false);
 
-	const draftUser = async (pid, simToNextUserPick = false) => {
+	const draftUser = async (pid: number, simToNextUserPick = false) => {
 		setDrafting(true);
 		await toWorker("draftUser", pid);
 		setDrafting(false);

@@ -46,7 +46,19 @@ TopMenuToggle.propTypes = {
 	toggle: PropTypes.func,
 };
 
-const TopMenuDropdown = ({ children, long, short, openID, onToggle }) => {
+const TopMenuDropdown = ({
+	children,
+	long,
+	short,
+	openID,
+	onToggle,
+}: {
+	children: React.ReactNode;
+	long: string;
+	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
+	openID: string;
+	short: string;
+}) => {
 	const toggle = useCallback(event => onToggle(long, event), [long, onToggle]);
 	return (
 		<Dropdown isOpen={openID === long} nav inNavbar toggle={toggle}>
@@ -74,8 +86,9 @@ TopMenuDropdown.propTypes = {
 	short: PropTypes.string.isRequired,
 };
 
-const getText = (text): string | any => {
+const getText = (text: MenuItemLink["text"]) => {
 	if (text.hasOwnProperty("top")) {
+		// @ts-ignore
 		return text.top;
 	}
 
@@ -108,7 +121,21 @@ const makeAnchorProps = (menuItem: MenuItemLink) => {
 	};
 };
 
-const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
+const MenuItem = ({
+	godMode,
+	lid,
+	menuItem,
+	openID,
+	onToggle,
+	root,
+}: {
+	godMode?: boolean;
+	lid?: number;
+	menuItem: MenuItemLink | MenuItemHeader;
+	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
+	openID: string;
+	root: boolean;
+}) => {
 	if (!menuItem.league && lid !== undefined) {
 		return null;
 	}
@@ -194,7 +221,7 @@ const MenuItem = ({ godMode, lid, menuItem, openID, onToggle, root }) => {
 		);
 	}
 
-	throw new Error(`Unknown menuItem.type "${menuItem.type}"`);
+	throw new Error(`Unknown menuItem.type "${(menuItem as any).type}"`);
 };
 
 type DropdownLinksProps = {

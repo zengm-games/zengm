@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { CSSProperties } from "react";
 
-const quartile = (data, quart) => {
+const quartile = (data: number[], quart: 1 | 2 | 3) => {
 	if (quart === 1 || quart === 2 || quart === 3) {
 		return data[Math.round((data.length * quart) / 4)];
 	}
@@ -9,7 +9,7 @@ const quartile = (data, quart) => {
 	return NaN;
 };
 
-const calculateValues = data => {
+const calculateValues = (data: number[]) => {
 	// Sort in ascending order
 	data.sort((a, b) => a - b);
 
@@ -23,15 +23,15 @@ const calculateValues = data => {
 	};
 };
 
-const scaleValue = (v, scale) => {
+const scaleValue = (v: number, scale: [number, number]) => {
 	return Math.round(100 - ((v - scale[0]) / (scale[1] - scale[0])) * 100);
 };
 
-const round = value => {
-	return parseFloat(value).toFixed(1);
+const round = (value: number) => {
+	return parseFloat(String(value)).toFixed(1);
 };
 
-const boxPlotElementStyle = (color, style) => {
+const boxPlotElementStyle = (color: string, style: CSSProperties) => {
 	const baseStyle: {
 		[key: string]: 0 | string;
 	} = {

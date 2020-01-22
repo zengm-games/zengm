@@ -6,10 +6,19 @@ import {
 	PlayerNameLabels,
 } from "../../components";
 import { downloadFile, getCols, toWorker } from "../../util";
+import { View } from "../../../common/types";
 
-const DraftClass = ({ offset, players, season }) => {
+const DraftClass = ({
+	offset,
+	players,
+	season,
+}: {
+	offset: number;
+	players: View<"draftScouting">["seasons"][0]["players"];
+	season: number;
+}) => {
 	const [showImportForm, setShowImportForm] = useState(false);
-	const [status, setStatus] = useState();
+	const [status, setStatus] = useState<"exporting" | "loading" | undefined>();
 
 	const cols = getCols("#", "Name", "Pos", "Age", "Ovr", "Pot");
 
@@ -52,7 +61,7 @@ const DraftClass = ({ offset, players, season }) => {
 						);
 						downloadFile(filename, json, "application/json");
 
-						setStatus();
+						setStatus(undefined);
 					}}
 				>
 					Export
@@ -85,7 +94,7 @@ const DraftClass = ({ offset, players, season }) => {
 							await toWorker("handleUploadedDraftClass", leagueFile, season);
 
 							setShowImportForm(false);
-							setStatus();
+							setStatus(undefined);
 						}}
 					/>
 					<p />

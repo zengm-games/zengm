@@ -9,6 +9,7 @@ import {
 	GameProcessedCompleted,
 	PlayoffSeriesTeam,
 	TeamSeason,
+	TeamFiltered,
 } from "../../common/types";
 
 const augmentSeries = async (
@@ -23,7 +24,7 @@ const augmentSeries = async (
 		season,
 	});
 
-	const setAll = obj => {
+	const setAll = (obj: PlayoffSeriesTeam) => {
 		obj.abbrev = g.get("teamAbbrevsCache")[obj.tid];
 		obj.region = g.get("teamRegionsCache")[obj.tid];
 		obj.imgURL = teams[obj.tid].imgURL;
@@ -237,16 +238,16 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	return Math.ceil(numGamesPlayoffSeries / 2);
 };
 
-const orderByWinp = <T extends any>(
-	teams: T[],
+const orderByWinp = (
+	teams: TeamFiltered[],
 	season: number = g.get("season"),
-): T[] => {
+): TeamFiltered[] => {
 	const defaultFuncs = [
-		t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
-		t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+		(t: TeamFiltered) => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
+		(t: TeamFiltered) => (t.seasonAttrs ? t.seasonAttrs.won : 0),
 
 		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
-		t =>
+		(t: TeamFiltered) =>
 			random.uniformSeed(
 				t.tid +
 					season +

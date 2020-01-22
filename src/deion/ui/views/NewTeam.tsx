@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
+import { View } from "../../common/types";
 
-const NewTeam = ({ gameOver, godMode, phase, teams }) => {
+const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 	const [tid, setTid] = useState(
 		teams && teams.length > 0 ? teams[0].tid : undefined,
 	);
@@ -13,7 +14,7 @@ const NewTeam = ({ gameOver, godMode, phase, teams }) => {
 		setTid(teams[0].tid);
 	}
 
-	const handleTidChange = event => {
+	const handleTidChange = (event: ChangeEvent<HTMLSelectElement>) => {
 		setTid(parseInt(event.currentTarget.value, 10));
 	};
 

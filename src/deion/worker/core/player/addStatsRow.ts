@@ -16,7 +16,7 @@ const addStatsRow = async (
 	p: Player | PlayerWithoutPid,
 	playoffs: boolean = false,
 ) => {
-	const statsRow = {
+	const statsRow: any = {
 		playoffs,
 		season: g.get("season"),
 		tid: p.tid,

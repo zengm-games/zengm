@@ -5,7 +5,7 @@ import {
 	TeamStats,
 } from "../../../../deion/common/types"; // Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
 
-const poss = ts => {
+const poss = (ts: TeamStats) => {
 	if (ts.orb + ts.oppDrb > 0 && ts.oppOrb + ts.drb > 0) {
 		return (
 			0.5 *

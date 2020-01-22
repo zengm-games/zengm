@@ -67,7 +67,7 @@ const genRatings = (
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
 	const randType = Math.random();
-	let type;
+	let type: keyof typeof typeFactors;
 
 	if (hgt >= 59) {
 		// 6'10" or taller

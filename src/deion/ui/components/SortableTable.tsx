@@ -9,52 +9,74 @@ import {
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import useClickable from "../hooks/useClickable";
 
-const ReorderHandle = SortableHandle(({ highlight, isDragged }) => {
-	return (
-		<td
-			className={classNames("roster-handle", {
-				"table-info": highlight,
-				"table-secondary": !highlight,
-				"user-select-none": isDragged,
-			})}
-			data-movable-handle
-			style={{
-				cursor: isDragged ? "grabbing" : "grab",
-			}}
-		/>
-	);
-});
+type HighlightHandle<Value> = (a: { index: number; value: Value }) => boolean;
+type RowClassName<Value> = (a: {
+	index: number;
+	isDragged: boolean;
+	value: Value;
+}) => string | undefined;
+type Row<Value> = (a: { index: number; value: Value }) => React.ReactNode;
+
+// Should be Value passed through as generic parameter, but that is annoying with HOC
+type ShouldBeValue = any;
+
+const ReorderHandle = SortableHandle(
+	({ highlight, isDragged }: { highlight: boolean; isDragged: boolean }) => {
+		return (
+			<td
+				className={classNames("roster-handle", {
+					"table-info": highlight,
+					"table-secondary": !highlight,
+					"user-select-none": isDragged,
+				})}
+				data-movable-handle
+				style={{
+					cursor: isDragged ? "grabbing" : "grab",
+				}}
+			/>
+		);
+	},
+);
 
 ReorderHandle.propTypes = {
+	highlight: PropTypes.bool.isRequired,
 	isDragged: PropTypes.bool.isRequired,
 };
 
-const style = () => null;
+const Row = SortableElement(
+	(props: {
+		className?: string;
+		disabled2?: boolean;
+		highlight: boolean;
+		i: number;
+		isDragged: boolean;
+		row: Row<ShouldBeValue>;
+		value: ShouldBeValue;
+	}) => {
+		const { clicked, toggleClicked } = useClickable();
 
-const Row = SortableElement(props => {
-	const { clicked, toggleClicked } = useClickable();
+		const { className, disabled2, highlight, i, isDragged, row, value } = props;
 
-	const { className, disabled2, highlight, i, isDragged, row, value } = props;
+		return (
+			<tr
+				className={classNames(className, {
+					"table-warning": clicked,
+				})}
+				onClick={toggleClicked}
+			>
+				{disabled2 ? null : (
+					<ReorderHandle highlight={highlight} isDragged={isDragged} />
+				)}
+				{row({
+					index: i,
+					value,
+				})}
+			</tr>
+		);
+	},
+);
 
-	return (
-		<tr
-			className={classNames(className, {
-				"table-warning": clicked,
-			})}
-			onClick={toggleClicked}
-		>
-			{disabled2 ? null : (
-				<ReorderHandle highlight={highlight} isDragged={isDragged} />
-			)}
-			{row({
-				index: i,
-				style,
-				value,
-			})}
-		</tr>
-	);
-});
-
+// @ts-ignore
 Row.propTypes = {
 	className: PropTypes.string,
 	disabled2: PropTypes.bool,
@@ -66,13 +88,27 @@ Row.propTypes = {
 };
 
 const TBody = SortableContainer(
-	({ disabled, highlightHandle, isDragged, row, rowClassName, values }) => {
+	({
+		disabled,
+		highlightHandle,
+		isDragged,
+		row,
+		rowClassName,
+		values,
+	}: {
+		disabled?: boolean;
+		highlightHandle: HighlightHandle<ShouldBeValue>;
+		isDragged: boolean;
+		row: ShouldBeValue;
+		rowClassName?: RowClassName<ShouldBeValue>;
+		values: ShouldBeValue[];
+	}) => {
 		return (
 			<tbody>
 				{values.map((value, index) => {
-					const className = rowClassName
+					const className: string | undefined = rowClassName
 						? rowClassName({ index, isDragged, value })
-						: null;
+						: undefined;
 					const highlight = highlightHandle({ index, value });
 
 					// Hacky! Would be better to pass in explicitly. If `index` is just used, then it breaks highlighting (highlight doesn't move with row when dragged)
@@ -104,6 +140,7 @@ const TBody = SortableContainer(
 	},
 );
 
+// @ts-ignore
 TBody.propTypes = {
 	disabled: PropTypes.bool,
 	highlightHandle: PropTypes.func,
@@ -113,7 +150,7 @@ TBody.propTypes = {
 	values: PropTypes.array.isRequired,
 };
 
-const SortableTable = ({
+const SortableTable = <Value extends {}>({
 	cols,
 	disabled,
 	highlightHandle,
@@ -121,6 +158,14 @@ const SortableTable = ({
 	row,
 	rowClassName,
 	values,
+}: {
+	cols: () => React.ReactNode;
+	disabled?: boolean;
+	highlightHandle: HighlightHandle<Value>;
+	onChange: (a: { oldIndex: number; newIndex: number }) => void;
+	row: Row<Value>;
+	rowClassName?: RowClassName<Value>;
+	values: Value[];
 }) => {
 	const [isDragged, setIsDragged] = useState(false);
 
@@ -131,7 +176,9 @@ const SortableTable = ({
 		const tds = document.getElementsByClassName("SortableHelper")[0].childNodes;
 		for (let i = 0; i < tds.length; i++) {
 			const childNode = node.childNodes[i];
+			// @ts-ignore
 			tds[i].style.width = `${childNode.offsetWidth}px`;
+			// @ts-ignore
 			tds[i].style.padding = "5px";
 		}
 	}, []);

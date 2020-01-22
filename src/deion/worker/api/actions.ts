@@ -20,7 +20,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from "../util";
-import { Conditions } from "../../common/types";
+import { Conditions, TradeTeams } from "../../common/types";
 
 const liveGame = async (gid: number, conditions: Conditions) => {
 	await toUI(
@@ -78,7 +78,7 @@ type TradeForOptions = {
 };
 
 const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
-	let teams;
+	let teams: TradeTeams | undefined;
 
 	if (arg.pid !== undefined) {
 		const p = await idb.cache.players.get(arg.pid);
@@ -128,7 +128,13 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 				dpidsExcluded: [],
 			},
 		];
-	} else {
+	} else if (
+		arg.userPids &&
+		arg.userDpids &&
+		arg.otherPids &&
+		arg.otherDpids &&
+		arg.tid !== undefined
+	) {
 		// Start a new trade with everything specified, from the trading block
 		teams = [
 			{
@@ -149,8 +155,10 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	}
 
 	// Start a new trade based on a list of pids and dpids, like from the trading block
-	await trade.create(teams);
-	toUI(["realtimeUpdate", [], helpers.leagueUrl(["trade"])], conditions);
+	if (teams) {
+		await trade.create(teams);
+		toUI(["realtimeUpdate", [], helpers.leagueUrl(["trade"])], conditions);
+	}
 };
 
 const getNumDaysThisRound = playoffSeries => {

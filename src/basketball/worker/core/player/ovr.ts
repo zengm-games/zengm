@@ -26,14 +26,14 @@ const ovr = (ratings: PlayerRatings): number => {
 		0.062 * (ratings.pss - 51.3) +
 		0.01 * (ratings.fg - 47.0) +
 		0.01 * (ratings.reb - 51.4) +
-		48.5; // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
+		48.5;
+
+	// Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
 	// +8 at 68
 	// +4 at 50
 	// -5 at 42
 	// -10 at 31
-
 	let fudgeFactor = 0;
-
 	if (r >= 68) {
 		fudgeFactor = 8;
 	} else if (r >= 50) {

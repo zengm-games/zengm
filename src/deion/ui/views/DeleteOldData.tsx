@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
 
@@ -14,14 +14,16 @@ const DeleteOldData = () => {
 	});
 	const [deleting, setDeleting] = useState(false);
 
-	const handleChange = name => event => {
+	const handleChange = (name: string) => (
+		event: ChangeEvent<HTMLInputElement>,
+	) => {
 		setState({
 			...state,
 			[name]: event.target.checked,
 		});
 	};
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setDeleting(true);
 

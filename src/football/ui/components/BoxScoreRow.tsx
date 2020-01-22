@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { MouseEvent } from "react";
 import { PlayerNameLabels } from "../../../deion/ui/components";
 import { helpers } from "../../../deion/ui/util";
 
@@ -14,7 +14,7 @@ const BoxScoreRow = ({
 	stats,
 }: {
 	className: string;
-	onClick?: (MouseEvent) => void;
+	onClick?: (a: MouseEvent) => void;
 	p: any;
 	stats: string[];
 }) => {

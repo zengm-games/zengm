@@ -116,7 +116,7 @@ const info = {
 };
 
 // Handle some nonlinear interactions
-const bonuses = {
+const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
 	RB: ratings => helpers.bound((ratings.spd * ratings.elu) / 300, 6, 20),
 	WR: ratings => helpers.bound((ratings.spd * ratings.hnd) / 550, 0, 5),
 	TE: ratings => helpers.bound((ratings.stre * ratings.hnd) / 550, 2, 10),
@@ -128,12 +128,13 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	const pos2 = pos !== undefined ? pos : ratings.pos;
 	let r = 0;
 
-	if (info[pos2]) {
+	if (info.hasOwnProperty(pos2)) {
 		let sumCoeffs = 0;
 
 		// @ts-ignore
 		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
 			const powerFactor = 100 / 100 ** power;
+			// @ts-ignore
 			r += coeff * powerFactor * ratings[key] ** power;
 			sumCoeffs += coeff;
 		}
@@ -141,6 +142,8 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		r /= sumCoeffs;
 
 		if (bonuses.hasOwnProperty(pos2)) {
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
 			r += bonuses[pos2](ratings);
 		}
 	} else {

@@ -1,4 +1,6 @@
-const posRatings = (pos: string): string[] => {
+import { RatingKey } from "../common/types";
+
+const posRatings = (pos: string): RatingKey[] => {
 	if (pos === "QB") {
 		return ["thv", "thp", "tha", "bsc"];
 	}

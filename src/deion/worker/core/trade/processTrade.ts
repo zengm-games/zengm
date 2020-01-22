@@ -4,7 +4,7 @@ import { idb } from "../../db";
 import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
 import { TradeSummary } from "../../../common/types";
 
-const formatAssetsEventLog = t => {
+const formatAssetsEventLog = (t: TradeSummary["teams"][0]) => {
 	const strings: string[] = [];
 	t.trade.forEach(p =>
 		strings.push(
@@ -46,8 +46,9 @@ const processTrade = async (
 
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
-			p.tid = tids[k]; // p.gamesUntilTradable = 14; // Don't make traded players untradable
+			p.tid = tids[k];
 
+			// p.gamesUntilTradable = 14; // Don't make traded players untradable
 			p.ptModifier = 1; // Reset
 
 			if (g.get("phase") <= PHASE.PLAYOFFS) {

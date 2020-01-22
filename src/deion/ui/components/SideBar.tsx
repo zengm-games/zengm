@@ -1,18 +1,26 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+	ReactNode,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	MouseEvent,
+} from "react";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
-import { MenuItemLink } from "../../common/types";
+import { MenuItemLink, MenuItemHeader } from "../../common/types";
 
-const getText = (text): React.ReactNode => {
+const getText = (text: MenuItemLink["text"]) => {
 	if (text.hasOwnProperty("side")) {
+		// @ts-ignore
 		return text.side;
 	}
 
 	return text;
 };
 
-const MenuGroup = ({ children }) => (
+const MenuGroup = ({ children }: { children: ReactNode }) => (
 	<ul className="nav flex-column">{children}</ul>
 );
 
@@ -39,10 +47,10 @@ const makeAnchorProps = (
 		href = helpers.leagueUrl(menuItem.path);
 	}
 
-	const onClick = async e => {
+	const onClick = async (event: MouseEvent) => {
 		if (menuItem.onClick) {
 			// Don't close menu if response is false
-			const response = await menuItem.onClick(e);
+			const response = await menuItem.onClick(event);
 
 			if (response !== false) {
 				onMenuItemClick();
@@ -67,6 +75,13 @@ const MenuItem = ({
 	onMenuItemClick,
 	pageID,
 	root,
+}: {
+	godMode: boolean;
+	lid?: number;
+	menuItem: MenuItemHeader | MenuItemLink;
+	onMenuItemClick: () => void;
+	pageID?: string;
+	root: boolean;
 }) => {
 	if (!menuItem.league && lid !== undefined) {
 		return null;
@@ -126,34 +141,39 @@ const MenuItem = ({
 		);
 	}
 
-	throw new Error(`Unknown menuItem.type "${menuItem.type}"`);
+	throw new Error(`Unknown menuItem.type "${(menuItem as any).type}"`);
 };
 
 type Props = {
 	pageID?: string;
-}; // Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.getState()
+};
+
+// Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.getState()
 // because then performance of the menu is independent of any other React performance issues - basically it's a hack to
 // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
-
 const SideBar = React.memo(({ pageID }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
 	const topUserBlockRef = useRef<HTMLElement | null>(null);
+
 	const { godMode, lid, sidebarOpen } = useLocalShallow(state => ({
 		godMode: state.godMode,
 		lid: state.lid,
 		sidebarOpen: state.sidebarOpen,
 	}));
+
 	const getNode = useCallback(node2 => {
 		if (node2 !== null) {
 			setNode(node2);
 		}
 	}, []);
+
 	const getNodeFade = useCallback(node2 => {
 		if (node2 !== null) {
 			setNodeFade(node2);
 		}
 	}, []);
+
 	const close = useCallback(() => {
 		// These are flat conditions while open is nested, by design - clean up everything!
 		if (node) {
@@ -186,6 +206,7 @@ const SideBar = React.memo(({ pageID }: Props) => {
 			}
 		}, 300); // Keep time in sync with .sidebar-fade
 	}, [node, nodeFade]);
+
 	const open = useCallback(() => {
 		if (node) {
 			node.classList.add("sidebar-open");
@@ -211,6 +232,7 @@ const SideBar = React.memo(({ pageID }: Props) => {
 			}
 		}
 	}, [node, nodeFade]);
+
 	useEffect(() => {
 		if (node) {
 			const opening = node.classList.contains("sidebar-open");
@@ -222,11 +244,13 @@ const SideBar = React.memo(({ pageID }: Props) => {
 			}
 		}
 	}, [close, node, open, sidebarOpen]);
+
 	const closeHandler = useCallback(() => {
 		localActions.update({
 			sidebarOpen: false,
 		});
 	}, []);
+
 	useEffect(() => {
 		if (nodeFade) {
 			nodeFade.addEventListener("click", closeHandler);
@@ -238,9 +262,11 @@ const SideBar = React.memo(({ pageID }: Props) => {
 			}
 		};
 	}, [closeHandler, nodeFade]);
+
 	useEffect(() => {
 		topUserBlockRef.current = document.getElementById("top-user-block");
 	}, []);
+
 	return (
 		<>
 			<div ref={getNodeFade} className="sidebar-fade" />

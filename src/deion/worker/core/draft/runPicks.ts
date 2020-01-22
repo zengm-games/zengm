@@ -23,21 +23,15 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	lock.set("drafting", true);
 	const pids: number[] = [];
 	const draftPicks = await getOrder();
-	let playersAll;
-
-	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
-		playersAll = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			PLAYER.UNDRAFTED,
-		);
-	} else {
-		playersAll = (
-			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-				[g.get("season")],
-				[g.get("season"), Infinity],
-			])
-		).filter(p => p.tid === PLAYER.UNDRAFTED);
-	}
+	const playersAll =
+		g.get("phase") === PHASE.FANTASY_DRAFT
+			? await idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED)
+			: (
+					await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+						[g.get("season")],
+						[g.get("season"), Infinity],
+					])
+			  ).filter(p => p.tid === PLAYER.UNDRAFTED);
 
 	playersAll.sort((a, b) => b.value - a.value); // Called after either the draft is over or it's the user's pick
 
@@ -49,7 +43,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	};
 
 	// This will actually draft "untilUserOrEnd"
-	const autoSelectPlayer = async () => {
+	const autoSelectPlayer = async (): Promise<number[]> => {
 		if (draftPicks.length > 0) {
 			const dp = draftPicks[0];
 

@@ -148,9 +148,9 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 						))}
 					</>
 				)}
-				row={({ value: p, style }) => (
+				row={({ value: p }) => (
 					<>
-						<td style={style(1)}>
+						<td>
 							<PlayerNameLabels
 								pid={p.pid}
 								injury={p.injury}
@@ -165,22 +165,19 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 								"text-danger":
 									pos !== "KR" && pos !== "PR" && pos !== p.ratings.pos,
 							})}
-							style={style(2)}
 						>
 							{p.ratings.pos}
 						</td>
-						<td style={style(3)}>{p.age}</td>
-						<td style={style(4)}>{p.ratings.ovrs[pos]}</td>
-						<td style={style(5)}>{p.ratings.pots[pos]}</td>
-						{ratings.map((rating, i) => (
-							<td key={rating} className="table-accent" style={style(6 + i)}>
+						<td>{p.age}</td>
+						<td>{p.ratings.ovrs[pos]}</td>
+						<td>{p.ratings.pots[pos]}</td>
+						{ratings.map(rating => (
+							<td key={rating} className="table-accent">
 								{p.ratings[rating]}
 							</td>
 						))}
-						{stats.map((stat, i) => (
-							<td key={stat} style={style(6 + ratings.length + i)}>
-								{helpers.roundStat(p.stats[stat], stat)}
-							</td>
+						{stats.map(stat => (
+							<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 						))}
 					</>
 				)}

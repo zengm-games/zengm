@@ -3,7 +3,7 @@ import { idb } from "../db";
 import { g } from "../util";
 import { UpdateEvents } from "../../common/types";
 
-const addSeason = async season => {
+const addSeason = async (season: number) => {
 	// In fantasy draft, use temp tid
 	const tid =
 		g.get("phase") === PHASE.FANTASY_DRAFT

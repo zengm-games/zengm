@@ -10,6 +10,11 @@ const UncontrolledPopover = ({
 	onEnter,
 	target: Target,
 	...passThroughProps
+}: {
+	defaultOpen?: boolean;
+	id: string;
+	onEnter?: () => void;
+	target: any;
 }) => {
 	const [open, setOpen] = useState(defaultOpen || false);
 
@@ -42,6 +47,7 @@ UncontrolledPopover.propTypes = {
 	id: PropTypes.string.isRequired,
 	onEnter: PropTypes.func,
 	target: PropTypes.any,
+	// @ts-ignore
 	...Popover.propTypes,
 };
 

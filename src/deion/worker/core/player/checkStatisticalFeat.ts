@@ -10,7 +10,7 @@ const checkStatisticalFeat = (
 	results: GameResults,
 	conditions: Conditions,
 ) => {
-	const logFeat = async text => {
+	const logFeat = async (text: string) => {
 		let allStars;
 
 		if (tid < 0 && results.team[0].id === -1 && results.team[1].id === -2) {

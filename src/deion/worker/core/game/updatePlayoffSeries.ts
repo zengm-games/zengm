@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import { Conditions, GameResults } from "../../../common/types";
+import { Conditions, GameResults, PlayoffSeries } from "../../../common/types";
 
 const updatePlayoffSeries = async (
 	results: GameResults,
@@ -15,7 +15,7 @@ const updatePlayoffSeries = async (
 	for (const result of results) {
 		// Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
 		const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
-		let series;
+		let series: PlayoffSeries["series"][0][0] | undefined;
 
 		for (let i = 0; i < playoffRound.length; i++) {
 			series = playoffRound[i];
@@ -58,8 +58,8 @@ const updatePlayoffSeries = async (
 			}
 		}
 
-		// For flow, not really necessary
-		if (series === undefined) {
+		// For TypeScript, not really necessary
+		if (series === undefined || series.away === undefined) {
 			continue;
 		}
 

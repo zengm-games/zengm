@@ -18,10 +18,10 @@ const shuffle = (list: any[]) => {
 		const j = randInt(0, i);
 
 		if (j !== i) {
-			const t = list[i]; // swap list[i] and list[j]
-
+			// swap list[i] and list[j]
+			const temp = list[i];
 			list[i] = list[j];
-			list[j] = t;
+			list[j] = temp;
 		}
 	}
 };
@@ -97,10 +97,10 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 						<th>Team</th>
 					</>
 				)}
-				row={({ index, style, value }) => (
+				row={({ index, value }) => (
 					<>
-						<td style={style(1)}>{index + 1}</td>
-						<td style={style(2)}>
+						<td>{index + 1}</td>
+						<td>
 							<a href={helpers.leagueUrl(["roster", value.abbrev])}>
 								{value.region} {value.name}
 							</a>

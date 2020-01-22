@@ -3,7 +3,7 @@ import { draft, player } from "..";
 
 const avgRatingDists = (numPlayers: number = 100) => {
 	const NUM_SEASONS = 20;
-	const ratings = range(NUM_SEASONS).map(() => {
+	const ratings: any[] = range(NUM_SEASONS).map(() => {
 		return {
 			ovr: [],
 			stre: [],
@@ -52,8 +52,8 @@ const avgRatingDists = (numPlayers: number = 100) => {
 	console.log("Career arc for the q1/median/q3 player");
 
 	for (const key of Object.keys(ratings[0])) {
-		const ratingsForKey = ratings.map(r => {
-			return r[key].sort((a, b) => a - b);
+		const ratingsForKey: any[] = ratings.map(r => {
+			return r[key].sort((a: any, b: any) => a - b);
 		});
 		const q1s = ratingsForKey.map(row => row[q1]);
 		const q2s = ratingsForKey.map(row => row[q2]);

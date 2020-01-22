@@ -47,6 +47,7 @@ import {
 	TradeTeams,
 	MinimalPlayerRatings,
 	Relative,
+	TradeTeam,
 } from "../../common/types";
 
 const acceptContractNegotiation = async (
@@ -683,13 +684,13 @@ const getLocal = async (name: keyof Local) => {
 };
 
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
-	const getOffers = async (userPids, userDpids) => {
+	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		// Pick 10 random teams to try (or all teams, if g.get("numTeams") < 10)
 		const tids = range(g.get("numTeams"));
 		random.shuffle(tids);
 		tids.splice(10);
 		const estValues = await trade.getPickValues();
-		const offers: TradeTeams[1][] = [];
+		const offers: TradeTeam[] = [];
 
 		for (const tid of tids) {
 			const teams: TradeTeams = [
@@ -714,7 +715,6 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 
 				if (teams2) {
 					const summary = await trade.summary(teams2);
-					// @ts-ignore
 					teams2[1].warning = summary.warning;
 					offers.push(teams2[1]);
 				}
@@ -724,7 +724,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		return offers;
 	};
 
-	const augmentOffers = async offers => {
+	const augmentOffers = async (offers: TradeTeam[]) => {
 		if (offers.length === 0) {
 			return [];
 		}
@@ -739,52 +739,50 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 				? ["min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"]; // Take the pids and dpids in each offer and get the info needed to display the offer
 
-		return Promise.all(
-			offers.map(async (offer, i) => {
-				const tid = offers[i].tid;
-				let players = await idb.cache.players.indexGetAll("playersByTid", tid);
-				players = players.filter(p => offers[i].pids.includes(p.pid));
-				players = await idb.getCopies.playersPlus(players, {
-					attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-					ratings: ["ovr", "pot", "skills", "pos"],
-					stats,
-					season: g.get("season"),
-					tid,
-					showNoStats: true,
-					showRookies: true,
-					fuzz: true,
-				});
-				let picks = await idb.getCopies.draftPicks({
-					tid,
-				});
-				picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
+		for (const offer of offers) {
+			const tid = offer.tid;
+			let players = await idb.cache.players.indexGetAll("playersByTid", tid);
+			players = players.filter(p => offer.pids.includes(p.pid));
+			players = await idb.getCopies.playersPlus(players, {
+				attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+				ratings: ["ovr", "pot", "skills", "pos"],
+				stats,
+				season: g.get("season"),
+				tid,
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			});
+			let picks = await idb.getCopies.draftPicks({
+				tid,
+			});
+			picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
 
-				const picks2 = picks.map(dp => {
-					return {
-						...dp,
-						desc: helpers.pickDesc(dp),
-					};
-				});
-
-				const payroll = await team.getPayroll(tid);
+			const picks2 = picks.map(dp => {
 				return {
-					tid,
-					abbrev: teams[tid].abbrev,
-					region: teams[tid].region,
-					name: teams[tid].name,
-					strategy: teams[tid].strategy,
-					won: teams[tid].seasonAttrs.won,
-					lost: teams[tid].seasonAttrs.lost,
-					tied: teams[tid].seasonAttrs.tied,
-					pids: offers[i].pids,
-					dpids: offers[i].dpids,
-					warning: offers[i].warning,
-					payroll,
-					picks: picks2,
-					players,
+					...dp,
+					desc: helpers.pickDesc(dp),
 				};
-			}),
-		);
+			});
+
+			const payroll = await team.getPayroll(tid);
+			return {
+				tid,
+				abbrev: teams[tid].abbrev,
+				region: teams[tid].region,
+				name: teams[tid].name,
+				strategy: teams[tid].strategy,
+				won: teams[tid].seasonAttrs.won,
+				lost: teams[tid].seasonAttrs.lost,
+				tied: teams[tid].seasonAttrs.tied,
+				pids: offer.pids,
+				dpids: offer.dpids,
+				warning: offer.warning,
+				payroll,
+				picks: picks2,
+				players,
+			};
+		}
 	};
 
 	const offers = await getOffers(pids, dpids);
@@ -800,7 +798,7 @@ const handleUploadedDraftClass = async (
 	draftYear: number,
 ) => {
 	// Find season from uploaded file, for age adjusting
-	let uploadedSeason;
+	let uploadedSeason: number | undefined;
 
 	if (uploadedFile.hasOwnProperty("gameAttributes")) {
 		for (let i = 0; i < uploadedFile.gameAttributes.length; i++) {
@@ -816,7 +814,7 @@ const handleUploadedDraftClass = async (
 	}
 
 	// Get all players from uploaded files
-	let players = uploadedFile.players; // Filter out any that are not draft prospects
+	let players: any[] = uploadedFile.players; // Filter out any that are not draft prospects
 
 	players = players.filter(p => p.tid === PLAYER.UNDRAFTED); // Handle draft format change in version 33, where PLAYER.UNDRAFTED has multiple draft classes
 
@@ -1413,7 +1411,9 @@ const updateTeamInfo = async (
 		await idb.cache.teamSeasons.put(teamSeason);
 	}
 
-	await league.updateMetaNameRegion(userName, userRegion);
+	if (userName !== undefined && userRegion !== undefined) {
+		await league.updateMetaNameRegion(userName, userRegion);
+	}
 	await league.setGameAttributes({
 		teamAbbrevsCache: newTeams.map(t => t.abbrev),
 		teamRegionsCache: newTeams.map(t => t.region),

@@ -63,7 +63,12 @@ const OwnerMoodsChart = ({
 				.append("g")
 				.attr("transform", `translate(${margin.left},${margin.top})`);
 
-			const drawReferenceLine = (y, color, text?, position?) => {
+			const drawReferenceLine = (
+				y: number,
+				color: string,
+				text?: string,
+				position?: string,
+			) => {
 				const line2 = line()
 					.x(d => d)
 					.y(() => yScale(y));
@@ -91,7 +96,11 @@ const OwnerMoodsChart = ({
 			drawReferenceLine(3, "var(--success)", "Perfect", "above");
 			drawReferenceLine(0, "var(--secondary)");
 
-			const drawLine = (attr, color, strokeWidth = 1) => {
+			const drawLine = (
+				attr: keyof typeof data[0],
+				color: string,
+				strokeWidth = 1,
+			) => {
 				const line2 = line()
 					.x(d => xScale(d.year))
 					.y(d => yScale(d[attr]))

@@ -1,38 +1,13 @@
+import { Position } from "../../../common/types";
+
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <T extends any>(
-	depth: {
-		QB: number[];
-		RB: number[];
-		WR: number[];
-		TE: number[];
-		OL: number[];
-		DL: number[];
-		LB: number[];
-		CB: number[];
-		S: number[];
-		K: number[];
-		P: number[];
-		KR: number[];
-		PR: number[];
-	},
+	depth: Record<Position, number[]>,
 	players: T[],
-): {
-	QB: T[];
-	RB: T[];
-	WR: T[];
-	TE: T[];
-	OL: T[];
-	DL: T[];
-	LB: T[];
-	CB: T[];
-	S: T[];
-	K: T[];
-	P: T[];
-	KR: T[];
-	PR: T[];
-} => {
+): Record<Position, T[]> => {
 	// @ts-ignore
-	return Object.keys(depth).reduce((obj, pos) => {
+	return Object.keys(depth).reduce((obj, pos: Position) => {
+		// @ts-ignore
 		obj[pos] = depth[pos]
 			.map(pid => players.find(p => p.pid === pid))
 			.concat(players.map(p => (depth[pos].includes(p.pid) ? undefined : p)))

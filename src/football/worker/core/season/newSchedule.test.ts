@@ -3,9 +3,11 @@ import flatten from "lodash/flatten";
 import testHelpers from "../../../../deion/test/helpers";
 import newSchedule, { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
+import { TeamBasic } from "../../../../deion/common/types";
 
-let defaultTeams;
 describe("football/worker/core/season/newSchedule", () => {
+	let defaultTeams: TeamBasic[];
+
 	beforeAll(() => {
 		process.env.SPORT = "football";
 		defaultTeams = helpers.getTeamsDefault();
@@ -13,6 +15,7 @@ describe("football/worker/core/season/newSchedule", () => {
 	describe("newScheduleCrappy", () => {
 		beforeEach(() => {
 			testHelpers.resetG();
+			g.setWithoutSavingToDB("allStarGame", false);
 		});
 		test("when numTeams*numGames is even, everyone gets a full schedule", () => {
 			for (let numGames = 2; numGames < 50; numGames += 1) {

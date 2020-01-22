@@ -3,8 +3,9 @@ import React from "react";
 import DraftClass from "./DraftClass";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
+import { View } from "../../../common/types";
 
-const DraftScouting = ({ draftType, seasons }) => {
+const DraftScouting = ({ draftType, seasons }: View<"draftScouting">) => {
 	useTitleBar({ title: "Draft Scouting" });
 
 	return (

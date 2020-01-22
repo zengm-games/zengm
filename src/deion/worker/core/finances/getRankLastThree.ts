@@ -12,38 +12,46 @@ import { TeamSeason } from "../../../common/types";
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.get("numTeams") (default 30)
  */
-const getRankLastThree = (
+const getRankLastThree = <Category extends "expenses" | "revenues">(
 	teamSeasons: TeamSeason[],
-	category: "expenses" | "revenues",
-	item: string,
+	category: Category,
+	item: keyof TeamSeason[Category],
 ): number => {
 	const defaultRank = (g.get("numTeams") + 1) / 2;
 
 	if (g.get("budget")) {
-		const s = teamSeasons.length - 1; // Most recent season index
+		const s0 = teamSeasons[teamSeasons.length - 1];
+		const s1 = teamSeasons[teamSeasons.length - 2];
+		const s2 = teamSeasons[teamSeasons.length - 3];
 
-		if (s > 1) {
+		if (s0 && s1 && s2) {
 			// Use three seasons if possible
 			return (
-				(teamSeasons[s][category][item].rank +
-					teamSeasons[s - 1][category][item].rank +
-					teamSeasons[s - 2][category][item].rank) /
+				// @ts-ignore
+				(s0[category][item].rank +
+					// @ts-ignore
+					s1[category][item].rank +
+					// @ts-ignore
+					s2[category][item].rank) /
 				3
 			);
 		}
 
-		if (s > 0) {
+		if (s0 && s1) {
 			// Use two seasons if possible
 			return (
-				(teamSeasons[s][category][item].rank +
-					teamSeasons[s - 1][category][item].rank +
+				// @ts-ignore
+				(s0[category][item].rank +
+					// @ts-ignore
+					s1[category][item].rank +
 					defaultRank) /
 				3
 			);
 		}
 
-		if (s === 0) {
-			return (teamSeasons[s][category][item].rank + 2 * defaultRank) / 3;
+		if (s0) {
+			// @ts-ignore
+			return (s0[category][item].rank + 2 * defaultRank) / 3;
 		}
 	}
 

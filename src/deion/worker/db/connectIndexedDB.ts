@@ -68,7 +68,7 @@ const connectIndexedDB = async <DBTypes>({
 	db.addEventListener("abort", (event: any) => {
 		console.log(`${name} database abort event`, event.target.error);
 
-		let text: string | undefined = undefined;
+		let text: string | undefined;
 		if (
 			event.target.error &&
 			event.target.error.name === "QuotaExceededError"

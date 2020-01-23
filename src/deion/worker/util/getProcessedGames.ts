@@ -15,7 +15,9 @@ import { GameProcessed } from "../../common/types";
 async function getProcessedGameList(
 	abbrev: string,
 	season: number,
-	loadedGames: GameProcessed[] = [],
+	loadedGames: {
+		gid: number;
+	}[] = [],
 ) {
 	let tid;
 

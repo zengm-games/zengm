@@ -3,12 +3,24 @@ import React from "react";
 import HelpPopover from "./HelpPopover";
 import { overrides } from "../util";
 
-const PositionFraction = ({ players, pos }) => {
+type Players = {
+	ratings: {
+		pos: string;
+	};
+}[];
+
+const PositionFraction = ({
+	players,
+	pos,
+}: {
+	players: Players;
+	pos: string;
+}) => {
 	const count = players.filter(p => p.ratings.pos === pos).length;
 	const target = overrides.common.constants.POSITION_COUNTS[pos];
 	const ratio = count / target;
 
-	let classes = null;
+	let classes = undefined;
 	if (count === 0 || ratio < 2 / 3) {
 		classes = "text-danger";
 	}
@@ -24,7 +36,13 @@ PositionFraction.propTypes = {
 	pos: PropTypes.string.isRequired,
 };
 
-const RosterComposition = ({ className = "", players }) => {
+const RosterComposition = ({
+	className = "",
+	players,
+}: {
+	className: string;
+	players: Players;
+}) => {
 	return (
 		<div className={`${className} text-nowrap`}>
 			<b>

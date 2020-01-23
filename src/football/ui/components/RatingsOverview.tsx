@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { PlayerRatings } from "../../common/types";
 
-const RatingsOverview = ({ ratings }) => {
+const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 	const r = ratings.length - 1;
 
 	return (

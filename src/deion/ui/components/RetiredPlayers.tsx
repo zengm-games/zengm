@@ -2,7 +2,27 @@ import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../util";
 
-const RetiredPlayers = ({ retiredPlayers, season, userTid }) => {
+const RetiredPlayers = ({
+	retiredPlayers,
+	season,
+	userTid,
+}: {
+	retiredPlayers: {
+		age: number;
+		hof: boolean;
+		name: string;
+		pid: number;
+		ratings: {
+			pos: string;
+		};
+		stats: {
+			abbrev: string;
+			tid: number;
+		};
+	}[];
+	season: number;
+	userTid: number;
+}) => {
 	return (
 		<>
 			<h2>Retired Players</h2>
@@ -17,7 +37,7 @@ const RetiredPlayers = ({ retiredPlayers, season, userTid }) => {
 				{retiredPlayers.map(p => (
 					<span
 						key={p.pid}
-						className={p.stats.tid === userTid ? "table-info" : null}
+						className={p.stats.tid === userTid ? "table-info" : undefined}
 					>
 						{process.env.SPORT === "football" ? `${p.ratings.pos} ` : null}
 						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (

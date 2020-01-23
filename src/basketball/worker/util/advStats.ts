@@ -1,4 +1,4 @@
-import { PHASE } from "../../../deion/common";
+import { PHASE, helpers } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util"; // http://www.basketball-reference.com/about/per.html
 
@@ -79,6 +79,8 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 		let prl;
 
 		if (prls.hasOwnProperty(players[i].ratings.pos)) {
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
 			prl = prls[players[i].ratings.pos];
 		} else {
 			// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
@@ -472,7 +474,7 @@ const advStats = async () => {
 	};
 
 	// Save to database
-	const keys = Object.keys(updatedStats);
+	const keys = helpers.keys(updatedStats);
 	await Promise.all(
 		players.map(async ({ pid }, i) => {
 			const p = playersRaw.find(p2 => p2.pid === pid);

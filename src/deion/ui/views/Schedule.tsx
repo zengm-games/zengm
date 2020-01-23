@@ -2,8 +2,14 @@ import PropTypes from "prop-types";
 import React from "react";
 import { CompletedGame, UpcomingGame } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
+import { View } from "../../common/types";
 
-const Schedule = ({ abbrev, completed, season, upcoming }) => {
+const Schedule = ({
+	abbrev,
+	completed,
+	season,
+	upcoming,
+}: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
 		dropdownView: "schedule",

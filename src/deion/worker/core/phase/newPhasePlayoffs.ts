@@ -1,12 +1,12 @@
 import { finances, player, season, team } from "..";
 import { idb } from "../../db";
 import { achievement, g, helpers, local, logEvent } from "../../util";
-import { Conditions } from "../../../common/types";
+import { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,
 	liveGameSim: boolean = false,
-) => {
+): Promise<PhaseReturn> => {
 	achievement.check("afterRegularSeason", conditions);
 
 	// In case this was somehow set already

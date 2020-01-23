@@ -2,9 +2,11 @@ import { PLAYER } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
-import { Conditions } from "../../../common/types";
+import { Conditions, PhaseReturn } from "../../../common/types";
 
-const newPhasePreseason = async (conditions: Conditions) => {
+const newPhasePreseason = async (
+	conditions: Conditions,
+): Promise<PhaseReturn> => {
 	await freeAgents.autoSign();
 	await league.setGameAttributes({
 		season: g.get("season") + 1,
@@ -32,7 +34,12 @@ const newPhasePreseason = async (conditions: Conditions) => {
 			updated = true;
 		}
 
-		const keys = ["scouting", "coaching", "health", "facilities"];
+		const keys: (keyof typeof t["budget"])[] = [
+			"scouting",
+			"coaching",
+			"health",
+			"facilities",
+		];
 
 		for (const key of keys) {
 			if (t.budget[key].amount !== defaultBudgetAmount) {

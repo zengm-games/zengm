@@ -1,8 +1,9 @@
 import { draft } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
+import { PhaseReturn } from "../../../common/types";
 
-const newPhaseAfterDraft = async () => {
+const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
 	await draft.genPicks(g.get("season") + g.get("numSeasonsFutureDraftPicks"));
 
 	// Delete any old draft picks

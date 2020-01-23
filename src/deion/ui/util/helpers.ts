@@ -64,7 +64,15 @@ const roundsWonText = (
 	return "";
 };
 
-const roundOverrides =
+const roundOverrides: Record<
+	string,
+	| "none"
+	| "oneDecimalPlace"
+	| "roundWinp"
+	| "plusMinus"
+	| "noDecimalPlace"
+	| undefined
+> =
 	process.env.SPORT === "basketball"
 		? {
 				gp: "none",

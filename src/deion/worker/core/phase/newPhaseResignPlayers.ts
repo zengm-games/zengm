@@ -3,9 +3,11 @@ import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, league, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
-import { Conditions } from "../../../common/types";
+import { Conditions, PhaseReturn } from "../../../common/types";
 
-const newPhaseResignPlayers = async (conditions: Conditions) => {
+const newPhaseResignPlayers = async (
+	conditions: Conditions,
+): Promise<PhaseReturn> => {
 	await idb.cache.negotiations.clear();
 	const baseMoodsReSigning = await player.genBaseMoods(true);
 	const baseMoodsFreeAgents = await player.genBaseMoods(false);

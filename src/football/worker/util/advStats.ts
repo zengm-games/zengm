@@ -1,7 +1,8 @@
-import { PHASE } from "../../../deion/common";
+import { PHASE, helpers } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
-import { g } from "../../../deion/worker/util"; // Approximate Value: https://www.pro-football-reference.com/blog/indexd961.html?page_id=8061
+import { g } from "../../../deion/worker/util";
 
+// Approximate Value: https://www.pro-football-reference.com/blog/indexd961.html?page_id=8061
 const calculateAV = (players: any[], teams: any[], league: any) => {
 	const teamOffPts = teams.map(
 		t => (100 * t.stats.ptsPerDrive) / league.ptsPerDrive,
@@ -29,13 +30,13 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 	});
 	const teamPtsFront7 = teamDefPts.map(pts => (2 / 3) * pts);
 	const teamPtsSecondary = teamDefPts.map(pts => (1 / 3) * pts);
-	const defensivePositions = ["DL", "LB", "CB", "S"];
 	const tckConstant = {
 		DL: 0.6,
 		LB: 0.3,
 		CB: 0,
 		S: 0,
 	};
+	const defensivePositions = ["DL", "LB", "CB", "S"];
 	const teamIndividualPtsOL = Array(teams.length).fill(0);
 	const teamIndividualPtsFront7 = Array(teams.length).fill(0);
 	const teamIndividualPtsSecondary = Array(teams.length).fill(0);
@@ -54,6 +55,8 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 				4 * p.stats.defFmbRec +
 				4 * p.stats.defInt +
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
 				tckConstant[p.ratings.pos] * p.stats.defTck;
 
 			if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
@@ -208,7 +211,7 @@ const advStats = async () => {
 	const updatedStats = { ...calculateAV(players, teams, league) };
 
 	// Save to database
-	const keys = Object.keys(updatedStats);
+	const keys = helpers.keys(updatedStats);
 	await Promise.all(
 		players.map(async ({ pid }, i) => {
 			const p = playersRaw.find(p2 => p2.pid === pid);

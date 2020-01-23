@@ -1,8 +1,9 @@
 import { season } from "..";
 import { idb, iterate } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
+import { PhaseReturn } from "../../../common/types";
 
-const newPhaseRegularSeason = async () => {
+const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.cache.teams.getAll();
 
 	if (!overrides.core.season.newSchedule) {

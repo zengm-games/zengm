@@ -1,5 +1,6 @@
 import assert from "assert";
 import getDepthPlayers from "./getDepthPlayers";
+import { helpers } from "../../../../deion/common";
 
 describe("football/worker/core/player/getDepthPlayers", () => {
 	beforeAll(() => {
@@ -44,7 +45,7 @@ describe("football/worker/core/player/getDepthPlayers", () => {
 		};
 		assert.deepEqual(Object.keys(output).sort(), Object.keys(target).sort());
 
-		for (const pos of Object.keys(output)) {
+		for (const pos of helpers.keys(output)) {
 			assert.deepEqual(
 				output[pos].map(p => p.pid),
 				target[pos],

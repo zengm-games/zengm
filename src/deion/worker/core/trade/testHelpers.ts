@@ -45,8 +45,14 @@ const beforeTests = async () => {
 const reset = async () => {
 	// Set to a trade with team 1 and no players;
 	await trade.create([
-		{ tid: g.get("userTid"), pids: [], dpids: [] },
-		{ tid: 1, pids: [], dpids: [] },
+		{
+			tid: g.get("userTid"),
+			pids: [],
+			dpids: [],
+			pidsExcluded: [],
+			dpidsExcluded: [],
+		},
+		{ tid: 1, pids: [], dpids: [], pidsExcluded: [], dpidsExcluded: [] },
 	]);
 	await trade.clear();
 };

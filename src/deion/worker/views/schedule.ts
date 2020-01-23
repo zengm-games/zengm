@@ -1,7 +1,11 @@
 import { season } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import {
+	UpdateEvents,
+	ViewInput,
+	GameProcessedCompleted,
+} from "../../common/types";
 
 const updateUpcoming = async (
 	inputs: ViewInput<"schedule">,
@@ -50,7 +54,10 @@ const updateUpcoming = async (
 const updateCompleted = async (
 	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
-	state: any,
+	state: {
+		abbrev: string;
+		completed: GameProcessedCompleted[];
+	},
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		/*// Reset list, so old completed games don't temporarily show when switching team

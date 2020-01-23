@@ -2,9 +2,12 @@ import { PLAYER } from "../../../common";
 import { contractNegotiation, draft, league } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
-import { Conditions } from "../../../common/types";
+import { Conditions, PhaseReturn } from "../../../common/types";
 
-const newPhaseFantasyDraft = async (conditions: Conditions, tids: number[]) => {
+const newPhaseFantasyDraft = async (
+	conditions: Conditions,
+	tids: number[],
+): Promise<PhaseReturn> => {
 	local.fantasyDraftResults = [];
 	await contractNegotiation.cancelAll();
 	await draft.genOrderFantasy(tids);

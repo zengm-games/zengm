@@ -19,7 +19,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 	const minFreeAgents: Player[] = [];
 	let userTeamSizeError;
 
-	const checkRosterSize = async tid => {
+	const checkRosterSize = async (tid: number) => {
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 		let numPlayersOnRoster = players.length;
 

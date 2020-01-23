@@ -24,7 +24,7 @@ import { Conditions, Phase, UpdateEvents } from "../../../common/types";
  */
 const finalize = async (
 	phase: Phase,
-	url: string,
+	url: string | undefined,
 	updateEvents: UpdateEvents = [],
 	conditions: Conditions,
 ) => {

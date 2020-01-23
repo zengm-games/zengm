@@ -832,7 +832,7 @@ const handleUploadedDraftClass = async (
 				p =>
 					p.draft === undefined ||
 					p.draft.year === undefined ||
-					p.draft.year === uploadedSeason + 1,
+					(uploadedSeason !== undefined && p.draft.year === uploadedSeason + 1),
 			);
 		}
 
@@ -884,7 +884,7 @@ const handleUploadedDraftClass = async (
 					skills: [],
 				};
 				p.born.year = draftYear - 19;
-			} else {
+			} else if (uploadedSeason !== undefined) {
 				p.born.year = draftYear - (uploadedSeason - p.born.year);
 			}
 

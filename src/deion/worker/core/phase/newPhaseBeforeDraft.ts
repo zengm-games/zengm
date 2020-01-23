@@ -11,12 +11,12 @@ import {
 	overrides,
 	toUI,
 } from "../../util";
-import { Conditions } from "../../../common/types";
+import { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
 	liveGameSim: boolean = false,
-) => {
+): Promise<PhaseReturn> => {
 	achievement.check("afterPlayoffs", conditions);
 
 	if (!overrides.core.season.doAwards) {

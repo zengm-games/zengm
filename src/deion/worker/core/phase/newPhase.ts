@@ -10,7 +10,7 @@ import newPhaseResignPlayers from "./newPhaseResignPlayers";
 import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
 import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
-import { Conditions, Phase } from "../../../common/types";
+import { Conditions, Phase, PhaseReturn } from "../../../common/types";
 
 /**
  * Set a new phase of the game.
@@ -72,7 +72,10 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			await updatePlayMenu();
 
 			if (phaseChangeInfo.hasOwnProperty(phase)) {
-				const result = await phaseChangeInfo[phase].func(conditions, extra);
+				const result: PhaseReturn = await phaseChangeInfo[phase].func(
+					conditions,
+					extra,
+				);
 
 				if (result && result.length === 2) {
 					const [url, updateEvents] = result;

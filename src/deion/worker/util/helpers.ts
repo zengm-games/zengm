@@ -238,16 +238,25 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	return Math.ceil(numGamesPlayoffSeries / 2);
 };
 
-const orderByWinp = (
-	teams: TeamFiltered[],
+const orderByWinp = <
+	T extends {
+		did: number;
+		seasonAttrs: {
+			winp: number;
+			won: number;
+		};
+		tid: number;
+	}
+>(
+	teams: T[],
 	season: number = g.get("season"),
-): TeamFiltered[] => {
+): T[] => {
 	const defaultFuncs = [
-		(t: TeamFiltered) => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
-		(t: TeamFiltered) => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+		(t: T) => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
+		(t: T) => (t.seasonAttrs ? t.seasonAttrs.won : 0),
 
 		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
-		(t: TeamFiltered) =>
+		(t: T) =>
 			random.uniformSeed(
 				t.tid +
 					season +

@@ -23,21 +23,18 @@ export type TeamsPlusOptions = {
 	regularSeason?: boolean;
 	statType?: TeamStatType;
 };
-type TeamsPlusOptionsRequired = {
-	season?: number;
-	attrs: TeamAttr[];
-	seasonAttrs: TeamSeasonAttr[];
-	stats: TeamStatAttr[];
-	playoffs: boolean;
-	regularSeason: boolean;
-	statType: TeamStatType;
-};
 
-const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
+const processAttrs = <Attrs extends Readonly<TeamAttr[]>>(
+	output: TeamFiltered<Attrs>,
+	t: Team,
+	attrs: Attrs,
+) => {
 	for (const attr of attrs) {
 		if (attr === "budget") {
+			// @ts-ignore
 			output.budget = helpers.deepCopy(t.budget);
 
+			// @ts-ignore
 			for (const [key, value] of Object.entries(output.budget)) {
 				if (key !== "ticketPrice") {
 					// ticketPrice is the only thing in dollars always
@@ -46,13 +43,14 @@ const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
 				}
 			}
 		} else {
+			// @ts-ignore
 			output[attr] = t[attr];
 		}
 	}
 };
 
-const processSeasonAttrs = async (
-	output: TeamFiltered,
+const processSeasonAttrs = async <Attrs extends Readonly<TeamAttr[]>>(
+	output: TeamFiltered<Attrs>,
 	t: Team,
 	seasonAttrs: TeamSeasonAttr[],
 	season: number | undefined,
@@ -193,8 +191,8 @@ const filterOrderStats = (
 	);
 };
 
-const processStats = async (
-	output: TeamFiltered,
+const processStats = async <Attrs extends Readonly<TeamAttr[]>>(
+	output: TeamFiltered<Attrs>,
 	t: Team,
 	stats: TeamStatAttr[],
 	playoffs: boolean,
@@ -272,7 +270,7 @@ const processStats = async (
 	}
 };
 
-const processTeam = async (
+const processTeam = async <Attrs extends Readonly<TeamAttr[]>>(
 	t: Team,
 	{
 		season,
@@ -282,9 +280,18 @@ const processTeam = async (
 		playoffs,
 		regularSeason,
 		statType,
-	}: TeamsPlusOptionsRequired,
+	}: {
+		season?: number;
+		attrs: Attrs;
+		seasonAttrs: TeamSeasonAttr[];
+		stats: TeamStatAttr[];
+		playoffs: boolean;
+		regularSeason: boolean;
+		statType: TeamStatType;
+	},
 ) => {
-	const output = {};
+	// @ts-ignore
+	const output: TeamFiltered<Attrs> = {};
 
 	if (attrs.length > 0) {
 		processAttrs(output, t, attrs);
@@ -325,16 +332,25 @@ const processTeam = async (
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-const getCopies = async ({
+async function getCopies<Attrs extends Readonly<TeamAttr[]>>({
 	tid,
 	season,
-	attrs = [],
+	attrs = ([] as never) as Attrs,
 	seasonAttrs = [],
 	stats = [],
 	playoffs = false,
 	regularSeason = true,
 	statType = "perGame",
-}: TeamsPlusOptions = {}): Promise<TeamFiltered[]> => {
+}: {
+	tid?: number;
+	season?: number;
+	attrs?: Attrs;
+	seasonAttrs?: any[];
+	stats?: any[];
+	playoffs?: boolean;
+	regularSeason?: boolean;
+	statType?: TeamStatType;
+} = {}): Promise<TeamFiltered<Attrs>[]> {
 	const options = {
 		season,
 		attrs,
@@ -345,27 +361,17 @@ const getCopies = async ({
 		statType,
 	};
 
-	// Does this require IDB?
-	const objectStores: string[] = [];
-
-	if (
-		seasonAttrs.length > 0 &&
-		(season === undefined || season < g.get("season") - 2)
-	) {
-		objectStores.push("teamSeasons");
-	}
-
-	if (stats.length > 0 && season !== g.get("season")) {
-		objectStores.push("teamStats");
-	}
-
 	if (tid === undefined) {
 		const teams = await idb.cache.teams.getAll();
 		return Promise.all(teams.map(t => processTeam(t, options)));
 	}
 
 	const t = await idb.cache.teams.get(tid);
-	return t ? [processTeam(t, options)] : [];
-};
+	if (t) {
+		return [await processTeam(t, options)];
+	}
+
+	return [];
+}
 
 export default getCopies;

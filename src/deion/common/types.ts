@@ -686,6 +686,16 @@ export type Team = {
 	colors: [string, string, string];
 };
 
+export type TeamAttr = keyof Team;
+
+export type TeamFiltered<Attrs extends Readonly<TeamAttr[]>> = Pick<
+	Team,
+	Attrs[number]
+> & {
+	seasonAttrs?: any;
+	stats?: any;
+};
+
 export type TeamBasic = {
 	tid: number;
 	cid: number;
@@ -699,15 +709,11 @@ export type TeamBasic = {
 	colors: [string, string, string];
 };
 
-export type TeamAttr = string;
-
 export type TeamSeasonAttr = string;
 
 export type TeamStatAttr = string;
 
 export type TeamStatType = "perGame" | "totals";
-
-export type TeamFiltered = any;
 
 export type TeamSeason = {
 	tid: number;

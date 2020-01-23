@@ -20,6 +20,8 @@ typescript
     - also like idb, cache get functions should all be | void
   - types for PlayersPlus and TeamsPlus
     - https://mail.google.com/mail/u/0/#inbox/FMfcgxwGCklMsckKcVMNqvgFsXjnvJfn?compose=GTvVlcSMSqJlMTcsPhMHZLnPtfslpGMZBHKpdmkbTlFzWxVDrcwjFjFTdpjqDnrHzWRKZRvxRnFlZ
+    - get rid of TeamAttr, TeamSeasonAttr, TeamStatAttr, TeamsPlusOptions
+    - https://www.typescriptlang.org/v2/en/play?target=99#code/C4TwDgpgBAggNnACgJwPZgM4HkBGArKAXigG8AoKSqAQwC4oA7AVwFscJkBuCqnenVKjgRqDblSgBjehmDIAlgwDm3AL7cyoSLAQp0GIlADWEEKgBmOpGky48GyagayoYasmDzqcO4YA8ACpQEAAewBAMACYGAEoikU5wIH7w1voA2gC6AHzZABRgNhj0AQCURNmkPJRa0Ijunt4A0qaGtRauRenMbByZ4lSOzsCuDV5w9IjykkYpukV2ADRQ9R7jLSCVxCTqZNVQ8pYFRQB0ipJwTJEQGHkARNR3peXkEhJua94n1IYAstTAAAWJ2QogSLDypQGlFU+0OUGO+jODAuVxu9xwTxe+3eYy+OEMAEJCf8gSCwagIVD9rCJPDEZhkajrrc7pIsVU3lQPo04CdJIY7hhKdBZAplHdoVBYftkBBgExkAxRp84Go9kMXCwQHpMIZ0g87ss2XdMjQDJrgNxLVBzIJDDzxnY8trdRhqWQbT9iHbUN9rU4XAKfYJ+dwgA
   - types for toWorker and toUI
   - backboard -> idb
     - my branch has two fixes:

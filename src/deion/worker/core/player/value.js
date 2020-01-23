@@ -122,7 +122,7 @@ const value = (
 	}
 
 	// Otherwise, combine based on age
-	if (age === 19) {
+	if (age <= 19) {
 		return 0.75 * potential + 0.25 * current;
 	}
 	if (age === 20) {

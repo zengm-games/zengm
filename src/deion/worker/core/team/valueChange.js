@@ -42,7 +42,7 @@ const valueChange = async (
 	const strategy = t.strategy;
 
 	const gpAvg = helpers.bound(t.stats.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
-	const payroll = await getPayroll(tid);
+	const payroll = await getPayroll(tid); //I am using await getPayroll, but its not waiting for it..?
 
 	const difficultyFudgeFactor = helpers.bound(
 		1 + 0.1 * g.difficulty,
@@ -299,16 +299,26 @@ const valueChange = async (
 		Ps: 4,
 		R: 3,
 	};
-	const rosterSkills = { "3": 0, A: 0, B: 0, Di: 0, Dp: 0, Po: 0, Ps: 0, R: 0 };
-	for (const p of roster) {
-		if (p.value >= 45) {
-			for (const s of p.skills) {
-				rosterSkills[s]++;
+
+	const doSkillBonuses = (test, rost) => {
+		const rosterSkills = {
+			"3": 0,
+			A: 0,
+			B: 0,
+			Di: 0,
+			Dp: 0,
+			Po: 0,
+			Ps: 0,
+			R: 0,
+		};
+		for (const p of rost) {
+			if (p.value >= 45) {
+				for (const s of p.skills) {
+					rosterSkills[s]++;
+				}
 			}
 		}
-	}
 
-	const doSkillBonuses = test => {
 		test.sort((a, b) => b.value - a.value); //do higher valued players first
 
 		for (let i = 0; i < test.length; i++) {
@@ -333,8 +343,8 @@ const valueChange = async (
 	};
 
 	if (process.env.SPORT === "basketball") {
-		add = doSkillBonuses(add); //adjust values in add
-		remove = doSkillBonuses(remove); //adjust values in remove
+		add = doSkillBonuses(add, roster); //adjust values in add
+		remove = doSkillBonuses(remove, roster); //adjust values in remove
 	}
 
 	const sumTradeValue = players => {
@@ -374,7 +384,6 @@ const valueChange = async (
 				? p.value
 				: contractFactor * valueContract(p) + p.value - valueInjury(p); //if a pick, don't factor in contract and no injuries
 			if (!p.draftPick && p.overall >= 60) {
-				//false if p is a draft pick
 				val *= p.overall / 45;
 			}
 			totalValue += val;

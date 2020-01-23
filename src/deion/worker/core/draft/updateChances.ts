@@ -9,7 +9,7 @@ import { TeamFiltered } from "../../../common/types";
  */
 const updateChances = (
 	chances: number[],
-	teams: TeamFiltered[],
+	teams: TeamFiltered<[]>[],
 	isFinal: boolean = false,
 ) => {
 	const wps0 = countBy(teams.slice(0, chances.length), t => t.seasonAttrs.winp);

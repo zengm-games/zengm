@@ -4,7 +4,7 @@ import { Conditions, TeamFiltered } from "../../../common/types";
 
 const logLotteryWinners = (
 	chances: number[],
-	teams: TeamFiltered[],
+	teams: TeamFiltered<["tid"]>[],
 	tm: number,
 	origTm: number,
 	pick: number,
@@ -15,9 +15,9 @@ const logLotteryWinners = (
 	if (idx !== undefined) {
 		let txt;
 
-		if (chances[idx] < chances[pick - 1]) {
+		if (chances[idx.tid] < chances[pick - 1]) {
 			txt = logLotteryTxt(tm, "movedup", pick);
-		} else if (chances[idx] > chances[pick - 1]) {
+		} else if (chances[idx.tid] > chances[pick - 1]) {
 			txt = logLotteryTxt(tm, "moveddown", pick);
 		} else {
 			txt = logLotteryTxt(tm, "normal", pick);

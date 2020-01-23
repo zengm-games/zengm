@@ -446,7 +446,7 @@ const advStats = async () => {
 		"pace",
 		"poss",
 	];
-	const league = teams.reduce((memo, t) => {
+	const league: any = teams.reduce((memo, t) => {
 		for (const key of leagueStats) {
 			// Special case for pace - scale by number of games
 			const value = key === "pace" ? t.stats.pace * t.stats.gp : t.stats[key];

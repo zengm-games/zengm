@@ -2,17 +2,24 @@ import { idb } from "../db";
 import { g } from "../util";
 
 const updateTeamInfo = async () => {
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors"],
-		seasonAttrs: ["pop", "stadiumCapacity"],
-		season: g.get("season"),
+	const teams = (
+		await idb.getCopies.teamsPlus({
+			attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors"],
+			seasonAttrs: ["pop", "stadiumCapacity"],
+			season: g.get("season"),
+		})
+	).map(t => {
+		return {
+			tid: t.tid,
+			abbrev: t.abbrev,
+			region: t.region,
+			name: t.name,
+			imgURL: t.imgURL,
+			colors: t.colors,
+			pop: parseFloat(t.seasonAttrs.pop.toFixed(6)),
+			stadiumCapacity: t.seasonAttrs.stadiumCapacity,
+		};
 	});
-
-	for (const t of teams) {
-		t.pop = parseFloat(t.seasonAttrs.pop.toFixed(6));
-		t.stadiumCapacity = t.seasonAttrs.stadiumCapacity;
-		delete t.seasonAttrs;
-	}
 
 	return {
 		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),

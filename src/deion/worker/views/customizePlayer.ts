@@ -15,13 +15,16 @@ const updateCustomizePlayer = async (
 	}
 
 	if (updateEvents.includes("firstRun")) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "region", "name"],
+		const teams = (
+			await idb.getCopies.teamsPlus({
+				attrs: ["tid", "region", "name"],
+			})
+		).map(t => {
+			return {
+				tid: t.tid,
+				text: `${t.region} ${t.name}`,
+			};
 		});
-
-		for (const t of teams) {
-			t.text = `${t.region} ${t.name}`;
-		}
 
 		teams.unshift({
 			tid: PLAYER.RETIRED,
@@ -35,6 +38,7 @@ const updateCustomizePlayer = async (
 			tid: PLAYER.FREE_AGENT,
 			text: "Free Agent",
 		});
+
 		let appearanceOption;
 		let originalTid;
 		let p;

@@ -9,7 +9,6 @@ import {
 	GameProcessedCompleted,
 	PlayoffSeriesTeam,
 	TeamSeason,
-	TeamFiltered,
 } from "../../common/types";
 
 const augmentSeries = async (

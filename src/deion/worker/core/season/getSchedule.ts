@@ -11,7 +11,7 @@ import { ScheduleGame } from "../../../common/types";
  */
 const getSchedule = async (
 	oneDay: boolean = false,
-): Promise<ScheduleGame[]> => {
+): Promise<(ScheduleGame & { gid: number })[]> => {
 	let schedule = await idb.cache.schedule.getAll();
 
 	if (oneDay) {
@@ -30,6 +30,7 @@ const getSchedule = async (
 					break;
 				} else {
 					// Return just the All-Star Game
+					// @ts-ignore
 					return schedule.slice(0, 1);
 				}
 			}
@@ -45,6 +46,7 @@ const getSchedule = async (
 		schedule = schedule.slice(0, i);
 	}
 
+	// @ts-ignore
 	return schedule;
 };
 

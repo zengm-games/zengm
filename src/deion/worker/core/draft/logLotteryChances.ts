@@ -4,7 +4,7 @@ import { Conditions, DraftPick, TeamFiltered } from "../../../common/types";
 
 const logLotteryChances = (
 	chances: number[],
-	teams: TeamFiltered[],
+	teams: TeamFiltered<["tid"]>[],
 	draftPicksIndexed: DraftPick[][],
 	conditions?: Conditions,
 ) => {

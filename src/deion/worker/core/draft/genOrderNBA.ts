@@ -81,7 +81,7 @@ const genOrder = async (
 
 		if (!firstN.includes(i) && i < teams.length) {
 			// If one lottery winner, select after other tied teams;
-			teams[i].randVal -= 30;
+			(teams[i] as any).randVal -= 30;
 			firstN.push(i);
 		}
 	}
@@ -223,7 +223,7 @@ const genOrder = async (
 	// Sort by winp with reverse randVal for tiebreakers.
 	teams.sort((a, b) => {
 		const r = a.seasonAttrs.winp - b.seasonAttrs.winp;
-		return r === 0 ? b.randVal - a.randVal : r;
+		return r === 0 ? (b as any).randVal - (a as any).randVal : r;
 	});
 
 	// Second round

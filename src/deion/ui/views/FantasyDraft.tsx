@@ -56,7 +56,11 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	const teamsSorted = sortedTids.map(tid => {
-		return teams.find(t => t.tid === tid);
+		const found = teams.find(t => t.tid === tid);
+		if (!found) {
+			throw new Error("Should never happen");
+		}
+		return found;
 	});
 	return (
 		<>

@@ -9,7 +9,7 @@ import { TeamFiltered } from "../../../common/types";
  *
  * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
  */
-const lotterySort = (teams: TeamFiltered[]) => {
+const lotterySort = (teams: TeamFiltered<["tid", "did"]>[]) => {
 	/**
 	 * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
 	 *
@@ -19,7 +19,7 @@ const lotterySort = (teams: TeamFiltered[]) => {
 	random.shuffle(randValues);
 
 	for (let i = 0; i < teams.length; i++) {
-		teams[i].randVal = randValues[i];
+		(teams[i] as any).randVal = randValues[i];
 	}
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
@@ -52,7 +52,7 @@ const lotterySort = (teams: TeamFiltered[]) => {
 		}
 
 		r = r === 0 ? a.seasonAttrs.winp - b.seasonAttrs.winp : r;
-		r = r === 0 ? a.randVal - b.randVal : r;
+		r = r === 0 ? (a as any).randVal - (b as any).randVal : r;
 		return r;
 	});
 };

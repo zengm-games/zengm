@@ -9,13 +9,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		(updateEvents.includes("newPhase") &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
-		const [awards, teams] = await Promise.all([
-			idb.getCopies.awards(),
-			idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev", "region", "name"],
-				seasonAttrs: ["season", "playoffRoundsWon", "won", "lost", "tied"],
-			}),
-		]);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid", "abbrev", "region", "name"],
+			seasonAttrs: ["season", "playoffRoundsWon", "won", "lost", "tied"],
+		});
+
+		const awards = await idb.getCopies.awards();
 		const awardNames =
 			process.env.SPORT === "basketball"
 				? ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"]

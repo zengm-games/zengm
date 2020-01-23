@@ -59,7 +59,9 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 	return lastRound;
 };
 
-const genPlayoffSeries = (teams: TeamFiltered[]) => {
+type MyTeam = TeamFiltered<["cid", "tid"]>;
+
+const genPlayoffSeries = (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	const playoffsByConference = g.get("confs").length === 2; // Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
 
@@ -97,12 +99,12 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 			const seeds = genSeeds(numPlayoffTeams / 2, numPlayoffByes / 2); // Default: top 50% of teams in each of the two conferences
 
 			for (let cid = 0; cid < g.get("confs").length; cid++) {
-				const teamsConf: TeamFiltered[] = [];
+				const teamsConf: MyTeam[] = [];
 
-				for (let i = 0; i < teams.length; i++) {
-					if (teams[i].cid === cid) {
-						teamsConf.push(teams[i]);
-						tidPlayoffs.push(teams[i].tid);
+				for (const t of teams) {
+					if (t.cid === cid) {
+						teamsConf.push(t);
+						tidPlayoffs.push(t.tid);
 
 						if (teamsConf.length >= numPlayoffTeams / 2) {
 							break;
@@ -120,15 +122,17 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 
 				series[0].push(
 					...seeds.map(matchup => {
-						const home = teamsConf[matchup[0]];
-						home.seed = matchup[0] + 1;
+						const home = {
+							...teamsConf[matchup[0]],
+							seed: matchup[0] + 1,
+						};
 						const away =
-							matchup[1] !== undefined ? teamsConf[matchup[1]] : undefined;
-
-						if (away) {
-							// @ts-ignore
-							away.seed = matchup[1] + 1;
-						}
+							matchup[1] !== undefined
+								? {
+										...teamsConf[matchup[1]],
+										seed: matchup[1] + 1,
+								  }
+								: undefined;
 
 						return {
 							home,
@@ -166,7 +170,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 		}
 	} else {
 		// Alternative: top 50% of teams overall
-		const teamsConf: TeamFiltered[] = [];
+		const teamsConf: MyTeam[] = [];
 
 		for (let i = 0; i < teams.length; i++) {
 			teamsConf.push(teams[i]);
@@ -183,14 +187,17 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
 
 		const seeds = genSeeds(numPlayoffTeams, numPlayoffByes);
 		series[0] = seeds.map(matchup => {
-			const home = teamsConf[matchup[0]];
-			home.seed = matchup[0] + 1;
-			const away = matchup[1] !== undefined ? teamsConf[matchup[1]] : undefined;
-
-			if (away) {
-				// @ts-ignore
-				away.seed = matchup[1] + 1;
-			}
+			const home = {
+				...teamsConf[matchup[0]],
+				seed: matchup[0] + 1,
+			};
+			const away =
+				matchup[1] !== undefined
+					? {
+							...teamsConf[matchup[1]],
+							seed: matchup[1] + 1,
+					  }
+					: undefined;
 
 			return {
 				home,

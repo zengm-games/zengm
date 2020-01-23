@@ -5,7 +5,7 @@ const getCopies = async ({
 	season,
 }: {
 	season?: number;
-} = {}): Promise<object[]> => {
+} = {}): Promise<any[]> => {
 	if (season !== undefined) {
 		const awards = mergeByPk(
 			await idb.league.getAll("awards", season),

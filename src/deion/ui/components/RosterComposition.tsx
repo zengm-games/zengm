@@ -20,7 +20,7 @@ const PositionFraction = ({
 	const target = overrides.common.constants.POSITION_COUNTS[pos];
 	const ratio = count / target;
 
-	let classes = undefined;
+	let classes: string | undefined;
 	if (count === 0 || ratio < 2 / 3) {
 		classes = "text-danger";
 	}

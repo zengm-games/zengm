@@ -78,8 +78,13 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		const stats =
 			process.env.SPORT === "basketball"
-				? ["pts", "oppPts", "trb", "ast"]
-				: ["ptsPerGame", "oppPtsPerGame", "pssYdsPerGame", "rusYdsPerGame"];
+				? (["pts", "oppPts", "trb", "ast"] as const)
+				: ([
+						"ptsPerGame",
+						"oppPtsPerGame",
+						"pssYdsPerGame",
+						"rusYdsPerGame",
+				  ] as const);
 		const statNames =
 			process.env.SPORT === "basketball"
 				? ["Points", "Allowed", "Rebounds", "Assists"]
@@ -108,7 +113,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		for (const t2 of teams) {
 			if (t2.cid === cid) {
 				if (t2.tid === g.get("userTid")) {
-					teamStats = stats.map((stat, i) => {
+					teamStats = ((stats as never) as string[]).map((stat, i) => {
 						return {
 							name: statNames[i],
 							rank: 0,

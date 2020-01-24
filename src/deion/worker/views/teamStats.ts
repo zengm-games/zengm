@@ -26,7 +26,8 @@ const updateTeams = async (
 		const seasonAttrs: TeamSeasonAttr[] = g.get("ties")
 			? ["won", "lost", "tied"]
 			: ["won", "lost"];
-		const teams = (
+		const teams = // @ts-ignore
+		(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs,

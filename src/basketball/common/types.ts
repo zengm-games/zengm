@@ -1,3 +1,35 @@
+import teamStats from "../worker/core/team/stats";
+
+// Should all the extra ones be in teamStats["derived"]?
+export type TeamStatAttr =
+	| typeof teamStats["raw"][number]
+	| "fgp"
+	| "oppFgp"
+	| "fgpAtRim"
+	| "oppFgpAtRim"
+	| "fgpLowPost"
+	| "oppFgpLowPost"
+	| "fgpMidRange"
+	| "oppFgpMidRange"
+	| "tpp"
+	| "oppTpp"
+	| "ftp"
+	| "oppFtp"
+	| "mov"
+	| "oppMov"
+	| "pw"
+	| "pl"
+	| "ortg"
+	| "drtg"
+	| "nrtg"
+	| "pace"
+	| "poss"
+	| "tpar"
+	| "ftr"
+	| "tsp"
+	| "trb"
+	| "oppTrb";
+
 type AwardTeam = {
 	tid: number;
 	abbrev: string;

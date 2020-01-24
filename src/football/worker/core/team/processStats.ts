@@ -10,8 +10,9 @@ const percentage = (numerator: number, denominator: number) => {
 
 const processStats = (
 	ts: TeamStats,
-	stats: TeamStatAttr[],
-	playoffs: boolean, // statType: TeamStatType,
+	stats: Readonly<TeamStatAttr[]>,
+	playoffs: boolean,
+	// statType: TeamStatType,
 ) => {
 	const row: any = {};
 

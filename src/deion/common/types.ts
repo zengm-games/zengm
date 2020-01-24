@@ -697,15 +697,24 @@ type TeamSeasonPlus = TeamSeason & {
 	lastTen: string;
 	streak: string;
 };
-
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
+
+import { TeamStatAttr as TeamStatAttrBasketball } from "../../basketball/common/types";
+import { TeamStatAttr as TeamStatAttrFootball } from "../../football/common/types";
+type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
+	Record<TeamStatAttrFootball, number> & {
+		season: number;
+		playoffs: boolean;
+	};
+export type TeamStatAttr = keyof TeamStatsPlus;
 
 export type TeamFiltered<
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]> = []
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> = [],
+	StatAttrs extends Readonly<TeamStatAttr[]> = []
 > = Pick<Team, Attrs[number]> & {
 	seasonAttrs: Pick<TeamSeasonPlus, SeasonAttrs[number]>;
-	stats?: any;
+	stats: Pick<TeamStatsPlus, StatAttrs[number]>;
 };
 
 export type TeamBasic = {
@@ -720,8 +729,6 @@ export type TeamBasic = {
 	imgURL?: string;
 	colors: [string, string, string];
 };
-
-export type TeamStatAttr = string;
 
 export type TeamStatType = "perGame" | "totals";
 
@@ -932,7 +939,7 @@ export type WorkerOverridesCore = {
 		) => number;
 		processStats?: (
 			ts: TeamStats,
-			stats: TeamStatAttr[],
+			stats: Readonly<TeamStatAttr[]>,
 			playoffs: boolean,
 			statType: TeamStatType,
 		) => any;

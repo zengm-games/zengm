@@ -33,7 +33,7 @@ const percentage = (numerator: number, denominator: number) => {
 
 const processStats = (
 	ts: TeamStats,
-	stats: TeamStatAttr[],
+	stats: Readonly<TeamStatAttr[]>,
 	playoffs: boolean,
 	statType: TeamStatType,
 ) => {

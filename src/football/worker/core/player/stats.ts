@@ -2,7 +2,7 @@
 // derived: still stored in database, but not directly recorded in game sim
 // not present in this file: transiently derived things, like FG%
 const stats = {
-	derived: ["av", "qbW", "qbL", "qbT"],
+	derived: ["av", "qbW", "qbL", "qbT"] as const,
 	raw: [
 		"gp",
 		"gs",
@@ -70,7 +70,7 @@ const stats = {
 		"pntBlk",
 		"pen",
 		"penYds",
-	],
+	] as const,
 };
 
 export default stats;

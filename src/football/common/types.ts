@@ -1,3 +1,41 @@
+import teamStats from "../worker/core/team/stats";
+
+// Should all the extra ones be in teamStats["derived"]?
+export type TeamStatAttr =
+	| typeof teamStats["raw"][number]
+	| "mov"
+	| "oppMov"
+	| "ptsPerGame"
+	| "oppPtsPerGame"
+	| "pssYdsPerGame"
+	| "rusYdsPerGame"
+	| "yds"
+	| "ydsPerPlay"
+	| "tov"
+	| "pssNetYdsPerAtt"
+	| "rusYdsPerAtt"
+	| "ply"
+	| "drivesScoringPct"
+	| "drivesTurnoverPct"
+	| "avgFieldPosition"
+	| "timePerDrive"
+	| "playsPerDrive"
+	| "ydsPerDrive"
+	| "ptsPerDrive"
+	| "oppYds"
+	| "oppYdsPerPlay"
+	| "oppTov"
+	| "oppPssNetYdsPerAtt"
+	| "oppRusYdsPerAtt"
+	| "oppPly"
+	| "oppDrivesScoringPct"
+	| "oppDrivesTurnoverPct"
+	| "oppAvgFieldPosition"
+	| "oppTimePerDrive"
+	| "oppPlaysPerDrive"
+	| "oppYdsPerDrive"
+	| "oppPtsPerDrive";
+
 type AwardTeam = {
 	tid: number;
 	abbrev: string;

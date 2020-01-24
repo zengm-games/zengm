@@ -16,7 +16,7 @@ const stats = {
 		"ortg",
 		"dws",
 		"ows",
-	],
+	] as const,
 	raw: [
 		"gp",
 		"gs",
@@ -43,7 +43,7 @@ const stats = {
 		"ba",
 		"pf",
 		"pts",
-	],
+	] as const,
 };
 
 export default stats;

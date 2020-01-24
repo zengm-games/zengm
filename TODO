@@ -20,11 +20,13 @@ typescript
     - do the same as whatever i end up doing with idb
     - also like idb, cache get functions should all be | void
   - types for PlayersPlus and TeamsPlus
-    - get rid of old TeamAttr, TeamSeasonAttr, TeamStatAttr, TeamsPlusOptions
-    - how to make seasonAttrs optional on resulting object?
+    - getCopy.teamsPlus not returning correct type
+    - how to make seasonAttrs optional on resulting object, if SeasonAttrs is undefined?
     - how to make seasonAttrs sometimes an array?
       - just used in historyAll?
     - test genPlayoffSeries and make it more explicit (get rid of any)
+    - PlayersPlus
+      - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES
   - types for toWorker and toUI
   - backboard -> idb
     - my branch has two fixes:

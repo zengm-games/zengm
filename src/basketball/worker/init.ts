@@ -19,8 +19,10 @@ const init = async () => {
 			common,
 			core: {
 				GameSim,
+				// @ts-ignore
 				player,
 				season,
+				// @ts-ignore
 				team,
 			},
 			names: (names as unknown) as Names,

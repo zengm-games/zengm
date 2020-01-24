@@ -184,7 +184,7 @@ const advStats = async () => {
 		"rusYds",
 		"rec",
 		"recYds",
-	];
+	] as const;
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		stats: teamStats,

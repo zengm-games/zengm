@@ -709,10 +709,10 @@ type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
 export type TeamStatAttr = keyof TeamStatsPlus;
 
 export type TeamFiltered<
-	Attrs extends Readonly<TeamAttr[]>,
+	Attrs extends Readonly<TeamAttr[]> | undefined = undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined = undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined = undefined
-> = Pick<Team, Attrs[number]> &
+> = (Attrs extends Readonly<TeamAttr[]> ? Pick<Team, Attrs[number]> : {}) &
 	(SeasonAttrs extends Readonly<TeamSeasonAttr[]>
 		? {
 				seasonAttrs: Pick<TeamSeasonPlus, SeasonAttrs[number]>;

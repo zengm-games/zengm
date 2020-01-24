@@ -43,7 +43,7 @@ const processAttrs = <
 };
 
 const processSeasonAttrs = async <
-	Attrs extends Readonly<TeamAttr[]>,
+	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >(
@@ -191,7 +191,7 @@ const filterOrderStats = (
 };
 
 const processStats = async <
-	Attrs extends Readonly<TeamAttr[]>,
+	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]>
 >(
@@ -274,7 +274,7 @@ const processStats = async <
 };
 
 const processTeam = async <
-	Attrs extends Readonly<TeamAttr[]>,
+	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >(
@@ -301,6 +301,7 @@ const processTeam = async <
 	const output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs> = {};
 
 	if (attrs) {
+		// @ts-ignore
 		processAttrs(output, t, attrs);
 	}
 
@@ -342,7 +343,7 @@ const processTeam = async <
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
 async function getCopies<
-	Attrs extends Readonly<TeamAttr[]>,
+	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >({

@@ -334,6 +334,33 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			>(true);
 		});
 
+		test("Returns just seasonAttrs and stats", async () => {
+			const teams = await idb.getCopies.teamsPlus({
+				seasonAttrs: ["season", "won", "payroll"],
+				stats: ["gp", "fg", "fgp"],
+				season: g.get("season"),
+			});
+
+			typeAssert<
+				IsExact<
+					typeof teams[number],
+					{
+						seasonAttrs: {
+							season: number;
+							won: number;
+							payroll: number;
+						};
+						stats: {
+							gp: number;
+							fg: number;
+							fgp: number;
+							playoffs: boolean;
+						};
+					}
+				>
+			>(true);
+		});
+
 		test.todo(
 			"Returns array for seasonAttrs and stats when no season is supplied",
 		);

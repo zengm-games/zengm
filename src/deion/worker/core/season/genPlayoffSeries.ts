@@ -1,6 +1,10 @@
 import range from "lodash/range";
 import { g, helpers } from "../../util";
-import { TeamFiltered } from "../../../common/types";
+import {
+	TeamFiltered,
+	PlayoffSeries,
+	PlayoffSeriesTeam,
+} from "../../../common/types";
 
 type Seed = [number, number | undefined]; // Return the seeds (0 indexed) for the matchups, in order (undefined is a bye)
 
@@ -61,6 +65,16 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 
 type MyTeam = TeamFiltered<["cid", "tid"], ["winp"]>;
 
+const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
+	return {
+		tid: t.tid,
+		cid: t.cid,
+		winp: t.seasonAttrs.winp,
+		seed,
+		won: 0,
+	};
+};
+
 const genPlayoffSeries = (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
 	const playoffsByConference = g.get("confs").length === 2; // Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
@@ -92,7 +106,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 		}
 	}
 
-	const series: any[][] = range(numRounds).map(() => []);
+	const series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
 	if (playoffsByConference) {
 		if (numRounds > 1) {
@@ -122,18 +136,10 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 
 				series[0].push(
 					...seeds.map(matchup => {
-						const home = {
-							...teamsConf[matchup[0]],
-							seed: matchup[0] + 1,
-							won: 0,
-						};
+						const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
 						const away =
 							matchup[1] !== undefined
-								? {
-										...teamsConf[matchup[1]],
-										seed: matchup[1] + 1,
-										won: 0,
-								  }
+								? genTeam(teamsConf[matchup[1]], matchup[1] + 1)
 								: undefined;
 
 						return {
@@ -161,18 +167,13 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 				throw new Error("Could not find two conference champs");
 			}
 
+			const t1 = genTeam(teamsConf[0], 1);
+			const t2 = genTeam(teamsConf[1], 1);
+
 			series[0][0] = {
-				home:
-					teamsConf[0].seasonAttrs.winp > teamsConf[1].seasonAttrs.winp
-						? teamsConf[0]
-						: teamsConf[1],
-				away:
-					teamsConf[0].seasonAttrs.winp > teamsConf[1].seasonAttrs.winp
-						? teamsConf[1]
-						: teamsConf[0],
+				home: t1.winp > t2.winp ? t1 : t2,
+				away: t1.winp > t2.winp ? t2 : t1,
 			};
-			series[0][0].home.seed = 1;
-			series[0][0].away.seed = 1;
 		}
 	} else {
 		// Alternative: top 50% of teams overall
@@ -193,18 +194,10 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 
 		const seeds = genSeeds(numPlayoffTeams, numPlayoffByes);
 		series[0] = seeds.map(matchup => {
-			const home = {
-				...teamsConf[matchup[0]],
-				seed: matchup[0] + 1,
-				won: 0,
-			};
+			const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
 			const away =
 				matchup[1] !== undefined
-					? {
-							...teamsConf[matchup[1]],
-							seed: matchup[1] + 1,
-							won: 0,
-					  }
+					? genTeam(teamsConf[matchup[1]], matchup[1] + 1)
 					: undefined;
 
 			return {

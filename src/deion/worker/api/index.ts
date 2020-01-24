@@ -739,50 +739,52 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 				? ["min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"]; // Take the pids and dpids in each offer and get the info needed to display the offer
 
-		for (const offer of offers) {
-			const tid = offer.tid;
-			let players = await idb.cache.players.indexGetAll("playersByTid", tid);
-			players = players.filter(p => offer.pids.includes(p.pid));
-			players = await idb.getCopies.playersPlus(players, {
-				attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-				ratings: ["ovr", "pot", "skills", "pos"],
-				stats,
-				season: g.get("season"),
-				tid,
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-			});
-			let picks = await idb.getCopies.draftPicks({
-				tid,
-			});
-			picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
+		return Promise.all(
+			offers.map(async offer => {
+				const tid = offer.tid;
+				let players = await idb.cache.players.indexGetAll("playersByTid", tid);
+				players = players.filter(p => offer.pids.includes(p.pid));
+				players = await idb.getCopies.playersPlus(players, {
+					attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+					ratings: ["ovr", "pot", "skills", "pos"],
+					stats,
+					season: g.get("season"),
+					tid,
+					showNoStats: true,
+					showRookies: true,
+					fuzz: true,
+				});
+				let picks = await idb.getCopies.draftPicks({
+					tid,
+				});
+				picks = picks.filter(dp => offer.dpids.includes(dp.dpid));
 
-			const picks2 = picks.map(dp => {
+				const picks2 = picks.map(dp => {
+					return {
+						...dp,
+						desc: helpers.pickDesc(dp),
+					};
+				});
+
+				const payroll = await team.getPayroll(tid);
 				return {
-					...dp,
-					desc: helpers.pickDesc(dp),
+					tid,
+					abbrev: teams[tid].abbrev,
+					region: teams[tid].region,
+					name: teams[tid].name,
+					strategy: teams[tid].strategy,
+					won: teams[tid].seasonAttrs.won,
+					lost: teams[tid].seasonAttrs.lost,
+					tied: teams[tid].seasonAttrs.tied,
+					pids: offer.pids,
+					dpids: offer.dpids,
+					warning: offer.warning,
+					payroll,
+					picks: picks2,
+					players,
 				};
-			});
-
-			const payroll = await team.getPayroll(tid);
-			return {
-				tid,
-				abbrev: teams[tid].abbrev,
-				region: teams[tid].region,
-				name: teams[tid].name,
-				strategy: teams[tid].strategy,
-				won: teams[tid].seasonAttrs.won,
-				lost: teams[tid].seasonAttrs.lost,
-				tied: teams[tid].seasonAttrs.tied,
-				pids: offer.pids,
-				dpids: offer.dpids,
-				warning: offer.warning,
-				payroll,
-				picks: picks2,
-				players,
-			};
-		}
+			}),
+		);
 	};
 
 	const offers = await getOffers(pids, dpids);

@@ -67,6 +67,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return an array if no team ID is specified", async () => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev"],
@@ -91,6 +92,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return requested info if tid/season match, even when no attrs requested", async () => {
 		const t = await idb.getCopy.teamsPlus({
 			seasonAttrs: ["season", "won"],
@@ -111,6 +113,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return requested info if tid/season match, even when no seasonAttrs requested", async () => {
 		const t = await idb.getCopy.teamsPlus({
 			attrs: ["tid", "abbrev"],
@@ -129,6 +132,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return requested info if tid/season match, even when no stats requested", async () => {
 		const t = await idb.getCopy.teamsPlus({
 			attrs: ["tid", "abbrev"],
@@ -145,6 +149,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return season totals if statType is 'totals'", async () => {
 		const t = await idb.getCopy.teamsPlus({
 			stats: ["gp", "fg", "fga", "fgp"],
@@ -162,6 +167,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return playoff stats if playoffs is true", async () => {
 		const t = await idb.getCopy.teamsPlus({
 			stats: ["gp", "fg", "fga", "fgp"],
@@ -180,6 +186,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			},
 		});
 	});
+
 	test("return stats in an array if no season is specified", async () => {
 		idb.league = testHelpers.mockIDBLeague();
 		const t = await idb.getCopy.teamsPlus({
@@ -202,6 +209,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			],
 		});
 	});
+
 	test("return stats in an array if regular season and playoffs are specified", async () => {
 		idb.league = testHelpers.mockIDBLeague();
 		const t = await idb.getCopy.teamsPlus({
@@ -232,7 +240,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 	});
 
 	describe("TypeScript", () => {
-		it("Returns attrs, seasonAttrs, and stats for a single season", async () => {
+		test("Returns attrs, seasonAttrs, and stats for a single season", async () => {
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
@@ -242,7 +250,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 
 			typeAssert<
 				IsExact<
-					typeof teams,
+					typeof teams[number],
 					{
 						tid: number;
 						abbrev: string;
@@ -257,17 +265,76 @@ describe("worker/db/getCopies/teamsPlus", () => {
 							fgp: number;
 							playoffs: boolean;
 						};
-					}[]
+					}
 				>
 			>(true);
 		});
 
-		it.todo("Returns just attrs");
-		it.todo("Returns just attrs and seasonAttrs");
-		it.todo("Returns just attrs and stats");
-		it.todo("Returns just seasonAttrs and stats");
-		it.todo("Returns just seasonAttrs and stats");
-		it.todo(
+		test("Returns just attrs", async () => {
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev"],
+				season: g.get("season"),
+			});
+
+			typeAssert<
+				IsExact<
+					typeof teams[number],
+					{
+						tid: number;
+						abbrev: string;
+					}
+				>
+			>(true);
+		});
+
+		test("Returns just attrs and seasonAttrs", async () => {
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev"],
+				seasonAttrs: ["season", "won", "payroll"],
+				season: g.get("season"),
+			});
+
+			typeAssert<
+				IsExact<
+					typeof teams[number],
+					{
+						tid: number;
+						abbrev: string;
+						seasonAttrs: {
+							season: number;
+							won: number;
+							payroll: number;
+						};
+					}
+				>
+			>(true);
+		});
+
+		test("Returns just attrs and stats", async () => {
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev"],
+				stats: ["gp", "fg", "fgp"],
+				season: g.get("season"),
+			});
+
+			typeAssert<
+				IsExact<
+					typeof teams[number],
+					{
+						tid: number;
+						abbrev: string;
+						stats: {
+							gp: number;
+							fg: number;
+							fgp: number;
+							playoffs: boolean;
+						};
+					}
+				>
+			>(true);
+		});
+
+		test.todo(
 			"Returns array for seasonAttrs and stats when no season is supplied",
 		);
 	});

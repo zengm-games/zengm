@@ -11,7 +11,6 @@ const genPlayoffSeriesWrapper = (teams: { tid: number; cid: number }[]) => {
 
 				// This doesn't affect order - sorting is done before calling genPlayoffSeries
 				seasonAttrs: { winp: 0 },
-				stats: { playoffs: false },
 			};
 		}),
 	);

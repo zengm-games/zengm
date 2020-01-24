@@ -8,14 +8,14 @@ import {
 
 const getCopy = async <
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
-	StatAttrs extends Readonly<TeamStatAttr[]>
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >({
 	tid,
 	season,
-	attrs = ([] as never) as Attrs,
-	seasonAttrs = ([] as never) as SeasonAttrs,
-	stats = ([] as never) as StatAttrs,
+	attrs,
+	seasonAttrs,
+	stats,
 	playoffs = false,
 	regularSeason = true,
 	statType = "perGame",

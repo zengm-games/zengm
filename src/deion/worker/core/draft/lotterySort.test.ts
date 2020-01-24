@@ -19,7 +19,6 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 9,
 					lost: 1,
 				},
-				stats: { playoffs: false },
 			},
 			{
 				tid: 1,
@@ -31,7 +30,6 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 8,
 					lost: 2,
 				},
-				stats: { playoffs: false },
 			},
 			{
 				tid: 2,
@@ -43,7 +41,6 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 1,
 					lost: 9,
 				},
-				stats: { playoffs: false },
 			},
 			{
 				tid: 3,
@@ -55,7 +52,6 @@ describe("worker/core/draft/lotterySort", () => {
 					won: 2,
 					lost: 8,
 				},
-				stats: { playoffs: false },
 			},
 		];
 		lotterySort(teams);

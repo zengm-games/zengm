@@ -710,12 +710,19 @@ export type TeamStatAttr = keyof TeamStatsPlus;
 
 export type TeamFiltered<
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]> = [],
-	StatAttrs extends Readonly<TeamStatAttr[]> = []
-> = Pick<Team, Attrs[number]> & {
-	seasonAttrs: Pick<TeamSeasonPlus, SeasonAttrs[number]>;
-	stats: Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean };
-};
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined = undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined = undefined
+> = Pick<Team, Attrs[number]> &
+	(SeasonAttrs extends Readonly<TeamSeasonAttr[]>
+		? {
+				seasonAttrs: Pick<TeamSeasonPlus, SeasonAttrs[number]>;
+		  }
+		: {}) &
+	(StatAttrs extends Readonly<TeamStatAttr[]>
+		? {
+				stats: Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean };
+		  }
+		: {});
 
 export type TeamBasic = {
 	tid: number;

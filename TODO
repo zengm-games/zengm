@@ -35,12 +35,10 @@ typescript
 - changelog
 - later
   - teamsPlus
-    - how to make seasonAttrs and stats optional on resulting object, if SeasonAttrs/StatAttrs is undefined?
-      - maybe needs | undefined in teamsPlus too
-      - undo stats: {playoffs: false} in two test files (lotterySort.test.ts and genPlayoffSeries.test.ts)
     - how to make seasonAttrs sometimes an array?
       - just used in historyAll?
-    - test genPlayoffSeries and make it more explicit (get rid of any)
+      - test.todo
+    - getCopy not working?
   - playersPlus
     - finish teamsPlus first, it's easier!
     - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES

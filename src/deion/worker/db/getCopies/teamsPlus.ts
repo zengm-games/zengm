@@ -15,8 +15,8 @@ import {
 
 const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
-	StatAttrs extends Readonly<TeamStatAttr[]>
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs>,
 	t: Team,
@@ -45,7 +45,7 @@ const processAttrs = <
 const processSeasonAttrs = async <
 	Attrs extends Readonly<TeamAttr[]>,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
-	StatAttrs extends Readonly<TeamStatAttr[]>
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs>,
 	t: Team,
@@ -192,7 +192,7 @@ const filterOrderStats = (
 
 const processStats = async <
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]>
 >(
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs>,
@@ -275,8 +275,8 @@ const processStats = async <
 
 const processTeam = async <
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
-	StatAttrs extends Readonly<TeamStatAttr[]>
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >(
 	t: Team,
 	{
@@ -289,9 +289,9 @@ const processTeam = async <
 		statType,
 	}: {
 		season?: number;
-		attrs: Attrs;
-		seasonAttrs: SeasonAttrs;
-		stats: StatAttrs;
+		attrs?: Attrs;
+		seasonAttrs?: SeasonAttrs;
+		stats?: StatAttrs;
 		playoffs: boolean;
 		regularSeason: boolean;
 		statType: TeamStatType;
@@ -300,18 +300,20 @@ const processTeam = async <
 	// @ts-ignore
 	const output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs> = {};
 
-	if (attrs.length > 0) {
+	if (attrs) {
 		processAttrs(output, t, attrs);
 	}
 
 	const promises: Promise<any>[] = [];
 
-	if (seasonAttrs.length > 0) {
+	if (seasonAttrs) {
+		// @ts-ignore
 		promises.push(processSeasonAttrs(output, t, seasonAttrs, season));
 	}
 
-	if (stats.length > 0) {
+	if (stats) {
 		promises.push(
+			// @ts-ignore
 			processStats(output, t, stats, playoffs, regularSeason, statType, season),
 		);
 	}
@@ -341,14 +343,14 @@ const processTeam = async <
  */
 async function getCopies<
 	Attrs extends Readonly<TeamAttr[]>,
-	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
-	StatAttrs extends Readonly<TeamStatAttr[]>
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
 >({
 	tid,
 	season,
-	attrs = ([] as never) as Attrs,
-	seasonAttrs = ([] as never) as SeasonAttrs,
-	stats = ([] as never) as StatAttrs,
+	attrs,
+	seasonAttrs,
+	stats,
 	playoffs = false,
 	regularSeason = true,
 	statType = "perGame",

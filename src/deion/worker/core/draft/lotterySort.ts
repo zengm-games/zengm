@@ -9,7 +9,12 @@ import { TeamFiltered } from "../../../common/types";
  *
  * Sort teams by making playoffs (NOT playoff performance) and winp, for first round
  */
-const lotterySort = (teams: TeamFiltered<["tid", "did"]>[]) => {
+const lotterySort = (
+	teams: TeamFiltered<
+		["tid", "cid", "did"],
+		["playoffRoundsWon", "won", "winp"]
+	>[],
+) => {
 	/**
 	 * http://www.nba.com/2015/news/04/17/2015-draft-order-of-selection-tiebreak-official-release/index.html
 	 *

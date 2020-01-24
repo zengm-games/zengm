@@ -31,13 +31,6 @@ const getProjectedSeries = async (inputSeason: number) => {
 		inputSeason,
 	);
 
-	// Add entry for wins for each team, delete seasonAttrs just used for sorting
-	for (let i = 0; i < teams.length; i++) {
-		teams[i].won = 0;
-		teams[i].winp = teams[i].seasonAttrs.winp;
-		delete teams[i].seasonAttrs;
-	}
-
 	const result = season.genPlayoffSeries(teams);
 	return result.series;
 };

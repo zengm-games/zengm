@@ -9,6 +9,7 @@ const userWonTitle = async () => {
 		tid: g.get("userTid"),
 	});
 	return (
+		!!t &&
 		t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
 	);
 };

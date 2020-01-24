@@ -24,8 +24,11 @@ export type TeamsPlusOptions = {
 	statType?: TeamStatType;
 };
 
-const processAttrs = <Attrs extends Readonly<TeamAttr[]>>(
-	output: TeamFiltered<Attrs>,
+const processAttrs = <
+	Attrs extends Readonly<TeamAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]>
+>(
+	output: TeamFiltered<Attrs, SeasonAttrs>,
 	t: Team,
 	attrs: Attrs,
 ) => {
@@ -49,10 +52,13 @@ const processAttrs = <Attrs extends Readonly<TeamAttr[]>>(
 	}
 };
 
-const processSeasonAttrs = async <Attrs extends Readonly<TeamAttr[]>>(
-	output: TeamFiltered<Attrs>,
+const processSeasonAttrs = async <
+	Attrs extends Readonly<TeamAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]>
+>(
+	output: TeamFiltered<Attrs, SeasonAttrs>,
 	t: Team,
-	seasonAttrs: TeamSeasonAttr[],
+	seasonAttrs: SeasonAttrs,
 	season: number | undefined,
 ) => {
 	let seasons;
@@ -107,7 +113,8 @@ const processSeasonAttrs = async <Attrs extends Readonly<TeamAttr[]>>(
 				0,
 			);
 
-			for (const attr of seasonAttrs) {
+			for (const temp of seasonAttrs) {
+				const attr: string = temp;
 				if (attr === "winp") {
 					row.winp = helpers.calcWinp(ts);
 				} else if (attr === "att") {
@@ -191,8 +198,11 @@ const filterOrderStats = (
 	);
 };
 
-const processStats = async <Attrs extends Readonly<TeamAttr[]>>(
-	output: TeamFiltered<Attrs>,
+const processStats = async <
+	Attrs extends Readonly<TeamAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]>
+>(
+	output: TeamFiltered<Attrs, SeasonAttrs>,
 	t: Team,
 	stats: TeamStatAttr[],
 	playoffs: boolean,
@@ -270,7 +280,10 @@ const processStats = async <Attrs extends Readonly<TeamAttr[]>>(
 	}
 };
 
-const processTeam = async <Attrs extends Readonly<TeamAttr[]>>(
+const processTeam = async <
+	Attrs extends Readonly<TeamAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]>
+>(
 	t: Team,
 	{
 		season,
@@ -283,7 +296,7 @@ const processTeam = async <Attrs extends Readonly<TeamAttr[]>>(
 	}: {
 		season?: number;
 		attrs: Attrs;
-		seasonAttrs: TeamSeasonAttr[];
+		seasonAttrs: SeasonAttrs;
 		stats: TeamStatAttr[];
 		playoffs: boolean;
 		regularSeason: boolean;
@@ -291,7 +304,7 @@ const processTeam = async <Attrs extends Readonly<TeamAttr[]>>(
 	},
 ) => {
 	// @ts-ignore
-	const output: TeamFiltered<Attrs> = {};
+	const output: TeamFiltered<Attrs, SeasonAttrs> = {};
 
 	if (attrs.length > 0) {
 		processAttrs(output, t, attrs);
@@ -332,11 +345,14 @@ const processTeam = async <Attrs extends Readonly<TeamAttr[]>>(
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-async function getCopies<Attrs extends Readonly<TeamAttr[]>>({
+async function getCopies<
+	Attrs extends Readonly<TeamAttr[]>,
+	SeasonAttrs extends Readonly<TeamSeasonAttr[]>
+>({
 	tid,
 	season,
 	attrs = ([] as never) as Attrs,
-	seasonAttrs = [],
+	seasonAttrs = ([] as never) as SeasonAttrs,
 	stats = [],
 	playoffs = false,
 	regularSeason = true,
@@ -345,12 +361,12 @@ async function getCopies<Attrs extends Readonly<TeamAttr[]>>({
 	tid?: number;
 	season?: number;
 	attrs?: Attrs;
-	seasonAttrs?: any[];
+	seasonAttrs?: SeasonAttrs;
 	stats?: any[];
 	playoffs?: boolean;
 	regularSeason?: boolean;
 	statType?: TeamStatType;
-} = {}): Promise<TeamFiltered<Attrs>[]> {
+} = {}): Promise<TeamFiltered<Attrs, SeasonAttrs>[]> {
 	const options = {
 		season,
 		attrs,

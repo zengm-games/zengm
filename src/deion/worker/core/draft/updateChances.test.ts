@@ -10,7 +10,7 @@ describe("worker/core/draft/updateChances", () => {
 	test("distribute combinations to teams with the same record", async () => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "cid", "did"],
-			seasonAttrs: ["winp", "playoffRoundsWon"],
+			seasonAttrs: ["won", "winp", "playoffRoundsWon"],
 			season: g.get("season"),
 		});
 		const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]; // index instead of tid

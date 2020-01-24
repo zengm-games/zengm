@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput, TeamSeasonAttr } from "../../common/types";
 
 const footballScore = p => {
 	const ind = overrides.common.constants.POSITIONS.indexOf(p.ratings.pos);
@@ -52,7 +52,12 @@ const updateRoster = async (
 			stats,
 			userTid: g.get("userTid"),
 		};
-		const seasonAttrs = ["profit", "won", "lost", "playoffRoundsWon"];
+		const seasonAttrs: TeamSeasonAttr[] = [
+			"profit",
+			"won",
+			"lost",
+			"playoffRoundsWon",
+		];
 
 		if (g.get("ties")) {
 			seasonAttrs.push("tied");

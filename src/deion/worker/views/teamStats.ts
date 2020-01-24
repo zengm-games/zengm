@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput, TeamSeasonAttr } from "../../common/types";
 
 const updateTeams = async (
 	inputs: ViewInput<"teamStats">,
@@ -23,7 +23,7 @@ const updateTeams = async (
 		}
 
 		const stats = statsTable.stats;
-		const seasonAttrs = g.get("ties")
+		const seasonAttrs: TeamSeasonAttr[] = g.get("ties")
 			? ["won", "lost", "tied"]
 			: ["won", "lost"];
 		const teams = (
@@ -74,7 +74,7 @@ const updateTeams = async (
 
 		// Sort stats so we can determine what percentile our team is in.
 		const allStats = {};
-		let statTypes = seasonAttrs.slice();
+		let statTypes: string[] = seasonAttrs.slice();
 
 		for (const table of Object.values(
 			overrides.common.constants.TEAM_STATS_TABLES,

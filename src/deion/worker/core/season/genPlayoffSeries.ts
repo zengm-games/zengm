@@ -59,7 +59,7 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 	return lastRound;
 };
 
-type MyTeam = TeamFiltered<["cid", "tid"]>;
+type MyTeam = TeamFiltered<["cid", "tid"], ["winp"]>;
 
 const genPlayoffSeries = (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
@@ -125,12 +125,14 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 						const home = {
 							...teamsConf[matchup[0]],
 							seed: matchup[0] + 1,
+							won: 0,
 						};
 						const away =
 							matchup[1] !== undefined
 								? {
 										...teamsConf[matchup[1]],
 										seed: matchup[1] + 1,
+										won: 0,
 								  }
 								: undefined;
 
@@ -143,7 +145,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 			}
 		} else {
 			// Special case - if there is only one round, pick the best team in each conference to play
-			const teamsConf: any[] = [];
+			const teamsConf: MyTeam[] = [];
 
 			for (let cid = 0; cid < g.get("confs").length; cid++) {
 				for (let i = 0; i < teams.length; i++) {
@@ -161,9 +163,13 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 
 			series[0][0] = {
 				home:
-					teamsConf[0].winp > teamsConf[1].winp ? teamsConf[0] : teamsConf[1],
+					teamsConf[0].seasonAttrs.winp > teamsConf[1].seasonAttrs.winp
+						? teamsConf[0]
+						: teamsConf[1],
 				away:
-					teamsConf[0].winp > teamsConf[1].winp ? teamsConf[1] : teamsConf[0],
+					teamsConf[0].seasonAttrs.winp > teamsConf[1].seasonAttrs.winp
+						? teamsConf[1]
+						: teamsConf[0],
 			};
 			series[0][0].home.seed = 1;
 			series[0][0].away.seed = 1;
@@ -190,12 +196,14 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 			const home = {
 				...teamsConf[matchup[0]],
 				seed: matchup[0] + 1,
+				won: 0,
 			};
 			const away =
 				matchup[1] !== undefined
 					? {
 							...teamsConf[matchup[1]],
 							seed: matchup[1] + 1,
+							won: 0,
 					  }
 					: undefined;
 

@@ -91,6 +91,7 @@ const processSeasonAttrs = async <
 		seasons = [dummySeason];
 	}
 
+	// @ts-ignore
 	output.seasonAttrs = await Promise.all(
 		seasons.map(async ts => {
 			const row: any = {}; // Revenue and expenses calculation

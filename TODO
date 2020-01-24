@@ -19,14 +19,6 @@ typescript
     - also getSchedule
     - do the same as whatever i end up doing with idb
     - also like idb, cache get functions should all be | void
-  - types for PlayersPlus and TeamsPlus
-    - getCopy.teamsPlus not returning correct type
-    - how to make seasonAttrs optional on resulting object, if SeasonAttrs is undefined?
-    - how to make seasonAttrs sometimes an array?
-      - just used in historyAll?
-    - test genPlayoffSeries and make it more explicit (get rid of any)
-    - PlayersPlus
-      - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES
   - types for toWorker and toUI
   - backboard -> idb
     - my branch has two fixes:
@@ -39,6 +31,17 @@ typescript
   - find src -name '*.js' > foo
   - find tools -name '*.js' > foo
 - changelog
+- later
+  - teamsPlus
+    - how to make seasonAttrs and stats optional on resulting object, if SeasonAttrs/StatAttrs is undefined?
+      - maybe needs | undefined in teamsPlus too
+      - undo stats: {} in two test files
+    - how to make seasonAttrs sometimes an array?
+      - just used in historyAll?
+    - test genPlayoffSeries and make it more explicit (get rid of any)
+  - playersPlus
+    - finish teamsPlus first, it's easier!
+    - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES
 
 make dark mode obey operating system default
 

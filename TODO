@@ -11,8 +11,6 @@ pass interference not giving first down https://old.reddit.com/r/Football_GM/com
 add kneeling to run out the clock
 
 typescript
-- type tests for teamsPlus
-  - getCopy too, in same file
 - to know
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
@@ -38,7 +36,6 @@ typescript
     - how to make seasonAttrs sometimes an array?
       - just used in historyAll?
       - test.todo
-    - getCopy not working?
   - playersPlus
     - finish teamsPlus first, it's easier!
     - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES

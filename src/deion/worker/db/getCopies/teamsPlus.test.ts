@@ -248,6 +248,18 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
+			const t = await idb.getCopy.teamsPlus({
+				tid: 0,
+				attrs: ["tid", "abbrev"],
+				seasonAttrs: ["season", "won", "payroll"],
+				stats: ["gp", "fg", "fgp"],
+				season: g.get("season"),
+			});
+
+			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+				true,
+			);
+
 			typeAssert<
 				IsExact<
 					typeof teams[number],
@@ -276,6 +288,16 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
+			const t = await idb.getCopy.teamsPlus({
+				tid: 0,
+				attrs: ["tid", "abbrev"],
+				season: g.get("season"),
+			});
+
+			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+				true,
+			);
+
 			typeAssert<
 				IsExact<
 					typeof teams[number],
@@ -293,6 +315,17 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				seasonAttrs: ["season", "won", "payroll"],
 				season: g.get("season"),
 			});
+
+			const t = await idb.getCopy.teamsPlus({
+				tid: 0,
+				attrs: ["tid", "abbrev"],
+				seasonAttrs: ["season", "won", "payroll"],
+				season: g.get("season"),
+			});
+
+			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+				true,
+			);
 
 			typeAssert<
 				IsExact<
@@ -317,6 +350,17 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				season: g.get("season"),
 			});
 
+			const t = await idb.getCopy.teamsPlus({
+				tid: 0,
+				attrs: ["tid", "abbrev"],
+				stats: ["gp", "fg", "fgp"],
+				season: g.get("season"),
+			});
+
+			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+				true,
+			);
+
 			typeAssert<
 				IsExact<
 					typeof teams[number],
@@ -340,6 +384,17 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				stats: ["gp", "fg", "fgp"],
 				season: g.get("season"),
 			});
+
+			const t = await idb.getCopy.teamsPlus({
+				tid: 0,
+				seasonAttrs: ["season", "won", "payroll"],
+				stats: ["gp", "fg", "fgp"],
+				season: g.get("season"),
+			});
+
+			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+				true,
+			);
 
 			typeAssert<
 				IsExact<

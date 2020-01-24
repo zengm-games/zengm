@@ -26,17 +26,17 @@ const updateTeams = async (
 		const seasonAttrs: TeamSeasonAttr[] = g.get("ties")
 			? ["won", "lost", "tied"]
 			: ["won", "lost"];
-		const teams = // @ts-ignore
-		(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev"],
-				seasonAttrs,
-				stats: ["gp", ...stats],
-				season: inputs.season,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs !== "playoffs",
-			})
-		).filter(t => {
+		// @ts-ignore
+		const teamsAll = await idb.getCopies.teamsPlus({
+			attrs: ["tid", "abbrev"],
+			seasonAttrs,
+			stats: ["gp", ...stats],
+			season: inputs.season,
+			playoffs: inputs.playoffs === "playoffs",
+			regularSeason: inputs.playoffs !== "playoffs",
+		});
+
+		const teams = teamsAll.filter(t => {
 			// For playoffs, only show teams who actually made playoffs (gp > 0)
 			return inputs.playoffs !== "playoffs" || t.stats.gp > 0;
 		});

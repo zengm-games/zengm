@@ -101,7 +101,7 @@ class DataTable extends React.Component<Props, State> {
 		let found = false;
 		let sortBys = helpers.deepCopy(this.state.sortBys); // eslint-disable-line react/no-access-state-in-setstate
 
-		const nextOrder = (col2, sortBy) => {
+		const nextOrder = (col2: Col, sortBy: SortBy) => {
 			const sortSequence = col2.sortSequence;
 
 			if (sortSequence) {

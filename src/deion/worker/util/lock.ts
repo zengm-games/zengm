@@ -1,7 +1,9 @@
 import { idb } from "../db";
 import toUI from "./toUI";
-import { Locks } from "../../common/types"; // These are transient variables that always reset to "false" on reload. See local.js for more.
+import { Locks } from "../../common/types";
+import { helpers } from "../../common";
 
+// These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {
 	drafting: false,
 	gameSim: false,
@@ -10,7 +12,7 @@ const locks: Locks = {
 };
 
 const reset = () => {
-	for (const key of Object.keys(locks)) {
+	for (const key of helpers.keys(locks)) {
 		locks[key] = false;
 	}
 };

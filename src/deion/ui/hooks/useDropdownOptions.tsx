@@ -23,14 +23,15 @@ export const getSortedTeams = ({
 		"val",
 	);
 
-	const object = {};
+	const object: { [key: string]: string | undefined } = {};
 	for (const { abbrev, name } of array) {
 		object[abbrev] = name;
 	}
 
 	return object;
 };
-const dropdownValues = {
+
+const dropdownValues: { [key: string]: string | undefined } = {
 	special: "All-Star Game",
 	"all|||teams": "All Teams",
 	watch: "Watch List",
@@ -89,7 +90,7 @@ const dropdownValues = {
 export const getDropdownValue = (
 	key: number | string,
 	sortedTeams: {
-		[key: string]: string;
+		[key: string]: string | undefined;
 	},
 ) => {
 	if (typeof key === "number") {

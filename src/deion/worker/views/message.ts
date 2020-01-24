@@ -7,7 +7,6 @@ const updateMessage = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<{ message: void | Message } | { redirectUrl: string } | void> => {
-	console.log("inputs", inputs);
 	// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 	if (
 		updateEvents.includes("firstRun") ||

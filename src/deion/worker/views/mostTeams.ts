@@ -10,10 +10,10 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["gp", "keyStats", "av"];
 		const playersAll = await idb.getCopies.players({
-			filter: (p: any) => {
+			filter: p => {
 				const teams = p.stats.filter(s => s.gp > 0).map(s => s.tid);
-				p.numTeams = new Set(teams).size;
-				return p.numTeams >= 5;
+				(p as any).numTeams = new Set(teams).size;
+				return (p as any).numTeams >= 5;
 			},
 		});
 		let players = await idb.getCopies.playersPlus(playersAll, {

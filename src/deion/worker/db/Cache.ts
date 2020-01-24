@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common";
+import { PLAYER, helpers } from "../../common";
 import { idb } from ".";
 import cmp from "./cmp";
 import { g, local, lock } from "../util";
@@ -82,17 +82,20 @@ export const STORES: Store[] = [
 	"trade",
 ];
 const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
-// Hacks to support stringifying/parsing an array containing strings and numbers, including Infinity. Currently used for retiredYear.
 
-const stringifyInfinity = array => {
+// Hacks to support stringifying/parsing an array containing strings and numbers, including Infinity. Currently used for retiredYear.
+const stringifyInfinity = (array: (number | string | boolean)[]) => {
 	return JSON.stringify(array);
 };
-
-const parseInfinity = string => {
-	return JSON.parse(string).map(val => (val === null ? Infinity : val));
+const parseInfinity = (string: string) => {
+	return JSON.parse(string).map((val: any) => (val === null ? Infinity : val));
 };
-
-const getIndexKey = (index, row) => {
+const getIndexKey = (
+	index: {
+		key: string[];
+	},
+	row: any,
+) => {
 	if (index.key.length === 1) {
 		return row[index.key[0]];
 	}
@@ -466,12 +469,14 @@ class Cache {
 					tx.objectStore("trade").getAll(),
 			},
 		};
+
 		// @ts-ignore
 		this._index2store = {};
 
-		for (const store of Object.keys(this.storeInfos)) {
-			if (this.storeInfos[store].indexes) {
-				for (const index of this.storeInfos[store].indexes) {
+		for (const store of helpers.keys(this.storeInfos)) {
+			const indexes = this.storeInfos[store].indexes;
+			if (indexes) {
+				for (const index of indexes) {
 					this._index2store[index.name] = store;
 				}
 			}
@@ -828,7 +833,7 @@ class Cache {
 		}
 
 		const [min, max] = key;
-		let output = [];
+		let output: any[] = [];
 
 		for (const keyString of Object.keys(this._indexes[index])) {
 			let keyParsed;

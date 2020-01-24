@@ -3,6 +3,7 @@ import { fetchWrapper } from "../../common";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
 
+console.log("howdy");
 const takeScreenshot = async () => {
 	const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
 
@@ -15,7 +16,10 @@ const takeScreenshot = async () => {
 	contentEl.style.display = "inline-block";
 	const watermark = document.createElement("div");
 	const logos = document.getElementsByClassName("spin");
-	const logoHTML = logos.length > 0 ? `<img src="${logos[0].src}">` : "";
+	const logoHTML =
+		logos.length > 0 && logos[0] instanceof HTMLImageElement
+			? `<img src="${logos[0].src}">`
+			: "";
 	watermark.innerHTML = `<nav class="navbar navbar-light bg-light mb-3"><a class="navbar-brand mr-auto" href="#">${logoHTML} ${helpers.upperCaseFirstLetter(
 		process.env.SPORT,
 	)} GM</a> ${
@@ -32,15 +36,17 @@ const takeScreenshot = async () => {
 	const notifications = document
 		.getElementsByClassName("notification-container")[0]
 		.cloneNode(true);
-	notifications.classList.remove("notification-container");
-	for (let i = 0; i < notifications.childNodes.length; i++) {
-		// Otherwise screeenshot is taken before fade in is complete
-		const el = notifications.children[0];
-		if (el.classList && typeof el.classList.remove === "function") {
-			el.classList.remove("notification-fadein");
+	if (notifications instanceof HTMLDivElement) {
+		notifications.classList.remove("notification-container");
+		for (let i = 0; i < notifications.childNodes.length; i++) {
+			// Otherwise screeenshot is taken before fade in is complete
+			const el = notifications.children[0];
+			if (el.classList && typeof el.classList.remove === "function") {
+				el.classList.remove("notification-fadein");
+			}
 		}
+		contentEl.appendChild(notifications);
 	}
-	contentEl.appendChild(notifications);
 
 	const canvas = await html2canvas(contentEl, {
 		backgroundColor: theme === "dark" ? "#212529" : "#fff",

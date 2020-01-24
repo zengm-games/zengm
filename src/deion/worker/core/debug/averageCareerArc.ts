@@ -26,6 +26,7 @@ const averageCareerArc = (ratingToSave: string) => {
 			averagePot[k] += p.ratings[0].pot;
 
 			if (ratingToSave) {
+				// @ts-ignore
 				averageRat[k] += p.ratings[0][ratingToSave];
 			}
 

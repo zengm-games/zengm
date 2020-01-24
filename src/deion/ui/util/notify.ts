@@ -4,13 +4,23 @@ container.classList.add("notification-container");
 document.body.appendChild(container);
 
 const notify = (
-	message,
-	title,
-	{ extraClass, persistent = false, timeOut },
+	message: string,
+	title?: string,
+	{
+		extraClass,
+		persistent = false,
+		timeOut,
+	}: {
+		extraClass?: string;
+		persistent?: boolean;
+		timeOut?: number;
+	} = {},
 ) => {
 	let timeoutRemaining = timeOut || 8000;
 
-	let notificationElement = document.createElement("div");
+	let notificationElement: HTMLDivElement | null = document.createElement(
+		"div",
+	);
 	notificationElement.classList.add("notification");
 	notificationElement.classList.add("notification-fadein");
 
@@ -34,15 +44,17 @@ const notify = (
 	};
 
 	// Auto hide transient notifications after timeout
-	let timeoutID;
+	let timeoutID: number;
 	if (!persistent) {
-		let timeoutStart;
+		let timeoutStart: number;
 
 		// Hide notification after timeout
 		const notificationTimeout = () => {
-			timeoutID = setTimeout(() => {
+			timeoutID = window.setTimeout(() => {
 				if (container.contains(notificationElement)) {
-					notificationElement.classList.add("notification-delete");
+					if (notificationElement) {
+						notificationElement.classList.add("notification-delete");
+					}
 
 					// notification-delete is 750ms via a CSS animation, but if this tab is not active, the animation
 					// won't run. setTimeout will be throttled too, but it'll be good enough to avoid having tons of
@@ -50,14 +62,14 @@ const notify = (
 					setTimeout(remove, 1000);
 				}
 			}, timeoutRemaining);
-			timeoutStart = new Date();
+			timeoutStart = Date.now();
 		};
 		notificationTimeout();
 
 		// When hovering over, don't count towards timeout
 		notificationElement.addEventListener("mouseenter", () => {
 			window.clearTimeout(timeoutID);
-			timeoutRemaining -= new Date() - timeoutStart;
+			timeoutRemaining -= Date.now() - timeoutStart;
 		});
 		notificationElement.addEventListener("mouseleave", notificationTimeout);
 	} else {
@@ -69,7 +81,9 @@ const notify = (
 	closeLink.classList.add("notification-close");
 	closeLink.innerHTML = "&times;";
 	closeLink.addEventListener("click", () => {
-		notificationElement.classList.add("notification-delete");
+		if (notificationElement) {
+			notificationElement.classList.add("notification-delete");
+		}
 		window.clearTimeout(timeoutID);
 		setTimeout(remove, 1000);
 	});
@@ -84,17 +98,18 @@ const notify = (
 	let numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown
 	if (numToDelete > 0) {
 		for (let i = 0; i <= container.childNodes.length; i++) {
-			if (!container.childNodes[i]) {
+			// We know it's an HTMLDivElement because we put it there!
+			const node = (container.childNodes[i] as unknown) as HTMLDivElement;
+
+			if (!node) {
 				continue;
 			}
 
-			if (container.childNodes[i].classList.contains("notification-delete")) {
+			if (node.classList.contains("notification-delete")) {
 				// Already being deleted
 				numToDelete -= 1;
-			} else if (
-				!container.childNodes[i].classList.contains("notification-persistent")
-			) {
-				container.childNodes[i].classList.add("notification-delete");
+			} else if (!node.classList.contains("notification-persistent")) {
+				node.classList.add("notification-delete");
 				numToDelete -= 1;
 			}
 
@@ -104,11 +119,12 @@ const notify = (
 		}
 	}
 
-	const removeOnFadeOut = event => {
+	const removeOnFadeOut = (event: AnimationEvent) => {
 		if (event.animationName === "fadeOut") {
 			remove();
 		}
 	};
+	// @ts-ignore
 	notificationElement.addEventListener("webkitAnimationEnd", removeOnFadeOut);
 	notificationElement.addEventListener("animationend", removeOnFadeOut);
 

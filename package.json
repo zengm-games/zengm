@@ -27,10 +27,7 @@
 		"test-e2e-browserstack": "node tools/pre-test.js && karma start karma-browserstack.conf.js"
 	},
 	"lint-staged": {
-		"*.{js,json,scss,ts,tsx}": [
-			"prettier --write",
-			"git add"
-		]
+		"*.{js,json,scss,ts,tsx}": "prettier --write"
 	},
 	"dependencies": {
 		"@bugsnag/plugin-react": "^6.5.0",

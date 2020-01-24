@@ -34,16 +34,15 @@ const updateHistory = async (
 			};
 		}
 
-		const [awards, teams] = await Promise.all([
-			idb.getCopy.awards({
-				season,
-			}),
-			idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev", "region", "name"],
-				seasonAttrs: ["playoffRoundsWon"],
-				season,
-			}),
-		]);
+		const awards = await idb.getCopy.awards({
+			season,
+		});
+
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid", "abbrev", "region", "name"],
+			seasonAttrs: ["playoffRoundsWon"],
+			season,
+		});
 
 		// Hack placeholder for old seasons before Finals MVP existed
 		if (awards && !awards.hasOwnProperty("finalsMvp")) {

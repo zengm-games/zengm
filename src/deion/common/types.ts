@@ -714,7 +714,7 @@ export type TeamFiltered<
 	StatAttrs extends Readonly<TeamStatAttr[]> = []
 > = Pick<Team, Attrs[number]> & {
 	seasonAttrs: Pick<TeamSeasonPlus, SeasonAttrs[number]>;
-	stats: Pick<TeamStatsPlus, StatAttrs[number]>;
+	stats: Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean };
 };
 
 export type TeamBasic = {

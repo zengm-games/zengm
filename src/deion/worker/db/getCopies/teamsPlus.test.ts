@@ -1,4 +1,5 @@
 import assert from "assert";
+import { assert as typeAssert, IsExact } from "conditional-type-checks";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
 import { idb } from "..";
@@ -35,6 +36,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		teamStats2.fga = 120;
 		await idb.cache.teamStats.add(teamStats2);
 	});
+
 	test("return requested info if tid/season match", async () => {
 		const t = await idb.getCopy.teamsPlus({
 			attrs: ["tid", "abbrev"],
@@ -227,5 +229,46 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				},
 			],
 		});
+	});
+
+	describe("TypeScript", () => {
+		it("Returns attrs, seasonAttrs, and stats for a single season", async () => {
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev"],
+				seasonAttrs: ["season", "won", "payroll"],
+				stats: ["gp", "fg", "fgp"],
+				season: g.get("season"),
+			});
+
+			typeAssert<
+				IsExact<
+					typeof teams,
+					{
+						tid: number;
+						abbrev: string;
+						seasonAttrs: {
+							season: number;
+							won: number;
+							payroll: number;
+						};
+						stats: {
+							gp: number;
+							fg: number;
+							fgp: number;
+							playoffs: boolean;
+						};
+					}[]
+				>
+			>(true);
+		});
+
+		it.todo("Returns just attrs");
+		it.todo("Returns just attrs and seasonAttrs");
+		it.todo("Returns just attrs and stats");
+		it.todo("Returns just seasonAttrs and stats");
+		it.todo("Returns just seasonAttrs and stats");
+		it.todo(
+			"Returns array for seasonAttrs and stats when no season is supplied",
+		);
 	});
 });

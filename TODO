@@ -11,6 +11,8 @@ pass interference not giving first down https://old.reddit.com/r/Football_GM/com
 add kneeling to run out the clock
 
 typescript
+- type tests for teamsPlus
+  - getCopy too, in same file
 - to know
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
@@ -35,7 +37,7 @@ typescript
   - teamsPlus
     - how to make seasonAttrs and stats optional on resulting object, if SeasonAttrs/StatAttrs is undefined?
       - maybe needs | undefined in teamsPlus too
-      - undo stats: {} in two test files
+      - undo stats: {playoffs: false} in two test files (lotterySort.test.ts and genPlayoffSeries.test.ts)
     - how to make seasonAttrs sometimes an array?
       - just used in historyAll?
     - test genPlayoffSeries and make it more explicit (get rid of any)

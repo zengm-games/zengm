@@ -96,6 +96,7 @@
 		"clean-css": "^4.2.1",
 		"cloudflare": "^2.7.0",
 		"concurrently": "^5.0.2",
+		"conditional-type-checks": "^1.0.5",
 		"eslint": "^6.8.0",
 		"eslint-config-airbnb-typescript": "^6.3.1",
 		"eslint-config-prettier": "^6.9.0",

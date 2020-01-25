@@ -12,8 +12,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],
 			seasonAttrs: ["season", "playoffRoundsWon", "won", "lost", "tied"],
-			stats: undefined,
-			season: undefined,
 		});
 
 		const awards = await idb.getCopies.awards();

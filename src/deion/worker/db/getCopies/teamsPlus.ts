@@ -350,7 +350,7 @@ async function getCopies<
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
-	Season extends number | undefined
+	Season extends number | undefined = undefined
 >({
 	tid,
 	season,

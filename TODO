@@ -35,8 +35,6 @@ typescript
   - find tools -name '*.js' > foo
 - changelog
 - later
-  - teamsPlus
-    - "Returns array for seasonAttrs and stats when no season is supplied" - why does it need season: undefined? also in historyAll.ts
   - playersPlus
     - finish teamsPlus first, it's easier!
     - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES

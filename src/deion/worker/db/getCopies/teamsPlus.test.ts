@@ -417,13 +417,10 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 
 		test("Returns array for seasonAttrs and stats when no season is supplied", async () => {
-			// Not sure why I need to explicitly pass undefined to season
-
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
 				stats: ["gp", "fg", "fgp"],
-				season: undefined,
 			});
 
 			const t = await idb.getCopy.teamsPlus({
@@ -431,7 +428,6 @@ describe("worker/db/getCopies/teamsPlus", () => {
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
 				stats: ["gp", "fg", "fgp"],
-				season: undefined,
 			});
 
 			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(

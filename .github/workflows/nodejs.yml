@@ -4,32 +4,19 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x]
 
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+    - uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: '12.x'
+        registry-url: <registry url>
     - name: Install dependencies
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: install
+      run: yarn install
     - name: ESLint
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: lint-js
+      run: yarn lint-js
     - name: TypeScript
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: lint-ts
+      run: yarn lint-ts
     - name: Unit tests
-      uses: borales/actions-yarn@v2.0.0
-      with:
-        cmd: test
+      run: yarn test

@@ -1,19 +1,25 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ReactNode, FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, realtimeUpdate } from "../util";
+import { View } from "../../common/types";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
 
-const ResetPassword = ({ token }) => {
-	const [state, setState] = useState({
+type State = {
+	globalMessage?: ReactNode;
+	errorMessageOverall?: string;
+	errorMessagePassword?: string;
+	errorMessagePassword2?: string;
+	showForm: boolean;
+};
+
+const ResetPassword = ({ token }: View<"resetPassword">) => {
+	const [state, setState] = useState<State>({
 		globalMessage: "Validating token...", // Because on initial page load you need AJAX request to see if it's valid
-		errorMessageOverall: undefined,
-		errorMessagePassword: undefined,
-		errorMessagePassword2: undefined,
 		showForm: false,
 	});
 
@@ -64,7 +70,7 @@ const ResetPassword = ({ token }) => {
 		checkToken();
 	}, [token]);
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		setState({
@@ -74,7 +80,16 @@ const ResetPassword = ({ token }) => {
 			errorMessagePassword2: undefined,
 		});
 
-		const formData = new FormData(document.getElementById("resetpw"));
+		const element = document.getElementById("resetpw");
+		if (!(element instanceof HTMLFormElement)) {
+			setState(state2 => ({
+				...state2,
+				errorMessageOverall: "resetpw element not found",
+			}));
+			throw new Error("resetpw element not found");
+		}
+
+		const formData = new FormData(element);
 
 		try {
 			const data = await fetchWrapper({
@@ -142,7 +157,7 @@ const ResetPassword = ({ token }) => {
 							})}
 							id="resetpw-password"
 							name="password"
-							required="required"
+							required
 						/>
 						<span className="form-text">{state.errorMessagePassword}</span>
 					</div>
@@ -161,7 +176,7 @@ const ResetPassword = ({ token }) => {
 							})}
 							id="resetpw-password2"
 							name="password2"
-							required="required"
+							required
 						/>
 						<span className="form-text">{state.errorMessagePassword2}</span>
 					</div>

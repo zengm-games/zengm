@@ -4,6 +4,10 @@ import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 
+const width100 = {
+	width: "100%",
+};
+
 const PlayerRatingDists = ({ ratingsAll, season }) => {
 	useTitleBar({
 		title: "Player Rating Distributions",
@@ -34,7 +38,7 @@ const PlayerRatingDists = ({ ratingsAll, season }) => {
 						return (
 							<tr key={rating}>
 								<td className="pr-3 text-right">{rating}</td>
-								<td width="100%">
+								<td style={width100}>
 									<BoxPlot
 										color="var(--blue)"
 										data={ratingsAll[rating]}

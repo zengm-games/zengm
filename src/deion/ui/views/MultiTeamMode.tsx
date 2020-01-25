@@ -1,13 +1,19 @@
 import PropTypes from "prop-types";
-import React, { useCallback } from "react";
+import React, { useCallback, ChangeEvent } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
+import { View } from "../../common/types";
 
-const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
+const MultiTeamMode = ({
+	phase,
+	teams,
+	userTid,
+	userTids,
+}: View<"multiTeamMode">) => {
 	const handleChange = useCallback(
-		async e => {
-			const newUserTids = Array.from(e.target.options)
+		async (event: ChangeEvent<HTMLSelectElement>) => {
+			const newUserTids = Array.from(event.target.options)
 				.filter(o => o.selected)
 				.map(o => parseInt(o.value, 10))
 				.filter(n => !Number.isNaN(n));
@@ -17,7 +23,10 @@ const MultiTeamMode = ({ phase, teams, userTid, userTids }) => {
 			}
 
 			if (JSON.stringify(newUserTids) !== JSON.stringify(userTids)) {
-				const gameAttributes = { userTids: newUserTids };
+				const gameAttributes: {
+					userTids: number[];
+					userTid?: number;
+				} = { userTids: newUserTids };
 				if (!newUserTids.includes(userTid)) {
 					gameAttributes.userTid = newUserTids[0];
 				}

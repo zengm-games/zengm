@@ -22,13 +22,16 @@ class Login extends React.Component<Props, State> {
 		this.setState({
 			errorMessage: undefined,
 		});
-		const el = document.getElementById("login");
 
-		if (!el) {
-			return;
+		const element = document.getElementById("login");
+		if (!(element instanceof HTMLFormElement)) {
+			this.setState({
+				errorMessage: "login element not found",
+			});
+			throw new Error("login element not found");
 		}
 
-		const formData = new FormData(el as HTMLFormElement);
+		const formData = new FormData(element);
 
 		try {
 			const data = await fetchWrapper({

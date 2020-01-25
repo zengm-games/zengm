@@ -710,6 +710,10 @@ const scale =
 		  }
 		: {};
 
+const width100 = {
+	width: "100%",
+};
+
 const TeamStatDists = ({ season, statsAll }) => {
 	useTitleBar({
 		title: "Team Stat Distributions",
@@ -743,7 +747,7 @@ const TeamStatDists = ({ season, statsAll }) => {
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
 									<td className="pr-3 text-right">{stat}</td>
-									<td width="100%">
+									<td style={width100}>
 										<BoxPlot
 											color="var(--blue)"
 											data={statsAll[stat]}
@@ -757,7 +761,7 @@ const TeamStatDists = ({ season, statsAll }) => {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
 										<td />
-										<td width="100%">
+										<td style={width100}>
 											<div style={{ marginTop: "-26px" }}>
 												<BoxPlot
 													color="var(--green)"

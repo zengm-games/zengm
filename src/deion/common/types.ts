@@ -400,7 +400,7 @@ export type LocalStateUI = {
 	title?: string;
 	hideNewWindow: boolean;
 	jumpTo: boolean;
-	jumpToSeason?: number;
+	jumpToSeason?: number | "all";
 	dropdownExtraParam?: number | string;
 	dropdownView?: string;
 	dropdownFields?: {
@@ -737,7 +737,7 @@ export type TeamBasic = {
 	name: string;
 	abbrev: string;
 	pop: number;
-	popRank?: number;
+	popRank: number;
 	imgURL?: string;
 	colors: [string, string, string];
 };

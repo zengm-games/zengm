@@ -4,6 +4,10 @@ import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 
+const width100 = {
+	width: "100%",
+};
+
 const proQuartiles =
 	process.env.SPORT === "basketball"
 		? {
@@ -100,7 +104,7 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
 						const bbgmPlot = (
 							<tr key={`${stat}-bbgm`}>
 								<td className="pr-3 text-right">{stat}</td>
-								<td width="100%">
+								<td style={width100}>
 									<BoxPlot
 										color="var(--blue)"
 										data={statsAll[stat]}
@@ -114,7 +118,7 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
 							proPlot = (
 								<tr key={`${stat}-pro`}>
 									<td />
-									<td width="100%">
+									<td style={width100}>
 										<div style={{ marginTop: "-26px" }}>
 											<BoxPlot
 												color="var(--green)"

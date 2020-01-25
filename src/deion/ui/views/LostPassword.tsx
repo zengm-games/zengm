@@ -1,26 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
 
+type State = {
+	errorMessage?: string;
+	successMessage?: string;
+};
+
 const LostPassword = () => {
-	const [state, setState] = useState({
+	const [state, setState] = useState<State>({
 		errorMessage: undefined,
 		successMessage: undefined,
 	});
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
-		const formData = new FormData(document.getElementById("lostpw"));
+		const element = document.getElementById("lostpw");
+		if (!(element instanceof HTMLFormElement)) {
+			setState({
+				errorMessage: "lostpw element not found",
+				successMessage: undefined,
+			});
+			throw new Error("lostpw element not found");
+		}
 
-		setState(state2 => ({
-			...state2,
+		const formData = new FormData(element);
+
+		setState({
 			errorMessage: undefined,
 			successMessage: undefined,
-		}));
+		});
 
 		try {
 			const data = await fetchWrapper({
@@ -31,15 +44,22 @@ const LostPassword = () => {
 			});
 
 			if (data.success) {
-				setState(state2 => ({
-					...state2,
+				setState({
+					errorMessage: undefined,
 					successMessage: "Check your email for further instructions.",
-				}));
+				});
 			} else {
-				setState(state2 => ({ ...state2, errorMessage: "Account not found." }));
+				setState({
+					successMessage: undefined,
+					errorMessage: "Account not found.",
+				});
 			}
 		} catch (err) {
-			setState(state2 => ({ ...state2, errorMessage: ajaxErrorMsg }));
+			setState({
+				successMessage: undefined,
+				errorMessage: ajaxErrorMsg,
+			});
+			throw err;
 		}
 	};
 	useTitleBar({ title: "Lost Password", hideNewWindow: true });
@@ -63,7 +83,7 @@ const LostPassword = () => {
 								className="form-control"
 								id="lostpw-entry"
 								name="entry"
-								required="required"
+								required
 							/>
 						</div>
 						<button type="submit" className="btn btn-primary">

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, ReactNode, FormEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, helpers, toWorker } from "../util";
 
@@ -45,17 +45,22 @@ const categories = [
 ];
 
 const ExportLeague = () => {
-	const [status, setStatus] = useState();
+	const [status, setStatus] = useState<ReactNode | undefined>();
 	const [compressed, setCompressed] = useState(true);
 
 	const handleSubmit = useCallback(
-		async e => {
-			e.preventDefault();
+		async (event: FormEvent) => {
+			event.preventDefault();
 
 			setStatus("Exporting...");
 
+			// @ts-ignore
+			const elements = (event.target.getElementsByTagName(
+				"input",
+			) as never) as HTMLInputElement[];
+
 			// Get array of object stores to export
-			const objectStores = Array.from(e.target.getElementsByTagName("input"))
+			const objectStores = Array.from(elements)
 				.filter(input => input.checked && input.name !== "compressed")
 				.map(input => input.value)
 				.join(",")
@@ -84,7 +89,7 @@ const ExportLeague = () => {
 				return;
 			}
 
-			setStatus();
+			setStatus(undefined);
 		},
 		[compressed],
 	);

@@ -3,6 +3,7 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
+import { View } from "../../common/types";
 
 const LeagueFinances = ({
 	budget,
@@ -15,7 +16,7 @@ const LeagueFinances = ({
 	season,
 	teams,
 	userTid,
-}) => {
+}: View<"leagueFinances">) => {
 	useTitleBar({
 		title: "League Finances",
 		jumpTo: true,

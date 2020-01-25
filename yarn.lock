@@ -905,6 +905,11 @@
   dependencies:
     "@types/stripe-v3" "*"
 
+"@types/stripe-v2@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@types/stripe-v2/-/stripe-v2-2.0.1.tgz#3c0a4e5e436291d83b2f773d712dc9dc75133de8"
+  integrity sha512-G7TAhUMuVidEcX4X1dox44wBukGcq7m90j2tEIUhywlDRgrFicIeK3oQh9WN0QomqRPEyyq3dDUyEH421uKM9g==
+
 "@types/stripe-v3@*":
   version "3.1.14"
   resolved "https://registry.yarnpkg.com/@types/stripe-v3/-/stripe-v3-3.1.14.tgz#5eefbec24754d23f6a039e8fb5c7ea0253007836"

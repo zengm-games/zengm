@@ -3,8 +3,14 @@ import React from "react";
 import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
+import { View } from "../../common/types";
 
-const Transactions = ({ abbrev, eventType, events, season }) => {
+const Transactions = ({
+	abbrev,
+	eventType,
+	events,
+	season,
+}: View<"transactions">) => {
 	useTitleBar({
 		title: "Transactions",
 		jumpTo: true,

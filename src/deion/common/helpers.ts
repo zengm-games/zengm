@@ -19,6 +19,30 @@ function addPopRank(teams: any[]): any[] {
 	return teams;
 }
 
+// Prefer this to addPopRank in new code because it's not mutable
+const getPopRanks = (
+	teamSeasons: {
+		pop: number;
+		tid: number;
+	}[],
+): number[] => {
+	// Add popRank
+	const teamsSorted = teamSeasons.slice();
+	teamsSorted.sort((a, b) => b.pop - a.pop);
+	const popRanks: number[] = [];
+
+	for (let i = 0; i < teamSeasons.length; i++) {
+		for (let j = 0; j < teamsSorted.length; j++) {
+			if (teamSeasons[i].tid === teamsSorted[j].tid) {
+				popRanks[i] = j + 1;
+				break;
+			}
+		}
+	}
+
+	return popRanks;
+};
+
 const gameScore = (arg: { [key: string]: number }): number => {
 	return (
 		arg.pts +
@@ -270,8 +294,8 @@ function getTeamsDefault(): TeamBasic[] {
 			colors: ["#213063", "#c5ae6e", "#ffffff"],
 		},
 	};
-	let teams: TeamBasic[];
 
+	let teams: Omit<TeamBasic, "popRank">[];
 	if (process.env.SPORT === "basketball") {
 		teams = [
 			{
@@ -718,8 +742,12 @@ function getTeamsDefault(): TeamBasic[] {
 		t.imgURL = `/img/logos/${t.abbrev}.png`;
 	}
 
-	teams = addPopRank(teams);
-	return teams;
+	const popRanks = getPopRanks(teams);
+
+	return teams.map((t, i) => ({
+		...t,
+		popRank: popRanks[i],
+	}));
 }
 
 /**
@@ -924,6 +952,7 @@ const keys = <O extends object>(obj: O): Array<keyof O> => {
 
 export default {
 	addPopRank,
+	getPopRanks,
 	gameScore,
 	getTeamsDefault,
 	deepCopy,

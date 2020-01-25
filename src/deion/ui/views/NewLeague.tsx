@@ -4,8 +4,31 @@ import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
+import { View } from "../../common/types";
 
-const PopText = ({ teams, tid }) => {
+const randomTeam = {
+	tid: -1,
+	region: "Random",
+	name: "Team",
+	popRank: Infinity,
+};
+
+const defaultTeams: {
+	tid: number;
+	region: string;
+	name: string;
+	pop?: number;
+	popRank: number;
+}[] = helpers.getTeamsDefault();
+defaultTeams.unshift(randomTeam);
+
+const PopText = ({
+	teams,
+	tid,
+}: {
+	teams: typeof defaultTeams;
+	tid: number;
+}) => {
 	if (tid >= 0) {
 		const t = teams.find(t2 => t2.tid === tid);
 		if (t) {
@@ -52,14 +75,7 @@ PopText.propTypes = {
 	tid: PropTypes.number.isRequired,
 };
 
-const defaultTeams = helpers.getTeamsDefault();
-defaultTeams.unshift({
-	tid: -1,
-	region: "Random",
-	name: "Team",
-});
-
-const NewLeague = props => {
+const NewLeague = (props: View<"newLeague">) => {
 	const [creating, setCreating] = useState(false);
 	const [customize, setCustomize] = useState(
 		props.lid !== undefined ? "custom-rosters" : "random",
@@ -67,7 +83,7 @@ const NewLeague = props => {
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
-	const [leagueFile, setLeagueFile] = useState(null);
+	const [leagueFile, setLeagueFile] = useState<any>(null);
 	const [name, setName] = useState(props.name);
 	const [prevlid, setPrevlid] = useState(props.lid);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
@@ -83,7 +99,9 @@ const NewLeague = props => {
 
 	if (props.lid !== undefined && prevlid === undefined) {
 		setCustomize("custom-rosters");
-		setDifficulty(props.difficulty);
+		setDifficulty(
+			props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
+		);
 		setName(props.name);
 		setPrevlid(props.lid);
 	}
@@ -197,11 +215,7 @@ const NewLeague = props => {
 				}
 
 				// Add random team
-				newTeams.unshift({
-					tid: -1,
-					region: "Random",
-					name: "Team",
-				});
+				newTeams.unshift(randomTeam);
 
 				setTeams(newTeams);
 			}
@@ -358,7 +372,7 @@ const NewLeague = props => {
 												setRandomizeRosters(event.target.checked);
 											}}
 											type="checkbox"
-											value={randomizeRosters}
+											checked={randomizeRosters}
 										/>
 										Shuffle Rosters
 									</label>

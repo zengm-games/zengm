@@ -18,11 +18,12 @@ typescript
 - to do
   - getting object from cache should add primary key to it
     - test with ts-ignore on teamSeason in worker/api/index.ts
-    - also getSchedule
+      - also getSchedule
     - do the same as whatever i end up doing with idb
-    - also like idb, cache get functions should all be | void
-  - types for toWorker and toUI
+  - types for toUI
+  - types for toWorker
     - test with tradeCounterOffer
+    - what about actions?
   - backboard -> idb
     - my branch has two fixes:
       - https://github.com/jakearchibald/idb/pull/151

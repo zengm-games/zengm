@@ -153,6 +153,10 @@ Offer.propTypes = {
 	won: PropTypes.number.isRequired,
 };
 
+const width100 = {
+	width: "100%",
+};
+
 const TradingBlock = props => {
 	const [state, setState] = useState({
 		asking: false,
@@ -306,7 +310,7 @@ const TradingBlock = props => {
 						<thead>
 							<tr>
 								<th />
-								<th width="100%">Draft Picks</th>
+								<th style={width100}>Draft Picks</th>
 							</tr>
 						</thead>
 						<tbody>

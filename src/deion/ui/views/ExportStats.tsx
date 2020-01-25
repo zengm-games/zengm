@@ -2,8 +2,13 @@ import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
+import { View } from "../../common/types";
 
-const genFilename = (leagueName, season, grouping) => {
+const genFilename = (
+	leagueName: string,
+	season: number | "all",
+	grouping: "averages" | "games",
+) => {
 	const filename = `${
 		process.env.SPORT === "basketball" ? "B" : "F"
 	}BGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${season}_${
@@ -13,8 +18,8 @@ const genFilename = (leagueName, season, grouping) => {
 	return `${filename}.csv`;
 };
 
-const ExportStats = ({ seasons }) => {
-	const [status, setStatus] = useState(null);
+const ExportStats = ({ seasons }: View<"exportStats">) => {
+	const [status, setStatus] = useState<string | undefined>();
 
 	const handleSubmit = useCallback(async event => {
 		event.preventDefault();
@@ -46,11 +51,11 @@ const ExportStats = ({ seasons }) => {
 
 		downloadFile(filename, data, "text/csv");
 
-		setStatus(null);
+		setStatus(undefined);
 	}, []);
 
 	const resetState = useCallback(() => {
-		setStatus(null);
+		setStatus(undefined);
 	}, []);
 
 	useTitleBar({ title: "Export Stats" });

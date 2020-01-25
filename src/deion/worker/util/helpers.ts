@@ -181,25 +181,6 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamAbbrevsCache")[tid];
 };
 
-// Prefer this to addPopRank in new code because it's not mutable
-const getPopRanks = (teamSeasons: TeamSeason[]): number[] => {
-	// Add popRank
-	const teamsSorted = teamSeasons.slice();
-	teamsSorted.sort((a, b) => b.pop - a.pop);
-	const popRanks: number[] = [];
-
-	for (let i = 0; i < teamSeasons.length; i++) {
-		for (let j = 0; j < teamsSorted.length; j++) {
-			if (teamSeasons[i].tid === teamsSorted[j].tid) {
-				popRanks[i] = j + 1;
-				break;
-			}
-		}
-	}
-
-	return popRanks;
-};
-
 const leagueUrl = (components: (number | string)[]): string =>
 	commonHelpers.leagueUrlFactory(g.get("lid"), components);
 
@@ -368,7 +349,6 @@ const helpers = {
 	formatCompletedGame,
 	gb,
 	getAbbrev,
-	getPopRanks,
 	leagueUrl,
 	nullPad,
 	numGamesToWinSeries,

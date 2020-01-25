@@ -21,7 +21,7 @@ const useTitleBar = ({
 	title?: string;
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
-	jumpToSeason?: number;
+	jumpToSeason?: number | "all";
 	dropdownExtraParam?: number | string;
 	dropdownView?: string;
 	dropdownFields?: {

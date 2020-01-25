@@ -89,6 +89,7 @@
 		"@types/roman-numerals": "^0.3.0",
 		"@types/sharedworker": "^0.0.29",
 		"@types/stripe-checkout": "^1.0.3",
+		"@types/stripe-v2": "^2.0.1",
 		"@typescript-eslint/eslint-plugin": "^2.17.0",
 		"@typescript-eslint/parser": "^2.17.0",
 		"cheerio": "^1.0.0-rc.3",

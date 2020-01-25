@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/camelcase: "off" */
 
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
@@ -9,14 +9,15 @@ import {
 } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getScript, realtimeUpdate } from "../util";
+import { View } from "../../common/types";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";
 
-const AccountUpdateCard = props => {
+const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const [state, setState] = useState({
 		disabled: true,
-		formError: null,
+		formError: undefined as string | undefined,
 		number: "",
 		cvc: "",
 		exp_month: "",
@@ -27,7 +28,9 @@ const AccountUpdateCard = props => {
 		(async () => {
 			if (!window.Stripe) {
 				await getScript("https://js.stripe.com/v2/");
-				window.Stripe.setPublishableKey(STRIPE_PUBLISHABLE_KEY);
+				(window.Stripe as stripe.StripeStatic).setPublishableKey(
+					STRIPE_PUBLISHABLE_KEY,
+				);
 			}
 
 			setState(prevState => ({
@@ -37,7 +40,9 @@ const AccountUpdateCard = props => {
 		})();
 	}, []);
 
-	const handleChange = name => event => {
+	const handleChange = (name: string) => (
+		event: ChangeEvent<HTMLInputElement>,
+	) => {
 		const value = event.target.value;
 		setState(prevState => ({
 			...prevState,
@@ -45,7 +50,7 @@ const AccountUpdateCard = props => {
 		}));
 	};
 
-	const handleSubmit = event => {
+	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();
 
 		setState(prevState => ({
@@ -57,15 +62,18 @@ const AccountUpdateCard = props => {
 			{
 				number: state.number,
 				cvc: state.cvc,
+				// @ts-ignore
 				exp_month: state.exp_month,
+				// @ts-ignore
 				exp_year: state.exp_year,
 			},
-			async (status, response) => {
-				if (response.error) {
+			async (status: number, response: stripe.StripeCardTokenResponse) => {
+				const error = response.error;
+				if (error) {
 					setState(prevState => ({
 						...prevState,
 						disabled: false,
-						formError: response.error.message,
+						formError: error.message,
 					}));
 				} else {
 					const token = response.id;

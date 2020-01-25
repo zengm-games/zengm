@@ -39,37 +39,51 @@ const updateStandings = async (
 			}),
 			inputs.season,
 		);
+
+		type StandingsTeam = typeof teams[number] & {
+			gb: number;
+			highlight: boolean;
+			rank: number;
+		};
+
+		type DivTeam = typeof teams[number] & {
+			gb: number;
+			highlight: boolean;
+			playoffsRank?: number;
+		};
+
 		const numPlayoffTeams =
 			2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
 		const confs: {
 			cid: number;
 			name: string;
-			divs: any[];
-			teams: any[];
+			divs: {
+				did: number;
+				name: string;
+				teams: DivTeam[];
+			}[];
+			teams: StandingsTeam[];
 		}[] = [];
 
 		for (let i = 0; i < g.get("confs").length; i++) {
 			const playoffsRank: number[] = [];
-			const confTeams: any[] = [];
+			const confTeams: StandingsTeam[] = [];
 			let j = 0;
 
 			for (const t of teams) {
 				if (g.get("confs")[i].cid === t.cid) {
 					playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
 
-					confTeams.push(helpers.deepCopy(t));
-					confTeams[j].rank = j + 1;
+					const gb =
+						j === 0 ? 0 : helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
 
-					if (j === 0) {
-						confTeams[j].gb = 0;
-					} else {
-						confTeams[j].gb = helpers.gb(
-							confTeams[0].seasonAttrs,
-							confTeams[j].seasonAttrs,
-						);
-					}
+					confTeams.push({
+						...helpers.deepCopy(t),
+						gb,
+						highlight: t.tid === g.get("userTid"),
+						rank: j + 1,
+					});
 
-					confTeams[j].highlight = confTeams[j].tid === g.get("userTid");
 					j += 1;
 				}
 			}
@@ -83,29 +97,28 @@ const updateStandings = async (
 
 			for (const div of g.get("divs")) {
 				if (div.cid === g.get("confs")[i].cid) {
-					const divTeams: any[] = [];
+					const divTeams: DivTeam[] = [];
 					let k = 0;
 
 					for (const t of teams) {
 						if (div.did === t.did) {
-							divTeams.push(helpers.deepCopy(t));
+							const gb =
+								k === 0
+									? 0
+									: helpers.gb(divTeams[0].seasonAttrs, t.seasonAttrs);
 
-							if (k === 0) {
-								divTeams[k].gb = 0;
-							} else {
-								divTeams[k].gb = helpers.gb(
-									divTeams[0].seasonAttrs,
-									divTeams[k].seasonAttrs,
-								);
-							}
+							const rank =
+								playoffsRank[divTeams[k].tid] <= numPlayoffTeams / 2
+									? playoffsRank[divTeams[k].tid]
+									: undefined;
 
-							if (playoffsRank[divTeams[k].tid] <= numPlayoffTeams / 2) {
-								divTeams[k].playoffsRank = playoffsRank[divTeams[k].tid];
-							} else {
-								divTeams[k].playoffsRank = null;
-							}
+							divTeams.push({
+								...helpers.deepCopy(t),
+								gb,
+								highlight: t.tid === g.get("userTid"),
+								playoffsRank: rank,
+							});
 
-							divTeams[k].highlight = divTeams[k].tid === g.get("userTid");
 							k += 1;
 						}
 					}
@@ -119,7 +132,7 @@ const updateStandings = async (
 			}
 		}
 
-		const allTeams: any[] = [];
+		const allTeams: StandingsTeam[] = [];
 
 		if (!playoffsByConference) {
 			// Fix playoffsRank if conferences don't matter
@@ -131,7 +144,7 @@ const updateStandings = async (
 					const t2 = div.teams.find(t3 => t.tid === t3.tid);
 
 					if (t2) {
-						t2.playoffsRank = i < numPlayoffTeams ? i + 1 : null;
+						t2.playoffsRank = i < numPlayoffTeams ? i + 1 : undefined;
 					}
 				}
 			}
@@ -141,30 +154,27 @@ const updateStandings = async (
 				let j = 0;
 
 				for (const t of teams) {
-					allTeams.push(helpers.deepCopy(t));
-					allTeams[j].rank = j + 1;
+					const gb =
+						j === 0 ? 0 : helpers.gb(teams[0].seasonAttrs, t.seasonAttrs);
 
-					if (j === 0) {
-						allTeams[j].gb = 0;
-					} else {
-						allTeams[j].gb = helpers.gb(
-							allTeams[0].seasonAttrs,
-							allTeams[j].seasonAttrs,
-						);
-					}
+					allTeams.push({
+						...helpers.deepCopy(t),
+						gb,
+						highlight: t.tid === g.get("userTid"),
+						rank: j + 1,
+					});
 
-					allTeams[j].highlight = allTeams[j].tid === g.get("userTid");
 					j += 1;
 				}
 			}
 		}
 
 		return {
-			allTeams,
 			confs,
 			numPlayoffTeams,
 			playoffsByConference,
 			season: inputs.season,
+			teams: allTeams,
 			ties: g.get("ties"),
 		};
 	}

@@ -38,13 +38,16 @@ class Register extends React.Component<Props, State> {
 			errorMessagePassword2: undefined,
 			errorMessageUsername: undefined,
 		});
-		const el = document.getElementById("register");
 
-		if (!el) {
-			return;
+		const element = document.getElementById("register");
+		if (!(element instanceof HTMLFormElement)) {
+			this.setState({
+				errorMessageOverall: "register element not found",
+			});
+			throw new Error("register element not found");
 		}
 
-		const formData = new FormData(el as HTMLFormElement);
+		const formData = new FormData(element);
 
 		try {
 			const data = await fetchWrapper({

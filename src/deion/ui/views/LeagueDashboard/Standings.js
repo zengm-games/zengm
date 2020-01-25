@@ -3,6 +3,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
 
+const width100 = {
+	width: "100%",
+};
+
 const Standings = ({
 	confTeams,
 	numPlayoffTeams,
@@ -13,7 +17,7 @@ const Standings = ({
 		<table className="table table-striped table-bordered table-sm">
 			<thead>
 				<tr>
-					<th width="100%">Team</th>
+					<th style={width100}>Team</th>
 					<th>GB</th>
 				</tr>
 			</thead>

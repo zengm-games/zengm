@@ -5,11 +5,24 @@ import { ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
+import { View } from "../../common/types";
 
-const record = (seasonAttrs, type, ties) => {
-	const won = `won${type}`;
-	const lost = `lost${type}`;
-	const tied = `tied${type}`;
+const record = (
+	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
+	type: "home" | "away" | "div" | "conf",
+	ties: boolean,
+) => {
+	const won = `won${type}` as "wonHome" | "wonAway" | "wonDiv" | "wonConf";
+	const lost = `lost${type}` as
+		| "lostHome"
+		| "lostAway"
+		| "lostDiv"
+		| "lostConf";
+	const tied = `tied${type}` as
+		| "tiedHome"
+		| "tiedAway"
+		| "tiedDiv"
+		| "tiedConf";
 
 	const val = `${seasonAttrs[won]}-${seasonAttrs[lost]}`;
 	if (ties) {
@@ -18,7 +31,17 @@ const record = (seasonAttrs, type, ties) => {
 	return val;
 };
 
-const DivStandingsRow = ({ season, t, ties }) => {
+type Div = View<"standings">["confs"][number]["divs"][number];
+
+const DivStandingsRow = ({
+	season,
+	t,
+	ties,
+}: {
+	season: number;
+	t: Div["teams"][number];
+	ties: boolean;
+}) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	return (
@@ -41,10 +64,10 @@ const DivStandingsRow = ({ season, t, ties }) => {
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
 			<td>{t.gb}</td>
-			<td>{record(t.seasonAttrs, "Home", ties)}</td>
-			<td>{record(t.seasonAttrs, "Away", ties)}</td>
-			<td>{record(t.seasonAttrs, "Div", ties)}</td>
-			<td>{record(t.seasonAttrs, "Conf", ties)}</td>
+			<td>{record(t.seasonAttrs, "home", ties)}</td>
+			<td>{record(t.seasonAttrs, "away", ties)}</td>
+			<td>{record(t.seasonAttrs, "div", ties)}</td>
+			<td>{record(t.seasonAttrs, "conf", ties)}</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
 		</tr>
@@ -57,13 +80,25 @@ DivStandingsRow.propTypes = {
 	ties: PropTypes.bool.isRequired,
 };
 
-const DivStandings = ({ div, season, ties }) => {
+const width100 = {
+	width: "100%",
+};
+
+const DivStandings = ({
+	div,
+	season,
+	ties,
+}: {
+	div: Div;
+	season: number;
+	ties: boolean;
+}) => {
 	return (
 		<ResponsiveTableWrapper>
 			<table className="table table-striped table-bordered table-sm table-hover">
 				<thead>
 					<tr>
-						<th width="100%">{div.name}</th>
+						<th style={width100}>{div.name}</th>
 						<th>W</th>
 						<th>L</th>
 						{ties ? <th>T</th> : null}
@@ -96,7 +131,17 @@ DivStandings.propTypes = {
 	ties: PropTypes.bool.isRequired,
 };
 
-const SmallStandingsRow = ({ i, numPlayoffTeams, season, t }) => {
+const SmallStandingsRow = ({
+	i,
+	numPlayoffTeams,
+	season,
+	t,
+}: {
+	i: number;
+	numPlayoffTeams: number;
+	season: number;
+	t: View<"standings">["teams"][number];
+}) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	return (
@@ -125,12 +170,16 @@ SmallStandingsRow.propTypes = {
 	t: PropTypes.object.isRequired,
 };
 
-const SmallStandings = ({ numPlayoffTeams, season, teams }) => {
+const SmallStandings = ({
+	numPlayoffTeams,
+	season,
+	teams,
+}: Pick<View<"standings">, "numPlayoffTeams" | "season" | "teams">) => {
 	return (
 		<table className="table table-striped table-bordered table-sm">
 			<thead>
 				<tr>
-					<th width="100%">Team</th>
+					<th style={width100}>Team</th>
 					<th style={{ textAlign: "right" }}>GB</th>
 				</tr>
 			</thead>
@@ -156,13 +205,13 @@ SmallStandings.propTypes = {
 };
 
 const Standings = ({
-	allTeams,
+	teams,
 	confs,
 	numPlayoffTeams,
 	playoffsByConference,
 	season,
 	ties,
-}) => {
+}: View<"standings">) => {
 	useTitleBar({
 		title: "Standings",
 		jumpTo: true,
@@ -220,7 +269,7 @@ const Standings = ({
 						<SmallStandings
 							numPlayoffTeams={numPlayoffTeams}
 							season={season}
-							teams={allTeams}
+							teams={teams}
 						/>
 					</div>
 				) : null}
@@ -230,7 +279,7 @@ const Standings = ({
 };
 
 Standings.propTypes = {
-	allTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
+	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 	confs: PropTypes.arrayOf(
 		PropTypes.shape({
 			cid: PropTypes.number.isRequired,

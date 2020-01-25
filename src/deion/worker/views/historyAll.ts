@@ -9,23 +9,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		(updateEvents.includes("newPhase") &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
-		// Manual typing because teamsPlus types don't support seasonAttrs as array
-		const teams = ((await idb.getCopies.teamsPlus({
+		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],
 			seasonAttrs: ["season", "playoffRoundsWon", "won", "lost", "tied"],
-		})) as never) as {
-			tid: number;
-			abbrev: string;
-			region: string;
-			name: string;
-			seasonAttrs: {
-				season: number;
-				playoffRoundsWon: number;
-				won: number;
-				lost: number;
-				tied: number;
-			}[];
-		}[];
+			stats: undefined,
+			season: undefined,
+		});
 
 		const awards = await idb.getCopies.awards();
 		const awardNames =

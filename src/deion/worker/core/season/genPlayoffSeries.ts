@@ -63,7 +63,7 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 	return lastRound;
 };
 
-type MyTeam = TeamFiltered<["cid", "tid"], ["winp"]>;
+type MyTeam = TeamFiltered<["cid", "tid"], ["winp"], any, number>;
 
 const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 	return {

@@ -416,8 +416,48 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			>(true);
 		});
 
-		test.todo(
-			"Returns array for seasonAttrs and stats when no season is supplied",
-		);
+		test("Returns array for seasonAttrs and stats when no season is supplied", async () => {
+			// Not sure why I need to explicitly pass undefined to season
+
+			const teams = await idb.getCopies.teamsPlus({
+				attrs: ["tid", "abbrev"],
+				seasonAttrs: ["season", "won", "payroll"],
+				stats: ["gp", "fg", "fgp"],
+				season: undefined,
+			});
+
+			const t = await idb.getCopy.teamsPlus({
+				tid: 0,
+				attrs: ["tid", "abbrev"],
+				seasonAttrs: ["season", "won", "payroll"],
+				stats: ["gp", "fg", "fgp"],
+				season: undefined,
+			});
+
+			typeAssert<IsExact<typeof teams[number], Exclude<typeof t, undefined>>>(
+				true,
+			);
+
+			typeAssert<
+				IsExact<
+					typeof teams[number],
+					{
+						tid: number;
+						abbrev: string;
+						seasonAttrs: {
+							season: number;
+							won: number;
+							payroll: number;
+						}[];
+						stats: {
+							gp: number;
+							fg: number;
+							fgp: number;
+							playoffs: boolean;
+						}[];
+					}
+				>
+			>(true);
+		});
 	});
 });

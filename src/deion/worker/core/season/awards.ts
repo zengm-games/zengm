@@ -79,7 +79,9 @@ const getPlayers = async () => {
 const teamAwards = (
 	teamsUnsorted: TeamFiltered<
 		["tid", "cid", "did", "abbrev", "region", "name"],
-		["winp", "won", "lost", "tied"]
+		["winp", "won", "lost", "tied"],
+		any,
+		number
 	>[],
 ) => {
 	const teams = helpers.orderByWinp(teamsUnsorted);

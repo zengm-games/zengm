@@ -11,6 +11,8 @@ pass interference not giving first down https://old.reddit.com/r/Football_GM/com
 add kneeling to run out the clock
 
 typescript
+- 3.8
+  - switch to import type using importsNotUsedAsValues
 - to know
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
@@ -26,6 +28,7 @@ typescript
       - https://github.com/jakearchibald/idb/issues/152
   - any -> unknown
     - also in dependencies, like bbgm-router
+  - @ts-ignore still needed? maybe write script to check
 - yarn tsc --noImplicitAny > foo
 - more JS to TS
   - find src -name '*.js' > foo
@@ -33,9 +36,7 @@ typescript
 - changelog
 - later
   - teamsPlus
-    - how to make seasonAttrs sometimes an array?
-      - just used in historyAll?
-      - test.todo
+    - "Returns array for seasonAttrs and stats when no season is supplied" - why does it need season: undefined? also in historyAll.ts
   - playersPlus
     - finish teamsPlus first, it's easier!
     - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES

@@ -16,9 +16,10 @@ import {
 const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
-	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined
 >(
-	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs>,
+	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
 	attrs: Attrs,
 ) => {
@@ -45,12 +46,13 @@ const processAttrs = <
 const processSeasonAttrs = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]>,
-	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined
 >(
-	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs>,
+	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
 	seasonAttrs: SeasonAttrs,
-	season: number | undefined,
+	season: Season,
 ) => {
 	let seasons;
 
@@ -81,13 +83,13 @@ const processSeasonAttrs = async <
 		seasons = await idb.league
 			.transaction("teamSeasons")
 			.store.index("season, tid")
-			.getAll([season, t.tid]);
+			.getAll([season as number, t.tid]);
 	}
 
 	// If a season is requested but not in the database, make a fake season so at least some dummy values are returned
 	if (season !== undefined && seasons.length === 0) {
 		const dummySeason = team.genSeasonRow(t.tid);
-		dummySeason.season = season;
+		dummySeason.season = season as number;
 		seasons = [dummySeason];
 	}
 
@@ -193,15 +195,16 @@ const filterOrderStats = (
 const processStats = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
-	StatAttrs extends Readonly<TeamStatAttr[]>
+	StatAttrs extends Readonly<TeamStatAttr[]>,
+	Season extends number | undefined
 >(
-	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs>,
+	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
 	stats: StatAttrs,
 	playoffs: boolean,
 	regularSeason: boolean,
 	statType: TeamStatType,
-	season?: number,
+	season?: Season,
 ) => {
 	let teamStats;
 
@@ -247,7 +250,7 @@ const processStats = async <
 		teamStats = await idb.league
 			.transaction("teamStats")
 			.store.index("season, tid")
-			.getAll([season, t.tid]);
+			.getAll([season as number, t.tid]);
 	}
 
 	// Handle playoffs/regularSeason
@@ -276,7 +279,8 @@ const processStats = async <
 const processTeam = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
-	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined
 >(
 	t: Team,
 	{
@@ -298,7 +302,7 @@ const processTeam = async <
 	},
 ) => {
 	// @ts-ignore
-	const output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs> = {};
+	const output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season> = {};
 
 	if (attrs) {
 		// @ts-ignore
@@ -345,7 +349,8 @@ const processTeam = async <
 async function getCopies<
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
-	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined
 >({
 	tid,
 	season,
@@ -357,14 +362,14 @@ async function getCopies<
 	statType = "perGame",
 }: {
 	tid?: number;
-	season?: number;
+	season?: Season;
 	attrs?: Attrs;
 	seasonAttrs?: SeasonAttrs;
 	stats?: StatAttrs;
 	playoffs?: boolean;
 	regularSeason?: boolean;
 	statType?: TeamStatType;
-} = {}): Promise<TeamFiltered<Attrs, SeasonAttrs, StatAttrs>[]> {
+} = {}): Promise<TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>[]> {
 	const options = {
 		season,
 		attrs,
@@ -377,6 +382,7 @@ async function getCopies<
 
 	if (tid === undefined) {
 		const teams = await idb.cache.teams.getAll();
+		// @ts-ignore
 		return Promise.all(teams.map(t => processTeam(t, options)));
 	}
 

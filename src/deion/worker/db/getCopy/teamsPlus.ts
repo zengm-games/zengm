@@ -9,7 +9,8 @@ import {
 const getCopy = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined,
-	StatAttrs extends Readonly<TeamStatAttr[]> | undefined
+	StatAttrs extends Readonly<TeamStatAttr[]> | undefined,
+	Season extends number | undefined
 >({
 	tid,
 	season,
@@ -21,7 +22,7 @@ const getCopy = async <
 	statType = "perGame",
 }: {
 	tid: number;
-	season?: number;
+	season?: Season;
 	attrs?: Attrs;
 	seasonAttrs?: SeasonAttrs;
 	stats?: StatAttrs;
@@ -29,7 +30,12 @@ const getCopy = async <
 	regularSeason?: boolean;
 	statType?: TeamStatType;
 }) => {
-	const result = await idb.getCopies.teamsPlus<Attrs, SeasonAttrs, StatAttrs>({
+	const result = await idb.getCopies.teamsPlus<
+		Attrs,
+		SeasonAttrs,
+		StatAttrs,
+		Season
+	>({
 		tid,
 		season,
 		attrs,

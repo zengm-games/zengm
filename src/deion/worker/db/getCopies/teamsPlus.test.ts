@@ -417,6 +417,8 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 
 		test("Returns array for seasonAttrs and stats when no season is supplied", async () => {
+			idb.league = testHelpers.mockIDBLeague();
+
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid", "abbrev"],
 				seasonAttrs: ["season", "won", "payroll"],
@@ -454,6 +456,9 @@ describe("worker/db/getCopies/teamsPlus", () => {
 					}
 				>
 			>(true);
+
+			// @ts-ignore
+			idb.league = undefined;
 		});
 	});
 });

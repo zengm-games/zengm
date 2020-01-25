@@ -2,8 +2,9 @@ import PropTypes from "prop-types";
 import React from "react";
 import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
+import { View } from "../../common/types";
 
-const EventLog = ({ abbrev, events, season }) => {
+const EventLog = ({ abbrev, events, season }: View<"eventLog">) => {
 	useTitleBar({
 		title: "Event Log",
 		dropdownView: "event_log",

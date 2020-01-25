@@ -5,7 +5,7 @@ import { idb } from "../../../deion/worker/db";
 import { g, helpers } from "../../../deion/worker/util";
 import achievements from "./achievements";
 
-const get = slug => {
+const get = (slug: string): any => {
 	const achievement = achievements.find(
 		achievement2 => slug === achievement2.slug,
 	);
@@ -34,6 +34,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 		idb.league = testHelpers.mockIDBLeague();
 	});
 	afterAll(() => {
+		// @ts-ignore
 		idb.league = undefined;
 	});
 
@@ -1613,7 +1614,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 				season: 2013,
 				roy: {
 					pid: p.pid,
-					name: p.name,
+					name: `${p.firstName} ${p.lastName}`,
 					tid: p.tid,
 					abbrev: "ATL",
 					pts: 30,

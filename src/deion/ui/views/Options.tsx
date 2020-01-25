@@ -1,6 +1,12 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+	useCallback,
+	useEffect,
+	useState,
+	ChangeEvent,
+	FormEvent,
+} from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent } from "../util";
 
@@ -75,7 +81,8 @@ const Storage = () => {
 	);
 };
 
-const Options = props => {
+// Props are not from View<> because they are only ever passed from LeagueOptions
+const Options = (props: { title?: string }) => {
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = localStorage.getItem("theme");
 		return {
@@ -83,7 +90,9 @@ const Options = props => {
 		};
 	});
 
-	const handleChange = name => event => {
+	const handleChange = (name: string) => (
+		event: ChangeEvent<HTMLSelectElement>,
+	) => {
 		const value = event.target.value;
 		setState(state2 => ({
 			...state2,
@@ -91,7 +100,7 @@ const Options = props => {
 		}));
 	};
 
-	const handleFormSubmit = async event => {
+	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		const newTheme = state.theme === "dark" ? "dark" : "light";

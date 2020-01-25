@@ -1,18 +1,22 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
 
 const updateEventLog = async (
 	inputs: ViewInput<"eventLog">,
 	updateEvents: UpdateEvents,
-	state: any,
+	state: {
+		abbrev?: string;
+		events?: EventBBGM[];
+		season?: number;
+	},
 ) => {
 	if (
 		updateEvents.length >= 0 ||
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
-		let events = state.events;
+		let events: EventBBGM[] = state.events || [];
 
 		if (inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
 			events = [];
@@ -53,6 +57,7 @@ const updateEventLog = async (
 			}
 
 			return {
+				abbrev: inputs.abbrev,
 				events,
 				season: inputs.season,
 			};

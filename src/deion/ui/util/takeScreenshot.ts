@@ -3,7 +3,6 @@ import { fetchWrapper } from "../../common";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
 
-console.log("howdy");
 const takeScreenshot = async () => {
 	const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
 

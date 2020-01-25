@@ -6,7 +6,7 @@ module.exports = {
 		"^league-schema$": "<rootDir>/build/files/league-schema.json",
 	},
 	setupFilesAfterEnv: [
-		"./src/deion/test/jest.js",
+		"./src/deion/test/jest.ts",
 		"./src/basketball/worker/index.ts",
 	],
 };

@@ -1,14 +1,15 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import { DIFFICULTY } from "../../common";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
 import Options from "./Options";
+import { View } from "../../common/types";
 
 const difficultyValues = Object.values(DIFFICULTY);
 
-const LeagueOptions = props => {
+const LeagueOptions = (props: View<"leagueOptions">) => {
 	const [state, setState] = useState({
 		autoDeleteOldBoxScores: String(props.autoDeleteOldBoxScores),
 		difficulty: String(props.difficulty),
@@ -19,7 +20,9 @@ const LeagueOptions = props => {
 		stopOnInjuryGames: String(props.stopOnInjuryGames),
 	});
 
-	const handleChange = name => event => {
+	const handleChange = (name: string) => (
+		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+	) => {
 		const value = event.target.value;
 		setState(state2 => ({
 			...state2,
@@ -27,16 +30,15 @@ const LeagueOptions = props => {
 		}));
 	};
 
-	const handleFormSubmit = async event => {
+	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
-		const attrs = {
+		const attrs: any = {
 			autoDeleteOldBoxScores: state.autoDeleteOldBoxScores === "true",
 			difficulty: parseFloat(state.difficulty),
 			stopOnInjury: state.stopOnInjury === "true",
 			stopOnInjuryGames: parseInt(state.stopOnInjuryGames, 10),
 		};
-
 		if (attrs.difficulty <= DIFFICULTY.Easy) {
 			attrs.easyDifficultyInPast = true;
 		}
@@ -106,9 +108,7 @@ const LeagueOptions = props => {
 							<input
 								type="text"
 								className="form-control"
-								disabled={
-									state.stopOnInjury === false || state.stopOnInjury === "false"
-								}
+								disabled={state.stopOnInjury === "false"}
 								onChange={handleChange("stopOnInjuryGames")}
 								value={state.stopOnInjuryGames}
 							/>

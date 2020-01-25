@@ -1,12 +1,64 @@
 import classNames from "classnames";
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, ReactNode, ChangeEvent, FormEvent } from "react";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, logEvent, toWorker } from "../util";
+import { View } from "../../common/types";
 
-const options = [
+type Key =
+	| "numGames"
+	| "quarterLength"
+	| "minRosterSize"
+	| "maxRosterSize"
+	| "numGamesPlayoffSeries"
+	| "numPlayoffByes"
+	| "draftType"
+	| "numSeasonsFutureDraftPicks"
+	| "salaryCap"
+	| "minPayroll"
+	| "luxuryPayroll"
+	| "luxuryTax"
+	| "minContract"
+	| "maxContract"
+	| "hardCap"
+	| "budget"
+	| "aiTrades"
+	| "playersRefuseToNegotiate"
+	| "injuryRate"
+	| "tragicDeathRate"
+	| "brotherRate"
+	| "sonRate"
+	| "homeCourtAdvantage"
+	| "allStarGame"
+	| "foulRateFactor"
+	| "foulsNeededToFoulOut";
+
+type Category = "League Structure" | "Finance" | "Events" | "Game Simulation";
+
+type FieldType =
+	| "bool"
+	| "float"
+	| "float1000"
+	| "int"
+	| "jsonString"
+	| "string";
+
+type Decoration = "currency" | "percent";
+
+type Values = { [key: string]: string | undefined };
+
+const options: {
+	category: Category;
+	key: Key;
+	name: string;
+	type: FieldType;
+	decoration?: Decoration;
+	helpText?: ReactNode;
+	values?: Values;
+	validator?: (value: any, output: any, props: View<"godMode">) => void;
+}[] = [
 	{
 		category: "League Structure",
 		key: "numGames",
@@ -343,12 +395,12 @@ if (process.env.SPORT === "basketball") {
 
 const encodeDecodeFunctions = {
 	bool: {
-		stringify: value => String(value),
-		parse: value => value === "true",
+		stringify: (value: boolean) => String(value),
+		parse: (value: string) => value === "true",
 	},
 	float: {
-		stringify: value => String(value),
-		parse: value => {
+		stringify: (value: number) => String(value),
+		parse: (value: string) => {
 			const parsed = parseFloat(value);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid number`);
@@ -357,8 +409,8 @@ const encodeDecodeFunctions = {
 		},
 	},
 	float1000: {
-		stringify: value => String(value / 1000),
-		parse: value => {
+		stringify: (value: number) => String(value / 1000),
+		parse: (value: string) => {
 			const parsed = parseFloat(value) * 1000;
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid number`);
@@ -367,8 +419,8 @@ const encodeDecodeFunctions = {
 		},
 	},
 	int: {
-		stringify: value => String(value),
-		parse: value => {
+		stringify: (value: number) => String(value),
+		parse: (value: string) => {
 			const parsed = parseInt(value, 10);
 			if (Number.isNaN(parsed)) {
 				throw new Error(`"${value}" is not a valid integer`);
@@ -378,14 +430,28 @@ const encodeDecodeFunctions = {
 	},
 	string: {},
 	jsonString: {
-		stringify: value => JSON.stringify(value),
-		parse: value => JSON.parse(value),
+		stringify: (value: any) => JSON.stringify(value),
+		parse: (value: string) => JSON.parse(value),
 	},
 };
 
 const groupedOptions = groupBy(options, "category");
 
-const Input = ({ decoration, disabled, onChange, type, value, values }) => {
+const Input = ({
+	decoration,
+	disabled,
+	onChange,
+	type,
+	value,
+	values,
+}: {
+	decoration?: Decoration;
+	disabled?: boolean;
+	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+	type: FieldType;
+	value: string;
+	values?: Values;
+}) => {
 	const commonProps = {
 		className: "form-control",
 		disabled,
@@ -452,19 +518,26 @@ Input.propTypes = {
 	values: PropTypes.object,
 };
 
-const GodModeOptions = props => {
+const GodModeOptions = (props: View<"godMode">) => {
 	const [submitting, setSubmitting] = useState(false);
-	const [state, setState] = useState(() => {
-		const initialState = {};
+	const [state, setState] = useState<Record<Key, string>>(() => {
+		// @ts-ignore
+		const initialState: Record<Key, string> = {};
 		for (const { key, type } of options) {
 			const value = props[key];
+
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
 			const stringify = encodeDecodeFunctions[type].stringify;
+
 			initialState[key] = stringify ? stringify(value) : value;
 		}
 		return initialState;
 	});
 
-	const handleChange = name => event => {
+	const handleChange = (name: string) => (
+		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+	) => {
 		const value = event.target.value;
 		setState(prevState => ({
 			...prevState,
@@ -472,15 +545,19 @@ const GodModeOptions = props => {
 		}));
 	};
 
-	const handleFormSubmit = async event => {
+	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setSubmitting(true);
 
-		const output = {};
+		const output: Partial<Record<Key, any>> = {};
 		for (const option of options) {
 			const { key, name, type } = option;
 			const value = state[key];
+
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
 			const parse = encodeDecodeFunctions[type].parse;
+
 			try {
 				output[key] = parse ? parse(value) : value;
 			} catch (error) {
@@ -599,13 +676,16 @@ GodModeOptions.propTypes = {
 	foulsNeededToFoulOut: PropTypes.number.isRequired,
 };
 
-const GodMode = props => {
+const GodMode = (props: View<"godMode">) => {
 	const { godMode } = props;
 
 	useTitleBar({ title: "God Mode" });
 
 	const handleGodModeToggle = async () => {
-		const attrs = { godMode: !godMode };
+		const attrs: {
+			godMode: boolean;
+			godModeInPast?: true;
+		} = { godMode: !godMode };
 
 		if (attrs.godMode) {
 			attrs.godModeInPast = true;

@@ -16,6 +16,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 			testHelpers.resetG();
 			g.setWithoutSavingToDB("allStarGame", false);
 		});
+
 		test("when numTeams*numGames is even, everyone gets a full schedule", () => {
 			for (let numGames = 2; numGames < 50; numGames += 1) {
 				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
@@ -43,6 +44,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				}
 			}
 		});
+
 		test("when numTeams*numGames is odd, one team is a game short", () => {
 			for (let numGames = 2; numGames < 50; numGames += 1) {
 				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
@@ -88,9 +90,11 @@ describe("basketball/worker/core/season/newSchedule", () => {
 			testHelpers.resetG();
 			g.setWithoutSavingToDB("allStarGame", false);
 		});
+
 		test("schedule 1230 games (82 each for 30 teams)", () => {
 			assert.equal(newSchedule(defaultTeams).length, 1230);
 		});
+
 		test("schedule 41 home games and 41 away games for each team", () => {
 			const tids = newSchedule(defaultTeams);
 			const home = Array(g.get("numTeams")).fill(0); // Number of home games for each team
@@ -107,6 +111,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				assert.equal(away[i], 41);
 			}
 		});
+
 		test("schedule each team one home game against every team in the other conference", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
@@ -128,6 +133,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 15);
 			}
 		});
+
 		test("schedule each team two home games against every team in the same division", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
@@ -149,6 +155,7 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				assert.equal(testHelpers.numInArrayEqualTo(home[i], 2), 4);
 			}
 		});
+
 		test("schedule each team one or two home games against every team in the same conference but not in the same division (one game: 2/10 teams; two games: 8/10 teams)", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)

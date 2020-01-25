@@ -116,12 +116,15 @@ describe("worker/util/helpers", () => {
 	});
 	describe("nullPad", () => {
 		const array = [1, 2, 3, 4, 5];
+
 		test("do nothing if already long enough", () => {
 			assert.deepEqual(helpers.nullPad(array, 5), array);
 		});
+
 		test("slice if too long", () => {
 			assert.deepEqual(helpers.nullPad(array, 3), [1, 2, 3]);
 		});
+
 		test("pad with nulls up to requested length if too short", () => {
 			assert.deepEqual(helpers.nullPad(array, 6), [1, 2, 3, 4, 5, null]);
 			assert.deepEqual(helpers.nullPad(array, 8), [

@@ -7,6 +7,7 @@ import { beforeTests, reset } from "./testHelpers";
 describe("worker/core/trade/updatePlayers", () => {
 	beforeAll(beforeTests);
 	afterEach(reset);
+
 	test("allow players from both teams to be set", async () => {
 		await trade.create([
 			{
@@ -45,6 +46,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		assert.deepEqual(teams[0].pids, userPidsTest);
 		assert.deepEqual(teams[1].pids, otherPidsTest);
 	});
+
 	test("filter out invalid players", async () => {
 		await trade.create([
 			{
@@ -81,6 +83,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		assert.deepEqual(teams[0].pids, [1]);
 		assert.deepEqual(teams[1].pids, [3]);
 	});
+
 	test("delete the other team's players, but not the user's players, from the trade when a new team is selected", async () => {
 		await trade.create([
 			{

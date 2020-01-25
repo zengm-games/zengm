@@ -7,6 +7,7 @@ import { beforeTests, givePlayerMinContract } from "./testHelpers";
 describe("worker/core/contractNegotiation/accept", () => {
 	beforeAll(beforeTests);
 	afterEach(() => idb.cache.negotiations.clear());
+
 	test("no signing non-minimum contracts that cause team to exceed the salary cap", async () => {
 		const pid = 1;
 		await givePlayerMinContract(pid);

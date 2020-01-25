@@ -56,6 +56,7 @@ describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
 		]);
 		assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 	});
+
 	test("put two Gs in starting lineup", () => {
 		let starters = findStarters([
 			"PG",
@@ -109,6 +110,7 @@ describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
 		]);
 		assert.deepEqual(starters, [0, 1, 2, 8, 9]);
 	});
+
 	test("put two Fs (or one F and one C) in starting lineup", () => {
 		let starters = findStarters([
 			"PG",
@@ -150,6 +152,7 @@ describe("basketball/worker/core/team/rosterAutoSort/findStarters", () => {
 		]);
 		assert.deepEqual(starters, [0, 1, 2, 4, 6]);
 	});
+
 	test("never put two pure Cs in starting lineup", () => {
 		let starters = findStarters([
 			"PG",

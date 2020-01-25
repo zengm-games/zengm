@@ -6,6 +6,7 @@ describe("football/worker/core/player/getDepthPlayers", () => {
 	beforeAll(() => {
 		process.env.SPORT = "football";
 	});
+
 	test("works", () => {
 		const depth = {
 			QB: [1, 2, 3],

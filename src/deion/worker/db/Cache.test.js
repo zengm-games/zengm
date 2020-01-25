@@ -22,6 +22,7 @@ describe("worker/db/Cache", () => {
 			const p2 = await idb.cache.players.get(p.pid);
 			assert.equal(p.pid, p2.pid);
 		});
+
 		test("return undefined for invalid ID", async () => {
 			const p = await idb.cache.players.get(-1);
 			assert.equal(typeof p, "undefined");

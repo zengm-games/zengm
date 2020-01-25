@@ -8,6 +8,7 @@ import { beforeTests, givePlayerMinContract } from "./testHelpers";
 describe("worker/core/contractNegotiation/create", () => {
 	beforeAll(beforeTests);
 	afterEach(() => idb.cache.negotiations.clear());
+
 	test("start a negotiation with a free agent", async () => {
 		const pid = 0;
 		await givePlayerMinContract(pid);
@@ -21,6 +22,7 @@ describe("worker/core/contractNegotiation/create", () => {
 		assert.equal(negotiations.length, 1);
 		assert.equal(negotiations[0].pid, pid);
 	});
+
 	test("fail to start a negotiation with anyone but a free agent", async () => {
 		const pid = 2;
 		await givePlayerMinContract(pid);
@@ -32,6 +34,7 @@ describe("worker/core/contractNegotiation/create", () => {
 		const negotiations = await idb.cache.negotiations.getAll();
 		assert.equal(negotiations.length, 0);
 	});
+
 	test("only allow one concurrent negotiation if resigning is false", async () => {
 		const pid1 = 0;
 		const pid2 = 1;
@@ -56,6 +59,7 @@ describe("worker/core/contractNegotiation/create", () => {
 		assert.equal(negotiations.length, 1);
 		assert.equal(negotiations[0].pid, pid2);
 	});
+
 	test("allow multiple concurrent negotiations if resigning is true", async () => {
 		const pid1 = 0;
 		const pid2 = 1;

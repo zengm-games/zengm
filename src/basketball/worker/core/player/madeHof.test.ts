@@ -51,6 +51,7 @@ describe("basketball/worker/core/player/madeHof", () => {
 		];
 		assert.equal(madeHof(p), true);
 	});
+
 	test("narrowly miss HoF based on dominance factor", () => {
 		const p = player.generate(0, 19, 2012, false, 15.5);
 		p.stats = [

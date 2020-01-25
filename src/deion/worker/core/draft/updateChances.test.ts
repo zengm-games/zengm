@@ -7,6 +7,7 @@ import { g } from "../../util";
 
 describe("worker/core/draft/updateChances", () => {
 	beforeAll(loadTeamSeasons);
+
 	test("distribute combinations to teams with the same record", async () => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "cid", "did"],

@@ -300,6 +300,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("fo_fo_fo").check();
 			assert.equal(awarded, true);
 		});
+
 		test("don't award achievement for 16-? playoff record for user's team", async () => {
 			// tid 7 loses a game!
 			const ps = {
@@ -561,6 +562,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("fo_fo_fo").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't award achievement for 16-0 playoff record for other team", async () => {
 			// tid 7 is changed to 8
 			const ps = {
@@ -1111,6 +1113,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("98_degrees").check();
 			assert.equal(awarded, true);
 		});
+
 		test("don't award achievement without 82-0 regular season", async () => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
@@ -1130,6 +1133,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			awarded = await get("98_degrees").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't be awarded without 16-0 playoffs", async () => {
 			// tid 7 lost a game
 			const ps = {
@@ -1466,6 +1470,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("hardware_store").check();
 			assert.equal(awarded, true);
 		});
+
 		test("don't award achievement if user's team loses an award", async () => {
 			// tid 7 wins loses an award!
 			const awards = {
@@ -1530,6 +1535,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("hardware_store").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't award achievement if another team sweeps the awards", async () => {
 			// tid 7 is changed to 8
 			const awards = {
@@ -1628,6 +1634,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			awarded = await get("sleeper_pick").check();
 			assert.equal(awarded, true);
 		});
+
 		test("don't award achievement if not currently on user's team", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 			p.tid = 15;
@@ -1636,6 +1643,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("sleeper_pick").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't award achievement if not drafted by user", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 			p.tid = g.get("userTid");
@@ -1645,6 +1653,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("sleeper_pick").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't award achievement if lottery pick", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 			p.draft.tid = g.get("userTid");
@@ -1654,6 +1663,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("sleeper_pick").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't award achievement if old pick", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 			p.draft.pick = 15;
@@ -1663,6 +1673,7 @@ describe("basketball/worker/util/account/checkAchievement", () => {
 			const awarded = await get("sleeper_pick").check();
 			assert.equal(awarded, false);
 		});
+
 		test("don't award achievement if not ROY", async () => {
 			// Switch to another player
 			const p = (await idb.cache.players.getAll())[1];

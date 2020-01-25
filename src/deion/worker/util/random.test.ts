@@ -25,6 +25,7 @@ describe("worker/util/random", () => {
 				assert(counts[letter] < 0.3 * N);
 			}
 		});
+
 		test("works with weight function", () => {
 			const counts = {
 				a: 0,

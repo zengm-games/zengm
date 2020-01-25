@@ -3,10 +3,12 @@ import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 
 describe("worker/core/draft/genOrder", () => {
 	beforeAll(loadTeamSeasons);
+
 	test("schedule 60 draft picks", async () => {
 		const draftTids = await getDraftTids();
 		assert.equal(draftTids.length, 60);
 	});
+
 	test("give the 3 teams with the lowest win percentage picks not lower than 6", async () => {
 		const draftTids = await getDraftTids();
 		const tids = [16, 28, 21]; // teams with lowest winp
@@ -17,6 +19,7 @@ describe("worker/core/draft/genOrder", () => {
 			assert.equal(draftTids.lastIndexOf(tids[i]), 30 + i);
 		}
 	});
+
 	test("give lottery team with better record than playoff teams a pick based on actual record for round 2", async () => {
 		const draftTids = await getDraftTids();
 		const pofteams = [23, 10, 18, 24, 14]; // good record lottery team
@@ -30,6 +33,7 @@ describe("worker/core/draft/genOrder", () => {
 			assert(draftTids.lastIndexOf(pofteams[i]) < draftTids.lastIndexOf(17));
 		}
 	});
+
 	test("give reverse round 2 order for teams with the same record", async () => {
 		const draftTids = await getDraftTids();
 		const sameRec = [

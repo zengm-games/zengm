@@ -23,6 +23,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 	afterAll(() => {
 		testHelpers.resetG();
 	});
+
 	test("split teams by conference if there are two conferences", () => {
 		const teams = [
 			{
@@ -70,6 +71,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
 		assert.equal(series[0].length, 2);
 	});
+
 	test("pick teams regardless of conference if there are not two conferences", () => {
 		const teams = [
 			{
@@ -121,6 +123,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		assert.deepEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
 		assert.equal(series[0].length, 2);
 	});
+
 	test("split teams by conference if there are two conferences, including byes", () => {
 		const teams = [
 			{
@@ -189,6 +192,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 			}
 		}
 	});
+
 	test("pick teams regardless of conference if there are not two conferences, including byes", () => {
 		const teams = [
 			{
@@ -261,6 +265,7 @@ describe("worker/core/season/genPlayoffSeries", () => {
 			}
 		}
 	});
+
 	test("handle 16 teams", () => {
 		const teams = [
 			{

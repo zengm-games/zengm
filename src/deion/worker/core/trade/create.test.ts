@@ -18,6 +18,7 @@ const testCreateTrade = async (
 describe("worker/core/trade/create", () => {
 	beforeAll(beforeTests);
 	afterEach(reset);
+
 	test("create trade with team ID", async () => {
 		await trade.create([
 			{
@@ -37,6 +38,7 @@ describe("worker/core/trade/create", () => {
 		]);
 		await testCreateTrade(1, [], []);
 	});
+
 	test("create trade with player ID", async () => {
 		await trade.create([
 			{

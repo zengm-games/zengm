@@ -61,18 +61,23 @@ describe("worker/core/draft/runPicks", () => {
 		// @ts-ignore
 		idb.league = undefined;
 	});
+
 	test("draft players before the user's team first round pick", () => {
 		return testRunPicks(userPick1 - 1, userPick1 - 1);
 	});
+
 	test("then allow the user to draft in the first round", () => {
 		return testDraftUser(1);
 	});
+
 	test("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
 		return testRunPicks(userPick2 - userPick1 - 1, userPick2 - 1);
 	});
+
 	test("then allow the user to draft in the second round", () => {
 		return testDraftUser(2);
 	});
+
 	test("when called again after the user drafts, should draft more players to finish the draft", () => {
 		const numAfter = 60 - userPick2;
 		return testRunPicks(numAfter, userPick2 + numAfter);

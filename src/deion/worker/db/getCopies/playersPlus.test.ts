@@ -39,6 +39,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		p.ratings[3].season = 2014;
 		player.develop(p, 0);
 	});
+
 	test("return requested info if tid/season match", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],
@@ -66,6 +67,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
+
 	test("return requested info if tid/season match for an array of player objects", async () => {
 		const pf = await idb.getCopies.playersPlus([p, p], {
 			attrs: ["tid", "awards"],
@@ -91,6 +93,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			assert(!pf[i].hasOwnProperty("careerStatsPlayoffs"));
 		}
 	});
+
 	test("return requested info if tid/season match, even when no attrs requested", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			ratings: ["season", "ovr"],
@@ -115,6 +118,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
+
 	test("return requested info if tid/season match, even when no ratings requested", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],
@@ -139,6 +143,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
+
 	test("return requested info if tid/season match, even when no stats requested", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],
@@ -160,6 +165,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
+
 	test("return undefined if tid does not match any on record", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],
@@ -170,6 +176,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		});
 		assert.equal(typeof pf, "undefined");
 	});
+
 	test("return undefined if season does not match any on record", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],
@@ -207,6 +214,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.equal(pf.stats.gp, 5);
 		assert.equal(pf.stats.fg, 4);
 	});
+
 	test("return playoff stats if options.playoffs is true", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
@@ -226,6 +234,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.equal(pf.stats[1].gp, 3);
 		assert.equal(pf.stats[1].fg, 10);
 	});
+
 	test("not return undefined with options.showNoStats even if tid does not match any on record", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
@@ -235,6 +244,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		});
 		assert.equal(typeof pf, "object");
 	});
+
 	test("not return undefined with options.showNoStats if season does not match any on record", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
@@ -244,6 +254,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		});
 		assert.equal(typeof pf, "object");
 	});
+
 	test("not return undefined with options.showRookies if the player was drafted this season", async () => {
 		g.setWithoutSavingToDB("season", 2011);
 		let pf = await idb.getCopy.playersPlus(p, {
@@ -262,6 +273,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		});
 		assert.equal(typeof pf, "undefined");
 	});
+
 	test("fuzz ratings if options.fuzz is true", async () => {
 		let pf = await idb.getCopy.playersPlus(p, {
 			ratings: ["ovr"],
@@ -292,6 +304,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			Math.round(p.ratings[1].ovr + p.ratings[1].fuzz),
 		);
 	});
+
 	test("return stats from previous season if options.oldStats is true and current season has no stats record", async () => {
 		g.setWithoutSavingToDB("season", 2013);
 		let pf = await idb.getCopy.playersPlus(p, {
@@ -330,6 +343,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.equal(pf.stats.fg, 7);
 		g.setWithoutSavingToDB("season", 2012);
 	});
+
 	test("adjust cashOwed by options.numGamesRemaining", async () => {
 		g.setWithoutSavingToDB("season", 2012);
 		let pf = await idb.getCopy.playersPlus(p, {
@@ -369,6 +383,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 
 		assert.equal(pf.cashOwed, p.contract.amount / 1000);
 	});
+
 	test("return stats and ratings from all seasons and teams if no season or team is specified", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],
@@ -398,6 +413,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.equal(pf.careerStats.fg, 76);
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
+
 	test("return stats and ratings from all seasons with a specific team if no season is specified but a team is", async () => {
 		const pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["tid", "awards"],

@@ -53,6 +53,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.equal(players.length, g.get("minRosterSize"));
 	});
+
 	test("return error message when AI team needs to add a player but there is none", async () => {
 		await resetCacheWithPlayers({
 			"0": 10,
@@ -66,6 +67,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"AI team BAL needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.",
 		);
 	});
+
 	test("remove players to AI team over roster limit without returning error message", async () => {
 		await resetCacheWithPlayers({
 			"0": 10,
@@ -81,6 +83,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.equal(players.length, 15);
 	});
+
 	test("return error message when user team is under roster limit", async () => {
 		await resetCacheWithPlayers({
 			"0": 9,
@@ -107,6 +110,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		);
 		assert.equal(players.length, 9);
 	});
+
 	test("return error message when user team is over roster limit", async () => {
 		await resetCacheWithPlayers({
 			"0": 24,

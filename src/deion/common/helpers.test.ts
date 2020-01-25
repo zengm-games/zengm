@@ -13,14 +13,17 @@ describe("common/helpers", () => {
 			b: "hi",
 			c: [1, 2, 3],
 		};
+
 		test("return same object as input", () => {
 			assert.deepEqual(helpers.deepCopy(obj), obj);
 		});
+
 		test("don't let changes in output propagate to input", () => {
 			const obj2 = helpers.deepCopy(obj);
 			obj2.a = 2;
 			assert.notDeepEqual(helpers.deepCopy(obj), obj2);
 		});
+
 		test("don't let changes in input propagate to output", () => {
 			const obj2 = helpers.deepCopy(obj);
 			obj.a = 2;
@@ -31,10 +34,12 @@ describe("common/helpers", () => {
 		test("work with no extra options", () => {
 			assert.equal(helpers.formatCurrency(52.766), "$52.77");
 		});
+
 		test("append a string, if supplied", () => {
 			assert.equal(helpers.formatCurrency(64363.764376, "Q"), "$64363.76Q");
 			assert.equal(helpers.formatCurrency(0.794, "whatever"), "$0.79whatever");
 		});
+
 		test("round to any precision", () => {
 			assert.equal(
 				helpers.formatCurrency(64363.764376, "Q", 5),

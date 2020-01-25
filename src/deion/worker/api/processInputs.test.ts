@@ -111,6 +111,7 @@ describe("worker/api/processInputs", () => {
 			assert.equal(out[0], 6);
 			assert.equal(out[1], "DAL");
 		});
+
 		test("return user team ID and abbrev on invalid input", () => {
 			let out = validateAbbrev("fuck");
 			assert.equal(out[0], 4);
@@ -125,6 +126,7 @@ describe("worker/api/processInputs", () => {
 			assert.equal(validateSeason(2008), 2008);
 			assert.equal(validateSeason("2008"), 2008);
 		});
+
 		test("return current season on invalid input", () => {
 			assert.equal(validateSeason("fuck"), 2009);
 			assert.equal(validateSeason(), 2009);

@@ -17,6 +17,7 @@ describe("football/worker/core/season/newSchedule", () => {
 			testHelpers.resetG();
 			g.setWithoutSavingToDB("allStarGame", false);
 		});
+
 		test("when numTeams*numGames is even, everyone gets a full schedule", () => {
 			for (let numGames = 2; numGames < 50; numGames += 1) {
 				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
@@ -44,6 +45,7 @@ describe("football/worker/core/season/newSchedule", () => {
 				}
 			}
 		});
+
 		test("when numTeams*numGames is odd, one team is a game short", () => {
 			for (let numGames = 2; numGames < 50; numGames += 1) {
 				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
@@ -88,9 +90,11 @@ describe("football/worker/core/season/newSchedule", () => {
 		beforeAll(() => {
 			testHelpers.resetG();
 		});
+
 		test("schedule 256 games (16 each for 32 teams)", () => {
 			assert.equal(newSchedule(defaultTeams).length, 256);
 		});
+
 		test("schedule 8 home games and 8 away games for each team", () => {
 			const tids = newSchedule(defaultTeams);
 			const home = Array(g.get("numTeams")).fill(0); // Number of home games for each team
@@ -107,6 +111,7 @@ describe("football/worker/core/season/newSchedule", () => {
 				assert.equal(away[i], 8);
 			}
 		});
+
 		test("schedule each team one home game against every team in the same division", () => {
 			const tids = newSchedule(defaultTeams);
 			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)

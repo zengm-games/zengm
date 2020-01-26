@@ -3,8 +3,9 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
+import { View } from "../../common/types";
 
-const Relatives = ({ pid, players, stats, userTid }) => {
+const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 	const target =
 		pid !== undefined ? players.find(p => p.pid === pid) : undefined;
 
@@ -55,7 +56,7 @@ const Relatives = ({ pid, players, stats, userTid }) => {
 			if (p.pid === pid) {
 				relationArray.push("Self");
 			} else {
-				const relation = target.relatives.find(rel => rel.pid === p.pid);
+				const relation = target.relatives.find((rel: any) => rel.pid === p.pid);
 				if (relation) {
 					relationArray.push(helpers.upperCaseFirstLetter(relation.type));
 				} else {

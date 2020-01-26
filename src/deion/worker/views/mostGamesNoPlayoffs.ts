@@ -21,9 +21,9 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 		players.sort((a, b) => b.careerStats.gp - a.careerStats.gp);
 		players = players.slice(0, 100);
-		processPlayersHallOfFame(players);
+
 		return {
-			players,
+			players: processPlayersHallOfFame(players),
 			stats,
 			userTid: g.get("userTid"),
 		};

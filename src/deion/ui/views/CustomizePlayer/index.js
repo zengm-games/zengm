@@ -550,7 +550,7 @@ const CustomizePlayer = props => {
 				</div>
 
 				<br />
-				<center>
+				<div className="text-center">
 					<button
 						type="submit"
 						className="btn btn-primary btn-lg"
@@ -558,7 +558,7 @@ const CustomizePlayer = props => {
 					>
 						{title}
 					</button>
-				</center>
+				</div>
 			</form>
 		</>
 	);

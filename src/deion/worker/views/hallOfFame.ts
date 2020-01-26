@@ -13,19 +13,19 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["keyStats", "av"];
-		let players = await idb.getCopies.players({
+		const playersAll = await idb.getCopies.players({
 			retired: true,
 			filter: p => p.hof,
 		});
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
 			ratings: ["ovr", "pos"],
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});
-		processPlayersHallOfFame(players);
+
 		return {
-			players,
+			players: processPlayersHallOfFame(players),
 			stats,
 			userTid: g.get("userTid"),
 		};

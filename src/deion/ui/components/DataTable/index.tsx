@@ -18,6 +18,8 @@ import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers } from "../../util";
 import { SortOrder, SortType } from "../../../common/types";
+// eslint-disable-next-line import/no-unresolved
+import { ClassValue } from "classnames/types";
 
 export type SortBy = [number, SortOrder];
 
@@ -48,7 +50,11 @@ export type Props = {
 	name: string;
 	nonfluid?: boolean;
 	pagination?: boolean;
-	rows: any[];
+	rows: {
+		key: number | string;
+		data: any[];
+		classNames?: ClassValue;
+	}[];
 	small?: boolean;
 	superCols?: SuperCol[];
 	addFilters?: (string | undefined)[];

@@ -4,10 +4,10 @@ import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTable
 import SafeHtml from "../../../deion/ui/components/SafeHtml";
 import { helpers } from "../../../deion/ui/util";
 
-const BoxScore = ({ boxScore, Row }) => {
+const BoxScore = ({ boxScore, Row }: { boxScore: any; Row: any }) => {
 	return (
 		<>
-			{boxScore.teams.map(t => (
+			{boxScore.teams.map((t: any) => (
 				<div key={t.abbrev} className="mb-3">
 					<h2>
 						{t.tid >= 0 ? (
@@ -49,7 +49,7 @@ const BoxScore = ({ boxScore, Row }) => {
 								</tr>
 							</thead>
 							<tbody>
-								{t.players.map((p, i) => {
+								{t.players.map((p: any, i: number) => {
 									return <Row key={p.pid} i={i} p={p} />;
 								})}
 							</tbody>
@@ -108,7 +108,7 @@ const BoxScore = ({ boxScore, Row }) => {
 			{boxScore.gameOver !== false &&
 			boxScore.clutchPlays &&
 			boxScore.clutchPlays.length > 0
-				? boxScore.clutchPlays.map((text, i) => (
+				? boxScore.clutchPlays.map((text: string, i: number) => (
 						<p key={i}>
 							<SafeHtml dirty={text} />
 						</p>

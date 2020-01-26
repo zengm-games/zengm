@@ -2,11 +2,12 @@ import { PHASE } from "../../common";
 import { contractNegotiation, freeAgents, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { ViewInput } from "../../common/types";
+import { ViewInput, PlayerContract } from "../../common/types";
 
-const generateContractOptions = (contract, ovr) => {
-	let growthFactor = 0.15; // Modulate contract amounts based on last digit of ovr (add some deterministic noise)
+const generateContractOptions = (contract: PlayerContract, ovr: number) => {
+	let growthFactor = 0.15;
 
+	// Modulate contract amounts based on last digit of ovr (add some deterministic noise)
 	growthFactor += (ovr % 10) * 0.01 - 0.05;
 	let exp = g.get("season");
 
@@ -57,7 +58,7 @@ const generateContractOptions = (contract, ovr) => {
 };
 
 const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
-	const negotiations: any = await idb.cache.negotiations.getAll();
+	const negotiations = await idb.cache.negotiations.getAll();
 	let negotiation;
 
 	if (inputs.pid === undefined) {
@@ -67,9 +68,11 @@ const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
 	}
 
 	if (!negotiation) {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			errorMessage: "No negotiation with player in progress.",
 		};
+		return returnValue;
 	}
 
 	const p2 = await idb.cache.players.get(negotiation.pid);
@@ -85,9 +88,11 @@ const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
 	// This can happen if a negotiation is somehow started with a retired player
 	if (!p) {
 		contractNegotiation.cancel(negotiation.pid);
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			errorMessage: "Invalid negotiation. Please try again.",
 		};
+		return returnValue;
 	}
 
 	p.contract.amount = freeAgents.amountWithMood(

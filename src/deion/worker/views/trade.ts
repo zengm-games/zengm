@@ -4,26 +4,9 @@ import { idb } from "../db";
 import { g, helpers } from "../util"; // This relies on vars being populated, so it can't be called in parallel with updateTrade
 import { TradeTeams } from "../../common/types";
 
-const updateSummary = async vars => {
-	const otherTid = await trade.getOtherTid();
-	const teams: TradeTeams = [
-		{
-			tid: g.get("userTid"),
-			pids: vars.userPids,
-			pidsExcluded: vars.userPidsExcluded,
-			dpids: vars.userDpids,
-			dpidsExcluded: vars.userDpidsExcluded,
-		},
-		{
-			tid: otherTid,
-			pids: vars.otherPids,
-			pidsExcluded: vars.userPidsExcluded,
-			dpids: vars.otherDpids,
-			dpidsExcluded: vars.userDpidsExcluded,
-		},
-	];
+const getSummary = async (teams: TradeTeams) => {
 	const summary = await trade.summary(teams);
-	vars.summary = {
+	const summary2 = {
 		enablePropose:
 			!summary.warning &&
 			(teams[0].pids.length > 0 ||
@@ -31,18 +14,18 @@ const updateSummary = async vars => {
 				teams[1].pids.length > 0 ||
 				teams[1].dpids.length > 0),
 		warning: summary.warning,
+		teams: [0, 1].map(i => {
+			return {
+				name: summary.teams[i].name,
+				payrollAfterTrade: summary.teams[i].payrollAfterTrade,
+				total: summary.teams[i].total,
+				trade: summary.teams[i].trade,
+				picks: summary.teams[i].picks,
+				other: i === 0 ? 1 : 0, // Index of other team
+			};
+		}),
 	};
-	vars.summary.teams = [0, 1].map(i => {
-		return {
-			name: summary.teams[i].name,
-			payrollAfterTrade: summary.teams[i].payrollAfterTrade,
-			total: summary.teams[i].total,
-			trade: summary.teams[i].trade,
-			picks: summary.teams[i].picks,
-			other: i === 0 ? 1 : 0, // Index of other team
-		};
-	});
-	return vars;
+	return summary2;
 };
 
 // Validate that the stored player IDs correspond with the active team ID
@@ -132,8 +115,7 @@ const updateTrade = async () => {
 		};
 	});
 
-	const otherTid = teams[1].tid; // Need to do this after knowing otherTid
-
+	const otherTid = teams[1].tid;
 	const otherRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		otherTid,
@@ -149,9 +131,11 @@ const updateTrade = async () => {
 	});
 
 	if (t === undefined) {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			errorMessage: `Invalid team ID "${otherTid}".`,
 		};
+		return returnValue;
 	}
 
 	const otherRoster = await idb.getCopies.playersPlus(otherRosterAll, {
@@ -179,7 +163,29 @@ const updateTrade = async () => {
 		};
 	});
 
-	let vars: any = {
+	const summary = await getSummary(teams); // Always run this, for multi team mode
+
+	const teams2 = [];
+
+	for (let tid = 0; tid < g.get("numTeams"); tid++) {
+		teams2[tid] = {
+			name: g.get("teamNamesCache")[tid],
+			region: g.get("teamRegionsCache")[tid],
+			tid,
+		};
+	}
+
+	teams2.splice(g.get("userTid"), 1); // Can't trade with yourself
+
+	const userTeamName = `${g.get("teamRegionsCache")[g.get("userTid")]} ${
+		g.get("teamNamesCache")[g.get("userTid")]
+	}`;
+
+	// If the season is over, can't trade players whose contracts are expired
+	const showResigningMsg =
+		g.get("phase") > PHASE.PLAYOFFS && g.get("phase") < PHASE.FREE_AGENCY;
+
+	return {
 		salaryCap: g.get("salaryCap") / 1000,
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,
@@ -196,37 +202,20 @@ const updateTrade = async () => {
 		otherTid,
 		stats,
 		strategy: t.strategy,
+		summary,
 		won: t.seasonAttrs.won,
 		lost: t.seasonAttrs.lost,
+		showResigningMsg,
+		teams: teams2,
 		tied: t.seasonAttrs.tied,
 		ties: g.get("ties"),
+		userTeamName,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
 		forceTrade: false,
 		phase: g.get("phase"),
 		userTid: g.get("userTid"),
 	};
-	vars = await updateSummary(vars); // Always run this, for multi team mode
-
-	vars.teams = [];
-
-	for (let tid = 0; tid < g.get("numTeams"); tid++) {
-		vars.teams[tid] = {
-			name: g.get("teamNamesCache")[tid],
-			region: g.get("teamRegionsCache")[tid],
-			tid,
-		};
-	}
-
-	vars.teams.splice(g.get("userTid"), 1); // Can't trade with yourself
-
-	vars.userTeamName = `${g.get("teamRegionsCache")[g.get("userTid")]} ${
-		g.get("teamNamesCache")[g.get("userTid")]
-	}`; // If the season is over, can't trade players whose contracts are expired
-
-	vars.showResigningMsg =
-		g.get("phase") > PHASE.PLAYOFFS && g.get("phase") < PHASE.FREE_AGENCY;
-	return vars;
 };
 
 export default updateTrade;

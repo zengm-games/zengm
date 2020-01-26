@@ -3,13 +3,20 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
+import { View } from "../../common/types";
 
-const MostTeams = ({ players, stats, userTid }) => {
-	useTitleBar({ title: "Most Teams" });
+const OldestFormerPlayers = ({
+	players,
+	stats,
+	userTid,
+}: View<"oldestFormerPlayers">) => {
+	useTitleBar({ title: "Oldest Former Players" });
 
 	const cols = getCols(
 		"Name",
-		"# Teams",
+		"Age",
+		"Born",
+		"Died",
 		"Pos",
 		"Drafted",
 		"Retired",
@@ -23,7 +30,9 @@ const MostTeams = ({ players, stats, userTid }) => {
 			key: p.pid,
 			data: [
 				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
-				p.numTeams,
+				typeof p.ageAtDeath === "number" ? p.ageAtDeath : p.age,
+				p.born.year,
+				p.diedYear,
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
@@ -44,7 +53,7 @@ const MostTeams = ({ players, stats, userTid }) => {
 	return (
 		<>
 			<p>
-				These are the 100 players who played for the most teams (minimum: 5).
+				These are the 100 former players who lived the longest (minimum: 85).
 			</p>
 
 			<p>
@@ -57,17 +66,17 @@ const MostTeams = ({ players, stats, userTid }) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[1, "desc"]}
-				name="MostTeams"
+				name="OldestFormerPlayers"
 				rows={rows}
 			/>
 		</>
 	);
 };
 
-MostTeams.propTypes = {
+OldestFormerPlayers.propTypes = {
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 
-export default MostTeams;
+export default OldestFormerPlayers;

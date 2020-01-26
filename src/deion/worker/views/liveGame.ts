@@ -8,9 +8,11 @@ const updatePlayByPlay = async (
 	updateEvents: UpdateEvents,
 ) => {
 	if (updateEvents.includes("firstRun") && !inputs.fromAction) {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["live"]),
 		};
+		return returnValue;
 	}
 
 	if (

@@ -3,8 +3,9 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, SafeHtml } from "../components";
+import { View } from "../../common/types";
 
-const TragicDeaths = ({ players, stats, userTid }) => {
+const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 	useTitleBar({ title: "Tragic Deaths" });
 
 	const superCols = [

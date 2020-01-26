@@ -187,7 +187,7 @@ const updateRoster = async (
 
 		vars.t.ovr = overrides.core.team.ovr(vars.players);
 		const playersCurrent = vars.players.filter(
-			p => p.injury.gamesRemaining === 0,
+			(p: any) => p.injury.gamesRemaining === 0,
 		);
 
 		if (!overrides.core.team.ovr) {

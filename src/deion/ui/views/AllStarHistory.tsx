@@ -3,8 +3,16 @@ import React from "react";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const PlayerName = ({ p }) => {
+const PlayerName = ({
+	p,
+}: {
+	p: {
+		pid: number;
+		name: string;
+	};
+}) => {
 	if (!p) {
 		return "???";
 	}
@@ -20,7 +28,15 @@ PlayerName.propTypes = {
 	}),
 };
 
-const PlayerTeam = ({ p, season }) => {
+const PlayerTeam = ({
+	p,
+	season,
+}: {
+	p: {
+		abbrev: string;
+	};
+	season: number;
+}) => {
 	if (!p) {
 		return "???";
 	}
@@ -36,7 +52,19 @@ PlayerTeam.propTypes = {
 	season: PropTypes.number.isRequired,
 };
 
-const ResultText = ({ gid, overtimes, score, season, teamNames }) => {
+const ResultText = ({
+	gid,
+	overtimes,
+	score,
+	season,
+	teamNames,
+}: {
+	gid?: number;
+	overtimes?: number;
+	score?: [number, number];
+	season: number;
+	teamNames: [string, string];
+}) => {
 	if (gid === undefined || overtimes === undefined || score === undefined) {
 		return "???";
 	}
@@ -68,7 +96,7 @@ ResultText.propTypes = {
 	teamNames: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const AllStarHistory = ({ allAllStars, userTid }) => {
+const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 	useTitleBar({ title: "All-Star History" });
 
 	const cols = getCols(
@@ -94,6 +122,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 			key: row.season,
 			data: [
 				row.season,
+				// @ts-ignore
 				<ResultText
 					gid={row.gid}
 					overtimes={row.overtimes}
@@ -104,6 +133,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 				{
 					classNames: classNamesCaptain1,
 					value: (
+						// @ts-ignore
 						<PlayerName p={row.captain1}>
 							{row.captain1 ? row.captain1.name : "???"}
 						</PlayerName>
@@ -112,6 +142,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 				{
 					classNames: classNamesCaptain1,
 					value: (
+						// @ts-ignore
 						<PlayerTeam p={row.captain1} season={row.season}>
 							{row.captain1 ? row.captain1.abbrev : "???"}
 						</PlayerTeam>
@@ -120,6 +151,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 				{
 					classNames: classNamesCaptain2,
 					value: (
+						// @ts-ignore
 						<PlayerName p={row.captain2}>
 							{row.captain2 ? row.captain2.name : "???"}
 						</PlayerName>
@@ -128,6 +160,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 				{
 					classNames: classNamesCaptain2,
 					value: (
+						// @ts-ignore
 						<PlayerTeam p={row.captain2} season={row.season}>
 							{row.captain2 ? row.captain2.abbrev : "???"}
 						</PlayerTeam>
@@ -136,6 +169,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 				{
 					classNames: classNamesMVP,
 					value: (
+						// @ts-ignore
 						<PlayerName p={row.mvp}>
 							{row.mvp ? row.mvp.name : "???"}
 						</PlayerName>
@@ -144,6 +178,7 @@ const AllStarHistory = ({ allAllStars, userTid }) => {
 				{
 					classNames: classNamesMVP,
 					value: (
+						// @ts-ignore
 						<PlayerTeam p={row.mvp} season={row.season}>
 							{row.mvp ? row.mvp.abbrev : "???"}
 						</PlayerTeam>

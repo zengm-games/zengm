@@ -34,11 +34,11 @@ const updatePlayers = async (
 						"ewa",
 				  ]
 				: ["gp", "keyStats", "av"];
-		let players = await idb.getCopies.players({
+		const playersAll = await idb.getCopies.players({
 			// In Firefox, objects have a "watch" function
 			filter: p => p.watch && typeof p.watch !== "function",
 		});
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",

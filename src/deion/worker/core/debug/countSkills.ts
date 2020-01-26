@@ -25,7 +25,11 @@ const countSkills = async () => {
 		const skills = player.skills(r);
 
 		for (const skill of skills) {
-			counts[skill] += 1;
+			if (counts.hasOwnProperty(skill)) {
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
+				counts[skill] += 1;
+			}
 		}
 	}
 

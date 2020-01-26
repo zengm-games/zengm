@@ -17,8 +17,11 @@ typescript
   - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
 - to do
   - getting object from cache should add primary key to it
+    - PlayerWithKey, Player (with key as optional prop)
     - test with ts-ignore on teamSeason in worker/api/index.ts
       - also getSchedule
+      - also achievements.test.js idb.cache.teamSeasons.delete(teamSeason.rid);
+      - getCopy/getCopies need to be aware
     - do the same as whatever i end up doing with idb
   - types for toUI
   - types for toWorker
@@ -149,6 +152,7 @@ DataTable
   - would allow sorting by checked/unchecked for trade and trading block
   - get rid of awkward children stuff - PlayerNameLabels, mood, ...
   - then get rid of react-addons-text-content
+  - PlayerName and PlayerTeam in AllStarHistory
 
 https://react-hook-form.com/ for forms
 

@@ -1,11 +1,12 @@
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
+import { AllStars } from "../../../common/types";
 
 const getCopies = async ({
 	season,
 }: {
 	season?: number;
-} = {}): Promise<object[]> => {
+} = {}): Promise<AllStars[]> => {
 	if (season !== undefined) {
 		const awards = mergeByPk(
 			await idb.league.getAll("allStars", season),

@@ -5,15 +5,21 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import achievements from "./achievements";
+import { TeamSeason, Achievement } from "../../common/types";
 
-const get = slug => {
+const get = (slug: string) => {
 	const achievement = achievements.find(
 		achievement2 => slug === achievement2.slug,
 	);
 	if (!achievement) {
 		throw new Error(`No achievement found for slug "${slug}"`);
 	}
-	return achievement;
+	if (!achievement.check) {
+		throw new Error(`No achievement check found for slug "${slug}"`);
+	}
+	return achievement as Achievement & {
+		check: () => Promise<boolean>;
+	};
 };
 
 describe("worker/util/account/checkAchievement", () => {
@@ -35,14 +41,20 @@ describe("worker/util/account/checkAchievement", () => {
 		idb.league = testHelpers.mockIDBLeague();
 	});
 	afterAll(() => {
+		// @ts-ignore
 		idb.league = undefined;
 	});
 
-	const addExtraSeasons = async (tid, lastSeason, extraSeasons) => {
+	const addExtraSeasons = async (
+		tid: number,
+		lastSeason: number,
+		extraSeasons: Partial<TeamSeason>[],
+	) => {
 		for (const extraSeason of extraSeasons) {
 			lastSeason += 1;
 			extraSeason.tid = tid;
 			extraSeason.season = lastSeason;
+			// @ts-ignore
 			await idb.cache.teamSeasons.add(extraSeason);
 		}
 	};
@@ -55,6 +67,7 @@ describe("worker/util/account/checkAchievement", () => {
 			);
 			for (const teamSeason of teamSeasons) {
 				if (teamSeason.season > g.get("season")) {
+					// @ts-ignore
 					await idb.cache.teamSeasons.delete(teamSeason.rid);
 				}
 			}

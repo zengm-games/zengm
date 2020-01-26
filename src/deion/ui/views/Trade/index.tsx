@@ -35,7 +35,7 @@ const Trade = (props: View<"trade">) => {
 		};
 		const idType = playerOrPick === "player" ? "pids" : "dpids";
 		const excluded = includeOrExclude === "exclude" ? "-excluded" : "";
-		const key = `${userOrOther}-${idType}${excluded}`;
+		const key = `${userOrOther}-${idType}${excluded}` as keyof typeof ids;
 
 		if (ids[key].includes(id)) {
 			ids[key] = ids[key].filter(currId => currId !== id);

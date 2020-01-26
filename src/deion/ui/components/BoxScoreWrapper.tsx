@@ -10,7 +10,18 @@ import {
 	useLocalShallow,
 } from "../util";
 
-const TeamNameLink = ({ season, t }) => {
+const TeamNameLink = ({
+	season,
+	t,
+}: {
+	season: number;
+	t: {
+		abbrev: string;
+		name: string;
+		region: string;
+		tid: number;
+	};
+}) => {
 	return t.tid >= 0 ? (
 		<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
 			{t.region} {t.name}
@@ -26,7 +37,7 @@ TeamNameLink.propTypes = {
 	t: PropTypes.object.isRequired,
 };
 
-const HeadlineScore = ({ boxScore }) => {
+const HeadlineScore = ({ boxScore }: any) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
@@ -47,7 +58,7 @@ HeadlineScore.propTypes = {
 	boxScore: PropTypes.object.isRequired,
 };
 
-const FourFactors = ({ teams }) => {
+const FourFactors = ({ teams }: { teams: any[] }) => {
 	return (
 		<table className="table table-bordered table-sm">
 			<thead>
@@ -77,16 +88,16 @@ const FourFactors = ({ teams }) => {
 
 					return (
 						<tr key={t.abbrev}>
-							<td className={efg > efg2 ? "table-success" : null}>
+							<td className={efg > efg2 ? "table-success" : undefined}>
 								{helpers.roundStat(efg, "efg")}
 							</td>
-							<td className={tovp < tovp2 ? "table-success" : null}>
+							<td className={tovp < tovp2 ? "table-success" : undefined}>
 								{helpers.roundStat(tovp, "tovp")}
 							</td>
-							<td className={orbp > orbp2 ? "table-success" : null}>
+							<td className={orbp > orbp2 ? "table-success" : undefined}>
 								{helpers.roundStat(orbp, "orbp")}
 							</td>
-							<td className={ftpfga > ftpfga2 ? "table-success" : null}>
+							<td className={ftpfga > ftpfga2 ? "table-success" : undefined}>
 								{helpers.roundStat(ftpfga, "ftpfga")}
 							</td>
 						</tr>
@@ -100,7 +111,17 @@ FourFactors.propTypes = {
 	teams: PropTypes.array.isRequired,
 };
 
-const NextButton = ({ abbrev, boxScore, currentGidInList, nextGid }) => {
+const NextButton = ({
+	abbrev,
+	boxScore,
+	currentGidInList,
+	nextGid,
+}: {
+	abbrev: string;
+	boxScore: any;
+	currentGidInList: boolean;
+	nextGid?: number;
+}) => {
 	const [autoGoToNext, setAutoGoToNext] = useState(false);
 	const [clickedGoToNext, setClickedGoToNext] = useState(false);
 
@@ -191,9 +212,16 @@ const DetailedScore = ({
 	nextGid,
 	prevGid,
 	showNextPrev,
+}: {
+	abbrev: string;
+	boxScore: any;
+	currentGidInList: boolean;
+	nextGid: number;
+	prevGid: number;
+	showNextPrev: boolean;
 }) => {
 	// Quarter/overtime labels
-	const qtrs = boxScore.teams[1].ptsQtrs.map((pts, i) => {
+	const qtrs = boxScore.teams[1].ptsQtrs.map((pts: number, i: number) => {
 		return i < 4 ? `Q${i + 1}` : `OT${i - 3}`;
 	});
 	qtrs.push("F");
@@ -223,13 +251,13 @@ const DetailedScore = ({
 						<thead>
 							<tr>
 								<th />
-								{qtrs.map(qtr => (
+								{qtrs.map((qtr: number) => (
 									<th key={qtr}>{qtr}</th>
 								))}
 							</tr>
 						</thead>
 						<tbody>
-							{boxScore.teams.map(t => (
+							{boxScore.teams.map((t: any) => (
 								<tr key={t.abbrev}>
 									<th>
 										{t.tid >= 0 ? (
@@ -246,7 +274,7 @@ const DetailedScore = ({
 											t.abbrev
 										)}
 									</th>
-									{t.ptsQtrs.map((pts, i) => (
+									{t.ptsQtrs.map((pts: number, i: number) => (
 										<td key={i}>{pts}</td>
 									))}
 									<th>{t.pts}</th>
@@ -290,6 +318,14 @@ const BoxScore = ({
 	prevGid,
 	showNextPrev,
 	Row,
+}: {
+	abbrev: string;
+	boxScore: any;
+	currentGidInList: boolean;
+	nextGid: number;
+	prevGid: number;
+	showNextPrev: boolean;
+	Row: any;
 }) => {
 	const handleKeydown = useCallback(
 		e => {
@@ -321,7 +357,7 @@ const BoxScore = ({
 
 	return (
 		<>
-			<center>
+			<div className="text-center">
 				<HeadlineScore boxScore={boxScore} />
 				<DetailedScore
 					abbrev={abbrev}
@@ -332,7 +368,7 @@ const BoxScore = ({
 					prevGid={prevGid}
 					showNextPrev={showNextPrev}
 				/>
-			</center>
+			</div>
 			<overrides.components.BoxScore boxScore={boxScore} Row={Row} />
 			Attendance: {helpers.numberWithCommas(boxScore.att)}
 		</>

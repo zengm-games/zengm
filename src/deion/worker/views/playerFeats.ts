@@ -12,8 +12,9 @@ const updatePlayers = async (
 		inputs.abbrev !== state.abbrev ||
 		inputs.season !== state.season
 	) {
-		let feats: any = await idb.getCopies.playerFeats(); // Put fake fid on cached feats
+		let feats = await idb.getCopies.playerFeats();
 
+		// Put fake fid on cached feats
 		let maxFid = 0;
 
 		for (const feat of feats) {
@@ -37,7 +38,7 @@ const updatePlayers = async (
 			feats = feats.filter(feat => feat.season === inputs.season);
 		}
 
-		for (const feat of feats) {
+		const featsProcessed = feats.map(feat => {
 			feat.stats.trb = feat.stats.orb + feat.stats.drb;
 			feat.stats.fgp =
 				feat.stats.fga > 0 ? (100 * feat.stats.fg) / feat.stats.fga : 0;
@@ -52,18 +53,24 @@ const updatePlayers = async (
 				feat.score += ` (${feat.overtimes}OT)`;
 			}
 
-			feat.abbrev = g.get("teamAbbrevsCache")[feat.tid];
-			feat.oppAbbrev = g.get("teamAbbrevsCache")[feat.oppTid];
-			feat.stats.gmsc = helpers.gameScore(feat.stats); // Type
+			feat.stats.gmsc = helpers.gameScore(feat.stats);
 
+			let type: string;
 			if (feat.playoffs) {
-				feat.type = "Playoffs";
+				type = "Playoffs";
 			} else if (feat.tid === -1 || feat.tid === -2) {
-				feat.type = "All-Star";
+				type = "All-Star";
 			} else {
-				feat.type = "Regular Season";
+				type = "Regular Season";
 			}
-		}
+
+			return {
+				...feat,
+				abbrev: g.get("teamAbbrevsCache")[feat.tid],
+				oppAbbrev: g.get("teamAbbrevsCache")[feat.oppTid],
+				type,
+			};
+		});
 
 		const stats =
 			process.env.SPORT === "basketball"
@@ -113,7 +120,7 @@ const updatePlayers = async (
 				  ];
 		return {
 			abbrev: inputs.abbrev,
-			feats,
+			feats: featsProcessed,
 			season: inputs.season,
 			stats,
 			userTid: g.get("userTid"),

@@ -31,6 +31,7 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 
 	return new Promise((resolve, reject) => {
 		const request = unwrapped.openCursor(key, direction);
+
 		request.onsuccess = (event: any) => {
 			const cursor = event.target.result;
 
@@ -43,10 +44,10 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 
 				const callbackResult = callback(cursor.value, shortCircuitFunction);
 
-				const withUpdatedValue = updatedValue => {
+				try {
 					// Only update if return value is not undefined
-					if (updatedValue !== undefined) {
-						cursor.update(updatedValue);
+					if (callbackResult !== undefined) {
+						cursor.update(callbackResult);
 					}
 
 					if (shortCircuit) {
@@ -54,10 +55,6 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 					} else {
 						cursor.continue();
 					}
-				};
-
-				try {
-					withUpdatedValue(callbackResult);
 				} catch (err) {
 					reject(err);
 				}
@@ -65,6 +62,7 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 				resolve();
 			}
 		};
+
 		request.onerror = (event: any) => {
 			reject(event.target.error);
 		};

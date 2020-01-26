@@ -3,9 +3,14 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
+import { View } from "../../common/types";
 
-const HallOfFame = ({ players, stats, userTid }) => {
-	useTitleBar({ title: "Hall of Fame" });
+const MostGamesNoPlayoffs = ({
+	players,
+	stats,
+	userTid,
+}: View<"mostGamesNoPlayoffs">) => {
+	useTitleBar({ title: "Most Games, No Playoffs" });
 
 	const superCols = [
 		{
@@ -42,7 +47,7 @@ const HallOfFame = ({ players, stats, userTid }) => {
 				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
-				p.retiredYear,
+				p.retiredYear === Infinity ? null : p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				p.peakOvr,
 				p.bestStats.season,
@@ -59,13 +64,11 @@ const HallOfFame = ({ players, stats, userTid }) => {
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
-				"table-danger": p.legacyTid === userTid,
-				"table-info":
-					p.statsTids.slice(0, p.statsTids.length - 1).includes(userTid) &&
-					p.legacyTid !== userTid,
-				"table-success":
-					p.statsTids[p.statsTids.length - 1] === userTid &&
-					p.legacyTid !== userTid,
+				"table-danger": p.hof,
+				"table-success": p.retiredYear === Infinity,
+				"table-info": p.statsTids
+					.slice(0, p.statsTids.length - 1)
+					.includes(userTid),
 			},
 		};
 	});
@@ -73,24 +76,21 @@ const HallOfFame = ({ players, stats, userTid }) => {
 	return (
 		<>
 			<p>
-				Players are eligible to be inducted into the Hall of Fame after they
-				retire. The formula for inclusion is very similar to{" "}
-				<a href="http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine">
-					the method described in this article
-				</a>
-				. Hall of Famers who played for your team are{" "}
-				<span className="text-info">highlighted in blue</span>. Hall of Famers
-				who retired with your team are{" "}
-				<span className="text-success">highlighted in green</span>. Hall of
-				Famers who played most of their career with your team are{" "}
-				<span className="text-danger">highlighted in red</span>.
+				These are the 100 players who played the most career games while never
+				making the playoffs.
+			</p>
+
+			<p>
+				Players who have played for your team are{" "}
+				<span className="text-info">highlighted in blue</span>. Active players
+				are <span className="text-success">highlighted in green</span>. Hall of
+				Famers are <span className="text-danger">highlighted in red</span>.
 			</p>
 
 			<DataTable
 				cols={cols}
-				defaultSort={[20, "desc"]}
-				name="HallOfFame"
-				pagination
+				defaultSort={[5, "desc"]}
+				name="MostGamesNoPlayoffs"
 				rows={rows}
 				superCols={superCols}
 			/>
@@ -98,10 +98,10 @@ const HallOfFame = ({ players, stats, userTid }) => {
 	);
 };
 
-HallOfFame.propTypes = {
+MostGamesNoPlayoffs.propTypes = {
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 
-export default HallOfFame;
+export default MostGamesNoPlayoffs;

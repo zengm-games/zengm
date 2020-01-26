@@ -1,8 +1,13 @@
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput, AllStars } from "../../common/types";
 
-export const setTeamInfo = (t: any, i: number, allStars: any, game: any) => {
+export const setTeamInfo = (
+	t: any,
+	i: number,
+	allStars: AllStars | undefined,
+	game: any,
+) => {
 	if (allStars) {
 		const ind = t.tid === -1 ? 0 : 1;
 		t.region = "Team";
@@ -48,7 +53,7 @@ const boxScore = async (gid: number) => {
 	}
 
 	const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
-	let allStars;
+	let allStars: AllStars | undefined;
 
 	if (allStarGame) {
 		allStars = await idb.getCopy.allStars({
@@ -66,7 +71,7 @@ const boxScore = async (gid: number) => {
 
 		t.min = Math.round(t.min); // Put injured players at the bottom, then sort by GS and roster position
 
-		t.players.sort((a, b) => {
+		t.players.sort((a: any, b: any) => {
 			// This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
 			return (
 				b.gs * 100000 +

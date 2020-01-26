@@ -29,8 +29,9 @@ import {
 import { IDBPTransaction } from "idb";
 import { LeagueDB } from "./connectLeague";
 
-type Status = "empty" | "error" | "filling" | "full"; // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
+type Status = "empty" | "error" | "filling" | "full";
 
+// Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 export type Store =
 	| "allStars"
 	| "awards"
@@ -59,8 +60,9 @@ type Index =
 	| "releasedPlayersByTid"
 	| "teamSeasonsBySeasonTid"
 	| "teamSeasonsByTidSeason"
-	| "teamStatsByPlayoffsTid"; // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
+	| "teamStatsByPlayoffsTid";
 
+// This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
 export const STORES: Store[] = [
 	"allStars",
 	"awards",

@@ -287,7 +287,7 @@ const doAwards = async (conditions: Conditions) => {
 
 				// Must have stats last year!
 				const oldStatsAll = p.stats.filter(
-					ps => ps.season === g.get("season") - 1,
+					(ps: { season: number }) => ps.season === g.get("season") - 1,
 				);
 
 				if (oldStatsAll.length === 0) {
@@ -308,10 +308,12 @@ const doAwards = async (conditions: Conditions) => {
 			},
 			score: p => {
 				const oldStatsAll = p.stats.filter(
-					ps => ps.season === g.get("season") - 1,
+					(ps: { season: number }) => ps.season === g.get("season") - 1,
 				);
 				const oldStats = oldStatsAll[oldStatsAll.length - 1];
-				const ewaAllPrev = p.stats.slice(0, -1).map(ps => ps.ewa);
+				const ewaAllPrev = p.stats
+					.slice(0, -1)
+					.map((ps: { ewa: number }) => ps.ewa);
 				const min = p.currentStats.min * p.currentStats.gp;
 				const minOld = oldStats.min * oldStats.gp;
 				const ewa = p.currentStats.ewa;
@@ -424,7 +426,14 @@ const doAwards = async (conditions: Conditions) => {
 		allDefensive: "All-Defensive",
 		allRookie: "All Rookie Team",
 	};
-	const simpleAwards = ["mvp", "roy", "smoy", "dpoy", "mip", "finalsMvp"];
+	const simpleAwards = [
+		"mvp",
+		"roy",
+		"smoy",
+		"dpoy",
+		"mip",
+		"finalsMvp",
+	] as const;
 
 	for (const key of simpleAwards) {
 		const type = awardNames[key];
@@ -445,7 +454,7 @@ const doAwards = async (conditions: Conditions) => {
 	}
 
 	// Special cases for teams
-	for (const key of ["allRookie", "allLeague", "allDefensive"]) {
+	for (const key of ["allRookie", "allLeague", "allDefensive"] as const) {
 		const type = awardNames[key];
 
 		if (key === "allRookie") {

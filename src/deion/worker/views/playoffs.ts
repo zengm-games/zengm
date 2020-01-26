@@ -60,8 +60,9 @@ const updatePlayoffs = async (
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
 		let finalMatchups = false;
-		let series; // If in the current season and before playoffs started, display projected matchups
+		let series;
 
+		// If in the current season and before playoffs started, display projected matchups
 		if (inputs.season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 			series = await getProjectedSeries(inputs.season);
 		} else {
@@ -78,8 +79,15 @@ const updatePlayoffs = async (
 			}
 		}
 
-		await helpers.augmentSeries(series, inputs.season); // Formatting for the table in playoffs.html
+		await helpers.augmentSeries(series, inputs.season);
 
+		// Because augmentSeries mutates series, this is for TypeScript
+		const series2 = series as {
+			home: SeriesTeam;
+			away?: SeriesTeam;
+		}[][];
+
+		// Formatting for the table in playoffs.html
 		const matchups: {
 			rowspan: number;
 			matchup: [number, number];
@@ -124,7 +132,7 @@ const updatePlayoffs = async (
 				.map(helpers.numGamesToWinSeries),
 			confNames,
 			season: inputs.season,
-			series,
+			series: series2,
 			userTid: g.get("userTid"),
 		};
 	}

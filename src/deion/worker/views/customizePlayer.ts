@@ -73,9 +73,11 @@ const updateCustomizePlayer = async (
 			});
 
 			if (!p) {
-				return {
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
 					errorMessage: "Player not found.",
 				};
+				return returnValue;
 			}
 
 			await face.upgrade(p);

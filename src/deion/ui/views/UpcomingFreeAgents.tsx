@@ -4,8 +4,14 @@ import { PHASE } from "../../common";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const UpcomingFreeAgents = ({ phase, players, season, stats }) => {
+const UpcomingFreeAgents = ({
+	phase,
+	players,
+	season,
+	stats,
+}: View<"upcomingFreeAgents">) => {
 	useTitleBar({
 		title: "Upcoming Free Agents",
 		dropdownView: "upcoming_free_agents",

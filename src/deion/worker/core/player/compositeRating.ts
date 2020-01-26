@@ -22,14 +22,22 @@ const composoteRating = (
 		let factor: number;
 		if (typeof component === "number") {
 			factor = component;
-		} else if (fuzz) {
-			// Don't fuzz height
-			factor =
-				component === "hgt"
-					? ratings[component]
-					: fuzzRating(ratings[component], ratings.fuzz);
 		} else {
-			factor = ratings[component];
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
+			const rating: number | undefined = ratings[component];
+
+			if (rating === undefined) {
+				throw new Error(`Undefined value for rating "${component}"`);
+			}
+
+			if (fuzz) {
+				// Don't fuzz height
+				factor =
+					component === "hgt" ? rating : fuzzRating(rating, ratings.fuzz);
+			} else {
+				factor = rating;
+			}
 		}
 
 		numerator += factor * weights[i];

@@ -15,9 +15,11 @@ const updatePlayer = async (
 		state.pid !== inputs.pid
 	) {
 		if (inputs.pid === undefined) {
-			return {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
 				errorMessage: "Player not found.",
 			};
+			return returnValue;
 		}
 
 		const ratings = overrides.common.constants.RATINGS;
@@ -55,9 +57,11 @@ const updatePlayer = async (
 		});
 
 		if (!p) {
-			return {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
 				errorMessage: "Player not found.",
 			};
+			return returnValue;
 		}
 
 		await face.upgrade(p);
@@ -109,9 +113,11 @@ const updatePlayer = async (
 		});
 
 		if (!p) {
-			return {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
 				errorMessage: "Player not found.",
 			};
+			return returnValue;
 		}
 
 		// Account for extra free agent demands

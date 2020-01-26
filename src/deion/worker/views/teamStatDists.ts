@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateTeams = async (
@@ -38,9 +38,14 @@ const updateTeams = async (
 			],
 			season: inputs.season,
 		});
-		const statsAll = teams.reduce((memo, t) => {
-			for (const cat of ["seasonAttrs", "stats"]) {
-				for (const stat of Object.keys(t[cat])) {
+
+		type Keys =
+			| keyof typeof teams[number]["seasonAttrs"]
+			| keyof typeof teams[number]["stats"];
+		type StatsAll = Record<Keys, number[]>;
+		const statsAll = (teams.reduce((memo: any, t) => {
+			for (const cat of ["seasonAttrs", "stats"] as const) {
+				for (const stat of helpers.keys(t[cat])) {
 					if (memo.hasOwnProperty(stat)) {
 						memo[stat].push(t[cat][stat]);
 					} else {
@@ -50,7 +55,8 @@ const updateTeams = async (
 			}
 
 			return memo;
-		}, {});
+		}, {}) as never) as StatsAll;
+
 		return {
 			season: inputs.season,
 			statsAll,

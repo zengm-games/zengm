@@ -333,7 +333,7 @@ const TradingBlock = props => {
 
 			<div ref={beforeOffersRef} />
 
-			<center>
+			<div className="text-center">
 				<button
 					className="btn btn-lg btn-primary"
 					disabled={state.asking}
@@ -341,7 +341,7 @@ const TradingBlock = props => {
 				>
 					{!state.asking ? "Ask For Trade Proposals" : "Asking..."}
 				</button>
-			</center>
+			</div>
 
 			{state.offers.map((offer, i) => {
 				return (
@@ -357,19 +357,15 @@ const TradingBlock = props => {
 			})}
 
 			{state.offers.length > 0 ? (
-				<div>
-					<center>
-						<p>
-							Don't like those offers? Well maybe you'll get lucky if you...
-						</p>
-						<button
-							className="btn btn-lg btn-primary"
-							disabled={state.asking}
-							onClick={handleClickAskBottom}
-						>
-							{!state.asking ? "Ask For Trade Proposals Again" : "Asking..."}
-						</button>
-					</center>
+				<div className="text-center">
+					<p>Don't like those offers? Well maybe you'll get lucky if you...</p>
+					<button
+						className="btn btn-lg btn-primary"
+						disabled={state.asking}
+						onClick={handleClickAskBottom}
+					>
+						{!state.asking ? "Ask For Trade Proposals Again" : "Asking..."}
+					</button>
 				</div>
 			) : null}
 		</>

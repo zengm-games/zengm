@@ -1096,9 +1096,13 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 		throw new Error("Missing depth");
 	}
 
-	depth[pos] = sortedPids;
-	await idb.cache.teams.put(t);
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	if (depth.hasOwnProperty(pos)) {
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
+		depth[pos] = sortedPids;
+		await idb.cache.teams.put(t);
+		await toUI(["realtimeUpdate", ["playerMovement"]]);
+	}
 };
 
 const reorderRosterDrag = async (sortedPids: number[]) => {
@@ -1147,6 +1151,8 @@ const runBefore = async (
 
 	let inputs;
 	if (processInputs.hasOwnProperty(viewId)) {
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
 		inputs = processInputs[viewId](params, ctxBBGM);
 	}
 	if (inputs === undefined) {
@@ -1161,6 +1167,8 @@ const runBefore = async (
 		};
 	}
 
+	// https://github.com/microsoft/TypeScript/issues/21732
+	// @ts-ignore
 	const view = views[viewId] ? views[viewId] : overrides.views[viewId];
 
 	if (view) {
@@ -1235,9 +1243,8 @@ const updateBudget = async (budgetAmounts: {
 }) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
 
-	for (const key of Object.keys(budgetAmounts)) {
+	for (const key of helpers.keys(budgetAmounts)) {
 		// Check for NaN before updating
-		// eslint-disable-next-line no-self-compare
 		if (budgetAmounts[key] === budgetAmounts[key]) {
 			t.budget[key].amount = budgetAmounts[key];
 		}

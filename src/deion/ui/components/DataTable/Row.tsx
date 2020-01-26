@@ -2,12 +2,14 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import useClickable from "../../hooks/useClickable";
+// eslint-disable-next-line import/no-unresolved
+import { ClassValue } from "classnames/types";
 
 const Row = ({
 	row,
 }: {
 	row: {
-		classNames: any;
+		classNames?: ClassValue;
 		data: any[];
 	};
 }) => {

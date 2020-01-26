@@ -1,12 +1,12 @@
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, AllStars } from "../../common/types";
 
 const addAbbrev = (obj: any): any => {
 	return { ...obj, abbrev: g.get("teamAbbrevsCache")[obj.tid] };
 };
 
-const augment = allAllStars => {
+const augment = (allAllStars: AllStars[]) => {
 	return allAllStars.map(row => {
 		return {
 			gid: row.gid,

@@ -198,9 +198,8 @@ const getCopies = async ({
 
 		return mergeByPk(
 			fromDB,
-			[]
+			([] as Player<MinimalPlayerRatings>[])
 				.concat(
-					// @ts-ignore
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 					await idb.cache.players.indexGetAll("playersByTid", [
 						PLAYER.FREE_AGENT,
@@ -238,7 +237,7 @@ const getCopies = async ({
 				idb.league.transaction("players").store.index("statsTids"),
 				constStatsTid,
 			),
-			[]
+			([] as Player<MinimalPlayerRatings>[])
 				.concat(
 					// @ts-ignore
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),

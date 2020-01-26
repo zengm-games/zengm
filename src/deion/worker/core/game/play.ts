@@ -25,7 +25,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from "../../util";
-import { Conditions } from "../../../common/types";
+import { Conditions, ScheduleGame } from "../../../common/types";
 
 /**
  * Play one or more days of games.
@@ -82,7 +82,7 @@ const play = async (
 	};
 
 	// Saves a vector of results objects for a day, as is output from cbSimGames
-	const cbSaveResults = async results => {
+	const cbSaveResults = async (results: any[]) => {
 		const {
 			injuryTexts,
 			pidsInjuredOneGameOrLess,
@@ -253,7 +253,10 @@ const play = async (
 	};
 
 	// Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults
-	const cbSimGames = async (schedule, teams) => {
+	const cbSimGames = async (
+		schedule: (ScheduleGame & { gid: number })[],
+		teams: Record<number, any>,
+	) => {
 		const results: any[] = [];
 
 		for (let i = 0; i < schedule.length; i++) {

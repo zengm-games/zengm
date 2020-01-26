@@ -13,7 +13,7 @@ const updatePlayers = async (
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["gp", "keyStats", "av"];
-		let players: Player[] = [];
+		let playersAll: Player[] = [];
 
 		if (typeof pid === "number") {
 			const target = await idb.getCopy.players({
@@ -25,15 +25,15 @@ const updatePlayers = async (
 				const otherPlayers = await idb.getCopies.players({
 					pids,
 				});
-				players = [target, ...otherPlayers];
+				playersAll = [target, ...otherPlayers];
 			}
 		} else {
-			players = await idb.getCopies.players({
+			playersAll = await idb.getCopies.players({
 				filter: p => p.relatives.length > 0,
 			});
 		}
 
-		players = await idb.getCopies.playersPlus(players, {
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"name",
@@ -50,10 +50,10 @@ const updatePlayers = async (
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});
-		processPlayersHallOfFame(players);
+
 		return {
 			pid,
-			players,
+			players: processPlayersHallOfFame(players),
 			stats,
 			userTid: g.get("userTid"),
 		};

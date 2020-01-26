@@ -28,22 +28,20 @@ describe("worker/db/Cache", () => {
 			assert.equal(typeof p, "undefined");
 		});
 
-		for (const status of ["filling", "flushing"]) {
-			test(`wait until ${status} complete before resolving query`, async () => {
-				const p = (await idb.cache.players.getAll())[0];
+		test(`wait until filling complete before resolving query`, async () => {
+			const p = (await idb.cache.players.getAll())[0];
 
-				idb.cache._status = status;
-				let setTimeoutCalled = false;
-				setTimeout(() => {
-					setTimeoutCalled = true;
-					idb.cache._setStatus("full");
-				}, 1000);
+			idb.cache._status = "filling";
+			let setTimeoutCalled = false;
+			setTimeout(() => {
+				setTimeoutCalled = true;
+				idb.cache._setStatus("full");
+			}, 1000);
 
-				const p2 = await idb.cache.players.get(p.pid);
-				assert(setTimeoutCalled);
-				assert.equal(idb.cache._status, "full");
-				assert.equal(p.pid, p2.pid);
-			});
-		}
+			const p2 = await idb.cache.players.get(p.pid);
+			assert(setTimeoutCalled);
+			assert.equal(idb.cache._status, "full");
+			assert.equal(p.pid, p2.pid);
+		});
 	});
 });

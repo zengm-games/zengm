@@ -41,7 +41,7 @@ declare global {
 export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 export type View<T extends keyof typeof views> = Exclude<
 	ThenArg<ReturnType<typeof views[T]>>,
-	void | { redirectUrl: string }
+	void | { redirectUrl: string } | { errorMessage: string }
 >;
 
 export type ViewInput<T extends keyof typeof processInputs> = Exclude<
@@ -77,6 +77,16 @@ export type AllStars = {
 	teams: [AllStarPlayer[], AllStarPlayer[]];
 	remaining: AllStarPlayer[];
 	finalized: boolean;
+
+	// After game is complete
+	gid?: number;
+	score?: [number, number];
+	overtimes?: number;
+	mvp?: {
+		pid: number;
+		tid: number;
+		name: string;
+	};
 };
 
 export type CompositeWeights<RatingKey = string> = {

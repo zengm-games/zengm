@@ -72,7 +72,7 @@ const augmentPartialPlayer = (
 		"watch",
 		"weight",
 		"yearsFreeAgent",
-	];
+	] as (keyof typeof pg)[];
 
 	for (let i = 0; i < simpleDefaults.length; i++) {
 		if (!p.hasOwnProperty(simpleDefaults[i])) {
@@ -90,7 +90,7 @@ const augmentPartialPlayer = (
 	}
 
 	if (!p.hasOwnProperty("statsTids")) {
-		p.statsTids = Array.isArray(p.stats) ? p.stats.map(s => s.tid) : [];
+		p.statsTids = Array.isArray(p.stats) ? p.stats.map((s: any) => s.tid) : [];
 
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
 			p.statsTids.push(p.tid);

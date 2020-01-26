@@ -85,15 +85,19 @@ const customizePlayer = (params: Params) => {
 const depth = (params: Params) => {
 	// Fix broken links
 	if (params.abbrev === "FA") {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
 		};
+		return returnValue;
 	}
 
 	if (params.abbrev === "DP") {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
 		};
+		return returnValue;
 	}
 
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
@@ -346,22 +350,22 @@ const resetPassword = (params: Params) => {
 	};
 };
 
-const roster = (
-	params: Params,
-):
-	| { redirectUrl: string }
-	| { abbrev: string; season: number; tid: number } => {
+const roster = (params: Params) => {
 	// Fix broken links
 	if (params.abbrev === "FA") {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
 		};
+		return returnValue;
 	}
 
 	if (params.abbrev === "DP") {
-		return {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
 		};
+		return returnValue;
 	}
 
 	const [tid, abbrev] = validateAbbrev(params.abbrev);

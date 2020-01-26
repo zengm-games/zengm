@@ -69,7 +69,7 @@ const OwnerMoodsChart = ({
 				text?: string,
 				position?: string,
 			) => {
-				const line2 = line()
+				const line2 = line<number>()
 					.x(d => d)
 					.y(() => yScale(y));
 				svg
@@ -96,15 +96,17 @@ const OwnerMoodsChart = ({
 			drawReferenceLine(3, "var(--success)", "Perfect", "above");
 			drawReferenceLine(0, "var(--secondary)");
 
+			type Data = typeof data[number];
 			const drawLine = (
-				attr: keyof typeof data[0],
+				attr: Exclude<keyof Data, "year">,
 				color: string,
 				strokeWidth = 1,
 			) => {
-				const line2 = line()
-					.x(d => xScale(d.year))
+				const line2 = line<Data>()
+					.x(d => xScale(d.year) as number)
 					.y(d => yScale(d[attr]))
 					.curve(curveMonotoneX);
+
 				svg
 					.append("path")
 					.datum(data)
@@ -112,6 +114,7 @@ const OwnerMoodsChart = ({
 					.style("stroke", color)
 					.style("stroke-width", strokeWidth)
 					.attr("d", line2);
+
 				svg
 					.selectAll()
 					.data(data)
@@ -120,7 +123,7 @@ const OwnerMoodsChart = ({
 					.attr("class", "chart-point")
 					.attr("stroke", color)
 					.style("stroke-width", strokeWidth)
-					.attr("cx", d => xScale(d.year))
+					.attr("cx", d => xScale(d.year) as number)
 					.attr("cy", d => yScale(d[attr]))
 					.attr("r", 3 * Math.sqrt(strokeWidth));
 			};

@@ -11,8 +11,14 @@ import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
+import { View } from "../../common/types";
 
-const WatchList = ({ players, playoffs, statType, stats }) => {
+const WatchList = ({
+	players,
+	playoffs,
+	statType,
+	stats,
+}: View<"watchList">) => {
 	const [clearing, setClearing] = useState(false);
 
 	const clearWatchList = useCallback(async () => {

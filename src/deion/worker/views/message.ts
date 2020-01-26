@@ -1,12 +1,12 @@
 import { idb } from "../db";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util";
-import { UpdateEvents, Message, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateMessage = async (
 	inputs: ViewInput<"message">,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<{ message: void | Message } | { redirectUrl: string } | void> => {
+) => {
 	// Complexity of updating is to handle auto-read message, so inputs.mid is blank
 	if (
 		updateEvents.includes("firstRun") ||
@@ -25,17 +25,21 @@ const updateMessage = async (
 
 			for (const m of messages) {
 				if (!m.read) {
-					return {
+					// https://stackoverflow.com/a/59923262/786644
+					const returnValue = {
 						redirectUrl: helpers.leagueUrl(["message", m.mid]),
 					};
+					return returnValue;
 				}
 			}
 
 			// Then look for any message
 			if (messages.length > 0) {
-				return {
+				// https://stackoverflow.com/a/59923262/786644
+				const returnValue = {
 					redirectUrl: helpers.leagueUrl(["message", messages[0].mid]),
 				};
+				return returnValue;
 			}
 		} else {
 			message = await idb.getCopy.messages({

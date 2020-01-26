@@ -150,7 +150,7 @@ const makeTeams = (players: PlayerFiltered[], rookie: boolean = false): any => {
 const getRealFinalsMvp = async (
 	players: PlayerFiltered[],
 	champTid: number,
-): Promise<AwardPlayer | void> => {
+): Promise<AwardPlayer | undefined> => {
 	const games = await idb.cache.games.getAll(); // Last game of the season will have the two finals teams
 
 	const finalsTids = games[games.length - 1].teams.map(t => t.tid); // Get all playoff games between those two teams - that will be all finals games
@@ -313,7 +313,7 @@ const doAwards = async (conditions: Conditions) => {
 		allLeague: "All-League",
 		allRookie: "All Rookie Team",
 	};
-	const simpleAwards = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"];
+	const simpleAwards = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
 
 	for (const key of simpleAwards) {
 		const type = awardNames[key];
@@ -334,7 +334,7 @@ const doAwards = async (conditions: Conditions) => {
 	}
 
 	// Special cases for teams
-	for (const key of ["allRookie", "allLeague"]) {
+	for (const key of ["allRookie", "allLeague"] as const) {
 		const type = awardNames[key];
 
 		if (key === "allRookie") {

@@ -212,9 +212,11 @@ const updateAwardsRecords = async (
 		const awardType = inputs.awardType;
 
 		if (typeof awardType !== "string") {
-			return {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
 				errorMessage: "Invalid input for awardType.",
 			};
+			return returnValue;
 		}
 
 		const awardsRecords = players

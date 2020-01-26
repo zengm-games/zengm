@@ -1,7 +1,7 @@
 import { allStar } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, AllStars } from "../../common/types";
 
 const stats =
 	process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];
@@ -26,7 +26,7 @@ const getPlayerInfo = async (pid: number) => {
 	});
 };
 
-const augment = async allStars => {
+const augment = async (allStars: AllStars) => {
 	const remaining = await Promise.all(
 		allStars.remaining.map(({ pid }) => getPlayerInfo(pid)),
 	);
@@ -52,9 +52,11 @@ const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const nextGameIsAllStar = await allStar.nextGameIsAllStar();
 
 		if (!nextGameIsAllStar) {
-			return {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
 				redirectUrl: helpers.leagueUrl(["all_star_history"]),
 			};
+			return returnValue;
 		}
 
 		const allStars = await allStar.getOrCreate();

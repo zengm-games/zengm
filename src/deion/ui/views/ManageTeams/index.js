@@ -233,11 +233,11 @@ const ManageTeams = props => {
 						</React.Fragment>
 					))}
 				</div>
-				<center>
+				<div className="text-center">
 					<button type="submit" className="btn btn-primary" disabled={saving}>
 						Update Team Info
 					</button>
-				</center>
+				</div>
 			</form>
 		</>
 	);

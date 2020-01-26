@@ -43,15 +43,18 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			stats: ["season", "abbrev", "tid", ...stats],
 			fuzz: true,
 		});
-		processPlayersHallOfFame(players);
 
-		for (const p of players) {
+		const players2 = processPlayersHallOfFame(players).map((p: any) => {
 			const event = events.find(event2 => event2.pids.includes(p.pid));
-			p.details = event ? event.text : "";
-		}
+			const details = event ? event.text : "";
+			return {
+				...p,
+				details,
+			};
+		});
 
 		return {
-			players,
+			players: players2,
 			stats,
 			userTid: g.get("userTid"),
 		};

@@ -1,11 +1,11 @@
 import { idb } from "..";
+import { AllStars } from "../../../common/types";
 
 const getCopy = async ({
 	season,
 }: {
 	season: number;
-}): Promise<object | void> => {
-	console.log("getCopy", season);
+}): Promise<AllStars | undefined> => {
 	const result = await idb.getCopies.allStars({
 		season,
 	});

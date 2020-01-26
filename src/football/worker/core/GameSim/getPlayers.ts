@@ -1,6 +1,7 @@
 import { POSITIONS } from "../../../common/constants";
 import { Position } from "../../../common/types";
 import { PlayerGameSim, PlayersOnField } from "./types";
+import { helpers } from "../../../../deion/common";
 
 const getPlayers = (
 	playersOnField: PlayersOnField,
@@ -8,9 +9,10 @@ const getPlayers = (
 ): PlayerGameSim[] => {
 	const players: PlayerGameSim[] = [];
 
-	for (const pos of Object.keys(playersOnField)) {
-		// @ts-ignore
-		if (positions.includes(pos)) {
+	for (const pos of helpers.keys(playersOnField)) {
+		if (positions.includes(pos) && playersOnField[pos]) {
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
 			players.push(...playersOnField[pos]);
 		}
 	}

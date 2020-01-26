@@ -113,12 +113,14 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		for (const t2 of teams) {
 			if (t2.cid === cid) {
 				if (t2.tid === g.get("userTid")) {
-					teamStats = ((stats as never) as string[]).map((stat, i) => {
+					// @ts-ignore
+					teamStats = stats.map((stat, i) => {
 						return {
 							name: statNames[i],
 							rank: 0,
 							stat,
-							value: t2.stats[stats[i]],
+							// @ts-ignore
+							value: t2.stats[stat],
 						};
 					});
 					att = t2.seasonAttrs.att;
@@ -132,6 +134,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		for (const stat of stats) {
+			// @ts-ignore
 			teams.sort((a, b) => b.stats[stat] - a.stats[stat]);
 
 			for (let j = 0; j < teams.length; j++) {

@@ -18,7 +18,7 @@ async function updateSeasons(
 		updateEvents.includes("playerMovement")
 	) {
 		const seasons: number[][] = [];
-		let prevMinutesAll;
+		let prevMinutesAll: Map<number, number>[];
 
 		for (
 			let season = g.get("startingSeason");
@@ -30,7 +30,9 @@ async function updateSeasons(
 			});
 
 			// Can't use getCopies.players easily because it doesn't elegantly handle when a player plays for two teams in a season
-			const minutesAll = range(g.get("numTeams")).map(() => new Map());
+			const minutesAll = range(g.get("numTeams")).map(
+				() => new Map<number, number>(),
+			);
 
 			for (const p of players) {
 				const stats = p.stats.filter(
@@ -47,6 +49,7 @@ async function updateSeasons(
 				}
 			}
 
+			// @ts-ignore
 			if (prevMinutesAll) {
 				seasons.push(
 					minutesAll.map((minutes, i) => {

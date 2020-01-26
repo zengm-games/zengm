@@ -212,9 +212,9 @@ const heightToInches = (hgt: number) => {
 	return Math.round(64 + (hgt * (82 - 64)) / 100);
 };
 
-const info = {};
+/*const info = {};
 const infoIn = {};
-const infoOut = {};
+const infoOut = {};*/
 
 // let timeoutID;
 
@@ -281,10 +281,11 @@ const genRatings = (
 	const ratingsToBoost = getRatingsToBoost(pos);
 
 	for (const [rating, factor] of Object.entries(ratingsToBoost)) {
-		rawRatings[rating] = player.limitRating(
-			// @ts-ignore
-			(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
-		);
+		if (factor !== undefined) {
+			rawRatings[rating] = player.limitRating(
+				(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
+			);
+		}
 	}
 
 	if (pos !== "K" && pos !== "P" && Math.random() < 0.95) {
@@ -311,7 +312,7 @@ const genRatings = (
 		rawRatings.rbk = helpers.bound(rawRatings.rbk, 30, Infinity);
 	}
 
-	for (const rating of ["hgt", "spd"]) {
+	for (const rating of ["hgt", "spd"] as const) {
 		rawRatings[rating] = player.limitRating(
 			rawRatings[rating] + random.truncGauss(20, 10, 0, 40),
 		);
@@ -375,14 +376,14 @@ const genRatings = (
 	}
 
 	ratings.pos = overrides.core.player.pos(ratings);
-	info[`${pos}->${ratings.pos}`] =
+	/*info[`${pos}->${ratings.pos}`] =
 		info[`${pos}->${ratings.pos}`] === undefined
 			? 1
 			: info[`${pos}->${ratings.pos}`] + 1;
 	infoIn[pos] = infoIn[pos] === undefined ? 1 : infoIn[pos] + 1;
 	infoOut[ratings.pos] =
 		infoOut[ratings.pos] === undefined ? 1 : infoOut[ratings.pos] + 1;
-	/*clearTimeout(timeoutID);
+	clearTimeout(timeoutID);
      timeoutID = setTimeout(() => {
          console.log(info);
          for (const pos2 of overrides.common.constants.POSITIONS) {

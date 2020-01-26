@@ -9,7 +9,7 @@ import { View } from "../../common/types";
 
 const record = (
 	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
-	type: "home" | "away" | "div" | "conf",
+	type: "Home" | "Away" | "Div" | "Conf",
 	ties: boolean,
 ) => {
 	const won = `won${type}` as "wonHome" | "wonAway" | "wonDiv" | "wonConf";
@@ -64,10 +64,10 @@ const DivStandingsRow = ({
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
 			<td>{t.gb}</td>
-			<td>{record(t.seasonAttrs, "home", ties)}</td>
-			<td>{record(t.seasonAttrs, "away", ties)}</td>
-			<td>{record(t.seasonAttrs, "div", ties)}</td>
-			<td>{record(t.seasonAttrs, "conf", ties)}</td>
+			<td>{record(t.seasonAttrs, "Home", ties)}</td>
+			<td>{record(t.seasonAttrs, "Away", ties)}</td>
+			<td>{record(t.seasonAttrs, "Div", ties)}</td>
+			<td>{record(t.seasonAttrs, "Conf", ties)}</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
 		</tr>

@@ -124,6 +124,8 @@ export type DraftPick = {
 	dpid: number;
 } & DraftPickWithoutDpid;
 
+export type DraftType = "nba1994" | "nba2019" | "noLottery" | "random";
+
 export type EventBBGM = any;
 
 export type Game = {
@@ -163,7 +165,7 @@ export type GameAttributesLeague = {
 	defaultStadiumCapacity: number;
 	difficulty: number;
 	divs: { cid: number; did: number; name: string }[];
-	draftType: "nba1994" | "nba2019" | "noLottery" | "random";
+	draftType: DraftType;
 	foulsNeededToFoulOut: number;
 	foulRateFactor: number;
 	gameOver: boolean;

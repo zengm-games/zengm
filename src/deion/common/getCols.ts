@@ -1825,6 +1825,7 @@ for (const key of Object.keys(cols)) {
 		key.startsWith("count:") ||
 		key.startsWith("award:")
 	) {
+		// @ts-ignore
 		title = titleOverrides[key];
 	} else {
 		title = key;

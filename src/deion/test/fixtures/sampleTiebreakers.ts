@@ -112,6 +112,10 @@ export default [
 						amount: 17418.24464507639,
 						rank: 22,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -148,7 +152,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "41.38",
+				amount: 41.38,
 				rank: 11,
 			},
 			scouting: {
@@ -255,6 +259,10 @@ export default [
 						amount: 20562.803618101963,
 						rank: 14,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -291,7 +299,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "31.90",
+				amount: 31.9,
 				rank: 22,
 			},
 			scouting: {
@@ -426,6 +434,10 @@ export default [
 						amount: 29875.146095384745,
 						rank: 4,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -462,7 +474,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "43.10",
+				amount: 43.1,
 				rank: 9,
 			},
 			scouting: {
@@ -569,6 +581,10 @@ export default [
 						amount: 23752.324495517598,
 						rank: 10,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -605,7 +621,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "47.41",
+				amount: 47.41,
 				rank: 4,
 			},
 			scouting: {
@@ -740,6 +756,10 @@ export default [
 						amount: 19147.886787814947,
 						rank: 17,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -776,7 +796,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "25.86",
+				amount: 25.86,
 				rank: 29,
 			},
 			scouting: {
@@ -911,6 +931,10 @@ export default [
 						amount: 17630.844144488285,
 						rank: 21,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -947,7 +971,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "29.31",
+				amount: 29.31,
 				rank: 25,
 			},
 			scouting: {
@@ -1054,6 +1078,10 @@ export default [
 						amount: 23923.53239908471,
 						rank: 9,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -1090,7 +1118,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "43.97",
+				amount: 43.97,
 				rank: 8,
 			},
 			scouting: {
@@ -1225,6 +1253,10 @@ export default [
 						amount: 14592.239228093718,
 						rank: 26,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -1261,7 +1293,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "32.76",
+				amount: 32.76,
 				rank: 21,
 			},
 			scouting: {
@@ -1368,6 +1400,10 @@ export default [
 						amount: 25138.612318875435,
 						rank: 7,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -1404,7 +1440,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "38.79",
+				amount: 38.79,
 				rank: 14,
 			},
 			scouting: {
@@ -1511,6 +1547,10 @@ export default [
 						amount: 18974.257957108053,
 						rank: 18,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -1547,7 +1587,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "42.24",
+				amount: 42.24,
 				rank: 10,
 			},
 			scouting: {
@@ -1682,6 +1722,10 @@ export default [
 						amount: 13693.851553881974,
 						rank: 29,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -1718,7 +1762,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "26.72",
+				amount: 26.72,
 				rank: 28,
 			},
 			scouting: {
@@ -1825,6 +1869,10 @@ export default [
 						amount: 29709.68741267938,
 						rank: 5,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -1861,7 +1909,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "48.28",
+				amount: 48.28,
 				rank: 3,
 			},
 			scouting: {
@@ -1996,6 +2044,10 @@ export default [
 						amount: 56164.735665548425,
 						rank: 1,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2032,7 +2084,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "50.00",
+				amount: 50.0,
 				rank: 1,
 			},
 			scouting: {
@@ -2167,6 +2219,10 @@ export default [
 						amount: 23940.731937102893,
 						rank: 8,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2203,7 +2259,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "44.83",
+				amount: 44.83,
 				rank: 7,
 			},
 			scouting: {
@@ -2338,6 +2394,10 @@ export default [
 						amount: 14693.141201777458,
 						rank: 25,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2374,7 +2434,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "34.48",
+				amount: 34.48,
 				rank: 19,
 			},
 			scouting: {
@@ -2481,6 +2541,10 @@ export default [
 						amount: 22617.892848434756,
 						rank: 13,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2517,7 +2581,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "39.66",
+				amount: 39.66,
 				rank: 13,
 			},
 			scouting: {
@@ -2624,6 +2688,10 @@ export default [
 						amount: 39305.42821935103,
 						rank: 2,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2660,7 +2728,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "49.14",
+				amount: 49.14,
 				rank: 2,
 			},
 			scouting: {
@@ -2767,6 +2835,10 @@ export default [
 						amount: 20473.755538613997,
 						rank: 15,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2803,7 +2875,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "45.69",
+				amount: 45.69,
 				rank: 6,
 			},
 			scouting: {
@@ -2938,6 +3010,10 @@ export default [
 						amount: 14130.257356117645,
 						rank: 27,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -2974,7 +3050,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "37.07",
+				amount: 37.07,
 				rank: 16,
 			},
 			scouting: {
@@ -3081,6 +3157,10 @@ export default [
 						amount: 17910.14568238327,
 						rank: 20,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -3117,7 +3197,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "28.45",
+				amount: 28.45,
 				rank: 26,
 			},
 			scouting: {
@@ -3224,6 +3304,10 @@ export default [
 						amount: 17410.34383590112,
 						rank: 23,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -3260,7 +3344,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "27.59",
+				amount: 27.59,
 				rank: 27,
 			},
 			scouting: {
@@ -3367,6 +3451,10 @@ export default [
 						amount: 13285.023954975763,
 						rank: 30,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -3403,7 +3491,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "25.00",
+				amount: 25.0,
 				rank: 30,
 			},
 			scouting: {
@@ -3538,6 +3626,10 @@ export default [
 						amount: 22736.35358555635,
 						rank: 11,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -3574,7 +3666,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "35.34",
+				amount: 35.34,
 				rank: 18,
 			},
 			scouting: {
@@ -3709,6 +3801,10 @@ export default [
 						amount: 18317.9288328058,
 						rank: 19,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -3745,7 +3841,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "37.93",
+				amount: 37.93,
 				rank: 15,
 			},
 			scouting: {
@@ -3880,6 +3976,10 @@ export default [
 						amount: 22649.812548731326,
 						rank: 12,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -3916,7 +4016,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "36.21",
+				amount: 36.21,
 				rank: 17,
 			},
 			scouting: {
@@ -4023,6 +4123,10 @@ export default [
 						amount: 17127.350451513306,
 						rank: 24,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -4059,7 +4163,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "31.03",
+				amount: 31.03,
 				rank: 23,
 			},
 			scouting: {
@@ -4194,6 +4298,10 @@ export default [
 						amount: 19824.88335362233,
 						rank: 16,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -4230,7 +4338,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "30.17",
+				amount: 30.17,
 				rank: 24,
 			},
 			scouting: {
@@ -4365,6 +4473,10 @@ export default [
 						amount: 37560.10757394689,
 						rank: 3,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -4401,7 +4513,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "46.55",
+				amount: 46.55,
 				rank: 5,
 			},
 			scouting: {
@@ -4508,6 +4620,10 @@ export default [
 						amount: 13885.075884642476,
 						rank: 28,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -4544,7 +4660,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "33.62",
+				amount: 33.62,
 				rank: 20,
 			},
 			scouting: {
@@ -4679,6 +4795,10 @@ export default [
 						amount: 25195.512270566345,
 						rank: 6,
 					},
+					luxuryTaxShare: {
+						amount: 0,
+						rank: 1,
+					},
 				},
 				expenses: {
 					salary: {
@@ -4715,7 +4835,7 @@ export default [
 		],
 		budget: {
 			ticketPrice: {
-				amount: "40.52",
+				amount: 40.52,
 				rank: 12,
 			},
 			scouting: {

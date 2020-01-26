@@ -108,8 +108,8 @@ const updateStandings = async (
 									: helpers.gb(divTeams[0].seasonAttrs, t.seasonAttrs);
 
 							const rank =
-								playoffsRank[divTeams[k].tid] <= numPlayoffTeams / 2
-									? playoffsRank[divTeams[k].tid]
+								playoffsRank[t.tid] <= numPlayoffTeams / 2
+									? playoffsRank[t.tid]
 									: undefined;
 
 							divTeams.push({

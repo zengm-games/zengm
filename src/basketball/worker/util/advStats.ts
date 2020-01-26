@@ -98,7 +98,7 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 };
 
 // https://www.basketball-reference.com/about/glossary.html
-const calculatePercentages = (players, teams) => {
+const calculatePercentages = (players: any[], teams: any[]) => {
 	const astp: number[] = [];
 	const blkp: number[] = [];
 	const drbp: number[] = [];
@@ -186,7 +186,7 @@ const calculatePercentages = (players, teams) => {
 };
 
 // https://www.basketball-reference.com/about/ratings.html
-const calculateRatings = (players, teams, league) => {
+const calculateRatings = (players: any[], teams: any[], league: any) => {
 	const drtg: number[] = [];
 	const dws: number[] = [];
 	const ortg: number[] = [];
@@ -446,7 +446,7 @@ const advStats = async () => {
 		"pace",
 		"poss",
 	];
-	const league: any = teams.reduce((memo, t) => {
+	const league: any = teams.reduce((memo: any, t: any) => {
 		for (const key of leagueStats) {
 			// Special case for pace - scale by number of games
 			const value = key === "pace" ? t.stats.pace * t.stats.gp : t.stats[key];

@@ -123,7 +123,7 @@ const genRatings = (
 	const shootingRatings = ["ft", "fg", "tp"];
 	const skillRatings = ["oiq", "diq", "drb", "pss", "reb"]; // ins purposely left out
 
-	for (const key of Object.keys(rawRatings)) {
+	for (const key of helpers.keys(rawRatings)) {
 		const typeFactor = typeFactors[type].hasOwnProperty(key)
 			? typeFactors[type][key]
 			: 1;
@@ -135,6 +135,12 @@ const genRatings = (
 			factor = factorShooting;
 		} else if (skillRatings.includes(key)) {
 			factor = factorSkill;
+		}
+
+		// For TypeScript
+		// https://github.com/microsoft/TypeScript/issues/21732
+		if (typeFactor === undefined) {
+			throw new Error("Should never happen");
 		}
 
 		rawRatings[key] = player.limitRating(

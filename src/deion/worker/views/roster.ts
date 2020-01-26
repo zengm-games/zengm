@@ -4,7 +4,12 @@ import { idb } from "../db";
 import { g, overrides } from "../util";
 import { UpdateEvents, ViewInput, TeamSeasonAttr } from "../../common/types";
 
-const footballScore = p => {
+const footballScore = (p: {
+	ratings: {
+		pos: string;
+		ovr: number;
+	};
+}) => {
 	const ind = overrides.common.constants.POSITIONS.indexOf(p.ratings.pos);
 	return (
 		(overrides.common.constants.POSITIONS.length - ind) * 1000 + p.ratings.ovr

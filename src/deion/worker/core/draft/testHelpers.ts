@@ -4,6 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
+import { Team, TeamSeason } from "../../../common/types";
 
 const getDraftTids = async () => {
 	await draft.genOrderNBA();
@@ -18,13 +19,27 @@ const loadTeamSeasons = async () => {
 	g.setWithoutSavingToDB("draftType", "nba1994"); // Load static data
 
 	for (const st of sampleTiebreakers) {
-		const t = helpers.deepCopy(st);
-		const teamSeasons = t.seasons;
-		delete t.seasons;
-		delete t.stats;
+		const copied = helpers.deepCopy(st);
+		delete copied.stats;
+		const { seasons, ...partialT } = copied;
+
+		const t = {
+			...partialT,
+			colors: ["#000000", "#000000", "#000000"],
+		} as Team;
+
+		const teamSeasons = seasons.map(teamSeason => ({
+			...teamSeason,
+			tid: t.tid,
+			tied: 0,
+			tiedHome: 0,
+			tiedAway: 0,
+			tiedConf: 0,
+			tiedDiv: 0,
+			stadiumCapacity: 50000,
+		})) as TeamSeason[];
 
 		for (const teamSeason of teamSeasons) {
-			teamSeason.tid = t.tid;
 			await idb.cache.teamSeasons.add(teamSeason);
 		}
 

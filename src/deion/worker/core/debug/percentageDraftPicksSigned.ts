@@ -4,7 +4,12 @@ import { g } from "../../util";
 const percentageDraftPicksSigned = async () => {
 	const players = await idb.getCopies.players();
 
-	const counts = {};
+	const counts: {
+		[key: string]: {
+			signed: number;
+			total: number;
+		};
+	} = {};
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 		for (let pick = 1; pick <= g.get("numTeams"); pick++) {
 			counts[`${round}-${pick}`] = {
@@ -28,7 +33,7 @@ const percentageDraftPicksSigned = async () => {
 		}
 	}
 
-	const table = {};
+	const table: Record<keyof typeof counts, number> = {};
 	for (const [key, value] of Object.entries(counts)) {
 		table[key] = value.signed / value.total;
 	}

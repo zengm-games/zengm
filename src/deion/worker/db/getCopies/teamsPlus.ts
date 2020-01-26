@@ -164,6 +164,7 @@ const processSeasonAttrs = async <
 	);
 
 	if (season !== undefined) {
+		// @ts-ignore
 		output.seasonAttrs = output.seasonAttrs[0];
 	}
 };
@@ -260,6 +261,7 @@ const processStats = async <
 		teamStats.push({});
 	}
 
+	// @ts-ignore
 	output.stats = teamStats.map(ts => {
 		if (!overrides.core.team.processStats) {
 			throw new Error("Missing overrides.core.team.processStats");
@@ -272,6 +274,7 @@ const processStats = async <
 		season !== undefined &&
 		((playoffs && !regularSeason) || (!playoffs && regularSeason))
 	) {
+		// @ts-ignore
 		output.stats = output.stats[0];
 	}
 };

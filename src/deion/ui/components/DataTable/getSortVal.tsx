@@ -1,4 +1,5 @@
 import React from "react";
+// @ts-ignore
 import textContent from "react-addons-text-content";
 import { SortType } from "../../../common/types";
 

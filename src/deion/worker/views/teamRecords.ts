@@ -22,8 +22,8 @@ const getTeamRecord = (
 	let playoffAppearances = 0;
 	let championships = 0;
 	let finals = 0;
-	let lastPlayoffAppearance = null;
-	let lastChampionship = null;
+	let lastPlayoffAppearance: number | null = null;
+	let lastChampionship: number | null = null;
 
 	for (let i = 0; i < t.seasonAttrs.length; i++) {
 		totalWon += t.seasonAttrs[i].won;

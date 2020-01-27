@@ -1,7 +1,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput, PlayerStatType } from "../../common/types";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -60,10 +60,17 @@ const updatePlayers = async (
 		}
 
 		// Show all teams
-		let statType;
+		let statType: PlayerStatType;
 
-		if (process.env.SPORT === "basketball") {
-			statType = inputs.statType === "advanced" ? "perGame" : inputs.statType;
+		if (process.env.SPORT === "basketball" && inputs.statType === "perGame") {
+			statType = "perGame";
+		} else if (
+			process.env.SPORT === "basketball" &&
+			inputs.statType === "per36"
+		) {
+			statType = "per36";
+		} else if (process.env.SPORT === "basketball") {
+			statType = "perGame";
 		} else {
 			statType = "totals";
 		}
@@ -153,8 +160,8 @@ const updatePlayers = async (
 		) {
 			// Ensure some non-zero stat for this position
 			const onlyShowIf = statsTable.onlyShowIf;
-			let obj;
 
+			let obj: "careerStatsPlayoffs" | "careerStats" | "stats";
 			if (inputs.season === undefined) {
 				if (inputs.playoffs === "playoffs") {
 					obj = "careerStatsPlayoffs";

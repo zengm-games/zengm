@@ -1,8 +1,8 @@
 import limitRating from "./limitRating";
 import { random } from "../../util";
-import { PlayerWithoutPid } from "../../../common/types";
+import { PlayerWithoutKey } from "../../../common/types";
 
-const bonus = (p: PlayerWithoutPid) => {
+const bonus = (p: PlayerWithoutKey) => {
 	const ratings = p.ratings[p.ratings.length - 1];
 	const skip = ["fuzz", "ovr", "pos", "pot", "season", "skills"];
 

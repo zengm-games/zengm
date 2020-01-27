@@ -6,23 +6,27 @@ import {
 	AllStars,
 	DraftLotteryResult,
 	DraftPick,
-	DraftPickWithoutDpid,
+	DraftPickWithoutKey,
 	EventBBGM,
 	Game,
 	GameAttribute,
 	Message,
-	MessageWithoutMid,
+	MessageWithoutKey,
 	MinimalPlayerRatings,
 	Negotiation,
 	Player,
+	PlayerWithoutKey,
 	PlayerFeat,
-	PlayerWithoutPid,
+	PlayerFeatWithoutKey,
 	PlayoffSeries,
 	ReleasedPlayer,
-	ReleasedPlayerWithoutRid,
+	ReleasedPlayerWithoutKey,
 	ScheduleGame,
+	ScheduleGameWithoutKey,
 	TeamSeason,
+	TeamSeasonWithoutKey,
 	TeamStats,
+	TeamStatsWithoutKey,
 	Team,
 	Trade,
 } from "../../common/types";
@@ -221,7 +225,7 @@ class Cache {
 
 	draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
 
-	draftPicks: StoreAPI<DraftPick | DraftPickWithoutDpid, DraftPick, number>;
+	draftPicks: StoreAPI<DraftPickWithoutKey, DraftPick, number>;
 
 	events: StoreAPI<EventBBGM, EventBBGM, number>;
 
@@ -229,31 +233,27 @@ class Cache {
 
 	games: StoreAPI<Game, Game, number>;
 
-	messages: StoreAPI<Message | MessageWithoutMid, Message, number>;
+	messages: StoreAPI<MessageWithoutKey, Message, number>;
 
 	negotiations: StoreAPI<Negotiation, Negotiation, number>;
 
-	playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
+	playerFeats: StoreAPI<PlayerFeatWithoutKey, PlayerFeat, number>;
 
 	players: StoreAPI<
-		Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+		PlayerWithoutKey<MinimalPlayerRatings>,
 		Player<MinimalPlayerRatings>,
 		number
 	>;
 
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 
-	releasedPlayers: StoreAPI<
-		ReleasedPlayer | ReleasedPlayerWithoutRid,
-		ReleasedPlayer,
-		number
-	>;
+	releasedPlayers: StoreAPI<ReleasedPlayerWithoutKey, ReleasedPlayer, number>;
 
-	schedule: StoreAPI<ScheduleGame, ScheduleGame, number>;
+	schedule: StoreAPI<ScheduleGameWithoutKey, ScheduleGame, number>;
 
-	teamSeasons: StoreAPI<TeamSeason, TeamSeason, number>;
+	teamSeasons: StoreAPI<TeamSeasonWithoutKey, TeamSeason, number>;
 
-	teamStats: StoreAPI<TeamStats, TeamStats, number>;
+	teamStats: StoreAPI<TeamStatsWithoutKey, TeamStats, number>;
 
 	teams: StoreAPI<Team, Team, number>;
 

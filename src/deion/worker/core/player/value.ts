@@ -3,7 +3,7 @@ import { g } from "../../util";
 import {
 	MinimalPlayerRatings,
 	Player,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 } from "../../../common/types";
 
 /**
@@ -27,7 +27,7 @@ import {
  *     ratings.
  */
 const value = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 	options: {
 		fuzz?: boolean;
 		noPot?: boolean;

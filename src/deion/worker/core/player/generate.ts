@@ -2,7 +2,7 @@ import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";
 import { face, g, overrides } from "../../util";
-import { MinimalPlayerRatings, PlayerWithoutPid } from "../../../common/types";
+import { MinimalPlayerRatings, PlayerWithoutKey } from "../../../common/types";
 
 const generate = (
 	tid: number,
@@ -10,7 +10,7 @@ const generate = (
 	draftYear: number,
 	newLeague: boolean,
 	scoutingRank: number,
-): PlayerWithoutPid<MinimalPlayerRatings> => {
+): PlayerWithoutKey<MinimalPlayerRatings> => {
 	if (!overrides.core.player.genRatings) {
 		throw new Error("Missing overrides.core.player.genRatings");
 	}

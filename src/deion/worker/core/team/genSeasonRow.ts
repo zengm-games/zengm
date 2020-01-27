@@ -1,7 +1,10 @@
 import { g, random } from "../../util";
-import { TeamSeason } from "../../../common/types";
+import { TeamSeasonWithoutKey } from "../../../common/types";
 
-const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
+const genSeasonRow = (
+	tid: number,
+	prevSeason?: TeamSeasonWithoutKey,
+): TeamSeasonWithoutKey => {
 	const defaultRank = (g.get("numTeams") + 1) / 2;
 	const newSeason = {
 		tid,

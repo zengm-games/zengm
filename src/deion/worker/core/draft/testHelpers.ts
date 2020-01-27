@@ -4,7 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import { Team, TeamSeason } from "../../../common/types";
+import { Team, TeamSeasonWithoutKey } from "../../../common/types";
 
 const getDraftTids = async () => {
 	await draft.genOrderNBA();
@@ -37,7 +37,7 @@ const loadTeamSeasons = async () => {
 			tiedConf: 0,
 			tiedDiv: 0,
 			stadiumCapacity: 50000,
-		})) as TeamSeason[];
+		})) as TeamSeasonWithoutKey[];
 
 		for (const teamSeason of teamSeasons) {
 			await idb.cache.teamSeasons.add(teamSeason);

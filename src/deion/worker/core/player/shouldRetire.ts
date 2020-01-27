@@ -3,14 +3,14 @@ import { g, random } from "../../util";
 import {
 	MinimalPlayerRatings,
 	Player,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 } from "../../../common/types"; // Players meeting one of these cutoffs might retire
 
 let maxAge = 34;
 const minPot = process.env.SPORT === "basketball" ? 40 : 50;
 
 const shouldRetire = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
 	const age = g.get("season") - p.born.year;
 	const { pos, pot } = p.ratings[p.ratings.length - 1];

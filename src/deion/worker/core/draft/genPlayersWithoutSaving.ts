@@ -2,13 +2,13 @@ import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { g, random } from "../../util";
-import { MinimalPlayerRatings, PlayerWithoutPid } from "../../../common/types";
+import { MinimalPlayerRatings, PlayerWithoutKey } from "../../../common/types";
 
 const genPlayersWithoutSaving = (
 	draftYear: number,
 	scoutingRank: number,
 	numPlayers?: number,
-): PlayerWithoutPid<MinimalPlayerRatings>[] => {
+): PlayerWithoutKey<MinimalPlayerRatings>[] => {
 	if (numPlayers === null || numPlayers === undefined) {
 		numPlayers = Math.round(
 			(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,

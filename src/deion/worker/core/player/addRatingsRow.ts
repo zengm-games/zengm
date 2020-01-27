@@ -3,7 +3,7 @@ import { g } from "../../util";
 import {
 	MinimalPlayerRatings,
 	Player,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 } from "../../../common/types";
 
 /**
@@ -14,7 +14,7 @@ import {
  * @param {number} scoutingRank Between 1 and g.get("numTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  */
 const addRatingsRow = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 	scoutingRank?: number,
 	injuryIndex?: number,
 ) => {

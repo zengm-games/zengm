@@ -1,7 +1,7 @@
 import { overrides } from "../../util";
-import { Player, PlayerWithoutPid } from "../../../common/types";
+import { Player, PlayerWithoutKey } from "../../../common/types";
 
-const getNeededPositions = (players: Player[] | PlayerWithoutPid[]) => {
+const getNeededPositions = (players: Player[] | PlayerWithoutKey[]) => {
 	const neededPositions = new Set<string>();
 
 	if (Object.keys(overrides.common.constants.POSITION_COUNTS).length === 0) {

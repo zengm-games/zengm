@@ -1,5 +1,5 @@
 import { g, overrides } from "../../util";
-import { Player, PlayerWithoutPid } from "../../../common/types";
+import { Player, PlayerWithoutKey } from "../../../common/types";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -13,7 +13,7 @@ import { Player, PlayerWithoutPid } from "../../../common/types";
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  */
 const addStatsRow = async (
-	p: Player | PlayerWithoutPid,
+	p: Player | PlayerWithoutKey,
 	playoffs: boolean = false,
 ) => {
 	const statsRow: any = {

@@ -8,21 +8,21 @@ import iterate from "./iterate";
 import { helpers, logEvent, overrides } from "../util";
 import {
 	DraftLotteryResult,
-	DraftPickWithoutDpid,
-	ReleasedPlayerWithoutRid,
+	DraftPickWithoutKey,
+	ReleasedPlayerWithoutKey,
 	AllStars,
 	EventBBGM,
 	GameAttribute,
 	Game,
-	Message,
+	MessageWithoutKey,
 	Negotiation,
-	PlayerFeat,
-	PlayerWithoutPid,
+	PlayerFeatWithoutKey,
+	PlayerWithoutKey,
 	MinimalPlayerRatings,
 	PlayoffSeries,
-	ScheduleGame,
-	TeamSeason,
-	TeamStats,
+	ScheduleGameWithoutKey,
+	TeamSeasonWithoutKey,
+	TeamStatsWithoutKey,
 	Team,
 	Trade,
 } from "../../common/types";
@@ -43,7 +43,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	draftPicks: {
 		key: number;
-		value: DraftPickWithoutDpid;
+		value: DraftPickWithoutKey;
 		autoIncrementKeyPath: "dpid";
 	};
 	events: {
@@ -68,7 +68,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	messages: {
 		key: number;
-		value: Message;
+		value: MessageWithoutKey;
 		autoIncrementKeyPath: "mid";
 	};
 	negotiations: {
@@ -77,12 +77,12 @@ export interface LeagueDB extends DBSchema {
 	};
 	playerFeats: {
 		key: number;
-		value: PlayerFeat;
+		value: PlayerFeatWithoutKey;
 		autoIncrementKeyPath: "fid";
 	};
 	players: {
 		key: number;
-		value: PlayerWithoutPid<MinimalPlayerRatings>;
+		value: PlayerWithoutKey<MinimalPlayerRatings>;
 		autoIncrementKeyPath: "pid";
 		indexes: {
 			"draft.year, retiredYear": [number, number];
@@ -96,17 +96,17 @@ export interface LeagueDB extends DBSchema {
 	};
 	releasedPlayers: {
 		key: number;
-		value: ReleasedPlayerWithoutRid;
+		value: ReleasedPlayerWithoutKey;
 		autoIncrementKeyPath: "rid";
 	};
 	schedule: {
 		key: number;
-		value: ScheduleGame;
+		value: ScheduleGameWithoutKey;
 		autoIncrementKeyPath: "gid";
 	};
 	teamSeasons: {
 		key: number;
-		value: TeamSeason;
+		value: TeamSeasonWithoutKey;
 		autoIncrementKeyPath: "rid";
 		indexes: {
 			"season, tid": [number, number];
@@ -115,7 +115,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	teamStats: {
 		key: number;
-		value: TeamStats;
+		value: TeamStatsWithoutKey;
 		autoIncrementKeyPath: "rid";
 		indexes: {
 			"season, tid": [number, number];

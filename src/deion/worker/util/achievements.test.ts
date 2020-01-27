@@ -67,7 +67,6 @@ describe("worker/util/account/checkAchievement", () => {
 			);
 			for (const teamSeason of teamSeasons) {
 				if (teamSeason.season > g.get("season")) {
-					// @ts-ignore
 					await idb.cache.teamSeasons.delete(teamSeason.rid);
 				}
 			}

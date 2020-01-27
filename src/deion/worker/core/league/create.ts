@@ -18,7 +18,7 @@ import {
 } from "../../util";
 import {
 	Conditions,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 	MinimalPlayerRatings,
 	GameAttributesLeague,
 	League,
@@ -458,7 +458,7 @@ export const createWithoutSaving = (
 		}
 
 		players = leagueFile.players.map(p0 => {
-			// Has to be any because I can't figure out how to change PlayerWithoutPidWithStats to Player
+			// Has to be any because I can't figure out how to change PlayerWithoutKeyWithStats to Player
 			const p: any = player.augmentPartialPlayer(
 				p0,
 				scoutingRank,
@@ -481,7 +481,7 @@ export const createWithoutSaving = (
 
 		// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 		const rookieSalaries = draft.getRookieSalaries();
-		const keptPlayers: PlayerWithoutPid<MinimalPlayerRatings>[] = [];
+		const keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 
 		for (
 			let numYearsAgo = NUM_PAST_SEASONS;

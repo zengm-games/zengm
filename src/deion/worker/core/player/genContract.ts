@@ -3,7 +3,7 @@ import {
 	MinimalPlayerRatings,
 	Player,
 	PlayerContract,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 } from "../../../common/types";
 
 /**
@@ -15,7 +15,7 @@ import {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 const genContract = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 	randomizeExp: boolean = false,
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,

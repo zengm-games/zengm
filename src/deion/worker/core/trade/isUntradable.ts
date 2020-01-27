@@ -1,9 +1,9 @@
 import { PHASE } from "../../../common";
 import { g } from "../../util";
-import { Player, PlayerWithoutPid } from "../../../common/types";
+import { Player, PlayerWithoutKey } from "../../../common/types";
 
 const isUntradable = (
-	p: Player | PlayerWithoutPid,
+	p: Player | PlayerWithoutKey,
 ): {
 	untradable: boolean;
 	untradableMsg: string;

@@ -1,7 +1,7 @@
 import { defaultGameAttributes, g } from "../../../../deion/worker/util";
 import {
 	Player,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 	MinimalPlayerRatings,
 } from "../../../../deion/common/types";
 
@@ -15,7 +15,7 @@ import {
  * @return {boolean} Hall of Fame worthy?
  */
 const madeHof = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): boolean => {
 	// Average together WS and EWA
 	const winShares = p.stats.map(ps => {

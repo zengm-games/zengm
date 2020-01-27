@@ -2,11 +2,11 @@ import value from "./value";
 import {
 	MinimalPlayerRatings,
 	Player,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 } from "../../../common/types";
 
 const updateValues = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ) => {
 	p.value = value(p);
 	p.valueNoPot = value(p, {

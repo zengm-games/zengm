@@ -1,5 +1,5 @@
 import { g } from "../../../../deion/worker/util";
-import { Player, PlayerWithoutPid } from "../../../../deion/common/types";
+import { Player, PlayerWithoutKey } from "../../../../deion/common/types";
 import { PlayerRatings } from "../../../common/types";
 
 const getMostCommonPos = (ratings: PlayerRatings[]) => {
@@ -25,7 +25,7 @@ const getMostCommonPos = (ratings: PlayerRatings[]) => {
 };
 
 const madeHof = (
-	p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
+	p: Player<PlayerRatings> | PlayerWithoutKey<PlayerRatings>,
 ): boolean => {
 	const av = p.stats
 		.filter(ps => {

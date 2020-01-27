@@ -121,7 +121,8 @@ export type DraftLotteryResult = {
 	result: DraftLotteryResultArray;
 };
 
-export type DraftPickWithoutDpid = {
+export type DraftPickWithoutKey = {
+	dpid?: number;
 	tid: number;
 	originalTid: number;
 	round: number;
@@ -132,7 +133,7 @@ export type DraftPickWithoutDpid = {
 
 export type DraftPick = {
 	dpid: number;
-} & DraftPickWithoutDpid;
+} & DraftPickWithoutKey;
 
 export type DraftType = "nba1994" | "nba2019" | "noLottery" | "random";
 
@@ -322,7 +323,8 @@ export type OwnerMood = {
 	wins: number;
 };
 
-export type MessageWithoutMid = {
+export type MessageWithoutKey = {
+	mid?: number;
 	from: string;
 	read: boolean;
 	text: string;
@@ -333,7 +335,7 @@ export type MessageWithoutMid = {
 
 export type Message = {
 	mid: number;
-} & MessageWithoutMid;
+} & MessageWithoutKey;
 
 export type MenuItemLink = {
 	type: "link";
@@ -438,7 +440,7 @@ export type PlayerContract = {
 	exp: number;
 };
 
-export type PlayerFeat = {
+export type PlayerFeatWithoutKey = {
 	fid?: number;
 	pid: number;
 	name: string;
@@ -452,6 +454,10 @@ export type PlayerFeat = {
 	won: boolean;
 	score: string;
 	overtimes: number;
+};
+
+export type PlayerFeat = PlayerFeatWithoutKey & {
+	fid: number;
 };
 
 export type PlayerFiltered = any;
@@ -492,7 +498,7 @@ export type MinimalPlayerRatings = {
 	endu: number;
 };
 
-export type PlayerWithoutPid<PlayerRatings = any> = {
+export type PlayerWithoutKey<PlayerRatings = any> = {
 	awards: {
 		season: number;
 		type: string;
@@ -530,8 +536,8 @@ export type PlayerWithoutPid<PlayerRatings = any> = {
 		potDrop?: number;
 	}[];
 	lastName: string;
-	pos?: string;
-	// Only in players from custom league files
+	pid?: number;
+	pos?: string; // Only in players from custom league files
 	ptModifier: number;
 	ratings: PlayerRatings[];
 	relatives: Relative[];
@@ -549,13 +555,11 @@ export type PlayerWithoutPid<PlayerRatings = any> = {
 	watch: boolean;
 	weight: number;
 	yearsFreeAgent: number;
-}; // Spread rather than intersection because we need it to be recognized as exact.
-// https://flow.org/en/docs/types/unions/#toc-disjoint-unions-with-exact-types
-// https://github.com/facebook/flow/issues/4946
+};
 
 export type Player<PlayerRatings = any> = {
 	pid: number;
-} & PlayerWithoutPid<PlayerRatings>;
+} & PlayerWithoutKey<PlayerRatings>;
 
 export type PlayerStatType = "per36" | "perGame" | "totals";
 
@@ -633,23 +637,25 @@ export type ContractInfo = {
 	watch: boolean;
 };
 
-export type ReleasedPlayer = {
+export type ReleasedPlayerWithoutKey = {
+	rid?: number;
+	pid: number;
+	tid: number;
+	contract: PlayerContract;
+};
+
+export type ReleasedPlayer = ReleasedPlayerWithoutKey & {
 	rid: number;
-	pid: number;
-	tid: number;
-	contract: PlayerContract;
 };
 
-export type ReleasedPlayerWithoutRid = {
-	pid: number;
-	tid: number;
-	contract: PlayerContract;
-};
-
-export type ScheduleGame = {
+export type ScheduleGameWithoutKey = {
 	gid?: number;
 	awayTid: number;
 	homeTid: number;
+};
+
+export type ScheduleGame = ScheduleGameWithoutKey & {
+	gid: number;
 };
 
 export type SortOrder = "asc" | "desc";
@@ -756,7 +762,8 @@ export type TeamBasic = {
 
 export type TeamStatType = "perGame" | "totals";
 
-export type TeamSeason = {
+export type TeamSeasonWithoutKey = {
+	rid?: number;
 	tid: number;
 	season: number;
 	gp: number;
@@ -806,8 +813,16 @@ export type TeamSeason = {
 	ownerMood?: OwnerMood;
 };
 
+export type TeamSeason = TeamSeasonWithoutKey & {
+	rid: number;
+};
+
 // opp stats (except Blk) can be undefined
-export type TeamStats = any;
+export type TeamStatsWithoutKey = any;
+
+export type TeamStats = TeamStatsWithoutKey & {
+	rid: number;
+};
 
 export type TradePickValues = {
 	[key: string]: number[];
@@ -934,7 +949,7 @@ export type WorkerOverridesCore = {
 			PR: T[];
 		};
 		heightToRating?: (heightInInches: number) => number;
-		madeHof?: (p: Player | PlayerWithoutPid) => boolean;
+		madeHof?: (p: Player | PlayerWithoutKey) => boolean;
 		ovr?: (a: any, pos?: any) => number;
 		pos?: (a: any) => string;
 		processStats?: (

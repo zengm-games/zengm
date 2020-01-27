@@ -42,7 +42,7 @@ import {
 	Local,
 	LockName,
 	Player,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 	UpdateEvents,
 	TradeTeams,
 	MinimalPlayerRatings,
@@ -1037,7 +1037,6 @@ const removeLastTeam = async (): Promise<void> => {
 	);
 
 	for (const teamSeason of teamSeasons) {
-		// @ts-ignore
 		await idb.cache.teamSeasons.delete(teamSeason.rid);
 	}
 
@@ -1404,10 +1403,11 @@ const updateTeamInfo = async (
 			"teamSeasonsByTidSeason",
 			[t.tid, g.get("season")],
 		);
-		// @ts-ignore
-		teamSeason.pop = parseFloat(newTeams[t.tid].pop);
-		// @ts-ignore
-		teamSeason.stadiumCapacity = parseInt(newTeams[t.tid].stadiumCapacity, 10);
+		teamSeason.pop = parseFloat((newTeams[t.tid].pop as unknown) as string);
+		teamSeason.stadiumCapacity = parseInt(
+			(newTeams[t.tid].stadiumCapacity as unknown) as string,
+			10,
+		);
 
 		if (Number.isNaN(teamSeason.pop)) {
 			throw new Error("Invalid pop");
@@ -1431,7 +1431,7 @@ const updateTeamInfo = async (
 };
 
 const upsertCustomizedPlayer = async (
-	p: Player | PlayerWithoutPid,
+	p: Player | PlayerWithoutKey,
 	originalTid: number,
 	season: number,
 	updatedRatingsOrAge: boolean,

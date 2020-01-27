@@ -3,7 +3,7 @@ import { g } from "../../util";
 import {
 	Player,
 	PlayerContract,
-	PlayerWithoutPid,
+	PlayerWithoutKey,
 } from "../../../common/types";
 
 /**
@@ -16,7 +16,7 @@ import {
  * @return {Object} Updated player object.
  */
 const setContract = (
-	p: Player | PlayerWithoutPid,
+	p: Player | PlayerWithoutKey,
 	contract: PlayerContract,
 	signed: boolean,
 ) => {

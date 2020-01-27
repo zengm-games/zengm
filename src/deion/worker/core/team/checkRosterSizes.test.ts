@@ -4,7 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { PlayerWithoutPid, MinimalPlayerRatings } from "../../../common/types";
+import { PlayerWithoutKey, MinimalPlayerRatings } from "../../../common/types";
 
 describe("worker/core/team/checkRosterSizes", () => {
 	beforeAll(() => {
@@ -16,7 +16,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 	// resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and	// 1 free agent with a minimum contract.
 
 	const resetCacheWithPlayers = async (info: { [key: string]: number }) => {
-		const players: PlayerWithoutPid<MinimalPlayerRatings>[] = [];
+		const players: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 
 		for (const tidString of Object.keys(info)) {
 			const tid = parseInt(tidString, 10);

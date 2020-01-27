@@ -3,8 +3,15 @@ import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
+const PlayerFeats = ({
+	abbrev,
+	feats,
+	season,
+	stats,
+	userTid,
+}: View<"playerFeats">) => {
 	useTitleBar({
 		title: "Statistical Feats",
 		dropdownView: "player_feats",
@@ -26,9 +33,7 @@ const PlayerFeats = ({ abbrev, feats, season, stats, userTid }) => {
 		return {
 			key: p.fid,
 			data: [
-				<PlayerNameLabels injury={p.injury} pid={p.pid} watch={p.watch}>
-					{p.name}
-				</PlayerNameLabels>,
+				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
 				p.pos,
 				<a href={helpers.leagueUrl(["roster", p.abbrev, p.season])}>
 					{p.abbrev}

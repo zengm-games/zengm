@@ -2,8 +2,28 @@ import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
+import { View } from "../../../common/types";
 
-const genPlayerRows = (players, handleToggle, userOrOther, stats) => {
+type HandleToggle = (
+	userOrOther: "other" | "user",
+	playerOrPick: "pick" | "player",
+	includeOrExclude: "include" | "exclude",
+	id: number,
+) => Promise<void>;
+
+type UserOrOther = "user" | "other";
+
+type TradeProps = View<"trade">;
+type Stats = TradeProps["stats"];
+type Picks = TradeProps["userRoster"];
+type Roster = TradeProps["otherRoster"];
+
+const genPlayerRows = (
+	players: Roster,
+	handleToggle: HandleToggle,
+	userOrOther: UserOrOther,
+	stats: Stats,
+) => {
 	return players.map(p => {
 		return {
 			key: p.pid,
@@ -51,7 +71,11 @@ const genPlayerRows = (players, handleToggle, userOrOther, stats) => {
 	});
 };
 
-const genPickRows = (picks, handleToggle, userOrOther) => {
+const genPickRows = (
+	picks: Picks,
+	handleToggle: HandleToggle,
+	userOrOther: UserOrOther,
+) => {
 	return picks.map(pick => {
 		return {
 			key: pick.dpid,
@@ -86,7 +110,19 @@ const pickCols = getCols("", "X", "Draft Picks");
 pickCols[0].sortSequence = [];
 pickCols[2].width = "100%";
 
-const AssetList = ({ handleToggle, picks, roster, stats, userOrOther }) => {
+const AssetList = ({
+	handleToggle,
+	picks,
+	roster,
+	stats,
+	userOrOther,
+}: {
+	handleToggle: HandleToggle;
+	picks: Picks;
+	roster: Roster;
+	stats: Stats;
+	userOrOther: UserOrOther;
+}) => {
 	const playerCols = getCols(
 		"",
 		"X",
@@ -122,7 +158,6 @@ const AssetList = ({ handleToggle, picks, roster, stats, userOrOther }) => {
 				<DataTable
 					cols={pickCols}
 					defaultSort={[1, "asc"]}
-					disableSorting
 					hideAllControls
 					name={`Trade:Picks:${userOrOtherKey}`}
 					rows={pickRows}

@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React from "react";
 
 const Buttons = ({
 	asking,
@@ -14,10 +14,10 @@ const Buttons = ({
 	enablePropose: boolean;
 	forceTrade: boolean;
 	godMode: boolean;
-	handleClickAsk: (x: MouseEvent) => void;
-	handleClickClear: (x: MouseEvent) => void;
-	handleClickForceTrade: (x: MouseEvent) => void;
-	handleClickPropose: (x: MouseEvent) => void;
+	handleClickAsk: () => void;
+	handleClickClear: () => void;
+	handleClickForceTrade: () => void;
+	handleClickPropose: () => void;
 }) => {
 	return (
 		<>
@@ -26,7 +26,7 @@ const Buttons = ({
 					<label className="god-mode god-mode-text">
 						<input
 							type="checkbox"
-							onClick={handleClickForceTrade}
+							onChange={handleClickForceTrade}
 							checked={forceTrade}
 						/>
 						Force Trade

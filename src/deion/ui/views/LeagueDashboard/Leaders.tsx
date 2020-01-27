@@ -1,8 +1,21 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
+import { View } from "../../../common/types";
 
-const Leader = ({ abbrev, name, pid, stat, value }) => {
+const Leader = ({
+	abbrev,
+	name,
+	pid,
+	stat,
+	value,
+}: {
+	abbrev?: string;
+	name: string;
+	pid: number;
+	stat: string;
+	value: number;
+}) => {
 	const numberToDisplay =
 		process.env.SPORT === "basketball"
 			? helpers.roundStat(value, stat)
@@ -30,7 +43,10 @@ Leader.propTypes = {
 	value: PropTypes.number.isRequired,
 };
 
-const Leaders = ({ leagueLeaders, teamLeaders }) => (
+const Leaders = ({
+	leagueLeaders,
+	teamLeaders,
+}: Pick<View<"leagueDashboard">, "leagueLeaders" | "teamLeaders">) => (
 	<>
 		<h2>Team Leaders</h2>
 		<p>

@@ -8,6 +8,7 @@ import {
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
 const NegotiationList = ({
 	capSpace,
@@ -20,7 +21,7 @@ const NegotiationList = ({
 	stats,
 	sumContracts,
 	userTid,
-}) => {
+}: View<"negotiationList">) => {
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
 
 	useTitleBar({ title });
@@ -67,6 +68,8 @@ const NegotiationList = ({
 				>
 					<span style={{ display: "none" }}>{p.freeAgentMood[userTid]}</span>
 				</div>,
+				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+				// @ts-ignore
 				<NegotiateButtons
 					canGoOverCap={!hardCap}
 					capSpace={capSpace}

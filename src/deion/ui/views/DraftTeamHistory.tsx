@@ -3,6 +3,7 @@ import React from "react";
 import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -10,7 +11,7 @@ const DraftTeamHistory = ({
 	players,
 	stats,
 	userAbbrev,
-}) => {
+}: View<"draftTeamHistory">) => {
 	useTitleBar({
 		title: "Draft History",
 		dropdownView: "draft_team_history",

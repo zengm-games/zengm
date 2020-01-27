@@ -6,7 +6,17 @@ import { getCols } from "../../util";
 const cols = getCols("Year", "Type", "Games", "Ovr Drop", "Pot Drop");
 cols[1].width = "100%";
 
-const Injuries = ({ injuries }) => {
+const Injuries = ({
+	injuries,
+}: {
+	injuries: {
+		games: number;
+		season: number;
+		type: string;
+		ovrDrop?: number;
+		potDrop?: number;
+	}[];
+}) => {
 	if (injuries.length === 0) {
 		return <p>None</p>;
 	}

@@ -26,8 +26,9 @@ const ovr = (
 		0.14314723 * ovrs[6] +
 		0.10012792 * ovrs[7] +
 		0.10397797 * ovrs[8] +
-		0.06609493 * ovrs[9]; // Translate from -20/20 to 0/100 scale
+		0.06609493 * ovrs[9];
 
+	// Translate from -20/20 to 0/100 scale
 	const rawOVR = (predictedMOV * 50) / 20 + 50;
 	return helpers.bound(Math.round(rawOVR), 0, Infinity);
 };

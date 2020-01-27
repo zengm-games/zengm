@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
+import { View } from "../../common/types";
 
 // Show the negotiations list if there are more ongoing negotiations
-async function redirectNegotiationOrRoster(cancelled) {
+const redirectNegotiationOrRoster = async (cancelled: boolean) => {
 	const count = await toWorker("countNegotiations");
 	if (count > 0) {
 		realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
@@ -15,14 +16,14 @@ async function redirectNegotiationOrRoster(cancelled) {
 	} else {
 		realtimeUpdate([], helpers.leagueUrl(["roster"]));
 	}
-}
+};
 
-const cancel = async pid => {
+const cancel = async (pid: number) => {
 	await toWorker("cancelContractNegotiation", pid);
 	redirectNegotiationOrRoster(true);
 };
 
-const sign = async (pid, amount, exp) => {
+const sign = async (pid: number, amount: number, exp: number) => {
 	const errorMsg = await toWorker(
 		"acceptContractNegotiation",
 		pid,
@@ -47,7 +48,7 @@ const Negotiation = ({
 	resigning,
 	salaryCap,
 	userTid,
-}) => {
+}: View<"negotiation">) => {
 	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
 
 	// See views.freeAgents for moods as well

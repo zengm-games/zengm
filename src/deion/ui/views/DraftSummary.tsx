@@ -3,8 +3,15 @@ import React from "react";
 import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const DraftSummary = ({ draftType, players, season, stats, userTid }) => {
+const DraftSummary = ({
+	draftType,
+	players,
+	season,
+	stats,
+	userTid,
+}: View<"draftSummary">) => {
 	useTitleBar({
 		title: "Draft History",
 		jumpTo: true,

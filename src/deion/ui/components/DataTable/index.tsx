@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { csvFormatRows } from "d3-dsv";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
-import React, { SyntheticEvent, MouseEvent } from "react";
+import React, { SyntheticEvent, MouseEvent, ReactNode } from "react";
 import Controls from "./Controls";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -52,7 +52,13 @@ export type Props = {
 	pagination?: boolean;
 	rows: {
 		key: number | string;
-		data: any[];
+		data: (
+			| ReactNode
+			| {
+					classNames?: ClassValue;
+					value: ReactNode;
+			  }
+		)[];
 		classNames?: ClassValue;
 	}[];
 	small?: boolean;

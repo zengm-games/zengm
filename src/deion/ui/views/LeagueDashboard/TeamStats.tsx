@@ -1,8 +1,14 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
+import { View } from "../../../common/types";
 
-const TeamStat = ({ name, rank, stat, value }) => {
+const TeamStat = ({
+	name,
+	rank,
+	stat,
+	value,
+}: View<"leagueDashboard">["teamStats"][number]) => {
 	return (
 		<>
 			{name}: {helpers.roundStat(value, stat)} ({helpers.ordinal(rank)})
@@ -18,7 +24,9 @@ TeamStat.propTypes = {
 	value: PropTypes.number.isRequired,
 };
 
-const TeamStats = ({ teamStats }) => (
+const TeamStats = ({
+	teamStats,
+}: Pick<View<"leagueDashboard">, "teamStats">) => (
 	<>
 		<h2>Team Stats</h2>
 		<p>

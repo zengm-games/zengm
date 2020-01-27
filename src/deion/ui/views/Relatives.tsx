@@ -51,7 +51,7 @@ const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 	);
 
 	const rows = players.map(p => {
-		const relationArray = [];
+		const relationArray: string[] = [];
 		if (target) {
 			if (p.pid === pid) {
 				relationArray.push("Self");

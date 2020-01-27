@@ -231,7 +231,7 @@ const augmentPartialPlayer = (
 			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
 				r.pos = p.pos;
 			} else {
-				r.pos = overrides.core.player!.pos(r);
+				r.pos = overrides.core.player.pos!(r);
 			}
 		}
 	}

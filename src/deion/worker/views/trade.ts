@@ -165,7 +165,11 @@ const updateTrade = async () => {
 
 	const summary = await getSummary(teams); // Always run this, for multi team mode
 
-	const teams2 = [];
+	const teams2: {
+		name: string;
+		region: string;
+		tid: number;
+	}[] = [];
 
 	for (let tid = 0; tid < g.get("numTeams"); tid++) {
 		teams2[tid] = {

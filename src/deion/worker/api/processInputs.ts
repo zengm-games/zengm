@@ -206,8 +206,7 @@ const leaders = (params: Params) => {
 		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
 
 	return {
-		season:
-			params.season === "career" ? undefined : validateSeason(params.season),
+		season: validateSeason(params.season),
 		playoffs,
 	};
 };

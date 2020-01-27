@@ -10,6 +10,7 @@ import {
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
 const FreeAgents = ({
 	capSpace,
@@ -23,11 +24,13 @@ const FreeAgents = ({
 	stats,
 	userPlayers,
 	userTid,
-}) => {
-	const [addFilters, setAddFilters] = useState();
+}: View<"freeAgents">) => {
+	const [addFilters, setAddFilters] = useState<
+		(string | undefined)[] | undefined
+	>();
 
 	const showAfforablePlayers = useCallback(() => {
-		const newAddFilters = new Array(8 + stats.length);
+		const newAddFilters: (string | undefined)[] = new Array(8 + stats.length);
 		if (capSpace * 1000 > minContract) {
 			newAddFilters[newAddFilters.length - 3] = `<${capSpace}`;
 		} else {
@@ -40,7 +43,7 @@ const FreeAgents = ({
 		// applied every refresh (like when playing games) even if the user had disabled or edited the filter. Really, it'd
 		// be better if sent as some kind of signal or event rather than as a prop, because it is transient.
 		setTimeout(() => {
-			setAddFilters();
+			setAddFilters(undefined);
 		}, 0);
 	}, [capSpace, minContract, stats]);
 
@@ -106,6 +109,8 @@ const FreeAgents = ({
 				>
 					<span style={{ display: "none" }}>{p.freeAgentMood[userTid]}</span>
 				</div>,
+				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+				// @ts-ignore
 				<NegotiateButtons
 					capSpace={capSpace}
 					disabled={gamesInProgress}

@@ -6,9 +6,13 @@ import {
 	ResponsiveTableWrapper,
 } from "../../components";
 import { getCols, helpers } from "../../util";
+import { View } from "../../../common/types";
 
-const StartingLineup = ({ starters, stats }) => {
-	const statCols = getCols(...stats.map(stat => `stat:${stat}`));
+const StartingLineup = ({
+	starters,
+	startersStats,
+}: Pick<View<"leagueDashboard">, "starters" | "startersStats">) => {
+	const statCols = getCols(...startersStats.map(stat => `stat:${stat}`));
 
 	return (
 		<>
@@ -63,7 +67,7 @@ const StartingLineup = ({ starters, stats }) => {
 									{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
 									{p.contract.exp}
 								</td>
-								{stats.map(stat => (
+								{startersStats.map(stat => (
 									<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 								))}
 							</tr>
@@ -79,7 +83,7 @@ const StartingLineup = ({ starters, stats }) => {
 
 StartingLineup.propTypes = {
 	starters: PropTypes.arrayOf(PropTypes.object).isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+	startersStats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default StartingLineup;

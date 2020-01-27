@@ -3,8 +3,9 @@ import React from "react";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const teamLink = t => {
+const teamLink = (t: { abbrev: string; name: string; region: string }) => {
 	return (
 		<a href={helpers.leagueUrl(["team_history", t.abbrev])}>
 			{t.region} {t.name}
@@ -12,7 +13,12 @@ const teamLink = t => {
 	);
 };
 
-const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
+const TeamRecords = ({
+	byType,
+	categories,
+	seasonCount,
+	teamRecords,
+}: View<"teamRecords">) => {
 	useTitleBar({
 		title: "Team Records",
 		dropdownView: "team_records",

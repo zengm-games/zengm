@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
+import { View } from "../../common/types";
 
 const PlayersTable = ({
 	draftType,
@@ -15,6 +16,17 @@ const PlayersTable = ({
 	stats,
 	userTids,
 	usersTurn,
+}: {
+	draftType: "auto" | "user";
+	name: string;
+	onDraft?: (pid: number) => Promise<void>;
+	pidsAdd?: number[];
+	pidsRemove?: number[];
+	players: View<"allStarDraft">["teams"][number];
+	remaining?: View<"allStarDraft">["remaining"];
+	stats: string[];
+	userTids: number[];
+	usersTurn?: boolean;
 }) => {
 	const showDraftCol = draftType === "user" && name === "Remaining";
 
@@ -75,7 +87,7 @@ const PlayersTable = ({
 			if (name !== "Remaining") {
 				data.unshift(i + 1);
 			}
-			if (showDraftCol) {
+			if (showDraftCol && onDraft) {
 				data.unshift(
 					<button
 						className="btn btn-xs btn-primary"
@@ -123,7 +135,7 @@ PlayersTable.propTypes = {
 	usersTurn: PropTypes.bool,
 };
 
-const wait = ms => {
+const wait = (ms: number) => {
 	return new Promise(resolve => {
 		setTimeout(resolve, ms);
 	});
@@ -136,23 +148,21 @@ const AllStars = ({
 	teams,
 	teamNames,
 	userTids,
-}) => {
+}: View<"allStarDraft">) => {
 	const draftType = teams.some(t => userTids.includes(t[0].tid))
 		? "user"
 		: "auto";
 
 	const [actuallyFinalized, setActuallyFinalized] = useState(finalized);
 	const [started, setStarted] = useState(teams[0].length > 1);
-	const [revealed, setRevealed] = useState([]);
+	const [revealed, setRevealed] = useState<number[]>([]);
 
 	const reveal = useCallback(pid => {
-		console.log("reveal", pid);
 		setRevealed(revealed2 => [...revealed2, pid]);
 	}, []);
 
 	const startDraft = useCallback(async () => {
 		setStarted(true);
-		console.log("startDraft", draftType);
 
 		if (draftType === "auto") {
 			const pids = await toWorker("allStarDraftAll");
@@ -176,20 +186,15 @@ const AllStars = ({
 	const userDraftingBothTeams =
 		userTids.includes(teams[0][0].tid) && userTids.includes(teams[1][0].tid);
 	const onDraft = useCallback(
-		async pid => {
-			console.log("onDraft", pid);
+		async (pid: number) => {
 			const finalized2 = await toWorker("allStarDraftUser", pid);
-			console.log("finalized2", finalized2);
 			reveal(pid);
 			setActuallyFinalized(finalized2);
 
-			console.log("userDraftingBothTeams", userDraftingBothTeams);
 			if (!userDraftingBothTeams) {
 				const { finalized: finalized3, pid: pid2 } = await toWorker(
 					"allStarDraftOne",
 				);
-				console.log("finalized3", finalized3);
-				console.log("pid2", pid2);
 				if (pid2 !== undefined) {
 					await wait(1000);
 					reveal(pid2);
@@ -203,8 +208,8 @@ const AllStars = ({
 	useTitleBar({ title: "All-Star Draft" });
 
 	// Split up revealed into the two teams
-	const revealed0 = [];
-	const revealed1 = [];
+	const revealed0: number[] = [];
+	const revealed1: number[] = [];
 	let teamInd = teams[0].length > teams[1].length ? 1 : 0;
 	for (const pid of revealed) {
 		if (teamInd === 0) {

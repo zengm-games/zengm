@@ -1,9 +1,22 @@
 import range from "lodash/range";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import {
+	UpdateEvents,
+	ViewInput,
+	AllStars,
+	TeamFiltered,
+} from "../../common/types";
 
-const getTeamRecord = (t, awards) => {
+const getTeamRecord = (
+	t: TeamFiltered<
+		["tid", "cid", "did", "abbrev", "region", "name"],
+		["season", "playoffRoundsWon", "won", "lost"],
+		undefined,
+		undefined
+	>,
+	awards: any[],
+) => {
 	let totalWon = 0;
 	let totalLost = 0;
 	let playoffAppearances = 0;
@@ -74,7 +87,7 @@ const getTeamRecord = (t, awards) => {
 	};
 };
 
-function tallyAwards(awards, allAllStars) {
+const tallyAwards = (awards: any[], allAllStars: AllStars[]) => {
 	const teams = range(g.get("numTeams")).map(() => {
 		return {
 			mvp: 0,
@@ -205,9 +218,14 @@ function tallyAwards(awards, allAllStars) {
 	}
 
 	return teams;
-}
+};
 
-const sumRecordsFor = (group, id, name, records) => {
+const sumRecordsFor = (
+	group: "cid" | "did",
+	id: number,
+	name: string,
+	records: ReturnType<typeof getTeamRecord>[],
+) => {
 	const except = [
 		"id",
 		"lastChampionship",
@@ -217,7 +235,7 @@ const sumRecordsFor = (group, id, name, records) => {
 		"did",
 		"winp",
 	];
-	const keys = Object.keys(records[0]);
+	const keys = helpers.keys(records[0]);
 	const out: any = {};
 	const xRecords = records.filter(r => r[group] === id);
 
@@ -233,10 +251,10 @@ const sumRecordsFor = (group, id, name, records) => {
 	out.team = name;
 	out.winp = helpers.roundWinp(helpers.calcWinp(out));
 
-	for (const key of ["lastChampionship", "lastPlayoffAppearance"]) {
+	for (const key of ["lastChampionship", "lastPlayoffAppearance"] as const) {
 		const years = xRecords
 			.map(r => r[key])
-			.filter(year => typeof year === "number");
+			.filter(year => typeof year === "number") as number[];
 		out[key] = years.length === 0 ? null : Math.max(...years);
 	}
 
@@ -249,14 +267,13 @@ const updateTeamRecords = async (
 	state: any,
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.byType !== state.byType) {
-		const [teams, awards, allStars] = await Promise.all([
-			idb.getCopies.teamsPlus({
-				attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
-				seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
-			}),
-			idb.getCopies.awards(),
-			idb.getCopies.allStars(),
-		]);
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+			seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
+		});
+		const awards = await idb.getCopies.awards();
+		const allStars = await idb.getCopies.allStars();
+
 		const awardsPerTeam = tallyAwards(awards, allStars);
 		const teamRecords = teams.map(t => getTeamRecord(t, awardsPerTeam));
 

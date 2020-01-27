@@ -8,6 +8,7 @@ import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";
 import TeamStats from "./TeamStats";
+import { View } from "../../../common/types";
 
 const LeagueDashboard = ({
 	abbrev,
@@ -46,7 +47,7 @@ const LeagueDashboard = ({
 	upcoming,
 	userTid,
 	won,
-}) => {
+}: View<"leagueDashboard">) => {
 	useTitleBar({ title: `${region} ${name} Dashboard` });
 
 	// Show the remaining number of games, only for the regular season.
@@ -111,7 +112,9 @@ const LeagueDashboard = ({
 													{messages.map(m => (
 														<tr
 															key={m.mid}
-															className={m.read ? null : "font-weight-bold"}
+															className={
+																m.read ? undefined : "font-weight-bold"
+															}
 														>
 															<td className="year">
 																<a href={helpers.leagueUrl(["message", m.mid])}>
@@ -167,7 +170,7 @@ const LeagueDashboard = ({
 				<div className="col-md-4">
 					<div className="row">
 						<div className="col-sm-6 col-md-12 mb-3">
-							{showPlayoffSeries ? (
+							{showPlayoffSeries && series ? (
 								<>
 									<h2>Playoffs</h2>
 									<b>{seriesTitle}</b>
@@ -176,6 +179,7 @@ const LeagueDashboard = ({
 										expandTeamNames
 										numGamesToWinSeries={numGamesToWinSeries}
 										season={season}
+										// @ts-ignore
 										series={series}
 										userTid={userTid}
 									/>
@@ -222,7 +226,7 @@ const LeagueDashboard = ({
 				</div>
 			</div>
 
-			<StartingLineup starters={starters} stats={startersStats} />
+			<StartingLineup starters={starters} startersStats={startersStats} />
 		</>
 	);
 };

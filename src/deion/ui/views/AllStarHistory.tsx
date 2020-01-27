@@ -122,6 +122,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 			key: row.season,
 			data: [
 				row.season,
+				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 				// @ts-ignore
 				<ResultText
 					gid={row.gid}

@@ -3,8 +3,19 @@ import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const awardName = (award, season, teamAbbrevsCache, userTid) => {
+const awardName = (
+	award: {
+		pid: number;
+		pos: string;
+		name: string;
+		tid: number;
+	},
+	season: number,
+	teamAbbrevsCache: string[],
+	userTid: number,
+) => {
 	if (!award) {
 		// For old seasons with no Finals MVP
 		return "N/A";
@@ -39,7 +50,11 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
 	return ret;
 };
 
-const teamName = (t, season, ties) => {
+const teamName = (
+	t: View<"historyAll">["seasons"][number]["champ"],
+	season: number,
+	ties: boolean,
+) => {
 	if (t) {
 		return (
 			<>
@@ -54,7 +69,13 @@ const teamName = (t, season, ties) => {
 	return "N/A";
 };
 
-const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
+const HistoryAll = ({
+	awards,
+	seasons,
+	teamAbbrevsCache,
+	ties,
+	userTid,
+}: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
 
 	const cols = getCols(
@@ -78,26 +99,20 @@ const HistoryAll = ({ awards, seasons, teamAbbrevsCache, ties, userTid }) => {
 			countText = null;
 		}
 
-		let champEl = (
-			<>
-				{teamName(s.champ, s.season, ties)}
-				{countText}
-			</>
-		);
-		if (s.champ && s.champ.tid === userTid) {
-			champEl = {
-				classNames: "table-info",
-				value: champEl,
-			};
-		}
+		const champEl = {
+			classNames: s.champ && s.champ.tid === userTid ? "table-info" : undefined,
+			value: (
+				<>
+					{teamName(s.champ, s.season, ties)}
+					{countText}
+				</>
+			),
+		};
 
-		let runnerUpEl = teamName(s.runnerUp, s.season, ties);
-		if (s.runnerUp && s.runnerUp.tid === userTid) {
-			runnerUpEl = {
-				classNames: "table-info",
-				value: runnerUpEl,
-			};
-		}
+		const runnerUpEl = {
+			classNames: s.runnerUp && s.runnerUp.tid === userTid,
+			value: teamName(s.runnerUp, s.season, ties),
+		};
 
 		return {
 			key: s.season,

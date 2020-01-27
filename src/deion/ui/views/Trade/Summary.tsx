@@ -2,8 +2,17 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
+import { View } from "../../../common/types";
 
-const Summary = ({ accepted, message, salaryCap, summary }) => {
+const Summary = ({
+	accepted,
+	message,
+	salaryCap,
+	summary,
+}: Pick<View<"trade">, "salaryCap" | "summary"> & {
+	accepted: boolean;
+	message: null | string;
+}) => {
 	return (
 		<>
 			<div className="row">

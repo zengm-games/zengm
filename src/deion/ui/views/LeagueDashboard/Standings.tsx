@@ -2,6 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
+import { View } from "../../../common/types";
 
 const width100 = {
 	width: "100%",
@@ -12,7 +13,10 @@ const Standings = ({
 	numPlayoffTeams,
 	playoffsByConference,
 	userTid,
-}) => (
+}: Pick<
+	View<"leagueDashboard">,
+	"confTeams" | "numPlayoffTeams" | "playoffsByConference" | "userTid"
+>) => (
 	<>
 		<table className="table table-striped table-bordered table-sm">
 			<thead>

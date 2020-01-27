@@ -3,8 +3,9 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
+import { View } from "../../common/types";
 
-const Leaders = ({ categories, playoffs, season }) => {
+const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 	useTitleBar({
 		title: "League Leaders",
 		jumpTo: true,
@@ -45,7 +46,7 @@ const Leaders = ({ categories, playoffs, season }) => {
 									{cat.data.map((p, j) => (
 										<tr
 											key={p.pid}
-											className={p.userTeam ? "table-info" : null}
+											className={p.userTeam ? "table-info" : undefined}
 										>
 											<td>
 												{j + 1}.{" "}

@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, GameProcessedCompleted } from "../../common/types";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -167,7 +167,9 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 const updateGames = async (
 	inputs: unknown,
 	updateEvents: UpdateEvents,
-	state: any,
+	state: {
+		completed?: GameProcessedCompleted[];
+	},
 ) => {
 	const NUM_SHOW_COMPLETED = 4;
 
@@ -508,16 +510,25 @@ export default async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	return Object.assign(
+	// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
+	const part1 = Object.assign(
 		{},
 		await updateInbox(inputs, updateEvents),
 		await updateTeam(inputs, updateEvents),
 		await updatePayroll(inputs, updateEvents),
+	);
+	const part2 = Object.assign(
+		{},
 		await updateTeams(inputs, updateEvents),
 		await updateGames(inputs, updateEvents, state),
 		await updateSchedule(inputs, updateEvents),
+	);
+	const part3 = Object.assign(
+		{},
 		await updatePlayers(inputs, updateEvents),
 		await updatePlayoffs(inputs, updateEvents),
 		await updateStandings(inputs, updateEvents),
 	);
+
+	return Object.assign({}, part1, part2, part3);
 };

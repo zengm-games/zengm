@@ -1,6 +1,11 @@
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, ViewInput, AllStars } from "../../common/types";
+import {
+	GameProcessed,
+	UpdateEvents,
+	ViewInput,
+	AllStars,
+} from "../../common/types";
 
 export const setTeamInfo = (
 	t: any,
@@ -37,19 +42,18 @@ export const setTeamInfo = (
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
 const boxScore = async (gid: number) => {
-	if (gid < 0) {
-		return {};
-	}
-
-	let game: any = helpers.deepCopy(await idb.cache.games.get(gid)); // Only this season is in cache
+	let game = helpers.deepCopy(await idb.cache.games.get(gid)); // Only this season is in cache
 
 	if (!game) {
-		game = await idb.league.get("games", gid);
+		const game2 = await idb.league.get("games", gid);
+		if (game2) {
+			game = game2;
+		}
 	}
 
 	// If game doesn't exist (bad gid or deleted box scores), show nothing
 	if (!game) {
-		return {};
+		return { gid: -1 };
 	}
 
 	const allStarGame = game.teams[0].tid === -1 || game.teams[1].tid === -1;
@@ -61,16 +65,18 @@ const boxScore = async (gid: number) => {
 		});
 
 		if (!allStars) {
-			return {};
+			return { gid: -1 };
 		}
 	}
 
 	for (let i = 0; i < game.teams.length; i++) {
 		const t = game.teams[i];
-		setTeamInfo(t, i, allStars, game); // Floating point errors make this off a bit
+		setTeamInfo(t, i, allStars, game);
 
-		t.min = Math.round(t.min); // Put injured players at the bottom, then sort by GS and roster position
+		// Floating point errors make this off a bit
+		t.min = Math.round(t.min);
 
+		// Put injured players at the bottom, then sort by GS and roster position
 		t.players.sort((a: any, b: any) => {
 			// This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
 			return (
@@ -83,33 +89,46 @@ const boxScore = async (gid: number) => {
 	}
 
 	const wonInd = game.won.tid === game.teams[0].tid ? 0 : 1;
-	const lostInd = wonInd === 0 ? 1 : 0; // WARNING - won/lost . region/name/abbrev is used to distinguish between GameLog and LiveGame in BoxScore, so be careful if you change this!
+	const lostInd = wonInd === 0 ? 1 : 0;
 
-	game.won.region = game.teams[wonInd].region;
-	game.won.name = game.teams[wonInd].name;
-	game.won.abbrev = game.teams[wonInd].abbrev;
-	game.lost.region = game.teams[lostInd].region;
-	game.lost.name = game.teams[lostInd].name;
-	game.lost.abbrev = game.teams[lostInd].abbrev;
-
+	let overtime;
 	if (game.overtimes === 1) {
-		game.overtime = " (OT)";
+		overtime = " (OT)";
 	} else if (game.overtimes > 1) {
-		game.overtime = ` (${game.overtimes}OT)`;
+		overtime = ` (${game.overtimes}OT)`;
 	} else {
-		game.overtime = "";
+		overtime = "";
 	}
 
-	// Swap teams order, so home team is at bottom in box score
-	game.teams.reverse();
+	const game2 = {
+		...game,
+		overtime,
 
-	if (game.scoringSummary) {
-		for (const event of game.scoringSummary) {
+		// WARNING - won/lost . region/name/abbrev is used to distinguish between GameLog and LiveGame in BoxScore, so be careful if you change this!
+		won: {
+			...game.won,
+			region: game.teams[wonInd].region,
+			name: game.teams[wonInd].name,
+			abbrev: game.teams[wonInd].abbrev,
+		},
+		lost: {
+			...game.lost,
+			region: game.teams[lostInd].region,
+			name: game.teams[lostInd].name,
+			abbrev: game.teams[lostInd].abbrev,
+		},
+	};
+
+	// Swap teams order, so home team is at bottom in box score
+	game2.teams.reverse();
+
+	if (game2.scoringSummary) {
+		for (const event of game2.scoringSummary) {
 			event.t = event.t === 0 ? 1 : 0;
 		}
 	}
 
-	return game;
+	return game2;
 };
 
 const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
@@ -130,34 +149,17 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
 const updateBoxScore = async (
-	inputs: ViewInput<"gameLog">,
+	{ gid }: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	const { gid } = inputs;
-
-	if (typeof gid !== "number") {
-		return;
-	}
-
 	if (
 		updateEvents.includes("firstRun") ||
 		!state.boxScore ||
 		gid !== state.boxScore.gid
 	) {
 		const game = await boxScore(gid);
-		const vars = {
-			boxScore: game,
-		};
-
-		// Either update the box score if we found one, or show placeholder
-		if (!game.hasOwnProperty("teams")) {
-			vars.boxScore.gid = -1;
-		} else {
-			vars.boxScore.gid = gid;
-		}
-
-		return vars;
+		return { boxScore: game };
 	}
 };
 
@@ -172,16 +174,16 @@ const updateBoxScore = async (
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
 const updateGamesList = async (
-	inputs: ViewInput<"gameLog">,
+	{ abbrev, season }: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
-	state: any,
+	state: {
+		gamesList: {
+			games: GameProcessed[];
+			abbrev: string;
+			season: number;
+		};
+	},
 ) => {
-	const { abbrev, season } = inputs;
-
-	if (typeof abbrev !== "string" || typeof season !== "number") {
-		return;
-	}
-
 	if (
 		updateEvents.includes("firstRun") ||
 		!state.gamesList ||
@@ -189,7 +191,7 @@ const updateGamesList = async (
 		season !== state.gamesList.season ||
 		(updateEvents.includes("gameSim") && season === g.get("season"))
 	) {
-		let games;
+		let games: GameProcessed[];
 
 		if (
 			state.gamesList &&

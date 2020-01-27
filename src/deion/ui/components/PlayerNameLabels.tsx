@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactNode } from "react";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
@@ -14,7 +14,7 @@ const PlayerNameLabels = ({
 	style,
 	watch,
 }: {
-	children: string;
+	children: ReactNode;
 	injury?: PlayerInjury;
 	pos?: string;
 	pid: number;

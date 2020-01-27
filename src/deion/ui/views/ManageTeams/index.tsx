@@ -1,10 +1,37 @@
 import PropTypes from "prop-types";
-import React, { useReducer } from "react";
+import React, { useReducer, ChangeEvent, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
+import { View } from "../../../common/types";
 
-const reducer = (state, action) => {
+type State = {
+	saving: boolean;
+	teams: View<"manageTeams">["teams"];
+};
+
+export type Action =
+	| {
+			type: "startSaving";
+	  }
+	| {
+			type: "doneSaving";
+	  }
+	| {
+			type: "updateTeam";
+			i: number;
+			field: string;
+			value: string;
+	  }
+	| {
+			type: "addTeam";
+			team: State["teams"][number];
+	  }
+	| {
+			type: "removeLastTeam";
+	  };
+
+const reducer = (state: State, action: Action) => {
 	switch (action.type) {
 		case "startSaving":
 			return {
@@ -20,9 +47,11 @@ const reducer = (state, action) => {
 			const newTeams = state.teams.slice();
 
 			if (action.field.startsWith("colors")) {
+				// @ts-ignore
 				newTeams[action.i].colors[action.field.replace("colors", "")] =
 					action.value;
 			} else {
+				// @ts-ignore
 				newTeams[action.i][action.field] = action.value;
 			}
 			return {
@@ -40,24 +69,26 @@ const reducer = (state, action) => {
 				...state,
 				teams: state.teams.slice(0, state.teams.length - 1),
 			};
-		default:
-			throw new Error(`Unknown action type "${action.type}"`);
 	}
 };
 
-const ManageTeams = props => {
+const ManageTeams = (props: View<"manageTeams">) => {
 	const [state, dispatch] = useReducer(reducer, {
 		saving: false,
 		teams: props.teams,
 	});
 
-	const handleInputChange = (i, field, e) => {
+	const handleInputChange = (
+		i: number,
+		field: string,
+		e: ChangeEvent<HTMLInputElement>,
+	) => {
 		const value = e.target.value;
 
 		dispatch({ type: "updateTeam", i, field, value });
 	};
 
-	const handleSubmit = async e => {
+	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		dispatch({ type: "startSaving" });
 

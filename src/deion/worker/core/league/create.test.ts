@@ -46,8 +46,8 @@ describe("worker/core/league/create", () => {
 	});
 
 	test("initialize teams object store", async () => {
-		const cids = leagueData.teams.map(t => t.cid);
-		const dids = leagueData.teams.map(t => t.did);
+		const cids = leagueData.teams.map((t: { cid: number }) => t.cid);
+		const dids = leagueData.teams.map((t: { did: number }) => t.did);
 		assert.equal(leagueData.teams.length, g.get("numTeams"));
 
 		for (let i = 0; i < 2; i++) {

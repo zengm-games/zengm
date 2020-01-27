@@ -22,6 +22,9 @@ import {
 	MinimalPlayerRatings,
 	GameAttributesLeague,
 	League,
+	TeamBasic,
+	TeamSeasonWithoutKey,
+	TeamStatsWithoutKey,
 } from "../../../common/types";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
@@ -48,11 +51,33 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 	return values;
 };
 
+type LeagueFile = {
+	version?: number;
+	meta?: any;
+	draftLotteryResults?: any[];
+	draftPicks?: any[];
+	draftOrder?: any[];
+	games?: any[];
+	gameAttributes?: any[];
+	players?: any[];
+	schedule?: any[];
+	teams?: any[];
+	trade?: any[];
+	allStars?: any[];
+	releasedPlayers?: any[];
+	awards?: any[];
+	playoffSeries?: any[];
+	negotiations?: any[];
+	messages?: any[];
+	events?: any[];
+	playerFeats?: any[];
+};
+
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = (
 	leagueName: string,
 	tid: number,
-	leagueFile: any,
+	leagueFile: LeagueFile,
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
@@ -60,9 +85,13 @@ export const createWithoutSaving = (
 	const teamsDefault = helpers.getTeamsDefault();
 
 	// Any custom teams?
-	let teamInfos: any;
+	let teamInfos: (TeamBasic & {
+		stadiumCapacity?: number;
+		seasons?: TeamSeasonWithoutKey[];
+		stats?: TeamStatsWithoutKey[];
+	})[];
 
-	if (leagueFile.hasOwnProperty("teams")) {
+	if (leagueFile.teams) {
 		for (let i = 0; i < leagueFile.teams.length; i++) {
 			const t = leagueFile.teams[i];
 
@@ -85,7 +114,7 @@ export const createWithoutSaving = (
 				// Fill in default values as needed
 				const t2 = teamsDefault[i];
 
-				for (const prop of Object.keys(t2)) {
+				for (const prop of helpers.keys(t2)) {
 					if (!t.hasOwnProperty(prop)) {
 						t[prop] = t2[prop];
 					}
@@ -126,7 +155,7 @@ export const createWithoutSaving = (
 		difficulty,
 	};
 
-	if (leagueFile.hasOwnProperty("gameAttributes")) {
+	if (leagueFile.gameAttributes) {
 		for (let i = 0; i < leagueFile.gameAttributes.length; i++) {
 			// Set default for anything except team ID and name, since they can be overwritten by form input.
 			if (
@@ -134,7 +163,7 @@ export const createWithoutSaving = (
 				leagueFile.gameAttributes[i].key !== "leagueName" &&
 				leagueFile.gameAttributes[i].key !== "difficulty"
 			) {
-				gameAttributes[leagueFile.gameAttributes[i].key] =
+				(gameAttributes as any)[leagueFile.gameAttributes[i].key] =
 					leagueFile.gameAttributes[i].value;
 			}
 		}
@@ -206,7 +235,7 @@ export const createWithoutSaving = (
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: any;
 
-	if (leagueFile.hasOwnProperty("draftPicks")) {
+	if (leagueFile.draftPicks) {
 		draftPicks = leagueFile.draftPicks;
 
 		for (const dp of leagueFile.draftPicks) {
@@ -258,15 +287,15 @@ export const createWithoutSaving = (
 
 	// teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league, and break out stuff for other object stores
 	let scoutingRankTemp;
-	const teamSeasons: any = [];
-	const teamStats: any = [];
+	const teamSeasons: TeamSeasonWithoutKey[] = [];
+	const teamStats: TeamStatsWithoutKey[] = [];
 
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
 		const teamInfo = teamInfos[i];
-		let teamSeasonsLocal;
+		let teamSeasonsLocal: TeamSeasonWithoutKey[];
 
-		if (teamInfo.hasOwnProperty("seasons")) {
+		if (teamInfo.seasons) {
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal[teamSeasonsLocal.length - 1];
 
@@ -276,6 +305,7 @@ export const createWithoutSaving = (
 		} else {
 			teamSeasonsLocal = [team.genSeasonRow(t.tid)];
 			teamSeasonsLocal[0].pop = teamInfo.pop;
+			// @ts-ignore
 			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
 		}
 
@@ -294,9 +324,9 @@ export const createWithoutSaving = (
 			teamSeasons.push(teamSeason);
 		}
 
-		let teamStatsLocal;
+		let teamStatsLocal: TeamStatsWithoutKey[];
 
-		if (teamInfo.hasOwnProperty("stats")) {
+		if (teamInfo.stats) {
 			teamStatsLocal = teamInfo.stats;
 		} else {
 			teamStatsLocal = [team.genStatsRow(t.tid)];
@@ -367,7 +397,7 @@ export const createWithoutSaving = (
 		];
 	}
 
-	const games = leagueFile.hasOwnProperty("games") ? leagueFile.games : [];
+	const games = leagueFile.games ? leagueFile.games : [];
 
 	for (const gm of games) {
 		// Fix missing +/-, blocks against in boxscore
@@ -390,7 +420,7 @@ export const createWithoutSaving = (
 	}
 
 	// Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
-	if (leagueFile.hasOwnProperty("schedule")) {
+	if (leagueFile.schedule) {
 		for (const matchup of leagueFile.schedule) {
 			delete matchup.gid;
 		}
@@ -408,13 +438,11 @@ export const createWithoutSaving = (
 		"games",
 		"events",
 		"playerFeats",
-	];
+	] as const;
 	const leagueData: any = {};
 
 	for (const store of toMaybeAdd) {
-		leagueData[store] = leagueFile.hasOwnProperty(store)
-			? leagueFile[store]
-			: [];
+		leagueData[store] = leagueFile[store] ? leagueFile[store] : [];
 	}
 
 	// Do this weird shit rather than genBaseMoods to avoid database access
@@ -425,9 +453,9 @@ export const createWithoutSaving = (
 	const baseMoods = teamSeasonsForBaseMoods.map(ts =>
 		player.genBaseMood(ts, false),
 	);
-	let players;
+	let players: PlayerWithoutKey[];
 
-	if (leagueFile.hasOwnProperty("players")) {
+	if (leagueFile.players) {
 		// Use pre-generated players, filling in attributes as needed
 		if (randomizeRosters) {
 			// Assign the team ID of all players to the 'playerTids' array.
@@ -437,7 +465,6 @@ export const createWithoutSaving = (
 				.map(p => p.tid);
 
 			// Shuffle the teams that players are assigned to.
-
 			random.shuffle(playerTids);
 
 			for (const p of leagueFile.players) {
@@ -458,8 +485,7 @@ export const createWithoutSaving = (
 		}
 
 		players = leagueFile.players.map(p0 => {
-			// Has to be any because I can't figure out how to change PlayerWithoutKeyWithStats to Player
-			const p: any = player.augmentPartialPlayer(
+			const p: PlayerWithoutKey = player.augmentPartialPlayer(
 				p0,
 				scoutingRank,
 				leagueFile.version,
@@ -579,13 +605,13 @@ export const createWithoutSaving = (
 		keptPlayers.sort((a, b) => b.value - a.value);
 
 		// Keep track of number of players on each team
-		const numPlayersByTid = {};
+		const numPlayersByTid: Record<number, number> = {};
 
 		for (const tid2 of range(g.get("numTeams"))) {
 			numPlayersByTid[tid2] = 0;
 		}
 
-		const addPlayerToTeam = (p, tid2: number) => {
+		const addPlayerToTeam = (p: PlayerWithoutKey, tid2: number) => {
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
 			player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
@@ -601,7 +627,7 @@ export const createWithoutSaving = (
 			players.push(p);
 		};
 
-		const probStillOnDraftTeam = p => {
+		const probStillOnDraftTeam = (p: PlayerWithoutKey) => {
 			let prob = 0;
 
 			// Probability a player is still on his draft team
@@ -808,7 +834,7 @@ export const createWithoutSaving = (
 const create = async (
 	name: string,
 	tid: number,
-	leagueFile: any = {},
+	leagueFile: LeagueFile = {},
 	startingSeason: number,
 	randomizeRosters: boolean = false,
 	difficulty: number,
@@ -898,6 +924,7 @@ const create = async (
 		}
 
 		for (const record of records) {
+			// @ts-ignore
 			await idb.cache[store].put(record);
 		}
 	}
@@ -911,7 +938,7 @@ const create = async (
 		}
 	}
 
-	const skipNewPhase = leagueFile.hasOwnProperty("gameAttributes")
+	const skipNewPhase = leagueFile.gameAttributes
 		? leagueFile.gameAttributes.some(ga => ga.key === "phase")
 		: false;
 
@@ -921,7 +948,9 @@ const create = async (
 
 		// Auto sort rosters
 		await Promise.all(
-			leagueData.teams.map(t => overrides.core.team.rosterAutoSort!(t.tid)),
+			leagueData.teams.map((t: { tid: number }) =>
+				overrides.core.team.rosterAutoSort!(t.tid),
+			),
 		);
 	}
 

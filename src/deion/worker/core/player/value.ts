@@ -55,11 +55,13 @@ const value = (
 
 	// From linear regression OVR ~ PER
 	const slope = 1.531;
-	const intercept = 31.693; // 1. Account for stats (and current ratings if not enough stats)
+	const intercept = 31.693;
 
+	// 1. Account for stats (and current ratings if not enough stats)
 	const ps = p.stats.filter(playerStats => !playerStats.playoffs);
-	let current = pr.ovr; // No stats at all? Just look at ratings more, then.
+	let current = pr.ovr;
 
+	// No stats at all? Just look at ratings more, then.
 	if (process.env.SPORT === "basketball" && ps.length > 0) {
 		const ps1 = ps[ps.length - 1]; // Most recent stats
 

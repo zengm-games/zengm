@@ -1,7 +1,37 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactNode } from "react";
 import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
 import { getCols, overrides } from "../../../deion/ui/util";
+
+const quarters = {
+	Q1: "1st Quarter",
+	Q2: "2nd Quarter",
+	Q3: "3rd Quarter",
+	Q4: "4th Quarter",
+	OT: "Overtime",
+};
+
+type ScoringSummaryEvent = {
+	hide: boolean;
+	quarter: keyof typeof quarters;
+	t: 0 | 1;
+	text: string;
+	time: number;
+	type: string;
+};
+
+type Team = {
+	abbrev: string;
+	name: string;
+	region: string;
+	players: any[];
+};
+
+type BoxScore = {
+	gid: number;
+	scoringSummary: ScoringSummaryEvent[];
+	teams: [Team, Team];
+};
 
 const statsByType = {
 	passing: [
@@ -61,7 +91,15 @@ const sortsByType = {
 	defense: ["defTck"],
 };
 
-const StatsTable = ({ Row, boxScore, type }) => {
+const StatsTable = ({
+	Row,
+	boxScore,
+	type,
+}: {
+	Row: any;
+	boxScore: BoxScore;
+	type: keyof typeof sortsByType;
+}) => {
 	const stats = statsByType[type];
 	const cols = getCols(...stats.map(stat => `stat:${stat}`));
 	const sorts = sortsByType[type];
@@ -74,12 +112,12 @@ const StatsTable = ({ Row, boxScore, type }) => {
 						<table className="table table-striped table-bordered table-sm table-hover">
 							<thead>
 								<tr>
-									<th colSpan="2">
+									<th colSpan={2}>
 										{t.region} {t.name}
 									</th>
 									{cols.map(({ desc, title, width }, i) => {
 										return (
-											<th key={i} title={desc} width={width}>
+											<th key={i} title={desc} style={{ width }}>
 												{title}
 											</th>
 										);
@@ -132,17 +170,9 @@ StatsTable.propTypes = {
 	type: PropTypes.string.isRequired,
 };
 
-const quarters = {
-	Q1: "1st Quarter",
-	Q2: "2nd Quarter",
-	Q3: "3rd Quarter",
-	Q4: "4th Quarter",
-	OT: "Overtime",
-};
-
 // Condenses TD + XP/2P into one event rather than two
-const processEvents = events => {
-	const processedEvents = [];
+const processEvents = (events: ScoringSummaryEvent[]) => {
+	const processedEvents: any[] = [];
 	const score = [0, 0];
 
 	for (const event of events) {
@@ -152,7 +182,7 @@ const processEvents = events => {
 
 		const otherT = event.t === 0 ? 1 : 0;
 
-		let scoreType = null;
+		let scoreType: string | null = null;
 		if (event.text.includes("extra point")) {
 			scoreType = "XP";
 			if (event.text.includes("made")) {
@@ -178,7 +208,7 @@ const processEvents = events => {
 			score[otherT] += 2;
 		}
 
-		const prevEvent = processedEvents[processedEvents.length - 1];
+		const prevEvent: any = processedEvents[processedEvents.length - 1];
 
 		if (prevEvent && scoreType === "XP") {
 			prevEvent.score = score.slice();
@@ -201,15 +231,27 @@ const processEvents = events => {
 	return processedEvents;
 };
 
-const reducer = (sum, event) => {
+type ScoringSummaryProps = {
+	events: ScoringSummaryEvent[];
+	teams: [Team, Team];
+};
+
+type ScoringSummaryState = {
+	count: number;
+};
+
+const reducer = (sum: number, event: ScoringSummaryEvent) => {
 	if (event.hide) {
 		return sum;
 	}
 	return sum + 1;
 };
 
-class ScoringSummary extends React.Component {
-	constructor(props) {
+class ScoringSummary extends React.Component<
+	ScoringSummaryProps,
+	ScoringSummaryState
+> {
+	constructor(props: ScoringSummaryProps) {
 		super(props);
 
 		this.state = {
@@ -217,13 +259,13 @@ class ScoringSummary extends React.Component {
 		};
 	}
 
-	static getDerivedStateFromProps(props) {
+	static getDerivedStateFromProps(props: ScoringSummaryProps) {
 		return {
 			count: props.events.reduce(reducer, 0),
 		};
 	}
 
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate(nextProps: ScoringSummaryProps) {
 		const newCount = nextProps.events.reduce(reducer, 0);
 		return this.state.count !== newCount;
 	}
@@ -231,7 +273,7 @@ class ScoringSummary extends React.Component {
 	render() {
 		const { events, teams } = this.props;
 
-		let prevQuarter;
+		let prevQuarter: keyof typeof quarters;
 
 		const processedEvents = processEvents(events);
 
@@ -243,12 +285,12 @@ class ScoringSummary extends React.Component {
 			<table className="table table-sm border-bottom">
 				<tbody>
 					{processedEvents.map((event, i) => {
-						let quarterHeader = null;
+						let quarterHeader: ReactNode = null;
 						if (event.quarter !== prevQuarter) {
 							prevQuarter = event.quarter;
 							quarterHeader = (
 								<tr>
-									<td className="text-muted" colSpan="5">
+									<td className="text-muted" colSpan={5}>
 										{quarters[event.quarter]}
 									</td>
 								</tr>
@@ -286,12 +328,13 @@ class ScoringSummary extends React.Component {
 	}
 }
 
+// @ts-ignore
 ScoringSummary.propTypes = {
 	events: PropTypes.array.isRequired,
 	teams: PropTypes.array.isRequired,
 };
 
-const BoxScore = ({ boxScore, Row }) => {
+const BoxScore = ({ boxScore, Row }: { boxScore: BoxScore; Row: any }) => {
 	return (
 		<div className="mb-3">
 			<h2>Scoring Summary</h2>
@@ -314,7 +357,7 @@ const BoxScore = ({ boxScore, Row }) => {
 					<StatsTable
 						Row={Row}
 						boxScore={boxScore}
-						type={title.toLowerCase()}
+						type={title.toLowerCase() as any}
 					/>
 				</React.Fragment>
 			))}

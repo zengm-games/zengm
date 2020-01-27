@@ -1,10 +1,17 @@
-import React, { useEffect, useState, FormEvent, MouseEvent } from "react";
+import React, {
+	useEffect,
+	useState,
+	Dispatch,
+	FormEvent,
+	MouseEvent,
+} from "react";
 import { PHASE } from "../../../common";
 import { logEvent, toWorker } from "../../util";
 import { Phase } from "../../../common/types";
+import { Action } from ".";
 
 type Props = {
-	dispatch: any;
+	dispatch: Dispatch<Action>;
 	confs: {
 		cid: number;
 		name: string;

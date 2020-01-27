@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { CSSProperties } from "react";
 import { helpers } from "../util";
 
 const RecordAndPlayoffs = ({
@@ -21,9 +21,7 @@ const RecordAndPlayoffs = ({
 	option?: "noSeason";
 	playoffRoundsWon?: number;
 	season: number;
-	style: {
-		[key: string]: string;
-	};
+	style?: CSSProperties;
 	tied?: number;
 	won: number;
 }) => {

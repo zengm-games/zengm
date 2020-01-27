@@ -1,8 +1,11 @@
 import { finances } from "..";
 import { g, helpers, random } from "../../util";
-import { TeamSeason } from "../../../common/types";
+import { TeamSeasonWithoutKey } from "../../../common/types";
 
-const genBaseMood = (teamSeason: TeamSeason, reSigning: boolean): number => {
+const genBaseMood = (
+	teamSeason: TeamSeasonWithoutKey,
+	reSigning: boolean,
+): number => {
 	// Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
 	if (
 		teamSeason.playoffRoundsWon === g.get("numGamesPlayoffSeries").length &&

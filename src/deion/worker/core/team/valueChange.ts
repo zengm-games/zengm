@@ -368,9 +368,9 @@ const valueChange = async (
 		R: 3,
 	};
 
-	const doSkillBonuses = (test, rosterLocal) => {
+	const doSkillBonuses = (test: Asset[], rosterLocal: Asset[]) => {
 		// What are current skills?
-		let rosterSkills = [];
+		let rosterSkills: string[] = [];
 
 		for (let i = 0; i < rosterLocal.length; i++) {
 			if (rosterLocal[i].value >= 45) {
@@ -388,15 +388,19 @@ const valueChange = async (
 				for (let j = 0; j < test[i].skills.length; j++) {
 					const s = test[i].skills[j];
 
-					if (rosterSkillsCount[s] <= skillsNeeded[s] - 2) {
-						// Big bonus
-						test[i].value *= 1.1;
-					} else if (rosterSkillsCount[s] <= skillsNeeded[s] - 1) {
-						// Medium bonus
-						test[i].value *= 1.05;
-					} else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
-						// Little bonus
-						test[i].value *= 1.025;
+					const count: number | undefined = (skillsNeeded as any)[s];
+
+					if (count !== undefined) {
+						if (rosterSkillsCount[s] <= count - 2) {
+							// Big bonus
+							test[i].value *= 1.1;
+						} else if (rosterSkillsCount[s] <= count - 1) {
+							// Medium bonus
+							test[i].value *= 1.05;
+						} else if (rosterSkillsCount[s] <= count) {
+							// Little bonus
+							test[i].value *= 1.025;
+						}
 					}
 
 					// Account for redundancy in test
@@ -419,7 +423,7 @@ const valueChange = async (
 	// This actually doesn't do anything because I'm an idiot
 	const base = 1.25;
 
-	const sumValues = (players, includeInjuries = false) => {
+	const sumValues = (players: Asset[], includeInjuries = false) => {
 		if (players.length === 0) {
 			return 0;
 		}
@@ -507,7 +511,7 @@ const valueChange = async (
 
 	// Sum of contracts
 	// If onlyThisSeason is set, then amounts after this season are ignored and the return value is the sum of this season's contract amounts in millions of dollars
-	const sumContracts = (players, onlyThisSeason = false) => {
+	const sumContracts = (players: Asset[], onlyThisSeason = false) => {
 		if (players.length === 0) {
 			return 0;
 		}

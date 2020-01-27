@@ -3,6 +3,7 @@ import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, overrides } from "../util";
+import { View } from "../../common/types";
 
 const PlayerRatings = ({
 	abbrev,
@@ -11,7 +12,7 @@ const PlayerRatings = ({
 	ratings,
 	season,
 	userTid,
-}) => {
+}: View<"playerRatings">) => {
 	useTitleBar({
 		title: "Player Ratings",
 		jumpTo: true,
@@ -20,7 +21,7 @@ const PlayerRatings = ({
 		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
 	});
 
-	const ovrsPotsColNames = [];
+	const ovrsPotsColNames: string[] = [];
 	if (process.env.SPORT === "football") {
 		for (const pos of overrides.common.constants.POSITIONS) {
 			for (const type of ["ovr", "pot"]) {
@@ -43,7 +44,7 @@ const PlayerRatings = ({
 	);
 
 	const rows = players.map(p => {
-		const ovrsPotsRatings = [];
+		const ovrsPotsRatings: string[] = [];
 		if (process.env.SPORT === "football") {
 			for (const pos of overrides.common.constants.POSITIONS) {
 				for (const type of ["ovrs", "pots"]) {

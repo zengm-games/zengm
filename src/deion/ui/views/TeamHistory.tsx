@@ -4,6 +4,7 @@ import { PLAYER } from "../../common";
 import { DataTable, PlayerNameLabels, RecordAndPlayoffs } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
+import { View } from "../../common/types";
 
 const TeamHistory = ({
 	abbrev,
@@ -21,7 +22,7 @@ const TeamHistory = ({
 	totalTied,
 	totalWon,
 	worstRecord,
-}) => {
+}: View<"teamHistory">) => {
 	useTitleBar({
 		title: "Team History",
 		dropdownView: "team_history",
@@ -41,7 +42,7 @@ const TeamHistory = ({
 				style={
 					h.playoffRoundsWon === numPlayoffRounds
 						? { fontWeight: "bold" }
-						: null
+						: undefined
 				}
 				tied={h.tied}
 				won={h.won}
@@ -113,22 +114,30 @@ const TeamHistory = ({
 						Championships: {championships}
 						<br />
 						Best Record:{" "}
-						<RecordAndPlayoffs
-							abbrev={abbrev}
-							lost={bestRecord.lost}
-							season={bestRecord.season}
-							tied={bestRecord.tied}
-							won={bestRecord.won}
-						/>
+						{bestRecord ? (
+							<RecordAndPlayoffs
+								abbrev={abbrev}
+								lost={bestRecord.lost}
+								season={bestRecord.season}
+								tied={bestRecord.tied}
+								won={bestRecord.won}
+							/>
+						) : (
+							"???"
+						)}
 						<br />
 						Worst Record:{" "}
-						<RecordAndPlayoffs
-							abbrev={abbrev}
-							lost={worstRecord.lost}
-							season={worstRecord.season}
-							tied={worstRecord.tied}
-							won={worstRecord.won}
-						/>
+						{worstRecord ? (
+							<RecordAndPlayoffs
+								abbrev={abbrev}
+								lost={worstRecord.lost}
+								season={worstRecord.season}
+								tied={worstRecord.tied}
+								won={worstRecord.won}
+							/>
+						) : (
+							"???"
+						)}
 					</p>
 
 					<h2>Seasons</h2>

@@ -12,10 +12,21 @@ import { TeamSeason } from "../../../common/types";
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.get("numTeams") (default 30)
  */
-const getRankLastThree = <Category extends "expenses" | "revenues">(
-	teamSeasons: TeamSeason[],
+const getRankLastThree = <
+	Category extends "expenses" | "revenues",
+	Item extends keyof TeamSeason[Category]
+>(
+	teamSeasons: Record<
+		Category,
+		Record<
+			Item,
+			{
+				rank: number;
+			}
+		>
+	>[],
 	category: Category,
-	item: keyof TeamSeason[Category],
+	item: Item,
 ): number => {
 	const defaultRank = (g.get("numTeams") + 1) / 2;
 

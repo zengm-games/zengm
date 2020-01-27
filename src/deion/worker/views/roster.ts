@@ -34,46 +34,38 @@ const updateRoster = async (
 			process.env.SPORT === "basketball"
 				? ["gp", "min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"];
+
 		const editable =
 			inputs.season === g.get("season") &&
 			inputs.tid === g.get("userTid") &&
 			process.env.SPORT === "basketball";
+
 		const showRelease =
 			inputs.season === g.get("season") && inputs.tid === g.get("userTid");
-		const vars: any = {
-			abbrev: inputs.abbrev,
-			budget: g.get("budget"),
-			currentSeason: g.get("season"),
-			editable,
-			maxRosterSize: g.get("maxRosterSize"),
-			numConfs: g.get("confs").length,
-			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
-			phase: g.get("phase"),
-			salaryCap: g.get("salaryCap") / 1000,
-			season: inputs.season,
-			showRelease,
-			showTradeFor:
-				inputs.season === g.get("season") && inputs.tid !== g.get("userTid"),
-			stats,
-			userTid: g.get("userTid"),
-		};
+
 		const seasonAttrs: TeamSeasonAttr[] = [
 			"profit",
 			"won",
 			"lost",
 			"playoffRoundsWon",
 		];
-
 		if (g.get("ties")) {
 			seasonAttrs.push("tied");
 		}
-
-		vars.t = await idb.getCopy.teamsPlus({
+		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
 			attrs: ["tid", "region", "name", "strategy", "imgURL"],
 			seasonAttrs,
 		});
+
+		if (!t) {
+			const returnValue = {
+				errorMessage: "Invalid team ID.",
+			};
+			return returnValue;
+		}
+
 		const attrs = [
 			"pid",
 			"tid",
@@ -93,14 +85,18 @@ const updateRoster = async (
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
 		const stats2 = [...stats, "yearsWithTeam"];
 
+		let players: any[];
+		let payroll: number | undefined;
+
 		if (inputs.season === g.get("season")) {
 			// Show players currently on the roster
 			const [schedule, playersAll] = await Promise.all([
 				season.getSchedule(),
 				idb.cache.players.indexGetAll("playersByTid", inputs.tid),
 			]);
-			const payroll = await team.getPayroll(inputs.tid); // numGamesRemaining doesn't need to be calculated except for g.get("userTid"), but it is.
+			payroll = (await team.getPayroll(inputs.tid)) / 1000;
 
+			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;
 
 			for (let i = 0; i < schedule.length; i++) {
@@ -112,7 +108,7 @@ const updateRoster = async (
 				}
 			}
 
-			const players = await idb.getCopies.playersPlus(playersAll, {
+			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
 				stats: stats2,
@@ -147,16 +143,13 @@ const updateRoster = async (
 				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
 				players[i].ptModifier = String(players[i].ptModifier);
 			}
-
-			vars.players = players;
-			vars.payroll = payroll / 1000;
 		} else {
 			// Show all players with stats for the given team and year
 			// Needs all seasons because of YWT!
 			const playersAll = await idb.getCopies.players({
 				statsTid: inputs.tid,
 			});
-			const players = await idb.getCopies.playersPlus(playersAll, {
+			players = await idb.getCopies.playersPlus(playersAll, {
 				attrs,
 				ratings,
 				stats: stats2,
@@ -176,19 +169,37 @@ const updateRoster = async (
 			for (let i = 0; i < players.length; i++) {
 				players[i].canRelease = false;
 			}
-
-			vars.players = players;
-			vars.payroll = undefined;
 		}
 
-		vars.t.ovr = overrides.core.team.ovr!(vars.players);
-		const playersCurrent = vars.players.filter(
+		const playersCurrent = players.filter(
 			(p: any) => p.injury.gamesRemaining === 0,
 		);
+		const t2 = {
+			...t,
+			ovr: overrides.core.team.ovr!(players),
+			ovrCurrent: overrides.core.team.ovr!(playersCurrent),
+		};
 
-		vars.t.ovrCurrent = overrides.core.team.ovr!(playersCurrent);
-
-		return vars;
+		return {
+			abbrev: inputs.abbrev,
+			budget: g.get("budget"),
+			currentSeason: g.get("season"),
+			editable,
+			maxRosterSize: g.get("maxRosterSize"),
+			numConfs: g.get("confs").length,
+			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
+			payroll,
+			phase: g.get("phase"),
+			players,
+			salaryCap: g.get("salaryCap") / 1000,
+			season: inputs.season,
+			showRelease,
+			showTradeFor:
+				inputs.season === g.get("season") && inputs.tid !== g.get("userTid"),
+			stats,
+			t: t2,
+			userTid: g.get("userTid"),
+		};
 	}
 };
 

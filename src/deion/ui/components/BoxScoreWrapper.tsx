@@ -216,8 +216,8 @@ const DetailedScore = ({
 	abbrev: string;
 	boxScore: any;
 	currentGidInList: boolean;
-	nextGid: number;
-	prevGid: number;
+	nextGid?: number;
+	prevGid?: number;
 	showNextPrev: boolean;
 }) => {
 	// Quarter/overtime labels
@@ -322,8 +322,8 @@ const BoxScore = ({
 	abbrev: string;
 	boxScore: any;
 	currentGidInList: boolean;
-	nextGid: number;
-	prevGid: number;
+	nextGid?: number;
+	prevGid?: number;
 	showNextPrev: boolean;
 	Row: any;
 }) => {

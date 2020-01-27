@@ -1,6 +1,9 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { toWorker } from "../../util";
+import { View } from "../../../common/types";
+
+type Player = View<"roster">["players"][number];
 
 export const ptStyles = {
 	0: {
@@ -25,7 +28,11 @@ export const ptStyles = {
 	},
 };
 
-const handlePtChange = async (p, userTid, event) => {
+const handlePtChange = async (
+	p: Player,
+	userTid: number,
+	event: ChangeEvent<HTMLSelectElement>,
+) => {
 	const ptModifier = parseFloat(event.currentTarget.value);
 
 	if (Number.isNaN(ptModifier)) {
@@ -41,7 +48,7 @@ const handlePtChange = async (p, userTid, event) => {
 	await toWorker("updatePlayingTime", p.pid, ptModifier);
 };
 
-const PlayingTime = ({ p, userTid }) => {
+const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 	const ptModifiers = [
 		{ text: "0", ptModifier: "0" },
 		{ text: "-", ptModifier: "0.75" },
@@ -55,7 +62,7 @@ const PlayingTime = ({ p, userTid }) => {
 			className="form-control pt-modifier-select"
 			value={p.ptModifier}
 			onChange={event => handlePtChange(p, userTid, event)}
-			style={ptStyles[String(p.ptModifier)]}
+			style={(ptStyles as any)[String(p.ptModifier)]}
 		>
 			{ptModifiers.map(({ text, ptModifier }) => {
 				return (

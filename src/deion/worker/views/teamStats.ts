@@ -1,11 +1,6 @@
 import { idb } from "../db";
-import { g, overrides } from "../util";
-import {
-	UpdateEvents,
-	ViewInput,
-	TeamSeasonAttr,
-	TeamStatAttr,
-} from "../../common/types";
+import { g, helpers, overrides } from "../util";
+import { UpdateEvents, ViewInput, TeamStatAttr } from "../../common/types";
 
 const updateTeams = async (
 	inputs: ViewInput<"teamStats">,
@@ -28,7 +23,7 @@ const updateTeams = async (
 		}
 
 		const stats = statsTable.stats;
-		const seasonAttrs: TeamSeasonAttr[] = g.get("ties")
+		const seasonAttrs: ("won" | "lost" | "tied")[] = g.get("ties")
 			? ["won", "lost", "tied"]
 			: ["won", "lost"];
 		const teams = (
@@ -60,13 +55,17 @@ const updateTeams = async (
 
 				for (const round of playoffSeries.series) {
 					for (const series of round) {
-						for (const ah of ["away", "home"]) {
+						for (const ah of ["away", "home"] as const) {
 							const ha = ah === "away" ? "home" : "away";
 							const t = teams.find(
+								// https://github.com/microsoft/TypeScript/issues/21732
+								// @ts-ignore
 								t2 => series[ah] && t2.tid === series[ah].tid,
 							);
 
 							if (t && series[ah] && series[ha]) {
+								// https://github.com/microsoft/TypeScript/issues/21732
+								// @ts-ignore
 								t.seasonAttrs.won += series[ah].won;
 								// @ts-ignore
 								t.seasonAttrs.lost += series[ha].won;
@@ -78,7 +77,7 @@ const updateTeams = async (
 		}
 
 		// Sort stats so we can determine what percentile our team is in.
-		const allStats = {};
+		const allStats: Record<string, number[]> = {};
 		let statTypes: string[] = seasonAttrs.slice();
 
 		for (const table of Object.values(
@@ -153,13 +152,15 @@ const updateTeams = async (
 						"oppPlaysPerDrive",
 						"oppYdsPerDrive",
 						"oppPtsPerDrive",
-				  ]; // Loop teams and stat types.
+				  ];
 
 		for (const t of teams) {
 			for (const statType of statTypes) {
 				const value = t.stats.hasOwnProperty(statType)
-					? t.stats[statType]
-					: t.seasonAttrs[statType];
+					? // @ts-ignore
+					  t.stats[statType]
+					: // @ts-ignore
+					  t.seasonAttrs[statType];
 
 				if (value === undefined) {
 					continue;
@@ -174,7 +175,7 @@ const updateTeams = async (
 		}
 
 		// Sort stat types. "Better" values are at the start of the arrays.
-		for (const statType of Object.keys(allStats)) {
+		for (const statType of helpers.keys(allStats)) {
 			allStats[statType].sort((a, b) => {
 				// Sort lowest first.
 				if (lowerIsBetter.includes(statType)) {

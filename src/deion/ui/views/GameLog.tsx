@@ -5,8 +5,9 @@ import { BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, overrides } from "../util";
 import useClickable from "../hooks/useClickable";
+import { View, GameProcessed } from "../../common/types";
 
-const StatsRow = ({ i, p, ...props }) => {
+const StatsRow = ({ i, p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const classes = classNames({
@@ -28,7 +29,7 @@ StatsRow.propTypes = {
 	p: PropTypes.object.isRequired,
 };
 
-const findPrevNextGids = (games = [], currentGid) => {
+const findPrevNextGids = (games: GameProcessed[], currentGid: number) => {
 	let prevGid;
 	let nextGid;
 	let currentGidInList = false;
@@ -49,7 +50,19 @@ const findPrevNextGids = (games = [], currentGid) => {
 	return { currentGidInList, prevGid, nextGid };
 };
 
-const GamesList = ({ abbrev, currentSeason, gid, gamesList, season }) => {
+const GamesList = ({
+	abbrev,
+	currentSeason,
+	gid,
+	gamesList,
+	season,
+}: {
+	abbrev: string;
+	currentSeason: number;
+	gamesList: View<"gameLog">["gamesList"];
+	gid?: number;
+	season: number;
+}) => {
 	if (season < currentSeason && gamesList.games.length === 0) {
 		return (
 			<p className="alert alert-info">
@@ -74,12 +87,15 @@ const GamesList = ({ abbrev, currentSeason, gid, gamesList, season }) => {
 			<tbody>
 				{gamesList.abbrev !== abbrev ? (
 					<tr>
-						<td colSpan="3">Loading...</td>
+						<td colSpan={3}>Loading...</td>
 					</tr>
 				) : (
 					gamesList.games.map(gm => {
 						return (
-							<tr key={gm.gid} className={gm.gid === gid ? "table-info" : null}>
+							<tr
+								key={gm.gid}
+								className={gm.gid === gid ? "table-info" : undefined}
+							>
 								<td className="game-log-cell">
 									<a
 										href={helpers.leagueUrl([
@@ -139,9 +155,9 @@ const GameLog = ({
 	abbrev,
 	boxScore,
 	currentSeason,
-	gamesList = { games: [] },
+	gamesList,
 	season,
-}) => {
+}: View<"gameLog">) => {
 	useTitleBar({
 		title: "Game Log",
 		dropdownView: "game_log",

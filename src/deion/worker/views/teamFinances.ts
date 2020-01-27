@@ -16,24 +16,8 @@ const updateTeamFinances = async (
 		inputs.tid !== state.tid ||
 		inputs.show !== state.show
 	) {
-		const vars: any = {
-			abbrev: inputs.abbrev,
-			gamesInProgress: lock.get("gameSim"),
-			hardCap: g.get("hardCap"),
-			numGames: g.get("numGames"),
-			tid: inputs.tid,
-			show: inputs.show,
-			salaryCap: g.get("salaryCap") / 1000,
-			minContract: g.get("minContract"),
-			minPayroll: g.get("minPayroll") / 1000,
-			luxuryPayroll: g.get("luxuryPayroll") / 1000,
-			luxuryTax: g.get("luxuryTax"),
-			userTid: g.get("userTid"),
-			budget: g.get("budget"),
-		};
-		const contracts: any = await team.getContracts(inputs.tid);
-		const payroll = await team.getPayroll(contracts);
-		vars.payroll = payroll / 1000;
+		const contractsRaw = await team.getContracts(inputs.tid);
+		const payroll = (await team.getPayroll(contractsRaw)) / 1000;
 		let showInt;
 
 		if (inputs.show === "all") {
@@ -51,26 +35,33 @@ const updateTeamFinances = async (
 			season += 1;
 		}
 
-		for (let i = 0; i < contracts.length; i++) {
-			contracts[i].amounts = [];
+		const contracts = contractsRaw.map(contract => {
+			const amounts: number[] = [];
 
-			for (let j = season; j <= contracts[i].exp; j++) {
+			for (let i = season; i <= contract.exp; i++) {
 				// Only look at first 5 years (edited rosters might have longer contracts)
-				if (j - season >= 5) {
+				if (i - season >= 5) {
 					break;
 				}
 
-				contracts[i].amounts.push(contracts[i].amount / 1000);
-				contractTotals[j - season] += contracts[i].amount / 1000;
+				amounts.push(contract.amount / 1000);
+				contractTotals[i - season] += contract.amount / 1000;
 			}
 
-			delete contracts[i].amount;
-			delete contracts[i].exp;
-		}
+			return {
+				pid: contract.pid,
+				firstName: contract.firstName,
+				lastName: contract.lastName,
+				skills: contract.skills,
+				pos: contract.pos,
+				injury: contract.injury,
+				watch: contract.watch,
+				released: contract.released,
+				amounts,
+			};
+		});
 
-		vars.contracts = contracts;
-		vars.contractTotals = contractTotals;
-		vars.salariesSeasons = [
+		const salariesSeasons = [
 			season,
 			season + 1,
 			season + 2,
@@ -81,8 +72,8 @@ const updateTeamFinances = async (
 			tid: inputs.tid,
 		});
 		teamSeasons.reverse(); // Most recent season first
-		// Add in luxuryTaxShare if it's missing
 
+		// Add in luxuryTaxShare if it's missing
 		for (let i = 0; i < teamSeasons.length; i++) {
 			if (!teamSeasons[i].revenues.hasOwnProperty("luxuryTaxShare")) {
 				teamSeasons[i].revenues.luxuryTaxShare = {
@@ -92,23 +83,36 @@ const updateTeamFinances = async (
 			}
 		}
 
-		let keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
-		const barData: any = {};
+		const keys = [
+			"won",
+			"hype",
+			"pop",
+			"att",
+			"cash",
+			"revenues",
+			"expenses",
+		] as const;
 
-		for (let i = 0; i < keys.length; i++) {
-			if (typeof teamSeasons[0][keys[i]] !== "object") {
-				barData[keys[i]] = helpers.nullPad(
-					teamSeasons.map(ts => ts[keys[i]]),
+		// @ts-ignore
+		const barData: Record<"won" | "hype" | "pop" | "att" | "cash", number[]> &
+			Record<"revenues" | "expenses", any> = {};
+
+		for (const key of keys) {
+			if (typeof teamSeasons[0][key] === "number") {
+				barData[key] = helpers.zeroPad(
+					// @ts-ignore
+					teamSeasons.map(ts => ts[key]),
 					showInt,
 				);
 			} else {
 				// Handle an object in the database
-				barData[keys[i]] = {};
-				const tempData = teamSeasons.map(ts => ts[keys[i]]);
+				barData[key] = {};
+				const tempData = teamSeasons.map(ts => ts[key]);
 
-				for (const key of Object.keys(tempData[0])) {
-					barData[keys[i]][key] = helpers.nullPad(
-						tempData.map(x => x[key]).map(x => x.amount),
+				for (const key2 of Object.keys(tempData[0])) {
+					barData[key][key2] = helpers.zeroPad(
+						// @ts-ignore
+						tempData.map(x => x[key2]).map(x => x.amount),
 						showInt,
 					);
 				}
@@ -123,17 +127,20 @@ const updateTeamFinances = async (
 				}
 
 				// See also game.js and team.js
-				if (teamSeasons[i].gpHome > 0) {
+				if (teamSeasons[i].gpHome > 0 && typeof num === "number") {
 					return num / teamSeasons[i].gpHome; // per game
 				}
-
-				return 0;
 			}
-		});
-		keys = ["cash"];
 
-		for (let i = 0; i < keys.length; i++) {
-			barData[keys[i]] = barData[keys[i]].map(num => num / 1000); // convert to millions
+			return 0;
+		});
+
+		const keys2 = ["cash"] as const;
+		for (const key of keys2) {
+			// convert to millions
+			barData[key] = barData[key].map(num =>
+				typeof num === "number" ? num / 1000 : num,
+			);
 		}
 
 		const barSeasons: number[] = [];
@@ -141,23 +148,45 @@ const updateTeamFinances = async (
 			barSeasons[i] = g.get("season") - i;
 		}
 
-		vars.barData = barData;
-		vars.barSeasons = barSeasons; // Get stuff for the finances form
-
-		vars.t = await idb.getCopy.teamsPlus({
+		// Get stuff for the finances form
+		const t = await idb.getCopy.teamsPlus({
 			attrs: ["region", "name", "abbrev", "budget"],
 			seasonAttrs: ["expenses"],
 			season: g.get("season"),
 			tid: inputs.tid,
 		});
-		vars.maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {
+
+		const maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {
 			if (teamSeason.stadiumCapacity > max) {
 				return teamSeason.stadiumCapacity;
 			}
 
 			return max;
 		}, 0);
-		return vars;
+
+		return {
+			abbrev: inputs.abbrev,
+			gamesInProgress: lock.get("gameSim"),
+			hardCap: g.get("hardCap"),
+			numGames: g.get("numGames"),
+			tid: inputs.tid,
+			show: inputs.show,
+			salaryCap: g.get("salaryCap") / 1000,
+			minContract: g.get("minContract"),
+			minPayroll: g.get("minPayroll") / 1000,
+			luxuryPayroll: g.get("luxuryPayroll") / 1000,
+			luxuryTax: g.get("luxuryTax"),
+			userTid: g.get("userTid"),
+			budget: g.get("budget"),
+			maxStadiumCapacity,
+			t,
+			barData,
+			barSeasons,
+			payroll,
+			contracts,
+			contractTotals,
+			salariesSeasons,
+		};
 	}
 };
 

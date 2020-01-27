@@ -3,12 +3,16 @@ import React from "react";
 import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
+import { View } from "../../common/types";
 
 const width100 = {
 	width: "100%",
 };
 
-const PlayerRatingDists = ({ ratingsAll, season }) => {
+const PlayerRatingDists = ({
+	ratingsAll,
+	season,
+}: View<"playerRatingDists">) => {
 	useTitleBar({
 		title: "Player Rating Distributions",
 		dropdownView: "player_rating_dists",

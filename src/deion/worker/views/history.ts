@@ -14,12 +14,6 @@ const updateHistory = async (
 ) => {
 	const { season } = inputs;
 
-	if (typeof season !== "number") {
-		viewedSeasonSummary(); // Should never happen, but just in case
-
-		return;
-	}
-
 	if (season === g.get("season") && local.unviewedSeasonSummary) {
 		viewedSeasonSummary();
 	}
@@ -28,10 +22,12 @@ const updateHistory = async (
 		if (season < g.get("startingSeason")) {
 			viewedSeasonSummary(); // Should never happen, but just in case
 
-			return {
-				invalidSeason: true,
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				invalidSeason: true as const,
 				season,
 			};
+			return returnValue;
 		}
 
 		const awards = await idb.getCopy.awards({
@@ -90,7 +86,7 @@ const updateHistory = async (
 			awards,
 			champ,
 			confs: g.get("confs"),
-			invalidSeason: false,
+			invalidSeason: false as const,
 			retiredPlayers,
 			season,
 			userTid: g.get("userTid"),

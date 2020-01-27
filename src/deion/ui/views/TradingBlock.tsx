@@ -1,11 +1,26 @@
 import PropTypes from "prop-types";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, ReactNode } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
+import { View, ThenArg } from "../../common/types";
+import api from "../../worker/api";
 
-const Offer = props => {
+type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
+
+type OfferProps = {
+	handleClickNegotiate: (
+		tid: number,
+		otherPids: number[],
+		otherDpids: number[],
+	) => Promise<void>;
+	i: number;
+	stats: string[];
+	ties: boolean;
+} & OfferType;
+
+const Offer = (props: OfferProps) => {
 	const {
 		abbrev,
 		dpids,
@@ -27,7 +42,7 @@ const Offer = props => {
 		won,
 	} = props;
 
-	let offerPlayers = null;
+	let offerPlayers: ReactNode = null;
 	if (players.length > 0) {
 		const cols = getCols(
 			"Name",
@@ -77,7 +92,7 @@ const Offer = props => {
 		);
 	}
 
-	let offerPicks = null;
+	let offerPicks: ReactNode = null;
 	if (picks.length > 0) {
 		offerPicks = (
 			<div className="col-md-4">
@@ -157,17 +172,22 @@ const width100 = {
 	width: "100%",
 };
 
-const TradingBlock = props => {
-	const [state, setState] = useState({
+const TradingBlock = (props: View<"tradingBlock">) => {
+	const [state, setState] = useState<{
+		asking: boolean;
+		offers: OfferType[];
+		pids: number[];
+		dpids: number[];
+	}>({
 		asking: false,
 		offers: [],
 		pids: [],
 		dpids: [],
 	});
 
-	const beforeOffersRef = useRef();
+	const beforeOffersRef = useRef<HTMLDivElement>(null);
 
-	const handleChangeAsset = async (type, id) => {
+	const handleChangeAsset = async (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
 			const ids = {
 				pids: helpers.deepCopy(prevState.pids),
@@ -194,7 +214,7 @@ const TradingBlock = props => {
 			offers: [],
 		}));
 
-		const offers = await toWorker(
+		const offers: OfferType[] = await toWorker(
 			"getTradingBlockOffers",
 			state.pids,
 			state.dpids,
@@ -210,13 +230,17 @@ const TradingBlock = props => {
 	const handleClickAskBottom = async () => {
 		await handleClickAsk();
 
-		if (beforeOffersRef && beforeOffersRef.current) {
+		if (beforeOffersRef.current) {
 			// This actually scrolls to above the button, because I don't want to worry about the fixed header offset
 			beforeOffersRef.current.scrollIntoView();
 		}
 	};
 
-	const handleClickNegotiate = async (tid, otherPids, otherDpids) => {
+	const handleClickNegotiate = async (
+		tid: number,
+		otherPids: number[],
+		otherDpids: number[],
+	) => {
 		await toWorker("actions.tradeFor", {
 			otherDpids,
 			otherPids,

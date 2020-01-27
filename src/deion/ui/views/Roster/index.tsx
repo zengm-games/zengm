@@ -13,16 +13,25 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
+import { Phase, View } from "../../../common/types";
 
 // If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
-const justDrafted = (p, phase, season) => {
+const justDrafted = (
+	p: View<"roster">["players"][number],
+	phase: Phase,
+	season: number,
+) => {
 	return (
 		(p.draft.year === season && phase >= PHASE.DRAFT) ||
 		(p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON)
 	);
 };
 
-const handleRelease = async (p, phase, season) => {
+const handleRelease = async (
+	p: View<"roster">["players"][number],
+	phase: Phase,
+	season: number,
+) => {
 	const wasPlayerJustDrafted = justDrafted(p, phase, season);
 
 	let releaseMessage;
@@ -69,8 +78,8 @@ const Roster = ({
 	stats,
 	t,
 	userTid,
-}) => {
-	const [sortedPids, setSortedPids] = useState(undefined);
+}: View<"roster">) => {
+	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
 	useTitleBar({
@@ -85,12 +94,12 @@ const Roster = ({
 	});
 
 	if (players !== prevPlayers) {
-		setSortedPids();
+		setSortedPids(undefined);
 		setPrevPlayers(players);
 	}
 
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
-	let playersSorted;
+	let playersSorted: typeof players;
 	if (sortedPids !== undefined) {
 		playersSorted = sortedPids.map(pid => {
 			return players.find(p => p.pid === pid);
@@ -255,7 +264,7 @@ const Roster = ({
 								title={
 									justDrafted(p, phase, currentSeason)
 										? "Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing."
-										: null
+										: undefined
 								}
 							>
 								{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}

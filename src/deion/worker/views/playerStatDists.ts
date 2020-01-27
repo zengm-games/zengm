@@ -27,34 +27,37 @@ const updatePlayers = async (
 			});
 		}
 
+		const stats = [
+			"gp",
+			"gs",
+			"min",
+			"fg",
+			"fga",
+			"fgp",
+			"tp",
+			"tpa",
+			"tpp",
+			"ft",
+			"fta",
+			"ftp",
+			"orb",
+			"drb",
+			"trb",
+			"ast",
+			"tov",
+			"stl",
+			"blk",
+			"pf",
+			"pts",
+			"per",
+		];
+
 		players = await idb.getCopies.playersPlus(players, {
 			ratings: ["skills"],
-			stats: [
-				"gp",
-				"gs",
-				"min",
-				"fg",
-				"fga",
-				"fgp",
-				"tp",
-				"tpa",
-				"tpp",
-				"ft",
-				"fta",
-				"ftp",
-				"orb",
-				"drb",
-				"trb",
-				"ast",
-				"tov",
-				"stl",
-				"blk",
-				"pf",
-				"pts",
-				"per",
-			],
+			stats,
 			season: inputs.season,
 		});
+
 		const statsAll = players.reduce((memo, p) => {
 			for (const stat of Object.keys(p.stats)) {
 				if (stat === "playoffs") {
@@ -70,6 +73,7 @@ const updatePlayers = async (
 
 			return memo;
 		}, {});
+
 		return {
 			numGames: g.get("numGames"),
 			season: inputs.season,

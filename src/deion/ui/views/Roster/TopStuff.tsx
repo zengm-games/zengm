@@ -1,23 +1,31 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, CSSProperties } from "react";
 import { RecordAndPlayoffs, RosterComposition } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
+import { View } from "../../../common/types";
 
 const fontSizeLarger = { fontSize: "larger" };
 
-const TeamRating = ({ ovr, ovrCurrent }) => {
+const TeamRating = ({
+	ovr,
+	ovrCurrent,
+}: {
+	ovr: number;
+	ovrCurrent: number;
+}) => {
 	const [showCurrent, setShowCurrent] = useState(true);
 
 	if (ovr === ovrCurrent) {
-		return `${ovr}/100`;
+		// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+		return <>{`${ovr}/100`}</>;
 	}
 
 	const title = showCurrent
 		? "Current rating, including injuries"
 		: "Rating when healthy";
 	const rating = showCurrent ? ovrCurrent : ovr;
-	const className = showCurrent ? "text-danger" : null;
+	const className = showCurrent ? "text-danger" : undefined;
 
 	return (
 		<>
@@ -52,8 +60,25 @@ const TopStuff = ({
 	season,
 	showTradeFor,
 	t,
+}: Pick<
+	View<"roster">,
+	| "abbrev"
+	| "budget"
+	| "currentSeason"
+	| "editable"
+	| "numConfs"
+	| "numPlayoffRounds"
+	| "payroll"
+	| "players"
+	| "salaryCap"
+	| "season"
+	| "showTradeFor"
+	| "t"
+> & {
+	openRosterSpots: number;
+	profit: number;
 }) => {
-	const logoStyle = {};
+	const logoStyle: CSSProperties = {};
 	if (t.imgURL) {
 		logoStyle.display = "inline";
 		logoStyle.backgroundImage = `url('${t.imgURL}')`;
@@ -96,7 +121,7 @@ const TopStuff = ({
 								<div>
 									{openRosterSpots} open roster spots
 									<br />
-									Payroll: {helpers.formatCurrency(payroll, "M")}
+									Payroll: {helpers.formatCurrency(payroll || 0, "M")}
 									<br />
 									Salary cap: {helpers.formatCurrency(salaryCap, "M")}
 									<br />

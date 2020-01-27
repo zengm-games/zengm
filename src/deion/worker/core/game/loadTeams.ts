@@ -1,8 +1,28 @@
 import { allStar, finances, player } from "..";
 import { idb } from "../../db";
 import { g, overrides } from "../../util";
+import { Player, MinimalPlayerRatings } from "../../../common/types";
 
-const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
+const processTeam = (
+	team: {
+		tid: number;
+		cid: number;
+		did: number;
+		depth?: any;
+	},
+	teamSeason: {
+		won: number;
+		lost: number;
+		expenses: {
+			health: {
+				rank: number;
+			};
+		};
+	},
+	teamStats: Record<string, number>,
+	players: Player<MinimalPlayerRatings>[],
+	playerStats: Record<string, number>,
+) => {
 	const allStarGame = team.tid === -1 || team.tid === -2;
 
 	if (!allStarGame) {
@@ -42,8 +62,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 		const playerCompositeRatings: any = {};
 		const p2 = {
 			id: p.pid,
-			pid: p.pid,
-			// for getDepthPlayers, eventually do it all this way
+			pid: p.pid, // for getDepthPlayers, eventually do it all this way
 			name: `${p.firstName} ${p.lastName}`,
 			age: g.get("season") - p.born.year,
 			pos: rating.pos,
@@ -130,7 +149,9 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[]) => {
-	const playerStats = overrides.core.player.stats!.raw.reduce((stats, stat) => {
+	const playerStats = overrides.core.player.stats!.raw.reduce<
+		Record<string, number>
+	>((stats, stat) => {
 		if (stat === "gp") {
 			return stats;
 		}
@@ -139,7 +160,9 @@ const loadTeams = async (tids: number[]) => {
 		return stats;
 	}, {});
 
-	const teamStats = overrides.core.team.stats!.raw.reduce((stats, stat) => {
+	const teamStats = overrides.core.team.stats!.raw.reduce<
+		Record<string, number>
+	>((stats, stat) => {
 		stats[stat] = 0;
 		return stats;
 	}, {});
@@ -148,14 +171,13 @@ const loadTeams = async (tids: number[]) => {
 	if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
 		// All-Star Game
 		const allStars = await allStar.getOrCreate();
-
 		if (!allStars.finalized) {
 			await allStar.draftAll();
 		}
 
 		for (const tid of tids) {
 			const allStarsTeamInd = tid === -1 ? 0 : 1;
-			const players = await Promise.all(
+			const players: Player<MinimalPlayerRatings>[] = await Promise.all(
 				allStars.teams[allStarsTeamInd].map(async ({ pid }) => {
 					const p = await idb.cache.players.get(pid);
 

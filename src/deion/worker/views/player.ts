@@ -2,7 +2,12 @@ import { PHASE, PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { face, g, getTeamColors, helpers, overrides } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import {
+	MinimalPlayerRatings,
+	Player,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -52,11 +57,11 @@ const updatePlayer = async (
 			]);
 		}
 
-		let p = await idb.getCopy.players({
+		const pRaw = await idb.getCopy.players({
 			pid: inputs.pid,
 		});
 
-		if (!p) {
+		if (!pRaw) {
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
 				errorMessage: "Player not found.",
@@ -64,8 +69,67 @@ const updatePlayer = async (
 			return returnValue;
 		}
 
-		await face.upgrade(p);
-		p = await idb.getCopy.playersPlus(p, {
+		await face.upgrade(pRaw);
+
+		type Stats = {
+			season: number;
+			tid: number;
+			abbrev: string;
+			age: number;
+			playoffs: boolean;
+		} & Record<string, number>;
+
+		const p: Pick<
+			Player,
+			| "pid"
+			| "tid"
+			| "weight"
+			| "born"
+			| "contract"
+			| "diedYear"
+			| "face"
+			| "imgURL"
+			| "freeAgentMood"
+			| "injury"
+			| "injuries"
+			| "college"
+			| "watch"
+			| "relatives"
+		> & {
+			age: number;
+			draft: {
+				round: number;
+				pick: number;
+				tid: number;
+				originalTid: number;
+				year: number;
+				pot: number;
+				ovr: number;
+				skills: string[];
+				age: number;
+				abbrev: string;
+				originalAbbrev: string;
+			};
+			name: string;
+			abbrev: string;
+			teamRegion: string;
+			teamName: string;
+			hgtFt: number;
+			hgtIn: number;
+			mood: any;
+			salaries: any[];
+			salariesTotal: any;
+			awardsGrouped: any[];
+			untradable: any;
+			untradableMsg: string;
+			ratings: (MinimalPlayerRatings & {
+				abbrev: string;
+				age: number;
+			})[];
+			stats: Stats[];
+			careerStats: Stats;
+			careerStatsPlayoffs: Stats;
+		} = await idb.getCopy.playersPlus(pRaw, {
 			attrs: [
 				"pid",
 				"name",

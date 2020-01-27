@@ -191,16 +191,13 @@ const leagueUrl = (components: (number | string)[]): string =>
  * @param {number} length Desired length.
  * @return {Array} Original array padded with null or truncated so that it has the required length.
  */
-function nullPad<T>(
-	array: (T | undefined | null)[],
-	length: number,
-): (T | undefined | null)[] {
+function zeroPad(array: number[], length: number) {
 	if (array.length > length) {
 		return array.slice(0, length);
 	}
 
 	while (array.length < length) {
-		array.push(null);
+		array.push(0);
 	}
 
 	return array;
@@ -349,7 +346,7 @@ const helpers = {
 	gb,
 	getAbbrev,
 	leagueUrl,
-	nullPad,
+	zeroPad,
 	numGamesToWinSeries,
 	orderByWinp,
 	overtimeCounter,

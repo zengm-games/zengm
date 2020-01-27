@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ChangeEvent, FormEvent, ReactNode } from "react";
 import {
 	BarGraph,
 	DataTable,
@@ -8,18 +8,49 @@ import {
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker } from "../util";
+import { View } from "../../common/types";
 
-class FinancesForm extends React.Component {
-	constructor(props) {
+type FinancesFormProps = {
+	gamesInProgress: boolean;
+	t: any;
+	tid: number;
+	userTid: number;
+};
+
+type FinancesFormState = {
+	dirty: boolean;
+	coaching: string;
+	facilities: string;
+	health: string;
+	saving: boolean;
+	scouting: string;
+	ticketPrice: string;
+};
+
+type HandleChanges = {
+	coaching: (event: ChangeEvent<HTMLInputElement>) => void;
+	facilities: (event: ChangeEvent<HTMLInputElement>) => void;
+	health: (event: ChangeEvent<HTMLInputElement>) => void;
+	scouting: (event: ChangeEvent<HTMLInputElement>) => void;
+	ticketPrice: (event: ChangeEvent<HTMLInputElement>) => void;
+};
+
+class FinancesForm extends React.Component<
+	FinancesFormProps,
+	FinancesFormState
+> {
+	handleChanges: HandleChanges;
+
+	constructor(props: FinancesFormProps) {
 		super(props);
 		this.state = {
 			dirty: false,
-			coaching: props.t.budget.coaching.amount,
-			facilities: props.t.budget.facilities.amount,
-			health: props.t.budget.health.amount,
+			coaching: String(props.t.budget.coaching.amount),
+			facilities: String(props.t.budget.facilities.amount),
+			health: String(props.t.budget.health.amount),
 			saving: false,
-			scouting: props.t.budget.scouting.amount,
-			ticketPrice: props.t.budget.ticketPrice.amount,
+			scouting: String(props.t.budget.scouting.amount),
+			ticketPrice: String(props.t.budget.ticketPrice.amount),
 		};
 		this.handleChanges = {
 			coaching: this.handleChange.bind(this, "coaching"),
@@ -31,7 +62,10 @@ class FinancesForm extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
-	static getDerivedStateFromProps(nextProps, prevState) {
+	static getDerivedStateFromProps(
+		nextProps: FinancesFormProps,
+		prevState: FinancesFormState,
+	) {
 		if (!prevState.dirty) {
 			return {
 				coaching: nextProps.t.budget.coaching.amount,
@@ -45,14 +79,15 @@ class FinancesForm extends React.Component {
 		return null;
 	}
 
-	handleChange(name, e) {
+	handleChange(name: keyof HandleChanges, e: ChangeEvent<HTMLInputElement>) {
+		// @ts-ignore
 		this.setState({
 			dirty: true,
 			[name]: e.target.value,
 		});
 	}
 
-	async handleSubmit(e) {
+	async handleSubmit(e: FormEvent) {
 		e.preventDefault();
 
 		this.setState({ saving: true });
@@ -60,22 +95,22 @@ class FinancesForm extends React.Component {
 		const budgetAmounts = {
 			// Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
 			coaching: helpers.bound(
-				Math.round(this.state.coaching * 100) * 10,
+				Math.round(parseFloat(this.state.coaching) * 100) * 10,
 				0,
 				Infinity,
 			),
 			facilities: helpers.bound(
-				Math.round(this.state.facilities * 100) * 10,
+				Math.round(parseFloat(this.state.facilities) * 100) * 10,
 				0,
 				Infinity,
 			),
 			health: helpers.bound(
-				Math.round(this.state.health * 100) * 10,
+				Math.round(parseFloat(this.state.health) * 100) * 10,
 				0,
 				Infinity,
 			),
 			scouting: helpers.bound(
-				Math.round(this.state.scouting * 100) * 10,
+				Math.round(parseFloat(this.state.scouting) * 100) * 10,
 				0,
 				Infinity,
 			),
@@ -271,6 +306,7 @@ class FinancesForm extends React.Component {
 	}
 }
 
+// @ts-ignore
 FinancesForm.propTypes = {
 	gamesInProgress: PropTypes.bool.isRequired,
 	t: PropTypes.object.isRequired,
@@ -286,7 +322,16 @@ const PayrollInfo = ({
 	minPayroll,
 	payroll,
 	salaryCap,
-}) => {
+}: Pick<
+	View<"teamFinances">,
+	| "hardCap"
+	| "luxuryPayroll"
+	| "luxuryTax"
+	| "minContract"
+	| "minPayroll"
+	| "payroll"
+	| "salaryCap"
+>) => {
 	return (
 		<p>
 			The current payroll (<b>{helpers.formatCurrency(payroll, "M")}</b>) is{" "}
@@ -347,6 +392,19 @@ PayrollInfo.propTypes = {
 	salaryCap: PropTypes.number.isRequired,
 };
 
+const highlightZeroNegative = (amount: number) => {
+	const formattedValue = helpers.formatCurrency(amount, "M");
+
+	if (amount === 0) {
+		return { classNames: "text-muted", value: formattedValue };
+	}
+	if (amount < 0) {
+		return { classNames: "text-danger", value: formattedValue };
+	}
+
+	return formattedValue;
+};
+
 const TeamFinances = ({
 	abbrev,
 	barData,
@@ -369,7 +427,7 @@ const TeamFinances = ({
 	t,
 	tid,
 	userTid,
-}) => {
+}: View<"teamFinances">) => {
 	useTitleBar({
 		title: "Team Finances",
 		dropdownView: "team_finances",
@@ -387,7 +445,7 @@ const TeamFinances = ({
 	);
 
 	const rows = contracts.map((p, i) => {
-		const data = [
+		const data: ReactNode[] = [
 			<PlayerNameLabels
 				injury={p.injury}
 				pid={p.pid}
@@ -421,24 +479,13 @@ const TeamFinances = ({
 		};
 	});
 
-	function highlightZeroNegative(amount) {
-		const formattedValue = helpers.formatCurrency(amount, "M");
-
-		if (amount === 0) {
-			return { classNames: "text-muted", value: formattedValue };
-		}
-		if (amount < 0) {
-			return { classNames: "text-danger", value: formattedValue };
-		}
-
-		return formattedValue;
-	}
-
 	const footer = [
 		["Totals"].concat(
+			// @ts-ignore
 			contractTotals.map(amount => highlightZeroNegative(amount)),
 		),
 		["Free Cap Space"].concat(
+			// @ts-ignore
 			contractTotals.map(amount => highlightZeroNegative(salaryCap - amount)),
 		),
 	];
@@ -502,7 +549,9 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData.hype}
 							labels={barSeasons}
-							tooltipCb={val => val.toFixed(2)}
+							tooltipCb={val =>
+								typeof val === "number" ? val.toFixed(2) : val
+							}
 							ylim={[0, 1]}
 						/>
 					</div>
@@ -513,7 +562,9 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData.pop}
 							labels={barSeasons}
-							tooltipCb={val => `${val.toFixed(1)}M`}
+							tooltipCb={val =>
+								typeof val === "number" ? `${val.toFixed(1)}M` : val
+							}
 							ylim={[0, 20]}
 						/>
 					</div>
@@ -524,7 +575,11 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData.att}
 							labels={barSeasons}
-							tooltipCb={val => helpers.numberWithCommas(Math.round(val))}
+							tooltipCb={val =>
+								typeof val === "number"
+									? helpers.numberWithCommas(Math.round(val))
+									: val
+							}
 							ylim={[0, maxStadiumCapacity]}
 						/>
 					</div>
@@ -553,7 +608,11 @@ const TeamFinances = ({
 										"luxury tax share revenue",
 									],
 								]}
-								tooltipCb={val => helpers.formatCurrency(val / 1000, "M", 1)}
+								tooltipCb={val =>
+									typeof val === "number"
+										? helpers.formatCurrency(val / 1000, "M", 1)
+										: val
+								}
 							/>
 						</div>
 						<br />
@@ -582,7 +641,11 @@ const TeamFinances = ({
 										"facilities",
 									],
 								]}
-								tooltipCb={val => helpers.formatCurrency(val / 1000, "M", 1)}
+								tooltipCb={val =>
+									typeof val === "number"
+										? helpers.formatCurrency(val / 1000, "M", 1)
+										: val
+								}
 							/>
 						</div>
 						<br />
@@ -592,7 +655,11 @@ const TeamFinances = ({
 							<BarGraph
 								data={barData.cash}
 								labels={barSeasons}
-								tooltipCb={val => helpers.formatCurrency(val, "M", 1)}
+								tooltipCb={val =>
+									typeof val === "number"
+										? helpers.formatCurrency(val, "M", 1)
+										: val
+								}
 							/>
 						</div>
 					</div>

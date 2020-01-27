@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { BoxPlot } from "../components";
+import { View } from "../../common/types";
 
 const proStatsAll =
 	process.env.SPORT === "basketball"
@@ -714,7 +715,7 @@ const width100 = {
 	width: "100%",
 };
 
-const TeamStatDists = ({ season, statsAll }) => {
+const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 	useTitleBar({
 		title: "Team Stat Distributions",
 		dropdownView: "team_stat_dists",
@@ -750,13 +751,13 @@ const TeamStatDists = ({ season, statsAll }) => {
 									<td style={width100}>
 										<BoxPlot
 											color="var(--blue)"
-											data={statsAll[stat]}
-											scale={scale[stat]}
+											data={(statsAll as any)[stat]}
+											scale={(scale as any)[stat]}
 										/>
 									</td>
 								</tr>
 							);
-							let proPlot = null;
+							let proPlot: ReactNode = null;
 							if (proStatsAll.hasOwnProperty(stat)) {
 								proPlot = (
 									<tr key={`${stat}-pro`}>
@@ -765,9 +766,9 @@ const TeamStatDists = ({ season, statsAll }) => {
 											<div style={{ marginTop: "-26px" }}>
 												<BoxPlot
 													color="var(--green)"
-													data={proStatsAll[stat]}
+													data={(proStatsAll as any)[stat]}
 													labels={false}
-													scale={scale[stat]}
+													scale={(scale as any)[stat]}
 												/>
 											</div>
 										</td>

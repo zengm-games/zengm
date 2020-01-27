@@ -2,7 +2,17 @@ import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../../../deion/ui/util";
 
-const Player = ({ i, p, season, userTid }) => {
+const Player = ({
+	i,
+	p,
+	season,
+	userTid,
+}: {
+	i: number;
+	p: any;
+	season: number;
+	userTid: number;
+}) => {
 	if (!p) {
 		return <div />;
 	}
@@ -17,7 +27,7 @@ const Player = ({ i, p, season, userTid }) => {
 	// The wrapper div here actually matters, don't change to fragment!
 	return (
 		<div>
-			<span className={p.tid === userTid ? "table-info" : null}>
+			<span className={p.tid === userTid ? "table-info" : undefined}>
 				{pos} <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 				<a href={helpers.leagueUrl(["roster", p.abbrev, season])}>{p.abbrev}</a>
 				)
@@ -33,7 +43,19 @@ Player.propTypes = {
 	userTid: PropTypes.number.isRequired,
 };
 
-const Teams = ({ className, name, season, team, userTid }) => {
+const Teams = ({
+	className,
+	name,
+	season,
+	team,
+	userTid,
+}: {
+	className?: string;
+	name: string;
+	season: number;
+	team: any[];
+	userTid: number;
+}) => {
 	return (
 		<div className={className}>
 			<h2>{name}</h2>

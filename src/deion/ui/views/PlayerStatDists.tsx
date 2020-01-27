@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactNode } from "react";
 import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
+import { View } from "../../common/types";
 
 const width100 = {
 	width: "100%",
@@ -34,7 +35,11 @@ const proQuartiles =
 		  }
 		: {};
 
-const PlayerStatDists = ({ numGames, season, statsAll }) => {
+const PlayerStatDists = ({
+	numGames,
+	season,
+	statsAll,
+}: View<"playerStatDists">) => {
 	useTitleBar({
 		title: "Player Stat Distributions",
 		dropdownView: "player_stat_dists",
@@ -108,12 +113,12 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
 									<BoxPlot
 										color="var(--blue)"
 										data={statsAll[stat]}
-										scale={scale[stat]}
+										scale={(scale as any)[stat]}
 									/>
 								</td>
 							</tr>
 						);
-						let proPlot = null;
+						let proPlot: ReactNode = null;
 						if (proQuartiles.hasOwnProperty(stat)) {
 							proPlot = (
 								<tr key={`${stat}-pro`}>
@@ -123,8 +128,8 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
 											<BoxPlot
 												color="var(--green)"
 												labels={false}
-												scale={scale[stat]}
-												quartiles={proQuartiles[stat]}
+												scale={(scale as any)[stat]}
+												quartiles={(proQuartiles as any)[stat]}
 											/>
 										</div>
 									</td>

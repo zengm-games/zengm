@@ -127,9 +127,9 @@ const scale = (val: number, ylim: [number, number]) => {
 type Props = {
 	data: number[] | number[][];
 	// To get rid of this (and other below), would probably have to break up into two separate code paths, one for stacked and one for non-stacked
-	labels: string[];
-	tooltipCb: (val: string | number) => string;
-	ylim: [number, number];
+	labels: (number | string)[] | (number | string)[][];
+	tooltipCb?: (val: string | number) => string;
+	ylim?: [number, number];
 };
 let globalCounter = 0;
 
@@ -253,6 +253,7 @@ const BarGraph = (props: Props) => {
 					let titleStart = "";
 
 					if (labels !== undefined) {
+						// @ts-ignore
 						titleStart = `${labels[0][i]} ${labels[1][j]}: `;
 					}
 

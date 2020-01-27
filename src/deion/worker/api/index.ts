@@ -738,9 +738,12 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		return Promise.all(
 			offers.map(async offer => {
 				const tid = offer.tid;
-				let players = await idb.cache.players.indexGetAll("playersByTid", tid);
-				players = players.filter(p => offer.pids.includes(p.pid));
-				players = await idb.getCopies.playersPlus(players, {
+				let playersAll = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					tid,
+				);
+				playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
+				const players = await idb.getCopies.playersPlus(playersAll, {
 					attrs: ["pid", "name", "age", "contract", "injury", "watch"],
 					ratings: ["ovr", "pot", "skills", "pos"],
 					stats,
@@ -1359,8 +1362,8 @@ const updateTeamInfo = async (
 		name: string;
 		abbrev: string;
 		imgURL?: string;
-		pop: number;
-		stadiumCapacity: number;
+		pop: number | string;
+		stadiumCapacity: number | string;
 		colors: [string, string, string];
 	}[],
 ) => {
@@ -1399,9 +1402,9 @@ const updateTeamInfo = async (
 			"teamSeasonsByTidSeason",
 			[t.tid, g.get("season")],
 		);
-		teamSeason.pop = parseFloat((newTeams[t.tid].pop as unknown) as string);
+		teamSeason.pop = parseFloat(newTeams[t.tid].pop as string);
 		teamSeason.stadiumCapacity = parseInt(
-			(newTeams[t.tid].stadiumCapacity as unknown) as string,
+			newTeams[t.tid].stadiumCapacity as string,
 			10,
 		);
 

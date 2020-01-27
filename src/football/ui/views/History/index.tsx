@@ -4,22 +4,24 @@ import { RetiredPlayers } from "../../../../deion/ui/components";
 import useTitleBar from "../../../../deion/ui/hooks/useTitleBar";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
+import { View } from "../../../../deion/common/types";
 
-const History = ({
-	awards,
-	champ,
-	confs,
-	invalidSeason,
-	retiredPlayers,
-	season,
-	userTid,
-}) => {
+export type ActualProps = Exclude<
+	View<"history">,
+	{ invalidSeason: true; season: number }
+>;
+
+const History = (props: View<"history">) => {
+	const { invalidSeason, season } = props;
+
 	useTitleBar({
 		title: "Season Summary",
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "history",
-		dropdownFields: { seasonsHistory: season },
+		dropdownFields: {
+			seasonsHistory: season,
+		},
 	});
 
 	if (invalidSeason) {
@@ -30,6 +32,14 @@ const History = ({
 			</>
 		);
 	}
+
+	const {
+		awards,
+		champ,
+		confs,
+		retiredPlayers,
+		userTid,
+	} = props as ActualProps;
 
 	return (
 		<>

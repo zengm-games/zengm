@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactNode } from "react";
 import {
 	DataTable,
 	PlayerPicture,
@@ -10,8 +10,15 @@ import {
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, overrides, toWorker } from "../../util";
+import { View, Player } from "../../../common/types";
 
-const Relatives = ({ pid, relatives }) => {
+const Relatives = ({
+	pid,
+	relatives,
+}: {
+	pid: number;
+	relatives: Player["relatives"];
+}) => {
 	if (relatives.length === 0) {
 		return null;
 	}
@@ -47,6 +54,13 @@ const StatsTable = ({
 	playoffs = false,
 	stats,
 	superCols,
+}: {
+	name: string;
+	onlyShowIf?: string[];
+	p: View<"player">["player"];
+	playoffs?: boolean;
+	stats: string[];
+	superCols?: any[];
 }) => {
 	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
 	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
@@ -128,7 +142,7 @@ StatsTable.propTypes = {
 	superCols: PropTypes.array,
 };
 
-const Player = ({
+const Player2 = ({
 	events,
 	feats,
 	freeAgent,
@@ -142,10 +156,10 @@ const Player = ({
 	statTables,
 	teamColors,
 	willingToSign,
-}) => {
+}: View<"player">) => {
 	useTitleBar({ title: player.name });
 
-	let draftInfo = null;
+	let draftInfo: ReactNode = null;
 	if (player.draft.round) {
 		draftInfo = (
 			<>
@@ -170,7 +184,7 @@ const Player = ({
 		);
 	}
 
-	let contractInfo = null;
+	let contractInfo: ReactNode = null;
 	if (showContract) {
 		contractInfo = (
 			<>
@@ -182,7 +196,7 @@ const Player = ({
 		);
 	}
 
-	let statusInfo = null;
+	let statusInfo: ReactNode = null;
 	if (!retired) {
 		statusInfo = (
 			<>
@@ -196,7 +210,7 @@ const Player = ({
 					</span>
 				) : null}
 				<SkillsBlock
-					className={injured ? null : "skills-alone"}
+					className={injured ? undefined : "skills-alone"}
 					skills={player.ratings[player.ratings.length - 1].skills}
 				/>
 				<WatchBlock pid={player.pid} watch={player.watch} />
@@ -284,7 +298,7 @@ const Player = ({
 				<span
 					title={
 						willingToSign
-							? null
+							? undefined
 							: `${player.name} refuses to negotiate with you`
 					}
 				>
@@ -378,7 +392,7 @@ const Player = ({
 							r.pos,
 							r.ovr,
 							r.pot,
-							...ratings.map(rating => r[rating]),
+							...ratings.map(rating => (r as any)[rating]),
 							<SkillsBlock className="skills-alone" skills={r.skills} />,
 						],
 					};
@@ -467,7 +481,7 @@ const Player = ({
 	);
 };
 
-Player.propTypes = {
+Player2.propTypes = {
 	events: PropTypes.arrayOf(
 		PropTypes.shape({
 			eid: PropTypes.number.isRequired,
@@ -500,4 +514,4 @@ Player.propTypes = {
 	willingToSign: PropTypes.bool.isRequired,
 };
 
-export default Player;
+export default Player2;

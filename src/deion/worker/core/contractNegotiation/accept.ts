@@ -60,14 +60,11 @@ const accept = async (
 		g.get("phase"),
 	);
 	await idb.cache.players.put(p);
-	await cancel(pid); // If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
+	await cancel(pid);
+
+	// If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
 	// better than, without otherwise disturbing the depth chart order
-
-	if (!overrides.core.team.rosterAutoSort) {
-		throw new Error("Missing overrides.core.team.rosterAutoSort");
-	}
-
-	await overrides.core.team.rosterAutoSort(g.get("userTid"), true);
+	await overrides.core.team.rosterAutoSort!(g.get("userTid"), true);
 };
 
 export default accept;

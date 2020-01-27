@@ -17,15 +17,11 @@ const genStatsRow = (tid: number, playoffs: boolean = false): TeamStats => {
 		tid,
 	};
 
-	if (!overrides.core.team.stats) {
-		throw new Error("Missing overrides.core.team.stats");
-	}
-
-	for (const key of overrides.core.team.stats.derived) {
+	for (const key of overrides.core.team.stats!.derived) {
 		statsRow[key] = 0;
 	}
 
-	for (const key of overrides.core.team.stats.raw) {
+	for (const key of overrides.core.team.stats!.raw) {
 		statsRow[key] = 0;
 	}
 

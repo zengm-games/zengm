@@ -70,12 +70,7 @@ const autoSign = async () => {
 			if (p) {
 				player.sign(p, tid, p.contract, g.get("phase"));
 				await idb.cache.players.put(p);
-
-				if (!overrides.core.team.rosterAutoSort) {
-					throw new Error("Missing overrides.core.team.rosterAutoSort");
-				}
-
-				await overrides.core.team.rosterAutoSort(tid);
+				await overrides.core.team.rosterAutoSort!(tid);
 			}
 		}
 	}

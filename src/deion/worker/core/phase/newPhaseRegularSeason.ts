@@ -6,11 +6,7 @@ import { PhaseReturn } from "../../../common/types";
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const teams = await idb.cache.teams.getAll();
 
-	if (!overrides.core.season.newSchedule) {
-		throw new Error("Missing overrides.core.season.newSchedule");
-	}
-
-	await season.setSchedule(overrides.core.season.newSchedule(teams));
+	await season.setSchedule(overrides.core.season.newSchedule!(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
 		const transaction = idb.league.transaction("games", "readwrite");

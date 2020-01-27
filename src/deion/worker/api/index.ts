@@ -147,11 +147,7 @@ const allStarDraftUser = async (pid: number) => {
 };
 
 const autoSortRoster = async (pos?: string) => {
-	if (!overrides.core.team.rosterAutoSort) {
-		throw new Error("Missing overrides.core.team.rosterAutoSort");
-	}
-
-	await overrides.core.team.rosterAutoSort(
+	await overrides.core.team.rosterAutoSort!(
 		g.get("userTid"),
 		false,
 		typeof pos === "string" ? pos : undefined,

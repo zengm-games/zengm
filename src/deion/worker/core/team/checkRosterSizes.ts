@@ -92,11 +92,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 		// Auto sort rosters (except player's team)
 		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
 		if (!g.get("userTids").includes(tid) || local.autoPlaySeasons > 0) {
-			if (!overrides.core.team.rosterAutoSort) {
-				throw new Error("Missing overrides.core.team.rosterAutoSort");
-			}
-
-			return overrides.core.team.rosterAutoSort(tid);
+			return overrides.core.team.rosterAutoSort!(tid);
 		}
 	};
 

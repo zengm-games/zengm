@@ -11,21 +11,13 @@ const generate = (
 	newLeague: boolean,
 	scoutingRank: number,
 ): PlayerWithoutKey<MinimalPlayerRatings> => {
-	if (!overrides.core.player.genRatings) {
-		throw new Error("Missing overrides.core.player.genRatings");
-	}
-
-	const { heightInInches, ratings } = overrides.core.player.genRatings(
+	const { heightInInches, ratings } = overrides.core.player.genRatings!(
 		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingRank,
 	);
 	const { country, firstName, lastName } = name();
 
-	if (!overrides.core.player.genWeight) {
-		throw new Error("Missing overrides.core.player.genWeight");
-	}
-
-	const weight = overrides.core.player.genWeight(ratings.hgt, ratings.stre);
+	const weight = overrides.core.player.genWeight!(ratings.hgt, ratings.stre);
 	const p = {
 		awards: [],
 		born: {

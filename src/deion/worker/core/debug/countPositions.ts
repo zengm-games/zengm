@@ -18,17 +18,9 @@ const countPositions = async () => {
 	for (const p of players) {
 		const r = p.ratings[p.ratings.length - 1]; // Dynamically recompute, to make dev easier when changing position formula
 
-		if (!overrides.core.player.pos) {
-			throw new Error("Missing overrides.core.player.pos");
-		}
+		const position = overrides.core.player.pos!(r);
 
-		const position = overrides.core.player.pos(r);
-
-		if (!overrides.core.player.ovr) {
-			throw new Error("Missing overrides.core.player.ovr");
-		}
-
-		const ovr = overrides.core.player.ovr(r, position);
+		const ovr = overrides.core.player.ovr!(r, position);
 
 		if (!posCounts[position]) {
 			posCounts[position] = 0;

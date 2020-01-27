@@ -60,11 +60,7 @@ const propose = async (
 		for (const tid of tids) {
 			const onlyNewPlayers = g.get("userTids").includes(tid);
 
-			if (!overrides.core.team.rosterAutoSort) {
-				throw new Error("Missing overrides.core.team.rosterAutoSort");
-			}
-
-			await overrides.core.team.rosterAutoSort(tid, onlyNewPlayers);
+			await overrides.core.team.rosterAutoSort!(tid, onlyNewPlayers);
 		}
 
 		return [true, 'Trade accepted! "Nice doing business with you!"'];

@@ -13,12 +13,7 @@ const recomputeOvr = async () => {
 
 	await iterate(transaction.store, undefined, "prev", p => {
 		const ratings = p.ratings[p.ratings.length - 1];
-
-		if (!overrides.core.player.ovr) {
-			throw new Error("Missing overrides.core.player.ovr");
-		}
-
-		const ovr = overrides.core.player.ovr(ratings);
+		const ovr = overrides.core.player.ovr!(ratings);
 		ovrs.push({
 			pid: p.pid,
 			old: ratings.ovr,

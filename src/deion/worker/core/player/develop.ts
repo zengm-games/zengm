@@ -146,17 +146,9 @@ export const bootstrapPot = (
 		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
-			if (!overrides.core.player.developSeason) {
-				throw new Error("Missing overrides.core.player.developSeason");
-			}
+			overrides.core.player.developSeason!(copiedRatings, ageTemp); // Purposely no coachingRank
 
-			overrides.core.player.developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
-
-			if (!overrides.core.player.ovr) {
-				throw new Error("Missing overrides.core.player.ovr");
-			}
-
-			const currentOvr = overrides.core.player.ovr(copiedRatings, pos);
+			const currentOvr = overrides.core.player.ovr!(copiedRatings, pos);
 
 			if (currentOvr > maxOvr) {
 				maxOvr = currentOvr;
@@ -210,18 +202,11 @@ const develop = (
 			age += 1;
 		}
 
-		if (!overrides.core.player.developSeason) {
-			throw new Error("Missing overrides.core.player.developSeason");
-		}
+		overrides.core.player.developSeason!(ratings, age, coachingRank);
 
-		overrides.core.player.developSeason(ratings, age, coachingRank); // In the NBA displayed weights seem to never change and seem inaccurate
-
+		// In the NBA displayed weights seem to never change and seem inaccurate
 		if (process.env.SPORT === "football") {
-			if (!overrides.core.player.genWeight) {
-				throw new Error("Missing overrides.core.player.genWeight");
-			}
-
-			const newWeight = overrides.core.player.genWeight(
+			const newWeight = overrides.core.player.genWeight!(
 				ratings.hgt,
 				ratings.stre,
 			);
@@ -239,11 +224,7 @@ const develop = (
 
 	// Run these even for players developing 0 seasons
 	if (process.env.SPORT === "basketball") {
-		if (!overrides.core.player.ovr) {
-			throw new Error("Missing overrides.core.player.ovr");
-		}
-
-		ratings.ovr = overrides.core.player.ovr(ratings);
+		ratings.ovr = overrides.core.player.ovr!(ratings);
 
 		if (!skipPot) {
 			ratings.pot = bootstrapPot(ratings, age);
@@ -253,11 +234,7 @@ const develop = (
 			// Must be a custom league player, let's not rock the boat
 			ratings.pos = p.pos;
 		} else {
-			if (!overrides.core.player.pos) {
-				throw new Error("Missing overrides.core.player.pos");
-			}
-
-			ratings.pos = overrides.core.player.pos(ratings);
+			ratings.pos = overrides.core.player.pos!(ratings);
 		}
 	} else {
 		let pos;
@@ -265,11 +242,7 @@ const develop = (
 
 		const bannedPositions = ["KR", "PR"];
 		ratings.ovrs = overrides.common.constants.POSITIONS.reduce((ovrs, pos2) => {
-			if (!overrides.core.player.ovr) {
-				throw new Error("Missing overrides.core.player.ovr");
-			}
-
-			ovrs[pos2] = overrides.core.player.ovr(ratings, pos2);
+			ovrs[pos2] = overrides.core.player.ovr!(ratings, pos2);
 
 			if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
 				pos = pos2;

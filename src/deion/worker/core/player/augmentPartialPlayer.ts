@@ -194,11 +194,7 @@ const augmentPartialPlayer = (
 	// Height rescaling
 	if (version === undefined || version <= 23) {
 		for (const r of p.ratings) {
-			if (!overrides.core.player.heightToRating) {
-				throw new Error("Missing overrides.core.player.heightToRating");
-			}
-
-			r.hgt = overrides.core.player.heightToRating(p.hgt);
+			r.hgt = overrides.core.player.heightToRating!(p.hgt);
 		}
 	}
 
@@ -219,11 +215,7 @@ const augmentPartialPlayer = (
 		}
 
 		if (!r.hasOwnProperty("ovr")) {
-			if (!overrides.core.player.ovr) {
-				throw new Error("Missing overrides.core.player.ovr");
-			}
-
-			r.ovr = overrides.core.player.ovr(p.ratings[0]);
+			r.ovr = overrides.core.player.ovr!(p.ratings[0]);
 		}
 
 		if (
@@ -239,11 +231,7 @@ const augmentPartialPlayer = (
 			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
 				r.pos = p.pos;
 			} else {
-				if (!overrides.core.player.pos) {
-					throw new Error("Missing overrides.core.player.pos");
-				}
-
-				r.pos = overrides.core.player.pos(r);
+				r.pos = overrides.core.player!.pos(r);
 			}
 		}
 	}
@@ -304,11 +292,7 @@ const augmentPartialPlayer = (
 				}
 			}
 
-			if (!overrides.core.player.ovr) {
-				throw new Error("Missing overrides.core.player.ovr");
-			}
-
-			r.ovr = overrides.core.player.ovr(r);
+			r.ovr = overrides.core.player.ovr!(r);
 			r.skills = skills(r);
 			r.pot = bootstrapPot(r, r.season - p.born.year);
 
@@ -364,13 +348,9 @@ const augmentPartialPlayer = (
 			addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 		}
 	} else {
-		if (!overrides.core.player.stats) {
-			throw new Error("Missing overrides.core.player.stats");
-		}
-
 		const statKeys = [
-			...overrides.core.player.stats.derived,
-			...overrides.core.player.stats.raw,
+			...overrides.core.player.stats!.derived,
+			...overrides.core.player.stats!.raw,
 		];
 
 		for (const ps of p.stats) {

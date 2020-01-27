@@ -19,11 +19,7 @@ const newPhaseBeforeDraft = async (
 ): Promise<PhaseReturn> => {
 	achievement.check("afterPlayoffs", conditions);
 
-	if (!overrides.core.season.doAwards) {
-		throw new Error("Missing overrides.core.season.doAwards");
-	}
-
-	await overrides.core.season.doAwards(conditions);
+	await overrides.core.season.doAwards!(conditions);
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		seasonAttrs: ["playoffRoundsWon"],

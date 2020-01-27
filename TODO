@@ -14,7 +14,7 @@ typescript
 - 3.8
   - switch to import type using importsNotUsedAsValues
 - to know
-  - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides, maybe g
+  - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, maybe g
 - to do
   - types for toUI
   - types for toWorker

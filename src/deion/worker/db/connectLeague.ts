@@ -548,11 +548,7 @@ const migrate = ({
 	if (oldVersion <= 23) {
 		iterate(transaction.objectStore("players"), undefined, undefined, p => {
 			for (const r of p.ratings) {
-				if (!overrides.core.player.heightToRating) {
-					throw new Error("Missing overrides.core.player.heightToRating");
-				}
-
-				r.hgt = overrides.core.player.heightToRating(p.hgt);
+				r.hgt = overrides.core.player.heightToRating!(p.hgt);
 			}
 
 			return p;
@@ -655,11 +651,7 @@ const migrate = ({
 						}
 					}
 
-					if (!overrides.core.player.ovr) {
-						throw new Error("Missing overrides.core.player.ovr");
-					}
-
-					r.ovr = overrides.core.player.ovr(r);
+					r.ovr = overrides.core.player.ovr!(r);
 					r.skills = player.skills(r);
 
 					// For performance, only calculate pot for non-retired players

@@ -48,23 +48,15 @@ const updatePowerRankings = async (
 					p => p.injury.gamesRemaining === 0,
 				);
 
-				if (!overrides.core.team.ovr) {
-					throw new Error("Missing overrides.core.team.ovr");
-				}
-
-				const ovr = overrides.core.team.ovr(teamPlayers);
-
-				if (!overrides.core.team.ovr) {
-					throw new Error("Missing overrides.core.team.ovr");
-				}
-
-				const ovrCurrent = overrides.core.team.ovr(teamPlayersCurrent);
+				const ovr = overrides.core.team.ovr!(teamPlayers);
+				const ovrCurrent = overrides.core.team.ovr!(teamPlayersCurrent);
 
 				// Calculate score
 
 				// Start with MOV, scaled for games played
-				let score = (t.stats.mov * t.stats.gp) / g.get("numGames"); // Add estimated MOV from ovr (0/100 to -30/30)
+				let score = (t.stats.mov * t.stats.gp) / g.get("numGames");
 
+				// Add estimated MOV from ovr (0/100 to -30/30)
 				const estimatedMOV = ovr * 0.6 - 30;
 				score += estimatedMOV;
 				let winsLastTen = parseInt(t.seasonAttrs.lastTen.split("-")[0], 10);

@@ -41,11 +41,7 @@ const checkStatisticalFeat = (
 		);
 	};
 
-	if (!overrides.core.player.checkStatisticalFeat) {
-		throw new Error("Missing overrides.core.player.checkStatisticalFeat");
-	}
-
-	const feat = overrides.core.player.checkStatisticalFeat(p);
+	const feat = overrides.core.player.checkStatisticalFeat!(p);
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 
 	if (feat) {

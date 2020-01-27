@@ -59,11 +59,7 @@ const genRatings = (
 
 	const wingspanAdjust = heightInInches + random.randInt(-1, 1); // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
 
-	if (!overrides.core.player.heightToRating) {
-		throw new Error("Missing overrides.core.player.heightToRating");
-	}
-
-	const hgt = overrides.core.player.heightToRating(wingspanAdjust);
+	const hgt = overrides.core.player.heightToRating!(wingspanAdjust);
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
 
 	const randType = Math.random();
@@ -208,11 +204,7 @@ const genRatings = (
 
 	ratings.fuzz *= factor;
 
-	if (!overrides.core.player.pos) {
-		throw new Error("Missing overrides.core.player.pos");
-	}
-
-	ratings.pos = overrides.core.player.pos(ratings);
+	ratings.pos = overrides.core.player.pos!(ratings);
 	return {
 		heightInInches,
 		ratings,

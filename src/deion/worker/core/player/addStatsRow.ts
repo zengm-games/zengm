@@ -23,15 +23,11 @@ const addStatsRow = async (
 		yearsWithTeam: 1,
 	};
 
-	if (!overrides.core.player.stats) {
-		throw new Error("Missing overrides.core.player.stats");
-	}
-
-	for (const key of overrides.core.player.stats.derived) {
+	for (const key of overrides.core.player.stats!.derived) {
 		statsRow[key] = 0;
 	}
 
-	for (const key of overrides.core.player.stats.raw) {
+	for (const key of overrides.core.player.stats!.raw) {
 		statsRow[key] = 0;
 	}
 

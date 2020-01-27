@@ -371,11 +371,7 @@ const genRatings = (
 		}
 	}
 
-	if (!overrides.core.player.pos) {
-		throw new Error("Missing overrides.core.player.pos");
-	}
-
-	ratings.pos = overrides.core.player.pos(ratings);
+	ratings.pos = overrides.core.player.pos!(ratings);
 	/*info[`${pos}->${ratings.pos}`] =
 		info[`${pos}->${ratings.pos}`] === undefined
 			? 1

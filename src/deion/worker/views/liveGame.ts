@@ -25,16 +25,8 @@ const updatePlayByPlay = async (
 		);
 
 		// Stats to set to 0
-		if (!overrides.core.player.stats) {
-			throw new Error("Missing overrides.core.player.stats");
-		}
-
-		if (!overrides.core.team.stats) {
-			throw new Error("Missing overrides.core.team.stats");
-		}
-
-		const resetStatsPlayer = overrides.core.player.stats.raw;
-		const resetStatsTeam = overrides.core.team.stats.raw;
+		const resetStatsPlayer = overrides.core.player.stats!.raw;
+		const resetStatsTeam = overrides.core.team.stats!.raw;
 		const allStarGame =
 			boxScore.teams[0].tid === -1 || boxScore.teams[1].tid === -1;
 		let allStars;

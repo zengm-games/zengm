@@ -116,11 +116,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	});
 
 	if (g.get("userTids").includes(dp.tid)) {
-		if (!overrides.core.team.rosterAutoSort) {
-			throw new Error("Missing overrides.core.team.rosterAutoSort");
-		}
-
-		await overrides.core.team.rosterAutoSort(dp.tid, true);
+		await overrides.core.team.rosterAutoSort!(dp.tid, true);
 	}
 };
 

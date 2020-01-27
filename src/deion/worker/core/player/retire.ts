@@ -35,11 +35,7 @@ function retire(
 	p.tid = PLAYER.RETIRED;
 	p.retiredYear = g.get("season"); // Add to Hall of Fame?
 
-	if (!overrides.core.player.madeHof) {
-		throw new Error("Missing overrides.core.player.madeHof");
-	}
-
-	if (conditions && overrides.core.player.madeHof(p)) {
+	if (conditions && overrides.core.player.madeHof!(p)) {
 		p.hof = true;
 		p.awards.push({
 			season: g.get("season"),

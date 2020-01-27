@@ -89,11 +89,6 @@ const StatsTable = ({ Row, boxScore, type }) => {
 							<tbody>
 								{t.players
 									.map(p => {
-										if (!overrides.common.processPlayerStats) {
-											throw new Error(
-												"Missing overrides.common.processPlayerStats",
-											);
-										}
 										return {
 											...p,
 											processed: overrides.common.processPlayerStats(p, stats),

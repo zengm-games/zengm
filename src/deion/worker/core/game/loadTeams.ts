@@ -88,11 +88,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
 	}
 
 	if (team.depth !== undefined) {
-		if (!overrides.core.player.getDepthPlayers) {
-			throw new Error("Missing overrides.core.player.getDepthPlayers");
-		}
-
-		t.depth = overrides.core.player.getDepthPlayers(team.depth, t.player);
+		t.depth = overrides.core.player.getDepthPlayers!(team.depth, t.player);
 	}
 
 	for (const p of t.player) {
@@ -134,11 +130,7 @@ const processTeam = (team, teamSeason, teamStats, players, playerStats) => {
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[]) => {
-	if (!overrides.core.player.stats) {
-		throw new Error("Missing overrides.core.player.stats");
-	}
-
-	const playerStats = overrides.core.player.stats.raw.reduce((stats, stat) => {
+	const playerStats = overrides.core.player.stats!.raw.reduce((stats, stat) => {
 		if (stat === "gp") {
 			return stats;
 		}
@@ -147,11 +139,7 @@ const loadTeams = async (tids: number[]) => {
 		return stats;
 	}, {});
 
-	if (!overrides.core.team.stats) {
-		throw new Error("Missing overrides.core.team.stats");
-	}
-
-	const teamStats = overrides.core.team.stats.raw.reduce((stats, stat) => {
+	const teamStats = overrides.core.team.stats!.raw.reduce((stats, stat) => {
 		stats[stat] = 0;
 		return stats;
 	}, {});

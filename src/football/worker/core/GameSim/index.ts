@@ -1689,15 +1689,6 @@ class GameSim {
 				this.recordStat(this.o, target, "recYds", yds);
 				this.recordStat(this.o, target, "recLng", yds);
 
-				// Fumble after catch... only if nothing else is going on, too complicated otherwise
-				if (!penInfo2 && !td && !safetyOrTouchback) {
-					if (Math.random() < this.probFumble(target)) {
-						this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
-
-						return dt + this.doFumble(target, yds);
-					}
-				}
-
 				this.playByPlay.logEvent("passComplete", {
 					clock: this.clock,
 					t: this.o,
@@ -1707,6 +1698,15 @@ class GameSim {
 					twoPointConversionTeam: this.twoPointConversionTeam,
 					yds,
 				});
+
+				// Fumble after catch... only if nothing else is going on, too complicated otherwise
+				if (!penInfo2 && !td && !safetyOrTouchback) {
+					if (Math.random() < this.probFumble(target)) {
+						this.awaitingAfterTouchdown = false; // In case set by this.advanceYds
+
+						return dt + this.doFumble(target, yds);
+					}
+				}
 				this.isClockRunning = Math.random() < 0.75;
 
 				if (td) {

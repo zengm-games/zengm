@@ -7,7 +7,6 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { TradePickValues } from "../../../common/types";
 import getPayroll from "./getPayroll";
-import updateValues from "../player/updateValues";
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
 const valueChange = async (
@@ -59,7 +58,6 @@ const valueChange = async (
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid); //get all the players on tid
 		for (const p of players) {
 			//for each player
-			updateValues(p);
 			if (!pidsRemove.includes(p.pid)) {
 				//player from tid not in pidsRemove put on roster
 				roster.push({
@@ -96,7 +94,6 @@ const valueChange = async (
 		for (const pid of pidsAdd) {
 			//add players from other team to add
 			const p = await idb.cache.players.get(pid);
-			updateValues(p);
 			add.push({
 				value:
 					strategy === "contending"
@@ -379,9 +376,10 @@ const valueChange = async (
 
 		let totalValue = 0;
 		const contractFactor = strategy === "contending" ? 0.75 : 1;
+		const rebuildFactor = strategy === "contending" ? 1 : 1.1;
 		for (const p of players) {
 			let val = p.draftPick
-				? p.value
+				? rebuildFactor * p.value
 				: contractFactor * valueContract(p) + p.value - valueInjury(p); //if a pick, don't factor in contract and no injuries
 			if (!p.draftPick && p.overall >= 60) {
 				val *= p.overall / 45;

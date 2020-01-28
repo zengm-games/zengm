@@ -32,7 +32,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 		).filter(p => p.tid === PLAYER.UNDRAFTED); //get undrafted players drafted in draftyear
 		if (players.length > 0) {
 			players.sort((a, b) => b.value - a.value);
-			const yearChangeFactor = 1.1 ** (draftYear - g.season);
+			const yearChangeFactor = 1.125 ** (draftYear - g.season);
 			estValues[players[0].draft.year] = players.map(
 				p => p.value / yearChangeFactor,
 			); // +4 is to generally make picks more valued
@@ -42,14 +42,6 @@ const getPickValues = async (): Promise<TradePickValues> => {
 			}
 		}
 	}
-
-	//console.log(estValues);
-
-	/*
-		estValues is a hash table with keys corresponding to the years that players were drafted
-		the values are arrays holding the slightly overvalued player values for each pick
-		so like estValues[2015][0] is the value of the player drafted 1st in 2015
-	*/
 
 	// Handle case where draft is in progress
 	if (g.phase === PHASE.DRAFT) {

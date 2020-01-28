@@ -14,6 +14,7 @@ import {
 	PlayersOnField,
 	TeamGameSim,
 	TeamNum,
+	Formation,
 } from "./types";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
@@ -727,11 +728,12 @@ class GameSim {
 
 		// For non-sacks, record tackler(s)
 		if (!sack && Math.random() < 0.9) {
-			let playersDefense = [];
+			let playersDefense: PlayerGameSim[] = [];
 
 			for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
-				// @ts-ignore
-				playersDefense = playersDefense.concat(playersAtPos);
+				if (playersAtPos) {
+					playersDefense = playersDefense.concat(playersAtPos);
+				}
 			}
 
 			const tacklers =
@@ -862,7 +864,7 @@ class GameSim {
 	}
 
 	updatePlayersOnField(playType: string) {
-		let formation;
+		let formation: Formation;
 
 		if (playType === "starters") {
 			formation = formations.normal[0];
@@ -878,7 +880,7 @@ class GameSim {
 			throw new Error(`Unknown playType "${playType}"`);
 		}
 
-		const sides = ["off", "def"];
+		const sides = ["off", "def"] as const;
 
 		for (let i = 0; i < 2; i++) {
 			const t = i === 0 ? this.o : this.d;
@@ -888,7 +890,7 @@ class GameSim {
 			const pidsUsed = new Set();
 			this.playersOnField[t] = {};
 
-			for (const pos of Object.keys(formation[side])) {
+			for (const pos of helpers.keys(formation[side])) {
 				const numPlayers = formation[side][pos];
 				const players = this.team[t].depth[pos]
 					.filter(p => !p.injured)
@@ -905,11 +907,13 @@ class GameSim {
 					});
 				this.playersOnField[t][pos] = players.slice(0, numPlayers);
 
+				// @ts-ignore
 				for (const p of this.playersOnField[t][pos]) {
 					pidsUsed.add(p.id);
 				}
 
 				if (playType === "starters") {
+					// @ts-ignore
 					for (const p of this.playersOnField[t][pos]) {
 						this.recordStat(t, p, "gs");
 					}
@@ -1652,9 +1656,10 @@ class GameSim {
 			});
 
 			if (penInfo2) {
-				if (penInfo2.spotYds !== undefined) {
+				const spotYds = penInfo2.spotYds;
+				if (spotYds !== undefined) {
 					if (penInfo2.side === "offense") {
-						yds = penInfo2.spotYds;
+						yds = spotYds;
 					}
 				} else if (
 					penInfo2.type === "offsetting" ||
@@ -1789,9 +1794,10 @@ class GameSim {
 		});
 
 		if (penInfo2) {
-			if (penInfo2.spotYds !== undefined) {
+			const spotYds = penInfo2.spotYds;
+			if (spotYds !== undefined) {
 				if (penInfo2.side === "offense") {
-					yds = penInfo2.spotYds;
+					yds = spotYds;
 				}
 			} else if (
 				penInfo2.type === "offsetting" ||
@@ -1926,7 +1932,7 @@ class GameSim {
 		}
 
 		const penInfos = called.map(pen => {
-			let spotYds;
+			let spotYds: number | undefined;
 			let totYds = 0;
 
 			if (
@@ -1947,16 +1953,16 @@ class GameSim {
 					spotYds = random.randInt(0, playYds);
 				}
 
-				// On kickoff returns, penalties are very unlikely to occur extremely deep
-				if (playType === "kickoffReturn" && spotYds + this.scrimmage <= 10) {
-					spotYds += random.randInt(10, playYds);
-				}
-
-				if (spotYds + this.scrimmage > 99) {
-					spotYds = 99 - this.scrimmage;
-				}
-
 				if (spotYds !== undefined) {
+					// On kickoff returns, penalties are very unlikely to occur extremely deep
+					if (playType === "kickoffReturn" && spotYds + this.scrimmage <= 10) {
+						spotYds += random.randInt(10, playYds);
+					}
+
+					if (spotYds + this.scrimmage > 99) {
+						spotYds = 99 - this.scrimmage;
+					}
+
 					totYds += spotYds;
 				}
 			}
@@ -2017,17 +2023,19 @@ class GameSim {
 				? penInfo.totYds
 				: penInfo.penYds;
 		const t = side === "offense" ? this.o : this.d;
-		let p;
+		let p: PlayerGameSim | undefined;
 		const posOdds = penInfo.posOdds;
 
 		if (posOdds !== undefined) {
-			const positionsOnField = Object.keys(this.playersOnField[t]);
-			const positionsForPenalty = Object.keys(posOdds);
+			const positionsOnField = helpers.keys(this.playersOnField[t]);
+			const positionsForPenalty = helpers.keys(posOdds);
 			const positions = positionsOnField.filter(pos =>
 				positionsForPenalty.includes(pos),
 			);
 
 			if (positions.length > 0) {
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
 				const pos = random.choice(positions, pos2 => posOdds[pos2]);
 
 				if (

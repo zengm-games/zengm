@@ -81,3 +81,8 @@ export type TeamGameSim = {
 	compositeRating: any;
 	depth: Record<Position, PlayerGameSim[]>;
 };
+
+export type Formation = {
+	off: Partial<Record<Position, number>>;
+	def: Partial<Record<Position, number>>;
+};

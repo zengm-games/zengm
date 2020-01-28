@@ -1,4 +1,6 @@
-const normal = [
+import { Formation } from "./types";
+
+const normal: Formation[] = [
 	{
 		off: {
 			QB: 1,
@@ -60,7 +62,8 @@ const normal = [
 		},
 	},
 ];
-const fieldGoal = [
+
+const fieldGoal: Formation[] = [
 	{
 		off: {
 			K: 1,
@@ -74,7 +77,8 @@ const fieldGoal = [
 		},
 	},
 ];
-const kickoff = [
+
+const kickoff: Formation[] = [
 	{
 		off: {
 			K: 1,
@@ -89,7 +93,8 @@ const kickoff = [
 		},
 	},
 ];
-const punt = [
+
+const punt: Formation[] = [
 	{
 		off: {
 			P: 1,

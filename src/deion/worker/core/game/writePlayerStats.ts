@@ -9,10 +9,10 @@ const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
 const doInjury = (
 	p,
 	p2,
-	healthRank,
-	pidsInjuredOneGameOrLess,
-	injuryTexts,
-	conditions,
+	healthRank: number,
+	pidsInjuredOneGameOrLess: Set<number>,
+	injuryTexts: string[],
+	conditions: Conditions,
 ) => {
 	p2.injury = player.injury(healthRank);
 	p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
@@ -133,7 +133,7 @@ const writePlayerStats = async (
 	results: GameResults[],
 	conditions: Conditions,
 ) => {
-	const injuryTexts = [];
+	const injuryTexts: string[] = [];
 	const pidsInjuredOneGameOrLess = new Set<number>();
 	let stopPlay = false;
 
@@ -155,9 +155,8 @@ const writePlayerStats = async (
 				}
 
 				if (id !== undefined) {
-					let qbResult;
+					let qbResult: "qbW" | "qbL" | "qbT";
 					const j = i === 0 ? 1 : 0;
-
 					if (result.team[i].stat.pts > result.team[j].stat.pts) {
 						qbResult = "qbW";
 					} else if (result.team[i].stat.pts < result.team[j].stat.pts) {

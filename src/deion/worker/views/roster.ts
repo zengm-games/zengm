@@ -57,6 +57,7 @@ const updateRoster = async (
 			tid: inputs.tid,
 			attrs: ["tid", "region", "name", "strategy", "imgURL"],
 			seasonAttrs,
+			stats: ["pts", "oppPts"],
 		});
 
 		if (!t) {

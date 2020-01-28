@@ -104,15 +104,20 @@ const TopStuff = ({
 			"Season not found"
 		);
 
+	const marginOfVictory = (t.stats.pts - t.stats.oppPts).toFixed(1);
+
 	return (
 		<>
 			<div className="d-flex mb-3">
 				<div className="team-picture" style={logoStyle} />
 				<div>
-					<div style={fontSizeLarger}>
-						{recordAndPlayoffs}
+					<div>
+						<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
 						<br />
 						Team rating: <TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
+						<br />
+						<span title="Average margin of victory">Average MOV</span>:{" "}
+						{marginOfVictory}
 					</div>
 
 					{season === currentSeason || process.env.SPORT === "football" ? (

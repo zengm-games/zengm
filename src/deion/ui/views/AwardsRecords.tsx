@@ -4,12 +4,15 @@ import React from "react";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
-const formatYear = year => {
+const formatYear = (year: {
+	[key: string]: { team: string; season: number }[];
+}) => {
 	return Object.keys(year).map((k, i) => {
 		const years = helpers.yearRanges(year[k].map(y => y.season)).join(", ");
 		return (
-			<span key={i}>
+			<span key={k}>
 				{i > 0 ? ", " : null}
 				{k} <small>({years})</small>
 			</span>
@@ -17,15 +20,15 @@ const formatYear = year => {
 	});
 };
 
-const CheckmarkOrCross = ({ children }) => {
-	if (children === 1) {
+const CheckmarkOrCross = ({ success }: { success: boolean }) => {
+	if (success) {
 		return <span className="glyphicon glyphicon-ok text-success" />;
 	}
 
 	return <span className="glyphicon glyphicon-remove text-danger" />;
 };
 CheckmarkOrCross.propTypes = {
-	children: PropTypes.number.isRequired,
+	success: PropTypes.bool.isRequired,
 };
 
 const AwardsRecords = ({
@@ -33,7 +36,7 @@ const AwardsRecords = ({
 	awardTypeVal,
 	awardsRecords,
 	playerCount,
-}) => {
+}: View<"awardsRecords">) => {
 	useTitleBar({
 		title: "Awards Records",
 		dropdownView: "awards_records",
@@ -51,8 +54,14 @@ const AwardsRecords = ({
 				a.count,
 				formatYear(groupBy(a.years, "team")),
 				a.lastYear,
-				<CheckmarkOrCross>{a.retired ? 1 : 0}</CheckmarkOrCross>,
-				<CheckmarkOrCross>{a.hof ? 1 : 0}</CheckmarkOrCross>,
+				{
+					value: <CheckmarkOrCross success={a.retired} />,
+					sortValue: a.retired ? 1 : 0,
+				},
+				{
+					value: <CheckmarkOrCross success={a.hof} />,
+					sortValue: a.hof ? 1 : 0,
+				},
 			],
 		};
 	});

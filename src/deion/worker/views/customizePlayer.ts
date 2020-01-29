@@ -2,16 +2,18 @@ import { PLAYER } from "../../common";
 import { finances, player } from "../core";
 import { idb } from "../db";
 import { face, g } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import { UpdateEvents, ViewInput, PlayerWithoutKey } from "../../common/types";
 
 const updateCustomizePlayer = async (
 	inputs: ViewInput<"customizePlayer">,
 	updateEvents: UpdateEvents,
 ) => {
 	if (!g.get("godMode")) {
-		return {
-			godMode: g.get("godMode"),
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			errorMessage: "You can't customize players unless you enable God Mode.",
 		};
+		return returnValue;
 	}
 
 	if (updateEvents.includes("firstRun")) {
@@ -41,8 +43,8 @@ const updateCustomizePlayer = async (
 
 		let appearanceOption;
 		let originalTid;
-		let p;
 
+		let p: PlayerWithoutKey;
 		if (inputs.pid === null) {
 			// Generate new player as basis
 			const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
@@ -66,19 +68,21 @@ const updateCustomizePlayer = async (
 			);
 			appearanceOption = "Cartoon Face";
 			p.imgURL = "http://";
-		} else if (typeof inputs.pid === "number") {
+		} else {
 			// Load a player to edit
-			p = await idb.getCopy.players({
+			const p2 = await idb.getCopy.players({
 				pid: inputs.pid,
 			});
 
-			if (!p) {
+			if (!p2) {
 				// https://stackoverflow.com/a/59923262/786644
 				const returnValue = {
 					errorMessage: "Player not found.",
 				};
 				return returnValue;
 			}
+
+			p = p2;
 
 			await face.upgrade(p);
 
@@ -94,7 +98,6 @@ const updateCustomizePlayer = async (
 
 		return {
 			appearanceOption,
-			godMode: g.get("godMode"),
 			minContract: g.get("minContract"),
 			originalTid,
 			p,

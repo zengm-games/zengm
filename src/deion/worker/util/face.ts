@@ -1,6 +1,6 @@
 import { generate as generateFace } from "facesjs";
 import { idb } from "../db";
-import { MinimalPlayerRatings, Player } from "../../common/types";
+import { MinimalPlayerRatings, PlayerWithoutKey } from "../../common/types";
 
 const generate = () => {
 	const overrides: any = {
@@ -18,7 +18,7 @@ const generate = () => {
 	return generateFace(overrides);
 };
 
-const upgrade = async (p: Player<MinimalPlayerRatings>) => {
+const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	if (!p.face || !p.face.accessories) {
 		// @ts-ignore
 		p.face2 = p.face;

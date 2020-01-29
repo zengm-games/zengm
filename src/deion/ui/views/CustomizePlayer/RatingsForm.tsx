@@ -1,8 +1,10 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { getCols } from "../../util";
 
-const rows =
+const rows: {
+	[key: string]: string[];
+}[][] =
 	process.env.SPORT === "basketball"
 		? [
 				[
@@ -24,7 +26,17 @@ const rows =
 				],
 		  ];
 
-const RatingsForm = ({ handleChange, ratingsRow }) => {
+const RatingsForm = ({
+	handleChange,
+	ratingsRow,
+}: {
+	handleChange: (
+		type: string,
+		field: string,
+		event: ChangeEvent<HTMLInputElement>,
+	) => void;
+	ratingsRow: any;
+}) => {
 	return (
 		<>
 			{rows.map((row, i) => {
@@ -41,7 +53,7 @@ const RatingsForm = ({ handleChange, ratingsRow }) => {
 													return (
 														<div key={rating} className="form-group">
 															<label>
-																{getCols([`rating:${rating}`])[0].desc}
+																{getCols(`rating:${rating}`)[0].desc}
 															</label>
 															<input
 																type="text"

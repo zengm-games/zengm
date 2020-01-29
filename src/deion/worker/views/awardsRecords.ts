@@ -136,12 +136,30 @@ optionsTmp.forEach(o => {
 	awardOptions[o.key] = o.val;
 });
 
-function getPlayerAwards(p, awardType) {
+type LocalPlayerAward = {
+	season: number;
+	type: string;
+};
+
+type LocalPlayer = {
+	awards: LocalPlayerAward[];
+	firstName: string;
+	hof: boolean;
+	lastName: string;
+	pid: number;
+	retiredYear: number;
+	stats: {
+		abbrev: string;
+		season: number;
+	}[];
+};
+
+function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	const aType = awardOptions[awardType];
 	let filter;
 
 	if (awardType === "all_league") {
-		filter = a => {
+		filter = (a: LocalPlayerAward) => {
 			const o = awardOptions;
 			return (
 				a.type === o.first_team ||
@@ -150,7 +168,7 @@ function getPlayerAwards(p, awardType) {
 			);
 		};
 	} else if (awardType === "all_def") {
-		filter = a => {
+		filter = (a: LocalPlayerAward) => {
 			const o = awardOptions;
 			return (
 				a.type === o.first_def ||
@@ -159,10 +177,10 @@ function getPlayerAwards(p, awardType) {
 			);
 		};
 	} else {
-		filter = a => a.type === aType;
+		filter = (a: LocalPlayerAward) => a.type === aType;
 	}
 
-	const getTeam = season => {
+	const getTeam = (season: number) => {
 		const stats = p.stats.filter(s => s.season === season);
 
 		if (stats.length > 0) {
@@ -201,11 +219,11 @@ const updateAwardsRecords = async (
 		updateEvents.includes("firstRun") ||
 		inputs.awardType !== state.awardType
 	) {
-		let players = await idb.getCopies.players({
+		const playersAll = await idb.getCopies.players({
 			activeAndRetired: true,
 			filter: p => p.awards.length > 0,
 		});
-		players = await idb.getCopies.playersPlus(players, {
+		const players: LocalPlayer[] = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["awards", "firstName", "lastName", "pid", "retiredYear", "hof"],
 			stats: ["abbrev", "season"],
 		});

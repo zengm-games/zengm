@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ReactNode } from "react";
 import { getCols, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable } from "../components";
+import { View } from "../../common/types";
 
-const legendSquare = className => {
+const legendSquare = (className: string) => {
 	return <span className={`table-${className} legend-square ml-3`} />;
 };
 
@@ -18,7 +19,7 @@ const TeamStats = ({
 	teams,
 	ties,
 	userTid,
-}) => {
+}: View<"teamStats">) => {
 	useTitleBar({
 		title: "Team Stats",
 		jumpTo: true,
@@ -60,7 +61,7 @@ const TeamStats = ({
 		}
 
 		// Create the cells for this row.
-		const data = {
+		const data: { [key: string]: ReactNode } = {
 			abbrev: (
 				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.abbrev}</a>
 			),
@@ -75,8 +76,8 @@ const TeamStats = ({
 
 		for (const stat of stats) {
 			const value = t.stats.hasOwnProperty(stat)
-				? t.stats[stat]
-				: t.seasonAttrs[stat];
+				? (t.stats as any)[stat]
+				: (t.seasonAttrs as any)[stat];
 			data[stat] = helpers.roundStat(value, stat);
 		}
 
@@ -87,10 +88,12 @@ const TeamStats = ({
 					data[plusMinusCol] = (
 						<span
 							className={
-								t.stats[plusMinusCol] > 0 ? "text-success" : "text-danger"
+								(t.stats as any)[plusMinusCol] > 0
+									? "text-success"
+									: "text-danger"
 							}
 						>
-							{t.stats[plusMinusCol].toFixed(1)}
+							{(t.stats as any)[plusMinusCol].toFixed(1)}
 						</span>
 					);
 				}
@@ -110,8 +113,8 @@ const TeamStats = ({
 
 				// Determine our team's percentile for this stat type. Closer to the start is better.
 				const statTypeValue = t.stats.hasOwnProperty(statType)
-					? t.stats[statType]
-					: t.seasonAttrs[statType];
+					? (t.stats as any)[statType]
+					: (t.seasonAttrs as any)[statType];
 				const percentile =
 					1 - allStats[statType].indexOf(statTypeValue) / (teamCount - 1);
 

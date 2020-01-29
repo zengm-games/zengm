@@ -13,9 +13,9 @@ const PlayerPicture = ({
 	imgURL,
 	teamColors,
 }: {
-	face: Face;
-	imgURL: string | undefined;
-	teamColors: [string, string, string] | undefined;
+	face?: Face;
+	imgURL?: string | undefined;
+	teamColors?: [string, string, string] | undefined;
 }) => {
 	const [wrapper, setWrapper] = useState<HTMLDivElement | null>(null);
 	useEffect(() => {

@@ -280,7 +280,8 @@ const genRatings = (
 
 	const ratingsToBoost = getRatingsToBoost(pos);
 
-	for (const [rating, factor] of Object.entries(ratingsToBoost)) {
+	for (const rating of helpers.keys(ratingsToBoost)) {
+		const factor = ratingsToBoost[rating];
 		if (factor !== undefined) {
 			rawRatings[rating] = player.limitRating(
 				(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),

@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
 import { getCols, overrides } from "../../../deion/ui/util";
+import { helpers } from "../../../deion/common";
 
 const quarters = {
 	Q1: "1st Quarter",
@@ -172,8 +173,15 @@ StatsTable.propTypes = {
 
 // Condenses TD + XP/2P into one event rather than two
 const processEvents = (events: ScoringSummaryEvent[]) => {
-	const processedEvents: any[] = [];
-	const score = [0, 0];
+	const processedEvents: {
+		quarter: keyof typeof quarters;
+		score: [number, number];
+		scoreType: string | null;
+		t: 0 | 1;
+		text: string;
+		time: number;
+	}[] = [];
+	const score = [0, 0] as [number, number];
 
 	for (const event of events) {
 		if (event.hide) {
@@ -222,7 +230,7 @@ const processEvents = (events: ScoringSummaryEvent[]) => {
 				quarter: event.quarter,
 				time: event.time,
 				text: event.text,
-				score: score.slice(),
+				score: helpers.deepCopy(score),
 				scoreType,
 			});
 		}

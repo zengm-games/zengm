@@ -157,10 +157,8 @@ const updateTeams = async (
 		for (const t of teams) {
 			for (const statType of statTypes) {
 				const value = t.stats.hasOwnProperty(statType)
-					? // @ts-ignore
-					  t.stats[statType]
-					: // @ts-ignore
-					  t.seasonAttrs[statType];
+					? (t.stats as any)[statType]
+					: (t.seasonAttrs as any)[statType];
 
 				if (value === undefined) {
 					continue;

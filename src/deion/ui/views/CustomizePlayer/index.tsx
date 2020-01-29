@@ -1,17 +1,25 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent, MouseEvent } from "react";
 import { PHASE } from "../../../common";
 import { PlayerPicture } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, overrides, realtimeUpdate, toWorker } from "../../util";
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
+import { View, Phase, PlayerWithoutKey } from "../../../common/types";
 
 // A player can never have KR or PR as his main position
 const bannedPositions = ["KR", "PR"];
 
-const copyValidValues = (source, target, minContract, phase, season) => {
-	for (const attr of ["hgt", "tid", "weight"]) {
+const copyValidValues = (
+	source: PlayerWithoutKey,
+	target: PlayerWithoutKey,
+	minContract: number,
+	phase: Phase,
+	season: number,
+) => {
+	for (const attr of ["hgt", "tid", "weight"] as const) {
+		// @ts-ignore
 		const val = parseInt(source[attr], 10);
 		if (!Number.isNaN(val)) {
 			target[attr] = val;
@@ -24,6 +32,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 
 	let updatedRatingsOrAge = false;
 	{
+		// @ts-ignore
 		const age = parseInt(source.age, 10);
 		if (!Number.isNaN(age)) {
 			const bornYear = season - age;
@@ -39,6 +48,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 	target.college = source.college;
 
 	{
+		// @ts-ignore
 		const diedYear = parseInt(source.diedYear, 10);
 		if (!Number.isNaN(diedYear)) {
 			target.diedYear = diedYear;
@@ -49,6 +59,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 
 	{
 		// Allow any value, even above or below normal limits, but round to $10k and convert from M to k
+		// @ts-ignore
 		let amount = Math.round(100 * parseFloat(source.contract.amount)) * 10;
 		if (Number.isNaN(amount)) {
 			amount = minContract;
@@ -57,6 +68,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 	}
 
 	{
+		// @ts-ignore
 		let exp = parseInt(source.contract.exp, 10);
 		if (!Number.isNaN(exp)) {
 			// No contracts expiring in the past
@@ -74,6 +86,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 	}
 
 	{
+		// @ts-ignore
 		const draftYear = parseInt(source.draft.year, 10);
 		if (!Number.isNaN(draftYear)) {
 			target.draft.year = draftYear;
@@ -81,6 +94,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 	}
 
 	{
+		// @ts-ignore
 		let gamesRemaining = parseInt(source.injury.gamesRemaining, 10);
 		if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
 			gamesRemaining = 0;
@@ -114,10 +128,12 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 		}
 	}
 
+	// @ts-ignore
 	target.face = JSON.parse(source.face);
 
 	target.relatives = source.relatives
 		.map(rel => {
+			// @ts-ignore
 			rel.pid = parseInt(rel.pid, 10);
 			return rel;
 		})
@@ -126,12 +142,14 @@ const copyValidValues = (source, target, minContract, phase, season) => {
 	return updatedRatingsOrAge;
 };
 
-const CustomizePlayer = props => {
+const CustomizePlayer = (props: View<"customizePlayer">) => {
 	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
-		if (p !== undefined) {
+		if (p) {
+			// @ts-ignore
 			p.age = props.season - p.born.year;
 			p.contract.amount /= 1000;
+			// @ts-ignore
 			p.face = JSON.stringify(p.face, null, 2);
 		}
 
@@ -142,7 +160,7 @@ const CustomizePlayer = props => {
 		};
 	});
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setState(prevState => ({
 			...prevState,
@@ -176,12 +194,23 @@ const CustomizePlayer = props => {
 		realtimeUpdate([], helpers.leagueUrl(["player", pid]));
 	};
 
-	const handleChange = (type, field, event) => {
+	const handleChange = (
+		type: string,
+		field: string,
+		event:
+			| ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+			| {
+					target: {
+						value: any;
+					};
+			  },
+	) => {
 		const val = event.target.value;
+		// @ts-ignore
 		const checked = event.target.checked;
 
 		setState(prevState => {
-			const p = prevState.p;
+			const p: any = prevState.p;
 
 			if (type === "root") {
 				p[field] = val;
@@ -212,7 +241,9 @@ const CustomizePlayer = props => {
 		});
 	};
 
-	const handleChangeAppearanceOption = event => {
+	const handleChangeAppearanceOption = (
+		event: ChangeEvent<HTMLSelectElement>,
+	) => {
 		const value = event.target.value;
 		setState(prevState => ({
 			...prevState,
@@ -220,12 +251,13 @@ const CustomizePlayer = props => {
 		}));
 	};
 
-	const randomizeFace = async event => {
+	const randomizeFace = async (event: MouseEvent) => {
 		event.preventDefault(); // Don't submit whole form
 
 		const face = await toWorker("generateFace");
 
 		setState(prevState => {
+			// @ts-ignore
 			prevState.p.face = JSON.stringify(face, null, 2);
 			return {
 				...prevState,
@@ -234,29 +266,18 @@ const CustomizePlayer = props => {
 		});
 	};
 
-	const { godMode, originalTid, teams } = props;
+	const { originalTid, teams } = props;
 	const { appearanceOption, p, saving } = state;
 
 	const title = originalTid === undefined ? "Create Player" : "Edit Player";
 
 	useTitleBar({ title });
 
-	if (!godMode) {
-		return (
-			<div>
-				<h2>Error</h2>
-				<p>
-					You can't customize players unless you enable{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
-				</p>
-			</div>
-		);
-	}
-
 	const r = p.ratings.length - 1;
 
 	let parsedFace;
 	try {
+		// @ts-ignore
 		parsedFace = JSON.parse(p.face);
 	} catch (error) {}
 
@@ -288,8 +309,8 @@ const CustomizePlayer = props => {
 					<textarea
 						className="form-control"
 						onChange={handleChange.bind(null, "root", "face")}
-						rows="10"
-						value={p.face}
+						rows={10}
+						value={p.face as any}
 					/>
 					<button
 						type="button"
@@ -366,7 +387,7 @@ const CustomizePlayer = props => {
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "age")}
-									value={p.age}
+									value={(p as any).age}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -566,7 +587,6 @@ const CustomizePlayer = props => {
 
 CustomizePlayer.propTypes = {
 	appearanceOption: PropTypes.oneOf(["Cartoon Face", "Image URL"]),
-	godMode: PropTypes.bool.isRequired,
 	originalTid: PropTypes.number,
 	minContract: PropTypes.number,
 	phase: PropTypes.number,

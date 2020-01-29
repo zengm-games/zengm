@@ -2038,11 +2038,12 @@ class GameSim {
 				// @ts-ignore
 				const pos = random.choice(positions, pos2 => posOdds[pos2]);
 
-				if (
-					this.playersOnField[t][pos] !== undefined &&
-					this.playersOnField[t][pos].length > 0
-				) {
-					p = random.choice(this.playersOnField[t][pos]);
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
+				const players = this.playersOnField[t][pos];
+
+				if (players !== undefined && players.length > 0) {
+					p = random.choice(players);
 				}
 			}
 
@@ -2094,8 +2095,10 @@ class GameSim {
 				continue;
 			}
 
-			for (const pos of Object.keys(this.playersOnField[t])) {
+			for (const pos of helpers.keys(this.playersOnField[t])) {
 				// Update minutes (overall, court, and bench)
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p.id);
 					this.recordStat(t, p, "min", possessionTime);
@@ -2141,8 +2144,10 @@ class GameSim {
 
 			const onField = new Set<any>();
 
-			for (const pos of Object.keys(this.playersOnField[t])) {
+			for (const pos of helpers.keys(this.playersOnField[t])) {
 				// Update minutes (overall, court, and bench)
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
 				for (const p of this.playersOnField[t][pos]) {
 					onField.add(p);
 				}
@@ -2178,7 +2183,8 @@ class GameSim {
 		const players = getPlayers(this.playersOnField[t], positions);
 		const weightFunc =
 			rating !== undefined
-				? p => (p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
+				? (p: PlayerGameSim) =>
+						(p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
 				: undefined;
 		return random.choice(players, weightFunc);
 	}

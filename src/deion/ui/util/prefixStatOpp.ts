@@ -1,7 +1,4 @@
-const prefixStatOpp = (
-	teamOpponent: "advanced" | "opponent" | "team",
-	key: string,
-) => {
+const prefixStatOpp = (teamOpponent: string, key: string) => {
 	if (teamOpponent === "opponent") {
 		return `opp${key[0].toUpperCase()}${key.slice(1)}`;
 	}

@@ -1,13 +1,21 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { overrides } from "../util";
+import { View } from "../../common/types";
 
-class PlayerRow extends React.Component {
+type PlayerRowProps = {
+	i: number;
+	p: any;
+};
+
+class PlayerRow extends React.Component<PlayerRowProps> {
+	prevInGame: boolean | undefined;
+
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
-	shouldComponentUpdate(nextProps) {
+	shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return process.env.SPORT === "basketball"
 			? this.prevInGame || nextProps.p.inGame
 			: true;
@@ -38,13 +46,28 @@ class PlayerRow extends React.Component {
 	}
 }
 
+// @ts-ignore
 PlayerRow.propTypes = {
 	i: PropTypes.number.isRequired,
 	p: PropTypes.object.isRequired,
 };
 
-class LiveGame extends React.Component {
-	constructor(props) {
+type LiveGameProps = View<"liveGame">;
+type State = {
+	boxScore: any;
+	paused: boolean;
+	speed: number;
+	started: boolean;
+};
+
+class LiveGame extends React.Component<LiveGameProps, State> {
+	componentIsMounted: boolean | undefined;
+	events: any[] | undefined;
+	overtimes: number;
+	playByPlayDiv: HTMLDivElement | null;
+	quarters: string[];
+
+	constructor(props: LiveGameProps) {
 		super(props);
 		this.state = {
 			boxScore: props.initialBoxScore ? props.initialBoxScore : {},
@@ -57,6 +80,7 @@ class LiveGame extends React.Component {
 		}
 
 		this.overtimes = 0;
+		this.playByPlayDiv = null;
 		this.quarters = ["Q1"];
 
 		this.handleSpeedChange = this.handleSpeedChange.bind(this);
@@ -95,20 +119,22 @@ class LiveGame extends React.Component {
 	}
 
 	setPlayByPlayDivHeight() {
-		// Keep in sync with .live-game-affix
-		if (window.matchMedia("(min-width:768px)").matches) {
-			this.playByPlayDiv.style.height = `${window.innerHeight - 113}px`;
-		} else if (this.playByPlayDiv.style.height !== "") {
-			this.playByPlayDiv.style.removeProperty("height");
+		if (this.playByPlayDiv) {
+			// Keep in sync with .live-game-affix
+			if (window.matchMedia("(min-width:768px)").matches) {
+				this.playByPlayDiv.style.height = `${window.innerHeight - 113}px`;
+			} else if (this.playByPlayDiv.style.height !== "") {
+				this.playByPlayDiv.style.removeProperty("height");
+			}
 		}
 	}
 
-	startLiveGame(events) {
+	startLiveGame(events: any[]) {
 		this.events = events;
 		this.processToNextPause();
 	}
 
-	processToNextPause(force) {
+	processToNextPause(force?: boolean) {
 		if (!this.componentIsMounted || (this.state.paused && !force)) {
 			return;
 		}
@@ -137,10 +163,12 @@ class LiveGame extends React.Component {
 				p.appendChild(node);
 			}
 
-			this.playByPlayDiv.insertBefore(p, this.playByPlayDiv.firstChild);
+			if (this.playByPlayDiv) {
+				this.playByPlayDiv.insertBefore(p, this.playByPlayDiv.firstChild);
+			}
 		}
 
-		if (this.events.length > 0) {
+		if (this.events && this.events.length > 0) {
 			if (!this.state.paused) {
 				setTimeout(this.processToNextPause, 4000 / 1.2 ** this.state.speed);
 			}
@@ -159,8 +187,11 @@ class LiveGame extends React.Component {
 		});
 	}
 
-	handleSpeedChange(e) {
-		this.setState({ speed: e.target.value });
+	handleSpeedChange(event: ChangeEvent<HTMLInputElement>) {
+		const speed = parseInt(event.target.value, 10);
+		if (!Number.isNaN(speed)) {
+			this.setState({ speed });
+		}
 	}
 
 	handlePause() {
@@ -265,6 +296,7 @@ class LiveGame extends React.Component {
 	}
 }
 
+// @ts-ignore
 LiveGame.propTypes = {
 	events: PropTypes.arrayOf(
 		PropTypes.shape({
@@ -274,12 +306,13 @@ LiveGame.propTypes = {
 	initialBoxScore: PropTypes.object,
 };
 
-const LiveGameWrapper = props => {
+const LiveGameWrapper = (props: LiveGameProps) => {
 	useTitleBar({ title: "Live Game Simulation", hideNewWindow: true });
 
 	return <LiveGame {...props} />;
 };
 
+// @ts-ignore
 LiveGameWrapper.propTypes = LiveGame.propTypes;
 
 export default LiveGameWrapper;

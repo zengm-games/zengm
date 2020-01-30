@@ -7,12 +7,12 @@ const updatePlayByPlay = async (
 	inputs: ViewInput<"liveGame">,
 	updateEvents: UpdateEvents,
 ) => {
+	const redirectToMenu = {
+		redirectUrl: helpers.leagueUrl(["live"]),
+	};
+
 	if (updateEvents.includes("firstRun") && !inputs.fromAction) {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			redirectUrl: helpers.leagueUrl(["live"]),
-		};
-		return returnValue;
+		return redirectToMenu;
 	}
 
 	if (
@@ -35,7 +35,7 @@ const updatePlayByPlay = async (
 			allStars = await idb.cache.allStars.get(g.get("season"));
 
 			if (!allStars) {
-				return {};
+				return redirectToMenu;
 			}
 		}
 

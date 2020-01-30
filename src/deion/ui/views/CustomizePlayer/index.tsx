@@ -1,5 +1,11 @@
 import PropTypes from "prop-types";
-import React, { useState, FormEvent, ChangeEvent, MouseEvent } from "react";
+import React, {
+	useState,
+	FormEvent,
+	ChangeEvent,
+	MouseEvent,
+	ReactNode,
+} from "react";
 import { PHASE } from "../../../common";
 import { PlayerPicture } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -283,7 +289,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
 
-	let pictureDiv = null;
+	let pictureDiv: ReactNode = null;
 	if (appearanceOption === "Cartoon Face") {
 		pictureDiv = (
 			<div className="row">

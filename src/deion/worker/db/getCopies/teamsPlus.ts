@@ -98,14 +98,12 @@ const processSeasonAttrs = async <
 		seasons.map(async ts => {
 			const row: any = {}; // Revenue and expenses calculation
 
-			const revenue = Object.keys(ts.revenues).reduce(
-				(memo, rev) => memo + ts.revenues[rev].amount,
-				0,
-			);
-			const expense = Object.keys(ts.expenses).reduce(
-				(memo, rev) => memo + ts.expenses[rev].amount,
-				0,
-			);
+			const revenue = helpers
+				.keys(ts.revenues)
+				.reduce((memo, rev) => memo + ts.revenues[rev].amount, 0);
+			const expense = helpers
+				.keys(ts.expenses)
+				.reduce((memo, rev) => memo + ts.expenses[rev].amount, 0);
 
 			for (const temp of seasonAttrs) {
 				const attr: string = temp;
@@ -155,6 +153,7 @@ const processSeasonAttrs = async <
 						row.streak = `Lost ${Math.abs(ts.streak)}`;
 					}
 				} else {
+					// @ts-ignore
 					row[attr] = ts[attr];
 				}
 			}

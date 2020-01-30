@@ -117,9 +117,9 @@ const NextButton = ({
 	currentGidInList,
 	nextGid,
 }: {
-	abbrev: string;
+	abbrev?: string;
 	boxScore: any;
-	currentGidInList: boolean;
+	currentGidInList?: boolean;
 	nextGid?: number;
 }) => {
 	const [autoGoToNext, setAutoGoToNext] = useState(false);
@@ -213,12 +213,12 @@ const DetailedScore = ({
 	prevGid,
 	showNextPrev,
 }: {
-	abbrev: string;
+	abbrev?: string;
 	boxScore: any;
-	currentGidInList: boolean;
+	currentGidInList?: boolean;
 	nextGid?: number;
 	prevGid?: number;
-	showNextPrev: boolean;
+	showNextPrev?: boolean;
 }) => {
 	// Quarter/overtime labels
 	const qtrs = boxScore.teams[1].ptsQtrs.map((pts: number, i: number) => {
@@ -319,12 +319,12 @@ const BoxScore = ({
 	showNextPrev,
 	Row,
 }: {
-	abbrev: string;
+	abbrev?: string;
 	boxScore: any;
-	currentGidInList: boolean;
+	currentGidInList?: boolean;
 	nextGid?: number;
 	prevGid?: number;
-	showNextPrev: boolean;
+	showNextPrev?: boolean;
 	Row: any;
 }) => {
 	const handleKeydown = useCallback(

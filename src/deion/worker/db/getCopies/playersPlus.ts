@@ -157,7 +157,7 @@ const processAttrs = (
 			});
 		} else if (attr === "salariesTotal") {
 			output.salariesTotal = output.salaries.reduce(
-				(memo, salary) => memo + salary.amount,
+				(memo: number, salary: { amount: number }) => memo + salary.amount,
 				0,
 			);
 		} else if (attr === "awardsGrouped") {
@@ -215,6 +215,7 @@ const processAttrs = (
 			output.numAllStar = p.awards.filter(a => a.type === "All-Star").length;
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
+			// @ts-ignore
 			output[attr] = helpers.deepCopy(p[attr]);
 		}
 	}
@@ -368,7 +369,11 @@ const weightByMinutes =
 		  ]
 		: [];
 
-const reduceCareerStats = (careerStats, attr, playoffs) => {
+const reduceCareerStats = (
+	careerStats: any[],
+	attr: string,
+	playoffs: boolean,
+) => {
 	return careerStats
 		.filter(cs => cs.playoffs === playoffs)
 		.map(cs => {
@@ -387,7 +392,13 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
 		}, 0);
 };
 
-const getPlayerStats = (playerStats, season, tid, playoffs, regularSeason) => {
+const getPlayerStats = (
+	playerStats: any[],
+	season: number | undefined,
+	tid: number | undefined,
+	playoffs: boolean,
+	regularSeason: boolean,
+) => {
 	return helpers.deepCopy(
 		playerStats.filter(ps => {
 			// Not sure why this is needed, but might fix an error someone reported
@@ -404,7 +415,12 @@ const getPlayerStats = (playerStats, season, tid, playoffs, regularSeason) => {
 	);
 };
 
-const processPlayerStats = (p, statSums, stats, statType) => {
+const processPlayerStats = (
+	p: any,
+	statSums: any,
+	stats: string[],
+	statType: PlayerStatType,
+) => {
 	const output = overrides.common.processPlayerStats(
 		statSums,
 		stats,
@@ -435,7 +451,6 @@ const processPlayerStats = (p, statSums, stats, statType) => {
 const processStats = (
 	output: PlayerFiltered,
 	p: Player,
-	keepWithNoStats: boolean,
 	{
 		playoffs,
 		regularSeason,
@@ -546,7 +561,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 			(options.season === undefined || options.season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, keepWithNoStats, options);
+		processStats(output, p, options);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {

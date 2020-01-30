@@ -3,6 +3,7 @@ import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
+import { View } from "../../common/types";
 
 const PlayerStats = ({
 	abbrev,
@@ -13,7 +14,7 @@ const PlayerStats = ({
 	stats,
 	superCols,
 	userTid,
-}) => {
+}: View<"playerStats">) => {
 	useTitleBar({
 		title: "Player Stats",
 		jumpTo: true,
@@ -114,7 +115,13 @@ const PlayerStats = ({
 		<>
 			<p>
 				More:{" "}
-				<a href={helpers.leagueUrl(["player_stat_dists", season])}>
+				<a
+					href={helpers.leagueUrl(
+						season === undefined
+							? ["player_stat_dists"]
+							: ["player_stat_dists", season],
+					)}
+				>
 					Stat Distributions
 				</a>
 			</p>

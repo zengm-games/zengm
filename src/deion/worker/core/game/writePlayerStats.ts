@@ -2,13 +2,13 @@ import { PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
-import { Conditions, GameResults } from "../../../common/types";
+import { Conditions, GameResults, Player } from "../../../common/types";
 
 const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
 
 const doInjury = (
-	p,
-	p2,
+	p: any,
+	p2: Player,
 	healthRank: number,
 	pidsInjuredOneGameOrLess: Set<number>,
 	injuryTexts: string[],
@@ -171,9 +171,9 @@ const writePlayerStats = async (
 		}
 
 		await Promise.all(
-			result.team.map(t =>
+			result.team.map((t: any) =>
 				Promise.all(
-					t.player.map(async p => {
+					t.player.map(async (p: any) => {
 						// Only need to write stats if player got minutes
 						if (p.stat.min === 0) {
 							return;

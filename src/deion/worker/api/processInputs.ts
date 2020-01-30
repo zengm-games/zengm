@@ -102,7 +102,11 @@ const depth = (params: Params) => {
 
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
 	const positions = overrides.common.constants.POSITIONS;
-	const pos = positions.includes(params.pos) ? params.pos : "QB";
+
+	// https://github.com/microsoft/TypeScript/issues/21732
+	// @ts-ignore
+	const pos: string = positions.includes(params.pos) ? params.pos : "QB";
+
 	return { abbrev, pos, tid };
 };
 

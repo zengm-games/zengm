@@ -6,8 +6,9 @@ import useTitleBar from "../../../deion/ui/hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../../deion/ui/util";
 import { PlayerNameLabels, SortableTable } from "../../../deion/ui/components";
 import { POSITIONS } from "../../common/constants";
+import { View } from "../../../deion/common/types";
 
-const handleAutoSort = async pos => {
+const handleAutoSort = async (pos: string) => {
 	await toWorker("autoSortRoster", pos);
 };
 
@@ -31,8 +32,16 @@ const numStartersByPos = {
 	PR: 1,
 };
 
-const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
-	const [sortedPids, setSortedPids] = useState();
+const Depth = ({
+	abbrev,
+	editable,
+	players,
+	pos,
+	ratings,
+	season,
+	stats,
+}: View<"depth", "football">) => {
+	const [sortedPids, setSortedPids] = useState<number[] | undefined>();
 	const [prevPos, setPrevPos] = useState(pos);
 	const [prevPlayers, setPrevPlayers] = useState(players);
 
@@ -45,18 +54,22 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 	});
 
 	if (pos !== prevPos) {
-		setSortedPids();
+		setSortedPids(undefined);
 		setPrevPos(pos);
 	}
 	if (players !== prevPlayers) {
-		setSortedPids();
+		setSortedPids(undefined);
 		setPrevPlayers(players);
 	}
 
 	let playersSorted;
 	if (sortedPids !== undefined) {
 		playersSorted = sortedPids.map(pid => {
-			return players.find(p => p.pid === pid);
+			const p2 = players.find(p => p.pid === pid);
+			if (!p2) {
+				throw new Error("Player not found");
+			}
+			return p2;
 		});
 	} else {
 		playersSorted = players;
@@ -64,6 +77,12 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 
 	const ratingCols = getCols(...ratings.map(rating => `rating:${rating}`));
 	const statCols = getCols(...stats.map(stat => `stat:${stat}`));
+
+	const numStarters = numStartersByPos.hasOwnProperty(pos)
+		? // https://github.com/microsoft/TypeScript/issues/21732
+		  // @ts-ignore
+		  numStartersByPos[pos]
+		: 0;
 
 	return (
 		<>
@@ -117,10 +136,10 @@ const Depth = ({ abbrev, editable, players, pos, ratings, season, stats }) => {
 			<SortableTable
 				disabled={!editable}
 				values={playersSorted}
-				highlightHandle={({ index }) => index < numStartersByPos[pos]}
+				highlightHandle={({ index }) => index < numStarters}
 				rowClassName={({ index, isDragged }) =>
 					classNames({
-						separator: index === numStartersByPos[pos] - 1 && !isDragged,
+						separator: index === numStarters - 1 && !isDragged,
 					})
 				}
 				onChange={async ({ oldIndex, newIndex }) => {

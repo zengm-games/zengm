@@ -287,6 +287,8 @@ const deionUI = async (options: {
 			);
 		}
 
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
 		return api[name](...params);
 	});
 	await handleVersion();

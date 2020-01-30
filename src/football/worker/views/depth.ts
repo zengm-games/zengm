@@ -77,8 +77,8 @@ async function updateDepth(
 		const editable = tid === g.get("userTid");
 		// @ts-ignore
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
-		let players = await idb.cache.players.indexGetAll("playersByTid", tid);
-		players = await idb.getCopies.playersPlus(players, {
+		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
+		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: ["pid", "name", "age", "injury", "watch"],
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 			// @ts-ignore
@@ -97,16 +97,25 @@ async function updateDepth(
 		}
 
 		const depthPlayers = getDepthPlayers(t.depth, players);
+
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
+		const stats2: string[] = stats.hasOwnProperty(pos) ? stats[pos] : [];
+
+		const players2: any[] = depthPlayers.hasOwnProperty(pos)
+			? // https://github.com/microsoft/TypeScript/issues/21732
+			  // @ts-ignore
+			  depthPlayers[pos]
+			: [];
+
 		return {
 			abbrev,
 			editable,
 			pos,
-			// @ts-ignore
-			players: depthPlayers[pos],
+			players: players2,
 			ratings,
 			season: g.get("season"),
-			// @ts-ignore
-			stats: stats.hasOwnProperty(pos) ? stats[pos] : [],
+			stats: stats2,
 		};
 	}
 }

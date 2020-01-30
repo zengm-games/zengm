@@ -51,6 +51,8 @@ const deionWorker = async (options: {
 					);
 				}
 
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
 				return api.actions.playMenu[subname](...params, conditions);
 			}
 
@@ -65,6 +67,8 @@ const deionWorker = async (options: {
 					);
 				}
 
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-ignore
 				return api.actions.toolsMenu[subname](...params, conditions);
 			}
 
@@ -76,6 +80,8 @@ const deionWorker = async (options: {
 				);
 			}
 
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
 			return api.actions[subname](...params, conditions);
 		}
 
@@ -87,6 +93,8 @@ const deionWorker = async (options: {
 			);
 		}
 
+		// https://github.com/microsoft/TypeScript/issues/21732
+		// @ts-ignore
 		return api[name](...params, conditions);
 	});
 };

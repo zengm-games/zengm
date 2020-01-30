@@ -1,7 +1,17 @@
 import { helpers } from "../../../deion/ui/util";
 
 // Mutates boxScore!!!
-const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
+const processLiveGameEvents = ({
+	events,
+	boxScore,
+	overtimes,
+	quarters,
+}: {
+	events: any[];
+	boxScore: any;
+	overtimes: number;
+	quarters: string[];
+}) => {
 	let stop = false;
 	let text;
 	while (!stop && events.length > 0) {

@@ -1,7 +1,7 @@
 import { helpers } from "../../../deion/ui/util";
 
 // For strings of a format like 1:23 (times), which is greater? 1 for first, -1 for second, 0 for tie
-const cmpTime = (t1, t2) => {
+const cmpTime = (t1: string, t2: string) => {
 	const [min1, sec1] = t1.split(":").map(x => parseInt(x, 10));
 	const [min2, sec2] = t2.split(":").map(x => parseInt(x, 10));
 
@@ -21,7 +21,17 @@ const cmpTime = (t1, t2) => {
 };
 
 // Mutates boxScore!!!
-const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
+const processLiveGameEvents = ({
+	events,
+	boxScore,
+	overtimes,
+	quarters,
+}: {
+	events: any[];
+	boxScore: any;
+	overtimes: number;
+	quarters: string[];
+}) => {
 	let stop = false;
 	let text;
 
@@ -87,7 +97,7 @@ const processLiveGameEvents = ({ events, boxScore, overtimes, quarters }) => {
 			if (boxScore.teams[actualT].hasOwnProperty(e.s) && e.s !== "min") {
 				if (e.pid !== undefined) {
 					const p = boxScore.teams[actualT].players.find(
-						p2 => p2.pid === e.pid,
+						(p2: any) => p2.pid === e.pid,
 					);
 					if (p === undefined) {
 						console.log("Can't find player", e);

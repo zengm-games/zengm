@@ -3,6 +3,7 @@ import { MouseEvent } from "react";
 import { Context } from "bbgm-router";
 import processInputs from "../worker/api/processInputs";
 import views from "../worker/views";
+import viewsFootball from "../../football/worker/views";
 
 export type Env = {
 	enableLogging: boolean;
@@ -39,8 +40,23 @@ declare global {
 }
 
 export type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-export type View<T extends keyof typeof views> = Exclude<
-	ThenArg<ReturnType<typeof views[T]>>,
+
+type ViewsKeys = keyof typeof views;
+type ViewsFootballKeys = keyof typeof viewsFootball;
+
+export type View<
+	Name extends ViewsKeys | ViewsFootballKeys,
+	Sport extends "football" | "deion" = "deion"
+> = Exclude<
+	ThenArg<
+		Sport extends "football"
+			? Name extends ViewsFootballKeys
+				? ReturnType<typeof viewsFootball[Name]>
+				: {}
+			: Name extends ViewsKeys
+			? ReturnType<typeof views[Name]>
+			: {}
+	>,
 	void | { redirectUrl: string } | { errorMessage: string }
 >;
 

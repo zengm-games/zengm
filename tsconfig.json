@@ -1,13 +1,11 @@
 {
 	"compilerOptions": {
 		"target": "esnext",
-		"module": "commonjs",
 		"resolveJsonModule": true,
 		"jsx": "react",
 		"rootDir": "./src",
 		"noEmit": true,
 		"noUnusedLocals": true,
-		// "noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 		"moduleResolution": "node",
 		"baseUrl": ".",
@@ -16,14 +14,6 @@
 			"league-schema": ["build/files/league-schema.json"]
 		},
 		"esModuleInterop": true,
-
-		// "strict": true,
-		// "noImplicitAny": true,
-		"noImplicitThis": true,
-		"alwaysStrict": true,
-		"strictBindCallApply": true,
-		"strictNullChecks": true,
-		"strictFunctionTypes": true,
-		"strictPropertyInitialization": true
+		"strict": true
 	}
 }

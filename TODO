@@ -23,8 +23,6 @@ get rid of zeroPad
 typescript
 - 3.8
   - switch to import type using importsNotUsedAsValues
-- to know
-  - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, maybe g
 - to do
   - types for toUI
   - types for toWorker
@@ -38,11 +36,9 @@ typescript
   - any -> unknown
     - also in dependencies, like bbgm-router
   - @ts-ignore still needed? maybe write script to check
-- yarn tsc --noImplicitAny > foo
 - more JS to TS
   - find src -name '*.js' > foo
   - find tools -name '*.js' > foo
-- changelog
 - later
   - playersPlus
     - finish teamsPlus first, it's easier!

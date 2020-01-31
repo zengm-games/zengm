@@ -38,15 +38,15 @@ const updatePlayers = async (
 		}
 
 		const stats = statsTable.stats;
-		let players;
+		let playersAll;
 
 		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
-			players = await idb.cache.players.indexGetAll("playersByTid", [
+			playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
 				Infinity,
 			]);
 		} else {
-			players = await idb.getCopies.players({
+			playersAll = await idb.getCopies.players({
 				activeSeason: inputs.season,
 			});
 		}
@@ -62,24 +62,25 @@ const updatePlayers = async (
 		// Show all teams
 		let statType: PlayerStatType;
 
-		if (process.env.SPORT === "basketball" && inputs.statType === "perGame") {
-			statType = "perGame";
-		} else if (
-			process.env.SPORT === "basketball" &&
-			inputs.statType === "per36"
-		) {
-			statType = "per36";
-		} else if (process.env.SPORT === "basketball") {
-			statType = "perGame";
+		if (process.env.SPORT === "basketball") {
+			if (inputs.statType === "totals") {
+				statType = "totals";
+			} else if (inputs.statType === "per36") {
+				statType = "per36";
+			} else {
+				statType = "perGame";
+			}
 		} else {
 			statType = "totals";
 		}
 
 		if (!tid && inputs.abbrev === "watch") {
-			players = players.filter(p => p.watch && typeof p.watch !== "function");
+			playersAll = playersAll.filter(
+				p => p.watch && typeof p.watch !== "function",
+			);
 		}
 
-		players = await idb.getCopies.playersPlus(players, {
+		let players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
 				"nameAbbrev",

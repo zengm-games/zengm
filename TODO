@@ -36,9 +36,6 @@ typescript
   - any -> unknown
     - also in dependencies, like bbgm-router
   - @ts-ignore still needed? maybe write script to check
-- more JS to TS
-  - find src -name '*.js' > foo
-  - find tools -name '*.js' > foo
 - later
   - playersPlus
     - finish teamsPlus first, it's easier!

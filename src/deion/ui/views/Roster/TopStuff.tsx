@@ -104,7 +104,12 @@ const TopStuff = ({
 			"Season not found"
 		);
 
-	const marginOfVictory = (t.stats.pts - t.stats.oppPts).toFixed(1);
+	let marginOfVictory: string;
+	if (process.env.SPORT === "football") {
+		marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(1);
+	} else {
+		marginOfVictory = (t.stats.pts - t.stats.oppPts).toFixed(1);
+	}
 
 	return (
 		<>

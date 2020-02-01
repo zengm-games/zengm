@@ -205,37 +205,6 @@ const augmentPartialPlayer = (
 		develop(p, 0);
 	}
 
-	for (const r of p.ratings) {
-		if (!r.hasOwnProperty("fuzz")) {
-			r.fuzz = pg.ratings[0].fuzz;
-		}
-
-		if (!r.hasOwnProperty("skills")) {
-			r.skills = skills(p.ratings[0]);
-		}
-
-		if (!r.hasOwnProperty("ovr")) {
-			r.ovr = overrides.core.player.ovr!(p.ratings[0]);
-		}
-
-		if (
-			process.env.SPORT === "basketball" &&
-			(!r.hasOwnProperty("pot") || r.pot < r.ovr)
-		) {
-			// Only basketball, in case position is not known at this point
-			r.pot = bootstrapPot(r, r.season - p.born.year);
-		}
-
-		if (!r.hasOwnProperty("pos") && process.env.SPORT !== "football") {
-			// Football is handled below with call to player.develop
-			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
-				r.pos = p.pos;
-			} else {
-				r.pos = overrides.core.player.pos!(r);
-			}
-		}
-	}
-
 	// Rating rescaling
 	if (
 		process.env.SPORT === "basketball" &&
@@ -309,6 +278,37 @@ const augmentPartialPlayer = (
 		for (let i = 0; i < p.ratings.length; i++) {
 			if (!p.ratings[i].hasOwnProperty("pos")) {
 				p.ratings[i].pos = p.pos;
+			}
+		}
+	}
+
+	for (const r of p.ratings) {
+		if (!r.hasOwnProperty("fuzz")) {
+			r.fuzz = pg.ratings[0].fuzz;
+		}
+
+		if (!r.hasOwnProperty("skills")) {
+			r.skills = skills(p.ratings[0]);
+		}
+
+		if (!r.hasOwnProperty("ovr")) {
+			r.ovr = overrides.core.player.ovr!(p.ratings[0]);
+		}
+
+		if (
+			process.env.SPORT === "basketball" &&
+			(!r.hasOwnProperty("pot") || r.pot < r.ovr)
+		) {
+			// Only basketball, in case position is not known at this point
+			r.pot = bootstrapPot(r, r.season - p.born.year);
+		}
+
+		if (!r.hasOwnProperty("pos") && process.env.SPORT !== "football") {
+			// Football is handled below with call to player.develop
+			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+				r.pos = p.pos;
+			} else {
+				r.pos = overrides.core.player.pos!(r);
 			}
 		}
 	}

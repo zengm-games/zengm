@@ -87,12 +87,12 @@ const takeScreenshot = async () => {
 			throw new Error(data.data.error.message);
 		}
 
-		const url = `https://i.imgur.com/${data.data.id}.jpg`;
+		const url = `https://imgur.com/${data.data.id}`;
 		const encodedURL = window.encodeURIComponent(url);
 
 		logEvent({
 			type: "screenshot",
-			text: `<p className="mb-0">Uploaded to Imgur:</p><p>${url}</p>
+			text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
 <a href="https://www.reddit.com/r/${
 				process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM"
 			}/submit?url=${encodedURL}">Share on Reddit</a><br>

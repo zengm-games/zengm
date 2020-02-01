@@ -279,6 +279,15 @@ const getCategoriesAndStats = () => {
 						minValue: [],
 					},
 					{
+						name: "Sacks",
+						stat: "Sk",
+						statProp: "defSk",
+						title: "Sacks",
+						data: [],
+						minStats: [],
+						minValue: [],
+					},
+					{
 						name: "Defensive Interceptions",
 						stat: "Int",
 						statProp: "defInt",

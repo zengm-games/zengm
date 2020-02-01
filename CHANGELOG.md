@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-02-01: Added sacks to the league leaders page.
+
 * 2020-01-30: Added average margin of victory to the roster page.
 
 * 2020-01-05: Revamped the UI for page titles, dropdown options, and shortcut links between pages.

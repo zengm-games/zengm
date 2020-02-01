@@ -1,4 +1,5 @@
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
+
 // Safari 11 (because in 10.1 getAll crashes in a worker)
 import "indexeddb-getall-shim";
 

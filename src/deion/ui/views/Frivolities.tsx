@@ -18,6 +18,14 @@ const Frivolities = () => {
 
 			<p>
 				<b>
+					<a href={helpers.leagueUrl(["frivolities", "colleges"])}>Colleges</a>
+				</b>{" "}
+				- see which colleges have had the most successful pro players (
+				<span className="text-danger">Warning</span>: this is slow for large
+				leagues!)
+			</p>
+			<p>
+				<b>
 					<a
 						href={helpers.leagueUrl(["frivolities", "most_games_no_playoffs"])}
 					>
@@ -67,7 +75,7 @@ const Frivolities = () => {
 				</b>{" "}
 				- color-coded visualization of year-to-year changes in roster
 				composition (<span className="text-danger">Warning</span>: this is{" "}
-				<b>very</b> slow for large leagues!)
+				<b className="text-danger">very</b> slow for large leagues!)
 			</p>
 			<p>
 				<b>
@@ -76,8 +84,8 @@ const Frivolities = () => {
 					</a>
 				</b>{" "}
 				- view all the tragic deaths that have occurred in your league (
-				<span className="text-danger">Warning</span>: this is <b>very</b> slow
-				for large leagues!)
+				<span className="text-danger">Warning</span>: this is{" "}
+				<b className="text-danger">very</b> slow for large leagues!)
 			</p>
 		</>
 	);

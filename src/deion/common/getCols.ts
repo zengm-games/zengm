@@ -1135,11 +1135,24 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"# Active": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"# Fathers": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"# HoF": {
+		desc: "Number of Players in the Hall of Fame",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"# Brothers": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Players": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

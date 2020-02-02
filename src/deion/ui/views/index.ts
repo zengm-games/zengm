@@ -4,6 +4,7 @@ import AllStarHistory from "./AllStarHistory";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardsRecords from "./AwardsRecords";
 import Changes from "./Changes";
+import Colleges from "./Colleges";
 import CustomizePlayer from "./CustomizePlayer";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
@@ -76,6 +77,7 @@ export default {
 	AllStarHistory,
 	AwardsRecords,
 	Changes,
+	Colleges,
 	CustomizePlayer,
 	DangerZone,
 	Dashboard,

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import { View } from "../../common/types";
 
 const MostGamesNoPlayoffs = ({
@@ -44,7 +44,7 @@ const MostGamesNoPlayoffs = ({
 		return {
 			key: p.pid,
 			data: [
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
+				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,

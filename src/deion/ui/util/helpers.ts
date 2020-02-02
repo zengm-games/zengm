@@ -18,11 +18,9 @@ const leagueUrl = (components: (number | string)[]): string => {
 	return commonHelpers.leagueUrlFactory(lid, components);
 };
 
-/**
- * Format a number as an integer with commas in the thousands places.
- */
+// Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (x: number | string): string => {
-	const y = typeof x === "string" ? parseFloat(x) : x;
+	const y = typeof x === "string" ? parseInt(x, 10) : x;
 	return y.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 };
 
@@ -75,9 +73,9 @@ const roundOverrides: Record<
 > =
 	process.env.SPORT === "basketball"
 		? {
-				gp: "none",
-				gs: "none",
-				yearsWithTeam: "none",
+				gp: "noDecimalPlace",
+				gs: "noDecimalPlace",
+				yearsWithTeam: "noDecimalPlace",
 				gmsc: "oneDecimalPlace",
 				fgp: "oneDecimalPlace",
 				tpp: "oneDecimalPlace",
@@ -87,9 +85,9 @@ const roundOverrides: Record<
 				ftpfga: "roundWinp",
 		  }
 		: {
-				gp: "none",
-				gs: "none",
-				yearsWithTeam: "none",
+				gp: "noDecimalPlace",
+				gs: "noDecimalPlace",
+				yearsWithTeam: "noDecimalPlace",
 				cmpPct: "oneDecimalPlace",
 				qbRat: "oneDecimalPlace",
 				rusYdsPerAtt: "oneDecimalPlace",
@@ -207,14 +205,6 @@ const roundStat = (
 			value = 0;
 		}
 
-		if (roundOverrides[stat] === "none") {
-			return String(value);
-		}
-
-		if (roundOverrides[stat] === "oneDecimalPlace") {
-			return value.toFixed(1);
-		}
-
 		if (roundOverrides[stat] === "roundWinp") {
 			return commonHelpers.roundWinp(value);
 		}
@@ -224,10 +214,11 @@ const roundStat = (
 		}
 
 		if (roundOverrides[stat] === "noDecimalPlace") {
-			return value.toFixed(0);
+			return numberWithCommas(value);
 		}
 
-		return value.toFixed(d);
+		// Default - oneDecimalPlace
+		return numberWithCommas(value) + (value % 1).toFixed(d).slice(1);
 	} catch (err) {
 		return "";
 	}

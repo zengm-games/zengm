@@ -4,6 +4,7 @@ import allStarDraft from "./allStarDraft";
 import allStarHistory from "./allStarHistory";
 import awardsRecords from "./awardsRecords";
 import changes from "./changes";
+import colleges from "./colleges";
 import customizePlayer from "./customizePlayer";
 import dashboard from "./dashboard";
 import deleteOldData from "./deleteOldData";
@@ -74,6 +75,7 @@ export default {
 	allStarHistory,
 	awardsRecords,
 	changes,
+	colleges,
 	customizePlayer,
 	dashboard,
 	deleteOldData,

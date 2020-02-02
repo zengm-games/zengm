@@ -12,15 +12,20 @@ add kneeling to run out the clock
 
 add colleges
 - football
-- frivolity like
-  - main page: https://www.pro-football-reference.com/schools/
-  - sub page: https://www.basketball-reference.com/friv/colleges.fcgi?college=acadia
+  - new college distribution
+  - make sure frivolity works
+- frivolity like https://www.basketball-reference.com/friv/colleges.fcgi?college=acadia
     - link from player pages
+    - special case for None
 - blog
   - data
   - names from ncaa
+  - distribution of colleges (not based on best schools always get best players)
   - viewable on player ratings
   - frivolity
+
+add countries frivolity, similar to colleges
+- account for custom countries that include states/provinces, like in achievements
 
 typescript
 - 3.8

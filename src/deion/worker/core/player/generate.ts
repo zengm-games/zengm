@@ -1,3 +1,4 @@
+import college from "./college";
 import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";
@@ -24,7 +25,7 @@ const generate = (
 			year: g.get("season") - age,
 			loc: country,
 		},
-		college: "",
+		college: college(country),
 		contract: {
 			// Will be set by setContract below
 			amount: 0,

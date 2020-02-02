@@ -1194,6 +1194,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	College: {},
 	Conference: {},
 	Contract: {
 		sortSequence: ["desc", "asc"],

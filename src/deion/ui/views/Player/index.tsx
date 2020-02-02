@@ -254,12 +254,9 @@ const Player2 = ({
 						)}
 						<Relatives pid={player.pid} relatives={player.relatives} />
 						{draftInfo}
-						{player.college && player.college !== "" ? (
-							<>
-								From: {player.college}
-								<br />
-							</>
-						) : null}
+						College:{" "}
+						{player.college && player.college !== "" ? player.college : "None"}
+						<br />
 						{contractInfo}
 						{godMode ? (
 							<>

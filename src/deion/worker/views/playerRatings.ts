@@ -95,6 +95,7 @@ const updatePlayers = async (
 				"hof",
 				"watch",
 				"tid",
+				"college",
 			],
 			ratings: ["ovr", "pot", "skills", "pos", ...ratings, ...extraRatings],
 			stats: ["abbrev", "tid"],

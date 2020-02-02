@@ -37,6 +37,7 @@ const PlayerRatings = ({
 		"Age",
 		"Contract",
 		"Country",
+		"College",
 		"Ovr",
 		"Pot",
 		...ratings.map(rating => `rating:${rating}`),
@@ -78,6 +79,7 @@ const PlayerRatings = ({
 						: ""}
 				</>,
 				p.born.loc,
+				p.college,
 				p.ratings.ovr,
 				p.ratings.pot,
 				...ratings.map(rating => p.ratings[rating]),

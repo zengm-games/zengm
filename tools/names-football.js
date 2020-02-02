@@ -10,7 +10,8 @@ const {
 
 // Run this on the output of something like:
 // $ wget --mirror --convert-links --adjust-extension --no-parent https://www.footballdb.com/college-football/players/index.html -A '*index.html*'
-const folder = "/media/external/www.footballdb.com/college-football/players";
+const folder =
+	"/media/external/BBGM/www.footballdb.com/college-football/players";
 
 const players = [];
 

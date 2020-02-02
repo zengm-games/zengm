@@ -11,7 +11,7 @@ const {
 
 // Run this on the output of something like:
 // $ wget --mirror --convert-links --adjust-extension --no-parent http://www.draftexpress.com
-const folder = "/media/external/www.draftexpress.com/profile";
+const folder = "/media/external/BBGM/www.draftexpress.com/profile";
 
 const upperCaseFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
 

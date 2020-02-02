@@ -1128,7 +1128,7 @@ class GameSim {
 
 		if (touchback) {
 			this.recordStat(this.d, punter, "pntTB");
-			this.scrimmage = 25;
+			this.scrimmage = 20;
 			this.down = 1;
 			this.toGo = 10;
 		} else {

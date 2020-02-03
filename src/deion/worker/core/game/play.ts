@@ -25,7 +25,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from "../../util";
-import { Conditions, ScheduleGame } from "../../../common/types";
+import { Conditions, ScheduleGame, UpdateEvents } from "../../../common/types";
 
 /**
  * Play one or more days of games.
@@ -205,7 +205,7 @@ const play = async (
 
 		await Promise.all(promises);
 		await overrides.util.advStats();
-		const updateEvents = ["gameSim"];
+		const updateEvents: UpdateEvents = ["gameSim"];
 
 		// Tragic deaths only happen during the regular season!
 		if (

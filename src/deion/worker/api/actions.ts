@@ -332,6 +332,8 @@ const playMenu = {
 			let proceed = true;
 
 			if (numRemaining > 0) {
+				// This function always returns a boolean if no defaultValue is supplied, but couldn't figure out how to get it to work correctly with TypeScript.
+				// @ts-ignore
 				proceed = await toUI(
 					"confirm",
 					[

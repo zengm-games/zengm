@@ -1539,7 +1539,7 @@ const upsertCustomizedPlayer = async (
 
 const clearTrade = async () => {
 	await trade.clear();
-	await toUI("realtimeUpdate");
+	await toUI("realtimeUpdate", []);
 };
 
 const createTrade = async (
@@ -1561,26 +1561,26 @@ const createTrade = async (
 	],
 ) => {
 	await trade.create(teams);
-	await toUI("realtimeUpdate");
+	await toUI("realtimeUpdate", []);
 };
 
 const proposeTrade = async (
 	forceTrade: boolean,
 ): Promise<[boolean, string | undefined | null]> => {
 	const output = await trade.propose(forceTrade);
-	await toUI("realtimeUpdate");
+	await toUI("realtimeUpdate", []);
 	return output;
 };
 
 const tradeCounterOffer = async (): Promise<string> => {
 	const message = await trade.makeItWorkTrade();
-	await toUI("realtimeUpdate");
+	await toUI("realtimeUpdate", []);
 	return message;
 };
 
 const updateTrade = async (teams: TradeTeams) => {
 	await trade.updatePlayers(teams);
-	await toUI("realtimeUpdate");
+	await toUI("realtimeUpdate", []);
 };
 
 export default {

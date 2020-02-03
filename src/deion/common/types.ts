@@ -397,6 +397,7 @@ export type Option = {
 	id: string;
 	label: string;
 	url?: string;
+	key?: string;
 };
 
 export type LocalStateUI = {

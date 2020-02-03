@@ -5,6 +5,7 @@ import helpers from "./helpers";
 import local from "./local";
 import lock from "./lock";
 import toUI from "./toUI";
+import { Option } from "../../common/types";
 
 const updatePlayMenu = async () => {
 	if (typeof it === "function") {
@@ -241,9 +242,11 @@ const updatePlayMenu = async () => {
 		keys = ["stopAuto"];
 	}
 
-	const someOptions = keys.map(id => {
-		allOptions[id].id = id;
-		return allOptions[id];
+	const someOptions: Option[] = keys.map(id => {
+		return {
+			...allOptions[id],
+			id,
+		};
 	});
 
 	// Set first key to always be p

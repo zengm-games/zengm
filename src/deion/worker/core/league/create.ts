@@ -896,7 +896,7 @@ const create = async (
 	helpers.resetG();
 	g.setWithoutSavingToDB("lid", lid);
 	leagueData.gameAttributes.lid = lid;
-	await toUI("resetLeague");
+	await toUI("resetLeague", []);
 
 	if (idb.cache) {
 		idb.cache.stopAutoFlush();

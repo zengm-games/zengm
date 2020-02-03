@@ -122,7 +122,7 @@ const resetLeague = () => {
 	localActions.resetLeague();
 };
 
-const setGameAttributes = (gameAttributes: GameAttributes) => {
+const setGameAttributes = (gameAttributes: Partial<GameAttributes>) => {
 	localActions.updateGameAttributes(gameAttributes);
 };
 

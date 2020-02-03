@@ -17,7 +17,6 @@ typescript
 - 3.8
   - switch to import type using importsNotUsedAsValues
 - to do
-  - types for toUI
   - types for toWorker
     - test with tradeCounterOffer
     - what about actions? should not be stringly typed

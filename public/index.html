@@ -62,7 +62,11 @@
         const dark = "dark-CSS_HASH_DARK";
         const light = "light-CSS_HASH_LIGHT";
         try {
-          return localStorage.getItem("theme") === "dark" ? dark : light;
+          const local = localStorage.getItem("theme");
+          if (local !== null) {
+            return local === "dark" ? dark : light;
+          }
+          return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
         } catch (err) {
           return light;
         }

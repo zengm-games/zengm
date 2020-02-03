@@ -85,8 +85,16 @@ const Storage = () => {
 const Options = (props: { title?: string }) => {
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = localStorage.getItem("theme");
+		let theme: "dark" | "light" | "default";
+		if (themeLocalStorage === "dark") {
+			theme = "dark";
+		} else if (themeLocalStorage === "light") {
+			theme = "light";
+		} else {
+			theme = "default";
+		}
 		return {
-			theme: themeLocalStorage === "dark" ? "dark" : "light",
+			theme,
 		};
 	});
 
@@ -103,8 +111,11 @@ const Options = (props: { title?: string }) => {
 	const handleFormSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
-		const newTheme = state.theme === "dark" ? "dark" : "light";
-		localStorage.setItem("theme", newTheme);
+		if (state.theme === "default") {
+			localStorage.removeItem("theme");
+		} else {
+			localStorage.setItem("theme", state.theme);
+		}
 		if (window.themeCSSLink) {
 			window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;
 		}
@@ -127,12 +138,13 @@ const Options = (props: { title?: string }) => {
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
-						<label>Theme</label>
+						<label>Color Scheme</label>
 						<select
 							className="form-control"
 							onChange={handleChange("theme")}
 							value={state.theme}
 						>
+							<option value="default">OS Default</option>
 							<option value="light">Light</option>
 							<option value="dark">Dark</option>
 						</select>

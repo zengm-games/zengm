@@ -1,3 +1,7 @@
+titlebar height - dashboard vs standings
+
+some kind of global status/finances menu, maybe within titlebar? or next to play menu?
+
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 
 Jofish - when you make a move that causes an error in your roster (i.e. not enough/too many players) and try to simulate the all-star game, it freezes. I understand that the game still has to check if the rosters are proper, however, there is no warning given. Even though it doesn't make sense that the user's roster has to comply within the league even though it's the all-star game, a simple warning given would be nice
@@ -32,8 +36,6 @@ typescript
   - playersPlus
     - finish teamsPlus first, it's easier!
     - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES
-
-make dark mode obey operating system default
 
 unify "More" links
 

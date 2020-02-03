@@ -4,7 +4,7 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-02-02: Players are assigned a college when they are generated. [[1]](https://basketball-gm.com/blog/2020/02/colleges/)
+* 2020-02-02: Players are assigned a college when they are generated. [[1]](https://basketball-gm.com/blog/2020/02/colleges/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ey1zqg/new_in_v202002030317_colleges/) [[3]](https://old.reddit.com/r/Football_GM/comments/ey20vo/new_in_v202002030318_colleges/)
 
 * 2020-02-01: In FBGM, touchbacks on punts put the ball at the 20 yard line, not 25.
 

@@ -213,7 +213,8 @@ const roundStat = (
 
 		// Default - oneDecimalPlace
 		return (
-			commonHelpers.numberWithCommas(value) + (value % 1).toFixed(d).slice(1)
+			commonHelpers.numberWithCommas(value) +
+			(Math.abs(value) % 1).toFixed(1).slice(1)
 		);
 	} catch (err) {
 		return "";

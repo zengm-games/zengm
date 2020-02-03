@@ -199,6 +199,13 @@ const roundStat = (
 			value = 0;
 		}
 
+		if (roundOverrides[stat] === "oneDecimalPlace") {
+			return value.toLocaleString("en-US", {
+				maximumFractionDigits: 1,
+				minimumFractionDigits: 1,
+			});
+		}
+
 		if (roundOverrides[stat] === "roundWinp") {
 			return commonHelpers.roundWinp(value);
 		}
@@ -208,14 +215,13 @@ const roundStat = (
 		}
 
 		if (roundOverrides[stat] === "noDecimalPlace") {
-			return commonHelpers.numberWithCommas(value);
+			return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
 		}
 
-		// Default - oneDecimalPlace
-		const intPart = commonHelpers.numberWithCommas(value);
-		return d === 0
-			? intPart
-			: intPart + (Math.abs(value) % 1).toFixed(d).slice(1);
+		return value.toLocaleString("en-US", {
+			maximumFractionDigits: d,
+			minimumFractionDigits: d,
+		});
 	} catch (err) {
 		return "";
 	}

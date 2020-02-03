@@ -868,9 +868,9 @@ function ordinal(x?: number | null): string {
 
 // Format a number as an integer with commas in the thousands places.
 const numberWithCommas = (x: number | string): string => {
-	const y = typeof x === "string" ? parseInt(x, 10) : x;
-	const z = y > 0 ? Math.floor(y) : Math.ceil(y);
-	return z.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	const y = typeof x === "string" ? parseFloat(x) : x;
+
+	return y.toLocaleString("en-US", { maximumFractionDigits: 10 });
 };
 
 function yearRanges(arr: number[]): string[] {

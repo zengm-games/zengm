@@ -866,6 +866,12 @@ function ordinal(x?: number | null): string {
 	return x.toString() + suffix;
 }
 
+// Format a number as an integer with commas in the thousands places.
+const numberWithCommas = (x: number | string): string => {
+	const y = typeof x === "string" ? parseInt(x, 10) : x;
+	return y.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 function yearRanges(arr: number[]): string[] {
 	if (arr.length <= 1) {
 		return arr.map(String);
@@ -959,6 +965,7 @@ export default {
 	formatCurrency,
 	bound,
 	leagueUrlFactory,
+	numberWithCommas,
 	ordinal,
 	yearRanges,
 	roundWinp,

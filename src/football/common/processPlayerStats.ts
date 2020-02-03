@@ -137,23 +137,27 @@ const processStats = (
 			}
 
 			if (role === "passer") {
-				row[stat] = `${percentage(ps.pssCmp, ps.pss).toFixed(1)}%, ${
-					ps.pssYds
-				} yards, ${ps.pssTD} TD, ${ps.pssInt} int, ${qbRat(ps).toFixed(
+				row[stat] = `${percentage(ps.pssCmp, ps.pss).toFixed(
 					1,
-				)} QBRat`;
+				)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${ps.pssTD} TD, ${
+					ps.pssInt
+				} int, ${qbRat(ps).toFixed(1)} QBRat`;
 			} else if (role === "rusher") {
-				row[stat] = `${ps.rus} rushes, ${ps.rusYds} yards, ${(
+				row[stat] = `${helpers.numberWithCommas(
+					ps.rus,
+				)} rushes, ${helpers.numberWithCommas(ps.rusYds)} yards, ${(
 					ps.rusYds / ps.rus
 				).toFixed(1)} avg, ${ps.rusTD} TD`;
 			} else if (role === "receiver") {
-				row[stat] = `${ps.rec} catches, ${ps.recYds} yards, ${(
+				row[stat] = `${helpers.numberWithCommas(
+					ps.rec,
+				)} catches, ${helpers.numberWithCommas(ps.recYds)} yards, ${(
 					ps.recYds / ps.rec
 				).toFixed(1)} avg, ${ps.recTD} TD`;
 			} else if (role === "defender") {
-				row[
-					stat
-				] = `${defTck} tackles, ${ps.defSk} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
+				row[stat] = `${helpers.numberWithCommas(defTck)} tackles, ${
+					ps.defSk
+				} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
 			} else if (role === "kicker") {
 				const fgm = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
 				row[stat] = `${fgm} FGs, ${percentage(fgm, fga).toFixed(1)}%`;

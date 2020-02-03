@@ -18,12 +18,6 @@ const leagueUrl = (components: (number | string)[]): string => {
 	return commonHelpers.leagueUrlFactory(lid, components);
 };
 
-// Format a number as an integer with commas in the thousands places.
-const numberWithCommas = (x: number | string): string => {
-	const y = typeof x === "string" ? parseInt(x, 10) : x;
-	return y.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
-
 const plusMinus = (arg: number, d: number): string => {
 	if (Number.isNaN(arg)) {
 		return "";
@@ -214,11 +208,13 @@ const roundStat = (
 		}
 
 		if (roundOverrides[stat] === "noDecimalPlace") {
-			return numberWithCommas(value);
+			return commonHelpers.numberWithCommas(value);
 		}
 
 		// Default - oneDecimalPlace
-		return numberWithCommas(value) + (value % 1).toFixed(d).slice(1);
+		return (
+			commonHelpers.numberWithCommas(value) + (value % 1).toFixed(d).slice(1)
+		);
 	} catch (err) {
 		return "";
 	}
@@ -228,7 +224,6 @@ const helpers = {
 	...commonHelpers,
 	colorRating,
 	leagueUrl,
-	numberWithCommas,
 	plusMinus,
 	roundStat,
 	roundsWonText,

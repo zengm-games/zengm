@@ -212,10 +212,10 @@ const roundStat = (
 		}
 
 		// Default - oneDecimalPlace
-		return (
-			commonHelpers.numberWithCommas(value) +
-			(Math.abs(value) % 1).toFixed(1).slice(1)
-		);
+		const intPart = commonHelpers.numberWithCommas(value);
+		return d === 0
+			? intPart
+			: intPart + (Math.abs(value) % 1).toFixed(d).slice(1);
 	} catch (err) {
 		return "";
 	}

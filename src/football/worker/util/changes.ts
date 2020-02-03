@@ -24,6 +24,11 @@ const changes = [
 		msg:
 			"I finally added Statistical Feats, which you can see in the Stats menu.",
 	},
+	{
+		date: "2020-02-03",
+		msg:
+			'Players are assigned a college when they are generated, and a new college summary page is at Tools > Frivolities > College. <a href="https://basketball-gm.com/blog/2020/02/colleges/">More details</a>',
+	},
 ];
 
 export default changes;

@@ -246,6 +246,11 @@ const changes = [
 		msg:
 			'Each team now has a numeric rating from 0-100, viewable on the Roster page or on the new improved Power Rankings, which should be a lot more meaningful now than they used to be. <a href="https://basketball-gm.com/blog/2019/11/team-ratings/">More details</a>',
 	},
+	{
+		date: "2020-02-03",
+		msg:
+			'Players are assigned a college when they are generated, and a new college summary page is at Tools > Frivolities > College. <a href="https://basketball-gm.com/blog/2020/02/colleges/">More details</a>',
+	},
 ];
 
 export default changes;

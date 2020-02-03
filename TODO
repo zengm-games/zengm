@@ -20,7 +20,7 @@ typescript
   - types for toUI
   - types for toWorker
     - test with tradeCounterOffer
-    - what about actions?
+    - what about actions? should not be stringly typed
     - see OfferType
   - backboard -> idb
     - my branch has two fixes:

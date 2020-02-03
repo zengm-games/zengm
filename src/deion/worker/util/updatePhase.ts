@@ -10,13 +10,13 @@ async function updatePhase(conditions?: Conditions) {
 
 	if (phaseText !== local.phaseText) {
 		local.phaseText = phaseText;
-		toUI([
-			"updateLocal",
+		toUI("updateLocal", [
 			{
 				phaseText,
 			},
-		]); // Update phase in meta database. No need to have this block updating the UI or anything.
+		]);
 
+		// Update phase in meta database. No need to have this block updating the UI or anything.
 		(async () => {
 			if (idb.meta) {
 				const l = await idb.meta.get("leagues", g.get("lid"));
@@ -29,8 +29,8 @@ async function updatePhase(conditions?: Conditions) {
 		})();
 	} else if (conditions !== undefined) {
 		toUI(
+			"updateLocal",
 			[
-				"updateLocal",
 				{
 					phaseText,
 				},

@@ -123,7 +123,7 @@ const newPhaseBeforeDraft = async (
 		local.unviewedSeasonSummary = true;
 	}
 
-	toUI(["bbgmPing", "season", g.get("season")], conditions);
+	toUI("bbgmPing", ["season", g.get("season")], conditions);
 	return [url, ["playerMovement"]];
 };
 

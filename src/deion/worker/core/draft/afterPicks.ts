@@ -37,7 +37,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 			});
 			await updatePhase();
 			await updatePlayMenu();
-			await toUI(["realtimeUpdate", ["playerMovement"]]);
+			await toUI("realtimeUpdate", [["playerMovement"]]);
 			local.fantasyDraftResults = [];
 		} else {
 			// Non-fantasy draft
@@ -45,7 +45,7 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 		}
 	} else {
 		await updatePlayMenu();
-		await toUI(["realtimeUpdate", ["playerMovement"]]);
+		await toUI("realtimeUpdate", [["playerMovement"]]);
 	}
 };
 

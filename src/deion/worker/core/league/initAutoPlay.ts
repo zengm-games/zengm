@@ -4,8 +4,8 @@ import { Conditions } from "../../../common/types";
 
 const initAutoPlay = async (conditions: Conditions) => {
 	const result = await toUI(
+		"confirm",
 		[
-			"confirm",
 			"This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?",
 			{
 				defaultValue: "5",

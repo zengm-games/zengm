@@ -50,13 +50,13 @@ const finalize = async (
 
 	// If auto-simulating, initiate next action but don't redirect to a new URL
 	if (local.autoPlaySeasons > 0) {
-		toUI(["realtimeUpdate", updateEvents]);
+		toUI("realtimeUpdate", [updateEvents]);
 
 		await league.autoPlay(conditions);
 	} else {
-		toUI(["realtimeUpdate", updateEvents, url], conditions).then(() => {
+		toUI("realtimeUpdate", [updateEvents, url], conditions).then(() => {
 			// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"
-			return toUI(["realtimeUpdate", updateEvents]);
+			return toUI("realtimeUpdate", [updateEvents]);
 		});
 	}
 };

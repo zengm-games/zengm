@@ -65,7 +65,8 @@ const play = async (
 
 				if (allStarNext) {
 					toUI(
-						["realtimeUpdate", [], helpers.leagueUrl(["all_star_draft"])],
+						"realtimeUpdate",
+						[[], helpers.leagueUrl(["all_star_draft"])],
 						conditions,
 					);
 				}
@@ -239,10 +240,10 @@ const play = async (
 				}
 			}
 
-			await toUI(["realtimeUpdate", updateEvents, url, raw], conditions);
+			await toUI("realtimeUpdate", [updateEvents, url, raw], conditions);
 		} else {
 			url = undefined;
-			await toUI(["realtimeUpdate", updateEvents]);
+			await toUI("realtimeUpdate", [updateEvents]);
 		}
 
 		if (numDays - 1 <= 0 || playoffsOver) {

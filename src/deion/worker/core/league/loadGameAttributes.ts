@@ -51,7 +51,7 @@ const loadGameAttributes = async () => {
 	const gToUI = { ...g };
 	delete gToUI.get;
 	delete gToUI.setWithoutSavingToDB;
-	await toUI(["setGameAttributes", gToUI]);
+	await toUI("setGameAttributes", [gToUI]);
 };
 
 export default loadGameAttributes;

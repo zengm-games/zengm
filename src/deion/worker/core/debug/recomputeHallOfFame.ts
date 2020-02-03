@@ -16,7 +16,7 @@ const recomputeHallOfFame = async () => {
 	await transaction.done;
 
 	await idb.cache.fill();
-	await toUI(["realtimeUpdate", ["firstRun"]]);
+	await toUI("realtimeUpdate", [["firstRun"]]);
 };
 
 export default recomputeHallOfFame;

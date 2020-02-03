@@ -31,7 +31,7 @@ const recomputeOvr = async () => {
 
 	console.table(ovrs);
 	await idb.cache.fill();
-	await toUI(["realtimeUpdate", ["firstRun"]]);
+	await toUI("realtimeUpdate", [["firstRun"]]);
 };
 
 export default recomputeOvr;

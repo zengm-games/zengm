@@ -39,7 +39,7 @@ async function play(
 			});
 
 			if (g.get("daysLeft") > 0 && numDays > 0) {
-				await toUI(["realtimeUpdate", ["playerMovement"]]);
+				await toUI("realtimeUpdate", [["playerMovement"]]);
 				await updateStatus(`${g.get("daysLeft")} days left`);
 				await trade.betweenAiTeams();
 				play(numDays - 1, conditions, false);

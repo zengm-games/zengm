@@ -65,7 +65,7 @@ const processTrade = async (
 		}
 	}
 
-	await toUI(["realtimeUpdate", ["playerMovement"]]); // If draft pick was changed...
+	await toUI("realtimeUpdate", [["playerMovement"]]); // If draft pick was changed...
 
 	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();

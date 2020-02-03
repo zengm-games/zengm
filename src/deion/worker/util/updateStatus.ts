@@ -36,24 +36,22 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 			}
 		}
 
-		toUI([
-			"updateLocal",
+		toUI("updateLocal", [
 			{
 				statusText: defaultStatusText,
 			},
 		]);
 	} else if (statusText !== local.statusText) {
 		local.statusText = statusText;
-		toUI([
-			"updateLocal",
+		toUI("updateLocal", [
 			{
 				statusText,
 			},
 		]);
 	} else if (conditions !== undefined) {
 		toUI(
+			"updateLocal",
 			[
-				"updateLocal",
 				{
 					statusText,
 				},

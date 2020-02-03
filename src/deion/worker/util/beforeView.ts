@@ -119,7 +119,7 @@ const beforeLeague = async (
 	if (switchingDatabaseLid) {
 		// Clear old game attributes from g, just to be sure
 		helpers.resetG();
-		await toUI(["resetLeague"]);
+		await toUI("resetLeague");
 
 		if (loadingNewLid !== newLid) {
 			return;
@@ -175,7 +175,7 @@ const beforeLeague = async (
 
 	// If this is a Shared Worker, only one league can be open at a time
 	if (env.useSharedWorker) {
-		toUI(["newLid", g.get("lid")]);
+		toUI("newLid", [g.get("lid")]);
 	}
 };
 
@@ -186,7 +186,7 @@ const beforeNonLeague = async (conditions: Conditions) => {
 		try {
 			beforeNonLeagueRunning = true;
 			await league.close(false);
-			await toUI(["resetLeague"], conditions);
+			await toUI("resetLeague", [], conditions);
 
 			if (!env.useSharedWorker) {
 				clearInterval(heartbeatIntervalID);

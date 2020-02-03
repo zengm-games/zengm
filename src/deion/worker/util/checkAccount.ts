@@ -21,8 +21,7 @@ const checkAccount = async (
 		// Keep track of latest here, for ads
 		local.goldUntil = data.gold_until;
 		const currentTimestamp = Math.floor(Date.now() / 1000);
-		await toUI([
-			"updateLocal",
+		await toUI("updateLocal", [
 			{
 				gold: currentTimestamp <= data.gold_until,
 				username: data.username,

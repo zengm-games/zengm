@@ -152,7 +152,7 @@ const autoSortRoster = async (pos?: string) => {
 		false,
 		typeof pos === "string" ? pos : undefined,
 	);
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const beforeViewLeague = async (
@@ -218,7 +218,7 @@ const clearWatchList = async () => {
 	);
 
 	await Promise.all(promises);
-	await toUI(["realtimeUpdate", ["playerMovement", "watchList"]]);
+	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
 
 const countNegotiations = async () => {
@@ -916,7 +916,7 @@ const handleUploadedDraftClass = async (
 		);
 	}
 
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const init = async (inputEnv: Env, conditions: Conditions) => {
@@ -929,14 +929,14 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		// Account and changes checks can be async
 		checkChanges(conditions);
 		checkAccount(conditions).then(() => {
-			return toUI(["initAds", local.goldUntil], conditions);
+			return toUI("initAds", [local.goldUntil], conditions);
 		});
 	} else {
 		// Even if it's not the first host tab, show ads (still async). Why
 		// setTimeout? Cause horrible race condition with actually rendering the
 		// ad divs. Need to move them more fully into React to solve this.
 		setTimeout(() => {
-			toUI(["initAds", local.goldUntil], conditions);
+			toUI("initAds", [local.goldUntil], conditions);
 		}, 0);
 	}
 };
@@ -985,7 +985,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 
 // Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!
 const realtimeUpdate = async (updateEvents: UpdateEvents) => {
-	await toUI(["realtimeUpdate", updateEvents]);
+	await toUI("realtimeUpdate", [updateEvents]);
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
@@ -1005,7 +1005,7 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	}
 
 	await player.release(p, justDrafted);
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const removeLastTeam = async (): Promise<void> => {
@@ -1083,7 +1083,7 @@ const removeLastTeam = async (): Promise<void> => {
 
 const removeLeague = async (lid: number) => {
 	await league.remove(lid);
-	await toUI(["realtimeUpdate", ["leagues"]]);
+	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
@@ -1099,7 +1099,7 @@ const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 		// @ts-ignore
 		depth[pos] = sortedPids;
 		await idb.cache.teams.put(t);
-		await toUI(["realtimeUpdate", ["playerMovement"]]);
+		await toUI("realtimeUpdate", [["playerMovement"]]);
 	}
 };
 
@@ -1114,7 +1114,7 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 			}
 		}),
 	);
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const resetPlayingTime = async (tid: number) => {
@@ -1125,7 +1125,7 @@ const resetPlayingTime = async (tid: number) => {
 		await idb.cache.players.put(p);
 	}
 
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const runBefore = async (
@@ -1199,7 +1199,7 @@ const sign = async (
 		return errorMsg;
 	}
 
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
@@ -1229,7 +1229,7 @@ const switchTeam = async (tid: number) => {
 		wins: 0,
 	};
 	await idb.cache.teamSeasons.put(teamSeason);
-	await toUI(["realtimeUpdate", ["leagues"]]);
+	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
 const updateBudget = async (budgetAmounts: {
@@ -1250,7 +1250,7 @@ const updateBudget = async (budgetAmounts: {
 
 	await idb.cache.teams.put(t);
 	await finances.updateRanks(["budget"]);
-	await toUI(["realtimeUpdate", ["teamFinances"]]);
+	await toUI("realtimeUpdate", [["teamFinances"]]);
 };
 
 const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
@@ -1299,7 +1299,7 @@ const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	}
 
 	await league.setGameAttributes(gameAttributes);
-	await toUI(["realtimeUpdate", ["gameAttributes"]]);
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
 const updateLeague = async (lid: number, obj: any) => {
@@ -1309,7 +1309,7 @@ const updateLeague = async (lid: number, obj: any) => {
 	}
 	Object.assign(l, obj);
 	await idb.meta.put("leagues", l);
-	await toUI(["realtimeUpdate", ["leagues"]]);
+	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
 const updateMultiTeamMode = async (gameAttributes: {
@@ -1327,7 +1327,7 @@ const updateMultiTeamMode = async (gameAttributes: {
 		league.updateMetaNameRegion("Multi Team Mode", "");
 	}
 
-	await toUI(["realtimeUpdate", ["g.userTids"]]);
+	await toUI("realtimeUpdate", [["g.userTids"]]);
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
@@ -1344,14 +1344,14 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 		}
 	}
 
-	await toUI(["realtimeUpdate", ["playerMovement", "watchList"]]);
+	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
 	const p = await idb.cache.players.get(pid);
 	p.ptModifier = ptModifier;
 	await idb.cache.players.put(p);
-	await toUI(["realtimeUpdate", ["playerMovement"]]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const updateTeamInfo = async (
@@ -1539,7 +1539,7 @@ const upsertCustomizedPlayer = async (
 
 const clearTrade = async () => {
 	await trade.clear();
-	await toUI(["realtimeUpdate"]);
+	await toUI("realtimeUpdate");
 };
 
 const createTrade = async (
@@ -1561,26 +1561,26 @@ const createTrade = async (
 	],
 ) => {
 	await trade.create(teams);
-	await toUI(["realtimeUpdate"]);
+	await toUI("realtimeUpdate");
 };
 
 const proposeTrade = async (
 	forceTrade: boolean,
 ): Promise<[boolean, string | undefined | null]> => {
 	const output = await trade.propose(forceTrade);
-	await toUI(["realtimeUpdate"]);
+	await toUI("realtimeUpdate");
 	return output;
 };
 
 const tradeCounterOffer = async (): Promise<string> => {
 	const message = await trade.makeItWorkTrade();
-	await toUI(["realtimeUpdate"]);
+	await toUI("realtimeUpdate");
 	return message;
 };
 
 const updateTrade = async (teams: TradeTeams) => {
 	await trade.updatePlayers(teams);
-	await toUI(["realtimeUpdate"]);
+	await toUI("realtimeUpdate");
 };
 
 export default {

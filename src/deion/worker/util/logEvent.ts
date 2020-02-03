@@ -16,7 +16,7 @@ const saveEvent = (event: LogEventSaveOptions) => {
 const logEvent = createLogger(
 	saveEvent,
 	(options: LogEventShowOptions, conditions?: Conditions) => {
-		toUI(["showEvent", options], conditions);
+		toUI("showEvent", [options], conditions);
 	},
 );
 

@@ -48,7 +48,7 @@ const setGameAttributes = async (
 		}
 	}
 
-	await toUI(["setGameAttributes", gameAttributes]);
+	await toUI("setGameAttributes", [gameAttributes]);
 };
 
 export default setGameAttributes;

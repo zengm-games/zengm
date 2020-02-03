@@ -251,8 +251,7 @@ const updatePlayMenu = async () => {
 		someOptions[0].key = "p";
 	}
 
-	toUI([
-		"updateLocal",
+	toUI("updateLocal", [
 		{
 			playMenuOptions: someOptions,
 		},

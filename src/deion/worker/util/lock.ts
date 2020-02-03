@@ -30,7 +30,7 @@ const set = (name: keyof Locks, value: boolean) => {
 	locks[name] = value;
 
 	if (name === "gameSim") {
-		toUI(["realtimeUpdate", ["lock.gameSim"]]);
+		toUI("realtimeUpdate", [["lock.gameSim"]]);
 	}
 };
 

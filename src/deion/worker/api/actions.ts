@@ -24,8 +24,8 @@ import { Conditions, TradeTeams, PlayoffSeries } from "../../common/types";
 
 const liveGame = async (gid: number, conditions: Conditions) => {
 	await toUI(
+		"realtimeUpdate",
 		[
-			"realtimeUpdate",
 			[],
 			helpers.leagueUrl(["live_game"]),
 			{
@@ -55,13 +55,15 @@ const negotiate = async (pid: number, conditions: Conditions) => {
 			);
 		} else {
 			toUI(
-				["realtimeUpdate", [], helpers.leagueUrl(["negotiation", pid])],
+				"realtimeUpdate",
+				[[], helpers.leagueUrl(["negotiation", pid])],
 				conditions,
 			);
 		}
 	} else {
 		toUI(
-			["realtimeUpdate", [], helpers.leagueUrl(["negotiation", pid])],
+			"realtimeUpdate",
+			[[], helpers.leagueUrl(["negotiation", pid])],
 			conditions,
 		);
 	}
@@ -157,7 +159,7 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	// Start a new trade based on a list of pids and dpids, like from the trading block
 	if (teams) {
 		await trade.create(teams);
-		toUI(["realtimeUpdate", [], helpers.leagueUrl(["trade"])], conditions);
+		toUI("realtimeUpdate", [[], helpers.leagueUrl(["trade"])], conditions);
 	}
 };
 
@@ -331,8 +333,8 @@ const playMenu = {
 
 			if (numRemaining > 0) {
 				proceed = await toUI(
+					"confirm",
 					[
-						"confirm",
 						`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
 							g.get("hardCap")
 								? ""
@@ -384,8 +386,8 @@ const toolsMenu = {
 	},
 	resetDb: async (conditions: Conditions) => {
 		const response = await toUI(
+			"confirm",
 			[
-				"confirm",
 				"Are you sure you want to delete ALL data in ALL of your leagues?",
 				{
 					okText: "Delete All Leagues",

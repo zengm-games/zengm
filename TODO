@@ -22,6 +22,7 @@ typescript
   - switch to import type using importsNotUsedAsValues
 - to do
   - types for toWorker
+    - flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier
     - test with tradeCounterOffer
     - see OfferType
   - backboard -> idb

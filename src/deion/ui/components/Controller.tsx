@@ -137,12 +137,12 @@ const Controller = () => {
 
 			if (inLeague) {
 				if (newLid !== lid) {
-					await toWorker("beforeViewLeague", newLid, lid);
+					await toWorker("main", "beforeViewLeague", newLid, lid);
 				}
 			} else {
 				// eslint-disable-next-line no-lonely-if
 				if (lid !== undefined) {
-					await toWorker("beforeViewNonLeague");
+					await toWorker("main", "beforeViewNonLeague");
 					localActions.updateGameAttributes({
 						lid: undefined,
 					});
@@ -155,6 +155,7 @@ const Controller = () => {
 
 			// Resolve all the promises before updating the UI to minimize flicker
 			const results = await toWorker(
+				"main",
 				"runBefore",
 				id,
 				context.params,

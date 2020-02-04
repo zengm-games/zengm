@@ -54,7 +54,7 @@ const handleVersion = async () => {
 		window.withGoodUI();
 	}
 
-	toWorker("getVersionWorker").then(bbgmVersionWorker => {
+	toWorker("main", "getVersionWorker").then(bbgmVersionWorker => {
 		window.bbgmVersionWorker = bbgmVersionWorker;
 
 		if (window.withGoodWorker) {
@@ -160,7 +160,7 @@ const setupEnv = async () => {
 		heartbeatID,
 		useSharedWorker: window.useSharedWorker,
 	};
-	await toWorker("init", env);
+	await toWorker("main", "init", env);
 };
 
 const render = () => {

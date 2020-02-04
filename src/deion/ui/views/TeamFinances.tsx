@@ -123,7 +123,7 @@ class FinancesForm extends React.Component<
 			),
 		};
 
-		await toWorker("updateBudget", budgetAmounts);
+		await toWorker("main", "updateBudget", budgetAmounts);
 
 		logEvent({
 			type: "success",

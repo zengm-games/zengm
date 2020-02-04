@@ -43,7 +43,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 			attrs.easyDifficultyInPast = true;
 		}
 
-		await toWorker("updateGameAttributes", attrs);
+		await toWorker("main", "updateGameAttributes", attrs);
 
 		logEvent({
 			type: "success",

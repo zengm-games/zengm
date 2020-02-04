@@ -19,7 +19,7 @@ const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 	};
 
 	const handleNewTeam = async () => {
-		await toWorker("switchTeam", tid);
+		await toWorker("main", "switchTeam", tid);
 		realtimeUpdate([], helpers.leagueUrl([]));
 	};
 

@@ -19,7 +19,7 @@ const DangerZone = () => {
 					type="button"
 					className="btn btn-danger"
 					onClick={() => {
-						toWorker("actions.toolsMenu.skipToPlayoffs");
+						toWorker("toolsMenu", "skipToPlayoffs");
 					}}
 				>
 					Skip To Playoffs
@@ -30,7 +30,7 @@ const DangerZone = () => {
 					type="button"
 					className="btn btn-danger"
 					onClick={() => {
-						toWorker("actions.toolsMenu.skipToBeforeDraft");
+						toWorker("toolsMenu", "skipToBeforeDraft");
 					}}
 				>
 					Skip To Before Draft
@@ -41,7 +41,7 @@ const DangerZone = () => {
 					type="button"
 					className="btn btn-danger"
 					onClick={() => {
-						toWorker("actions.toolsMenu.skipToAfterDraft");
+						toWorker("toolsMenu", "skipToAfterDraft");
 					}}
 				>
 					Skip To After Draft
@@ -52,7 +52,7 @@ const DangerZone = () => {
 					type="button"
 					className="btn btn-danger"
 					onClick={() => {
-						toWorker("actions.toolsMenu.skipToPreseason");
+						toWorker("toolsMenu", "skipToPreseason");
 					}}
 				>
 					Skip To Preseason

@@ -31,14 +31,14 @@ const MultiTeamMode = ({
 					gameAttributes.userTid = newUserTids[0];
 				}
 
-				await toWorker("updateMultiTeamMode", gameAttributes);
+				await toWorker("main", "updateMultiTeamMode", gameAttributes);
 			}
 		},
 		[userTid, userTids],
 	);
 
 	const handleDisable = useCallback(async () => {
-		await toWorker("updateMultiTeamMode", {
+		await toWorker("main", "updateMultiTeamMode", {
 			userTids: [userTid],
 		});
 	}, [userTid]);

@@ -11,7 +11,7 @@ const WatchBlock = React.memo(({ pid, watch }: Props) => {
 	const handleClick = useCallback(
 		async (e: SyntheticEvent) => {
 			e.preventDefault();
-			await toWorker("updatePlayerWatch", pid, !watch);
+			await toWorker("main", "updatePlayerWatch", pid, !watch);
 		},
 		[pid, watch],
 	);

@@ -34,9 +34,9 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 
 		let csvPromise;
 		if (grouping === "averages") {
-			csvPromise = toWorker("exportPlayerAveragesCsv", season);
+			csvPromise = toWorker("main", "exportPlayerAveragesCsv", season);
 		} else if (grouping === "games") {
-			csvPromise = toWorker("exportPlayerGamesCsv", season);
+			csvPromise = toWorker("main", "exportPlayerGamesCsv", season);
 		} else {
 			setStatus("Invalid grouping selected");
 			return;
@@ -44,7 +44,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 
 		const [data, leagueName] = await Promise.all([
 			csvPromise,
-			toWorker("getLeagueName"),
+			toWorker("main", "getLeagueName"),
 		]);
 
 		const filename = genFilename(leagueName, season, grouping);

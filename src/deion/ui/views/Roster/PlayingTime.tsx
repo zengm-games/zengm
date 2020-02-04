@@ -45,7 +45,7 @@ const handlePtChange = async (
 		return;
 	}
 
-	await toWorker("updatePlayingTime", p.pid, ptModifier);
+	await toWorker("main", "updatePlayingTime", p.pid, ptModifier);
 };
 
 const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {

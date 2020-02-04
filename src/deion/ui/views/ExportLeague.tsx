@@ -68,6 +68,7 @@ const ExportLeague = () => {
 
 			try {
 				const { filename, json } = await toWorker(
+					"main",
 					"exportLeague",
 					objectStores,
 					compressed,

@@ -285,7 +285,7 @@ const Player2 = ({
 					<button
 						className="btn btn-light-bordered mb-3"
 						disabled={player.untradable}
-						onClick={() => toWorker("actions.tradeFor", { pid: player.pid })}
+						onClick={() => toWorker("actions", "tradeFor", { pid: player.pid })}
 					>
 						Trade For
 					</button>
@@ -302,7 +302,7 @@ const Player2 = ({
 					<button
 						className="btn btn-light-bordered mb-3"
 						disabled={!willingToSign}
-						onClick={() => toWorker("actions.negotiate", player.pid)}
+						onClick={() => toWorker("actions", "negotiate", player.pid)}
 					>
 						Negotiate Contract
 					</button>

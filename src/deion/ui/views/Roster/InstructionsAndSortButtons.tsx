@@ -3,11 +3,11 @@ import React from "react";
 import { toWorker } from "../../util";
 
 const handleAutoSort = async () => {
-	await toWorker("autoSortRoster");
+	await toWorker("main", "autoSortRoster");
 };
 
 const handleResetPT = async (tid: number) => {
-	await toWorker("resetPlayingTime", tid);
+	await toWorker("main", "resetPlayingTime", tid);
 };
 
 const InstructionsAndSortButtons = ({

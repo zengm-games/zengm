@@ -7,7 +7,7 @@ import { View } from "../../common/types";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {
-	const count = await toWorker("countNegotiations");
+	const count = await toWorker("main", "countNegotiations");
 	if (count > 0) {
 		realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
 	} else if (cancelled || process.env.SPORT === "football") {
@@ -19,12 +19,13 @@ const redirectNegotiationOrRoster = async (cancelled: boolean) => {
 };
 
 const cancel = async (pid: number) => {
-	await toWorker("cancelContractNegotiation", pid);
+	await toWorker("main", "cancelContractNegotiation", pid);
 	redirectNegotiationOrRoster(true);
 };
 
 const sign = async (pid: number, amount: number, exp: number) => {
 	const errorMsg = await toWorker(
+		"main",
 		"acceptContractNegotiation",
 		pid,
 		Math.round(amount * 1000),

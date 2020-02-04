@@ -30,7 +30,7 @@ const Live = ({ games, gamesInProgress }: View<"live">) => {
 							"btn-success": gm.highlight,
 						})}
 						disabled={gamesInProgress}
-						onClick={() => toWorker("actions.liveGame", gm.gid)}
+						onClick={() => toWorker("actions", "liveGame", gm.gid)}
 					>
 						{gm.awayRegion} {gm.awayName} at
 						<br />

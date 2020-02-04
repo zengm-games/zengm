@@ -46,6 +46,7 @@ const handleRelease = async (
 	});
 	if (proceed) {
 		const errorMsg = await toWorker(
+			"main",
 			"releasePlayer",
 			p.pid,
 			wasPlayerJustDrafted,
@@ -161,7 +162,7 @@ const Roster = ({
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);
-					await toWorker("reorderRosterDrag", newSortedPids);
+					await toWorker("main", "reorderRosterDrag", newSortedPids);
 				}}
 				cols={() => (
 					<>
@@ -295,7 +296,9 @@ const Roster = ({
 								<button
 									className="btn btn-light-bordered btn-xs"
 									disabled={p.untradable}
-									onClick={() => toWorker("actions.tradeFor", { pid: p.pid })}
+									onClick={() =>
+										toWorker("actions", "tradeFor", { pid: p.pid })
+									}
 								>
 									Trade For
 								</button>

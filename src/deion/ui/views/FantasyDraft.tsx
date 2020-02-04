@@ -36,7 +36,7 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	}, [sortedTids]);
 	const startDraft = useCallback(() => {
 		setStarting(true);
-		toWorker("startFantasyDraft", sortedTids);
+		toWorker("main", "startFantasyDraft", sortedTids);
 	}, [sortedTids]);
 	useTitleBar({
 		title: "Fantasy Draft",

@@ -23,7 +23,6 @@ typescript
 - to do
   - types for toWorker
     - test with tradeCounterOffer
-    - what about actions? should not be stringly typed
     - see OfferType
   - backboard -> idb
     - my branch has two fixes:

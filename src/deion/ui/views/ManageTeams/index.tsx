@@ -92,7 +92,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		e.preventDefault();
 		dispatch({ type: "startSaving" });
 
-		await toWorker("updateTeamInfo", state.teams);
+		await toWorker("main", "updateTeamInfo", state.teams);
 
 		logEvent({
 			type: "success",

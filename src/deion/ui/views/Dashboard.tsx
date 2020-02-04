@@ -118,7 +118,7 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 	const [actuallyStarred, setActuallyStarred] = useState<boolean>(!!starred);
 	const toggle = useCallback(async () => {
 		setActuallyStarred(!actuallyStarred);
-		await toWorker("updateLeague", lid, {
+		await toWorker("main", "updateLeague", lid, {
 			starred: !actuallyStarred,
 		});
 	}, [actuallyStarred, lid]);
@@ -266,7 +266,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 									});
 
 									if (typeof newName === "string") {
-										await toWorker("updateLeague", league.lid, {
+										await toWorker("main", "updateLeague", league.lid, {
 											name: newName,
 										});
 									}
@@ -285,7 +285,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 									if (proceed) {
 										setDeletingLID(league.lid);
-										await toWorker("removeLeague", league.lid);
+										await toWorker("main", "removeLeague", league.lid);
 										setDeletingLID(undefined);
 									}
 								}}

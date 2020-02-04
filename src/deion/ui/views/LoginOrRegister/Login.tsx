@@ -49,7 +49,7 @@ class Login extends React.Component<Props, State> {
 				});
 
 				// Check for participation achievement, if this is the first time logging in to this sport
-				await toWorker("checkParticipationAchievement", false);
+				await toWorker("main", "checkParticipationAchievement", false);
 				realtimeUpdate(["account"], "/account");
 			} else {
 				this.setState({

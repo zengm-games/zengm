@@ -20,7 +20,7 @@ const DraftButtons = ({
 				className="btn btn-light-bordered"
 				disabled={usersTurn}
 				onClick={async () => {
-					await toWorker("actions.playMenu.onePick");
+					await toWorker("playMenu", "onePick");
 				}}
 			>
 				Sim one pick
@@ -29,7 +29,7 @@ const DraftButtons = ({
 				className="btn btn-light-bordered"
 				disabled={usersTurn}
 				onClick={async () => {
-					await toWorker("actions.playMenu.untilYourNextPick");
+					await toWorker("playMenu", "untilYourNextPick");
 				}}
 			>
 				Sim until {untilText}
@@ -59,7 +59,7 @@ const TradeButton = ({
 			className="btn btn-xs btn-light-bordered"
 			disabled={disabled}
 			onClick={async () => {
-				await toWorker("actions.tradeFor", {
+				await toWorker("actions", "tradeFor", {
 					dpid,
 					tid,
 				});
@@ -110,11 +110,11 @@ const Draft = ({
 
 	const draftUser = async (pid: number, simToNextUserPick = false) => {
 		setDrafting(true);
-		await toWorker("draftUser", pid);
+		await toWorker("main", "draftUser", pid);
 		setDrafting(false);
 
 		if (simToNextUserPick) {
-			await toWorker("actions.playMenu.untilYourNextPick");
+			await toWorker("playMenu", "untilYourNextPick");
 		}
 	};
 

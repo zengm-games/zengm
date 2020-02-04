@@ -61,7 +61,7 @@ class Register extends React.Component<Props, State> {
 				localActions.update({
 					username: data.username,
 				});
-				await toWorker("checkParticipationAchievement", true);
+				await toWorker("main", "checkParticipationAchievement", true);
 				realtimeUpdate([], "/account");
 			} else {
 				const updatedState: Partial<State> = {};

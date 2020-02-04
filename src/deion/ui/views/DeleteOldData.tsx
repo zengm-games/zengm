@@ -27,7 +27,7 @@ const DeleteOldData = () => {
 		event.preventDefault();
 		setDeleting(true);
 
-		await toWorker("deleteOldData", state);
+		await toWorker("main", "deleteOldData", state);
 
 		logEvent({
 			type: "success",

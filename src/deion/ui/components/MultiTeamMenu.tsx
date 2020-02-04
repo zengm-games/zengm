@@ -2,7 +2,7 @@ import React, { useCallback, ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalShallow } from "../util";
 
 const setUserTid = async (userTid: number) => {
-	await toWorker("updateGameAttributes", {
+	await toWorker("main", "updateGameAttributes", {
 		userTid,
 	});
 	realtimeUpdate(["firstRun"]);

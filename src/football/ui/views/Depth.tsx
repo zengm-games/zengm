@@ -9,11 +9,11 @@ import { POSITIONS } from "../../common/constants";
 import { View } from "../../../deion/common/types";
 
 const handleAutoSort = async (pos: string) => {
-	await toWorker("autoSortRoster", pos);
+	await toWorker("main", "autoSortRoster", pos);
 };
 
 const handleAutoSortAll = async () => {
-	await toWorker("autoSortRoster");
+	await toWorker("main", "autoSortRoster");
 };
 
 const numStartersByPos = {
@@ -146,7 +146,7 @@ const Depth = ({
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 					setSortedPids(newSortedPids);
-					await toWorker("reorderDepthDrag", pos, newSortedPids);
+					await toWorker("main", "reorderDepthDrag", pos, newSortedPids);
 				}}
 				cols={() => (
 					<>

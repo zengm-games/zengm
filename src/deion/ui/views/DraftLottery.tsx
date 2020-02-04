@@ -187,7 +187,7 @@ class DraftLotteryTable extends React.Component<Props, State> {
 		this.setState({
 			started: true,
 		});
-		const { draftType, result } = await toWorker("draftLottery");
+		const { draftType, result } = await toWorker("main", "draftLottery");
 		const toReveal: number[] = [];
 
 		for (let i = 0; i < result.length; i++) {

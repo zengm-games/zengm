@@ -215,6 +215,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		}));
 
 		const offers: OfferType[] = await toWorker(
+			"main",
 			"getTradingBlockOffers",
 			state.pids,
 			state.dpids,
@@ -241,7 +242,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		otherPids: number[],
 		otherDpids: number[],
 	) => {
-		await toWorker("actions.tradeFor", {
+		await toWorker("actions", "tradeFor", {
 			otherDpids,
 			otherPids,
 			tid,

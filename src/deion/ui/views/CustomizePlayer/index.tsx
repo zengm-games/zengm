@@ -190,6 +190,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		}
 
 		const pid = await toWorker(
+			"main",
 			"upsertCustomizedPlayer",
 			p,
 			props.originalTid,
@@ -260,7 +261,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	const randomizeFace = async (event: MouseEvent) => {
 		event.preventDefault(); // Don't submit whole form
 
-		const face = await toWorker("generateFace");
+		const face = await toWorker("main", "generateFace");
 
 		setState(prevState => {
 			// @ts-ignore

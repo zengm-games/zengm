@@ -591,7 +591,7 @@ const GodModeOptions = (props: View<"godMode">) => {
 			}
 		}
 
-		await toWorker("updateGameAttributes", output);
+		await toWorker("main", "updateGameAttributes", output);
 
 		setSubmitting(false);
 		logEvent({
@@ -691,7 +691,7 @@ const GodMode = (props: View<"godMode">) => {
 			attrs.godModeInPast = true;
 		}
 
-		await toWorker("updateGameAttributes", attrs);
+		await toWorker("main", "updateGameAttributes", attrs);
 		localActions.update({ godMode: attrs.godMode });
 	};
 

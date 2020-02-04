@@ -248,7 +248,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 
 				onClick() {
-					return toWorker("actions.toolsMenu.autoPlaySeasons");
+					return toWorker("toolsMenu", "autoPlaySeasons");
 				},
 
 				text: "Auto Play",
@@ -367,7 +367,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				nonLeague: true,
 
 				async onClick(): Promise<false> {
-					const response = await toWorker("actions.toolsMenu.resetDb");
+					const response = await toWorker("toolsMenu", "resetDb");
 
 					if (response) {
 						window.location.reload();

@@ -43,7 +43,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	}
 
 	const loadData = useCallback(async () => {
-		const p = await toWorker("ratingsStatsPopoverInfo", pid);
+		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid);
 		setPlayer({
 			name: p.name,
 			ratings: p.ratings,

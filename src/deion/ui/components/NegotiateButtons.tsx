@@ -44,7 +44,7 @@ const NegotiateButtons = ({
 			<button
 				className="btn btn-light-bordered btn-xs"
 				disabled={!!disabled}
-				onClick={() => toWorker("actions.negotiate", p.pid)}
+				onClick={() => toWorker("actions", "negotiate", p.pid)}
 			>
 				Negotiate
 			</button>
@@ -53,6 +53,7 @@ const NegotiateButtons = ({
 				disabled={signDisabled}
 				onClick={async () => {
 					const errorMsg = await toWorker(
+						"main",
 						"sign",
 						p.pid,
 						p.contract.amount * 1000,

@@ -56,6 +56,7 @@ const DraftClass = ({
 						setStatus("exporting");
 
 						const { filename, json } = await toWorker(
+							"main",
 							"exportDraftClass",
 							season,
 						);
@@ -91,7 +92,12 @@ const DraftClass = ({
 								return;
 							}
 
-							await toWorker("handleUploadedDraftClass", leagueFile, season);
+							await toWorker(
+								"main",
+								"handleUploadedDraftClass",
+								leagueFile,
+								season,
+							);
 
 							setShowImportForm(false);
 							setStatus(undefined);

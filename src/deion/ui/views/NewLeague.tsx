@@ -145,6 +145,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			try {
 				const lid = await toWorker(
+					"main",
 					"createLeague",
 					name,
 					tid,

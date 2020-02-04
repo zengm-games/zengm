@@ -165,7 +165,7 @@ const AllStars = ({
 		setStarted(true);
 
 		if (draftType === "auto") {
-			const pids = await toWorker("allStarDraftAll");
+			const pids = await toWorker("main", "allStarDraftAll");
 			for (const pid of pids) {
 				if (pid !== pids[0]) {
 					await wait(1000);
@@ -177,7 +177,10 @@ const AllStars = ({
 		}
 
 		if (!userTids.includes(teams[0][0].tid)) {
-			const { finalized: finalized2, pid } = await toWorker("allStarDraftOne");
+			const { finalized: finalized2, pid } = await toWorker(
+				"main",
+				"allStarDraftOne",
+			);
 			reveal(pid);
 			setActuallyFinalized(finalized2);
 		}
@@ -187,12 +190,13 @@ const AllStars = ({
 		userTids.includes(teams[0][0].tid) && userTids.includes(teams[1][0].tid);
 	const onDraft = useCallback(
 		async (pid: number) => {
-			const finalized2 = await toWorker("allStarDraftUser", pid);
+			const finalized2 = await toWorker("main", "allStarDraftUser", pid);
 			reveal(pid);
 			setActuallyFinalized(finalized2);
 
 			if (!userDraftingBothTeams) {
 				const { finalized: finalized3, pid: pid2 } = await toWorker(
+					"main",
 					"allStarDraftOne",
 				);
 				if (pid2 !== undefined) {

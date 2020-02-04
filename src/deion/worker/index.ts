@@ -16,6 +16,7 @@ const overrides = util.overrides;
 
 self.bbgm = { ...common, ...core, ...db, ...util };
 
+console.log("aaa");
 const deionWorker = async (options: {
 	overrides: {
 		common: {
@@ -32,49 +33,16 @@ const deionWorker = async (options: {
 }) => {
 	Object.assign(overrides, options.overrides); // God damn this function is ugly, clean up! Can probably share with ui.
 
-	util.promiseWorker.register(([name, ...params], hostID) => {
+	util.promiseWorker.register(([type, name, ...params], hostID) => {
 		const conditions = {
 			hostID,
 		};
+		console.log(type, name, params);
 
-		if (name.indexOf("actions.") === 0) {
-			let subname = name.replace("actions.", "");
-
-			if (subname.indexOf("playMenu.") === 0) {
-				subname = subname.replace("playMenu.", "");
-
-				if (!api.actions.playMenu.hasOwnProperty(subname)) {
-					throw new Error(
-						`API call to nonexistant worker function "${name}" with params ${JSON.stringify(
-							params,
-						)}`,
-					);
-				}
-
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				return api.actions.playMenu[subname](...params, conditions);
-			}
-
-			if (subname.indexOf("toolsMenu.") === 0) {
-				subname = subname.replace("toolsMenu.", "");
-
-				if (!api.actions.toolsMenu.hasOwnProperty(subname)) {
-					throw new Error(
-						`API call to nonexistant worker function "${name}" with params ${JSON.stringify(
-							params,
-						)}`,
-					);
-				}
-
-				// https://github.com/microsoft/TypeScript/issues/21732
-				// @ts-ignore
-				return api.actions.toolsMenu[subname](...params, conditions);
-			}
-
-			if (!api.actions.hasOwnProperty(subname)) {
+		if (type === "actions") {
+			if (!api.actions.hasOwnProperty(name)) {
 				throw new Error(
-					`API call to nonexistant worker function "${name}" with params ${JSON.stringify(
+					`API call to nonexistant worker function "actions.${name}" with params ${JSON.stringify(
 						params,
 					)}`,
 				);
@@ -82,7 +50,35 @@ const deionWorker = async (options: {
 
 			// https://github.com/microsoft/TypeScript/issues/21732
 			// @ts-ignore
-			return api.actions[subname](...params, conditions);
+			return api.actions[name](...params, conditions);
+		}
+
+		if (type === "playMenu") {
+			if (!api.actions.playMenu.hasOwnProperty(name)) {
+				throw new Error(
+					`API call to nonexistant worker function "playMenu.${name}" with params ${JSON.stringify(
+						params,
+					)}`,
+				);
+			}
+
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
+			return api.actions.playMenu[name](...params, conditions);
+		}
+
+		if (type === "toolsMenu") {
+			if (!api.actions.toolsMenu.hasOwnProperty(name)) {
+				throw new Error(
+					`API call to nonexistant worker function "toolsMenu.${name}" with params ${JSON.stringify(
+						params,
+					)}`,
+				);
+			}
+
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
+			return api.actions.toolsMenu[name](...params, conditions);
 		}
 
 		if (!api.hasOwnProperty(name)) {

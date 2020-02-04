@@ -59,7 +59,7 @@ const Trade = (props: View<"trade">) => {
 				dpidsExcluded: ids["other-dpids-excluded"],
 			},
 		];
-		await toWorker("updateTrade", teams);
+		await toWorker("main", "updateTrade", teams);
 	};
 
 	const handleChangeTeam = async (event: ChangeEvent<HTMLSelectElement>) => {
@@ -81,18 +81,18 @@ const Trade = (props: View<"trade">) => {
 				dpidsExcluded: [],
 			},
 		];
-		await toWorker("createTrade", teams);
+		await toWorker("main", "createTrade", teams);
 	};
 
 	const handleClickAsk = async () => {
 		setState(prevState => ({ ...prevState, asking: true, message: null }));
-		const message = await toWorker("tradeCounterOffer");
+		const message = await toWorker("main", "tradeCounterOffer");
 		setState(prevState => ({ ...prevState, asking: false, message }));
 	};
 
 	const handleClickClear = async () => {
 		setState(prevState => ({ ...prevState, message: null }));
-		await toWorker("clearTrade");
+		await toWorker("main", "clearTrade");
 	};
 
 	const handleClickForceTrade = () => {
@@ -104,6 +104,7 @@ const Trade = (props: View<"trade">) => {
 
 	const handleClickPropose = async () => {
 		const [accepted, message] = await toWorker(
+			"main",
 			"proposeTrade",
 			state.forceTrade,
 		);

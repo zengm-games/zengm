@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import "../common/polyfills";
 import api from "./api";
 import * as common from "../common";
@@ -16,7 +15,6 @@ const overrides = util.overrides;
 
 self.bbgm = { ...common, ...core, ...db, ...util };
 
-console.log("aaa");
 const deionWorker = async (options: {
 	overrides: {
 		common: {
@@ -31,13 +29,12 @@ const deionWorker = async (options: {
 		};
 	};
 }) => {
-	Object.assign(overrides, options.overrides); // God damn this function is ugly, clean up! Can probably share with ui.
+	Object.assign(overrides, options.overrides);
 
 	util.promiseWorker.register(([type, name, ...params], hostID) => {
 		const conditions = {
 			hostID,
 		};
-		console.log(type, name, params);
 
 		if (type === "actions") {
 			if (!api.actions.hasOwnProperty(name)) {

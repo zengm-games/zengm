@@ -24,7 +24,7 @@ type Props = {
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
 		event.preventDefault();
-		toWorker("playMenu", option.id);
+		toWorker("playMenu", option.id as any);
 	}
 };
 
@@ -57,7 +57,7 @@ const PlayMenu = ({ lid, options }: Props) => {
 				if (option.url) {
 					realtimeUpdate([], option.url);
 				} else {
-					toWorker("playMenu", option.id);
+					toWorker("playMenu", option.id as any);
 				}
 			}
 		};

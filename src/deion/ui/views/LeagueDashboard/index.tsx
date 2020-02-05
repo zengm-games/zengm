@@ -142,7 +142,7 @@ const LeagueDashboard = ({
 									<TeamStats teamStats={teamStats} />
 									<h2>Finances</h2>
 									<p>
-										Avg Attendance: {helpers.numberWithCommas(att)}
+										Avg Attendance: {helpers.numberWithCommas(Math.round(att))}
 										<br />
 										Revenue (YTD): {helpers.formatCurrency(revenue, "M")}
 										<br />

@@ -28,7 +28,7 @@ export { default as downloadFile } from "./downloadFile";
 
 export { default as genStaticPage } from "./genStaticPage";
 
-export { default as getCols } from "../../common/getCols"; // To save renaming all imports everywhere
+export { default as getCols } from "../../common/getCols";
 
 export { default as getScript } from "./getScript";
 

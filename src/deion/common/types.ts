@@ -4,6 +4,7 @@ import { Context } from "bbgm-router";
 import processInputs from "../worker/api/processInputs";
 import views from "../worker/views";
 import viewsFootball from "../../football/worker/views";
+import { Bugsnag } from "@bugsnag/browser";
 
 export type Env = {
 	enableLogging: boolean;
@@ -19,9 +20,9 @@ declare global {
 		bbgmVersion: string;
 		bbgmVersionUI: string;
 		bbgmVersionWorker: string;
-		bugsnagClient: any;
+		bugsnagClient: Bugsnag.Client;
 		enableLogging: boolean;
-		getTheme: (theme?: "light" | "dark") => string;
+		getTheme: () => string;
 		googleAnalyticsID: string;
 		heartbeatID: string;
 		themeCSSLink: HTMLLinkElement;

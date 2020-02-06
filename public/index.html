@@ -66,7 +66,7 @@
           if (local !== null) {
             return local === "dark" ? dark : light;
           }
-          return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          return matchMedia("(prefers-color-scheme: dark)").matches ? dark : light;
         } catch (err) {
           return light;
         }

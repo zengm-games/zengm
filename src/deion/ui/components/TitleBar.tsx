@@ -106,6 +106,12 @@ const TitleBar = () => {
 				{
 					type: "link",
 					league: true,
+					path: genPath(["player_bios", "all"], season),
+					text: "Player Bios",
+				},
+				{
+					type: "link",
+					league: true,
 					path: genPath(["player_stats", "all"], season),
 					text: "Player Stats",
 				},

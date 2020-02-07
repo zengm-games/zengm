@@ -503,6 +503,7 @@ export default {
 	negotiationList,
 	newLeague,
 	player,
+	playerBios: playerRatings,
 	playerFeats,
 	playerRatingDists: validateSeasonOnly,
 	playerRatings,

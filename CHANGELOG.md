@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-02-07: Added Player Bios page and removed country and college info from Player Ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/f0h9yv/new_in_v202002071284_player_bios_table_also_the/) [[2]](https://old.reddit.com/r/Football_GM/comments/f0h8wf/new_in_v202002071286_player_bios_table_also_the/)
+
 * 2020-02-03: For users who have an OS-level dark mode enabled, the default color scheme is now dark.
 
 * 2020-02-02: Players are assigned a college when they are generated. [[1]](https://basketball-gm.com/blog/2020/02/colleges/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ey1zqg/new_in_v202002030317_colleges/) [[3]](https://old.reddit.com/r/Football_GM/comments/ey20vo/new_in_v202002030318_colleges/)

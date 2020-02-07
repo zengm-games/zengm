@@ -1,7 +1,6 @@
-customizable columns in DataTable would be great... especially for football, with presets like mogul
-- get rid of college from player ratings
-  - or maybe as a temp solution, add a "player info" page with demographic info, ovr, pot, and basic stats
-    - also pass in attrs
+metric option
+- https://stackoverflow.com/a/18684014/786644
+- https://old.reddit.com/r/BasketballGM/comments/f0h9yv/new_in_v202002071284_player_bios_table_also_the/fgu8lhf/
 
 some kind of global status/finances menu, maybe within titlebar? or next to play menu?
 
@@ -92,8 +91,6 @@ game highs
 - store in normal player stats object (like Lng in football)
 
 add more variance in player development with some kind of professionalism/ambition rating https://old.reddit.com/r/BasketballGM/comments/e15yuv/unpredictability_of_progression_and_the_football/
-
-metric option
 
 team rating
 - currently for past seasons, includes traded players on both teams. so intead, store value at end of each season

@@ -1253,6 +1253,7 @@ const cols: {
 	"Draft Picks": {
 		sortSequence: [],
 	},
+	"Draft Year": {},
 	Drafted: {},
 	Finals: {
 		desc: "Finals Appearances",
@@ -1266,6 +1267,10 @@ const cols: {
 	},
 	Healthy: {
 		desc: "Team Rating (When Healthy)",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Height: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1406,6 +1411,10 @@ const cols: {
 	},
 	W: {
 		desc: "Wins",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Weight: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

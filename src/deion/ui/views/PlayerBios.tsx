@@ -2,56 +2,43 @@ import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, overrides } from "../util";
+import { getCols, helpers } from "../util";
 import { View } from "../../common/types";
 
-const PlayerRatings = ({
+const PlayerBios = ({
 	abbrev,
 	currentSeason,
 	players,
-	ratings,
 	season,
+	stats,
 	userTid,
-}: View<"playerRatings">) => {
+}: View<"playerBios">) => {
 	useTitleBar({
-		title: "Player Ratings",
+		title: "Player Bios",
 		jumpTo: true,
 		jumpToSeason: season,
-		dropdownView: "player_ratings",
+		dropdownView: "player_bios",
 		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
 	});
-
-	const ovrsPotsColNames: string[] = [];
-	if (process.env.SPORT === "football") {
-		for (const pos of overrides.common.constants.POSITIONS) {
-			for (const type of ["ovr", "pot"]) {
-				ovrsPotsColNames.push(`rating:${type}${pos}`);
-			}
-		}
-	}
 
 	const cols = getCols(
 		"Name",
 		"Pos",
 		"Team",
 		"Age",
+		"Height",
+		"Weight",
 		"Contract",
+		"Country",
+		"College",
+		"Draft Year",
+		"Pick",
 		"Ovr",
 		"Pot",
-		...ratings.map(rating => `rating:${rating}`),
-		...ovrsPotsColNames,
+		...stats.map(stat => `stat:${stat}`),
 	);
 
 	const rows = players.map(p => {
-		const ovrsPotsRatings: string[] = [];
-		if (process.env.SPORT === "football") {
-			for (const pos of overrides.common.constants.POSITIONS) {
-				for (const type of ["ovrs", "pots"]) {
-					ovrsPotsRatings.push(p.ratings[type][pos]);
-				}
-			}
-		}
-
 		return {
 			key: p.pid,
 			data: [
@@ -68,6 +55,11 @@ const PlayerRatings = ({
 					{p.stats.abbrev}
 				</a>,
 				p.age,
+				{
+					value: `${Math.floor(p.hgt / 12)}'${p.hgt % 12}"`,
+					sortValue: p.hgt,
+				},
+				p.weight,
 				<>
 					{p.contract.amount > 0
 						? helpers.formatCurrency(p.contract.amount, "M")
@@ -76,10 +68,13 @@ const PlayerRatings = ({
 						? ` thru ${p.contract.exp}`
 						: ""}
 				</>,
+				p.born.loc,
+				p.college,
+				p.draft.year,
+				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : null,
 				p.ratings.ovr,
 				p.ratings.pot,
-				...ratings.map(rating => p.ratings[rating]),
-				...ovrsPotsRatings,
+				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.hof,
@@ -91,13 +86,6 @@ const PlayerRatings = ({
 	return (
 		<>
 			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["player_rating_dists", season])}>
-					Rating Distributions
-				</a>
-			</p>
-
-			<p>
 				Players on your team are{" "}
 				<span className="text-info">highlighted in blue</span>. Players in the
 				Hall of Fame are <span className="text-danger">highlighted in red</span>
@@ -106,8 +94,8 @@ const PlayerRatings = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[5, "desc"]}
-				name="PlayerRatings"
+				defaultSort={[0, "asc"]}
+				name="PlayerBios"
 				pagination
 				rows={rows}
 			/>
@@ -115,13 +103,13 @@ const PlayerRatings = ({
 	);
 };
 
-PlayerRatings.propTypes = {
+PlayerBios.propTypes = {
 	abbrev: PropTypes.string.isRequired,
 	currentSeason: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
 	season: PropTypes.number.isRequired,
+	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 
-export default PlayerRatings;
+export default PlayerBios;

@@ -39,6 +39,7 @@ import newLeague from "./newLeague";
 import newTeam from "./newTeam";
 import oldestFormerPlayers from "./oldestFormerPlayers";
 import player from "./player";
+import playerBios from "./playerBios";
 import playerFeats from "./playerFeats";
 import playerRatingDists from "./playerRatingDists";
 import playerRatings from "./playerRatings";
@@ -106,6 +107,7 @@ export default {
 	newTeam,
 	oldestFormerPlayers,
 	player,
+	playerBios,
 	playerFeats,
 	playerRatingDists,
 	playerRatings,

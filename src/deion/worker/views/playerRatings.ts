@@ -3,10 +3,12 @@ import { idb } from "../db";
 import { g } from "../util";
 import { UpdateEvents, ViewInput } from "../../common/types";
 
-const getPlayers = async (
+export const getPlayers = async (
 	season: number,
 	abbrev: string,
+	attrs: string[],
 	ratings: string[],
+	stats: string[],
 ) => {
 	let playersAll;
 
@@ -39,15 +41,14 @@ const getPlayers = async (
 			"abbrev",
 			"age",
 			"contract",
-			"born",
 			"injury",
 			"hof",
 			"watch",
 			"tid",
-			"college",
+			...attrs,
 		],
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
-		stats: ["abbrev", "tid"],
+		stats: ["abbrev", "tid", ...stats],
 		season: season,
 		showNoStats: true,
 		showRookies: true,
@@ -130,10 +131,13 @@ const updatePlayers = async (
 		const extraRatings =
 			process.env.SPORT === "basketball" ? [] : ["ovrs", "pots"];
 
-		const players = await getPlayers(inputs.season, inputs.abbrev, [
-			...ratings,
-			...extraRatings,
-		]);
+		const players = await getPlayers(
+			inputs.season,
+			inputs.abbrev,
+			[],
+			[...ratings, ...extraRatings],
+			[],
+		);
 
 		return {
 			abbrev: inputs.abbrev,

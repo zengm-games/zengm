@@ -45,6 +45,7 @@ import NewTeam from "./NewTeam";
 import OldestFormerPlayers from "./OldestFormerPlayers";
 import Options from "./Options";
 import Player from "./Player";
+import PlayerBios from "./PlayerBios";
 import PlayerFeats from "./PlayerFeats";
 import PlayerRatingDists from "./PlayerRatingDists";
 import PlayerRatings from "./PlayerRatings";
@@ -118,6 +119,7 @@ export default {
 	OldestFormerPlayers,
 	Options,
 	Player,
+	PlayerBios,
 	PlayerFeats,
 	PlayerRatingDists,
 	PlayerRatings,

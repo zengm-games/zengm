@@ -200,6 +200,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "playerBios",
+				league: true,
+				path: ["player_bios"],
+				text: "Player Bios",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "playerRatings",
 				league: true,
 				path: ["player_ratings"],

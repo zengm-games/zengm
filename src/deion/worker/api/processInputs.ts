@@ -285,7 +285,7 @@ const playerFeats = (params: Params) => {
 		abbrev = "all";
 	}
 
-	let season;
+	let season: number | "all";
 
 	if (params.season && params.season !== "all") {
 		season = validateSeason(params.season);

@@ -3,6 +3,76 @@ import { idb } from "../db";
 import { g } from "../util";
 import { UpdateEvents, ViewInput } from "../../common/types";
 
+const getPlayers = async (
+	season: number,
+	abbrev: string,
+	ratings: string[],
+) => {
+	let playersAll;
+
+	if (g.get("season") === season) {
+		playersAll = await idb.cache.players.getAll();
+		playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+	} else {
+		playersAll = await idb.getCopies.players({
+			activeSeason: season,
+		});
+	}
+
+	let tid: number | undefined = g.get("teamAbbrevsCache").indexOf(abbrev);
+
+	if (tid < 0) {
+		tid = undefined;
+	}
+
+	// Show all teams
+	if (tid === undefined && abbrev === "watch") {
+		playersAll = playersAll.filter(
+			p => p.watch && typeof p.watch !== "function",
+		);
+	}
+
+	let players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: [
+			"pid",
+			"name",
+			"abbrev",
+			"age",
+			"contract",
+			"born",
+			"injury",
+			"hof",
+			"watch",
+			"tid",
+			"college",
+		],
+		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
+		stats: ["abbrev", "tid"],
+		season: season,
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+	});
+
+	// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
+	// For the current season, use the current abbrev (including FA), not the last stats abbrev
+	// For other seasons, use the stats abbrev for filtering
+	if (g.get("season") === season) {
+		if (tid !== undefined) {
+			players = players.filter(p => p.abbrev === abbrev);
+		}
+
+		for (const p of players) {
+			p.stats.abbrev = p.abbrev;
+			p.stats.tid = p.tid;
+		}
+	} else if (tid !== undefined) {
+		players = players.filter(p => p.stats.abbrev === abbrev);
+	}
+
+	return players;
+};
+
 const updatePlayers = async (
 	inputs: ViewInput<"playerRatings">,
 	updateEvents: UpdateEvents,
@@ -15,30 +85,6 @@ const updatePlayers = async (
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
-		let players;
-
-		if (g.get("season") === inputs.season) {
-			players = await idb.cache.players.getAll();
-			players = players.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
-		} else {
-			players = await idb.getCopies.players({
-				activeSeason: inputs.season,
-			});
-		}
-
-		let tid: number | undefined = g
-			.get("teamAbbrevsCache")
-			.indexOf(inputs.abbrev);
-
-		if (tid < 0) {
-			tid = undefined;
-		}
-
-		// Show all teams
-		if (!tid && inputs.abbrev === "watch") {
-			players = players.filter(p => p.watch && typeof p.watch !== "function");
-		}
-
 		const ratings =
 			process.env.SPORT === "basketball"
 				? [
@@ -83,43 +129,11 @@ const updatePlayers = async (
 				  ];
 		const extraRatings =
 			process.env.SPORT === "basketball" ? [] : ["ovrs", "pots"];
-		players = await idb.getCopies.playersPlus(players, {
-			attrs: [
-				"pid",
-				"name",
-				"abbrev",
-				"age",
-				"contract",
-				"born",
-				"injury",
-				"hof",
-				"watch",
-				"tid",
-				"college",
-			],
-			ratings: ["ovr", "pot", "skills", "pos", ...ratings, ...extraRatings],
-			stats: ["abbrev", "tid"],
-			season: inputs.season,
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
 
-		// idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually		// For the current season, use the current abbrev (including FA), not the last stats abbrev
-		// For other seasons, use the stats abbrev for filtering
-
-		if (g.get("season") === inputs.season) {
-			if (tid !== undefined) {
-				players = players.filter(p => p.abbrev === inputs.abbrev);
-			}
-
-			for (const p of players) {
-				p.stats.abbrev = p.abbrev;
-				p.stats.tid = p.tid;
-			}
-		} else if (tid !== undefined) {
-			players = players.filter(p => p.stats.abbrev === inputs.abbrev);
-		}
+		const players = await getPlayers(inputs.season, inputs.abbrev, [
+			...ratings,
+			...extraRatings,
+		]);
 
 		return {
 			abbrev: inputs.abbrev,

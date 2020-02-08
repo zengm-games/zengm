@@ -928,10 +928,15 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		idb.meta = await connectMeta();
 
 		// Account and changes checks can be async
-		checkChanges(conditions);
-		checkAccount(conditions).then(() => {
-			return toUI("initAds", [local.goldUntil], conditions);
-		});
+		(async () => {
+			await checkChanges(conditions);
+			await checkAccount(conditions);
+			await toUI("initAds", [local.goldUntil], conditions);
+
+			const options = (((await idb.meta.get("attributes", "options")) ||
+				{}) as unknown) as Options;
+			await toUI("updateLocal", [{ units: options.units }]);
+		})();
 	} else {
 		// Even if it's not the first host tab, show ads (still async). Why
 		// setTimeout? Cause horrible race condition with actually rendering the
@@ -1333,6 +1338,7 @@ const updateMultiTeamMode = async (gameAttributes: {
 
 const updateOptions = async (options: Options) => {
 	await idb.meta.put("attributes", options, "options");
+	await toUI("updateLocal", [{ units: options.units }]);
 	await toUI("realtimeUpdate", [["options"]]);
 };
 

@@ -423,6 +423,7 @@ export type LocalStateUI = {
 	teamAbbrevsCache: string[];
 	teamNamesCache: string[];
 	teamRegionsCache: string[];
+	units: "metric" | "us";
 	userTid: number;
 	userTids: number[];
 	username?: string;

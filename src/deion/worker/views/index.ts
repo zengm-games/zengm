@@ -38,6 +38,7 @@ import negotiationList from "./negotiationList";
 import newLeague from "./newLeague";
 import newTeam from "./newTeam";
 import oldestFormerPlayers from "./oldestFormerPlayers";
+import options from "./options";
 import player from "./player";
 import playerBios from "./playerBios";
 import playerFeats from "./playerFeats";
@@ -106,6 +107,7 @@ export default {
 	newLeague,
 	newTeam,
 	oldestFormerPlayers,
+	options,
 	player,
 	playerBios,
 	playerFeats,

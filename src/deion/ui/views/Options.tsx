@@ -8,7 +8,8 @@ import React, {
 	FormEvent,
 } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent } from "../util";
+import { helpers, logEvent, toWorker } from "../util";
+import { View } from "../../common/types";
 
 const Storage = () => {
 	const [status, setStatus] = useState("loading...");
@@ -82,7 +83,7 @@ const Storage = () => {
 };
 
 // Props are not from View<> because they are only ever passed from LeagueOptions
-const Options = (props: { title?: string }) => {
+const Options = (props: View<"options"> & { title?: string }) => {
 	const [state, setState] = useState(() => {
 		const themeLocalStorage = localStorage.getItem("theme");
 		let theme: "dark" | "light" | "default";
@@ -93,8 +94,19 @@ const Options = (props: { title?: string }) => {
 		} else {
 			theme = "default";
 		}
+
+		let units: "metric" | "us" | "default";
+		if (props.units === "metric") {
+			units = "metric";
+		} else if (props.units === "us") {
+			units = "us";
+		} else {
+			units = "default";
+		}
+
 		return {
 			theme,
+			units,
 		};
 	});
 
@@ -120,6 +132,9 @@ const Options = (props: { title?: string }) => {
 			window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;
 		}
 
+		const units = state.units === "default" ? undefined : state.units;
+		await toWorker("main", "updateOptions", { units });
+
 		logEvent({
 			type: "success",
 			text: "Options successfully updated.",
@@ -144,9 +159,21 @@ const Options = (props: { title?: string }) => {
 							onChange={handleChange("theme")}
 							value={state.theme}
 						>
-							<option value="default">OS Default</option>
+							<option value="default">Auto</option>
 							<option value="light">Light</option>
 							<option value="dark">Dark</option>
+						</select>
+					</div>
+					<div className="col-sm-3 col-6 form-group">
+						<label>Units</label>
+						<select
+							className="form-control"
+							onChange={handleChange("units")}
+							value={state.units}
+						>
+							<option value="default">Auto</option>
+							<option value="us">US</option>
+							<option value="metric">Metric</option>
 						</select>
 					</div>
 					<div className="col-sm-3 col-6 form-group">

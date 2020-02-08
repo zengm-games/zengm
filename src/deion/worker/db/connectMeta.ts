@@ -1,5 +1,5 @@
 import { DBSchema, IDBPDatabase } from "idb";
-import { League } from "../../common/types";
+import { League, Options } from "../../common/types";
 import connectIndexedDB from "./connectIndexedDB";
 
 export interface MetaDB extends DBSchema {
@@ -10,8 +10,8 @@ export interface MetaDB extends DBSchema {
 		};
 	};
 	attributes: {
-		value: number;
-		key: "changesRead" | "lastSelectedTid" | "nagged";
+		value: number | Options;
+		key: "changesRead" | "lastSelectedTid" | "nagged" | "options";
 	};
 	leagues: {
 		value: League;

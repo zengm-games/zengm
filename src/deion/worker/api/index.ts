@@ -48,6 +48,7 @@ import {
 	MinimalPlayerRatings,
 	Relative,
 	TradeTeam,
+	Options,
 } from "../../common/types";
 
 const acceptContractNegotiation = async (
@@ -1330,6 +1331,11 @@ const updateMultiTeamMode = async (gameAttributes: {
 	await toUI("realtimeUpdate", [["g.userTids"]]);
 };
 
+const updateOptions = async (options: Options) => {
+	await idb.meta.put("attributes", options, "options");
+	await toUI("realtimeUpdate", [["options"]]);
+};
+
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
 	const cachedPlayer = await idb.cache.players.get(pid);
 
@@ -1633,6 +1639,7 @@ export default {
 	updateGameAttributes,
 	updateLeague,
 	updateMultiTeamMode,
+	updateOptions,
 	updatePlayerWatch,
 	updatePlayingTime,
 	updateTeamInfo,

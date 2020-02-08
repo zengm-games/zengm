@@ -4,8 +4,12 @@ import overrides from "./overrides";
 import { Conditions } from "../../common/types";
 
 const checkChanges = async (conditions: Conditions) => {
-	const changesRead = await idb.meta.get("attributes", "changesRead"); // Don't show anything on first visit
+	const changesRead = ((await idb.meta.get(
+		"attributes",
+		"changesRead",
+	)) as unknown) as number;
 
+	// Don't show anything on first visit
 	if (changesRead === undefined || changesRead < 0) {
 		await idb.meta.put(
 			"attributes",

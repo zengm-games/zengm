@@ -60,7 +60,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 
 	return (
 		<>
-			<Options title="Global Options" />
+			<Options title="Global Options" {...props.globalOptions} />
 
 			<h2 className="mt-5">League Options</h2>
 

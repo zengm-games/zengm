@@ -1,6 +1,10 @@
 metric option
 - https://stackoverflow.com/a/18684014/786644
 - https://old.reddit.com/r/BasketballGM/comments/f0h9yv/new_in_v202002071284_player_bios_table_also_the/fgu8lhf/
+- make units variable available in ui local
+- display converted units
+  - player page
+  - player bios
 
 some kind of global status/finances menu, maybe within titlebar? or next to play menu?
 

@@ -401,6 +401,10 @@ export type Option = {
 	key?: string;
 };
 
+export type Options = {
+	units?: "metric" | "us";
+};
+
 export type LocalStateUI = {
 	gold?: boolean;
 	godMode: boolean;
@@ -887,6 +891,7 @@ export type UpdateEvents = (
 	| "leagues"
 	| "lock.gameSim"
 	| "newPhase"
+	| "options"
 	| "playerMovement"
 	| "teamFinances"
 	| "watchList"

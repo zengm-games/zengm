@@ -948,9 +948,12 @@ const create = async (
 
 		// Auto sort rosters
 		await Promise.all(
-			leagueData.teams.map((t: { tid: number }) =>
-				overrides.core.team.rosterAutoSort!(t.tid),
-			),
+			leagueData.teams.map((t: { tid: number }) => {
+				// If league file has players, don't auto sort even if skipNewPhase is false
+				if (!leagueFile.players || !g.get("userTids").includes(t.tid)) {
+					overrides.core.team.rosterAutoSort!(t.tid);
+				}
+			}),
 		);
 	}
 

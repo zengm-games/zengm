@@ -12,7 +12,8 @@ type LocalActions = {
 	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
 };
 
-const defaultUnits: "metric" | "us" = "us";
+const defaultUnits: "metric" | "us" =
+	window.navigator.language === "en-US" ? "us" : "metric";
 
 const [useLocal, local] = create<
 	LocalStateUI & {

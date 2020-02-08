@@ -83,6 +83,7 @@ const updatePlayer = async (
 			Player,
 			| "pid"
 			| "tid"
+			| "hgt"
 			| "weight"
 			| "born"
 			| "contract"
@@ -114,8 +115,6 @@ const updatePlayer = async (
 			abbrev: string;
 			teamRegion: string;
 			teamName: string;
-			hgtFt: number;
-			hgtIn: number;
 			mood: any;
 			salaries: any[];
 			salariesTotal: any;
@@ -138,8 +137,7 @@ const updatePlayer = async (
 				"teamRegion",
 				"teamName",
 				"age",
-				"hgtFt",
-				"hgtIn",
+				"hgt",
 				"weight",
 				"born",
 				"diedYear",

@@ -99,10 +99,6 @@ const processAttrs = (
 			output.draft.originalAbbrev = g.get("teamAbbrevsCache")[
 				output.draft.originalTid
 			];
-		} else if (attr === "hgtFt") {
-			output.hgtFt = Math.floor(p.hgt / 12);
-		} else if (attr === "hgtIn") {
-			output.hgtIn = p.hgt - 12 * Math.floor(p.hgt / 12);
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);

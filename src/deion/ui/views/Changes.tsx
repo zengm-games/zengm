@@ -15,6 +15,14 @@ const Changes = ({ changes }: View<"changes">) => {
 				won't get bugged for every little new feature.
 			</p>
 
+			<p>
+				If you want to see a more detailed list of changes,{" "}
+				<a href="https://github.com/dumbmatter/gm-games/blob/master/CHANGELOG.md">
+					here you go
+				</a>
+				.
+			</p>
+
 			<ul>
 				{changes.map((c, i) => {
 					return (

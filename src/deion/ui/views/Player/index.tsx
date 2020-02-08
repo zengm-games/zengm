@@ -2,10 +2,12 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import {
 	DataTable,
+	Height,
 	PlayerPicture,
 	SafeHtml,
 	SkillsBlock,
 	WatchBlock,
+	Weight,
 } from "../../components";
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -219,6 +221,14 @@ const Player2 = ({
 		);
 	}
 
+	// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+	// @ts-ignore
+	const height = <Height inches={player.hgt} />;
+
+	// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+	// @ts-ignore
+	const weight = <Weight pounds={player.weight} />;
+
 	return (
 		<>
 			<div className="row mb-3">
@@ -236,8 +246,9 @@ const Player2 = ({
 							{player.teamRegion} {player.teamName}
 						</strong>
 						<br />
-						Height: {player.hgtFt}'{player.hgtIn}"<br />
-						Weight: {player.weight} lbs
+						Height: {height}
+						<br />
+						Weight: {weight}
 						<br />
 						Born: {player.born.year} - {player.born.loc}
 						<br />

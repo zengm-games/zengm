@@ -1,11 +1,3 @@
-metric option
-- default value set in local
-  - https://stackoverflow.com/a/18684014/786644
-- https://old.reddit.com/r/BasketballGM/comments/f0h9yv/new_in_v202002071284_player_bios_table_also_the/fgu8lhf/
-- display converted units
-  - player page
-  - player bios
-
 some kind of global status/finances menu, maybe within titlebar? or next to play menu?
 
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
@@ -141,6 +133,7 @@ dashboard ui
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):
   - any place with sortValue probably needs searchValue too
+  - Height/Weight in PlayerBios needs searchValue
   - DraftAbbrev
   - NegotiateButtons (search for negotiate/refuses)
   - sorting by skills on draft history

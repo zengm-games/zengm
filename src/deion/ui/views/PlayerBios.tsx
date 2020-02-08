@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, Height, PlayerNameLabels, Weight } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { View } from "../../common/types";
@@ -56,10 +56,17 @@ const PlayerBios = ({
 				</a>,
 				p.age,
 				{
-					value: `${Math.floor(p.hgt / 12)}'${p.hgt % 12}"`,
+					// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+					// @ts-ignore
+					value: <Height inches={p.hgt} />,
 					sortValue: p.hgt,
 				},
-				p.weight,
+				{
+					// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+					// @ts-ignore
+					value: <Weight pounds={p.weight} />,
+					sortValue: p.weight,
+				},
 				<>
 					{p.contract.amount > 0
 						? helpers.formatCurrency(p.contract.amount, "M")

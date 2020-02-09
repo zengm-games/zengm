@@ -486,7 +486,7 @@ export const createWithoutSaving = (
 
 		players = leagueFile.players.map(p0 => {
 			const p: PlayerWithoutKey = player.augmentPartialPlayer(
-				p0,
+				{ ...p0 },
 				scoutingRank,
 				leagueFile.version,
 			);
@@ -949,8 +949,18 @@ const create = async (
 		// Auto sort rosters
 		await Promise.all(
 			leagueData.teams.map((t: { tid: number }) => {
+				let noRosterOrderSet = true;
+				if (process.env.SPORT === "basketball" && leagueFile.players) {
+					for (const p of leagueFile.players) {
+						if (p.tid === t.tid && typeof p.rosterOrder === "number") {
+							noRosterOrderSet = false;
+							break;
+						}
+					}
+				}
+
 				// If league file has players, don't auto sort even if skipNewPhase is false
-				if (!leagueFile.players || !g.get("userTids").includes(t.tid)) {
+				if (noRosterOrderSet || !g.get("userTids").includes(t.tid)) {
 					overrides.core.team.rosterAutoSort!(t.tid);
 				}
 			}),

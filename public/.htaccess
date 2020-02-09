@@ -5,7 +5,13 @@
   </IfModule>
 </FilesMatch>
 
-<FilesMatch "^(ui|worker)-.*.js$">
+<FilesMatch "^(ui|worker)-.*\.js$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(dark|light)-.*\.css$">
   <IfModule mod_headers.c>
     Header set Cache-Control "max-age=31536000"
   </IfModule>

@@ -11,7 +11,7 @@
   </IfModule>
 </FilesMatch>
 
-<FilesMatch "^sw.js$">
+<FilesMatch "^(index.html|sw.js)$">
   <IfModule mod_headers.c>
     Header set Cache-Control "no-cache"
   </IfModule>

@@ -29,3 +29,9 @@ try {
 } catch (e) {
 	// fail silently
 }
+
+self.addEventListener("message", event => {
+	if (event.data === "getSWVersion") {
+		event.ports[0].postMessage("REV_GOES_HERE");
+	}
+});

@@ -20,7 +20,7 @@ declare global {
 		bbgmVersion: string;
 		bbgmVersionUI: string;
 		bbgmVersionWorker: string;
-		bugsnagClient: Bugsnag.Client;
+		bugsnagClient?: Bugsnag.Client;
 		enableLogging: boolean;
 		getTheme: () => string;
 		googleAnalyticsID: string;

@@ -94,46 +94,72 @@ const handleVersion = async () => {
 					window.bbgmVersion
 				}) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.`,
 			);
-			let registrations: readonly ServiceWorkerRegistration[] = [];
 
-			if (window.navigator.serviceWorker) {
-				registrations = await window.navigator.serviceWorker.getRegistrations();
-			}
+			// Don't block
+			(async () => {
+				let registrations: readonly ServiceWorkerRegistration[] = [];
 
-			if (window.bugsnagClient) {
-				window.bugsnagClient.notify(new Error("Game version mismatch"), {
-					metaData: {
-						bbgmVersion: window.bbgmVersion,
-						bbgmVersionStored,
-						hasNavigatorServiceWorker:
-							window.navigator.serviceWorker !== undefined,
-						registrationsLength: registrations.length,
-						registrations: registrations.map(r => {
-							return {
-								scope: r.scope,
-								active: r.active
-									? {
-											scriptURL: r.active.scriptURL,
-											state: r.active.state,
-									  }
-									: null,
-								installing: r.installing
-									? {
-											scriptURL: r.installing.scriptURL,
-											state: r.installing.state,
-									  }
-									: null,
-								waiting: r.waiting
-									? {
-											scriptURL: r.waiting.scriptURL,
-											state: r.waiting.state,
-									  }
-									: null,
-							};
-						}),
-					},
-				});
-			}
+				if (window.navigator.serviceWorker) {
+					registrations = await window.navigator.serviceWorker.getRegistrations();
+				}
+
+				const getSWVersion = () => {
+					return new Promise(resolve => {
+						setTimeout(() => {
+							resolve("???");
+						}, 2000);
+
+						const messageChannel = new MessageChannel();
+						messageChannel.port1.onmessage = event => {
+							resolve(event.data);
+						};
+						if (navigator.serviceWorker.controller) {
+							navigator.serviceWorker.controller.postMessage("getSWVersion", [
+								messageChannel.port2,
+							]);
+						}
+					});
+				};
+
+				const swVersion = await getSWVersion();
+				console.log("swVersion", swVersion);
+
+				if (window.bugsnagClient) {
+					window.bugsnagClient.notify(new Error("Game version mismatch"), {
+						metaData: {
+							bbgmVersion: window.bbgmVersion,
+							bbgmVersionStored,
+							hasNavigatorServiceWorker:
+								window.navigator.serviceWorker !== undefined,
+							registrationsLength: registrations.length,
+							registrations: registrations.map(r => {
+								return {
+									scope: r.scope,
+									active: r.active
+										? {
+												scriptURL: r.active.scriptURL,
+												state: r.active.state,
+										  }
+										: null,
+									installing: r.installing
+										? {
+												scriptURL: r.installing.scriptURL,
+												state: r.installing.state,
+										  }
+										: null,
+									waiting: r.waiting
+										? {
+												scriptURL: r.waiting.scriptURL,
+												state: r.waiting.state,
+										  }
+										: null,
+								};
+							}),
+							swVersion,
+						},
+					});
+				}
+			})();
 		}
 	} else {
 		// Initial load, store version for future comparisons

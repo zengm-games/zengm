@@ -1,5 +1,7 @@
 sw cache issue
 - might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag
+- could also store quota amount in log
+- looks like it could be old sw staying active somehow
 
 some kind of global status/finances menu, maybe within titlebar? or next to play menu?
 

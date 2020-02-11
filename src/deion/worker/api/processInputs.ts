@@ -191,8 +191,9 @@ const gameLog = (params: Params) => {
 };
 
 const history = (params: Params) => {
-	let season = validateSeason(params.season); // If playoffs aren't over, season awards haven't been set
+	let season = validateSeason(params.season);
 
+	// If playoffs aren't over, season awards haven't been set
 	if (g.get("phase") <= PHASE.PLAYOFFS) {
 		// View last season by default
 		if (season === g.get("season")) {

@@ -1,4 +1,8 @@
 @nicidob store team ratings in box score, use to show estimated point differential. display in schedule, live game sim too
+- predict odds of winning and avg margin of victory
+- home court advantage
+- https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
+  - 1.03 * (RatingH - RatingA) + 3.3504
 
 sw cache issue
 - might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag

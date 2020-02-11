@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, local, updatePlayMenu } from "../util";
 import { UpdateEvents, ViewInput } from "../../common/types";
+import { PHASE } from "../../common";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
@@ -19,7 +20,11 @@ const updateHistory = async (
 	}
 
 	if (updateEvents.includes("firstRun") || state.season !== season) {
-		if (season < g.get("startingSeason")) {
+		const awards = await idb.getCopy.awards({
+			season,
+		});
+
+		if (!awards) {
 			viewedSeasonSummary(); // Should never happen, but just in case
 
 			// https://stackoverflow.com/a/59923262/786644
@@ -30,10 +35,6 @@ const updateHistory = async (
 			return returnValue;
 		}
 
-		const awards = await idb.getCopy.awards({
-			season,
-		});
-
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],
 			seasonAttrs: ["playoffRoundsWon"],
@@ -41,7 +42,7 @@ const updateHistory = async (
 		});
 
 		// Hack placeholder for old seasons before Finals MVP existed
-		if (awards && !awards.hasOwnProperty("finalsMvp")) {
+		if (!awards.hasOwnProperty("finalsMvp")) {
 			awards.finalsMvp = {
 				pid: 0,
 				name: "N/A",
@@ -54,7 +55,7 @@ const updateHistory = async (
 		}
 
 		// Hack placeholder for old seasons before Finals MVP existed
-		if (awards && !awards.hasOwnProperty("allRookie")) {
+		if (!awards.hasOwnProperty("allRookie")) {
 			awards.allRookie = [];
 		}
 
@@ -74,8 +75,9 @@ const updateHistory = async (
 			stats: ["tid", "abbrev"],
 			showNoStats: true,
 		});
-		retiredPlayers.sort((a, b) => b.age - a.age); // Get champs
+		retiredPlayers.sort((a, b) => b.age - a.age);
 
+		// Get champs
 		const champ = teams.find(
 			t =>
 				t.seasonAttrs.playoffRoundsWon ===

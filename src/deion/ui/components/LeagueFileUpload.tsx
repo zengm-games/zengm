@@ -92,8 +92,9 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 		return () => {
 			isMounted.current = false;
 		};
-	}, []); // Reset status when switching between file upload
+	}, []);
 
+	// Reset status when switching between file upload
 	useEffect(() => {
 		dispatch({
 			type: "init",

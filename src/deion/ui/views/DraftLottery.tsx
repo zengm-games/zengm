@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
@@ -128,65 +128,133 @@ type State = {
 	draftType: "nba1994" | "nba2019" | "noLottery" | "random" | undefined;
 	result: DraftLotteryResultArray | undefined;
 	season: number;
-	started: boolean;
 	toReveal: number[];
-	// Values are indexes of this.props.result, starting with the 14th pick and ending with the 1st pick
+	// Values are indexes of props.result, starting with the 14th pick and ending with the 1st pick
 	indRevealed: number;
+	revealState: "init" | "running" | "paused" | "done";
 };
 
-class DraftLotteryTable extends React.Component<Props, State> {
-	componentIsMounted: boolean | undefined;
+type Action =
+	| {
+			type: "init";
+			props: Props;
+	  }
+	| {
+			type: "startClicked";
+	  }
+	| {
+			type: "start";
+			draftType: "nba1994" | "nba2019" | "noLottery" | "random";
+			result: DraftLotteryResultArray;
+			toReveal: number[];
+			indRevealed: number;
+	  }
+	| {
+			type: "pause";
+	  }
+	| {
+			type: "resume";
+	  }
+	| {
+			type: "revealOne";
+	  };
 
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			draftType: undefined,
-			result: undefined,
-			started: false,
-			toReveal: [],
-			indRevealed: -1,
-			season: props.season,
-		};
-	}
-
-	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (nextProps.season !== prevState.season) {
+const reducer = (state: State, action: Action): State => {
+	switch (action.type) {
+		case "init":
 			return {
-				draftType: undefined,
-				result: undefined,
-				started: false,
+				draftType: action.props.draftType,
+				result: action.props.result,
 				toReveal: [],
 				indRevealed: -1,
-				season: nextProps.season,
+				revealState: "init",
+				season: action.props.season,
+			};
+		case "startClicked":
+			return {
+				...state,
+				revealState: "running",
+			};
+		case "start":
+			return {
+				...state,
+				draftType: action.draftType,
+				result: action.result,
+				toReveal: action.toReveal,
+				indRevealed: action.indRevealed,
+				revealState: "running",
+			};
+		case "pause":
+			return {
+				...state,
+				revealState: "paused",
+			};
+		case "resume":
+			return {
+				...state,
+				revealState: "running",
+			};
+		case "revealOne": {
+			const indRevealed = state.indRevealed + 1;
+			const revealState =
+				indRevealed >= state.toReveal.length - 1 ? "done" : state.revealState;
+			return {
+				...state,
+				indRevealed,
+				revealState,
 			};
 		}
+	}
+};
 
-		return null;
+const DraftLotteryTable = (props: Props) => {
+	const isMounted = useRef(true);
+	useEffect(() => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, []);
+
+	// This is redundant with state because of https://github.com/facebook/react/issues/14010
+	const numLeftToReveal = useRef(0); // Like indRevealed
+	const revealState = useRef<State["revealState"]>("init");
+
+	const timeoutID = useRef<number | undefined>();
+
+	const [state, dispatch] = useReducer(reducer, {
+		draftType: props.draftType,
+		result: props.result,
+		toReveal: [],
+		indRevealed: -1,
+		revealState: "init",
+		season: props.season,
+	});
+
+	if (props.season !== state.season) {
+		numLeftToReveal.current = 0;
+		revealState.current = "init";
+		dispatch({ type: "init", props: props });
 	}
 
-	revealPick() {
-		if (!this.componentIsMounted) {
+	const revealPickAuto = () => {
+		if (
+			!isMounted.current ||
+			numLeftToReveal.current <= 0 ||
+			revealState.current !== "running"
+		) {
 			return;
 		}
 
-		this.setState(
-			prevState => ({
-				indRevealed: prevState.indRevealed + 1,
-			}),
-			() => {
-				if (this.state.indRevealed < this.state.toReveal.length - 1) {
-					setTimeout(() => {
-						this.revealPick();
-					}, 1000);
-				}
-			},
-		);
-	}
+		numLeftToReveal.current -= 1;
+		dispatch({ type: "revealOne" });
 
-	async startLottery() {
-		this.setState({
-			started: true,
-		});
+		if (numLeftToReveal.current >= 1) {
+			timeoutID.current = window.setTimeout(revealPickAuto, 1000);
+		}
+	};
+
+	const startLottery = async () => {
+		dispatch({ type: "startClicked" });
 		const { draftType, result } = await toWorker("main", "draftLottery");
 		const toReveal: number[] = [];
 
@@ -195,157 +263,179 @@ class DraftLotteryTable extends React.Component<Props, State> {
 			toReveal[pick - 1] = i;
 			result[i].pick = undefined;
 		}
-
 		toReveal.reverse();
-		this.setState(
-			{
-				draftType,
-				result,
-				toReveal,
-				indRevealed: -1,
-			},
-			() => {
-				this.revealPick();
-			},
-		);
-	}
 
-	componentDidMount() {
-		this.componentIsMounted = true;
-	}
+		revealState.current = "running";
+		numLeftToReveal.current = toReveal.length;
+		dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
 
-	componentWillUnmount() {
-		this.componentIsMounted = false;
-	}
+		revealPickAuto();
+	};
 
-	render() {
-		const { season, ties, type, userTid } = this.props;
-		const result =
-			this.state.result !== undefined ? this.state.result : this.props.result;
-		const draftType =
-			this.state.draftType !== undefined
-				? this.state.draftType
-				: this.props.draftType;
-		const probs =
-			result !== undefined &&
-			(draftType === "nba2019" || draftType === "nba1994")
-				? getProbs(result, draftType)
-				: undefined;
-		const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
+	const handleResume = () => {
+		revealState.current = "running";
+		dispatch({ type: "resume" });
 
-		let table;
+		revealPickAuto();
+	};
 
-		if (result && probs) {
-			// Checking both is redundant, but flow wants it
-			table = (
-				<ResponsiveTableWrapper>
-					<table className="table table-striped table-bordered table-sm table-hover">
-						<thead>
-							<tr>
-								<th colSpan={3} />
-								<th colSpan={NUM_PICKS} className="text-center">
-									Pick Probabilities
-								</th>
-							</tr>
-							<tr>
-								<th>Team</th>
-								<th>Record</th>
-								<th>Chances</th>
-								{result.map((row, i) => (
-									<th key={i}>{helpers.ordinal(i + 1)}</th>
-								))}
-							</tr>
-						</thead>
-						<tbody>
-							{result.map(
-								({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
-									const pickCols = range(NUM_PICKS).map(j => {
-										const prob = probs[i][j];
-										const pct =
-											prob !== undefined
-												? `${(prob * 100).toFixed(1)}%`
-												: undefined;
-										let highlighted = false;
+	const handlePause = () => {
+		clearTimeout(timeoutID.current);
+		timeoutID.current = undefined;
+		revealState.current = "paused";
+		dispatch({ type: "pause" });
+	};
 
-										if (pick !== undefined) {
-											highlighted = pick === j + 1;
-										} else if (NUM_PICKS - 1 - j <= this.state.indRevealed) {
-											// Has this round been revealed?
-											// Is this pick revealed?
-											const ind = this.state.toReveal.findIndex(
-												ind2 => ind2 === i,
-											);
+	const handleShowOne = () => {
+		numLeftToReveal.current -= 1;
+		dispatch({ type: "revealOne" });
+	};
 
-											if (ind === NUM_PICKS - 1 - j) {
-												highlighted = true;
-											}
+	const { season, ties, type, userTid } = props;
+	const { draftType, result } = state;
+	const probs =
+		result !== undefined && (draftType === "nba2019" || draftType === "nba1994")
+			? getProbs(result, draftType)
+			: undefined;
+	const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
+
+	let table;
+
+	if (result && probs) {
+		// Checking both is redundant, but flow wants it
+		table = (
+			<ResponsiveTableWrapper>
+				<table className="table table-striped table-bordered table-sm table-hover">
+					<thead>
+						<tr>
+							<th colSpan={3} />
+							<th colSpan={NUM_PICKS} className="text-center">
+								Pick Probabilities
+							</th>
+						</tr>
+						<tr>
+							<th>Team</th>
+							<th>Record</th>
+							<th>Chances</th>
+							{result.map((row, i) => (
+								<th key={i}>{helpers.ordinal(i + 1)}</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{result.map(
+							({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
+								const pickCols = range(NUM_PICKS).map(j => {
+									const prob = probs[i][j];
+									const pct =
+										prob !== undefined
+											? `${(prob * 100).toFixed(1)}%`
+											: undefined;
+									let highlighted = false;
+
+									if (pick !== undefined) {
+										highlighted = pick === j + 1;
+									} else if (NUM_PICKS - 1 - j <= state.indRevealed) {
+										// Has this round been revealed?
+										// Is this pick revealed?
+										const ind = state.toReveal.findIndex(ind2 => ind2 === i);
+
+										if (ind === NUM_PICKS - 1 - j) {
+											highlighted = true;
 										}
+									}
 
-										return (
-											<td
-												className={classNames({
-													"table-success": highlighted,
-												})}
-												key={j}
-											>
-												{pct}
-											</td>
-										);
-									});
-									const row = (
-										<tr key={originalTid}>
-											<td
-												className={classNames({
-													"table-info": tid === userTid,
-												})}
-											>
-												<DraftAbbrev
-													tid={tid}
-													originalTid={originalTid}
-													season={season}
-												/>
-											</td>
-											<td>
-												<a href={helpers.leagueUrl(["standings", season])}>
-													{won}-{lost}
-													{ties ? <>-{tied}</> : null}
-												</a>
-											</td>
-											<td>{chances}</td>
-											{pickCols}
-										</tr>
+									return (
+										<td
+											className={classNames({
+												"table-success": highlighted,
+											})}
+											key={j}
+										>
+											{pct}
+										</td>
 									);
-									return row;
-								},
-							)}
-						</tbody>
-					</table>
-				</ResponsiveTableWrapper>
-			);
-		} else {
-			table = <p>No draft lottery results for {season}.</p>;
-		}
-
-		return (
-			<>
-				{type === "readyToRun" && !this.state.started ? (
-					<p>
-						<button
-							className="btn btn-large btn-success"
-							onClick={() => this.startLottery()}
-						>
-							Start Draft Lottery
-						</button>
-					</p>
-				) : null}
-
-				{table}
-			</>
+								});
+								const row = (
+									<tr key={originalTid}>
+										<td
+											className={classNames({
+												"table-info": tid === userTid,
+											})}
+										>
+											<DraftAbbrev
+												tid={tid}
+												originalTid={originalTid}
+												season={season}
+											/>
+										</td>
+										<td>
+											<a href={helpers.leagueUrl(["standings", season])}>
+												{won}-{lost}
+												{ties ? <>-{tied}</> : null}
+											</a>
+										</td>
+										<td>{chances}</td>
+										{pickCols}
+									</tr>
+								);
+								return row;
+							},
+						)}
+					</tbody>
+				</table>
+			</ResponsiveTableWrapper>
 		);
+	} else {
+		table = <p>No draft lottery results for {season}.</p>;
 	}
-}
 
-// @ts-ignore
+	return (
+		<>
+			{type === "readyToRun" && state.revealState === "init" ? (
+				<button
+					className="btn btn-large btn-success mb-3"
+					onClick={() => startLottery()}
+				>
+					Start Draft Lottery
+				</button>
+			) : null}
+			{type === "readyToRun" &&
+			(state.revealState === "running" || state.revealState === "paused") ? (
+				<div className="btn-group mb-3">
+					{state.revealState === "paused" ? (
+						<button
+							className="btn btn-light-bordered"
+							onClick={handleResume}
+							title="Resume Lottery"
+						>
+							<span className="glyphicon glyphicon-play" />
+						</button>
+					) : (
+						<button
+							className="btn btn-light-bordered"
+							onClick={handlePause}
+							title="Pause Lottery"
+						>
+							<span className="glyphicon glyphicon-pause" />
+						</button>
+					)}
+					<button
+						className="btn btn-light-bordered"
+						disabled={state.revealState === "running"}
+						onClick={handleShowOne}
+						title="Show Next Pick"
+					>
+						<span className="glyphicon glyphicon-step-forward" />
+					</button>
+				</div>
+			) : null}
+
+			{table}
+		</>
+	);
+};
+
 DraftLotteryTable.propTypes = {
 	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
 	result: PropTypes.arrayOf(
@@ -374,6 +464,7 @@ const DraftLottery = (props: Props) => {
 			seasons: props.season,
 		},
 	});
+
 	return (
 		<>
 			<p>
@@ -400,7 +491,6 @@ const DraftLottery = (props: Props) => {
 	);
 };
 
-// @ts-ignore
 DraftLottery.propTypes = DraftLotteryTable.propTypes;
 
 export default DraftLottery;

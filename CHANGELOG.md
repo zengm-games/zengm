@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-02-10:: Added play/pause/next controls to the draft lottery reveal. [[1]](https://old.reddit.com/r/BasketballGM/comments/f201yh/new_in_version_202002110036_playpausenext_buttons/)
+
 * 2020-02-08: Added option to set units for height and weight to metric. [[1]](https://old.reddit.com/r/BasketballGM/comments/f0ulhj/new_in_version_202002081042_an_option_to_switch/) [[2]](https://old.reddit.com/r/Football_GM/comments/f0ulhy/new_in_version_202002081043_an_option_to_switch/)
 
 * 2020-02-07: Added Player Bios page and removed country and college info from Player Ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/f0h9yv/new_in_v202002071284_player_bios_table_also_the/) [[2]](https://old.reddit.com/r/Football_GM/comments/f0h8wf/new_in_v202002071286_player_bios_table_also_the/)

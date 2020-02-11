@@ -1,3 +1,5 @@
+@nicidob store team ratings in box score, use to show estimated point differential. display in schedule, live game sim too
+
 sw cache issue
 - might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag
 - could also store quota amount in log

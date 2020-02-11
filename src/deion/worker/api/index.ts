@@ -409,9 +409,10 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	} else {
 		throw new Error("User trying to draft out of turn.");
 	}
-}; // exportPlayerAveragesCsv(2015) - just 2015 stats
-// exportPlayerAveragesCsv("all") - all stats
+};
 
+// exportPlayerAveragesCsv(2015) - just 2015 stats
+// exportPlayerAveragesCsv("all") - all stats
 const exportPlayerAveragesCsv = async (season: number | "all") => {
 	let players: Player<MinimalPlayerRatings>[];
 

@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import g from "./g";
-import { GameProcessed } from "../../common/types";
+import { GameProcessed, Game } from "../../common/types";
 
 /**
  * Generate a game log list.
@@ -15,9 +15,7 @@ import { GameProcessed } from "../../common/types";
 async function getProcessedGameList(
 	abbrev: string,
 	season: number,
-	loadedGames: {
-		gid: number;
-	}[] = [],
+	loadedGames: Game[] = [],
 ) {
 	let tid;
 
@@ -39,7 +37,7 @@ async function getProcessedGameList(
 		maxGid = -1; // Load all games
 	}
 
-	const gameInfos: GameProcessed[] = [];
+	const gameInfos: Game[] = [];
 	let games;
 
 	if (season === g.get("season")) {
@@ -59,57 +57,9 @@ async function getProcessedGameList(
 			break;
 		}
 
-		let overtime;
-
-		if (gm.overtimes === 1) {
-			overtime = " (OT)";
-		} else if (gm.overtimes > 1) {
-			overtime = ` (${gm.overtimes}OT)`;
-		} else {
-			overtime = "";
-		}
-
 		// Check tid
 		if (gm.teams[0].tid === tid || gm.teams[1].tid === tid) {
-			const oppAbbrevOverride = abbrev === "special" ? "ASG" : undefined;
-
-			if (gm.teams[0].tid === tid) {
-				gameInfos.push({
-					gid: gm.gid,
-					overtime,
-					tid,
-					home: true,
-					oppAbbrev:
-						oppAbbrevOverride || g.get("teamAbbrevsCache")[gm.teams[1].tid],
-					oppPts: gm.teams[1].pts,
-					oppTid: gm.teams[1].tid,
-					pts: gm.teams[0].pts,
-					result:
-						gm.teams[0].pts > gm.teams[1].pts
-							? "W"
-							: gm.teams[0].pts < gm.teams[1].pts
-							? "L"
-							: "T",
-				});
-			} else if (gm.teams[1].tid === tid) {
-				gameInfos.push({
-					gid: gm.gid,
-					overtime,
-					tid,
-					home: false,
-					oppAbbrev:
-						oppAbbrevOverride || g.get("teamAbbrevsCache")[gm.teams[0].tid],
-					oppPts: gm.teams[0].pts,
-					oppTid: gm.teams[0].tid,
-					pts: gm.teams[1].pts,
-					result:
-						gm.teams[1].pts > gm.teams[0].pts
-							? "W"
-							: gm.teams[1].pts < gm.teams[0].pts
-							? "L"
-							: "T",
-				});
-			}
+			gameInfos.push(gm);
 		}
 	}
 

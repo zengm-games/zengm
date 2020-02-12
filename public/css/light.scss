@@ -873,3 +873,20 @@ tr.table-warning:hover > td {
 		color: #000;
 	}
 }
+
+.game-score-box {
+	img {
+		margin-top: 1px;
+		width: 24px;
+	}
+
+	th {
+		font-weight: normal;
+	}
+
+	max-width: 400px;
+
+	tbody {
+		box-shadow: 0 0 0 1px $gray-300;
+	}
+}

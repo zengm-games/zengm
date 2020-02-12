@@ -156,6 +156,16 @@ export type DraftType = "nba1994" | "nba2019" | "noLottery" | "random";
 
 export type EventBBGM = any;
 
+type GameTeam = {
+	tid: number;
+	players: any[];
+
+	ovr?: number; // Undefined for legacy objects
+	won?: number; // Undefined for legacy objects
+	lost?: number; // Undefined for legacy objects
+	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
+};
+
 export type Game = {
 	att: number;
 	clutchPlays?: string[];
@@ -168,7 +178,7 @@ export type Game = {
 	overtimes: number;
 	scoringSummary?: any;
 	season: number;
-	teams: [any, any];
+	teams: [GameTeam, GameTeam];
 	won: {
 		tid: number;
 		pts: number;

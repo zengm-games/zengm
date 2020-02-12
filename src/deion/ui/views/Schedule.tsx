@@ -22,31 +22,16 @@ const Schedule = ({
 				<div className="col-sm-6">
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
-						{upcoming.map(({ gid, teams }) => (
-							<UpcomingGame key={gid} teams={teams} />
+						{upcoming.map((game, i) => (
+							<CompletedGame key={game.gid} game={game} header={i === 0} />
 						))}
 					</ul>
 				</div>
 				<div className="col-sm-6 d-none d-sm-block">
 					<h2>Completed Games</h2>
-					<ul className="list-group">
-						{completed === undefined
-							? "Loading..."
-							: completed.map(({ gid, overtime, result, score, teams }) => {
-									return (
-										<CompletedGame
-											key={gid}
-											abbrev={abbrev}
-											gid={gid}
-											overtime={overtime}
-											result={result}
-											score={score}
-											season={season}
-											teams={teams}
-										/>
-									);
-							  })}
-					</ul>
+					{completed.map((game, i) => (
+						<CompletedGame key={game.gid} game={game} header={i === 0} />
+					))}
 				</div>
 			</div>
 		</>

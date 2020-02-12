@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, GameProcessedCompleted } from "../../common/types";
+import { UpdateEvents, GameProcessedCompleted, Game } from "../../common/types";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -168,7 +168,7 @@ const updateGames = async (
 	inputs: unknown,
 	updateEvents: UpdateEvents,
 	state: {
-		completed?: GameProcessedCompleted[];
+		completed?: Game[];
 	},
 ) => {
 	const NUM_SHOW_COMPLETED = 4;
@@ -179,9 +179,7 @@ const updateGames = async (
 			g.get("teamAbbrevsCache")[g.get("userTid")],
 			g.get("season"),
 		);
-		const completed = games
-			.slice(0, NUM_SHOW_COMPLETED)
-			.map(game => helpers.formatCompletedGame(game));
+		const completed = games.slice(0, NUM_SHOW_COMPLETED);
 		return {
 			completed,
 		};
@@ -197,7 +195,7 @@ const updateGames = async (
 		);
 
 		for (let i = games.length - 1; i >= 0; i--) {
-			completed.unshift(helpers.formatCompletedGame(games[i]));
+			completed.unshift(games[i]);
 
 			if (completed.length > NUM_SHOW_COMPLETED) {
 				completed.pop();

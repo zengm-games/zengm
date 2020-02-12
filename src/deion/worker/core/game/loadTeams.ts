@@ -13,6 +13,7 @@ const processTeam = (
 	teamSeason: {
 		won: number;
 		lost: number;
+		tied: number;
 		expenses: {
 			health: {
 				rank: number;
@@ -38,13 +39,27 @@ const processTeam = (
 		compositeRating[rating] = 0;
 	}
 
+	// Injury-adjusted ovr
+	const playersCurrent = players
+		.filter((p: any) => p.injury.gamesRemaining === 0)
+		.map(p => ({
+			pid: p.pid,
+			ratings: {
+				ovr: p.ratings[p.ratings.length - 1].ovr,
+				pos: p.ratings[p.ratings.length - 1].pos,
+			},
+		}));
+	const ovr = overrides.core.team.ovr!(playersCurrent);
+
 	const t: any = {
 		id: team.tid,
 		pace: 0,
 		won: teamSeason.won,
 		lost: teamSeason.lost,
+		tied: g.get("ties") ? teamSeason.tied : undefined,
 		cid: team.cid,
 		did: team.did,
+		ovr,
 		stat: {},
 		player: [],
 		synergy: {
@@ -198,6 +213,7 @@ const loadTeams = async (tids: number[]) => {
 				{
 					won: 0,
 					lost: 0,
+					tied: 0,
 					expenses: {
 						health: {
 							rank: 1,

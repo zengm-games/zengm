@@ -190,11 +190,13 @@ const LeagueDashboard = ({
 								<>
 									<h2>Upcoming Games</h2>
 									{gamesRemainingTag}
-									<ul className="list-group" style={{ marginBottom: "6px" }}>
-										{upcoming.map(({ gid, teams }) => (
-											<UpcomingGame key={gid} teams={teams} />
-										))}
-									</ul>
+									{upcoming.map((game, i) => (
+										<CompletedGame
+											key={game.gid}
+											game={game}
+											header={i === 0}
+										/>
+									))}
 									{upcoming.length === 0 ? <p>None</p> : null}
 									<a href={helpers.leagueUrl(["schedule"])}>» Schedule</a>
 								</>
@@ -202,23 +204,14 @@ const LeagueDashboard = ({
 						</div>
 						<div className="col-sm-6 col-md-12 mb-3">
 							<h2>Completed Games</h2>
-							<ul className="list-group" style={{ marginBottom: "6px" }}>
-								{completed.map(({ gid, overtime, result, score, teams }) => {
-									return (
-										<CompletedGame
-											key={gid}
-											abbrev={abbrev}
-											displayAbbrevs
-											gid={gid}
-											overtime={overtime}
-											result={result}
-											score={score}
-											season={season}
-											teams={teams}
-										/>
-									);
-								})}
-							</ul>
+							{completed.map((game, i) => (
+								<CompletedGame
+									key={game.gid}
+									displayAbbrevs
+									game={game}
+									header={i === 0}
+								/>
+							))}
 							{completed.length === 0 ? <p>None</p> : null}
 							<a href={helpers.leagueUrl(["game_log"])}>» Game Log</a>
 						</div>

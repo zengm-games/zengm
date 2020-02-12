@@ -1,11 +1,7 @@
-import { season } from "../core";
+import { season, game } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames, helpers } from "../util";
-import {
-	UpdateEvents,
-	ViewInput,
-	GameProcessedCompleted,
-} from "../../common/types";
+import { g, getProcessedGames, helpers, overrides } from "../util";
+import { UpdateEvents, ViewInput, Game } from "../../common/types";
 
 const updateUpcoming = async (
 	inputs: ViewInput<"schedule">,
@@ -18,29 +14,59 @@ const updateUpcoming = async (
 		updateEvents.includes("newPhase") ||
 		inputs.abbrev !== state.abbrev
 	) {
-		// Get schedule and all teams.
-		const [schedule, teams] = await Promise.all([
-			season.getSchedule(),
-			idb.getCopies.teamsPlus({
-				attrs: ["abbrev", "name", "region"],
-				seasonAttrs: ["won", "lost"],
-				season: g.get("season"),
-			}),
-		]); // Loop through each game in the schedule.
+		const schedule = await season.getSchedule();
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: ["won", "lost", "tied"],
+			season: g.get("season"),
+		});
 
-		const upcoming: {
-			gid: number;
-			teams: [any, any];
-		}[] = [];
+		const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
+			0, // Active players have tid >= 0
+			Infinity,
+		]);
+		const healthyPlayers = playersRaw
+			.filter((p: any) => p.injury.gamesRemaining === 0)
+			.map(p => ({
+				pid: p.pid,
+				ratings: {
+					ovr: p.ratings[p.ratings.length - 1].ovr,
+					pos: p.ratings[p.ratings.length - 1].pos,
+				},
+				tid: p.tid,
+			}));
 
-		for (const game of schedule) {
-			if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
-				upcoming.push({
-					gid: game.gid,
-					teams: [teams[game.awayTid], teams[game.homeTid]],
-				});
+		const ovrsCache = new Map<number, number>();
+
+		const getTeam = (tid: number) => {
+			let ovr = ovrsCache.get(tid);
+			if (ovr === undefined) {
+				ovr = overrides.core.team.ovr!(
+					healthyPlayers.filter(p => p.tid === tid),
+				);
+				ovrsCache.set(tid, ovr);
 			}
-		}
+
+			return {
+				ovr,
+				tid,
+				won: teams[tid].seasonAttrs.won,
+				lost: teams[tid].seasonAttrs.lost,
+				tied: g.get("ties") ? teams[tid].seasonAttrs.tied : undefined,
+			};
+		};
+
+		const upcoming = schedule
+			.filter(
+				game => inputs.tid === game.homeTid || inputs.tid === game.awayTid,
+			)
+			.map(({ awayTid, gid, homeTid }) => {
+				return {
+					gid,
+					season: g.get("season"),
+					teams: [getTeam(homeTid), getTeam(awayTid)],
+				};
+			});
 
 		return {
 			abbrev: inputs.abbrev,
@@ -56,7 +82,7 @@ const updateCompleted = async (
 	updateEvents: UpdateEvents,
 	state: {
 		abbrev: string;
-		completed: GameProcessedCompleted[];
+		completed: Game[];
 	},
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
@@ -65,8 +91,7 @@ const updateCompleted = async (
               setState({completed: undefined});
           }*/
 		// Load all games in list
-		const games = await getProcessedGames(inputs.abbrev, g.get("season"));
-		const completed = games.map(game => helpers.formatCompletedGame(game));
+		const completed = await getProcessedGames(inputs.abbrev, g.get("season"));
 		return {
 			completed,
 		};
@@ -82,7 +107,7 @@ const updateCompleted = async (
 		);
 
 		for (let i = games.length - 1; i >= 0; i--) {
-			completed.unshift(helpers.formatCompletedGame(games[i]));
+			completed.unshift(games[i]);
 		}
 
 		return {

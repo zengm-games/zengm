@@ -96,12 +96,25 @@ const writeGameStats = async (
 			pts: 0,
 		},
 		scoringSummary: results.scoringSummary,
-		teams: [{}, {}],
+		teams: [
+			{
+				tid: results.team[0].id,
+				ovr: results.team[0].ovr,
+				won: results.team[0].won,
+				lost: results.team[0].lost,
+				tied: results.team[0].tied,
+				players: [],
+			},
+			{
+				tid: results.team[1].id,
+				ovr: results.team[1].ovr,
+				won: results.team[1].won,
+				lost: results.team[1].lost,
+				tied: results.team[1].tied,
+				players: [],
+			},
+		],
 	};
-	gameStats.teams[0].tid = results.team[0].id;
-	gameStats.teams[0].players = [];
-	gameStats.teams[1].tid = results.team[1].id;
-	gameStats.teams[1].players = [];
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 	let allStars;
 
@@ -111,7 +124,7 @@ const writeGameStats = async (
 
 	for (let t = 0; t < 2; t++) {
 		for (const key of Object.keys(results.team[t].stat)) {
-			gameStats.teams[t][key] = results.team[t].stat[key];
+			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
 		}
 
 		for (let p = 0; p < results.team[t].player.length; p++) {
@@ -142,6 +155,18 @@ const writeGameStats = async (
 	gameStats.won.pts = results.team[tw].stat.pts;
 	gameStats.lost.pts = results.team[tl].stat.pts;
 	const tied = results.team[0].stat.pts === results.team[1].stat.pts; // Event log
+
+	if (
+		tied &&
+		gameStats.teams[0].tied !== undefined &&
+		gameStats.teams[1].tied
+	) {
+		gameStats.teams[0].tied += 1;
+		gameStats.teams[1].tied += 1;
+	} else {
+		gameStats.teams[tw].won += 1;
+		gameStats.teams[tl].lost += 1;
+	}
 
 	if (
 		results.team[0].id === g.get("userTid") ||

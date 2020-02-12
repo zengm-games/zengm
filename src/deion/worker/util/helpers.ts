@@ -106,37 +106,6 @@ const defaultTicketPrice = (popRank: number) => {
 	);
 };
 
-const formatCompletedGame = (game: GameProcessed): GameProcessedCompleted => {
-	// If not specified, assume user's team is playing
-	const tid: number = game.tid !== undefined ? game.tid : g.get("userTid");
-
-	// team0 and team1 are different than they are elsewhere! Here it refers to user and opponent, not home and away
-	const team0 = {
-		tid: tid,
-		abbrev: g.get("teamAbbrevsCache")[tid],
-		region: g.get("teamRegionsCache")[tid],
-		name: g.get("teamNamesCache")[tid],
-		pts: game.pts,
-	};
-	const team1 = {
-		tid: game.oppTid,
-		abbrev: g.get("teamAbbrevsCache")[game.oppTid],
-		region: g.get("teamRegionsCache")[game.oppTid],
-		name: g.get("teamNamesCache")[game.oppTid],
-		pts: game.oppPts,
-	};
-	return {
-		gid: game.gid,
-		overtime: game.overtime,
-		result: game.result,
-		score:
-			game.result === "W"
-				? `${team0.pts}-${team1.pts}`
-				: `${team1.pts}-${team0.pts}`,
-		teams: game.home ? [team1, team0] : [team0, team1],
-	};
-};
-
 // Calculate the number of games that team is behind team0
 type teamWonLost = {
 	lost: number;
@@ -342,7 +311,6 @@ const helpers = {
 	correctLinkLid,
 	defaultBudgetAmount,
 	defaultTicketPrice,
-	formatCompletedGame,
 	gb,
 	getAbbrev,
 	leagueUrl,

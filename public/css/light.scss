@@ -306,40 +306,6 @@ table {
 	}
 }
 
-.schedule-row {
-	@extend .d-flex;
-	color: $black;
-	font-size: 16px;
-	max-width: 400px;
-}
-
-.schedule-results {
-	width: 135px;
-	text-align: center;
-}
-
-.schedule-wl {
-	font-size: 22px;
-	text-decoration: underline;
-	width: 26px;
-	text-align: center;
-}
-
-.schedule-score {
-	@extend .flex-grow-1;
-	font-size: 14px;
-	margin-left: 16px;
-	margin-top: 8px;
-}
-
-.schedule-at {
-	font-size: 22px;
-}
-
-.schedule-extra {
-	font-size: 14px;
-}
-
 // Make table not stretch to 100% width automatically
 .table-nonfluid {
 	display: inline-block;

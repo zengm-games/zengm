@@ -3,6 +3,66 @@ import { idb } from "../db";
 import { g, getProcessedGames, overrides } from "../util";
 import { UpdateEvents, ViewInput, Game } from "../../common/types";
 
+export const getUpcoming = async (tid: number, limit: number = Infinity) => {
+	const schedule = await season.getSchedule();
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["won", "lost", "tied"],
+		season: g.get("season"),
+	});
+
+	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
+		0, // Active players have tid >= 0
+		Infinity,
+	]);
+	const healthyPlayers = playersRaw
+		.filter(p => p.injury.gamesRemaining === 0)
+		.map(p => ({
+			pid: p.pid,
+			ratings: {
+				ovr: p.ratings[p.ratings.length - 1].ovr,
+				pos: p.ratings[p.ratings.length - 1].pos,
+			},
+			tid: p.tid,
+		}));
+
+	const ovrsCache = new Map<number, number>();
+
+	const getTeam = (tid: number) => {
+		let ovr = ovrsCache.get(tid);
+		if (ovr === undefined) {
+			ovr = overrides.core.team.ovr!(healthyPlayers.filter(p => p.tid === tid));
+			ovrsCache.set(tid, ovr);
+		}
+
+		return {
+			ovr,
+			tid,
+			won: teams[tid].seasonAttrs.won,
+			lost: teams[tid].seasonAttrs.lost,
+			tied: g.get("ties") ? teams[tid].seasonAttrs.tied : undefined,
+		};
+	};
+
+	const filteredSchedule = schedule
+		.filter(game => tid === game.homeTid || tid === game.awayTid)
+		.slice(0, limit);
+
+	const upcoming: {
+		gid: number;
+		season: number;
+		teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
+	}[] = filteredSchedule.map(({ awayTid, gid, homeTid }) => {
+		return {
+			gid,
+			season: g.get("season"),
+			teams: [getTeam(homeTid), getTeam(awayTid)],
+		};
+	});
+
+	return upcoming;
+};
+
 const updateUpcoming = async (
 	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
@@ -14,63 +74,7 @@ const updateUpcoming = async (
 		updateEvents.includes("newPhase") ||
 		inputs.abbrev !== state.abbrev
 	) {
-		const schedule = await season.getSchedule();
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: ["won", "lost", "tied"],
-			season: g.get("season"),
-		});
-
-		const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
-			0, // Active players have tid >= 0
-			Infinity,
-		]);
-		const healthyPlayers = playersRaw
-			.filter((p: any) => p.injury.gamesRemaining === 0)
-			.map(p => ({
-				pid: p.pid,
-				ratings: {
-					ovr: p.ratings[p.ratings.length - 1].ovr,
-					pos: p.ratings[p.ratings.length - 1].pos,
-				},
-				tid: p.tid,
-			}));
-
-		const ovrsCache = new Map<number, number>();
-
-		const getTeam = (tid: number) => {
-			let ovr = ovrsCache.get(tid);
-			if (ovr === undefined) {
-				ovr = overrides.core.team.ovr!(
-					healthyPlayers.filter(p => p.tid === tid),
-				);
-				ovrsCache.set(tid, ovr);
-			}
-
-			return {
-				ovr,
-				tid,
-				won: teams[tid].seasonAttrs.won,
-				lost: teams[tid].seasonAttrs.lost,
-				tied: g.get("ties") ? teams[tid].seasonAttrs.tied : undefined,
-			};
-		};
-
-		const upcoming: {
-			gid: number;
-			season: number;
-			teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
-		}[] = schedule
-			.filter(
-				game => inputs.tid === game.homeTid || inputs.tid === game.awayTid,
-			)
-			.map(({ awayTid, gid, homeTid }) => {
-				return {
-					gid,
-					season: g.get("season"),
-					teams: [getTeam(homeTid), getTeam(awayTid)],
-				};
-			});
+		const upcoming = await getUpcoming(inputs.tid);
 
 		return {
 			abbrev: inputs.abbrev,

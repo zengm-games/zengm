@@ -58,6 +58,7 @@ const ScoreBox = ({
 		teamRegionsCache: state.teamRegionsCache,
 		userTid: state.userTid,
 	}));
+	console.log(header, game);
 
 	console.log(game);
 	let winner: -1 | 0 | 1 | undefined;
@@ -88,11 +89,11 @@ const ScoreBox = ({
 				1.03 * (game.teams[0].ovr - game.teams[1].ovr) +
 				3.3504 * homeCourtAdvantage;
 			if (spread > 0) {
-				spreads = [undefined, roundHalf(-spread)];
+				spreads = [roundHalf(-spread), undefined];
 			} else if (spread < 0) {
-				spreads = [roundHalf(spread), undefined];
+				spreads = [undefined, roundHalf(spread)];
 			} else {
-				spreads = ["PK", undefined];
+				spreads = [undefined, "PK"];
 			}
 		}
 	}

@@ -3,6 +3,7 @@ import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
 import { UpdateEvents, Game } from "../../common/types";
+import { getUpcoming } from "./schedule";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -214,60 +215,10 @@ const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {
-		const schedule = await season.getSchedule();
-		const games: {
-			gid: number;
-			season: number;
-			teams: [
-				{
-					tid: number;
-					abbrev: string;
-					region: string;
-					name: string;
-				},
-				{
-					tid: number;
-					abbrev: string;
-					region: string;
-					name: string;
-				},
-			];
-		}[] = [];
-		const numShowUpcoming = 3;
-
-		for (let i = 0; i < schedule.length; i++) {
-			const game = schedule[i];
-
-			if (
-				g.get("userTid") === game.homeTid ||
-				g.get("userTid") === game.awayTid
-			) {
-				const team0 = {
-					tid: game.homeTid,
-					abbrev: g.get("teamAbbrevsCache")[game.homeTid],
-					region: g.get("teamRegionsCache")[game.homeTid],
-					name: g.get("teamNamesCache")[game.homeTid],
-				};
-				const team1 = {
-					tid: game.awayTid,
-					abbrev: g.get("teamAbbrevsCache")[game.awayTid],
-					region: g.get("teamRegionsCache")[game.awayTid],
-					name: g.get("teamNamesCache")[game.awayTid],
-				};
-				games.push({
-					gid: game.gid,
-					season: g.get("season"),
-					teams: [team1, team0],
-				});
-			}
-
-			if (games.length >= numShowUpcoming) {
-				break;
-			}
-		}
+		const upcoming = await getUpcoming(g.get("userTid"), 3);
 
 		return {
-			upcoming: games,
+			upcoming,
 		};
 	}
 };

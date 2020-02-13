@@ -50,19 +50,6 @@ const LeagueDashboard = ({
 }: View<"leagueDashboard">) => {
 	useTitleBar({ title: `${region} ${name} Dashboard` });
 
-	// Show the remaining number of games, only for the regular season.
-	const gamesPlayed = won + lost + tied;
-	const gamesRemaining = numGames - gamesPlayed;
-	const percentComplete = gamesPlayed / numGames;
-
-	const gamesRemainingTag =
-		phase === PHASE.REGULAR_SEASON ? (
-			<p>
-				{gamesRemaining} games remaining ({(percentComplete * 100).toFixed(1)}%
-				complete)
-			</p>
-		) : null;
-
 	return (
 		<>
 			<div className="row">
@@ -189,7 +176,6 @@ const LeagueDashboard = ({
 							) : (
 								<>
 									<h2>Upcoming Games</h2>
-									{gamesRemainingTag}
 									{upcoming.map((game, i) => (
 										<CompletedGame
 											key={game.gid}

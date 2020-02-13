@@ -6,6 +6,10 @@ const width100 = {
 	width: "100%",
 };
 
+const marginTop = {
+	marginTop: -25,
+};
+
 const roundHalf = (x: number): string => {
 	return (Math.round(x * 2) / 2).toLocaleString("en-US", {
 		maximumFractionDigits: 1,
@@ -108,7 +112,10 @@ const CompletedGame = ({
 	}
 
 	return (
-		<table className="table table-borderless table-sm game-score-box mb-3">
+		<table
+			className="table table-borderless table-sm game-score-box mb-3"
+			style={header ? marginTop : undefined}
+		>
 			{header ? (
 				<thead className="text-muted">
 					<tr>

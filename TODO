@@ -23,6 +23,7 @@ Game list redesign
 - fix game log
 - switch from table to flexbox, then replace displayAbbrevs with ... overflow
 - football
+- unused variables in LeagueDashboard
 
 @nicidob store team ratings in box score, use to show estimated point differential. display in schedule, live game sim too
 - predict odds of winning and avg margin of victory

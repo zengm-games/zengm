@@ -151,7 +151,10 @@ const ScoreBox = ({
 					const imgURL = teamImgURLsCache[t.tid];
 
 					return (
-						<div key={i} className="d-flex align-items-center">
+						<div
+							key={i}
+							className={classNames("d-flex align-items-center", scoreClasses)}
+						>
 							{imgURL ? (
 								<div className="score-box-logo d-flex align-items-center justify-content-center">
 									<img className="mw-100 mh-100" src={imgURL} alt="" />
@@ -174,7 +177,7 @@ const ScoreBox = ({
 							{final ? (
 								<div
 									className={classNames(
-										"score-box-score text-right font-weight-bold",
+										"score-box-score p-1 text-right font-weight-bold",
 										scoreClasses,
 									)}
 								>

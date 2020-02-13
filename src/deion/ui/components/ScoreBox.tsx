@@ -54,9 +54,7 @@ const ScoreBox = ({
 		teamRegionsCache: state.teamRegionsCache,
 		userTid: state.userTid,
 	}));
-	console.log(header, game);
 
-	console.log(game);
 	let winner: -1 | 0 | 1 | undefined;
 	if (game.teams[0].pts !== undefined && game.teams[1].pts !== undefined) {
 		if (game.teams[0].pts > game.teams[1].pts) {

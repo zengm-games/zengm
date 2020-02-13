@@ -10,7 +10,6 @@ import TeamStats from "./TeamStats";
 import { View } from "../../../common/types";
 
 const LeagueDashboard = ({
-	abbrev,
 	att,
 	cash,
 	completed,
@@ -20,12 +19,10 @@ const LeagueDashboard = ({
 	messages,
 	name,
 	numConfs,
-	numGames,
 	numGamesToWinSeries,
 	numPlayoffRounds,
 	numPlayoffTeams,
 	payroll,
-	phase,
 	playoffRoundsWon,
 	playoffsByConference,
 	profit,
@@ -201,7 +198,6 @@ const LeagueDashboard = ({
 };
 
 LeagueDashboard.propTypes = {
-	abbrev: PropTypes.string.isRequired,
 	att: PropTypes.number.isRequired,
 	cash: PropTypes.number.isRequired,
 	completed: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -211,12 +207,10 @@ LeagueDashboard.propTypes = {
 	messages: PropTypes.arrayOf(PropTypes.object).isRequired,
 	name: PropTypes.string.isRequired,
 	numConfs: PropTypes.number.isRequired,
-	numGames: PropTypes.number.isRequired,
 	numGamesToWinSeries: PropTypes.number.isRequired,
 	numPlayoffRounds: PropTypes.number.isRequired,
 	numPlayoffTeams: PropTypes.number.isRequired,
 	payroll: PropTypes.number.isRequired,
-	phase: PropTypes.number.isRequired,
 	playoffRoundsWon: PropTypes.number.isRequired,
 	playoffsByConference: PropTypes.bool.isRequired,
 	profit: PropTypes.number.isRequired,

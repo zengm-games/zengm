@@ -39,7 +39,6 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			region: t.region,
 			name: t.name,
-			abbrev: t.abbrev,
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
@@ -51,8 +50,6 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			season: g.get("season"),
 			playoffRoundsWon:
 				latestSeason !== undefined ? latestSeason.playoffRoundsWon : 0,
-			numGames: g.get("numGames"),
-			phase: g.get("phase"),
 			userTid: g.get("userTid"),
 		};
 	}

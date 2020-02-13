@@ -47,11 +47,13 @@ const CompletedGame = ({
 	header?: boolean;
 }) => {
 	const {
+		homeCourtAdvantage,
 		teamAbbrevsCache,
 		teamNamesCache,
 		teamRegionsCache,
 		userTid,
 	} = useLocalShallow(state => ({
+		homeCourtAdvantage: state.homeCourtAdvantage,
 		teamAbbrevsCache: state.teamAbbrevsCache,
 		teamNamesCache: state.teamNamesCache,
 		teamRegionsCache: state.teamRegionsCache,
@@ -82,7 +84,10 @@ const CompletedGame = ({
 	if (game.teams[0].ovr !== undefined && game.teams[1].ovr !== undefined) {
 		if (process.env.SPORT === "basketball") {
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
-			const spread = 1.03 * (game.teams[1].ovr - game.teams[0].ovr) + 3.3504;
+			// Default homeCourtAdvantage is 1
+			const spread =
+				1.03 * (game.teams[1].ovr - game.teams[0].ovr) +
+				3.3504 * homeCourtAdvantage;
 			if (spread > 0) {
 				spreads = [undefined, roundHalf(-spread)];
 			} else if (spread < 0) {

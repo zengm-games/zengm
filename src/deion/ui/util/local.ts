@@ -23,6 +23,7 @@ const [useLocal, local] = create<
 	gold: undefined,
 	godMode: false,
 	hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
+	homeCourtAdvantage: 1,
 	lid: undefined,
 	leagueName: "",
 	phase: 0,
@@ -89,6 +90,7 @@ const [useLocal, local] = create<
 		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
 			const keys = [
 				"godMode",
+				"homeCourtAdvantage",
 				"lid",
 				"leagueName",
 				"phase",

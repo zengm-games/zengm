@@ -419,6 +419,7 @@ export type LocalStateUI = {
 	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;
+	homeCourtAdvantage: number;
 	lid?: number;
 	leagueName: string;
 	phase: number;

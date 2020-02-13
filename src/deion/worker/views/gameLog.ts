@@ -1,11 +1,6 @@
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import {
-	GameProcessed,
-	UpdateEvents,
-	ViewInput,
-	AllStars,
-} from "../../common/types";
+import { UpdateEvents, ViewInput, AllStars, Game } from "../../common/types";
 
 export const setTeamInfo = (
 	t: any,
@@ -137,6 +132,7 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
 		abbrev: inputs.abbrev,
 		currentSeason: g.get("season"),
 		season: inputs.season,
+		tid: g.get("teamAbbrevsCache").indexOf(inputs.abbrev),
 	};
 };
 
@@ -178,7 +174,7 @@ const updateGamesList = async (
 	updateEvents: UpdateEvents,
 	state: {
 		gamesList: {
-			games: GameProcessed[];
+			games: Game[];
 			abbrev: string;
 			season: number;
 		};
@@ -191,7 +187,7 @@ const updateGamesList = async (
 		season !== state.gamesList.season ||
 		(updateEvents.includes("gameSim") && season === g.get("season"))
 	) {
-		let games: GameProcessed[];
+		let games: Game[];
 
 		if (
 			state.gamesList &&

@@ -90,7 +90,7 @@ const CompletedGame = ({
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
 			const spread =
-				1.03 * (game.teams[1].ovr - game.teams[0].ovr) +
+				1.03 * (game.teams[0].ovr - game.teams[1].ovr) +
 				3.3504 * homeCourtAdvantage;
 			if (spread > 0) {
 				spreads = [undefined, roundHalf(-spread)];

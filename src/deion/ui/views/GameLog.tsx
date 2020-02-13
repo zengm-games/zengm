@@ -3,9 +3,9 @@ import PropTypes from "prop-types";
 import React from "react";
 import { BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, overrides } from "../util";
+import { helpers, overrides, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
-import { View, GameProcessed } from "../../common/types";
+import { View, Game } from "../../common/types";
 
 const StatsRow = ({ i, p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -29,7 +29,7 @@ StatsRow.propTypes = {
 	p: PropTypes.object.isRequired,
 };
 
-const findPrevNextGids = (games: GameProcessed[], currentGid: number) => {
+const findPrevNextGids = (games: Game[], currentGid: number) => {
 	let prevGid;
 	let nextGid;
 	let currentGidInList = false;
@@ -56,13 +56,19 @@ const GamesList = ({
 	gid,
 	gamesList,
 	season,
+	tid,
 }: {
 	abbrev: string;
 	currentSeason: number;
 	gamesList: View<"gameLog">["gamesList"];
 	gid?: number;
 	season: number;
+	tid: number;
 }) => {
+	const { teamAbbrevsCache } = useLocalShallow(state => ({
+		teamAbbrevsCache: state.teamAbbrevsCache,
+	}));
+
 	if (season < currentSeason && gamesList.games.length === 0) {
 		return (
 			<p className="alert alert-info">
@@ -91,6 +97,33 @@ const GamesList = ({
 					</tr>
 				) : (
 					gamesList.games.map(gm => {
+						const home = gm.teams[0].tid === tid;
+						const user = home ? 0 : 1;
+						const other = home ? 1 : 0;
+
+						let result;
+						if (gm.teams[user].pts > gm.teams[other].pts) {
+							result = "W";
+						} else if (gm.teams[user].pts < gm.teams[other].pts) {
+							result = "L";
+						} else {
+							result = "T";
+						}
+
+						let overtimes;
+						if (gm.overtimes !== undefined && gm.overtimes > 0) {
+							if (gm.overtimes === 1) {
+								overtimes = "OT";
+							} else if (gm.overtimes > 1) {
+								overtimes = `${gm.overtimes}OT`;
+							}
+						}
+
+						const oppAbbrev =
+							abbrev === "special"
+								? "ASG"
+								: teamAbbrevsCache[gm.teams[other].tid];
+
 						return (
 							<tr
 								key={gm.gid}
@@ -105,8 +138,8 @@ const GamesList = ({
 											gm.gid,
 										])}
 									>
-										{gm.home ? "" : "@"}
-										{gm.oppAbbrev}
+										{home ? "" : "@"}
+										{oppAbbrev}
 									</a>
 								</td>
 								<td className="game-log-cell">
@@ -118,7 +151,7 @@ const GamesList = ({
 											gm.gid,
 										])}
 									>
-										{gm.result}
+										{result}
 									</a>
 								</td>
 								<td className="game-log-cell">
@@ -130,8 +163,7 @@ const GamesList = ({
 											gm.gid,
 										])}
 									>
-										{gm.pts}-{gm.oppPts}
-										{gm.overtime}
+										{gm.teams[user].pts}-{gm.teams[other].pts} {overtimes}
 									</a>
 								</td>
 							</tr>
@@ -149,6 +181,7 @@ GamesList.propTypes = {
 	gid: PropTypes.number,
 	gamesList: PropTypes.object.isRequired,
 	season: PropTypes.number.isRequired,
+	tid: PropTypes.number.isRequired,
 };
 
 const GameLog = ({
@@ -157,6 +190,7 @@ const GameLog = ({
 	currentSeason,
 	gamesList,
 	season,
+	tid,
 }: View<"gameLog">) => {
 	useTitleBar({
 		title: "Game Log",
@@ -215,6 +249,7 @@ const GameLog = ({
 						gamesList={gamesList}
 						gid={boxScore.gid}
 						season={season}
+						tid={tid}
 					/>
 				</div>
 			</div>
@@ -228,6 +263,7 @@ GameLog.propTypes = {
 	currentSeason: PropTypes.number.isRequired,
 	gamesList: PropTypes.object.isRequired,
 	season: PropTypes.number.isRequired,
+	tid: PropTypes.number.isRequired,
 };
 
 export default GameLog;

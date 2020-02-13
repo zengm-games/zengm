@@ -76,30 +76,38 @@ const ScoreBox = ({
 
 	let spreads: [string | undefined, string | undefined] | undefined;
 	if (game.teams[0].ovr !== undefined && game.teams[1].ovr !== undefined) {
+		let spread;
+
 		if (process.env.SPORT === "basketball") {
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
-			const spread = roundHalf(
-				1.03 * (game.teams[0].ovr - game.teams[1].ovr) +
+			spread = roundHalf(
+				(2 / 5) * (game.teams[0].ovr - game.teams[1].ovr) +
 					3.3504 * homeCourtAdvantage,
 			);
-			if (spread > 0) {
-				spreads = [
-					(-spread).toLocaleString("en-US", {
-						maximumFractionDigits: 1,
-					}),
-					undefined,
-				];
-			} else if (spread < 0) {
-				spreads = [
-					undefined,
-					spread.toLocaleString("en-US", {
-						maximumFractionDigits: 1,
-					}),
-				];
-			} else {
-				spreads = [undefined, "PK"];
-			}
+		} else {
+			// Just assume similar would work for football
+			spread = roundHalf(
+				(3 / 10) * (game.teams[0].ovr - game.teams[1].ovr) +
+					3 * homeCourtAdvantage,
+			);
+		}
+		if (spread > 0) {
+			spreads = [
+				(-spread).toLocaleString("en-US", {
+					maximumFractionDigits: 1,
+				}),
+				undefined,
+			];
+		} else if (spread < 0) {
+			spreads = [
+				undefined,
+				spread.toLocaleString("en-US", {
+					maximumFractionDigits: 1,
+				}),
+			];
+		} else {
+			spreads = [undefined, "PK"];
 		}
 	}
 

@@ -2,7 +2,6 @@ Game list redesign
 - completed game is clickable, to box score
 - logos - somehow in cache? or formatCompletedGame?
   - maybe redo team cache to just store whole damn team objects in one variable
-- rename CompletedGame to ScoreBox
 - highlight score of selected team, based on if it's w/l/t
 - get rid of getProcessedGames
 - show record and ovr in box score too

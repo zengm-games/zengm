@@ -36,7 +36,7 @@ const getRecord = (t: Team) => {
 	return ` ${t.won}-${t.lost}-${t.tied}`;
 };
 
-const CompletedGame = ({
+const ScoreBox = ({
 	displayAbbrevs,
 	game,
 	header,
@@ -209,4 +209,4 @@ const CompletedGame = ({
 	);
 };
 
-export default CompletedGame;
+export default ScoreBox;

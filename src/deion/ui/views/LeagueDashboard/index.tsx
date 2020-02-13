@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
-import { CompletedGame, PlayoffMatchup } from "../../components";
+import { ScoreBox, PlayoffMatchup } from "../../components";
 import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";
@@ -176,11 +176,7 @@ const LeagueDashboard = ({
 								<>
 									<h2>Upcoming Games</h2>
 									{upcoming.map((game, i) => (
-										<CompletedGame
-											key={game.gid}
-											game={game}
-											header={i === 0}
-										/>
+										<ScoreBox key={game.gid} game={game} header={i === 0} />
 									))}
 									{upcoming.length === 0 ? <p>None</p> : null}
 									<a href={helpers.leagueUrl(["schedule"])}>» Schedule</a>
@@ -190,7 +186,7 @@ const LeagueDashboard = ({
 						<div className="col-sm-6 col-md-12 mb-3">
 							<h2>Completed Games</h2>
 							{completed.map((game, i) => (
-								<CompletedGame
+								<ScoreBox
 									key={game.gid}
 									displayAbbrevs
 									game={game}

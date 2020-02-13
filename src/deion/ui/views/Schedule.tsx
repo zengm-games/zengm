@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { CompletedGame } from "../components";
+import { ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { View } from "../../common/types";
 
@@ -18,14 +18,14 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
 						{upcoming.map((game, i) => (
-							<CompletedGame key={game.gid} game={game} header={i === 0} />
+							<ScoreBox key={game.gid} game={game} header={i === 0} />
 						))}
 					</ul>
 				</div>
 				<div className="col-sm-6 d-none d-sm-block">
 					<h2>Completed Games</h2>
 					{completed.map((game, i) => (
-						<CompletedGame key={game.gid} game={game} header={i === 0} />
+						<ScoreBox key={game.gid} game={game} header={i === 0} />
 					))}
 				</div>
 			</div>

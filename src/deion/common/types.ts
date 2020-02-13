@@ -201,12 +201,12 @@ export type GameAttributesLeague = {
 	brotherRate: number;
 	budget: boolean;
 	confs: { cid: number; name: string }[];
-	easyDifficultyInPast: boolean;
 	daysLeft: number;
 	defaultStadiumCapacity: number;
 	difficulty: number;
 	divs: { cid: number; did: number; name: string }[];
 	draftType: DraftType;
+	easyDifficultyInPast: boolean;
 	foulsNeededToFoulOut: number;
 	foulRateFactor: number;
 	gameOver: boolean;
@@ -231,8 +231,8 @@ export type GameAttributesLeague = {
 	numGames: number;
 	numGamesPlayoffSeries: number[];
 	numPlayoffByes: number;
-	numTeams: number;
 	numSeasonsFutureDraftPicks: number;
+	numTeams: number;
 	phase: Phase;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;

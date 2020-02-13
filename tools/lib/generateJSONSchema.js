@@ -414,8 +414,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						},
-						homeCourtAdvantage: {
-							type: "number",
+						budget: {
+							type: "boolean",
 						},
 						confs: {
 							type: "array",
@@ -457,6 +457,20 @@ const generateJSONSchema = (sport /*: string*/) => {
 								required: ["did", "cid", "name"],
 							},
 						},
+						draftType: {
+							type: "string",
+							enum: ["nba1994", "nba2019", "noLottery", "random"],
+						},
+						easyDifficultyInPast: {
+							type: "boolean",
+						},
+						foulsNeededToFoulOut: {
+							type: "integer",
+							minimum: 0,
+						},
+						foulRateFactor: {
+							type: "number",
+						},
 						gameOver: {
 							type: "boolean",
 						},
@@ -468,6 +482,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 						},
 						gracePeriodEnd: {
 							type: "boolean",
+						},
+						hardCap: {
+							type: "boolean",
+						},
+						homeCourtAdvantage: {
+							type: "number",
 						},
 						injuryRate: {
 							type: "integer",
@@ -531,6 +551,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							minItems: 1,
 						},
+						numPlayoffByes: {
+							type: "integer",
+							minimum: 0,
+						},
+						numSeasonsFutureDraftPicks: {
+							type: "integer",
+							minimum: 0,
+						},
 						numTeams: {
 							type: "integer",
 							minimum: 0,
@@ -539,6 +567,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 							minimum: -1,
 							maximum: 8,
+						},
+						playersRefuseToNegotiate: {
+							type: "boolean",
 						},
 						quarterLength: {
 							type: "number",
@@ -564,23 +595,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 						stopOnInjuryGames: {
 							type: "integer",
 						},
-						teamAbbrevsCache: {
-							type: "array",
-							items: {
-								type: "string",
-							},
-						},
-						teamNamesCache: {
-							type: "array",
-							items: {
-								type: "string",
-							},
-						},
-						teamRegionsCache: {
-							type: "array",
-							items: {
-								type: "string",
-							},
+						ties: {
+							type: "boolean",
 						},
 						tragicDeathRate: {
 							type: "number",

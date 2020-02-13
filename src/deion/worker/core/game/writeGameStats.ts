@@ -164,8 +164,8 @@ const writeGameStats = async (
 		gameStats.teams[0].tied += 1;
 		gameStats.teams[1].tied += 1;
 	} else {
-		gameStats.teams[tw].won += 1;
-		gameStats.teams[tl].lost += 1;
+		(gameStats.teams[tw] as any).won += 1;
+		(gameStats.teams[tl] as any).lost += 1;
 	}
 
 	if (

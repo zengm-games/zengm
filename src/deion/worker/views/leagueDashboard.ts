@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, GameProcessedCompleted, Game } from "../../common/types";
+import { UpdateEvents, Game } from "../../common/types";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -216,7 +216,8 @@ const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		const schedule = await season.getSchedule();
 		const games: {
-			gid?: number;
+			gid: number;
+			season: number;
 			teams: [
 				{
 					tid: number;
@@ -255,6 +256,7 @@ const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				};
 				games.push({
 					gid: game.gid,
+					season: g.get("season"),
 					teams: [team1, team0],
 				});
 			}

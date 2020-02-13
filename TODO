@@ -3,7 +3,7 @@ Game list redesign
 - logos - somehow in cache? or formatCompletedGame?
   - maybe redo team cache to just store whole damn team objects in one variable
 - remove schedule-row class and others
-- delete UpcomingGame, rename CompletedGame
+- rename CompletedGame
 - highlight score of selected team, based on if it's w/l/t
 - get rid of getProcessedGames
 - where show overtime?
@@ -18,11 +18,6 @@ Game list redesign
 		} else {
 			overtime = "";
 		}
-- show record for upcoming games
-  - completed too! including this game?
-  - show inline after team name, maybe include ovr there too
-  - score/spread header needed still?
-  - handle tied, maybe generalize
 - show record and ovr in box score too
 - show player with highest game score under completed game
 - fix game log

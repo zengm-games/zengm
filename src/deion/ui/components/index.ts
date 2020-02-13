@@ -31,6 +31,5 @@ export { default as SideBar } from "./SideBar";
 export { default as SkillsBlock } from "./SkillsBlock";
 export { default as SortableTable } from "./SortableTable";
 export { default as UncontrolledPopover } from "./UncontrolledPopover";
-export { default as UpcomingGame } from "./UpcomingGame";
 export { default as WatchBlock } from "./WatchBlock";
 export { default as Weight } from "./Weight";

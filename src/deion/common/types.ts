@@ -164,6 +164,9 @@ type GameTeam = {
 	won?: number; // Undefined for legacy objects
 	lost?: number; // Undefined for legacy objects
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
+
+	// For stats
+	[key: string]: any;
 };
 
 export type Game = {

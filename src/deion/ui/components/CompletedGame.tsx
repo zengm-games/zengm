@@ -128,7 +128,7 @@ const CompletedGame = ({
 					</tr>
 				</thead>
 			) : null}
-			<tbody className="rounded">
+			<tbody>
 				{[1, 0].map(i => {
 					const t = game.teams[i];
 					let scoreClasses;

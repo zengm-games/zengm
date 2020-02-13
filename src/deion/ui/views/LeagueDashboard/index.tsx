@@ -3,7 +3,7 @@ import React from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
-import { CompletedGame, PlayoffMatchup, UpcomingGame } from "../../components";
+import { CompletedGame, PlayoffMatchup } from "../../components";
 import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";

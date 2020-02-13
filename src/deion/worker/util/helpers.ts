@@ -3,12 +3,7 @@ import { PLAYER, helpers as commonHelpers } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import random from "./random";
-import {
-	DraftPick,
-	GameProcessed,
-	GameProcessedCompleted,
-	PlayoffSeriesTeam,
-} from "../../common/types";
+import { DraftPick, PlayoffSeriesTeam } from "../../common/types";
 
 const augmentSeries = async (
 	series: {

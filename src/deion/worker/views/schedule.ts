@@ -1,6 +1,6 @@
-import { season, game } from "../core";
+import { season } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames, helpers, overrides } from "../util";
+import { g, getProcessedGames, overrides } from "../util";
 import { UpdateEvents, ViewInput, Game } from "../../common/types";
 
 const updateUpcoming = async (
@@ -56,7 +56,11 @@ const updateUpcoming = async (
 			};
 		};
 
-		const upcoming = schedule
+		const upcoming: {
+			gid: number;
+			season: number;
+			teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
+		}[] = schedule
 			.filter(
 				game => inputs.tid === game.homeTid || inputs.tid === game.awayTid,
 			)
@@ -70,7 +74,6 @@ const updateUpcoming = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			season: g.get("season"),
 			upcoming,
 		};
 	}

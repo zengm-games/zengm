@@ -110,7 +110,8 @@ const HistoryAll = ({
 		};
 
 		const runnerUpEl = {
-			classNames: s.runnerUp && s.runnerUp.tid === userTid,
+			classNames:
+				s.runnerUp && s.runnerUp.tid === userTid ? "table-info" : undefined,
 			value: teamName(s.runnerUp, s.season, ties),
 		};
 

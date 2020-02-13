@@ -88,7 +88,10 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			}
 		},
 		watch: {
-			chokidar: true,
+			// https://github.com/rollup/rollup/issues/1666#issuecomment-536227450
+			chokidar: {
+				usePolling: true,
+			},
 		},
 	};
 };

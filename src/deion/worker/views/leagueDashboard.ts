@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common";
-import { season, team } from "../core";
+import { team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
 import { UpdateEvents, Game } from "../../common/types";

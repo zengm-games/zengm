@@ -2,14 +2,8 @@ import classNames from "classnames";
 import React from "react";
 import { helpers, useLocalShallow } from "../util";
 
-const width100 = {
-	width: "100%",
-};
-
-const roundHalf = (x: number): string => {
-	return (Math.round(x * 2) / 2).toLocaleString("en-US", {
-		maximumFractionDigits: 1,
-	});
+const roundHalf = (x: number) => {
+	return Math.round(x * 2) / 2;
 };
 
 // pts is undefined for upcoming games. Others are undefined only for legacy objects
@@ -85,13 +79,24 @@ const ScoreBox = ({
 		if (process.env.SPORT === "basketball") {
 			// From @nicidob https://github.com/nicidob/bbgm/blob/master/team_win_testing.ipynb
 			// Default homeCourtAdvantage is 1
-			const spread =
+			const spread = roundHalf(
 				1.03 * (game.teams[0].ovr - game.teams[1].ovr) +
-				3.3504 * homeCourtAdvantage;
+					3.3504 * homeCourtAdvantage,
+			);
 			if (spread > 0) {
-				spreads = [roundHalf(-spread), undefined];
+				spreads = [
+					-spread.toLocaleString("en-US", {
+						maximumFractionDigits: 1,
+					}),
+					undefined,
+				];
 			} else if (spread < 0) {
-				spreads = [undefined, roundHalf(spread)];
+				spreads = [
+					undefined,
+					spread.toLocaleString("en-US", {
+						maximumFractionDigits: 1,
+					}),
+				];
 			} else {
 				spreads = [undefined, "PK"];
 			}

@@ -243,6 +243,7 @@ export type GameAttributesLeague = {
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
 	teamAbbrevsCache: string[];
+	teamImgURLsCache: (string | undefined)[];
 	teamNamesCache: string[];
 	teamRegionsCache: string[];
 	ties: boolean;
@@ -435,6 +436,7 @@ export type LocalStateUI = {
 	startingSeason: number;
 	statusText: string;
 	teamAbbrevsCache: string[];
+	teamImgURLsCache: (string | undefined)[];
 	teamNamesCache: string[];
 	teamRegionsCache: string[];
 	units: "metric" | "us";

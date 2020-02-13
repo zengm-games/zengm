@@ -97,6 +97,7 @@ const defaultGameAttributes: GameAttributesLeague = {
 	startingSeason: 0,
 	leagueName: "",
 	teamAbbrevsCache: [],
+	teamImgURLsCache: [],
 	teamRegionsCache: [],
 	teamNamesCache: [],
 	gracePeriodEnd: 0,

@@ -12,7 +12,6 @@ const augmentSeries = async (
 	}[][],
 	season: number = g.get("season"),
 ) => {
-	const teams = await idb.cache.teams.getAll();
 	const teamSeasons = await idb.getCopies.teamSeasons({
 		season,
 	});
@@ -20,7 +19,7 @@ const augmentSeries = async (
 	const setAll = (obj: PlayoffSeriesTeam) => {
 		obj.abbrev = g.get("teamAbbrevsCache")[obj.tid];
 		obj.region = g.get("teamRegionsCache")[obj.tid];
-		obj.imgURL = teams[obj.tid].imgURL;
+		obj.imgURL = g.get("teamImgURLsCache")[obj.tid];
 		const teamSeason = teamSeasons[obj.tid];
 		obj.regularSeason = {
 			won: 0,

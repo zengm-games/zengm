@@ -146,6 +146,7 @@ export const createWithoutSaving = (
 		startingSeason,
 		leagueName,
 		teamAbbrevsCache: teamInfos.map(t => t.abbrev),
+		teamImgURLsCache: teamInfos.map(t => t.imgURL),
 		teamRegionsCache: teamInfos.map(t => t.region),
 		teamNamesCache: teamInfos.map(t => t.name),
 		gracePeriodEnd: startingSeason + 2,

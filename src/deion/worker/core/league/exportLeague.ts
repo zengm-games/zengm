@@ -85,6 +85,7 @@ const exportLeague = async (
 		// Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
 		const keysToDelete = [
 			"teamAbbrevsCache",
+			"teamImgURLsCache",
 			"teamNamesCache",
 			"teamRegionsCache",
 		];

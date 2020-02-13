@@ -42,12 +42,14 @@ const ScoreBox = ({
 	const {
 		homeCourtAdvantage,
 		teamAbbrevsCache,
+		teamImgURLsCache,
 		teamNamesCache,
 		teamRegionsCache,
 		userTid,
 	} = useLocalShallow(state => ({
 		homeCourtAdvantage: state.homeCourtAdvantage,
 		teamAbbrevsCache: state.teamAbbrevsCache,
+		teamImgURLsCache: state.teamImgURLsCache,
 		teamNamesCache: state.teamNamesCache,
 		teamRegionsCache: state.teamRegionsCache,
 		userTid: state.userTid,
@@ -85,7 +87,7 @@ const ScoreBox = ({
 			);
 			if (spread > 0) {
 				spreads = [
-					-spread.toLocaleString("en-US", {
+					(-spread).toLocaleString("en-US", {
 						maximumFractionDigits: 1,
 					}),
 					undefined,
@@ -148,9 +150,11 @@ const ScoreBox = ({
 						};
 					}
 
+					const imgURL = teamImgURLsCache[t.tid];
+
 					return (
 						<div key={i} className="d-flex">
-							<img src="/img/logos/DEN.png" alt="" />
+							{imgURL ? <img src={imgURL} alt="" /> : null}
 							<div className="flex-grow-1 p-1 text-truncate">
 								<a
 									href={helpers.leagueUrl(["roster", teamAbbrevsCache[t.tid]])}

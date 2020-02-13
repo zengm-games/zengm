@@ -102,6 +102,7 @@ describe("worker/api/processInputs", () => {
 			"Whalers",
 			"Monuments",
 		]);
+		g.setWithoutSavingToDB("teamImgURLsCache", []);
 	});
 
 	// Relies on g.*Cache being populated

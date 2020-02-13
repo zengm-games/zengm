@@ -95,6 +95,7 @@ const addTeam = async (
 		teamAbbrevsCache: [...g.get("teamAbbrevsCache"), t.abbrev],
 		teamRegionsCache: [...g.get("teamRegionsCache"), t.region],
 		teamNamesCache: [...g.get("teamNamesCache"), t.name],
+		teamImgURLsCache: [...g.get("teamImgURLsCache"), t.imgURL],
 	});
 	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
 
@@ -1073,6 +1074,9 @@ const removeLastTeam = async (): Promise<void> => {
 		teamNamesCache: g
 			.get("teamNamesCache")
 			.slice(0, g.get("teamNamesCache").length - 1),
+		teamImgURLsCache: g
+			.get("teamImgURLsCache")
+			.slice(0, g.get("teamImgURLsCache").length - 1),
 		userTids: g.get("userTids").filter(userTid => userTid !== tid),
 	};
 
@@ -1439,6 +1443,7 @@ const updateTeamInfo = async (
 		teamAbbrevsCache: newTeams.map(t => t.abbrev),
 		teamRegionsCache: newTeams.map(t => t.region),
 		teamNamesCache: newTeams.map(t => t.name),
+		teamImgURLsCache: newTeams.map(t => t.imgURL),
 	});
 };
 

@@ -1,13 +1,12 @@
 Game list redesign
-- logos - somehow in cache? or formatCompletedGame?
-  - maybe redo team cache to just store whole damn team objects in one variable
-    - too risky, given cache issues? could add new variable for image URLs
 - football
 - unused variables in LeagueDashboard
 - changelog
 - later
   - show record and ovr in box score too
   - show player with highest game score under completed game
+
+teamRegion in playersPlus needed?
 
 @nicidob store team ratings in box score, use to show estimated point differential. display in schedule, live game sim too
 - predict odds of winning and avg margin of victory

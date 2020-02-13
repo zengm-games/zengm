@@ -855,4 +855,14 @@ tr.table-warning:hover > td {
 	tbody {
 		border: 1px solid $gray-300;
 	}
+
+	.clickable-td {
+		padding: 0;
+		a {
+			display: block;
+			height: 100%;
+			width: 100%;
+			padding: 0.3em;
+		}
+	}
 }

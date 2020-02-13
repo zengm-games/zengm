@@ -1,14 +1,14 @@
 Game list redesign
-- completed game is clickable, to box score
 - logos - somehow in cache? or formatCompletedGame?
   - maybe redo team cache to just store whole damn team objects in one variable
-- highlight score of selected team, based on if it's w/l/t
-- get rid of getProcessedGames
-- show record and ovr in box score too
-- show player with highest game score under completed game
+    - too risky, given cache issues? could add new variable for image URLs
 - switch from table to flexbox, then replace displayAbbrevs with ... overflow
 - football
 - unused variables in LeagueDashboard
+- changelog
+- later
+  - show record and ovr in box score too
+  - show player with highest game score under completed game
 
 @nicidob store team ratings in box score, use to show estimated point differential. display in schedule, live game sim too
 - predict odds of winning and avg margin of victory
@@ -20,6 +20,7 @@ sw cache issue
 - might have been due to index.html being cached by cloudflare. that's disabled now (feb 8). it things don't improve, add logging in sw.js to send version to index.html, and then attach that to error log in bugsnag
 - could also store quota amount in log
 - looks like it could be old sw staying active somehow
+- try to reproduce on low disk space
 
 some kind of global status/finances menu, maybe within titlebar? or next to play menu?
 

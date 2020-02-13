@@ -173,7 +173,7 @@ const ScoreBox = ({
 							{final ? (
 								<td
 									className={classNames(
-										"text-right font-weight-bold",
+										"text-right font-weight-bold clickable-td",
 										scoreClasses,
 									)}
 									style={{ minWidth: 44 }}

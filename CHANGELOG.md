@@ -4,7 +4,9 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-02-10:: Added play/pause/next controls to the draft lottery reveal. [[1]](https://old.reddit.com/r/BasketballGM/comments/f201yh/new_in_version_202002110036_playpausenext_buttons/)
+* 2020-02-13: Redesigned the "score box" for a game to include team logos, team records, team overall ratings, and the predicted point spread. [[1]](https://old.reddit.com/r/BasketballGM/comments/f3izh4/new_in_version_202002131405_redesigned_schedule/) [[2]](https://old.reddit.com/r/Football_GM/comments/f3j0in/new_in_version_202002131406_redesigned_schedule/)
+
+* 2020-02-10: Added play/pause/next controls to the draft lottery reveal. [[1]](https://old.reddit.com/r/BasketballGM/comments/f201yh/new_in_version_202002110036_playpausenext_buttons/)
 
 * 2020-02-08: Added option to set units for height and weight to metric. [[1]](https://old.reddit.com/r/BasketballGM/comments/f0ulhj/new_in_version_202002081042_an_option_to_switch/) [[2]](https://old.reddit.com/r/Football_GM/comments/f0ulhy/new_in_version_202002081043_an_option_to_switch/)
 

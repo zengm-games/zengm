@@ -35,23 +35,8 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 
 Schedule.propTypes = {
 	abbrev: PropTypes.string.isRequired,
-	completed: PropTypes.arrayOf(PropTypes.object),
-	upcoming: PropTypes.arrayOf(
-		PropTypes.shape({
-			gid: PropTypes.number.isRequired,
-			teams: PropTypes.arrayOf(
-				PropTypes.shape({
-					abbrev: PropTypes.string.isRequired,
-					name: PropTypes.string.isRequired,
-					region: PropTypes.string.isRequired,
-					seasonAttrs: PropTypes.shape({
-						lost: PropTypes.number.isRequired,
-						won: PropTypes.number.isRequired,
-					}).isRequired,
-				}),
-			).isRequired,
-		}),
-	).isRequired,
+	completed: PropTypes.arrayOf(PropTypes.object).isRequired,
+	upcoming: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Schedule;

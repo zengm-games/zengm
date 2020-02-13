@@ -151,8 +151,12 @@ const ScoreBox = ({
 					const imgURL = teamImgURLsCache[t.tid];
 
 					return (
-						<div key={i} className="d-flex">
-							{imgURL ? <img src={imgURL} alt="" /> : null}
+						<div key={i} className="d-flex align-items-center">
+							{imgURL ? (
+								<div className="score-box-logo d-flex align-items-center justify-content-center">
+									<img className="mw-100 mh-100" src={imgURL} alt="" />
+								</div>
+							) : null}
 							<div className="flex-grow-1 p-1 text-truncate">
 								<a
 									href={helpers.leagueUrl(["roster", teamAbbrevsCache[t.tid]])}

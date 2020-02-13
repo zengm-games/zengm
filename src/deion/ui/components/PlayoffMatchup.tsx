@@ -56,8 +56,13 @@ const Team = ({
 			})}
 		>
 			{team.imgURL ? (
-				<div className="playoff-matchup-logo">
-					<img style={lost ? faded : undefined} src={team.imgURL} alt="" />
+				<div className="playoff-matchup-logo d-flex align-items-center justify-content-center">
+					<img
+						className="mw-100 mh-100"
+						style={lost ? faded : undefined}
+						src={team.imgURL}
+						alt=""
+					/>
 				</div>
 			) : null}
 			<div className="mx-1">

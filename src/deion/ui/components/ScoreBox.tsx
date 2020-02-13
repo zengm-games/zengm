@@ -6,10 +6,6 @@ const width100 = {
 	width: "100%",
 };
 
-const marginTop = {
-	marginTop: -25,
-};
-
 const roundHalf = (x: number): string => {
 	return (Math.round(x * 2) / 2).toLocaleString("en-US", {
 		maximumFractionDigits: 1,
@@ -37,7 +33,6 @@ const getRecord = (t: Team) => {
 };
 
 const ScoreBox = ({
-	displayAbbrevs,
 	game,
 	header,
 }: {
@@ -112,30 +107,30 @@ const ScoreBox = ({
 	}
 
 	return (
-		<table
-			className="table table-borderless table-sm game-score-box mb-3"
-			style={header ? marginTop : undefined}
-		>
+		<div className="score-box mb-3">
 			{header ? (
-				<thead className="text-muted">
-					<tr>
-						<th></th>
-						<th></th>
-						{hasOvrs ? <th title="Team Overall Rating">Ovr</th> : null}
-						{spreads ? (
-							<th className="text-right" title="Predicted Point Spread">
-								Spread
-							</th>
-						) : null}
-						{final ? (
-							<th className="text-right" title="Final Score">
-								Score
-							</th>
-						) : null}
-					</tr>
-				</thead>
+				<div className="d-flex justify-content-end score-box-header text-muted">
+					{hasOvrs ? (
+						<div className="p-1" title="Team Overall Rating">
+							Ovr
+						</div>
+					) : null}
+					{spreads ? (
+						<div
+							className="score-box-spread text-right p-1"
+							title="Predicted Point Spread"
+						>
+							Spread
+						</div>
+					) : null}
+					{final ? (
+						<div className="score-box-score text-right p-1" title="Final Score">
+							Score
+						</div>
+					) : null}
+				</div>
 			) : null}
-			<tbody>
+			<div className="border-light">
 				{[1, 0].map(i => {
 					const t = game.teams[i];
 					let scoreClasses;
@@ -147,36 +142,29 @@ const ScoreBox = ({
 						};
 					}
 
-					const teamName = displayAbbrevs
-						? teamNamesCache[t.tid]
-						: `${teamRegionsCache[t.tid]} ${teamNamesCache[t.tid]}`;
-
 					return (
-						<tr key={i}>
-							<td className="p-0">
-								<img src="/img/logos/DEN.png" alt="" />
-							</td>
-							<td style={width100}>
+						<div key={i} className="d-flex">
+							<img src="/img/logos/DEN.png" alt="" />
+							<div className="flex-grow-1 p-1 text-truncate">
 								<a
 									href={helpers.leagueUrl(["roster", teamAbbrevsCache[t.tid]])}
 								>
-									{teamName}
+									{teamRegionsCache[t.tid]} {teamNamesCache[t.tid]}
 								</a>
 								{getRecord(t)}
-							</td>
-							{hasOvrs ? <td className="text-right">{t.ovr}</td> : null}
+							</div>
+							{hasOvrs ? <div className="p-1 text-right">{t.ovr}</div> : null}
 							{spreads ? (
-								<td className="text-right" style={{ minWidth: 52 }}>
+								<div className="score-box-spread p-1 text-right">
 									{spreads[i]}
-								</td>
+								</div>
 							) : null}
 							{final ? (
-								<td
+								<div
 									className={classNames(
-										"text-right font-weight-bold clickable-td",
+										"score-box-score text-right font-weight-bold",
 										scoreClasses,
 									)}
-									style={{ minWidth: 44 }}
 								>
 									<a
 										href={helpers.leagueUrl([
@@ -188,24 +176,18 @@ const ScoreBox = ({
 									>
 										{t.pts}
 									</a>
-								</td>
+								</div>
 							) : null}
-						</tr>
+						</div>
 					);
 				})}
-			</tbody>
+			</div>
 			{overtimes ? (
-				<tfoot>
-					<tr>
-						<th></th>
-						<th></th>
-						{hasOvrs ? <th></th> : null}
-						{spreads ? <th></th> : null}
-						<th className="text-right text-muted">{overtimes}</th>
-					</tr>
-				</tfoot>
+				<div className="d-flex justify-content-end text-muted">
+					<div className="text-right text-muted p-1">{overtimes}</div>
+				</div>
 			) : null}
-		</table>
+		</div>
 	);
 };
 

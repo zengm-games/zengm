@@ -840,29 +840,33 @@ tr.table-warning:hover > td {
 	}
 }
 
-.game-score-box {
+.score-box {
 	img {
 		margin-top: 1px;
 		width: 24px;
 	}
 
-	th {
-		font-weight: normal;
-	}
-
 	max-width: 400px;
+}
 
-	tbody {
-		border: 1px solid $gray-300;
-	}
+.score-box-header {
+	margin-top: -25px;
+}
 
-	.clickable-td {
-		padding: 0;
-		a {
-			display: block;
-			height: 100%;
-			width: 100%;
-			padding: 0.3em;
-		}
+.score-box-spread {
+	min-width: 52px;
+}
+
+.score-box-score {
+	min-width: 44px;
+	a {
+		display: block;
+		height: 100%;
+		width: 100%;
+		padding: 0.3em;
 	}
+}
+
+.border-light {
+	border: 1px solid $gray-300 !important;
 }

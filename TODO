@@ -2,7 +2,6 @@ Game list redesign
 - logos - somehow in cache? or formatCompletedGame?
   - maybe redo team cache to just store whole damn team objects in one variable
     - too risky, given cache issues? could add new variable for image URLs
-- switch from table to flexbox, then replace displayAbbrevs with ... overflow
 - football
 - unused variables in LeagueDashboard
 - changelog

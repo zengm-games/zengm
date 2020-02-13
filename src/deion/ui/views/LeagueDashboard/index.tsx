@@ -186,12 +186,7 @@ const LeagueDashboard = ({
 						<div className="col-sm-6 col-md-12 mb-3">
 							<h2>Completed Games</h2>
 							{completed.map((game, i) => (
-								<ScoreBox
-									key={game.gid}
-									displayAbbrevs
-									game={game}
-									header={i === 0}
-								/>
+								<ScoreBox key={game.gid} game={game} header={i === 0} />
 							))}
 							{completed.length === 0 ? <p>None</p> : null}
 							<a href={helpers.leagueUrl(["game_log"])}>» Game Log</a>

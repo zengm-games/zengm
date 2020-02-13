@@ -36,7 +36,6 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 Schedule.propTypes = {
 	abbrev: PropTypes.string.isRequired,
 	completed: PropTypes.arrayOf(PropTypes.object),
-	season: PropTypes.number.isRequired,
 	upcoming: PropTypes.arrayOf(
 		PropTypes.shape({
 			gid: PropTypes.number.isRequired,

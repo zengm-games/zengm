@@ -116,8 +116,9 @@ const addTeam = async (
 		await draft.genPlayers(draftYear, undefined, g.get("numDraftRounds"));
 	}
 
-	await idb.cache.flush(); // Team format used in ManageTemas
+	await idb.cache.flush();
 
+	// Team format used in ManageTemas
 	return {
 		tid: t.tid,
 		abbrev: t.abbrev,
@@ -501,9 +502,10 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	}
 
 	return csvFormatRows([columns, ...rows]);
-}; // exportPlayerGamesCsv(2015) - just 2015 games
-// exportPlayerGamesCsv("all") - all games
+};
 
+// exportPlayerGamesCsv(2015) - just 2015 games
+// exportPlayerGamesCsv("all") - all games
 const exportPlayerGamesCsv = async (season: number | "all") => {
 	let games;
 
@@ -622,8 +624,9 @@ const genFilename = (data: any) => {
 		// Most recent series info
 		const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
 		const rnd = playoffSeries.currentRound;
-		filename += `_Round_${playoffSeries.currentRound + 1}`; // Find the latest playoff series with the user's team in it
+		filename += `_Round_${playoffSeries.currentRound + 1}`;
 
+		// Find the latest playoff series with the user's team in it
 		for (const series of playoffSeries.series[rnd]) {
 			if (series.home.tid === g.get("userTid")) {
 				if (series.away) {
@@ -736,8 +739,9 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		const stats =
 			process.env.SPORT === "basketball"
 				? ["min", "pts", "trb", "ast", "per"]
-				: ["gp", "keyStats", "av"]; // Take the pids and dpids in each offer and get the info needed to display the offer
+				: ["gp", "keyStats", "av"];
 
+		// Take the pids and dpids in each offer and get the info needed to display the offer
 		return Promise.all(
 			offers.map(async offer => {
 				const tid = offer.tid;
@@ -818,10 +822,12 @@ const handleUploadedDraftClass = async (
 	}
 
 	// Get all players from uploaded files
-	let players: any[] = uploadedFile.players; // Filter out any that are not draft prospects
+	let players: any[] = uploadedFile.players;
 
-	players = players.filter(p => p.tid === PLAYER.UNDRAFTED); // Handle draft format change in version 33, where PLAYER.UNDRAFTED has multiple draft classes
+	// Filter out any that are not draft prospects
+	players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
 
+	// Handle draft format change in version 33, where PLAYER.UNDRAFTED has multiple draft classes
 	if (uploadedFile.version !== undefined && uploadedFile.version >= 33) {
 		let filtered = players.filter(
 			p =>
@@ -923,8 +929,9 @@ const handleUploadedDraftClass = async (
 };
 
 const init = async (inputEnv: Env, conditions: Conditions) => {
-	Object.assign(env, inputEnv); // Kind of hacky, only run this for the first host tab
+	Object.assign(env, inputEnv);
 
+	// Kind of hacky, only run this for the first host tab
 	if (idb.meta === undefined) {
 		checkNaNs();
 		idb.meta = await connectMeta();
@@ -1006,7 +1013,7 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 		return "You must keep at least 5 players on your roster.";
 	}
 
-	const p = await idb.cache.players.get(pid); // Don't let the user update CPU-controlled rosters
+	const p = await idb.cache.players.get(pid);
 
 	if (p.tid !== g.get("userTid")) {
 		return "You aren't allowed to do this.";
@@ -1453,8 +1460,9 @@ const upsertCustomizedPlayer = async (
 	season: number,
 	updatedRatingsOrAge: boolean,
 ): Promise<number> => {
-	const r = p.ratings.length - 1; // Fix draft and ratings season
+	const r = p.ratings.length - 1;
 
+	// Fix draft and ratings season
 	if (p.tid === PLAYER.UNDRAFTED) {
 		if (p.draft.year < season) {
 			p.draft.year = season;
@@ -1542,8 +1550,9 @@ const upsertCustomizedPlayer = async (
 		}
 	}
 
-	p.relatives = relatives; // Save to database, adding pid if it doesn't already exist
+	p.relatives = relatives;
 
+	// Save to database, adding pid if it doesn't already exist
 	await idb.cache.players.put(p);
 
 	// @ts-ignore

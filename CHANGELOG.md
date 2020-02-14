@@ -94,7 +94,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2019-11-03: Fix errors that happened when editing a player's relatives.
 
-* 2019-11-02:  Fix team history pages for players with no ratings for a team, only stats (like for custom rosters with historical stats)
+* 2019-11-02: Fix team history pages for players with no ratings for a team, only stats (like for custom rosters with historical stats)
 
 * **2019-11-02: Multiple improvements to BBGM game simulation, mostly related to more realistic behavior in the play-by-play. [[1]](https://old.reddit.com/r/BasketballGM/comments/dqoc8u/game_simulation_improvements_beta/) [[2]](https://basketball-gm.com/blog/2019/11/game-simulation-ovr-beta/) [[3]](https://old.reddit.com/r/BasketballGM/comments/dtyef8/game_simulation_improvements_and_tweaks_to_ovr/)**
 

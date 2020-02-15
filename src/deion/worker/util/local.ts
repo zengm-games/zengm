@@ -1,10 +1,10 @@
-import { Local } from "../../common/types"; // These variables are transient and will be reset every refresh. See lock.js for more.
+import { Local } from "../../common/types";
 
+// These variables are transient and will be reset every refresh. See lock.js for more.
 const defaultLocal: Local = {
 	autoPlaySeasons: 0,
 	fantasyDraftResults: [],
-	goldUntil: Infinity,
-	// Default is to assume Gold, until told otherwise by server
+	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
 	leagueLoaded: false,
 	phaseText: "",
 	playerNames: undefined,
@@ -32,7 +32,8 @@ const local: Local & {
 		local.playerNames = defaultLocal.playerNames;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
 		local.statusText = defaultLocal.statusText;
-		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary; // Don't reset goldUntil because that persists across leagues. Probably it shouldn't be in this file, but should
+		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;
+		// Don't reset goldUntil because that persists across leagues. Probably it shouldn't be in this file, but should
 		// be somewhere else (like how g used to have some variables not persisted to database).
 	},
 };

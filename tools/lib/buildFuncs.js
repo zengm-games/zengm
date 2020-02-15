@@ -1,4 +1,3 @@
-const workboxBuild = require("workbox-build");
 const CleanCSS = require("clean-css");
 const crypto = require("crypto");
 const fs = require("fs");
@@ -6,7 +5,6 @@ const fse = require("fs-extra");
 const sass = require("node-sass");
 const path = require("path");
 const replace = require("replace");
-const Terser = require("terser");
 const getSport = require("./getSport");
 
 const buildCSS = (watch /*: boolean*/ = false) => {
@@ -86,23 +84,6 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 	}
 };
 
-// NOTE: This should be run *AFTER* all assets are built
-const buildSW = async () => {
-	const { count, size, warnings } = await workboxBuild.injectManifest({
-		swSrc: "public/sw.js",
-		swDest: "build/sw.js",
-		globDirectory: "build",
-		globPatterns: ["**/*.{js,css,html}", "fonts/*.woff2", "img/logos/*.png"],
-		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
-
-		// Changing default is only needed for unminified versions from watch-js
-		maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
-	});
-
-	warnings.forEach(console.warn);
-	console.log(`${count} files will be precached, totaling ${size} bytes.`);
-};
-
 const setSport = () => {
 	if (process.env.SPORT === "football") {
 		replace({
@@ -174,23 +155,6 @@ const genRev = () => {
 	return rev;
 };
 
-const minifyJS = (name /*: string */) => {
-	const data = fs.readFileSync(`build/${name}`, "utf8");
-
-	const result = Terser.minify(data, {
-		// Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
-		safari10: true,
-		sourceMap: {
-			content: "inline",
-			filename: `build/${name}`,
-			url: `${path.basename(name)}.map`,
-		},
-	});
-
-	fs.writeFileSync(`build/${name}`, result.code);
-	fs.writeFileSync(`build/${name}.map`, result.map);
-};
-
 const reset = () => {
 	fse.removeSync("build");
 	fs.mkdirSync("build/gen", { recursive: true });
@@ -250,10 +214,8 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 
 module.exports = {
 	buildCSS,
-	buildSW,
 	copyFiles,
 	genRev,
-	minifyJS,
 	reset,
 	setTimestamps,
 };

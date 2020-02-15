@@ -18,6 +18,7 @@ const Confirm = confirmable(
 		);
 		const inputRef = useRef<HTMLInputElement>(null);
 		const okRef = useRef<HTMLButtonElement>(null);
+
 		useEffect(() => {
 			// Ugly hack that became necessary when upgrading reactstrap from v6 to v8
 			setTimeout(() => {
@@ -28,6 +29,7 @@ const Confirm = confirmable(
 				}
 			}, 0);
 		}, []);
+
 		return (
 			<div>
 				<Modal fade={false} isOpen={show} toggle={cancel}>

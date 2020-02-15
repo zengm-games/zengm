@@ -154,18 +154,20 @@ const writeGameStats = async (
 	gameStats.lost.tid = results.team[tl].id;
 	gameStats.won.pts = results.team[tw].stat.pts;
 	gameStats.lost.pts = results.team[tl].stat.pts;
-	const tied = results.team[0].stat.pts === results.team[1].stat.pts; // Event log
+	const tied = results.team[0].stat.pts === results.team[1].stat.pts;
 
-	if (
-		tied &&
-		gameStats.teams[0].tied !== undefined &&
-		gameStats.teams[1].tied
-	) {
-		gameStats.teams[0].tied += 1;
-		gameStats.teams[1].tied += 1;
-	} else {
-		(gameStats.teams[tw] as any).won += 1;
-		(gameStats.teams[tl] as any).lost += 1;
+	if (g.get("phase") < PHASE.PLAYOFFS) {
+		if (
+			tied &&
+			gameStats.teams[0].tied !== undefined &&
+			gameStats.teams[1].tied
+		) {
+			gameStats.teams[0].tied += 1;
+			gameStats.teams[1].tied += 1;
+		} else {
+			(gameStats.teams[tw] as any).won += 1;
+			(gameStats.teams[tl] as any).lost += 1;
+		}
 	}
 
 	if (

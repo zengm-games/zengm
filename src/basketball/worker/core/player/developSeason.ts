@@ -76,7 +76,15 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 				return -2;
 			}
 
-			return -4;
+			if (age <= 35) {
+				return -3;
+			}
+
+			if (age <= 40) {
+				return -4;
+			}
+
+			return -8;
 		},
 		changeLimits: () => [-12, 2],
 	},
@@ -90,7 +98,15 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 				return -3;
 			}
 
-			return -5;
+			if (age <= 35) {
+				return -4;
+			}
+
+			if (age <= 40) {
+				return -5;
+			}
+
+			return -10;
 		},
 		changeLimits: () => [-12, 2],
 	},
@@ -104,11 +120,29 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 				return 0;
 			}
 
-			return -4;
+			if (age <= 35) {
+				return -2;
+			}
+
+			if (age <= 40) {
+				return -4;
+			}
+
+			return -8;
 		},
 		changeLimits: () => [-11, 19],
 	},
-	dnk: shootingFormula,
+	dnk: {
+		ageModifier: (age: number) => {
+			// Like shootingForumla, except for old players
+			if (age <= 27) {
+				return 0;
+			}
+
+			return 0.5;
+		},
+		changeLimits: () => [-3, 13],
+	},
 	ins: shootingFormula,
 	ft: shootingFormula,
 	fg: shootingFormula,
@@ -144,8 +178,12 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 		val = -2;
 	} else if (age <= 34) {
 		val = -3;
-	} else {
+	} else if (age <= 40) {
 		val = -4;
+	} else if (age <= 43) {
+		val = -5;
+	} else {
+		val = -6;
 	}
 
 	// Noise

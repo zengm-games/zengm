@@ -14,7 +14,7 @@ export type Env = {
 
 declare global {
 	interface Window {
-		TriggerPrompt: any;
+		TriggerPrompt: (a: string, b: string | number | undefined) => void;
 		bbgm: any; // Just for debugging
 		bbgmAds: any;
 		bbgmVersion: string;

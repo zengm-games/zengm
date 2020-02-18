@@ -39,13 +39,11 @@ async function updateSeasons(
 					ps => !ps.playoffs && ps.season === season,
 				);
 
-				if (stats.length === 0) {
-					continue;
-				}
-
 				for (const ps of stats) {
-					const min = minutesAll[ps.tid].get(p.pid) || 0;
-					minutesAll[ps.tid].set(p.pid, min + ps.min);
+					if (minutesAll[ps.tid]) {
+						const min = minutesAll[ps.tid].get(p.pid) || 0;
+						minutesAll[ps.tid].set(p.pid, min + ps.min);
+					}
 				}
 			}
 

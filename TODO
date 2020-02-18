@@ -1,3 +1,5 @@
+manifest.json for FBGM
+
 If you have extra playoff round, you'll be noticed about winning teams in semis, but not in finals
 
 Put games remaining back on the dashboard?
@@ -84,12 +86,6 @@ god mode options for tendencies
 - have them as sliders, where 50 means "no effect", 0 means "never happens", and 100 means "always". then blend those rates with the default rates behind the scenes
 - maybe redo foulRateFactor this way
 
-from @nicidob - a simple logistic retirement model for NBA is -2.85 + 0.142*Age - 0.96 * WS.  I tried adding PER but didn't get much out of it (its coefficient was 1/56th of WS, so 20 extra PER to equal 0.3WS? Might as well pull it)  (Adding GamesPlayed helped a little, it had a coefficient of about 1/43 of a WS... so -2.5 + 0.1425 * Age -0.0165 * G - 0.71 *WS)
-- maybe not perfect, since it combines "player chose to retire" and "no team signed player". but it does show that BBGM is too aggressive with old players retiring while still good
-- EstWS = (1/64) * max(Pot-40,0)^2
-- logit(Retire) = 0.3 + (1/146.35) * (max(Age-18,0)^2) - 0.961 * max(EstWS,WS)
-- at the same time, look at re-signing, particularly of players coming off rookie contracts. too often become FAs!
-
 illness @mattable#4273
 - pass to teammates or opponents
 - list of diseases, each with a different average length and probability to spread
@@ -142,6 +138,7 @@ button to randomize ratings on customize player screen
 
 zipped files @Jofish#5051
 - https://github.com/Stuk/jszip is a bit big
+- https://twitter.com/addyosmani/status/1228989899686260736 in Chrome 80
 
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?

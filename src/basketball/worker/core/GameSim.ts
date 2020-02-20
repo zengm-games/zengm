@@ -1482,11 +1482,6 @@ class GameSim {
 								case "threePointer":
 									shotType = "four-point play";
 									break;
-								// case where more than one free throw is needed to take the lead
-
-								case "ft":
-									shotType += "s";
-									break;
 
 								default:
 							}

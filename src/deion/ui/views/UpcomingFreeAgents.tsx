@@ -26,7 +26,7 @@ const UpcomingFreeAgents = ({
 		"Ovr",
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
-		"Current Contract",
+		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
 		"Desired Contract",
 	);
 
@@ -48,9 +48,14 @@ const UpcomingFreeAgents = ({
 				p.ratings.ovr,
 				p.ratings.pot,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				<>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</>,
+				...(phase === PHASE.RESIGN_PLAYERS
+					? []
+					: [
+							<>
+								{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
+								{p.contract.exp}
+							</>,
+					  ]),
 				<>
 					{helpers.formatCurrency(p.contractDesired.amount, "M")} thru{" "}
 					{p.contractDesired.exp}

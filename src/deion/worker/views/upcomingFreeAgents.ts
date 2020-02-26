@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common";
-import { player } from "../core";
+import { player, freeAgents } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import { ViewInput } from "../../common/types";
@@ -21,11 +21,17 @@ const updateUpcomingFreeAgents = async (
 					filter: p => p.contract.exp === inputs.season,
 			  }); // Done before filter so full player object can be passed to player.genContract.
 
-	for (let i = 0; i < players.length; i++) {
-		players[i].contractDesired = player.genContract(players[i], false, false); // No randomization
-
-		players[i].contractDesired.amount /= 1000;
-		players[i].contractDesired.exp += inputs.season - g.get("season");
+	for (const p of players) {
+		if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
+			p.contractDesired = {
+				amount: p.contract.amount / 1000,
+				exp: p.contract.exp,
+			};
+		} else {
+			p.contractDesired = player.genContract(p, false, false); // No randomization
+			p.contractDesired.amount /= 1000;
+			p.contractDesired.exp += inputs.season - g.get("season");
+		}
 	}
 
 	players = await idb.getCopies.playersPlus(players, {
@@ -47,6 +53,19 @@ const updateUpcomingFreeAgents = async (
 		showRookies: true,
 		fuzz: true,
 	});
+
+	// Apply mood
+	for (const p of players) {
+		p.contract.amount = freeAgents.amountWithMood(
+			p.contract.amount,
+			p.freeAgentMood[g.get("userTid")],
+		);
+		p.contractDesired.amount = freeAgents.amountWithMood(
+			p.contractDesired.amount,
+			p.freeAgentMood[g.get("userTid")],
+		);
+	}
+
 	return {
 		phase: g.get("phase"),
 		players,

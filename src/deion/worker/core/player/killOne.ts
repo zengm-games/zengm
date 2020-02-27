@@ -12,6 +12,7 @@ const killOne = async (conditions: Conditions) => {
 		"was stabbed to death by a jealous ex-girlfriend",
 		"committed suicide",
 		"died from a rapidly progressing case of ebola",
+		"died from a rapidly progressing coronavirus infection",
 		"was killed in a bar fight",
 		"died after falling out of his 13th floor hotel room",
 		"was shredded to bits by the team plane's propeller",

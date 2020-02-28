@@ -586,6 +586,25 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	stats: PlayerStats[];
 	statsTids: number[];
 	tid: number;
+	transactions?: (
+		| {
+				season: number;
+				phase: number;
+				type: "draft";
+				pickNum: number;
+		  }
+		| {
+				season: number;
+				phase: number;
+				type: "freeAgent";
+		  }
+		| {
+				season: number;
+				phase: number;
+				tid: number;
+				type: "trade";
+		  }
+	)[]; // Only optional cause I'm worried about upgrades
 	value: number;
 	valueNoPot: number;
 	valueFuzz: number;

@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-02-28: Added "Acquired" column to the roster, showing how the team acquired each of its players.
+
 * 2020-02-26: Upcoming Free Agents contracts factor in player mood, and the "Current Contract" column is not shown during the re-signing phase.
 
 * 2020-02-17: New retirement formula will allow rare old and good players to have longer careers.

@@ -1,5 +1,5 @@
 import groupBy from "lodash/groupBy";
-import { PLAYER } from "../../../common";
+import { PLAYER, PHASE } from "../../../common";
 import { player, trade } from "../../core";
 import { g, helpers, overrides } from "../../util";
 import {
@@ -209,6 +209,50 @@ const processAttrs = (
 			output.numSons = p.relatives.filter(rel => rel.type === "son").length;
 		} else if (attr === "numAllStar") {
 			output.numAllStar = p.awards.filter(a => a.type === "All-Star").length;
+		} else if (attr === "latestTransaction") {
+			let transaction;
+			if (p.transactions && p.transactions.length > 0) {
+				if (season === undefined || season >= g.get("season")) {
+					transaction = p.transactions[p.transactions.length - 1];
+				} else {
+					// Iterate over transactions backwards, find most recent one that was before the supplied season
+					for (let i = p.transactions.length - 1; i >= 0; i--) {
+						if (
+							p.transactions[i].season < season ||
+							(p.transactions[i].season === season &&
+								p.transactions[i].phase <= PHASE.PLAYOFFS)
+						) {
+							transaction = p.transactions[i];
+						}
+					}
+				}
+			}
+
+			if (transaction) {
+				if (transaction.type === "draft") {
+					const draftName =
+						transaction.phase === PHASE.FANTASY_DRAFT
+							? `${transaction.season} fantasy draft`
+							: `${transaction.season} draft`;
+
+					output.latestTransaction = `${helpers.ordinal(
+						// @ts-ignore
+						transaction.pickNum,
+					)} pick in the <a href="${helpers.leagueUrl([
+						"draft_history",
+						transaction.season,
+					])}">${draftName}</a>`;
+				} else if (transaction.type === "freeAgent") {
+					output.latestTransaction = `Free agent signing in ${transaction.season}`;
+				} else if (transaction.type === "trade") {
+					output.latestTransaction = `Trade with ${
+						// @ts-ignore
+						g.get("teamAbbrevsCache")[transaction.tid]
+					} in ${transaction.season}`;
+				}
+			} else {
+				output.latestTransaction = "";
+			}
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
 			// @ts-ignore

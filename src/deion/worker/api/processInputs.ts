@@ -58,7 +58,7 @@ export const validateSeason = (season?: number | string): number => {
 const account = (params: Params, ctxBBGM: any) => {
 	return {
 		goldMessage: ctxBBGM.goldResult ? ctxBBGM.goldResult.message : undefined,
-		goldSuccess: ctxBBGM.goldResult ? ctxBBGM.goldResult.success : undefined,
+		goldSuccess: ctxBBGM.goldResult ? !!ctxBBGM.goldResult.success : undefined,
 	};
 };
 

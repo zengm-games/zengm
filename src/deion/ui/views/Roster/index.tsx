@@ -8,6 +8,7 @@ import {
 	PlayerNameLabels,
 	RatingWithChange,
 	SortableTable,
+	SafeHtml,
 } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
@@ -228,6 +229,7 @@ const Roster = ({
 							</th>
 						) : null}
 						{showTradeFor ? <th>Trade For</th> : null}
+						<th>Acquired</th>
 					</>
 				)}
 				row={({ value: p }) => (
@@ -304,6 +306,9 @@ const Roster = ({
 								</button>
 							</td>
 						) : null}
+						<td>
+							<SafeHtml dirty={p.latestTransaction} />
+						</td>
 					</>
 				)}
 			/>

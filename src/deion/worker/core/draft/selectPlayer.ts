@@ -88,12 +88,24 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		player.addStatsRow(p, g.get("nextPhase") === PHASE.PLAYOFFS);
 	}
 
-	await idb.cache.players.put(p);
-	await idb.cache.draftPicks.delete(dp.dpid);
+	const pickNum = dp.pick + (dp.round - 1) * g.get("numTeams");
 	const draftName =
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? `${g.get("season")} fantasy draft`
 			: `${g.get("season")} draft`;
+
+	if (!p.transactions) {
+		p.transactions = [];
+	}
+	p.transactions.push({
+		season: g.get("season"),
+		phase: g.get("phase"),
+		type: "draft",
+		pickNum,
+	});
+
+	await idb.cache.players.put(p);
+	await idb.cache.draftPicks.delete(dp.dpid);
 	logEvent({
 		type: "draft",
 		text: `The <a href="${helpers.leagueUrl([
@@ -105,7 +117,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${
 			p.firstName
 		} ${p.lastName}</a> with the ${helpers.ordinal(
-			dp.pick + (dp.round - 1) * g.get("numTeams"),
+			pickNum,
 		)} pick in the <a href="${helpers.leagueUrl([
 			"draft_history",
 			g.get("season"),

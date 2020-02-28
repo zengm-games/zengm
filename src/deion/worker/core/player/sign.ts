@@ -43,6 +43,17 @@ const sign = (
 		pids: [p.pid],
 		tids: [p.tid],
 	});
+
+	if (!resigning) {
+		if (!p.transactions) {
+			p.transactions = [];
+		}
+		p.transactions.push({
+			season: g.get("season"),
+			phase: g.get("phase"),
+			type: "freeAgent",
+		});
+	}
 };
 
 export default sign;

@@ -55,6 +55,16 @@ const processTrade = async (
 				player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 			}
 
+			if (!p.transactions) {
+				p.transactions = [];
+			}
+			p.transactions.push({
+				season: g.get("season"),
+				phase: g.get("phase"),
+				tid: tids[j],
+				type: "trade",
+			});
+
 			await idb.cache.players.put(p);
 		}
 

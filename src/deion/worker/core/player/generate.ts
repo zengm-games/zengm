@@ -65,6 +65,7 @@ const generate = (
 		stats: [],
 		statsTids: [],
 		tid,
+		transactions: [],
 		watch: false,
 		weight,
 		yearsFreeAgent: 0,

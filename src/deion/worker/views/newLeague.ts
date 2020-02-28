@@ -23,7 +23,7 @@ const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
 		.transaction("leagues")
 		.store.openCursor(undefined, "prev");
 	if (cursor) {
-		newLid = cursor.value.lid;
+		newLid = cursor.value.lid + 1;
 	}
 
 	if (newLid === undefined) {

@@ -1,11 +1,15 @@
-"Acquired" column in roster page, with things like "Free agent in 2020" or "4th draft pick in 2025" or "Trade in 2025"
-- https://mail.google.com/mail/u/0/#inbox/FMfcgxwGDWrhntgFfrkWDKsmqvhNNRhT
-
-less fatigue in playoffs
-- benchmark playoff performance (seed upsets)
+more dynamic contracts, based on available cap space
+- things this would enable
+  - sliders to control talent levels
+  - @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
 god mode option to set rookie contract length
 - @fowad#9672
+
+if earned achievement but blocked due to god mode in past or easy difficulty, still send notification explaining that
+
+less fatigue in playoffs
+- benchmark playoff performance (seed upsets)
 
 error if cid/did mismatch on imported team
 - tell nicidob when i do this

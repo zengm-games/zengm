@@ -13,7 +13,7 @@ const Select = ({
 	value: number | string;
 }) => {
 	const options = useDropdownOptions(field);
-	const [width, setWidth] = useState();
+	const [width, setWidth] = useState<number | undefined>();
 	useEffect(() => {
 		let currentValue;
 

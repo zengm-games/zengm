@@ -143,7 +143,7 @@ const TBody = SortableContainer(
 // @ts-ignore
 TBody.propTypes = {
 	disabled: PropTypes.bool,
-	highlightHandle: PropTypes.func,
+	highlightHandle: PropTypes.func.isRequired,
 	isDragged: PropTypes.bool.isRequired,
 	row: PropTypes.func.isRequired,
 	rowClassName: PropTypes.func,

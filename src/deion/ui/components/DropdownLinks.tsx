@@ -56,7 +56,7 @@ const TopMenuDropdown = ({
 	children: React.ReactNode;
 	long: string;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
-	openID: string;
+	openID?: string;
 	short: string;
 }) => {
 	const toggle = useCallback(event => onToggle(long, event), [long, onToggle]);
@@ -133,7 +133,7 @@ const MenuItem = ({
 	lid?: number;
 	menuItem: MenuItemLink | MenuItemHeader;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
-	openID: string;
+	openID?: string;
 	root: boolean;
 }) => {
 	if (!menuItem.league && lid !== undefined) {
@@ -233,7 +233,7 @@ type DropdownLinksProps = {
 
 const DropdownLinks = React.memo(
 	({ className, godMode, lid, menuItems }: DropdownLinksProps) => {
-		const [openID, setOpenID] = useState();
+		const [openID, setOpenID] = useState<string | undefined>();
 		const handleTopMenuToggle = useCallback(
 			(id: string, event: MouseEvent<HTMLAnchorElement>) => {
 				if (event.currentTarget && event.currentTarget.focus) {

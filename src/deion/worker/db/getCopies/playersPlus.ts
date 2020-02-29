@@ -233,15 +233,15 @@ const processAttrs = (
 					const draftName =
 						transaction.phase === PHASE.FANTASY_DRAFT
 							? `${transaction.season} fantasy draft`
-							: `${transaction.season} draft`;
+							: `<a href="${helpers.leagueUrl([
+									"draft_history",
+									transaction.season,
+							  ])}">${transaction.season} draft</a>`;
 
 					output.latestTransaction = `${helpers.ordinal(
 						// @ts-ignore
 						transaction.pickNum,
-					)} pick in the <a href="${helpers.leagueUrl([
-						"draft_history",
-						transaction.season,
-					])}">${draftName}</a>`;
+					)} pick in the ${draftName}`;
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
@@ -249,6 +249,8 @@ const processAttrs = (
 						// @ts-ignore
 						g.get("teamAbbrevsCache")[transaction.tid]
 					} in ${transaction.season}`;
+				} else if (transaction.type === "godMode") {
+					output.latestTransaction = `God Mode in ${transaction.season}`;
 				}
 			} else {
 				output.latestTransaction = "";

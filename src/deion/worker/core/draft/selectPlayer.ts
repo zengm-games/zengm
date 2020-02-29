@@ -92,7 +92,10 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	const draftName =
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? `${g.get("season")} fantasy draft`
-			: `${g.get("season")} draft`;
+			: `<a href="${helpers.leagueUrl([
+					"draft_history",
+					g.get("season"),
+			  ])}">${g.get("season")} draft</a>`;
 
 	if (!p.transactions) {
 		p.transactions = [];
@@ -118,10 +121,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			p.firstName
 		} ${p.lastName}</a> with the ${helpers.ordinal(
 			pickNum,
-		)} pick in the <a href="${helpers.leagueUrl([
-			"draft_history",
-			g.get("season"),
-		])}">${draftName}</a>.`,
+		)} pick in the ${draftName}.`,
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],

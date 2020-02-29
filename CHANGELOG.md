@@ -8,7 +8,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-02-26: Upcoming Free Agents contracts factor in player mood, and the "Current Contract" column is not shown during the re-signing phase.
 
-* 2020-02-17: New retirement formula will allow rare old and good players to have longer careers.
+* 2020-02-17: New retirement formula in BBGM will allow rare old and good players to have longer careers.
 
 * 2020-02-13: Redesigned schedule listings to include team logos, team records, team overall ratings, and the predicted point spread. [[1]](https://old.reddit.com/r/BasketballGM/comments/f3izh4/new_in_version_202002131405_redesigned_schedule/) [[2]](https://old.reddit.com/r/Football_GM/comments/f3j0in/new_in_version_202002131406_redesigned_schedule/)
 

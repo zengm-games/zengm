@@ -601,8 +601,13 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		| {
 				season: number;
 				phase: number;
-				tid: number;
 				type: "trade";
+				tid: number;
+		  }
+		| {
+				season: number;
+				phase: number;
+				type: "godMode";
 		  }
 	)[]; // Only optional cause I'm worried about upgrades
 	value: number;

@@ -1532,6 +1532,17 @@ const upsertCustomizedPlayer = async (
 		player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 	}
 
+	if (p.tid >= 0 && p.tid !== originalTid) {
+		if (!p.transactions) {
+			p.transactions = [];
+		}
+		p.transactions.push({
+			season: g.get("season"),
+			phase: g.get("phase"),
+			type: "godMode",
+		});
+	}
+
 	// Fill in player names for relatives
 	const relatives: Relative[] = [];
 

@@ -51,6 +51,7 @@ const sign = (
 		p.transactions.push({
 			season: g.get("season"),
 			phase: g.get("phase"),
+			tid: p.tid,
 			type: "freeAgent",
 		});
 	}

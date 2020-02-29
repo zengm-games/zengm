@@ -55,7 +55,7 @@ const awardsOrder = [
 const processAttrs = (
 	output: PlayerFiltered,
 	p: Player,
-	{ attrs, fuzz, numGamesRemaining, season }: PlayersPlusOptionsRequired,
+	{ attrs, fuzz, numGamesRemaining, season, tid }: PlayersPlusOptionsRequired,
 ) => {
 	const getSalary = () => {
 		let total = 0;
@@ -217,6 +217,10 @@ const processAttrs = (
 				} else {
 					// Iterate over transactions backwards, find most recent one that was before the supplied season
 					for (let i = p.transactions.length - 1; i >= 0; i--) {
+						if (tid !== undefined && p.transactions[i].tid !== tid) {
+							continue;
+						}
+
 						if (
 							p.transactions[i].season < season ||
 							(p.transactions[i].season === season &&
@@ -245,10 +249,13 @@ const processAttrs = (
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
-					output.latestTransaction = `Trade with ${
-						// @ts-ignore
-						g.get("teamAbbrevsCache")[transaction.tid]
-					} in ${transaction.season}`;
+					// @ts-ignore
+					const abbrev = g.get("teamAbbrevsCache")[transaction.fromTid];
+					output.latestTransaction = `Trade with <a href="${helpers.leagueUrl([
+						"roster",
+						abbrev,
+						transaction.season,
+					])}">${abbrev} in ${transaction.season}</a>`;
 				} else if (transaction.type === "godMode") {
 					output.latestTransaction = `God Mode in ${transaction.season}`;
 				}

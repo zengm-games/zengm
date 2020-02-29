@@ -103,6 +103,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	p.transactions.push({
 		season: g.get("season"),
 		phase: g.get("phase"),
+		tid: p.tid,
 		type: "draft",
 		pickNum,
 	});

@@ -61,8 +61,9 @@ const processTrade = async (
 			p.transactions.push({
 				season: g.get("season"),
 				phase: g.get("phase"),
-				tid: tids[j],
+				tid: p.tid,
 				type: "trade",
+				fromTid: tids[j],
 			});
 
 			await idb.cache.players.put(p);

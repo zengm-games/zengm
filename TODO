@@ -1,12 +1,5 @@
 "Acquired" column in roster page, with things like "Free agent in 2020" or "4th draft pick in 2025" or "Trade in 2025"
 - https://mail.google.com/mail/u/0/#inbox/FMfcgxwGDWrhntgFfrkWDKsmqvhNNRhT
-- blog
-  - user feedback
-  - not retroactive
-  - always blank in new league (so you can distinguish players you acquired vs ones you got at beginning of league)
-  - changes
-- what if player is traded multiple times in one season? all his teams will show the last transaction
-  - store in stats row!
 
 less fatigue in playoffs
 - benchmark playoff performance (seed upsets)
@@ -17,6 +10,10 @@ god mode option to set rookie contract length
 error if cid/did mismatch on imported team
 - tell nicidob when i do this
 - better - set cid on import, and log warning to console
+
+add player who tackled to play by play
+- Nate Oor Completed to pass to Jake buttham (Tackle by Shaun boof)
+- https://discordapp.com/channels/@me/625036115497451609
 
 in watchlist, if you have a player play the prior  year's playoffs and then they get an injury that keeps them out of the playoffs, it displays last year's playoff stats
 - https://cdn.discordapp.com/attachments/290015591216054273/679836680420589690/unknown.png

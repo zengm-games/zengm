@@ -44,7 +44,13 @@ const sign = (
 		tids: [p.tid],
 	});
 
-	if (!resigning) {
+	const isRookie =
+		g.get("hardCap") &&
+		p.stats.length === 0 &&
+		p.draft.year === g.get("season") &&
+		p.draft.tid === p.tid;
+	const freeAgent = !resigning && !isRookie;
+	if (freeAgent) {
 		if (!p.transactions) {
 			p.transactions = [];
 		}

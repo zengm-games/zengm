@@ -28,26 +28,21 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 	}
 };
 
-const keyCodes = {
-	"65": "a",
-	"68": "d",
-	"76": "l",
-	"77": "m",
-	"80": "p",
-	"83": "s",
-	"87": "w",
-	"89": "y",
-};
-
 const PlayMenu = ({ lid, options }: Props) => {
 	useEffect(() => {
 		const handleKeyup = (event: KeyboardEvent) => {
 			// alt + letter
-			if (event.altKey && keyCodes.hasOwnProperty(event.keyCode)) {
+			if (
+				event.altKey &&
+				!event.ctrlKey &&
+				!event.shiftKey &&
+				!event.isComposing &&
+				!event.metaKey
+			) {
 				const option = options.find(
 					// https://github.com/microsoft/TypeScript/issues/21732
 					// @ts-ignore
-					option2 => option2.key === keyCodes[event.keyCode],
+					option2 => option2.key === event.key,
 				);
 
 				if (!option) {

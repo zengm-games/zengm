@@ -123,7 +123,8 @@ const updatePlayoffSeries = async (
 			const showNotification =
 				series.away.tid === g.get("userTid") ||
 				series.home.tid === g.get("userTid") ||
-				playoffSeries.currentRound === 3;
+				playoffSeries.currentRound ===
+					g.get("numGamesPlayoffSeries").length - 1;
 			logEvent(
 				{
 					type: "playoffs",

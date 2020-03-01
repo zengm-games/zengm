@@ -35,6 +35,7 @@ const useTitleBar = ({
 		teamNamesCache: state2.teamNamesCache,
 		teamRegionsCache: state2.teamRegionsCache,
 	}));
+
 	useEffect(() => {
 		const parts: string[] = [];
 
@@ -61,7 +62,20 @@ const useTitleBar = ({
 
 		document.title = parts.join(" » ");
 	}, [dropdownFields, state, title]);
-	localActions.update({
+
+	useEffect(() => {
+		localActions.update({
+			title,
+			hideNewWindow,
+			jumpTo,
+			jumpToSeason,
+			dropdownExtraParam,
+			dropdownView,
+			dropdownFields,
+			moreInfoAbbrev,
+			moreInfoSeason,
+		});
+	}, [
 		title,
 		hideNewWindow,
 		jumpTo,
@@ -71,7 +85,7 @@ const useTitleBar = ({
 		dropdownFields,
 		moreInfoAbbrev,
 		moreInfoSeason,
-	});
+	]);
 };
 
 export default useTitleBar;

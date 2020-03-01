@@ -57,8 +57,7 @@ const [useLocal, local] = create<
 	actions: {
 		// Reset any values specific to a league
 		resetLeague() {
-			set(state => ({
-				...state,
+			set({
 				godMode: false,
 				lid: undefined,
 				leagueName: "",
@@ -74,11 +73,11 @@ const [useLocal, local] = create<
 				teamRegionsCache: [],
 				userTid: 0,
 				userTids: [],
-			}));
+			});
 		},
 
 		toggleSidebar() {
-			set(state => ({ ...state, sidebarOpen: !state.sidebarOpen }));
+			set(state => ({ sidebarOpen: !state.sidebarOpen }));
 		},
 
 		update(obj: Partial<LocalStateUI>) {
@@ -86,7 +85,7 @@ const [useLocal, local] = create<
 				obj.units = defaultUnits;
 			}
 
-			set(state => ({ ...state, ...obj }));
+			set(obj);
 		},
 
 		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {

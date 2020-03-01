@@ -339,7 +339,6 @@ const Account = ({
 			</>
 		);
 	}
-	console.log("goldSuccess", goldSuccess);
 
 	return (
 		<>

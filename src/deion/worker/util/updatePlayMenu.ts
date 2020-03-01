@@ -178,6 +178,12 @@ const updatePlayMenu = async () => {
 		} else {
 			keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];
 		}
+
+		// If playoff contains no rounds with more than one game, then untilEndOfRound is not needed
+		const maxGames = Math.max(...g.get("numGamesPlayoffSeries"));
+		if (maxGames <= 1) {
+			keys = keys.filter(key => key !== "untilEndOfRound");
+		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		// Offseason - pre draft
 		keys =

@@ -1,3 +1,7 @@
+player page UI improvements https://old.reddit.com/r/BasketballGM/comments/fbja8g/more_ideas/
+- deltas for ratings at the top
+- highlight ratings based on comparison to position average (maybe like popover)
+
 more dynamic contracts, based on available cap space
 - things this would enable
   - sliders to control talent levels

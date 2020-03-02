@@ -101,8 +101,8 @@ const setSport = () => {
 
 		// lol
 		replace({
-			regex: "football-gm.com/bbgm-ads",
-			replacement: "basketball-gm.com/bbgm-ads",
+			regex: "football-gm.com/prebid",
+			replacement: "basketball-gm.com/prebid",
 			paths: ["build/index.html"],
 			silent: true,
 		});

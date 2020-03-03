@@ -155,6 +155,7 @@ redo mood system
   - have deterministic noise, so it can be recomputed constantly as the situation changes
 - make it impossible to refuse to re-sign to title winner (really)
 - loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
 
 SW stuff
 - dynamic rather than precache like https://github.com/GoogleChromeLabs/proxx/blob/master/src/sw/index.ts maybe

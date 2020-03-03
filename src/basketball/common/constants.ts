@@ -112,6 +112,10 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 			cutoff: 0.63,
 		},
 	},
+	jumpBall: {
+		ratings: ["hgt", "jmp"],
+		weights: [1, 0.25],
+	},
 };
 const PLAYER_STATS_TABLES = {
 	regular: {

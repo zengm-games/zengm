@@ -16,6 +16,7 @@ type PlayType =
 	| "foulOut"
 	| "ft"
 	| "injury"
+	| "jumpBall"
 	| "missAtRim"
 	| "missFt"
 	| "missLowPost"
@@ -67,7 +68,8 @@ type CompositeRating =
 	| "rebounding"
 	| "stealing"
 	| "turnovers"
-	| "usage";
+	| "usage"
+	| "jumpBall";
 type PlayerGameSim = {
 	id: number;
 	name: string;
@@ -355,10 +357,42 @@ class GameSim {
 		return out;
 	}
 
+	jumpBall() {
+		const jumpers = ([0, 1] as const).map(t => {
+			const ratios = this.ratingArray("jumpBall", t);
+			const maxRatio = Math.max(...ratios);
+			let ind = ratios.findIndex(ratio => ratio === maxRatio);
+			if (ind === undefined) {
+				ind = 0;
+			}
+			return this.playersOnCourt[t][ind];
+		});
+		const prob =
+			0.5 *
+			(this.team[0].player[jumpers[0]].compositeRating.jumpBall /
+				this.team[1].player[jumpers[1]].compositeRating.jumpBall) **
+				3;
+
+		// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
+		this.o = Math.random() < prob ? 1 : 0;
+		this.d = this.o === 0 ? 1 : 0;
+		this.recordPlay("jumpBall", this.d, [
+			this.team[this.d].player[jumpers[this.d]].name,
+		]);
+		return this.d;
+	}
+
 	simRegulation() {
 		let quarter = 1;
+		const wonJump = this.jumpBall();
 
 		while (true) {
+			if (quarter === 3) {
+				// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
+				this.o = wonJump === 0 ? 0 : 1;
+				this.d = this.o === 0 ? 1 : 0;
+			}
+
 			while (this.t > 0) {
 				this.simPossession();
 			}
@@ -387,8 +421,7 @@ class GameSim {
 		this.team[0].stat.ptsQtrs.push(0);
 		this.team[1].stat.ptsQtrs.push(0);
 		this.recordPlay("overtime");
-		this.o = Math.random() < 0.5 ? 0 : 1;
-		this.d = this.o === 0 ? 1 : 0;
+		this.jumpBall();
 
 		while (this.t > 0) {
 			this.simPossession();
@@ -1816,6 +1849,8 @@ class GameSim {
 				texts = ["{0} fouled out"];
 			} else if (type === "sub") {
 				texts = ["Substitution: {0} for {1}"];
+			} else if (type === "jumpBall") {
+				texts = ["{0} won the jump ball"];
 			}
 
 			if (texts) {

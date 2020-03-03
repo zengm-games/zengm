@@ -4,7 +4,7 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-03-02: Added jump balls to BBGM game sim at the beginning of each game and overtime period, based on height and jumping ratings.
+* 2020-03-02: Added jump balls to BBGM game sim at the beginning of each game and overtime period, based on height and jumping ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/fcoq8i/big_news_jump_balls_are_based_on_height_and/)
 
 * 2020-02-28: Added "Acquired" column to the roster, showing how the team acquired each of its players. [[1]](https://basketball-gm.com/blog/2020/02/acquired-column-roster/) [[2]](https://old.reddit.com/r/BasketballGM/comments/fbe13e/new_in_version_202002290926_acquired_column_on/) [[3]](https://old.reddit.com/r/Football_GM/comments/fbe2du/new_in_version_202002290927_acquired_column_on/)
 

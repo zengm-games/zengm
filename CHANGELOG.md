@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-03-03: New God Mode option to set rookie contract lengths. [[1]](https://old.reddit.com/r/BasketballGM/comments/fd1qi3/new_in_version_202003031279_god_mode_option_to/)
+
 * 2020-03-03: Added new Countries frivolity to show which countries have the best players, similar to the existing Colleges frivolity. [[1]](https://old.reddit.com/r/BasketballGM/comments/fczv7r/tools_frivolities_countries_in_version/)
 
 * 2020-03-02: Added jump balls to BBGM game sim at the beginning of each game and overtime period, based on height and jumping ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/fcoq8i/big_news_jump_balls_are_based_on_height_and/)

@@ -575,6 +575,13 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						},
+						rookieContractLengths: {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+							minItems: 1,
+						},
 						salaryCap: {
 							type: "integer",
 							minimum: 0,

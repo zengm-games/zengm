@@ -14,9 +14,6 @@ more dynamic contracts, based on available cap space
   - sliders to control talent levels
   - @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
-god mode option to set rookie contract length
-- @fowad#9672
-
 if earned achievement but blocked due to god mode in past or easy difficulty, still send notification explaining that
 
 less fatigue in playoffs

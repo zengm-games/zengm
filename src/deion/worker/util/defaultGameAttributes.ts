@@ -88,6 +88,7 @@ const defaultGameAttributes: GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: 4,
 	foulRateFactor: 1,
 	foulsNeededToFoulOut: 6,
+	rookieContractLengths: [3, 2],
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

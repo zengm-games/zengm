@@ -31,6 +31,7 @@ type Key =
 	| "brotherRate"
 	| "sonRate"
 	| "homeCourtAdvantage"
+	| "rookieContractLengths"
 	| "allStarGame"
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut";
@@ -96,8 +97,8 @@ const options: {
 		helpText: (
 			<>
 				Specify the number of games in each round. You must enter a valid JSON
-				array of integers. For example, enter <code>[5, 7, 1]</code> for a 5
-				game first round series, a 7 game second round series, and a single
+				array of integers. For example, enter <code>[5,7,1]</code> for a 5 game
+				first round series, a 7 game second round series, and a single
 				winner-takes-all final game.
 			</>
 		),
@@ -358,6 +359,45 @@ const options: {
 		decoration: "percent",
 		helpText:
 			"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
+	},
+	{
+		category: "Finance",
+		key: "rookieContractLengths",
+		name: "Rookie Contract Lengths",
+		helpText: (
+			<>
+				<p>
+					Specify the length of rookie contracts. Different rounds can have
+					different lengths. The default is for first round picks to have 3 year
+					contracts and second round picks to have 2 year contracts, which looks
+					like: <code>[3,2]</code>. If you want every rookie contract to have
+					the same length regardless of round, just set one number like{" "}
+					<code>[2]</code> - this works because it uses the last value specified
+					here for any rounds where you don't define contract length.
+				</p>
+				<p>
+					This only applies if the <b>hard cap option is disabled</b>.
+				</p>
+			</>
+		),
+		type: "jsonString",
+		validator: (value, output, props) => {
+			if (!Array.isArray(value)) {
+				throw new Error("Must be an array");
+			}
+			for (const num of value) {
+				if (!Number.isInteger(num)) {
+					throw new Error("Array must contain only integers");
+				}
+			}
+			const numRounds = value.length;
+			const numPlayoffTeams = 2 ** numRounds - output.numPlayoffByes;
+			if (numPlayoffTeams > props.numTeams) {
+				throw new Error(
+					`${numRounds} playoff rounds with ${output.numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${props.numTeams} teams in the league`,
+				);
+			}
+		},
 	},
 ];
 
@@ -663,6 +703,7 @@ GodModeOptions.propTypes = {
 	tragicDeathRate: PropTypes.number.isRequired,
 	brotherRate: PropTypes.number.isRequired,
 	homeCourtAdvantage: PropTypes.number.isRequired,
+	rookieContractLengths: PropTypes.number.isRequired,
 	sonRate: PropTypes.number.isRequired,
 	hardCap: PropTypes.bool.isRequired,
 	numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,

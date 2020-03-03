@@ -65,7 +65,16 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		} else {
 			const rookieSalaries = getRookieSalaries();
 			const i = dp.pick - 1 + g.get("numTeams") * (dp.round - 1);
-			const years = 4 - dp.round; // 2 years for 2nd round, 3 years for 1st round;
+
+			let years = g.get("rookieContractLengths")[dp.round - 1];
+			if (years === undefined) {
+				years = g.get("rookieContractLengths")[
+					g.get("rookieContractLengths").length - 1
+				];
+			}
+			if (years === undefined) {
+				years = 2;
+			}
 
 			player.setContract(
 				p,

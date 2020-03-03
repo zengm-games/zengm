@@ -236,6 +236,7 @@ export type GameAttributesLeague = {
 	phase: Phase;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
+	rookieContractLengths: number[];
 	salaryCap: number;
 	season: number;
 	sonRate: number;

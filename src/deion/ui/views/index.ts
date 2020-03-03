@@ -5,6 +5,7 @@ import AccountUpdateCard from "./AccountUpdateCard";
 import AwardsRecords from "./AwardsRecords";
 import Changes from "./Changes";
 import Colleges from "./Colleges";
+import Countries from "./Countries";
 import CustomizePlayer from "./CustomizePlayer";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
@@ -79,6 +80,7 @@ export default {
 	AwardsRecords,
 	Changes,
 	Colleges,
+	Countries,
 	CustomizePlayer,
 	DangerZone,
 	Dashboard,

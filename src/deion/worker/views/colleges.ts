@@ -1,8 +1,9 @@
 import { idb, iterate } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import { UpdateEvents, Player } from "../../common/types";
+import { isAmerican } from "../../../basketball/worker/util/achievements";
 
-type CollegeInfoTemp = {
+type InfoTemp = {
 	numPlayers: number;
 	numActivePlayers: number;
 	numHof: number;
@@ -16,11 +17,29 @@ type CollegeInfoTemp = {
 
 const valueStatName = process.env.SPORT === "basketball" ? "ewa" : "av";
 
-const reducer = (colleges: { [key: string]: CollegeInfoTemp }, p: Player) => {
-	const name = p.college && p.college !== "" ? p.college : "None";
+const reducer = (
+	type: "college" | "country",
+	infos: { [key: string]: InfoTemp },
+	p: Player,
+) => {
+	let name;
+	if (type === "college") {
+		name = p.college && p.college !== "" ? p.college : "None";
+	} else {
+		name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
 
-	if (!colleges[name]) {
-		colleges[name] = {
+		if (isAmerican(name)) {
+			name = "USA";
+		} else {
+			const parts = name.split(", ");
+			if (parts.length > 1) {
+				name = parts[parts.length - 1];
+			}
+		}
+	}
+
+	if (!infos[name]) {
+		infos[name] = {
 			numPlayers: 0,
 			numActivePlayers: 0,
 			numHof: 0,
@@ -33,13 +52,13 @@ const reducer = (colleges: { [key: string]: CollegeInfoTemp }, p: Player) => {
 		};
 	}
 
-	const college = colleges[name];
-	college.numPlayers += 1;
+	const info = infos[name];
+	info.numPlayers += 1;
 	if (p.tid >= 0) {
-		college.numActivePlayers += 1;
+		info.numActivePlayers += 1;
 	}
 	if (p.hof) {
-		college.numHof += 1;
+		info.numHof += 1;
 	}
 
 	let valueStat = 0;
@@ -52,63 +71,65 @@ const reducer = (colleges: { [key: string]: CollegeInfoTemp }, p: Player) => {
 		}
 	}
 
-	college.gp += gp;
-	college.valueStat += valueStat;
-	if (valueStat >= college.best.valueStat) {
-		college.best = {
+	info.gp += gp;
+	info.valueStat += valueStat;
+	if (valueStat >= info.best.valueStat) {
+		info.best = {
 			p,
 			valueStat,
 		};
 	}
 };
 
-const updateColleges = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-	if (updateEvents.includes("firstRun")) {
-		const valueStat = process.env.SPORT === "basketball" ? "ws" : "av";
-		const stats =
-			process.env.SPORT === "basketball"
-				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
-				: ["keyStats", "av"];
+export const genView = (type: "college" | "country") => {
+	return async (inputs: unknown, updateEvents: UpdateEvents) => {
+		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
+		if (updateEvents.includes("firstRun")) {
+			const valueStat = process.env.SPORT === "basketball" ? "ws" : "av";
+			const stats =
+				process.env.SPORT === "basketball"
+					? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
+					: ["keyStats", "av"];
 
-		const collegesTemp: { [key: string]: CollegeInfoTemp } = {};
-		await iterate(
-			idb.league.transaction("players").store,
-			undefined,
-			undefined,
-			p => {
-				reducer(collegesTemp, p);
-			},
-		);
+			const infosTemp: { [key: string]: InfoTemp } = {};
+			await iterate(
+				idb.league.transaction("players").store,
+				undefined,
+				undefined,
+				p => {
+					reducer(type, infosTemp, p);
+				},
+			);
 
-		const colleges = await Promise.all(
-			Object.entries(collegesTemp).map(async ([name, info]) => {
-				const p = await idb.getCopy.playersPlus(info.best.p, {
-					attrs: ["pid", "name", "draft", "retiredYear", "statsTids", "hof"],
-					ratings: ["ovr", "pos"],
-					stats: ["season", "abbrev", "tid", ...stats],
-					fuzz: true,
-				});
+			const infos = await Promise.all(
+				Object.entries(infosTemp).map(async ([name, info]) => {
+					const p = await idb.getCopy.playersPlus(info.best.p, {
+						attrs: ["pid", "name", "draft", "retiredYear", "statsTids", "hof"],
+						ratings: ["ovr", "pos"],
+						stats: ["season", "abbrev", "tid", ...stats],
+						fuzz: true,
+					});
 
-				return {
-					name,
-					numPlayers: info.numPlayers,
-					numActivePlayers: info.numActivePlayers,
-					numHof: info.numHof,
-					gp: info.gp,
-					valueStat: info.valueStat,
-					p: processPlayersHallOfFame([p])[0],
-				};
-			}),
-		);
+					return {
+						name,
+						numPlayers: info.numPlayers,
+						numActivePlayers: info.numActivePlayers,
+						numHof: info.numHof,
+						gp: info.gp,
+						valueStat: info.valueStat,
+						p: processPlayersHallOfFame([p])[0],
+					};
+				}),
+			);
 
-		return {
-			colleges,
-			stats,
-			userTid: g.get("userTid"),
-			valueStat,
-		};
-	}
+			return {
+				infos,
+				stats,
+				userTid: g.get("userTid"),
+				valueStat,
+			};
+		}
+	};
 };
 
-export default updateColleges;
+export default genView("college");

@@ -153,6 +153,7 @@ const routes = () => {
 		"/l/:lid/depth/:abbrev/:pos": genPage("depth"),
 		"/l/:lid/frivolities": genPage("frivolities"),
 		"/l/:lid/frivolities/colleges": genPage("colleges"),
+		"/l/:lid/frivolities/countries": genPage("countries"),
 		"/l/:lid/frivolities/most_games_no_playoffs": genPage(
 			"mostGamesNoPlayoffs",
 		),

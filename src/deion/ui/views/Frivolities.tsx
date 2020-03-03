@@ -26,6 +26,16 @@ const Frivolities = () => {
 			</p>
 			<p>
 				<b>
+					<a href={helpers.leagueUrl(["frivolities", "countries"])}>
+						Countries
+					</a>
+				</b>{" "}
+				- see which countries have had the most successful pro players (
+				<span className="text-danger">Warning</span>: this is slow for large
+				leagues!)
+			</p>
+			<p>
+				<b>
 					<a
 						href={helpers.leagueUrl(["frivolities", "most_games_no_playoffs"])}
 					>

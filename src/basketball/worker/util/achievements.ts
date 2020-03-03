@@ -134,7 +134,7 @@ const states = [
 	"WY",
 ];
 
-const isAmerican = (loc: string) => {
+export const isAmerican = (loc: string) => {
 	if (loc.endsWith("USA")) {
 		return true;
 	}

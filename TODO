@@ -60,9 +60,6 @@ pass interference not giving first down https://old.reddit.com/r/Football_GM/com
 
 add kneeling to run out the clock
 
-add countries frivolity, similar to colleges
-- account for custom countries that include states/provinces, like in achievements
-
 typescript
 - 3.8
   - switch to import type using importsNotUsedAsValues

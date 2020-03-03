@@ -249,8 +249,15 @@ const updatePlayMenu = async () => {
 	}
 
 	const someOptions: Option[] = keys.map(id => {
+		let code;
+		if (allOptions[id].key) {
+			// @ts-ignore
+			code = `Key${allOptions[id].key.toUpperCase()}`;
+		}
+
 		return {
 			...allOptions[id],
+			code,
 			id,
 		};
 	});
@@ -258,6 +265,7 @@ const updatePlayMenu = async () => {
 	// Set first key to always be p
 	if (someOptions.length > 0) {
 		someOptions[0].key = "p";
+		someOptions[0].code = "KeyP";
 	}
 
 	toUI("updateLocal", [

@@ -414,6 +414,7 @@ export type Option = {
 	label: string;
 	url?: string;
 	key?: string;
+	code?: string;
 };
 
 export type Options = {

@@ -6,15 +6,8 @@ import {
 	DropdownToggle,
 	UncontrolledDropdown,
 } from "reactstrap";
-
 import { realtimeUpdate, toWorker } from "../util";
-
-type Option = {
-	id: string;
-	label: string;
-	url?: string;
-	key?: string;
-};
+import { Option } from "../../common/types";
 
 type Props = {
 	lid: number | undefined;
@@ -30,7 +23,7 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 
 const PlayMenu = ({ lid, options }: Props) => {
 	useEffect(() => {
-		const handleKeyup = (event: KeyboardEvent) => {
+		const handleKeydown = (event: KeyboardEvent) => {
 			// alt + letter
 			if (
 				event.altKey &&
@@ -39,11 +32,7 @@ const PlayMenu = ({ lid, options }: Props) => {
 				!event.isComposing &&
 				!event.metaKey
 			) {
-				const option = options.find(
-					// https://github.com/microsoft/TypeScript/issues/21732
-					// @ts-ignore
-					option2 => option2.key === event.key,
-				);
+				const option = options.find(option2 => option2.code === event.code);
 
 				if (!option) {
 					return;
@@ -57,9 +46,9 @@ const PlayMenu = ({ lid, options }: Props) => {
 			}
 		};
 
-		document.addEventListener("keyup", handleKeyup);
+		document.addEventListener("keydown", handleKeydown);
 		return () => {
-			document.removeEventListener("keyup", handleKeyup);
+			document.removeEventListener("keydown", handleKeydown);
 		};
 	}, [options]);
 

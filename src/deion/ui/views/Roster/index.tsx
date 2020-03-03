@@ -229,7 +229,7 @@ const Roster = ({
 							</th>
 						) : null}
 						{showTradeFor ? <th>Trade For</th> : null}
-						<th>Acquired</th>
+						<th title="How Player Was Acquired">Acquired</th>
 					</>
 				)}
 				row={({ value: p }) => (

@@ -14,20 +14,25 @@ const genBaseMood = (
 		return -0.25; // Should guarantee no refusing to re-sign
 	}
 
-	let baseMood = 0; // Hype
+	let baseMood = 0;
 
-	baseMood += 0.5 * (1 - teamSeason.hype); // Facilities - fuck it, just use most recent rank
+	// Hype
+	baseMood += 0.5 * (1 - teamSeason.hype);
 
+	// Facilities - fuck it, just use most recent rank
 	baseMood +=
 		(0.1 *
 			(finances.getRankLastThree([teamSeason], "expenses", "facilities") - 1)) /
 		(g.get("numTeams") - 1); // Population
 
-	baseMood += 0.2 * (1 - teamSeason.pop / 10); // Randomness
+	baseMood += 0.2 * (1 - teamSeason.pop / 10);
 
+	// Randomness
 	baseMood += random.uniform(-0.2, 0.4);
-	baseMood = helpers.bound(baseMood, 0, 1.2); // Difficulty
 
+	baseMood = helpers.bound(baseMood, 0, 1.2);
+
+	// Difficulty
 	if (g.get("userTids").includes(teamSeason.tid)) {
 		baseMood += g.get("difficulty");
 	}

@@ -72,13 +72,16 @@ const killOne = async (conditions: Conditions) => {
 		"was strangled to death by a teammate for not knowing the score",
 		"died in a freak gasoline fight accident",
 		"was intensely focused on playing Basketball GM on his cell phone. As he walked across the street, he was so distracted by his ultimately fatal obsession that he didn't notice the bus barreling towards him",
-	]); // Pick random team
+	]);
 
+	// Pick random team
 	const tid = random.randInt(0, g.get("numTeams") - 1);
-	const players = await idb.cache.players.indexGetAll("playersByTid", tid); // Pick a random player on that team
+	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
+	// Pick a random player on that team
 	const p = random.choice(players);
 	retire(p, conditions, false);
+
 	p.diedYear = g.get("season");
 	await idb.cache.players.put(p);
 	logEvent(

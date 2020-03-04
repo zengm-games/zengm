@@ -40,11 +40,12 @@ const value = (
 
 	const pr: any = {}; // Start blank, add what we need (efficiency, wow!)
 
-	const s = p.ratings.length - 1; // Latest season
-	// Fuzz?
+	const s = p.ratings.length - 1;
 
+	// Latest season
 	pr.pos = p.ratings[s].pos;
 
+	// Fuzz?
 	if (options.fuzz) {
 		pr.ovr = fuzzRating(p.ratings[s].ovr, p.ratings[s].fuzz);
 		pr.pot = fuzzRating(p.ratings[s].pot, p.ratings[s].fuzz);

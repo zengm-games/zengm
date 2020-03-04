@@ -25,8 +25,9 @@ const setContract = (
 		contract.amount = g.get("minContract");
 	}
 
-	p.contract = contract; // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
+	p.contract = contract;
 
+	// Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
 	if (signed) {
 		// Is this contract beginning with an in-progress season, or next season?
 		let start = g.get("season");

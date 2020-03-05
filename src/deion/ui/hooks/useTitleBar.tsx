@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
 import { localActions, useLocalShallow } from "../util";
 
@@ -63,7 +63,8 @@ const useTitleBar = ({
 		document.title = parts.join(" » ");
 	}, [dropdownFields, state, title]);
 
-	useEffect(() => {
+	// Without useLayoutEffect, weird shit happens in Safari! State inappropriately bleeds over from one load of a view to the next. Not sure why!
+	useLayoutEffect(() => {
 		localActions.update({
 			title,
 			hideNewWindow,

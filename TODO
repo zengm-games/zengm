@@ -1,3 +1,12 @@
+safari bugs
+- error when phase change
+  - when going to playoffs, sometimes error. looking "state" from updatePlayoffs shows that on the *second* render (without firstRun) "state" looks like it came from the previous screen (message). in chrome it's working normally
+    - but why is there two renders of updatePlayoffs anyway? maybe separate question
+- reload the page and it works
+
+football rookie contract scale
+- https://old.reddit.com/message/messages/mfpqf1
+
 double check that re-signing player doesn't change acquired column
 - both for new league and existign league (pre-existing acquired col or not)
 
@@ -326,6 +335,7 @@ frivolities
 - highest paid @mattable#4273 @Jlebron13#9965
 - abstract code for "highest X"
 - draft class aggregate stats alexnoob
+- best player without a ring
 
 Add "All Seasons" option to various stat/ratings pages
 - Player Ratings

@@ -703,7 +703,7 @@ GodModeOptions.propTypes = {
 	tragicDeathRate: PropTypes.number.isRequired,
 	brotherRate: PropTypes.number.isRequired,
 	homeCourtAdvantage: PropTypes.number.isRequired,
-	rookieContractLengths: PropTypes.number.isRequired,
+	rookieContractLengths: PropTypes.arrayOf(PropTypes.number).isRequired,
 	sonRate: PropTypes.number.isRequired,
 	hardCap: PropTypes.bool.isRequired,
 	numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,

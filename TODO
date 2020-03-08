@@ -1,8 +1,7 @@
-safari bugs
-- error when phase change
-  - when going to playoffs, sometimes error. looking "state" from updatePlayoffs shows that on the *second* render (without firstRun) "state" looks like it came from the previous screen (message). in chrome it's working normally
-    - but why is there two renders of updatePlayoffs anyway? maybe separate question
-- reload the page and it works
+make countries easier to customize
+- allow specifying country frequencies without tying it to the number of names
+- GUI to add countries and names
+- same for colleges
 
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1

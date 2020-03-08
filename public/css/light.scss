@@ -797,7 +797,7 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
-	height: 52px;
+	min-height: 52px;
 	select {
 		font-size: 14px;
 	}

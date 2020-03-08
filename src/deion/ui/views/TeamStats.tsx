@@ -157,9 +157,7 @@ const TeamStats = ({
 				<div className="col-sm-8 text-right">
 					<p>
 						For a statistical category, among all teams, your team is in the...
-					</p>
-
-					<p>
+						<br />
 						{legendSquare("success")} <strong>Top third</strong>
 						{legendSquare("warning")} <strong>Middle third</strong>
 						{legendSquare("danger")} <strong>Bottom third</strong>

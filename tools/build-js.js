@@ -25,6 +25,7 @@ const BLACKLIST = {
 				});
 
 				await bundle.write({
+					compact: true,
 					file: `build/gen/${name}-${rev}.js`,
 					format: "iife",
 					indent: false,

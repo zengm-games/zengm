@@ -2,7 +2,6 @@ teams play better/worse when down/up
 - 10 point gap equals home court advantage
   - implementing exactly this would require letting player composite ratings change every possession... maybe too complicated
 - @nicidob
-- changelog
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
 
 make countries easier to customize

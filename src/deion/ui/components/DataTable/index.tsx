@@ -92,6 +92,7 @@ class DataTable extends React.Component<Props, State> {
 		};
 		this.handleColClick = this.handleColClick.bind(this);
 		this.handleExportCSV = this.handleExportCSV.bind(this);
+		this.handleResetTable = this.handleResetTable.bind(this);
 		this.handleToggleFilters = this.handleToggleFilters.bind(this);
 		this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
 		this.handlePagination = this.handlePagination.bind(this);
@@ -173,6 +174,13 @@ class DataTable extends React.Component<Props, State> {
 		);
 		const output = csvFormatRows([columns, ...rows]);
 		downloadFile(`${this.props.name}.csv`, output, "text/csv");
+	}
+
+	handleResetTable() {
+		this.settingsCache.clear("DataTableFilters");
+		this.settingsCache.clear("DataTableSort");
+
+		this.setState(loadStateFromCache(this.props));
 	}
 
 	handleToggleFilters() {
@@ -377,8 +385,10 @@ class DataTable extends React.Component<Props, State> {
 						<Controls
 							enableFilters={this.state.enableFilters}
 							onExportCSV={this.handleExportCSV}
+							onResetTable={this.handleResetTable}
 							onSearch={this.handleSearch}
 							onToggleFilters={this.handleToggleFilters}
+							searchText={this.state.searchText}
 						/>
 						{nonfluid ? <div className="clearFix" /> : null}
 					</>

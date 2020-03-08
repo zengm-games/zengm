@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-03-07: Added "Reset Table" in the "..." menu for tables, which resets the search text, page, sorting, and filters to their default values.
+
 * 2020-03-03: New God Mode option to set rookie contract lengths. [[1]](https://old.reddit.com/r/BasketballGM/comments/fd1qi3/new_in_version_202003031279_god_mode_option_to/)
 
 * 2020-03-03: Added new Countries frivolity to show which countries have the best players, similar to the existing Colleges frivolity. [[1]](https://old.reddit.com/r/BasketballGM/comments/fczv7r/tools_frivolities_countries_in_version/)

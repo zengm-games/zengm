@@ -13,13 +13,17 @@ import HelpPopover from "../HelpPopover";
 const Controls = ({
 	enableFilters,
 	onExportCSV,
+	onResetTable,
 	onSearch,
 	onToggleFilters,
+	searchText,
 }: {
 	enableFilters: boolean;
 	onExportCSV: () => void;
+	onResetTable: () => void;
 	onSearch: (a: SyntheticEvent<HTMLInputElement>) => void;
 	onToggleFilters: () => void;
+	searchText: string;
 }) => {
 	const positionFilterText =
 		process.env.SPORT === "football"
@@ -69,6 +73,7 @@ const Controls = ({
 					onChange={onSearch}
 					placeholder="Search"
 					type="search"
+					value={searchText}
 				/>
 			</label>
 			<UncontrolledDropdown className="float-right">
@@ -88,6 +93,7 @@ const Controls = ({
 					<DropdownItem onClick={onExportCSV}>
 						Download Spreadsheet
 					</DropdownItem>
+					<DropdownItem onClick={onResetTable}>Reset Table</DropdownItem>
 				</DropdownMenu>
 			</UncontrolledDropdown>
 		</div>
@@ -96,8 +102,10 @@ const Controls = ({
 Controls.propTypes = {
 	enableFilters: PropTypes.bool.isRequired,
 	onExportCSV: PropTypes.func.isRequired,
+	onResetTable: PropTypes.func.isRequired,
 	onSearch: PropTypes.func.isRequired,
 	onToggleFilters: PropTypes.func.isRequired,
+	searchText: PropTypes.string.isRequired,
 };
 
 export default Controls;

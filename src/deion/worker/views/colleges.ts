@@ -15,7 +15,8 @@ type InfoTemp = {
 	};
 };
 
-const valueStatName = process.env.SPORT === "basketball" ? "ewa" : "av";
+const valueStatNames =
+	process.env.SPORT === "basketball" ? ["ows", "dws"] : ["av"];
 
 const reducer = (
 	type: "college" | "country",
@@ -67,7 +68,9 @@ const reducer = (
 		// No real reason to discard playoff stats. This just makes it consistet with usage of careerStats for the best player
 		if (!stats.playoffs) {
 			gp += stats.gp;
-			valueStat += stats[valueStatName];
+			for (const valueStatName of valueStatNames) {
+				valueStat += stats[valueStatName];
+			}
 		}
 	}
 

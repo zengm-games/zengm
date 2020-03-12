@@ -155,6 +155,7 @@ export type PlayerRatings = {
 	injuryIndex?: number;
 	ins: number;
 	jmp: number;
+	locked?: boolean;
 	oiq: number;
 	ovr: number;
 	pos: string;

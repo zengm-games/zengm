@@ -130,6 +130,8 @@ const copyValidValues = (
 						updatedRatingsOrAge = true;
 					}
 				}
+			} else if (rating === "locked") {
+				target.ratings[r].locked = source.ratings[r].locked;
 			}
 		}
 	}
@@ -224,7 +226,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			} else if (["born", "contract", "draft", "injury"].includes(type)) {
 				p[type][field] = val;
 			} else if (type === "rating") {
-				p.ratings[p.ratings.length - 1][field] = val;
+				if (field === "locked") {
+					p.ratings[p.ratings.length - 1][field] = checked;
+				} else {
+					p.ratings[p.ratings.length - 1][field] = val;
+				}
 			} else if (type === "face") {
 				if (["eye", "hair", "mouth", "nose"].includes(field)) {
 					p[type][field].id = val;

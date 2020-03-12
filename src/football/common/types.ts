@@ -136,6 +136,7 @@ export type PlayerRatings = {
 	season: number;
 	skills: string[];
 	injuryIndex?: number;
+	locked?: boolean;
 };
 
 export type RatingKey =

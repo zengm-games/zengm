@@ -103,16 +103,22 @@ const HistoryAll = ({
 			classNames: s.champ && s.champ.tid === userTid ? "table-info" : undefined,
 			value: (
 				<>
-					{teamName(s.champ, s.season, ties)}
+					{s.champ.seed}. {teamName(s.champ, s.season, ties)}
 					{countText}
 				</>
 			),
+			sortValue: `${s.champ.region} ${s.champ.name} ${s.season}`,
 		};
 
 		const runnerUpEl = {
 			classNames:
 				s.runnerUp && s.runnerUp.tid === userTid ? "table-info" : undefined,
-			value: teamName(s.runnerUp, s.season, ties),
+			value: (
+				<>
+					{s.runnerUp.seed}. {teamName(s.runnerUp, s.season, ties)}
+				</>
+			),
+			sortValue: `${s.runnerUp.region} ${s.runnerUp.name} ${s.season}`,
 		};
 
 		return {

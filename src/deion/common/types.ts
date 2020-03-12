@@ -537,6 +537,7 @@ export type MinimalPlayerRatings = {
 	stre: number;
 	spd: number;
 	endu: number;
+	locked?: boolean;
 };
 
 export type PlayerWithoutKey<PlayerRatings = any> = {

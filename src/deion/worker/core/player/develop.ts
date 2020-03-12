@@ -202,78 +202,85 @@ const develop = (
 			age += 1;
 		}
 
-		overrides.core.player.developSeason!(ratings, age, coachingRank);
+		if (!ratings.locked) {
+			overrides.core.player.developSeason!(ratings, age, coachingRank);
 
-		// In the NBA displayed weights seem to never change and seem inaccurate
-		if (process.env.SPORT === "football") {
-			const newWeight = overrides.core.player.genWeight!(
-				ratings.hgt,
-				ratings.stre,
-			);
-			const oldWeight = p.weight;
+			// In the NBA displayed weights seem to never change and seem inaccurate
+			if (process.env.SPORT === "football") {
+				const newWeight = overrides.core.player.genWeight!(
+					ratings.hgt,
+					ratings.stre,
+				);
+				const oldWeight = p.weight;
 
-			if (newWeight - oldWeight > 10) {
-				p.weight = oldWeight + 10;
-			} else if (newWeight - oldWeight < -10) {
-				p.weight = oldWeight - 10;
-			} else {
-				p.weight = newWeight;
+				if (newWeight - oldWeight > 10) {
+					p.weight = oldWeight + 10;
+				} else if (newWeight - oldWeight < -10) {
+					p.weight = oldWeight - 10;
+				} else {
+					p.weight = newWeight;
+				}
 			}
 		}
 	}
 
-	// Run these even for players developing 0 seasons
-	if (process.env.SPORT === "basketball") {
-		ratings.ovr = overrides.core.player.ovr!(ratings);
+	if (!ratings.locked) {
+		// Run these even for players developing 0 seasons
+		if (process.env.SPORT === "basketball") {
+			ratings.ovr = overrides.core.player.ovr!(ratings);
 
-		if (!skipPot) {
-			ratings.pot = bootstrapPot(ratings, age);
-		}
-
-		if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
-			// Must be a custom league player, let's not rock the boat
-			ratings.pos = p.pos;
-		} else {
-			ratings.pos = overrides.core.player.pos!(ratings);
-		}
-	} else {
-		let pos;
-		let maxOvr = -Infinity; // A player can never have KR or PR as his main position
-
-		const bannedPositions = ["KR", "PR"];
-		ratings.ovrs = overrides.common.constants.POSITIONS.reduce((ovrs, pos2) => {
-			ovrs[pos2] = overrides.core.player.ovr!(ratings, pos2);
-
-			if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
-				pos = pos2;
-				maxOvr = ovrs[pos2];
+			if (!skipPot) {
+				ratings.pot = bootstrapPot(ratings, age);
 			}
 
-			return ovrs;
-		}, {});
+			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+				// Must be a custom league player, let's not rock the boat
+				ratings.pos = p.pos;
+			} else {
+				ratings.pos = overrides.core.player.pos!(ratings);
+			}
+		} else {
+			let pos;
+			let maxOvr = -Infinity; // A player can never have KR or PR as his main position
 
-		if (!skipPot) {
-			ratings.pots = overrides.common.constants.POSITIONS.reduce(
-				(pots, pos2) => {
-					pots[pos2] = bootstrapPot(ratings, age, pos2);
-					return pots;
+			const bannedPositions = ["KR", "PR"];
+			ratings.ovrs = overrides.common.constants.POSITIONS.reduce(
+				(ovrs, pos2) => {
+					ovrs[pos2] = overrides.core.player.ovr!(ratings, pos2);
+
+					if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
+						pos = pos2;
+						maxOvr = ovrs[pos2];
+					}
+
+					return ovrs;
 				},
 				{},
 			);
-		}
 
-		if (pos === undefined) {
-			throw new Error("Should never happen");
-		}
+			if (!skipPot) {
+				ratings.pots = overrides.common.constants.POSITIONS.reduce(
+					(pots, pos2) => {
+						pots[pos2] = bootstrapPot(ratings, age, pos2);
+						return pots;
+					},
+					{},
+				);
+			}
 
-		ratings.ovr = ratings.ovrs[pos];
-		ratings.pot = ratings.pots[pos];
+			if (pos === undefined) {
+				throw new Error("Should never happen");
+			}
 
-		if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
-			// Must be a manually specified position
-			ratings.pos = p.pos;
-		} else {
-			ratings.pos = pos;
+			ratings.ovr = ratings.ovrs[pos];
+			ratings.pot = ratings.pots[pos];
+
+			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+				// Must be a manually specified position
+				ratings.pos = p.pos;
+			} else {
+				ratings.pos = pos;
+			}
 		}
 	}
 

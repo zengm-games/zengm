@@ -75,6 +75,18 @@ const RatingsForm = ({
 					</div>
 				);
 			})}
+
+			<label className="form-check-label ml-3 mb-3">
+				<input
+					className="form-check-input"
+					onChange={event => {
+						handleChange("rating", "locked", event);
+					}}
+					type="checkbox"
+					checked={!!ratingsRow.locked}
+				/>
+				Lock ratings (ratings will not change as player ages)
+			</label>
 		</>
 	);
 };

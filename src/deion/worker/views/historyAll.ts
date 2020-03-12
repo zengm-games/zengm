@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
 
 const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -35,60 +35,55 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			};
 		});
 
+		const playoffSeries = await idb.getCopies.playoffSeries();
+
 		for (let i = 0; i < seasons.length; i++) {
-			// Use this rather than numGamesPlayoffSeries in case configuration changes during a league
-			const maxPlayoffRoundsWon = teams.reduce((max, t) => {
-				for (const seasonAttrs of t.seasonAttrs) {
-					if (seasonAttrs.season === seasons[i].season) {
-						return seasonAttrs.playoffRoundsWon > max
-							? seasonAttrs.playoffRoundsWon
-							: max;
+			const season = seasons[i].season;
+
+			// Only check for finals result for seasons that are over
+			if (
+				season < g.get("season") ||
+				(season === g.get("season") && g.get("phase") > PHASE.PLAYOFFS)
+			) {
+				const series = playoffSeries.find(ps => ps.season === season);
+
+				if (series) {
+					const finals = series.series[series.series.length - 1][0];
+
+					if (!finals || !finals.away) {
+						continue;
 					}
-				}
 
-				return max;
-			}, 0);
-
-			for (const t of teams) {
-				// Find corresponding entries in seasons and t.seasonAttrs. Can't assume they are the same because they aren't if some data has been deleted (Delete Old Data)
-				let found = false;
-				let j;
-
-				for (j = 0; j < t.seasonAttrs.length; j++) {
-					if (t.seasonAttrs[j].season === seasons[i].season) {
-						found = true;
-						break;
+					let champ: PlayoffSeriesTeam;
+					let runnerUp: PlayoffSeriesTeam;
+					if (finals.home.won > finals.away.won) {
+						champ = finals.home;
+						runnerUp = finals.away;
+					} else {
+						champ = finals.away;
+						runnerUp = finals.home;
 					}
-				}
 
-				if (!found) {
-					continue;
-				}
+					const formatTeam = ({ seed, tid }: PlayoffSeriesTeam) => {
+						const teamSeason = teams[tid].seasonAttrs.find(
+							ts => ts.season === season,
+						);
 
-				if (t.seasonAttrs[j].playoffRoundsWon === maxPlayoffRoundsWon) {
-					seasons[i].champ = {
-						tid: t.tid,
-						abbrev: t.abbrev,
-						region: t.region,
-						name: t.name,
-						won: t.seasonAttrs[j].won,
-						lost: t.seasonAttrs[j].lost,
-						tied: t.seasonAttrs[j].tied,
-						count: 0,
+						return {
+							tid: tid,
+							seed: seed,
+							abbrev: g.get("teamAbbrevsCache")[tid],
+							region: g.get("teamRegionsCache")[tid],
+							name: g.get("teamNamesCache")[tid],
+							won: teamSeason ? teamSeason.won : 0,
+							lost: teamSeason ? teamSeason.lost : 0,
+							tied: teamSeason ? teamSeason.tied : 0,
+							count: 0,
+						};
 					};
-				} else if (
-					t.seasonAttrs[j].playoffRoundsWon ===
-					maxPlayoffRoundsWon - 1
-				) {
-					seasons[i].runnerUp = {
-						tid: t.tid,
-						abbrev: t.abbrev,
-						region: t.region,
-						name: t.name,
-						won: t.seasonAttrs[j].won,
-						lost: t.seasonAttrs[j].lost,
-						tied: t.seasonAttrs[j].tied,
-					};
+
+					seasons[i].champ = formatTeam(champ);
+					seasons[i].runnerUp = formatTeam(runnerUp);
 				}
 			}
 		}

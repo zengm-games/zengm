@@ -4,6 +4,10 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-03-12: Added seeds of the league champion and runner up to the League History table. Also, for leagues where the length of the playoffs is changed in God Mode, the champion is now shown correctly in this table.
+
+* 2020-03-12: Added an option in God Mode to lock an individual player's ratings, so they don't change from season to season.
+
 * 2020-03-07: Added "Reset Table" in the "..." menu for tables, which resets the search text, page, sorting, and filters to their default values.
 
 * 2020-03-03: New God Mode option to set rookie contract lengths. [[1]](https://old.reddit.com/r/BasketballGM/comments/fd1qi3/new_in_version_202003031279_god_mode_option_to/)

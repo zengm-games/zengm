@@ -1,6 +1,3 @@
-@buntaga#9761 
-- also, the Player Salaries section on the player page - right now the salaries which are given to the players using God Mode don't show up there, is it posible to have them listed?
-
 teams play better/worse when down/up
 - 10 point gap equals home court advantage
   - implementing exactly this would require letting player composite ratings change every possession... maybe too complicated

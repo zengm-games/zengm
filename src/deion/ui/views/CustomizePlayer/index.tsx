@@ -63,6 +63,10 @@ const copyValidValues = (
 		}
 	}
 
+	const oldContract = {
+		...target.contract,
+	};
+
 	{
 		// Allow any value, even above or below normal limits, but round to $10k and convert from M to k
 		// @ts-ignore
@@ -88,6 +92,34 @@ const copyValidValues = (
 			}
 
 			target.contract.exp = exp;
+		}
+	}
+
+	// Keep salaries log updated with contract
+	if (
+		oldContract.amount !== target.contract.amount ||
+		oldContract.exp !== target.contract.exp
+	) {
+		// This code is similar to player.setContract
+
+		// Is this contract beginning with an in-progress season, or next season?
+		let start = season;
+
+		if (phase > PHASE.AFTER_TRADE_DEADLINE) {
+			start += 1;
+		}
+
+		// Remove entries from old contract
+		target.salaries = target.salaries.filter(salary => {
+			return salary.season < start || salary.amount !== oldContract.amount;
+		});
+
+		// Add entries for new contract
+		for (let i = start; i <= target.contract.exp; i++) {
+			target.salaries.push({
+				season: i,
+				amount: target.contract.amount,
+			});
 		}
 	}
 

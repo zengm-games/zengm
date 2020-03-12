@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-03-12: Changes to player salaries in God Mode will now show up in the Player Salaries table on player pages.
+
 * 2020-03-12: Added seeds of the league champion and runner up to the League History table. Also, for leagues where the length of the playoffs is changed in God Mode, the champion is now shown correctly in this table.
 
 * 2020-03-12: Added an option in God Mode to lock an individual player's ratings, so they don't change from season to season.

@@ -3,10 +3,6 @@
 // Safari 11 (because in 10.1 getAll crashes in a worker)
 import "indexeddb-getall-shim";
 
-// Safari 10.1
-import "url-search-params-polyfill";
-import "whatwg-fetch";
-
 // Chrome 54, Safari 10.1
 // Inlined from MDN, since object.entries and object.values npm packages were somehow adding 50kb to each bundle
 if (!Object.entries) {

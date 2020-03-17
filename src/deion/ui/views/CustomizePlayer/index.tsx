@@ -24,6 +24,10 @@ const copyValidValues = (
 	phase: Phase,
 	season: number,
 ) => {
+	// Should be true if a player is becoming "active" (moving to a team from a non-team, such as free agent, retired, draft prospect, or new player)
+	// @ts-ignore
+	const activated = source.tid >= 0 && parseInt(target.tid, 10) < 0;
+
 	for (const attr of ["hgt", "tid", "weight"] as const) {
 		// @ts-ignore
 		const val = parseInt(source[attr], 10);
@@ -67,6 +71,8 @@ const copyValidValues = (
 		...target.contract,
 	};
 
+	let contractChanged = false;
+
 	{
 		// Allow any value, even above or below normal limits, but round to $10k and convert from M to k
 		// @ts-ignore
@@ -74,7 +80,11 @@ const copyValidValues = (
 		if (Number.isNaN(amount)) {
 			amount = minContract;
 		}
-		target.contract.amount = amount;
+
+		if (target.contract.amount !== amount) {
+			target.contract.amount = amount;
+			contractChanged = true;
+		}
 	}
 
 	{
@@ -91,15 +101,15 @@ const copyValidValues = (
 				exp += 1;
 			}
 
-			target.contract.exp = exp;
+			if (target.contract.exp !== exp) {
+				target.contract.exp = exp;
+				contractChanged = true;
+			}
 		}
 	}
 
 	// Keep salaries log updated with contract
-	if (
-		oldContract.amount !== target.contract.amount ||
-		oldContract.exp !== target.contract.exp
-	) {
+	if (contractChanged || activated) {
 		// This code is similar to player.setContract
 
 		// Is this contract beginning with an in-progress season, or next season?
@@ -109,17 +119,21 @@ const copyValidValues = (
 			start += 1;
 		}
 
-		// Remove entries from old contract
-		target.salaries = target.salaries.filter(salary => {
-			return salary.season < start || salary.amount !== oldContract.amount;
-		});
-
-		// Add entries for new contract
-		for (let i = start; i <= target.contract.exp; i++) {
-			target.salaries.push({
-				season: i,
-				amount: target.contract.amount,
+		if (contractChanged && !activated) {
+			// Remove entries from old contract
+			target.salaries = target.salaries.filter(salary => {
+				return salary.season < start || salary.amount !== oldContract.amount;
 			});
+		}
+
+		if (target.tid >= 0) {
+			// Add entries for new contract
+			for (let i = start; i <= target.contract.exp; i++) {
+				target.salaries.push({
+					season: i,
+					amount: target.contract.amount,
+				});
+			}
 		}
 	}
 

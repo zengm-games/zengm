@@ -302,6 +302,12 @@ export const createWithoutSaving = (
 
 			if (last.season !== g.get("season")) {
 				last.season = g.get("season");
+
+				// Remove any past seasons that claim to be from this season or a future season
+				teamSeasonsLocal = [
+					...teamSeasonsLocal.filter(ts => ts.season < last.season),
+					last,
+				];
 			}
 		} else {
 			teamSeasonsLocal = [team.genSeasonRow(t.tid)];
@@ -851,6 +857,7 @@ const create = async (
 		randomizeRosters,
 		difficulty,
 	);
+
 	let phaseText;
 
 	if (

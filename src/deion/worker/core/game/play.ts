@@ -63,7 +63,7 @@ const play = async (
 			} else {
 				const allStarNext = await allStar.nextGameIsAllStar(schedule);
 
-				if (allStarNext) {
+				if (allStarNext && gidPlayByPlay === undefined) {
 					toUI(
 						"realtimeUpdate",
 						[[], helpers.leagueUrl(["all_star_draft"])],

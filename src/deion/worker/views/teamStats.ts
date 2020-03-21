@@ -85,6 +85,7 @@ const updateTeams = async (
 		)) {
 			statTypes = statTypes.concat(table.stats);
 		}
+		statTypes = Array.from(new Set(statTypes));
 
 		const lowerIsBetter =
 			process.env.SPORT === "basketball"
@@ -120,9 +121,6 @@ const updateTeams = async (
 						"oppFgMidRange",
 						"oppFgaMidRange",
 						"oppFgpMidRange",
-						"oppTp",
-						"oppTpa",
-						"oppTpp",
 				  ]
 				: [
 						"lost",

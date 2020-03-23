@@ -87,6 +87,7 @@ const TeamHistory = ({
 	if (ties) {
 		record += `-${totalTied}`;
 	}
+	let recordPct = (totalWon + totalLost) == 0 ? "0.0" : (totalWon / (totalWon + totalLost) * 100).toFixed(1);
 
 	return (
 		<>
@@ -107,7 +108,7 @@ const TeamHistory = ({
 				<div className="col-sm-5 col-md-3">
 					<h2>Overall</h2>
 					<p>
-						Record: {record}
+						Record: {record} ({recordPct}%)
 						<br />
 						Playoff Appearances: {playoffAppearances}
 						<br />

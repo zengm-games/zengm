@@ -5,6 +5,7 @@ import { helpers, logEvent, toWorker } from "../util";
 const DeleteOldData = () => {
 	const [state, setState] = useState({
 		boxScores: true,
+		events: true,
 		teamStats: true,
 		teamHistory: true,
 		retiredPlayersUnnotable: true,
@@ -131,6 +132,17 @@ const DeleteOldData = () => {
 							checked={state.playerStats}
 						/>
 						Delete <b>All</b> Player Stats and Ratings
+					</label>
+				</div>
+				<div className="form-check">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							onChange={handleChange("events")}
+							type="checkbox"
+							checked={state.events}
+						/>
+						Delete <b>All</b> Event Log Entries
 					</label>
 				</div>
 

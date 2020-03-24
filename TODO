@@ -1,3 +1,9 @@
+delete old data should also delete events, otherwise for old leagues that winds up being quite large
+
+show winning percentage next to record in team history page
+
+add toggle to table, to turn it into a heatmap showing which values are high or low. like think on a player stats table
+
 DL get too many tackles, LB too few
 
 FBGM punt when down in OT https://cdn.discordapp.com/attachments/290015591216054273/690387745042071592/Screenshot_2020-03-19_at_9.34.14_PM.png

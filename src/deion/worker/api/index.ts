@@ -253,6 +253,7 @@ const createLeague = async (
 
 const deleteOldData = async (options: {
 	boxScores: boolean;
+	events: boolean;
 	teamStats: boolean;
 	teamHistory: boolean;
 	retiredPlayersUnnotable: boolean;
@@ -264,6 +265,7 @@ const deleteOldData = async (options: {
 		[
 			"allStars",
 			"draftLotteryResults",
+			"events",
 			"games",
 			"teams",
 			"teamSeasons",
@@ -383,6 +385,10 @@ const deleteOldData = async (options: {
 				}
 			},
 		);
+	}
+
+	if (options.events) {
+		transaction.objectStore("events").clear();
 	}
 
 	await transaction.done;

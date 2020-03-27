@@ -12,7 +12,13 @@ import { helpers, logEvent, toWorker } from "../util";
 import { View } from "../../common/types";
 
 const Storage = () => {
-	const [status, setStatus] = useState("loading...");
+	const [status, setStatus] = useState<
+		| "enabled"
+		| "disabled"
+		| "failed"
+		| "loading..."
+		| "not supported by your browser"
+	>("loading...");
 
 	useEffect(() => {
 		const check = async () => {
@@ -35,13 +41,14 @@ const Storage = () => {
 		event.preventDefault();
 
 		if (navigator.storage && navigator.storage.persist) {
-			setStatus("loading");
+			setStatus("loading...");
 
 			const persisted = await navigator.storage.persist();
 			if (persisted) {
 				setStatus("enabled");
 			} else {
-				setStatus("disabled");
+				// https://stackoverflow.com/questions/51657388/request-persistent-storage-permissions
+				setStatus("failed");
 			}
 		} else {
 			setStatus("not supported by your browser");
@@ -63,13 +70,22 @@ const Storage = () => {
 				<span
 					className={classNames({
 						"text-success": status === "enabled",
-						"text-danger": status === "disabled",
+						"text-danger": status === "disabled" || status === "failed",
 					})}
 				>
 					{status}
 				</span>
 			</p>
-			{status === "loading..." || status === "disabled" ? (
+			{status === "failed" ? (
+				<p>
+					Sorry, this feature can be tricky to get working in some browsers. If
+					you bookmark this page, it might work if you press "Enable" again.
+					Otherwise, check back later after playing more and maybe it will work.
+				</p>
+			) : null}
+			{status === "loading..." ||
+			status === "disabled" ||
+			status === "failed" ? (
 				<button
 					className="btn btn-light-bordered"
 					disabled={status === "loading..."}

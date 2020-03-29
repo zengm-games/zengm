@@ -8,7 +8,7 @@ import { deleteDB } from "idb";
 describe("Smoke Tests", () => {
 	let intervalID: number;
 
-	it("Create a new league and simuluate a season without error", async function() {
+	it("Create a new league and simuluate a season without error", async function () {
 		// Don't want to include Mocha and Jest types cause they conflict
 		// @ts-ignore
 		this.timeout(5 * 60 * 1000); // 5 minutes

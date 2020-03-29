@@ -30,10 +30,9 @@ const doInjury = (
 	const injuryText = `${p.pos} <a href="${helpers.leagueUrl([
 		"player",
 		p2.pid,
-	])}">${p2.firstName} ${p2.lastName}</a> - ${p2.injury.type}, ${p2.injury
-		.gamesRemaining - 1} ${
-		p2.injury.gamesRemaining - 1 === 1 ? gameOrWeek : `${gameOrWeek}s`
-	}`;
+	])}">${p2.firstName} ${p2.lastName}</a> - ${p2.injury.type}, ${
+		p2.injury.gamesRemaining - 1
+	} ${p2.injury.gamesRemaining - 1 === 1 ? gameOrWeek : `${gameOrWeek}s`}`;
 
 	if (g.get("userTid") === p2.tid) {
 		if (p2.injury.gamesRemaining > 1) {

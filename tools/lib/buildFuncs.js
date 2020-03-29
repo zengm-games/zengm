@@ -10,11 +10,7 @@ const getSport = require("./getSport");
 const buildCSS = (watch /*: boolean*/ = false) => {
 	const fileHash = contents => {
 		// https://github.com/sindresorhus/rev-hash
-		return crypto
-			.createHash("md5")
-			.update(contents)
-			.digest("hex")
-			.slice(0, 10);
+		return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
 	};
 
 	const filenames = ["light", "dark"];
@@ -142,10 +138,7 @@ const copyFiles = () => {
 
 const genRev = () => {
 	const d = new Date();
-	const date = d
-		.toISOString()
-		.split("T")[0]
-		.replace(/-/g, ".");
+	const date = d.toISOString().split("T")[0].replace(/-/g, ".");
 	const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
 		4,
 		"0",

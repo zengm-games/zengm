@@ -30,7 +30,7 @@ const customLaunchers = [
 	return acc;
 }, {});
 
-module.exports = function(config) {
+module.exports = function (config) {
 	config.set({
 		...karmaConfig,
 		browserStack,

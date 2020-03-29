@@ -36,10 +36,7 @@ const augmentPartialPlayer = (
 	) {
 		// parse and split names from roster file
 		p.firstName = p.name.split(" ")[0];
-		p.lastName = p.name
-			.split(" ")
-			.slice(1, p.name.split(" ").length)
-			.join(" ");
+		p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
 	}
 
 	// This is used to get at default values for various attributes

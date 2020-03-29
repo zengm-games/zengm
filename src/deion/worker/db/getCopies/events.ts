@@ -30,10 +30,7 @@ const getCopies = async ({
 
 	if (pid !== undefined) {
 		return mergeByPk(
-			await idb.league
-				.transaction("events")
-				.store.index("pids")
-				.getAll(pid),
+			await idb.league.transaction("events").store.index("pids").getAll(pid),
 			(await idb.cache.events.getAll()).filter(event => {
 				return event.pids !== undefined && event.pids.includes(pid);
 			}),

@@ -33,9 +33,9 @@ const checkChanges = async (conditions: Conditions) => {
 
 			if (i >= 2 && unread.length - i - 1 > 0) {
 				linked = true;
-				text += `<br><a href="/changes">...and ${unread.length -
-					i -
-					1} more changes.</a>`;
+				text += `<br><a href="/changes">...and ${
+					unread.length - i - 1
+				} more changes.</a>`;
 				break;
 			}
 		}

@@ -331,10 +331,7 @@ class Cache {
 				autoIncrement: false,
 				// Current season
 				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx
-						.objectStore("games")
-						.index("season")
-						.getAll(this._season),
+					tx.objectStore("games").index("season").getAll(this._season),
 			},
 			messages: {
 				pk: "mid",

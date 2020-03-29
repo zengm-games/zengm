@@ -398,12 +398,7 @@ for (const filename of fs.readdirSync(folder)) {
 	let fn;
 	let ln;
 	try {
-		[fn, ln] = getName(
-			$(".title")
-				.first()
-				.text(),
-			file,
-		);
+		[fn, ln] = getName($(".title").first().text(), file);
 	} catch (err) {
 		console.log(err.message);
 		continue;

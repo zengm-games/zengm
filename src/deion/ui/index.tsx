@@ -175,9 +175,7 @@ const setupEnv = async () => {
 	let heartbeatID = sessionStorage.getItem("heartbeatID");
 
 	if (heartbeatID === null || heartbeatID === undefined) {
-		heartbeatID = Math.random()
-			.toString(16)
-			.slice(2);
+		heartbeatID = Math.random().toString(16).slice(2);
 		sessionStorage.setItem("heartbeatID", heartbeatID);
 	}
 

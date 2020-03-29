@@ -1,3 +1,5 @@
+get rid of basketball/football split, move into one folder structure
+
 https://play.basketball-gm.com/options "Enable" not working https://discordapp.com/channels/@me/662077709836484618
 
 delete old data should also delete events, otherwise for old leagues that winds up being quite large
@@ -92,8 +94,7 @@ pass interference not giving first down https://old.reddit.com/r/Football_GM/com
 add kneeling to run out the clock
 
 typescript
-- 3.8
-  - switch to import type using importsNotUsedAsValues
+- on 3.8 now, so can switch to import type using importsNotUsedAsValues
 - to do
   - types for toWorker
     - flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier
@@ -646,6 +647,7 @@ customizable columns in datatable
 per 100 possessions and totals toggle on team stats page
 
 remove babel plugins
+- https://github.com/babel/babel/blob/71e7a7b1e0df42df4ee47a01a6218adf40e99cda/packages/babel-compat-data/data/plugins.json
 
 remove polyfills
 - get rid of getAll polyfill when safari 10.x usage goes to 0

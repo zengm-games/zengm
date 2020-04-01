@@ -2,7 +2,14 @@ OL weight
 
 get rid of basketball/football split, move into one folder structure
 
-https://play.basketball-gm.com/options "Enable" not working https://discordapp.com/channels/@me/662077709836484618
+way to save/load leagues on server
+- generate GUID per league
+- on load, check server for stored leagues for user
+- if timestamp is more recent on server, show notification that league is stale and update button
+- way to load leagues from server if they are not local already
+- some limit on size
+- gold only?
+- store on my system (s3 maybe) or use google drive?
 
 delete old data should also delete events, otherwise for old leagues that winds up being quite large
 

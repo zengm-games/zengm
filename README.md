@@ -10,7 +10,7 @@ Copyright (C) Jeremy Scheff. All rights reserved.
 * Website: <https://basketball-gm.com/> and <https://football-gm.com/>
 * Development: <https://github.com/dumbmatter/gm-games>
 * Discussion: <https://www.reddit.com/r/BasketballGM/> or
-<https://www.reddit.com/r/Football_GM/> or <https://discord.gg/E9HUwbq>
+<https://www.reddit.com/r/Football_GM/> or <https://discord.gg/caPFuM9>
 
 **This project is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**

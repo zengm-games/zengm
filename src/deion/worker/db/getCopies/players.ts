@@ -184,8 +184,9 @@ const getCopies = async ({
 						return;
 					}
 
-					const [draftYear2, retiredYear] = cursor.key; // https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+					const [draftYear2, retiredYear] = cursor.key;
 
+					// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 					if (retiredYear < activeSeason) {
 						cursor.continue([draftYear2, activeSeason]);
 					} else {

@@ -14,7 +14,14 @@ describe("Smoke Tests", () => {
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
 		idb.meta = await connectMeta();
-		await league.create("Test", 0, undefined, 2016, false, 0, undefined, {});
+		await league.create(
+			{
+				name: "Test",
+				tid: 0,
+				startingSeason: 2016,
+			},
+			{},
+		);
 		local.autoPlaySeasons = 1;
 		league.autoPlay();
 		return new Promise(resolve => {

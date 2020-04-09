@@ -839,13 +839,23 @@ export const createWithoutSaving = (
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
 const create = async (
-	name: string,
-	tid: number,
-	leagueFile: LeagueFile = {},
-	startingSeason: number,
-	randomizeRosters: boolean = false,
-	difficulty: number,
-	importLid: number | undefined | null,
+	{
+		name,
+		tid,
+		leagueFile = {},
+		startingSeason,
+		randomizeRosters = false,
+		difficulty = 0,
+		importLid,
+	}: {
+		name: string;
+		tid: number;
+		leagueFile?: LeagueFile;
+		startingSeason: number;
+		randomizeRosters?: boolean;
+		difficulty?: number;
+		importLid?: number | undefined | null;
+	},
 	conditions: Conditions,
 ): Promise<number> => {
 	await idb.meta.put("attributes", tid, "lastSelectedTid");

@@ -240,13 +240,15 @@ const createLeague = async (
 	conditions: Conditions,
 ): Promise<number> => {
 	return league.create(
-		name,
-		tid,
-		leagueFile,
-		startingSeason,
-		randomizeRosters,
-		difficulty,
-		importLid,
+		{
+			name,
+			tid,
+			leagueFile,
+			startingSeason,
+			randomizeRosters,
+			difficulty,
+			importLid,
+		},
 		conditions,
 	);
 };

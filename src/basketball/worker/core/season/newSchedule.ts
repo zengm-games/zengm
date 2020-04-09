@@ -140,9 +140,10 @@ const newScheduleDefault = (
 	}
 
 	return tids;
-}; // Takes all teams and returns all unique matchups between teams. This means 2 games per matchup, to deal with
-// home/away. See https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
+};
 
+// Takes all teams and returns all unique matchups between teams. This means 2 games per matchup, to deal with
+// home/away. See https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
 const roundRobin = (tidsInput: number[]): [number, number][] => {
 	const tids: (number | "DUMMY")[] = tidsInput.slice();
 

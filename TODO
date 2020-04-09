@@ -1,3 +1,19 @@
+new league options
+- option to equalize cities when starting new league (equal spending and size)
+- set startingSeason
+
+jersey numbers
+- store in player stats
+- viewable in bios
+- draw from some known distribution
+  - by position, for football
+- frivolity like colleges/countries to view
+- frivolity for retired jersey numbers?
+
+pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
+
+mailing list
+
 OL weight
 
 get rid of basketball/football split, move into one folder structure
@@ -10,8 +26,6 @@ way to save/load leagues on server
 - some limit on size
 - gold only?
 - store on my system (s3 maybe) or use google drive?
-
-delete old data should also delete events, otherwise for old leagues that winds up being quite large
 
 show winning percentage next to record in team history page
 
@@ -226,14 +240,6 @@ DataTable
   - PlayerName and PlayerTeam in AllStarHistory
 
 https://react-hook-form.com/ for forms
-
-jersey numbers
-- retire
-  - could come with expiration date
-
-new league options
-- option to equalize cities when starting new league (equal spending and size)
-- set startingSeason
 
 global key info (salary, days until playoffs, team  etc)
 - league info: days until playoffs, standings/series
@@ -779,7 +785,6 @@ newScheduleCrappy should be better
 
 international names
   accurate faces (race)
-  in player ratings table, show country abbrevs not full names
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 
@@ -792,8 +797,6 @@ delete most negotiation code
     get rid of negotiations object store
 
 bold highest values in career on player stats tables like wikipedia https://www.reddit.com/r/BasketballGM/comments/4rgn0p/two_statrelated_suggestions/
-
-pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
 Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www.reddit.com/r/BasketballGM/comments/3t4kl6/suggestion_add_free_agents_to_teams_dropdown_menu/
 

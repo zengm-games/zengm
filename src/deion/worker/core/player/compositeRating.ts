@@ -2,7 +2,7 @@ import { helpers } from "../../util";
 import fuzzRating from "./fuzzRating";
 import { MinimalPlayerRatings } from "../../../common/types";
 
-const composoteRating = (
+const compositeRating = (
 	ratings: MinimalPlayerRatings,
 	components: (string | number)[],
 	weights: number[] | undefined,
@@ -47,4 +47,4 @@ const composoteRating = (
 	return helpers.bound(numerator / denominator, 0, 1);
 };
 
-export default composoteRating;
+export default compositeRating;

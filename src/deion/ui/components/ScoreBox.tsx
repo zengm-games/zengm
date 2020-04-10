@@ -149,7 +149,10 @@ const ScoreBox = ({
 					) : null}
 					{spreads ? (
 						<div
-							className="score-box-spread text-right p-1"
+							className={classNames(
+								"text-right p-1",
+								small ? "score-box-score" : "score-box-spread",
+							)}
 							title="Predicted Point Spread"
 						>
 							Spread
@@ -200,7 +203,12 @@ const ScoreBox = ({
 							</div>
 							{hasOvrs ? <div className="p-1 text-right">{t.ovr}</div> : null}
 							{spreads ? (
-								<div className="score-box-spread p-1 text-right">
+								<div
+									className={classNames(
+										"text-right p-1",
+										small ? "score-box-score" : "score-box-spread",
+									)}
+								>
 									{spreads[i]}
 								</div>
 							) : null}

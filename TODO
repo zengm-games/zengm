@@ -5,6 +5,8 @@ new league options
 some kind of global status/finances menu, above titlebar
 - BEFORE BETA
   - when game is played, send all team ovrs and use to update first upcoming game
+    - where is injury applied/healed? do after that
+  - test UI in firefox
 - EVENTUALLY
   - more info, not just games
     - progress bar showing phases, completion of season
@@ -14,8 +16,7 @@ some kind of global status/finances menu, above titlebar
 - animation
   - new game simulated
   - show/hide
-- width of spread should be same as score
-- test UI in firefox
+- clean up github issue tracker, and add good first issues, including some of these
 
 player stats popover
 - stats relative to league average

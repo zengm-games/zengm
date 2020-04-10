@@ -272,9 +272,10 @@ const play = async (
 		}
 
 		await cbSaveResults(results);
-	}; // Simulates a day of games. If there are no games left, it calls cbNoGames.
-	// Promise is resolved after games are run
+	};
 
+	// Simulates a day of games. If there are no games left, it calls cbNoGames.
+	// Promise is resolved after games are run
 	const cbPlayGames = async () => {
 		if (numDays === 1) {
 			await updateStatus(

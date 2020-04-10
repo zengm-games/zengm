@@ -1,6 +1,21 @@
+button to close all notifications
+
 new league options
 - option to equalize cities when starting new league (equal spending and size)
 - set startingSeason
+
+some kind of global status/finances menu, above titlebar
+- state passed through titlebar, or other zustand, or normal bbgm view?
+  - probably normal bbgm view, if that makes it each to refresh when appropriate
+- progress bar showing phases, completion of season
+- recent games
+  - get rid of normal W/L notifications
+  - whole season
+  - scrollable
+- mobile
+  - only show either games or other info, with toggle between them
+- make whole thing toggleable somehow, on desktop and mobile
+- don't update in live game sim mode, but do update as soon as navigate away from there
 
 jersey numbers
 - store in player stats
@@ -9,6 +24,8 @@ jersey numbers
   - by position, for football
 - frivolity like colleges/countries to view
 - frivolity for retired jersey numbers?
+- collisions
+  - if one player is much better than the other (probably based on career stats), they keep the number
 
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
@@ -100,9 +117,6 @@ sw cache issue
 - could also store quota amount in log
 - looks like it could be old sw staying active somehow
 - try to reproduce on low disk space
-
-some kind of global status/finances menu, maybe within titlebar? or next to play menu?
-- progress bar showing phases, completion of season
 
 nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff. And some way to see in-season MOV graphs, and multi-season MOV/Win%/PowerRanking
 

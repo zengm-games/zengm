@@ -26,11 +26,15 @@ const getRecord = (t: Team) => {
 	return ` ${t.won}-${t.lost}-${t.tied}`;
 };
 
+const smallStyle = {
+	display: "inline-block",
+};
+
 const ScoreBox = ({
 	game,
 	header,
+	small,
 }: {
-	displayAbbrevs?: boolean;
 	game: {
 		gid: number;
 		overtimes?: number;
@@ -38,6 +42,7 @@ const ScoreBox = ({
 		teams: [Team, Team];
 	};
 	header?: boolean;
+	small?: boolean;
 }) => {
 	const {
 		homeCourtAdvantage,
@@ -72,10 +77,16 @@ const ScoreBox = ({
 	const final = winner !== undefined;
 
 	const hasOvrs =
-		game.teams[0].ovr !== undefined && game.teams[1].ovr !== undefined;
+		!small &&
+		game.teams[0].ovr !== undefined &&
+		game.teams[1].ovr !== undefined;
 
 	let spreads: [string | undefined, string | undefined] | undefined;
-	if (game.teams[0].ovr !== undefined && game.teams[1].ovr !== undefined) {
+	if (
+		game.teams[0].ovr !== undefined &&
+		game.teams[1].ovr !== undefined &&
+		(!small || !final)
+	) {
 		let spread;
 
 		if (process.env.SPORT === "basketball") {
@@ -121,7 +132,10 @@ const ScoreBox = ({
 	}
 
 	return (
-		<div className="score-box mb-3">
+		<div
+			className={classNames("score-box", { "mb-3": !small, "ml-2": small })}
+			style={small ? smallStyle : undefined}
+		>
 			{header ? (
 				<div className="d-flex justify-content-end score-box-header text-muted">
 					{hasOvrs ? (
@@ -158,6 +172,10 @@ const ScoreBox = ({
 
 					const imgURL = teamImgURLsCache[t.tid];
 
+					const teamName = small
+						? teamAbbrevsCache[t.tid]
+						: `${teamRegionsCache[t.tid]} ${teamNamesCache[t.tid]}`;
+
 					return (
 						<div
 							key={i}
@@ -172,9 +190,9 @@ const ScoreBox = ({
 								<a
 									href={helpers.leagueUrl(["roster", teamAbbrevsCache[t.tid]])}
 								>
-									{teamRegionsCache[t.tid]} {teamNamesCache[t.tid]}
+									{teamName}
 								</a>
-								{getRecord(t)}
+								{!small ? getRecord(t) : null}
 							</div>
 							{hasOvrs ? <div className="p-1 text-right">{t.ovr}</div> : null}
 							{spreads ? (
@@ -205,7 +223,7 @@ const ScoreBox = ({
 					);
 				})}
 			</div>
-			{overtimes ? (
+			{!small && overtimes ? (
 				<div className="d-flex justify-content-end text-muted">
 					<div className="text-right text-muted p-1">{overtimes}</div>
 				</div>

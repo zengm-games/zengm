@@ -11,6 +11,7 @@ import {
 import ErrorBoundary from "./ErrorBoundary";
 import Footer from "./Footer";
 import Header from "./Header";
+import LeagueTopBar from "./LeagueTopBar";
 import MultiTeamMenu from "./MultiTeamMenu";
 import NagModal from "./NagModal";
 import NavBar from "./NavBar";
@@ -99,6 +100,7 @@ const Controller = () => {
 				context.state.updateEvents !== undefined
 					? context.state.updateEvents
 					: [];
+			console.log("updatePage", id, inLeague, updateEvents);
 
 			let newLid: number | undefined;
 			if (typeof context.params.lid === "string") {
@@ -283,6 +285,7 @@ const Controller = () => {
 	return (
 		<>
 			<NavBar pageID={pageID} updating={loading} />
+			<LeagueTopBar />
 			<TitleBar />
 			<div className="bbgm-container mt-2">
 				<Header />

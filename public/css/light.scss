@@ -830,6 +830,12 @@ tr.table-warning:hover > td {
 	}
 }
 
+.league-top-bar {
+	.score-box:last-child {
+		margin-right: 15px;
+	}
+}
+
 .score-box {
 	max-width: 400px;
 }
@@ -858,5 +864,6 @@ tr.table-warning:hover > td {
 }
 
 .border-light {
-	border: 1px solid $gray-300 !important;
+	border: 1px solid;
+	border-color: $gray-300 !important;
 }

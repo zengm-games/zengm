@@ -24,6 +24,7 @@ type Props = {
 const NavBar = ({ pageID, updating }: Props) => {
 	const {
 		lid,
+		liveGameInProgress,
 		godMode,
 		gold,
 		hasViewedALeague,
@@ -34,6 +35,7 @@ const NavBar = ({ pageID, updating }: Props) => {
 		username,
 	} = useLocalShallow(state => ({
 		lid: state.lid,
+		liveGameInProgress: state.liveGameInProgress,
 		godMode: state.godMode,
 		gold: state.gold,
 		hasViewedALeague: state.hasViewedALeague,
@@ -61,34 +63,33 @@ const NavBar = ({ pageID, updating }: Props) => {
 	);
 
 	// Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals	// game. This is needed because game sim happens before the results are displayed in liveGame.
-	const phaseStatusBlock =
-		pageID === "liveGame" ? (
-			<span
-				className="navbar-text"
-				style={{
-					lineHeight: 1.35,
-					marginLeft: 16,
-					padding: 0,
-				}}
-			>
-				Live game
-				<br />
-				in progress
-			</span>
-		) : (
-			<span
-				className="navbar-text"
-				style={{
-					lineHeight: 1.35,
-					marginLeft: 16,
-					padding: 0,
-				}}
-			>
-				{phaseText}
-				<br />
-				{statusText}
-			</span>
-		);
+	const phaseStatusBlock = liveGameInProgress ? (
+		<span
+			className="navbar-text"
+			style={{
+				lineHeight: 1.35,
+				marginLeft: 16,
+				padding: 0,
+			}}
+		>
+			Live game
+			<br />
+			in progress
+		</span>
+	) : (
+		<span
+			className="navbar-text"
+			style={{
+				lineHeight: 1.35,
+				marginLeft: 16,
+				padding: 0,
+			}}
+		>
+			{phaseText}
+			<br />
+			{statusText}
+		</span>
+	);
 	return (
 		<Navbar
 			color="light"

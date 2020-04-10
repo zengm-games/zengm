@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocalShallow } from "../util";
 import ScoreBox from "./ScoreBox";
 
@@ -24,13 +24,25 @@ const hiddenStyle = {
 	marginBottom: -64,
 };
 
-const LeagueTopBar = () => {
-	const { games, lid } = useLocalShallow(state => ({
+// https://reactjs.org/docs/hooks-faq.html
+const usePrevious = <T extends any>(value: T): T | undefined => {
+	const ref = useRef<T>();
+	useEffect(() => {
+		ref.current = value;
+	});
+	return ref.current;
+};
+
+const LeagueTopBar = React.memo(() => {
+	const { games, lid, liveGameInProgress } = useLocalShallow(state => ({
 		games: state.games,
 		lid: state.lid,
+		liveGameInProgress: state.liveGameInProgress,
 	}));
 
 	const [show, setShow] = useState(true);
+
+	const prevGames = usePrevious(games);
 
 	if (lid === undefined) {
 		return null;
@@ -40,10 +52,13 @@ const LeagueTopBar = () => {
 		return null;
 	}
 
+	// Don't show any new games if liveGameInProgress
+	const games2 = liveGameInProgress ? prevGames || [] : games;
+
+	const games3 = [];
 	// Show only the first upcoming game
-	const games2 = [];
-	for (const game of games) {
-		games2.push(game);
+	for (const game of games2) {
+		games3.push(game);
 		if (game.teams[0].pts === undefined) {
 			break;
 		}
@@ -55,7 +70,7 @@ const LeagueTopBar = () => {
 			style={show ? undefined : hiddenStyle}
 		>
 			{show
-				? games2.map(game => <ScoreBox key={game.gid} game={game} small />)
+				? games3.map(game => <ScoreBox key={game.gid} game={game} small />)
 				: null}
 			<Toggle
 				show={show}
@@ -65,6 +80,6 @@ const LeagueTopBar = () => {
 			/>
 		</div>
 	);
-};
+});
 
 export default LeagueTopBar;

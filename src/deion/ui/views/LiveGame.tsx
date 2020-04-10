@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, { ChangeEvent } from "react";
 import { BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { overrides } from "../util";
+import { overrides, localActions } from "../util";
 import { View } from "../../common/types";
 
 type PlayerRowProps = {
@@ -50,6 +50,12 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 PlayerRow.propTypes = {
 	i: PropTypes.number.isRequired,
 	p: PropTypes.object.isRequired,
+};
+
+const updatePhaseAndLeagueTopBar = () => {
+	localActions.update({
+		liveGameInProgress: false,
+	});
 };
 
 type LiveGameProps = View<"liveGame">;
@@ -116,6 +122,8 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		this.componentIsMounted = false;
 
 		window.removeEventListener("resize", this.setPlayByPlayDivHeight);
+
+		updatePhaseAndLeagueTopBar();
 	}
 
 	setPlayByPlayDivHeight() {
@@ -180,6 +188,8 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 					event.hide = false;
 				}
 			}
+
+			updatePhaseAndLeagueTopBar();
 		}
 
 		this.setState({

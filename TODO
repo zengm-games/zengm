@@ -5,9 +5,7 @@ new league options
 some kind of global status/finances menu, above titlebar
 - BEFORE BETA
   - when game is played, send all team ovrs and use to update first upcoming game
-  - live game sim. elsewhere, this is checked on the worker only, with "gidPlayByPlay !== undefined". but here, we would need to do it on UI
-    - when viewing live game sim and the sim is still running, don't update list of games
-    - but after the sim finishes running, or when another page is clicked, do update
+  - benchmark
 - EVENTUALLY
   - more info, not just games
     - progress bar showing phases, completion of season
@@ -23,6 +21,13 @@ some kind of global status/finances menu, above titlebar
 player stats popover
 - stats relative to league average
 - ovr/pot graph over time
+
+game highs
+- per season and career, like in basketball reference
+- link to box score
+- summary per team at bottom
+- somehow show in stats page
+- store in normal player stats object (like Lng in football)
 
 page showing scores by day
 
@@ -195,13 +200,6 @@ illness @mattable#4273
 - list of diseases, each with a different average length and probability to spread
 - if can be fatal, make sure to always create new FAs
   - playoffs?
-
-game highs
-- per season and career, like in basketball reference
-- link to box score
-- summary per team at bottom
-- somehow show in stats page
-- store in normal player stats object (like Lng in football)
 
 add more variance in player development with some kind of professionalism/ambition rating https://old.reddit.com/r/BasketballGM/comments/e15yuv/unpredictability_of_progression_and_the_football/
 

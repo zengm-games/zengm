@@ -441,8 +441,9 @@ export type LocalStateUI = {
 	godMode: boolean;
 	hasViewedALeague: boolean;
 	homeCourtAdvantage: number;
-	lid?: number;
 	leagueName: string;
+	lid?: number;
+	liveGameInProgress: boolean;
 	phase: number;
 	phaseText: string;
 	playMenuOptions: Option[];

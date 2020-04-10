@@ -13,7 +13,6 @@ some kind of global status/finances menu, above titlebar
     - progress bar showing phases, completion of season
     - mobile: only show either games or other info, with toggle between them
 - scrollable
-- persist show/hide to localstorage
 - animation
   - new game simulated
   - show/hide

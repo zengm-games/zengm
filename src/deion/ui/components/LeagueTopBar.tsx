@@ -40,7 +40,16 @@ const LeagueTopBar = React.memo(() => {
 		liveGameInProgress: state.liveGameInProgress,
 	}));
 
-	const [show, setShow] = useState(true);
+	const [show, setShow] = useState(() => {
+		const showTemp = localStorage.getItem("bbgmShowLeagueTopBar");
+		if (showTemp === "true") {
+			return true;
+		}
+		if (showTemp === "false") {
+			return false;
+		}
+		return true;
+	});
 	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
 	const prevGames = usePrevious(games);
 
@@ -98,6 +107,7 @@ const LeagueTopBar = React.memo(() => {
 				show={show}
 				toggle={() => {
 					setShow(show2 => !show2);
+					localStorage.setItem("bbgmShowLeagueTopBar", String(!show));
 				}}
 			/>
 		</div>

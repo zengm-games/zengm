@@ -93,10 +93,6 @@ const updateCompleted = async (
 	},
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
-		/*// Reset list, so old completed games don't temporarily show when switching team
-          if (state.completed) {
-              setState({completed: undefined});
-          }*/
 		// Load all games in list
 		const completed = await getProcessedGames(inputs.abbrev, g.get("season"));
 		return {
@@ -105,7 +101,8 @@ const updateCompleted = async (
 	}
 
 	if (updateEvents.includes("gameSim")) {
-		const completed = Array.isArray(state.completed) ? state.completed : []; // Partial update of only new games
+		// Partial update of only new games
+		const completed = Array.isArray(state.completed) ? state.completed : [];
 
 		const games = await getProcessedGames(
 			inputs.abbrev,

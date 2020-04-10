@@ -100,7 +100,6 @@ const Controller = () => {
 				context.state.updateEvents !== undefined
 					? context.state.updateEvents
 					: [];
-			console.log("updatePage", id, inLeague, updateEvents);
 
 			let newLid: number | undefined;
 			if (typeof context.params.lid === "string") {

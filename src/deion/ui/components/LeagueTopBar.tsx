@@ -31,7 +31,8 @@ const hiddenStyle = {
 };
 
 const LeagueTopBar = () => {
-	const { lid } = useLocalShallow(state => ({
+	const { games, lid } = useLocalShallow(state => ({
+		games: state.games,
 		lid: state.lid,
 	}));
 
@@ -40,56 +41,6 @@ const LeagueTopBar = () => {
 	if (lid === undefined) {
 		return null;
 	}
-
-	const games = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(gid => {
-		let teams = [
-			{
-				pts: Math.round(Math.random() * 10 + 100),
-				ovr: 50,
-				tid: 0,
-				won: 14,
-				lost: 28,
-			},
-			{
-				pts: Math.round(Math.random() * 10 + 100),
-				ovr: 50,
-				tid: Math.floor(1 + 29 * Math.random()),
-				won: 14,
-				lost: 28,
-			},
-		];
-
-		if (Math.random() < 0.5) {
-			teams = [teams[1], teams[0]];
-		}
-
-		return {
-			gid,
-			overtimes: 1,
-			season: 2020,
-			teams,
-		};
-	});
-
-	games.push({
-		gid: 10,
-		overtimes: 1,
-		season: 2020,
-		teams: [
-			{
-				ovr: 50,
-				tid: 0,
-				won: 14,
-				lost: 28,
-			},
-			{
-				ovr: 50,
-				tid: 1,
-				won: 14,
-				lost: 28,
-			},
-		],
-	});
 
 	if (games.length === 0) {
 		return null;

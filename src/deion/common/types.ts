@@ -422,6 +422,22 @@ export type Options = {
 };
 
 export type LocalStateUI = {
+	games: {
+		gid: number;
+		season: number;
+		teams: [
+			{
+				ovr?: number;
+				pts?: number;
+				tid: number;
+			},
+			{
+				ovr?: number;
+				pts?: number;
+				tid: number;
+			},
+		];
+	}[];
 	gold?: boolean;
 	godMode: boolean;
 	hasViewedALeague: boolean;

@@ -1,12 +1,19 @@
-button to close all notifications
-
 new league options
 - option to equalize cities when starting new league (equal spending and size)
 - set startingSeason
 
 some kind of global status/finances menu, above titlebar
 - state passed through titlebar, or other zustand, or normal bbgm view?
-  - probably normal bbgm view, if that makes it each to refresh when appropriate
+  - probably zustand, then it can be sent once to all tabs, only when something changes
+- data transfer to UI
+  - reset (not clear, send all schedule and games)
+    - on first load of league
+    - when userTid changes
+  - when season changes, clear
+  - when setSchedule is called, send list of games
+  - when game is played
+    - send result of that game
+    - send all team ovrs and use to update first upcoming game
 - progress bar showing phases, completion of season
 - recent games
   - get rid of normal W/L notifications
@@ -18,6 +25,12 @@ some kind of global status/finances menu, above titlebar
 - make whole thing toggleable somehow, on desktop and mobile
 - don't update in live game sim mode, but do update as soon as navigate away from there
 - persist show/hide to localstorage
+
+player stats popover
+- stats relative to league average
+- ovr/pot graph over time
+
+page showing scores by day
 
 jersey numbers
 - store in player stats

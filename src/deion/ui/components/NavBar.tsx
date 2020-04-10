@@ -17,11 +17,10 @@ import PlayMenu from "./PlayMenu";
 const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 
 type Props = {
-	pageID?: string;
 	updating: boolean;
 };
 
-const NavBar = ({ pageID, updating }: Props) => {
+const NavBar = ({ updating }: Props) => {
 	const {
 		lid,
 		liveGameInProgress,
@@ -158,7 +157,6 @@ const NavBar = ({ pageID, updating }: Props) => {
 };
 
 NavBar.propTypes = {
-	pageID: PropTypes.string,
 	updating: PropTypes.bool.isRequired,
 };
 

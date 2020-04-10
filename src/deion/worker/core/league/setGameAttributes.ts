@@ -43,16 +43,16 @@ const setGameAttributes = async (
 		});
 		g.setWithoutSavingToDB(key, gameAttributes[key]);
 
-		if (key === "userTid") {
-			await initUILocalGames();
-		}
-
 		if (key === "difficulty") {
 			await updateMetaDifficulty(g.get(key));
 		}
 	}
 
 	await toUI("setGameAttributes", [gameAttributes]);
+
+	if (toUpdate.includes("userTid")) {
+		await initUILocalGames();
+	}
 };
 
 export default setGameAttributes;

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow } from "../util";
 import ScoreBox from "./ScoreBox";
 
@@ -41,8 +41,25 @@ const LeagueTopBar = React.memo(() => {
 	}));
 
 	const [show, setShow] = useState(true);
-
+	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
 	const prevGames = usePrevious(games);
+
+	const updateNumberOfScoreBoxes = useCallback(() => {
+		// Limit number of ScoreBoxes to render
+		const documentElement = document.documentElement;
+		if (documentElement) {
+			const width = documentElement.clientWidth;
+			setNumberOfScoreBoxes(Math.ceil(width / 115));
+		}
+	}, []);
+
+	useEffect(() => {
+		updateNumberOfScoreBoxes();
+		window.addEventListener("optimizedResize", updateNumberOfScoreBoxes);
+		return () => {
+			window.removeEventListener("optimizedResize", updateNumberOfScoreBoxes);
+		};
+	}, [updateNumberOfScoreBoxes]);
 
 	if (lid === undefined) {
 		return null;
@@ -55,7 +72,7 @@ const LeagueTopBar = React.memo(() => {
 	// Don't show any new games if liveGameInProgress
 	const games2 = liveGameInProgress ? prevGames || [] : games;
 
-	const games3 = [];
+	let games3 = [];
 	// Show only the first upcoming game
 	for (const game of games2) {
 		games3.push(game);
@@ -63,6 +80,8 @@ const LeagueTopBar = React.memo(() => {
 			break;
 		}
 	}
+
+	games3 = games3.slice(games3.length - numberOfScoreBoxes);
 
 	return (
 		<div

@@ -283,7 +283,7 @@ const Controller = () => {
 
 	return (
 		<>
-			<NavBar pageID={pageID} updating={loading} />
+			<NavBar updating={loading} />
 			<LeagueTopBar />
 			<TitleBar />
 			<div className="bbgm-container mt-2">

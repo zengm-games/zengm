@@ -424,7 +424,6 @@ export type Options = {
 export type LocalStateUI = {
 	games: {
 		gid: number;
-		season: number;
 		teams: [
 			{
 				ovr?: number;

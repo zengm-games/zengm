@@ -12,7 +12,6 @@ const initUILocalGames = async () => {
 		await getProcessedGames(g.get("teamAbbrevsCache")[userTid], g.get("season"))
 	).map(game => ({
 		gid: game.gid,
-		season: game.season,
 		teams: [
 			{
 				ovr: game.teams[0].ovr,
@@ -33,7 +32,6 @@ const initUILocalGames = async () => {
 	for (const game of upcoming) {
 		games.push({
 			gid: game.gid,
-			season: game.season,
 			teams: [
 				{
 					ovr: game.teams[0].ovr,

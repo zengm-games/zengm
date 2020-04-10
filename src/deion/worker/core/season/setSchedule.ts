@@ -28,7 +28,6 @@ const setSchedule = async (tids: [number, number][]) => {
 	for (const game of upcoming) {
 		games.push({
 			gid: game.gid,
-			season: game.season,
 			teams: [
 				{
 					ovr: game.teams[0].ovr,

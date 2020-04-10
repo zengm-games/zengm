@@ -8,9 +8,7 @@ some kind of global status/finances menu, above titlebar
 - data transfer to UI
   - reset (not clear, send all schedule and games) - initUILocalGames
     - when userTid changes
-  - when game is played
-    - send result of that game
-    - send all team ovrs and use to update first upcoming game
+  - when game is played, send all team ovrs and use to update first upcoming game
 - progress bar showing phases, completion of season
 - recent games
   - get rid of normal W/L notifications
@@ -22,6 +20,9 @@ some kind of global status/finances menu, above titlebar
 - make whole thing toggleable somehow, on desktop and mobile
 - don't update in live game sim mode, but do update as soon as navigate away from there
 - persist show/hide to localstorage
+- animation
+  - new game simulated
+  - show/hide
 - test UI in firefox
 
 player stats popover

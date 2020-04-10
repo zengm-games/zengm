@@ -38,7 +38,7 @@ const ScoreBox = ({
 	game: {
 		gid: number;
 		overtimes?: number;
-		season: number;
+		season?: number;
 		teams: [Team, Team];
 	};
 	header?: boolean;
@@ -46,6 +46,7 @@ const ScoreBox = ({
 }) => {
 	const {
 		homeCourtAdvantage,
+		season,
 		teamAbbrevsCache,
 		teamImgURLsCache,
 		teamNamesCache,
@@ -53,6 +54,7 @@ const ScoreBox = ({
 		userTid,
 	} = useLocalShallow(state => ({
 		homeCourtAdvantage: state.homeCourtAdvantage,
+		season: state.season,
 		teamAbbrevsCache: state.teamAbbrevsCache,
 		teamImgURLsCache: state.teamImgURLsCache,
 		teamNamesCache: state.teamNamesCache,
@@ -130,6 +132,8 @@ const ScoreBox = ({
 			overtimes = `${game.overtimes}OT`;
 		}
 	}
+
+	const gameSeason = game.season === undefined ? season : game.season;
 
 	return (
 		<div
@@ -211,7 +215,7 @@ const ScoreBox = ({
 										href={helpers.leagueUrl([
 											"game_log",
 											teamAbbrevsCache[t.tid],
-											game.season,
+											gameSeason,
 											game.gid,
 										])}
 									>

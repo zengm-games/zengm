@@ -1,7 +1,7 @@
 import { PHASE } from "../../../common";
 import { saveAwardsByPlayer } from "../season/awards";
 import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent, toUI } from "../../util";
 import {
 	Conditions,
 	Game,
@@ -224,6 +224,26 @@ const writeGameStats = async (
 			},
 			conditions,
 		);
+
+		await toUI("mergeGames", [
+			[
+				{
+					gid: results.gid,
+					teams: [
+						{
+							ovr: results.team[0].ovr,
+							pts: results.team[0].stat.pts,
+							tid: results.team[0].id,
+						},
+						{
+							ovr: results.team[1].ovr,
+							pts: results.team[1].stat.pts,
+							tid: results.team[1].id,
+						},
+					],
+				},
+			],
+		]);
 	} else if (results.team[0].id === -1 && results.team[1].id === -2) {
 		if (allStars) {
 			const text = `${allStars.teamNames[tw]} ${tied ? "tied" : "defeated"} ${

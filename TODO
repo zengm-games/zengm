@@ -10,12 +10,14 @@ some kind of global status/finances menu, above titlebar
 - progress bar showing phases, completion of season
 - recent games
   - get rid of normal W/L notifications
+    - even when collapsed?
   - whole season
   - scrollable
 - mobile
   - only show either games or other info, with toggle between them
 - make whole thing toggleable somehow, on desktop and mobile
 - don't update in live game sim mode, but do update as soon as navigate away from there
+- persist show/hide to localstorage
 
 jersey numbers
 - store in player stats

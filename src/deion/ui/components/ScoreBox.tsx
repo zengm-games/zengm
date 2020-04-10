@@ -133,7 +133,7 @@ const ScoreBox = ({
 
 	return (
 		<div
-			className={classNames("score-box", { "mb-3": !small, "ml-2": small })}
+			className={classNames("score-box", { "mb-3": !small, "mr-2": small })}
 			style={small ? smallStyle : undefined}
 		>
 			{header ? (

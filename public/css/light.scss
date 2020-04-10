@@ -830,10 +830,12 @@ tr.table-warning:hover > td {
 	}
 }
 
-.league-top-bar {
-	.score-box:last-child {
-		margin-right: 15px;
-	}
+.league-top-bar-toggle {
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	width: 15px;
+	height: 56px;
+	z-index: 1000;
 }
 
 .score-box {

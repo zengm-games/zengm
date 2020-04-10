@@ -6,8 +6,6 @@ some kind of global status/finances menu, above titlebar
 - state passed through titlebar, or other zustand, or normal bbgm view?
   - probably zustand, then it can be sent once to all tabs, only when something changes
 - data transfer to UI
-  - reset (not clear, send all schedule and games) - initUILocalGames
-    - when userTid changes
   - when game is played, send all team ovrs and use to update first upcoming game
 - progress bar showing phases, completion of season
 - recent games
@@ -17,12 +15,12 @@ some kind of global status/finances menu, above titlebar
   - scrollable
 - mobile
   - only show either games or other info, with toggle between them
-- make whole thing toggleable somehow, on desktop and mobile
 - don't update in live game sim mode, but do update as soon as navigate away from there
 - persist show/hide to localstorage
 - animation
   - new game simulated
   - show/hide
+- width of spread should be same as score
 - test UI in firefox
 
 player stats popover

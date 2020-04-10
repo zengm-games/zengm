@@ -59,7 +59,6 @@ const [useLocal, local] = create<
 	actions: {
 		mergeGames(games: LocalStateUI["games"]) {
 			set(state => {
-				console.log("mergeGames", state.games, games);
 				const newGames = state.games.slice();
 
 				for (const game of games) {
@@ -71,7 +70,6 @@ const [useLocal, local] = create<
 					}
 				}
 
-				console.log("end result", newGames);
 				return {
 					games: newGames,
 				};

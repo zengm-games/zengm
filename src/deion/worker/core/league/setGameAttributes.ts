@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, toUI } from "../../util";
+import { g, toUI, initUILocalGames } from "../../util";
 import { GameAttributesLeague } from "../../../common/types";
 import { helpers } from "../../../common";
 
@@ -42,6 +42,10 @@ const setGameAttributes = async (
 			value: gameAttributes[key],
 		});
 		g.setWithoutSavingToDB(key, gameAttributes[key]);
+
+		if (key === "userTid") {
+			await initUILocalGames();
+		}
 
 		if (key === "difficulty") {
 			await updateMetaDifficulty(g.get(key));

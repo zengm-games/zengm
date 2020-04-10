@@ -6,6 +6,7 @@ import { GameAttributesLeague, LocalStateUI } from "../../common/types";
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
 
 type LocalActions = {
+	mergeGames: (games: LocalStateUI["games"]) => void;
 	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
@@ -56,6 +57,27 @@ const [useLocal, local] = create<
 	moreInfoSeason: undefined,
 
 	actions: {
+		mergeGames(games: LocalStateUI["games"]) {
+			set(state => {
+				console.log("mergeGames", state.games, games);
+				const newGames = state.games.slice();
+
+				for (const game of games) {
+					const index = newGames.findIndex(newGame => newGame.gid === game.gid);
+					if (index >= 0) {
+						newGames[index] = game;
+					} else {
+						newGames.push(game);
+					}
+				}
+
+				console.log("end result", newGames);
+				return {
+					games: newGames,
+				};
+			});
+		},
+
 		// Reset any values specific to a league
 		resetLeague() {
 			set({

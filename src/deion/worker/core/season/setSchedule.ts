@@ -1,4 +1,7 @@
 import { idb } from "../../db";
+import { getUpcoming } from "../../views/schedule";
+import { g, toUI } from "../../util";
+import { LocalStateUI } from "../../../common/types";
 
 /**
  * Save the schedule to the database, overwriting what's currently there.
@@ -17,6 +20,29 @@ const setSchedule = async (tids: [number, number][]) => {
 			}),
 		),
 	);
+
+	// Add upcoming games
+	const games: LocalStateUI["games"] = [];
+	const userTid = g.get("userTid");
+	const upcoming = await getUpcoming(userTid);
+	for (const game of upcoming) {
+		games.push({
+			gid: game.gid,
+			season: game.season,
+			teams: [
+				{
+					ovr: game.teams[0].ovr,
+					tid: game.teams[0].tid,
+				},
+				{
+					ovr: game.teams[1].ovr,
+					tid: game.teams[1].tid,
+				},
+			],
+		});
+	}
+
+	await toUI("mergeGames", [games]);
 };
 
 export default setSchedule;

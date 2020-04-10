@@ -46,13 +46,22 @@ const LeagueTopBar = () => {
 		return null;
 	}
 
+	// Show only the first upcoming game
+	const games2 = [];
+	for (const game of games) {
+		games2.push(game);
+		if (game.teams[0].pts === undefined) {
+			break;
+		}
+	}
+
 	return (
 		<div
 			className="league-top-bar d-flex justify-content-end mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
 			{show
-				? games.map(game => <ScoreBox key={game.gid} game={game} small />)
+				? games2.map(game => <ScoreBox key={game.gid} game={game} small />)
 				: null}
 			<Toggle show={show} setShow={setShow} />
 		</div>

@@ -11,6 +11,12 @@ const newPhasePreseason = async (
 	await league.setGameAttributes({
 		season: g.get("season") + 1,
 	});
+	await toUI("setLocal", [
+		{
+			games: [],
+		},
+	]);
+
 	const teams = await idb.cache.teams.getAll();
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",

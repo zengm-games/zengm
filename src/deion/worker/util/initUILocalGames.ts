@@ -1,46 +1,52 @@
+import g from "./g";
+import getProcessedGames from "./getProcessedGames";
 import toUI from "./toUI";
 import { LocalStateUI } from "../../common/types";
-
-const games: LocalStateUI["games"] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(gid => {
-	let teams: LocalStateUI["games"][number]["teams"] = [
-		{
-			pts: Math.round(Math.random() * 10 + 100),
-			ovr: 50,
-			tid: 0,
-		},
-		{
-			pts: Math.round(Math.random() * 10 + 100),
-			ovr: 50,
-			tid: Math.floor(1 + 29 * Math.random()),
-		},
-	];
-
-	if (Math.random() < 0.5) {
-		teams = [teams[1], teams[0]];
-	}
-
-	return {
-		gid,
-		season: 2020,
-		teams,
-	};
-});
-games.push({
-	gid: 10,
-	season: 2020,
-	teams: [
-		{
-			ovr: 50,
-			tid: 0,
-		},
-		{
-			ovr: 50,
-			tid: 1,
-		},
-	],
-});
+import { getUpcoming } from "../views/schedule";
 
 const initUILocalGames = async () => {
+	const userTid = g.get("userTid");
+
+	// Start with completed games
+	const games: LocalStateUI["games"] = (
+		await getProcessedGames(g.get("teamAbbrevsCache")[userTid], g.get("season"))
+	).map(game => ({
+		gid: game.gid,
+		season: game.season,
+		teams: [
+			{
+				ovr: game.teams[0].ovr,
+				pts: game.teams[0].pts,
+				tid: game.teams[0].tid,
+			},
+			{
+				ovr: game.teams[1].ovr,
+				pts: game.teams[1].pts,
+				tid: game.teams[1].tid,
+			},
+		],
+	}));
+	games.reverse();
+
+	// Add upcoming games
+	const upcoming = await getUpcoming(userTid);
+	for (const game of upcoming) {
+		games.push({
+			gid: game.gid,
+			season: game.season,
+			teams: [
+				{
+					ovr: game.teams[0].ovr,
+					tid: game.teams[0].tid,
+				},
+				{
+					ovr: game.teams[1].ovr,
+					tid: game.teams[1].tid,
+				},
+			],
+		});
+	}
+
 	await toUI("setLocal", [
 		{
 			games,

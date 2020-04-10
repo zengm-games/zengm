@@ -96,6 +96,10 @@ const initAds = (goldUntil: number | undefined) => {
 	}
 };
 
+const mergeGames = (games: LocalStateUI["games"]) => {
+	localActions.mergeGames(games);
+};
+
 // Should only be called from Shared Worker, to move other tabs to new league because only one can be open at a time
 const newLid = async (lid: number) => {
 	const parts = window.location.pathname.split("/");
@@ -161,6 +165,7 @@ export default {
 	bbgmPing,
 	confirm,
 	initAds,
+	mergeGames,
 	newLid,
 	realtimeUpdate: realtimeUpdate2,
 	resetLeague,

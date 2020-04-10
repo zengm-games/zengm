@@ -6,10 +6,8 @@ some kind of global status/finances menu, above titlebar
 - state passed through titlebar, or other zustand, or normal bbgm view?
   - probably zustand, then it can be sent once to all tabs, only when something changes
 - data transfer to UI
-  - reset (not clear, send all schedule and games)
+  - reset (not clear, send all schedule and games) - initUILocalGames
     - when userTid changes
-  - when season changes, clear
-  - when setSchedule is called, send list of games
   - when game is played
     - send result of that game
     - send all team ovrs and use to update first upcoming game

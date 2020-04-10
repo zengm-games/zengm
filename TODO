@@ -3,19 +3,16 @@ new league options
 - set startingSeason
 
 some kind of global status/finances menu, above titlebar
-- state passed through titlebar, or other zustand, or normal bbgm view?
-  - probably zustand, then it can be sent once to all tabs, only when something changes
-- data transfer to UI
+- BEFORE BETA
   - when game is played, send all team ovrs and use to update first upcoming game
-- progress bar showing phases, completion of season
-- recent games
-  - get rid of normal W/L notifications
-    - even when collapsed?
-  - whole season
-  - scrollable
-- mobile
-  - only show either games or other info, with toggle between them
-- don't update in live game sim mode, but do update as soon as navigate away from there
+  - live game sim. elsewhere, this is checked on the worker only, with "gidPlayByPlay !== undefined". but here, we would need to do it on UI
+    - when viewing live game sim and the sim is still running, don't update list of games
+    - but after the sim finishes running, or when another page is clicked, do update
+- EVENTUALLY
+  - more info, not just games
+    - progress bar showing phases, completion of season
+    - mobile: only show either games or other info, with toggle between them
+- scrollable
 - persist show/hide to localstorage
 - animation
   - new game simulated

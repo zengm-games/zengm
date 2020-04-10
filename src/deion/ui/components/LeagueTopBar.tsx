@@ -3,18 +3,12 @@ import React, { useState } from "react";
 import { useLocalShallow } from "../util";
 import ScoreBox from "./ScoreBox";
 
-const Toggle = ({
-	show,
-	setShow,
-}: {
-	show: boolean;
-	setShow: (show: boolean) => void;
-}) => {
+const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	return (
 		<button
 			className="btn btn-secondary p-0 league-top-bar-toggle"
 			title={show ? "Hide scores" : "Show scores"}
-			onClick={() => setShow(!show)}
+			onClick={toggle}
 		>
 			<span
 				className={classNames(
@@ -63,7 +57,12 @@ const LeagueTopBar = () => {
 			{show
 				? games2.map(game => <ScoreBox key={game.gid} game={game} small />)
 				: null}
-			<Toggle show={show} setShow={setShow} />
+			<Toggle
+				show={show}
+				toggle={() => {
+					setShow(show2 => !show2);
+				}}
+			/>
 		</div>
 	);
 };

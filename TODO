@@ -7,7 +7,6 @@ some kind of global status/finances menu, above titlebar
   - probably zustand, then it can be sent once to all tabs, only when something changes
 - data transfer to UI
   - reset (not clear, send all schedule and games)
-    - on first load of league
     - when userTid changes
   - when season changes, clear
   - when setSchedule is called, send list of games
@@ -25,6 +24,7 @@ some kind of global status/finances menu, above titlebar
 - make whole thing toggleable somehow, on desktop and mobile
 - don't update in live game sim mode, but do update as soon as navigate away from there
 - persist show/hide to localstorage
+- test UI in firefox
 
 player stats popover
 - stats relative to league average

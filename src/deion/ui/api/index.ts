@@ -126,6 +126,10 @@ const setGameAttributes = (gameAttributes: Partial<GameAttributes>) => {
 	localActions.updateGameAttributes(gameAttributes);
 };
 
+const setLocal = (obj: Partial<LocalStateUI>) => {
+	localActions.update(obj);
+};
+
 const showEvent2 = (options: LogEventShowOptions) => {
 	showEvent(options);
 };
@@ -161,6 +165,7 @@ export default {
 	realtimeUpdate: realtimeUpdate2,
 	resetLeague,
 	setGameAttributes,
+	setLocal,
 	showEvent: showEvent2,
 	showModal,
 	updateLocal,

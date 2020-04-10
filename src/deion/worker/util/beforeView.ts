@@ -4,6 +4,7 @@ import {
 	env,
 	g,
 	helpers,
+	initUILocalGames,
 	local,
 	toUI,
 	updatePhase,
@@ -153,6 +154,7 @@ const beforeLeague = async (
 	}
 
 	await league.loadGameAttributes();
+	await initUILocalGames();
 
 	if (loadingNewLid !== newLid) {
 		return;

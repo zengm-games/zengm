@@ -15,49 +15,12 @@ type LocalActions = {
 const defaultUnits: "metric" | "us" =
 	window.navigator.language === "en-US" ? "us" : "metric";
 
-const games: LocalStateUI["games"] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(gid => {
-	let teams: LocalStateUI["games"][number]["teams"] = [
-		{
-			pts: Math.round(Math.random() * 10 + 100),
-			ovr: 50,
-			tid: 0,
-		},
-		{
-			pts: Math.round(Math.random() * 10 + 100),
-			ovr: 50,
-			tid: Math.floor(1 + 29 * Math.random()),
-		},
-	];
-
-	if (Math.random() < 0.5) {
-		teams = [teams[1], teams[0]];
-	}
-
-	return {
-		gid,
-		season: 2020,
-		teams,
-	};
-});
-games.push({
-	gid: 10,
-	season: 2020,
-	teams: [
-		{
-			tid: 0,
-		},
-		{
-			tid: 1,
-		},
-	],
-});
-
 const [useLocal, local] = create<
 	LocalStateUI & {
 		actions: LocalActions;
 	}
 >(set => ({
-	games,
+	games: [],
 	gold: undefined,
 	godMode: false,
 	hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
@@ -96,7 +59,7 @@ const [useLocal, local] = create<
 		// Reset any values specific to a league
 		resetLeague() {
 			set({
-				games,
+				games: [],
 				godMode: false,
 				lid: undefined,
 				leagueName: "",

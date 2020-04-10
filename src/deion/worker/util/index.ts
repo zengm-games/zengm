@@ -14,6 +14,7 @@ export { default as genMessage } from "./genMessage";
 export { default as getProcessedGames } from "./getProcessedGames";
 export { default as getTeamColors } from "./getTeamColors";
 export { default as helpers } from "./helpers";
+export { default as initUILocalGames } from "./initUILocalGames";
 export { default as injuries } from "./injuries";
 export { default as loadNames } from "./loadNames";
 export { default as local } from "./local";

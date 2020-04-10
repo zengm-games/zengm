@@ -49,7 +49,7 @@ const LeagueTopBar = React.memo(() => {
 		const documentElement = document.documentElement;
 		if (documentElement) {
 			const width = documentElement.clientWidth;
-			setNumberOfScoreBoxes(Math.ceil(width / 115));
+			setNumberOfScoreBoxes(Math.ceil(width / 85));
 		}
 	}, []);
 
@@ -81,7 +81,10 @@ const LeagueTopBar = React.memo(() => {
 		}
 	}
 
-	games3 = games3.slice(games3.length - numberOfScoreBoxes);
+	const start = games3.length - numberOfScoreBoxes;
+	if (start > 0) {
+		games3 = games3.slice(start);
+	}
 
 	return (
 		<div

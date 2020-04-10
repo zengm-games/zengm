@@ -83,6 +83,9 @@ const ScoreBox = ({
 		game.teams[0].ovr !== undefined &&
 		game.teams[1].ovr !== undefined;
 
+	const userInGame =
+		userTid === game.teams[0].tid || userTid === game.teams[1].tid;
+
 	let spreads: [string | undefined, string | undefined] | undefined;
 	if (
 		game.teams[0].ovr !== undefined &&
@@ -169,11 +172,12 @@ const ScoreBox = ({
 				{[1, 0].map(i => {
 					const t = game.teams[i];
 					let scoreClasses;
-					if (winner !== undefined && t.tid === userTid) {
+					if (winner !== undefined) {
 						scoreClasses = {
-							"alert-success": winner === i,
-							"alert-danger": winner !== i,
-							"alert-warning": winner === -1,
+							"alert-success": winner === i && userInGame && t.tid === userTid,
+							"alert-danger": winner === i && userInGame && t.tid !== userTid,
+							"alert-warning": winner === -1 && userInGame && t.tid === userTid,
+							"alert-secondary": winner === i && !userInGame,
 						};
 					}
 
@@ -188,7 +192,7 @@ const ScoreBox = ({
 							key={i}
 							className={classNames("d-flex align-items-center", scoreClasses)}
 						>
-							{imgURL ? (
+							{!small && imgURL ? (
 								<div className="score-box-logo d-flex align-items-center justify-content-center">
 									<img className="mw-100 mh-100" src={imgURL} alt="" />
 								</div>

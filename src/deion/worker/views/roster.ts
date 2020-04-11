@@ -182,6 +182,8 @@ const updateRoster = async (
 			ovrCurrent: overrides.core.team.ovr!(playersCurrent),
 		};
 
+		console.log("roster", playersCurrent, t2.ovrCurrent);
+
 		return {
 			abbrev: inputs.abbrev,
 			budget: g.get("budget"),

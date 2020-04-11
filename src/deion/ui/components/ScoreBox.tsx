@@ -192,7 +192,7 @@ const ScoreBox = ({
 							key={i}
 							className={classNames("d-flex align-items-center", scoreClasses)}
 						>
-							{!small && imgURL ? (
+							{imgURL ? (
 								<div className="score-box-logo d-flex align-items-center justify-content-center">
 									<img className="mw-100 mh-100" src={imgURL} alt="" />
 								</div>

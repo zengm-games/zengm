@@ -161,6 +161,27 @@ const updateLocal = (obj: Partial<LocalStateUI>) => {
 	localActions.update(obj);
 };
 
+const updateTeamOvrs = (ovrs: number[]) => {
+	const games = local.getState().games;
+
+	// Find upcoming game, it's the only one that needs updating
+	const game = games.find(game => game.teams[0].pts === undefined);
+	if (game) {
+		const { teams } = game;
+		if (
+			teams[0].ovr !== ovrs[teams[0].tid] ||
+			teams[1].ovr !== ovrs[teams[1].tid]
+		) {
+			teams[0].ovr = ovrs[teams[0].tid];
+			teams[1].ovr = ovrs[teams[1].tid];
+
+			localActions.update({
+				games: games.slice(),
+			});
+		}
+	}
+};
+
 export default {
 	bbgmPing,
 	confirm,
@@ -174,4 +195,5 @@ export default {
 	showEvent: showEvent2,
 	showModal,
 	updateLocal,
+	updateTeamOvrs,
 };

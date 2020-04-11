@@ -45,7 +45,10 @@ const processTeam = (
 		.map(p => ({
 			pid: p.pid,
 			ratings: {
-				ovr: p.ratings[p.ratings.length - 1].ovr,
+				ovr: player.fuzzRating(
+					p.ratings[p.ratings.length - 1].ovr,
+					p.ratings[p.ratings.length - 1].fuzz,
+				),
 				pos: p.ratings[p.ratings.length - 1].pos,
 			},
 		}));

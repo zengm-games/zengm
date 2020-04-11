@@ -6,12 +6,14 @@ some kind of global status/finances menu, above titlebar
 - BEFORE BETA
   - when game is played, send all team ovrs and use to update first upcoming game
     - where is injury applied/healed? do after that
+  - on playerMovement, also call recomputeTeamOvrs
   - test UI in firefox
   - test football
 - EVENTUALLY
   - more info, not just games
     - progress bar showing phases, completion of season
     - mobile: only show either games or other info, with toggle between them
+- get rid of notifications?
 - scrollable
 - animation
   - new game simulated
@@ -28,6 +30,8 @@ game highs
 - summary per team at bottom
 - somehow show in stats page
 - store in normal player stats object (like Lng in football)
+
+average roster age implemented as team advanced stat?
 
 page showing scores by day
 

@@ -1,4 +1,4 @@
-import { season } from "../core";
+import { season, player } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, overrides } from "../util";
 import { UpdateEvents, ViewInput, Game } from "../../common/types";
@@ -20,7 +20,10 @@ export const getUpcoming = async (tid: number, limit: number = Infinity) => {
 		.map(p => ({
 			pid: p.pid,
 			ratings: {
-				ovr: p.ratings[p.ratings.length - 1].ovr,
+				ovr: player.fuzzRating(
+					p.ratings[p.ratings.length - 1].ovr,
+					p.ratings[p.ratings.length - 1].fuzz,
+				),
 				pos: p.ratings[p.ratings.length - 1].pos,
 			},
 			tid: p.tid,

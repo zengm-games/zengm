@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow } from "../util";
 import ScoreBox from "./ScoreBox";
@@ -75,18 +76,20 @@ const LeagueTopBar = React.memo(() => {
 	}
 	const games2 = prevGames.current || [];
 
-	let games3 = [];
-	// Show only the first upcoming game
-	for (const game of games2) {
-		games3.push(game);
-		if (game.teams[0].pts === undefined) {
-			break;
+	let games3: typeof games = [];
+	if (show) {
+		// Show only the first upcoming game
+		for (const game of games2) {
+			games3.push(game);
+			if (game.teams[0].pts === undefined) {
+				break;
+			}
 		}
-	}
 
-	const start = games3.length - numberOfScoreBoxes;
-	if (start > 0) {
-		games3 = games3.slice(start);
+		const start = games3.length - numberOfScoreBoxes;
+		if (start > 0) {
+			games3 = games3.slice(start);
+		}
 	}
 
 	return (
@@ -94,9 +97,19 @@ const LeagueTopBar = React.memo(() => {
 			className="league-top-bar d-flex justify-content-end mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
-			{show
-				? games3.map(game => <ScoreBox key={game.gid} game={game} small />)
-				: null}
+			<AnimatePresence initial={false}>
+				{games3.map(game => (
+					<motion.div
+						key={game.gid}
+						positionTransition
+						initial={{ x: 150 }}
+						animate={{ x: 0 }}
+						transition={{ duration: 2, type: "tween" }}
+					>
+						<ScoreBox game={game} small />
+					</motion.div>
+				))}
+			</AnimatePresence>
 			<Toggle
 				show={show}
 				toggle={() => {

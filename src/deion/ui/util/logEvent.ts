@@ -14,6 +14,12 @@ const showEvent = ({
 }: LogEventShowOptions) => {
 	let title;
 
+	if (type === "gameWon" || type === "gameLost" || type === "gameTied") {
+		if (localStorage.getItem("bbgmShowLeagueTopBar") !== "false") {
+			return;
+		}
+	}
+
 	if (type === "error") {
 		title = "Error!";
 	} else if (type === "changes") {

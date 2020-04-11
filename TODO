@@ -8,10 +8,16 @@ some kind of global status/finances menu, above titlebar
   - more info, not just games
     - progress bar showing phases, completion of season
     - mobile: only show either games or other info, with toggle between them
+- get rid of normal W/L notifications?
+  - maybe only hide it when LeagueTopBar is open
+    - could do that with localStorage? not really, can get out of sync across tabs
 - scrollable
 - animation
   - new game simulated
   - show/hide
+  - https://codesandbox.io/s/framer-motion-notifications-5cvo9
+    - https://codesandbox.io/s/vibrant-curran-xqcbh?file=/src/App.js
+  - css transition wtih margin-right?
 - clean up github issue tracker, and add good first issues, including some of these
 
 player stats popover
@@ -46,6 +52,15 @@ mailing list
 OL weight
 
 get rid of basketball/football split, move into one folder structure
+
+login issues
+- DefinitelyNotDonaldTrump on discord can help debug
+  - from his debugging so far, the response from login.php is correct and the redirect to the account page happens, but local.username is still ""
+    - is it not working correctly, setting through localActions?
+    - or is it being overridden somewhere, like due to cross tab communication or the worker?
+  - also says it happens on both BBGM and FBGM, and that it happens regardless of how many windows are open
+  - console.log(document.cookie) - he says this returns an empty string, so i guess the cookie isn't being set somehow
+    - would explain things, if cookie was not being set somehow. but should also be checked on account.basketball-gm.com directly
 
 way to save/load leagues on server
 - generate GUID per league

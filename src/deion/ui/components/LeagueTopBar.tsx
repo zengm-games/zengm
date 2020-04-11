@@ -61,11 +61,7 @@ const LeagueTopBar = React.memo(() => {
 		};
 	}, [updateNumberOfScoreBoxes]);
 
-	if (lid === undefined) {
-		return null;
-	}
-
-	if (games.length === 0) {
+	if (lid === undefined || games.length === 0) {
 		return null;
 	}
 
@@ -73,20 +69,21 @@ const LeagueTopBar = React.memo(() => {
 	if (!liveGameInProgress) {
 		prevGames.current = games;
 	}
-	const games2 = prevGames.current || [];
 
-	let games3 = [];
-	// Show only the first upcoming game
-	for (const game of games2) {
-		games3.push(game);
-		if (game.teams[0].pts === undefined) {
-			break;
+	let games2: typeof games = [];
+	if (show) {
+		// Show only the first upcoming game
+		for (const game of prevGames.current) {
+			games2.push(game);
+			if (game.teams[0].pts === undefined) {
+				break;
+			}
 		}
-	}
 
-	const start = games3.length - numberOfScoreBoxes;
-	if (start > 0) {
-		games3 = games3.slice(start);
+		const start = games2.length - numberOfScoreBoxes;
+		if (start > 0) {
+			games2 = games2.slice(start);
+		}
 	}
 
 	return (
@@ -94,9 +91,9 @@ const LeagueTopBar = React.memo(() => {
 			className="league-top-bar d-flex justify-content-end mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
-			{show
-				? games3.map(game => <ScoreBox key={game.gid} game={game} small />)
-				: null}
+			{games2.map(game => (
+				<ScoreBox key={game.gid} game={game} small />
+			))}
 			<Toggle
 				show={show}
 				toggle={() => {

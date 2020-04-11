@@ -1,16 +1,13 @@
 new league options
 - option to equalize cities when starting new league (equal spending and size)
 - set startingSeason
+- challenge mode
 
 some kind of global status/finances menu, above titlebar
-- BEFORE BETA
-  - test UI in firefox
-  - test football
 - EVENTUALLY
   - more info, not just games
     - progress bar showing phases, completion of season
     - mobile: only show either games or other info, with toggle between them
-- get rid of notifications?
 - scrollable
 - animation
   - new game simulated

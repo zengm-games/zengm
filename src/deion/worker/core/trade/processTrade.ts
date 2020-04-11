@@ -1,7 +1,14 @@
 import { PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
+import {
+	g,
+	helpers,
+	logEvent,
+	toUI,
+	updatePlayMenu,
+	recomputeLocalUITeamOvrs,
+} from "../../util";
 import { TradeSummary } from "../../../common/types";
 
 const formatAssetsEventLog = (t: TradeSummary["teams"][0]) => {
@@ -76,8 +83,10 @@ const processTrade = async (
 		}
 	}
 
-	await toUI("realtimeUpdate", [["playerMovement"]]); // If draft pick was changed...
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
 
+	// If draft pick was changed...
 	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();
 	}

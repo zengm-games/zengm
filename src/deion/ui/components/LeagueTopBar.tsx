@@ -24,15 +24,6 @@ const hiddenStyle = {
 	marginBottom: -64,
 };
 
-// https://reactjs.org/docs/hooks-faq.html
-const usePrevious = <T extends any>(value: T): T | undefined => {
-	const ref = useRef<T>();
-	useEffect(() => {
-		ref.current = value;
-	});
-	return ref.current;
-};
-
 const LeagueTopBar = React.memo(() => {
 	const { games, lid, liveGameInProgress } = useLocalShallow(state => ({
 		games: state.games,
@@ -51,14 +42,14 @@ const LeagueTopBar = React.memo(() => {
 		return true;
 	});
 	const [numberOfScoreBoxes, setNumberOfScoreBoxes] = useState(10);
-	const prevGames = usePrevious(games);
+	const prevGames = useRef<typeof games>([]);
 
 	const updateNumberOfScoreBoxes = useCallback(() => {
 		// Limit number of ScoreBoxes to render
 		const documentElement = document.documentElement;
 		if (documentElement) {
 			const width = documentElement.clientWidth;
-			setNumberOfScoreBoxes(Math.ceil(width / 85));
+			setNumberOfScoreBoxes(Math.ceil(width / 115));
 		}
 	}, []);
 
@@ -79,7 +70,10 @@ const LeagueTopBar = React.memo(() => {
 	}
 
 	// Don't show any new games if liveGameInProgress
-	const games2 = liveGameInProgress ? prevGames || [] : games;
+	if (!liveGameInProgress) {
+		prevGames.current = games;
+	}
+	const games2 = prevGames.current || [];
 
 	let games3 = [];
 	// Show only the first upcoming game

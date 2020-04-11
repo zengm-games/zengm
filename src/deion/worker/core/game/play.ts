@@ -1,4 +1,3 @@
-import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import {
 	allStar,
@@ -25,37 +24,9 @@ import {
 	toUI,
 	updatePlayMenu,
 	updateStatus,
+	recomputeLocalUITeamOvrs,
 } from "../../util";
 import { Conditions, ScheduleGame, UpdateEvents } from "../../../common/types";
-
-const recomputeTeamOvrs = async () => {
-	const players = (
-		await idb.cache.players.indexGetAll("playersByTid", [
-			0, // Active players have tid >= 0
-			Infinity,
-		])
-	).map(p => ({
-		pid: p.pid,
-		tid: p.tid,
-		injury: p.injury,
-		ratings: {
-			ovr: player.fuzzRating(
-				p.ratings[p.ratings.length - 1].ovr,
-				p.ratings[p.ratings.length - 1].fuzz,
-			),
-			pos: p.ratings[p.ratings.length - 1].pos,
-		},
-	}));
-
-	const ovrs = range(g.get("numTeams")).map(tid => {
-		const playersCurrent = players.filter(
-			p => p.tid === tid && p.injury.gamesRemaining === 0,
-		);
-		return overrides.core.team.ovr!(playersCurrent);
-	});
-
-	toUI("updateTeamOvrs", [ovrs]);
-};
 
 /**
  * Play one or more days of games.
@@ -227,7 +198,7 @@ const play = async (
 		}
 
 		// More stuff for LeagueTopBar - update ovrs based on injuries
-		await recomputeTeamOvrs();
+		await recomputeLocalUITeamOvrs();
 
 		if (healedTexts.length > 0) {
 			logEvent(

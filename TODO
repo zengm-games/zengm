@@ -4,9 +4,6 @@ new league options
 
 some kind of global status/finances menu, above titlebar
 - BEFORE BETA
-  - when game is played, send all team ovrs and use to update first upcoming game
-    - where is injury applied/healed? do after that
-  - on playerMovement, also call recomputeTeamOvrs
   - test UI in firefox
   - test football
 - EVENTUALLY

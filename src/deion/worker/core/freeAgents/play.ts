@@ -2,7 +2,14 @@ import { PHASE } from "../../../common";
 import { league, phase, trade } from "..";
 import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";
-import { g, lock, updatePlayMenu, updateStatus, toUI } from "../../util";
+import {
+	g,
+	lock,
+	updatePlayMenu,
+	updateStatus,
+	toUI,
+	recomputeLocalUITeamOvrs,
+} from "../../util";
 import { Conditions } from "../../../common/types";
 
 /**
@@ -40,6 +47,7 @@ async function play(
 
 			if (g.get("daysLeft") > 0 && numDays > 0) {
 				await toUI("realtimeUpdate", [["playerMovement"]]);
+				await recomputeLocalUITeamOvrs();
 				await updateStatus(`${g.get("daysLeft")} days left`);
 				await trade.betweenAiTeams();
 				play(numDays - 1, conditions, false);

@@ -33,6 +33,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 	toUI,
+	recomputeLocalUITeamOvrs,
 } from "../util";
 import views from "../views";
 import {
@@ -1029,6 +1030,7 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 
 	await player.release(p, justDrafted);
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
 };
 
 const removeLastTeam = async (): Promise<void> => {
@@ -1224,8 +1226,6 @@ const sign = async (
 	if (errorMsg !== undefined && errorMsg) {
 		return errorMsg;
 	}
-
-	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const startFantasyDraft = async (tids: number[], conditions: Conditions) => {

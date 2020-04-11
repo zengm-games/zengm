@@ -1,7 +1,7 @@
 import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
-import { g, overrides } from "../../util";
+import { g, overrides, toUI, recomputeLocalUITeamOvrs } from "../../util";
 
 /**
  * Accept the player's offer.
@@ -65,6 +65,9 @@ const accept = async (
 	// If this a depth chart exists, place this player in the depth chart so they are ahead of every player they are
 	// better than, without otherwise disturbing the depth chart order
 	await overrides.core.team.rosterAutoSort!(g.get("userTid"), true);
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
 };
 
 export default accept;

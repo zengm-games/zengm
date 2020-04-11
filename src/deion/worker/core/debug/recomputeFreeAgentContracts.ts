@@ -1,7 +1,7 @@
 import { PHASE, PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
-import { toUI } from "../../util";
+import { toUI, recomputeLocalUITeamOvrs } from "../../util";
 
 const recomputeFreeAgentContracts = async () => {
 	const players = await idb.cache.players.indexGetAll(
@@ -16,6 +16,7 @@ const recomputeFreeAgentContracts = async () => {
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
 };
 
 export default recomputeFreeAgentContracts;

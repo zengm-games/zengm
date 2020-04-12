@@ -9,12 +9,7 @@ some kind of global status/finances menu, above titlebar
     - progress bar showing phases, completion of season
     - mobile: only show either games or other info, with toggle between them
 - scrollable
-- animation
-  - new game
-    - keeping old divs around, rather than truncating?
-  - show/hide
-- skyscraper needs to move down when open
-  - or make it relative to titlebar
+- animation on show/hide of LeagueTopbar
 - clean up github issue tracker, and add good first issues, including some of these
 
 player stats popover

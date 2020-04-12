@@ -80,9 +80,9 @@ h5 {
 	}
 	.skyscraper-wrapper {
 		display: block;
-		position: fixed;
-		top: 105px;
-		right: 0px;
+		position: absolute;
+		top: 0;
+		right: 0;
 		height: 600px;
 		width: 190px;
 	}

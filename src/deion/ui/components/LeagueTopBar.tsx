@@ -1,4 +1,5 @@
 import classNames from "classnames";
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow } from "../util";
 import ScoreBox from "./ScoreBox";
@@ -86,14 +87,28 @@ const LeagueTopBar = React.memo(() => {
 		}
 	}
 
+	const transition = { duration: 0.5, type: "tween" };
+
 	return (
 		<div
 			className="league-top-bar d-flex justify-content-end mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
-			{games2.map(game => (
-				<ScoreBox key={game.gid} game={game} small />
-			))}
+			{show ? (
+				<AnimatePresence initial={false}>
+					{games2.map(game => (
+						<motion.div
+							key={game.gid}
+							positionTransition={transition}
+							initial={{ x: 105 }}
+							animate={{ x: 0 }}
+							transition={transition}
+						>
+							<ScoreBox game={game} small />
+						</motion.div>
+					))}
+				</AnimatePresence>
+			) : null}
 			<Toggle
 				show={show}
 				toggle={() => {

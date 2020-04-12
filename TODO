@@ -10,11 +10,11 @@ some kind of global status/finances menu, above titlebar
     - mobile: only show either games or other info, with toggle between them
 - scrollable
 - animation
-  - new game simulated
+  - new game
+    - keeping old divs around, rather than truncating?
   - show/hide
-  - https://codesandbox.io/s/framer-motion-notifications-5cvo9
-    - https://codesandbox.io/s/vibrant-curran-xqcbh?file=/src/App.js
-  - css transition wtih margin-right?
+- skyscraper needs to move down when open
+  - or make it relative to titlebar
 - clean up github issue tracker, and add good first issues, including some of these
 
 player stats popover

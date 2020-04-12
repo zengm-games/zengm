@@ -87,11 +87,11 @@ const LeagueTopBar = React.memo(() => {
 		}
 	}
 
-	const transition = { duration: 0.5, type: "tween" };
+	const transition = { duration: 0.2, type: "tween" };
 
 	return (
 		<div
-			className="league-top-bar d-flex justify-content-end mt-2"
+			className="league-top-bar d-flex justify-content-end overflow-hidden mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
 			{show ? (

@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-04-12: Scores of your team's games are shown at the top of the screen on all pages. [[1]](https://www.youtube.com/watch?v=r65xhONYbTc) [[2]](https://old.reddit.com/r/BasketballGM/comments/fz6n1z/basketball_gm_beta_feature_scores_at_the_top_of/)
+
 * 2020-03-12: Changes to player salaries in God Mode will now show up in the Player Salaries table on player pages.
 
 * 2020-03-12: Added seeds of the league champion and runner up to the League History table. Also, for leagues where the length of the playoffs is changed in God Mode, the champion is now shown correctly in this table.

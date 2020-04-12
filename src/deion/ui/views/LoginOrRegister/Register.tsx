@@ -196,9 +196,10 @@ class Register extends React.Component<Props, State> {
 							defaultChecked
 							className="form-check-input"
 							id="register-mailinglist"
+							name="mailinglist"
 						/>
 						<label className="form-check-label" htmlFor="register-mailinglist">
-							Join the mailing list (Only major announcements, about once/year)
+							Join the mailing list (one email per quarter)
 						</label>
 					</div>
 					<button type="submit" className="btn btn-primary">

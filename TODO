@@ -8,9 +8,6 @@ some kind of global status/finances menu, above titlebar
   - more info, not just games
     - progress bar showing phases, completion of season
     - mobile: only show either games or other info, with toggle between them
-- get rid of normal W/L notifications?
-  - maybe only hide it when LeagueTopBar is open
-    - could do that with localStorage? not really, can get out of sync across tabs
 - scrollable
 - animation
   - new game simulated
@@ -48,27 +45,8 @@ jersey numbers
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
 mailing list
-- use mailchimp (or similar) to handle
-  - on sign up, trigger double opt in email
-    - https://stackoverflow.com/questions/31251271/realize-mailchimp-double-opt-in-with-api-3-0
-  - unsubscribing - handled by mailchimp
-- options
-  - mailchimp - expensive
-  - SES - have to set up my own stuff for double opt in and unsubscribe (but i guess that's not too bad, and maybe even preferable?)
-    - states: legacy (from before this), out, pending, in
-    - ability to join (or re-send, if pending) from account page
-    - EVERYTHING NEEDS TO ACCOUNT FOR MULTIPLE ACCOUNTS WITH THE SAME EMAIL
-    - if an email bounces, unsubscribe
-      - https://aws.amazon.com/blogs/messaging-and-targeting/handling-bounces-and-complaints/ looks annoying
-  - https://www.mailerlite.com/ - looks promising
-    - double opt in http://help.mailerlite.com/article/show/29273-double-opt-in-for-api
-    - confirm normal signup workflow, through some form
-    - confirm signup through API
-      - https://app.mailerlite.com/integrations/api/
-    - confirm signup through API triggered by registration
-  - https://convertkit.com/?lmref=oTlfdQ
-  - https://www.activecampaign.com/
 - somehow prompt current users to join
+  - https://landing.mailerlite.com/webforms/landing/z7d2z9
 - newsletter format
   - plans
   - stats

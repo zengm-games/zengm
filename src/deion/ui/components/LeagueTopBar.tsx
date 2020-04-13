@@ -95,6 +95,7 @@ const LeagueTopBar = React.memo(() => {
 			style={show ? undefined : hiddenStyle}
 		>
 			{show ? (
+				// This makes it not animate the initial render
 				<AnimatePresence initial={false}>
 					{games2.map(game => (
 						<motion.div
@@ -102,6 +103,8 @@ const LeagueTopBar = React.memo(() => {
 							positionTransition={transition}
 							initial={{ x: 105 }}
 							animate={{ x: 0 }}
+							// Need to specify exit, otherwise AnimatePresence makes divs stay around forever
+							exit={{}}
 							transition={transition}
 						>
 							<ScoreBox game={game} small />

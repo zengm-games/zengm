@@ -1,3 +1,6 @@
+home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
+- football too?
+
 new league options
 - option to equalize cities when starting new league (equal spending and size)
 - set startingSeason
@@ -10,7 +13,9 @@ some kind of global status/finances menu, above titlebar
     - mobile: only show either games or other info, with toggle between them
 - scrollable
 - animation on show/hide of LeagueTopbar
-- clean up github issue tracker, and add good first issues, including some of these
+- some way to "lock" it so it stays fixed to the top of the screen
+
+more animations
 
 player stats popover
 - stats relative to league average
@@ -41,6 +46,7 @@ pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qj
 
 mailing list
 - somehow prompt current users to join
+  - export from mailerlite, import subscription status my database, emit from account API, send notification based on that
   - https://landing.mailerlite.com/webforms/landing/z7d2z9
 - newsletter format
   - plans

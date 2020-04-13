@@ -3,6 +3,22 @@ import { idb } from "../../db";
 import { g, overrides } from "../../util";
 import { Player, MinimalPlayerRatings } from "../../../common/types";
 
+const playoffTryhardModifer = (x: number): number => {
+	var y = 0.0;
+	if (x < 45) {
+		y = 0.1;
+	} else if (x >= 45 && x < 60) {
+		y =
+			0.000053 * Math.pow(x, 3) - 0.0078 * Math.pow(x, 2) + 0.381667 * x - 6.14;
+	} else if (x >= 60 && x <= 75) {
+		y =
+			0.000067 * Math.pow(x, 3) - 0.0136 * Math.pow(x, 2) + 0.934333 * x - 21.3;
+	} else if (x > 75) {
+		y = 0.4;
+	}
+	return (y += 1);
+};
+
 const processTeam = (
 	team: {
 		tid: number;
@@ -104,6 +120,21 @@ const processTeam = (
 				overrides.common.constants.COMPOSITE_WEIGHTS[k].weights,
 				false,
 			);
+		}
+
+		var currentPhase = g.get("phase");
+
+		if (currentPhase == 3) {
+			for (const r of Object.keys(p2.compositeRating)) {
+				if (r === "turnovers" || r === "fouling") {
+					// These are negative ratings, so the bonus or penalty should be inversed
+					p2.compositeRating[r] /= playoffTryhardModifer(rating.ovr);
+				} else {
+					// Apply bonus or penalty
+					p2.compositeRating[r] *= playoffTryhardModifer(rating.ovr);
+				}
+				//console.log(p2.name, p2.compositeRating[r], r, playoffTryhardModifer(rating.ovr));
+			}
 		}
 
 		if (process.env.SPORT === "basketball") {

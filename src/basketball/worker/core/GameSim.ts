@@ -273,7 +273,11 @@ class GameSim {
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
-					if (r !== "endurance") {
+					if (r === "turnovers" || r === "fouling") {
+						// These are negative ratings, so the bonus or penalty should be inversed
+						this.team[t].player[p].compositeRating[r] /= factor;
+					} else {
+						// Apply bonus or penalty
 						this.team[t].player[p].compositeRating[r] *= factor;
 					}
 				}

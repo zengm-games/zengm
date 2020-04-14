@@ -56,10 +56,6 @@ const updateUpcomingFreeAgents = async (
 
 	// Apply mood
 	for (const p of players) {
-		p.contract.amount = freeAgents.amountWithMood(
-			p.contract.amount,
-			p.freeAgentMood[g.get("userTid")],
-		);
 		p.contractDesired.amount = freeAgents.amountWithMood(
 			p.contractDesired.amount,
 			p.freeAgentMood[g.get("userTid")],

@@ -105,9 +105,10 @@ const newScheduleDefault = (
 						}
 					}
 
-					iters += 1; // Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
-					// So, catch these situations and reset the newMatchup
+					iters += 1;
 
+					// Sometimes this gets stuck (for example, first 14 teams in fine but 15th team must play itself)
+					// So, catch these situations and reset the newMatchup
 					if (iters > 50) {
 						newMatchup = [];
 						n = -1;

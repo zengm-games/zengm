@@ -1,4 +1,4 @@
-const getAwardCandidates = async () => {
+const getAwardCandidates = async (season: number) => {
 	return [];
 };
 

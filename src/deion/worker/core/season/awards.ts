@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { PLAYER, PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, defaultGameAttributes, helpers, logEvent } from "../../util";
 import {
@@ -21,11 +21,21 @@ export type GetTopPlayersOptions = {
 	score: (a: PlayerFiltered) => number;
 };
 
-const getPlayers = async () => {
-	const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-		PLAYER.FREE_AGENT,
-		Infinity,
-	]);
+const getPlayers = async (season: number) => {
+	let playersAll;
+	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+		console.log("aaa", season);
+		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+			PLAYER.FREE_AGENT,
+			Infinity,
+		]);
+	} else {
+		console.log("bbb", season);
+		playersAll = await idb.getCopies.players({
+			activeSeason: season,
+		});
+	}
+	console.log(playersAll);
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: ["pid", "name", "tid", "abbrev", "draft", "injury", "age"],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
@@ -63,18 +73,25 @@ const getPlayers = async () => {
 						"tid",
 				  ],
 	});
+	console.log(players.length);
 
 	// Only keep players who actually have a stats entry for the latest season
 	players = players.filter(
-		p =>
-			p.stats.length > 0 &&
-			p.stats[p.stats.length - 1].season === g.get("season"),
+		p => p.stats.length > 0 && p.stats.some((ps: any) => ps.season === season),
 	);
+	console.log(players.length);
 
 	// For convenience later
 	for (const p of players) {
-		p.currentStats = p.stats[p.stats.length - 1];
 		p.pos = p.ratings[p.ratings.length - 1].pos;
+
+		p.currentStats = p.stats[p.stats.length - 1];
+		for (let i = p.stats.length - 1; i >= 0; i--) {
+			if (p.stats[i].season === season) {
+				p.currentStats = p.stats[i];
+				break;
+			}
+		}
 	}
 
 	return players;
@@ -115,10 +132,9 @@ const teamAwards = (
 			abbrev: t.abbrev,
 			region: t.region,
 			name: t.name,
-			// Flow can't handle complexity of idb.getCopies.teams
-			won: t.seasonAttrs ? t.seasonAttrs.won : 0,
-			lost: t.seasonAttrs ? t.seasonAttrs.lost : 0,
-			tied: g.get("ties") && t.seasonAttrs ? t.seasonAttrs.tied : undefined,
+			won: t.seasonAttrs.won,
+			lost: t.seasonAttrs.lost,
+			tied: g.get("ties") ? t.seasonAttrs.tied : undefined,
 		};
 	});
 	return {

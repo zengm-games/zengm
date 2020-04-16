@@ -1051,7 +1051,9 @@ export type WorkerOverridesCore = {
 		};
 	};
 	season: {
-		getAwardCandidates?: () => Promise<
+		getAwardCandidates?: (
+			season: number,
+		) => Promise<
 			{
 				name: string;
 				players: PlayerFiltered[];

@@ -229,7 +229,7 @@ const doAwards = async (conditions: Conditions) => {
 		seasonAttrs: ["won", "lost", "tied", "winp", "playoffRoundsWon"],
 		season: g.get("season"),
 	});
-	const players = await getPlayers();
+	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = teamAwards(teams);
 	leagueLeaders(players, [], awardsByPlayer);
 

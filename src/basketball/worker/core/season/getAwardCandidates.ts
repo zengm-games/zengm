@@ -11,8 +11,8 @@ import {
 	smoyFilter,
 } from "./doAwards";
 
-const getAwardCandidates = async () => {
-	const players = await getPlayers();
+const getAwardCandidates = async (season: number) => {
+	const players = await getPlayers(season);
 
 	const awardCandidates = [
 		{
@@ -79,6 +79,8 @@ const getAwardCandidates = async () => {
 			stats: ["pts", "trb", "ast", "per"],
 		},
 	];
+	console.log(players);
+	console.log(awardCandidates);
 
 	return awardCandidates;
 };

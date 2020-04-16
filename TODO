@@ -12,9 +12,6 @@ home court advantage bonus gives "bonus" to negative things like fouling and tur
 playoff upsets
 
 award races
-- refactor
-  - getAwardCandidates - returns top 10 for every award
-- past seasons
 - football
 
 game sim improvements

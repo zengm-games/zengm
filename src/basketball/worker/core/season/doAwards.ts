@@ -192,7 +192,7 @@ export const smoyFilter = (p: PlayerFiltered) =>
 
 export const royFilter = (p: PlayerFiltered) => {
 	// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-	return p.draft.year === g.get("season") - 1;
+	return p.draft.year === p.currentStats.season - 1;
 };
 
 const getMipFactor = () =>
@@ -201,7 +201,7 @@ const getMipFactor = () =>
 
 export const mipScore = (p: PlayerFiltered) => {
 	const oldStatsAll = p.stats.filter(
-		(ps: { season: number }) => ps.season === g.get("season") - 1,
+		(ps: { season: number }) => ps.season === p.currentStats.season - 1,
 	);
 	const oldStats = oldStatsAll[oldStatsAll.length - 1];
 	const ewaAllPrev = p.stats.slice(0, -1).map((ps: { ewa: number }) => ps.ewa);
@@ -254,13 +254,13 @@ export const mipScore = (p: PlayerFiltered) => {
 
 export const mipFilter = (p: PlayerFiltered) => {
 	// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
-	if (p.draft.year + 2 >= g.get("season") && p.draft.round === 1) {
+	if (p.draft.year + 2 >= p.currentStats.season && p.draft.round === 1) {
 		return false;
 	}
 
 	// Must have stats last year!
 	const oldStatsAll = p.stats.filter(
-		(ps: { season: number }) => ps.season === g.get("season") - 1,
+		(ps: { season: number }) => ps.season === p.currentStats.season - 1,
 	);
 
 	if (oldStatsAll.length === 0) {
@@ -319,7 +319,7 @@ const doAwards = async (conditions: Conditions) => {
 		seasonAttrs: ["won", "lost", "tied", "winp", "playoffRoundsWon"],
 		season: g.get("season"),
 	});
-	const players = await getPlayers();
+	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = teamAwards(teams);
 	const categories = [
 		{

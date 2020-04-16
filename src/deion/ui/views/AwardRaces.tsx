@@ -2,7 +2,12 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
-import { PlayerNameLabels, DataTable } from "../components";
+import {
+	PlayerNameLabels,
+	DataTable,
+	RatingWithChange,
+	StatWithChange,
+} from "../components";
 import { View } from "../../common/types";
 
 const AwardRaces = ({
@@ -24,7 +29,7 @@ const AwardRaces = ({
 
 	return (
 		<>
-			<div className="row">
+			<div className="row" style={{ marginTop: -14 }}>
 				{awardCandidates.map(({ name, players, stats }) => {
 					const mip = name === "Most Improved Player";
 
@@ -32,25 +37,6 @@ const AwardRaces = ({
 						...globalCols,
 						...getCols(...stats.map(stat => `stat:${stat}`)),
 					];
-
-					let superCols;
-					if (mip) {
-						cols.push(...cols.slice(-5));
-						superCols = [
-							{
-								title: "",
-								colspan: 5,
-							},
-							{
-								title: "This Season",
-								colspan: 1 + stats.length,
-							},
-							{
-								title: "Last Season",
-								colspan: 1 + stats.length,
-							},
-						];
-					}
 
 					const rows = players.map((p, j) => {
 						let ps: any;
@@ -73,10 +59,6 @@ const AwardRaces = ({
 						const abbrev = ps ? ps.abbrev : undefined;
 						const tid = ps ? ps.tid : undefined;
 
-						const statsRow = stats.map(stat =>
-							ps ? helpers.roundStat(ps[stat], stat) : undefined,
-						);
-
 						const data = [
 							j + 1,
 							<PlayerNameLabels
@@ -92,11 +74,15 @@ const AwardRaces = ({
 							<a href={helpers.leagueUrl(["roster", abbrev, season])}>
 								{abbrev}
 							</a>,
-							pr ? pr.ovr : undefined,
-							...statsRow,
 						];
 
 						if (mip) {
+							data.push(
+								pr ? (
+									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
+								) : undefined,
+							);
+
 							let ps2: any;
 							for (let i = p.stats.length - 1; i >= 0; i--) {
 								if (p.stats[i].season === season - 1 && !p.stats[i].playoffs) {
@@ -104,20 +90,29 @@ const AwardRaces = ({
 									break;
 								}
 							}
-							let pr2;
-							for (let i = p.ratings.length - 1; i >= 0; i--) {
-								if (p.ratings[i].season === season - 1) {
-									pr2 = p.ratings[i];
-									break;
-								}
-							}
+							data.push(
+								...stats.map(stat => {
+									if (!ps && !ps2) {
+										return undefined;
+									}
 
-							const statsRow2 = stats.map(stat =>
-								ps2 ? helpers.roundStat(ps2[stat], stat) : undefined,
+									if (!ps2) {
+										return helpers.roundStat(ps[stat], stat);
+									}
+
+									return (
+										<StatWithChange change={ps[stat] - ps2[stat]} stat={stat}>
+											{ps[stat]}
+										</StatWithChange>
+									);
+								}),
 							);
-
-							data.push(pr2 ? pr2.ovr : undefined);
-							data.push(...statsRow2);
+						} else {
+							data.push(pr ? pr.ovr : undefined);
+							const statsRow = stats.map(stat =>
+								ps ? helpers.roundStat(ps[stat], stat) : undefined,
+							);
+							data.push(...statsRow);
 						}
 
 						return {
@@ -133,16 +128,21 @@ const AwardRaces = ({
 					return (
 						<div
 							key={name}
-							className={mip ? "col-12 col-md-9" : "col-12 col-md-6"}
+							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
+							style={{ marginTop: 14 }}
 						>
 							<h2>{name}</h2>
-							<DataTable
-								cols={cols}
-								defaultSort={[0, "asc"]}
-								name={`AwardRaces${name}`}
-								rows={rows}
-								superCols={superCols}
-							/>
+							{rows.length > 0 ? (
+								<DataTable
+									cols={cols}
+									defaultSort={[0, "asc"]}
+									hideAllControls
+									name={`AwardRaces${name}`}
+									rows={rows}
+								/>
+							) : (
+								<p>No candidates yet...</p>
+							)}
 						</div>
 					);
 				})}

@@ -1,3 +1,5 @@
+screenshot whitespace fix - scroll to top before taking?
+
 redesign dashboard
 - include some historical context
 - top FAs
@@ -14,8 +16,6 @@ award races
   - getAwardCandidates - returns top 10 for every award
 - past seasons
 - football
-- mip
-  - show last  years stats and ratings
 
 game sim improvements
 - big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/

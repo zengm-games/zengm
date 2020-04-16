@@ -150,12 +150,19 @@ const allStarDraftUser = async (pid: number) => {
 	return finalized;
 };
 
-const autoSortRoster = async (pos?: string) => {
-	await overrides.core.team.rosterAutoSort!(
-		g.get("userTid"),
-		false,
-		typeof pos === "string" ? pos : undefined,
-	);
+const autoSortRoster = async (
+	pos: string | undefined,
+	tids: number[] | undefined,
+) => {
+	const tids2 = tids !== undefined ? tids : [g.get("userTid")];
+
+	for (const tid of tids2) {
+		await overrides.core.team.rosterAutoSort!(
+			tid,
+			false,
+			typeof pos === "string" ? pos : undefined,
+		);
+	}
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
@@ -1145,12 +1152,19 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const resetPlayingTime = async (tid: number) => {
-	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+const resetPlayingTime = async (tids: number[] | undefined) => {
+	const tids2 = tids !== undefined ? tids : [g.get("userTid")];
+
+	const players = await idb.cache.players.indexGetAll("playersByTid", [
+		0,
+		Infinity,
+	]);
 
 	for (const p of players) {
-		p.ptModifier = 1;
-		await idb.cache.players.put(p);
+		if (tids2.includes(p.tid)) {
+			p.ptModifier = 1;
+			await idb.cache.players.put(p);
+		}
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);

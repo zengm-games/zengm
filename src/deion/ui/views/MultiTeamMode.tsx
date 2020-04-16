@@ -5,6 +5,14 @@ import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
 import { View } from "../../common/types";
 
+const handleAutoSort = async (tids: number[]) => {
+	await toWorker("main", "autoSortRoster", undefined, tids);
+};
+
+const handleResetPT = async (tids: number[]) => {
+	await toWorker("main", "resetPlayingTime", tids);
+};
+
 const MultiTeamMode = ({
 	phase,
 	teams,
@@ -146,6 +154,27 @@ const MultiTeamMode = ({
 						))}
 					</select>
 				</div>
+			</div>
+
+			<h1 className="mt-3">Multi Team Controls</h1>
+
+			<p>
+				These actions will apply to all teams controlled by multi team mode.
+			</p>
+
+			<div className="btn-group">
+				<button
+					className="btn btn-light-bordered"
+					onClick={() => handleAutoSort(userTids)}
+				>
+					Auto sort roster
+				</button>
+				<button
+					className="btn btn-light-bordered"
+					onClick={() => handleResetPT(userTids)}
+				>
+					Reset playing time
+				</button>
 			</div>
 		</>
 	);

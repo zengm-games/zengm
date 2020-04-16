@@ -9,11 +9,11 @@ import { POSITIONS } from "../../common/constants";
 import { View } from "../../../deion/common/types";
 
 const handleAutoSort = async (pos: string) => {
-	await toWorker("main", "autoSortRoster", pos);
+	await toWorker("main", "autoSortRoster", pos, undefined);
 };
 
 const handleAutoSortAll = async () => {
-	await toWorker("main", "autoSortRoster");
+	await toWorker("main", "autoSortRoster", undefined, undefined);
 };
 
 const numStartersByPos = {

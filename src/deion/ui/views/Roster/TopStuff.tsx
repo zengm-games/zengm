@@ -151,7 +151,7 @@ const TopStuff = ({
 					) : null}
 				</div>
 			</div>
-			<InstructionsAndSortButtons editable={editable} tid={t.tid} />
+			<InstructionsAndSortButtons editable={editable} />
 			{season !== currentSeason ? (
 				<p>
 					Players in the Hall of Fame are{" "}

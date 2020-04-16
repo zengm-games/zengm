@@ -3,20 +3,14 @@ import React from "react";
 import { toWorker } from "../../util";
 
 const handleAutoSort = async () => {
-	await toWorker("main", "autoSortRoster");
+	await toWorker("main", "autoSortRoster", undefined, undefined);
 };
 
-const handleResetPT = async (tid: number) => {
-	await toWorker("main", "resetPlayingTime", tid);
+const handleResetPT = async () => {
+	await toWorker("main", "resetPlayingTime", undefined);
 };
 
-const InstructionsAndSortButtons = ({
-	editable,
-	tid,
-}: {
-	editable: boolean;
-	tid: number;
-}) => {
+const InstructionsAndSortButtons = ({ editable }: { editable: boolean }) => {
 	if (!editable) {
 		return null;
 	}
@@ -36,10 +30,7 @@ const InstructionsAndSortButtons = ({
 				<button className="btn btn-light-bordered" onClick={handleAutoSort}>
 					Auto sort roster
 				</button>
-				<button
-					className="btn btn-light-bordered"
-					onClick={() => handleResetPT(tid)}
-				>
+				<button className="btn btn-light-bordered" onClick={handleResetPT}>
 					Reset playing time
 				</button>
 			</div>
@@ -49,7 +40,6 @@ const InstructionsAndSortButtons = ({
 
 InstructionsAndSortButtons.propTypes = {
 	editable: PropTypes.bool.isRequired,
-	tid: PropTypes.number.isRequired,
 };
 
 export default InstructionsAndSortButtons;

@@ -484,6 +484,7 @@ const validateSeasonOnly = (params: Params) => {
 
 export default {
 	account,
+	awardRaces: validateSeasonOnly,
 	awardsRecords,
 	customizePlayer,
 	depth,

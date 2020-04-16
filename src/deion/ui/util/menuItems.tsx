@@ -233,6 +233,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["player_feats"],
 				text: "Statistical Feats",
 			},
+			{
+				type: "link",
+				active: pageID => pageID === "awardRaces",
+				league: true,
+				path: ["award_races"],
+				text: "Award Races",
+			},
 		],
 	},
 	{

@@ -2,6 +2,7 @@ import account from "./account";
 import accountUpdateCard from "./accountUpdateCard";
 import allStarDraft from "./allStarDraft";
 import allStarHistory from "./allStarHistory";
+import awardRaces from "./awardRaces";
 import awardsRecords from "./awardsRecords";
 import changes from "./changes";
 import colleges from "./colleges";
@@ -72,6 +73,7 @@ export default {
 	accountUpdateCard,
 	allStarDraft,
 	allStarHistory,
+	awardRaces,
 	awardsRecords,
 	changes,
 	colleges,

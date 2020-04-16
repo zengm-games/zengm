@@ -7,10 +7,23 @@ redesign dashboard
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?
 
+playoff upsets
+
 award races
+- refactor
+  - getAwardCandidates - returns top 10 for every award
+- past seasons
+- football
+- mip
+  - show last  years stats and ratings
 
 game sim improvements
 - big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/
+  - https://discordapp.com/channels/@me/604773209837010944/700376777473654784
+- ask what kind of players are not common enough
+
+value in basketball should be more based on ratings
+- especially if player ratings changed this season!
 
 gm history page
 - like team history, but for the teams you GMed

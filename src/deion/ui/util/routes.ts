@@ -165,6 +165,7 @@ const routes = () => {
 		"/l/:lid/frivolities/tragic_deaths": genPage("tragicDeaths"),
 		"/l/:lid/all_star_draft": genPage("allStarDraft"),
 		"/l/:lid/all_star_history": genPage("allStarHistory"),
+		"/l/:lid/award_races": genPage("awardRaces"),
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),
 		"/l/:lid/draft_summary/:season": genPage("draftSummary"),

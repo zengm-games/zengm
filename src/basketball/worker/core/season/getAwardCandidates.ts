@@ -79,8 +79,6 @@ const getAwardCandidates = async (season: number) => {
 			stats: ["pts", "trb", "ast", "per"],
 		},
 	];
-	console.log(players);
-	console.log(awardCandidates);
 
 	return awardCandidates;
 };

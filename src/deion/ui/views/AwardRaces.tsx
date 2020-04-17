@@ -53,7 +53,6 @@ const AwardRaces = ({
 								break;
 							}
 						}
-						console.log(p, ps, pr);
 
 						const pos = pr ? pr.pos : "?";
 						const abbrev = ps ? ps.abbrev : undefined;

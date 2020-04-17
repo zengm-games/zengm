@@ -221,6 +221,8 @@ const getRealFinalsMvp = async (
 	}
 };
 
+export const avScore = (p: PlayerFiltered) => p.currentStats.av;
+
 const doAwards = async (conditions: Conditions) => {
 	// Careful - this array is mutated in various functions called below
 	const awardsByPlayer: AwardsByPlayer = [];
@@ -232,8 +234,6 @@ const doAwards = async (conditions: Conditions) => {
 	const players = await getPlayers(g.get("season"));
 	const { bestRecord, bestRecordConfs } = teamAwards(teams);
 	leagueLeaders(players, [], awardsByPlayer);
-
-	const avScore = (p: PlayerFiltered) => p.currentStats.av;
 
 	const avPlayers = getTopPlayers(
 		{
@@ -251,7 +251,7 @@ const doAwards = async (conditions: Conditions) => {
 			amount: Infinity,
 			filter: p => {
 				// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-				return p.draft.year === g.get("season") - 1;
+				return p.draft.year === p.currentStats.season - 1;
 			},
 			score: avScore,
 		},

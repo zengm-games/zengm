@@ -251,6 +251,10 @@ const changes = [
 		msg:
 			'Players are assigned a college when they are generated, and a new college summary page is at Tools > Frivolities > College. <a href="https://basketball-gm.com/blog/2020/02/colleges/">More details</a>',
 	},
+	{
+		date: "2020-04-16",
+		msg: "New Award Races page available at Stats > Award Races.",
+	},
 ];
 
 export default changes;

@@ -1,6 +1,7 @@
 import { createNanoEvents } from "nanoevents";
 
 export type Message = {
+	key: number;
 	message: string;
 	title?: string;
 	extraClass?: string;
@@ -10,6 +11,8 @@ export type Message = {
 export const emitter = createNanoEvents<{
 	notification: (message: Message) => void;
 }>();
+
+let key = 0;
 
 const notify = (
 	message: string,
@@ -26,11 +29,13 @@ const notify = (
 ) => {
 	console.log(message, title, extraClass, persistent, timeOut);
 	emitter.emit("notification", {
+		key,
 		message,
 		title,
 		extraClass,
 		persistent,
 	});
+	key += 1;
 	return;
 	let timeoutRemaining = timeOut || 8000;
 

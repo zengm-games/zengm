@@ -78,6 +78,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 						"abbrev",
 						"tid",
 				  ],
+		fuzz: true,
 	});
 
 	// Only keep players who actually have a stats entry for the latest season

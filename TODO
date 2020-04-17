@@ -1,8 +1,27 @@
+better animation for notifications
+- use react
+- can still put limit on number?
+
+mailing list
+- somehow prompt current users to join
+  - export from mailerlite, import subscription status my database, emit from account API, send notification based on that
+  - https://landing.mailerlite.com/webforms/landing/z7d2z9
+- newsletter format
+  - plans
+  - stats
+  - social media
+
+event log size
+- auto delete?
+- smaller by default, maybe not storing text?
+
 redesign dashboard
 - include some historical context
 - top FAs
 - award races
 - league news
+- injuries
+- draft picks owned, and rank of team
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?
@@ -63,15 +82,6 @@ jersey numbers
   - if one player is much better than the other (probably based on career stats), they keep the number
 
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
-
-mailing list
-- somehow prompt current users to join
-  - export from mailerlite, import subscription status my database, emit from account API, send notification based on that
-  - https://landing.mailerlite.com/webforms/landing/z7d2z9
-- newsletter format
-  - plans
-  - stats
-  - social media
 
 OL weight
 
@@ -1163,7 +1173,6 @@ add "play until end of quarter" in live gamesim
 LOW PRIORITY
 ------------
 
-awards races throughout the season
 track longest W/L streaks
 tooling
   istanbul https://github.com/karma-runner/karma-coverage

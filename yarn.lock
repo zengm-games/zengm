@@ -5933,6 +5933,11 @@ nan@^2.13.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
+nanoevents@^5.1.5:
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/nanoevents/-/nanoevents-5.1.5.tgz#ad9854a531c4240296f21e8362c9e51f9ebde528"
+  integrity sha512-4uRsi3eXxPLQfiXSWPstkS2opiYqRP7mkqh2KDWr24/IwJnqdCLL41ljl86rYW6LxN0w6B6PlwoClAH8o17hBQ==
+
 nanoid@^3.0.1:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.3.tgz#b2bcfcfda4b4d6838bc22a0c8dd3c0a17a204c20"

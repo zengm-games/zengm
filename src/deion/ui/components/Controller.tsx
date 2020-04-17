@@ -15,6 +15,7 @@ import LeagueTopBar from "./LeagueTopBar";
 import MultiTeamMenu from "./MultiTeamMenu";
 import NagModal from "./NagModal";
 import NavBar from "./NavBar";
+import Notifications from "./Notifications";
 import SideBar from "./SideBar";
 import TitleBar from "./TitleBar";
 import { LocalStateUI } from "../../common/types";
@@ -297,6 +298,7 @@ const Controller = () => {
 				</div>
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
+			<Notifications />
 		</>
 	);
 };

@@ -136,10 +136,11 @@ export const newScheduleCrappy = () => {
 
 	let numWithRemaining = g.get("numTeams"); // Number of teams with numRemaining > 0
 
-	const matchups: [number, number][] = []; // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
+	const matchups: [number, number][] = [];
 
 	const potentialMatchups = roundRobin(tids);
 
+	// 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
 	while (numWithRemaining > 1) {
 		for (const matchup of potentialMatchups) {
 			const [i, j] = matchup;

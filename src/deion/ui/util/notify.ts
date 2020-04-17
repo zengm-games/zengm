@@ -1,7 +1,15 @@
-const container = document.createElement("div");
-container.id = "notification-container";
-container.classList.add("notification-container");
-document.body.appendChild(container);
+import { createNanoEvents } from "nanoevents";
+
+export type Message = {
+	message: string;
+	title?: string;
+	extraClass?: string;
+	persistent: boolean;
+};
+
+export const emitter = createNanoEvents<{
+	notification: (message: Message) => void;
+}>();
 
 const notify = (
 	message: string,
@@ -16,6 +24,14 @@ const notify = (
 		timeOut?: number;
 	} = {},
 ) => {
+	console.log(message, title, extraClass, persistent, timeOut);
+	emitter.emit("notification", {
+		message,
+		title,
+		extraClass,
+		persistent,
+	});
+	return;
 	let timeoutRemaining = timeOut || 8000;
 
 	let notificationElement: HTMLDivElement | null = document.createElement(

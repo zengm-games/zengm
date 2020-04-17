@@ -42,7 +42,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			"abbrev",
 			"draft",
 			"injury",
-			"age",
+			"born",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats:
@@ -97,6 +97,9 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				break;
 			}
 		}
+
+		// Otherwise it's always the current season
+		p.age = season - p.born.year;
 	}
 
 	return players;

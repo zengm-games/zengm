@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-04-16: In FBGM, defensive linemen now get fewer tackles.
+
 * 2020-04-16: Added a new Award Races page, available under the Stats menu.
 
 * 2020-04-16: Added "Auto sort roster" and "Reset playing time" buttons to the Multi Team Mode page, to allow you to easily apply those actions to all teams you control.

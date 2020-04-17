@@ -727,7 +727,7 @@ class GameSim {
 		this.scrimmage += yds;
 
 		// For non-sacks, record tackler(s)
-		if (!sack && Math.random() < 0.9) {
+		if (!sack && Math.random() < 0.8) {
 			let playersDefense: PlayerGameSim[] = [];
 
 			for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
@@ -736,13 +736,21 @@ class GameSim {
 				}
 			}
 
+			// Bias away from DL and CB
+			const positions: Position[] | undefined =
+				this.playersOnField[this.d].LB &&
+				this.playersOnField[this.d].LB!.length > 0 &&
+				Math.random() < 0.25
+					? ["LB", "S"]
+					: undefined;
+
 			const tacklers =
-				Math.random() < 0.3
+				Math.random() < 0.25
 					? new Set([
-							this.pickPlayer(this.d, "tackling"),
-							this.pickPlayer(this.d, "tackling"),
+							this.pickPlayer(this.d, "tackling", positions, 0.9),
+							this.pickPlayer(this.d, "tackling", positions, 0.9),
 					  ])
-					: new Set([this.pickPlayer(this.d, "tackling")]);
+					: new Set([this.pickPlayer(this.d, "tackling", positions, 0.9)]);
 
 			for (const tackler of tacklers) {
 				this.recordStat(

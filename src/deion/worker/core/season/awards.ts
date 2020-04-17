@@ -34,7 +34,16 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		});
 	}
 	let players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["pid", "name", "tid", "abbrev", "draft", "injury", "age"],
+		attrs: [
+			"pid",
+			"name",
+			"firstName",
+			"tid",
+			"abbrev",
+			"draft",
+			"injury",
+			"age",
+		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats:
 			process.env.SPORT === "basketball"

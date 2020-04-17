@@ -21,7 +21,7 @@ const create = async (conditions: Conditions) => {
 		remaining: [],
 		finalized: false,
 	};
-	const players = await getPlayers();
+	const players = await getPlayers(g.get("season"));
 
 	const score = (p: PlayerFiltered) =>
 		process.env.SPORT === "football"

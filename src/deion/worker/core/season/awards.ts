@@ -21,21 +21,18 @@ export type GetTopPlayersOptions = {
 	score: (a: PlayerFiltered) => number;
 };
 
-const getPlayers = async (season: number) => {
+const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	let playersAll;
 	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		console.log("aaa", season);
 		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
 			PLAYER.FREE_AGENT,
 			Infinity,
 		]);
 	} else {
-		console.log("bbb", season);
 		playersAll = await idb.getCopies.players({
 			activeSeason: season,
 		});
 	}
-	console.log(playersAll);
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: ["pid", "name", "tid", "abbrev", "draft", "injury", "age"],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
@@ -73,13 +70,11 @@ const getPlayers = async (season: number) => {
 						"tid",
 				  ],
 	});
-	console.log(players.length);
 
 	// Only keep players who actually have a stats entry for the latest season
 	players = players.filter(
 		p => p.stats.length > 0 && p.stats.some((ps: any) => ps.season === season),
 	);
-	console.log(players.length);
 
 	// For convenience later
 	for (const p of players) {

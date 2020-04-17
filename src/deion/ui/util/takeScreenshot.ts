@@ -48,6 +48,8 @@ const takeScreenshot = async () => {
 		contentEl.appendChild(notifications);
 	}
 
+	window.scrollTo(0, 0);
+
 	const canvas = await html2canvas(contentEl, {
 		backgroundColor: theme === "dark" ? "#212529" : "#fff",
 	});

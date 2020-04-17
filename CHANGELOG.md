@@ -6,7 +6,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-04-16: In FBGM, defensive linemen now get fewer tackles.
 
-* 2020-04-16: Added a new Award Races page, available under the Stats menu.
+* 2020-04-16: Added a new Award Races page, available under the Stats menu. [[1]](https://old.reddit.com/r/BasketballGM/comments/g2sgwf/new_in_version_202004170093_award_races/) [[2]](https://old.reddit.com/r/Football_GM/comments/g2sgxa/new_in_version_202004170094_award_races/)
 
 * 2020-04-16: Added "Auto sort roster" and "Reset playing time" buttons to the Multi Team Mode page, to allow you to easily apply those actions to all teams you control.
 

@@ -1,4 +1,4 @@
-import bugsnagReact from "@bugsnag/plugin-react";
+import BugsnagPluginReact from "@bugsnag/plugin-react";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 

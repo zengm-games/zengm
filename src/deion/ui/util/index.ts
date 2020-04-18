@@ -10,8 +10,8 @@ const worker = window.useSharedWorker
 
 export const promiseWorker = new PWBHost(worker);
 promiseWorker.registerError(e => {
-	if (window.bugsnagClient) {
-		window.bugsnagClient.notify(e);
+	if (window.Bugsnag) {
+		window.Bugsnag.notify(e);
 	}
 
 	console.error("Error from worker:");

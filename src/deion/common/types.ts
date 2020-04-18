@@ -4,7 +4,7 @@ import type { Context } from "bbgm-router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
 import type viewsFootball from "../../football/worker/views";
-import type { Bugsnag } from "@bugsnag/browser";
+import type Bugsnag from "@bugsnag/js";
 
 export type Env = {
 	enableLogging: boolean;
@@ -20,7 +20,7 @@ declare global {
 		bbgmVersion: string;
 		bbgmVersionUI: string;
 		bbgmVersionWorker: string;
-		bugsnagClient?: Bugsnag.Client;
+		Bugsnag?: typeof Bugsnag;
 		enableLogging: boolean;
 		getTheme: () => string;
 		googleAnalyticsID: string;

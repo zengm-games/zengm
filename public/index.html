@@ -14,7 +14,7 @@
 
     <meta name="Description" content="A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
 
-    <script src="//d2wy8f7a9ursnm.cloudfront.net/v6/bugsnag.min.js"></script>
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/v7/bugsnag.min.js"></script>
 
     <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
     <script async="async" src="https://basketball-gm.com/prebid/BBGM_ADS_FILENAME.js"></script>
@@ -116,27 +116,18 @@
         releaseStage = "production";
       }
 
-      if (window.bugsnag) {
-        window.bugsnagClient = window.bugsnag({
+      if (window.Bugsnag) {
+        window.Bugsnag.start({
           apiKey: "BUGSNAG_API_KEY",
           appVersion: window.bbgmVersion,
-          autoCaptureSessions: false,
-          beforeSend: function (report) {
+          autoTrackSessions: false,
+          onError: function (event) {
             // Normalize league URLs to all look the same
-            if (report && typeof report.context === "string") {
-              report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
-            }
-
-            if (report && typeof report.errorMessage === "string") {
-              var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop", "contentDocument", "Celtra", "AdBlock"];
-              for (var i = 0; i < skip.length; i++) {
-                if (report.errorMessage.includes(skip[i])) {
-                  report.ignore();
-                }
-              }
+            if (event && typeof event.context === "string") {
+              event.context = event.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
             }
           },
-          notifyReleaseStages: ["beta", "production"],
+          enabledReleaseStages: ["beta", "production"],
           releaseStage: releaseStage
         });
       }

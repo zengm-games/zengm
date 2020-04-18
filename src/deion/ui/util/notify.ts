@@ -20,11 +20,9 @@ const notify = (
 	{
 		extraClass,
 		persistent = false,
-		timeOut,
 	}: {
 		extraClass?: string;
 		persistent?: boolean;
-		timeOut?: number;
 	} = {},
 ) => {
 	emitter.emit("notification", {

@@ -1,7 +1,3 @@
-better animation for notifications
-- get rid of useless css
-- z index stuff
-
 mailing list
 - somehow prompt current users to join
   - export from mailerlite, import subscription status my database, emit from account API, send notification based on that

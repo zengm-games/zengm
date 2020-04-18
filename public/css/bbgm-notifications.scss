@@ -1,7 +1,4 @@
 .notification-container {
-	display: flex;
-	flex-direction: column;
-
 	ul,
 	li {
 		padding: 0;
@@ -17,7 +14,7 @@
 		flex-direction: column;
 		list-style: none;
 		justify-content: flex-end;
-		z-index: -1;
+		pointer-events: none;
 	}
 }
 
@@ -35,6 +32,7 @@
 	margin: 0 0 6px;
 	opacity: 0.8;
 	padding: 6px 12px;
+	pointer-events: auto;
 	position: relative;
 	width: 300px;
 	z-index: 1000;

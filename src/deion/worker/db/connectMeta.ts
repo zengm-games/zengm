@@ -11,7 +11,12 @@ export interface MetaDB extends DBSchema {
 	};
 	attributes: {
 		value: number | Options;
-		key: "changesRead" | "lastSelectedTid" | "nagged" | "options";
+		key:
+			| "changesRead"
+			| "lastSelectedTid"
+			| "nagged"
+			| "naggedMailingList"
+			| "options";
 	};
 	leagues: {
 		value: League;

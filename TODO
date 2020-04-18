@@ -1,11 +1,8 @@
-mailing list
-- somehow prompt current users to join
-  - export from mailerlite, import subscription status my database, emit from account API, send notification based on that
-  - https://landing.mailerlite.com/webforms/landing/z7d2z9
-- newsletter format
-  - plans
-  - stats
-  - social media
+mailing list/newsletter
+- changelog
+- plans
+- stats
+- social media
 
 redesign dashboard
 - include some historical context

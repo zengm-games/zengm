@@ -1,7 +1,7 @@
 import { idb } from "../../db";
 import { getUpcoming } from "../../views/schedule";
 import { g, toUI } from "../../util";
-import { LocalStateUI } from "../../../common/types";
+import type { LocalStateUI } from "../../../common/types";
 
 /**
  * Save the schedule to the database, overwriting what's currently there.

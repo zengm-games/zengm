@@ -1,7 +1,7 @@
 import { allStar, finances, player } from "..";
 import { idb } from "../../db";
 import { g, overrides } from "../../util";
-import { Player, MinimalPlayerRatings } from "../../../common/types";
+import type { Player, MinimalPlayerRatings } from "../../../common/types";
 
 const processTeam = (
 	team: {

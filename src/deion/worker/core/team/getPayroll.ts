@@ -1,4 +1,4 @@
-import { ContractInfo } from "../../../common/types";
+import type { ContractInfo } from "../../../common/types";
 import getContracts from "./getContracts";
 
 /**

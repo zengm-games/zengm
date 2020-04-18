@@ -1,4 +1,4 @@
-import { TeamStatAttr, TeamStats } from "../../../../deion/common/types";
+import type { TeamStatAttr, TeamStats } from "../../../../deion/common/types";
 
 const percentage = (numerator: number, denominator: number) => {
 	if (denominator > 0) {

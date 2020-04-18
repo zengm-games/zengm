@@ -1,5 +1,5 @@
 import { g } from "../util";
-import { UpdateEvents, Options } from "../../common/types";
+import type { UpdateEvents, Options } from "../../common/types";
 import { idb } from "../db";
 
 const updateLeagueOptions = async (

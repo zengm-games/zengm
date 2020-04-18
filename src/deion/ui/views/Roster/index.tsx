@@ -14,7 +14,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { confirm, getCols, helpers, logEvent, toWorker } from "../../util";
 import PlayingTime, { ptStyles } from "./PlayingTime";
 import TopStuff from "./TopStuff";
-import { Phase, View } from "../../../common/types";
+import type { Phase, View } from "../../../common/types";
 
 // If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
 const justDrafted = (

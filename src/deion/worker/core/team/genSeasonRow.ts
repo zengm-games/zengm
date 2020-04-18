@@ -1,5 +1,5 @@
 import { g, random } from "../../util";
-import { TeamSeasonWithoutKey } from "../../../common/types";
+import type { TeamSeasonWithoutKey } from "../../../common/types";
 
 const genSeasonRow = (
 	tid: number,

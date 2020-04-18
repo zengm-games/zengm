@@ -1,5 +1,5 @@
 import { promiseWorker } from ".";
-import api from "../../worker/api";
+import type api from "../../worker/api";
 
 const toWorker = <
 	Type extends "actions" | "main" | "playMenu" | "toolsMenu",

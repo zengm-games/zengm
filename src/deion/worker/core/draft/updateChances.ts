@@ -1,5 +1,5 @@
 import countBy from "lodash/countBy";
-import { TeamFiltered } from "../../../common/types";
+import type { TeamFiltered } from "../../../common/types";
 
 /**
  * Divide the combinations between teams with tied records.

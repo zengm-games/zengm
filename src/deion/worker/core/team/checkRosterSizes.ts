@@ -2,7 +2,7 @@ import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, overrides } from "../../util";
-import { Player } from "../../../common/types";
+import type { Player } from "../../../common/types";
 
 /**
  * Check roster size limits

@@ -1,5 +1,5 @@
 import { g, overrides } from "../../util";
-import { Player, PlayerWithoutKey } from "../../../common/types";
+import type { Player, PlayerWithoutKey } from "../../../common/types";
 
 /**
  * Add a new row of stats to the playerStats database.

@@ -1,6 +1,6 @@
 import fuzzRating from "./fuzzRating";
 import { g } from "../../util";
-import {
+import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,

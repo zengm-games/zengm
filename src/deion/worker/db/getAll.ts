@@ -1,12 +1,12 @@
-import {
+import iterate from "./iterate";
+import type {
 	IDBPObjectStore,
 	IDBPIndex,
 	StoreNames,
 	StoreValue,
 	IndexNames,
 } from "idb";
-import { LeagueDB } from "./connectLeague";
-import iterate from "./iterate";
+import type { LeagueDB } from "./connectLeague";
 
 /**
  * This is used for two separate purposes.

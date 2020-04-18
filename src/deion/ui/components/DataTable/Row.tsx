@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
-import { ClassValue } from "classnames/types";
+import type { ClassValue } from "classnames/types";
 
 const Row = ({
 	row,

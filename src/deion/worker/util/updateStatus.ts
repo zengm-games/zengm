@@ -3,7 +3,7 @@ import { idb } from "../db";
 import g from "./g";
 import local from "./local";
 import toUI from "./toUI";
-import { Conditions } from "../../common/types";
+import type { Conditions } from "../../common/types";
 /*Save status to database and push to client.
 
 If no status is given, set a default status based on game state.

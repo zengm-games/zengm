@@ -1,6 +1,9 @@
 import { generate as generateFace } from "facesjs";
 import { idb } from "../db";
-import { MinimalPlayerRatings, PlayerWithoutKey } from "../../common/types";
+import type {
+	MinimalPlayerRatings,
+	PlayerWithoutKey,
+} from "../../common/types";
 
 const generate = () => {
 	const overrides: any = {

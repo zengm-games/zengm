@@ -1,6 +1,6 @@
 import { team } from "..";
 import { idb } from "../../db";
-import { TradePickValues, TradeTeams } from "../../../common/types";
+import type { TradePickValues, TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 
 type AssetPlayer = {

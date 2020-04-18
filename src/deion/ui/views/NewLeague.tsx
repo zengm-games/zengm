@@ -4,7 +4,7 @@ import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const randomTeam = {
 	tid: -1,

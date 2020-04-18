@@ -1,5 +1,5 @@
 import { idb } from "..";
-import { Player } from "../../../common/types";
+import type { Player } from "../../../common/types";
 
 const getCopy = async ({ pid }: { pid: number }): Promise<Player | void> => {
 	const result = await idb.getCopies.players({

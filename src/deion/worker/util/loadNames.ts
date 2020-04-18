@@ -1,4 +1,4 @@
-import { PlayerNames } from "../../common/types";
+import type { PlayerNames } from "../../common/types";
 import g from "./g";
 import overrides from "./overrides";
 

@@ -3,7 +3,7 @@ import { mergeByPk } from "./helpers";
 import { team } from "../../core";
 import { idb } from "..";
 import { g, helpers, overrides } from "../../util";
-import {
+import type {
 	Team,
 	TeamAttr,
 	TeamFiltered,

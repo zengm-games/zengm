@@ -2,7 +2,11 @@ import { PLAYER } from "../../common";
 import { finances, player } from "../core";
 import { idb } from "../db";
 import { face, g } from "../util";
-import { UpdateEvents, ViewInput, PlayerWithoutKey } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	PlayerWithoutKey,
+} from "../../common/types";
 
 const updateCustomizePlayer = async (
 	inputs: ViewInput<"customizePlayer">,

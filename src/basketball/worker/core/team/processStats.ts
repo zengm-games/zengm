@@ -1,5 +1,5 @@
 import { g } from "../../../../deion/worker/util";
-import {
+import type {
 	TeamStatAttr,
 	TeamStatType,
 	TeamStats,

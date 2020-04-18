@@ -6,7 +6,7 @@ import season from "./core/season";
 import team from "./core/team";
 import util from "./util";
 import views from "./views";
-import { Names } from "../../deion/common/types";
+import type { Names } from "../../deion/common/types";
 
 // This is dynamically resolved with rollup-plugin-alias
 import names from "player-names"; // eslint-disable-line

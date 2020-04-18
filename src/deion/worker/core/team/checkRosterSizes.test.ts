@@ -4,7 +4,10 @@ import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { PlayerWithoutKey, MinimalPlayerRatings } from "../../../common/types";
+import type {
+	PlayerWithoutKey,
+	MinimalPlayerRatings,
+} from "../../../common/types";
 
 describe("worker/core/team/checkRosterSizes", () => {
 	beforeAll(() => {

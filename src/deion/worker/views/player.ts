@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { face, g, getTeamColors, helpers, overrides } from "../util";
-import {
+import type {
 	MinimalPlayerRatings,
 	Player,
 	UpdateEvents,

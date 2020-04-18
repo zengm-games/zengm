@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import {
+import type {
 	UpdateEvents,
 	DraftLotteryResultArray,
 	ViewInput,

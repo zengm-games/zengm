@@ -1,6 +1,6 @@
 import range from "lodash/range";
 import { g, helpers } from "../../util";
-import {
+import type {
 	TeamFiltered,
 	PlayoffSeries,
 	PlayoffSeriesTeam,

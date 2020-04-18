@@ -1,6 +1,11 @@
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, ViewInput, AllStars, Game } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	AllStars,
+	Game,
+} from "../../common/types";
 
 export const setTeamInfo = (
 	t: any,

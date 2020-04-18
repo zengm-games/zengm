@@ -1,4 +1,4 @@
-import { Position } from "../../../common/types";
+import type { Position } from "../../../common/types";
 
 export type PlayType =
 	| "quarter"

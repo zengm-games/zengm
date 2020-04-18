@@ -1,4 +1,4 @@
-import { IDBPDatabase } from "idb";
+import type { IDBPDatabase } from "idb";
 import Cache from "./Cache";
 import connectLeague, { LeagueDB } from "./connectLeague";
 import connectMeta, { MetaDB } from "./connectMeta";

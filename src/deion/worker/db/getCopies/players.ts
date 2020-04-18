@@ -2,7 +2,7 @@ import { PLAYER } from "../../../common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";
-import { MinimalPlayerRatings, Player } from "../../../common/types";
+import type { MinimalPlayerRatings, Player } from "../../../common/types";
 import { unwrap } from "idb";
 
 const getCopies = async ({

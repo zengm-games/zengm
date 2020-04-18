@@ -3,7 +3,7 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 	useTitleBar({

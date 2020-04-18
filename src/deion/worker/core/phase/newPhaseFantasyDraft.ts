@@ -2,7 +2,7 @@ import { PLAYER } from "../../../common";
 import { contractNegotiation, draft, league } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
-import { Conditions, PhaseReturn } from "../../../common/types";
+import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseFantasyDraft = async (
 	conditions: Conditions,

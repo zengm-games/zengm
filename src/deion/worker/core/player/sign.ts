@@ -2,7 +2,7 @@ import { PHASE } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";
-import { Phase, Player, PlayerContract } from "../../../common/types";
+import type { Phase, Player, PlayerContract } from "../../../common/types";
 
 const sign = (
 	p: Player,

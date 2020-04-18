@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import g from "./g";
-import { Achievement } from "../../common/types"; // These are achievements that are common across all sports. Sport-specific achievements go in the sport-specific folder, not deion.
+import type { Achievement } from "../../common/types"; // These are achievements that are common across all sports. Sport-specific achievements go in the sport-specific folder, not deion.
 
 const goldenOldiesCutoffs =
 	process.env.SPORT === "basketball" ? [30, 33, 36] : [28, 30, 32];

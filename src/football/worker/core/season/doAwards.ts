@@ -9,9 +9,12 @@ import {
 } from "../../../../deion/worker/core/season/awards";
 import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
-import { Conditions, PlayerFiltered } from "../../../../deion/common/types";
+import type {
+	Conditions,
+	PlayerFiltered,
+} from "../../../../deion/common/types";
 
-import { AwardPlayer, Awards } from "../../../common/types";
+import type { AwardPlayer, Awards } from "../../../common/types";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {

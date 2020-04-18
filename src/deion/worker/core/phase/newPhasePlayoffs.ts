@@ -1,7 +1,7 @@
 import { finances, player, season, team } from "..";
 import { idb } from "../../db";
 import { achievement, g, helpers, local, logEvent } from "../../util";
-import { Conditions, PhaseReturn } from "../../../common/types";
+import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,

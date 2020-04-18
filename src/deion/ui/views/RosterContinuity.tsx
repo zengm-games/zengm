@@ -3,8 +3,8 @@ import React from "react";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols } from "../util";
-import { Col } from "../components/DataTable";
-import { View } from "../../common/types";
+import type { Col } from "../components/DataTable";
+import type { View } from "../../common/types";
 
 const RosterContinuity = ({
 	abbrevs,

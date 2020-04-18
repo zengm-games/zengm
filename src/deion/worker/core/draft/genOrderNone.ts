@@ -2,7 +2,7 @@ import genPicks from "./genPicks";
 import lotterySort from "./lotterySort";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import { DraftPick } from "../../../common/types";
+import type { DraftPick } from "../../../common/types";
 
 const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	const teams = await idb.getCopies.teamsPlus({

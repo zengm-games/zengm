@@ -1,6 +1,6 @@
 import limitRating from "./limitRating";
 import { random } from "../../util";
-import { PlayerWithoutKey } from "../../../common/types";
+import type { PlayerWithoutKey } from "../../../common/types";
 
 const bonus = (p: PlayerWithoutKey) => {
 	const ratings = p.ratings[p.ratings.length - 1];

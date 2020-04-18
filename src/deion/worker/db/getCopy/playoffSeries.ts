@@ -1,6 +1,6 @@
 import { idb } from "..";
 import { g, helpers } from "../../util";
-import { PlayoffSeries } from "../../../common/types";
+import type { PlayoffSeries } from "../../../common/types";
 
 const getCopy = async ({
 	season,

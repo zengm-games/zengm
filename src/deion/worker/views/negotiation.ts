@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { contractNegotiation, freeAgents, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { ViewInput, PlayerContract } from "../../common/types";
+import type { ViewInput, PlayerContract } from "../../common/types";
 
 const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	let growthFactor = 0.15;

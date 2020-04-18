@@ -1,7 +1,7 @@
 import { season, player } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, overrides } from "../util";
-import { UpdateEvents, ViewInput, Game } from "../../common/types";
+import type { UpdateEvents, ViewInput, Game } from "../../common/types";
 
 export const getUpcoming = async (tid: number, limit: number = Infinity) => {
 	const schedule = await season.getSchedule();

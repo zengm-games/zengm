@@ -1,4 +1,4 @@
-import { Props, SortBy } from ".";
+import type { Props, SortBy } from ".";
 
 const loadStateFromCache = (props: Props) => {
 	// @ts-ignore

@@ -1,5 +1,5 @@
 import { season } from "..";
-import { ScheduleGame } from "../../../common/types";
+import type { ScheduleGame } from "../../../common/types";
 
 const nextGameIsAllStar = async (schedule?: ScheduleGame[]) => {
 	const schedule2 =

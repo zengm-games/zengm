@@ -20,7 +20,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from "../util";
-import { Conditions, TradeTeams, PlayoffSeries } from "../../common/types";
+import type { Conditions, TradeTeams, PlayoffSeries } from "../../common/types";
 
 const liveGame = async (gid: number, conditions: Conditions) => {
 	await toUI(

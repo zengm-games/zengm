@@ -10,7 +10,7 @@ import newPhaseResignPlayers from "./newPhaseResignPlayers";
 import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
 import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
-import { Conditions, Phase, PhaseReturn } from "../../../common/types";
+import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
 
 /**
  * Set a new phase of the game.

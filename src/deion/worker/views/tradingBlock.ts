@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const updateUserRoster = async (
 	inputs: unknown,

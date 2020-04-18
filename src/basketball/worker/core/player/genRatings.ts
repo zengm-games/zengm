@@ -1,7 +1,7 @@
 import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
-import { PlayerRatings, RatingKey } from "../../../common/types";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const typeFactors: Record<
 	"point" | "wing" | "big",

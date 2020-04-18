@@ -3,7 +3,7 @@ import flatten from "lodash/flatten";
 import testHelpers from "../../../../deion/test/helpers";
 import newSchedule, { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
-import { TeamBasic } from "../../../../deion/common/types";
+import type { TeamBasic } from "../../../../deion/common/types";
 
 describe("football/worker/core/season/newSchedule", () => {
 	let defaultTeams: TeamBasic[];

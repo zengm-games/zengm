@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 	useTitleBar({

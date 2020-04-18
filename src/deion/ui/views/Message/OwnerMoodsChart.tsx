@@ -5,7 +5,7 @@ import { scaleLinear, scalePoint } from "d3-scale";
 import { curveMonotoneX, line } from "d3-shape";
 import { select } from "d3-selection";
 import { HelpPopover } from "../../components";
-import { OwnerMood } from "../../../common/types";
+import type { OwnerMood } from "../../../common/types";
 
 const OwnerMoodsChart = ({
 	ownerMoods,

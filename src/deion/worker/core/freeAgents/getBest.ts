@@ -1,6 +1,6 @@
 import { team } from "..";
 import { g } from "../../util";
-import { PlayerWithoutKey } from "../../../common/types"; // Find the best available free agent for a team.
+import type { PlayerWithoutKey } from "../../../common/types"; // Find the best available free agent for a team.
 // playersAvailable should be sorted - best players first, worst players last. It will be mutated if a player is found, to remove the found player.
 // If payroll is not supplied, don't do salary cap check (like when creating new league).
 

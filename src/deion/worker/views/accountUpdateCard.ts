@@ -1,6 +1,6 @@
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import { checkAccount } from "../util";
-import { Conditions, UpdateEvents } from "../../common/types";
+import type { Conditions, UpdateEvents } from "../../common/types";
 
 const updateAccountUpdateCard = async (
 	inputs: unknown,

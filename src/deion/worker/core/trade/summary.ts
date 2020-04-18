@@ -1,7 +1,7 @@
 import { team } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import { TradeSummary, TradeTeams } from "../../../common/types";
+import type { TradeSummary, TradeTeams } from "../../../common/types";
 
 /**
  * Create a summary of the trade, for eventual display to the user.

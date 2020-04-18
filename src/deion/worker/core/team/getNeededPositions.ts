@@ -1,5 +1,5 @@
 import { overrides } from "../../util";
-import { Player, PlayerWithoutKey } from "../../../common/types";
+import type { Player, PlayerWithoutKey } from "../../../common/types";
 
 const getNeededPositions = (players: Player[] | PlayerWithoutKey[]) => {
 	const neededPositions = new Set<string>();

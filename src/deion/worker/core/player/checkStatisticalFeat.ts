@@ -1,7 +1,11 @@
 import { PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, helpers, logEvent, overrides } from "../../util";
-import { Conditions, GamePlayer, GameResults } from "../../../common/types";
+import type {
+	Conditions,
+	GamePlayer,
+	GameResults,
+} from "../../../common/types";
 
 const checkStatisticalFeat = (
 	pid: number,

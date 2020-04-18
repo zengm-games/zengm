@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const DraftButtons = ({
 	userRemaining,

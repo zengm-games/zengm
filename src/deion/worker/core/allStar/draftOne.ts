@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
-import { AllStarPlayer } from "../../../common/types";
+import type { AllStarPlayer } from "../../../common/types";
 
 const draftOne = async (): Promise<{
 	finalized: boolean;

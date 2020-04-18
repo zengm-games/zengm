@@ -1,5 +1,5 @@
 import { idb } from "..";
-import {
+import type {
 	TeamAttr,
 	TeamStatAttr,
 	TeamSeasonAttr,

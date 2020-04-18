@@ -3,7 +3,10 @@ import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";
 import { face, g, overrides } from "../../util";
-import { MinimalPlayerRatings, PlayerWithoutKey } from "../../../common/types";
+import type {
+	MinimalPlayerRatings,
+	PlayerWithoutKey,
+} from "../../../common/types";
 
 const generate = (
 	tid: number,

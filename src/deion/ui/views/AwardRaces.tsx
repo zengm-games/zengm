@@ -8,7 +8,7 @@ import {
 	RatingWithChange,
 	StatWithChange,
 } from "../components";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const AwardRaces = ({
 	awardCandidates,

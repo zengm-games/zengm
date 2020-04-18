@@ -1,5 +1,5 @@
 import { achievement, checkAccount } from "../util";
-import { Conditions, UpdateEvents, ViewInput } from "../../common/types";
+import type { Conditions, UpdateEvents, ViewInput } from "../../common/types";
 
 const updateAccount = async (
 	inputs: ViewInput<"account">,

@@ -1,6 +1,6 @@
 import { idb, iterate } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { UpdateEvents, Player } from "../../common/types";
+import type { UpdateEvents, Player } from "../../common/types";
 import { isAmerican } from "../../../basketball/worker/util/achievements";
 
 type InfoTemp = {

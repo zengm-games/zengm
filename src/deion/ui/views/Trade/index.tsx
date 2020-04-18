@@ -6,7 +6,7 @@ import { toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({

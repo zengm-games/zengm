@@ -1,6 +1,10 @@
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import { Conditions, GameResults, PlayoffSeries } from "../../../common/types";
+import type {
+	Conditions,
+	GameResults,
+	PlayoffSeries,
+} from "../../../common/types";
 
 const updatePlayoffSeries = async (
 	results: GameResults,

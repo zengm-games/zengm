@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes

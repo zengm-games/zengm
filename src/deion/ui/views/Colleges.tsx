@@ -2,7 +2,7 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocalShallow } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 export const genView = (type: "college" | "country") => {
 	return ({ infos, stats, userTid, valueStat }: View<"colleges">) => {

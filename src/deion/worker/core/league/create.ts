@@ -16,7 +16,7 @@ import {
 	updatePhase,
 	updateStatus,
 } from "../../util";
-import {
+import type {
 	Conditions,
 	PlayerWithoutKey,
 	MinimalPlayerRatings,

@@ -7,7 +7,7 @@ import {
 	unwrap,
 	StoreKey,
 } from "idb";
-import { LeagueDB } from "./connectLeague";
+import type { LeagueDB } from "./connectLeague";
 
 // Helper function to use cursors to iterate over an index or object store, without awaiting a promise (for Firefox <60 support)
 const iterate = async <StoreName extends StoreNames<LeagueDB>>(

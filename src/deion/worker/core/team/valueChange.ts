@@ -3,7 +3,7 @@ import { PHASE } from "../../../common";
 import { draft, player, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import {
+import type {
 	TradePickValues,
 	PlayerContract,
 	PlayerInjury,

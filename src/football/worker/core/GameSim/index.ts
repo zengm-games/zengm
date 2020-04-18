@@ -6,8 +6,8 @@ import getCompositeFactor from "./getCompositeFactor";
 import getPlayers from "./getPlayers";
 import formations from "./formations";
 import penalties from "./penalties";
-import { Position } from "../../../common/types";
-import {
+import type { Position } from "../../../common/types";
+import type {
 	CompositeRating,
 	PenaltyPlayType,
 	PlayerGameSim,

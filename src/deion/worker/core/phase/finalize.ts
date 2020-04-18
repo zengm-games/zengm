@@ -9,7 +9,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from "../../util";
-import { Conditions, Phase, UpdateEvents } from "../../../common/types";
+import type { Conditions, Phase, UpdateEvents } from "../../../common/types";
 
 /**
  * Common tasks run after a new phrase is set.

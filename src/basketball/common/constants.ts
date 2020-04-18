@@ -1,5 +1,5 @@
-import { CompositeWeights } from "../../deion/common/types";
-import { RatingKey } from "./types";
+import type { CompositeWeights } from "../../deion/common/types";
+import type { RatingKey } from "./types";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {

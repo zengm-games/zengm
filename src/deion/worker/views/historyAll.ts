@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
+import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
 
 const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (

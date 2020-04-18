@@ -1,7 +1,7 @@
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
 import { g, helpers } from "../../util";
-import { TeamSeason } from "../../../common/types";
+import type { TeamSeason } from "../../../common/types";
 
 const getCopies = async ({
 	tid,

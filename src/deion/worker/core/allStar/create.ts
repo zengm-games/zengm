@@ -4,7 +4,7 @@ import {
 	saveAwardsByPlayer,
 } from "../season/awards";
 import { g } from "../../util";
-import {
+import type {
 	AllStars,
 	Conditions,
 	PlayerFiltered,

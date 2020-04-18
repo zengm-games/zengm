@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateStandings = async (
 	inputs: ViewInput<"standings">,

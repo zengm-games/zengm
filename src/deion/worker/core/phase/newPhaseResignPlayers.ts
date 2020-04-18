@@ -3,7 +3,7 @@ import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, league, player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
-import { Conditions, PhaseReturn } from "../../../common/types";
+import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseResignPlayers = async (
 	conditions: Conditions,

@@ -26,7 +26,11 @@ import {
 	updateStatus,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import { Conditions, ScheduleGame, UpdateEvents } from "../../../common/types";
+import type {
+	Conditions,
+	ScheduleGame,
+	UpdateEvents,
+} from "../../../common/types";
 
 /**
  * Play one or more days of games.

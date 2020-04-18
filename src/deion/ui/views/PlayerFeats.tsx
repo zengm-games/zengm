@@ -3,7 +3,7 @@ import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const PlayerFeats = ({
 	abbrev,

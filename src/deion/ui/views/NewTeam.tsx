@@ -3,7 +3,7 @@ import React, { useState, ChangeEvent } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 	const [tid, setTid] = useState(

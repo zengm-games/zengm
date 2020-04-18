@@ -1,7 +1,7 @@
 import genOrderNBA from "./genOrderNBA";
 import genOrderNone from "./genOrderNone";
 import { g } from "../../util";
-import { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../common/types";
 
 /**
  * Sets draft order and save it to the draftPicks object store.

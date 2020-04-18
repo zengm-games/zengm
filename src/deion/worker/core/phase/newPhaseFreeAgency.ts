@@ -1,6 +1,6 @@
 import { contractNegotiation } from "..";
 import { helpers } from "../../util";
-import { PhaseReturn } from "../../../common/types";
+import type { PhaseReturn } from "../../../common/types";
 
 const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 	// Delete all current negotiations to resign players

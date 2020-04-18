@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import { getCols, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
 import { DataTable } from "../components";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const legendSquare = (className: string) => {
 	return <span className={`table-${className} legend-square ml-3`} />;

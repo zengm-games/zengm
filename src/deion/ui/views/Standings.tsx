@@ -5,7 +5,7 @@ import { ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const record = (
 	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],

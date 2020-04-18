@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers, lock } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateTeamFinances = async (
 	inputs: ViewInput<"teamFinances">,

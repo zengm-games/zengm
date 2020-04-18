@@ -2,7 +2,11 @@ import { PHASE } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents, ViewInput, TeamSeasonAttr } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	TeamSeasonAttr,
+} from "../../common/types";
 
 const footballScore = (p: {
 	ratings: {

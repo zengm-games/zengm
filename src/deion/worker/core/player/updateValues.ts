@@ -1,5 +1,5 @@
 import value from "./value";
-import {
+import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,

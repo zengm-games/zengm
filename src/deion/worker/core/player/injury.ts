@@ -1,5 +1,5 @@
 import { g, injuries, random } from "../../util";
-import { PlayerInjury } from "../../../common/types";
+import type { PlayerInjury } from "../../../common/types";
 
 /**
  * Pick injury type and duration.

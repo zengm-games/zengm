@@ -1,5 +1,5 @@
 import { defaultGameAttributes, g } from "../../../../deion/worker/util";
-import {
+import type {
 	Player,
 	PlayerWithoutKey,
 	MinimalPlayerRatings,

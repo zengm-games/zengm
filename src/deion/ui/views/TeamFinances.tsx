@@ -8,7 +8,7 @@ import {
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 type FinancesFormProps = {
 	gamesInProgress: boolean;

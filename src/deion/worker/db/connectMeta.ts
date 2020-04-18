@@ -1,5 +1,5 @@
-import { DBSchema, IDBPDatabase } from "idb";
-import { League, Options } from "../../common/types";
+import type { DBSchema, IDBPDatabase } from "idb";
+import type { League, Options } from "../../common/types";
 import connectIndexedDB from "./connectIndexedDB";
 
 export interface MetaDB extends DBSchema {

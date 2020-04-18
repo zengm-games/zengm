@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../../../deion/ui/util";
-import { ActualProps } from ".";
+import type { ActualProps } from ".";
 
 const Winner = ({
 	award,

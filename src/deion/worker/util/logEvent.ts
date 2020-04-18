@@ -2,7 +2,7 @@ import { createLogger } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import toUI from "./toUI";
-import {
+import type {
 	Conditions,
 	LogEventSaveOptions,
 	LogEventShowOptions,

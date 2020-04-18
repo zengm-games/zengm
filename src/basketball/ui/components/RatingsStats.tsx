@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../../deion/ui/util";
-import { RatingKey } from "../../common/types";
+import type { RatingKey } from "../../common/types";
 
 type Props = {
 	ratings?: {

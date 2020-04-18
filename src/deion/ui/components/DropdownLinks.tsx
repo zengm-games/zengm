@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 
 import { helpers } from "../util";
-import { MenuItemLink, MenuItemHeader } from "../../common/types";
+import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 type TopMenuToggleProps = {
 	long: string;
 	openID?: string;

@@ -2,7 +2,7 @@ import { PLAYER } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
-import { Conditions, PhaseReturn } from "../../../common/types";
+import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

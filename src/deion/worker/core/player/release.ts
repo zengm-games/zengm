@@ -2,7 +2,7 @@ import addToFreeAgents from "./addToFreeAgents";
 import genBaseMoods from "./genBaseMoods";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import { Player } from "../../../common/types";
+import type { Player } from "../../../common/types";
 
 /**
  * Release player.

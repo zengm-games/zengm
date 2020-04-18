@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 type SeriesTeam = {
 	abbrev: string;

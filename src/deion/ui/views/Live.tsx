@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const Live = ({ games, gamesInProgress }: View<"live">) => {
 	useTitleBar({ title: "Live Game Simulation" });

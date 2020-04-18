@@ -1,7 +1,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const addSeason = async (season: number) => {
 	// In fantasy draft, use temp tid

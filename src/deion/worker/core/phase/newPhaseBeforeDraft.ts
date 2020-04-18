@@ -11,7 +11,7 @@ import {
 	overrides,
 	toUI,
 } from "../../util";
-import { Conditions, PhaseReturn } from "../../../common/types";
+import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,

@@ -5,7 +5,7 @@ import React, { useState, ReactNode, ChangeEvent, FormEvent } from "react";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, logEvent, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 type Key =
 	| "numGames"

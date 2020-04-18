@@ -1,10 +1,10 @@
-import { Face } from "facesjs";
-import { MouseEvent } from "react";
-import { Context } from "bbgm-router";
-import processInputs from "../worker/api/processInputs";
-import views from "../worker/views";
-import viewsFootball from "../../football/worker/views";
-import { Bugsnag } from "@bugsnag/browser";
+import type { Face } from "facesjs";
+import type { MouseEvent } from "react";
+import type { Context } from "bbgm-router";
+import type processInputs from "../worker/api/processInputs";
+import type views from "../worker/views";
+import type viewsFootball from "../../football/worker/views";
+import type { Bugsnag } from "@bugsnag/browser";
 
 export type Env = {
 	enableLogging: boolean;
@@ -803,8 +803,8 @@ type TeamSeasonPlus = TeamSeason & {
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
-import { TeamStatAttr as TeamStatAttrBasketball } from "../../basketball/common/types";
-import { TeamStatAttr as TeamStatAttrFootball } from "../../football/common/types";
+import type { TeamStatAttr as TeamStatAttrBasketball } from "../../basketball/common/types";
+import type { TeamStatAttr as TeamStatAttrFootball } from "../../football/common/types";
 type TeamStatsPlus = Record<TeamStatAttrBasketball, number> &
 	Record<TeamStatAttrFootball, number> & {
 		season: number;

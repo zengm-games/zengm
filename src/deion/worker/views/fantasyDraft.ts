@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, random } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const updateFantasyDraft = async (
 	inputs: unknown,

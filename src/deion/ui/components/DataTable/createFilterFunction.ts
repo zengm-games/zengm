@@ -1,6 +1,6 @@
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
-import { SortType } from "../../../common/types";
+import type { SortType } from "../../../common/types";
 
 const createFilterFunction = (
 	originalFilterText: string,

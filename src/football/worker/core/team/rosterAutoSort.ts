@@ -1,8 +1,8 @@
 import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 import { POSITIONS } from "../../../common/constants";
-import { Position } from "../../../common/types";
-import { PlayerFiltered } from "../../../../deion/common/types";
+import type { Position } from "../../../common/types";
+import type { PlayerFiltered } from "../../../../deion/common/types";
 
 const score = (p: PlayerFiltered, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];

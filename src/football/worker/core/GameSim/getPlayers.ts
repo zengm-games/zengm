@@ -1,6 +1,6 @@
 import { POSITIONS } from "../../../common/constants";
-import { Position } from "../../../common/types";
-import { PlayerGameSim, PlayersOnField } from "./types";
+import type { Position } from "../../../common/types";
+import type { PlayerGameSim, PlayersOnField } from "./types";
 import { helpers } from "../../../../deion/common";
 
 const getPlayers = (

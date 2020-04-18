@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
-import { ScheduleGame } from "../../../common/types";
+import type { ScheduleGame } from "../../../common/types";
 
 /**
  * Get an array of games from the schedule.

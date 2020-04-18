@@ -4,7 +4,7 @@ import { PLAYER } from "../../common";
 import { DataTable, PlayerNameLabels, RecordAndPlayoffs } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, getCols } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const TeamHistory = ({
 	abbrev,

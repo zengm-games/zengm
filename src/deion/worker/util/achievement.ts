@@ -4,8 +4,9 @@ import achievements from "./achievements";
 import g from "./g";
 import logEvent from "./logEvent";
 import overrides from "./overrides";
-import { AchievementWhen, Conditions } from "../../common/types"; // Combine global and sport-specific achievements
+import type { AchievementWhen, Conditions } from "../../common/types";
 
+// Combine global and sport-specific achievements
 const getAchievements = () => {
 	return [...achievements, ...overrides.util.achievements];
 };

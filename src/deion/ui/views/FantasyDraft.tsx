@@ -5,7 +5,7 @@ import { PHASE } from "../../common";
 import { SortableTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util"; // Copied from worker/util/random lol
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const randInt = (a: number, b: number): number => {
 	return Math.floor(Math.random() * (1 + b - a)) + a;

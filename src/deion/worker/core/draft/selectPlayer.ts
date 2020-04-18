@@ -3,7 +3,7 @@ import { player } from "..";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
-import { DraftPick } from "../../../common/types";
+import type { DraftPick } from "../../../common/types";
 
 /**
  * Select a player for the current drafting team.

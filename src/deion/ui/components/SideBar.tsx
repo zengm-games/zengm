@@ -9,7 +9,7 @@ import React, {
 	MouseEvent,
 } from "react";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
-import { MenuItemLink, MenuItemHeader } from "../../common/types";
+import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const getText = (text: MenuItemLink["text"]) => {
 	if (text.hasOwnProperty("side")) {

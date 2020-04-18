@@ -13,7 +13,7 @@ import { DIFFICULTY } from "../../common";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const difficultyText = (difficulty: number) => {
 	let prevText: string | undefined;

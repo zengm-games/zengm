@@ -1,6 +1,6 @@
 import compositeRating from "./compositeRating";
 import { overrides } from "../../util";
-import { MinimalPlayerRatings } from "../../../common/types";
+import type { MinimalPlayerRatings } from "../../../common/types";
 
 const hasSkill = (
 	ratings: MinimalPlayerRatings,

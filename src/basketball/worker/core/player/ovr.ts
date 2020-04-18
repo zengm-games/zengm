@@ -1,5 +1,5 @@
 import { helpers } from "../../../../deion/worker/util";
-import { PlayerRatings } from "../../../common/types";
+import type { PlayerRatings } from "../../../common/types";
 
 /**
  * Calculates the overall rating by averaging together all the other ratings.

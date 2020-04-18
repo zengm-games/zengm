@@ -5,7 +5,7 @@ import { BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, overrides, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
-import { View, Game } from "../../common/types";
+import type { View, Game } from "../../common/types";
 
 const StatsRow = ({ i, p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();

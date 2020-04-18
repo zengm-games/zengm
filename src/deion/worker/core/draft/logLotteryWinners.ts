@@ -1,6 +1,6 @@
 import logAction from "./logAction";
 import logLotteryTxt from "./logLotteryTxt";
-import { Conditions, TeamFiltered } from "../../../common/types";
+import type { Conditions, TeamFiltered } from "../../../common/types";
 
 const logLotteryWinners = (
 	chances: number[],

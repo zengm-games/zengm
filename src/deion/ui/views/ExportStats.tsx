@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { downloadFile, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const genFilename = (
 	leagueName: string,

@@ -2,7 +2,7 @@ import { PLAYER } from "../../../common";
 import { draft } from "..";
 import { idb, iterate } from "../../db";
 import { g, helpers } from "../../util";
-import { Conditions, PhaseReturn } from "../../../common/types";
+import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 	// Kill off old retired players (done here since not much else happens in this phase change, so making it a little

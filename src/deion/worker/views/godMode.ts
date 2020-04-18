@@ -1,5 +1,5 @@
 import { g } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (

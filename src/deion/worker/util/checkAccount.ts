@@ -3,7 +3,7 @@ import { idb } from "../db";
 import achievement from "./achievement";
 import local from "./local";
 import toUI from "./toUI";
-import { Conditions, PartialTopMenu } from "../../common/types";
+import type { Conditions, PartialTopMenu } from "../../common/types";
 
 const checkAccount = async (
 	conditions: Conditions,

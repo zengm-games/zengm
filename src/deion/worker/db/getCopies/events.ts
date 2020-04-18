@@ -1,6 +1,6 @@
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import { EventBBGM } from "../../../common/types";
+import type { EventBBGM } from "../../../common/types";
 
 const getCopies = async ({
 	pid,

@@ -10,7 +10,7 @@ import {
 	toUI,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../common/types";
 
 /**
  * Simulates one or more days of free agency.

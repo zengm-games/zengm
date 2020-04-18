@@ -2,7 +2,10 @@ import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { g, random } from "../../util";
-import { MinimalPlayerRatings, PlayerWithoutKey } from "../../../common/types";
+import type {
+	MinimalPlayerRatings,
+	PlayerWithoutKey,
+} from "../../../common/types";
 
 const genPlayersWithoutSaving = (
 	draftYear: number,

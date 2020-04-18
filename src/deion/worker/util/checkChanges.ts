@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import logEvent from "./logEvent";
 import overrides from "./overrides";
-import { Conditions } from "../../common/types";
+import type { Conditions } from "../../common/types";
 
 const checkChanges = async (conditions: Conditions) => {
 	const changesRead = ((await idb.meta.get(

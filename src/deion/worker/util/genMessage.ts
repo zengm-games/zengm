@@ -3,7 +3,7 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
-import { OwnerMood } from "../../common/types";
+import type { OwnerMood } from "../../common/types";
 
 const moodTexts = ["Horrible!", "Bad.", "Pretty good.", "Good.", "Excellent!"];
 

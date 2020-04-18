@@ -1,7 +1,11 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g, overrides } from "../util";
-import { UpdateEvents, ViewInput, PlayerStatType } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	PlayerStatType,
+} from "../../common/types";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,

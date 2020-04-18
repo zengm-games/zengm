@@ -11,7 +11,7 @@ import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
 import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const WatchList = ({
 	players,

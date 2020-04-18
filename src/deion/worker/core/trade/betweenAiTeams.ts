@@ -6,7 +6,7 @@ import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";
 import summary from "./summary";
-import { TradeTeams } from "../../../common/types";
+import type { TradeTeams } from "../../../common/types";
 
 const betweenAiTeams = async () => {
 	if (!g.get("aiTrades")) {

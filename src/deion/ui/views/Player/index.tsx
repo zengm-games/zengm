@@ -12,7 +12,7 @@ import {
 import Injuries from "./Injuries";
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, overrides, toWorker } from "../../util";
-import { View, Player } from "../../../common/types";
+import type { View, Player } from "../../../common/types";
 
 const Relatives = ({
 	pid,

@@ -1,7 +1,7 @@
 import { PHASE } from "../../../common";
 import { draft, freeAgents, game, phase, season } from "..";
 import { g } from "../../util";
-import { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
+import type { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
 
 const autoPlay = async (conditions: Conditions = {}) => {
 	if (g.get("phase") === PHASE.PRESEASON) {

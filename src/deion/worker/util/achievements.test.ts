@@ -5,7 +5,7 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import achievements from "./achievements";
-import { TeamSeason, Achievement } from "../../common/types";
+import type { TeamSeason, Achievement } from "../../common/types";
 
 const get = (slug: string) => {
 	const achievement = achievements.find(

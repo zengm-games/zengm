@@ -7,7 +7,7 @@ import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";
 import TeamStats from "./TeamStats";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 const LeagueDashboard = ({
 	att,

@@ -1,4 +1,4 @@
-import { GameAttributesLeague } from "../../common/types";
+import type { GameAttributesLeague } from "../../common/types";
 
 const defaultGameAttributes: GameAttributesLeague = {
 	phase: 0,

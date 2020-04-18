@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { player, freeAgents } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import { ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types";
 
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,

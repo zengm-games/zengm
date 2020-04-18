@@ -1,5 +1,5 @@
 import { idb } from "..";
-import { AllStars } from "../../../common/types";
+import type { AllStars } from "../../../common/types";
 
 const getCopy = async ({
 	season,

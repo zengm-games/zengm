@@ -1,6 +1,6 @@
 import { helpers } from ".";
-import { SortOrder, SortType } from "./types";
-import { Col } from "../ui/components/DataTable";
+import type { SortOrder, SortType } from "./types";
+import type { Col } from "../ui/components/DataTable";
 
 type ColTemp = {
 	desc?: string;

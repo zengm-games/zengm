@@ -1,5 +1,5 @@
-import { CompositeWeights } from "../../deion/common/types";
-import { Position, PrimaryPosition, RatingKey } from "./types";
+import type { CompositeWeights } from "../../deion/common/types";
+import type { Position, PrimaryPosition, RatingKey } from "./types";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	passingAccuracy: {

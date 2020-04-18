@@ -12,7 +12,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, overrides, realtimeUpdate, toWorker } from "../../util";
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
-import { View, Phase, PlayerWithoutKey } from "../../../common/types";
+import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
 
 // A player can never have KR or PR as his main position
 const bannedPositions = ["KR", "PR"];

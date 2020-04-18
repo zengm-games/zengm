@@ -3,7 +3,7 @@ import Dropdown from "./Dropdown";
 import DropdownLinks from "./DropdownLinks";
 import NewWindowLink from "./NewWindowLink";
 import { useLocalShallow } from "../util";
-import { MenuItemHeader } from "../../common/types";
+import type { MenuItemHeader } from "../../common/types";
 
 const genPath = (parts: string[], season: string | undefined) => {
 	if (season !== undefined) {

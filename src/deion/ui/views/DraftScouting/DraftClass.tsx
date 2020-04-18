@@ -6,7 +6,7 @@ import {
 	PlayerNameLabels,
 } from "../../components";
 import { downloadFile, getCols, toWorker } from "../../util";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 const DraftClass = ({
 	offset,

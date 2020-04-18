@@ -17,9 +17,9 @@ import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { downloadFile, helpers } from "../../util";
-import { SortOrder, SortType } from "../../../common/types";
+import type { SortOrder, SortType } from "../../../common/types";
 // eslint-disable-next-line import/no-unresolved
-import { ClassValue } from "classnames/types";
+import type { ClassValue } from "classnames/types";
 
 export type SortBy = [number, SortOrder];
 

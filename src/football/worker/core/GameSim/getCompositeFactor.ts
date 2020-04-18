@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import getPlayers from "./getPlayers";
-import { Position } from "../../../common/types";
-import { PlayerGameSim, PlayersOnField } from "./types"; // weightsBonus is not added to denominator, it just gives a bonus in situations e.g. with extra receivers or blockers beyond normal
+import type { Position } from "../../../common/types";
+import type { PlayerGameSim, PlayersOnField } from "./types"; // weightsBonus is not added to denominator, it just gives a bonus in situations e.g. with extra receivers or blockers beyond normal
 
 const getCompositeFactor = ({
 	playersOnField,

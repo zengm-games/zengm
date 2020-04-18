@@ -4,7 +4,7 @@ import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import { Team, TeamSeasonWithoutKey } from "../../../common/types";
+import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
 
 const getDraftTids = async () => {
 	await draft.genOrderNBA();

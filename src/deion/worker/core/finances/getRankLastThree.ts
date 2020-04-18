@@ -1,5 +1,5 @@
 import { g } from "../../util";
-import { TeamSeason } from "../../../common/types";
+import type { TeamSeason } from "../../../common/types";
 
 /**
  * Gets the rank of some financial thing over the past 3 seasons, if available.

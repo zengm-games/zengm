@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { g, toUI, initUILocalGames } from "../../util";
-import { GameAttributesLeague } from "../../../common/types";
+import type { GameAttributesLeague } from "../../../common/types";
 import { helpers } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {

@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { ContractInfo } from "../../../common/types";
+import type { ContractInfo } from "../../../common/types";
 
 /**
  * Gets all the contracts a team owes.

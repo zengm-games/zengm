@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (

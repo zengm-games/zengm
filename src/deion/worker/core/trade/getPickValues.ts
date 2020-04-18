@@ -2,7 +2,7 @@ import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g } from "../../util";
-import { TradePickValues } from "../../../common/types";
+import type { TradePickValues } from "../../../common/types";
 
 /**
  * Estimate draft pick values, based on the generated draft prospects in the database.

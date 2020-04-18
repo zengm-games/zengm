@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common";
 import { g } from "../../util";
-import { Player, PlayerWithoutKey } from "../../../common/types";
+import type { Player, PlayerWithoutKey } from "../../../common/types";
 
 const isUntradable = (
 	p: Player | PlayerWithoutKey,

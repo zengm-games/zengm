@@ -1,5 +1,5 @@
 import { defaultGameAttributes, g } from "../../../../deion/worker/util";
-import { GamePlayer } from "../../../../deion/common/types";
+import type { GamePlayer } from "../../../../deion/common/types";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = Math.sqrt(

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { ChangeEvent } from "react";
 import { toWorker } from "../../util";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 type Player = View<"roster">["players"][number];
 

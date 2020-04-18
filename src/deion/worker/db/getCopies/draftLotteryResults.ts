@@ -1,6 +1,6 @@
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import { DraftLotteryResult } from "../../../common/types";
+import type { DraftLotteryResult } from "../../../common/types";
 
 const getCopies = async ({
 	season,

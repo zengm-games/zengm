@@ -1,7 +1,7 @@
 import g from "./g";
 import getProcessedGames from "./getProcessedGames";
 import toUI from "./toUI";
-import { LocalStateUI } from "../../common/types";
+import type { LocalStateUI } from "../../common/types";
 import { getUpcoming } from "../views/schedule";
 
 const initUILocalGames = async () => {

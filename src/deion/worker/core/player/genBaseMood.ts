@@ -1,6 +1,6 @@
 import { finances } from "..";
 import { g, helpers, random } from "../../util";
-import { TeamSeasonWithoutKey } from "../../../common/types";
+import type { TeamSeasonWithoutKey } from "../../../common/types";
 
 const genBaseMood = (
 	teamSeason: TeamSeasonWithoutKey,

@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const width100 = {
 	width: "100%",

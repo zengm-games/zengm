@@ -1,6 +1,6 @@
 import { PHASE } from "../../common";
 import { g } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
 
 const updatePlayers = async (

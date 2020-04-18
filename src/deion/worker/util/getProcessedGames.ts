@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import g from "./g";
-import { Game } from "../../common/types";
+import type { Game } from "../../common/types";
 
 /**
  * Generate a game log list.

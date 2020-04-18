@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { g, helpers, overrides } from "../util";
-import { Params } from "bbgm-router";
-import { PlayerStatType } from "../../common/types";
+import type { Params } from "bbgm-router";
+import type { PlayerStatType } from "../../common/types";
 
 /**
  * Validate that a given abbreviation corresponds to a team.

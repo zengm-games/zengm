@@ -1,5 +1,5 @@
-import { Position } from "../../../common/types";
-import { PenaltyPlayType } from "./types";
+import type { Position } from "../../../common/types";
+import type { PenaltyPlayType } from "./types";
 
 type Penalty = {
 	name: string;

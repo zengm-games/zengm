@@ -6,7 +6,7 @@ import useTitleBar from "../../../deion/ui/hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../../deion/ui/util";
 import { PlayerNameLabels, SortableTable } from "../../../deion/ui/components";
 import { POSITIONS } from "../../common/constants";
-import { View } from "../../../deion/common/types";
+import type { View } from "../../../deion/common/types";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", pos, undefined);

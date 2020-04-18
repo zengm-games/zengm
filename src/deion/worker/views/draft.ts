@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g, local } from "../util";

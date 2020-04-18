@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { TradeTeams } from "../../../common/types";
+import type { TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 
 /**

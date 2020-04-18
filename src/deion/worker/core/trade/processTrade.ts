@@ -9,7 +9,7 @@ import {
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
 } from "../../util";
-import { TradeSummary } from "../../../common/types";
+import type { TradeSummary } from "../../../common/types";
 
 const formatAssetsEventLog = (t: TradeSummary["teams"][0]) => {
 	const strings: string[] = [];

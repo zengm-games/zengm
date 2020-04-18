@@ -2,8 +2,8 @@ import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
 import getDepthPlayers from "../core/player/getDepthPlayers";
 import posRatings from "../../common/posRatings";
-import { UpdateEvents, ViewInput } from "../../../deion/common/types";
-import { Position } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../../deion/common/types";
+import type { Position } from "../../common/types";
 
 const defenseStats = [
 	"defTckSolo",

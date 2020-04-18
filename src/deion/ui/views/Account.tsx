@@ -15,7 +15,7 @@ import {
 	localActions,
 	realtimeUpdate,
 } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";

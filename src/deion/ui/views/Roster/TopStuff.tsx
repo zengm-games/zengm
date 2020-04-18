@@ -3,7 +3,7 @@ import React, { useState, CSSProperties } from "react";
 import { RecordAndPlayoffs, RosterComposition } from "../../components";
 import { helpers } from "../../util";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 const fontSizeLarger = { fontSize: "larger" };
 

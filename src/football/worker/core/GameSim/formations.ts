@@ -1,4 +1,4 @@
-import { Formation } from "./types";
+import type { Formation } from "./types";
 
 const normal: Formation[] = [
 	{

@@ -6,7 +6,7 @@ import {
 	ResponsiveTableWrapper,
 } from "../../components";
 import { getCols, helpers } from "../../util";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 const StartingLineup = ({
 	starters,

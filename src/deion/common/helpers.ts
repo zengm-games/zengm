@@ -1,5 +1,5 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import { TeamBasic } from "./types";
+import type { TeamBasic } from "./types";
 
 // Prefer getPopRanks to this in new code because it's not mutable
 function addPopRank(teams: any[]): any[] {

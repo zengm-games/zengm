@@ -5,7 +5,7 @@ import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";
-import { Relative } from "../../../common/types";
+import type { Relative } from "../../../common/types";
 
 const season = 2017;
 

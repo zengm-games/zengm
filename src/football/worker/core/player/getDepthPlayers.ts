@@ -1,4 +1,4 @@
-import { Position } from "../../../common/types";
+import type { Position } from "../../../common/types";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <T extends any>(

@@ -1,6 +1,6 @@
 import autoPlay from "./autoPlay";
 import { local, toUI } from "../../util";
-import { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../common/types";
 
 const initAutoPlay = async (conditions: Conditions) => {
 	const result = await toUI(

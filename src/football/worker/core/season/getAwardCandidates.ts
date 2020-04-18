@@ -3,7 +3,7 @@ import {
 	getTopPlayers,
 } from "../../../../deion/worker/core/season/awards";
 import { avScore } from "./doAwards";
-import { PlayerFiltered } from "../../../../deion/common/types";
+import type { PlayerFiltered } from "../../../../deion/common/types";
 
 const filterPosition = (season: number, positions: string[]) => (
 	p: PlayerFiltered,

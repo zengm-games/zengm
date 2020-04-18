@@ -1,6 +1,6 @@
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import { PlayoffSeries } from "../../../common/types";
+import type { PlayoffSeries } from "../../../common/types";
 
 const getCopies = async (): Promise<PlayoffSeries[]> => {
 	return mergeByPk(

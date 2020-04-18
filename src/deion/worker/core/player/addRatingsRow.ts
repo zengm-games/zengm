@@ -1,6 +1,6 @@
 import genFuzz from "./genFuzz";
 import { g } from "../../util";
-import {
+import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,

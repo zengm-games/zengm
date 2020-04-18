@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import initView from "./initView";
 

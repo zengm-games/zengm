@@ -1,6 +1,6 @@
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, random } from "../../../../deion/worker/util";
-import { PlayerRatings, RatingKey } from "../../../common/types";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 type RatingFormula = {
 	ageModifier: (age: number) => number;

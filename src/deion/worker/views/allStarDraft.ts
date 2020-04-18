@@ -1,7 +1,7 @@
 import { allStar } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import { UpdateEvents, AllStars } from "../../common/types";
+import type { UpdateEvents, AllStars } from "../../common/types";
 
 const stats =
 	process.env.SPORT === "basketball" ? ["pts", "trb", "ast"] : ["keyStats"];

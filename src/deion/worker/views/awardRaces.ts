@@ -1,5 +1,5 @@
 import { g, overrides } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateAwardRaces = async (
 	inputs: ViewInput<"leaders">,

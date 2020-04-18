@@ -14,6 +14,7 @@
 			"league-schema": ["build/files/league-schema.json"]
 		},
 		"esModuleInterop": true,
-		"strict": true
+		"strict": true,
+		"importsNotUsedAsValues": "error"
 	}
 }

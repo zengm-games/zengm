@@ -1,6 +1,6 @@
 import { PLAYER } from "../../../common";
 import { g, helpers, logEvent, overrides } from "../../util";
-import { Conditions, Player } from "../../../common/types";
+import type { Conditions, Player } from "../../../common/types";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.

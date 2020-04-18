@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, local, updatePlayMenu } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;

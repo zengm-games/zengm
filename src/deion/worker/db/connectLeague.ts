@@ -1,4 +1,4 @@
-import { DBSchema, IDBPDatabase, IDBPTransaction, unwrap } from "idb";
+import { unwrap } from "idb";
 import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
@@ -6,7 +6,9 @@ import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
 import iterate from "./iterate";
 import { helpers, logEvent, overrides } from "../util";
-import {
+import connectIndexedDB from "./connectIndexedDB";
+import type { DBSchema, IDBPDatabase, IDBPTransaction } from "idb";
+import type {
 	DraftLotteryResult,
 	DraftPickWithoutKey,
 	ReleasedPlayerWithoutKey,
@@ -26,7 +28,6 @@ import {
 	Team,
 	Trade,
 } from "../../common/types";
-import connectIndexedDB from "./connectIndexedDB";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {

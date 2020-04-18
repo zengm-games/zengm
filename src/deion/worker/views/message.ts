@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateMessage = async (
 	inputs: ViewInput<"message">,

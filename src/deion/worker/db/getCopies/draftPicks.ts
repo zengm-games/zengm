@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import { DraftPick } from "../../../common/types";
+import type { DraftPick } from "../../../common/types";
 
 const getCopies = async ({
 	tid,

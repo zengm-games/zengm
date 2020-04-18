@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common";
 import { g } from "../../util";
-import {
+import type {
 	Player,
 	PlayerContract,
 	PlayerWithoutKey,

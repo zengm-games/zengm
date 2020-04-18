@@ -14,8 +14,15 @@ import {
 	g,
 	helpers,
 } from "../../../../deion/worker/util";
-import { Conditions, PlayerFiltered } from "../../../../deion/common/types";
-import { AwardPlayer, AwardPlayerDefense, Awards } from "../../../common/types";
+import type {
+	Conditions,
+	PlayerFiltered,
+} from "../../../../deion/common/types";
+import type {
+	AwardPlayer,
+	AwardPlayerDefense,
+	Awards,
+} from "../../../common/types";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 	return {

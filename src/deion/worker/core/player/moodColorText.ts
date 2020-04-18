@@ -1,5 +1,5 @@
 import { g } from "../../util";
-import { Player } from "../../../common/types"; // See views.negotiation for moods as well
+import type { Player } from "../../../common/types"; // See views.negotiation for moods as well
 
 const moodColorText = (p: Player) => {
 	if (p.freeAgentMood[g.get("userTid")] < 0.25) {

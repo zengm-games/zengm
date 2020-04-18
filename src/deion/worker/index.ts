@@ -4,7 +4,7 @@ import * as common from "../common";
 import * as core from "./core";
 import * as db from "./db";
 import * as util from "./util";
-import {
+import type {
 	Names,
 	WorkerOverridesConstants,
 	WorkerOverridesCore,

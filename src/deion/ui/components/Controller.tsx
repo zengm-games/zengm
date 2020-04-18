@@ -18,8 +18,8 @@ import NavBar from "./NavBar";
 import Notifications from "./Notifications";
 import SideBar from "./SideBar";
 import TitleBar from "./TitleBar";
-import { LocalStateUI } from "../../common/types";
-import { Context } from "bbgm-router";
+import type { LocalStateUI } from "../../common/types";
+import type { Context } from "bbgm-router";
 
 type LeagueContentProps = {
 	children: any;

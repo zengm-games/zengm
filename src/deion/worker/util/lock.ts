@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import toUI from "./toUI";
-import { Locks } from "../../common/types";
+import type { Locks } from "../../common/types";
 import { helpers } from "../../common";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.

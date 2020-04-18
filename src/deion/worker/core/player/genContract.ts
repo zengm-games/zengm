@@ -1,5 +1,5 @@
 import { g, helpers, random } from "../../util";
-import {
+import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerContract,

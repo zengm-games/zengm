@@ -5,7 +5,7 @@ import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import {
+import type {
 	Conditions,
 	DraftLotteryResult,
 	DraftPick,

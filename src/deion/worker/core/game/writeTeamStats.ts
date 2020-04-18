@@ -2,7 +2,7 @@ import { PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import { GameResults } from "../../../common/types";
+import type { GameResults } from "../../../common/types";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;

@@ -1,6 +1,6 @@
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
-import { Achievement } from "../../../deion/common/types";
+import type { Achievement } from "../../../deion/common/types";
 
 const checkFoFoFo = async () => {
 	if (g.get("numGamesPlayoffSeries").length < 3) {

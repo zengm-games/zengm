@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {

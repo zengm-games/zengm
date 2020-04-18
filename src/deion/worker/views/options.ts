@@ -1,4 +1,4 @@
-import { UpdateEvents, Options } from "../../common/types";
+import type { UpdateEvents, Options } from "../../common/types";
 import { idb } from "../db";
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {

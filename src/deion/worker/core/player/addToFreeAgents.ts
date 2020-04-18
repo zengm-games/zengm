@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../../common";
 import genContract from "./genContract";
 import setContract from "./setContract";
 import { g, helpers, random } from "../../util";
-import {
+import type {
 	MinimalPlayerRatings,
 	Phase,
 	Player,

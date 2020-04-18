@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { g } from "../../util";
-import { OwnerMood } from "../../../common/types";
+import type { OwnerMood } from "../../../common/types";
 
 /**
  * Update teamSeason.ownerMood based on performance this season, only for user's team.

@@ -36,7 +36,7 @@ import {
 	recomputeLocalUITeamOvrs,
 } from "../util";
 import views from "../views";
-import {
+import type {
 	Conditions,
 	Env,
 	GameAttributesLeague,

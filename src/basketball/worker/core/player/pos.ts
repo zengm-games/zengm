@@ -1,4 +1,4 @@
-import { PlayerRatings } from "../../../common/types";
+import type { PlayerRatings } from "../../../common/types";
 
 /**
  * Assign a position (PG, SG, SF, PF, C, G, GF, FC) based on ratings.

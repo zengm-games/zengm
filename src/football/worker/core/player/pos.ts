@@ -1,6 +1,6 @@
 import { overrides } from "../../../../deion/worker/util";
 import ovr from "./ovr";
-import { PlayerRatings } from "../../../common/types";
+import type { PlayerRatings } from "../../../common/types";
 
 const pos = (ratings: PlayerRatings): string => {
 	const positions = overrides.common.constants.POSITIONS.filter(

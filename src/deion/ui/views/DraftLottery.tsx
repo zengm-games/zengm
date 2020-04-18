@@ -5,7 +5,7 @@ import React, { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
-import { DraftLotteryResultArray, View } from "../../common/types";
+import type { DraftLotteryResultArray, View } from "../../common/types";
 
 const getProbs = (
 	result: DraftLotteryResultArray,

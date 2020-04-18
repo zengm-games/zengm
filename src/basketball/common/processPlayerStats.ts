@@ -1,4 +1,4 @@
-import { PlayerStats, PlayerStatType } from "../../deion/common/types";
+import type { PlayerStats, PlayerStatType } from "../../deion/common/types";
 
 const straightThrough = [
 	"gp",

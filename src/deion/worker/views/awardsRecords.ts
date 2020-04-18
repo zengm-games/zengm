@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sync with Dropdown.js
+import type { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sync with Dropdown.js
 
 const optionsTmp =
 	process.env.SPORT === "basketball"

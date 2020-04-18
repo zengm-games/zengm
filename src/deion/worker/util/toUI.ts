@@ -1,6 +1,6 @@
 import { promiseWorker } from ".";
-import api from "../../ui/api";
-import { Conditions } from "../../common/types";
+import type api from "../../ui/api";
+import type { Conditions } from "../../common/types";
 
 const toUI = <Name extends keyof typeof api>(
 	name: Name,

@@ -4,7 +4,7 @@ import React, { useEffect, useState, ReactNode, FormEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, realtimeUpdate } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";

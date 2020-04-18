@@ -1,7 +1,7 @@
 import { PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import { ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,

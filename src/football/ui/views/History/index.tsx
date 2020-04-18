@@ -4,7 +4,7 @@ import { RetiredPlayers } from "../../../../deion/ui/components";
 import useTitleBar from "../../../../deion/ui/hooks/useTitleBar";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
-import { View } from "../../../../deion/common/types";
+import type { View } from "../../../../deion/common/types";
 
 export type ActualProps = Exclude<
 	View<"history">,

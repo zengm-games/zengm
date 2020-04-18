@@ -5,7 +5,7 @@ import helpers from "./helpers";
 import local from "./local";
 import lock from "./lock";
 import toUI from "./toUI";
-import { Option } from "../../common/types";
+import type { Option } from "../../common/types";
 
 const updatePlayMenu = async () => {
 	if (typeof it === "function") {

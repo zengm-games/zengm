@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types";
 
 const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
 	if (lid !== undefined) {

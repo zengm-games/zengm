@@ -1,5 +1,5 @@
 import { idb } from "..";
-import { Message } from "../../../common/types";
+import type { Message } from "../../../common/types";
 
 const getCopy = async ({ mid }: { mid: number }): Promise<Message | void> => {
 	const result = await idb.getCopies.messages({

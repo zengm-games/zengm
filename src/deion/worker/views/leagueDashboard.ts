@@ -2,7 +2,7 @@ import { PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import { UpdateEvents, Game } from "../../common/types";
+import type { UpdateEvents, Game } from "../../common/types";
 import { getUpcoming } from "./schedule";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {

@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { TradeTeams } from "../../../common/types";
+import type { TradeTeams } from "../../../common/types";
 
 /**
  * Start a new trade with a team.

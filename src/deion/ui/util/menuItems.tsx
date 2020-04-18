@@ -1,6 +1,6 @@
 import * as React from "react";
 import { takeScreenshot, toWorker } from ".";
-import { MenuItemLink, MenuItemHeader } from "../../common/types";
+import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 
 const depthChart: MenuItemLink = {
 	type: "link",

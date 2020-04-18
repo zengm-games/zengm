@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common";
 import { g, logEvent } from "../../util";
-import { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../common/types";
 
 const logAction = (tid: number, text: string, conditions?: Conditions) => {
 	// Don't show notification during lottery UI, it will spoil it!

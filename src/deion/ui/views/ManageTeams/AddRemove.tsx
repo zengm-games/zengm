@@ -7,8 +7,8 @@ import React, {
 } from "react";
 import { PHASE } from "../../../common";
 import { logEvent, toWorker } from "../../util";
-import { Phase } from "../../../common/types";
-import { Action } from ".";
+import type { Phase } from "../../../common/types";
+import type { Action } from ".";
 
 type Props = {
 	dispatch: Dispatch<Action>;

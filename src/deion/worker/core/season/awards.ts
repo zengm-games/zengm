@@ -1,7 +1,7 @@
 import { PLAYER, PHASE } from "../../../common";
 import { idb } from "../../db";
 import { g, defaultGameAttributes, helpers, logEvent } from "../../util";
-import {
+import type {
 	Conditions,
 	PlayerFiltered,
 	TeamFiltered,

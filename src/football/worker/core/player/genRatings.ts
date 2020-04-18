@@ -2,7 +2,7 @@ import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, overrides, random } from "../../../../deion/worker/util";
 import { POSITION_COUNTS } from "../../../common/constants";
-import { PlayerRatings } from "../../../common/types";
+import type { PlayerRatings } from "../../../common/types";
 
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {

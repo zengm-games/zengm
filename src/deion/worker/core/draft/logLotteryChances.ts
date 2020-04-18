@@ -1,6 +1,10 @@
 import logAction from "./logAction";
 import logLotteryTxt from "./logLotteryTxt";
-import { Conditions, DraftPick, TeamFiltered } from "../../../common/types";
+import type {
+	Conditions,
+	DraftPick,
+	TeamFiltered,
+} from "../../../common/types";
 
 const logLotteryChances = (
 	chances: number[],

@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
-import { UpdateEvents, Player, ViewInput } from "../../common/types";
+import type { UpdateEvents, Player, ViewInput } from "../../common/types";
 
 const updatePlayers = async (
 	{ pid }: ViewInput<"relatives">,

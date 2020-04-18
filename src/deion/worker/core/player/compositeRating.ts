@@ -1,6 +1,6 @@
 import { helpers } from "../../util";
 import fuzzRating from "./fuzzRating";
-import { MinimalPlayerRatings } from "../../../common/types";
+import type { MinimalPlayerRatings } from "../../../common/types";
 
 const compositeRating = (
 	ratings: MinimalPlayerRatings,

@@ -2,7 +2,7 @@ import { PHASE } from "../../../common";
 import { saveAwardsByPlayer } from "../season/awards";
 import { idb } from "../../db";
 import { g, helpers, logEvent, toUI } from "../../util";
-import {
+import type {
 	Conditions,
 	Game,
 	GameResults,

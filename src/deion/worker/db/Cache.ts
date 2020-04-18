@@ -2,7 +2,7 @@ import { PLAYER, helpers } from "../../common";
 import { idb } from ".";
 import cmp from "./cmp";
 import { g, local, lock } from "../util";
-import {
+import type {
 	AllStars,
 	DraftLotteryResult,
 	DraftPick,
@@ -30,8 +30,8 @@ import {
 	Team,
 	Trade,
 } from "../../common/types";
-import { IDBPTransaction } from "idb";
-import { LeagueDB } from "./connectLeague";
+import type { IDBPTransaction } from "idb";
+import type { LeagueDB } from "./connectLeague";
 
 type Status = "empty" | "error" | "filling" | "full";
 

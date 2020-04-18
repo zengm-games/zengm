@@ -1,6 +1,6 @@
 import { idb } from "../db";
 import { g } from "../util";
-import { UpdateEvents, AllStars } from "../../common/types";
+import type { UpdateEvents, AllStars } from "../../common/types";
 
 const addAbbrev = (obj: any): any => {
 	return { ...obj, abbrev: g.get("teamAbbrevsCache")[obj.tid] };

@@ -1,4 +1,4 @@
-import { WorkerOverridesConstants } from "../../common/types";
+import type { WorkerOverridesConstants } from "../../common/types";
 
 const overrides: {
 	common: {

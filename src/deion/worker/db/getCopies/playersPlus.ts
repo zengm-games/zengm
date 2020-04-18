@@ -2,7 +2,7 @@ import groupBy from "lodash/groupBy";
 import { PLAYER, PHASE } from "../../../common";
 import { player, trade } from "../../core";
 import { g, helpers, overrides } from "../../util";
-import {
+import type {
 	Player,
 	PlayerFiltered,
 	PlayerStatType,

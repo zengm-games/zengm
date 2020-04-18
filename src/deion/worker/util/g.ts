@@ -1,4 +1,4 @@
-import { GameAttributes, GameAttributesLeague } from "../../common/types"; // This will get filled by values from IndexedDB
+import type { GameAttributes, GameAttributesLeague } from "../../common/types"; // This will get filled by values from IndexedDB
 
 const g: GameAttributes & {
 	get: <T extends keyof GameAttributesLeague>(

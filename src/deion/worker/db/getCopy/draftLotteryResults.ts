@@ -1,5 +1,5 @@
 import { idb } from "..";
-import { DraftLotteryResult } from "../../../common/types";
+import type { DraftLotteryResult } from "../../../common/types";
 
 const getCopy = async ({
 	season,

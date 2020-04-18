@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
-import { View } from "../../common/types";
+import type { View } from "../../common/types";
 
 const Storage = () => {
 	const [status, setStatus] = useState<

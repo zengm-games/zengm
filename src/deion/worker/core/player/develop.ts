@@ -3,7 +3,7 @@ import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import skills from "./skills";
 import { helpers, overrides, random } from "../../util";
-import { MinimalPlayerRatings } from "../../../common/types";
+import type { MinimalPlayerRatings } from "../../../common/types";
 
 let potEstimator:
 	| ((ovr: number, age: number, pos: string) => number)

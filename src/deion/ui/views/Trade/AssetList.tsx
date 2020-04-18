@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 type HandleToggle = (
 	userOrOther: "other" | "user",

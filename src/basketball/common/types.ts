@@ -1,4 +1,4 @@
-import teamStats from "../worker/core/team/stats";
+import type teamStats from "../worker/core/team/stats";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =

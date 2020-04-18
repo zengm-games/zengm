@@ -7,10 +7,6 @@ mailing list
   - stats
   - social media
 
-event log size
-- auto delete?
-- smaller by default, maybe not storing text?
-
 redesign dashboard
 - include some historical context
 - top FAs
@@ -188,7 +184,6 @@ pass interference not giving first down https://old.reddit.com/r/Football_GM/com
 add kneeling to run out the clock
 
 typescript
-- on 3.8 now, so can switch to import type using importsNotUsedAsValues
 - to do
   - types for toWorker
     - flatten into a single object, rather than having "type". this will make typing the inputs and outputs easier

@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import { g, helpers, overrides } from "../util";
 import { setTeamInfo } from "./gameLog";
-import { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updatePlayByPlay = async (
 	inputs: ViewInput<"liveGame">,

@@ -7,7 +7,7 @@ import {
 	UncontrolledDropdown,
 } from "reactstrap";
 import { realtimeUpdate, toWorker } from "../util";
-import { Option } from "../../common/types";
+import type { Option } from "../../common/types";
 
 type Props = {
 	lid: number | undefined;

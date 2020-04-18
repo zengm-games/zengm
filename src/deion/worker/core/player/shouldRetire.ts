@@ -1,6 +1,6 @@
 import { PLAYER } from "../../../common";
 import { g, random } from "../../util";
-import {
+import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,

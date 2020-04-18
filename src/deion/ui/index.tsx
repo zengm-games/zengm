@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";
 import * as util from "./util";
-import { Env, WorkerOverridesConstants } from "../common/types";
+import type { Env, WorkerOverridesConstants } from "../common/types";
 window.bbgm = { ...util };
 const {
 	compareVersions,

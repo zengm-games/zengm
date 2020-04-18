@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
-import { PlayerInjury } from "../../common/types";
+import type { PlayerInjury } from "../../common/types";
 
 const PlayerNameLabels = ({
 	children,

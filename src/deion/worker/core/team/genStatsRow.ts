@@ -1,5 +1,5 @@
 import { g, overrides } from "../../util";
-import { TeamStats } from "../../../common/types";
+import type { TeamStats } from "../../../common/types";
 
 /**
  * Generate a new row of team stats.

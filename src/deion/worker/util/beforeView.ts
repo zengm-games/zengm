@@ -11,7 +11,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from ".";
-import { Conditions, League, ThenArg } from "../../common/types";
+import type { Conditions, League, ThenArg } from "../../common/types";
 
 let heartbeatIntervalID: number;
 

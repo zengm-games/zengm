@@ -3,7 +3,7 @@ import React, { useReducer, ChangeEvent, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 type State = {
 	saving: boolean;

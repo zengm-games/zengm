@@ -1,6 +1,6 @@
 import { allStar, season } from "../core";
 import { g, helpers, lock } from "../util";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 const updateGamesList = async () => {
 	const games = helpers.deepCopy(await season.getSchedule(true));

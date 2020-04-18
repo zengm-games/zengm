@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
-import { View } from "../../../common/types";
+import type { View } from "../../../common/types";
 
 const width100 = {
 	width: "100%",

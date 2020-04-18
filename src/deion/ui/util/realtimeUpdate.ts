@@ -1,5 +1,5 @@
 import router from "bbgm-router";
-import { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../common/types";
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.

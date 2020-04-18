@@ -41,17 +41,27 @@ const HeadlineScore = ({ boxScore }: any) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
+	const liveGameSim = !boxScore.won || !boxScore.won.name;
 	const t0 =
 		boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
 	const t1 =
 		boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
 
 	return (
-		<h2>
-			<TeamNameLink season={boxScore.season} t={t0} /> {t0.pts},{" "}
-			<TeamNameLink season={boxScore.season} t={t1} /> {t1.pts}
-			{boxScore.overtime}
-		</h2>
+		<>
+			<h2>
+				<TeamNameLink season={boxScore.season} t={t0} /> {t0.pts},{" "}
+				<TeamNameLink season={boxScore.season} t={t1} /> {t1.pts}
+				{boxScore.overtime}
+			</h2>
+			{liveGameSim ? (
+				<div className="mb-2">
+					{boxScore.gameOver
+						? "Final score"
+						: `${boxScore.quarter}, ${boxScore.time} remaining`}
+				</div>
+			) : null}
+		</>
 	);
 };
 HeadlineScore.propTypes = {
@@ -327,6 +337,7 @@ const BoxScore = ({
 	showNextPrev?: boolean;
 	Row: any;
 }) => {
+	console.log(boxScore);
 	const handleKeydown = useCallback(
 		e => {
 			if (showNextPrev) {

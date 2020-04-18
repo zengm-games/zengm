@@ -1,6 +1,6 @@
 better animation for notifications
-- use react
-- can still put limit on number?
+- get rid of useless css
+- z index stuff
 
 mailing list
 - somehow prompt current users to join

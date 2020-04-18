@@ -3,17 +3,58 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { emitter, Message } from "../util/notify";
 import SafeHtml from "./SafeHtml";
+import { useLocalShallow } from "../util";
+
+const MAX_NUM_NOTIFICATIONS = 5;
+
+const NOTIFICATION_TIMEOUT = 8000;
 
 const Notification = ({
 	extraClass,
 	message,
+	persistent,
 	title,
 	remove,
 }: Message & { remove: () => void }) => {
-	console.log("Notification", message);
+	const notificationElement = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		let timeoutID: number;
+		let timeoutStart: number;
+		let timeoutRemaining = NOTIFICATION_TIMEOUT;
+
+		const element = notificationElement.current;
+
+		const notificationTimeout = () => {
+			timeoutID = window.setTimeout(remove, timeoutRemaining);
+			timeoutStart = Date.now();
+		};
+
+		if (!persistent && element) {
+			// Hide notification after timeout
+			notificationTimeout();
+
+			// When hovering over, don't count towards timeout
+			element.addEventListener("mouseenter", () => {
+				window.clearTimeout(timeoutID);
+				timeoutRemaining -= Date.now() - timeoutStart;
+			});
+			element.addEventListener("mouseleave", notificationTimeout);
+		}
+
+		return () => {
+			window.clearTimeout(timeoutID);
+			if (element) {
+				element.removeEventListener("mouseleave", notificationTimeout);
+			}
+		};
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<div className={classNames("notification", extraClass)}>
+		<div
+			className={classNames("notification", extraClass)}
+			ref={notificationElement}
+		>
 			{title ? (
 				<>
 					<strong>{title}</strong>
@@ -28,60 +69,76 @@ const Notification = ({
 	);
 };
 
-const MAX_NUM_NOTIFICATIONS = 5;
+const transition = { duration: 0.2, type: "tween" };
 
 const Notifications = () => {
-	const [notifications, setNotifications] = useState<Message[]>([
-		{
-			key: -1,
-			message: "foo",
-			persistent: true,
-		},
-		{
-			key: -2,
-			message: "bar",
-			title: "title",
-			persistent: true,
-		},
-	]);
+	const { userTids } = useLocalShallow(state => ({
+		userTids: state.userTids,
+	}));
+
+	const [notifications, setNotifications] = useState<Message[]>([]);
 
 	useEffect(
 		() =>
-			emitter.on("notification", message => {
-				let newNotifications = [...notifications, message];
+			emitter.on("notification", notification => {
+				setNotifications(currentNotifications => {
+					let newNotifications = [...currentNotifications, notification];
 
-				// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
-				let numToDelete = newNotifications.length - MAX_NUM_NOTIFICATIONS;
-				if (numToDelete > 0) {
-					newNotifications = newNotifications.filter(notification => {
-						if (notification.persistent) {
+					// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
+					let numToDelete = newNotifications.length - MAX_NUM_NOTIFICATIONS;
+					if (numToDelete > 0) {
+						newNotifications = newNotifications.filter(notification => {
+							if (notification.persistent) {
+								return true;
+							}
+
+							if (numToDelete > 0) {
+								numToDelete -= 1;
+								return false;
+							}
+
 							return true;
-						}
+						});
+					}
 
-						if (numToDelete > 0) {
-							numToDelete -= 1;
-							return false;
-						}
-
-						return true;
-					});
-				}
-
-				setNotifications(newNotifications);
+					return newNotifications;
+				});
 			}),
-		[notifications],
+		[],
 	);
 
 	return (
-		<div className="notification-container">
-			{notifications.map(notification => (
-				<Notification
-					{...notification}
-					remove={() =>
-						setNotifications(notifications.filter(n => n !== notification))
-					}
-				/>
-			))}
+		<div
+			className={classNames(
+				"notification-container",
+				userTids.length > 1
+					? "notification-container-extra-margin-bottom"
+					: undefined,
+			)}
+		>
+			<ul>
+				<AnimatePresence initial={false}>
+					{notifications.map(notification => (
+						<motion.li
+							key={notification.id}
+							positionTransition={transition}
+							initial={{ opacity: 0, y: 100 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+							transition={transition}
+						>
+							<Notification
+								{...notification}
+								remove={() => {
+									setNotifications(currentNotifications =>
+										currentNotifications.filter(n => n !== notification),
+									);
+								}}
+							/>
+						</motion.li>
+					))}
+				</AnimatePresence>
+			</ul>
 		</div>
 	);
 };

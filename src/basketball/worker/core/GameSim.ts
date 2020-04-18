@@ -15,6 +15,7 @@ type PlayType =
 	| "fgMidRangeAndOne"
 	| "foulOut"
 	| "ft"
+	| "gameOver"
 	| "injury"
 	| "jumpBall"
 	| "missAtRim"
@@ -317,6 +318,8 @@ class GameSim {
 			this.checkGameTyingShot();
 			this.simOvertime();
 		}
+
+		this.recordPlay("gameOver");
 
 		this.checkGameWinner();
 
@@ -1790,9 +1793,12 @@ class GameSim {
 			} else if (type === "stl") {
 				texts = ["{0} stole the ball from {1}"];
 			} else if (type === "fgAtRim") {
-				texts = ["{0} made a dunk/layup"];
+				texts = ["{0} made a layup", "{0} made a dunk"];
 			} else if (type === "fgAtRimAndOne") {
-				texts = ["{0} made a dunk/layup and got fouled!"];
+				texts = [
+					"{0} made a layup and got fouled!",
+					"{0} made a dunk and got fouled!",
+				];
 			} else if (type === "fgLowPost") {
 				texts = ["{0} made a low post shot"];
 			} else if (type === "fgLowPostAndOne") {
@@ -1806,7 +1812,10 @@ class GameSim {
 			} else if (type === "tpAndOne") {
 				texts = ["{0} made a three pointer and got fouled!"];
 			} else if (type === "blkAtRim") {
-				texts = ["{0} blocked {1}'s dunk/layup"];
+				texts = [
+					"{0} blocked {1}'s layup attempt",
+					"{0} blocked {1}'s dunk attempt",
+				];
 			} else if (type === "blkLowPost") {
 				texts = ["{0} blocked {1}'s low post shot"];
 			} else if (type === "blkMidRange") {
@@ -1814,7 +1823,7 @@ class GameSim {
 			} else if (type === "blkTp") {
 				texts = ["{0} blocked {1}'s three pointer"];
 			} else if (type === "missAtRim") {
-				texts = ["{0} missed a dunk/layup"];
+				texts = ["{0} missed a layup", "{0} missed a dunk"];
 			} else if (type === "missLowPost") {
 				texts = ["{0} missed a low post shot"];
 			} else if (type === "missMidRange") {
@@ -1839,6 +1848,8 @@ class GameSim {
 						this.team[0].stat.ptsQtrs.length - 4,
 					)} overtime period`,
 				];
+			} else if (type === "gameOver") {
+				texts = ["End of game"];
 			} else if (type === "ft") {
 				texts = ["{0} made a free throw"];
 			} else if (type === "missFt") {
@@ -1854,8 +1865,7 @@ class GameSim {
 			}
 
 			if (texts) {
-				//text = random.choice(texts);
-				let text = texts[0];
+				let text = random.choice(texts);
 
 				if (names) {
 					for (let i = 0; i < names.length; i++) {

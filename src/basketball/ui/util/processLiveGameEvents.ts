@@ -21,7 +21,9 @@ const processLiveGameEvents = ({
 		const actualT = e.t === 0 ? 1 : 0;
 
 		if (e.type === "text") {
-			if (actualT === 0 || actualT === 1) {
+			if (e.text === "End of game" || e.text.startsWith("Start of")) {
+				text = e.text;
+			} else if (actualT === 0 || actualT === 1) {
 				text = `${e.time} - ${boxScore.teams[actualT].abbrev} - ${e.text}`;
 			} else {
 				text = e.text;

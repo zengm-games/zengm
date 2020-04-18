@@ -1,3 +1,5 @@
+show quarter and clock in live box score
+
 mailing list/newsletter
 - changelog
 - plans
@@ -543,8 +545,6 @@ more accurage game sim
 
 ---
 
-draft lottery teams should only be non-playoff teams
-
 in table, sort position by constants.POSITIONS order (like roster page in football)
 
 revise re-signing - too many good young players become FAs
@@ -553,8 +553,6 @@ everywhere contract is displayed, make it in italics if not guaranteed
 - currently only on roster i think. make a component!
 
 Add playoff seed # to the history page
-
-add end of game to live game sim in basketball, like it is for football
 
 option to have no draft, players just become FAs
 

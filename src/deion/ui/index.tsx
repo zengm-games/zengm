@@ -1,5 +1,5 @@
 /* eslint-disable import/first */
-import "../common/polyfills";
+import "bbgm-polyfills"; // eslint-disable-line
 import router from "bbgm-router";
 import React from "react";
 import ReactDOM from "react-dom";

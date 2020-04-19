@@ -28,6 +28,10 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 					nodeEnv !== "production"
 						? "./../../deion/worker/data/names-test.json"
 						: `./../../${sport}/worker/data/names.json`,
+
+				"bbgm-polyfills": process.env.LEGACY
+					? "./../common/polyfills.ts"
+					: "./../common/polyfills-noop.ts",
 			},
 		}),
 		replace({

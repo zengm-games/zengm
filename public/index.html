@@ -331,6 +331,15 @@
         }
       };
 
+      var supportsAsync = function () {
+        try {
+          eval("async function foo() {}");
+          return true;
+        } catch (err) {
+          return false;
+        }
+      };
+
       goodIDB(function (idbResult) {
         if (idbResult !== "good" || !supportsArrowFunctions() || !supportsSymbol()) {
           var errorMsg;
@@ -354,7 +363,11 @@
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          script.src = "/gen/ui-" + bbgmVersion + ".js";
+          if (supportsAsync()) {
+            script.src = "/gen/ui-" + bbgmVersion + ".js";
+          } else  {
+            script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";
+          }
           body.appendChild(script);
 
           if ('serviceWorker' in navigator) {

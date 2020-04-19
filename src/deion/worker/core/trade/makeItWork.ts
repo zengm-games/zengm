@@ -18,7 +18,6 @@ type AssetPick = {
 type Asset = AssetPlayer | AssetPick;
 
 // Add either the highest value asset or the lowest value one that makes the trade good for the AI team.
-let k = 0;
 const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
@@ -26,7 +25,6 @@ const tryAddAsset = async (
 	added: number,
 	initialSign: -1 | 1,
 ): Promise<TradeTeams | void> => {
-	k += 1;
 	const assets: Asset[] = [];
 
 	if (!holdUserConstant) {
@@ -220,7 +218,6 @@ async function testTrade(
 	);
 }
 
-let i = 0;
 /**
  * Make a trade work
  *
@@ -237,7 +234,6 @@ const makeItWork = async (
 	holdUserConstant: boolean,
 	valueChangeKey: number = Math.random(),
 ) => {
-	i += 1;
 	let initialSign: -1 | 1;
 	const added = 0;
 

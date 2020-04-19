@@ -1,4 +1,4 @@
-import "../common/polyfills";
+import "bbgm-polyfills"; // eslint-disable-line
 import api from "./api";
 import * as common from "../common";
 import * as core from "./core";

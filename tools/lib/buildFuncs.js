@@ -164,10 +164,21 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 			: [
 					"build/index.html",
 					`build/gen/ui-${rev}.js`,
+					`build/gen/ui-legacy-${rev}.js`,
 					`build/gen/worker-${rev}.js`,
+					`build/gen/worker-legacy-${rev}.js`,
 			  ],
 		silent: true,
 	});
+
+	if (!watch) {
+		replace({
+			regex: "/gen/worker-",
+			replacement: "/gen/worker-legacy-",
+			paths: [`build/gen/ui-legacy-${rev}.js`],
+			silent: true,
+		});
+	}
 
 	replace({
 		regex: "GOOGLE_ANALYTICS_ID",

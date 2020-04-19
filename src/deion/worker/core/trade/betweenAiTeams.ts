@@ -103,7 +103,6 @@ const attempt = async (valueChangeKey: number) => {
 		teams[0].dpids,
 		valueChangeKey,
 	);
-	console.log("dv2", dv2);
 	if (Math.abs(dv2) > 250) {
 		return false;
 	}

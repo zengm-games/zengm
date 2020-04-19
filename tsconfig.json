@@ -11,7 +11,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"player-names": ["src/deion/worker/data/names-test.json"],
-			"league-schema": ["build/files/league-schema.json"]
+			"league-schema": ["build/files/league-schema.json"],
+			"bbgm-polyfills": ["src/deion/worker/common/polyfills-noop.ts"]
 		},
 		"esModuleInterop": true,
 		"strict": true,

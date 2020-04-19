@@ -1,7 +1,4 @@
 increase AI trades, and god mode option for frequency
-- too damn slow!
-  - @babel/plugin-transform-async-to-generator makes it twice as slow... either bump up required versions (and note in index.html) or do separate modern and legacy bundles
-    - test-e2e also goes from 55s to 35s
 - football benchmark
 - changelog
 - blog

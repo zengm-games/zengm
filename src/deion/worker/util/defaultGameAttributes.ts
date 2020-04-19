@@ -62,7 +62,6 @@ const defaultGameAttributes: GameAttributesLeague = {
 	],
 	numGamesPlayoffSeries: [7, 7, 7, 7],
 	numPlayoffByes: 0,
-	aiTrades: true,
 	aiTradesFactor: 1,
 	autoDeleteOldBoxScores: true,
 	stopOnInjury: false,

@@ -1,6 +1,18 @@
 increase AI trades, and god mode option for frequency
 - too damn slow!
   - "Calculate the value for each asset added to the trade, for use in forward selection" - this part
+    - slowest parts of valueChange:
+      - getPicks (400ms)
+      - getPayroll (400ms)
+      - getting team and teamStats (100ms)
+      - getPlayers (100ms)
+      - other (300ms)
+      - TODO: build caching framework, triggered from some id passed to valueChange
+        - estValues
+        - estPicks
+        - payrolls
+  - @babel/plugin-transform-async-to-generator makes it twice as slow... either bump up required versions (and note in index.html) or do separate modern and legacy bundles
+    - test-e2e also goes from 55s to 35s
 - somehow bias trades to include better assets
 - football benchmark
 - changelog

@@ -33,10 +33,12 @@ const genPlayersWithoutSaving = (
 		);
 
 		// Just for ovr/pot
-		player.develop(p, 0); // Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
-		// seem quite large, but empirically it seems to work well.
+		player.develop(p, 0);
 
+		// Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
+		// seem quite large, but empirically it seems to work well.
 		p.fudgeFactor = random.randInt(-50, 50);
+
 		return p;
 	});
 

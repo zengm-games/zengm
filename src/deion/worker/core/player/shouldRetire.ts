@@ -45,7 +45,6 @@ const shouldRetire = (
 
 		// Only players older than maxAge or without a contract will retire
 		if (age > maxAge || (pot < minPot && p.tid === PLAYER.FREE_AGENT)) {
-			// Only players older than maxAge or without a contract will retire
 			let excessAge = 0;
 
 			if (age > maxAge) {

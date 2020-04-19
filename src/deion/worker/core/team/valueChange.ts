@@ -86,7 +86,7 @@ const getPicks = async ({
 	dpidsAdd,
 	dpidsRemove,
 	difficultyFudgeFactor,
-	estValuesCached,
+	estValues,
 	tid,
 }: {
 	add: Asset[];
@@ -94,7 +94,7 @@ const getPicks = async ({
 	dpidsAdd: number[];
 	dpidsRemove: number[];
 	difficultyFudgeFactor: number;
-	estValuesCached: TradePickValues | undefined;
+	estValues: TradePickValues;
 	tid: number;
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
@@ -169,15 +169,7 @@ const getPicks = async ({
 		const sorted = wps.slice().sort((a, b) => a - b);
 		const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
 
-		const rookieSalaries = draft.getRookieSalaries(); // Actually add picks after some stuff below is done
-
-		let estValues;
-
-		if (estValuesCached) {
-			estValues = estValuesCached;
-		} else {
-			estValues = await trade.getPickValues();
-		}
+		const rookieSalaries = draft.getRookieSalaries();
 
 		for (const dpid of dpidsAdd) {
 			const dp = await idb.cache.draftPicks.get(dpid);
@@ -192,8 +184,9 @@ const getPicks = async ({
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = estPicks[dp.originalTid]; // For future draft picks, add some uncertainty
+				estPick = estPicks[dp.originalTid];
 
+				// For future draft picks, add some uncertainty
 				const seasons = season - g.get("season");
 				estPick = Math.round(
 					(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
@@ -509,19 +502,18 @@ const valueChange = async (
 	const roster: Asset[] = [];
 	const add: Asset[] = [];
 	const remove: Asset[] = [];
-	const t = await idb.getCopy.teamsPlus({
-		attrs: ["strategy"],
-		stats: ["gp"],
-		season: g.get("season"),
-		tid,
-	});
+	const t = await idb.cache.teams.get(tid);
+	const teamStats = await idb.cache.teamStats.indexGet(
+		"teamSeasonsByTidSeason",
+		[tid, g.get("season")],
+	);
 
 	if (!t) {
-		throw new Error("Invalid team ID");
+		throw new Error("Invalid team");
 	}
 
 	const strategy = t.strategy;
-	const gpAvg = helpers.bound(t.stats.gp, 0, g.get("numGames")); // Ideally would be done separately for each team, but close enough
+	const gpAvg = helpers.bound(teamStats.gp, 0, g.get("numGames")); // Ideally would be done separately for each team, but close enough
 
 	const payroll = await getPayroll(tid);
 	const difficultyFudgeFactor = helpers.bound(
@@ -529,6 +521,13 @@ const valueChange = async (
 		0,
 		Infinity,
 	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
+
+	let estValues;
+	if (estValuesCached) {
+		estValues = estValuesCached;
+	} else {
+		estValues = await trade.getPickValues();
+	}
 
 	await getPlayers({
 		add,
@@ -545,7 +544,7 @@ const valueChange = async (
 		dpidsAdd,
 		dpidsRemove,
 		difficultyFudgeFactor,
-		estValuesCached,
+		estValues,
 		tid,
 	});
 

@@ -404,8 +404,8 @@ const generateJSONSchema = (sport /*: string*/) => {
 				items: {
 					type: "object",
 					properties: {
-						aiTrades: {
-							type: "boolean",
+						aiTradesFactor: {
+							type: "number",
 						},
 						autoDeleteOldBoxScores: {
 							type: "boolean",

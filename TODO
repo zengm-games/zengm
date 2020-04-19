@@ -1,3 +1,27 @@
+increase AI trades, and god mode option for frequency
+- too damn slow!
+  - cache more things, like estValues?
+- changelog
+
+global key info (salary, days until playoffs, team  etc)
+- league info: days until playoffs, standings/series
+- finance info: salary, relative to cap and luxury tax. expiring contracts
+- team info: needs (like... rebounding, perimeter defense, shooting, etc)
+- ronen
+
+condensed/composite rating views
+- athleticism, shooting, defense, playmaking
+- on ratings table, elsewhere?
+- ronen
+
+box score - more info
+- playoff series record
+- regular season team records http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
+- team ratings (for active players in game)
+- live
+  - timeouts
+  - football: position on field
+
 mailing list/newsletter
 - changelog
 - plans
@@ -97,8 +121,6 @@ way to save/load leagues on server
 show winning percentage next to record in team history page
 
 add toggle to table, to turn it into a heatmap showing which values are high or low. like think on a player stats table
-
-DL get too many tackles, LB too few
 
 FBGM punt when down in OT https://cdn.discordapp.com/attachments/290015591216054273/690387745042071592/Screenshot_2020-03-19_at_9.34.14_PM.png
 
@@ -296,28 +318,6 @@ DataTable
   - PlayerName and PlayerTeam in AllStarHistory
 
 https://react-hook-form.com/ for forms
-
-global key info (salary, days until playoffs, team  etc)
-- league info: days until playoffs, standings/series
-- finance info: salary, relative to cap and luxury tax. expiring contracts
-- team info: needs (like... rebounding, perimeter defense, shooting, etc)
-- ronen
-
-condensed/composite rating views
-- athleticism, shooting, defense, playmaking
-- on ratings table, elsewhere?
-- ronen
-
-box score - more info
-- playoff series record
-- regular season team records http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
-- team ratings (for active players in game)
-- live
-  - timeouts
-  - football: position on field
-
-better retiring logic
-- base on data - fit model from NBA stats
 
 more customize player options
 - fixed position

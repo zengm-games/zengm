@@ -345,9 +345,7 @@ const play = async (
 					await freeAgents.decreaseDemands();
 					await freeAgents.autoSign();
 
-					if (Math.random() < 0.5) {
-						await trade.betweenAiTeams();
-					}
+					await trade.betweenAiTeams();
 				}
 
 				await cbPlayGames();

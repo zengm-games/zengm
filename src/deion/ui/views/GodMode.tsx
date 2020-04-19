@@ -24,7 +24,7 @@ type Key =
 	| "maxContract"
 	| "hardCap"
 	| "budget"
-	| "aiTrades"
+	| "aiTradesFactor"
 	| "playersRefuseToNegotiate"
 	| "injuryRate"
 	| "tragicDeathRate"
@@ -280,9 +280,11 @@ const options: {
 	},
 	{
 		category: "Events",
-		key: "aiTrades",
-		name: "Trades Between AI Teams",
-		type: "bool",
+		key: "aiTradesFactor",
+		name: "Trades Between AI Teams Factor",
+		type: "float",
+		helpText:
+			"The baseline rate of trades between AI teams is multiplied by this number.",
 	},
 	{
 		category: "Events",
@@ -417,7 +419,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Foul Rate Factor",
 			type: "float",
 			helpText:
-				"The baseline foul rates for shooting and non-shooting fouls are multiplied by this number.",
+				"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 		},
 		{
 			category: "Game Simulation",
@@ -698,7 +700,7 @@ GodModeOptions.propTypes = {
 	numTeams: PropTypes.number.isRequired,
 	quarterLength: PropTypes.number.isRequired,
 	salaryCap: PropTypes.number.isRequired,
-	aiTrades: PropTypes.bool.isRequired,
+	aiTradesFactor: PropTypes.number.isRequired,
 	injuryRate: PropTypes.number.isRequired,
 	tragicDeathRate: PropTypes.number.isRequired,
 	brotherRate: PropTypes.number.isRequired,

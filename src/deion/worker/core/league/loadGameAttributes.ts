@@ -53,6 +53,9 @@ const loadGameAttributes = async () => {
 	if ((g.get("draftType") as any) === "nba") {
 		g.setWithoutSavingToDB("draftType", "nba2019");
 	}
+	if ((g.get("draftType") as any) === "nba") {
+		g.setWithoutSavingToDB("draftType", "nba2019");
+	}
 
 	const gToUI = { ...g };
 	delete gToUI.get;

@@ -54,9 +54,10 @@ async function play(
 			} else {
 				await cbNoDays();
 			}
-		}; // If we didn't just stop games, let's play
-		// Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
+		};
 
+		// If we didn't just stop games, let's play
+		// Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
 		const stopGameSim = lock.get("stopGameSim");
 
 		if (numDays > 0 && (start || !stopGameSim)) {
@@ -69,9 +70,10 @@ async function play(
 			// If this is the last day, update play menu
 			await cbNoDays();
 		}
-	}; // If this is a request to start a new simulation... are we allowed to do
-	// that? If so, set the lock and update the play menu
+	};
 
+	// If this is a request to start a new simulation... are we allowed to do
+	// that? If so, set the lock and update the play menu
 	if (start) {
 		const canStartGames = await lock.canStartGames();
 

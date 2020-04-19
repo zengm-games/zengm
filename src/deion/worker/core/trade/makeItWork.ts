@@ -27,7 +27,6 @@ const tryAddAsset = async (
 	initialSign: -1 | 1,
 ): Promise<TradeTeams | void> => {
 	k += 1;
-	console.log("tryAddAsset", k);
 	const assets: Asset[] = [];
 
 	if (!holdUserConstant) {
@@ -239,7 +238,6 @@ const makeItWork = async (
 	valueChangeKey: number = Math.random(),
 ) => {
 	i += 1;
-	console.log("makeItWork", i);
 	let initialSign: -1 | 1;
 	const added = 0;
 

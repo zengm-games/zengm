@@ -20,6 +20,13 @@ type Asset = {
 	draftPick?: true;
 };
 
+let prevValueChangeKey: number | undefined;
+let cache: {
+	estPicks: number[];
+	estValues: TradePickValues;
+	gp: number;
+};
+
 const getPlayers = async ({
 	add,
 	remove,
@@ -99,76 +106,6 @@ const getPicks = async ({
 }) => {
 	// For each draft pick, estimate its value based on the recent performance of the team
 	if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
-		// Estimate the order of the picks by team
-		const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
-			"teamSeasonsBySeasonTid",
-			[[g.get("season") - 1], [g.get("season"), "Z"]],
-		);
-
-		// This part needs to be run every time so that gpAvg is available
-		const wps: number[] = []; // Contains estimated winning percentages for all teams by the end of the season
-
-		let gp = 0;
-
-		for (let tid2 = 0; tid2 < g.get("numTeams"); tid2++) {
-			const teamSeasons = allTeamSeasons.filter(
-				teamSeason => teamSeason.tid === tid2,
-			);
-			const s = teamSeasons.length;
-			let rCurrent;
-			let rLast;
-
-			if (teamSeasons.length === 1) {
-				// First season
-				if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
-					rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
-				} else {
-					// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
-					rCurrent =
-						tid2 === g.get("userTid")
-							? [g.get("numGames"), 0]
-							: [0, g.get("numGames")];
-				}
-
-				if (tid2 === g.get("userTid")) {
-					rLast = [
-						Math.round(0.6 * g.get("numGames")),
-						Math.round(0.4 * g.get("numGames")),
-					];
-				} else {
-					// Assume a losing season to minimize bad trades
-					rLast = [
-						Math.round(0.4 * g.get("numGames")),
-						Math.round(0.6 * g.get("numGames")),
-					];
-				}
-			} else {
-				// Second (or higher) season
-				rCurrent = [teamSeasons[s - 1].won, teamSeasons[s - 1].lost];
-				rLast = [teamSeasons[s - 2].won, teamSeasons[s - 2].lost];
-			}
-
-			gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
-
-			// If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
-			const halfSeason = Math.round(0.5 * g.get("numGames"));
-
-			if (gp >= halfSeason) {
-				wps.push(rCurrent[0] / gp);
-			} else if (gp > 0) {
-				wps.push(
-					((gp / halfSeason) * rCurrent[0]) / gp +
-						(((halfSeason - gp) / halfSeason) * rLast[0]) / g.get("numGames"),
-				);
-			} else {
-				wps.push(rLast[0] / g.get("numGames"));
-			}
-		}
-
-		// Get rank order of wps http://stackoverflow.com/a/14834599/786644
-		const sorted = wps.slice().sort((a, b) => a - b);
-		const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
-
 		const rookieSalaries = draft.getRookieSalaries();
 
 		for (const dpid of dpidsAdd) {
@@ -179,12 +116,11 @@ const getPicks = async ({
 			}
 
 			const season = dp.season === "fantasy" ? g.get("season") : dp.season;
-			let estPick;
-
+			let estPick: number;
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = estPicks[dp.originalTid];
+				estPick = cache.estPicks[dp.originalTid];
 
 				// For future draft picks, add some uncertainty
 				const seasons = season - g.get("season");
@@ -239,12 +175,11 @@ const getPicks = async ({
 
 			const season = dp.season === "fantasy" ? g.get("season") : dp.season;
 			const seasons = season - g.get("season");
-			let estPick;
-
+			let estPick: number;
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = estPicks[dp.originalTid];
+				estPick = cache.estPicks[dp.originalTid];
 
 				// For future draft picks, add some uncertainty
 				estPick = Math.round(
@@ -255,8 +190,8 @@ const getPicks = async ({
 			// Set fudge factor with more confidence if it's the current season
 			let fudgeFactor;
 
-			if (seasons === 0 && gp >= g.get("numGames") / 2) {
-				fudgeFactor = (1 - gp / g.get("numGames")) * 10;
+			if (seasons === 0 && cache.gp >= g.get("numGames") / 2) {
+				fudgeFactor = (1 - cache.gp / g.get("numGames")) * 10;
 			} else {
 				fudgeFactor = 10;
 			}
@@ -484,9 +419,82 @@ const sumContracts = (
 	}, 0);
 };
 
-let prevValueChangeKey: number | undefined;
-let cache: {
-	estValues: TradePickValues;
+const refreshCache = async () => {
+	// Estimate the order of the picks by team
+	const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
+		"teamSeasonsBySeasonTid",
+		[[g.get("season") - 1], [g.get("season"), "Z"]],
+	);
+
+	// This part needs to be run every time so that gpAvg is available
+	const wps: number[] = []; // Contains estimated winning percentages for all teams by the end of the season
+
+	let gp = 0;
+
+	for (let tid2 = 0; tid2 < g.get("numTeams"); tid2++) {
+		const teamSeasons = allTeamSeasons.filter(
+			teamSeason => teamSeason.tid === tid2,
+		);
+		const s = teamSeasons.length;
+		let rCurrent;
+		let rLast;
+
+		if (teamSeasons.length === 1) {
+			// First season
+			if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
+				rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
+			} else {
+				// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
+				rCurrent =
+					tid2 === g.get("userTid")
+						? [g.get("numGames"), 0]
+						: [0, g.get("numGames")];
+			}
+
+			if (tid2 === g.get("userTid")) {
+				rLast = [
+					Math.round(0.6 * g.get("numGames")),
+					Math.round(0.4 * g.get("numGames")),
+				];
+			} else {
+				// Assume a losing season to minimize bad trades
+				rLast = [
+					Math.round(0.4 * g.get("numGames")),
+					Math.round(0.6 * g.get("numGames")),
+				];
+			}
+		} else {
+			// Second (or higher) season
+			rCurrent = [teamSeasons[s - 1].won, teamSeasons[s - 1].lost];
+			rLast = [teamSeasons[s - 2].won, teamSeasons[s - 2].lost];
+		}
+
+		gp = rCurrent[0] + rCurrent[1]; // Might not be "real" games played
+
+		// If we've played half a season, just use that as an estimate. Otherwise, take a weighted sum of this and last year
+		const halfSeason = Math.round(0.5 * g.get("numGames"));
+
+		if (gp >= halfSeason) {
+			wps.push(rCurrent[0] / gp);
+		} else if (gp > 0) {
+			wps.push(
+				((gp / halfSeason) * rCurrent[0]) / gp +
+					(((halfSeason - gp) / halfSeason) * rLast[0]) / g.get("numGames"),
+			);
+		} else {
+			wps.push(rLast[0] / g.get("numGames"));
+		}
+	}
+
+	// Get rank order of wps http://stackoverflow.com/a/14834599/786644
+	const sorted = wps.slice().sort((a, b) => a - b);
+	const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
+
+	return {
+		estPicks,
+		estValues: await trade.getPickValues(),
+		gp,
+	};
 };
 
 const valueChange = async (
@@ -527,10 +535,7 @@ const valueChange = async (
 	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
 
 	if (prevValueChangeKey !== valueChangeKey || cache === undefined) {
-		console.log("reset cache");
-		cache = {
-			estValues: await trade.getPickValues(),
-		};
+		cache = await refreshCache();
 		prevValueChangeKey = valueChangeKey;
 	}
 

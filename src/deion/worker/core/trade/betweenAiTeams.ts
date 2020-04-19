@@ -6,8 +6,7 @@ import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";
 import summary from "./summary";
-import type { TradeTeams, TradePickValues } from "../../../common/types";
-import getPickValues from "./getPickValues";
+import type { TradeTeams } from "../../../common/types";
 
 const attempt = async (valueChangeKey: number) => {
 	const aiTids = range(g.get("numTeams")).filter(i => {
@@ -47,11 +46,12 @@ const attempt = async (valueChangeKey: number) => {
 	const dpids: number[] = [];
 
 	if (r < 0.33 || draftPicks.length === 0) {
-		pids.push(random.choice(players).pid);
+		// Weight by player value - good player more likely to be in trade
+		pids.push(random.choice(players, p => p.value).pid);
 	} else if (r < 0.67 || players.length === 0) {
 		dpids.push(random.choice(draftPicks).dpid);
 	} else {
-		pids.push(random.choice(players).pid);
+		pids.push(random.choice(players, p => p.value).pid);
 		dpids.push(random.choice(draftPicks).dpid);
 	}
 
@@ -103,8 +103,8 @@ const attempt = async (valueChangeKey: number) => {
 		teams[0].dpids,
 		valueChangeKey,
 	);
-
-	if (dv2 < -15) {
+	console.log("dv2", dv2);
+	if (Math.abs(dv2) > 250) {
 		return false;
 	}
 

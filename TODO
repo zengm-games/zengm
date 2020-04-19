@@ -1,6 +1,8 @@
 increase AI trades, and god mode option for frequency
 - too damn slow!
-  - cache more things, like estValues?
+  - "Calculate the value for each asset added to the trade, for use in forward selection" - this part
+- somehow bias trades to include better assets
+- football benchmark
 - changelog
 
 global key info (salary, days until playoffs, team  etc)

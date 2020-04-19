@@ -436,9 +436,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 							minimum: 0,
 						},
-						disableInjuries: {
-							type: "boolean",
-						},
 						divs: {
 							type: "array",
 							items: {

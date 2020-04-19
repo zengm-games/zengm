@@ -195,7 +195,6 @@ export type GameResults = any;
 export type GameAttributesNonLeague = { lid: undefined };
 
 export type GameAttributesLeague = {
-	aiTrades?: boolean; // Legacy
 	aiTradesFactor: number;
 	allStarGame: boolean;
 	autoDeleteOldBoxScores: boolean;

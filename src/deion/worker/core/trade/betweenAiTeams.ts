@@ -116,7 +116,7 @@ const attempt = async (estValues: TradePickValues) => {
 
 const betweenAiTeams = async () => {
 	// aiTrades is a legacy option. Only pay attention to it if the new option is at its default value.
-	if (g.get("aiTrades") === false && g.get("aiTradesFactor") === 1) {
+	if ((g as any).aiTrades === false && g.get("aiTradesFactor") === 1) {
 		return false;
 	}
 

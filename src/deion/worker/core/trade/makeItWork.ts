@@ -1,6 +1,6 @@
 import { team } from "..";
 import { idb } from "../../db";
-import type { TradePickValues, TradeTeams } from "../../../common/types";
+import type { TradeTeams } from "../../../common/types";
 import isUntradable from "./isUntradable";
 
 type AssetPlayer = {
@@ -22,7 +22,7 @@ let k = 0;
 const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
-	estValuesCached: TradePickValues | undefined,
+	valueChangeKey: number,
 	added: number,
 	initialSign: -1 | 1,
 ): Promise<TradeTeams | void> => {
@@ -146,7 +146,7 @@ const tryAddAsset = async (
 			otherPids,
 			userDpids,
 			otherDpids,
-			estValuesCached,
+			valueChangeKey,
 		);
 	}
 	assets.sort((a, b) => b.dv - a.dv); // Find the asset that will push the trade value the smallest amount above 0
@@ -180,20 +180,14 @@ const tryAddAsset = async (
 	added += 1;
 
 	// eslint-disable-next-line @typescript-eslint/no-use-before-define
-	return testTrade(
-		teams,
-		holdUserConstant,
-		estValuesCached,
-		added,
-		initialSign,
-	);
+	return testTrade(teams, holdUserConstant, valueChangeKey, added, initialSign);
 };
 
 // See if the AI team likes the current trade. If not, try adding something to it.
 async function testTrade(
 	teams: TradeTeams,
 	holdUserConstant: boolean,
-	estValuesCached: TradePickValues | undefined,
+	valueChangeKey: number,
 	added: number,
 	initialSign: -1 | 1,
 ) {
@@ -203,7 +197,7 @@ async function testTrade(
 		teams[1].pids,
 		teams[0].dpids,
 		teams[1].dpids,
-		estValuesCached,
+		valueChangeKey,
 	);
 
 	if (dv > 0 && initialSign === -1) {
@@ -221,7 +215,7 @@ async function testTrade(
 	return tryAddAsset(
 		teams,
 		holdUserConstant,
-		estValuesCached,
+		valueChangeKey,
 		added,
 		initialSign,
 	);
@@ -242,7 +236,7 @@ let i = 0;
 const makeItWork = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
-	estValuesCached?: TradePickValues,
+	valueChangeKey: number = Math.random(),
 ) => {
 	i += 1;
 	console.log("makeItWork", i);
@@ -255,7 +249,7 @@ const makeItWork = async (
 		teams[1].pids,
 		teams[0].dpids,
 		teams[1].dpids,
-		estValuesCached,
+		valueChangeKey,
 	);
 
 	if (dv > 0) {
@@ -266,13 +260,7 @@ const makeItWork = async (
 		initialSign = -1;
 	}
 
-	return testTrade(
-		teams,
-		holdUserConstant,
-		estValuesCached,
-		added,
-		initialSign,
-	);
+	return testTrade(teams, holdUserConstant, valueChangeKey, added, initialSign);
 };
 
 export default makeItWork;

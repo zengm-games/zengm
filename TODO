@@ -9,6 +9,7 @@ increase AI trades, and god mode option for frequency
       - TODO: how fast is it if i get rid of async stuff?
       - TODO: build caching framework, triggered from some id passed to valueChange
         - id needs to be constant until a transaction is made or a game is simulated. but if trade rate is bumped up, that would happen a lot for some stuff, like payrolls
+          - in betweenAiTeams attempt, only update valueChangeKey when a trade actually happens
         - estValues
         - estPicks
   - @babel/plugin-transform-async-to-generator makes it twice as slow... either bump up required versions (and note in index.html) or do separate modern and legacy bundles

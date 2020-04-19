@@ -707,7 +707,6 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		const tids = range(g.get("numTeams"));
 		random.shuffle(tids);
 		tids.splice(10);
-		const estValues = await trade.getPickValues();
 		const offers: TradeTeam[] = [];
 
 		for (const tid of tids) {
@@ -729,7 +728,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			];
 
 			if (tid !== g.get("userTid")) {
-				const teams2 = await trade.makeItWork(teams, true, estValues);
+				const teams2 = await trade.makeItWork(teams, true);
 
 				if (teams2) {
 					const summary = await trade.summary(teams2);

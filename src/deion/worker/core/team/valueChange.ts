@@ -484,14 +484,18 @@ const sumContracts = (
 	}, 0);
 };
 
-// estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
+let prevValueChangeKey: number | undefined;
+let cache: {
+	estValues: TradePickValues;
+};
+
 const valueChange = async (
 	tid: number,
 	pidsAdd: number[],
 	pidsRemove: number[],
 	dpidsAdd: number[],
 	dpidsRemove: number[],
-	estValuesCached?: TradePickValues,
+	valueChangeKey: number = Math.random(),
 ): Promise<number> => {
 	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
 	if (dpidsRemove.length > 2) {
@@ -522,11 +526,12 @@ const valueChange = async (
 		Infinity,
 	); // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
 
-	let estValues;
-	if (estValuesCached) {
-		estValues = estValuesCached;
-	} else {
-		estValues = await trade.getPickValues();
+	if (prevValueChangeKey !== valueChangeKey || cache === undefined) {
+		console.log("reset cache");
+		cache = {
+			estValues: await trade.getPickValues(),
+		};
+		prevValueChangeKey = valueChangeKey;
 	}
 
 	await getPlayers({
@@ -544,7 +549,7 @@ const valueChange = async (
 		dpidsAdd,
 		dpidsRemove,
 		difficultyFudgeFactor,
-		estValues,
+		estValues: cache.estValues,
 		tid,
 	});
 

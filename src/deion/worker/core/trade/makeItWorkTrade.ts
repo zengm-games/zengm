@@ -1,6 +1,5 @@
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import getPickValues from "./getPickValues";
 import makeItWork from "./makeItWork";
 import summary from "./summary";
 
@@ -13,12 +12,9 @@ import summary from "./summary";
  * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
  */
 const makeItWorkTrade = async () => {
-	const [estValues, tr] = await Promise.all([
-		getPickValues(),
-		idb.cache.trade.get(0),
-	]);
+	const tr = await idb.cache.trade.get(0);
 	const teams0 = tr.teams;
-	const teams = await makeItWork(helpers.deepCopy(teams0), false, estValues);
+	const teams = await makeItWork(helpers.deepCopy(teams0), false);
 
 	if (!teams) {
 		return `${

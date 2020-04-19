@@ -9,7 +9,7 @@ import summary from "./summary";
 import type { TradeTeams, TradePickValues } from "../../../common/types";
 import getPickValues from "./getPickValues";
 
-const attempt = async (estValues: TradePickValues) => {
+const attempt = async (valueChangeKey: number) => {
 	const aiTids = range(g.get("numTeams")).filter(i => {
 		return !g.get("userTids").includes(i);
 	});
@@ -71,7 +71,8 @@ const attempt = async (estValues: TradePickValues) => {
 			tid: otherTid,
 		},
 	];
-	const teams = await makeItWork(teams0, false, estValues);
+
+	const teams = await makeItWork(teams0, false, valueChangeKey);
 
 	if (!teams) {
 		return false;
@@ -100,6 +101,7 @@ const attempt = async (estValues: TradePickValues) => {
 		teams[0].pids,
 		teams[1].dpids,
 		teams[0].dpids,
+		valueChangeKey,
 	);
 
 	if (dv2 < -15) {
@@ -128,10 +130,13 @@ const betweenAiTeams = async () => {
 	}
 
 	if (numAttempts > 0) {
-		const estValues = await getPickValues();
+		let valueChangeKey = Math.random();
 
 		for (let i = 0; i < numAttempts; i++) {
-			await attempt(estValues);
+			const tradeHappened = await attempt(valueChangeKey);
+			if (tradeHappened) {
+				valueChangeKey = Math.random();
+			}
 		}
 	}
 };

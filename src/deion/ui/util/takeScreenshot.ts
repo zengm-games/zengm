@@ -73,11 +73,12 @@ const takeScreenshot = async () => {
 
 	try {
 		const data = await fetchWrapper({
-			url: "https://imgur-apiv3.p.mashape.com/3/image",
+			url: "https://imgur-apiv3.p.rapidapi.com/3/image",
 			method: "POST",
 			headers: {
 				Authorization: "Client-ID c2593243d3ea679",
-				"X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
+				"x-rapidapi-host": "imgur-apiv3.p.rapidapi.com",
+				"x-rapidapi-key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
 			},
 			data: {
 				image: canvas.toDataURL().split(",")[1],

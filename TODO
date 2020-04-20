@@ -1,11 +1,9 @@
-increase AI trades, and god mode option for frequency
-- football benchmark
-- changelog
-- blog
-  - new option
-  - performance
-  - AI bad at finding matched salaries
-  - big trades/signings/picks to appear on dashboard, hopefully
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
 
 better trade finder AI
 - handle salary matching constraint
@@ -289,13 +287,6 @@ bundle size by removing dependency (tested by adding to "external" in rollup con
 - lodash total - ~18kb in worker and ui, and basically all of that is shared so there's only benefit in replacing it all
 
 keep box scores with feats, and ASG
-
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
 
 SW stuff
 - dynamic rather than precache like https://github.com/GoogleChromeLabs/proxx/blob/master/src/sw/index.ts maybe

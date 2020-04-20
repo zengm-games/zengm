@@ -1,3 +1,10 @@
+player stats popover
+- stats relative to league average
+- ovr/pot graph over time
+  - put this on player page too
+  - https://old.reddit.com/r/BasketballGM/comments/g4m90u/suggestion_player_progression_graphs/
+- switch to modal on small screens?
+
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes
@@ -76,12 +83,6 @@ some kind of global status/finances menu, above titlebar
 - some way to "lock" it so it stays fixed to the top of the screen
 
 more animations
-
-player stats popover
-- stats relative to league average
-- ovr/pot graph over time
-  - put this on player page too
-  - https://old.reddit.com/r/BasketballGM/comments/g4m90u/suggestion_player_progression_graphs/
 
 add FMVP to award races
 

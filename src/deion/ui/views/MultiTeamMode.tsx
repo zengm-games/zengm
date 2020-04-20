@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
-import React, { useCallback, ChangeEvent } from "react";
+import React, { useCallback, ChangeEvent, useRef } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { toWorker } from "../util";
+import { toWorker, logEvent } from "../util";
 import type { View } from "../../common/types";
 
 const handleAutoSort = async (tids: number[]) => {
@@ -19,6 +19,8 @@ const MultiTeamMode = ({
 	userTid,
 	userTids,
 }: View<"multiTeamMode">) => {
+	const notificationProbablyShowing = useRef(false);
+
 	const handleChange = useCallback(
 		async (event: ChangeEvent<HTMLSelectElement>) => {
 			const newUserTids = Array.from(event.target.options)
@@ -40,6 +42,22 @@ const MultiTeamMode = ({
 				}
 
 				await toWorker("main", "updateMultiTeamMode", gameAttributes);
+
+				if (newUserTids.length > 1) {
+					// Hacky attempt to not show this notification if it's already showing
+					if (!notificationProbablyShowing.current) {
+						notificationProbablyShowing.current = true;
+						logEvent({
+							saveToDb: false,
+							text: "Switch between teams you control using the menu below:",
+							type: "info",
+						});
+						window.setTimeout(() => {
+							console.log("current undefined");
+							notificationProbablyShowing.current = false;
+						}, 8000);
+					}
+				}
 			}
 		},
 		[userTid, userTids],

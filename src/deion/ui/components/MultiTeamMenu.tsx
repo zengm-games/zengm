@@ -55,11 +55,8 @@ const MultiTeamMenu = () => {
 				<span className="glyphicon glyphicon-menu-left" />
 			</button>
 			<div className="flex-fill px-1">
-				<label htmlFor="multi-team-select">Currently controlling:</label>
-				<br />
 				<select
 					className="form-control"
-					id="multi-team-select"
 					onChange={handleChange}
 					value={state.userTid}
 				>

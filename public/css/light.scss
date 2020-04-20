@@ -597,9 +597,12 @@ tr.table-warning:hover > td {
 
 .multi-team-menu {
 	background-color: $white;
+	opacity: 0.9;
 	position: fixed;
 	right: 6px;
-	bottom: 6px;
+	bottom: 0;
+	padding-bottom: 6px;
+	border-radius: 0.25em 0.25em 0 0;
 }
 
 .dropdown-toggle {

@@ -284,7 +284,7 @@ const options: {
 		name: "Trades Between AI Teams Factor",
 		type: "float",
 		helpText:
-			"The baseline rate of trades between AI teams is multiplied by this number.",
+			"The baseline rate of trades between AI teams is multiplied by this number. Anything beyond 100 will be both absurd and ridiculously slow.",
 	},
 	{
 		category: "Events",

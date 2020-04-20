@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import { team } from "..";
 import { idb } from "../../db";
-import { g, random } from "../../util";
+import { g, random, local } from "../../util";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";
@@ -9,8 +9,11 @@ import summary from "./summary";
 import type { TradeTeams } from "../../../common/types";
 
 const attempt = async (valueChangeKey: number) => {
-	const aiTids = range(g.get("numTeams")).filter(i => {
-		return !g.get("userTids").includes(i);
+	const aiTids = range(g.get("numTeams")).filter(tid => {
+		if (local.autoPlaySeasons > 0) {
+			return true;
+		}
+		return !g.get("userTids").includes(tid);
 	});
 
 	if (aiTids.length === 0) {

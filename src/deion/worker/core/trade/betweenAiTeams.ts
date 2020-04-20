@@ -21,9 +21,7 @@ const attempt = async (valueChangeKey: number) => {
 	}
 
 	const tid = random.choice(aiTids);
-	const otherTids = range(g.get("numTeams")).filter(i => {
-		return i !== tid && !g.get("userTids").includes(i);
-	});
+	const otherTids = aiTids.filter(tid2 => tid !== tid2);
 
 	if (otherTids.length === 0) {
 		return false;

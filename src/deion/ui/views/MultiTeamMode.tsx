@@ -53,7 +53,6 @@ const MultiTeamMode = ({
 							type: "info",
 						});
 						window.setTimeout(() => {
-							console.log("current undefined");
 							notificationProbablyShowing.current = false;
 						}, 8000);
 					}

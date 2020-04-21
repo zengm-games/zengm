@@ -482,9 +482,16 @@ class GameSim {
 		if (twoForOne && !catchUp && !maintainLead) {
 			if (Math.random() < 0.6) {
 				// There are between 32 and 52 seconds remaining, and we'd like to get the shot up somewhere between 29 and 35 seconds
-				lowerBound = this.t - 29 / 60;
-				upperBound = this.t - 35 / 60;
+				lowerBound = this.t - 35 / 60;
+				upperBound = this.t - 29 / 60;
 			}
+		}
+
+		if (lowerBound < 0) {
+			lowerBound = 0;
+		}
+		if (upperBound < 1 / 60) {
+			upperBound = 1 / 60;
 		}
 
 		return helpers.bound(possessionLength, lowerBound, upperBound);

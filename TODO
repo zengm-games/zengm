@@ -15,8 +15,10 @@ redo mood system
 better trade finder AI
 - handle salary matching constraint
 - use in trading block, and betweenAiTeams
-- after doing this, make sure big trades happen enough in betweenAiTeams
-  - see random.choice weights in betweenAiTeams
+- after doing this
+  - make sure big trades happen enough in betweenAiTeams - see random.choice weights in betweenAiTeams
+  - also make sure betweenAiTeams doens't accept really bad trades, see dv2 check
+    - especially for minor trades, not sure if dv as an absolute value rather than % makes sense
 
 global key info (salary, days until playoffs, team  etc)
 - league info: days until playoffs, standings/series

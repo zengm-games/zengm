@@ -337,7 +337,6 @@ const BoxScore = ({
 	showNextPrev?: boolean;
 	Row: any;
 }) => {
-	console.log(boxScore);
 	const handleKeydown = useCallback(
 		e => {
 			if (showNextPrev) {

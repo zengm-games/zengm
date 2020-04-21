@@ -28,17 +28,16 @@ const getAwardCandidates = async (season: number) => {
 			stats: ["pts", "trb", "ast", "per"],
 		},
 		{
-			name: "Rookie of the Year",
+			name: "Defensive Player of the Year",
 			players: getTopPlayers(
 				{
 					allowNone: true,
 					amount: 10,
-					filter: royFilter,
-					score: mvpScore,
+					score: dpoyScore,
 				},
 				players,
 			),
-			stats: ["pts", "trb", "ast", "per"],
+			stats: ["trb", "blk", "stl", "dws"],
 		},
 		{
 			name: "Sixth Man of the Year",
@@ -54,16 +53,17 @@ const getAwardCandidates = async (season: number) => {
 			stats: ["pts", "trb", "ast", "per"],
 		},
 		{
-			name: "Defensive Player of the Year",
+			name: "Rookie of the Year",
 			players: getTopPlayers(
 				{
 					allowNone: true,
 					amount: 10,
-					score: dpoyScore,
+					filter: royFilter,
+					score: mvpScore,
 				},
 				players,
 			),
-			stats: ["trb", "blk", "stl", "dws"],
+			stats: ["pts", "trb", "ast", "per"],
 		},
 		{
 			name: "Most Improved Player",

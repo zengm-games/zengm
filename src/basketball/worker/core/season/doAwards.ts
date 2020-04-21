@@ -211,7 +211,9 @@ export const mipScore = (p: PlayerFiltered) => {
 		(ps: { season: number }) => ps.season === p.currentStats.season - 1,
 	);
 	const oldStats = oldStatsAll[oldStatsAll.length - 1];
-	const ewaAllPrev = p.stats.slice(0, -1).map((ps: { ewa: number }) => ps.ewa);
+	const ewaAllPrev = p.stats
+		.filter((ps: { season: number }) => ps.season < p.currentStats.season)
+		.map((ps: { ewa: number }) => ps.ewa);
 	const min = p.currentStats.min * p.currentStats.gp;
 	const minOld = oldStats.min * oldStats.gp;
 	const ewa = p.currentStats.ewa;

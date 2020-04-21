@@ -1,9 +1,7 @@
 import { localActions } from "./local";
 
 const showGcs = () => {
-	if (process.env.SPORT === "basketball") {
-		window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());
-	}
+	window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());
 };
 
 const showModal = () => {

@@ -56,7 +56,6 @@
 		"react-confirm": "^0.1.20",
 		"react-dom": "^16.13.1",
 		"react-sortable-hoc": "^1.11.0",
-		"reactstrap": "^8.4.1",
 		"roman-numerals": "^0.3.2",
 		"s-ago": "^2.1.0",
 		"workbox-google-analytics": "^5.1.2",

@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, MouseEvent } from "react";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import Dropdown from "react-bootstrap/Dropdown";
+import Nav from "react-bootstrap/Nav";
 import { realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
 
@@ -52,25 +53,30 @@ const PlayMenu = ({ lid, options }: Props) => {
 	}
 
 	return (
-		<NavDropdown className="play-button" id="play-button" title="Play">
-			{options.map((option, i) => {
-				return (
-					<NavDropdown.Item
-						key={i}
-						href={option.url}
-						onClick={event => handleOptionClick(option, event)}
-						className="kbd-parent"
-					>
-						{option.label}
-						{option.key ? (
-							<span className="text-muted kbd">
-								Alt+{option.key.toUpperCase()}
-							</span>
-						) : null}
-					</NavDropdown.Item>
-				);
-			})}
-		</NavDropdown>
+		<Dropdown as={Nav.Item}>
+			<Dropdown.Toggle as={Nav.Link} className="play-button" id="play-button">
+				Play
+			</Dropdown.Toggle>
+			<Dropdown.Menu>
+				{options.map((option, i) => {
+					return (
+						<Dropdown.Item
+							key={i}
+							href={option.url}
+							onClick={event => handleOptionClick(option, event)}
+							className="kbd-parent"
+						>
+							{option.label}
+							{option.key ? (
+								<span className="text-muted kbd">
+									Alt+{option.key.toUpperCase()}
+								</span>
+							) : null}
+						</Dropdown.Item>
+					);
+				})}
+			</Dropdown.Menu>
+		</Dropdown>
 	);
 };
 

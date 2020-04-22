@@ -1,16 +1,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { MouseEvent, useCallback, useState } from "react";
-import {
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-} from "reactstrap";
+import Dropdown from "react-bootstrap/Dropdown";
 import Nav from "react-bootstrap/Nav";
-
 import { helpers } from "../util";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
+
 type TopMenuToggleProps = {
 	long: string;
 	openID?: string;
@@ -28,12 +23,16 @@ const TopMenuToggle = ({ long, openID, short, toggle }: TopMenuToggleProps) => {
 		[long, openID, toggle],
 	);
 	return (
-		<DropdownToggle caret nav onMouseEnter={handleMouseEnter}>
+		<Dropdown.Toggle
+			as={Nav.Link}
+			id="whatever"
+			onMouseEnter={handleMouseEnter}
+		>
 			<span className="d-xs-inline d-sm-none d-md-inline">{long}</span>
 			<span className="d-none d-sm-inline d-md-none" title={long}>
 				{short}
 			</span>
-		</DropdownToggle>
+		</Dropdown.Toggle>
 	);
 };
 
@@ -59,19 +58,19 @@ const TopMenuDropdown = ({
 }) => {
 	const toggle = useCallback(event => onToggle(long, event), [long, onToggle]);
 	return (
-		<Dropdown isOpen={openID === long} nav inNavbar toggle={toggle}>
+		<Dropdown show={openID === long} onToggle={toggle} as={Nav.Item}>
 			<TopMenuToggle
 				long={long}
 				short={short}
 				openID={openID}
 				toggle={toggle}
 			/>
-			<DropdownMenu right>
-				<DropdownItem className="d-none d-sm-block d-md-none" header>
+			<Dropdown.Menu alignRight>
+				<Dropdown.Header className="d-none d-sm-block d-md-none">
 					{long}
-				</DropdownItem>
+				</Dropdown.Header>
 				{children}
-			</DropdownMenu>
+			</Dropdown.Menu>
 		</Dropdown>
 	);
 };
@@ -177,14 +176,14 @@ const MenuItem = ({
 		}
 
 		return (
-			<DropdownItem
+			<Dropdown.Item
 				{...anchorProps}
 				className={classNames({
 					"god-mode": menuItem.godMode,
 				})}
 			>
 				{getText(menuItem.text)}
-			</DropdownItem>
+			</Dropdown.Item>
 		);
 	}
 
@@ -243,7 +242,10 @@ const DropdownLinks = React.memo(
 			[openID],
 		);
 		return (
-			<Nav navbar className={classNames(className, "dropdown-links")}>
+			<Nav
+				navbar
+				className={classNames(className, "dropdown-links navbar-nav")}
+			>
 				{menuItems.map((menuItem, i) => (
 					<MenuItem
 						godMode={godMode}

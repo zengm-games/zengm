@@ -1,5 +1,5 @@
 switch back to react-bootstrap
-- play button
+- play button alignment of menu below broke when added "as" stuff
 - popovers better?
 - typescript
 - switch some popovers to modal on small screen, like player stats popover?

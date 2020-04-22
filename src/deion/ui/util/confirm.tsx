@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import { Modal, ModalBody, ModalFooter } from "reactstrap";
+import Modal from "react-bootstrap/Modal";
 
 const Confirm = confirmable(
 	({ show, proceed, confirmation, defaultValue, okText, cancelText }: any) => {
@@ -31,40 +31,39 @@ const Confirm = confirmable(
 		}, []);
 
 		return (
-			<div>
-				<Modal fade={false} isOpen={show} toggle={cancel}>
-					<ModalBody>
-						{confirmation}
-						{defaultValue !== undefined ? (
-							<form
-								className="mt-3"
-								onSubmit={event => {
-									event.preventDefault();
-									ok();
+			<Modal show={show} onHide={cancel}>
+				<Modal.Body>
+					{confirmation}
+					{defaultValue !== undefined ? (
+						<form
+							className="mt-3"
+							onSubmit={event => {
+								event.preventDefault();
+								ok();
+							}}
+						>
+							<input
+								ref={inputRef}
+								type="text"
+								className="form-control"
+								value={controlledValue}
+								onChange={event => {
+									setControlledValue(event.target.value);
 								}}
-							>
-								<input
-									ref={inputRef}
-									type="text"
-									className="form-control"
-									value={controlledValue}
-									onChange={event => {
-										setControlledValue(event.target.value);
-									}}
-								/>
-							</form>
-						) : null}
-					</ModalBody>
-					<ModalFooter>
-						<button className="btn btn-secondary" onClick={cancel}>
-							{cancelText}
-						</button>
-						<button className="btn btn-primary" onClick={ok} ref={okRef}>
-							{okText}
-						</button>
-					</ModalFooter>
-				</Modal>
-			</div>
+							/>
+						</form>
+					) : null}
+				</Modal.Body>
+
+				<Modal.Footer>
+					<button className="btn btn-secondary" onClick={cancel}>
+						{cancelText}
+					</button>
+					<button className="btn btn-primary" onClick={ok} ref={okRef}>
+						{okText}
+					</button>
+				</Modal.Footer>
+			</Modal>
 		);
 	},
 );

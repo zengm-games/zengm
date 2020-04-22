@@ -375,7 +375,7 @@ export type MenuItemLink = {
 	league?: true;
 	godMode?: true;
 	nonLeague?: true;
-	onClick?: (a: MouseEvent) => void | false | Promise<void | false>; // Return false to leave sidebar open
+	onClick?: (a: MouseEvent<any>) => void | false | Promise<void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	text:
 		| Exclude<React.ReactNode, null | undefined | number | boolean>

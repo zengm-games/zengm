@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
-import React, { useRef } from "react";
-import { UncontrolledTooltip } from "reactstrap";
+import React from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 /**
  * Bar plots, both stacked and normal.
@@ -124,6 +125,27 @@ const scale = (val: number, ylim: [number, number]) => {
 	return ((val - ylim[0]) / (ylim[1] - ylim[0])) * 100;
 };
 
+const Block = ({
+	className,
+	style,
+	tooltip,
+}: {
+	className: string;
+	style: React.CSSProperties;
+	tooltip: string | undefined;
+}) => {
+	if (tooltip === undefined) {
+		return <div className={className} style={style} />;
+	}
+	return (
+		<OverlayTrigger
+			overlay={<Tooltip id="bar-graph-tooltip">{tooltip}</Tooltip>}
+		>
+			<div className={className} style={style} />
+		</OverlayTrigger>
+	);
+};
+
 type Props = {
 	data: number[] | number[][];
 	// To get rid of this (and other below), would probably have to break up into two separate code paths, one for stacked and one for non-stacked
@@ -131,16 +153,8 @@ type Props = {
 	tooltipCb?: (val: string | number) => string;
 	ylim?: [number, number];
 };
-let globalCounter = 0;
 
 const BarGraph = (props: Props) => {
-	const counter = useRef(globalCounter);
-
-	if (globalCounter === counter.current) {
-		// Only increment once, not every re-render
-		globalCounter += 1;
-	}
-
 	const {
 		data = [],
 		labels,
@@ -205,12 +219,15 @@ const BarGraph = (props: Props) => {
 				cssClass = "bar-graph-3";
 			}
 
-			const id = `a${counter.current}-${i}`;
-			const bar = (
-				<div
-					className={cssClass}
-					id={id}
+			const tooltip =
+				typeof val === "number" && !Number.isNaN(val)
+					? `${titleStart}${tooltipCb(val)}`
+					: undefined;
+
+			return (
+				<Block
 					key={i}
+					className={cssClass}
 					style={{
 						marginLeft: `${gap}px`,
 						position: "absolute",
@@ -219,22 +236,9 @@ const BarGraph = (props: Props) => {
 						left: `${i * widthPct}%`,
 						width: `calc(${widthPct}% - ${gap}px)`,
 					}}
+					tooltip={tooltip}
 				/>
 			);
-
-			if (typeof val === "number" && !Number.isNaN(val)) {
-				return (
-					<div key={i}>
-						{bar}
-						<UncontrolledTooltip delay={0} placement="top" target={id}>
-							{titleStart}
-							{tooltipCb(val)}
-						</UncontrolledTooltip>
-					</div>
-				);
-			}
-
-			return bar;
 		});
 	} else {
 		// Stacked
@@ -257,11 +261,10 @@ const BarGraph = (props: Props) => {
 						titleStart = `${labels[0][i]} ${labels[1][j]}: `;
 					}
 
-					const id = `a${counter.current}-${i}-${j}`;
-					const bar = (
-						<div
+					bars.push(
+						<Block
+							key={`${i}.${j}`}
 							className={`bar-graph-${j + 1}`}
-							id={id}
 							style={{
 								marginLeft: `${gap}px`,
 								position: "absolute",
@@ -270,16 +273,8 @@ const BarGraph = (props: Props) => {
 								left: `${i * widthPct}%`,
 								width: `calc(${widthPct}% - ${gap}px)`,
 							}}
-						/>
-					);
-					bars.push(
-						<div key={`${i}.${j}`}>
-							{bar}
-							<UncontrolledTooltip delay={0} placement="top" target={id}>
-								{titleStart}
-								{tooltipCb(data[j][i])}
-							</UncontrolledTooltip>
-						</div>,
+							tooltip={`${titleStart}${tooltipCb(data[j][i])}`}
+						/>,
 					);
 				}
 			}

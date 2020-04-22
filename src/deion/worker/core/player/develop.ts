@@ -2,7 +2,7 @@ import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import skills from "./skills";
-import { helpers, overrides, random } from "../../util";
+import { g, helpers, overrides, random } from "../../util";
 import type { MinimalPlayerRatings } from "../../../common/types";
 
 let potEstimator:
@@ -190,7 +190,7 @@ const develop = (
 	},
 	years: number = 1,
 	newPlayer: boolean = false,
-	coachingRank: number = 15.5,
+	coachingRank: number = (g.get("numTeams") + 1) / 2,
 	skipPot: boolean = false, // Only for making testing or core/debug faster
 ) => {
 	const ratings = p.ratings[p.ratings.length - 1];

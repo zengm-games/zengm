@@ -170,10 +170,10 @@ const Roster = ({
 						<th>Name</th>
 						<th title="Position">Pos</th>
 						<th>Age</th>
-						<th title="Years With Team">YWT</th>
 						<th title="Overall Rating">Ovr</th>
 						<th title="Potential Rating">Pot</th>
 						{season === currentSeason ? <th>Contract</th> : null}
+						<th title="Years With Team">YWT</th>
 						{statCols.map(({ desc, title }) => (
 							<th key={title} title={desc}>
 								{title}
@@ -246,7 +246,6 @@ const Roster = ({
 						</td>
 						<td>{p.ratings.pos}</td>
 						<td>{p.age}</td>
-						<td>{p.stats.yearsWithTeam}</td>
 						<td>
 							<RatingWithChange change={p.ratings.dovr}>
 								{p.ratings.ovr}
@@ -274,6 +273,7 @@ const Roster = ({
 								{p.contract.exp}
 							</td>
 						) : null}
+						<td>{p.stats.yearsWithTeam}</td>
 						{stats.map(stat => (
 							<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 						))}

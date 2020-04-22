@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Popover, PopoverBody, PopoverHeader } from "reactstrap";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
@@ -83,6 +84,7 @@ const NavBar = ({ updating }: Props) => {
 			{statusText}
 		</span>
 	);
+
 	return (
 		<Navbar bg="light" expand="sm" fixed="top" className="navbar-border">
 			<button
@@ -95,43 +97,36 @@ const NavBar = ({ updating }: Props) => {
 				<span className="navbar-toggler-icon" />
 			</button>
 			<LogoAndText gold={gold} lid={lid} updating={updating} />
-			<Nav navbar>
-				<div
-					id="play-menu"
-					onClick={() => {
-						// Hack because otherwise the popover doesn't close when the Play button is clicked, for some reason
-						if (!hasViewedALeague) {
+			{lid !== undefined ? (
+				<Nav navbar>
+					<OverlayTrigger
+						placement="bottom"
+						defaultShow={!hasViewedALeague && lid === 1}
+						trigger="click"
+						rootClose
+						onExited={() => {
 							localActions.update({
 								hasViewedALeague: true,
 							});
+							localStorage.setItem("hasViewedALeague", "true");
+						}}
+						overlay={
+							<Popover id="popover-welcome">
+								<Popover.Title className="text-primary font-weight-bold">
+									Welcome to {sport} GM!
+								</Popover.Title>
+								<Popover.Content>
+									To advance through the game, use the Play button at the top.
+									The options shown will change depending on the current state
+									of the game.
+								</Popover.Content>
+							</Popover>
 						}
-					}}
-				>
-					<PlayMenu lid={lid} options={playMenuOptions} />
-				</div>
-				<Popover
-					placement="bottom"
-					isOpen={!hasViewedALeague && lid === 1}
-					target="play-menu"
-					toggle={() => {
-						// This will run when it closes, so next time it will be hidden
-						localActions.update({
-							hasViewedALeague: true,
-						});
-						localStorage.setItem("hasViewedALeague", "true");
-					}}
-					trigger="click"
-				>
-					<PopoverHeader className="text-primary font-weight-bold">
-						Welcome to {sport} GM!
-					</PopoverHeader>
-					<PopoverBody>
-						To advance through the game, use the Play button at the top. The
-						options shown will change depending on the current state of the
-						game.
-					</PopoverBody>
-				</Popover>
-			</Nav>
+					>
+						<PlayMenu lid={lid} options={playMenuOptions} />
+					</OverlayTrigger>
+				</Nav>
+			) : null}
 			{lid !== undefined ? phaseStatusBlock : null}
 			<div className="flex-grow-1" />
 			<div className="d-none d-sm-flex">

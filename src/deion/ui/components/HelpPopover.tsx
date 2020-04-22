@@ -26,7 +26,7 @@ const HelpPopover = ({
 	const popover = (
 		<Popover id={title}>
 			<Popover.Title as="h3">{title}</Popover.Title>
-			<Popover.Content>{children}}</Popover.Content>
+			<Popover.Content>{children}</Popover.Content>
 		</Popover>
 	);
 

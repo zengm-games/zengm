@@ -144,9 +144,8 @@ a.god-mode,
 
 .play-button {
 	font-size: 1.01562rem;
-	margin: -8px 0;
-	height: 51px;
 	padding: 14px !important;
+	height: 51px;
 
 	@extend .bg-success;
 	@extend .text-white;
@@ -637,7 +636,8 @@ tr.table-warning:hover > td {
 }
 
 .dropdown-links .nav-item,
-#top-user-block .nav-item {
+#top-user-block .nav-item,
+.play-button-wrapper {
 	margin: -8px 0;
 	height: 51px;
 }

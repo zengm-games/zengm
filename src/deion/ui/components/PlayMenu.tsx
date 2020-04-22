@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, MouseEvent } from "react";
+import NavDropdown from "react-bootstrap/NavDropdown";
 import Dropdown from "react-bootstrap/Dropdown";
 import Nav from "react-bootstrap/Nav";
 import { realtimeUpdate, toWorker } from "../util";
@@ -53,8 +54,8 @@ const PlayMenu = ({ lid, options }: Props) => {
 	}
 
 	return (
-		<Dropdown as={Nav.Item}>
-			<Dropdown.Toggle as={Nav.Link} className="play-button" id="play-button">
+		<Dropdown className="play-button-wrapper" as={Nav.Item}>
+			<Dropdown.Toggle className="play-button" id="play-button" as={Nav.Link}>
 				Play
 			</Dropdown.Toggle>
 			<Dropdown.Menu>

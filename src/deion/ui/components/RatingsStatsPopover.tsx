@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { MouseEvent, useCallback, useState } from "react";
+import React, { MouseEvent, useCallback, useEffect, useState } from "react";
 import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
 import WatchBlock from "./WatchBlock";
 import { helpers, overrides, toWorker } from "../util";
@@ -23,6 +23,8 @@ const Icon = ({
 		/>
 	);
 };
+
+const isMobile = () => window.screen && window.screen.width < 768;
 
 type Props = {
 	pid: number;
@@ -94,7 +96,16 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 		);
 	}
 
-	const mobile = window.screen && window.screen.width < 768;
+	const [mobile, setMobile] = useState(isMobile);
+	useEffect(() => {
+		const update = () => {
+			setMobile(isMobile());
+		};
+		window.addEventListener("optimizedResize", update);
+		return () => {
+			window.removeEventListener("optimizedResize", update);
+		};
+	}, []);
 
 	const [showModal, setShowModal] = useState(false);
 

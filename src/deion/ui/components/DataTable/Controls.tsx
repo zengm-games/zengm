@@ -1,17 +1,13 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { SyntheticEvent } from "react";
-import {
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-	UncontrolledDropdown,
-} from "reactstrap";
+import Dropdown from "react-bootstrap/Dropdown";
 
 import HelpPopover from "../HelpPopover";
 
 const Controls = ({
 	enableFilters,
+	name,
 	onExportCSV,
 	onResetTable,
 	onSearch,
@@ -19,6 +15,7 @@ const Controls = ({
 	searchText,
 }: {
 	enableFilters: boolean;
+	name: string;
 	onExportCSV: () => void;
 	onResetTable: () => void;
 	onSearch: (a: SyntheticEvent<HTMLInputElement>) => void;
@@ -76,31 +73,35 @@ const Controls = ({
 					value={searchText}
 				/>
 			</label>
-			<UncontrolledDropdown className="float-right">
-				<DropdownToggle
+			<Dropdown className="float-right">
+				<Dropdown.Toggle
+					as="span"
+					bsPrefix="no-caret"
+					id={`datatable-controls-${name}`}
 					style={{
 						cursor: "pointer",
 						fontSize: 16,
 						lineHeight: "30px",
 						paddingLeft: 5,
 					}}
-					tag="span"
 					title="Actions"
 				>
 					<span className="glyphicon glyphicon-option-vertical text-muted" />
-				</DropdownToggle>
-				<DropdownMenu right>
-					<DropdownItem onClick={onExportCSV}>
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item onClick={onExportCSV}>
 						Download Spreadsheet
-					</DropdownItem>
-					<DropdownItem onClick={onResetTable}>Reset Table</DropdownItem>
-				</DropdownMenu>
-			</UncontrolledDropdown>
+					</Dropdown.Item>
+					<Dropdown.Item onClick={onResetTable}>Reset Table</Dropdown.Item>
+				</Dropdown.Menu>
+			</Dropdown>
 		</div>
 	);
 };
+
 Controls.propTypes = {
 	enableFilters: PropTypes.bool.isRequired,
+	name: PropTypes.string.isRequired,
 	onExportCSV: PropTypes.func.isRequired,
 	onResetTable: PropTypes.func.isRequired,
 	onSearch: PropTypes.func.isRequired,

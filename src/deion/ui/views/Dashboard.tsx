@@ -1,12 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useState, CSSProperties } from "react";
-import {
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-	UncontrolledDropdown,
-} from "reactstrap";
+import Dropdown from "react-bootstrap/Dropdown";
 
 import ago from "s-ago";
 import { DIFFICULTY } from "../../common";
@@ -240,25 +235,31 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							: 0,
 					value: <Ago date={league.lastPlayed} />,
 				},
-				<UncontrolledDropdown style={dropdownStyle}>
-					<DropdownToggle style={glyphiconStyle} tag="span" title="Actions">
+				<Dropdown style={dropdownStyle}>
+					<Dropdown.Toggle
+						as="span"
+						bsPrefix="no-caret"
+						id={`dashboard-actions-${league.lid}`}
+						style={glyphiconStyle}
+						title="Actions"
+					>
 						<span
 							className="glyphicon glyphicon-option-vertical text-muted p-2"
 							data-no-row-highlight="true"
 						/>
-					</DropdownToggle>
+					</Dropdown.Toggle>
 					{!disabled ? (
-						<DropdownMenu right>
-							<DropdownItem href={`/new_league/${league.lid}`}>
+						<Dropdown.Menu>
+							<Dropdown.Item href={`/new_league/${league.lid}`}>
 								Import
-							</DropdownItem>
-							<DropdownItem
+							</Dropdown.Item>
+							<Dropdown.Item
 								href={`/l/${league.lid}/export_league`}
 								onClick={() => setLoadingLID(league.lid)}
 							>
 								Export
-							</DropdownItem>
-							<DropdownItem
+							</Dropdown.Item>
+							<Dropdown.Item
 								onClick={async () => {
 									const newName = await confirm("League name:", {
 										defaultValue: league.name,
@@ -273,8 +274,8 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 								}}
 							>
 								Rename
-							</DropdownItem>
-							<DropdownItem
+							</Dropdown.Item>
+							<Dropdown.Item
 								onClick={async () => {
 									const proceed = await confirm(
 										`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
@@ -291,10 +292,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 								}}
 							>
 								Delete
-							</DropdownItem>
-						</DropdownMenu>
+							</Dropdown.Item>
+						</Dropdown.Menu>
 					) : null}
-				</UncontrolledDropdown>,
+				</Dropdown>,
 			],
 		};
 	});

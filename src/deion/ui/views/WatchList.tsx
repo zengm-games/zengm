@@ -1,12 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import {
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-	UncontrolledDropdown,
-} from "reactstrap";
-
+import Dropdown from "react-bootstrap/Dropdown";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";
@@ -84,19 +78,22 @@ const WatchList = ({
 
 	return (
 		<>
-			<UncontrolledDropdown className="float-right my-1">
-				<DropdownToggle caret className="btn-light-bordered">
+			<Dropdown className="float-right my-1">
+				<Dropdown.Toggle
+					id="watch-list-other-reports"
+					className="btn-light-bordered"
+				>
 					Other Reports
-				</DropdownToggle>
-				<DropdownMenu>
-					<DropdownItem href={helpers.leagueUrl(["player_stats", "watch"])}>
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item href={helpers.leagueUrl(["player_stats", "watch"])}>
 						Player Stats
-					</DropdownItem>
-					<DropdownItem href={helpers.leagueUrl(["player_ratings", "watch"])}>
+					</Dropdown.Item>
+					<Dropdown.Item href={helpers.leagueUrl(["player_ratings", "watch"])}>
 						Player Ratings
-					</DropdownItem>
-				</DropdownMenu>
-			</UncontrolledDropdown>
+					</Dropdown.Item>
+				</Dropdown.Menu>
+			</Dropdown>
 
 			<p>
 				Click the watch icon <span className="glyphicon glyphicon-flag" /> to

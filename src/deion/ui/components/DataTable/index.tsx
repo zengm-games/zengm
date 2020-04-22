@@ -384,6 +384,7 @@ class DataTable extends React.Component<Props, State> {
 						) : null}
 						<Controls
 							enableFilters={this.state.enableFilters}
+							name={this.props.name}
 							onExportCSV={this.handleExportCSV}
 							onResetTable={this.handleResetTable}
 							onSearch={this.handleSearch}

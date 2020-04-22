@@ -1,6 +1,9 @@
-switch back to react-bootstrap
-- switch some popovers to modal on small screen, like player stats popover?
-  - animate coming from the icon
+switch some popovers to modal on small screen, like player stats popover?
+- animate coming from the icon
+- row gets highlighted on icon click, but not for popover
+- click icon, resize window, click again -> wrong form factor
+
+move YWT to right
 
 player stats popover
 - stats relative to league average

@@ -1,9 +1,28 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
-import { OverlayTrigger, Popover } from "react-bootstrap";
+import React, { MouseEvent, useCallback, useState } from "react";
+import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
 import WatchBlock from "./WatchBlock";
 import { helpers, overrides, toWorker } from "../util";
+
+const Icon = ({
+	onClick,
+	watch,
+}: {
+	onClick?: (e: MouseEvent) => void;
+	watch?: boolean;
+}) => {
+	return (
+		<span
+			className={classNames("glyphicon glyphicon-stats watch", {
+				"watch-active": watch === true, // Explicit true check is for Firefox 57 and older
+			})}
+			data-no-row-highlight="true"
+			title="View ratings and stats"
+			onClick={onClick}
+		/>
+	);
+};
 
 type Props = {
 	pid: number;
@@ -48,6 +67,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 			pid,
 		});
 	}, [pid]);
+
 	const toggle = useCallback(() => {
 		if (!loadDataStarted) {
 			loadData();
@@ -55,13 +75,14 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 
 		setLoadDataStarted(true);
 	}, [loadData, loadDataStarted]);
-	const { name, ratings, stats } = player;
-	let nameBlock;
 
+	const { name, ratings, stats } = player;
+
+	let nameBlock = null;
 	if (name) {
 		// Explicit boolean check is for Firefox 57 and older
 		nameBlock = (
-			<p className="mb-2">
+			<>
 				<a href={helpers.leagueUrl(["player", pid])}>
 					<b>{name}</b>
 				</a>
@@ -69,10 +90,42 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 				{typeof watch === "boolean" ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}
-			</p>
+			</>
 		);
-	} else {
-		nameBlock = <p className="mb-2" />;
+	}
+
+	const mobile = window.screen && window.screen.width < 768;
+
+	const [showModal, setShowModal] = useState(false);
+
+	if (mobile) {
+		return (
+			<>
+				<Icon
+					watch={watch}
+					onClick={() => {
+						setShowModal(true);
+						toggle();
+					}}
+				/>
+				<Modal
+					animation={false}
+					centered
+					show={showModal}
+					onHide={() => {
+						setShowModal(false);
+					}}
+				>
+					<Modal.Header closeButton>{nameBlock}</Modal.Header>
+					<Modal.Body>
+						<overrides.components.RatingsStats
+							ratings={ratings}
+							stats={stats}
+						/>
+					</Modal.Body>
+				</Modal>
+			</>
+		);
 	}
 
 	const popover = (
@@ -85,7 +138,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 						minHeight: 225,
 					}}
 				>
-					{nameBlock}
+					<p className="mb-2">{nameBlock}</p>
 					<overrides.components.RatingsStats ratings={ratings} stats={stats} />
 				</div>
 			</Popover.Content>
@@ -100,13 +153,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 			rootClose
 			onEnter={toggle}
 		>
-			<span
-				className={classNames("glyphicon glyphicon-stats watch", {
-					"watch-active": watch === true, // Explicit true check is for Firefox 57 and older
-				})}
-				data-no-row-highlight="true"
-				title="View ratings and stats"
-			/>
+			<Icon watch={watch} />
 		</OverlayTrigger>
 	);
 };

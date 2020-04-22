@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PopoverBody, PopoverHeader } from "reactstrap";
-
-import { UncontrolledPopover } from ".";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
 const HelpPopover = ({
 	children,
@@ -22,19 +21,24 @@ const HelpPopover = ({
 	if (!className) {
 		className = "";
 	}
-
 	className += " glyphicon glyphicon-question-sign help-icon";
+
+	const popover = (
+		<Popover id={title}>
+			<Popover.Title as="h3">{title}</Popover.Title>
+			<Popover.Content>{children}}</Popover.Content>
+		</Popover>
+	);
+
 	return (
-		<UncontrolledPopover
-			id={title}
+		<OverlayTrigger
+			trigger="click"
 			placement={placement}
-			target={(props: any) => (
-				<span className={className} style={style} {...props} />
-			)}
+			overlay={popover}
+			rootClose
 		>
-			<PopoverHeader>{title}</PopoverHeader>
-			<PopoverBody>{children}</PopoverBody>
-		</UncontrolledPopover>
+			<span className={className} style={style} />
+		</OverlayTrigger>
 	);
 };
 

@@ -1,8 +1,9 @@
 switch back to react-bootstrap
+- play button
 - popovers better?
 - typescript
 - switch some popovers to modal on small screen, like player stats popover?
-- get rid of placement for popovers?
+- get rid of reactstrap dependency
 
 player stats popover
 - stats relative to league average

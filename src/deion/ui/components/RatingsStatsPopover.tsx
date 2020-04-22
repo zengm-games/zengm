@@ -1,18 +1,17 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useRef, useState } from "react";
-import { Popover, PopoverBody } from "reactstrap";
-
+import React, { useCallback, useState } from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 import WatchBlock from "./WatchBlock";
 import { helpers, overrides, toWorker } from "../util";
+
 type Props = {
 	pid: number;
 	watch?: boolean;
 };
-let count = 0;
 
 const RatingsStatsPopover = ({ pid, watch }: Props) => {
-	const [open, setOpen] = useState<boolean>(false);
 	const [loadDataStarted, setLoadDataStarted] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
 		name?: string;
@@ -32,9 +31,8 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	}>({
 		pid,
 	});
-	const countLocal = useRef(count);
-	count += 1; // Object.is to handle NaN
 
+	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
 		setLoadDataStarted(false);
 		setPlayer({
@@ -52,13 +50,12 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 		});
 	}, [pid]);
 	const toggle = useCallback(() => {
-		if (!open && !loadDataStarted) {
+		if (!loadDataStarted) {
 			loadData();
 		}
 
 		setLoadDataStarted(true);
-		setOpen(!open);
-	}, [loadData, loadDataStarted, open]);
+	}, [loadData, loadDataStarted]);
 	const { name, ratings, stats } = player;
 	let nameBlock;
 
@@ -79,41 +76,39 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 		nameBlock = <p className="mb-2" />;
 	}
 
+	const popover = (
+		<Popover id={`ratings-stats-popover-${player.pid}`}>
+			<Popover.Content>
+				<div
+					className="text-nowrap"
+					style={{
+						minWidth: 250,
+						minHeight: 225,
+					}}
+				>
+					{nameBlock}
+					<overrides.components.RatingsStats ratings={ratings} stats={stats} />
+				</div>
+			</Popover.Content>
+		</Popover>
+	);
+
 	return (
-		<>
+		<OverlayTrigger
+			trigger="click"
+			placement="right"
+			overlay={popover}
+			rootClose
+			onEnter={toggle}
+		>
 			<span
 				className={classNames("glyphicon glyphicon-stats watch", {
 					"watch-active": watch === true, // Explicit true check is for Firefox 57 and older
 				})}
-				id={`ratings-pop-${countLocal.current}`}
-				onClick={toggle}
 				data-no-row-highlight="true"
 				title="View ratings and stats"
 			/>
-			<Popover
-				placement="right"
-				isOpen={open}
-				target={`ratings-pop-${countLocal.current}`}
-				toggle={toggle}
-				trigger="legacy"
-			>
-				<PopoverBody>
-					<div
-						className="text-nowrap"
-						style={{
-							minWidth: 250,
-							minHeight: 225,
-						}}
-					>
-						{nameBlock}
-						<overrides.components.RatingsStats
-							ratings={ratings}
-							stats={stats}
-						/>
-					</div>
-				</PopoverBody>
-			</Popover>
-		</>
+		</OverlayTrigger>
 	);
 };
 

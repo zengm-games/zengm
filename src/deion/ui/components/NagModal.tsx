@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { Modal, ModalBody, ModalHeader } from "reactstrap";
+import Modal from "react-bootstrap/Modal";
 
 import { helpers } from "../util";
 type Props = {
@@ -15,14 +15,14 @@ const NagModal = ({ close, show }: Props) => {
 	// div is from public/files/ads/ads.js
 	const adBlock = !document.getElementById("sd1qBP1fFk");
 	return (
-		<Modal isOpen={show} toggle={close}>
-			<ModalHeader toggle={close}>
+		<Modal show={show} onHide={close}>
+			<Modal.Header closeButton>
 				{adBlock
 					? "Are you using an ad blocker?"
 					: `Please support ${sport} GM`}
-			</ModalHeader>
+			</Modal.Header>
 			{adBlock ? (
-				<ModalBody>
+				<Modal.Body>
 					<p>
 						Don't worry. I understand why people use ad blockers. You can close
 						this window and keep playing.
@@ -72,9 +72,9 @@ const NagModal = ({ close, show }: Props) => {
 						None of that is mandatory. Like I said at the top, you can close
 						this and keep playing!
 					</p>
-				</ModalBody>
+				</Modal.Body>
 			) : (
-				<ModalBody>
+				<Modal.Body>
 					<p>
 						{sport} GM is completely free. There will never be any{" "}
 						<a
@@ -117,7 +117,7 @@ const NagModal = ({ close, show }: Props) => {
 							Sign up for GM Gold from your account page
 						</a>
 					</div>
-				</ModalBody>
+				</Modal.Body>
 			)}
 		</Modal>
 	);

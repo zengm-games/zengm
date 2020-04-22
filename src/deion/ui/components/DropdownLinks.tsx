@@ -6,10 +6,8 @@ import {
 	DropdownItem,
 	DropdownMenu,
 	DropdownToggle,
-	Nav,
-	NavItem,
-	NavLink,
 } from "reactstrap";
+import Nav from "react-bootstrap/Nav";
 
 import { helpers } from "../util";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
@@ -172,9 +170,9 @@ const MenuItem = ({
 
 		if (root) {
 			return (
-				<NavItem>
-					<NavLink {...anchorProps}>{getText(menuItem.text)}</NavLink>
-				</NavItem>
+				<Nav.Item>
+					<Nav.Link {...anchorProps}>{getText(menuItem.text)}</Nav.Link>
+				</Nav.Item>
 			);
 		}
 

@@ -1,14 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-	Nav,
-	NavItem,
-	NavLink,
-	Navbar,
-	Popover,
-	PopoverBody,
-	PopoverHeader,
-} from "reactstrap";
+import { Popover, PopoverBody, PopoverHeader } from "reactstrap";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
@@ -50,15 +44,15 @@ const NavBar = ({ updating }: Props) => {
 	}
 
 	const userBlock = username ? (
-		<NavLink href="/account">
+		<Nav.Link href="/account">
 			<span className="glyphicon glyphicon-user" />{" "}
 			<span className="d-none d-lg-inline">{username}</span>
-		</NavLink>
+		</Nav.Link>
 	) : (
-		<NavLink href="/account/login_or_register">
+		<Nav.Link href="/account/login_or_register">
 			<span className="glyphicon glyphicon-user" />{" "}
 			<span className="d-none d-lg-inline">Login/Register</span>
-		</NavLink>
+		</Nav.Link>
 	);
 
 	// Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals	// game. This is needed because game sim happens before the results are displayed in liveGame.
@@ -90,13 +84,7 @@ const NavBar = ({ updating }: Props) => {
 		</span>
 	);
 	return (
-		<Navbar
-			color="light"
-			light
-			expand="sm"
-			fixed="top"
-			className="navbar-border"
-		>
+		<Navbar bg="light" expand="sm" fixed="top" className="navbar-border">
 			<button
 				className="navbar-toggler mr-3"
 				onClick={() => {
@@ -150,7 +138,7 @@ const NavBar = ({ updating }: Props) => {
 				<DropdownLinks godMode={godMode} lid={lid} menuItems={menuItems} />
 			</div>
 			<Nav id="top-user-block" navbar>
-				<NavItem>{userBlock}</NavItem>
+				<Nav.Item>{userBlock}</Nav.Item>
 			</Nav>
 		</Navbar>
 	);

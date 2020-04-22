@@ -18,6 +18,11 @@ const useClickable = () => {
 			return;
 		}
 
+		// This handles modals, where for some reason an event is triggered for any click on or outside the modal, even though the modal is not a child of the actual clickable element (event.currentTarget)
+		if (!event.currentTarget.contains(event.target)) {
+			return;
+		}
+
 		setClicked(prevClicked => !prevClicked);
 	}, []);
 	return {

@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { SyntheticEvent } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Dropdown } from "react-bootstrap";
 import HelpPopover from "../HelpPopover";
 
 const Controls = ({

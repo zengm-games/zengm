@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { MouseEvent, useCallback, useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
+import { Dropdown, Nav } from "react-bootstrap";
 import { helpers } from "../util";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types";
 

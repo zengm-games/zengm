@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, MouseEvent } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
-import Nav from "react-bootstrap/Nav";
+import { Dropdown, Nav } from "react-bootstrap";
 import { realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
 

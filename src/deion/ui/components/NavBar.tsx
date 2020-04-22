@@ -1,9 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
+import { Nav, Navbar, OverlayTrigger, Popover } from "react-bootstrap";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";

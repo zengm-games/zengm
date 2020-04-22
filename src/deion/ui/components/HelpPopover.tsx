@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 
 const HelpPopover = ({
 	children,

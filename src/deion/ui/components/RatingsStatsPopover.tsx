@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Popover from "react-bootstrap/Popover";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import WatchBlock from "./WatchBlock";
 import { helpers, overrides, toWorker } from "../util";
 

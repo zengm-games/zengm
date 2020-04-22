@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 /**
  * Bar plots, both stacked and normal.

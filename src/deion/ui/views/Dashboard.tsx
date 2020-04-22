@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useCallback, useState, CSSProperties } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Dropdown } from "react-bootstrap";
 
 import ago from "s-ago";
 import { DIFFICULTY } from "../../common";

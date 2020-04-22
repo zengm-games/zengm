@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
-import Dropdown from "react-bootstrap/Dropdown";
+import { Dropdown } from "react-bootstrap";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../util";

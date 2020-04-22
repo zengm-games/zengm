@@ -1,3 +1,15 @@
+nba
+- add disclaimer
+- UI for creating league?
+- modify existing rosters or bbgm code
+  - fake team names
+    - new names and logos
+  - no player pictures
+  - no player deaths
+  - salary stuff, if too many FAs next year
+- way to import team and player info
+- gui to edit rosters in spreadsheet, with different ratings/stats/gameAttributes for different seasons, and ability to export any given season
+
 player stats popover
 - stats relative to league average
 - ovr/pot graph over time

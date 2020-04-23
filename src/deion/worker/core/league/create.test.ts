@@ -6,7 +6,13 @@ import { createWithoutSaving } from "./create";
 describe("worker/core/league/create", () => {
 	let leagueData: ReturnType<typeof createWithoutSaving>;
 	beforeAll(() => {
-		leagueData = createWithoutSaving("Test", 0, {}, 2015, false, 0);
+		leagueData = createWithoutSaving(
+			"Test",
+			0,
+			{ startingSeason: 2015 },
+			false,
+			0,
+		);
 	});
 
 	test("create all necessary object stores", () => {

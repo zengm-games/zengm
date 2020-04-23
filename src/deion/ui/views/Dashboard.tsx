@@ -303,26 +303,26 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const pagination = rows.length > 100;
 
 	return (
-		<>
-			<a
-				href="/new_league/real"
-				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3"
-			>
-				New league
-				<br />
-				<span className="dashboard-top-link-small">» Real players</span>
-			</a>
+		<div className="mt-3">
 			<a
 				href="/new_league/fictional"
-				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3"
+				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
 			>
 				New league
 				<br />
 				<span className="dashboard-top-link-small">» Fictional players</span>
 			</a>
 			<a
+				href="/new_league/real"
+				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+			>
+				New league
+				<br />
+				<span className="dashboard-top-link-small">» Real players</span>
+			</a>
+			<a
 				href="/new_league"
-				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3"
+				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
 			>
 				New league
 				<br />
@@ -333,7 +333,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				href={`https://play.${
 					process.env.SPORT === "football" ? "basketball" : "football"
 				}-gm.com/`}
-				className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
+				className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3"
 				style={{
 					backgroundImage: `url("https://play.${
 						process.env.SPORT === "football" ? "basketball" : "football"
@@ -350,7 +350,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 			{rows.length > 0 ? (
 				<>
-					<div className="clearfix mb-3" />
+					<div className="clearfix" />
 
 					<DataTable
 						bordered={false}
@@ -365,7 +365,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					/>
 				</>
 			) : null}
-		</>
+		</div>
 	);
 };
 

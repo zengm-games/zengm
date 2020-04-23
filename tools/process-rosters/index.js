@@ -2,8 +2,6 @@ const fs = require("fs");
 const path = require("path");
 const input = require("./input.json");
 
-console.log(input);
-
 delete input.teams;
 delete input.verison;
 
@@ -17,6 +15,9 @@ for (const dp of input.draftPicks) {
 }
 
 fs.writeFileSync(
-	path.join(__dirname, "output.json"),
+	path.join(
+		__dirname,
+		"../../src/deion/worker/data/league-real-2020.basketball.json",
+	),
 	JSON.stringify(input, undefined, 2),
 );

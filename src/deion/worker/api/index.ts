@@ -51,6 +51,7 @@ import type {
 	TradeTeam,
 	Options,
 } from "../../common/types";
+import leagueReal2020Basketball from "../data/league-real-2020.basketball.json";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -256,7 +257,11 @@ const createLeague = async (
 
 	if (customizePlayers === "fictional") {
 		delete leagueFile.players;
-	} else if (customizePlayers === "real") {
+	} else if (
+		process.env.SPORT === "basketball" &&
+		customizePlayers === "real"
+	) {
+		leagueFile.players = leagueReal2020Basketball.players;
 	}
 
 	if (customizeTeams === "bbgm") {
@@ -265,13 +270,19 @@ const createLeague = async (
 		leagueFile.teams = helpers.getTeamsDefault(true);
 	}
 
-	if (customizeOther === "default") {
+	if (customizeOther === "default" || customizeOther === "realistic") {
 		for (const key of Object.keys(leagueFile)) {
 			if (key !== "players" && key !== "teams") {
 				delete leagueFile[key];
 			}
 		}
-	} else if (customizeOther === "realistic") {
+	}
+	if (process.env.SPORT === "basketball" && customizeOther === "realistic") {
+		for (const key of helpers.keys(leagueReal2020Basketball)) {
+			if (key !== "players") {
+				leagueFile[key] = leagueReal2020Basketball[key];
+			}
+		}
 	}
 
 	leagueFile.startingSeason = startingSeason;

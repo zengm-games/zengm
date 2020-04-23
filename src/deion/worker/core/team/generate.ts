@@ -8,13 +8,7 @@ import { helpers, overrides } from "../../util";
  * @return {Object} Team object to insert in the database.
  */
 const generate = (tm: any) => {
-	let strategy;
-
-	if (tm.hasOwnProperty("strategy")) {
-		strategy = tm.strategy;
-	} else {
-		strategy = Math.random() > 0.5 ? "contending" : "rebuilding";
-	}
+	const strategy = tm.hasOwnProperty("strategy") ? tm.strategy : "rebuilding";
 
 	const t = {
 		tid: tm.tid,

@@ -626,7 +626,6 @@ export const createWithoutSaving = (
 			player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 
 			// Keep rookie contract, or no?
-
 			if (p.contract.exp >= g.get("season")) {
 				player.setContract(p, p.contract, true);
 			} else {
@@ -637,9 +636,7 @@ export const createWithoutSaving = (
 		};
 
 		const probStillOnDraftTeam = (p: PlayerWithoutKey) => {
-			let prob = 0;
-
-			// Probability a player is still on his draft team
+			let prob = 0; // Probability a player is still on his draft team
 
 			const numYearsAgo = g.get("season") - p.draft.year;
 
@@ -671,7 +668,6 @@ export const createWithoutSaving = (
 		};
 
 		// Drafted players kept with own team, with some probability
-
 		for (let i = 0; i < numPlayerPerTeam * g.get("numTeams"); i++) {
 			const p = keptPlayers[i];
 
@@ -686,7 +682,6 @@ export const createWithoutSaving = (
 		}
 
 		// Then add other players, up to the limit
-
 		while (true) {
 			// Random order tids, so no team is a superpower
 			const tids = range(g.get("numTeams"));
@@ -718,7 +713,6 @@ export const createWithoutSaving = (
 		}
 
 		// Adjustment for hard cap - lower contracts for teams above cap
-
 		if (g.get("hardCap")) {
 			for (const tid2 of range(g.get("numTeams"))) {
 				const roster = players.filter(p => p.tid === tid2);
@@ -745,14 +739,12 @@ export const createWithoutSaving = (
 		}
 
 		// Finally, free agents
-
 		for (let i = 0; i < maxNumFreeAgents; i++) {
 			const p = keptPlayers[i];
 
 			if (p) {
-				p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;
-
 				// So half will be eligible to retire after the first season
+				p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;
 
 				player.setContract(p, player.genContract(p, false), false);
 				player.addToFreeAgents(p, g.get("phase"), baseMoods);
@@ -762,13 +754,11 @@ export const createWithoutSaving = (
 	}
 
 	// See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-
 	const baseNumPlayers = Math.round(
 		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
 	);
 
 	// 70 for basketball 2 round draft
-
 	let createUndrafted1 = baseNumPlayers;
 	let createUndrafted2 = baseNumPlayers;
 	let createUndrafted3 = baseNumPlayers;
@@ -787,7 +777,6 @@ export const createWithoutSaving = (
 	}
 
 	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
-
 	if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (
 			createUndrafted1 > 0 &&
@@ -818,6 +807,19 @@ export const createWithoutSaving = (
 				createUndrafted3,
 			);
 			players = players.concat(draftClass);
+		}
+	}
+
+	// Unless we got strategy from a league file, calculate it here
+	for (let i = 0; i < teamInfos.length; i++) {
+		// @ts-ignore
+		if (teamInfos[i].strategy === undefined) {
+			const teamPlayers = players
+				.filter(p => p.tid === i)
+				.map(p => ({ ratings: p.ratings[p.ratings.length - 1] }));
+			const ovr = overrides.core.team.ovr!(teamPlayers);
+			console.log(teamInfos[i], teams[i], teamPlayers, ovr);
+			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
 	}
 

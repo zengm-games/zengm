@@ -48,8 +48,9 @@ const updateStrategies = async () => {
 
 		for (let i = 0; i < players.length; i++) {
 			numerator += players[i].age * players[i].stats.min;
-			denominator += players[i].stats.min; // Is a young star about to get a pay raise and eat up all the cap after this season?
+			denominator += players[i].stats.min;
 
+			// Is a young star about to get a pay raise and eat up all the cap after this season?
 			if (
 				players[i].value > 65 &&
 				players[i].contract.exp === g.get("season") + 1 &&

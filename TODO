@@ -1,9 +1,7 @@
 nba
 - add disclaimer: "Basketball GM is not sponsored by or endorsed by the National Basketball Association, the National Basketball Players Association, any individual NBA players, or any of their affiliates. All league trademarks are property of their respective owners and are used under the doctrine of trademark nominative fair use."
 - UI for creating league?
-  - Create new league with real players - hide all of Customization, preload league file
-    - better idea - select "real" and "realistic", have some other signal that it should use everything from league file, not just players. and then load on worker. teams not needed, already functional through helpers.getTeamsDefaul
-  - Create new league with fictional players - hide all of Customization
+  - in worker api, create or process leagueFile based on settings, then pass to create.ts
   - fix spacing of League File URL form and message, make sure ok elsewhere
   - football?
   - what i have now doesn't really make sense. there are draft picks and league settings that get applied from nba too

@@ -89,6 +89,9 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
+	const [otherSettingsAndData, setOtherSettingsAndData] = useState<
+		"default" | "realistic" | "league-file"
+	>(props.type === "real" ? "realistic" : "default");
 	const [leagueFile, setLeagueFile] = useState<any>(null);
 	const [name, setName] = useState(props.name);
 	const [prevlid, setPrevlid] = useState(props.lid);
@@ -246,6 +249,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			if (newLeagueFile.players) {
 				setCustomizePlayers("league-file");
 			}
+
+			setOtherSettingsAndData("league-file");
 
 			// Need to update team and difficulty dropdowns?
 			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
@@ -438,8 +443,31 @@ const NewLeague = (props: View<"newLeague">) => {
 										) : null}
 									</select>
 								</div>
+								<div className="form-group">
+									<label htmlFor="new-league-customize-other">
+										Other settings and data
+									</label>
+									<p className="text-muted">
+										Depending on the league file you select, this can include
+										league settings, draft picks, the schedule, and more.
+									</p>
+									<select
+										id="new-league-customize-other"
+										className="form-control"
+										value={otherSettingsAndData}
+										onChange={event => {
+											setOtherSettingsAndData(event.target.value as any);
+										}}
+									>
+										<option value="default">Default</option>
+										<option value="realistic">Realistic</option>
+										{leagueFile ? (
+											<option value="league-file">League File</option>
+										) : null}
+									</select>
+								</div>
 								<div className="form-group mb-0">
-									<label htmlFor="new-league-customize">League File</label>
+									<label htmlFor="new-league-customize">League file</label>
 									<p className="text-muted">
 										League files can contain teams, players, settings, and other
 										data. You can create a league file by going to Tools >
@@ -460,7 +488,12 @@ const NewLeague = (props: View<"newLeague">) => {
 											setLeagueFile(null);
 											if (customizeTeams === "league-file") {
 												setCustomizeTeams("bbgm");
+											}
+											if (customizePlayers === "league-file") {
 												setCustomizePlayers("fictional");
+											}
+											if (otherSettingsAndData === "league-file") {
+												setOtherSettingsAndData("default");
 											}
 										}}
 										value={customize}

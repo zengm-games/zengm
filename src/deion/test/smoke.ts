@@ -18,7 +18,9 @@ describe("Smoke Tests", () => {
 			{
 				name: "Test",
 				tid: 0,
-				startingSeason: 2016,
+				leagueFile: {
+					startingSeason: 2016,
+				},
 			},
 			{},
 		);

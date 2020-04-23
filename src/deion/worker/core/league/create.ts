@@ -54,6 +54,7 @@ const confirmSequential = (objs: any, key: string, objectName: string) => {
 type LeagueFile = {
 	version?: number;
 	meta?: any;
+	startingSeason: number;
 	draftLotteryResults?: any[];
 	draftPicks?: any[];
 	draftOrder?: any[];
@@ -78,7 +79,6 @@ export const createWithoutSaving = (
 	leagueName: string,
 	tid: number,
 	leagueFile: LeagueFile,
-	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
 ) => {
@@ -137,6 +137,8 @@ export const createWithoutSaving = (
 	if (userTid === -1 || userTid >= teamInfos.length) {
 		userTid = random.randInt(0, teamInfos.length - 1);
 	}
+
+	const startingSeason = leagueFile.startingSeason;
 
 	const gameAttributes: GameAttributesLeague = {
 		...defaultGameAttributes,
@@ -842,16 +844,14 @@ const create = async (
 	{
 		name,
 		tid,
-		leagueFile = {},
-		startingSeason,
+		leagueFile,
 		randomizeRosters = false,
 		difficulty = 0,
 		importLid,
 	}: {
 		name: string;
 		tid: number;
-		leagueFile?: LeagueFile;
-		startingSeason: number;
+		leagueFile: LeagueFile;
 		randomizeRosters?: boolean;
 		difficulty?: number;
 		importLid?: number | undefined | null;
@@ -863,7 +863,6 @@ const create = async (
 		name,
 		tid,
 		leagueFile,
-		startingSeason,
 		randomizeRosters,
 		difficulty,
 	);

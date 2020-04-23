@@ -274,12 +274,13 @@ const createLeague = async (
 	} else if (customizeOther === "realistic") {
 	}
 
+	leagueFile.startingSeason = startingSeason;
+
 	return league.create(
 		{
 			name,
 			tid,
 			leagueFile,
-			startingSeason,
 			randomizeRosters,
 			difficulty,
 			importLid,

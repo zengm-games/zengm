@@ -13,22 +13,16 @@ const randomTeam = {
 	popRank: Infinity,
 };
 
-const defaultTeams: {
+const teamsBBGM: {
 	tid: number;
 	region: string;
 	name: string;
 	pop?: number;
 	popRank: number;
 }[] = helpers.getTeamsDefault();
-defaultTeams.unshift(randomTeam);
+teamsBBGM.unshift(randomTeam);
 
-const PopText = ({
-	teams,
-	tid,
-}: {
-	teams: typeof defaultTeams;
-	tid: number;
-}) => {
+const PopText = ({ teams, tid }: { teams: typeof teamsBBGM; tid: number }) => {
 	if (tid >= 0) {
 		const t = teams.find(t2 => t2.tid === tid);
 		if (t) {
@@ -77,9 +71,15 @@ PopText.propTypes = {
 
 const NewLeague = (props: View<"newLeague">) => {
 	const [creating, setCreating] = useState(false);
-	const [customize, setCustomize] = useState(
-		props.lid !== undefined ? "custom-rosters" : "random",
-	);
+	const [customize, setCustomize] = useState<
+		"custom-rosters" | "custom-url" | "none"
+	>(props.lid !== undefined ? "custom-rosters" : "none");
+	const [customizePlayers, setCustomizePlayers] = useState<
+		"fictional" | "real" | "league-file"
+	>("fictional");
+	const [customizeTeams, setCustomizeTeams] = useState<
+		"bbgm" | "realistic" | "league-file"
+	>("bbgm");
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
@@ -87,11 +87,11 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [name, setName] = useState(props.name);
 	const [prevlid, setPrevlid] = useState(props.lid);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
-	const [teams, setTeams] = useState(defaultTeams);
+	const [teams, setTeams] = useState(teamsBBGM);
 	const [tid, setTid] = useState(props.lastSelectedTid);
 
 	if (props.lid === undefined && prevlid !== undefined) {
-		setCustomize("random");
+		setCustomize("none");
 		setDifficulty(DIFFICULTY.Normal);
 		setName(props.name);
 		setPrevlid(undefined);
@@ -219,6 +219,11 @@ const NewLeague = (props: View<"newLeague">) => {
 				newTeams.unshift(randomTeam);
 
 				setTeams(newTeams);
+				setCustomizeTeams("league-file");
+			}
+
+			if (newLeagueFile.players) {
+				setCustomizePlayers("league-file");
 			}
 
 			// Need to update team and difficulty dropdowns?
@@ -264,9 +269,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				</div>
 			) : null}
 
-			<form onSubmit={handleSubmit}>
-				<div className="row">
-					<div className="form-group col-md-3 col-sm-6">
+			<form onSubmit={handleSubmit} className="d-flex">
+				<div style={{ maxWidth: 400 }}>
+					<div className="form-group">
 						<label htmlFor="new-league-name">League name</label>
 						<input
 							id="new-league-name"
@@ -279,7 +284,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						/>
 					</div>
 
-					<div className="form-group col-md-3 col-sm-6">
+					<div className="form-group">
 						<label htmlFor="new-league-team">Pick your team</label>
 						<select
 							id="new-league-team"
@@ -300,7 +305,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						<PopText tid={tid} teams={teams} />
 					</div>
 
-					<div className="form-group col-md-3 col-sm-6">
+					<div className="form-group">
 						<label htmlFor="new-league-difficulty">Difficulty</label>
 						<select
 							id="new-league-difficulty"
@@ -326,75 +331,123 @@ const NewLeague = (props: View<"newLeague">) => {
 						</span>
 					</div>
 
-					<div className="col-md-3 col-sm-6">
+					{customizePlayers !== "fictional" ? (
 						<div className="form-group">
-							<label htmlFor="new-league-customize">Customize</label>
-							<select
-								id="new-league-customize"
-								className="form-control mb-1"
-								onChange={event => {
-									setCustomize(event.target.value);
-									setTeams(defaultTeams);
-									setLeagueFile(null);
-								}}
-								value={customize}
-							>
-								{props.lid === undefined ? (
-									<option value="random">Random Players</option>
-								) : null}
-								<option value="custom-rosters">Upload League File</option>
-								<option value="custom-url">Enter League File URL</option>
-							</select>
-							<span className="text-muted">
-								Teams in your new league can either be filled by
-								randomly-generated players or by players from a{" "}
-								<a
-									href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
-								>
-									custom League File
-								</a>{" "}
-								you upload.
-							</span>
+							<label>Options</label>
+
+							<div className="form-check">
+								<label className="form-check-label">
+									<input
+										className="form-check-input"
+										onChange={event => {
+											setRandomizeRosters(event.target.checked);
+										}}
+										type="checkbox"
+										checked={randomizeRosters}
+									/>
+									Shuffle rosters
+								</label>
+							</div>
 						</div>
-						{customize === "custom-rosters" || customize === "custom-url" ? (
-							<>
-								<LeagueFileUpload
-									onLoading={() => {
-										setLeagueFile(null);
-									}}
-									onDone={handleNewLeagueFile}
-									enterURL={customize === "custom-url"}
-								/>
-								<div className="form-check mt-3">
-									<label className="form-check-label">
-										<input
-											className="form-check-input"
-											onChange={event => {
-												setRandomizeRosters(event.target.checked);
-											}}
-											type="checkbox"
-											checked={randomizeRosters}
-										/>
-										Shuffle Rosters
-									</label>
-								</div>
-							</>
-						) : null}
+					) : null}
+
+					<div className="text-center">
+						<button
+							type="submit"
+							className="btn btn-lg btn-primary mt-3"
+							disabled={
+								creating ||
+								((customize === "custom-rosters" ||
+									customize === "custom-url") &&
+									leagueFile === null)
+							}
+						>
+							{title}
+						</button>
 					</div>
 				</div>
 
-				<div className="text-center">
-					<button
-						type="submit"
-						className="btn btn-lg btn-primary mt-3"
-						disabled={
-							creating ||
-							((customize === "custom-rosters" || customize === "custom-url") &&
-								leagueFile === null)
-						}
-					>
-						{title}
-					</button>
+				<div style={{ maxWidth: 400 }} className="ml-3 ml-md-5">
+					<div className="card bg-light">
+						<div className="card-body">
+							<h2 className="card-title">Customize</h2>
+							<div className="form-group">
+								<label htmlFor="new-league-teams">Teams</label>
+								<select
+									className="form-control"
+									value={customizeTeams}
+									onChange={event => {
+										setCustomizeTeams(event.target.value as any);
+									}}
+								>
+									<option value="bbgm">BBGM</option>
+									<option value="realistic">Realistic</option>
+									{leagueFile && leagueFile.players ? (
+										<option value="league-file">League File</option>
+									) : null}
+								</select>
+							</div>
+							<div className="form-group">
+								<label htmlFor="new-league-players">Players</label>
+								<select
+									className="form-control"
+									value={customizePlayers}
+									onChange={event => {
+										setCustomizePlayers(event.target.value as any);
+									}}
+								>
+									<option value="fictional">Fictional</option>
+									<option value="real">Real</option>
+									{leagueFile && leagueFile.players ? (
+										<option value="league-file">League File</option>
+									) : null}
+								</select>
+							</div>
+							<div className="form-group mb-0">
+								<label htmlFor="new-league-customize">League File</label>
+								<p className="text-muted">
+									League files can contain teams, players, and anything else in
+									a league. You can create a league file by going to Tools >
+									Export within a league, or by{" "}
+									<a
+										href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+									>
+										creating a custom league file
+									</a>
+									.
+								</p>
+								<select
+									id="new-league-customize"
+									className="form-control"
+									onChange={event => {
+										setCustomize(event.target.value as any);
+										setTeams(teamsBBGM);
+										setLeagueFile(null);
+										if (customizeTeams === "league-file") {
+											setCustomizeTeams("bbgm");
+											setCustomizePlayers("fictional");
+										}
+									}}
+									value={customize}
+								>
+									<option value="none">None</option>
+									<option value="custom-rosters">Upload League File</option>
+									<option value="custom-url">Enter League File URL</option>
+								</select>
+							</div>
+							{customize === "custom-rosters" || customize === "custom-url" ? (
+								<div className="mt-3">
+									<LeagueFileUpload
+										onLoading={() => {
+											setLeagueFile(null);
+										}}
+										onDone={handleNewLeagueFile}
+										enterURL={customize === "custom-url"}
+									/>
+								</div>
+							) : null}
+						</div>
+					</div>
 				</div>
 			</form>
 		</>

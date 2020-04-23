@@ -167,19 +167,19 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 			pop: 1.5,
 			colors: ["#8f2100", "#ffb500", "#d4731c"],
 		},
+		LAC: {
+			region: "Los Angeles",
+			name: "Churros",
+			abbrev: "LAC",
+			pop: 12.1,
+			colors: ["#4a2b14", "#30d9ff", "#704723"],
+		},
 		LA: {
 			region: "Los Angeles",
 			name: "Earthquakes",
 			abbrev: "LA",
 			pop: 12.1,
 			colors: ["#6b6b6b", "#f15d24", "#dedddd"],
-		},
-		LA2: {
-			region: "Los Angeles",
-			name: "???",
-			abbrev: "LA2",
-			pop: 12.1,
-			colors: ["#000000", "#cccccc", "#ffffff"],
 		},
 		LV: {
 			region: "Las Vegas",
@@ -472,7 +472,7 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					cid: 1,
 					did: 5,
 					imgURL: undefined,
-					...teamInfos.LA,
+					...teamInfos.LAC,
 				},
 
 				{
@@ -480,7 +480,7 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					cid: 1,
 					did: 5,
 					imgURL: undefined,
-					...teamInfos.LA2,
+					...teamInfos.LA,
 				},
 
 				{

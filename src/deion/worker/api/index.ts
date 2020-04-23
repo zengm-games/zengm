@@ -261,7 +261,7 @@ const createLeague = async (
 		process.env.SPORT === "basketball" &&
 		customizePlayers === "real"
 	) {
-		leagueFile.players = leagueReal2020Basketball.players;
+		leagueFile.players = helpers.deepCopy(leagueReal2020Basketball.players);
 	}
 
 	if (customizeTeams === "default") {
@@ -280,7 +280,7 @@ const createLeague = async (
 	if (process.env.SPORT === "basketball" && customizeOther === "realistic") {
 		for (const key of helpers.keys(leagueReal2020Basketball)) {
 			if (key !== "players") {
-				leagueFile[key] = leagueReal2020Basketball[key];
+				leagueFile[key] = helpers.deepCopy(leagueReal2020Basketball[key]);
 			}
 		}
 	}

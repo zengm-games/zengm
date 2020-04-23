@@ -263,8 +263,22 @@ const negotiationList = () => {
 };
 
 const newLeague = (params: Params) => {
+	let type: "custom" | "fictional" | "real" = "custom";
+	let lid;
+	if (params.x === "fictional") {
+		type = "fictional";
+	} else if (params.x === "real") {
+		type = "real";
+	} else if (params.x !== undefined) {
+		lid = parseInt(params.x, 10);
+		if (Number.isNaN(lid)) {
+			lid = undefined;
+		}
+	}
+
 	return {
-		lid: params.lid !== undefined ? parseInt(params.lid, 10) : undefined,
+		lid,
+		type,
 	};
 };
 

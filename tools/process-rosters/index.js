@@ -7,10 +7,7 @@ for (const p of input.players) {
 	p.real = true;
 }
 
-for (const t of input.teams) {
-	delete t.colors;
-	// fix names and logos
-}
+delete input.teams;
 
 for (const dp of input.draftPicks) {
 	delete dp.dpid;

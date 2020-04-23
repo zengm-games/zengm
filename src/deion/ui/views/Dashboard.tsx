@@ -299,7 +299,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			],
 		};
 	});
+
 	const pagination = rows.length > 100;
+
 	return (
 		<>
 			<a

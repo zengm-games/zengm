@@ -2,6 +2,7 @@ nba
 - add disclaimer: "Basketball GM is not sponsored by or endorsed by the National Basketball Association, the National Basketball Players Association, any individual NBA players, or any of their affiliates. All league trademarks are property of their respective owners and are used under the doctrine of trademark nominative fair use."
 - UI for creating league?
   - Create new league with real players - hide all of Customization, preload league file
+    - better idea - select "real" and "realistic", have some other signal that it should use everything from league file, not just players. and then load on worker. teams not needed, already functional through helpers.getTeamsDefaul
   - Create new league with fictional players - hide all of Customization
   - fix spacing of League File URL form and message, make sure ok elsewhere
   - football?
@@ -24,6 +25,7 @@ nba
 - LA abbrevs
 - logos for new teams
   - emailed
+- add GA tracking of league type
 - eventually
   - when you load a league file, it lets you pick if you want to use the players or teams from it. should also allow other things to be selected or not
 

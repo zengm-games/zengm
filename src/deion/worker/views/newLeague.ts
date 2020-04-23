@@ -1,7 +1,7 @@
 import { idb } from "../db";
 import type { ViewInput } from "../../common/types";
 
-const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
+const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	if (lid !== undefined) {
 		// Importing!
 		const l = await idb.meta.get("leagues", lid);
@@ -41,6 +41,7 @@ const updateNewLeague = async ({ lid }: ViewInput<"newLeague">) => {
 		difficulty: undefined,
 		name: `League ${newLid}`,
 		lastSelectedTid,
+		type,
 	};
 };
 

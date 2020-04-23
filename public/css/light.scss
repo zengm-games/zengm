@@ -170,18 +170,22 @@ a.god-mode,
 	margin-top: 0.5em;
 	padding: 5px 8px 6px;
 	text-align: left;
-	width: 151px;
-	height: 94px;
+	width: 155px;
+	height: 77px;
 }
 
 .dashboard-top-link-new {
-	font-size: 24px;
-	padding-top: 14px;
+	font-size: 20px;
+	padding-top: 11px;
+}
+
+.dashboard-top-link-small {
+	font-size: 16px;
 }
 
 .dashboard-top-link-other {
 	color: $gray-800;
-	font-size: 13px;
+	font-size: 15px;
 
 	&:hover {
 		color: $black;

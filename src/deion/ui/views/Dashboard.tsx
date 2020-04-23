@@ -303,60 +303,52 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	return (
 		<>
 			<a
+				href="/new_league/real"
+				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3"
+			>
+				New league
+				<br />
+				<span className="dashboard-top-link-small">» Real players</span>
+			</a>
+			<a
+				href="/new_league/fictional"
+				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3"
+			>
+				New league
+				<br />
+				<span className="dashboard-top-link-small">» Fictional players</span>
+			</a>
+			<a
 				href="/new_league"
 				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3"
-				style={{
-					height: 94,
-				}}
 			>
-				Create new
+				New league
 				<br />
-				league
+				<span className="dashboard-top-link-small">» Custom</span>
 			</a>
-			<div
-				className="btn-group-vertical dashboard-top-link"
+
+			<a
+				href={`https://play.${
+					process.env.SPORT === "football" ? "basketball" : "football"
+				}-gm.com/`}
+				className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
 				style={{
-					height: 94,
+					backgroundImage: `url("https://play.${
+						process.env.SPORT === "football" ? "basketball" : "football"
+					}-gm.com/ico/icon70.png")`,
+					backgroundRepeat: "no-repeat",
+					backgroundPosition:
+						process.env.SPORT === "football" ? "100px 41px" : "81px 34px",
 				}}
 			>
-				<a
-					href={`https://play.${
-						process.env.SPORT === "football" ? "basketball" : "football"
-					}-gm.com/`}
-					className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
-					style={{
-						backgroundImage: `url("https://play.${
-							process.env.SPORT === "football" ? "basketball" : "football"
-						}-gm.com/ico/icon70.png")`,
-						backgroundRepeat: "no-repeat",
-						backgroundPosition:
-							process.env.SPORT === "football" ? "115px 27px" : "100px 25px",
-						backgroundSize: 35,
-						width: 151,
-					}}
-				>
-					{process.env.SPORT === "football"
-						? "Try our other game, Basketball GM"
-						: "Try our other game, Football GM"}
-				</a>
-				<a
-					href="http://zengm.com/"
-					className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other"
-					style={{
-						width: 151,
-					}}
-				>
-					Play even more sports at Zen GM
-				</a>
-			</div>
+				{process.env.SPORT === "football"
+					? "Try our other game, Basketball GM!"
+					: "Try our other game, Football GM!"}
+			</a>
 
 			{rows.length > 0 ? (
 				<>
-					<div
-						className={classNames("clearfix mb-3", {
-							"mb-sm-0": !pagination,
-						})}
-					/>
+					<div className="clearfix mb-3" />
 
 					<DataTable
 						bordered={false}

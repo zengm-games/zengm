@@ -177,6 +177,8 @@ const NewLeague = (props: View<"newLeague">) => {
 		},
 		[
 			customize,
+			customizePlayers,
+			customizeTeams,
 			difficulty,
 			leagueFile,
 			name,
@@ -380,8 +382,9 @@ const NewLeague = (props: View<"newLeague">) => {
 						<div className="card-body">
 							<h2 className="card-title">Customize</h2>
 							<div className="form-group">
-								<label htmlFor="new-league-teams">Teams</label>
+								<label htmlFor="new-league-customize-teams">Teams</label>
 								<select
+									id="new-league-customize-teams"
 									className="form-control"
 									value={customizeTeams}
 									onChange={event => {
@@ -399,14 +402,15 @@ const NewLeague = (props: View<"newLeague">) => {
 									{process.env.SPORT === "basketball" ? (
 										<option value="realistic">Realistic</option>
 									) : null}
-									{leagueFile && leagueFile.players ? (
+									{leagueFile && leagueFile.teams ? (
 										<option value="league-file">League File</option>
 									) : null}
 								</select>
 							</div>
 							<div className="form-group">
-								<label htmlFor="new-league-players">Players</label>
+								<label htmlFor="new-league-customize-players">Players</label>
 								<select
+									id="new-league-customize-players"
 									className="form-control"
 									value={customizePlayers}
 									onChange={event => {
@@ -425,9 +429,9 @@ const NewLeague = (props: View<"newLeague">) => {
 							<div className="form-group mb-0">
 								<label htmlFor="new-league-customize">League File</label>
 								<p className="text-muted">
-									League files can contain teams, players, and anything else in
-									a league. You can create a league file by going to Tools >
-									Export within a league, or by{" "}
+									League files can contain teams, players, settings, and other
+									data. You can create a league file by going to Tools > Export
+									within a league, or by{" "}
 									<a
 										href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
 									>

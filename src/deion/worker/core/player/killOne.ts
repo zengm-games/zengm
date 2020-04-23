@@ -79,7 +79,7 @@ const killOne = async (conditions: Conditions) => {
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 	// Pick a random player on that team
-	const p = random.choice(players);
+	const p = random.choice(players.filter(p => !p.real));
 	retire(p, conditions, false);
 
 	p.diedYear = g.get("season");

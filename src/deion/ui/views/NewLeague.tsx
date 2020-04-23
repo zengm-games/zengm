@@ -121,11 +121,11 @@ const NewLeague = (props: View<"newLeague">) => {
 	if (props.lid !== undefined) {
 		title = "Import League";
 	} else if (props.type === "custom") {
-		title = "New League - Custom";
+		title = "New Custom League";
 	} else if (props.type === "fictional") {
-		title = "New League - Fictional Players";
+		title = "New Fictional Players League";
 	} else {
-		title = "New League - Real Players";
+		title = "New Real Players League";
 	}
 
 	const handleSubmit = useCallback(
@@ -527,8 +527,12 @@ const NewLeague = (props: View<"newLeague">) => {
 											) : null}
 										</select>
 										<p className="text-muted mt-1">
-											Depending on the league file you select, this can include
-											league settings, draft picks, the schedule, and more.
+											{customizeOther === "realistic"
+												? "This will apply salary cap rules and traded draft picks to match realistic teams and real players."
+												: null}
+											{customizeOther === "league-file"
+												? "Depending on the contents of your league file, this can include league settings, draft picks, the schedule, and more."
+												: null}
 										</p>
 									</div>
 								) : null}

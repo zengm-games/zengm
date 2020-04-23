@@ -598,6 +598,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	pos?: string; // Only in players from custom league files
 	ptModifier: number;
 	ratings: PlayerRatings[];
+	real?: boolean;
 	relatives: Relative[];
 	retiredYear: number;
 	rosterOrder: number;

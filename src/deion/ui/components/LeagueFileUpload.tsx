@@ -246,7 +246,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 					<div className="col">
 						<input
 							type="text"
-							className="form-control mb-2 mr-2"
+							className="form-control mr-2"
 							placeholder="URL"
 							value={url}
 							onChange={event => {
@@ -256,7 +256,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 					</div>
 					<div className="col-auto">
 						<button
-							className="btn btn-secondary mb-2"
+							className="btn btn-secondary"
 							onClick={handleFileURL}
 							disabled={
 								disabled ||

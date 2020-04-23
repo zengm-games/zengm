@@ -246,7 +246,7 @@ const createLeague = async (
 	randomizeRosters: boolean,
 	difficulty: number,
 	customizePlayers: "fictional" | "real" | "league-file",
-	customizeTeams: "bbgm" | "realistic" | "league-file",
+	customizeTeams: "default" | "realistic" | "league-file",
 	customizeOther: "default" | "realistic" | "league-file",
 	importLid: number | undefined | null,
 	conditions: Conditions,
@@ -264,7 +264,7 @@ const createLeague = async (
 		leagueFile.players = leagueReal2020Basketball.players;
 	}
 
-	if (customizeTeams === "bbgm") {
+	if (customizeTeams === "default") {
 		delete leagueFile.teams;
 	} else if (customizeTeams === "realistic") {
 		leagueFile.teams = helpers.getTeamsDefault(true);

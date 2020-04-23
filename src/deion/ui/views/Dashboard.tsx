@@ -304,30 +304,45 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	return (
 		<div className="mt-3">
-			<a
-				href="/new_league/fictional"
-				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-			>
-				New league
-				<br />
-				<span className="dashboard-top-link-small">» Fictional players</span>
-			</a>
-			<a
-				href="/new_league/real"
-				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
-			>
-				New league
-				<br />
-				<span className="dashboard-top-link-small">» Real players</span>
-			</a>
-			<a
-				href="/new_league"
-				className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-			>
-				New league
-				<br />
-				<span className="dashboard-top-link-small">» Custom</span>
-			</a>
+			{process.env.SPORT === "basketball" ? (
+				<>
+					<a
+						href="/new_league/fictional"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+					>
+						New league
+						<br />
+						<span className="dashboard-top-link-small">
+							» Fictional players
+						</span>
+					</a>
+					<a
+						href="/new_league/real"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+					>
+						New league
+						<br />
+						<span className="dashboard-top-link-small">» Real players</span>
+					</a>
+					<a
+						href="/new_league"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+					>
+						New league
+						<br />
+						<span className="dashboard-top-link-small">» Custom</span>
+					</a>
+				</>
+			) : (
+				<a
+					href="/new_league"
+					className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+				>
+					Create new
+					<br />
+					league
+				</a>
+			)}
 
 			<a
 				href={`https://play.${

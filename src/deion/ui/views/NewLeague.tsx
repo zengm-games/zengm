@@ -84,8 +84,8 @@ const NewLeague = (props: View<"newLeague">) => {
 		"fictional" | "real" | "league-file"
 	>(props.type === "real" ? "real" : "fictional");
 	const [customizeTeams, setCustomizeTeams] = useState<
-		"bbgm" | "realistic" | "league-file"
-	>(props.type === "real" ? "realistic" : "bbgm");
+		"default" | "realistic" | "league-file"
+	>(props.type === "real" ? "realistic" : "default");
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
@@ -403,89 +403,10 @@ const NewLeague = (props: View<"newLeague">) => {
 				{props.type === "custom" ? (
 					<div style={{ maxWidth: 400 }} className="ml-3 ml-md-5">
 						<div className="card bg-light">
-							<div className="card-body">
+							<div className="card-body" style={{ marginBottom: "-1rem" }}>
 								<h2 className="card-title">Customize</h2>
 								<div className="form-group">
-									<label htmlFor="new-league-customize-teams">Teams</label>
-									<select
-										id="new-league-customize-teams"
-										className="form-control"
-										value={customizeTeams}
-										onChange={event => {
-											setCustomizeTeams(event.target.value as any);
-											if (event.target.value === "bbgm") {
-												setTeams(teamsBBGM);
-											} else if (event.target.value === "realistic") {
-												setTeams(teamsRealistic);
-											}
-										}}
-									>
-										<option value="bbgm">
-											{process.env.SPORT === "basketball" ? "BBGM" : "FBGM"}
-										</option>
-										{process.env.SPORT === "basketball" ? (
-											<option value="realistic">Realistic</option>
-										) : null}
-										{leagueFile && leagueFile.teams ? (
-											<option value="league-file">League File</option>
-										) : null}
-									</select>
-								</div>
-								<div className="form-group">
-									<label htmlFor="new-league-customize-players">Players</label>
-									<select
-										id="new-league-customize-players"
-										className="form-control"
-										value={customizePlayers}
-										onChange={event => {
-											setCustomizePlayers(event.target.value as any);
-										}}
-									>
-										<option value="fictional">Fictional</option>
-										{process.env.SPORT === "basketball" ? (
-											<option value="real">Real</option>
-										) : null}
-										{leagueFile && leagueFile.players ? (
-											<option value="league-file">League File</option>
-										) : null}
-									</select>
-								</div>
-								<div className="form-group">
-									<label htmlFor="new-league-customize-other">
-										Other settings and data
-									</label>
-									<p className="text-muted">
-										Depending on the league file you select, this can include
-										league settings, draft picks, the schedule, and more.
-									</p>
-									<select
-										id="new-league-customize-other"
-										className="form-control"
-										value={customizeOther}
-										onChange={event => {
-											setCustomizeOther(event.target.value as any);
-										}}
-									>
-										<option value="default">Default</option>
-										<option value="realistic">Realistic</option>
-										{leagueFile ? (
-											<option value="league-file">League File</option>
-										) : null}
-									</select>
-								</div>
-								<div className="form-group mb-0">
 									<label htmlFor="new-league-customize">League file</label>
-									<p className="text-muted">
-										League files can contain teams, players, settings, and other
-										data. You can create a league file by going to Tools >
-										Export within a league, or by{" "}
-										<a
-											href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
-										>
-											creating a custom league file
-										</a>
-										.
-									</p>
 									<select
 										id="new-league-customize"
 										className="form-control"
@@ -494,7 +415,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											setTeams(teamsBBGM);
 											setLeagueFile(null);
 											if (customizeTeams === "league-file") {
-												setCustomizeTeams("bbgm");
+												setCustomizeTeams("default");
 											}
 											if (customizePlayers === "league-file") {
 												setCustomizePlayers("fictional");
@@ -509,10 +430,21 @@ const NewLeague = (props: View<"newLeague">) => {
 										<option value="custom-rosters">Upload League File</option>
 										<option value="custom-url">Enter League File URL</option>
 									</select>
+									<p className="text-muted mt-1">
+										League files can contain teams, players, settings, and other
+										data. You can create a league file by going to Tools >
+										Export within a league, or by{" "}
+										<a
+											href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+										>
+											creating a custom league file
+										</a>
+										.
+									</p>
 								</div>
 								{customize === "custom-rosters" ||
 								customize === "custom-url" ? (
-									<div className="mt-3">
+									<div className="my-3">
 										<LeagueFileUpload
 											onLoading={() => {
 												setLeagueFile(null);
@@ -520,6 +452,84 @@ const NewLeague = (props: View<"newLeague">) => {
 											onDone={handleNewLeagueFile}
 											enterURL={customize === "custom-url"}
 										/>
+									</div>
+								) : null}
+								{process.env.SPORT === "basketball" ||
+								(leagueFile && leagueFile.teams) ? (
+									<div className="form-group">
+										<label htmlFor="new-league-customize-teams">Teams</label>
+										<select
+											id="new-league-customize-teams"
+											className="form-control"
+											value={customizeTeams}
+											onChange={event => {
+												setCustomizeTeams(event.target.value as any);
+												if (event.target.value === "default") {
+													setTeams(teamsBBGM);
+												} else if (event.target.value === "realistic") {
+													setTeams(teamsRealistic);
+												}
+											}}
+										>
+											<option value="default">Default</option>
+											{process.env.SPORT === "basketball" ? (
+												<option value="realistic">Realistic</option>
+											) : null}
+											{leagueFile && leagueFile.teams ? (
+												<option value="league-file">League File</option>
+											) : null}
+										</select>
+									</div>
+								) : null}
+								{process.env.SPORT === "basketball" ||
+								(leagueFile && leagueFile.players) ? (
+									<div className="form-group">
+										<label htmlFor="new-league-customize-players">
+											Players
+										</label>
+										<select
+											id="new-league-customize-players"
+											className="form-control"
+											value={customizePlayers}
+											onChange={event => {
+												setCustomizePlayers(event.target.value as any);
+											}}
+										>
+											<option value="fictional">Fictional</option>
+											{process.env.SPORT === "basketball" ? (
+												<option value="real">Real</option>
+											) : null}
+											{leagueFile && leagueFile.players ? (
+												<option value="league-file">League File</option>
+											) : null}
+										</select>
+									</div>
+								) : null}
+								{process.env.SPORT === "basketball" || leagueFile ? (
+									<div className="form-group">
+										<label htmlFor="new-league-customize-other">
+											Other settings and data
+										</label>
+										<select
+											id="new-league-customize-other"
+											className="form-control"
+											value={customizeOther}
+											onChange={event => {
+												setCustomizeOther(event.target.value as any);
+											}}
+										>
+											<option value="default">Default</option>
+											{process.env.SPORT === "basketball" ? (
+												<option value="realistic">Realistic</option>
+											) : null}
+											{leagueFile ? (
+												<option value="league-file">League File</option>
+											) : null}
+										</select>
+										<p className="text-muted mt-1">
+											Depending on the league file you select, this can include
+											league settings, draft picks, the schedule, and more.
+										</p>
 									</div>
 								) : null}
 							</div>

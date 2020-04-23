@@ -59,7 +59,7 @@ const gameScore = (arg: { [key: string]: number }): number => {
 	);
 };
 
-function getTeamsDefault(): TeamBasic[] {
+function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 	const teamInfos: {
 		[key: string]: {
 			region: string;
@@ -89,6 +89,20 @@ function getTeamsDefault(): TeamBasic[] {
 			abbrev: "BOS",
 			pop: 4.2,
 			colors: ["#0d435e", "#f0494a", "#cccccc"],
+		},
+		BKN: {
+			region: "Brooklyn",
+			name: "???",
+			abbrev: "BKN",
+			pop: 19.1,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
+		CHA: {
+			region: "Charlotte",
+			name: "???",
+			abbrev: "CHA",
+			pop: 2.5,
+			colors: ["#000000", "#cccccc", "#ffffff"],
 		},
 		CHI: {
 			region: "Chicago",
@@ -139,6 +153,13 @@ function getTeamsDefault(): TeamBasic[] {
 			pop: 4.9,
 			colors: ["#4c91c2", "#c4c4c3", "#ffffff"],
 		},
+		IND: {
+			region: "Indianapolis",
+			name: "???",
+			abbrev: "IND",
+			pop: 2,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
 		KC: {
 			region: "Kansas City",
 			name: "Sauce",
@@ -153,6 +174,13 @@ function getTeamsDefault(): TeamBasic[] {
 			pop: 12.1,
 			colors: ["#6b6b6b", "#f15d24", "#dedddd"],
 		},
+		LA2: {
+			region: "Los Angeles",
+			name: "???",
+			abbrev: "LA2",
+			pop: 12.1,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
 		LV: {
 			region: "Las Vegas",
 			name: "Blue Chips",
@@ -160,12 +188,26 @@ function getTeamsDefault(): TeamBasic[] {
 			pop: 1.9,
 			colors: ["#1c73bb", "#ffd600", "#0c5983"],
 		},
+		MEM: {
+			region: "Memphis",
+			name: "???",
+			abbrev: "MEM",
+			pop: 1.3,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
 		MIA: {
 			region: "Miami",
 			name: "Cyclones",
 			abbrev: "MIA",
 			pop: 5.5,
 			colors: ["#d8519d", "#4ac1c0", "#f15949"],
+		},
+		MIL: {
+			region: "Milwaukee",
+			name: "???",
+			abbrev: "MIL",
+			pop: 1.6,
+			colors: ["#000000", "#cccccc", "#ffffff"],
 		},
 		MIN: {
 			region: "Minneapolis",
@@ -188,12 +230,33 @@ function getTeamsDefault(): TeamBasic[] {
 			pop: 19.4,
 			colors: ["#1a9190", "#510f0f", "#eb5924"],
 		},
+		NOL: {
+			region: "New Orleans",
+			name: "???",
+			abbrev: "NOL",
+			pop: 1.3,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
 		NYC: {
 			region: "New York",
 			name: "Bankers",
 			abbrev: "NYC",
 			pop: 18.4,
 			colors: ["#1e73ba", "#ff8500", "#ffffff"],
+		},
+		OKC: {
+			region: "Oklahoma City",
+			name: "???",
+			abbrev: "OKC",
+			pop: 1.4,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
+		ORL: {
+			region: "Orlando",
+			name: "???",
+			abbrev: "ORL",
+			pop: 2.4,
+			colors: ["#000000", "#cccccc", "#ffffff"],
 		},
 		PHI: {
 			region: "Philadelphia",
@@ -279,6 +342,13 @@ function getTeamsDefault(): TeamBasic[] {
 			pop: 2.4,
 			colors: ["#eb851e", "#17cc21", "#023a02"],
 		},
+		UTA: {
+			region: "Utah",
+			name: "???",
+			abbrev: "UTA",
+			pop: 1.2,
+			colors: ["#000000", "#cccccc", "#ffffff"],
+		},
 		VAN: {
 			region: "Vancouver",
 			name: "Whalers",
@@ -297,218 +367,452 @@ function getTeamsDefault(): TeamBasic[] {
 
 	let teams: Omit<TeamBasic, "popRank">[];
 	if (process.env.SPORT === "basketball") {
-		teams = [
-			{
-				tid: 0,
-				cid: 0,
-				did: 2,
-				imgURL: undefined,
-				...teamInfos.ATL,
-			},
-			{
-				tid: 1,
-				cid: 0,
-				did: 2,
-				imgURL: undefined,
-				...teamInfos.BAL,
-			},
-			{
-				tid: 2,
-				cid: 0,
-				did: 0,
-				imgURL: undefined,
-				...teamInfos.BOS,
-			},
-			{
-				tid: 3,
-				cid: 0,
-				did: 1,
-				imgURL: undefined,
-				...teamInfos.CHI,
-			},
-			{
-				tid: 4,
-				cid: 0,
-				did: 1,
-				imgURL: undefined,
-				...teamInfos.CIN,
-			},
-			{
-				tid: 5,
-				cid: 0,
-				did: 1,
-				imgURL: undefined,
-				...teamInfos.CLE,
-			},
-			{
-				tid: 6,
-				cid: 1,
-				did: 3,
-				imgURL: undefined,
-				...teamInfos.DAL,
-			},
-			{
-				tid: 7,
-				cid: 1,
-				did: 4,
-				imgURL: undefined,
-				...teamInfos.DEN,
-			},
-			{
-				tid: 8,
-				cid: 0,
-				did: 1,
-				imgURL: undefined,
-				...teamInfos.DET,
-			},
-			{
-				tid: 9,
-				cid: 1,
-				did: 3,
-				imgURL: undefined,
-				...teamInfos.HOU,
-			},
-			{
-				tid: 10,
-				cid: 1,
-				did: 5,
-				imgURL: undefined,
-				...teamInfos.LV,
-			},
-			{
-				tid: 11,
-				cid: 1,
-				did: 5,
-				imgURL: undefined,
-				...teamInfos.LA,
-			},
-			{
-				tid: 12,
-				cid: 1,
-				did: 3,
-				imgURL: undefined,
-				...teamInfos.MXC,
-			},
-			{
-				tid: 13,
-				cid: 0,
-				did: 2,
-				imgURL: undefined,
-				...teamInfos.MIA,
-			},
-			{
-				tid: 14,
-				cid: 1,
-				did: 4,
-				imgURL: undefined,
-				...teamInfos.MIN,
-			},
-			{
-				tid: 15,
-				cid: 0,
-				did: 0,
-				imgURL: undefined,
-				...teamInfos.MON,
-			},
-			{
-				tid: 16,
-				cid: 0,
-				did: 0,
-				imgURL: undefined,
-				...teamInfos.NYC,
-			},
-			{
-				tid: 17,
-				cid: 0,
-				did: 0,
-				imgURL: undefined,
-				...teamInfos.PHI,
-			},
-			{
-				tid: 18,
-				cid: 1,
-				did: 3,
-				imgURL: undefined,
-				...teamInfos.PHO,
-			},
-			{
-				tid: 19,
-				cid: 0,
-				did: 1,
-				imgURL: undefined,
-				...teamInfos.PIT,
-			},
-			{
-				tid: 20,
-				cid: 1,
-				did: 4,
-				imgURL: undefined,
-				...teamInfos.POR,
-			},
-			{
-				tid: 21,
-				cid: 1,
-				did: 5,
-				imgURL: undefined,
-				...teamInfos.SAC,
-			},
-			{
-				tid: 22,
-				cid: 1,
-				did: 5,
-				imgURL: undefined,
-				...teamInfos.SD,
-			},
-			{
-				tid: 23,
-				cid: 1,
-				did: 5,
-				imgURL: undefined,
-				...teamInfos.SF,
-			},
-			{
-				tid: 24,
-				cid: 1,
-				did: 4,
-				imgURL: undefined,
-				...teamInfos.SEA,
-			},
-			{
-				tid: 25,
-				cid: 1,
-				did: 3,
-				imgURL: undefined,
-				...teamInfos.STL,
-			},
-			{
-				tid: 26,
-				cid: 0,
-				did: 2,
-				imgURL: undefined,
-				...teamInfos.TPA,
-			},
-			{
-				tid: 27,
-				cid: 0,
-				did: 0,
-				imgURL: undefined,
-				...teamInfos.TOR,
-			},
-			{
-				tid: 28,
-				cid: 1,
-				did: 4,
-				imgURL: undefined,
-				...teamInfos.VAN,
-			},
-			{
-				tid: 29,
-				cid: 0,
-				did: 2,
-				imgURL: undefined,
-				...teamInfos.WAS,
-			},
-		];
+		if (realistic) {
+			teams = [
+				{
+					tid: 0,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.ATL,
+				},
+
+				{
+					tid: 1,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.BOS,
+				},
+
+				{
+					tid: 2,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.BKN,
+				},
+
+				{
+					tid: 3,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.CHA,
+				},
+
+				{
+					tid: 4,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.CHI,
+				},
+
+				{
+					tid: 5,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.CLE,
+				},
+
+				{
+					tid: 6,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.DAL,
+				},
+
+				{
+					tid: 7,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.DEN,
+				},
+
+				{
+					tid: 8,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.DET,
+				},
+
+				{
+					tid: 9,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.SF,
+					abbrev: "GS",
+					region: "Golden State",
+				},
+
+				{
+					tid: 10,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.HOU,
+				},
+
+				{
+					tid: 11,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.IND,
+				},
+
+				{
+					tid: 12,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.LA,
+				},
+
+				{
+					tid: 13,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.LA2,
+				},
+
+				{
+					tid: 14,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.MEM,
+				},
+
+				{
+					tid: 15,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.MIA,
+				},
+
+				{
+					tid: 16,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.MIL,
+				},
+
+				{
+					tid: 17,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.MIN,
+				},
+
+				{
+					tid: 18,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.NOL,
+				},
+
+				{ tid: 19, cid: 0, did: 0, imgURL: undefined, ...teamInfos.NYC },
+
+				{
+					tid: 20,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.OKC,
+				},
+
+				{
+					tid: 21,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.ORL,
+				},
+
+				{
+					tid: 22,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.PHI,
+				},
+
+				{
+					tid: 23,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.PHO,
+				},
+
+				{
+					tid: 24,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.POR,
+				},
+
+				{
+					tid: 25,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.SAC,
+				},
+
+				{
+					tid: 26,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.SA,
+				},
+
+				{
+					tid: 27,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.TOR,
+				},
+
+				{ tid: 28, cid: 1, did: 4, imgURL: undefined, ...teamInfos.UTA },
+
+				{
+					tid: 29,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.WAS,
+				},
+			];
+		} else {
+			teams = [
+				{
+					tid: 0,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.ATL,
+				},
+				{
+					tid: 1,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.BAL,
+				},
+				{
+					tid: 2,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.BOS,
+				},
+				{
+					tid: 3,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.CHI,
+				},
+				{
+					tid: 4,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.CIN,
+				},
+				{
+					tid: 5,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.CLE,
+				},
+				{
+					tid: 6,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.DAL,
+				},
+				{
+					tid: 7,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.DEN,
+				},
+				{
+					tid: 8,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.DET,
+				},
+				{
+					tid: 9,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.HOU,
+				},
+				{
+					tid: 10,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.LV,
+				},
+				{
+					tid: 11,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.LA,
+				},
+				{
+					tid: 12,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.MXC,
+				},
+				{
+					tid: 13,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.MIA,
+				},
+				{
+					tid: 14,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.MIN,
+				},
+				{
+					tid: 15,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.MON,
+				},
+				{
+					tid: 16,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.NYC,
+				},
+				{
+					tid: 17,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.PHI,
+				},
+				{
+					tid: 18,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.PHO,
+				},
+				{
+					tid: 19,
+					cid: 0,
+					did: 1,
+					imgURL: undefined,
+					...teamInfos.PIT,
+				},
+				{
+					tid: 20,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.POR,
+				},
+				{
+					tid: 21,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.SAC,
+				},
+				{
+					tid: 22,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.SD,
+				},
+				{
+					tid: 23,
+					cid: 1,
+					did: 5,
+					imgURL: undefined,
+					...teamInfos.SF,
+				},
+				{
+					tid: 24,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.SEA,
+				},
+				{
+					tid: 25,
+					cid: 1,
+					did: 3,
+					imgURL: undefined,
+					...teamInfos.STL,
+				},
+				{
+					tid: 26,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.TPA,
+				},
+				{
+					tid: 27,
+					cid: 0,
+					did: 0,
+					imgURL: undefined,
+					...teamInfos.TOR,
+				},
+				{
+					tid: 28,
+					cid: 1,
+					did: 4,
+					imgURL: undefined,
+					...teamInfos.VAN,
+				},
+				{
+					tid: 29,
+					cid: 0,
+					did: 2,
+					imgURL: undefined,
+					...teamInfos.WAS,
+				},
+			];
+		}
 	} else {
 		teams = [
 			{

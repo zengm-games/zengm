@@ -244,6 +244,8 @@ const createLeague = async (
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
+	customizePlayers: "fictional" | "real" | "league-file",
+	customizeTeams: "bbgm" | "realistic" | "league-file",
 	importLid: number | undefined | null,
 	conditions: Conditions,
 ): Promise<number> => {
@@ -255,6 +257,8 @@ const createLeague = async (
 			startingSeason,
 			randomizeRosters,
 			difficulty,
+			customizePlayers,
+			customizeTeams,
 			importLid,
 		},
 		conditions,

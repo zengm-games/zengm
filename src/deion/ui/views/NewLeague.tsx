@@ -13,14 +13,20 @@ const randomTeam = {
 	popRank: Infinity,
 };
 
-const teamsBBGM: {
+type NewLeagueTeam = {
 	tid: number;
 	region: string;
 	name: string;
 	pop?: number;
 	popRank: number;
-}[] = helpers.getTeamsDefault();
+};
+
+const teamsBBGM: NewLeagueTeam[] = helpers.getTeamsDefault();
 teamsBBGM.unshift(randomTeam);
+
+const teamsRealistic: NewLeagueTeam[] =
+	process.env.SPORT === "basketball" ? helpers.getTeamsDefault(true) : [];
+teamsRealistic.unshift(randomTeam);
 
 const PopText = ({ teams, tid }: { teams: typeof teamsBBGM; tid: number }) => {
 	if (tid >= 0) {
@@ -153,6 +159,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					startingSeason,
 					actualRandomizeRosters,
 					actualDifficulty,
+					customizePlayers,
+					customizeTeams,
 					props.lid,
 				);
 				realtimeUpdate([], `/l/${lid}`);
@@ -378,10 +386,19 @@ const NewLeague = (props: View<"newLeague">) => {
 									value={customizeTeams}
 									onChange={event => {
 										setCustomizeTeams(event.target.value as any);
+										if (event.target.value === "bbgm") {
+											setTeams(teamsBBGM);
+										} else if (event.target.value === "realistic") {
+											setTeams(teamsRealistic);
+										}
 									}}
 								>
-									<option value="bbgm">BBGM</option>
-									<option value="realistic">Realistic</option>
+									<option value="bbgm">
+										{process.env.SPORT === "basketball" ? "BBGM" : "FBGM"}
+									</option>
+									{process.env.SPORT === "basketball" ? (
+										<option value="realistic">Realistic</option>
+									) : null}
 									{leagueFile && leagueFile.players ? (
 										<option value="league-file">League File</option>
 									) : null}
@@ -397,7 +414,9 @@ const NewLeague = (props: View<"newLeague">) => {
 									}}
 								>
 									<option value="fictional">Fictional</option>
-									<option value="real">Real</option>
+									{process.env.SPORT === "basketball" ? (
+										<option value="real">Real</option>
+									) : null}
 									{leagueFile && leagueFile.players ? (
 										<option value="league-file">League File</option>
 									) : null}

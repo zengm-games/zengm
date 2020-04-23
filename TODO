@@ -1,25 +1,9 @@
 nba
 - add disclaimer: "Basketball GM is not sponsored by or endorsed by the National Basketball Association, the National Basketball Players Association, any individual NBA players, or any of their affiliates. All league trademarks are property of their respective owners and are used under the doctrine of trademark nominative fair use."
 - UI for creating league?
-  - Create new league with real players
-  - Create new league with fictional players
-  - Create new custom league
-  - most generic
-    - right column, customization stuff - hidden except for "new custom league"
-      - Teams (realistic, BBGM, league file (only available if league file selected))
-        - if league file contains teams, set this to League File
-      - Players (real, fictional, league file (only available if league file selected))
-        - if league file contains players, set this to League File
-      - League file
-        - Note that a league file that contains teams and players will override teams and players selected above
-    - left column, stuff that's always editable
-      - League name
-      - Team
-      - Difficulty
-      - Shuffle players
-        - hidden for fictional players
+  - Create new league with real players - hide all of Customization
+  - Create new league with fictional players - hide all of Customization
   - fix spacing of League File URL form and message, make sure ok elsewhere
-  - import?
   - football?
 - modify existing rosters or bbgm code
   - fake team names
@@ -33,6 +17,10 @@ nba
 - don't break football
 - service worker dynamic cache?
 - use normed ratings from nicidob?
+- revisit city populations in getTeamsDefault and input.json
+- LA abbrevs
+- logos for new teams
+  - emailed
 
 player stats popover
 - stats relative to league average

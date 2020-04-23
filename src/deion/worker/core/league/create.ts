@@ -81,8 +81,10 @@ export const createWithoutSaving = (
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
+	customizePlayers: "fictional" | "real" | "league-file",
+	customizeTeams: "bbgm" | "realistic" | "league-file",
 ) => {
-	const teamsDefault = helpers.getTeamsDefault();
+	const teamsDefault = helpers.getTeamsDefault(customizeTeams === "realistic");
 
 	// Any custom teams?
 	let teamInfos: (TeamBasic & {
@@ -91,7 +93,7 @@ export const createWithoutSaving = (
 		stats?: TeamStatsWithoutKey[];
 	})[];
 
-	if (leagueFile.teams) {
+	if (customizeTeams === "league-file" && leagueFile.teams) {
 		for (let i = 0; i < leagueFile.teams.length; i++) {
 			const t = leagueFile.teams[i];
 
@@ -462,7 +464,7 @@ export const createWithoutSaving = (
 	);
 	let players: PlayerWithoutKey[];
 
-	if (leagueFile.players) {
+	if (customizePlayers === "league-file" && leagueFile.players) {
 		// Use pre-generated players, filling in attributes as needed
 		if (randomizeRosters) {
 			// Assign the team ID of all players to the 'playerTids' array.
@@ -846,6 +848,8 @@ const create = async (
 		startingSeason,
 		randomizeRosters = false,
 		difficulty = 0,
+		customizePlayers,
+		customizeTeams,
 		importLid,
 	}: {
 		name: string;
@@ -854,6 +858,8 @@ const create = async (
 		startingSeason: number;
 		randomizeRosters?: boolean;
 		difficulty?: number;
+		customizePlayers: "fictional" | "real" | "league-file";
+		customizeTeams: "bbgm" | "realistic" | "league-file";
 		importLid?: number | undefined | null;
 	},
 	conditions: Conditions,
@@ -866,6 +872,8 @@ const create = async (
 		startingSeason,
 		randomizeRosters,
 		difficulty,
+		customizePlayers,
+		customizeTeams,
 	);
 
 	let phaseText;

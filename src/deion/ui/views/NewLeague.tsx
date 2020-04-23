@@ -89,7 +89,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
-	const [otherSettingsAndData, setOtherSettingsAndData] = useState<
+	const [customizeOther, setCustomizeOther] = useState<
 		"default" | "realistic" | "league-file"
 	>(props.type === "real" ? "realistic" : "default");
 	const [leagueFile, setLeagueFile] = useState<any>(null);
@@ -152,11 +152,16 @@ const NewLeague = (props: View<"newLeague">) => {
 			let actualRandomizeRosters = false;
 			if (customize === "custom-rosters" || customize === "custom-url") {
 				actualLeagueFile = leagueFile;
+				if (customizeOther === "league-file") {
+					startingSeason =
+						leagueFile.startingSeason !== undefined
+							? leagueFile.startingSeason
+							: startingSeason;
+				}
+			}
+
+			if (customizePlayers !== "fictional") {
 				actualRandomizeRosters = randomizeRosters;
-				startingSeason =
-					leagueFile.startingSeason !== undefined
-						? leagueFile.startingSeason
-						: startingSeason;
 			}
 
 			const actualDifficulty = Object.values(DIFFICULTY).includes(difficulty)
@@ -175,6 +180,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					actualDifficulty,
 					customizePlayers,
 					customizeTeams,
+					customizeOther,
 					props.lid,
 				);
 				realtimeUpdate([], `/l/${lid}`);
@@ -191,6 +197,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		},
 		[
 			customize,
+			customizeOther,
 			customizePlayers,
 			customizeTeams,
 			difficulty,
@@ -250,7 +257,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				setCustomizePlayers("league-file");
 			}
 
-			setOtherSettingsAndData("league-file");
+			setCustomizeOther("league-file");
 
 			// Need to update team and difficulty dropdowns?
 			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
@@ -454,9 +461,9 @@ const NewLeague = (props: View<"newLeague">) => {
 									<select
 										id="new-league-customize-other"
 										className="form-control"
-										value={otherSettingsAndData}
+										value={customizeOther}
 										onChange={event => {
-											setOtherSettingsAndData(event.target.value as any);
+											setCustomizeOther(event.target.value as any);
 										}}
 									>
 										<option value="default">Default</option>
@@ -492,8 +499,8 @@ const NewLeague = (props: View<"newLeague">) => {
 											if (customizePlayers === "league-file") {
 												setCustomizePlayers("fictional");
 											}
-											if (otherSettingsAndData === "league-file") {
-												setOtherSettingsAndData("default");
+											if (customizeOther === "league-file") {
+												setCustomizeOther("default");
 											}
 										}}
 										value={customize}

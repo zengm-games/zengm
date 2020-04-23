@@ -240,15 +240,40 @@ const countNegotiations = async () => {
 const createLeague = async (
 	name: string,
 	tid: number,
-	leagueFile: object | undefined,
+	leagueFile: any,
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
 	customizePlayers: "fictional" | "real" | "league-file",
 	customizeTeams: "bbgm" | "realistic" | "league-file",
+	customizeOther: "default" | "realistic" | "league-file",
 	importLid: number | undefined | null,
 	conditions: Conditions,
 ): Promise<number> => {
+	if (leagueFile === undefined) {
+		leagueFile = {};
+	}
+
+	if (customizePlayers === "fictional") {
+		delete leagueFile.players;
+	} else if (customizePlayers === "real") {
+	}
+
+	if (customizeTeams === "bbgm") {
+		delete leagueFile.teams;
+	} else if (customizeTeams === "realistic") {
+		leagueFile.teams = helpers.getTeamsDefault(true);
+	}
+
+	if (customizeOther === "default") {
+		for (const key of Object.keys(leagueFile)) {
+			if (key !== "players" && key !== "teams") {
+				delete leagueFile[key];
+			}
+		}
+	} else if (customizeOther === "realistic") {
+	}
+
 	return league.create(
 		{
 			name,
@@ -257,8 +282,6 @@ const createLeague = async (
 			startingSeason,
 			randomizeRosters,
 			difficulty,
-			customizePlayers,
-			customizeTeams,
 			importLid,
 		},
 		conditions,

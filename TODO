@@ -10,7 +10,7 @@ nba
 - test GA tracking of league type
 - redo UI
   - make sure json not imported on football
-  - setKeptKeys error
+  - when unselecting "teams", switch back to default teams list. when reselecting, switch to league file
   - fix fictional/real forms
   - DRY filter(key => key !== "version")
     - and other init stuff

@@ -10,7 +10,6 @@ nba
 - test GA tracking of league type
 - redo UI
   - make sure json not imported on football
-  - All/None link colors in dark mode
   - setKeptKeys error
   - fix fictional/real forms
   - DRY filter(key => key !== "version")

@@ -41,6 +41,9 @@ $text-muted: $gray-400;
 		color: $gray-700;
 	}
 }
+.btn-link {
+	color: $primary;
+}
 
 .text-danger {
 	color: lighten($red, 10) !important;

@@ -12,6 +12,7 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 				difficulty: l.difficulty,
 				name: l.name,
 				lastSelectedTid: l.tid,
+				type,
 			};
 		}
 	}

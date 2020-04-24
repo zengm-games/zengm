@@ -274,6 +274,7 @@ const newLeague = (params: Params) => {
 		if (Number.isNaN(lid)) {
 			lid = undefined;
 		}
+		type = "custom";
 	}
 
 	return {

@@ -179,7 +179,7 @@ const LeaguePartPicker = ({
 				</button>
 			</div>
 
-			<p className="my-3">
+			<p className="alert alert-warning my-3">
 				Warning: selecting a weird combination of things may result in a
 				partially or completely broken league.
 			</p>
@@ -371,6 +371,8 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	useTitleBar({ title, hideNewWindow: true });
 
+	const displayedTeams = keptKeys.includes("teams") ? teams : teamsDefault;
+
 	return (
 		<>
 			{props.lid !== undefined ? (
@@ -415,7 +417,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								setTid(parseInt(event.target.value, 10));
 							}}
 						>
-							{teams.map(t => {
+							{displayedTeams.map(t => {
 								return (
 									<option key={t.tid} value={t.tid}>
 										{t.region} {t.name}
@@ -423,7 +425,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								);
 							})}
 						</select>
-						<PopText tid={tid} teams={teams} />
+						<PopText tid={tid} teams={displayedTeams} />
 					</div>
 
 					<div className="form-group">
@@ -494,9 +496,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							<div className="card-body" style={{ marginBottom: "-1rem" }}>
 								<h2 className="card-title">Customize</h2>
 								<div className="form-group">
-									<label htmlFor="new-league-customize">League</label>
 									<select
-										id="new-league-customize"
 										className="form-control"
 										onChange={event => {
 											const newCustomize = event.target.value as any;
@@ -516,7 +516,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										}}
 										value={customize}
 									>
-										<option value="default">Fictional teams and players</option>
+										<option value="default">Fictional players and teams</option>
 										<option value="2020">2020 players and teams</option>
 										<option value="custom-rosters">Upload league file</option>
 										<option value="custom-url">Enter league file URL</option>

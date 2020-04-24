@@ -184364,6 +184364,338 @@
 			"real": true
 		}
 	],
+	"teams": [
+		{
+			"abbrev": "ATL",
+			"cid": 0,
+			"did": 2,
+			"tid": 0,
+			"region": "Atlanta",
+			"name": "Gold Club",
+			"pop": 5.3,
+			"colors": ["#5c4a99", "#f0e81c", "#211e1e"],
+			"imgURL": "/img/logos/ATL.png"
+		},
+		{
+			"abbrev": "BOS",
+			"cid": 0,
+			"did": 0,
+			"tid": 1,
+			"region": "Boston",
+			"name": "Massacre",
+			"pop": 7.3,
+			"colors": ["#0d435e", "#f0494a", "#cccccc"],
+			"imgURL": "/img/logos/BOS.png"
+		},
+		{
+			"abbrev": "BKN",
+			"cid": 0,
+			"did": 0,
+			"tid": 2,
+			"region": "Brooklyn",
+			"name": "Bagels",
+			"pop": 21.5,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/BKN.png"
+		},
+		{
+			"abbrev": "CHA",
+			"cid": 0,
+			"did": 2,
+			"tid": 3,
+			"region": "Charlotte",
+			"name": "Queens",
+			"pop": 1.5,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/CHA.png"
+		},
+		{
+			"abbrev": "CHI",
+			"cid": 0,
+			"did": 1,
+			"tid": 4,
+			"region": "Chicago",
+			"name": "Whirlwinds",
+			"pop": 9.1,
+			"colors": ["#ef670a", "#caeaf9", "#d3d3d3"],
+			"imgURL": "/img/logos/CHI.png"
+		},
+		{
+			"abbrev": "CLE",
+			"cid": 0,
+			"did": 1,
+			"tid": 5,
+			"region": "Cleveland",
+			"name": "Curses",
+			"pop": 1.7,
+			"colors": ["#211e1e", "#f8e3cc", "#3f1c59"],
+			"imgURL": "/img/logos/CLE.png"
+		},
+		{
+			"abbrev": "DAL",
+			"cid": 1,
+			"did": 3,
+			"tid": 6,
+			"region": "Dallas",
+			"name": "Snipers",
+			"pop": 6.6,
+			"colors": ["#be2026", "#2b2e81", "#ffffff"],
+			"imgURL": "/img/logos/DAL.png"
+		},
+		{
+			"abbrev": "DEN",
+			"cid": 1,
+			"did": 4,
+			"tid": 7,
+			"region": "Denver",
+			"name": "High",
+			"pop": 2.7,
+			"colors": ["#216935", "#163a1c", "#a1d297"],
+			"imgURL": "/img/logos/DEN.png"
+		},
+		{
+			"abbrev": "DET",
+			"cid": 0,
+			"did": 1,
+			"tid": 8,
+			"region": "Detroit",
+			"name": "Muscle",
+			"pop": 4,
+			"colors": ["#3a5eab", "#708fc7", "#0a1130"],
+			"imgURL": "/img/logos/DET.png"
+		},
+		{
+			"abbrev": "GS",
+			"cid": 1,
+			"did": 5,
+			"tid": 9,
+			"region": "Golden State",
+			"name": "Venture Capitalists",
+			"pop": 6.5,
+			"colors": ["#0e442e", "#d75f27", "#e7d3ae"],
+			"imgURL": "/img/logos/GS.png"
+		},
+		{
+			"abbrev": "HOU",
+			"cid": 1,
+			"did": 3,
+			"tid": 10,
+			"region": "Houston",
+			"name": "Apollos",
+			"pop": 6.2,
+			"colors": ["#4c91c2", "#c4c4c3", "#ffffff"],
+			"imgURL": "/img/logos/HOU.png"
+		},
+		{
+			"abbrev": "IND",
+			"cid": 0,
+			"did": 1,
+			"tid": 11,
+			"region": "Indianapolis",
+			"name": "Crossroads",
+			"pop": 1.6,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/IND.png"
+		},
+		{
+			"abbrev": "LAE",
+			"cid": 1,
+			"did": 5,
+			"tid": 12,
+			"region": "Los Angeles",
+			"name": "Earthquakes",
+			"pop": 15.6,
+			"colors": ["#6b6b6b", "#f15d24", "#dedddd"],
+			"imgURL": "/img/logos/LAE.png"
+		},
+		{
+			"abbrev": "LAL",
+			"cid": 1,
+			"did": 5,
+			"tid": 13,
+			"region": "Los Angeles",
+			"name": "Legion",
+			"pop": 15.6,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/LAL.png"
+		},
+		{
+			"abbrev": "MEM",
+			"cid": 1,
+			"did": 3,
+			"tid": 14,
+			"region": "Memphis",
+			"name": "Blues",
+			"pop": 1.3,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/MEM.png"
+		},
+		{
+			"abbrev": "MIA",
+			"cid": 0,
+			"did": 2,
+			"tid": 15,
+			"region": "Miami",
+			"name": "Cyclones",
+			"pop": 6.1,
+			"colors": ["#d8519d", "#4ac1c0", "#f15949"],
+			"imgURL": "/img/logos/MIA.png"
+		},
+		{
+			"abbrev": "MIL",
+			"cid": 0,
+			"did": 1,
+			"tid": 16,
+			"region": "Milwaukee",
+			"name": "Meat Packers",
+			"pop": 1.5,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/MIL.png"
+		},
+		{
+			"abbrev": "MIN",
+			"cid": 1,
+			"did": 4,
+			"tid": 17,
+			"region": "Minneapolis",
+			"name": "Blizzard",
+			"pop": 2.8,
+			"colors": ["#3d2971", "#8accdc", "#ed9a22"],
+			"imgURL": "/img/logos/MIN.png"
+		},
+		{
+			"abbrev": "NOL",
+			"cid": 1,
+			"did": 3,
+			"tid": 18,
+			"region": "New Orleans",
+			"name": "Bayou",
+			"pop": 1.1,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/NOL.png"
+		},
+		{
+			"abbrev": "NYC",
+			"cid": 0,
+			"did": 0,
+			"tid": 19,
+			"region": "New York",
+			"name": "Bankers",
+			"pop": 21.5,
+			"colors": ["#1e73ba", "#ff8500", "#ffffff"],
+			"imgURL": "/img/logos/NYC.png"
+		},
+		{
+			"abbrev": "OKC",
+			"cid": 1,
+			"did": 4,
+			"tid": 20,
+			"region": "Oklahoma City",
+			"name": "66ers",
+			"pop": 1.4,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/OKC.png"
+		},
+		{
+			"abbrev": "ORL",
+			"cid": 0,
+			"did": 2,
+			"tid": 21,
+			"region": "Orlando",
+			"name": "Juice",
+			"pop": 2.2,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/ORL.png"
+		},
+		{
+			"abbrev": "PHI",
+			"cid": 0,
+			"did": 0,
+			"tid": 22,
+			"region": "Philadelphia",
+			"name": "Cheesesteaks",
+			"pop": 5.5,
+			"colors": ["#bee6f6", "#ffe67b", "#3a3a3a"],
+			"imgURL": "/img/logos/PHI.png"
+		},
+		{
+			"abbrev": "PHO",
+			"cid": 1,
+			"did": 5,
+			"tid": 23,
+			"region": "Phoenix",
+			"name": "Vultures",
+			"pop": 4.3,
+			"colors": ["#d17d2a", "#231f20", "#c09867"],
+			"imgURL": "/img/logos/PHO.png"
+		},
+		{
+			"abbrev": "POR",
+			"cid": 1,
+			"did": 4,
+			"tid": 24,
+			"region": "Portland",
+			"name": "Roses",
+			"pop": 2,
+			"colors": ["#e41d34", "#1e1e1e", "#e7a9cc"],
+			"imgURL": "/img/logos/POR.png"
+		},
+		{
+			"abbrev": "SAC",
+			"cid": 1,
+			"did": 5,
+			"tid": 25,
+			"region": "Sacramento",
+			"name": "Gold Rush",
+			"pop": 1.8,
+			"colors": ["#e4c649", "#735823", "#f8e19f"],
+			"imgURL": "/img/logos/SAC.png"
+		},
+		{
+			"abbrev": "SA",
+			"cid": 1,
+			"did": 3,
+			"tid": 26,
+			"region": "San Antonio",
+			"name": "Churros",
+			"pop": 2,
+			"colors": ["#4a2b14", "#30d9ff", "#704723"],
+			"imgURL": "/img/logos/SA.png"
+		},
+		{
+			"abbrev": "TOR",
+			"cid": 0,
+			"did": 0,
+			"tid": 27,
+			"region": "Toronto",
+			"name": "Beavers",
+			"pop": 6.6,
+			"colors": ["#832525", "#5e372c", "#331b16"],
+			"imgURL": "/img/logos/TOR.png"
+		},
+		{
+			"abbrev": "UTA",
+			"cid": 1,
+			"did": 4,
+			"tid": 28,
+			"region": "Utah",
+			"name": "Missionaries",
+			"pop": 2.3,
+			"colors": ["#000000", "#cccccc", "#ffffff"],
+			"imgURL": "/img/logos/UTA.png"
+		},
+		{
+			"abbrev": "WAS",
+			"cid": 0,
+			"did": 2,
+			"tid": 29,
+			"region": "Washington",
+			"name": "Monuments",
+			"pop": 6.2,
+			"colors": ["#213063", "#c5ae6e", "#ffffff"],
+			"imgURL": "/img/logos/WAS.png"
+		}
+	],
 	"draftPicks": [
 		{
 			"tid": 0,

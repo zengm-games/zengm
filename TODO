@@ -12,6 +12,7 @@ nba
   - when you load a league file, it lets you pick if you want to use the players or teams from it. should also allow other things to be selected or not
   - change New League UI so that the "real" rosters are just a predefined league file. loading a league file lets you select which parts to keep. this will enable other sets of built-in rosters
   - change preprocessor to generate league file from inputs.ison and getTeamInfos.ts
+  - get rid of "realistic" option to getTeamsDefault
 - check even tracking
 - blog
   - alexnoob

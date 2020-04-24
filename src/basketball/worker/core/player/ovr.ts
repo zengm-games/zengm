@@ -1,4 +1,4 @@
-import { helpers } from "../../../../deion/worker/util";
+import { helpers } from "../../../../deion/common";
 import type { PlayerRatings } from "../../../common/types";
 
 /**

@@ -232,7 +232,7 @@ export const createWithoutSaving = (
 	Object.assign(g, gameAttributes);
 
 	// Needs to be done after g is set
-	const teams = teamInfos.map(t => team.generate(t));
+	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: any;

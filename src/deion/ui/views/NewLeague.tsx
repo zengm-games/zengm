@@ -206,7 +206,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
 	const [leagueFile, setLeagueFile] = useState<any>(
-		customize === "2020" ? league2020 : null,
+		customize === "2020" && process.env.SPORT === "basketball"
+			? league2020
+			: null,
 	);
 	const [name, setName] = useState(props.name);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
@@ -516,8 +518,14 @@ const NewLeague = (props: View<"newLeague">) => {
 										}}
 										value={customize}
 									>
-										<option value="default">Fictional players and teams</option>
-										<option value="2020">2020 players and teams</option>
+										<option value="default">
+											{process.env.SPORT === "basketball"
+												? "Fictional players and teams"
+												: "Default"}
+										</option>
+										{process.env.SPORT === "basketball" ? (
+											<option value="2020">2020 players and teams</option>
+										) : null}
 										<option value="custom-rosters">Upload league file</option>
 										<option value="custom-url">Enter league file URL</option>
 									</select>

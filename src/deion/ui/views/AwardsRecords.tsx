@@ -52,7 +52,13 @@ const AwardsRecords = ({
 			data: [
 				<a href={helpers.leagueUrl(["player", a.pid])}>{a.name}</a>,
 				a.count,
-				formatYear(groupBy(a.years, "team")),
+				{
+					value: formatYear(groupBy(a.years, "team")),
+					sortValue: a.years
+						.map(year => year.team)
+						.sort()
+						.join(","),
+				},
 				a.lastYear,
 				{
 					value: <CheckmarkOrCross success={a.retired} />,

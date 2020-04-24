@@ -717,6 +717,9 @@ tr.table-warning:hover > td {
 .table-responsive {
 	margin-bottom: 1rem;
 
+	// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
+	-webkit-overflow-scrolling: auto;
+
 	.table {
 		margin-bottom: 0;
 	}

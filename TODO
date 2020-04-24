@@ -5,7 +5,6 @@ nba
 - way to import team and player info
 - gui to edit rosters in spreadsheet, with different ratings/stats/gameAttributes for different seasons, and ability to export any given season
 - don't break football
-- revisit city populations in getTeamsDefault and input.json
 - logos for new teams
   - emailed
 - add GA tracking of league type

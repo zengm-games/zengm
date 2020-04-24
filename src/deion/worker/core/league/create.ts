@@ -17,7 +17,6 @@ import {
 	updateStatus,
 } from "../../util";
 import type {
-	Conditions,
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
 	GameAttributesLeague,
@@ -841,24 +840,21 @@ export const createWithoutSaving = (
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-const create = async (
-	{
-		name,
-		tid,
-		leagueFile,
-		randomizeRosters = false,
-		difficulty = 0,
-		importLid,
-	}: {
-		name: string;
-		tid: number;
-		leagueFile: LeagueFile;
-		randomizeRosters?: boolean;
-		difficulty?: number;
-		importLid?: number | undefined | null;
-	},
-	conditions: Conditions,
-): Promise<number> => {
+const create = async ({
+	name,
+	tid,
+	leagueFile,
+	randomizeRosters = false,
+	difficulty = 0,
+	importLid,
+}: {
+	name: string;
+	tid: number;
+	leagueFile: LeagueFile;
+	randomizeRosters?: boolean;
+	difficulty?: number;
+	importLid?: number | undefined | null;
+}): Promise<number> => {
 	await idb.meta.put("attributes", tid, "lastSelectedTid");
 	const leagueData = createWithoutSaving(
 		name,

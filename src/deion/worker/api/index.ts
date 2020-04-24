@@ -244,19 +244,15 @@ const createLeague = async (
 	randomizeRosters: boolean,
 	difficulty: number,
 	importLid: number | undefined | null,
-	conditions: Conditions,
 ): Promise<number> => {
-	const lid = league.create(
-		{
-			name,
-			tid,
-			leagueFile,
-			randomizeRosters,
-			difficulty,
-			importLid,
-		},
-		conditions,
-	);
+	const lid = league.create({
+		name,
+		tid,
+		leagueFile,
+		randomizeRosters,
+		difficulty,
+		importLid,
+	});
 
 	return lid;
 };

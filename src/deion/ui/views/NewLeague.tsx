@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";

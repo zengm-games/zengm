@@ -6,8 +6,7 @@ require("ts-node").register();
 const ovr = require("../../src/basketball/worker/core/player/ovr.ts").default;
 const getTeamInfos = require("../../src/deion/common/getTeamInfos.ts").default;
 
-const decreaseAmount = ratings => {
-	const ovr2 = ovr(ratings);
+const decreaseAmount = ovr2 => {
 	if (ovr2 <= 42) {
 		return 9;
 	}
@@ -39,7 +38,9 @@ const decreaseAmount = ratings => {
 };
 
 const adjustRatings = (ratings, tid) => {
-	const amount = decreaseAmount(ratings);
+	const ovr2 = ovr(ratings);
+	const amount = decreaseAmount(ovr2);
+
 	const keys = [
 		"stre",
 		"spd",
@@ -56,6 +57,7 @@ const adjustRatings = (ratings, tid) => {
 		"fg",
 		"reb",
 	];
+
 	for (const key of keys) {
 		ratings[key] -= amount;
 

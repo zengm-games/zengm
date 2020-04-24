@@ -6,6 +6,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
 import league2020 from "../../../../public/basketball/leagues/2020.json";
+import api from "../api";
 
 const randomTeam = {
 	tid: -1,
@@ -109,18 +110,24 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	draftPicks: "Traded future draft picks",
 };
 
-const LeaguePartPicker = ({ leagueFile }: { leagueFile: any }) => {
+const LeaguePartPicker = ({
+	leagueFile,
+	keptKeys,
+	setKeptKeys,
+}: {
+	leagueFile: any;
+	keptKeys: string[];
+	setKeptKeys: (keys: string[]) => void;
+}) => {
 	const prevLeagueFile = useRef(leagueFile);
 
 	const keys = leagueFile
 		? Object.keys(leagueFile).filter(key => key !== "version")
 		: [];
 
-	const [kept, setKept] = useState([...keys]);
-
 	if (leagueFile !== prevLeagueFile.current) {
 		prevLeagueFile.current = leagueFile;
-		setKept([...keys]);
+		setKeptKeys([...keys]);
 	}
 
 	if (!leagueFile) {
@@ -143,25 +150,25 @@ const LeaguePartPicker = ({ leagueFile }: { leagueFile: any }) => {
 							className="form-check-input"
 							onChange={event => {
 								if (!event.target.checked) {
-									setKept(kept.filter(key2 => key2 !== key));
+									setKeptKeys(keptKeys.filter(key2 => key2 !== key));
 								} else {
-									setKept([...kept, key]);
+									setKeptKeys([...keptKeys, key]);
 								}
 							}}
 							type="checkbox"
-							checked={kept.includes(key)}
+							checked={keptKeys.includes(key)}
 						/>
 						{leaguePartDescriptions[key] ? leaguePartDescriptions[key] : key}
 					</label>
 				</div>
 			))}
 
-			<div className="my-1">
+			<div className="mt-1">
 				<button
 					className="btn btn-link p-0"
 					onClick={event => {
 						event.preventDefault();
-						setKept([...keys]);
+						setKeptKeys([...keys]);
 					}}
 				>
 					All
@@ -171,14 +178,14 @@ const LeaguePartPicker = ({ leagueFile }: { leagueFile: any }) => {
 					className="btn btn-link p-0"
 					onClick={event => {
 						event.preventDefault();
-						setKept([]);
+						setKeptKeys([]);
 					}}
 				>
 					None
 				</button>
 			</div>
 
-			<p>
+			<p className="my-3">
 				Warning: selecting a weird combination of things may result in a
 				partially or completely broken league.
 			</p>
@@ -195,46 +202,27 @@ const NewLeague = (props: View<"newLeague">) => {
 			return "custom-rosters";
 		}
 
+		if (props.type === "real") {
+			return "2020";
+		}
+
 		return "default";
 	});
-	const [customizePlayers, setCustomizePlayers] = useState<
-		"fictional" | "real" | "league-file"
-	>(props.type === "real" ? "real" : "fictional");
-	const [customizeTeams, setCustomizeTeams] = useState<
-		"default" | "realistic" | "league-file"
-	>(props.type === "real" ? "realistic" : "default");
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
-	const [customizeOther, setCustomizeOther] = useState<
-		"default" | "realistic" | "league-file"
-	>(props.type === "real" ? "realistic" : "default");
-	const [leagueFile, setLeagueFile] = useState<any>(null);
+	const [leagueFile, setLeagueFile] = useState<any>(
+		customize === "2020" ? league2020 : null,
+	);
 	const [name, setName] = useState(props.name);
-	const [prevlid, setPrevlid] = useState(props.lid);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
 	const [teams, setTeams] = useState(
 		customize === "2020" ? teams2020 : teamsDefault,
 	);
 	const [tid, setTid] = useState(props.lastSelectedTid);
-
-	if (props.lid === undefined && prevlid !== undefined) {
-		setCustomize("default");
-		setDifficulty(DIFFICULTY.Normal);
-		setName(props.name);
-		setPrevlid(undefined);
-		setTeams(teamsDefault);
-	}
-
-	if (props.lid !== undefined && prevlid === undefined) {
-		setCustomize("custom-rosters");
-		setDifficulty(
-			props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
-		);
-		setName(props.name);
-		setPrevlid(props.lid);
-		setTeams(teamsDefault);
-	}
+	const [keptKeys, setKeptKeys] = useState<string[]>(
+		leagueFile ? Object.keys(leagueFile).filter(key => key !== "version") : [],
+	);
 
 	let title: string;
 	if (props.lid !== undefined) {
@@ -265,26 +253,20 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			setCreating(true);
 
-			let startingSeason = new Date().getFullYear();
-
-			let actualLeagueFile;
-			let actualRandomizeRosters = false;
-			if (customize === "custom-rosters" || customize === "custom-url") {
-				actualLeagueFile = leagueFile;
-				if (customizeOther === "league-file") {
-					startingSeason =
-						leagueFile.startingSeason !== undefined
-							? leagueFile.startingSeason
-							: startingSeason;
+			const actualLeagueFile: any = {};
+			for (const key of [...keptKeys, "version"]) {
+				if (leagueFile && leagueFile[key]) {
+					actualLeagueFile[key] = leagueFile[key];
 				}
-			} else if (process.env.SPORT === "basketball" && customize === "2020") {
-				actualLeagueFile = league2020;
-				startingSeason = 2020;
 			}
 
-			if (customizePlayers !== "fictional") {
-				actualRandomizeRosters = randomizeRosters;
+			if (actualLeagueFile.startingSeason === undefined) {
+				actualLeagueFile.startingSeason = new Date().getFullYear();
 			}
+
+			const actualRandomizeRosters = keptKeys.includes("players")
+				? randomizeRosters
+				: false;
 
 			const actualDifficulty = Object.values(DIFFICULTY).includes(difficulty)
 				? difficulty
@@ -297,11 +279,11 @@ const NewLeague = (props: View<"newLeague">) => {
 					name,
 					tid,
 					actualLeagueFile,
-					startingSeason,
 					actualRandomizeRosters,
 					actualDifficulty,
 					props.lid,
 				);
+				api.bbgmPing("league", [lid, "League Type???"]);
 				realtimeUpdate([], `/l/${lid}`);
 			} catch (err) {
 				setCreating(false);
@@ -315,8 +297,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 		},
 		[
-			customize,
 			difficulty,
+			keptKeys,
 			leagueFile,
 			name,
 			props.lid,
@@ -366,14 +348,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				newTeams.unshift(randomTeam);
 
 				setTeams(newTeams);
-				setCustomizeTeams("league-file");
 			}
-
-			if (newLeagueFile.players) {
-				setCustomizePlayers("league-file");
-			}
-
-			setCustomizeOther("league-file");
 
 			// Need to update team and difficulty dropdowns?
 			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
@@ -480,7 +455,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						</span>
 					</div>
 
-					{customizePlayers !== "fictional" ? (
+					{keptKeys.includes("players") ? (
 						<div className="form-group">
 							<label>Options</label>
 
@@ -517,7 +492,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				</div>
 
 				{props.type === "custom" ? (
-					<div style={{ maxWidth: 400 }} className="ml-3 ml-md-5">
+					<div style={{ maxWidth: 400 }} className="ml-3 ml-md-5 flex-fill">
 						<div className="card bg-light">
 							<div className="card-body" style={{ marginBottom: "-1rem" }}>
 								<h2 className="card-title">Customize</h2>
@@ -533,7 +508,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												process.env.SPORT === "basketball" &&
 												newCustomize === "2020"
 											) {
-												setLeagueFile(league2020);
+												setLeagueFile(helpers.deepCopy(league2020));
 												setTeams(teams2020);
 											} else {
 												setTeams(teamsDefault);
@@ -543,13 +518,13 @@ const NewLeague = (props: View<"newLeague">) => {
 										value={customize}
 									>
 										<option value="default">Fictional teams and players</option>
-										<option value="2020">Real teams and players - 2020</option>
+										<option value="2020">2020 players and teams</option>
 										<option value="custom-rosters">Upload league file</option>
 										<option value="custom-url">Enter league file URL</option>
 									</select>
 									{customize === "custom-rosters" ||
 									customize === "custom-url" ? (
-										<p className="text-muted mt-1">
+										<p className="mt-3">
 											League files can contain teams, players, settings, and
 											other data. You can create a league file by going to Tools
 											> Export within a league, or by{" "}
@@ -576,7 +551,11 @@ const NewLeague = (props: View<"newLeague">) => {
 									</div>
 								) : null}
 
-								<LeaguePartPicker leagueFile={leagueFile} />
+								<LeaguePartPicker
+									leagueFile={leagueFile}
+									keptKeys={keptKeys}
+									setKeptKeys={setKeptKeys}
+								/>
 							</div>
 						</div>
 					</div>

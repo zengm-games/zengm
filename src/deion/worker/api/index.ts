@@ -241,18 +241,11 @@ const createLeague = async (
 	name: string,
 	tid: number,
 	leagueFile: any,
-	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
 	importLid: number | undefined | null,
 	conditions: Conditions,
 ): Promise<number> => {
-	if (leagueFile === undefined) {
-		leagueFile = {};
-	}
-
-	leagueFile.startingSeason = startingSeason;
-
 	const lid = league.create(
 		{
 			name,
@@ -264,8 +257,6 @@ const createLeague = async (
 		},
 		conditions,
 	);
-
-	toUI("bbgmPing", ["league", [lid, "League Type???"]], conditions);
 
 	return lid;
 };

@@ -52,424 +52,221 @@ const gameScore = (arg: { [key: string]: number }): number => {
 	);
 };
 
-function getTeamsDefault(realistic?: boolean): TeamBasic[] {
+function getTeamsDefault(): TeamBasic[] {
 	let teams: Omit<TeamBasic, "popRank">[];
 	if (process.env.SPORT === "basketball") {
-		if (realistic) {
-			teams = getTeamInfos([
-				{
-					tid: 0,
-					cid: 0,
-					did: 2,
+		teams = getTeamInfos([
+			{
+				tid: 0,
+				cid: 0,
+				did: 2,
 
-					abbrev: "ATL",
-				},
-				{
-					tid: 1,
-					cid: 0,
-					did: 0,
+				abbrev: "ATL",
+			},
+			{
+				tid: 1,
+				cid: 0,
+				did: 2,
 
-					abbrev: "BOS",
-				},
-				{
-					tid: 2,
-					cid: 0,
-					did: 0,
+				abbrev: "BAL",
+			},
+			{
+				tid: 2,
+				cid: 0,
+				did: 0,
 
-					abbrev: "BKN",
-				},
-				{
-					tid: 3,
-					cid: 0,
-					did: 2,
+				abbrev: "BOS",
+			},
+			{
+				tid: 3,
+				cid: 0,
+				did: 1,
 
-					abbrev: "CHA",
-				},
-				{
-					tid: 4,
-					cid: 0,
-					did: 1,
+				abbrev: "CHI",
+			},
+			{
+				tid: 4,
+				cid: 0,
+				did: 1,
 
-					abbrev: "CHI",
-				},
-				{
-					tid: 5,
-					cid: 0,
-					did: 1,
+				abbrev: "CIN",
+			},
+			{
+				tid: 5,
+				cid: 0,
+				did: 1,
 
-					abbrev: "CLE",
-				},
-				{
-					tid: 6,
-					cid: 1,
-					did: 3,
+				abbrev: "CLE",
+			},
+			{
+				tid: 6,
+				cid: 1,
+				did: 3,
 
-					abbrev: "DAL",
-				},
-				{
-					tid: 7,
-					cid: 1,
-					did: 4,
+				abbrev: "DAL",
+			},
+			{
+				tid: 7,
+				cid: 1,
+				did: 4,
 
-					abbrev: "DEN",
-				},
-				{
-					tid: 8,
-					cid: 0,
-					did: 1,
+				abbrev: "DEN",
+			},
+			{
+				tid: 8,
+				cid: 0,
+				did: 1,
 
-					abbrev: "DET",
-				},
-				{
-					tid: 9,
-					cid: 1,
-					did: 5,
+				abbrev: "DET",
+			},
+			{
+				tid: 9,
+				cid: 1,
+				did: 3,
 
-					abbrev: "GS",
-				},
-				{
-					tid: 10,
-					cid: 1,
-					did: 3,
+				abbrev: "HOU",
+			},
+			{
+				tid: 10,
+				cid: 1,
+				did: 5,
 
-					abbrev: "HOU",
-				},
-				{
-					tid: 11,
-					cid: 0,
-					did: 1,
+				abbrev: "LV",
+			},
+			{
+				tid: 11,
+				cid: 1,
+				did: 5,
 
-					abbrev: "IND",
-				},
-				{
-					tid: 12,
-					cid: 1,
-					did: 5,
+				abbrev: "LA",
+			},
+			{
+				tid: 12,
+				cid: 1,
+				did: 3,
 
-					abbrev: "LAE",
-				},
-				{
-					tid: 13,
-					cid: 1,
-					did: 5,
+				abbrev: "MXC",
+			},
+			{
+				tid: 13,
+				cid: 0,
+				did: 2,
 
-					abbrev: "LAL",
-				},
-				{
-					tid: 14,
-					cid: 1,
-					did: 3,
+				abbrev: "MIA",
+			},
+			{
+				tid: 14,
+				cid: 1,
+				did: 4,
 
-					abbrev: "MEM",
-				},
-				{
-					tid: 15,
-					cid: 0,
-					did: 2,
+				abbrev: "MIN",
+			},
+			{
+				tid: 15,
+				cid: 0,
+				did: 0,
 
-					abbrev: "MIA",
-				},
-				{
-					tid: 16,
-					cid: 0,
-					did: 1,
+				abbrev: "MON",
+			},
+			{
+				tid: 16,
+				cid: 0,
+				did: 0,
 
-					abbrev: "MIL",
-				},
-				{
-					tid: 17,
-					cid: 1,
-					did: 4,
+				abbrev: "NYC",
+			},
+			{
+				tid: 17,
+				cid: 0,
+				did: 0,
 
-					abbrev: "MIN",
-				},
-				{
-					tid: 18,
-					cid: 1,
-					did: 3,
+				abbrev: "PHI",
+			},
+			{
+				tid: 18,
+				cid: 1,
+				did: 3,
 
-					abbrev: "NOL",
-				},
-				{ tid: 19, cid: 0, did: 0, abbrev: "NYC" },
-				{
-					tid: 20,
-					cid: 1,
-					did: 4,
+				abbrev: "PHO",
+			},
+			{
+				tid: 19,
+				cid: 0,
+				did: 1,
 
-					abbrev: "OKC",
-				},
-				{
-					tid: 21,
-					cid: 0,
-					did: 2,
+				abbrev: "PIT",
+			},
+			{
+				tid: 20,
+				cid: 1,
+				did: 4,
 
-					abbrev: "ORL",
-				},
-				{
-					tid: 22,
-					cid: 0,
-					did: 0,
+				abbrev: "POR",
+			},
+			{
+				tid: 21,
+				cid: 1,
+				did: 5,
 
-					abbrev: "PHI",
-				},
-				{
-					tid: 23,
-					cid: 1,
-					did: 5,
+				abbrev: "SAC",
+			},
+			{
+				tid: 22,
+				cid: 1,
+				did: 5,
 
-					abbrev: "PHO",
-				},
-				{
-					tid: 24,
-					cid: 1,
-					did: 4,
+				abbrev: "SD",
+			},
+			{
+				tid: 23,
+				cid: 1,
+				did: 5,
 
-					abbrev: "POR",
-				},
-				{
-					tid: 25,
-					cid: 1,
-					did: 5,
+				abbrev: "SF",
+			},
+			{
+				tid: 24,
+				cid: 1,
+				did: 4,
 
-					abbrev: "SAC",
-				},
-				{
-					tid: 26,
-					cid: 1,
-					did: 3,
+				abbrev: "SEA",
+			},
+			{
+				tid: 25,
+				cid: 1,
+				did: 3,
 
-					abbrev: "SA",
-				},
-				{
-					tid: 27,
-					cid: 0,
-					did: 0,
+				abbrev: "STL",
+			},
+			{
+				tid: 26,
+				cid: 0,
+				did: 2,
 
-					abbrev: "TOR",
-				},
-				{ tid: 28, cid: 1, did: 4, abbrev: "UTA" },
-				{
-					tid: 29,
-					cid: 0,
-					did: 2,
+				abbrev: "TPA",
+			},
+			{
+				tid: 27,
+				cid: 0,
+				did: 0,
 
-					abbrev: "WAS",
-				},
-			]);
-		} else {
-			teams = getTeamInfos([
-				{
-					tid: 0,
-					cid: 0,
-					did: 2,
+				abbrev: "TOR",
+			},
+			{
+				tid: 28,
+				cid: 1,
+				did: 4,
 
-					abbrev: "ATL",
-				},
-				{
-					tid: 1,
-					cid: 0,
-					did: 2,
+				abbrev: "VAN",
+			},
+			{
+				tid: 29,
+				cid: 0,
+				did: 2,
 
-					abbrev: "BAL",
-				},
-				{
-					tid: 2,
-					cid: 0,
-					did: 0,
-
-					abbrev: "BOS",
-				},
-				{
-					tid: 3,
-					cid: 0,
-					did: 1,
-
-					abbrev: "CHI",
-				},
-				{
-					tid: 4,
-					cid: 0,
-					did: 1,
-
-					abbrev: "CIN",
-				},
-				{
-					tid: 5,
-					cid: 0,
-					did: 1,
-
-					abbrev: "CLE",
-				},
-				{
-					tid: 6,
-					cid: 1,
-					did: 3,
-
-					abbrev: "DAL",
-				},
-				{
-					tid: 7,
-					cid: 1,
-					did: 4,
-
-					abbrev: "DEN",
-				},
-				{
-					tid: 8,
-					cid: 0,
-					did: 1,
-
-					abbrev: "DET",
-				},
-				{
-					tid: 9,
-					cid: 1,
-					did: 3,
-
-					abbrev: "HOU",
-				},
-				{
-					tid: 10,
-					cid: 1,
-					did: 5,
-
-					abbrev: "LV",
-				},
-				{
-					tid: 11,
-					cid: 1,
-					did: 5,
-
-					abbrev: "LA",
-				},
-				{
-					tid: 12,
-					cid: 1,
-					did: 3,
-
-					abbrev: "MXC",
-				},
-				{
-					tid: 13,
-					cid: 0,
-					did: 2,
-
-					abbrev: "MIA",
-				},
-				{
-					tid: 14,
-					cid: 1,
-					did: 4,
-
-					abbrev: "MIN",
-				},
-				{
-					tid: 15,
-					cid: 0,
-					did: 0,
-
-					abbrev: "MON",
-				},
-				{
-					tid: 16,
-					cid: 0,
-					did: 0,
-
-					abbrev: "NYC",
-				},
-				{
-					tid: 17,
-					cid: 0,
-					did: 0,
-
-					abbrev: "PHI",
-				},
-				{
-					tid: 18,
-					cid: 1,
-					did: 3,
-
-					abbrev: "PHO",
-				},
-				{
-					tid: 19,
-					cid: 0,
-					did: 1,
-
-					abbrev: "PIT",
-				},
-				{
-					tid: 20,
-					cid: 1,
-					did: 4,
-
-					abbrev: "POR",
-				},
-				{
-					tid: 21,
-					cid: 1,
-					did: 5,
-
-					abbrev: "SAC",
-				},
-				{
-					tid: 22,
-					cid: 1,
-					did: 5,
-
-					abbrev: "SD",
-				},
-				{
-					tid: 23,
-					cid: 1,
-					did: 5,
-
-					abbrev: "SF",
-				},
-				{
-					tid: 24,
-					cid: 1,
-					did: 4,
-
-					abbrev: "SEA",
-				},
-				{
-					tid: 25,
-					cid: 1,
-					did: 3,
-
-					abbrev: "STL",
-				},
-				{
-					tid: 26,
-					cid: 0,
-					did: 2,
-
-					abbrev: "TPA",
-				},
-				{
-					tid: 27,
-					cid: 0,
-					did: 0,
-
-					abbrev: "TOR",
-				},
-				{
-					tid: 28,
-					cid: 1,
-					did: 4,
-
-					abbrev: "VAN",
-				},
-				{
-					tid: 29,
-					cid: 0,
-					did: 2,
-
-					abbrev: "WAS",
-				},
-			]);
-		}
+				abbrev: "WAS",
+			},
+		]);
 	} else {
 		teams = getTeamInfos([
 			{

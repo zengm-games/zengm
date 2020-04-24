@@ -23,6 +23,7 @@ type Props = {
 	onDone: (b: Error | null, a?: any) => void;
 	disabled?: boolean;
 	enterURL?: boolean;
+	hideLoadedMessage?: boolean;
 	// onLoading is called when it starts reading the file into memory
 	onLoading?: () => void;
 };
@@ -84,7 +85,13 @@ const reducer = (state: State, action: any): State => {
 	}
 };
 
-const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
+const LeagueFileUpload = ({
+	disabled,
+	enterURL,
+	hideLoadedMessage,
+	onDone,
+	onLoading,
+}: Props) => {
 	const [url, setURL] = useState("");
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const isMounted = useRef(true);
@@ -302,7 +309,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 			{state.status === "parsing" ? (
 				<p className="alert alert-info mt-3">Parsing league file...</p>
 			) : null}
-			{state.status === "done" ? (
+			{state.status === "done" && !hideLoadedMessage ? (
 				<p className="alert alert-success mt-3">Loaded!</p>
 			) : null}
 		</>
@@ -312,6 +319,7 @@ const LeagueFileUpload = ({ disabled, enterURL, onDone, onLoading }: Props) => {
 LeagueFileUpload.propTypes = {
 	disabled: PropTypes.bool,
 	enterURL: PropTypes.bool,
+	hideLoadedMessage: PropTypes.bool,
 	onLoading: PropTypes.func,
 	onDone: PropTypes.func.isRequired,
 };

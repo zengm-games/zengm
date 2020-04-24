@@ -106,9 +106,6 @@ for (const dp of input.draftPicks) {
 }
 
 fs.writeFileSync(
-	path.join(
-		__dirname,
-		"../../src/deion/worker/data/league-real-2020.basketball.json",
-	),
+	path.join(__dirname, "../../public/basketball/leagues/2020.json"),
 	JSON.stringify(input, undefined, 2),
 );

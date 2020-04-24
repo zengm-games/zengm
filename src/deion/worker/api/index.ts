@@ -51,7 +51,6 @@ import type {
 	TradeTeam,
 	Options,
 } from "../../common/types";
-import leagueReal2020Basketball from "../data/league-real-2020.basketball.json";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -245,44 +244,11 @@ const createLeague = async (
 	startingSeason: number,
 	randomizeRosters: boolean,
 	difficulty: number,
-	customizePlayers: "fictional" | "real" | "league-file",
-	customizeTeams: "default" | "realistic" | "league-file",
-	customizeOther: "default" | "realistic" | "league-file",
 	importLid: number | undefined | null,
 	conditions: Conditions,
 ): Promise<number> => {
 	if (leagueFile === undefined) {
 		leagueFile = {};
-	}
-
-	if (customizePlayers === "fictional") {
-		delete leagueFile.players;
-	} else if (
-		process.env.SPORT === "basketball" &&
-		customizePlayers === "real"
-	) {
-		leagueFile.players = helpers.deepCopy(leagueReal2020Basketball.players);
-	}
-
-	if (customizeTeams === "default") {
-		delete leagueFile.teams;
-	} else if (customizeTeams === "realistic") {
-		leagueFile.teams = helpers.getTeamsDefault(true);
-	}
-
-	if (customizeOther === "default" || customizeOther === "realistic") {
-		for (const key of Object.keys(leagueFile)) {
-			if (key !== "players" && key !== "teams") {
-				delete leagueFile[key];
-			}
-		}
-	}
-	if (process.env.SPORT === "basketball" && customizeOther === "realistic") {
-		for (const key of helpers.keys(leagueReal2020Basketball)) {
-			if (key !== "players") {
-				leagueFile[key] = helpers.deepCopy(leagueReal2020Basketball[key]);
-			}
-		}
 	}
 
 	leagueFile.startingSeason = startingSeason;
@@ -299,7 +265,7 @@ const createLeague = async (
 		conditions,
 	);
 
-	toUI("bbgmPing", ["league", [lid, customizePlayers]], conditions);
+	toUI("bbgmPing", ["league", [lid, "League Type???"]], conditions);
 
 	return lid;
 };

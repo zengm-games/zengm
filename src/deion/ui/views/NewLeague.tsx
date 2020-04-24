@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
+import league2020 from "../../../../public/basketball/leagues/2020.json";
 
 const randomTeam = {
 	tid: -1,
@@ -21,18 +22,24 @@ type NewLeagueTeam = {
 	popRank: number;
 };
 
-const teamsBBGM: NewLeagueTeam[] = helpers.addPopRank(
+const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
 	helpers.getTeamsDefault(),
 );
-teamsBBGM.unshift(randomTeam);
+teamsDefault.unshift(randomTeam);
 
-const teamsRealistic: NewLeagueTeam[] =
+const teams2020: NewLeagueTeam[] =
 	process.env.SPORT === "basketball"
-		? helpers.addPopRank(helpers.getTeamsDefault(true))
+		? helpers.addPopRank(league2020.teams)
 		: [];
-teamsRealistic.unshift(randomTeam);
+teams2020.unshift(randomTeam);
 
-const PopText = ({ teams, tid }: { teams: typeof teamsBBGM; tid: number }) => {
+const PopText = ({
+	teams,
+	tid,
+}: {
+	teams: typeof teamsDefault;
+	tid: number;
+}) => {
 	if (tid >= 0) {
 		const t = teams.find(t2 => t2.tid === tid);
 		if (t) {
@@ -79,11 +86,117 @@ PopText.propTypes = {
 	tid: PropTypes.number.isRequired,
 };
 
+const leaguePartDescriptions: { [key: string]: string } = {
+	gameAttributes: "League settings",
+	startingSeason: "Starting season",
+	players: "Players, including ratings and stats",
+	teams: "Teams",
+	teamSeason: "Team seasons history",
+	teamStats: "Team stats history",
+	allStars: "All-Star Game history",
+	awards: "Awards history",
+	games: "Box scores",
+	releasedPlayers: "Contracts owed to released players",
+	draftLotteryResults: "Draft lottery history",
+	events: "Event log",
+	negotiations: "In-progress contract negotiations",
+	trade: "In-progress trade negotiations",
+	meta: "League metadata, like league name",
+	messages: "Messages from the owner",
+	playerFeats: "Statistical feats",
+	playoffSeries: "Upcoming and historical playoff series",
+	schedule: "Upcoming schedule",
+	draftPicks: "Traded future draft picks",
+};
+
+const LeaguePartPicker = ({ leagueFile }: { leagueFile: any }) => {
+	const prevLeagueFile = useRef(leagueFile);
+
+	const keys = leagueFile
+		? Object.keys(leagueFile).filter(key => key !== "version")
+		: [];
+
+	const [kept, setKept] = useState([...keys]);
+
+	if (leagueFile !== prevLeagueFile.current) {
+		prevLeagueFile.current = leagueFile;
+		setKept([...keys]);
+	}
+
+	if (!leagueFile) {
+		return null;
+	}
+
+	const keysSorted = Object.keys(leaguePartDescriptions).filter(key =>
+		keys.includes(key),
+	);
+	keysSorted.push(...keys.filter(key => !keysSorted.includes(key)));
+
+	return (
+		<div className="form-group">
+			<label>Use from selected league:</label>
+
+			{keysSorted.map(key => (
+				<div key={key} className="form-check">
+					<label className="form-check-label">
+						<input
+							className="form-check-input"
+							onChange={event => {
+								if (!event.target.checked) {
+									setKept(kept.filter(key2 => key2 !== key));
+								} else {
+									setKept([...kept, key]);
+								}
+							}}
+							type="checkbox"
+							checked={kept.includes(key)}
+						/>
+						{leaguePartDescriptions[key] ? leaguePartDescriptions[key] : key}
+					</label>
+				</div>
+			))}
+
+			<div className="my-1">
+				<button
+					className="btn btn-link p-0"
+					onClick={event => {
+						event.preventDefault();
+						setKept([...keys]);
+					}}
+				>
+					All
+				</button>{" "}
+				|{" "}
+				<button
+					className="btn btn-link p-0"
+					onClick={event => {
+						event.preventDefault();
+						setKept([]);
+					}}
+				>
+					None
+				</button>
+			</div>
+
+			<p>
+				Warning: selecting a weird combination of things may result in a
+				partially or completely broken league.
+			</p>
+		</div>
+	);
+};
+
 const NewLeague = (props: View<"newLeague">) => {
 	const [creating, setCreating] = useState(false);
 	const [customize, setCustomize] = useState<
-		"custom-rosters" | "custom-url" | "none"
-	>(props.lid !== undefined ? "custom-rosters" : "none");
+		"custom-rosters" | "custom-url" | "default" | "2020"
+	>(() => {
+		if (props.lid !== undefined) {
+			return "custom-rosters";
+		}
+
+		return "default";
+	});
 	const [customizePlayers, setCustomizePlayers] = useState<
 		"fictional" | "real" | "league-file"
 	>(props.type === "real" ? "real" : "fictional");
@@ -101,15 +214,16 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [prevlid, setPrevlid] = useState(props.lid);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
 	const [teams, setTeams] = useState(
-		customizeTeams === "realistic" ? teamsRealistic : teamsBBGM,
+		customize === "2020" ? teams2020 : teamsDefault,
 	);
 	const [tid, setTid] = useState(props.lastSelectedTid);
 
 	if (props.lid === undefined && prevlid !== undefined) {
-		setCustomize("none");
+		setCustomize("default");
 		setDifficulty(DIFFICULTY.Normal);
 		setName(props.name);
 		setPrevlid(undefined);
+		setTeams(teamsDefault);
 	}
 
 	if (props.lid !== undefined && prevlid === undefined) {
@@ -119,6 +233,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		);
 		setName(props.name);
 		setPrevlid(props.lid);
+		setTeams(teamsDefault);
 	}
 
 	let title: string;
@@ -162,6 +277,9 @@ const NewLeague = (props: View<"newLeague">) => {
 							? leagueFile.startingSeason
 							: startingSeason;
 				}
+			} else if (process.env.SPORT === "basketball" && customize === "2020") {
+				actualLeagueFile = league2020;
+				startingSeason = 2020;
 			}
 
 			if (customizePlayers !== "fictional") {
@@ -182,9 +300,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					startingSeason,
 					actualRandomizeRosters,
 					actualDifficulty,
-					customizePlayers,
-					customizeTeams,
-					customizeOther,
 					props.lid,
 				);
 				realtimeUpdate([], `/l/${lid}`);
@@ -201,9 +316,6 @@ const NewLeague = (props: View<"newLeague">) => {
 		},
 		[
 			customize,
-			customizeOther,
-			customizePlayers,
-			customizeTeams,
 			difficulty,
 			leagueFile,
 			name,
@@ -410,41 +522,45 @@ const NewLeague = (props: View<"newLeague">) => {
 							<div className="card-body" style={{ marginBottom: "-1rem" }}>
 								<h2 className="card-title">Customize</h2>
 								<div className="form-group">
-									<label htmlFor="new-league-customize">League file</label>
+									<label htmlFor="new-league-customize">League</label>
 									<select
 										id="new-league-customize"
 										className="form-control"
 										onChange={event => {
-											setCustomize(event.target.value as any);
-											setTeams(teamsBBGM);
-											setLeagueFile(null);
-											if (customizeTeams === "league-file") {
-												setCustomizeTeams("default");
-											}
-											if (customizePlayers === "league-file") {
-												setCustomizePlayers("fictional");
-											}
-											if (customizeOther === "league-file") {
-												setCustomizeOther("default");
+											const newCustomize = event.target.value as any;
+											setCustomize(newCustomize);
+											if (
+												process.env.SPORT === "basketball" &&
+												newCustomize === "2020"
+											) {
+												setLeagueFile(league2020);
+												setTeams(teams2020);
+											} else {
+												setTeams(teamsDefault);
+												setLeagueFile(null);
 											}
 										}}
 										value={customize}
 									>
-										<option value="none">None</option>
-										<option value="custom-rosters">Upload League File</option>
-										<option value="custom-url">Enter League File URL</option>
+										<option value="default">Fictional teams and players</option>
+										<option value="2020">Real teams and players - 2020</option>
+										<option value="custom-rosters">Upload league file</option>
+										<option value="custom-url">Enter league file URL</option>
 									</select>
-									<p className="text-muted mt-1">
-										League files can contain teams, players, settings, and other
-										data. You can create a league file by going to Tools >
-										Export within a league, or by{" "}
-										<a
-											href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
-										>
-											creating a custom league file
-										</a>
-										.
-									</p>
+									{customize === "custom-rosters" ||
+									customize === "custom-url" ? (
+										<p className="text-muted mt-1">
+											League files can contain teams, players, settings, and
+											other data. You can create a league file by going to Tools
+											> Export within a league, or by{" "}
+											<a
+												href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+											>
+												creating a custom league file
+											</a>
+											.
+										</p>
+									) : null}
 								</div>
 								{customize === "custom-rosters" ||
 								customize === "custom-url" ? (
@@ -455,91 +571,12 @@ const NewLeague = (props: View<"newLeague">) => {
 											}}
 											onDone={handleNewLeagueFile}
 											enterURL={customize === "custom-url"}
+											hideLoadedMessage
 										/>
 									</div>
 								) : null}
-								{process.env.SPORT === "basketball" ||
-								(leagueFile && leagueFile.teams) ? (
-									<div className="form-group">
-										<label htmlFor="new-league-customize-teams">Teams</label>
-										<select
-											id="new-league-customize-teams"
-											className="form-control"
-											value={customizeTeams}
-											onChange={event => {
-												setCustomizeTeams(event.target.value as any);
-												if (event.target.value === "default") {
-													setTeams(teamsBBGM);
-												} else if (event.target.value === "realistic") {
-													setTeams(teamsRealistic);
-												}
-											}}
-										>
-											<option value="default">Default</option>
-											{process.env.SPORT === "basketball" ? (
-												<option value="realistic">Realistic</option>
-											) : null}
-											{leagueFile && leagueFile.teams ? (
-												<option value="league-file">League File</option>
-											) : null}
-										</select>
-									</div>
-								) : null}
-								{process.env.SPORT === "basketball" ||
-								(leagueFile && leagueFile.players) ? (
-									<div className="form-group">
-										<label htmlFor="new-league-customize-players">
-											Players
-										</label>
-										<select
-											id="new-league-customize-players"
-											className="form-control"
-											value={customizePlayers}
-											onChange={event => {
-												setCustomizePlayers(event.target.value as any);
-											}}
-										>
-											<option value="fictional">Fictional</option>
-											{process.env.SPORT === "basketball" ? (
-												<option value="real">Real</option>
-											) : null}
-											{leagueFile && leagueFile.players ? (
-												<option value="league-file">League File</option>
-											) : null}
-										</select>
-									</div>
-								) : null}
-								{process.env.SPORT === "basketball" || leagueFile ? (
-									<div className="form-group">
-										<label htmlFor="new-league-customize-other">
-											Other settings and data
-										</label>
-										<select
-											id="new-league-customize-other"
-											className="form-control"
-											value={customizeOther}
-											onChange={event => {
-												setCustomizeOther(event.target.value as any);
-											}}
-										>
-											<option value="default">Default</option>
-											{process.env.SPORT === "basketball" ? (
-												<option value="realistic">Realistic</option>
-											) : null}
-											{leagueFile ? (
-												<option value="league-file">League File</option>
-											) : null}
-										</select>
-										<p className="text-muted mt-1">
-											{customizeOther === "realistic"
-												? "This will apply salary cap rules and traded draft picks to match realistic teams and real players."
-												: null}
-											{customizeOther === "league-file"
-												? "Depending on the contents of your league file, this can include league settings, draft picks, the schedule, and more."
-												: null}
-										</p>
-									</div>
-								) : null}
+
+								<LeaguePartPicker leagueFile={leagueFile} />
 							</div>
 						</div>
 					</div>

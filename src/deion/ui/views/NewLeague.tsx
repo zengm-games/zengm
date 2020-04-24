@@ -21,11 +21,15 @@ type NewLeagueTeam = {
 	popRank: number;
 };
 
-const teamsBBGM: NewLeagueTeam[] = helpers.getTeamsDefault();
+const teamsBBGM: NewLeagueTeam[] = helpers.addPopRank(
+	helpers.getTeamsDefault(),
+);
 teamsBBGM.unshift(randomTeam);
 
 const teamsRealistic: NewLeagueTeam[] =
-	process.env.SPORT === "basketball" ? helpers.getTeamsDefault(true) : [];
+	process.env.SPORT === "basketball"
+		? helpers.addPopRank(helpers.getTeamsDefault(true))
+		: [];
 teamsRealistic.unshift(randomTeam);
 
 const PopText = ({ teams, tid }: { teams: typeof teamsBBGM; tid: number }) => {

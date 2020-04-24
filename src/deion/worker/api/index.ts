@@ -287,7 +287,7 @@ const createLeague = async (
 
 	leagueFile.startingSeason = startingSeason;
 
-	return league.create(
+	const lid = league.create(
 		{
 			name,
 			tid,
@@ -298,6 +298,10 @@ const createLeague = async (
 		},
 		conditions,
 	);
+
+	toUI("bbgmPing", ["league", [lid, customizePlayers]], conditions);
+
+	return lid;
 };
 
 const deleteOldData = async (options: {

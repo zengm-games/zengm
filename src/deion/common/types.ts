@@ -842,7 +842,6 @@ export type TeamBasic = {
 	name: string;
 	abbrev: string;
 	pop: number;
-	popRank: number;
 	imgURL?: string;
 	colors: [string, string, string];
 };

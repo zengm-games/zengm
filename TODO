@@ -8,9 +8,11 @@ nba
 - logos for new teams
   - emailed
 - add GA tracking of league type
-- eventually
+- redo UI
   - when you load a league file, it lets you pick if you want to use the players or teams from it. should also allow other things to be selected or not
   - change New League UI so that the "real" rosters are just a predefined league file. loading a league file lets you select which parts to keep. this will enable other sets of built-in rosters
+  - change preprocessor to generate league file from inputs.ison and getTeamInfos.ts
+- check even tracking
 - blog
   - alexnoob
   - difference in ratings distributions between real and fictional
@@ -34,6 +36,9 @@ redo mood system
 - make rookies always willing to re-sign (like restricted free agency, kind of)
 
 fewer finals MVPs on losing team
+
+add copy league function
+- https://old.reddit.com/message/messages/nmnr87
 
 better trade finder AI
 - handle salary matching constraint

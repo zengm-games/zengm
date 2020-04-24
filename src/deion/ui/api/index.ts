@@ -13,12 +13,15 @@ import type {
  *
  * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
  */
-const bbgmPing = (type: "league" | "season" | "version", arg?: number) => {
+const bbgmPing = (
+	type: "customizePlayers" | "league" | "season" | "version",
+	arg?: any,
+) => {
 	if (window.enableLogging && window.gtag) {
 		if (type === "league") {
 			window.gtag("event", "New league", {
-				event_category: "BBGM",
-				event_label: String(arg),
+				event_category: arg[1],
+				event_label: String(arg[0]),
 			});
 		} else if (type === "season") {
 			window.gtag("event", "Completed season", {

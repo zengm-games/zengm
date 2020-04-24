@@ -986,7 +986,6 @@ const create = async (
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;
-	toUI("bbgmPing", ["league", lid], conditions);
 	return lid;
 };
 

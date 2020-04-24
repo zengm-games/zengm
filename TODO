@@ -1,13 +1,10 @@
 nba
-- modify existing rosters or bbgm code
-  - fake team names
-    - new names and logos
-- way to import team and player info
-- gui to edit rosters in spreadsheet, with different ratings/stats/gameAttributes for different seasons, and ability to export any given season
-- logos for new teams
+- test rosters
 - test GA tracking of league type
-- redo UI
-  - on mobile, move "Customize" above the rest
+- logos for new teams
+- eventually
+  - way to import team and player info
+  - gui to edit rosters in spreadsheet, with different ratings/stats/gameAttributes for different seasons, and ability to export any given season
 - blog
   - alexnoob
   - difference in ratings distributions between real and fictional

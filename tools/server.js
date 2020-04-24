@@ -13,6 +13,7 @@ const mimeTypes = {
 	".jpeg": "image/jpeg",
 	".jpg": "image/jpeg",
 	".js": "text/javascript",
+	".json": "application/json",
 	".map": "application/json",
 	".png": "image/png",
 	".woff": "font/woff",
@@ -53,6 +54,7 @@ const server = http.createServer((req, res) => {
 		"/gen/",
 		"/ico/",
 		"/img/",
+		"/leagues/",
 		"/manifest",
 	];
 

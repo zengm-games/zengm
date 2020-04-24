@@ -395,180 +395,182 @@ const NewLeague = (props: View<"newLeague">) => {
 			) : null}
 
 			<form onSubmit={handleSubmit} className="d-flex">
-				<div style={{ maxWidth: 400 }}>
-					<div className="form-group">
-						<label htmlFor="new-league-name">League name</label>
-						<input
-							id="new-league-name"
-							className="form-control"
-							type="text"
-							value={name}
-							onChange={event => {
-								setName(event.target.value);
-							}}
-						/>
-					</div>
-
-					<div className="form-group">
-						<label htmlFor="new-league-team">Pick your team</label>
-						<select
-							id="new-league-team"
-							className="form-control mb-1"
-							value={tid}
-							onChange={event => {
-								setTid(parseInt(event.target.value, 10));
-							}}
-						>
-							{displayedTeams.map(t => {
-								return (
-									<option key={t.tid} value={t.tid}>
-										{t.region} {t.name}
-									</option>
-								);
-							})}
-						</select>
-						<PopText tid={tid} teams={displayedTeams} />
-					</div>
-
-					<div className="form-group">
-						<label htmlFor="new-league-difficulty">Difficulty</label>
-						<select
-							id="new-league-difficulty"
-							className="form-control mb-1"
-							onChange={event => {
-								setDifficulty(parseFloat(event.target.value));
-							}}
-							value={difficulty}
-						>
-							{Object.entries(DIFFICULTY).map(([text, numeric]) => (
-								<option key={numeric} value={numeric}>
-									{text}
-								</option>
-							))}
-							{!Object.values(DIFFICULTY).includes(difficulty) ? (
-								<option value={difficulty}>Custom (from league file)</option>
-							) : null}
-						</select>
-						<span className="text-muted">
-							Increasing difficulty makes AI teams more reluctant to trade with
-							you, makes players less likely to sign with you, and makes it
-							harder to turn a profit.
-						</span>
-					</div>
-
-					{keptKeys.includes("players") ? (
+				<div className="row" style={{ maxWidth: 800 }}>
+					<div className="col-sm-6">
 						<div className="form-group">
-							<label>Options</label>
+							<label htmlFor="new-league-name">League name</label>
+							<input
+								id="new-league-name"
+								className="form-control"
+								type="text"
+								value={name}
+								onChange={event => {
+									setName(event.target.value);
+								}}
+							/>
+						</div>
 
-							<div className="form-check">
-								<label className="form-check-label">
-									<input
-										className="form-check-input"
-										onChange={event => {
-											setRandomizeRosters(event.target.checked);
-										}}
-										type="checkbox"
-										checked={randomizeRosters}
+						<div className="form-group">
+							<label htmlFor="new-league-team">Pick your team</label>
+							<select
+								id="new-league-team"
+								className="form-control mb-1"
+								value={tid}
+								onChange={event => {
+									setTid(parseInt(event.target.value, 10));
+								}}
+							>
+								{displayedTeams.map(t => {
+									return (
+										<option key={t.tid} value={t.tid}>
+											{t.region} {t.name}
+										</option>
+									);
+								})}
+							</select>
+							<PopText tid={tid} teams={displayedTeams} />
+						</div>
+
+						<div className="form-group">
+							<label htmlFor="new-league-difficulty">Difficulty</label>
+							<select
+								id="new-league-difficulty"
+								className="form-control mb-1"
+								onChange={event => {
+									setDifficulty(parseFloat(event.target.value));
+								}}
+								value={difficulty}
+							>
+								{Object.entries(DIFFICULTY).map(([text, numeric]) => (
+									<option key={numeric} value={numeric}>
+										{text}
+									</option>
+								))}
+								{!Object.values(DIFFICULTY).includes(difficulty) ? (
+									<option value={difficulty}>Custom (from league file)</option>
+								) : null}
+							</select>
+							<span className="text-muted">
+								Increasing difficulty makes AI teams more reluctant to trade
+								with you, makes players less likely to sign with you, and makes
+								it harder to turn a profit.
+							</span>
+						</div>
+
+						{keptKeys.includes("players") ? (
+							<div className="form-group">
+								<label>Options</label>
+
+								<div className="form-check">
+									<label className="form-check-label">
+										<input
+											className="form-check-input"
+											onChange={event => {
+												setRandomizeRosters(event.target.checked);
+											}}
+											type="checkbox"
+											checked={randomizeRosters}
+										/>
+										Shuffle rosters
+									</label>
+								</div>
+							</div>
+						) : null}
+
+						<div className="text-center">
+							<button
+								type="submit"
+								className="btn btn-lg btn-primary mt-3"
+								disabled={
+									creating ||
+									((customize === "custom-rosters" ||
+										customize === "custom-url") &&
+										leagueFile === null)
+								}
+							>
+								{props.lid !== undefined ? "Import League" : "Create League"}
+							</button>
+						</div>
+					</div>
+
+					{props.type === "custom" ? (
+						<div className="col-sm-6 order-first order-sm-last mb-3 mb-sm-0">
+							<div className="card bg-light">
+								<div className="card-body" style={{ marginBottom: "-1rem" }}>
+									<h2 className="card-title">Customize</h2>
+									<div className="form-group">
+										<select
+											className="form-control"
+											onChange={event => {
+												const newCustomize = event.target.value as any;
+												setCustomize(newCustomize);
+												if (
+													process.env.SPORT === "basketball" &&
+													newCustomize === "2020"
+												) {
+													setTeams(teams2020);
+													setLeagueFile(helpers.deepCopy(league2020));
+													setKeptKeys(initKeptKeys(league2020));
+												} else {
+													setTeams(teamsDefault);
+													setLeagueFile(null);
+													setKeptKeys(initKeptKeys(null));
+												}
+											}}
+											value={customize}
+										>
+											<option value="default">
+												{process.env.SPORT === "basketball"
+													? "Fictional players and teams"
+													: "Default"}
+											</option>
+											{process.env.SPORT === "basketball" ? (
+												<option value="2020">2020 players and teams</option>
+											) : null}
+											<option value="custom-rosters">Upload league file</option>
+											<option value="custom-url">Enter league file URL</option>
+										</select>
+										{customize === "custom-rosters" ||
+										customize === "custom-url" ? (
+											<p className="mt-3">
+												League files can contain teams, players, settings, and
+												other data. You can create a league file by going to
+												Tools > Export within a league, or by{" "}
+												<a
+													href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+												>
+													creating a custom league file
+												</a>
+												.
+											</p>
+										) : null}
+									</div>
+									{customize === "custom-rosters" ||
+									customize === "custom-url" ? (
+										<div className="my-3">
+											<LeagueFileUpload
+												onLoading={() => {
+													setTeams(teamsDefault);
+													setLeagueFile(null);
+													setKeptKeys(initKeptKeys(null));
+												}}
+												onDone={handleNewLeagueFile}
+												enterURL={customize === "custom-url"}
+												hideLoadedMessage
+											/>
+										</div>
+									) : null}
+
+									<LeaguePartPicker
+										leagueFile={leagueFile}
+										keptKeys={keptKeys}
+										setKeptKeys={setKeptKeys}
 									/>
-									Shuffle rosters
-								</label>
+								</div>
 							</div>
 						</div>
 					) : null}
-
-					<div className="text-center">
-						<button
-							type="submit"
-							className="btn btn-lg btn-primary mt-3"
-							disabled={
-								creating ||
-								((customize === "custom-rosters" ||
-									customize === "custom-url") &&
-									leagueFile === null)
-							}
-						>
-							{props.lid !== undefined ? "Import League" : "Create League"}
-						</button>
-					</div>
 				</div>
-
-				{props.type === "custom" ? (
-					<div style={{ maxWidth: 400 }} className="ml-3 ml-md-5 flex-fill">
-						<div className="card bg-light">
-							<div className="card-body" style={{ marginBottom: "-1rem" }}>
-								<h2 className="card-title">Customize</h2>
-								<div className="form-group">
-									<select
-										className="form-control"
-										onChange={event => {
-											const newCustomize = event.target.value as any;
-											setCustomize(newCustomize);
-											if (
-												process.env.SPORT === "basketball" &&
-												newCustomize === "2020"
-											) {
-												setTeams(teams2020);
-												setLeagueFile(helpers.deepCopy(league2020));
-												setKeptKeys(initKeptKeys(league2020));
-											} else {
-												setTeams(teamsDefault);
-												setLeagueFile(null);
-												setKeptKeys(initKeptKeys(null));
-											}
-										}}
-										value={customize}
-									>
-										<option value="default">
-											{process.env.SPORT === "basketball"
-												? "Fictional players and teams"
-												: "Default"}
-										</option>
-										{process.env.SPORT === "basketball" ? (
-											<option value="2020">2020 players and teams</option>
-										) : null}
-										<option value="custom-rosters">Upload league file</option>
-										<option value="custom-url">Enter league file URL</option>
-									</select>
-									{customize === "custom-rosters" ||
-									customize === "custom-url" ? (
-										<p className="mt-3">
-											League files can contain teams, players, settings, and
-											other data. You can create a league file by going to Tools
-											> Export within a league, or by{" "}
-											<a
-												href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
-											>
-												creating a custom league file
-											</a>
-											.
-										</p>
-									) : null}
-								</div>
-								{customize === "custom-rosters" ||
-								customize === "custom-url" ? (
-									<div className="my-3">
-										<LeagueFileUpload
-											onLoading={() => {
-												setTeams(teamsDefault);
-												setLeagueFile(null);
-												setKeptKeys(initKeptKeys(null));
-											}}
-											onDone={handleNewLeagueFile}
-											enterURL={customize === "custom-url"}
-											hideLoadedMessage
-										/>
-									</div>
-								) : null}
-
-								<LeaguePartPicker
-									leagueFile={leagueFile}
-									keptKeys={keptKeys}
-									setKeptKeys={setKeptKeys}
-								/>
-							</div>
-						</div>
-					</div>
-				) : null}
 			</form>
 		</>
 	);

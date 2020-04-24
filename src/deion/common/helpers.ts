@@ -167,19 +167,19 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 			pop: 1.5,
 			colors: ["#8f2100", "#ffb500", "#d4731c"],
 		},
-		LAC: {
-			region: "Los Angeles",
-			name: "Churros",
-			abbrev: "LAC",
-			pop: 12.1,
-			colors: ["#4a2b14", "#30d9ff", "#704723"],
-		},
 		LA: {
 			region: "Los Angeles",
 			name: "Earthquakes",
 			abbrev: "LA",
 			pop: 12.1,
 			colors: ["#6b6b6b", "#f15d24", "#dedddd"],
+		},
+		LAL: {
+			region: "Los Angeles",
+			name: "???",
+			abbrev: "LAL",
+			pop: 12.1,
+			colors: ["#000000", "#cccccc", "#ffffff"],
 		},
 		LV: {
 			region: "Las Vegas",
@@ -376,7 +376,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.ATL,
 				},
-
 				{
 					tid: 1,
 					cid: 0,
@@ -384,7 +383,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.BOS,
 				},
-
 				{
 					tid: 2,
 					cid: 0,
@@ -392,7 +390,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.BKN,
 				},
-
 				{
 					tid: 3,
 					cid: 0,
@@ -400,7 +397,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.CHA,
 				},
-
 				{
 					tid: 4,
 					cid: 0,
@@ -408,7 +404,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.CHI,
 				},
-
 				{
 					tid: 5,
 					cid: 0,
@@ -416,7 +411,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.CLE,
 				},
-
 				{
 					tid: 6,
 					cid: 1,
@@ -424,7 +418,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.DAL,
 				},
-
 				{
 					tid: 7,
 					cid: 1,
@@ -432,7 +425,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.DEN,
 				},
-
 				{
 					tid: 8,
 					cid: 0,
@@ -440,7 +432,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.DET,
 				},
-
 				{
 					tid: 9,
 					cid: 1,
@@ -450,7 +441,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					abbrev: "GS",
 					region: "Golden State",
 				},
-
 				{
 					tid: 10,
 					cid: 1,
@@ -458,7 +448,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.HOU,
 				},
-
 				{
 					tid: 11,
 					cid: 0,
@@ -466,23 +455,20 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.IND,
 				},
-
 				{
 					tid: 12,
 					cid: 1,
 					did: 5,
 					imgURL: undefined,
-					...teamInfos.LAC,
+					...teamInfos.LA,
 				},
-
 				{
 					tid: 13,
 					cid: 1,
 					did: 5,
 					imgURL: undefined,
-					...teamInfos.LA,
+					...teamInfos.LAL,
 				},
-
 				{
 					tid: 14,
 					cid: 1,
@@ -490,7 +476,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.MEM,
 				},
-
 				{
 					tid: 15,
 					cid: 0,
@@ -498,7 +483,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.MIA,
 				},
-
 				{
 					tid: 16,
 					cid: 0,
@@ -506,7 +490,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.MIL,
 				},
-
 				{
 					tid: 17,
 					cid: 1,
@@ -514,7 +497,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.MIN,
 				},
-
 				{
 					tid: 18,
 					cid: 1,
@@ -522,9 +504,7 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.NOL,
 				},
-
 				{ tid: 19, cid: 0, did: 0, imgURL: undefined, ...teamInfos.NYC },
-
 				{
 					tid: 20,
 					cid: 1,
@@ -532,7 +512,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.OKC,
 				},
-
 				{
 					tid: 21,
 					cid: 0,
@@ -540,7 +519,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.ORL,
 				},
-
 				{
 					tid: 22,
 					cid: 0,
@@ -548,7 +526,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.PHI,
 				},
-
 				{
 					tid: 23,
 					cid: 1,
@@ -556,7 +533,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.PHO,
 				},
-
 				{
 					tid: 24,
 					cid: 1,
@@ -564,7 +540,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.POR,
 				},
-
 				{
 					tid: 25,
 					cid: 1,
@@ -572,7 +547,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.SAC,
 				},
-
 				{
 					tid: 26,
 					cid: 1,
@@ -580,7 +554,6 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.SA,
 				},
-
 				{
 					tid: 27,
 					cid: 0,
@@ -588,9 +561,7 @@ function getTeamsDefault(realistic?: boolean): TeamBasic[] {
 					imgURL: undefined,
 					...teamInfos.TOR,
 				},
-
 				{ tid: 28, cid: 1, did: 4, imgURL: undefined, ...teamInfos.UTA },
-
 				{
 					tid: 29,
 					cid: 0,

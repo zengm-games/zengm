@@ -3,13 +3,9 @@ nba
 - modify existing rosters or bbgm code
   - fake team names
     - new names and logos
-  - salary stuff, if too many FAs next year
-  - adjust player value age
 - way to import team and player info
 - gui to edit rosters in spreadsheet, with different ratings/stats/gameAttributes for different seasons, and ability to export any given season
 - don't break football
-- service worker dynamic cache?
-- use normed ratings from nicidob?
 - revisit city populations in getTeamsDefault and input.json
 - LA abbrevs
 - logos for new teams
@@ -20,8 +16,12 @@ nba
   - change New League UI so that the "real" rosters are just a predefined league file. loading a league file lets you select which parts to keep. this will enable other sets of built-in rosters
 - blog
   - alexnoob
+  - difference in ratings distributions between real and fictional
+    - adjustments i made
+    - scoring
   - deaths
   - pictures/logos
+  - future - historical
 
 player stats popover
 - stats relative to league average
@@ -35,6 +35,8 @@ redo mood system
 - make it impossible to refuse to re-sign to title winner (really)
 - loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
 - make rookies always willing to re-sign (like restricted free agency, kind of)
+
+fewer finals MVPs on losing team
 
 better trade finder AI
 - handle salary matching constraint
@@ -87,8 +89,10 @@ game sim improvements
   - https://discordapp.com/channels/@me/604773209837010944/700376777473654784
 - ask what kind of players are not common enough
 
-value in basketball should be more based on ratings
-- especially if player ratings changed this season!
+even log revamp
+- store info about trade, so the summary of a trade can be linked to
+- store the "value" of an event, so it can be used as a filter for important news
+- for traded picks, store info so eventual picked players can be filled in later
 
 gm history page
 - like team history, but for the teams you GMed
@@ -110,6 +114,8 @@ some kind of global status/finances menu, above titlebar
 
 more animations
 - RatingsStatsPopover modal opening
+- games log
+- schedule
 
 add FMVP to award races
 

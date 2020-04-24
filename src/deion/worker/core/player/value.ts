@@ -91,7 +91,7 @@ const value = (
 			}
 		}
 
-		current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
+		current = 0.5 * pr.ovr + 0.5 * current; // Include some part of the ratings
 	}
 
 	// 2. Potential
@@ -175,15 +175,15 @@ const value = (
 		return 0.975 * current;
 	}
 
-	if (age === 31) {
+	if (age === 32) {
 		return 0.95 * current;
 	}
 
-	if (age === 32) {
+	if (age === 34) {
 		return 0.9 * current;
 	}
 
-	if (age === 33) {
+	if (age === 35) {
 		return 0.85 * current;
 	}
 

@@ -818,7 +818,6 @@ export const createWithoutSaving = (
 				.filter(p => p.tid === i)
 				.map(p => ({ ratings: p.ratings[p.ratings.length - 1] }));
 			const ovr = overrides.core.team.ovr!(teamPlayers);
-			console.log(teamInfos[i], teams[i], teamPlayers, ovr);
 			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
 	}
@@ -966,24 +965,22 @@ const create = async (
 		await updateStatus("Idle");
 
 		// Auto sort rosters
-		await Promise.all(
-			leagueData.teams.map((t: { tid: number }) => {
-				let noRosterOrderSet = true;
-				if (process.env.SPORT === "basketball" && leagueFile.players) {
-					for (const p of leagueFile.players) {
-						if (p.tid === t.tid && typeof p.rosterOrder === "number") {
-							noRosterOrderSet = false;
-							break;
-						}
+		for (const t of leagueData.teams) {
+			let noRosterOrderSet = true;
+			if (process.env.SPORT === "basketball" && leagueFile.players) {
+				for (const p of leagueFile.players) {
+					if (p.tid === t.tid && typeof p.rosterOrder === "number") {
+						noRosterOrderSet = false;
+						break;
 					}
 				}
+			}
 
-				// If league file has players, don't auto sort even if skipNewPhase is false
-				if (noRosterOrderSet || !g.get("userTids").includes(t.tid)) {
-					overrides.core.team.rosterAutoSort!(t.tid);
-				}
-			}),
-		);
+			// If league file has players, don't auto sort even if skipNewPhase is false
+			if (noRosterOrderSet || !g.get("userTids").includes(t.tid)) {
+				await overrides.core.team.rosterAutoSort!(t.tid);
+			}
+		}
 	}
 
 	await idb.cache.flush();

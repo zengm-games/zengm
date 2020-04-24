@@ -1,7 +1,7 @@
 import { PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { g, helpers, random, overrides } from "../../util";
 import type { GameResults } from "../../../common/types";
 
 const writeTeamStats = async (results: GameResults) => {
@@ -304,6 +304,13 @@ const writeTeamStats = async (results: GameResults) => {
 		await idb.cache.teams.put(t);
 		await idb.cache.teamSeasons.put(teamSeason);
 		await idb.cache.teamStats.put(teamStats);
+
+		// 10% chance of reordering roster, why not
+		if (Math.random() < 0.1) {
+			if (!g.get("userTids").includes(t.tid)) {
+				await overrides.core.team.rosterAutoSort!(t.tid);
+			}
+		}
 	}
 
 	return att;

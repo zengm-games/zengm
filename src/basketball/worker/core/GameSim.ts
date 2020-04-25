@@ -494,7 +494,9 @@ class GameSim {
 			upperBound = 1 / 60;
 		}
 
-		return helpers.bound(possessionLength, lowerBound, upperBound);
+		const bounded1 = helpers.bound(possessionLength, lowerBound, upperBound);
+
+		return helpers.bound(bounded1, 0, this.t);
 	}
 
 	simPossession() {
@@ -1791,6 +1793,9 @@ class GameSim {
 
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[]) {
 		let texts;
+		if (this.t < 0) {
+			console.log("FUCK", type, t, names, this.t);
+		}
 
 		if (this.playByPlay !== undefined) {
 			if (type === "injury") {

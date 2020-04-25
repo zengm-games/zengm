@@ -3,7 +3,6 @@ nba
 - logos for new teams
 - eventually
   - way to import team and player info
-  - gui to edit rosters in spreadsheet, with different ratings/stats/gameAttributes for different seasons, and ability to export any given season
 - blog
   - alexnoob
   - difference in ratings distributions between real and fictional
@@ -12,9 +11,18 @@ nba
   - deaths
   - pictures/logos
   - player value (age and more ratings based)
-  - future - historical
+  - future - historical, more quantitative approach like nicidob. these rosters are more about putting the infrastructure in place than anointing a set of ratings as perfect
+- historical
+  - do something like nicidob, only for the time since expansion (2004)
+    - do a good job, build tools for analysis and customization, integrate past stats and awards and such
+      - one script to output BBGM objects (players, stats, ratings, awards) as CSV files. another to parse that and produce JSON file for a season
+  - eventually
     - add relocation
     - add expansion
+    - add triggered events
+      - relocation
+      - expansion
+      - gameAttributes changes
 
 less than 0 seconds
 - https://cdn.discordapp.com/attachments/290015591216054273/703349891996450997/Screen_Shot_2020-04-24_at_5.00.37_PM.png

@@ -19,7 +19,7 @@ export const getSortedTeams = ({
 				name: `${teamRegionsCache[i]} ${teamNamesCache[i]}`,
 			};
 		}),
-		"val",
+		"name",
 	);
 
 	const object: { [key: string]: string | undefined } = {};

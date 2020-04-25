@@ -4,6 +4,7 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker, logEvent } from "../util";
 import type { View } from "../../common/types";
+import orderBy from "lodash/orderBy";
 
 const handleAutoSort = async (tids: number[]) => {
 	await toWorker("main", "autoSortRoster", undefined, tids);
@@ -164,7 +165,7 @@ const MultiTeamMode = ({
 						size={teams.length}
 						value={userTids.map(String)}
 					>
-						{teams.map(t => (
+						{orderBy(teams, "name").map(t => (
 							<option key={t.tid} value={t.tid}>
 								{t.name}
 							</option>

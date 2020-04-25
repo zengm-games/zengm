@@ -1,6 +1,5 @@
 nba
 - test rosters
-- test GA tracking of league type
 - logos for new teams
 - eventually
   - way to import team and player info
@@ -14,6 +13,11 @@ nba
   - pictures/logos
   - player value (age and more ratings based)
   - future - historical
+    - add relocation
+    - add expansion
+
+less than 0 seconds
+- https://cdn.discordapp.com/attachments/290015591216054273/703349891996450997/Screen_Shot_2020-04-24_at_5.00.37_PM.png
 
 player stats popover
 - stats relative to league average

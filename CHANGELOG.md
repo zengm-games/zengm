@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* **2020-04-25: Added an option in BBGM to create a new league based on real players. [[1]](https://basketball-gm.com/blog/2020/04/real-players/) [[2]](https://old.reddit.com/r/BasketballGM/comments/g7vg6w/new_in_versions_202004250934_built_in_support_for/)**
+
 * 2020-04-19: Added new God Mode option "Trades Between AI Teams Factor" to control the rate of trades between AI teams. [[1]](https://old.reddit.com/r/BasketballGM/comments/g4kvht/new_in_version_202004200168_god_mode_option_to/) [[2]](https://old.reddit.com/r/Football_GM/comments/g4kvsf/new_in_version_202004200170_god_mode_option_to/)
 
 * 2020-04-16: In FBGM, defensive linemen now get fewer tackles.

@@ -1,18 +1,7 @@
 nba
-- test rosters
 - logos for new teams
 - eventually
   - way to import team and player info
-- blog
-  - teams
-  - alexnoob
-  - difference in ratings distributions between real and fictional
-    - adjustments i made
-    - scoring
-  - deaths
-  - pictures/logos
-  - player value (age and more ratings based)
-  - future - historical, more quantitative approach like nicidob. these rosters are more about putting the infrastructure in place than anointing a set of ratings as perfect
 - historical
   - do something like nicidob, only for the time since expansion (2004)
     - do a good job, build tools for analysis and customization, integrate past stats and awards and such

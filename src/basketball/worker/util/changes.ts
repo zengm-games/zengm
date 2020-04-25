@@ -255,6 +255,11 @@ const changes = [
 		date: "2020-04-16",
 		msg: "New Award Races page available at Stats > Award Races.",
 	},
+	{
+		date: "2020-04-25",
+		msg:
+			'When creating a new league, you now have the option of using real players. <a href="https://basketball-gm.com/blog/2020/04/real-players/">More details</a>',
+	},
 ];
 
 export default changes;

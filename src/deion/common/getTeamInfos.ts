@@ -122,7 +122,7 @@ const teamInfos: {
 	},
 	MIL: {
 		region: "Milwaukee",
-		name: "Meat Packers",
+		name: "Maulers",
 		pop: 1.5,
 		colors: ["#000000", "#cccccc", "#ffffff"],
 	},

@@ -1,5 +1,6 @@
 nba
 - logos for new teams
+  - Los Angeles Lowriders
 - eventually
   - way to import team and player info
 - historical
@@ -8,11 +9,16 @@ nba
       - one script to output BBGM objects (players, stats, ratings, awards) as CSV files. another to parse that and produce JSON file for a season
   - eventually
     - add relocation
+      - team name, abbrev, and region not static
+      - confs divs not static either
+      - other things in team or game attributes?
     - add expansion
     - add triggered events
       - relocation
       - expansion
       - gameAttributes changes
+
+on league creation, select which teams you want for a league
 
 player stats popover
 - stats relative to league average

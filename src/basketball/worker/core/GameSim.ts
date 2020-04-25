@@ -519,7 +519,11 @@ class GameSim {
 		this.updatePlayingTime(possessionLength);
 		this.injuries();
 
-		if (random.randInt(1, this.subsEveryN) === 1) {
+		const gameOver =
+			this.team[this.o].stat.ptsQtrs.length >= 4 &&
+			this.team[this.d].stat.pts != this.team[this.o].stat.pts;
+
+		if (!gameOver && random.randInt(1, this.subsEveryN) === 1) {
 			const substitutions = this.updatePlayersOnCourt();
 
 			if (substitutions) {
@@ -966,14 +970,15 @@ class GameSim {
 
 		// If winning at end of game, just run out the clock
 		if (
-			this.t === 0 &&
+			this.t <= 0 &&
+			this.team[this.o].stat.ptsQtrs.length >= 4 &&
 			this.team[this.o].stat.pts > this.team[this.d].stat.pts
 		) {
 			return "endOfQuarter";
 		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
-		if (this.t === 0 && possessionLength < 6 / 60) {
+		if (this.t <= 0 && possessionLength < 6 / 60) {
 			if (Math.random() > (possessionLength / (8 / 60)) ** (1 / 4)) {
 				return "endOfQuarter";
 			}

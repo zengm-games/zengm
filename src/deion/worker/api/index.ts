@@ -673,7 +673,9 @@ const exportDraftClass = async (season: number) => {
 		},
 	});
 	data.startingSeason = season;
-	const filename = `BBGM_draft_class_${g.get("leagueName")}_${season}.json`;
+	const filename = `${
+		process.env.SPORT === "basketball" ? "B" : "F"
+	}BGM_draft_class_${g.get("leagueName")}_${season}.json`;
 	return {
 		filename,
 		json: JSON.stringify(data),

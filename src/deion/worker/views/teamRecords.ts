@@ -173,9 +173,9 @@ const tallyAwards = (awards: any[], allAllStars: AllStars[]) => {
 				teams[a.bestRecord.tid].bestRecord++;
 			}
 
-			for (let i = 0; i < a.allRookie.length; i++) {
-				if (teams[a.allRookie[i].tid]) {
-					teams[a.allRookie[i].tid].allRookie++;
+			for (const t of a.allRookie) {
+				if (t && teams[t.tid]) {
+					teams[t.tid].allRookie++;
 				}
 			}
 		}

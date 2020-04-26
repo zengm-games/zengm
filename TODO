@@ -1,3 +1,5 @@
+in checkRosterSizes, auto create min contract FAs if necessary
+
 show spread, ovr, etc on live game sim game selection page
 
 way to disable saving? @champ1432#2175 

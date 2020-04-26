@@ -396,7 +396,7 @@ class GameSim {
 				this.d = this.o === 0 ? 1 : 0;
 			}
 
-			while (this.t > 0) {
+			while (this.t > 0.5 / 60) {
 				this.simPossession();
 			}
 
@@ -426,7 +426,7 @@ class GameSim {
 		this.recordPlay("overtime");
 		this.jumpBall();
 
-		while (this.t > 0) {
+		while (this.t > 0.5 / 60) {
 			this.simPossession();
 		}
 	}
@@ -1258,7 +1258,7 @@ class GameSim {
 			this.recordPlay("missTp", this.o, [this.team[this.o].player[p].name]);
 		}
 
-		if (this.t > 0) {
+		if (this.t > 0.5 / 60) {
 			return this.doReb(); // orb or drb
 		}
 

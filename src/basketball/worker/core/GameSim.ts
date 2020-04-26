@@ -436,6 +436,11 @@ class GameSim {
 		const pointDifferential =
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
+		// Run out the clock if winning
+		if (quarter >= 4 && this.t <= 24 / 60 && pointDifferential > 0) {
+			return this.t;
+		}
+
 		// Booleans that can influence possession length strategy
 		const holdForLastShot =
 			this.t <= 26 / 60 && (quarter <= 3 || pointDifferential >= 0);
@@ -470,6 +475,9 @@ class GameSim {
 				this.averagePossessionLength - 3 / 60,
 				5 / 60,
 			);
+			if (this.t < 48 / 60 && this.t > 4 / 60) {
+				upperBound = Math.sqrt(this.t);
+			}
 		} else if (maintainLead) {
 			possessionLength = random.gauss(
 				this.averagePossessionLength + 3 / 60,
@@ -487,6 +495,10 @@ class GameSim {
 			}
 		}
 
+		if (upperBound < lowerBound) {
+			lowerBound = upperBound;
+		}
+
 		if (lowerBound < 0) {
 			lowerBound = 0;
 		}
@@ -500,14 +512,15 @@ class GameSim {
 	}
 
 	simPossession() {
-		// Clock
-		const possessionLength = this.getPossessionLength();
-		this.t -= possessionLength;
-
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
 		this.updateTeamCompositeRatings();
+
+		// Clock
+		const possessionLength = this.getPossessionLength();
+		this.t -= possessionLength;
+
 		const outcome = this.getPossessionOutcome(possessionLength);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
@@ -1798,10 +1811,6 @@ class GameSim {
 
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[]) {
 		let texts;
-		if (this.t < 0) {
-			console.log("FUCK", type, t, names, this.t);
-		}
-
 		if (this.playByPlay !== undefined) {
 			if (type === "injury") {
 				texts = ["{0} was injured!"];

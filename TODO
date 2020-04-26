@@ -1,6 +1,24 @@
+logos for new teams
+- Los Angeles Lowriders
+
+historical teams back to 2004
+- assemble data for teams, players, awards, and traded draft picks
+- write script to create league file
+- estimate ratings
+
+dynamic confs/divs
+- only allow in certain phase of offseason
+- drag and drop ui
+- make generic enough that it could be reused for creating new league with custom set of teams
+
+expansion draft
+- only allow in certain phase of offseason
+- allow division/conference realignment when setting up?
+- pick protections
+- multiple expansion teams
+- allow user to take control of expansion team
+
 nba
-- logos for new teams
-  - Los Angeles Lowriders
 - eventually
   - way to import team and player info
 - historical

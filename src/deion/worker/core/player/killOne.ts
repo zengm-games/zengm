@@ -80,6 +80,11 @@ const killOne = async (conditions: Conditions) => {
 
 	// Pick a random player on that team
 	const p = random.choice(players.filter(p => !p.real));
+	if (!p) {
+		// Could happen, with real rosters
+		return;
+	}
+
 	retire(p, conditions, false);
 
 	p.diedYear = g.get("season");

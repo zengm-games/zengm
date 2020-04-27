@@ -98,7 +98,7 @@ const teamInfos: {
 	},
 	LAL: {
 		region: "Los Angeles",
-		name: "Legion",
+		name: "Lowriders",
 		pop: 15.6,
 		colors: ["#000000", "#cccccc", "#ffffff"],
 	},
@@ -122,7 +122,7 @@ const teamInfos: {
 	},
 	MIL: {
 		region: "Milwaukee",
-		name: "Maulers",
+		name: "Cheesemakers",
 		pop: 1.5,
 		colors: ["#000000", "#cccccc", "#ffffff"],
 	},

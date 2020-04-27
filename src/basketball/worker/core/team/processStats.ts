@@ -3,8 +3,9 @@ import type {
 	TeamStatAttr,
 	TeamStatType,
 	TeamStats,
-} from "../../../../deion/common/types"; // Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
+} from "../../../../deion/common/types";
 
+// Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
 const poss = (ts: TeamStats) => {
 	if (ts.orb + ts.oppDrb > 0 && ts.oppOrb + ts.drb > 0) {
 		return (

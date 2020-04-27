@@ -51,24 +51,25 @@ describe("worker/core/team/checkRosterSizes", () => {
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.equal(players.length, 9);
 		const userTeamSizeError = await team.checkRosterSizes();
-		assert.equal(userTeamSizeError, undefined); // Confirm players added up to limit
+		assert.equal(userTeamSizeError, undefined);
 
+		// Confirm players added up to limit
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.equal(players.length, g.get("minRosterSize"));
 	});
 
-	test("return error message when AI team needs to add a player but there is none", async () => {
+	test("automatically create a scrub when AI team needs to add a player but there is none", async () => {
 		await resetCacheWithPlayers({
 			"0": 10,
 			"1": 9,
 		});
 
 		// Confirm roster size under limit
-		const teamSizeError = await team.checkRosterSizes();
-		assert.equal(
-			teamSizeError,
-			"AI team BAL needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.",
-		);
+		const userTeamSizeError = await team.checkRosterSizes();
+		assert.equal(userTeamSizeError, undefined);
+
+		const players = await idb.cache.players.indexGetAll("playersByTid", 1);
+		assert.equal(players.length, g.get("minRosterSize"));
 	});
 
 	test("remove players to AI team over roster limit without returning error message", async () => {

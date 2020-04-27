@@ -1,4 +1,4 @@
-in checkRosterSizes, auto create min contract FAs if necessary
+shuffle rosters option should reset p.transactions
 
 show spread, ovr, etc on live game sim game selection page
 
@@ -47,7 +47,7 @@ nba
     - add triggered events
       - relocation
       - expansion
-      - gameAttributes changes
+      - gameAttributes changes (salary cap, etc)
 
 on league creation, select which teams you want for a league
 

@@ -184514,7 +184514,7 @@
 			"did": 5,
 			"tid": 13,
 			"region": "Los Angeles",
-			"name": "Legion",
+			"name": "Lowriders",
 			"pop": 15.6,
 			"colors": ["#000000", "#cccccc", "#ffffff"],
 			"imgURL": "/img/logos/LAL.png"
@@ -184547,7 +184547,7 @@
 			"did": 1,
 			"tid": 16,
 			"region": "Milwaukee",
-			"name": "Maulers",
+			"name": "Cheesemakers",
 			"pop": 1.5,
 			"colors": ["#000000", "#cccccc", "#ffffff"],
 			"imgURL": "/img/logos/MIL.png"

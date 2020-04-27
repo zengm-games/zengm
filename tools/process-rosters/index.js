@@ -70,6 +70,8 @@ const adjustRatings = (ratings, tid) => {
 			ratings[key] = 0;
 		}
 	}
+
+	ratings.fuzz = 0;
 };
 
 const replaceAbbrevs = {

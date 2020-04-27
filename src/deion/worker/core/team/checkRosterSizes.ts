@@ -1,7 +1,7 @@
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, overrides } from "../../util";
+import { g, helpers, local, overrides, random } from "../../util";
 import type { Player } from "../../../common/types";
 
 /**
@@ -73,13 +73,18 @@ const checkRosterSizes = async (): Promise<string | void> => {
 				// Auto-add players
 				while (numPlayersOnRoster < g.get("minRosterSize")) {
 					// See also core.phase
-					const p = minFreeAgents.shift();
+					let p: any = minFreeAgents.shift();
 
-					if (!p) {
-						userTeamSizeError = `AI team ${
-							g.get("teamAbbrevsCache")[tid]
-						} needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.`;
-						break;
+					while (true) {
+						const age = random.randInt(25, 31);
+						const draftYear = g.get("season") - (age - 22);
+						p = player.generate(PLAYER.FREE_AGENT, age, draftYear, false, 15.5);
+						p.ratings[0].season = g.get("season"); // HACK!!!
+						player.develop(p, 0);
+						if (p.ratings[0].ovr <= 40) {
+							await idb.cache.players.add(p); // Create pid
+							break;
+						}
 					}
 
 					player.sign(p, tid, p.contract, g.get("phase"));

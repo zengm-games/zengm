@@ -476,6 +476,8 @@ export const createWithoutSaving = (
 			random.shuffle(playerTids);
 
 			for (const p of leagueFile.players) {
+				p.transactions = [];
+
 				if (p.tid > PLAYER.FREE_AGENT) {
 					p.tid = playerTids.pop();
 

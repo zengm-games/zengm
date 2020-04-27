@@ -47,7 +47,7 @@ const awardsOrder = [
 	"First Team All-Defensive",
 	"Second Team All-Defensive",
 	"Third Team All-Defensive",
-	"All Rookie Team",
+	"All-Rookie Team",
 	"All-Star",
 	"All-Star MVP",
 ];

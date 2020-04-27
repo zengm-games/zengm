@@ -37,6 +37,7 @@ nba
     - do a good job, build tools for analysis and customization, integrate past stats and awards and such
       - one script to output BBGM objects (players, stats, ratings, awards) as CSV files. another to parse that and produce JSON file for a season
   - eventually
+    - play style changes
     - add relocation
       - team name, abbrev, and region not static
       - confs divs not static either

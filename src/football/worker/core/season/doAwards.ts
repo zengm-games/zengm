@@ -314,7 +314,7 @@ const doAwards = async (conditions: Conditions) => {
 		droy: "Defensive Rookie of the Year",
 		finalsMvp: "Finals MVP",
 		allLeague: "All-League",
-		allRookie: "All Rookie Team",
+		allRookie: "All-Rookie Team",
 	};
 	const simpleAwards = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
 

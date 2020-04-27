@@ -1470,17 +1470,17 @@ const cols: {
 		sortType: "number",
 	},
 	"count:allDefense": {
-		desc: "All Defensive Team",
+		desc: "All-Defensive Team",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	"count:allLeague": {
-		desc: "All League Team",
+		desc: "All-League Team",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	"count:allRookie": {
-		desc: "All Rookie Team",
+		desc: "All-Rookie Team",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

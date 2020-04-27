@@ -300,7 +300,7 @@ const awardNames = {
 	finalsMvp: "Finals MVP",
 	allLeague: "All-League",
 	allDefensive: "All-Defensive",
-	allRookie: "All Rookie Team",
+	allRookie: "All-Rookie Team",
 };
 
 const simpleAwards = [

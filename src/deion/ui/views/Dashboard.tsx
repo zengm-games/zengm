@@ -307,14 +307,12 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			{process.env.SPORT === "basketball" ? (
 				<>
 					<a
-						href="/new_league/fictional"
+						href="/new_league/random"
 						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
 					>
 						New league
 						<br />
-						<span className="dashboard-top-link-small">
-							» Fictional players
-						</span>
+						<span className="dashboard-top-link-small">» Random players</span>
 					</a>
 					<a
 						href="/new_league/real"

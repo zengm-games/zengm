@@ -225,8 +225,8 @@ const NewLeague = (props: View<"newLeague">) => {
 	} else if (props.type === "custom") {
 		title =
 			process.env.SPORT === "basketball" ? "New Custom League" : "New League";
-	} else if (props.type === "fictional") {
-		title = "New Fictional Players League";
+	} else if (props.type === "random") {
+		title = "New Random Players League";
 	} else {
 		title = "New Real Players League";
 	}
@@ -521,7 +521,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									>
 										<option value="default">
 											{process.env.SPORT === "basketball"
-												? "Fictional players and teams"
+												? "Random players and teams"
 												: "Default"}
 										</option>
 										{process.env.SPORT === "basketball" ? (

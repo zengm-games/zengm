@@ -7,7 +7,9 @@ way to disable saving? @champ1432#2175
 logos for new teams
 
 historical teams back to 2004
-- salary cap increases needed?
+- UI
+  - 2020 option -> real, and when selected show a season. if a season besides 2020 is selected, show a loading indicator and dynamically retrieve it
+  - log season to GA
 - blog
   - names, ratings (with tweaks), awards, relatives, contrats (mostly)
   - why no historical stats

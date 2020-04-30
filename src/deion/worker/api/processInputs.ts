@@ -263,10 +263,10 @@ const negotiationList = () => {
 };
 
 const newLeague = (params: Params) => {
-	let type: "custom" | "fictional" | "real" = "custom";
+	let type: "custom" | "random" | "real" = "custom";
 	let lid;
-	if (params.x === "fictional") {
-		type = "fictional";
+	if (params.x === "random") {
+		type = "random";
 	} else if (params.x === "real") {
 		type = "real";
 	} else if (params.x !== undefined) {

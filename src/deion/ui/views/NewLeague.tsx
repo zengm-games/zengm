@@ -1,4 +1,5 @@
 import orderBy from "lodash/orderBy";
+import range from "lodash/range";
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
@@ -191,30 +192,31 @@ const LeaguePartPicker = ({
 const NewLeague = (props: View<"newLeague">) => {
 	const [creating, setCreating] = useState(false);
 	const [customize, setCustomize] = useState<
-		"custom-rosters" | "custom-url" | "default" | "2020"
+		"custom-rosters" | "custom-url" | "default" | "real"
 	>(() => {
 		if (props.lid !== undefined) {
 			return "custom-rosters";
 		}
 
 		if (props.type === "real") {
-			return "2020";
+			return "real";
 		}
 
 		return "default";
 	});
+	const [realSeason, setRealSeason] = useState(2020);
 	const [difficulty, setDifficulty] = useState(
 		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 	);
 	const [leagueFile, setLeagueFile] = useState<any>(
-		customize === "2020" && process.env.SPORT === "basketball"
+		customize === "real" && process.env.SPORT === "basketball"
 			? league2020
 			: null,
 	);
 	const [name, setName] = useState(props.name);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
 	const [teams, setTeams] = useState(
-		customize === "2020" ? teams2020 : teamsDefault,
+		customize === "real" ? teams2020 : teamsDefault,
 	);
 	const [tid, setTid] = useState(props.lastSelectedTid);
 	const [keptKeys, setKeptKeys] = useState<string[]>(initKeptKeys(leagueFile));
@@ -410,6 +412,28 @@ const NewLeague = (props: View<"newLeague">) => {
 						/>
 					</div>
 
+					{customize === "real" ? (
+						<div className="form-group">
+							<label htmlFor="new-league-season">Season</label>
+							<select
+								id="new-league-season"
+								className="form-control mb-1"
+								value={realSeason}
+								onChange={event => {
+									setRealSeason(parseInt(event.target.value, 10));
+								}}
+							>
+								{range(2020, 2004).map(season => {
+									return (
+										<option key={season} value={season}>
+											{season} season
+										</option>
+									);
+								})}
+							</select>
+						</div>
+					) : null}
+
 					<div className="form-group">
 						<label htmlFor="new-league-team">Pick your team</label>
 						<select
@@ -506,7 +530,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											setCustomize(newCustomize);
 											if (
 												process.env.SPORT === "basketball" &&
-												newCustomize === "2020"
+												newCustomize === "real"
 											) {
 												setTeams(teams2020);
 												setLeagueFile(helpers.deepCopy(league2020));
@@ -525,7 +549,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												: "Default"}
 										</option>
 										{process.env.SPORT === "basketball" ? (
-											<option value="2020">2020 players and teams</option>
+											<option value="real">Real players and teams</option>
 										) : null}
 										<option value="custom-rosters">Upload league file</option>
 										<option value="custom-url">Enter league file URL</option>

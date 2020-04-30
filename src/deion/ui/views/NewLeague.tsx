@@ -194,7 +194,7 @@ const SeasonsMenu = ({
 	onLoading,
 	value,
 }: {
-	onDone: (season, leagueFile: any) => void;
+	onDone: (season: number, leagueFile: any) => void;
 	onLoading: (season: number) => void;
 	value: number;
 }) => {

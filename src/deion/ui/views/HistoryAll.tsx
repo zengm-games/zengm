@@ -99,27 +99,30 @@ const HistoryAll = ({
 			countText = null;
 		}
 
-		const champEl = {
-			classNames: s.champ && s.champ.tid === userTid ? "table-info" : undefined,
-			value: (
-				<>
-					{s.champ.seed}. {teamName(s.champ, s.season, ties)}
-					{countText}
-				</>
-			),
-			sortValue: `${s.champ.region} ${s.champ.name} ${s.season}`,
-		};
+		const champEl = s.champ
+			? {
+					classNames: s.champ.tid === userTid ? "table-info" : undefined,
+					value: (
+						<>
+							{s.champ.seed}. {teamName(s.champ, s.season, ties)}
+							{countText}
+						</>
+					),
+					sortValue: `${s.champ.region} ${s.champ.name} ${s.season}`,
+			  }
+			: null;
 
-		const runnerUpEl = {
-			classNames:
-				s.runnerUp && s.runnerUp.tid === userTid ? "table-info" : undefined,
-			value: (
-				<>
-					{s.runnerUp.seed}. {teamName(s.runnerUp, s.season, ties)}
-				</>
-			),
-			sortValue: `${s.runnerUp.region} ${s.runnerUp.name} ${s.season}`,
-		};
+		const runnerUpEl = s.runnerUp
+			? {
+					classNames: s.runnerUp.tid === userTid ? "table-info" : undefined,
+					value: (
+						<>
+							{s.runnerUp.seed}. {teamName(s.runnerUp, s.season, ties)}
+						</>
+					),
+					sortValue: `${s.runnerUp.region} ${s.runnerUp.name} ${s.season}`,
+			  }
+			: null;
 
 		return {
 			key: s.season,

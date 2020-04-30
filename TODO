@@ -5,19 +5,12 @@ show spread, ovr, etc on live game sim game selection page
 way to disable saving? @champ1432#2175 
 
 logos for new teams
-- Los Angeles Lowriders
 
 historical teams back to 2004
-- assemble data for teams, players, awards, and traded draft picks
-- write script to create league file
-- estimate ratings
-- compare
-  - real data - player level
-  - real data - team level
-  - TheRealGWood has some hand made rosters for some seasons
-  - LexGoat223 did 2014/15
 - salary cap increases needed?
 - blog
+  - names, ratings (with tweaks), awards, relatives, contrats (mostly)
+  - why no historical stats
   - stats wrong?
     - could be shortfall in roster file
     - could be limitation in bbgm ratings system

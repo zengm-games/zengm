@@ -7,22 +7,8 @@ way to disable saving? @champ1432#2175
 logos for new teams
 
 historical teams back to 2004
-- UI
-  - 2020 option -> real, and when selected show a season. if a season besides 2020 is selected, show a loading indicator and dynamically retrieve it
-  - maybe put season to the left of the team dropdown
-    - would make it hard to add legends
-  - log season to GA
 - blog
-  - names, ratings (with tweaks), awards, relatives, contrats (mostly)
-  - why no historical stats
-  - stats wrong?
-    - could be shortfall in roster file
-    - could be limitation in bbgm ratings system
-    - could be style of play changes over time, which are not yet simulated (3 point frequency)
-  - older - after expansion draft
-  - salary cap increases - not yet
-
-shuffle rosters checkbox alignment
+- changes
 
 legends mode
 - start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected

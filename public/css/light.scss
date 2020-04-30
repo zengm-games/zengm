@@ -878,3 +878,8 @@ tr.table-warning:hover > td {
 	border: 1px solid;
 	border-color: $gray-300 !important;
 }
+
+.form-check-input {
+	// Default does not do well with altered font-size-base
+	margin-top: 4px;
+}

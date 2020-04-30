@@ -74,6 +74,25 @@ const adjustRatings = (ratings, tid) => {
 	ratings.fuzz = 0;
 };
 
+// BBGM has more aggressive development of young players than reality, which requires some young players to be nerfed a bit
+const nerfYoungPlayers = () => {
+	for (const p of input.players) {
+		const ratings = p.ratings[p.ratings.length - 1];
+		if (p.name === "Luka Doncic") {
+			ratings.tp -= 12;
+			ratings.diq -= 17;
+		} else if (p.name === "Tyler Herro") {
+			ratings.spd -= 5;
+			ratings.oiq -= 9;
+			ratings.diq -= 9;
+		} else if (p.name === "Trae Young") {
+			ratings.fg -= 5;
+			ratings.oiq -= 5;
+			ratings.diq -= 5;
+		}
+	}
+};
+
 const replaceAbbrevs = {
 	LAC: "LAE",
 	GSW: "GS",
@@ -104,6 +123,8 @@ for (const p of input.players) {
 		adjustRatings(ratings, p.tid);
 	}
 }
+
+nerfYoungPlayers(input.players);
 
 for (const dp of input.draftPicks) {
 	delete dp.dpid;

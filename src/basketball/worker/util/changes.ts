@@ -260,6 +260,11 @@ const changes = [
 		msg:
 			'When creating a new league, you now have the option of using real players. <a href="https://basketball-gm.com/blog/2020/04/real-players/">More details</a>',
 	},
+	{
+		date: "2020-04-30",
+		msg:
+			'When creating a new league, you now have the option of using real historical rosters back to 2005. <a href="https://basketball-gm.com/blog/2020/04/real-rosters-back-to-2005/">More details</a>',
+	},
 ];
 
 export default changes;

@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -189,6 +189,60 @@ const LeaguePartPicker = ({
 	);
 };
 
+const SeasonsMenu = ({
+	onDone,
+	onLoading,
+	value,
+}: {
+	onDone: (season, leagueFile: any) => void;
+	onLoading: (season: number) => void;
+	value: number;
+}) => {
+	const latestSeason = useRef(value);
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+
+	return (
+		<div className="form-group">
+			<label htmlFor="new-league-season">Season</label>
+			<select
+				id="new-league-season"
+				className="form-control mb-1"
+				value={value}
+				onChange={async event => {
+					const season = parseInt(event.target.value, 10);
+					latestSeason.current = season;
+					onLoading(season);
+					setErrorMessage(undefined);
+
+					if (process.env.SPORT === "basketball" && season === 2020) {
+						onDone(2020, helpers.deepCopy(league2020));
+					} else {
+						try {
+							const response = await fetch(`/leagues/${season}.json`);
+							const leagueFile = await response.json();
+							onDone(season, leagueFile);
+						} catch (error) {
+							setErrorMessage(error.message);
+							throw error;
+						}
+					}
+				}}
+			>
+				{range(2020, 2004).map(season => {
+					return (
+						<option key={season} value={season}>
+							{season} season
+						</option>
+					);
+				})}
+			</select>
+			{errorMessage ? (
+				<span className="text-danger">Error: {errorMessage}</span>
+			) : null}
+		</div>
+	);
+};
+
 const NewLeague = (props: View<"newLeague">) => {
 	const [creating, setCreating] = useState(false);
 	const [customize, setCustomize] = useState<
@@ -282,7 +336,11 @@ const NewLeague = (props: View<"newLeague">) => {
 					props.lid,
 				);
 
-				api.bbgmPing("league", [lid, customize]);
+				let type: string = customize;
+				if (type === "real") {
+					type = String(realSeason);
+				}
+				api.bbgmPing("league", [lid, type]);
 				realtimeUpdate([], `/l/${lid}`);
 			} catch (err) {
 				setCreating(false);
@@ -304,6 +362,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.lid,
 			props.name,
 			randomizeRosters,
+			realSeason,
 			tid,
 			title,
 		],
@@ -381,6 +440,12 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const displayedTeams = keptKeys.includes("teams") ? teams : teamsDefault;
 
+	const loadingLeagueFile =
+		(customize === "custom-rosters" ||
+			customize === "custom-url" ||
+			customize === "real") &&
+		leagueFile === null;
+
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
 			{props.lid !== undefined ? (
@@ -413,25 +478,24 @@ const NewLeague = (props: View<"newLeague">) => {
 					</div>
 
 					{customize === "real" ? (
-						<div className="form-group">
-							<label htmlFor="new-league-season">Season</label>
-							<select
-								id="new-league-season"
-								className="form-control mb-1"
-								value={realSeason}
-								onChange={event => {
-									setRealSeason(parseInt(event.target.value, 10));
-								}}
-							>
-								{range(2020, 2004).map(season => {
-									return (
-										<option key={season} value={season}>
-											{season} season
-										</option>
-									);
-								})}
-							</select>
-						</div>
+						<SeasonsMenu
+							value={realSeason}
+							onLoading={season => {
+								setRealSeason(season);
+								if (season !== 2020) {
+									setLeagueFile(null);
+								}
+							}}
+							onDone={(season, leagueFile) => {
+								if (season === 2020) {
+									setTeams(teams2020);
+									setLeagueFile(leagueFile);
+									setKeptKeys(initKeptKeys(leagueFile));
+								} else {
+									handleNewLeagueFile(null, leagueFile);
+								}
+							}}
+						/>
 					) : null}
 
 					<div className="form-group">
@@ -439,6 +503,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						<select
 							id="new-league-team"
 							className="form-control mb-1"
+							disabled={loadingLeagueFile}
 							value={tid}
 							onChange={event => {
 								setTid(parseInt(event.target.value, 10));
@@ -505,12 +570,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						<button
 							type="submit"
 							className="btn btn-lg btn-primary mt-3"
-							disabled={
-								creating ||
-								((customize === "custom-rosters" ||
-									customize === "custom-url") &&
-									leagueFile === null)
-							}
+							disabled={creating || loadingLeagueFile}
 						>
 							{props.lid !== undefined ? "Import League" : "Create League"}
 						</button>

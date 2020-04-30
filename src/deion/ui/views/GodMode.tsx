@@ -331,11 +331,27 @@ const options: {
 		key: "tragicDeathRate",
 		name: "Tragic Death Rate",
 		type: "float",
-		helpText: `The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season.${
-			process.env.SPORT === "basketball"
-				? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
-				: null
-		} If you set it too high and run out of players, then you'll have to use God Mode to either create more or bring some back from the dead.`,
+		helpText: (
+			<>
+				<p>
+					The tragic death rate is the probability that a player will die a
+					tragic death on a given regular season day. Yes, this only happens in
+					the regular season.$
+					{process.env.SPORT === "basketball"
+						? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
+						: null}{" "}
+					If you set it too high and run out of players, then you'll have to use
+					God Mode to either create more or bring some back from the dead.
+				</p>
+				{process.env.SPORT === "basketball" ? (
+					<p>
+						If you're using the built-in rosters with real players, please be
+						aware that real players can never experience tragic deaths, no
+						matter how high you set this.
+					</p>
+				) : null}
+			</>
+		),
 	},
 	{
 		category: "Events",

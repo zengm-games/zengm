@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React, { useCallback, useState } from "react";
 import { DIFFICULTY } from "../../common";
@@ -419,7 +420,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								setTid(parseInt(event.target.value, 10));
 							}}
 						>
-							{displayedTeams.map(t => {
+							{orderBy(displayedTeams, ["region", "name"]).map(t => {
 								return (
 									<option key={t.tid} value={t.tid}>
 										{t.region} {t.name}

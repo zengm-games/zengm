@@ -1,3 +1,5 @@
+playoff upsets
+
 show spread, ovr, etc on live game sim game selection page
 
 way to disable saving? @champ1432#2175 
@@ -15,6 +17,17 @@ historical teams back to 2004
   - TheRealGWood has some hand made rosters for some seasons
   - LexGoat223 did 2014/15
 - salary cap increases needed?
+- blog
+  - stats wrong?
+    - could be shortfall in roster file
+    - could be limitation in bbgm ratings system
+    - could be style of play changes over time, which are not yet simulated (3 point frequency)
+  - older - after expansion draft
+  - salary cap increases - not yet
+
+legends mode
+- start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
+- NBA seasons only
 
 dynamic confs/divs
 - only allow in certain phase of offseason
@@ -32,9 +45,6 @@ nba
 - eventually
   - way to import team and player info
 - historical
-  - do something like nicidob, only for the time since expansion (2004)
-    - do a good job, build tools for analysis and customization, integrate past stats and awards and such
-      - one script to output BBGM objects (players, stats, ratings, awards) as CSV files. another to parse that and produce JSON file for a season
   - eventually
     - play style changes
     - add relocation
@@ -113,8 +123,6 @@ redesign dashboard
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?
-
-playoff upsets
 
 game sim improvements
 - big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/

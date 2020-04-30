@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import { PHASE } from "../../common";
 import { team, trade } from "../core";
 import { idb } from "../db";
@@ -165,7 +166,7 @@ const updateTrade = async () => {
 
 	const summary = await getSummary(teams); // Always run this, for multi team mode
 
-	const teams2: {
+	let teams2: {
 		name: string;
 		region: string;
 		tid: number;
@@ -180,6 +181,8 @@ const updateTrade = async () => {
 	}
 
 	teams2.splice(g.get("userTid"), 1); // Can't trade with yourself
+
+	teams2 = orderBy(teams2, ["region", "name"]);
 
 	const userTeamName = `${g.get("teamRegionsCache")[g.get("userTid")]} ${
 		g.get("teamNamesCache")[g.get("userTid")]

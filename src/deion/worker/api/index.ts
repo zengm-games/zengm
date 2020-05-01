@@ -1223,6 +1223,11 @@ const runBefore = async (
 };
 
 const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
+	if (key === "autoSave" && value === false) {
+		await league.setGameAttributes({ godModeInPast: true });
+		await idb.cache.flush();
+	}
+
 	// @ts-ignore
 	local[key] = value;
 

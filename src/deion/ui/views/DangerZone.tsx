@@ -144,6 +144,11 @@ const DangerZone = ({ autoSave }: { autoSave: boolean }) => {
 					to another league, auto save will be enabled again.
 				</p>
 
+				<p className="alert alert-danger">
+					<b>Warning!</b> Once you disable auto save, you will not be awarded
+					any achievements for this league, even after re-enabling auto save.
+				</p>
+
 				<AutoSave autoSave={autoSave} />
 			</div>
 		</div>

@@ -12,7 +12,15 @@ show spread, ovr, etc on live game sim game selection page
 
 way to disable saving? @champ1432#2175 
 
-logos for new teams
+league structure changes, without breaking history
+- needs to support
+  - g.confs
+  - g.divs
+  - g.numGamesPlayoffSeries
+  - team info (name, region, abbrev, cid, did, etc.)
+- implementation ideas
+  - g.whatever = [{until: 2015, value: 5}, {until: Infinity, value: 10}]; - with helper functions for getting and setting
+    - is just the year sufficient for until? needs to be clever... like updating playoffs or confs/divs can't happen during playoffs, and after playoffs it applies to the next season
 
 legends mode
 - start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
@@ -23,6 +31,13 @@ dynamic confs/divs
 - drag and drop ui
 - make generic enough that it could be reused for creating new league with custom set of teams
 
+play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_poss.html
+- pace
+- 3 point tendency
+- 3 point accuracy
+- 2 point accuracy
+- offensive rebounding
+
 expansion draft
 - only allow in certain phase of offseason
 - allow division/conference realignment when setting up?
@@ -30,19 +45,17 @@ expansion draft
 - multiple expansion teams
 - allow user to take control of expansion team
 
-nba
-- historical
-  - eventually
-    - play style changes
-    - add relocation
-      - team name, abbrev, and region not static
-      - confs divs not static either
-      - other things in team or game attributes?
-    - add expansion
-    - add triggered events
-      - relocation
-      - expansion
-      - gameAttributes changes (salary cap, etc)
+add triggered events
+- relocation
+- expansion
+- gameAttributes changes (salary cap, tendencies, etc)
+
+add relocation
+- team name, abbrev, and region not static
+- confs divs not static either
+- other things in team or game attributes?
+
+---
 
 "sim to" button next to game on schedule
 

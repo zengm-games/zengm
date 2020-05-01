@@ -31,18 +31,35 @@ const AutoSave = ({ autoSave }: { autoSave: boolean }) => {
 					Disable auto save
 				</button>
 			) : (
-				<button
-					className="btn btn-light-bordered"
-					disabled={processing}
-					onClick={async () => {
-						setProcessing(true);
-						await toWorker("main", "setLocal", "autoSave", true);
-						setAutoSaveTemp(true);
-						setProcessing(false);
-					}}
-				>
-					Enable auto save
-				</button>
+				<>
+					<button
+						className="btn btn-success"
+						disabled={processing}
+						onClick={async () => {
+							setProcessing(true);
+							await toWorker("main", "setLocal", "autoSave", true);
+							setAutoSaveTemp(true);
+							setProcessing(false);
+						}}
+					>
+						Save current progres and enable auto save
+					</button>
+					<div className="mt-3">
+						<button
+							className="btn btn-danger"
+							disabled={processing}
+							onClick={async () => {
+								setProcessing(true);
+								await toWorker("main", "discardUnsavedProgress");
+								await toWorker("main", "setLocal", "autoSave", false);
+								setAutoSaveTemp(false);
+								setProcessing(false);
+							}}
+						>
+							Go back to previous save state
+						</button>
+					</div>
+				</>
 			)}
 		</>
 	);
@@ -123,17 +140,8 @@ const DangerZone = ({ autoSave }: { autoSave: boolean }) => {
 				</p>
 
 				<p>
-					<b className="text-info">How to restore to your previous save:</b> The
-					easiest way is to switch to another league and then switch back to
-					this league. When you do this and load your previous save, auto save
-					will be enabled until you manually disable it again.
-				</p>
-
-				<p>
-					<b className="text-info">
-						How to save things that happened with auto save disabled:
-					</b>{" "}
-					Just come back here and click "Enable auto save".
+					This setting is only temporary. If you restart your browser or switch
+					to another league, auto save will be enabled again.
 				</p>
 
 				<AutoSave autoSave={autoSave} />

@@ -403,6 +403,12 @@ const deleteOldData = async (options: {
 	await idb.cache.fill();
 };
 
+const discardUnsavedProgress = async () => {
+	const lid = g.get("lid");
+	await league.close(true);
+	await beforeView.league(lid, undefined);
+};
+
 const draftLottery = async () => {
 	const draftLotteryResult = await draft.genOrderNBA();
 	return draftLotteryResult;
@@ -1687,6 +1693,7 @@ export default {
 	createLeague,
 	createTrade,
 	deleteOldData,
+	discardUnsavedProgress,
 	draftLottery,
 	draftUser,
 	exportDraftClass,

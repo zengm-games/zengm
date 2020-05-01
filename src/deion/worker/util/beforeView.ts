@@ -91,7 +91,7 @@ let loadingNewLid;
 const beforeLeague = async (
 	newLid: number,
 	loadedLid: number | undefined,
-	conditions: Conditions,
+	conditions?: Conditions,
 ) => {
 	// Make sure league template FOR THE CURRENT LEAGUE is showing
 	loadingNewLid = newLid;

@@ -18,7 +18,7 @@ async function updatePhase(conditions?: Conditions) {
 
 		// Update phase in meta database. No need to have this block updating the UI or anything.
 		(async () => {
-			if (idb.meta) {
+			if (idb.meta && local.autoSave) {
 				const l = await idb.meta.get("leagues", g.get("lid"));
 				if (!l) {
 					throw new Error(`No league with lid ${g.get("lid")} found`);

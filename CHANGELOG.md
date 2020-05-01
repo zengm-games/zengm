@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-01: Added a way to temporarily disable auto save to the Danger Zone screen.
+
 * 2020-05-01: Added "Acquired" column to the re-signing players table.
 
 * **2020-04-30: Added real historical rosters back to 2005 in BBGM. [[1]](https://basketball-gm.com/blog/2020/04/real-rosters-back-to-2005/) [[2]]()**

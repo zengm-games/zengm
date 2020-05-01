@@ -644,6 +644,10 @@ class Cache {
 
 	// Load database from disk and save in cache, wiping out any prior values in cache
 	async fill(season?: number) {
+		if (!local.autoSave) {
+			return;
+		}
+
 		//console.log('fill start');
 		//performance.mark('fillStart');
 		this._validateStatus("empty", "full");
@@ -695,6 +699,10 @@ class Cache {
 
 	// Take current contents in database and write to disk
 	async flush() {
+		if (!local.autoSave) {
+			return;
+		}
+
 		//console.log('flush start');
 		//performance.mark('flushStart');
 		this._validateStatus("full");

@@ -8,6 +8,7 @@ import changes from "./changes";
 import colleges from "./colleges";
 import countries from "./countries";
 import customizePlayer from "./customizePlayer";
+import dangerZone from "./dangerZone";
 import dashboard from "./dashboard";
 import draft from "./draft";
 import draftLottery from "./draftLottery";
@@ -79,6 +80,7 @@ export default {
 	colleges,
 	countries,
 	customizePlayer,
+	dangerZone,
 	dashboard,
 	draft,
 	draftLottery,

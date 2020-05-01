@@ -1,14 +1,16 @@
 import { idb } from "../../db";
-import { g, toUI, initUILocalGames } from "../../util";
+import { g, toUI, initUILocalGames, local } from "../../util";
 import type { GameAttributesLeague } from "../../../common/types";
 import { helpers } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {
-	const l = await idb.meta.get("leagues", g.get("lid"));
+	if (local.autoSave) {
+		const l = await idb.meta.get("leagues", g.get("lid"));
 
-	if (l) {
-		l.difficulty = difficulty;
-		await idb.meta.put("leagues", l);
+		if (l) {
+			l.difficulty = difficulty;
+			await idb.meta.put("leagues", l);
+		}
 	}
 };
 

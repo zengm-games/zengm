@@ -1216,6 +1216,34 @@ const runBefore = async (
 	return {};
 };
 
+const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
+	// @ts-ignore
+	local[key] = value;
+
+	if (key === "autoSave" && value === true) {
+		console.log("NEED TO DO STUFF HERE - FLUSH, FILL, META");
+		await idb.cache.flush();
+		await idb.cache.fill();
+
+		if (g.get("userTids").length === 1) {
+			await league.updateMetaNameRegion(
+				g.get("teamNamesCache")[g.get("userTids")[0]],
+				g.get("teamRegionsCache")[g.get("userTids")[0]],
+			);
+		} else {
+			await league.updateMetaNameRegion("Multi Team Mode", "");
+		}
+
+		const l = await idb.meta.get("leagues", g.get("lid"));
+		if (!l) {
+			throw new Error(`No league with lid ${g.get("lid")} found`);
+		}
+		l.phaseText = `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`;
+		l.difficulty = g.get("difficulty");
+		await idb.meta.put("leagues", l);
+	}
+};
+
 const sign = async (
 	pid: number,
 	amount: number,
@@ -1683,6 +1711,7 @@ export default {
 	reorderRosterDrag,
 	resetPlayingTime,
 	runBefore,
+	setLocal,
 	sign,
 	startFantasyDraft,
 	switchTeam,

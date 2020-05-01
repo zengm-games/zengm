@@ -673,6 +673,7 @@ export type PlayerNames = Names & {
 
 export type Local = {
 	autoPlaySeasons: number;
+	autoSave: boolean;
 	fantasyDraftResults: Player<any>[];
 	goldUntil: number;
 	leagueLoaded: boolean;
@@ -681,7 +682,6 @@ export type Local = {
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
-	reset?: () => void;
 };
 
 export type PlayoffSeriesTeam = {

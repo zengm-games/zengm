@@ -21,6 +21,9 @@ league structure changes, without breaking history
 - implementation ideas
   - g.whatever = [{until: 2015, value: 5}, {until: Infinity, value: 10}]; - with helper functions for getting and setting
     - is just the year sufficient for until? needs to be clever... like updating playoffs or confs/divs can't happen during playoffs, and after playoffs it applies to the next season
+    - build it into g.get???
+  - put in another object store, index by year. that way don't need to store the whole history of all settings in memory forever
+    - is that a big enough win to justify a schema change?
 
 legends mode
 - start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected

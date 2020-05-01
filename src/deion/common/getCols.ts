@@ -1169,6 +1169,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Acquired: {
+		desc: "How Player Was Acquired",
+	},
 	Age: {
 		sortType: "number",
 	},

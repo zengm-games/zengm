@@ -262,6 +262,13 @@ const processAttrs = (
 			} else {
 				output.latestTransaction = "";
 			}
+		} else if (attr === "latestTransactionSeason") {
+			if (p.transactions && p.transactions.length > 0) {
+				output.latestTransactionSeason =
+					p.transactions[p.transactions.length - 1].season;
+			} else {
+				output.latestTransactionSeason = undefined;
+			}
 		} else {
 			// Several other attrs are not primitive types, so deepCopy
 			// @ts-ignore

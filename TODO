@@ -16,6 +16,9 @@ add triggered events
 - team info (name, region, abbrev, cid, did, etc.)
 - expansion
 - gameAttributes changes (salary cap, tendencies, etc)
+  - finances ones make sense as triggered events, or should it be defined as some % growth?
+- {season: number, phase: number, type: string, action: any}
+- new object store or g.triggeredEvents
 
 league structure changes, without breaking history
 - needs to support

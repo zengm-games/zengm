@@ -5,6 +5,7 @@ import {
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterSalarySummary,
+	SafeHtml,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
@@ -33,8 +34,9 @@ const NegotiationList = ({
 		"Ovr",
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
-		"Asking For",
+		"Acquired",
 		"Mood",
+		"Asking For",
 		"Negotiate",
 	);
 
@@ -55,9 +57,10 @@ const NegotiationList = ({
 				p.ratings.ovr,
 				p.ratings.pot,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				<>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</>,
+				{
+					value: <SafeHtml dirty={p.latestTransaction} />,
+					sortValue: p.latestTransactionSeason,
+				},
 				<div
 					title={p.mood.text}
 					style={{
@@ -68,6 +71,9 @@ const NegotiationList = ({
 				>
 					<span style={{ display: "none" }}>{p.freeAgentMood[userTid]}</span>
 				</div>,
+				<>
+					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
+				</>,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 				// @ts-ignore
 				<NegotiateButtons

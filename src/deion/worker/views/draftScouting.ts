@@ -1,30 +1,20 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents, Player, ThenArg } from "../../common/types";
 
-const addSeason = async (season: number) => {
-	// In fantasy draft, use temp tid
-	const tid =
-		g.get("phase") === PHASE.FANTASY_DRAFT
-			? PLAYER.UNDRAFTED_FANTASY_TEMP
-			: PLAYER.UNDRAFTED;
-	const playersAll2 = (
-		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-			[season],
-			[season, Infinity],
-		])
-	).filter(p => p.tid === tid);
-	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
+const getSeason = async (playersAll: Player[], season: number) => {
+	const playersAllFiltered = playersAll.filter(p => p.draft.year === season);
+	const players = await idb.getCopies.playersPlus(playersAllFiltered, {
 		attrs: ["pid", "nameAbbrev", "age", "valueFuzz", "watch"],
 		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
 		showNoStats: true,
 		showRookies: true,
 		fuzz: true,
 	});
-	playersAll.sort((a, b) => b.valueFuzz - a.valueFuzz);
+	players.sort((a, b) => b.valueFuzz - a.valueFuzz);
 
-	const players = playersAll.map((pa, i) => ({
+	const players2 = players.map((pa, i) => ({
 		pid: pa.pid,
 		nameAbbrev: pa.nameAbbrev,
 		age: pa.age,
@@ -39,7 +29,7 @@ const addSeason = async (season: number) => {
 	}));
 
 	return {
-		players,
+		players: players2,
 		season,
 	};
 };
@@ -52,13 +42,36 @@ const updateDraftScouting = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playerMovement")
 	) {
+		// In fantasy draft, use temp tid
+		const tid =
+			g.get("phase") === PHASE.FANTASY_DRAFT
+				? PLAYER.UNDRAFTED_FANTASY_TEMP
+				: PLAYER.UNDRAFTED;
+
 		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
 		const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
-		const seasons = await Promise.all([
-			addSeason(g.get("season") + seasonOffset),
-			addSeason(g.get("season") + seasonOffset + 1),
-			addSeason(g.get("season") + seasonOffset + 2),
-		]);
+
+		const firstSeason = g.get("season") + seasonOffset;
+
+		const players = (
+			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+				[firstSeason],
+				[Infinity, Infinity],
+			])
+		).filter(p => p.tid === tid);
+
+		let maxDraftYear = firstSeason + 2;
+		for (const p of players) {
+			if (p.draft.year > maxDraftYear) {
+				maxDraftYear = p.draft.year;
+			}
+		}
+
+		const seasons: ThenArg<ReturnType<typeof getSeason>>[] = [];
+		for (let season = firstSeason; season <= maxDraftYear; season++) {
+			seasons.push(await getSeason(players, season));
+		}
+
 		return {
 			draftType: g.get("draftType"),
 			seasons,

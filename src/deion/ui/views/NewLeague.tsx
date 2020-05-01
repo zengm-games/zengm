@@ -28,13 +28,11 @@ type NewLeagueTeam = {
 const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
 	helpers.getTeamsDefault(),
 );
-teamsDefault.unshift(randomTeam);
 
 const teams2020: NewLeagueTeam[] =
 	process.env.SPORT === "basketball"
 		? helpers.addPopRank(league2020.teams)
 		: [];
-teams2020.unshift(randomTeam);
 
 const PopText = ({
 	teams,
@@ -406,9 +404,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					setTid(-1);
 				}
 
-				// Add random team
-				newTeams.unshift(randomTeam);
-
 				setTeams(newTeams);
 			} else {
 				setTeams(teamsDefault);
@@ -509,13 +504,15 @@ const NewLeague = (props: View<"newLeague">) => {
 								setTid(parseInt(event.target.value, 10));
 							}}
 						>
-							{orderBy(displayedTeams, ["region", "name"]).map(t => {
-								return (
-									<option key={t.tid} value={t.tid}>
-										{t.region} {t.name}
-									</option>
-								);
-							})}
+							{[randomTeam, ...orderBy(displayedTeams, ["region", "name"])].map(
+								t => {
+									return (
+										<option key={t.tid} value={t.tid}>
+											{t.region} {t.name}
+										</option>
+									);
+								},
+							)}
 						</select>
 						<PopText tid={tid} teams={displayedTeams} />
 					</div>

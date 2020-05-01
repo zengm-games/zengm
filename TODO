@@ -1,3 +1,11 @@
+way to import team and player info
+- options
+  - like before, from manage teams
+  - when creating a new league, option to use teams from another file
+  - somehow globally specify default teams
+
+what would it really cost to store all game sim results?
+
 playoff upsets
 
 show spread, ovr, etc on live game sim game selection page
@@ -23,8 +31,6 @@ expansion draft
 - allow user to take control of expansion team
 
 nba
-- eventually
-  - way to import team and player info
 - historical
   - eventually
     - play style changes

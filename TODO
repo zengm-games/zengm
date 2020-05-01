@@ -22,6 +22,7 @@ league structure changes, without breaking history
   - g.whatever = [{until: 2015, value: 5}, {until: Infinity, value: 10}]; - with helper functions for getting and setting
     - is just the year sufficient for until? needs to be clever... like updating playoffs or confs/divs can't happen during playoffs, and after playoffs it can't happen unless pending team cid/did changes are somehow stored for team objects next year
       - what if these changes are restricted to preseason only?
+        - real expansion drafts were held before the actual draft. that would be cool, would just need a way to store pending changes in team cid/did
     - build it into g.get???
   - put in another object store, index by year. that way don't need to store the whole history of all settings in memory forever
     - is that a big enough win to justify a schema change?

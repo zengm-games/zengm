@@ -43,6 +43,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			"draft",
 			"injury",
 			"born",
+			"watch",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats:

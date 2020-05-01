@@ -12,6 +12,11 @@ show spread, ovr, etc on live game sim game selection page
 
 way to disable saving? @champ1432#2175 
 
+add triggered events
+- team info (name, region, abbrev, cid, did, etc.)
+- expansion
+- gameAttributes changes (salary cap, tendencies, etc)
+
 league structure changes, without breaking history
 - needs to support
   - g.confs
@@ -20,12 +25,21 @@ league structure changes, without breaking history
   - team info (name, region, abbrev, cid, did, etc.)
 - implementation ideas
   - g.whatever = [{until: 2015, value: 5}, {until: Infinity, value: 10}]; - with helper functions for getting and setting
+    - if during or after playoffs, use next season for "until" valueChange
+      - warning in UI that changes won't be applied until next season
+    - add extra parameter to g.get to get the value that was active for a given season
+    - store cid/did for teams in teamSeasons. fallback to root team object if not present
+      - if a change needs to apply for next year, where to store that info
+        - easy - make up something like t.pendingChanges
+        - better - store as a triggered event in some way that generically supports changing any setting
     - is just the year sufficient for until? needs to be clever... like updating playoffs or confs/divs can't happen during playoffs, and after playoffs it can't happen unless pending team cid/did changes are somehow stored for team objects next year
       - what if these changes are restricted to preseason only?
         - real expansion drafts were held before the actual draft. that would be cool, would just need a way to store pending changes in team cid/did
-    - build it into g.get???
+          - store pending in something like t.pendingChanges, and store actual cid/did in teamSeason
+    - build it into g.get (pass season as second arg), and some other helper for writing
   - put in another object store, index by year. that way don't need to store the whole history of all settings in memory forever
     - is that a big enough win to justify a schema change?
+- for team name/region/abbrev/imgURL, will need to avoid using caches for that info
 
 legends mode
 - start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
@@ -45,15 +59,12 @@ play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_po
 
 expansion draft
 - only allow in certain phase of offseason
+  - DRAFT_LOTTERY - definitely, most realistic, but need to do something about lottery results
+  - DRAFT, FREE_AGENCY, PREASEASON - could support, but would it be better to force it before the draft always?
 - allow division/conference realignment when setting up?
 - pick protections
 - multiple expansion teams
 - allow user to take control of expansion team
-
-add triggered events
-- relocation
-- expansion
-- gameAttributes changes (salary cap, tendencies, etc)
 
 add relocation
 - team name, abbrev, and region not static

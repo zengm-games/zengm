@@ -471,6 +471,34 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		stats.push(...table.stats);
 	}
 
+	// Ugh
+	const shotLocationsGetCols = (cols: string[]) => {
+		const colNames: string[] = [];
+		const overrides = {
+			"stat:fgAtRim": "AtRimFG",
+			"stat:fgaAtRim": "AtRimFGA",
+			"stat:fgpAtRim": "AtRimFGP",
+			"stat:fgLowPost": "LowPostFG",
+			"stat:fgaLowPost": "LowPostFGA",
+			"stat:fgpLowPost": "LowPostFGP",
+			"stat:fgMidRange": "MidRangeFG",
+			"stat:fgaMidRange": "MidRangeFGA",
+			"stat:fgpMidRange": "MidRangeFGP",
+		};
+		for (const col of cols) {
+			// @ts-ignore
+			if (overrides[col]) {
+				// @ts-ignore
+				colNames.push(overrides[col]);
+			} else {
+				const array = getCols(col);
+				colNames.push(array[0].title);
+			}
+		}
+
+		return colNames;
+	};
+
 	stats = Array.from(new Set(stats));
 	const columns = [
 		"pid",
@@ -481,7 +509,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		"Salary",
 		"Team",
 		"Season",
-		...getCols(...stats.map(stat => `stat:${stat}`)).map(col => col.title),
+		...shotLocationsGetCols(stats.map(stat => `stat:${stat}`)),
 		"Ovr",
 		"Pot",
 		...getCols(...ratings.map(rating => `rating:${rating}`)).map(

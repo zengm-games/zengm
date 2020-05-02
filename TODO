@@ -1,3 +1,10 @@
+play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_poss.html
+- 3 point tendency
+- 3 point accuracy
+- 2 point accuracy
+- offensive rebounding
+- test!!!
+
 add triggered events
 - team info (name, region, abbrev, cid, did, etc.)
 - expansion
@@ -6,13 +13,6 @@ add triggered events
 - {season: number, phase: number, type: string, action: any}
 - new object store or g.triggeredEvents
 - when a triggered event happens, pop up a model explaining it
-
-play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_poss.html
-- pace
-- 3 point tendency
-- 3 point accuracy
-- 2 point accuracy
-- offensive rebounding
 
 league structure changes, without breaking history
 - needs to support

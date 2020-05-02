@@ -36,6 +36,8 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numSeasonsFutureDraftPicks: g.get("numSeasonsFutureDraftPicks"),
 			foulRateFactor: g.get("foulRateFactor"),
 			foulsNeededToFoulOut: g.get("foulsNeededToFoulOut"),
+			threePointers: g.get("threePointers"),
+			pace: g.get("pace"),
 		};
 	}
 };

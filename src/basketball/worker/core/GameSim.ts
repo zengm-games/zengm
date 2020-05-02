@@ -85,8 +85,7 @@ type PlayerGameSim = {
 };
 type TeamGameSim = {
 	id: number;
-	pace: number;
-	// mean number of possessions the team likes to have in a game
+	pace: number; // mean number of possessions the team likes to have in a game
 	stat: any;
 	compositeRating: any;
 	player: PlayerGameSim[];
@@ -232,7 +231,11 @@ class GameSim {
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 		const numPossessions =
-			Math.round((this.team[0].pace + this.team[1].pace) / 2) * 1.09;
+			(Math.round((this.team[0].pace + this.team[1].pace) / 2) *
+				1.1 *
+				g.get("pace")) /
+			100;
+		console.log(this.team[0].pace, this.team[1].pace, numPossessions);
 		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
@@ -1243,7 +1246,7 @@ class GameSim {
 		if (probMissAndFoul > Math.random()) {
 			this.doPf(this.d, shooter);
 
-			if (type === "threePointer") {
+			if (type === "threePointer" && g.get("threePointers")) {
 				return this.doFt(shooter, 3); // fg, orb, or drb
 			}
 
@@ -1377,7 +1380,9 @@ class GameSim {
 				this.team[this.o].player[p].name,
 			]);
 		} else if (type === "threePointer") {
-			this.recordStat(this.o, p, "pts"); // Extra point for 3's
+			if (g.get("threePointers")) {
+				this.recordStat(this.o, p, "pts"); // Extra point for 3's
+			}
 
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
@@ -1812,6 +1817,10 @@ class GameSim {
 	recordPlay(type: PlayType, t?: TeamNum, names?: string[]) {
 		let texts;
 		if (this.playByPlay !== undefined) {
+			const threePointerText = g.get("threePointers")
+				? "three pointer"
+				: "deep shot";
+
 			if (type === "injury") {
 				texts = ["{0} was injured!"];
 			} else if (type === "tov") {
@@ -1834,9 +1843,9 @@ class GameSim {
 			} else if (type === "fgMidRangeAndOne") {
 				texts = ["{0} made a mid-range shot and got fouled!"];
 			} else if (type === "tp") {
-				texts = ["{0} made a three pointer"];
+				texts = [`{0} made a ${threePointerText}`];
 			} else if (type === "tpAndOne") {
-				texts = ["{0} made a three pointer and got fouled!"];
+				texts = [`{0} made a ${threePointerText} and got fouled!`];
 			} else if (type === "blkAtRim") {
 				texts = [
 					"{0} blocked {1}'s layup attempt",
@@ -1847,7 +1856,7 @@ class GameSim {
 			} else if (type === "blkMidRange") {
 				texts = ["{0} blocked {1}'s mid-range shot"];
 			} else if (type === "blkTp") {
-				texts = ["{0} blocked {1}'s three pointer"];
+				texts = [`{0} blocked {1}'s ${threePointerText}`];
 			} else if (type === "missAtRim") {
 				texts = ["{0} missed a layup", "{0} missed a dunk"];
 			} else if (type === "missLowPost") {
@@ -1855,7 +1864,7 @@ class GameSim {
 			} else if (type === "missMidRange") {
 				texts = ["{0} missed a mid-range shot"];
 			} else if (type === "missTp") {
-				texts = ["{0} missed a three pointer"];
+				texts = [`{0} missed a ${threePointerText}`];
 			} else if (type === "orb") {
 				texts = ["{0} grabbed the offensive rebound"];
 			} else if (type === "drb") {

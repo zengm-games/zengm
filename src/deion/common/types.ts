@@ -251,6 +251,13 @@ export type GameAttributesLeague = {
 	tragicDeathRate: number;
 	userTid: number;
 	userTids: number[];
+
+	threePointers: boolean;
+	threePointTendencyFactor: number;
+	threePointAccuracyFactor: number;
+	twoPointAccuracyFactor: number;
+	offensiveReboundingTendencyFactor: number;
+	pace: number;
 };
 
 export type GameAttributes = GameAttributesNonLeague | GameAttributesLeague;

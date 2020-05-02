@@ -34,7 +34,9 @@ type Key =
 	| "rookieContractLengths"
 	| "allStarGame"
 	| "foulRateFactor"
-	| "foulsNeededToFoulOut";
+	| "foulsNeededToFoulOut"
+	| "threePointers"
+	| "pace";
 
 type Category = "League Structure" | "Finance" | "Events" | "Game Simulation";
 
@@ -447,6 +449,21 @@ if (process.env.SPORT === "basketball") {
 					throw new Error("Value cannot be less than 0");
 				}
 			},
+		},
+		{
+			category: "Game Simulation",
+			key: "threePointers",
+			name: "Three Pointers",
+			type: "bool",
+			helpText:
+				"If you disable three pointers, shots from that range will still be displayed as three pointers in stats tables, but they will only count for two points.",
+		},
+		{
+			category: "Game Simulation",
+			key: "pace",
+			name: "Pace",
+			type: "float",
+			helpText: "Average number of possessions per 48 minutes.",
 		},
 	);
 }

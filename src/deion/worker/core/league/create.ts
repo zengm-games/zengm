@@ -310,6 +310,25 @@ export const createWithoutSaving = (
 					last,
 				];
 			}
+
+			for (const teamSeason of teamSeasonsLocal) {
+				// See similar code in teamsPlus
+				const copyFromTeamIfUndefined = [
+					"cid",
+					"did",
+					"region",
+					"name",
+					"abbrev",
+					"imgURL",
+					"colors",
+				] as const;
+				for (const key of copyFromTeamIfUndefined) {
+					if (teamSeason[key] === undefined) {
+						// @ts-ignore
+						teamSeason[key] = t[key];
+					}
+				}
+			}
 		} else {
 			teamSeasonsLocal = [team.genSeasonRow(t)];
 			teamSeasonsLocal[0].pop = teamInfo.pop;

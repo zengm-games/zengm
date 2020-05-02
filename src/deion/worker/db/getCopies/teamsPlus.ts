@@ -93,6 +93,17 @@ const processSeasonAttrs = async <
 		seasons = [dummySeason];
 	}
 
+	// 2020-05-02 - these were moved into TeamSeason, but I'm wary of doing an IDB upgrade, so here we are.
+	const copyFromTeamIfUndefined = [
+		"cid",
+		"did",
+		"region",
+		"name",
+		"abbrev",
+		"imgURL",
+		"colors",
+	];
+
 	// @ts-ignore
 	output.seasonAttrs = await Promise.all(
 		seasons.map(async ts => {
@@ -155,6 +166,11 @@ const processSeasonAttrs = async <
 				} else {
 					// @ts-ignore
 					row[attr] = ts[attr];
+				}
+
+				if (row[attr] === undefined && copyFromTeamIfUndefined.includes(attr)) {
+					// @ts-ignore
+					row[attr] = t[attr];
 				}
 			}
 

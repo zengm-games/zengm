@@ -20,7 +20,6 @@ db schema change not needed
 
 teams info refactor
 - test
-- make sure it can handle upgraded leagues without schema change (fall back to team object if undefined in teamsPlus)
 - how does this impact teamAbbrevsCache, abbrevs in links, hardcoded URLs in event log, etc?
   - could eventually do a more complex lookup, or use more complex caches. for now, no big loss to keep abbrevs the same or suffer broken links
     - abbrevs already break links if you change them, so no regression. but added infoffuture

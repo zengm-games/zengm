@@ -768,6 +768,7 @@ export type Team = {
 	name: string;
 	abbrev: string;
 	imgURL?: string;
+	colors: [string, string, string];
 	budget: Record<
 		"ticketPrice" | "scouting" | "coaching" | "health" | "facilities",
 		BudgetItem
@@ -788,7 +789,6 @@ export type Team = {
 		KR: number[];
 		PR: number[];
 	};
-	colors: [string, string, string];
 };
 
 export type TeamAttr = keyof Team;
@@ -897,6 +897,15 @@ export type TeamSeasonWithoutKey = {
 	};
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;
+
+	// Copied over from Team
+	cid: number;
+	did: number;
+	region: string;
+	name: string;
+	abbrev: string;
+	imgURL?: string;
+	colors: [string, string, string];
 };
 
 export type TeamSeason = TeamSeasonWithoutKey & {
@@ -1061,7 +1070,15 @@ export type WorkerOverridesCore = {
 			}[]
 		>;
 		doAwards?: (conditions: Conditions) => Promise<void>;
-		newSchedule?: (teams: Team[]) => [number, number][];
+		newSchedule?: (
+			teams: {
+				seasonAttrs: {
+					cid: number;
+					did: number;
+				};
+				tid: number;
+			}[],
+		) => [number, number][];
 	};
 	team: {
 		ovr?: (

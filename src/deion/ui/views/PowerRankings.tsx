@@ -43,8 +43,8 @@ const PowerRankings = ({ season, teams, userTid }: View<"powerRankings">) => {
 			key: t.tid,
 			data: [
 				t.rank,
-				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
-					{t.region} {t.name}
+				<a href={helpers.leagueUrl(["roster", t.seasonAttrs.abbrev, season])}>
+					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>,
 				t.ovr !== t.ovrCurrent ? (
 					<span className="text-danger">{t.ovrCurrent}</span>
@@ -89,16 +89,16 @@ PowerRankings.propTypes = {
 	season: PropTypes.number.isRequired,
 	teams: PropTypes.arrayOf(
 		PropTypes.shape({
-			abbrev: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
 			ovr: PropTypes.number.isRequired,
 			ovrCurrent: PropTypes.number.isRequired,
 			rank: PropTypes.number.isRequired,
-			region: PropTypes.string.isRequired,
 			tid: PropTypes.number.isRequired,
 			seasonAttrs: PropTypes.shape({
+				abbrev: PropTypes.string.isRequired,
 				lastTen: PropTypes.string.isRequired,
 				lost: PropTypes.number.isRequired,
+				name: PropTypes.string.isRequired,
+				region: PropTypes.string.isRequired,
 				won: PropTypes.number.isRequired,
 			}),
 			stats: PropTypes.shape({

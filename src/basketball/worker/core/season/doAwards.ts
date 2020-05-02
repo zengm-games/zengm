@@ -324,8 +324,19 @@ const doAwards = async (conditions: Conditions) => {
 	// Careful - this array is mutated in various functions called below
 	const awardsByPlayer: AwardsByPlayer = [];
 	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "abbrev", "region", "name", "cid", "did"],
-		seasonAttrs: ["won", "lost", "tied", "winp", "playoffRoundsWon"],
+		attrs: ["tid"],
+		seasonAttrs: [
+			"won",
+			"lost",
+			"tied",
+			"winp",
+			"playoffRoundsWon",
+			"abbrev",
+			"region",
+			"name",
+			"cid",
+			"did",
+		],
 		season: g.get("season"),
 	});
 	const players = await getPlayers(g.get("season"));

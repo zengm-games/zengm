@@ -150,7 +150,7 @@ const updateTeamFinances = async (
 
 		// Get stuff for the finances form
 		const t = await idb.getCopy.teamsPlus({
-			attrs: ["region", "name", "abbrev", "budget"],
+			attrs: ["budget"],
 			seasonAttrs: ["expenses"],
 			season: g.get("season"),
 			tid: inputs.tid,

@@ -66,8 +66,14 @@ const AwardsAndChamp = ({
 								className={champ.tid === userTid ? "table-info" : undefined}
 							>
 								<b>
-									<a href={helpers.leagueUrl(["roster", champ.abbrev, season])}>
-										{champ.region} {champ.name}
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											champ.seasonAttrs.abbrev,
+											season,
+										])}
+									>
+										{champ.seasonAttrs.region} {champ.seasonAttrs.name}
 									</a>
 								</b>
 							</span>

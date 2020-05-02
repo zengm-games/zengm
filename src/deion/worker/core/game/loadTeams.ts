@@ -6,14 +6,14 @@ import type { Player, MinimalPlayerRatings } from "../../../common/types";
 const processTeam = (
 	team: {
 		tid: number;
-		cid: number;
-		did: number;
 		depth?: any;
 	},
 	teamSeason: {
 		won: number;
 		lost: number;
 		tied: number;
+		cid: number;
+		did: number;
 		expenses: {
 			health: {
 				rank: number;
@@ -60,8 +60,8 @@ const processTeam = (
 		won: teamSeason.won,
 		lost: teamSeason.lost,
 		tied: g.get("ties") ? teamSeason.tied : undefined,
-		cid: team.cid,
-		did: team.did,
+		cid: teamSeason.cid,
+		did: teamSeason.did,
 		ovr,
 		stat: {},
 		player: [],
@@ -210,10 +210,10 @@ const loadTeams = async (tids: number[]) => {
 			teams[tid] = processTeam(
 				{
 					tid,
-					cid: -1,
-					did: -1,
 				},
 				{
+					cid: -1,
+					did: -1,
 					won: 0,
 					lost: 0,
 					tied: 0,

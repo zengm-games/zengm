@@ -4,7 +4,11 @@ import { g, helpers, local, logEvent, overrides } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 
 const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
-	const teams = await idb.cache.teams.getAll();
+	const teams = await idb.getCopies.teamsPlus({
+		attrs: ["tid"],
+		seasonAttrs: ["cid", "did"],
+		season: g.get("season"),
+	});
 
 	await season.setSchedule(overrides.core.season.newSchedule!(teams));
 

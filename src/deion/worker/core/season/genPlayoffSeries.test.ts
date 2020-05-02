@@ -7,10 +7,14 @@ const genPlayoffSeriesWrapper = (teams: { tid: number; cid: number }[]) => {
 	return season.genPlayoffSeries(
 		teams.map(t => {
 			return {
-				...t,
+				tid: t.tid,
 
-				// This doesn't affect order - sorting is done before calling genPlayoffSeries
-				seasonAttrs: { winp: 0 },
+				seasonAttrs: {
+					cid: t.cid,
+
+					// This doesn't affect order - sorting is done before calling genPlayoffSeries
+					winp: 0,
+				},
 			};
 		}),
 	);

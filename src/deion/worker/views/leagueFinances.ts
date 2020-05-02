@@ -13,7 +13,7 @@ const updateLeagueFinances = async (
 		inputs.season === g.get("season")
 	) {
 		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "region", "name"],
+			attrs: ["tid"],
 			seasonAttrs: [
 				"att",
 				"revenue",
@@ -22,6 +22,9 @@ const updateLeagueFinances = async (
 				"payroll",
 				"salaryPaid",
 				"pop",
+				"abbrev",
+				"region",
+				"name",
 			],
 			season: inputs.season,
 		});

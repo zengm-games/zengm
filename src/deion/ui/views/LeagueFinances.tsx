@@ -48,8 +48,8 @@ const LeagueFinances = ({
 		return {
 			key: t.tid,
 			data: [
-				<a href={helpers.leagueUrl(["team_finances", t.abbrev])}>
-					{t.region} {t.name}
+				<a href={helpers.leagueUrl(["team_finances", t.seasonAttrs.abbrev])}>
+					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>,
 				helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
 				helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),

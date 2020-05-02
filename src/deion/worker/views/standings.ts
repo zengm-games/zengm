@@ -14,7 +14,7 @@ const updateStandings = async (
 		const playoffsByConference = g.get("confs").length === 2;
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+				attrs: ["tid"],
 				seasonAttrs: [
 					"won",
 					"lost",
@@ -34,6 +34,11 @@ const updateStandings = async (
 					"tiedConf",
 					"lastTen",
 					"streak",
+					"cid",
+					"did",
+					"abbrev",
+					"region",
+					"name",
 				],
 				season: inputs.season,
 			}),
@@ -71,7 +76,7 @@ const updateStandings = async (
 			let j = 0;
 
 			for (const t of teams) {
-				if (g.get("confs")[i].cid === t.cid) {
+				if (g.get("confs")[i].cid === t.seasonAttrs.cid) {
 					playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
 
 					const gb =
@@ -101,7 +106,7 @@ const updateStandings = async (
 					let k = 0;
 
 					for (const t of teams) {
-						if (div.did === t.did) {
+						if (div.did === t.seasonAttrs.did) {
 							const gb =
 								k === 0
 									? 0
@@ -138,7 +143,9 @@ const updateStandings = async (
 			// Fix playoffsRank if conferences don't matter
 			for (let i = 0; i < teams.length; i++) {
 				const t = teams[i];
-				const div = confs[t.cid].divs.find(div2 => t.did === div2.did);
+				const div = confs[t.seasonAttrs.cid].divs.find(
+					div2 => t.seasonAttrs.did === div2.did,
+				);
 
 				if (div) {
 					const t2 = div.teams.find(t3 => t.tid === t3.tid);

@@ -89,14 +89,14 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				: ["Points", "Allowed", "PssYds", "RusYds"];
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "cid", "did"],
-				seasonAttrs: ["won", "winp", "att", "revenue", "profit"],
+				attrs: ["tid"],
+				seasonAttrs: ["won", "winp", "att", "revenue", "profit", "cid", "did"],
 				stats,
 				season: g.get("season"),
 			}),
 		);
 		const t = teams.find(t2 => t2.tid === g.get("userTid"));
-		const cid = t !== undefined ? t.cid : undefined;
+		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
 		let att = 0;
 		let rank = 1;
 		let revenue = 0;
@@ -109,7 +109,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		for (const t2 of teams) {
-			if (t2.cid === cid) {
+			if (t2.seasonAttrs.cid === cid) {
 				if (t2.tid === g.get("userTid")) {
 					// @ts-ignore
 					teamStats = stats.map((stat, i) => {
@@ -404,8 +404,8 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "cid", "did", "abbrev", "region"],
-				seasonAttrs: ["won", "lost", "winp"],
+				attrs: ["tid"],
+				seasonAttrs: ["won", "lost", "winp", "cid", "did", "abbrev", "region"],
 				season: g.get("season"),
 			}),
 		);
@@ -415,27 +415,27 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		for (const t of teams) {
 			if (t.tid === g.get("userTid")) {
-				cid = t.cid;
+				cid = t.seasonAttrs.cid;
 				break;
 			}
 		}
 
-		const confTeams: any[] = [];
+		const confTeams: (typeof teams[number] & {
+			rank: number;
+			gb: number;
+		})[] = [];
+
 		let l = 0;
-
 		for (let k = 0; k < teams.length; k++) {
-			if (cid === teams[k].cid) {
-				confTeams.push(helpers.deepCopy(teams[k]));
-				confTeams[l].rank = l + 1;
-
-				if (l === 0) {
-					confTeams[l].gb = 0;
-				} else {
-					confTeams[l].gb = helpers.gb(
-						confTeams[0].seasonAttrs,
-						confTeams[l].seasonAttrs,
-					);
-				}
+			if (cid === teams[k].seasonAttrs.cid) {
+				confTeams.push({
+					...helpers.deepCopy(teams[k]),
+					rank: l + 1,
+					gb:
+						l === 0
+							? 0
+							: helpers.gb(confTeams[0].seasonAttrs, confTeams[l].seasonAttrs),
+				});
 
 				l += 1;
 			}

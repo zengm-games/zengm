@@ -108,8 +108,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 const teamAwards = (
 	teamsUnsorted: TeamFiltered<
-		["tid", "cid", "did", "abbrev", "region", "name"],
-		["winp", "won", "lost", "tied"],
+		["tid"],
+		["winp", "won", "lost", "tied", "cid", "did", "abbrev", "region", "name"],
 		any,
 		number
 	>[],
@@ -122,15 +122,15 @@ const teamAwards = (
 
 	const bestRecord = {
 		tid: teams[0].tid,
-		abbrev: teams[0].abbrev,
-		region: teams[0].region,
-		name: teams[0].name,
+		abbrev: teams[0].seasonAttrs.abbrev,
+		region: teams[0].seasonAttrs.region,
+		name: teams[0].seasonAttrs.name,
 		won: teams[0].seasonAttrs.won,
 		lost: teams[0].seasonAttrs.lost,
 		tied: g.get("ties") ? teams[0].seasonAttrs.tied : undefined,
 	};
 	const bestRecordConfs = g.get("confs").map(c => {
-		const t = teams.find(t2 => t2.cid === c.cid);
+		const t = teams.find(t2 => t2.seasonAttrs.cid === c.cid);
 
 		if (!t) {
 			throw new Error(`No team found with conference ID ${c.cid}`);
@@ -138,9 +138,9 @@ const teamAwards = (
 
 		return {
 			tid: t.tid,
-			abbrev: t.abbrev,
-			region: t.region,
-			name: t.name,
+			abbrev: t.seasonAttrs.abbrev,
+			region: t.seasonAttrs.region,
+			name: t.seasonAttrs.name,
 			won: t.seasonAttrs.won,
 			lost: t.seasonAttrs.lost,
 			tied: g.get("ties") ? t.seasonAttrs.tied : undefined,

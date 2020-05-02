@@ -63,12 +63,12 @@ const genSeeds = (numPlayoffTeams: number, numPlayoffByes: number): Seed[] => {
 	return lastRound;
 };
 
-type MyTeam = TeamFiltered<["cid", "tid"], ["winp"], any, number>;
+type MyTeam = TeamFiltered<["tid"], ["cid", "winp"], any, number>;
 
 const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 	return {
 		tid: t.tid,
-		cid: t.cid,
+		cid: t.seasonAttrs.cid,
 		winp: t.seasonAttrs.winp,
 		seed,
 		won: 0,
@@ -116,7 +116,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 				const teamsConf: MyTeam[] = [];
 
 				for (const t of teams) {
-					if (t.cid === cid) {
+					if (t.seasonAttrs.cid === cid) {
 						teamsConf.push(t);
 						tidPlayoffs.push(t.tid);
 
@@ -155,7 +155,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 
 			for (let cid = 0; cid < g.get("confs").length; cid++) {
 				for (let i = 0; i < teams.length; i++) {
-					if (teams[i].cid === cid) {
+					if (teams[i].seasonAttrs.cid === cid) {
 						teamsConf.push(teams[i]);
 						tidPlayoffs.push(teams[i].tid);
 						break;

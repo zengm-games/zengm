@@ -79,9 +79,9 @@ const TopStuff = ({
 	profit: number;
 }) => {
 	const logoStyle: CSSProperties = {};
-	if (t.imgURL) {
+	if (t.seasonAttrs.imgURL) {
 		logoStyle.display = "inline";
-		logoStyle.backgroundImage = `url('${t.imgURL}')`;
+		logoStyle.backgroundImage = `url('${t.seasonAttrs.imgURL}')`;
 	}
 
 	const recordAndPlayoffs =

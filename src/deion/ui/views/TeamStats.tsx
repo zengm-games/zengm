@@ -63,7 +63,9 @@ const TeamStats = ({
 		// Create the cells for this row.
 		const data: { [key: string]: ReactNode } = {
 			abbrev: (
-				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.abbrev}</a>
+				<a href={helpers.leagueUrl(["roster", t.seasonAttrs.abbrev, season])}>
+					{t.seasonAttrs.abbrev}
+				</a>
 			),
 			gp: t.stats.gp,
 			won: t.seasonAttrs.won,

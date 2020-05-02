@@ -37,7 +37,9 @@ const Standings = ({
 						>
 							<td>
 								{t.rank}.{" "}
-								<a href={helpers.leagueUrl(["roster", t.abbrev])}>{t.region}</a>
+								<a href={helpers.leagueUrl(["roster", t.seasonAttrs.abbrev])}>
+									{t.seasonAttrs.region}
+								</a>
 							</td>
 							<td className="text-right">{t.gb}</td>
 						</tr>

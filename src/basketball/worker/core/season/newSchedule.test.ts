@@ -3,13 +3,24 @@ import flatten from "lodash/flatten";
 import testHelpers from "../../../../deion/test/helpers";
 import newSchedule, { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
-import type { TeamBasic } from "../../../../deion/common/types";
 
 describe("basketball/worker/core/season/newSchedule", () => {
-	let defaultTeams: TeamBasic[];
+	let defaultTeams: {
+		seasonAttrs: {
+			cid: number;
+			did: number;
+		};
+		tid: number;
+	}[];
 
 	beforeAll(() => {
-		defaultTeams = helpers.getTeamsDefault();
+		defaultTeams = helpers.getTeamsDefault().map(t => ({
+			tid: t.tid,
+			seasonAttrs: {
+				cid: t.cid,
+				did: t.did,
+			},
+		}));
 	});
 	describe("newScheduleCrappy", () => {
 		beforeEach(() => {

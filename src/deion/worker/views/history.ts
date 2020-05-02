@@ -35,8 +35,8 @@ const updateHistory = async (
 		}
 
 		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "region", "name"],
-			seasonAttrs: ["playoffRoundsWon"],
+			attrs: ["tid"],
+			seasonAttrs: ["playoffRoundsWon", "abbrev", "region", "name"],
 			season,
 		});
 

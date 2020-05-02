@@ -37,6 +37,12 @@ const loadTeamSeasons = async () => {
 			tiedConf: 0,
 			tiedDiv: 0,
 			stadiumCapacity: 50000,
+			abbrev: t.abbrev,
+			name: t.name,
+			region: t.region,
+			cid: t.cid,
+			did: t.did,
+			colors: t.colors,
 		})) as TeamSeasonWithoutKey[];
 
 		for (const teamSeason of teamSeasons) {

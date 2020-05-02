@@ -2,7 +2,11 @@ import { PHASE } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	PlayoffSeries,
+} from "../../common/types";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -24,8 +28,8 @@ type SeriesTeam = {
 const getProjectedSeries = async (inputSeason: number) => {
 	const teams = helpers.orderByWinp(
 		await idb.getCopies.teamsPlus({
-			attrs: ["tid", "cid", "did", "abbrev", "name"],
-			seasonAttrs: ["winp", "won"],
+			attrs: ["tid"],
+			seasonAttrs: ["winp", "won", "cid", "did", "abbrev", "name"],
 			season: inputSeason,
 		}),
 		inputSeason,
@@ -60,7 +64,7 @@ const updatePlayoffs = async (
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
 		let finalMatchups = false;
-		let series;
+		let series: PlayoffSeries["series"];
 
 		// If in the current season and before playoffs started, display projected matchups
 		if (inputs.season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {

@@ -11,8 +11,8 @@ import type { TeamFiltered } from "../../../common/types";
  */
 const lotterySort = (
 	teams: TeamFiltered<
-		["tid", "cid", "did"],
-		["playoffRoundsWon", "won", "winp"],
+		["tid"],
+		["playoffRoundsWon", "won", "winp", "cid", "did"],
 		any,
 		number
 	>[],

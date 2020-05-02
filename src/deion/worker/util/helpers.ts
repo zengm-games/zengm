@@ -179,10 +179,10 @@ const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 
 const orderByWinp = <
 	T extends {
-		did: number;
 		seasonAttrs: {
 			winp: number;
 			won: number;
+			did: number;
 		};
 		tid: number;
 	}
@@ -213,14 +213,17 @@ const orderByWinp = <
 	const divisionLeaders = new Map<number, number>();
 
 	for (const t of sortedTeams) {
-		if (!divisionLeaders.has(t.did)) {
-			divisionLeaders.set(t.did, t.tid);
+		if (!divisionLeaders.has(t.seasonAttrs.did)) {
+			divisionLeaders.set(t.seasonAttrs.did, t.tid);
 		}
 	}
 
 	return orderBy(
 		sortedTeams,
-		[t => (divisionLeaders.get(t.did) === t.tid ? 1 : 0), ...defaultFuncs],
+		[
+			t => (divisionLeaders.get(t.seasonAttrs.did) === t.tid ? 1 : 0),
+			...defaultFuncs,
+		],
 		["desc", ...defaultOrders],
 	);
 };

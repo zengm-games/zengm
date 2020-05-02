@@ -12,8 +12,10 @@ import { g, random } from "../../../../deion/worker/util";
  */
 const newScheduleDefault = (
 	teams: {
-		cid: number;
-		did: number;
+		seasonAttrs: {
+			cid: number;
+			did: number;
+		};
 		tid: number;
 	}[],
 ) => {
@@ -33,14 +35,14 @@ const newScheduleDefault = (
 			if (teams[i].tid !== teams[j].tid) {
 				const game: [number, number] = [teams[i].tid, teams[j].tid]; // Constraint: 1 home game vs. each team in other conference
 
-				if (teams[i].cid !== teams[j].cid) {
+				if (teams[i].seasonAttrs.cid !== teams[j].seasonAttrs.cid) {
 					tids.push(game);
 					homeGames[i] += 1;
 					awayGames[j] += 1;
 				}
 
 				// Constraint: 2 home games vs. each team in same division
-				if (teams[i].did === teams[j].did) {
+				if (teams[i].seasonAttrs.did === teams[j].seasonAttrs.did) {
 					tids.push(game);
 					tids.push(game);
 					homeGames[i] += 2;
@@ -49,7 +51,10 @@ const newScheduleDefault = (
 
 				// Constraint: 1-2 home games vs. each team in same conference and different division
 				// Only do 1 now
-				if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
+				if (
+					teams[i].seasonAttrs.cid === teams[j].seasonAttrs.cid &&
+					teams[i].seasonAttrs.did !== teams[j].seasonAttrs.did
+				) {
 					tids.push(game);
 					homeGames[i] += 1;
 					awayGames[j] += 1;
@@ -64,8 +69,8 @@ const newScheduleDefault = (
 	const dids: [number[], number[]] = [[], []];
 
 	for (let i = 0; i < teams.length; i++) {
-		tidsByConf[teams[i].cid].push(i);
-		dids[teams[i].cid].push(teams[i].did);
+		tidsByConf[teams[i].seasonAttrs.cid].push(i);
+		dids[teams[i].seasonAttrs.cid].push(teams[i].seasonAttrs.did);
 	}
 
 	for (let cid = 0; cid < g.get("confs").length; cid++) {
@@ -237,8 +242,10 @@ export const newScheduleCrappy = () => {
  */
 const newSchedule = (
 	teams: {
-		cid: number;
-		did: number;
+		seasonAttrs: {
+			cid: number;
+			did: number;
+		};
 		tid: number;
 	}[],
 ) => {
@@ -255,7 +262,10 @@ const newSchedule = (
 	let twoConfsEvenTeams = g.get("confs").length === 2;
 
 	for (const conf of g.get("confs")) {
-		if (teams.filter(t => t.cid === conf.cid).length !== teams.length / 2) {
+		if (
+			teams.filter(t => t.seasonAttrs.cid === conf.cid).length !==
+			teams.length / 2
+		) {
 			twoConfsEvenTeams = false;
 			break;
 		}

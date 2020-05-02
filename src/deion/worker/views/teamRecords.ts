@@ -268,6 +268,7 @@ const updateTeamRecords = async (
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.byType !== state.byType) {
 		const teams = await idb.getCopies.teamsPlus({
+			// Purposely use global team info here, not season specific!
 			attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
 			seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
 		});

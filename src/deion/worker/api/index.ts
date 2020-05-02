@@ -1232,7 +1232,6 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 	local[key] = value;
 
 	if (key === "autoSave" && value === true) {
-		console.log("NEED TO DO STUFF HERE - FLUSH, FILL, META");
 		await idb.cache.flush();
 		await idb.cache.fill();
 

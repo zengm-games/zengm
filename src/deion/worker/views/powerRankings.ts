@@ -12,8 +12,8 @@ const updatePowerRankings = async (
 		season !== state.season
 	) {
 		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "region", "name", "depth"],
-			seasonAttrs: ["won", "lost", "lastTen"],
+			attrs: ["tid", "depth"],
+			seasonAttrs: ["won", "lost", "lastTen", "abbrev", "region", "name"],
 			stats: ["gp", "mov"],
 			season,
 		});

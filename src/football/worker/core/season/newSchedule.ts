@@ -12,7 +12,9 @@ import { g, random } from "../../../../deion/worker/util";
  */
 const newScheduleDefault = (
 	teams: {
-		did: number;
+		seasonAttrs: {
+			did: number;
+		};
 		tid: number;
 	}[],
 ) => {
@@ -33,7 +35,7 @@ const newScheduleDefault = (
 				// Constraint: 1 home game vs. each team in same division
 				const game: [number, number] = [t.tid, t2.tid];
 
-				if (t.did === t2.did) {
+				if (t.seasonAttrs.did === t2.seasonAttrs.did) {
 					tids.push(game);
 					homeGames[t.tid] += 1;
 					awayGames[t2.tid] += 1;
@@ -53,7 +55,9 @@ const newScheduleDefault = (
 		const awayGames2 = awayGames.slice();
 
 		for (const t of teams) {
-			const nonDivisionTeams = teams.filter(t2 => t.did !== t2.did);
+			const nonDivisionTeams = teams.filter(
+				t2 => t.seasonAttrs.did !== t2.seasonAttrs.did,
+			);
 			const withGamesLeft = nonDivisionTeams.filter(
 				t2 => awayGames2[t2.tid] < 8,
 			);
@@ -180,8 +184,10 @@ export const newScheduleCrappy = () => {
  */
 const newSchedule = (
 	teams: {
-		cid: number;
-		did: number;
+		seasonAttrs: {
+			cid: number;
+			did: number;
+		};
 		tid: number;
 	}[],
 ) => {
@@ -198,7 +204,10 @@ const newSchedule = (
 	let twoConfsEvenTeams = g.get("confs").length === 2;
 
 	for (const conf of g.get("confs")) {
-		if (teams.filter(t => t.cid === conf.cid).length !== teams.length / 2) {
+		if (
+			teams.filter(t => t.seasonAttrs.cid === conf.cid).length !==
+			teams.length / 2
+		) {
 			twoConfsEvenTeams = false;
 			break;
 		}

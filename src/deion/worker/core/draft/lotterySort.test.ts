@@ -11,9 +11,9 @@ describe("worker/core/draft/lotterySort", () => {
 		const teams = [
 			{
 				tid: 0,
-				cid: 0,
-				did: 0,
 				seasonAttrs: {
+					cid: 0,
+					did: 0,
 					winp: 0.9,
 					playoffRoundsWon: -1,
 					won: 9,
@@ -22,9 +22,9 @@ describe("worker/core/draft/lotterySort", () => {
 			},
 			{
 				tid: 1,
-				cid: 0,
-				did: 0,
 				seasonAttrs: {
+					cid: 0,
+					did: 0,
 					winp: 0.8,
 					playoffRoundsWon: -1,
 					won: 8,
@@ -33,9 +33,9 @@ describe("worker/core/draft/lotterySort", () => {
 			},
 			{
 				tid: 2,
-				cid: 1,
-				did: 1,
 				seasonAttrs: {
+					cid: 1,
+					did: 1,
 					winp: 0.1,
 					playoffRoundsWon: -1,
 					won: 1,
@@ -44,9 +44,9 @@ describe("worker/core/draft/lotterySort", () => {
 			},
 			{
 				tid: 3,
-				cid: 1,
-				did: 1,
 				seasonAttrs: {
+					cid: 1,
+					did: 1,
 					winp: 0.2,
 					playoffRoundsWon: -1,
 					won: 2,

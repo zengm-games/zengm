@@ -23,12 +23,12 @@ const updateTeams = async (
 		}
 
 		const stats = statsTable.stats;
-		const seasonAttrs: ("won" | "lost" | "tied")[] = g.get("ties")
-			? ["won", "lost", "tied"]
-			: ["won", "lost"];
+		const seasonAttrs: ("abbrev" | "won" | "lost" | "tied")[] = g.get("ties")
+			? ["abbrev", "won", "lost", "tied"]
+			: ["abbrev", "won", "lost"];
 		const teams = (
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev"],
+				attrs: ["tid"],
 				seasonAttrs,
 				stats: ["gp", ...stats] as TeamStatAttr[],
 				season: inputs.season,

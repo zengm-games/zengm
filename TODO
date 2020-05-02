@@ -1,38 +1,3 @@
-dropdown and left menu highlight looks weird for god mode, what did it look like with reactstrap?
-
-way to import team and player info
-- options
-  - like before, from manage teams
-  - when creating a new league, option to use teams from another file
-  - somehow globally specify default teams
-
-what would it really cost to store all game sim results?
-
-playoff upsets
-
-show spread, ovr, etc on live game sim game selection page
-
-way to disable saving? @champ1432#2175
-- changes
-
-blog
-- danger zone auto save
-- edit what conf/div a team belongs to on Manage Teams
-- track changes of team info edits on Manage Teams
-  - what happens if changed after regular season
-  - old links still break if you edit abbrev, no change there
-
-db schema change not needed
-- if teamSeason property undefined, fall back to team
-- g.triggeredEvents
-- update g.confs/divs/numGamesPlayoffSeries when loading
-
-teams info refactor
-- test
-- how does this impact teamAbbrevsCache, abbrevs in links, hardcoded URLs in event log, etc?
-  - could eventually do a more complex lookup, or use more complex caches. for now, no big loss to keep abbrevs the same or suffer broken links
-    - abbrevs already break links if you change them, so no regression. but added infoffuture
-
 add triggered events
 - team info (name, region, abbrev, cid, did, etc.)
 - expansion
@@ -41,6 +6,13 @@ add triggered events
 - {season: number, phase: number, type: string, action: any}
 - new object store or g.triggeredEvents
 - when a triggered event happens, pop up a model explaining it
+
+play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_poss.html
+- pace
+- 3 point tendency
+- 3 point accuracy
+- 2 point accuracy
+- offensive rebounding
 
 league structure changes, without breaking history
 - needs to support
@@ -66,31 +38,53 @@ league structure changes, without breaking history
     - is that a big enough win to justify a schema change?
 - for team name/region/abbrev/imgURL, will need to avoid using caches for that info
 
-legends mode
-- start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
-- NBA seasons only
-
-play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_poss.html
-- pace
-- 3 point tendency
-- 3 point accuracy
-- 2 point accuracy
-- offensive rebounding
-
 expansion draft
 - only allow in certain phase of offseason
   - DRAFT_LOTTERY - definitely, most realistic, but need to do something about lottery results
   - DRAFT, FREE_AGENCY, PREASEASON - could support, but would it be better to force it before the draft always?
-- allow division/conference realignment when setting up?
+- upcoming free agents are not available to be drafted
+- teams can protect up to 8 players, unless they have 8 players or less on roster, in which case they need to leave 1 unprotected
 - pick protections
 - multiple expansion teams
 - allow user to take control of expansion team
+- does expansion team get draft pick in upcoming draft?
+- FBGM?
+
+way to import team and player info
+- options
+  - like before, from manage teams
+  - when creating a new league, option to use teams from another file
+  - somehow globally specify default teams
+
+db schema change not needed
+- if teamSeason property undefined, fall back to team
+- g.triggeredEvents
+- update g.confs/divs/numGamesPlayoffSeries when loading
+
+blog
+- danger zone auto save
+- edit what conf/div a team belongs to on Manage Teams
+- track changes of team info edits on Manage Teams
+  - what happens if changed after regular season
+  - old links still break if you edit abbrev, no change there
+
+---
+
+dropdown and left menu highlight looks weird for god mode, what did it look like with reactstrap?
+
+what would it really cost to store all game sim results?
+
+playoff upsets
+
+show spread, ovr, etc on live game sim game selection page
+
+legends mode
+- start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
+- NBA seasons only
 
 better changelog
 - everything from CHANGELOG.made
 - show in modal
-
----
 
 "sim to" button next to game on schedule
 

@@ -6,6 +6,9 @@ import AddRemove from "./AddRemove";
 import type { View } from "../../../common/types";
 import { PHASE } from "../../../common";
 
+const nextSeasonWarning =
+	"Because the regular season is already over, changes will not be fully applied until next season.";
+
 type State = {
 	saving: boolean;
 	teams: View<"manageTeams">["teams"];
@@ -98,9 +101,15 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 		await toWorker("main", "updateTeamInfo", state.teams);
 
+		let text = "Saved team info.";
+
+		if (props.phase >= PHASE.PLAYOFFS) {
+			text += `<br /><br />${nextSeasonWarning}`;
+		}
+
 		logEvent({
 			type: "success",
-			text: "Saved team info.",
+			text,
 			saveToDb: false,
 		});
 
@@ -146,8 +155,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 			{props.phase >= PHASE.PLAYOFFS ? (
 				<p className="alert alert-warning d-inline-block">
-					Because the regular season is already over, changes will not be
-					completely applied until next season.
+					{nextSeasonWarning}
 				</p>
 			) : null}
 

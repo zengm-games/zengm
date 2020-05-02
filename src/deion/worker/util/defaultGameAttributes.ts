@@ -90,12 +90,12 @@ const defaultGameAttributes: GameAttributesLeague = {
 	foulsNeededToFoulOut: 6,
 	rookieContractLengths: [3, 2],
 
-	threePointers: true,
 	pace: 100,
+	threePointers: true,
 	threePointTendencyFactor: 1,
 	threePointAccuracyFactor: 1,
 	twoPointAccuracyFactor: 1,
-	offensiveReboundingTendencyFactor: 1,
+	offensiveReboundingFactor: 1,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

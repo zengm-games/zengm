@@ -38,6 +38,10 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			foulsNeededToFoulOut: g.get("foulsNeededToFoulOut"),
 			threePointers: g.get("threePointers"),
 			pace: g.get("pace"),
+			threePointTendencyFactor: g.get("threePointTendencyFactor"),
+			threePointAccuracyFactor: g.get("threePointAccuracyFactor"),
+			twoPointAccuracyFactor: g.get("twoPointAccuracyFactor"),
+			offensiveReboundingFactor: g.get("offensiveReboundingFactor"),
 		};
 	}
 };

@@ -228,14 +228,14 @@ class GameSim {
 
 		this.t = g.get("quarterLength"); // Game clock, in minutes
 
+		// Needed because relationship between averagePossessionLength and number of actual possessions is not perfect
+		let paceFactor = g.get("pace") / 100;
+		paceFactor += 0.025 * helpers.bound((paceFactor - 1) / 0.2, -1, 1);
+
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 		const numPossessions =
-			(Math.round((this.team[0].pace + this.team[1].pace) / 2) *
-				1.1 *
-				g.get("pace")) /
-			100;
-		console.log(this.team[0].pace, this.team[1].pace, numPossessions);
+			((this.team[0].pace + this.team[1].pace) / 2) * 1.1 * paceFactor;
 		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
@@ -1138,7 +1138,8 @@ class GameSim {
 			forceThreePointer ||
 			(this.team[this.o].player[p].compositeRating.shootingThreePointer >
 				0.35 &&
-				Math.random() < 0.67 * shootingThreePointerScaled)
+				Math.random() <
+					0.67 * shootingThreePointerScaled * g.get("threePointTendencyFactor"))
 		) {
 			// Three pointer
 			type = "threePointer";
@@ -1150,6 +1151,7 @@ class GameSim {
 			if (this.allStarGame) {
 				probMake += 0.02;
 			}
+			probMake *= g.get("threePointAccuracyFactor");
 		} else {
 			const r1 =
 				0.8 *
@@ -1197,6 +1199,8 @@ class GameSim {
 			if (this.allStarGame) {
 				probMake += 0.1;
 			}
+
+			probMake *= g.get("twoPointAccuracyFactor");
 		}
 
 		let foulFactor =
@@ -1718,9 +1722,14 @@ class GameSim {
 			return null;
 		}
 
+		// Not sure why this transformation is needed
+		const offensiveReboundingFactor =
+			g.get("offensiveReboundingFactor") ** (1 / 2);
+
 		if (
 			(0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-				(2 + this.team[this.o].compositeRating.rebounding) >
+				(offensiveReboundingFactor *
+					(2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
 			ratios = this.ratingArray("rebounding", this.d, 3);

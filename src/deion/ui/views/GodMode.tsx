@@ -36,7 +36,11 @@ type Key =
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
 	| "threePointers"
-	| "pace";
+	| "pace"
+	| "threePointTendencyFactor"
+	| "threePointAccuracyFactor"
+	| "twoPointAccuracyFactor"
+	| "offensiveReboundingFactor";
 
 type Category = "League Structure" | "Finance" | "Events" | "Game Simulation";
 
@@ -452,6 +456,13 @@ if (process.env.SPORT === "basketball") {
 		},
 		{
 			category: "Game Simulation",
+			key: "pace",
+			name: "Pace",
+			type: "float",
+			helpText: "Average number of possessions per 48 minutes.",
+		},
+		{
+			category: "Game Simulation",
 			key: "threePointers",
 			name: "Three Pointers",
 			type: "bool",
@@ -460,10 +471,35 @@ if (process.env.SPORT === "basketball") {
 		},
 		{
 			category: "Game Simulation",
-			key: "pace",
-			name: "Pace",
+			key: "threePointTendencyFactor",
+			name: "Three Point Tendency Factor",
 			type: "float",
-			helpText: "Average number of possessions per 48 minutes.",
+			helpText:
+				"The baseline rate for number of three pointers is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "threePointAccuracyFactor",
+			name: "Three Point Accuracy Factor",
+			type: "float",
+			helpText:
+				"The baseline rate for three point percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "twoPointAccuracyFactor",
+			name: "Two Point Accuracy Factor",
+			type: "float",
+			helpText:
+				"The baseline rate for two point percentage is multiplied by this number.",
+		},
+		{
+			category: "Game Simulation",
+			key: "offensiveReboundingFactor",
+			name: "Offensive Rebounding Factor",
+			type: "float",
+			helpText:
+				"The baseline rate for the offensive:defensive rebounding ratio is multiplied by this number.",
 		},
 	);
 }

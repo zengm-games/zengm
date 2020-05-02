@@ -5,6 +5,7 @@ add triggered events
 - expansion
 - gameAttributes changes (salary cap, tendencies, etc)
   - finances ones make sense as triggered events, or should it be defined as some % growth?
+- gameSimPresets from GodMode - make it able to use these by year, to save space
 - {season: number, phase: number, type: string, action: any}
 - new object store or g.triggeredEvents
 - when a triggered event happens, pop up a model explaining it
@@ -63,6 +64,7 @@ blog
   - what happens if changed after regular season
   - old links still break if you edit abbrev, no change there
 - new game simulation settings, and presets for historical seasons
+- fit historical rosters based on historical sim settings - crowdsourced training data
 
 ---
 

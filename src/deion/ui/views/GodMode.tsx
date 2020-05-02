@@ -1112,6 +1112,7 @@ Input.propTypes = {
 
 const GodModeOptions = (props: View<"godMode">) => {
 	const [submitting, setSubmitting] = useState(false);
+	const [gameSimPreset, setGameSimPreset] = useState("default");
 	const [state, setState] = useState<Record<Key, string>>(() => {
 		// @ts-ignore
 		const initialState: Record<Key, string> = {};
@@ -1135,6 +1136,10 @@ const GodModeOptions = (props: View<"godMode">) => {
 			...prevState,
 			[name]: value,
 		}));
+
+		if (gameSimPresets && Object.keys(gameSimPresets[2020]).includes(name)) {
+			setGameSimPreset("default");
+		}
 	};
 
 	const handleFormSubmit = async (event: FormEvent) => {
@@ -1205,7 +1210,8 @@ const GodModeOptions = (props: View<"godMode">) => {
 							<div className="form-inline mb-3">
 								<select
 									className="form-control"
-									defaultValue="default"
+									value={gameSimPreset}
+									disabled={!props.godMode}
 									onChange={event => {
 										// @ts-ignore
 										const presets = gameSimPresets[event.target.value];
@@ -1222,7 +1228,7 @@ const GodModeOptions = (props: View<"godMode">) => {
 											...prevState,
 											...presetsString,
 										}));
-										console.log(event, event.target);
+										setGameSimPreset(event.target.value);
 									}}
 								>
 									<option value="default">

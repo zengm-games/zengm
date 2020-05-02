@@ -19,14 +19,11 @@ db schema change not needed
 - update g.confs/divs/numGamesPlayoffSeries when loading
 
 teams info refactor
-- move name, region, abbrev, cid, did to season object
-  - actually keep it in root too. root is "template for future seasons"
 - test
 - make sure it can handle upgraded leagues without schema change (fall back to team object if undefined in teamsPlus)
-- add to manage teams a dropdown to say a change applies to this year, future years, or past years
-  - maybe not... don't want to change past confs/divs. maybe just show notification if it's after playoffs that it will apply only to next year
 - how does this impact teamAbbrevsCache, abbrevs in links, hardcoded URLs in event log, etc?
   - could eventually do a more complex lookup, or use more complex caches. for now, no big loss to keep abbrevs the same or suffer broken links
+    - abbrevs already break links if you change them, so no regression. but added infoffuture
 
 add triggered events
 - team info (name, region, abbrev, cid, did, etc.)

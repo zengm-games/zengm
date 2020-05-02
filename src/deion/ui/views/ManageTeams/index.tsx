@@ -4,6 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
 import type { View } from "../../../common/types";
+import { PHASE } from "../../../common";
 
 type State = {
 	saving: boolean;
@@ -50,6 +51,9 @@ const reducer = (state: State, action: Action) => {
 				// @ts-ignore
 				newTeams[action.i].colors[action.field.replace("colors", "")] =
 					action.value;
+			}
+			if (action.field === "did") {
+				newTeams[action.i][action.field] = parseInt(action.value);
 			} else {
 				// @ts-ignore
 				newTeams[action.i][action.field] = action.value;
@@ -81,7 +85,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	const handleInputChange = (
 		i: number,
 		field: string,
-		e: ChangeEvent<HTMLInputElement>,
+		e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
 		const value = e.target.value;
 
@@ -106,6 +110,11 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	useTitleBar({ title: "Manage Teams" });
 
 	const { saving, teams } = state;
+
+	const divisions = props.divs.map(div => ({
+		did: div.did,
+		name: `${div.name} (${props.confs[div.cid].name})`,
+	}));
 
 	return (
 		<>
@@ -135,6 +144,13 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 			<h2 className="mt-3">Edit Teams</h2>
 
+			{props.phase >= PHASE.PLAYOFFS ? (
+				<p className="alert alert-warning d-inline-block">
+					Because the regular season is already over, changes will not be
+					completely applied until next season.
+				</p>
+			) : null}
+
 			<div className="row d-none d-lg-flex font-weight-bold mb-2">
 				<div className="col-lg-2">
 					<br />
@@ -147,6 +163,10 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				<div className="col-lg-1">
 					<br />
 					Abbrev
+				</div>
+				<div className="col-lg-1">
+					<br />
+					Division
 				</div>
 				<div className="col-lg-1">
 					Population
@@ -162,7 +182,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 					<br />
 					Logo URL
 				</div>
-				<div className="col-lg-3">
+				<div className="col-lg-2">
 					<br />
 					Colors
 				</div>
@@ -207,6 +227,22 @@ const ManageTeams = (props: View<"manageTeams">) => {
 							</div>
 							<div className="col-6 col-lg-1">
 								<div className="form-group">
+									<label className="d-lg-none">Division</label>
+									<select
+										className="form-control"
+										onChange={e => handleInputChange(i, "did", e)}
+										value={t.did}
+									>
+										{divisions.map(division => (
+											<option key={division.did} value={division.did}>
+												{division.name}
+											</option>
+										))}
+									</select>
+								</div>
+							</div>
+							<div className="col-6 col-lg-1">
+								<div className="form-group">
 									<label className="d-lg-none">Population (millions)</label>
 									<input
 										type="text"
@@ -240,7 +276,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 									/>
 								</div>
 							</div>
-							<div className="col-6 col-lg-3">
+							<div className="col-6 col-lg-2">
 								<div className="form-group">
 									<label className="d-lg-none">Colors</label>
 									<div className="d-flex">

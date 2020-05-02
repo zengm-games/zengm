@@ -1438,7 +1438,7 @@ const updatePlayingTime = async (pid: number, ptModifier: number) => {
 const updateTeamInfo = async (
 	newTeams: {
 		cid?: number;
-		did?: number;
+		did: number;
 		region: string;
 		name: string;
 		abbrev: string;
@@ -1453,14 +1453,11 @@ const updateTeamInfo = async (
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		const { cid, did } = newTeams[t.tid];
+		const { did } = newTeams[t.tid];
 
-		if (cid !== undefined) {
-			t.cid = cid;
-		}
-
-		if (did !== undefined) {
+		if (did !== undefined && g.get("divs")[did]) {
 			t.did = did;
+			t.cid = g.get("divs")[did].cid;
 		}
 
 		t.region = newTeams[t.tid].region;
@@ -1495,6 +1492,17 @@ const updateTeamInfo = async (
 
 		if (Number.isNaN(teamSeason.stadiumCapacity)) {
 			throw new Error("Invalid stadiumCapacity");
+		}
+
+		if (g.get("phase") < PHASE.PLAYOFFS) {
+			// Also apply team info changes to this season
+			teamSeason.cid = t.cid;
+			teamSeason.did = t.did;
+			teamSeason.region = t.region;
+			teamSeason.name = t.name;
+			teamSeason.abbrev = t.abbrev;
+			teamSeason.imgURL = t.imgURL;
+			teamSeason.colors = t.colors;
 		}
 
 		await idb.cache.teamSeasons.put(teamSeason);

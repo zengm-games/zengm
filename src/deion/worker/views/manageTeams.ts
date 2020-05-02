@@ -4,7 +4,7 @@ import { g } from "../util";
 const updateTeamInfo = async () => {
 	const teams = (
 		await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors"],
+			attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors", "did"],
 			seasonAttrs: ["pop", "stadiumCapacity"],
 			season: g.get("season"),
 		})
@@ -18,6 +18,7 @@ const updateTeamInfo = async () => {
 			colors: t.colors,
 			pop: parseFloat(t.seasonAttrs.pop.toFixed(6)),
 			stadiumCapacity: t.seasonAttrs.stadiumCapacity,
+			did: t.did,
 		};
 	});
 

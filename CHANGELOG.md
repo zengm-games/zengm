@@ -4,6 +4,10 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-02: Added the ability to change what division/conference a team belongs to from Tools > Manage Teams.
+
+* 2020-05-02: Added tracking of changes to team info (name, region, logo, etc.) so they can be displayed correctly when viewing historical data. Previously, updating a team's name would update it when viewing data from past seasons too.
+
 * 2020-05-01: Added a way to temporarily disable auto save to the Danger Zone screen.
 
 * 2020-05-01: Added "Acquired" column to the re-signing players table.

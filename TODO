@@ -21,7 +21,6 @@ db schema change not needed
 teams info refactor
 - move name, region, abbrev, cid, did to season object
   - actually keep it in root too. root is "template for future seasons"
-- schema
 - test
 - make sure it can handle upgraded leagues without schema change (fall back to team object if undefined in teamsPlus)
 - add to manage teams a dropdown to say a change applies to this year, future years, or past years

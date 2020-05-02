@@ -1152,6 +1152,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 									tid: {
 										type: "integer",
 									},
+									cid: {
+										type: "integer",
+									},
+									did: {
+										type: "integer",
+									},
+									region: {
+										type: "string",
+									},
+									name: {
+										type: "string",
+									},
+									abbrev: {
+										type: "string",
+									},
+									imgURL: {
+										type: "string",
+									},
 									season: {
 										type: "integer",
 									},

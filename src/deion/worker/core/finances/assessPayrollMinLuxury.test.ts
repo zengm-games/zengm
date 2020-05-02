@@ -2,7 +2,7 @@ import assert from "assert";
 import testHelpers from "../../../test/helpers";
 import { finances, player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 
 describe("worker/core/finances/assessPayrollMinLuxury", () => {
 	test("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
@@ -19,14 +19,18 @@ describe("worker/core/finances/assessPayrollMinLuxury", () => {
 		players[1].contract.amount =
 			(g.get("luxuryPayroll") + g.get("minPayroll")) / 2;
 		players[2].contract.amount = g.get("minPayroll") - 1;
+
+		const teamsDefault = helpers.getTeamsDefault();
+
 		await testHelpers.resetCache({
 			players,
 			teamSeasons: [
-				team.genSeasonRow(0),
-				team.genSeasonRow(1),
-				team.genSeasonRow(2),
+				team.genSeasonRow(teamsDefault[0]),
+				team.genSeasonRow(teamsDefault[1]),
+				team.genSeasonRow(teamsDefault[2]),
 			],
 		});
+
 		await finances.assessPayrollMinLuxury();
 		const teamSeasons = await idb.cache.teamSeasons.getAll();
 		assert.equal(teamSeasons.length, g.get("numTeams"));

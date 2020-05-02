@@ -425,19 +425,19 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			gb: number;
 		})[] = [];
 
-		let l = 0;
+		let rank = 1;
 		for (let k = 0; k < teams.length; k++) {
 			if (cid === teams[k].seasonAttrs.cid) {
 				confTeams.push({
 					...helpers.deepCopy(teams[k]),
-					rank: l + 1,
+					rank,
 					gb:
-						l === 0
+						rank === 1
 							? 0
-							: helpers.gb(confTeams[0].seasonAttrs, confTeams[l].seasonAttrs),
+							: helpers.gb(confTeams[0].seasonAttrs, teams[k].seasonAttrs),
 				});
 
-				l += 1;
+				rank += 1;
 			}
 		}
 

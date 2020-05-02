@@ -13,7 +13,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		await testHelpers.resetCache({
 			players: [player.generate(4, 30, 2010, true, 15.5)],
 			teams: teamsDefault.map(team.generate),
-			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
+			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),
 			teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
 		});
 

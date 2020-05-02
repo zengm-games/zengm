@@ -84,7 +84,7 @@ const addTeam = async (
 		pop,
 		imgURL: undefined,
 	});
-	const teamSeason = team.genSeasonRow(t.tid);
+	const teamSeason = team.genSeasonRow(t);
 	teamSeason.pop = pop;
 	teamSeason.stadiumCapacity = g.get("defaultStadiumCapacity");
 	const teamStats = team.genStatsRow(t.tid);

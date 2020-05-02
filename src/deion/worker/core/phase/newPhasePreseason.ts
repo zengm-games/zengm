@@ -59,34 +59,31 @@ const newPhasePreseason = async (
 		}
 	}
 
-	const tids: number[] = teams.map(t => t.tid);
-	let scoutingRankTemp;
-	await Promise.all(
-		tids.map(async tid => {
-			// Only actually need 3 seasons for userTid, but get it for all just in case there is a
-			// skipped season (alternatively could use cursor to just find most recent season, but this
-			// is not performance critical code)
-			const teamSeasons2 = await idb.getCopies.teamSeasons({
-				tid,
-				seasons: [g.get("season") - 3, g.get("season") - 1],
-			});
-			const prevSeason = teamSeasons2[teamSeasons2.length - 1];
+	let scoutingRank: number | undefined;
+	for (const t of teams) {
+		const tid = t.tid;
+		// Only actually need 3 seasons for userTid, but get it for all just in case there is a
+		// skipped season (alternatively could use cursor to just find most recent season, but this
+		// is not performance critical code)
+		const teamSeasons2 = await idb.getCopies.teamSeasons({
+			tid,
+			seasons: [g.get("season") - 3, g.get("season") - 1],
+		});
+		const prevSeason = teamSeasons2[teamSeasons2.length - 1];
 
-			// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
-			// This is done BEFORE a new season row is added.
-			if (tid === g.get("userTid")) {
-				scoutingRankTemp = finances.getRankLastThree(
-					teamSeasons2,
-					"expenses",
-					"scouting",
-				);
-			}
+		// Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
+		// This is done BEFORE a new season row is added.
+		if (tid === g.get("userTid")) {
+			scoutingRank = finances.getRankLastThree(
+				teamSeasons2,
+				"expenses",
+				"scouting",
+			);
+		}
 
-			await idb.cache.teamSeasons.add(team.genSeasonRow(tid, prevSeason));
-			await idb.cache.teamStats.add(team.genStatsRow(tid));
-		}),
-	);
-	const scoutingRank = scoutingRankTemp;
+		await idb.cache.teamSeasons.add(team.genSeasonRow(t, prevSeason));
+		await idb.cache.teamStats.add(team.genStatsRow(tid));
+	}
 
 	if (scoutingRank === undefined) {
 		throw new Error("scoutingRank should be defined");

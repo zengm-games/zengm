@@ -35,7 +35,7 @@ describe("worker/util/account/checkAchievement", () => {
 				player.generate(0, 30, 2010, true, 15.5),
 			],
 			teams: teamsDefault.map(team.generate),
-			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
+			teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),
 		});
 
 		idb.league = testHelpers.mockIDBLeague();

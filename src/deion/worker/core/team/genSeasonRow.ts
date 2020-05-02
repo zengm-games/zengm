@@ -1,13 +1,24 @@
 import { g, random } from "../../util";
-import type { TeamSeasonWithoutKey } from "../../../common/types";
+import type {
+	Team,
+	TeamBasic,
+	TeamSeasonWithoutKey,
+} from "../../../common/types";
 
 const genSeasonRow = (
-	tid: number,
+	t: Team | TeamBasic,
 	prevSeason?: TeamSeasonWithoutKey,
 ): TeamSeasonWithoutKey => {
 	const defaultRank = (g.get("numTeams") + 1) / 2;
 	const newSeason = {
-		tid,
+		tid: t.tid,
+		cid: t.cid,
+		did: t.did,
+		region: t.region,
+		name: t.name,
+		abbrev: t.abbrev,
+		imgURL: t.imgURL,
+		colors: t.colors,
 		season: g.get("season"),
 		gp: 0,
 		gpHome: 0,
@@ -102,13 +113,14 @@ const genSeasonRow = (
 
 	if (prevSeason) {
 		// New season, carrying over some values from the previous season
-		newSeason.pop = prevSeason.pop * random.uniform(0.98, 1.02); // Mean population should stay constant, otherwise the economics change too much
-
 		newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
 		newSeason.hype = prevSeason.hype;
 		newSeason.cash = prevSeason.cash;
 
-		if (g.get("userTid") === tid) {
+		// Mean population should stay constant, otherwise the economics change too much
+		newSeason.pop = prevSeason.pop * random.uniform(0.98, 1.02);
+
+		if (g.get("userTid") === t.tid) {
 			if (prevSeason.ownerMood) {
 				newSeason.ownerMood = prevSeason.ownerMood;
 			} else if ((g as any).ownerMood) {

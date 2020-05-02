@@ -109,8 +109,6 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 	return (
 		<>
-			<h2>Manage Teams</h2>
-
 			{!props.godMode ? (
 				<div className="alert alert-warning">
 					Some features here are disabled because you are not using{" "}

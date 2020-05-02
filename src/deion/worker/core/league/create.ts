@@ -311,7 +311,7 @@ export const createWithoutSaving = (
 				];
 			}
 		} else {
-			teamSeasonsLocal = [team.genSeasonRow(t.tid)];
+			teamSeasonsLocal = [team.genSeasonRow(t)];
 			teamSeasonsLocal[0].pop = teamInfo.pop;
 			// @ts-ignore
 			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;

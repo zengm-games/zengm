@@ -4,14 +4,16 @@ import { team } from "../core";
 import { idb } from "../db";
 import g from "./g";
 import genMessage from "./genMessage";
+import { helpers } from "../../common";
 
 describe("worker/util/genMessage", () => {
 	beforeEach(async () => {
 		testHelpers.resetG();
 		g.setWithoutSavingToDB("gracePeriodEnd", g.get("season"));
 
+		const teamsDefault = helpers.getTeamsDefault();
 		await testHelpers.resetCache({
-			teamSeasons: [team.genSeasonRow(g.get("userTid"))],
+			teamSeasons: [team.genSeasonRow(teamsDefault[g.get("userTid")])],
 		});
 
 		idb.league = testHelpers.mockIDBLeague();

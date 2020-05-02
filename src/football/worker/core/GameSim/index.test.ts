@@ -18,7 +18,7 @@ const genTwoTeams = async () => {
 			...range(50).map(() => player.generate(1, 25, 2010, true, 15.5)),
 		],
 		teams: teamsDefault.map(team.generate),
-		teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
+		teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),
 		teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
 	});
 };

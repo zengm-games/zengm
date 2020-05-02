@@ -15,6 +15,13 @@ show spread, ovr, etc on live game sim game selection page
 way to disable saving? @champ1432#2175
 - changes
 
+blog
+- danger zone auto save
+- edit what conf/div a team belongs to on Manage Teams
+- track changes of team info edits on Manage Teams
+  - what happens if changed after regular season
+  - old links still break if you edit abbrev, no change there
+
 db schema change not needed
 - if teamSeason property undefined, fall back to team
 - g.triggeredEvents

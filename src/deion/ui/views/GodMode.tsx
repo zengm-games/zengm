@@ -495,6 +495,496 @@ if (process.env.SPORT === "basketball") {
 	);
 }
 
+// See play-style-adjustments in bbgm-rosters
+const gameSimPresets =
+	process.env.SPORT === "basketball"
+		? {
+				2020: {
+					pace: 100.2,
+					threePointers: true,
+					threePointTendencyFactor: 1.0,
+					threePointAccuracyFactor: 1.0,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2019: {
+					pace: 100.0,
+					threePointers: true,
+					threePointTendencyFactor: 0.946,
+					threePointAccuracyFactor: 0.994,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2018: {
+					pace: 97.3,
+					threePointers: true,
+					threePointTendencyFactor: 0.881,
+					threePointAccuracyFactor: 1.014,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2017: {
+					pace: 96.4,
+					threePointers: true,
+					threePointTendencyFactor: 0.827,
+					threePointAccuracyFactor: 1.003,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2016: {
+					pace: 95.8,
+					threePointers: true,
+					threePointTendencyFactor: 0.744,
+					threePointAccuracyFactor: 0.992,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2015: {
+					pace: 93.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.705,
+					threePointAccuracyFactor: 0.98,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2014: {
+					pace: 93.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.676,
+					threePointAccuracyFactor: 1.008,
+					twoPointAccuracyFactor: 1.0,
+				},
+				2013: {
+					pace: 92.0,
+					threePointers: true,
+					threePointTendencyFactor: 0.64,
+					threePointAccuracyFactor: 1.006,
+					twoPointAccuracyFactor: 0.991,
+				},
+				2012: {
+					pace: 91.3,
+					threePointers: true,
+					threePointTendencyFactor: 0.595,
+					threePointAccuracyFactor: 0.978,
+					twoPointAccuracyFactor: 0.978,
+				},
+				2011: {
+					pace: 92.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.577,
+					threePointAccuracyFactor: 1.003,
+					twoPointAccuracyFactor: 0.999,
+				},
+				2010: {
+					pace: 92.7,
+					threePointers: true,
+					threePointTendencyFactor: 0.577,
+					threePointAccuracyFactor: 0.994,
+					twoPointAccuracyFactor: 1.009,
+				},
+				2009: {
+					pace: 91.7,
+					threePointers: true,
+					threePointTendencyFactor: 0.583,
+					threePointAccuracyFactor: 1.028,
+					twoPointAccuracyFactor: 0.995,
+				},
+				2008: {
+					pace: 92.4,
+					threePointers: true,
+					threePointTendencyFactor: 0.58,
+					threePointAccuracyFactor: 1.014,
+					twoPointAccuracyFactor: 0.993,
+				},
+				2007: {
+					pace: 91.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.545,
+					threePointAccuracyFactor: 1.003,
+					twoPointAccuracyFactor: 0.995,
+				},
+				2006: {
+					pace: 90.5,
+					threePointers: true,
+					threePointTendencyFactor: 0.521,
+					threePointAccuracyFactor: 1.003,
+					twoPointAccuracyFactor: 0.98,
+				},
+				2005: {
+					pace: 90.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.512,
+					threePointAccuracyFactor: 0.997,
+					twoPointAccuracyFactor: 0.964,
+				},
+				2004: {
+					pace: 90.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.488,
+					threePointAccuracyFactor: 0.972,
+					twoPointAccuracyFactor: 0.943,
+				},
+				2003: {
+					pace: 91.0,
+					threePointers: true,
+					threePointTendencyFactor: 0.476,
+					threePointAccuracyFactor: 0.978,
+					twoPointAccuracyFactor: 0.949,
+				},
+				2002: {
+					pace: 90.7,
+					threePointers: true,
+					threePointTendencyFactor: 0.479,
+					threePointAccuracyFactor: 0.992,
+					twoPointAccuracyFactor: 0.954,
+				},
+				2001: {
+					pace: 91.3,
+					threePointers: true,
+					threePointTendencyFactor: 0.443,
+					threePointAccuracyFactor: 0.992,
+					twoPointAccuracyFactor: 0.946,
+				},
+				2000: {
+					pace: 93.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.435,
+					threePointAccuracyFactor: 0.989,
+					twoPointAccuracyFactor: 0.96,
+				},
+				1999: {
+					pace: 88.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.438,
+					threePointAccuracyFactor: 0.95,
+					twoPointAccuracyFactor: 0.937,
+				},
+				1998: {
+					pace: 90.3,
+					threePointers: true,
+					threePointTendencyFactor: 0.417,
+					threePointAccuracyFactor: 0.969,
+					twoPointAccuracyFactor: 0.965,
+				},
+				1997: {
+					pace: 90.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.551,
+					threePointAccuracyFactor: 1.008,
+					twoPointAccuracyFactor: 0.985,
+				},
+				1996: {
+					pace: 91.8,
+					threePointers: true,
+					threePointTendencyFactor: 0.518,
+					threePointAccuracyFactor: 1.028,
+					twoPointAccuracyFactor: 0.996,
+				},
+				1995: {
+					pace: 92.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.485,
+					threePointAccuracyFactor: 1.006,
+					twoPointAccuracyFactor: 1.007,
+				},
+				1994: {
+					pace: 95.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.31,
+					threePointAccuracyFactor: 0.933,
+					twoPointAccuracyFactor: 0.991,
+				},
+				1993: {
+					pace: 96.8,
+					threePointers: true,
+					threePointTendencyFactor: 0.274,
+					threePointAccuracyFactor: 0.941,
+					twoPointAccuracyFactor: 1.003,
+				},
+				1992: {
+					pace: 96.6,
+					threePointers: true,
+					threePointTendencyFactor: 0.232,
+					threePointAccuracyFactor: 0.927,
+					twoPointAccuracyFactor: 0.997,
+				},
+				1991: {
+					pace: 97.8,
+					threePointers: true,
+					threePointTendencyFactor: 0.214,
+					threePointAccuracyFactor: 0.896,
+					twoPointAccuracyFactor: 1.001,
+				},
+				1990: {
+					pace: 98.3,
+					threePointers: true,
+					threePointTendencyFactor: 0.199,
+					threePointAccuracyFactor: 0.927,
+					twoPointAccuracyFactor: 1.001,
+				},
+				1989: {
+					pace: 100.6,
+					threePointers: true,
+					threePointTendencyFactor: 0.193,
+					threePointAccuracyFactor: 0.905,
+					twoPointAccuracyFactor: 1.004,
+				},
+				1988: {
+					pace: 99.6,
+					threePointers: true,
+					threePointTendencyFactor: 0.149,
+					threePointAccuracyFactor: 0.885,
+					twoPointAccuracyFactor: 1.005,
+				},
+				1987: {
+					pace: 100.8,
+					threePointers: true,
+					threePointTendencyFactor: 0.14,
+					threePointAccuracyFactor: 0.843,
+					twoPointAccuracyFactor: 1.006,
+				},
+				1986: {
+					pace: 102.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.095,
+					threePointAccuracyFactor: 0.79,
+					twoPointAccuracyFactor: 1.016,
+				},
+				1985: {
+					pace: 102.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.092,
+					threePointAccuracyFactor: 0.79,
+					twoPointAccuracyFactor: 1.023,
+				},
+				1984: {
+					pace: 101.4,
+					threePointers: true,
+					threePointTendencyFactor: 0.068,
+					threePointAccuracyFactor: 0.7,
+					twoPointAccuracyFactor: 1.023,
+				},
+				1983: {
+					pace: 103.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.065,
+					threePointAccuracyFactor: 0.667,
+					twoPointAccuracyFactor: 1.009,
+				},
+				1982: {
+					pace: 100.9,
+					threePointers: true,
+					threePointTendencyFactor: 0.065,
+					threePointAccuracyFactor: 0.734,
+					twoPointAccuracyFactor: 1.02,
+				},
+				1981: {
+					pace: 101.8,
+					threePointers: true,
+					threePointTendencyFactor: 0.06,
+					threePointAccuracyFactor: 0.686,
+					twoPointAccuracyFactor: 1.008,
+				},
+				1980: {
+					pace: 103.1,
+					threePointers: true,
+					threePointTendencyFactor: 0.08,
+					threePointAccuracyFactor: 0.784,
+					twoPointAccuracyFactor: 1.0,
+				},
+				1979: {
+					pace: 105.8,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.995,
+				},
+				1978: {
+					pace: 106.7,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.962,
+				},
+				1977: {
+					pace: 106.5,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.954,
+				},
+				1976: {
+					pace: 105.5,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.94,
+				},
+				1975: {
+					pace: 104.5,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.938,
+				},
+				1974: {
+					pace: 107.8,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.941,
+				},
+				1973: {
+					pace: 110.385,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.936,
+				},
+				1972: {
+					pace: 109.785,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.932,
+				},
+				1971: {
+					pace: 112.988,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.922,
+				},
+				1970: {
+					pace: 114.811,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.943,
+				},
+				1969: {
+					pace: 114.571,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.904,
+				},
+				1968: {
+					pace: 117.058,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.915,
+				},
+				1967: {
+					pace: 119.602,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.904,
+				},
+				1966: {
+					pace: 118.921,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.887,
+				},
+				1965: {
+					pace: 115.617,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.873,
+				},
+				1964: {
+					pace: 114.689,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.887,
+				},
+				1963: {
+					pace: 117.316,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.904,
+				},
+				1962: {
+					pace: 125.168,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.874,
+				},
+				1961: {
+					pace: 127.219,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.85,
+				},
+				1960: {
+					pace: 126.113,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.84,
+				},
+				1959: {
+					pace: 118.68,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.81,
+				},
+				1958: {
+					pace: 118.564,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.786,
+				},
+				1957: {
+					pace: 109.736,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.779,
+				},
+				1956: {
+					pace: 106.17,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.793,
+				},
+				1955: {
+					pace: 99.922,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.79,
+				},
+				1954: {
+					pace: 86.481,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.764,
+				},
+				1953: {
+					pace: 88.992,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.758,
+				},
+				1952: {
+					pace: 92.863,
+					threePointers: false,
+					threePointTendencyFactor: 0.025,
+					threePointAccuracyFactor: 0.8,
+					twoPointAccuracyFactor: 0.752,
+				},
+		  }
+		: undefined;
+
 const encodeDecodeFunctions = {
 	bool: {
 		stringify: (value: boolean) => String(value),
@@ -709,6 +1199,46 @@ const GodModeOptions = (props: View<"godMode">) => {
 				return (
 					<React.Fragment key={category}>
 						<h2 className={i === 0 ? "mt-3" : "mt-2"}>{category}</h2>
+						{category === "Game Simulation" &&
+						process.env.SPORT === "basketball" &&
+						gameSimPresets ? (
+							<div className="form-inline mb-3">
+								<select
+									className="form-control"
+									defaultValue="default"
+									onChange={event => {
+										// @ts-ignore
+										const presets = gameSimPresets[event.target.value];
+										if (!presets) {
+											return;
+										}
+
+										const presetsString: any = {};
+										for (const [key, value] of Object.entries(presets)) {
+											presetsString[key] = String(value);
+										}
+
+										setState(prevState => ({
+											...prevState,
+											...presetsString,
+										}));
+										console.log(event, event.target);
+									}}
+								>
+									<option value="default">
+										Select preset based on historical NBA stats
+									</option>
+									{Object.keys(gameSimPresets)
+										.sort()
+										.reverse()
+										.map(season => (
+											<option key={season} value={season}>
+												{season}
+											</option>
+										))}
+								</select>
+							</div>
+						) : null}
 						<div className="row">
 							{catOptions.map(
 								({ decoration, helpText, key, name, type, values }) => (

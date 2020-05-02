@@ -1,5 +1,4 @@
-play style changes https://www.basketball-reference.com/leagues/NBA_stats_per_poss.html
-- dropdown in god mode to let you pick historical season
+refit rosters with game sim presets applied
 
 add triggered events
 - team info (name, region, abbrev, cid, did, etc.)
@@ -63,8 +62,11 @@ blog
 - track changes of team info edits on Manage Teams
   - what happens if changed after regular season
   - old links still break if you edit abbrev, no change there
+- new game simulation settings, and presets for historical seasons
 
 ---
+
+button to clear all notification popups
 
 dropdown and left menu highlight looks weird for god mode, what did it look like with reactstrap?
 

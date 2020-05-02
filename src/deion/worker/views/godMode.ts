@@ -41,7 +41,6 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			threePointTendencyFactor: g.get("threePointTendencyFactor"),
 			threePointAccuracyFactor: g.get("threePointAccuracyFactor"),
 			twoPointAccuracyFactor: g.get("twoPointAccuracyFactor"),
-			offensiveReboundingFactor: g.get("offensiveReboundingFactor"),
 		};
 	}
 };

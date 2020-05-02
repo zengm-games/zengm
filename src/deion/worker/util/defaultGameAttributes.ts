@@ -95,7 +95,6 @@ const defaultGameAttributes: GameAttributesLeague = {
 	threePointTendencyFactor: 1,
 	threePointAccuracyFactor: 1,
 	twoPointAccuracyFactor: 1,
-	offensiveReboundingFactor: 1,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

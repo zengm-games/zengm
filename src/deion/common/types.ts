@@ -256,7 +256,6 @@ export type GameAttributesLeague = {
 	threePointTendencyFactor: number;
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
-	offensiveReboundingFactor: number;
 	pace: number;
 };
 

@@ -39,8 +39,7 @@ type Key =
 	| "pace"
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"
-	| "twoPointAccuracyFactor"
-	| "offensiveReboundingFactor";
+	| "twoPointAccuracyFactor";
 
 type Category = "League Structure" | "Finance" | "Events" | "Game Simulation";
 
@@ -492,14 +491,6 @@ if (process.env.SPORT === "basketball") {
 			type: "float",
 			helpText:
 				"The baseline rate for two point percentage is multiplied by this number.",
-		},
-		{
-			category: "Game Simulation",
-			key: "offensiveReboundingFactor",
-			name: "Offensive Rebounding Factor",
-			type: "float",
-			helpText:
-				"The baseline rate for the offensive:defensive rebounding ratio is multiplied by this number.",
 		},
 	);
 }

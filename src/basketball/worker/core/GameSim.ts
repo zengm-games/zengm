@@ -1722,14 +1722,9 @@ class GameSim {
 			return null;
 		}
 
-		// Not sure why this transformation is needed
-		const offensiveReboundingFactor =
-			g.get("offensiveReboundingFactor") ** (1 / 2);
-
 		if (
 			(0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-				(offensiveReboundingFactor *
-					(2 + this.team[this.o].compositeRating.rebounding)) >
+				(2 + this.team[this.o].compositeRating.rebounding) >
 			Math.random()
 		) {
 			ratios = this.ratingArray("rebounding", this.d, 3);

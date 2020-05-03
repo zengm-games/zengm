@@ -1,4 +1,9 @@
-import type { GameAttributes, GameAttributesLeague } from "../../common/types"; // This will get filled by values from IndexedDB
+import type {
+	GameAttributes,
+	GameAttributesLeague,
+	GameAttributesLeagueWithHistory,
+} from "../../common/types";
+import { PHASE, helpers } from "../../common";
 
 export const gameAttributeHasHistory = (gameAttribute: any) => {
 	return (
@@ -8,6 +13,7 @@ export const gameAttributeHasHistory = (gameAttribute: any) => {
 	);
 };
 
+// This will get filled by values from IndexedDB
 const g: GameAttributes & {
 	get: <T extends keyof GameAttributesLeague>(
 		key: T,
@@ -15,7 +21,7 @@ const g: GameAttributes & {
 	) => GameAttributesLeague[T];
 	setWithoutSavingToDB: <T extends keyof GameAttributesLeague>(
 		key: T,
-		value: GameAttributesLeague[T],
+		value: GameAttributesLeague[T] | GameAttributesLeagueWithHistory[T],
 	) => void;
 } = {
 	lid: undefined,
@@ -51,6 +57,53 @@ const g: GameAttributes & {
 		// @ts-ignore
 		g[key] = value;
 	},
+};
+
+export const wrap = <T extends keyof GameAttributesLeague>(
+	gameAttributes: any,
+	key: T,
+	value: GameAttributesLeague[T],
+) => {
+	// @ts-ignore
+	const gameAttribute = gameAttributes[key];
+
+	if (!gameAttributeHasHistory(gameAttribute)) {
+		return value;
+	}
+
+	const cloned = helpers.deepCopy(gameAttribute);
+
+	const latestRow = cloned[cloned.length - 1];
+
+	let currentSeason = g.get("season");
+	// Currently this applies to confs, divs, and numGamesPlayoffSeries, which all can only be changed for this season before the playoffs
+	if (g.get("phase") >= PHASE.PLAYOFFS) {
+		currentSeason += 1;
+	}
+
+	// This mutates, but the result supposed to be updated immediately anyway, so whatever
+	if (latestRow.start === currentSeason) {
+		latestRow.value = value;
+	} else {
+		cloned.push({
+			start: currentSeason,
+			value,
+		});
+	}
+
+	return cloned;
+};
+
+// Get latest value
+export const unwrap = <T extends keyof GameAttributesLeague>(
+	gameAttributes: any,
+	key: T,
+): GameAttributesLeague[T] => {
+	if (gameAttributeHasHistory(gameAttributes[key])) {
+		return gameAttributes[key][gameAttributes[key].length - 1].value;
+	}
+
+	return gameAttributes[key];
 };
 
 export default g;

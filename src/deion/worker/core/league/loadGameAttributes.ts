@@ -2,6 +2,7 @@ import { league } from "..";
 import { idb } from "../../db";
 import { defaultGameAttributes, g, toUI } from "../../util";
 import { helpers } from "../../../common";
+import { unwrap } from "../../util/g";
 
 /**
  * Load game attributes from the database and update the global variable g.
@@ -31,7 +32,7 @@ const loadGameAttributes = async () => {
 				// If numPlayoffRounds was set back before numGamesPlayoffSeries existed, use that
 				await league.setGameAttributes({
 					numGamesPlayoffSeries: league.getValidNumGamesPlayoffSeries(
-						defaultGameAttributes.numGamesPlayoffSeries,
+						unwrap(defaultGameAttributes, "numGamesPlayoffSeries"),
 						(g as any).numPlayoffRounds,
 						g.get("numTeams"),
 					),

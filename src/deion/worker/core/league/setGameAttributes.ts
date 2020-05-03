@@ -1,8 +1,8 @@
 import { idb } from "../../db";
 import { g, toUI, initUILocalGames, local } from "../../util";
-import { gameAttributeHasHistory } from "../../util/g";
+import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
-import { helpers, PHASE } from "../../../common";
+import { helpers } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -13,45 +13,6 @@ const updateMetaDifficulty = async (difficulty: number) => {
 			await idb.meta.put("leagues", l);
 		}
 	}
-};
-
-const wrap = <T extends keyof GameAttributesLeague>(
-	gameAttributes: any,
-	key: T,
-	value: GameAttributesLeague[T],
-) => {
-	if (!gameAttributeHasHistory(gameAttributes[key])) {
-		return value;
-	}
-
-	const latestRow = gameAttributes[key][gameAttributes[key].length - 1];
-
-	let currentSeason = g.get("season");
-	// Currently this applies to confs, divs, and numGamesPlayoffSeries, which all can only be changed for this season before the playoffs
-	if (g.get("phase") >= PHASE.PLAYOFFS) {
-		currentSeason += 1;
-	}
-
-	// This mutates, but the result supposed to be updated immediately anyway, so whatever
-	if (latestRow.start === currentSeason) {
-		latestRow.value = value;
-	} else {
-		gameAttributes[key].push({
-			start: currentSeason,
-			value,
-		});
-	}
-
-	return gameAttributes[key];
-};
-
-// Get latest value
-const unwrap = (gameAttributes: any, key: keyof GameAttributesLeague) => {
-	if (gameAttributeHasHistory(gameAttributes[key])) {
-		return gameAttributes[key][gameAttributes[key].length - 1].value;
-	}
-
-	return gameAttributes[key];
 };
 
 const setGameAttributes = async (
@@ -73,8 +34,14 @@ const setGameAttributes = async (
 		}
 	}
 
+	// Will contain the wrapped values too
+	const updated: any = {
+		...gameAttributes,
+	};
+
 	for (const key of toUpdate) {
 		const value = wrap(g, key, gameAttributes[key]);
+		updated[key] = value;
 
 		await idb.cache.gameAttributes.put({
 			key,
@@ -87,7 +54,7 @@ const setGameAttributes = async (
 		}
 	}
 
-	await toUI("setGameAttributes", [gameAttributes]);
+	await toUI("setGameAttributes", [updated]);
 
 	if (toUpdate.includes("userTid")) {
 		await initUILocalGames();

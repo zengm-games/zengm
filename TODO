@@ -2,10 +2,10 @@ refit rosters with game sim presets applied
 
 add more triggered events
 - numGamesPlayoffSeries
-  - typescript
-    - wrap/unwrap to g?
+  - upgrade (auto wrap) these fields...
     - loadGameAttributes
-  - upgrade (auto wrap) these fields... when? league import? loading from gameAttributes?
+    - on league import, in create.ts
+      - or does loadGameAttributes get run after this anyway?
   - schema
   - triggered event
 - confs, divs - like numGamesPlayoffSeries

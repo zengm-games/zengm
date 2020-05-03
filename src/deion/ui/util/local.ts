@@ -1,6 +1,9 @@
 import create from "zustand";
 import shallow from "zustand/shallow";
-import type { GameAttributesLeague, LocalStateUI } from "../../common/types";
+import type {
+	LocalStateUI,
+	GameAttributesLeagueWithHistory,
+} from "../../common/types";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
@@ -10,7 +13,9 @@ type LocalActions = {
 	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
-	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
+	updateGameAttributes: (
+		gameAttributes: Partial<GameAttributesLeagueWithHistory>,
+	) => void;
 };
 
 const defaultUnits: "metric" | "us" =
@@ -112,7 +117,9 @@ const [useLocal, local] = create<
 			set(obj);
 		},
 
-		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
+		updateGameAttributes(
+			gameAttributes: Partial<GameAttributesLeagueWithHistory>,
+		) {
 			const keys = [
 				"godMode",
 				"homeCourtAdvantage",
@@ -131,7 +138,7 @@ const [useLocal, local] = create<
 
 			let update = false;
 
-			const updates: Partial<GameAttributesLeague> = {};
+			const updates: Partial<GameAttributesLeagueWithHistory> = {};
 
 			for (const key of keys) {
 				if (

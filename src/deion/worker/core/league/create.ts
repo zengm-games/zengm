@@ -24,7 +24,9 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
+	GameAttributesLeagueWithHistory,
 } from "../../../common/types";
+import { unwrap, wrap } from "../../util/g";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
 	const values = new Set();
@@ -139,7 +141,7 @@ export const createWithoutSaving = (
 
 	const startingSeason = leagueFile.startingSeason;
 
-	const gameAttributes: GameAttributesLeague = {
+	const gameAttributes: GameAttributesLeagueWithHistory = {
 		...defaultGameAttributes,
 		userTid,
 		userTids: [userTid],
@@ -158,15 +160,14 @@ export const createWithoutSaving = (
 	};
 
 	if (leagueFile.gameAttributes) {
-		for (let i = 0; i < leagueFile.gameAttributes.length; i++) {
+		for (const gameAttribute of leagueFile.gameAttributes) {
 			// Set default for anything except team ID and name, since they can be overwritten by form input.
 			if (
-				leagueFile.gameAttributes[i].key !== "userTid" &&
-				leagueFile.gameAttributes[i].key !== "leagueName" &&
-				leagueFile.gameAttributes[i].key !== "difficulty"
+				gameAttribute.key !== "userTid" &&
+				gameAttribute.key !== "leagueName" &&
+				gameAttribute.key !== "difficulty"
 			) {
-				(gameAttributes as any)[leagueFile.gameAttributes[i].key] =
-					leagueFile.gameAttributes[i].value;
+				(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
 			}
 		}
 
@@ -183,11 +184,17 @@ export const createWithoutSaving = (
 	}
 
 	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
-	const oldNumGames = JSON.stringify(gameAttributes.numGamesPlayoffSeries);
-	gameAttributes.numGamesPlayoffSeries = league.getValidNumGamesPlayoffSeries(
-		gameAttributes.numGamesPlayoffSeries,
-		(gameAttributes as any).numPlayoffRounds,
-		gameAttributes.numTeams,
+	const oldNumGames = JSON.stringify(
+		unwrap(gameAttributes, "numGamesPlayoffSeries"),
+	);
+	gameAttributes.numGamesPlayoffSeries = wrap(
+		gameAttributes,
+		"numGamesPlayoffSeries",
+		league.getValidNumGamesPlayoffSeries(
+			unwrap(gameAttributes, "numGamesPlayoffSeries"),
+			(gameAttributes as any).numPlayoffRounds,
+			gameAttributes.numTeams,
+		),
 	);
 	delete (gameAttributes as any).numPlayoffRounds;
 

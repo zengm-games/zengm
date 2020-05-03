@@ -1,19 +1,18 @@
 refit rosters with game sim presets applied
 
-add triggered events
+add more triggered events
+- confs, divs, numGamesPlayoffSeries
 - gameAttributes changes (salary cap, tendencies, etc)
   - finances ones make sense as triggered events, or should it be defined as some % growth?
+    - if % growth, make it work on any numeric variable in gameAttributes
 - gameSimPresets from GodMode - make it able to use these by year, to save space
-- {season: number, phase: number, type: string, action: any}
-- new object store or g.triggeredEvents
-- when a triggered event happens, pop up a model explaining it
+- expansion
 
 league structure changes, without breaking history
 - needs to support
   - g.confs
   - g.divs
   - g.numGamesPlayoffSeries
-  - team info (name, region, abbrev, cid, did, etc.)
 - implementation ideas
   - g.whatever = [{until: 2015, value: 5}, {until: Infinity, value: 10}]; - with helper functions for getting and setting
     - if during or after playoffs, use next season for "until" valueChange
@@ -43,6 +42,7 @@ expansion draft
 - allow user to take control of expansion team
 - does expansion team get draft pick in upcoming draft?
 - FBGM?
+- store in g.expansionDraft? lol
 
 way to import team and player info
 - options
@@ -63,8 +63,13 @@ blog
   - old links still break if you edit abbrev, no change there
 - new game simulation settings, and presets for historical seasons
 - fit historical rosters based on historical sim settings - crowdsourced training data
+- triggered events, prespecified in league
+  - relocation
 
 ---
+
+would be cool to let people cancel a relocation of their team
+- could prompt them, and then if they say no still move their cid/did but leave the rest alone
 
 button to clear all notification popups
 
@@ -75,6 +80,10 @@ what would it really cost to store all game sim results?
 playoff upsets
 
 show spread, ovr, etc on live game sim game selection page
+
+contraction
+- happened some NBA seasons
+- ...but tid gap
 
 legends mode
 - start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected

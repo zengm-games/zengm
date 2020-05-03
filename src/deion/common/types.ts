@@ -195,13 +195,14 @@ export type GameResults = any;
 export type GameAttributesNonLeague = { lid: undefined };
 
 type TriggeredEvent = {
-	type: "relocation";
+	type: "teamInfo";
 	season: number;
 	phase: Phase;
 	info: {
 		tid: number;
-		region: string;
-		name: string;
+		region?: string;
+		name?: string;
+		pop?: number;
 		cid?: number;
 		did?: number;
 		abbrev?: string;

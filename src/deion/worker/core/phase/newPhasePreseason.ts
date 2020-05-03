@@ -26,8 +26,6 @@ const newPhasePreseason = async (
 		},
 	]);
 
-	await processTriggeredEvents(g.get("season"), PHASE.PRESEASON);
-
 	const teams = await idb.cache.teams.getAll();
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
@@ -175,6 +173,8 @@ const newPhasePreseason = async (
 
 		await idb.cache.players.put(p);
 	}
+
+	await processTriggeredEvents(g.get("season"), PHASE.PRESEASON);
 
 	if (local.autoPlaySeasons > 0) {
 		local.autoPlaySeasons -= 1;

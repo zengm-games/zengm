@@ -21,13 +21,13 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 
 		const info = triggeredEvent.info;
 
-		if (triggeredEvent.type === "relocation") {
-			// This happens in preseason, before a new teamSeason row is created, so just update team object.
+		if (triggeredEvent.type === "teamInfo") {
+			// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
 
 			const teams = await idb.cache.teams.getAll();
 			const t = teams.find(t2 => t2.tid === info.tid);
 			if (!t) {
-				throw new Error(`Invalid tid in triggered event: ${info.tid}`);
+				throw new Error(`No team found in triggered event: ${info.tid}`);
 			}
 
 			const old = {
@@ -35,17 +35,46 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 				name: t.name,
 			};
 			Object.assign(t, info);
+
+			// Bullshit for pop. Really should be stored somewhere else, not without Team or TeamSeason
+			// @ts-ignore
+			delete t.pop;
+
 			await idb.cache.teams.put(t);
 
-			eventLogTexts.push(
-				`<b>Team relocation</b>: the ${old.region} ${
-					old.name
-				} are now the <a href="${helpers.leagueUrl([
-					"roster",
-					t.abbrev,
-					season,
-				])}">${t.region} ${t.name}</a>.`,
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[info.tid, season],
 			);
+			if (!t) {
+				throw new Error(
+					`No team season found in triggered event: ${info.tid}, ${season}`,
+				);
+			}
+			Object.assign(teamSeason, info);
+			await idb.cache.teamSeasons.put(teamSeason);
+
+			if (info.region && info.region !== old.region) {
+				eventLogTexts.push(
+					`<b>Team relocation</b>: the ${old.region} ${
+						old.name
+					} are now the <a href="${helpers.leagueUrl([
+						"roster",
+						t.abbrev,
+						season,
+					])}">${t.region} ${t.name}</a>.`,
+				);
+			} else if (info.name && info.name !== old.name) {
+				eventLogTexts.push(
+					`<b>Team rename</b>: the ${old.region} ${
+						old.name
+					} are now the <a href="${helpers.leagueUrl([
+						"roster",
+						t.abbrev,
+						season,
+					])}">${t.region} ${t.name}</a>.`,
+				);
+			}
 
 			await league.setGameAttributes({
 				teamAbbrevsCache: teams.map(t => t.abbrev),

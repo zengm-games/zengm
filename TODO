@@ -1,8 +1,8 @@
 refit rosters with game sim presets applied
 
 add history for some game attributes
-- on save, double entry is created for numGamesPlayoffSeries if start is not this season
 - confs, divs - like numGamesPlayoffSeries
+  - check for double entry when saving in god mode
 - test schema checking
 
 add more triggered events

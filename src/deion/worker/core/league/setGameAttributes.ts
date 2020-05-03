@@ -30,6 +30,14 @@ const setGameAttributes = async (
 			// @ts-ignore
 			!Number.isNaN(gameAttributes[key])
 		) {
+			// No needless update for arrays - this matters for wrapped values like numGamesPlayoffSeries so it doesn't create an extra entry every year!
+			if (Array.isArray(gameAttributes[key])) {
+				if (
+					JSON.stringify(gameAttributes[key]) === JSON.stringify(currentValue)
+				) {
+					continue;
+				}
+			}
 			toUpdate.push(key);
 		}
 	}

@@ -16,16 +16,20 @@ const updateTeamHistory = async (
 		let worstRecord;
 		let mostWon = -Infinity;
 		let mostLost = -Infinity;
+
 		const teamSeasons = await idb.getCopies.teamSeasons({
 			tid: inputs.tid,
 		});
+
 		const history: {
 			season: number;
 			won: number;
 			lost: number;
 			tied?: number;
 			playoffRoundsWon: number;
+			numPlayoffRounds: number;
 		}[] = [];
+
 		let totalWon = 0;
 		let totalLost = 0;
 		let totalTied = 0;
@@ -33,12 +37,15 @@ const updateTeamHistory = async (
 		let championships = 0;
 
 		for (const teamSeason of teamSeasons) {
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", teamSeason.season)
+				.length;
 			history.push({
 				season: teamSeason.season,
 				won: teamSeason.won,
 				lost: teamSeason.lost,
 				tied: g.get("ties") ? teamSeason.tied : undefined,
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
+				numPlayoffRounds,
 			});
 			totalWon += teamSeason.won;
 			totalLost += teamSeason.lost;
@@ -48,9 +55,7 @@ const updateTeamHistory = async (
 				playoffAppearances += 1;
 			}
 
-			if (
-				teamSeason.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
-			) {
+			if (teamSeason.playoffRoundsWon === numPlayoffRounds) {
 				championships += 1;
 			}
 
@@ -125,7 +130,6 @@ const updateTeamHistory = async (
 			bestRecord,
 			worstRecord,
 			numConfs: g.get("confs").length,
-			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
 			ties: g.get("ties"),
 		};
 	}

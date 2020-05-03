@@ -211,6 +211,11 @@ type TriggeredEvent = {
 	};
 };
 
+type GameAttributeWithHistory<T> = {
+	start: number;
+	value: T;
+}[];
+
 export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: boolean;
@@ -277,7 +282,16 @@ export type GameAttributesLeague = {
 	triggeredEvents: TriggeredEvent[];
 };
 
-export type GameAttributes = GameAttributesNonLeague | GameAttributesLeague;
+export type GameAttributesLeagueWithHistory = Omit<
+	GameAttributesLeague,
+	"numGamesPlayoffSeries"
+> & {
+	numGamesPlayoffSeries: GameAttributeWithHistory<number[]>;
+};
+
+export type GameAttributes =
+	| GameAttributesNonLeague
+	| GameAttributesLeagueWithHistory;
 
 export type GameAttributeKey = keyof GameAttributesLeague;
 

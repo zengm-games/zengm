@@ -42,7 +42,7 @@ const AutoSave = ({ autoSave }: { autoSave: boolean }) => {
 							setProcessing(false);
 						}}
 					>
-						Save current progres and enable auto save
+						Save current progress and enable auto save
 					</button>
 					<div className="mt-3">
 						<button

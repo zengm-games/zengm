@@ -1,6 +1,6 @@
-import type { GameAttributesLeague } from "../../common/types";
+import type { GameAttributesLeagueWithHistory } from "../../common/types";
 
-const defaultGameAttributes: GameAttributesLeague = {
+const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft
 	names: undefined,
@@ -60,7 +60,12 @@ const defaultGameAttributes: GameAttributesLeague = {
 			name: "Pacific",
 		},
 	],
-	numGamesPlayoffSeries: [7, 7, 7, 7],
+	numGamesPlayoffSeries: [
+		{
+			start: -Infinity,
+			value: [7, 7, 7, 7],
+		},
+	],
 	numPlayoffByes: 0,
 	aiTradesFactor: 1,
 	autoDeleteOldBoxScores: true,

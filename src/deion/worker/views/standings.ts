@@ -58,7 +58,8 @@ const updateStandings = async (
 		};
 
 		const numPlayoffTeams =
-			2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
+			2 ** g.get("numGamesPlayoffSeries", inputs.season).length -
+			g.get("numPlayoffByes");
 		const confs: {
 			cid: number;
 			name: string;

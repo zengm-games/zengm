@@ -12,7 +12,6 @@ const TeamHistory = ({
 	championships,
 	history,
 	numConfs,
-	numPlayoffRounds,
 	players,
 	playoffAppearances,
 	stats,
@@ -35,12 +34,12 @@ const TeamHistory = ({
 				abbrev={abbrev}
 				lost={h.lost}
 				numConfs={numConfs}
-				numPlayoffRounds={numPlayoffRounds}
+				numPlayoffRounds={h.numPlayoffRounds}
 				playoffRoundsWon={h.playoffRoundsWon}
 				season={h.season}
 				// Bold championship seasons.
 				style={
-					h.playoffRoundsWon === numPlayoffRounds
+					h.playoffRoundsWon === h.numPlayoffRounds
 						? { fontWeight: "bold" }
 						: undefined
 				}

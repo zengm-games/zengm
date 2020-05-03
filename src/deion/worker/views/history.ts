@@ -80,7 +80,7 @@ const updateHistory = async (
 		const champ = teams.find(
 			t =>
 				t.seasonAttrs.playoffRoundsWon ===
-				g.get("numGamesPlayoffSeries").length,
+				g.get("numGamesPlayoffSeries", season).length,
 		);
 
 		return {

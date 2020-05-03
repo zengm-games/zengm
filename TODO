@@ -1,7 +1,14 @@
 refit rosters with game sim presets applied
 
 add more triggered events
-- confs, divs, numGamesPlayoffSeries
+- numGamesPlayoffSeries
+  - typescript
+    - wrap/unwrap to g?
+    - loadGameAttributes
+  - upgrade (auto wrap) these fields... when? league import? loading from gameAttributes?
+  - schema
+  - triggered event
+- confs, divs - like numGamesPlayoffSeries
 - gameAttributes changes (salary cap, tendencies, etc)
   - finances ones make sense as triggered events, or should it be defined as some % growth?
     - if % growth, make it work on any numeric variable in gameAttributes
@@ -65,15 +72,23 @@ blog
 - fit historical rosters based on historical sim settings - crowdsourced training data
 - triggered events, prespecified in league
   - relocation
+- changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 
 ---
 
-would be cool to let people cancel a relocation of their team
-- could prompt them, and then if they say no still move their cid/did but leave the rest alone
+in leagues with no 3 pointers, 3 pointers should not be tracked
+- shot locations?
+
+relocation fun stuff
+- would be cool to let people cancel a relocation of their team
+  - could prompt them, and then if they say no still move their cid/did but leave the rest alone
+- would be cool to let people move their team (and rebrand) by spending $
 
 button to clear all notification popups
 
 dropdown and left menu highlight looks weird for god mode, what did it look like with reactstrap?
+
+ovr formula should change depending on game simulation settings, especially 3 point shooting
 
 what would it really cost to store all game sim results?
 

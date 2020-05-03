@@ -29,22 +29,21 @@ const getTeamRecord = (
 		totalWon += t.seasonAttrs[i].won;
 		totalLost += t.seasonAttrs[i].lost;
 
+		const numPlayoffRounds = g.get(
+			"numGamesPlayoffSeries",
+			t.seasonAttrs[i].season,
+		).length;
+
 		if (t.seasonAttrs[i].playoffRoundsWon >= 0) {
 			playoffAppearances++;
 			lastPlayoffAppearance = t.seasonAttrs[i].season;
 		}
 
-		if (
-			t.seasonAttrs[i].playoffRoundsWon >=
-			g.get("numGamesPlayoffSeries").length - 1
-		) {
+		if (t.seasonAttrs[i].playoffRoundsWon >= numPlayoffRounds - 1) {
 			finals++;
 		}
 
-		if (
-			t.seasonAttrs[i].playoffRoundsWon ===
-			g.get("numGamesPlayoffSeries").length
-		) {
+		if (t.seasonAttrs[i].playoffRoundsWon === numPlayoffRounds) {
 			championships++;
 			lastChampionship = t.seasonAttrs[i].season;
 		}

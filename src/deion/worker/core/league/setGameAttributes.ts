@@ -1,7 +1,8 @@
 import { idb } from "../../db";
 import { g, toUI, initUILocalGames, local } from "../../util";
+import { gameAttributeHasHistory } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
-import { helpers } from "../../../common";
+import { helpers, PHASE } from "../../../common";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -14,23 +15,57 @@ const updateMetaDifficulty = async (difficulty: number) => {
 	}
 };
 
-/**
- * Set values in the gameAttributes objectStore and update the global variable g.
- *
- * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
- *
- * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
- * @returns {Promise} Promise for when it finishes.
- */
+const wrap = <T extends keyof GameAttributesLeague>(
+	gameAttributes: any,
+	key: T,
+	value: GameAttributesLeague[T],
+) => {
+	if (!gameAttributeHasHistory(gameAttributes[key])) {
+		return value;
+	}
+
+	const latestRow = gameAttributes[key][gameAttributes[key].length - 1];
+
+	let currentSeason = g.get("season");
+	// Currently this applies to confs, divs, and numGamesPlayoffSeries, which all can only be changed for this season before the playoffs
+	if (g.get("phase") >= PHASE.PLAYOFFS) {
+		currentSeason += 1;
+	}
+
+	// This mutates, but the result supposed to be updated immediately anyway, so whatever
+	if (latestRow.start === currentSeason) {
+		latestRow.value = value;
+	} else {
+		gameAttributes[key].push({
+			start: currentSeason,
+			value,
+		});
+	}
+
+	return gameAttributes[key];
+};
+
+// Get latest value
+const unwrap = (gameAttributes: any, key: keyof GameAttributesLeague) => {
+	if (gameAttributeHasHistory(gameAttributes[key])) {
+		return gameAttributes[key][gameAttributes[key].length - 1].value;
+	}
+
+	return gameAttributes[key];
+};
+
 const setGameAttributes = async (
 	gameAttributes: Partial<GameAttributesLeague>,
 ) => {
 	const toUpdate: (keyof GameAttributesLeague)[] = [];
 
 	for (const key of helpers.keys(gameAttributes)) {
+		const currentValue = unwrap(g, key);
+
 		if (
 			// @ts-ignore
-			(gameAttributes[key] === undefined || g[key] !== gameAttributes[key]) &&
+			(gameAttributes[key] === undefined ||
+				currentValue !== gameAttributes[key]) &&
 			// @ts-ignore
 			!Number.isNaN(gameAttributes[key])
 		) {
@@ -39,11 +74,13 @@ const setGameAttributes = async (
 	}
 
 	for (const key of toUpdate) {
+		const value = wrap(g, key, gameAttributes[key]);
+
 		await idb.cache.gameAttributes.put({
 			key,
-			value: gameAttributes[key],
+			value,
 		});
-		g.setWithoutSavingToDB(key, gameAttributes[key]);
+		g.setWithoutSavingToDB(key, value);
 
 		if (key === "difficulty") {
 			await updateMetaDifficulty(g.get(key));

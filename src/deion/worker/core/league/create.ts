@@ -184,23 +184,22 @@ export const createWithoutSaving = (
 	}
 
 	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
-	const oldNumGames = JSON.stringify(
-		unwrap(gameAttributes, "numGamesPlayoffSeries"),
-	);
-	gameAttributes.numGamesPlayoffSeries = wrap(
-		gameAttributes,
-		"numGamesPlayoffSeries",
-		league.getValidNumGamesPlayoffSeries(
-			unwrap(gameAttributes, "numGamesPlayoffSeries"),
-			(gameAttributes as any).numPlayoffRounds,
-			gameAttributes.numTeams,
-		),
+	const oldNumGames = unwrap(gameAttributes, "numGamesPlayoffSeries");
+	const newNumGames = league.getValidNumGamesPlayoffSeries(
+		oldNumGames,
+		(gameAttributes as any).numPlayoffRounds,
+		gameAttributes.numTeams,
 	);
 	delete (gameAttributes as any).numPlayoffRounds;
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
-	if (oldNumGames !== JSON.stringify(gameAttributes.numGamesPlayoffSeries)) {
+	if (JSON.stringify(oldNumGames) !== JSON.stringify(newNumGames)) {
 		gameAttributes.numPlayoffByes = 0;
+		gameAttributes.numGamesPlayoffSeries = wrap(
+			gameAttributes,
+			"numGamesPlayoffSeries",
+			newNumGames,
+		);
 	}
 
 	// Validation of some identifiers

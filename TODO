@@ -1,8 +1,6 @@
 refit rosters with game sim presets applied
 
 add triggered events
-- team info (name, region, abbrev, cid, did, etc.)
-- expansion
 - gameAttributes changes (salary cap, tendencies, etc)
   - finances ones make sense as triggered events, or should it be defined as some % growth?
 - gameSimPresets from GodMode - make it able to use these by year, to save space

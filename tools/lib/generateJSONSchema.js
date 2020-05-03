@@ -616,6 +616,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							minItems: 1,
 						},
+						threePointers: {
+							type: "boolean",
+						},
+						threePointTendencyFactor: {
+							type: "number",
+						},
+						threePointAccuracyFactor: {
+							type: "number",
+						},
+						twoPointAccuracyFactor: {
+							type: "number",
+						},
+						pace: {
+							type: "number",
+						},
+						triggeredEvents: {
+							type: "array",
+						},
 					},
 				},
 			},

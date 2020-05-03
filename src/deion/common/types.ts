@@ -194,6 +194,22 @@ export type GameResults = any;
 
 export type GameAttributesNonLeague = { lid: undefined };
 
+type TriggeredEvent = {
+	type: "relocation";
+	season: number;
+	phase: Phase;
+	info: {
+		tid: number;
+		region: string;
+		name: string;
+		cid?: number;
+		did?: number;
+		abbrev?: string;
+		imgURL?: string;
+		colors?: [string, string, string];
+	};
+};
+
 export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: boolean;
@@ -257,6 +273,7 @@ export type GameAttributesLeague = {
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
 	pace: number;
+	triggeredEvents: TriggeredEvent[];
 };
 
 export type GameAttributes = GameAttributesNonLeague | GameAttributesLeague;

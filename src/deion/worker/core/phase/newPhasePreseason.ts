@@ -1,7 +1,16 @@
-import { PLAYER } from "../../../common";
+import { PLAYER, PHASE } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
-import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
+import {
+	env,
+	g,
+	helpers,
+	local,
+	logEvent,
+	random,
+	toUI,
+	processTriggeredEvents,
+} from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhasePreseason = async (
@@ -16,6 +25,8 @@ const newPhasePreseason = async (
 			games: [],
 		},
 	]);
+
+	await processTriggeredEvents(g.get("season"), PHASE.PRESEASON);
 
 	const teams = await idb.cache.teams.getAll();
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(

@@ -22,6 +22,7 @@ export { default as lock } from "./lock";
 export { default as logEvent } from "./logEvent";
 export { default as overrides } from "./overrides";
 export { default as processPlayersHallOfFame } from "./processPlayersHallOfFame";
+export { default as processTriggeredEvents } from "./processTriggeredEvents";
 export { default as random } from "./random";
 export { default as recomputeLocalUITeamOvrs } from "./recomputeLocalUITeamOvrs";
 export { default as toUI } from "./toUI";

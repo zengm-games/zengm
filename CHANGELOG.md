@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-03: Added support for team info changes (name, region, logo, etc.) to be predefined in a league file and trigger only at a certain year.
+
 *** 2020-05-03: In BBGM, added game simulation settings to God Mode to allow for more realistic simulation of different eras of basketball, when things like pace and 3 point shooting were very different.**
 
 * 2020-05-02: Added the ability to change what division/conference a team belongs to from Tools > Manage Teams.

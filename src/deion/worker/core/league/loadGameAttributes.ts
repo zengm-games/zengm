@@ -2,7 +2,7 @@ import { league } from "..";
 import { idb } from "../../db";
 import { defaultGameAttributes, g, toUI } from "../../util";
 import { helpers } from "../../../common";
-import { unwrap } from "../../util/g";
+import { unwrap, gameAttributeHasHistory } from "../../util/g";
 
 /**
  * Load game attributes from the database and update the global variable g.
@@ -12,8 +12,21 @@ import { unwrap } from "../../util/g";
 const loadGameAttributes = async () => {
 	const gameAttributes = await idb.cache.gameAttributes.getAll();
 
+	const alwaysWrap = ["confs", "divs", "numGamesPlayoffSeries"];
+
 	for (const { key, value } of gameAttributes) {
-		g.setWithoutSavingToDB(key, value);
+		if (alwaysWrap.includes(key) && !gameAttributeHasHistory(value)) {
+			// Wrap on load to avoid IndexedDB upgrade
+			g.setWithoutSavingToDB(key, [
+				{
+					// @ts-ignore
+					start: -Infinity,
+					value,
+				},
+			]);
+		} else {
+			g.setWithoutSavingToDB(key, value);
+		}
 	}
 
 	// Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w

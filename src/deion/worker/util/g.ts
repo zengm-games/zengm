@@ -75,9 +75,14 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 
 	const latestRow = cloned[cloned.length - 1];
 
-	let currentSeason = g.get("season");
+	let currentSeason =
+		gameAttributes.season !== undefined
+			? gameAttributes.season
+			: g.get("season");
+	const phase =
+		gameAttributes.phase !== undefined ? gameAttributes.phase : g.get("phase");
 	// Currently this applies to confs, divs, and numGamesPlayoffSeries, which all can only be changed for this season before the playoffs
-	if (g.get("phase") >= PHASE.PLAYOFFS) {
+	if (phase >= PHASE.PLAYOFFS) {
 		currentSeason += 1;
 	}
 

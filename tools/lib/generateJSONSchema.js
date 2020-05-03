@@ -305,6 +305,33 @@ const generateJSONSchema = (sport /*: string*/) => {
 				},
 				required: ["dpids", "pids", "tid"],
 			},
+			div: {
+				type: "object",
+				properties: {
+					did: {
+						type: "integer",
+					},
+					cid: {
+						type: "integer",
+					},
+					name: {
+						type: "string",
+					},
+				},
+				required: ["did", "cid", "name"],
+			},
+			conf: {
+				type: "object",
+				properties: {
+					cid: {
+						type: "integer",
+					},
+					name: {
+						type: "string",
+					},
+				},
+				required: ["cid", "name"],
+			},
 		},
 
 		type: "object",
@@ -420,17 +447,28 @@ const generateJSONSchema = (sport /*: string*/) => {
 						confs: {
 							type: "array",
 							items: {
-								type: "object",
-								properties: {
-									cid: {
-										type: "integer",
+								oneOf: [
+									{
+										ref: "#/definitions/conf",
 									},
-									name: {
-										type: "string",
+									{
+										type: "object",
+										properties: {
+											start: {
+												type: "integer",
+											},
+											value: {
+												type: "array",
+												items: {
+													ref: "#/definitions/conf",
+												},
+												minItems: 1,
+											},
+										},
 									},
-								},
-								required: ["cid", "name"],
+								],
 							},
+							minItems: 1,
 						},
 						daysLeft: {
 							type: "integer",
@@ -439,20 +477,28 @@ const generateJSONSchema = (sport /*: string*/) => {
 						divs: {
 							type: "array",
 							items: {
-								type: "object",
-								properties: {
-									did: {
-										type: "integer",
+								oneOf: [
+									{
+										ref: "#/definitions/div",
 									},
-									cid: {
-										type: "integer",
+									{
+										type: "object",
+										properties: {
+											start: {
+												type: "integer",
+											},
+											value: {
+												type: "array",
+												items: {
+													ref: "#/definitions/div",
+												},
+												minItems: 1,
+											},
+										},
 									},
-									name: {
-										type: "string",
-									},
-								},
-								required: ["did", "cid", "name"],
+								],
 							},
+							minItems: 1,
 						},
 						draftType: {
 							type: "string",
@@ -544,7 +590,25 @@ const generateJSONSchema = (sport /*: string*/) => {
 						numGamesPlayoffSeries: {
 							type: "array",
 							items: {
-								type: "integer",
+								oneOf: [
+									{
+										type: "integer",
+									},
+									{
+										type: "object",
+										properties: {
+											start: {
+												type: "integer",
+											},
+											value: {
+												type: "array",
+												items: {
+													type: "integer",
+												},
+											},
+										},
+									},
+								],
 							},
 							minItems: 1,
 						},

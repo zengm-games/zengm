@@ -1,19 +1,18 @@
 refit rosters with game sim presets applied
 
-add more triggered events
-- numGamesPlayoffSeries
-  - upgrade (auto wrap) these fields...
-    - loadGameAttributes
-    - on league import, in create.ts
-      - or does loadGameAttributes get run after this anyway?
-  - schema
-  - triggered event
+add history for some game attributes
+- on load, double entry is created for numGamesPlayoffSeries
 - confs, divs - like numGamesPlayoffSeries
+- test schema checking
+
+add more triggered events
+- numGamesPlayoffSeries, confs, divs
 - gameAttributes changes (salary cap, tendencies, etc)
   - finances ones make sense as triggered events, or should it be defined as some % growth?
     - if % growth, make it work on any numeric variable in gameAttributes
 - gameSimPresets from GodMode - make it able to use these by year, to save space
 - expansion
+- event log should also log to DB
 
 league structure changes, without breaking history
 - needs to support
@@ -74,7 +73,15 @@ blog
   - relocation
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 
+eventually
+- way to view triggered events and add/edit/delete
+- what happens to triggered event if the user changes something relevant to it prior to the event happening? does this matter?
+- show triggered events separately when creating a new custom league, to allow creating one without them
+- show draft prospects separately when creating a new custom league, to allow creating one without them
+
 ---
+
+schema validation of gameAttributes seems broken
 
 in leagues with no 3 pointers, 3 pointers should not be tracked
 - shot locations?

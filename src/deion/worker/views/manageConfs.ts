@@ -8,7 +8,6 @@ const updateConfs = async () => {
 	return {
 		confs,
 		divs,
-		godMode: g.get("godMode"),
 	};
 };
 

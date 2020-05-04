@@ -19,11 +19,9 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 	) => {
 		const newConfs = [...liveConfs];
 		const conf = newConfs.find(c => c.cid === cid);
-		console.log(event, conf, cid);
 		if (conf) {
 			conf.name = event.target.value;
 			setLiveConfs(newConfs);
-			console.log("updated");
 		}
 	};
 
@@ -106,9 +104,6 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 
 		setSaving(false);
 	};
-
-	console.table(liveConfs);
-	console.table(liveDivs);
 
 	if (phase < 0) {
 		return (

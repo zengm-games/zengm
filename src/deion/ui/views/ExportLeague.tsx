@@ -29,7 +29,7 @@ const categories = [
 	},
 	{
 		objectStores:
-			"trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats,allStars",
+			"trade,negotiations,gameAttributes,draftLotteryResults,messages,events,playerFeats,allStars,scheduledEvents",
 		name: "Game State",
 		desc:
 			"Interactions with the owner, current contract negotiations, current game phase, etc. Useful for saving or backing up a game, but not for creating custom rosters to share.",

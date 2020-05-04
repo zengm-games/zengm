@@ -73,6 +73,7 @@ type LeagueFile = {
 	messages?: any[];
 	events?: any[];
 	playerFeats?: any[];
+	scheduledEvents?: any[];
 };
 
 // Creates a league, writing nothing to the database.
@@ -831,11 +832,16 @@ export const createWithoutSaving = (
 		}
 	}
 
+	const scheduledEvents = leagueFile.scheduledEvents
+		? leagueFile.scheduledEvents
+		: [];
+
 	return Object.assign(leagueData, {
 		draftLotteryResults,
 		draftPicks,
 		gameAttributes,
 		players,
+		scheduledEvents,
 		teamSeasons,
 		teamStats,
 		teams,

@@ -97,6 +97,16 @@ const exportLeague = async (
 		exportedLeague.startingSeason = g.get("startingSeason");
 	}
 
+	// No need emitting empty object stores
+	for (const key of Object.keys(exportedLeague)) {
+		if (
+			Array.isArray(exportedLeague[key]) &&
+			exportedLeague[key].length === 0
+		) {
+			delete exportedLeague[key];
+		}
+	}
+
 	return exportedLeague;
 };
 

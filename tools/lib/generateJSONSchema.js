@@ -695,9 +695,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 						pace: {
 							type: "number",
 						},
-						triggeredEvents: {
-							type: "array",
-						},
 					},
 				},
 			},
@@ -1180,6 +1177,30 @@ const generateJSONSchema = (sport /*: string*/) => {
 						},
 					},
 					required: ["awayTid", "homeTid"],
+				},
+			},
+			scheduledEvents: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						id: {
+							type: "integer",
+						},
+						type: {
+							type: "string",
+						},
+						season: {
+							type: "integer",
+						},
+						phase: {
+							type: "integer",
+						},
+						info: {
+							type: "object",
+						},
+					},
+					required: ["type", "season", "phase", "info"],
 				},
 			},
 			teams: {

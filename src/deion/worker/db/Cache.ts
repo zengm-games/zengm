@@ -23,6 +23,8 @@ import type {
 	ReleasedPlayerWithoutKey,
 	ScheduleGame,
 	ScheduleGameWithoutKey,
+	ScheduledEvent,
+	ScheduledEventWithoutKey,
 	TeamSeason,
 	TeamSeasonWithoutKey,
 	TeamStats,
@@ -51,6 +53,7 @@ export type Store =
 	| "playoffSeries"
 	| "releasedPlayers"
 	| "schedule"
+	| "scheduledEvents"
 	| "teamSeasons"
 	| "teamStats"
 	| "teams"
@@ -82,6 +85,7 @@ export const STORES: Store[] = [
 	"playoffSeries",
 	"releasedPlayers",
 	"schedule",
+	"scheduledEvents",
 	"teamSeasons",
 	"teamStats",
 	"teams",
@@ -251,6 +255,8 @@ class Cache {
 
 	schedule: StoreAPI<ScheduleGameWithoutKey, ScheduleGame, number>;
 
+	scheduledEvents: StoreAPI<ScheduledEventWithoutKey, ScheduledEvent, number>;
+
 	teamSeasons: StoreAPI<TeamSeasonWithoutKey, TeamSeason, number>;
 
 	teamStats: StoreAPI<TeamStatsWithoutKey, TeamStats, number>;
@@ -407,6 +413,21 @@ class Cache {
 				getData: (tx: IDBPTransaction<LeagueDB>) =>
 					tx.objectStore("schedule").getAll(),
 			},
+			scheduledEvents: {
+				pk: "id",
+				pkType: "number",
+				autoIncrement: true,
+				getData: (tx: IDBPTransaction<LeagueDB>) => {
+					if (this._season === undefined) {
+						throw new Error("this._season is undefined");
+					}
+					// Need next year's because preseason phase happens before cache is re-filled
+					return tx
+						.objectStore("scheduledEvents")
+						.index("season")
+						.getAll(IDBKeyRange.bound(this._season, this._season + 1));
+				},
+			},
 			teamSeasons: {
 				pk: "rid",
 				pkType: "number",
@@ -495,6 +516,7 @@ class Cache {
 		this.playoffSeries = new StoreAPI(this, "playoffSeries");
 		this.releasedPlayers = new StoreAPI(this, "releasedPlayers");
 		this.schedule = new StoreAPI(this, "schedule");
+		this.scheduledEvents = new StoreAPI(this, "scheduledEvents");
 		this.teamSeasons = new StoreAPI(this, "teamSeasons");
 		this.teamStats = new StoreAPI(this, "teamStats");
 		this.teams = new StoreAPI(this, "teams");
@@ -937,6 +959,7 @@ class Cache {
 				"players",
 				"releasedPlayers",
 				"schedule",
+				"scheduledEvents",
 				"teamSeasons",
 				"teamStats",
 				"teams",

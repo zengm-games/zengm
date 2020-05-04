@@ -9,7 +9,7 @@ import {
 	logEvent,
 	random,
 	toUI,
-	processTriggeredEvents,
+	processScheduledEvents,
 } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 
@@ -181,7 +181,7 @@ const newPhasePreseason = async (
 		await idb.cache.players.put(p);
 	}
 
-	await processTriggeredEvents(g.get("season"), PHASE.PRESEASON);
+	await processScheduledEvents(g.get("season"), PHASE.PRESEASON);
 
 	if (local.autoPlaySeasons > 0) {
 		local.autoPlaySeasons -= 1;

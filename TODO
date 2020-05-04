@@ -18,16 +18,16 @@ expansion draft
     - then the normal draft happens
       - ??? what pick should an expansion team get?
         - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
+- auto play
+- multi team
 - FBGM?
 
-add more triggered events
+add more scheduled events
 - numGamesPlayoffSeries, confs, divs
 - expansion
 - event log should also log to DB
 
-...but changes to game attributes are not backwards compatible, would it be better to do a version change?
-- might as well do triggeredEvents object store, then
-- add instructions for deleting old service worker in chrome
+add instructions to faq for deleting old service worker in chrome
 
 blog
 - danger zone auto save
@@ -37,24 +37,26 @@ blog
   - old links still break if you edit abbrev, no change there
 - new game simulation settings, and presets for historical seasons
 - fit historical rosters based on historical sim settings - crowdsourced training data
-- triggered events, prespecified in league
-  - relocation
-  - salary cap changes
-  - 3 point line
-  - play style changes (shooting more 3s, pace)
+- scheduled events, prespecified in historical rosters
+  - including:
+    - relocation
+    - salary cap changes
+    - 3 point line
+    - play style changes (shooting more 3s, pace)
+  - can choose to use or not when creating league
 - GUI to edit conferences and divisions
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 
 eventually
-- way to view triggered events and add/edit/delete
-- what happens to triggered event if the user changes something relevant to it prior to the event happening? does this matter?
-- show triggered events separately when creating a new custom league, to allow creating one without them
+- way to view scheduled events and add/edit/delete
+- what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
 - show draft prospects separately when creating a new custom league, to allow creating one without them
 - way to import team and player info
   - options
     - like before, from manage teams
     - when creating a new league, option to use teams from another file
     - somehow globally specify default teams
+- gui to edit scheduled events
 
 ---
 

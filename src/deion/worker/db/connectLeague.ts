@@ -27,6 +27,7 @@ import type {
 	TeamStatsWithoutKey,
 	Team,
 	Trade,
+	ScheduledEventWithoutKey,
 } from "../../common/types";
 
 export interface LeagueDB extends DBSchema {
@@ -104,6 +105,14 @@ export interface LeagueDB extends DBSchema {
 		key: number;
 		value: ScheduleGameWithoutKey;
 		autoIncrementKeyPath: "gid";
+	};
+	scheduledEvents: {
+		key: number;
+		value: ScheduledEventWithoutKey;
+		autoIncrementKeyPath: "id";
+		indexes: {
+			season: number;
+		};
 	};
 	teamSeasons: {
 		key: number;
@@ -401,6 +410,14 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 
 	// Not unique because of playoffs
 	teamStatsStore.createIndex("tid", "tid", {
+		unique: false,
+	});
+
+	const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
+		keyPath: "id",
+		autoIncrement: true,
+	});
+	scheduledEventsStore.createIndex("season", "season", {
 		unique: false,
 	});
 };
@@ -784,13 +801,23 @@ const migrate = ({
 		});
 	}
 
+	if (oldVersion <= 36) {
+		const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
+			keyPath: "id",
+			autoIncrement: true,
+		});
+		scheduledEventsStore.createIndex("season", "season", {
+			unique: false,
+		});
+	}
+
 	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
 };
 
 const connectLeague = (lid: number) =>
 	connectIndexedDB<LeagueDB>({
 		name: `league${lid}`,
-		version: 36,
+		version: 37,
 		lid,
 		create,
 		migrate,

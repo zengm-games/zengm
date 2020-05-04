@@ -194,7 +194,7 @@ export type GameResults = any;
 
 export type GameAttributesNonLeague = { lid: undefined };
 
-type TriggeredEvent =
+export type ScheduledEventWithoutKey =
 	| {
 			type: "teamInfo";
 			season: number;
@@ -217,6 +217,8 @@ type TriggeredEvent =
 			phase: Phase;
 			info: Partial<GameAttributesLeague>;
 	  };
+
+export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };
 
 type GameAttributeWithHistory<T> = {
 	start: number;
@@ -286,7 +288,6 @@ export type GameAttributesLeague = {
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
 	pace: number;
-	triggeredEvents: TriggeredEvent[];
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

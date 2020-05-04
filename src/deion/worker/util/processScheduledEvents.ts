@@ -4,25 +4,22 @@ import helpers from "./helpers";
 import logEvent from "./logEvent";
 import { league } from "../core";
 
-const processTriggeredEvents = async (season: number, phase: number) => {
-	console.log("processTriggeredEvents", processTriggeredEvents);
-	const triggeredEvents = g.get("triggeredEvents");
-	const processed: typeof triggeredEvents = [];
+const processScheduledEvents = async (season: number, phase: number) => {
+	console.log("processScheduledEvents", season, phase);
+	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
+	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];
 
-	for (const triggeredEvent of triggeredEvents) {
-		console.log("triggeredEvent", triggeredEvent);
-		if (
-			triggeredEvent.season > season ||
-			(triggeredEvent.season === season && triggeredEvent.phase > phase)
-		) {
+	for (const scheduledEvent of scheduledEvents) {
+		console.log("scheduledEvent", scheduledEvent);
+		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			continue;
 		}
 
-		if (triggeredEvent.type === "teamInfo") {
+		if (scheduledEvent.type === "teamInfo") {
 			// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
 
-			const info = triggeredEvent.info;
+			const info = scheduledEvent.info;
 
 			const teams = await idb.cache.teams.getAll();
 			const t = teams.find(t2 => t2.tid === info.tid);
@@ -82,14 +79,14 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 				teamNamesCache: teams.map(t => t.name),
 				teamImgURLsCache: teams.map(t => t.imgURL),
 			});
-		} else if (triggeredEvent.type === "gameAttributes") {
+		} else if (scheduledEvent.type === "gameAttributes") {
 			const texts = [];
 			if (
-				triggeredEvent.info.threePointers !== undefined &&
-				triggeredEvent.info.threePointers !== g.get("threePointers")
+				scheduledEvent.info.threePointers !== undefined &&
+				scheduledEvent.info.threePointers !== g.get("threePointers")
 			) {
 				texts.push(
-					triggeredEvent.info.threePointers
+					scheduledEvent.info.threePointers
 						? "Added a three point line"
 						: "Removed the three point line",
 				);
@@ -97,11 +94,11 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 
 			const prevSalaryCap = g.get("salaryCap");
 			if (
-				triggeredEvent.info.salaryCap !== undefined &&
-				triggeredEvent.info.salaryCap !== prevSalaryCap
+				scheduledEvent.info.salaryCap !== undefined &&
+				scheduledEvent.info.salaryCap !== prevSalaryCap
 			) {
 				const increased =
-					triggeredEvent.info.salaryCap > prevSalaryCap
+					scheduledEvent.info.salaryCap > prevSalaryCap
 						? "increased"
 						: "decreased";
 				texts.push(
@@ -109,7 +106,7 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 						prevSalaryCap / 1000,
 						"M",
 					)} to ${helpers.formatCurrency(
-						triggeredEvent.info.salaryCap / 1000,
+						scheduledEvent.info.salaryCap / 1000,
 						"M",
 					)}`,
 				);
@@ -123,14 +120,16 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 				);
 			}
 
-			await league.setGameAttributes(triggeredEvent.info);
+			await league.setGameAttributes(scheduledEvent.info);
 		} else {
 			throw new Error(
-				`Unknown triggered event type: ${(triggeredEvent as any).type}`,
+				`Unknown triggered event type: ${(scheduledEvent as any).type}`,
 			);
 		}
 
-		processed.push(triggeredEvent);
+		await idb.cache.scheduledEvents.delete(scheduledEvent.id);
+
+		processed.push(scheduledEvent);
 	}
 
 	if (eventLogTexts.length > 0) {
@@ -142,13 +141,6 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 			type: "info",
 		});
 	}
-
-	if (processed.length > 0) {
-		const remaining = triggeredEvents.filter(x => !processed.includes(x));
-		await league.setGameAttributes({
-			triggeredEvents: remaining,
-		});
-	}
 };
 
-export default processTriggeredEvents;
+export default processScheduledEvents;

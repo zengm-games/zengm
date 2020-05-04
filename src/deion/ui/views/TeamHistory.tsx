@@ -11,7 +11,6 @@ const TeamHistory = ({
 	bestRecord,
 	championships,
 	history,
-	numConfs,
 	players,
 	playoffAppearances,
 	stats,
@@ -33,7 +32,7 @@ const TeamHistory = ({
 			<RecordAndPlayoffs
 				abbrev={abbrev}
 				lost={h.lost}
-				numConfs={numConfs}
+				numConfs={h.numConfs}
 				numPlayoffRounds={h.numPlayoffRounds}
 				playoffRoundsWon={h.playoffRoundsWon}
 				season={h.season}
@@ -193,8 +192,6 @@ TeamHistory.propTypes = {
 			won: PropTypes.number.isRequired,
 		}),
 	).isRequired,
-	numConfs: PropTypes.number.isRequired,
-	numPlayoffRounds: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playoffAppearances: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,

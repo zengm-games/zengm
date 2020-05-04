@@ -1356,6 +1356,84 @@ const updateBudget = async (budgetAmounts: {
 	await toUI("realtimeUpdate", [["teamFinances"]]);
 };
 
+const updateConfsDivs = async (
+	confs: { cid: number; name: string }[],
+	divs: { cid: number; did: number; name: string }[],
+) => {
+	// First some sanity checks to make sure they're consistent
+	if (divs.length === 0) {
+		throw new Error("No divisions");
+	}
+	for (const div of divs) {
+		const conf = confs.find(c => c.cid === div.cid);
+		if (!conf) {
+			throw new Error("div has invalid cid");
+		}
+	}
+
+	// Second, update any teams belonging to a deleted division
+	const teams = await idb.cache.teams.getAll();
+	for (const t of teams) {
+		const div = divs.find(d => d.did === t.did);
+		const conf = confs.find(c => c.cid === t.cid);
+		const divMatchesConf = div && conf ? conf.cid === div.cid : false;
+
+		if (divMatchesConf) {
+			// No update needed
+			continue;
+		}
+
+		let newDid: number | undefined;
+		let newCid: number | undefined;
+
+		if (div) {
+			// Move to correct conference based on did
+			newCid = div.cid;
+		} else if (conf) {
+			// Put in last division of conference, if possible
+			const potentialDivs = divs.filter(d => d.cid === conf.cid);
+			if (potentialDivs.length > 0) {
+				newDid = potentialDivs[potentialDivs.length - 1].did;
+			}
+		}
+
+		// If this hasn't resulted in a newCid or newDid, we need to pick a new one
+		if (newDid === undefined && newCid === undefined) {
+			const newDiv = divs[divs.length - 1];
+			newDid = newDiv.did;
+			newCid = newDiv.cid;
+		}
+
+		if (newDid !== undefined) {
+			t.did = newDid;
+		}
+		if (newCid !== undefined) {
+			t.cid = newCid;
+		}
+		await idb.cache.teams.put(t);
+
+		if (g.get("phase") < PHASE.PLAYOFFS) {
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[t.tid, g.get("season")],
+			);
+
+			// Also apply team info changes to this season
+			if (newDid !== undefined) {
+				teamSeason.did = newDid;
+			}
+			if (newCid !== undefined) {
+				teamSeason.cid = newCid;
+			}
+
+			await idb.cache.teamSeasons.put(teamSeason);
+		}
+	}
+
+	await league.setGameAttributes({ confs, divs });
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
 const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	if (
 		gameAttributes.numSeasonsFutureDraftPicks <
@@ -1764,6 +1842,7 @@ export default {
 	switchTeam,
 	tradeCounterOffer,
 	updateBudget,
+	updateConfsDivs,
 	updateGameAttributes,
 	updateLeague,
 	updateMultiTeamMode,

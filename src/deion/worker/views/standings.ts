@@ -11,7 +11,9 @@ const updateStandings = async (
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season
 	) {
-		const playoffsByConference = g.get("confs").length === 2;
+		const currentConfs = g.get("confs", inputs.season);
+
+		const playoffsByConference = currentConfs.length === 2;
 		const teams = helpers.orderByWinp(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
@@ -58,8 +60,7 @@ const updateStandings = async (
 		};
 
 		const numPlayoffTeams =
-			2 ** g.get("numGamesPlayoffSeries", inputs.season).length -
-			g.get("numPlayoffByes");
+			2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
 		const confs: {
 			cid: number;
 			name: string;
@@ -71,13 +72,13 @@ const updateStandings = async (
 			teams: StandingsTeam[];
 		}[] = [];
 
-		for (let i = 0; i < g.get("confs").length; i++) {
+		for (let i = 0; i < currentConfs.length; i++) {
 			const playoffsRank: number[] = [];
 			const confTeams: StandingsTeam[] = [];
 			let j = 0;
 
 			for (const t of teams) {
-				if (g.get("confs")[i].cid === t.seasonAttrs.cid) {
+				if (currentConfs[i].cid === t.seasonAttrs.cid) {
 					playoffsRank[t.tid] = j + 1; // Store ranks by tid, for use in division standings
 
 					const gb =
@@ -95,14 +96,14 @@ const updateStandings = async (
 			}
 
 			confs.push({
-				cid: g.get("confs")[i].cid,
-				name: g.get("confs")[i].name,
+				cid: currentConfs[i].cid,
+				name: currentConfs[i].name,
 				divs: [],
 				teams: playoffsByConference ? confTeams : [],
 			});
 
-			for (const div of g.get("divs")) {
-				if (div.cid === g.get("confs")[i].cid) {
+			for (const div of g.get("divs", inputs.season)) {
+				if (div.cid === currentConfs[i].cid) {
 					const divTeams: DivTeam[] = [];
 					let k = 0;
 

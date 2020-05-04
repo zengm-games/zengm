@@ -1,4 +1,3 @@
-import { idb } from "../db";
 import { g } from "../util";
 
 const updateConfs = async () => {

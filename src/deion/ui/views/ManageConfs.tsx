@@ -1,10 +1,4 @@
-import React, {
-	useRef,
-	useState,
-	ChangeEvent,
-	FormEvent,
-	MouseEvent,
-} from "react";
+import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, toWorker } from "../util";
 import type { View } from "../../common/types";
@@ -92,11 +86,11 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 		]);
 	};
 
-	const handleSubmit = (event: FormEvent) => {
+	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setSaving(true);
 
-		//await toWorker("main", "updateTeamInfo", state.teams);
+		await toWorker("main", "updateConfsDivs", liveConfs, liveDivs);
 
 		let text = "Saved conferences and divisions.";
 
@@ -217,7 +211,11 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 					</div>
 				</div>
 				<div className="text-center">
-					<button type="submit" className="btn btn-primary" disabled={saving}>
+					<button
+						type="submit"
+						className="btn btn-primary"
+						disabled={saving || liveConfs.length === 0 || liveDivs.length === 0}
+					>
 						Save Conferences and Divisions
 					</button>
 				</div>

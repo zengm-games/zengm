@@ -86,7 +86,7 @@ const updateHistory = async (
 		return {
 			awards,
 			champ,
-			confs: g.get("confs"),
+			confs: g.get("confs", season),
 			invalidSeason: false as const,
 			retiredPlayers,
 			season,

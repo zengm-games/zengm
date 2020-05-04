@@ -1,12 +1,5 @@
 refit rosters with game sim presets applied
 
-manage conferences
-- how to handle submission and update teams?
-
-add history for some game attributes
-- confs, divs - like numGamesPlayoffSeries
-  - check for double entry when saving in god mode
-
 add more triggered events
 - numGamesPlayoffSeries, confs, divs
 - gameAttributes changes (salary cap, tendencies, etc)
@@ -16,41 +9,25 @@ add more triggered events
 - expansion
 - event log should also log to DB
 
-league structure changes, without breaking history
-- needs to support
-  - g.confs
-  - g.divs
-  - g.numGamesPlayoffSeries
-- implementation ideas
-  - g.whatever = [{until: 2015, value: 5}, {until: Infinity, value: 10}]; - with helper functions for getting and setting
-    - if during or after playoffs, use next season for "until" valueChange
-      - warning in UI that changes won't be applied until next season
-    - add extra parameter to g.get to get the value that was active for a given season
-    - store cid/did for teams in teamSeasons. fallback to root team object if not present
-      - if a change needs to apply for next year, where to store that info
-        - easy - make up something like t.pendingChanges
-        - better - store as a triggered event in some way that generically supports changing any setting
-    - is just the year sufficient for until? needs to be clever... like updating playoffs or confs/divs can't happen during playoffs, and after playoffs it can't happen unless pending team cid/did changes are somehow stored for team objects next year
-      - what if these changes are restricted to preseason only?
-        - real expansion drafts were held before the actual draft. that would be cool, would just need a way to store pending changes in team cid/did
-          - store pending in something like t.pendingChanges, and store actual cid/did in teamSeason
-    - build it into g.get (pass season as second arg), and some other helper for writing
-  - put in another object store, index by year. that way don't need to store the whole history of all settings in memory forever
-    - is that a big enough win to justify a schema change?
-- for team name/region/abbrev/imgURL, will need to avoid using caches for that info
-
 expansion draft
-- only allow in certain phase of offseason
-  - DRAFT_LOTTERY - definitely, most realistic, but need to do something about lottery results
-  - DRAFT, FREE_AGENCY, PREASEASON - could support, but would it be better to force it before the draft always?
-- upcoming free agents are not available to be drafted
-- teams can protect up to 8 players, unless they have 8 players or less on roster, in which case they need to leave 1 unprotected
-- pick protections
-- multiple expansion teams
-- allow user to take control of expansion team
-- does expansion team get draft pick in upcoming draft?
+- plan
+  - 1. configure expansion draft
+    - can only be started after the playoffs end but before the draft starts
+    - select number of teams in the expansion draft (can be any number)
+    - select team names and other info (ideally it'll have some prepopulated suggestions)
+    - select how many players each team can protect (default: minimum roster size minus the number of expansion teams, and if that allows a team to protect their whole roster somehow, then force them to at least leave the number of expansion teams unprotected)
+    - select if you want to switch to controlling one of the expansion teams
+  - 2. protection phase (only available if you do not choose to be an expansion team)
+    - each existing team will pick their players to protect. similar to the roster screen, but with a checkbox by each player
+      - ??? how should upcoming free agents be dealt with? i feel like they should be available to be drafted and guaranteed to not refuse to re-sign. make this clear in the UI
+  - 3. expansion draft phase
+    - basically the same as the fantasy draft UI
+  - 4. after the expansion draft
+    - create some extra draft prospects for future draft classes, to account for the new teams
+    - then the normal draft happens
+      - ??? what pick should an expansion team get?
+        - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
 - FBGM?
-- store in g.expansionDraft? lol
 
 way to import team and player info
 - options
@@ -62,6 +39,7 @@ db schema change not needed
 - if teamSeason property undefined, fall back to team
 - g.triggeredEvents
 - update g.confs/divs/numGamesPlayoffSeries when loading
+- ...but changes to game attributes are not backwards compatible, would it be better to do a version change?
 
 blog
 - danger zone auto save
@@ -73,6 +51,7 @@ blog
 - fit historical rosters based on historical sim settings - crowdsourced training data
 - triggered events, prespecified in league
   - relocation
+- GUI to edit conferences and divisions
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 
 eventually

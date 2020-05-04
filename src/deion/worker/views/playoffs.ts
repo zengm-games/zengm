@@ -126,7 +126,7 @@ const updatePlayoffs = async (
 			}
 		}
 
-		const confNames = g.get("confs").map(conf => conf.name); // Display the current or archived playoffs
+		const confNames = g.get("confs", inputs.season).map(conf => conf.name); // Display the current or archived playoffs
 
 		return {
 			finalMatchups,

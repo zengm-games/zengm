@@ -28,6 +28,7 @@ const updateTeamHistory = async (
 			tied?: number;
 			playoffRoundsWon: number;
 			numPlayoffRounds: number;
+			numConfs: number;
 		}[] = [];
 
 		let totalWon = 0;
@@ -46,6 +47,7 @@ const updateTeamHistory = async (
 				tied: g.get("ties") ? teamSeason.tied : undefined,
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
 				numPlayoffRounds,
+				numConfs: g.get("confs", teamSeason.season).length,
 			});
 			totalWon += teamSeason.won;
 			totalLost += teamSeason.lost;
@@ -129,7 +131,6 @@ const updateTeamHistory = async (
 			championships,
 			bestRecord,
 			worstRecord,
-			numConfs: g.get("confs").length,
 			ties: g.get("ties"),
 		};
 	}

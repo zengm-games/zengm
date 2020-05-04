@@ -326,6 +326,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "manageConfs",
+				league: true,
+				path: ["manage_confs"],
+				text: "Manage Conferences",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "manageTeams",
 				league: true,
 				path: ["manage_teams"],

@@ -31,6 +31,7 @@ import leagueFinances from "./leagueFinances";
 import leagueOptions from "./leagueOptions";
 import live from "./live";
 import liveGame from "./liveGame";
+import manageConfs from "./manageConfs";
 import manageTeams from "./manageTeams";
 import message from "./message";
 import mostGamesNoPlayoffs from "./mostGamesNoPlayoffs";
@@ -103,6 +104,7 @@ export default {
 	leagueOptions,
 	live,
 	liveGame,
+	manageConfs,
 	manageTeams,
 	message,
 	mostGamesNoPlayoffs,

@@ -35,6 +35,7 @@ import Live from "./Live";
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";
+import ManageConfs from "./ManageConfs";
 import ManageTeams from "./ManageTeams";
 import Message from "./Message";
 import MostGamesNoPlayoffs from "./MostGamesNoPlayoffs";
@@ -111,6 +112,7 @@ export default {
 	LiveGame,
 	LoginOrRegister,
 	LostPassword,
+	ManageConfs,
 	ManageTeams,
 	Message,
 	MostGamesNoPlayoffs,

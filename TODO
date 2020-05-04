@@ -1,9 +1,16 @@
 refit rosters with game sim presets applied
 
+manage conferences
+- do cid and did need to be sequential?
+- warning about weird stuff that might happen
+- warning about what happens when you delete
+- you can't move them, to move, either delete and recreate or rename
+- list conferences, with edit/delete
+- list divisions under conference, with edit/delete, including conference dropdown
+
 add history for some game attributes
 - confs, divs - like numGamesPlayoffSeries
   - check for double entry when saving in god mode
-- test schema checking
 
 add more triggered events
 - numGamesPlayoffSeries, confs, divs
@@ -116,6 +123,8 @@ better changelog
 - show in modal
 
 "sim to" button next to game on schedule
+
+way to clone a player
 
 on league creation, select which teams you want for a league
 

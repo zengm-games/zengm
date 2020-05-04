@@ -204,34 +204,6 @@ export const createWithoutSaving = (
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
-	const cidsTeam = confirmSequential(teamInfos, "cid", "team");
-	const didsTeam = confirmSequential(teamInfos, "did", "team");
-	const cidsConfs = confirmSequential(
-		gameAttributes.confs,
-		"cid",
-		"conference",
-	);
-	const didsDivs = confirmSequential(gameAttributes.divs, "did", "division");
-	const cidsDivs = confirmSequential(gameAttributes.divs, "cid", "division");
-
-	// It's okay to have an empty conference or division, but you can't reference a conference or division that doesn't exist!
-	if (cidsConfs.size < cidsTeam.size) {
-		throw new Error(
-			`confs in game attributes only has ${cidsConfs.size} conferences, but your teams belong to ${cidsTeam.size} conferences`,
-		);
-	}
-
-	if (cidsConfs.size < cidsDivs.size) {
-		throw new Error(
-			`confs in game attributes only has ${cidsConfs.size} conferences, but divs references ${cidsDivs.size} conferences`,
-		);
-	}
-
-	if (didsDivs.size < didsTeam.size) {
-		throw new Error(
-			`divs in game attributes only has ${didsDivs.size} divisions, but your teams belong to ${didsTeam.size} divisions`,
-		);
-	}
 
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
 	helpers.resetG();

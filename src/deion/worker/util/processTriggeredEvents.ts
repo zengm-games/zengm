@@ -19,10 +19,10 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 			continue;
 		}
 
-		const info = triggeredEvent.info;
-
 		if (triggeredEvent.type === "teamInfo") {
 			// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
+
+			const info = triggeredEvent.info;
 
 			const teams = await idb.cache.teams.getAll();
 			const t = teams.find(t2 => t2.tid === info.tid);
@@ -56,7 +56,7 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 
 			if (info.region && info.region !== old.region) {
 				eventLogTexts.push(
-					`<b>Team relocation</b>: the ${old.region} ${
+					`<b>Team relocation:</b> the ${old.region} ${
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
@@ -66,7 +66,7 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 				);
 			} else if (info.name && info.name !== old.name) {
 				eventLogTexts.push(
-					`<b>Team rename</b>: the ${old.region} ${
+					`<b>Team rename:</b> the ${old.region} ${
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
@@ -82,8 +82,52 @@ const processTriggeredEvents = async (season: number, phase: number) => {
 				teamNamesCache: teams.map(t => t.name),
 				teamImgURLsCache: teams.map(t => t.imgURL),
 			});
+		} else if (triggeredEvent.type === "gameAttributes") {
+			const texts = [];
+			if (
+				triggeredEvent.info.threePointers !== undefined &&
+				triggeredEvent.info.threePointers !== g.get("threePointers")
+			) {
+				texts.push(
+					triggeredEvent.info.threePointers
+						? "Added a three point line"
+						: "Removed the three point line",
+				);
+			}
+
+			const prevSalaryCap = g.get("salaryCap");
+			if (
+				triggeredEvent.info.salaryCap !== undefined &&
+				triggeredEvent.info.salaryCap !== prevSalaryCap
+			) {
+				const increased =
+					triggeredEvent.info.salaryCap > prevSalaryCap
+						? "increased"
+						: "decreased";
+				texts.push(
+					`Salary cap ${increased} from ${helpers.formatCurrency(
+						prevSalaryCap / 1000,
+						"M",
+					)} to ${helpers.formatCurrency(
+						triggeredEvent.info.salaryCap / 1000,
+						"M",
+					)}`,
+				);
+			}
+
+			if (texts.length === 1) {
+				eventLogTexts.push(`<b>League rule change:</b> ${texts[0]}`);
+			} else if (texts.length > 1) {
+				eventLogTexts.push(
+					`<b>League rule changes:</b><br>- ${texts.join("<br>- ")}`,
+				);
+			}
+
+			await league.setGameAttributes(triggeredEvent.info);
 		} else {
-			throw new Error(`Unknown triggered event type: ${triggeredEvent.type}`);
+			throw new Error(
+				`Unknown triggered event type: ${(triggeredEvent as any).type}`,
+			);
 		}
 
 		processed.push(triggeredEvent);

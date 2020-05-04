@@ -194,22 +194,29 @@ export type GameResults = any;
 
 export type GameAttributesNonLeague = { lid: undefined };
 
-type TriggeredEvent = {
-	type: "teamInfo";
-	season: number;
-	phase: Phase;
-	info: {
-		tid: number;
-		region?: string;
-		name?: string;
-		pop?: number;
-		cid?: number;
-		did?: number;
-		abbrev?: string;
-		imgURL?: string;
-		colors?: [string, string, string];
-	};
-};
+type TriggeredEvent =
+	| {
+			type: "teamInfo";
+			season: number;
+			phase: Phase;
+			info: {
+				tid: number;
+				region?: string;
+				name?: string;
+				pop?: number;
+				cid?: number;
+				did?: number;
+				abbrev?: string;
+				imgURL?: string;
+				colors?: [string, string, string];
+			};
+	  }
+	| {
+			type: "gameAttributes";
+			season: number;
+			phase: Phase;
+			info: Partial<GameAttributesLeague>;
+	  };
 
 type GameAttributeWithHistory<T> = {
 	start: number;

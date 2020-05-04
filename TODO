@@ -22,18 +22,11 @@ expansion draft
 
 add more triggered events
 - numGamesPlayoffSeries, confs, divs
-- gameAttributes changes (salary cap, tendencies, etc)
-- gameSimPresets from GodMode - make it able to use these by year, to save space
 - expansion
 - event log should also log to DB
 
-db schema change not needed
-- if teamSeason property undefined, fall back to team
-- g.triggeredEvents
-- update g.confs/divs/numGamesPlayoffSeries when loading
-
 ...but changes to game attributes are not backwards compatible, would it be better to do a version change?
-- could add triggeredEvents or something
+- might as well do triggeredEvents object store, then
 - add instructions for deleting old service worker in chrome
 
 blog
@@ -46,6 +39,9 @@ blog
 - fit historical rosters based on historical sim settings - crowdsourced training data
 - triggered events, prespecified in league
   - relocation
+  - salary cap changes
+  - 3 point line
+  - play style changes (shooting more 3s, pace)
 - GUI to edit conferences and divisions
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 

@@ -8,6 +8,7 @@ const updateConfs = async () => {
 	return {
 		confs,
 		divs,
+		phase: g.get("phase"),
 	};
 };
 

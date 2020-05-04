@@ -1,10 +1,7 @@
 refit rosters with game sim presets applied
 
 manage conferences
-- like manage teams page, warning about edits after playoffs have started
-- you can't move them, to move, either delete and recreate or rename
-- list conferences, with edit/delete
-- list divisions under conference, with edit/delete, including conference dropdown
+- how to handle submission and update teams?
 
 add history for some game attributes
 - confs, divs - like numGamesPlayoffSeries

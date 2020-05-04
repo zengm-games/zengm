@@ -168,6 +168,15 @@ export const createWithoutSaving = (
 				gameAttribute.key !== "difficulty"
 			) {
 				(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
+
+				// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
+				if (
+					Array.isArray(gameAttribute.value) &&
+					gameAttribute.value.length > 0 &&
+					gameAttribute.value[0].start === null
+				) {
+					gameAttribute.value[0].start = -Infinity;
+				}
 			}
 		}
 

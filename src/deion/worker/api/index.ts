@@ -1405,9 +1405,11 @@ const updateConfsDivs = async (
 		}
 
 		if (newDid !== undefined) {
+			console.log("Move to new division", t.abbrev);
 			t.did = newDid;
 		}
 		if (newCid !== undefined) {
+			console.log("Move to new conference", t.abbrev);
 			t.cid = newCid;
 		}
 		await idb.cache.teams.put(t);
@@ -1561,9 +1563,12 @@ const updateTeamInfo = async (
 	for (const t of teams) {
 		const { did } = newTeams[t.tid];
 
-		if (did !== undefined && g.get("divs")[did]) {
-			t.did = did;
-			t.cid = g.get("divs")[did].cid;
+		if (did !== undefined) {
+			const newDiv = g.get("divs").find(div => div.did === did);
+			if (newDiv) {
+				t.did = newDiv.did;
+				t.cid = newDiv.cid;
+			}
 		}
 
 		t.region = newTeams[t.tid].region;

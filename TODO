@@ -1,3 +1,5 @@
+t.pop should work like all the other ones (cid, did, etc). should be on root team object. in genSeasonRow it should pull from team object (unless undefined), and root team object should be where population growth occurs
+
 refit rosters with game sim presets applied
 
 expansion draft

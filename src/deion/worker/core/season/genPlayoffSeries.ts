@@ -112,7 +112,8 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 		if (numRounds > 1) {
 			const seeds = genSeeds(numPlayoffTeams / 2, numPlayoffByes / 2); // Default: top 50% of teams in each of the two conferences
 
-			for (let cid = 0; cid < g.get("confs").length; cid++) {
+			for (const conf of g.get("confs")) {
+				const cid = conf.cid;
 				const teamsConf: MyTeam[] = [];
 
 				for (const t of teams) {
@@ -128,9 +129,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 
 				if (teamsConf.length < numPlayoffTeams / 2) {
 					throw new Error(
-						`Not enough teams for playoffs in conference ${cid} (${
-							g.get("confs")[cid].name
-						})`,
+						`Not enough teams for playoffs in conference ${cid} (${conf.name})`,
 					);
 				}
 
@@ -153,9 +152,9 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 			// Special case - if there is only one round, pick the best team in each conference to play
 			const teamsConf: MyTeam[] = [];
 
-			for (let cid = 0; cid < g.get("confs").length; cid++) {
+			for (const conf of g.get("confs")) {
 				for (let i = 0; i < teams.length; i++) {
-					if (teams[i].seasonAttrs.cid === cid) {
+					if (teams[i].seasonAttrs.cid === conf.cid) {
 						teamsConf.push(teams[i]);
 						tidPlayoffs.push(teams[i].tid);
 						break;

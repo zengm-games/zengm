@@ -65,15 +65,29 @@ const newScheduleDefault = (
 
 	// Constraint: 1-2 home games vs. each team in same conference and different division
 	// Constraint: We need 8 more of these games per home team!
-	const tidsByConf: [number[], number[]] = [[], []];
-	const dids: [number[], number[]] = [[], []];
+	const tidsByConf: {
+		[key: number]: number[];
+	} = {};
+	const dids: {
+		[key: number]: number[];
+	} = {};
 
 	for (let i = 0; i < teams.length; i++) {
-		tidsByConf[teams[i].seasonAttrs.cid].push(i);
-		dids[teams[i].seasonAttrs.cid].push(teams[i].seasonAttrs.did);
+		const t = teams[i];
+		const cid = t.seasonAttrs.cid;
+		if (!tidsByConf[cid]) {
+			tidsByConf[cid] = [];
+		}
+		if (!dids[cid]) {
+			dids[cid] = [];
+		}
+		tidsByConf[cid].push(i);
+		dids[cid].push(t.seasonAttrs.did);
 	}
 
-	for (let cid = 0; cid < g.get("confs").length; cid++) {
+	for (const conf of g.get("confs")) {
+		const cid = conf.cid;
+
 		const matchups = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]];
 		let games = 0;
 

@@ -328,7 +328,9 @@ export const createWithoutSaving = (
 
 			if (typeof teamSeason.stadiumCapacity !== "number") {
 				teamSeason.stadiumCapacity =
-					defaultGameAttributes.defaultStadiumCapacity;
+					t.stadiumCapacity !== undefined
+						? t.stadiumCapacity
+						: g.get("defaultStadiumCapacity");
 			}
 
 			// If this is specified in a league file, we can ignore it because they should all be in order, and sometimes people manually edit the file and include duplicates

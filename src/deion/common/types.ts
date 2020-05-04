@@ -827,6 +827,10 @@ export type Team = {
 		KR: number[];
 		PR: number[];
 	};
+
+	// Optional because upgrade code was not written on 2020-05-04. Ideally should have populated these with the most recent value of teamSeason.
+	pop?: number;
+	stadiumCapacity?: number;
 };
 
 export type TeamAttr = keyof Team;

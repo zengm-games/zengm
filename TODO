@@ -1,5 +1,3 @@
-t.pop should work like all the other ones (cid, did, etc). should be on root team object. in genSeasonRow it should pull from team object (unless undefined), and root team object should be where population growth occurs
-
 refit rosters with game sim presets applied
 
 expansion draft
@@ -25,8 +23,6 @@ expansion draft
 add more triggered events
 - numGamesPlayoffSeries, confs, divs
 - gameAttributes changes (salary cap, tendencies, etc)
-  - finances ones make sense as triggered events, or should it be defined as some % growth?
-    - if % growth, make it work on any numeric variable in gameAttributes
 - gameSimPresets from GodMode - make it able to use these by year, to save space
 - expansion
 - event log should also log to DB
@@ -67,6 +63,8 @@ eventually
 ---
 
 schema validation of gameAttributes seems broken
+
+option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 
 in leagues with no 3 pointers, 3 pointers should not be tracked
 - shot locations?

@@ -1,4 +1,4 @@
-import { g, random } from "../../util";
+import { g } from "../../util";
 import type {
 	Team,
 	TeamBasic,
@@ -43,7 +43,7 @@ const genSeasonRow = (
 		streak: 0,
 		playoffRoundsWon: -1, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
 		hype: Math.random(),
-		pop: 0, // Needs to be set somewhere!
+		pop: 1,
 		stadiumCapacity: g.get("defaultStadiumCapacity"),
 		revenues: {
 			luxuryTaxShare: {
@@ -109,14 +109,25 @@ const genSeasonRow = (
 		},
 	};
 
+	if (typeof t.pop === "number") {
+		newSeason.pop = t.pop;
+		// @ts-ignore
+	} else if (typeof t.stadiumCapacity === "number") {
+		// @ts-ignore
+		newSeason.stadiumCapacity = t.stadiumCapacity;
+	}
+
 	if (prevSeason) {
 		// New season, carrying over some values from the previous season
-		newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
 		newSeason.hype = prevSeason.hype;
 		newSeason.cash = prevSeason.cash;
-
-		// Mean population should stay constant, otherwise the economics change too much
-		newSeason.pop = prevSeason.pop * random.uniform(0.98, 1.02);
+		if (t.pop === undefined) {
+			newSeason.pop = prevSeason.pop;
+		}
+		// @ts-ignore
+		if (t.stadiumCapacity === undefined) {
+			newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
+		}
 
 		if (g.get("userTid") === t.tid) {
 			if (prevSeason.ownerMood) {

@@ -1,4 +1,4 @@
-import { helpers, overrides } from "../../util";
+import { helpers, overrides, g } from "../../util";
 import type { Team } from "../../../common/types";
 
 /**
@@ -62,6 +62,11 @@ const generate = (tm: any): Team => {
 		strategy,
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : ["#000000", "#cccccc", "#ffffff"],
+		pop: tm.pop !== undefined ? tm.pop : 0,
+		stadiumCapacity:
+			tm.stadiumCapacity !== undefined
+				? tm.stadiumCapacity
+				: g.get("defaultStadiumCapacity"),
 	};
 
 	if (process.env.SPORT === "football" && tm.depth === undefined) {

@@ -42,11 +42,9 @@ const newPhasePreseason = async (
 
 		const defaultTicketPrice = helpers.defaultTicketPrice(popRanks[i]);
 		const defaultBudgetAmount = helpers.defaultBudgetAmount(popRanks[i]);
-		let updated = false;
 
 		if (t.budget.ticketPrice.amount !== defaultTicketPrice) {
 			t.budget.ticketPrice.amount = defaultTicketPrice;
-			updated = true;
 		}
 
 		const keys: (keyof typeof t["budget"])[] = [
@@ -59,12 +57,7 @@ const newPhasePreseason = async (
 		for (const key of keys) {
 			if (t.budget[key].amount !== defaultBudgetAmount) {
 				t.budget[key].amount = defaultBudgetAmount;
-				updated = true;
 			}
-		}
-
-		if (updated) {
-			await idb.cache.teams.put(t);
 		}
 	}
 
@@ -90,7 +83,21 @@ const newPhasePreseason = async (
 			);
 		}
 
-		await idb.cache.teamSeasons.add(team.genSeasonRow(t, prevSeason));
+		const newSeason = team.genSeasonRow(t, prevSeason);
+
+		if (t.pop === undefined) {
+			t.pop = newSeason.pop;
+		}
+		if (t.stadiumCapacity === undefined) {
+			t.stadiumCapacity = newSeason.stadiumCapacity;
+		}
+
+		// Mean population should stay constant, otherwise the economics change too much
+		t.pop *= random.uniform(0.98, 1.02);
+		newSeason.pop = t.pop;
+
+		await idb.cache.teams.put(t);
+		await idb.cache.teamSeasons.add(newSeason);
 		await idb.cache.teamStats.add(team.genStatsRow(tid));
 	}
 

@@ -4,11 +4,28 @@ import { g } from "../util";
 const updateTeamInfo = async () => {
 	const teams = (
 		await idb.getCopies.teamsPlus({
-			attrs: ["tid", "abbrev", "region", "name", "imgURL", "colors", "did"],
+			attrs: [
+				"tid",
+				"abbrev",
+				"region",
+				"name",
+				"imgURL",
+				"colors",
+				"did",
+				"pop",
+				"stadiumCapacity",
+			],
 			seasonAttrs: ["pop", "stadiumCapacity"],
 			season: g.get("season"),
 		})
 	).map(t => {
+		if (t.pop === undefined) {
+			t.pop = t.seasonAttrs.pop;
+		}
+		if (t.stadiumCapacity === undefined) {
+			t.stadiumCapacity = t.seasonAttrs.stadiumCapacity;
+		}
+
 		return {
 			tid: t.tid,
 			abbrev: t.abbrev,
@@ -16,8 +33,8 @@ const updateTeamInfo = async () => {
 			name: t.name,
 			imgURL: t.imgURL,
 			colors: t.colors,
-			pop: parseFloat(t.seasonAttrs.pop.toFixed(6)),
-			stadiumCapacity: t.seasonAttrs.stadiumCapacity,
+			pop: parseFloat(t.pop.toFixed(6)),
+			stadiumCapacity: t.stadiumCapacity,
 			did: t.did,
 		};
 	});

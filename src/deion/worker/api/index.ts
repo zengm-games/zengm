@@ -1580,6 +1580,18 @@ const updateTeamInfo = async (
 		}
 
 		t.colors = newTeams[t.tid].colors;
+
+		t.pop = parseFloat(newTeams[t.tid].pop as string);
+		t.stadiumCapacity = parseInt(newTeams[t.tid].stadiumCapacity as string, 10);
+
+		if (Number.isNaN(t.pop)) {
+			throw new Error("Invalid pop");
+		}
+
+		if (Number.isNaN(t.stadiumCapacity)) {
+			throw new Error("Invalid stadiumCapacity");
+		}
+
 		await idb.cache.teams.put(t);
 
 		if (t.tid === g.get("userTid")) {
@@ -1591,19 +1603,6 @@ const updateTeamInfo = async (
 			"teamSeasonsByTidSeason",
 			[t.tid, g.get("season")],
 		);
-		teamSeason.pop = parseFloat(newTeams[t.tid].pop as string);
-		teamSeason.stadiumCapacity = parseInt(
-			newTeams[t.tid].stadiumCapacity as string,
-			10,
-		);
-
-		if (Number.isNaN(teamSeason.pop)) {
-			throw new Error("Invalid pop");
-		}
-
-		if (Number.isNaN(teamSeason.stadiumCapacity)) {
-			throw new Error("Invalid stadiumCapacity");
-		}
 
 		if (g.get("phase") < PHASE.PLAYOFFS) {
 			// Also apply team info changes to this season
@@ -1614,6 +1613,8 @@ const updateTeamInfo = async (
 			teamSeason.abbrev = t.abbrev;
 			teamSeason.imgURL = t.imgURL;
 			teamSeason.colors = t.colors;
+			teamSeason.pop = t.pop;
+			teamSeason.stadiumCapacity = t.stadiumCapacity;
 		}
 
 		await idb.cache.teamSeasons.put(teamSeason);

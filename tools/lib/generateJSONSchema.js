@@ -695,6 +695,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						pace: {
 							type: "number",
 						},
+						expansionDraft: {
+							type: "object",
+						},
 					},
 				},
 			},

@@ -1305,6 +1305,64 @@ const sign = async (
 	}
 };
 
+const startExpansionDraft = async (
+	expansionTeams: {
+		abbrev: string;
+		region: string;
+		name: string;
+		imgURL: string | undefined;
+		colors: [string, string, string];
+		pop: number;
+		stadiumCapacity: number;
+		did: number;
+		takeControl: boolean;
+	}[],
+) => {
+	const errors = [];
+	const teams = await idb.cache.teams.getAll();
+	const divs = await g.get("divs", Infinity);
+
+	// Do some error checking
+	for (const t of expansionTeams) {
+		console.log(t);
+		if (t.imgURL === "") {
+			t.imgURL = undefined;
+		}
+
+		t.pop = parseFloat((t.pop as never) as string);
+		if (Number.isNaN(t.pop)) {
+			errors.push(`Invalid population for ${t.abbrev}`);
+		}
+
+		t.stadiumCapacity = parseInt((t.stadiumCapacity as never) as string);
+		if (Number.isNaN(t.stadiumCapacity)) {
+			errors.push(`Invalid stadium capacity for ${t.abbrev}`);
+		}
+
+		t.did = parseInt((t.did as never) as string);
+		let foundDiv = false;
+		for (const div of divs) {
+			if (t.did === div.did) {
+				foundDiv = true;
+				break;
+			}
+		}
+		if (!foundDiv) {
+			errors.push(`Invalid division for ${t.abbrev}`);
+		}
+
+		for (const t2 of teams) {
+			if (t2.abbrev === t.abbrev) {
+				errors.push(`Abbrev ${t.abbrev} is already used by an existing team`);
+			}
+		}
+	}
+
+	if (errors.length > 0) {
+		return errors;
+	}
+};
+
 const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
 	await phase.newPhase(PHASE.FANTASY_DRAFT, conditions, tids);
 };
@@ -1842,6 +1900,7 @@ export default {
 	runBefore,
 	setLocal,
 	sign,
+	startExpansionDraft,
 	startFantasyDraft,
 	switchTeam,
 	tradeCounterOffer,

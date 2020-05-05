@@ -288,6 +288,7 @@ export type GameAttributesLeague = {
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
 	pace: number;
+	expansionDraft: undefined;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

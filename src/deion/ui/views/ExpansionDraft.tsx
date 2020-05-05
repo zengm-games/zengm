@@ -1,9 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers } from "../../util";
-import type { View } from "../../../common/types";
-import { PHASE } from "../../../common";
-import TeamForm from "../ManageTeams/TeamForm";
+import useTitleBar from "../hooks/useTitleBar";
+import { helpers, toWorker, logEvent } from "../util";
+import type { View } from "../../common/types";
+import { PHASE } from "../../common";
+import TeamForm from "./ManageTeams/TeamForm";
 
 type Team = Omit<View<"manageTeams">["teams"][number], "tid"> & {
 	takeControl: boolean;
@@ -70,7 +70,25 @@ const ExpansionDraft = ({
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
+
+		if (saving) {
+			return;
+		}
+
 		setSaving(true);
+
+		const errors = await toWorker("main", "startExpansionDraft", teams);
+
+		if (errors) {
+			logEvent({
+				type: "error",
+				text: `- ${errors.join("<br>- ")}`,
+				saveToDb: false,
+			});
+			setSaving(false);
+		} else {
+			// Redirect to next page
+		}
 	};
 
 	const handleTakeControl = (i: number) => (
@@ -157,6 +175,7 @@ const ExpansionDraft = ({
 										</div>
 										<div className="col-6 text-right">
 											<button
+												type="button"
 												className="btn btn-danger"
 												onClick={deleteTeam(i)}
 											>
@@ -171,7 +190,11 @@ const ExpansionDraft = ({
 					<div className="col-xl-4 col-lg-6 mb-3">
 						<div className="card">
 							<div className="card-body">
-								<button className="btn btn-secondary" onClick={addTeam}>
+								<button
+									type="button"
+									className="btn btn-secondary"
+									onClick={addTeam}
+								>
 									Add Team
 								</button>
 							</div>

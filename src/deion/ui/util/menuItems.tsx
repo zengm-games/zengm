@@ -305,6 +305,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "expansionDraft",
+				league: true,
+				path: ["expansion_draft"],
+				text: "Expansion Draft",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "fantasyDraft",
 				league: true,
 				path: ["fantasy_draft"],

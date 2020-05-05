@@ -17,6 +17,7 @@ import DraftScouting from "./DraftScouting";
 import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
 import EventLog from "./EventLog";
+import ExpansionDraft from "./ExpansionDraft";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
 import FantasyDraft from "./FantasyDraft";
@@ -94,6 +95,7 @@ export default {
 	DraftSummary,
 	DraftTeamHistory,
 	EventLog,
+	ExpansionDraft,
 	ExportLeague,
 	ExportStats,
 	FantasyDraft,

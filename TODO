@@ -21,6 +21,11 @@ expansion draft
 - auto play
 - multi team
 - FBGM?
+- share team creation form with manage teams
+
+
+update Add Team text on Manage Teams to reference expansion draft
+- also get rid of the conf/div form there
 
 add more scheduled events
 - confs, divs
@@ -46,7 +51,7 @@ blog
   - can choose to use or not when creating league
 - GUI to edit conferences and divisions
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
-- playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs
+- playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs - numGames too
 
 eventually
 - way to view scheduled events and add/edit/delete

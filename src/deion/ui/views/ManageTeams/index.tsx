@@ -5,6 +5,7 @@ import { helpers, logEvent, toWorker } from "../../util";
 import AddRemove from "./AddRemove";
 import type { View } from "../../../common/types";
 import { PHASE } from "../../../common";
+import TeamForm from "./TeamForm";
 
 const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
@@ -85,12 +86,11 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		teams: props.teams,
 	});
 
-	const handleInputChange = (
-		i: number,
+	const handleInputChange = (i: number) => (
 		field: string,
-		e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
-		const value = e.target.value;
+		const value = event.target.value;
 
 		dispatch({ type: "updateTeam", i, field, value });
 	};
@@ -119,11 +119,6 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	useTitleBar({ title: "Manage Teams" });
 
 	const { saving, teams } = state;
-
-	const divisions = props.divs.map(div => ({
-		did: div.did,
-		name: `${div.name} (${props.confs[div.cid].name})`,
-	}));
 
 	return (
 		<>
@@ -200,106 +195,24 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				<div className="row">
 					{teams.map((t, i) => (
 						<React.Fragment key={t.tid}>
-							<div className="col-6 col-lg-2">
-								<div className="form-group">
-									<label className="d-lg-none">Region</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={e => handleInputChange(i, "region", e)}
-										value={t.region}
-									/>
-								</div>
-							</div>
-							<div className="col-6 col-lg-2">
-								<div className="form-group">
-									<label className="d-lg-none">Name</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={e => handleInputChange(i, "name", e)}
-										value={t.name}
-									/>
-								</div>
-							</div>
-							<div className="col-6 col-lg-1">
-								<div className="form-group">
-									<label className="d-lg-none">Abbrev</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={e => handleInputChange(i, "abbrev", e)}
-										value={t.abbrev}
-									/>
-								</div>
-							</div>
-							<div className="col-6 col-lg-1">
-								<div className="form-group">
-									<label className="d-lg-none">Division</label>
-									<select
-										className="form-control"
-										onChange={e => handleInputChange(i, "did", e)}
-										value={t.did}
-									>
-										{divisions.map(division => (
-											<option key={division.did} value={division.did}>
-												{division.name}
-											</option>
-										))}
-									</select>
-								</div>
-							</div>
-							<div className="col-6 col-lg-1">
-								<div className="form-group">
-									<label className="d-lg-none">Population (millions)</label>
-									<input
-										type="text"
-										className="form-control"
-										disabled={!props.godMode}
-										onChange={e => handleInputChange(i, "pop", e)}
-										value={t.pop}
-									/>
-								</div>
-							</div>
-							<div className="col-6 col-lg-1">
-								<div className="form-group">
-									<label className="d-lg-none">Stadium Capacity</label>
-									<input
-										type="text"
-										className="form-control"
-										disabled={!props.godMode}
-										onChange={e => handleInputChange(i, "stadiumCapacity", e)}
-										value={t.stadiumCapacity}
-									/>
-								</div>
-							</div>
-							<div className="col-6 col-lg-2">
-								<div className="form-group">
-									<label className="d-lg-none">Logo URL</label>
-									<input
-										type="text"
-										className="form-control"
-										onChange={e => handleInputChange(i, "imgURL", e)}
-										value={t.imgURL}
-									/>
-								</div>
-							</div>
-							<div className="col-6 col-lg-2">
-								<div className="form-group">
-									<label className="d-lg-none">Colors</label>
-									<div className="d-flex">
-										{[0, 1, 2].map(j => (
-											<input
-												key={j}
-												type="color"
-												className="form-control"
-												onChange={e => handleInputChange(i, `colors${j}`, e)}
-												value={t.colors[j]}
-											/>
-										))}
-									</div>
-								</div>
-							</div>
+							<TeamForm
+								classNamesCol={[
+									"col-6 col-lg-2",
+									"col-6 col-lg-2",
+									"col-6 col-lg-1",
+									"col-6 col-lg-1",
+									"col-6 col-lg-1",
+									"col-6 col-lg-1",
+									"col-6 col-lg-2",
+									"col-6 col-lg-2",
+								]}
+								classNameLabel="d-lg-none"
+								confs={props.confs}
+								divs={props.divs}
+								handleInputChange={handleInputChange(i)}
+								disableSomeForManageTeams={!props.godMode}
+								t={t}
+							/>
 							<div className="col-12 d-lg-none" style={{ marginTop: -12 }}>
 								<hr />
 							</div>

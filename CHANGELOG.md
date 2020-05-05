@@ -6,6 +6,8 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-05-03: Added a new page Tools > Manage Confs that allows you to create, edit, and delete divisions and conferenes.
 
+* 2020-05-03: Added tracking of changes to some league settings (conferences, divisions, and number of playoff rounds) so that historical screens don't show incorrect values.
+
 * 2020-05-03: Added support for team info changes (name, region, logo, etc.) to be predefined in a league file and trigger only at a certain year.
 
 *** 2020-05-03: In BBGM, added game simulation settings to God Mode to allow for more realistic simulation of different eras of basketball, when things like pace and 3 point shooting were very different.**

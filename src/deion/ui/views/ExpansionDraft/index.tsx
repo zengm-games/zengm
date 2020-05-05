@@ -5,9 +5,16 @@ import type { View } from "../../../common/types";
 import { PHASE } from "../../../common";
 import TeamForm from "../ManageTeams/TeamForm";
 
-type Team = Omit<View<"manageTeams">["teams"][number], "tid">;
+type Team = Omit<View<"manageTeams">["teams"][number], "tid"> & {
+	takeControl: boolean;
+};
 
-const ExpansionDraft = ({ confs, divs, phase }: View<"expansionDraft">) => {
+const ExpansionDraft = ({
+	confs,
+	divs,
+	multiTeamMode,
+	phase,
+}: View<"expansionDraft">) => {
 	const defaultTeam: Team = {
 		abbrev: "AAA",
 		region: "Aaa",
@@ -17,6 +24,7 @@ const ExpansionDraft = ({ confs, divs, phase }: View<"expansionDraft">) => {
 		pop: 1,
 		stadiumCapacity: 25000,
 		did: divs[divs.length - 1].did,
+		takeControl: false,
 	};
 
 	const [saving, setSaving] = useState(false);
@@ -65,6 +73,35 @@ const ExpansionDraft = ({ confs, divs, phase }: View<"expansionDraft">) => {
 		setSaving(true);
 	};
 
+	const handleTakeControl = (i: number) => (
+		event: ChangeEvent<HTMLInputElement>,
+	) => {
+		const newTeams = [...teams];
+		if (!event.target.checked) {
+			newTeams[i] = {
+				...newTeams[i],
+				takeControl: false,
+			};
+		} else {
+			if (multiTeamMode) {
+				newTeams[i] = {
+					...newTeams[i],
+					takeControl: true,
+				};
+			} else {
+				for (let j = 0; j < newTeams.length; j++) {
+					// Only allow one to be checked
+					newTeams[j] = {
+						...newTeams[j],
+						takeControl: i === j,
+					};
+				}
+			}
+		}
+
+		setTeams(newTeams);
+	};
+
 	return (
 		<>
 			<p>
@@ -99,7 +136,26 @@ const ExpansionDraft = ({ confs, divs, phase }: View<"expansionDraft">) => {
 											handleInputChange={handleInputChange(i)}
 											t={t}
 										/>
-										<div className="col-12">
+										<div className="col-6">
+											<div className="form-check mt-2">
+												<input
+													className="form-check-input"
+													type="checkbox"
+													id={`expansion-control-team-${i}`}
+													checked={t.takeControl}
+													onChange={handleTakeControl(i)}
+												/>
+												<label
+													className="form-check-label"
+													htmlFor={`expansion-control-team-${i}`}
+												>
+													{multiTeamMode
+														? "Add team to multi team mode"
+														: "Switch to controlling this team"}
+												</label>
+											</div>
+										</div>
+										<div className="col-6 text-right">
 											<button
 												className="btn btn-danger"
 												onClick={deleteTeam(i)}

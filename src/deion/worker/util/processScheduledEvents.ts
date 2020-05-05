@@ -109,7 +109,7 @@ const processScheduledEvents = async (season: number, phase: number) => {
 				const increased =
 					info.numPlayoffByes > prevNumPlayoffByes ? "increased" : "decreased";
 				texts.push(
-					`Number of playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}`,
+					`Playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}`,
 				);
 			}
 
@@ -127,11 +127,20 @@ const processScheduledEvents = async (season: number, phase: number) => {
 							? "increased"
 							: "decreased";
 					texts.push(
-						`Number of playoff rounds ${increased} from ${prevNumGamesPlayoffSeries.length} to ${info.numGamesPlayoffSeries.length}`,
+						`Playoffs ${increased} from ${prevNumGamesPlayoffSeries.length} to ${info.numGamesPlayoffSeries.length} rounds`,
 					);
 				} else {
 					texts.push("New number of playoff games per round");
 				}
+			}
+
+			const prevNumGames = g.get("numGames");
+			if (info.numGames !== undefined && info.numGames !== prevNumGames) {
+				const increased =
+					info.numGames > prevNumGames ? "lengthened" : "shortened";
+				texts.push(
+					`Regular season ${increased} from ${prevNumGames} to ${info.numGames} games`,
+				);
 			}
 
 			if (texts.length === 1) {

@@ -3,8 +3,13 @@ refit rosters with game sim presets applied
 expansion draft
 - plan
   - 2. protection phase (only available if you do not choose to be an expansion team)
-    - each existing team will pick their players to protect. similar to the roster screen, but with a checkbox by each player
-      - ??? how should upcoming free agents be dealt with? i feel like they should be available to be drafted and guaranteed to not refuse to re-sign. make this clear in the UI
+    - upcoming free agents should be available to be drafted and guaranteed to not refuse to re-sign. make this clear in the UI
+    - auto skip if userTids are all expansion teams
+    - on submit
+      - auto protect AI teams
+      - update expansionDraft.phase
+      - redirect to next page
+    - use protectedPids directly from expansionDraft, not as separate component state
   - 3. expansion draft phase
     - basically the same as the fantasy draft UI
   - 4. after the expansion draft
@@ -12,12 +17,17 @@ expansion draft
     - then the normal draft happens
       - ??? what pick should an expansion team get?
         - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
+- confirm pages redirect correctly based on phase
 - auto play
 - multi team
 - FBGM?
 - redirect expansion draft url to protect/draft based on g.expansionDraft
 - valid to create team with no teamseason?
 - support doing it other phases too, same restrictions as Add Team?
+- make initial expansion form persist in g.expansionDraft
+  - default should not be undefined, should be some other object where that info can be stored
+- update play menu when appropriate
+- disable trading during expansion draft
 
 update Add Team text on Manage Teams to reference expansion draft
 - also get rid of the conf/div form there

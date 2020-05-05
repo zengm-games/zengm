@@ -53,6 +53,7 @@ import playerStatDists from "./playerStatDists";
 import playerStats from "./playerStats";
 import playoffs from "./playoffs";
 import powerRankings from "./powerRankings";
+import protectPlayers from "./protectPlayers";
 import relatives from "./relatives";
 import resetPassword from "./resetPassword";
 import roster from "./roster";
@@ -127,6 +128,7 @@ export default {
 	playerStats,
 	playoffs,
 	powerRankings,
+	protectPlayers,
 	relatives,
 	resetPassword,
 	roster,

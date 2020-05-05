@@ -294,6 +294,7 @@ export type GameAttributesLeague = {
 				phase: "protection";
 				numProtectedPlayers: number;
 				expansionTids: number[];
+				protectedPids: { [key: number]: number[] };
 		  };
 };
 

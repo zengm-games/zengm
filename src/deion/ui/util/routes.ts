@@ -111,7 +111,6 @@ const routes = () => {
 		"/l/:lid/player_stat_dists/:season": genPage("playerStatDists"),
 		"/l/:lid/team_stat_dists": genPage("teamStatDists"),
 		"/l/:lid/team_stat_dists/:season": genPage("teamStatDists"),
-		"/l/:lid/expansion_draft": genPage("expansionDraft"),
 		"/l/:lid/export_league": genPage("exportLeague"),
 		"/l/:lid/fantasy_draft": genPage("fantasyDraft"),
 		"/l/:lid/live": genPage("live"),
@@ -169,6 +168,8 @@ const routes = () => {
 		"/l/:lid/all_star_history": genPage("allStarHistory"),
 		"/l/:lid/award_races": genPage("awardRaces"),
 		"/l/:lid/award_races/:season": genPage("awardRaces"),
+		"/l/:lid/expansion_draft": genPage("expansionDraft"),
+		"/l/:lid/protect_players": genPage("protectPlayers"),
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),
 		"/l/:lid/draft_summary/:season": genPage("draftSummary"),

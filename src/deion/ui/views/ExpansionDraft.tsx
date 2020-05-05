@@ -6,7 +6,7 @@ import React, {
 	useEffect,
 } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, logEvent } from "../util";
+import { helpers, toWorker, logEvent, realtimeUpdate } from "../util";
 import type { View } from "../../common/types";
 import { PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
@@ -93,7 +93,7 @@ const ExpansionDraft = ({
 
 		const errors = await toWorker(
 			"main",
-			"startExpansionDraft",
+			"advanceToPlayerProtection",
 			numProtectedPlayers,
 			teams,
 		);
@@ -106,7 +106,7 @@ const ExpansionDraft = ({
 			});
 			setSaving(false);
 		} else {
-			// Redirect to next page
+			realtimeUpdate([], helpers.leagueUrl(["protect_players"]));
 		}
 	};
 

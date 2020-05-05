@@ -1271,7 +1271,7 @@ const sign = async (
 	}
 };
 
-const startExpansionDraft = async (
+const advanceToPlayerProtection = async (
 	numProtectedPlayers: number,
 	expansionTeams: {
 		abbrev: string;
@@ -1323,6 +1323,12 @@ const startExpansionDraft = async (
 				errors.push(`Abbrev ${t.abbrev} is already used by an existing team`);
 			}
 		}
+
+		for (const t2 of expansionTeams) {
+			if (t !== t2 && t2.abbrev === t.abbrev) {
+				errors.push(`Abbrev ${t.abbrev} is used by multiple expansion teams`);
+			}
+		}
 	}
 
 	if (expansionTeams.length === 0) {
@@ -1335,7 +1341,7 @@ const startExpansionDraft = async (
 	}
 
 	if (errors.length > 0) {
-		return errors;
+		return Array.from(new Set(errors));
 	}
 
 	const expansionTids: number[] = [];
@@ -1361,15 +1367,38 @@ const startExpansionDraft = async (
 		}
 	}
 
+	// teams is the previously existing teams, so they are the ones that need protection
+	const protectedPids: {
+		[key: number]: number[];
+	} = {};
+	for (const t of teams) {
+		protectedPids[t.tid] = [];
+	}
+
 	gameAttributes.expansionDraft = {
 		phase: "protection",
 		numProtectedPlayers,
 		expansionTids,
+		protectedPids,
 	};
 
 	await league.setGameAttributes(gameAttributes);
-
 	await idb.cache.flush();
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
+const updateProtectedPlayers = async (tid: number, protectedPids: number[]) => {
+	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));
+
+	if (!expansionDraft || expansionDraft.phase !== "protection") {
+		throw new Error("Invalid expansion draft phase");
+	}
+
+	expansionDraft.protectedPids[tid] = protectedPids;
+
+	await league.setGameAttributes({ expansionDraft });
+	await idb.cache.flush();
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
 const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
@@ -1911,7 +1940,8 @@ export default {
 	runBefore,
 	setLocal,
 	sign,
-	startExpansionDraft,
+	advanceToPlayerProtection,
+	updateProtectedPlayers,
 	startFantasyDraft,
 	switchTeam,
 	tradeCounterOffer,

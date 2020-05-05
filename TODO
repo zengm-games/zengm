@@ -13,16 +13,10 @@ expansion draft
   - some explanation of upcomoing FAs in UI
 - confirm pages redirect correctly based on phase
 - auto play
-- multi team
 - FBGM?
-- redirect expansion draft url to protect/draft based on g.expansionDraft
-- support doing it other phases too, same restrictions as Add Team?
 - make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] }
-- update play menu when appropriate
-- disable newPhase while in expansion draft
-- disable trading during expansion draft
+- disable trading, free agents, releasing players during expansion draft
 - a way to cancel the expansion draft from the protection phase
-- improve draft UI on large screens
 - after draft ends, replace "sim one pick / sim until end of draft" buttons with a message saying it's over and that results are transient
 
 update Add Team text on Manage Teams to reference expansion draft

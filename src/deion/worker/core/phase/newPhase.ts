@@ -26,6 +26,10 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		return;
 	}
 
+	if (g.get("expansionDraft").phase !== "setup") {
+		throw new Error("Can't call newPhase when expansion draft is in progress");
+	}
+
 	const phaseChangeInfo = {
 		[PHASE.PRESEASON]: {
 			func: newPhasePreseason,

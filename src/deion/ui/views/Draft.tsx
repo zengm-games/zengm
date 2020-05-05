@@ -284,6 +284,7 @@ const Draft = ({
 	});
 	const buttonClasses = classNames("btn", "btn-primary", "btn-xs", {
 		"d-sm-none": !(fantasyDraft || expansionDraft),
+		"d-xl-none": fantasyDraft || expansionDraft,
 	});
 	const wrapperClasses = classNames(
 		"row",
@@ -294,7 +295,8 @@ const Draft = ({
 			"row-offcanvas-right-force": fantasyDraft || expansionDraft,
 		},
 	);
-	const colClass = fantasyDraft || expansionDraft ? "col-12" : "col-sm-6";
+	const colClass =
+		fantasyDraft || expansionDraft ? "col-12 col-xl-6" : "col-sm-6";
 	const undraftedColClasses = classNames(colClass);
 	const draftedColClasses = classNames("sidebar-offcanvas", colClass, {
 		"sidebar-offcanvas-force": fantasyDraft || expansionDraft,

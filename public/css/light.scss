@@ -229,23 +229,21 @@ a.god-mode,
 
 // From the Bootstrap offcanvas example
 // http://getbootstrap.com/examples/offcanvas/
-@media screen and (max-width: 768px) {
-	.row-offcanvas {
-		position: relative;
-	}
-
-	.row-offcanvas-right .sidebar-offcanvas {
-		right: -100%;
-	}
-
-	.sidebar-offcanvas {
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
+.row-offcanvas {
+	position: relative;
 }
 
-@media screen and (min-width: 769px) {
+.row-offcanvas-right .sidebar-offcanvas {
+	right: -100%;
+}
+
+.sidebar-offcanvas {
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+@include media-breakpoint-up(md) {
 	.row-offcanvas-force {
 		position: relative;
 	}
@@ -258,6 +256,22 @@ a.god-mode,
 		position: absolute;
 		top: 0;
 		width: 100%;
+	}
+}
+
+@include media-breakpoint-up(xl) {
+	.row-offcanvas-force {
+		position: inherit;
+	}
+
+	.row-offcanvas-right-force .sidebar-offcanvas-force {
+		right: inherit;
+	}
+
+	.sidebar-offcanvas-force {
+		position: inherit;
+		top: inherit;
+		width: inherit;
 	}
 }
 

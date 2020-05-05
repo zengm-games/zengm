@@ -30,10 +30,13 @@ const TeamForm = ({
 	) => void;
 	t: Omit<View<"manageTeams">["teams"][number], "tid">;
 }) => {
-	const divisions = divs.map(div => ({
-		did: div.did,
-		name: `${div.name} (${confs[div.cid].name})`,
-	}));
+	const divisions = divs.map(div => {
+		const conf = confs.find(c => c.cid === div.cid);
+		return {
+			did: div.did,
+			name: conf ? `${div.name} (${conf.name})` : div.name,
+		};
+	});
 
 	return (
 		<>

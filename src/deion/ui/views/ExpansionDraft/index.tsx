@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../../util";
+import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 import { PHASE } from "../../../common";
 import TeamForm from "../ManageTeams/TeamForm";

@@ -145,15 +145,16 @@ const updateStandings = async (
 			// Fix playoffsRank if conferences don't matter
 			for (let i = 0; i < teams.length; i++) {
 				const t = teams[i];
-				const div = confs[t.seasonAttrs.cid].divs.find(
-					div2 => t.seasonAttrs.did === div2.did,
-				);
+				const conf = confs.find(c => c.cid === t.seasonAttrs.cid);
+				if (conf) {
+					const div = conf.divs.find(div2 => t.seasonAttrs.did === div2.did);
 
-				if (div) {
-					const t2 = div.teams.find(t3 => t.tid === t3.tid);
+					if (div) {
+						const t2 = div.teams.find(t3 => t.tid === t3.tid);
 
-					if (t2) {
-						t2.playoffsRank = i < numPlayoffTeams ? i + 1 : undefined;
+						if (t2) {
+							t2.playoffsRank = i < numPlayoffTeams ? i + 1 : undefined;
+						}
 					}
 				}
 			}

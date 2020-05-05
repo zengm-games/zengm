@@ -1405,11 +1405,9 @@ const updateConfsDivs = async (
 		}
 
 		if (newDid !== undefined) {
-			console.log("Move to new division", t.abbrev);
 			t.did = newDid;
 		}
 		if (newCid !== undefined) {
-			console.log("Move to new conference", t.abbrev);
 			t.cid = newCid;
 		}
 		await idb.cache.teams.put(t);

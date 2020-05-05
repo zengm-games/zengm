@@ -3,7 +3,7 @@ import { idb } from "../db";
 
 const updateProtectPlayers = async () => {
 	const expansionDraft = g.get("expansionDraft");
-	if (!expansionDraft) {
+	if (expansionDraft.phase === "setup") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["expansion_draft"]),

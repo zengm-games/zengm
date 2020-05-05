@@ -2,7 +2,7 @@ import { g, helpers } from "../util";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");
-	if (expansionDraft && expansionDraft.phase === "protection") {
+	if (expansionDraft.phase === "protection") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["protect_players"]),

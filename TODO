@@ -19,14 +19,14 @@ expansion draft
         - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
 - confirm pages redirect correctly based on phase
 - auto play
+  - abstract into core.expansionDraft
 - multi team
 - FBGM?
 - redirect expansion draft url to protect/draft based on g.expansionDraft
-- valid to create team with no teamseason?
 - support doing it other phases too, same restrictions as Add Team?
-- make initial expansion form persist in g.expansionDraft
-  - default should not be undefined, should be some other object where that info can be stored
+- make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] }
 - update play menu when appropriate
+- disable newPhase while in expansion draft
 - disable trading during expansion draft
 
 update Add Team text on Manage Teams to reference expansion draft

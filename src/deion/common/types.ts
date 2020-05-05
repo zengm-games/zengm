@@ -289,7 +289,7 @@ export type GameAttributesLeague = {
 	twoPointAccuracyFactor: number;
 	pace: number;
 	expansionDraft:
-		| undefined
+		| { phase: "setup" }
 		| {
 				phase: "protection";
 				numProtectedPlayers: number;

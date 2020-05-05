@@ -46,11 +46,13 @@ const ExpansionDraft = ({
 		setNumProtectedPlayers(String(minRosterSize - teams.length));
 	}, [minRosterSize, teams]);
 
-	if (phase !== PHASE.DRAFT_LOTTERY) {
+	const phaseDisabled = ![PHASE.PRESEASON, PHASE.DRAFT_LOTTERY].includes(phase);
+
+	if (phaseDisabled) {
 		return (
 			<p>
-				You can only do an expansion draft after the playoffs end but before the
-				draft starts.
+				You can only do an expansion draft during the preseason or draft lottery
+				phases.
 			</p>
 		);
 	}

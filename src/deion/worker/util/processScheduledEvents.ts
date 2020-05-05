@@ -5,16 +5,15 @@ import logEvent from "./logEvent";
 import { league } from "../core";
 
 const processScheduledEvents = async (season: number, phase: number) => {
-	console.log("processScheduledEvents", season, phase);
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
 	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];
 
 	for (const scheduledEvent of scheduledEvents) {
-		console.log("scheduledEvent", scheduledEvent);
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			continue;
 		}
+		console.log("scheduledEvent", scheduledEvent);
 
 		if (scheduledEvent.type === "teamInfo") {
 			// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
@@ -32,10 +31,6 @@ const processScheduledEvents = async (season: number, phase: number) => {
 				name: t.name,
 			};
 			Object.assign(t, info);
-
-			// Bullshit for pop. Really should be stored somewhere else, not without Team or TeamSeason
-			// @ts-ignore
-			delete t.pop;
 
 			await idb.cache.teams.put(t);
 
@@ -80,36 +75,63 @@ const processScheduledEvents = async (season: number, phase: number) => {
 				teamImgURLsCache: teams.map(t => t.imgURL),
 			});
 		} else if (scheduledEvent.type === "gameAttributes") {
+			const info = scheduledEvent.info;
+
 			const texts = [];
 			if (
-				scheduledEvent.info.threePointers !== undefined &&
-				scheduledEvent.info.threePointers !== g.get("threePointers")
+				info.threePointers !== undefined &&
+				info.threePointers !== g.get("threePointers")
 			) {
 				texts.push(
-					scheduledEvent.info.threePointers
+					info.threePointers
 						? "Added a three point line"
 						: "Removed the three point line",
 				);
 			}
 
 			const prevSalaryCap = g.get("salaryCap");
-			if (
-				scheduledEvent.info.salaryCap !== undefined &&
-				scheduledEvent.info.salaryCap !== prevSalaryCap
-			) {
+			if (info.salaryCap !== undefined && info.salaryCap !== prevSalaryCap) {
 				const increased =
-					scheduledEvent.info.salaryCap > prevSalaryCap
-						? "increased"
-						: "decreased";
+					info.salaryCap > prevSalaryCap ? "increased" : "decreased";
 				texts.push(
 					`Salary cap ${increased} from ${helpers.formatCurrency(
 						prevSalaryCap / 1000,
 						"M",
-					)} to ${helpers.formatCurrency(
-						scheduledEvent.info.salaryCap / 1000,
-						"M",
-					)}`,
+					)} to ${helpers.formatCurrency(info.salaryCap / 1000, "M")}`,
 				);
+			}
+
+			const prevNumPlayoffByes = g.get("numPlayoffByes");
+			if (
+				info.numPlayoffByes !== undefined &&
+				info.numPlayoffByes !== prevNumPlayoffByes
+			) {
+				const increased =
+					info.numPlayoffByes > prevNumPlayoffByes ? "increased" : "decreased";
+				texts.push(
+					`Number of playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}`,
+				);
+			}
+
+			const prevNumGamesPlayoffSeries = g.get("numGamesPlayoffSeries");
+			if (
+				info.numGamesPlayoffSeries !== undefined &&
+				JSON.stringify(info.numGamesPlayoffSeries) !==
+					JSON.stringify(prevNumGamesPlayoffSeries)
+			) {
+				if (
+					prevNumGamesPlayoffSeries.length !== info.numGamesPlayoffSeries.length
+				) {
+					const increased =
+						info.numGamesPlayoffSeries.length > prevNumGamesPlayoffSeries.length
+							? "increased"
+							: "decreased";
+					texts.push(
+						`Number of playoff rounds ${increased} from ${prevNumGamesPlayoffSeries.length} to ${info.numGamesPlayoffSeries.length}`,
+					);
+				} else {
+					texts.push("New number of playoff games per round");
+				}
 			}
 
 			if (texts.length === 1) {

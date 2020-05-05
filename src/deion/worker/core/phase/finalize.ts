@@ -8,6 +8,8 @@ import {
 	updatePhase,
 	updatePlayMenu,
 	updateStatus,
+	processScheduledEvents,
+	g,
 } from "../../util";
 import type { Conditions, Phase, UpdateEvents } from "../../../common/types";
 
@@ -47,6 +49,11 @@ const finalize = async (
 	await updatePlayMenu();
 	await updateStatus("Idle");
 	updateEvents.push("newPhase");
+
+	if (phase === PHASE.PRESEASON) {
+		// Needs to be here rather than in newPhasePreseason so g.season is set correctly and wrapped game attributes will therefore update correctly.
+		await processScheduledEvents(g.get("season"), PHASE.PRESEASON);
+	}
 
 	// If auto-simulating, initiate next action but don't redirect to a new URL
 	if (local.autoPlaySeasons > 0) {

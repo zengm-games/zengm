@@ -421,11 +421,10 @@ class Cache {
 					if (this._season === undefined) {
 						throw new Error("this._season is undefined");
 					}
-					// Need next year's because preseason phase happens before cache is re-filled
 					return tx
 						.objectStore("scheduledEvents")
 						.index("season")
-						.getAll(IDBKeyRange.bound(this._season, this._season + 1));
+						.getAll(this._season);
 				},
 			},
 			teamSeasons: {

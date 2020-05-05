@@ -31,6 +31,7 @@ describe("worker/core/league/create", () => {
 			"playoffSeries",
 			"releasedPlayers",
 			"schedule",
+			"scheduledEvents",
 			"teamSeasons",
 			"teamStats",
 			"teams",
@@ -48,7 +49,7 @@ describe("worker/core/league/create", () => {
 		assert.equal(leagueData.gameAttributes.userTid, 0);
 		assert.equal(leagueData.gameAttributes.gameOver, false);
 		assert.equal(leagueData.gameAttributes.daysLeft, 0);
-		assert.equal(Object.keys(leagueData.gameAttributes).length, 62);
+		assert.equal(Object.keys(leagueData.gameAttributes).length, 61);
 	});
 
 	test("initialize teams object store", async () => {

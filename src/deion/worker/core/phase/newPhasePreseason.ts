@@ -1,16 +1,7 @@
-import { PLAYER, PHASE } from "../../../common";
+import { PLAYER } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
-import {
-	env,
-	g,
-	helpers,
-	local,
-	logEvent,
-	random,
-	toUI,
-	processScheduledEvents,
-} from "../../util";
+import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhasePreseason = async (
@@ -180,8 +171,6 @@ const newPhasePreseason = async (
 
 		await idb.cache.players.put(p);
 	}
-
-	await processScheduledEvents(g.get("season"), PHASE.PRESEASON);
 
 	if (local.autoPlaySeasons > 0) {
 		local.autoPlaySeasons -= 1;

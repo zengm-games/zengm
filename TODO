@@ -23,7 +23,7 @@ expansion draft
 - FBGM?
 
 add more scheduled events
-- numGamesPlayoffSeries, confs, divs
+- confs, divs
 - expansion
 - event log should also log to DB
 
@@ -46,6 +46,7 @@ blog
   - can choose to use or not when creating league
 - GUI to edit conferences and divisions
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
+- playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs
 
 eventually
 - way to view scheduled events and add/edit/delete

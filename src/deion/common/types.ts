@@ -145,7 +145,7 @@ export type DraftPickWithoutKey = {
 	round: number;
 	pick: number;
 	// 0 if not set
-	season: number | "fantasy";
+	season: number | "fantasy" | "expansion";
 };
 
 export type DraftPick = {
@@ -298,6 +298,7 @@ export type GameAttributesLeague = {
 		  }
 		| {
 				phase: "draft";
+				expansionTids: number[];
 				availablePids: number[];
 		  };
 };

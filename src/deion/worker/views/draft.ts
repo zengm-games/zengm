@@ -10,6 +10,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("playerMovement")
 	) {
 		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
+		const expansionDraft = g.get("expansionDraft");
 		let stats: string[];
 		let undrafted: any[];
 
@@ -22,6 +23,14 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"playersByTid",
 				PLAYER.UNDRAFTED,
 			);
+		} else if (expansionDraft.phase === "draft") {
+			stats =
+				process.env.SPORT === "basketball"
+					? ["per", "ewa"]
+					: ["gp", "keyStats", "av"];
+			undrafted = (
+				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
+			).filter(p => expansionDraft.availablePids.includes(p.pid));
 		} else {
 			stats = [];
 			undrafted = (
@@ -46,7 +55,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
 		undrafted = await idb.getCopies.playersPlus(undrafted, {
-			attrs: ["pid", "name", "age", "injury", "contract", "watch"],
+			attrs: ["pid", "name", "age", "injury", "contract", "watch", "abbrev"],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
 			season: g.get("season"),
@@ -56,7 +65,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 		let drafted: any[];
 
-		if (fantasyDraft) {
+		if (fantasyDraft || expansionDraft.phase === "draft") {
 			drafted = local.fantasyDraftResults;
 		} else {
 			drafted = await idb.cache.players.indexGetAll("playersByTid", [
@@ -89,9 +98,14 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showRookies: true,
 			fuzz: true,
 		});
-		let draftPicks = await draft.getOrder(); // DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
+		let draftPicks = await draft.getOrder();
 
-		if (!fantasyDraft && draftPicks.length > 2 * g.get("numTeams")) {
+		// DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
+		if (
+			!fantasyDraft &&
+			expansionDraft.phase !== "draft" &&
+			draftPicks.length > 2 * g.get("numTeams")
+		) {
 			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
 
 			if (draftPicks2.length === 2 * g.get("numTeams")) {
@@ -130,6 +144,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			draftType: g.get("draftType"),
 			drafted,
+			expansionDraft: expansionDraft.phase === "draft",
 			fantasyDraft,
 			stats,
 			undrafted,

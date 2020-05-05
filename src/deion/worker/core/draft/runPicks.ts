@@ -4,7 +4,11 @@ import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
 import { g, helpers, local, lock, random } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type {
+	Conditions,
+	MinimalPlayerRatings,
+	Player,
+} from "../../../common/types";
 
 /**
  * Simulate draft picks until it's the user's turn or the draft is over.
@@ -23,18 +27,30 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	lock.set("drafting", true);
 	const pids: number[] = [];
 	const draftPicks = await getOrder();
-	const playersAll =
-		g.get("phase") === PHASE.FANTASY_DRAFT
-			? await idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED)
-			: (
-					await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-						[g.get("season")],
-						[g.get("season"), Infinity],
-					])
-			  ).filter(p => p.tid === PLAYER.UNDRAFTED);
 
-	playersAll.sort((a, b) => b.value - a.value); // Called after either the draft is over or it's the user's pick
+	const expansionDraft = g.get("expansionDraft");
 
+	let playersAll: Player<MinimalPlayerRatings>[];
+	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
+		playersAll = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			PLAYER.UNDRAFTED,
+		);
+	} else if (expansionDraft.phase === "draft") {
+		playersAll = (
+			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
+		).filter(p => expansionDraft.availablePids.includes(p.pid));
+	} else {
+		playersAll = (
+			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+				[g.get("season")],
+				[g.get("season"), Infinity],
+			])
+		).filter(p => p.tid === PLAYER.UNDRAFTED);
+	}
+	playersAll.sort((a, b) => b.value - a.value);
+
+	// Called after either the draft is over or it's the user's pick
 	const afterDoneAuto = async () => {
 		// Is draft over?
 		await afterPicks(draftPicks.length === 0, conditions);

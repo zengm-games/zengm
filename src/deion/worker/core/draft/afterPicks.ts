@@ -1,8 +1,16 @@
 import { PHASE, PLAYER } from "../../../common";
 import { league, phase, player } from "..";
 import { idb } from "../../db";
-import { g, local, toUI, updatePlayMenu, updatePhase } from "../../util";
+import {
+	g,
+	local,
+	toUI,
+	updatePlayMenu,
+	updatePhase,
+	updateStatus,
+} from "../../util";
 import type { Conditions } from "../../../common/types";
+import expansionDraft from "../expansionDraft";
 
 const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {
@@ -31,14 +39,26 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 				await idb.cache.players.put(p);
 			}
 
+			// Refresh draft results without redirecting away
+			await toUI("realtimeUpdate", [["playerMovement"]]);
+
+			local.fantasyDraftResults = [];
 			await league.setGameAttributes({
 				phase: g.get("nextPhase"),
 				nextPhase: undefined,
 			});
 			await updatePhase();
 			await updatePlayMenu();
+			await updateStatus("Idle");
+		} else if (g.get("expansionDraft").phase === "draft") {
+			// Refresh draft results without redirecting away
 			await toUI("realtimeUpdate", [["playerMovement"]]);
+
 			local.fantasyDraftResults = [];
+			await expansionDraft.finalize();
+			await updatePhase();
+			await updatePlayMenu();
+			await updateStatus("Idle");
 		} else {
 			// Non-fantasy draft
 			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);

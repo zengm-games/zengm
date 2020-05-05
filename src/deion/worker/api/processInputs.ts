@@ -113,7 +113,8 @@ const depth = (params: Params) => {
 const draft = () => {
 	if (
 		g.get("phase") !== PHASE.DRAFT &&
-		g.get("phase") !== PHASE.FANTASY_DRAFT
+		g.get("phase") !== PHASE.FANTASY_DRAFT &&
+		g.get("expansionDraft").phase !== "draft"
 	) {
 		return {
 			redirectUrl: helpers.leagueUrl([

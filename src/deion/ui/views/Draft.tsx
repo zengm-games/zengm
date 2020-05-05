@@ -101,6 +101,7 @@ const viewUndrafted = () => {
 const Draft = ({
 	draftType,
 	drafted,
+	expansionDraft,
 	fantasyDraft,
 	stats,
 	undrafted,
@@ -119,7 +120,11 @@ const Draft = ({
 	};
 
 	useTitleBar({
-		title: "Draft",
+		title: fantasyDraft
+			? "Fantasy Draft"
+			: expansionDraft
+			? "Expansion Draft"
+			: "Draft",
 	});
 	const remainingPicks = drafted.filter(p => p.pid < 0);
 	const nextPick = remainingPicks[0];
@@ -130,12 +135,16 @@ const Draft = ({
 	const colsUndrafted = getCols("Name", "Pos", "Age", "Ovr", "Pot", "Draft");
 	colsUndrafted[0].width = "100%";
 
-	if (fantasyDraft) {
+	if (fantasyDraft || expansionDraft) {
 		colsUndrafted.splice(
 			5,
 			0,
 			...getCols("Contract", ...stats.map(stat => `stat:${stat}`)),
 		);
+	}
+
+	if (expansionDraft) {
+		colsUndrafted.splice(2, 0, ...getCols("Team"));
 	}
 
 	const rowsUndrafted = undrafted.map(p => {
@@ -177,7 +186,7 @@ const Draft = ({
 			</div>,
 		];
 
-		if (fantasyDraft) {
+		if (fantasyDraft || expansionDraft) {
 			data.splice(
 				5,
 				0,
@@ -189,6 +198,14 @@ const Draft = ({
 						? helpers.roundStat(p.stats[stat], stat)
 						: p.stats[stat],
 				),
+			);
+		}
+
+		if (expansionDraft) {
+			data.splice(
+				2,
+				0,
+				<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
 			);
 		}
 
@@ -232,7 +249,7 @@ const Draft = ({
 			p.pid >= 0 ? p.ratings.pot : null,
 		];
 
-		if (fantasyDraft) {
+		if (fantasyDraft || expansionDraft) {
 			data.splice(
 				7,
 				0,
@@ -249,6 +266,14 @@ const Draft = ({
 			);
 		}
 
+		if (expansionDraft) {
+			data.splice(
+				4,
+				0,
+				<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
+			);
+		}
+
 		return {
 			key: i,
 			data,
@@ -257,22 +282,22 @@ const Draft = ({
 			},
 		};
 	});
-	const buttonClasses = classNames("btn", "btn-info", "btn-xs", {
-		"d-sm-none": !fantasyDraft,
+	const buttonClasses = classNames("btn", "btn-primary", "btn-xs", {
+		"d-sm-none": !(fantasyDraft || expansionDraft),
 	});
 	const wrapperClasses = classNames(
 		"row",
 		"row-offcanvas",
 		"row-offcanvas-right",
 		{
-			"row-offcanvas-force": fantasyDraft,
-			"row-offcanvas-right-force": fantasyDraft,
+			"row-offcanvas-force": fantasyDraft || expansionDraft,
+			"row-offcanvas-right-force": fantasyDraft || expansionDraft,
 		},
 	);
-	const colClass = fantasyDraft ? "col-12" : "col-sm-6";
+	const colClass = fantasyDraft || expansionDraft ? "col-12" : "col-sm-6";
 	const undraftedColClasses = classNames(colClass);
 	const draftedColClasses = classNames("sidebar-offcanvas", colClass, {
-		"sidebar-offcanvas-force": fantasyDraft,
+		"sidebar-offcanvas-force": fantasyDraft || expansionDraft,
 	});
 	return (
 		<>

@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, updatePlayMenu } from "../../util";
 import { league, team } from "..";
 import type { GameAttributesLeague } from "../../../common/types";
 
@@ -91,7 +91,7 @@ const advanceToPlayerProtection = async (
 
 	if (takeControlTids.length > 0) {
 		const userTids = g.get("userTids");
-		if (userTids.length > 0) {
+		if (userTids.length > 1) {
 			gameAttributes.userTids = [...userTids, ...takeControlTids];
 		} else {
 			gameAttributes.userTid = takeControlTids[takeControlTids.length - 1];
@@ -115,6 +115,7 @@ const advanceToPlayerProtection = async (
 	};
 
 	await league.setGameAttributes(gameAttributes);
+	await updatePlayMenu();
 };
 
 export default advanceToPlayerProtection;

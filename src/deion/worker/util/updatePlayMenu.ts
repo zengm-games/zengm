@@ -130,10 +130,31 @@ const updatePlayMenu = async () => {
 		stopAuto: {
 			label: `Stop auto play (${local.autoPlaySeasons} seasons left)`,
 		},
+		expansionDraft: {
+			url: helpers.leagueUrl(["expansion_draft"]),
+			label: "Continue expansion draft setup",
+		},
 	};
+
 	let keys: string[] = [];
 
-	if (g.get("phase") === PHASE.PRESEASON) {
+	if (
+		g.get("phase") === PHASE.DRAFT ||
+		g.get("phase") === PHASE.FANTASY_DRAFT ||
+		g.get("expansionDraft").phase === "draft"
+	) {
+		// Draft - check this first because it checks more than just phase
+		const draftPicks = await draft.getOrder();
+		const nextPick = draftPicks[0];
+
+		if (nextPick && g.get("userTids").includes(nextPick.tid)) {
+			keys = ["viewDraft"];
+		} else if (draftPicks.some(dp => g.get("userTids").includes(dp.tid))) {
+			keys = ["onePick", "untilYourNextPick", "viewDraft"];
+		} else {
+			keys = ["onePick", "untilEnd", "viewDraft"];
+		}
+	} else if (g.get("phase") === PHASE.PRESEASON) {
 		// Preseason
 		keys = ["untilRegularSeason"];
 	} else if (
@@ -190,21 +211,6 @@ const updatePlayMenu = async () => {
 			g.get("draftType") !== "noLottery" && g.get("draftType") !== "random"
 				? ["viewDraftLottery", "untilDraft"]
 				: ["untilDraft"];
-	} else if (
-		g.get("phase") === PHASE.DRAFT ||
-		g.get("phase") === PHASE.FANTASY_DRAFT
-	) {
-		// Draft
-		const draftPicks = await draft.getOrder();
-		const nextPick = draftPicks[0];
-
-		if (nextPick && g.get("userTids").includes(nextPick.tid)) {
-			keys = ["viewDraft"];
-		} else if (draftPicks.some(dp => g.get("userTids").includes(dp.tid))) {
-			keys = ["onePick", "untilYourNextPick", "viewDraft"];
-		} else {
-			keys = ["onePick", "untilEnd", "viewDraft"];
-		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft
 		keys = ["untilResignPlayers"];
@@ -233,6 +239,10 @@ const updatePlayMenu = async () => {
 
 	if (negotiationInProgress && g.get("phase") !== PHASE.RESIGN_PLAYERS) {
 		keys = ["contractNegotiation"];
+	}
+
+	if (g.get("expansionDraft").phase === "protection") {
+		keys = ["expansionDraft"];
 	}
 
 	if (lock.get("newPhase")) {

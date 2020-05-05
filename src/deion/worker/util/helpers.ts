@@ -260,7 +260,12 @@ const overtimeCounter = (n: number): string => {
 };
 
 const pickDesc = (dp: DraftPick): string => {
-	const season = dp.season === "fantasy" ? "Fantasy draft" : dp.season;
+	const season =
+		dp.season === "fantasy"
+			? "Fantasy draft"
+			: dp.season === "expansion"
+			? "Expansion draft"
+			: dp.season;
 	let desc = `${season} ${commonHelpers.ordinal(dp.round)} round pick`;
 	const extras: string[] = [];
 

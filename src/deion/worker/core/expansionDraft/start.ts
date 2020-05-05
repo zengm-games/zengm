@@ -1,7 +1,7 @@
 import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
+import { g, helpers, local, updatePlayMenu } from "../../util";
 import autoProtect from "./autoProtect";
-import { league } from "..";
+import { league, draft } from "..";
 
 const start = async () => {
 	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));
@@ -9,6 +9,8 @@ const start = async () => {
 	if (expansionDraft.phase !== "protection") {
 		throw new Error("Invalid expansion draft phase");
 	}
+
+	local.fantasyDraftResults = [];
 
 	const userTids = g.get("userTids");
 
@@ -32,13 +34,17 @@ const start = async () => {
 		.map(p => p.pid);
 
 	// Move draft picks around, like fantasy draft
+	await draft.genOrderFantasy(expansionDraft.expansionTids, "expansion");
 
 	await league.setGameAttributes({
 		expansionDraft: {
 			phase: "draft",
+			expansionTids: expansionDraft.expansionTids,
 			availablePids,
 		},
 	});
+
+	await updatePlayMenu();
 };
 
 export default start;

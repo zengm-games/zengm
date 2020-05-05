@@ -237,10 +237,12 @@ const processAttrs = (
 					const draftName =
 						transaction.phase === PHASE.FANTASY_DRAFT
 							? `${transaction.season} fantasy draft`
-							: `<a href="${helpers.leagueUrl([
+							: transaction.phase === PHASE.DRAFT
+							? `<a href="${helpers.leagueUrl([
 									"draft_history",
 									transaction.season,
-							  ])}">${transaction.season} draft</a>`;
+							  ])}">${transaction.season} draft</a>`
+							: `${transaction.season} expansion draft`;
 
 					output.latestTransaction = `${helpers.ordinal(
 						// @ts-ignore

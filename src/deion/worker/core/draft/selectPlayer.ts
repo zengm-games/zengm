@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common";
-import { player } from "..";
+import { player, league } from "..";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, overrides } from "../../util";
@@ -24,7 +24,12 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 	p.tid = dp.tid;
 
-	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
+	const expansionDraft = g.get("expansionDraft");
+
+	const fantasyOrExpansionDraft =
+		g.get("phase") === PHASE.FANTASY_DRAFT || expansionDraft.phase === "draft";
+
+	if (fantasyOrExpansionDraft) {
 		const fakeP = helpers.deepCopy(p);
 		fakeP.draft = {
 			round: dp.round,
@@ -51,7 +56,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	}
 
 	// Contract
-	if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
+	if (!fantasyOrExpansionDraft) {
 		if (g.get("hardCap")) {
 			// Make it an expiring contract, so player immediately becomes a free agent
 			player.setContract(
@@ -97,10 +102,17 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		player.addStatsRow(p, g.get("nextPhase") === PHASE.PLAYOFFS);
 	}
 
-	const pickNum = dp.pick + (dp.round - 1) * g.get("numTeams");
+	const pickNum =
+		dp.pick +
+		(dp.round - 1) *
+			(expansionDraft.phase === "draft"
+				? expansionDraft.expansionTids.length
+				: g.get("numTeams"));
 	const draftName =
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? `${g.get("season")} fantasy draft`
+			: expansionDraft.phase === "draft"
+			? `${g.get("season")} expansion draft`
 			: `<a href="${helpers.leagueUrl([
 					"draft_history",
 					g.get("season"),
@@ -119,6 +131,18 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 	await idb.cache.players.put(p);
 	await idb.cache.draftPicks.delete(dp.dpid);
+
+	if (expansionDraft.phase === "draft") {
+		await league.setGameAttributes({
+			expansionDraft: {
+				...expansionDraft,
+				availablePids: expansionDraft.availablePids.filter(
+					pid2 => pid !== pid2,
+				),
+			},
+		});
+	}
+
 	logEvent({
 		type: "draft",
 		text: `The <a href="${helpers.leagueUrl([

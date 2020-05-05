@@ -11,7 +11,11 @@ import { g } from "../../util";
  */
 const getOrder = async () => {
 	const season =
-		g.get("phase") === PHASE.FANTASY_DRAFT ? "fantasy" : g.get("season");
+		g.get("phase") === PHASE.FANTASY_DRAFT
+			? "fantasy"
+			: g.get("expansionDraft").phase === "draft"
+			? "expansion"
+			: g.get("season");
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		season,

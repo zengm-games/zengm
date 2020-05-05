@@ -1280,10 +1280,15 @@ const advanceToPlayerProtection = async (
 		typeof expansionDraft.advanceToPlayerProtection
 	>[1],
 ) => {
-	await expansionDraft.advanceToPlayerProtection(
+	const errors = await expansionDraft.advanceToPlayerProtection(
 		numProtectedPlayers,
 		expansionTeams,
 	);
+
+	if (errors) {
+		return errors;
+	}
+
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
@@ -1450,7 +1455,11 @@ const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 		const draftPicks = await idb.cache.draftPicks.getAll();
 
 		for (const dp of draftPicks) {
-			if (dp.season !== "fantasy" && dp.season > maxSeason) {
+			if (
+				dp.season !== "fantasy" &&
+				dp.season !== "expansion" &&
+				dp.season > maxSeason
+			) {
 				await idb.cache.draftPicks.delete(dp.dpid);
 			}
 		}

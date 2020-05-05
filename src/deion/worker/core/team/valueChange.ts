@@ -115,7 +115,10 @@ const getPicks = async ({
 				continue;
 			}
 
-			const season = dp.season === "fantasy" ? g.get("season") : dp.season;
+			const season =
+				dp.season === "fantasy" || dp.season === "expansion"
+					? g.get("season")
+					: dp.season;
 			let estPick: number;
 			if (dp.pick > 0) {
 				estPick = dp.pick;
@@ -173,7 +176,10 @@ const getPicks = async ({
 				continue;
 			}
 
-			const season = dp.season === "fantasy" ? g.get("season") : dp.season;
+			const season =
+				dp.season === "fantasy" || dp.season === "expansion"
+					? g.get("season")
+					: dp.season;
 			const seasons = season - g.get("season");
 			let estPick: number;
 			if (dp.pick > 0) {

@@ -288,7 +288,13 @@ export type GameAttributesLeague = {
 	threePointAccuracyFactor: number;
 	twoPointAccuracyFactor: number;
 	pace: number;
-	expansionDraft: undefined;
+	expansionDraft:
+		| undefined
+		| {
+				phase: "protection";
+				numProtectedPlayers: number;
+				expansionTids: number[];
+		  };
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

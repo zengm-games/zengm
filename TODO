@@ -2,12 +2,6 @@ refit rosters with game sim presets applied
 
 expansion draft
 - plan
-  - 1. configure expansion draft
-    - can only be started after the playoffs end but before the draft starts
-    - select number of teams in the expansion draft (can be any number)
-    - select team names and other info (ideally it'll have some prepopulated suggestions)
-    - select how many players each team can protect (default: minimum roster size minus the number of expansion teams, and if that allows a team to protect their whole roster somehow, then force them to at least leave the number of expansion teams unprotected)
-    - select if you want to switch to controlling one of the expansion teams
   - 2. protection phase (only available if you do not choose to be an expansion team)
     - each existing team will pick their players to protect. similar to the roster screen, but with a checkbox by each player
       - ??? how should upcoming free agents be dealt with? i feel like they should be available to be drafted and guaranteed to not refuse to re-sign. make this clear in the UI
@@ -21,9 +15,15 @@ expansion draft
 - auto play
 - multi team
 - FBGM?
+- redirect expansion draft url to protect/draft based on g.expansionDraft
+- valid to create team with no teamseason?
+- support doing it other phases too, same restrictions as Add Team?
 
 update Add Team text on Manage Teams to reference expansion draft
 - also get rid of the conf/div form there
+
+make sure added teams (Add Teams or Expansion Draft) don't break views for not having a TeamSeason/TeamStats entry
+- Team Finances
 
 add more scheduled events
 - confs, divs
@@ -31,6 +31,8 @@ add more scheduled events
 - event log should also log to DB
 
 add instructions to faq for deleting old service worker in chrome
+
+do something about situation when there are two conferences but one does not have enough teams for the playoffs
 
 blog
 - danger zone auto save

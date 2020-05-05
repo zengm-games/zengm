@@ -1,3 +1,4 @@
+import addNewTeamToExistingLeague from "./addNewTeamToExistingLeague";
 import checkRosterSizes from "./checkRosterSizes";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
@@ -10,6 +11,7 @@ import updateStrategies from "./updateStrategies";
 import valueChange from "./valueChange";
 
 export default {
+	addNewTeamToExistingLeague,
 	checkRosterSizes,
 	genSeasonRow,
 	genStatsRow,

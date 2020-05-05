@@ -61,7 +61,6 @@ const acceptContractNegotiation = async (
 };
 
 const addTeam = async (
-	cid: number,
 	did: number,
 ): Promise<{
 	tid: number;
@@ -73,49 +72,14 @@ const addTeam = async (
 	stadiumCapacity: number;
 	colors: [string, string, string];
 }> => {
-	const pop = 1;
-	const t = team.generate({
-		tid: g.get("numTeams"),
-		cid,
+	const t = await team.addNewTeamToExistingLeague({
 		did,
 		region: "Region",
 		name: "Name",
 		abbrev: "ZZZ",
-		pop,
+		pop: 1,
 		imgURL: undefined,
 	});
-	const teamSeason = team.genSeasonRow(t);
-	teamSeason.pop = pop;
-	teamSeason.stadiumCapacity = g.get("defaultStadiumCapacity");
-	const teamStats = team.genStatsRow(t.tid);
-	await idb.cache.teams.put(t);
-	await idb.cache.teamSeasons.put(teamSeason);
-	await idb.cache.teamStats.put(teamStats);
-	await league.setGameAttributes({
-		numTeams: g.get("numTeams") + 1,
-		teamAbbrevsCache: [...g.get("teamAbbrevsCache"), t.abbrev],
-		teamRegionsCache: [...g.get("teamRegionsCache"), t.region],
-		teamNamesCache: [...g.get("teamNamesCache"), t.name],
-		teamImgURLsCache: [...g.get("teamImgURLsCache"), t.imgURL],
-	});
-	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
-
-	for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
-		const draftYear = g.get("season") + dpOffset + i;
-
-		for (let round = 1; round <= g.get("numDraftRounds"); round++) {
-			await idb.cache.draftPicks.put({
-				tid: t.tid,
-				originalTid: t.tid,
-				round,
-				pick: 0,
-				season: draftYear,
-			});
-		}
-
-		// Add new draft prospects to draft class
-		await draft.genPlayers(draftYear, undefined, g.get("numDraftRounds"));
-	}
 
 	await idb.cache.flush();
 
@@ -126,8 +90,10 @@ const addTeam = async (
 		region: t.region,
 		name: t.name,
 		imgURL: t.imgURL,
-		pop: teamSeason.pop,
-		stadiumCapacity: teamSeason.stadiumCapacity,
+		// @ts-ignore
+		pop: t.pop,
+		// @ts-ignore
+		stadiumCapacity: t.stadiumCapacity,
 		colors: t.colors,
 	};
 };
@@ -1306,6 +1272,7 @@ const sign = async (
 };
 
 const startExpansionDraft = async (
+	numProtectedPlayers: number,
 	expansionTeams: {
 		abbrev: string;
 		region: string;
@@ -1358,9 +1325,51 @@ const startExpansionDraft = async (
 		}
 	}
 
+	if (expansionTeams.length === 0) {
+		errors.push("No expansion teams");
+	}
+
+	numProtectedPlayers = parseInt((numProtectedPlayers as never) as string);
+	if (Number.isNaN(numProtectedPlayers)) {
+		errors.push("Invalid number of protected players");
+	}
+
 	if (errors.length > 0) {
 		return errors;
 	}
+
+	const expansionTids: number[] = [];
+	const takeControlTids: number[] = [];
+	for (const teamInfo of expansionTeams) {
+		const t = await team.addNewTeamToExistingLeague(teamInfo);
+		expansionTids.push(t.tid);
+
+		if (teamInfo.takeControl) {
+			takeControlTids.push(t.tid);
+		}
+	}
+
+	const gameAttributes: Partial<GameAttributesLeague> = {};
+
+	if (takeControlTids.length > 0) {
+		const userTids = g.get("userTids");
+		if (userTids.length > 0) {
+			gameAttributes.userTids = [...userTids, ...takeControlTids];
+		} else {
+			gameAttributes.userTid = takeControlTids[takeControlTids.length - 1];
+			gameAttributes.userTids = [gameAttributes.userTid];
+		}
+	}
+
+	gameAttributes.expansionDraft = {
+		phase: "protection",
+		numProtectedPlayers,
+		expansionTids,
+	};
+
+	await league.setGameAttributes(gameAttributes);
+
+	await idb.cache.flush();
 };
 
 const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
@@ -1655,25 +1664,27 @@ const updateTeamInfo = async (
 			userRegion = t.region;
 		}
 
-		const teamSeason = await idb.cache.teamSeasons.indexGet(
-			"teamSeasonsByTidSeason",
-			[t.tid, g.get("season")],
-		);
-
+		// Also apply team info changes to this season
 		if (g.get("phase") < PHASE.PLAYOFFS) {
-			// Also apply team info changes to this season
-			teamSeason.cid = t.cid;
-			teamSeason.did = t.did;
-			teamSeason.region = t.region;
-			teamSeason.name = t.name;
-			teamSeason.abbrev = t.abbrev;
-			teamSeason.imgURL = t.imgURL;
-			teamSeason.colors = t.colors;
-			teamSeason.pop = t.pop;
-			teamSeason.stadiumCapacity = t.stadiumCapacity;
-		}
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[t.tid, g.get("season")],
+			);
 
-		await idb.cache.teamSeasons.put(teamSeason);
+			if (teamSeason) {
+				teamSeason.cid = t.cid;
+				teamSeason.did = t.did;
+				teamSeason.region = t.region;
+				teamSeason.name = t.name;
+				teamSeason.abbrev = t.abbrev;
+				teamSeason.imgURL = t.imgURL;
+				teamSeason.colors = t.colors;
+				teamSeason.pop = t.pop;
+				teamSeason.stadiumCapacity = t.stadiumCapacity;
+
+				await idb.cache.teamSeasons.put(teamSeason);
+			}
+		}
 	}
 
 	if (userName !== undefined && userRegion !== undefined) {

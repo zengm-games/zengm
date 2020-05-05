@@ -1,4 +1,10 @@
-import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
+import React, {
+	useState,
+	ChangeEvent,
+	FormEvent,
+	MouseEvent,
+	useEffect,
+} from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent } from "../util";
 import type { View } from "../../common/types";
@@ -12,6 +18,7 @@ type Team = Omit<View<"manageTeams">["teams"][number], "tid"> & {
 const ExpansionDraft = ({
 	confs,
 	divs,
+	minRosterSize,
 	multiTeamMode,
 	phase,
 }: View<"expansionDraft">) => {
@@ -29,8 +36,15 @@ const ExpansionDraft = ({
 
 	const [saving, setSaving] = useState(false);
 	const [teams, setTeams] = useState<Team[]>([helpers.deepCopy(defaultTeam)]);
+	const [numProtectedPlayers, setNumProtectedPlayers] = useState(
+		String(minRosterSize - 1),
+	);
 
 	useTitleBar({ title: "Expansion Draft" });
+
+	useEffect(() => {
+		setNumProtectedPlayers(String(minRosterSize - teams.length));
+	}, [minRosterSize, teams]);
 
 	if (phase !== PHASE.DRAFT_LOTTERY) {
 		return (
@@ -77,7 +91,12 @@ const ExpansionDraft = ({
 
 		setSaving(true);
 
-		const errors = await toWorker("main", "startExpansionDraft", teams);
+		const errors = await toWorker(
+			"main",
+			"startExpansionDraft",
+			numProtectedPlayers,
+			teams,
+		);
 
 		if (errors) {
 			logEvent({
@@ -129,9 +148,8 @@ const ExpansionDraft = ({
 				existing team has a chance to protect some of their players.
 			</p>
 
-			<p>First, specify the expansion teams.</p>
-
 			<form onSubmit={handleSubmit}>
+				<h2>Expansion Teams</h2>
 				<div className="row">
 					{teams.map((t, i) => {
 						return (
@@ -201,15 +219,31 @@ const ExpansionDraft = ({
 						</div>
 					</div>
 				</div>
-				<div className="text-center">
-					<button
-						type="submit"
-						className="btn btn-primary"
-						disabled={saving || teams.length === 0}
-					>
-						Advance To Player Protection
-					</button>
+
+				<h2>Settings</h2>
+				<div className="form-group">
+					<label htmlFor="expansion-num-protected">
+						Number of players each existing team can protect
+					</label>
+					<input
+						id="expansion-num-protected"
+						type="text"
+						className="form-control"
+						onChange={event => {
+							setNumProtectedPlayers(event.target.value);
+						}}
+						value={numProtectedPlayers}
+						style={{ maxWidth: 100 }}
+					/>
 				</div>
+
+				<button
+					type="submit"
+					className="btn btn-primary"
+					disabled={saving || teams.length === 0}
+				>
+					Advance To Player Protection
+				</button>
 			</form>
 		</>
 	);

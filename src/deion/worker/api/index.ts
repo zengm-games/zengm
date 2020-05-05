@@ -14,6 +14,7 @@ import {
 	player,
 	team,
 	trade,
+	expansionDraft,
 } from "../core";
 import { connectMeta, idb, iterate } from "../db";
 import {
@@ -1387,17 +1388,19 @@ const advanceToPlayerProtection = async (
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const autoProtect = async (tid: number) => {
+	const pids = await expansionDraft.autoProtect(tid);
+	await expansionDraft.updateProtectedPids(tid, pids);
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
 const updateProtectedPlayers = async (tid: number, protectedPids: number[]) => {
-	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));
+	await expansionDraft.updateProtectedPids(tid, protectedPids);
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
 
-	if (expansionDraft.phase !== "protection") {
-		throw new Error("Invalid expansion draft phase");
-	}
-
-	expansionDraft.protectedPids[tid] = protectedPids;
-
-	await league.setGameAttributes({ expansionDraft });
-	await idb.cache.flush();
+const startExpansionDraft = async () => {
+	await expansionDraft.start();
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
@@ -1941,7 +1944,9 @@ export default {
 	setLocal,
 	sign,
 	advanceToPlayerProtection,
+	autoProtect,
 	updateProtectedPlayers,
+	startExpansionDraft,
 	startFantasyDraft,
 	switchTeam,
 	tradeCounterOffer,

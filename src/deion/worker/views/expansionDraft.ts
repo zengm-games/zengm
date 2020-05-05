@@ -8,6 +8,12 @@ const updateExpansionDraft = async () => {
 			redirectUrl: helpers.leagueUrl(["protect_players"]),
 		};
 		return returnValue;
+	} else if (expansionDraft.phase === "draft") {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl: helpers.leagueUrl(["draft"]),
+		};
+		return returnValue;
 	}
 
 	return {

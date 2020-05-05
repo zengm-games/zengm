@@ -9,6 +9,12 @@ const updateProtectPlayers = async () => {
 			redirectUrl: helpers.leagueUrl(["expansion_draft"]),
 		};
 		return returnValue;
+	} else if (expansionDraft.phase === "draft") {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl: helpers.leagueUrl(["draft"]),
+		};
+		return returnValue;
 	}
 
 	const stats =
@@ -37,7 +43,6 @@ const updateProtectPlayers = async () => {
 				"draft",
 				"latestTransaction",
 				"latestTransactionSeason",
-				"valueFuzz",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,

@@ -18,10 +18,12 @@ const PlayerList = ({
 	players,
 	protectedPids,
 	stats,
+	tid,
 }: Pick<View<"protectPlayers">, "players" | "stats"> & {
 	updateProtectedPids: (newProtectedPids: number[]) => void;
 	numProtectedPlayers: number;
 	protectedPids: number[];
+	tid: number;
 }) => {
 	const cols = getCols(
 		"",
@@ -92,11 +94,8 @@ const PlayerList = ({
 				<button
 					type="button"
 					className="btn btn-light-bordered"
-					onClick={() => {
-						const pids = orderBy(players, "valueFuzz", "desc")
-							.slice(0, numProtectedPlayers)
-							.map(p => p.pid);
-						updateProtectedPids(pids);
+					onClick={async () => {
+						await toWorker("main", "autoProtect", tid);
 					}}
 				>
 					Auto Select
@@ -219,6 +218,7 @@ const ProtectPlayers = ({
 					players={players}
 					protectedPids={protectedPids}
 					stats={stats}
+					tid={userTid}
 				/>
 			)}
 

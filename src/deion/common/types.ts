@@ -295,6 +295,10 @@ export type GameAttributesLeague = {
 				numProtectedPlayers: number;
 				expansionTids: number[];
 				protectedPids: { [key: number]: number[] };
+		  }
+		| {
+				phase: "draft";
+				availablePids: number[];
 		  };
 };
 

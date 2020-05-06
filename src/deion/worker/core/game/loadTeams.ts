@@ -6,15 +6,21 @@ import { Player, MinimalPlayerRatings } from "../../../common/types";
 const playoffTryhardModifer = (x: number): number => {
 	var y = 0.0;
 	if (x < 45) {
-		y = 0.1;
+		y = 0.01;
 	} else if (x >= 45 && x < 60) {
 		y =
-			0.000053 * Math.pow(x, 3) - 0.0078 * Math.pow(x, 2) + 0.381667 * x - 6.14;
+			0.0001066667 * Math.pow(x, 3) -
+			0.0158 * Math.pow(x, 2) +
+			0.7803333333 * x -
+			12.83;
 	} else if (x >= 60 && x <= 75) {
 		y =
-			0.000067 * Math.pow(x, 3) - 0.0136 * Math.pow(x, 2) + 0.934333 * x - 21.3;
+			0.0000266667 * Math.pow(x, 3) -
+			0.0056 * Math.pow(x, 2) +
+			0.3933333333 * x -
+			9.05;
 	} else if (x > 75) {
-		y = 0.4;
+		y = 0.2;
 	}
 	return (y += 1);
 };
@@ -129,6 +135,13 @@ const processTeam = (
 				if (r === "turnovers" || r === "fouling") {
 					// These are negative ratings, so the bonus or penalty should be inversed
 					p2.compositeRating[r] /= playoffTryhardModifer(rating.ovr);
+				} else if (r === "drawingFouls") {
+					// It is a known science that refs call fewer fouls in the playoffs, this is also a Harden playoffs nerf to mimic real life because otherwise he scores 40 ppg in the sim. Let's set initial nerf to .85
+					p2.compositeRating[r] *= 0.85;
+				} else if (r === "endurance" || r === "usage") {
+					// Decreasing buff to endurance and usage
+					p2.compositeRating[r] *=
+						1 + (playoffTryhardModifer(rating.ovr) - 1) / 2;
 				} else {
 					// Apply bonus or penalty
 					p2.compositeRating[r] *= playoffTryhardModifer(rating.ovr);

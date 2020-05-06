@@ -6,6 +6,7 @@ import { PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 
 const ExpansionDraft = ({
+	builtInTeams,
 	confs,
 	divs,
 	initialNumProtectedPlayers,
@@ -16,8 +17,8 @@ const ExpansionDraft = ({
 }: View<"expansionDraft">) => {
 	const defaultTeam: ExpansionDraftSetupTeam = {
 		abbrev: "AAA",
-		region: "Aaa",
-		name: "Aaa",
+		region: "",
+		name: "",
 		imgURL: "",
 		colors: ["#000000", "#cccccc", "#ffffff"],
 		pop: "1",
@@ -31,6 +32,7 @@ const ExpansionDraft = ({
 	const [numProtectedPlayers, setNumProtectedPlayers2] = useState(
 		initialNumProtectedPlayers,
 	);
+	const [addTeamAbbrev, setAddTeamAbbrev] = useState("");
 
 	const setNumProtectedPlayers = async (newNum: string) => {
 		setNumProtectedPlayers2(newNum);
@@ -90,7 +92,11 @@ const ExpansionDraft = ({
 	const addTeam = async (event: MouseEvent) => {
 		event.preventDefault();
 
-		await setTeams([...teams, helpers.deepCopy(defaultTeam)]);
+		const newTeam =
+			builtInTeams.find(t => t.abbrev === addTeamAbbrev) || defaultTeam;
+
+		await setTeams([...teams, helpers.deepCopy(newTeam)]);
+		setAddTeamAbbrev("");
 	};
 
 	const handleSubmit = async (event: FormEvent) => {
@@ -144,6 +150,8 @@ const ExpansionDraft = ({
 
 		await setTeams(newTeams);
 	};
+
+	const currentAbbrevs = teams.map(t => t.abbrev);
 
 	return (
 		<>
@@ -213,7 +221,23 @@ const ExpansionDraft = ({
 					})}
 					<div className="col-xl-4 col-lg-6 mb-3">
 						<div className="card">
-							<div className="card-body">
+							<div className="card-body form-inline">
+								<select
+									className="form-control mr-2"
+									value={addTeamAbbrev}
+									onChange={event => {
+										setAddTeamAbbrev(event.target.value);
+									}}
+								>
+									<option value="">Blank Team</option>
+									{builtInTeams
+										.filter(t => !currentAbbrevs.includes(t.abbrev))
+										.map(t => (
+											<option key={t.abbrev} value={t.abbrev}>
+												{t.region} {t.name}
+											</option>
+										))}
+								</select>
 								<button
 									type="button"
 									className="btn btn-secondary"

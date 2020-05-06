@@ -8,8 +8,7 @@ expansion draft
   - what about other draft types?
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
-- easily populate expansion draft with built-in teams
-  - also better "random" defaults, don't make the abbrevs collide
+  - firstSeasonAfterExpansion
 
 add more scheduled events
 - confs, divs
@@ -46,6 +45,7 @@ blog
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 - playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs - numGames too
 - Tools > Expansion Draft
+  - choose a built in expansion team, or make your own
 
 eventually
 - way to view scheduled events and add/edit/delete

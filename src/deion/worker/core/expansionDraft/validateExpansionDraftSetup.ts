@@ -22,6 +22,17 @@ const validateExpansionDraftSetup = async () => {
 			t.imgURL = undefined;
 		}
 
+		if (t.abbrev === "") {
+			errors.push(`Abbrev cannot be blank`);
+		} else {
+			if (t.name === "") {
+				errors.push(`Blank team name for ${t.abbrev}`);
+			}
+			if (t.region === "") {
+				errors.push(`Blank team region for ${t.abbrev}`);
+			}
+		}
+
 		const pop = parseFloat(t.pop);
 		if (Number.isNaN(pop)) {
 			errors.push(`Invalid population for ${t.abbrev}`);

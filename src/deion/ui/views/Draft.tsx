@@ -217,6 +217,10 @@ const Draft = ({
 	const colsDrafted = getCols("Pick", "Team").concat(
 		colsUndrafted.slice(0, -1),
 	);
+
+	if (expansionDraft) {
+		colsDrafted.splice(4, 1);
+	}
 	const rowsDrafted = drafted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
@@ -263,14 +267,6 @@ const Draft = ({
 						? helpers.roundStat(p.stats[stat], stat)
 						: null,
 				),
-			);
-		}
-
-		if (expansionDraft) {
-			data.splice(
-				4,
-				0,
-				<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
 			);
 		}
 

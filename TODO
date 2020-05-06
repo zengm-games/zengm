@@ -7,8 +7,7 @@ expansion draft
   - some explanation of upcomoing FAs in UI
 - confirm pages redirect correctly based on phase
 - FBGM?
-- make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] }
-- after draft ends, replace "sim one pick / sim until end of draft" buttons with a message saying it's over and that results are transient
+- make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] } so you can navigate away and back without losing it
 
 update Add Team text on Manage Teams to reference expansion draft
 - also get rid of the conf/div form there

@@ -322,7 +322,26 @@ const Draft = ({
 				players on the left.
 			</p>
 
-			<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
+			{remainingPicks.length > 0 ? (
+				<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
+			) : (
+				<>
+					<p>
+						<span className="alert alert-success d-inline-block mb-0">
+							The draft is over!
+						</span>
+					</p>
+					{fantasyDraft || expansionDraft ? (
+						<p>
+							<span className="alert alert-warning d-inline-block mb-0">
+								Draft results from {fantasyDraft ? "fantasy" : "expansion"}{" "}
+								drafts are only viewable while you remain on this page. When you
+								navigate away, they are lost.
+							</span>
+						</p>
+					) : null}
+				</>
+			)}
 
 			<div className={wrapperClasses}>
 				<div className={undraftedColClasses}>

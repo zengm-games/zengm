@@ -35,6 +35,7 @@ import {
 	updateStatus,
 	toUI,
 	recomputeLocalUITeamOvrs,
+	updatePhase,
 } from "../util";
 import views from "../views";
 import type {
@@ -1274,6 +1275,23 @@ const sign = async (
 	}
 };
 
+const updateExpansionDraftSetup = async (changes: {
+	numProtectedPlayers?: string;
+	teams?: ExpansionDraftSetupTeam[];
+}) => {
+	const expansionDraft = g.get("expansionDraft");
+	if (expansionDraft.phase !== "setup") {
+		throw new Error("Invalid expansion draft phase");
+	}
+
+	await setGameAttributes({
+		expansionDraft: {
+			...expansionDraft,
+			...changes,
+		},
+	});
+};
+
 const advanceToPlayerProtection = async (
 	numProtectedPlayers: string,
 	expansionTeams: ExpansionDraftSetupTeam[],
@@ -1308,7 +1326,11 @@ const cancelExpansionDraft = async () => {
 	}
 	await setGameAttributes({
 		expansionDraft: { phase: "setup" },
+		phase: g.get("nextPhase"),
+		nextPhase: undefined,
 	});
+	await updatePhase();
+	await updatePlayMenu();
 };
 
 const updateProtectedPlayers = async (tid: number, protectedPids: number[]) => {
@@ -1864,6 +1886,7 @@ export default {
 	runBefore,
 	setLocal,
 	sign,
+	updateExpansionDraftSetup,
 	advanceToPlayerProtection,
 	autoProtect,
 	cancelExpansionDraft,

@@ -8,7 +8,7 @@ expansion draft
   - what about other draft types?
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
-- make initial expansion draft form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] } so you can navigate away and back without losing it, and also for ease of scheduled events
+- advanceToPlayerProtection should pull from g.expansionDraft
 - easily populate expansion draft with built-in teams
   - also better "random" defaults, don't make the abbrevs collide
 

@@ -1,26 +1,20 @@
-import React, {
-	useState,
-	ChangeEvent,
-	FormEvent,
-	MouseEvent,
-	useEffect,
-} from "react";
+import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent, realtimeUpdate } from "../util";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types";
 import { PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 
-type Team = ExpansionDraftSetupTeam;
-
 const ExpansionDraft = ({
 	confs,
 	divs,
+	initialNumProtectedPlayers,
+	initialTeams,
 	minRosterSize,
 	multiTeamMode,
 	phase,
 }: View<"expansionDraft">) => {
-	const defaultTeam: Team = {
+	const defaultTeam: ExpansionDraftSetupTeam = {
 		abbrev: "AAA",
 		region: "Aaa",
 		name: "Aaa",
@@ -33,16 +27,31 @@ const ExpansionDraft = ({
 	};
 
 	const [saving, setSaving] = useState(false);
-	const [teams, setTeams] = useState<Team[]>([helpers.deepCopy(defaultTeam)]);
-	const [numProtectedPlayers, setNumProtectedPlayers] = useState(
-		String(minRosterSize - 1),
+	const [teams, setTeams2] = useState<ExpansionDraftSetupTeam[]>(initialTeams);
+	const [numProtectedPlayers, setNumProtectedPlayers2] = useState(
+		initialNumProtectedPlayers,
 	);
 
-	useTitleBar({ title: "Expansion Draft" });
+	const setNumProtectedPlayers = async (newNum: string) => {
+		setNumProtectedPlayers2(newNum);
+		setSaving(true);
+		await toWorker("main", "updateExpansionDraftSetup", {
+			numProtectedPlayers: newNum,
+		});
+		setSaving(false);
+	};
 
-	useEffect(() => {
-		setNumProtectedPlayers(String(minRosterSize - teams.length));
-	}, [minRosterSize, teams]);
+	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
+		setTeams2(newTeams);
+		setSaving(true);
+		await toWorker("main", "updateExpansionDraftSetup", {
+			numProtectedPlayers: String(minRosterSize - newTeams.length),
+			teams: newTeams,
+		});
+		setSaving(false);
+	};
+
+	useTitleBar({ title: "Expansion Draft" });
 
 	const phaseDisabled = ![PHASE.PRESEASON, PHASE.DRAFT_LOTTERY].includes(phase);
 
@@ -55,7 +64,7 @@ const ExpansionDraft = ({
 		);
 	}
 
-	const handleInputChange = (i: number) => (
+	const handleInputChange = (i: number) => async (
 		field: string,
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
@@ -67,19 +76,19 @@ const ExpansionDraft = ({
 		};
 		const newTeams = [...teams];
 		newTeams[i] = t;
-		setTeams(newTeams);
+		await setTeams(newTeams);
 	};
 
-	const deleteTeam = (i: number) => (event: MouseEvent) => {
+	const deleteTeam = (i: number) => async (event: MouseEvent) => {
 		event.preventDefault();
 
-		setTeams(teams.filter((t, j) => j !== i));
+		await setTeams(teams.filter((t, j) => j !== i));
 	};
 
-	const addTeam = (event: MouseEvent) => {
+	const addTeam = async (event: MouseEvent) => {
 		event.preventDefault();
 
-		setTeams([...teams, helpers.deepCopy(defaultTeam)]);
+		await setTeams([...teams, helpers.deepCopy(defaultTeam)]);
 	};
 
 	const handleSubmit = async (event: FormEvent) => {
@@ -110,7 +119,7 @@ const ExpansionDraft = ({
 		}
 	};
 
-	const handleTakeControl = (i: number) => (
+	const handleTakeControl = (i: number) => async (
 		event: ChangeEvent<HTMLInputElement>,
 	) => {
 		const newTeams = [...teams];
@@ -136,7 +145,7 @@ const ExpansionDraft = ({
 			}
 		}
 
-		setTeams(newTeams);
+		await setTeams(newTeams);
 	};
 
 	return (
@@ -229,8 +238,8 @@ const ExpansionDraft = ({
 						id="expansion-num-protected"
 						type="text"
 						className="form-control"
-						onChange={event => {
-							setNumProtectedPlayers(event.target.value);
+						onChange={async event => {
+							await setNumProtectedPlayers(event.target.value);
 						}}
 						value={numProtectedPlayers}
 						style={{ maxWidth: 100 }}

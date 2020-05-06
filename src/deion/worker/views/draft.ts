@@ -7,7 +7,8 @@ import { g, local } from "../util";
 const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("playerMovement")
+		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("newPhase")
 	) {
 		const fantasyDraft = g.get("phase") === PHASE.FANTASY_DRAFT;
 		const expansionDraft = g.get("expansionDraft");

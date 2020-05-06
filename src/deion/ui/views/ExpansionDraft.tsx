@@ -7,13 +7,11 @@ import React, {
 } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker, logEvent, realtimeUpdate } from "../util";
-import type { View } from "../../common/types";
+import type { View, ExpansionDraftSetupTeam } from "../../common/types";
 import { PHASE } from "../../common";
 import TeamForm from "./ManageTeams/TeamForm";
 
-type Team = Omit<View<"manageTeams">["teams"][number], "tid"> & {
-	takeControl: boolean;
-};
+type Team = ExpansionDraftSetupTeam;
 
 const ExpansionDraft = ({
 	confs,
@@ -28,9 +26,9 @@ const ExpansionDraft = ({
 		name: "Aaa",
 		imgURL: "",
 		colors: ["#000000", "#cccccc", "#ffffff"],
-		pop: 1,
-		stadiumCapacity: 25000,
-		did: divs[divs.length - 1].did,
+		pop: "1",
+		stadiumCapacity: "25000",
+		did: String(divs[divs.length - 1].did),
 		takeControl: false,
 	};
 

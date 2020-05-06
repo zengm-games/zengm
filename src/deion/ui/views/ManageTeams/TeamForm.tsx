@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import type { View } from "../../../common/types";
+import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
 
 const TeamForm = ({
 	classNamesCol,
@@ -28,7 +28,10 @@ const TeamForm = ({
 		field: string,
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => void;
-	t: Omit<View<"manageTeams">["teams"][number], "tid">;
+	// Really should just be ExpansionDraftSetupTeam, but need to update Manage Teams
+	t:
+		| Omit<View<"manageTeams">["teams"][number], "tid">
+		| ExpansionDraftSetupTeam;
 }) => {
 	const divisions = divs.map(div => {
 		const conf = confs.find(c => c.cid === div.cid);

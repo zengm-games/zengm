@@ -1,4 +1,4 @@
-import React, { useCallback, ChangeEvent } from "react";
+import React, { ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalShallow } from "../util";
 import orderBy from "lodash/orderBy";
 

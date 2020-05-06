@@ -5,22 +5,13 @@ import type {
 	GameAttributesLeague,
 	Team,
 	Conditions,
+	ExpansionDraftSetupTeam,
 } from "../../../common/types";
 import { PHASE } from "../../../common";
 
 const advanceToPlayerProtection = async (
-	numProtectedPlayers: number,
-	expansionTeams: {
-		abbrev: string;
-		region: string;
-		name: string;
-		imgURL: string | undefined;
-		colors: [string, string, string];
-		pop: number;
-		stadiumCapacity: number;
-		did: number;
-		takeControl: boolean;
-	}[],
+	numProtectedPlayersString: string,
+	expansionTeams: ExpansionDraftSetupTeam[],
 	conditions: Conditions,
 ) => {
 	const errors = [];
@@ -28,26 +19,25 @@ const advanceToPlayerProtection = async (
 	const divs = await g.get("divs", Infinity);
 
 	// Do some error checking
-	for (const t of expansionTeams) {
-		console.log(t);
+	const parsedExpansionTeams = expansionTeams.map(t => {
 		if (t.imgURL === "") {
 			t.imgURL = undefined;
 		}
 
-		t.pop = parseFloat((t.pop as never) as string);
-		if (Number.isNaN(t.pop)) {
+		const pop = parseFloat(t.pop);
+		if (Number.isNaN(pop)) {
 			errors.push(`Invalid population for ${t.abbrev}`);
 		}
 
-		t.stadiumCapacity = parseInt((t.stadiumCapacity as never) as string);
-		if (Number.isNaN(t.stadiumCapacity)) {
+		const stadiumCapacity = parseInt(t.stadiumCapacity);
+		if (Number.isNaN(stadiumCapacity)) {
 			errors.push(`Invalid stadium capacity for ${t.abbrev}`);
 		}
 
-		t.did = parseInt((t.did as never) as string);
+		const did = parseInt(t.did);
 		let foundDiv = false;
 		for (const div of divs) {
-			if (t.did === div.did) {
+			if (did === div.did) {
 				foundDiv = true;
 				break;
 			}
@@ -67,13 +57,20 @@ const advanceToPlayerProtection = async (
 				errors.push(`Abbrev ${t.abbrev} is used by multiple expansion teams`);
 			}
 		}
-	}
 
-	if (expansionTeams.length === 0) {
+		return {
+			...t,
+			did,
+			pop,
+			stadiumCapacity,
+		};
+	});
+
+	if (parsedExpansionTeams.length === 0) {
 		errors.push("No expansion teams");
 	}
 
-	numProtectedPlayers = parseInt((numProtectedPlayers as never) as string);
+	const numProtectedPlayers = parseInt(numProtectedPlayersString);
 	if (Number.isNaN(numProtectedPlayers)) {
 		errors.push("Invalid number of protected players");
 	}
@@ -90,7 +87,7 @@ const advanceToPlayerProtection = async (
 
 	const expansionTids: number[] = [];
 	const takeControlTeams: Team[] = [];
-	for (const teamInfo of expansionTeams) {
+	for (const teamInfo of parsedExpansionTeams) {
 		const t = await team.addNewTeamToExistingLeague({
 			...teamInfo,
 			firstSeasonAfterExpansion,

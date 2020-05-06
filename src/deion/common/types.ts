@@ -225,6 +225,18 @@ type GameAttributeWithHistory<T> = {
 	value: T;
 }[];
 
+export type ExpansionDraftSetupTeam = {
+	abbrev: string;
+	region: string;
+	name: string;
+	imgURL: string | undefined;
+	colors: [string, string, string];
+	pop: string;
+	stadiumCapacity: string;
+	did: string;
+	takeControl: boolean;
+};
+
 export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: boolean;
@@ -289,7 +301,11 @@ export type GameAttributesLeague = {
 	twoPointAccuracyFactor: number;
 	pace: number;
 	expansionDraft:
-		| { phase: "setup" }
+		| {
+				phase: "setup";
+				numProtectedPlayers?: string;
+				teams?: ExpansionDraftSetupTeam[];
+		  }
 		| {
 				phase: "protection";
 				numProtectedPlayers: number;

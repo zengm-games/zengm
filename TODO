@@ -60,6 +60,8 @@ eventually
 
 ---
 
+manually specify lottery result in god mode
+
 better newScheduleCrappy
 
 objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies

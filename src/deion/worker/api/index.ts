@@ -51,6 +51,7 @@ import type {
 	Relative,
 	TradeTeam,
 	Options,
+	ExpansionDraftSetupTeam,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 
@@ -1274,12 +1275,8 @@ const sign = async (
 };
 
 const advanceToPlayerProtection = async (
-	numProtectedPlayers: Parameters<
-		typeof expansionDraft.advanceToPlayerProtection
-	>[0],
-	expansionTeams: Parameters<
-		typeof expansionDraft.advanceToPlayerProtection
-	>[1],
+	numProtectedPlayers: string,
+	expansionTeams: ExpansionDraftSetupTeam[],
 	conditions: Conditions,
 ) => {
 	const errors = await expansionDraft.advanceToPlayerProtection(

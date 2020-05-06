@@ -9,7 +9,7 @@ expansion draft
 - make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] } so you can navigate away and back without losing it
 - update phaseText
 - cancel when userTid already switched to expansion team?
-- after making 10th pick when user controls expansion team, error. not getting to finalize
+- Team column in drafted table
 
 update Add Team text on Manage Teams to reference expansion draft
 - also get rid of the conf/div form there

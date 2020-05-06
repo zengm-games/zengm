@@ -253,12 +253,18 @@ const playStop = async () => {
 };
 
 const runDraft = async (onlyOne: boolean, conditions: Conditions) => {
-	await updateStatus("Draft in progress...");
-	await draft.runPicks(onlyOne, conditions);
-	const draftPicks = await draft.getOrder();
+	if (
+		g.get("phase") === PHASE.DRAFT ||
+		g.get("phase") === PHASE.FANTASY_DRAFT ||
+		g.get("expansionDraft").phase === "draft"
+	) {
+		await updateStatus("Draft in progress...");
+		await draft.runPicks(onlyOne, conditions);
+		const draftPicks = await draft.getOrder();
 
-	if (draftPicks.length === 0) {
-		await updateStatus("Idle");
+		if (draftPicks.length === 0) {
+			await updateStatus("Idle");
+		}
 	}
 };
 

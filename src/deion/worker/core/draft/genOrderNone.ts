@@ -6,7 +6,7 @@ import type { DraftPick } from "../../../common/types";
 
 const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
+		attrs: ["tid", "firstSeasonAfterExpansion"],
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost", "cid", "did"],
 		season: g.get("season"),
 	});

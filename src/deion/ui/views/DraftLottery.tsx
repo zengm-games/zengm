@@ -486,6 +486,13 @@ const DraftLottery = (props: Props) => {
 				</p>
 			) : null}
 
+			{props.showExpansionTeamMessage ? (
+				<p>
+					New expansion teams are treated as if they won half their games but
+					missed the playoffs.
+				</p>
+			) : null}
+
 			<DraftLotteryTable {...props} />
 		</>
 	);

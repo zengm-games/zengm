@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PHASE } from "../../../common";
 import { season } from "..";
@@ -11,7 +12,7 @@ import type { TeamFiltered } from "../../../common/types";
  */
 const lotterySort = (
 	teams: TeamFiltered<
-		["tid"],
+		["tid", "firstSeasonAfterExpansion"],
 		["playoffRoundsWon", "won", "winp", "cid", "did"],
 		any,
 		number
@@ -25,10 +26,6 @@ const lotterySort = (
 	const randValues = range(g.get("numTeams"));
 	random.shuffle(randValues);
 
-	for (let i = 0; i < teams.length; i++) {
-		(teams[i] as any).randVal = randValues[i];
-	}
-
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.get("phase") < PHASE.PLAYOFFS) {
 		const { tidPlayoffs } = season.genPlayoffSeries(helpers.orderByWinp(teams));
@@ -39,6 +36,22 @@ const lotterySort = (
 			}
 		}
 	}
+
+	for (let i = 0; i < teams.length; i++) {
+		const t = teams[i];
+		(t as any).randVal = randValues[i];
+
+		// Expansion teams who
+		if (
+			t.firstSeasonAfterExpansion !== undefined &&
+			t.firstSeasonAfterExpansion - 1 === g.get("season") &&
+			t.seasonAttrs.winp === 0
+		) {
+			t.seasonAttrs.winp = 0.5;
+		}
+	}
+
+	console.log(teams);
 
 	teams.sort((a, b) => {
 		let r;

@@ -1,11 +1,6 @@
 refit rosters with game sim presets applied
 
-expansion draft
-- what pick should an expansion team get in the upcoming draft?
-  - easiest would be to have lotterySort be aware of which teams are expansion teamsPlus
-    - firstSeasonAfterExpansion - could use that and teamSeason check to impose an artificial W/L record
-  - expose it in the draft lottery UI somewhere
-  - what about other draft types?
+after expansion draft ends, if you go to next phase immediately ,Play > View Draft doesn't work?
 
 LAE -> LAC
 

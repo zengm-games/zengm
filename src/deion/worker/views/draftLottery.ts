@@ -17,6 +17,7 @@ const updateDraftLottery = async (
 	draftType?: DraftType;
 	result: DraftLotteryResultArray | undefined;
 	season: number;
+	showExpansionTeamMessage: boolean;
 	ties: boolean;
 	type: "completed" | "projected" | "readyToRun";
 	userTid: number;
@@ -27,6 +28,19 @@ const updateDraftLottery = async (
 		season !== state.season ||
 		(season === g.get("season") && updateEvents.includes("gameSim"))
 	) {
+		let showExpansionTeamMessage = false;
+		if (season === g.get("season")) {
+			const teams = await idb.cache.teams.getAll();
+			for (const t of teams) {
+				if (
+					t.firstSeasonAfterExpansion !== undefined &&
+					t.firstSeasonAfterExpansion - 1 === g.get("season")
+				) {
+					showExpansionTeamMessage = true;
+				}
+			}
+		}
+
 		// View completed draft lottery
 		if (
 			season < g.get("season") ||
@@ -52,6 +66,7 @@ const updateDraftLottery = async (
 					draftType,
 					result,
 					season,
+					showExpansionTeamMessage,
 					ties: g.get("ties"),
 					type: "completed",
 					userTid: g.get("userTid"),
@@ -64,6 +79,7 @@ const updateDraftLottery = async (
 					draftType: "noLottery",
 					result: undefined,
 					season,
+					showExpansionTeamMessage,
 					ties: g.get("ties"),
 					type: "completed",
 					userTid: g.get("userTid"),
@@ -82,10 +98,12 @@ const updateDraftLottery = async (
 			season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY
 				? "readyToRun"
 				: "projected";
+
 		return {
 			draftType: draftLotteryResult.draftType,
 			result: draftLotteryResult.result,
 			season: draftLotteryResult.season,
+			showExpansionTeamMessage,
 			ties: g.get("ties"),
 			type,
 			userTid: g.get("userTid"),

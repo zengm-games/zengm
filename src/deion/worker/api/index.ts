@@ -62,9 +62,7 @@ const acceptContractNegotiation = async (
 	return contractNegotiation.accept(pid, amount, exp);
 };
 
-const addTeam = async (
-	did: number,
-): Promise<{
+const addTeam = async (): Promise<{
 	tid: number;
 	abbrev: string;
 	region: string;
@@ -74,6 +72,8 @@ const addTeam = async (
 	stadiumCapacity: number;
 	colors: [string, string, string];
 }> => {
+	const did = g.get("divs")[0].did;
+
 	const t = await team.addNewTeamToExistingLeague({
 		did,
 		region: "Region",

@@ -1,16 +1,13 @@
 refit rosters with game sim presets applied
 
 expansion draft
+- should i just make it a phase?
 - what pick should an expansion team get in the upcoming draft?
   - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
-
-update Add Team text on Manage Teams to reference expansion draft
-- also get rid of the conf/div form there
-
-make sure added teams (Add Teams or Expansion Draft) don't break views for not having a TeamSeason/TeamStats entry
-- Team Finances
+- make sure added teams (Add Teams or Expansion Draft) don't break views for not having a TeamSeason/TeamStats entry
+  - Team Finances
 
 add more scheduled events
 - confs, divs

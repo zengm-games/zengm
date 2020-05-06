@@ -134,8 +134,6 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			{props.godMode ? (
 				<AddRemove
 					dispatch={dispatch}
-					confs={props.confs}
-					divs={props.divs}
 					expansionDraftInProgress={props.expansionDraftInProgress}
 					phase={props.phase}
 					saving={saving}

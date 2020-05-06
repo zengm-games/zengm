@@ -26,7 +26,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 
 	lock.set("drafting", true);
 	const pids: number[] = [];
-	const draftPicks = await getOrder();
+	let draftPicks = await getOrder();
 
 	const expansionDraft = g.get("expansionDraft");
 
@@ -61,27 +61,35 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	// This will actually draft "untilUserOrEnd"
 	const autoSelectPlayer = async (): Promise<number[]> => {
 		if (draftPicks.length > 0) {
-			const dp = draftPicks[0];
+			// If there are no players, delete the rest of the picks and draft is done
+			if (playersAll.length === 0) {
+				for (const dp of draftPicks) {
+					await idb.cache.draftPicks.delete(dp.dpid);
+				}
+				draftPicks = await getOrder();
+			} else {
+				const dp = draftPicks[0];
 
-			if (g.get("userTids").includes(dp.tid) && local.autoPlaySeasons === 0) {
-				return afterDoneAuto();
-			}
+				if (g.get("userTids").includes(dp.tid) && local.autoPlaySeasons === 0) {
+					return afterDoneAuto();
+				}
 
-			draftPicks.shift();
-			const selection = helpers.bound(
-				Math.floor(Math.abs(random.realGauss(0, 1))),
-				0,
-				playersAll.length - 1,
-			);
+				draftPicks.shift();
+				const selection = helpers.bound(
+					Math.floor(Math.abs(random.realGauss(0, 1))),
+					0,
+					playersAll.length - 1,
+				);
 
-			// 0=best prospect, 1=next best prospect, etc.
-			const pid = playersAll[selection].pid;
-			await selectPlayer(dp, pid);
-			pids.push(pid);
-			playersAll.splice(selection, 1); // Delete from the list of undrafted players
+				// 0=best prospect, 1=next best prospect, etc.
+				const pid = playersAll[selection].pid;
+				await selectPlayer(dp, pid);
+				pids.push(pid);
+				playersAll.splice(selection, 1); // Delete from the list of undrafted players
 
-			if (!onlyOne) {
-				return autoSelectPlayer();
+				if (!onlyOne) {
+					return autoSelectPlayer();
+				}
 			}
 		}
 

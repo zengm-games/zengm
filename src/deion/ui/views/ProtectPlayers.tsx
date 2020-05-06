@@ -196,7 +196,7 @@ const ProtectPlayers = ({
 			});
 			setSaving(false);
 		} else {
-			realtimeUpdate([], helpers.leagueUrl([]));
+			realtimeUpdate([], helpers.leagueUrl(["draft"]));
 		}
 	};
 

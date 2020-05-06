@@ -133,14 +133,6 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			});
 		}
 
-		if (drafted.length === 0) {
-			console.log("drafted:", drafted);
-			console.log("draftPicks:", draftPicks);
-			throw new Error(
-				"drafted.length should always be 60, combo of drafted players and picks. But now it's 0. Why?",
-			);
-		}
-
 		return {
 			draftType: g.get("draftType"),
 			drafted,

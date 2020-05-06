@@ -1,7 +1,6 @@
 refit rosters with game sim presets applied
 
 expansion draft
-- if players run out, end draft
 - ??? what pick should an expansion team get in the upcoming draft?
   - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
 - force upcoming FAs to re-sign with expansion team

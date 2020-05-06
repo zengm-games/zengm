@@ -10,6 +10,7 @@ import {
 } from "../util";
 import type { View } from "../../common/types";
 import { PlayerNameLabels, SafeHtml, DataTable } from "../components";
+import { PHASE } from "../../common";
 
 const PlayerList = ({
 	updateProtectedPids,
@@ -18,11 +19,13 @@ const PlayerList = ({
 	protectedPids,
 	stats,
 	tid,
+	upcomingFreeAgentsText,
 }: Pick<View<"protectPlayers">, "players" | "stats"> & {
 	updateProtectedPids: (newProtectedPids: number[]) => void;
 	numProtectedPlayers: number;
 	protectedPids: number[];
 	tid: number;
+	upcomingFreeAgentsText: React.ReactNode;
 }) => {
 	const cols = getCols(
 		"",
@@ -88,6 +91,7 @@ const PlayerList = ({
 				Check the box to the left of a player to protect him. Any players who
 				are not protected may be selected in the expansion draft.
 			</p>
+			{upcomingFreeAgentsText}
 			<p>Protections remaining: {numRemaining}</p>
 			<div className="btn-group mb-3">
 				<button
@@ -126,6 +130,7 @@ const PlayerList = ({
 const ProtectPlayers = ({
 	expansionDraft,
 	expansionTeam,
+	nextPhase,
 	players,
 	stats,
 	userTid,
@@ -209,40 +214,56 @@ const ProtectPlayers = ({
 		realtimeUpdate([], helpers.leagueUrl([]));
 	};
 
+	const upcomingFreeAgentsText =
+		nextPhase !== undefined && nextPhase > PHASE.PLAYOFFS ? (
+			<p>
+				<span className="text-warning">
+					Upcoming free agents are available to be protected or drafted.
+				</span>{" "}
+				If drafted, they will be forced to re-sign with their expansion team.
+			</p>
+		) : null;
+
 	return (
-		<form onSubmit={handleSubmit}>
-			{expansionTeam ? (
-				<p>
-					Your team is an expansion team, so you have no players to protect.
-				</p>
-			) : (
-				<PlayerList
-					updateProtectedPids={updateProtectedPids}
-					numProtectedPlayers={expansionDraft.numProtectedPlayers}
-					players={players}
-					protectedPids={protectedPids}
-					stats={stats}
-					tid={userTid}
-				/>
-			)}
+		<>
+			<form onSubmit={handleSubmit}>
+				{expansionTeam ? (
+					<>
+						<p>
+							Your team is an expansion team, so you have no players to protect.
+						</p>
+						{upcomingFreeAgentsText}
+					</>
+				) : (
+					<PlayerList
+						updateProtectedPids={updateProtectedPids}
+						numProtectedPlayers={expansionDraft.numProtectedPlayers}
+						players={players}
+						protectedPids={protectedPids}
+						stats={stats}
+						tid={userTid}
+						upcomingFreeAgentsText={upcomingFreeAgentsText}
+					/>
+				)}
 
-			<button
-				type="submit"
-				className="btn btn-primary"
-				disabled={numRemaining < 0 || saving}
-			>
-				Start Expansion Draft
-			</button>
+				<button
+					type="submit"
+					className="btn btn-primary"
+					disabled={numRemaining < 0 || saving}
+				>
+					Start Expansion Draft
+				</button>
 
-			<button
-				type="button"
-				className="btn btn-light-bordered ml-2"
-				disabled={saving}
-				onClick={handleCancel}
-			>
-				Cancel Expansion Draft
-			</button>
-		</form>
+				<button
+					type="button"
+					className="btn btn-light-bordered ml-2"
+					disabled={saving}
+					onClick={handleCancel}
+				>
+					Cancel Expansion Draft
+				</button>
+			</form>
+		</>
 	);
 };
 

@@ -52,6 +52,7 @@ import type {
 	TradeTeam,
 	Options,
 } from "../../common/types";
+import setGameAttributes from "../core/league/setGameAttributes";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1298,6 +1299,19 @@ const autoProtect = async (tid: number) => {
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const cancelExpansionDraft = async () => {
+	const expansionDraft = g.get("expansionDraft");
+	if (expansionDraft.phase !== "protection") {
+		throw new Error("Invalid expansion draft phase");
+	}
+	for (let i = 0; i < expansionDraft.expansionTids.length; i++) {
+		await removeLastTeam();
+	}
+	await setGameAttributes({
+		expansionDraft: { phase: "setup" },
+	});
+};
+
 const updateProtectedPlayers = async (tid: number, protectedPids: number[]) => {
 	await expansionDraft.updateProtectedPids(tid, protectedPids);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
@@ -1853,6 +1867,7 @@ export default {
 	sign,
 	advanceToPlayerProtection,
 	autoProtect,
+	cancelExpansionDraft,
 	updateProtectedPlayers,
 	startExpansionDraft,
 	startFantasyDraft,

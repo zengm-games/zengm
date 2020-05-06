@@ -10,7 +10,6 @@ import {
 } from "../util";
 import type { View } from "../../common/types";
 import { PlayerNameLabels, SafeHtml, DataTable } from "../components";
-import orderBy from "lodash/orderBy";
 
 const PlayerList = ({
 	updateProtectedPids,
@@ -197,12 +196,17 @@ const ProtectPlayers = ({
 			});
 			setSaving(false);
 		} else {
-			realtimeUpdate([], helpers.leagueUrl(["protect_players"]));
+			realtimeUpdate([], helpers.leagueUrl([]));
 		}
 	};
 
 	const updateProtectedPids = async (newProtectedPids: number[]) => {
 		await toWorker("main", "updateProtectedPlayers", userTid, newProtectedPids);
+	};
+
+	const handleCancel = async () => {
+		await toWorker("main", "cancelExpansionDraft");
+		realtimeUpdate([], helpers.leagueUrl([]));
 	};
 
 	return (
@@ -228,6 +232,15 @@ const ProtectPlayers = ({
 				disabled={numRemaining < 0 || saving}
 			>
 				Start Expansion Draft
+			</button>
+
+			<button
+				type="button"
+				className="btn btn-light-bordered ml-2"
+				disabled={saving}
+				onClick={handleCancel}
+			>
+				Cancel Expansion Draft
 			</button>
 		</form>
 	);

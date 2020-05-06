@@ -136,6 +136,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 					dispatch={dispatch}
 					confs={props.confs}
 					divs={props.divs}
+					expansionDraftInProgress={props.expansionDraftInProgress}
 					phase={props.phase}
 					saving={saving}
 				/>
@@ -233,6 +234,7 @@ ManageTeams.propTypes = {
 	defaultStadiumCapacity: PropTypes.number.isRequired,
 	confs: PropTypes.arrayOf(PropTypes.object).isRequired,
 	divs: PropTypes.arrayOf(PropTypes.object).isRequired,
+	expansionDraftInProgress: PropTypes.bool.isRequired,
 	godMode: PropTypes.bool.isRequired,
 	numTeams: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,

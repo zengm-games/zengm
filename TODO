@@ -1,20 +1,14 @@
 refit rosters with game sim presets applied
 
 expansion draft
-- plan
-  - 3. expansion draft phase
-    - basically the same as the fantasy draft UI
-    - if players run out, end draft
-  - 4. after the expansion draft
-    - then the normal draft happens
-      - ??? what pick should an expansion team get?
-        - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
+- if players run out, end draft
+- ??? what pick should an expansion team get in the upcoming draft?
+  - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
 - confirm pages redirect correctly based on phase
 - FBGM?
 - make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] }
-- a way to cancel the expansion draft from the protection phase
 - after draft ends, replace "sim one pick / sim until end of draft" buttons with a message saying it's over and that results are transient
 
 update Add Team text on Manage Teams to reference expansion draft
@@ -31,6 +25,8 @@ add more scheduled events
 add instructions to faq for deleting old service worker in chrome
 
 do something about situation when there are two conferences but one does not have enough teams for the playoffs
+
+fbgm test all
 
 blog
 - danger zone auto save
@@ -50,6 +46,7 @@ blog
 - GUI to edit conferences and divisions
 - changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
 - playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs - numGames too
+- Tools > Expansion Draft
 
 eventually
 - way to view scheduled events and add/edit/delete

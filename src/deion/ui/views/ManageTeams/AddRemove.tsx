@@ -21,11 +21,19 @@ type Props = {
 		did: number;
 		name: string;
 	}[];
+	expansionDraftInProgress: boolean;
 	phase: Phase;
 	saving: boolean;
 };
 
-const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
+const AddRemove = ({
+	dispatch,
+	confs,
+	divs,
+	expansionDraftInProgress,
+	phase,
+	saving,
+}: Props) => {
 	const divsInDefaultConf = divs.filter(div => div.cid === confs[0].cid);
 	const phaseDisabled = ![
 		PHASE.PRESEASON,
@@ -94,7 +102,7 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
 
 	return (
 		<>
-			{phaseDisabled ? (
+			{phaseDisabled || expansionDraftInProgress ? (
 				<p className="text-danger">
 					You can only add or remove teams during the preseason, after draft,
 					re-signing, or free agency game phases.
@@ -150,7 +158,7 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
 						<button
 							type="submit"
 							className="btn btn-primary btn-lg mb-3"
-							disabled={phaseDisabled || saving}
+							disabled={phaseDisabled || expansionDraftInProgress || saving}
 						>
 							Add Team
 						</button>
@@ -176,7 +184,7 @@ const AddRemove = ({ dispatch, confs, divs, phase, saving }: Props) => {
 					<button
 						className="btn btn-danger btn mb-3"
 						onClick={removeLastTeam}
-						disabled={phaseDisabled || saving}
+						disabled={phaseDisabled || expansionDraftInProgress || saving}
 					>
 						Remove Last Team
 					</button>

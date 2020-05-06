@@ -43,6 +43,7 @@ const updateTeamInfo = async () => {
 		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
 		confs: g.get("confs", Infinity),
 		divs: g.get("divs", Infinity),
+		expansionDraftInProgress: g.get("expansionDraft").phase !== "setup",
 		godMode: g.get("godMode"),
 		numTeams: g.get("numTeams"),
 		phase: g.get("phase"),

@@ -12,7 +12,6 @@ expansion draft
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
 - confirm pages redirect correctly based on phase
-- auto play
 - FBGM?
 - make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] }
 - disable trading, free agents, releasing players during expansion draft

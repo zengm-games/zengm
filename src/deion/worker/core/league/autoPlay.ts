@@ -1,9 +1,16 @@
 import { PHASE } from "../../../common";
-import { draft, freeAgents, game, phase, season } from "..";
+import { draft, freeAgents, game, phase, season, expansionDraft } from "..";
 import { g } from "../../util";
 import type { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
 
 const autoPlay = async (conditions: Conditions = {}) => {
+	if (g.get("expansionDraft").phase === "protection") {
+		await expansionDraft.start();
+	}
+	if (g.get("expansionDraft").phase === "draft") {
+		await draft.runPicks(false, conditions);
+	}
+
 	if (g.get("phase") === PHASE.PRESEASON) {
 		await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
 	} else if (g.get("phase") === PHASE.REGULAR_SEASON) {

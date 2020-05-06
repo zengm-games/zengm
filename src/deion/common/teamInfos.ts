@@ -260,7 +260,7 @@ const teamInfos: {
 	},
 };
 
-teamInfos.LAE = teamInfos.LA;
+teamInfos.LAC = teamInfos.LA;
 teamInfos.GS = {
 	...teamInfos.SF,
 	region: "Golden State",

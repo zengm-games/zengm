@@ -94,7 +94,6 @@ const nerfYoungPlayers = () => {
 };
 
 const replaceAbbrevs = {
-	LAC: "LAE",
 	GSW: "GS",
 	NOP: "NOL",
 	NYK: "NYC",

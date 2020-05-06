@@ -6,7 +6,10 @@ import toUI from "./toUI";
 import type { Conditions } from "../../common/types"; // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 
 async function updatePhase(conditions?: Conditions) {
-	const phaseText = `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`;
+	let phaseText = `${g.get("season")} ${PHASE_TEXT[g.get("phase")]}`;
+	if (g.get("expansionDraft").phase !== "setup") {
+		phaseText = `${g.get("season")} expansion draft`;
+	}
 
 	if (phaseText !== local.phaseText) {
 		local.phaseText = phaseText;

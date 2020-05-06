@@ -490,6 +490,9 @@ const TeamFinances = ({
 		),
 	];
 
+	// This happens for expansion teams before they have a TeamSeason
+	const noSeasonData = Object.keys(barData).length === 0;
+
 	return (
 		<>
 			<p>
@@ -584,7 +587,7 @@ const TeamFinances = ({
 						/>
 					</div>
 				</div>
-				{budget ? (
+				{budget && !noSeasonData ? (
 					<div className="col-lg-4 col-md-3 col-sm-3 mb-3">
 						<h3>Revenue</h3>
 						<div id="bar-graph-revenue" className="bar-graph-large">

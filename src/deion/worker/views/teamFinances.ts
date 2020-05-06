@@ -98,49 +98,55 @@ const updateTeamFinances = async (
 			Record<"revenues" | "expenses", any> = {};
 
 		for (const key of keys) {
-			if (typeof teamSeasons[0][key] === "number") {
-				barData[key] = helpers.zeroPad(
-					// @ts-ignore
-					teamSeasons.map(ts => ts[key]),
-					showInt,
-				);
-			} else {
-				// Handle an object in the database
-				barData[key] = {};
-				const tempData = teamSeasons.map(ts => ts[key]);
-
-				for (const key2 of Object.keys(tempData[0])) {
-					barData[key][key2] = helpers.zeroPad(
+			if (teamSeasons.length > 0) {
+				if (typeof teamSeasons[0][key] === "number") {
+					barData[key] = helpers.zeroPad(
 						// @ts-ignore
-						tempData.map(x => x[key2]).map(x => x.amount),
+						teamSeasons.map(ts => ts[key]),
 						showInt,
 					);
+				} else {
+					// Handle an object in the database
+					barData[key] = {};
+					const tempData = teamSeasons.map(ts => ts[key]);
+
+					for (const key2 of Object.keys(tempData[0])) {
+						barData[key][key2] = helpers.zeroPad(
+							// @ts-ignore
+							tempData.map(x => x[key2]).map(x => x.amount),
+							showInt,
+						);
+					}
 				}
 			}
 		}
 
 		// Process some values
-		barData.att = barData.att.map((num, i) => {
-			if (teamSeasons[i] !== undefined) {
-				if (!teamSeasons[i].hasOwnProperty("gpHome")) {
-					teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2);
+		if (barData.att) {
+			barData.att = barData.att.map((num, i) => {
+				if (teamSeasons[i] !== undefined) {
+					if (!teamSeasons[i].hasOwnProperty("gpHome")) {
+						teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2);
+					}
+
+					// See also game.js and team.js
+					if (teamSeasons[i].gpHome > 0 && typeof num === "number") {
+						return num / teamSeasons[i].gpHome; // per game
+					}
 				}
 
-				// See also game.js and team.js
-				if (teamSeasons[i].gpHome > 0 && typeof num === "number") {
-					return num / teamSeasons[i].gpHome; // per game
-				}
-			}
-
-			return 0;
-		});
+				return 0;
+			});
+		}
 
 		const keys2 = ["cash"] as const;
 		for (const key of keys2) {
-			// convert to millions
-			barData[key] = barData[key].map(num =>
-				typeof num === "number" ? num / 1000 : num,
-			);
+			if (barData[key]) {
+				// convert to millions
+				barData[key] = barData[key].map(num =>
+					typeof num === "number" ? num / 1000 : num,
+				);
+			}
 		}
 
 		const barSeasons: number[] = [];

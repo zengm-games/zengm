@@ -331,8 +331,9 @@ const Draft = ({
 						<p>
 							<span className="alert alert-warning d-inline-block mb-0">
 								Draft results from {fantasyDraft ? "fantasy" : "expansion"}{" "}
-								drafts are only viewable while you remain on this page. When you
-								navigate away, they are lost.
+								drafts are only temporarily viewable. When you navigate away
+								from this page or proceed to the next phase of the game, you
+								cannot come back to this page.
 							</span>
 						</p>
 					) : null}

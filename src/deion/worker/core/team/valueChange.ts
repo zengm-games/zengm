@@ -445,7 +445,17 @@ const refreshCache = async () => {
 		let rCurrent;
 		let rLast;
 
-		if (teamSeasons.length === 1) {
+		if (teamSeasons.length === 0) {
+			// Expansion team?
+			rCurrent = [
+				Math.round(0.2 * g.get("numGames")),
+				Math.round(0.8 * g.get("numGames")),
+			];
+			rLast = [
+				Math.round(0.2 * g.get("numGames")),
+				Math.round(0.8 * g.get("numGames")),
+			];
+		} else if (teamSeasons.length === 1) {
 			// First season
 			if (teamSeasons[0].won + teamSeasons[0].lost > 15) {
 				rCurrent = [teamSeasons[0].won, teamSeasons[0].lost];
@@ -531,7 +541,11 @@ const valueChange = async (
 	}
 
 	const strategy = t.strategy;
-	const gpAvg = helpers.bound(teamStats.gp, 0, g.get("numGames")); // Ideally would be done separately for each team, but close enough
+	const gpAvg = helpers.bound(
+		teamStats ? teamStats.gp : 0,
+		0,
+		g.get("numGames"),
+	); // Ideally would be done separately for each team, but close enough
 
 	const payroll = await getPayroll(tid);
 	const difficultyFudgeFactor = helpers.bound(

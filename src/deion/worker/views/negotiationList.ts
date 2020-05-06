@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common";
+import { PLAYER, PHASE } from "../../common";
 import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -56,13 +56,27 @@ const updateNegotiationList = async () => {
 	const payroll = await team.getPayroll(g.get("userTid"));
 	const capSpace =
 		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
+
+	let playersRefuseToNegotiate = g.get("playersRefuseToNegotiate");
+
+	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
+		const t = await idb.cache.teams.get(g.get("userTid"));
+		if (
+			t &&
+			t.firstSeasonAfterExpansion !== undefined &&
+			t.firstSeasonAfterExpansion - 1 === g.get("season")
+		) {
+			playersRefuseToNegotiate = false;
+		}
+	}
+
 	return {
 		capSpace,
 		hardCap: g.get("hardCap"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
 		players,
-		playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
+		playersRefuseToNegotiate,
 		season: g.get("season"),
 		stats,
 		sumContracts,

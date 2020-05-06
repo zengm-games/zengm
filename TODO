@@ -6,9 +6,6 @@ expansion draft
     - firstSeasonAfterExpansion - could use that and teamSeason check to impose an artificial W/L record
   - expose it in the draft lottery UI somewhere
   - what about other draft types?
-- force upcoming FAs to re-sign with expansion team
-  - firstSeasonAfterExpansion
-  - make them available to negotiate, if user controls team
 
 LAE -> LAC
 

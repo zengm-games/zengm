@@ -100,9 +100,25 @@ const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
 		p.freeAgentMood[g.get("userTid")],
 	);
 
-	// Generate contract options
 	const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
+	if (contractOptions.length === 0 && g.get("phase") === PHASE.RESIGN_PLAYERS) {
+		const t = await idb.cache.teams.get(g.get("userTid"));
+		if (
+			t &&
+			t.firstSeasonAfterExpansion !== undefined &&
+			t.firstSeasonAfterExpansion - 1 === g.get("season")
+		) {
+			contractOptions.push({
+				exp: g.get("season") + 1,
+				years: 1,
+				amount: p.contract.amount,
+				smallestAmount: true,
+			});
+		}
+	}
+
 	const payroll = await team.getPayroll(g.get("userTid"));
+
 	return {
 		contractOptions,
 		hardCap: g.get("hardCap"),

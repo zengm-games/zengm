@@ -220,7 +220,7 @@ const ProtectPlayers = ({
 				<span className="text-warning">
 					Upcoming free agents are available to be protected or drafted.
 				</span>{" "}
-				If drafted, they will be forced to re-sign with their expansion team.
+				If drafted, they will never refuse to re-sign with their expansion team.
 			</p>
 		) : null;
 

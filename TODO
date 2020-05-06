@@ -14,7 +14,6 @@ expansion draft
 - confirm pages redirect correctly based on phase
 - FBGM?
 - make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] }
-- disable trading, free agents, releasing players during expansion draft
 - a way to cancel the expansion draft from the protection phase
 - after draft ends, replace "sim one pick / sim until end of draft" buttons with a message saying it's over and that results are transient
 

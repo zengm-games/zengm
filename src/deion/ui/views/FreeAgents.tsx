@@ -14,6 +14,7 @@ import type { View } from "../../common/types";
 
 const FreeAgents = ({
 	capSpace,
+	expansionDraftInProgress,
 	gamesInProgress,
 	hardCap,
 	minContract,
@@ -49,7 +50,11 @@ const FreeAgents = ({
 
 	useTitleBar({ title: "Free Agents" });
 
-	if (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) {
+	if (
+		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
+		phase === PHASE.FANTASY_DRAFT ||
+		expansionDraftInProgress
+	) {
 		return (
 			<div>
 				<p>
@@ -170,6 +175,7 @@ const FreeAgents = ({
 
 FreeAgents.propTypes = {
 	capSpace: PropTypes.number.isRequired,
+	expansionDraftInProgress: PropTypes.bool.isRequired,
 	gamesInProgress: PropTypes.bool.isRequired,
 	hardCap: PropTypes.bool.isRequired,
 	minContract: PropTypes.number.isRequired,

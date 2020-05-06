@@ -30,6 +30,10 @@ const create = async (
 		return "You cannot initiate a new negotiaion while game simulation is in progress.";
 	}
 
+	if (g.get("expansionDraft").phase !== "setup") {
+		return "You're not allowed to sign free agents now.";
+	}
+
 	const playersOnRoster = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		g.get("userTid"),

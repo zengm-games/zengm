@@ -193,6 +193,7 @@ const updateTrade = async () => {
 		g.get("phase") > PHASE.PLAYOFFS && g.get("phase") < PHASE.FREE_AGENCY;
 
 	return {
+		expansionDraftInProgress: g.get("expansionDraft").phase !== "setup",
 		salaryCap: g.get("salaryCap") / 1000,
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,

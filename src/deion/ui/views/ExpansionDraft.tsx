@@ -74,10 +74,19 @@ const ExpansionDraft = ({
 	) => {
 		const value = event.target.value;
 
-		const t = {
+		const t: any = {
 			...teams[i],
-			[field]: value,
 		};
+
+		if (field.startsWith("colors")) {
+			const ind = parseInt(field.replace("colors", ""));
+			if (ind >= 0 && ind <= 2) {
+				t.colors[ind] = value;
+			}
+		} else {
+			t[field] = value;
+		}
+
 		const newTeams = [...teams];
 		newTeams[i] = t;
 		await setTeams(newTeams);

@@ -1,7 +1,11 @@
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, logEvent } from "../../util";
 import { league, team } from "..";
-import type { GameAttributesLeague } from "../../../common/types";
+import type {
+	GameAttributesLeague,
+	Team,
+	Conditions,
+} from "../../../common/types";
 import { PHASE } from "../../../common";
 
 const advanceToPlayerProtection = async (
@@ -17,6 +21,7 @@ const advanceToPlayerProtection = async (
 		did: number;
 		takeControl: boolean;
 	}[],
+	conditions: Conditions,
 ) => {
 	const errors = [];
 	const teams = await idb.cache.teams.getAll();
@@ -84,7 +89,7 @@ const advanceToPlayerProtection = async (
 	}
 
 	const expansionTids: number[] = [];
-	const takeControlTids: number[] = [];
+	const takeControlTeams: Team[] = [];
 	for (const teamInfo of expansionTeams) {
 		const t = await team.addNewTeamToExistingLeague({
 			...teamInfo,
@@ -93,19 +98,31 @@ const advanceToPlayerProtection = async (
 		expansionTids.push(t.tid);
 
 		if (teamInfo.takeControl) {
-			takeControlTids.push(t.tid);
+			takeControlTeams.push(t);
 		}
 	}
 
 	const gameAttributes: Partial<GameAttributesLeague> = {};
 
-	if (takeControlTids.length > 0) {
+	if (takeControlTeams.length > 0) {
 		const userTids = g.get("userTids");
 		if (userTids.length > 1) {
-			gameAttributes.userTids = [...userTids, ...takeControlTids];
+			gameAttributes.userTids = [
+				...userTids,
+				...takeControlTeams.map(t => t.tid),
+			];
 		} else {
-			gameAttributes.userTid = takeControlTids[takeControlTids.length - 1];
+			const t = takeControlTeams[takeControlTeams.length - 1];
+			gameAttributes.userTid = t.tid;
 			gameAttributes.userTids = [gameAttributes.userTid];
+			logEvent(
+				{
+					saveToDb: false,
+					text: `You are now the GM of a new expansion team, the ${t.region} ${t.name}!`,
+					type: "info",
+				},
+				conditions,
+			);
 		}
 	}
 

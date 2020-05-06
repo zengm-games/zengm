@@ -14,7 +14,7 @@ const addNewTeamToExistingLeague = async (teamInfo: {
 	abbrev: string;
 	pop: number;
 	imgURL: string | undefined;
-	expansionSeason?: number;
+	firstSeasonAfterExpansion?: number;
 }): Promise<Team> => {
 	const div = g.get("divs", Infinity).find(d => d.did === teamInfo.did);
 	if (!div) {

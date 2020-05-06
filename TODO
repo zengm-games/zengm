@@ -11,7 +11,6 @@ expansion draft
 - make initial expansion draft form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] } so you can navigate away and back without losing it, and also for ease of scheduled events
 - easily populate expansion draft with built-in teams
   - also better "random" defaults, don't make the abbrevs collide
-- notification popup when you take control of expansion team, to make it clear
 
 add more scheduled events
 - confs, divs

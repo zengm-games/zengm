@@ -1285,6 +1285,7 @@ const advanceToPlayerProtection = async (
 	const errors = await expansionDraft.advanceToPlayerProtection(
 		numProtectedPlayers,
 		expansionTeams,
+		conditions,
 	);
 
 	if (errors) {

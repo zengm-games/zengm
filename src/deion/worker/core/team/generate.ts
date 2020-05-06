@@ -11,7 +11,7 @@ import type { Team } from "../../../common/types";
 const generate = (tm: any): Team => {
 	const strategy = tm.hasOwnProperty("strategy") ? tm.strategy : "rebuilding";
 
-	const t = {
+	const t: Team = {
 		tid: tm.tid,
 		cid: tm.cid,
 		did: tm.did,
@@ -68,6 +68,10 @@ const generate = (tm: any): Team => {
 				? tm.stadiumCapacity
 				: g.get("defaultStadiumCapacity"),
 	};
+
+	if (tm.firstSeasonAfterExpansion !== undefined) {
+		t.firstSeasonAfterExpansion = tm.firstSeasonAfterExpansion;
+	}
 
 	if (process.env.SPORT === "football" && tm.depth === undefined) {
 		t.depth = overrides.common.constants.POSITIONS.reduce((depth, pos) => {

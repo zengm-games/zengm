@@ -2,10 +2,16 @@ refit rosters with game sim presets applied
 
 expansion draft
 - what pick should an expansion team get in the upcoming draft?
-  - easiest would be to have lotterySort be aware of which teams are expansion teams, and then re-do the lottery after the expansion draft. need to be careful about different types of drafts
+  - easiest would be to have lotterySort be aware of which teams are expansion teamsPlus
+    - firstSeasonAfterExpansion - could use that and teamSeason check to impose an artificial W/L record
+  - expose it in the draft lottery UI somewhere
+  - what about other draft types?
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
 - make initial expansion draft form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] } so you can navigate away and back without losing it, and also for ease of scheduled events
+- easily populate expansion draft with built-in teams
+  - also better "random" defaults, don't make the abbrevs collide
+- notification popup when you take control of expansion team, to make it clear
 
 add more scheduled events
 - confs, divs
@@ -52,7 +58,6 @@ eventually
     - when creating a new league, option to use teams from another file
     - somehow globally specify default teams
 - gui to edit scheduled events
-- easily populate expansion draft with built-in teams
 
 ---
 

@@ -114,10 +114,10 @@ LeagueFinances.propTypes = {
 	season: PropTypes.number.isRequired,
 	teams: PropTypes.arrayOf(
 		PropTypes.shape({
-			abbrev: PropTypes.string.isRequired,
-			name: PropTypes.string.isRequired,
-			region: PropTypes.string.isRequired,
 			seasonAttrs: PropTypes.shape({
+				abbrev: PropTypes.string.isRequired,
+				name: PropTypes.string.isRequired,
+				region: PropTypes.string.isRequired,
 				att: PropTypes.number.isRequired,
 				cash: PropTypes.number.isRequired,
 				payroll: PropTypes.number, // Not required for past seasons

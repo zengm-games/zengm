@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import { g } from "../../util";
 import { league, team } from "..";
 import type { GameAttributesLeague } from "../../../common/types";
+import { PHASE } from "../../../common";
 
 const advanceToPlayerProtection = async (
 	numProtectedPlayers: number,
@@ -76,10 +77,19 @@ const advanceToPlayerProtection = async (
 		return Array.from(new Set(errors));
 	}
 
+	// Used for some special behavior for teams created in expansion drafts after the regular season has ended - can check if g.get("season") is less than firstSeasonAfterExpansion
+	let firstSeasonAfterExpansion = g.get("season");
+	if (g.get("phase") > PHASE.REGULAR_SEASON) {
+		firstSeasonAfterExpansion += 1;
+	}
+
 	const expansionTids: number[] = [];
 	const takeControlTids: number[] = [];
 	for (const teamInfo of expansionTeams) {
-		const t = await team.addNewTeamToExistingLeague(teamInfo);
+		const t = await team.addNewTeamToExistingLeague({
+			...teamInfo,
+			firstSeasonAfterExpansion,
+		});
 		expansionTids.push(t.tid);
 
 		if (teamInfo.takeControl) {

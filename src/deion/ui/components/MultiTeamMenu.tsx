@@ -1,5 +1,6 @@
 import React, { useCallback, ChangeEvent } from "react";
 import { realtimeUpdate, toWorker, useLocalShallow } from "../util";
+import orderBy from "lodash/orderBy";
 
 const setUserTid = async (userTid: number) => {
 	await toWorker("main", "updateGameAttributes", {
@@ -20,30 +21,41 @@ const MultiTeamMenu = () => {
 		userTid: state2.userTid,
 		userTids: state2.userTids,
 	}));
-	const prev = useCallback(async () => {
-		const ind = state.userTids.indexOf(state.userTid);
-		const userTid = state.userTids[ind - 1];
 
-		if (userTid !== undefined) {
-			await setUserTid(userTid);
-		}
-	}, [state.userTid, state.userTids]);
-	const next = useCallback(async () => {
-		const ind = state.userTids.indexOf(state.userTid);
-		const userTid = state.userTids[ind + 1];
-
-		if (userTid !== undefined) {
-			await setUserTid(userTid);
-		}
-	}, [state.userTid, state.userTids]); // Hide if not multi team or not loaded yet
-
+	// Hide if not multi team or not loaded yet
 	if (state.userTids.length <= 1) {
 		return null;
 	}
 
-	const ind = state.userTids.indexOf(state.userTid);
+	const teams = orderBy(
+		state.userTids.map(tid => ({
+			region: state.teamRegionsCache[tid],
+			name: state.teamNamesCache[tid],
+			tid,
+		})),
+		["region", "name", "tid"],
+	);
+
+	const ind = teams.findIndex(t => t.tid === state.userTid);
+
+	const prev = async () => {
+		const t = teams[ind - 1];
+
+		if (t !== undefined) {
+			await setUserTid(t.tid);
+		}
+	};
+	const next = async () => {
+		const t = teams[ind + 1];
+
+		if (t !== undefined) {
+			await setUserTid(t.tid);
+		}
+	};
+
 	const prevDisabled = ind < 0 || ind === 0;
 	const nextDisabled = ind < 0 || ind === state.userTids.length - 1;
+
 	return (
 		<div className="multi-team-menu d-flex align-items-end">
 			<button
@@ -60,9 +72,9 @@ const MultiTeamMenu = () => {
 					onChange={handleChange}
 					value={state.userTid}
 				>
-					{state.userTids.map(tid => (
-						<option key={tid} value={tid}>
-							{state.teamRegionsCache[tid]} {state.teamNamesCache[tid]}
+					{teams.map(t => (
+						<option key={t.tid} value={t.tid}>
+							{t.region} {t.name}
 						</option>
 					))}
 				</select>

@@ -31,7 +31,7 @@ const newPhaseResignPlayers = async (
 	}
 
 	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["strategy"],
+		attrs: ["tid", "strategy", "firstSeasonAfterExpansion"],
 		season: g.get("season"),
 	});
 	const strategies = teams.map(t => t.strategy);
@@ -165,6 +165,15 @@ const newPhaseResignPlayers = async (
 					} else if (p.draft.round <= 8) {
 						probReSign += 0.15;
 					}
+				}
+
+				const t = teams.find(t => t.tid == p.tid);
+				if (
+					t &&
+					t.firstSeasonAfterExpansion !== undefined &&
+					t.firstSeasonAfterExpansion - 1 === g.get("season")
+				) {
+					probReSign = 1;
 				}
 
 				if (g.get("hardCap")) {

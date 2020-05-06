@@ -9,6 +9,7 @@ import newPhaseAfterDraft from "./newPhaseAfterDraft";
 import newPhaseResignPlayers from "./newPhaseResignPlayers";
 import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
+import newPhaseExpansionDraft from "./newPhaseExpansionDraft";
 import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
 import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
 
@@ -26,8 +27,10 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		return;
 	}
 
-	if (g.get("expansionDraft").phase !== "setup") {
-		throw new Error("Can't call newPhase when expansion draft is in progress");
+	if (g.get("phase") < 0) {
+		throw new Error(
+			"Can't call newPhase when expansion/fantasy draft is in progress",
+		);
 	}
 
 	const phaseChangeInfo = {
@@ -57,6 +60,9 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		},
 		[PHASE.FANTASY_DRAFT]: {
 			func: newPhaseFantasyDraft,
+		},
+		[PHASE.EXPANSION_DRAFT]: {
+			func: newPhaseExpansionDraft,
 		},
 	};
 

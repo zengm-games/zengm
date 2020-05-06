@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, updatePlayMenu, updatePhase } from "../../util";
+import { g } from "../../util";
 import { league, team } from "..";
 import type { GameAttributesLeague } from "../../../common/types";
 
@@ -115,8 +115,6 @@ const advanceToPlayerProtection = async (
 	};
 
 	await league.setGameAttributes(gameAttributes);
-	await updatePhase();
-	await updatePlayMenu();
 };
 
 export default advanceToPlayerProtection;

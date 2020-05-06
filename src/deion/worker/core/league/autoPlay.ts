@@ -4,11 +4,14 @@ import { g } from "../../util";
 import type { Conditions } from "../../../common/types"; // Depending on phase, initiate action that will lead to the next phase
 
 const autoPlay = async (conditions: Conditions = {}) => {
-	if (g.get("expansionDraft").phase === "protection") {
-		await expansionDraft.start();
-	}
-	if (g.get("expansionDraft").phase === "draft") {
-		await draft.runPicks(false, conditions);
+	// No newPhase call is triggered after expansion draft, so this check comes first
+	if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
+		if (g.get("expansionDraft").phase === "protection") {
+			await expansionDraft.start();
+		}
+		if (g.get("expansionDraft").phase === "draft") {
+			await draft.runPicks(false, conditions);
+		}
 	}
 
 	if (g.get("phase") === PHASE.PRESEASON) {

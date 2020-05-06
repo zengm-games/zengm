@@ -13,7 +13,7 @@ const getOrder = async () => {
 	const season =
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? "fantasy"
-			: g.get("expansionDraft").phase === "draft"
+			: g.get("phase") === PHASE.EXPANSION_DRAFT
 			? "expansion"
 			: g.get("season");
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(

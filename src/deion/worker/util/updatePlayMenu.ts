@@ -141,9 +141,8 @@ const updatePlayMenu = async () => {
 	if (
 		g.get("phase") === PHASE.DRAFT ||
 		g.get("phase") === PHASE.FANTASY_DRAFT ||
-		g.get("expansionDraft").phase === "draft"
+		g.get("phase") === PHASE.EXPANSION_DRAFT
 	) {
-		// Draft - check this first because it checks more than just phase
 		const draftPicks = await draft.getOrder();
 		const nextPick = draftPicks[0];
 

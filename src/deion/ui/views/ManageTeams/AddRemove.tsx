@@ -6,17 +6,11 @@ import type { Action } from ".";
 
 type Props = {
 	dispatch: Dispatch<Action>;
-	expansionDraftInProgress: boolean;
 	phase: Phase;
 	saving: boolean;
 };
 
-const AddRemove = ({
-	dispatch,
-	expansionDraftInProgress,
-	phase,
-	saving,
-}: Props) => {
+const AddRemove = ({ dispatch, phase, saving }: Props) => {
 	const phaseDisabled = ![
 		PHASE.PRESEASON,
 		PHASE.AFTER_DRAFT,
@@ -65,7 +59,7 @@ const AddRemove = ({
 
 	return (
 		<>
-			{phaseDisabled || expansionDraftInProgress ? (
+			{phaseDisabled ? (
 				<p className="text-danger">
 					You can only add or remove teams during the preseason, after draft,
 					re-signing, or free agency game phases.
@@ -89,7 +83,7 @@ const AddRemove = ({
 						<button
 							type="submit"
 							className="btn btn-primary btn-lg mb-3"
-							disabled={phaseDisabled || expansionDraftInProgress || saving}
+							disabled={phaseDisabled || saving}
 						>
 							Add Team
 						</button>
@@ -115,7 +109,7 @@ const AddRemove = ({
 					<button
 						className="btn btn-danger btn mb-3"
 						onClick={removeLastTeam}
-						disabled={phaseDisabled || expansionDraftInProgress || saving}
+						disabled={phaseDisabled || saving}
 					>
 						Remove Last Team
 					</button>

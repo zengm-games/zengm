@@ -112,7 +112,6 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
-		expansionDraftInProgress,
 		gameOver,
 		godMode,
 		lost,
@@ -139,8 +138,8 @@ const Trade = (props: View<"trade">) => {
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
-		gameOver ||
-		expansionDraftInProgress;
+		phase === PHASE.EXPANSION_DRAFT ||
+		gameOver;
 	return (
 		<>
 			{showResigningMsg ? (
@@ -227,7 +226,6 @@ const Trade = (props: View<"trade">) => {
 };
 
 Trade.propTypes = {
-	expansionDraftInProgress: PropTypes.bool.isRequired,
 	gameOver: PropTypes.bool.isRequired,
 	godMode: PropTypes.bool.isRequired,
 	lost: PropTypes.number.isRequired,

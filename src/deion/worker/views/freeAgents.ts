@@ -52,7 +52,6 @@ const updateFreeAgents = async () => {
 
 	return {
 		capSpace,
-		expansionDraftInProgress: g.get("expansionDraft").phase !== "setup",
 		gamesInProgress: lock.get("gameSim"),
 		hardCap: g.get("hardCap"),
 		minContract: g.get("minContract"),

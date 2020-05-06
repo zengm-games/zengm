@@ -30,7 +30,7 @@ const create = async (
 		return "You cannot initiate a new negotiaion while game simulation is in progress.";
 	}
 
-	if (g.get("expansionDraft").phase !== "setup") {
+	if (g.get("phase") < 0) {
 		return "You're not allowed to sign free agents now.";
 	}
 

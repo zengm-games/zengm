@@ -11,6 +11,7 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 const PHASE: {
+	EXPANSION_DRAFT: Phase;
 	FANTASY_DRAFT: Phase;
 	PRESEASON: Phase;
 	REGULAR_SEASON: Phase;
@@ -22,6 +23,7 @@ const PHASE: {
 	RESIGN_PLAYERS: Phase;
 	FREE_AGENCY: Phase;
 } = {
+	EXPANSION_DRAFT: -2,
 	FANTASY_DRAFT: -1,
 	PRESEASON: 0,
 	REGULAR_SEASON: 1,
@@ -45,6 +47,7 @@ const PLAYER = {
 	UNDRAFTED_3: -5, // Next next year's draft class
 };
 const PHASE_TEXT = {
+	"-2": "expansion draft",
 	"-1": "fantasy draft",
 	"0": "preseason",
 	"1": "regular season",

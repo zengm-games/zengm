@@ -50,15 +50,20 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 			await updatePhase();
 			await updatePlayMenu();
 			await updateStatus("Idle");
-		} else if (g.get("expansionDraft").phase === "draft") {
+		} else if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
 			// Refresh draft results without redirecting away
 			await toUI("realtimeUpdate", [["playerMovement"]]);
 
 			local.fantasyDraftResults = [];
-			await expansionDraft.finalize();
+			await league.setGameAttributes({
+				phase: g.get("nextPhase"),
+				nextPhase: undefined,
+			});
 			await updatePhase();
 			await updatePlayMenu();
 			await updateStatus("Idle");
+
+			await expansionDraft.finalize();
 		} else {
 			// Non-fantasy draft
 			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);

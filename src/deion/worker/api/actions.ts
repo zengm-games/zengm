@@ -256,7 +256,7 @@ const runDraft = async (onlyOne: boolean, conditions: Conditions) => {
 	if (
 		g.get("phase") === PHASE.DRAFT ||
 		g.get("phase") === PHASE.FANTASY_DRAFT ||
-		g.get("expansionDraft").phase === "draft"
+		g.get("phase") === PHASE.EXPANSION_DRAFT
 	) {
 		await updateStatus("Draft in progress...");
 		await draft.runPicks(onlyOne, conditions);

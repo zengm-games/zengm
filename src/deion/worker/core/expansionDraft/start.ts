@@ -2,11 +2,15 @@ import { idb } from "../../db";
 import { g, helpers, local, updatePlayMenu } from "../../util";
 import autoProtect from "./autoProtect";
 import { league, draft } from "..";
+import { PHASE } from "../../../common";
 
 const start = async () => {
 	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));
 
-	if (expansionDraft.phase !== "protection") {
+	if (
+		g.get("phase") !== PHASE.EXPANSION_DRAFT ||
+		expansionDraft.phase !== "protection"
+	) {
 		throw new Error("Invalid expansion draft phase");
 	}
 

@@ -105,13 +105,14 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	const pickNum =
 		dp.pick +
 		(dp.round - 1) *
-			(expansionDraft.phase === "draft"
+			(g.get("phase") === PHASE.EXPANSION_DRAFT &&
+			expansionDraft.phase === "draft"
 				? expansionDraft.expansionTids.length
 				: g.get("numTeams"));
 	const draftName =
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? `${g.get("season")} fantasy draft`
-			: expansionDraft.phase === "draft"
+			: g.get("phase") === PHASE.EXPANSION_DRAFT
 			? `${g.get("season")} expansion draft`
 			: `<a href="${helpers.leagueUrl([
 					"draft_history",
@@ -132,7 +133,10 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	await idb.cache.players.put(p);
 	await idb.cache.draftPicks.delete(dp.dpid);
 
-	if (expansionDraft.phase === "draft") {
+	if (
+		g.get("phase") === PHASE.EXPANSION_DRAFT &&
+		expansionDraft.phase === "draft"
+	) {
 		await league.setGameAttributes({
 			expansionDraft: {
 				...expansionDraft,

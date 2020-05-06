@@ -133,8 +133,6 @@ const updateRoster = async (
 				players.sort((a, b) => footballScore(b) - footballScore(a));
 			}
 
-			const expansionDraftInProgress =
-				g.get("expansionDraft").phase !== "setup";
 			for (let i = 0; i < players.length; i++) {
 				// Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
 				if (
@@ -143,7 +141,8 @@ const updateRoster = async (
 						players.length > g.get("maxRosterSize")) &&
 					!g.get("gameOver") &&
 					players.length > 5 &&
-					!expansionDraftInProgress
+					g.get("phase") !== PHASE.FANTASY_DRAFT &&
+					g.get("phase") !== PHASE.EXPANSION_DRAFT
 				) {
 					players[i].canRelease = true;
 				} else {

@@ -1280,6 +1280,7 @@ const advanceToPlayerProtection = async (
 	expansionTeams: Parameters<
 		typeof expansionDraft.advanceToPlayerProtection
 	>[1],
+	conditions: Conditions,
 ) => {
 	const errors = await expansionDraft.advanceToPlayerProtection(
 		numProtectedPlayers,
@@ -1290,7 +1291,7 @@ const advanceToPlayerProtection = async (
 		return errors;
 	}
 
-	await toUI("realtimeUpdate", [["gameAttributes"]]);
+	await phase.newPhase(PHASE.EXPANSION_DRAFT, conditions);
 };
 
 const autoProtect = async (tid: number) => {

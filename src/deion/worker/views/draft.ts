@@ -23,7 +23,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"playersByTid",
 				PLAYER.UNDRAFTED,
 			);
-		} else if (expansionDraft.phase === "draft") {
+		} else if (
+			g.get("phase") === PHASE.EXPANSION_DRAFT &&
+			expansionDraft.phase === "draft"
+		) {
 			stats =
 				process.env.SPORT === "basketball"
 					? ["per", "ewa"]
@@ -65,7 +68,11 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 		let drafted: any[];
 
-		if (fantasyDraft || expansionDraft.phase === "draft") {
+		if (
+			fantasyDraft ||
+			(g.get("phase") === PHASE.EXPANSION_DRAFT &&
+				expansionDraft.phase === "draft")
+		) {
 			drafted = local.fantasyDraftResults;
 		} else {
 			drafted = await idb.cache.players.indexGetAll("playersByTid", [
@@ -103,7 +110,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
 		if (
 			!fantasyDraft &&
-			expansionDraft.phase !== "draft" &&
+			g.get("phase") !== PHASE.EXPANSION_DRAFT &&
 			draftPicks.length > 2 * g.get("numTeams")
 		) {
 			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
@@ -136,7 +143,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			draftType: g.get("draftType"),
 			drafted,
-			expansionDraft: expansionDraft.phase === "draft",
+			expansionDraft: g.get("phase") === PHASE.EXPANSION_DRAFT,
 			fantasyDraft,
 			stats,
 			undrafted,

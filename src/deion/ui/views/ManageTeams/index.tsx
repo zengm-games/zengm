@@ -132,12 +132,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			<h2>Add/Remove Teams</h2>
 
 			{props.godMode ? (
-				<AddRemove
-					dispatch={dispatch}
-					expansionDraftInProgress={props.expansionDraftInProgress}
-					phase={props.phase}
-					saving={saving}
-				/>
+				<AddRemove dispatch={dispatch} phase={props.phase} saving={saving} />
 			) : (
 				<p>
 					Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to add
@@ -232,7 +227,6 @@ ManageTeams.propTypes = {
 	defaultStadiumCapacity: PropTypes.number.isRequired,
 	confs: PropTypes.arrayOf(PropTypes.object).isRequired,
 	divs: PropTypes.arrayOf(PropTypes.object).isRequired,
-	expansionDraftInProgress: PropTypes.bool.isRequired,
 	godMode: PropTypes.bool.isRequired,
 	numTeams: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,

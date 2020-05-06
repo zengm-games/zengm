@@ -114,7 +114,7 @@ const draft = () => {
 	if (
 		g.get("phase") !== PHASE.DRAFT &&
 		g.get("phase") !== PHASE.FANTASY_DRAFT &&
-		g.get("expansionDraft").phase !== "draft"
+		g.get("phase") !== PHASE.EXPANSION_DRAFT
 	) {
 		return {
 			redirectUrl: helpers.leagueUrl([

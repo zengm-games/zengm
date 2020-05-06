@@ -63,6 +63,7 @@ const updateRoster = async (
 			attrs: ["tid", "strategy"],
 			seasonAttrs,
 			stats: ["pts", "oppPts", "gp"],
+			addDummySeason: true,
 		});
 
 		if (!t) {

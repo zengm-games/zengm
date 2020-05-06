@@ -17,6 +17,7 @@ const updateTeamInfo = async () => {
 			],
 			seasonAttrs: ["pop", "stadiumCapacity"],
 			season: g.get("season"),
+			addDummySeason: true,
 		})
 	).map(t => {
 		if (t.pop === undefined) {

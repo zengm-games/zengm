@@ -129,6 +129,7 @@ const updateTrade = async () => {
 		season: g.get("season"),
 		attrs: ["strategy"],
 		seasonAttrs: ["won", "lost", "tied"],
+		addDummySeason: true,
 	});
 
 	if (t === undefined) {

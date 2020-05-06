@@ -41,6 +41,7 @@ const genOrder = async (
 			"did",
 		],
 		season: g.get("season"),
+		addDummySeason: true,
 	});
 
 	// Draft lottery

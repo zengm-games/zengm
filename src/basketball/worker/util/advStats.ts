@@ -427,6 +427,7 @@ const advStats = async () => {
 		playoffs: PHASE.PLAYOFFS === g.get("phase"),
 		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 		statType: "totals",
+		addDummySeason: true,
 	});
 
 	// Total league stats (not per game averages)	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb

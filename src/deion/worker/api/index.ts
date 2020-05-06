@@ -752,6 +752,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			attrs: ["abbrev", "region", "name", "strategy"],
 			seasonAttrs: ["won", "lost", "tied"],
 			season: g.get("season"),
+			addDummySeason: true,
 		});
 		const stats =
 			process.env.SPORT === "basketball"

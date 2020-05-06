@@ -30,10 +30,7 @@ const newPhaseResignPlayers = async (
 		await idb.cache.players.put(p);
 	}
 
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "strategy", "firstSeasonAfterExpansion"],
-		season: g.get("season"),
-	});
+	const teams = await idb.cache.teams.getAll();
 	const strategies = teams.map(t => t.strategy);
 
 	// Re-sign players on user's team, and some AI players

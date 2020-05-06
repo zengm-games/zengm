@@ -15,19 +15,16 @@ import { g, local, random, overrides } from "../../util";
  * @return {Promise}
  */
 const autoSign = async () => {
-	const [teams, players] = await Promise.all([
-		idb.getCopies.teamsPlus({
-			attrs: ["strategy"],
-			season: g.get("season"),
-		}),
-		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
-	]);
+	const players = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		PLAYER.FREE_AGENT,
+	);
 
 	if (players.length === 0) {
 		return;
 	}
 
-	const strategies = teams.map(t => t.strategy); // List of free agents, sorted by value
+	const strategies = (await idb.cache.teams.getAll()).map(t => t.strategy); // List of free agents, sorted by value
 
 	const playersSorted = orderBy(players, "value", "desc"); // Randomly order teams
 

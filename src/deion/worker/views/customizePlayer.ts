@@ -21,11 +21,7 @@ const updateCustomizePlayer = async (
 	}
 
 	if (updateEvents.includes("firstRun")) {
-		const teams = (
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "region", "name"],
-			})
-		).map(t => {
+		const teams = (await idb.cache.teams.getAll()).map(t => {
 			return {
 				tid: t.tid,
 				text: `${t.region} ${t.name}`,

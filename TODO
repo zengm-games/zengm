@@ -3,6 +3,9 @@ refit rosters with game sim presets applied
 expansion draft bugs
 - all free agents willing to sign with expansion team?
 - initial value for finances/budget/tickets
+- Not really a major bug, but I noticed that during the expansion draft, the playoff bracket from last season doesn't have the results, just the initial matchups
+- start a real players league in 2020, a lot of "acquired" values are inappropriately expansion draft
+- force protection number to be non-negative
 
 add more scheduled events
 - confs, divs

@@ -10,10 +10,13 @@ import type { OwnerMood } from "../../../common/types";
  * @memberOf core.season
  * @return {Promise.Object} Resolves to an object containing the changes in teamSeason.ownerMood this season.
  */
-const updateOwnerMood = async (): Promise<{
-	cappedDeltas: OwnerMood;
-	deltas: OwnerMood;
-}> => {
+const updateOwnerMood = async (): Promise<
+	| {
+			cappedDeltas: OwnerMood;
+			deltas: OwnerMood;
+	  }
+	| undefined
+> => {
 	const t = await idb.getCopy.teamsPlus({
 		seasonAttrs: ["won", "playoffRoundsWon", "profit"],
 		season: g.get("season"),
@@ -21,7 +24,7 @@ const updateOwnerMood = async (): Promise<{
 	});
 
 	if (!t) {
-		throw new Error("Team not found");
+		return;
 	}
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
@@ -30,7 +33,7 @@ const updateOwnerMood = async (): Promise<{
 	);
 
 	if (!teamSeason) {
-		throw new Error("Team season not found");
+		return;
 	}
 
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;

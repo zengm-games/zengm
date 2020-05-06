@@ -4,6 +4,7 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
+import orderBy from "lodash/orderBy";
 
 const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 	const [tid, setTid] = useState(
@@ -78,7 +79,7 @@ const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 					onChange={handleTidChange}
 					value={tid}
 				>
-					{teams.map(t => {
+					{orderBy(teams, ["region", "name", "tid"]).map(t => {
 						return (
 							<option key={t.tid} value={t.tid}>
 								{t.region} {t.name}

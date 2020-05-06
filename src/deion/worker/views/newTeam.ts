@@ -6,6 +6,7 @@ const updateTeamSelect = async () => {
 		attrs: ["tid", "region", "name"],
 		seasonAttrs: ["winp"],
 		season: g.get("season"),
+		addDummySeason: true,
 	});
 
 	// Remove user's team (no re-hiring immediately after firing)

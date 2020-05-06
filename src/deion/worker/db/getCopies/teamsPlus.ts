@@ -52,6 +52,7 @@ const processSeasonAttrs = async <
 	output: TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>,
 	t: Team,
 	seasonAttrs: SeasonAttrs,
+	addDummySeason: boolean,
 	season: Season,
 ) => {
 	let seasons;
@@ -87,7 +88,7 @@ const processSeasonAttrs = async <
 	}
 
 	// If a season is requested but not in the database, make a fake season so at least some dummy values are returned
-	if (season !== undefined && seasons.length === 0) {
+	if (season !== undefined && seasons.length === 0 && addDummySeason) {
 		const dummySeason = team.genSeasonRow(t);
 		dummySeason.season = season as number;
 		seasons = [dummySeason];
@@ -220,6 +221,7 @@ const processStats = async <
 	playoffs: boolean,
 	regularSeason: boolean,
 	statType: TeamStatType,
+	addDummySeason: boolean,
 	season?: Season,
 ) => {
 	let teamStats;
@@ -272,7 +274,7 @@ const processStats = async <
 	// Handle playoffs/regularSeason
 	teamStats = filterOrderStats(teamStats, playoffs, regularSeason);
 
-	if (teamStats.length === 0) {
+	if (teamStats.length === 0 && addDummySeason) {
 		teamStats.push({});
 	}
 
@@ -305,6 +307,7 @@ const processTeam = async <
 		playoffs,
 		regularSeason,
 		statType,
+		addDummySeason,
 	}: {
 		season?: number;
 		attrs?: Attrs;
@@ -313,6 +316,7 @@ const processTeam = async <
 		playoffs: boolean;
 		regularSeason: boolean;
 		statType: TeamStatType;
+		addDummySeason: boolean;
 	},
 ) => {
 	// @ts-ignore
@@ -327,17 +331,36 @@ const processTeam = async <
 
 	if (seasonAttrs) {
 		// @ts-ignore
-		promises.push(processSeasonAttrs(output, t, seasonAttrs, season));
+		promises.push(
+			processSeasonAttrs(output, t, seasonAttrs, addDummySeason, season),
+		);
 	}
 
 	if (stats) {
 		promises.push(
 			// @ts-ignore
-			processStats(output, t, stats, playoffs, regularSeason, statType, season),
+			processStats(
+				output,
+				t,
+				stats,
+				playoffs,
+				regularSeason,
+				statType,
+				addDummySeason,
+				season,
+			),
 		);
 	}
 
 	await Promise.all(promises);
+
+	if (seasonAttrs && ((output as never) as any).seasonAttrs === undefined) {
+		return;
+	}
+	if (stats && ((output as never) as any).stats === undefined) {
+		return;
+	}
+
 	return output;
 };
 
@@ -358,6 +381,7 @@ const processTeam = async <
  * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false.
  * @param {boolean=} options.regularSeason Boolean representing whether to return playoff stats or not; default is false.
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
+ * @param {boolean=} options.addDummySeason If season is specified, should we return data for this team if it is missing a TeamStats or TeamSeasons entry?
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
 async function getCopies<
@@ -374,6 +398,7 @@ async function getCopies<
 	playoffs = false,
 	regularSeason = true,
 	statType = "perGame",
+	addDummySeason = false,
 }: {
 	tid?: number;
 	season?: Season;
@@ -383,6 +408,7 @@ async function getCopies<
 	playoffs?: boolean;
 	regularSeason?: boolean;
 	statType?: TeamStatType;
+	addDummySeason?: boolean;
 } = {}): Promise<TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>[]> {
 	const options = {
 		season,
@@ -392,17 +418,24 @@ async function getCopies<
 		playoffs,
 		regularSeason,
 		statType,
+		addDummySeason,
 	};
 
 	if (tid === undefined) {
 		const teams = await idb.cache.teams.getAll();
 		// @ts-ignore
-		return Promise.all(teams.map(t => processTeam(t, options)));
+		return (await Promise.all(teams.map(t => processTeam(t, options)))).filter(
+			x => x !== undefined,
+		);
 	}
 
 	const t = await idb.cache.teams.get(tid);
 	if (t) {
-		return [await processTeam(t, options)];
+		const val = await processTeam(t, options);
+		if (val) {
+			// @ts-ignore
+			return [val];
+		}
 	}
 
 	return [];

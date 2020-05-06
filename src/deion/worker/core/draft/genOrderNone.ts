@@ -9,6 +9,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 		attrs: ["tid", "firstSeasonAfterExpansion"],
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost", "cid", "did"],
 		season: g.get("season"),
+		addDummySeason: true,
 	});
 
 	if (g.get("draftType") !== "random") {

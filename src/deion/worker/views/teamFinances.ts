@@ -160,6 +160,7 @@ const updateTeamFinances = async (
 			seasonAttrs: ["expenses"],
 			season: g.get("season"),
 			tid: inputs.tid,
+			addDummySeason: true,
 		});
 
 		const maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {

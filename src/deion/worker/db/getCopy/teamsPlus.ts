@@ -20,6 +20,7 @@ const getCopy = async <
 	playoffs = false,
 	regularSeason = true,
 	statType = "perGame",
+	addDummySeason = false,
 }: {
 	tid: number;
 	season?: Season;
@@ -29,6 +30,7 @@ const getCopy = async <
 	playoffs?: boolean;
 	regularSeason?: boolean;
 	statType?: TeamStatType;
+	addDummySeason?: boolean;
 }) => {
 	const result = await idb.getCopies.teamsPlus<
 		Attrs,
@@ -44,6 +46,7 @@ const getCopy = async <
 		playoffs,
 		regularSeason,
 		statType,
+		addDummySeason,
 	});
 	return result.length > 0 ? result[0] : undefined;
 };

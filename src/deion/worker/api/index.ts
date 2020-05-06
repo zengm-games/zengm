@@ -1292,16 +1292,8 @@ const updateExpansionDraftSetup = async (changes: {
 	});
 };
 
-const advanceToPlayerProtection = async (
-	numProtectedPlayers: string,
-	expansionTeams: ExpansionDraftSetupTeam[],
-	conditions: Conditions,
-) => {
-	const errors = await expansionDraft.advanceToPlayerProtection(
-		numProtectedPlayers,
-		expansionTeams,
-		conditions,
-	);
+const advanceToPlayerProtection = async (conditions: Conditions) => {
+	const errors = await expansionDraft.advanceToPlayerProtection(conditions);
 
 	if (errors) {
 		return errors;

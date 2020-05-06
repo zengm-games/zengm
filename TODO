@@ -8,7 +8,6 @@ expansion draft
   - what about other draft types?
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
-- advanceToPlayerProtection should pull from g.expansionDraft
 - easily populate expansion draft with built-in teams
   - also better "random" defaults, don't make the abbrevs collide
 
@@ -20,6 +19,7 @@ add more scheduled events
 - event log should also log to DB
 
 add instructions to faq for deleting old service worker in chrome
+- https://www.reddit.com/r/BasketballGM/comments/gecq85/ive_tried_every_way_to_update_the_game_and_its
 
 do something about situation when there are two conferences but one does not have enough teams for the playoffs
 

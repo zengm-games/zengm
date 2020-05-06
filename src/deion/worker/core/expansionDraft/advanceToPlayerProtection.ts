@@ -5,78 +5,19 @@ import type {
 	GameAttributesLeague,
 	Team,
 	Conditions,
-	ExpansionDraftSetupTeam,
 } from "../../../common/types";
 import { PHASE } from "../../../common";
+import validateExpansionDraftSetup from "./validateExpansionDraftSetup";
 
-const advanceToPlayerProtection = async (
-	numProtectedPlayersString: string,
-	expansionTeams: ExpansionDraftSetupTeam[],
-	conditions: Conditions,
-) => {
-	const errors = [];
-	const teams = await idb.cache.teams.getAll();
-	const divs = await g.get("divs", Infinity);
+const advanceToPlayerProtection = async (conditions: Conditions) => {
+	const {
+		errors,
+		expansionTeams,
+		numProtectedPlayers,
+	} = await validateExpansionDraftSetup();
 
-	// Do some error checking
-	const parsedExpansionTeams = expansionTeams.map(t => {
-		if (t.imgURL === "") {
-			t.imgURL = undefined;
-		}
-
-		const pop = parseFloat(t.pop);
-		if (Number.isNaN(pop)) {
-			errors.push(`Invalid population for ${t.abbrev}`);
-		}
-
-		const stadiumCapacity = parseInt(t.stadiumCapacity);
-		if (Number.isNaN(stadiumCapacity)) {
-			errors.push(`Invalid stadium capacity for ${t.abbrev}`);
-		}
-
-		const did = parseInt(t.did);
-		let foundDiv = false;
-		for (const div of divs) {
-			if (did === div.did) {
-				foundDiv = true;
-				break;
-			}
-		}
-		if (!foundDiv) {
-			errors.push(`Invalid division for ${t.abbrev}`);
-		}
-
-		for (const t2 of teams) {
-			if (t2.abbrev === t.abbrev) {
-				errors.push(`Abbrev ${t.abbrev} is already used by an existing team`);
-			}
-		}
-
-		for (const t2 of expansionTeams) {
-			if (t !== t2 && t2.abbrev === t.abbrev) {
-				errors.push(`Abbrev ${t.abbrev} is used by multiple expansion teams`);
-			}
-		}
-
-		return {
-			...t,
-			did,
-			pop,
-			stadiumCapacity,
-		};
-	});
-
-	if (parsedExpansionTeams.length === 0) {
-		errors.push("No expansion teams");
-	}
-
-	const numProtectedPlayers = parseInt(numProtectedPlayersString);
-	if (Number.isNaN(numProtectedPlayers)) {
-		errors.push("Invalid number of protected players");
-	}
-
-	if (errors.length > 0) {
-		return Array.from(new Set(errors));
+	if (errors) {
+		return errors;
 	}
 
 	// Used for some special behavior for teams created in expansion drafts after the regular season has ended - can check if g.get("season") is less than firstSeasonAfterExpansion
@@ -87,7 +28,7 @@ const advanceToPlayerProtection = async (
 
 	const expansionTids: number[] = [];
 	const takeControlTeams: Team[] = [];
-	for (const teamInfo of parsedExpansionTeams) {
+	for (const teamInfo of expansionTeams) {
 		const t = await team.addNewTeamToExistingLeague({
 			...teamInfo,
 			firstSeasonAfterExpansion,
@@ -123,12 +64,14 @@ const advanceToPlayerProtection = async (
 		}
 	}
 
-	// teams is the previously existing teams, so they are the ones that need protection
 	const protectedPids: {
 		[key: number]: number[];
 	} = {};
+	const teams = await idb.cache.teams.getAll();
 	for (const t of teams) {
-		protectedPids[t.tid] = [];
+		if (!expansionTids.includes(t.tid)) {
+			protectedPids[t.tid] = [];
+		}
 	}
 
 	gameAttributes.expansionDraft = {

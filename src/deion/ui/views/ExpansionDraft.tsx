@@ -42,10 +42,12 @@ const ExpansionDraft = ({
 	};
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
+		const newNum = String(minRosterSize - newTeams.length);
 		setTeams2(newTeams);
+		setNumProtectedPlayers2(newNum);
 		setSaving(true);
 		await toWorker("main", "updateExpansionDraftSetup", {
-			numProtectedPlayers: String(minRosterSize - newTeams.length),
+			numProtectedPlayers: newNum,
 			teams: newTeams,
 		});
 		setSaving(false);
@@ -100,12 +102,7 @@ const ExpansionDraft = ({
 
 		setSaving(true);
 
-		const errors = await toWorker(
-			"main",
-			"advanceToPlayerProtection",
-			numProtectedPlayers,
-			teams,
-		);
+		const errors = await toWorker("main", "advanceToPlayerProtection");
 
 		if (errors) {
 			logEvent({

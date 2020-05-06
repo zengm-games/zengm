@@ -20,23 +20,40 @@ const updateExpansionDraft = async () => {
 	}
 
 	const currentAbbrevs = g.get("teamAbbrevsCache");
-	const allAbbrevs = Object.keys(teamInfos).filter(abbrev => {
-		// Handle a couple teams with multiple names
-		if (currentAbbrevs.includes("LA") && abbrev === "LAE") {
-			return false;
+	const allAbbrevs: string[] = [];
+	for (const abbrev of Object.keys(teamInfos)) {
+		const blacklist = [...allAbbrevs, ...currentAbbrevs];
+
+		// Handle a couple teams with multiple abbrevs
+		if (blacklist.includes("LA") && abbrev === "LAC") {
+			continue;
 		}
-		if (currentAbbrevs.includes("LAE") && abbrev === "LA") {
-			return false;
+		if (blacklist.includes("LA") && abbrev === "LAE") {
+			continue;
 		}
-		if (currentAbbrevs.includes("GS") && abbrev === "SF") {
-			return false;
+		if (blacklist.includes("LAC") && abbrev === "LA") {
+			continue;
 		}
-		if (currentAbbrevs.includes("SF") && abbrev === "GS") {
-			return false;
+		if (blacklist.includes("LAC") && abbrev === "LAE") {
+			continue;
+		}
+		if (blacklist.includes("LAE") && abbrev === "LA") {
+			continue;
+		}
+		if (blacklist.includes("LAE") && abbrev === "LAC") {
+			continue;
+		}
+		if (blacklist.includes("GS") && abbrev === "SF") {
+			continue;
+		}
+		if (blacklist.includes("SF") && abbrev === "GS") {
+			continue;
 		}
 
-		return !currentAbbrevs.includes(abbrev);
-	});
+		if (!blacklist.includes(abbrev)) {
+			allAbbrevs.push(abbrev);
+		}
+	}
 
 	const divs = g.get("divs");
 	const div = divs[divs.length - 1];

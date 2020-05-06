@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+*** 2020-05-05: Expansion draft, including configurable player protections from existing teams and the ability to control an expansion team. Tools > Expansion Draft.**
+
 * 2020-05-03: Added a new page Tools > Manage Confs that allows you to create, edit, and delete divisions and conferenes.
 
 * 2020-05-03: Added tracking of changes to some league settings (conferences, divisions, and number of playoff rounds) so that historical screens don't show incorrect values.

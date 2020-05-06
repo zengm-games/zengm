@@ -954,6 +954,7 @@ class Cache {
 		if (
 			[
 				"draftPicks",
+				"draftLotteryResults",
 				"negotiations",
 				"players",
 				"releasedPlayers",

@@ -6,8 +6,10 @@ expansion draft
 - force upcoming FAs to re-sign with expansion team
   - some explanation of upcomoing FAs in UI
 - confirm pages redirect correctly based on phase
-- FBGM?
 - make initial expansion form persist in g.expansionDraft as { phase: "setup", numProtectedPlayers: number, teams: {}[] } so you can navigate away and back without losing it
+- update phaseText
+- cancel when userTid already switched to expansion team?
+- after making 10th pick when user controls expansion team, error. not getting to finalize
 
 update Add Team text on Manage Teams to reference expansion draft
 - also get rid of the conf/div form there
@@ -25,6 +27,8 @@ add instructions to faq for deleting old service worker in chrome
 do something about situation when there are two conferences but one does not have enough teams for the playoffs
 
 fbgm test all
+
+changes
 
 blog
 - danger zone auto save
@@ -58,6 +62,10 @@ eventually
 - gui to edit scheduled events
 
 ---
+
+better newScheduleCrappy
+
+objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
 
 schema validation of gameAttributes seems broken
 

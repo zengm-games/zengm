@@ -229,18 +229,20 @@ a.god-mode,
 
 // From the Bootstrap offcanvas example
 // http://getbootstrap.com/examples/offcanvas/
-.row-offcanvas {
-	position: relative;
-}
+@include media-breakpoint-down(md) {
+	.row-offcanvas {
+		position: relative;
+	}
 
-.row-offcanvas-right .sidebar-offcanvas {
-	right: -100%;
-}
+	.row-offcanvas-right .sidebar-offcanvas {
+		right: -100%;
+	}
 
-.sidebar-offcanvas {
-	position: absolute;
-	top: 0;
-	width: 100%;
+	.sidebar-offcanvas {
+		position: absolute;
+		top: 0;
+		width: 100%;
+	}
 }
 
 @include media-breakpoint-up(md) {

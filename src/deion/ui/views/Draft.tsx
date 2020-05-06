@@ -244,7 +244,9 @@ const Draft = ({
 					dpid={p.draft.dpid}
 					disabled={drafting}
 					tid={p.draft.tid}
-					visible={!fantasyDraft && !userTids.includes(p.draft.tid)}
+					visible={
+						!fantasyDraft && !expansionDraft && !userTids.includes(p.draft.tid)
+					}
 				/>
 			),
 			p.pid >= 0 ? p.ratings.pos : null,

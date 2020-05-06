@@ -240,7 +240,7 @@ const ExpansionDraft = ({
 								</select>
 								<button
 									type="button"
-									className="btn btn-secondary"
+									className="btn btn-primary"
 									onClick={addTeam}
 								>
 									Add Team

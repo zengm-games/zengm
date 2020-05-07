@@ -50,8 +50,6 @@ const lotterySort = (
 		}
 	}
 
-	console.log(teams);
-
 	teams.sort((a, b) => {
 		let r;
 		r = 0;

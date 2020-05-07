@@ -71,7 +71,7 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 						After you add a team here, it will become available to edit in the
 						form below. Created teams start with no players. You can use God
 						Mode to set up the roster, or start simulating and the AI will sign
-						free agents. There is not yet support for a real expansion draft.
+						free agents.
 					</p>
 					<p>
 						An{" "}

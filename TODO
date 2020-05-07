@@ -1,17 +1,12 @@
 refit rosters with game sim presets applied
 - how are finance values in old seasons?
+- other stuff from bbgm-rosters todo
+
+somehow, expansion draft trigger results in the season summary page not finding the season. wtf
 
 add more scheduled events
-- confs, divs
-- expansion
-  - specify {
-				phase: "setup";
-				numProtectedPlayers?: string;
-				teams?: ExpansionDraftSetupTeam[];
-		  }
-  - run advanceToPlayerProtection, ignore errors
-  - run newPhase
 - event log should also log to DB
+- make sure auto play works
 
 add instructions to faq for deleting old service worker in chrome
 - https://www.reddit.com/r/BasketballGM/comments/gecq85/ive_tried_every_way_to_update_the_game_and_its

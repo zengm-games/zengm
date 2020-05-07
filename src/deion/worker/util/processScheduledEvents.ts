@@ -2,8 +2,9 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
-import { league } from "../core";
-import type { ScheduledEvent } from "../../common/types";
+import { league, expansionDraft, phase } from "../core";
+import type { ScheduledEvent, Conditions } from "../../common/types";
+import { PHASE } from "../../common";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -16,7 +17,7 @@ const processTeamInfo = async (
 	const teams = await idb.cache.teams.getAll();
 	const t = teams.find(t2 => t2.tid === info.tid);
 	if (!t) {
-		throw new Error(`No team found in triggered event: ${info.tid}`);
+		throw new Error(`No team found in scheduled event: ${info.tid}`);
 	}
 
 	const old = {
@@ -33,7 +34,7 @@ const processTeamInfo = async (
 	);
 	if (!t) {
 		throw new Error(
-			`No team season found in triggered event: ${info.tid}, ${season}`,
+			`No team season found in scheduled event: ${info.tid}, ${season}`,
 		);
 	}
 	Object.assign(teamSeason, info);
@@ -73,7 +74,6 @@ const processTeamInfo = async (
 
 const processGameAttributes = async (
 	info: Extract<ScheduledEvent, { type: "gameAttributes" }>["info"],
-	season: number,
 ) => {
 	const eventLogTexts: string[] = [];
 
@@ -155,7 +155,43 @@ const processGameAttributes = async (
 	return eventLogTexts;
 };
 
-const processScheduledEvents = async (season: number, phase: number) => {
+const processExpansionDraft = async (
+	info: Extract<ScheduledEvent, { type: "expansionDraft" }>["info"],
+	conditions: Conditions,
+) => {
+	const teams = info.teams;
+	const numProtectedPlayers =
+		info.numProtectedPlayers !== undefined
+			? info.numProtectedPlayers
+			: g.get("minRosterSize") - teams.length;
+
+	await league.setGameAttributes({
+		expansionDraft: {
+			phase: "setup",
+			teams,
+			numProtectedPlayers: String(numProtectedPlayers),
+		},
+	});
+
+	const errors = await expansionDraft.advanceToPlayerProtection(conditions);
+	if (errors) {
+		throw new Error(errors.join("; "));
+	}
+
+	await phase.newPhase(PHASE.EXPANSION_DRAFT, conditions);
+
+	return [
+		`<b>Expansion draft!</b> ${info.teams.length} new team${
+			info.teams.length > 1 ? "s are" : " is"
+		} joining the league.`,
+	];
+};
+
+const processScheduledEvents = async (
+	season: number,
+	phase: number,
+	conditions: Conditions,
+) => {
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
 	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];
@@ -164,19 +200,20 @@ const processScheduledEvents = async (season: number, phase: number) => {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			continue;
 		}
-		console.log("scheduledEvent", scheduledEvent);
 
 		if (scheduledEvent.type === "teamInfo") {
 			eventLogTexts.push(
 				...(await processTeamInfo(scheduledEvent.info, season)),
 			);
 		} else if (scheduledEvent.type === "gameAttributes") {
+			eventLogTexts.push(...(await processGameAttributes(scheduledEvent.info)));
+		} else if (scheduledEvent.type === "expansionDraft") {
 			eventLogTexts.push(
-				...(await processGameAttributes(scheduledEvent.info, season)),
+				...(await processExpansionDraft(scheduledEvent.info, conditions)),
 			);
 		} else {
 			throw new Error(
-				`Unknown triggered event type: ${(scheduledEvent as any).type}`,
+				`Unknown scheduled event type: ${(scheduledEvent as any).type}`,
 			);
 		}
 

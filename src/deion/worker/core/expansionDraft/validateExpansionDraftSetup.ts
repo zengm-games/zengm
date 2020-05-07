@@ -38,9 +38,14 @@ const validateExpansionDraftSetup = async () => {
 			errors.push(`Invalid population for ${t.abbrev}`);
 		}
 
-		const stadiumCapacity = parseInt(t.stadiumCapacity);
-		if (Number.isNaN(stadiumCapacity)) {
-			errors.push(`Invalid stadium capacity for ${t.abbrev}`);
+		let stadiumCapacity;
+		if (t.stadiumCapacity === undefined) {
+			stadiumCapacity = g.get("defaultStadiumCapacity");
+		} else {
+			const stadiumCapacity = parseInt(t.stadiumCapacity);
+			if (Number.isNaN(stadiumCapacity)) {
+				errors.push(`Invalid stadium capacity for ${t.abbrev}`);
+			}
 		}
 
 		const did = parseInt(t.did);

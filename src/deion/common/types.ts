@@ -216,6 +216,16 @@ export type ScheduledEventWithoutKey =
 			season: number;
 			phase: Phase;
 			info: Partial<GameAttributesLeague>;
+	  }
+	| {
+			type: "expansionDraft";
+			season: number;
+			phase: Phase;
+			info: {
+				// Actually stadiumCapacity is optional
+				teams: ExpansionDraftSetupTeam[];
+				numProtectedPlayers?: number;
+			};
 	  };
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };

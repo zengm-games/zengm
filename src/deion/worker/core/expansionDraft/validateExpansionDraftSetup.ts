@@ -55,15 +55,25 @@ const validateExpansionDraftSetup = async () => {
 			errors.push(`Invalid division for ${t.abbrev}`);
 		}
 
-		for (const t2 of teams) {
-			if (t2.abbrev === t.abbrev) {
-				errors.push(`Abbrev ${t.abbrev} is already used by an existing team`);
+		let abbrevGood = false;
+		const originalAbbrev = t.abbrev;
+		let counter = 1;
+		while (!abbrevGood) {
+			abbrevGood = true;
+			for (const t2 of teams) {
+				if (t2.abbrev === t.abbrev) {
+					counter += 1;
+					t.abbrev = `${originalAbbrev}${counter}`;
+					abbrevGood = false;
+				}
 			}
-		}
 
-		for (const t2 of expansionTeamsRaw) {
-			if (t !== t2 && t2.abbrev === t.abbrev) {
-				errors.push(`Abbrev ${t.abbrev} is used by multiple expansion teams`);
+			for (const t2 of expansionTeamsRaw) {
+				if (t !== t2 && t2.abbrev === t.abbrev) {
+					counter += 1;
+					t.abbrev = `${originalAbbrev}${counter}`;
+					abbrevGood = false;
+				}
 			}
 		}
 

@@ -900,3 +900,7 @@ tr.table-warning:hover > td {
 	// Default does not do well with altered font-size-base
 	margin-top: 4px;
 }
+
+.text-warning {
+	color: darken($yellow, 10%) !important;
+}

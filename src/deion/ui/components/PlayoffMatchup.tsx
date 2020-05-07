@@ -55,16 +55,16 @@ const Team = ({
 				"text-muted": lost,
 			})}
 		>
-			{team.imgURL ? (
-				<div className="playoff-matchup-logo d-flex align-items-center justify-content-center">
+			<div className="playoff-matchup-logo d-flex align-items-center justify-content-center">
+				{team.imgURL ? (
 					<img
 						className="mw-100 mh-100"
 						style={lost ? faded : undefined}
 						src={team.imgURL}
 						alt=""
 					/>
-				</div>
-			) : null}
+				) : null}
+			</div>
 			<div className="mx-1">
 				{team.seed}.<br />
 				&nbsp;

@@ -2,11 +2,7 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-text-warning too light in light mode?
-
 auto play while viewing some screens (like playoffs) results in errors sometimes, probably related to TeamSeason filtering stuff, like if it refreshes before they are created in preseason
-
-does it make sense for expansion draft scheduled event to redirect to protection screen? no, should stay with season summary
 
 scheduled events
 - event log should also log to DB

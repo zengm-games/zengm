@@ -569,6 +569,12 @@ function formatCurrency(
 		append = "B";
 	}
 
+	if (append === "M" && amount < 1 && amount !== 0) {
+		amount *= 1000;
+		append = "k";
+		precision = 0;
+	}
+
 	return `$${amount.toFixed(precision)}${append}`;
 }
 

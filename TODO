@@ -2,11 +2,17 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-somehow, expansion draft trigger results in the season summary page not finding the season. wtf
+"Invalid division for POR" in 1970
+- conference realignment happens for the 1971 season, but expansion draft comes prior at the end of 1970
+- either have to put team in dummy division, or do realignment before expansion draft
 
-add more scheduled events
+does it make sense for expansion draft scheduled event to redirect to protection screen? no, should stay with season summary
+
+button to clear all notification popups
+- also don't let more than N persistent notifications stay, like they do in auto play from the old days
+
+scheduled events
 - event log should also log to DB
-- make sure auto play works
 
 add instructions to faq for deleting old service worker in chrome
 - https://www.reddit.com/r/BasketballGM/comments/gecq85/ive_tried_every_way_to_update_the_game_and_its
@@ -71,8 +77,6 @@ relocation fun stuff
   - could prompt them, and then if they say no still move their cid/did but leave the rest alone
 - would be cool to let people move their team (and rebrand) by spending $
 
-button to clear all notification popups
-
 dropdown and left menu highlight looks weird for god mode, what did it look like with reactstrap?
 
 ovr formula should change depending on game simulation settings, especially 3 point shooting
@@ -80,6 +84,7 @@ ovr formula should change depending on game simulation settings, especially 3 po
 what would it really cost to store all game sim results?
 
 playoff upsets
+- could apply bigger home court advantage for good teams
 
 show spread, ovr, etc on live game sim game selection page
 

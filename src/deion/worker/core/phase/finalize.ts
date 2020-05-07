@@ -50,9 +50,9 @@ const finalize = async (
 	await updateStatus("Idle");
 	updateEvents.push("newPhase");
 
-	if (phase === PHASE.PRESEASON) {
+	if (phase === PHASE.PRESEASON || phase === PHASE.DRAFT_LOTTERY) {
 		// Needs to be here rather than in newPhasePreseason so g.season is set correctly and wrapped game attributes will therefore update correctly.
-		await processScheduledEvents(g.get("season"), PHASE.PRESEASON);
+		await processScheduledEvents(g.get("season"), phase);
 	}
 
 	// If auto-simulating, initiate next action but don't redirect to a new URL

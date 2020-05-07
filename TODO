@@ -4,8 +4,13 @@ refit rosters with game sim presets applied
 add more scheduled events
 - confs, divs
 - expansion
-  - need to populate g.expansionDraft and then trigger phase change
-  - ideally phase change does all the validation that's in advanceToPlayerProtection too
+  - specify {
+				phase: "setup";
+				numProtectedPlayers?: string;
+				teams?: ExpansionDraftSetupTeam[];
+		  }
+  - run advanceToPlayerProtection, ignore errors
+  - run newPhase
 - event log should also log to DB
 
 add instructions to faq for deleting old service worker in chrome

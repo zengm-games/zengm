@@ -86,9 +86,12 @@ const Notifications = () => {
 
 					// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
 					let numToDelete = newNotifications.length - MAX_NUM_NOTIFICATIONS;
-					if (numToDelete > 0) {
+					let numPersistentKept = 0;
+					if (numToDelete > -1) {
+						// -1 so numPersistentKept can still identify when there are 4 persistent notifications
 						newNotifications = newNotifications.filter(notification => {
 							if (notification.persistent) {
+								numPersistentKept += 1;
 								return true;
 							}
 
@@ -99,6 +102,13 @@ const Notifications = () => {
 
 							return true;
 						});
+					}
+
+					// Want at most MAX_NUM_NOTIFICATIONS-1, so there is room for another
+					if (numPersistentKept > MAX_NUM_NOTIFICATIONS - 1) {
+						newNotifications = newNotifications.slice(
+							numPersistentKept - (MAX_NUM_NOTIFICATIONS - 1),
+						);
 					}
 
 					return newNotifications;

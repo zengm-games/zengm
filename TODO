@@ -2,9 +2,9 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-"Invalid division for POR" in 1970
-- conference realignment happens for the 1971 season, but expansion draft comes prior at the end of 1970
-- either have to put team in dummy division, or do realignment before expansion draft
+text-warning too light in light mode?
+
+auto play while viewing some screens (like playoffs) results in errors sometimes, probably related to TeamSeason filtering stuff, like if it refreshes before they are created in preseason
 
 does it make sense for expansion draft scheduled event to redirect to protection screen? no, should stay with season summary
 
@@ -43,6 +43,7 @@ blog
 - playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs - numGames too
 - Tools > Expansion Draft
   - choose a built in expansion team, or make your own
+- historical rosters change over time - league settings, expansion, team relocation
 
 fbgm test all
 

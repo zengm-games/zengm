@@ -61,6 +61,7 @@ const advanceToPlayerProtection = async (conditions: Conditions) => {
 				},
 				conditions,
 			);
+			await league.updateMetaNameRegion(t.name, t.region);
 		}
 	}
 

@@ -1,7 +1,6 @@
 refit rosters with game sim presets applied
 
 expansion draft bugs
-- switching to expansion team does not update dashboard (meta db)
 - initial value for finances/budget/tickets
 - force protection number to be non-negative
 - check created draft prospect. report from user it creates prospects for 1 year too far in the future, leading to Next button on Draft Scouting

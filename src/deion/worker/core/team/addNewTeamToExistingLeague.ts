@@ -57,8 +57,12 @@ const addNewTeamToExistingLeague = async (teamInfo: {
 				season: draftYear,
 			});
 		}
+	}
 
-		// Add new draft prospects to draft class
+	// Add new draft prospects to draft classes
+	for (let i = 0; i < 3; i++) {
+		const draftYear = g.get("season") + dpOffset + i;
+
 		await draft.genPlayers(draftYear, undefined, g.get("numDraftRounds"));
 	}
 

@@ -1,4 +1,4 @@
-import { helpers, g } from "../../util";
+import { g } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 import { league } from "..";
 
@@ -8,7 +8,7 @@ const newPhaseExpansionDraft = async (): Promise<PhaseReturn> => {
 		nextPhase: g.get("phase"),
 	});
 
-	return [helpers.leagueUrl(["protect_players"]), []];
+	return [undefined, []];
 };
 
 export default newPhaseExpansionDraft;

@@ -2,8 +2,9 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-expansion draft redirect in live game sim
-- do we even need this redirect for scheduled event? noop normally
+during post-season expansion draft, league history and playoffs act like season is still ongoing
+
+during live gamesim, suppress notification of scheduled events
 
 contracts under $1M should really be expressed in thousands instead of millions.
 

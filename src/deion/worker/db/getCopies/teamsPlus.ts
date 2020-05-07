@@ -330,16 +330,16 @@ const processTeam = async <
 	const promises: Promise<any>[] = [];
 
 	if (seasonAttrs) {
-		// @ts-ignore
 		promises.push(
+			// @ts-ignore
 			processSeasonAttrs(output, t, seasonAttrs, addDummySeason, season),
 		);
 	}
 
 	if (stats) {
 		promises.push(
-			// @ts-ignore
 			processStats(
+				// @ts-ignore
 				output,
 				t,
 				stats,

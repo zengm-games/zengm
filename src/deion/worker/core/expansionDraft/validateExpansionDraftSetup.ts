@@ -80,7 +80,7 @@ const validateExpansionDraftSetup = async () => {
 	}
 
 	const numProtectedPlayers = parseInt(numProtectedPlayersRaw);
-	if (Number.isNaN(numProtectedPlayers)) {
+	if (Number.isNaN(numProtectedPlayers) || numProtectedPlayers < 0) {
 		errors.push("Invalid number of protected players");
 	}
 

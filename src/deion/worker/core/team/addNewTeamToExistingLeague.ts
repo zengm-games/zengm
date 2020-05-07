@@ -3,7 +3,7 @@ import type { Team } from "../../../common/types";
 import generate from "./generate";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
-import { draft, league } from "..";
+import { draft, league, finances } from "..";
 import { idb } from "../../db";
 import { PHASE } from "../../../common";
 
@@ -65,6 +65,8 @@ const addNewTeamToExistingLeague = async (teamInfo: {
 
 		await draft.genPlayers(draftYear, undefined, g.get("numDraftRounds"));
 	}
+
+	await finances.updateRanks(["budget"]);
 
 	return t;
 };

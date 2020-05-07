@@ -1,9 +1,6 @@
 refit rosters with game sim presets applied
 - how are finance values in old seasons?
 
-expansion draft bugs
-- initial value for finances/budget/tickets
-
 add more scheduled events
 - confs, divs
 - expansion
@@ -16,7 +13,7 @@ add instructions to faq for deleting old service worker in chrome
 
 do something about situation when there are two conferences but one does not have enough teams for the playoffs
 
-fbgm test all
+when starting a new real league, show some information about the features (expansion draft, finance changes, etc)
 
 changes
 
@@ -40,6 +37,8 @@ blog
 - playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs - numGames too
 - Tools > Expansion Draft
   - choose a built in expansion team, or make your own
+
+fbgm test all
 
 eventually
 - way to view scheduled events and add/edit/delete

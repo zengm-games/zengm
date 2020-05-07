@@ -12,6 +12,7 @@ import type { View } from "../../common/types";
 
 type FinancesFormProps = {
 	gamesInProgress: boolean;
+	noSeasonData: boolean;
 	t: any;
 	tid: number;
 	userTid: number;
@@ -138,7 +139,7 @@ class FinancesForm extends React.Component<
 	}
 
 	render() {
-		const { gamesInProgress, t, tid, userTid } = this.props;
+		const { gamesInProgress, noSeasonData, t, tid, userTid } = this.props;
 
 		const warningMessage = (
 			<p className="text-danger">
@@ -214,7 +215,11 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current rate: #{t.budget.scouting.rank}
 						<br />
-						Spent this season: #{t.seasonAttrs.expenses.scouting.rank}
+						{noSeasonData ? (
+							<br />
+						) : (
+							`Spent this season: #${t.seasonAttrs.expenses.scouting.rank}`
+						)}
 					</div>
 				</div>
 				<div className="row">
@@ -237,7 +242,11 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current spending rate: #{t.budget.coaching.rank}
 						<br />
-						Spent this season: #{t.seasonAttrs.expenses.coaching.rank}
+						{noSeasonData ? (
+							<br />
+						) : (
+							`Spent this season: #${t.seasonAttrs.expenses.coaching.rank}`
+						)}
 					</div>
 				</div>
 				<div className="row">
@@ -260,7 +269,11 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current spending rate: #{t.budget.health.rank}
 						<br />
-						Spent this season: #{t.seasonAttrs.expenses.health.rank}
+						{noSeasonData ? (
+							<br />
+						) : (
+							`Spent this season: #${t.seasonAttrs.expenses.health.rank}`
+						)}
 					</div>
 				</div>
 				<div className="row">
@@ -283,7 +296,11 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current spending rate: #{t.budget.facilities.rank}
 						<br />
-						Spent this season: #{t.seasonAttrs.expenses.facilities.rank}
+						{noSeasonData ? (
+							<br />
+						) : (
+							`Spent this season: #${t.seasonAttrs.expenses.facilities.rank}`
+						)}
 					</div>
 				</div>
 				<br />
@@ -671,6 +688,7 @@ const TeamFinances = ({
 					<div className="col-lg-5 col-md-6 col-sm-7">
 						<FinancesForm
 							gamesInProgress={gamesInProgress}
+							noSeasonData={noSeasonData}
 							t={t}
 							tid={tid}
 							userTid={userTid}

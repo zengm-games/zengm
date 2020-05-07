@@ -82,7 +82,7 @@ const correctLinkLid = (
 	event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
 };
 
-const defaultBudgetAmount = (popRank: number) => {
+const defaultBudgetAmount = (popRank: number = g.get("numTeams")) => {
 	return (
 		Math.round(
 			(g.get("salaryCap") / 90000) * 1350 +
@@ -91,7 +91,7 @@ const defaultBudgetAmount = (popRank: number) => {
 	);
 };
 
-const defaultTicketPrice = (popRank: number) => {
+const defaultTicketPrice = (popRank: number = g.get("numTeams")) => {
 	return parseFloat(
 		(
 			(g.get("salaryCap") / 90000) * 37 +

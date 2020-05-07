@@ -24,6 +24,31 @@
 	}
 }
 
+.notification-close-all {
+	background-color: #000;
+	border-radius: 3px;
+	box-shadow: #999 0 0 12px;
+	color: #c0c0c0; // Try to match normal close button
+	opacity: 0.8;
+
+	&:hover {
+		box-shadow: #000 0 0 12px;
+		color: #fff;
+		opacity: 1;
+	}
+
+	font-size: 20px;
+
+	border-width: 0px;
+
+	position: fixed;
+	right: 312px;
+	bottom: 6px;
+
+	width: 31px;
+	height: 31px;
+}
+
 .notification {
 	background-color: #000;
 	border-radius: 3px;

@@ -8,9 +8,6 @@ auto play while viewing some screens (like playoffs) results in errors sometimes
 
 does it make sense for expansion draft scheduled event to redirect to protection screen? no, should stay with season summary
 
-button to clear all notification popups
-- also don't let more than N persistent notifications stay, like they do in auto play from the old days
-
 scheduled events
 - event log should also log to DB
 

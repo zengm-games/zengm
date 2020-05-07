@@ -62,7 +62,11 @@ const Notification = ({
 				</>
 			) : null}
 			<SafeHtml dirty={message} />
-			<button className="notification-close" onClick={remove}>
+			<button
+				className="notification-close"
+				onClick={remove}
+				title="Dismiss notification"
+			>
 				&times;
 			</button>
 		</div>
@@ -126,6 +130,22 @@ const Notifications = () => {
 					: undefined,
 			)}
 		>
+			{notifications.length > 0 ? (
+				<button
+					className={classNames(
+						"notification-close-all",
+						userTids.length > 1
+							? "notification-container-extra-margin-bottom"
+							: undefined,
+					)}
+					title="Dismiss all notifications"
+					onClick={() => {
+						setNotifications([]);
+					}}
+				>
+					&times;
+				</button>
+			) : null}
 			<ul>
 				<AnimatePresence initial={false}>
 					{notifications.map(notification => (

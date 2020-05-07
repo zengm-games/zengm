@@ -9,6 +9,7 @@ import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
 import league2020 from "../../../../public/basketball/leagues/2020.json";
 import api from "../api";
+import classNames from "classnames";
 
 const randomTeam = {
 	tid: -1,
@@ -575,80 +576,121 @@ const NewLeague = (props: View<"newLeague">) => {
 					</div>
 				</div>
 
-				{props.type === "custom" ? (
-					<div className="col-sm-6 order-first order-sm-last mb-3 mb-sm-0">
+				{props.type === "custom" || props.type === "real" ? (
+					<div
+						className={classNames(
+							"col-sm-6 order-first order-sm-last mb-3 mb-sm-0",
+							{
+								"d-none d-sm-block": props.type === "real",
+							},
+						)}
+					>
 						<div className="card bg-light mt-1">
-							<div className="card-body" style={{ marginBottom: "-1rem" }}>
-								<h2 className="card-title">Customize</h2>
-								<div className="form-group">
-									<select
-										className="form-control"
-										onChange={event => {
-											const newCustomize = event.target.value as any;
-											setCustomize(newCustomize);
-											if (
-												process.env.SPORT === "basketball" &&
-												newCustomize === "real"
-											) {
-												setTeams(teams2020);
-												setLeagueFile(helpers.deepCopy(league2020));
-												setKeptKeys(initKeptKeys(league2020));
-											} else {
-												setTeams(teamsDefault);
-												setLeagueFile(null);
-												setKeptKeys(initKeptKeys(null));
-											}
-										}}
-										value={customize}
-									>
-										<option value="default">
-											{process.env.SPORT === "basketball"
-												? "Random players and teams"
-												: "Default"}
-										</option>
-										{process.env.SPORT === "basketball" ? (
-											<option value="real">Real players and teams</option>
+							{props.type === "real" ? (
+								<>
+									<ul className="list-group list-group-flush">
+										<li className="list-group-item bg-light">
+											<h3>Start in any season back to 1956</h3>
+											<p className="mb-0">
+												Players, teams, rosters, and contracts are as realistic
+												as possible. Draft classes are included up to today.
+											</p>
+										</li>
+										<li className="list-group-item bg-light">
+											<h3>Watch your league evolve over time</h3>
+											<p className="mb-0">
+												There were only 8 teams in 1956, playing a very
+												different brand of basketball than today. Live through
+												expansion drafts, league rule changes, team relocations,
+												economic growth, and changes in style of play.
+											</p>
+										</li>
+										<li className="list-group-item bg-light">
+											<h3>Every league is different</h3>
+											<p className="mb-0">
+												Rookies always start the same, but they have different
+												career arcs in every league. See busts meet their
+												potential, see injury-shortened careers play out in
+												full, and see new combinations of players lead to
+												dynasties.
+											</p>
+										</li>
+									</ul>
+								</>
+							) : null}
+							{props.type === "custom" ? (
+								<div className="card-body" style={{ marginBottom: "-1rem" }}>
+									<h2 className="card-title">Customize</h2>
+									<div className="form-group">
+										<select
+											className="form-control"
+											onChange={event => {
+												const newCustomize = event.target.value as any;
+												setCustomize(newCustomize);
+												if (
+													process.env.SPORT === "basketball" &&
+													newCustomize === "real"
+												) {
+													setTeams(teams2020);
+													setLeagueFile(helpers.deepCopy(league2020));
+													setKeptKeys(initKeptKeys(league2020));
+												} else {
+													setTeams(teamsDefault);
+													setLeagueFile(null);
+													setKeptKeys(initKeptKeys(null));
+												}
+											}}
+											value={customize}
+										>
+											<option value="default">
+												{process.env.SPORT === "basketball"
+													? "Random players and teams"
+													: "Default"}
+											</option>
+											{process.env.SPORT === "basketball" ? (
+												<option value="real">Real players and teams</option>
+											) : null}
+											<option value="custom-rosters">Upload league file</option>
+											<option value="custom-url">Enter league file URL</option>
+										</select>
+										{customize === "custom-rosters" ||
+										customize === "custom-url" ? (
+											<p className="mt-3">
+												League files can contain teams, players, settings, and
+												other data. You can create a league file by going to
+												Tools > Export within a league, or by{" "}
+												<a
+													href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
+												>
+													creating a custom league file
+												</a>
+												.
+											</p>
 										) : null}
-										<option value="custom-rosters">Upload league file</option>
-										<option value="custom-url">Enter league file URL</option>
-									</select>
+									</div>
 									{customize === "custom-rosters" ||
 									customize === "custom-url" ? (
-										<p className="mt-3">
-											League files can contain teams, players, settings, and
-											other data. You can create a league file by going to Tools
-											> Export within a league, or by{" "}
-											<a
-												href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
-											>
-												creating a custom league file
-											</a>
-											.
-										</p>
+										<div className="my-3">
+											<LeagueFileUpload
+												onLoading={() => {
+													setTeams(teamsDefault);
+													setLeagueFile(null);
+													setKeptKeys(initKeptKeys(null));
+												}}
+												onDone={handleNewLeagueFile}
+												enterURL={customize === "custom-url"}
+												hideLoadedMessage
+											/>
+										</div>
 									) : null}
-								</div>
-								{customize === "custom-rosters" ||
-								customize === "custom-url" ? (
-									<div className="my-3">
-										<LeagueFileUpload
-											onLoading={() => {
-												setTeams(teamsDefault);
-												setLeagueFile(null);
-												setKeptKeys(initKeptKeys(null));
-											}}
-											onDone={handleNewLeagueFile}
-											enterURL={customize === "custom-url"}
-											hideLoadedMessage
-										/>
-									</div>
-								) : null}
 
-								<LeaguePartPicker
-									leagueFile={leagueFile}
-									keptKeys={keptKeys}
-									setKeptKeys={setKeptKeys}
-								/>
-							</div>
+									<LeaguePartPicker
+										leagueFile={leagueFile}
+										keptKeys={keptKeys}
+										setKeptKeys={setKeptKeys}
+									/>
+								</div>
+							) : null}
 						</div>
 					</div>
 				) : null}

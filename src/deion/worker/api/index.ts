@@ -975,7 +975,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 };
 
 const lockSet = async (name: LockName, value: boolean) => {
-	lock.set(name, value);
+	await lock.set(name, value);
 };
 
 const ratingsStatsPopoverInfo = async (pid: number) => {

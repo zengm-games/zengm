@@ -53,7 +53,7 @@ const play = async (
 		await updateStatus("Saving...");
 		await idb.cache.flush();
 		await updateStatus("Idle");
-		lock.set("gameSim", false);
+		await lock.set("gameSim", false);
 
 		// Check to see if the season is over
 		if (g.get("phase") < PHASE.PLAYOFFS) {
@@ -228,7 +228,7 @@ const play = async (
 			await player.killOne(conditions);
 
 			if (g.get("stopOnInjury")) {
-				lock.set("stopGameSim", true);
+				await lock.set("stopGameSim", true);
 			}
 
 			updateEvents.push("playerMovement");
@@ -338,7 +338,7 @@ const play = async (
 			if (start || !stopGameSim) {
 				// If start is set, then reset stopGames
 				if (stopGameSim) {
-					lock.set("stopGameSim", false);
+					await lock.set("stopGameSim", false);
 				}
 
 				if (g.get("phase") !== PHASE.PLAYOFFS) {
@@ -371,7 +371,7 @@ const play = async (
 				await updatePlayMenu();
 				await cbRunDay();
 			} else {
-				lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
+				await lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
 
 				await updateStatus("Idle");
 				logEvent(

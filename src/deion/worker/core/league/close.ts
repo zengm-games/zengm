@@ -4,8 +4,8 @@ import { g, local, lock, updateStatus } from "../../util"; // Flush cache, disco
 const close = async (disconnect?: boolean) => {
 	const gameSim = lock.get("gameSim");
 	local.autoPlaySeasons = 0;
-	lock.set("stopGameSim", true);
-	lock.set("gameSim", false); // Wait in case stuff is still happening (ugh)
+	await lock.set("stopGameSim", true);
+	await lock.set("gameSim", false); // Wait in case stuff is still happening (ugh)
 
 	if (gameSim) {
 		await new Promise(resolve => {

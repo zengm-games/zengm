@@ -240,7 +240,7 @@ const writePlayerStats = async (
 							ratingsLoss = output.ratingsLoss;
 
 							if (output.stopPlay && !stopPlay) {
-								lock.set("stopGameSim", true);
+								await lock.set("stopGameSim", true);
 								stopPlay = true;
 							}
 						}

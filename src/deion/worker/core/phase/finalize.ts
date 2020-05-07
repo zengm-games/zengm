@@ -44,7 +44,7 @@ const finalize = async (
 		await idb.cache.fill();
 	}
 
-	lock.set("newPhase", false);
+	await lock.set("newPhase", false);
 	await updatePhase();
 	await updatePlayMenu();
 	await updateStatus("Idle");

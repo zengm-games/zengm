@@ -21,7 +21,7 @@ const get = (name: keyof Locks): boolean => {
 	return locks[name];
 };
 
-const set = (name: keyof Locks, value: boolean) => {
+const set = async (name: keyof Locks, value: boolean) => {
 	if (locks[name] === value) {
 		// Short circuit to prevent realtimeUpdate
 		return;
@@ -30,7 +30,7 @@ const set = (name: keyof Locks, value: boolean) => {
 	locks[name] = value;
 
 	if (name === "gameSim") {
-		toUI("realtimeUpdate", [["lock.gameSim"]]);
+		await toUI("realtimeUpdate", [["lock.gameSim"]]);
 	}
 };
 

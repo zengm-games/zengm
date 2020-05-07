@@ -2,7 +2,15 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-auto play while viewing some screens (like playoffs) results in errors sometimes, probably related to TeamSeason filtering stuff, like if it refreshes before they are created in preseason
+expansion draft redirect in live game sim
+- do we even need this redirect for scheduled event? noop normally
+
+contracts under $1M should really be expressed in thousands instead of millions.
+
+user bug report - player who goes undrafted has wrong draft ovr/pot on draft history page
+- works fine with random players
+
+team finance stuff needs to change as the season changes
 
 scheduled events
 - event log should also log to DB
@@ -50,6 +58,8 @@ eventually
     - when creating a new league, option to use teams from another file
     - somehow globally specify default teams
 - gui to edit scheduled events
+- allow user to cancel relocation if it's their team?
+- allow user to switch to expansion team from scheduled event?
 
 ---
 

@@ -26,7 +26,7 @@ async function play(
 ) {
 	// This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
 	const cbNoDays = async () => {
-		lock.set("gameSim", false);
+		await lock.set("gameSim", false);
 		await updatePlayMenu(); // Check to see if free agency is over
 
 		if (g.get("daysLeft") === 0) {
@@ -62,7 +62,7 @@ async function play(
 
 		if (numDays > 0 && (start || !stopGameSim)) {
 			if (stopGameSim) {
-				lock.set("stopGameSim", false);
+				await lock.set("stopGameSim", false);
 			}
 
 			await cbYetAnother();

@@ -77,7 +77,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		);
 	} else {
 		try {
-			lock.set("newPhase", true);
+			await lock.set("newPhase", true);
 			await updateStatus("Processing...");
 			await updatePlayMenu();
 
@@ -99,7 +99,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 				throw new Error(`Unknown phase number ${phase}`);
 			}
 		} catch (err) {
-			lock.set("newPhase", false);
+			await lock.set("newPhase", false);
 			await updatePlayMenu();
 			logEvent(
 				{

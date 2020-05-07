@@ -88,7 +88,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	// Playoffs are not over! Make another round
 	// Handle "Play until end of round"
 	if (local.playingUntilEndOfRound) {
-		lock.set("stopGameSim", true);
+		await lock.set("stopGameSim", true);
 		local.playingUntilEndOfRound = false;
 	}
 

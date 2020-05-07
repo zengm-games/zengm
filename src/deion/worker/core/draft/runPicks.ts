@@ -24,7 +24,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 		return [];
 	}
 
-	lock.set("drafting", true);
+	await lock.set("drafting", true);
 	const pids: number[] = [];
 	let draftPicks = await getOrder();
 
@@ -54,7 +54,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 	const afterDoneAuto = async () => {
 		// Is draft over?
 		await afterPicks(draftPicks.length === 0, conditions);
-		lock.set("drafting", false);
+		await lock.set("drafting", false);
 		return pids;
 	};
 

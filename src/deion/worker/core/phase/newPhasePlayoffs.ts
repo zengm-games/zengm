@@ -101,7 +101,10 @@ const newPhasePlayoffs = async (
 		url = helpers.leagueUrl(["playoffs"]);
 	}
 
-	return [url, ["teamFinances"]];
+	return {
+		url,
+		updateEvents: ["teamFinances"],
+	};
 };
 
 export default newPhasePlayoffs;

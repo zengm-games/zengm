@@ -48,7 +48,10 @@ const newPhaseFantasyDraft = async (
 		}
 	}
 
-	return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
+	return {
+		url: helpers.leagueUrl(["draft"]),
+		updateEvents: ["playerMovement"],
+	};
 };
 
 export default newPhaseFantasyDraft;

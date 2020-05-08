@@ -181,7 +181,9 @@ const newPhasePreseason = async (
 		toUI("showModal", [], conditions);
 	}
 
-	return [undefined, ["playerMovement"]];
+	return {
+		updateEvents: ["playerMovement"],
+	};
 };
 
 export default newPhasePreseason;

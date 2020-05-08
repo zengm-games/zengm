@@ -11,7 +11,7 @@ import {
 	processScheduledEvents,
 	g,
 } from "../../util";
-import type { Conditions, Phase, UpdateEvents } from "../../../common/types";
+import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
 
 /**
  * Common tasks run after a new phrase is set.
@@ -26,9 +26,8 @@ import type { Conditions, Phase, UpdateEvents } from "../../../common/types";
  */
 const finalize = async (
 	phase: Phase,
-	url: string | undefined,
-	updateEvents: UpdateEvents = [],
 	conditions: Conditions,
+	{ url, updateEvents = [] }: PhaseReturn,
 ) => {
 	await updateStatus("Saving...");
 

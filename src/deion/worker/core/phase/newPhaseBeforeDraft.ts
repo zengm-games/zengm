@@ -15,7 +15,7 @@ import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
-	liveGameSim: boolean = false,
+	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
 	achievement.check("afterPlayoffs", conditions);
 
@@ -119,14 +119,17 @@ const newPhaseBeforeDraft = async (
 
 	// Don't redirect if we're viewing a live game now
 	let url;
-	if (!liveGameSim) {
+	if (!liveGameInProgress) {
 		url = helpers.leagueUrl(["history"]);
 	} else {
 		local.unviewedSeasonSummary = true;
 	}
 
 	toUI("bbgmPing", ["season", g.get("season")], conditions);
-	return [url, ["playerMovement"]];
+	return {
+		url,
+		updateEvents: ["playerMovement"],
+	};
 };
 
 export default newPhaseBeforeDraft;

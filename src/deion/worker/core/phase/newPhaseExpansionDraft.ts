@@ -8,7 +8,7 @@ const newPhaseExpansionDraft = async (): Promise<PhaseReturn> => {
 		nextPhase: g.get("phase"),
 	});
 
-	return [undefined, []];
+	return {};
 };
 
 export default newPhaseExpansionDraft;

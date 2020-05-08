@@ -261,7 +261,11 @@ const newPhaseResignPlayers = async (
 	await league.setGameAttributes({
 		daysLeft: 30,
 	});
-	return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
+
+	return {
+		url: helpers.leagueUrl(["negotiation"]),
+		updateEvents: ["playerMovement"],
+	};
 };
 
 export default newPhaseResignPlayers;

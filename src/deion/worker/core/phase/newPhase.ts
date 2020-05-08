@@ -87,9 +87,8 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 					extra,
 				);
 
-				if (result && result.length === 2) {
-					const [url, updateEvents] = result;
-					await finalize(phase, url, updateEvents, conditions);
+				if (result) {
+					await finalize(phase, conditions, result);
 				} else {
 					throw new Error(
 						`Invalid result from phase change: ${JSON.stringify(result)}`,

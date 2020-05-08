@@ -152,7 +152,9 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 		}
 	}
 
-	return [undefined, ["playerMovement"]];
+	return {
+		updateEvents: ["playerMovement"],
+	};
 };
 
 export default newPhaseRegularSeason;

@@ -53,7 +53,9 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 		}
 	}
 
-	return [helpers.leagueUrl(["draft"]), []];
+	return {
+		url: helpers.leagueUrl(["draft"]),
+	};
 };
 
 export default newPhaseDraft;

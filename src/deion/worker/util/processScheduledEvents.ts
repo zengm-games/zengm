@@ -225,7 +225,6 @@ const processScheduledEvents = async (
 	if (eventLogTexts.length > 0) {
 		logEvent({
 			extraClass: "",
-			persistent: true,
 			saveToDb: false,
 			text: eventLogTexts.join("<br><br>"),
 			type: "info",

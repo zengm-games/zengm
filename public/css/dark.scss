@@ -53,9 +53,11 @@ $text-muted: $gray-400;
 	border-color: darken($red, 20);
 	background-color: darken($red, 20);
 
+	&:active,
+	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($red, 25);
-		background-color: darken($red, 25);
+		border-color: darken($red, 25) !important;
+		background-color: darken($red, 25) !important;
 	}
 }
 
@@ -64,9 +66,11 @@ $text-muted: $gray-400;
 	background-color: darken($orange, 25);
 	color: #fff !important;
 
+	&:active,
+	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($orange, 30);
-		background-color: darken($orange, 30);
+		border-color: darken($orange, 30) !important;
+		background-color: darken($orange, 30) !important;
 	}
 }
 
@@ -74,18 +78,21 @@ $text-muted: $gray-400;
 	border-color: darken($green, 20);
 	background-color: darken($green, 20);
 
+	&:active,
+	&:focus,
 	&:hover {
-		border-color: darken($green, 25);
-		background-color: darken($green, 25);
+		border-color: darken($green, 25) !important;
+		background-color: darken($green, 25) !important;
 	}
 }
 
-.btn-primary,
 .btn-secondary {
 	color: $white;
 
+	&:active,
+	&:focus,
 	&:not(:disabled):hover {
-		color: $white;
+		color: $white !important;
 	}
 
 	&:disabled {

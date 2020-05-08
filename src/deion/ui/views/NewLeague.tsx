@@ -201,41 +201,62 @@ const SeasonsMenu = ({
 	const latestSeason = useRef(value);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
+	const seasons = range(2020, 1955);
+
+	const handleNewSeason = async (season: number) => {
+		latestSeason.current = season;
+		onLoading(season);
+		setErrorMessage(undefined);
+
+		if (process.env.SPORT === "basketball" && season === 2020) {
+			onDone(2020, helpers.deepCopy(league2020));
+		} else {
+			try {
+				const response = await fetch(`/leagues/${season}.json`);
+				const leagueFile = await response.json();
+				onDone(season, leagueFile);
+			} catch (error) {
+				setErrorMessage(error.message);
+				throw error;
+			}
+		}
+	};
+
 	return (
 		<div className="form-group">
 			<label htmlFor="new-league-season">Season</label>
-			<select
-				id="new-league-season"
-				className="form-control mb-1"
-				value={value}
-				onChange={async event => {
-					const season = parseInt(event.target.value, 10);
-					latestSeason.current = season;
-					onLoading(season);
-					setErrorMessage(undefined);
-
-					if (process.env.SPORT === "basketball" && season === 2020) {
-						onDone(2020, helpers.deepCopy(league2020));
-					} else {
-						try {
-							const response = await fetch(`/leagues/${season}.json`);
-							const leagueFile = await response.json();
-							onDone(season, leagueFile);
-						} catch (error) {
-							setErrorMessage(error.message);
-							throw error;
-						}
-					}
-				}}
-			>
-				{range(2020, 1955).map(season => {
-					return (
-						<option key={season} value={season}>
-							{season}
-						</option>
-					);
-				})}
-			</select>
+			<div className="input-group mb-1">
+				<select
+					id="new-league-season"
+					className="form-control"
+					value={value}
+					onChange={async event => {
+						const season = parseInt(event.target.value, 10);
+						await handleNewSeason(season);
+					}}
+				>
+					{seasons.map(season => {
+						return (
+							<option key={season} value={season}>
+								{season}
+							</option>
+						);
+					})}
+				</select>
+				<div className="input-group-append">
+					<button
+						className="btn btn-secondary"
+						type="button"
+						onClick={() => {
+							const randomSeason =
+								seasons[Math.floor(Math.random() * seasons.length)];
+							handleNewSeason(randomSeason);
+						}}
+					>
+						Random
+					</button>
+				</div>
+			</div>
 			{errorMessage ? (
 				<span className="text-danger">Error: {errorMessage}</span>
 			) : null}

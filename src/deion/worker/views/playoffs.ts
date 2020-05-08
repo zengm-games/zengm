@@ -1,4 +1,3 @@
-import { PHASE } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
@@ -66,21 +65,15 @@ const updatePlayoffs = async (
 		let finalMatchups = false;
 		let series: PlayoffSeries["series"];
 
-		// If in the current season and before playoffs started, display projected matchups
-		if (inputs.season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
-			series = await getProjectedSeries(inputs.season);
-		} else {
-			const playoffSeries = await idb.getCopy.playoffSeries({
-				season: inputs.season,
-			});
+		const playoffSeries = await idb.getCopy.playoffSeries({
+			season: inputs.season,
+		});
 
-			if (playoffSeries) {
-				series = playoffSeries.series;
-				finalMatchups = true;
-			} else {
-				// Not sure why, but sometimes playoffSeries is undefined here
-				series = await getProjectedSeries(inputs.season);
-			}
+		if (playoffSeries) {
+			series = playoffSeries.series;
+			finalMatchups = true;
+		} else {
+			series = await getProjectedSeries(inputs.season);
 		}
 
 		await helpers.augmentSeries(series, inputs.season);

@@ -50,54 +50,49 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			const season = seasons[i].season;
 
 			// Only check for finals result for seasons that are over
-			if (
-				season < g.get("season") ||
-				(season === g.get("season") && g.get("phase") > PHASE.PLAYOFFS)
-			) {
-				const series = playoffSeries.find(ps => ps.season === season);
+			const series = playoffSeries.find(ps => ps.season === season);
 
-				if (series) {
-					const finals = series.series[series.series.length - 1][0];
+			if (series) {
+				const finals = series.series[series.series.length - 1][0];
 
-					if (!finals || !finals.away) {
-						continue;
-					}
-
-					let champ: PlayoffSeriesTeam;
-					let runnerUp: PlayoffSeriesTeam;
-					if (finals.home.won > finals.away.won) {
-						champ = finals.home;
-						runnerUp = finals.away;
-					} else {
-						champ = finals.away;
-						runnerUp = finals.home;
-					}
-
-					const formatTeam = ({ seed, tid }: PlayoffSeriesTeam) => {
-						const teamSeason = teams[tid].seasonAttrs.find(
-							ts => ts.season === season,
-						);
-
-						return {
-							tid: tid,
-							seed: seed,
-							abbrev: teamSeason
-								? teamSeason.abbrev
-								: g.get("teamAbbrevsCache")[tid],
-							region: teamSeason
-								? teamSeason.region
-								: g.get("teamRegionsCache")[tid],
-							name: teamSeason ? teamSeason.name : g.get("teamNamesCache")[tid],
-							won: teamSeason ? teamSeason.won : 0,
-							lost: teamSeason ? teamSeason.lost : 0,
-							tied: teamSeason ? teamSeason.tied : 0,
-							count: 0,
-						};
-					};
-
-					seasons[i].champ = formatTeam(champ);
-					seasons[i].runnerUp = formatTeam(runnerUp);
+				if (!finals || !finals.away) {
+					continue;
 				}
+
+				let champ: PlayoffSeriesTeam;
+				let runnerUp: PlayoffSeriesTeam;
+				if (finals.home.won > finals.away.won) {
+					champ = finals.home;
+					runnerUp = finals.away;
+				} else {
+					champ = finals.away;
+					runnerUp = finals.home;
+				}
+
+				const formatTeam = ({ seed, tid }: PlayoffSeriesTeam) => {
+					const teamSeason = teams[tid].seasonAttrs.find(
+						ts => ts.season === season,
+					);
+
+					return {
+						tid: tid,
+						seed: seed,
+						abbrev: teamSeason
+							? teamSeason.abbrev
+							: g.get("teamAbbrevsCache")[tid],
+						region: teamSeason
+							? teamSeason.region
+							: g.get("teamRegionsCache")[tid],
+						name: teamSeason ? teamSeason.name : g.get("teamNamesCache")[tid],
+						won: teamSeason ? teamSeason.won : 0,
+						lost: teamSeason ? teamSeason.lost : 0,
+						tied: teamSeason ? teamSeason.tied : 0,
+						count: 0,
+					};
+				};
+
+				seasons[i].champ = formatTeam(champ);
+				seasons[i].runnerUp = formatTeam(runnerUp);
 			}
 		}
 

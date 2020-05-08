@@ -2,14 +2,10 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-during post-season expansion draft, league history and playoffs act like season is still ongoing
-
 team finance stuff needs to change as the season changes
 
 add instructions to faq for deleting old service worker in chrome
 - https://www.reddit.com/r/BasketballGM/comments/gecq85/ive_tried_every_way_to_update_the_game_and_its
-
-do something about situation when there are two conferences but one does not have enough teams for the playoffs
 
 changes
 
@@ -66,6 +62,8 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 
 in leagues with no 3 pointers, 3 pointers should not be tracked
 - shot locations?
+
+do something about situation when there are two conferences but one does not have enough teams for the playoffs
 
 relocation fun stuff
 - would be cool to let people cancel a relocation of their team

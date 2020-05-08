@@ -228,10 +228,10 @@ const SeasonsMenu = ({
 					}
 				}}
 			>
-				{range(2020, 2004).map(season => {
+				{range(2020, 1955).map(season => {
 					return (
 						<option key={season} value={season}>
-							{season} season
+							{season}
 						</option>
 					);
 				})}

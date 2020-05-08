@@ -75,7 +75,7 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 					</p>
 					<p>
 						An{" "}
-						<a href={helpers.leagueUrl(["expansion_draft"])}>exansion draft</a>{" "}
+						<a href={helpers.leagueUrl(["expansion_draft"])}>expansion draft</a>{" "}
 						is generally a better way to add a team.
 					</p>
 

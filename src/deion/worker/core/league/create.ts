@@ -136,7 +136,7 @@ export const createWithoutSaving = (
 	// Handle random team
 	let userTid = tid;
 
-	if (userTid === -1 || userTid >= teamInfos.length) {
+	if (userTid < 0 || userTid >= teamInfos.length) {
 		userTid = random.randInt(0, teamInfos.length - 1);
 	}
 

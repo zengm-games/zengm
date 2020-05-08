@@ -11,13 +11,6 @@ import league2020 from "../../../../public/basketball/leagues/2020.json";
 import api from "../api";
 import classNames from "classnames";
 
-const randomTeam = {
-	tid: -1,
-	region: "Random",
-	name: "Team",
-	popRank: Infinity,
-};
-
 type NewLeagueTeam = {
 	tid: number;
 	region: string;
@@ -518,25 +511,41 @@ const NewLeague = (props: View<"newLeague">) => {
 
 					<div className="form-group">
 						<label htmlFor="new-league-team">Pick your team</label>
-						<select
-							id="new-league-team"
-							className="form-control mb-1"
-							disabled={loadingLeagueFile}
-							value={tid}
-							onChange={event => {
-								setTid(parseInt(event.target.value, 10));
-							}}
-						>
-							{[randomTeam, ...orderBy(displayedTeams, ["region", "name"])].map(
-								t => {
+						<div className="input-group mb-1">
+							<select
+								id="new-league-team"
+								className="form-control"
+								disabled={loadingLeagueFile}
+								value={tid}
+								onChange={event => {
+									setTid(parseInt(event.target.value, 10));
+								}}
+							>
+								{orderBy(displayedTeams, ["region", "name"]).map(t => {
 									return (
 										<option key={t.tid} value={t.tid}>
 											{t.region} {t.name}
 										</option>
 									);
-								},
-							)}
-						</select>
+								})}
+							</select>
+							<div className="input-group-append">
+								<button
+									className="btn btn-secondary"
+									disabled={loadingLeagueFile}
+									type="button"
+									onClick={() => {
+										const t =
+											displayedTeams[
+												Math.floor(Math.random() * displayedTeams.length)
+											];
+										setTid(t.tid);
+									}}
+								>
+									Random
+								</button>
+							</div>
+						</div>
 						<PopText tid={tid} teams={displayedTeams} />
 					</div>
 
@@ -613,8 +622,8 @@ const NewLeague = (props: View<"newLeague">) => {
 										<li className="list-group-item bg-light">
 											<h3>Start in any season back to 1956</h3>
 											<p className="mb-0">
-												Players, teams, rosters, and contracts are as realistic
-												as possible. Draft classes are included up to today.
+												Players, teams, rosters, and contracts are generated
+												from real data. Draft classes are included up to today.
 											</p>
 										</li>
 										<li className="list-group-item bg-light">
@@ -631,7 +640,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											<p className="mb-0">
 												Rookies always start the same, but they have different
 												career arcs in every league. See busts meet their
-												potential, see injury-shortened careers play out in
+												potentials, see injury-shortened careers play out in
 												full, and see new combinations of players lead to
 												dynasties.
 											</p>

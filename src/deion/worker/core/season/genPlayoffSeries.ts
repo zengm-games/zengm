@@ -87,24 +87,9 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 		Infinity,
 	);
 	const numRounds = g.get("numGamesPlayoffSeries").length;
+	helpers.validateRoundsByes(numRounds, numPlayoffByes, g.get("numTeams"));
 	const tidPlayoffs: number[] = [];
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
-
-	if (numPlayoffTeams <= 0) {
-		throw new Error(
-			"Invalid combination of numGamesPlayoffSeries and numPlayoffByes results in no playoff teams",
-		);
-	}
-
-	if (numPlayoffTeams > g.get("numTeams")) {
-		if (numPlayoffTeams > g.get("numTeams")) {
-			throw new Error(
-				`${numRounds} playoff rounds with ${numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${g.get(
-					"numTeams",
-				)} teams in the league`,
-			);
-		}
-	}
 
 	const series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 

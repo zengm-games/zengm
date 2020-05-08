@@ -2,6 +2,8 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
+close all with multi team mode
+
 team finance stuff needs to change as the season changes
 
 add instructions to faq for deleting old service worker in chrome
@@ -17,6 +19,7 @@ blog
   - old links still break if you edit abbrev, no change there
 - new game simulation settings, and presets for historical seasons
 - fit historical rosters based on historical sim settings - crowdsourced training data
+  - ratings definitely not perfect
 - scheduled events, prespecified in historical rosters
   - including:
     - relocation
@@ -45,6 +48,7 @@ eventually
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?
+- better historical draft lottery
 
 ---
 

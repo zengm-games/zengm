@@ -711,6 +711,46 @@ const keys = <O extends object>(obj: O): Array<keyof O> => {
 	return Object.keys(obj) as Array<keyof O>;
 };
 
+const validateRoundsByes = (
+	numRounds: number,
+	numPlayoffByes: number,
+	numTeams: number,
+) => {
+	if (numRounds < 1) {
+		throw new Error("Must have at least one round of playoffs");
+	}
+
+	if (numPlayoffByes < 0) {
+		throw new Error("Cannot have a negative number of byes");
+	}
+
+	if (numRounds === 1 && numPlayoffByes > 0) {
+		throw new Error("You cannoy have any byes in a one round playoff.");
+	}
+
+	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+
+	if (numPlayoffTeams > numTeams) {
+		throw new Error(
+			`${numRounds} playoff rounds with ${numPlayoffByes} first round byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${numTeams} teams in the league`,
+		);
+	}
+
+	let numTeamsSecondRound;
+	if (numRounds === 1) {
+		// Becuase there is no second round!
+		numTeamsSecondRound = 0;
+	} else {
+		numTeamsSecondRound = 2 ** (numRounds - 1);
+	}
+
+	if (numTeamsSecondRound < numPlayoffByes) {
+		throw new Error(
+			`With ${numRounds} playoff rounds, you need ${numTeamsSecondRound} teams in the second round, so it's not possible to have ${numPlayoffByes} first round byes`,
+		);
+	}
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -727,4 +767,5 @@ export default {
 	refuseToNegotiate,
 	upperCaseFirstLetter,
 	keys,
+	validateRoundsByes,
 };

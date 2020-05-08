@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React, { useState, ReactNode, ChangeEvent, FormEvent } from "react";
 import { HelpPopover } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { localActions, logEvent, toWorker } from "../util";
+import { localActions, logEvent, toWorker, helpers } from "../util";
 import type { View } from "../../common/types";
 
 type Key =
@@ -117,13 +117,13 @@ const options: {
 					throw new Error("Array must contain only integers");
 				}
 			}
+
 			const numRounds = value.length;
-			const numPlayoffTeams = 2 ** numRounds - output.numPlayoffByes;
-			if (numPlayoffTeams > props.numTeams) {
-				throw new Error(
-					`${numRounds} playoff rounds with ${output.numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${props.numTeams} teams in the league`,
-				);
-			}
+			helpers.validateRoundsByes(
+				numRounds,
+				output.numPlayoffByes,
+				props.numTeams,
+			);
 		},
 	},
 	{

@@ -3,6 +3,10 @@ refit rosters with game sim presets applied
 - other stuff from bbgm-rosters todo
 
 team finance stuff needs to change as the season changes
+- init values (budget and ticket price) based on defaults relative to salaryCap:defaultSalaryCap
+- if salary cap changes in scheduled event, change values too
+- what about revenue?
+- attendance formula relative to ticket price?
 
 changes
 

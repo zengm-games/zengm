@@ -560,22 +560,21 @@ function formatCurrency(
 	append: string = "",
 	precision: number = 2,
 ): string {
-	if (amount < 0) {
-		return `-$${Math.abs(amount).toFixed(precision)}${append}`;
-	}
+	const sign = amount < 0 ? "-" : "";
+	let abs = Math.abs(amount);
 
-	if (append === "M" && amount > 1000) {
-		amount /= 1000;
+	if (append === "M" && abs > 1000) {
+		abs /= 1000;
 		append = "B";
 	}
 
-	if (append === "M" && amount < 1 && amount !== 0) {
-		amount *= 1000;
+	if (append === "M" && abs < 1 && abs !== 0) {
+		abs *= 1000;
 		append = "k";
 		precision = 0;
 	}
 
-	return `$${amount.toFixed(precision)}${append}`;
+	return `${sign}$${abs.toFixed(precision)}${append}`;
 }
 
 /**

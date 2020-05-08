@@ -87,6 +87,9 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 			if (sortVal.includes("B")) {
 				return parseFloat(sortVal.replace("$", "")) * 1000;
 			}
+			if (sortVal.includes("k")) {
+				return parseFloat(sortVal.replace("$", "")) / 1000;
+			}
 
 			return parseFloat(sortVal.replace("$", ""));
 		}

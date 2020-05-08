@@ -132,12 +132,7 @@ const Notifications = () => {
 		>
 			{notifications.length > 0 ? (
 				<button
-					className={classNames(
-						"notification-close-all",
-						userTids.length > 1
-							? "notification-container-extra-margin-bottom"
-							: undefined,
-					)}
+					className="notification-close-all"
 					title="Dismiss all notifications"
 					onClick={() => {
 						setNotifications([]);

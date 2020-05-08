@@ -45,7 +45,9 @@ const ExpansionDraft = ({
 	};
 
 	const setTeams = async (newTeams: ExpansionDraftSetupTeam[]) => {
-		const newNum = String(minRosterSize - newTeams.length);
+		const newNum = String(
+			helpers.bound(minRosterSize - newTeams.length, 0, Infinity),
+		);
 		setTeams2(newTeams);
 		setNumProtectedPlayers2(newNum);
 		setSaving(true);

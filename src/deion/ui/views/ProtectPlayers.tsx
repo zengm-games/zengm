@@ -234,6 +234,11 @@ const ProtectPlayers = ({
 						</p>
 						{upcomingFreeAgentsText}
 					</>
+				) : expansionDraft.numProtectedPlayers <= 0 ? (
+					<>
+						<p>There are no protected players in this expansion draft.</p>
+						{upcomingFreeAgentsText}
+					</>
 				) : (
 					<PlayerList
 						updateProtectedPids={updateProtectedPids}

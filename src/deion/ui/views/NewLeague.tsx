@@ -281,6 +281,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			? league2020
 			: null,
 	);
+	const [loadingLeagueFile, setLoadingLeagueFile] = useState(false);
 	const [name, setName] = useState(props.name);
 	const [randomizeRosters, setRandomizeRosters] = useState(false);
 	const [teams, setTeams] = useState(
@@ -387,11 +388,13 @@ const NewLeague = (props: View<"newLeague">) => {
 			if (err) {
 				setTeams(teamsDefault);
 				setLeagueFile(null);
+				setLoadingLeagueFile(false);
 				setKeptKeys(initKeptKeys(null));
 				return;
 			}
 
 			setLeagueFile(newLeagueFile);
+			setLoadingLeagueFile(false);
 			setKeptKeys(initKeptKeys(newLeagueFile));
 
 			let newTeams = helpers.deepCopy(newLeagueFile.teams);
@@ -451,11 +454,11 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const displayedTeams = keptKeys.includes("teams") ? teams : teamsDefault;
 
-	const loadingLeagueFile =
+	const disableWhileLoadingLeagueFile =
 		(customize === "custom-rosters" ||
 			customize === "custom-url" ||
 			customize === "real") &&
-		leagueFile === null;
+		(leagueFile === null || loadingLeagueFile);
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -494,13 +497,14 @@ const NewLeague = (props: View<"newLeague">) => {
 							onLoading={season => {
 								setRealSeason(season);
 								if (season !== 2020) {
-									setLeagueFile(null);
+									setLoadingLeagueFile(true);
 								}
 							}}
 							onDone={(season, leagueFile) => {
 								if (season === 2020) {
 									setTeams(teams2020);
 									setLeagueFile(leagueFile);
+									setLoadingLeagueFile(false);
 									setKeptKeys(initKeptKeys(leagueFile));
 								} else {
 									handleNewLeagueFile(null, leagueFile);
@@ -515,7 +519,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							<select
 								id="new-league-team"
 								className="form-control"
-								disabled={loadingLeagueFile}
+								disabled={disableWhileLoadingLeagueFile}
 								value={tid}
 								onChange={event => {
 									setTid(parseInt(event.target.value, 10));
@@ -532,7 +536,7 @@ const NewLeague = (props: View<"newLeague">) => {
 							<div className="input-group-append">
 								<button
 									className="btn btn-secondary"
-									disabled={loadingLeagueFile}
+									disabled={disableWhileLoadingLeagueFile}
 									type="button"
 									onClick={() => {
 										const t =
@@ -599,7 +603,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						<button
 							type="submit"
 							className="btn btn-lg btn-primary mt-3"
-							disabled={creating || loadingLeagueFile}
+							disabled={creating || disableWhileLoadingLeagueFile}
 						>
 							{props.lid !== undefined ? "Import League" : "Create League"}
 						</button>
@@ -661,12 +665,15 @@ const NewLeague = (props: View<"newLeague">) => {
 													process.env.SPORT === "basketball" &&
 													newCustomize === "real"
 												) {
+													setRealSeason(2020);
 													setTeams(teams2020);
 													setLeagueFile(helpers.deepCopy(league2020));
+													setLoadingLeagueFile(false);
 													setKeptKeys(initKeptKeys(league2020));
 												} else {
 													setTeams(teamsDefault);
 													setLeagueFile(null);
+													setLoadingLeagueFile(false);
 													setKeptKeys(initKeptKeys(null));
 												}
 											}}
@@ -704,7 +711,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											<LeagueFileUpload
 												onLoading={() => {
 													setTeams(teamsDefault);
-													setLeagueFile(null);
+													setLoadingLeagueFile(true);
 													setKeptKeys(initKeptKeys(null));
 												}}
 												onDone={handleNewLeagueFile}

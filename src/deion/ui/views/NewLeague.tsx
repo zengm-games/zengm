@@ -191,23 +191,29 @@ const SeasonsMenu = ({
 	onLoading: (season: number) => void;
 	value: number;
 }) => {
-	const latestSeason = useRef(value);
+	const waitingForSeason = useRef<number | undefined>(value);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
 	const seasons = range(2020, 1955);
 
 	const handleNewSeason = async (season: number) => {
-		latestSeason.current = season;
+		waitingForSeason.current = season;
 		onLoading(season);
 		setErrorMessage(undefined);
 
 		if (process.env.SPORT === "basketball" && season === 2020) {
 			onDone(2020, helpers.deepCopy(league2020));
+			waitingForSeason.current = undefined;
 		} else {
 			try {
 				const response = await fetch(`/leagues/${season}.json`);
-				const leagueFile = await response.json();
-				onDone(season, leagueFile);
+				if (waitingForSeason.current === season) {
+					const leagueFile = await response.json();
+					if (waitingForSeason.current === season) {
+						onDone(season, leagueFile);
+						waitingForSeason.current = undefined;
+					}
+				}
 			} catch (error) {
 				setErrorMessage(error.message);
 				throw error;

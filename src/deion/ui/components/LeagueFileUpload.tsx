@@ -9,15 +9,41 @@ import React, {
 	MouseEvent,
 	ChangeEvent,
 } from "react";
+import { MAX_SUPPORTED_LEAGUE_VERSION, helpers } from "../../common";
 
 // This is dynamically resolved with rollup-plugin-alias
 import schema from "league-schema"; // eslint-disable-line
+
+const ErrorMessage = ({ error }: { error: Error | null }) => {
+	if (!error || !error.message) {
+		return <>"Unknown error"</>;
+	}
+
+	if (!(error as any).version) {
+		return <>{error.message}</>;
+	}
+
+	return (
+		<>
+			{error.message} Please{" "}
+			<a
+				href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+				rel="noopener noreferrer"
+				target="_blank"
+			>
+				make sure you have the latest version of the game loaded
+			</a>
+			.
+		</>
+	);
+};
 
 const ajv = new Ajv({
 	allErrors: true,
 	verbose: true,
 });
 const validate = ajv.compile(schema);
+
 type Props = {
 	// onDone is called in errback style when parsing is done or when an error occurs
 	onDone: (b: Error | null, a?: any) => void;
@@ -127,6 +153,32 @@ const LeagueFileUpload = ({
 				});
 			}
 
+			console.log(leagueFile.version);
+			if (
+				leagueFile &&
+				typeof leagueFile.version === "number" &&
+				leagueFile.version > MAX_SUPPORTED_LEAGUE_VERSION
+			) {
+				const error = new Error(
+					`This league file is a newer format (version ${
+						leagueFile.version
+					}) than is supported by your version of ${helpers.upperCaseFirstLetter(
+						process.env.SPORT,
+					)} GM (version ${MAX_SUPPORTED_LEAGUE_VERSION}).`,
+				);
+				(error as any).version = true;
+				console.log(isMounted, error);
+
+				if (isMounted) {
+					dispatch({
+						type: "error",
+						error,
+					});
+					onDone(error);
+				}
+				return;
+			}
+
 			try {
 				await onDone(null, leagueFile);
 			} catch (error) {
@@ -137,7 +189,6 @@ const LeagueFileUpload = ({
 					});
 					onDone(error);
 				}
-
 				return;
 			}
 
@@ -287,7 +338,7 @@ const LeagueFileUpload = ({
 			)}
 			{state.status === "error" ? (
 				<p className="alert alert-danger mt-3">
-					Error: {state.error ? state.error.message : "Unknown error"}
+					Error: <ErrorMessage error={state.error} />
 				</p>
 			) : null}
 			{state.jsonSchemaErrors.length > 0 ? (

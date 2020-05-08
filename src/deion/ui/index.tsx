@@ -261,7 +261,7 @@ const setupRoutes = () => {
 							<h4>
 								Please{" "}
 								<a
-									href="https://basketball-gm.com/manual/faq/#latest-version"
+									href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
 									rel="noopener noreferrer"
 									target="_blank"
 								>

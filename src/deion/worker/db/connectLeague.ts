@@ -1,6 +1,6 @@
 import { unwrap } from "idb";
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../common";
+import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
@@ -790,7 +790,7 @@ const migrate = ({
 const connectLeague = (lid: number) =>
 	connectIndexedDB<LeagueDB>({
 		name: `league${lid}`,
-		version: 36,
+		version: MAX_SUPPORTED_LEAGUE_VERSION,
 		lid,
 		create,
 		migrate,

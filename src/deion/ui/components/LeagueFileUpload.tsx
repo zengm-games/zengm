@@ -153,7 +153,6 @@ const LeagueFileUpload = ({
 				});
 			}
 
-			console.log(leagueFile.version);
 			if (
 				leagueFile &&
 				typeof leagueFile.version === "number" &&

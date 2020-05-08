@@ -534,7 +534,9 @@ const NewLeague = (props: View<"newLeague">) => {
 								{orderBy(displayedTeams, ["region", "name"]).map(t => {
 									return (
 										<option key={t.tid} value={t.tid}>
-											{t.region} {t.name}
+											{disableWhileLoadingLeagueFile && loadingLeagueFile
+												? "Loading..."
+												: `${t.region} ${t.name}`}
 										</option>
 									);
 								})}

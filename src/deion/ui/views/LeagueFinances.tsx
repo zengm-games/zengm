@@ -25,6 +25,9 @@ const LeagueFinances = ({
 		dropdownFields: { seasons: season },
 	});
 
+	// Since we don't store historical salary cap data, only show cap space for current season
+	const showCapSpace = season === currentSeason;
+
 	const cols = budget
 		? getCols(
 				"Team",
@@ -37,6 +40,9 @@ const LeagueFinances = ({
 				"Cap Space",
 		  )
 		: getCols("Team", "Pop", "Avg Attendance", "Payroll", "Cap Space");
+	if (!showCapSpace) {
+		cols.pop();
+	}
 
 	const rows = teams.map(t => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
@@ -45,24 +51,29 @@ const LeagueFinances = ({
 				? t.seasonAttrs.payroll
 				: t.seasonAttrs.salaryPaid;
 
+		const data = [
+			<a href={helpers.leagueUrl(["team_finances", t.seasonAttrs.abbrev])}>
+				{t.seasonAttrs.region} {t.seasonAttrs.name}
+			</a>,
+			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
+			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
+			...(budget
+				? [
+						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
+						helpers.formatCurrency(t.seasonAttrs.profit, "M"),
+						helpers.formatCurrency(t.seasonAttrs.cash, "M"),
+				  ]
+				: []),
+			helpers.formatCurrency(payroll, "M"),
+		];
+
+		if (showCapSpace) {
+			data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
+		}
+
 		return {
 			key: t.tid,
-			data: [
-				<a href={helpers.leagueUrl(["team_finances", t.seasonAttrs.abbrev])}>
-					{t.seasonAttrs.region} {t.seasonAttrs.name}
-				</a>,
-				helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),
-				helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
-				...(budget
-					? [
-							helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
-							helpers.formatCurrency(t.seasonAttrs.profit, "M"),
-							helpers.formatCurrency(t.seasonAttrs.cash, "M"),
-					  ]
-					: []),
-				helpers.formatCurrency(payroll, "M"),
-				helpers.formatCurrency(salaryCap - payroll, "M"),
-			],
+			data,
 			classNames: {
 				"table-info": t.tid === userTid,
 			},

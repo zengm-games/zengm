@@ -29,10 +29,13 @@ const advanceToPlayerProtection = async (conditions: Conditions) => {
 	const expansionTids: number[] = [];
 	const takeControlTeams: Team[] = [];
 	for (const teamInfo of expansionTeams) {
-		const t = await team.addNewTeamToExistingLeague({
-			...teamInfo,
-			firstSeasonAfterExpansion,
-		});
+		const t = await team.addNewTeamToExistingLeague(
+			{
+				...teamInfo,
+				firstSeasonAfterExpansion,
+			},
+			true,
+		);
 		expansionTids.push(t.tid);
 
 		if (teamInfo.takeControl) {

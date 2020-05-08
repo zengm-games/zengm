@@ -62,6 +62,15 @@ const processTeamInfo = async (
 		);
 	}
 
+	for (const text of eventLogTexts) {
+		logEvent({
+			text,
+			type: "teamInfo",
+			tids: [t.tid],
+			showNotification: false,
+		});
+	}
+
 	await league.setGameAttributes({
 		teamAbbrevsCache: teams.map(t => t.abbrev),
 		teamRegionsCache: teams.map(t => t.region),
@@ -224,7 +233,6 @@ const processScheduledEvents = async (
 
 	if (eventLogTexts.length > 0) {
 		logEvent({
-			extraClass: "",
 			saveToDb: false,
 			text: eventLogTexts.join("<br><br>"),
 			type: "info",

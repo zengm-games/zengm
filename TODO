@@ -4,13 +4,7 @@ refit rosters with game sim presets applied
 
 during post-season expansion draft, league history and playoffs act like season is still ongoing
 
-user bug report - player who goes undrafted has wrong draft ovr/pot on draft history page
-- works fine with random players
-
 team finance stuff needs to change as the season changes
-
-scheduled events
-- event log should also log to DB
 
 add instructions to faq for deleting old service worker in chrome
 - https://www.reddit.com/r/BasketballGM/comments/gecq85/ive_tried_every_way_to_update_the_game_and_its

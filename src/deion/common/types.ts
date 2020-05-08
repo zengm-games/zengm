@@ -408,6 +408,7 @@ export type LogEventType =
 	| "info"
 	| "injured"
 	| "injuredList"
+	| "newTeam"
 	| "playerFeat"
 	| "playoffs"
 	| "reSigned"
@@ -416,6 +417,7 @@ export type LogEventType =
 	| "retired"
 	| "screenshot"
 	| "success"
+	| "teamInfo"
 	| "trade"
 	| "tragedy"
 	| "upgrade";

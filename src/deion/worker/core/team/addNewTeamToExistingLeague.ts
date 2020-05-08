@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g, logEvent } from "../../util";
 import type { Team } from "../../../common/types";
 import generate from "./generate";
 import genSeasonRow from "./genSeasonRow";
@@ -7,15 +7,18 @@ import { draft, league, finances } from "..";
 import { idb } from "../../db";
 import { PHASE } from "../../../common";
 
-const addNewTeamToExistingLeague = async (teamInfo: {
-	did: number;
-	region: string;
-	name: string;
-	abbrev: string;
-	pop: number;
-	imgURL: string | undefined;
-	firstSeasonAfterExpansion?: number;
-}): Promise<Team> => {
+const addNewTeamToExistingLeague = async (
+	teamInfo: {
+		did: number;
+		region: string;
+		name: string;
+		abbrev: string;
+		pop: number;
+		imgURL: string | undefined;
+		firstSeasonAfterExpansion?: number;
+	},
+	expansionDraft: boolean = false,
+): Promise<Team> => {
 	const div = g.get("divs", Infinity).find(d => d.did === teamInfo.did);
 	if (!div) {
 		throw new Error("Invalid division");
@@ -67,6 +70,15 @@ const addNewTeamToExistingLeague = async (teamInfo: {
 	}
 
 	await finances.updateRanks(["budget"]);
+
+	logEvent({
+		text: `A new team called the ${t.region} ${t.name} was created${
+			expansionDraft ? " in an expansion draft" : ""
+		}.`,
+		type: "newTeam",
+		tids: [t.tid],
+		showNotification: false,
+	});
 
 	return t;
 };

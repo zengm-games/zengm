@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import { team } from "..";
 import { idb } from "../../db";
-import { g, random, local } from "../../util";
+import { g, random, local, defaultGameAttributes } from "../../util";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";
@@ -123,8 +123,13 @@ const betweenAiTeams = async () => {
 	}
 
 	// If aiTradesFactor is not an integer, use the fractional part as a probability. Like for 3.5, 50% of the times it will be 3, and 50% will be 4.
-	let numAttempts = Math.floor(g.get("aiTradesFactor"));
-	const remainder = g.get("aiTradesFactor") % 1;
+	// Also scale so there are fewer trade attempts if there are fewer teams.
+	let float = g.get("aiTradesFactor");
+	if (g.get("numTeams") < defaultGameAttributes.numTeams) {
+		float *= g.get("numTeams") / defaultGameAttributes.numTeams;
+	}
+	let numAttempts = Math.floor(float);
+	const remainder = float % 1;
 	if (remainder > 0 && Math.random() < remainder) {
 		numAttempts += 1;
 	}

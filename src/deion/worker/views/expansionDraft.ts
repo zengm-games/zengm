@@ -82,6 +82,7 @@ const updateExpansionDraft = async () => {
 		builtInTeams,
 		confs: g.get("confs", Infinity),
 		divs: g.get("divs", Infinity),
+		godMode: g.get("godMode"),
 		initialTeams: expansionDraft.teams || [],
 		initialNumProtectedPlayers:
 			expansionDraft.numProtectedPlayers || String(g.get("minRosterSize")),

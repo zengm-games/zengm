@@ -9,6 +9,7 @@ const ExpansionDraft = ({
 	builtInTeams,
 	confs,
 	divs,
+	godMode,
 	initialNumProtectedPlayers,
 	initialTeams,
 	minRosterSize,
@@ -160,6 +161,17 @@ const ExpansionDraft = ({
 
 	const currentAbbrevs = teams.map(t => t.abbrev);
 
+	// If user is taking control of team, don't let them pick the number of protected players - too easy!
+	const disableNumProtectedPlayersChange =
+		teams.some(t => t.takeControl) && !godMode;
+	const defaultNumProtectedPlayers = String(minRosterSize - teams.length);
+	if (
+		disableNumProtectedPlayersChange &&
+		numProtectedPlayers !== defaultNumProtectedPlayers
+	) {
+		setNumProtectedPlayers(defaultNumProtectedPlayers);
+	}
+
 	return (
 		<>
 			<p>
@@ -266,12 +278,20 @@ const ExpansionDraft = ({
 						id="expansion-num-protected"
 						type="text"
 						className="form-control"
+						disabled={disableNumProtectedPlayersChange}
 						onChange={async event => {
 							await setNumProtectedPlayers(event.target.value);
 						}}
 						value={numProtectedPlayers}
 						style={{ maxWidth: 100 }}
 					/>
+					{disableNumProtectedPlayersChange ? (
+						<p className="form-text text-muted">
+							If you're taking control of a team, you can't change the number of
+							protected players unless you enable{" "}
+							<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+						</p>
+					) : null}
 				</div>
 
 				<button

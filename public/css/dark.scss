@@ -58,6 +58,7 @@ $text-muted: $gray-400;
 	&:not(:disabled):hover {
 		border-color: darken($red, 25) !important;
 		background-color: darken($red, 25) !important;
+		color: $black !important;
 	}
 }
 
@@ -83,6 +84,7 @@ $text-muted: $gray-400;
 	&:hover {
 		border-color: darken($green, 25) !important;
 		background-color: darken($green, 25) !important;
+		color: $black !important;
 	}
 }
 

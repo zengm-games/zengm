@@ -201,6 +201,7 @@ const ExpansionDraft = ({
 												"col-6",
 											]}
 											confs={confs}
+											disableStadiumCapacity={!godMode}
 											divs={divs}
 											handleInputChange={handleInputChange(i)}
 											t={t}

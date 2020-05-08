@@ -5,7 +5,8 @@ const TeamForm = ({
 	classNamesCol,
 	classNameLabel,
 	confs,
-	disableSomeForManageTeams,
+	disablePop,
+	disableStadiumCapacity,
 	divs,
 	handleInputChange,
 	t,
@@ -22,7 +23,8 @@ const TeamForm = ({
 	];
 	classNameLabel?: string;
 	confs: View<"manageTeams">["confs"];
-	disableSomeForManageTeams?: boolean;
+	disablePop?: boolean;
+	disableStadiumCapacity?: boolean;
 	divs: View<"manageTeams">["divs"];
 	handleInputChange: (
 		field: string,
@@ -98,7 +100,7 @@ const TeamForm = ({
 					<input
 						type="text"
 						className="form-control"
-						disabled={disableSomeForManageTeams}
+						disabled={disablePop}
 						onChange={e => handleInputChange("pop", e)}
 						value={t.pop}
 					/>
@@ -110,7 +112,7 @@ const TeamForm = ({
 					<input
 						type="text"
 						className="form-control"
-						disabled={disableSomeForManageTeams}
+						disabled={disableStadiumCapacity}
 						onChange={e => handleInputChange("stadiumCapacity", e)}
 						value={t.stadiumCapacity}
 					/>

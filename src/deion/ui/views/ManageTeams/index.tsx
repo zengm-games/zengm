@@ -204,7 +204,8 @@ const ManageTeams = (props: View<"manageTeams">) => {
 								confs={props.confs}
 								divs={props.divs}
 								handleInputChange={handleInputChange(i)}
-								disableSomeForManageTeams={!props.godMode}
+								disablePop={!props.godMode}
+								disableStadiumCapacity={!props.godMode}
 								t={t}
 							/>
 							<div className="col-12 d-lg-none" style={{ marginTop: -12 }}>

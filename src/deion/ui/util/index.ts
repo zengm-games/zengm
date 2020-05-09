@@ -63,3 +63,5 @@ export { default as routes } from "./routes";
 export { default as takeScreenshot } from "./takeScreenshot";
 
 export { default as toWorker } from "./toWorker";
+
+export { default as unregisterServiceWorkers } from "./unregisterServiceWorkers";

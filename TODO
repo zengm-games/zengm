@@ -2,12 +2,12 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-finance stuff, over time
-- need budget items and ticket price to change automatically somehow
-  - set to default every year? or increase by amount default would?
-- how are expansion teams?
+trade weirdness
+- start a new 1956 league. offer a player on trading block. many offers. offer a 2nd round pick too, no offers. wtf?
+- report that AI teams are giving up first round picks for role players @JDOTDO#5752 but i can't reproduce
+- investigate draft pick value weirdness
 
-test if attendance, revenue, and expenses is good over a simulation from 1956 to today
+test upgrade
 
 changes
 
@@ -49,7 +49,6 @@ eventually
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?
 - better historical draft lottery
-- start a new 1956 league. offer a player on trading block. many offers. offer a 2nd round pick too, no offers. wtf?
 
 ---
 
@@ -167,6 +166,7 @@ redesign dashboard
 - league news
 - injuries
 - draft picks owned, and rank of team
+- top draft prospects
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?

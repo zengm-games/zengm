@@ -18,6 +18,7 @@ const {
 	promiseWorker,
 	routes,
 	toWorker,
+	unregisterServiceWorkers,
 } = util;
 
 const handleVersion = async () => {
@@ -159,6 +160,8 @@ const handleVersion = async () => {
 						},
 					});
 				}
+
+				unregisterServiceWorkers();
 			})();
 		}
 	} else {
@@ -257,8 +260,8 @@ const setupRoutes = () => {
 				) {
 					errMsg = (
 						<>
-							<h4>{errMsg}</h4>
-							<h4>
+							<p>{errMsg}</p>
+							<p>
 								Please{" "}
 								<a
 									href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
@@ -268,9 +271,11 @@ const setupRoutes = () => {
 									make sure you have the latest version of the game loaded
 								</a>
 								.
-							</h4>
+							</p>
 						</>
 					);
+
+					unregisterServiceWorkers();
 				}
 			}
 

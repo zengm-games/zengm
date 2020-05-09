@@ -221,9 +221,28 @@ const SeasonsMenu = ({
 		}
 	};
 
+	const quickSeasons = [1956, 1970, 1984, 1996, 2003, 2020];
+
 	return (
 		<div className="form-group">
-			<label htmlFor="new-league-season">Season</label>
+			<div className="d-flex">
+				<label htmlFor="new-league-season" className="flex-grow-1">
+					Season
+				</label>
+				{quickSeasons.map(season => (
+					<button
+						key={season}
+						type="button"
+						className="btn btn-link border-0 p-0 mb-1 ml-2"
+						style={{ height: 19 }}
+						onClick={() => {
+							handleNewSeason(season);
+						}}
+					>
+						{season}
+					</button>
+				))}
+			</div>
 			<div className="input-group mb-1">
 				<select
 					id="new-league-season"

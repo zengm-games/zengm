@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* **2020-05-09: Added real historical rosters back to 1956 in BBGM. [[1]](https://basketball-gm.com/blog/2020/05/beta-real-rosters-back-to-1956/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gghq04/real_rosters_back_to_1956_is_officially_in_beta/)**
+
 * 2020-05-07: Expansion drafts can be predefined in a league file to trigger at a certain time.
 
 *** 2020-05-05: Expansion draft, including configurable player protections from existing teams and the ability to control an expansion team. Tools > Expansion Draft.**
@@ -24,7 +26,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-05-01: Added "Acquired" column to the re-signing players table.
 
-* **2020-04-30: Added real historical rosters back to 2005 in BBGM. [[1]](https://basketball-gm.com/blog/2020/04/real-rosters-back-to-2005/) [[2]]()**
+* **2020-04-30: Added real historical rosters back to 2005 in BBGM. [[1]](https://basketball-gm.com/blog/2020/04/real-rosters-back-to-2005/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gb3etv/new_in_version_202004301213_builtin_rosters_with/)**
 
 * **2020-04-25: Added an option in BBGM to create a new league based on real players. [[1]](https://basketball-gm.com/blog/2020/04/real-players/) [[2]](https://old.reddit.com/r/BasketballGM/comments/g7vg6w/new_in_versions_202004250934_built_in_support_for/)**
 

@@ -17,12 +17,6 @@ test upgrade
 
 changes
 
-blog
-- danger zone auto save
-- old links still break if you edit abbrev, no change there
-- fit historical rosters based on historical sim settings - crowdsourced training data
-  - ratings definitely not perfect
-
 fbgm test all
 
 eventually

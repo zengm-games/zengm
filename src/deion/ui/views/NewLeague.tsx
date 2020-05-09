@@ -221,7 +221,7 @@ const SeasonsMenu = ({
 		}
 	};
 
-	const quickSeasons = [1956, 1970, 1984, 1996, 2003, 2020];
+	const quickSeasons = [1956, 1968, 1984, 1996, 2003, 2020];
 
 	return (
 		<div className="form-group">

@@ -2,6 +2,12 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
+negotiation screen should show things like $500k rather than $0.5M
+
+lewie bug report
+- do an expansion team in 1981, play to 1988 expansion draft, and you're in that draft again!
+  - is it because of tids in teams from scheduledEvents?
+
 trade weirdness
 - start a new 1956 league. offer a player on trading block. many offers. offer a 2nd round pick too, no offers. wtf?
 - report that AI teams are giving up first round picks for role players @JDOTDO#5752 but i can't reproduce
@@ -13,26 +19,9 @@ changes
 
 blog
 - danger zone auto save
-- edit what conf/div a team belongs to on Manage Teams
-- track changes of team info edits on Manage Teams
-  - what happens if changed after regular season
-  - old links still break if you edit abbrev, no change there
-- new game simulation settings, and presets for historical seasons
+- old links still break if you edit abbrev, no change there
 - fit historical rosters based on historical sim settings - crowdsourced training data
   - ratings definitely not perfect
-- scheduled events, prespecified in historical rosters
-  - including:
-    - relocation
-    - salary cap changes
-    - 3 point line
-    - play style changes (shooting more 3s, pace)
-  - can choose to use or not when creating league
-- GUI to edit conferences and divisions
-- changing confs/divs/numGamesPlayoffSeries no longer breaks viewing past seasons
-- playoff structure history https://en.wikipedia.org/wiki/NBA_playoffs - numGames too
-- Tools > Expansion Draft
-  - choose a built in expansion team, or make your own
-- historical rosters change over time - league settings, expansion, team relocation
 
 fbgm test all
 
@@ -51,6 +40,8 @@ eventually
 - better historical draft lottery
 
 ---
+
+frivolities > countries page, it lists future players that are not born yet if there's no one available
 
 league stats page, one row per season, otherwise similar to team stats
 

@@ -182,6 +182,8 @@ const LeaguePartPicker = ({
 	);
 };
 
+const quickSeasonsStyle = { height: 19, color: "var(--dark)" };
+
 const SeasonsMenu = ({
 	onDone,
 	onLoading,
@@ -234,7 +236,7 @@ const SeasonsMenu = ({
 						key={season}
 						type="button"
 						className="btn btn-link border-0 p-0 mb-1 ml-2"
-						style={{ height: 19 }}
+						style={quickSeasonsStyle}
 						onClick={() => {
 							handleNewSeason(season);
 						}}

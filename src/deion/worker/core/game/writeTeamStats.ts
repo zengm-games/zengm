@@ -30,8 +30,9 @@ const writeTeamStats = async (results: GameResults) => {
 		]);
 		const teamSeason = teamSeasons[teamSeasons.length - 1];
 		const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
-		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts; // Attendance - base calculation now, which is used for other revenue estimates
+		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;
 
+		// Attendance - base calculation now, which is used for other revenue estimates
 		if (t1 === 0) {
 			// Base on home team
 			att =

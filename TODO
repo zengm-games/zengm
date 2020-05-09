@@ -2,13 +2,11 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-team finance stuff needs to change as the season changes
-- init values (budget and ticket price) based on defaults relative to salaryCap:defaultSalaryCap
-- if salary cap changes in scheduled event, change values too
-- what about revenue?
-- attendance formula relative to ticket price?
+finance stuff, 1956
+- why max att for all teams? probably ticket price
 
-start a new 1956 league. offer a player on trading block. many offers. offer a 2nd round pick too, no offers. wtf?
+finance stuff, over time
+- need budget items and ticket price to change automatically somehow
 
 changes
 
@@ -50,6 +48,7 @@ eventually
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?
 - better historical draft lottery
+- start a new 1956 league. offer a player on trading block. many offers. offer a 2nd round pick too, no offers. wtf?
 
 ---
 

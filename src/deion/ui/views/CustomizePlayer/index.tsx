@@ -1,3 +1,4 @@
+import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React, {
 	useState,
@@ -456,7 +457,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									onChange={handleChange.bind(null, "root", "tid")}
 									value={p.tid}
 								>
-									{teams.map(t => {
+									{orderBy(teams, ["text", "tid"]).map(t => {
 										return (
 											<option key={t.tid} value={t.tid}>
 												{t.text}

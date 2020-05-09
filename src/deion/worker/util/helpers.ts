@@ -85,8 +85,10 @@ const correctLinkLid = (
 const defaultBudgetAmount = (popRank: number = g.get("numTeams")) => {
 	return (
 		Math.round(
-			(g.get("salaryCap") / 90000) * 1350 +
-				(900 * (g.get("numTeams") - popRank)) / (g.get("numTeams") - 1),
+			20 +
+				(g.get("salaryCap") / 90000) * 1330 +
+				(900 * (g.get("salaryCap") / 90000) * (g.get("numTeams") - popRank)) /
+					(g.get("numTeams") - 1),
 		) * 10
 	);
 };
@@ -94,8 +96,10 @@ const defaultBudgetAmount = (popRank: number = g.get("numTeams")) => {
 const defaultTicketPrice = (popRank: number = g.get("numTeams")) => {
 	return parseFloat(
 		(
-			(g.get("salaryCap") / 90000) * 37 +
-			(25 * (g.get("numTeams") - popRank)) / (g.get("numTeams") - 1)
+			1 +
+			(g.get("salaryCap") / 90000) * 36 +
+			(25 * (g.get("salaryCap") / 90000) * (g.get("numTeams") - popRank)) /
+				(g.get("numTeams") - 1)
 		).toFixed(2),
 	);
 };

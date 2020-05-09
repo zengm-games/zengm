@@ -141,13 +141,15 @@ const Negotiation = ({
 							return (
 								<div
 									key={i}
-									className={classNames("list-group-item", {
-										"list-group-item-success": contract.smallestAmount,
-									})}
-									style={{ height: "54px" }}
+									className={classNames(
+										"d-flex align-items-center list-group-item",
+										{
+											"list-group-item-success": contract.smallestAmount,
+										},
+									)}
 								>
-									<div className="float-left" style={{ paddingTop: "8px" }}>
-										${contract.amount.toFixed(2)}M per year
+									<div className="flex-grow-1">
+										{helpers.formatCurrency(contract.amount, "M")} per year
 										<span className="d-none d-sm-inline">
 											, through {contract.exp}
 										</span>{" "}
@@ -156,7 +158,7 @@ const Negotiation = ({
 									</div>
 
 									<button
-										className="btn btn-success float-right"
+										className="btn btn-success"
 										onClick={() =>
 											sign(player.pid, contract.amount, contract.exp)
 										}

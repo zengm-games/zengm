@@ -2,12 +2,6 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-negotiation screen should show things like $500k rather than $0.5M
-
-lewie bug report
-- do an expansion team in 1981, play to 1988 expansion draft, and you're in that draft again!
-  - is it because of tids in teams from scheduledEvents?
-
 trade weirdness
 - start a new 1956 league. offer a player on trading block. many offers. offer a 2nd round pick too, no offers. wtf?
 - report that AI teams are giving up first round picks for role players @JDOTDO#5752 but i can't reproduce

@@ -669,10 +669,10 @@ const NewLeague = (props: View<"newLeague">) => {
 										<li className="list-group-item bg-light">
 											<h3>Every league is different</h3>
 											<p className="mb-0">
-												Rookies always start the same, but they have different
-												career arcs in every league. See busts meet their
-												potentials, see injury-shortened careers play out in
-												full, and see new combinations of players lead to
+												Draft prospects always start the same, but they have
+												different career arcs in every league. See busts meet
+												their potentials, see injury-shortened careers play out
+												in full, and see new combinations of players lead to
 												dynasties.
 											</p>
 										</li>

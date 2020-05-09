@@ -14,6 +14,9 @@ const writeTeamStats = async (results: GameResults) => {
 	let att = 0;
 	let ticketPrice = 0;
 
+	// This one is adjusted for the salary cap, so it can be used in attendance calculation without distorting things for leagues with low/high caps
+	let relativeTicketPrice = 0;
+
 	for (const t1 of [0, 1]) {
 		const t2 = t1 === 1 ? 0 : 1;
 		const payroll = await team.getPayroll(results.team[t1].id);
@@ -44,6 +47,10 @@ const writeTeamStats = async (results: GameResults) => {
 			}
 
 			ticketPrice = t.budget.ticketPrice.amount;
+
+			// The exponential factor was hand-tuned to make this work in 1965
+			relativeTicketPrice =
+				t.budget.ticketPrice.amount * (90000 / g.get("salaryCap")) ** 0.75;
 
 			if (process.env.SPORT === "football") {
 				att *= 28;
@@ -109,7 +116,7 @@ const writeTeamStats = async (results: GameResults) => {
 		// Attendance: base on home team
 		if (t1 === 0) {
 			att = random.gauss(att, 1000);
-			att *= (45 * 50) / ((g.get("salaryCap") / 90000) * ticketPrice ** 2); // Attendance depends on ticket price. Not sure if this formula is reasonable.
+			att *= (45 * 50) / relativeTicketPrice ** 2; // Attendance depends on ticket price. Not sure if this formula is reasonable.
 
 			att *=
 				1 +

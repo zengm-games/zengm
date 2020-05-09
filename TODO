@@ -2,11 +2,14 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-finance stuff, 1956
-- why max att for all teams? probably ticket price
-
 finance stuff, over time
 - need budget items and ticket price to change automatically somehow
+  - set to default every year? or increase by amount default would?
+- how are expansion teams?
+
+test if attendance, revenue, and expenses is good over a simulation from 1956 to today
+
+shortcuts to key seasons of interest when creating league
 
 changes
 

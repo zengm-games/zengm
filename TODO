@@ -8,6 +8,8 @@ changes
 
 fbgm test all
 
+when 3 point tendency is decreased, accuracy should be increased. look at league stats
+
 eventually
 - way to view scheduled events and add/edit/delete
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -24,7 +26,9 @@ eventually
 
 ---
 
-frivolities > countries page, it lists future players that are not born yet if there's no one available
+frivolities > countries page
+- it lists future players that are not born yet if there's no one available
+- shows states for real rosters https://media.discordapp.net/attachments/361954501365858304/708940092130983946/unknown.png
 
 league stats page, one row per season, otherwise similar to team stats
 - also add a team filter, so you could view league averages or just one team

@@ -2,6 +2,74 @@ import { idb } from "../db";
 import { g, helpers, overrides } from "../util";
 import type { UpdateEvents, ViewInput, TeamStatAttr } from "../../common/types";
 
+const getStats = async (
+	season: number,
+	playoffs: boolean,
+	statsTable: {
+		stats: string[];
+	},
+) => {
+	const stats = statsTable.stats;
+	const seasonAttrs: ("abbrev" | "won" | "lost" | "tied")[] = g.get("ties")
+		? ["abbrev", "won", "lost", "tied"]
+		: ["abbrev", "won", "lost"];
+	const teams = (
+		await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs,
+			stats: ["gp", ...stats] as TeamStatAttr[],
+			season: season,
+			playoffs,
+			regularSeason: !playoffs,
+		})
+	).filter(t => {
+		// For playoffs, only show teams who actually made playoffs (gp > 0)
+		return !playoffs || t.stats.gp > 0;
+	});
+
+	// For playoffs, fix W/L to be playoff W/L not regular season
+	if (playoffs) {
+		const playoffSeries = await idb.getCopy.playoffSeries({
+			season,
+		});
+
+		if (playoffSeries !== undefined) {
+			// Reset W/L
+			for (const t of teams) {
+				t.seasonAttrs.won = 0;
+				t.seasonAttrs.lost = 0;
+			}
+
+			for (const round of playoffSeries.series) {
+				for (const series of round) {
+					for (const ah of ["away", "home"] as const) {
+						const ha = ah === "away" ? "home" : "away";
+						const t = teams.find(
+							// https://github.com/microsoft/TypeScript/issues/21732
+							// @ts-ignore
+							t2 => series[ah] && t2.tid === series[ah].tid,
+						);
+
+						if (t && series[ah] && series[ha]) {
+							// https://github.com/microsoft/TypeScript/issues/21732
+							// @ts-ignore
+							t.seasonAttrs.won += series[ah].won;
+							// @ts-ignore
+							t.seasonAttrs.lost += series[ha].won;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return {
+		seasonAttrs,
+		stats,
+		teams,
+	};
+};
+
 const updateTeams = async (
 	inputs: ViewInput<"teamStats">,
 	updateEvents: UpdateEvents,
@@ -22,59 +90,11 @@ const updateTeams = async (
 			throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
 		}
 
-		const stats = statsTable.stats;
-		const seasonAttrs: ("abbrev" | "won" | "lost" | "tied")[] = g.get("ties")
-			? ["abbrev", "won", "lost", "tied"]
-			: ["abbrev", "won", "lost"];
-		const teams = (
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs,
-				stats: ["gp", ...stats] as TeamStatAttr[],
-				season: inputs.season,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs !== "playoffs",
-			})
-		).filter(t => {
-			// For playoffs, only show teams who actually made playoffs (gp > 0)
-			return inputs.playoffs !== "playoffs" || t.stats.gp > 0;
-		});
-
-		// For playoffs, fix W/L to be playoff W/L not regular season
-		if (inputs.playoffs === "playoffs") {
-			const playoffSeries = await idb.getCopy.playoffSeries({
-				season: inputs.season,
-			});
-
-			if (playoffSeries !== undefined) {
-				// Reset W/L
-				for (const t of teams) {
-					t.seasonAttrs.won = 0;
-					t.seasonAttrs.lost = 0;
-				}
-
-				for (const round of playoffSeries.series) {
-					for (const series of round) {
-						for (const ah of ["away", "home"] as const) {
-							const ha = ah === "away" ? "home" : "away";
-							const t = teams.find(
-								// https://github.com/microsoft/TypeScript/issues/21732
-								// @ts-ignore
-								t2 => series[ah] && t2.tid === series[ah].tid,
-							);
-
-							if (t && series[ah] && series[ha]) {
-								// https://github.com/microsoft/TypeScript/issues/21732
-								// @ts-ignore
-								t.seasonAttrs.won += series[ah].won;
-								// @ts-ignore
-								t.seasonAttrs.lost += series[ha].won;
-							}
-						}
-					}
-				}
-			}
-		}
+		const { seasonAttrs, stats, teams } = await getStats(
+			inputs.season,
+			inputs.playoffs === "playoffs",
+			statsTable,
+		);
 
 		// Sort stats so we can determine what percentile our team is in.
 		const allStats: Record<string, number[]> = {};

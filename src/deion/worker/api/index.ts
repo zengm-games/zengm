@@ -1357,12 +1357,14 @@ const switchTeam = async (tid: number) => {
 		"teamSeasonsByTidSeason",
 		[tid, g.get("season")],
 	);
-	teamSeason.ownerMood = {
-		money: 0,
-		playoffs: 0,
-		wins: 0,
-	};
-	await idb.cache.teamSeasons.put(teamSeason);
+	if (teamSeason) {
+		teamSeason.ownerMood = {
+			money: 0,
+			playoffs: 0,
+			wins: 0,
+		};
+		await idb.cache.teamSeasons.put(teamSeason);
+	}
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 

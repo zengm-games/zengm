@@ -125,10 +125,11 @@ const getPicks = async ({
 			} else {
 				estPick = cache.estPicks[dp.originalTid];
 
-				// For future draft picks, add some uncertainty
+				// For future draft picks, add some uncertainty. Weighted average of estPicks and numTeams/2
 				const seasons = season - g.get("season");
 				estPick = Math.round(
-					(estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
+					(estPick * (5 - seasons)) / 5 +
+						((g.get("numTeams") / 2) * seasons) / 5,
 				);
 			}
 

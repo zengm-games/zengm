@@ -12,7 +12,12 @@ import { unwrap, gameAttributeHasHistory } from "../../util/g";
 const loadGameAttributes = async () => {
 	const gameAttributes = await idb.cache.gameAttributes.getAll();
 
-	const alwaysWrap = ["confs", "divs", "numGamesPlayoffSeries"];
+	const alwaysWrap = [
+		"confs",
+		"divs",
+		"numGamesPlayoffSeries",
+		"numPlayoffByes",
+	];
 
 	for (const { key, value } of gameAttributes) {
 		if (alwaysWrap.includes(key) && !gameAttributeHasHistory(value)) {

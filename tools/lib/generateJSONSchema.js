@@ -574,8 +574,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							minItems: 1,
 						}),
 						gameAttribute("numPlayoffByes", {
-							type: "integer",
-							minimum: 0,
+							type: ["integer", "array"],
 						}),
 						gameAttribute("numSeasonsFutureDraftPicks", {
 							type: "integer",

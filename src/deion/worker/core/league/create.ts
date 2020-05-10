@@ -204,7 +204,7 @@ export const createWithoutSaving = (
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
 	if (JSON.stringify(oldNumGames) !== JSON.stringify(newNumGames)) {
-		gameAttributes.numPlayoffByes = 0;
+		gameAttributes.numPlayoffByes = wrap(gameAttributes, "numPlayoffByes", 0);
 		gameAttributes.numGamesPlayoffSeries = wrap(
 			gameAttributes,
 			"numGamesPlayoffSeries",

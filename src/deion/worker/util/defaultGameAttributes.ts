@@ -20,44 +20,54 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	quarterLength: 12, // [minutes]
 	confs: [
 		{
-			cid: 0,
-			name: "Eastern Conference",
-		},
-		{
-			cid: 1,
-			name: "Western Conference",
+			start: -Infinity,
+			value: [
+				{
+					cid: 0,
+					name: "Eastern Conference",
+				},
+				{
+					cid: 1,
+					name: "Western Conference",
+				},
+			],
 		},
 	],
 	divs: [
 		{
-			did: 0,
-			cid: 0,
-			name: "Atlantic",
-		},
-		{
-			did: 1,
-			cid: 0,
-			name: "Central",
-		},
-		{
-			did: 2,
-			cid: 0,
-			name: "Southeast",
-		},
-		{
-			did: 3,
-			cid: 1,
-			name: "Southwest",
-		},
-		{
-			did: 4,
-			cid: 1,
-			name: "Northwest",
-		},
-		{
-			did: 5,
-			cid: 1,
-			name: "Pacific",
+			start: -Infinity,
+			value: [
+				{
+					did: 0,
+					cid: 0,
+					name: "Atlantic",
+				},
+				{
+					did: 1,
+					cid: 0,
+					name: "Central",
+				},
+				{
+					did: 2,
+					cid: 0,
+					name: "Southeast",
+				},
+				{
+					did: 3,
+					cid: 1,
+					name: "Southwest",
+				},
+				{
+					did: 4,
+					cid: 1,
+					name: "Northwest",
+				},
+				{
+					did: 5,
+					cid: 1,
+					name: "Pacific",
+				},
+			],
 		},
 	],
 	numGamesPlayoffSeries: [
@@ -66,7 +76,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			value: [7, 7, 7, 7],
 		},
 	],
-	numPlayoffByes: 0,
+	numPlayoffByes: [
+		{
+			start: -Infinity,
+			value: 0,
+		},
+	],
 	aiTradesFactor: 1,
 	autoDeleteOldBoxScores: true,
 	stopOnInjury: false,

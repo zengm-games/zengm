@@ -9,6 +9,7 @@ changes
 fbgm test all
 
 when 3 point tendency is decreased, accuracy should be increased. look at league stats
+- better to make threePointAccuracyFactor 1
 
 eventually
 - way to view scheduled events and add/edit/delete

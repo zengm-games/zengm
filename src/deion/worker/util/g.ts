@@ -82,7 +82,7 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	const phase =
 		gameAttributes.phase !== undefined ? gameAttributes.phase : g.get("phase");
 
-	// Currently this applies to confs, divs, and numGamesPlayoffSeries, which all can only be changed for this season before the playoffs
+	// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs
 	if (phase >= PHASE.PLAYOFFS) {
 		currentSeason += 1;
 	}

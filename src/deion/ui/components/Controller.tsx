@@ -221,7 +221,7 @@ const Controller = () => {
 				}
 			}
 		},
-		[lid, state.data],
+		[lid, state],
 	);
 
 	useEffect(() => {

@@ -96,6 +96,7 @@ const genPlayers = async (
 					tids: [g.get("userTid")],
 				});
 			}
+			// eslint-disable-next-line no-dupe-else-if
 		} else if (Math.random() < 1 / 100000) {
 			const p = player.generate(
 				PLAYER.UNDRAFTED,

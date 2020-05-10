@@ -81,8 +81,6 @@ const processStats = (
 				(ps.pss + ps.pssSk);
 		} else if (stat === "pssSkPct") {
 			row[stat] = percentage(ps.pssSk, ps.pssSk + ps.pss);
-		} else if (stat === "rusYdsPerAtt") {
-			row[stat] = ps.rusYds / ps.rus;
 		} else if (stat === "rusYdsPerGame") {
 			row[stat] = ps.rusYds / ps.gp;
 		} else if (stat === "rusPerGame") {

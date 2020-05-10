@@ -77,8 +77,9 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 
 const genPlayoffSeries = (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	const playoffsByConference = g.get("confs").length === 2; // Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
+	let playoffsByConference = g.get("confs").length === 2;
 
+	// Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
 	const numPlayoffByes = helpers.bound(
 		playoffsByConference && g.get("numPlayoffByes") % 2 === 1
 			? g.get("numPlayoffByes") - 1
@@ -88,10 +89,10 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 	);
 	const numRounds = g.get("numGamesPlayoffSeries").length;
 	helpers.validateRoundsByes(numRounds, numPlayoffByes, g.get("numTeams"));
-	const tidPlayoffs: number[] = [];
+	let tidPlayoffs: number[] = [];
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
-	const series: PlayoffSeries["series"] = range(numRounds).map(() => []);
+	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
 	if (playoffsByConference) {
 		if (numRounds > 1) {
@@ -112,26 +113,24 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 					}
 				}
 
-				if (teamsConf.length < numPlayoffTeams / 2) {
-					throw new Error(
-						`Not enough teams for playoffs in conference ${cid} (${conf.name})`,
+				if (teamsConf.length >= numPlayoffTeams / 2) {
+					series[0].push(
+						...seeds.map(matchup => {
+							const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
+							const away =
+								matchup[1] !== undefined
+									? genTeam(teamsConf[matchup[1]], matchup[1] + 1)
+									: undefined;
+
+							return {
+								home,
+								away,
+							};
+						}),
 					);
+				} else {
+					playoffsByConference = false;
 				}
-
-				series[0].push(
-					...seeds.map(matchup => {
-						const home = genTeam(teamsConf[matchup[0]], matchup[0] + 1);
-						const away =
-							matchup[1] !== undefined
-								? genTeam(teamsConf[matchup[1]], matchup[1] + 1)
-								: undefined;
-
-						return {
-							home,
-							away,
-						};
-					}),
-				);
 			}
 		} else {
 			// Special case - if there is only one round, pick the best team in each conference to play
@@ -147,19 +146,26 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 				}
 			}
 
-			if (teamsConf.length !== 2) {
-				throw new Error("Could not find two conference champs");
+			if (teamsConf.length === 2) {
+				const t1 = genTeam(teamsConf[0], 1);
+				const t2 = genTeam(teamsConf[1], 1);
+
+				series[0][0] = {
+					home: t1.winp > t2.winp ? t1 : t2,
+					away: t1.winp > t2.winp ? t2 : t1,
+				};
+			} else {
+				playoffsByConference = false;
 			}
-
-			const t1 = genTeam(teamsConf[0], 1);
-			const t2 = genTeam(teamsConf[1], 1);
-
-			series[0][0] = {
-				home: t1.winp > t2.winp ? t1 : t2,
-				away: t1.winp > t2.winp ? t2 : t1,
-			};
 		}
-	} else {
+	}
+
+	// Not an "else" because if the (playoffsByConference) branch fails it sets it to false and runs this as backup
+	if (!playoffsByConference) {
+		// Reset, in case they were set in prior branch
+		tidPlayoffs = [];
+		series = range(numRounds).map(() => []);
+
 		// Alternative: top 50% of teams overall
 		const teamsConf: MyTeam[] = [];
 

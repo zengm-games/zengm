@@ -2,6 +2,7 @@ import { idb, iterate } from "../db";
 import { g, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
 import { isAmerican } from "../../../basketball/worker/util/achievements";
+import { PHASE, PLAYER } from "../../common";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -23,6 +24,14 @@ const reducer = (
 	infos: { [key: string]: InfoTemp },
 	p: Player,
 ) => {
+	// Ignore future draft prospects
+	if (
+		(p.tid === PLAYER.UNDRAFTED && g.get("phase") !== PHASE.FANTASY_DRAFT) ||
+		p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+	) {
+		return;
+	}
+
 	let name;
 	if (type === "college") {
 		name = p.college && p.college !== "" ? p.college : "None";

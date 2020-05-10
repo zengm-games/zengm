@@ -29,8 +29,6 @@ handle abbrevs changing over time without breaking URLs
 
 manually specify lottery result in god mode
 
-better newScheduleCrappy
-
 objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
 
 schema validation of gameAttributes seems broken

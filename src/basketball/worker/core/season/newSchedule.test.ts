@@ -95,6 +95,37 @@ describe("basketball/worker/core/season/newSchedule", () => {
 				}
 			}
 		});
+
+		test("when numGames is even and there are enough games, everyone gets even home and away games", () => {
+			for (let numGames = 20; numGames < 50; numGames += 1) {
+				if (numGames % 2 === 1) {
+					continue;
+				}
+				for (let numTeams = 2; numTeams < 25; numTeams += 1) {
+					g.setWithoutSavingToDB("numGames", numGames);
+					g.setWithoutSavingToDB("numTeams", numTeams);
+					const matchups = newScheduleCrappy(); // Total number of games
+
+					assert.equal(
+						matchups.length * 2,
+						numGames * numTeams,
+						"Total number of games is wrong",
+					);
+
+					const home = Array(numTeams).fill(0); // Number of home games for each team
+					const away = Array(numTeams).fill(0); // Number of away games for each team
+					for (let i = 0; i < matchups.length; i++) {
+						home[matchups[i][0]] += 1;
+						away[matchups[i][1]] += 1;
+					}
+
+					for (let i = 0; i < numTeams; i++) {
+						assert.equal(home[i], numGames / 2);
+						assert.equal(away[i], numGames / 2);
+					}
+				}
+			}
+		});
 	});
 	describe("newScheduleDefault", () => {
 		beforeAll(() => {
@@ -108,10 +139,9 @@ describe("basketball/worker/core/season/newSchedule", () => {
 
 		test("schedule 41 home games and 41 away games for each team", () => {
 			const tids = newSchedule(defaultTeams);
+
 			const home = Array(g.get("numTeams")).fill(0); // Number of home games for each team
-
 			const away = Array(g.get("numTeams")).fill(0); // Number of away games for each team
-
 			for (let i = 0; i < tids.length; i++) {
 				home[tids[i][0]] += 1;
 				away[tids[i][1]] += 1;

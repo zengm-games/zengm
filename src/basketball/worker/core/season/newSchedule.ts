@@ -20,8 +20,8 @@ const newScheduleDefault = (
 	}[],
 ) => {
 	const tids: [number, number][] = []; // tid_home, tid_away
-	// Collect info needed for scheduling
 
+	// Collect info needed for scheduling
 	const homeGames: number[] = [];
 	const awayGames: number[] = [];
 
@@ -191,6 +191,14 @@ const roundRobin = (tidsInput: number[]): [number, number][] => {
 	return matchups;
 };
 
+const absSum = (nums: number[]) => {
+	let sum = 0;
+	for (const num of nums) {
+		sum += Math.abs(num);
+	}
+	return sum;
+};
+
 /**
  * Creates a new regular season schedule for an arbitrary number of teams.
  *
@@ -233,14 +241,45 @@ export const newScheduleCrappy = () => {
 					numWithRemaining -= 1;
 				}
 
-				// Randomize which team is home or away. This is done because otherwise the first team could have all home games if numGames > numTeams
-				if (Math.random() > 0.5) {
-					matchups.push(matchup);
-				} else {
-					matchups.push([matchup[1], matchup[0]]);
-				}
+				// Needed because below mutates
+				matchups.push([matchup[0], matchup[1]]);
 			}
 		}
+	}
+
+	// Try to equalize home and away
+
+	// How many home/away games for each team currently?
+	const balance = Array(tids.length).fill(0);
+	for (const matchup of matchups) {
+		balance[matchup[0]] += 1;
+		balance[matchup[1]] -= 1;
+	}
+
+	let iterations = 0;
+	while (absSum(balance) !== 0 && iterations < 100) {
+		for (const matchup of matchups) {
+			// Add some randomness, to prevent it getting stuck swapping everything
+			if (Math.random() > 0.5) {
+				continue;
+			}
+
+			// Swap matchup if it brings the team that is currently furthest from balance closer to balanced
+			const furthestFromEven =
+				Math.abs(balance[matchup[0]]) > Math.abs(balance[matchup[1]]) ? 0 : 1;
+			if (
+				(balance[matchup[furthestFromEven]] > 0 && furthestFromEven === 0) ||
+				(balance[matchup[furthestFromEven]] < 0 && furthestFromEven === 1)
+			) {
+				matchup.reverse();
+
+				// 2 because we take away one home game and add one away game, or vice versa
+				balance[matchup[0]] += 2;
+				balance[matchup[1]] -= 2;
+			}
+		}
+
+		iterations += 1;
 	}
 
 	return matchups;

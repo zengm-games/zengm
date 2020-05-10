@@ -28,6 +28,9 @@ frivolities > countries page, it lists future players that are not born yet if t
 
 league stats page, one row per season, otherwise similar to team stats
 
+handle abbrevs changing over time without breaking URLs
+- ATL -> ATL_0. backwards compatible, and unbreakable. could also accept just 0 if necessary
+
 manually specify lottery result in god mode
 
 better newScheduleCrappy

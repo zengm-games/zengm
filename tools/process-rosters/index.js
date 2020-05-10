@@ -121,6 +121,17 @@ for (const p of input.players) {
 	for (const ratings of p.ratings) {
 		adjustRatings(ratings, p.tid);
 	}
+
+	if (p.stats) {
+		for (const stats of p.stats) {
+			if (typeof stats.tid === "string") {
+				stats.tid = parseInt(stats.tid);
+				if (Number.isNaN(stats.tid)) {
+					throw new Error("WTF");
+				}
+			}
+		}
+	}
 }
 
 nerfYoungPlayers(input.players);

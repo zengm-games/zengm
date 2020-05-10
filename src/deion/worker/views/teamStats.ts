@@ -2,12 +2,13 @@ import { idb } from "../db";
 import { g, helpers, overrides } from "../util";
 import type { UpdateEvents, ViewInput, TeamStatAttr } from "../../common/types";
 
-const getStats = async (
+export const getStats = async (
 	season: number,
 	playoffs: boolean,
 	statsTable: {
 		stats: string[];
 	},
+	tid?: number,
 ) => {
 	const stats = statsTable.stats;
 	const seasonAttrs: ("abbrev" | "won" | "lost" | "tied")[] = g.get("ties")
@@ -19,6 +20,7 @@ const getStats = async (
 			seasonAttrs,
 			stats: ["gp", ...stats] as TeamStatAttr[],
 			season: season,
+			tid,
 			playoffs,
 			regularSeason: !playoffs,
 		})

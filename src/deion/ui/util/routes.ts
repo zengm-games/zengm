@@ -102,6 +102,12 @@ const routes = () => {
 		"/l/:lid/team_stats/:season": genPage("teamStats"),
 		"/l/:lid/team_stats/:season/:teamOpponent": genPage("teamStats"),
 		"/l/:lid/team_stats/:season/:teamOpponent/:playoffs": genPage("teamStats"),
+		"/l/:lid/league_stats": genPage("leagueStats"),
+		"/l/:lid/league_stats/:abbrev": genPage("leagueStats"),
+		"/l/:lid/league_stats/:abbrev/:teamOpponent": genPage("leagueStats"),
+		"/l/:lid/league_stats/:abbrev/:teamOpponent/:playoffs": genPage(
+			"leagueStats",
+		),
 		"/l/:lid/player/:pid": genPage("player"),
 		"/l/:lid/negotiation": genPage("negotiationList"),
 		"/l/:lid/negotiation/:pid": genPage("negotiation"),

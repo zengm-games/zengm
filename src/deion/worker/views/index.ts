@@ -30,6 +30,7 @@ import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
 import leagueFinances from "./leagueFinances";
 import leagueOptions from "./leagueOptions";
+import leagueStats from "./leagueStats";
 import live from "./live";
 import liveGame from "./liveGame";
 import manageConfs from "./manageConfs";
@@ -105,6 +106,7 @@ export default {
 	leagueDashboard,
 	leagueFinances,
 	leagueOptions,
+	leagueStats,
 	live,
 	liveGame,
 	manageConfs,

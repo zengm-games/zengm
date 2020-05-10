@@ -32,6 +32,7 @@ import Leaders from "./Leaders";
 import LeagueDashboard from "./LeagueDashboard";
 import LeagueFinances from "./LeagueFinances";
 import LeagueOptions from "./LeagueOptions";
+import LeagueStats from "./LeagueStats";
 import Live from "./Live";
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
@@ -111,6 +112,7 @@ export default {
 	LeagueDashboard,
 	LeagueFinances,
 	LeagueOptions,
+	LeagueStats,
 	Live,
 	LiveGame,
 	LoginOrRegister,

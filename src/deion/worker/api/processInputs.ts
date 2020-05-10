@@ -428,10 +428,33 @@ const teamStats = (params: Params) => {
 	};
 };
 
+const leagueStats = (params: Params) => {
+	let abbrev: string = "all";
+	let tid: number = -1;
+	if (params.abbrev && params.abbrev !== "all") {
+		[tid, abbrev] = validateAbbrev(params.abbrev);
+	}
+
+	if (tid < 0) {
+		tid = -1;
+		abbrev = "all";
+	}
+
+	const playoffs =
+		params.playoffs === "playoffs" ? "playoffs" : "regularSeason";
+
+	return {
+		tid,
+		abbrev,
+		teamOpponent:
+			params.teamOpponent !== undefined ? params.teamOpponent : "team",
+		playoffs,
+	};
+};
+
 const transactions = (params: Params) => {
 	let abbrev: string;
 	let tid: number;
-
 	if (params.abbrev && params.abbrev !== "all") {
 		[tid, abbrev] = validateAbbrev(params.abbrev);
 	} else if (params.abbrev && params.abbrev === "all") {
@@ -515,6 +538,7 @@ export default {
 	history,
 	leaders,
 	leagueFinances: validateSeasonOnly,
+	leagueStats,
 	liveGame,
 	message,
 	negotiation,

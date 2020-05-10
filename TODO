@@ -26,13 +26,6 @@ eventually
 
 ---
 
-frivolities > countries page
-- it lists future players that are not born yet if there's no one available
-- shows states for real rosters https://media.discordapp.net/attachments/361954501365858304/708940092130983946/unknown.png
-
-league stats page, one row per season, otherwise similar to team stats
-- also add a team filter, so you could view league averages or just one team
-
 handle abbrevs changing over time without breaking URLs
 - ATL -> ATL_0. backwards compatible, and unbreakable. could also accept just 0 if necessary
 

@@ -252,6 +252,10 @@ const useDropdownOptions = (field: string) => {
 		keys = ["team", "opponent"];
 	} else if (field === "teamOpponentAdvanced") {
 		keys = Object.keys(overrides.common.constants.TEAM_STATS_TABLES);
+	} else if (field === "teamAdvanced") {
+		keys = Object.keys(overrides.common.constants.TEAM_STATS_TABLES).filter(
+			key => !key.includes("pponent"),
+		);
 	} else if (field === "teamRecordType") {
 		keys = ["by_team", "by_conf", "by_div"];
 	} else if (field === "positions") {

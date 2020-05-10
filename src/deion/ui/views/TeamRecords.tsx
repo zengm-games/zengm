@@ -73,7 +73,8 @@ const TeamRecords = ({
 	return (
 		<>
 			<p>
-				More: <a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
+				More: <a href={helpers.leagueUrl(["league_stats"])}>League Stats</a> |{" "}
+				<a href={helpers.leagueUrl(["history_all"])}>League History</a> |{" "}
 				<a href={helpers.leagueUrl(["awards_records"])}>Awards Records</a>
 				{process.env.SPORT === "basketball" ? (
 					<>

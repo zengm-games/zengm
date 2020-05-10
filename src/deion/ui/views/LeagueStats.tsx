@@ -99,6 +99,8 @@ const LeagueStats = ({
 		};
 	});
 
+	const pagination = rows.length > 100;
+
 	return (
 		<>
 			<p>
@@ -119,6 +121,7 @@ const LeagueStats = ({
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name={`TeamStats${teamOpponent}`}
+				pagination={pagination}
 				rows={rows}
 				superCols={superCols}
 			/>

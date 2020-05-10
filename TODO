@@ -8,9 +8,6 @@ changes
 
 fbgm test all
 
-when 3 point tendency is decreased, accuracy should be increased. look at league stats
-- better to make threePointAccuracyFactor 1
-
 eventually
 - way to view scheduled events and add/edit/delete
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

@@ -27,6 +27,7 @@ eventually
 frivolities > countries page, it lists future players that are not born yet if there's no one available
 
 league stats page, one row per season, otherwise similar to team stats
+- also add a team filter, so you could view league averages or just one team
 
 handle abbrevs changing over time without breaking URLs
 - ATL -> ATL_0. backwards compatible, and unbreakable. could also accept just 0 if necessary

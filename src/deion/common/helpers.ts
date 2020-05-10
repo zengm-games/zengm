@@ -563,6 +563,10 @@ function formatCurrency(
 	const sign = amount < 0 ? "-" : "";
 	let abs = Math.abs(amount);
 
+	if (abs === 0) {
+		return "$0";
+	}
+
 	if (append === "M" && abs > 1000) {
 		abs /= 1000;
 		append = "B";

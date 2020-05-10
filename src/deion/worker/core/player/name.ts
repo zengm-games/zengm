@@ -24,8 +24,16 @@ const name = (): {
 		throw new Error(`Undefined countryRow (cRand=${cRand}`);
 	}
 
-	const country = countryRow[0]; // First name
+	const country = countryRow[0];
 
+	if (!playerNames.first[country]) {
+		throw new Error(`No first names found for ${country}`);
+	}
+	if (!playerNames.last[country]) {
+		throw new Error(`No last names found for ${country}`);
+	}
+
+	// First name
 	const fnRand = random.uniform(
 		0,
 		playerNames.first[country][playerNames.first[country].length - 1][1],
@@ -36,8 +44,9 @@ const name = (): {
 		throw new Error(`Undefined firstNameRow (fnRand=${fnRand}`);
 	}
 
-	const firstName = firstNameRow[0]; // Last name
+	const firstName = firstNameRow[0];
 
+	// Last name
 	const lnRand = random.uniform(
 		0,
 		playerNames.last[country][playerNames.last[country].length - 1][1],

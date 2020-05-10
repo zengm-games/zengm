@@ -2,8 +2,6 @@ refit rosters with game sim presets applied
 - how are finance values in old seasons?
 - other stuff from bbgm-rosters todo
 
-test upgrade
-
 changes
 
 fbgm test all
@@ -21,6 +19,13 @@ eventually
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?
 - better historical draft lottery
+  - up to 1965: noLottery
+  - 1966-1984: coin flip to decide first 2
+  - 1985-1986: random, but only for lottery teams
+    - could implement as weighted top N lottery
+  - 1987-1989: random, only first 3 picks
+    - could implement as weighted top 3 lottery
+  - 1990-1993: some other weighted top 3 lottery
 
 ---
 
@@ -30,8 +35,6 @@ handle abbrevs changing over time without breaking URLs
 manually specify lottery result in god mode
 
 objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
-
-schema validation of gameAttributes seems broken
 
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 

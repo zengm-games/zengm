@@ -34,6 +34,10 @@ const LeagueStats = ({
 		basicColNames.push("T");
 	}
 
+	if (superCols) {
+		superCols[0].colspan += 1;
+	}
+
 	const cols = getCols(
 		...basicColNames,
 		...stats.map(stat => {

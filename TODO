@@ -1,5 +1,11 @@
 changes
 
+live game sim game selection page
+- playoff seed and games won
+
+"sim to" button next to game on schedule
+- use "action" mechanism of ScoreBox
+
 eventually
 - way to view scheduled events and add/edit/delete
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -49,8 +55,6 @@ what would it really cost to store all game sim results?
 playoff upsets
 - could apply bigger home court advantage for good teams
 
-show spread, ovr, etc on live game sim game selection page
-
 contraction
 - happened some NBA seasons
 - ...but tid gap
@@ -62,8 +66,6 @@ legends mode
 better changelog
 - everything from CHANGELOG.made
 - show in modal
-
-"sim to" button next to game on schedule
 
 way to clone a player
 

@@ -212,7 +212,10 @@ const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {
-		const upcoming = await getUpcoming(g.get("userTid"), 3);
+		const upcoming = await getUpcoming({
+			tid: g.get("userTid"),
+			limit: 3,
+		});
 
 		return {
 			upcoming,

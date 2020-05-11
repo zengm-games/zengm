@@ -24,7 +24,7 @@ const setSchedule = async (tids: [number, number][]) => {
 	// Add upcoming games
 	const games: LocalStateUI["games"] = [];
 	const userTid = g.get("userTid");
-	const upcoming = await getUpcoming(userTid);
+	const upcoming = await getUpcoming({ tid: userTid });
 	for (const game of upcoming) {
 		games.push({
 			gid: game.gid,

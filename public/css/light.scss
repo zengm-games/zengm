@@ -888,6 +888,12 @@ tr.table-warning:hover > td {
 	}
 }
 
+.score-box-action {
+	border-bottom-left-radius: 0px;
+	border-top-left-radius: 0px;
+	height: 56px;
+}
+
 .border-light {
 	border: 1px solid;
 	border-color: $gray-300 !important;

@@ -1,11 +1,11 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { toWorker } from "../util";
 import type { View } from "../../common/types";
+import { ScoreBox } from "../components";
 
-const Live = ({ games, gamesInProgress }: View<"live">) => {
+const Live = ({ games, gamesInProgress, userTid }: View<"live">) => {
 	useTitleBar({ title: "Live Game Simulation" });
 
 	return (
@@ -21,39 +21,50 @@ const Live = ({ games, gamesInProgress }: View<"live">) => {
 				</p>
 			) : null}
 
-			{games.map(gm => {
-				return (
-					<button
-						key={gm.gid}
-						className={classNames("btn float-left mb-3 mr-3", {
-							"btn-light-bordered": !gm.highlight,
-							"btn-success": gm.highlight,
-						})}
-						disabled={gamesInProgress}
-						onClick={() => toWorker("actions", "liveGame", gm.gid)}
+			<div className="row">
+				<div className="col-xl-4 col-md-6 col-12">
+					{/* Copy-pasted from ScoreBox */}
+					<div
+						className="d-flex justify-content-end text-muted"
+						style={{ maxWidth: 400, marginRight: 62 }}
 					>
-						{gm.awayRegion} {gm.awayName} at
-						<br />
-						{gm.homeRegion} {gm.homeName}
-					</button>
-				);
-			})}
+						<div className="p-1" title="Team Overall Rating">
+							Ovr
+						</div>
+						<div
+							className={classNames("text-right p-1", "score-box-spread")}
+							title="Predicted Point Spread"
+						>
+							Spread
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div className="row">
+				{games.map((game, i) => (
+					<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
+						<ScoreBox
+							game={game}
+							actionDisabled={gamesInProgress}
+							actionHighlight={
+								game.teams[0].tid === userTid || game.teams[1].tid === userTid
+							}
+							actionText={
+								<>
+									Watch
+									<br />
+									Game
+								</>
+							}
+							actionOnClick={() => toWorker("actions", "liveGame", game.gid)}
+							limitWidthToParent
+						/>
+					</div>
+				))}
+			</div>
 		</>
 	);
-};
-
-Live.propTypes = {
-	games: PropTypes.arrayOf(
-		PropTypes.shape({
-			awayName: PropTypes.string.isRequired,
-			awayRegion: PropTypes.string.isRequired,
-			gid: PropTypes.number.isRequired,
-			highlight: PropTypes.bool.isRequired,
-			homeName: PropTypes.string.isRequired,
-			homeRegion: PropTypes.string.isRequired,
-		}),
-	),
-	gamesInProgress: PropTypes.bool,
 };
 
 export default Live;

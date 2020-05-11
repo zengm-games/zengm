@@ -3,8 +3,16 @@ import { idb } from "../db";
 import { g, getProcessedGames, overrides } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
 
-export const getUpcoming = async (tid: number, limit: number = Infinity) => {
-	const schedule = await season.getSchedule();
+export const getUpcoming = async ({
+	tid,
+	limit = Infinity,
+	oneDay,
+}: {
+	tid?: number;
+	limit?: number;
+	oneDay?: boolean;
+}) => {
+	const schedule = await season.getSchedule(oneDay);
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
 		seasonAttrs: ["won", "lost", "tied"],
@@ -38,6 +46,10 @@ export const getUpcoming = async (tid: number, limit: number = Infinity) => {
 			ovrsCache.set(tid, ovr);
 		}
 
+		if (tid < 0) {
+			return { tid };
+		}
+
 		return {
 			ovr,
 			tid,
@@ -48,7 +60,9 @@ export const getUpcoming = async (tid: number, limit: number = Infinity) => {
 	};
 
 	const filteredSchedule = schedule
-		.filter(game => tid === game.homeTid || tid === game.awayTid)
+		.filter(
+			game => tid === undefined || tid === game.homeTid || tid === game.awayTid,
+		)
 		.slice(0, limit);
 
 	const upcoming: {
@@ -77,7 +91,9 @@ const updateUpcoming = async (
 		updateEvents.includes("newPhase") ||
 		inputs.abbrev !== state.abbrev
 	) {
-		const upcoming = await getUpcoming(inputs.tid);
+		const upcoming = await getUpcoming({
+			tid: inputs.tid,
+		});
 
 		return {
 			abbrev: inputs.abbrev,

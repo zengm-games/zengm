@@ -28,7 +28,7 @@ const initUILocalGames = async () => {
 	games.reverse();
 
 	// Add upcoming games
-	const upcoming = await getUpcoming(userTid);
+	const upcoming = await getUpcoming({ tid: userTid });
 	for (const game of upcoming) {
 		games.push({
 			gid: game.gid,

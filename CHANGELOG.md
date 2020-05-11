@@ -14,7 +14,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-05-07: Expansion drafts can be predefined in a league file to trigger at a certain time.
 
-*** 2020-05-05: Expansion draft, including configurable player protections from existing teams and the ability to control an expansion team. Tools > Expansion Draft.**
+* **2020-05-05: Expansion draft, including configurable player protections from existing teams and the ability to control an expansion team. Tools > Expansion Draft.**
 
 * 2020-05-03: Added a new page Tools > Manage Confs that allows you to create, edit, and delete divisions and conferenes.
 
@@ -22,7 +22,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-05-03: Added support for team info changes (name, region, logo, etc.) to be predefined in a league file and trigger only at a certain year.
 
-*** 2020-05-03: In BBGM, added game simulation settings to God Mode to allow for more realistic simulation of different eras of basketball, when things like pace and 3 point shooting were very different.**
+* **2020-05-03: In BBGM, added game simulation settings to God Mode to allow for more realistic simulation of different eras of basketball, when things like pace and 3 point shooting were very different.**
 
 * 2020-05-02: Added the ability to change what division/conference a team belongs to from Tools > Manage Teams.
 
@@ -40,7 +40,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-04-16: In FBGM, defensive linemen now get fewer tackles.
 
-*** 2020-04-16: Added a new Award Races page, available under the Stats menu. [[1]](https://old.reddit.com/r/BasketballGM/comments/g2sgwf/new_in_version_202004170093_award_races/) [[2]](https://old.reddit.com/r/Football_GM/comments/g2sgxa/new_in_version_202004170094_award_races/)**
+* **2020-04-16: Added a new Award Races page, available under the Stats menu. [[1]](https://old.reddit.com/r/BasketballGM/comments/g2sgwf/new_in_version_202004170093_award_races/) [[2]](https://old.reddit.com/r/Football_GM/comments/g2sgxa/new_in_version_202004170094_award_races/)**
 
 * 2020-04-16: Added "Auto sort roster" and "Reset playing time" buttons to the Multi Team Mode page, to allow you to easily apply those actions to all teams you control.
 

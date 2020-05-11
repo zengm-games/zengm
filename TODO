@@ -5,6 +5,7 @@ live game sim game selection page
 
 "sim to" button next to game on schedule
 - use "action" mechanism of ScoreBox
+- add ASG to schedule and top bar
 
 eventually
 - way to view scheduled events and add/edit/delete

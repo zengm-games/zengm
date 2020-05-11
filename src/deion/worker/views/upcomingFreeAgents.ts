@@ -11,18 +11,23 @@ const updateUpcomingFreeAgents = async (
 		process.env.SPORT === "basketball"
 			? ["min", "pts", "trb", "ast", "per"]
 			: ["gp", "keyStats", "av"];
-	let players: any[] =
-		g.get("phase") === PHASE.RESIGN_PLAYERS
-			? await idb.getCopies.players({
-					tid: PLAYER.FREE_AGENT,
-			  })
-			: await idb.getCopies.players({
-					tid: [0, Infinity],
-					filter: p => p.contract.exp === inputs.season,
-			  }); // Done before filter so full player object can be passed to player.genContract.
 
+	const showActualFreeAgents =
+		g.get("phase") === PHASE.RESIGN_PLAYERS &&
+		g.get("season") === inputs.season;
+
+	let players: any[] = showActualFreeAgents
+		? await idb.getCopies.players({
+				tid: PLAYER.FREE_AGENT,
+		  })
+		: await idb.getCopies.players({
+				tid: [0, Infinity],
+				filter: p => p.contract.exp === inputs.season,
+		  });
+
+	// Done before filter so full player object can be passed to player.genContract.
 	for (const p of players) {
-		if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
+		if (showActualFreeAgents) {
 			p.contractDesired = {
 				amount: p.contract.amount / 1000,
 				exp: p.contract.exp,

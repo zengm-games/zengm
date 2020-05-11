@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-11: Revamped the UI for selecting a live game to watch.
+
 * 2020-05-10: Schedules for leagues with non-standard teams and divisions now have balanced home/away games when possible. Or at least close to that - it's not a deterministic algorithm, but it works pretty well.
 
 * 2020-05-10: New League Stats page which lets you see team stats for all seasons in one table.

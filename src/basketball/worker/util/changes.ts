@@ -265,6 +265,11 @@ const changes = [
 		msg:
 			'When creating a new league, you now have the option of using real historical rosters back to 2005. <a href="https://basketball-gm.com/blog/2020/04/real-rosters-back-to-2005/">More details</a>',
 	},
+	{
+		date: "2020-05-11",
+		msg:
+			'Real historical rosters back to 1956, including all future draft prospects, team relocations, expansion drafts, salary cap changes, and more! <a href="https://basketball-gm.com/blog/2020/05/beta-real-rosters-back-to-1956/">More details</a>',
+	},
 ];
 
 export default changes;

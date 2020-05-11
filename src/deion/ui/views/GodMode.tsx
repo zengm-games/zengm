@@ -341,7 +341,7 @@ const options: {
 				<p>
 					The tragic death rate is the probability that a player will die a
 					tragic death on a given regular season day. Yes, this only happens in
-					the regular season.$
+					the regular season.
 					{process.env.SPORT === "basketball"
 						? "  With roughly 100 days in a season, the default is about one death every 50 years, or 1/(50*100) = 0.0002."
 						: null}{" "}

@@ -393,4 +393,331 @@ describe("worker/util/account/checkAchievement", () => {
 			assert.equal(awarded, false);
 		});
 	});
+
+	describe("triple_crown", () => {
+		test("award achievement if same player wins mvp, finalsMvp, and dpoy, on users team", async () => {
+			// pid 200 wins mvp, finalsMvp, and dpoy
+			const awards = {
+				season: 2013,
+				roy: {
+					pid: 501,
+					name: "Timothy Gonzalez",
+					tid: 4,
+					abbrev: "ATL",
+					pts: 30.135135135135137,
+					trb: 9.18918918918919,
+					ast: 0.7972972972972973,
+				},
+				mvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				mip: {
+					pid: 280,
+					name: "William Jarosz",
+					tid: 7,
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				smoy: {
+					pid: 505,
+					name: "Donald Gallager",
+					tid: 7,
+					abbrev: "MON",
+					pts: 22.195121951219512,
+					trb: 7.878048780487805,
+					ast: 0.7682926829268293,
+				},
+				dpoy: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					trb: 11.329268292682928,
+					blk: 3.2560975609756095,
+					stl: 2.2804878048780486,
+				},
+				finalsMvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					pts: 29.3,
+					trb: 10.85,
+					ast: 3.72,
+				},
+			};
+
+			await idb.cache.awards.put(awards);
+			const awarded = await get("triple_crown").check();
+			assert.equal(awarded, true);
+		});
+
+		test("don't award if different players on the same team win the three awards", async () => {
+			// pid 200 wins mvp and dpoy, pid 206 wins finalsMvp, all on same team
+			const awards = {
+				season: 2013,
+				roy: {
+					pid: 501,
+					name: "Timothy Gonzalez",
+					tid: 7,
+					abbrev: "ATL",
+					pts: 30.135135135135137,
+					trb: 9.18918918918919,
+					ast: 0.7972972972972973,
+				},
+				mvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				mip: {
+					pid: 280,
+					name: "William Jarosz",
+					tid: 7,
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				smoy: {
+					pid: 505,
+					name: "Donald Gallager",
+					tid: 7,
+					abbrev: "MON",
+					pts: 22.195121951219512,
+					trb: 7.878048780487805,
+					ast: 0.7682926829268293,
+				},
+				dpoy: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					trb: 11.329268292682928,
+					blk: 3.2560975609756095,
+					stl: 2.2804878048780486,
+				},
+				finalsMvp: {
+					pid: 206,
+					name: "Vernon Maxwell",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					pts: 22.3,
+					trb: 7.85,
+					ast: 7.72,
+				},
+			};
+
+			await idb.cache.awards.put(awards);
+			const awarded = await get("triple_crown").check();
+			assert.equal(awarded, false);
+		});
+
+		test("dont award if different players win from different teams", async () => {
+			//pid 200 wins mvp, pid 195 wins dpoy, pid 210 wins finalsMvp, all on diff teams
+			const awards = {
+				season: 2013,
+				roy: {
+					pid: 501,
+					name: "Timothy Gonzalez",
+					tid: 7,
+					abbrev: "ATL",
+					pts: 30.135135135135137,
+					trb: 9.18918918918919,
+					ast: 0.7972972972972973,
+				},
+				mvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				mip: {
+					pid: 280,
+					name: "William Jarosz",
+					tid: 7,
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				smoy: {
+					pid: 505,
+					name: "Donald Gallager",
+					tid: 7,
+					abbrev: "MON",
+					pts: 22.195121951219512,
+					trb: 7.878048780487805,
+					ast: 0.7682926829268293,
+				},
+				dpoy: {
+					pid: 195,
+					name: "Shawn Kemp",
+					tid: g.get("userTid") + 3,
+					abbrev: "SEA",
+					trb: 16.329268292682928,
+					blk: 1.2560975609756095,
+					stl: 4.2804878048780486,
+				},
+				finalsMvp: {
+					pid: 210,
+					name: "Michael Jordan",
+					tid: g.get("userTid") + 2,
+					abbrev: "CHI",
+					pts: 35.3,
+					trb: 6.85,
+					ast: 5.72,
+				},
+			};
+
+			await idb.cache.awards.put(awards);
+			const awarded = await get("triple_crown").check();
+			assert.equal(awarded, false);
+		});
+
+		test("don't award if same player wins all 3, same team, but not the user's team", async () => {
+			// pid 200 wins mvp, finalsMvp, and dpoy, but on differet teams
+			const awards = {
+				season: 2013,
+				roy: {
+					pid: 501,
+					name: "Timothy Gonzalez",
+					tid: 7,
+					abbrev: "ATL",
+					pts: 30.135135135135137,
+					trb: 9.18918918918919,
+					ast: 0.7972972972972973,
+				},
+				mvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid") + 2,
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				mip: {
+					pid: 280,
+					name: "William Jarosz",
+					tid: 7,
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				smoy: {
+					pid: 505,
+					name: "Donald Gallager",
+					tid: 7,
+					abbrev: "MON",
+					pts: 22.195121951219512,
+					trb: 7.878048780487805,
+					ast: 0.7682926829268293,
+				},
+				dpoy: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid") + 2,
+					abbrev: "PHI",
+					trb: 11.329268292682928,
+					blk: 3.2560975609756095,
+					stl: 2.2804878048780486,
+				},
+				finalsMvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid") + 2,
+					abbrev: "PHI",
+					pts: 29.3,
+					trb: 10.85,
+					ast: 3.72,
+				},
+			};
+
+			await idb.cache.awards.put(awards);
+			const awarded = await get("triple_crown").check();
+			assert.equal(awarded, false);
+		});
+
+		test("don't award if same player wins but is on different teams (a nonsense scenario)", async () => {
+			// pid 200 wins mvp, finalsMvp, and dpoy, but on differet teams
+			const awards = {
+				season: 2013,
+				roy: {
+					pid: 501,
+					name: "Timothy Gonzalez",
+					tid: 7,
+					abbrev: "ATL",
+					pts: 30.135135135135137,
+					trb: 9.18918918918919,
+					ast: 0.7972972972972973,
+				},
+				mvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid"),
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				mip: {
+					pid: 280,
+					name: "William Jarosz",
+					tid: 7,
+					abbrev: "PHI",
+					pts: 28.951219512195124,
+					trb: 11.329268292682928,
+					ast: 0.6585365853658537,
+				},
+				smoy: {
+					pid: 505,
+					name: "Donald Gallager",
+					tid: 7,
+					abbrev: "MON",
+					pts: 22.195121951219512,
+					trb: 7.878048780487805,
+					ast: 0.7682926829268293,
+				},
+				dpoy: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid") + 1,
+					abbrev: "SEA",
+					trb: 11.329268292682928,
+					blk: 3.2560975609756095,
+					stl: 2.2804878048780486,
+				},
+				finalsMvp: {
+					pid: 200,
+					name: "Hakeem Olajuwon",
+					tid: g.get("userTid") + 2,
+					abbrev: "HOU",
+					pts: 29.3,
+					trb: 10.85,
+					ast: 3.72,
+				},
+			};
+
+			await idb.cache.awards.put(awards);
+			const awarded = await get("triple_crown").check();
+			assert.equal(awarded, false);
+		});
+	});
 });

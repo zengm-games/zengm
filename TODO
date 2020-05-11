@@ -568,9 +568,6 @@ game sim
   - blocked punt
   - missed fg/xp return
 
-league leaders recorded in awards
-- see leagueLeaders call in doAwards, needs categories
-
 AV advanced stat
 - use in value?
 - OL and defense
@@ -696,8 +693,6 @@ BoxScoreRow
 - link to team should be for the season of the ASG, not current season always (in boxScore.season but not passed to Row)
 - highlight user team abbrev
 
-fix contracts old players too cheap
-
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter
 
@@ -713,8 +708,6 @@ somewhere, show average age of team
 
 increase PG cutoff
 - https://www.reddit.com/r/BasketballGM/comments/8lfyuh/7_center_turns_into_pg_when_the_season_starts/
-
-option to edit AI trade rate https://www.reddit.com/r/BasketballGM/comments/8kqzl9/trade_frequency/
 
 index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
@@ -737,9 +730,6 @@ NEED TO FIX TRADE AI
 no POT mode, to make it harder
 
 p.valueWithContract is exactly equal to p.value currently!
-
-team shot locations playoffs
-- share code with team stats for highlighting and playoff W/L
 
 persist fantasy draft results
 - make an array of draft results

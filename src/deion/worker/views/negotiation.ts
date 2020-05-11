@@ -53,7 +53,9 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	}
 
 	return contractOptions.filter(
-		contractOption => contractOption.amount * 1000 <= g.get("maxContract"),
+		contractOption =>
+			contractOption.smallestAmount ||
+			contractOption.amount * 1000 <= g.get("maxContract"),
 	);
 };
 

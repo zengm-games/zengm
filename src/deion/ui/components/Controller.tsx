@@ -287,11 +287,14 @@ const Controller = () => {
 			<NavBar updating={loading} />
 			<LeagueTopBar />
 			<TitleBar />
-			<div className="bbgm-container position-relative mt-2">
+			<div className="bbgm-container position-relative mt-2 flex-grow-1 d-flex flex-column">
 				<Header />
 				<SideBar pageID={pageID} />
-				<div className="p402_premium" id="actual-content">
-					<div id="actual-actual-content" className="clearfix">
+				<div
+					className="p402_premium flex-grow-1 d-flex flex-column"
+					id="actual-content"
+				>
+					<div id="actual-actual-content" className="clearfix flex-shrink-0">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
 					</div>
 					<Footer />

@@ -3,7 +3,7 @@ import React from "react";
 const Footer = React.memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
-		<div className="footer-wrapper">
+		<div className="footer-wrapper mt-auto">
 			<p className="clearfix" />
 
 			<div

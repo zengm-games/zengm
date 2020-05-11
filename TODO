@@ -1,7 +1,3 @@
-refit rosters with game sim presets applied
-- how are finance values in old seasons?
-- other stuff from bbgm-rosters todo
-
 changes
 
 fbgm test all
@@ -32,7 +28,7 @@ eventually
 handle abbrevs changing over time without breaking URLs
 - ATL -> ATL_0. backwards compatible, and unbreakable. could also accept just 0 if necessary
 
-manually specify lottery result in god mode
+manually specify draft order in god mode
 
 objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
 

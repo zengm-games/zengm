@@ -91,7 +91,7 @@ const LeagueTopBar = React.memo(() => {
 
 	return (
 		<div
-			className="league-top-bar d-flex justify-content-end overflow-hidden mt-2"
+			className="league-top-bar flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2"
 			style={show ? undefined : hiddenStyle}
 		>
 			{show ? (

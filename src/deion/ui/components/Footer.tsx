@@ -71,14 +71,6 @@ const Footer = React.memo(() => {
 					</a>{" "}
 					·{" "}
 					<a
-						href={`https://${process.env.SPORT}-gm.com/advertise/`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Advertise
-					</a>{" "}
-					·{" "}
-					<a
 						href={`https://${process.env.SPORT}-gm.com/blog/`}
 						rel="noopener noreferrer"
 						target="_blank"
@@ -99,15 +91,27 @@ const Footer = React.memo(() => {
 						rel="noopener noreferrer"
 						target="_blank"
 					>
-						Privacy Policy
+						Privacy
 					</a>{" "}
 					·{" "}
 					<a
-						href={`https://${process.env.SPORT}-gm.com/share/`}
+						href={`https://www.reddit.com/r/${
+							process.env.SPORT === "basketball"
+								? "BasketballGM"
+								: "Football_GM"
+						}/`}
 						rel="noopener noreferrer"
 						target="_blank"
 					>
-						Share
+						Reddit
+					</a>
+					·{" "}
+					<a
+						href="https://discord.gg/caPFuM9"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						Discord
 					</a>
 					<br />
 				</p>

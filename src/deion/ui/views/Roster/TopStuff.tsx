@@ -106,7 +106,13 @@ const TopStuff = ({
 
 	let marginOfVictory: string;
 	if (process.env.SPORT === "football") {
-		marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(1);
+		if (t.stats.gp !== 0) {
+			marginOfVictory = ((t.stats.pts - t.stats.oppPts) / t.stats.gp).toFixed(
+				1,
+			);
+		} else {
+			marginOfVictory = "0.0";
+		}
 	} else {
 		marginOfVictory = (t.stats.pts - t.stats.oppPts).toFixed(1);
 	}

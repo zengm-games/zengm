@@ -191,6 +191,7 @@ const advStats = async () => {
 		season: g.get("season"),
 		playoffs: PHASE.PLAYOFFS === g.get("phase"),
 		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
+		addDummySeason: true,
 	});
 	const league: any = teams.reduce((memo: any, t) => {
 		for (const key of teamStats) {

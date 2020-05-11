@@ -1,7 +1,5 @@
 changes
 
-fbgm test all
-
 eventually
 - way to view scheduled events and add/edit/delete
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

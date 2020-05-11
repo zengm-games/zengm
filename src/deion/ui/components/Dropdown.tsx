@@ -14,6 +14,7 @@ const Select = ({
 }) => {
 	const options = useDropdownOptions(field);
 	const [width, setWidth] = useState<number | undefined>();
+
 	useEffect(() => {
 		let currentValue;
 
@@ -40,15 +41,22 @@ const Select = ({
 
 		document.body.removeChild(el);
 	}, [field, options, value]);
+
+	const style: React.CSSProperties = {
+		width,
+	};
+
+	if (options.length === 1) {
+		style.display = "none";
+	}
+
 	return (
 		<>
 			<select
 				value={value}
 				className="dropdown-select"
 				onChange={handleChange}
-				style={{
-					width,
-				}}
+				style={style}
 			>
 				{options.map(opt => (
 					<option key={opt.key} value={opt.key}>

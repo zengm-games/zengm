@@ -165,6 +165,12 @@ type GameTeam = {
 	lost?: number; // Undefined for legacy objects
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
 
+	playoffs?: {
+		seed: number;
+		won: number;
+		lost: number;
+	};
+
 	// For stats
 	[key: string]: any;
 };

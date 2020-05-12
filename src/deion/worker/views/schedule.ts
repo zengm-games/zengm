@@ -1,4 +1,4 @@
-import { season, player, expansionDraft } from "../core";
+import { season, player } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, overrides } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
@@ -146,6 +146,8 @@ const updateCompleted = async (
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		// Load all games in list
 		const completed = await getProcessedGames(inputs.abbrev, g.get("season"));
+		console.log(completed[0]);
+
 		return {
 			completed,
 		};

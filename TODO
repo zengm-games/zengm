@@ -1,10 +1,10 @@
 changes football
 
-schedule
-- playoff seed and game won
-  - upcoming
-  - completed - maybe log to whatever
-- why no seed in top bar?
+seed and playoff w/l in top bar
+
+ScoreBox - align records, so they both appear right after the longest team name
+
+alt+left/right on box score
 
 live game sim game selection page
 - playoff seed and games won

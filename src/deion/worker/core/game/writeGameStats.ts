@@ -75,6 +75,58 @@ const allStarMVP = async (
 	);
 };
 
+const getPlayoffInfos = async (game: Game) => {
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	const roundSeries = playoffSeries
+		? playoffSeries.series[playoffSeries.currentRound]
+		: undefined;
+
+	if (!roundSeries) {
+		return;
+	}
+
+	const series = roundSeries.find(s => {
+		if (!s.away) {
+			return false;
+		}
+
+		// Here and below, can't assume series and game have same home/away, because for series "home" means home court advantage in series, but for game it means this individual game.
+		if (s.home.tid === game.teams[0].tid && s.away.tid === game.teams[1].tid) {
+			return true;
+		}
+		if (s.home.tid === game.teams[1].tid && s.away.tid === game.teams[0].tid) {
+			return true;
+		}
+
+		return false;
+	});
+
+	if (!series || !series.away) {
+		return;
+	}
+
+	const first =
+		series.home.tid === game.teams[0].tid ? series.home : series.away;
+	const second =
+		series.home.tid === game.teams[0].tid ? series.away : series.home;
+
+	const firstWon = game.teams[0].pts > game.teams[1].pts ? 1 : 0;
+	const secondWon = game.teams[1].pts > game.teams[0].pts ? 1 : 0;
+
+	return [
+		{
+			seed: first.seed,
+			won: first.won + firstWon,
+			lost: second.won + secondWon,
+		},
+		{
+			seed: second.seed,
+			won: second.won + secondWon,
+			lost: first.won + firstWon,
+		},
+	] as const;
+};
+
 const writeGameStats = async (
 	results: GameResults,
 	att: number,
@@ -324,6 +376,14 @@ const writeGameStats = async (
 			allStars.score = [results.team[0].stat.pts, results.team[1].stat.pts];
 			allStars.overtimes = results.overtimes;
 			await idb.cache.allStars.put(allStars);
+		}
+	}
+
+	if (g.get("phase") === PHASE.PLAYOFFS) {
+		const playoffInfos = await getPlayoffInfos(gameStats);
+		if (playoffInfos) {
+			gameStats.teams[0].playoffs = playoffInfos[0];
+			gameStats.teams[1].playoffs = playoffInfos[1];
 		}
 	}
 

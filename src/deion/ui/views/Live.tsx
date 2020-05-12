@@ -42,7 +42,7 @@ const Live = ({ games, gamesInProgress, userTid }: View<"live">) => {
 			</div>
 
 			<div className="row">
-				{games.map((game, i) => (
+				{games.map(game => (
 					<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
 						<ScoreBox
 							game={game}

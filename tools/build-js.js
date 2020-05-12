@@ -1,6 +1,7 @@
 const rollup = require("rollup");
 const build = require("./lib/buildFuncs");
 const getSport = require("./lib/getSport");
+const replace = require("replace");
 const rollupConfig = require("./lib/rollupConfig");
 
 console.log("Bundling JavaScript files...");
@@ -32,6 +33,14 @@ const buildFile = async (name, legacy) => {
 		indent: false,
 		name,
 		sourcemap: true,
+	});
+
+	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
+	replace({
+		regex: ";//# sourceMappingURL",
+		replacement: ";\n//# sourceMappingURL",
+		paths: [outFile],
+		silent: true,
 	});
 };
 

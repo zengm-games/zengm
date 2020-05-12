@@ -473,7 +473,17 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("draftType", {
 							type: "string",
 							// nba is legacy
-							enum: ["nba1994", "nba2019", "noLottery", "random", "nba"],
+							enum: [
+								"nba1994",
+								"nba2019",
+								"noLottery",
+								"random",
+								"nba1990",
+								"randomLotteryFirst3",
+								"randomLottery",
+								"coinFlip",
+								"nba",
+							],
 						}),
 						gameAttribute("easyDifficultyInPast", {
 							type: "boolean",

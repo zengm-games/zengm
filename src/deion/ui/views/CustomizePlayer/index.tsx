@@ -7,7 +7,7 @@ import React, {
 	MouseEvent,
 	ReactNode,
 } from "react";
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { PlayerPicture } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, overrides, realtimeUpdate, toWorker } from "../../util";
@@ -457,6 +457,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									onChange={handleChange.bind(null, "root", "tid")}
 									value={p.tid}
 								>
+									<option value={PLAYER.RETIRED}>Retired</option>
+									<option value={PLAYER.UNDRAFTED}>Draft Prospect</option>
+									<option value={PLAYER.FREE_AGENT}>Free Agent</option>
 									{orderBy(teams, ["text", "tid"]).map(t => {
 										return (
 											<option key={t.tid} value={t.tid}>

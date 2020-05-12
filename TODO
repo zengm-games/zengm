@@ -1,5 +1,8 @@
 max expansion population, unless god mode
 
+test drafttype
+- why did it not change in 1987, but in 1988?
+
 changes football
 
 seed and playoff w/l in top bar
@@ -25,14 +28,6 @@ eventually
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?
-- better historical draft lottery
-  - up to 1965: noLottery
-  - 1966-1984: coin flip to decide first 2
-  - 1985-1986: random, but only for lottery teams
-    - could implement as weighted top N lottery
-  - 1987-1989: random, only first 3 picks
-    - could implement as weighted top 3 lottery
-  - 1990-1993: some other weighted top 3 lottery
 
 ---
 

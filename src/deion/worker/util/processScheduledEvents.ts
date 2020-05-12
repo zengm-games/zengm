@@ -151,6 +151,15 @@ const processGameAttributes = async (
 		);
 	}
 
+	const prevDraftType = g.get("draftType");
+	if (info.draftType !== undefined && info.draftType !== prevDraftType) {
+		texts.push(
+			`<a href="${helpers.leagueUrl([
+				"draft_lottery",
+			])}">Draft lottery</a> format changed`,
+		);
+	}
+
 	if (texts.length === 1) {
 		eventLogTexts.push(`<b>League rule change:</b> ${texts[0]}`);
 	} else if (texts.length > 1) {

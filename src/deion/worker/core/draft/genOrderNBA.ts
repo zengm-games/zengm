@@ -9,11 +9,79 @@ import type {
 	Conditions,
 	DraftLotteryResult,
 	DraftPick,
+	DraftType,
 } from "../../../common/types";
 
 type ReturnVal = DraftLotteryResult & {
-	draftType: "nba1994" | "nba2019";
+	draftType: Exclude<DraftType, "random" | "noLottery">;
 };
+
+// chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
+const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
+	if (draftType === "coinFlip") {
+		return {
+			minNumTeams: 2,
+			numToPick: 2,
+			chances: [1, 1, 0],
+		};
+	}
+
+	if (draftType === "randomLottery") {
+		return {
+			minNumTeams: numLotteryTeams,
+			numToPick: numLotteryTeams,
+			chances: [1],
+		};
+	}
+
+	if (draftType === "randomLotteryFirst3") {
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances: [1],
+		};
+	}
+
+	if (draftType === "nba1990") {
+		const chances = [];
+		for (let i = numLotteryTeams; i > 0; i--) {
+			chances.push(i);
+		}
+
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances,
+		};
+	}
+
+	if (draftType === "nba1994") {
+		return {
+			minNumTeams: 3,
+			numToPick: 3,
+			chances: [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5],
+		};
+	}
+
+	if (draftType === "nba2019") {
+		return {
+			minNumTeams: 4,
+			numToPick: 4,
+			chances: [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5],
+		};
+	}
+
+	throw new Error(`Unsupported draft type "${draftType}"`);
+};
+
+const VALID_DRAFT_TYPES = [
+	"nba1994",
+	"nba2019",
+	"coinFlip",
+	"randomLottery",
+	"randomLotteryFirst3",
+	"nba1990",
+] as const;
 
 /**
  * Sets draft order and save it to the draftPicks object store.
@@ -45,27 +113,40 @@ const genOrder = async (
 	});
 
 	// Draft lottery
-	lotterySort(teams);
-	let chances =
-		g.get("draftType") === "nba1994"
-			? [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]
-			: [140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5]; // Change number of teams in lottery, based on number of playoff teams
+
+	const draftTypeTemp: any = g.get("draftType");
+	if (!VALID_DRAFT_TYPES.includes(draftTypeTemp)) {
+		throw new Error(`Unsupported draft type "${draftTypeTemp}"`);
+	}
+	const draftType = draftTypeTemp as typeof VALID_DRAFT_TYPES[number];
 
 	const numPlayoffTeams =
 		2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
-	const minNumLotteryTeams = g.get("draftType") === "nba1994" ? 3 : 4; // Otherwise would require changes to draft lottery algorithm
+
+	const info = getLotteryInfo(draftType, g.get("numTeams") - numPlayoffTeams);
+	const minNumLotteryTeams = info.minNumTeams;
+	const numToPick = info.numToPick;
+	let chances = info.chances;
+
+	if (teams.length < minNumLotteryTeams) {
+		throw new Error(
+			`Number of teams ${teams.length} is less than the minimum required for draft type "${draftType}"`,
+		);
+	}
+
+	lotterySort(teams);
 
 	const numLotteryTeams = helpers.bound(
 		g.get("numTeams") - numPlayoffTeams,
 		minNumLotteryTeams,
-		g.get("numTeams"),
+		draftType === "coinFlip" ? minNumLotteryTeams : g.get("numTeams"),
 	);
 
 	if (numLotteryTeams < chances.length) {
 		chances = chances.slice(0, numLotteryTeams);
 	} else {
 		while (numLotteryTeams > chances.length) {
-			chances.push(5);
+			chances.push(chances[chances.length - 1]);
 		}
 	}
 
@@ -81,7 +162,6 @@ const genOrder = async (
 
 	const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
 
-	const numToPick = g.get("draftType") === "nba1994" ? 3 : 4;
 	const firstN: number[] = [];
 
 	while (firstN.length < numToPick) {
@@ -180,7 +260,7 @@ const genOrder = async (
 	// Save draft lottery results separately
 	const draftLotteryResult: ReturnVal = {
 		season: g.get("season"),
-		draftType: g.get("draftType") === "nba1994" ? "nba1994" : "nba2019",
+		draftType,
 		result: teams // Start with teams in lottery order
 			.map(({ tid }) => {
 				return draftPicks.find(dp => {

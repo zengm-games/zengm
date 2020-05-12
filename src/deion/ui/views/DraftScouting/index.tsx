@@ -92,7 +92,7 @@ const DraftScouting = ({ draftType, seasons }: View<"draftScouting">) => {
 };
 
 DraftScouting.propTypes = {
-	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
+	draftType: PropTypes.string,
 	seasons: PropTypes.arrayOf(
 		PropTypes.shape({
 			players: PropTypes.arrayOf(PropTypes.object).isRequired,

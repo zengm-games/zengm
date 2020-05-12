@@ -28,19 +28,6 @@ const updateCustomizePlayer = async (
 			};
 		});
 
-		teams.unshift({
-			tid: PLAYER.RETIRED,
-			text: "Retired",
-		});
-		teams.unshift({
-			tid: PLAYER.UNDRAFTED,
-			text: "Draft Prospect",
-		});
-		teams.unshift({
-			tid: PLAYER.FREE_AGENT,
-			text: "Free Agent",
-		});
-
 		let appearanceOption;
 		let originalTid;
 

@@ -5,11 +5,30 @@ import React, { useEffect, useReducer, useRef } from "react";
 import { DraftAbbrev, ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, toWorker } from "../util";
-import type { DraftLotteryResultArray, View } from "../../common/types";
+import type {
+	DraftLotteryResultArray,
+	View,
+	DraftType,
+} from "../../common/types";
+
+const draftTypeDescriptions: Record<DraftType, string> = {
+	nba2019: "Weighted lottery for the top 4 picks, like the NBA from 2019+",
+	nba1994: "Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
+	nba1990: "Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
+	randomLotteryFirst3:
+		"Random lottery for the top 3 picks, like the NBA from 1987-1989",
+	randomLottery:
+		"Non-playoff teams draft in random order, like the NBA from 1985-1986",
+	coinFlip:
+		"Coin flip to determine the top 2 picks, like the NBA from 1966-1984",
+	noLottery:
+		"No lottery, teams draft in order of their record, with non-playoff teams coming first",
+	random: "Teams draft in random order, including playoff teams",
+};
 
 const getProbs = (
 	result: DraftLotteryResultArray,
-	draftType: "nba1994" | "nba2019",
+	draftType: Exclude<DraftType, "random" | "noLottery">,
 ): (number | undefined)[][] => {
 	const probs: number[][] = [];
 	const topNCombos = new Map();
@@ -17,6 +36,36 @@ const getProbs = (
 		(total, { chances }) => total + chances,
 		0,
 	);
+
+	if (draftType === "randomLottery") {
+		for (let i = 0; i < result.length; i++) {
+			probs[i] = [];
+			for (let j = 0; j < result.length; j++) {
+				probs[i][j] = 1 / result.length;
+			}
+		}
+
+		return probs;
+	}
+
+	if (draftType === "coinFlip") {
+		for (let i = 0; i < result.length; i++) {
+			probs[i] = [];
+			for (let j = 0; j < result.length; j++) {
+				if (i === 0 && j <= 1) {
+					probs[i][j] = 0.5;
+				} else if (i === 1 && j <= 1) {
+					probs[i][j] = 0.5;
+				} else if (i === j) {
+					probs[i][j] = 1;
+				} else {
+					probs[i][j] = 0;
+				}
+			}
+		}
+
+		return probs;
+	}
 
 	// Top N picks
 	for (let i = 0; i < result.length; i++) {
@@ -125,9 +174,9 @@ const getProbs = (
 
 type Props = View<"draftLottery">;
 type State = {
-	draftType: "nba1994" | "nba2019" | "noLottery" | "random" | undefined;
-	result: DraftLotteryResultArray | undefined;
-	season: number;
+	draftType: Props["draftType"];
+	result: Props["result"];
+	season: Props["season"];
 	toReveal: number[];
 	// Values are indexes of props.result, starting with the 14th pick and ending with the 1st pick
 	indRevealed: number;
@@ -144,7 +193,7 @@ type Action =
 	  }
 	| {
 			type: "start";
-			draftType: "nba1994" | "nba2019" | "noLottery" | "random";
+			draftType: DraftType;
 			result: DraftLotteryResultArray;
 			toReveal: number[];
 			indRevealed: number;
@@ -294,7 +343,10 @@ const DraftLotteryTable = (props: Props) => {
 	const { season, ties, type, userTid } = props;
 	const { draftType, result } = state;
 	const probs =
-		result !== undefined && (draftType === "nba2019" || draftType === "nba1994")
+		result !== undefined &&
+		draftType !== undefined &&
+		draftType !== "random" &&
+		draftType !== "noLottery"
 			? getProbs(result, draftType)
 			: undefined;
 	const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
@@ -304,87 +356,90 @@ const DraftLotteryTable = (props: Props) => {
 	if (result && probs) {
 		// Checking both is redundant, but flow wants it
 		table = (
-			<ResponsiveTableWrapper>
-				<table className="table table-striped table-bordered table-sm table-hover">
-					<thead>
-						<tr>
-							<th colSpan={3} />
-							<th colSpan={NUM_PICKS} className="text-center">
-								Pick Probabilities
-							</th>
-						</tr>
-						<tr>
-							<th>Team</th>
-							<th>Record</th>
-							<th>Chances</th>
-							{result.map((row, i) => (
-								<th key={i}>{helpers.ordinal(i + 1)}</th>
-							))}
-						</tr>
-					</thead>
-					<tbody>
-						{result.map(
-							({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
-								const pickCols = range(NUM_PICKS).map(j => {
-									const prob = probs[i][j];
-									const pct =
-										prob !== undefined
-											? `${(prob * 100).toFixed(1)}%`
-											: undefined;
-									let highlighted = false;
+			<>
+				<p />
+				<ResponsiveTableWrapper nonfluid>
+					<table className="table table-striped table-bordered table-sm table-hover">
+						<thead>
+							<tr>
+								<th colSpan={3} />
+								<th colSpan={NUM_PICKS} className="text-center">
+									Pick Probabilities
+								</th>
+							</tr>
+							<tr>
+								<th>Team</th>
+								<th>Record</th>
+								<th>Chances</th>
+								{result.map((row, i) => (
+									<th key={i}>{helpers.ordinal(i + 1)}</th>
+								))}
+							</tr>
+						</thead>
+						<tbody>
+							{result.map(
+								({ tid, originalTid, chances, pick, won, lost, tied }, i) => {
+									const pickCols = range(NUM_PICKS).map(j => {
+										const prob = probs[i][j];
+										const pct =
+											prob !== undefined
+												? `${(prob * 100).toFixed(1)}%`
+												: undefined;
+										let highlighted = false;
 
-									if (pick !== undefined) {
-										highlighted = pick === j + 1;
-									} else if (NUM_PICKS - 1 - j <= state.indRevealed) {
-										// Has this round been revealed?
-										// Is this pick revealed?
-										const ind = state.toReveal.findIndex(ind2 => ind2 === i);
+										if (pick !== undefined) {
+											highlighted = pick === j + 1;
+										} else if (NUM_PICKS - 1 - j <= state.indRevealed) {
+											// Has this round been revealed?
+											// Is this pick revealed?
+											const ind = state.toReveal.findIndex(ind2 => ind2 === i);
 
-										if (ind === NUM_PICKS - 1 - j) {
-											highlighted = true;
+											if (ind === NUM_PICKS - 1 - j) {
+												highlighted = true;
+											}
 										}
-									}
 
-									return (
-										<td
-											className={classNames({
-												"table-success": highlighted,
-											})}
-											key={j}
-										>
-											{pct}
-										</td>
+										return (
+											<td
+												className={classNames({
+													"table-success": highlighted,
+												})}
+												key={j}
+											>
+												{pct}
+											</td>
+										);
+									});
+									const row = (
+										<tr key={originalTid}>
+											<td
+												className={classNames({
+													"table-info": tid === userTid,
+												})}
+											>
+												<DraftAbbrev
+													tid={tid}
+													originalTid={originalTid}
+													season={season}
+												/>
+											</td>
+											<td>
+												<a href={helpers.leagueUrl(["standings", season])}>
+													{won}-{lost}
+													{ties ? <>-{tied}</> : null}
+												</a>
+											</td>
+											<td>{chances}</td>
+											{pickCols}
+										</tr>
 									);
-								});
-								const row = (
-									<tr key={originalTid}>
-										<td
-											className={classNames({
-												"table-info": tid === userTid,
-											})}
-										>
-											<DraftAbbrev
-												tid={tid}
-												originalTid={originalTid}
-												season={season}
-											/>
-										</td>
-										<td>
-											<a href={helpers.leagueUrl(["standings", season])}>
-												{won}-{lost}
-												{ties ? <>-{tied}</> : null}
-											</a>
-										</td>
-										<td>{chances}</td>
-										{pickCols}
-									</tr>
-								);
-								return row;
-							},
-						)}
-					</tbody>
-				</table>
-			</ResponsiveTableWrapper>
+									return row;
+								},
+							)}
+						</tbody>
+					</table>
+				</ResponsiveTableWrapper>
+			</>
 		);
 	} else {
 		table = <p>No draft lottery results for {season}.</p>;
@@ -392,9 +447,16 @@ const DraftLotteryTable = (props: Props) => {
 
 	return (
 		<>
+			<p>
+				{draftType !== undefined ? (
+					<>
+						<b>Draft lottery type:</b> {draftTypeDescriptions[draftType]}
+					</>
+				) : null}
+			</p>
 			{type === "readyToRun" && state.revealState === "init" ? (
 				<button
-					className="btn btn-large btn-success mb-3"
+					className="btn btn-large btn-success"
 					onClick={() => startLottery()}
 				>
 					Start Draft Lottery
@@ -402,7 +464,7 @@ const DraftLotteryTable = (props: Props) => {
 			) : null}
 			{type === "readyToRun" &&
 			(state.revealState === "running" || state.revealState === "paused") ? (
-				<div className="btn-group mb-3">
+				<div className="btn-group">
 					{state.revealState === "paused" ? (
 						<button
 							className="btn btn-light-bordered"
@@ -437,7 +499,7 @@ const DraftLotteryTable = (props: Props) => {
 };
 
 DraftLotteryTable.propTypes = {
-	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
+	draftType: PropTypes.string,
 	result: PropTypes.arrayOf(
 		PropTypes.shape({
 			tid: PropTypes.number.isRequired,

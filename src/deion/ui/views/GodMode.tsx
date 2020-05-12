@@ -146,16 +146,39 @@ const options: {
 		helpText: (
 			<>
 				<p>Currently this just changes the type of draft lottery.</p>
-				<p>NBA 2019 is the current NBA draft lottery.</p>
 				<p>
-					NBA 1994 is the NBA draft lottery that was used from 1994 to 2018.
+					<b>NBA 2019:</b> Weighted lottery for the top 4 picks, like the NBA
+					from 2019+
 				</p>
-				<p>No Lottery will order teams based on their record.</p>
 				<p>
-					Random Order will order the draft completely randomly, with no regard
-					for team performance. Each round is randomized independently, so a
-					team could get the first pick in one round and the last pick in the
-					next round.
+					<b>NBA 1994:</b> Weighted lottery for the top 3 picks, like the NBA
+					from 1994-2018
+				</p>
+				<p>
+					<b>NBA 1990:</b> Weighted lottery for the top 3 picks, like the NBA
+					from 1990-1993
+				</p>
+				<p>
+					<b>Random, first 3:</b> Random lottery for the top 3 picks, like the
+					NBA from 1987-1989
+				</p>
+				<p>
+					<b>Random, lottery only:</b> Non-playoff teams draft in random order,
+					like the NBA from 1985-1986
+				</p>
+				<p>
+					<b>Coin flip:</b> Coin flip to determine the top 2 picks, like the NBA
+					from 1966-1984
+				</p>
+				<p>
+					<b>No Lottery:</b> No lottery, teams draft in order of their record,
+					with non-playoff teams coming first
+				</p>
+				<p>
+					<b>Random:</b> order the draft completely randomly, with no regard for
+					team performance. Each round is randomized independently, so a team
+					could get the first pick in one round and the last pick in the next
+					round.
 				</p>
 			</>
 		),
@@ -163,8 +186,12 @@ const options: {
 		values: {
 			nba2019: "NBA 2019",
 			nba1994: "NBA 1994",
+			nba1990: "NBA 1990",
+			randomLotteryFirst3: "Random, first 3",
+			randomLottery: "Random, lottery only",
+			coinFlip: "Coin flip",
 			noLottery: "No Lottery",
-			random: "Random Order",
+			random: "Random",
 		},
 	},
 	{
@@ -1306,7 +1333,7 @@ GodModeOptions.propTypes = {
 	hardCap: PropTypes.bool.isRequired,
 	numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
 	numPlayoffByes: PropTypes.number.isRequired,
-	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
+	draftType: PropTypes.string.isRequired,
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
 	allStarGame: PropTypes.bool.isRequired,
 	budget: PropTypes.bool.isRequired,

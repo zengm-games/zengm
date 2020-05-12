@@ -37,6 +37,7 @@ const updateDraftLottery = async (
 					t.firstSeasonAfterExpansion - 1 === g.get("season")
 				) {
 					showExpansionTeamMessage = true;
+					break;
 				}
 			}
 		}

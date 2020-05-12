@@ -134,7 +134,7 @@ export type DraftLotteryResultArray = {
 
 export type DraftLotteryResult = {
 	season: number;
-	draftType?: "nba1994" | "nba2019";
+	draftType?: Exclude<DraftType, "random" | "noLottery">;
 	result: DraftLotteryResultArray;
 };
 
@@ -152,7 +152,15 @@ export type DraftPick = {
 	dpid: number;
 } & DraftPickWithoutKey;
 
-export type DraftType = "nba1994" | "nba2019" | "noLottery" | "random";
+export type DraftType =
+	| "nba1994"
+	| "nba2019"
+	| "noLottery"
+	| "random"
+	| "coinFlip"
+	| "randomLottery"
+	| "randomLotteryFirst3"
+	| "nba1990";
 
 export type EventBBGM = any;
 

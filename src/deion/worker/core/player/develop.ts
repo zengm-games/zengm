@@ -224,7 +224,8 @@ const develop = (
 		}
 	}
 
-	if (!ratings.locked) {
+	// years===0 condition is so editing locked player in God Mode will update ovr and pot
+	if (!ratings.locked || years === 0) {
 		// Run these even for players developing 0 seasons
 		if (process.env.SPORT === "basketball") {
 			ratings.ovr = overrides.core.player.ovr!(ratings);

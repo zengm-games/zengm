@@ -4,13 +4,15 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-05-11: Revamped the UI for selecting a live game to watch.
+* 2020-05-12: Playoff seeds and W/L are shown in score boxes (schedule page, dashboard, live game sim, etc.).
+
+* 2020-05-11: Revamped the UI for selecting a live game to watch. [[1]](https://old.reddit.com/r/BasketballGM/comments/gi1gpu/i_also_snuck_this_update_into_todays_release_the/)
 
 * 2020-05-10: Schedules for leagues with non-standard teams and divisions now have balanced home/away games when possible. Or at least close to that - it's not a deterministic algorithm, but it works pretty well.
 
 * 2020-05-10: New League Stats page which lets you see team stats for all seasons in one table.
 
-* **2020-05-09: Added real historical rosters back to 1956 in BBGM. [[1]](https://basketball-gm.com/blog/2020/05/beta-real-rosters-back-to-1956/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gghq04/real_rosters_back_to_1956_is_officially_in_beta/)**
+* **2020-05-09: Added real historical rosters back to 1956 in BBGM. [[1]](https://basketball-gm.com/blog/2020/05/beta-real-rosters-back-to-1956/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gghq04/real_rosters_back_to_1956_is_officially_in_beta/) [[3]](https://old.reddit.com/r/BasketballGM/comments/ghw91z/official_release_real_rosters_back_to_1956/)**
 
 * 2020-05-07: Expansion drafts can be predefined in a league file to trigger at a certain time.
 

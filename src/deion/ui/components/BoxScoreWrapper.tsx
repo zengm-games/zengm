@@ -340,6 +340,10 @@ const BoxScore = ({
 	const handleKeydown = useCallback(
 		e => {
 			if (showNextPrev) {
+				if (e.altKey || e.ctrlKey || e.shiftKey || e.isComposing || e.metaKey) {
+					return;
+				}
+
 				if (e.keyCode === 37 && boxScore && prevGid !== undefined) {
 					// prev
 					realtimeUpdate(

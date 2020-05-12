@@ -1,4 +1,3 @@
-import { helpers } from "../../../../deion/common";
 import type { PlayerRatings } from "../../../common/types";
 
 /**
@@ -46,7 +45,16 @@ const ovr = (ratings: PlayerRatings): number => {
 		fudgeFactor = -10;
 	}
 
-	return helpers.bound(Math.round(r + fudgeFactor), 0, 100);
+	const val = Math.round(r + fudgeFactor);
+
+	if (val > 100) {
+		return 100;
+	}
+	if (val < 0) {
+		return 0;
+	}
+
+	return val;
 };
 
 export default ovr;

@@ -14,9 +14,18 @@ type Team = {
 	won?: number;
 	lost?: number;
 	tied?: number;
+	playoffs?: {
+		seed: number;
+		won: number;
+		lost: number;
+	};
 };
 
 const getRecord = (t: Team) => {
+	if (t.playoffs) {
+		return ` ${t.playoffs.won}`;
+	}
+
 	if (t.won === undefined || t.lost === undefined) {
 		return "";
 	}
@@ -229,6 +238,7 @@ const ScoreBox = ({
 									</div>
 								) : null}
 								<div className="flex-grow-1 p-1 text-truncate">
+									{t.playoffs ? `${t.playoffs.seed}. ` : null}
 									<a
 										href={helpers.leagueUrl([
 											"roster",

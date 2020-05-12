@@ -1,7 +1,8 @@
-import { season, player } from "../core";
+import { season, player, expansionDraft } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, overrides } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
+import { PHASE } from "../../common";
 
 export const getUpcoming = async ({
 	tid,
@@ -39,6 +40,11 @@ export const getUpcoming = async ({
 
 	const ovrsCache = new Map<number, number>();
 
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	const roundSeries = playoffSeries
+		? playoffSeries.series[playoffSeries.currentRound]
+		: undefined;
+
 	const getTeam = (tid: number) => {
 		let ovr = ovrsCache.get(tid);
 		if (ovr === undefined) {
@@ -50,12 +56,38 @@ export const getUpcoming = async ({
 			return { tid };
 		}
 
+		let playoffs:
+			| {
+					seed: number;
+					won: number;
+					lost: number;
+			  }
+			| undefined;
+		if (g.get("phase") === PHASE.PLAYOFFS && roundSeries) {
+			for (const series of roundSeries) {
+				if (series.home.tid === tid) {
+					playoffs = {
+						seed: series.home.seed,
+						won: series.home.won,
+						lost: series.away ? series.away.won : 0,
+					};
+				} else if (series.away && series.away.tid === tid) {
+					playoffs = {
+						seed: series.away.seed,
+						won: series.away.won,
+						lost: series.home.won,
+					};
+				}
+			}
+		}
+
 		return {
 			ovr,
 			tid,
 			won: teams[tid].seasonAttrs.won,
 			lost: teams[tid].seasonAttrs.lost,
 			tied: g.get("ties") ? teams[tid].seasonAttrs.tied : undefined,
+			playoffs,
 		};
 	};
 

@@ -39,13 +39,13 @@ const PopText = ({
 		const t = teams.find(t2 => t2.tid === tid);
 		if (t) {
 			let size;
-			if (t.popRank <= 3) {
+			if (t.popRank <= Math.ceil((3 / 30) * teams.length)) {
 				size = "very large";
-			} else if (t.popRank <= 8) {
+			} else if (t.popRank <= Math.ceil((8 / 30) * teams.length)) {
 				size = "large";
-			} else if (t.popRank <= 16) {
+			} else if (t.popRank <= Math.ceil((16 / 30) * teams.length)) {
 				size = "normal";
-			} else if (t.popRank <= 24) {
+			} else if (t.popRank <= Math.ceil((24 / 30) * teams.length)) {
 				size = "small";
 			} else {
 				size = "very small";

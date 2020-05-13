@@ -88,6 +88,18 @@ const updateDraftLottery = async (
 			}
 		}
 
+		if (g.get("draftType") === "random" || g.get("draftType") === "noLottery") {
+			return {
+				draftType: g.get("draftType"),
+				result: undefined,
+				season,
+				showExpansionTeamMessage,
+				ties: g.get("ties"),
+				type: "projected",
+				userTid: g.get("userTid"),
+			};
+		}
+
 		// View projected draft lottery for this season
 		const draftLotteryResult = await draft.genOrderNBA(true);
 

@@ -116,6 +116,8 @@ const attempt = async (valueChangeKey: number) => {
 	return true;
 };
 
+const DEFAULT_NUM_TEAMS = 30;
+
 const betweenAiTeams = async () => {
 	// aiTrades is a legacy option. Only pay attention to it if the new option is at its default value.
 	if ((g as any).aiTrades === false && g.get("aiTradesFactor") === 1) {
@@ -125,8 +127,8 @@ const betweenAiTeams = async () => {
 	// If aiTradesFactor is not an integer, use the fractional part as a probability. Like for 3.5, 50% of the times it will be 3, and 50% will be 4.
 	// Also scale so there are fewer trade attempts if there are fewer teams.
 	let float = g.get("aiTradesFactor");
-	if (g.get("numTeams") < defaultGameAttributes.numTeams) {
-		float *= g.get("numTeams") / defaultGameAttributes.numTeams;
+	if (g.get("numTeams") < DEFAULT_NUM_TEAMS) {
+		float *= g.get("numTeams") / DEFAULT_NUM_TEAMS;
 	}
 	let numAttempts = Math.floor(float);
 	const remainder = float % 1;

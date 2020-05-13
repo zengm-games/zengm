@@ -184,6 +184,9 @@ const LeaguePartPicker = ({
 
 const quickSeasonsStyle = { height: 19, color: "var(--dark)" };
 
+const MIN_SEASON = 1956;
+const MAX_SEASON = 2020;
+
 const SeasonsMenu = ({
 	onDone,
 	onLoading,
@@ -196,7 +199,7 @@ const SeasonsMenu = ({
 	const waitingForSeason = useRef<number | undefined>(value);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
-	const seasons = range(2020, 1955);
+	const seasons = range(MAX_SEASON, MIN_SEASON - 1);
 
 	const handleNewSeason = async (season: number) => {
 		waitingForSeason.current = season;
@@ -833,7 +836,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								<>
 									<ul className="list-group list-group-flush">
 										<li className="list-group-item bg-light">
-											<h3>Start in any season back to 1956</h3>
+											<h3>Start in any season back to {MIN_SEASON}</h3>
 											<p className="mb-0">
 												Players, teams, rosters, and contracts are generated
 												from real data. Draft classes are included up to today.
@@ -842,7 +845,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										<li className="list-group-item bg-light">
 											<h3>Watch your league evolve over time</h3>
 											<p className="mb-0">
-												There were only 8 teams in 1956, playing a very
+												There were only 8 teams in {MIN_SEASON}, playing a very
 												different brand of basketball than today. Live through
 												expansion drafts, league rule changes, team relocations,
 												economic growth, and changes in style of play.

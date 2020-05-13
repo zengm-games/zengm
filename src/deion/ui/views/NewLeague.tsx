@@ -340,16 +340,15 @@ type Action =
 			teams: NewLeagueTeam[];
 	  };
 
-const getNewTid = (
-	prevTid: number,
-	prevTeams: NewLeagueTeam[],
-	newTeams: NewLeagueTeam[],
-) => {
-	const prevTeam = prevTeams[prevTid];
-	const prevTeamName = `${prevTeam.region} ${prevTeam.name}`;
+const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
+	const t = teams[tid];
+	return `${t.region} ${t.name}`;
+};
+
+const getNewTid = (prevTeamRegionName: string, newTeams: NewLeagueTeam[]) => {
 	const newTeamsSorted = orderBy(newTeams, ["region", "name"]);
 	const closestNewTeam = newTeamsSorted.find(
-		t => prevTeamName <= `${t.region} ${t.name}`,
+		t => prevTeamRegionName <= `${t.region} ${t.name}`,
 	);
 	return closestNewTeam ? closestNewTeam.tid : newTeams.length - 1;
 };
@@ -375,7 +374,7 @@ const reducer = (state: State, action: Action): State => {
 				loadingLeagueFile: false,
 				keptKeys: [],
 				teams: teamsDefault,
-				tid: getNewTid(state.tid, state.teams, teamsDefault),
+				tid: getNewTid(getTeamRegionName(state.teams, state.tid), teamsDefault),
 			};
 
 		case "setCustomize":
@@ -431,7 +430,7 @@ const reducer = (state: State, action: Action): State => {
 				leagueFile: action.leagueFile,
 				keptKeys: initKeptKeys(action.leagueFile),
 				teams: action.teams,
-				tid: getNewTid(state.tid, state.teams, action.teams),
+				tid: getNewTid(getTeamRegionName(state.teams, state.tid), action.teams),
 			};
 		}
 
@@ -460,6 +459,13 @@ const NewLeague = (props: View<"newLeague">) => {
 					? league2020
 					: null;
 
+			const teams = customize === "real" ? teams2020 : teamsDefault;
+
+			let prevTeamRegionName = localStorage.getItem("prevTeamRegionName");
+			if (prevTeamRegionName === null) {
+				prevTeamRegionName = "";
+			}
+
 			return {
 				creating: false,
 				customize,
@@ -469,8 +475,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				leagueFile,
 				loadingLeagueFile: false,
 				randomizeRosters: false,
-				teams: customize === "real" ? teams2020 : teamsDefault,
-				tid: 0,
+				teams,
+				tid: getNewTid(prevTeamRegionName, teams),
 				keptKeys: initKeptKeys(leagueFile),
 			};
 		},
@@ -547,6 +553,11 @@ const NewLeague = (props: View<"newLeague">) => {
 				}
 				api.bbgmPing("league", [lid, type]);
 				realtimeUpdate([], `/l/${lid}`);
+
+				localStorage.setItem(
+					"prevTeamRegionName",
+					getTeamRegionName(state.teams, state.tid),
+				);
 			} catch (err) {
 				dispatch({
 					type: "error",
@@ -570,6 +581,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.name,
 			state.randomizeRosters,
 			state.season,
+			state.teams,
 			state.tid,
 			title,
 		],

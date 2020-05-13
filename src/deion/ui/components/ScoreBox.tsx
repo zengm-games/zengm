@@ -238,7 +238,9 @@ const ScoreBox = ({
 									</div>
 								) : null}
 								<div className="flex-grow-1 p-1 text-truncate">
-									{t.playoffs ? `${t.playoffs.seed}. ` : null}
+									{t.playoffs ? (
+										<span className="text-dark">{t.playoffs.seed}. </span>
+									) : null}
 									<a
 										href={helpers.leagueUrl([
 											"roster",

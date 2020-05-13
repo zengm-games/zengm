@@ -146,7 +146,6 @@ const updateCompleted = async (
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		// Load all games in list
 		const completed = await getProcessedGames(inputs.abbrev, g.get("season"));
-		console.log(completed[0]);
 
 		return {
 			completed,

@@ -222,6 +222,14 @@ const writeGameStats = async (
 		}
 	}
 
+	if (g.get("phase") === PHASE.PLAYOFFS) {
+		const playoffInfos = await getPlayoffInfos(gameStats);
+		if (playoffInfos) {
+			gameStats.teams[0].playoffs = playoffInfos[0];
+			gameStats.teams[1].playoffs = playoffInfos[1];
+		}
+	}
+
 	if (
 		results.team[0].id === g.get("userTid") ||
 		results.team[1].id === g.get("userTid")
@@ -286,11 +294,13 @@ const writeGameStats = async (
 							ovr: results.team[0].ovr,
 							pts: results.team[0].stat.pts,
 							tid: results.team[0].id,
+							playoffs: gameStats.teams[0].playoffs,
 						},
 						{
 							ovr: results.team[1].ovr,
 							pts: results.team[1].stat.pts,
 							tid: results.team[1].id,
+							playoffs: gameStats.teams[1].playoffs,
 						},
 					],
 				},
@@ -376,14 +386,6 @@ const writeGameStats = async (
 			allStars.score = [results.team[0].stat.pts, results.team[1].stat.pts];
 			allStars.overtimes = results.overtimes;
 			await idb.cache.allStars.put(allStars);
-		}
-	}
-
-	if (g.get("phase") === PHASE.PLAYOFFS) {
-		const playoffInfos = await getPlayoffInfos(gameStats);
-		if (playoffInfos) {
-			gameStats.teams[0].playoffs = playoffInfos[0];
-			gameStats.teams[1].playoffs = playoffInfos[1];
 		}
 	}
 

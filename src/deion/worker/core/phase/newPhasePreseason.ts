@@ -11,7 +11,7 @@ const newPhasePreseason = async (
 	await league.setGameAttributes({
 		season: g.get("season") + 1,
 	});
-	await toUI("setLocal", [
+	await toUI("updateLocal", [
 		{
 			games: [],
 		},

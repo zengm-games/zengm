@@ -32,10 +32,12 @@ const setSchedule = async (tids: [number, number][]) => {
 				{
 					ovr: game.teams[0].ovr,
 					tid: game.teams[0].tid,
+					playoffs: game.teams[0].playoffs,
 				},
 				{
 					ovr: game.teams[1].ovr,
 					tid: game.teams[1].tid,
+					playoffs: game.teams[1].playoffs,
 				},
 			],
 		});

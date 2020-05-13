@@ -537,11 +537,21 @@ export type LocalStateUI = {
 				ovr?: number;
 				pts?: number;
 				tid: number;
+				playoffs?: {
+					seed: number;
+					won: number;
+					lost: number;
+				};
 			},
 			{
 				ovr?: number;
 				pts?: number;
 				tid: number;
+				playoffs?: {
+					seed: number;
+					won: number;
+					lost: number;
+				};
 			},
 		];
 	}[];

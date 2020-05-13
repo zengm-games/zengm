@@ -17,11 +17,13 @@ const initUILocalGames = async () => {
 				ovr: game.teams[0].ovr,
 				pts: game.teams[0].pts,
 				tid: game.teams[0].tid,
+				playoffs: game.teams[0].playoffs,
 			},
 			{
 				ovr: game.teams[1].ovr,
 				pts: game.teams[1].pts,
 				tid: game.teams[1].tid,
+				playoffs: game.teams[1].playoffs,
 			},
 		],
 	}));
@@ -36,16 +38,18 @@ const initUILocalGames = async () => {
 				{
 					ovr: game.teams[0].ovr,
 					tid: game.teams[0].tid,
+					playoffs: game.teams[0].playoffs,
 				},
 				{
 					ovr: game.teams[1].ovr,
 					tid: game.teams[1].tid,
+					playoffs: game.teams[1].playoffs,
 				},
 			],
 		});
 	}
 
-	await toUI("setLocal", [
+	await toUI("updateLocal", [
 		{
 			games,
 		},

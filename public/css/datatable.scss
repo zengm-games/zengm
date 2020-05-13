@@ -50,6 +50,12 @@ ul.pagination {
 	}
 }
 
+// Without this, these buttons appear on top of notification bubbles. Bootstrap docs say the z-index here is just for handling border overlaps, meh whatever.
+.page-item.active .page-link,
+.page-item .page-link {
+	z-index: inherit;
+}
+
 // Not sure why this is needed, it should do this by default!
 .page-item.active .page-link:hover {
 	color: $white;

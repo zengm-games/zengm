@@ -36,9 +36,15 @@ const Pagination = ({
 				key={i}
 				className={classNames("page-item", i === currentPage ? "active" : null)}
 			>
-				<a className="page-link" onClick={() => onClick(i)}>
-					{i}
-				</a>
+				{i === currentPage ? (
+					<span className="page-link" onClick={() => onClick(i)}>
+						{i}
+					</span>
+				) : (
+					<a className="page-link" onClick={() => onClick(i)}>
+						{i}
+					</a>
+				)}
 			</li>,
 		);
 	}

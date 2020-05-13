@@ -1,7 +1,5 @@
 NewLeague
-- lastSelectedTid better as abbrev, then find closest?
-- same when setting tid in newLeagueFile action
-- how to define closest? first match region. if 0 or multiple rows match region, then find closest abbrev - sort, and find first >=
+- store last team name/region in localStorage and use on init of reducer
 
 notifications overlap
 - https://cdn.discordapp.com/attachments/290015591216054273/709914615873536031/unknown.png
@@ -9,6 +7,11 @@ notifications overlap
 max expansion population, unless god mode
 
 seed and playoff w/l in top bar
+
+legends mode
+- start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
+- NBA seasons only
+- New Special League
 
 ScoreBox - align records, so they both appear right after the longest team name
 
@@ -63,10 +66,6 @@ playoff upsets
 contraction
 - happened some NBA seasons
 - ...but tid gap
-
-legends mode
-- start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
-- NBA seasons only
 
 better changelog
 - everything from CHANGELOG.made

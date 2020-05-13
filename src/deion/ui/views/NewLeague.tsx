@@ -340,8 +340,21 @@ type Action =
 			teams: NewLeagueTeam[];
 	  };
 
+const getNewTid = (
+	prevTid: number,
+	prevTeams: NewLeagueTeam[],
+	newTeams: NewLeagueTeam[],
+) => {
+	const prevTeam = prevTeams[prevTid];
+	const prevTeamName = `${prevTeam.region} ${prevTeam.name}`;
+	const newTeamsSorted = orderBy(newTeams, ["region", "name"]);
+	const closestNewTeam = newTeamsSorted.find(
+		t => prevTeamName <= `${t.region} ${t.name}`,
+	);
+	return closestNewTeam ? closestNewTeam.tid : newTeams.length - 1;
+};
+
 const reducer = (state: State, action: Action): State => {
-	console.log(action);
 	switch (action.type) {
 		case "submit":
 			return {
@@ -358,10 +371,11 @@ const reducer = (state: State, action: Action): State => {
 		case "clearLeagueFile":
 			return {
 				...state,
-				teams: teamsDefault,
 				leagueFile: null,
 				loadingLeagueFile: false,
 				keptKeys: [],
+				teams: teamsDefault,
+				tid: getNewTid(state.tid, state.teams, teamsDefault),
 			};
 
 		case "setCustomize":
@@ -411,17 +425,13 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "newLeagueFile": {
-			// Would be better if it searched by nearest abbrev, since tids can be in any order
-			const tid =
-				state.tid >= action.teams.length ? action.teams.length - 1 : state.tid;
-
 			return {
 				...state,
 				loadingLeagueFile: false,
 				leagueFile: action.leagueFile,
 				keptKeys: initKeptKeys(action.leagueFile),
 				teams: action.teams,
-				tid,
+				tid: getNewTid(state.tid, state.teams, action.teams),
 			};
 		}
 
@@ -460,7 +470,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				loadingLeagueFile: false,
 				randomizeRosters: false,
 				teams: customize === "real" ? teams2020 : teamsDefault,
-				tid: props.lastSelectedTid,
+				tid: 0,
 				keptKeys: initKeptKeys(leagueFile),
 			};
 		},
@@ -928,7 +938,6 @@ NewLeague.propTypes = {
 	difficulty: PropTypes.number,
 	lid: PropTypes.number,
 	name: PropTypes.string.isRequired,
-	lastSelectedTid: PropTypes.number.isRequired,
 	type: PropTypes.string.isRequired,
 };
 

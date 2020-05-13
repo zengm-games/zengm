@@ -11,12 +11,7 @@ export interface MetaDB extends DBSchema {
 	};
 	attributes: {
 		value: number | Options;
-		key:
-			| "changesRead"
-			| "lastSelectedTid"
-			| "nagged"
-			| "naggedMailingList"
-			| "options";
+		key: "changesRead" | "nagged" | "naggedMailingList" | "options";
 	};
 	leagues: {
 		value: League;
@@ -36,7 +31,6 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 		autoIncrement: true,
 	});
 	attributeStore.put(-1, "changesRead");
-	attributeStore.put(-1, "lastSelectedTid");
 	attributeStore.put(0, "nagged");
 };
 
@@ -61,9 +55,11 @@ const migrate = ({
 	if (oldVersion <= 7) {
 		const attributeStore = db.createObjectStore("attributes");
 		attributeStore.put(-1, "changesRead");
-		attributeStore.put(-1, "lastSelectedTid");
 		attributeStore.put(0, "nagged");
 	}
+
+	// In next version, can do:
+	// attributeStore.delete("lastSelectedTid");
 };
 
 const connectMeta = () =>

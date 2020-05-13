@@ -11,7 +11,6 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 				lid,
 				difficulty: l.difficulty,
 				name: l.name,
-				lastSelectedTid: l.tid,
 				type,
 			};
 		}
@@ -31,21 +30,10 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		newLid = 1;
 	}
 
-	let lastSelectedTid = await idb.meta.get("attributes", "lastSelectedTid");
-
-	if (
-		typeof lastSelectedTid !== "number" ||
-		Number.isNaN(lastSelectedTid) ||
-		lastSelectedTid < 0
-	) {
-		lastSelectedTid = 0;
-	}
-
 	return {
 		lid: undefined,
 		difficulty: undefined,
 		name: `League ${newLid}`,
-		lastSelectedTid,
 		type,
 	};
 };

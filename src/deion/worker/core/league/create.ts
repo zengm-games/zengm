@@ -871,7 +871,6 @@ const create = async ({
 	difficulty?: number;
 	importLid?: number | undefined | null;
 }): Promise<number> => {
-	await idb.meta.put("attributes", tid, "lastSelectedTid");
 	const leagueData = createWithoutSaving(
 		name,
 		tid,

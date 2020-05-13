@@ -520,6 +520,30 @@ const achievements: Achievement[] = [
 
 		when: "afterAwards",
 	},
+	{
+		slug: "triple_crown",
+		name: "Triple Crown",
+		desc: "Have a player win MVP, Championship MVP, and DPOY in the same year",
+		category: "Awards",
+		async check() {
+			const awards = await idb.cache.awards.get(g.get("season"));
+
+			return (
+				awards &&
+				awards.mvp &&
+				awards.finalsMvp &&
+				awards.dpoy &&
+				awards.mvp.tid === g.get("userTid") &&
+				awards.finalsMvp.tid === g.get("userTid") &&
+				awards.dpoy.tid === g.get("userTid") &&
+				awards.mvp.pid === awards.finalsMvp.pid &&
+				awards.mvp.pid === awards.dpoy.pid &&
+				// technically not needed due to transitive property
+				awards.finalsMvp.pid === awards.dpoy.pid
+			);
+		},
+		when: "afterAwards",
+	},
 ];
 
 export default achievements;

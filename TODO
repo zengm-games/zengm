@@ -1,3 +1,8 @@
+NewLeague
+- lastSelectedTid better as abbrev, then find closest?
+- same when setting tid in newLeagueFile action
+- how to define closest? first match region. if 0 or multiple rows match region, then find closest abbrev - sort, and find first >=
+
 notifications overlap
 - https://cdn.discordapp.com/attachments/290015591216054273/709914615873536031/unknown.png
 
@@ -120,12 +125,6 @@ box score - more info
 - live
   - timeouts
   - football: position on field
-
-mailing list/newsletter
-- changelog
-- plans
-- stats
-- social media
 
 redesign dashboard
 - include some historical context
@@ -434,9 +433,6 @@ Could you add a page which shows all the game results on any given day? Just the
 
 option to control retirement rate
 
-expansion draft
-- and trigger in league file
-
 Too few players refuse after recent change
 - https://www.reddit.com/r/BasketballGM/comments/ays1wh/change_in_free_agents_refusing_to_sign
 
@@ -451,9 +447,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
 - https://uppy.io/
   - file sharing platforms are sources, but not destinations?
   - requires server side integration
-
-make expansion teams easier
-- doesn't need to be a real draft
 
 add another season option to team stats, player stats, and leaders: All Seasons
 
@@ -1383,7 +1376,6 @@ import/export stuff
     "Edit" button between "Export" and "Delete" - set in leaguesStore and gameAttributes
       move delete/edit/export under one button, "manage". have the 3 buttons pop out in place when you hit manage, then it functions as it does now. popped buttons can be colored too, then
 moving to other cities
-expansion teams (add population growth, expand when certain conditions are met)
 team finances view
   compare bar graphs against league averages?
 different size stadiums, building new stadiums

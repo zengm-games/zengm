@@ -33,8 +33,12 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 
 	let lastSelectedTid = await idb.meta.get("attributes", "lastSelectedTid");
 
-	if (typeof lastSelectedTid !== "number" || Number.isNaN(lastSelectedTid)) {
-		lastSelectedTid = -1;
+	if (
+		typeof lastSelectedTid !== "number" ||
+		Number.isNaN(lastSelectedTid) ||
+		lastSelectedTid < 0
+	) {
+		lastSelectedTid = 0;
 	}
 
 	return {

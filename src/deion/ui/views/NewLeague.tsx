@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import PropTypes from "prop-types";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useReducer } from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -284,38 +284,187 @@ const SeasonsMenu = ({
 	);
 };
 
+type State = {
+	creating: boolean;
+	customize: "default" | "custom-rosters" | "custom-url" | "real";
+	season: number;
+	difficulty: number;
+	leagueFile: any;
+	loadingLeagueFile: boolean;
+	randomizeRosters: boolean;
+	teams: NewLeagueTeam[];
+	tid: number;
+	keptKeys: string[];
+};
+
+type Action =
+	| {
+			type: "submit";
+	  }
+	| {
+			type: "error";
+	  }
+	| {
+			type: "clearLeagueFile";
+	  }
+	| {
+			type: "setCustomize";
+			customize: State["customize"];
+	  }
+	| {
+			type: "setDifficulty";
+			difficulty: string;
+	  }
+	| {
+			type: "setKeptKeys";
+			keptKeys: string[];
+	  }
+	| {
+			type: "setRandomizeRosters";
+			randomizeRosters: boolean;
+	  }
+	| {
+			type: "setSeason";
+			season: number;
+	  }
+	| {
+			type: "setTid";
+			tid: number;
+	  }
+	| {
+			type: "loadingLeagueFile";
+	  }
+	| {
+			type: "newLeagueFile";
+			leagueFile: any;
+			teams: NewLeagueTeam[];
+	  };
+
+const reducer = (state: State, action: Action): State => {
+	console.log(action);
+	switch (action.type) {
+		case "submit":
+			return {
+				...state,
+				creating: true,
+			};
+
+		case "error":
+			return {
+				...state,
+				creating: false,
+			};
+
+		case "clearLeagueFile":
+			return {
+				...state,
+				teams: teamsDefault,
+				leagueFile: null,
+				loadingLeagueFile: false,
+				keptKeys: [],
+			};
+
+		case "setCustomize":
+			return {
+				...state,
+				customize: action.customize,
+			};
+
+		case "setDifficulty":
+			return {
+				...state,
+				difficulty: parseFloat(action.difficulty),
+			};
+
+		case "setKeptKeys":
+			return {
+				...state,
+				keptKeys: action.keptKeys,
+			};
+
+		case "setRandomizeRosters":
+			return {
+				...state,
+				randomizeRosters: action.randomizeRosters,
+			};
+
+		case "setSeason":
+			return {
+				...state,
+				season: action.season,
+			};
+
+		case "setTid": {
+			const tid =
+				action.tid >= state.teams.length ? state.teams.length - 1 : action.tid;
+
+			return {
+				...state,
+				tid,
+			};
+		}
+
+		case "loadingLeagueFile":
+			return {
+				...state,
+				loadingLeagueFile: true,
+			};
+
+		case "newLeagueFile": {
+			// Would be better if it searched by nearest abbrev, since tids can be in any order
+			const tid =
+				state.tid >= action.teams.length ? action.teams.length - 1 : state.tid;
+
+			return {
+				...state,
+				loadingLeagueFile: false,
+				leagueFile: action.leagueFile,
+				keptKeys: initKeptKeys(action.leagueFile),
+				teams: action.teams,
+				tid,
+			};
+		}
+
+		default:
+			throw new Error();
+	}
+};
+
 const NewLeague = (props: View<"newLeague">) => {
-	const [creating, setCreating] = useState(false);
-	const [customize, setCustomize] = useState<
-		"custom-rosters" | "custom-url" | "default" | "real"
-	>(() => {
-		if (props.lid !== undefined) {
-			return "custom-rosters";
-		}
-
-		if (props.type === "real") {
-			return "real";
-		}
-
-		return "default";
-	});
-	const [realSeason, setRealSeason] = useState(2020);
-	const [difficulty, setDifficulty] = useState(
-		props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
-	);
-	const [leagueFile, setLeagueFile] = useState<any>(
-		customize === "real" && process.env.SPORT === "basketball"
-			? league2020
-			: null,
-	);
-	const [loadingLeagueFile, setLoadingLeagueFile] = useState(false);
 	const [name, setName] = useState(props.name);
-	const [randomizeRosters, setRandomizeRosters] = useState(false);
-	const [teams, setTeams] = useState(
-		customize === "real" ? teams2020 : teamsDefault,
+
+	const [state, dispatch] = useReducer(
+		reducer,
+		props,
+		(props: View<"newLeague">): State => {
+			let customize: State["customize"] = "default";
+			if (props.lid !== undefined) {
+				customize = "custom-rosters";
+			}
+			if (props.type === "real") {
+				customize = "real";
+			}
+
+			const leagueFile =
+				customize === "real" && process.env.SPORT === "basketball"
+					? league2020
+					: null;
+
+			return {
+				creating: false,
+				customize,
+				season: 2020,
+				difficulty:
+					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
+				leagueFile,
+				loadingLeagueFile: false,
+				randomizeRosters: false,
+				teams: customize === "real" ? teams2020 : teamsDefault,
+				tid: props.lastSelectedTid,
+				keptKeys: initKeptKeys(leagueFile),
+			};
+		},
 	);
-	const [tid, setTid] = useState(props.lastSelectedTid);
-	const [keptKeys, setKeptKeys] = useState<string[]>(initKeptKeys(leagueFile));
 
 	let title: string;
 	if (props.lid !== undefined) {
@@ -345,12 +494,14 @@ const NewLeague = (props: View<"newLeague">) => {
 				}
 			}
 
-			setCreating(true);
+			dispatch({
+				type: "submit",
+			});
 
 			const actualLeagueFile: any = {};
-			for (const key of [...keptKeys, "version"]) {
-				if (leagueFile && leagueFile[key]) {
-					actualLeagueFile[key] = leagueFile[key];
+			for (const key of [...state.keptKeys, "version"]) {
+				if (state.leagueFile && state.leagueFile[key]) {
+					actualLeagueFile[key] = state.leagueFile[key];
 				}
 			}
 
@@ -358,12 +509,14 @@ const NewLeague = (props: View<"newLeague">) => {
 				actualLeagueFile.startingSeason = new Date().getFullYear();
 			}
 
-			const actualRandomizeRosters = keptKeys.includes("players")
-				? randomizeRosters
+			const actualRandomizeRosters = state.keptKeys.includes("players")
+				? state.randomizeRosters
 				: false;
 
-			const actualDifficulty = Object.values(DIFFICULTY).includes(difficulty)
-				? difficulty
+			const actualDifficulty = Object.values(DIFFICULTY).includes(
+				state.difficulty,
+			)
+				? state.difficulty
 				: DIFFICULTY.Normal;
 
 			try {
@@ -371,21 +524,23 @@ const NewLeague = (props: View<"newLeague">) => {
 					"main",
 					"createLeague",
 					name,
-					tid,
+					state.tid,
 					actualLeagueFile,
 					actualRandomizeRosters,
 					actualDifficulty,
 					props.lid,
 				);
 
-				let type: string = customize;
+				let type: string = state.customize;
 				if (type === "real") {
-					type = String(realSeason);
+					type = String(state.season);
 				}
 				api.bbgmPing("league", [lid, type]);
 				realtimeUpdate([], `/l/${lid}`);
 			} catch (err) {
-				setCreating(false);
+				dispatch({
+					type: "error",
+				});
 				console.log(err);
 				logEvent({
 					type: "error",
@@ -396,96 +551,87 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 		},
 		[
-			customize,
-			difficulty,
-			keptKeys,
-			leagueFile,
+			state.customize,
+			state.difficulty,
+			state.keptKeys,
+			state.leagueFile,
 			name,
 			props.lid,
 			props.name,
-			randomizeRosters,
-			realSeason,
-			tid,
+			state.randomizeRosters,
+			state.season,
+			state.tid,
 			title,
 		],
 	);
 
-	const handleNewLeagueFile = useCallback(
-		(err, newLeagueFile) => {
-			if (err) {
-				setTeams(teamsDefault);
-				setLeagueFile(null);
-				setLoadingLeagueFile(false);
-				setKeptKeys(initKeptKeys(null));
-				return;
-			}
+	const handleNewLeagueFile = useCallback((err, newLeagueFile) => {
+		if (err) {
+			dispatch({ type: "clearLeagueFile" });
+			return;
+		}
 
-			setLeagueFile(newLeagueFile);
-			setLoadingLeagueFile(false);
-			setKeptKeys(initKeptKeys(newLeagueFile));
-
-			let newTeams = helpers.deepCopy(newLeagueFile.teams);
-			if (newTeams) {
-				for (const t of newTeams) {
-					// Is pop hidden in season, like in manageTeams import?
-					if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
-						t.pop = t.seasons[t.seasons.length - 1].pop;
-					}
-
-					// God, I hate being permissive...
-					if (typeof t.pop !== "number") {
-						t.pop = parseFloat(t.pop);
-					}
-					if (Number.isNaN(t.pop)) {
-						t.pop = 1;
-					}
-
-					t.pop = parseFloat(t.pop.toFixed(2));
+		let newTeams = helpers.deepCopy(newLeagueFile.teams);
+		if (newTeams) {
+			for (const t of newTeams) {
+				// Is pop hidden in season, like in manageTeams import?
+				if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+					t.pop = t.seasons[t.seasons.length - 1].pop;
 				}
 
-				newTeams = helpers.addPopRank(newTeams);
-
-				// Might get overwritten from gameAttributes of uploaded file, but that's ok
-				if (tid >= newTeams.length) {
-					setTid(-1);
+				// God, I hate being permissive...
+				if (typeof t.pop !== "number") {
+					t.pop = parseFloat(t.pop);
+				}
+				if (Number.isNaN(t.pop)) {
+					t.pop = 1;
 				}
 
-				setTeams(newTeams);
-			} else {
-				setTeams(teamsDefault);
+				t.pop = parseFloat(t.pop.toFixed(2));
 			}
 
-			// Need to update team and difficulty dropdowns?
-			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
-				for (const ga of newLeagueFile.gameAttributes) {
-					if (
-						ga.key === "userTid" &&
-						typeof ga.value === "number" &&
-						!Number.isNaN(ga.value)
-					) {
-						setTid(ga.value);
-					} else if (
-						ga.key === "difficulty" &&
-						typeof ga.value === "number" &&
-						!Number.isNaN(ga.value)
-					) {
-						setDifficulty(ga.value);
-					}
+			newTeams = helpers.addPopRank(newTeams);
+		} else {
+			newTeams = teamsDefault;
+		}
+
+		dispatch({
+			type: "newLeagueFile",
+			leagueFile: newLeagueFile,
+			teams: newTeams,
+		});
+
+		// Need to update team and difficulty dropdowns?
+		if (newLeagueFile.hasOwnProperty("gameAttributes")) {
+			for (const ga of newLeagueFile.gameAttributes) {
+				if (
+					ga.key === "userTid" &&
+					typeof ga.value === "number" &&
+					!Number.isNaN(ga.value)
+				) {
+					dispatch({ type: "setTid", tid: ga.value });
+				} else if (
+					ga.key === "difficulty" &&
+					typeof ga.value === "number" &&
+					!Number.isNaN(ga.value)
+				) {
+					dispatch({ type: "setDifficulty", difficulty: ga.value });
 				}
 			}
-		},
-		[tid],
-	);
+		}
+	}, []);
 
 	useTitleBar({ title, hideNewWindow: true });
 
-	const displayedTeams = keptKeys.includes("teams") ? teams : teamsDefault;
+	const displayedTeams = state.keptKeys.includes("teams")
+		? state.teams
+		: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
-		(customize === "custom-rosters" ||
-			customize === "custom-url" ||
-			customize === "real") &&
-		(leagueFile === null || loadingLeagueFile);
+		(state.customize === "custom-rosters" ||
+			state.customize === "custom-url" ||
+			state.customize === "real") &&
+		(state.leagueFile === null || state.loadingLeagueFile);
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -518,21 +664,22 @@ const NewLeague = (props: View<"newLeague">) => {
 						/>
 					</div>
 
-					{customize === "real" ? (
+					{state.customize === "real" ? (
 						<SeasonsMenu
-							value={realSeason}
+							value={state.season}
 							onLoading={season => {
-								setRealSeason(season);
+								dispatch({ type: "setSeason", season });
 								if (season !== 2020) {
-									setLoadingLeagueFile(true);
+									dispatch({ type: "loadingLeagueFile" });
 								}
 							}}
 							onDone={(season, leagueFile) => {
 								if (season === 2020) {
-									setTeams(teams2020);
-									setLeagueFile(leagueFile);
-									setLoadingLeagueFile(false);
-									setKeptKeys(initKeptKeys(leagueFile));
+									dispatch({
+										type: "newLeagueFile",
+										leagueFile,
+										teams: teams2020,
+									});
 								} else {
 									handleNewLeagueFile(null, leagueFile);
 								}
@@ -547,15 +694,18 @@ const NewLeague = (props: View<"newLeague">) => {
 								id="new-league-team"
 								className="form-control"
 								disabled={disableWhileLoadingLeagueFile}
-								value={tid}
+								value={state.tid}
 								onChange={event => {
-									setTid(parseInt(event.target.value, 10));
+									dispatch({
+										type: "setTid",
+										tid: parseInt(event.target.value, 10),
+									});
 								}}
 							>
 								{orderBy(displayedTeams, ["region", "name"]).map(t => {
 									return (
 										<option key={t.tid} value={t.tid}>
-											{disableWhileLoadingLeagueFile && loadingLeagueFile
+											{disableWhileLoadingLeagueFile && state.loadingLeagueFile
 												? "Loading..."
 												: `${t.region} ${t.name}`}
 										</option>
@@ -572,14 +722,14 @@ const NewLeague = (props: View<"newLeague">) => {
 											displayedTeams[
 												Math.floor(Math.random() * displayedTeams.length)
 											];
-										setTid(t.tid);
+										dispatch({ type: "setTid", tid: t.tid });
 									}}
 								>
 									Random
 								</button>
 							</div>
 						</div>
-						<PopText tid={tid} teams={displayedTeams} />
+						<PopText tid={state.tid} teams={displayedTeams} />
 					</div>
 
 					<div className="form-group">
@@ -588,17 +738,22 @@ const NewLeague = (props: View<"newLeague">) => {
 							id="new-league-difficulty"
 							className="form-control mb-1"
 							onChange={event => {
-								setDifficulty(parseFloat(event.target.value));
+								dispatch({
+									type: "setDifficulty",
+									difficulty: event.target.value,
+								});
 							}}
-							value={difficulty}
+							value={state.difficulty}
 						>
 							{Object.entries(DIFFICULTY).map(([text, numeric]) => (
 								<option key={numeric} value={numeric}>
 									{text}
 								</option>
 							))}
-							{!Object.values(DIFFICULTY).includes(difficulty) ? (
-								<option value={difficulty}>Custom (from league file)</option>
+							{!Object.values(DIFFICULTY).includes(state.difficulty) ? (
+								<option value={state.difficulty}>
+									Custom (from league file)
+								</option>
 							) : null}
 						</select>
 						<span className="text-muted">
@@ -608,7 +763,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						</span>
 					</div>
 
-					{keptKeys.includes("players") ? (
+					{state.keptKeys.includes("players") ? (
 						<div className="form-group">
 							<label>Options</label>
 
@@ -617,10 +772,13 @@ const NewLeague = (props: View<"newLeague">) => {
 									<input
 										className="form-check-input"
 										onChange={event => {
-											setRandomizeRosters(event.target.checked);
+											dispatch({
+												type: "setRandomizeRosters",
+												randomizeRosters: event.target.checked,
+											});
 										}}
 										type="checkbox"
-										checked={randomizeRosters}
+										checked={state.randomizeRosters}
 									/>
 									Shuffle rosters
 								</label>
@@ -632,7 +790,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						<button
 							type="submit"
 							className="btn btn-lg btn-primary mt-3"
-							disabled={creating || disableWhileLoadingLeagueFile}
+							disabled={state.creating || disableWhileLoadingLeagueFile}
 						>
 							{props.lid !== undefined ? "Import League" : "Create League"}
 						</button>
@@ -689,24 +847,25 @@ const NewLeague = (props: View<"newLeague">) => {
 											className="form-control"
 											onChange={event => {
 												const newCustomize = event.target.value as any;
-												setCustomize(newCustomize);
+												dispatch({
+													type: "setCustomize",
+													customize: newCustomize,
+												});
 												if (
 													process.env.SPORT === "basketball" &&
 													newCustomize === "real"
 												) {
-													setRealSeason(2020);
-													setTeams(teams2020);
-													setLeagueFile(helpers.deepCopy(league2020));
-													setLoadingLeagueFile(false);
-													setKeptKeys(initKeptKeys(league2020));
+													dispatch({ type: "setSeason", season: 2020 });
+													dispatch({
+														type: "newLeagueFile",
+														leagueFile: helpers.deepCopy(league2020),
+														teams: teams2020,
+													});
 												} else {
-													setTeams(teamsDefault);
-													setLeagueFile(null);
-													setLoadingLeagueFile(false);
-													setKeptKeys(initKeptKeys(null));
+													dispatch({ type: "clearLeagueFile" });
 												}
 											}}
-											value={customize}
+											value={state.customize}
 										>
 											<option value="default">
 												{process.env.SPORT === "basketball"
@@ -719,8 +878,8 @@ const NewLeague = (props: View<"newLeague">) => {
 											<option value="custom-rosters">Upload league file</option>
 											<option value="custom-url">Enter league file URL</option>
 										</select>
-										{customize === "custom-rosters" ||
-										customize === "custom-url" ? (
+										{state.customize === "custom-rosters" ||
+										state.customize === "custom-url" ? (
 											<p className="mt-3">
 												League files can contain teams, players, settings, and
 												other data. You can create a league file by going to
@@ -734,26 +893,26 @@ const NewLeague = (props: View<"newLeague">) => {
 											</p>
 										) : null}
 									</div>
-									{customize === "custom-rosters" ||
-									customize === "custom-url" ? (
+									{state.customize === "custom-rosters" ||
+									state.customize === "custom-url" ? (
 										<div className="my-3">
 											<LeagueFileUpload
 												onLoading={() => {
-													setTeams(teamsDefault);
-													setLoadingLeagueFile(true);
-													setKeptKeys(initKeptKeys(null));
+													dispatch({ type: "loadingLeagueFile" });
 												}}
 												onDone={handleNewLeagueFile}
-												enterURL={customize === "custom-url"}
+												enterURL={state.customize === "custom-url"}
 												hideLoadedMessage
 											/>
 										</div>
 									) : null}
 
 									<LeaguePartPicker
-										leagueFile={leagueFile}
-										keptKeys={keptKeys}
-										setKeptKeys={setKeptKeys}
+										leagueFile={state.leagueFile}
+										keptKeys={state.keptKeys}
+										setKeptKeys={keptKeys => {
+											dispatch({ type: "setKeptKeys", keptKeys });
+										}}
 									/>
 								</div>
 							) : null}

@@ -7,11 +7,11 @@ import {
 	PlayerNameLabels,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, logEvent, toWorker } from "../util";
+import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 
 type FinancesFormProps = {
-	gamesInProgress: boolean;
+	gameSimInProgress: boolean;
 	noSeasonData: boolean;
 	t: any;
 	tid: number;
@@ -139,17 +139,17 @@ class FinancesForm extends React.Component<
 	}
 
 	render() {
-		const { gamesInProgress, noSeasonData, t, tid, userTid } = this.props;
+		const { gameSimInProgress, noSeasonData, t, tid, userTid } = this.props;
 
 		const warningMessage = (
 			<p className="text-danger">
-				{gamesInProgress && tid === userTid
+				{gameSimInProgress && tid === userTid
 					? "Stop game simulation to edit."
 					: null}
 			</p>
 		);
 
-		const formDisabled = gamesInProgress || tid !== userTid;
+		const formDisabled = gameSimInProgress || tid !== userTid;
 
 		return (
 			<form onSubmit={this.handleSubmit} className="mb-3">
@@ -325,7 +325,7 @@ class FinancesForm extends React.Component<
 
 // @ts-ignore
 FinancesForm.propTypes = {
-	gamesInProgress: PropTypes.bool.isRequired,
+	gameSimInProgress: PropTypes.bool.isRequired,
 	t: PropTypes.object.isRequired,
 	tid: PropTypes.number.isRequired,
 	userTid: PropTypes.number.isRequired,
@@ -429,7 +429,6 @@ const TeamFinances = ({
 	budget,
 	contractTotals,
 	contracts,
-	gamesInProgress,
 	hardCap,
 	luxuryPayroll,
 	luxuryTax,
@@ -450,6 +449,10 @@ const TeamFinances = ({
 		dropdownView: "team_finances",
 		dropdownFields: { teams: abbrev, shows: show },
 	});
+
+	const { gameSimInProgress } = useLocalShallow(state => ({
+		gameSimInProgress: state.gameSimInProgress,
+	}));
 
 	const cols = getCols("Name").concat(
 		salariesSeasons.map(season => {
@@ -687,7 +690,7 @@ const TeamFinances = ({
 				{budget ? (
 					<div className="col-lg-5 col-md-6 col-sm-7">
 						<FinancesForm
-							gamesInProgress={gamesInProgress}
+							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}
 							t={t}
 							tid={tid}
@@ -724,7 +727,6 @@ TeamFinances.propTypes = {
 	budget: PropTypes.bool.isRequired,
 	contractTotals: PropTypes.arrayOf(PropTypes.number).isRequired,
 	contracts: PropTypes.arrayOf(PropTypes.object).isRequired,
-	gamesInProgress: PropTypes.bool.isRequired,
 	hardCap: PropTypes.bool.isRequired,
 	luxuryPayroll: PropTypes.number.isRequired,
 	luxuryTax: PropTypes.number.isRequired,

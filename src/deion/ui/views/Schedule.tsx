@@ -3,19 +3,18 @@ import React from "react";
 import { ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker } from "../util";
+import { toWorker, useLocalShallow } from "../util";
 
-const Schedule = ({
-	abbrev,
-	completed,
-	gamesInProgress,
-	upcoming,
-}: View<"schedule">) => {
+const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
 		dropdownView: "schedule",
 		dropdownFields: { teams: abbrev },
 	});
+
+	const { gameSimInProgress } = useLocalShallow(state => ({
+		gameSimInProgress: state.gameSimInProgress,
+	}));
 
 	return (
 		<>
@@ -27,7 +26,7 @@ const Schedule = ({
 							const action = game.teams[0].playoffs
 								? {}
 								: {
-										actionDisabled: gamesInProgress,
+										actionDisabled: gameSimInProgress,
 										actionText: (
 											<>
 												Sim to

@@ -1,12 +1,16 @@
 import classNames from "classnames";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { toWorker } from "../util";
+import { toWorker, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 import { ScoreBox } from "../components";
 
-const Live = ({ games, gamesInProgress, userTid }: View<"live">) => {
+const Live = ({ games, userTid }: View<"live">) => {
 	useTitleBar({ title: "Live Game Simulation" });
+
+	const { gameSimInProgress } = useLocalShallow(state => ({
+		gameSimInProgress: state.gameSimInProgress,
+	}));
 
 	return (
 		<>
@@ -15,7 +19,7 @@ const Live = ({ games, gamesInProgress, userTid }: View<"live">) => {
 				games below.
 			</p>
 
-			{gamesInProgress ? (
+			{gameSimInProgress ? (
 				<p className="text-danger">
 					Stop the current game simulation to select a play-by-play game.
 				</p>
@@ -46,7 +50,7 @@ const Live = ({ games, gamesInProgress, userTid }: View<"live">) => {
 					<div className="col-xl-4 col-md-6 col-12" key={game.gid}>
 						<ScoreBox
 							game={game}
-							actionDisabled={gamesInProgress}
+							actionDisabled={gameSimInProgress}
 							actionHighlight={
 								game.teams[0].tid === userTid || game.teams[1].tid === userTid
 							}

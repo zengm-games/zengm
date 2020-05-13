@@ -1,7 +1,7 @@
 import { PLAYER } from "../../common";
 import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
-import { g, lock } from "../util";
+import { g } from "../util";
 
 const updateFreeAgents = async () => {
 	const payroll = await team.getPayroll(g.get("userTid"));
@@ -52,7 +52,6 @@ const updateFreeAgents = async () => {
 
 	return {
 		capSpace,
-		gamesInProgress: lock.get("gameSim"),
 		hardCap: g.get("hardCap"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,

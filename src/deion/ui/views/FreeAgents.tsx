@@ -9,12 +9,11 @@ import {
 	RosterSalarySummary,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, useLocalShallow } from "../util";
 import type { View } from "../../common/types";
 
 const FreeAgents = ({
 	capSpace,
-	gamesInProgress,
 	hardCap,
 	minContract,
 	numRosterSpots,
@@ -48,6 +47,10 @@ const FreeAgents = ({
 	}, [capSpace, minContract, stats]);
 
 	useTitleBar({ title: "Free Agents" });
+
+	const { gameSimInProgress } = useLocalShallow(state => ({
+		gameSimInProgress: state.gameSimInProgress,
+	}));
 
 	if (
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
@@ -117,7 +120,7 @@ const FreeAgents = ({
 				// @ts-ignore
 				<NegotiateButtons
 					capSpace={capSpace}
-					disabled={gamesInProgress}
+					disabled={gameSimInProgress}
 					minContract={minContract}
 					p={p}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
@@ -156,7 +159,7 @@ const FreeAgents = ({
 				</button>
 			</p>
 
-			{gamesInProgress ? (
+			{gameSimInProgress ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 
@@ -174,7 +177,6 @@ const FreeAgents = ({
 
 FreeAgents.propTypes = {
 	capSpace: PropTypes.number.isRequired,
-	gamesInProgress: PropTypes.bool.isRequired,
 	hardCap: PropTypes.bool.isRequired,
 	minContract: PropTypes.number.isRequired,
 	numRosterSpots: PropTypes.number.isRequired,

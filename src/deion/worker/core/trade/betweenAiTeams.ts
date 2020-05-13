@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import { team } from "..";
 import { idb } from "../../db";
-import { g, random, local, defaultGameAttributes } from "../../util";
+import { g, random, local } from "../../util";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";

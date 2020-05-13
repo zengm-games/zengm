@@ -530,6 +530,7 @@ export type Options = {
 };
 
 export type LocalStateUI = {
+	gameSimInProgress: boolean;
 	games: {
 		gid: number;
 		teams: [
@@ -1088,7 +1089,6 @@ export type UpdateEvents = (
 	| "gameAttributes"
 	| "gameSim"
 	| "leagues"
-	| "lock.gameSim"
 	| "newPhase"
 	| "options"
 	| "playerMovement"

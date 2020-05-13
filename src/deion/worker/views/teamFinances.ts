@@ -1,7 +1,7 @@
 import { PHASE } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
-import { g, helpers, lock } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateTeamFinances = async (
@@ -173,7 +173,6 @@ const updateTeamFinances = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			gamesInProgress: lock.get("gameSim"),
 			hardCap: g.get("hardCap"),
 			numGames: g.get("numGames"),
 			tid: inputs.tid,
@@ -197,26 +196,4 @@ const updateTeamFinances = async (
 	}
 };
 
-const updateGamesInProgress = (
-	inputs: ViewInput<"teamFinances">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("lock.gameSim") ||
-		inputs.tid !== state.tid ||
-		inputs.show !== state.show
-	) {
-		return {
-			gamesInProgress: lock.get("gameSim"),
-		};
-	}
-};
-
-export default async (inputs: any, updateEvents: UpdateEvents, state: any) => {
-	return Object.assign(
-		{},
-		await updateTeamFinances(inputs, updateEvents, state),
-		await updateGamesInProgress(inputs, updateEvents, state),
-	);
-};
+export default updateTeamFinances;

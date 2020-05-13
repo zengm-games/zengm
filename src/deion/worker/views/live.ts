@@ -1,5 +1,4 @@
-import { g, lock } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import { g } from "../util";
 import { getUpcoming } from "./schedule";
 
 const updateGamesList = async () => {
@@ -13,21 +12,4 @@ const updateGamesList = async () => {
 	};
 };
 
-const updateGamesInProgress = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-) => {
-	if (updateEvents.includes("lock.gameSim")) {
-		return {
-			gamesInProgress: lock.get("gameSim"),
-		};
-	}
-};
-
-export default async (inputs: unknown, updateEvents: UpdateEvents) => {
-	return Object.assign(
-		{},
-		await updateGamesList(),
-		await updateGamesInProgress(inputs, updateEvents),
-	);
-};
+export default updateGamesList;

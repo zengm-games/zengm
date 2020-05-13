@@ -30,7 +30,11 @@ const set = async (name: keyof Locks, value: boolean) => {
 	locks[name] = value;
 
 	if (name === "gameSim") {
-		await toUI("realtimeUpdate", [["lock.gameSim"]]);
+		await toUI("updateLocal", [
+			{
+				gameSimInProgress: value,
+			},
+		]);
 	}
 };
 
@@ -71,7 +75,7 @@ async function canStartGames(): Promise<boolean> {
 	}
 
 	// Otherwise, doing it outside of this function would be a race condition if anything else async happened
-	locks.gameSim = true;
+	set("gameSim", true);
 	return true;
 }
 

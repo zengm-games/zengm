@@ -284,7 +284,7 @@ const playMenu = {
 	untilAllStarGame: async (conditions: Conditions) => {
 		if (g.get("phase") < PHASE.PLAYOFFS) {
 			await updateStatus("Playing...");
-			const numDays = await season.getDaysLeftSchedule(true);
+			const numDays = await season.getDaysLeftSchedule("allStarGame");
 			game.play(numDays, conditions);
 		}
 	},
@@ -412,10 +412,17 @@ const toolsMenu = {
 	},
 };
 
+const simToGame = async (gid: number, conditions: Conditions) => {
+	const numDays = await season.getDaysLeftSchedule(gid);
+	await updateStatus("Playing..."); // For quick UI updating, before game.play
+	await game.play(numDays, conditions);
+};
+
 export default {
 	liveGame,
 	negotiate,
 	playMenu,
+	simToGame,
 	toolsMenu,
 	tradeFor,
 };

@@ -23,7 +23,7 @@ const Live = ({ games, gamesInProgress, userTid }: View<"live">) => {
 
 			<div className="row">
 				<div className="col-xl-4 col-md-6 col-12">
-					{/* Copy-pasted from ScoreBox */}
+					{/* Copy-pasted from ScoreBox, so all the rows below can remain aligned */}
 					<div
 						className="d-flex justify-content-end text-muted"
 						style={{ maxWidth: 400, marginRight: 62 }}

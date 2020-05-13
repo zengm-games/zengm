@@ -3,8 +3,14 @@ import React from "react";
 import { ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
+import { toWorker } from "../util";
 
-const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
+const Schedule = ({
+	abbrev,
+	completed,
+	gamesInProgress,
+	upcoming,
+}: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
 		dropdownView: "schedule",
@@ -17,9 +23,32 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 				<div className="col-sm-6">
 					<h2>Upcoming Games</h2>
 					<ul className="list-group">
-						{upcoming.map((game, i) => (
-							<ScoreBox key={game.gid} game={game} header={i === 0} />
-						))}
+						{upcoming.map((game, i) => {
+							const action = game.teams[0].playoffs
+								? {}
+								: {
+										actionDisabled: gamesInProgress,
+										actionText: (
+											<>
+												Sim to
+												<br />
+												game
+											</>
+										),
+										actionOnClick: () => {
+											toWorker("actions", "simToGame", game.gid);
+										},
+								  };
+
+							return (
+								<ScoreBox
+									key={game.gid}
+									game={game}
+									header={i === 0}
+									{...action}
+								/>
+							);
+						})}
 					</ul>
 				</div>
 				<div className="col-sm-6 d-none d-sm-block">

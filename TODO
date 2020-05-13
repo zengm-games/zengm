@@ -1,3 +1,5 @@
+move gamesInProgress to ui local
+
 add "adjust for inflation" checkbox to team finances, which scales budget items with salary cap
 
 max expansion population, unless god mode
@@ -7,10 +9,7 @@ legends mode
 - NBA seasons only
 - New Special League
 
-"sim to" button next to game on schedule
-- use "action" mechanism of ScoreBox
-- add ASG to schedule and top bar
-- switch back to using "header" option on live game sim page, if it works on schedule page
+add ASG to schedule and top bar
 
 eventually
 - way to view scheduled events and add/edit/delete

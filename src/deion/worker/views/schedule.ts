@@ -1,6 +1,6 @@
 import { season, player } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames, overrides } from "../util";
+import { g, getProcessedGames, overrides, lock } from "../util";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types";
 import { PHASE } from "../../common";
 
@@ -172,6 +172,17 @@ const updateCompleted = async (
 	}
 };
 
+const updateGamesInProgress = async (
+	inputs: unknown,
+	updateEvents: UpdateEvents,
+) => {
+	if (updateEvents.includes("lock.gameSim")) {
+		return {
+			gamesInProgress: lock.get("gameSim"),
+		};
+	}
+};
+
 export default async (
 	inputs: ViewInput<"schedule">,
 	updateEvents: UpdateEvents,
@@ -181,5 +192,6 @@ export default async (
 		{},
 		await updateUpcoming(inputs, updateEvents, state),
 		await updateCompleted(inputs, updateEvents, state),
+		await updateGamesInProgress(inputs, updateEvents),
 	);
 };

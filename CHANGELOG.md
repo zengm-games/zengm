@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-13: "Sim to game" button on the schedule page.
+
 * 2020-05-12: Added 4 new draft lottery types, to improve the accuracy of historical leagues in BBGM. [[1]](https://basketball-gm.com/blog/2020/05/more-draft-lottery-types/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gildrw/new_in_version_202005121314_four_new_types_of/)
 
 * 2020-05-12: Playoff seeds and W/L are shown in score boxes (schedule page, dashboard, live game sim, etc.).

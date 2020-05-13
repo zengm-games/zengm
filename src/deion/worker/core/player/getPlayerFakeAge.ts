@@ -1,6 +1,15 @@
 import { g, random } from "../../util";
 
-const getPlayerFakeAge = <T extends any>(players: T[]): T | void => {
+const getPlayerFakeAge = <
+	T extends {
+		born: {
+			year: number;
+			loc: string;
+		};
+	}
+>(
+	players: T[],
+): T | void => {
 	// This list is very arbitrary, but certain countries are deemed more likely to have a player with a fake age
 	const highRiskCountries = [
 		"Angola",

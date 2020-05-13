@@ -92,7 +92,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 							Stop On Injury Longer Than{" "}
 							<HelpPopover title="Stop On Injury Longer Than">
 								This will stop game simulation if one of your players is injured
-								for more than N games. In auto play mode (Tools > Auto Play
+								for more than N games. In auto play mode (Tools &gt; Auto Play
 								Seasons), this has no effect.
 							</HelpPopover>
 						</label>

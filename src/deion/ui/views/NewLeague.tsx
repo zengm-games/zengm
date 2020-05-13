@@ -724,7 +724,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											<p className="mt-3">
 												League files can contain teams, players, settings, and
 												other data. You can create a league file by going to
-												Tools > Export within a league, or by{" "}
+												Tools &gt; Export within a league, or by{" "}
 												<a
 													href={`https://${process.env.SPORT}-gm.com/manual/customization/`}
 												>

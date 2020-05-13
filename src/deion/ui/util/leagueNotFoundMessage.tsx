@@ -88,8 +88,8 @@ const leagueNotFoundMessage = (
 					happen in places like schools and libraries that set browsers to
 					automatically delete everything when they are closed. It also happens
 					if you manually delete your browser data. For example, in Chrome, if
-					you go to More tools > Clear browsing data... > Cookies and other site
-					and plugin data, that will delete all your
+					you go to More tools &gt; Clear browsing data... &gt; Cookies and
+					other site and plugin data, that will delete all your
 					{sport} GM data.{" "}
 					<a href="https://bugs.chromium.org/p/chromium/issues/detail?id=340821">
 						This is true even if you tell it to only delete data from today - if

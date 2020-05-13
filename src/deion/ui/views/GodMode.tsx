@@ -1372,7 +1372,7 @@ const GodMode = (props: View<"godMode">) => {
 			</p>
 
 			<ul>
-				<li>Create custom players by going to Tools > Create A Player</li>
+				<li>Create custom players by going to Tools &gt; Create A Player</li>
 				<li>
 					Edit any player by going to their player page and clicking Edit Player
 				</li>
@@ -1381,10 +1381,10 @@ const GodMode = (props: View<"godMode">) => {
 					before proposing a trade
 				</li>
 				<li>
-					You can become the GM of another team at any time with Tools > Switch
-					Team
+					You can become the GM of another team at any time with Tools &gt;
+					Switch Team
 				</li>
-				<li>Add, remove and edit teams with Tools > Manage Teams</li>
+				<li>Add, remove and edit teams with Tools &gt; Manage Teams</li>
 				<li>You will never be fired!</li>
 				<li>You will be able to change the options below</li>
 			</ul>

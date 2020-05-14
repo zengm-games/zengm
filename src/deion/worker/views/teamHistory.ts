@@ -29,6 +29,7 @@ const updateTeamHistory = async (
 			playoffRoundsWon: number;
 			numPlayoffRounds: number;
 			numConfs: number;
+			name?: string;
 		}[] = [];
 
 		let totalWon = 0;
@@ -48,6 +49,10 @@ const updateTeamHistory = async (
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
 				numPlayoffRounds,
 				numConfs: g.get("confs", teamSeason.season).length,
+				name:
+					teamSeason.region && teamSeason.name
+						? `${teamSeason.region} ${teamSeason.name}`
+						: undefined,
 			});
 			totalWon += teamSeason.won;
 			totalLost += teamSeason.lost;

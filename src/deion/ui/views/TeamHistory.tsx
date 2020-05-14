@@ -27,7 +27,7 @@ const TeamHistory = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const historySeasons = history.map(h => {
+	const historySeasons = history.map((h, i) => {
 		const recordAndPlayoffs = (
 			<RecordAndPlayoffs
 				abbrev={abbrev}
@@ -47,11 +47,19 @@ const TeamHistory = ({
 			/>
 		);
 
+		let newName;
+		if (h.name && (i === 0 || h.name !== history[i - 1].name)) {
+			newName = h.name;
+		}
+
 		return (
-			<span key={h.season}>
+			<React.Fragment key={h.season}>
+				{newName ? (
+					<h4 className={i > 0 ? "mt-2" : undefined}>{newName}</h4>
+				) : null}
 				{recordAndPlayoffs}
 				<br />
-			</span>
+			</React.Fragment>
 		);
 	});
 
@@ -139,16 +147,7 @@ const TeamHistory = ({
 					</p>
 
 					<h2>Seasons</h2>
-					<p
-						style={{
-							MozColumnWidth: "15em",
-							MozColumns: "15em",
-							WebkitColumns: "15em",
-							columns: "15em",
-						}}
-					>
-						{historySeasons}
-					</p>
+					{historySeasons}
 				</div>
 				<div className="col-sm-7 col-md-9">
 					<h2>Players</h2>

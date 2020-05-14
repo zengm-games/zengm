@@ -10,6 +10,7 @@ const Transactions = ({
 	eventType,
 	events,
 	season,
+	tid,
 }: View<"transactions">) => {
 	useTitleBar({
 		title: "Transactions",
@@ -29,13 +30,24 @@ const Transactions = ({
 				More:{" "}
 				{process.env.SPORT === "football" ? (
 					<>
-						<a href={helpers.leagueUrl(["depth", abbrev])}>Depth Chart</a> |{" "}
+						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
+							Depth Chart
+						</a>{" "}
+						|{" "}
 					</>
 				) : null}
-				<a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}
-				<a href={helpers.leagueUrl(["game_log", abbrev, season])}>Game Log</a> |{" "}
-				<a href={helpers.leagueUrl(["team_history", abbrev])}>History</a>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
+				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
+					Finances
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`, season])}>
+					Game Log
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
+					History
+				</a>
 			</p>
 		) : null;
 
@@ -71,6 +83,7 @@ Transactions.propTypes = {
 		}),
 	).isRequired,
 	season: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+	tid: PropTypes.number.isRequired,
 };
 
 export default Transactions;

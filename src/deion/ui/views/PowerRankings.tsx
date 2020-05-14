@@ -43,7 +43,13 @@ const PowerRankings = ({ season, teams, userTid }: View<"powerRankings">) => {
 			key: t.tid,
 			data: [
 				t.rank,
-				<a href={helpers.leagueUrl(["roster", t.seasonAttrs.abbrev, season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${t.seasonAttrs.abbrev}_${t.tid}`,
+						season,
+					])}
+				>
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>,
 				t.ovr !== t.ovrCurrent ? (

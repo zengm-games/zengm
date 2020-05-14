@@ -205,7 +205,9 @@ const Draft = ({
 			data.splice(
 				2,
 				0,
-				<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
+				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+					{p.abbrev}
+				</a>,
 			);
 		}
 

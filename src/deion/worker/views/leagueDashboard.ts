@@ -271,6 +271,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			name: string;
 			pid: number;
 			stat: string;
+			tid: number;
 			value: number;
 		}[] = [];
 
@@ -282,6 +283,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					name: players[0].name,
 					pid: players[0].pid,
 					stat,
+					tid: players[0].tid,
 					value: players[0].stats[stat],
 				});
 			} else {
@@ -290,6 +292,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					name: "",
 					pid: 0,
 					stat,
+					tid: g.get("userTid"),
 					value: 0,
 				});
 			}

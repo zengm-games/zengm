@@ -62,6 +62,7 @@ const [useLocal, local] = create<
 	dropdownFields: {},
 	moreInfoAbbrev: undefined,
 	moreInfoSeason: undefined,
+	moreInfoTid: undefined,
 
 	actions: {
 		mergeGames(games: LocalStateUI["games"]) {

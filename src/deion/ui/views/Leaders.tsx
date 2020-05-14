@@ -59,7 +59,11 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 													{p.nameAbbrev}
 												</PlayerNameLabels>
 												<a
-													href={helpers.leagueUrl(["roster", p.abbrev, season])}
+													href={helpers.leagueUrl([
+														"roster",
+														`${p.abbrev}_${p.tid}`,
+														season,
+													])}
 													style={{
 														marginLeft: "6px",
 													}}

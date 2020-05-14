@@ -65,7 +65,9 @@ const WatchList = ({
 				</PlayerNameLabels>,
 				p.ratings.pos,
 				p.age,
-				<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
+				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+					{p.abbrev}
+				</a>,
 				p.ratings.ovr,
 				p.ratings.pot,
 				contract,

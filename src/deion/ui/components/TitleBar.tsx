@@ -24,6 +24,7 @@ const TitleBar = () => {
 		dropdownFields,
 		moreInfoAbbrev,
 		moreInfoSeason,
+		moreInfoTid,
 		lid,
 	} = useLocalShallow(state => ({
 		title: state.title,
@@ -35,6 +36,7 @@ const TitleBar = () => {
 		dropdownFields: state.dropdownFields,
 		moreInfoAbbrev: state.moreInfoAbbrev,
 		moreInfoSeason: state.moreInfoSeason,
+		moreInfoTid: state.moreInfoTid,
 		lid: state.lid,
 	}));
 
@@ -125,7 +127,11 @@ const TitleBar = () => {
 		});
 	}
 
-	if (moreInfoAbbrev && moreInfoSeason !== undefined) {
+	if (
+		moreInfoAbbrev &&
+		moreInfoSeason !== undefined &&
+		moreInfoTid !== undefined
+	) {
 		menuItems.push({
 			type: "header",
 			long: "More Info",
@@ -135,13 +141,21 @@ const TitleBar = () => {
 				{
 					type: "link",
 					league: true,
-					path: ["player_stats", moreInfoAbbrev, moreInfoSeason],
+					path: [
+						"player_stats",
+						`${moreInfoAbbrev}_${moreInfoTid}`,
+						moreInfoSeason,
+					],
 					text: "Player Stats",
 				},
 				{
 					type: "link",
 					league: true,
-					path: ["player_ratings", moreInfoAbbrev, moreInfoSeason],
+					path: [
+						"player_ratings",
+						`${moreInfoAbbrev}_${moreInfoTid}`,
+						moreInfoSeason,
+					],
 					text: "Player Ratings",
 				},
 			],

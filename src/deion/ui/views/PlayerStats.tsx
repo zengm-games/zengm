@@ -99,7 +99,13 @@ const PlayerStats = ({
 				</PlayerNameLabels>,
 				pos,
 				p.age,
-				<a href={helpers.leagueUrl(["roster", actualAbbrev, season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${actualAbbrev}_${actualTid}`,
+						...(season === undefined ? [] : [season]),
+					])}
+				>
 					{actualAbbrev}
 				</a>,
 				...statsRow,

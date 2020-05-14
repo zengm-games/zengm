@@ -242,13 +242,19 @@ const writeGameStats = async (
 					? results.team[1].id
 					: results.team[0].id;
 			text = `<span style="color: yellow; font-weight: bold; padding-right: 8px">T</span> Your team tied the <a href="${helpers.leagueUrl(
-				["roster", g.get("teamAbbrevsCache")[otherTid], g.get("season")],
+				[
+					"roster",
+					`${g.get("teamAbbrevsCache")[otherTid]}_${otherTid}`,
+					g.get("season"),
+				],
 			)}">${g.get("teamNamesCache")[otherTid]}`;
 		} else if (results.team[tw].id === g.get("userTid")) {
 			text = `<span style="color: green; font-weight: bold; padding-right: 3px">W</span> Your team defeated the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					g.get("teamAbbrevsCache")[results.team[tl].id],
+					`${g.get("teamAbbrevsCache")[results.team[tl].id]}_${
+						results.team[tl].id
+					}`,
 					g.get("season"),
 				],
 			)}">${g.get("teamNamesCache")[results.team[tl].id]}`;
@@ -256,7 +262,9 @@ const writeGameStats = async (
 			text = `<span style="color: red; font-weight: bold; padding-right: 8px">L</span> Your team lost to the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					g.get("teamAbbrevsCache")[results.team[tw].id],
+					`${g.get("teamAbbrevsCache")[results.team[tw].id]}_${
+						results.team[tw].id
+					}`,
 					g.get("season"),
 				],
 			)}">${g.get("teamNamesCache")[results.team[tw].id]}`;
@@ -264,7 +272,7 @@ const writeGameStats = async (
 
 		text += `</a> <a href="${helpers.leagueUrl([
 			"game_log",
-			g.get("teamAbbrevsCache")[g.get("userTid")],
+			`${g.get("teamAbbrevsCache")[g.get("userTid")]}_${g.get("userTid")}`,
 			g.get("season"),
 			results.gid,
 		])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
@@ -358,7 +366,9 @@ const writeGameStats = async (
 			"game_log",
 			allStarGame
 				? "special"
-				: g.get("teamAbbrevsCache")[results.team[indTeam].id],
+				: `${g.get("teamAbbrevsCache")[results.team[indTeam].id]}_${
+						results.team[indTeam].id
+				  }`,
 			g.get("season"),
 			results.gid,
 		])}">${score}</a> ${endPart}.`;

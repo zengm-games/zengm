@@ -44,6 +44,7 @@ const updateUpcomingFreeAgents = async (
 			"pid",
 			"name",
 			"abbrev",
+			"tid",
 			"age",
 			"contract",
 			"freeAgentMood",

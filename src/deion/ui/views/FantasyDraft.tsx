@@ -105,7 +105,12 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 					<>
 						<td>{index + 1}</td>
 						<td>
-							<a href={helpers.leagueUrl(["roster", value.abbrev])}>
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${value.abbrev}_${value.tid}`,
+								])}
+							>
 								{value.region} {value.name}
 							</a>
 						</td>

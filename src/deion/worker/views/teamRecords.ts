@@ -58,6 +58,7 @@ const getTeamRecord = (
 			abbrev: t.abbrev,
 			name: t.name,
 			region: t.region,
+			tid: t.tid,
 		},
 		cid: t.cid,
 		did: t.did,

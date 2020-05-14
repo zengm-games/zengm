@@ -23,6 +23,7 @@ const updateLeagueFinances = async (
 				"salaryPaid",
 				"pop",
 				"abbrev",
+				"tid",
 				"region",
 				"name",
 			],

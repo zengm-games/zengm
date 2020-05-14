@@ -35,17 +35,25 @@ const PlayerFeats = ({
 			data: [
 				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
 				p.pos,
-				<a href={helpers.leagueUrl(["roster", p.abbrev, p.season])}>
+				<a
+					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, p.season])}
+				>
 					{p.abbrev}
 				</a>,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat, true)),
-				<a href={helpers.leagueUrl(["roster", p.oppAbbrev, p.season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${p.oppAbbrev}_${p.oppTid}`,
+						p.season,
+					])}
+				>
 					{p.oppAbbrev}
 				</a>,
 				<a
 					href={helpers.leagueUrl([
 						"game_log",
-						p.abbrev === undefined ? "special" : p.abbrev,
+						p.abbrev === undefined ? "special" : `${p.abbrev}_${p.tid}`,
 						p.season,
 						p.gid,
 					])}

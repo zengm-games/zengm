@@ -12,7 +12,11 @@ const BoxScore = ({ boxScore, Row }: { boxScore: any; Row: any }) => {
 					<h2>
 						{t.tid >= 0 ? (
 							<a
-								href={helpers.leagueUrl(["roster", t.abbrev, boxScore.season])}
+								href={helpers.leagueUrl([
+									"roster",
+									`${t.abbrev}_${t.tid}`,
+									boxScore.season,
+								])}
 							>
 								{t.region} {t.name}
 							</a>

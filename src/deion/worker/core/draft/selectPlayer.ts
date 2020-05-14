@@ -151,7 +151,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		type: "draft",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamAbbrevsCache")[dp.tid],
+			`${g.get("teamAbbrevsCache")[dp.tid]}_${dp.tid}`,
 			g.get("season"),
 		])}">${
 			g.get("teamNamesCache")[dp.tid]

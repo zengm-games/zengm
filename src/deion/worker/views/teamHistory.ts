@@ -136,6 +136,7 @@ const updateTeamHistory = async (
 			championships,
 			bestRecord,
 			worstRecord,
+			tid: inputs.tid,
 			ties: g.get("ties"),
 		};
 	}

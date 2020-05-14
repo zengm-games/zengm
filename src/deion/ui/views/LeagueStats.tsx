@@ -14,6 +14,7 @@ const LeagueStats = ({
 	stats,
 	superCols,
 	teamOpponent,
+	tid,
 	ties,
 }: View<"leagueStats">) => {
 	useTitleBar({
@@ -75,7 +76,7 @@ const LeagueStats = ({
 						{s.season}
 					</a>
 				) : (
-					<a href={helpers.leagueUrl(["roster", abbrev, s.season])}>
+					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, s.season])}>
 						{s.season}
 					</a>
 				),

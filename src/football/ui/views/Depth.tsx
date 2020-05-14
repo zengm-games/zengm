@@ -40,6 +40,7 @@ const Depth = ({
 	ratings,
 	season,
 	stats,
+	tid,
 }: View<"depth", "football">) => {
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>();
 	const [prevPos, setPrevPos] = useState(pos);
@@ -51,6 +52,7 @@ const Depth = ({
 		dropdownFields: { teams: abbrev, positions: pos },
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
+		moreInfoTid: tid,
 	});
 
 	if (pos !== prevPos) {
@@ -87,11 +89,23 @@ const Depth = ({
 	return (
 		<>
 			<p>
-				More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}
-				<a href={helpers.leagueUrl(["game_log", abbrev])}>Game Log</a> |{" "}
-				<a href={helpers.leagueUrl(["team_history", abbrev])}>History</a> |{" "}
-				<a href={helpers.leagueUrl(["transactions", abbrev])}>Transactions</a>
+				More:{" "}
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
+				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
+					Finances
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
+					Game Log
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
+					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
+					Transactions
+				</a>
 			</p>
 			<p style={{ clear: "both" }}>
 				Drag row handles to move players between the starting lineup{" "}
@@ -106,7 +120,7 @@ const Depth = ({
 							className={classNames("nav-link", {
 								active: pos === pos2,
 							})}
-							href={helpers.leagueUrl(["depth", abbrev, pos2])}
+							href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`, pos2])}
 						>
 							{pos2}
 						</a>

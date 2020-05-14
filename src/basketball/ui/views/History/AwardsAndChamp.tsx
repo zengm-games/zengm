@@ -30,7 +30,13 @@ const Winner = ({
 					<a href={helpers.leagueUrl(["player", award.pid])}>{award.name}</a>
 				</b>{" "}
 				(
-				<a href={helpers.leagueUrl(["roster", award.abbrev, season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${award.abbrev}_${award.tid}`,
+						season,
+					])}
+				>
 					{award.abbrev}
 				</a>
 				)
@@ -72,7 +78,7 @@ const AwardsAndChamp = ({
 									<a
 										href={helpers.leagueUrl([
 											"roster",
-											champ.seasonAttrs.abbrev,
+											`${champ.seasonAttrs.abbrev}_${champ.tid}`,
 											season,
 										])}
 									>
@@ -103,7 +109,13 @@ const AwardsAndChamp = ({
 					<p key={t.tid}>
 						{confs[i].name}:<br />
 						<span className={t.tid === userTid ? "table-info" : undefined}>
-							<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${t.abbrev}_${t.tid}`,
+									season,
+								])}
+							>
 								{t.region} {t.name}
 							</a>{" "}
 							({t.won}-{t.lost}

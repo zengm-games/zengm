@@ -43,7 +43,13 @@ const RetiredPlayers = ({
 						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 						{p.stats.tid >= 0 ? (
 							<>
-								<a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${p.stats.abbrev}_${p.stats.tid}`,
+										season,
+									])}
+								>
 									{p.stats.abbrev}
 								</a>
 								,{" "}

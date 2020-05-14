@@ -34,6 +34,7 @@ const PlayerTeam = ({
 }: {
 	p: {
 		abbrev: string;
+		tid: number;
 	};
 	season: number;
 }) => {
@@ -42,12 +43,15 @@ const PlayerTeam = ({
 	}
 
 	return (
-		<a href={helpers.leagueUrl(["roster", p.abbrev, season])}>{p.abbrev}</a>
+		<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
+			{p.abbrev}
+		</a>
 	);
 };
 PlayerTeam.propTypes = {
 	p: PropTypes.shape({
 		abbrev: PropTypes.string.isRequired,
+		tid: PropTypes.number.isRequired,
 	}),
 	season: PropTypes.number.isRequired,
 };

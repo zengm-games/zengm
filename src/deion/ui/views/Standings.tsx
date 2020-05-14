@@ -54,7 +54,13 @@ const DivStandingsRow = ({
 			onClick={toggleClicked}
 		>
 			<td>
-				<a href={helpers.leagueUrl(["roster", t.seasonAttrs.abbrev, season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${t.seasonAttrs.abbrev}_${t.tid}`,
+						season,
+					])}
+				>
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>
 				<span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
@@ -156,7 +162,13 @@ const SmallStandingsRow = ({
 		>
 			<td>
 				{t.rank}.{" "}
-				<a href={helpers.leagueUrl(["roster", t.seasonAttrs.abbrev, season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${t.seasonAttrs.abbrev}_${t.tid}`,
+						season,
+					])}
+				>
 					{t.seasonAttrs.region}
 				</a>
 			</td>

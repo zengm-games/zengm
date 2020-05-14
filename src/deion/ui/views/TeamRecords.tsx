@@ -5,9 +5,14 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
-const teamLink = (t: { abbrev: string; name: string; region: string }) => {
+const teamLink = (t: {
+	abbrev: string;
+	name: string;
+	region: string;
+	tid: number;
+}) => {
 	return (
-		<a href={helpers.leagueUrl(["team_history", t.abbrev])}>
+		<a href={helpers.leagueUrl(["team_history", `${t.abbrev}_${t.tid}`])}>
 			{t.region} {t.name}
 		</a>
 	);

@@ -133,7 +133,7 @@ const GamesList = ({
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
-											abbrev,
+											`${abbrev}_${tid}`,
 											season,
 											gm.gid,
 										])}
@@ -146,7 +146,7 @@ const GamesList = ({
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
-											abbrev,
+											`${abbrev}_${tid}`,
 											season,
 											gm.gid,
 										])}
@@ -158,7 +158,7 @@ const GamesList = ({
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
-											abbrev,
+											`${abbrev}_${tid}`,
 											season,
 											gm.gid,
 										])}
@@ -215,13 +215,27 @@ const GameLog = ({
 				More:{" "}
 				{process.env.SPORT === "football" ? (
 					<>
-						<a href={helpers.leagueUrl(["depth", abbrev])}>Depth Chart</a> |{" "}
+						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
+							Depth Chart
+						</a>{" "}
+						|{" "}
 					</>
 				) : null}
-				<a href={helpers.leagueUrl(["roster", abbrev, season])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}
-				<a href={helpers.leagueUrl(["team_history", abbrev])}>History</a> |{" "}
-				<a href={helpers.leagueUrl(["transactions", abbrev])}>Transactions</a>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
+					Roster
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
+					Finances
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
+					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
+					Transactions
+				</a>
 			</p>
 
 			<p />
@@ -235,6 +249,7 @@ const GameLog = ({
 							nextGid={nextGid}
 							prevGid={prevGid}
 							showNextPrev
+							tid={tid}
 							Row={StatsRow}
 						/>
 					) : (

@@ -8,12 +8,14 @@ const Leader = ({
 	name,
 	pid,
 	stat,
+	tid,
 	value,
 }: {
 	abbrev?: string;
 	name: string;
 	pid: number;
 	stat: string;
+	tid?: number;
 	value: number;
 }) => {
 	const numberToDisplay =
@@ -24,9 +26,12 @@ const Leader = ({
 	return (
 		<>
 			<a href={helpers.leagueUrl(["player", pid])}>{name}</a>
-			{abbrev ? (
+			{abbrev && tid !== undefined ? (
 				<>
-					, <a href={helpers.leagueUrl(["roster", abbrev])}>{abbrev}</a>
+					,{" "}
+					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
+						{abbrev}
+					</a>
 				</>
 			) : null}
 			: {numberToDisplay} {stat}
@@ -40,6 +45,7 @@ Leader.propTypes = {
 	name: PropTypes.string.isRequired,
 	pid: PropTypes.number.isRequired,
 	stat: PropTypes.string.isRequired,
+	tid: PropTypes.number,
 	value: PropTypes.number.isRequired,
 };
 

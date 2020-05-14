@@ -79,6 +79,7 @@ const Roster = ({
 	showTradeFor,
 	stats,
 	t,
+	tid,
 	userTid,
 }: View<"roster">) => {
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
@@ -93,6 +94,7 @@ const Roster = ({
 		},
 		moreInfoAbbrev: abbrev,
 		moreInfoSeason: season,
+		moreInfoTid: tid,
 	});
 
 	if (players !== prevPlayers) {
@@ -120,13 +122,27 @@ const Roster = ({
 				More:{" "}
 				{process.env.SPORT === "football" ? (
 					<>
-						<a href={helpers.leagueUrl(["depth", abbrev])}>Depth Chart</a> |{" "}
+						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
+							Depth Chart
+						</a>{" "}
+						|{" "}
 					</>
 				) : null}
-				<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}
-				<a href={helpers.leagueUrl(["game_log", abbrev, season])}>Game Log</a> |{" "}
-				<a href={helpers.leagueUrl(["team_history", abbrev])}>History</a> |{" "}
-				<a href={helpers.leagueUrl(["transactions", abbrev])}>Transactions</a>
+				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
+					Finances
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`, season])}>
+					Game Log
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
+					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
+					Transactions
+				</a>
 			</p>
 
 			<TopStuff
@@ -144,6 +160,7 @@ const Roster = ({
 				salaryCap={salaryCap}
 				showTradeFor={showTradeFor}
 				t={t}
+				tid={tid}
 			/>
 
 			<div className="clearfix" />

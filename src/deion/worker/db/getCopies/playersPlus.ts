@@ -318,6 +318,7 @@ const processRatings = (
 	output.ratings = playerRatings.map(pr => {
 		const row: any = {};
 
+		console.log(pr);
 		for (const attr of ratings) {
 			if (attr === "skills") {
 				row.skills = helpers.deepCopy(pr.skills);
@@ -342,11 +343,11 @@ const processRatings = (
 				}
 			} else if (attr === "age") {
 				row.age = pr.season - p.born.year;
-			} else if (attr === "abbrev") {
+			} else if (attr === "abbrev" || attr === "tid") {
 				// Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
 				if (!stats.includes("tid")) {
 					throw new Error(
-						'Crazy I know, but if you request "abbrev" from ratings, you must also request "tid" from stats',
+						'Crazy I know, but if you request "abbrev" or "tid" from ratings, you must also request "tid" from stats',
 					);
 				}
 
@@ -358,10 +359,14 @@ const processRatings = (
 					}
 				}
 
-				if (tidTemp !== undefined) {
-					row.abbrev = helpers.getAbbrev(tidTemp);
+				if (attr === "abbrev") {
+					if (tidTemp !== undefined) {
+						row.abbrev = helpers.getAbbrev(tidTemp);
+					} else {
+						row.abbrev = "";
+					}
 				} else {
-					row.abbrev = "";
+					row.tid = tidTemp;
 				}
 			} else if (attr === "ovrs" || attr === "pots") {
 				row[attr] = { ...pr[attr] };

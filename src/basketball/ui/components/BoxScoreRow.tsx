@@ -29,7 +29,9 @@ const BoxScoreRow = ({
 			</td>
 			{typeof p.abbrev === "string" ? (
 				<td>
-					<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>
+					<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+						{p.abbrev}
+					</a>
 				</td>
 			) : null}
 			<td>{p.pos}</td>

@@ -68,7 +68,14 @@ export const genView = (type: "college" | "country") => {
 					p.peakOvr,
 					{
 						value: (
-							<a href={helpers.leagueUrl(["team_history", abbrev])}>{abbrev}</a>
+							<a
+								href={helpers.leagueUrl([
+									"team_history",
+									`${abbrev}_${p.legacyTid}`,
+								])}
+							>
+								{abbrev}
+							</a>
 						),
 						classNames: {
 							"table-info": p.legacyTid === userTid,

@@ -124,6 +124,7 @@ const updatePlayer = async (
 			ratings: (MinimalPlayerRatings & {
 				abbrev: string;
 				age: number;
+				tid: number;
 			})[];
 			stats: Stats[];
 			careerStats: Stats;
@@ -160,6 +161,7 @@ const updatePlayer = async (
 			ratings: [
 				"season",
 				"abbrev",
+				"tid",
 				"age",
 				"ovr",
 				"pot",

@@ -50,6 +50,7 @@ const updateEventLog = async (
 			events,
 			season: inputs.season,
 			eventType: inputs.eventType,
+			tid: inputs.tid,
 		};
 	}
 };

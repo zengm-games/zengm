@@ -9,20 +9,43 @@ import type { PlayerStatType } from "../../common/types";
  * If the abbreviation is not valid, then g.get("userTid") and its correspodning abbreviation will be returned.
  *
  * @memberOf util.helpers
- * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
+ * @param  {string} abbrev Three-letter team abbreviation, like "ATL". Can also be a numeric team ID like "0" or a concatenated one like "ATL_0", in which case the number will be used.
  * @return {Array} Array with two elements, the team ID and the validated abbreviation.
  */
-export const validateAbbrev = (abbrev?: string): [number, string] => {
-	let tid: number = -1;
+export const validateAbbrev = (
+	abbrev?: string,
+	strict?: boolean,
+): [number, string] => {
 	if (abbrev !== undefined) {
-		tid = g.get("teamAbbrevsCache").indexOf(abbrev);
+		{
+			const int = parseInt(abbrev);
+			if (!Number.isNaN(int) && int < g.get("teamAbbrevsCache").length) {
+				return [int, g.get("teamAbbrevsCache")[int]];
+			}
+		}
+
+		{
+			const tid = g.get("teamAbbrevsCache").indexOf(abbrev);
+			if (tid >= 0) {
+				return [tid, abbrev];
+			}
+		}
+
+		{
+			const parts = abbrev.split("_");
+			const int = parseInt(parts[parts.length - 1]);
+			if (!Number.isNaN(int) && int < g.get("teamAbbrevsCache").length) {
+				return [int, g.get("teamAbbrevsCache")[int]];
+			}
+		}
 	}
 
-	if (tid < 0 || abbrev === undefined) {
-		tid = g.get("userTid");
-		abbrev = g.get("teamAbbrevsCache")[tid];
+	if (strict) {
+		return [g.get("userTid"), "???"];
 	}
 
+	const tid = g.get("userTid");
+	abbrev = g.get("teamAbbrevsCache")[tid];
 	if (abbrev === undefined) {
 		abbrev = "???";
 	}
@@ -318,12 +341,13 @@ const playerFeats = (params: Params) => {
 
 const playerRatings = (params: Params) => {
 	let abbrev;
+	let tid: number | undefined;
 
-	if (
-		params.abbrev !== undefined &&
-		g.get("teamAbbrevsCache").includes(params.abbrev)
-	) {
-		abbrev = params.abbrev;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
 	} else if (params.abbrev && params.abbrev === "watch") {
 		abbrev = "watch";
 	} else {
@@ -333,6 +357,7 @@ const playerRatings = (params: Params) => {
 	return {
 		abbrev,
 		season: validateSeason(params.season),
+		tid,
 	};
 };
 

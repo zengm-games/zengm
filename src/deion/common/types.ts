@@ -598,6 +598,7 @@ export type LocalStateUI = {
 	};
 	moreInfoAbbrev?: string;
 	moreInfoSeason?: number;
+	moreInfoTid?: number;
 };
 
 export type PartialTopMenu = {

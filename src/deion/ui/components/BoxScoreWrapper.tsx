@@ -23,7 +23,7 @@ const TeamNameLink = ({
 	};
 }) => {
 	return t.tid >= 0 ? (
-		<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
+		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}>
 			{t.region} {t.name}
 		</a>
 	) : (
@@ -126,11 +126,13 @@ const NextButton = ({
 	boxScore,
 	currentGidInList,
 	nextGid,
+	tid,
 }: {
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
 	nextGid?: number;
+	tid?: number;
 }) => {
 	const [autoGoToNext, setAutoGoToNext] = useState(false);
 	const [clickedGoToNext, setClickedGoToNext] = useState(false);
@@ -197,7 +199,7 @@ const NextButton = ({
 					})}
 					href={helpers.leagueUrl([
 						"game_log",
-						abbrev,
+						`${abbrev}_${tid}`,
 						boxScore.season,
 						nextGid,
 					])}
@@ -222,6 +224,7 @@ const DetailedScore = ({
 	nextGid,
 	prevGid,
 	showNextPrev,
+	tid,
 }: {
 	abbrev?: string;
 	boxScore: any;
@@ -229,6 +232,7 @@ const DetailedScore = ({
 	nextGid?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
+	tid?: number;
 }) => {
 	// Quarter/overtime labels
 	const qtrs = boxScore.teams[1].ptsQtrs.map((pts: number, i: number) => {
@@ -246,7 +250,7 @@ const DetailedScore = ({
 						})}
 						href={helpers.leagueUrl([
 							"game_log",
-							abbrev,
+							`${abbrev}_${tid}`,
 							boxScore.season,
 							prevGid,
 						])}
@@ -305,6 +309,7 @@ const DetailedScore = ({
 					boxScore={boxScore}
 					currentGidInList={currentGidInList}
 					nextGid={nextGid}
+					tid={tid}
 				/>
 			) : null}
 		</div>
@@ -318,6 +323,7 @@ DetailedScore.propTypes = {
 	nextGid: PropTypes.number,
 	prevGid: PropTypes.number,
 	showNextPrev: PropTypes.bool,
+	tid: PropTypes.number,
 };
 
 const BoxScore = ({
@@ -327,6 +333,7 @@ const BoxScore = ({
 	nextGid,
 	prevGid,
 	showNextPrev,
+	tid,
 	Row,
 }: {
 	abbrev?: string;
@@ -335,6 +342,7 @@ const BoxScore = ({
 	nextGid?: number;
 	prevGid?: number;
 	showNextPrev?: boolean;
+	tid?: number;
 	Row: any;
 }) => {
 	const handleKeydown = useCallback(
@@ -348,18 +356,28 @@ const BoxScore = ({
 					// prev
 					realtimeUpdate(
 						[],
-						helpers.leagueUrl(["game_log", abbrev, boxScore.season, prevGid]),
+						helpers.leagueUrl([
+							"game_log",
+							`${abbrev}_${tid}`,
+							boxScore.season,
+							prevGid,
+						]),
 					);
 				} else if (e.keyCode === 39 && boxScore && nextGid !== undefined) {
 					// next
 					realtimeUpdate(
 						[],
-						helpers.leagueUrl(["game_log", abbrev, boxScore.season, nextGid]),
+						helpers.leagueUrl([
+							"game_log",
+							`${abbrev}_${tid}`,
+							boxScore.season,
+							nextGid,
+						]),
 					);
 				}
 			}
 		},
-		[abbrev, boxScore, nextGid, prevGid, showNextPrev],
+		[abbrev, boxScore, nextGid, prevGid, showNextPrev, tid],
 	);
 
 	useEffect(() => {
@@ -381,6 +399,7 @@ const BoxScore = ({
 					nextGid={nextGid}
 					prevGid={prevGid}
 					showNextPrev={showNextPrev}
+					tid={tid}
 				/>
 			</div>
 			<overrides.components.BoxScore boxScore={boxScore} Row={Row} />
@@ -396,6 +415,7 @@ BoxScore.propTypes = {
 	nextGid: PropTypes.number,
 	prevGid: PropTypes.number,
 	showNextPrev: PropTypes.bool,
+	tid: PropTypes.number,
 	Row: PropTypes.any,
 };
 

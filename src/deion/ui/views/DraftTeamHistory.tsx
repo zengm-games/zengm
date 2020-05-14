@@ -78,7 +78,12 @@ const DraftTeamHistory = ({
 				<span className="skills-alone">
 					<SkillsBlock skills={p.draft.skills} />
 				</span>,
-				<a href={helpers.leagueUrl(["roster", p.currentAbbrev])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${p.currentAbbrev}_${p.currentTid}`,
+					])}
+				>
 					{p.currentAbbrev}
 				</a>,
 				p.currentAge,

@@ -47,6 +47,7 @@ const updateDraftSummary = async (inputs: ViewInput<"draftSummary">) => {
 				draft: p.draft,
 				currentAge: p.age,
 				currentAbbrev: p.abbrev,
+				currentTid: p.tid,
 				hof: p.hof,
 				// Ratings
 				currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,

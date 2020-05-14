@@ -9,7 +9,6 @@ const getCopy = async ({
 	const result = await idb.getCopies.allStars({
 		season,
 	});
-	console.log(result);
 	return result[0];
 };
 

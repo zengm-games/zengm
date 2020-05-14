@@ -43,7 +43,9 @@ const UpcomingFreeAgents = ({
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.pos,
-				<a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
+				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+					{p.abbrev}
+				</a>,
 				p.age,
 				p.ratings.ovr,
 				p.ratings.pot,

@@ -70,7 +70,9 @@ const AwardRaces = ({
 							</PlayerNameLabels>,
 							pos,
 							p.age,
-							<a href={helpers.leagueUrl(["roster", abbrev, season])}>
+							<a
+								href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}
+							>
 								{abbrev}
 							</a>,
 						];

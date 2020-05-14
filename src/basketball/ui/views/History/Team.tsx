@@ -16,7 +16,9 @@ const Player = ({
 		<div>
 			<span className={p.tid === userTid ? "table-info" : undefined}>
 				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
-				<a href={helpers.leagueUrl(["roster", p.abbrev, season])}>{p.abbrev}</a>
+				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}>
+					{p.abbrev}
+				</a>
 				)
 			</span>
 		</div>

@@ -52,7 +52,12 @@ const LeagueFinances = ({
 				: t.seasonAttrs.salaryPaid;
 
 		const data = [
-			<a href={helpers.leagueUrl(["team_finances", t.seasonAttrs.abbrev])}>
+			<a
+				href={helpers.leagueUrl([
+					"team_finances",
+					`${t.seasonAttrs.abbrev}_${t.seasonAttrs.tid}`,
+				])}
+			>
 				{t.seasonAttrs.region} {t.seasonAttrs.name}
 			</a>,
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.pop * 1000000)),

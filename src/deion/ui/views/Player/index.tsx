@@ -121,7 +121,13 @@ const StatsTable = ({
 						key: i,
 						data: [
 							ps.season,
-							<a href={helpers.leagueUrl(["roster", ps.abbrev, ps.season])}>
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${ps.abbrev}_${ps.tid}`,
+									ps.season,
+								])}
+							>
 								{ps.abbrev}
 							</a>,
 							ps.age,
@@ -392,7 +398,13 @@ const Player2 = ({
 									),
 							},
 							r.abbrev ? (
-								<a href={helpers.leagueUrl(["roster", r.abbrev, r.season])}>
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${r.abbrev}_${r.tid}`,
+										r.season,
+									])}
+								>
 									{r.abbrev}
 								</a>
 							) : null,

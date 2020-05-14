@@ -519,13 +519,24 @@ const TeamFinances = ({
 				More:{" "}
 				{process.env.SPORT === "football" ? (
 					<>
-						<a href={helpers.leagueUrl(["depth", abbrev])}>Depth Chart</a> |{" "}
+						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
+							Depth Chart
+						</a>{" "}
+						|{" "}
 					</>
 				) : null}
-				<a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["game_log", abbrev])}>Game Log</a> |{" "}
-				<a href={helpers.leagueUrl(["team_history", abbrev])}>History</a> |{" "}
-				<a href={helpers.leagueUrl(["transactions", abbrev])}>Transactions</a>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
+				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
+					Game Log
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
+					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
+					Transactions
+				</a>
 			</p>
 
 			<PayrollInfo

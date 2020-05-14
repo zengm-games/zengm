@@ -15,6 +15,7 @@ const TeamHistory = ({
 	playoffAppearances,
 	stats,
 	team,
+	tid,
 	ties,
 	totalLost,
 	totalTied,
@@ -42,6 +43,7 @@ const TeamHistory = ({
 						? { fontWeight: "bold" }
 						: undefined
 				}
+				tid={tid}
 				tied={h.tied}
 				won={h.won}
 			/>
@@ -100,13 +102,24 @@ const TeamHistory = ({
 				More:{" "}
 				{process.env.SPORT === "football" ? (
 					<>
-						<a href={helpers.leagueUrl(["depth", abbrev])}>Depth Chart</a> |{" "}
+						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
+							Depth Chart
+						</a>{" "}
+						|{" "}
 					</>
 				) : null}
-				<a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a> |{" "}
-				<a href={helpers.leagueUrl(["team_finances", abbrev])}>Finances</a> |{" "}
-				<a href={helpers.leagueUrl(["game_log", abbrev])}>Game Log</a> |{" "}
-				<a href={helpers.leagueUrl(["transactions", abbrev])}>Transactions</a>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
+				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
+					Finances
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
+					Game Log
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
+					Transactions
+				</a>
 			</p>
 
 			<div className="row">
@@ -123,6 +136,7 @@ const TeamHistory = ({
 						{bestRecord ? (
 							<RecordAndPlayoffs
 								abbrev={abbrev}
+								tid={tid}
 								lost={bestRecord.lost}
 								season={bestRecord.season}
 								tied={bestRecord.tied}
@@ -136,6 +150,7 @@ const TeamHistory = ({
 						{worstRecord ? (
 							<RecordAndPlayoffs
 								abbrev={abbrev}
+								tid={tid}
 								lost={worstRecord.lost}
 								season={worstRecord.season}
 								tied={worstRecord.tied}
@@ -199,6 +214,7 @@ TeamHistory.propTypes = {
 		region: PropTypes.string.isRequired,
 		tid: PropTypes.number.isRequired,
 	}).isRequired,
+	tid: PropTypes.number.isRequired,
 	ties: PropTypes.bool.isRequired,
 	totalLost: PropTypes.number.isRequired,
 	totalTied: PropTypes.number,

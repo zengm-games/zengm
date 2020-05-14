@@ -12,6 +12,7 @@ const RecordAndPlayoffs = ({
 	season,
 	style,
 	tied,
+	tid,
 	won,
 }: {
 	abbrev: string;
@@ -23,12 +24,16 @@ const RecordAndPlayoffs = ({
 	season: number;
 	style?: CSSProperties;
 	tied?: number;
+	tid: number;
 	won: number;
 }) => {
 	const seasonText =
 		option !== "noSeason" ? (
 			<span>
-				<a href={helpers.leagueUrl(["roster", abbrev, season])}>{season}</a>:{" "}
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
+					{season}
+				</a>
+				:{" "}
 			</span>
 		) : null;
 	let record = `${won}-${lost}`;
@@ -72,6 +77,7 @@ RecordAndPlayoffs.propTypes = {
 	playoffRoundsWon: PropTypes.number,
 	season: PropTypes.number.isRequired,
 	style: PropTypes.object,
+	tid: PropTypes.number.isRequired,
 	tied: PropTypes.number,
 	won: PropTypes.number.isRequired,
 };

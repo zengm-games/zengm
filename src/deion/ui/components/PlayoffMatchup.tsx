@@ -74,7 +74,11 @@ const Team = ({
 					className={classNames({
 						"text-muted": lost,
 					})}
-					href={helpers.leagueUrl(["roster", team.abbrev, season])}
+					href={helpers.leagueUrl([
+						"roster",
+						`${team.abbrev}_${team.tid}`,
+						season,
+					])}
 				>
 					{expandTeamName ? (
 						team.region

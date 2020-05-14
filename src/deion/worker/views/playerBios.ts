@@ -25,6 +25,7 @@ const updatePlayers = async (
 			["born", "college", "hgt", "weight", "draft"],
 			["ovr", "pot"],
 			stats,
+			inputs.tid,
 		);
 
 		return {

@@ -16,7 +16,9 @@ const DraftAbbrev = ({
 	const abbrev = teamAbbrevsCache[tid];
 	const originalAbbrev = teamAbbrevsCache[originalTid];
 	const args1 =
-		season === undefined ? ["roster", abbrev] : ["roster", abbrev, season];
+		season === undefined
+			? ["roster", `${abbrev}_${tid}`]
+			: ["roster", `${abbrev}_${tid}`, season];
 
 	if (abbrev === originalAbbrev) {
 		return <a href={helpers.leagueUrl(args1)}>{abbrev}</a>;
@@ -24,8 +26,8 @@ const DraftAbbrev = ({
 
 	const args2 =
 		season === undefined
-			? ["roster", originalAbbrev]
-			: ["roster", originalAbbrev, season];
+			? ["roster", `${originalAbbrev}_${originalTid}`]
+			: ["roster", `${originalAbbrev}_${originalTid}`, season];
 	return (
 		<>
 			<a href={helpers.leagueUrl(args1)}>{abbrev}</a> (from{" "}

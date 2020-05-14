@@ -118,7 +118,7 @@ const Offer = (props: OfferProps) => {
 		<div className="mt-4">
 			<h2>
 				Offer {i + 1}:{" "}
-				<a href={helpers.leagueUrl(["roster", abbrev])}>
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
 					{region} {name}
 				</a>
 			</h2>

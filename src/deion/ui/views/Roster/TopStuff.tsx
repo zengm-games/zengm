@@ -60,6 +60,7 @@ const TopStuff = ({
 	season,
 	showTradeFor,
 	t,
+	tid,
 }: Pick<
 	View<"roster">,
 	| "abbrev"
@@ -74,6 +75,7 @@ const TopStuff = ({
 	| "season"
 	| "showTradeFor"
 	| "t"
+	| "tid"
 > & {
 	openRosterSpots: number;
 	profit: number;
@@ -98,6 +100,7 @@ const TopStuff = ({
 					option="noSeason"
 					numConfs={numConfs}
 					numPlayoffRounds={numPlayoffRounds}
+					tid={tid}
 				/>
 			</>
 		) : (
@@ -183,6 +186,7 @@ TopStuff.propTypes = {
 	season: PropTypes.number.isRequired,
 	showTradeFor: PropTypes.bool.isRequired,
 	t: PropTypes.object.isRequired,
+	tid: PropTypes.number.isRequired,
 };
 
 export default TopStuff;

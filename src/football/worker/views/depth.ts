@@ -116,6 +116,7 @@ async function updateDepth(
 			ratings,
 			season: g.get("season"),
 			stats: stats2,
+			tid,
 		};
 	}
 }

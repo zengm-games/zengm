@@ -1,10 +1,10 @@
+during a realistic year (i.e., one with a bunch of real players as draft prospects), any generated draft prospects should be bums
+
 add "adjust for inflation" checkbox to team finances, which scales budget items with salary cap
 
 revamp ai drafting
 
 show team a player was selected from on expansion/fantasy draft page
-
-show relocation/rename on team history page, maybe as subheader of Seasons
 
 FBGM - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 
@@ -30,8 +30,8 @@ eventually
 
 ---
 
-handle abbrevs changing over time without breaking URLs
-- ATL -> ATL_0. backwards compatible, and unbreakable. could also accept just 0 if necessary
+handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
+- any abbrev returned in stats or ratings from playersPlus is wrong
 
 events revamp
 - nothing should be lost, ever
@@ -39,6 +39,7 @@ events revamp
 - store the "value" of an event, so it can be used as a filter for important news
 - for traded picks, store info so eventual picked players can be filled in later
 - scheduled events output should be viewable somewhere
+- should be easy way to see team relocations, expansions, and league rule changes over time
 
 manually specify draft order in god mode
 

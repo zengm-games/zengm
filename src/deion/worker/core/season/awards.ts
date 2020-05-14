@@ -248,7 +248,7 @@ const saveAwardsByPlayer = async (
 			p.name
 		}</a> (<a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamAbbrevsCache")[p.tid],
+			`${g.get("teamAbbrevsCache")[p.tid]}_${p.tid}`,
 			g.get("season"),
 		])}">${g.get("teamAbbrevsCache")[p.tid]}</a>) `;
 

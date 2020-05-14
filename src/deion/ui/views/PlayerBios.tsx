@@ -39,6 +39,7 @@ const PlayerBios = ({
 	);
 
 	const rows = players.map(p => {
+		console.log(p);
 		return {
 			key: p.pid,
 			data: [
@@ -51,7 +52,13 @@ const PlayerBios = ({
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.pos,
-				<a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						`${p.stats.abbrev}_${p.stats.tid}`,
+						season,
+					])}
+				>
 					{p.stats.abbrev}
 				</a>,
 				p.age,

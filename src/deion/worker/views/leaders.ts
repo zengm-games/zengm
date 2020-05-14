@@ -435,6 +435,7 @@ const updateLeaders = async (
 					const leader = helpers.deepCopy(p);
 					leader.stat = leader.stats[cat.statProp];
 					leader.abbrev = leader.stats.abbrev;
+					leader.tid = leader.stats.tid;
 					delete leader.stats;
 					leader.userTeam = userAbbrev === leader.abbrev;
 					cat.data.push(leader);

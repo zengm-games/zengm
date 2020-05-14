@@ -9,6 +9,7 @@ export const getPlayers = async (
 	attrs: string[],
 	ratings: string[],
 	stats: string[],
+	tid: number | undefined,
 ) => {
 	let playersAll;
 
@@ -19,12 +20,6 @@ export const getPlayers = async (
 		playersAll = await idb.getCopies.players({
 			activeSeason: season,
 		});
-	}
-
-	let tid: number | undefined = g.get("teamAbbrevsCache").indexOf(abbrev);
-
-	if (tid < 0) {
-		tid = undefined;
 	}
 
 	// Show all teams
@@ -38,13 +33,13 @@ export const getPlayers = async (
 		attrs: [
 			"pid",
 			"name",
-			"abbrev",
 			"age",
 			"contract",
 			"injury",
 			"hof",
 			"watch",
 			"tid",
+			"abbrev",
 			...attrs,
 		],
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
@@ -60,7 +55,7 @@ export const getPlayers = async (
 	// For other seasons, use the stats abbrev for filtering
 	if (g.get("season") === season) {
 		if (tid !== undefined) {
-			players = players.filter(p => p.abbrev === abbrev);
+			players = players.filter(p => p.tid === tid);
 		}
 
 		for (const p of players) {
@@ -68,8 +63,9 @@ export const getPlayers = async (
 			p.stats.tid = p.tid;
 		}
 	} else if (tid !== undefined) {
-		players = players.filter(p => p.stats.abbrev === abbrev);
+		players = players.filter(p => p.stats.tid === tid);
 	}
+	console.log("players", players);
 
 	return players;
 };
@@ -86,6 +82,7 @@ const updatePlayers = async (
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
+		console.log(inputs.abbrev, state.abbrev);
 		const ratings =
 			process.env.SPORT === "basketball"
 				? [
@@ -137,6 +134,7 @@ const updatePlayers = async (
 			[],
 			[...ratings, ...extraRatings],
 			[],
+			inputs.tid,
 		);
 
 		return {

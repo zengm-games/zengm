@@ -30,7 +30,7 @@ const awardName = (
 			<a
 				href={helpers.leagueUrl([
 					"roster",
-					teamAbbrevsCache[award.tid],
+					`${teamAbbrevsCache[award.tid]}_${award.tid}`,
 					season,
 				])}
 			>
@@ -58,7 +58,9 @@ const teamName = (
 	if (t) {
 		return (
 			<>
-				<a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.region}</a>{" "}
+				<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}>
+					{t.region}
+				</a>{" "}
 				({t.won}-{t.lost}
 				{ties ? <>-{t.tied}</> : null})
 			</>

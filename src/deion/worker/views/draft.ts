@@ -59,7 +59,16 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
 		undrafted = await idb.getCopies.playersPlus(undrafted, {
-			attrs: ["pid", "name", "age", "injury", "contract", "watch", "abbrev"],
+			attrs: [
+				"pid",
+				"name",
+				"age",
+				"injury",
+				"contract",
+				"watch",
+				"abbrev",
+				"tid",
+			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
 			season: g.get("season"),

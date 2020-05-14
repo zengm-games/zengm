@@ -1,0 +1,13 @@
+diff --git a/node_modules/@bugsnag/browser/dist/types/bugsnag.d.ts b/node_modules/@bugsnag/browser/dist/types/bugsnag.d.ts
+index 02c0edf..da87198 100644
+--- a/node_modules/@bugsnag/browser/dist/types/bugsnag.d.ts
++++ b/node_modules/@bugsnag/browser/dist/types/bugsnag.d.ts
+@@ -18,8 +18,6 @@ declare module "./bugsnag-core" {
+     metaData?: object | null;
+     logger?: BugsnagCore.ILogger | null;
+     filters?: Array<string | RegExp>;
+-    // catch-all for any missing options
+-    [key: string]: any;
+     // options for all bundled browser plugins
+     maxEvents?: number;
+     consoleBreadcrumbsEnabled?: boolean;

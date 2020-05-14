@@ -1,11 +1,13 @@
 import { helpers } from "../../util";
 
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
-// const mergeByPk = <PrimaryKey extends string, T extends Record<PrimaryKey, any>>(
-const mergeByPk = <T extends any>(
+const mergeByPk = <
+	PrimaryKey extends string,
+	T extends Record<PrimaryKey, any>
+>(
 	fromDb: T[],
 	fromCache: T[],
-	pk: string,
+	pk: PrimaryKey,
 ): T[] => {
 	const cacheKeys: {
 		[key: string]: number;

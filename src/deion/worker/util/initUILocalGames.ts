@@ -9,7 +9,12 @@ const initUILocalGames = async () => {
 
 	// Start with completed games
 	const games: LocalStateUI["games"] = (
-		await getProcessedGames(g.get("teamAbbrevsCache")[userTid], g.get("season"))
+		await getProcessedGames(
+			g.get("teamAbbrevsCache")[userTid],
+			g.get("season"),
+			undefined,
+			true,
+		)
 	).map(game => ({
 		gid: game.gid,
 		teams: [

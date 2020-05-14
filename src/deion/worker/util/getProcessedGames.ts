@@ -16,6 +16,7 @@ const getProcessedGames = async (
 	abbrev: string,
 	season: number,
 	loadedGames: Game[] = [],
+	includeAllStarGame?: boolean,
 ) => {
 	let tid;
 
@@ -59,6 +60,12 @@ const getProcessedGames = async (
 
 		// Check tid
 		if (gm.teams[0].tid === tid || gm.teams[1].tid === tid) {
+			gameInfos.push(gm);
+		} else if (
+			includeAllStarGame &&
+			gm.teams[0].tid === -1 &&
+			gm.teams[1].tid === -2
+		) {
 			gameInfos.push(gm);
 		}
 	}

@@ -176,6 +176,8 @@ const updateGames = async (
 		const games = await getProcessedGames(
 			g.get("teamAbbrevsCache")[g.get("userTid")],
 			g.get("season"),
+			undefined,
+			true,
 		);
 		const completed = games.slice(0, NUM_SHOW_COMPLETED);
 		return {
@@ -190,6 +192,7 @@ const updateGames = async (
 			g.get("teamAbbrevsCache")[g.get("userTid")],
 			g.get("season"),
 			state.completed,
+			true,
 		);
 
 		for (let i = games.length - 1; i >= 0; i--) {

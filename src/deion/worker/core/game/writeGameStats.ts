@@ -284,28 +284,6 @@ const writeGameStats = async (
 			},
 			conditions,
 		);
-
-		await toUI("mergeGames", [
-			[
-				{
-					gid: results.gid,
-					teams: [
-						{
-							ovr: results.team[0].ovr,
-							pts: results.team[0].stat.pts,
-							tid: results.team[0].id,
-							playoffs: gameStats.teams[0].playoffs,
-						},
-						{
-							ovr: results.team[1].ovr,
-							pts: results.team[1].stat.pts,
-							tid: results.team[1].id,
-							playoffs: gameStats.teams[1].playoffs,
-						},
-					],
-				},
-			],
-		]);
 	} else if (results.team[0].id === -1 && results.team[1].id === -2) {
 		if (allStars) {
 			const text = `${allStars.teamNames[tw]} ${tied ? "tied" : "defeated"} ${
@@ -329,6 +307,34 @@ const writeGameStats = async (
 				conditions,
 			);
 		}
+	}
+
+	if (
+		results.team[0].id === g.get("userTid") ||
+		results.team[1].id === g.get("userTid") ||
+		allStarGame
+	) {
+		await toUI("mergeGames", [
+			[
+				{
+					gid: results.gid,
+					teams: [
+						{
+							ovr: results.team[0].ovr,
+							pts: results.team[0].stat.pts,
+							tid: results.team[0].id,
+							playoffs: gameStats.teams[0].playoffs,
+						},
+						{
+							ovr: results.team[1].ovr,
+							pts: results.team[1].stat.pts,
+							tid: results.team[1].id,
+							playoffs: gameStats.teams[1].playoffs,
+						},
+					],
+				},
+			],
+		]);
 	}
 
 	for (const clutchPlay of results.clutchPlays) {

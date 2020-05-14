@@ -93,7 +93,11 @@ export const getUpcoming = async ({
 
 	const filteredSchedule = schedule
 		.filter(
-			game => tid === undefined || tid === game.homeTid || tid === game.awayTid,
+			game =>
+				tid === undefined ||
+				tid === game.homeTid ||
+				tid === game.awayTid ||
+				(game.homeTid === -1 && game.awayTid === -2),
 		)
 		.slice(0, limit);
 
@@ -145,7 +149,12 @@ const updateCompleted = async (
 ) => {
 	if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
 		// Load all games in list
-		const completed = await getProcessedGames(inputs.abbrev, g.get("season"));
+		const completed = await getProcessedGames(
+			inputs.abbrev,
+			g.get("season"),
+			undefined,
+			true,
+		);
 
 		return {
 			completed,
@@ -160,6 +169,7 @@ const updateCompleted = async (
 			inputs.abbrev,
 			g.get("season"),
 			state.completed,
+			true,
 		);
 
 		for (let i = games.length - 1; i >= 0; i--) {

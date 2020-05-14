@@ -26,7 +26,7 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 							const action = game.teams[0].playoffs
 								? {}
 								: {
-										actionDisabled: gameSimInProgress,
+										actionDisabled: gameSimInProgress || i === 0,
 										actionText: (
 											<>
 												Sim to

@@ -19,11 +19,14 @@ const getDaysLeftSchedule = async (target?: number | "allStarGame") => {
 		for (i = iPrev; i < schedule.length; i++) {
 			const { awayTid, homeTid, gid } = schedule[i]; // All-Star Game
 
-			if (awayTid === -2 && homeTid === -1) {
+			const allStarGame = awayTid === -2 && homeTid === -1;
+			if (allStarGame) {
 				// Add one to represent that the "current day" of games before the ASG ended. Then the normal +1 at the end of the while loop will account for the ASG itself
-				numDays += 1;
+				if (i > 0) {
+					numDays += 1;
+				}
 
-				if (target === "allStarGame") {
+				if (target === "allStarGame" || target === gid) {
 					return numDays;
 				}
 

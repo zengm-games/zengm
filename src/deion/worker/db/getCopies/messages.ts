@@ -2,7 +2,7 @@ import { getAll, idb, iterate } from "..";
 import { mergeByPk } from "./helpers";
 import type { Message } from "../../../common/types";
 
-const getLastEntries = <T extends any>(arr: T[], limit: number): T[] => {
+const getLastEntries = <T>(arr: T[], limit: number): T[] => {
 	return arr.slice(arr.length - limit);
 };
 

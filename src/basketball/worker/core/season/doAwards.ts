@@ -62,7 +62,7 @@ const getTopPlayersDefense = (
 	return getTopPlayers(options, playersUnsorted).map(getPlayerInfoDefense);
 };
 
-const makeTeams = <T extends any>(
+const makeTeams = <T>(
 	players: T[],
 ): [
 	{

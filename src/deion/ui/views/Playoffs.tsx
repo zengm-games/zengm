@@ -26,9 +26,11 @@ const Playoffs = ({
 			seasons: season,
 		},
 	});
+
 	const numRounds = series.length;
+
 	return (
-		<>
+		<div style={{ maxWidth: 210 * (2 * numRounds - 1) }}>
 			{!finalMatchups ? (
 				<p>
 					This is what the playoff matchups would be if the season ended right
@@ -37,7 +39,7 @@ const Playoffs = ({
 			) : null}
 
 			{confNames.length === 2 && numRounds > 1 ? (
-				<h2 className="d-none d-sm-block">
+				<h2 className="d-none d-sm-block px-2">
 					{confNames[1]} <span className="float-right">{confNames[0]}</span>
 				</h2>
 			) : null}
@@ -68,7 +70,7 @@ const Playoffs = ({
 					</tbody>
 				</table>
 			</ResponsiveTableWrapper>
-		</>
+		</div>
 	);
 };
 

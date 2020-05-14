@@ -29,6 +29,13 @@ eventually
 handle abbrevs changing over time without breaking URLs
 - ATL -> ATL_0. backwards compatible, and unbreakable. could also accept just 0 if necessary
 
+events revamp
+- nothing should be lost, ever
+- store info about trade, so the summary of a trade can be linked to
+- store the "value" of an event, so it can be used as a filter for important news
+- for traded picks, store info so eventual picked players can be filled in later
+- scheduled events output should be viewable somewhere
+
 manually specify draft order in god mode
 
 objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
@@ -130,11 +137,6 @@ game sim improvements
 - big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/
   - https://discordapp.com/channels/@me/604773209837010944/700376777473654784
 - ask what kind of players are not common enough
-
-even log revamp
-- store info about trade, so the summary of a trade can be linked to
-- store the "value" of an event, so it can be used as a filter for important news
-- for traded picks, store info so eventual picked players can be filled in later
 
 gm history page
 - like team history, but for the teams you GMed

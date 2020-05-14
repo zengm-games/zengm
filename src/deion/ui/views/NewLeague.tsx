@@ -1,7 +1,13 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import PropTypes from "prop-types";
-import React, { useCallback, useState, useRef, useReducer } from "react";
+import React, {
+	useCallback,
+	useState,
+	useRef,
+	useReducer,
+	useEffect,
+} from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -225,6 +231,11 @@ const SeasonsMenu = ({
 			}
 		}
 	};
+
+	// Handle initial value for season
+	useEffect(() => {
+		handleNewSeason(value);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const quickSeasons = [1956, 1968, 1984, 1996, 2003, 2020];
 
@@ -469,10 +480,15 @@ const NewLeague = (props: View<"newLeague">) => {
 				prevTeamRegionName = "";
 			}
 
+			let season = parseInt(localStorage.getItem("prevSeason") as any);
+			if (Number.isNaN(season)) {
+				season = 2020;
+			}
+
 			return {
 				creating: false,
 				customize,
-				season: 2020,
+				season,
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 				leagueFile,
@@ -561,6 +577,10 @@ const NewLeague = (props: View<"newLeague">) => {
 					"prevTeamRegionName",
 					getTeamRegionName(state.teams, state.tid),
 				);
+
+				if (state.customize === "real") {
+					localStorage.setItem("prevSeason", String(state.season));
+				}
 			} catch (err) {
 				dispatch({
 					type: "error",
@@ -876,17 +896,7 @@ const NewLeague = (props: View<"newLeague">) => {
 													type: "setCustomize",
 													customize: newCustomize,
 												});
-												if (
-													process.env.SPORT === "basketball" &&
-													newCustomize === "real"
-												) {
-													dispatch({ type: "setSeason", season: 2020 });
-													dispatch({
-														type: "newLeagueFile",
-														leagueFile: helpers.deepCopy(league2020),
-														teams: teams2020,
-													});
-												} else {
+												if (newCustomize !== "real") {
 													dispatch({ type: "clearLeagueFile" });
 												}
 											}}

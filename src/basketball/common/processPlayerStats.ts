@@ -57,7 +57,7 @@ const processStats = (
 		} else if (stat === "ftr") {
 			row[stat] = percentage(ps.fta, ps.fga);
 		} else if (stat === "tovp") {
-			row[stat] = percentage(ps.tov, 2 * (ps.fga + 0.44 * ps.fta));
+			row[stat] = percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);
 		} else if (stat === "season") {
 			row.season = ps.season;
 		} else if (stat === "age") {

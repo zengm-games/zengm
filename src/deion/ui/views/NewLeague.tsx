@@ -570,13 +570,21 @@ const NewLeague = (props: View<"newLeague">) => {
 				if (type === "real") {
 					type = String(state.season);
 				}
+				const teamRegionName = getTeamRegionName(state.teams, state.tid);
 				api.bbgmPing("league", [lid, type]);
+				if (window.enableLogging && window.gtag) {
+					window.gtag("event", "new_league", {
+						// eslint-disable-next-line @typescript-eslint/camelcase
+						event_category: type,
+						// eslint-disable-next-line @typescript-eslint/camelcase
+						event_label: teamRegionName,
+						value: lid,
+					});
+				}
+
 				realtimeUpdate([], `/l/${lid}`);
 
-				localStorage.setItem(
-					"prevTeamRegionName",
-					getTeamRegionName(state.teams, state.tid),
-				);
+				localStorage.setItem("prevTeamRegionName", teamRegionName);
 
 				if (state.customize === "real") {
 					localStorage.setItem("prevSeason", String(state.season));

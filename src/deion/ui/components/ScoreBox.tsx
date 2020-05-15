@@ -289,7 +289,9 @@ const ScoreBox = ({
 											<a
 												href={helpers.leagueUrl([
 													"game_log",
-													teamAbbrevsCache[t.tid],
+													allStarGame
+														? "special"
+														: `${teamAbbrevsCache[t.tid]}_${t.tid}`,
 													gameSeason,
 													game.gid,
 												])}

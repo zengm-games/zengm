@@ -133,7 +133,7 @@ const GamesList = ({
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
-											`${abbrev}_${tid}`,
+											abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
 											season,
 											gm.gid,
 										])}
@@ -146,7 +146,7 @@ const GamesList = ({
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
-											`${abbrev}_${tid}`,
+											abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
 											season,
 											gm.gid,
 										])}
@@ -158,7 +158,7 @@ const GamesList = ({
 									<a
 										href={helpers.leagueUrl([
 											"game_log",
-											`${abbrev}_${tid}`,
+											abbrev === "special" ? abbrev : `${abbrev}_${tid}`,
 											season,
 											gm.gid,
 										])}

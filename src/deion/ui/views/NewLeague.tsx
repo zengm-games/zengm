@@ -571,7 +571,6 @@ const NewLeague = (props: View<"newLeague">) => {
 					type = String(state.season);
 				}
 				const teamRegionName = getTeamRegionName(state.teams, state.tid);
-				api.bbgmPing("league", [lid, type]);
 				if (window.enableLogging && window.gtag) {
 					window.gtag("event", "new_league", {
 						// eslint-disable-next-line @typescript-eslint/camelcase

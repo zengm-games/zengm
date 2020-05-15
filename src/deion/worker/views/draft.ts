@@ -108,6 +108,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"injury",
 				"contract",
 				"watch",
+				"prevTid",
+				"prevAbbrev",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats: ["per", "ewa"],

@@ -797,7 +797,10 @@ export type PlayerNames = Names & {
 export type Local = {
 	autoPlaySeasons: number;
 	autoSave: boolean;
-	fantasyDraftResults: Player<any>[];
+	fantasyDraftResults: (Player<any> & {
+		prevAbbrev: string;
+		prevTid: number;
+	})[];
 	goldUntil: number;
 	leagueLoaded: boolean;
 	phaseText: string;

@@ -318,7 +318,6 @@ const processRatings = (
 	output.ratings = playerRatings.map(pr => {
 		const row: any = {};
 
-		console.log(pr);
 		for (const attr of ratings) {
 			if (attr === "skills") {
 				row.skills = helpers.deepCopy(pr.skills);

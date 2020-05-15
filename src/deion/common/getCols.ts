@@ -1263,6 +1263,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	From: {},
 	Games: {
 		desc: "Number of Games",
 		sortSequence: ["desc", "asc"],

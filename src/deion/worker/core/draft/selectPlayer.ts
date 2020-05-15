@@ -20,8 +20,8 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		throw new Error(`Invalid draft pick number "${dp.pick}"`);
 	}
 
-	const p = await idb.cache.players.get(pid); // Draft player
-
+	const p = await idb.cache.players.get(pid);
+	const prevTid = p.tid;
 	p.tid = dp.tid;
 
 	const expansionDraft = g.get("expansionDraft");
@@ -30,7 +30,13 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		g.get("phase") === PHASE.FANTASY_DRAFT || expansionDraft.phase === "draft";
 
 	if (fantasyOrExpansionDraft) {
-		const fakeP = helpers.deepCopy(p);
+		const fakeP = {
+			...helpers.deepCopy(p),
+
+			// These are only used for expansion draft UI, not fantasy draft
+			prevTid,
+			prevAbbrev: g.get("teamAbbrevsCache")[prevTid],
+		};
 		fakeP.draft = {
 			round: dp.round,
 			pick: dp.pick,

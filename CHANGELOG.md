@@ -4,9 +4,11 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-14: Shows the team a player was selected from in the "Drafted" table of expansion drafts.
+
 * 2020-05-14: Historical rosters in BBGM include team abbreviations that change when a team moves, without breaking links to team pages from past seasons. Some parts of the UI still incorrectly display the current abbreviation rather than the historical one.
 
-* 2020-05-14: "Team History" page shows team region and name from past seasons.
+* 2020-05-14: "Team History" page shows team region and name from past seasons. [[1]](https://old.reddit.com/r/BasketballGM/comments/gjy01l/version_202005141399_team_history_page_shows_team/)
 
 * 2020-05-13: "Sim to game" button on the schedule page, which now also includes the All-Star game.
 

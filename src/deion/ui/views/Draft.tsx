@@ -216,13 +216,16 @@ const Draft = ({
 			data,
 		};
 	});
+
 	const colsDrafted = getCols("Pick", "Team").concat(
 		colsUndrafted.slice(0, -1),
 	);
 
 	if (expansionDraft) {
 		colsDrafted.splice(4, 1);
+		colsDrafted.splice(2, 0, getCols("From")[0]);
 	}
+
 	const rowsDrafted = drafted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
@@ -274,11 +277,22 @@ const Draft = ({
 			);
 		}
 
+		if (expansionDraft) {
+			data.splice(
+				2,
+				0,
+				<a href={helpers.leagueUrl(["roster", `${p.prevAbbrev}_${p.prevTid}`])}>
+					{p.prevAbbrev}
+				</a>,
+			);
+		}
+
 		return {
 			key: i,
 			data,
 			classNames: {
-				"table-info": userTids.includes(p.draft.tid),
+				"table-info":
+					userTids.includes(p.draft.tid) || userTids.includes(p.prevTid),
 			},
 		};
 	});

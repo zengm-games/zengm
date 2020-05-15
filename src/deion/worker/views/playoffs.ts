@@ -125,7 +125,7 @@ const updatePlayoffs = async (
 			finalMatchups,
 			matchups,
 			numGamesToWinSeries: g
-				.get("numGamesPlayoffSeries")
+				.get("numGamesPlayoffSeries", inputs.season)
 				.map(helpers.numGamesToWinSeries),
 			confNames,
 			season: inputs.season,

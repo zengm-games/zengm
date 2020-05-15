@@ -4,6 +4,12 @@ add "adjust for inflation" checkbox to team finances, which scales budget items 
 
 revamp ai drafting
 
+way to import team and player info
+- options
+  - like before, from manage teams
+  - when creating a new league, option to use teams from another file
+  - somehow globally specify default team info overrides
+
 FBGM - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 
 max expansion population, unless god mode
@@ -17,11 +23,6 @@ eventually
 - way to view scheduled events and add/edit/delete
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
 - show draft prospects separately when creating a new custom league, to allow creating one without them
-- way to import team and player info
-  - options
-    - like before, from manage teams
-    - when creating a new league, option to use teams from another file
-    - somehow globally specify default teams
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?

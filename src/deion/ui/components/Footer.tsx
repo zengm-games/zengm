@@ -104,7 +104,7 @@ const Footer = React.memo(() => {
 						target="_blank"
 					>
 						Reddit
-					</a>
+					</a>{" "}
 					·{" "}
 					<a
 						href="https://discord.gg/caPFuM9"

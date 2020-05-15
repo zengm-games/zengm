@@ -39,7 +39,7 @@ const categories = [
 		objectStores: "games",
 		name: "Box Scores",
 		desc:
-			"Box scores from multiple seasons take up tons of space, but by default only one season is saved.",
+			"Box scores take up tons of space, but by default only three seasons are saved.",
 		checked: false,
 	},
 ];

@@ -13,7 +13,7 @@ import type {
 
 const overrides = util.overrides;
 
-self.bbgm = { ...common, ...core, ...db, ...util };
+self.bbgm = { api, ...common, ...core, ...db, ...util };
 
 const deionWorker = async (options: {
 	overrides: {

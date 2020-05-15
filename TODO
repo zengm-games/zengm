@@ -1,3 +1,7 @@
+inconsistent text
+- https://cdn.discordapp.com/attachments/290015591216054273/710691278769225748/unknown.png
+- https://cdn.discordapp.com/attachments/290015591216054273/710691285790621726/unknown.png
+
 during a realistic year (i.e., one with a bunch of real players as draft prospects), any generated draft prospects should be bums
 
 add "adjust for inflation" checkbox to team finances, which scales budget items with salary cap
@@ -26,8 +30,12 @@ eventually
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
 - allow user to switch to expansion team from scheduled event?
+- contraction
 
 ---
+
+way to bulk delete leagues
+- replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button
 
 handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
 - any abbrev returned in stats or ratings from playersPlus is wrong

@@ -68,10 +68,12 @@ const doInjury = (
 		process.env.SPORT === "basketball"
 			? p2.injury.gamesRemaining
 			: p2.injury.gamesRemaining * 3;
+	const r = p2.ratings.length - 1;
 
 	if (
 		gamesRemainingNormalized > 25 &&
-		Math.random() < gamesRemainingNormalized / 82
+		Math.random() < gamesRemainingNormalized / 82 &&
+		!p2.ratings[r].locked
 	) {
 		ratingsLoss = true;
 		let biggestRatingsLoss = 20; // Small chance of horrible things
@@ -81,7 +83,6 @@ const doInjury = (
 		}
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
-		const r = p2.ratings.length - 1;
 		p2.ratings[r].spd = helpers.bound(
 			p2.ratings[r].spd - random.randInt(1, biggestRatingsLoss),
 			1,

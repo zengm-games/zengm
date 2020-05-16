@@ -84,7 +84,8 @@ const addNewTeamToExistingLeague = async (
 			g.get("numDraftRounds"),
 		);
 		if (numNeeded > 0) {
-			await draft.genPlayers(draftYear, undefined, numNeeded);
+			// Generate scrubs only!
+			await draft.genPlayers(draftYear, undefined, numNeeded, true);
 		}
 	}
 

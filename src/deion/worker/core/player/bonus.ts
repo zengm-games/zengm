@@ -2,7 +2,7 @@ import limitRating from "./limitRating";
 import { random } from "../../util";
 import type { PlayerWithoutKey } from "../../../common/types";
 
-const bonus = (p: PlayerWithoutKey) => {
+const bonus = (p: PlayerWithoutKey, amount?: number) => {
 	const ratings = p.ratings[p.ratings.length - 1];
 	const skip = ["fuzz", "ovr", "pos", "pot", "season", "skills"];
 
@@ -11,7 +11,8 @@ const bonus = (p: PlayerWithoutKey) => {
 			continue;
 		}
 
-		ratings[key] = limitRating(ratings[key] + random.randInt(0, 10));
+		const boost = amount !== undefined ? amount : random.randInt(0, 10);
+		ratings[key] = limitRating(ratings[key] + boost);
 	}
 };
 

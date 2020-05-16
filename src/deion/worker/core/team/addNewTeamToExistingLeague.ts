@@ -1,11 +1,11 @@
-import { g, logEvent } from "../../util";
+import { g, logEvent, helpers } from "../../util";
 import type { Team } from "../../../common/types";
 import generate from "./generate";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
 import { draft, league, finances } from "..";
 import { idb } from "../../db";
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {
@@ -63,10 +63,29 @@ const addNewTeamToExistingLeague = async (
 	}
 
 	// Add new draft prospects to draft classes
+	const draftClassTargetSize = Math.round(
+		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+	);
+	const draftProspects = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		PLAYER.UNDRAFTED,
+	);
+
 	for (let i = 0; i < 3; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
 
-		await draft.genPlayers(draftYear, undefined, g.get("numDraftRounds"));
+		const numPlayersAlreadyInDraftClass = draftProspects.filter(
+			p => p.draft.year === draftYear,
+		).length;
+
+		const numNeeded = helpers.bound(
+			draftClassTargetSize - numPlayersAlreadyInDraftClass,
+			0,
+			g.get("numDraftRounds"),
+		);
+		if (numNeeded > 0) {
+			await draft.genPlayers(draftYear, undefined, numNeeded);
+		}
 	}
 
 	await finances.updateRanks(["budget"]);
@@ -83,4 +102,5 @@ const addNewTeamToExistingLeague = async (
 	return t;
 };
 
+console.log("fuck");
 export default addNewTeamToExistingLeague;

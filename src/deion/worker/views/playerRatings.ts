@@ -65,7 +65,6 @@ export const getPlayers = async (
 	} else if (tid !== undefined) {
 		players = players.filter(p => p.stats.tid === tid);
 	}
-	console.log("players", players);
 
 	return players;
 };
@@ -82,7 +81,6 @@ const updatePlayers = async (
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {
-		console.log(inputs.abbrev, state.abbrev);
 		const ratings =
 			process.env.SPORT === "basketball"
 				? [

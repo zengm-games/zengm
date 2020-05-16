@@ -22,35 +22,6 @@ const newPhasePreseason = async (
 		"teamSeasonsBySeasonTid",
 		[[g.get("season") - 1], [g.get("season")]],
 	);
-	const popRanks = helpers.getPopRanks(teamSeasons);
-
-	for (let i = 0; i < teamSeasons.length; i++) {
-		const t = teams.find(t2 => t2.tid === teamSeasons[i].tid);
-
-		if (!t || g.get("userTids").includes(t.tid)) {
-			continue;
-		}
-
-		const defaultTicketPrice = helpers.defaultTicketPrice(popRanks[i]);
-		const defaultBudgetAmount = helpers.defaultBudgetAmount(popRanks[i]);
-
-		if (t.budget.ticketPrice.amount !== defaultTicketPrice) {
-			t.budget.ticketPrice.amount = defaultTicketPrice;
-		}
-
-		const keys: (keyof typeof t["budget"])[] = [
-			"scouting",
-			"coaching",
-			"health",
-			"facilities",
-		];
-
-		for (const key of keys) {
-			if (t.budget[key].amount !== defaultBudgetAmount) {
-				t.budget[key].amount = defaultBudgetAmount;
-			}
-		}
-	}
 
 	let scoutingRank: number | undefined;
 	for (const t of teams) {

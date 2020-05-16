@@ -1368,13 +1368,16 @@ const switchTeam = async (tid: number) => {
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
-const updateBudget = async (budgetAmounts: {
-	coaching: number;
-	facilities: number;
-	health: number;
-	scouting: number;
-	ticketPrice: number;
-}) => {
+const updateBudget = async (
+	budgetAmounts: {
+		coaching: number;
+		facilities: number;
+		health: number;
+		scouting: number;
+		ticketPrice: number;
+	},
+	adjustForInflation: boolean,
+) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
 
 	for (const key of helpers.keys(budgetAmounts)) {
@@ -1383,6 +1386,8 @@ const updateBudget = async (budgetAmounts: {
 			t.budget[key].amount = budgetAmounts[key];
 		}
 	}
+
+	t.adjustForInflation = adjustForInflation;
 
 	await idb.cache.teams.put(t);
 	await finances.updateRanks(["budget"]);

@@ -920,6 +920,9 @@ export type Team = {
 	// Optional because upgrade code was not written on 2020-05-04. Ideally should have populated these with the most recent value of teamSeason.
 	pop?: number;
 	stadiumCapacity?: number;
+
+	// Optional because no upgrade. Otherwise, would make this true
+	adjustForInflation?: boolean;
 };
 
 export type TeamAttr = keyof Team;

@@ -82,23 +82,29 @@ const correctLinkLid = (
 	event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
 };
 
-const defaultBudgetAmount = (popRank: number = g.get("numTeams")) => {
+const defaultBudgetAmount = (
+	popRank: number = g.get("numTeams"),
+	salaryCap: number = g.get("salaryCap"),
+) => {
 	return (
 		Math.round(
 			20 +
-				(g.get("salaryCap") / 90000) * 1330 +
-				(900 * (g.get("salaryCap") / 90000) * (g.get("numTeams") - popRank)) /
+				(salaryCap / 90000) * 1330 +
+				(900 * (salaryCap / 90000) * (g.get("numTeams") - popRank)) /
 					(g.get("numTeams") - 1),
 		) * 10
 	);
 };
 
-const defaultTicketPrice = (popRank: number = g.get("numTeams")) => {
+const defaultTicketPrice = (
+	popRank: number = g.get("numTeams"),
+	salaryCap: number = g.get("salaryCap"),
+) => {
 	return parseFloat(
 		(
 			1 +
-			(g.get("salaryCap") / 90000) * 36 +
-			(25 * (g.get("salaryCap") / 90000) * (g.get("numTeams") - popRank)) /
+			(salaryCap / 90000) * 36 +
+			(25 * (salaryCap / 90000) * (g.get("numTeams") - popRank)) /
 				(g.get("numTeams") - 1)
 		).toFixed(2),
 	);

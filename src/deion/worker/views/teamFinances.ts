@@ -156,7 +156,7 @@ const updateTeamFinances = async (
 
 		// Get stuff for the finances form
 		const t = await idb.getCopy.teamsPlus({
-			attrs: ["budget"],
+			attrs: ["budget", "adjustForInflation"],
 			seasonAttrs: ["expenses"],
 			season: g.get("season"),
 			tid: inputs.tid,
@@ -192,6 +192,7 @@ const updateTeamFinances = async (
 			contracts,
 			contractTotals,
 			salariesSeasons,
+			phase: g.get("phase"),
 		};
 	}
 };

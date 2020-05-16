@@ -8,11 +8,13 @@ import {
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, logEvent, toWorker, useLocalShallow } from "../util";
-import type { View } from "../../common/types";
+import type { View, Phase } from "../../common/types";
+import { PHASE } from "../../common";
 
 type FinancesFormProps = {
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
+	phase: Phase;
 	t: any;
 	tid: number;
 	userTid: number;
@@ -26,6 +28,7 @@ type FinancesFormState = {
 	saving: boolean;
 	scouting: string;
 	ticketPrice: string;
+	adjustForInflation: boolean;
 };
 
 type HandleChanges = {
@@ -34,6 +37,7 @@ type HandleChanges = {
 	health: (event: ChangeEvent<HTMLInputElement>) => void;
 	scouting: (event: ChangeEvent<HTMLInputElement>) => void;
 	ticketPrice: (event: ChangeEvent<HTMLInputElement>) => void;
+	adjustForInflation: (event: ChangeEvent<HTMLInputElement>) => void;
 };
 
 class FinancesForm extends React.Component<
@@ -52,6 +56,7 @@ class FinancesForm extends React.Component<
 			saving: false,
 			scouting: String(props.t.budget.scouting.amount),
 			ticketPrice: String(props.t.budget.ticketPrice.amount),
+			adjustForInflation: props.t.adjustForInflation !== false,
 		};
 		this.handleChanges = {
 			coaching: this.handleChange.bind(this, "coaching"),
@@ -59,6 +64,7 @@ class FinancesForm extends React.Component<
 			health: this.handleChange.bind(this, "health"),
 			scouting: this.handleChange.bind(this, "scouting"),
 			ticketPrice: this.handleChange.bind(this, "ticketPrice"),
+			adjustForInflation: this.handleChange.bind(this, "adjustForInflation"),
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
@@ -74,6 +80,7 @@ class FinancesForm extends React.Component<
 				health: nextProps.t.budget.health.amount,
 				scouting: nextProps.t.budget.scouting.amount,
 				ticketPrice: nextProps.t.budget.ticketPrice.amount,
+				adjustForInflation: nextProps.t.adjustForInflation !== false,
 			};
 		}
 
@@ -81,6 +88,14 @@ class FinancesForm extends React.Component<
 	}
 
 	handleChange(name: keyof HandleChanges, e: ChangeEvent<HTMLInputElement>) {
+		if (name === "adjustForInflation") {
+			this.setState({
+				dirty: true,
+				adjustForInflation: e.target.checked,
+			});
+			return;
+		}
+
 		// @ts-ignore
 		this.setState({
 			dirty: true,
@@ -124,7 +139,12 @@ class FinancesForm extends React.Component<
 			),
 		};
 
-		await toWorker("main", "updateBudget", budgetAmounts);
+		await toWorker(
+			"main",
+			"updateBudget",
+			budgetAmounts,
+			this.state.adjustForInflation,
+		);
 
 		logEvent({
 			type: "success",
@@ -215,7 +235,7 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current rate: #{t.budget.scouting.rank}
 						<br />
-						{noSeasonData ? (
+						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
 							<br />
 						) : (
 							`Spent this season: #${t.seasonAttrs.expenses.scouting.rank}`
@@ -242,7 +262,7 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current spending rate: #{t.budget.coaching.rank}
 						<br />
-						{noSeasonData ? (
+						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
 							<br />
 						) : (
 							`Spent this season: #${t.seasonAttrs.expenses.coaching.rank}`
@@ -269,7 +289,7 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current spending rate: #{t.budget.health.rank}
 						<br />
-						{noSeasonData ? (
+						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
 							<br />
 						) : (
 							`Spent this season: #${t.seasonAttrs.expenses.health.rank}`
@@ -296,26 +316,46 @@ class FinancesForm extends React.Component<
 					<div className="float-left finances-settings-text-small">
 						Current spending rate: #{t.budget.facilities.rank}
 						<br />
-						{noSeasonData ? (
+						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
 							<br />
 						) : (
 							`Spent this season: #${t.seasonAttrs.expenses.facilities.rank}`
 						)}
 					</div>
 				</div>
-				<br />
+				<div className="row mt-3" style={{ paddingLeft: 100 }}>
+					<div className="form-check">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								onChange={this.handleChanges.adjustForInflation}
+								type="checkbox"
+								checked={this.state.adjustForInflation}
+								disabled={formDisabled}
+							/>
+							Auto adjust for inflation
+						</label>
+						<HelpPopover
+							placement="bottom"
+							title="Inflation adjustment"
+							className="ml-1"
+						>
+							When enabled, all your revenue and expense settings will
+							automatically change whenever the salary cap changes. Salary cap
+							goes up by 7%? Revenue and expense settings go up by 7%.
+						</HelpPopover>
+					</div>
+				</div>
 				{tid === userTid ? (
-					<div className="row">
-						<div className="float-left finances-settings-label">&nbsp;</div>
-						<div className="input-group input-group-sm float-left finances-settings-field">
-							<button
-								className="btn btn-large btn-primary"
-								disabled={formDisabled || this.state.saving}
-								style={{ lineHeight: "1.5em" }}
-							>
-								Save Revenue and Expense Settings
-							</button>
-						</div>
+					<div className="row mt-3" style={{ paddingLeft: 100 }}>
+						<button
+							className="btn btn-large btn-primary"
+							disabled={formDisabled || this.state.saving}
+						>
+							Save Revenue and
+							<br />
+							Expense Settings
+						</button>
 					</div>
 				) : null}
 			</form>
@@ -437,6 +477,7 @@ const TeamFinances = ({
 	minPayroll,
 	numGames,
 	payroll,
+	phase,
 	salariesSeasons,
 	salaryCap,
 	show,
@@ -703,6 +744,7 @@ const TeamFinances = ({
 						<FinancesForm
 							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}
+							phase={phase}
 							t={t}
 							tid={tid}
 							userTid={userTid}
@@ -746,6 +788,7 @@ TeamFinances.propTypes = {
 	minPayroll: PropTypes.number.isRequired,
 	numGames: PropTypes.number.isRequired,
 	payroll: PropTypes.number.isRequired,
+	phase: PropTypes.number.isRequired,
 	salariesSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,
 	salaryCap: PropTypes.number.isRequired,
 	show: PropTypes.oneOf(["10", "all"]).isRequired,

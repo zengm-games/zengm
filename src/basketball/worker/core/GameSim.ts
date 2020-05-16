@@ -934,9 +934,12 @@ class GameSim {
 		}
 
 		let newInjury = false;
-		const baseRate = this.allStarGame
+		let baseRate = this.allStarGame
 			? g.get("injuryRate") / 4
 			: g.get("injuryRate");
+
+		// Modulate by pace - since injuries are evaluated per possession, but really probably happen per minute played
+		baseRate *= 100 / g.get("pace");
 
 		for (const t of teamNums) {
 			for (let p = 0; p < this.team[t].player.length; p++) {

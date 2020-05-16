@@ -14,7 +14,6 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
 import league2020 from "../../../../public/basketball/leagues/2020.json";
-import api from "../api";
 import classNames from "classnames";
 
 type NewLeagueTeam = {

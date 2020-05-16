@@ -103,5 +103,4 @@ const addNewTeamToExistingLeague = async (
 	return t;
 };
 
-console.log("fuck");
 export default addNewTeamToExistingLeague;

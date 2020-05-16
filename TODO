@@ -10,8 +10,6 @@ way to import team and player info
 
 FBGM - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 
-max expansion population, unless god mode
-
 legends mode
 - start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
 - NBA seasons only
@@ -55,8 +53,6 @@ relocation fun stuff
 - would be cool to let people cancel a relocation of their team
   - could prompt them, and then if they say no still move their cid/did but leave the rest alone
 - would be cool to let people move their team (and rebrand) by spending $
-
-dropdown and left menu highlight looks weird for god mode, what did it look like with reactstrap?
 
 ovr formula should change depending on game simulation settings, especially 3 point shooting
 

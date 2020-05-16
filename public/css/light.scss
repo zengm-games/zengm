@@ -130,6 +130,10 @@ a.god-mode,
 		text-decoration: none;
 	}
 }
+a.god-mode.active {
+	background-color: darken($purple, 10);
+	color: $white;
+}
 .sidebar a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: lighten($primary, 30);

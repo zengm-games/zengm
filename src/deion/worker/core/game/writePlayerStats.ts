@@ -68,12 +68,11 @@ const doInjury = (
 		process.env.SPORT === "basketball"
 			? p2.injury.gamesRemaining
 			: p2.injury.gamesRemaining * 3;
-	const r = p2.ratings.length - 1;
 
 	if (
 		gamesRemainingNormalized > 25 &&
 		Math.random() < gamesRemainingNormalized / 82 &&
-		!p2.ratings[r].locked
+		!p2.ratings[p2.ratings.length - 1].locked
 	) {
 		ratingsLoss = true;
 		let biggestRatingsLoss = 20; // Small chance of horrible things
@@ -83,6 +82,8 @@ const doInjury = (
 		}
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
+		const r = p2.ratings.length - 1; // New ratings row
+
 		p2.ratings[r].spd = helpers.bound(
 			p2.ratings[r].spd - random.randInt(1, biggestRatingsLoss),
 			1,
@@ -101,10 +102,11 @@ const doInjury = (
 		);
 
 		// Update ovr and pot
-		player.develop(p2, 0); // Bound pot - can't go up after injury!
+		player.develop(p2, 0);
 
-		const r2 = p2.ratings.length - 2;
+		const r2 = p2.ratings.length - 2; // Prev ratings row
 
+		// Bound pot - can't go up after injury!
 		if (p2.ratings[r].pot > p2.ratings[r2].pot) {
 			p2.ratings[r].pot = p2.ratings[r2].pot;
 		}

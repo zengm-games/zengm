@@ -13,13 +13,6 @@ total stats, for traded players
 - what about advanced stats?
 - MVP
 
-multiple reports of injuries leading to increased player ratings
-- https://cdn.discordapp.com/attachments/290015591216054273/711175324561440798/6f411b05b158c641afe2b302d098eb11.png
-- https://cdn.discordapp.com/attachments/290015591216054273/711219192522866688/unknown.png
-- seems to somehow be storing the new row (lower ratings) behind the current row in the db:
-  - https://cdn.discordapp.com/attachments/290015591216054273/711225151668355143/unknown.png
-  - https://cdn.discordapp.com/attachments/290015591216054273/711229064584757339/unknown.png
-
 frivolities > roster continuity should handle expansion teams
 
 revamp ai drafting

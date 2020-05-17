@@ -4,7 +4,7 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-05-16: Added "Auto adjust for inflation" option to the Team Finances page, which will keep revenue and expense settings in sync with salary cap changes. By default this setting is enabled.
+* 2020-05-16: Added "Auto adjust for inflation" option to the Team Finances page, which will keep revenue and expense settings in sync with salary cap changes. This setting is enabled by default.
 
 * 2020-05-14: Shows the team a player was selected from in the "Drafted" table of expansion drafts.
 

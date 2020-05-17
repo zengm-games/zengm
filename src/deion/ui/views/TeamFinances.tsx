@@ -341,8 +341,9 @@ class FinancesForm extends React.Component<
 							className="ml-1"
 						>
 							When enabled, all your revenue and expense settings will
-							automatically change whenever the salary cap changes. Salary cap
-							goes up by 7%? Revenue and expense settings go up by 7%.
+							automatically change whenever the salary cap changes. This will
+							generally maintain your ranks, although expansion teams and
+							changes made by AI teams can still result in your ranks changing.
 						</HelpPopover>
 					</div>
 				</div>

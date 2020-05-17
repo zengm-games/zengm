@@ -3,7 +3,6 @@ import { g, toUI, helpers, initUILocalGames, local } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances } from "..";
-import range from "lodash/range";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {

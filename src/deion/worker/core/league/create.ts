@@ -212,6 +212,10 @@ export const createWithoutSaving = (
 		);
 	}
 
+	if (gameAttributes.numDraftRounds < 1) {
+		throw new Error("numDraftRounds must be a positive number");
+	}
+
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
 

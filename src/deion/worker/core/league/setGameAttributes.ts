@@ -3,6 +3,7 @@ import { g, toUI, helpers, initUILocalGames, local } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances } from "..";
+import range from "lodash/range";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -65,39 +66,42 @@ const setGameAttributes = async (
 				);
 				const popRanks = helpers.getPopRanks(teamSeasons);
 
+				const keys: (keyof typeof teams[number]["budget"])[] = [
+					"scouting",
+					"coaching",
+					"health",
+					"facilities",
+				];
+
 				for (let i = 0; i < teams.length; i++) {
 					const t = teams[i];
-					console.log(t.region, t.name);
 					const popRank = popRanks[i];
 					if (popRank === undefined) {
 						continue;
 					}
 
+					let updated = false;
+
 					if (g.get("userTids").includes(t.tid)) {
 						if (t.adjustForInflation !== false) {
-							// This won't perfectly keep pace, because a higher currentRank would be needed to maintain a higher rank, and a lower currentRank would be needed to maintain lower.
-							// Better - find out what popRank would be needed to obtain the current rank in each budget item
-							const currentRank = g.get("numTeams") / 2;
+							for (const key of keys) {
+								const factor =
+									helpers.defaultBudgetAmount(t.budget[key].rank, value) /
+									helpers.defaultBudgetAmount(t.budget[key].rank);
+
+								t.budget[key].amount =
+									Math.round((t.budget[key].amount * factor) / 10) * 10;
+							}
 
 							const factor =
-								helpers.defaultBudgetAmount(currentRank, value) /
-								helpers.defaultBudgetAmount(currentRank);
-							t.budget.coaching.amount =
-								Math.round((t.budget.coaching.amount * factor) / 10) * 10;
-							t.budget.facilities.amount =
-								Math.round((t.budget.facilities.amount * factor) / 10) * 10;
-							t.budget.health.amount =
-								Math.round((t.budget.health.amount * factor) / 10) * 10;
-							t.budget.scouting.amount =
-								Math.round((t.budget.scouting.amount * factor) / 10) * 10;
+								helpers.defaultTicketPrice(t.budget.ticketPrice.rank, value) /
+								helpers.defaultTicketPrice(t.budget.ticketPrice.rank);
 
 							t.budget.ticketPrice.amount = parseFloat(
-								(
-									(t.budget.ticketPrice.amount *
-										helpers.defaultTicketPrice(currentRank, value)) /
-									helpers.defaultTicketPrice(currentRank)
-								).toFixed(2),
+								(t.budget.ticketPrice.amount * factor).toFixed(2),
 							);
+
+							updated = true;
 						}
 					} else {
 						const defaultTicketPrice = helpers.defaultTicketPrice(
@@ -111,23 +115,20 @@ const setGameAttributes = async (
 
 						if (t.budget.ticketPrice.amount !== defaultTicketPrice) {
 							t.budget.ticketPrice.amount = defaultTicketPrice;
+							updated = true;
 						}
-
-						const keys: (keyof typeof t["budget"])[] = [
-							"scouting",
-							"coaching",
-							"health",
-							"facilities",
-						];
 
 						for (const key of keys) {
 							if (t.budget[key].amount !== defaultBudgetAmount) {
 								t.budget[key].amount = defaultBudgetAmount;
+								updated = true;
 							}
 						}
 					}
 
-					await idb.cache.teams.put(t);
+					if (updated) {
+						await idb.cache.teams.put(t);
+					}
 				}
 
 				await finances.updateRanks(["budget"]);

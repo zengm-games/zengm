@@ -9,14 +9,16 @@ import { idb } from "../../db";
 const clear = async () => {
 	const tr = await idb.cache.trade.get(0);
 
-	for (const t of tr.teams) {
-		t.pids = [];
-		t.pidsExcluded = [];
-		t.dpids = [];
-		t.dpidsExcluded = [];
-	}
+	if (tr) {
+		for (const t of tr.teams) {
+			t.pids = [];
+			t.pidsExcluded = [];
+			t.dpids = [];
+			t.dpidsExcluded = [];
+		}
 
-	await idb.cache.trade.put(tr);
+		await idb.cache.trade.put(tr);
+	}
 };
 
 export default clear;

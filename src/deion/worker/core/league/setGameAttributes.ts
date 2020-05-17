@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import { g, toUI, helpers, initUILocalGames, local } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
-import { finances } from "..";
+import { finances, trade } from "..";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -132,6 +132,8 @@ const setGameAttributes = async (
 
 				await finances.updateRanks(["budget"]);
 			}
+		} else if (key === "userTid") {
+			await trade.clear();
 		}
 
 		await idb.cache.gameAttributes.put({

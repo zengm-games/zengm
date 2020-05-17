@@ -1,10 +1,11 @@
 revamp ai drafting
 
 way to import team and player info
-- options
-  - like before, from manage teams
-  - when creating a new league, option to use teams from another file
-  - somehow globally specify default team info overrides
+- new page, only accessible from outside a league
+- upload a file with team and player overrides
+  - for players, lets you specify an image url based on bbref slug
+  - for teams, lets you specify logo, name, etc based on abbrev
+- automatically use when creating new league. option in custom league to disable using it (either teams or players independently)
 
 total stats, for traded players
 - player stats table

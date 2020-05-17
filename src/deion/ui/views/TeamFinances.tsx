@@ -233,7 +233,7 @@ class FinancesForm extends React.Component<
 						</div>
 					</div>
 					<div className="float-left finances-settings-text-small">
-						Current rate: #{t.budget.scouting.rank}
+						Current spending rate: #{t.budget.scouting.rank}
 						<br />
 						{noSeasonData || this.props.phase === PHASE.PRESEASON ? (
 							<br />

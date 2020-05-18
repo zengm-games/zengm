@@ -7,6 +7,7 @@ console.log("Starting build.js...");
 
 build.reset();
 build.copyFiles();
+build.hashLeagueFiles();
 build.buildCSS();
 
 const jsonSchema = generateJSONSchema(getSport());

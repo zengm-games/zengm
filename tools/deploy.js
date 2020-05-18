@@ -38,15 +38,18 @@ const mySpawn = (command, args) => {
 	console.log(`Deploying to ${domain}...`);
 
 	// Copy gen first, so index.html never links to partial file
-	console.log("Copying gen...");
-	await mySpawn("rsync", [
-		"-vhrl",
-		"./build/gen/",
-		`jersch50@garibaldi.dreamhost.com:/home/jersch50/${domain}/gen/`,
-	]);
+	const copyAndKeep = ["gen", "leagues"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
+	for (const folder of copyAndKeep) {
+		console.log(`Copying ${folder}...`);
+		await mySpawn("rsync", [
+			"-vhrl",
+			`./build/${folder}/`,
+			`jersch50@garibaldi.dreamhost.com:/home/jersch50/${domain}/${folder}/`,
+		]);
+	}
 
 	console.log("Copying other files...");
-	const excludes = ["--exclude", "/gen"];
+	const excludes = ["--exclude", "/gen", "--exclude", "/leagues"];
 	if (subdomain === "beta") {
 		excludes.push("--exclude", "/sw.js*");
 	}

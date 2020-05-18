@@ -7,12 +7,12 @@ const path = require("path");
 const replace = require("replace");
 const getSport = require("./getSport");
 
-const buildCSS = (watch /*: boolean*/ = false) => {
-	const fileHash = contents => {
-		// https://github.com/sindresorhus/rev-hash
-		return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
-	};
+const fileHash = contents => {
+	// https://github.com/sindresorhus/rev-hash
+	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
+};
 
+const buildCSS = (watch /*: boolean*/ = false) => {
 	const filenames = ["light", "dark"];
 	for (const filename of filenames) {
 		const start = process.hrtime();
@@ -126,7 +126,9 @@ const copyFiles = () => {
 		sport = "basketball";
 	}
 
-	fse.copySync(path.join("public", sport), "build");
+	fse.copySync(path.join("public", sport), "build", {
+		filter: filename => !filename.includes(".gitignore"),
+	});
 
 	// Remove the empty folders created by the "filter" function.
 	for (const folder of foldersToIgnore) {
@@ -134,6 +136,33 @@ const copyFiles = () => {
 	}
 
 	setSport();
+};
+
+const hashLeagueFiles = () => {
+	const folder = path.join("build", "leagues");
+	const leagueFiles = fs.readdirSync(folder);
+
+	const leagueFileHashes = {};
+
+	for (const filename of leagueFiles) {
+		const sourcePath = path.join(folder, filename);
+		const contents = fs.readFileSync(sourcePath);
+		const hash = fileHash(contents);
+
+		const leagueFile = path.basename(filename, ".json");
+		leagueFileHashes[leagueFile] = hash;
+
+		fse.moveSync(sourcePath, path.join(folder, `${leagueFile}-${hash}.json`));
+	}
+
+	replace({
+		regex: "window.leagueFileHashes = {};",
+		replacement: `window.leagueFileHashes = ${JSON.stringify(
+			leagueFileHashes,
+		)};`,
+		paths: ["build/index.html"],
+		silent: true,
+	});
 };
 
 const genRev = () => {
@@ -220,6 +249,7 @@ module.exports = {
 	buildCSS,
 	copyFiles,
 	genRev,
+	hashLeagueFiles,
 	reset,
 	setTimestamps,
 };

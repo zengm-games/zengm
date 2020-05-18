@@ -208,6 +208,14 @@ const LeaguePartPicker = ({
 	);
 };
 
+const fetchLeagueFile = (filename: number | string) => {
+	let filenameWithHash = filename;
+	if (window.leagueFileHashes[filename]) {
+		filenameWithHash += `-${window.leagueFileHashes[filename]}`;
+	}
+	return fetch(`/leagues/${filenameWithHash}.json`);
+};
+
 const quickSeasonsStyle = { height: 19, color: "var(--dark)" };
 
 const MIN_SEASON = 1956;
@@ -237,7 +245,7 @@ const SeasonsMenu = ({
 			waitingForSeason.current = undefined;
 		} else {
 			try {
-				const response = await fetch(`/leagues/${season}.json`);
+				const response = await fetchLeagueFile(season);
 				if (waitingForSeason.current === season) {
 					const leagueFile = await response.json();
 					if (waitingForSeason.current === season) {

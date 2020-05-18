@@ -25,6 +25,7 @@ declare global {
 		getTheme: () => string;
 		googleAnalyticsID: string;
 		heartbeatID: string;
+		leagueFileHashes: Record<string, string>;
 		themeCSSLink: HTMLLinkElement;
 		useSharedWorker: boolean;
 		withGoodUI: () => void;

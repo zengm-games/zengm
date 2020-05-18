@@ -51,6 +51,8 @@
       window.bbgmVersionWorker = "???";
       window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
 
+      window.leagueFileHashes = {};
+
       function loadCSS(filename){
         var el = document.createElement("link");
         el.setAttribute("rel", "stylesheet");

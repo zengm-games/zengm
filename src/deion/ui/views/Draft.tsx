@@ -15,7 +15,7 @@ const DraftButtons = ({
 }) => {
 	const untilText = userRemaining ? "your next pick" : "end of draft";
 	return (
-		<div className="btn-group mb-3">
+		<div className="btn-group mb-3" id="draft-buttons">
 			<button
 				className="btn btn-light-bordered"
 				disabled={usersTurn}
@@ -75,27 +75,6 @@ TradeButton.propTypes = {
 	dpid: PropTypes.number.isRequired,
 	tid: PropTypes.number.isRequired,
 	visible: PropTypes.bool.isRequired,
-};
-
-const scrollLeft = (pos: number) => {
-	// https://blog.hospodarets.com/native_smooth_scrolling
-	if ("scrollBehavior" in document.documentElement.style) {
-		window.scrollTo({
-			left: pos,
-			top: document.body.scrollTop,
-			behavior: "smooth",
-		});
-	} else {
-		window.scrollTo(pos, document.body.scrollTop);
-	}
-};
-
-const viewDrafted = () => {
-	scrollLeft(document.body.scrollWidth - document.body.clientWidth);
-};
-
-const viewUndrafted = () => {
-	scrollLeft(0);
 };
 
 const Draft = ({
@@ -300,21 +279,11 @@ const Draft = ({
 		"d-sm-none": !(fantasyDraft || expansionDraft),
 		"d-xl-none": fantasyDraft || expansionDraft,
 	});
-	const wrapperClasses = classNames(
-		"row",
-		"row-offcanvas",
-		"row-offcanvas-right",
-		{
-			"row-offcanvas-force": fantasyDraft || expansionDraft,
-			"row-offcanvas-right-force": fantasyDraft || expansionDraft,
-		},
-	);
+	const wrapperClasses = classNames("row");
 	const colClass =
 		fantasyDraft || expansionDraft ? "col-12 col-xl-6" : "col-sm-6";
 	const undraftedColClasses = classNames(colClass);
-	const draftedColClasses = classNames("sidebar-offcanvas", colClass, {
-		"sidebar-offcanvas-force": fantasyDraft || expansionDraft,
-	});
+	const draftedColClasses = classNames(colClass);
 	return (
 		<>
 			<p>
@@ -331,16 +300,11 @@ const Draft = ({
 				<a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
 			</p>
 
-			<p>
-				When your turn in the draft comes up, select from the list of available
-				players on the left.
-			</p>
-
 			{remainingPicks.length > 0 ? (
 				<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
 			) : (
 				<>
-					<p>
+					<p id="draft-buttons">
 						<span className="alert alert-success d-inline-block mb-0">
 							The draft is over!
 						</span>
@@ -366,7 +330,15 @@ const Draft = ({
 							<button
 								type="button"
 								className={buttonClasses}
-								onClick={viewDrafted}
+								onClick={() => {
+									const target = document.getElementById("table-draft-results");
+									if (target) {
+										target.scrollIntoView(true);
+
+										// Fixed navbar
+										window.scrollBy(0, -60);
+									}
+								}}
 							>
 								View Drafted
 							</button>
@@ -381,14 +353,22 @@ const Draft = ({
 						rows={rowsUndrafted}
 					/>
 				</div>
-				<div className={draftedColClasses}>
+				<div className={draftedColClasses} id="table-draft-results">
 					<h2>
 						Draft Results
 						<span className="float-right">
 							<button
 								type="button"
 								className={buttonClasses}
-								onClick={viewUndrafted}
+								onClick={() => {
+									const target = document.getElementById("draft-buttons");
+									if (target) {
+										target.scrollIntoView(true);
+
+										// Fixed navbar
+										window.scrollBy(0, -60);
+									}
+								}}
 							>
 								View Undrafted
 							</button>

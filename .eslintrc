@@ -44,6 +44,7 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "jsx-a11y/anchor-has-content": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/label-has-associated-control": "off",

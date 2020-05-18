@@ -1,16 +1,11 @@
+hash in url of league files
+
 0 pot in draft summary
 - https://discord.com/channels/@me/692190176411123744
 
 contraction
 
 revamp ai drafting
-
-way to import team and player info
-- new page, only accessible from outside a league
-- upload a file with team and player overrides
-  - for players, lets you specify an image url based on bbref slug
-  - for teams, lets you specify logo, name, etc based on abbrev
-- automatically use when creating new league. option in custom league to disable using it (either teams or players independently)
 
 total stats, for traded players
 - player stats table

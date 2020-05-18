@@ -7,6 +7,10 @@ const checkObject = (
 	foundNaN = foundNaN !== undefined ? foundNaN : false;
 	replace = replace !== undefined ? replace : false;
 
+	if (obj === null || obj === undefined) {
+		return foundNaN;
+	}
+
 	for (const prop of Object.keys(obj)) {
 		if (typeof obj[prop] === "object" && obj[prop] !== null) {
 			foundNaN = checkObject(obj[prop], foundNaN, replace);

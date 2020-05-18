@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const input = require("./input.json");
+const readCSV = require("../../../bbgm-rosters/src/4-output/lib/readCSV");
 
 require("ts-node").register();
 const ovr = require("../../src/basketball/worker/core/player/ovr.ts").default;
@@ -102,6 +103,7 @@ const replaceAbbrevs = {
 };
 input.teams = getTeamInfos(
 	input.teams.map(t => {
+		const srID = t.abbrev;
 		if (replaceAbbrevs[t.abbrev]) {
 			t.abbrev = replaceAbbrevs[t.abbrev];
 		}
@@ -110,9 +112,30 @@ input.teams = getTeamInfos(
 			cid: t.cid,
 			did: t.did,
 			tid: t.tid,
+			srID,
 		};
 	}),
 );
+
+const normalizeName = name => {
+	name = name.toLowerCase().replace(/\./g, "");
+
+	// https://stackoverflow.com/a/37511463/786644
+	return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+};
+
+const bios = readCSV("player-bios.csv").reverse();
+for (const bio of bios) {
+	bio.name = normalizeName(bio.name);
+}
+
+const nameOverrides = {
+	"Marvin Bagley": "Marvin Bagley III",
+	"Mohamed Bamba": "Mo Bamba",
+	"Wendell Carter": "Wendell Carter Jr.",
+	"Kelly Oubre": "Kelly Oubre Jr.",
+	"Dennis Smith": "Dennis Smith Jr.",
+};
 
 for (const p of input.players) {
 	p.imgURL = "/img/blank-face.png";
@@ -132,6 +155,27 @@ for (const p of input.players) {
 			}
 		}
 	}
+
+	let rawName = p.name ? p.name : `${p.firstName} ${p.lastName}`.trim();
+
+	if (nameOverrides[rawName]) {
+		rawName = nameOverrides[rawName];
+	}
+
+	const name = normalizeName(rawName);
+	const bio = bios.find(bio => name === bio.name);
+
+	let srID;
+	if (bio) {
+		srID = bio.slug;
+	} else {
+		if (p.draft.year < 2020) {
+			console.log(`No player-bios.csv entry found for ${rawName}`);
+		}
+		srID = `dp_${p.draft.year}_${name.replace(/ /g, "_")}`;
+	}
+
+	p.srID = srID;
 }
 
 nerfYoungPlayers(input.players);

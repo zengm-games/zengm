@@ -67,7 +67,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
-						<label>
+						<label htmlFor="options-auto-delete-box-scores">
 							Auto Delete Old Box Scores{" "}
 							<HelpPopover title="Auto Delete Old Box Scores">
 								This will automatically delete box scores older than the past
@@ -79,6 +79,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 							</HelpPopover>
 						</label>
 						<select
+							id="options-auto-delete-box-scores"
 							className="form-control"
 							onChange={handleChange("autoDeleteOldBoxScores")}
 							value={state.autoDeleteOldBoxScores}
@@ -88,7 +89,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 						</select>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
-						<label>
+						<label htmlFor="options-stop-on-injury">
 							Stop On Injury Longer Than{" "}
 							<HelpPopover title="Stop On Injury Longer Than">
 								This will stop game simulation if one of your players is injured
@@ -97,6 +98,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 							</HelpPopover>
 						</label>
 						<select
+							id="options-stop-on-injury"
 							className="form-control"
 							onChange={handleChange("stopOnInjury")}
 							value={state.stopOnInjury}
@@ -118,7 +120,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 						</div>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
-						<label>
+						<label htmlFor="options-difficulty">
 							Difficulty{" "}
 							<HelpPopover placement="bottom" title="Difficulty">
 								<p>
@@ -134,6 +136,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 							</HelpPopover>
 						</label>
 						<select
+							id="options-difficulty"
 							className="form-control"
 							onChange={event => {
 								handleChange("difficultySelect")(event);

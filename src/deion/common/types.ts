@@ -726,6 +726,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	retiredYear: number;
 	rosterOrder: number;
 	salaries: PlayerSalary[];
+	srID?: string;
 	stats: PlayerStats[];
 	statsTids: number[];
 	tid: number;
@@ -916,6 +917,7 @@ export type Team = {
 		PR: number[];
 	};
 	firstSeasonAfterExpansion?: number;
+	srID?: string;
 
 	// Optional because upgrade code was not written on 2020-05-04. Ideally should have populated these with the most recent value of teamSeason.
 	pop?: number;
@@ -1248,3 +1250,17 @@ export type WorkerOverridesUtil = {
 		msg: string;
 	}[];
 };
+
+export type RealPlayerPhotos = Record<string, string>;
+
+export type RealTeamInfo = Record<
+	string,
+	{
+		abbrev: string;
+		region: string;
+		name: string;
+		pop: number;
+		colors: [string, string, string];
+		imgURL: string;
+	}
+>;

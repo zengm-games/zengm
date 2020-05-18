@@ -320,7 +320,6 @@ const augmentPartialPlayer = (
 	if (!p.hasOwnProperty("contract")) {
 		setContract(p, genContract(p, true), p.tid >= 0);
 	} else {
-		// Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
 		p.contract.amount = 10 * Math.round(p.contract.amount / 10);
 
 		if (p.contract.exp < g.get("startingSeason")) {

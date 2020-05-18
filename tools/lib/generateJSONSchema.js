@@ -1069,6 +1069,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 								required: ["amount", "season"],
 							},
 						},
+						srID: {
+							type: "string",
+						},
 						stats: {
 							type: "array",
 							items: {
@@ -1249,6 +1252,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							maxItems: 3,
 							minItems: 3,
+						},
+						srID: {
+							type: "string",
 						},
 						seasons: {
 							type: "array",

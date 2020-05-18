@@ -1,6 +1,6 @@
 import { g } from "../util";
-import type { UpdateEvents, Options } from "../../common/types";
-import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
+import { getOptions } from "./options";
 
 const updateLeagueOptions = async (
 	inputs: unknown,
@@ -11,17 +11,14 @@ const updateLeagueOptions = async (
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("options")
 	) {
-		const options = (((await idb.meta.get("attributes", "options")) ||
-			{}) as unknown) as Options;
+		const globalOptions = await getOptions();
 
 		return {
 			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
 			difficulty: g.get("difficulty"),
 			stopOnInjury: g.get("stopOnInjury"),
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),
-			globalOptions: {
-				units: options.units,
-			},
+			globalOptions,
 		};
 	}
 };

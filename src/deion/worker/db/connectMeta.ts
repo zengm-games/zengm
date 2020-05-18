@@ -1,5 +1,10 @@
 import type { DBSchema, IDBPDatabase } from "idb";
-import type { League, Options } from "../../common/types";
+import type {
+	League,
+	Options,
+	RealPlayerPhotos,
+	RealTeamInfo,
+} from "../../common/types";
 import connectIndexedDB from "./connectIndexedDB";
 
 export interface MetaDB extends DBSchema {
@@ -10,8 +15,14 @@ export interface MetaDB extends DBSchema {
 		};
 	};
 	attributes: {
-		value: number | Options;
-		key: "changesRead" | "nagged" | "naggedMailingList" | "options";
+		value: number | Options | RealPlayerPhotos | RealTeamInfo;
+		key:
+			| "changesRead"
+			| "nagged"
+			| "naggedMailingList"
+			| "options"
+			| "realPlayerPhotos"
+			| "realTeamInfo";
 	};
 	leagues: {
 		value: League;

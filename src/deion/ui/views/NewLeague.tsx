@@ -12,7 +12,7 @@ import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
-import type { View } from "../../common/types";
+import type { View, RealTeamInfo } from "../../common/types";
 import league2020 from "../../../../public/basketball/leagues/2020.json";
 import classNames from "classnames";
 
@@ -22,6 +22,27 @@ type NewLeagueTeam = {
 	name: string;
 	pop?: number;
 	popRank: number;
+	srID?: string;
+};
+
+const applyRealTeamInfo = (
+	teams: NewLeagueTeam[],
+	realTeamInfo: RealTeamInfo | undefined,
+) => {
+	if (!realTeamInfo) {
+		return teams;
+	}
+
+	return teams.map(t => {
+		if (t.srID && realTeamInfo[t.srID]) {
+			return {
+				...t,
+				...realTeamInfo[t.srID],
+			};
+		}
+
+		return t;
+	});
 };
 
 const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
@@ -472,7 +493,10 @@ const NewLeague = (props: View<"newLeague">) => {
 					? league2020
 					: null;
 
-			const teams = customize === "real" ? teams2020 : teamsDefault;
+			const teams =
+				customize === "real"
+					? applyRealTeamInfo(teams2020, props.realTeamInfo)
+					: teamsDefault;
 
 			let prevTeamRegionName = localStorage.getItem("prevTeamRegionName");
 			if (prevTeamRegionName === null) {
@@ -616,61 +640,64 @@ const NewLeague = (props: View<"newLeague">) => {
 		],
 	);
 
-	const handleNewLeagueFile = useCallback((err, newLeagueFile) => {
-		if (err) {
-			dispatch({ type: "clearLeagueFile" });
-			return;
-		}
-
-		let newTeams = helpers.deepCopy(newLeagueFile.teams);
-		if (newTeams) {
-			for (const t of newTeams) {
-				// Is pop hidden in season, like in manageTeams import?
-				if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
-					t.pop = t.seasons[t.seasons.length - 1].pop;
-				}
-
-				// God, I hate being permissive...
-				if (typeof t.pop !== "number") {
-					t.pop = parseFloat(t.pop);
-				}
-				if (Number.isNaN(t.pop)) {
-					t.pop = 1;
-				}
-
-				t.pop = parseFloat(t.pop.toFixed(2));
+	const handleNewLeagueFile = useCallback(
+		(err, newLeagueFile) => {
+			if (err) {
+				dispatch({ type: "clearLeagueFile" });
+				return;
 			}
 
-			newTeams = helpers.addPopRank(newTeams);
-		} else {
-			newTeams = teamsDefault;
-		}
+			let newTeams = helpers.deepCopy(newLeagueFile.teams);
+			if (newTeams) {
+				for (const t of newTeams) {
+					// Is pop hidden in season, like in manageTeams import?
+					if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+						t.pop = t.seasons[t.seasons.length - 1].pop;
+					}
 
-		dispatch({
-			type: "newLeagueFile",
-			leagueFile: newLeagueFile,
-			teams: newTeams,
-		});
+					// God, I hate being permissive...
+					if (typeof t.pop !== "number") {
+						t.pop = parseFloat(t.pop);
+					}
+					if (Number.isNaN(t.pop)) {
+						t.pop = 1;
+					}
 
-		// Need to update team and difficulty dropdowns?
-		if (newLeagueFile.hasOwnProperty("gameAttributes")) {
-			for (const ga of newLeagueFile.gameAttributes) {
-				if (
-					ga.key === "userTid" &&
-					typeof ga.value === "number" &&
-					!Number.isNaN(ga.value)
-				) {
-					dispatch({ type: "setTid", tid: ga.value });
-				} else if (
-					ga.key === "difficulty" &&
-					typeof ga.value === "number" &&
-					!Number.isNaN(ga.value)
-				) {
-					dispatch({ type: "setDifficulty", difficulty: ga.value });
+					t.pop = parseFloat(t.pop.toFixed(2));
+				}
+
+				newTeams = helpers.addPopRank(newTeams);
+			} else {
+				newTeams = teamsDefault;
+			}
+
+			dispatch({
+				type: "newLeagueFile",
+				leagueFile: newLeagueFile,
+				teams: applyRealTeamInfo(newTeams, props.realTeamInfo),
+			});
+
+			// Need to update team and difficulty dropdowns?
+			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
+				for (const ga of newLeagueFile.gameAttributes) {
+					if (
+						ga.key === "userTid" &&
+						typeof ga.value === "number" &&
+						!Number.isNaN(ga.value)
+					) {
+						dispatch({ type: "setTid", tid: ga.value });
+					} else if (
+						ga.key === "difficulty" &&
+						typeof ga.value === "number" &&
+						!Number.isNaN(ga.value)
+					) {
+						dispatch({ type: "setDifficulty", difficulty: ga.value });
+					}
 				}
 			}
-		}
-	}, []);
+		},
+		[props.realTeamInfo],
+	);
 
 	useTitleBar({ title, hideNewWindow: true });
 
@@ -729,7 +756,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									dispatch({
 										type: "newLeagueFile",
 										leagueFile,
-										teams: teams2020,
+										teams: applyRealTeamInfo(teams2020, props.realTeamInfo),
 									});
 								} else {
 									handleNewLeagueFile(null, leagueFile);

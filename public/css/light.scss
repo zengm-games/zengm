@@ -326,12 +326,18 @@ table {
 }
 
 // Make table not stretch to 100% width automatically
-.table-nonfluid {
-	display: inline-block;
-	max-width: 100%;
-	width: unset;
-	.table {
-		width: 1px;
+@include media-breakpoint-up(sm) {
+	.table-nonfluid {
+		display: inline-block;
+		max-width: 100%;
+		width: unset;
+		.table {
+			width: 1px;
+		}
+	}
+
+	.table-nonfluid-wrapper {
+		display: inline-block;
 	}
 }
 

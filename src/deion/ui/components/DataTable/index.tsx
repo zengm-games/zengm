@@ -369,10 +369,9 @@ class DataTable extends React.Component<Props, State> {
 
 		return (
 			<div
-				className={classNames(className)}
-				style={{
-					display: nonfluid ? "inline-block" : "block",
-				}}
+				className={classNames(className, {
+					"table-nonfluid-wrapper": nonfluid,
+				})}
 			>
 				{!hideAllControls ? (
 					<>

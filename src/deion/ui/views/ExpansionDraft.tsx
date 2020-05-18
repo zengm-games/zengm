@@ -243,9 +243,10 @@ const ExpansionDraft = ({
 					})}
 					<div className="col-xl-4 col-lg-6 mb-3">
 						<div className="card">
-							<div className="card-body form-inline">
+							<div className="card-body">
 								<select
 									className="form-control mr-2"
+									style={{ maxWidth: 300 }}
 									value={addTeamAbbrev}
 									onChange={event => {
 										setAddTeamAbbrev(event.target.value);
@@ -262,7 +263,7 @@ const ExpansionDraft = ({
 								</select>
 								<button
 									type="button"
-									className="btn btn-primary"
+									className="btn btn-primary mt-2"
 									onClick={addTeam}
 								>
 									Add Team

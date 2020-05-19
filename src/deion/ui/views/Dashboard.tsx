@@ -303,28 +303,36 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const pagination = rows.length > 100;
 
 	return (
-		<div className="mt-3">
+		<div className="mt-2">
 			{process.env.SPORT === "basketball" ? (
 				<>
 					<a
-						href="/new_league/random"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-					>
-						New league
-						<br />
-						<span className="dashboard-top-link-small">» Random players</span>
-					</a>
-					<a
 						href="/new_league/real"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
 					>
 						New league
 						<br />
 						<span className="dashboard-top-link-small">» Real players</span>
 					</a>
 					<a
-						href="/new_league"
+						href="/new_league/random"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+					>
+						New league
+						<br />
+						<span className="dashboard-top-link-small">» Random players</span>
+					</a>
+					<a
+						href="/new_league/legends"
 						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+					>
+						New league
+						<br />
+						<span className="dashboard-top-link-small">» Legends</span>
+					</a>
+					<a
+						href="/new_league"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
 					>
 						New league
 						<br />

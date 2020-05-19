@@ -287,12 +287,14 @@ const negotiationList = () => {
 };
 
 const newLeague = (params: Params) => {
-	let type: "custom" | "random" | "real" = "custom";
+	let type: "custom" | "random" | "real" | "legends" = "custom";
 	let lid;
 	if (params.x === "random") {
 		type = "random";
 	} else if (params.x === "real") {
 		type = "real";
+	} else if (params.x === "legends") {
+		type = "legends";
 	} else if (params.x !== undefined) {
 		lid = parseInt(params.x, 10);
 		if (Number.isNaN(lid)) {

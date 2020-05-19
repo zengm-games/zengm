@@ -326,12 +326,113 @@ const SeasonsMenu = ({
 	);
 };
 
+const legends = {
+	"legends-all": "All Time",
+	"legends-2010s": "2010s",
+	"legends-2000s": "2000s",
+	"legends-1990s": "1990s",
+	"legends-1980s": "1980s",
+	"legends-1970s": "1970s",
+	"legends-1960s": "1960s",
+	"legends-1950s": "1950s",
+};
+
+type Legend = keyof typeof legends;
+
+const LegendsMenu = ({
+	onDone,
+	onLoading,
+	value,
+}: {
+	onDone: (legend: Legend, leagueFile: any) => void;
+	onLoading: (legend: Legend) => void;
+	value: Legend;
+}) => {
+	const waitingForFile = useRef<typeof value | undefined>(value);
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+
+	const handleNewValue = async (legend: Legend) => {
+		waitingForFile.current = legend;
+		onLoading(legend);
+		setErrorMessage(undefined);
+
+		try {
+			const response = await fetchLeagueFile(legend);
+			if (waitingForFile.current === legend) {
+				const leagueFile = await response.json();
+				if (waitingForFile.current === legend) {
+					onDone(legend, leagueFile);
+					waitingForFile.current = undefined;
+				}
+			}
+		} catch (error) {
+			setErrorMessage(error.message);
+			throw error;
+		}
+	};
+
+	// Handle initial value
+	useEffect(() => {
+		handleNewValue(value);
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+	return (
+		<div className="form-group">
+			<div className="d-flex">
+				<label htmlFor="new-league-legends" className="flex-grow-1">
+					Players
+				</label>
+			</div>
+			<div className="input-group mb-1">
+				<select
+					id="new-league-legends"
+					className="form-control"
+					value={value}
+					onChange={async event => {
+						const value: any = event.target.value;
+						// @ts-ignore
+						if (!legends[value]) {
+							throw new Error(`Unknown value: ${value}`);
+						}
+						await handleNewValue(value);
+					}}
+				>
+					{Object.entries(legends).map(([key, name]) => {
+						return (
+							<option key={key} value={key}>
+								{name}
+							</option>
+						);
+					})}
+				</select>
+				<div className="input-group-append">
+					<button
+						className="btn btn-secondary"
+						type="button"
+						onClick={() => {
+							const keys = Object.keys(legends) as Legend[];
+							const random = keys[Math.floor(Math.random() * keys.length)];
+							handleNewValue(random);
+						}}
+					>
+						Random
+					</button>
+				</div>
+			</div>
+			{errorMessage ? (
+				<span className="text-danger">Error: {errorMessage}</span>
+			) : null}
+		</div>
+	);
+};
+
 type State = {
 	creating: boolean;
-	customize: "default" | "custom-rosters" | "custom-url" | "real";
+	customize: "default" | "custom-rosters" | "custom-url" | "legends" | "real";
 	season: number;
 	difficulty: number;
 	leagueFile: any;
+	legend: Legend;
 	loadingLeagueFile: boolean;
 	randomizeRosters: boolean;
 	teams: NewLeagueTeam[];
@@ -360,6 +461,10 @@ type Action =
 	| {
 			type: "setKeptKeys";
 			keptKeys: string[];
+	  }
+	| {
+			type: "setLegend";
+			legend: Legend;
 	  }
 	| {
 			type: "setRandomizeRosters";
@@ -437,6 +542,12 @@ const reducer = (state: State, action: Action): State => {
 				keptKeys: action.keptKeys,
 			};
 
+		case "setLegend":
+			return {
+				...state,
+				legend: action.legend,
+			};
+
 		case "setRandomizeRosters":
 			return {
 				...state,
@@ -495,6 +606,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			if (props.type === "real") {
 				customize = "real";
 			}
+			if (props.type === "legends") {
+				customize = "legends";
+			}
 
 			const leagueFile =
 				customize === "real" && process.env.SPORT === "basketball"
@@ -520,6 +634,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				creating: false,
 				customize,
 				season,
+				legend: "legends-all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 				leagueFile,
@@ -540,6 +655,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			process.env.SPORT === "basketball" ? "New Custom League" : "New League";
 	} else if (props.type === "random") {
 		title = "New Random Players League";
+	} else if (props.type === "legends") {
+		title = "New Legends League";
 	} else {
 		title = "New Real Players League";
 	}
@@ -601,6 +718,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				if (type === "real") {
 					type = String(state.season);
 				}
+				if (type === "legends") {
+					type = String(state.legend);
+				}
 				const teamRegionName = getTeamRegionName(state.teams, state.tid);
 				if (window.enableLogging && window.gtag) {
 					window.gtag("event", "new_league", {
@@ -637,6 +757,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.difficulty,
 			state.keptKeys,
 			state.leagueFile,
+			state.legend,
 			name,
 			props.lid,
 			props.name,
@@ -773,6 +894,19 @@ const NewLeague = (props: View<"newLeague">) => {
 						/>
 					) : null}
 
+					{state.customize === "legends" ? (
+						<LegendsMenu
+							value={state.legend}
+							onLoading={legend => {
+								dispatch({ type: "setLegend", legend });
+								dispatch({ type: "loadingLeagueFile" });
+							}}
+							onDone={(legend, leagueFile) => {
+								handleNewLeagueFile(null, leagueFile);
+							}}
+						/>
+					) : null}
+
 					<div className="form-group">
 						<label htmlFor="new-league-team">Pick your team</label>
 						<div className="input-group mb-1">
@@ -883,7 +1017,9 @@ const NewLeague = (props: View<"newLeague">) => {
 					</div>
 				</div>
 
-				{props.type === "custom" || props.type === "real" ? (
+				{props.type === "custom" ||
+				props.type === "real" ||
+				props.type === "legends" ? (
 					<div
 						className={classNames(
 							"col-sm-6 order-first order-sm-last mb-3 mb-sm-0",
@@ -925,6 +1061,20 @@ const NewLeague = (props: View<"newLeague">) => {
 									</ul>
 								</>
 							) : null}
+							{props.type === "legends" ? (
+								<>
+									<ul className="list-group list-group-flush">
+										<li className="list-group-item bg-light">
+											<h3>Legends mode</h3>
+											<p className="mb-0">
+												Each team is filled with the best players from that
+												franchise. Create a league with players from only one
+												decade, or the greatest players of all time.
+											</p>
+										</li>
+									</ul>
+								</>
+							) : null}
 							{props.type === "custom" ? (
 								<div className="card-body" style={{ marginBottom: "-1rem" }}>
 									<h2 className="card-title">Customize</h2>
@@ -950,6 +1100,9 @@ const NewLeague = (props: View<"newLeague">) => {
 											</option>
 											{process.env.SPORT === "basketball" ? (
 												<option value="real">Real players and teams</option>
+											) : null}
+											{process.env.SPORT === "basketball" ? (
+												<option value="legends">Legends</option>
 											) : null}
 											<option value="custom-rosters">Upload league file</option>
 											<option value="custom-url">Enter league file URL</option>

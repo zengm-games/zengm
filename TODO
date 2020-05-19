@@ -1,7 +1,10 @@
+legends mode
+- blog
+- dashboard link to FBGM
+- some teams don't have players, see 1950s especially, probably abbrev in roster generation
+
 hash in url of league files
-- test local
-- cache expiration time
-- tell discord
+- test cache expiration time
 
 0 pot in draft summary
 - https://discord.com/channels/@me/692190176411123744
@@ -25,11 +28,6 @@ way to import team and player info
   - somehow globally specify default team info overrides
 
 FBGM - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
-
-legends mode
-- start with top 12 players from each franchise's history, in their peak season. incoming draft classes are other real players, randomly selected
-- NBA seasons only
-- New Special League
 
 eventually
 - way to view scheduled events and add/edit/delete

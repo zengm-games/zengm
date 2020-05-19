@@ -111,8 +111,10 @@ const genSeasonRow = (
 
 	if (typeof t.pop === "number") {
 		newSeason.pop = t.pop;
-		// @ts-ignore
-	} else if (typeof t.stadiumCapacity === "number") {
+	}
+
+	// @ts-ignore
+	if (typeof t.stadiumCapacity === "number") {
 		// @ts-ignore
 		newSeason.stadiumCapacity = t.stadiumCapacity;
 	}

@@ -275,6 +275,11 @@ const changes = [
 		msg:
 			'Added 4 new draft lottery types, to improve the accuracy of historical leagues. <a href="https://basketball-gm.com/blog/2020/05/more-draft-lottery-types/">More details</a>',
 	},
+	{
+		date: "2020-05-19",
+		msg:
+			'You can now create a "legends" league filled with the best players in each franchise\'s history. <a href="https://basketball-gm.com/blog/2020/05/legends-leagues/">More details</a>',
+	},
 ];
 
 export default changes;

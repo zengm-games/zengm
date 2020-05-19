@@ -380,7 +380,7 @@ const LegendsMenu = ({
 		<div className="form-group">
 			<div className="d-flex">
 				<label htmlFor="new-league-legends" className="flex-grow-1">
-					Players
+					Eligible players
 				</label>
 			</div>
 			<div className="input-group mb-1">
@@ -1066,10 +1066,15 @@ const NewLeague = (props: View<"newLeague">) => {
 									<ul className="list-group list-group-flush">
 										<li className="list-group-item bg-light">
 											<h3>Legends mode</h3>
-											<p className="mb-0">
+											<p>
 												Each team is filled with the best players from that
-												franchise. Create a league with players from only one
-												decade, or the greatest players of all time.
+												franchise's history. Create a league with players from
+												only one decade, or the greatest players of all time.
+											</p>
+											<p className="mb-0">
+												<a href="https://basketball-gm.com/blog/2020/05/legends-leagues/">
+													More details
+												</a>
 											</p>
 										</li>
 									</ul>

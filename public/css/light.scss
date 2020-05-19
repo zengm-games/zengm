@@ -186,9 +186,30 @@ a.god-mode.active {
 .dashboard-top-link-other {
 	color: $gray-800;
 	font-size: 15px;
+	background-repeat: no-repeat;
 
 	&:hover {
 		color: $black;
+	}
+}
+
+.dashboard-top-link-other-football {
+	background-image: url("https://play.basketball-gm.com/ico/icon70.png");
+	background-position: 100px 41px;
+}
+.dashboard-top-link-other-basketball {
+	background-image: url("https://play.football-gm.com/ico/icon70.png");
+	background-position: 81px 34px;
+}
+
+@include media-breakpoint-down(xs) {
+	.dashboard-top-wrapper {
+		text-align: center;
+	}
+	a.dashboard-top-link-other-basketball {
+		width: 326px;
+		height: inherit;
+		background-position: 236px 0px;
 	}
 }
 

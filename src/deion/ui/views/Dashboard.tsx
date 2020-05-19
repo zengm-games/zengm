@@ -303,71 +303,73 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const pagination = rows.length > 100;
 
 	return (
-		<div className="mt-2">
-			{process.env.SPORT === "basketball" ? (
-				<>
-					<a
-						href="/new_league/real"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-					>
-						New league
-						<br />
-						<span className="dashboard-top-link-small">» Real players</span>
-					</a>
-					<a
-						href="/new_league/random"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
-					>
-						New league
-						<br />
-						<span className="dashboard-top-link-small">» Random players</span>
-					</a>
-					<a
-						href="/new_league/legends"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-					>
-						New league
-						<br />
-						<span className="dashboard-top-link-small">» Legends</span>
-					</a>
+		<>
+			<div
+				className={
+					process.env.SPORT === "basketball"
+						? "mt-2 dashboard-top-wrapper"
+						: "mt-2"
+				}
+			>
+				{process.env.SPORT === "basketball" ? (
+					<>
+						<a
+							href="/new_league/real"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+						>
+							New league
+							<br />
+							<span className="dashboard-top-link-small">» Real players</span>
+						</a>
+						<a
+							href="/new_league/random"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+						>
+							New league
+							<br />
+							<span className="dashboard-top-link-small">» Random players</span>
+						</a>
+						<div className="d-sm-none" />
+						<a
+							href="/new_league/legends"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
+						>
+							New league
+							<br />
+							<span className="dashboard-top-link-small">» Legends</span>
+						</a>
+						<a
+							href="/new_league"
+							className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+						>
+							New league
+							<br />
+							<span className="dashboard-top-link-small">» Custom</span>
+						</a>
+						<div className="d-sm-none" />
+					</>
+				) : (
 					<a
 						href="/new_league"
-						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-sm-3 mb-3"
+						className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
 					>
-						New league
+						Create new
 						<br />
-						<span className="dashboard-top-link-small">» Custom</span>
+						league
 					</a>
-				</>
-			) : (
-				<a
-					href="/new_league"
-					className="btn btn-primary dashboard-top-link dashboard-top-link-new mr-3 mb-3"
-				>
-					Create new
-					<br />
-					league
-				</a>
-			)}
+				)}
 
-			<a
-				href={`https://play.${
-					process.env.SPORT === "football" ? "basketball" : "football"
-				}-gm.com/`}
-				className="btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3"
-				style={{
-					backgroundImage: `url("https://play.${
+				<a
+					href={`https://play.${
 						process.env.SPORT === "football" ? "basketball" : "football"
-					}-gm.com/ico/icon70.png")`,
-					backgroundRepeat: "no-repeat",
-					backgroundPosition:
-						process.env.SPORT === "football" ? "100px 41px" : "81px 34px",
-				}}
-			>
-				{process.env.SPORT === "football"
-					? "Try our other game, Basketball GM!"
-					: "Try our other game, Football GM!"}
-			</a>
+					}-gm.com/`}
+					className={`btn btn-light-bordered dashboard-top-link dashboard-top-link-other mb-3 dashboard-top-link-other-${process.env.SPORT}`}
+				>
+					{process.env.SPORT === "football"
+						? "Try our other game, Basketball GM!"
+						: "Try our other game, Football GM!"}
+				</a>
+			</div>
 
 			{rows.length > 0 ? (
 				<>
@@ -386,7 +388,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					/>
 				</>
 			) : null}
-		</div>
+		</>
 	);
 };
 

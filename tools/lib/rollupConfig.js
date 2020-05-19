@@ -1,7 +1,7 @@
 const React = require("react");
 const ReactDOM = require("react-dom");
 const alias = require("@rollup/plugin-alias");
-const babel = require("rollup-plugin-babel");
+const babel = require("@rollup/plugin-babel").babel;
 const blacklist = require("rollup-plugin-blacklist");
 const commonjs = require("@rollup/plugin-commonjs");
 const json = require("@rollup/plugin-json");
@@ -39,6 +39,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			"process.env.SPORT": JSON.stringify(sport),
 		}),
 		babel({
+			babelHelpers: "bundled",
 			exclude: "node_modules/!(d3|idb)**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 		}),

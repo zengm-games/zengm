@@ -1,6 +1,6 @@
 const fs = require("fs");
 const replace2 = require("replace");
-const babel = require("rollup-plugin-babel");
+const babel = require("@rollup/plugin-babel").babel;
 const replace = require("@rollup/plugin-replace");
 const resolve = require("@rollup/plugin-node-resolve");
 const terser = require("rollup-plugin-terser").terser;
@@ -46,7 +46,9 @@ const bundle = async () => {
 			replace({
 				"process.env.NODE_ENV": JSON.stringify("production"),
 			}),
-			babel(),
+			babel({
+				babelHelpers: "bundled",
+			}),
 			resolve(),
 			terser({
 				output: {

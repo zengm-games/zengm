@@ -63,7 +63,7 @@ export type AwardPlayerDefense = {
 export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
-	bestRecordConfs: AwardTeam[];
+	bestRecordConfs: (AwardTeam | undefined)[];
 	// Only in old leagues
 	bre?: AwardTeam;
 	brw?: AwardTeam;

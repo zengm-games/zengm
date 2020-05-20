@@ -58,7 +58,7 @@ export type AwardPlayer = {
 export type Awards = {
 	season: number;
 	bestRecord: AwardTeam;
-	bestRecordConfs: AwardTeam[];
+	bestRecordConfs: (AwardTeam | undefined)[];
 	oroy: AwardPlayer | undefined;
 	droy: AwardPlayer | undefined;
 	allRookie: (AwardPlayer | undefined)[];

@@ -133,7 +133,7 @@ const teamAwards = (
 		const t = teams.find(t2 => t2.seasonAttrs.cid === c.cid);
 
 		if (!t) {
-			throw new Error(`No team found with conference ID ${c.cid}`);
+			return;
 		}
 
 		return {

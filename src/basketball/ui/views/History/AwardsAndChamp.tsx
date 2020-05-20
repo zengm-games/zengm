@@ -105,25 +105,27 @@ const AwardsAndChamp = ({
 					<p>???</p>
 				)}
 				<h2>Best Record</h2>
-				{awards.bestRecordConfs.map((t: any, i: number) => (
-					<p key={t.tid}>
-						{confs[i].name}:<br />
-						<span className={t.tid === userTid ? "table-info" : undefined}>
-							<a
-								href={helpers.leagueUrl([
-									"roster",
-									`${t.abbrev}_${t.tid}`,
-									season,
-								])}
-							>
-								{t.region} {t.name}
-							</a>{" "}
-							({t.won}-{t.lost}
-							{t.tied !== undefined ? <>-{t.tied}</> : null})
-						</span>
-						<br />
-					</p>
-				))}
+				{awards.bestRecordConfs.map((t: any, i: number) =>
+					t !== undefined ? (
+						<p key={t.tid}>
+							{confs[i].name}:<br />
+							<span className={t.tid === userTid ? "table-info" : undefined}>
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${t.abbrev}_${t.tid}`,
+										season,
+									])}
+								>
+									{t.region} {t.name}
+								</a>{" "}
+								({t.won}-{t.lost}
+								{t.tied !== undefined ? <>-{t.tied}</> : null})
+							</span>
+							<br />
+						</p>
+					) : null,
+				)}
 				<h2>Most Valuable Player</h2>
 				<Winner award={awards.mvp} season={season} userTid={userTid} />
 			</div>

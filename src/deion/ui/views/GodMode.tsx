@@ -431,7 +431,7 @@ const options: {
 			</>
 		),
 		type: "jsonString",
-		validator: (value, output, props) => {
+		validator: value => {
 			if (!Array.isArray(value)) {
 				throw new Error("Must be an array");
 			}
@@ -439,13 +439,6 @@ const options: {
 				if (!Number.isInteger(num)) {
 					throw new Error("Array must contain only integers");
 				}
-			}
-			const numRounds = value.length;
-			const numPlayoffTeams = 2 ** numRounds - output.numPlayoffByes;
-			if (numPlayoffTeams > props.numTeams) {
-				throw new Error(
-					`${numRounds} playoff rounds with ${output.numPlayoffByes} byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${props.numTeams} teams in the league`,
-				);
 			}
 		},
 	},

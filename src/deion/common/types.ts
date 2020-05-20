@@ -217,6 +217,7 @@ export type ScheduledEventWithoutKey =
 			info: {
 				tid: number;
 				region?: string;
+				srID?: string;
 				name?: string;
 				pop?: number;
 				cid?: number;
@@ -238,7 +239,9 @@ export type ScheduledEventWithoutKey =
 			phase: Phase;
 			info: {
 				// Actually stadiumCapacity is optional
-				teams: ExpansionDraftSetupTeam[];
+				teams: (ExpansionDraftSetupTeam & {
+					srID?: string;
+				})[];
 				numProtectedPlayers?: number;
 			};
 	  };

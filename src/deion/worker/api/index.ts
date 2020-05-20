@@ -231,14 +231,29 @@ const createLeague = async (
 		}
 	}
 
-	if (leagueFile.teams) {
-		const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
-			| RealTeamInfo
-			| undefined;
-		if (realTeamInfo) {
+	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
+		| RealTeamInfo
+		| undefined;
+	if (realTeamInfo) {
+		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
 				if (t.srID && realTeamInfo[t.srID]) {
 					Object.assign(t, realTeamInfo[t.srID]);
+				}
+			}
+		}
+		if (leagueFile.scheduledEvents) {
+			for (const event of leagueFile.scheduledEvents) {
+				if (event.type === "expansionDraft") {
+					for (const t of event.info.teams) {
+						if (t.srID && realTeamInfo[t.srID]) {
+							Object.assign(t, realTeamInfo[t.srID]);
+						}
+					}
+				} else if (event.type === "teamInfo") {
+					if (event.info.srID && realTeamInfo[event.info.srID]) {
+						Object.assign(event.info, realTeamInfo[event.info.srID]);
+					}
 				}
 			}
 		}

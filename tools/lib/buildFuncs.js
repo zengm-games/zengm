@@ -145,14 +145,16 @@ const hashLeagueFiles = () => {
 	const leagueFileHashes = {};
 
 	for (const filename of leagueFiles) {
-		const sourcePath = path.join(folder, filename);
-		const contents = fs.readFileSync(sourcePath);
-		const hash = fileHash(contents);
+		if (filename.endsWith(".json")) {
+			const sourcePath = path.join(folder, filename);
+			const contents = fs.readFileSync(sourcePath);
+			const hash = fileHash(contents);
 
-		const leagueFile = path.basename(filename, ".json");
-		leagueFileHashes[leagueFile] = hash;
+			const leagueFile = path.basename(filename, ".json");
+			leagueFileHashes[leagueFile] = hash;
 
-		fse.moveSync(sourcePath, path.join(folder, `${leagueFile}-${hash}.json`));
+			fse.moveSync(sourcePath, path.join(folder, `${leagueFile}-${hash}.json`));
+		}
 	}
 
 	replace({

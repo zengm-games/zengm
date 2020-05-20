@@ -3,7 +3,7 @@ import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
-import { g, helpers, local, lock, random } from "../../util";
+import { g, local, lock, random } from "../../util";
 import type {
 	Conditions,
 	MinimalPlayerRatings,
@@ -75,17 +75,13 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 				}
 
 				draftPicks.shift();
-				const selection = helpers.bound(
-					Math.floor(Math.abs(random.realGauss(0, 1))),
-					0,
-					playersAll.length - 1,
-				);
+				const selection = random.choice(playersAll, p => p.value ** 69);
 
 				// 0=best prospect, 1=next best prospect, etc.
-				const pid = playersAll[selection].pid;
+				const pid = selection.pid;
 				await selectPlayer(dp, pid);
 				pids.push(pid);
-				playersAll.splice(selection, 1); // Delete from the list of undrafted players
+				playersAll = playersAll.filter(p => p !== selection); // Delete from the list of undrafted players
 
 				if (!onlyOne) {
 					return autoSelectPlayer();

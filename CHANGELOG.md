@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-20: AI teams draft smarter. Previously the probability they would pick a player depended only on that player's rank, but now it depends on how good the players are. So the AI will almost always take the clear #1 pick, but there will be more randomness if the top available prospects have similar talents.
+
 * 2020-05-19: You can now create a "legends" league filled with the best players in each franchise's history. [[1]](https://basketball-gm.com/blog/2020/05/legends-leagues/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gmznsx/new_in_version_202005191391_you_can_now_create_a/)
 
 * 2020-05-18: Added ability to supply real team info and player photos on the Options page, which overrides the defaults in any new league with real players. [[1]](https://basketball-gm.com/manual/customization/real-team-info-player-photos/)

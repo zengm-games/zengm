@@ -1,3 +1,5 @@
+make ball spin during toWorker
+
 hash in url of league files
 - test cache expiration time
 
@@ -7,9 +9,6 @@ At the end of a quarter in a live sim, it says there is 12 mins remaining in the
 - https://discord.com/channels/@me/692190176411123744
 
 contraction
-
-revamp ai drafting
-- random.choice with weight function based on p.value
 
 total stats, for traded players
 - player stats table

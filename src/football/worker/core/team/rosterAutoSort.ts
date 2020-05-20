@@ -70,7 +70,14 @@ const rosterAutoSort = async (
 			}
 		} else {
 			// Sort everything from scratch
-			players.sort((a, b) => score(b, pos2) - score(a, pos2));
+			players.sort((a, b) => {
+				const diff = score(b, pos2) - score(a, pos2);
+				if (diff === 0) {
+					// Deterministic order
+					return b.pid - a.pid;
+				}
+				return diff;
+			});
 			depth[pos2] = players.map(p => p.pid);
 		}
 	}

@@ -1,7 +1,3 @@
-auto sort all and auto sort RB doing different things
-- Eris DM
-- http://localhost/l/707/depth/BAL_1/RB
-
 hash in url of league files
 - test cache expiration time
 
@@ -13,6 +9,7 @@ At the end of a quarter in a live sim, it says there is 12 mins remaining in the
 contraction
 
 revamp ai drafting
+- random.choice with weight function based on p.value
 
 total stats, for traded players
 - player stats table

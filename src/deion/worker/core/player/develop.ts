@@ -273,15 +273,13 @@ const develop = (
 				throw new Error("Should never happen");
 			}
 
+			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+				pos = p.pos;
+			}
+
 			ratings.ovr = ratings.ovrs[pos];
 			ratings.pot = ratings.pots[pos];
-
-			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
-				// Must be a manually specified position
-				ratings.pos = p.pos;
-			} else {
-				ratings.pos = pos;
-			}
+			ratings.pos = pos;
 		}
 	}
 

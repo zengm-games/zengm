@@ -14,7 +14,6 @@ const processLiveGameEvents = ({
 }) => {
 	let stop = false;
 	let text;
-	let prevQtr;
 	while (!stop && events.length > 0) {
 		const e = events.shift();
 
@@ -22,13 +21,10 @@ const processLiveGameEvents = ({
 		const actualT = e.t === 0 ? 1 : 0;
 
 		// Hacky quarter stuff, ugh
-		if (e.qtr !== undefined) {
-			prevQtr = e.qtr;
-		}
 		if (e.text && e.text.startsWith("Start of")) {
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
-			const quarter = prevQtr + 2; // 1 because it's a new quarter, 1 for starting qtr at 0
+			const quarter = boxScore.teams[0].ptsQtrs.length;
 			if (quarter > 4) {
 				overtimes = quarter - 4;
 				if (overtimes === 1) {

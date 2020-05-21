@@ -1,3 +1,7 @@
+2020 abbrevs
+- Problem with the team data template, Brooklyn's abbreviation (not "abbrev", but the thing that BBGM uses to refer to the team) is BRK instead of BKN. Custom data didn't work when it was BRK, I changed to BKN and tested and it worked.
+- same with Phoenix, it's currently PHO but should be PHX
+
 0 pot in draft summary
 - https://discord.com/channels/@me/692190176411123744
 

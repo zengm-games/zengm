@@ -124,11 +124,18 @@ const Options = (props: View<"options"> & { title?: string }) => {
 				</div>
 
 				{process.env.SPORT === "basketball" ? (
-					<RealData
-						handleChange={handleChange}
-						realPlayerPhotos={state.realPlayerPhotos}
-						realTeamInfo={state.realTeamInfo}
-					/>
+					<>
+						{props.title ? (
+							<h3>Team and Player Data for "Real Players" Leagues</h3>
+						) : (
+							<h2>Team and Player Data for "Real Players" Leagues</h2>
+						)}
+						<RealData
+							handleChange={handleChange}
+							realPlayerPhotos={state.realPlayerPhotos}
+							realTeamInfo={state.realTeamInfo}
+						/>
+					</>
 				) : null}
 
 				<button className="btn btn-primary mt-3">Save {title}</button>

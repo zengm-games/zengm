@@ -60,11 +60,9 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 
 	return (
 		<>
-			<Options title="Global Options" {...props.globalOptions} />
+			<h2>League Options</h2>
 
-			<h2 className="mt-5">League Options</h2>
-
-			<form onSubmit={handleFormSubmit}>
+			<form onSubmit={handleFormSubmit} className="mb-5">
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
 						<label htmlFor="options-auto-delete-box-scores">
@@ -167,6 +165,8 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 
 				<button className="btn btn-primary">Save League Options</button>
 			</form>
+
+			<Options title="Global Options" {...props.globalOptions} />
 		</>
 	);
 };

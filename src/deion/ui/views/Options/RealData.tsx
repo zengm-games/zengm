@@ -13,8 +13,6 @@ const RealData = ({
 }) => {
 	return (
 		<>
-			<h2>Team and Player Data for "Real Players" Leagues</h2>
-
 			<p>
 				By default, leagues using real players do not include real team names,
 				team logos, or player photos. If you would like to override the defaults

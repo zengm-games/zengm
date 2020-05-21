@@ -34,6 +34,10 @@ const RosterContinuity = ({
 			data: [
 				season - i,
 				...seasonRow.map(pct => {
+					if (pct === undefined) {
+						return null;
+					}
+
 					return {
 						classNames:
 							process.env.SPORT === "basketball"

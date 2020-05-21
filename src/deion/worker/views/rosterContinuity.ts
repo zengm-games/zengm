@@ -2,6 +2,7 @@ import range from "lodash/range";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
+import { PHASE } from "../../common";
 
 async function updateSeasons(
 	inputs: unknown,
@@ -9,7 +10,7 @@ async function updateSeasons(
 ): Promise<{
 	abbrevs: string[];
 	season: number;
-	seasons: number[][];
+	seasons: (number | undefined)[][];
 	userTid: number;
 } | void> {
 	if (
@@ -17,7 +18,7 @@ async function updateSeasons(
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement")
 	) {
-		const seasons: number[][] = [];
+		const seasons: (number | undefined)[][] = [];
 		let prevMinutesAll: Map<number, number>[];
 
 		for (
@@ -49,29 +50,48 @@ async function updateSeasons(
 
 			// @ts-ignore
 			if (prevMinutesAll) {
-				seasons.push(
-					minutesAll.map((minutes, i) => {
-						const prevMinutes = prevMinutesAll[i];
-						let sumMinutes = 0;
-						let sumMinutesContinuity = 0;
-
-						for (const [pid, min] of minutes) {
-							sumMinutes += min;
-
-							if (prevMinutes.has(pid)) {
-								sumMinutesContinuity += min;
-							}
-						}
-
-						return sumMinutes > 0 ? sumMinutesContinuity / sumMinutes : 1;
-					}),
-				);
 				// compare against previous season
+				seasons.push(
+					await Promise.all(
+						minutesAll.map(async (minutes, i) => {
+							const prevMinutes = prevMinutesAll[i];
+							let sumMinutes = 0;
+							let sumMinutesContinuity = 0;
+
+							for (const [pid, min] of minutes) {
+								sumMinutes += min;
+
+								if (prevMinutes.has(pid)) {
+									sumMinutesContinuity += min;
+								}
+							}
+
+							if (sumMinutesContinuity === 0) {
+								// Is it really 0, or did team not exist that season?
+								const teamSeason = await idb.cache.teamSeasons.indexGet(
+									"teamSeasonsBySeasonTid",
+									[season - 1, i],
+								);
+								if (!teamSeason) {
+									return undefined;
+								}
+							}
+
+							if (sumMinutes === 0) {
+								// Season probably hasn't started yet
+								return 1;
+							}
+
+							return sumMinutesContinuity / sumMinutes;
+						}),
+					),
+				);
 			}
 			prevMinutesAll = minutesAll;
 		}
 
 		seasons.reverse();
+
 		return {
 			abbrevs: g.get("teamAbbrevsCache"),
 			season: g.get("season"),

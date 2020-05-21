@@ -2,7 +2,6 @@ import range from "lodash/range";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
-import { PHASE } from "../../common";
 
 async function updateSeasons(
 	inputs: unknown,

@@ -101,9 +101,15 @@ const replaceAbbrevs = {
 	PHX: "PHO",
 	SAS: "SA",
 };
+const replaceAbbrevsSrID = {
+	BKN: "BRK",
+	PHX: "PHO",
+};
 input.teams = getTeamInfos(
 	input.teams.map(t => {
-		const srID = t.abbrev;
+		const srID = replaceAbbrevsSrID[t.abbrev]
+			? replaceAbbrevsSrID[t.abbrev]
+			: t.abbrev;
 		if (replaceAbbrevs[t.abbrev]) {
 			t.abbrev = replaceAbbrevs[t.abbrev];
 		}

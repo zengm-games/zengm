@@ -102,6 +102,7 @@ const replaceAbbrevs = {
 	SAS: "SA",
 };
 const replaceAbbrevsSrID = {
+	CHA: "CHO",
 	BKN: "BRK",
 	PHX: "PHO",
 };

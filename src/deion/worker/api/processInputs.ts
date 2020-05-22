@@ -147,6 +147,15 @@ const draft = () => {
 			]),
 		};
 	}
+
+	if (
+		g.get("phase") === PHASE.EXPANSION_DRAFT &&
+		g.get("expansionDraft").phase === "protection"
+	) {
+		return {
+			redirectUrl: helpers.leagueUrl(["protect_players"]),
+		};
+	}
 };
 
 const draftLottery = (params: Params) => {

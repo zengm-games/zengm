@@ -220,7 +220,6 @@ const genOrder = async (
 
 			if (!mock) {
 				logLotteryWinners(
-					chancePct,
 					teams,
 					dp.tid,
 					teams[firstN[i]].tid,
@@ -241,15 +240,8 @@ const genOrder = async (
 			if (dp) {
 				dp.pick = pick;
 
-				if (pick < 15 && !mock) {
-					logLotteryWinners(
-						chancePct,
-						teams,
-						dp.tid,
-						teams[i].tid,
-						pick,
-						conditions,
-					);
+				if (pick <= numLotteryTeams && !mock) {
+					logLotteryWinners(teams, dp.tid, teams[i].tid, pick, conditions);
 				}
 			}
 

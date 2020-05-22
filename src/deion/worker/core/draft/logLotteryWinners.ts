@@ -3,21 +3,22 @@ import logLotteryTxt from "./logLotteryTxt";
 import type { Conditions, TeamFiltered } from "../../../common/types";
 
 const logLotteryWinners = (
-	chances: number[],
 	teams: TeamFiltered<["tid"]>[],
 	tm: number,
 	origTm: number,
 	pick: number,
 	conditions?: Conditions,
 ) => {
-	const idx = teams.find(t => t.tid === origTm);
+	const idx = teams.findIndex(t => t.tid === origTm);
 
-	if (idx !== undefined) {
+	if (idx >= 0) {
+		const expectedPick = idx + 1;
+
 		let txt;
 
-		if (chances[idx.tid] < chances[pick - 1]) {
+		if (expectedPick > pick) {
 			txt = logLotteryTxt(tm, "movedup", pick);
-		} else if (chances[idx.tid] > chances[pick - 1]) {
+		} else if (expectedPick < pick) {
 			txt = logLotteryTxt(tm, "moveddown", pick);
 		} else {
 			txt = logLotteryTxt(tm, "normal", pick);

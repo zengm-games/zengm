@@ -191,7 +191,10 @@ const processExpansionDraft = async (
 		},
 	});
 
-	const errors = await expansionDraft.advanceToPlayerProtection(conditions);
+	const errors = await expansionDraft.advanceToPlayerProtection(
+		true,
+		conditions,
+	);
 	if (errors) {
 		throw new Error(errors.join("; "));
 	}

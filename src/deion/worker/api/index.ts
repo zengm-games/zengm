@@ -36,6 +36,7 @@ import {
 	toUI,
 	recomputeLocalUITeamOvrs,
 	updatePhase,
+	logEvent,
 } from "../util";
 import views from "../views";
 import type {
@@ -1338,7 +1339,10 @@ const updateExpansionDraftSetup = async (changes: {
 };
 
 const advanceToPlayerProtection = async (conditions: Conditions) => {
-	const errors = await expansionDraft.advanceToPlayerProtection(conditions);
+	const errors = await expansionDraft.advanceToPlayerProtection(
+		false,
+		conditions,
+	);
 
 	if (errors) {
 		return errors;
@@ -1384,10 +1388,43 @@ const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
 	await phase.newPhase(PHASE.FANTASY_DRAFT, conditions, tids);
 };
 
-const switchTeam = async (tid: number) => {
-	await team.switchTo(tid);
-	await updateStatus("Idle");
-	await updatePlayMenu();
+const switchTeam = async (tid: number, conditions: Conditions) => {
+	const t = await idb.cache.teams.get(tid);
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	const userTid = g.get("userTid");
+	if (userTid !== tid) {
+		await team.switchTo(tid);
+		await updateStatus("Idle");
+		await updatePlayMenu();
+	}
+
+	const expansionDraft = g.get("expansionDraft");
+	if (
+		g.get("phase") === PHASE.EXPANSION_DRAFT &&
+		expansionDraft.phase === "protection" &&
+		expansionDraft.allowSwitchTeam
+	) {
+		await league.setGameAttributes({
+			expansionDraft: {
+				...expansionDraft,
+				allowSwitchTeam: false,
+			},
+		});
+
+		if (userTid !== tid) {
+			logEvent(
+				{
+					saveToDb: false,
+					text: `You are now the GM of a new expansion team, the ${t.region} ${t.name}!`,
+					type: "info",
+				},
+				conditions,
+			);
+		}
+	}
 };
 
 const updateBudget = async (

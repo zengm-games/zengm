@@ -9,7 +9,7 @@ import React, {
 	useEffect,
 } from "react";
 import { DIFFICULTY } from "../../common";
-import { LeagueFileUpload } from "../components";
+import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View, RealTeamInfo } from "../../common/types";
@@ -53,59 +53,6 @@ const teams2020: NewLeagueTeam[] =
 	process.env.SPORT === "basketball"
 		? helpers.addPopRank(league2020.teams)
 		: [];
-
-const PopText = ({
-	teams,
-	tid,
-}: {
-	teams: typeof teamsDefault;
-	tid: number;
-}) => {
-	if (tid >= 0) {
-		const t = teams.find(t2 => t2.tid === tid);
-		if (t) {
-			let size;
-			if (t.popRank <= Math.ceil((3 / 30) * teams.length)) {
-				size = "very large";
-			} else if (t.popRank <= Math.ceil((8 / 30) * teams.length)) {
-				size = "large";
-			} else if (t.popRank <= Math.ceil((16 / 30) * teams.length)) {
-				size = "normal";
-			} else if (t.popRank <= Math.ceil((24 / 30) * teams.length)) {
-				size = "small";
-			} else {
-				size = "very small";
-			}
-
-			return (
-				<span className="text-muted">
-					Region population: {t.pop} million (#
-					{t.popRank})<br />
-					Size: {size}
-				</span>
-			);
-		}
-	}
-
-	return (
-		<span className="text-muted">
-			Region population: ?<br />
-			Difficulty: ?
-		</span>
-	);
-};
-
-PopText.propTypes = {
-	teams: PropTypes.arrayOf(
-		PropTypes.shape({
-			// pop and popRank not required for Random Team
-			pop: PropTypes.number,
-			popRank: PropTypes.number,
-			tid: PropTypes.number.isRequired,
-		}),
-	).isRequired,
-	tid: PropTypes.number.isRequired,
-};
 
 const leaguePartDescriptions: { [key: string]: string } = {
 	gameAttributes: "League settings",
@@ -949,7 +896,11 @@ const NewLeague = (props: View<"newLeague">) => {
 								</button>
 							</div>
 						</div>
-						<PopText tid={state.tid} teams={displayedTeams} />
+						<PopText
+							tid={state.tid}
+							teams={displayedTeams}
+							numTeams={displayedTeams.length}
+						/>
 					</div>
 
 					<div className="form-group">

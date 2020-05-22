@@ -5,8 +5,17 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
 import orderBy from "lodash/orderBy";
+import { PopText } from "../components";
 
-const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
+const NewTeam = ({
+	expansion,
+	gameOver,
+	godMode,
+	numTeams,
+	phase,
+	teams,
+	userTid,
+}: View<"newTeam">) => {
 	const [tid, setTid] = useState(
 		teams && teams.length > 0 ? teams[0].tid : undefined,
 	);
@@ -21,18 +30,30 @@ const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 
 	const handleNewTeam = async () => {
 		await toWorker("main", "switchTeam", tid);
-		realtimeUpdate([], helpers.leagueUrl([]));
+		realtimeUpdate(
+			[],
+			expansion
+				? helpers.leagueUrl(["protect_players"])
+				: helpers.leagueUrl([]),
+		);
 	};
 
-	useTitleBar({ title: "Pick a New Team" });
+	let title;
+	if (expansion) {
+		title = "Switch To Expansion Team?";
+	} else {
+		title = "Pick a New Team";
+	}
 
-	if (!gameOver && !godMode) {
+	useTitleBar({ title, hideNewWindow: true });
+
+	if (!expansion && !gameOver && !godMode) {
 		return (
 			<div>
 				<h2>Error</h2>
 				<p>
-					You may only switch to another team after you're fired or when you're
-					in <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
+					You cannot switch to a new team now unless you enable{" "}
+					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
 				</p>
 			</div>
 		);
@@ -51,7 +72,14 @@ const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 	}
 
 	let message;
-	if (godMode) {
+	if (expansion) {
+		message = (
+			<p>
+				You can either stay with your current team or take control of a new
+				expansion team.
+			</p>
+		);
+	} else if (godMode) {
 		message = (
 			<p>
 				Because you're in <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
@@ -69,24 +97,48 @@ const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 		);
 	}
 
+	let submitText;
+	if (expansion) {
+		submitText = "Continue With Expansion Draft";
+	} else if (godMode) {
+		submitText = "Switch Team";
+	} else {
+		submitText = "Accept New Job";
+	}
+
+	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
+	if (expansion) {
+		// User team first!
+		const userTeam = teams.find(t => t.tid === userTid);
+		if (userTeam) {
+			orderedTeams = [userTeam, ...orderedTeams.filter(t => t !== userTeam)];
+		}
+	}
+
 	return (
 		<>
 			{message}
 
 			<div className="form-group">
 				<select
-					className="form-control select-team"
+					className="form-control mb-1"
+					style={{
+						width: "inherit",
+					}}
 					onChange={handleTidChange}
 					value={tid}
 				>
-					{orderBy(teams, ["region", "name", "tid"]).map(t => {
+					{orderedTeams.map(t => {
 						return (
 							<option key={t.tid} value={t.tid}>
-								{t.region} {t.name}
+								{expansion && t.tid === userTid
+									? `Stay with my current team in ${t.region}`
+									: `${t.region} ${t.name}`}
 							</option>
 						);
 					})}
 				</select>
+				<PopText tid={tid} teams={teams} numTeams={numTeams} />
 			</div>
 
 			<button
@@ -94,7 +146,7 @@ const NewTeam = ({ gameOver, godMode, phase, teams }: View<"newTeam">) => {
 				disabled={tid === undefined}
 				onClick={handleNewTeam}
 			>
-				{godMode ? "Switch Team" : "Accept New Job"}
+				{submitText}
 			</button>
 		</>
 	);

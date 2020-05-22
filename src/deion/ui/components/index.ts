@@ -19,6 +19,7 @@ export { default as NewWindowLink } from "./NewWindowLink";
 export { default as PlayerNameLabels } from "./PlayerNameLabels";
 export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
+export { default as PopText } from "./PopText";
 export { default as RatingWithChange } from "./RatingWithChange";
 export { default as RatingsStatsPopover } from "./RatingsStatsPopover";
 export { default as RecordAndPlayoffs } from "./RecordAndPlayoffs";

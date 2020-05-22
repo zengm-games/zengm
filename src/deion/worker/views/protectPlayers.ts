@@ -15,6 +15,15 @@ const updateProtectPlayers = async () => {
 			redirectUrl: helpers.leagueUrl(["draft"]),
 		};
 		return returnValue;
+	} else if (
+		expansionDraft.phase === "protection" &&
+		expansionDraft.allowSwitchTeam
+	) {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			redirectUrl: helpers.leagueUrl(["new_team"]),
+		};
+		return returnValue;
 	}
 
 	const stats =

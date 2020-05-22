@@ -1,6 +1,4 @@
-switch to expansion team in scheduled event
-- set flag, and make that show another page before protection
-- multi team mode might want to take control of multiple teams
+skip "protect players" screen if user is not controlling
 
 face overrides - support faces.js object @Lerotri#4029
 
@@ -23,7 +21,6 @@ eventually
 - show draft prospects separately when creating a new custom league, to allow creating one without them
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
-- allow user to switch to expansion team from scheduled event?
 - contraction
 
 ---

@@ -9,7 +9,10 @@ import type {
 import { PHASE } from "../../../common";
 import validateExpansionDraftSetup from "./validateExpansionDraftSetup";
 
-const advanceToPlayerProtection = async (conditions: Conditions) => {
+const advanceToPlayerProtection = async (
+	allowSwitchTeam: boolean,
+	conditions: Conditions,
+) => {
 	const {
 		errors,
 		expansionTeams,
@@ -82,6 +85,7 @@ const advanceToPlayerProtection = async (conditions: Conditions) => {
 		numProtectedPlayers,
 		expansionTids,
 		protectedPids,
+		allowSwitchTeam,
 	};
 
 	await league.setGameAttributes(gameAttributes);

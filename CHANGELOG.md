@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-21: When using historical rosters with pre-scheduled expansion drafts, you now are given the option of taking control of expansion teams. [[1]](https://old.reddit.com/r/BasketballGM/comments/goaypl/when_using_historical_rosters_with_prescheduled/)
+
 * 2020-05-20: New hair styles! [[1]](https://old.reddit.com/r/BasketballGM/comments/gnowab/thanks_to_usmileyoaks_there_are_some_new_hair/)
 
 * 2020-05-20: AI teams draft smarter. Previously the probability they would pick a player depended only on that player's rank, but now it depends on how good the players are. So the AI will almost always take the clear #1 pick, but there will be more randomness if the top available prospects have similar talents.

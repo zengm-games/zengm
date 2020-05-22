@@ -1,16 +1,16 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
 import type { TeamBasic } from "./types";
 import getTeamInfos from "./getTeamInfos";
+import orderBy from "lodash/orderBy";
 
 const getPopRanks = (
 	teamSeasons: {
-		pop: number;
+		pop?: number;
 		tid: number;
 	}[],
 ): number[] => {
 	// Add popRank
-	const teamsSorted = teamSeasons.slice();
-	teamsSorted.sort((a, b) => b.pop - a.pop);
+	const teamsSorted = orderBy(teamSeasons, "pop", "desc");
 	const popRanks: number[] = [];
 
 	for (let i = 0; i < teamSeasons.length; i++) {
@@ -25,7 +25,7 @@ const getPopRanks = (
 	return popRanks;
 };
 
-function addPopRank<T extends { pop: number; tid: number }>(
+function addPopRank<T extends { pop?: number; tid: number }>(
 	teams: T[],
 ): (T & { popRank: number })[] {
 	const popRanks = getPopRanks(teams);

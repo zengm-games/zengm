@@ -113,6 +113,17 @@ export const createWithoutSaving = (
 		if (leagueFile.teams.length <= teamsDefault.length) {
 			// This probably shouldn't be here, but oh well, backwards compatibility...
 			teamInfos = leagueFile.teams.map((t, i) => {
+				// If specified on season, copy to root
+				if (t.seasons && t.seasons.length > 0) {
+					const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
+					const ts = t.seasons[t.seasons.length - 1];
+					for (const prop of maybeOnSeason) {
+						if (ts[prop] !== undefined) {
+							t[prop] = ts[prop];
+						}
+					}
+				}
+
 				// Fill in default values as needed
 				const t2 = teamsDefault[i];
 

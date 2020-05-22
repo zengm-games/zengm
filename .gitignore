@@ -11,3 +11,4 @@ local.log
 stats-*.html
 .idea/
 foo
+.vscode

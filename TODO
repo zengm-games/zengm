@@ -1,11 +1,25 @@
-skip "protect players" screen if user is not controlling
-
-face overrides - support faces.js object @Lerotri#4029
-
-0 pot in draft summary
-- https://discord.com/channels/@me/692190176411123744
-
 contraction
+- t.disabled=true
+- UI to change in Manage Teams
+  - only allow in certain phases
+    - PRESEASON
+    - AFTER_DRAFT
+    - RESIGN_PLAYERS
+    - FREE_AGENCY
+  - things to change on toggle
+    - t.disabled
+    - make sure to delete/create teamSeason row if toggled in preseason
+    - delete/create future draft picks
+    - team*Cache
+    - if in draft lottery phase and contracted team is in the lottery, delete lottery results
+- when this is true
+  - don't create new teamSeason row for this team
+  - don't include in team*Cache
+  - don't include most places that loop over all teams
+    - look for range( and numTeams
+    - maybe get rid of g.numTeams
+- pages to check
+  - roster composition
 
 total stats, for traded players
 - player stats table
@@ -60,10 +74,6 @@ what would it really cost to store all game sim results?
 playoff upsets
 - could apply bigger home court advantage for good teams
 
-contraction
-- happened some NBA seasons
-- ...but tid gap
-
 better changelog
 - everything from CHANGELOG.made
 - show in modal
@@ -71,8 +81,6 @@ better changelog
 way to clone a player
 
 way to bookmark trades
-
-on league creation, select which teams you want for a league
 
 player stats popover
 - stats relative to league average
@@ -161,8 +169,6 @@ more animations
 - RatingsStatsPopover modal opening
 - games log
 - schedule
-
-add FMVP to award races
 
 game highs
 - per season and career, like in basketball reference

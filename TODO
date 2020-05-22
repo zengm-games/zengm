@@ -1,3 +1,7 @@
+button to randomize ratings on customize player screen
+- test football
+- move button lower
+
 contraction
 - t.disabled=true
 - UI to change in Manage Teams
@@ -383,8 +387,6 @@ SW stuff
 hype revamp
 - make more transparent
 - YWT
-
-button to randomize ratings on customize player screen
 
 zipped files @Jofish#5051
 - https://github.com/Stuk/jszip is a bit big

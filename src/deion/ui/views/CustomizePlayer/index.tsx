@@ -615,6 +615,35 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					</div>
 
 					<div className="col-md-5">
+						<button
+							type="button"
+							className="btn btn-secondary float-right"
+							title="Ratings will be taken from a randomly generated player with the same age as this player"
+							onClick={async event => {
+								event.preventDefault();
+								const ratings = await toWorker(
+									"main",
+									"getRandomRatings",
+									(p as any).age,
+								);
+
+								setState(prevState => {
+									const p: any = prevState.p;
+									p.ratings[p.ratings.length - 1] = {
+										...p.ratings[p.ratings.length - 1],
+										...ratings,
+									};
+
+									return {
+										...prevState,
+										p,
+									};
+								});
+							}}
+						>
+							Randomize
+						</button>
+
 						<h2>Ratings</h2>
 
 						<p>All ratings are on a scale of 0 to 100.</p>

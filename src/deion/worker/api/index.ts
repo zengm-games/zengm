@@ -748,6 +748,23 @@ const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
 
+const getRandomRatings = (age: number) => {
+	const p = player.generate(
+		PLAYER.UNDRAFTED,
+		19,
+		g.get("season"),
+		false,
+		g.get("numTeams") / 2,
+	);
+	player.develop(p, age - 19);
+
+	const ratings: Record<string, number> = {};
+	for (const key of overrides.common.constants.RATINGS) {
+		ratings[key] = (p.ratings[0] as any)[key];
+	}
+	return ratings;
+};
+
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		// Pick 10 random teams to try (or all teams, if g.get("numTeams") < 10)
@@ -2017,6 +2034,7 @@ export default {
 	generateFace,
 	getLeagueName,
 	getLocal,
+	getRandomRatings,
 	getTradingBlockOffers,
 	getVersionWorker,
 	handleUploadedDraftClass,

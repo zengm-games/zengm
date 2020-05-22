@@ -40,6 +40,7 @@ const processTeamInfo = async (
 	Object.assign(teamSeason, info);
 	await idb.cache.teamSeasons.put(teamSeason);
 
+	let updatedRegionName;
 	if (info.region && info.region !== old.region) {
 		eventLogTexts.push(
 			`<b>Team relocation:</b> the ${old.region} ${
@@ -50,6 +51,7 @@ const processTeamInfo = async (
 				season,
 			])}">${t.region} ${t.name}</a>.`,
 		);
+		updatedRegionName = true;
 	} else if (info.name && info.name !== old.name) {
 		eventLogTexts.push(
 			`<b>Team rename:</b> the ${old.region} ${
@@ -60,6 +62,11 @@ const processTeamInfo = async (
 				season,
 			])}">${t.region} ${t.name}</a>.`,
 		);
+		updatedRegionName = true;
+	}
+
+	if (info.tid === g.get("userTid")) {
+		await league.updateMetaNameRegion(t.name, t.region);
 	}
 
 	for (const text of eventLogTexts) {

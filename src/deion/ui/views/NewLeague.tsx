@@ -384,6 +384,7 @@ type State = {
 	randomizeRosters: boolean;
 	teams: NewLeagueTeam[];
 	tid: number;
+	pendingInitialLeagueFile: boolean;
 	keptKeys: string[];
 };
 
@@ -524,13 +525,21 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "newLeagueFile": {
+			let prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
+			if (state.pendingInitialLeagueFile) {
+				const fromLocalStorage = localStorage.getItem("prevTeamRegionName");
+				if (fromLocalStorage !== null) {
+					prevTeamRegionName = fromLocalStorage;
+				}
+			}
 			return {
 				...state,
 				loadingLeagueFile: false,
 				leagueFile: action.leagueFile,
 				keptKeys: initKeptKeys(action.leagueFile),
 				teams: action.teams,
-				tid: getNewTid(getTeamRegionName(state.teams, state.tid), action.teams),
+				tid: getNewTid(prevTeamRegionName, action.teams),
+				pendingInitialLeagueFile: false,
 			};
 		}
 
@@ -589,6 +598,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				randomizeRosters: false,
 				teams,
 				tid: getNewTid(prevTeamRegionName, teams),
+				pendingInitialLeagueFile:
+					(customize === "real" && season !== 2020) || customize === "legends",
 				keptKeys: initKeptKeys(leagueFile),
 			};
 		},

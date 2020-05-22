@@ -962,10 +962,10 @@ const handleUploadedDraftClass = async (
 			}
 
 			// Make sure player object is fully defined
-			p = player.augmentPartialPlayer(p, scoutingRank, uploadedFile.version);
-			p.tid = PLAYER.UNDRAFTED;
 			p.draft.year = draftYear;
 			p.ratings[p.ratings.length - 1].season = draftYear;
+			p = player.augmentPartialPlayer(p, scoutingRank, uploadedFile.version);
+			p.tid = PLAYER.UNDRAFTED;
 
 			if (p.hasOwnProperty("pid")) {
 				delete p.pid;

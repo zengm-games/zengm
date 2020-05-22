@@ -47,15 +47,14 @@ const advanceToPlayerProtection = async (conditions: Conditions) => {
 
 	if (takeControlTeams.length > 0) {
 		const userTids = g.get("userTids");
+		let tid: number;
+		let tids: number[] | undefined;
 		if (userTids.length > 1) {
-			gameAttributes.userTids = [
-				...userTids,
-				...takeControlTeams.map(t => t.tid),
-			];
+			tid = g.get("userTid");
+			tids = [...userTids, ...takeControlTeams.map(t => t.tid)];
 		} else {
 			const t = takeControlTeams[takeControlTeams.length - 1];
-			gameAttributes.userTid = t.tid;
-			gameAttributes.userTids = [gameAttributes.userTid];
+			tid = t.tid;
 			logEvent(
 				{
 					saveToDb: false,
@@ -64,8 +63,8 @@ const advanceToPlayerProtection = async (conditions: Conditions) => {
 				},
 				conditions,
 			);
-			await league.updateMetaNameRegion(t.name, t.region);
 		}
+		await team.switchTo(tid, tids);
 	}
 
 	const protectedPids: {

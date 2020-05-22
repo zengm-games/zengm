@@ -7,6 +7,7 @@ import getContracts from "./getContracts";
 import getNeededPositions from "./getNeededPositions";
 import getPayroll from "./getPayroll";
 import getPayrolls from "./getPayrolls";
+import switchTo from "./switchTo";
 import updateStrategies from "./updateStrategies";
 import valueChange from "./valueChange";
 
@@ -20,6 +21,7 @@ export default {
 	getNeededPositions,
 	getPayroll,
 	getPayrolls,
+	switchTo,
 	updateStrategies,
 	valueChange,
 };

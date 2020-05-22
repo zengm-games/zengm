@@ -1385,31 +1385,9 @@ const startFantasyDraft = async (tids: number[], conditions: Conditions) => {
 };
 
 const switchTeam = async (tid: number) => {
+	await team.switchTo(tid);
 	await updateStatus("Idle");
-	updatePlayMenu();
-	await league.setGameAttributes({
-		gameOver: false,
-		userTid: tid,
-		userTids: [tid],
-		gracePeriodEnd: g.get("season") + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
-	});
-	league.updateMetaNameRegion(
-		g.get("teamNamesCache")[g.get("userTid")],
-		g.get("teamRegionsCache")[g.get("userTid")],
-	);
-	const teamSeason = await idb.cache.teamSeasons.indexGet(
-		"teamSeasonsByTidSeason",
-		[tid, g.get("season")],
-	);
-	if (teamSeason) {
-		teamSeason.ownerMood = {
-			money: 0,
-			playoffs: 0,
-			wins: 0,
-		};
-		await idb.cache.teamSeasons.put(teamSeason);
-	}
-	await toUI("realtimeUpdate", [["leagues"]]);
+	await updatePlayMenu();
 };
 
 const updateBudget = async (

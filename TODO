@@ -1,5 +1,6 @@
 switch to expansion team in scheduled event
 - set flag, and make that show another page before protection
+- multi team mode might want to take control of multiple teams
 
 face overrides - support faces.js object @Lerotri#4029
 

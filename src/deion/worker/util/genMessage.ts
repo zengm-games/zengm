@@ -87,7 +87,9 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 		if (currentTotal >= 0) {
 			if (deltas.playoffs >= 0 && deltas.wins >= 0) {
 				if (deltas.money < 0) {
-					text = "Keep it up on the court, but I need more money.";
+					text = `Keep it up on the ${
+						process.env.SPORT === "basketball" ? "court" : "field"
+					}, but I need more money.`;
 				} else {
 					text = "Keep it up.";
 				}

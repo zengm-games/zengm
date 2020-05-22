@@ -617,14 +617,19 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					<div className="col-md-5">
 						<button
 							type="button"
-							className="btn btn-secondary float-right"
-							title="Ratings will be taken from a randomly generated player with the same age as this player"
+							className="btn btn-secondary float-right mt-3"
+							title={`Ratings will be taken from a randomly generated player with the same age${
+								process.env.SPORT === "football" ? " and position" : ""
+							} as this player`}
 							onClick={async event => {
 								event.preventDefault();
 								const ratings = await toWorker(
 									"main",
 									"getRandomRatings",
 									(p as any).age,
+									process.env.SPORT === "football"
+										? p.pos || p.ratings[p.ratings.length - 1].pos
+										: undefined,
 								);
 
 								setState(prevState => {

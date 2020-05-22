@@ -748,15 +748,25 @@ const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
 
-const getRandomRatings = (age: number) => {
-	const p = player.generate(
-		PLAYER.UNDRAFTED,
-		19,
-		g.get("season"),
-		false,
-		g.get("numTeams") / 2,
-	);
+const getRandomRatings = (age: number, pos: string | undefined) => {
+	// 100 tries to find a matching position
+	let p: any;
+	for (let i = 0; i < 100; i++) {
+		p = player.generate(
+			PLAYER.UNDRAFTED,
+			19,
+			g.get("season"),
+			false,
+			g.get("numTeams") / 2,
+		);
+		if (p.ratings[0].pos === pos || pos === undefined) {
+			break;
+		}
+	}
+
+	console.log(p.ratings[0].pos, pos);
 	player.develop(p, age - 19);
+	console.log(2, p.ratings[0].pos);
 
 	const ratings: Record<string, number> = {};
 	for (const key of overrides.common.constants.RATINGS) {

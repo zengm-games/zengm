@@ -65,7 +65,7 @@ const processTeamInfo = async (
 		updatedRegionName = true;
 	}
 
-	if (info.tid === g.get("userTid")) {
+	if (info.tid === g.get("userTid") && updatedRegionName) {
 		await league.updateMetaNameRegion(t.name, t.region);
 	}
 

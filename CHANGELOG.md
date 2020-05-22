@@ -4,7 +4,7 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-05-22: Button on the Create/Edit Player page to randomize player ratings, which works by generating a random player of the same age and copying his ratings over.
+* 2020-05-22: Button on the Create/Edit Player page to randomize player ratings, which works by generating a random player of the same age and copying his ratings over. In FBGM it also matches by position.
 
 * 2020-05-21: When using historical rosters with pre-scheduled expansion drafts, you now are given the option of taking control of expansion teams. [[1]](https://old.reddit.com/r/BasketballGM/comments/goaypl/when_using_historical_rosters_with_prescheduled/)
 

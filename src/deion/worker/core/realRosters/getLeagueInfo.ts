@@ -47,6 +47,24 @@ const getLeagueInfo = (
 		};
 	}
 
+	if (options.type === "legends") {
+		const lastSeason =
+			options.decade === "all" ? 2020 : parseInt(options.decade) + 9;
+
+		const { initialTeams } = formatScheduledEvents(
+			basketball.scheduledEventsTeams,
+			lastSeason,
+		);
+
+		const stores = ["teams", "players", "gameAttributes", "startingSeason"];
+
+		return {
+			stores,
+			teams: initialTeams,
+		};
+	}
+
+	// @ts-ignore
 	throw new Error(`Unknown type "${options.type}"`);
 };
 

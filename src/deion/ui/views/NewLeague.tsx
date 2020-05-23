@@ -158,109 +158,15 @@ const LeaguePartPicker = ({
 	);
 };
 
-const fetchLeagueFile = (filename: number | string) => {
-	let filenameWithHash = filename;
-	if (window.leagueFileHashes[filename]) {
-		filenameWithHash += `-${window.leagueFileHashes[filename]}`;
-	}
-	return fetch(`/leagues/${filenameWithHash}.json`);
-};
-
-const quickSeasonsStyle = { height: 19, color: "var(--dark)" };
+const quickValuesStyle = { height: 19, color: "var(--dark)" };
 
 const MIN_SEASON = 1956;
 const MAX_SEASON = 2020;
 
-const SeasonsMenu = ({
-	onDone,
-	onLoading,
-	value,
-}: {
-	onDone: (leagueInfo: any) => void;
-	onLoading: (season: number) => void;
-	value: number;
-}) => {
-	const waitingForInfo = useRef<number | undefined>(value);
-
-	const seasons = range(MAX_SEASON, MIN_SEASON - 1);
-
-	const handleNewValue = async (season: number) => {
-		waitingForInfo.current = season;
-		onLoading(season);
-
-		const leagueInfo = await toWorker("main", "getLeagueInfo", {
-			type: "real",
-			season,
-		});
-		console.log("leagueInfo", leagueInfo);
-		if (waitingForInfo.current === season) {
-			onDone(leagueInfo);
-			waitingForInfo.current = undefined;
-		}
-	};
-
-	// Handle initial value
-	useEffect(() => {
-		handleNewValue(value);
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-	const quickSeasons = [1956, 1968, 1984, 1996, 2003, 2020];
-
-	return (
-		<div className="form-group">
-			<div className="d-flex">
-				<label htmlFor="new-league-season" className="flex-grow-1">
-					Season
-				</label>
-				{quickSeasons.map(season => (
-					<button
-						key={season}
-						type="button"
-						className="btn btn-link border-0 p-0 mb-1 ml-2"
-						style={quickSeasonsStyle}
-						onClick={() => {
-							handleNewValue(season);
-						}}
-					>
-						{season}
-					</button>
-				))}
-			</div>
-			<div className="input-group mb-1">
-				<select
-					id="new-league-season"
-					className="form-control"
-					value={value}
-					onChange={async event => {
-						const season = parseInt(event.target.value, 10);
-						await handleNewValue(season);
-					}}
-				>
-					{seasons.map(season => {
-						return (
-							<option key={season} value={season}>
-								{season}
-							</option>
-						);
-					})}
-				</select>
-				<div className="input-group-append">
-					<button
-						className="btn btn-secondary"
-						type="button"
-						onClick={() => {
-							const randomSeason =
-								seasons[Math.floor(Math.random() * seasons.length)];
-							handleNewValue(randomSeason);
-						}}
-					>
-						Random
-					</button>
-				</div>
-			</div>
-		</div>
-	);
-};
+const seasons: Record<string, string> = {};
+for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
+	seasons[i] = String(i);
+}
 
 const legends = {
 	all: "All Time",
@@ -275,35 +181,32 @@ const legends = {
 
 type Legend = keyof typeof legends;
 
-const LegendsMenu = ({
+const LeagueMenu = <T extends string>({
+	getLeagueInfo,
 	onDone,
 	onLoading,
+	quickValues,
 	value,
+	values,
 }: {
-	onDone: (leagueFile: any) => void;
-	onLoading: (legend: Legend) => void;
-	value: Legend;
+	getLeagueInfo: (value: T) => Promise<LeagueInfo>;
+	onDone: (leagueInfo: any) => void;
+	onLoading: (value: T) => void;
+	quickValues?: T[];
+	value: T;
+	values: Record<T, string>;
 }) => {
-	const waitingForFile = useRef<typeof value | undefined>(value);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const waitingForInfo = useRef<string | undefined>(value);
 
-	const handleNewValue = async (legend: Legend) => {
-		waitingForFile.current = legend;
-		onLoading(legend);
-		setErrorMessage(undefined);
+	const handleNewValue = async (newValue: T) => {
+		waitingForInfo.current = newValue;
+		onLoading(newValue);
 
-		try {
-			const response = await fetchLeagueFile(legend);
-			if (waitingForFile.current === legend) {
-				const leagueFile = await response.json();
-				if (waitingForFile.current === legend) {
-					onDone(leagueFile);
-					waitingForFile.current = undefined;
-				}
-			}
-		} catch (error) {
-			setErrorMessage(error.message);
-			throw error;
+		const leagueInfo = await getLeagueInfo(newValue);
+		console.log("leagueInfo", leagueInfo);
+		if (waitingForInfo.current === newValue) {
+			onDone(leagueInfo);
+			waitingForInfo.current = undefined;
 		}
 	};
 
@@ -315,28 +218,38 @@ const LegendsMenu = ({
 	return (
 		<div className="form-group">
 			<div className="d-flex">
-				<label htmlFor="new-league-legends" className="flex-grow-1">
-					Eligible players
+				<label htmlFor="new-league-season" className="flex-grow-1">
+					Season
 				</label>
+				{quickValues
+					? quickValues.map(key => (
+							<button
+								key={key}
+								type="button"
+								className="btn btn-link border-0 p-0 mb-1 ml-2"
+								style={quickValuesStyle}
+								onClick={() => {
+									handleNewValue(key);
+								}}
+							>
+								{values[key]}
+							</button>
+					  ))
+					: null}
 			</div>
 			<div className="input-group mb-1">
 				<select
-					id="new-league-legends"
+					id="new-league-season"
 					className="form-control"
 					value={value}
 					onChange={async event => {
-						const value: any = event.target.value;
-						// @ts-ignore
-						if (!legends[value]) {
-							throw new Error(`Unknown value: ${value}`);
-						}
-						await handleNewValue(value);
+						await handleNewValue((event.target.value as unknown) as T);
 					}}
 				>
-					{Object.entries(legends).map(([key, name]) => {
+					{helpers.keys(values).map(key => {
 						return (
 							<option key={key} value={key}>
-								{name}
+								{values[key]}
 							</option>
 						);
 					})}
@@ -346,7 +259,7 @@ const LegendsMenu = ({
 						className="btn btn-secondary"
 						type="button"
 						onClick={() => {
-							const keys = Object.keys(legends) as Legend[];
+							const keys = helpers.keys(values);
 							const random = keys[Math.floor(Math.random() * keys.length)];
 							handleNewValue(random);
 						}}
@@ -355,9 +268,6 @@ const LegendsMenu = ({
 					</button>
 				</div>
 			</div>
-			{errorMessage ? (
-				<span className="text-danger">Error: {errorMessage}</span>
-			) : null}
 		</div>
 	);
 };
@@ -612,7 +522,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				creating: false,
 				customize,
 				season,
-				legend: "legends-all",
+				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 				leagueFile,
@@ -864,30 +774,40 @@ const NewLeague = (props: View<"newLeague">) => {
 					</div>
 
 					{state.customize === "real" ? (
-						<SeasonsMenu
-							value={state.season}
-							onLoading={season => {
+						<LeagueMenu
+							value={String(state.season)}
+							values={seasons}
+							getLeagueInfo={value =>
+								toWorker("main", "getLeagueInfo", {
+									type: "real",
+									season: parseInt(value),
+								})
+							}
+							onLoading={value => {
+								const season = parseInt(value);
 								dispatch({ type: "setSeason", season });
-								if (season !== 2020) {
-									dispatch({ type: "loadingLeagueFile" });
-								}
+								dispatch({ type: "loadingLeagueFile" });
 							}}
-							onDone={leagueInfo => {
-								handleNewLeagueInfo(leagueInfo);
-							}}
+							onDone={handleNewLeagueInfo}
+							quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
 						/>
 					) : null}
 
 					{state.customize === "legends" ? (
-						<LegendsMenu
+						<LeagueMenu
 							value={state.legend}
+							values={legends}
+							getLeagueInfo={value =>
+								toWorker("main", "getLeagueInfo", {
+									type: "legends",
+									decade: value,
+								})
+							}
 							onLoading={legend => {
 								dispatch({ type: "setLegend", legend });
 								dispatch({ type: "loadingLeagueFile" });
 							}}
-							onDone={leagueInfo => {
-								handleNewLeagueInfo(leagueInfo);
-							}}
+							onDone={handleNewLeagueInfo}
 						/>
 					) : null}
 

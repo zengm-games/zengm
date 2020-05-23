@@ -1,6 +1,6 @@
 import orderBy from "lodash/orderBy";
 
-const processGameAttributes = (events, season) => {
+const processGameAttributes = (events, season: number) => {
 	let gameAttributeEvents = [];
 
 	for (const event of events) {
@@ -43,7 +43,7 @@ const processGameAttributes = (events, season) => {
 	return { gameAttributeEvents, initialGameAttributes };
 };
 
-const processTeams = (events, season) => {
+const processTeams = (events, season: number) => {
 	let teamEvents = [];
 
 	for (const event of events) {

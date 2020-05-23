@@ -15,6 +15,7 @@ import {
 	team,
 	trade,
 	expansionDraft,
+	realRosters,
 } from "../core";
 import { connectMeta, idb, iterate } from "../db";
 import {
@@ -733,6 +734,12 @@ const exportDraftClass = async (season: number) => {
 
 const generateFace = () => {
 	return face.generate();
+};
+
+const getLeagueInfo = async (
+	options: Parameters<typeof realRosters.getLeagueInfo>[0],
+) => {
+	return realRosters.getLeagueInfo(options);
 };
 
 const getLeagueName = async () => {
@@ -2042,6 +2049,7 @@ export default {
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
 	generateFace,
+	getLeagueInfo,
 	getLeagueName,
 	getLocal,
 	getRandomRatings,

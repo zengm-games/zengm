@@ -1,18 +1,7 @@
 build bbgm-rosters into game
 - output JSON versions of all the data files
-  - come up with more systematic overrides system, if necessary. or just apply current ones
-  - normalize "abbrev" so it is bbgm 2020 abbrevs
-  - "league" column is never needed, just filter out non-NBA
-  - awards, bios, ratings, relatives, injuries
-    - need basically all of these files
-  - salaries
-    - need only slug, start, end, salary
-  - stats
-    - just use this to get (slug, season) => abbrev
-  - have this script read alexnoob 2020 file and include them
-    - how to handle players with no slug, like draft prospects? temp slug like for player photo override?
-- script to generate all scheduled events
 - formatScheduledEvents should go into bbgm
+  - maybe scheduledEvents generation too? wouldn't save much space, probably makes sense to put in json
 - NewLeague needs to change, to read from worker rather than JSON file
   - only need to send teams and Object.keys(leagueFile)
   - rest of league file shouldn't be generated until after submit
@@ -24,8 +13,18 @@ build bbgm-rosters into game
         decade: "1950" | "1960" | "1970" | "1980" | "1990" | "2000" | "2010" | "all",
       })
     - getLeague
-- dynamically generate scrub FAs
-- get rid of all public/leagues stuff, including file hashing
+      - dynamically generate scrub FAs
+  - no need to disable while loading, it's so fast it's just a flash
+- confirm 2020 rosters are good enough
+  - salaries
+  - traded draft picks
+  - numSeasonsFutureDraftPicks
+  - relatives
+  - FAs
+- get rid of
+  - public/leagues stuff, including file hashing
+  - process-rosters
+- confirm not in football bundle
 
 random debut
 - https://old.reddit.com/r/BasketballGM/comments/gou4kq/button_on_the_createedit_player_page_to_randomize/frigqqp/
@@ -92,6 +91,7 @@ way to bulk delete leagues
 
 handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
 - any abbrev returned in stats or ratings from playersPlus is wrong
+- using team*Cache from UI is probably wrong too
 
 events revamp
 - nothing should be lost, ever

@@ -25,6 +25,11 @@ type NewLeagueTeam = {
 	srID?: string;
 };
 
+type LeagueInfo = {
+	stores: string[];
+	teams: NewLeagueTeam[];
+};
+
 const applyRealTeamInfo = (
 	teams: NewLeagueTeam[],
 	realTeamInfo: RealTeamInfo | undefined,
@@ -82,19 +87,17 @@ const initKeptKeys = (leagueFile: any) =>
 	leagueFile ? Object.keys(leagueFile).filter(key => key !== "version") : [];
 
 const LeaguePartPicker = ({
-	leagueFile,
+	allKeys,
 	keptKeys,
 	setKeptKeys,
 }: {
-	leagueFile: any;
+	allKeys: string[];
 	keptKeys: string[];
 	setKeptKeys: (keys: string[]) => void;
 }) => {
-	if (!leagueFile) {
+	if (allKeys.length === 0) {
 		return null;
 	}
-
-	const allKeys = initKeptKeys(leagueFile);
 
 	const keysSorted = Object.keys(leaguePartDescriptions).filter(key =>
 		allKeys.includes(key),
@@ -173,43 +176,32 @@ const SeasonsMenu = ({
 	onLoading,
 	value,
 }: {
-	onDone: (season: number, leagueFile: any) => void;
+	onDone: (leagueInfo: any) => void;
 	onLoading: (season: number) => void;
 	value: number;
 }) => {
-	const waitingForSeason = useRef<number | undefined>(value);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const waitingForInfo = useRef<number | undefined>(value);
 
 	const seasons = range(MAX_SEASON, MIN_SEASON - 1);
 
-	const handleNewSeason = async (season: number) => {
-		waitingForSeason.current = season;
+	const handleNewValue = async (season: number) => {
+		waitingForInfo.current = season;
 		onLoading(season);
-		setErrorMessage(undefined);
 
-		if (process.env.SPORT === "basketball" && season === 2020) {
-			onDone(2020, helpers.deepCopy(league2020));
-			waitingForSeason.current = undefined;
-		} else {
-			try {
-				const response = await fetchLeagueFile(season);
-				if (waitingForSeason.current === season) {
-					const leagueFile = await response.json();
-					if (waitingForSeason.current === season) {
-						onDone(season, leagueFile);
-						waitingForSeason.current = undefined;
-					}
-				}
-			} catch (error) {
-				setErrorMessage(error.message);
-				throw error;
-			}
+		const leagueInfo = await toWorker("main", "getLeagueInfo", {
+			type: "real",
+			season,
+		});
+		console.log("leagueInfo", leagueInfo);
+		if (waitingForInfo.current === season) {
+			onDone(leagueInfo);
+			waitingForInfo.current = undefined;
 		}
 	};
 
-	// Handle initial value for season
+	// Handle initial value
 	useEffect(() => {
-		handleNewSeason(value);
+		handleNewValue(value);
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const quickSeasons = [1956, 1968, 1984, 1996, 2003, 2020];
@@ -227,7 +219,7 @@ const SeasonsMenu = ({
 						className="btn btn-link border-0 p-0 mb-1 ml-2"
 						style={quickSeasonsStyle}
 						onClick={() => {
-							handleNewSeason(season);
+							handleNewValue(season);
 						}}
 					>
 						{season}
@@ -241,7 +233,7 @@ const SeasonsMenu = ({
 					value={value}
 					onChange={async event => {
 						const season = parseInt(event.target.value, 10);
-						await handleNewSeason(season);
+						await handleNewValue(season);
 					}}
 				>
 					{seasons.map(season => {
@@ -259,29 +251,26 @@ const SeasonsMenu = ({
 						onClick={() => {
 							const randomSeason =
 								seasons[Math.floor(Math.random() * seasons.length)];
-							handleNewSeason(randomSeason);
+							handleNewValue(randomSeason);
 						}}
 					>
 						Random
 					</button>
 				</div>
 			</div>
-			{errorMessage ? (
-				<span className="text-danger">Error: {errorMessage}</span>
-			) : null}
 		</div>
 	);
 };
 
 const legends = {
-	"legends-all": "All Time",
-	"legends-2010s": "2010s",
-	"legends-2000s": "2000s",
-	"legends-1990s": "1990s",
-	"legends-1980s": "1980s",
-	"legends-1970s": "1970s",
-	"legends-1960s": "1960s",
-	"legends-1950s": "1950s",
+	all: "All Time",
+	"2010s": "2010s",
+	"2000s": "2000s",
+	"1990s": "1990s",
+	"1980s": "1980s",
+	"1970s": "1970s",
+	"1960s": "1960s",
+	"1950s": "1950s",
 };
 
 type Legend = keyof typeof legends;
@@ -291,7 +280,7 @@ const LegendsMenu = ({
 	onLoading,
 	value,
 }: {
-	onDone: (legend: Legend, leagueFile: any) => void;
+	onDone: (leagueFile: any) => void;
 	onLoading: (legend: Legend) => void;
 	value: Legend;
 }) => {
@@ -308,7 +297,7 @@ const LegendsMenu = ({
 			if (waitingForFile.current === legend) {
 				const leagueFile = await response.json();
 				if (waitingForFile.current === legend) {
-					onDone(legend, leagueFile);
+					onDone(leagueFile);
 					waitingForFile.current = undefined;
 				}
 			}
@@ -385,6 +374,7 @@ type State = {
 	teams: NewLeagueTeam[];
 	tid: number;
 	pendingInitialLeagueFile: boolean;
+	allKeys: string[];
 	keptKeys: string[];
 };
 
@@ -432,6 +422,11 @@ type Action =
 	| {
 			type: "newLeagueFile";
 			leagueFile: any;
+			teams: NewLeagueTeam[];
+	  }
+	| {
+			type: "newLeagueInfo";
+			allKeys: string[];
 			teams: NewLeagueTeam[];
 	  };
 
@@ -532,11 +527,36 @@ const reducer = (state: State, action: Action): State => {
 					prevTeamRegionName = fromLocalStorage;
 				}
 			}
+
+			const allKeys = initKeptKeys(action.leagueFile);
+
 			return {
 				...state,
 				loadingLeagueFile: false,
 				leagueFile: action.leagueFile,
-				keptKeys: initKeptKeys(action.leagueFile),
+				allKeys,
+				keptKeys: allKeys,
+				teams: action.teams,
+				tid: getNewTid(prevTeamRegionName, action.teams),
+				pendingInitialLeagueFile: false,
+			};
+		}
+
+		case "newLeagueInfo": {
+			let prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
+			if (state.pendingInitialLeagueFile) {
+				const fromLocalStorage = localStorage.getItem("prevTeamRegionName");
+				if (fromLocalStorage !== null) {
+					prevTeamRegionName = fromLocalStorage;
+				}
+			}
+
+			return {
+				...state,
+				loadingLeagueFile: false,
+				leagueFile: null,
+				allKeys: action.allKeys,
+				keptKeys: action.allKeys,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				pendingInitialLeagueFile: false,
@@ -586,6 +606,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				season = 2020;
 			}
 
+			const allKeys = initKeptKeys(leagueFile);
+
 			return {
 				creating: false,
 				customize,
@@ -600,7 +622,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				tid: getNewTid(prevTeamRegionName, teams),
 				pendingInitialLeagueFile:
 					(customize === "real" && season !== 2020) || customize === "legends",
-				keptKeys: initKeptKeys(leagueFile),
+				allKeys,
+				keptKeys: allKeys,
 			};
 		},
 	);
@@ -784,6 +807,18 @@ const NewLeague = (props: View<"newLeague">) => {
 		[props.realTeamInfo],
 	);
 
+	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
+		console.log("handleNewLeagueInfo", leagueInfo);
+
+		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
+
+		dispatch({
+			type: "newLeagueInfo",
+			allKeys: leagueInfo.stores,
+			teams: applyRealTeamInfo(newTeams, props.realTeamInfo),
+		});
+	};
+
 	useTitleBar({ title, hideNewWindow: true });
 
 	const displayedTeams = state.keptKeys.includes("teams")
@@ -791,10 +826,11 @@ const NewLeague = (props: View<"newLeague">) => {
 		: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
-		(state.customize === "custom-rosters" ||
-			state.customize === "custom-url" ||
-			state.customize === "real") &&
-		(state.leagueFile === null || state.loadingLeagueFile);
+		((state.customize === "custom-rosters" ||
+			state.customize === "custom-url") &&
+			(state.leagueFile === null || state.loadingLeagueFile)) ||
+		((state.customize === "real" || state.customize === "legends") &&
+			state.loadingLeagueFile);
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -836,16 +872,8 @@ const NewLeague = (props: View<"newLeague">) => {
 									dispatch({ type: "loadingLeagueFile" });
 								}
 							}}
-							onDone={(season, leagueFile) => {
-								if (season === 2020) {
-									dispatch({
-										type: "newLeagueFile",
-										leagueFile,
-										teams: applyRealTeamInfo(teams2020, props.realTeamInfo),
-									});
-								} else {
-									handleNewLeagueFile(null, leagueFile);
-								}
+							onDone={leagueInfo => {
+								handleNewLeagueInfo(leagueInfo);
 							}}
 						/>
 					) : null}
@@ -857,8 +885,8 @@ const NewLeague = (props: View<"newLeague">) => {
 								dispatch({ type: "setLegend", legend });
 								dispatch({ type: "loadingLeagueFile" });
 							}}
-							onDone={(legend, leagueFile) => {
-								handleNewLeagueFile(null, leagueFile);
+							onDone={leagueInfo => {
+								handleNewLeagueInfo(leagueInfo);
 							}}
 						/>
 					) : null}
@@ -1102,7 +1130,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									) : null}
 
 									<LeaguePartPicker
-										leagueFile={state.leagueFile}
+										allKeys={state.allKeys}
 										keptKeys={state.keptKeys}
 										setKeptKeys={keptKeys => {
 											dispatch({ type: "setKeptKeys", keptKeys });

@@ -163,23 +163,48 @@ const quickValuesStyle = { height: 19, color: "var(--dark)" };
 const MIN_SEASON = 1956;
 const MAX_SEASON = 2020;
 
-const seasons: Record<string, string> = {};
+const seasons: { key: string; value: string }[] = [];
 for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
-	seasons[i] = String(i);
+	seasons.push({
+		key: String(i),
+		value: String(i),
+	});
 }
 
-const legends = {
-	all: "All Time",
-	"2010s": "2010s",
-	"2000s": "2000s",
-	"1990s": "1990s",
-	"1980s": "1980s",
-	"1970s": "1970s",
-	"1960s": "1960s",
-	"1950s": "1950s",
-};
-
-type Legend = keyof typeof legends;
+const legends = [
+	{
+		key: "all",
+		value: "All Time",
+	},
+	{
+		key: "2010s",
+		value: "2010s",
+	},
+	{
+		key: "2000s",
+		value: "2000s",
+	},
+	{
+		key: "1990s",
+		value: "1990s",
+	},
+	{
+		key: "1980s",
+		value: "1980s",
+	},
+	{
+		key: "1970s",
+		value: "1970s",
+	},
+	{
+		key: "1960s",
+		value: "1960s",
+	},
+	{
+		key: "1950s",
+		value: "1950s",
+	},
+];
 
 const LeagueMenu = <T extends string>({
 	getLeagueInfo,
@@ -194,7 +219,7 @@ const LeagueMenu = <T extends string>({
 	onLoading: (value: T) => void;
 	quickValues?: T[];
 	value: T;
-	values: Record<T, string>;
+	values: { key: T; value: string }[];
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
@@ -203,7 +228,6 @@ const LeagueMenu = <T extends string>({
 		onLoading(newValue);
 
 		const leagueInfo = await getLeagueInfo(newValue);
-		console.log("leagueInfo", leagueInfo);
 		if (waitingForInfo.current === newValue) {
 			onDone(leagueInfo);
 			waitingForInfo.current = undefined;
@@ -232,7 +256,7 @@ const LeagueMenu = <T extends string>({
 									handleNewValue(key);
 								}}
 							>
-								{values[key]}
+								{values.find(v => v.key === key)!.value}
 							</button>
 					  ))
 					: null}
@@ -246,10 +270,10 @@ const LeagueMenu = <T extends string>({
 						await handleNewValue((event.target.value as unknown) as T);
 					}}
 				>
-					{helpers.keys(values).map(key => {
+					{values.map(({ key, value }) => {
 						return (
 							<option key={key} value={key}>
-								{values[key]}
+								{value}
 							</option>
 						);
 					})}
@@ -259,7 +283,7 @@ const LeagueMenu = <T extends string>({
 						className="btn btn-secondary"
 						type="button"
 						onClick={() => {
-							const keys = helpers.keys(values);
+							const keys = values.map(v => v.key);
 							const random = keys[Math.floor(Math.random() * keys.length)];
 							handleNewValue(random);
 						}}
@@ -278,7 +302,7 @@ type State = {
 	season: number;
 	difficulty: number;
 	leagueFile: any;
-	legend: Legend;
+	legend: string;
 	loadingLeagueFile: boolean;
 	randomizeRosters: boolean;
 	teams: NewLeagueTeam[];
@@ -312,7 +336,7 @@ type Action =
 	  }
 	| {
 			type: "setLegend";
-			legend: Legend;
+			legend: string;
 	  }
 	| {
 			type: "setRandomizeRosters";
@@ -718,8 +742,6 @@ const NewLeague = (props: View<"newLeague">) => {
 	);
 
 	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
-		console.log("handleNewLeagueInfo", leagueInfo);
-
 		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
 
 		dispatch({

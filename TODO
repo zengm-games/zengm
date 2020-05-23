@@ -1,3 +1,51 @@
+build bbgm-rosters into game
+- output JSON versions of all the data files
+  - come up with more systematic overrides system, if necessary. or just apply current ones
+  - normalize "abbrev" so it is bbgm 2020 abbrevs
+  - "league" column is never needed, just filter out non-NBA
+  - awards, bios, ratings, relatives, injuries
+    - need basically all of these files
+  - salaries
+    - need only slug, start, end, salary
+  - stats
+    - just use this to get (slug, season) => abbrev
+  - have this script read alexnoob 2020 file and include them
+    - how to handle players with no slug, like draft prospects? temp slug like for player photo override?
+- script to generate all scheduled events
+- formatScheduledEvents should go into bbgm
+- NewLeague needs to change, to read from worker rather than JSON file
+  - only need to send teams and Object.keys(leagueFile)
+  - rest of league file shouldn't be generated until after submit
+    - getLeagueInfo({
+        type: "real",
+        season: number,
+      } | {
+        type: "legends",
+        decade: "1950" | "1960" | "1970" | "1980" | "1990" | "2000" | "2010" | "all",
+      })
+    - getLeague
+- dynamically generate scrub FAs
+- get rid of all public/leagues stuff, including file hashing
+
+random debut
+- https://old.reddit.com/r/BasketballGM/comments/gou4kq/button_on_the_createedit_player_page_to_randomize/frigqqp/
+- would need to operate on full set of ratings, since it needs players in different years
+- work like randomize teams, but do on draft year too
+- select menu "Randomization": none/shuffle/random-debuts, with text info underneath
+  - maybe not, cause shuffle can work for uploaded league files, but random debuts can't
+- only available for "Real players" leagues
+
+frivolities
+- abstract code for "highest X"
+  - highest paid over career @mattable#4273 @Jlebron13#9965
+  - oldest to actually play @youngtubesteak#2173
+- draft class aggregate stats alexnoob
+- best player without a ring
+
+don't include 2020 in .js bundle, but do include in service worker
+- remove old stats, retired players
+- minify
+
 contraction
 - t.disabled=true
 - UI to change in Manage Teams
@@ -511,13 +559,6 @@ confirm subscription works from football-gm.com
 redo pot formulas?
 
 ---
-
-frivolities
-- abstract code for "highest X"
-  - highest paid over career @mattable#4273 @Jlebron13#9965
-  - oldest to actually play @youngtubesteak#2173
-- draft class aggregate stats alexnoob
-- best player without a ring
 
 Add "All Seasons" option to various stat/ratings pages
 - Player Ratings

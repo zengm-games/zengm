@@ -150,7 +150,7 @@ TBody.propTypes = {
 	values: PropTypes.array.isRequired,
 };
 
-const SortableTable = <Value extends {}>({
+const SortableTable = <Value extends Record<string, unknown>>({
 	cols,
 	disabled,
 	highlightHandle,

@@ -25,12 +25,7 @@ type StripeButtonProps = {
 };
 
 type StripeButtonState = {
-	handler:
-		| {
-				open: Function;
-		  }
-		| undefined
-		| null;
+	handler: StripeCheckoutHandler | undefined | null;
 };
 
 class StripeButton extends React.Component<

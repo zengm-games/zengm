@@ -72,7 +72,6 @@ const mySpawn = (command, args) => {
 		});
 
 		const response = await cf.zones.purgeCache(zone, {
-			// eslint-disable-next-line @typescript-eslint/camelcase
 			purge_everything: true,
 		});
 		if (!response.success) {

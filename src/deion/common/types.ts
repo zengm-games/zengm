@@ -54,10 +54,10 @@ export type View<
 		Sport extends "football"
 			? Name extends ViewsFootballKeys
 				? ReturnType<typeof viewsFootball[Name]>
-				: {}
+				: Record<string, unknown>
 			: Name extends ViewsKeys
 			? ReturnType<typeof views[Name]>
-			: {}
+			: Record<string, unknown>
 	>,
 	void | { redirectUrl: string } | { errorMessage: string }
 >;
@@ -959,21 +959,23 @@ export type TeamFiltered<
 	SeasonAttrs extends Readonly<TeamSeasonAttr[]> | undefined = undefined,
 	StatAttrs extends Readonly<TeamStatAttr[]> | undefined = undefined,
 	Season extends number | undefined = undefined
-> = (Attrs extends Readonly<TeamAttr[]> ? Pick<Team, Attrs[number]> : {}) &
+> = (Attrs extends Readonly<TeamAttr[]>
+	? Pick<Team, Attrs[number]>
+	: Record<string, unknown>) &
 	(SeasonAttrs extends Readonly<TeamSeasonAttr[]>
 		? {
 				seasonAttrs: Season extends number
 					? Pick<TeamSeasonPlus, SeasonAttrs[number]>
 					: Pick<TeamSeasonPlus, SeasonAttrs[number]>[];
 		  }
-		: {}) &
+		: Record<string, unknown>) &
 	(StatAttrs extends Readonly<TeamStatAttr[]>
 		? {
 				stats: Season extends number
 					? Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean }
 					: (Pick<TeamStatsPlus, StatAttrs[number]> & { playoffs: boolean })[];
 		  }
-		: {});
+		: Record<string, unknown>);
 
 export type TeamBasic = {
 	tid: number;

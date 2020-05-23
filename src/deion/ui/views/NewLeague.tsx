@@ -682,9 +682,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				const teamRegionName = getTeamRegionName(state.teams, state.tid);
 				if (window.enableLogging && window.gtag) {
 					window.gtag("event", "new_league", {
-						// eslint-disable-next-line @typescript-eslint/camelcase
 						event_category: type,
-						// eslint-disable-next-line @typescript-eslint/camelcase
 						event_label: teamRegionName,
 						value: lid,
 					});

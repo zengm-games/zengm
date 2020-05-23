@@ -711,6 +711,7 @@ const upperCaseFirstLetter = (string: string): string => {
 };
 
 // https://medium.com/@_achou/dont-give-up-and-use-suppressimplicitanyindexerrors-ca6b208b9365
+// eslint-disable-next-line @typescript-eslint/ban-types
 const keys = <O extends object>(obj: O): Array<keyof O> => {
 	return Object.keys(obj) as Array<keyof O>;
 };

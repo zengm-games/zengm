@@ -14,7 +14,7 @@ import type { UpdateEvents } from "../../common/types";
 async function realtimeUpdate(
 	updateEvents: UpdateEvents = [],
 	url?: string,
-	raw: object = {},
+	raw: Record<string, unknown> = {},
 	replace: boolean = false,
 ) {
 	url =

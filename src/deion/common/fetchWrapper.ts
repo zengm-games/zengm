@@ -1,5 +1,3 @@
-import helpers from "./helpers";
-
 const fetchWrapper = async ({
 	url,
 	method,
@@ -12,7 +10,7 @@ const fetchWrapper = async ({
 	headers?: {
 		[key: string]: string;
 	};
-	data: object;
+	data: any;
 	credentials?: "include";
 }): Promise<any> => {
 	let body;
@@ -25,7 +23,7 @@ const fetchWrapper = async ({
 	} else if (data !== undefined) {
 		body = new URLSearchParams();
 
-		for (const key of helpers.keys(data)) {
+		for (const key of Object.keys(data)) {
 			body.set(key, data[key]);
 		}
 	}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import { ads, confirm, local, localActions, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
@@ -120,7 +119,7 @@ const newLid = async (lid: number) => {
 async function realtimeUpdate2(
 	updateEvents: UpdateEvents = [],
 	url?: string,
-	raw?: object,
+	raw?: Record<string, unknown>,
 ) {
 	await realtimeUpdate(updateEvents, url, raw);
 }

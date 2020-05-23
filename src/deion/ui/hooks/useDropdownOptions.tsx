@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
 import orderBy from "lodash/orderBy";
 import { PHASE } from "../../common";
 import { overrides, useLocalShallow } from "../util";

@@ -1,5 +1,4 @@
 import orderBy from "lodash/orderBy";
-import range from "lodash/range";
 import PropTypes from "prop-types";
 import React, {
 	useCallback,
@@ -12,8 +11,7 @@ import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
-import type { View, RealTeamInfo } from "../../common/types";
-import league2020 from "../../../../public/basketball/leagues/2020.json";
+import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
 import classNames from "classnames";
 
 type NewLeagueTeam = {
@@ -53,11 +51,6 @@ const applyRealTeamInfo = (
 const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
 	helpers.getTeamsDefault(),
 );
-
-const teams2020: NewLeagueTeam[] =
-	process.env.SPORT === "basketball"
-		? helpers.addPopRank(league2020.teams)
-		: [];
 
 const leaguePartDescriptions: { [key: string]: string } = {
 	gameAttributes: "League settings",
@@ -520,15 +513,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				customize = "legends";
 			}
 
-			const leagueFile =
-				customize === "real" && process.env.SPORT === "basketball"
-					? league2020
-					: null;
+			const leagueFile = null;
 
-			const teams =
-				customize === "real"
-					? applyRealTeamInfo(teams2020, props.realTeamInfo)
-					: teamsDefault;
+			const teams = teamsDefault;
 
 			let prevTeamRegionName = localStorage.getItem("prevTeamRegionName");
 			if (prevTeamRegionName === null) {
@@ -618,16 +605,28 @@ const NewLeague = (props: View<"newLeague">) => {
 				: DIFFICULTY.Normal;
 
 			try {
-				const lid = await toWorker(
-					"main",
-					"createLeague",
+				let getLeagueOptions: GetLeagueOptions | undefined;
+				if (state.customize === "real") {
+					getLeagueOptions = {
+						type: "real",
+						season: state.season,
+					};
+				} else if (state.customize === "legends") {
+					getLeagueOptions = {
+						type: "legends",
+						decade: state.legend as any,
+					};
+				}
+
+				const lid = await toWorker("main", "createLeague", {
 					name,
-					state.tid,
-					actualLeagueFile,
-					actualRandomizeRosters,
-					actualDifficulty,
-					props.lid,
-				);
+					tid: state.tid,
+					leagueFile: actualLeagueFile,
+					randomizeRosters: actualRandomizeRosters,
+					difficulty: actualDifficulty,
+					importLid: props.lid,
+					getLeagueOptions,
+				});
 
 				let type: string = state.customize;
 				if (type === "real") {

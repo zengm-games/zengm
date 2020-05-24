@@ -1,22 +1,14 @@
 build bbgm-rosters into game
-- output JSON versions of all the data files
-- formatScheduledEvents should go into bbgm
-  - maybe scheduledEvents generation too? wouldn't save much space, probably makes sense to put in json
-- NewLeague needs to change, to read from worker rather than JSON file
-  - rest of league file shouldn't be generated until after submit
-    - getLeague
-      - dynamically generate scrub FAs
-  - no need to disable while loading, it's so fast it's just a flash
-- confirm 2020 rosters are good enough
-  - salaries
-  - traded draft picks
-  - numSeasonsFutureDraftPicks
-  - relatives
-  - FAs
+- on NewLeague, no need to disable while loading, it's so fast it's just a flash
+- getLeague
+  - dynamically generate scrub FAs
+- legends
 - get rid of
   - public/leagues stuff, including file hashing
   - process-rosters
 - confirm not in football bundle
+
+start real players league league with juice in 2020, next time it defaults to philly
 
 random debut
 - https://old.reddit.com/r/BasketballGM/comments/gou4kq/button_on_the_createedit_player_page_to_randomize/frigqqp/

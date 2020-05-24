@@ -23,16 +23,15 @@ const augmentPartialPlayer = (
 ): Player<MinimalPlayerRatings> => {
 	let age;
 
-	if (!p.hasOwnProperty("born")) {
+	if (p.born === undefined) {
 		age = random.randInt(19, 35);
 	} else {
 		age = g.get("startingSeason") - p.born.year;
 	}
 
 	if (
-		p.hasOwnProperty("name") &&
-		!p.hasOwnProperty("firstName") &&
-		!p.hasOwnProperty("lastName")
+		p.name !== undefined &&
+		(p.firstName === undefined || p.lastName === undefined)
 	) {
 		// parse and split names from roster file
 		p.firstName = p.name.split(" ")[0];
@@ -71,9 +70,9 @@ const augmentPartialPlayer = (
 		"yearsFreeAgent",
 	] as (keyof typeof pg)[];
 
-	for (let i = 0; i < simpleDefaults.length; i++) {
-		if (!p.hasOwnProperty(simpleDefaults[i])) {
-			p[simpleDefaults[i]] = pg[simpleDefaults[i]];
+	for (const key of simpleDefaults) {
+		if (p[key] === undefined) {
+			p[key] = pg[key];
 		}
 	}
 
@@ -82,11 +81,11 @@ const augmentPartialPlayer = (
 		p.retiredYear = Infinity;
 	}
 
-	if (!p.hasOwnProperty("stats")) {
+	if (!p.stats) {
 		p.stats = [];
 	}
 
-	if (!p.hasOwnProperty("statsTids")) {
+	if (!p.statsTids) {
 		p.statsTids = Array.isArray(p.stats) ? p.stats.map((s: any) => s.tid) : [];
 
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
@@ -96,7 +95,7 @@ const augmentPartialPlayer = (
 		p.statsTids = Array.from(new Set(p.statsTids));
 	}
 
-	if (!p.hasOwnProperty("draft")) {
+	if (!p.draft) {
 		p.draft = {};
 	}
 
@@ -164,13 +163,13 @@ const augmentPartialPlayer = (
 		}
 	} else if (p.tid === PLAYER.RETIRED) {
 		for (const r of p.ratings) {
-			if (!r.hasOwnProperty("season")) {
+			if (r.season === undefined) {
 				r.season =
 					typeof p.retiredYear === "number" ? p.retiredYear : g.get("season");
 			}
 		}
 	} else if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
-		if (!p.ratings[0].hasOwnProperty("season")) {
+		if (p.ratings[0].season === undefined) {
 			p.ratings[0].season = g.get("season");
 		}
 
@@ -271,38 +270,38 @@ const augmentPartialPlayer = (
 	}
 
 	// Handle old format position
-	if (p.hasOwnProperty("pos")) {
+	if (p.pos !== undefined) {
 		for (let i = 0; i < p.ratings.length; i++) {
-			if (!p.ratings[i].hasOwnProperty("pos")) {
+			if (p.ratings[i].pos === undefined) {
 				p.ratings[i].pos = p.pos;
 			}
 		}
 	}
 
 	for (const r of p.ratings) {
-		if (!r.hasOwnProperty("fuzz")) {
+		if (r.fuzz === undefined) {
 			r.fuzz = pg.ratings[0].fuzz;
 		}
 
-		if (!r.hasOwnProperty("skills")) {
+		if (r.skills === undefined) {
 			r.skills = skills(p.ratings[0]);
 		}
 
-		if (!r.hasOwnProperty("ovr")) {
+		if (r.ovr === undefined) {
 			r.ovr = overrides.core.player.ovr!(p.ratings[0]);
 		}
 
 		if (
 			process.env.SPORT === "basketball" &&
-			(!r.hasOwnProperty("pot") || r.pot < r.ovr)
+			(r.pot === undefined || r.pot < r.ovr)
 		) {
 			// Only basketball, in case position is not known at this point
 			r.pot = bootstrapPot(r, r.season - p.born.year);
 		}
 
-		if (!r.hasOwnProperty("pos") && process.env.SPORT !== "football") {
+		if (r.pos === undefined && process.env.SPORT !== "football") {
 			// Football is handled below with call to player.develop
-			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+			if (p.pos !== undefined && typeof p.pos === "string") {
 				r.pos = p.pos;
 			} else {
 				r.pos = overrides.core.player.pos!(r);
@@ -313,11 +312,11 @@ const augmentPartialPlayer = (
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 	updateValues(p);
 
-	if (!p.hasOwnProperty("salaries")) {
+	if (p.salaries === undefined) {
 		p.salaries = [];
 	}
 
-	if (!p.hasOwnProperty("contract")) {
+	if (p.contract === undefined) {
 		setContract(p, genContract(p, true), p.tid >= 0);
 	} else {
 		p.contract.amount = 10 * Math.round(p.contract.amount / 10);
@@ -348,22 +347,22 @@ const augmentPartialPlayer = (
 
 		for (const ps of p.stats) {
 			// Could be calculated correctly if I wasn't lazy
-			if (!ps.hasOwnProperty("yearsWithTeam")) {
+			if (ps.yearsWithTeam === undefined) {
 				ps.yearsWithTeam = 1;
 			}
 
 			// If needed, set missing +/-, blocks against to 0
-			if (!ps.hasOwnProperty("ba")) {
+			if (ps.ba === undefined) {
 				ps.ba = 0;
 			}
 
-			if (!ps.hasOwnProperty("pm")) {
+			if (ps.pm === undefined) {
 				ps.pm = 0;
 			}
 
 			// Handle any missing stats
 			for (const key of statKeys) {
-				if (!ps.hasOwnProperty(key)) {
+				if (ps[key] === undefined) {
 					ps[key] = 0;
 				}
 			}

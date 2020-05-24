@@ -1,6 +1,6 @@
 import orderBy from "lodash/orderBy";
 
-const processGameAttributes = (events, season: number) => {
+const processGameAttributes = (events: any[], season: number) => {
 	let gameAttributeEvents = [];
 
 	for (const event of events) {
@@ -12,7 +12,7 @@ const processGameAttributes = (events, season: number) => {
 	let initialGameAttributes;
 
 	// Remove gameAttributes individual property dupes, and find what the gameAttributes state was at the beginning of the given season
-	const prevState = {};
+	const prevState: any = {};
 	for (const event of gameAttributeEvents) {
 		if (
 			(event.season === season + 1 ||
@@ -43,7 +43,7 @@ const processGameAttributes = (events, season: number) => {
 	return { gameAttributeEvents, initialGameAttributes };
 };
 
-const processTeams = (events, season: number) => {
+const processTeams = (events: any[], season: number) => {
 	let teamEvents = [];
 
 	for (const event of events) {
@@ -66,10 +66,11 @@ const processTeams = (events, season: number) => {
 	}[];
 
 	// Keep track of initial teams
-	const prevState = [];
+	const prevState: any[] = [];
 	for (const event of teamEvents) {
 		if (
 			(event.season > season || (event.season === season && event.phase > 0)) &&
+			// @ts-ignore
 			initialTeams === undefined
 		) {
 			initialTeams = JSON.parse(JSON.stringify(prevState));
@@ -93,7 +94,8 @@ const processTeams = (events, season: number) => {
 	}
 
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
-	if ((initialTeams as any) === undefined) {
+	// @ts-ignore
+	if (initialTeams === undefined) {
 		initialTeams = JSON.parse(JSON.stringify(prevState));
 	}
 
@@ -112,10 +114,11 @@ const processTeams = (events, season: number) => {
 			...event,
 			info: {
 				...event.info,
-				teams: event.info.teams.map(t => ({
-					...t,
-					tid: undefined,
-				})),
+				teams: event.info.teams.map((t: any) => {
+					const t2 = { ...t };
+					delete t2.tid;
+					return t2;
+				}),
 			},
 		};
 	});
@@ -123,7 +126,7 @@ const processTeams = (events, season: number) => {
 	return { teamEvents, initialTeams };
 };
 
-const formatScheduledEvents = (events, season) => {
+const formatScheduledEvents = (events: any[], season: number) => {
 	for (const event of events) {
 		if (
 			event.type !== "gameAttributes" &&

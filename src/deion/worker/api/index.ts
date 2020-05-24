@@ -57,6 +57,7 @@ import type {
 	ExpansionDraftSetupTeam,
 	RealTeamInfo,
 	RealPlayerPhotos,
+	GetLeagueOptions,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 
@@ -211,14 +212,29 @@ const countNegotiations = async () => {
 	return negotiations.length;
 };
 
-const createLeague = async (
-	name: string,
-	tid: number,
-	leagueFile: any,
-	randomizeRosters: boolean,
-	difficulty: number,
-	importLid: number | undefined | null,
-): Promise<number> => {
+const createLeague = async ({
+	name,
+	tid,
+	leagueFile,
+	randomizeRosters,
+	difficulty,
+	importLid,
+	getLeagueOptions,
+}: {
+	name: string;
+	tid: number;
+	leagueFile: any;
+	randomizeRosters: boolean;
+	difficulty: number;
+	importLid: number | undefined | null;
+	getLeagueOptions: GetLeagueOptions | undefined;
+}): Promise<number> => {
+	console.log(getLeagueOptions);
+	if (getLeagueOptions) {
+		leagueFile = realRosters.getLeague(getLeagueOptions);
+		console.log(leagueFile);
+	}
+
 	if (leagueFile.players) {
 		const realPlayerPhotos = (await idb.meta.get(
 			"attributes",

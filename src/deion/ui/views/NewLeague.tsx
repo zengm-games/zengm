@@ -301,7 +301,7 @@ type State = {
 	shuffleRosters: boolean;
 	teams: NewLeagueTeam[];
 	tid: number;
-	pendingInitialLeagueFile: boolean;
+	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
 	keptKeys: string[];
 };
@@ -460,13 +460,7 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "newLeagueFile": {
-			let prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
-			if (state.pendingInitialLeagueFile) {
-				const fromLocalStorage = localStorage.getItem("prevTeamRegionName");
-				if (fromLocalStorage !== null) {
-					prevTeamRegionName = fromLocalStorage;
-				}
-			}
+			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
 
 			const allKeys = initKeptKeys(action.leagueFile);
 
@@ -478,13 +472,12 @@ const reducer = (state: State, action: Action): State => {
 				keptKeys: allKeys,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
-				pendingInitialLeagueFile: false,
 			};
 		}
 
 		case "newLeagueInfo": {
 			let prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
-			if (state.pendingInitialLeagueFile) {
+			if (state.pendingInitialLeagueInfo) {
 				const fromLocalStorage = localStorage.getItem("prevTeamRegionName");
 				if (fromLocalStorage !== null) {
 					prevTeamRegionName = fromLocalStorage;
@@ -499,7 +492,7 @@ const reducer = (state: State, action: Action): State => {
 				keptKeys: action.allKeys,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
-				pendingInitialLeagueFile: false,
+				pendingInitialLeagueInfo: false,
 			};
 		}
 
@@ -555,8 +548,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				shuffleRosters: false,
 				teams,
 				tid: getNewTid(prevTeamRegionName, teams),
-				pendingInitialLeagueFile:
-					(customize === "real" && season !== 2020) || customize === "legends",
+				pendingInitialLeagueInfo:
+					customize === "real" || customize === "legends",
 				allKeys,
 				keptKeys: allKeys,
 			};

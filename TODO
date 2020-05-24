@@ -6,8 +6,6 @@ don't includ basketball.json in default bundle, but do make service worker cache
 
 collapse options by default?
 
-start real players league league with juice in 2020, next time it defaults to philly
-
 trade cap rounding https://cdn.discordapp.com/attachments/290015591216054273/713954442441130094/S00524-121936.jpg
 
 frivolities
@@ -259,6 +257,8 @@ make countries easier to customize
 - allow specifying country frequencies without tying it to the number of names
 - GUI to add countries and names
 - same for colleges
+  - also support different distribution per country
+  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwHNWCgnhQnrXNBlvVxJJmfhsNr
 
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1

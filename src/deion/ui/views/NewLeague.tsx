@@ -757,11 +757,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
-		((state.customize === "custom-rosters" ||
+		(state.customize === "custom-rosters" ||
 			state.customize === "custom-url") &&
-			(state.leagueFile === null || state.loadingLeagueFile)) ||
-		((state.customize === "real" || state.customize === "legends") &&
-			state.loadingLeagueFile);
+		(state.leagueFile === null || state.loadingLeagueFile);
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -807,7 +805,6 @@ const NewLeague = (props: View<"newLeague">) => {
 							onLoading={value => {
 								const season = parseInt(value);
 								dispatch({ type: "setSeason", season });
-								dispatch({ type: "loadingLeagueFile" });
 							}}
 							onDone={handleNewLeagueInfo}
 							quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
@@ -826,7 +823,6 @@ const NewLeague = (props: View<"newLeague">) => {
 							}
 							onLoading={legend => {
 								dispatch({ type: "setLegend", legend });
-								dispatch({ type: "loadingLeagueFile" });
 							}}
 							onDone={handleNewLeagueInfo}
 						/>

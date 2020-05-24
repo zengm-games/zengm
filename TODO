@@ -1,9 +1,10 @@
 build bbgm-rosters into game
-- on NewLeague, no need to disable while loading, it's so fast it's just a flash
+- squash
 - getLeague
   - dynamically generate scrub FAs, for real and legends
 
 don't includ basketball.json in default bundle, but do make service worker cache if when loaded
+- in NewLeague, make LeagueMenu disable stuff while loading basketball.json
 
 start real players league league with juice in 2020, next time it defaults to philly
 

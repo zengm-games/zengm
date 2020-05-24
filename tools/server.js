@@ -54,7 +54,6 @@ const server = http.createServer((req, res) => {
 		"/gen/",
 		"/ico/",
 		"/img/",
-		"/leagues/",
 		"/manifest",
 	];
 

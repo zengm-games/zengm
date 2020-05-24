@@ -47,12 +47,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			compact: true,
 			namedExports: false,
 		}),
-		commonjs({
-			namedExports: {
-				react: Object.keys(React),
-				"react-dom": Object.keys(ReactDOM),
-			},
-		}),
+		commonjs(),
 		resolve({
 			extensions,
 			preferBuiltins: true,

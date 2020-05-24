@@ -36,7 +36,8 @@ const PopText = ({
 
 			return (
 				<span className="text-muted">
-					Region population: {t.pop} million (#
+					Region population:{" "}
+					{t.pop !== undefined ? `${t.pop.toFixed(1)} million ` : ""}(#
 					{t.popRank})<br />
 					Size: {size}
 				</span>

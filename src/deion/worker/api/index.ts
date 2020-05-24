@@ -230,7 +230,7 @@ const createLeague = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 }): Promise<number> => {
 	if (getLeagueOptions) {
-		leagueFile = realRosters.getLeague(getLeagueOptions);
+		leagueFile = await realRosters.getLeague(getLeagueOptions);
 	}
 
 	if (leagueFile.players) {

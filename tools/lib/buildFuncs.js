@@ -221,6 +221,7 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 module.exports = {
 	buildCSS,
 	copyFiles,
+	fileHash,
 	genRev,
 	reset,
 	setTimestamps,

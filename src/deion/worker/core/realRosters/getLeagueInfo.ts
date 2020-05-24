@@ -1,7 +1,7 @@
-import basketball from "./basketball.json";
+import loadDataBasketball from "./loadDataBasketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 
-const getLeagueInfo = (
+const getLeagueInfo = async (
 	options:
 		| {
 				type: "real";
@@ -23,6 +23,8 @@ const getLeagueInfo = (
 	if (process.env.SPORT !== "basketball") {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
+
+	const basketball = await loadDataBasketball();
 
 	if (options.type === "real") {
 		const { initialTeams } = formatScheduledEvents(

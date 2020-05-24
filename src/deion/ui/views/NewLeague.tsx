@@ -548,8 +548,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				shuffleRosters: false,
 				teams,
 				tid: getNewTid(prevTeamRegionName, teams),
-				pendingInitialLeagueInfo:
-					customize === "real" || customize === "legends",
+				pendingInitialLeagueInfo: true,
 				allKeys,
 				keptKeys: allKeys,
 			};
@@ -766,9 +765,16 @@ const NewLeague = (props: View<"newLeague">) => {
 		: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
-		(state.customize === "custom-rosters" ||
+		((state.customize === "custom-rosters" ||
 			state.customize === "custom-url") &&
-		(state.leagueFile === null || state.loadingLeagueFile);
+			(state.leagueFile === null || state.loadingLeagueFile)) ||
+		((state.customize === "real" || state.customize === "legends") &&
+			state.pendingInitialLeagueInfo);
+	const showLoadingIndicator =
+		disableWhileLoadingLeagueFile &&
+		(state.loadingLeagueFile ||
+			((state.customize === "real" || state.customize === "legends") &&
+				state.pendingInitialLeagueInfo));
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -855,7 +861,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								{orderBy(displayedTeams, ["region", "name"]).map(t => {
 									return (
 										<option key={t.tid} value={t.tid}>
-											{disableWhileLoadingLeagueFile && state.loadingLeagueFile
+											{showLoadingIndicator
 												? "Loading..."
 												: `${t.region} ${t.name}`}
 										</option>
@@ -917,7 +923,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						</span>
 					</div>
 
-					{state.keptKeys.includes("players") ? (
+					{state.keptKeys.includes("players") || state.customize === "real" ? (
 						<div className="form-group">
 							<label>Options</label>
 
@@ -1053,7 +1059,10 @@ const NewLeague = (props: View<"newLeague">) => {
 													type: "setCustomize",
 													customize: newCustomize,
 												});
-												if (newCustomize !== "real") {
+												if (
+													newCustomize !== "real" &&
+													newCustomize !== "legends"
+												) {
 													dispatch({ type: "clearLeagueFile" });
 												}
 											}}

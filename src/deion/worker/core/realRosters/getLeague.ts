@@ -1,89 +1,10 @@
-import basketballTemp from "./basketball.json";
+import loadDataBasketball from "./loadDataBasketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import orderBy from "lodash/orderBy";
-import type {
-	DraftPickWithoutKey,
-	GetLeagueOptions,
-	ScheduledEventWithoutKey,
-	Relative,
-} from "../../../common/types";
+import type { GetLeagueOptions, Relative } from "../../../common/types";
+import type { Ratings } from "./loadDataBasketball";
 import { overrides, helpers, random } from "../../util";
 import { PLAYER } from "../../../common";
-
-type Ratings = {
-	slug: string;
-	season: number;
-	hgt: number;
-	stre: number;
-	spd: number;
-	jmp: number;
-	endu: number;
-	ins: number;
-	dnk: number;
-	ft: number;
-	fg: number;
-	tp: number;
-	diq: number;
-	oiq: number;
-	drb: number;
-	pss: number;
-	reb: number;
-	abbrev_if_new_row?: string;
-};
-
-// Not sure why this is necessary, TypeScript should figure it out automatically
-type Basketball = {
-	awards: Record<
-		string,
-		{
-			type: string;
-			season: number;
-		}[]
-	>;
-	stats: {
-		slug: string;
-		season: number;
-		abbrev: string;
-	}[];
-	bios: Record<
-		string,
-		{
-			name: string;
-			bornYear: number;
-			country: string;
-			weight: number;
-			pos: string;
-			height: number;
-			college: string;
-			draftYear: number;
-			draftRound: number;
-			draftPick: number;
-			draftAbbrev: string;
-		}
-	>;
-	ratings: Ratings[];
-	relatives: {
-		type: "son" | "brother" | "father";
-		slug: string;
-		slug2: string;
-	}[];
-	salaries: {
-		slug: string;
-		start: number;
-		exp: number;
-		amount: number;
-	}[];
-	injuries: {
-		slug: string;
-		season: number;
-		type: string;
-		gamesRemaining: number;
-	}[];
-	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
-	scheduledEventsTeams: ScheduledEventWithoutKey[];
-	draftPicks2020: DraftPickWithoutKey[];
-	freeAgents: any[];
-};
 
 // Convert abbrevs of current or old NBA/BBGM teams to their equivalent team in modern BBGM. This is used to track a franchise over time, if all you have is the abbrev
 const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
@@ -222,12 +143,12 @@ const nerfDraftProspect = (ratings: {
 	decreaseRating("oiq", 4);
 };
 
-const getLeague = (options: GetLeagueOptions) => {
+const getLeague = async (options: GetLeagueOptions) => {
 	if (process.env.SPORT !== "basketball") {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 
-	const basketball = (basketballTemp as unknown) as Basketball;
+	const basketball = await loadDataBasketball();
 
 	let pid = -1;
 

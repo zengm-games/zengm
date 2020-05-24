@@ -1,9 +1,6 @@
 build bbgm-rosters into game
 - squash
 
-don't includ basketball.json in default bundle, but do make service worker cache if when loaded
-- in NewLeague, make LeagueMenu disable stuff while loading basketball.json
-
 collapse options by default?
 
 trade cap rounding https://cdn.discordapp.com/attachments/290015591216054273/713954442441130094/S00524-121936.jpg

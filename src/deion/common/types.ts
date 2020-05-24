@@ -1276,6 +1276,7 @@ export type GetLeagueOptions =
 	| {
 			type: "real";
 			season: number;
+			randomDebuts: boolean;
 	  }
 	| {
 			type: "legends";

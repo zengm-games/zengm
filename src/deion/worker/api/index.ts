@@ -216,7 +216,7 @@ const createLeague = async ({
 	name,
 	tid,
 	leagueFile,
-	randomizeRosters,
+	shuffleRosters,
 	difficulty,
 	importLid,
 	getLeagueOptions,
@@ -224,7 +224,7 @@ const createLeague = async ({
 	name: string;
 	tid: number;
 	leagueFile: any;
-	randomizeRosters: boolean;
+	shuffleRosters: boolean;
 	difficulty: number;
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
@@ -279,7 +279,7 @@ const createLeague = async ({
 		name,
 		tid,
 		leagueFile,
-		randomizeRosters,
+		shuffleRosters,
 		difficulty,
 		importLid,
 	});

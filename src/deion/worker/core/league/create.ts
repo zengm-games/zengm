@@ -81,7 +81,7 @@ export const createWithoutSaving = (
 	leagueName: string,
 	tid: number,
 	leagueFile: LeagueFile,
-	randomizeRosters: boolean,
+	shuffleRosters: boolean,
 	difficulty: number,
 ) => {
 	const teamsDefault = helpers.getTeamsDefault();
@@ -489,7 +489,7 @@ export const createWithoutSaving = (
 
 	if (leagueFile.players) {
 		// Use pre-generated players, filling in attributes as needed
-		if (randomizeRosters) {
+		if (shuffleRosters) {
 			// Assign the team ID of all players to the 'playerTids' array.
 			// Check tid to prevent draft prospects from being swapped with established players
 			const playerTids = leagueFile.players
@@ -875,14 +875,14 @@ const create = async ({
 	name,
 	tid,
 	leagueFile,
-	randomizeRosters = false,
+	shuffleRosters = false,
 	difficulty = 0,
 	importLid,
 }: {
 	name: string;
 	tid: number;
 	leagueFile: LeagueFile;
-	randomizeRosters?: boolean;
+	shuffleRosters?: boolean;
 	difficulty?: number;
 	importLid?: number | undefined | null;
 }): Promise<number> => {
@@ -890,7 +890,7 @@ const create = async ({
 		name,
 		tid,
 		leagueFile,
-		randomizeRosters,
+		shuffleRosters,
 		difficulty,
 	);
 

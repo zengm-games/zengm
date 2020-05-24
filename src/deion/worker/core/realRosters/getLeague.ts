@@ -7,7 +7,8 @@ import type {
 	ScheduledEventWithoutKey,
 	Relative,
 } from "../../../common/types";
-import { overrides, helpers } from "../../util";
+import { overrides, helpers, random } from "../../util";
+import { PLAYER } from "../../../common";
 
 type Ratings = {
 	slug: string;
@@ -182,6 +183,45 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 	throw new Error(`Unknown abbrev "${abbrev}"`);
 };
 
+const getOnlyRatings = (ratings: Ratings) => {
+	return {
+		hgt: ratings.hgt,
+		stre: ratings.stre,
+		spd: ratings.spd,
+		jmp: ratings.jmp,
+		endu: ratings.endu,
+		ins: ratings.ins,
+		dnk: ratings.dnk,
+		ft: ratings.ft,
+		fg: ratings.fg,
+		tp: ratings.tp,
+		diq: ratings.diq,
+		oiq: ratings.oiq,
+		drb: ratings.drb,
+		pss: ratings.pss,
+		reb: ratings.reb,
+	};
+};
+
+const nerfDraftProspect = (ratings: {
+	endu: number;
+	diq: number;
+	oiq: number;
+}) => {
+	const decreaseRating = (name: keyof typeof ratings, amount: number) => {
+		if (ratings[name] > amount) {
+			ratings[name] -= amount;
+		} else {
+			ratings[name] = 0;
+		}
+	};
+
+	// Arbitrarily copied from nicidob
+	decreaseRating("endu", 5);
+	decreaseRating("diq", 4);
+	decreaseRating("oiq", 4);
+};
+
 const getLeague = (options: GetLeagueOptions) => {
 	if (process.env.SPORT !== "basketball") {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
@@ -258,9 +298,9 @@ const getLeague = (options: GetLeagueOptions) => {
 
 		let tid: number;
 		if (draftProspect) {
-			tid = -2;
+			tid = PLAYER.UNDRAFTED;
 		} else {
-			tid = -1;
+			tid = PLAYER.FREE_AGENT;
 			const statsRow = basketball.stats.find(
 				row => row.slug === slug && row.season === ratings.season,
 			);
@@ -273,7 +313,7 @@ const getLeague = (options: GetLeagueOptions) => {
 
 					return oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev;
 				});
-				tid = team ? team.tid : -1;
+				tid = team ? team.tid : PLAYER.FREE_AGENT;
 			} else {
 				if (abbrev !== undefined) {
 					const t = teams.find(
@@ -335,39 +375,9 @@ const getLeague = (options: GetLeagueOptions) => {
 		}
 
 		// Whitelist, to get rid of any other columns
-		const currentRatings = {
-			hgt: ratings.hgt,
-			stre: ratings.stre,
-			spd: ratings.spd,
-			jmp: ratings.jmp,
-			endu: ratings.endu,
-			ins: ratings.ins,
-			dnk: ratings.dnk,
-			ft: ratings.ft,
-			fg: ratings.fg,
-			tp: ratings.tp,
-			diq: ratings.diq,
-			oiq: ratings.oiq,
-			drb: ratings.drb,
-			pss: ratings.pss,
-			reb: ratings.reb,
-		};
+		const currentRatings = getOnlyRatings(ratings);
 		if (draftProspect) {
-			const decreaseRating = (
-				name: keyof typeof currentRatings,
-				amount: number,
-			) => {
-				if (currentRatings[name] > amount) {
-					currentRatings[name] -= amount;
-				} else {
-					currentRatings[name] = 0;
-				}
-			};
-
-			// Arbitrarily copied from nicidob
-			decreaseRating("endu", 5);
-			decreaseRating("diq", 4);
-			decreaseRating("oiq", 4);
+			nerfDraftProspect(currentRatings);
 		}
 
 		let bornYear;
@@ -452,7 +462,9 @@ const getLeague = (options: GetLeagueOptions) => {
 			.map(ratings => formatPlayer(ratings, options.season, initialTeams));
 
 		// Free agents were generated in 2020, so offset
-		const numExistingFreeAgents = players.filter(p => p.tid === -1).length;
+		const numExistingFreeAgents = players.filter(
+			p => p.tid === PLAYER.FREE_AGENT,
+		).length;
 		if (numExistingFreeAgents < 50) {
 			const freeAgents2 = helpers.deepCopy(
 				basketball.freeAgents.slice(0, 50 - numExistingFreeAgents),
@@ -479,19 +491,7 @@ const getLeague = (options: GetLeagueOptions) => {
 				seenSlugs.add(ratings.slug);
 				return !seen;
 			})
-			.filter(ratings => {
-				if (ratings.season <= options.season) {
-					return false;
-				}
-
-				const bio = basketball.bios[ratings.slug];
-				if (!bio) {
-					return false;
-				}
-
-				// This affects some of alexnoob's players, where they were part of some old draft class and never actually played in the NBA.
-				return bio.draftYear > options.season;
-			})
+			.filter(ratings => ratings.season > options.season)
 			.map(ratings =>
 				formatPlayer(ratings, options.season, initialTeams, {
 					draftProspect: true,
@@ -501,6 +501,73 @@ const getLeague = (options: GetLeagueOptions) => {
 		players.push(...draftProspects);
 
 		addRelatives(players);
+
+		if (options.randomDebuts) {
+			const toRandomize = players.filter(p => p.tid !== PLAYER.FREE_AGENT);
+
+			const draftYears = toRandomize.map(p => p.draft.year);
+			random.shuffle(draftYears);
+
+			const tids = toRandomize.filter(p => p.tid >= 0).map(p => p.tid);
+			random.shuffle(tids);
+
+			for (let i = 0; i < toRandomize.length; i++) {
+				const p = toRandomize[i];
+				const diff = draftYears[i] - p.draft.year;
+				p.draft.year = draftYears[i];
+				p.born.year += diff;
+
+				if (p.draft.year < options.season) {
+					// Active player on a team
+					const tid = tids.pop();
+					if (tid === undefined) {
+						throw new Error("Not enough tids");
+					}
+
+					p.tid = tid;
+
+					const targetRatingsSeason = options.season - diff;
+
+					const rows = basketball.ratings.filter(row => row.slug === p.srID);
+					if (rows.length === 0) {
+						throw new Error(`No ratings found for "${p.srID}"`);
+					}
+
+					// If possible, use ratings from exact age
+					let ratings = rows.find(row => row.season === targetRatingsSeason);
+
+					// Otherwise, find closest
+					if (!ratings) {
+						const sorted = orderBy(
+							rows,
+							row => Math.abs(row.season - targetRatingsSeason),
+							"asc",
+						);
+						ratings = sorted[0];
+					}
+
+					p.ratings = [getOnlyRatings(ratings)];
+				} else {
+					// Draft prospect
+					p.tid = PLAYER.UNDRAFTED;
+
+					const rookieRatings = basketball.ratings.find(
+						row => row.slug === p.srID,
+					);
+					if (!rookieRatings) {
+						throw new Error(`No ratings found for "${p.srID}"`);
+					}
+					const ratings = getOnlyRatings(rookieRatings);
+					nerfDraftProspect(ratings);
+					p.ratings = [ratings];
+				}
+
+				if (p.draft.year === options.season) {
+					console.log(p);
+				}
+			}
+			console.log(draftYears);
+		}
 
 		const gameAttributes: {
 			key: string;
@@ -515,7 +582,7 @@ const getLeague = (options: GetLeagueOptions) => {
 			gameAttributes.push({ key, value });
 		}
 
-		if (options.season === 2020) {
+		if (options.season === 2020 && !options.randomDebuts) {
 			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
 		}
 
@@ -527,7 +594,9 @@ const getLeague = (options: GetLeagueOptions) => {
 			scheduledEvents,
 			gameAttributes,
 			draftPicks:
-				options.season === 2020 ? basketball.draftPicks2020 : undefined,
+				options.season === 2020 && !options.randomDebuts
+					? basketball.draftPicks2020
+					: undefined,
 		};
 	} else if (options.type === "legends") {
 		const NUM_PLAYERS_PER_TEAM = 15;

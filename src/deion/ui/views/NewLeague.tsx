@@ -297,7 +297,8 @@ type State = {
 	leagueFile: any;
 	legend: string;
 	loadingLeagueFile: boolean;
-	randomizeRosters: boolean;
+	randomDebuts: boolean;
+	shuffleRosters: boolean;
 	teams: NewLeagueTeam[];
 	tid: number;
 	pendingInitialLeagueFile: boolean;
@@ -332,8 +333,12 @@ type Action =
 			legend: string;
 	  }
 	| {
-			type: "setRandomizeRosters";
-			randomizeRosters: boolean;
+			type: "setRandomDebuts";
+			randomDebuts: boolean;
+	  }
+	| {
+			type: "setShuffleRosters";
+			shuffleRosters: boolean;
 	  }
 	| {
 			type: "setSeason";
@@ -418,10 +423,18 @@ const reducer = (state: State, action: Action): State => {
 				legend: action.legend,
 			};
 
-		case "setRandomizeRosters":
+		case "setRandomDebuts":
 			return {
 				...state,
-				randomizeRosters: action.randomizeRosters,
+				randomDebuts: action.randomDebuts,
+				shuffleRosters: action.randomDebuts ? false : state.shuffleRosters,
+			};
+
+		case "setShuffleRosters":
+			return {
+				...state,
+				randomDebuts: action.shuffleRosters ? false : state.randomDebuts,
+				shuffleRosters: action.shuffleRosters,
 			};
 
 		case "setSeason":
@@ -538,7 +551,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 				leagueFile,
 				loadingLeagueFile: false,
-				randomizeRosters: false,
+				randomDebuts: false,
+				shuffleRosters: false,
 				teams,
 				tid: getNewTid(prevTeamRegionName, teams),
 				pendingInitialLeagueFile:
@@ -594,8 +608,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				actualLeagueFile.startingSeason = new Date().getFullYear();
 			}
 
-			const actualRandomizeRosters = state.keptKeys.includes("players")
-				? state.randomizeRosters
+			const actualShuffleRosters = state.keptKeys.includes("players")
+				? state.shuffleRosters
 				: false;
 
 			const actualDifficulty = Object.values(DIFFICULTY).includes(
@@ -610,6 +624,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					getLeagueOptions = {
 						type: "real",
 						season: state.season,
+						randomDebuts: state.randomDebuts,
 					};
 				} else if (state.customize === "legends") {
 					getLeagueOptions = {
@@ -622,7 +637,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					name,
 					tid: state.tid,
 					leagueFile: actualLeagueFile,
-					randomizeRosters: actualRandomizeRosters,
+					shuffleRosters: actualShuffleRosters,
 					difficulty: actualDifficulty,
 					importLid: props.lid,
 					getLeagueOptions,
@@ -673,7 +688,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			name,
 			props.lid,
 			props.name,
-			state.randomizeRosters,
+			state.randomDebuts,
+			state.shuffleRosters,
 			state.season,
 			state.teams,
 			state.tid,
@@ -912,18 +928,45 @@ const NewLeague = (props: View<"newLeague">) => {
 						<div className="form-group">
 							<label>Options</label>
 
+							{state.customize === "real" ? (
+								<>
+									<div className="form-check">
+										<label className="form-check-label">
+											<input
+												className="form-check-input"
+												onChange={event => {
+													dispatch({
+														type: "setRandomDebuts",
+														randomDebuts: event.target.checked,
+													});
+												}}
+												type="checkbox"
+												checked={state.randomDebuts}
+											/>
+											Random debuts
+										</label>
+									</div>
+									<div className="text-muted mt-1 mb-3">
+										"Random debuts" means that every player's draft year is
+										randomized. Starting teams are random combinations of
+										current and future players, and future draft classes contain
+										a random selection of real players.
+									</div>
+								</>
+							) : null}
+
 							<div className="form-check">
 								<label className="form-check-label">
 									<input
 										className="form-check-input"
 										onChange={event => {
 											dispatch({
-												type: "setRandomizeRosters",
-												randomizeRosters: event.target.checked,
+												type: "setShuffleRosters",
+												shuffleRosters: event.target.checked,
 											});
 										}}
 										type="checkbox"
-										checked={state.randomizeRosters}
+										checked={state.shuffleRosters}
 									/>
 									Shuffle rosters
 								</label>

@@ -1,20 +1,14 @@
 build bbgm-rosters into game
 - squash
 
-trade cap rounding https://cdn.discordapp.com/attachments/290015591216054273/713954442441130094/S00524-121936.jpg
-
 don't includ basketball.json in default bundle, but do make service worker cache if when loaded
 - in NewLeague, make LeagueMenu disable stuff while loading basketball.json
 
+collapse options by default?
+
 start real players league league with juice in 2020, next time it defaults to philly
 
-random debut
-- https://old.reddit.com/r/BasketballGM/comments/gou4kq/button_on_the_createedit_player_page_to_randomize/frigqqp/
-- would need to operate on full set of ratings, since it needs players in different years
-- work like randomize teams, but do on draft year too
-- select menu "Randomization": none/shuffle/random-debuts, with text info underneath
-  - maybe not, cause shuffle can work for uploaded league files, but random debuts can't
-- only available for "Real players" leagues
+trade cap rounding https://cdn.discordapp.com/attachments/290015591216054273/713954442441130094/S00524-121936.jpg
 
 frivolities
 - abstract code for "highest X"

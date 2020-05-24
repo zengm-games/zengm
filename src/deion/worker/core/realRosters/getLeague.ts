@@ -7,6 +7,7 @@ import type {
 	ScheduledEventWithoutKey,
 	Relative,
 } from "../../../common/types";
+import { overrides } from "../../util";
 
 type Ratings = {
 	slug: string;
@@ -195,21 +196,27 @@ const getLeague = (options: GetLeagueOptions) => {
 		teams: any[],
 		{
 			draftProspect,
+			legends,
+			hasQueens,
 		}: {
 			draftProspect?: boolean;
+			legends?: boolean;
+			hasQueens?: boolean;
 		} = {},
 	) => {
-		if (draftProspect) {
-			if (ratings.season === season) {
-				throw new Error(
-					"draftProspect should not be true when ratings.season === season",
-				);
-			}
-		} else {
-			if (ratings.season !== season) {
-				throw new Error(
-					"draftProspect should be true when ratings.season !== season",
-				);
+		if (!legends) {
+			if (draftProspect) {
+				if (ratings.season === season) {
+					throw new Error(
+						"draftProspect should not be true when ratings.season === season",
+					);
+				}
+			} else {
+				if (ratings.season !== season) {
+					throw new Error(
+						"draftProspect should be true when ratings.season !== season",
+					);
+				}
 			}
 		}
 
@@ -221,13 +228,13 @@ const getLeague = (options: GetLeagueOptions) => {
 		}
 
 		let draft;
-		if (draftProspect) {
+		if (draftProspect || legends) {
 			draft = {
 				tid: -1,
 				originalTid: -1,
 				round: 0,
 				pick: 0,
-				year: ratings.season - 1,
+				year: legends ? season - 1 : ratings.season - 1,
 			};
 		} else {
 			let draftTid;
@@ -254,57 +261,77 @@ const getLeague = (options: GetLeagueOptions) => {
 		} else {
 			tid = -1;
 			const statsRow = basketball.stats.find(
-				row => row.slug === slug && row.season === season,
+				row => row.slug === slug && row.season === ratings.season,
 			);
 			const abbrev = statsRow ? statsRow.abbrev : ratings.abbrev_if_new_row;
-			if (abbrev !== undefined) {
-				const t = teams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
-				);
-				if (t) {
-					tid = t.tid;
+			if (legends) {
+				const team = teams.find(t => {
+					if (hasQueens && abbrev === "NOL" && ratings.season < 2003) {
+						return oldAbbrevTo2020BBGMAbbrev(t.abbrev) === "CHA";
+					}
+
+					return oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev;
+				});
+				tid = team ? team.tid : -1;
+			} else {
+				if (abbrev !== undefined) {
+					const t = teams.find(
+						t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === abbrev,
+					);
+					if (t) {
+						tid = t.tid;
+					}
 				}
 			}
 		}
 
-		const injuryRow = basketball.injuries.find(
-			injury => injury.season === season && injury.slug === slug,
-		);
-		const injury = injuryRow
-			? {
+		let injury;
+		let contract;
+		let awards;
+		if (legends) {
+			contract = {
+				amount: 6000,
+				exp: season + 3,
+			};
+		} else {
+			const injuryRow = basketball.injuries.find(
+				injury => injury.season === season && injury.slug === slug,
+			);
+			if (injuryRow) {
+				injury = {
 					type: injuryRow.type,
 					gamesRemaining: injuryRow.gamesRemaining,
-			  }
-			: undefined;
-
-		let salaryRow = basketball.salaries.find(
-			row => row.start <= season && row.exp >= season && row.slug === slug,
-		);
-		if (season === 2020) {
-			// For 2020, auto-apply extensions, otherwise will feel weird
-			const salaryRowExtension = basketball.salaries.find(
-				row => row.start > 2020 && row.slug === slug,
-			);
-			if (salaryRowExtension) {
-				salaryRow = salaryRowExtension;
+				};
 			}
-		}
-		const contract =
-			salaryRow && !draftProspect
-				? {
-						amount: salaryRow.amount / 1000,
-						exp: salaryRow.exp,
-				  }
-				: undefined;
-		if (contract && contract.exp > season + 4) {
-			// Bound at 5 year contract
-			contract.exp = season + 4;
-		}
 
-		const awards =
-			basketball.awards[slug] && !draftProspect
-				? basketball.awards[slug].filter(award => award.season < season)
-				: undefined;
+			let salaryRow = basketball.salaries.find(
+				row => row.start <= season && row.exp >= season && row.slug === slug,
+			);
+			if (season === 2020) {
+				// For 2020, auto-apply extensions, otherwise will feel weird
+				const salaryRowExtension = basketball.salaries.find(
+					row => row.start > 2020 && row.slug === slug,
+				);
+				if (salaryRowExtension) {
+					salaryRow = salaryRowExtension;
+				}
+			}
+			if (salaryRow && !draftProspect) {
+				contract = {
+					amount: salaryRow.amount / 1000,
+					exp: salaryRow.exp,
+				};
+				if (contract.exp > season + 4) {
+					// Bound at 5 year contract
+					contract.exp = season + 4;
+				}
+			}
+
+			awards =
+				basketball.awards[slug] && !draftProspect
+					? basketball.awards[slug].filter(award => award.season < season)
+					: undefined;
+		}
 
 		// Whitelist, to get rid of any other columns
 		const currentRatings = {
@@ -342,15 +369,25 @@ const getLeague = (options: GetLeagueOptions) => {
 			decreaseRating("oiq", 4);
 		}
 
+		let bornYear;
+		if (legends) {
+			const age = ratings.season - bio.bornYear;
+			bornYear = season - age;
+		} else {
+			bornYear = bio.bornYear;
+		}
+
+		const name = legends ? `${bio.name} ${ratings.season}` : bio.name;
+
 		pid += 1;
 
 		return {
 			pid,
-			name: bio.name,
+			name,
 			pos: bio.pos,
 			college: bio.college,
 			born: {
-				year: bio.bornYear,
+				year: bornYear,
 				loc: bio.country,
 			},
 			weight: bio.weight,
@@ -396,18 +433,17 @@ const getLeague = (options: GetLeagueOptions) => {
 		}
 	};
 
+	const scheduledEventsAll = [
+		...basketball.scheduledEventsGameAttributes,
+		...basketball.scheduledEventsTeams,
+	];
+
 	if (options.type === "real") {
 		const {
 			scheduledEvents,
 			initialGameAttributes,
 			initialTeams,
-		} = formatScheduledEvents(
-			[
-				...basketball.scheduledEventsGameAttributes,
-				...basketball.scheduledEventsTeams,
-			],
-			options.season,
-		);
+		} = formatScheduledEvents(scheduledEventsAll, options.season);
 		console.log(initialTeams);
 
 		const players = basketball.ratings
@@ -473,6 +509,122 @@ const getLeague = (options: GetLeagueOptions) => {
 			gameAttributes,
 			draftPicks:
 				options.season === 2020 ? basketball.draftPicks2020 : undefined,
+		};
+	} else if (options.type === "legends") {
+		const NUM_PLAYERS_PER_TEAM = 15;
+
+		const allTypes = {
+			"1950s": {
+				start: 1950,
+				end: 1959,
+			},
+			"1960s": {
+				start: 1960,
+				end: 1969,
+			},
+			"1970s": {
+				start: 1970,
+				end: 1979,
+			},
+			"1980s": {
+				start: 1980,
+				end: 1989,
+			},
+			"1990s": {
+				start: 1990,
+				end: 1999,
+			},
+			"2000s": {
+				start: 2000,
+				end: 2009,
+			},
+			"2010s": {
+				start: 2010,
+				end: 2019,
+			},
+			all: {
+				start: -Infinity,
+				end: 2020,
+			},
+		};
+
+		const season = allTypes[options.decade].end;
+		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
+			scheduledEventsAll,
+			season,
+		);
+
+		const hasQueens = initialTeams.some(t => t.name === "Queens");
+
+		pid = -1;
+
+		let players = orderBy(basketball.ratings, overrides.core.player.ovr, "desc")
+			.filter(
+				ratings =>
+					ratings.season >= allTypes[options.decade].start &&
+					ratings.season <= allTypes[options.decade].end,
+			)
+			.map(ratings =>
+				formatPlayer(ratings, season, initialTeams, {
+					legends: true,
+					hasQueens,
+				}),
+			)
+			.filter(p => p.tid >= 0);
+
+		const keptPlayers = [];
+		const numPlayersPerTeam = Array(initialTeams.length).fill(0);
+		while (
+			players.length > 0 &&
+			keptPlayers.length < NUM_PLAYERS_PER_TEAM * initialTeams.length
+		) {
+			const p = players.shift();
+			if (p && numPlayersPerTeam[p.tid] < NUM_PLAYERS_PER_TEAM) {
+				keptPlayers.push(p);
+				numPlayersPerTeam[p.tid] += 1;
+
+				// Remove other years of this player
+				players = players.filter(p2 => p2.srID !== p.srID);
+			}
+		}
+
+		addRelatives(keptPlayers);
+
+		console.log("ADD SCRUB FAs");
+
+		const gameAttributes: {
+			key: string;
+			value: unknown;
+		}[] = [
+			{
+				key: "maxRosterSize",
+				value: 17,
+			},
+			{
+				key: "aiTradesFactor",
+				value: 0,
+			},
+		];
+
+		const ignoreGameAttributes = [
+			"salaryCap",
+			"luxuryPayroll",
+			"minPayroll",
+			"minContract",
+			"maxContract",
+		];
+		for (const [key, value] of Object.entries(initialGameAttributes)) {
+			if (!ignoreGameAttributes.includes(key)) {
+				gameAttributes.push({ key, value });
+			}
+		}
+
+		return {
+			version: 37,
+			startingSeason: season,
+			players: keptPlayers,
+			teams: initialTeams,
+			gameAttributes,
 		};
 	}
 

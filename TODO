@@ -1,12 +1,12 @@
 build bbgm-rosters into game
 - on NewLeague, no need to disable while loading, it's so fast it's just a flash
 - getLeague
-  - dynamically generate scrub FAs
-- legends
+  - dynamically generate scrub FAs, for real and legends
 - get rid of
   - public/leagues stuff, including file hashing
   - process-rosters
-- confirm not in football bundle
+
+don't includ basketball.json in default bundle, but do make service worker cache if when loaded
 
 start real players league league with juice in 2020, next time it defaults to philly
 

@@ -229,10 +229,8 @@ const createLeague = async ({
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
 }): Promise<number> => {
-	console.log(getLeagueOptions);
 	if (getLeagueOptions) {
 		leagueFile = realRosters.getLeague(getLeagueOptions);
-		console.log(leagueFile);
 	}
 
 	if (leagueFile.players) {
@@ -787,9 +785,7 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 		}
 	}
 
-	console.log(p.ratings[0].pos, pos);
 	player.develop(p, age - 19);
-	console.log(2, p.ratings[0].pos);
 
 	const ratings: Record<string, number> = {};
 	for (const key of overrides.common.constants.RATINGS) {

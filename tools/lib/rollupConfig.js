@@ -1,5 +1,3 @@
-const React = require("react");
-const ReactDOM = require("react-dom");
 const alias = require("@rollup/plugin-alias");
 const babel = require("@rollup/plugin-babel").default;
 const blacklist = require("rollup-plugin-blacklist");

@@ -7,7 +7,7 @@ import type {
 	ScheduledEventWithoutKey,
 	Relative,
 } from "../../../common/types";
-import { overrides } from "../../util";
+import { overrides, helpers } from "../../util";
 
 type Ratings = {
 	slug: string;
@@ -81,6 +81,7 @@ type Basketball = {
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];
 	draftPicks2020: DraftPickWithoutKey[];
+	freeAgents: any[];
 };
 
 // Convert abbrevs of current or old NBA/BBGM teams to their equivalent team in modern BBGM. This is used to track a franchise over time, if all you have is the abbrev
@@ -450,7 +451,25 @@ const getLeague = (options: GetLeagueOptions) => {
 			.filter(row => row.season === options.season)
 			.map(ratings => formatPlayer(ratings, options.season, initialTeams));
 
-		console.log("ADD SCRUB FAs");
+		// Free agents were generated in 2020, so offset
+		const numExistingFreeAgents = players.filter(p => p.tid === -1).length;
+		if (numExistingFreeAgents < 50) {
+			const freeAgents2 = helpers.deepCopy(
+				basketball.freeAgents.slice(0, 50 - numExistingFreeAgents),
+			);
+			for (const p of freeAgents2) {
+				let offset = 2020 - options.season;
+
+				// Make them a bit older so they suck
+				offset += 5;
+
+				p.born.year -= offset;
+				p.draft.year -= offset;
+				pid += 1;
+				p.pid = pid;
+			}
+			players.push(...freeAgents2);
+		}
 
 		const seenSlugs = new Set();
 		const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
@@ -590,7 +609,19 @@ const getLeague = (options: GetLeagueOptions) => {
 
 		addRelatives(keptPlayers);
 
-		console.log("ADD SCRUB FAs");
+		const freeAgents2 = helpers.deepCopy(basketball.freeAgents);
+		for (const p of freeAgents2) {
+			let offset = 2020 - season;
+
+			// Make them a bit older so they suck
+			offset += 5;
+
+			p.born.year -= offset;
+			p.draft.year -= offset;
+			pid += 1;
+			p.pid = pid;
+		}
+		keptPlayers.push(...freeAgents2);
 
 		const gameAttributes: {
 			key: string;

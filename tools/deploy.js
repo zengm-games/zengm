@@ -49,7 +49,7 @@ const mySpawn = (command, args) => {
 	}
 
 	console.log("Copying other files...");
-	const excludes = ["--exclude", "/gen"];
+	const excludes = ["--exclude", "/gen", "--exclude", "/leagues"];
 	if (subdomain === "beta") {
 		excludes.push("--exclude", "/sw.js*");
 	}

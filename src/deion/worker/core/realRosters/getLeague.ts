@@ -293,7 +293,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 			awards =
 				basketball.awards[slug] && !draftProspect
-					? basketball.awards[slug].filter(award => award.season < season)
+					? helpers.deepCopy(
+							basketball.awards[slug].filter(award => award.season < season),
+					  )
 					: undefined;
 		}
 
@@ -518,7 +520,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			gameAttributes,
 			draftPicks:
 				options.season === 2020 && !options.randomDebuts
-					? basketball.draftPicks2020
+					? helpers.deepCopy(basketball.draftPicks2020)
 					: undefined,
 		};
 	} else if (options.type === "legends") {

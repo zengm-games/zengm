@@ -1,3 +1,11 @@
+playoff upsets
+- upset odds currently? upset odds ideally?
+- different between real and random players?
+- try
+  - less fatigue
+  - 5% slower pace
+- could apply bigger home court advantage for good teams
+
 files -> data+gen
 - confirm cache header
 
@@ -88,9 +96,6 @@ relocation fun stuff
 ovr formula should change depending on game simulation settings, especially 3 point shooting
 
 what would it really cost to store all game sim results?
-
-playoff upsets
-- could apply bigger home court advantage for good teams
 
 better changelog
 - everything from CHANGELOG.made

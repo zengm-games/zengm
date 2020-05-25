@@ -1,4 +1,5 @@
 import orderBy from "lodash/orderBy";
+import { helpers } from "../../util";
 
 const processGameAttributes = (events: any[], season: number) => {
 	let gameAttributeEvents = [];
@@ -19,7 +20,7 @@ const processGameAttributes = (events: any[], season: number) => {
 				(event.season === season && event.phase > 0)) &&
 			initialGameAttributes === undefined
 		) {
-			initialGameAttributes = JSON.parse(JSON.stringify(prevState));
+			initialGameAttributes = helpers.deepCopy(prevState);
 		}
 		for (const [key, value] of Object.entries(event.info)) {
 			if (value === prevState[key]) {
@@ -32,12 +33,14 @@ const processGameAttributes = (events: any[], season: number) => {
 
 	// Handle initialGameAttributes for the last season, where the season + 1 condition above can never be met
 	if (initialGameAttributes === undefined) {
-		initialGameAttributes = JSON.parse(JSON.stringify(prevState));
+		initialGameAttributes = helpers.deepCopy(prevState);
 	}
 
-	gameAttributeEvents = gameAttributeEvents.filter(
-		event =>
-			event.season > season || (event.season === season && event.phase > 0),
+	gameAttributeEvents = helpers.deepCopy(
+		gameAttributeEvents.filter(
+			event =>
+				event.season > season || (event.season === season && event.phase > 0),
+		),
 	);
 
 	return { gameAttributeEvents, initialGameAttributes };
@@ -73,7 +76,7 @@ const processTeams = (events: any[], season: number) => {
 			// @ts-ignore
 			initialTeams === undefined
 		) {
-			initialTeams = JSON.parse(JSON.stringify(prevState));
+			initialTeams = helpers.deepCopy(prevState);
 		}
 
 		if (event.type === "expansionDraft") {
@@ -96,12 +99,14 @@ const processTeams = (events: any[], season: number) => {
 	// Handle initialTeams for the last season, where the season + 1 condition above can never be met
 	// @ts-ignore
 	if (initialTeams === undefined) {
-		initialTeams = JSON.parse(JSON.stringify(prevState));
+		initialTeams = helpers.deepCopy(prevState);
 	}
 
-	teamEvents = teamEvents.filter(
-		event =>
-			event.season > season || (event.season === season && event.phase > 0),
+	teamEvents = helpers.deepCopy(
+		teamEvents.filter(
+			event =>
+				event.season > season || (event.season === season && event.phase > 0),
+		),
 	);
 
 	// Remove tids, in case user already did another expansion draft

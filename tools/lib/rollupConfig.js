@@ -1,5 +1,3 @@
-const React = require("react");
-const ReactDOM = require("react-dom");
 const alias = require("@rollup/plugin-alias");
 const babel = require("@rollup/plugin-babel").default;
 const blacklist = require("rollup-plugin-blacklist");
@@ -47,12 +45,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			compact: true,
 			namedExports: false,
 		}),
-		commonjs({
-			namedExports: {
-				react: Object.keys(React),
-				"react-dom": Object.keys(ReactDOM),
-			},
-		}),
+		commonjs(),
 		resolve({
 			extensions,
 			preferBuiltins: true,

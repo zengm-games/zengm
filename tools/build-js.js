@@ -1,3 +1,5 @@
+const fs = require("fs");
+const fse = require("fs-extra");
 const rollup = require("rollup");
 const build = require("./lib/buildFuncs");
 const getSport = require("./lib/getSport");
@@ -53,6 +55,32 @@ const buildFile = async (name, legacy) => {
 		delete process.env.LEGACY;
 
 		build.setTimestamps(rev);
+
+		const realPlayerDataFilename = "build/files/real-player-data.json";
+		if (fs.existsSync(realPlayerDataFilename)) {
+			const string = fs.readFileSync(realPlayerDataFilename);
+			fs.writeFileSync(
+				realPlayerDataFilename,
+				JSON.stringify(JSON.parse(string)),
+			);
+
+			const hash = build.fileHash(string);
+			const newFilename = realPlayerDataFilename.replace(
+				".json",
+				`-${hash}.json`,
+			);
+			fse.moveSync(realPlayerDataFilename, newFilename);
+
+			replace({
+				regex: "/files/real-player-data.json",
+				replacement: `/files/real-player-data-${hash}.json`,
+				paths: [
+					`build/gen/worker-legacy-${rev}.js`,
+					`build/gen/worker-${rev}.js`,
+				],
+				silent: true,
+			});
+		}
 	} catch (error) {
 		console.error(error);
 		process.exit(1);

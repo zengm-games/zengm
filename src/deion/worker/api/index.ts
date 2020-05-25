@@ -15,6 +15,7 @@ import {
 	team,
 	trade,
 	expansionDraft,
+	realRosters,
 } from "../core";
 import { connectMeta, idb, iterate } from "../db";
 import {
@@ -56,6 +57,7 @@ import type {
 	ExpansionDraftSetupTeam,
 	RealTeamInfo,
 	RealPlayerPhotos,
+	GetLeagueOptions,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 
@@ -210,14 +212,27 @@ const countNegotiations = async () => {
 	return negotiations.length;
 };
 
-const createLeague = async (
-	name: string,
-	tid: number,
-	leagueFile: any,
-	randomizeRosters: boolean,
-	difficulty: number,
-	importLid: number | undefined | null,
-): Promise<number> => {
+const createLeague = async ({
+	name,
+	tid,
+	leagueFile,
+	shuffleRosters,
+	difficulty,
+	importLid,
+	getLeagueOptions,
+}: {
+	name: string;
+	tid: number;
+	leagueFile: any;
+	shuffleRosters: boolean;
+	difficulty: number;
+	importLid: number | undefined | null;
+	getLeagueOptions: GetLeagueOptions | undefined;
+}): Promise<number> => {
+	if (getLeagueOptions) {
+		leagueFile = await realRosters.getLeague(getLeagueOptions);
+	}
+
 	if (leagueFile.players) {
 		const realPlayerPhotos = (await idb.meta.get(
 			"attributes",
@@ -264,7 +279,7 @@ const createLeague = async (
 		name,
 		tid,
 		leagueFile,
-		randomizeRosters,
+		shuffleRosters,
 		difficulty,
 		importLid,
 	});
@@ -735,6 +750,12 @@ const generateFace = () => {
 	return face.generate();
 };
 
+const getLeagueInfo = async (
+	options: Parameters<typeof realRosters.getLeagueInfo>[0],
+) => {
+	return realRosters.getLeagueInfo(options);
+};
+
 const getLeagueName = async () => {
 	const l = await idb.meta.get("leagues", g.get("lid"));
 	if (l) {
@@ -764,9 +785,7 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 		}
 	}
 
-	console.log(p.ratings[0].pos, pos);
 	player.develop(p, age - 19);
-	console.log(2, p.ratings[0].pos);
 
 	const ratings: Record<string, number> = {};
 	for (const key of overrides.common.constants.RATINGS) {
@@ -2042,6 +2061,7 @@ export default {
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
 	generateFace,
+	getLeagueInfo,
 	getLeagueName,
 	getLocal,
 	getRandomRatings,

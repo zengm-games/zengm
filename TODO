@@ -1,39 +1,9 @@
-build bbgm-rosters into game
-- output JSON versions of all the data files
-  - come up with more systematic overrides system, if necessary. or just apply current ones
-  - normalize "abbrev" so it is bbgm 2020 abbrevs
-  - "league" column is never needed, just filter out non-NBA
-  - awards, bios, ratings, relatives, injuries
-    - need basically all of these files
-  - salaries
-    - need only slug, start, end, salary
-  - stats
-    - just use this to get (slug, season) => abbrev
-  - have this script read alexnoob 2020 file and include them
-    - how to handle players with no slug, like draft prospects? temp slug like for player photo override?
-- script to generate all scheduled events
-- formatScheduledEvents should go into bbgm
-- NewLeague needs to change, to read from worker rather than JSON file
-  - only need to send teams and Object.keys(leagueFile)
-  - rest of league file shouldn't be generated until after submit
-    - getLeagueInfo({
-        type: "real",
-        season: number,
-      } | {
-        type: "legends",
-        decade: "1950" | "1960" | "1970" | "1980" | "1990" | "2000" | "2010" | "all",
-      })
-    - getLeague
-- dynamically generate scrub FAs
-- get rid of all public/leagues stuff, including file hashing
+end of game playing time situations @gmgameschris
 
-random debut
-- https://old.reddit.com/r/BasketballGM/comments/gou4kq/button_on_the_createedit_player_page_to_randomize/frigqqp/
-- would need to operate on full set of ratings, since it needs players in different years
-- work like randomize teams, but do on draft year too
-- select menu "Randomization": none/shuffle/random-debuts, with text info underneath
-  - maybe not, cause shuffle can work for uploaded league files, but random debuts can't
-- only available for "Real players" leagues
+When creating a new player, the draft class year always defaults to the previous season upon pressing "create player" even if that field was edited. So if I make a player and make his draft class year 2013, when I click create player it still shows as 2019 (if it's a 2020 file), and then it had to be edited again
+
+build bbgm-rosters into game
+- squash
 
 frivolities
 - abstract code for "highest X"
@@ -41,10 +11,6 @@ frivolities
   - oldest to actually play @youngtubesteak#2173
 - draft class aggregate stats alexnoob
 - best player without a ring
-
-don't include 2020 in .js bundle, but do include in service worker
-- remove old stats, retired players
-- minify
 
 contraction
 - t.disabled=true
@@ -92,6 +58,7 @@ way to bulk delete leagues
 
 handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
 - any abbrev returned in stats or ratings from playersPlus is wrong
+- using team*Cache from UI is probably wrong too
 
 events revamp
 - nothing should be lost, ever
@@ -203,6 +170,10 @@ new league options
 - option to equalize cities when starting new league (equal spending and size)
 - set startingSeason
 - challenge mode
+  - hide player ratings
+  - no free agency
+  - no draft picks
+  - lose your best player every year
 
 some kind of global status/finances menu, above titlebar
 - EVENTUALLY
@@ -269,8 +240,6 @@ add toggle to table, to turn it into a heatmap showing which values are high or 
 
 FBGM punt when down in OT https://cdn.discordapp.com/attachments/290015591216054273/690387745042071592/Screenshot_2020-03-19_at_9.34.14_PM.png
 
-end of game playing time situations @gmgameschris
-
 make the 3 year delayed effect of team finances more obvious
 
 teams play better/worse when down/up
@@ -283,6 +252,8 @@ make countries easier to customize
 - allow specifying country frequencies without tying it to the number of names
 - GUI to add countries and names
 - same for colleges
+  - also support different distribution per country
+  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwHNWCgnhQnrXNBlvVxJJmfhsNr
 
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1

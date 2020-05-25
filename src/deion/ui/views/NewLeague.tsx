@@ -1,5 +1,4 @@
 import orderBy from "lodash/orderBy";
-import range from "lodash/range";
 import PropTypes from "prop-types";
 import React, {
 	useCallback,
@@ -12,8 +11,7 @@ import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
-import type { View, RealTeamInfo } from "../../common/types";
-import league2020 from "../../../../public/basketball/leagues/2020.json";
+import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
 import classNames from "classnames";
 
 type NewLeagueTeam = {
@@ -23,6 +21,11 @@ type NewLeagueTeam = {
 	pop?: number;
 	popRank: number;
 	srID?: string;
+};
+
+type LeagueInfo = {
+	stores: string[];
+	teams: NewLeagueTeam[];
 };
 
 const applyRealTeamInfo = (
@@ -48,11 +51,6 @@ const applyRealTeamInfo = (
 const teamsDefault: NewLeagueTeam[] = helpers.addPopRank(
 	helpers.getTeamsDefault(),
 );
-
-const teams2020: NewLeagueTeam[] =
-	process.env.SPORT === "basketball"
-		? helpers.addPopRank(league2020.teams)
-		: [];
 
 const leaguePartDescriptions: { [key: string]: string } = {
 	gameAttributes: "League settings",
@@ -82,19 +80,17 @@ const initKeptKeys = (leagueFile: any) =>
 	leagueFile ? Object.keys(leagueFile).filter(key => key !== "version") : [];
 
 const LeaguePartPicker = ({
-	leagueFile,
+	allKeys,
 	keptKeys,
 	setKeptKeys,
 }: {
-	leagueFile: any;
+	allKeys: string[];
 	keptKeys: string[];
 	setKeptKeys: (keys: string[]) => void;
 }) => {
-	if (!leagueFile) {
+	if (allKeys.length === 0) {
 		return null;
 	}
-
-	const allKeys = initKeptKeys(leagueFile);
 
 	const keysSorted = Object.keys(leaguePartDescriptions).filter(key =>
 		allKeys.includes(key),
@@ -155,166 +151,79 @@ const LeaguePartPicker = ({
 	);
 };
 
-const fetchLeagueFile = (filename: number | string) => {
-	let filenameWithHash = filename;
-	if (window.leagueFileHashes[filename]) {
-		filenameWithHash += `-${window.leagueFileHashes[filename]}`;
-	}
-	return fetch(`/leagues/${filenameWithHash}.json`);
-};
-
-const quickSeasonsStyle = { height: 19, color: "var(--dark)" };
+const quickValuesStyle = { height: 19, color: "var(--dark)" };
 
 const MIN_SEASON = 1956;
 const MAX_SEASON = 2020;
 
-const SeasonsMenu = ({
+const seasons: { key: string; value: string }[] = [];
+for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
+	seasons.push({
+		key: String(i),
+		value: String(i),
+	});
+}
+
+const legends = [
+	{
+		key: "all",
+		value: "All Time",
+	},
+	{
+		key: "2010s",
+		value: "2010s",
+	},
+	{
+		key: "2000s",
+		value: "2000s",
+	},
+	{
+		key: "1990s",
+		value: "1990s",
+	},
+	{
+		key: "1980s",
+		value: "1980s",
+	},
+	{
+		key: "1970s",
+		value: "1970s",
+	},
+	{
+		key: "1960s",
+		value: "1960s",
+	},
+	{
+		key: "1950s",
+		value: "1950s",
+	},
+];
+
+const LeagueMenu = <T extends string>({
+	getLeagueInfo,
 	onDone,
 	onLoading,
+	quickValues,
 	value,
+	values,
 }: {
-	onDone: (season: number, leagueFile: any) => void;
-	onLoading: (season: number) => void;
-	value: number;
+	getLeagueInfo: (value: T) => Promise<LeagueInfo>;
+	onDone: (leagueInfo: any) => void;
+	onLoading: (value: T) => void;
+	quickValues?: T[];
+	value: T;
+	values: { key: T; value: string }[];
 }) => {
-	const waitingForSeason = useRef<number | undefined>(value);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
+	const waitingForInfo = useRef<string | undefined>(value);
 
-	const seasons = range(MAX_SEASON, MIN_SEASON - 1);
+	const handleNewValue = async (newValue: T) => {
+		waitingForInfo.current = newValue;
+		onLoading(newValue);
 
-	const handleNewSeason = async (season: number) => {
-		waitingForSeason.current = season;
-		onLoading(season);
-		setErrorMessage(undefined);
-
-		if (process.env.SPORT === "basketball" && season === 2020) {
-			onDone(2020, helpers.deepCopy(league2020));
-			waitingForSeason.current = undefined;
-		} else {
-			try {
-				const response = await fetchLeagueFile(season);
-				if (waitingForSeason.current === season) {
-					const leagueFile = await response.json();
-					if (waitingForSeason.current === season) {
-						onDone(season, leagueFile);
-						waitingForSeason.current = undefined;
-					}
-				}
-			} catch (error) {
-				setErrorMessage(error.message);
-				throw error;
-			}
-		}
-	};
-
-	// Handle initial value for season
-	useEffect(() => {
-		handleNewSeason(value);
-	}, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-	const quickSeasons = [1956, 1968, 1984, 1996, 2003, 2020];
-
-	return (
-		<div className="form-group">
-			<div className="d-flex">
-				<label htmlFor="new-league-season" className="flex-grow-1">
-					Season
-				</label>
-				{quickSeasons.map(season => (
-					<button
-						key={season}
-						type="button"
-						className="btn btn-link border-0 p-0 mb-1 ml-2"
-						style={quickSeasonsStyle}
-						onClick={() => {
-							handleNewSeason(season);
-						}}
-					>
-						{season}
-					</button>
-				))}
-			</div>
-			<div className="input-group mb-1">
-				<select
-					id="new-league-season"
-					className="form-control"
-					value={value}
-					onChange={async event => {
-						const season = parseInt(event.target.value, 10);
-						await handleNewSeason(season);
-					}}
-				>
-					{seasons.map(season => {
-						return (
-							<option key={season} value={season}>
-								{season}
-							</option>
-						);
-					})}
-				</select>
-				<div className="input-group-append">
-					<button
-						className="btn btn-secondary"
-						type="button"
-						onClick={() => {
-							const randomSeason =
-								seasons[Math.floor(Math.random() * seasons.length)];
-							handleNewSeason(randomSeason);
-						}}
-					>
-						Random
-					</button>
-				</div>
-			</div>
-			{errorMessage ? (
-				<span className="text-danger">Error: {errorMessage}</span>
-			) : null}
-		</div>
-	);
-};
-
-const legends = {
-	"legends-all": "All Time",
-	"legends-2010s": "2010s",
-	"legends-2000s": "2000s",
-	"legends-1990s": "1990s",
-	"legends-1980s": "1980s",
-	"legends-1970s": "1970s",
-	"legends-1960s": "1960s",
-	"legends-1950s": "1950s",
-};
-
-type Legend = keyof typeof legends;
-
-const LegendsMenu = ({
-	onDone,
-	onLoading,
-	value,
-}: {
-	onDone: (legend: Legend, leagueFile: any) => void;
-	onLoading: (legend: Legend) => void;
-	value: Legend;
-}) => {
-	const waitingForFile = useRef<typeof value | undefined>(value);
-	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-
-	const handleNewValue = async (legend: Legend) => {
-		waitingForFile.current = legend;
-		onLoading(legend);
-		setErrorMessage(undefined);
-
-		try {
-			const response = await fetchLeagueFile(legend);
-			if (waitingForFile.current === legend) {
-				const leagueFile = await response.json();
-				if (waitingForFile.current === legend) {
-					onDone(legend, leagueFile);
-					waitingForFile.current = undefined;
-				}
-			}
-		} catch (error) {
-			setErrorMessage(error.message);
-			throw error;
+		const leagueInfo = await getLeagueInfo(newValue);
+		if (waitingForInfo.current === newValue) {
+			onDone(leagueInfo);
+			waitingForInfo.current = undefined;
 		}
 	};
 
@@ -326,28 +235,38 @@ const LegendsMenu = ({
 	return (
 		<div className="form-group">
 			<div className="d-flex">
-				<label htmlFor="new-league-legends" className="flex-grow-1">
-					Eligible players
+				<label htmlFor="new-league-season" className="flex-grow-1">
+					Season
 				</label>
+				{quickValues
+					? quickValues.map(key => (
+							<button
+								key={key}
+								type="button"
+								className="btn btn-link border-0 p-0 mb-1 ml-2"
+								style={quickValuesStyle}
+								onClick={() => {
+									handleNewValue(key);
+								}}
+							>
+								{values.find(v => v.key === key)!.value}
+							</button>
+					  ))
+					: null}
 			</div>
 			<div className="input-group mb-1">
 				<select
-					id="new-league-legends"
+					id="new-league-season"
 					className="form-control"
 					value={value}
 					onChange={async event => {
-						const value: any = event.target.value;
-						// @ts-ignore
-						if (!legends[value]) {
-							throw new Error(`Unknown value: ${value}`);
-						}
-						await handleNewValue(value);
+						await handleNewValue((event.target.value as unknown) as T);
 					}}
 				>
-					{Object.entries(legends).map(([key, name]) => {
+					{values.map(({ key, value }) => {
 						return (
 							<option key={key} value={key}>
-								{name}
+								{value}
 							</option>
 						);
 					})}
@@ -357,7 +276,7 @@ const LegendsMenu = ({
 						className="btn btn-secondary"
 						type="button"
 						onClick={() => {
-							const keys = Object.keys(legends) as Legend[];
+							const keys = values.map(v => v.key);
 							const random = keys[Math.floor(Math.random() * keys.length)];
 							handleNewValue(random);
 						}}
@@ -366,9 +285,6 @@ const LegendsMenu = ({
 					</button>
 				</div>
 			</div>
-			{errorMessage ? (
-				<span className="text-danger">Error: {errorMessage}</span>
-			) : null}
 		</div>
 	);
 };
@@ -379,12 +295,13 @@ type State = {
 	season: number;
 	difficulty: number;
 	leagueFile: any;
-	legend: Legend;
+	legend: string;
 	loadingLeagueFile: boolean;
-	randomizeRosters: boolean;
+	randomization: "none" | "debuts" | "shuffle";
 	teams: NewLeagueTeam[];
 	tid: number;
-	pendingInitialLeagueFile: boolean;
+	pendingInitialLeagueInfo: boolean;
+	allKeys: string[];
 	keptKeys: string[];
 };
 
@@ -412,11 +329,11 @@ type Action =
 	  }
 	| {
 			type: "setLegend";
-			legend: Legend;
+			legend: string;
 	  }
 	| {
-			type: "setRandomizeRosters";
-			randomizeRosters: boolean;
+			type: "setRandomization";
+			randomization: State["randomization"];
 	  }
 	| {
 			type: "setSeason";
@@ -432,6 +349,11 @@ type Action =
 	| {
 			type: "newLeagueFile";
 			leagueFile: any;
+			teams: NewLeagueTeam[];
+	  }
+	| {
+			type: "newLeagueInfo";
+			allKeys: string[];
 			teams: NewLeagueTeam[];
 	  };
 
@@ -496,10 +418,10 @@ const reducer = (state: State, action: Action): State => {
 				legend: action.legend,
 			};
 
-		case "setRandomizeRosters":
+		case "setRandomization":
 			return {
 				...state,
-				randomizeRosters: action.randomizeRosters,
+				randomization: action.randomization,
 			};
 
 		case "setSeason":
@@ -525,21 +447,39 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "newLeagueFile": {
+			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
+
+			const allKeys = initKeptKeys(action.leagueFile);
+
+			return {
+				...state,
+				loadingLeagueFile: false,
+				leagueFile: action.leagueFile,
+				allKeys,
+				keptKeys: allKeys,
+				teams: action.teams,
+				tid: getNewTid(prevTeamRegionName, action.teams),
+			};
+		}
+
+		case "newLeagueInfo": {
 			let prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
-			if (state.pendingInitialLeagueFile) {
+			if (state.pendingInitialLeagueInfo) {
 				const fromLocalStorage = localStorage.getItem("prevTeamRegionName");
 				if (fromLocalStorage !== null) {
 					prevTeamRegionName = fromLocalStorage;
 				}
 			}
+
 			return {
 				...state,
 				loadingLeagueFile: false,
-				leagueFile: action.leagueFile,
-				keptKeys: initKeptKeys(action.leagueFile),
+				leagueFile: null,
+				allKeys: action.allKeys,
+				keptKeys: action.allKeys,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
-				pendingInitialLeagueFile: false,
+				pendingInitialLeagueInfo: false,
 			};
 		}
 
@@ -566,15 +506,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				customize = "legends";
 			}
 
-			const leagueFile =
-				customize === "real" && process.env.SPORT === "basketball"
-					? league2020
-					: null;
+			const leagueFile = null;
 
-			const teams =
-				customize === "real"
-					? applyRealTeamInfo(teams2020, props.realTeamInfo)
-					: teamsDefault;
+			const teams = teamsDefault;
 
 			let prevTeamRegionName = localStorage.getItem("prevTeamRegionName");
 			if (prevTeamRegionName === null) {
@@ -586,21 +520,23 @@ const NewLeague = (props: View<"newLeague">) => {
 				season = 2020;
 			}
 
+			const allKeys = initKeptKeys(leagueFile);
+
 			return {
 				creating: false,
 				customize,
 				season,
-				legend: "legends-all",
+				legend: "all",
 				difficulty:
 					props.difficulty !== undefined ? props.difficulty : DIFFICULTY.Normal,
 				leagueFile,
 				loadingLeagueFile: false,
-				randomizeRosters: false,
+				randomization: "none",
 				teams,
 				tid: getNewTid(prevTeamRegionName, teams),
-				pendingInitialLeagueFile:
-					(customize === "real" && season !== 2020) || customize === "legends",
-				keptKeys: initKeptKeys(leagueFile),
+				pendingInitialLeagueInfo: true,
+				allKeys,
+				keptKeys: allKeys,
 			};
 		},
 	);
@@ -650,8 +586,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				actualLeagueFile.startingSeason = new Date().getFullYear();
 			}
 
-			const actualRandomizeRosters = state.keptKeys.includes("players")
-				? state.randomizeRosters
+			const actualShuffleRosters = state.keptKeys.includes("players")
+				? state.randomization === "shuffle"
 				: false;
 
 			const actualDifficulty = Object.values(DIFFICULTY).includes(
@@ -661,16 +597,29 @@ const NewLeague = (props: View<"newLeague">) => {
 				: DIFFICULTY.Normal;
 
 			try {
-				const lid = await toWorker(
-					"main",
-					"createLeague",
+				let getLeagueOptions: GetLeagueOptions | undefined;
+				if (state.customize === "real") {
+					getLeagueOptions = {
+						type: "real",
+						season: state.season,
+						randomDebuts: state.randomization === "debuts",
+					};
+				} else if (state.customize === "legends") {
+					getLeagueOptions = {
+						type: "legends",
+						decade: state.legend as any,
+					};
+				}
+
+				const lid = await toWorker("main", "createLeague", {
 					name,
-					state.tid,
-					actualLeagueFile,
-					actualRandomizeRosters,
-					actualDifficulty,
-					props.lid,
-				);
+					tid: state.tid,
+					leagueFile: actualLeagueFile,
+					shuffleRosters: actualShuffleRosters,
+					difficulty: actualDifficulty,
+					importLid: props.lid,
+					getLeagueOptions,
+				});
 
 				let type: string = state.customize;
 				if (type === "real") {
@@ -717,7 +666,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			name,
 			props.lid,
 			props.name,
-			state.randomizeRosters,
+			state.randomization,
 			state.season,
 			state.teams,
 			state.tid,
@@ -784,6 +733,16 @@ const NewLeague = (props: View<"newLeague">) => {
 		[props.realTeamInfo],
 	);
 
+	const handleNewLeagueInfo = (leagueInfo: LeagueInfo) => {
+		const newTeams = helpers.addPopRank(helpers.deepCopy(leagueInfo.teams));
+
+		dispatch({
+			type: "newLeagueInfo",
+			allKeys: leagueInfo.stores,
+			teams: applyRealTeamInfo(newTeams, props.realTeamInfo),
+		});
+	};
+
 	useTitleBar({ title, hideNewWindow: true });
 
 	const displayedTeams = state.keptKeys.includes("teams")
@@ -791,10 +750,16 @@ const NewLeague = (props: View<"newLeague">) => {
 		: teamsDefault;
 
 	const disableWhileLoadingLeagueFile =
-		(state.customize === "custom-rosters" ||
-			state.customize === "custom-url" ||
-			state.customize === "real") &&
-		(state.leagueFile === null || state.loadingLeagueFile);
+		((state.customize === "custom-rosters" ||
+			state.customize === "custom-url") &&
+			(state.leagueFile === null || state.loadingLeagueFile)) ||
+		((state.customize === "real" || state.customize === "legends") &&
+			state.pendingInitialLeagueInfo);
+	const showLoadingIndicator =
+		disableWhileLoadingLeagueFile &&
+		(state.loadingLeagueFile ||
+			((state.customize === "real" || state.customize === "legends") &&
+				state.pendingInitialLeagueInfo));
 
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
@@ -828,38 +793,38 @@ const NewLeague = (props: View<"newLeague">) => {
 					</div>
 
 					{state.customize === "real" ? (
-						<SeasonsMenu
-							value={state.season}
-							onLoading={season => {
+						<LeagueMenu
+							value={String(state.season)}
+							values={seasons}
+							getLeagueInfo={value =>
+								toWorker("main", "getLeagueInfo", {
+									type: "real",
+									season: parseInt(value),
+								})
+							}
+							onLoading={value => {
+								const season = parseInt(value);
 								dispatch({ type: "setSeason", season });
-								if (season !== 2020) {
-									dispatch({ type: "loadingLeagueFile" });
-								}
 							}}
-							onDone={(season, leagueFile) => {
-								if (season === 2020) {
-									dispatch({
-										type: "newLeagueFile",
-										leagueFile,
-										teams: applyRealTeamInfo(teams2020, props.realTeamInfo),
-									});
-								} else {
-									handleNewLeagueFile(null, leagueFile);
-								}
-							}}
+							onDone={handleNewLeagueInfo}
+							quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
 						/>
 					) : null}
 
 					{state.customize === "legends" ? (
-						<LegendsMenu
+						<LeagueMenu
 							value={state.legend}
+							values={legends}
+							getLeagueInfo={value =>
+								toWorker("main", "getLeagueInfo", {
+									type: "legends",
+									decade: value,
+								})
+							}
 							onLoading={legend => {
 								dispatch({ type: "setLegend", legend });
-								dispatch({ type: "loadingLeagueFile" });
 							}}
-							onDone={(legend, leagueFile) => {
-								handleNewLeagueFile(null, leagueFile);
-							}}
+							onDone={handleNewLeagueInfo}
 						/>
 					) : null}
 
@@ -881,7 +846,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								{orderBy(displayedTeams, ["region", "name"]).map(t => {
 									return (
 										<option key={t.tid} value={t.tid}>
-											{disableWhileLoadingLeagueFile && state.loadingLeagueFile
+											{showLoadingIndicator
 												? "Loading..."
 												: `${t.region} ${t.name}`}
 										</option>
@@ -943,26 +908,38 @@ const NewLeague = (props: View<"newLeague">) => {
 						</span>
 					</div>
 
-					{state.keptKeys.includes("players") ? (
+					{state.keptKeys.includes("players") || state.customize === "real" ? (
 						<div className="form-group">
-							<label>Options</label>
-
-							<div className="form-check">
-								<label className="form-check-label">
-									<input
-										className="form-check-input"
-										onChange={event => {
-											dispatch({
-												type: "setRandomizeRosters",
-												randomizeRosters: event.target.checked,
-											});
-										}}
-										type="checkbox"
-										checked={state.randomizeRosters}
-									/>
-									Shuffle rosters
-								</label>
-							</div>
+							<label htmlFor="new-league-randomization">Randomization</label>
+							<select
+								id="new-league-randomization"
+								className="form-control"
+								onChange={event => {
+									dispatch({
+										type: "setRandomization",
+										randomization: event.target.value as any,
+									});
+								}}
+								value={state.randomization}
+							>
+								<option value="none">None</option>
+								{state.customize === "real" ? (
+									<option value="debuts">Random debuts</option>
+								) : null}
+								<option value="shuffle">Shuffle rosters</option>
+							</select>
+							{state.randomization === "debuts" ? (
+								<div className="text-muted mt-1">
+									Every player's draft year is randomized. Starting teams are
+									random combinations of current and future players, and future
+									draft classes contain a random selection of real players.
+								</div>
+							) : null}
+							{state.randomization === "shuffle" ? (
+								<div className="text-muted mt-1">
+									All active players are placed on random teams.
+								</div>
+							) : null}
 						</div>
 					) : null}
 
@@ -1052,7 +1029,10 @@ const NewLeague = (props: View<"newLeague">) => {
 													type: "setCustomize",
 													customize: newCustomize,
 												});
-												if (newCustomize !== "real") {
+												if (
+													newCustomize !== "real" &&
+													newCustomize !== "legends"
+												) {
 													dispatch({ type: "clearLeagueFile" });
 												}
 											}}
@@ -1102,7 +1082,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									) : null}
 
 									<LeaguePartPicker
-										leagueFile={state.leagueFile}
+										allKeys={state.allKeys}
 										keptKeys={state.keptKeys}
 										setKeptKeys={keptKeys => {
 											dispatch({ type: "setKeptKeys", keptKeys });

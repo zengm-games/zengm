@@ -138,35 +138,6 @@ const copyFiles = () => {
 	setSport();
 };
 
-const hashLeagueFiles = () => {
-	const folder = path.join("build", "leagues");
-	const leagueFiles = fs.readdirSync(folder);
-
-	const leagueFileHashes = {};
-
-	for (const filename of leagueFiles) {
-		if (filename.endsWith(".json")) {
-			const sourcePath = path.join(folder, filename);
-			const contents = fs.readFileSync(sourcePath);
-			const hash = fileHash(contents);
-
-			const leagueFile = path.basename(filename, ".json");
-			leagueFileHashes[leagueFile] = hash;
-
-			fse.moveSync(sourcePath, path.join(folder, `${leagueFile}-${hash}.json`));
-		}
-	}
-
-	replace({
-		regex: "window.leagueFileHashes = {};",
-		replacement: `window.leagueFileHashes = ${JSON.stringify(
-			leagueFileHashes,
-		)};`,
-		paths: ["build/index.html"],
-		silent: true,
-	});
-};
-
 const genRev = () => {
 	const d = new Date();
 	const date = d.toISOString().split("T")[0].replace(/-/g, ".");
@@ -250,8 +221,8 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 module.exports = {
 	buildCSS,
 	copyFiles,
+	fileHash,
 	genRev,
-	hashLeagueFiles,
 	reset,
 	setTimestamps,
 };

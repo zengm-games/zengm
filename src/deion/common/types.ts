@@ -1271,3 +1271,22 @@ export type RealTeamInfo = Record<
 		imgURL: string;
 	}
 >;
+
+export type GetLeagueOptions =
+	| {
+			type: "real";
+			season: number;
+			randomDebuts: boolean;
+	  }
+	| {
+			type: "legends";
+			decade:
+				| "1950s"
+				| "1960s"
+				| "1970s"
+				| "1980s"
+				| "1990s"
+				| "2000s"
+				| "2010s"
+				| "all";
+	  };

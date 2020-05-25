@@ -280,6 +280,11 @@ const changes = [
 		msg:
 			'You can now create a "legends" league filled with the best players in each franchise\'s history. <a href="https://basketball-gm.com/blog/2020/05/legends-leagues/">More details</a>',
 	},
+	{
+		date: "2020-05-24",
+		msg:
+			'New option "random debuts" when creating a real players league, which randomizes every player\'s draft year so different players will appear at different times.',
+	},
 ];
 
 export default changes;

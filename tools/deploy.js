@@ -38,7 +38,7 @@ const mySpawn = (command, args) => {
 	console.log(`Deploying to ${domain}...`);
 
 	// Copy gen first, so index.html never links to partial file
-	const copyAndKeep = ["gen", "leagues"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
+	const copyAndKeep = ["gen", "files"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
 	for (const folder of copyAndKeep) {
 		console.log(`Copying ${folder}...`);
 		await mySpawn("rsync", [
@@ -49,7 +49,14 @@ const mySpawn = (command, args) => {
 	}
 
 	console.log("Copying other files...");
-	const excludes = ["--exclude", "/gen", "--exclude", "/leagues"];
+	const excludes = [
+		"--exclude",
+		"/gen",
+		"--exclude",
+		"/leagues",
+		"--exclude",
+		"/files",
+	];
 	if (subdomain === "beta") {
 		excludes.push("--exclude", "/sw.js*");
 	}

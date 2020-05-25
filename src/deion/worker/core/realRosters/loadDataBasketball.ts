@@ -83,7 +83,7 @@ const loadDataBasketball = async () => {
 	if (cachedJSON) {
 		return cachedJSON;
 	}
-	const response = await fetch("/files/real-player-data.json");
+	const response = await fetch("/gen/real-player-data.json");
 	cachedJSON = await response.json();
 	return cachedJSON;
 };

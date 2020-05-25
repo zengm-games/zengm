@@ -17,6 +17,12 @@
   </IfModule>
 </FilesMatch>
 
+<FilesMatch "^real-player-data-.*\.json$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "max-age=31536000"
+  </IfModule>
+</FilesMatch>
+
 <FilesMatch "^(index.html|sw.js)$">
   <IfModule mod_headers.c>
     Header set Cache-Control "no-cache"
@@ -41,6 +47,7 @@ RewriteCond %{REQUEST_URI} !^/ico
 RewriteCond %{REQUEST_URI} !^/img
 RewriteCond %{REQUEST_URI} !^/leagues
 RewriteCond %{REQUEST_URI} !^/manifest
+RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/sw.js
 RewriteCond %{REQUEST_URI} !^/(.well-known)(/|$)
 RewriteRule ^.*$ index.html

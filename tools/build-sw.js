@@ -31,8 +31,8 @@ const injectManifest = async () => {
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
 		globIgnores: [
 			"gen/*-legacy-*.js",
+			"gen/real-player-data*.json",
 			"files/ads/ads.js",
-			"files/real-player-data*.json",
 		],
 
 		// Changing default is only needed for unminified versions from watch-js

@@ -135,6 +135,15 @@ const copyFiles = () => {
 		fse.removeSync(`build/${folder}`);
 	}
 
+	const realPlayerDataFilename = path.join(
+		"data",
+		`real-player-data-${sport}.json`,
+	);
+	console.log("realPlayerDataFilename", realPlayerDataFilename);
+	if (fs.existsSync(realPlayerDataFilename)) {
+		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
+	}
+
 	setSport();
 };
 

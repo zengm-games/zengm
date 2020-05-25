@@ -9,9 +9,8 @@ import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
 registerRoute(
-	new RegExp("/files/real-player-data.*"),
+	new RegExp("/gen/real-player-data.*"),
 	new CacheFirst({
-		// Use a custom cache name.
 		cacheName: "real-player-data",
 		plugins: [
 			new ExpirationPlugin({

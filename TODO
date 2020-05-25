@@ -1,3 +1,6 @@
+files -> data+gen
+- confirm cache header
+
 end of game playing time situations @gmgameschris
 
 When creating a new player, the draft class year always defaults to the previous season upon pressing "create player" even if that field was edited. So if I make a player and make his draft class year 2013, when I click create player it still shows as 2019 (if it's a 2020 file), and then it had to be edited again

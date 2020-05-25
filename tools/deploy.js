@@ -38,6 +38,7 @@ const mySpawn = (command, args) => {
 	console.log(`Deploying to ${domain}...`);
 
 	// Copy gen first, so index.html never links to partial file
+	// files is here because real-player-data was briefly there in May 2020, so we don't want to delete it
 	const copyAndKeep = ["gen", "files"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
 	for (const folder of copyAndKeep) {
 		console.log(`Copying ${folder}...`);
@@ -49,6 +50,7 @@ const mySpawn = (command, args) => {
 	}
 
 	console.log("Copying other files...");
+	// files and leagues are here because real-player-data was briefly there in May 2020, so we don't want to delete them
 	const excludes = [
 		"--exclude",
 		"/gen",

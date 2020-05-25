@@ -56,30 +56,30 @@ const buildFile = async (name, legacy) => {
 
 		build.setTimestamps(rev);
 
-		const realPlayerDataFilename = "build/files/real-player-data.json";
+		const realPlayerDataFilename = "build/gen/real-player-data.json";
 		if (fs.existsSync(realPlayerDataFilename)) {
 			const string = fs.readFileSync(realPlayerDataFilename);
-			fs.writeFileSync(
-				realPlayerDataFilename,
-				JSON.stringify(JSON.parse(string)),
-			);
+			const compressed = JSON.stringify(JSON.parse(string));
+			fs.writeFileSync(realPlayerDataFilename, compressed);
 
-			const hash = build.fileHash(string);
+			const hash = build.fileHash(compressed);
 			const newFilename = realPlayerDataFilename.replace(
 				".json",
 				`-${hash}.json`,
 			);
 			fse.moveSync(realPlayerDataFilename, newFilename);
 
-			replace({
-				regex: "/files/real-player-data.json",
-				replacement: `/files/real-player-data-${hash}.json`,
-				paths: [
-					`build/gen/worker-legacy-${rev}.js`,
-					`build/gen/worker-${rev}.js`,
-				],
-				silent: true,
-			});
+			if (sport === "basketball") {
+				replace({
+					regex: "/gen/real-player-data.json",
+					replacement: `/gen/real-player-data-${hash}.json`,
+					paths: [
+						`build/gen/worker-legacy-${rev}.js`,
+						`build/gen/worker-${rev}.js`,
+					],
+					silent: true,
+				});
+			}
 		}
 	} catch (error) {
 		console.error(error);

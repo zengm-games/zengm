@@ -58,6 +58,7 @@ const updateFreeAgents = async () => {
 		phase: g.get("phase"),
 		players,
 		playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
+		salaryCap: g.get("salaryCap"),
 		stats,
 		userPlayers,
 		userTid: g.get("userTid"),

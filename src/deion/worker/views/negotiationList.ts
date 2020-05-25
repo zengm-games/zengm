@@ -77,6 +77,7 @@ const updateNegotiationList = async () => {
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
 		players,
 		playersRefuseToNegotiate,
+		salaryCap: g.get("salaryCap"),
 		season: g.get("season"),
 		stats,
 		sumContracts,

@@ -18,6 +18,7 @@ const NegotiationList = ({
 	numRosterSpots,
 	players,
 	playersRefuseToNegotiate,
+	salaryCap,
 	season,
 	stats,
 	sumContracts,
@@ -82,6 +83,7 @@ const NegotiationList = ({
 					minContract={minContract}
 					p={p}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
+					salaryCap={salaryCap}
 					season={season}
 					userTid={userTid}
 				/>,
@@ -138,6 +140,7 @@ NegotiationList.propTypes = {
 	numRosterSpots: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
+	salaryCap: PropTypes.number.isRequired,
 	season: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	sumContracts: PropTypes.number.isRequired,

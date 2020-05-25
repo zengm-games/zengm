@@ -20,6 +20,7 @@ const FreeAgents = ({
 	phase,
 	players,
 	playersRefuseToNegotiate,
+	salaryCap,
 	stats,
 	userPlayers,
 	userTid,
@@ -124,6 +125,7 @@ const FreeAgents = ({
 					minContract={minContract}
 					p={p}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
+					salaryCap={salaryCap}
 					userTid={userTid}
 				/>,
 			],
@@ -183,6 +185,7 @@ FreeAgents.propTypes = {
 	phase: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
+	salaryCap: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userPlayers: PropTypes.arrayOf(
 		PropTypes.shape({

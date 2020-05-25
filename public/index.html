@@ -29,7 +29,7 @@
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57-64 has buggy shared workers
       function isBuggyFirefox() {
         var ua = navigator.userAgent;
-        if (!ua || !ua.includes("Firefox") || !ua.includes("Gecko")) {
+        if (!ua || ua.indexOf("Firefox") < 0 || ua.indexOf("Gecko") < 0) {
           return false;
         }
 
@@ -61,10 +61,10 @@
         return el;
       }
       function getTheme() {
-        const dark = "dark-CSS_HASH_DARK";
-        const light = "light-CSS_HASH_LIGHT";
+        var dark = "dark-CSS_HASH_DARK";
+        var light = "light-CSS_HASH_LIGHT";
         try {
-          const local = localStorage.getItem("theme");
+          var local = localStorage.getItem("theme");
           if (local !== null) {
             return local === "dark" ? dark : light;
           }
@@ -75,7 +75,7 @@
       }
       window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
 
-      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
+      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0;
 
       if (window.enableLogging) {
         window.googleAnalyticsID = "GOOGLE_ANALYTICS_ID";
@@ -127,15 +127,6 @@
             // Normalize league URLs to all look the same
             if (report && typeof report.context === "string") {
               report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
-            }
-
-            if (report && typeof report.errorMessage === "string") {
-              var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop", "contentDocument", "Celtra", "AdBlock"];
-              for (var i = 0; i < skip.length; i++) {
-                if (report.errorMessage.includes(skip[i])) {
-                  report.ignore();
-                }
-              }
             }
           },
           notifyReleaseStages: ["beta", "production"],
@@ -265,7 +256,7 @@
         openRequest.onerror = function (evt) {
           console.error("Error openining test database:");
           console.error(evt.target.error);
-          if (evt.target.error.message.includes("aborted") || evt.target.error.message.includes("full")) {
+          if (evt.target.error.message.indexOf("aborted") >= 0 || evt.target.error.message.indexOf("full") >= 0) {
             // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
             cb("good");
           } else {

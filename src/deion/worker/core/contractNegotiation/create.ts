@@ -54,6 +54,7 @@ const create = async (
 		helpers.refuseToNegotiate(
 			freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[tid]),
 			p.freeAgentMood[g.get("userTid")],
+			g.get("salaryCap"),
 			g.get("playersRefuseToNegotiate"),
 			rookie,
 		)

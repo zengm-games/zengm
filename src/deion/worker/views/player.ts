@@ -230,6 +230,7 @@ const updatePlayer = async (
 		const willingToSign = !helpers.refuseToNegotiate(
 			p.contract.amount * 1000,
 			p.freeAgentMood[g.get("userTid")],
+			g.get("salaryCap"),
 			g.get("playersRefuseToNegotiate"),
 			g.get("phase") === PHASE.RESIGN_PLAYERS
 				? p.draft.year === g.get("season")

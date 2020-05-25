@@ -11,6 +11,7 @@ const NegotiateButtons = ({
 	minContract,
 	p,
 	playersRefuseToNegotiate,
+	salaryCap,
 	season,
 	userTid,
 }: {
@@ -20,6 +21,7 @@ const NegotiateButtons = ({
 	minContract: number;
 	p: Player;
 	playersRefuseToNegotiate: boolean;
+	salaryCap: number;
 	season?: number;
 	userTid: number;
 }) => {
@@ -27,6 +29,7 @@ const NegotiateButtons = ({
 		helpers.refuseToNegotiate(
 			p.contract.amount * 1000,
 			p.freeAgentMood[userTid],
+			salaryCap,
 			playersRefuseToNegotiate,
 			typeof season === "number" && p.draft.year === season,
 		)
@@ -79,6 +82,7 @@ NegotiateButtons.propTypes = {
 	disabled: PropTypes.bool,
 	p: PropTypes.object.isRequired,
 	playersRefuseToNegotiate: PropTypes.bool.isRequired,
+	salaryCap: PropTypes.number.isRequired,
 	season: PropTypes.number,
 	userTid: PropTypes.number.isRequired,
 };

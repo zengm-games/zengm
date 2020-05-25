@@ -12,9 +12,7 @@
 		"paths": {
 			"player-names": ["src/deion/worker/data/names-test.json"],
 			"league-schema": ["build/files/league-schema.json"],
-			"bbgm-polyfills": ["src/deion/worker/common/polyfills-noop.ts"],
-			"@bugsnag/plugin-react/types/bugsnag-react.d.ts": ["DOES_NOT_EXIST"],
-			"@bugsnag/browser": ["DOES_NOT_EXIST"]
+			"bbgm-polyfills": ["src/deion/worker/common/polyfills-noop.ts"]
 		},
 		"esModuleInterop": true,
 		"strict": true,

@@ -28,6 +28,7 @@ const MostGamesNoPlayoffs = ({
 	];
 
 	const cols = getCols(
+		"#",
 		"Name",
 		"Pos",
 		"Drafted",
@@ -44,6 +45,7 @@ const MostGamesNoPlayoffs = ({
 		return {
 			key: p.pid,
 			data: [
+				p.rank,
 				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
@@ -89,7 +91,7 @@ const MostGamesNoPlayoffs = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[5, "desc"]}
+				defaultSort={[0, "asc"]}
 				name="MostGamesNoPlayoffs"
 				rows={rows}
 				superCols={superCols}

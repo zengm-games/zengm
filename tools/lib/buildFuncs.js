@@ -139,7 +139,6 @@ const copyFiles = () => {
 		"data",
 		`real-player-data-${sport}.json`,
 	);
-	console.log("realPlayerDataFilename", realPlayerDataFilename);
 	if (fs.existsSync(realPlayerDataFilename)) {
 		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
 	}

@@ -45,7 +45,6 @@ const Most = ({
 		...stats.map(stat => `stat:${stat}`),
 		...stats.map(stat => `stat:${stat}`),
 	);
-	console.log(players);
 
 	const rows = players.map(p => {
 		return {

@@ -285,6 +285,11 @@ const changes = [
 		msg:
 			'New option "random debuts" when creating a real players league, which randomizes every player\'s draft year so different players will appear at different times.',
 	},
+	{
+		date: "2020-05-26",
+		msg:
+			'12 new frivolities, available within a league at at Tools > Frivolities. <a href="https://basketball-gm.com/blog/2020/05/new-frivolities/">More details</a>',
+	},
 ];
 
 export default changes;

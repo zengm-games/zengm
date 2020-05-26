@@ -89,7 +89,7 @@ const Most = ({
 				<a
 					href={helpers.leagueUrl([
 						"roster",
-						p.bestStats.abbrev,
+						`${p.bestStats.abbrev}_${p.bestStats.tid}`,
 						p.bestStats.season,
 					])}
 				>

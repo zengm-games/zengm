@@ -88,7 +88,7 @@ const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 				<a
 					href={helpers.leagueUrl([
 						"roster",
-						p.bestStats.abbrev,
+						`${p.bestStats.abbrev}_${p.bestStats.tid}`,
 						p.bestStats.season,
 					])}
 				>

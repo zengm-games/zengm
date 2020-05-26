@@ -50,7 +50,7 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 				<a
 					href={helpers.leagueUrl([
 						"roster",
-						p.bestStats.abbrev,
+						`${p.bestStats.abbrev}_${p.bestStats.tid}`,
 						p.bestStats.season,
 					])}
 				>

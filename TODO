@@ -1,7 +1,3 @@
-clear awards in random debuts
-
-p.bestStats.abbrev should use tid instead
-
 playoff upsets
 - upset odds currently? upset odds ideally?
 - different between real and random players?
@@ -22,9 +18,6 @@ build bbgm-rosters into game
 
 frivolities
 - abstract code for "highest X"
-  - football
-    - hall of trash
-  - changes notification
   - blog, reddit, discord, twitter
 - draft class aggregate stats alexnoob
 - future playoffs ones

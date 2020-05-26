@@ -38,6 +38,11 @@ const changes = [
 		msg:
 			'New league customization features, including expansion drafts at Tools > Expansion Draft. <a href="https://basketball-gm.com/blog/2020/05/beta-real-rosters-back-to-1956/">More details on the BBGM blog</a>, most of which applies to FBGM except the realistic rosters.',
 	},
+	{
+		date: "2020-05-26",
+		msg:
+			'11 new frivolities, available within a league at at Tools > Frivolities. <a href="https://basketball-gm.com/blog/2020/05/new-frivolities/">More details</a>',
+	},
 ];
 
 export default changes;

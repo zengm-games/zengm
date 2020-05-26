@@ -44,9 +44,9 @@ export const getMostXPlayers = async ({
 				...p,
 				most,
 			});
+			playersAll.sort((a, b) => b.most.value - a.most.value);
 
 			if (playersAll.length > LIMIT) {
-				playersAll.sort((a, b) => b.most.value - a.most.value);
 				playersAll.pop();
 			}
 		},
@@ -90,8 +90,9 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
 	for (const ps of p.stats) {
 		if (process.env.SPORT === "basketball") {
-			sum += ps.per + ps.ewa;
+			sum += ps.ws + ps.ewa;
 		} else {
+			console.log(ps.av);
 			sum += ps.av;
 		}
 	}
@@ -104,9 +105,10 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 const updatePlayers = async (
 	{ type }: ViewInput<"most">,
 	updateEvents: UpdateEvents,
+	state: any,
 ) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
-	if (updateEvents.includes("firstRun")) {
+	if (updateEvents.includes("firstRun") || type !== state.type) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
 		let title: string;
@@ -225,7 +227,10 @@ const updatePlayers = async (
 				"These are the players drafted with a top 5 pick who had the worst careers.";
 
 			filter = p =>
-				p.draft.round === 1 && p.draft.pick <= 5 && p.ratings.length > 4;
+				p.draft.round === 1 &&
+				p.draft.pick <= 5 &&
+				g.get("season") - p.draft.year >= 5 &&
+				p.draft.year >= g.get("startingSeason") - 3;
 			getValue = p => {
 				const value = playerValue(p).value;
 				return { value: -value };

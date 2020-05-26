@@ -90,9 +90,8 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
 	for (const ps of p.stats) {
 		if (process.env.SPORT === "basketball") {
-			sum += ps.ws + ps.ewa;
+			sum += ps.ows + ps.dws + ps.ewa;
 		} else {
-			console.log(ps.av);
 			sum += ps.av;
 		}
 	}

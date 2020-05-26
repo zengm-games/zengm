@@ -1899,23 +1899,6 @@ const upsertCustomizedPlayer = async (
 		}
 	}
 
-	// If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
-	if (p.tid !== PLAYER.UNDRAFTED && g.get("phase") < PHASE.FREE_AGENCY) {
-		// This makes sure it's only for created players, not edited players
-		if (!p.hasOwnProperty("pid")) {
-			p.draft.year = g.get("season") - 1;
-		}
-	}
-
-	// Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
-	if (
-		p.tid !== PLAYER.UNDRAFTED &&
-		originalTid === PLAYER.UNDRAFTED &&
-		g.get("phase") < PHASE.FREE_AGENCY
-	) {
-		p.draft.year = g.get("season") - 1;
-	}
-
 	// Recalculate player ovr, pot, and values if necessary
 	const selectedPos = p.ratings[r].pos;
 

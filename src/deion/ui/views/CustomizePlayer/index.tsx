@@ -238,6 +238,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			p.imgURL = "";
 		}
 
+		console.log("aaa", p);
 		const pid = await toWorker(
 			"main",
 			"upsertCustomizedPlayer",

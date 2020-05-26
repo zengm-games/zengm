@@ -11,18 +11,8 @@ files -> data+gen
 
 end of game playing time situations @gmgameschris
 
-When creating a new player, the draft class year always defaults to the previous season upon pressing "create player" even if that field was edited. So if I make a player and make his draft class year 2013, when I click create player it still shows as 2019 (if it's a 2020 file), and then it had to be edited again
-
 build bbgm-rosters into game
 - squash
-
-frivolities
-- abstract code for "highest X"
-  - blog, reddit, discord, twitter
-- draft class aggregate stats alexnoob
-- future playoffs ones
-  - most consecutive championships/finals/playoffs
-  - longest playoffs drought
 
 retiredYear null is valid in JSON because infinity becomes that, unless it gets stripped out prior
 
@@ -199,6 +189,12 @@ more animations
 - RatingsStatsPopover modal opening
 - games log
 - schedule
+
+frivolities
+- draft class aggregate stats alexnoob
+- future playoffs ones
+  - most consecutive championships/finals/playoffs
+  - longest playoffs drought
 
 game highs
 - per season and career, like in basketball reference

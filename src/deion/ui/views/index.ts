@@ -41,7 +41,6 @@ import ManageConfs from "./ManageConfs";
 import ManageTeams from "./ManageTeams";
 import Message from "./Message";
 import Most from "./Most";
-import MostTeams from "./MostTeams";
 import MultiTeamMode from "./MultiTeamMode";
 import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
@@ -121,7 +120,6 @@ export default {
 	ManageTeams,
 	Message,
 	Most,
-	MostTeams,
 	MultiTeamMode,
 	Negotiation,
 	NegotiationList,

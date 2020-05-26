@@ -52,7 +52,7 @@ const Frivolities = () => {
 			</p>
 			<p>
 				<b>
-					<a href={helpers.leagueUrl(["frivolities", "most_teams"])}>
+					<a href={helpers.leagueUrl(["frivolities", "most", "teams"])}>
 						Most Teams
 					</a>
 				</b>{" "}

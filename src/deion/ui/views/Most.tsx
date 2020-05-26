@@ -2,34 +2,74 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
-const MostTeams = ({ players, stats, userTid }: View<"mostTeams">) => {
-	useTitleBar({ title: "Most Teams" });
+const Most = ({
+	description,
+	extraCols,
+	players,
+	stats,
+	title,
+	type,
+	userTid,
+}: View<"most">) => {
+	useTitleBar({ title });
+
+	const superCols = [
+		{
+			title: "",
+			colspan: 7 + extraCols.length,
+		},
+		{
+			title: "Best Season",
+			colspan: 2 + stats.length,
+		},
+		{
+			title: "Career Stats",
+			colspan: stats.length,
+		},
+	];
 
 	const cols = getCols(
+		"#",
 		"Name",
-		"# Teams",
+		...extraCols.map(x => x.colName),
 		"Pos",
 		"Drafted",
 		"Retired",
 		"Pick",
 		"Peak Ovr",
+		"Year",
+		"Team",
+		...stats.map(stat => `stat:${stat}`),
 		...stats.map(stat => `stat:${stat}`),
 	);
+	console.log(players);
 
 	const rows = players.map(p => {
 		return {
 			key: p.pid,
 			data: [
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
-				p.numTeams,
+				p.rank,
+				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+				...extraCols.map(x => p[x.key]),
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				p.peakOvr,
+				p.bestStats.season,
+				<a
+					href={helpers.leagueUrl([
+						"roster",
+						p.bestStats.abbrev,
+						p.bestStats.season,
+					])}
+				>
+					{p.bestStats.abbrev}
+				</a>,
+				...stats.map(stat => helpers.roundStat(p.bestStats[stat], stat)),
 				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
@@ -44,9 +84,7 @@ const MostTeams = ({ players, stats, userTid }: View<"mostTeams">) => {
 
 	return (
 		<>
-			<p>
-				These are the 100 players who played for the most teams (minimum: 5).
-			</p>
+			<p>{description}</p>
 
 			<p>
 				Players who have played for your team are{" "}
@@ -57,18 +95,19 @@ const MostTeams = ({ players, stats, userTid }: View<"mostTeams">) => {
 
 			<DataTable
 				cols={cols}
-				defaultSort={[1, "desc"]}
-				name="MostTeams"
+				defaultSort={[0, "asc"]}
+				name={`Most_${type}`}
 				rows={rows}
+				superCols={superCols}
 			/>
 		</>
 	);
 };
 
-MostTeams.propTypes = {
+Most.propTypes = {
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 
-export default MostTeams;
+export default Most;

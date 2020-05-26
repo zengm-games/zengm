@@ -888,7 +888,7 @@ export type SortType =
 	| "number"
 	| "record";
 
-type BudgetItem = {
+export type BudgetItem = {
 	amount: number;
 	rank: number;
 };

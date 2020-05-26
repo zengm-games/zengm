@@ -1,29 +1,29 @@
 import { idb } from "../../db";
 import { g } from "../../util";
+import type { BudgetItem } from "../../../common/types";
+import { helpers } from "../../../common";
 
 type BudgetTypes = "budget" | "expenses" | "revenues";
 
 const sortFn = (a: { amount: number }, b: { amount: number }) =>
 	b.amount - a.amount;
 
-const getByItem = (byTeam: any[]) => {
-	const byItem: any = {};
+const getByItem = <T extends string>(byTeam: Record<T, BudgetItem>[]) => {
+	const byItem = {} as Record<T, BudgetItem[]>;
 
-	for (const item of Object.keys(byTeam[0])) {
-		byItem[item] = byTeam.map((x: any) => x[item]);
+	for (const item of helpers.keys(byTeam[0])) {
+		byItem[item] = byTeam.map(x => x[item]);
 		byItem[item].sort(sortFn);
 	}
 
 	return byItem;
 };
 
-const updateObj = (obj: any, byItem: any) => {
-	// Nonsense for flow
-	if (byItem === undefined) {
-		return;
-	}
-
-	for (const item of Object.keys(obj)) {
+const updateObj = <T extends string>(
+	obj: Record<T, BudgetItem>,
+	byItem: Record<T, BudgetItem[]>,
+) => {
+	for (const item of helpers.keys(obj)) {
 		for (let i = 0; i < byItem[item].length; i++) {
 			if (byItem[item][i].amount === obj[item].amount) {
 				obj[item].rank = i + 1;
@@ -53,7 +53,7 @@ const updateRanks = async (types: BudgetTypes[]) => {
 			  ])
 			: undefined;
 
-	const teams = await idb.cache.teams.getAll();
+	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
 
 	let budgetsByItem;
 	if (types.includes("budget")) {
@@ -78,19 +78,19 @@ const updateRanks = async (types: BudgetTypes[]) => {
 			updateObj(t.budget, budgetsByItem);
 			await idb.cache.teams.put(t);
 		}
-
-		if (teamSeasons && expensesByItem) {
-			updateObj(teamSeasons[t.tid].expenses, expensesByItem);
-		}
-
-		if (teamSeasons && revenuesByItem) {
-			updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
-		}
 	}
 
-	if (teamSeasons !== undefined) {
-		for (const teamSeason of teamSeasons) {
-			await idb.cache.teamSeasons.put(teamSeason);
+	if (teamSeasons) {
+		for (const ts of teamSeasons) {
+			if (expensesByItem) {
+				updateObj(ts.expenses, expensesByItem);
+			}
+
+			if (revenuesByItem) {
+				updateObj(ts.revenues, revenuesByItem);
+			}
+
+			await idb.cache.teamSeasons.put(ts);
 		}
 	}
 };

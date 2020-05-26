@@ -17,7 +17,6 @@ contraction
     - RESIGN_PLAYERS
     - FREE_AGENCY
   - things to change on toggle
-    - IN BOTH UPDATETEAMINFO AND ON IMPORTING A LEAGUE FILE IN LEAGUE.CREATE
     - team*Cache
       - or leave it there, as a warning to others?
     - if in draft lottery phase and contracted team is in the lottery, delete lottery results

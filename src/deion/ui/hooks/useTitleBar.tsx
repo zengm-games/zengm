@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
 import { localActions, useLocalShallow } from "../util";
+import type { MenuItemHeader } from "../../common/types";
 
 // helpers.upperCaseFirst failed for some reason
 const sport = `${process.env.SPORT.charAt(
@@ -9,6 +10,7 @@ const sport = `${process.env.SPORT.charAt(
 
 const useTitleBar = ({
 	title,
+	customMenu,
 	hideNewWindow,
 	jumpTo,
 	jumpToSeason,
@@ -20,6 +22,7 @@ const useTitleBar = ({
 	moreInfoTid,
 }: {
 	title?: string;
+	customMenu?: MenuItemHeader;
 	hideNewWindow?: boolean;
 	jumpTo?: boolean;
 	jumpToSeason?: number | "all";
@@ -69,6 +72,7 @@ const useTitleBar = ({
 	useLayoutEffect(() => {
 		localActions.update({
 			title,
+			customMenu,
 			hideNewWindow,
 			jumpTo,
 			jumpToSeason,
@@ -81,6 +85,7 @@ const useTitleBar = ({
 		});
 	}, [
 		title,
+		customMenu,
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,

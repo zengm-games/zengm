@@ -1,3 +1,5 @@
+clear awards in random debuts
+
 p.bestStats.abbrev should use tid instead
 
 playoff upsets
@@ -20,11 +22,10 @@ build bbgm-rosters into game
 
 frivolities
 - abstract code for "highest X"
-  - links to other frivolities, from dropdown?
   - football
     - hall of trash
   - changes notification
-  - tell @mattable#4273 @Jlebron13#9965 @youngtubesteak#2173
+  - blog, reddit, discord, twitter
 - draft class aggregate stats alexnoob
 - future playoffs ones
   - most consecutive championships/finals/playoffs

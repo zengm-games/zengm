@@ -3,10 +3,14 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocalShallow } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
+import { frivolitiesMenu } from "./Frivolities";
 
 export const genView = (type: "college" | "country") => {
 	return ({ infos, stats, userTid, valueStat }: View<"colleges">) => {
-		useTitleBar({ title: type === "college" ? "Colleges" : "Countries" });
+		useTitleBar({
+			title: type === "college" ? "Colleges" : "Countries",
+			customMenu: frivolitiesMenu,
+		});
 
 		const { teamAbbrevsCache } = useLocalShallow(state2 => ({
 			teamAbbrevsCache: state2.teamAbbrevsCache,

@@ -16,6 +16,7 @@ const genPath = (parts: string[], season: string | undefined) => {
 const TitleBar = () => {
 	const {
 		title,
+		customMenu,
 		hideNewWindow,
 		jumpTo,
 		jumpToSeason,
@@ -28,6 +29,7 @@ const TitleBar = () => {
 		lid,
 	} = useLocalShallow(state => ({
 		title: state.title,
+		customMenu: state.customMenu,
 		hideNewWindow: state.hideNewWindow,
 		jumpTo: state.jumpTo,
 		jumpToSeason: state.jumpToSeason,
@@ -162,6 +164,10 @@ const TitleBar = () => {
 		});
 	}
 
+	if (customMenu) {
+		menuItems.push(customMenu);
+	}
+
 	return (
 		<nav className="navbar navbar-border navbar-light title-bar">
 			<h1 className="mb-0">
@@ -175,7 +181,12 @@ const TitleBar = () => {
 					fields={dropdownFields}
 				/>
 			) : null}
-			<DropdownLinks className="ml-auto" lid={lid} menuItems={menuItems} />
+			<DropdownLinks
+				className="ml-auto"
+				hideTitle
+				lid={lid}
+				menuItems={menuItems}
+			/>
 		</nav>
 	);
 };

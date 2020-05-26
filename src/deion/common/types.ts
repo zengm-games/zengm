@@ -535,6 +535,7 @@ export type Options = {
 };
 
 export type LocalStateUI = {
+	customMenu?: MenuItemHeader;
 	gameSimInProgress: boolean;
 	games: {
 		gid: number;

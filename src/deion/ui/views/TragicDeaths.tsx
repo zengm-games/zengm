@@ -4,9 +4,10 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, SafeHtml } from "../components";
 import type { View } from "../../common/types";
+import { frivolitiesMenu } from "./Frivolities";
 
 const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
-	useTitleBar({ title: "Tragic Deaths" });
+	useTitleBar({ title: "Tragic Deaths", customMenu: frivolitiesMenu });
 
 	const superCols = [
 		{

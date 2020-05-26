@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
+import { frivolitiesMenu } from "./Frivolities";
 
 const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 	const target =
@@ -11,7 +12,7 @@ const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 
 	const title = target === undefined ? "Relatives" : `${target.name}'s Family`;
 
-	useTitleBar({ title });
+	useTitleBar({ title, customMenu: frivolitiesMenu });
 
 	const superCols = [
 		{

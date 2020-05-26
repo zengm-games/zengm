@@ -26,6 +26,7 @@ const [useLocal, local] = create<
 		actions: LocalActions;
 	}
 >(set => ({
+	customMenu: undefined,
 	gameSimInProgress: false,
 	games: [],
 	gold: undefined,

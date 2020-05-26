@@ -4,6 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
+import { frivolitiesMenu } from "./Frivolities";
 
 const Most = ({
 	description,
@@ -14,7 +15,7 @@ const Most = ({
 	type,
 	userTid,
 }: View<"most">) => {
-	useTitleBar({ title });
+	useTitleBar({ title, customMenu: frivolitiesMenu });
 
 	const superCols = [
 		{

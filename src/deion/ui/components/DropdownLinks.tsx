@@ -44,12 +44,14 @@ TopMenuToggle.propTypes = {
 
 const TopMenuDropdown = ({
 	children,
+	hideTitle,
 	long,
 	short,
 	openID,
 	onToggle,
 }: {
 	children: React.ReactNode;
+	hideTitle?: boolean;
 	long: string;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
 	openID?: string;
@@ -65,9 +67,11 @@ const TopMenuDropdown = ({
 				toggle={toggle}
 			/>
 			<Dropdown.Menu alignRight>
-				<Dropdown.Header className="d-none d-sm-block d-md-none">
-					{long}
-				</Dropdown.Header>
+				{!hideTitle ? (
+					<Dropdown.Header className="d-none d-sm-block d-md-none">
+						{long}
+					</Dropdown.Header>
+				) : null}
 				{children}
 			</Dropdown.Menu>
 		</Dropdown>
@@ -77,6 +81,7 @@ const TopMenuDropdown = ({
 TopMenuDropdown.propTypes = {
 	children: PropTypes.any,
 	long: PropTypes.string.isRequired,
+	hideTitle: PropTypes.bool,
 	onToggle: PropTypes.func.isRequired,
 	openID: PropTypes.string,
 	short: PropTypes.string.isRequired,
@@ -119,6 +124,7 @@ const makeAnchorProps = (menuItem: MenuItemLink) => {
 
 const MenuItem = ({
 	godMode,
+	hideTitle,
 	lid,
 	menuItem,
 	openID,
@@ -126,6 +132,7 @@ const MenuItem = ({
 	root,
 }: {
 	godMode?: boolean;
+	hideTitle?: boolean;
 	lid?: number;
 	menuItem: MenuItemLink | MenuItemHeader;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
@@ -207,6 +214,7 @@ const MenuItem = ({
 
 		return (
 			<TopMenuDropdown
+				hideTitle={hideTitle}
 				long={menuItem.long}
 				short={menuItem.short}
 				openID={openID}
@@ -223,12 +231,13 @@ const MenuItem = ({
 type DropdownLinksProps = {
 	className?: string;
 	godMode?: boolean;
+	hideTitle?: boolean;
 	lid: number | undefined;
 	menuItems: (MenuItemLink | MenuItemHeader)[];
 };
 
 const DropdownLinks = React.memo(
-	({ className, godMode, lid, menuItems }: DropdownLinksProps) => {
+	({ className, godMode, hideTitle, lid, menuItems }: DropdownLinksProps) => {
 		const [openID, setOpenID] = useState<string | undefined>();
 		const handleTopMenuToggle = useCallback(
 			(id: string, event: MouseEvent<HTMLAnchorElement>) => {
@@ -249,6 +258,7 @@ const DropdownLinks = React.memo(
 					<MenuItem
 						godMode={godMode}
 						lid={lid}
+						hideTitle={hideTitle}
 						key={i}
 						menuItem={menuItem}
 						openID={openID}
@@ -265,6 +275,7 @@ const DropdownLinks = React.memo(
 DropdownLinks.propTypes = {
 	className: PropTypes.string,
 	godMode: PropTypes.bool,
+	hideTitle: PropTypes.bool,
 	lid: PropTypes.number,
 	menuItems: PropTypes.array.isRequired,
 };

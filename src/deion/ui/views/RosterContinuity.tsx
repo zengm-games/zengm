@@ -5,6 +5,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols } from "../util";
 import type { Col } from "../components/DataTable";
 import type { View } from "../../common/types";
+import { frivolitiesMenu } from "./Frivolities";
 
 const RosterContinuity = ({
 	abbrevs,
@@ -14,6 +15,7 @@ const RosterContinuity = ({
 }: View<"rosterContinuity">) => {
 	useTitleBar({
 		title: "Roster Continuity",
+		customMenu: frivolitiesMenu,
 	});
 	const cols = [
 		...getCols("Season"),

@@ -25,6 +25,7 @@ import type {
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
 	GameAttributesLeagueWithHistory,
+	DraftPickWithoutKey,
 } from "../../../common/types";
 import { unwrap, wrap } from "../../util/g";
 
@@ -236,9 +237,10 @@ export const createWithoutSaving = (
 
 	// Needs to be done after g is set
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
+	teams[0].disabled = true;
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
-	let draftPicks: any;
+	let draftPicks: DraftPickWithoutKey[];
 
 	if (leagueFile.draftPicks) {
 		draftPicks = leagueFile.draftPicks;
@@ -252,15 +254,17 @@ export const createWithoutSaving = (
 		draftPicks = [];
 
 		for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
-			for (let t = 0; t < teams.length; t++) {
-				for (let round = 1; round <= g.get("numDraftRounds"); round++) {
-					draftPicks.push({
-						tid: t,
-						originalTid: t,
-						round,
-						pick: 0,
-						season: startingSeason + i,
-					});
+			for (const t of teams) {
+				if (!t.disabled) {
+					for (let round = 1; round <= g.get("numDraftRounds"); round++) {
+						draftPicks.push({
+							tid: t.tid,
+							originalTid: t.tid,
+							round,
+							pick: 0,
+							season: startingSeason + i,
+						});
+					}
 				}
 			}
 		}
@@ -297,9 +301,6 @@ export const createWithoutSaving = (
 
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
-		if (i === 0) {
-			t.disabled = true;
-		}
 		const teamInfo = teamInfos[i];
 		let teamSeasonsLocal: TeamSeasonWithoutKey[];
 
@@ -365,8 +366,10 @@ export const createWithoutSaving = (
 
 		if (teamInfo.stats) {
 			teamStatsLocal = teamInfo.stats;
-		} else {
+		} else if (!t.disabled) {
 			teamStatsLocal = [team.genStatsRow(t.tid)];
+		} else {
+			teamStatsLocal = [];
 		}
 
 		for (const ts of teamStatsLocal) {

@@ -1821,6 +1821,9 @@ const updateTeamInfo = async (
 		t.pop = parseFloat(newTeams[t.tid].pop as string);
 		t.stadiumCapacity = parseInt(newTeams[t.tid].stadiumCapacity as string, 10);
 
+		const disableTeam = newTeams[t.tid].disabled && !t.disabled;
+		const enableTeam = !newTeams[t.tid].disabled && t.disabled;
+
 		t.disabled = !!newTeams[t.tid].disabled;
 
 		if (Number.isNaN(t.pop)) {
@@ -1838,6 +1841,33 @@ const updateTeamInfo = async (
 			userRegion = t.region;
 		}
 
+		if (enableTeam) {
+			await draft.createTeamPicks(t.tid);
+		} else if (disableTeam) {
+			// Delete draft picks, and return traded ones to original owner
+			const draftPicks = await idb.cache.draftPicks.getAll();
+			for (const dp of draftPicks) {
+				if (dp.originalTid === t.tid) {
+					await idb.cache.draftPicks.delete(dp.dpid);
+				} else if (dp.tid === t.tid) {
+					dp.tid = dp.originalTid;
+					await idb.cache.draftPicks.put(dp);
+				}
+			}
+
+			// Make all players free agents
+			const players = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				t.tid,
+			);
+			const baseMoods = await player.genBaseMoods();
+
+			for (const p of players) {
+				player.addToFreeAgents(p, g.get("phase"), baseMoods);
+				await idb.cache.players.put(p);
+			}
+		}
+
 		// Also apply team info changes to this season
 		if (g.get("phase") < PHASE.PLAYOFFS) {
 			let teamSeason:
@@ -1847,31 +1877,39 @@ const updateTeamInfo = async (
 				[t.tid, g.get("season")],
 			);
 
-			if (!teamSeason && !t.disabled) {
+			if (enableTeam) {
 				const prevSeason = await idb.cache.teamSeasons.indexGet(
 					"teamSeasonsByTidSeason",
 					[t.tid, g.get("season") - 1],
 				);
 
 				teamSeason = team.genSeasonRow(t, prevSeason);
+			} else if (disableTeam) {
+				if (teamSeason && teamSeason.rid !== undefined) {
+					idb.cache.teamSeasons.delete(teamSeason.rid);
+				}
+
+				const teamStats = await idb.cache.teamSeasons.indexGet(
+					"teamStatsByPlayoffsTid",
+					[false, t.tid],
+				);
+				if (teamStats) {
+					await idb.cache.teamSeasons.delete(teamStats.rid);
+				}
 			}
 
-			if (teamSeason) {
-				if (t.disabled && teamSeason.rid !== undefined) {
-					idb.cache.teamSeasons.delete(teamSeason.rid);
-				} else {
-					teamSeason.cid = t.cid;
-					teamSeason.did = t.did;
-					teamSeason.region = t.region;
-					teamSeason.name = t.name;
-					teamSeason.abbrev = t.abbrev;
-					teamSeason.imgURL = t.imgURL;
-					teamSeason.colors = t.colors;
-					teamSeason.pop = t.pop;
-					teamSeason.stadiumCapacity = t.stadiumCapacity;
+			if (teamSeason && !t.disabled) {
+				teamSeason.cid = t.cid;
+				teamSeason.did = t.did;
+				teamSeason.region = t.region;
+				teamSeason.name = t.name;
+				teamSeason.abbrev = t.abbrev;
+				teamSeason.imgURL = t.imgURL;
+				teamSeason.colors = t.colors;
+				teamSeason.pop = t.pop;
+				teamSeason.stadiumCapacity = t.stadiumCapacity;
 
-					await idb.cache.teamSeasons.put(teamSeason);
-				}
+				await idb.cache.teamSeasons.put(teamSeason);
 			}
 		}
 	}

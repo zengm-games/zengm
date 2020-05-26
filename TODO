@@ -18,11 +18,12 @@ contraction
     - FREE_AGENCY
   - things to change on toggle
     - IN BOTH UPDATETEAMINFO AND ON IMPORTING A LEAGUE FILE IN LEAGUE.CREATE
-    - delete/create future draft picks
     - team*Cache
       - or leave it there, as a warning to others?
     - if in draft lottery phase and contracted team is in the lottery, delete lottery results
-    - make all players free agents
+- dropdowns should include disabled teams?
+  - maybe some places yes, others no
+  - option?
 - when this is true
   - don't create new teamSeason row for this team
   - don't include in team*Cache

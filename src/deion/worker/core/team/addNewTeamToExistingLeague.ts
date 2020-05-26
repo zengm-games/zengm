@@ -47,6 +47,8 @@ const addNewTeamToExistingLeague = async (
 		teamImgURLsCache: [...g.get("teamImgURLsCache"), t.imgURL],
 	});
 
+	await draft.createTeamPicks(t.tid);
+
 	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
 	for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
 		const draftYear = g.get("season") + dpOffset + i;

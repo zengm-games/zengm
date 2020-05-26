@@ -380,7 +380,6 @@ const getLeague = async (options: GetLeagueOptions) => {
 			initialGameAttributes,
 			initialTeams,
 		} = formatScheduledEvents(scheduledEventsAll, options.season);
-		console.log(initialTeams);
 
 		const players = basketball.ratings
 			.filter(row => row.season === options.season)

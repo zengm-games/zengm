@@ -170,7 +170,7 @@ const genOrder = async (
 
 		if (!firstN.includes(i) && i < teams.length) {
 			// If one lottery winner, select after other tied teams;
-			(teams[i] as any).randVal -= 30;
+			(teams[i] as any).randVal -= teams.length;
 			firstN.push(i);
 		}
 	}

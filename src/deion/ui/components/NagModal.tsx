@@ -30,7 +30,11 @@ const NagModal = ({ close, show }: Props) => {
 					<p>
 						But please remember that {sport} GM is a free game. It's made by one
 						person (
-						<a href={`https://${otherSport.toLowerCase()}-gm.com/about/`}>me</a>
+						<a
+							href={`https://${process.env.SPORT.toLowerCase()}-gm.com/about/`}
+						>
+							me
+						</a>
 						) in my spare time. The more money I make, the more time I can
 						afford to spend improving the game.
 					</p>

@@ -270,8 +270,8 @@ const updatePlayers = async (
 
 			filter = p => p.retiredYear < Infinity && !p.hof;
 			getValue = playerValue;
-		} else if (type === "hall_of_trash") {
-			title = "Hall of Trash";
+		} else if (type === "hall_of_shame") {
+			title = "Hall of Shame";
 			description =
 				"These are the worst players who actually got enough playing time to show it.";
 

@@ -80,8 +80,8 @@ const frivolities = {
 		...(process.env.SPORT === "basketball"
 			? [
 					{
-						urlParts: ["most", "hall_of_trash"],
-						name: "Hall of Trash",
+						urlParts: ["most", "hall_of_shame"],
+						name: "Hall of Shame",
 						description:
 							"Worst players who actually got some playing time to show how bad they are.",
 					},

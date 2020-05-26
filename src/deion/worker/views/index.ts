@@ -36,7 +36,7 @@ import liveGame from "./liveGame";
 import manageConfs from "./manageConfs";
 import manageTeams from "./manageTeams";
 import message from "./message";
-import mostGamesNoPlayoffs from "./mostGamesNoPlayoffs";
+import most from "./most";
 import mostTeams from "./mostTeams";
 import multiTeamMode from "./multiTeamMode";
 import negotiation from "./negotiation";
@@ -112,7 +112,7 @@ export default {
 	manageConfs,
 	manageTeams,
 	message,
-	mostGamesNoPlayoffs,
+	most,
 	mostTeams,
 	multiTeamMode,
 	negotiation,

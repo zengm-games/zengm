@@ -1,6 +1,5 @@
-import { idb } from "../db";
 import { g } from "../util";
-import { getMostXPlayers } from "./mostGamesNoPlayoffs";
+import { getMostXPlayers } from "./most";
 import type { UpdateEvents } from "../../common/types";
 
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {

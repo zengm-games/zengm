@@ -272,6 +272,12 @@ const message = (params: Params) => {
 	};
 };
 
+const most = (params: Params) => {
+	return {
+		type: params.type,
+	};
+};
+
 const negotiation = (params: Params) => {
 	// undefined will load whatever the active one is
 	let pid: number | undefined;
@@ -577,6 +583,7 @@ export default {
 	leagueStats,
 	liveGame,
 	message,
+	most,
 	negotiation,
 	negotiationList,
 	newLeague,

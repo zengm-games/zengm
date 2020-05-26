@@ -40,7 +40,7 @@ import LostPassword from "./LostPassword";
 import ManageConfs from "./ManageConfs";
 import ManageTeams from "./ManageTeams";
 import Message from "./Message";
-import MostGamesNoPlayoffs from "./MostGamesNoPlayoffs";
+import Most from "./Most";
 import MostTeams from "./MostTeams";
 import MultiTeamMode from "./MultiTeamMode";
 import Negotiation from "./Negotiation";
@@ -120,7 +120,7 @@ export default {
 	ManageConfs,
 	ManageTeams,
 	Message,
-	MostGamesNoPlayoffs,
+	Most,
 	MostTeams,
 	MultiTeamMode,
 	Negotiation,

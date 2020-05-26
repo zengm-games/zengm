@@ -146,6 +146,20 @@ const showModal = () => {
 		return;
 	}
 
+	const date = new Date().toISOString().split("T")[0];
+	const lastDate = localStorage.getItem("lastDateShowModal");
+	if (date === lastDate) {
+		return;
+	}
+	localStorage.setItem("lastDateShowModal", date);
+
+	// div is from public/files/ads/ads.js
+	const adBlock = !document.getElementById("sd1qBP1fFk");
+	if (adBlock) {
+		ads.showModal();
+		return;
+	}
+
 	const r = Math.random();
 
 	if (r < 0.96) {

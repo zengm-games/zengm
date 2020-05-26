@@ -101,9 +101,7 @@ const Most = ({
 			classNames: {
 				"table-danger": p.hof,
 				"table-success": p.retiredYear === Infinity,
-				"table-info": p.statsTids
-					.slice(0, p.statsTids.length - 1)
-					.includes(userTid),
+				"table-info": p.statsTids.includes(userTid),
 			},
 		};
 	});

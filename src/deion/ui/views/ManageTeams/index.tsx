@@ -55,9 +55,10 @@ const reducer = (state: State, action: Action) => {
 				// @ts-ignore
 				newTeams[action.i].colors[action.field.replace("colors", "")] =
 					action.value;
-			}
-			if (action.field === "did") {
+			} else if (action.field === "did") {
 				newTeams[action.i][action.field] = parseInt(action.value);
+			} else if (action.field === "disabled") {
+				newTeams[action.i][action.field] = action.value === "1";
 			} else {
 				// @ts-ignore
 				newTeams[action.i][action.field] = action.value;
@@ -118,6 +119,15 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 	useTitleBar({ title: "Manage Teams" });
 
+	const disableStatus =
+		!props.godMode ||
+		![
+			PHASE.PRESEASON,
+			PHASE.AFTER_DRAFT,
+			PHASE.RESIGN_PLAYERS,
+			PHASE.FREE_AGENCY,
+		].includes(props.phase);
+
 	const { saving, teams } = state;
 
 	return (
@@ -141,6 +151,15 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			)}
 
 			<h2 className="mt-3">Edit Teams</h2>
+
+			<p>
+				Changing a team's <b>Status</b> from "Active" to "Inactive" is
+				equivalent to contraction. A team that existed in the past no longer
+				exists, and its former players become free agents. Changing from
+				"Inactive" to "Active" means a previously-contracted team is now back,
+				but they will start with an empty roster. This cannot be done during the
+				regular season, playoffs, or draft.
+			</p>
 
 			{props.phase >= PHASE.PLAYOFFS ? (
 				<p className="alert alert-warning d-inline-block">
@@ -175,13 +194,17 @@ const ManageTeams = (props: View<"manageTeams">) => {
 					<br />
 					Capacity
 				</div>
-				<div className="col-lg-2">
+				<div className="col-lg-1">
 					<br />
 					Logo URL
 				</div>
 				<div className="col-lg-2">
 					<br />
 					Colors
+				</div>
+				<div className="col-lg-1">
+					<br />
+					Status
 				</div>
 			</div>
 
@@ -197,14 +220,16 @@ const ManageTeams = (props: View<"manageTeams">) => {
 									"col-6 col-lg-1",
 									"col-6 col-lg-1",
 									"col-6 col-lg-1",
+									"col-6 col-lg-1",
 									"col-6 col-lg-2",
-									"col-6 col-lg-2",
+									"col-6 col-lg-1",
 								]}
 								classNameLabel="d-lg-none"
 								confs={props.confs}
 								divs={props.divs}
 								handleInputChange={handleInputChange(i)}
 								disablePop={!props.godMode}
+								disableStatus={disableStatus}
 								disableStadiumCapacity={!props.godMode}
 								t={t}
 							/>

@@ -201,11 +201,13 @@ const ExpansionDraft = ({
 												"col-6",
 												"col-6",
 												"col-6",
+												"col-6",
 											]}
 											confs={confs}
 											disableStadiumCapacity={!godMode}
 											divs={divs}
 											handleInputChange={handleInputChange(i)}
+											hideStatus
 											t={t}
 										/>
 										<div className="col-6">

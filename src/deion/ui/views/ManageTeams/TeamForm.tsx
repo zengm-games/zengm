@@ -7,11 +7,14 @@ const TeamForm = ({
 	confs,
 	disablePop,
 	disableStadiumCapacity,
+	disableStatus,
 	divs,
 	handleInputChange,
+	hideStatus,
 	t,
 }: {
 	classNamesCol: [
+		string,
 		string,
 		string,
 		string,
@@ -24,16 +27,20 @@ const TeamForm = ({
 	classNameLabel?: string;
 	confs: View<"manageTeams">["confs"];
 	disablePop?: boolean;
+	disableStatus?: boolean;
 	disableStadiumCapacity?: boolean;
 	divs: View<"manageTeams">["divs"];
 	handleInputChange: (
 		field: string,
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => void;
+	hideStatus?: boolean;
 	// Really should just be ExpansionDraftSetupTeam, but need to update Manage Teams
 	t:
 		| Omit<View<"manageTeams">["teams"][number], "tid">
-		| ExpansionDraftSetupTeam;
+		| (ExpansionDraftSetupTeam & {
+				disabled?: boolean;
+		  });
 }) => {
 	const divisions = divs.map(div => {
 		const conf = confs.find(c => c.cid === div.cid);
@@ -145,6 +152,22 @@ const TeamForm = ({
 					</div>
 				</div>
 			</div>
+			{!hideStatus ? (
+				<div className={classNamesCol[8]}>
+					<div className="form-group">
+						<label className={classNameLabel}>Status</label>
+						<select
+							className="form-control"
+							disabled={disableStatus}
+							onChange={e => handleInputChange("disabled", e)}
+							value={t.disabled ? "1" : "0"}
+						>
+							<option value="0">Active</option>
+							<option value="1">Inactive</option>
+						</select>
+					</div>
+				</div>
+			) : null}
 		</>
 	);
 };

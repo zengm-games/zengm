@@ -6,15 +6,7 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-files -> data+gen
-- confirm cache header
-
 end of game playing time situations @gmgameschris
-
-build bbgm-rosters into game
-- squash
-
-retiredYear null is valid in JSON because infinity becomes that, unless it gets stripped out prior
 
 contraction
 - t.disabled=true
@@ -25,19 +17,33 @@ contraction
     - RESIGN_PLAYERS
     - FREE_AGENCY
   - things to change on toggle
-    - t.disabled
-    - make sure to delete/create teamSeason row if toggled in preseason
+    - IN BOTH UPDATETEAMINFO AND ON IMPORTING A LEAGUE FILE IN LEAGUE.CREATE
     - delete/create future draft picks
     - team*Cache
+      - or leave it there, as a warning to others?
     - if in draft lottery phase and contracted team is in the lottery, delete lottery results
+    - make all players free agents
 - when this is true
   - don't create new teamSeason row for this team
   - don't include in team*Cache
+    - or leave it there, as a warning to others?
   - don't include most places that loop over all teams
     - look for range( and numTeams
-    - maybe get rid of g.numTeams
-- pages to check
+    - maybe get rid of g.numTeams, or at least update it on contraction
+- things to check
+  - roster
   - roster composition
+  - newScheduleCrappy and newSchedule
+- objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
+  - add to mergeByPk
+- get rid of "Remove Last Team" feature
+  - maybe put explanation of "Status" there, or at least mention it
+- football
+
+contraction as a scheduled event
+- handle case where it's the user's team
+
+list teams alphabetically on Manage Team
 
 total stats, for traded players
 - player stats table
@@ -73,8 +79,6 @@ events revamp
 - should be easy way to see team relocations, expansions, and league rule changes over time
 
 manually specify draft order in god mode
-
-objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
 
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 

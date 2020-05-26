@@ -297,6 +297,9 @@ export const createWithoutSaving = (
 
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
+		if (i === 0) {
+			t.disabled = true;
+		}
 		const teamInfo = teamInfos[i];
 		let teamSeasonsLocal: TeamSeasonWithoutKey[];
 
@@ -332,11 +335,13 @@ export const createWithoutSaving = (
 					}
 				}
 			}
-		} else {
+		} else if (!t.disabled) {
 			teamSeasonsLocal = [team.genSeasonRow(t)];
 			teamSeasonsLocal[0].pop = teamInfo.pop;
 			// @ts-ignore
 			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
+		} else {
+			teamSeasonsLocal = [];
 		}
 
 		for (const teamSeason of teamSeasonsLocal) {

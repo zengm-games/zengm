@@ -929,8 +929,11 @@ export type Team = {
 	pop?: number;
 	stadiumCapacity?: number;
 
-	// Optional because no upgrade. Otherwise, would make this true
+	// Optional because no upgrade. Otherwise, would make this true by default
 	adjustForInflation?: boolean;
+
+	// Optional because no upgrade. Otherwise, would make this false by default
+	disabled?: boolean;
 };
 
 export type TeamAttr = keyof Team;

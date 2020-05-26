@@ -14,6 +14,7 @@ const updateTeamInfo = async () => {
 				"did",
 				"pop",
 				"stadiumCapacity",
+				"disabled",
 			],
 			seasonAttrs: ["pop", "stadiumCapacity"],
 			season: g.get("season"),
@@ -37,6 +38,7 @@ const updateTeamInfo = async () => {
 			pop: parseFloat(t.pop.toFixed(6)),
 			stadiumCapacity: t.stadiumCapacity,
 			did: t.did,
+			disabled: t.disabled,
 		};
 	});
 

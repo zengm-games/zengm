@@ -58,6 +58,8 @@ import type {
 	RealTeamInfo,
 	RealPlayerPhotos,
 	GetLeagueOptions,
+	TeamSeason,
+	TeamSeasonWithoutKey,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 
@@ -1788,6 +1790,7 @@ const updateTeamInfo = async (
 		pop: number | string;
 		stadiumCapacity: number | string;
 		colors: [string, string, string];
+		disabled?: boolean;
 	}[],
 ) => {
 	let userName;
@@ -1818,6 +1821,8 @@ const updateTeamInfo = async (
 		t.pop = parseFloat(newTeams[t.tid].pop as string);
 		t.stadiumCapacity = parseInt(newTeams[t.tid].stadiumCapacity as string, 10);
 
+		t.disabled = !!newTeams[t.tid].disabled;
+
 		if (Number.isNaN(t.pop)) {
 			throw new Error("Invalid pop");
 		}
@@ -1835,23 +1840,38 @@ const updateTeamInfo = async (
 
 		// Also apply team info changes to this season
 		if (g.get("phase") < PHASE.PLAYOFFS) {
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
+			let teamSeason:
+				| TeamSeason
+				| TeamSeasonWithoutKey = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[t.tid, g.get("season")],
 			);
 
-			if (teamSeason) {
-				teamSeason.cid = t.cid;
-				teamSeason.did = t.did;
-				teamSeason.region = t.region;
-				teamSeason.name = t.name;
-				teamSeason.abbrev = t.abbrev;
-				teamSeason.imgURL = t.imgURL;
-				teamSeason.colors = t.colors;
-				teamSeason.pop = t.pop;
-				teamSeason.stadiumCapacity = t.stadiumCapacity;
+			if (!teamSeason && !t.disabled) {
+				const prevSeason = await idb.cache.teamSeasons.indexGet(
+					"teamSeasonsByTidSeason",
+					[t.tid, g.get("season") - 1],
+				);
 
-				await idb.cache.teamSeasons.put(teamSeason);
+				teamSeason = team.genSeasonRow(t, prevSeason);
+			}
+
+			if (teamSeason) {
+				if (t.disabled && teamSeason.rid !== undefined) {
+					idb.cache.teamSeasons.delete(teamSeason.rid);
+				} else {
+					teamSeason.cid = t.cid;
+					teamSeason.did = t.did;
+					teamSeason.region = t.region;
+					teamSeason.name = t.name;
+					teamSeason.abbrev = t.abbrev;
+					teamSeason.imgURL = t.imgURL;
+					teamSeason.colors = t.colors;
+					teamSeason.pop = t.pop;
+					teamSeason.stadiumCapacity = t.stadiumCapacity;
+
+					await idb.cache.teamSeasons.put(teamSeason);
+				}
 			}
 		}
 	}

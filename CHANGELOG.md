@@ -4,9 +4,9 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-05-25: Added a ton of new frivolities and redesigned the frivolities page.
+* 2020-05-26: Added a ton of new frivolities and redesigned the frivolities page. [[1]](https://basketball-gm.com/blog/2020/05/new-frivolities/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/)
 
-* 2020-05-24: New option "random debuts" when creating a real players league, which randomizes every player's draft year so different players will appear at different times.
+* 2020-05-24: New option "random debuts" when creating a real players league, which randomizes every player's draft year so different players will appear at different times. [[1]](https://old.reddit.com/r/BasketballGM/comments/gq13b4/new_option_random_debuts_when_creating_a_real/)
 
 * 2020-05-22: Button on the Create/Edit Player page to randomize player ratings, which works by generating a random player of the same age and copying his ratings over. In FBGM it also matches by position.
 

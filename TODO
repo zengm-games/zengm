@@ -18,19 +18,17 @@ build bbgm-rosters into game
 
 frivolities
 - abstract code for "highest X"
-  - highest paid over career @mattable#4273 @Jlebron13#9965
-  - oldest to actually play @youngtubesteak#2173
-  - all in one view
-    - need to be able to specify columns to show. no extra for Most, numTeams extra for MostTeams, a few extra for OldestFormerPlayers
   - new ones
     - Biggest Busts - worst stats for top 3 pick
     - Biggest Steals - best stats for 2nd round or undrafted
     - Most Times Traded
     - Hall of Good
     - Career Earnings
+    - oldest to actually play
     - best player without a ring
   - redo UI for frivolities index page
   - links to other frivolities, from dropdown?
+  - tell @mattable#4273 @Jlebron13#9965 @youngtubesteak#2173
 - draft class aggregate stats alexnoob
 
 contraction

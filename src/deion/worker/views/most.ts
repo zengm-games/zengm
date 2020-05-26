@@ -50,8 +50,6 @@ export const getMostXPlayers = async ({
 			"retiredYear",
 			"statsTids",
 			"hof",
-			"age",
-			"ageAtDeath",
 			"born",
 			"diedYear",
 			"metric",
@@ -84,7 +82,7 @@ const updatePlayers = async (
 		let title: string;
 		let description: string;
 		const extraCols: {
-			key: string;
+			key: string | [string, string];
 			colName: string;
 		}[] = [];
 
@@ -113,6 +111,31 @@ const updatePlayers = async (
 			metric = p => {
 				const tids = p.stats.filter(s => s.gp > 0).map(s => s.tid);
 				return new Set(tids).size;
+			};
+		} else if (type === "oldest_former_players") {
+			title = "Oldest Former Players";
+			description = "These are the 100 players who lived the longest.";
+			extraCols.push(
+				{
+					key: "metric",
+					colName: "Age",
+				},
+				{
+					key: ["born", "year"],
+					colName: "Born",
+				},
+				{
+					key: "diedYear",
+					colName: "Died",
+				},
+			);
+
+			metric = p => {
+				const age =
+					typeof p.diedYear === "number"
+						? p.diedYear - p.born.year
+						: g.get("season") - p.born.year;
+				return age;
 			};
 		} else {
 			throw new Error(`Unknown type "${type}"`);

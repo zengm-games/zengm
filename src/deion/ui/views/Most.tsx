@@ -53,7 +53,9 @@ const Most = ({
 			data: [
 				p.rank,
 				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
-				...extraCols.map(x => p[x.key]),
+				...extraCols.map(x =>
+					typeof x.key === "string" ? p[x.key] : p[x.key[0]][x.key[1]],
+				),
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,

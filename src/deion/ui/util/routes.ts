@@ -162,7 +162,6 @@ const routes = () => {
 		"/l/:lid/frivolities/colleges": genPage("colleges"),
 		"/l/:lid/frivolities/countries": genPage("countries"),
 		"/l/:lid/frivolities/most/:type": genPage("most"),
-		"/l/:lid/frivolities/oldest_former_players": genPage("oldestFormerPlayers"),
 		"/l/:lid/frivolities/relatives": genPage("relatives"),
 		"/l/:lid/frivolities/relatives/:pid": genPage("relatives"),
 		"/l/:lid/frivolities/roster_continuity": genPage("rosterContinuity"),

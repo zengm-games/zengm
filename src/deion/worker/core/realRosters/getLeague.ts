@@ -1,7 +1,11 @@
 import loadDataBasketball from "./loadDataBasketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import orderBy from "lodash/orderBy";
-import type { GetLeagueOptions, Relative } from "../../../common/types";
+import type {
+	GetLeagueOptions,
+	Relative,
+	DraftPickWithoutKey,
+} from "../../../common/types";
 import type { Ratings } from "./loadDataBasketball";
 import { overrides, helpers, random } from "../../util";
 import { PLAYER } from "../../../common";
@@ -511,6 +515,34 @@ const getLeague = async (options: GetLeagueOptions) => {
 			gameAttributes.push({ key: "numSeasonsFutureDraftPicks", value: 7 });
 		}
 
+		let draftPicks: DraftPickWithoutKey[] | undefined;
+		if (options.season === 2020 && !options.randomDebuts) {
+			draftPicks = helpers.deepCopy(basketball.draftPicks2020).map(dp => {
+				const t = initialTeams.find(
+					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === dp.abbrev,
+				);
+				if (!t) {
+					throw new Error(`Team not found for draft pick abbrev ${dp.abbrev}`);
+				}
+				const t2 = initialTeams.find(
+					t => oldAbbrevTo2020BBGMAbbrev(t.abbrev) === dp.originalAbbrev,
+				);
+				if (!t2) {
+					throw new Error(
+						`Team not found for draft pick abbrev ${dp.originalAbbrev}`,
+					);
+				}
+
+				return {
+					tid: t.tid,
+					originalTid: t2.tid,
+					round: dp.round,
+					pick: dp.pick,
+					season: dp.season,
+				};
+			});
+		}
+
 		return {
 			version: 37,
 			startingSeason: options.season,
@@ -518,10 +550,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			teams: initialTeams,
 			scheduledEvents,
 			gameAttributes,
-			draftPicks:
-				options.season === 2020 && !options.randomDebuts
-					? helpers.deepCopy(basketball.draftPicks2020)
-					: undefined,
+			draftPicks,
 		};
 	} else if (options.type === "legends") {
 		const NUM_PLAYERS_PER_TEAM = 15;

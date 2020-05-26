@@ -1,7 +1,4 @@
-import type {
-	DraftPickWithoutKey,
-	ScheduledEventWithoutKey,
-} from "../../../common/types";
+import type { ScheduledEventWithoutKey } from "../../../common/types";
 
 export type Ratings = {
 	slug: string;
@@ -74,7 +71,13 @@ type Basketball = {
 	}[];
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];
-	draftPicks2020: DraftPickWithoutKey[];
+	draftPicks2020: {
+		abbrev: string;
+		originalAbbrev: string;
+		round: number;
+		pick: number;
+		season: number;
+	}[];
 	freeAgents: any[];
 };
 

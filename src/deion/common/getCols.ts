@@ -1156,11 +1156,19 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"# Seasons": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"# Sons": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	"# Teams": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Trades": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1281,6 +1289,7 @@ const cols: {
 	HOF: {
 		sortSequence: ["desc", "asc"],
 	},
+	Injury: {},
 	L: {
 		desc: "Losses",
 		sortSequence: ["desc", "asc"],
@@ -1382,6 +1391,11 @@ const cols: {
 	},
 	"Pot Drop": {
 		desc: "Decrease in Potential Rating",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Prog: {
+		desc: "Progression From Previous Season",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

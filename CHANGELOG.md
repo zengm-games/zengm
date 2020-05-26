@@ -4,6 +4,8 @@ The dates are when development finished, not when the change was actually deploy
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-05-25: Added a ton of new frivolities and redesigned the frivolities page.
+
 * 2020-05-24: New option "random debuts" when creating a real players league, which randomizes every player's draft year so different players will appear at different times.
 
 * 2020-05-22: Button on the Create/Edit Player page to randomize player ratings, which works by generating a random player of the same age and copying his ratings over. In FBGM it also matches by position.

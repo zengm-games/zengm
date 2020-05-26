@@ -52,9 +52,33 @@ const Most = ({
 			data: [
 				p.rank,
 				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
-				...extraCols.map(x =>
-					typeof x.key === "string" ? p[x.key] : p[x.key[0]][x.key[1]],
-				),
+				...extraCols.map(x => {
+					const value =
+						typeof x.key === "string"
+							? p[x.key]
+							: x.key.length === 2
+							? p[x.key[0]][x.key[1]]
+							: p[x.key[0]][x.key[1]][x.key[2]];
+					if (x.colName === "Amount") {
+						return helpers.formatCurrency(value / 1000, "M");
+					}
+					if (x.colName === "Prog") {
+						return helpers.plusMinus(value, 0);
+					}
+					if (x.colName === "Team") {
+						return (
+							<a
+								href={helpers.leagueUrl([
+									"team_history",
+									`${value.abbrev}_${value.tid}`,
+								])}
+							>
+								{value.abbrev}
+							</a>
+						);
+					}
+					return value;
+				}),
 				p.ratings[p.ratings.length - 1].pos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,

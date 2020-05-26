@@ -24,7 +24,7 @@ const Frivolities = () => {
 					"See which countries have had the most successful pro players.",
 			},
 		],
-		"Player Info": [
+		"Biographical Info": [
 			{
 				urlParts: ["relatives"],
 				name: "Relatives",
@@ -47,6 +47,52 @@ const Frivolities = () => {
 		],
 		"Players With The Most...": [
 			{
+				urlParts: ["most", "no_ring"],
+				name: "Best Players Without a Ring",
+				description: "The best players who never won a title.",
+			},
+			{
+				urlParts: ["most", "no_mvp"],
+				name: "Best Players Without an MVP",
+				description: "The best players who never won an MVP awards.",
+			},
+			{
+				urlParts: ["most", "progs"],
+				name: "Best Progs",
+				description: "Largest single season ovr increases.",
+			},
+			{
+				urlParts: ["most", "busts"],
+				name: "Biggest Busts",
+				description: "Top 5 picks with the worst careers.",
+			},
+			{
+				urlParts: ["most", "steals"],
+				name: "Biggest Steals",
+				description: "Late picks or undrafted players with the best careers.",
+			},
+			{
+				urlParts: ["most", "earnings"],
+				name: "Career Earnings",
+				description: "Players who made the most money.",
+			},
+			{
+				urlParts: ["most", "hall_of_good"],
+				name: "Hall of Good",
+				description:
+					"The best retired players who didn't make the Hall of Fame.",
+			},
+			...(process.env.SPORT === "basketball"
+				? [
+						{
+							urlParts: ["most", "hall_of_trash"],
+							name: "Hall of Trash",
+							description:
+								"Worst players who actually got some playing time to show how bad they are.",
+						},
+				  ]
+				: []),
+			{
 				urlParts: ["most", "games_no_playoffs"],
 				name: "Most Games, No Playoffs",
 				description:
@@ -59,16 +105,38 @@ const Frivolities = () => {
 					"See the players who played for the largest number of teams.",
 			},
 			{
+				urlParts: ["most", "traded"],
+				name: "Most Times Traded",
+				description:
+					"Players who were passed around like... you fill in the blank.",
+			},
+			{
+				urlParts: ["most", "one_team"],
+				name: "Most Years on One Team",
+				description: "Players who were loyal to one team for the longest.",
+			},
+			{
 				urlParts: ["most", "oldest_former_players"],
 				name: "Oldest Former Players",
 				description:
 					"As in reality, players die in Basketball GM, even after their careers end. See who made it the longest.",
 			},
+			{
+				urlParts: ["most", "oldest"],
+				name: "Oldest to Play in a Game",
+				description: "The oldest players who actually played.",
+			},
+			{
+				urlParts: ["most", "worst_injuries"],
+				name: "Worst Injuries",
+				description:
+					"Players who experienced the largest ovr declines due to injuries.",
+			},
 		],
 	};
 
 	const columns: (keyof typeof frivolities)[][] = [
-		["Player Origins", "Player Info", "Teams"],
+		["Player Origins", "Biographical Info", "Teams"],
 		["Players With The Most..."],
 	];
 
@@ -89,7 +157,10 @@ const Frivolities = () => {
 
 			<div className="row" style={style}>
 				{columns.map((categories, i) => (
-					<div key={i} className="col col-sm-6">
+					<div
+						key={i}
+						className={`col-12 col-md-6${i > 0 ? " mt-3 mt-md-0" : ""}`}
+					>
 						{categories.map((category, i) => (
 							<React.Fragment key={category}>
 								<h3 className={`ml-1${i > 0 ? " mt-3" : ""}`}>{category}</h3>

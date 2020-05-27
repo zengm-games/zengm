@@ -148,15 +148,22 @@ const NextButton = ({
 		const whatever = async () => {
 			if (autoGoToNext && nextGid !== undefined) {
 				setAutoGoToNext(false);
+				// Hack, because otherwise the updateEvent with "gameSim" comes before this one, but doesn't finish yet, so in updatePage this update gets cancelled even though it's a new URL (because it's the same page)
+				setTimeout(() => {
+					realtimeUpdate(
+						[],
+						helpers.leagueUrl([
+							"game_log",
+							`${abbrev}_${tid}`,
+							boxScore.season,
+							nextGid,
+						]),
+					);
 
-				await realtimeUpdate(
-					[],
-					helpers.leagueUrl(["game_log", abbrev, boxScore.season, nextGid]),
-				);
-
-				if (mounted) {
-					setClickedGoToNext(false);
-				}
+					if (mounted) {
+						setClickedGoToNext(false);
+					}
+				}, 10);
 			}
 		};
 
@@ -165,7 +172,7 @@ const NextButton = ({
 		return () => {
 			mounted = false;
 		};
-	}, [abbrev, autoGoToNext, boxScore.season, nextGid]);
+	}, [abbrev, autoGoToNext, boxScore.season, nextGid, tid]);
 
 	const { phase, playMenuOptions, season } = useLocalShallow(state => ({
 		phase: state.phase,
@@ -181,11 +188,11 @@ const NextButton = ({
 		<div className="ml-4">
 			{boxScore.season === season &&
 			currentGidInList &&
-			(nextGid === undefined || clickedGoToNext) &&
+			(nextGid === undefined || clickedGoToNext || autoGoToNext) &&
 			(phase === PHASE.REGULAR_SEASON || phase === PHASE.PLAYOFFS) ? (
 				<button
 					className="btn btn-light-bordered"
-					disabled={!canPlay || autoGoToNext}
+					disabled={!canPlay}
 					onClick={simNext}
 				>
 					Sim

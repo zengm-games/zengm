@@ -62,6 +62,11 @@ const loadGameAttributes = async () => {
 				await league.setGameAttributes({
 					teamImgURLsCache: teams.map(t => t.imgURL),
 				});
+			} else if (key === "numActiveTeams") {
+				g.setWithoutSavingToDB(
+					"numActiveTeams",
+					(await idb.cache.teams.getAll()).filter(t => !t.disabled).length,
+				);
 			} else {
 				g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
 			}

@@ -298,6 +298,7 @@ export type GameAttributesLeague = {
 	minRosterSize: number;
 	names?: Names;
 	nextPhase?: Phase;
+	numActiveTeams: number;
 	numDraftRounds: number;
 	numGames: number;
 	numGamesPlayoffSeries: number[];

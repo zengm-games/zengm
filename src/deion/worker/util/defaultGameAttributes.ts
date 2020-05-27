@@ -130,6 +130,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	teamNamesCache: [],
 	gracePeriodEnd: 0,
 	numTeams: 0,
+	numActiveTeams: 0,
 	difficulty: 0, // See constants.DIFFICULTY for values
 };
 

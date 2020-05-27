@@ -19,6 +19,8 @@ contraction
   - genBaseMoods - might be okay if used correctly
     - same with estPicks
   - disabled teams still making draft picks and signing free agents
+- numActiveTeams
+  - update whenever numTeams is updated or disabled is set
 - UI to change in Manage Teams
   - only allow in certain phases
     - PRESEASON

@@ -88,6 +88,7 @@ export const createWithoutSaving = (
 
 	// Any custom teams?
 	let teamInfos: (TeamBasic & {
+		disabled?: boolean;
 		stadiumCapacity?: number;
 		seasons?: TeamSeasonWithoutKey[];
 		stats?: TeamStatsWithoutKey[];
@@ -164,10 +165,9 @@ export const createWithoutSaving = (
 		teamImgURLsCache: teamInfos.map(t => t.imgURL),
 		teamRegionsCache: teamInfos.map(t => t.region),
 		teamNamesCache: teamInfos.map(t => t.name),
-		gracePeriodEnd: startingSeason + 2,
-		// Can't get fired for the first two seasons
+		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
 		numTeams: teamInfos.length,
-		// Will be 30 if the user doesn't supply custom rosters
+		numActiveTeams: teamInfos.filter(t => !t.disabled).length,
 		difficulty,
 	};
 

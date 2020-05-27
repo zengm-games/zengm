@@ -67,6 +67,7 @@ const generate = (tm: any): Team => {
 			tm.stadiumCapacity !== undefined
 				? tm.stadiumCapacity
 				: g.get("defaultStadiumCapacity"),
+		disabled: tm.disabled,
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

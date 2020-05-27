@@ -171,19 +171,15 @@ const updateTrade = async () => {
 		name: string;
 		region: string;
 		tid: number;
-	}[] = [];
+	}[] = (await idb.cache.teams.getAll())
+		.filter(t => !t.disabled && t.tid !== g.get("userTid"))
+		.map(t => ({
+			name: t.name,
+			region: t.region,
+			tid: t.tid,
+		}));
 
-	for (let tid = 0; tid < g.get("numTeams"); tid++) {
-		teams2[tid] = {
-			name: g.get("teamNamesCache")[tid],
-			region: g.get("teamRegionsCache")[tid],
-			tid,
-		};
-	}
-
-	teams2.splice(g.get("userTid"), 1); // Can't trade with yourself
-
-	teams2 = orderBy(teams2, ["region", "name"]);
+	teams2 = orderBy(teams2, ["region", "name", "tid"]);
 
 	const userTeamName = `${g.get("teamRegionsCache")[g.get("userTid")]} ${
 		g.get("teamNamesCache")[g.get("userTid")]

@@ -17,7 +17,7 @@ contraction
   - input to lotterySort
   - getPayrolls
   - genBaseMoods - might be okay if used correctly
-    - same with estPicks
+    - same with estPicks from refreshCache in valueChange
   - disabled teams still making draft picks and signing free agents
 - numActiveTeams
   - update whenever numTeams is updated or disabled is set
@@ -34,6 +34,7 @@ contraction
 - dropdowns should include disabled teams?
   - maybe some places yes, others no
   - option?
+  - maybe have some kind of "League > Franchises" page which shows expansion/contraction
 - team*Cache options
   - leave all there
   - turn to object (or array with holes) and only active

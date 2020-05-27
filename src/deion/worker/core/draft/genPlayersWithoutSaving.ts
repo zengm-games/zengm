@@ -14,7 +14,7 @@ const genPlayersWithoutSaving = (
 ): PlayerWithoutKey<MinimalPlayerRatings>[] => {
 	if (numPlayers === null || numPlayers === undefined) {
 		numPlayers = Math.round(
-			(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+			(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
 		); // 70 for basketball 2 round draft
 	}
 

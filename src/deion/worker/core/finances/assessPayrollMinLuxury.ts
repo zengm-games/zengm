@@ -39,7 +39,7 @@ const assessPayrollMinLuxury = async () => {
 		}
 	}
 
-	const defaultRank = (g.get("numTeams") + 1) / 2;
+	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
 	const payteams = payrolls.filter(x => x <= g.get("salaryCap"));
 
 	if (payteams.length > 0 && collectedTax > 0) {

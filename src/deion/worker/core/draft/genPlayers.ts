@@ -11,7 +11,7 @@ import { g, helpers, logEvent } from "../../util";
  *
  * @memberOf core.draft
  * @param {number} draftYear Year for the draft class.
- * @param {?number=} scoutingRank Between 1 and g.get("numTeams"), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
+ * @param {?number=} scoutingRank Between 1 and g.get("numActiveTeams"), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */

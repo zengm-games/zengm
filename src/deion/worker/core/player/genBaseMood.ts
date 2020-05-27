@@ -23,7 +23,7 @@ const genBaseMood = (
 	baseMood +=
 		(0.1 *
 			(finances.getRankLastThree([teamSeason], "expenses", "facilities") - 1)) /
-		(g.get("numTeams") - 1); // Population
+		(g.get("numActiveTeams") - 1); // Population
 
 	baseMood += 0.2 * (1 - teamSeason.pop / 10);
 

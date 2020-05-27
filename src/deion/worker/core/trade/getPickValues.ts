@@ -42,7 +42,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	// Handle case where draft is in progress
 	if (g.get("phase") === PHASE.DRAFT) {
 		// See what the lowest remaining pick is
-		const numPicks = 2 * g.get("numTeams");
+		const numPicks = 2 * g.get("numActiveTeams");
 		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
 			dp => dp.season === g.get("season"),
 		);

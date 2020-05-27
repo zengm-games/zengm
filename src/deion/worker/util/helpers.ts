@@ -83,15 +83,15 @@ const correctLinkLid = (
 };
 
 const defaultBudgetAmount = (
-	popRank: number = g.get("numTeams"),
+	popRank: number = g.get("numActiveTeams"),
 	salaryCap: number = g.get("salaryCap"),
 ) => {
 	return (
 		Math.round(
 			20 +
 				(salaryCap / 90000) * 1330 +
-				(900 * (salaryCap / 90000) * (g.get("numTeams") - popRank)) /
-					(g.get("numTeams") - 1),
+				(900 * (salaryCap / 90000) * (g.get("numActiveTeams") - popRank)) /
+					(g.get("numActiveTeams") - 1),
 		) * 10
 	);
 };

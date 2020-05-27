@@ -121,9 +121,9 @@ const writeTeamStats = async (results: GameResults) => {
 			att *=
 				1 +
 				(0.075 *
-					(g.get("numTeams") -
+					(g.get("numActiveTeams") -
 						finances.getRankLastThree(teamSeasons, "expenses", "facilities"))) /
-					(g.get("numTeams") - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
+					(g.get("numActiveTeams") - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
 
 			att = helpers.bound(att, 0, teamSeason.stadiumCapacity);
 			att = Math.round(att);

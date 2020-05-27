@@ -9,7 +9,7 @@ const genSeasonRow = (
 	t: Team | TeamBasic,
 	prevSeason?: TeamSeasonWithoutKey,
 ): TeamSeasonWithoutKey => {
-	const defaultRank = (g.get("numTeams") + 1) / 2;
+	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
 	const newSeason = {
 		tid: t.tid,
 		cid: t.cid,

@@ -88,7 +88,11 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 		Infinity,
 	);
 	const numRounds = g.get("numGamesPlayoffSeries").length;
-	helpers.validateRoundsByes(numRounds, numPlayoffByes, g.get("numTeams"));
+	helpers.validateRoundsByes(
+		numRounds,
+		numPlayoffByes,
+		g.get("numActiveTeams"),
+	);
 	let tidPlayoffs: number[] = [];
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 

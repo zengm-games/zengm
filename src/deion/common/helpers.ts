@@ -720,7 +720,7 @@ const keys = <O extends object>(obj: O): Array<keyof O> => {
 const validateRoundsByes = (
 	numRounds: number,
 	numPlayoffByes: number,
-	numTeams: number,
+	numActiveTeams: number,
 ) => {
 	if (numRounds < 1) {
 		throw new Error("Must have at least one round of playoffs");
@@ -736,9 +736,9 @@ const validateRoundsByes = (
 
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 
-	if (numPlayoffTeams > numTeams) {
+	if (numPlayoffTeams > numActiveTeams) {
 		throw new Error(
-			`${numRounds} playoff rounds with ${numPlayoffByes} first round byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${numTeams} teams in the league`,
+			`${numRounds} playoff rounds with ${numPlayoffByes} first round byes means ${numPlayoffTeams} teams make the playoffs, but there are only ${numActiveTeams} teams in the league`,
 		);
 	}
 

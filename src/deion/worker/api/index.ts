@@ -779,7 +779,7 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 			19,
 			g.get("season"),
 			false,
-			g.get("numTeams") / 2,
+			g.get("numActiveTeams") / 2,
 		);
 		if (p.ratings[0].pos === pos || pos === undefined) {
 			break;
@@ -797,7 +797,7 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
-		// Pick 10 random teams to try (or all teams, if g.get("numTeams") < 10)
+		// Pick 10 random teams to try (or all teams, if g.get("numActiveTeams") < 10)
 		const teams = await idb.cache.teams.getAll();
 		const tids = teams.filter(t => !t.disabled).map(t => t.tid);
 		random.shuffle(tids);
@@ -1025,7 +1025,7 @@ const handleUploadedDraftClass = async (
 
 	// "Top off" the draft class if <70 players imported
 	const baseNumPlayers = Math.round(
-		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
 	); // 70 for basketball 2 round draft
 
 	if (players.length < baseNumPlayers) {
@@ -1183,6 +1183,7 @@ const removeLastTeam = async (): Promise<void> => {
 
 	await idb.cache.teams.delete(tid);
 	const updatedGameAttributes: any = {
+		numActiveTeams: g.get("numActiveTeams") - 1,
 		numTeams: g.get("numTeams") - 1,
 		teamAbbrevsCache: g
 			.get("teamAbbrevsCache")

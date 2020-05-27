@@ -137,8 +137,8 @@ const betweenAiTeams = async () => {
 	// If aiTradesFactor is not an integer, use the fractional part as a probability. Like for 3.5, 50% of the times it will be 3, and 50% will be 4.
 	// Also scale so there are fewer trade attempts if there are fewer teams.
 	let float = g.get("aiTradesFactor");
-	if (g.get("numTeams") < DEFAULT_NUM_TEAMS) {
-		float *= g.get("numTeams") / DEFAULT_NUM_TEAMS;
+	if (g.get("numActiveTeams") < DEFAULT_NUM_TEAMS) {
+		float *= g.get("numActiveTeams") / DEFAULT_NUM_TEAMS;
 	}
 	let numAttempts = Math.floor(float);
 	const remainder = float % 1;

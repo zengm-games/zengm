@@ -12,11 +12,9 @@ import type { ScheduleGame } from "../../../common/types";
 const getSchedule = async (
 	oneDay: boolean = false,
 ): Promise<ScheduleGame[]> => {
-	let schedule = await idb.cache.schedule.getAll();
+	const schedule = await idb.cache.schedule.getAll();
 
 	if (oneDay) {
-		schedule = schedule.slice(0, g.get("numTeams") / 2); // This is the maximum number of games possible in a day
-
 		// Only take the games up until right before a team plays for the second time that day
 		const tids: number[] = [];
 		let i;
@@ -43,7 +41,7 @@ const getSchedule = async (
 			}
 		}
 
-		schedule = schedule.slice(0, i);
+		return schedule.slice(0, i);
 	}
 
 	return schedule;

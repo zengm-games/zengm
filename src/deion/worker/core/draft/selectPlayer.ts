@@ -76,7 +76,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			);
 		} else {
 			const rookieSalaries = getRookieSalaries();
-			const i = dp.pick - 1 + g.get("numTeams") * (dp.round - 1);
+			const i = dp.pick - 1 + g.get("numActiveTeams") * (dp.round - 1);
 
 			let years = g.get("rookieContractLengths")[dp.round - 1];
 			if (years === undefined) {
@@ -115,7 +115,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			(g.get("phase") === PHASE.EXPANSION_DRAFT &&
 			expansionDraft.phase === "draft"
 				? expansionDraft.expansionTids.length
-				: g.get("numTeams"));
+				: g.get("numActiveTeams"));
 	const draftName =
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? `${g.get("season")} fantasy draft`

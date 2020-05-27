@@ -399,6 +399,7 @@ async function getCopies<
 	regularSeason = true,
 	statType = "perGame",
 	addDummySeason = false,
+	active,
 }: {
 	tid?: number;
 	season?: Season;
@@ -409,6 +410,7 @@ async function getCopies<
 	regularSeason?: boolean;
 	statType?: TeamStatType;
 	addDummySeason?: boolean;
+	active?: true;
 } = {}): Promise<TeamFiltered<Attrs, SeasonAttrs, StatAttrs, Season>[]> {
 	const options = {
 		season,
@@ -422,7 +424,11 @@ async function getCopies<
 	};
 
 	if (tid === undefined) {
-		const teams = await idb.cache.teams.getAll();
+		let teams = await idb.cache.teams.getAll();
+		if (active) {
+			teams = teams.filter(t => !t.disabled);
+		}
+
 		// @ts-ignore
 		return (await Promise.all(teams.map(t => processTeam(t, options)))).filter(
 			x => x !== undefined,

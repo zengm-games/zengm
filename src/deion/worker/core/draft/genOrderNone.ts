@@ -10,6 +10,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 		seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost", "cid", "did"],
 		season: g.get("season"),
 		addDummySeason: true,
+		active: true,
 	});
 
 	if (g.get("draftType") !== "random") {
@@ -22,7 +23,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	);
 
 	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	if (draftPicks.length < g.get("numDraftRounds") * g.get("numTeams")) {
+	if (draftPicks.length < g.get("numDraftRounds") * teams.length) {
 		await genPicks(g.get("season"), draftPicks);
 		draftPicks = await idb.cache.draftPicks.indexGetAll(
 			"draftPicksBySeason",

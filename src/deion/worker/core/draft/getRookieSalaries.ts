@@ -76,18 +76,18 @@ const getRookieSalaries = (): number[] => {
 		500,
 	];
 
-	while (g.get("numTeams") > firstRoundRookieSalaries.length) {
+	while (g.get("numActiveTeams") > firstRoundRookieSalaries.length) {
 		//add first round contracts on to end of first round
 		firstRoundRookieSalaries.push(1000);
 	}
 
-	while (g.get("numTeams") < firstRoundRookieSalaries.length) {
+	while (g.get("numActiveTeams") < firstRoundRookieSalaries.length) {
 		//remove smallest first round salaries
 		firstRoundRookieSalaries.pop();
 	}
 
 	while (
-		g.get("numTeams") * (g.get("numDraftRounds") - 1) >
+		g.get("numActiveTeams") * (g.get("numDraftRounds") - 1) >
 		otherRoundRookieSalaries.length
 	) {
 		// Add min contracts on to end
@@ -95,7 +95,7 @@ const getRookieSalaries = (): number[] => {
 	}
 
 	while (
-		g.get("numTeams") * (g.get("numDraftRounds") - 1) <
+		g.get("numActiveTeams") * (g.get("numDraftRounds") - 1) <
 		otherRoundRookieSalaries.length
 	) {
 		// Remove smallest salaries

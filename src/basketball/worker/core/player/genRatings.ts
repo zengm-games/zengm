@@ -43,7 +43,7 @@ const typeFactors: Record<
  * Generate initial ratings for a newly-created player.
  *
  * @param {number} season [description]
- * @param {number} scoutingRank Between 1 and g.get("numTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+ * @param {number} scoutingRank Between 1 and g.get("numActiveTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @param {number} tid [description]
  * @return {Object} Ratings object
  */

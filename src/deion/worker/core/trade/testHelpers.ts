@@ -6,6 +6,7 @@ const beforeTests = async () => {
 	testHelpers.resetG();
 
 	g.setWithoutSavingToDB("numTeams", 3);
+	g.setWithoutSavingToDB("numActiveTeams", 3);
 
 	await testHelpers.resetCache({
 		players: [

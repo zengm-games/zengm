@@ -43,7 +43,12 @@ const loadGameAttributes = async () => {
 	for (const key of helpers.keys(defaultGameAttributes)) {
 		// @ts-ignore
 		if (g[key] === undefined) {
-			if (
+			if (key === "numActiveTeams") {
+				g.setWithoutSavingToDB(
+					"numActiveTeams",
+					(await idb.cache.teams.getAll()).filter(t => !t.disabled).length,
+				);
+			} else if (
 				key === "numGamesPlayoffSeries" &&
 				g.hasOwnProperty("numPlayoffRounds")
 			) {
@@ -52,7 +57,7 @@ const loadGameAttributes = async () => {
 					numGamesPlayoffSeries: league.getValidNumGamesPlayoffSeries(
 						unwrap(defaultGameAttributes, "numGamesPlayoffSeries"),
 						(g as any).numPlayoffRounds,
-						g.get("numTeams"),
+						g.get("numActiveTeams"),
 					),
 				});
 				delete (g as any).numPlayoffRounds;
@@ -62,11 +67,6 @@ const loadGameAttributes = async () => {
 				await league.setGameAttributes({
 					teamImgURLsCache: teams.map(t => t.imgURL),
 				});
-			} else if (key === "numActiveTeams") {
-				g.setWithoutSavingToDB(
-					"numActiveTeams",
-					(await idb.cache.teams.getAll()).filter(t => !t.disabled).length,
-				);
 			} else {
 				g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
 			}

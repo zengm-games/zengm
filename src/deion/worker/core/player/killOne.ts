@@ -75,7 +75,8 @@ const killOne = async (conditions: Conditions) => {
 	]);
 
 	// Pick random team
-	const tid = random.randInt(0, g.get("numTeams") - 1);
+	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+	const tid = random.choice(teams).tid;
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 	// Pick a random player on that team

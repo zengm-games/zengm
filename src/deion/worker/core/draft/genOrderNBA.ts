@@ -98,7 +98,7 @@ const genOrder = async (
 	conditions?: Conditions,
 ): Promise<ReturnVal> => {
 	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "firstSeasonAfterExpansion"],
+		attrs: ["tid", "firstSeasonAfterExpansion", "disabled"],
 		seasonAttrs: [
 			"winp",
 			"playoffRoundsWon",
@@ -110,6 +110,7 @@ const genOrder = async (
 		],
 		season: g.get("season"),
 		addDummySeason: true,
+		active: true,
 	});
 
 	// Draft lottery
@@ -123,7 +124,7 @@ const genOrder = async (
 	const numPlayoffTeams =
 		2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
 
-	const info = getLotteryInfo(draftType, g.get("numTeams") - numPlayoffTeams);
+	const info = getLotteryInfo(draftType, teams.length - numPlayoffTeams);
 	const minNumLotteryTeams = info.minNumTeams;
 	const numToPick = info.numToPick;
 	let chances = info.chances;
@@ -137,9 +138,9 @@ const genOrder = async (
 	lotterySort(teams);
 
 	const numLotteryTeams = helpers.bound(
-		g.get("numTeams") - numPlayoffTeams,
+		teams.length - numPlayoffTeams,
 		minNumLotteryTeams,
-		draftType === "coinFlip" ? minNumLotteryTeams : g.get("numTeams"),
+		draftType === "coinFlip" ? minNumLotteryTeams : teams.length,
 	);
 
 	if (numLotteryTeams < chances.length) {
@@ -181,7 +182,7 @@ const genOrder = async (
 	);
 
 	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	if (draftPicks.length < g.get("numDraftRounds") * g.get("numTeams")) {
+	if (draftPicks.length < g.get("numDraftRounds") * teams.length) {
 		await genPicks(g.get("season"), draftPicks);
 		draftPicks = await idb.cache.draftPicks.indexGetAll(
 			"draftPicksBySeason",

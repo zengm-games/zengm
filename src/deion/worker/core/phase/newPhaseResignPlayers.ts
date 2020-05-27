@@ -239,7 +239,7 @@ const newPhaseResignPlayers = async (
 
 	// Generate a new draft class, while leaving existing players in that draft class in place
 	const baseNumPlayers = Math.round(
-		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
 	);
 	const numPlayersAlreadyInDraftClass = draftProspects.filter(
 		p => p.draft.year === g.get("season") + 3,

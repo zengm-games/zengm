@@ -11,7 +11,7 @@ import type {
  *
  * @memberOf core.player
  * @param {Object} p Player object.
- * @param {number} scoutingRank Between 1 and g.get("numTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
+ * @param {number} scoutingRank Between 1 and g.get("numActiveTeams") (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  */
 const addRatingsRow = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,

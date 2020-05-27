@@ -129,7 +129,7 @@ const getPicks = async ({
 				const seasons = season - g.get("season");
 				estPick = Math.round(
 					(estPick * (5 - seasons)) / 5 +
-						((g.get("numTeams") / 2) * seasons) / 5,
+						((g.get("numActiveTeams") / 2) * seasons) / 5,
 				);
 			}
 
@@ -139,13 +139,15 @@ const getPicks = async ({
 			if (estValues[String(season)]) {
 				value =
 					estValues[String(season)][
-						estPick - 1 + g.get("numTeams") * (dp.round - 1)
+						estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
 					];
 			}
 
 			if (value === undefined) {
 				value =
-					estValues.default[estPick - 1 + g.get("numTeams") * (dp.round - 1)];
+					estValues.default[
+						estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
+					];
 			}
 
 			add.push({
@@ -153,12 +155,16 @@ const getPicks = async ({
 				skills: [],
 				contract: {
 					amount:
-						rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)],
+						rookieSalaries[
+							estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
+						],
 					exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 				},
 				worth: {
 					amount:
-						rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)],
+						rookieSalaries[
+							estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
+						],
 					exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 				},
 				injury: {
@@ -209,7 +215,7 @@ const getPicks = async ({
 			if (estValues[String(season)]) {
 				value =
 					estValues[String(season)][
-						estPick - 1 + g.get("numTeams") * (dp.round - 1)
+						estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
 					] +
 					(tid !== g.get("userTid") ? 1 : 0) *
 						fudgeFactor *
@@ -218,7 +224,9 @@ const getPicks = async ({
 
 			if (value === undefined) {
 				value =
-					estValues.default[estPick - 1 + g.get("numTeams") * (dp.round - 1)] +
+					estValues.default[
+						estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
+					] +
 					(tid !== g.get("userTid") ? 1 : 0) *
 						fudgeFactor *
 						difficultyFudgeFactor;
@@ -229,14 +237,16 @@ const getPicks = async ({
 				skills: [],
 				contract: {
 					amount:
-						rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)] /
-						1000,
+						rookieSalaries[
+							estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
+						] / 1000,
 					exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 				},
 				worth: {
 					amount:
-						rookieSalaries[estPick - 1 + g.get("numTeams") * (dp.round - 1)] /
-						1000,
+						rookieSalaries[
+							estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
+						] / 1000,
 					exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
 				},
 				injury: {

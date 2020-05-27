@@ -40,6 +40,7 @@ const addNewTeamToExistingLeague = async (
 	}
 
 	await league.setGameAttributes({
+		numActiveTeams: g.get("numActiveTeams") + 1,
 		numTeams: g.get("numTeams") + 1,
 		teamAbbrevsCache: [...g.get("teamAbbrevsCache"), t.abbrev],
 		teamRegionsCache: [...g.get("teamRegionsCache"), t.region],
@@ -51,7 +52,7 @@ const addNewTeamToExistingLeague = async (
 
 	// Add new draft prospects to draft classes
 	const draftClassTargetSize = Math.round(
-		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
 	);
 	const draftProspects = await idb.cache.players.indexGetAll(
 		"playersByTid",

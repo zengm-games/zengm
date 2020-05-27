@@ -9,6 +9,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 		seasonAttrs: ["cid", "did"],
 		season: g.get("season"),
 	});
+	console.log(teams.length, teams);
 
 	await season.setSchedule(overrides.core.season.newSchedule!(teams));
 

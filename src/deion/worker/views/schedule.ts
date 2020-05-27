@@ -81,12 +81,18 @@ export const getUpcoming = async ({
 			}
 		}
 
+		const t = teams.find(t2 => t2.tid === tid);
+
+		if (!t) {
+			throw new Error(`No team found for tid ${tid}`);
+		}
+
 		return {
 			ovr,
 			tid,
-			won: teams[tid].seasonAttrs.won,
-			lost: teams[tid].seasonAttrs.lost,
-			tied: g.get("ties") ? teams[tid].seasonAttrs.tied : undefined,
+			won: t.seasonAttrs.won,
+			lost: t.seasonAttrs.lost,
+			tied: g.get("ties") ? t.seasonAttrs.tied : undefined,
 			playoffs,
 		};
 	};

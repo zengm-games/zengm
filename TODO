@@ -10,9 +10,9 @@ end of game playing time situations @gmgameschris
 
 contraction
 - to fix
-  - washington's budget stuff isn't being recorded
-  - look for range(
+  - no schedule generated for washington (random players, with one team disabled)
   - look for numTeams
+  - look for teams[tid]
   - maybe get rid of g.numTeams, or at least update it on contraction?
     - can't get rid, it's just that there's two concepts.. numTeams and numActiveTeams
   - input to lotterySort
@@ -40,7 +40,7 @@ contraction
   - don't include most places that loop over all teams
 - things to check
   - roster
-  - newScheduleCrappy and newSchedule
+  - basketball+football newSchedule
   - trade between AI teams
 - objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
   - add to mergeByPk
@@ -52,6 +52,9 @@ contraction as a scheduled event
 - handle case where it's the user's team
 
 list teams alphabetically on Manage Team
+
+new frivolity improvements
+- https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
 
 total stats, for traded players
 - player stats table

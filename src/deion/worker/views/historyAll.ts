@@ -70,9 +70,11 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				const formatTeam = ({ seed, tid }: PlayoffSeriesTeam) => {
-					const teamSeason = teams[tid].seasonAttrs.find(
-						ts => ts.season === season,
-					);
+					const t = teams.find(t => t.tid === tid);
+					if (!t) {
+						throw new Error(`Team not found for tid ${tid}`);
+					}
+					const teamSeason = t.seasonAttrs.find(ts => ts.season === season);
 
 					return {
 						tid: tid,
@@ -97,15 +99,16 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		// Count up number of championships per team
-		const championshipsByTid = Array(g.get("numTeams")).fill(0);
+		const championshipsByTid: Record<number, number> = {};
 
-		for (let i = 0; i < seasons.length; i++) {
-			if (seasons[i].champ) {
-				championshipsByTid[seasons[i].champ.tid] += 1;
-			}
-
-			if (seasons[i].champ) {
-				seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
+		for (const row of seasons) {
+			if (row.champ) {
+				const tid = row.champ.tid;
+				if (championshipsByTid[tid] === undefined) {
+					championshipsByTid[tid] = 0;
+				}
+				championshipsByTid[tid] += 1;
+				row.champ.count = championshipsByTid[tid];
 			}
 		}
 

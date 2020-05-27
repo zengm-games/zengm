@@ -29,9 +29,9 @@ const roundRobin = (tidsInput: number[]) => {
 	return matchups;
 };
 
-const absSum = (nums: number[]) => {
+const absSum = (nums: Record<number, number>) => {
 	let sum = 0;
-	for (const num of nums) {
+	for (const num of Object.values(nums)) {
 		sum += Math.abs(num);
 	}
 	return sum;
@@ -54,13 +54,13 @@ const newScheduleCrappy = (
 	random.shuffle(tids);
 
 	// Number of games left to reschedule for each team
-	const numRemaining: number[] = [];
+	const numRemaining: Record<number, number> = {};
 
-	for (let i = 0; i < teams.length; i++) {
-		numRemaining[i] = g.get("numGames");
+	for (const tid of tids) {
+		numRemaining[tid] = g.get("numGames");
 	}
 
-	let numWithRemaining = teams.length; // Number of teams with numRemaining > 0
+	let numWithRemaining = tids.length; // Number of teams with numRemaining > 0
 
 	const matchups: [number, number][] = [];
 
@@ -92,8 +92,14 @@ const newScheduleCrappy = (
 	// Try to equalize home and away
 
 	// How many home/away games for each team currently?
-	const balance = Array(tids.length).fill(0);
+	const balance: Record<number, number> = {};
 	for (const matchup of matchups) {
+		if (balance[matchup[0]] === undefined) {
+			balance[matchup[0]] = 0;
+		}
+		if (balance[matchup[1]] === undefined) {
+			balance[matchup[1]] = 0;
+		}
 		balance[matchup[0]] += 1;
 		balance[matchup[1]] -= 1;
 	}

@@ -236,6 +236,7 @@ export const createWithoutSaving = (
 
 	// Needs to be done after g is set
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
+	teams[1].disabled = true;
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: DraftPickWithoutKey[];

@@ -72,10 +72,10 @@ const setGameAttributes = async (
 					"facilities",
 				];
 
-				for (let i = 0; i < teams.length; i++) {
-					const t = teams[i];
+				for (let i = 0; i < teamSeasons.length; i++) {
+					const t = teams.find(t => t.tid === teamSeasons[i].tid);
 					const popRank = popRanks[i];
-					if (popRank === undefined) {
+					if (popRank === undefined || t === undefined) {
 						continue;
 					}
 

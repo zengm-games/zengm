@@ -9,7 +9,13 @@ playoff upsets
 end of game playing time situations @gmgameschris
 
 contraction
-- t.disabled=true
+- to fix
+  - washington's budget stuff isn't being recorded
+  - look for range( and numTeams
+  - maybe get rid of g.numTeams, or at least update it on contraction
+  - getPayrolls
+  - genBaseMoods - might be okay if used correctly
+    - same with estPicks
 - UI to change in Manage Teams
   - only allow in certain phases
     - PRESEASON
@@ -28,8 +34,6 @@ contraction
   - don't include in team*Cache
     - or leave it there, as a warning to others?
   - don't include most places that loop over all teams
-    - look for range( and numTeams
-    - maybe get rid of g.numTeams, or at least update it on contraction
 - things to check
   - roster
   - roster composition

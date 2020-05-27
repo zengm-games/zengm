@@ -62,13 +62,13 @@ const updateRanks = async (types: BudgetTypes[]) => {
 	}
 
 	let expensesByItem;
-	if (types.includes("expenses") && teamSeasons !== undefined) {
+	if (types.includes("expenses") && teamSeasons) {
 		const byTeam = teamSeasons.map(ts => ts.expenses);
 		expensesByItem = getByItem(byTeam);
 	}
 
 	let revenuesByItem;
-	if (types.includes("revenues") && teamSeasons !== undefined) {
+	if (types.includes("revenues") && teamSeasons) {
 		const byTeam = teamSeasons.map(ts => ts.revenues);
 		revenuesByItem = getByItem(byTeam);
 	}

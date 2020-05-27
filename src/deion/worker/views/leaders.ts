@@ -358,24 +358,25 @@ const updateLeaders = async (
 		const teamSeasons = await idb.getCopies.teamSeasons({
 			season: inputs.season,
 		});
-		const gps = teamSeasons.map(teamSeason => {
+		const gps: Record<number, number | undefined> = {};
+		for (const teamSeason of teamSeasons) {
 			if (inputs.playoffs === "playoffs") {
 				if (teamSeason.gp < g.get("numGames")) {
-					return 0;
+					gps[teamSeason.tid] = 0;
+				} else {
+					gps[teamSeason.tid] = teamSeason.gp - g.get("numGames");
 				}
-
-				return teamSeason.gp - g.get("numGames");
+			} else {
+				// Don't count playoff games
+				if (teamSeason.gp > g.get("numGames")) {
+					gps[teamSeason.tid] = g.get("numGames");
+				} else {
+					gps[teamSeason.tid] = teamSeason.gp;
+				}
 			}
+		}
 
-			// Don't count playoff games
-			if (teamSeason.gp > g.get("numGames")) {
-				return g.get("numGames");
-			}
-
-			return teamSeason.gp;
-		});
 		let players;
-
 		if (g.get("season") === inputs.season && g.get("phase") <= PHASE.PLAYOFFS) {
 			players = await idb.cache.players.indexGetAll("playersByTid", [
 				PLAYER.FREE_AGENT,
@@ -420,11 +421,11 @@ const updateLeaders = async (
 					}
 
 					// Compare against value normalized for team games played
+					const gpTeam = gps[p.stats.tid];
 					if (
+						gpTeam !== undefined &&
 						playerValue >=
-						Math.ceil(
-							(cat.minValue[k] * factor * gps[p.stats.tid]) / g.get("numGames"),
-						)
+							Math.ceil((cat.minValue[k] * factor * gpTeam) / g.get("numGames"))
 					) {
 						pass = true;
 						break; // If one is true, don't need to check the others

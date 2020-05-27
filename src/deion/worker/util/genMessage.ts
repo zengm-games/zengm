@@ -51,7 +51,14 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 					wins: 0,
 			  };
 	});
-	const currentMood = moods[moods.length - 1];
+	const currentMood =
+		moods.length > 0
+			? moods[moods.length - 1]
+			: {
+					money: 0,
+					playoffs: 0,
+					wins: 0,
+			  };
 	const currentTotal =
 		currentMood.wins + currentMood.playoffs + currentMood.money;
 	const fired =

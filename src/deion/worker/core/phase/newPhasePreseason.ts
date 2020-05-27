@@ -25,6 +25,10 @@ const newPhasePreseason = async (
 
 	let scoutingRank: number | undefined;
 	for (const t of teams) {
+		if (t.disabled) {
+			continue;
+		}
+
 		const tid = t.tid;
 		// Only actually need 3 seasons for userTid, but get it for all just in case there is a
 		// skipped season (alternatively could use cursor to just find most recent season, but this
@@ -67,9 +71,14 @@ const newPhasePreseason = async (
 		throw new Error("scoutingRank should be defined");
 	}
 
-	const coachingRanks = teamSeasons.map(teamSeason =>
-		finances.getRankLastThree([teamSeason], "expenses", "coaching"),
-	);
+	const coachingRanks: Record<number, number> = {};
+	for (const teamSeason of teamSeasons) {
+		coachingRanks[teamSeason.tid] = finances.getRankLastThree(
+			[teamSeason],
+			"expenses",
+			"coaching",
+		);
+	}
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
 		PLAYER.FREE_AGENT,
 		Infinity,

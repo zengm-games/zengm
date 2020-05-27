@@ -13,8 +13,7 @@ const updateStrategies = async () => {
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		// Skip user's team
-		if (t.tid === g.get("userTid")) {
+		if (t.tid === g.get("userTid") || t.disabled) {
 			continue;
 		}
 
@@ -23,6 +22,9 @@ const updateStrategies = async () => {
 			"teamSeasonsBySeasonTid",
 			[g.get("season"), t.tid],
 		);
+		if (!teamSeason) {
+			continue;
+		}
 		const teamSeasonOld = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsBySeasonTid",
 			[g.get("season") - 1, t.tid],

@@ -20,13 +20,13 @@ const augmentSeries = async (
 		obj.abbrev = g.get("teamAbbrevsCache")[obj.tid];
 		obj.region = g.get("teamRegionsCache")[obj.tid];
 		obj.imgURL = g.get("teamImgURLsCache")[obj.tid];
-		const teamSeason = teamSeasons[obj.tid];
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
 			tied: g.get("ties") ? 0 : undefined,
 		};
 
+		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
 		if (teamSeason) {
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;

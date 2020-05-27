@@ -165,9 +165,9 @@ const MultiTeamMode = ({
 						size={teams.length}
 						value={userTids.map(String)}
 					>
-						{orderBy(teams, "name").map(t => (
+						{orderBy(teams, ["region", "name", "tid"]).map(t => (
 							<option key={t.tid} value={t.tid}>
-								{t.name}
+								{t.region} {t.name}
 							</option>
 						))}
 					</select>

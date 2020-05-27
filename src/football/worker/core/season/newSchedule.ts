@@ -132,7 +132,7 @@ const newSchedule = (
 	}
 
 	if (
-		g.get("numTeams") === 32 &&
+		teams.length === 32 &&
 		g.get("numGames") === 16 &&
 		g.get("confs").length === 2 &&
 		fourDivsPerConf &&

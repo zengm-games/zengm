@@ -1,5 +1,6 @@
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
+import { idb } from "../db";
 
 const updateMultiTeamMode = async (
 	inputs: unknown,
@@ -10,17 +11,15 @@ const updateMultiTeamMode = async (
 		updateEvents.includes("g.userTids") ||
 		updateEvents.includes("newPhase")
 	) {
-		const teams: {
-			tid: number;
-			name: string;
-		}[] = [];
+		const teamsAll = await idb.cache.teams.getAll();
 
-		for (let i = 0; i < g.get("numTeams"); i++) {
-			teams.push({
-				tid: i,
-				name: `${g.get("teamRegionsCache")[i]} ${g.get("teamNamesCache")[i]}`,
-			});
-		}
+		const teams = teamsAll
+			.filter(t => !t.disabled)
+			.map(t => ({
+				tid: t.tid,
+				region: t.region,
+				name: t.name,
+			}));
 
 		return {
 			phase: g.get("phase"),

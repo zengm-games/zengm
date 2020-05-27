@@ -47,7 +47,6 @@ const updateTeamInfo = async () => {
 		confs: g.get("confs", Infinity),
 		divs: g.get("divs", Infinity),
 		godMode: g.get("godMode"),
-		numTeams: g.get("numTeams"),
 		phase: g.get("phase"),
 		teams,
 	};

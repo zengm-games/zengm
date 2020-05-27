@@ -254,7 +254,6 @@ ManageTeams.propTypes = {
 	confs: PropTypes.arrayOf(PropTypes.object).isRequired,
 	divs: PropTypes.arrayOf(PropTypes.object).isRequired,
 	godMode: PropTypes.bool.isRequired,
-	numTeams: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,
 	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

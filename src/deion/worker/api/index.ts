@@ -1,6 +1,5 @@
 import { csvFormatRows } from "d3-dsv";
 import flatten from "lodash/flatten";
-import range from "lodash/range";
 import { PHASE, PHASE_TEXT, PLAYER, getCols } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -799,7 +798,8 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 	const getOffers = async (userPids: number[], userDpids: number[]) => {
 		// Pick 10 random teams to try (or all teams, if g.get("numTeams") < 10)
-		const tids = range(g.get("numTeams"));
+		const teams = await idb.cache.teams.getAll();
+		const tids = teams.filter(t => !t.disabled).map(t => t.tid);
 		random.shuffle(tids);
 		tids.splice(10);
 		const offers: TradeTeam[] = [];

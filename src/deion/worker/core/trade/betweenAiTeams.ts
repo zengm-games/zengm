@@ -1,4 +1,3 @@
-import range from "lodash/range";
 import { team } from "..";
 import { idb } from "../../db";
 import { g, random, local } from "../../util";
@@ -8,13 +7,24 @@ import processTrade from "./processTrade";
 import summary from "./summary";
 import type { TradeTeams } from "../../../common/types";
 
+const getAITids = async () => {
+	const teams = await idb.cache.teams.getAll();
+	return teams
+		.filter(t => {
+			if (t.disabled) {
+				return false;
+			}
+
+			if (local.autoPlaySeasons > 0) {
+				return true;
+			}
+			return !g.get("userTids").includes(t.tid);
+		})
+		.map(t => t.tid);
+};
+
 const attempt = async (valueChangeKey: number) => {
-	const aiTids = range(g.get("numTeams")).filter(tid => {
-		if (local.autoPlaySeasons > 0) {
-			return true;
-		}
-		return !g.get("userTids").includes(tid);
-	});
+	const aiTids = await getAITids();
 
 	if (aiTids.length === 0) {
 		return false;

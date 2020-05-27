@@ -17,6 +17,7 @@ import type { DraftPick } from "../../../common/types";
  */
 const selectPlayer = async (dp: DraftPick, pid: number) => {
 	if (dp.pick <= 0) {
+		console.log(dp);
 		throw new Error(`Invalid draft pick number "${dp.pick}"`);
 	}
 

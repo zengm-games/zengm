@@ -66,12 +66,12 @@ async function updateSeasons(
 							}
 
 							if (sumMinutesContinuity === 0) {
-								// Is it really 0, or did team not exist that season?
-								const teamSeason = await idb.cache.teamSeasons.indexGet(
-									"teamSeasonsBySeasonTid",
-									[season - 1, i],
-								);
-								if (!teamSeason) {
+								// Is it really 0, or did team not exist for one of these seasons?
+								const teamSeasons = await idb.getCopies.teamSeasons({
+									tid: i,
+									seasons: [season - 1, season],
+								});
+								if (teamSeasons.length < 2) {
 									return undefined;
 								}
 							}

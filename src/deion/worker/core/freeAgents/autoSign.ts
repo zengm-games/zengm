@@ -1,5 +1,4 @@
 import orderBy from "lodash/orderBy";
-import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import getBest from "./getBest";
@@ -24,16 +23,20 @@ const autoSign = async () => {
 		return;
 	}
 
-	const strategies = (await idb.cache.teams.getAll()).map(t => t.strategy); // List of free agents, sorted by value
+	// List of free agents, sorted by value
+	const playersSorted = orderBy(players, "value", "desc");
 
-	const playersSorted = orderBy(players, "value", "desc"); // Randomly order teams
+	// Randomly order teams
+	const teams = await idb.cache.teams.getAll();
+	random.shuffle(teams);
 
-	const tids = range(g.get("numTeams"));
-	random.shuffle(tids);
-
-	for (const tid of tids) {
+	for (const t of teams) {
 		// Skip the user's team
-		if (g.get("userTids").includes(tid) && local.autoPlaySeasons === 0) {
+		if (g.get("userTids").includes(t.tid) && local.autoPlaySeasons === 0) {
+			continue;
+		}
+
+		if (t.disabled) {
 			continue;
 		}
 
@@ -49,7 +52,7 @@ const autoSign = async () => {
 		// Skip rebuilding teams sometimes
 		if (
 			process.env.SPORT === "basketball" &&
-			strategies[tid] === "rebuilding" &&
+			t.strategy === "rebuilding" &&
 			Math.random() < 0.7
 		) {
 			continue;
@@ -57,17 +60,17 @@ const autoSign = async () => {
 
 		const playersOnRoster = await idb.cache.players.indexGetAll(
 			"playersByTid",
-			tid,
+			t.tid,
 		);
 
 		if (playersOnRoster.length < g.get("maxRosterSize")) {
-			const payroll = await team.getPayroll(tid);
+			const payroll = await team.getPayroll(t.tid);
 			const p = getBest(playersOnRoster, playersSorted, payroll);
 
 			if (p) {
-				player.sign(p, tid, p.contract, g.get("phase"));
+				player.sign(p, t.tid, p.contract, g.get("phase"));
 				await idb.cache.players.put(p);
-				await overrides.core.team.rosterAutoSort!(tid);
+				await overrides.core.team.rosterAutoSort!(t.tid);
 			}
 		}
 	}

@@ -22,7 +22,7 @@ const lotterySort = (
 	 *
 	 * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
 	 */
-	const randValues = range(g.get("numTeams"));
+	const randValues = range(teams.length);
 	random.shuffle(randValues);
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs

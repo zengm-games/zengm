@@ -1,5 +1,4 @@
 import { random, g } from "../../util";
-import range from "lodash/range";
 
 // Takes all teams and returns all unique matchups between teams. This means 2 games per matchup, to deal with
 // home/away. See https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm

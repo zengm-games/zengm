@@ -49,21 +49,6 @@ const addNewTeamToExistingLeague = async (
 
 	await draft.createTeamPicks(t.tid);
 
-	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
-	for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
-		const draftYear = g.get("season") + dpOffset + i;
-
-		for (let round = 1; round <= g.get("numDraftRounds"); round++) {
-			await idb.cache.draftPicks.put({
-				tid: t.tid,
-				originalTid: t.tid,
-				round,
-				pick: 0,
-				season: draftYear,
-			});
-		}
-	}
-
 	// Add new draft prospects to draft classes
 	const draftClassTargetSize = Math.round(
 		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
@@ -73,6 +58,7 @@ const addNewTeamToExistingLeague = async (
 		PLAYER.UNDRAFTED,
 	);
 
+	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
 	for (let i = 0; i < 3; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
 

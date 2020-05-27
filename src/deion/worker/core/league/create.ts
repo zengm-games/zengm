@@ -1,5 +1,4 @@
 import orderBy from "lodash/orderBy";
-import range from "lodash/range";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
 import { draft, finances, freeAgents, league, player, team } from "..";
@@ -237,7 +236,6 @@ export const createWithoutSaving = (
 
 	// Needs to be done after g is set
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
-	teams[0].disabled = true;
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: DraftPickWithoutKey[];
@@ -495,6 +493,8 @@ export const createWithoutSaving = (
 	);
 	let players: PlayerWithoutKey[];
 
+	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
+
 	if (leagueFile.players) {
 		// Use pre-generated players, filling in attributes as needed
 		if (shuffleRosters) {
@@ -533,7 +533,7 @@ export const createWithoutSaving = (
 				leagueFile.version,
 			);
 
-			if (p.tid >= g.get("numTeams")) {
+			if (!activeTids.includes(p.tid)) {
 				p.tid = PLAYER.FREE_AGENT;
 			}
 
@@ -563,18 +563,18 @@ export const createWithoutSaving = (
 
 			// Very rough simulation of a draft
 			draftClass = orderBy(draftClass, ["value"], ["desc"]);
-			const tids = range(g.get("numTeams"));
+			const tids = [...activeTids];
 			random.shuffle(tids);
 
 			for (let i = 0; i < draftClass.length; i++) {
 				const p = draftClass[i];
 				let round = 0;
 				let pick = 0;
-				const roundTemp = Math.floor(i / g.get("numTeams")) + 1;
+				const roundTemp = Math.floor(i / activeTids.length) + 1;
 
 				if (roundTemp <= g.get("numDraftRounds")) {
 					round = roundTemp;
-					pick = (i % g.get("numTeams")) + 1;
+					pick = (i % activeTids.length) + 1;
 				}
 
 				// Save these for later, because player.develop will overwrite them
@@ -631,7 +631,7 @@ export const createWithoutSaving = (
 		}
 
 		// (g.get("maxRosterSize") + 1) for wiggle room (need min contract FAs sometimes)
-		if (keptPlayers.length < (g.get("maxRosterSize") + 1) * g.get("numTeams")) {
+		if (keptPlayers.length < (g.get("maxRosterSize") + 1) * activeTids.length) {
 			throw new Error("Not enough players!");
 		}
 
@@ -639,7 +639,7 @@ export const createWithoutSaving = (
 
 		// 13 for basketball
 		const maxNumFreeAgents = Math.round(
-			(g.get("numTeams") / 3) * g.get("maxRosterSize"),
+			(activeTids.length / 3) * g.get("maxRosterSize"),
 		);
 
 		// 150 for basketball
@@ -649,7 +649,7 @@ export const createWithoutSaving = (
 		// Keep track of number of players on each team
 		const numPlayersByTid: Record<number, number> = {};
 
-		for (const tid2 of range(g.get("numTeams"))) {
+		for (const tid2 of activeTids) {
 			numPlayersByTid[tid2] = 0;
 		}
 
@@ -701,7 +701,7 @@ export const createWithoutSaving = (
 		};
 
 		// Drafted players kept with own team, with some probability
-		for (let i = 0; i < numPlayerPerTeam * g.get("numTeams"); i++) {
+		for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
 			const p = keptPlayers[i];
 
 			if (
@@ -717,7 +717,7 @@ export const createWithoutSaving = (
 		// Then add other players, up to the limit
 		while (true) {
 			// Random order tids, so no team is a superpower
-			const tids = range(g.get("numTeams"));
+			const tids = [...activeTids];
 			random.shuffle(tids);
 			let numTeamsDone = 0;
 
@@ -740,14 +740,14 @@ export const createWithoutSaving = (
 				}
 			}
 
-			if (numTeamsDone === g.get("numTeams")) {
+			if (numTeamsDone === activeTids.length) {
 				break;
 			}
 		}
 
 		// Adjustment for hard cap - lower contracts for teams above cap
 		if (g.get("hardCap")) {
-			for (const tid2 of range(g.get("numTeams"))) {
+			for (const tid2 of activeTids) {
 				const roster = players.filter(p => p.tid === tid2);
 				let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
 
@@ -788,7 +788,7 @@ export const createWithoutSaving = (
 
 	// See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
 	const baseNumPlayers = Math.round(
-		(g.get("numDraftRounds") * g.get("numTeams") * 7) / 6,
+		(g.get("numDraftRounds") * activeTids.length * 7) / 6,
 	);
 
 	// 70 for basketball 2 round draft

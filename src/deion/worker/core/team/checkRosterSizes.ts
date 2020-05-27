@@ -115,8 +115,13 @@ const checkRosterSizes = async (): Promise<string | void> => {
 
 	minFreeAgents.sort((a, b) => b.value - a.value); // Make sure teams are all within the roster limits
 
-	for (let i = 0; i < g.get("numTeams"); i++) {
-		await checkRosterSize(i);
+	const teams = await idb.cache.teams.getAll();
+	for (const t of teams) {
+		if (t.disabled) {
+			continue;
+		}
+
+		await checkRosterSize(t.tid);
 
 		if (userTeamSizeError) {
 			break;

@@ -1,5 +1,6 @@
 import { idb } from "../db";
 import { g } from "../util";
+import orderBy from "lodash/orderBy";
 
 const updateTeamInfo = async () => {
 	const teams = (
@@ -48,7 +49,7 @@ const updateTeamInfo = async () => {
 		divs: g.get("divs", Infinity),
 		godMode: g.get("godMode"),
 		phase: g.get("phase"),
-		teams,
+		teams: orderBy(teams, ["region", "name", "tid"]),
 	};
 };
 

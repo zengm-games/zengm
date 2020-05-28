@@ -37,8 +37,6 @@ contraction as a scheduled event
 - handle case where it's the user's team
 - in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draft, increment all tids that are beyond numTeams in future scheduledEvents.
 
-list teams alphabetically on Manage Team
-
 https://web.dev/maskable-icon-audit/?utm_source=lighthouse&utm_medium=lr
 
 new frivolity improvements
@@ -54,6 +52,8 @@ support changing team logos at any season, from predefined real team logos
 when manually retiring a player in god mode, check HoF eligibility
 
 when editing contract in God Mode, make sure p.salaries is updated correctly
+
+the ratings previews (the ones next to a player's name, that pop up when clicked) dont update at preseason
 
 total stats, for traded players
 - player stats table

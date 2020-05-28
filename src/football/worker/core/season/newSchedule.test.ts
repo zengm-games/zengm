@@ -15,7 +15,8 @@ describe("football/worker/core/season/newSchedule", () => {
 	beforeAll(() => {
 		process.env.SPORT = "football";
 		defaultTeams = helpers.getTeamsDefault().map(t => ({
-			tid: t.tid,
+			// Don't need tid to start at 0, could be disabled teams!
+			tid: t.tid + 2,
 			seasonAttrs: {
 				cid: t.cid,
 				did: t.did,
@@ -34,40 +35,59 @@ describe("football/worker/core/season/newSchedule", () => {
 
 		test("schedule 8 home games and 8 away games for each team", () => {
 			const tids = newSchedule(defaultTeams);
-			const home = Array(defaultTeams.length).fill(0); // Number of home games for each team
 
-			const away = Array(defaultTeams.length).fill(0); // Number of away games for each team
-
+			const home: Record<number, number> = {}; // Number of home games for each team
+			const away: Record<number, number> = {}; // Number of away games for each team
 			for (let i = 0; i < tids.length; i++) {
+				if (home[tids[i][0]] === undefined) {
+					home[tids[i][0]] = 0;
+				}
+				if (away[tids[i][1]] === undefined) {
+					away[tids[i][1]] = 0;
+				}
 				home[tids[i][0]] += 1;
 				away[tids[i][1]] += 1;
 			}
 
-			for (let i = 0; i < defaultTeams.length; i++) {
-				assert.equal(home[i], 8);
-				assert.equal(away[i], 8);
+			assert.equal(Object.keys(home).length, defaultTeams.length);
+
+			for (const numGames of [...Object.values(home), ...Object.values(away)]) {
+				assert.equal(numGames, 8);
 			}
 		});
 
-		test("schedule each team one home game against every team in the same division", () => {
+		test("schedule each team two home games against every team in the same division", () => {
 			const tids = newSchedule(defaultTeams);
-			const home: number[][] = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
 
-			for (let i = 0; i < defaultTeams.length; i++) {
-				home.push(Array(defaultTeams.length).fill(0));
-			}
-
-			const teams = helpers.getTeamsDefault();
+			// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)
+			const home: Record<number, Record<number, number>> = {};
 
 			for (let i = 0; i < tids.length; i++) {
-				if (teams[tids[i][0]].did === teams[tids[i][1]].did) {
+				const t0 = defaultTeams.find(t => t.tid === tids[i][0]);
+				const t1 = defaultTeams.find(t => t.tid === tids[i][1]);
+				if (!t0 || !t1) {
+					console.log(tids[i]);
+					throw new Error("Team not found");
+				}
+				if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
+					if (home[tids[i][1]] === undefined) {
+						home[tids[i][1]] = {};
+					}
+					if (home[tids[i][1]][tids[i][0]] === undefined) {
+						home[tids[i][1]][tids[i][0]] = 0;
+					}
 					home[tids[i][1]][tids[i][0]] += 1;
 				}
 			}
 
-			for (let i = 0; i < defaultTeams.length; i++) {
-				assert.equal(testHelpers.numInArrayEqualTo(home[i], 0), 29);
-				assert.equal(testHelpers.numInArrayEqualTo(home[i], 1), 3);
+			assert.equal(Object.keys(home).length, defaultTeams.length);
+
+			for (const { tid } of defaultTeams) {
+				assert.equal(Object.values(home[tid]).length, 3);
+				assert.equal(
+					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
+					3,
+				);
 			}
 		});
 	});

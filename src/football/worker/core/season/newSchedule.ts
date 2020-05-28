@@ -21,12 +21,11 @@ const newScheduleDefault = (
 	const tids: [number, number][] = []; // tid_home, tid_away
 
 	// Collect info needed for scheduling
-	const homeGames: number[] = [];
-	const awayGames: number[] = [];
-
-	for (let i = 0; i < teams.length; i++) {
-		homeGames[i] = 0;
-		awayGames[i] = 0;
+	const homeGames: Record<number, number> = {};
+	const awayGames: Record<number, number> = {};
+	for (const t of teams) {
+		homeGames[t.tid] = 0;
+		awayGames[t.tid] = 0;
 	}
 
 	for (const t of teams) {
@@ -51,8 +50,8 @@ const newScheduleDefault = (
 		const newTids: [number, number][] = [];
 		let success = true; // Copy, so each iteration of the while loop this is reset
 
-		const homeGames2 = homeGames.slice();
-		const awayGames2 = awayGames.slice();
+		const homeGames2 = { ...homeGames };
+		const awayGames2 = { ...awayGames };
 
 		for (const t of teams) {
 			const nonDivisionTeams = teams.filter(

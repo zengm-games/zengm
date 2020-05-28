@@ -17,16 +17,14 @@ contraction
     - handle if userTid or userTids
 - things to check
   - roster
-  - basketball+football newSchedule - make unit tests work without tid/cid/did starting at 0
   - trade between AI teams
   - luxury tax and min payroll limit payouts/penalties
+  - football av
 - objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
   - add to mergeByPk
   - "Since draftLotteryResult might be in IndexedDB" comments
 - get rid of "Remove Last Team" feature
   - maybe put explanation of "Status" there, or at least mention it
-- football
-  - av
 - League > Franchises like https://www.basketball-reference.com/teams/
 - creating an expansion team should show inactive teams as possible teams to select
   - add explanation on Manage Teams about this, that it's often better than activating

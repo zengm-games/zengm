@@ -3,7 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, AllStars } from "../../common/types";
 
 const addAbbrev = (obj: any): any => {
-	return { ...obj, abbrev: g.get("teamInfoCache")[obj.tid].abbrev };
+	return { ...obj, abbrev: g.get("teamInfoCache")[obj.tid]?.abbrev };
 };
 
 const augment = (allAllStars: AllStars[]) => {

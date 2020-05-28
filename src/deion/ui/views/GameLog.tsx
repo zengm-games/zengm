@@ -122,7 +122,7 @@ const GamesList = ({
 						const oppAbbrev =
 							abbrev === "special"
 								? "ASG"
-								: teamInfoCache[gm.teams[other].tid].abbrev;
+								: teamInfoCache[gm.teams[other].tid]?.abbrev;
 
 						return (
 							<tr

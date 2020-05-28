@@ -28,8 +28,8 @@ const MultiTeamMenu = () => {
 
 	const teams = orderBy(
 		state.userTids.map(tid => ({
-			region: state.teamInfoCache[tid].region,
-			name: state.teamInfoCache[tid].name,
+			region: state.teamInfoCache[tid]?.region,
+			name: state.teamInfoCache[tid]?.name,
 			tid,
 		})),
 		["region", "name", "tid"],

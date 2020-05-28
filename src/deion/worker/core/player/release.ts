@@ -32,10 +32,10 @@ const release = async (p: Player, justDrafted: boolean) => {
 		type: "release",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamInfoCache")[p.tid].abbrev,
+			g.get("teamInfoCache")[p.tid]?.abbrev,
 			g.get("season"),
 		])}">${
-			g.get("teamInfoCache")[p.tid].name
+			g.get("teamInfoCache")[p.tid]?.name
 		}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${
 			p.firstName
 		} ${p.lastName}</a>.`,

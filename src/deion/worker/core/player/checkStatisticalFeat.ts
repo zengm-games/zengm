@@ -56,7 +56,7 @@ const checkStatisticalFeat = (
 			p.name
 		}</a> had <a href="${helpers.leagueUrl([
 			"game_log",
-			tid < 0 ? "special" : g.get("teamInfoCache")[tid].abbrev,
+			tid < 0 ? "special" : g.get("teamInfoCache")[tid]?.abbrev,
 			g.get("season"),
 			results.gid,
 		])}">`;
@@ -76,7 +76,7 @@ const checkStatisticalFeat = (
 		const endPart = allStarGame
 			? `${won ? "win" : "loss"} in the All-Star Game`
 			: `${won ? "win over the" : "loss to the"} ${
-					g.get("teamInfoCache")[results.team[j].id].name
+					g.get("teamInfoCache")[results.team[j].id]?.name
 			  }`;
 		featText += `</a> in ${
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"

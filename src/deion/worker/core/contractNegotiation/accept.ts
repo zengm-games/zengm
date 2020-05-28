@@ -41,11 +41,11 @@ const accept = async (
 	// wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
 	if (negotiation.tid !== undefined && negotiation.tid !== g.get("userTid")) {
 		return `This negotiation was started by the ${
-			g.get("teamInfoCache")[negotiation.tid].region
-		} ${g.get("teamInfoCache")[negotiation.tid].name} but you are the ${
-			g.get("teamInfoCache")[g.get("userTid")].region
+			g.get("teamInfoCache")[negotiation.tid]?.region
+		} ${g.get("teamInfoCache")[negotiation.tid]?.name} but you are the ${
+			g.get("teamInfoCache")[g.get("userTid")]?.region
 		} ${
-			g.get("teamInfoCache")[g.get("userTid")].name
+			g.get("teamInfoCache")[g.get("userTid")]?.name
 		}. Either switch teams or cancel this negotiation.`;
 	}
 

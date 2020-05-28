@@ -7,9 +7,9 @@ const logLotteryTxt = (
 ) => {
 	let txt = `The <a href="${helpers.leagueUrl([
 		"roster",
-		g.get("teamInfoCache")[tid].abbrev,
+		g.get("teamInfoCache")[tid]?.abbrev,
 		g.get("season"),
-	])}">${g.get("teamInfoCache")[tid].name}</a>`;
+	])}">${g.get("teamInfoCache")[tid]?.name}</a>`;
 
 	if (type === "chance") {
 		txt += ` have a ${number.toFixed(

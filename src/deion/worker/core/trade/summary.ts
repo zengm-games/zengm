@@ -69,7 +69,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 								desc: `${picks[j].season} ${helpers.ordinal(
 									picks[j].round,
 								)} round pick (${
-									g.get("teamInfoCache")[picks[j].originalTid].abbrev
+									g.get("teamInfoCache")[picks[j].originalTid]?.abbrev
 								})`,
 							});
 						}
@@ -84,8 +84,8 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 	await Promise.all(
 		[0, 1].map(async j => {
 			const k = j === 0 ? 1 : 0;
-			s.teams[j].name = `${g.get("teamInfoCache")[tids[j]].region} ${
-				g.get("teamInfoCache")[tids[j]].name
+			s.teams[j].name = `${g.get("teamInfoCache")[tids[j]]?.region} ${
+				g.get("teamInfoCache")[tids[j]]?.name
 			}`;
 
 			if (s.teams[j].total > 0) {

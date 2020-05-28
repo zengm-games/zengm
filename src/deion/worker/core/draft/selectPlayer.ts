@@ -36,7 +36,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 			// These are only used for expansion draft UI, not fantasy draft
 			prevTid,
-			prevAbbrev: g.get("teamInfoCache")[prevTid].abbrev,
+			prevAbbrev: g.get("teamInfoCache")[prevTid]?.abbrev,
 		};
 		fakeP.draft = {
 			round: dp.round,
@@ -158,10 +158,10 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		type: "draft",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			`${g.get("teamInfoCache")[dp.tid].abbrev}_${dp.tid}`,
+			`${g.get("teamInfoCache")[dp.tid]?.abbrev}_${dp.tid}`,
 			g.get("season"),
 		])}">${
-			g.get("teamInfoCache")[dp.tid].name
+			g.get("teamInfoCache")[dp.tid]?.name
 		}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${
 			p.firstName
 		} ${p.lastName}</a> with the ${helpers.ordinal(

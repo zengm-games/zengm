@@ -20,7 +20,7 @@ export const validateAbbrev = (
 		{
 			const int = parseInt(abbrev);
 			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
-				return [int, g.get("teamInfoCache")[int].abbrev];
+				return [int, g.get("teamInfoCache")[int]?.abbrev];
 			}
 		}
 
@@ -35,7 +35,7 @@ export const validateAbbrev = (
 			const parts = abbrev.split("_");
 			const int = parseInt(parts[parts.length - 1]);
 			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
-				return [int, g.get("teamInfoCache")[int].abbrev];
+				return [int, g.get("teamInfoCache")[int]?.abbrev];
 			}
 		}
 	}
@@ -45,7 +45,7 @@ export const validateAbbrev = (
 	}
 
 	const tid = g.get("userTid");
-	abbrev = g.get("teamInfoCache")[tid].abbrev;
+	abbrev = g.get("teamInfoCache")[tid]?.abbrev;
 	if (abbrev === undefined) {
 		abbrev = "???";
 	}
@@ -504,7 +504,7 @@ const transactions = (params: Params) => {
 		abbrev = "all";
 	} else {
 		tid = g.get("userTid");
-		abbrev = g.get("teamInfoCache")[tid].abbrev;
+		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
 	}
 
 	let season: number | "all";

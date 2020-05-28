@@ -229,15 +229,15 @@ const ScoreBox = ({
 									: `All-Star Team ${i === 0 ? 2 : 1}`;
 								rosterURL = helpers.leagueUrl(["all_star_history"]);
 							} else {
-								imgURL = teamInfoCache[t.tid].imgURL;
+								imgURL = teamInfoCache[t.tid]?.imgURL;
 								teamName = small
-									? teamInfoCache[t.tid].abbrev
-									: `${teamInfoCache[t.tid].region} ${
-											teamInfoCache[t.tid].name
+									? teamInfoCache[t.tid]?.abbrev
+									: `${teamInfoCache[t.tid]?.region} ${
+											teamInfoCache[t.tid]?.name
 									  }`;
 								rosterURL = helpers.leagueUrl([
 									"roster",
-									`${teamInfoCache[t.tid].abbrev}_${t.tid}`,
+									`${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
 								]);
 							}
 
@@ -288,7 +288,7 @@ const ScoreBox = ({
 													"game_log",
 													allStarGame
 														? "special"
-														: `${teamInfoCache[t.tid].abbrev}_${t.tid}`,
+														: `${teamInfoCache[t.tid]?.abbrev}_${t.tid}`,
 													gameSeason,
 													game.gid,
 												])}

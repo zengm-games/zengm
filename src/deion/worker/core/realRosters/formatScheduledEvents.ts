@@ -1,9 +1,6 @@
 import orderBy from "lodash/orderBy";
 import { helpers } from "../../util";
-import type {
-	ScheduledEvent,
-	ScheduledEventWithoutKey,
-} from "../../../common/types";
+import type { ScheduledEventWithoutKey } from "../../../common/types";
 
 const processGameAttributes = (events: any[], season: number) => {
 	let gameAttributeEvents = [];

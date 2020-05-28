@@ -11,8 +11,6 @@ end of game playing time situations @gmgameschris
 randomize ratings should also update height/weight
 
 contraction
-- all teamInfoCache access, in UI and worker, should be wrapped in a function that prevents "cannot read property abbrev of undefined" errors
-  - or use optional chaining @babel/plugin-proposal-optional-chaining
 - do auto sim. at some point, negative age players appear. why?
   - initial draft prospects wrong, some are FAs
 - UI to change in Manage Teams
@@ -39,6 +37,8 @@ contraction
 - League > Franchises like https://www.basketball-reference.com/teams/
 
 contraction as a scheduled event
+- handle "expansion" that reactivates team
+  - seems to work, but go over and make sure. like not everything in addNewTeamToExistingLeague looks like it'd make sense, is that even being called?
 - handle case where it's the user's team
 - in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draft, increment all tids that are beyond numTeams in future scheduledEvents.
 

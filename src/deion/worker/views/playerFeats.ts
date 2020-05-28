@@ -30,7 +30,7 @@ const updatePlayers = async (
 
 		if (inputs.abbrev !== "all") {
 			feats = feats.filter(
-				feat => g.get("teamInfoCache")[feat.tid].abbrev === inputs.abbrev,
+				feat => g.get("teamInfoCache")[feat.tid]?.abbrev === inputs.abbrev,
 			);
 		}
 
@@ -66,8 +66,8 @@ const updatePlayers = async (
 
 			return {
 				...feat,
-				abbrev: g.get("teamInfoCache")[feat.tid].abbrev,
-				oppAbbrev: g.get("teamInfoCache")[feat.oppTid].abbrev,
+				abbrev: g.get("teamInfoCache")[feat.tid]?.abbrev,
+				oppAbbrev: g.get("teamInfoCache")[feat.oppTid]?.abbrev,
 				type,
 			};
 		});

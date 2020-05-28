@@ -265,9 +265,7 @@ const processScheduledEvents = async (
 				...(await processExpansionDraft(scheduledEvent.info, conditions)),
 			);
 		} else if (scheduledEvent.type === "contraction") {
-			eventLogTexts.push(
-				...(await processContraction(scheduledEvent.info, conditions)),
-			);
+			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));
 		} else {
 			throw new Error(
 				`Unknown scheduled event type: ${(scheduledEvent as any).type}`,

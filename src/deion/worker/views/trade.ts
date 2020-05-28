@@ -181,8 +181,8 @@ const updateTrade = async () => {
 
 	teams2 = orderBy(teams2, ["region", "name", "tid"]);
 
-	const userTeamName = `${g.get("teamInfoCache")[g.get("userTid")].region} ${
-		g.get("teamInfoCache")[g.get("userTid")].name
+	const userTeamName = `${g.get("teamInfoCache")[g.get("userTid")]?.region} ${
+		g.get("teamInfoCache")[g.get("userTid")]?.name
 	}`;
 
 	// If the season is over, can't trade players whose contracts are expired

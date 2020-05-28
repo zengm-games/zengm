@@ -47,7 +47,7 @@ export const genView = (type: "college" | "country") => {
 		const rows = infos.map(c => {
 			const p = c.p;
 
-			const abbrev = teamInfoCache[p.legacyTid].abbrev;
+			const abbrev = teamInfoCache[p.legacyTid]?.abbrev;
 
 			return {
 				key: c.name,

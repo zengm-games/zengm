@@ -10,7 +10,7 @@ const initUILocalGames = async () => {
 	// Start with completed games
 	const games: LocalStateUI["games"] = (
 		await getProcessedGames(
-			g.get("teamInfoCache")[userTid].abbrev,
+			g.get("teamInfoCache")[userTid]?.abbrev,
 			g.get("season"),
 			undefined,
 			true,

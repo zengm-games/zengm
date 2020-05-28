@@ -642,8 +642,8 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					p.pid,
 					p.name,
 					p.pos,
-					g.get("teamInfoCache")[t.tid].abbrev,
-					g.get("teamInfoCache")[t2.tid].abbrev,
+					g.get("teamInfoCache")[t.tid]?.abbrev,
+					g.get("teamInfoCache")[t2.tid]?.abbrev,
 					`${t.pts}-${t2.pts}`,
 					t.pts > t2.pts ? "W" : "L",
 					seasons[i],
@@ -1325,8 +1325,8 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 
 		if (g.get("userTids").length === 1) {
 			await league.updateMetaNameRegion(
-				g.get("teamInfoCache")[g.get("userTids")[0]].name,
-				g.get("teamInfoCache")[g.get("userTids")[0]].region,
+				g.get("teamInfoCache")[g.get("userTids")[0]]?.name,
+				g.get("teamInfoCache")[g.get("userTids")[0]]?.region,
 			);
 		} else {
 			await league.updateMetaNameRegion("Multi Team Mode", "");
@@ -1646,8 +1646,8 @@ const updateMultiTeamMode = async (gameAttributes: {
 
 	if (gameAttributes.userTids.length === 1) {
 		league.updateMetaNameRegion(
-			g.get("teamInfoCache")[gameAttributes.userTids[0]].name,
-			g.get("teamInfoCache")[gameAttributes.userTids[0]].region,
+			g.get("teamInfoCache")[gameAttributes.userTids[0]]?.name,
+			g.get("teamInfoCache")[gameAttributes.userTids[0]]?.region,
 		);
 	} else {
 		league.updateMetaNameRegion("Multi Team Mode", "");

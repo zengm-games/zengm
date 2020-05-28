@@ -18,7 +18,7 @@ const makeItWorkTrade = async () => {
 
 	if (!teams) {
 		return `${
-			g.get("teamInfoCache")[teams0[1].tid].region
+			g.get("teamInfoCache")[teams0[1].tid]?.region
 		} GM: "I can't afford to give up so much."`;
 	}
 
@@ -51,12 +51,12 @@ const makeItWorkTrade = async () => {
 
 	if (s.warning) {
 		return `${
-			g.get("teamInfoCache")[teams[1].tid].region
+			g.get("teamInfoCache")[teams[1].tid]?.region
 		} GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`;
 	}
 
 	return `${
-		g.get("teamInfoCache")[teams[1].tid].region
+		g.get("teamInfoCache")[teams[1].tid]?.region
 	} GM: "How does this sound?"`;
 };
 

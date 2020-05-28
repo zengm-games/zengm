@@ -6,6 +6,7 @@ module.exports = api => {
 
 	const plugins = [
 		"@babel/plugin-proposal-object-rest-spread", // Chrome 60, Firefox 55, Safari 11.1
+		"@babel/plugin-proposal-optional-chaining", // Chrome 80, Firefox 74, Safari 13.1
 	];
 
 	if (process.env.LEGACY) {

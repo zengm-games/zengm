@@ -13,8 +13,8 @@ const DraftAbbrev = ({
 	children?: any;
 }) => {
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
-	const abbrev = teamInfoCache[tid].abbrev;
-	const originalAbbrev = teamInfoCache[originalTid].abbrev;
+	const abbrev = teamInfoCache[tid]?.abbrev;
+	const originalAbbrev = teamInfoCache[originalTid]?.abbrev;
 	const args1 =
 		season === undefined
 			? ["roster", `${abbrev}_${tid}`]

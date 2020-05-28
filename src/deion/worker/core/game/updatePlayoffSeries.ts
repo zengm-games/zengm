@@ -134,16 +134,16 @@ const updatePlayoffSeries = async (
 					type: "playoffs",
 					text: `The <a href="${helpers.leagueUrl([
 						"roster",
-						`${g.get("teamInfoCache")[winnerTid].abbrev}_${winnerTid}`,
+						`${g.get("teamInfoCache")[winnerTid]?.abbrev}_${winnerTid}`,
 						g.get("season"),
 					])}">${
-						g.get("teamInfoCache")[winnerTid].name
+						g.get("teamInfoCache")[winnerTid]?.name
 					}</a> defeated the <a href="${helpers.leagueUrl([
 						"roster",
-						`${g.get("teamInfoCache")[loserTid].abbrev}_${loserTid}`,
+						`${g.get("teamInfoCache")[loserTid]?.abbrev}_${loserTid}`,
 						g.get("season"),
 					])}">${
-						g.get("teamInfoCache")[loserTid].name
+						g.get("teamInfoCache")[loserTid]?.name
 					}</a> in the ${currentRoundText}, ${score}`,
 					showNotification,
 					tids: [winnerTid, loserTid],

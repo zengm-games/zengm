@@ -95,14 +95,10 @@ const processAttrs = (
 			}
 
 			// Inject abbrevs
-			if (g.get("teamInfoCache")[output.draft.tid]) {
-				output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid].abbrev;
-			}
-			if (g.get("teamInfoCache")[output.draft.originalTid]) {
-				output.draft.originalAbbrev = g.get("teamInfoCache")[
-					output.draft.originalTid
-				].abbrev;
-			}
+			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid]?.abbrev;
+			output.draft.originalAbbrev = g.get("teamInfoCache")[
+				output.draft.originalTid
+			]?.abbrev;
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);
@@ -122,13 +118,13 @@ const processAttrs = (
 			output.abbrev = helpers.getAbbrev(p.tid);
 		} else if (attr === "teamRegion") {
 			if (p.tid >= 0) {
-				output.teamRegion = g.get("teamInfoCache")[p.tid].region;
+				output.teamRegion = g.get("teamInfoCache")[p.tid]?.region;
 			} else {
 				output.teamRegion = "";
 			}
 		} else if (attr === "teamName") {
 			if (p.tid >= 0) {
-				output.teamName = g.get("teamInfoCache")[p.tid].name;
+				output.teamName = g.get("teamInfoCache")[p.tid]?.name;
 			} else if (p.tid === PLAYER.FREE_AGENT) {
 				output.teamName = "Free Agent";
 			} else if (
@@ -256,7 +252,7 @@ const processAttrs = (
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
 					// @ts-ignore
-					const abbrev = g.get("teamInfoCache")[transaction.fromTid].abbrev;
+					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
 					output.latestTransaction = `Trade with <a href="${helpers.leagueUrl([
 						"roster",
 						abbrev,

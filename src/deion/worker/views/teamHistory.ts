@@ -107,7 +107,7 @@ const updateTeamHistory = async (
 			p.stats.reverse();
 
 			for (let j = 0; j < p.stats.length; j++) {
-				if (p.stats[j].abbrev === g.get("teamInfoCache")[inputs.tid].abbrev) {
+				if (p.stats[j].abbrev === g.get("teamInfoCache")[inputs.tid]?.abbrev) {
 					p.lastYr = p.stats[j].season.toString();
 					break;
 				}
@@ -125,8 +125,8 @@ const updateTeamHistory = async (
 			players,
 			stats,
 			team: {
-				name: g.get("teamInfoCache")[inputs.tid].name,
-				region: g.get("teamInfoCache")[inputs.tid].region,
+				name: g.get("teamInfoCache")[inputs.tid]?.name,
+				region: g.get("teamInfoCache")[inputs.tid]?.region,
 				tid: inputs.tid,
 			},
 			totalWon,

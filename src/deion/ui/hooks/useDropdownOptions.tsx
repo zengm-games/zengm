@@ -8,19 +8,23 @@ export const getSortedTeams = ({
 }: {
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
-	const array = orderBy(
-		teamInfoCache.map(t => {
-			return {
-				abbrev: t.abbrev,
-				name: `${t.region} ${t.name}`,
-			};
-		}),
-		"name",
-	);
+	const array = [
+		...orderBy(
+			teamInfoCache.filter(t => !t.disabled),
+			["region", "name", "tid"],
+		),
+		...orderBy(
+			teamInfoCache.filter(t => t.disabled),
+			["region", "name", "tid"],
+		),
+	];
 
 	const object: { [key: string]: string | undefined } = {};
-	for (const { abbrev, name } of array) {
-		object[abbrev] = name;
+	for (const t of array) {
+		object[t.abbrev] = `${t.region} ${t.name}`;
+		if (t.disabled) {
+			object[t.abbrev] += " (inactive)";
+		}
 	}
 
 	return object;
@@ -118,6 +122,7 @@ const useDropdownOptions = (field: string) => {
 	}));
 
 	const sortedTeams = getSortedTeams(state);
+
 	let keys: (number | string)[];
 
 	if (field === "teams") {

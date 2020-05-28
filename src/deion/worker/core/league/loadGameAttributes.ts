@@ -43,7 +43,18 @@ const loadGameAttributes = async () => {
 	for (const key of helpers.keys(defaultGameAttributes)) {
 		// @ts-ignore
 		if (g[key] === undefined) {
-			if (key === "numActiveTeams") {
+			if (key === "teamInfoCache") {
+				g.setWithoutSavingToDB(
+					"teamInfoCache",
+					(await idb.cache.teams.getAll()).map(t => ({
+						abbrev: t.abbrev,
+						disabled: t.disabled,
+						imgURL: t.imgURL,
+						name: t.name,
+						region: t.region,
+					})),
+				);
+			} else if (key === "numActiveTeams") {
 				g.setWithoutSavingToDB(
 					"numActiveTeams",
 					(await idb.cache.teams.getAll()).filter(t => !t.disabled).length,

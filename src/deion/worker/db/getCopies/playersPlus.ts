@@ -95,10 +95,14 @@ const processAttrs = (
 			}
 
 			// Inject abbrevs
-			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid].abbrev;
-			output.draft.originalAbbrev = g.get("teamInfoCache")[
-				output.draft.originalTid
-			].abbrev;
+			if (g.get("teamInfoCache")[output.draft.tid]) {
+				output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid].abbrev;
+			}
+			if (g.get("teamInfoCache")[output.draft.originalTid]) {
+				output.draft.originalAbbrev = g.get("teamInfoCache")[
+					output.draft.originalTid
+				].abbrev;
+			}
 		} else if (attr === "contract") {
 			if (g.get("season") === season || season === undefined) {
 				output.contract = helpers.deepCopy(p.contract);

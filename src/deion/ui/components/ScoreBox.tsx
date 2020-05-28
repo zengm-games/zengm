@@ -219,16 +219,17 @@ const ScoreBox = ({
 								};
 							}
 
-							const imgURL = teamInfoCache[t.tid].imgURL;
-
+							let imgURL;
 							let teamName;
 							let rosterURL;
 							if (allStarGame) {
+								imgURL = undefined;
 								teamName = small
 									? `AS${i === 0 ? 2 : 1}`
 									: `All-Star Team ${i === 0 ? 2 : 1}`;
 								rosterURL = helpers.leagueUrl(["all_star_history"]);
 							} else {
+								imgURL = teamInfoCache[t.tid].imgURL;
 								teamName = small
 									? teamInfoCache[t.tid].abbrev
 									: `${teamInfoCache[t.tid].region} ${

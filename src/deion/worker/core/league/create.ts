@@ -239,7 +239,7 @@ export const createWithoutSaving = (
 
 	// Needs to be done after g is set
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
-	// teams[1].disabled = true;
+	teams[1].disabled = true;
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: DraftPickWithoutKey[];
@@ -537,7 +537,7 @@ export const createWithoutSaving = (
 				leagueFile.version,
 			);
 
-			if (!activeTids.includes(p.tid)) {
+			if (p.tid >= 0 && !activeTids.includes(p.tid)) {
 				p.tid = PLAYER.FREE_AGENT;
 			}
 

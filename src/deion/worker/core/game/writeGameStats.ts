@@ -254,7 +254,7 @@ const writeGameStats = async (
 			text = `<span style="color: green; font-weight: bold; padding-right: 3px">W</span> Your team defeated the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					`${g.get("teamInfoCache")[results.team[tl].abbrev.id]}_${
+					`${g.get("teamInfoCache")[results.team[tl].id].abbrev}_${
 						results.team[tl].id
 					}`,
 					g.get("season"),
@@ -264,7 +264,7 @@ const writeGameStats = async (
 			text = `<span style="color: red; font-weight: bold; padding-right: 8px">L</span> Your team lost to the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					`${g.get("teamInfoCache")[results.team[tw].abbrev.id]}_${
+					`${g.get("teamInfoCache")[results.team[tw].id].abbrev}_${
 						results.team[tw].id
 					}`,
 					g.get("season"),
@@ -368,7 +368,7 @@ const writeGameStats = async (
 			"game_log",
 			allStarGame
 				? "special"
-				: `${g.get("teamInfoCache")[results.team[indTeam].abbrev.id]}_${
+				: `${g.get("teamInfoCache")[results.team[indTeam].id].abbrev}_${
 						results.team[indTeam].id
 				  }`,
 			g.get("season"),

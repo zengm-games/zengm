@@ -8,7 +8,11 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
+randomize ratings should also update height/weight
+
 contraction
+- do auto sim. at some point, negative age players appear. why?
+  - initial draft prospects wrong, some are FAs
 - UI to change in Manage Teams
   - only allow in certain phases
     - PRESEASON
@@ -19,16 +23,6 @@ contraction
     - team*Cache
     - if in draft lottery phase and contracted team is in the lottery, delete lottery results
     - handle if userTid or userTids
-- dropdowns should include disabled teams?
-  - maybe some places yes, others no
-  - option?
-  - maybe have some kind of "League > Franchises" page which shows expansion/contraction
-- team*Cache options
-  - leave all there
-  - turn to object (or array with holes) and only active
-  - turn into teamInfoCache, and include "disabled" as one of the properties
-    - how to keep updated? old ones were through updateGameAttributes
-      - maybe kep doing it this way, and have teamInfoCache in worker too
 - when this is true
   - don't create new teamSeason row for this team
   - don't include most places that loop over all teams
@@ -43,9 +37,11 @@ contraction
   - maybe put explanation of "Status" there, or at least mention it
 - football
   - av
+- League > Franchises like https://www.basketball-reference.com/teams/
 
 contraction as a scheduled event
 - handle case where it's the user's team
+- expansionDraft can be of a disabled team
 
 list teams alphabetically on Manage Team
 

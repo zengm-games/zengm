@@ -28,7 +28,8 @@ contraction
 - football
   - av
 - League > Franchises like https://www.basketball-reference.com/teams/
-- when enabling a team during the draft lottery phase, where should they go in the lottery? like expansion team?
+- creating an expansion team should show inactive teams as possible teams to select
+  - add explanation on Manage Teams about this, that it's often better than activating
 
 contraction as a scheduled event
 - handle "expansion" that reactivates team
@@ -47,6 +48,8 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
   - Best Progs - age of increase
+
+support changing team logos at any season, from predefined real team logos
 
 when manually retiring a player in god mode, check HoF eligibility
 

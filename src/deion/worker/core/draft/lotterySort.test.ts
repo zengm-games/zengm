@@ -18,6 +18,7 @@ describe("worker/core/draft/lotterySort", () => {
 					playoffRoundsWon: -1,
 					won: 9,
 					lost: 1,
+					tied: 0,
 				},
 			},
 			{
@@ -29,6 +30,7 @@ describe("worker/core/draft/lotterySort", () => {
 					playoffRoundsWon: -1,
 					won: 8,
 					lost: 2,
+					tied: 0,
 				},
 			},
 			{
@@ -40,6 +42,7 @@ describe("worker/core/draft/lotterySort", () => {
 					playoffRoundsWon: -1,
 					won: 1,
 					lost: 9,
+					tied: 0,
 				},
 			},
 			{
@@ -51,6 +54,7 @@ describe("worker/core/draft/lotterySort", () => {
 					playoffRoundsWon: -1,
 					won: 2,
 					lost: 8,
+					tied: 0,
 				},
 			},
 		];

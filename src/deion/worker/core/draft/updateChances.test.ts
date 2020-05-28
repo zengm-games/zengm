@@ -11,7 +11,15 @@ describe("worker/core/draft/updateChances", () => {
 	test("distribute combinations to teams with the same record", async () => {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
-			seasonAttrs: ["won", "winp", "playoffRoundsWon", "cid", "did"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"winp",
+				"playoffRoundsWon",
+				"cid",
+				"did",
+			],
 			season: g.get("season"),
 			addDummySeason: true,
 			active: true,

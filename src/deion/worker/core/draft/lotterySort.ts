@@ -11,8 +11,8 @@ import type { TeamFiltered } from "../../../common/types";
  */
 const lotterySort = (
 	teams: TeamFiltered<
-		["tid", "firstSeasonAfterExpansion"],
-		["playoffRoundsWon", "won", "winp", "cid", "did"],
+		["tid"],
+		["playoffRoundsWon", "won", "lost", "tied", "winp", "cid", "did"],
 		any,
 		number
 	>[],
@@ -40,11 +40,11 @@ const lotterySort = (
 		const t = teams[i];
 		(t as any).randVal = randValues[i];
 
-		// Expansion teams who
+		// Expansion teams and re-activated teams who did not play this season
 		if (
-			t.firstSeasonAfterExpansion !== undefined &&
-			t.firstSeasonAfterExpansion - 1 === g.get("season") &&
-			t.seasonAttrs.winp === 0
+			t.seasonAttrs.won === 0 &&
+			t.seasonAttrs.lost === 0 &&
+			t.seasonAttrs.tied === 0
 		) {
 			t.seasonAttrs.winp = 0.5;
 		}

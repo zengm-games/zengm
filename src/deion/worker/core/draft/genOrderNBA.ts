@@ -98,7 +98,7 @@ const genOrder = async (
 	conditions?: Conditions,
 ): Promise<ReturnVal> => {
 	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "firstSeasonAfterExpansion", "disabled"],
+		attrs: ["tid", "disabled"],
 		seasonAttrs: [
 			"winp",
 			"playoffRoundsWon",

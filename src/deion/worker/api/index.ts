@@ -1839,6 +1839,7 @@ const updateTeamInfo = async (
 
 		if (enableTeam) {
 			await draft.createTeamPicks(t.tid);
+			await draft.deleteLotteryResultIfNoDraftYet();
 		} else if (disableTeam) {
 			await team.disable(t.tid);
 		}

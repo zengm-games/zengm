@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { player, league } from "..";
+import { player, league, draft } from "..";
 import { g } from "../../util";
 import { PHASE } from "../../../common";
 
@@ -50,6 +50,8 @@ const disable = async (tid: number) => {
 			await idb.cache.teamSeasons.delete(teamStats.rid);
 		}
 	}
+
+	await draft.deleteLotteryResultIfNoDraftYet();
 
 	await league.setGameAttributes({
 		teamInfoCache: g.get("teamInfoCache").map((t2, tid) => {

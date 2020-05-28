@@ -123,6 +123,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		!props.godMode ||
 		![
 			PHASE.PRESEASON,
+			PHASE.DRAFT_LOTTERY,
 			PHASE.AFTER_DRAFT,
 			PHASE.RESIGN_PLAYERS,
 			PHASE.FREE_AGENCY,

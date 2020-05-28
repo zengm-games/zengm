@@ -11,6 +11,8 @@ end of game playing time situations @gmgameschris
 randomize ratings should also update height/weight
 
 contraction
+- all teamInfoCache access, in UI and worker, should be wrapped in a function that prevents "cannot read property abbrev of undefined" errors
+  - or use optional chaining @babel/plugin-proposal-optional-chaining
 - do auto sim. at some point, negative age players appear. why?
   - initial draft prospects wrong, some are FAs
 - UI to change in Manage Teams
@@ -23,9 +25,6 @@ contraction
     - team*Cache
     - if in draft lottery phase and contracted team is in the lottery, delete lottery results
     - handle if userTid or userTids
-- when this is true
-  - don't create new teamSeason row for this team
-  - don't include most places that loop over all teams
 - things to check
   - roster
   - basketball+football newSchedule - make unit tests work without tid/cid/did starting at 0
@@ -42,6 +41,7 @@ contraction
 contraction as a scheduled event
 - handle case where it's the user's team
 - expansionDraft can be of a disabled team
+- starting league in 1956 results in error about gap in tids, because of contracted team. rewrite tids? or leave stub contracted teams? former would be better, but then how does it handle an expansion that is of a disabled team? need to rewrite that too
 
 list teams alphabetically on Manage Team
 

@@ -1840,28 +1840,7 @@ const updateTeamInfo = async (
 		if (enableTeam) {
 			await draft.createTeamPicks(t.tid);
 		} else if (disableTeam) {
-			// Delete draft picks, and return traded ones to original owner
-			const draftPicks = await idb.cache.draftPicks.getAll();
-			for (const dp of draftPicks) {
-				if (dp.originalTid === t.tid) {
-					await idb.cache.draftPicks.delete(dp.dpid);
-				} else if (dp.tid === t.tid) {
-					dp.tid = dp.originalTid;
-					await idb.cache.draftPicks.put(dp);
-				}
-			}
-
-			// Make all players free agents
-			const players = await idb.cache.players.indexGetAll(
-				"playersByTid",
-				t.tid,
-			);
-			const baseMoods = await player.genBaseMoods();
-
-			for (const p of players) {
-				player.addToFreeAgents(p, g.get("phase"), baseMoods);
-				await idb.cache.players.put(p);
-			}
+			await team.disable(t.tid);
 		}
 
 		// Also apply team info changes to this season
@@ -1880,18 +1859,6 @@ const updateTeamInfo = async (
 				);
 
 				teamSeason = team.genSeasonRow(t, prevSeason);
-			} else if (disableTeam) {
-				if (teamSeason && teamSeason.rid !== undefined) {
-					idb.cache.teamSeasons.delete(teamSeason.rid);
-				}
-
-				const teamStats = await idb.cache.teamSeasons.indexGet(
-					"teamStatsByPlayoffsTid",
-					[false, t.tid],
-				);
-				if (teamStats) {
-					await idb.cache.teamSeasons.delete(teamStats.rid);
-				}
 			}
 
 			if (teamSeason && !t.disabled) {

@@ -1,5 +1,9 @@
 import orderBy from "lodash/orderBy";
 import { helpers } from "../../util";
+import type {
+	ScheduledEvent,
+	ScheduledEventWithoutKey,
+} from "../../../common/types";
 
 const processGameAttributes = (events: any[], season: number) => {
 	let gameAttributeEvents = [];
@@ -46,11 +50,15 @@ const processGameAttributes = (events: any[], season: number) => {
 	return { gameAttributeEvents, initialGameAttributes };
 };
 
-const processTeams = (events: any[], season: number) => {
+const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 	let teamEvents = [];
 
 	for (const event of events) {
-		if (event.type === "expansionDraft" || event.type === "teamInfo") {
+		if (
+			event.type === "expansionDraft" ||
+			event.type === "teamInfo" ||
+			event.type === "contraction"
+		) {
 			teamEvents.push(event);
 		}
 	}
@@ -69,7 +77,7 @@ const processTeams = (events: any[], season: number) => {
 	}[];
 
 	// Keep track of initial teams
-	const prevState: any[] = [];
+	let prevState: any[] = [];
 	for (const event of teamEvents) {
 		if (
 			(event.season > season || (event.season === season && event.phase > 0)) &&
@@ -93,6 +101,21 @@ const processTeams = (events: any[], season: number) => {
 				...t0,
 				...t,
 			};
+		} else if (event.type === "contraction") {
+			let found = false;
+			prevState = prevState.filter(t => {
+				if (t.tid === event.info.tid) {
+					found = true;
+					return false;
+				}
+				return true;
+			});
+			if (!found) {
+				console.log(event);
+				throw new Error(
+					`Contraction of team that doesn't exist, tid ${event.info.tid}`,
+				);
+			}
 		}
 	}
 
@@ -136,7 +159,8 @@ const formatScheduledEvents = (events: any[], season: number) => {
 		if (
 			event.type !== "gameAttributes" &&
 			event.type !== "expansionDraft" &&
-			event.type !== "teamInfo"
+			event.type !== "teamInfo" &&
+			event.type !== "contraction"
 		) {
 			throw new Error(`Unknown event type: ${event.type}`);
 		}

@@ -244,6 +244,14 @@ export type ScheduledEventWithoutKey =
 				})[];
 				numProtectedPlayers?: number;
 			};
+	  }
+	| {
+			type: "contraction";
+			season: number;
+			phase: Phase;
+			info: {
+				tid: number;
+			};
 	  };
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };

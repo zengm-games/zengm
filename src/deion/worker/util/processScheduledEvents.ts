@@ -2,7 +2,7 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
-import { league, expansionDraft, phase } from "../core";
+import { league, expansionDraft, phase, team } from "../core";
 import type { ScheduledEvent, Conditions } from "../../common/types";
 import { PHASE } from "../../common";
 
@@ -218,6 +218,28 @@ const processExpansionDraft = async (
 	];
 };
 
+const processContraction = async (
+	info: Extract<ScheduledEvent, { type: "contraction" }>["info"],
+) => {
+	const t = await idb.cache.teams.get(info.tid);
+	if (!t) {
+		throw new Error(`No team found in scheduled event: ${info.tid}`);
+	}
+
+	await team.disable(t.tid);
+
+	const text = `<b>Contraction!</b> The ${t.region} ${t.name} franchise is disbanding. All their players will become free agents.`;
+
+	logEvent({
+		text,
+		type: "teamInfo",
+		tids: [t.tid],
+		showNotification: false,
+	});
+
+	return [text];
+};
+
 const processScheduledEvents = async (
 	season: number,
 	phase: number,
@@ -241,6 +263,10 @@ const processScheduledEvents = async (
 		} else if (scheduledEvent.type === "expansionDraft") {
 			eventLogTexts.push(
 				...(await processExpansionDraft(scheduledEvent.info, conditions)),
+			);
+		} else if (scheduledEvent.type === "contraction") {
+			eventLogTexts.push(
+				...(await processContraction(scheduledEvent.info, conditions)),
 			);
 		} else {
 			throw new Error(

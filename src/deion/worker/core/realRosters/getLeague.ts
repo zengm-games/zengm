@@ -13,11 +13,14 @@ import { PLAYER } from "../../../common";
 // Convert abbrevs of current or old NBA/BBGM teams to their equivalent team in modern BBGM. This is used to track a franchise over time, if all you have is the abbrev
 const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 	const abbrevs = {
-		"": null,
+		// These teams are defunct by 2020, but we're giving their history to a modern franchise
+		INO: "IND",
+		BLB: "WAS",
+
+		// Map to BBGM 2020 abbrevs
 		AND: "IND",
 		ATL: "ATL",
 		BAL: "WAS",
-		BLB: "WAS",
 		BOS: "BOS",
 		BRK: "BKN",
 		BUF: "LAC",
@@ -39,7 +42,6 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		GSW: "GS",
 		HOU: "HOU",
 		IND: "IND",
-		INO: "IND",
 		KCK: "SAC",
 		KCO: "SAC",
 		LAC: "LAC",

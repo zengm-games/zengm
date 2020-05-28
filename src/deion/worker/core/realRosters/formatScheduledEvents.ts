@@ -132,24 +132,85 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 		),
 	);
 
-	// Remove tids, in case user already did another expansion draft
-	teamEvents = teamEvents.map(event => {
-		if (event.type !== "expansionDraft") {
-			return event;
+	// Rewrite tids, to remove gaps in initialTeams
+	const tidOverrides: Record<number, number> = {};
+	for (let tid = 0; tid < initialTeams.length; tid++) {
+		const t = initialTeams[tid];
+		console.log(t.region, t.tid);
+		if (t.tid === tid) {
+			tidOverrides[t.tid] = tid;
+			continue;
 		}
 
-		return {
-			...event,
-			info: {
-				...event.info,
-				teams: event.info.teams.map((t: any) => {
-					const t2 = { ...t };
-					delete t2.tid;
-					return t2;
-				}),
-			},
-		};
+		tidOverrides[t.tid] = tid;
+		t.tid = tid;
+	}
+	console.log(JSON.stringify(tidOverrides, null, 2));
+	let maxSeenTid = Math.max(...Object.values(tidOverrides));
+	teamEvents = teamEvents.map(event => {
+		if (event.type === "teamInfo" || event.type === "contraction") {
+			const oldTid = event.info.tid;
+			let newTid = tidOverrides[oldTid];
+			if (newTid == undefined) {
+				newTid = maxSeenTid + 1;
+				tidOverrides[oldTid] = newTid;
+			}
+			if (newTid > maxSeenTid) {
+				maxSeenTid = newTid;
+			}
+
+			return {
+				...event,
+				info: {
+					...event.info,
+					tid: newTid,
+				},
+			};
+		} else if (event.type === "expansionDraft") {
+			return {
+				...event,
+				info: {
+					...event.info,
+					teams: event.info.teams.map(t => {
+						if (t.tid === undefined) {
+							return t;
+						}
+
+						const oldTid = t.tid;
+						let newTid = tidOverrides[oldTid];
+						if (newTid == undefined) {
+							newTid = maxSeenTid + 1;
+							tidOverrides[oldTid] = newTid;
+						}
+						if (newTid > maxSeenTid) {
+							maxSeenTid = newTid;
+						}
+
+						return {
+							...t,
+							tid: newTid,
+						};
+					}),
+				},
+			};
+		}
+
+		return event;
 	});
+
+	console.log(tidOverrides);
+	for (const t of initialTeams) {
+		console.log(`${t.tid} ${t.region} ${t.name}`);
+	}
+	for (const event of teamEvents) {
+		if (event.type === "expansionDraft") {
+			for (const t of event.info.teams) {
+				console.log(`EXPAND ${event.season} ${t.tid} ${t.region} ${t.name}`);
+			}
+		} else if (event.type === "contraction") {
+			console.log(`CONTRACT ${event.season} ${event.info.tid}`);
+		}
+	}
 
 	return { teamEvents, initialTeams };
 };

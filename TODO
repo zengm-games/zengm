@@ -41,7 +41,9 @@ contraction
 contraction as a scheduled event
 - handle case where it's the user's team
 - expansionDraft can be of a disabled team
-- starting league in 1956 results in error about gap in tids, because of contracted team. rewrite tids? or leave stub contracted teams? former would be better, but then how does it handle an expansion that is of a disabled team? need to rewrite that too
+  - include tid in expansionDraft, upsert
+  - notification message
+- in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draft, increment all tids that are beyond numTeams in future scheduledEvents.
 
 list teams alphabetically on Manage Team
 

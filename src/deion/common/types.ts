@@ -240,6 +240,7 @@ export type ScheduledEventWithoutKey =
 			info: {
 				// Actually stadiumCapacity is optional
 				teams: (ExpansionDraftSetupTeam & {
+					tid?: number;
 					srID?: string;
 				})[];
 				numProtectedPlayers?: number;

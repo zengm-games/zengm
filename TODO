@@ -11,13 +11,14 @@ end of game playing time situations @gmgameschris
 contraction
 - to fix
   - look for numTeams
-  - look for teams[tid]
+  - look for teams\[.*tid\]
   - maybe get rid of g.numTeams, or at least update it on contraction?
     - can't get rid, it's just that there's two concepts.. numTeams and numActiveTeams
   - input to lotterySort
   - getPayrolls
   - genBaseMoods - might be okay if used correctly
     - same with estPicks from refreshCache in valueChange
+  - football advStats - indexing arrays with tid
   - disabled teams still making draft picks and signing free agents
 - numActiveTeams
   - update whenever numTeams is updated or disabled is set
@@ -59,6 +60,11 @@ list teams alphabetically on Manage Team
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
+  - drafted team for the players in busts and steals
+  - team and overall for the final year of the Oldest to Play in Game
+  - total games on team for players with the most years on one team
+- https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
+  - Best Progs - age of increase
 
 total stats, for traded players
 - player stats table

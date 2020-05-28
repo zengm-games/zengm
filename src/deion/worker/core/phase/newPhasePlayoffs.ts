@@ -18,6 +18,7 @@ const newPhasePlayoffs = async (
 			attrs: ["tid"],
 			seasonAttrs: ["winp", "won", "cid", "did"],
 			season: g.get("season"),
+			active: true,
 		}),
 	);
 

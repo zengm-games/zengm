@@ -846,6 +846,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 			seasonAttrs: ["won", "lost", "tied"],
 			season: g.get("season"),
 			addDummySeason: true,
+			active: true,
 		});
 		const stats =
 			process.env.SPORT === "basketball"
@@ -856,6 +857,11 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		return Promise.all(
 			offers.map(async offer => {
 				const tid = offer.tid;
+				const t = teams.find(t => t.tid === tid);
+				if (!t) {
+					throw new Error("No team found");
+				}
+
 				let playersAll = await idb.cache.players.indexGetAll(
 					"playersByTid",
 					tid,
@@ -886,13 +892,13 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 				const payroll = await team.getPayroll(tid);
 				return {
 					tid,
-					abbrev: teams[tid].abbrev,
-					region: teams[tid].region,
-					name: teams[tid].name,
-					strategy: teams[tid].strategy,
-					won: teams[tid].seasonAttrs.won,
-					lost: teams[tid].seasonAttrs.lost,
-					tied: teams[tid].seasonAttrs.tied,
+					abbrev: t.abbrev,
+					region: t.region,
+					name: t.name,
+					strategy: t.strategy,
+					won: t.seasonAttrs.won,
+					lost: t.seasonAttrs.lost,
+					tied: t.seasonAttrs.tied,
 					pids: offer.pids,
 					dpids: offer.dpids,
 					warning: offer.warning,

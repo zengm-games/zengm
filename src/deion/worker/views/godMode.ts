@@ -9,7 +9,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			godMode: g.get("godMode"),
 			numGames: g.get("numGames"),
-			numTeams: g.get("numTeams"),
+			numActiveTeams: g.get("numActiveTeams"),
 			quarterLength: g.get("quarterLength"),
 			maxRosterSize: g.get("maxRosterSize"),
 			minRosterSize: g.get("minRosterSize"),

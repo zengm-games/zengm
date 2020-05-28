@@ -13,6 +13,8 @@ describe("worker/core/draft/updateChances", () => {
 			attrs: ["tid"],
 			seasonAttrs: ["won", "winp", "playoffRoundsWon", "cid", "did"],
 			season: g.get("season"),
+			addDummySeason: true,
+			active: true,
 		});
 		const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5]; // index instead of tid
 

@@ -24,6 +24,7 @@ const newPhaseBeforeDraft = async (
 		attrs: ["tid"],
 		seasonAttrs: ["playoffRoundsWon"],
 		season: g.get("season"),
+		active: true,
 	});
 
 	// Give award to all players on the championship team

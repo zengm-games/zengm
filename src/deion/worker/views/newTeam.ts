@@ -7,12 +7,13 @@ const updateTeamSelect = async () => {
 		attrs: ["tid", "region", "name", "pop"],
 		seasonAttrs: ["winp"],
 		season: g.get("season"),
+		active: true,
 		addDummySeason: true,
 	});
 
 	let teams = helpers.addPopRank(rawTeams);
 
-	const numTeams = teams.length;
+	const numActiveTeams = teams.length;
 
 	const expansionDraft = g.get("expansionDraft");
 	const expansion =
@@ -45,7 +46,7 @@ const updateTeamSelect = async () => {
 		expansion,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
-		numTeams,
+		numActiveTeams,
 		phase: g.get("phase"),
 		teams,
 		userTid: g.get("userTid"),

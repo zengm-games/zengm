@@ -16,7 +16,11 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 	league.aPER = 0;
 
 	for (let i = 0; i < players.length; i++) {
-		const tid = players[i].tid;
+		const t = teams.find(t => t.tid === players[i].tid);
+		if (!t) {
+			throw new Error("No team found");
+		}
+
 		const factor =
 			2 / 3 - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
 		const vop =
@@ -30,13 +34,12 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 				(1 / players[i].stats.min) *
 				(players[i].stats.tp +
 					(2 / 3) * players[i].stats.ast +
-					(2 - factor * (teams[tid].stats.ast / teams[tid].stats.fg)) *
-						players[i].stats.fg +
+					(2 - factor * (t.stats.ast / t.stats.fg)) * players[i].stats.fg +
 					players[i].stats.ft *
 						0.5 *
 						(1 +
-							(1 - teams[tid].stats.ast / teams[tid].stats.fg) +
-							(2 / 3) * (teams[tid].stats.ast / teams[tid].stats.fg)) -
+							(1 - t.stats.ast / t.stats.fg) +
+							(2 / 3) * (t.stats.ast / t.stats.fg)) -
 					vop * players[i].stats.tov -
 					vop * drbp * (players[i].stats.fga - players[i].stats.fg) -
 					vop *
@@ -53,7 +56,7 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 			uPER = 0;
 		}
 
-		aPER[i] = teams[tid].stats.paceAdj * uPER;
+		aPER[i] = t.stats.paceAdj * uPER;
 		league.aPER += aPER[i] * players[i].stats.min;
 		mins[i] = players[i].stats.min; // Save for EWA calculation
 	}
@@ -109,7 +112,7 @@ const calculatePercentages = (players: any[], teams: any[]) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
-		const t = teams[p.tid];
+		const t = teams.find(t => t.tid === p.tid);
 
 		if (t === undefined) {
 			astp[i] = 0;
@@ -194,7 +197,7 @@ const calculateRatings = (players: any[], teams: any[], league: any) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
-		const t = teams[p.tid];
+		const t = teams.find(t => t.tid === p.tid);
 
 		if (t === undefined) {
 			drtg[i] = 0;
@@ -428,10 +431,11 @@ const advStats = async () => {
 		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 		statType: "totals",
 		addDummySeason: true,
+		active: true,
 	});
 
-	// Total league stats (not per game averages)	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
-
+	// Total league stats (not per game averages)
+	// For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
 	const leagueStats = [
 		"gp",
 		"ft",
@@ -460,10 +464,12 @@ const advStats = async () => {
 		}
 
 		return memo;
-	}, {}); // Special case for pace - scale by number of games
+	}, {});
 
-	league.pace /= league.gp; // If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
+	// Special case for pace - scale by number of games
+	league.pace /= league.gp;
 
+	// If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
 	if (league.gp === 0) {
 		return;
 	}

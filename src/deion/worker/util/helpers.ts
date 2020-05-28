@@ -97,15 +97,15 @@ const defaultBudgetAmount = (
 };
 
 const defaultTicketPrice = (
-	popRank: number = g.get("numTeams"),
+	popRank: number = g.get("numActiveTeams"),
 	salaryCap: number = g.get("salaryCap"),
 ) => {
 	return parseFloat(
 		(
 			1 +
 			(salaryCap / 90000) * 36 +
-			(25 * (salaryCap / 90000) * (g.get("numTeams") - popRank)) /
-				(g.get("numTeams") - 1)
+			(25 * (salaryCap / 90000) * (g.get("numActiveTeams") - popRank)) /
+				(g.get("numActiveTeams") - 1)
 		).toFixed(2),
 	);
 };
@@ -281,7 +281,7 @@ const pickDesc = (dp: DraftPick): string => {
 
 	if (dp.pick > 0) {
 		extras.push(
-			commonHelpers.ordinal((dp.round - 1) * g.get("numTeams") + dp.pick),
+			commonHelpers.ordinal((dp.round - 1) * g.get("numActiveTeams") + dp.pick),
 		);
 	}
 

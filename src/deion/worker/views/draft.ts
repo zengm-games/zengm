@@ -123,11 +123,11 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		if (
 			!fantasyDraft &&
 			g.get("phase") !== PHASE.EXPANSION_DRAFT &&
-			draftPicks.length > 2 * g.get("numTeams")
+			draftPicks.length > 2 * g.get("numActiveTeams")
 		) {
 			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
 
-			if (draftPicks2.length === 2 * g.get("numTeams")) {
+			if (draftPicks2.length === 2 * g.get("numActiveTeams")) {
 				const toDelete = draftPicks.filter(dp => dp.pick === 0);
 
 				for (const dp of toDelete) {

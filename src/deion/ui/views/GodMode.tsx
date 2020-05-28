@@ -122,7 +122,7 @@ const options: {
 			helpers.validateRoundsByes(
 				numRounds,
 				output.numPlayoffByes,
-				props.numTeams,
+				props.numActiveTeams,
 			);
 		},
 	},
@@ -1312,8 +1312,8 @@ GodModeOptions.propTypes = {
 	minPayroll: PropTypes.number.isRequired,
 	minRosterSize: PropTypes.number.isRequired,
 	maxRosterSize: PropTypes.number.isRequired,
+	numActiveTeams: PropTypes.number.isRequired,
 	numGames: PropTypes.number.isRequired,
-	numTeams: PropTypes.number.isRequired,
 	quarterLength: PropTypes.number.isRequired,
 	salaryCap: PropTypes.number.isRequired,
 	aiTradesFactor: PropTypes.number.isRequired,

@@ -8,6 +8,137 @@ import type {
 	TeamFiltered,
 } from "../../common/types";
 
+const tallyAwards = (tid: number, awards: any[], allAllStars: AllStars[]) => {
+	const teamAwards = {
+		mvp: 0,
+		dpoy: 0,
+		smoy: 0,
+		mip: 0,
+		roy: 0,
+		oroy: 0,
+		droy: 0,
+		allLeague: [0, 0, 0],
+		allLeagueTotal: 0,
+		allDefense: [0, 0, 0],
+		allDefenseTotal: 0,
+		allRookie: 0,
+		allStar: 0,
+		allStarMVP: 0,
+		bestRecord: 0,
+		bestRecordConf: 0,
+	};
+
+	for (const a of awards) {
+		if (!a) {
+			continue;
+		}
+
+		if (a.mvp.tid === tid) {
+			teamAwards.mvp++;
+		}
+
+		if (a.dpoy.tid === tid) {
+			teamAwards.dpoy++;
+		}
+
+		if (a.smoy && a.smoy.tid === tid) {
+			teamAwards.smoy++;
+		}
+
+		if (a.mip && a.mip.tid === tid) {
+			teamAwards.mip++;
+		}
+
+		if (a.roy && a.roy.tid === tid) {
+			teamAwards.roy++;
+		}
+
+		if (a.oroy && a.oroy.tid === tid) {
+			teamAwards.oroy++;
+		}
+
+		if (a.droy && a.droy.tid === tid) {
+			teamAwards.droy++;
+		}
+
+		if (a.bre && a.brw) {
+			// For old league files, this format is obsolete now
+			if (a.bre.tid === tid) {
+				teamAwards.bestRecordConf++;
+			}
+
+			if (a.brw.tid === tid) {
+				teamAwards.bestRecordConf++;
+			}
+
+			if (a.bre.won >= a.brw.won) {
+				if (a.bre.tid === tid) {
+					teamAwards.bestRecord++;
+				}
+			} else {
+				// eslint-disable-next-line no-lonely-if
+				if (a.brw.tid === tid) {
+					teamAwards.bestRecord++;
+				}
+			}
+		} else {
+			for (const t of a.bestRecordConfs) {
+				if (t.tid === tid) {
+					teamAwards.bestRecordConf++;
+				}
+			}
+
+			if (a.bestRecord.tid === tid) {
+				teamAwards.bestRecord++;
+			}
+
+			for (const t of a.allRookie) {
+				if (t && t.tid === tid) {
+					teamAwards.allRookie++;
+				}
+			}
+		}
+
+		for (let i = 0; i < a.allLeague.length; i++) {
+			for (const p of a.allLeague[i].players) {
+				if (p.tid === tid) {
+					teamAwards.allLeague[i]++;
+					teamAwards.allLeagueTotal++;
+				}
+			}
+		}
+
+		if (a.allDefensive) {
+			for (let i = 0; i < a.allDefensive.length; i++) {
+				for (const p of a.allDefensive[i].players) {
+					if (p.tid === tid) {
+						teamAwards.allDefense[i]++;
+						teamAwards.allDefenseTotal++;
+					}
+				}
+			}
+		}
+	}
+
+	for (const allStars of allAllStars) {
+		for (const row of [
+			...allStars.remaining,
+			...allStars.teams[0],
+			...allStars.teams[1],
+		]) {
+			if (row.tid === tid) {
+				teamAwards.allStar += 1;
+			}
+		}
+
+		if (allStars.mvp && allStars.mvp.tid === tid) {
+			teamAwards.allStarMVP += 1;
+		}
+	}
+
+	return teamAwards;
+};
+
 const getTeamRecord = (
 	t: TeamFiltered<
 		["tid", "cid", "did", "abbrev", "region", "name"],
@@ -16,7 +147,10 @@ const getTeamRecord = (
 		undefined
 	>,
 	awards: any[],
+	allStars: AllStars[],
 ) => {
+	const teamAwards = tallyAwards(t.tid, awards, allStars);
+
 	let totalWon = 0;
 	let totalLost = 0;
 	let playoffAppearances = 0;
@@ -70,154 +204,21 @@ const getTeamRecord = (
 		championships,
 		lastChampionship,
 		finals,
-		mvp: awards[t.tid] ? awards[t.tid].mvp : 0,
-		dpoy: awards[t.tid] ? awards[t.tid].dpoy : 0,
-		smoy: awards[t.tid] ? awards[t.tid].smoy : 0,
-		mip: awards[t.tid] ? awards[t.tid].mip : 0,
-		roy: awards[t.tid] ? awards[t.tid].roy : 0,
-		oroy: awards[t.tid] ? awards[t.tid].oroy : 0,
-		droy: awards[t.tid] ? awards[t.tid].droy : 0,
-		bestRecord: awards[t.tid] ? awards[t.tid].bestRecord : 0,
-		bestRecordConf: awards[t.tid] ? awards[t.tid].bestRecordConf : 0,
-		allRookie: awards[t.tid] ? awards[t.tid].allRookie : 0,
-		allLeague: awards[t.tid] ? awards[t.tid].allLeagueTotal : 0,
-		allDefense: awards[t.tid] ? awards[t.tid].allDefenseTotal : 0,
-		allStar: awards[t.tid] ? awards[t.tid].allStar : 0,
-		allStarMVP: awards[t.tid] ? awards[t.tid].allStarMVP : 0,
+		mvp: teamAwards.mvp,
+		dpoy: teamAwards.dpoy,
+		smoy: teamAwards.smoy,
+		mip: teamAwards.mip,
+		roy: teamAwards.roy,
+		oroy: teamAwards.oroy,
+		droy: teamAwards.droy,
+		bestRecord: teamAwards.bestRecord,
+		bestRecordConf: teamAwards.bestRecordConf,
+		allRookie: teamAwards.allRookie,
+		allLeague: teamAwards.allLeagueTotal,
+		allDefense: teamAwards.allDefenseTotal,
+		allStar: teamAwards.allStar,
+		allStarMVP: teamAwards.allStarMVP,
 	};
-};
-
-const tallyAwards = (awards: any[], allAllStars: AllStars[]) => {
-	const teams = range(g.get("numTeams")).map(() => {
-		return {
-			mvp: 0,
-			dpoy: 0,
-			smoy: 0,
-			mip: 0,
-			roy: 0,
-			oroy: 0,
-			droy: 0,
-			allLeague: [0, 0, 0],
-			allLeagueTotal: 0,
-			allDefense: [0, 0, 0],
-			allDefenseTotal: 0,
-			allRookie: 0,
-			allStar: 0,
-			allStarMVP: 0,
-			bestRecord: 0,
-			bestRecordConf: 0,
-		};
-	});
-
-	for (const a of awards) {
-		if (!a) {
-			continue;
-		}
-
-		if (teams[a.mvp.tid]) {
-			teams[a.mvp.tid].mvp++;
-		}
-
-		if (teams[a.dpoy.tid]) {
-			teams[a.dpoy.tid].dpoy++;
-		}
-
-		if (a.smoy && teams[a.smoy.tid]) {
-			teams[a.smoy.tid].smoy++;
-		}
-
-		if (a.mip && teams[a.mip.tid]) {
-			teams[a.mip.tid].mip++;
-		}
-
-		if (a.roy && teams[a.roy.tid]) {
-			teams[a.roy.tid].roy++;
-		}
-
-		if (a.oroy && teams[a.oroy.tid]) {
-			teams[a.oroy.tid].oroy++;
-		}
-
-		if (a.droy && teams[a.droy.tid]) {
-			teams[a.droy.tid].droy++;
-		}
-
-		if (a.bre && a.brw) {
-			// For old league files, this format is obsolete now
-			if (teams[a.bre.tid]) {
-				teams[a.bre.tid].bestRecordConf++;
-			}
-
-			if (teams[a.brw.tid]) {
-				teams[a.brw.tid].bestRecordConf++;
-			}
-
-			if (a.bre.won >= a.brw.won) {
-				if (teams[a.bre.tid]) {
-					teams[a.bre.tid].bestRecord++;
-				}
-			} else {
-				// eslint-disable-next-line no-lonely-if
-				if (teams[a.brw.tid]) {
-					teams[a.brw.tid].bestRecord++;
-				}
-			}
-		} else {
-			for (const t of a.bestRecordConfs) {
-				if (teams[t.tid]) {
-					teams[t.tid].bestRecordConf++;
-				}
-			}
-
-			if (teams[a.bestRecord.tid]) {
-				teams[a.bestRecord.tid].bestRecord++;
-			}
-
-			for (const t of a.allRookie) {
-				if (t && teams[t.tid]) {
-					teams[t.tid].allRookie++;
-				}
-			}
-		}
-
-		for (let i = 0; i < a.allLeague.length; i++) {
-			for (const p of a.allLeague[i].players) {
-				// https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
-				if (teams[p.tid]) {
-					teams[p.tid].allLeague[i]++;
-					teams[p.tid].allLeagueTotal++;
-				}
-			}
-		}
-
-		if (a.allDefensive) {
-			for (let i = 0; i < a.allDefensive.length; i++) {
-				for (const p of a.allDefensive[i].players) {
-					// https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
-					if (teams[p.tid]) {
-						teams[p.tid].allDefense[i]++;
-						teams[p.tid].allDefenseTotal++;
-					}
-				}
-			}
-		}
-	}
-
-	for (const allStars of allAllStars) {
-		for (const { tid } of [
-			...allStars.remaining,
-			...allStars.teams[0],
-			...allStars.teams[1],
-		]) {
-			teams[tid].allStar += 1;
-		}
-
-		if (allStars.mvp) {
-			teams[allStars.mvp.tid].allStarMVP += 1;
-		}
-	}
-
-	return teams;
 };
 
 const sumRecordsFor = (
@@ -275,8 +276,7 @@ const updateTeamRecords = async (
 		const awards = await idb.getCopies.awards();
 		const allStars = await idb.getCopies.allStars();
 
-		const awardsPerTeam = tallyAwards(awards, allStars);
-		const teamRecords = teams.map(t => getTeamRecord(t, awardsPerTeam));
+		const teamRecords = teams.map(t => getTeamRecord(t, awards, allStars));
 
 		const seasonCount = teamRecords
 			.map(tr => tr.championships)

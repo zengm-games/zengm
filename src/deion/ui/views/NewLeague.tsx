@@ -873,7 +873,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						<PopText
 							tid={state.tid}
 							teams={displayedTeams}
-							numTeams={displayedTeams.length}
+							numActiveTeams={displayedTeams.length}
 						/>
 					</div>
 

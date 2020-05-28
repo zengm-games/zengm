@@ -143,7 +143,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						entry.rank = j + 1;
 
 						if (stat.startsWith("opp")) {
-							entry.rank = g.get("numTeams") + 1 - entry.rank;
+							entry.rank = teams.length + 1 - entry.rank;
 						}
 					}
 

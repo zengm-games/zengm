@@ -11,7 +11,7 @@ const NewTeam = ({
 	expansion,
 	gameOver,
 	godMode,
-	numTeams,
+	numActiveTeams,
 	phase,
 	teams,
 	userTid,
@@ -138,7 +138,7 @@ const NewTeam = ({
 						);
 					})}
 				</select>
-				<PopText tid={tid} teams={teams} numTeams={numTeams} />
+				<PopText tid={tid} teams={teams} numActiveTeams={numActiveTeams} />
 			</div>
 
 			<button

@@ -19,7 +19,7 @@ export const getStats = async (
 			attrs: ["tid"],
 			seasonAttrs,
 			stats: ["gp", ...stats] as TeamStatAttr[],
-			season: season,
+			season,
 			tid,
 			playoffs,
 			regularSeason: !playoffs,

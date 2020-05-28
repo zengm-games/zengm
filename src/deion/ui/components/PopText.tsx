@@ -2,11 +2,11 @@ import PropTypes from "prop-types";
 import React from "react";
 
 const PopText = ({
-	numTeams,
+	numActiveTeams,
 	teams,
 	tid,
 }: {
-	numTeams: number;
+	numActiveTeams: number;
 	teams: {
 		tid: number;
 		pop?: number;
@@ -22,13 +22,13 @@ const PopText = ({
 		const t = teams.find(t2 => t2.tid === tid);
 		if (t) {
 			let size;
-			if (t.popRank <= Math.ceil((3 / 30) * numTeams)) {
+			if (t.popRank <= Math.ceil((3 / 30) * numActiveTeams)) {
 				size = "very large";
-			} else if (t.popRank <= Math.ceil((8 / 30) * numTeams)) {
+			} else if (t.popRank <= Math.ceil((8 / 30) * numActiveTeams)) {
 				size = "large";
-			} else if (t.popRank <= Math.ceil((16 / 30) * numTeams)) {
+			} else if (t.popRank <= Math.ceil((16 / 30) * numActiveTeams)) {
 				size = "normal";
-			} else if (t.popRank <= Math.ceil((24 / 30) * numTeams)) {
+			} else if (t.popRank <= Math.ceil((24 / 30) * numActiveTeams)) {
 				size = "small";
 			} else {
 				size = "very small";

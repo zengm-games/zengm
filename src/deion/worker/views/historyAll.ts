@@ -21,6 +21,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"region",
 				"name",
 			],
+			addDummySeason: true,
 		});
 
 		const awards = await idb.getCopies.awards();

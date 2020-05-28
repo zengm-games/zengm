@@ -426,6 +426,11 @@ async function getCopies<
 	if (tid === undefined) {
 		let teams = await idb.cache.teams.getAll();
 		if (active) {
+			if (season !== undefined && season !== g.get("season")) {
+				throw new Error(
+					"Don't call teamsPlus with active=true for any season other than the current season",
+				);
+			}
 			teams = teams.filter(t => !t.disabled);
 		}
 

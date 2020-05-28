@@ -18,6 +18,7 @@ export const getUpcoming = async ({
 		attrs: ["tid"],
 		seasonAttrs: ["won", "lost", "tied"],
 		season: g.get("season"),
+		active: true,
 	});
 
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [

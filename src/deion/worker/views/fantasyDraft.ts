@@ -9,6 +9,7 @@ const updateFantasyDraft = async (
 	if (updateEvents.includes("firstRun")) {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "abbrev", "region", "name"],
+			active: true,
 		});
 		random.shuffle(teams);
 		return {

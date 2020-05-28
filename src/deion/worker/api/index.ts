@@ -1805,33 +1805,33 @@ const updateTeamInfo = async (
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		const { did } = newTeams[t.tid];
+		const newTeam = newTeams[t.tid];
 
-		if (did !== undefined) {
-			const newDiv = g.get("divs").find(div => div.did === did);
+		if (newTeam.did !== undefined) {
+			const newDiv = g.get("divs").find(div => div.did === newTeam.did);
 			if (newDiv) {
 				t.did = newDiv.did;
 				t.cid = newDiv.cid;
 			}
 		}
 
-		t.region = newTeams[t.tid].region;
-		t.name = newTeams[t.tid].name;
-		t.abbrev = newTeams[t.tid].abbrev;
+		t.region = newTeam.region;
+		t.name = newTeam.name;
+		t.abbrev = newTeam.abbrev;
 
-		if (newTeams[t.tid].hasOwnProperty("imgURL")) {
-			t.imgURL = newTeams[t.tid].imgURL;
+		if (newTeam.hasOwnProperty("imgURL")) {
+			t.imgURL = newTeam.imgURL;
 		}
 
-		t.colors = newTeams[t.tid].colors;
+		t.colors = newTeam.colors;
 
-		t.pop = parseFloat(newTeams[t.tid].pop as string);
-		t.stadiumCapacity = parseInt(newTeams[t.tid].stadiumCapacity as string, 10);
+		t.pop = parseFloat(newTeam.pop as string);
+		t.stadiumCapacity = parseInt(newTeam.stadiumCapacity as string, 10);
 
-		const disableTeam = newTeams[t.tid].disabled && !t.disabled;
-		const enableTeam = !newTeams[t.tid].disabled && t.disabled;
+		const disableTeam = newTeam.disabled && !t.disabled;
+		const enableTeam = !newTeam.disabled && t.disabled;
 
-		t.disabled = !!newTeams[t.tid].disabled;
+		t.disabled = !!newTeam.disabled;
 
 		if (Number.isNaN(t.pop)) {
 			throw new Error("Invalid pop");

@@ -125,6 +125,7 @@ const resetG = () => {
 		teamNamesCache: teams.map(t => t.name),
 		gracePeriodEnd: season + 2,
 		numTeams: teams.length,
+		numActiveTeams: teams.length,
 	});
 };
 

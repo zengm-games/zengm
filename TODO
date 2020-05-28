@@ -10,10 +10,8 @@ end of game playing time situations @gmgameschris
 
 contraction
 - to fix
-  - look for numTeams
   - look for teams\[.*tid\]
-  - maybe get rid of g.numTeams, or at least update it on contraction?
-    - can't get rid, it's just that there's two concepts.. numTeams and numActiveTeams
+    - continue at genOrderNBA
   - input to lotterySort
   - getPayrolls
   - genBaseMoods - might be okay if used correctly

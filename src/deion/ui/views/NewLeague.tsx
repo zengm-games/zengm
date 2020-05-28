@@ -358,7 +358,10 @@ type Action =
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
-	const t = teams[tid];
+	const t = teams.find(t => t.tid === tid);
+	if (!t) {
+		return "";
+	}
 	return `${t.region} ${t.name}`;
 };
 

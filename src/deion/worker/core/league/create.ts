@@ -209,7 +209,7 @@ export const createWithoutSaving = (
 	const newNumGames = league.getValidNumGamesPlayoffSeries(
 		oldNumGames,
 		(gameAttributes as any).numPlayoffRounds,
-		gameAttributes.numTeams,
+		gameAttributes.numActiveTeams,
 	);
 	delete (gameAttributes as any).numPlayoffRounds;
 

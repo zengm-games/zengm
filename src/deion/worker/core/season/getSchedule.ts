@@ -1,5 +1,4 @@
 import { idb } from "../../db";
-import { g } from "../../util";
 import type { ScheduleGame } from "../../../common/types";
 
 /**

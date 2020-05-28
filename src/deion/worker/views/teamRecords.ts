@@ -1,4 +1,3 @@
-import range from "lodash/range";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type {

@@ -70,7 +70,7 @@ const RosterContinuity = ({
 				cols={cols}
 				defaultSort={[0, "desc"]}
 				name="RosterContinuity"
-				pagination
+				pagination={rows.length > 100}
 				rows={rows}
 			/>
 		</>

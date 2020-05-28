@@ -1,7 +1,7 @@
 import assert from "assert";
 import testHelpers from "../../../../deion/test/helpers";
 import newSchedule from "./newSchedule";
-import { g, helpers } from "../../../../deion/worker/util";
+import { helpers } from "../../../../deion/worker/util";
 
 describe("football/worker/core/season/newSchedule", () => {
 	let defaultTeams: {

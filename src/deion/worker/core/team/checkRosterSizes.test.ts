@@ -3,7 +3,7 @@ import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type {
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
@@ -23,7 +23,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		const players: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 
 		for (const tidString of Object.keys(info)) {
-			const tid = parseInt(tidString, 10);
+			const tid = parseInt(tidString);
 
 			for (let i = 0; i < info[tidString]; i++) {
 				const p = player.generate(tid, 30, 2017, true, 15.5);
@@ -36,8 +36,15 @@ describe("worker/core/team/checkRosterSizes", () => {
 			}
 		}
 
+		const numTeams = Object.keys(Object.keys(info))
+			.map(tid => parseInt(tid))
+			.filter(tid => tid >= 0).length;
+		const teamsDefault = helpers.getTeamsDefault();
+		const teams = teamsDefault.slice(0, numTeams).map(team.generate);
+
 		await testHelpers.resetCache({
 			players,
+			teams,
 		});
 	};
 

@@ -198,10 +198,7 @@ const genOrder = async (
 	for (const dp of draftPicks) {
 		const tid = dp.originalTid; // Initialize to an array
 
-		if (
-			draftPicksIndexed.length < tid ||
-			draftPicksIndexed[tid] === undefined
-		) {
+		if (draftPicksIndexed[tid] === undefined) {
 			draftPicksIndexed[tid] = [];
 		}
 

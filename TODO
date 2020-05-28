@@ -40,9 +40,6 @@ contraction
 
 contraction as a scheduled event
 - handle case where it's the user's team
-- expansionDraft can be of a disabled team
-  - include tid in expansionDraft, upsert
-  - notification message
 - in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draft, increment all tids that are beyond numTeams in future scheduledEvents.
 
 list teams alphabetically on Manage Team
@@ -56,6 +53,10 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
   - Best Progs - age of increase
+
+when manually retiring a player in god mode, check HoF eligibility
+
+when editing contract in God Mode, make sure p.salaries is updated correctly
 
 total stats, for traded players
 - player stats table

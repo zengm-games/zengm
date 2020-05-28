@@ -132,7 +132,7 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 		),
 	);
 
-	// Rewrite tids, to remove gaps in initialTeams
+	// Rewrite tids, to remove gaps in initialTeams caused by contractions prior to `season`
 	const tidOverrides: Record<number, number> = {};
 	for (let tid = 0; tid < initialTeams.length; tid++) {
 		const t = initialTeams[tid];
@@ -145,7 +145,6 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 		tidOverrides[t.tid] = tid;
 		t.tid = tid;
 	}
-	console.log(JSON.stringify(tidOverrides, null, 2));
 	let maxSeenTid = Math.max(...Object.values(tidOverrides));
 	teamEvents = teamEvents.map(event => {
 		if (event.type === "teamInfo" || event.type === "contraction") {
@@ -197,20 +196,6 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 
 		return event;
 	});
-
-	console.log(tidOverrides);
-	for (const t of initialTeams) {
-		console.log(`${t.tid} ${t.region} ${t.name}`);
-	}
-	for (const event of teamEvents) {
-		if (event.type === "expansionDraft") {
-			for (const t of event.info.teams) {
-				console.log(`EXPAND ${event.season} ${t.tid} ${t.region} ${t.name}`);
-			}
-		} else if (event.type === "contraction") {
-			console.log(`CONTRACT ${event.season} ${event.info.tid}`);
-		}
-	}
 
 	return { teamEvents, initialTeams };
 };

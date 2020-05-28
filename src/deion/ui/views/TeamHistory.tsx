@@ -54,14 +54,17 @@ const TeamHistory = ({
 			newName = h.name;
 		}
 
+		// If a team was inactive for some number of seasons, add some vertical space in the gap
+		const gap = i > 0 && h.season + 1 < history[i - 1].season;
+
 		return (
-			<React.Fragment key={h.season}>
+			<div key={h.season} className={gap && !newName ? "mt-2" : undefined}>
 				{newName ? (
 					<h4 className={i > 0 ? "mt-2" : undefined}>{newName}</h4>
 				) : null}
 				{recordAndPlayoffs}
 				<br />
-			</React.Fragment>
+			</div>
 		);
 	});
 

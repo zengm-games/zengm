@@ -23,7 +23,7 @@ const getProcessedGames = async (
 	if (abbrev === "special") {
 		tid = -1;
 	} else {
-		tid = g.get("teamAbbrevsCache").indexOf(abbrev);
+		tid = g.get("teamInfoCache").findIndex(t => t.abbrev === abbrev);
 
 		if (tid < 0) {
 			throw new Error(`Invalid abbrev: "${abbrev}"`);

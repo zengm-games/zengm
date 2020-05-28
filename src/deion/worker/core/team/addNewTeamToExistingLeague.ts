@@ -42,10 +42,16 @@ const addNewTeamToExistingLeague = async (
 	await league.setGameAttributes({
 		numActiveTeams: g.get("numActiveTeams") + 1,
 		numTeams: g.get("numTeams") + 1,
-		teamAbbrevsCache: [...g.get("teamAbbrevsCache"), t.abbrev],
-		teamRegionsCache: [...g.get("teamRegionsCache"), t.region],
-		teamNamesCache: [...g.get("teamNamesCache"), t.name],
-		teamImgURLsCache: [...g.get("teamImgURLsCache"), t.imgURL],
+		teamInfoCache: [
+			...g.get("teamInfoCache"),
+			{
+				abbrev: t.abbrev,
+				disabled: false,
+				imgURL: t.imgURL,
+				name: t.name,
+				region: t.region,
+			},
+		],
 	});
 
 	await draft.createTeamPicks(t.tid);

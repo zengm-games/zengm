@@ -1,6 +1,5 @@
-import range from "lodash/range";
 import getPayroll from "./getPayroll";
-import { g } from "../../util";
+import { idb } from "../../db";
 
 /**
  * Get the total current payroll for every team team.
@@ -8,8 +7,13 @@ import { g } from "../../util";
  * @memberOf core.team
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
-const getPayrolls = (): Promise<number[]> => {
-	return Promise.all(range(g.get("numTeams")).map(tid => getPayroll(tid)));
+const getPayrolls = async () => {
+	const payrolls: Record<number, number | undefined> = {};
+	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+	for (const t of teams) {
+		payrolls[t.tid] = await getPayroll(t.tid);
+	}
+	return payrolls;
 };
 
 export default getPayrolls;

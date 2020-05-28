@@ -12,8 +12,8 @@ export const genView = (type: "college" | "country") => {
 			customMenu: frivolitiesMenu,
 		});
 
-		const { teamAbbrevsCache } = useLocalShallow(state2 => ({
-			teamAbbrevsCache: state2.teamAbbrevsCache,
+		const { teamInfoCache } = useLocalShallow(state2 => ({
+			teamInfoCache: state2.teamInfoCache,
 		}));
 
 		const superCols = [
@@ -47,7 +47,7 @@ export const genView = (type: "college" | "country") => {
 		const rows = infos.map(c => {
 			const p = c.p;
 
-			const abbrev = teamAbbrevsCache[p.legacyTid];
+			const abbrev = teamInfoCache[p.legacyTid].abbrev;
 
 			return {
 				key: c.name,

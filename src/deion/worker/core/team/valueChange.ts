@@ -22,7 +22,7 @@ type Asset = {
 
 let prevValueChangeKey: number | undefined;
 let cache: {
-	estPicks: number[];
+	estPicks: Record<number, number | undefined>;
 	estValues: TradePickValues;
 	gp: number;
 };
@@ -123,7 +123,7 @@ const getPicks = async ({
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = cache.estPicks[dp.originalTid];
+				estPick = cache.estPicks[dp.originalTid] || g.get("numActiveTeams") / 2;
 
 				// For future draft picks, add some uncertainty. Weighted average of estPicks and numTeams/2
 				const seasons = season - g.get("season");
@@ -192,7 +192,7 @@ const getPicks = async ({
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = cache.estPicks[dp.originalTid];
+				estPick = cache.estPicks[dp.originalTid] || g.get("numActiveTeams") / 2;
 
 				// For future draft picks, add some uncertainty
 				estPick = Math.round(
@@ -388,7 +388,9 @@ const sumValues = (
 		// Really bad players will just get no PT
 		if (playerValue < 0) {
 			playerValue = 0;
-		} //console.log([playerValue, contractValue]);
+		}
+
+		//console.log([playerValue, contractValue]);
 
 		const value = playerValue + 0.5 * contractValue;
 
@@ -437,20 +439,19 @@ const sumContracts = (
 };
 
 const refreshCache = async () => {
-	// Estimate the order of the picks by team
+	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+
 	const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
 		[[g.get("season") - 1], [g.get("season"), "Z"]],
 	);
 
-	// This part needs to be run every time so that gpAvg is available
-	const wps: number[] = []; // Contains estimated winning percentages for all teams by the end of the season
-
 	let gp = 0;
 
-	for (let tid2 = 0; tid2 < g.get("numTeams"); tid2++) {
+	// Estimate the order of the picks by team
+	const wps = teams.map(t => {
 		const teamSeasons = allTeamSeasons.filter(
-			teamSeason => teamSeason.tid === tid2,
+			teamSeason => teamSeason.tid === t.tid,
 		);
 		const s = teamSeasons.length;
 		let rCurrent;
@@ -473,12 +474,12 @@ const refreshCache = async () => {
 			} else {
 				// Fix for new leagues - don't base this on record until we have some games played, and don't let the user's picks be overvalued
 				rCurrent =
-					tid2 === g.get("userTid")
+					t.tid === g.get("userTid")
 						? [g.get("numGames"), 0]
 						: [0, g.get("numGames")];
 			}
 
-			if (tid2 === g.get("userTid")) {
+			if (t.tid === g.get("userTid")) {
 				rLast = [
 					Math.round(0.6 * g.get("numGames")),
 					Math.round(0.4 * g.get("numGames")),
@@ -502,20 +503,27 @@ const refreshCache = async () => {
 		const halfSeason = Math.round(0.5 * g.get("numGames"));
 
 		if (gp >= halfSeason) {
-			wps.push(rCurrent[0] / gp);
-		} else if (gp > 0) {
-			wps.push(
-				((gp / halfSeason) * rCurrent[0]) / gp +
-					(((halfSeason - gp) / halfSeason) * rLast[0]) / g.get("numGames"),
-			);
-		} else {
-			wps.push(rLast[0] / g.get("numGames"));
+			return rCurrent[0] / gp;
 		}
-	}
+		if (gp > 0) {
+			return (
+				((gp / halfSeason) * rCurrent[0]) / gp +
+				(((halfSeason - gp) / halfSeason) * rLast[0]) / g.get("numGames")
+			);
+		}
+		return rLast[0] / g.get("numGames");
+	});
 
 	// Get rank order of wps http://stackoverflow.com/a/14834599/786644
 	const sorted = wps.slice().sort((a, b) => a - b);
-	const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
+
+	// For each team, what is their estimated draft position?
+	const estPicks: Record<number, number | undefined> = {};
+	for (let i = 0; i < teams.length; i++) {
+		const wp = wps[i];
+		const rank = sorted.indexOf(wp) + 1;
+		estPicks[teams[i].tid] = rank;
+	}
 
 	return {
 		estPicks,

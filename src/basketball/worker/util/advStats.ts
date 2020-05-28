@@ -1,15 +1,59 @@
 import { PHASE, helpers } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
-import { g } from "../../../deion/worker/util"; // http://www.basketball-reference.com/about/per.html
+import { g } from "../../../deion/worker/util";
+import type { TeamFiltered } from "../../../deion/common/types";
 
-const calculatePER = (players: any[], teams: any[], league: any) => {
-	for (const t of teams) {
-		t.stats.paceAdj = league.pace / t.stats.pace; // Handle divide by 0 error
+type Team = TeamFiltered<
+	["tid"],
+	undefined,
+	[
+		"gp",
+		"ft",
+		"pf",
+		"ast",
+		"fg",
+		"pts",
+		"fga",
+		"orb",
+		"tov",
+		"fta",
+		"trb",
+		"oppPts",
+		"pace",
+		"min",
+		"oppFga",
+		"oppTpa",
+		"drb",
+		"oppOrb",
+		"oppDrb",
+		"oppFta",
+		"oppFg",
+		"oppTov",
+		"oppTrb",
+		"blk",
+		"drtg",
+		"oppFg",
+		"oppFt",
+		"stl",
+		"tp",
+		"poss",
+	],
+	number
+>;
 
-		if (Number.isNaN(t.stats.paceAdj)) {
-			t.stats.paceAdj = 1;
-		}
-	}
+// http://www.basketball-reference.com/about/per.html
+const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
+	const teams = teamsInput.map(t => {
+		const paceAdj = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
+
+		return {
+			...t,
+			stats: {
+				...t.stats,
+				paceAdj,
+			},
+		};
+	});
 
 	const aPER: number[] = [];
 	const mins: number[] = [];
@@ -101,7 +145,7 @@ const calculatePER = (players: any[], teams: any[], league: any) => {
 };
 
 // https://www.basketball-reference.com/about/glossary.html
-const calculatePercentages = (players: any[], teams: any[]) => {
+const calculatePercentages = (players: any[], teams: Team[]) => {
 	const astp: number[] = [];
 	const blkp: number[] = [];
 	const drbp: number[] = [];
@@ -189,7 +233,7 @@ const calculatePercentages = (players: any[], teams: any[]) => {
 };
 
 // https://www.basketball-reference.com/about/ratings.html
-const calculateRatings = (players: any[], teams: any[], league: any) => {
+const calculateRatings = (players: any[], teams: Team[], league: any) => {
 	const drtg: number[] = [];
 	const dws: number[] = [];
 	const ortg: number[] = [];

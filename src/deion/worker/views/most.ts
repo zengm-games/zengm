@@ -338,7 +338,7 @@ const updatePlayers = async (
 
 						// Somehow propagate these through
 						maxTid = parseInt(tid);
-						maxAbbrev = g.get("teamAbbrevsCache")[maxTid];
+						maxAbbrev = g.get("teamInfoCache")[maxTid].abbrev;
 					}
 				}
 

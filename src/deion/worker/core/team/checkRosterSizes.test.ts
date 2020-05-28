@@ -18,7 +18,6 @@ describe("worker/core/team/checkRosterSizes", () => {
 	});
 
 	// resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and	// 1 free agent with a minimum contract.
-
 	const resetCacheWithPlayers = async (info: { [key: string]: number }) => {
 		const players: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
 

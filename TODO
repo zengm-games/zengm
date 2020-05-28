@@ -9,14 +9,6 @@ playoff upsets
 end of game playing time situations @gmgameschris
 
 contraction
-- to fix
-  - getPayrolls
-  - genBaseMoods - might be okay if used correctly
-    - same with estPicks from refreshCache in valueChange
-  - football advStats - indexing arrays with tid
-  - disabled teams still making draft picks and signing free agents
-- numActiveTeams
-  - update whenever numTeams is updated or disabled is set
 - UI to change in Manage Teams
   - only allow in certain phases
     - PRESEASON
@@ -34,7 +26,9 @@ contraction
 - team*Cache options
   - leave all there
   - turn to object (or array with holes) and only active
-  - turn into teamsCache, and include "disabled" as one of the properties
+  - turn into teamInfoCache, and include "disabled" as one of the properties
+    - how to keep updated? old ones were through updateGameAttributes
+      - maybe kep doing it this way, and have teamInfoCache in worker too
 - when this is true
   - don't create new teamSeason row for this team
   - don't include most places that loop over all teams
@@ -42,16 +36,20 @@ contraction
   - roster
   - basketball+football newSchedule - make unit tests work without tid/cid/did starting at 0
   - trade between AI teams
+  - luxury tax and min payroll limit payouts/penalties
 - objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
   - add to mergeByPk
 - get rid of "Remove Last Team" feature
   - maybe put explanation of "Status" there, or at least mention it
 - football
+  - av
 
 contraction as a scheduled event
 - handle case where it's the user's team
 
 list teams alphabetically on Manage Team
+
+https://web.dev/maskable-icon-audit/?utm_source=lighthouse&utm_medium=lr
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/

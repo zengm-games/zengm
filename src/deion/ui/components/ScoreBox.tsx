@@ -66,18 +66,12 @@ const ScoreBox = ({
 	const {
 		homeCourtAdvantage,
 		season,
-		teamAbbrevsCache,
-		teamImgURLsCache,
-		teamNamesCache,
-		teamRegionsCache,
+		teamInfoCache,
 		userTid,
 	} = useLocalShallow(state => ({
 		homeCourtAdvantage: state.homeCourtAdvantage,
 		season: state.season,
-		teamAbbrevsCache: state.teamAbbrevsCache,
-		teamImgURLsCache: state.teamImgURLsCache,
-		teamNamesCache: state.teamNamesCache,
-		teamRegionsCache: state.teamRegionsCache,
+		teamInfoCache: state.teamInfoCache,
 		userTid: state.userTid,
 	}));
 
@@ -225,7 +219,7 @@ const ScoreBox = ({
 								};
 							}
 
-							const imgURL = teamImgURLsCache[t.tid];
+							const imgURL = teamInfoCache[t.tid].imgURL;
 
 							let teamName;
 							let rosterURL;
@@ -236,11 +230,13 @@ const ScoreBox = ({
 								rosterURL = helpers.leagueUrl(["all_star_history"]);
 							} else {
 								teamName = small
-									? teamAbbrevsCache[t.tid]
-									: `${teamRegionsCache[t.tid]} ${teamNamesCache[t.tid]}`;
+									? teamInfoCache[t.tid].abbrev
+									: `${teamInfoCache[t.tid].region} ${
+											teamInfoCache[t.tid].name
+									  }`;
 								rosterURL = helpers.leagueUrl([
 									"roster",
-									teamAbbrevsCache[t.tid],
+									`${teamInfoCache[t.tid].abbrev}_${t.tid}`,
 								]);
 							}
 
@@ -291,7 +287,7 @@ const ScoreBox = ({
 													"game_log",
 													allStarGame
 														? "special"
-														: `${teamAbbrevsCache[t.tid]}_${t.tid}`,
+														: `${teamInfoCache[t.tid].abbrev}_${t.tid}`,
 													gameSeason,
 													game.gid,
 												])}

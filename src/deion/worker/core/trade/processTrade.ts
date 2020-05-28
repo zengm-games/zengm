@@ -95,15 +95,17 @@ const processTrade = async (
 		type: "trade",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamAbbrevsCache")[tids[0]],
+			g.get("teamInfoCache")[tids[0]].abbrev,
 			g.get("season"),
-		])}">${g.get("teamNamesCache")[tids[0]]}</a> traded ${formatAssetsEventLog(
+		])}">${
+			g.get("teamInfoCache")[tids[0]].name
+		}</a> traded ${formatAssetsEventLog(
 			tradeSummary.teams[0],
 		)} to the <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamAbbrevsCache")[tids[1]],
+			g.get("teamInfoCache")[tids[1]].abbrev,
 			g.get("season"),
-		])}">${g.get("teamNamesCache")[tids[1]]}</a> for ${formatAssetsEventLog(
+		])}">${g.get("teamInfoCache")[tids[1]].name}</a> for ${formatAssetsEventLog(
 			tradeSummary.teams[1],
 		)}.`,
 		showNotification: false,

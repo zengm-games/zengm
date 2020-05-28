@@ -92,7 +92,7 @@ async function updateSeasons(
 		seasons.reverse();
 
 		return {
-			abbrevs: g.get("teamAbbrevsCache"),
+			abbrevs: g.get("teamInfoCache").map(t => t.abbrev),
 			season: g.get("season"),
 			seasons,
 			userTid: g.get("userTid"),

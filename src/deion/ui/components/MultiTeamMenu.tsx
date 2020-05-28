@@ -16,8 +16,7 @@ const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 
 const MultiTeamMenu = () => {
 	const state = useLocalShallow(state2 => ({
-		teamNamesCache: state2.teamNamesCache,
-		teamRegionsCache: state2.teamRegionsCache,
+		teamInfoCache: state2.teamInfoCache,
 		userTid: state2.userTid,
 		userTids: state2.userTids,
 	}));
@@ -29,8 +28,8 @@ const MultiTeamMenu = () => {
 
 	const teams = orderBy(
 		state.userTids.map(tid => ({
-			region: state.teamRegionsCache[tid],
-			name: state.teamNamesCache[tid],
+			region: state.teamInfoCache[tid].region,
+			name: state.teamInfoCache[tid].name,
 			tid,
 		})),
 		["region", "name", "tid"],

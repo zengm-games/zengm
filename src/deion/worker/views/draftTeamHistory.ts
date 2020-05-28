@@ -42,7 +42,7 @@ const updateDraftTeamHistory = async (
 		};
 	});
 	const abbrev = inputs.abbrev;
-	const userAbbrev = g.get("teamAbbrevsCache")[g.get("userTid")];
+	const userAbbrev = g.get("teamInfoCache")[g.get("userTid")].abbrev;
 	return {
 		abbrev,
 		draftType: g.get("draftType"),

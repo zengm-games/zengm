@@ -19,13 +19,13 @@ export const validateAbbrev = (
 	if (abbrev !== undefined) {
 		{
 			const int = parseInt(abbrev);
-			if (!Number.isNaN(int) && int < g.get("teamAbbrevsCache").length) {
-				return [int, g.get("teamAbbrevsCache")[int]];
+			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
+				return [int, g.get("teamInfoCache")[int].abbrev];
 			}
 		}
 
 		{
-			const tid = g.get("teamAbbrevsCache").indexOf(abbrev);
+			const tid = g.get("teamInfoCache").findIndex(t => t.abbrev === abbrev);
 			if (tid >= 0) {
 				return [tid, abbrev];
 			}
@@ -34,8 +34,8 @@ export const validateAbbrev = (
 		{
 			const parts = abbrev.split("_");
 			const int = parseInt(parts[parts.length - 1]);
-			if (!Number.isNaN(int) && int < g.get("teamAbbrevsCache").length) {
-				return [int, g.get("teamAbbrevsCache")[int]];
+			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
+				return [int, g.get("teamInfoCache")[int].abbrev];
 			}
 		}
 	}
@@ -45,7 +45,7 @@ export const validateAbbrev = (
 	}
 
 	const tid = g.get("userTid");
-	abbrev = g.get("teamAbbrevsCache")[tid];
+	abbrev = g.get("teamInfoCache")[tid].abbrev;
 	if (abbrev === undefined) {
 		abbrev = "???";
 	}
@@ -335,7 +335,7 @@ const playerFeats = (params: Params) => {
 
 	if (
 		params.abbrev !== undefined &&
-		g.get("teamAbbrevsCache").includes(params.abbrev)
+		g.get("teamInfoCache").some(t => t.abbrev === params.abbrev)
 	) {
 		abbrev = params.abbrev;
 	} else {
@@ -383,7 +383,7 @@ const playerStats = (params: Params) => {
 
 	if (
 		params.abbrev !== undefined &&
-		g.get("teamAbbrevsCache").includes(params.abbrev)
+		g.get("teamInfoCache").some(t => t.abbrev === params.abbrev)
 	) {
 		abbrev = params.abbrev;
 	} else if (params.abbrev && params.abbrev === "watch") {
@@ -504,7 +504,7 @@ const transactions = (params: Params) => {
 		abbrev = "all";
 	} else {
 		tid = g.get("userTid");
-		abbrev = g.get("teamAbbrevsCache")[tid];
+		abbrev = g.get("teamInfoCache")[tid].abbrev;
 	}
 
 	let season: number | "all";

@@ -28,8 +28,8 @@ const checkRosterSizes = async (): Promise<string | void> => {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
 				} else {
-					userTeamSizeError = `The ${g.get("teamRegionsCache")[tid]} ${
-						g.get("teamNamesCache")[tid]
+					userTeamSizeError = `The ${g.get("teamInfoCache")[tid].region} ${
+						g.get("teamInfoCache")[tid].name
 					} have `;
 				}
 
@@ -53,8 +53,8 @@ const checkRosterSizes = async (): Promise<string | void> => {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
 				} else {
-					userTeamSizeError = `The ${g.get("teamRegionsCache")[tid]} ${
-						g.get("teamNamesCache")[tid]
+					userTeamSizeError = `The ${g.get("teamInfoCache")[tid].region} ${
+						g.get("teamInfoCache")[tid].name
 					} have `;
 				}
 

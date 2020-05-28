@@ -10,8 +10,8 @@ const switchTo = async (tid: number, tids?: number[]) => {
 		gracePeriodEnd: g.get("season") + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
 	});
 	league.updateMetaNameRegion(
-		g.get("teamNamesCache")[g.get("userTid")],
-		g.get("teamRegionsCache")[g.get("userTid")],
+		g.get("teamInfoCache")[g.get("userTid")].name,
+		g.get("teamInfoCache")[g.get("userTid")].region,
 	);
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsByTidSeason",

@@ -1,108 +1,22 @@
 import assert from "assert";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import { validateAbbrev, validateSeason } from "./processInputs";
 
 describe("worker/api/processInputs", () => {
 	beforeAll(() => {
 		g.setWithoutSavingToDB("userTid", 4);
 		g.setWithoutSavingToDB("season", 2009);
-		g.setWithoutSavingToDB("teamAbbrevsCache", [
-			"ATL",
-			"BAL",
-			"BOS",
-			"CHI",
-			"CIN",
-			"CLE",
-			"DAL",
-			"DEN",
-			"DET",
-			"HOU",
-			"LV",
-			"LA",
-			"MXC",
-			"MIA",
-			"MIN",
-			"MON",
-			"NYC",
-			"PHI",
-			"PHO",
-			"PIT",
-			"POR",
-			"SAC",
-			"SD",
-			"SF",
-			"SEA",
-			"STL",
-			"TPA",
-			"TOR",
-			"VAN",
-			"WAS",
-		]);
-		g.setWithoutSavingToDB("teamRegionsCache", [
-			"Atlanta",
-			"Baltimore",
-			"Boston",
-			"Chicago",
-			"Cincinnati",
-			"Cleveland",
-			"Dallas",
-			"Denver",
-			"Detroit",
-			"Houston",
-			"Las Vegas",
-			"Los Angeles",
-			"Mexico City",
-			"Miami",
-			"Minneapolis",
-			"Montreal",
-			"New York",
-			"Philadelphia",
-			"Phoenix",
-			"Pittsburgh",
-			"Portland",
-			"Sacramento",
-			"San Diego",
-			"San Francisco",
-			"Seattle",
-			"St. Louis",
-			"Tampa",
-			"Toronto",
-			"Vancouver",
-			"Washington",
-		]);
-		g.setWithoutSavingToDB("teamNamesCache", [
-			"Gold Club",
-			"Crabs",
-			"Massacre",
-			"Whirlwinds",
-			"Riots",
-			"Curses",
-			"Snipers",
-			"High",
-			"Muscle",
-			"Apollos",
-			"Blue Chips",
-			"Earthquakes",
-			"Aztecs",
-			"Cyclones",
-			"Blizzard",
-			"Mounties",
-			"Bankers",
-			"Cheesesteaks",
-			"Vultures",
-			"Rivers",
-			"Roses",
-			"Gold Rush",
-			"Pandas",
-			"Venture Capitalists",
-			"Symphony",
-			"Spirits",
-			"Turtles",
-			"Beavers",
-			"Whalers",
-			"Monuments",
-		]);
-		g.setWithoutSavingToDB("teamImgURLsCache", []);
+		const teams = helpers.getTeamsDefault();
+		g.setWithoutSavingToDB(
+			"teamInfoCache",
+			teams.map(t => ({
+				abbrev: t.abbrev,
+				disabled: false,
+				imgURL: t.imgURL,
+				name: t.name,
+				region: t.region,
+			})),
+		);
 	});
 
 	// Relies on g.*Cache being populated

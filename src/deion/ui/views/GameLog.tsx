@@ -65,8 +65,8 @@ const GamesList = ({
 	season: number;
 	tid: number;
 }) => {
-	const { teamAbbrevsCache } = useLocalShallow(state => ({
-		teamAbbrevsCache: state.teamAbbrevsCache,
+	const { teamInfoCache } = useLocalShallow(state => ({
+		teamInfoCache: state.teamInfoCache,
 	}));
 
 	if (season < currentSeason && gamesList.games.length === 0) {
@@ -122,7 +122,7 @@ const GamesList = ({
 						const oppAbbrev =
 							abbrev === "special"
 								? "ASG"
-								: teamAbbrevsCache[gm.teams[other].tid];
+								: teamInfoCache[gm.teams[other].tid].abbrev;
 
 						return (
 							<tr

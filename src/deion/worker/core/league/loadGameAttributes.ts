@@ -61,12 +61,6 @@ const loadGameAttributes = async () => {
 					),
 				});
 				delete (g as any).numPlayoffRounds;
-			} else if (key === "teamImgURLsCache") {
-				// Because I'm scared to do an IDB upgrade
-				const teams = await idb.cache.teams.getAll();
-				await league.setGameAttributes({
-					teamImgURLsCache: teams.map(t => t.imgURL),
-				});
 			} else {
 				g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
 			}

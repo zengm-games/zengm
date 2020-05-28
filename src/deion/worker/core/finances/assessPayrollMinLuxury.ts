@@ -18,21 +18,21 @@ const assessPayrollMinLuxury = async () => {
 	);
 
 	for (const teamSeason of teamSeasons) {
-		// Store payroll
-		teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid]; // Assess minimum payroll tax and luxury tax
+		const payroll = payrolls[teamSeason.tid];
+		if (payroll === undefined) {
+			throw new Error(`No payroll found for team ${teamSeason.tid}`);
+		}
 
-		if (payrolls[teamSeason.tid] < g.get("minPayroll")) {
-			teamSeason.expenses.minTax.amount =
-				g.get("minPayroll") - payrolls[teamSeason.tid];
+		// Store payroll
+		teamSeason.payrollEndOfSeason = payroll;
+
+		// Assess minimum payroll tax and luxury tax
+		if (payroll < g.get("minPayroll")) {
+			teamSeason.expenses.minTax.amount = g.get("minPayroll") - payroll;
 			teamSeason.cash -= teamSeason.expenses.minTax.amount;
-		} else if (
-			payrolls[teamSeason.tid] > g.get("luxuryPayroll") &&
-			!g.get("hardCap")
-		) {
+		} else if (payroll > g.get("luxuryPayroll") && !g.get("hardCap")) {
 			// Only apply luxury tax if hard cap is disabled!
-			const amount =
-				g.get("luxuryTax") *
-				(payrolls[teamSeason.tid] - g.get("luxuryPayroll"));
+			const amount = g.get("luxuryTax") * (payroll - g.get("luxuryPayroll"));
 			collectedTax += amount;
 			teamSeason.expenses.luxuryTax.amount = amount;
 			teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
@@ -40,13 +40,20 @@ const assessPayrollMinLuxury = async () => {
 	}
 
 	const defaultRank = (g.get("numActiveTeams") + 1) / 2;
-	const payteams = payrolls.filter(x => x <= g.get("salaryCap"));
+	const payteams = Object.values(payrolls).filter(
+		x => x !== undefined && x <= g.get("salaryCap"),
+	);
 
 	if (payteams.length > 0 && collectedTax > 0) {
 		const distribute = (collectedTax * 0.5) / payteams.length;
 
 		for (const teamSeason of teamSeasons) {
-			if (payrolls[teamSeason.tid] <= g.get("salaryCap")) {
+			const payroll = payrolls[teamSeason.tid];
+			if (payroll === undefined) {
+				throw new Error(`No payroll found for team ${teamSeason.tid}`);
+			}
+
+			if (payroll <= g.get("salaryCap")) {
 				teamSeason.revenues.luxuryTaxShare = {
 					amount: distribute,
 					rank: defaultRank,

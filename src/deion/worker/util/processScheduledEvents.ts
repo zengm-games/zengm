@@ -79,10 +79,13 @@ const processTeamInfo = async (
 	}
 
 	await league.setGameAttributes({
-		teamAbbrevsCache: teams.map(t => t.abbrev),
-		teamRegionsCache: teams.map(t => t.region),
-		teamNamesCache: teams.map(t => t.name),
-		teamImgURLsCache: teams.map(t => t.imgURL),
+		teamInfoCache: teams.map(t => ({
+			abbrev: t.abbrev,
+			disabled: t.disabled,
+			imgURL: t.imgURL,
+			name: t.name,
+			region: t.region,
+		})),
 	});
 
 	return eventLogTexts;

@@ -25,13 +25,13 @@ export const setTeamInfo = (
 
 		for (const p of t.players) {
 			const entry = allStars.teams[ind].find(p2 => p2.pid === p.pid);
-			p.abbrev = entry ? g.get("teamAbbrevsCache")[entry.tid] : "";
+			p.abbrev = entry ? g.get("teamInfoCache")[entry.tid].abbrev : "";
 			p.tid = entry ? entry.tid : g.get("userTid");
 		}
 	} else {
-		t.region = g.get("teamRegionsCache")[t.tid];
-		t.name = g.get("teamNamesCache")[t.tid];
-		t.abbrev = g.get("teamAbbrevsCache")[t.tid];
+		t.region = g.get("teamInfoCache")[t.tid].region;
+		t.name = g.get("teamInfoCache")[t.tid].name;
+		t.abbrev = g.get("teamInfoCache")[t.tid].abbrev;
 	}
 };
 
@@ -138,7 +138,7 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
 		abbrev: inputs.abbrev,
 		currentSeason: g.get("season"),
 		season: inputs.season,
-		tid: g.get("teamAbbrevsCache").indexOf(inputs.abbrev),
+		tid: g.get("teamInfoCache").findIndex(t => t.abbrev === inputs.abbrev),
 	};
 };
 

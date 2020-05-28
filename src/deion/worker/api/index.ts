@@ -642,8 +642,8 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 					p.pid,
 					p.name,
 					p.pos,
-					g.get("teamAbbrevsCache")[t.tid],
-					g.get("teamAbbrevsCache")[t2.tid],
+					g.get("teamInfoCache")[t.tid].abbrev,
+					g.get("teamInfoCache")[t2.tid].abbrev,
 					`${t.pts}-${t2.pts}`,
 					t.pts > t2.pts ? "W" : "L",
 					seasons[i],
@@ -1191,18 +1191,7 @@ const removeLastTeam = async (): Promise<void> => {
 	const updatedGameAttributes: any = {
 		numActiveTeams: g.get("numActiveTeams") - 1,
 		numTeams: g.get("numTeams") - 1,
-		teamAbbrevsCache: g
-			.get("teamAbbrevsCache")
-			.slice(0, g.get("teamAbbrevsCache").length - 1),
-		teamRegionsCache: g
-			.get("teamRegionsCache")
-			.slice(0, g.get("teamRegionsCache").length - 1),
-		teamNamesCache: g
-			.get("teamNamesCache")
-			.slice(0, g.get("teamNamesCache").length - 1),
-		teamImgURLsCache: g
-			.get("teamImgURLsCache")
-			.slice(0, g.get("teamImgURLsCache").length - 1),
+		teamInfoCache: g.get("teamInfoCache").slice(0, -1),
 		userTids: g.get("userTids").filter(userTid => userTid !== tid),
 	};
 
@@ -1336,8 +1325,8 @@ const setLocal = async <T extends keyof Local>(key: T, value: Local[T]) => {
 
 		if (g.get("userTids").length === 1) {
 			await league.updateMetaNameRegion(
-				g.get("teamNamesCache")[g.get("userTids")[0]],
-				g.get("teamRegionsCache")[g.get("userTids")[0]],
+				g.get("teamInfoCache")[g.get("userTids")[0]].name,
+				g.get("teamInfoCache")[g.get("userTids")[0]].region,
 			);
 		} else {
 			await league.updateMetaNameRegion("Multi Team Mode", "");
@@ -1657,8 +1646,8 @@ const updateMultiTeamMode = async (gameAttributes: {
 
 	if (gameAttributes.userTids.length === 1) {
 		league.updateMetaNameRegion(
-			g.get("teamNamesCache")[gameAttributes.userTids[0]],
-			g.get("teamRegionsCache")[gameAttributes.userTids[0]],
+			g.get("teamInfoCache")[gameAttributes.userTids[0]].name,
+			g.get("teamInfoCache")[gameAttributes.userTids[0]].region,
 		);
 	} else {
 		league.updateMetaNameRegion("Multi Team Mode", "");
@@ -1925,10 +1914,13 @@ const updateTeamInfo = async (
 		await league.updateMetaNameRegion(userName, userRegion);
 	}
 	await league.setGameAttributes({
-		teamAbbrevsCache: newTeams.map(t => t.abbrev),
-		teamRegionsCache: newTeams.map(t => t.region),
-		teamNamesCache: newTeams.map(t => t.name),
-		teamImgURLsCache: newTeams.map(t => t.imgURL),
+		teamInfoCache: newTeams.map(t => ({
+			abbrev: t.abbrev,
+			disabled: t.disabled,
+			imgURL: t.imgURL,
+			name: t.name,
+			region: t.region,
+		})),
 	});
 };
 

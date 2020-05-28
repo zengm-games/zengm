@@ -56,8 +56,8 @@ const updatePlayers = async (
 		}
 
 		let tid: number | undefined = g
-			.get("teamAbbrevsCache")
-			.indexOf(inputs.abbrev);
+			.get("teamInfoCache")
+			.findIndex(t => t.abbrev === inputs.abbrev);
 
 		if (tid < 0) {
 			tid = undefined;

@@ -161,10 +161,13 @@ export const createWithoutSaving = (
 		season: startingSeason,
 		startingSeason,
 		leagueName,
-		teamAbbrevsCache: teamInfos.map(t => t.abbrev),
-		teamImgURLsCache: teamInfos.map(t => t.imgURL),
-		teamRegionsCache: teamInfos.map(t => t.region),
-		teamNamesCache: teamInfos.map(t => t.name),
+		teamInfoCache: teamInfos.map(t => ({
+			abbrev: t.abbrev,
+			disabled: t.disabled,
+			imgURL: t.imgURL,
+			name: t.name,
+			region: t.region,
+		})),
 		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter(t => !t.disabled).length,
@@ -236,7 +239,7 @@ export const createWithoutSaving = (
 
 	// Needs to be done after g is set
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
-	teams[1].disabled = true;
+	// teams[1].disabled = true;
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
 	let draftPicks: DraftPickWithoutKey[];

@@ -23,7 +23,8 @@ describe("worker/core/finances/assessPayrollMinLuxury", () => {
 			(g.get("luxuryPayroll") + g.get("minPayroll")) / 2;
 		players[2].contract.amount = g.get("minPayroll") - 1;
 
-		const teamsDefault = helpers.getTeamsDefault();
+		const teamsDefault = helpers.getTeamsDefault().slice(0, 3);
+		const teams = teamsDefault.map(team.generate);
 
 		await testHelpers.resetCache({
 			players,
@@ -32,6 +33,7 @@ describe("worker/core/finances/assessPayrollMinLuxury", () => {
 				team.genSeasonRow(teamsDefault[1]),
 				team.genSeasonRow(teamsDefault[2]),
 			],
+			teams,
 		});
 
 		await finances.assessPayrollMinLuxury();

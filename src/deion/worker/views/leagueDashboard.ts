@@ -174,7 +174,7 @@ const updateGames = async (
 	if (updateEvents.includes("firstRun")) {
 		// Load all games in list - would be more efficient to just load NUM_SHOW_COMPLETED
 		const games = await getProcessedGames(
-			g.get("teamAbbrevsCache")[g.get("userTid")],
+			g.get("teamInfoCache")[g.get("userTid")].abbrev,
 			g.get("season"),
 			undefined,
 			true,
@@ -189,7 +189,7 @@ const updateGames = async (
 		const completed = Array.isArray(state.completed) ? state.completed : []; // Partial update of only new games
 
 		const games = await getProcessedGames(
-			g.get("teamAbbrevsCache")[g.get("userTid")],
+			g.get("teamInfoCache")[g.get("userTid")].abbrev,
 			g.get("season"),
 			state.completed,
 			true,
@@ -288,7 +288,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				});
 			} else {
 				leagueLeaders.push({
-					abbrev: g.get("teamAbbrevsCache")[g.get("userTid")],
+					abbrev: g.get("teamInfoCache")[g.get("userTid")].abbrev,
 					name: "",
 					pid: 0,
 					stat,

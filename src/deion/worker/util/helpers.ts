@@ -17,9 +17,9 @@ const augmentSeries = async (
 	});
 
 	const setAll = (obj: PlayoffSeriesTeam) => {
-		obj.abbrev = g.get("teamAbbrevsCache")[obj.tid];
-		obj.region = g.get("teamRegionsCache")[obj.tid];
-		obj.imgURL = g.get("teamImgURLsCache")[obj.tid];
+		obj.abbrev = g.get("teamInfoCache")[obj.tid].abbrev;
+		obj.region = g.get("teamInfoCache")[obj.tid].region;
+		obj.imgURL = g.get("teamInfoCache")[obj.tid].imgURL;
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
@@ -146,11 +146,11 @@ const getAbbrev = (tid: number | string): string => {
 		return "";
 	}
 
-	if (tid >= g.get("teamAbbrevsCache").length) {
+	if (tid >= g.get("teamInfoCache").length) {
 		tid = g.get("userTid");
 	}
 
-	return g.get("teamAbbrevsCache")[tid];
+	return g.get("teamInfoCache")[tid].abbrev;
 };
 
 const leagueUrl = (components: (number | string)[]): string =>
@@ -286,7 +286,7 @@ const pickDesc = (dp: DraftPick): string => {
 	}
 
 	if (dp.tid !== dp.originalTid) {
-		extras.push(`from ${g.get("teamAbbrevsCache")[dp.originalTid]}`);
+		extras.push(`from ${g.get("teamInfoCache")[dp.originalTid].abbrev}`);
 	}
 
 	if (extras.length > 0) {

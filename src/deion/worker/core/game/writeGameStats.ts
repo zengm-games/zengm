@@ -58,9 +58,11 @@ const allStarMVP = async (
 			mvp.name
 		}</a> (<a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamAbbrevsCache")[p.tid],
+			g.get("teamInfoCache")[p.tid].abbrev,
 			g.get("season"),
-		])}">${g.get("teamAbbrevsCache")[p.tid]}</a>) won the All-Star MVP award.`,
+		])}">${
+			g.get("teamInfoCache")[p.tid].abbrev
+		}</a>) won the All-Star MVP award.`,
 	);
 	await saveAwardsByPlayer(
 		[
@@ -244,35 +246,35 @@ const writeGameStats = async (
 			text = `<span style="color: yellow; font-weight: bold; padding-right: 8px">T</span> Your team tied the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					`${g.get("teamAbbrevsCache")[otherTid]}_${otherTid}`,
+					`${g.get("teamInfoCache")[otherTid].abbrev}_${otherTid}`,
 					g.get("season"),
 				],
-			)}">${g.get("teamNamesCache")[otherTid]}`;
+			)}">${g.get("teamInfoCache")[otherTid].name}`;
 		} else if (results.team[tw].id === g.get("userTid")) {
 			text = `<span style="color: green; font-weight: bold; padding-right: 3px">W</span> Your team defeated the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					`${g.get("teamAbbrevsCache")[results.team[tl].id]}_${
+					`${g.get("teamInfoCache")[results.team[tl].abbrev.id]}_${
 						results.team[tl].id
 					}`,
 					g.get("season"),
 				],
-			)}">${g.get("teamNamesCache")[results.team[tl].id]}`;
+			)}">${g.get("teamInfoCache")[results.team[tl].id].name}`;
 		} else {
 			text = `<span style="color: red; font-weight: bold; padding-right: 8px">L</span> Your team lost to the <a href="${helpers.leagueUrl(
 				[
 					"roster",
-					`${g.get("teamAbbrevsCache")[results.team[tw].id]}_${
+					`${g.get("teamInfoCache")[results.team[tw].abbrev.id]}_${
 						results.team[tw].id
 					}`,
 					g.get("season"),
 				],
-			)}">${g.get("teamNamesCache")[results.team[tw].id]}`;
+			)}">${g.get("teamInfoCache")[results.team[tw].id].name}`;
 		}
 
 		text += `</a> <a href="${helpers.leagueUrl([
 			"game_log",
-			`${g.get("teamAbbrevsCache")[g.get("userTid")]}_${g.get("userTid")}`,
+			`${g.get("teamInfoCache")[g.get("userTid")].abbrev}_${g.get("userTid")}`,
 			g.get("season"),
 			results.gid,
 		])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
@@ -358,7 +360,7 @@ const writeGameStats = async (
 		const endPart = allStarGame
 			? `${won ? "win" : "loss"} in the All-Star Game`
 			: `${won ? "win over" : "loss to"} the ${
-					g.get("teamNamesCache")[results.team[indOther].id]
+					g.get("teamInfoCache")[results.team[indOther].id].name
 			  }`;
 		clutchPlay.text += ` in ${
 			results.team[indTeam].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
@@ -366,7 +368,7 @@ const writeGameStats = async (
 			"game_log",
 			allStarGame
 				? "special"
-				: `${g.get("teamAbbrevsCache")[results.team[indTeam].id]}_${
+				: `${g.get("teamInfoCache")[results.team[indTeam].abbrev.id]}_${
 						results.team[indTeam].id
 				  }`,
 			g.get("season"),

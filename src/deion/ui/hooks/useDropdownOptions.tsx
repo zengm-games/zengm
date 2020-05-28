@@ -1,21 +1,18 @@
 import orderBy from "lodash/orderBy";
 import { PHASE } from "../../common";
 import { overrides, useLocalShallow } from "../util";
+import type { LocalStateUI } from "../../common/types";
 
 export const getSortedTeams = ({
-	teamAbbrevsCache,
-	teamRegionsCache,
-	teamNamesCache,
+	teamInfoCache,
 }: {
-	teamAbbrevsCache: string[];
-	teamRegionsCache: string[];
-	teamNamesCache: string[];
+	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
 	const array = orderBy(
-		teamAbbrevsCache.map((abbrev, i) => {
+		teamInfoCache.map(t => {
 			return {
-				abbrev,
-				name: `${teamRegionsCache[i]} ${teamNamesCache[i]}`,
+				abbrev: t.abbrev,
+				name: `${t.region} ${t.name}`,
 			};
 		}),
 		"name",
@@ -117,9 +114,7 @@ const useDropdownOptions = (field: string) => {
 		phase: state2.phase,
 		season: state2.season,
 		startingSeason: state2.startingSeason,
-		teamAbbrevsCache: state2.teamAbbrevsCache,
-		teamNamesCache: state2.teamNamesCache,
-		teamRegionsCache: state2.teamRegionsCache,
+		teamInfoCache: state2.teamInfoCache,
 	}));
 
 	const sortedTeams = getSortedTeams(state);

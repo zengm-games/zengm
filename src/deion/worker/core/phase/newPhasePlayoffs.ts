@@ -30,10 +30,10 @@ const newPhasePlayoffs = async (
 				type: "playoffs",
 				text: `The <a href="${helpers.leagueUrl([
 					"roster",
-					`${g.get("teamAbbrevsCache")[tid]}_${tid}`,
+					`${g.get("teamInfoCache")[tid].abbrev}_${tid}`,
 					g.get("season"),
 				])}">${
-					g.get("teamNamesCache")[tid]
+					g.get("teamInfoCache")[tid].name
 				}</a> made the <a href="${helpers.leagueUrl([
 					"playoffs",
 					g.get("season"),

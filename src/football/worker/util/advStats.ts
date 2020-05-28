@@ -1,53 +1,93 @@
 import { PHASE, helpers } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
+import type { TeamFiltered } from "../../../deion/common/types";
+
+type Team = TeamFiltered<
+	["tid"],
+	undefined,
+	[
+		"ptsPerDrive",
+		"oppPtsPerDrive",
+		"pts",
+		"oppPts",
+		"drives",
+		"pss",
+		"pssYds",
+		"pssTD",
+		"pssInt",
+		"rus",
+		"rusYds",
+		"rec",
+		"recYds",
+	],
+	number
+>;
+
+const TCK_CONSTANT = {
+	DL: 0.6,
+	LB: 0.3,
+	CB: 0,
+	S: 0,
+};
+const DEFENSIVE_POSITIONS = ["DL", "LB", "CB", "S"] as const;
 
 // Approximate Value: https://www.pro-football-reference.com/blog/indexd961.html?page_id=8061
-const calculateAV = (players: any[], teams: any[], league: any) => {
-	const teamOffPts = teams.map(
-		t => (100 * t.stats.ptsPerDrive) / league.ptsPerDrive,
-	);
-	const teamPtsOL = teamOffPts.map(pts => (5 / 11) * pts);
-	const teamPtsSkill = teams.map((t, i) => teamOffPts[i] - teamPtsOL[i]);
-	const teamPtsRus = teams.map(
-		(t, i) =>
-			(teamPtsSkill[i] * 0.22 * t.stats.rusYds) /
-			(t.stats.rusYds + t.stats.recYds),
-	);
-	const teamPtsPss = teams.map(
-		(t, i) => (teamPtsSkill[i] - teamPtsRus[i]) * 0.26,
-	);
-	const teamPtsRec = teams.map(
-		(t, i) => (teamPtsSkill[i] - teamPtsRus[i]) * 0.74,
-	);
-	const teamDefPts = teams.map(t => {
-		if (league.ptsPerDrive === 0) {
-			return 0;
-		}
+const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
+	const teams = teamsInput.map(t => {
+		const offPts =
+			league.ptsPerDrive === 0
+				? 0
+				: (100 * t.stats.ptsPerDrive) / league.ptsPerDrive;
+		const ptsOL = (5 / 11) * offPts;
+		const ptsSkill = offPts - ptsOL;
+		const ptsRus =
+			t.stats.rusYds + t.stats.recYds === 0
+				? 0
+				: (ptsSkill * 0.22 * t.stats.rusYds) /
+				  (t.stats.rusYds + t.stats.recYds);
+		const ptsPss = (ptsSkill - ptsRus) * 0.26;
+		const ptsRec = (ptsSkill - ptsRus) * 0.74;
 
-		const M = t.stats.oppPtsPerDrive / league.ptsPerDrive;
-		return (100 * (1 + 2 * M - M ** 2)) / (2 * M);
+		let defPts = 0;
+		if (league.ptsPerDrive !== 0) {
+			const M = t.stats.oppPtsPerDrive / league.ptsPerDrive;
+			defPts = (100 * (1 + 2 * M - M ** 2)) / (2 * M);
+		}
+		const ptsFront7 = (2 / 3) * defPts;
+		const ptsSecondary = (1 / 3) * defPts;
+
+		return {
+			...t,
+			stats: {
+				...t.stats,
+				ptsOL,
+				ptsRus,
+				ptsPss,
+				ptsRec,
+				ptsFront7,
+				ptsSecondary,
+				individualPtsOL: 0,
+				individualPtsFront7: 0,
+				individualPtsSecondary: 0,
+			},
+		};
 	});
-	const teamPtsFront7 = teamDefPts.map(pts => (2 / 3) * pts);
-	const teamPtsSecondary = teamDefPts.map(pts => (1 / 3) * pts);
-	const tckConstant = {
-		DL: 0.6,
-		LB: 0.3,
-		CB: 0,
-		S: 0,
-	};
-	const defensivePositions = ["DL", "LB", "CB", "S"];
-	const teamIndividualPtsOL = Array(teams.length).fill(0);
-	const teamIndividualPtsFront7 = Array(teams.length).fill(0);
-	const teamIndividualPtsSecondary = Array(teams.length).fill(0);
+
 	const individualPts = players.map(p => {
 		let score = 0;
+
+		const t = teams.find(t => t.tid === p.tid);
+
+		if (t === undefined) {
+			throw new Error("Should never happen");
+		}
 
 		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
 			const posMultiplier = p.ratings.pos === "OL" ? 1.1 : 0.2;
 			score = p.stats.gp + 5 * p.stats.gs * posMultiplier;
-			teamIndividualPtsOL[p.tid] += score;
-		} else if (defensivePositions.includes(p.ratings.pos)) {
+			t.stats.individualPtsOL += score;
+		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
 			score =
 				p.stats.gp +
 				5 * p.stats.gs +
@@ -57,12 +97,12 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-ignore
-				tckConstant[p.ratings.pos] * p.stats.defTck;
+				TCK_CONSTANT[p.ratings.pos] * p.stats.defTck;
 
 			if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
-				teamIndividualPtsFront7[p.tid] += score;
+				t.stats.individualPtsFront7 += score;
 			} else {
-				teamIndividualPtsSecondary[p.tid] += score;
+				t.stats.individualPtsSecondary += score;
 			}
 		}
 
@@ -70,7 +110,8 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 	});
 	const av = players.map((p, i) => {
 		let score = 0;
-		const t = teams[p.tid];
+
+		const t = teams.find(t => t.tid === p.tid);
 
 		if (t === undefined) {
 			throw new Error("Should never happen");
@@ -78,12 +119,11 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 
 		// OL
 		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
-			score +=
-				(individualPts[i] / teamIndividualPtsOL[p.tid]) * teamPtsOL[p.tid];
+			score += (individualPts[i] / t.stats.individualPtsOL) * t.stats.ptsOL;
 		}
 
 		// Rushing
-		score += (p.stats.rusYds / t.stats.rusYds) * teamPtsRus[p.tid];
+		score += (p.stats.rusYds / t.stats.rusYds) * t.stats.ptsRus;
 
 		if (p.stats.rus / p.stats.gp >= 200 / 16) {
 			if (p.stats.rusYdsPerAtt > league.rusYdsPerAtt) {
@@ -94,7 +134,7 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 		}
 
 		// Receiving
-		score += (p.stats.recYds / t.stats.recYds) * teamPtsRec[p.tid];
+		score += (p.stats.recYds / t.stats.recYds) * t.stats.ptsRec;
 
 		if (p.stats.rec / p.stats.gp >= 70 / 16) {
 			if (p.stats.recYdsPerAtt > league.recYdsPerAtt) {
@@ -105,7 +145,7 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 		}
 
 		// Passing
-		score += (p.stats.pssYds / t.stats.pssYds) * teamPtsPss[p.tid];
+		score += (p.stats.pssYds / t.stats.pssYds) * t.stats.ptsPss;
 
 		if (p.stats.pss / p.stats.gp >= 400 / 16) {
 			if (p.stats.pssAdjYdsPerAtt > league.pssAdjYdsPerAtt) {
@@ -118,14 +158,13 @@ const calculateAV = (players: any[], teams: any[], league: any) => {
 		// Defense
 		if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
 			score +=
-				(individualPts[i] / teamIndividualPtsFront7[p.tid]) *
-				teamPtsFront7[p.tid];
+				(individualPts[i] / t.stats.individualPtsFront7) * t.stats.ptsFront7;
 		}
 
 		if (p.ratings.pos === "S" || p.ratings.pos === "CB") {
 			score +=
-				(individualPts[i] / teamIndividualPtsSecondary[p.tid]) *
-				teamPtsSecondary[p.tid];
+				(individualPts[i] / t.stats.individualPtsSecondary) *
+				t.stats.ptsSecondary;
 		}
 
 		// Returns

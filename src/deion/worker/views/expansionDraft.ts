@@ -19,7 +19,7 @@ const updateExpansionDraft = async () => {
 		return returnValue;
 	}
 
-	const currentAbbrevs = g.get("teamAbbrevsCache");
+	const currentAbbrevs = g.get("teamInfoCache").map(t => t.abbrev);
 	const allAbbrevs: string[] = [];
 	for (const abbrev of Object.keys(teamInfos)) {
 		const blacklist = [...allAbbrevs, ...currentAbbrevs];

@@ -36,9 +36,7 @@ const useTitleBar = ({
 	moreInfoTid?: number;
 } = {}) => {
 	const state = useLocalShallow(state2 => ({
-		teamAbbrevsCache: state2.teamAbbrevsCache,
-		teamNamesCache: state2.teamNamesCache,
-		teamRegionsCache: state2.teamRegionsCache,
+		teamInfoCache: state2.teamInfoCache,
 	}));
 
 	useEffect(() => {

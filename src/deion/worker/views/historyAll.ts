@@ -82,11 +82,13 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						seed: seed,
 						abbrev: teamSeason
 							? teamSeason.abbrev
-							: g.get("teamAbbrevsCache")[tid],
+							: g.get("teamInfoCache")[tid].abbrev,
 						region: teamSeason
 							? teamSeason.region
-							: g.get("teamRegionsCache")[tid],
-						name: teamSeason ? teamSeason.name : g.get("teamNamesCache")[tid],
+							: g.get("teamInfoCache")[tid].region,
+						name: teamSeason
+							? teamSeason.name
+							: g.get("teamInfoCache")[tid].name,
 						won: teamSeason ? teamSeason.won : 0,
 						lost: teamSeason ? teamSeason.lost : 0,
 						tied: teamSeason ? teamSeason.tied : 0,
@@ -116,7 +118,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			awards: awardNames,
 			seasons,
-			teamAbbrevsCache: g.get("teamAbbrevsCache"),
+			teamAbbrevsCache: g.get("teamInfoCache").map(t => t.abbrev),
 			ties: g.get("ties"),
 			userTid: g.get("userTid"),
 		};

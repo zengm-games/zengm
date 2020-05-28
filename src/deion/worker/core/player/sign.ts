@@ -28,10 +28,10 @@ const sign = (
 		type: eventType,
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamAbbrevsCache")[p.tid],
+			g.get("teamInfoCache")[p.tid].abbrev,
 			g.get("season"),
 		])}">${
-			g.get("teamNamesCache")[p.tid]
+			g.get("teamInfoCache")[p.tid].name
 		}</a> ${signedOrReSigned} <a href="${helpers.leagueUrl([
 			"player",
 			p.pid,

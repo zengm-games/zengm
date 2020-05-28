@@ -315,10 +315,13 @@ export type GameAttributesLeague = {
 	startingSeason: number;
 	stopOnInjury: boolean;
 	stopOnInjuryGames: number;
-	teamAbbrevsCache: string[];
-	teamImgURLsCache: (string | undefined)[];
-	teamNamesCache: string[];
-	teamRegionsCache: string[];
+	teamInfoCache: {
+		abbrev: string;
+		region: string;
+		name: string;
+		imgURL?: string;
+		disabled?: boolean;
+	}[];
 	ties: boolean;
 	tragicDeathRate: number;
 	userTid: number;
@@ -579,10 +582,13 @@ export type LocalStateUI = {
 	sidebarOpen: boolean;
 	startingSeason: number;
 	statusText: string;
-	teamAbbrevsCache: string[];
-	teamImgURLsCache: (string | undefined)[];
-	teamNamesCache: string[];
-	teamRegionsCache: string[];
+	teamInfoCache: {
+		abbrev: string;
+		region: string;
+		name: string;
+		imgURL?: string;
+		disabled?: boolean;
+	}[];
 	units: "metric" | "us";
 	userTid: number;
 	userTids: number[];

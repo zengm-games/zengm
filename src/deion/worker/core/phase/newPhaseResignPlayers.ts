@@ -241,14 +241,22 @@ const newPhaseResignPlayers = async (
 	const baseNumPlayers = Math.round(
 		(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
 	);
-	const numPlayersAlreadyInDraftClass = draftProspects.filter(
+	const playersAlreadyInDraftClass = draftProspects.filter(
 		p => p.draft.year === g.get("season") + 3,
-	).length;
-	await draft.genPlayers(
-		g.get("season") + 3,
-		undefined,
-		baseNumPlayers - numPlayersAlreadyInDraftClass,
 	);
+	if (baseNumPlayers > playersAlreadyInDraftClass.length) {
+		// If it's mostly real players, generate scrubs
+		const numRealPlayers = playersAlreadyInDraftClass.filter(p => p.real)
+			.length;
+		const scrubs = numRealPlayers > 0.5 * baseNumPlayers;
+
+		await draft.genPlayers(
+			g.get("season") + 3,
+			undefined,
+			baseNumPlayers - playersAlreadyInDraftClass.length,
+			scrubs,
+		);
+	}
 
 	// Delete any old undrafted players that still somehow exist
 	for (const p of draftProspects) {

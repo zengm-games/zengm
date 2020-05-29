@@ -78,17 +78,17 @@ const disable = async (tid: number) => {
 
 	await draft.deleteLotteryResultIfNoDraftYet();
 
+	const allTeams = await idb.cache.teams.getAll();
 	await league.setGameAttributes({
-		teamInfoCache: g.get("teamInfoCache").map((t2, tid) => {
-			if (t.tid !== tid) {
-				return t2;
-			}
-
-			return {
-				...t2,
-				disabled: true,
-			};
-		}),
+		numActiveTeams: allTeams.filter(t => !t.disabled).length,
+		numTeams: allTeams.length,
+		teamInfoCache: allTeams.map(t => ({
+			abbrev: t.abbrev,
+			disabled: t.disabled,
+			imgURL: t.imgURL,
+			name: t.name,
+			region: t.region,
+		})),
 	});
 };
 

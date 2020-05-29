@@ -21,7 +21,6 @@ const genPlayers = async (
 	numPlayers?: number,
 	scrubs?: boolean,
 ) => {
-	console.log("genPlayers", draftYear, numPlayers, scrubs);
 	// If scoutingRank is not supplied, have to hit the DB to get it
 	if (scoutingRank === undefined || scoutingRank === null) {
 		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(

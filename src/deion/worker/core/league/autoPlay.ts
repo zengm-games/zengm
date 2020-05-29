@@ -6,7 +6,6 @@ import {
 	phase,
 	season,
 	expansionDraft,
-	league,
 	team,
 } from "..";
 import { g, random } from "../../util";

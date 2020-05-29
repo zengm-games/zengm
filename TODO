@@ -15,6 +15,7 @@ contraction
   - football av
 - expansionDraft scheduledEvent on an existing tid that is active should be noop
 - upload new overrides jsons
+- changelog
 
 blog
 - contraction
@@ -44,6 +45,9 @@ when manually retiring a player in god mode, check HoF eligibility
 when editing contract in God Mode, make sure p.salaries is updated correctly
 
 the ratings previews (the ones next to a player's name, that pop up when clicked) dont update at preseason
+
+league creation options
+- no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues

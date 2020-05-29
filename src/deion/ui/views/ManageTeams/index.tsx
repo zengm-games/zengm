@@ -192,7 +192,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 			<form onSubmit={handleSubmit}>
 				<div className="row">
-					{teams.map((t, i) => (
+					{teams.map(t => (
 						<React.Fragment key={t.tid}>
 							<TeamForm
 								classNamesCol={[

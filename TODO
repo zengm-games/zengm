@@ -13,9 +13,7 @@ randomize ratings should also update height/weight
 contraction
 - things to check
   - football av
-- in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draf...
-  - if it's a new team (no prevT), increment all tids that are beyond numTeams in future scheduledEvents.
-  - if it's reactivating an existing team, if that team was scheduled for an upcoming expansion draft, get rid of it
+- expansionDraft scheduledEvent on an existing tid that is active should be noop
 - upload new overrides jsons
 
 blog

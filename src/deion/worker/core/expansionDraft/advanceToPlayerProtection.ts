@@ -10,7 +10,7 @@ import { PHASE } from "../../../common";
 import validateExpansionDraftSetup from "./validateExpansionDraftSetup";
 
 const advanceToPlayerProtection = async (
-	allowSwitchTeam: boolean,
+	fromScheduledEvent: boolean,
 	conditions: Conditions,
 ) => {
 	const {
@@ -37,7 +37,10 @@ const advanceToPlayerProtection = async (
 				...teamInfo,
 				firstSeasonAfterExpansion,
 			},
-			true,
+			{
+				expansionDraft: true,
+				fromScheduledEvent,
+			},
 		);
 		expansionTids.push(t.tid);
 
@@ -85,7 +88,7 @@ const advanceToPlayerProtection = async (
 		numProtectedPlayers,
 		expansionTids,
 		protectedPids,
-		allowSwitchTeam,
+		allowSwitchTeam: fromScheduledEvent,
 	};
 
 	await league.setGameAttributes(gameAttributes);

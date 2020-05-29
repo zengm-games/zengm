@@ -18,7 +18,13 @@ const addNewTeamToExistingLeague = async (
 		firstSeasonAfterExpansion?: number;
 		tid?: number;
 	},
-	expansionDraft: boolean = false,
+	{
+		expansionDraft,
+		fromScheduledEvent,
+	}: {
+		expansionDraft?: boolean;
+		fromScheduledEvent?: boolean;
+	} = {},
 ): Promise<Team> => {
 	const div = g.get("divs", Infinity).find(d => d.did === teamInfo.did);
 	if (!div) {
@@ -111,6 +117,36 @@ const addNewTeamToExistingLeague = async (
 		tids: [t.tid],
 		showNotification: false,
 	});
+
+	// Manually adding a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
+	if (!fromScheduledEvent && !prevT) {
+		// This means a new team was added, with a newly generated tid. Increment tids in future scheduled events to account for this
+		const scheduledEvents = await idb.getCopies.scheduledEvents();
+		for (const scheduledEvent of scheduledEvents) {
+			if (scheduledEvent.season < g.get("season")) {
+				await idb.cache.scheduledEvents.delete(scheduledEvent.id);
+			} else if (scheduledEvent.type === "expansionDraft") {
+				let updated;
+				for (const t2 of scheduledEvent.info.teams) {
+					if (typeof t2.tid === "number" && t.tid <= t2.tid) {
+						t2.tid += 1;
+						updated = true;
+					}
+				}
+				if (updated) {
+					await idb.cache.scheduledEvents.put(scheduledEvent);
+				}
+			} else if (
+				scheduledEvent.type == "contraction" ||
+				scheduledEvent.type === "teamInfo"
+			) {
+				if (t.tid <= scheduledEvent.info.tid) {
+					scheduledEvent.info.tid += 1;
+					await idb.cache.scheduledEvents.put(scheduledEvent);
+				}
+			}
+		}
+	}
 
 	return t;
 };

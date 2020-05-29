@@ -39,7 +39,6 @@ const PlayerBios = ({
 	);
 
 	const rows = players.map(p => {
-		console.log(p);
 		return {
 			key: p.pid,
 			data: [

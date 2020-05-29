@@ -31,9 +31,6 @@ export type Action =
 	| {
 			type: "addTeam";
 			team: State["teams"][number];
-	  }
-	| {
-			type: "removeLastTeam";
 	  };
 
 const reducer = (state: State, action: Action) => {
@@ -75,11 +72,6 @@ const reducer = (state: State, action: Action) => {
 			return {
 				...state,
 				teams: [...state.teams, action.team],
-			};
-		case "removeLastTeam":
-			return {
-				...state,
-				teams: state.teams.slice(0, state.teams.length - 1),
 			};
 	}
 };
@@ -137,33 +129,19 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	return (
 		<>
 			{!props.godMode ? (
-				<div className="alert alert-warning">
-					Some features here are disabled because you are not using{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-				</div>
+				<p className="alert alert-warning d-inline-block mt-1">
+					Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to
+					access additional features, such as creating new teams and disabling
+					existing teams.
+				</p>
 			) : null}
 
-			<h2>Add/Remove Teams</h2>
-
 			{props.godMode ? (
-				<AddRemove dispatch={dispatch} phase={props.phase} saving={saving} />
-			) : (
-				<p>
-					Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to add
-					or remove teams.
-				</p>
-			)}
-
-			<h2 className="mt-3">Edit Teams</h2>
-
-			<p>
-				Changing a team's <b>Status</b> from "Active" to "Inactive" is
-				equivalent to contraction. A team that existed in the past no longer
-				exists, and its former players become free agents. Changing from
-				"Inactive" to "Active" means a previously-contracted team is now back,
-				but they will start with an empty roster. This cannot be done during the
-				regular season, playoffs, or draft.
-			</p>
+				<>
+					<AddRemove dispatch={dispatch} phase={props.phase} saving={saving} />
+					<h2 className="mt-sm-3">Edit Teams</h2>
+				</>
+			) : null}
 
 			{props.phase >= PHASE.PLAYOFFS ? (
 				<p className="alert alert-warning d-inline-block">

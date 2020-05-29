@@ -38,25 +38,6 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 		});
 	};
 
-	const removeLastTeam = async (e: MouseEvent) => {
-		e.preventDefault();
-		dispatch({
-			type: "startSaving",
-		});
-		await toWorker("main", "removeLastTeam");
-		dispatch({
-			type: "removeLastTeam",
-		});
-		logEvent({
-			type: "success",
-			text: "Removed last team.",
-			saveToDb: false,
-		});
-		dispatch({
-			type: "doneSaving",
-		});
-	};
-
 	return (
 		<>
 			{phaseDisabled ? (
@@ -67,6 +48,7 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 			) : null}
 			<div className="row">
 				<div className="col-sm">
+					<h2>Add Team</h2>
 					<p>
 						After you add a team here, it will become available to edit in the
 						form below. Created teams start with no players. You can use God
@@ -82,7 +64,7 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 					<form onSubmit={addTeam}>
 						<button
 							type="submit"
-							className="btn btn-primary btn-lg mb-3"
+							className="btn btn-primary mb-3"
 							disabled={phaseDisabled || saving}
 						>
 							Add Team
@@ -90,29 +72,23 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 					</form>
 				</div>
 				<div className="col-sm">
-					<p>
-						Due to some stupid technical complexities, it is not currently
-						possible to remove a team, except for the last team on the list
-						below.
-					</p>
-
-					<p>Players on the removed team will become free agents.</p>
+					<h2>Remove Team</h2>
 
 					<p>
-						<span className="text-danger">Please be careful!</span> This will{" "}
-						<span className="text-danger font-weight-bold">
-							completely delete
-						</span>{" "}
-						all historical data for the last team on the list below.
+						You can disable a team by changing its <b>Status</b> from "Active"
+						to "Inactive" in the table below. This can be done at any time
+						except during the regular season, playoffs, or draft.
 					</p>
-
-					<button
-						className="btn btn-danger btn mb-3"
-						onClick={removeLastTeam}
-						disabled={phaseDisabled || saving}
-					>
-						Remove Last Team
-					</button>
+					<p>
+						When a team is disabled, all its players become free agents. Because
+						of this, the best time to disable a team is right after the playoffs
+						finish. Then the draft and free agency can proceed like normal, just
+						with fewer teams.
+					</p>
+					<p>
+						Team history is preserved for disabled teams, and disabled teams can
+						be re-enabled in the future.
+					</p>
 				</div>
 			</div>
 		</>

@@ -13,20 +13,15 @@ randomize ratings should also update height/weight
 contraction
 - things to check
   - roster
-  - trade between AI teams
   - luxury tax and min payroll limit payouts/penalties
   - football av
-- get rid of "Remove Last Team" feature
-  - maybe put explanation of "Status" there, or at least mention it
-  - mention that best time to disable is right after the playoffs, bc then the draft and free agency happen mostly like normal
 - League > Franchises like https://www.basketball-reference.com/teams/
 - creating an expansion team should show inactive teams as possible teams to select
-  - add explanation on Manage Teams about this, that it's often better than activating
+  - add explanation on Manage Teams about this
 
 contraction as a scheduled event
 - handle "expansion" that reactivates team
   - seems to work, but go over and make sure. like not everything in addNewTeamToExistingLeague looks like it'd make sense, is that even being called?
-- handle case where it's the user's team
 - in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draft, increment all tids that are beyond numTeams in future scheduledEvents.
 
 https://web.dev/maskable-icon-audit/?utm_source=lighthouse&utm_medium=lr
@@ -38,6 +33,8 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
   - Best Progs - age of increase
+
+make nag modal less likely to pop up first season
 
 support changing team logos at any season, from predefined real team logos
 

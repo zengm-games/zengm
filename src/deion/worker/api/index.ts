@@ -2095,7 +2095,6 @@ export default {
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,
 	releasePlayer,
-	removeLastTeam,
 	removeLeague,
 	reorderDepthDrag,
 	reorderRosterDrag,

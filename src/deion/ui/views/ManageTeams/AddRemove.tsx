@@ -87,7 +87,9 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 					</p>
 					<p>
 						Team history is preserved for disabled teams, and disabled teams can
-						be re-enabled in the future.
+						be re-enabled in the future, either here or in an{" "}
+						<a href={helpers.leagueUrl(["expansion_draft"])}>expansion draft</a>
+						.
 					</p>
 				</div>
 			</div>

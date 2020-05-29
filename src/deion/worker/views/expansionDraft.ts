@@ -2,6 +2,8 @@ import { g, helpers } from "../util";
 import teamInfos from "../../common/teamInfos";
 import getTeamInfos from "../../common/getTeamInfos";
 import type { ExpansionDraftSetupTeam } from "../../common/types";
+import { idb } from "../db";
+import orderBy from "lodash/orderBy";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");
@@ -19,10 +21,10 @@ const updateExpansionDraft = async () => {
 		return returnValue;
 	}
 
-	const currentAbbrevs = g.get("teamInfoCache").map(t => t.abbrev);
+	const currentTeams = g.get("teamInfoCache");
 	const allAbbrevs: string[] = [];
-	for (const abbrev of Object.keys(teamInfos)) {
-		const blacklist = [...allAbbrevs, ...currentAbbrevs];
+	for (const [abbrev, t] of Object.entries(teamInfos)) {
+		const blacklist = [...allAbbrevs, ...currentTeams.map(t => t.abbrev)];
 
 		// Handle a couple teams with multiple abbrevs
 		if (blacklist.includes("LA") && abbrev === "LAC") {
@@ -50,9 +52,16 @@ const updateExpansionDraft = async () => {
 			continue;
 		}
 
-		if (!blacklist.includes(abbrev)) {
-			allAbbrevs.push(abbrev);
+		if (blacklist.includes(abbrev)) {
+			continue;
 		}
+
+		const currentTeam = currentTeams.find(t2 => t2.region === t.region);
+		if (currentTeam) {
+			continue;
+		}
+
+		allAbbrevs.push(abbrev);
 	}
 
 	const divs = g.get("divs");
@@ -78,8 +87,28 @@ const updateExpansionDraft = async () => {
 		}),
 	);
 
+	const disabledTeams = (await idb.cache.teams.getAll()).filter(
+		t => t.disabled,
+	);
+	for (const t of disabledTeams) {
+		builtInTeams.push({
+			abbrev: t.abbrev,
+			region: t.region,
+			name: t.name,
+			imgURL: t.imgURL,
+			colors: t.colors,
+			pop: String(t.pop || 1),
+			stadiumCapacity: String(
+				t.stadiumCapacity || g.get("defaultStadiumCapacity"),
+			),
+			did: String(t.did),
+			takeControl: false,
+			tid: t.tid,
+		});
+	}
+
 	return {
-		builtInTeams,
+		builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
 		confs: g.get("confs", Infinity),
 		divs: g.get("divs", Infinity),
 		godMode: g.get("godMode"),

@@ -260,6 +260,7 @@ const ExpansionDraft = ({
 										.map(t => (
 											<option key={t.abbrev} value={t.abbrev}>
 												{t.region} {t.name}
+												{t.tid !== undefined ? " (inactive)" : ""}
 											</option>
 										))}
 								</select>

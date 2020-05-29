@@ -272,6 +272,9 @@ export type ExpansionDraftSetupTeam = {
 	stadiumCapacity: string;
 	did: string;
 	takeControl: boolean;
+
+	// tid is for referencing a disabled current team
+	tid?: number;
 };
 
 export type GameAttributesLeague = {

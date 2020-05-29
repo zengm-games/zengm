@@ -16,6 +16,7 @@ const addNewTeamToExistingLeague = async (
 		pop: number;
 		imgURL: string | undefined;
 		firstSeasonAfterExpansion?: number;
+		tid?: number;
 	},
 	expansionDraft: boolean = false,
 ): Promise<Team> => {
@@ -25,11 +26,29 @@ const addNewTeamToExistingLeague = async (
 	}
 	const cid = div.cid;
 
-	const t = generate({
-		tid: g.get("numTeams"),
-		cid,
-		...teamInfo,
-	});
+	const prevT =
+		teamInfo.tid !== undefined
+			? await idb.cache.teams.get(teamInfo.tid)
+			: undefined;
+
+	if (prevT && !prevT.disabled) {
+		throw new Error(
+			`Attempting to add new team with tid ${prevT.tid} but there is an existing active team with the same tid`,
+		);
+	}
+
+	const t = prevT
+		? {
+				...prevT,
+				cid,
+				...teamInfo,
+				disabled: false,
+		  }
+		: generate({
+				tid: g.get("numTeams"),
+				cid,
+				...teamInfo,
+		  });
 	await idb.cache.teams.put(t);
 
 	if (g.get("phase") <= PHASE.PLAYOFFS) {
@@ -39,19 +58,17 @@ const addNewTeamToExistingLeague = async (
 		await idb.cache.teamStats.put(teamStats);
 	}
 
+	const allTeams = await idb.cache.teams.getAll();
 	await league.setGameAttributes({
-		numActiveTeams: g.get("numActiveTeams") + 1,
-		numTeams: g.get("numTeams") + 1,
-		teamInfoCache: [
-			...g.get("teamInfoCache"),
-			{
-				abbrev: t.abbrev,
-				disabled: false,
-				imgURL: t.imgURL,
-				name: t.name,
-				region: t.region,
-			},
-		],
+		numActiveTeams: allTeams.filter(t => !t.disabled).length,
+		numTeams: allTeams.length,
+		teamInfoCache: allTeams.map(t => ({
+			abbrev: t.abbrev,
+			disabled: t.disabled,
+			imgURL: t.imgURL,
+			name: t.name,
+			region: t.region,
+		})),
 	});
 
 	await draft.createTeamPicks(t.tid);

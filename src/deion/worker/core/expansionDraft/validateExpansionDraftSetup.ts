@@ -66,7 +66,8 @@ const validateExpansionDraftSetup = async () => {
 		while (!abbrevGood) {
 			abbrevGood = true;
 			for (const t2 of teams) {
-				if (t2.abbrev === t.abbrev) {
+				const isReactivating = t.tid === t2.tid && !!t2.disabled;
+				if (t2.abbrev === t.abbrev && !isReactivating) {
 					counter += 1;
 					t.abbrev = `${originalAbbrev}${counter}`;
 					abbrevGood = false;

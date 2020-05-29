@@ -6,7 +6,7 @@ const getCopies = async (): Promise<PlayerFeat[]> => {
 	return mergeByPk(
 		await getAll(idb.league.transaction("playerFeats").store),
 		await idb.cache.playerFeats.getAll(),
-		idb.cache.storeInfos.playerFeats.pk,
+		"playerFeats",
 	);
 };
 

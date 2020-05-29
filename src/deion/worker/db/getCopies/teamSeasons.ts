@@ -46,7 +46,7 @@ const getCopies = async ({
 				[tid, seasons[0]],
 				[tid, seasons[1]],
 			]),
-			idb.cache.storeInfos.teamSeasons.pk,
+			"teamSeasons",
 		);
 	}
 
@@ -59,7 +59,7 @@ const getCopies = async ({
 			[tid],
 			[tid, "Z"],
 		]),
-		idb.cache.storeInfos.teamSeasons.pk,
+		"teamSeasons",
 	);
 };
 

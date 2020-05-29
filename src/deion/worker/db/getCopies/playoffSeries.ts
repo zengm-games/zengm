@@ -6,7 +6,7 @@ const getCopies = async (): Promise<PlayoffSeries[]> => {
 	return mergeByPk(
 		await idb.league.getAll("playoffSeries"),
 		await idb.cache.playoffSeries.getAll(),
-		idb.cache.storeInfos.playoffSeries.pk,
+		"playoffSeries",
 	);
 };
 

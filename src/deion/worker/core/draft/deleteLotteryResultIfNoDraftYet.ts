@@ -11,7 +11,6 @@ const deleteLotteryResultIfNoDraftYet = async () => {
 
 		if (draftLotteryResult) {
 			await idb.cache.draftLotteryResults.delete(draftLotteryResult.season);
-			await idb.cache.flush(); // Since draftLotteryResult might be in IndexedDB
 		}
 	}
 };

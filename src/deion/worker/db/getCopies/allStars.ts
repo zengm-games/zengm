@@ -13,7 +13,7 @@ const getCopies = async ({
 			(await idb.cache.allStars.getAll()).filter(row => {
 				return row.season === season;
 			}),
-			idb.cache.storeInfos.allStars.pk,
+			"allStars",
 		);
 		return awards;
 	}
@@ -21,7 +21,7 @@ const getCopies = async ({
 	return mergeByPk(
 		await idb.league.getAll("allStars"),
 		await idb.cache.allStars.getAll(),
-		idb.cache.storeInfos.allStars.pk,
+		"allStars",
 	);
 };
 

@@ -24,7 +24,7 @@ const getCopies = async ({
 			(await idb.cache.events.getAll()).filter(event => {
 				return event.season === season;
 			}),
-			idb.cache.storeInfos.events.pk,
+			"events",
 		).filter(filter);
 	}
 
@@ -34,14 +34,14 @@ const getCopies = async ({
 			(await idb.cache.events.getAll()).filter(event => {
 				return event.pids !== undefined && event.pids.includes(pid);
 			}),
-			idb.cache.storeInfos.events.pk,
+			"events",
 		).filter(filter);
 	}
 
 	return mergeByPk(
 		await getAll(idb.league.transaction("events").store, undefined, filter),
 		await idb.cache.events.getAll(),
-		idb.cache.storeInfos.events.pk,
+		"events",
 	).filter(filter);
 };
 

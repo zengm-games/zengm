@@ -14,13 +14,13 @@ const getCopies = async ({
 		draftPicks = mergeByPk(
 			[], // All picks always in cache
 			await idb.cache.draftPicks.indexGetAll("draftPicksByTid", tid),
-			idb.cache.storeInfos.draftPicks.pk,
+			"draftPicks",
 		);
 	} else {
 		draftPicks = mergeByPk(
 			[], // All picks always in cache
 			await idb.cache.draftPicks.getAll(),
-			idb.cache.storeInfos.draftPicks.pk,
+			"draftPicks",
 		);
 	}
 

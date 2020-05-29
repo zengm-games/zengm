@@ -68,7 +68,7 @@ const processSeasonAttrs = async <
 				[t.tid],
 				[t.tid, "Z"],
 			]),
-			idb.cache.storeInfos.teamSeasons.pk,
+			"teamSeasons",
 		);
 	} else if (season >= g.get("season") - 2) {
 		// Single season, from cache
@@ -259,7 +259,7 @@ const processStats = async <
 				.store.index("tid")
 				.getAll(t.tid),
 			await teamStatsFromCache(),
-			idb.cache.storeInfos.teamStats.pk,
+			"teamStats",
 		);
 	} else if (season === g.get("season")) {
 		teamStats = await teamStatsFromCache();

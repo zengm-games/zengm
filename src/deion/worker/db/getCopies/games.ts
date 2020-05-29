@@ -16,14 +16,14 @@ const getCopies = async ({
 			(await idb.cache.games.getAll()).filter(gm => {
 				return gm.season === season;
 			}),
-			idb.cache.storeInfos.games.pk,
+			"games",
 		);
 	}
 
 	return mergeByPk(
 		await getAll(idb.league.transaction("games").store),
 		await idb.cache.games.getAll(),
-		idb.cache.storeInfos.games.pk,
+		"games",
 	);
 };
 

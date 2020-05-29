@@ -46,7 +46,7 @@ const getCopies = async ({
 		const messages = mergeByPk(
 			fromDb,
 			getLastEntries(fromCache, limit),
-			idb.cache.storeInfos.messages.pk,
+			"messages",
 		);
 
 		// Need another getLastEntries because DB and cache will probably combine for (2 * limit) entries
@@ -56,7 +56,7 @@ const getCopies = async ({
 	return mergeByPk(
 		await getAll(idb.league.transaction("messages").store),
 		await idb.cache.messages.getAll(),
-		idb.cache.storeInfos.messages.pk,
+		"messages",
 	);
 };
 

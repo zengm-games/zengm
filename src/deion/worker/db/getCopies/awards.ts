@@ -12,7 +12,7 @@ const getCopies = async ({
 			(await idb.cache.awards.getAll()).filter(event => {
 				return event.season === season;
 			}),
-			idb.cache.storeInfos.awards.pk,
+			"awards",
 		);
 		return awards;
 	}
@@ -20,7 +20,7 @@ const getCopies = async ({
 	return mergeByPk(
 		await idb.league.getAll("awards"),
 		await idb.cache.awards.getAll(),
-		idb.cache.storeInfos.awards.pk,
+		"awards",
 	);
 };
 

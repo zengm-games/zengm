@@ -91,7 +91,7 @@ const getCopies = async ({
 		return mergeByPk(
 			fromDB,
 			(await idb.cache.players.getAll()).filter(p => pids.includes(p.pid)),
-			idb.cache.storeInfos.players.pk,
+			"players",
 		);
 	}
 
@@ -104,7 +104,7 @@ const getCopies = async ({
 				filter,
 			),
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
-			idb.cache.storeInfos.players.pk,
+			"players",
 		).filter(filter);
 	}
 
@@ -150,7 +150,7 @@ const getCopies = async ({
 					Infinity,
 				]),
 			),
-			idb.cache.storeInfos.players.pk,
+			"players",
 		).filter(filter);
 	}
 
@@ -210,7 +210,7 @@ const getCopies = async ({
 				.filter(
 					p => p.draft.year < activeSeason && p.retiredYear >= activeSeason,
 				),
-			idb.cache.storeInfos.players.pk,
+			"players",
 		);
 	}
 
@@ -226,7 +226,7 @@ const getCopies = async ({
 					Infinity,
 				])
 			).filter(p => p.draft.year === draftYear),
-			idb.cache.storeInfos.players.pk,
+			"players",
 		);
 	}
 
@@ -248,14 +248,14 @@ const getCopies = async ({
 					]),
 				)
 				.filter(p => p.statsTids.includes(constStatsTid)),
-			idb.cache.storeInfos.players.pk,
+			"players",
 		);
 	}
 
 	return mergeByPk(
 		await getAll(idb.league.transaction("players").store, undefined, filter),
 		await idb.cache.players.getAll(),
-		idb.cache.storeInfos.players.pk,
+		"players",
 	).filter(filter);
 };
 

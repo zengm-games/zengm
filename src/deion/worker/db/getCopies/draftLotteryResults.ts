@@ -13,7 +13,7 @@ const getCopies = async ({
 			(await idb.cache.draftLotteryResults.getAll()).filter(event => {
 				return event.season === season;
 			}),
-			idb.cache.storeInfos.draftLotteryResults.pk,
+			"draftLotteryResults",
 		);
 		return draftLotteryResults;
 	}
@@ -21,7 +21,7 @@ const getCopies = async ({
 	return mergeByPk(
 		await idb.league.getAll("draftLotteryResults"),
 		await idb.cache.draftLotteryResults.getAll(),
-		idb.cache.storeInfos.draftLotteryResults.pk,
+		"draftLotteryResults",
 	);
 };
 

@@ -153,10 +153,7 @@ const FreeAgents = ({
 			/>
 
 			<p>
-				<button
-					className="btn btn-light-bordered"
-					onClick={showAfforablePlayers}
-				>
+				<button className="btn btn-secondary" onClick={showAfforablePlayers}>
 					Show players you can afford now
 				</button>
 			</p>

@@ -129,7 +129,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	return (
 		<>
 			{!props.godMode ? (
-				<p className="alert alert-warning d-inline-block mt-1">
+				<p className="alert alert-warning d-inline-block">
 					Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to
 					access additional features, such as creating new teams and disabling
 					existing teams.

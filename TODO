@@ -17,6 +17,15 @@ contraction
   - football av
 - League > Franchises like https://www.basketball-reference.com/teams/
   - actually should just replace Team Records. maybe call Franchise Records
+  - Championships -> Titles
+  - add Finals
+  - for Titles/Finals/Playoffs, add "Last" column with last season it happened
+  - award counts
+  - remove G
+  - what about by_conf/by_div from old team records?
+    - still support, for backwards compatibility
+  - button to show/hide sub-teams
+    - only display if sub-teams exist
 - in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draf...
   - if it's a new team (no prevT), increment all tids that are beyond numTeams in future scheduledEvents.
   - if it's reactivating an existing team, if that team was scheduled for an upcoming expansion draft, get rid of it
@@ -48,6 +57,11 @@ when manually retiring a player in god mode, check HoF eligibility
 when editing contract in God Mode, make sure p.salaries is updated correctly
 
 the ratings previews (the ones next to a player's name, that pop up when clicked) dont update at preseason
+
+add option to disable salary cap @hrmantovani#2284 
+- historical leagues
+- merge with hard cap setting
+- salary cap value is still inflation
 
 switching team in god mode does not update trade summary https://media.discordapp.net/attachments/290015591216054273/715802132158087178/unknown.png?width=1214&height=580
 

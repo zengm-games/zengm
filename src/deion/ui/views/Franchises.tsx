@@ -4,6 +4,33 @@ import useTitleBar from "../hooks/useTitleBar";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 
+const categories =
+	process.env.SPORT === "basketball"
+		? [
+				"mvp",
+				"dpoy",
+				"smoy",
+				"mip",
+				"roy",
+				"bestRecord",
+				"bestRecordConf",
+				"allRookie",
+				"allLeague",
+				"allDefense",
+				"allStar",
+				"allStarMVP",
+		  ]
+		: [
+				"mvp",
+				"dpoy",
+				"oroy",
+				"droy",
+				"bestRecord",
+				"bestRecordConf",
+				"allRookie",
+				"allLeague",
+		  ];
+
 const Franchises = ({ teams, ties, userTid }: View<"franchises">) => {
 	useTitleBar({
 		title: "Franchises",
@@ -14,17 +41,25 @@ const Franchises = ({ teams, ties, userTid }: View<"franchises">) => {
 		"Start",
 		"End",
 		"# Seasons",
-		"stat:gp",
 		"W",
 		"L",
 		"T",
 		"%",
 		"Playoffs",
-		"Championships",
+		"Last",
+		"Finals",
+		"Last",
+		"Titles",
+		"Last",
+		...categories.map(category => `count:${category}`),
 	);
 	if (!ties) {
 		cols = cols.filter(col => col.title !== "T");
 	}
+	const lasts = cols.filter(col => col.title === "Last");
+	lasts[0].desc = "Last Playoffs Appearance";
+	lasts[1].desc = "Last Finals Appearance";
+	lasts[2].desc = "Last Championship";
 
 	const rows = teams.map((t, i) => {
 		return {
@@ -47,13 +82,17 @@ const Franchises = ({ teams, ties, userTid }: View<"franchises">) => {
 				t.start,
 				t.end,
 				t.numSeasons,
-				t.won + t.lost + t.tied,
 				t.won,
 				t.lost,
 				...(ties ? [t.tied] : []),
 				helpers.roundWinp(t.winp),
 				t.playoffs,
-				t.championships,
+				t.lastPlayoffs,
+				t.finals,
+				t.lastFinals,
+				t.titles,
+				t.lastTitle,
+				...categories.map(category => t[category]),
 			],
 			classNames: {
 				"text-muted": !t.root,

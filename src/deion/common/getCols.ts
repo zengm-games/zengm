@@ -1213,11 +1213,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
-	Championships: {
-		desc: "Championships Won",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
 	College: {},
 	Conference: {},
 	Contract: {
@@ -1314,15 +1309,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"Last Playoffs": {
-		sortType: "number",
-	},
 	"Last Season": {
 		desc: "Last Season with Team",
 		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
-	"Last Title": {
 		sortType: "number",
 	},
 	"League Champion": {},
@@ -1432,6 +1421,11 @@ const cols: {
 		sortType: "number",
 	},
 	Team: {},
+	Titles: {
+		desc: "Championships Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Type: {
 		desc: "Type of game",
 	},

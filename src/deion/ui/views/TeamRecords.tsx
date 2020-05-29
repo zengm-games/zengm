@@ -45,10 +45,10 @@ const TeamRecords = ({
 		"L",
 		"%",
 		"Playoffs",
-		"Last Playoffs",
+		"Last",
 		"Finals",
-		"Championships",
-		"Last Title",
+		"Titles",
+		"Last",
 		...categories.map(category => `count:${category}`),
 	);
 	// MVP, DPOY, SMOY, ROY

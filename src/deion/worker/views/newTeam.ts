@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import { PHASE } from "../../common";
+import orderBy from "lodash/orderBy";
 
 const updateTeamSelect = async () => {
 	const rawTeams = await idb.getCopies.teamsPlus({
@@ -46,6 +47,15 @@ const updateTeamSelect = async () => {
 		teams = teams.slice(0, 5);
 	}
 
+	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
+	if (expansion) {
+		// User team first!
+		const userTeam = teams.find(t => t.tid === g.get("userTid"));
+		if (userTeam) {
+			orderedTeams = [userTeam, ...orderedTeams.filter(t => t !== userTeam)];
+		}
+	}
+
 	return {
 		disabled,
 		expansion,
@@ -53,7 +63,7 @@ const updateTeamSelect = async () => {
 		godMode: g.get("godMode"),
 		numActiveTeams,
 		phase: g.get("phase"),
-		teams,
+		teams: orderedTeams,
 		userTid: g.get("userTid"),
 	};
 };

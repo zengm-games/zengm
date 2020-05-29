@@ -4,7 +4,6 @@ import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
-import orderBy from "lodash/orderBy";
 import { PopText } from "../components";
 
 const NewTeam = ({
@@ -114,15 +113,6 @@ const NewTeam = ({
 		submitText = "Accept New Job";
 	}
 
-	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
-	if (expansion) {
-		// User team first!
-		const userTeam = teams.find(t => t.tid === userTid);
-		if (userTeam) {
-			orderedTeams = [userTeam, ...orderedTeams.filter(t => t !== userTeam)];
-		}
-	}
-
 	return (
 		<>
 			{message}
@@ -136,7 +126,7 @@ const NewTeam = ({
 					onChange={handleTidChange}
 					value={tid}
 				>
-					{orderedTeams.map(t => {
+					{teams.map(t => {
 						return (
 							<option key={t.tid} value={t.tid}>
 								{expansion && t.tid === userTid

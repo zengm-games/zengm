@@ -13,8 +13,14 @@ const disable = async (tid: number) => {
 	await idb.cache.teams.put(t);
 
 	if (tid === g.get("userTid")) {
-		// If it's multi team mode, just move to the next team
+		// If there is an unread message from the owner, it's not doing any good now
+		const messages = await idb.getCopies.messages({ limit: 1 });
+		if (messages.length > 0 && !messages[0].read) {
+			await idb.cache.messages.delete(messages[0].mid);
+		}
+
 		if (g.get("userTids").length > 1) {
+			// If it's multi team mode, just move to the next team
 			const newUserTids = g.get("userTids").filter(userTid => userTid !== tid);
 			const newUserTid = random.choice(newUserTids);
 			await league.setGameAttributes({
@@ -22,6 +28,7 @@ const disable = async (tid: number) => {
 				userTids: newUserTids,
 			});
 		} else {
+			// If it's not multi team mode, then this is similar to being fired
 			await league.setGameAttributes({
 				gameOver: true,
 			});

@@ -955,6 +955,7 @@ class Cache {
 			[
 				"draftPicks",
 				"draftLotteryResults",
+				"messages",
 				"negotiations",
 				"players",
 				"releasedPlayers",

@@ -11,6 +11,7 @@ end of game playing time situations @gmgameschris
 randomize ratings should also update height/weight
 
 contraction
+- auto play needs to pick a new team, otherwise there will be errors
 - things to check
   - roster
   - trade between AI teams
@@ -19,6 +20,7 @@ contraction
 - objects deleted from cache but not indexeddb might still be read from indexeddb though getCopies
   - add to mergeByPk
   - "Since draftLotteryResult might be in IndexedDB" comments
+  - also, confirm play menu after scheduledEvent contraction of user team does not show link to deleted message
 - get rid of "Remove Last Team" feature
   - maybe put explanation of "Status" there, or at least mention it
 - League > Franchises like https://www.basketball-reference.com/teams/

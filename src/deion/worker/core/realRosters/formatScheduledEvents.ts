@@ -133,7 +133,6 @@ const processTeams = (events: ScheduledEventWithoutKey[], season: number) => {
 	const tidOverrides: Record<number, number> = {};
 	for (let tid = 0; tid < initialTeams.length; tid++) {
 		const t = initialTeams[tid];
-		console.log(t.region, t.tid);
 		if (t.tid === tid) {
 			tidOverrides[t.tid] = tid;
 			continue;

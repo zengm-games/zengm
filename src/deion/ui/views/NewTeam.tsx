@@ -8,6 +8,7 @@ import orderBy from "lodash/orderBy";
 import { PopText } from "../components";
 
 const NewTeam = ({
+	disabled,
 	expansion,
 	gameOver,
 	godMode,
@@ -84,6 +85,13 @@ const NewTeam = ({
 			<p>
 				Because you're in <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
 				, you can become the GM of any team.
+			</p>
+		);
+	} else if (disabled) {
+		message = (
+			<p>
+				Your team no longer exists! Don't worry, it wasn't your fault. Probably.
+				Look, at least some other teams are willing to hire you.
 			</p>
 		);
 	} else {

@@ -11,10 +11,6 @@ end of game playing time situations @gmgameschris
 randomize ratings should also update height/weight
 
 contraction
-- UI to change in Manage Teams
-  - things to change on toggle
-    - team*Cache
-    - handle if userTid or userTids
 - things to check
   - roster
   - trade between AI teams

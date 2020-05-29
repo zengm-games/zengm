@@ -23,9 +23,12 @@ const updateTeamSelect = async () => {
 	const expansionTids =
 		expansionDraft.phase === "protection" ? expansionDraft.expansionTids : []; // TypeScript bullshit
 
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	const disabled = t ? t.disabled : false;
+
 	if (!expansion) {
 		// Remove user's team (no re-hiring immediately after firing)
-		teams.splice(g.get("userTid"), 1);
+		teams = teams.filter(t => t.tid !== g.get("userTid"));
 	}
 
 	if (expansion) {
@@ -34,15 +37,17 @@ const updateTeamSelect = async () => {
 			t => t.tid === g.get("userTid") || expansionTids.includes(t.tid),
 		);
 	} else if (!g.get("godMode")) {
-		// If not in god mode, user must have been fired
+		// If not in god mode, user must have been fired or team folded
 
 		// Order by worst record
-		teams.sort((a, b) => a.seasonAttrs.winp - b.seasonAttrs.winp); // Only get option of 5 worst
+		teams.sort((a, b) => a.seasonAttrs.winp - b.seasonAttrs.winp);
 
+		// Only get option of 5 worst
 		teams = teams.slice(0, 5);
 	}
 
 	return {
+		disabled,
 		expansion,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),

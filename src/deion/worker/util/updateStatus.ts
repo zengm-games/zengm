@@ -4,6 +4,7 @@ import g from "./g";
 import local from "./local";
 import toUI from "./toUI";
 import type { Conditions } from "../../common/types";
+
 /*Save status to database and push to client.
 
 If no status is given, set a default status based on game state.
@@ -14,7 +15,6 @@ Args:
     status: A string containing the current status message to be pushed to
         the client.
 */
-
 const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 	if (statusText === undefined) {
 		// This should only be triggered on loading a league from DB for now, but eventually this could actually
@@ -22,7 +22,12 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 		let defaultStatusText = "Idle";
 
 		if (g.get("gameOver")) {
-			defaultStatusText = "You're fired!";
+			const t = await idb.cache.teams.get(g.get("userTid"));
+			if (t.disabled) {
+				defaultStatusText = "Your team folded!";
+			} else {
+				defaultStatusText = "You're fired!";
+			}
 		} else if (g.get("phase") === PHASE.FREE_AGENCY) {
 			defaultStatusText = `${g.get("daysLeft")} days left`;
 		} else if (g.get("phase") === PHASE.DRAFT) {
@@ -36,6 +41,7 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 			}
 		}
 
+		local.statusText = defaultStatusText;
 		toUI("updateLocal", [
 			{
 				statusText: defaultStatusText,

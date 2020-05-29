@@ -61,6 +61,7 @@ import type {
 	TeamSeasonWithoutKey,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
+import orderBy from "lodash/orderBy";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1777,6 +1778,7 @@ const updatePlayingTime = async (pid: number, ptModifier: number) => {
 
 const updateTeamInfo = async (
 	newTeams: {
+		tid: number;
 		cid?: number;
 		did: number;
 		region: string;
@@ -1794,7 +1796,10 @@ const updateTeamInfo = async (
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		const newTeam = newTeams[t.tid];
+		const newTeam = newTeams.find(t2 => t2.tid === t.tid);
+		if (!newTeam) {
+			throw new Error(`New team not found for tid ${t.tid}`);
+		}
 
 		if (newTeam.did !== undefined) {
 			const newDiv = g.get("divs").find(div => div.did === newTeam.did);
@@ -1840,6 +1845,14 @@ const updateTeamInfo = async (
 		if (enableTeam) {
 			await draft.createTeamPicks(t.tid);
 			await draft.deleteLotteryResultIfNoDraftYet();
+
+			if (t.tid === g.get("userTid")) {
+				await league.setGameAttributes({
+					gameOver: false,
+				});
+				await updateStatus();
+				await updatePlayMenu();
+			}
 		} else if (disableTeam) {
 			await team.disable(t.tid);
 		}
@@ -1882,7 +1895,7 @@ const updateTeamInfo = async (
 		await league.updateMetaNameRegion(userName, userRegion);
 	}
 	await league.setGameAttributes({
-		teamInfoCache: newTeams.map(t => ({
+		teamInfoCache: orderBy(newTeams, "tid").map(t => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,

@@ -24,7 +24,7 @@ export type Action =
 	  }
 	| {
 			type: "updateTeam";
-			i: number;
+			tid: number;
 			field: string;
 			value: string;
 	  }
@@ -50,18 +50,21 @@ const reducer = (state: State, action: Action) => {
 			};
 		case "updateTeam": {
 			const newTeams = state.teams.slice();
+			const t = newTeams.find(t => t.tid === action.tid);
+			if (!t) {
+				throw new Error(`No team found with tid ${action.tid}`);
+			}
 
 			if (action.field.startsWith("colors")) {
 				// @ts-ignore
-				newTeams[action.i].colors[action.field.replace("colors", "")] =
-					action.value;
+				t.colors[action.field.replace("colors", "")] = action.value;
 			} else if (action.field === "did") {
-				newTeams[action.i][action.field] = parseInt(action.value);
+				t[action.field] = parseInt(action.value);
 			} else if (action.field === "disabled") {
-				newTeams[action.i][action.field] = action.value === "1";
+				t[action.field] = action.value === "1";
 			} else {
 				// @ts-ignore
-				newTeams[action.i][action.field] = action.value;
+				t[action.field] = action.value;
 			}
 			return {
 				...state,
@@ -87,13 +90,13 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		teams: props.teams,
 	});
 
-	const handleInputChange = (i: number) => (
+	const handleInputChange = (tid: number) => (
 		field: string,
 		event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
 		const value = event.target.value;
 
-		dispatch({ type: "updateTeam", i, field, value });
+		dispatch({ type: "updateTeam", tid, field, value });
 	};
 
 	const handleSubmit = async (e: FormEvent) => {
@@ -228,7 +231,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 								classNameLabel="d-lg-none"
 								confs={props.confs}
 								divs={props.divs}
-								handleInputChange={handleInputChange(i)}
+								handleInputChange={handleInputChange(t.tid)}
 								disablePop={!props.godMode}
 								disableStatus={disableStatus}
 								disableStadiumCapacity={!props.godMode}

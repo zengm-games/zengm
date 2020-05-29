@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { player, league, draft } from "..";
-import { g } from "../../util";
+import { g, updateStatus, updatePlayMenu, random } from "../../util";
 import { PHASE } from "../../../common";
 
 const disable = async (tid: number) => {
@@ -11,6 +11,24 @@ const disable = async (tid: number) => {
 
 	t.disabled = true;
 	await idb.cache.teams.put(t);
+
+	if (tid === g.get("userTid")) {
+		// If it's multi team mode, just move to the next team
+		if (g.get("userTids").length > 1) {
+			const newUserTids = g.get("userTids").filter(userTid => userTid !== tid);
+			const newUserTid = random.choice(newUserTids);
+			await league.setGameAttributes({
+				userTid: newUserTid,
+				userTids: newUserTids,
+			});
+		} else {
+			await league.setGameAttributes({
+				gameOver: true,
+			});
+			await updateStatus();
+			await updatePlayMenu();
+		}
+	}
 
 	// Delete draft picks, and return traded ones to original owner
 	const draftPicks = await idb.cache.draftPicks.getAll();

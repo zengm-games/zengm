@@ -172,7 +172,6 @@ const routes = () => {
 		"/l/:lid/award_races/:season": genPage("awardRaces"),
 		"/l/:lid/expansion_draft": genPage("expansionDraft"),
 		"/l/:lid/protect_players": genPage("protectPlayers"),
-		"/l/:lid/franchises": genPage("franchises"),
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),
 		"/l/:lid/draft_summary/:season": genPage("draftSummary"),

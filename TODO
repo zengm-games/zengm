@@ -15,10 +15,6 @@ contraction
   - roster
   - luxury tax and min payroll limit payouts/penalties
   - football av
-- League > Franchises like https://www.basketball-reference.com/teams/
-  - actually should just replace Team Records
-  - what about by_conf/by_div from old team records?
-    - still support, for backwards compatibility
 - in addNewTeamToExistingLeague, if it's happening because of user intervention (manage teams, manual expansion draft) rather than a scheduledEvent expansion draf...
   - if it's a new team (no prevT), increment all tids that are beyond numTeams in future scheduledEvents.
   - if it's reactivating an existing team, if that team was scheduled for an upcoming expansion draft, get rid of it
@@ -30,6 +26,7 @@ blog
 - enable/disable team in god mode
 - inactive teams in dropdown
 - expansion draft can be used to re-activate team
+- Team Records revamp
 
 https://web.dev/maskable-icon-audit/?utm_source=lighthouse&utm_medium=lr
 

@@ -19,7 +19,6 @@ import eventLog from "./eventLog";
 import expansionDraft from "./expansionDraft";
 import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
-import franchises from "./franchises";
 import freeAgents from "./freeAgents";
 import gameLog from "./gameLog";
 import godMode from "./godMode";
@@ -95,7 +94,6 @@ export default {
 	exportStats,
 	fantasyDraft,
 	freeAgents,
-	franchises,
 	gameLog,
 	godMode,
 	hallOfFame,

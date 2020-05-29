@@ -21,7 +21,6 @@ import ExpansionDraft from "./ExpansionDraft";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
 import FantasyDraft from "./FantasyDraft";
-import Franchises from "./Franchises";
 import FreeAgents from "./FreeAgents";
 import Frivolities from "./Frivolities";
 import GameLog from "./GameLog";
@@ -100,7 +99,6 @@ export default {
 	ExportLeague,
 	ExportStats,
 	FantasyDraft,
-	Franchises,
 	FreeAgents,
 	Frivolities,
 	GameLog,

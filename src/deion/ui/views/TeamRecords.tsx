@@ -1,29 +1,54 @@
-import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { DataTable } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
-const teamLink = (t: {
-	abbrev: string;
-	name: string;
-	region: string;
-	tid: number;
-}) => {
-	return (
-		<a href={helpers.leagueUrl(["team_history", `${t.abbrev}_${t.tid}`])}>
-			{t.region} {t.name}
-		</a>
-	);
+const teamLink = (t: View<"teamRecords">["teams"][number]) => {
+	return {
+		value: t.root ? (
+			<a href={helpers.leagueUrl(["team_history", `${t.abbrev}_${t.tid}`])}>
+				{t.region} {t.name}
+			</a>
+		) : (
+			<span className="ml-2">
+				{t.region} {t.name}
+			</span>
+		),
+		sortValue: t.sortValue,
+	};
 };
 
-const TeamRecords = ({
-	byType,
-	categories,
-	seasonCount,
-	teamRecords,
-}: View<"teamRecords">) => {
+const categories =
+	process.env.SPORT === "basketball"
+		? [
+				"mvp",
+				"dpoy",
+				"smoy",
+				"mip",
+				"roy",
+				"bestRecord",
+				"bestRecordConf",
+				"allRookie",
+				"allLeague",
+				"allDefense",
+				"allStar",
+				"allStarMVP",
+		  ]
+		: [
+				"mvp",
+				"dpoy",
+				"oroy",
+				"droy",
+				"bestRecord",
+				"bestRecordConf",
+				"allRookie",
+				"allLeague",
+		  ];
+
+const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
+	const [showHistorical, setShowHistorical] = useState(true);
+
 	useTitleBar({
 		title: "Team Records",
 		dropdownView: "team_records",
@@ -39,41 +64,61 @@ const TeamRecords = ({
 		displayName = "Team";
 	}
 
-	const cols = getCols(
+	let cols = getCols(
 		displayName,
+		"Start",
+		"End",
+		"# Seasons",
 		"W",
 		"L",
+		"T",
 		"%",
 		"Playoffs",
 		"Last",
 		"Finals",
+		"Last",
 		"Titles",
 		"Last",
 		...categories.map(category => `count:${category}`),
 	);
-	// MVP, DPOY, SMOY, ROY
-	for (let i = 9; i <= 12; i++) {
-		cols[i].sortSequence = ["desc", "asc"];
-		cols[i].sortType = "number";
+	if (!ties) {
+		cols = cols.filter(col => col.title !== "T");
 	}
+	const lasts = cols.filter(col => col.title === "Last");
+	lasts[0].desc = "Last Playoffs Appearance";
+	lasts[1].desc = "Last Finals Appearance";
+	lasts[2].desc = "Last Championship";
 
-	const rows = teamRecords.map(tr => {
-		return {
-			key: tr.id,
-			data: [
-				byType === "by_team" ? teamLink(tr.team) : tr.team,
-				tr.won,
-				tr.lost,
-				tr.winp,
-				tr.playoffAppearances,
-				tr.lastPlayoffAppearance,
-				tr.finals,
-				tr.championships,
-				tr.lastChampionship,
-				...categories.map(category => tr[category]),
-			],
-		};
-	});
+	const rows = teams
+		.filter(t => showHistorical || t.root)
+		.map((t, i) => {
+			return {
+				key: i,
+				data: [
+					byType === "by_team" ? teamLink(t) : t.name,
+					t.start,
+					t.end,
+					t.numSeasons,
+					t.won,
+					t.lost,
+					...(ties ? [t.tied] : []),
+					helpers.roundWinp(t.winp),
+					t.playoffs,
+					t.lastPlayoffs,
+					t.finals,
+					t.lastFinals,
+					t.titles,
+					t.lastTitle,
+					...categories.map(category => (t as any)[category]),
+				],
+				classNames: {
+					"text-muted": !t.root,
+					"table-info": byType === "by_team" && t.root && t.tid === userTid,
+				},
+			};
+		});
+
+	const hasHistoricalTeams = byType === "by_team" && teams.some(t => !t.root);
 
 	return (
 		<>
@@ -92,24 +137,26 @@ const TeamRecords = ({
 				) : null}
 			</p>
 
-			<p>Totals over {seasonCount} seasons played.</p>
+			{hasHistoricalTeams ? (
+				<button
+					className="btn btn-secondary"
+					onClick={() => {
+						setShowHistorical(show => !show);
+					}}
+				>
+					{showHistorical ? "Hide historical teams" : "Show historical teams"}
+				</button>
+			) : null}
 
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="TeamRecords"
-				nonfluid
+				pagination={false}
 				rows={rows}
 			/>
 		</>
 	);
-};
-
-TeamRecords.propTypes = {
-	byType: PropTypes.oneOf(["by_conf", "by_div", "by_team"]).isRequired,
-	categories: PropTypes.arrayOf(PropTypes.string).isRequired,
-	seasonCount: PropTypes.number.isRequired,
-	teamRecords: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default TeamRecords;

@@ -1266,6 +1266,10 @@ const cols: {
 	},
 	"Draft Year": {},
 	Drafted: {},
+	End: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Finals: {
 		desc: "Finals Appearances",
 		sortSequence: ["desc", "asc"],
@@ -1418,6 +1422,10 @@ const cols: {
 		sortType: "number",
 	},
 	Skills: {},
+	Start: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	T: {
 		desc: "Ties",
 		sortSequence: ["desc", "asc"],

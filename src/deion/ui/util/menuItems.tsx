@@ -88,6 +88,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["transactions", "all"],
 				text: "Transactions",
 			},
+			{
+				type: "link",
+				active: pageID => pageID === "franchises",
+				league: true,
+				path: ["franchises"],
+				text: "Franchises",
+			},
 		],
 	},
 	{

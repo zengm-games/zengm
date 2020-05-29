@@ -11,7 +11,6 @@ end of game playing time situations @gmgameschris
 randomize ratings should also update height/weight
 
 contraction
-- auto play needs to pick a new team, otherwise there will be errors
 - things to check
   - roster
   - trade between AI teams
@@ -19,6 +18,7 @@ contraction
   - football av
 - get rid of "Remove Last Team" feature
   - maybe put explanation of "Status" there, or at least mention it
+  - mention that best time to disable is right after the playoffs, bc then the draft and free agency happen mostly like normal
 - League > Franchises like https://www.basketball-reference.com/teams/
 - creating an expansion team should show inactive teams as possible teams to select
   - add explanation on Manage Teams about this, that it's often better than activating

@@ -107,7 +107,7 @@ const DeleteOldData = () => {
 							type="checkbox"
 							checked={state.retiredPlayers}
 						/>
-						Delete <b>All</b> Retired Players
+						Delete All Retired Players
 					</label>
 				</div>
 				<div className="form-check">
@@ -131,7 +131,7 @@ const DeleteOldData = () => {
 							type="checkbox"
 							checked={state.playerStats}
 						/>
-						Delete <b>All</b> Player Stats and Ratings
+						Delete Old Player Stats and Ratings
 					</label>
 				</div>
 				<div className="form-check">
@@ -142,7 +142,7 @@ const DeleteOldData = () => {
 							type="checkbox"
 							checked={state.events}
 						/>
-						Delete <b>All</b> Event Log Entries
+						Delete All Event Log Entries
 					</label>
 				</div>
 

@@ -72,15 +72,6 @@ eventually
 - allow user to cancel relocation if it's their team?
 - contraction
 
----
-
-way to bulk delete leagues
-- replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button
-
-handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
-- any abbrev returned in stats or ratings from playersPlus is wrong
-- using team*Cache from UI is probably wrong too
-
 events revamp
 - nothing should be lost, ever
 - store info about trade, so the summary of a trade can be linked to
@@ -92,6 +83,15 @@ events revamp
 manually specify draft order in god mode
 
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
+
+---
+
+way to bulk delete leagues
+- replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button
+
+handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
+- any abbrev returned in stats or ratings from playersPlus is wrong
+- using team*Cache from UI is probably wrong too
 
 in leagues with no 3 pointers, 3 pointers should not be tracked
 - shot locations?

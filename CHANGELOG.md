@@ -4,7 +4,9 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * DEV: If you use God Mode to retire a player, it checks for HoF eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity.
 
-* BETA: Realistic rosters back to 1947, including contraction of teams occuring automaticaly at appropriate times.
+*** BETA: Realistic rosters back to 1947, including contraction of teams occuring automaticaly at appropriate times.**
+
+* BETA: Revamped Team Records page, including information for team relocations, renames, and contraction.
 
 *** BETA: Support for disabling teams in Tools > Manage Teams. History of disabled teams is preserved and they can come back at a future date, either by re-enabling on Manage Teams or going to Tools > Expansion Draft, where you will see disabled teams as possible expansion teams.**
 

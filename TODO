@@ -13,7 +13,6 @@ randomize ratings should also update height/weight
 contraction
 - things to check
   - football av
-- changelog
 - 1947
   - player ratings - do better
   - play style, god mode play style presets - after redoing player ratings
@@ -87,6 +86,7 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 ---
 
 option to include historical players/stats when creating a real players league
+- should it include 1 season of stats by default, for MIP?
 
 way to bulk delete leagues
 - replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button

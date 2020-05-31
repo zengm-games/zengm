@@ -187,16 +187,33 @@ const processExpansionDraft = async (
 	info: Extract<ScheduledEvent, { type: "expansionDraft" }>["info"],
 	conditions: Conditions,
 ) => {
-	const teams = info.teams;
 	const numProtectedPlayers =
 		info.numProtectedPlayers !== undefined
 			? info.numProtectedPlayers
-			: g.get("minRosterSize") - teams.length;
+			: g.get("minRosterSize") - info.teams.length;
+
+	const teams = await idb.cache.teams.getAll();
+	const expansionTeams = info.teams.filter(t => {
+		if (t.tid === undefined) {
+			return true;
+		}
+
+		if (!teams[t.tid]) {
+			return true;
+		}
+
+		// If team is already enabled, no need for expansion draft
+		return teams[t.tid].disabled;
+	});
+
+	if (expansionTeams.length === 0) {
+		return [];
+	}
 
 	await league.setGameAttributes({
 		expansionDraft: {
 			phase: "setup",
-			teams,
+			teams: expansionTeams,
 			numProtectedPlayers: String(numProtectedPlayers),
 		},
 	});
@@ -212,8 +229,8 @@ const processExpansionDraft = async (
 	await phase.newPhase(PHASE.EXPANSION_DRAFT, conditions);
 
 	return [
-		`<b>Expansion draft!</b> ${info.teams.length} new team${
-			info.teams.length > 1 ? "s are" : " is"
+		`<b>Expansion draft!</b> ${expansionTeams.length} new team${
+			expansionTeams.length > 1 ? "s are" : " is"
 		} joining the league.`,
 	];
 };

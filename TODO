@@ -13,14 +13,11 @@ randomize ratings should also update height/weight
 contraction
 - things to check
   - football av
-- expansionDraft scheduledEvent on an existing tid that is active should be noop
 - changelog
 - 1947
-  - re-expansion and relocation at the same time (DET -> FTW)
   - player ratings - do better
   - play style, god mode play style presets - after redoing player ratings
   - https://gyazo.com/4e1496799e001b5363814c4eac36ec87
-- add _tid to abbrev from top dropdown
 
 blog
 - contraction

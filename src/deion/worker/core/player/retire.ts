@@ -12,19 +12,28 @@ import type { Conditions, Player } from "../../../common/types";
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-function retire(
+const retire = (
 	p: Player,
 	conditions?: Conditions,
-	retiredNotification: boolean = true,
-) {
-	if (conditions && retiredNotification) {
+	{
+		logRetiredEvent = true,
+		allowRetiredNotification = true,
+		forceHofNotification = false,
+	}: {
+		logRetiredEvent?: boolean;
+		allowRetiredNotification?: boolean;
+		forceHofNotification?: boolean;
+	} = {},
+) => {
+	if (conditions && logRetiredEvent) {
 		logEvent(
 			{
 				type: "retired",
 				text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 					p.firstName
 				} ${p.lastName}</a> retired.`,
-				showNotification: p.tid === g.get("userTid"),
+				showNotification:
+					p.tid === g.get("userTid") && allowRetiredNotification,
 				pids: [p.pid],
 				tids: [p.tid],
 			},
@@ -50,13 +59,14 @@ function retire(
 				} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl([
 					"hall_of_fame",
 				])}">Hall of Fame</a>.`,
-				showNotification: p.statsTids.includes(g.get("userTid")),
+				showNotification:
+					p.statsTids.includes(g.get("userTid")) || forceHofNotification,
 				pids: [p.pid],
 				tids: p.statsTids,
 			},
 			conditions,
 		);
 	}
-}
+};
 
 export default retire;

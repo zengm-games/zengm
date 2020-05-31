@@ -88,7 +88,9 @@ const killOne = async (conditions: Conditions) => {
 		return;
 	}
 
-	retire(p, conditions, false);
+	retire(p, conditions, {
+		logRetiredEvent: false,
+	});
 
 	p.diedYear = g.get("season");
 	await idb.cache.players.put(p);

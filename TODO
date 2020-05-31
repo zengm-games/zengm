@@ -38,11 +38,7 @@ new frivolity improvements
 
 Why are teams allowed to sign over the roster limit on autoplay? I'm autoplaying a league and I see teams with -2 roster spots as I flip through
 
-make nag modal less likely to pop up first season
-
 support changing team logos at any season, from predefined real team logos
-
-when manually retiring a player in god mode, check HoF eligibility
 
 when editing contract in God Mode, make sure p.salaries is updated correctly
 
@@ -50,6 +46,7 @@ the ratings previews (the ones next to a player's name, that pop up when clicked
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
+- starting season
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues
@@ -87,6 +84,8 @@ manually specify draft order in god mode
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 
 ---
+
+option to include historical players/stats when creating a real players league
 
 way to bulk delete leagues
 - replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button

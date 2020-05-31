@@ -1923,6 +1923,7 @@ const upsertCustomizedPlayer = async (
 	originalTid: number,
 	season: number,
 	updatedRatingsOrAge: boolean,
+	conditions: Conditions,
 ): Promise<number> => {
 	const r = p.ratings.length - 1;
 
@@ -1948,6 +1949,18 @@ const upsertCustomizedPlayer = async (
 		if (g.get("season") - p.ratings[r].season > 0) {
 			player.addRatingsRow(p, 15);
 		}
+	}
+
+	// If player is now retired, check HoF eligibility
+	if (
+		typeof p.pid === "number" &&
+		p.tid === PLAYER.RETIRED &&
+		originalTid !== PLAYER.RETIRED
+	) {
+		player.retire(p as Player, conditions, {
+			allowRetiredNotification: false,
+			forceHofNotification: true,
+		});
 	}
 
 	// Recalculate player ovr, pot, and values if necessary

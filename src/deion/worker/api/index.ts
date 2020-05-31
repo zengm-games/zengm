@@ -217,22 +217,35 @@ const countNegotiations = async () => {
 const createLeague = async ({
 	name,
 	tid,
-	leagueFile,
+	leagueFileInput,
 	shuffleRosters,
 	difficulty,
 	importLid,
 	getLeagueOptions,
+	keptKeys,
 }: {
 	name: string;
 	tid: number;
-	leagueFile: any;
+	leagueFileInput: any;
 	shuffleRosters: boolean;
 	difficulty: number;
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
+	keptKeys: string[];
 }): Promise<number> => {
 	if (getLeagueOptions) {
-		leagueFile = await realRosters.getLeague(getLeagueOptions);
+		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
+	}
+
+	const leagueFile: any = {};
+	for (const key of [...keptKeys, "version"]) {
+		if (leagueFileInput && leagueFileInput[key]) {
+			leagueFile[key] = leagueFileInput[key];
+		}
+	}
+
+	if (leagueFile.startingSeason === undefined) {
+		leagueFile.startingSeason = new Date().getFullYear();
 	}
 
 	if (leagueFile.players) {

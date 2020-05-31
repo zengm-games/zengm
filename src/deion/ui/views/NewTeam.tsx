@@ -39,7 +39,9 @@ const NewTeam = ({
 	};
 
 	let title;
-	if (expansion) {
+	if (expansion && disabled) {
+		title = "Pick an Expansion Team";
+	} else if (expansion) {
 		title = "Switch To Expansion Team?";
 	} else {
 		title = "Pick a New Team";
@@ -73,12 +75,21 @@ const NewTeam = ({
 
 	let message;
 	if (expansion) {
-		message = (
-			<p>
-				You can either stay with your current team or take control of a new
-				expansion team.
-			</p>
-		);
+		if (disabled) {
+			message = (
+				<p>
+					Your old team no longer exists, but fortunately there are some new
+					teams willing to hire you.
+				</p>
+			);
+		} else {
+			message = (
+				<p>
+					You can either stay with your current team or take control of a new
+					expansion team.
+				</p>
+			);
+		}
 	} else if (godMode) {
 		message = (
 			<p>

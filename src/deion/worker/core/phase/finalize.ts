@@ -46,7 +46,7 @@ const finalize = async (
 	await lock.set("newPhase", false);
 	await updatePhase();
 	await updatePlayMenu();
-	await updateStatus("Idle");
+	await updateStatus();
 	updateEvents.push("newPhase");
 
 	if (phase === PHASE.PRESEASON || phase === PHASE.DRAFT_LOTTERY) {

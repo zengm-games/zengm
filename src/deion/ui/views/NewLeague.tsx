@@ -578,17 +578,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				type: "submit",
 			});
 
-			const actualLeagueFile: any = {};
-			for (const key of [...state.keptKeys, "version"]) {
-				if (state.leagueFile && state.leagueFile[key]) {
-					actualLeagueFile[key] = state.leagueFile[key];
-				}
-			}
-
-			if (actualLeagueFile.startingSeason === undefined) {
-				actualLeagueFile.startingSeason = new Date().getFullYear();
-			}
-
 			const actualShuffleRosters = state.keptKeys.includes("players")
 				? state.randomization === "shuffle"
 				: false;
@@ -617,7 +606,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				const lid = await toWorker("main", "createLeague", {
 					name,
 					tid: state.tid,
-					leagueFile: actualLeagueFile,
+					leagueFile: state.leagueFile,
+					keptKeys: state.keptKeys,
 					shuffleRosters: actualShuffleRosters,
 					difficulty: actualDifficulty,
 					importLid: props.lid,
@@ -990,7 +980,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										<li className="list-group-item bg-light">
 											<h3>Watch your league evolve over time</h3>
 											<p className="mb-0">
-												There were only 8 teams in {MIN_SEASON}, playing a very
+												There were only 11 teams in {MIN_SEASON}, playing a very
 												different brand of basketball than today. Live through
 												expansion drafts, league rule changes, team relocations,
 												economic growth, and changes in style of play.

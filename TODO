@@ -14,12 +14,15 @@ contraction
 - things to check
   - football av
 - expansionDraft scheduledEvent on an existing tid that is active should be noop
-- upload new overrides jsons
 - changelog
 - 1947
   - re-expansion and relocation at the same time (DET -> FTW)
   - player ratings - do better
-  - play style, finances
+  - play style
+  - god mode play style presets
+  - lower league leader requirements, otherwise 1947 is weird
+  - https://gyazo.com/4e1496799e001b5363814c4eac36ec87
+  - Ivr Rothenberg and Hank Biasatti show as players that went undrafted in the 1947 draft, although they played in the 1947 season directly before that. (Both were on teams that went inactive)
 
 blog
 - contraction
@@ -29,8 +32,6 @@ blog
 - inactive teams in dropdown
 - expansion draft can be used to re-activate team
 - Team Records revamp
-
-https://web.dev/maskable-icon-audit/?utm_source=lighthouse&utm_medium=lr
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
@@ -49,6 +50,9 @@ when manually retiring a player in god mode, check HoF eligibility
 when editing contract in God Mode, make sure p.salaries is updated correctly
 
 the ratings previews (the ones next to a player's name, that pop up when clicked) dont update at preseason
+
+with ad blocker, don't take up extra space on right
+- replace ads.js check with prebid check
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/

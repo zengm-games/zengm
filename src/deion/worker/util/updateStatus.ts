@@ -16,6 +16,7 @@ Args:
         the client.
 */
 const updateStatus = async (statusText?: string, conditions?: Conditions) => {
+	console.log("updateStatus", statusText);
 	if (statusText === undefined) {
 		// This should only be triggered on loading a league from DB for now, but eventually this could actually
 		// populate statusText in most situations (just call with no argument).

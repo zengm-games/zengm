@@ -153,18 +153,18 @@ const showModal = () => {
 	}
 	localStorage.setItem("lastDateShowModal", date);
 
+	const r = Math.random();
+
 	// div is from public/files/ads/ads.js
 	const adBlock = !document.getElementById("sd1qBP1fFk");
-	if (adBlock) {
+	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;
 	}
 
-	const r = Math.random();
-
-	if (r < 0.96) {
+	if (r < 0.1) {
 		ads.showGcs();
-	} else {
+	} else if (r < 0.11) {
 		ads.showModal();
 	}
 };

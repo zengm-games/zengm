@@ -250,6 +250,7 @@ const getRowInfo = (
 type Team = {
 	root: boolean;
 	tid: number;
+	disabled?: boolean; // Only for root object of team, not div/conf
 	abbrev: string;
 	region: string;
 	name: string;
@@ -296,6 +297,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 	const colsMax = ["end", "lastPlayoffs", "lastFinals", "lastTitle"] as const;
 
 	const output = { ...teams[0] };
+	delete output.disabled;
 	for (const col of [...colsSum]) {
 		output[col] = sumBy(teams, col);
 	}
@@ -327,7 +329,7 @@ const updateTeamRecords = async (
 
 		const teamsAll = orderBy(
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid", "abbrev", "region", "name", "cid", "did"],
+				attrs: ["tid", "abbrev", "region", "name", "cid", "did", "disabled"],
 				seasonAttrs: [
 					"abbrev",
 					"region",
@@ -349,6 +351,7 @@ const updateTeamRecords = async (
 			const row = {
 				root: true,
 				tid: t.tid,
+				disabled: t.disabled,
 				abbrev: t.abbrev,
 				region: t.region,
 				name: t.name,

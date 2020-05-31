@@ -46,6 +46,9 @@ const categories =
 				"allLeague",
 		  ];
 
+const isHistorical = (t: { root: boolean; disabled?: boolean }) =>
+	!t.root || t.disabled;
+
 const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 	const [showHistorical, setShowHistorical] = useState(true);
 
@@ -90,7 +93,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 	lasts[2].desc = "Last Championship";
 
 	const rows = teams
-		.filter(t => showHistorical || t.root)
+		.filter(t => showHistorical || !isHistorical(t))
 		.map((t, i) => {
 			return {
 				key: i,
@@ -118,7 +121,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 			};
 		});
 
-	const hasHistoricalTeams = byType === "by_team" && teams.some(t => !t.root);
+	const hasHistoricalTeams = byType === "by_team" && teams.some(isHistorical);
 
 	return (
 		<>

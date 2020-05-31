@@ -1,8 +1,12 @@
 This is a user-focused changelog. The entries here are things that affect gameplay.
 
-The dates are when development finished, not when the change was actually deployed to basketball-gm.com or football-gm.com.
-
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
+
+* DEV: If you use God Mode to retire a player, it checks for HoF eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity.
+
+* BETA: Realistic rosters back to 1947, including contraction of teams occuring automaticaly at appropriate times.
+
+*** BETA: Support for disabling teams in Tools > Manage Teams. History of disabled teams is preserved and they can come back at a future date, either by re-enabling on Manage Teams or going to Tools > Expansion Draft, where you will see disabled teams as possible expansion teams.**
 
 * 2020-05-26: Added a ton of new frivolities and redesigned the frivolities page. [[1]](https://basketball-gm.com/blog/2020/05/new-frivolities/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/)
 

@@ -264,6 +264,19 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 		}
 
+		if (tid >= PLAYER.FREE_AGENT && !draftProspect) {
+			// Ensure draft year is before the current season, because for some players like Irv Rothenberg this is not true
+			if (draft.year >= season) {
+				draft = {
+					tid: -1,
+					originalTid: -1,
+					round: 0,
+					pick: 0,
+					year: season - 1,
+				};
+			}
+		}
+
 		let injury;
 		let contract;
 		let awards;

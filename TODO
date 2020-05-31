@@ -23,6 +23,7 @@ contraction
   - lower league leader requirements, otherwise 1947 is weird
   - https://gyazo.com/4e1496799e001b5363814c4eac36ec87
   - Ivr Rothenberg and Hank Biasatti show as players that went undrafted in the 1947 draft, although they played in the 1947 season directly before that. (Both were on teams that went inactive)
+- add _tid to abbrev from top dropdown
 
 blog
 - contraction
@@ -40,6 +41,9 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
   - Best Progs - age of increase
+
+
+Why are teams allowed to sign over the roster limit on autoplay? I'm autoplaying a league and I see teams with -2 roster spots as I flip through
 
 make nag modal less likely to pop up first season
 

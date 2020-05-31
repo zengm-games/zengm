@@ -12,8 +12,7 @@ const otherSport =
 	process.env.SPORT === "basketball" ? "Football" : "Basketball";
 
 const NagModal = ({ close, show }: Props) => {
-	// div is from public/files/ads/ads.js
-	const adBlock = !document.getElementById("sd1qBP1fFk");
+	const adBlock = !window.bbgmAds.init;
 	return (
 		<Modal show={show} onHide={close}>
 			<Modal.Header closeButton>

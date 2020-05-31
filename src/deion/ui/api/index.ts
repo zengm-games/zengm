@@ -155,8 +155,7 @@ const showModal = () => {
 
 	const r = Math.random();
 
-	// div is from public/files/ads/ads.js
-	const adBlock = !document.getElementById("sd1qBP1fFk");
+	const adBlock = !window.bbgmAds.init;
 	if (adBlock && r < 0.11) {
 		ads.showModal();
 		return;

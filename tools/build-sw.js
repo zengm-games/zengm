@@ -29,11 +29,7 @@ const injectManifest = async () => {
 		globDirectory: "build",
 		globPatterns: ["**/*.{js,css,html}", "fonts/*.woff2", "img/logos/*.png"],
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
-		globIgnores: [
-			"gen/*-legacy-*.js",
-			"gen/real-player-data*.json",
-			"files/ads/ads.js",
-		],
+		globIgnores: ["gen/*-legacy-*.js", "gen/real-player-data*.json"],
 
 		// Changing default is only needed for unminified versions from watch-js
 		maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,

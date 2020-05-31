@@ -16,6 +16,10 @@ contraction
 - expansionDraft scheduledEvent on an existing tid that is active should be noop
 - upload new overrides jsons
 - changelog
+- 1947
+  - re-expansion and relocation at the same time (DET -> FTW)
+  - player ratings - do better
+  - play style, finances
 
 blog
 - contraction

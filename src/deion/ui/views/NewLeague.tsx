@@ -153,7 +153,7 @@ const LeaguePartPicker = ({
 
 const quickValuesStyle = { height: 19, color: "var(--dark)" };
 
-const MIN_SEASON = 1952;
+const MIN_SEASON = 1947;
 const MAX_SEASON = 2020;
 
 const seasons: { key: string; value: string }[] = [];
@@ -810,7 +810,15 @@ const NewLeague = (props: View<"newLeague">) => {
 								dispatch({ type: "setSeason", season });
 							}}
 							onDone={handleNewLeagueInfo}
-							quickValues={["1952", "1968", "1984", "1996", "2003", "2020"]}
+							quickValues={[
+								"1947",
+								"1956",
+								"1968",
+								"1984",
+								"1996",
+								"2003",
+								"2020",
+							]}
 						/>
 					) : null}
 

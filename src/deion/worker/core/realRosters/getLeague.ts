@@ -15,10 +15,24 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 	const abbrevs = {
 		// These teams are defunct by 2020, but we're giving their history to a modern franchise
 		INO: "IND",
+		INJ: "IND",
 		BLB: "WAS",
+		CHS: "CHI",
+		SHE: "MIL",
+		TRH: "TOR",
+		CLR: "CLE",
+		DTF: "DET",
+
+		// These teams go defunct and remain defunct by 2020, indicated by the _ prefix
+		WSC: "_WSC",
+		STB: "_STL",
+		AND: "_AND",
+		DNN: "_DEN",
+		WAT: "_WAT",
+		PRO: "_PRO",
+		PIT: "_PIT",
 
 		// Map to BBGM 2020 abbrevs
-		AND: "IND",
 		ATL: "ATL",
 		BAL: "WAS",
 		BOS: "BOS",
@@ -30,14 +44,12 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		CHI: "CHI",
 		CHO: "CHA",
 		CHP: "WAS",
-		CHS: "CHI",
 		CHZ: "WAS",
 		CIN: "SAC",
 		CLE: "CLE",
 		DAL: "DAL",
 		DEN: "DEN",
 		DET: "DET",
-		DNN: "DEN",
 		FTW: "DET",
 		GSW: "GS",
 		HOU: "HOU",
@@ -73,7 +85,6 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		SDR: "HOU",
 		SEA: "OKC",
 		SFW: "GS",
-		SHE: "MIL",
 		STL: "ATL",
 		SYR: "PHI",
 		TOR: "TOR",
@@ -81,9 +92,7 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		UTA: "UTA",
 		VAN: "MEM",
 		WAS: "WAS",
-		WAT: null,
 		WSB: "WAS",
-		WSC: "WAS",
 
 		// These are BBGM-only ones, which is used for when old seasons of BBGM are compared against new ones
 		BKN: "BKN",
@@ -92,7 +101,7 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		NYC: "NYC",
 		SA: "SA",
 		SD: "SD",
-		CHB: "NOL",
+		CHQ: "NOL",
 		KC: "SAC",
 		MLG: "ATL",
 		NJ: "BKN",

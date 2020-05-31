@@ -46,16 +46,14 @@ const initAds = (goldUntil: number | undefined) => {
 		hideAds = true;
 	}
 
-	if (hideAds) {
-		// Get rid of margin saved for skyscraper on right
-		const container = document.getElementsByClassName("bbgm-container")[0];
-
-		if (container instanceof HTMLElement) {
-			container.style.paddingRight = "15px";
-			container.style.maxWidth = "100%";
-		}
-	} else {
+	if (!hideAds) {
 		window.bbgmAds.cmd.push(() => {
+			// Add margin for skyscraper on right
+			const container = document.getElementsByClassName("bbgm-container")[0];
+			if (container instanceof HTMLElement) {
+				container.classList.add("padding-for-skyscraper");
+			}
+
 			// Show hidden divs. skyscraper has its own code elsewhere to manage display.
 			const showDivs =
 				window.screen && window.screen.width < 768

@@ -65,14 +65,8 @@ h5 {
 	display: none;
 }
 
-@include media-breakpoint-up(xl) {
-	.bbgm-container {
-		max-width: map-get($grid-breakpoints, xl);
-	}
-}
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-	.bbgm-container {
-		max-width: unset;
+	.padding-for-skyscraper {
 		padding-right: 190px;
 	}
 	.skyscraper-wrapper {

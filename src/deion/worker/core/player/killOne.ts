@@ -72,6 +72,8 @@ const killOne = async (conditions: Conditions) => {
 		"was strangled to death by a teammate for not knowing the score",
 		"died in a freak gasoline fight accident",
 		"was intensely focused on playing Basketball GM on his cell phone. As he walked across the street, he was so distracted by his ultimately fatal obsession that he didn't notice the bus barreling towards him",
+		"drowned while crossing the Saleph River",
+		"uploaded himself to the cloud and can no longer participate in corporeal pursuits",
 	]);
 
 	// Pick random team

@@ -49,7 +49,7 @@ const getCategoriesAndStats = () => {
 						title: "Field Goal Percentage",
 						data: [],
 						minStats: ["fg"],
-						minValue: [300],
+						minValue: [300 * g.get("twoPointAccuracyFactor")],
 					},
 					{
 						name: "Three-Pointer Percentage",

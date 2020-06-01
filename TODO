@@ -82,6 +82,9 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 
 ---
 
+move stuff from basketball and football folders back to deion. overrides too cumbersome
+- see madeHof.basketball and madeHof.football
+
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
 

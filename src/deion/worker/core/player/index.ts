@@ -18,6 +18,7 @@ import getPlayerFakeAge from "./getPlayerFakeAge";
 import injury from "./injury";
 import killOne from "./killOne";
 import limitRating from "./limitRating";
+import madeHof from "./madeHof";
 import moodColorText from "./moodColorText";
 import release from "./release";
 import retire from "./retire";
@@ -48,6 +49,7 @@ export default {
 	injury,
 	killOne,
 	limitRating,
+	madeHof,
 	moodColorText,
 	release,
 	retire,

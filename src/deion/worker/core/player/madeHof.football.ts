@@ -1,6 +1,6 @@
-import { g } from "../../../../deion/worker/util";
-import type { Player, PlayerWithoutKey } from "../../../../deion/common/types";
-import type { PlayerRatings } from "../../../common/types";
+import { g } from "../../util";
+import type { Player, PlayerWithoutKey } from "../../../common/types";
+import type { PlayerRatings } from "../../../../football/common/types";
 
 const getMostCommonPos = (ratings: PlayerRatings[]) => {
 	const counts = new Map<string, number>();

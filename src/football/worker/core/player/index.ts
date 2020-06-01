@@ -4,7 +4,6 @@ import genRatings from "./genRatings";
 import getDepthPlayers from "./getDepthPlayers";
 import genWeight from "./genWeight";
 import heightToRating from "./heightToRating";
-import madeHof from "./madeHof";
 import ovr from "./ovr";
 import pos from "./pos";
 import stats from "./stats";
@@ -16,7 +15,6 @@ export default {
 	getDepthPlayers,
 	genWeight,
 	heightToRating,
-	madeHof,
 	ovr,
 	pos,
 	stats,

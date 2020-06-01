@@ -1,5 +1,6 @@
 import { PLAYER } from "../../../common";
-import { g, helpers, logEvent, overrides } from "../../util";
+import { g, helpers, logEvent } from "../../util";
+import madeHof from "./madeHof";
 import type { Conditions, Player } from "../../../common/types";
 
 /**
@@ -45,7 +46,7 @@ const retire = (
 	p.retiredYear = g.get("season");
 
 	// Add to Hall of Fame?
-	if (conditions && overrides.core.player.madeHof!(p)) {
+	if (conditions && madeHof(p)) {
 		p.hof = true;
 		p.awards.push({
 			season: g.get("season"),

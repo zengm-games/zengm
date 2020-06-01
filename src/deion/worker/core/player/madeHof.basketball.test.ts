@@ -1,9 +1,9 @@
 import assert from "assert";
-import testHelpers from "../../../../deion/test/helpers";
-import { player } from "../../../../deion/worker/core";
-import madeHof from "./madeHof";
+import testHelpers from "../../../test/helpers";
+import { player } from "..";
+import madeHofBasketball from "./madeHof.basketball";
 
-describe("basketball/worker/core/player/madeHof", () => {
+describe("basketball/worker/core/player/madeHof.basketball", () => {
 	test("narrowly make HoF based on dominance factor", () => {
 		testHelpers.resetG();
 		const p = player.generate(0, 19, 2012, false, 15.5);
@@ -49,7 +49,7 @@ describe("basketball/worker/core/player/madeHof", () => {
 				ewa: 14,
 			},
 		];
-		assert.equal(madeHof(p), true);
+		assert.equal(madeHofBasketball(p), true);
 	});
 
 	test("narrowly miss HoF based on dominance factor", () => {
@@ -121,6 +121,6 @@ describe("basketball/worker/core/player/madeHof", () => {
 				ewa: 8,
 			},
 		];
-		assert.equal(madeHof(p), false);
+		assert.equal(madeHofBasketball(p), false);
 	});
 });

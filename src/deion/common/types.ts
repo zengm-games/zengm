@@ -1210,7 +1210,6 @@ export type WorkerOverridesCore = {
 			PR: T[];
 		};
 		heightToRating?: (heightInInches: number) => number;
-		madeHof?: (p: Player | PlayerWithoutKey) => boolean;
 		ovr?: (a: any, pos?: any) => number;
 		pos?: (a: any) => string;
 		processStats?: (

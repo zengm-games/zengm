@@ -1,9 +1,9 @@
-import { defaultGameAttributes, g } from "../../../../deion/worker/util";
+import { defaultGameAttributes, g } from "../../util";
 import type {
 	Player,
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
-} from "../../../../deion/common/types";
+} from "../../../common/types";
 
 /**
  * Is a player worthy of the Hall of Fame?

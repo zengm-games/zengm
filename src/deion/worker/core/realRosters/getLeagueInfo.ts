@@ -1,4 +1,4 @@
-import loadDataBasketball from "./loadDataBasketball";
+import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 
 const getLeagueInfo = async (

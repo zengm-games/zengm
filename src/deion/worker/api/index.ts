@@ -802,11 +802,17 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 
 	player.develop(p, age - 19);
 
-	const ratings: Record<string, number> = {};
+	const ratings: Record<string, unknown> = {};
 	for (const key of overrides.common.constants.RATINGS) {
 		ratings[key] = (p.ratings[0] as any)[key];
 	}
-	return ratings;
+	if (pos === undefined) {
+		ratings.pos = p.ratings[0].pos;
+	}
+	return {
+		hgt: p.hgt,
+		ratings,
+	};
 };
 
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {

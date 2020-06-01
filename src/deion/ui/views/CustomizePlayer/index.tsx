@@ -624,7 +624,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							} as this player`}
 							onClick={async event => {
 								event.preventDefault();
-								const ratings = await toWorker(
+								const { hgt, ratings } = await toWorker(
 									"main",
 									"getRandomRatings",
 									(p as any).age,
@@ -634,7 +634,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								);
 
 								setState(prevState => {
-									const p: any = prevState.p;
+									const p: any = {
+										...prevState.p,
+										hgt,
+									};
 									p.ratings[p.ratings.length - 1] = {
 										...p.ratings[p.ratings.length - 1],
 										...ratings,

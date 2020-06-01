@@ -40,6 +40,9 @@ Why are teams allowed to sign over the roster limit on autoplay? I'm autoplaying
 support changing team logos at any season, from predefined real team logos
 - could add them as scheduled events when starting a league
 - could check the overrides dynamically every new season, including the first
+  - have a default, for any starting season, and then season specific overrides. only apply season-specific override of previous entry for this franchise has been applied and not altered
+    - track altering with a flag, or value? if flag, won't work for existing leagues or if the overrides change. so flag might be better
+      - but flag would miss if it was edited and then edited back. maybe both?
   - would have to do the same for players?
 
 the ratings previews (the ones next to a player's name, that pop up when clicked) dont update at preseason

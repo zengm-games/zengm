@@ -460,7 +460,7 @@ const reducer = (state: State, action: Action): State => {
 				leagueFile: action.leagueFile,
 				allKeys,
 				keptKeys: allKeys,
-				teams: action.teams,
+				teams: action.teams.filter(t => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
 			};
 		}
@@ -606,7 +606,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				const lid = await toWorker("main", "createLeague", {
 					name,
 					tid: state.tid,
-					leagueFile: state.leagueFile,
+					leagueFileInput: state.leagueFile,
 					keptKeys: state.keptKeys,
 					shuffleRosters: actualShuffleRosters,
 					difficulty: actualDifficulty,

@@ -31,10 +31,10 @@ const getSummary = async (teams: TradeTeams) => {
 
 // Validate that the stored player IDs correspond with the active team ID
 const validateTeams = async () => {
-	const { teams } = await idb.cache.trade.get(0); // Handle case where multi team mode is used to switch teams, but a trade was already happening with the team that was just switched to
+	const { teams } = await idb.cache.trade.get(0);
 
 	if (teams[0].tid !== g.get("userTid")) {
-		teams[1] = {
+		teams[0] = {
 			tid: g.get("userTid"),
 			pids: [],
 			pidsExcluded: [],
@@ -43,14 +43,20 @@ const validateTeams = async () => {
 		};
 	}
 
-	if (teams[1].tid === g.get("userTid") || teams[1].tid >= g.get("numTeams")) {
-		teams[1] = {
-			tid: g.get("userTid") === 0 ? 1 : 0,
-			pids: [],
-			pidsExcluded: [],
-			dpids: [],
-			dpidsExcluded: [],
-		};
+	const allTeams = await idb.cache.teams.getAll();
+	const t1 = allTeams.find(t => t.tid === teams[1].tid);
+	if (!t1 || teams[1].tid === g.get("userTid") || t1.disabled) {
+		// Invalid trading partner
+		const newT1 = allTeams.find(t => t.tid !== g.get("userTid") && !t.disabled);
+		if (newT1) {
+			teams[1] = {
+				tid: newT1.tid,
+				pids: [],
+				pidsExcluded: [],
+				dpids: [],
+				dpidsExcluded: [],
+			};
+		}
 	}
 
 	// This is just for debugging
@@ -65,6 +71,7 @@ const validateTeams = async () => {
 		.then(dv => {
 			console.log(dv);
 		});
+
 	return trade.updatePlayers(teams);
 };
 

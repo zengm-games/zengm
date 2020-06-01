@@ -21,6 +21,7 @@ type NewLeagueTeam = {
 	pop?: number;
 	popRank: number;
 	srID?: string;
+	disabled?: boolean;
 };
 
 type LeagueInfo = {

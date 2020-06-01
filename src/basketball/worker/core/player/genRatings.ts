@@ -1,6 +1,6 @@
 import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
-import { g, helpers, overrides, random } from "../../../../deion/worker/util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const typeFactors: Record<
@@ -204,7 +204,7 @@ const genRatings = (
 
 	ratings.fuzz *= factor;
 
-	ratings.pos = overrides.core.player.pos!(ratings);
+	ratings.pos = player.pos(ratings);
 	return {
 		heightInInches,
 		ratings,

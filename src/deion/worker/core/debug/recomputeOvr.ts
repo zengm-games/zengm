@@ -1,5 +1,6 @@
 import { idb, iterate } from "../../db";
-import { overrides, toUI } from "../../util";
+import { toUI } from "../../util";
+import { player } from "..";
 
 const recomputeOvr = async () => {
 	const ovrs: {
@@ -13,7 +14,7 @@ const recomputeOvr = async () => {
 
 	await iterate(transaction.store, undefined, "prev", p => {
 		const ratings = p.ratings[p.ratings.length - 1];
-		const ovr = overrides.core.player.ovr!(ratings);
+		const ovr = player.ovr(ratings);
 		ovrs.push({
 			pid: p.pid,
 			old: ratings.ovr,

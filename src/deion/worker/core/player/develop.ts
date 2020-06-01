@@ -1,6 +1,8 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
+import ovr from "./ovr";
+import pos from "./pos";
 import skills from "./skills";
 import { g, helpers, overrides, random } from "../../util";
 import type { MinimalPlayerRatings } from "../../../common/types";
@@ -148,7 +150,7 @@ export const bootstrapPot = (
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
 			overrides.core.player.developSeason!(copiedRatings, ageTemp); // Purposely no coachingRank
 
-			const currentOvr = overrides.core.player.ovr!(copiedRatings, pos);
+			const currentOvr = ovr(copiedRatings, pos);
 
 			if (currentOvr > maxOvr) {
 				maxOvr = currentOvr;
@@ -228,7 +230,7 @@ const develop = (
 	if (!ratings.locked || years === 0) {
 		// Run these even for players developing 0 seasons
 		if (process.env.SPORT === "basketball") {
-			ratings.ovr = overrides.core.player.ovr!(ratings);
+			ratings.ovr = ovr(ratings);
 
 			if (!skipPot) {
 				ratings.pot = bootstrapPot(ratings, age);
@@ -238,7 +240,7 @@ const develop = (
 				// Must be a custom league player, let's not rock the boat
 				ratings.pos = p.pos;
 			} else {
-				ratings.pos = overrides.core.player.pos!(ratings);
+				ratings.pos = pos(ratings);
 			}
 		} else {
 			let pos;
@@ -247,7 +249,7 @@ const develop = (
 			const bannedPositions = ["KR", "PR"];
 			ratings.ovrs = overrides.common.constants.POSITIONS.reduce(
 				(ovrs, pos2) => {
-					ovrs[pos2] = overrides.core.player.ovr!(ratings, pos2);
+					ovrs[pos2] = ovr(ratings, pos2);
 
 					if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
 						pos = pos2;

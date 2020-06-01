@@ -7,8 +7,9 @@ import type {
 	DraftPickWithoutKey,
 } from "../../../common/types";
 import type { Ratings } from "./loadData.basketball";
-import { overrides, helpers, random } from "../../util";
+import { helpers, random } from "../../util";
 import { PLAYER } from "../../../common";
+import { player } from "..";
 
 // Convert abbrevs of current or old NBA/BBGM teams to their equivalent team in modern BBGM. This is used to track a franchise over time, if all you have is the abbrev
 const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
@@ -623,7 +624,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		pid = -1;
 
-		let players = orderBy(basketball.ratings, overrides.core.player.ovr, "desc")
+		let players = orderBy(
+			basketball.ratings,
+			ratings => player.ovr(ratings as any),
+			"desc",
+		)
 			.filter(
 				ratings =>
 					ratings.season >= allTypes[options.decade].start &&

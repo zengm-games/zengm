@@ -5,7 +5,7 @@ import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
 import iterate from "./iterate";
-import { helpers, logEvent, overrides } from "../util";
+import { helpers, logEvent } from "../util";
 import connectIndexedDB from "./connectIndexedDB";
 import type { DBSchema, IDBPDatabase, IDBPTransaction } from "idb";
 import type {
@@ -669,7 +669,7 @@ const migrate = ({
 						}
 					}
 
-					r.ovr = overrides.core.player.ovr!(r);
+					r.ovr = player.ovr(r);
 					r.skills = player.skills(r);
 
 					// For performance, only calculate pot for non-retired players

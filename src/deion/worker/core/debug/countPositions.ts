@@ -1,6 +1,7 @@
 import { PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { overrides } from "../../util";
+import { player } from "..";
 
 const countPositions = async () => {
 	// All non-retired players
@@ -18,9 +19,9 @@ const countPositions = async () => {
 	for (const p of players) {
 		const r = p.ratings[p.ratings.length - 1]; // Dynamically recompute, to make dev easier when changing position formula
 
-		const position = overrides.core.player.pos!(r);
+		const position = player.pos(r);
 
-		const ovr = overrides.core.player.ovr!(r, position);
+		const ovr = player.ovr(r, position);
 
 		if (!posCounts[position]) {
 			posCounts[position] = 0;

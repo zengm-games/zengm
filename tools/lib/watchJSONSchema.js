@@ -3,6 +3,8 @@ const fs = require("fs");
 const getSport = require("./getSport");
 
 const watchJSONSchema = (updateStart, updateEnd, updateError) => {
+	fs.mkdirSync("build/files", { recursive: true });
+
 	const sport = getSport();
 
 	const watcher = chokidar.watch("tools/lib/generateJSONSchema.js", {});

@@ -4,6 +4,8 @@ import develop, { bootstrapPot } from "./develop";
 import genContract from "./genContract";
 import generate from "./generate";
 import heightToRating from "./heightToRating";
+import ovr from "./ovr";
+import pos from "./pos";
 import setContract from "./setContract";
 import skills from "./skills";
 import updateValues from "./updateValues";
@@ -258,7 +260,7 @@ const augmentPartialPlayer = (
 				}
 			}
 
-			r.ovr = overrides.core.player.ovr!(r);
+			r.ovr = ovr(r);
 			r.skills = skills(r);
 			r.pot = bootstrapPot(r, r.season - p.born.year);
 
@@ -289,7 +291,7 @@ const augmentPartialPlayer = (
 		}
 
 		if (r.ovr === undefined) {
-			r.ovr = overrides.core.player.ovr!(p.ratings[0]);
+			r.ovr = ovr(p.ratings[0]);
 		}
 
 		if (
@@ -305,7 +307,7 @@ const augmentPartialPlayer = (
 			if (p.pos !== undefined && typeof p.pos === "string") {
 				r.pos = p.pos;
 			} else {
-				r.pos = overrides.core.player.pos!(r);
+				r.pos = pos(r);
 			}
 		}
 	}

@@ -21,6 +21,8 @@ import killOne from "./killOne";
 import limitRating from "./limitRating";
 import madeHof from "./madeHof";
 import moodColorText from "./moodColorText";
+import ovr from "./ovr";
+import pos from "./pos";
 import release from "./release";
 import retire from "./retire";
 import setContract from "./setContract";
@@ -53,6 +55,8 @@ export default {
 	limitRating,
 	madeHof,
 	moodColorText,
+	ovr,
+	pos,
 	release,
 	retire,
 	sign,

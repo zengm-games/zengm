@@ -1,4 +1,4 @@
-import type { PlayerRatings } from "../../../common/types";
+import type { PlayerRatings } from "../../../../basketball/common/types";
 
 /**
  * Calculates the overall rating by averaging together all the other ratings.

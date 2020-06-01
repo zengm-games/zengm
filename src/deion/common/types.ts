@@ -694,8 +694,8 @@ export type MinimalPlayerRatings = {
 	pos: string;
 	skills: string[];
 	season: number;
-	ovrs: any;
-	pots: any;
+	ovrs?: any;
+	pots?: any;
 	injuryIndex?: number;
 	hgt: number;
 	stre: number;
@@ -1209,8 +1209,6 @@ export type WorkerOverridesCore = {
 			KR: T[];
 			PR: T[];
 		};
-		ovr?: (a: any, pos?: any) => number;
-		pos?: (a: any) => string;
 		processStats?: (
 			ps: PlayerStats,
 			stats: string[],

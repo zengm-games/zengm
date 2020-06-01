@@ -1,6 +1,6 @@
 import { PHASE } from "../../../../deion/common";
 import { player } from "../../../../deion/worker/core";
-import { g, helpers, overrides, random } from "../../../../deion/worker/util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import { POSITION_COUNTS } from "../../../common/constants";
 import type { PlayerRatings } from "../../../common/types";
 
@@ -372,7 +372,7 @@ const genRatings = (
 		}
 	}
 
-	ratings.pos = overrides.core.player.pos!(ratings);
+	ratings.pos = player.pos(ratings);
 	/*info[`${pos}->${ratings.pos}`] =
 		info[`${pos}->${ratings.pos}`] === undefined
 			? 1

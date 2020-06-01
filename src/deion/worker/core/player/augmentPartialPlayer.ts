@@ -3,6 +3,7 @@ import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
 import genContract from "./genContract";
 import generate from "./generate";
+import heightToRating from "./heightToRating";
 import setContract from "./setContract";
 import skills from "./skills";
 import updateValues from "./updateValues";
@@ -190,7 +191,7 @@ const augmentPartialPlayer = (
 	// Height rescaling
 	if (version === undefined || version <= 23) {
 		for (const r of p.ratings) {
-			r.hgt = overrides.core.player.heightToRating!(p.hgt);
+			r.hgt = heightToRating(p.hgt);
 		}
 	}
 

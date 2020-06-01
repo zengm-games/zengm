@@ -15,6 +15,7 @@ import genContract from "./genContract";
 import genFuzz from "./genFuzz";
 import generate from "./generate";
 import getPlayerFakeAge from "./getPlayerFakeAge";
+import heightToRating from "./heightToRating";
 import injury from "./injury";
 import killOne from "./killOne";
 import limitRating from "./limitRating";
@@ -46,6 +47,7 @@ export default {
 	genFuzz,
 	generate,
 	getPlayerFakeAge,
+	heightToRating,
 	injury,
 	killOne,
 	limitRating,

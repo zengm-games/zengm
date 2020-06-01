@@ -1209,7 +1209,6 @@ export type WorkerOverridesCore = {
 			KR: T[];
 			PR: T[];
 		};
-		heightToRating?: (heightInInches: number) => number;
 		ovr?: (a: any, pos?: any) => number;
 		pos?: (a: any) => string;
 		processStats?: (

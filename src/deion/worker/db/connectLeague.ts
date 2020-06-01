@@ -566,7 +566,7 @@ const migrate = ({
 	if (oldVersion <= 23) {
 		iterate(transaction.objectStore("players"), undefined, undefined, p => {
 			for (const r of p.ratings) {
-				r.hgt = overrides.core.player.heightToRating!(p.hgt);
+				r.hgt = player.heightToRating(p.hgt);
 			}
 
 			return p;

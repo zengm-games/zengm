@@ -1,16 +1,13 @@
 const alias = require("@rollup/plugin-alias");
-const getSport = require("./getSport");
 const rollupConfig = require("./rollupConfig");
 
-const files = ["src/deion/test/mocha.ts", "src/deion/test/smoke.ts"];
-
-const sport = getSport();
+const files = ["src/test/mocha.ts", "src/test/smoke.ts"];
 
 const rollupConfigTemp = rollupConfig("test");
 rollupConfigTemp.plugins.unshift(
 	alias({
 		entries: {
-			"smoke-test-overrides": `./../../${sport}/worker/index.ts`,
+			"smoke-test-overrides": `./../worker/index.ts`,
 		},
 	}),
 );

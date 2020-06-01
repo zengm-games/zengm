@@ -21,7 +21,7 @@ const BLACKLIST = {
 const buildFile = async (name, legacy) => {
 	const bundle = await rollup.rollup({
 		...rollupConfig("production", BLACKLIST[name], `stats-${name}.html`),
-		input: `src/${sport}/${name}/index.ts`,
+		input: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
 	});
 
 	const outFile = legacy

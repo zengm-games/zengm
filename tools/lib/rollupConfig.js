@@ -19,13 +19,13 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			resolve: [".json"],
 			entries: {
 				// This is assumed to be generated prior to rollup being started
-				"league-schema": `./../../../../build/files/league-schema.json`,
+				"league-schema": `./../../../build/files/league-schema.json`,
 
 				// This is so Karma doesn't crash when using the big names file.
 				"player-names":
 					nodeEnv !== "production"
-						? "./../../deion/worker/data/names-test.json"
-						: `./../../deion/worker/data/names.${sport}.json`,
+						? "./../data/names-test.json"
+						: `./../data/names.${sport}.json`,
 
 				"bbgm-polyfills": process.env.LEGACY
 					? "./../common/polyfills.ts"

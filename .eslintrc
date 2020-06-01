@@ -75,7 +75,7 @@
       "@typescript-eslint/no-var-requires": "off"
     }
   }, {
-    "files": "src/deion/test/*.{js,ts}",
+    "files": "src/test/*.{js,ts}",
     "env": {
       "jest": true,
       "mocha": true

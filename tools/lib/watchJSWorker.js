@@ -3,13 +3,13 @@ const rollup = require("rollup");
 const { parentPort, workerData } = require("worker_threads");
 const rollupConfig = require("./rollupConfig");
 
-const { name, sport } = workerData;
+const { name } = workerData;
 
 const file = `build/gen/${name}.js`;
 
 const watcher = rollup.watch({
 	...rollupConfig("development"),
-	input: `src/${sport}/${name}/index.ts`,
+	input: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
 	output: {
 		name,
 		file,

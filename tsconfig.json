@@ -10,9 +10,9 @@
 		"moduleResolution": "node",
 		"baseUrl": ".",
 		"paths": {
-			"player-names": ["src/deion/worker/data/names-test.json"],
+			"player-names": ["src/worker/data/names-test.json"],
 			"league-schema": ["build/files/league-schema.json"],
-			"bbgm-polyfills": ["src/deion/worker/common/polyfills-noop.ts"]
+			"bbgm-polyfills": ["src/worker/common/polyfills-noop.ts"]
 		},
 		"esModuleInterop": true,
 		"strict": true,

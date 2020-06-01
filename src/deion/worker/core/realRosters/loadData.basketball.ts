@@ -82,7 +82,7 @@ type Basketball = {
 };
 
 let cachedJSON: Basketball;
-const loadDataBasketball = async () => {
+const loadData = async () => {
 	if (cachedJSON) {
 		return cachedJSON;
 	}
@@ -91,4 +91,4 @@ const loadDataBasketball = async () => {
 	return cachedJSON;
 };
 
-export default loadDataBasketball;
+export default loadData;

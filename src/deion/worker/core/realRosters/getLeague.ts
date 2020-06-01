@@ -1,4 +1,4 @@
-import loadDataBasketball from "./loadDataBasketball";
+import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 import orderBy from "lodash/orderBy";
 import type {
@@ -6,7 +6,7 @@ import type {
 	Relative,
 	DraftPickWithoutKey,
 } from "../../../common/types";
-import type { Ratings } from "./loadDataBasketball";
+import type { Ratings } from "./loadData.basketball";
 import { overrides, helpers, random } from "../../util";
 import { PLAYER } from "../../../common";
 

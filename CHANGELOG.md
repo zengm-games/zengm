@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* DEV: If you use God Mode to retire a player, it checks for HoF eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity.
+* DEV: If you use God Mode to retire a player, it checks for Hall of Fame eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity.
 
 *** BETA: Realistic rosters back to 1947, including contraction of teams occuring automaticaly at appropriate times.**
 

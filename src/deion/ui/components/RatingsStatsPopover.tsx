@@ -32,7 +32,7 @@ type Props = {
 };
 
 const RatingsStatsPopover = ({ pid, watch }: Props) => {
-	const [loadDataStarted, setLoadDataStarted] = useState<boolean>(false);
+	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
 		name?: string;
 		ratings?: {
@@ -54,7 +54,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 
 	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
-		setLoadDataStarted(false);
+		setLoadingData(false);
 		setPlayer({
 			pid,
 		});
@@ -68,15 +68,15 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 			stats: p.stats,
 			pid,
 		});
+		setLoadingData(false);
 	}, [pid]);
 
 	const toggle = useCallback(() => {
-		if (!loadDataStarted) {
+		if (!loadingData) {
 			loadData();
+			setLoadingData(true);
 		}
-
-		setLoadDataStarted(true);
-	}, [loadData, loadDataStarted]);
+	}, [loadData, loadingData]);
 
 	const { name, ratings, stats } = player;
 

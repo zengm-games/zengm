@@ -82,8 +82,6 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 ---
 
 move stuff from basketball and football folders back to deion. overrides too cumbersome
-- football gamesim tests - need some way to dynamically re-eval constants
-  - test works with SPORT=football.. could also have different tests for different sports
 - blacklist
 - bbgm-router
 

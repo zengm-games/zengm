@@ -2,9 +2,6 @@ import assert from "assert";
 import penalties from "./penalties";
 
 describe("football/worker/core/GameSim", () => {
-	beforeAll(() => {
-		process.env.SPORT = "football";
-	});
 	describe("penalties", () => {
 		test("posOdds sum to 1", () => {
 			for (const pen of penalties) {

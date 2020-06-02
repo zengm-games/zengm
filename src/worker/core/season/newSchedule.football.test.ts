@@ -13,7 +13,6 @@ describe("football/worker/core/season/newSchedule.football", () => {
 	}[];
 
 	beforeAll(() => {
-		process.env.SPORT = "football";
 		defaultTeams = helpers.getTeamsDefault().map(t => ({
 			// Don't need tid to start at 0, could be disabled teams!
 			tid: t.tid + 2,

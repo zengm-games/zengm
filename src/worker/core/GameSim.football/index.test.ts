@@ -23,11 +23,7 @@ const genTwoTeams = async () => {
 
 describe("football/worker/core/GameSim", () => {
 	beforeAll(async () => {
-		process.env.SPORT = "football";
 		await genTwoTeams();
-	});
-	afterAll(async () => {
-		process.env.SPORT = "basketball";
 	});
 
 	test("kick a field goal when down 2 at the end of the game and there is little time left", async () => {

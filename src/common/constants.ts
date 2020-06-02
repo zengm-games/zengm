@@ -111,8 +111,8 @@ const TEAM_STATS_TABLES: {
 	};
 } =
 	process.env.SPORT === "football"
-		? constantsFootball.PLAYER_STATS_TABLES
-		: constantsBasketball.PLAYER_STATS_TABLES;
+		? constantsFootball.TEAM_STATS_TABLES
+		: constantsBasketball.TEAM_STATS_TABLES;
 
 const TIME_BETWEEN_GAMES: string =
 	process.env.SPORT === "football"

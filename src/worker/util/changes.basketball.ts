@@ -290,6 +290,11 @@ const changes = [
 		msg:
 			'12 new frivolities, available within a league at at Tools > Frivolities. <a href="https://basketball-gm.com/blog/2020/05/new-frivolities/">More details</a>',
 	},
+	{
+		date: "2020-06-03",
+		msg:
+			'Real rosters back to 1947, support for contraction at Tools > Manage Teams, and more. <a href="https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/">More details</a>',
+	},
 ];
 
 export default changes;

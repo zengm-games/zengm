@@ -8,22 +8,6 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
-contraction
-- things to check
-  - football av
-- 1947
-  - player ratings - do better
-  - https://gyazo.com/4e1496799e001b5363814c4eac36ec87
-
-blog
-- contraction
-- back to 1947
-- pick new team when your team is contracted
-- enable/disable team in god mode
-- inactive teams in dropdown
-- expansion draft can be used to re-activate team
-- Team Records revamp
-
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
   - drafted team for the players in busts and steals
@@ -31,8 +15,6 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
   - Best Progs - age of increase
-
-Why are teams allowed to sign over the roster limit on autoplay? I'm autoplaying a league and I see teams with -2 roster spots as I flip through
 
 support changing team logos at any season, from predefined real team logos
 - could add them as scheduled events when starting a league
@@ -99,12 +81,16 @@ events revamp
   - select season
   - maybe different columns for different types of news
   - link to full event log and transactions pages
+  - tag for category (like event.type) preceding each headline
+  - bold for really big stories
 - support for leaguewide events, like rule changes
   - could put aggregate ones there, like at end of summary make one for all awards, one for all HoF
 - scheduled events output should be viewable somewhere
 - should be easy way to see team relocations, expansions, and league rule changes over time
 
 manually specify draft order in god mode
+- make draft page drag-and-drop, with purple handles
+- dropdown to force lottery winners
 
 after agreeing to contract from negotiation screen, it flashes the "no negotiation in progress" message before redirecting
 

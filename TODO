@@ -77,7 +77,10 @@ events revamp
 
 manually specify draft order in god mode
 
+after agreeing to contract from negotiation screen, it flashes the "no negotiation in progress" message before redirecting
+
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
+- check if upcoming scheduled event and noop if there is one
 
 ---
 
@@ -87,6 +90,8 @@ move stuff from basketball and football folders back to deion. overrides too cum
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
+
+BAA teams should enter with intact rosters, not expansion draft
 
 way to bulk delete leagues
 - replace "delete all leagues". show checkmarks next to leagues, including "check all" button and a delete button

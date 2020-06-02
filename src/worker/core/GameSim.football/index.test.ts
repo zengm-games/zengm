@@ -21,7 +21,7 @@ const genTwoTeams = async () => {
 	});
 };
 
-describe("football/worker/core/GameSim", () => {
+describe("worker/core/GameSim.football", () => {
 	beforeAll(async () => {
 		await genTwoTeams();
 	});

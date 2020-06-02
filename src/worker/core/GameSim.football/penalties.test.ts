@@ -1,7 +1,7 @@
 import assert from "assert";
 import penalties from "./penalties";
 
-describe("football/worker/core/GameSim", () => {
+describe("worker/core/GameSim.football", () => {
 	describe("penalties", () => {
 		test("posOdds sum to 1", () => {
 			for (const pen of penalties) {

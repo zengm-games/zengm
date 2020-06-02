@@ -3,7 +3,7 @@ import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import madeHofBasketball from "./madeHof.basketball";
 
-describe("basketball/worker/core/player/madeHof.basketball", () => {
+describe("worker/core/player/madeHof.basketball", () => {
 	test("narrowly make HoF based on dominance factor", () => {
 		testHelpers.resetG();
 		const p = player.generate(0, 19, 2012, false, 15.5);

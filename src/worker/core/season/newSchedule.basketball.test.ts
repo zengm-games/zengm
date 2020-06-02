@@ -3,7 +3,7 @@ import testHelpers from "../../../test/helpers";
 import newSchedule from "./newSchedule.basketball";
 import { g, helpers } from "../../util";
 
-describe("basketball/worker/core/season/newSchedule.basketball", () => {
+describe("worker/core/season/newSchedule.basketball", () => {
 	let defaultTeams: {
 		seasonAttrs: {
 			cid: number;

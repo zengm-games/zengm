@@ -11,7 +11,7 @@ const makeTeams = (numTeams: number) => {
 	}));
 };
 
-describe("deion/worker/core/season/newScheduleCrappy", () => {
+describe("worker/core/season/newScheduleCrappy", () => {
 	beforeEach(() => {
 		testHelpers.resetG();
 		g.setWithoutSavingToDB("allStarGame", false);

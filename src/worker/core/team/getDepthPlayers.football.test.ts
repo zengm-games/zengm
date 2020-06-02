@@ -2,7 +2,7 @@ import assert from "assert";
 import getDepthPlayers from "./getDepthPlayers";
 import { helpers } from "../../../common";
 
-describe("football/worker/core/player/getDepthPlayers", () => {
+describe("worker/core/player/getDepthPlayers.football", () => {
 	test("works", () => {
 		const depth = {
 			QB: [1, 2, 3],

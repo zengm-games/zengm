@@ -1,7 +1,7 @@
 import assert from "assert";
 import { findStarters } from "./rosterAutoSort.basketball";
 
-describe("basketball/worker/core/team/rosterAutoSort.basketball/findStarters", () => {
+describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 	test("handle easy roster sorts", () => {
 		let starters = findStarters([
 			"PG",

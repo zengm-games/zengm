@@ -31,6 +31,7 @@ import type {
 	TeamStatsWithoutKey,
 	Team,
 	Trade,
+	EventBBGMWithoutKey,
 } from "../../common/types";
 import type { IDBPTransaction } from "idb";
 import type { LeagueDB } from "./connectLeague";
@@ -231,7 +232,7 @@ class Cache {
 
 	draftPicks: StoreAPI<DraftPickWithoutKey, DraftPick, number>;
 
-	events: StoreAPI<EventBBGM, EventBBGM, number>;
+	events: StoreAPI<EventBBGMWithoutKey, EventBBGM, number>;
 
 	gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
 

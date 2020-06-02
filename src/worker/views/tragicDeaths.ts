@@ -11,7 +11,10 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const pids: number[] = [];
 
 		for (const event of events) {
-			pids.push(...event.pids);
+			// if would not be necessary if EventBBGM was typed better! See check below too.
+			if (event.pids) {
+				pids.push(...event.pids);
+			}
 		}
 
 		const stats =
@@ -45,7 +48,9 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 
 		const players2 = processPlayersHallOfFame(players).map((p: any) => {
-			const event = events.find(event2 => event2.pids.includes(p.pid));
+			const event = events.find(
+				event2 => event2.pids && event2.pids.includes(p.pid),
+			);
 			const details = event ? event.text : "";
 			return {
 				...p,

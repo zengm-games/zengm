@@ -191,10 +191,10 @@ const updatePlayer = async (
 		}
 
 		const teamColors = await getTeamColors(p.tid);
-		let events = await idb.getCopies.events({
+		const eventsAll = await idb.getCopies.events({
 			pid: inputs.pid,
 		});
-		const feats = events
+		const feats = eventsAll
 			.filter(event => event.type === "playerFeat")
 			.map(event => {
 				return {
@@ -203,7 +203,7 @@ const updatePlayer = async (
 					text: event.text,
 				};
 			});
-		events = events
+		const events = eventsAll
 			.filter(event => {
 				// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
 				return !(

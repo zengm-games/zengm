@@ -13,7 +13,7 @@ import type {
 	DraftPickWithoutKey,
 	ReleasedPlayerWithoutKey,
 	AllStars,
-	EventBBGM,
+	EventBBGMWithoutKey,
 	GameAttribute,
 	Game,
 	MessageWithoutKey,
@@ -50,7 +50,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	events: {
 		key: number;
-		value: EventBBGM;
+		value: EventBBGMWithoutKey;
 		autoIncrementKeyPath: "eid";
 		indexes: {
 			pids: number;

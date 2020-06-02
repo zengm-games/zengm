@@ -154,7 +154,17 @@ export type DraftType =
 	| "randomLotteryFirst3"
 	| "nba1990";
 
-export type EventBBGM = any;
+export type EventBBGMWithoutKey = {
+	type: LogEventType;
+	text: string;
+	pids?: number[];
+	tids?: number[];
+	season: number;
+};
+
+export type EventBBGM = EventBBGMWithoutKey & {
+	eid: number;
+};
 
 type GameTeam = {
 	tid: number;

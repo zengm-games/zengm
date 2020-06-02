@@ -1,5 +1,6 @@
 import addNewTeamToExistingLeague from "./addNewTeamToExistingLeague";
 import checkRosterSizes from "./checkRosterSizes";
+import deleteUnreadMessages from "./deleteUnreadMessages";
 import disable from "./disable";
 import genSeasonRow from "./genSeasonRow";
 import genStatsRow from "./genStatsRow";
@@ -20,6 +21,7 @@ import valueChange from "./valueChange";
 export default {
 	addNewTeamToExistingLeague,
 	checkRosterSizes,
+	deleteUnreadMessages,
 	disable,
 	genSeasonRow,
 	genStatsRow,

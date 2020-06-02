@@ -293,7 +293,7 @@ const changes = [
 	{
 		date: "2020-06-03",
 		msg:
-			'Real rosters back to 1947, support for contraction at Tools > Manage Teams, and more. <a href="https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/">More details</a>',
+			'Real rosters back to 1947 and support for contraction at Tools > Manage Teams. <a href="https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/">More details</a>',
 	},
 ];
 

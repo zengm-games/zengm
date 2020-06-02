@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import { player, league, draft } from "..";
 import { g, updateStatus, updatePlayMenu, random } from "../../util";
 import { PHASE } from "../../../common";
+import deleteUnreadMessages from "./deleteUnreadMessages";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);
@@ -14,10 +15,7 @@ const disable = async (tid: number) => {
 
 	if (tid === g.get("userTid")) {
 		// If there is an unread message from the owner, it's not doing any good now
-		const messages = await idb.getCopies.messages({ limit: 1 });
-		if (messages.length > 0 && !messages[0].read) {
-			await idb.cache.messages.delete(messages[0].mid);
-		}
+		await deleteUnreadMessages();
 
 		if (g.get("userTids").length > 1) {
 			// If it's multi team mode, just move to the next team

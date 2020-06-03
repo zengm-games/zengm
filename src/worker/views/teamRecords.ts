@@ -122,7 +122,7 @@ const tallyAwards = (
 			}
 		} else {
 			for (const t of a.bestRecordConfs) {
-				if (t.tid === tid) {
+				if (t && t.tid === tid) {
 					teamAwards.bestRecordConf++;
 				}
 			}

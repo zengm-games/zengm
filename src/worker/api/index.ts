@@ -1583,15 +1583,17 @@ const updateConfsDivs = async (
 				[t.tid, g.get("season")],
 			);
 
-			// Also apply team info changes to this season
-			if (newDid !== undefined) {
-				teamSeason.did = newDid;
-			}
-			if (newCid !== undefined) {
-				teamSeason.cid = newCid;
-			}
+			if (teamSeason) {
+				// Also apply team info changes to this season
+				if (newDid !== undefined) {
+					teamSeason.did = newDid;
+				}
+				if (newCid !== undefined) {
+					teamSeason.cid = newCid;
+				}
 
-			await idb.cache.teamSeasons.put(teamSeason);
+				await idb.cache.teamSeasons.put(teamSeason);
+			}
 		}
 	}
 

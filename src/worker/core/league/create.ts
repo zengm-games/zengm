@@ -308,7 +308,7 @@ export const createWithoutSaving = (
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal[teamSeasonsLocal.length - 1];
 
-			if (last.season !== g.get("season")) {
+			if (last.season !== g.get("season") && !t.disabled) {
 				last.season = g.get("season");
 
 				// Remove any past seasons that claim to be from this season or a future season

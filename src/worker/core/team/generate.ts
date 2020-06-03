@@ -75,6 +75,10 @@ const generate = (tm: any): Team => {
 		t.firstSeasonAfterExpansion = tm.firstSeasonAfterExpansion;
 	}
 
+	if (tm.srID !== undefined) {
+		t.srID = tm.srID;
+	}
+
 	if (process.env.SPORT === "football" && tm.depth === undefined) {
 		t.depth = POSITIONS.reduce((depth, pos) => {
 			depth[pos] = [];

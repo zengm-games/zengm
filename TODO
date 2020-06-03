@@ -8,8 +8,6 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
-Annual Performance Evaluation page still comes up if you take over an expansion team
-
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
   - drafted team for the players in busts and steals
@@ -33,6 +31,11 @@ support changing team logos at any season, from predefined real team logos
   - or, could just do the dumb thing first and see if anyone complains
     - just override always if srID and overrides loaded
   - make player photo overrides dynamic too?
+- IMPLEMENTATION
+  - initial application needs to check season
+  - also use applyRealInfo when creating a team from a scheduled event
+    - make sure it keeps srID
+  - also use in NewLeague, so maybe move to common
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/

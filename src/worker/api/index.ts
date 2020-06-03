@@ -274,9 +274,7 @@ const createLeague = async ({
 	if (realTeamInfo) {
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
-				if (t.srID && realTeamInfo[t.srID]) {
-					Object.assign(t, realTeamInfo[t.srID]);
-				}
+				team.applyRealInfo(t, realTeamInfo, leagueFile.startingSeason);
 			}
 		}
 		if (leagueFile.scheduledEvents) {
@@ -1686,6 +1684,48 @@ const updateOptions = async (
 		realTeamInfo: string;
 	},
 ) => {
+	const validateRealTeamInfo = (abbrev: string, teamInfo: any) => {
+		const strings = ["abbrev", "region", "name", "imgURL"];
+		const numbers = ["pop"];
+		for (const [key, value] of Object.entries(teamInfo as any)) {
+			if (strings.includes(key)) {
+				if (typeof value !== "string") {
+					throw new Error(
+						`Invalid data format in real team info - value for "${abbrev}.${key}" is not a string`,
+					);
+				}
+			} else if (numbers.includes(key)) {
+				if (typeof value !== "number") {
+					throw new Error(
+						`Invalid data format in real team info - value for "${abbrev}.${key}" is not a number`,
+					);
+				}
+			} else if (key === "colors") {
+				if (!Array.isArray(value)) {
+					throw new Error(
+						`Invalid data format in real team info - value for "${abbrev}.${key}" is not an array`,
+					);
+				}
+				if (value.length !== 3) {
+					throw new Error(
+						`Invalid data format in real team info - value for "${abbrev}.${key}" should have 3 colors`,
+					);
+				}
+				for (const color of value) {
+					if (typeof color !== "string") {
+						throw new Error(
+							`Invalid data format in real team info - value for "${abbrev}.${key}" is not an array of strings`,
+						);
+					}
+				}
+			} else if (key !== "seasons") {
+				throw new Error(
+					`Invalid data format in real team info - unknown property "${abbrev}.${key}"`,
+				);
+			}
+		}
+	};
+
 	let realPlayerPhotos;
 	let realTeamInfo;
 	if (options.realPlayerPhotos !== "") {
@@ -1720,49 +1760,22 @@ const updateOptions = async (
 				"Invalid data format in real team info - input is not an object",
 			);
 		}
-		const strings = ["abbrev", "region", "name", "imgURL"];
-		const numbers = ["pop"];
 		for (const [abbrev, teamInfo] of Object.entries(realTeamInfo)) {
-			if (typeof teamInfo !== "object") {
+			validateRealTeamInfo(abbrev, teamInfo);
+			if (typeof teamInfo !== "object" || teamInfo === null) {
 				throw new Error(
 					"Invalid data format in real team info - input is not an object",
 				);
 			}
-			for (const [key, value] of Object.entries(teamInfo as any)) {
-				if (strings.includes(key)) {
-					if (typeof value !== "string") {
+			if ((teamInfo as any).seasons) {
+				for (const [key, value] of Object.entries((teamInfo as any).seasons)) {
+					const keyParsed = parseInt(key);
+					if (Number.isNaN(keyParsed)) {
 						throw new Error(
-							`Invalid data format in real team info - value for "${abbrev}.${key}" is not a string`,
+							`Invalid data format in real player photos - season is not an integer`,
 						);
 					}
-				} else if (numbers.includes(key)) {
-					if (typeof value !== "number") {
-						throw new Error(
-							`Invalid data format in real team info - value for "${abbrev}.${key}" is not a number`,
-						);
-					}
-				} else if (key === "colors") {
-					if (!Array.isArray(value)) {
-						throw new Error(
-							`Invalid data format in real team info - value for "${abbrev}.${key}" is not an array`,
-						);
-					}
-					if (value.length !== 3) {
-						throw new Error(
-							`Invalid data format in real team info - value for "${abbrev}.${key}" should have 3 colors`,
-						);
-					}
-					for (const color of value) {
-						if (typeof color !== "string") {
-							throw new Error(
-								`Invalid data format in real team info - value for "${abbrev}.${key}" is not an array of strings`,
-							);
-						}
-					}
-				} else {
-					throw new Error(
-						`Invalid data format in real team info - unknown property "${abbrev}.${key}"`,
-					);
+					validateRealTeamInfo(`${abbrev}.${key}`, value);
 				}
 			}
 		}

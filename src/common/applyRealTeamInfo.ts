@@ -13,6 +13,9 @@ const applyRealTeamInfo = (
 	t: Partial<Pick<Team, typeof POTENTIAL_OVERRIDES[number] | "srID">>,
 	realTeamInfo: RealTeamInfo,
 	season: number,
+	options: {
+		exactSeason?: boolean;
+	} = {},
 ) => {
 	if (!realTeamInfo || !t.srID || !realTeamInfo[t.srID]) {
 		return;
@@ -21,9 +24,11 @@ const applyRealTeamInfo = (
 	const realInfoRoot = realTeamInfo[t.srID];
 
 	// Apply the base attributes first
-	for (const key of POTENTIAL_OVERRIDES) {
-		if (realInfoRoot[key]) {
-			(t as any)[key] = realInfoRoot[key];
+	if (!options.exactSeason) {
+		for (const key of POTENTIAL_OVERRIDES) {
+			if (realInfoRoot[key]) {
+				(t as any)[key] = realInfoRoot[key];
+			}
 		}
 	}
 
@@ -45,6 +50,9 @@ const applyRealTeamInfo = (
 
 	// Max available season up to the input season
 	const seasonToUse = Math.max(...seasons);
+	if (options.exactSeason && season !== seasonToUse) {
+		return;
+	}
 	const realInfoSeason = realInfoSeasons[seasonToUse];
 
 	// Apply, like above

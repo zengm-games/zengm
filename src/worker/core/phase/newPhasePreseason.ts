@@ -37,7 +37,9 @@ const newPhasePreseason = async (
 		// Check if we need to override team info based on a season-specific entry in realTeamInfo
 		console.log(t.srID);
 		if (realTeamInfo && t.srID && realTeamInfo[t.srID]) {
-			applyRealTeamInfo(t, realTeamInfo, g.get("season"));
+			applyRealTeamInfo(t, realTeamInfo, g.get("season"), {
+				exactSeason: true,
+			});
 		}
 
 		if (t.disabled) {

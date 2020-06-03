@@ -282,14 +282,10 @@ const createLeague = async ({
 			for (const event of leagueFile.scheduledEvents) {
 				if (event.type === "expansionDraft") {
 					for (const t of event.info.teams) {
-						if (t.srID && realTeamInfo[t.srID]) {
-							Object.assign(t, realTeamInfo[t.srID]);
-						}
+						applyRealTeamInfo(t, realTeamInfo, event.season);
 					}
 				} else if (event.type === "teamInfo") {
-					if (event.info.srID && realTeamInfo[event.info.srID]) {
-						Object.assign(event.info, realTeamInfo[event.info.srID]);
-					}
+					applyRealTeamInfo(event.info, realTeamInfo, event.season);
 				}
 			}
 		}

@@ -32,10 +32,10 @@ support changing team logos at any season, from predefined real team logos
     - just override always if srID and overrides loaded
   - make player photo overrides dynamic too?
 - IMPLEMENTATION
-  - in createLeague, replace old Object.assign applications with applyRealTeamInfo, somehow
   - also use applyRealInfo when creating a team from a scheduled event
     - why here too? in case it was updated in realTeamInfo since league creation. maybe not necessary...
     - make sure it keeps srID
+  - some explanation of when it's applied - not instant, but does affect existing leagues
 - documentation
 
 league creation options

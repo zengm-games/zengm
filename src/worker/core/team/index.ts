@@ -1,5 +1,4 @@
 import addNewTeamToExistingLeague from "./addNewTeamToExistingLeague";
-import applyRealInfo from "./applyRealInfo";
 import checkRosterSizes from "./checkRosterSizes";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 import disable from "./disable";
@@ -21,7 +20,6 @@ import valueChange from "./valueChange";
 
 export default {
 	addNewTeamToExistingLeague,
-	applyRealInfo,
 	checkRosterSizes,
 	deleteUnreadMessages,
 	disable,

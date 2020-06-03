@@ -1,4 +1,4 @@
-import type { Team, RealTeamInfo } from "../../../common/types";
+import type { Team, RealTeamInfo } from "./types";
 
 const POTENTIAL_OVERRIDES = [
 	"abbrev",
@@ -9,9 +9,12 @@ const POTENTIAL_OVERRIDES = [
 	"imgURL",
 ] as const;
 
-const applyRealInfo = (t: Team, realTeamInfo: RealTeamInfo, season: number) => {
+const applyRealTeamInfo = (
+	t: Partial<Pick<Team, typeof POTENTIAL_OVERRIDES[number] | "srID">>,
+	realTeamInfo: RealTeamInfo,
+	season: number,
+) => {
 	if (!realTeamInfo || !t.srID || !realTeamInfo[t.srID]) {
-		console.log(t.srID, "return 1");
 		return;
 	}
 
@@ -26,7 +29,6 @@ const applyRealInfo = (t: Team, realTeamInfo: RealTeamInfo, season: number) => {
 
 	// Need to add a season override?
 	if (!realInfoRoot.seasons) {
-		console.log(t.srID, "return 2");
 		return;
 	}
 
@@ -38,7 +40,6 @@ const applyRealInfo = (t: Team, realTeamInfo: RealTeamInfo, season: number) => {
 		.filter(x => !Number.isNaN(x))
 		.filter(x => x <= season);
 	if (seasons.length === 0) {
-		console.log(t.srID, "return 3");
 		return;
 	}
 
@@ -54,4 +55,4 @@ const applyRealInfo = (t: Team, realTeamInfo: RealTeamInfo, season: number) => {
 	}
 };
 
-export default applyRealInfo;
+export default applyRealTeamInfo;

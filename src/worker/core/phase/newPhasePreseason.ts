@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { PLAYER, applyRealTeamInfo } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
@@ -37,7 +37,7 @@ const newPhasePreseason = async (
 		// Check if we need to override team info based on a season-specific entry in realTeamInfo
 		console.log(t.srID);
 		if (realTeamInfo && t.srID && realTeamInfo[t.srID]) {
-			team.applyRealInfo(t, realTeamInfo, g.get("season"));
+			applyRealTeamInfo(t, realTeamInfo, g.get("season"));
 		}
 
 		if (t.disabled) {

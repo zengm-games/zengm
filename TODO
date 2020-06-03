@@ -32,10 +32,11 @@ support changing team logos at any season, from predefined real team logos
     - just override always if srID and overrides loaded
   - make player photo overrides dynamic too?
 - IMPLEMENTATION
-  - initial application needs to check season
+  - in createLeague, replace old Object.assign applications with applyRealTeamInfo, somehow
   - also use applyRealInfo when creating a team from a scheduled event
+    - why here too? in case it was updated in realTeamInfo since league creation. maybe not necessary...
     - make sure it keeps srID
-  - also use in NewLeague, so maybe move to common
+- documentation
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/

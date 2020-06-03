@@ -7,6 +7,7 @@ import {
 	getCols,
 	PLAYER_STATS_TABLES,
 	RATINGS,
+	applyRealTeamInfo,
 } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
@@ -274,7 +275,7 @@ const createLeague = async ({
 	if (realTeamInfo) {
 		if (leagueFile.teams) {
 			for (const t of leagueFile.teams) {
-				team.applyRealInfo(t, realTeamInfo, leagueFile.startingSeason);
+				applyRealTeamInfo(t, realTeamInfo, leagueFile.startingSeason);
 			}
 		}
 		if (leagueFile.scheduledEvents) {

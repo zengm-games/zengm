@@ -11,6 +11,7 @@ import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import { helpers, random } from "../../util";
 import { PLAYER } from "../../../common";
 import { player } from "..";
+import { legendsInfo } from "./getLeagueInfo";
 
 const getOnlyRatings = (ratings: Ratings) => {
 	return {
@@ -471,42 +472,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 	} else if (options.type === "legends") {
 		const NUM_PLAYERS_PER_TEAM = 15;
 
-		const allTypes = {
-			"1950s": {
-				start: 1950,
-				end: 1959,
-			},
-			"1960s": {
-				start: 1960,
-				end: 1969,
-			},
-			"1970s": {
-				start: 1970,
-				end: 1979,
-			},
-			"1980s": {
-				start: 1980,
-				end: 1989,
-			},
-			"1990s": {
-				start: 1990,
-				end: 1999,
-			},
-			"2000s": {
-				start: 2000,
-				end: 2009,
-			},
-			"2010s": {
-				start: 2010,
-				end: 2019,
-			},
-			all: {
-				start: -Infinity,
-				end: 2020,
-			},
-		};
-
-		const season = allTypes[options.decade].end;
+		const season = legendsInfo[options.decade].end;
 		const { initialGameAttributes, initialTeams } = formatScheduledEvents(
 			scheduledEventsAll,
 			season,
@@ -523,8 +489,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 		)
 			.filter(
 				ratings =>
-					ratings.season >= allTypes[options.decade].start &&
-					ratings.season <= allTypes[options.decade].end,
+					ratings.season >= legendsInfo[options.decade].start &&
+					ratings.season <= legendsInfo[options.decade].end,
 			)
 			.map(ratings =>
 				formatPlayer(ratings, season, initialTeams, {

@@ -7,7 +7,7 @@ import React, {
 	useReducer,
 	useEffect,
 } from "react";
-import { DIFFICULTY } from "../../common";
+import { DIFFICULTY, applyRealTeamInfo } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
@@ -25,13 +25,15 @@ type NewLeagueTeam = {
 };
 
 type LeagueInfo = {
+	startingSeason: number;
 	stores: string[];
 	teams: NewLeagueTeam[];
 };
 
-const applyRealTeamInfo = (
+const applyRealTeamInfos = (
 	teams: NewLeagueTeam[],
 	realTeamInfo: RealTeamInfo | undefined,
+	season: number = new Date().getFullYear(),
 ) => {
 	if (!realTeamInfo) {
 		return teams;
@@ -39,10 +41,9 @@ const applyRealTeamInfo = (
 
 	return teams.map(t => {
 		if (t.srID && realTeamInfo[t.srID]) {
-			return {
-				...t,
-				...realTeamInfo[t.srID],
-			};
+			const t2 = helpers.deepCopy(t);
+			applyRealTeamInfo(t2, realTeamInfo, season);
+			return t2;
 		}
 
 		return t;
@@ -702,7 +703,11 @@ const NewLeague = (props: View<"newLeague">) => {
 			dispatch({
 				type: "newLeagueFile",
 				leagueFile: newLeagueFile,
-				teams: applyRealTeamInfo(newTeams, props.realTeamInfo),
+				teams: applyRealTeamInfos(
+					newTeams,
+					props.realTeamInfo,
+					newLeagueFile.startingSeason,
+				),
 			});
 
 			// Need to update team and difficulty dropdowns?
@@ -733,7 +738,11 @@ const NewLeague = (props: View<"newLeague">) => {
 		dispatch({
 			type: "newLeagueInfo",
 			allKeys: leagueInfo.stores,
-			teams: applyRealTeamInfo(newTeams, props.realTeamInfo),
+			teams: applyRealTeamInfos(
+				newTeams,
+				props.realTeamInfo,
+				leagueInfo.startingSeason,
+			),
 		});
 	};
 

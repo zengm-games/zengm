@@ -1,11 +1,11 @@
 import assert from "assert";
-import applyRealInfo from "./applyRealInfo";
-import generate from "./generate";
-import testHelpers from "../../../test/helpers";
-import { helpers } from "../../util";
-import type { RealTeamInfo } from "../../../common/types";
+import applyRealTeamInfo from "./applyRealTeamInfo";
+import generate from "../worker/core/team/generate";
+import testHelpers from "../test/helpers";
+import helpers from "./helpers";
+import type { RealTeamInfo } from "./types";
 
-describe("worker/core/team/applyRealInfo", () => {
+describe("common/applyRealTeamInfo", () => {
 	beforeAll(async () => {
 		testHelpers.resetG();
 	});
@@ -32,7 +32,7 @@ describe("worker/core/team/applyRealInfo", () => {
 			},
 		};
 
-		applyRealInfo(t, realTeamInfo, 2016);
+		applyRealTeamInfo(t, realTeamInfo, 2016);
 
 		assert.equal(t.abbrev, "FOO");
 		assert.equal(t.region, "Foo");
@@ -66,7 +66,7 @@ describe("worker/core/team/applyRealInfo", () => {
 			},
 		};
 
-		applyRealInfo(t, realTeamInfo, 2016);
+		applyRealTeamInfo(t, realTeamInfo, 2016);
 
 		assert.equal(t.abbrev, "FOO");
 		assert.equal(t.region, "Foo");
@@ -100,7 +100,7 @@ describe("worker/core/team/applyRealInfo", () => {
 			},
 		};
 
-		applyRealInfo(t, realTeamInfo, 2000);
+		applyRealTeamInfo(t, realTeamInfo, 2000);
 
 		assert.equal(t.abbrev, "FOO");
 		assert.equal(t.region, "Foo");

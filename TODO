@@ -80,7 +80,6 @@ events revamp
     - maybe can just be one for each entry in eventLogTexts - just add some metadata to it, rather than being an array of strings, and save individual ones without displaying
 - news page
   - select season
-  - maybe different columns for different types of news
   - link to full event log and transactions pages
   - tag for category (like event.type) preceding each headline
   - bold for really big stories

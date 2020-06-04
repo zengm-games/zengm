@@ -130,6 +130,7 @@ const newPhasePreseason = async (
 					pids: [p.pid],
 					tids: [p.tid],
 					persistent: true,
+					score: 20,
 				},
 				conditions,
 			);

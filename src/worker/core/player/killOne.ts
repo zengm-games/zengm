@@ -104,6 +104,7 @@ const killOne = async (conditions: Conditions) => {
 			pids: [p.pid],
 			tids: [tid],
 			persistent: true,
+			score: 20,
 		},
 		conditions,
 	);

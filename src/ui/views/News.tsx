@@ -22,6 +22,10 @@ const categories = {
 		text: "Playoffs",
 		className: "badge-primary",
 	},
+	rare: {
+		text: "Rare Events",
+		className: "badge-dark",
+	},
 	transaction: {
 		text: "Transactions",
 		className: "badge-info",
@@ -79,6 +83,14 @@ const types: Partial<Record<
 		text: "Hall of Fame",
 		category: "award",
 	},
+	ageFraud: {
+		text: "Fraud",
+		category: "rare",
+	},
+	tragedy: {
+		text: "Tragic Death",
+		category: "rare",
+	},
 };
 
 const Badge = ({ type }: { type: LogEventType }) => {
@@ -103,6 +115,7 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 		injury: true,
 		playerFeat: true,
 		playoffs: true,
+		rare: true,
 		transaction: true,
 	});
 

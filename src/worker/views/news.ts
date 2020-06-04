@@ -11,6 +11,7 @@ const updateNews = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
+		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase") ||
 		state.season !== season ||

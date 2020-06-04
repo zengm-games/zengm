@@ -23,16 +23,10 @@ const sign = (
 	const resigning =
 		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
 	const eventType = resigning ? "reSigned" : "freeAgent";
-	const signedOrReSigned = resigning ? "re-signed" : "signed";
+	const signedOrReSigned = resigning ? "Re-signed" : "Signed";
 	logEvent({
 		type: eventType,
-		text: `The <a href="${helpers.leagueUrl([
-			"roster",
-			g.get("teamInfoCache")[p.tid]?.abbrev,
-			g.get("season"),
-		])}">${
-			g.get("teamInfoCache")[p.tid]?.name
-		}</a> ${signedOrReSigned} <a href="${helpers.leagueUrl([
+		text: `${signedOrReSigned} <a href="${helpers.leagueUrl([
 			"player",
 			p.pid,
 		])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
@@ -42,6 +36,7 @@ const sign = (
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],
+		score: Math.round(helpers.bound(p.valueFuzz - 45, 0, Infinity)),
 	});
 
 	const isRookie =

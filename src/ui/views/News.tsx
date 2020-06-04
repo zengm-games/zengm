@@ -1,10 +1,10 @@
 import React from "react";
 import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import type { View, EventBBGM } from "../../common/types";
+import type { View, EventBBGM, LogEventType } from "../../common/types";
 import { useLocalShallow, helpers } from "../util";
 
-const Badge = ({ type }: { type: string }) => {
+const Badge = ({ type }: { type: LogEventType }) => {
 	let text;
 	let className;
 	if (type === "injured") {
@@ -19,8 +19,14 @@ const Badge = ({ type }: { type: string }) => {
 	} else if (type === "playoffs" || type === "madePlayoffs") {
 		text = "Playoffs";
 		className = "badge-primary";
+	} else if (type === "freeAgent") {
+		text = "Free Agent";
+		className = "badge-info";
+	} else if (type === "reSigned") {
+		text = "Re-signing";
+		className = "badge-info";
 	} else if (type === "retired") {
-		text = "Transactions";
+		text = "Retirement";
 		className = "badge-info";
 	} else {
 		text = type;
@@ -66,7 +72,7 @@ const News = ({ events, level, season }: View<"news">) => {
 				return (
 					<div key={event.eid} className="col-lg-3 col-md-4 col-sm-6 col-12">
 						<div className="card mb-3">
-							<div className="card-header p-2 d-flex justify-content-between">
+							<div className="card-header p-2">
 								<Badge type={event.type} />
 								{teamInfo ? (
 									<a
@@ -74,6 +80,7 @@ const News = ({ events, level, season }: View<"news">) => {
 											"roster",
 											`${teamInfo.abbrev}_${tid}`,
 										])}
+										className="float-right"
 									>
 										{teamInfo.region} {teamInfo.name}
 									</a>

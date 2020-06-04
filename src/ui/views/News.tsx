@@ -4,30 +4,41 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View, EventBBGM, LogEventType } from "../../common/types";
 import { useLocalShallow, helpers } from "../util";
 
+const classNamesByType = {
+	award: "badge-warning",
+	injury: "badge-danger",
+	playerFeat: "badge-success",
+	playoffs: "badge-primary",
+	transaction: "badge-info",
+};
+
 const Badge = ({ type }: { type: LogEventType }) => {
 	let text;
 	let className;
 	if (type === "injured") {
 		text = "Injury";
-		className = "badge-danger";
+		className = classNamesByType.injury;
 	} else if (type === "healed") {
 		text = "Recovery";
-		className = "badge-danger";
+		className = classNamesByType.injury;
 	} else if (type === "playerFeat") {
 		text = "Player Feat";
-		className = "badge-success";
+		className = classNamesByType.playerFeat;
 	} else if (type === "playoffs" || type === "madePlayoffs") {
 		text = "Playoffs";
-		className = "badge-primary";
+		className = classNamesByType.playoffs;
 	} else if (type === "freeAgent") {
 		text = "Free Agent";
-		className = "badge-info";
+		className = classNamesByType.transaction;
 	} else if (type === "reSigned") {
 		text = "Re-signing";
-		className = "badge-info";
+		className = classNamesByType.transaction;
 	} else if (type === "retired") {
 		text = "Retirement";
-		className = "badge-info";
+		className = classNamesByType.transaction;
+	} else if (type === "hallOfFame") {
+		text = "Hall of Fame";
+		className = classNamesByType.award;
 	} else {
 		text = type;
 		className = "badge-secondary";

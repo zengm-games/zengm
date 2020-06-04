@@ -40,9 +40,6 @@ const retire = (
 		);
 	}
 
-	p.tid = PLAYER.RETIRED;
-	p.retiredYear = g.get("season");
-
 	// Add to Hall of Fame?
 	if (conditions && madeHof(p)) {
 		p.hof = true;
@@ -50,6 +47,7 @@ const retire = (
 			season: g.get("season"),
 			type: "Inducted into the Hall of Fame",
 		});
+
 		logEvent(
 			{
 				type: "hallOfFame",
@@ -62,10 +60,14 @@ const retire = (
 					p.statsTids.includes(g.get("userTid")) || forceHofNotification,
 				pids: [p.pid],
 				tids: p.statsTids,
+				score: 20,
 			},
 			conditions,
 		);
 	}
+
+	p.tid = PLAYER.RETIRED;
+	p.retiredYear = g.get("season");
 };
 
 export default retire;

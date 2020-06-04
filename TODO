@@ -64,7 +64,7 @@ events revamp
   - draft: first pick is big. others are small, except user's team, which are big when aggregated into one event for the whole draft
   - DRAFT LOTTERY RESULTS (need event type): always big, showing who got #1 pick, who moved up the most, who moved down the most
   - DONE freeAgent: sliding scale based on how good the player is and userTid
-  - hallOfFame: aggregate into a big story at end of season
+  - DONE hallOfFame: aggregate into a big story at end of season
   - healed: sliding scale based on how good the player is and user team and severity of injury (will need to store original severity! or maybe store original event score, and just repeat that)
   - DONE injured: sliding scale based on how good the player is and user team and severity of injury
   - DONE playerFeat: user team, always big. other team, sliding scale based on game score. always at least medium

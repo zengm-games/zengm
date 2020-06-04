@@ -17,22 +17,12 @@ new frivolity improvements
   - Best Progs - age of increase
 
 support changing team logos at any season, from predefined real team logos
-- could add them as scheduled events when starting a league
-  - would be nice to say all future changes come from scheduled events
-  - first, need gui to view scheduled events
-  - downsides
-    - a bunch of scheduled events to deal with
-    - can't dynamically apply to all leagues
-    - would overwrite user edits
-- could check the overrides dynamically every new season, including the first
-  - have a default, for any starting season, and then season specific overrides. only apply season-specific override of previous entry for this franchise has been applied and not altered
-    - track altering with a flag, or value? if flag, won't work for existing leagues or if the overrides change. so flag might be better
-      - but flag would miss if it was edited and then edited back. maybe both?
-  - or, could just do the dumb thing first and see if anyone complains
-    - just override always if srID and overrides loaded
+- future
+  - handle if the user edits something but realTeamInfo specifies an override
+    - could check if the pre-overridden value is the previous override or not
+    - could add a flag to track if a field has been edited or not
+    - neiether of those is perfect
   - make player photo overrides dynamic too?
-- IMPLEMENTATION
-  - some explanation of when it's applied - not instant, but does affect existing leagues. also note about how it will override user-made changes to team info in real players leagues
 - documentation
 
 league creation options

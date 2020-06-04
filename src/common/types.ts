@@ -679,7 +679,9 @@ export type PlayerFiltered = any;
 export type PlayerInjury = {
 	gamesRemaining: number;
 	type: string;
+	score?: number;
 };
+
 type PlayerSalary = {
 	amount: number;
 	season: number;

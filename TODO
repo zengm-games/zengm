@@ -65,7 +65,7 @@ events revamp
   - DRAFT LOTTERY RESULTS (need event type): always big, showing who got #1 pick, who moved up the most, who moved down the most
   - DONE freeAgent: sliding scale based on how good the player is and userTid
   - DONE hallOfFame: aggregate into a big story at end of season
-  - healed: sliding scale based on how good the player is and user team and severity of injury (will need to store original severity! or maybe store original event score, and just repeat that)
+  - DONE healed: sliding scale based on how good the player is and user team and severity of injury (will need to store original severity! or maybe store original event score, and just repeat that)
   - DONE injured: sliding scale based on how good the player is and user team and severity of injury
   - DONE playerFeat: user team, always big. other team, sliding scale based on game score. always at least medium
   - DONE playoffs: winning series is big for user team, medium for others, until the semifinals+finals when it is always big
@@ -111,6 +111,8 @@ get rid of mailing list nag for subscribers
 popovers should auto detect position so they don't go off screen (like league leaders)
 
 old playoff brackets use old logos @Lerotri#4029
+
+You can release players from the last draft, during the next year's expansion draft, without a cap penalty @Lerotri#4029
 
 ---
 

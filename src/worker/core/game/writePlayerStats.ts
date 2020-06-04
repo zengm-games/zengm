@@ -93,6 +93,8 @@ const doInjury = (
 		}
 	}
 
+	p2.injury.score = score;
+
 	logEvent(
 		{
 			type: "injured",

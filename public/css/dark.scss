@@ -213,3 +213,17 @@ input[type="checkbox"][disabled] {
 	cursor: not-allowed;
 	opacity: 0.65;
 }
+
+.badge-primary,
+.badge-secondary,
+.badge-success,
+.badge-danger,
+.badge-info,
+.badge-dark {
+	color: $white;
+}
+
+.badge-warning,
+.badge-light {
+	color: $black;
+}

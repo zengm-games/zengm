@@ -172,6 +172,7 @@ const routes = () => {
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),
 		"/l/:lid/draft_summary/:season": genPage("draftSummary"),
+		"/l/:lid/news": genPage("news"),
 	};
 };
 

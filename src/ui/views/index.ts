@@ -48,6 +48,7 @@ import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
+import News from "./News";
 import Options from "./Options";
 import Player from "./Player";
 import PlayerBios from "./PlayerBios";
@@ -128,6 +129,7 @@ export default {
 	NegotiationList,
 	NewLeague,
 	NewTeam,
+	News,
 	Options,
 	Player,
 	PlayerBios,

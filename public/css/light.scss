@@ -883,3 +883,8 @@ tr.table-warning:hover > td {
 .text-warning {
 	color: darken($yellow, 10%) !important;
 }
+
+.badge-news {
+	font-size: inherit;
+	font-weight: inherit;
+}

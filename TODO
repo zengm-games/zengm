@@ -84,6 +84,7 @@ events revamp
   - link to full event log and transactions pages
   - tag for category (like event.type) preceding each headline
   - bold for really big stories
+  - get rid of "Transactions", or link from News
 - support for leaguewide events, like rule changes
   - could put aggregate ones there, like at end of summary make one for all awards, one for all HoF
 - scheduled events output should be viewable somewhere
@@ -97,6 +98,9 @@ after agreeing to contract from negotiation screen, it flashes the "no negotiati
 
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
+
+get rid of mailing list nag for subscribers
+- load data from mailerlite, send status from php
 
 ---
 

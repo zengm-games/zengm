@@ -60,7 +60,7 @@ events revamp
     - most bump up one category (small/med/large), but madePlayoffs should bump up 2
 - break down existing eventtype+score into categories: big (for dashboard), medium (for news page), small (event log)
   - ageFraud: always medium, could be big for good enough player or user team
-  - award: aggregate into a big story at end of season. on news page, include details from awards object?
+  - DONE award: aggregate into a big story at end of season. on news page, include details from awards object?
   - draft: first pick is big. others are small, except user's team, which are big when aggregated into one event for the whole draft
   - DRAFT LOTTERY RESULTS (need event type): always big, showing who got #1 pick, who moved up the most, who moved down the most
   - DONE freeAgent: sliding scale based on how good the player is and userTid
@@ -90,6 +90,7 @@ events revamp
   - tag for category (like event.type) preceding each headline
   - bold for really big stories
   - get rid of "Transactions", or link from News
+  - highlight userTid
 - support for leaguewide events, like rule changes
   - could put aggregate ones there, like at end of summary make one for all awards, one for all HoF
 - scheduled events output should be viewable somewhere

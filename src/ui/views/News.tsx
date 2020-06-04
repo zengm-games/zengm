@@ -3,6 +3,7 @@ import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, EventBBGM, LogEventType } from "../../common/types";
 import { useLocalShallow, helpers } from "../util";
+import classNames from "classnames";
 
 const classNamesByType = {
 	award: "badge-warning",
@@ -36,6 +37,9 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	} else if (type === "retired") {
 		text = "Retirement";
 		className = classNamesByType.transaction;
+	} else if (type === "award") {
+		text = "Award";
+		className = classNamesByType.award;
 	} else if (type === "hallOfFame") {
 		text = "Hall of Fame";
 		className = classNamesByType.award;
@@ -46,24 +50,7 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	return <span className={`badge badge-news ${className} mr-1`}>{text}</span>;
 };
 
-const getTid = (event: EventBBGM) => {
-	if (!event.tids || event.tids.length === 0 || event.tids[0] < 0) {
-		return;
-	}
-
-	if (event.type === "playoffs") {
-		// First team is winning team
-		return event.tids[0];
-	}
-
-	if (event.tids.length !== 1) {
-		return;
-	}
-
-	return event.tids[0];
-};
-
-const News = ({ events, level, season }: View<"news">) => {
+const News = ({ events, level, season, userTid }: View<"news">) => {
 	useTitleBar({
 		title: "League News",
 		dropdownView: "news",
@@ -77,19 +64,26 @@ const News = ({ events, level, season }: View<"news">) => {
 	return (
 		<div className="row">
 			{events.map(event => {
-				const tid = getTid(event);
-				const teamInfo = tid !== undefined ? teamInfoCache[tid] : undefined;
+				const teamInfo =
+					event.tid !== undefined ? teamInfoCache[event.tid] : undefined;
 
 				return (
 					<div key={event.eid} className="col-lg-3 col-md-4 col-sm-6 col-12">
 						<div className="card mb-3">
-							<div className="card-header p-2">
+							<div
+								className={classNames(
+									"p-2",
+									event.tids && event.tids.includes(userTid)
+										? "table-info"
+										: "card-header",
+								)}
+							>
 								<Badge type={event.type} />
 								{teamInfo ? (
 									<a
 										href={helpers.leagueUrl([
 											"roster",
-											`${teamInfo.abbrev}_${tid}`,
+											`${teamInfo.abbrev}_${event.tid}`,
 										])}
 										className="float-right"
 									>
@@ -98,8 +92,10 @@ const News = ({ events, level, season }: View<"news">) => {
 								) : null}
 							</div>
 							<div className="p-2">
-								{event.score !== undefined ? `${event.score} ` : null}
 								<SafeHtml dirty={event.text} />
+								{event.score !== undefined ? (
+									<div className="text-muted">Score: {event.score}</div>
+								) : null}
 							</div>
 						</div>
 					</div>

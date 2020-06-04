@@ -251,18 +251,23 @@ const saveAwardsByPlayer = async (
 			`${g.get("teamInfoCache")[p.tid]?.abbrev}_${p.tid}`,
 			g.get("season"),
 		])}">${g.get("teamInfoCache")[p.tid]?.abbrev}</a>) `;
+		let score;
 
 		if (p.type.includes("Team")) {
 			text += `made the ${p.type}.`;
+			score = 10;
 		} else if (p.type.includes("Leader")) {
 			text += `led the league in ${p.type
 				.replace("League ", "")
 				.replace(" Leader", "")
 				.toLowerCase()}.`;
+			score = 10;
 		} else if (p.type === "All-Star") {
 			text += `made the All-Star team.`;
+			score = 10;
 		} else {
 			text += `won the ${p.type} award.`;
+			score = 20;
 		}
 
 		logEvent(
@@ -272,6 +277,7 @@ const saveAwardsByPlayer = async (
 				showNotification: false,
 				pids: [p.pid],
 				tids: [p.tid],
+				score,
 			},
 			conditions,
 		);

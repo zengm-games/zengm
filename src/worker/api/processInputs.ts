@@ -323,6 +323,22 @@ const newLeague = (params: Params) => {
 	};
 };
 
+const news = (params: Params) => {
+	const season = validateSeason(params.season);
+	let level: "all" | "normal" | "big";
+	if (params.level === "all") {
+		level = "all";
+	} else if (params.level === "big") {
+		level = "big";
+	} else {
+		level = "normal";
+	}
+	return {
+		season,
+		level,
+	};
+};
+
 const player = (params: Params) => {
 	return {
 		pid: params.pid !== undefined ? parseInt(params.pid, 10) : undefined,
@@ -586,6 +602,7 @@ export default {
 	negotiation,
 	negotiationList,
 	newLeague,
+	news,
 	player,
 	playerBios: playerRatings,
 	playerFeats,

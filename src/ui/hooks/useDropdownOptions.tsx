@@ -84,6 +84,9 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	by_team: "By Team",
 	by_conf: "By Conference",
 	by_div: "By Division",
+	"all|||news": "All Stories",
+	normal: "Normal",
+	big: "Only Big News",
 };
 
 export const getDropdownValue = (
@@ -259,6 +262,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["by_team", "by_conf", "by_div"];
 	} else if (field === "positions") {
 		keys = POSITIONS;
+	} else if (field === "newsLevels") {
+		keys = ["big", "normal", "all|||news"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

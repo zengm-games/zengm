@@ -1,21 +1,39 @@
 import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 
-const updateNews = async (inputs: unknown, updateEvents: UpdateEvents) => {
+const updateNews = async (
+	{ level, season }: ViewInput<"news">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
+		updateEvents.includes("newPhase") ||
+		state.season !== season ||
+		state.level !== level
 	) {
-		const events = await idb.getCopies.events({
-			season: g.get("season"),
+		const events = (
+			await idb.getCopies.events({
+				season,
+			})
+		).filter(event => {
+			if (level === "big") {
+				return event.score !== undefined && event.score >= 20;
+			}
+			if (level === "normal") {
+				return event.score !== undefined && event.score >= 10;
+			}
+			return true;
 		});
 
 		events.reverse();
 
 		return {
 			events,
+			level,
+			season,
 		};
 	}
 };

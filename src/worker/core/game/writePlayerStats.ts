@@ -59,8 +59,10 @@ const doInjury = (
 	}
 
 	let score;
+	// 0 to 25, where 0 is role player and 25 is star
+	const playerQuality = helpers.bound(p2.valueNoPotFuzz - 50, 0, 25);
 
-	if (p2.valueNoPotFuzz < 50) {
+	if (playerQuality <= 0) {
 		if (playoffs && injuryLength !== "short") {
 			// Bad player, playoffs, medium/long injury
 			score = 10;
@@ -69,12 +71,9 @@ const doInjury = (
 			score = 0;
 		}
 	} else {
-		// 0 to 25, where 0 is role player and 25 is star
-		const playerQuality = helpers.bound(p.valueNoPotFuzz - 50, 0, 25);
-
 		if (playoffs) {
-			if (playerQuality > 10 || injuryLength === "long") {
-				// Good player or long injury in playoffs
+			if (playerQuality > 10 || injuryLength === "medium") {
+				// Good player or medium injury in playoffs
 				score = 20;
 			} else {
 				// Mediocre player, short injury in playoffs
@@ -84,8 +83,8 @@ const doInjury = (
 			if (playerQuality > 10 && injuryLength === "long") {
 				// Good player, long injury
 				score = 20;
-			} else if (playerQuality > 10 || injuryLength === "long") {
-				// Good player or long injury
+			} else if (playerQuality > 10 || injuryLength === "medium") {
+				// Good player or medium injury
 				score = 10;
 			} else {
 				// Mediocre player, short injury

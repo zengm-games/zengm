@@ -76,14 +76,13 @@ events revamp
     - for contraction, merge into a single event. do this for display of event in the GUI too, currently it's too big when 4 teams do it at the same time
   - trade:  sliding scale based on how good the assets are and userTid
   - tragedy: always big
+  - game result, for finals. event exists?
   - add stuff from scheduled events
     - one for expansion draft
     - one for league rule changes
     - maybe can just be one for each entry in eventLogTexts - just add some metadata to it, rather than being an array of strings, and save individual ones without displaying
 - news page
-  - select season
-  - select All Stories, Regular, Only Big News
-  - select type of news?
+  - select type of news? maybe as checkboxes
   - send teamInfo from worker, so accurate for old seasons
   - maybe different columns for different types of news
   - link to full event log and transactions pages

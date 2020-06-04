@@ -43,11 +43,12 @@ const getTid = (event: EventBBGM) => {
 	return event.tids[0];
 };
 
-const News = ({ events }: View<"news">) => {
+const News = ({ events, level, season }: View<"news">) => {
 	useTitleBar({
 		title: "League News",
+		dropdownView: "news",
+		dropdownFields: { seasons: season, newsLevels: level },
 	});
-	console.log("events", events);
 
 	const { teamInfoCache } = useLocalShallow(state => ({
 		teamInfoCache: state.teamInfoCache,

@@ -1,4 +1,5 @@
 export * from "./constants";
+export { default as applyRealTeamInfo } from "./applyRealTeamInfo";
 export { default as createLogger } from "./createLogger";
 export { default as fetchWrapper } from "./fetchWrapper";
 export { default as getCols } from "./getCols";

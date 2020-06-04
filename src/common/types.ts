@@ -1138,15 +1138,18 @@ export type UpdateEvents = (
 
 export type RealPlayerPhotos = Record<string, string>;
 
+type IndividualRealTeamInfo = {
+	abbrev?: string;
+	region?: string;
+	name?: string;
+	pop?: number;
+	colors?: [string, string, string];
+	imgURL?: string;
+};
 export type RealTeamInfo = Record<
 	string,
-	{
-		abbrev: string;
-		region: string;
-		name: string;
-		pop: number;
-		colors: [string, string, string];
-		imgURL: string;
+	IndividualRealTeamInfo & {
+		seasons?: Record<number, IndividualRealTeamInfo>;
 	}
 >;
 

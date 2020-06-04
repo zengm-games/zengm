@@ -1,8 +1,12 @@
-import { PLAYER } from "../../../common";
+import { PLAYER, applyRealTeamInfo } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
+import type {
+	Conditions,
+	PhaseReturn,
+	RealTeamInfo,
+} from "../../../common/types";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -23,8 +27,19 @@ const newPhasePreseason = async (
 		[[g.get("season") - 1], [g.get("season")]],
 	);
 
+	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
+		| RealTeamInfo
+		| undefined;
+
 	let scoutingRank: number | undefined;
 	for (const t of teams) {
+		// Check if we need to override team info based on a season-specific entry in realTeamInfo
+		if (realTeamInfo && t.srID && realTeamInfo[t.srID]) {
+			applyRealTeamInfo(t, realTeamInfo, g.get("season"), {
+				exactSeason: true,
+			});
+		}
+
 		if (t.disabled) {
 			continue;
 		}

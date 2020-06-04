@@ -1,6 +1,41 @@
 import loadDataBasketball from "./loadData.basketball";
 import formatScheduledEvents from "./formatScheduledEvents";
 
+export const legendsInfo = {
+	"1950s": {
+		start: 1950,
+		end: 1959,
+	},
+	"1960s": {
+		start: 1960,
+		end: 1969,
+	},
+	"1970s": {
+		start: 1970,
+		end: 1979,
+	},
+	"1980s": {
+		start: 1980,
+		end: 1989,
+	},
+	"1990s": {
+		start: 1990,
+		end: 1999,
+	},
+	"2000s": {
+		start: 2000,
+		end: 2009,
+	},
+	"2010s": {
+		start: 2010,
+		end: 2019,
+	},
+	all: {
+		start: -Infinity,
+		end: 2020,
+	},
+};
+
 const getLeagueInfo = async (
 	options:
 		| {
@@ -44,6 +79,7 @@ const getLeagueInfo = async (
 				  ];
 
 		return {
+			startingSeason: options.season,
 			stores,
 			teams: initialTeams,
 		};
@@ -61,6 +97,7 @@ const getLeagueInfo = async (
 		const stores = ["teams", "players", "gameAttributes", "startingSeason"];
 
 		return {
+			startingSeason: legendsInfo[options.decade].end,
 			stores,
 			teams: initialTeams,
 		};

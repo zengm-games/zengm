@@ -21,9 +21,11 @@ export const getOptions = async () => {
 
 	return {
 		realPlayerPhotos:
-			realPlayerPhotos === undefined ? "" : JSON.stringify(realPlayerPhotos),
+			realPlayerPhotos === undefined
+				? ""
+				: JSON.stringify(realPlayerPhotos, null, 2),
 		realTeamInfo:
-			realTeamInfo === undefined ? "" : JSON.stringify(realTeamInfo),
+			realTeamInfo === undefined ? "" : JSON.stringify(realTeamInfo, null, 2),
 		units: options.units,
 	};
 };

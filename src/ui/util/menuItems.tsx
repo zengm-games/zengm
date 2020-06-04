@@ -93,7 +93,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				active: pageID => pageID === "news",
 				league: true,
 				path: ["news"],
-				text: "News",
+				text: "News Feed",
 			},
 		],
 	},

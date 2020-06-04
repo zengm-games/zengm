@@ -328,10 +328,10 @@ const news = (params: Params) => {
 	let level: "all" | "normal" | "big";
 	if (params.level === "all") {
 		level = "all";
-	} else if (params.level === "big") {
-		level = "big";
-	} else {
+	} else if (params.level === "normal") {
 		level = "normal";
+	} else {
+		level = "big";
 	}
 	return {
 		season,

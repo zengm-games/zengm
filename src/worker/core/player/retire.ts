@@ -34,6 +34,7 @@ const retire = (
 				showNotification: false,
 				pids: [p.pid],
 				tids: [p.tid],
+				score: p.tid >= 0 ? 10 : 0,
 			},
 			conditions,
 		);

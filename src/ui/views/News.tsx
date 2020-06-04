@@ -19,6 +19,9 @@ const Badge = ({ type }: { type: string }) => {
 	} else if (type === "playoffs" || type === "madePlayoffs") {
 		text = "Playoffs";
 		className = "badge-primary";
+	} else if (type === "retired") {
+		text = "Transactions";
+		className = "badge-info";
 	} else {
 		text = type;
 		className = "badge-secondary";

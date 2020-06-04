@@ -78,9 +78,9 @@ events revamp
   - DONE tragedy: always big
   - game result, for finals. event exists?
   - add stuff from scheduled events
-    - one for expansion draft
-    - one for league rule changes
-    - maybe can just be one for each entry in eventLogTexts - just add some metadata to it, rather than being an array of strings, and save individual ones without displaying
+    - add for gameAttributes
+    - add for team logo
+    - replace bold prefix with distinct type
 - on player page, for transaction log with reSigned or freeAgent, prefix with team info and link to roster of that season
 - news page
   - select type of news? maybe as checkboxes

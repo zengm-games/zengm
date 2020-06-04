@@ -51,40 +51,47 @@ const processTeamInfo = async (
 
 	let updatedRegionName;
 	if (info.region && info.region !== old.region) {
-		eventLogTexts.push(
-			`<b>Team relocation:</b> the ${old.region} ${
-				old.name
-			} are now the <a href="${helpers.leagueUrl([
-				"roster",
-				t.abbrev,
-				season,
-			])}">${t.region} ${t.name}</a>.`,
-		);
+		const text = `the ${old.region} ${
+			old.name
+		} are now the <a href="${helpers.leagueUrl([
+			"roster",
+			t.abbrev,
+			season,
+		])}">${t.region} ${t.name}</a>.`;
+
+		eventLogTexts.push(`<b>Team relocation:</b> ${text}`);
 		updatedRegionName = true;
+
+		logEvent({
+			text: helpers.upperCaseFirstLetter(text),
+			type: "teamRelocation",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
 	} else if (info.name && info.name !== old.name) {
-		eventLogTexts.push(
-			`<b>Team rename:</b> the ${old.region} ${
-				old.name
-			} are now the <a href="${helpers.leagueUrl([
-				"roster",
-				t.abbrev,
-				season,
-			])}">${t.region} ${t.name}</a>.`,
-		);
+		const text = `the ${old.region} ${
+			old.name
+		} are now the <a href="${helpers.leagueUrl([
+			"roster",
+			t.abbrev,
+			season,
+		])}">${t.region} ${t.name}</a>.`;
+
+		eventLogTexts.push(`<b>Team rename:</b> ${text}`);
 		updatedRegionName = true;
+
+		logEvent({
+			text: helpers.upperCaseFirstLetter(text),
+			type: "teamRename",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
 	}
 
 	if (info.tid === g.get("userTid") && updatedRegionName) {
 		await league.updateMetaNameRegion(t.name, t.region);
-	}
-
-	for (const text of eventLogTexts) {
-		logEvent({
-			text,
-			type: "teamInfo",
-			tids: [t.tid],
-			showNotification: false,
-		});
 	}
 
 	await league.setGameAttributes({
@@ -263,13 +270,6 @@ const processContraction = async (
 	await team.disable(t.tid);
 
 	const text = `<b>Contraction!</b> The ${t.region} ${t.name} franchise is disbanding. All their players will become free agents.`;
-
-	logEvent({
-		text,
-		type: "teamInfo",
-		tids: [t.tid],
-		showNotification: false,
-	});
 
 	return [text];
 };

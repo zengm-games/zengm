@@ -1,5 +1,5 @@
 import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
 import { idb } from "../db";
 
 const IGNORE_EVENT_TYPES = ["retiredList"];

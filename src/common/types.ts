@@ -467,7 +467,10 @@ export type LogEventType =
 	| "retiredList"
 	| "screenshot"
 	| "success"
-	| "teamInfo"
+	| "teamContraction"
+	| "teamExpansion"
+	| "teamRelocation"
+	| "teamRename"
 	| "trade"
 	| "tragedy"
 	| "upgrade";

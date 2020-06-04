@@ -30,6 +30,10 @@ const categories = {
 		text: "Transactions",
 		className: "badge-info",
 	},
+	team: {
+		text: "Teams",
+		className: "badge-light",
+	},
 };
 
 const types: Partial<Record<
@@ -91,6 +95,22 @@ const types: Partial<Record<
 		text: "Tragic Death",
 		category: "rare",
 	},
+	teamContraction: {
+		text: "Contraction",
+		category: "team",
+	},
+	teamExpansion: {
+		text: "Expansion",
+		category: "team",
+	},
+	teamRelocation: {
+		text: "Relocation",
+		category: "team",
+	},
+	teamRename: {
+		text: "Rename",
+		category: "team",
+	},
 };
 
 const Badge = ({ type }: { type: LogEventType }) => {
@@ -117,6 +137,7 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 		playoffs: true,
 		rare: true,
 		transaction: true,
+		team: true,
 	});
 
 	useTitleBar({

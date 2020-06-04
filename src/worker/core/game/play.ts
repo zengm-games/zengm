@@ -326,33 +326,47 @@ const play = async (
 
 	// This simulates a day, including game simulation and any other bookkeeping that needs to be done
 	const cbRunDay = async () => {
-		// setTimeout is for responsiveness during gameSim with UI that doesn't hit IDB
-		if (numDays > 0) {
-			// If we didn't just stop games, let's play
-			// Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
-			const stopGameSim = lock.get("stopGameSim");
+		const userTeamSizeError = await team.checkRosterSizes();
 
-			if (start || !stopGameSim) {
-				// If start is set, then reset stopGames
-				if (stopGameSim) {
-					await lock.set("stopGameSim", false);
+		if (!userTeamSizeError) {
+			await updatePlayMenu();
+
+			if (numDays > 0) {
+				// If we didn't just stop games, let's play
+				// Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
+				const stopGameSim = lock.get("stopGameSim");
+
+				if (start || !stopGameSim) {
+					// If start is set, then reset stopGames
+					if (stopGameSim) {
+						await lock.set("stopGameSim", false);
+					}
+
+					if (g.get("phase") !== PHASE.PLAYOFFS) {
+						await freeAgents.decreaseDemands();
+						await freeAgents.autoSign();
+
+						await trade.betweenAiTeams();
+					}
+
+					await cbPlayGames();
+				} else {
+					// Update UI if stopped
+					await cbNoGames();
 				}
-
-				if (g.get("phase") !== PHASE.PLAYOFFS) {
-					await freeAgents.decreaseDemands();
-					await freeAgents.autoSign();
-
-					await trade.betweenAiTeams();
-				}
-
-				await cbPlayGames();
-			} else {
-				// Update UI if stopped
-				await cbNoGames();
 			}
-		} else if (numDays === 0) {
-			// If this is the last day, update play menu
-			await cbNoGames();
+		} else {
+			await lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
+			await updatePlayMenu();
+			await updateStatus("Idle");
+			logEvent(
+				{
+					type: "error",
+					text: userTeamSizeError,
+					saveToDb: false,
+				},
+				conditions,
+			);
 		}
 	};
 
@@ -362,24 +376,7 @@ const play = async (
 		const canStartGames = await lock.canStartGames();
 
 		if (canStartGames) {
-			const userTeamSizeError = await team.checkRosterSizes();
-
-			if (!userTeamSizeError) {
-				await updatePlayMenu();
-				await cbRunDay();
-			} else {
-				await lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
-
-				await updateStatus("Idle");
-				logEvent(
-					{
-						type: "error",
-						text: userTeamSizeError,
-						saveToDb: false,
-					},
-					conditions,
-				);
-			}
+			await cbRunDay();
 		}
 	} else {
 		await cbRunDay();

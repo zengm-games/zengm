@@ -5,7 +5,7 @@ import type { View, EventBBGM, LogEventType } from "../../common/types";
 import { useLocalShallow, helpers } from "../util";
 import classNames from "classnames";
 
-const classNamesByType = {
+const classNamesByCategory = {
 	award: "badge-warning",
 	injury: "badge-danger",
 	playerFeat: "badge-success",
@@ -13,39 +13,66 @@ const classNamesByType = {
 	transaction: "badge-info",
 };
 
+const types: Partial<Record<
+	LogEventType,
+	{
+		text: string;
+		category: keyof typeof classNamesByCategory;
+	}
+>> = {
+	injured: {
+		text: "Injury",
+		category: "injury",
+	},
+	healed: {
+		text: "Recovery",
+		category: "injury",
+	},
+	playerFeat: {
+		text: "Player Feat",
+		category: "playerFeat",
+	},
+	playoffs: {
+		text: "Playoffs",
+		category: "playoffs",
+	},
+	madePlayoffs: {
+		text: "Playoffs",
+		category: "playoffs",
+	},
+	freeAgent: {
+		text: "Free Agent",
+		category: "transaction",
+	},
+	reSigned: {
+		text: "Re-signing",
+		category: "transaction",
+	},
+	retired: {
+		text: "Retirement",
+		category: "transaction",
+	},
+	trade: {
+		text: "Trade",
+		category: "transaction",
+	},
+	award: {
+		text: "Award",
+		category: "award",
+	},
+	hallOfFame: {
+		text: "Hall of Fame",
+		category: "award",
+	},
+};
+
 const Badge = ({ type }: { type: LogEventType }) => {
 	let text;
 	let className;
-	if (type === "injured") {
-		text = "Injury";
-		className = classNamesByType.injury;
-	} else if (type === "healed") {
-		text = "Recovery";
-		className = classNamesByType.injury;
-	} else if (type === "playerFeat") {
-		text = "Player Feat";
-		className = classNamesByType.playerFeat;
-	} else if (type === "playoffs" || type === "madePlayoffs") {
-		text = "Playoffs";
-		className = classNamesByType.playoffs;
-	} else if (type === "freeAgent") {
-		text = "Free Agent";
-		className = classNamesByType.transaction;
-	} else if (type === "reSigned") {
-		text = "Re-signing";
-		className = classNamesByType.transaction;
-	} else if (type === "retired") {
-		text = "Retirement";
-		className = classNamesByType.transaction;
-	} else if (type === "trade") {
-		text = "Trade";
-		className = classNamesByType.transaction;
-	} else if (type === "award") {
-		text = "Award";
-		className = classNamesByType.award;
-	} else if (type === "hallOfFame") {
-		text = "Hall of Fame";
-		className = classNamesByType.award;
+	const typeInfo = types[type];
+	if (typeInfo) {
+		text = typeInfo.text;
+		className = classNamesByCategory[typeInfo.category];
 	} else {
 		text = type;
 		className = "badge-secondary";

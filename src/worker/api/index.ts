@@ -278,6 +278,8 @@ const createLeague = async ({
 				applyRealTeamInfo(t, realTeamInfo, leagueFile.startingSeason);
 			}
 		}
+
+		// This is not really needed, since applyRealTeamInfo is called again in processScheduledEvents. It's just to make it look more normal in the database, for when I eventually build a GUI editor for scheduled events.
 		if (leagueFile.scheduledEvents) {
 			for (const event of leagueFile.scheduledEvents) {
 				if (event.type === "expansionDraft") {

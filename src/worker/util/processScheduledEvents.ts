@@ -3,12 +3,17 @@ import g from "./g";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
 import { league, expansionDraft, phase, team } from "../core";
-import type { ScheduledEvent, Conditions } from "../../common/types";
-import { PHASE } from "../../common";
+import type {
+	ScheduledEvent,
+	Conditions,
+	RealTeamInfo,
+} from "../../common/types";
+import { PHASE, applyRealTeamInfo } from "../../common";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
 	season: number,
+	realTeamInfo: RealTeamInfo | undefined,
 ) => {
 	// This happens in preseason, but after a new TeamSeason row is created, so update Team and TeamSeason
 
@@ -18,6 +23,10 @@ const processTeamInfo = async (
 	const t = teams.find(t2 => t2.tid === info.tid);
 	if (!t) {
 		throw new Error(`No team found in scheduled event: ${info.tid}`);
+	}
+
+	if (realTeamInfo) {
+		applyRealTeamInfo(info, realTeamInfo, season);
 	}
 
 	const old = {
@@ -185,6 +194,8 @@ const processGameAttributes = async (
 
 const processExpansionDraft = async (
 	info: Extract<ScheduledEvent, { type: "expansionDraft" }>["info"],
+	season: number,
+	realTeamInfo: RealTeamInfo | undefined,
 	conditions: Conditions,
 ) => {
 	const numProtectedPlayers =
@@ -205,6 +216,12 @@ const processExpansionDraft = async (
 		// If team is already enabled, no need for expansion draft
 		return teams[t.tid].disabled;
 	});
+
+	if (realTeamInfo) {
+		for (const t of expansionTeams) {
+			applyRealTeamInfo(t as any, realTeamInfo, season);
+		}
+	}
 
 	if (expansionTeams.length === 0) {
 		return [];
@@ -266,6 +283,10 @@ const processScheduledEvents = async (
 	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];
 
+	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
+		| RealTeamInfo
+		| undefined;
+
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			continue;
@@ -273,13 +294,18 @@ const processScheduledEvents = async (
 
 		if (scheduledEvent.type === "teamInfo") {
 			eventLogTexts.push(
-				...(await processTeamInfo(scheduledEvent.info, season)),
+				...(await processTeamInfo(scheduledEvent.info, season, realTeamInfo)),
 			);
 		} else if (scheduledEvent.type === "gameAttributes") {
 			eventLogTexts.push(...(await processGameAttributes(scheduledEvent.info)));
 		} else if (scheduledEvent.type === "expansionDraft") {
 			eventLogTexts.push(
-				...(await processExpansionDraft(scheduledEvent.info, conditions)),
+				...(await processExpansionDraft(
+					scheduledEvent.info,
+					season,
+					realTeamInfo,
+					conditions,
+				)),
 			);
 		} else if (scheduledEvent.type === "contraction") {
 			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));

@@ -1982,7 +1982,6 @@ const upsertCustomizedPlayer = async (
 		originalTid !== PLAYER.RETIRED
 	) {
 		player.retire(p as Player, conditions, {
-			allowRetiredNotification: false,
 			forceHofNotification: true,
 		});
 	}

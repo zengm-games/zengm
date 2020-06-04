@@ -2,6 +2,8 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { idb } from "../db";
 
+const IGNORE_EVENT_TYPES = ["retiredList"];
+
 const updateNews = async (
 	{ level, season }: ViewInput<"news">,
 	updateEvents: UpdateEvents,
@@ -18,15 +20,17 @@ const updateNews = async (
 			await idb.getCopies.events({
 				season,
 			})
-		).filter(event => {
-			if (level === "big") {
-				return event.score !== undefined && event.score >= 20;
-			}
-			if (level === "normal") {
-				return event.score !== undefined && event.score >= 10;
-			}
-			return true;
-		});
+		)
+			.filter(event => !IGNORE_EVENT_TYPES.includes(event.type))
+			.filter(event => {
+				if (level === "big") {
+					return event.score !== undefined && event.score >= 20;
+				}
+				if (level === "normal") {
+					return event.score !== undefined && event.score >= 10;
+				}
+				return true;
+			});
 
 		events.reverse();
 

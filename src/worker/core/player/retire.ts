@@ -18,11 +18,9 @@ const retire = (
 	conditions?: Conditions,
 	{
 		logRetiredEvent = true,
-		allowRetiredNotification = true,
 		forceHofNotification = false,
 	}: {
 		logRetiredEvent?: boolean;
-		allowRetiredNotification?: boolean;
 		forceHofNotification?: boolean;
 	} = {},
 ) => {
@@ -33,8 +31,7 @@ const retire = (
 				text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 					p.firstName
 				} ${p.lastName}</a> retired.`,
-				showNotification:
-					p.tid === g.get("userTid") && allowRetiredNotification,
+				showNotification: false,
 				pids: [p.pid],
 				tids: [p.tid],
 			},

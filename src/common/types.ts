@@ -464,6 +464,7 @@ export type LogEventType =
 	| "refuseToSign"
 	| "release"
 	| "retired"
+	| "retiredList"
 	| "screenshot"
 	| "success"
 	| "teamInfo"

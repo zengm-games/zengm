@@ -217,12 +217,12 @@ input[type="checkbox"][disabled] {
 .badge-primary,
 .badge-secondary,
 .badge-success,
-.badge-danger,
 .badge-info,
 .badge-dark {
 	color: $white;
 }
 
+.badge-danger,
 .badge-warning,
 .badge-light {
 	color: $black;

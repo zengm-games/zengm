@@ -21,7 +21,7 @@ const checkStatisticalFeat = (
 	results: GameResults,
 	conditions: Conditions,
 ) => {
-	const logFeat = async (text: string) => {
+	const logFeat = async (text: string, score: number) => {
 		let allStars;
 
 		if (tid < 0 && results.team[0].id === -1 && results.team[1].id === -2) {
@@ -47,6 +47,7 @@ const checkStatisticalFeat = (
 				showNotification: actualTid === g.get("userTid"),
 				pids: [pid],
 				tids: [actualTid],
+				score,
 			},
 			conditions,
 		);
@@ -88,7 +89,14 @@ const checkStatisticalFeat = (
 		featText += `</a> in ${
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
 		} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${endPart}.`;
-		logFeat(featText);
+
+		const gmsc = helpers.gameScore(p.stat);
+		const score = Math.round(
+			gmsc / 2 + (g.get("phase") === PHASE.PLAYOFFS ? 10 : 0),
+		);
+
+		logFeat(featText, score);
+
 		idb.cache.playerFeats.add({
 			pid,
 			name: p.name,

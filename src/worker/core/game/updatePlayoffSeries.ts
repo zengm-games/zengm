@@ -94,6 +94,7 @@ const updatePlayoffSeries = async (
 
 			let currentRoundText = "";
 
+			let eventScore = 10;
 			if (playoffSeries.currentRound === 0) {
 				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
 			} else if (
@@ -106,11 +107,13 @@ const updatePlayoffSeries = async (
 				g.get("numGamesPlayoffSeries").length - 2
 			) {
 				currentRoundText = "semifinals";
+				eventScore = 20;
 			} else if (
 				playoffSeries.currentRound ===
 				g.get("numGamesPlayoffSeries").length - 1
 			) {
 				currentRoundText = "finals";
+				eventScore = 20;
 			} else {
 				currentRoundText = `${helpers.ordinal(
 					playoffSeries.currentRound + 1,
@@ -147,6 +150,7 @@ const updatePlayoffSeries = async (
 					}</a> in the ${currentRoundText}, ${score}`,
 					showNotification,
 					tids: [winnerTid, loserTid],
+					score: eventScore,
 				},
 				conditions,
 			);

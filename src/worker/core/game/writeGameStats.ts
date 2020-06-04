@@ -134,12 +134,14 @@ const writeGameStats = async (
 	att: number,
 	conditions: Conditions,
 ) => {
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 	const gameStats: Game = {
 		gid: results.gid,
 		att,
 		clutchPlays: [],
 		season: g.get("season"),
-		playoffs: g.get("phase") === PHASE.PLAYOFFS,
+		playoffs,
 		overtimes: results.overtimes,
 		won: {
 			tid: 0,
@@ -387,10 +389,13 @@ const writeGameStats = async (
 			}
 		}
 
+		const eventScore = won ? (playoffs ? 20 : 10) : 0;
+
 		logEvent(
 			{
 				type: "playerFeat",
 				...clutchPlay,
+				score: eventScore,
 			},
 			conditions,
 		);

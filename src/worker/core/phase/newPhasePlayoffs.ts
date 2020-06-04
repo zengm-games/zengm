@@ -27,7 +27,7 @@ const newPhasePlayoffs = async (
 	for (const tid of tidPlayoffs) {
 		logEvent(
 			{
-				type: "playoffs",
+				type: "madePlayoffs",
 				text: `The <a href="${helpers.leagueUrl([
 					"roster",
 					`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
@@ -40,6 +40,7 @@ const newPhasePlayoffs = async (
 				])}">playoffs</a>.`,
 				showNotification: tid === g.get("userTid"),
 				tids: [tid],
+				score: 0,
 			},
 			conditions,
 		);

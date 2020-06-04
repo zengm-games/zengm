@@ -12,6 +12,8 @@ const updateNews = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			season: g.get("season"),
 		});
 
+		events.reverse();
+
 		return {
 			events,
 		};

@@ -160,6 +160,11 @@ export type EventBBGMWithoutKey = {
 	pids?: number[];
 	tids?: number[];
 	season: number;
+
+	// < 10: not very important
+	// < 20: somewhat important
+	// >= 20: very important
+	score?: number;
 };
 
 export type EventBBGM = EventBBGMWithoutKey & {
@@ -451,6 +456,7 @@ export type LogEventType =
 	| "info"
 	| "injured"
 	| "injuredList"
+	| "madePlayoffs"
 	| "newTeam"
 	| "playerFeat"
 	| "playoffs"
@@ -470,6 +476,7 @@ export type LogEventSaveOptions = {
 	text: string;
 	pids?: number[];
 	tids?: number[];
+	score?: number;
 };
 
 export type LogEventShowOptions = {

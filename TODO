@@ -74,7 +74,7 @@ events revamp
   - DONE retired: small for FAs, medium for players on teams, large for userTid
   - teamInfo: contains relocation, rename, and contraction scheduled events. big if user team, medium otherwise
     - for contraction, merge into a single event. do this for display of event in the GUI too, currently it's too big when 4 teams do it at the same time
-  - trade:  sliding scale based on how good the assets are and userTid
+  - DONE trade:  sliding scale based on how good the assets are and userTid
   - tragedy: always big
   - game result, for finals. event exists?
   - add stuff from scheduled events

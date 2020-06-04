@@ -37,6 +37,9 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	} else if (type === "retired") {
 		text = "Retirement";
 		className = classNamesByType.transaction;
+	} else if (type === "trade") {
+		text = "Trade";
+		className = classNamesByType.transaction;
 	} else if (type === "award") {
 		text = "Award";
 		className = classNamesByType.award;

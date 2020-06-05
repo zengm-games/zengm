@@ -8,7 +8,7 @@ const EventLog = ({ abbrev, events, season }: View<"eventLog">) => {
 	useTitleBar({
 		title: "Event Log",
 		dropdownView: "event_log",
-		dropdownFields: { teams: abbrev, seasons: season },
+		dropdownFields: { teamsAndLeague: abbrev, seasons: season },
 	});
 
 	return (

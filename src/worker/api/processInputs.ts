@@ -188,7 +188,11 @@ const draftTeamHistory = (params: Params) => {
 };
 
 const eventLog = (params: Params) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	let [tid, abbrev] = validateAbbrev(params.abbrev);
+	if (params.abbrev === "league") {
+		tid = -1;
+		abbrev = "league";
+	}
 	return {
 		tid,
 		abbrev,

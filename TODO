@@ -59,21 +59,8 @@ events revamp
   - bonus for userTid should be dynamic, so it handles switching teams
     - most bump up one category (small/med/large), but madePlayoffs should bump up 2
 - break down existing eventtype+score into categories: big (for dashboard), medium (for news page), small (event log)
-  - DONE ageFraud: always medium, could be big for good enough player or user team
-  - DONE award: aggregate into a big story at end of season. on news page, include details from awards object?
   - draft: first pick is big. others are small, except user's team, which are big when aggregated into one event for the whole draft
   - DRAFT LOTTERY RESULTS (need event type): always big, showing who got #1 pick, who moved up the most, who moved down the most
-  - DONE freeAgent: sliding scale based on how good the player is and userTid
-  - DONE hallOfFame: aggregate into a big story at end of season
-  - DONE healed: sliding scale based on how good the player is and user team and severity of injury (will need to store original severity! or maybe store original event score, and just repeat that)
-  - DONE injured: sliding scale based on how good the player is and user team and severity of injury
-  - DONE playerFeat: user team, always big. other team, sliding scale based on game score. always at least medium
-  - DONE playoffs: winning series is big for user team, medium for others, until the semifinals+finals when it is always big
-  - DONE madePlayoffs: making the playoffs is big for user team, small for others
-  - DONE reSigned: sliding scale based on how good the player is and userTid
-  - DONE retired: small for FAs, medium for players on teams, large for userTid
-  - DONE trade:  sliding scale based on how good the assets are and userTid
-  - DONE tragedy: always big
   - game result, for finals. event exists?
 - on player page, for transaction log with reSigned or freeAgent, prefix with team info and link to roster of that season
 - news page
@@ -81,14 +68,10 @@ events revamp
   - send teamInfo from worker, so accurate for old seasons
   - maybe different columns for different types of news
   - link to full event log and transactions pages
-  - tag for category (like event.type) preceding each headline
-  - bold for really big stories
-  - get rid of "Transactions", or link from News
-  - highlight userTid
-- support for leaguewide events, like rule changes
-  - could put aggregate ones there, like at end of summary make one for all awards, one for all HoF
-- scheduled events output should be viewable somewhere
-- add "League" for league events (tids.length === 0) to event log
+  - get rid of "Transactions"?
+- blog
+  - "League" option in event log
+  - news feed
 
 manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles

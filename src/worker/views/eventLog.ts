@@ -30,9 +30,12 @@ const updateEventLog = async (
 			events.reverse(); // Newest first
 			// Filter by team
 
-			events = events.filter(
-				event => event.tids !== undefined && event.tids.includes(inputs.tid),
-			);
+			events = events.filter(event => {
+				if (inputs.abbrev === "league") {
+					return event.tids === undefined || event.tids.length === 0;
+				}
+				return event.tids !== undefined && event.tids.includes(inputs.tid);
+			});
 			events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 			return {
 				abbrev: inputs.abbrev,

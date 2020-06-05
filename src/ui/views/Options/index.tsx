@@ -40,7 +40,6 @@ const Options = (props: View<"options"> & { title?: string }) => {
 		event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>,
 	) => {
 		const value = event.target.value;
-		console.log("handleChange", name, value);
 		setState(state2 => ({
 			...state2,
 			[name]: value,

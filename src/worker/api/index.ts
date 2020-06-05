@@ -1782,7 +1782,13 @@ const updateOptions = async (
 		}
 	}
 
-	await idb.meta.put("attributes", options, "options");
+	await idb.meta.put(
+		"attributes",
+		{
+			units: options.units,
+		},
+		"options",
+	);
 	await idb.meta.put("attributes", realPlayerPhotos, "realPlayerPhotos");
 	await idb.meta.put("attributes", realTeamInfo, "realTeamInfo");
 	await toUI("updateLocal", [{ units: options.units }]);

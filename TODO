@@ -75,8 +75,6 @@ events revamp
   - DONE trade:  sliding scale based on how good the assets are and userTid
   - DONE tragedy: always big
   - game result, for finals. event exists?
-  - add stuff from scheduled events
-    - add for gameAttributes
 - on player page, for transaction log with reSigned or freeAgent, prefix with team info and link to roster of that season
 - news page
   - select type of news? maybe as checkboxes
@@ -90,7 +88,7 @@ events revamp
 - support for leaguewide events, like rule changes
   - could put aggregate ones there, like at end of summary make one for all awards, one for all HoF
 - scheduled events output should be viewable somewhere
-- should be easy way to see team relocations, expansions, and league rule changes over time
+- add "League" for league events (tids.length === 0) to event log
 
 manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles

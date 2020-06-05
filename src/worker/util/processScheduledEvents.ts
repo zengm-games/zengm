@@ -91,7 +91,7 @@ const processTeamInfo = async (
 		});
 	} else if (info.imgURL && info.imgURL !== old.imgURL) {
 		logEvent({
-			text: `The ${t.region} ${t.name} got a new logo:<img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+			text: `The ${t.region} ${t.name} got a new logo:<br><img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
 			type: "teamLogo",
 			tids: [t.tid],
 			showNotification: false,
@@ -128,8 +128,8 @@ const processGameAttributes = async (
 	) {
 		texts.push(
 			info.threePointers
-				? "Added a three point line"
-				: "Removed the three point line",
+				? "Added a three point line."
+				: "Removed the three point line.",
 		);
 	}
 
@@ -141,7 +141,7 @@ const processGameAttributes = async (
 			`Salary cap ${increased} from ${helpers.formatCurrency(
 				prevSalaryCap / 1000,
 				"M",
-			)} to ${helpers.formatCurrency(info.salaryCap / 1000, "M")}`,
+			)} to ${helpers.formatCurrency(info.salaryCap / 1000, "M")}.`,
 		);
 	}
 
@@ -153,7 +153,7 @@ const processGameAttributes = async (
 		const increased =
 			info.numPlayoffByes > prevNumPlayoffByes ? "increased" : "decreased";
 		texts.push(
-			`Playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}`,
+			`Playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}.`,
 		);
 	}
 
@@ -174,7 +174,7 @@ const processGameAttributes = async (
 				`Playoffs ${increased} from ${prevNumGamesPlayoffSeries.length} to ${info.numGamesPlayoffSeries.length} rounds`,
 			);
 		} else {
-			texts.push("New number of playoff games per round");
+			texts.push("New number of playoff games per round.");
 		}
 	}
 
@@ -182,17 +182,27 @@ const processGameAttributes = async (
 	if (info.numGames !== undefined && info.numGames !== prevNumGames) {
 		const increased = info.numGames > prevNumGames ? "lengthened" : "shortened";
 		texts.push(
-			`Regular season ${increased} from ${prevNumGames} to ${info.numGames} games`,
+			`Regular season ${increased} from ${prevNumGames} to ${info.numGames} games.`,
 		);
 	}
 
 	const prevDraftType = g.get("draftType");
 	if (info.draftType !== undefined && info.draftType !== prevDraftType) {
 		texts.push(
-			`<a href="${helpers.leagueUrl([
+			`New <a href="${helpers.leagueUrl([
 				"draft_lottery",
-			])}">Draft lottery</a> format changed`,
+			])}">draft lottery</a> format.`,
 		);
+	}
+
+	for (const text of texts) {
+		logEvent({
+			text,
+			type: "gameAttribute",
+			tids: [],
+			showNotification: false,
+			score: 20,
+		});
 	}
 
 	if (texts.length === 1) {

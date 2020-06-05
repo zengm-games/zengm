@@ -10,6 +10,10 @@ const categories = {
 		text: "Awards",
 		className: "badge-warning",
 	},
+	league: {
+		text: "League",
+		className: "badge-secondary",
+	},
 	injury: {
 		text: "Injuries",
 		className: "badge-danger",
@@ -115,6 +119,10 @@ const types: Partial<Record<
 		text: "Rename",
 		category: "team",
 	},
+	gameAttribute: {
+		text: "League",
+		category: "league",
+	},
 };
 
 const Badge = ({ type }: { type: LogEventType }) => {
@@ -137,6 +145,7 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 	>({
 		award: true,
 		injury: true,
+		league: true,
 		playerFeat: true,
 		playoffs: true,
 		rare: true,

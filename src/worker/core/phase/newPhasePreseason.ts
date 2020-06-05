@@ -79,7 +79,7 @@ const newPhasePreseason = async (
 				});
 			} else if (t.imgURL && t.imgURL !== old.imgURL) {
 				logEvent({
-					text: `The ${t.region} ${t.name} got a new logo:<img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+					text: `The ${t.region} ${t.name} got a new logo:<br><img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
 					type: "teamLogo",
 					tids: [t.tid],
 					showNotification: false,

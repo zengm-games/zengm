@@ -178,31 +178,69 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 
 	return (
 		<>
-			{helpers.keys(categories).map(category => {
-				const info = categories[category];
-				return (
-					<div key={category} className="form-check">
-						<input
-							className="form-check-input"
-							type="checkbox"
-							checked={showCategories[category]}
-							id={`news-${category}`}
-							onChange={() => {
-								setShowCategories(show => ({
-									...show,
-									[category]: !show[category],
-								}));
-							}}
-						/>
-						<label
-							className={`form-check-label badge badge-news ${info.className}`}
-							htmlFor={`news-${category}`}
+			<div className="mt-1" style={{ marginLeft: "-0.5rem" }}>
+				{helpers.keys(categories).map((category, i) => {
+					const info = categories[category];
+					return (
+						<div
+							key={category}
+							className={classNames(
+								"form-check form-check-inline mb-2 ml-2",
+								{},
+							)}
 						>
-							{info.text}
-						</label>
-					</div>
-				);
-			})}
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={showCategories[category]}
+								id={`news-${category}`}
+								onChange={() => {
+									setShowCategories(show => ({
+										...show,
+										[category]: !show[category],
+									}));
+								}}
+							/>
+							<label
+								className={`form-check-label badge badge-news ${info.className}`}
+								htmlFor={`news-${category}`}
+							>
+								{info.text}
+							</label>
+						</div>
+					);
+				})}
+			</div>
+
+			<div className="mb-3">
+				<button
+					className="btn btn-link p-0"
+					onClick={event => {
+						event.preventDefault();
+						const show = { ...showCategories };
+						for (const key of helpers.keys(show)) {
+							show[key] = true;
+						}
+						setShowCategories(show);
+					}}
+				>
+					All
+				</button>{" "}
+				|{" "}
+				<button
+					className="btn btn-link p-0"
+					onClick={event => {
+						event.preventDefault();
+						const show = { ...showCategories };
+						for (const key of helpers.keys(show)) {
+							show[key] = false;
+						}
+						setShowCategories(show);
+					}}
+				>
+					None
+				</button>
+			</div>
 
 			<div className="row">
 				{events

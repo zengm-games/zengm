@@ -55,18 +55,14 @@ events revamp
   - nothing should be lost, ever
   - store info about trade, so the summary of a trade can be linked to
     - for traded picks, store info so eventual picked players can be filled in later
-- store the "score" of an event, so it can be used as a filter for important news
-  - bonus for userTid should be dynamic, so it handles switching teams
-    - most bump up one category (small/med/large), but madePlayoffs should bump up 2
-- break down existing eventtype+score into categories: big (for dashboard), medium (for news page), small (event log)
-  - game result, for finals. event exists?
+- game result, for finals. event exists?
 - on player page, for transaction log with reSigned or freeAgent, prefix with team info and link to roster of that season
 - news page
-  - select type of news? maybe as checkboxes
   - send teamInfo from worker, so accurate for old seasons
   - maybe different columns for different types of news
   - link to full event log and transactions pages
   - get rid of "Transactions"?
+- changelog
 - blog
   - "League" option in event log
   - news feed

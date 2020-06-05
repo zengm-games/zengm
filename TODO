@@ -27,10 +27,11 @@ support changing team logos at any season, from predefined real team logos
   - For the news alert, put the team name on the left and the category on the right
   - Show team logo and/or colors in news alert
   - Include the little "View ratings and stats" option next to player names (like in the "Roster" page)
-  - Weigh "Injuries" importance based on value of player (EWA, WS, USG, etc.) and length of injury
   - Ability to filter what teams to show
   - Option to show player photos?
   - Filter by "Oldest" and "Newest" events, which would be great when looking at previous years and figuring out how events transpired
+- animation
+- pagination?
 - documentation
 
 league creation options

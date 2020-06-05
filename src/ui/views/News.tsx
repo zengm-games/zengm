@@ -152,7 +152,9 @@ const Badge = ({ type }: { type: LogEventType }) => {
 		text = type;
 		className = "badge-secondary";
 	}
-	return <span className={`badge badge-news ${className} mr-1`}>{text}</span>;
+	return (
+		<span className={`badge badge-news ${className} float-right`}>{text}</span>
+	);
 };
 
 const News = ({ events, level, season, teams, userTid }: View<"news">) => {
@@ -271,19 +273,18 @@ const News = ({ events, level, season, teams, userTid }: View<"news">) => {
 												: "card-header",
 										)}
 									>
-										<Badge type={event.type} />
 										{teamInfo ? (
 											<a
 												href={helpers.leagueUrl([
 													"roster",
 													`${teamInfo.seasonAttrs.abbrev}_${event.tid}`,
 												])}
-												className="float-right"
 											>
 												{teamInfo.seasonAttrs.region}{" "}
 												{teamInfo.seasonAttrs.name}
 											</a>
 										) : null}
+										<Badge type={event.type} />
 									</div>
 									<div className="p-2">
 										<SafeHtml dirty={event.text} />

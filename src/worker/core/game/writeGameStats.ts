@@ -280,9 +280,9 @@ const writeGameStats = async (
 			g.get("season"),
 			results.gid,
 		])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
+
 		let type: LogEventType =
 			results.team[tw].id === g.get("userTid") ? "gameWon" : "gameLost";
-
 		if (tied) {
 			type = "gameTied";
 		}
@@ -292,7 +292,7 @@ const writeGameStats = async (
 				type,
 				text,
 				saveToDb: false,
-				tids: [results.team[0].id, results.team[1].id],
+				tids: [results.team[tw].id, results.team[tl].id],
 			},
 			conditions,
 		);

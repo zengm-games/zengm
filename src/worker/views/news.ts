@@ -71,10 +71,17 @@ const updateNews = async (
 
 		events.reverse();
 
+		const teams = await idb.getCopies.teamsPlus({
+			attrs: ["tid"],
+			seasonAttrs: ["abbrev", "region", "name"],
+			season: season,
+		});
+
 		return {
 			events,
 			level,
 			season,
+			teams,
 			userTid: g.get("userTid"),
 		};
 	}

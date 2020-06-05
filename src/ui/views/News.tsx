@@ -151,7 +151,7 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	return <span className={`badge badge-news ${className} mr-1`}>{text}</span>;
 };
 
-const News = ({ events, level, season, userTid }: View<"news">) => {
+const News = ({ events, level, season, teams, userTid }: View<"news">) => {
 	const [showCategories, setShowCategories] = useState<
 		Record<keyof typeof categories, boolean>
 	>({
@@ -171,10 +171,6 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 		dropdownView: "news",
 		dropdownFields: { seasons: season, newsLevels: level },
 	});
-
-	const { teamInfoCache } = useLocalShallow(state => ({
-		teamInfoCache: state.teamInfoCache,
-	}));
 
 	return (
 		<>
@@ -253,7 +249,9 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 					})
 					.map(event => {
 						const teamInfo =
-							event.tid !== undefined ? teamInfoCache[event.tid] : undefined;
+							event.tid !== undefined
+								? teams.find(t => t.tid === event.tid)
+								: undefined;
 
 						return (
 							<div
@@ -274,11 +272,12 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 											<a
 												href={helpers.leagueUrl([
 													"roster",
-													`${teamInfo.abbrev}_${event.tid}`,
+													`${teamInfo.seasonAttrs.abbrev}_${event.tid}`,
 												])}
 												className="float-right"
 											>
-												{teamInfo.region} {teamInfo.name}
+												{teamInfo.seasonAttrs.region}{" "}
+												{teamInfo.seasonAttrs.name}
 											</a>
 										) : null}
 									</div>

@@ -32,6 +32,7 @@ const processTeamInfo = async (
 	const old = {
 		region: t.region,
 		name: t.name,
+		imgURL: t.imgURL,
 	};
 	Object.assign(t, info);
 
@@ -84,6 +85,14 @@ const processTeamInfo = async (
 		logEvent({
 			text: helpers.upperCaseFirstLetter(text),
 			type: "teamRename",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
+	} else if (info.imgURL && info.imgURL !== old.imgURL) {
+		logEvent({
+			text: `The ${t.region} ${t.name} got a new logo:<img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+			type: "teamLogo",
 			tids: [t.tid],
 			showNotification: false,
 			score: 20,

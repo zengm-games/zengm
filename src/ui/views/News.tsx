@@ -103,6 +103,10 @@ const types: Partial<Record<
 		text: "Expansion",
 		category: "team",
 	},
+	teamLogo: {
+		text: "New Logo",
+		category: "team",
+	},
 	teamRelocation: {
 		text: "Relocation",
 		category: "team",

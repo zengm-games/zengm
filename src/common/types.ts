@@ -469,6 +469,7 @@ export type LogEventType =
 	| "success"
 	| "teamContraction"
 	| "teamExpansion"
+	| "teamLogo"
 	| "teamRelocation"
 	| "teamRename"
 	| "trade"

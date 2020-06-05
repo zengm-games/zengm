@@ -24,7 +24,14 @@ const logLotteryWinners = (
 			txt = logLotteryTxt(tm, "normal", pick);
 		}
 
-		logAction(tm, txt, conditions);
+		let score = 0;
+		if (pick === 1) {
+			score = 20;
+		} else if (pick <= 5) {
+			score = 10;
+		}
+
+		logAction(tm, txt, score, conditions);
 	}
 };
 

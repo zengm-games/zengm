@@ -59,8 +59,6 @@ events revamp
   - bonus for userTid should be dynamic, so it handles switching teams
     - most bump up one category (small/med/large), but madePlayoffs should bump up 2
 - break down existing eventtype+score into categories: big (for dashboard), medium (for news page), small (event log)
-  - DRAFT LOTTERY RESULTS (need event type): always big, showing who got #1 pick, who moved up the most, who moved down the most
-    - see logAction - what other stuff passes through there?
   - game result, for finals. event exists?
 - on player page, for transaction log with reSigned or freeAgent, prefix with team info and link to roster of that season
 - news page

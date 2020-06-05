@@ -445,6 +445,7 @@ export type LogEventType =
 	| "award"
 	| "changes"
 	| "draft"
+	| "draftLottery"
 	| "error"
 	| "freeAgent"
 	| "gameAttribute"

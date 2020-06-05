@@ -131,6 +131,10 @@ const types: Partial<Record<
 		text: "Draft",
 		category: "draft",
 	},
+	draftLottery: {
+		text: "Draft Lottery",
+		category: "draft",
+	},
 };
 
 const Badge = ({ type }: { type: LogEventType }) => {

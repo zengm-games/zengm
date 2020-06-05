@@ -24,7 +24,6 @@ support changing team logos at any season, from predefined real team logos
     - neiether of those is perfect
   - make player photo overrides dynamic too?
 - user feedback
-  - When selecting "None" under the "All Stories" filter, I still saw a message in the "release" category.
   - For the news alert, put the team name on the left and the category on the right
   - Show team logo and/or colors in news alert
   - Include the little "View ratings and stats" option next to player names (like in the "Roster" page)
@@ -91,6 +90,8 @@ popovers should auto detect position so they don't go off screen (like league le
 old playoff brackets use old logos @Lerotri#4029
 
 You can release players from the last draft, during the next year's expansion draft, without a cap penalty @Lerotri#4029
+
+In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft Results" table, it seems you can't sort by team (when there's more than one team in expansion). Sorting other columns is fine
 
 ---
 

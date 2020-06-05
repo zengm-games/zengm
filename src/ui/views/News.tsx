@@ -79,6 +79,10 @@ const types: Partial<Record<
 		text: "Re-signing",
 		category: "transaction",
 	},
+	release: {
+		text: "Released",
+		category: "transaction",
+	},
 	retired: {
 		text: "Retirement",
 		category: "transaction",

@@ -23,6 +23,15 @@ support changing team logos at any season, from predefined real team logos
     - could add a flag to track if a field has been edited or not
     - neiether of those is perfect
   - make player photo overrides dynamic too?
+- user feedback
+  - When selecting "None" under the "All Stories" filter, I still saw a message in the "release" category.
+  - For the news alert, put the team name on the left and the category on the right
+  - Show team logo and/or colors in news alert
+  - Include the little "View ratings and stats" option next to player names (like in the "Roster" page)
+  - Weigh "Injuries" importance based on value of player (EWA, WS, USG, etc.) and length of injury
+  - Ability to filter what teams to show
+  - Option to show player photos?
+  - Filter by "Oldest" and "Newest" events, which would be great when looking at previous years and figuring out how events transpired
 - documentation
 
 league creation options
@@ -55,7 +64,7 @@ events revamp
   - nothing should be lost, ever
   - store info about trade, so the summary of a trade can be linked to
     - for traded picks, store info so eventual picked players can be filled in later
-- game result, for finals. event exists?
+- in playoffs, recovery should only be notable if the team is still alive
 - news page
   - maybe different columns for different types of news
   - link to full event log and transactions pages

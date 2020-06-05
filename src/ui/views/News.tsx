@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SafeHtml } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, LogEventType } from "../../common/types";
-import { useLocalShallow, helpers } from "../util";
+import { helpers } from "../util";
 import classNames from "classnames";
 
 const categories = {
@@ -175,7 +175,7 @@ const News = ({ events, level, season, teams, userTid }: View<"news">) => {
 	return (
 		<>
 			<div className="mt-1" style={{ marginLeft: "-0.5rem" }}>
-				{helpers.keys(categories).map((category, i) => {
+				{helpers.keys(categories).map(category => {
 					const info = categories[category];
 					return (
 						<div

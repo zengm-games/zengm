@@ -78,13 +78,17 @@ const allStarMVP = async (
 };
 
 const getPlayoffInfos = async (game: Game) => {
+	if (g.get("phase") !== PHASE.PLAYOFFS) {
+		return {};
+	}
+
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	const roundSeries = playoffSeries
 		? playoffSeries.series[playoffSeries.currentRound]
 		: undefined;
 
 	if (!roundSeries) {
-		return;
+		return {};
 	}
 
 	const series = roundSeries.find(s => {
@@ -104,7 +108,7 @@ const getPlayoffInfos = async (game: Game) => {
 	});
 
 	if (!series || !series.away) {
-		return;
+		return {};
 	}
 
 	const first =
@@ -115,7 +119,7 @@ const getPlayoffInfos = async (game: Game) => {
 	const firstWon = game.teams[0].pts > game.teams[1].pts ? 1 : 0;
 	const secondWon = game.teams[1].pts > game.teams[0].pts ? 1 : 0;
 
-	return [
+	const playoffInfos = [
 		{
 			seed: first.seed,
 			won: first.won + firstWon,
@@ -127,6 +131,11 @@ const getPlayoffInfos = async (game: Game) => {
 			lost: first.won + firstWon,
 		},
 	] as const;
+
+	return {
+		currentRound: playoffSeries.currentRound,
+		playoffInfos,
+	};
 };
 
 const writeGameStats = async (
@@ -226,12 +235,10 @@ const writeGameStats = async (
 		}
 	}
 
-	if (g.get("phase") === PHASE.PLAYOFFS) {
-		const playoffInfos = await getPlayoffInfos(gameStats);
-		if (playoffInfos) {
-			gameStats.teams[0].playoffs = playoffInfos[0];
-			gameStats.teams[1].playoffs = playoffInfos[1];
-		}
+	const { playoffInfos, currentRound } = await getPlayoffInfos(gameStats);
+	if (playoffInfos) {
+		gameStats.teams[0].playoffs = playoffInfos[0];
+		gameStats.teams[1].playoffs = playoffInfos[1];
 	}
 
 	if (
@@ -292,7 +299,7 @@ const writeGameStats = async (
 				type,
 				text,
 				saveToDb: false,
-				tids: [results.team[tw].id, results.team[tl].id],
+				tids: [results.team[0].id, results.team[1].id],
 			},
 			conditions,
 		);
@@ -319,6 +326,77 @@ const writeGameStats = async (
 				conditions,
 			);
 		}
+	}
+
+	// Save finals and semifinals, for news feed
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
+	if (
+		currentRound !== undefined &&
+		currentRound >= numPlayoffRounds - 2 &&
+		playoffInfos
+	) {
+		const round =
+			currentRound >= numPlayoffRounds - 1 ? "finals" : "semifinals";
+		let score = round === "finals" ? 20 : 10;
+		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
+		const numGamesThisRound = g.get("numGamesPlayoffSeries")[currentRound];
+		const gameNumText = numGamesThisRound > 1 ? ` game ${gameNum} of` : "";
+		let leadText = "";
+		if (numGamesThisRound > 1) {
+			const numGamesToWinSeries = helpers.numGamesToWinSeries(
+				g.get("numGamesPlayoffSeries")[currentRound],
+			);
+
+			if (playoffInfos[tw].won === playoffInfos[tw].lost) {
+				leadText = `, evening the series at ${playoffInfos[tw].won}-${playoffInfos[tw].lost}`;
+			} else if (playoffInfos[tw].won === numGamesToWinSeries) {
+				leadText = `, winning the series ${playoffInfos[tw].won}-${playoffInfos[tw].lost}`;
+				score = 20; // For winning semifinals
+			} else if (playoffInfos[tw].won === playoffInfos[tw].lost + 1) {
+				leadText = `, taking a ${playoffInfos[tw].won}-${playoffInfos[tw].lost} series lead`;
+			} else if (playoffInfos[tw].won > playoffInfos[tw].lost) {
+				leadText = `, extending their ${playoffInfos[tw].won}-${playoffInfos[tw].lost} series lead`;
+			} else {
+				leadText = `, closing their ${playoffInfos[tw].won}-${playoffInfos[tw].lost} series deficit`;
+			}
+		}
+
+		const text = `The <a href="${helpers.leagueUrl([
+			"roster",
+			`${g.get("teamInfoCache")[results.team[tw].id]?.abbrev}_${
+				results.team[tw].id
+			}`,
+			g.get("season"),
+		])}">${
+			g.get("teamInfoCache")[results.team[tw].id]?.name
+		}</a> defeated the <a href="${helpers.leagueUrl([
+			"roster",
+			`${g.get("teamInfoCache")[results.team[tl].id]?.abbrev}_${
+				results.team[tl].id
+			}`,
+			g.get("season"),
+		])}">${
+			g.get("teamInfoCache")[results.team[tl].id]?.name
+		}</a> <a href="${helpers.leagueUrl([
+			"game_log",
+			`${g.get("teamInfoCache")[g.get("userTid")]?.abbrev}_${g.get("userTid")}`,
+			g.get("season"),
+			results.gid,
+		])}">${results.team[tw].stat.pts}-${
+			results.team[tl].stat.pts
+		}</a> in${gameNumText} the ${round}${leadText}.`;
+
+		// Await needed so this happens before the updatePlayoffSeries event
+		await logEvent(
+			{
+				type: "playoffs",
+				text,
+				tids: [results.team[tw].id, results.team[tl].id],
+				showNotification: false,
+				score,
+			},
+			conditions,
+		);
 	}
 
 	if (

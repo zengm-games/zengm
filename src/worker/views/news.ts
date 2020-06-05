@@ -22,7 +22,7 @@ const getTid = (event: EventBBGM) => {
 };
 
 const updateNews = async (
-	{ level, season }: ViewInput<"news">,
+	{ abbrev, level, order, season, tid }: ViewInput<"news">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
@@ -32,14 +32,26 @@ const updateNews = async (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase") ||
 		state.season !== season ||
-		state.level !== level
+		state.level !== level ||
+		state.abbrev !== abbrev ||
+		state.order !== order
 	) {
 		const events = (
 			await idb.getCopies.events({
 				season,
 			})
 		)
-			.filter(event => !IGNORE_EVENT_TYPES.includes(event.type))
+			.filter(event => {
+				if (
+					tid !== undefined &&
+					event.tids &&
+					event.tids.length > 0 &&
+					!event.tids.includes(tid)
+				) {
+					return false;
+				}
+				return !IGNORE_EVENT_TYPES.includes(event.type);
+			})
 			.map(event => {
 				if (
 					event.score !== undefined &&
@@ -69,7 +81,9 @@ const updateNews = async (
 				tid: getTid(event),
 			}));
 
-		events.reverse();
+		if (order === "newest") {
+			events.reverse();
+		}
 
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
@@ -78,8 +92,10 @@ const updateNews = async (
 		});
 
 		return {
+			abbrev,
 			events,
 			level,
+			order,
 			season,
 			teams,
 			userTid: g.get("userTid"),

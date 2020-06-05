@@ -337,9 +337,30 @@ const news = (params: Params) => {
 	} else {
 		level = "big";
 	}
+
+	const order: "oldest" | "newest" =
+		params.order === "oldest" ? "oldest" : "newest";
+
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (
+		params.abbrev !== undefined &&
+		params.abbrev !== "all" &&
+		validatedAbbrev !== "???"
+	) {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else {
+		abbrev = "all";
+	}
+
 	return {
-		season,
+		abbrev,
 		level,
+		order,
+		season,
+		tid,
 	};
 };
 

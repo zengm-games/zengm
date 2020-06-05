@@ -23,16 +23,6 @@ support changing team logos at any season, from predefined real team logos
     - could add a flag to track if a field has been edited or not
     - neiether of those is perfect
   - make player photo overrides dynamic too?
-- user feedback
-  - For the news alert, put the team name on the left and the category on the right
-  - Show team logo and/or colors in news alert
-  - Include the little "View ratings and stats" option next to player names (like in the "Roster" page)
-  - Ability to filter what teams to show
-  - Option to show player photos?
-  - Filter by "Oldest" and "Newest" events, which would be great when looking at previous years and figuring out how events transpired
-- animation
-- pagination?
-- documentation
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
@@ -64,11 +54,16 @@ events revamp
   - nothing should be lost, ever
   - store info about trade, so the summary of a trade can be linked to
     - for traded picks, store info so eventual picked players can be filled in later
+  - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
 - in playoffs, recovery should only be notable if the team is still alive
 - news page
-  - maybe different columns for different types of news
   - link to full event log and transactions pages
   - get rid of "Transactions"?
+- user feedback
+  - Show team logo and/or colors in news alert
+  - Option to show player photos?
+- animation
+- documentation
 - changelog
 - blog
   - "League" option in event log
@@ -93,6 +88,10 @@ old playoff brackets use old logos @Lerotri#4029
 You can release players from the last draft, during the next year's expansion draft, without a cap penalty @Lerotri#4029
 
 In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft Results" table, it seems you can't sort by team (when there's more than one team in expansion). Sorting other columns is fine
+
+@CleveIandFan#0216 PER for playoff stats is broken on this file https://dl.dropbox.com/s/68fsydzr5m6ujgu/BBGM_RBL_2019_playoffs_Round_3.json?dl=0
+- someone has a 93 PER and like 20 guys are over 50
+- it is a non-standard playoff format with some byes
 
 ---
 

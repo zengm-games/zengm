@@ -157,7 +157,15 @@ const Badge = ({ type }: { type: LogEventType }) => {
 	);
 };
 
-const News = ({ events, level, season, teams, userTid }: View<"news">) => {
+const News = ({
+	abbrev,
+	events,
+	level,
+	order,
+	season,
+	teams,
+	userTid,
+}: View<"news">) => {
 	const [showCategories, setShowCategories] = useState<
 		Record<keyof typeof categories, boolean>
 	>({
@@ -175,7 +183,12 @@ const News = ({ events, level, season, teams, userTid }: View<"news">) => {
 	useTitleBar({
 		title: "News Feed",
 		dropdownView: "news",
-		dropdownFields: { seasons: season, newsLevels: level },
+		dropdownFields: {
+			seasons: season,
+			newsLevels: level,
+			teamsAndAll: abbrev,
+			newestOldestFirst: order,
+		},
 	});
 
 	return (

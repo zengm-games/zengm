@@ -88,6 +88,8 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	"all|||news": "All Stories",
 	normal: "Normal",
 	big: "Only Big News",
+	newest: "Newest First",
+	oldest: "Oldest First",
 };
 
 export const getDropdownValue = (
@@ -267,6 +269,8 @@ const useDropdownOptions = (field: string) => {
 		keys = POSITIONS;
 	} else if (field === "newsLevels") {
 		keys = ["big", "normal", "all|||news"];
+	} else if (field === "newestOldestFirst") {
+		keys = ["newest", "oldest"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

@@ -153,7 +153,9 @@ const Badge = ({ type }: { type: LogEventType }) => {
 		className = "badge-secondary";
 	}
 	return (
-		<span className={`badge badge-news ${className} float-right`}>{text}</span>
+		<span className={`badge badge-news ml-auto align-self-start ${className}`}>
+			{text}
+		</span>
 	);
 };
 
@@ -280,7 +282,7 @@ const News = ({
 								<div className="card mb-3">
 									<div
 										className={classNames(
-											"p-2",
+											"p-2 d-flex",
 											event.tids && event.tids.includes(userTid)
 												? "table-info"
 												: "card-header",

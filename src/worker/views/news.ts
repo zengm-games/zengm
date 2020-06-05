@@ -46,7 +46,7 @@ const updateNews = async (
 					event.tids &&
 					event.tids.includes(g.get("userTid"))
 				) {
-					if (event.type === "madePlayoffs") {
+					if (event.type === "madePlayoffs" || event.type === "draft") {
 						event.score += 20;
 					} else {
 						event.score += 10;

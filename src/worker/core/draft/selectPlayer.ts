@@ -154,6 +154,13 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		});
 	}
 
+	let score = 0;
+	if (pickNum === 1) {
+		score = 20;
+	} else if (pickNum <= 5) {
+		score = 10;
+	}
+
 	logEvent({
 		type: "draft",
 		text: `The <a href="${helpers.leagueUrl([
@@ -170,6 +177,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],
+		score,
 	});
 
 	if (g.get("userTids").includes(dp.tid)) {

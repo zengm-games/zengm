@@ -10,6 +10,10 @@ const categories = {
 		text: "Awards",
 		className: "badge-warning",
 	},
+	draft: {
+		text: "Draft",
+		className: "badge-primary",
+	},
 	league: {
 		text: "League",
 		className: "badge-secondary",
@@ -123,6 +127,10 @@ const types: Partial<Record<
 		text: "League",
 		category: "league",
 	},
+	draft: {
+		text: "Draft",
+		category: "draft",
+	},
 };
 
 const Badge = ({ type }: { type: LogEventType }) => {
@@ -144,6 +152,7 @@ const News = ({ events, level, season, userTid }: View<"news">) => {
 		Record<keyof typeof categories, boolean>
 	>({
 		award: true,
+		draft: true,
 		injury: true,
 		league: true,
 		playerFeat: true,

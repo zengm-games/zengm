@@ -83,13 +83,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "transactions",
-				league: true,
-				path: ["transactions", "all"],
-				text: "Transactions",
-			},
-			{
-				type: "link",
 				active: pageID => pageID === "news",
 				league: true,
 				path: ["news"],

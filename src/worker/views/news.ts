@@ -1,4 +1,4 @@
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
 import { idb } from "../db";
 import type { Face } from "facesjs";
@@ -117,6 +117,8 @@ const updateNews = async (
 			seasonAttrs: ["abbrev", "imgURL", "name"],
 			season: season,
 		});
+
+		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 
 		return {
 			abbrev,

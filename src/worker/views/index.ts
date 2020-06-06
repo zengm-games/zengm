@@ -69,7 +69,6 @@ import teamStats from "./teamStats";
 import trade from "./trade";
 import tradingBlock from "./tradingBlock";
 import tragicDeaths from "./tragicDeaths";
-import transactions from "./transactions";
 import upcomingFreeAgents from "./upcomingFreeAgents";
 import watchList from "./watchList";
 
@@ -145,7 +144,6 @@ export default {
 	trade,
 	tradingBlock,
 	tragicDeaths,
-	transactions,
 	upcomingFreeAgents,
 	watchList,
 };

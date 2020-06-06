@@ -17,7 +17,7 @@ const Headlines = ({
 >) => {
 	return (
 		<>
-			<h2 className="mt-2" style={{ marginBottom: "-0.5rem" }}>
+			<h2 className="mt-3" style={{ marginBottom: "-0.5rem" }}>
 				League Headlines
 			</h2>
 			<div className="row mb-1">
@@ -32,7 +32,7 @@ const Headlines = ({
 							return (
 								<motion.div
 									key={event.eid}
-									className="col-xl-6 col-md-12 col-sm-6 mt-3"
+									className="col-xl-6 col-lg-12 col-md-4 col-sm-6 mt-3"
 									positionTransition={transition}
 									initial={{ opacity: 0, y: -100 }}
 									animate={{ opacity: 1, y: 0 }}

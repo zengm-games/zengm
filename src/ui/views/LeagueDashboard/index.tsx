@@ -50,7 +50,7 @@ const LeagueDashboard = ({
 	return (
 		<>
 			<div className="row">
-				<div className="col-xl-7 col-md-8">
+				<div className="col-xl-7 col-lg-8">
 					<div className="row">
 						<div className="col-sm-4 mb-sm-3">
 							{showPlayoffSeries && series ? (
@@ -172,8 +172,9 @@ const LeagueDashboard = ({
 							</div>
 						</div>
 					</div>
+					<StartingLineup starters={starters} startersStats={startersStats} />
 				</div>
-				<div className="col-xl-5 col-md-4 mb-3">
+				<div className="col-xl-5 col-lg-4 mb-3">
 					<Headlines
 						events={events}
 						eventsTeams={eventsTeams}
@@ -182,8 +183,6 @@ const LeagueDashboard = ({
 					/>
 				</div>
 			</div>
-
-			<StartingLineup starters={starters} startersStats={startersStats} />
 		</>
 	);
 };

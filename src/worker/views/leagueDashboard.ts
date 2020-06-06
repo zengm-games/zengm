@@ -412,7 +412,7 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			name: t.name,
 		}));
 
-		const NUM_EVENTS = 6;
+		const NUM_EVENTS = 8;
 
 		// Load all events from this season, and last season too if more are needed
 		const eventsAll = await idb.getCopies.events({

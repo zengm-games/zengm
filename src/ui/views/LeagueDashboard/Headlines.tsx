@@ -21,35 +21,28 @@ const Headlines = ({
 				League Headlines
 			</h2>
 			<div className="row mb-1">
-				{events.length === 0 ? (
-					<div className="col mt-3">
-						Nothing has happened yet! Start playing and the top headlines from
-						your team and around the league will show up here.
-					</div>
-				) : (
-					<AnimatePresence initial={false}>
-						{events.map(event => {
-							return (
-								<motion.div
-									key={event.eid}
-									className="col-xl-6 col-lg-12 col-md-4 col-sm-6 mt-3"
-									positionTransition={transition}
-									initial={{ opacity: 0, y: -100 }}
-									animate={{ opacity: 1, y: 0 }}
-									exit={{ transition: { duration: 0 } }}
-									transition={{ transition }}
-								>
-									<NewsBlock
-										event={event}
-										season={season}
-										teams={eventsTeams}
-										userTid={userTid}
-									/>
-								</motion.div>
-							);
-						})}
-					</AnimatePresence>
-				)}
+				<AnimatePresence initial={false}>
+					{events.map(event => {
+						return (
+							<motion.div
+								key={event.eid}
+								className="col-xl-6 col-lg-12 col-md-4 col-sm-6 mt-3"
+								positionTransition={transition}
+								initial={{ opacity: 0, y: -100 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ transition: { duration: 0 } }}
+								transition={{ transition }}
+							>
+								<NewsBlock
+									event={event}
+									season={season}
+									teams={eventsTeams}
+									userTid={userTid}
+								/>
+							</motion.div>
+						);
+					})}
+				</AnimatePresence>
 			</div>
 			<a href={helpers.leagueUrl(["news"])}>» News Feed</a>
 		</>

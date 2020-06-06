@@ -58,6 +58,8 @@ events revamp
   - in playoffs, recovery should only be notable if the team is still alive
 - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
 - changelog
+- change translation on dashboard to scale (animation for new events)
+- somehow limit rate of change of headlines on dashboard?
 - blog
   - news feed
   - no more Tools > Event Log or League > Transactions
@@ -77,6 +79,8 @@ get rid of mailing list nag for subscribers
 - load data from mailerlite, send status from php
 
 popovers should auto detect position so they don't go off screen (like league leaders)
+
+table-info rather than table-primary in playoffs view
 
 old playoff brackets use old logos @Lerotri#4029
 
@@ -249,8 +253,6 @@ pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qj
 
 OL weight
 
-get rid of basketball/football split, move into one folder structure
-
 login issues
 - DefinitelyNotDonaldTrump on discord can help debug
   - from his debugging so far, the response from login.php is correct and the redirect to the account page happens, but local.username is still ""
@@ -349,7 +351,9 @@ turnover in 2 point conversion -> wrong team still kicking off, wtf
 
 probGoForIt should account for being down by a FG or less late in the game
 
-pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
+FBGM football sim bugs
+- pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
+- negative yard line https://i.imgur.com/fSHX6md.png
 
 add kneeling to run out the clock
 

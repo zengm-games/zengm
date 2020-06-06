@@ -459,6 +459,7 @@ export type LogEventType =
 	| "injured"
 	| "injuredList"
 	| "madePlayoffs"
+	| "newLeague"
 	| "newTeam"
 	| "playerFeat"
 	| "playoffs"

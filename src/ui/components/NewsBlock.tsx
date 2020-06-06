@@ -139,6 +139,10 @@ export const types: Partial<Record<
 		text: "Draft Lottery",
 		category: "draft",
 	},
+	newLeague: {
+		text: "New League",
+		category: "league",
+	},
 };
 
 const Badge = ({ type }: { type: LogEventType }) => {

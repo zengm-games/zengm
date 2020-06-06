@@ -13,6 +13,7 @@ import {
 	toUI,
 	updatePhase,
 	updateStatus,
+	logEvent,
 } from "../../util";
 import type {
 	PlayerWithoutKey,
@@ -1018,6 +1019,14 @@ const create = async ({
 			}
 		}
 	}
+
+	logEvent({
+		text: "Welcome to your new league!",
+		type: "newLeague",
+		tids: [g.get("userTid")],
+		showNotification: false,
+		score: 20,
+	});
 
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();

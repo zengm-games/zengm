@@ -3,6 +3,39 @@ import React from "react";
 import { NewsBlock } from "../../components";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
+import throttle from "lodash/throttle";
+
+const throttleRender = (wait: number) => {
+	return component => {
+		class Throttle extends React.Component {
+			constructor(props) {
+				super(props);
+				this.state = {};
+				this.throttledSetState = throttle(
+					nextState => this.setState(nextState),
+					wait,
+				);
+			}
+			shouldComponentUpdate(nextProps, nextState) {
+				return this.state !== nextState;
+			}
+			componentWillMount() {
+				this.throttledSetState({ props: this.props });
+			}
+			componentWillReceiveProps(nextProps) {
+				this.throttledSetState({ props: nextProps });
+			}
+			componentWillUnmount() {
+				this.throttledSetState.cancel();
+			}
+			render() {
+				return React.createElement(component, this.state.props);
+			}
+		}
+
+		return Throttle;
+	};
+};
 
 const transition = { duration: 0.5, type: "tween" };
 
@@ -15,6 +48,7 @@ const Headlines = ({
 	View<"leagueDashboard">,
 	"events" | "eventsTeams" | "season" | "userTid"
 >) => {
+	console.log("render", new Date().toISOString());
 	return (
 		<>
 			<h2 className="mt-3" style={{ marginBottom: "-0.5rem" }}>
@@ -48,4 +82,6 @@ const Headlines = ({
 	);
 };
 
-export default Headlines;
+const ThrottledComponent = throttleRender(2000)(Headlines);
+
+export default ThrottledComponent;

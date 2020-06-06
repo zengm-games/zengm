@@ -96,7 +96,7 @@ const doInjury = (
 		}
 	}
 
-	if (process.env.SPORT === "football" && p2.injury.gamesRemaining === 1) {
+	if (p2.injury.gamesRemaining === 1) {
 		// Never really care about single game injuries much
 		score -= 10;
 	}

@@ -2,12 +2,13 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
-import { PlayoffMatchup, NewsBlock } from "../../components";
+import { PlayoffMatchup } from "../../components";
 import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";
 import TeamStats from "./TeamStats";
 import type { View } from "../../../common/types";
+import Headlines from "./Headlines";
 
 const LeagueDashboard = ({
 	att,
@@ -173,33 +174,12 @@ const LeagueDashboard = ({
 					</div>
 				</div>
 				<div className="col-xl-5 col-md-4 mb-3">
-					<h2 className="mt-2" style={{ marginBottom: "-0.5rem" }}>
-						League Headlines
-					</h2>
-					<div className="row mb-1">
-						{events.length === 0 ? (
-							<div className="col mt-3">
-								Nothing has happened yet! Start playing and the top headlines
-								from your team and around the league will show up here.
-							</div>
-						) : null}
-						{events.map(event => {
-							return (
-								<div
-									key={event.eid}
-									className="col-xl-6 col-md-12 col-sm-6 mt-3"
-								>
-									<NewsBlock
-										event={event}
-										season={season}
-										teams={eventsTeams}
-										userTid={userTid}
-									/>
-								</div>
-							);
-						})}
-					</div>
-					<a href={helpers.leagueUrl(["news"])}>» News Feed</a>
+					<Headlines
+						events={events}
+						eventsTeams={eventsTeams}
+						season={season}
+						userTid={userTid}
+					/>
 				</div>
 			</div>
 

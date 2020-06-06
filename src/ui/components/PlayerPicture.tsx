@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
 const imgStyle = {
-	marginTop: 20,
 	maxHeight: "100%",
 	maxWidth: "100%",
 };

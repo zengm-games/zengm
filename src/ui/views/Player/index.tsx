@@ -240,7 +240,12 @@ const Player2 = ({
 		<>
 			<div className="row mb-3">
 				<div className="col-sm-6">
-					<div className="player-picture">
+					<div
+						className="player-picture"
+						style={{
+							marginTop: player.imgURL ? 0 : -20,
+						}}
+					>
 						<PlayerPicture
 							face={player.face}
 							imgURL={player.imgURL}

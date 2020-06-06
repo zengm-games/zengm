@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeHtml } from "../components";
+import { SafeHtml, PlayerPicture } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, LogEventType } from "../../common/types";
 import { helpers } from "../util";
@@ -321,6 +321,7 @@ const News = ({
 
 								return (
 									<a
+										key={tid}
 										href={rosterURL}
 										className="align-self-center p-1"
 										style={logoStyle}
@@ -356,11 +357,23 @@ const News = ({
 										{teamName}
 										<Badge type={event.type} />
 									</div>
-									<div className="p-2">
-										<SafeHtml dirty={event.text} />
-										{event.score !== undefined ? (
-											<div className="text-muted">Score: {event.score}</div>
+									<div className="p-2 d-flex">
+										{event.p ? (
+											<div
+												style={{
+													maxHeight: 90,
+													width: 60,
+													marginTop: event.p.imgURL ? 0 : -10,
+												}}
+												className="flex-shrink-0 mr-1"
+											>
+												<PlayerPicture
+													face={event.p.face}
+													imgURL={event.p.imgURL}
+												/>
+											</div>
 										) : null}
+										<SafeHtml dirty={event.text} />
 									</div>
 								</div>
 							</div>

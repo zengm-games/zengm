@@ -1,6 +1,7 @@
 import { g } from "../util";
 import type { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
 import { idb } from "../db";
+import type { Face } from "facesjs";
 
 const IGNORE_EVENT_TYPES = ["retiredList"];
 
@@ -76,13 +77,39 @@ const updateNews = async (
 				}
 				return true;
 			})
-			.map(event => ({
-				...event,
-				tid: getTid(event),
-			}));
+			.map(event => {
+				let p:
+					| undefined
+					| {
+							imgURL?: string;
+							face?: Face;
+					  };
+				return {
+					...event,
+					tid: getTid(event),
+					p,
+				};
+			});
 
 		if (order === "newest") {
 			events.reverse();
+		}
+
+		let numImagesRemaining = 12;
+		for (const event of events) {
+			if (numImagesRemaining <= 0) {
+				break;
+			}
+			if (event.pids && event.pids.length > 0) {
+				const player = await idb.getCopy.players({ pid: event.pids[0] });
+				if (player) {
+					event.p = {
+						imgURL: player.imgURL,
+						face: player.imgURL ? undefined : player.face,
+					};
+					numImagesRemaining -= 1;
+				}
+			}
 		}
 
 		const teams = await idb.getCopies.teamsPlus({

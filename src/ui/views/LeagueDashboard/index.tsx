@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
-import { ScoreBox, PlayoffMatchup } from "../../components";
+import { PlayoffMatchup, NewsBlock } from "../../components";
 import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";
@@ -12,8 +12,9 @@ import type { View } from "../../../common/types";
 const LeagueDashboard = ({
 	att,
 	cash,
-	completed,
 	confTeams,
+	events,
+	eventsTeams,
 	leagueLeaders,
 	lost,
 	messages,
@@ -40,7 +41,6 @@ const LeagueDashboard = ({
 	teamStats,
 	tied,
 	ties,
-	upcoming,
 	userTid,
 	won,
 }: View<"leagueDashboard">) => {
@@ -49,12 +49,12 @@ const LeagueDashboard = ({
 	return (
 		<>
 			<div className="row">
-				<div className="col-md-8">
+				<div className="col-xl-7 col-md-8">
 					<div className="row">
-						<div className="col-sm-4 d-none d-sm-block mb-3 pt-2">
+						<div className="col-sm-4 mb-sm-3">
 							{showPlayoffSeries && series ? (
 								<>
-									<div className="mb-1">
+									<div className="mb-1 mt-2">
 										<b>{seriesTitle}</b>
 									</div>
 									<PlayoffMatchup
@@ -65,17 +65,19 @@ const LeagueDashboard = ({
 										series={series}
 										userTid={userTid}
 									/>
-									<div className="mt-1 mb-3">
+									<div className="mt-1 mb-sm-3">
 										<a href={helpers.leagueUrl(["playoffs"])}>» Playoffs</a>
 									</div>
 								</>
 							) : null}
-							<Standings
-								confTeams={confTeams}
-								numPlayoffTeams={numPlayoffTeams}
-								playoffsByConference={playoffsByConference}
-								userTid={userTid}
-							/>
+							<div className="d-none d-sm-block mt-2">
+								<Standings
+									confTeams={confTeams}
+									numPlayoffTeams={numPlayoffTeams}
+									playoffsByConference={playoffsByConference}
+									userTid={userTid}
+								/>
+							</div>
 						</div>
 						<div className="col-sm-8">
 							<div className="text-center mb-3">
@@ -88,11 +90,13 @@ const LeagueDashboard = ({
 									{playoffRoundsWon < 0 ? (
 										<span>{helpers.ordinal(rank)} in conference</span>
 									) : (
-										helpers.roundsWonText(
-											playoffRoundsWon,
-											numPlayoffRounds,
-											numConfs,
-										)
+										<span className="d-none d-sm-inline">
+											{helpers.roundsWonText(
+												playoffRoundsWon,
+												numPlayoffRounds,
+												numConfs,
+											)}
+										</span>
 									)}
 								</span>
 							</div>
@@ -168,27 +172,34 @@ const LeagueDashboard = ({
 						</div>
 					</div>
 				</div>
-				<div className="col-md-4">
-					<div className="row">
-						<div className="col-sm-6 col-md-12 mb-3">
-							<>
-								<h2>Upcoming Games</h2>
-								{upcoming.map((game, i) => (
-									<ScoreBox key={game.gid} game={game} header={i === 0} />
-								))}
-								{upcoming.length === 0 ? <p>None</p> : null}
-								<a href={helpers.leagueUrl(["schedule"])}>» Schedule</a>
-							</>
-						</div>
-						<div className="col-sm-6 col-md-12 mb-3">
-							<h2>Completed Games</h2>
-							{completed.map((game, i) => (
-								<ScoreBox key={game.gid} game={game} header={i === 0} />
-							))}
-							{completed.length === 0 ? <p>None</p> : null}
-							<a href={helpers.leagueUrl(["game_log"])}>» Game Log</a>
-						</div>
+				<div className="col-xl-5 col-md-4 mb-3">
+					<h2 className="mt-2" style={{ marginBottom: "-0.5rem" }}>
+						League Headlines
+					</h2>
+					<div className="row mb-1">
+						{events.length === 0 ? (
+							<div className="col mt-3">
+								Nothing has happened yet! Start playing and the top headlines
+								from your team and around the league will show up here.
+							</div>
+						) : null}
+						{events.map(event => {
+							return (
+								<div
+									key={event.eid}
+									className="col-xl-6 col-md-12 col-sm-6 mt-3"
+								>
+									<NewsBlock
+										event={event}
+										season={season}
+										teams={eventsTeams}
+										userTid={userTid}
+									/>
+								</div>
+							);
+						})}
 					</div>
+					<a href={helpers.leagueUrl(["news"])}>» News Feed</a>
 				</div>
 			</div>
 
@@ -200,8 +211,9 @@ const LeagueDashboard = ({
 LeagueDashboard.propTypes = {
 	att: PropTypes.number.isRequired,
 	cash: PropTypes.number.isRequired,
-	completed: PropTypes.arrayOf(PropTypes.object).isRequired,
 	confTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
+	events: PropTypes.arrayOf(PropTypes.object).isRequired,
+	eventsTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
 	leagueLeaders: PropTypes.arrayOf(PropTypes.object).isRequired,
 	lost: PropTypes.number.isRequired,
 	messages: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -235,7 +247,6 @@ LeagueDashboard.propTypes = {
 	).isRequired,
 	tied: PropTypes.number,
 	ties: PropTypes.bool.isRequired,
-	upcoming: PropTypes.arrayOf(PropTypes.object).isRequired,
 	userTid: PropTypes.number.isRequired,
 	won: PropTypes.number.isRequired,
 };

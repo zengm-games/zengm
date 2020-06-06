@@ -57,7 +57,7 @@ events revamp
   - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
   - in playoffs, recovery should only be notable if the team is still alive
 - animation
-- dashboard
+- bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
 - changelog
 - blog
   - news feed

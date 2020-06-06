@@ -119,7 +119,7 @@ const News = ({
 						return (
 							<div
 								key={event.eid}
-								className="col-lg-3 col-md-4 col-sm-6 col-12"
+								className="col-lg-3 col-md-4 col-sm-6 col-12 mb-3"
 							>
 								<NewsBlock
 									event={event}

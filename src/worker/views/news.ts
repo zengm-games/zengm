@@ -22,6 +22,104 @@ const getTid = (event: EventBBGM) => {
 	return event.tids[0];
 };
 
+export const processEvents = async (
+	eventsAll: EventBBGM[],
+	{
+		level = "big",
+		limit = Infinity,
+		tid,
+	}: {
+		level?: "all" | "big" | "normal";
+		limit?: number;
+		tid?: number;
+	} = {},
+) => {
+	let numKept = 0;
+	const events = eventsAll
+		.filter(event => {
+			if (
+				tid !== undefined &&
+				event.tids &&
+				event.tids.length > 0 &&
+				!event.tids.includes(tid)
+			) {
+				return false;
+			}
+			return !IGNORE_EVENT_TYPES.includes(event.type);
+		})
+		.map(event => {
+			if (
+				event.score !== undefined &&
+				event.tids &&
+				event.tids.includes(g.get("userTid"))
+			) {
+				if (event.type === "madePlayoffs" || event.type === "draft") {
+					event.score += 20;
+				} else {
+					event.score += 10;
+				}
+			}
+
+			return event;
+		})
+		.filter(event => {
+			let keep = true;
+			if (level === "big") {
+				if (event.score === undefined || event.score < 20) {
+					keep = false;
+				}
+			} else if (level === "normal") {
+				if (event.score === undefined || event.score < 10) {
+					keep = false;
+				}
+			}
+
+			if (numKept >= limit) {
+				keep = false;
+			}
+
+			if (keep) {
+				numKept += 1;
+			}
+
+			return keep;
+		})
+		.map(event => {
+			let p:
+				| undefined
+				| {
+						imgURL?: string;
+						face?: Face;
+				  };
+			return {
+				...event,
+				tid: getTid(event),
+				p,
+			};
+		});
+
+	let numImagesRemaining = 12;
+	for (const event of events) {
+		if (numImagesRemaining <= 0) {
+			break;
+		}
+		if (event.pids && event.pids.length > 0) {
+			const player = await idb.getCopy.players({ pid: event.pids[0] });
+			if (player) {
+				event.p = {
+					imgURL: player.imgURL,
+					face: player.imgURL ? undefined : player.face,
+				};
+				numImagesRemaining -= 1;
+			}
+		}
+	}
+
+	events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
+
+	return events;
+};
+
 const updateNews = async (
 	{ abbrev, level, order, season, tid }: ViewInput<"news">,
 	updateEvents: UpdateEvents,
@@ -37,80 +135,18 @@ const updateNews = async (
 		state.abbrev !== abbrev ||
 		state.order !== order
 	) {
-		const events = (
-			await idb.getCopies.events({
-				season,
-			})
-		)
-			.filter(event => {
-				if (
-					tid !== undefined &&
-					event.tids &&
-					event.tids.length > 0 &&
-					!event.tids.includes(tid)
-				) {
-					return false;
-				}
-				return !IGNORE_EVENT_TYPES.includes(event.type);
-			})
-			.map(event => {
-				if (
-					event.score !== undefined &&
-					event.tids &&
-					event.tids.includes(g.get("userTid"))
-				) {
-					if (event.type === "madePlayoffs" || event.type === "draft") {
-						event.score += 20;
-					} else {
-						event.score += 10;
-					}
-				}
-
-				return event;
-			})
-			.filter(event => {
-				if (level === "big") {
-					return event.score !== undefined && event.score >= 20;
-				}
-				if (level === "normal") {
-					return event.score !== undefined && event.score >= 10;
-				}
-				return true;
-			})
-			.map(event => {
-				let p:
-					| undefined
-					| {
-							imgURL?: string;
-							face?: Face;
-					  };
-				return {
-					...event,
-					tid: getTid(event),
-					p,
-				};
-			});
+		const eventsAll = await idb.getCopies.events({
+			season,
+		});
 
 		if (order === "newest") {
-			events.reverse();
+			eventsAll.reverse();
 		}
 
-		let numImagesRemaining = 12;
-		for (const event of events) {
-			if (numImagesRemaining <= 0) {
-				break;
-			}
-			if (event.pids && event.pids.length > 0) {
-				const player = await idb.getCopy.players({ pid: event.pids[0] });
-				if (player) {
-					event.p = {
-						imgURL: player.imgURL,
-						face: player.imgURL ? undefined : player.face,
-					};
-					numImagesRemaining -= 1;
-				}
-			}
-		}
+		const events = await processEvents(eventsAll, {
+			level,
+			tid,
+		});
 
 		const teams = (
 			await idb.getCopies.teamsPlus({
@@ -124,8 +160,6 @@ const updateNews = async (
 			imgURL: t.seasonAttrs.imgURL,
 			name: t.seasonAttrs.name,
 		}));
-
-		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 
 		return {
 			abbrev,

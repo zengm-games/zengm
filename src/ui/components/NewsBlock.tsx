@@ -252,7 +252,7 @@ const NewsBlock = ({
 				<Badge type={event.type} />
 			</div>
 			<div className="d-flex">
-				{event.p ? (
+				{event.p && event.p.imgURL !== "/img/blank-face.png" ? (
 					<div
 						style={{
 							maxHeight: 90,

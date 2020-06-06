@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 import { NewsBlock } from "../../components";
-import { helpers } from "../../util";
+import { helpers, useLocal } from "../../util";
 import type { View } from "../../../common/types";
 import throttle from "lodash/throttle";
 
@@ -50,13 +50,17 @@ const transition = { duration: 0.5, type: "tween" };
 
 const Headlines = ({
 	events,
-	eventsTeams,
 	season,
 	userTid,
-}: Pick<
-	View<"leagueDashboard">,
-	"events" | "eventsTeams" | "season" | "userTid"
->) => {
+}: Pick<View<"leagueDashboard">, "events" | "season" | "userTid">) => {
+	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const eventsTeams = teamInfoCache.map((t, i) => ({
+		tid: i,
+		abbrev: t.abbrev,
+		imgURL: t.imgURL,
+		region: t.region,
+	}));
+
 	return (
 		<>
 			<h2 className="mt-3" style={{ marginBottom: "-0.5rem" }}>
@@ -90,6 +94,21 @@ const Headlines = ({
 	);
 };
 
-const ThrottledComponent = throttleRender(2000)(Headlines);
+const ThrottledComponent = React.memo(
+	throttleRender(2000)(Headlines),
+	(prevProps, nextProps) => {
+		// Complicated memo function is because we don't want the throttle timer to start when doing a render where nothing changed, and we can't maintain referential equality of props.events because it is passed between the UI and worker.
+		if (
+			prevProps.season !== nextProps.season ||
+			prevProps.userTid !== nextProps.userTid
+		) {
+			return false;
+		}
+
+		const prevEIDs = prevProps.events.map(event => event.eid);
+		const nextEIDs = nextProps.events.map(event => event.eid);
+		return JSON.stringify(prevEIDs) === JSON.stringify(nextEIDs);
+	},
+);
 
 export default ThrottledComponent;

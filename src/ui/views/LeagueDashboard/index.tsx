@@ -15,7 +15,6 @@ const LeagueDashboard = ({
 	cash,
 	confTeams,
 	events,
-	eventsTeams,
 	leagueLeaders,
 	lost,
 	messages,
@@ -175,12 +174,7 @@ const LeagueDashboard = ({
 					<StartingLineup starters={starters} startersStats={startersStats} />
 				</div>
 				<div className="col-xl-5 col-lg-4 mb-3">
-					<Headlines
-						events={events}
-						eventsTeams={eventsTeams}
-						season={season}
-						userTid={userTid}
-					/>
+					<Headlines events={events} season={season} userTid={userTid} />
 				</div>
 			</div>
 		</>
@@ -192,7 +186,6 @@ LeagueDashboard.propTypes = {
 	cash: PropTypes.number.isRequired,
 	confTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
 	events: PropTypes.arrayOf(PropTypes.object).isRequired,
-	eventsTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
 	leagueLeaders: PropTypes.arrayOf(PropTypes.object).isRequired,
 	lost: PropTypes.number.isRequired,
 	messages: PropTypes.arrayOf(PropTypes.object).isRequired,

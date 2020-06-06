@@ -405,13 +405,6 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {
-		const eventsTeams = g.get("teamInfoCache").map((t, i) => ({
-			tid: i,
-			abbrev: t.abbrev,
-			imgURL: t.imgURL,
-			region: t.region,
-		}));
-
 		const NUM_EVENTS = 8;
 
 		// Load all events from this season, and last season too if more are needed
@@ -436,7 +429,6 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		return {
 			events,
-			eventsTeams,
 		};
 	}
 };

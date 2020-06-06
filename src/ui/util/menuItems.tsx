@@ -291,13 +291,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "eventLog",
-				league: true,
-				path: ["event_log"],
-				text: "Event Log",
-			},
-			{
-				type: "link",
 				active: pageID => pageID === "exportLeague",
 				league: true,
 				path: ["export_league"],

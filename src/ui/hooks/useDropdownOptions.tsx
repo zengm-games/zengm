@@ -33,7 +33,6 @@ export const getSortedTeams = ({
 const dropdownValues: { [key: string]: string | undefined } = {
 	special: "All-Star Game",
 	"all|||teams": "All Teams",
-	league: "League",
 	watch: "Watch List",
 	career: "Career Totals",
 	regularSeason: "Regular Season",
@@ -130,8 +129,6 @@ const useDropdownOptions = (field: string) => {
 		keys = ["special", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAll") {
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
-	} else if (field === "teamsAndLeague") {
-		keys = ["league", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAllWatch") {
 		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
 	} else if (

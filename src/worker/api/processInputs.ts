@@ -187,19 +187,6 @@ const draftTeamHistory = (params: Params) => {
 	};
 };
 
-const eventLog = (params: Params) => {
-	let [tid, abbrev] = validateAbbrev(params.abbrev);
-	if (params.abbrev === "league") {
-		tid = -1;
-		abbrev = "league";
-	}
-	return {
-		tid,
-		abbrev,
-		season: validateSeason(params.season),
-	};
-};
-
 const fantasyDraft = () => {
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 		return {
@@ -582,7 +569,6 @@ export default {
 	draftLottery,
 	draftSummary,
 	draftTeamHistory,
-	eventLog,
 	fantasyDraft,
 	freeAgents,
 	gameLog,

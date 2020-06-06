@@ -16,7 +16,6 @@ import draftLottery from "./draftLottery";
 import draftScouting from "./draftScouting";
 import draftSummary from "./draftSummary";
 import draftTeamHistory from "./draftTeamHistory";
-import eventLog from "./eventLog";
 import expansionDraft from "./expansionDraft";
 import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
@@ -91,7 +90,6 @@ export default {
 	draftScouting,
 	draftSummary,
 	draftTeamHistory,
-	eventLog,
 	expansionDraft,
 	exportStats,
 	fantasyDraft,

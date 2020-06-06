@@ -19,7 +19,7 @@ const StartingLineup = ({
 			<h2>
 				{process.env.SPORT === "basketball" ? "Starting Lineup" : "Top Players"}
 			</h2>
-			<ResponsiveTableWrapper nonfluid>
+			<ResponsiveTableWrapper nonfluid className="mb-0">
 				<table className="table table-striped table-bordered table-sm">
 					<thead>
 						<tr>

@@ -18,7 +18,7 @@ const Standings = ({
 	"confTeams" | "numPlayoffTeams" | "playoffsByConference" | "userTid"
 >) => (
 	<>
-		<table className="table table-striped table-bordered table-sm">
+		<table className="table table-striped table-bordered table-sm mb-1">
 			<thead>
 				<tr>
 					<th style={width100}>Team</th>

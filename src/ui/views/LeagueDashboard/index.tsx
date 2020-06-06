@@ -52,6 +52,24 @@ const LeagueDashboard = ({
 				<div className="col-md-8">
 					<div className="row">
 						<div className="col-sm-4 d-none d-sm-block mb-3 pt-2">
+							{showPlayoffSeries && series ? (
+								<>
+									<div className="mb-1">
+										<b>{seriesTitle}</b>
+									</div>
+									<PlayoffMatchup
+										expandTeamNames
+										numGamesToWinSeries={numGamesToWinSeries}
+										season={season}
+										// @ts-ignore
+										series={series}
+										userTid={userTid}
+									/>
+									<div className="mt-1 mb-3">
+										<a href={helpers.leagueUrl(["playoffs"])}>» Playoffs</a>
+									</div>
+								</>
+							) : null}
 							<Standings
 								confTeams={confTeams}
 								numPlayoffTeams={numPlayoffTeams}
@@ -153,32 +171,14 @@ const LeagueDashboard = ({
 				<div className="col-md-4">
 					<div className="row">
 						<div className="col-sm-6 col-md-12 mb-3">
-							{showPlayoffSeries && series ? (
-								<>
-									<h2>Playoffs</h2>
-									<b>{seriesTitle}</b>
-									<br />
-									<PlayoffMatchup
-										expandTeamNames
-										numGamesToWinSeries={numGamesToWinSeries}
-										season={season}
-										// @ts-ignore
-										series={series}
-										userTid={userTid}
-									/>
-									<br />
-									<a href={helpers.leagueUrl(["playoffs"])}>» Playoffs</a>
-								</>
-							) : (
-								<>
-									<h2>Upcoming Games</h2>
-									{upcoming.map((game, i) => (
-										<ScoreBox key={game.gid} game={game} header={i === 0} />
-									))}
-									{upcoming.length === 0 ? <p>None</p> : null}
-									<a href={helpers.leagueUrl(["schedule"])}>» Schedule</a>
-								</>
-							)}
+							<>
+								<h2>Upcoming Games</h2>
+								{upcoming.map((game, i) => (
+									<ScoreBox key={game.gid} game={game} header={i === 0} />
+								))}
+								{upcoming.length === 0 ? <p>None</p> : null}
+								<a href={helpers.leagueUrl(["schedule"])}>» Schedule</a>
+							</>
 						</div>
 						<div className="col-sm-6 col-md-12 mb-3">
 							<h2>Completed Games</h2>

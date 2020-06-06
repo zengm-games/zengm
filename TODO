@@ -61,6 +61,8 @@ events revamp
 - changelog
 - blog
   - news feed
+    - efficient updating, based on checking cache? only initial needs db
+    - responsive
   - no more Tools > Event Log or League > Transactions
 
 manually specify draft order in god mode

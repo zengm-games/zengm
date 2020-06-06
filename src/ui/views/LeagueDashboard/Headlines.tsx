@@ -6,34 +6,43 @@ import type { View } from "../../../common/types";
 import throttle from "lodash/throttle";
 
 const throttleRender = (wait: number) => {
-	return component => {
-		class Throttle extends React.Component {
-			constructor(props) {
+	return function <Props>(component: React.ComponentType<Props>) {
+		type State = { props: Props };
+		class Throttled extends React.Component<Props, State> {
+			throttledSetState: ((state: State) => void) & {
+				cancel: () => void;
+			};
+
+			constructor(props: Props) {
 				super(props);
-				this.state = {};
+				this.state = {
+					props,
+				};
+
 				this.throttledSetState = throttle(
-					nextState => this.setState(nextState),
+					(nextState: State) => this.setState(nextState),
 					wait,
 				);
 			}
-			shouldComponentUpdate(nextProps, nextState) {
+
+			shouldComponentUpdate(nextProps: Props, nextState: State) {
 				return this.state !== nextState;
 			}
-			componentWillMount() {
-				this.throttledSetState({ props: this.props });
-			}
-			componentWillReceiveProps(nextProps) {
+
+			UNSAFE_componentWillReceiveProps(nextProps: Props) {
 				this.throttledSetState({ props: nextProps });
 			}
+
 			componentWillUnmount() {
 				this.throttledSetState.cancel();
 			}
+
 			render() {
 				return React.createElement(component, this.state.props);
 			}
 		}
 
-		return Throttle;
+		return Throttled;
 	};
 };
 
@@ -48,7 +57,6 @@ const Headlines = ({
 	View<"leagueDashboard">,
 	"events" | "eventsTeams" | "season" | "userTid"
 >) => {
-	console.log("render", new Date().toISOString());
 	return (
 		<>
 			<h2 className="mt-3" style={{ marginBottom: "-0.5rem" }}>

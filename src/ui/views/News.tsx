@@ -153,11 +153,15 @@ const Badge = ({ type }: { type: LogEventType }) => {
 		className = "badge-secondary";
 	}
 	return (
-		<span className={`badge badge-news ml-auto align-self-start ${className}`}>
+		<span
+			className={`badge badge-news m-2 ml-auto align-self-start ${className}`}
+		>
 			{text}
 		</span>
 	);
 };
+
+const logoStyle = { height: 36 };
 
 const News = ({
 	abbrev,
@@ -269,10 +273,71 @@ const News = ({
 						return true;
 					})
 					.map(event => {
-						const teamInfo =
-							event.tid !== undefined
-								? teams.find(t => t.tid === event.tid)
-								: undefined;
+						let teamName = null;
+						if (event.tid !== undefined) {
+							const teamInfo = teams.find(t => t.tid === event.tid);
+
+							if (teamInfo) {
+								const rosterURL = helpers.leagueUrl([
+									"roster",
+									`${teamInfo.seasonAttrs.abbrev}_${event.tid}`,
+									season,
+								]);
+
+								teamName = (
+									<>
+										{teamInfo.seasonAttrs.imgURL ? (
+											<a
+												href={rosterURL}
+												className="align-self-center p-1"
+												style={logoStyle}
+											>
+												<img
+													className="mw-100 mh-100"
+													src={teamInfo.seasonAttrs.imgURL}
+													alt=""
+												/>
+											</a>
+										) : null}
+										<a href={rosterURL} className="align-self-center pl-1">
+											{teamInfo.seasonAttrs.name}
+										</a>
+									</>
+								);
+							}
+						} else if (event.tids && event.tids.length <= 3) {
+							// Show multiple logos, like for a trade;
+							teamName = event.tids.map(tid => {
+								const teamInfo = teams.find(t => t.tid === tid);
+
+								if (!teamInfo) {
+									return null;
+								}
+								const rosterURL = helpers.leagueUrl([
+									"roster",
+									`${teamInfo.seasonAttrs.abbrev}_${event.tid}`,
+									season,
+								]);
+
+								return (
+									<a
+										href={rosterURL}
+										className="align-self-center p-1"
+										style={logoStyle}
+									>
+										{teamInfo.seasonAttrs.imgURL ? (
+											<img
+												className="mw-100 mh-100"
+												src={teamInfo.seasonAttrs.imgURL}
+												alt=""
+											/>
+										) : (
+											teamInfo.seasonAttrs.abbrev
+										)}
+									</a>
+								);
+							});
+						}
 
 						return (
 							<div
@@ -282,23 +347,13 @@ const News = ({
 								<div className="card mb-3">
 									<div
 										className={classNames(
-											"p-2 d-flex",
+											"d-flex",
 											event.tids && event.tids.includes(userTid)
 												? "table-info"
-												: "card-header",
+												: "card-header p-0",
 										)}
 									>
-										{teamInfo ? (
-											<a
-												href={helpers.leagueUrl([
-													"roster",
-													`${teamInfo.seasonAttrs.abbrev}_${event.tid}`,
-												])}
-											>
-												{teamInfo.seasonAttrs.region}{" "}
-												{teamInfo.seasonAttrs.name}
-											</a>
-										) : null}
+										{teamName}
 										<Badge type={event.type} />
 									</div>
 									<div className="p-2">

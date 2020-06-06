@@ -87,7 +87,7 @@ const updateNews = async (
 
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
-			seasonAttrs: ["abbrev", "region", "name"],
+			seasonAttrs: ["abbrev", "imgURL", "name"],
 			season: season,
 		});
 

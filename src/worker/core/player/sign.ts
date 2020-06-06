@@ -19,6 +19,12 @@ const sign = (
 		addStatsRow(p, phase === PHASE.PLAYOFFS);
 	}
 
+	let score = p.valueFuzz - 45;
+	if (process.env.SPORT === "football") {
+		score -= 7;
+	}
+	score = Math.round(helpers.bound(score, 0, Infinity));
+
 	setContract(p, contract, true);
 	const resigning =
 		phase === PHASE.RESIGN_PLAYERS && p.draft.year !== g.get("season");
@@ -36,7 +42,7 @@ const sign = (
 		showNotification: false,
 		pids: [p.pid],
 		tids: [p.tid],
-		score: Math.round(helpers.bound(p.valueFuzz - 45, 0, Infinity)),
+		score,
 	});
 
 	const isRookie =

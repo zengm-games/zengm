@@ -1,5 +1,6 @@
 import { defaultGameAttributes, g } from "../../../worker/util";
 import type { GamePlayer } from "../../../common/types";
+import { helpers, PHASE } from "../../../common";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = Math.sqrt(
@@ -87,8 +88,19 @@ const checkStatisticalFeat = (p: GamePlayer) => {
 	}
 
 	if (Object.keys(statArr).length > 0) {
-		return statArr;
+		const gmsc = helpers.gameScore(p.stat);
+		const score = Math.round(
+			gmsc / 2 + (g.get("phase") === PHASE.PLAYOFFS ? 10 : 0),
+		);
+		return {
+			feats: statArr,
+			score,
+		};
 	}
+
+	return {
+		score: 0,
+	};
 };
 
 export default checkStatisticalFeat;

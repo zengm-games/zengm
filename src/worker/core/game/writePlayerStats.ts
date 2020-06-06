@@ -60,7 +60,10 @@ const doInjury = (
 
 	let score;
 	// 0 to 25, where 0 is role player and 25 is star
-	const playerQuality = helpers.bound(p2.valueNoPotFuzz - 50, 0, 25);
+	let playerQuality = helpers.bound(p2.valueNoPotFuzz - 50, 0, 25);
+	if (process.env.SPORT === "football") {
+		playerQuality -= 7;
+	}
 
 	if (playerQuality <= 0) {
 		if (playoffs && injuryLength !== "short") {
@@ -91,6 +94,11 @@ const doInjury = (
 				score = 0;
 			}
 		}
+	}
+
+	if (process.env.SPORT === "football" && p2.injury.gamesRemaining === 1) {
+		// Never really care about single game injuries much
+		score -= 10;
 	}
 
 	p2.injury.score = score;

@@ -53,13 +53,15 @@ const checkStatisticalFeat = (
 		);
 	};
 
-	const feat = checkPlayer(p);
+	const { score, feats } = checkPlayer(p);
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 
-	if (feat) {
+	if (feats) {
 		const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
 		const won = results.team[i].stat.pts > results.team[j].stat.pts;
-		const featTextArr = Object.keys(feat).map(stat => `${feat[stat]} ${stat}`);
+		const featTextArr = Object.keys(feats).map(
+			stat => `${feats[stat]} ${stat}`,
+		);
 		let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${
 			p.name
 		}</a> had <a href="${helpers.leagueUrl([
@@ -89,11 +91,6 @@ const checkStatisticalFeat = (
 		featText += `</a> in ${
 			results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
 		} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${endPart}.`;
-
-		const gmsc = helpers.gameScore(p.stat);
-		const score = Math.round(
-			gmsc / 2 + (g.get("phase") === PHASE.PLAYOFFS ? 10 : 0),
-		);
 
 		logFeat(featText, score);
 

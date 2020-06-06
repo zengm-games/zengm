@@ -375,6 +375,9 @@ const News = ({
 										) : null}
 										<SafeHtml dirty={event.text} />
 									</div>
+									{event.score !== undefined ? (
+										<div className="text-muted">Score: {event.score}</div>
+									) : null}
 								</div>
 							</div>
 						);

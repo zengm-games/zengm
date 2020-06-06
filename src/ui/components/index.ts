@@ -18,6 +18,7 @@ export { default as NagModal } from "./NagModal";
 export { default as NavBar } from "./NavBar";
 export { default as NegotiateButtons } from "./NegotiateButtons";
 export { default as NewWindowLink } from "./NewWindowLink";
+export { default as NewsBlock } from "./NewsBlock";
 export { default as PlayerNameLabels } from "./PlayerNameLabels";
 export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";

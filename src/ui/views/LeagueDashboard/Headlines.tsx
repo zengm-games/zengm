@@ -5,6 +5,7 @@ import { helpers, useLocal } from "../../util";
 import type { View } from "../../../common/types";
 import throttle from "lodash/throttle";
 
+// Similar to react-throttle-render
 const throttleRender = (wait: number) => {
 	return function <Props>(component: React.ComponentType<Props>) {
 		type State = { props: Props };
@@ -54,12 +55,6 @@ const Headlines = ({
 	userTid,
 }: Pick<View<"leagueDashboard">, "events" | "season" | "userTid">) => {
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
-	const eventsTeams = teamInfoCache.map((t, i) => ({
-		tid: i,
-		abbrev: t.abbrev,
-		imgURL: t.imgURL,
-		region: t.region,
-	}));
 
 	return (
 		<>
@@ -81,7 +76,7 @@ const Headlines = ({
 								<NewsBlock
 									event={event}
 									season={season}
-									teams={eventsTeams}
+									teams={teamInfoCache}
 									userTid={userTid}
 								/>
 							</motion.div>

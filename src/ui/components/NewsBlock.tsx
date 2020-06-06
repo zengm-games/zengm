@@ -177,7 +177,6 @@ const NewsBlock = ({
 	season: number;
 	userTid: number;
 	teams: {
-		tid: number;
 		abbrev: string;
 		imgURL?: string;
 		region: string;
@@ -185,7 +184,7 @@ const NewsBlock = ({
 }) => {
 	let teamName = null;
 	if (event.tid !== undefined) {
-		const teamInfo = teams.find(t => t.tid === event.tid);
+		const teamInfo = teams[event.tid];
 
 		if (teamInfo) {
 			const rosterURL = helpers.leagueUrl([
@@ -214,7 +213,7 @@ const NewsBlock = ({
 	} else if (event.tids && event.tids.length <= 3) {
 		// Show multiple logos, like for a trade;
 		teamName = event.tids.map(tid => {
-			const teamInfo = teams.find(t => t.tid === tid);
+			const teamInfo = teams[tid];
 
 			if (!teamInfo) {
 				return null;

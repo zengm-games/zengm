@@ -150,12 +150,10 @@ const updateNews = async (
 
 		const teams = (
 			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
 				seasonAttrs: ["abbrev", "imgURL", "region"],
 				season: season,
 			})
 		).map(t => ({
-			tid: t.tid,
 			abbrev: t.seasonAttrs.abbrev,
 			imgURL: t.seasonAttrs.imgURL,
 			region: t.seasonAttrs.region,

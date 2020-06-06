@@ -409,7 +409,7 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			tid: i,
 			abbrev: t.abbrev,
 			imgURL: t.imgURL,
-			name: t.name,
+			region: t.region,
 		}));
 
 		const NUM_EVENTS = 8;

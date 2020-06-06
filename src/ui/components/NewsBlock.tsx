@@ -180,7 +180,7 @@ const NewsBlock = ({
 		tid: number;
 		abbrev: string;
 		imgURL?: string;
-		name: string;
+		region: string;
 	}[];
 }) => {
 	let teamName = null;
@@ -206,7 +206,7 @@ const NewsBlock = ({
 						</a>
 					) : null}
 					<a href={rosterURL} className="align-self-center pl-1">
-						{teamInfo.name}
+						{teamInfo.region}
 					</a>
 				</>
 			);

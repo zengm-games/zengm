@@ -251,7 +251,7 @@ const NewsBlock = ({
 				{teamName}
 				<Badge type={event.type} />
 			</div>
-			<div className="p-2 d-flex">
+			<div className="d-flex">
 				{event.p ? (
 					<div
 						style={{
@@ -259,12 +259,14 @@ const NewsBlock = ({
 							width: 60,
 							marginTop: event.p.imgURL ? 0 : -10,
 						}}
-						className="flex-shrink-0 mr-1"
+						className="flex-shrink-0 ml-1"
 					>
 						<PlayerPicture face={event.p.face} imgURL={event.p.imgURL} />
 					</div>
 				) : null}
-				<SafeHtml dirty={event.text} />
+				<div className="p-2">
+					<SafeHtml dirty={event.text} />
+				</div>
 			</div>
 		</div>
 	);

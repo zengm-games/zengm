@@ -1,9 +1,8 @@
 import { PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames, helpers } from "../util";
-import type { UpdateEvents, Game } from "../../common/types";
-import { getUpcoming } from "./schedule";
+import { g, helpers } from "../util";
+import type { UpdateEvents } from "../../common/types";
 import { processEvents } from "./news";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -442,11 +441,7 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
+export default async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
 	const part1 = Object.assign(
 		{},
@@ -457,7 +452,7 @@ export default async (
 	const part2 = Object.assign(
 		{},
 		await updateTeams(inputs, updateEvents),
-		await updateNewsFeed(inputs, updateEvents, state),
+		await updateNewsFeed(inputs, updateEvents),
 	);
 	const part3 = Object.assign(
 		{},

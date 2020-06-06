@@ -4,7 +4,7 @@ import { NewsBlock } from "../../components";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 
-const transition = { duration: 0.2, type: "tween" };
+const transition = { duration: 0.5, type: "tween" };
 
 const Headlines = ({
 	events,
@@ -28,10 +28,9 @@ const Headlines = ({
 								key={event.eid}
 								className="col-xl-6 col-lg-12 col-md-4 col-sm-6 mt-3"
 								positionTransition={transition}
-								initial={{ opacity: 0, y: -100 }}
-								animate={{ opacity: 1, y: 0 }}
+								initial={{ opacity: 0, scale: 0.5 }}
+								animate={{ opacity: 1, scale: 1 }}
 								exit={{ transition: { duration: 0 } }}
-								transition={{ transition }}
 							>
 								<NewsBlock
 									event={event}

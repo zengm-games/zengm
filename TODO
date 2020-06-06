@@ -58,7 +58,6 @@ events revamp
   - in playoffs, recovery should only be notable if the team is still alive
 - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
 - changelog
-- change translation on dashboard to scale (animation for new events)
 - somehow limit rate of change of headlines on dashboard?
 - blog
   - news feed

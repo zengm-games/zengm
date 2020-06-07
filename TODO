@@ -77,8 +77,6 @@ get rid of mailing list nag for subscribers
 
 popovers should auto detect position so they don't go off screen (like league leaders)
 
-table-info rather than table-primary in playoffs view
-
 old playoff brackets use old logos @Lerotri#4029
 
 You can release players from the last draft, during the next year's expansion draft, without a cap penalty @Lerotri#4029

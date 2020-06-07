@@ -51,7 +51,7 @@ const Team = ({
 		<li
 			className={classNames("border border-bottom-0", {
 				"font-weight-bold": won,
-				"table-primary": team.tid === userTid,
+				"table-info": team.tid === userTid,
 				"text-muted": lost,
 			})}
 		>

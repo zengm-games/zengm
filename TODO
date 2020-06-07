@@ -89,6 +89,17 @@ In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft R
 - someone has a 93 PER and like 20 guys are over 50
 - it is a non-standard playoff format with some byes
 
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
+
+team needs/synergy display on roster
+
+player stats in real rosters
+
 ---
 
 move stuff from basketball and football folders back to deion. overrides too cumbersome
@@ -132,13 +143,6 @@ player stats popover
 - ovr/pot graph over time
   - put this on player page too
   - https://old.reddit.com/r/BasketballGM/comments/g4m90u/suggestion_player_progression_graphs/
-
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
 
 fewer finals MVPs on losing team
 

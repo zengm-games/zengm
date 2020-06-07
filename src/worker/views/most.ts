@@ -192,6 +192,10 @@ const updatePlayers = async (
 					colName: "Season",
 				},
 				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+				{
 					key: ["most", "value"],
 					colName: "Prog",
 				},
@@ -217,6 +221,7 @@ const updatePlayers = async (
 					value: maxProg,
 					extra: {
 						season: maxSeason,
+						age: maxSeason - p.born.year,
 					},
 				};
 			};

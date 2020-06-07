@@ -8,13 +8,17 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
+news feed improvements
+- merge some together
+  - expansion draft teams in one event
+  - contraction teams in one event
+- your players being selected in the expansion draft should be on news feed
+
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
   - drafted team for the players in busts and steals
   - team and overall for the final year of the Oldest to Play in Game
   - total games on team for players with the most years on one team
-- https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
-  - Best Progs - age of increase
 
 support changing team logos at any season, from predefined real team logos
 - future
@@ -49,16 +53,6 @@ eventually
 - allow user to cancel relocation if it's their team?
 - contraction
 
-events revamp
-- eventually
-  - nothing should be lost, ever
-  - store info about trade, so the summary of a trade can be linked to
-    - for traded picks, store info so eventual picked players can be filled in later
-  - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
-  - in playoffs, recovery should only be notable if the team is still alive
-  - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
-- changelog
-
 some way to slow down sim speed
 
 manually specify draft order in god mode
@@ -89,16 +83,12 @@ redo mood system
 
 team needs/synergy display on roster
 
-player stats in real rosters
-
----
-
-move stuff from basketball and football folders back to deion. overrides too cumbersome
-- blacklist
-- bbgm-router
-
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
+
+when a team is disbanded, shouldn't it appear on the "Transactions" section of a player page? I found guys who were FA for no reason, only to remember that their teams disappeared
+
+---
 
 BAA teams should enter with intact rosters, not expansion draft
 
@@ -177,6 +167,16 @@ redesign dashboard
 - injuries
 - draft picks owned, and rank of team
 - top draft prospects
+
+events revamp
+- eventually
+  - nothing should be lost, ever
+  - store info about trade, so the summary of a trade can be linked to
+    - for traded picks, store info so eventual picked players can be filled in later
+  - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
+  - in playoffs, recovery should only be notable if the team is still alive
+  - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
+  - include all time records being broken, like career scoring, etc
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?

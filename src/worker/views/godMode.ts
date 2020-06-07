@@ -28,7 +28,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			sonRate: g.get("sonRate"),
 			hardCap: g.get("hardCap"),
 			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", Infinity), // Always get latest value
-			numPlayoffByes: g.get("numPlayoffByes"),
+			numPlayoffByes: g.get("numPlayoffByes", Infinity), // Always get latest value
 			draftType: g.get("draftType"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 			allStarGame: g.get("allStarGame"),

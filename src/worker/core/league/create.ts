@@ -1020,13 +1020,15 @@ const create = async ({
 		}
 	}
 
-	logEvent({
-		text: "Welcome to your new league!",
-		type: "newLeague",
-		tids: [g.get("userTid")],
-		showNotification: false,
-		score: 20,
-	});
+	if (!leagueFile.events || leagueFile.events.length === 0) {
+		logEvent({
+			text: "Welcome to your new league!",
+			type: "newLeague",
+			tids: [g.get("userTid")],
+			showNotification: false,
+			score: 20,
+		});
+	}
 
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();

@@ -56,7 +56,7 @@ events revamp
     - for traded picks, store info so eventual picked players can be filled in later
   - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
   - in playoffs, recovery should only be notable if the team is still alive
-- bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
+  - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
 - changelog
 
 some way to slow down sim speed

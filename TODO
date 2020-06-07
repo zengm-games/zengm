@@ -77,8 +77,6 @@ get rid of mailing list nag for subscribers
 
 popovers should auto detect position so they don't go off screen (like league leaders)
 
-history_all uses current abbrev for past seasons
-
 You can release players from the last draft, during the next year's expansion draft, without a cap penalty @Lerotri#4029
 
 In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft Results" table, it seems you can't sort by team (when there's more than one team in expansion). Sorting other columns is fine

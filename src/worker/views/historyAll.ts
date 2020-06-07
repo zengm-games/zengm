@@ -3,6 +3,44 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
 
+const addAbbrev = (
+	award: any,
+	teams: {
+		tid: number;
+		abbrev: string;
+		seasonAttrs: {
+			abbrev: string;
+			season: number;
+		}[];
+	}[],
+	season: number,
+) => {
+	if (!award) {
+		return;
+	}
+
+	const t = teams.find(t => t.tid === award.tid);
+	if (!t) {
+		return {
+			...award,
+			abbrev: "???",
+		};
+	}
+
+	const seasonAttrs = t.seasonAttrs.find(ts => ts.season === season);
+	if (!seasonAttrs) {
+		return {
+			...award,
+			abbrev: t.abbrev,
+		};
+	}
+
+	return {
+		...award,
+		abbrev: seasonAttrs.abbrev,
+	};
+};
+
 const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
@@ -10,7 +48,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") === PHASE.DRAFT_LOTTERY)
 	) {
 		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
+			attrs: ["tid", "abbrev"],
 			seasonAttrs: [
 				"season",
 				"playoffRoundsWon",
@@ -32,14 +70,14 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const seasons: any[] = awards.map(a => {
 			return {
 				season: a.season,
-				finalsMvp: a.finalsMvp,
-				mvp: a.mvp,
-				dpoy: a.dpoy,
-				smoy: a.smoy,
-				mip: a.mip,
-				roy: a.roy,
-				oroy: a.oroy,
-				droy: a.droy,
+				finalsMvp: addAbbrev(a.finalsMvp, teams, a.season),
+				mvp: addAbbrev(a.mvp, teams, a.season),
+				dpoy: addAbbrev(a.dpoy, teams, a.season),
+				smoy: addAbbrev(a.smoy, teams, a.season),
+				mip: addAbbrev(a.mip, teams, a.season),
+				roy: addAbbrev(a.roy, teams, a.season),
+				oroy: addAbbrev(a.oroy, teams, a.season),
+				droy: addAbbrev(a.droy, teams, a.season),
 				runnerUp: undefined,
 				champ: undefined,
 			};
@@ -118,7 +156,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			awards: awardNames,
 			seasons,
-			teamAbbrevsCache: g.get("teamInfoCache").map(t => t.abbrev),
 			ties: g.get("ties"),
 			userTid: g.get("userTid"),
 		};

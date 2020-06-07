@@ -72,9 +72,6 @@ after agreeing to contract from negotiation screen, it flashes the "no negotiati
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
 
-get rid of mailing list nag for subscribers
-- load data from mailerlite, send status from php
-
 popovers should auto detect position so they don't go off screen (like league leaders)
 
 In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft Results" table, it seems you can't sort by team (when there's more than one team in expansion). Sorting other columns is fine
@@ -177,7 +174,6 @@ redesign dashboard
 - include some historical context
 - top FAs
 - award races
-- league news
 - injuries
 - draft picks owned, and rank of team
 - top draft prospects

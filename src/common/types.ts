@@ -646,6 +646,7 @@ export type PartialTopMenu = {
 	email: string;
 	goldCancelled: boolean;
 	goldUntil: number;
+	mailingList: boolean;
 	username: string;
 };
 
@@ -847,6 +848,7 @@ export type Local = {
 	})[];
 	goldUntil: number;
 	leagueLoaded: boolean;
+	mailingList: boolean;
 	phaseText: string;
 	playerNames?: PlayerNames;
 	playingUntilEndOfRound: boolean;

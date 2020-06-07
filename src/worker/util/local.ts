@@ -6,6 +6,7 @@ const defaultLocal: Local = {
 	autoSave: true,
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
+	mailingList: false, // Default, until told otherwise by server
 	leagueLoaded: false,
 	phaseText: "",
 	playerNames: undefined,
@@ -21,6 +22,7 @@ const local: Local & {
 	fantasyDraftResults: defaultLocal.fantasyDraftResults,
 	goldUntil: defaultLocal.goldUntil,
 	leagueLoaded: defaultLocal.leagueLoaded,
+	mailingList: defaultLocal.mailingList,
 	phaseText: defaultLocal.phaseText,
 	playerNames: defaultLocal.playerNames,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,

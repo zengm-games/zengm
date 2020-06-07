@@ -28,6 +28,11 @@ const augmentSeries = async (
 
 		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
 		if (teamSeason) {
+			if (teamSeason.abbrev) {
+				obj.abbrev = teamSeason.abbrev;
+				obj.region = teamSeason.region;
+				obj.imgURL = teamSeason.imgURL;
+			}
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
 

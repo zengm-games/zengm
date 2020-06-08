@@ -47,7 +47,7 @@ const throttleRender = (wait: number) => {
 	};
 };
 
-const transition = { duration: 0.5, type: "tween" };
+const transition = { duration: 0.4, type: "tween" };
 
 const Headlines = ({
 	events,
@@ -71,6 +71,7 @@ const Headlines = ({
 								positionTransition={transition}
 								initial={{ opacity: 0, scale: 0.5 }}
 								animate={{ opacity: 1, scale: 1 }}
+								transition={transition}
 								exit={{ transition: { duration: 0 } }}
 							>
 								<NewsBlock

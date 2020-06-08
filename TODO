@@ -8,7 +8,75 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
-https://getbootstrap.com/docs/4.5/components/card/#card-columns for news feed
+injury of 0 games showing up in news feed
+- playoffs?
+
+adjust team on transactions page, like player page https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/ftehvpo/
+
+standings UI
+- max width
+- clinched?
+
+way to save/load leagues on server
+- ~/projects/google-drive
+- MVP
+  - import league from google drive
+    - show files we have access to
+  - export league to google drive rather than file
+    - still need to track googleFileID, so it won't create a new file every time you export to drive
+    - option to create new file or overwrite existing one
+- Cloud
+  - authorize and sign out buttons for google
+    - https://developers.google.com/drive/api/v3/about-auth#save_refresh_tokens_in_long-term_storage
+  - list of leagues in cloud
+    - delete button
+      - when deleting, delete file ID from local leagues too
+    - rename button
+    - link to create a new league with cloud file
+  - https://developers.google.com/drive/api/v3/picker to add more files to list?
+- Dashboard
+  - link to Cloud page, and explanation if not logged in
+  - for a league linked to a cloud save (with googleFileID etc)
+    - if lastPlayed is greater than googleLastSync, show button to save changes to the cloud
+    - if version in cloud is greater than googleFileVersion, show button to overwrite league with latest from cloud
+    - if both of those things are true, show warning
+  - for a league not linked to a cloud save (googleFileID is undefined)
+    - show button to upload to cloud
+  - some way to import leagues from the cloud (maybe another "New League" button, and support "Import" over existing one too)
+  - some way to delete things from cloud
+    - deleting a league locally should pop up an option of if you want to delete from cloud
+  - design
+    - condense some columns (name, team, difficulty) into one
+    - add column for # seasons played
+- Data stored locally
+  - in each league, store google file ID, version, and timestamp of last sync (download or upload) w/ cloud
+    - googleFileID
+    - googleFileVerison
+    - googleLastSync
+- API
+  - should this run all client side, or do we need a server side component?
+    - try all client side first
+  - authentication
+    - https://developers.google.com/drive/api/v3/quickstart/js
+    - store all keys and gapi object in worker
+  - get list of cloud saves, including google file ID, BBGM league ID, last time played, and last phase/season
+    - how to search for them? https://developers.google.com/drive/api/v3/properties says it is possible
+      - https://developers.google.com/drive/api/v3/reference/query-ref
+  - download existing save by google file ID
+  - upload new save
+  - update (overwrite) existing save
+  - delete save
+- for multiplayer leagues, some way to support other people having read access to a league
+  - manual input of file ID or URL
+- store on my system (s3 maybe) or use google drive?
+  - google drive
+    - https://developers.google.com/drive/api/v3/reference/files could put metadata in "properties"
+      - use that to store some unique ID of the save
+    - UI integration https://developers.google.com/drive/api/v3/about-apps
+    - thumbnail https://developers.google.com/drive/api/v3/create-file#upload_thumbnails
+    - challenge - how do i stream data out of IndexedDB and into Google Drive?
+      - ideally would send data from IndexedDB to WritableStream to some HTTP API, but that doesn't seem supported - https://github.com/whatwg/fetch/issues/378 for the HTTP request, but also it's a problem with IDB auto closing transactions
+      - so would need to read entire league file into memory first
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
@@ -247,15 +315,6 @@ login issues
   - also says it happens on both BBGM and FBGM, and that it happens regardless of how many windows are open
   - console.log(document.cookie) - he says this returns an empty string, so i guess the cookie isn't being set somehow
     - would explain things, if cookie was not being set somehow. but should also be checked on account.basketball-gm.com directly
-
-way to save/load leagues on server
-- generate GUID per league
-- on load, check server for stored leagues for user
-- if timestamp is more recent on server, show notification that league is stale and update button
-- way to load leagues from server if they are not local already
-- some limit on size
-- gold only?
-- store on my system (s3 maybe) or use google drive?
 
 show winning percentage next to record in team history page
 

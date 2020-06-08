@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-06-08: Sortable table rows (roster, fantasy draft, football depth chart) can be reordered by clicking two rows to swap them, in addition to dragging like normal. This is sometimes easier on mobile.
+
 * **2020-06-07: Added the News Feed page, available in the League menu. This incorporates a score for each event that happens, allowing you to filter events by importance. This replaces the old Transactions and Event Log pages. [[1]](https://basketball-gm.com/blog/2020/06/news-feed/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/)**
 
 * 2020-06-03: If you use God Mode to retire a player, it checks for Hall of Fame eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity. [[1]](https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gvtw5o/new_features_in_version_202006030801_real_rosters/)

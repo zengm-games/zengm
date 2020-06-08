@@ -1,6 +1,6 @@
 import { idb } from "../../db";
 import { player, league, draft } from "..";
-import { g, updateStatus, updatePlayMenu, random } from "../../util";
+import { g, updateStatus, updatePlayMenu, random, logEvent } from "../../util";
 import { PHASE } from "../../../common";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 
@@ -87,6 +87,14 @@ const disable = async (tid: number) => {
 			name: t.name,
 			region: t.region,
 		})),
+	});
+
+	logEvent({
+		text: `The ${t.region} ${t.name} franchise is disbanding. All their players will become free agents.`,
+		type: "teamContraction",
+		tids: [t.tid],
+		showNotification: false,
+		score: 20,
 	});
 };
 

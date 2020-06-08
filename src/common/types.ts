@@ -160,6 +160,11 @@ export type EventBBGMWithoutKey = {
 	pids?: number[];
 	tids?: number[];
 	season: number;
+
+	// < 10: not very important
+	// < 20: somewhat important
+	// >= 20: very important
+	score?: number;
 };
 
 export type EventBBGM = EventBBGMWithoutKey & {
@@ -440,8 +445,10 @@ export type LogEventType =
 	| "award"
 	| "changes"
 	| "draft"
+	| "draftLottery"
 	| "error"
 	| "freeAgent"
+	| "gameAttribute"
 	| "gameLost"
 	| "gameTied"
 	| "gameWon"
@@ -451,6 +458,8 @@ export type LogEventType =
 	| "info"
 	| "injured"
 	| "injuredList"
+	| "madePlayoffs"
+	| "newLeague"
 	| "newTeam"
 	| "playerFeat"
 	| "playoffs"
@@ -458,9 +467,14 @@ export type LogEventType =
 	| "refuseToSign"
 	| "release"
 	| "retired"
+	| "retiredList"
 	| "screenshot"
 	| "success"
-	| "teamInfo"
+	| "teamContraction"
+	| "teamExpansion"
+	| "teamLogo"
+	| "teamRelocation"
+	| "teamRename"
 	| "trade"
 	| "tragedy"
 	| "upgrade";
@@ -470,6 +484,7 @@ export type LogEventSaveOptions = {
 	text: string;
 	pids?: number[];
 	tids?: number[];
+	score?: number;
 };
 
 export type LogEventShowOptions = {
@@ -631,6 +646,7 @@ export type PartialTopMenu = {
 	email: string;
 	goldCancelled: boolean;
 	goldUntil: number;
+	mailingList: boolean;
 	username: string;
 };
 
@@ -671,7 +687,9 @@ export type PlayerFiltered = any;
 export type PlayerInjury = {
 	gamesRemaining: number;
 	type: string;
+	score?: number;
 };
+
 type PlayerSalary = {
 	amount: number;
 	season: number;
@@ -830,6 +848,7 @@ export type Local = {
 	})[];
 	goldUntil: number;
 	leagueLoaded: boolean;
+	mailingList: boolean;
 	phaseText: string;
 	playerNames?: PlayerNames;
 	playingUntilEndOfRound: boolean;

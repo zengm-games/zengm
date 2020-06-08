@@ -187,15 +187,6 @@ const draftTeamHistory = (params: Params) => {
 	};
 };
 
-const eventLog = (params: Params) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	return {
-		tid,
-		abbrev,
-		season: validateSeason(params.season),
-	};
-};
-
 const fantasyDraft = () => {
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 		return {
@@ -320,6 +311,43 @@ const newLeague = (params: Params) => {
 	return {
 		lid,
 		type,
+	};
+};
+
+const news = (params: Params) => {
+	const season = validateSeason(params.season);
+	let level: "all" | "normal" | "big";
+	if (params.level === "all") {
+		level = "all";
+	} else if (params.level === "normal") {
+		level = "normal";
+	} else {
+		level = "big";
+	}
+
+	const order: "oldest" | "newest" =
+		params.order === "oldest" ? "oldest" : "newest";
+
+	let abbrev;
+	let tid: number | undefined;
+	const [validatedTid, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+	if (
+		params.abbrev !== undefined &&
+		params.abbrev !== "all" &&
+		validatedAbbrev !== "???"
+	) {
+		abbrev = validatedAbbrev;
+		tid = validatedTid;
+	} else {
+		abbrev = "all";
+	}
+
+	return {
+		abbrev,
+		level,
+		order,
+		season,
+		tid,
 	};
 };
 
@@ -572,7 +600,6 @@ export default {
 	draftLottery,
 	draftSummary,
 	draftTeamHistory,
-	eventLog,
 	fantasyDraft,
 	freeAgents,
 	gameLog,
@@ -586,6 +613,7 @@ export default {
 	negotiation,
 	negotiationList,
 	newLeague,
+	news,
 	player,
 	playerBios: playerRatings,
 	playerFeats,

@@ -94,6 +94,7 @@ const updatePlayoffSeries = async (
 
 			let currentRoundText = "";
 
+			let saveToDb = true;
 			if (playoffSeries.currentRound === 0) {
 				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
 			} else if (
@@ -106,11 +107,17 @@ const updatePlayoffSeries = async (
 				g.get("numGamesPlayoffSeries").length - 2
 			) {
 				currentRoundText = "semifinals";
+
+				// Not needed, because individual game event in writeGameStats will cover this round
+				saveToDb = false;
 			} else if (
 				playoffSeries.currentRound ===
 				g.get("numGamesPlayoffSeries").length - 1
 			) {
 				currentRoundText = "finals";
+
+				// Not needed, because individual game event in writeGameStats will cover this round
+				saveToDb = false;
 			} else {
 				currentRoundText = `${helpers.ordinal(
 					playoffSeries.currentRound + 1,
@@ -144,9 +151,11 @@ const updatePlayoffSeries = async (
 						g.get("season"),
 					])}">${
 						g.get("teamInfoCache")[loserTid]?.name
-					}</a> in the ${currentRoundText}, ${score}`,
+					}</a> in the ${currentRoundText}, ${score}.`,
 					showNotification,
 					tids: [winnerTid, loserTid],
+					score: 10,
+					saveToDb,
 				},
 				conditions,
 			);

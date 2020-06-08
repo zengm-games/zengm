@@ -65,7 +65,8 @@
 		margin-left: 161px;
 	}
 	.title-bar {
-		margin-left: 161px;
+		// -17 for left margin in .title-bar
+		margin-left: 144px !important;
 	}
 }
 

@@ -8,22 +8,13 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
+https://getbootstrap.com/docs/4.5/components/card/#card-columns for news feed
+
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
   - drafted team for the players in busts and steals
   - team and overall for the final year of the Oldest to Play in Game
   - total games on team for players with the most years on one team
-- https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frzs1rd/?context=3
-  - Best Progs - age of increase
-
-support changing team logos at any season, from predefined real team logos
-- future
-  - handle if the user edits something but realTeamInfo specifies an override
-    - could check if the pre-overridden value is the previous override or not
-    - could add a flag to track if a field has been edited or not
-    - neiether of those is perfect
-  - make player photo overrides dynamic too?
-- documentation
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
@@ -48,63 +39,41 @@ eventually
 - show draft prospects separately when creating a new custom league, to allow creating one without them
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
-- contraction
-
-events revamp
-- eventually
-  - nothing should be lost, ever
-  - store info about trade, so the summary of a trade can be linked to
-    - for traded picks, store info so eventual picked players can be filled in later
-- store the "score" of an event, so it can be used as a filter for important news
-  - bonus for userTid should be dynamic, so it handles switching teams
-- break down existing eventtype+score into categories: big (for dashboard), medium (for news page), small (event log)
-  - ageFraud: always big
-  - award: aggregate into a big story at end of season. on news page, include details from awards object?
-  - draft: first pick is big. others are small, except user's team, which are big when aggregated into one event for the whole draft
-  - DRAFT LOTTERY RESULTS (need event type): always big, showing who got #1 pick, who moved up the most, who moved down the most
-  - freeAgent: sliding scale based on how good the player is and userTid
-  - hallOfFame: aggregate into a big story at end of season
-  - healed: sliding scale based on how good the player is and user team and severity of injury (will need to store original severity!)
-  - injured: sliding scale based on how good the player is and user team and severity of injury
-  - playerFeat: user team, always big. other team, sliding scale based on game score. always at least medium
-  - playoffs: making the playoffs is big for user team, small for others. winning series is big for user team, medium for others, until the semifinals+finals when it is always big
-  - reSigned: sliding scale based on how good the player is and userTid
-  - retired: sliding scale based on how good the player is and userTid
-  - teamInfo: contains relocation, rename, and contraction scheduled events. big if user team, medium otherwise
-    - for contraction, merge into a single event. do this for display of event in the GUI too, currently it's too big when 4 teams do it at the same time
-  - trade:  sliding scale based on how good the assets are and userTid
-  - tragedy: always big
-  - add stuff from scheduled events
-    - one for expansion draft
-    - one for league rule changes
-    - maybe can just be one for each entry in eventLogTexts - just add some metadata to it, rather than being an array of strings, and save individual ones without displaying
-- news page
-  - select season
-  - link to full event log and transactions pages
-  - tag for category (like event.type) preceding each headline
-  - bold for really big stories
-- support for leaguewide events, like rule changes
-  - could put aggregate ones there, like at end of summary make one for all awards, one for all HoF
-- scheduled events output should be viewable somewhere
-- should be easy way to see team relocations, expansions, and league rule changes over time
 
 manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles
 - dropdown to force lottery winners
+
+add logos to league history table?
 
 after agreeing to contract from negotiation screen, it flashes the "no negotiation in progress" message before redirecting
 
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
 
----
+popovers should auto detect position so they don't go off screen (like league leaders)
 
-move stuff from basketball and football folders back to deion. overrides too cumbersome
-- blacklist
-- bbgm-router
+In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft Results" table, it seems you can't sort by team (when there's more than one team in expansion). Sorting other columns is fine
+
+@CleveIandFan#0216 PER for playoff stats is broken on this file https://dl.dropbox.com/s/68fsydzr5m6ujgu/BBGM_RBL_2019_playoffs_Round_3.json?dl=0
+- someone has a 93 PER and like 20 guys are over 50
+- it is a non-standard playoff format with some byes
+
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
+
+team needs/synergy display on roster
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
+
+when a team is disbanded, shouldn't it appear on the "Transactions" section of a player page? I found guys who were FA for no reason, only to remember that their teams disappeared
+
+---
 
 BAA teams should enter with intact rosters, not expansion draft
 
@@ -140,13 +109,6 @@ player stats popover
 - ovr/pot graph over time
   - put this on player page too
   - https://old.reddit.com/r/BasketballGM/comments/g4m90u/suggestion_player_progression_graphs/
-
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
 
 fewer finals MVPs on losing team
 
@@ -187,10 +149,29 @@ redesign dashboard
 - include some historical context
 - top FAs
 - award races
-- league news
 - injuries
 - draft picks owned, and rank of team
 - top draft prospects
+
+events revamp
+- eventually
+  - nothing should be lost, ever
+  - store info about trade, so the summary of a trade can be linked to
+    - for traded picks, store info so eventual picked players can be filled in later
+  - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
+  - in playoffs, recovery should only be notable if the team is still alive
+  - include all time records being broken, like career scoring, etc
+  - merge some together
+    - expansion draft teams in one event
+    - contraction teams in one event
+
+support changing team logos at any season, from predefined real team logos
+- future
+  - handle if the user edits something but realTeamInfo specifies an override
+    - could check if the pre-overridden value is the previous override or not
+    - could add a flag to track if a field has been edited or not
+    - neiether of those is perfect
+  - make player photo overrides dynamic too?
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?
@@ -257,8 +238,6 @@ jersey numbers
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
 OL weight
-
-get rid of basketball/football split, move into one folder structure
 
 login issues
 - DefinitelyNotDonaldTrump on discord can help debug
@@ -358,7 +337,9 @@ turnover in 2 point conversion -> wrong team still kicking off, wtf
 
 probGoForIt should account for being down by a FG or less late in the game
 
-pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
+FBGM football sim bugs
+- pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
+- negative yard line https://i.imgur.com/fSHX6md.png
 
 add kneeling to run out the clock
 
@@ -912,11 +893,6 @@ document cache data format and API!
 - cache mutations are dangerous, see getCopy
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 - promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
-
-event log refactor
-- react
-- keep state just on worker
-- "event log" page with ALL events, should be impossible to "miss" an event
 
 ----
 

@@ -13,6 +13,7 @@ import {
 	toUI,
 	updatePhase,
 	updateStatus,
+	logEvent,
 } from "../../util";
 import type {
 	PlayerWithoutKey,
@@ -1017,6 +1018,16 @@ const create = async ({
 				await team.rosterAutoSort(t.tid);
 			}
 		}
+	}
+
+	if (!leagueFile.events || leagueFile.events.length === 0) {
+		logEvent({
+			text: "Welcome to your new league!",
+			type: "newLeague",
+			tids: [g.get("userTid")],
+			showNotification: false,
+			score: 20,
+		});
 	}
 
 	await idb.cache.flush();

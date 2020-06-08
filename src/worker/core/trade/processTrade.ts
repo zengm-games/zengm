@@ -48,6 +48,7 @@ const processTrade = async (
 	pids: [number[], number[]],
 	dpids: [number[], number[]],
 ) => {
+	let maxPlayerValue = -Infinity;
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
 
@@ -72,6 +73,10 @@ const processTrade = async (
 				type: "trade",
 				fromTid: tids[j],
 			});
+
+			if (p.valueFuzz > maxPlayerValue) {
+				maxPlayerValue = p.valueFuzz;
+			}
 
 			await idb.cache.players.put(p);
 		}
@@ -111,6 +116,7 @@ const processTrade = async (
 		showNotification: false,
 		pids: pids[0].concat(pids[1]),
 		tids: Array.from(tids), // Array.from is for Flow
+		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
 	});
 };
 

@@ -45,6 +45,64 @@ const doInjury = (
 			local.autoPlaySeasons === 0;
 	}
 
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
+	let injuryLength = "short";
+	if (
+		p2.injury.gamesRemaining >= (process.env.SPORT === "basketball" ? 10 : 4)
+	) {
+		injuryLength = "medium";
+	} else if (
+		p2.injury.gamesRemaining >= (process.env.SPORT === "basketball" ? 20 : 8)
+	) {
+		injuryLength = "long";
+	}
+
+	let score;
+	// 0 to 25, where 0 is role player and 25 is star
+	let playerQuality = helpers.bound(p2.valueNoPotFuzz - 50, 0, 25);
+	if (process.env.SPORT === "football") {
+		playerQuality -= 7;
+	}
+
+	if (playerQuality <= 0) {
+		if (playoffs && injuryLength !== "short") {
+			// Bad player, playoffs, medium/long injury
+			score = 10;
+		} else {
+			// Bad player, regular season or short injury
+			score = 0;
+		}
+	} else {
+		if (playoffs) {
+			if (playerQuality > 10 || injuryLength === "medium") {
+				// Good player or medium injury in playoffs
+				score = 20;
+			} else {
+				// Mediocre player, short injury in playoffs
+				score = 10;
+			}
+		} else {
+			if (playerQuality > 10 && injuryLength === "long") {
+				// Good player, long injury
+				score = 20;
+			} else if (playerQuality > 10 || injuryLength === "medium") {
+				// Good player or medium injury
+				score = 10;
+			} else {
+				// Mediocre player, short injury
+				score = 0;
+			}
+		}
+	}
+
+	if (p2.injury.gamesRemaining === 1) {
+		// Never really care about single game injuries much
+		score -= 10;
+	}
+
+	p2.injury.score = score;
+
 	logEvent(
 		{
 			type: "injured",
@@ -56,6 +114,7 @@ const doInjury = (
 			showNotification: false,
 			pids: [p2.pid],
 			tids: [p2.tid],
+			score,
 		},
 		conditions,
 	);
@@ -139,6 +198,8 @@ const writePlayerStats = async (
 	const pidsInjuredOneGameOrLess = new Set<number>();
 	let stopPlay = false;
 
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 	for (const result of results) {
 		const allStarGame = result.team[0].id === -1 && result.team[1].id === -2; // Find QBs, for qbW, qbL, qbT
 
@@ -190,15 +251,13 @@ const writePlayerStats = async (
 						if (!allStarGame) {
 							let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
 
-							const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-
 							if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
 								player.addStatsRow(p2, playoffs);
 								ps = p2.stats[p2.stats.length - 1];
 							}
 
 							// Since index is not on playoffs, manually check
-							if (ps.playoffs !== (g.get("phase") === PHASE.PLAYOFFS)) {
+							if (ps.playoffs !== playoffs) {
 								throw new Error(`Missing playoff stats for player ${p.id}`);
 							}
 

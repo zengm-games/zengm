@@ -42,6 +42,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 			naggedMailingList = 0;
 		}
 		if (
+			!local.mailingList &&
 			g.get("season") === g.get("startingSeason") + 3 &&
 			g.get("lid") > 3 &&
 			(naggedMailingList === 0 ||

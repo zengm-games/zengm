@@ -18,11 +18,9 @@ const retire = (
 	conditions?: Conditions,
 	{
 		logRetiredEvent = true,
-		allowRetiredNotification = true,
 		forceHofNotification = false,
 	}: {
 		logRetiredEvent?: boolean;
-		allowRetiredNotification?: boolean;
 		forceHofNotification?: boolean;
 	} = {},
 ) => {
@@ -33,17 +31,14 @@ const retire = (
 				text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 					p.firstName
 				} ${p.lastName}</a> retired.`,
-				showNotification:
-					p.tid === g.get("userTid") && allowRetiredNotification,
+				showNotification: false,
 				pids: [p.pid],
 				tids: [p.tid],
+				score: p.tid >= 0 ? 10 : 0,
 			},
 			conditions,
 		);
 	}
-
-	p.tid = PLAYER.RETIRED;
-	p.retiredYear = g.get("season");
 
 	// Add to Hall of Fame?
 	if (conditions && madeHof(p)) {
@@ -52,6 +47,7 @@ const retire = (
 			season: g.get("season"),
 			type: "Inducted into the Hall of Fame",
 		});
+
 		logEvent(
 			{
 				type: "hallOfFame",
@@ -64,10 +60,14 @@ const retire = (
 					p.statsTids.includes(g.get("userTid")) || forceHofNotification,
 				pids: [p.pid],
 				tids: p.statsTids,
+				score: 20,
 			},
 			conditions,
 		);
 	}
+
+	p.tid = PLAYER.RETIRED;
+	p.retiredYear = g.get("season");
 };
 
 export default retire;

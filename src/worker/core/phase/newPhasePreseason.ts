@@ -35,9 +35,57 @@ const newPhasePreseason = async (
 	for (const t of teams) {
 		// Check if we need to override team info based on a season-specific entry in realTeamInfo
 		if (realTeamInfo && t.srID && realTeamInfo[t.srID]) {
+			const old = {
+				region: t.region,
+				name: t.name,
+				imgURL: t.imgURL,
+			};
+
 			applyRealTeamInfo(t, realTeamInfo, g.get("season"), {
 				exactSeason: true,
 			});
+
+			if (t.region !== old.region) {
+				const text = `the ${old.region} ${
+					old.name
+				} are now the <a href="${helpers.leagueUrl([
+					"roster",
+					t.abbrev,
+					g.get("season"),
+				])}">${t.region} ${t.name}</a>.`;
+
+				logEvent({
+					text: helpers.upperCaseFirstLetter(text),
+					type: "teamRelocation",
+					tids: [t.tid],
+					showNotification: false,
+					score: 20,
+				});
+			} else if (t.name !== old.name) {
+				const text = `the ${old.region} ${
+					old.name
+				} are now the <a href="${helpers.leagueUrl([
+					"roster",
+					t.abbrev,
+					g.get("season"),
+				])}">${t.region} ${t.name}</a>.`;
+
+				logEvent({
+					text: helpers.upperCaseFirstLetter(text),
+					type: "teamRename",
+					tids: [t.tid],
+					showNotification: false,
+					score: 20,
+				});
+			} else if (t.imgURL && t.imgURL !== old.imgURL) {
+				logEvent({
+					text: `The ${t.region} ${t.name} got a new logo:<br><img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+					type: "teamLogo",
+					tids: [t.tid],
+					showNotification: false,
+					score: 20,
+				});
+			}
 		}
 
 		if (t.disabled) {
@@ -130,6 +178,7 @@ const newPhasePreseason = async (
 					pids: [p.pid],
 					tids: [p.tid],
 					persistent: true,
+					score: 20,
 				},
 				conditions,
 			);

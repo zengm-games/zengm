@@ -122,6 +122,11 @@ const TopStuff = ({
 
 	return (
 		<>
+			{t.name !== t.seasonAttrs.name || t.region !== t.seasonAttrs.region ? (
+				<h3>
+					{t.seasonAttrs.region} {t.seasonAttrs.name}
+				</h3>
+			) : null}
 			<div className="d-flex mb-3">
 				<div className="team-picture" style={logoStyle} />
 				<div>

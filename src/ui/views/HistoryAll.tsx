@@ -6,14 +6,16 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
 const awardName = (
-	award: {
-		pid: number;
-		pos: string;
-		name: string;
-		tid: number;
-	},
+	award:
+		| {
+				pid: number;
+				pos: string;
+				name: string;
+				tid: number;
+				abbrev: string;
+		  }
+		| undefined,
 	season: number,
-	teamAbbrevsCache: string[],
 	userTid: number,
 ) => {
 	if (!award) {
@@ -30,11 +32,11 @@ const awardName = (
 			<a
 				href={helpers.leagueUrl([
 					"roster",
-					`${teamAbbrevsCache[award.tid]}_${award.tid}`,
+					`${award.abbrev}_${award.tid}`,
 					season,
 				])}
 			>
-				{teamAbbrevsCache[award.tid]}
+				{award.abbrev}
 			</a>
 			)
 		</>
@@ -71,13 +73,7 @@ const teamName = (
 	return "N/A";
 };
 
-const HistoryAll = ({
-	awards,
-	seasons,
-	teamAbbrevsCache,
-	ties,
-	userTid,
-}: View<"historyAll">) => {
+const HistoryAll = ({ awards, seasons, ties, userTid }: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
 
 	const cols = getCols(
@@ -132,9 +128,7 @@ const HistoryAll = ({
 				seasonLink,
 				champEl,
 				runnerUpEl,
-				...awards.map(award =>
-					awardName(s[award], s.season, teamAbbrevsCache, userTid),
-				),
+				...awards.map(award => awardName(s[award], s.season, userTid)),
 			],
 		};
 	});
@@ -170,7 +164,6 @@ const HistoryAll = ({
 HistoryAll.propTypes = {
 	awards: PropTypes.arrayOf(PropTypes.string).isRequired,
 	seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
-	teamAbbrevsCache: PropTypes.arrayOf(PropTypes.string).isRequired,
 	ties: PropTypes.bool.isRequired,
 	userTid: PropTypes.number.isRequired,
 };

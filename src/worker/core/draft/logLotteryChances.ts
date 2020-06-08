@@ -20,7 +20,7 @@ const logLotteryChances = (
 			if (dp) {
 				const tid = dp.tid;
 				const txt = logLotteryTxt(tid, "chance", chances[i]);
-				logAction(tid, txt, conditions);
+				logAction(tid, txt, 0, conditions);
 			}
 		}
 	}

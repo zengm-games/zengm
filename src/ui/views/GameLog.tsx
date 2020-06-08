@@ -233,8 +233,8 @@ const GameLog = ({
 					History
 				</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
-					Transactions
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
+					News Feed
 				</a>
 			</p>
 

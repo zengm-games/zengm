@@ -14,8 +14,6 @@ const Transactions = ({
 }: View<"transactions">) => {
 	useTitleBar({
 		title: "Transactions",
-		jumpTo: true,
-		jumpToSeason: season,
 		dropdownView: "transactions",
 		dropdownFields: {
 			teamsAndAll: abbrev,
@@ -47,9 +45,17 @@ const Transactions = ({
 				|{" "}
 				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
 					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
+					News Feed
 				</a>
 			</p>
-		) : null;
+		) : (
+			<p>
+				More: <a href={helpers.leagueUrl(["news", "all", season])}>News Feed</a>
+			</p>
+		);
 
 	return (
 		<>

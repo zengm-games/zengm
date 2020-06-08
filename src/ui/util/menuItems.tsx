@@ -88,6 +88,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["transactions", "all"],
 				text: "Transactions",
 			},
+			{
+				type: "link",
+				active: pageID => pageID === "news",
+				league: true,
+				path: ["news"],
+				text: "News Feed",
+			},
 		],
 	},
 	{
@@ -288,13 +295,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 				path: ["delete_old_data"],
 				text: "Delete Old Data",
-			},
-			{
-				type: "link",
-				active: pageID => pageID === "eventLog",
-				league: true,
-				path: ["event_log"],
-				text: "Event Log",
 			},
 			{
 				type: "link",

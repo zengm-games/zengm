@@ -576,9 +576,7 @@ const TeamFinances = ({
 					History
 				</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
-					Transactions
-				</a>
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
 			</p>
 
 			<PayrollInfo

@@ -2,13 +2,15 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-06-03: If you use God Mode to retire a player, it checks for Hall of Fame eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity. [[1]]() [[2]]()
+*** 2020-06-07: Added the News Feed page, available in the League menu. This incorporates a score for each event that happens, allowing you to filter events by importance. This replaces the old Transactions and Event Log pages. [[1]](https://basketball-gm.com/blog/2020/06/news-feed/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/)**
 
-*** 2020-06-03: Realistic rosters back to 1947, including contraction of teams occuring automaticaly at appropriate times.** [[1]]() [[2]]()
+* 2020-06-03: If you use God Mode to retire a player, it checks for Hall of Fame eligibility and notifies you if he makes it. And when you edit a player's contract, it also updates the "Salaries" table on player pages and the "Career Earnings" frivolity. [[1]](https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gvtw5o/new_features_in_version_202006030801_real_rosters/)
 
-* 2020-06-03: Revamped Team Records page, including team relocations, renames, and contraction. [[1]]() [[2]]()
+*** 2020-06-03: Realistic rosters back to 1947, including contraction of teams occuring automaticaly at appropriate times. [[1]](https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gvtw5o/new_features_in_version_202006030801_real_rosters/)**
 
-*** 2020-06-03: Support for disabling teams in Tools > Manage Teams. History of disabled teams is preserved and they can come back at a future date, either by re-enabling on Manage Teams or going to Tools > Expansion Draft, where you will see disabled teams as possible expansion teams.** [[1]]() [[2]]()
+* 2020-06-03: Revamped Team Records page, including team relocations, renames, and contraction. [[1]](https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gvtw5o/new_features_in_version_202006030801_real_rosters/)
+
+*** 2020-06-03: Support for disabling teams in Tools > Manage Teams. History of disabled teams is preserved and they can come back at a future date, either by re-enabling on Manage Teams or going to Tools > Expansion Draft, where you will see disabled teams as possible expansion teams. [[1]](https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gvtw5o/new_features_in_version_202006030801_real_rosters/)**
 
 * 2020-05-26: Added a ton of new frivolities and redesigned the frivolities page. [[1]](https://basketball-gm.com/blog/2020/05/new-frivolities/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/)
 

@@ -32,6 +32,7 @@ const processTeamInfo = async (
 	const old = {
 		region: t.region,
 		name: t.name,
+		imgURL: t.imgURL,
 	};
 	Object.assign(t, info);
 
@@ -51,40 +52,55 @@ const processTeamInfo = async (
 
 	let updatedRegionName;
 	if (info.region && info.region !== old.region) {
-		eventLogTexts.push(
-			`<b>Team relocation:</b> the ${old.region} ${
-				old.name
-			} are now the <a href="${helpers.leagueUrl([
-				"roster",
-				t.abbrev,
-				season,
-			])}">${t.region} ${t.name}</a>.`,
-		);
+		const text = `the ${old.region} ${
+			old.name
+		} are now the <a href="${helpers.leagueUrl([
+			"roster",
+			t.abbrev,
+			season,
+		])}">${t.region} ${t.name}</a>.`;
+
+		eventLogTexts.push(`<b>Team relocation:</b> ${text}`);
 		updatedRegionName = true;
+
+		logEvent({
+			text: helpers.upperCaseFirstLetter(text),
+			type: "teamRelocation",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
 	} else if (info.name && info.name !== old.name) {
-		eventLogTexts.push(
-			`<b>Team rename:</b> the ${old.region} ${
-				old.name
-			} are now the <a href="${helpers.leagueUrl([
-				"roster",
-				t.abbrev,
-				season,
-			])}">${t.region} ${t.name}</a>.`,
-		);
+		const text = `the ${old.region} ${
+			old.name
+		} are now the <a href="${helpers.leagueUrl([
+			"roster",
+			t.abbrev,
+			season,
+		])}">${t.region} ${t.name}</a>.`;
+
+		eventLogTexts.push(`<b>Team rename:</b> ${text}`);
 		updatedRegionName = true;
+
+		logEvent({
+			text: helpers.upperCaseFirstLetter(text),
+			type: "teamRename",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
+	} else if (info.imgURL && info.imgURL !== old.imgURL) {
+		logEvent({
+			text: `The ${t.region} ${t.name} got a new logo:<br><img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+			type: "teamLogo",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
 	}
 
 	if (info.tid === g.get("userTid") && updatedRegionName) {
 		await league.updateMetaNameRegion(t.name, t.region);
-	}
-
-	for (const text of eventLogTexts) {
-		logEvent({
-			text,
-			type: "teamInfo",
-			tids: [t.tid],
-			showNotification: false,
-		});
 	}
 
 	await league.setGameAttributes({
@@ -112,8 +128,8 @@ const processGameAttributes = async (
 	) {
 		texts.push(
 			info.threePointers
-				? "Added a three point line"
-				: "Removed the three point line",
+				? "Added a three point line."
+				: "Removed the three point line.",
 		);
 	}
 
@@ -125,7 +141,7 @@ const processGameAttributes = async (
 			`Salary cap ${increased} from ${helpers.formatCurrency(
 				prevSalaryCap / 1000,
 				"M",
-			)} to ${helpers.formatCurrency(info.salaryCap / 1000, "M")}`,
+			)} to ${helpers.formatCurrency(info.salaryCap / 1000, "M")}.`,
 		);
 	}
 
@@ -137,7 +153,7 @@ const processGameAttributes = async (
 		const increased =
 			info.numPlayoffByes > prevNumPlayoffByes ? "increased" : "decreased";
 		texts.push(
-			`Playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}`,
+			`Playoff byes ${increased} from ${prevNumPlayoffByes} to ${info.numPlayoffByes}.`,
 		);
 	}
 
@@ -158,7 +174,7 @@ const processGameAttributes = async (
 				`Playoffs ${increased} from ${prevNumGamesPlayoffSeries.length} to ${info.numGamesPlayoffSeries.length} rounds`,
 			);
 		} else {
-			texts.push("New number of playoff games per round");
+			texts.push("New number of playoff games per round.");
 		}
 	}
 
@@ -166,17 +182,27 @@ const processGameAttributes = async (
 	if (info.numGames !== undefined && info.numGames !== prevNumGames) {
 		const increased = info.numGames > prevNumGames ? "lengthened" : "shortened";
 		texts.push(
-			`Regular season ${increased} from ${prevNumGames} to ${info.numGames} games`,
+			`Regular season ${increased} from ${prevNumGames} to ${info.numGames} games.`,
 		);
 	}
 
 	const prevDraftType = g.get("draftType");
 	if (info.draftType !== undefined && info.draftType !== prevDraftType) {
 		texts.push(
-			`<a href="${helpers.leagueUrl([
+			`New <a href="${helpers.leagueUrl([
 				"draft_lottery",
-			])}">Draft lottery</a> format changed`,
+			])}">draft lottery</a> format.`,
 		);
+	}
+
+	for (const text of texts) {
+		logEvent({
+			text,
+			type: "gameAttribute",
+			tids: [],
+			showNotification: false,
+			score: 20,
+		});
 	}
 
 	if (texts.length === 1) {
@@ -263,13 +289,6 @@ const processContraction = async (
 	await team.disable(t.tid);
 
 	const text = `<b>Contraction!</b> The ${t.region} ${t.name} franchise is disbanding. All their players will become free agents.`;
-
-	logEvent({
-		text,
-		type: "teamInfo",
-		tids: [t.tid],
-		showNotification: false,
-	});
 
 	return [text];
 };

@@ -9,8 +9,14 @@ import {
 	helpers,
 	local,
 	toUI,
+	logEvent,
 } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
+import type {
+	Conditions,
+	PhaseReturn,
+	MinimalPlayerRatings,
+	Player,
+} from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
@@ -50,10 +56,21 @@ const newPhaseBeforeDraft = async (
 		Infinity,
 	]);
 
+	const retiredPlayersByTeam: Record<
+		number,
+		Player<MinimalPlayerRatings>[]
+	> = {};
+
 	for (const p of players) {
 		let update = false;
 
 		if (player.shouldRetire(p)) {
+			if (p.tid >= 0) {
+				if (!retiredPlayersByTeam[p.tid]) {
+					retiredPlayersByTeam[p.tid] = [];
+				}
+				retiredPlayersByTeam[p.tid].push(p);
+			}
 			player.retire(p, conditions);
 			update = true;
 		}
@@ -92,6 +109,31 @@ const newPhaseBeforeDraft = async (
 		if (update) {
 			await idb.cache.players.put(p);
 		}
+	}
+
+	for (const [tidString, retiredPlayers] of Object.entries(
+		retiredPlayersByTeam,
+	)) {
+		const tid = parseInt(tidString);
+		const text = retiredPlayers
+			.map(
+				p =>
+					`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
+						p.lastName
+					}</a> retired.`,
+			)
+			.join("<br>");
+		logEvent(
+			{
+				type: "retiredList",
+				text,
+				showNotification: tid === g.get("userTid"),
+				pids: retiredPlayers.map(p => p.pid),
+				tids: [tid],
+				saveToDb: false,
+			},
+			conditions,
+		);
 	}
 
 	const releasedPlayers = await idb.cache.releasedPlayers.getAll();

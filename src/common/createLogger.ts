@@ -3,13 +3,15 @@ import type {
 	LogEventSaveOptions,
 	LogEventShowOptions,
 	LogEventType,
-} from "./types"; // Really, pids, tids, and type should not be optional if saveToDb is true
+} from "./types";
 
+// Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {
 	extraClass?: string;
 	persistent?: boolean;
 	pids?: number[];
 	saveToDb?: boolean;
+	score?: number;
 	showNotification?: boolean;
 	text: string;
 	tids?: number[];
@@ -26,6 +28,7 @@ function createLogger(
 			persistent = false,
 			pids,
 			saveToDb = true,
+			score,
 			showNotification = true,
 			text,
 			tids,
@@ -43,6 +46,7 @@ function createLogger(
 				text,
 				pids,
 				tids,
+				score,
 			});
 		}
 

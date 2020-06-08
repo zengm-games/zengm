@@ -17,7 +17,6 @@ import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
 import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
-import EventLog from "./EventLog";
 import ExpansionDraft from "./ExpansionDraft";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
@@ -48,6 +47,7 @@ import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
+import News from "./News";
 import Options from "./Options";
 import Player from "./Player";
 import PlayerBios from "./PlayerBios";
@@ -97,7 +97,6 @@ export default {
 	DraftScouting,
 	DraftSummary,
 	DraftTeamHistory,
-	EventLog,
 	ExpansionDraft,
 	ExportLeague,
 	ExportStats,
@@ -128,6 +127,7 @@ export default {
 	NegotiationList,
 	NewLeague,
 	NewTeam,
+	News,
 	Options,
 	Player,
 	PlayerBios,

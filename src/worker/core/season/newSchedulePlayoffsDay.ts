@@ -126,8 +126,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		const playoffsByConference = g.get("confs").length === 2;
 
 		if (playoffsByConference) {
-			const numPlayoffRounds = g.get("numGamesPlayoffSeries").length; // Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
 
+			// Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
 			if (numPlayoffRounds === playoffSeries.currentRound + 2) {
 				firstTeamHome =
 					team1.winp > team2.winp ||

@@ -1,9 +1,9 @@
 import { PHASE, PLAYER } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames, helpers } from "../util";
-import type { UpdateEvents, Game } from "../../common/types";
-import { getUpcoming } from "./schedule";
+import { g, helpers } from "../util";
+import type { UpdateEvents } from "../../common/types";
+import { processEvents } from "./news";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -158,70 +158,6 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			revenue,
 			profit,
 			teamStats,
-		};
-	}
-};
-
-const updateGames = async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-	state: {
-		completed?: Game[];
-	},
-) => {
-	const NUM_SHOW_COMPLETED = 4;
-
-	if (updateEvents.includes("firstRun")) {
-		// Load all games in list - would be more efficient to just load NUM_SHOW_COMPLETED
-		const games = await getProcessedGames(
-			g.get("teamInfoCache")[g.get("userTid")]?.abbrev,
-			g.get("season"),
-			undefined,
-			true,
-		);
-		const completed = games.slice(0, NUM_SHOW_COMPLETED);
-		return {
-			completed,
-		};
-	}
-
-	if (updateEvents.includes("gameSim")) {
-		const completed = Array.isArray(state.completed) ? state.completed : []; // Partial update of only new games
-
-		const games = await getProcessedGames(
-			g.get("teamInfoCache")[g.get("userTid")]?.abbrev,
-			g.get("season"),
-			state.completed,
-			true,
-		);
-
-		for (let i = games.length - 1; i >= 0; i--) {
-			completed.unshift(games[i]);
-
-			if (completed.length > NUM_SHOW_COMPLETED) {
-				completed.pop();
-			}
-		}
-
-		return {
-			completed,
-		};
-	}
-};
-
-const updateSchedule = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase")
-	) {
-		const upcoming = await getUpcoming({
-			tid: g.get("userTid"),
-			limit: 3,
-		});
-
-		return {
-			upcoming,
 		};
 	}
 };
@@ -462,11 +398,42 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default async (
-	inputs: unknown,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
+const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
+	if (
+		updateEvents.includes("firstRun") ||
+		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("gameSim") ||
+		updateEvents.includes("newPhase")
+	) {
+		const NUM_EVENTS = 8;
+
+		// Load all events from this season, and last season too if more are needed
+		const eventsAll = await idb.getCopies.events({
+			season: g.get("season"),
+		});
+		eventsAll.reverse();
+
+		const events = await processEvents(eventsAll, {
+			limit: NUM_EVENTS,
+		});
+		if (events.length < NUM_EVENTS) {
+			const eventsAll2 = await idb.getCopies.events({
+				season: g.get("season") - 1,
+			});
+			eventsAll2.reverse();
+			const events2 = await processEvents(eventsAll2, {
+				limit: NUM_EVENTS - events.length,
+			});
+			events.push(...events2);
+		}
+
+		return {
+			events,
+		};
+	}
+};
+
+export default async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// Woo TypeScript, gotta break this up into 3 parts or it just says fuck it and calls it any
 	const part1 = Object.assign(
 		{},
@@ -477,8 +444,7 @@ export default async (
 	const part2 = Object.assign(
 		{},
 		await updateTeams(inputs, updateEvents),
-		await updateGames(inputs, updateEvents, state),
-		await updateSchedule(inputs, updateEvents),
+		await updateNewsFeed(inputs, updateEvents),
 	);
 	const part3 = Object.assign(
 		{},

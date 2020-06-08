@@ -157,6 +157,7 @@ const play = async (
 
 			// Is it already over?
 			if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+				const score = p.injury.score;
 				p.injury = {
 					type: "Healthy",
 					gamesRemaining: 0,
@@ -182,6 +183,7 @@ const play = async (
 						showNotification: false,
 						pids: [p.pid],
 						tids: [p.tid],
+						score,
 					},
 					conditions,
 				);

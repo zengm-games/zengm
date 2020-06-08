@@ -120,9 +120,7 @@ const TeamHistory = ({
 					Game Log
 				</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
-					Transactions
-				</a>
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
 			</p>
 
 			<div className="row">

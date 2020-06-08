@@ -20,6 +20,7 @@ const checkAccount = async (
 
 		// Keep track of latest here, for ads
 		local.goldUntil = data.gold_until;
+		local.mailingList = !!data.mailing_list;
 		const currentTimestamp = Math.floor(Date.now() / 1000);
 		await toUI("updateLocal", [
 			{
@@ -47,6 +48,7 @@ const checkAccount = async (
 			goldCancelled: !!data.gold_cancelled,
 			goldUntil: data.gold_until,
 			username: data.username,
+			mailingList: !!data.mailing_list,
 		};
 	} catch (err) {
 		// Don't freak out if an AJAX request fails or whatever
@@ -56,6 +58,7 @@ const checkAccount = async (
 			goldCancelled: false,
 			goldUntil: Infinity,
 			username: "",
+			mailingList: false,
 		};
 	}
 };

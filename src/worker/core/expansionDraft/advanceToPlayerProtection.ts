@@ -47,6 +47,15 @@ const advanceToPlayerProtection = async (
 		if (teamInfo.takeControl) {
 			takeControlTeams.push(t);
 		}
+
+		const text = `The ${t.region} ${t.name} are joining the league.`;
+		logEvent({
+			text,
+			type: "teamExpansion",
+			tids: [t.tid],
+			showNotification: false,
+			score: 20,
+		});
 	}
 
 	const gameAttributes: Partial<GameAttributesLeague> = {};

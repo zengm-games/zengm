@@ -9,10 +9,13 @@ playoff upsets
 end of game playing time situations @gmgameschris
 
 news feed improvements
+- fix "More" links to event log and transactions
+  - "transactions"
+  - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
 - merge some together
   - expansion draft teams in one event
   - contraction teams in one event
-- your players being selected in the expansion draft should be on news feed
+- horizontal scroll flashes on dashboard
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
@@ -175,7 +178,6 @@ events revamp
     - for traded picks, store info so eventual picked players can be filled in later
   - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
   - in playoffs, recovery should only be notable if the team is still alive
-  - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
   - include all time records being broken, like career scoring, etc
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?

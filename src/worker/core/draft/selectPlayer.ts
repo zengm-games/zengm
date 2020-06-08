@@ -140,6 +140,15 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	await idb.cache.players.put(p);
 	await idb.cache.draftPicks.delete(dp.dpid);
 
+	let score = 0;
+	if (pickNum === 1) {
+		score = 20;
+	} else if (pickNum <= 5) {
+		score = 10;
+	}
+
+	const eventTids = [p.tid];
+
 	if (
 		g.get("phase") === PHASE.EXPANSION_DRAFT &&
 		expansionDraft.phase === "draft"
@@ -152,13 +161,8 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 				),
 			},
 		});
-	}
 
-	let score = 0;
-	if (pickNum === 1) {
-		score = 20;
-	} else if (pickNum <= 5) {
-		score = 10;
+		eventTids.push(prevTid);
 	}
 
 	logEvent({
@@ -176,7 +180,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		)} pick in the ${draftName}.`,
 		showNotification: false,
 		pids: [p.pid],
-		tids: [p.tid],
+		tids: eventTids,
 		score,
 	});
 

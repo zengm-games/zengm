@@ -794,6 +794,10 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
+	margin-left: -17px;
+	h1 {
+		margin-left: 17px;
+	}
 	min-height: 52px;
 	select {
 		font-size: 14px;

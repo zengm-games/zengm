@@ -8,28 +8,13 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
-news feed improvements
-- fix "More" links to event log and transactions
-  - "transactions"
-  - bring back transactions, and link from news feed? c94853f28db270ea0564a2226179d06bb2e07337
-- merge some together
-  - expansion draft teams in one event
-  - contraction teams in one event
-- horizontal scroll flashes on dashboard
+https://getbootstrap.com/docs/4.5/components/card/#card-columns for news feed
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
   - drafted team for the players in busts and steals
   - team and overall for the final year of the Oldest to Play in Game
   - total games on team for players with the most years on one team
-
-support changing team logos at any season, from predefined real team logos
-- future
-  - handle if the user edits something but realTeamInfo specifies an override
-    - could check if the pre-overridden value is the previous override or not
-    - could add a flag to track if a field has been edited or not
-    - neiether of those is perfect
-  - make player photo overrides dynamic too?
 
 league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
@@ -54,9 +39,6 @@ eventually
 - show draft prospects separately when creating a new custom league, to allow creating one without them
 - gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
-- contraction
-
-some way to slow down sim speed
 
 manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles
@@ -179,6 +161,17 @@ events revamp
   - like trade above... all events should not have premade text, but instead have the metadata to generate it. then can do things like including RatingsStatsPopover
   - in playoffs, recovery should only be notable if the team is still alive
   - include all time records being broken, like career scoring, etc
+  - merge some together
+    - expansion draft teams in one event
+    - contraction teams in one event
+
+support changing team logos at any season, from predefined real team logos
+- future
+  - handle if the user edits something but realTeamInfo specifies an override
+    - could check if the pre-overridden value is the previous override or not
+    - could add a flag to track if a field has been edited or not
+    - neiether of those is perfect
+  - make player photo overrides dynamic too?
 
 home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
 - football too?
@@ -900,11 +893,6 @@ document cache data format and API!
 - cache mutations are dangerous, see getCopy
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 - promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
-
-event log refactor
-- react
-- keep state just on worker
-- "event log" page with ALL events, should be impossible to "miss" an event
 
 ----
 

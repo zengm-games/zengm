@@ -521,6 +521,37 @@ const leagueStats = (params: Params) => {
 	};
 };
 
+const transactions = (params: Params) => {
+	let abbrev: string;
+	let tid: number;
+	if (params.abbrev && params.abbrev !== "all") {
+		[tid, abbrev] = validateAbbrev(params.abbrev);
+	} else if (params.abbrev && params.abbrev === "all") {
+		tid = -1;
+		abbrev = "all";
+	} else {
+		tid = g.get("userTid");
+		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+	}
+
+	let season: number | "all";
+
+	if (params.season && params.season !== "all") {
+		season = validateSeason(params.season);
+	} else if (params.season && params.season === "all") {
+		season = "all";
+	} else {
+		season = g.get("season");
+	}
+
+	return {
+		tid,
+		abbrev,
+		season,
+		eventType: params.eventType || "all",
+	};
+};
+
 const upcomingFreeAgents = (params: Params) => {
 	let season = validateSeason(params.season);
 
@@ -602,6 +633,7 @@ export default {
 	teamRecords,
 	teamStatDists: validateSeasonOnly,
 	teamStats,
+	transactions,
 	upcomingFreeAgents,
 	watchList,
 };

@@ -73,6 +73,13 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	bpg_leader: "League Blocks Leader",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",
+	"all|||types": "All Types",
+	draft: "Draft",
+	freeAgent: "FA Signed",
+	reSigned: "Re-signed",
+	release: "Released",
+	trade: "Trades",
+	team: "Team",
 	opponent: "Opponent",
 	by_team: "By Team",
 	by_conf: "By Conference",
@@ -236,6 +243,15 @@ const useDropdownOptions = (field: string) => {
 						"second_team",
 						"all_league",
 				  ];
+	} else if (field === "eventType") {
+		keys = [
+			"all|||types",
+			"draft",
+			"freeAgent",
+			"reSigned",
+			"release",
+			"trade",
+		];
 	} else if (field === "teamOpponent") {
 		keys = ["team", "opponent"];
 	} else if (field === "teamOpponentAdvanced") {

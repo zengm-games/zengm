@@ -107,8 +107,8 @@ const Depth = ({
 					History
 				</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
-					Transactions
+				<a href={helpers.leagueUrl(["news_feed", `${abbrev}_${tid}`])}>
+					News Feed
 				</a>
 			</p>
 			<p style={{ clear: "both" }}>

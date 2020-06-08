@@ -86,8 +86,8 @@ const TitleBar = () => {
 				{
 					type: "link",
 					league: true,
-					path: genPath(["transactions", "all"], season),
-					text: "Transactions",
+					path: genPath(["news", "all"], season),
+					text: "News Feed",
 				},
 				{
 					type: "link",

@@ -128,6 +128,15 @@
             if (report && typeof report.context === "string") {
               report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
             }
+
+            if (report && typeof report.errorMessage === "string") {
+              var skip = ["ResizeObserver loop limit exceeded"];
+              for (var i = 0; i < skip.length; i++) {
+                if (report.errorMessage.includes(skip[i])) {
+                  report.ignore();
+                }
+              }
+            }
           },
           notifyReleaseStages: ["beta", "production"],
           releaseStage: releaseStage

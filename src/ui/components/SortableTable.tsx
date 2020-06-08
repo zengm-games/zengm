@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
 	SortableContainer,
 	SortableElement,
@@ -21,13 +21,22 @@ type Row<Value> = (a: { index: number; value: Value }) => React.ReactNode;
 type ShouldBeValue = any;
 
 const ReorderHandle = SortableHandle(
-	({ highlight, isDragged }: { highlight: boolean; isDragged: boolean }) => {
+	({
+		highlight,
+		isDragged,
+		selected,
+	}: {
+		highlight: boolean;
+		isDragged: boolean;
+		selected: boolean;
+	}) => {
 		return (
 			<td
 				className={classNames("roster-handle", {
-					"table-info": highlight,
-					"table-secondary": !highlight,
+					"table-info": !selected && highlight,
+					"table-secondary": !selected && !highlight,
 					"user-select-none": isDragged,
+					"bg-primary": selected,
 				})}
 				data-movable-handle
 				style={{
@@ -50,12 +59,22 @@ const Row = SortableElement(
 		highlight: boolean;
 		i: number;
 		isDragged: boolean;
+		selected: boolean;
 		row: Row<ShouldBeValue>;
 		value: ShouldBeValue;
 	}) => {
 		const { clicked, toggleClicked } = useClickable();
 
-		const { className, disabled2, highlight, i, isDragged, row, value } = props;
+		const {
+			className,
+			disabled2,
+			highlight,
+			i,
+			isDragged,
+			row,
+			selected,
+			value,
+		} = props;
 
 		return (
 			<tr
@@ -65,7 +84,11 @@ const Row = SortableElement(
 				onClick={toggleClicked}
 			>
 				{disabled2 ? null : (
-					<ReorderHandle highlight={highlight} isDragged={isDragged} />
+					<ReorderHandle
+						highlight={highlight}
+						isDragged={isDragged}
+						selected={selected}
+					/>
 				)}
 				{row({
 					index: i,
@@ -91,6 +114,7 @@ const TBody = SortableContainer(
 	({
 		disabled,
 		highlightHandle,
+		indexSelected,
 		isDragged,
 		row,
 		rowClassName,
@@ -98,6 +122,7 @@ const TBody = SortableContainer(
 	}: {
 		disabled?: boolean;
 		highlightHandle: HighlightHandle<ShouldBeValue>;
+		indexSelected: number | undefined;
 		isDragged: boolean;
 		row: ShouldBeValue;
 		rowClassName?: RowClassName<ShouldBeValue>;
@@ -130,6 +155,7 @@ const TBody = SortableContainer(
 							i={index}
 							index={index}
 							isDragged={isDragged}
+							selected={indexSelected === index}
 							row={row}
 							value={value}
 						/>
@@ -155,6 +181,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	disabled,
 	highlightHandle,
 	onChange,
+	onSwap,
 	row,
 	rowClassName,
 	values,
@@ -163,14 +190,22 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	disabled?: boolean;
 	highlightHandle: HighlightHandle<Value>;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
+	onSwap: (index1: number, index2: number) => void;
 	row: Row<Value>;
 	rowClassName?: RowClassName<Value>;
 	values: Value[];
 }) => {
 	const [isDragged, setIsDragged] = useState(false);
+	const [indexSelected, setIndexSelected] = useState<number | undefined>(
+		undefined,
+	);
+
+	// Hacky shit to try to determine click from drag
+	const clicked = useRef(false);
 
 	const onSortStart = useCallback(({ node }) => {
 		setIsDragged(true);
+		clicked.current = true;
 
 		// https://github.com/clauderic/react-sortable-hoc/issues/361#issuecomment-471907612
 		const tds = document.getElementsByClassName("SortableHelper")[0].childNodes;
@@ -183,12 +218,29 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		}
 	}, []);
 
+	const onSortOver = useCallback(() => {
+		clicked.current = false;
+	}, []);
+
 	const onSortEnd = useCallback(
 		({ oldIndex, newIndex }) => {
 			setIsDragged(false);
-			onChange({ oldIndex, newIndex });
+			if (oldIndex === newIndex && clicked.current) {
+				if (indexSelected === undefined) {
+					setIndexSelected(newIndex);
+				} else if (indexSelected === newIndex) {
+					setIndexSelected(undefined);
+				} else {
+					onSwap(indexSelected, newIndex);
+					setIndexSelected(undefined);
+				}
+			} else {
+				onChange({ oldIndex, newIndex });
+				setIndexSelected(undefined);
+			}
+			clicked.current = false;
 		},
-		[onChange],
+		[onChange, onSwap, indexSelected],
 	);
 
 	return (
@@ -204,9 +256,11 @@ const SortableTable = <Value extends Record<string, unknown>>({
 					disabled={disabled}
 					helperClass="SortableHelper"
 					highlightHandle={highlightHandle}
+					indexSelected={indexSelected}
 					isDragged={isDragged}
 					onSortEnd={onSortEnd}
 					onSortStart={onSortStart}
+					onSortOver={onSortOver}
 					row={row}
 					rowClassName={rowClassName}
 					transitionDuration={0}

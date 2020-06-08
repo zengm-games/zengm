@@ -112,7 +112,7 @@ const Depth = ({
 				</a>
 			</p>
 			<p style={{ clear: "both" }}>
-				Drag row handles to move players between the starting lineup{" "}
+				Click or drag row handles to move players between the starting lineup{" "}
 				<span className="table-info legend-square" /> and the bench{" "}
 				<span className="table-secondary legend-square" />.
 			</p>
@@ -163,6 +163,13 @@ const Depth = ({
 				onChange={async ({ oldIndex, newIndex }) => {
 					const pids = players.map(p => p.pid);
 					const newSortedPids = arrayMove(pids, oldIndex, newIndex);
+					setSortedPids(newSortedPids);
+					await toWorker("main", "reorderDepthDrag", pos, newSortedPids);
+				}}
+				onSwap={async (index1, index2) => {
+					const newSortedPids = players.map(p => p.pid);
+					newSortedPids[index1] = players[index2].pid;
+					newSortedPids[index2] = players[index1].pid;
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderDepthDrag", pos, newSortedPids);
 				}}

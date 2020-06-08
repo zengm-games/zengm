@@ -95,6 +95,12 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 					const newSortedTids = arrayMove(sortedTids, oldIndex, newIndex);
 					setSortedTids(newSortedTids);
 				}}
+				onSwap={async (index1, index2) => {
+					const newSortedTids = [...sortedTids];
+					newSortedTids[index1] = sortedTids[index2];
+					newSortedTids[index2] = sortedTids[index1];
+					setSortedTids(newSortedTids);
+				}}
 				cols={() => (
 					<>
 						<th>#</th>

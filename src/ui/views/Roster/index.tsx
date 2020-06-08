@@ -182,6 +182,13 @@ const Roster = ({
 					setSortedPids(newSortedPids);
 					await toWorker("main", "reorderRosterDrag", newSortedPids);
 				}}
+				onSwap={async (index1, index2) => {
+					const newSortedPids = players.map(p => p.pid);
+					newSortedPids[index1] = players[index2].pid;
+					newSortedPids[index2] = players[index1].pid;
+					setSortedPids(newSortedPids);
+					await toWorker("main", "reorderRosterDrag", newSortedPids);
+				}}
 				cols={() => (
 					<>
 						<th>Name</th>

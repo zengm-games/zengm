@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-06-08: Standings now show when teams clinch the playoffs, a first round bye, or the #1 overall seed. [[1]]() [[2]]()
+* 2020-06-08: Standings now show when teams clinch the playoffs, a first round bye, or the #1 overall seed. [[1]](https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/) [[2]](https://old.reddit.com/r/Football_GM/comments/gzd8q6/standings_now_show_when_teams_clinch_the_playoffs/)
 
 * 2020-06-08: Sortable table rows (roster, fantasy draft, football depth chart) can be reordered by clicking two rows to swap them, in addition to dragging like normal. This is sometimes easier on mobile.
 

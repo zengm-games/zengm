@@ -436,8 +436,8 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "setTid": {
-			const tid =
-				action.tid >= state.teams.length ? state.teams.length - 1 : action.tid;
+			const t = state.teams.find(t => t.tid === action.tid);
+			const tid = t ? t.tid : state.teams.length > 0 ? state.teams[0].tid : 0;
 
 			return {
 				...state,
@@ -842,7 +842,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								onChange={event => {
 									dispatch({
 										type: "setTid",
-										tid: parseInt(event.target.value, 10),
+										tid: parseInt(event.target.value),
 									});
 								}}
 							>

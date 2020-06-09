@@ -200,12 +200,23 @@ const SortableTable = <Value extends Record<string, unknown>>({
 		undefined,
 	);
 
-	// Hacky shit to try to determine click from drag
-	const clicked = useRef(false);
+	// Hacky shit to try to determine click from drag. Could just be a boolean, except on mobile seems sorting fires twice in a row, so we need to track the time to debounce.
+	const clicked = useRef<{
+		index: number | undefined;
+		time: number; // Milliseconds
+	}>({
+		index: undefined,
+		time: 0,
+	});
 
-	const onSortStart = useCallback(({ node }) => {
+	const onSortStart = useCallback(({ node, index }) => {
 		setIsDragged(true);
-		clicked.current = true;
+
+		// Hack to avoid responding to duiplicated event on mobile
+		const ignoreToDebounce = Date.now() - clicked.current.time < 500;
+		if (!ignoreToDebounce) {
+			clicked.current.index = index;
+		}
 
 		// https://github.com/clauderic/react-sortable-hoc/issues/361#issuecomment-471907612
 		const tds = document.getElementsByClassName("SortableHelper")[0].childNodes;
@@ -219,17 +230,28 @@ const SortableTable = <Value extends Record<string, unknown>>({
 	}, []);
 
 	const onSortOver = useCallback(() => {
-		clicked.current = false;
+		clicked.current.index = undefined;
 	}, []);
 
 	const onSortEnd = useCallback(
 		({ oldIndex, newIndex }) => {
 			setIsDragged(false);
-			if (oldIndex === newIndex && clicked.current) {
+
+			// Hack to avoid responding to duiplicated event on mobile
+			const ignoreToDebounce = Date.now() - clicked.current.time < 500;
+			if (ignoreToDebounce) {
+				return;
+			}
+			clicked.current.time = Date.now();
+
+			if (oldIndex === newIndex && clicked.current.index === newIndex) {
 				if (indexSelected === undefined) {
 					setIndexSelected(newIndex);
 				} else if (indexSelected === newIndex) {
-					setIndexSelected(undefined);
+					// Hack to avoid responding to duiplicated event on mobile
+					if (!ignoreToDebounce) {
+						setIndexSelected(undefined);
+					}
 				} else {
 					onSwap(indexSelected, newIndex);
 					setIndexSelected(undefined);
@@ -238,7 +260,7 @@ const SortableTable = <Value extends Record<string, unknown>>({
 				onChange({ oldIndex, newIndex });
 				setIndexSelected(undefined);
 			}
-			clicked.current = false;
+			clicked.current.index = undefined;
 		},
 		[onChange, onSwap, indexSelected],
 	);

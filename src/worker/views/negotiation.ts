@@ -2,7 +2,11 @@ import { PHASE } from "../../common";
 import { contractNegotiation, freeAgents, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { ViewInput, PlayerContract } from "../../common/types";
+import type {
+	ViewInput,
+	PlayerContract,
+	UpdateEvents,
+} from "../../common/types";
 
 const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	let growthFactor = 0.15;
@@ -59,77 +63,91 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 	);
 };
 
-const updateNegotiation = async (inputs: ViewInput<"negotiation">) => {
-	const negotiations = await idb.cache.negotiations.getAll();
-	let negotiation;
+const updateNegotiation = async (
+	inputs: ViewInput<"negotiation">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
+	if (
+		!state.player ||
+		(state.player && inputs.pid !== state.player.pid) ||
+		updateEvents.includes("gameSim") ||
+		updateEvents.includes("newPhase")
+	) {
+		const negotiations = await idb.cache.negotiations.getAll();
+		let negotiation;
 
-	if (inputs.pid === undefined) {
-		negotiation = negotiations[0];
-	} else {
-		negotiation = negotiations.find(neg => neg.pid === inputs.pid);
-	}
-
-	if (!negotiation) {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			errorMessage: "No negotiation with player in progress.",
-		};
-		return returnValue;
-	}
-
-	const p2 = await idb.cache.players.get(negotiation.pid);
-	const p = await idb.getCopy.playersPlus(p2, {
-		attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
-		ratings: ["ovr", "pot"],
-		season: g.get("season"),
-		showNoStats: true,
-		showRookies: true,
-		fuzz: true,
-	});
-
-	// This can happen if a negotiation is somehow started with a retired player
-	if (!p) {
-		contractNegotiation.cancel(negotiation.pid);
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			errorMessage: "Invalid negotiation. Please try again.",
-		};
-		return returnValue;
-	}
-
-	p.contract.amount = freeAgents.amountWithMood(
-		p.contract.amount,
-		p.freeAgentMood[g.get("userTid")],
-	);
-
-	const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
-	if (contractOptions.length === 0 && g.get("phase") === PHASE.RESIGN_PLAYERS) {
-		const t = await idb.cache.teams.get(g.get("userTid"));
-		if (
-			t &&
-			t.firstSeasonAfterExpansion !== undefined &&
-			t.firstSeasonAfterExpansion - 1 === g.get("season")
-		) {
-			contractOptions.push({
-				exp: g.get("season") + 1,
-				years: 1,
-				amount: p.contract.amount,
-				smallestAmount: true,
-			});
+		if (inputs.pid === undefined) {
+			negotiation = negotiations[0];
+		} else {
+			negotiation = negotiations.find(neg => neg.pid === inputs.pid);
 		}
+
+		if (!negotiation) {
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				errorMessage: "No negotiation with player in progress.",
+			};
+			return returnValue;
+		}
+
+		const p2 = await idb.cache.players.get(negotiation.pid);
+		const p = await idb.getCopy.playersPlus(p2, {
+			attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
+			ratings: ["ovr", "pot"],
+			season: g.get("season"),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		});
+
+		// This can happen if a negotiation is somehow started with a retired player
+		if (!p) {
+			contractNegotiation.cancel(negotiation.pid);
+			// https://stackoverflow.com/a/59923262/786644
+			const returnValue = {
+				errorMessage: "Invalid negotiation. Please try again.",
+			};
+			return returnValue;
+		}
+
+		p.contract.amount = freeAgents.amountWithMood(
+			p.contract.amount,
+			p.freeAgentMood[g.get("userTid")],
+		);
+
+		const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
+		if (
+			contractOptions.length === 0 &&
+			g.get("phase") === PHASE.RESIGN_PLAYERS
+		) {
+			const t = await idb.cache.teams.get(g.get("userTid"));
+			if (
+				t &&
+				t.firstSeasonAfterExpansion !== undefined &&
+				t.firstSeasonAfterExpansion - 1 === g.get("season")
+			) {
+				contractOptions.push({
+					exp: g.get("season") + 1,
+					years: 1,
+					amount: p.contract.amount,
+					smallestAmount: true,
+				});
+			}
+		}
+
+		const payroll = await team.getPayroll(g.get("userTid"));
+
+		return {
+			contractOptions,
+			hardCap: g.get("hardCap"),
+			payroll: payroll / 1000,
+			player: p,
+			resigning: negotiation.resigning,
+			salaryCap: g.get("salaryCap") / 1000,
+			userTid: g.get("userTid"),
+		};
 	}
-
-	const payroll = await team.getPayroll(g.get("userTid"));
-
-	return {
-		contractOptions,
-		hardCap: g.get("hardCap"),
-		payroll: payroll / 1000,
-		player: p,
-		resigning: negotiation.resigning,
-		salaryCap: g.get("salaryCap") / 1000,
-		userTid: g.get("userTid"),
-	};
 };
 
 export default updateNegotiation;

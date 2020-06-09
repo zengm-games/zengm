@@ -5,13 +5,11 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 const HelpPopover = ({
 	children,
 	className,
-	placement,
 	style,
 	title,
 }: {
 	children: React.ReactNode;
 	className?: string;
-	placement?: "bottom" | "left" | "right" | "top";
 	style?: {
 		[key: string]: number | string;
 	};
@@ -32,7 +30,7 @@ const HelpPopover = ({
 	return (
 		<OverlayTrigger
 			trigger="click"
-			placement={placement}
+			placement="auto"
 			overlay={popover}
 			rootClose
 		>
@@ -43,7 +41,6 @@ const HelpPopover = ({
 
 HelpPopover.propTypes = {
 	children: PropTypes.any,
-	placement: PropTypes.string,
 	style: PropTypes.object,
 	title: PropTypes.string.isRequired,
 };

@@ -6,7 +6,7 @@ import { g } from "../../util";
  * @memberOf core.freeAgents
  * @param {number} amount Contract amount, in thousands of dollars or millions of dollars (fun auto-detect!).
  * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
- * @return {number} Contract amoung adjusted for mood.
+ * @return {number} Contract amount adjusted for mood.
  */
 const amountWithMood = (amount: number, mood: number = 0.5): number => {
 	amount *= 1 + 0.2 * mood;

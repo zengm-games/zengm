@@ -68,7 +68,7 @@ const RelativesForm = ({
 							{i === 0 ? (
 								<label>
 									Player ID number{" "}
-									<HelpPopover placement="bottom" title="Player ID number">
+									<HelpPopover title="Player ID number">
 										<p>Enter the player ID number of the relative here.</p>
 										<p>
 											To find a player ID number, go to the player page for that

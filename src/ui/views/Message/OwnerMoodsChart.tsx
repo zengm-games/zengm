@@ -138,7 +138,6 @@ const OwnerMoodsChart = ({
 	return (
 		<div className="position-relative mt-n1">
 			<HelpPopover
-				placement="right"
 				title="Owner Mood History"
 				style={{
 					position: "absolute",

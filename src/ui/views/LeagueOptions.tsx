@@ -120,7 +120,7 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 					<div className="col-sm-3 col-6 form-group">
 						<label htmlFor="options-difficulty">
 							Difficulty{" "}
-							<HelpPopover placement="bottom" title="Difficulty">
+							<HelpPopover title="Difficulty">
 								<p>
 									Increasing difficulty makes AI teams more reluctant to trade
 									with you, makes players less likely to sign with you, and

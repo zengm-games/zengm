@@ -206,7 +206,7 @@ const Roster = ({
 						{editable ? (
 							<th title="Playing Time Modifier">
 								PT{" "}
-								<HelpPopover placement="left" title="Playing Time Modifier">
+								<HelpPopover title="Playing Time Modifier">
 									<p>
 										Your coach will divide up playing time based on ability and
 										stamina. If you want to influence his judgement, your
@@ -233,7 +233,7 @@ const Roster = ({
 						{showRelease ? (
 							<th>
 								Release{" "}
-								<HelpPopover placement="left" title="Release Player">
+								<HelpPopover title="Release Player">
 									<p>
 										To free up a roster spot, you can release a player from your
 										team. You will still have to pay his salary (and have it

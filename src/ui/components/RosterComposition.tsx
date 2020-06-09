@@ -47,7 +47,7 @@ const RosterComposition = ({
 		<div className={`${className} text-nowrap`}>
 			<b>
 				Roster Composition{" "}
-				<HelpPopover placement="bottom" title="Roster Composition">
+				<HelpPopover title="Roster Composition">
 					<p>
 						This shows the number of players you have at each position, compared
 						to the recommended number. For example, if you see:

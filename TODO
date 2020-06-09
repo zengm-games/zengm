@@ -112,8 +112,6 @@ add logos to league history table?
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
 
-popovers should auto detect position so they don't go off screen (like league leaders)
-
 @CleveIandFan#0216 PER for playoff stats is broken on this file https://dl.dropbox.com/s/68fsydzr5m6ujgu/BBGM_RBL_2019_playoffs_Round_3.json?dl=0
 - someone has a 93 PER and like 20 guys are over 50
 - it is a non-standard playoff format with some byes
@@ -131,6 +129,9 @@ option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
 
 when a team is disbanded, shouldn't it appear on the "Transactions" section of a player page? I found guys who were FA for no reason, only to remember that their teams disappeared
+
+notification when team clinches something for playoffs https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/fthp6gv/?context=3
+- persist clinched status in TeamSeason, check if changed every day
 
 ---
 

@@ -175,7 +175,7 @@ class FinancesForm extends React.Component<
 			<form onSubmit={this.handleSubmit} className="mb-3">
 				<h3>
 					Revenue Settings{" "}
-					<HelpPopover placement="bottom" title="Revenue Settings">
+					<HelpPopover title="Revenue Settings">
 						Set your ticket price too high, and attendance will decrease and
 						some fans will resent you for it. Set it too low, and you're not
 						maximizing your profit.
@@ -203,7 +203,7 @@ class FinancesForm extends React.Component<
 				<p />
 				<h3>
 					Expense Settings{" "}
-					<HelpPopover placement="bottom" title="Expense Settings">
+					<HelpPopover title="Expense Settings">
 						<p>Scouting: Controls the accuracy of displayed player ratings.</p>
 						<p>Coaching: Better coaches mean better player development.</p>
 						<p>Health: A good team of doctors speeds recovery from injuries.</p>
@@ -335,11 +335,7 @@ class FinancesForm extends React.Component<
 							/>
 							Auto adjust for inflation
 						</label>
-						<HelpPopover
-							placement="bottom"
-							title="Inflation adjustment"
-							className="ml-1"
-						>
+						<HelpPopover title="Inflation adjustment" className="ml-1">
 							When enabled, all your revenue and expense settings will
 							automatically change whenever the salary cap changes. This will
 							generally maintain your ranks, although expansion teams and
@@ -405,7 +401,7 @@ const PayrollInfo = ({
 			)}
 			.{" "}
 			{hardCap ? (
-				<HelpPopover placement="bottom" title="Payroll Limits">
+				<HelpPopover title="Payroll Limits">
 					<p>
 						The salary cap is a hard cap, meaning that you cannot exceed it,
 						even when re-signing your own players or making trades. The only
@@ -420,7 +416,7 @@ const PayrollInfo = ({
 					</p>
 				</HelpPopover>
 			) : (
-				<HelpPopover placement="bottom" title="Payroll Limits">
+				<HelpPopover title="Payroll Limits">
 					<p>
 						The salary cap is a soft cap, meaning that you can exceed it to
 						re-sign your own players, to sign free agents to minimum contracts
@@ -611,7 +607,7 @@ const TeamFinances = ({
 					<br />
 					<h3>
 						Hype{" "}
-						<HelpPopover placement="right" title="Hype">
+						<HelpPopover title="Hype">
 							"Hype" refers to fans' interest in your team. If your team is
 							winning or improving, then hype increases; if your team is losing
 							or stagnating, then hype decreases. Hype influences attendance,

@@ -124,6 +124,16 @@ const PlayerStats = ({
 				<a
 					href={helpers.leagueUrl(
 						season === undefined
+							? ["player_stats"]
+							: ["player_stats", "all", "career", "totals"],
+					)}
+				>
+					{season === undefined ? "Per Game" : "Career Totals"}
+				</a>{" "}
+				|{" "}
+				<a
+					href={helpers.leagueUrl(
+						season === undefined
 							? ["player_stat_dists"]
 							: ["player_stat_dists", season],
 					)}

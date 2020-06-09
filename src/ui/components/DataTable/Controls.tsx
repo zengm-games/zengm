@@ -28,7 +28,6 @@ const Controls = ({
 	return (
 		<div className="datatable-controls">
 			<HelpPopover
-				placement="bottom"
 				style={{
 					marginRight: "6px",
 				}}

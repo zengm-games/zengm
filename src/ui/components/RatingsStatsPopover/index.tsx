@@ -157,7 +157,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	return (
 		<OverlayTrigger
 			trigger="click"
-			placement="right"
+			placement="auto"
 			overlay={popover}
 			rootClose
 			onEnter={toggle}

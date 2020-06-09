@@ -18,7 +18,7 @@ const RosterSalarySummary = ({
 		<p>
 			You currently have <b>{numRosterSpots}</b> open roster spots and{" "}
 			<b>{helpers.formatCurrency(capSpace, "M")}</b> in cap space.{" "}
-			<HelpPopover placement="bottom" title="Cap Space">
+			<HelpPopover title="Cap Space">
 				<p>
 					"Cap space" is the difference between your current payroll and the
 					salary cap.

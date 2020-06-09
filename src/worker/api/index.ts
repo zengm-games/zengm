@@ -1992,25 +1992,6 @@ const upsertCustomizedPlayer = async (
 		});
 	}
 
-	// Keep track of contract in p.salaries
-	if (
-		p.tid >= 0 &&
-		(p.salaries.length === 0 ||
-			p.contract.amount !== p.salaries[p.salaries.length - 1].amount ||
-			p.contract.exp !== p.salaries[p.salaries.length - 1].season)
-	) {
-		// Remove salaries that are now obsolete
-		let lastCompletedSeason = g.get("season");
-		if (g.get("phase") <= PHASE.PLAYOFFS) {
-			lastCompletedSeason -= 1;
-		}
-		p.salaries = p.salaries.filter(
-			salary => salary.season <= lastCompletedSeason,
-		);
-
-		player.setContract(p, p.contract, true);
-	}
-
 	// Recalculate player ovr, pot, and values if necessary
 	const selectedPos = p.ratings[r].pos;
 

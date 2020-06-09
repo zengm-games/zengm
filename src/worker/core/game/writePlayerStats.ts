@@ -98,7 +98,7 @@ const doInjury = (
 
 	if (p2.injury.gamesRemaining === 1) {
 		// Never really care about single game injuries much
-		score -= 10;
+		score = 0;
 	}
 
 	p2.injury.score = score;

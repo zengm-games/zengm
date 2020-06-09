@@ -209,7 +209,7 @@ const Draft = ({
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
 			{
-				sortValue: `{p.draft.tid} {p.draft.originalTid}`,
+				sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
 				value: (
 					<DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />
 				),

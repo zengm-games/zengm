@@ -114,8 +114,6 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 
 popovers should auto detect position so they don't go off screen (like league leaders)
 
-In beta version (BBGM v2020.06.05.0186), during Expansion Draft, in the "Draft Results" table, it seems you can't sort by team (when there's more than one team in expansion). Sorting other columns is fine
-
 @CleveIandFan#0216 PER for playoff stats is broken on this file https://dl.dropbox.com/s/68fsydzr5m6ujgu/BBGM_RBL_2019_playoffs_Round_3.json?dl=0
 - someone has a 93 PER and like 20 guys are over 50
 - it is a non-standard playoff format with some byes

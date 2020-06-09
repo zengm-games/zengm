@@ -1,6 +1,43 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
+
+export const fixSigningEvents = (events: EventBBGM[]) => {
+	return Promise.all(
+		events.map(async event => {
+			if (
+				(event.type === "reSigned" || event.type === "freeAgent") &&
+				event.tids
+			) {
+				const tid = event.tids[0];
+				if (tid >= 0) {
+					const t = await idb.getCopy.teamsPlus({
+						seasonAttrs: ["abbrev", "region", "name"],
+						season: event.season,
+						tid,
+					});
+
+					if (t) {
+						const text = `The <a href="${helpers.leagueUrl([
+							"roster",
+							`${t.seasonAttrs.abbrev}_${tid}`,
+							event.season,
+						])}">${t.seasonAttrs.region} ${
+							t.seasonAttrs.name
+						}</a> ${event.text.charAt(0).toLowerCase()}${event.text.slice(1)}`;
+
+						return {
+							...event,
+							text,
+						};
+					}
+				}
+			}
+
+			return event;
+		}),
+	);
+};
 
 const updateEventLog = async (
 	inputs: ViewInput<"transactions">,
@@ -44,7 +81,10 @@ const updateEventLog = async (
 			events = events.filter(event => event.type === inputs.eventType);
 		}
 
+		events = await fixSigningEvents(events);
+
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
+
 		return {
 			abbrev: inputs.abbrev,
 			events,

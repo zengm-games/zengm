@@ -8,6 +8,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
+import { fixSigningEvents } from "./transactions";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -203,9 +204,9 @@ const updatePlayer = async (
 					text: event.text,
 				};
 			});
-		const events = await Promise.all(
-			eventsAll
-				.filter(event => {
+		const events = (
+			await fixSigningEvents(
+				eventsAll.filter(event => {
 					// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
 					return !(
 						event.type === "award" ||
@@ -216,40 +217,15 @@ const updatePlayer = async (
 						event.type === "tragedy" ||
 						event.type === undefined
 					);
-				})
-				.map(async event => {
-					let text = event.text;
-					if (
-						(event.type === "reSigned" || event.type === "freeAgent") &&
-						event.tids
-					) {
-						const tid = event.tids[0];
-						if (tid >= 0) {
-							const t = await idb.getCopy.teamsPlus({
-								seasonAttrs: ["abbrev", "region", "name"],
-								season: event.season,
-								tid,
-							});
-
-							if (t) {
-								text = `The <a href="${helpers.leagueUrl([
-									"roster",
-									`${t.seasonAttrs.abbrev}_${tid}`,
-									event.season,
-								])}">${t.seasonAttrs.region} ${
-									t.seasonAttrs.name
-								}</a> ${text.charAt(0).toLowerCase()}${text.slice(1)}`;
-							}
-						}
-					}
-
-					return {
-						eid: event.eid,
-						season: event.season,
-						text,
-					};
 				}),
-		);
+			)
+		).map(event => {
+			return {
+				eid: event.eid,
+				season: event.season,
+				text: event.text,
+			};
+		});
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		const willingToSign = !helpers.refuseToNegotiate(

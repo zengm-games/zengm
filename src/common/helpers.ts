@@ -9,7 +9,6 @@ const getPopRanks = (
 		tid: number;
 	}[],
 ): number[] => {
-	// Add popRank
 	const teamsSorted = orderBy(teamSeasons, "pop", "desc");
 	const popRanks: number[] = [];
 

@@ -9,6 +9,7 @@ import { POSITIONS } from "../../../common";
  * @param {Object} tm Team metadata object, likely from core.league.create.
  * @return {Object} Team object to insert in the database.
  */
+// If I ever type this, ensure that at least one of budget and popRank is set
 const generate = (tm: any): Team => {
 	const strategy = tm.hasOwnProperty("strategy") ? tm.strategy : "rebuilding";
 

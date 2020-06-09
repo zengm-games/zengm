@@ -43,6 +43,15 @@ const addNewTeamToExistingLeague = async (
 		);
 	}
 
+	const popRanks = helpers.getPopRanks([
+		...(await idb.cache.teams.getAll()),
+		{
+			tid: -1,
+			pop: teamInfo.pop,
+		},
+	]);
+	const popRank = popRanks[popRanks.length - 1];
+
 	const t = prevT
 		? {
 				...prevT,
@@ -51,9 +60,10 @@ const addNewTeamToExistingLeague = async (
 				disabled: false,
 		  }
 		: generate({
+				...teamInfo,
 				tid: g.get("numTeams"),
 				cid,
-				...teamInfo,
+				popRank,
 		  });
 	await idb.cache.teams.put(t);
 

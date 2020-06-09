@@ -313,6 +313,7 @@ const Standings = ({
 						</>
 					) : null}
 					x - clinched playoffs
+					<br />o - eliminated from playoff contention
 				</div>
 			) : null}
 		</>

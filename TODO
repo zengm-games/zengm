@@ -8,6 +8,12 @@ playoff upsets
 
 end of game playing time situations @gmgameschris
 
+click to reorder doesn't actually work on mobile @LoneDrow
+
+investigate https://old.reddit.com/r/BasketballGM/comments/gz0g2w/expansion_team_finances/
+
+wrong team abbrev on player history https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
+
 way to save/load leagues on server
 - ~/projects/google-drive
 - MVP
@@ -1300,7 +1306,6 @@ if a player refuses to resign, that decision should also be reflected in free ag
 add "drb" to usage so that good ball handlers shoot more (favor guards over bigs more)
 in player page, show red/green for ratings changes from the previous year, maybe as heatmap
 in ratings tables, show dpot and dovr columns? maybe?
-Add markers for clinching playoffs / 1st seed in league standings
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 merge game.play and freeAgents.play
 replace random.gauss with random.realGauss

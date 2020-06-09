@@ -3,7 +3,7 @@ import { PHASE } from "../../../common";
 import { helpers, g } from "../../util";
 import genPlayoffSeries from "./genPlayoffSeries";
 
-type ClinchedPlayoffs = "x" | "y" | "z" | undefined;
+type ClinchedPlayoffs = "x" | "y" | "z" | "o" | undefined;
 
 const addClinchedPlayoffs = <
 	T extends TeamFiltered<
@@ -16,7 +16,7 @@ const addClinchedPlayoffs = <
 	teams: T[],
 	season: number = g.get("season"),
 ): (T & {
-	clinchedPlayoffs?: "x" | "y" | "z" | undefined;
+	clinchedPlayoffs?: ClinchedPlayoffs;
 })[] => {
 	if (g.get("season") < season || g.get("phase") >= PHASE.PLAYOFFS) {
 		return teams;
@@ -57,6 +57,7 @@ const addClinchedPlayoffs = <
 		// x - clinched playoffs
 		// y - if byes exist - clinched bye
 		// z - clinched home court advantage
+		// o - eliminated
 		let clinchedPlayoffs: ClinchedPlayoffs;
 
 		if (sorted[0].tid === t.tid) {
@@ -75,6 +76,45 @@ const addClinchedPlayoffs = <
 				if (result.tidPlayoffs.includes(t.tid)) {
 					clinchedPlayoffs = "x";
 				}
+			}
+		}
+
+		if (!clinchedPlayoffs) {
+			const bestCases = teams.map(t2 => {
+				const gp =
+					t2.seasonAttrs.won + t2.seasonAttrs.lost + t2.seasonAttrs.tied;
+				const gamesLeft = g.get("numGames") - gp;
+
+				const bestCase = {
+					tid: t2.tid,
+					seasonAttrs: {
+						won: t2.seasonAttrs.won,
+						lost: t2.seasonAttrs.lost,
+						tied: t2.seasonAttrs.tied,
+						winp: 0,
+						cid: t2.seasonAttrs.cid,
+						did: t2.seasonAttrs.did,
+					},
+				};
+
+				if (gamesLeft > 0) {
+					if (t2.tid === t.tid) {
+						// 0.1 extra is to simulate team winning all tie breakers
+						bestCase.seasonAttrs.won += gamesLeft + 0.1;
+					} else {
+						bestCase.seasonAttrs.lost += gamesLeft;
+					}
+				}
+				bestCase.seasonAttrs.winp = helpers.calcWinp(bestCase.seasonAttrs);
+
+				return bestCase;
+			});
+
+			const sorted = helpers.orderByWinp(bestCases);
+
+			const result = genPlayoffSeries(sorted);
+			if (!result.tidPlayoffs.includes(t.tid)) {
+				clinchedPlayoffs = "o";
 			}
 		}
 

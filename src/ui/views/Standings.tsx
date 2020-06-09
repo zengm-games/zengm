@@ -54,6 +54,7 @@ const DivStandingsRow = ({
 			onClick={toggleClicked}
 		>
 			<td>
+				{t.playoffsRank ? `${t.playoffsRank}. ` : null}
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -63,7 +64,7 @@ const DivStandingsRow = ({
 				>
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>
-				<span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
+				{t.clinchedPlayoffs ? ` ${t.clinchedPlayoffs}` : null}
 			</td>
 			<td>{t.seasonAttrs.won}</td>
 			<td>{t.seasonAttrs.lost}</td>
@@ -171,6 +172,7 @@ const SmallStandingsRow = ({
 				>
 					{t.seasonAttrs.region}
 				</a>
+				{t.clinchedPlayoffs ? ` ${t.clinchedPlayoffs}` : null}
 			</td>
 			<td style={{ textAlign: "right" }}>{t.gb}</td>
 		</tr>
@@ -221,6 +223,7 @@ SmallStandings.propTypes = {
 const Standings = ({
 	teams,
 	confs,
+	numPlayoffByes,
 	numPlayoffTeams,
 	playoffsByConference,
 	season,
@@ -236,9 +239,19 @@ const Standings = ({
 		},
 	});
 
+	let showClinchedPlayoffsText = false;
+	for (const conf of confs) {
+		for (const t of conf.teams) {
+			if (t.clinchedPlayoffs !== undefined) {
+				showClinchedPlayoffsText = true;
+				break;
+			}
+		}
+	}
+
 	return (
 		<>
-			<div className="row">
+			<div className="row" style={{ maxWidth: 1000 }}>
 				<div className={!playoffsByConference ? "col-md-9" : "col-12"}>
 					{confs.map((conf, i) => (
 						<div
@@ -288,6 +301,20 @@ const Standings = ({
 					</div>
 				) : null}
 			</div>
+			{showClinchedPlayoffsText ? (
+				<div>
+					z - clinched #1 overall seed and home{" "}
+					{process.env.SPORT === "basketball" ? "court" : "field"} advantage
+					<br />
+					{numPlayoffByes > 0 ? (
+						<>
+							y - clinched first round bye
+							<br />
+						</>
+					) : null}
+					x - clinched playoffs
+				</div>
+			) : null}
 		</>
 	);
 };

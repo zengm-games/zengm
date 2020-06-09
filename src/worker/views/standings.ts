@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { season } from "../core";
 
 const updateStandings = async (
 	inputs: ViewInput<"standings">,
@@ -14,36 +15,39 @@ const updateStandings = async (
 		const currentConfs = g.get("confs", inputs.season);
 
 		const playoffsByConference = currentConfs.length === 2;
-		const teams = helpers.orderByWinp(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs: [
-					"won",
-					"lost",
-					"tied",
-					"winp",
-					"wonHome",
-					"lostHome",
-					"tiedHome",
-					"wonAway",
-					"lostAway",
-					"tiedAway",
-					"wonDiv",
-					"lostDiv",
-					"tiedDiv",
-					"wonConf",
-					"lostConf",
-					"tiedConf",
-					"lastTen",
-					"streak",
-					"cid",
-					"did",
-					"abbrev",
-					"region",
-					"name",
-				],
-				season: inputs.season,
-			}),
+		const teams = season.addClinchedPlayoffs(
+			helpers.orderByWinp(
+				await idb.getCopies.teamsPlus({
+					attrs: ["tid"],
+					seasonAttrs: [
+						"won",
+						"lost",
+						"tied",
+						"winp",
+						"wonHome",
+						"lostHome",
+						"tiedHome",
+						"wonAway",
+						"lostAway",
+						"tiedAway",
+						"wonDiv",
+						"lostDiv",
+						"tiedDiv",
+						"wonConf",
+						"lostConf",
+						"tiedConf",
+						"lastTen",
+						"streak",
+						"cid",
+						"did",
+						"abbrev",
+						"region",
+						"name",
+					],
+					season: inputs.season,
+				}),
+				inputs.season,
+			),
 			inputs.season,
 		);
 
@@ -182,6 +186,7 @@ const updateStandings = async (
 
 		return {
 			confs,
+			numPlayoffByes: g.get("numPlayoffByes"),
 			numPlayoffTeams,
 			playoffsByConference,
 			season: inputs.season,

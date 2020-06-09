@@ -45,6 +45,7 @@ const Standings = ({
 								>
 									{t.seasonAttrs.region}
 								</a>
+								{t.clinchedPlayoffs ? ` ${t.clinchedPlayoffs}` : null}
 							</td>
 							<td className="text-right">{t.gb}</td>
 						</tr>

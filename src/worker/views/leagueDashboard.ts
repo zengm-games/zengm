@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common";
-import { team } from "../core";
+import { team, season } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
@@ -347,12 +347,23 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {
-		const teams = helpers.orderByWinp(
-			await idb.getCopies.teamsPlus({
-				attrs: ["tid"],
-				seasonAttrs: ["won", "lost", "winp", "cid", "did", "abbrev", "region"],
-				season: g.get("season"),
-			}),
+		const teams = season.addClinchedPlayoffs(
+			helpers.orderByWinp(
+				await idb.getCopies.teamsPlus({
+					attrs: ["tid"],
+					seasonAttrs: [
+						"won",
+						"lost",
+						"tied",
+						"winp",
+						"cid",
+						"did",
+						"abbrev",
+						"region",
+					],
+					season: g.get("season"),
+				}),
+			),
 		);
 
 		// Find user's conference

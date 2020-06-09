@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-06-08: Standings now show when teams clinch the playoffs, a first round bye, or the #1 overall seed. [[1]]() [[2]]()
+
 * 2020-06-08: Sortable table rows (roster, fantasy draft, football depth chart) can be reordered by clicking two rows to swap them, in addition to dragging like normal. This is sometimes easier on mobile.
 
 * **2020-06-07: Added the News Feed page, available in the League menu. This incorporates a score for each event that happens, allowing you to filter events by importance. This replaces the old Transactions and Event Log pages. [[1]](https://basketball-gm.com/blog/2020/06/news-feed/) [[2]](https://old.reddit.com/r/BasketballGM/comments/gyc615/news_feed_changes_are_live_in_version_202006070785/)**

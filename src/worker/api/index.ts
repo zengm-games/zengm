@@ -971,6 +971,7 @@ const handleUploadedDraftClass = async (
 			p =>
 				p.draft === undefined ||
 				p.draft.year === undefined ||
+				p.draft.year === "" ||
 				p.draft.year === uploadedSeason,
 		);
 
@@ -978,9 +979,7 @@ const handleUploadedDraftClass = async (
 			// Try the next season, in case draft already happened
 			filtered = players.filter(
 				p =>
-					p.draft === undefined ||
-					p.draft.year === undefined ||
-					(uploadedSeason !== undefined && p.draft.year === uploadedSeason + 1),
+					uploadedSeason !== undefined && p.draft.year === uploadedSeason + 1,
 			);
 		}
 
@@ -1014,41 +1013,43 @@ const handleUploadedDraftClass = async (
 	}
 
 	// Add new players to database
-	await Promise.all(
-		players.map(async p => {
-			// Adjust age and seasons
-			p.ratings[0].season = draftYear;
+	for (const p of players) {
+		// Adjust age and seasons
+		p.ratings[0].season = draftYear;
 
-			if (!p.draft) {
-				// For college basketball imports
-				p.draft = {
-					round: 0,
-					pick: 0,
-					tid: -1,
-					originalTid: -1,
-					year: draftYear,
-					pot: 0,
-					ovr: 0,
-					skills: [],
-				};
-				p.born.year = draftYear - 19;
-			} else if (uploadedSeason !== undefined) {
-				p.born.year = draftYear - (uploadedSeason - p.born.year);
-			}
+		if (!p.draft) {
+			// For college basketball imports
+			p.draft = {
+				round: 0,
+				pick: 0,
+				tid: -1,
+				originalTid: -1,
+				year: draftYear,
+				pot: 0,
+				ovr: 0,
+				skills: [],
+			};
+			p.born.year = draftYear - 19;
+		} else if (uploadedSeason !== undefined) {
+			p.born.year = draftYear - (uploadedSeason - p.born.year);
+		}
 
-			// Make sure player object is fully defined
-			p.draft.year = draftYear;
-			p.ratings[p.ratings.length - 1].season = draftYear;
-			p = player.augmentPartialPlayer(p, scoutingRank, uploadedFile.version);
-			p.tid = PLAYER.UNDRAFTED;
+		// Make sure player object is fully defined
+		const p2 = player.augmentPartialPlayer(
+			p,
+			scoutingRank,
+			uploadedFile.version,
+		);
+		p2.draft.year = draftYear;
+		p2.ratings[p2.ratings.length - 1].season = draftYear;
+		p2.tid = PLAYER.UNDRAFTED;
 
-			if (p.hasOwnProperty("pid")) {
-				delete p.pid;
-			}
+		if (p2.hasOwnProperty("pid")) {
+			delete p2.pid;
+		}
 
-			await idb.cache.players.add(p);
-		}),
-	);
+		await idb.cache.players.add(p2);
+	}
 
 	// "Top off" the draft class if <70 players imported
 	const baseNumPlayers = Math.round(

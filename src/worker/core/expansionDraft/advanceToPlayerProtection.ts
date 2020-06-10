@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { g, logEvent } from "../../util";
+import { g, logEvent, helpers } from "../../util";
 import { league, team } from "..";
 import type {
 	GameAttributesLeague,
@@ -48,7 +48,10 @@ const advanceToPlayerProtection = async (
 			takeControlTeams.push(t);
 		}
 
-		const text = `The ${t.region} ${t.name} are joining the league.`;
+		const text = `The <a href="${helpers.leagueUrl([
+			"team_history",
+			`${t.abbrev}_${t.tid}`,
+		])}">${t.region} ${t.name}</a> are joining the league.`;
 		logEvent({
 			text,
 			type: "teamExpansion",

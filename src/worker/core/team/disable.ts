@@ -116,9 +116,8 @@ const disable = async (tid: number) => {
 
 	logEvent({
 		text: `The <a href="${helpers.leagueUrl([
-			"roster",
+			"team_history",
 			`${t.abbrev}_${t.tid}`,
-			g.get("season"),
 		])}">${t.region} ${
 			t.name
 		}</a> are disbanding. All their players will become free agents.`,

@@ -12,7 +12,7 @@ export const categories = {
 	},
 	draft: {
 		text: "Draft",
-		className: "badge-primary",
+		className: "badge-darkblue",
 	},
 	league: {
 		text: "League",
@@ -24,11 +24,11 @@ export const categories = {
 	},
 	playerFeat: {
 		text: "Player Feats",
-		className: "badge-success",
+		className: "badge-info",
 	},
 	playoffs: {
 		text: "Playoffs",
-		className: "badge-primary",
+		className: "badge-orange",
 	},
 	rare: {
 		text: "Rare Events",
@@ -36,7 +36,7 @@ export const categories = {
 	},
 	transaction: {
 		text: "Transactions",
-		className: "badge-info",
+		className: "badge-success",
 	},
 	team: {
 		text: "Teams",

@@ -891,3 +891,11 @@ tr.table-warning:hover > td {
 	font-size: inherit;
 	font-weight: inherit;
 }
+.badge-darkblue {
+	background-color: #007bff;
+	color: #fff;
+}
+.badge-orange {
+	background-color: lighten(#fd7e14, 10);
+	color: #000;
+}

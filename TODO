@@ -113,10 +113,6 @@ add logos to league history table?
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
 
-@CleveIandFan#0216 PER for playoff stats is broken on this file https://dl.dropbox.com/s/68fsydzr5m6ujgu/BBGM_RBL_2019_playoffs_Round_3.json?dl=0
-- someone has a 93 PER and like 20 guys are over 50
-- it is a non-standard playoff format with some byes
-
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes

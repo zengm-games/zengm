@@ -59,17 +59,17 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	const mins: number[] = [];
 	league.aPER = 0;
 
+	const factor =
+		2 / 3 - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
+	const vop =
+		league.pts / (league.fga - league.orb + league.tov + 0.44 * league.fta);
+	const drbp = (league.trb - league.orb) / league.trb; // DRB%
+
 	for (let i = 0; i < players.length; i++) {
 		const t = teams.find(t => t.tid === players[i].tid);
 		if (!t) {
 			throw new Error("No team found");
 		}
-
-		const factor =
-			2 / 3 - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
-		const vop =
-			league.pts / (league.fga - league.orb + league.tov + 0.44 * league.fta);
-		const drbp = (league.trb - league.orb) / league.trb; // DRB%
 
 		let uPER;
 
@@ -106,8 +106,9 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	}
 
 	league.aPER /= league.gp * 5 * 4 * g.get("quarterLength");
-	const PER = aPER.map(num => num * (15 / league.aPER)); // Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
+	const PER = aPER.map(num => num * (15 / league.aPER));
 
+	// Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
 	const EWA: number[] = []; // Position Replacement Levels
 
 	const prls = {

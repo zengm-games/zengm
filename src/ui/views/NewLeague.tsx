@@ -222,9 +222,24 @@ const LeagueMenu = <T extends string>({
 		waitingForInfo.current = newValue;
 		onLoading(newValue);
 
-		const leagueInfo = await getLeagueInfo(newValue);
+		try {
+			const leagueInfo = await getLeagueInfo(newValue);
+			if (waitingForInfo.current === newValue) {
+				onDone(leagueInfo);
+			}
+		} catch (error) {
+			console.error(error);
+			if (window.bugsnagClient) {
+				window.bugsnagClient.notify(error);
+			}
+			logEvent({
+				type: "error",
+				text: `Error loading real team data: ${error.message}`,
+				saveToDb: false,
+				persistent: true,
+			});
+		}
 		if (waitingForInfo.current === newValue) {
-			onDone(leagueInfo);
 			waitingForInfo.current = undefined;
 		}
 	};

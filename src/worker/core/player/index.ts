@@ -13,6 +13,7 @@ import genBaseMood from "./genBaseMood";
 import genBaseMoods from "./genBaseMoods";
 import genContract from "./genContract";
 import genFuzz from "./genFuzz";
+import genRandomFreeAgent from "./genRandomFreeAgent";
 import genWeight from "./genWeight";
 import generate from "./generate";
 import getPlayerFakeAge from "./getPlayerFakeAge";
@@ -49,6 +50,7 @@ export default {
 	genBaseMoods,
 	genContract,
 	genFuzz,
+	genRandomFreeAgent,
 	genWeight,
 	generate,
 	getPlayerFakeAge,

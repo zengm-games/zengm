@@ -1,10 +1,12 @@
-import { contractNegotiation } from "..";
+import { contractNegotiation, freeAgents } from "..";
 import { helpers } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 
 const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 	// Delete all current negotiations to resign players
 	await contractNegotiation.cancelAll();
+
+	await freeAgents.ensureEnoughPlayers();
 
 	return {
 		url: helpers.leagueUrl(["free_agents"]),

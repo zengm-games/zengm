@@ -2,7 +2,7 @@ import { PLAYER } from "../../../common";
 import { player } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
-import { g, helpers, local, random } from "../../util";
+import { g, helpers, local } from "../../util";
 import type { Player } from "../../../common/types";
 
 /**
@@ -76,16 +76,8 @@ const checkRosterSizes = async (): Promise<string | void> => {
 					// See also core.phase
 					let p: any = minFreeAgents.shift();
 
-					while (true) {
-						const age = random.randInt(25, 31);
-						const draftYear = g.get("season") - (age - 22);
-						p = player.generate(PLAYER.FREE_AGENT, age, draftYear, false, 15.5);
-						p.ratings[0].season = g.get("season"); // HACK!!!
-						player.develop(p, 0);
-						if (p.ratings[0].ovr <= 40) {
-							await idb.cache.players.add(p); // Create pid
-							break;
-						}
+					if (!p) {
+						p = await player.genRandomFreeAgent();
 					}
 
 					player.sign(p, tid, p.contract, g.get("phase"));

@@ -133,8 +133,6 @@ more testing of cancelling expansion drafts, stuff seems messed up, can wind up 
 
 should never be possible https://app.bugsnag.com/dumbmatter/basketball-gm/errors/5e9d9f2a5c45fc0018c860ab?filters[event.since][0]=30d&filters[error.status][0]=open and other table sanity checks
 
-3p% leaders cutoff still not right, for instance 1991
-
 ---
 
 BAA teams should enter with intact rosters, not expansion draft

@@ -58,7 +58,7 @@ const getCategoriesAndStats = () => {
 						title: "Three-Pointer Percentage",
 						data: [],
 						minStats: ["tp"],
-						minValue: [55],
+						minValue: [Math.max(55 * g.get("threePointTendencyFactor"), 12)],
 					},
 					{
 						name: "Free Throw Percentage",

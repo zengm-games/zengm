@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common";
+import { PLAYER, PHASE } from "../../common";
 import { finances, player } from "../core";
 import { idb } from "../db";
 import { face, g } from "../util";
@@ -49,7 +49,9 @@ const updateCustomizePlayer = async (
 			p = player.generate(
 				PLAYER.FREE_AGENT,
 				20,
-				g.get("season"),
+				g.get("phase") <= PHASE.PLAYOFFS
+					? g.get("season") - 1
+					: g.get("season"),
 				false,
 				scoutingRank,
 			);

@@ -106,6 +106,7 @@ eventually
 manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles
 - dropdown to force lottery winners
+  - would need to deal with coin flips for ties not making the top N reliable
 
 add logos to league history table?
 
@@ -130,11 +131,11 @@ option to include historical players/stats when creating a real players league
 
 more testing of cancelling expansion drafts, stuff seems messed up, can wind up with tid gap?
 
-1947 with random players -> auto play to 1950 -> no FAs!
-- https://old.reddit.com/message/messages/p7dzvj
-- diff from real players - draft class size. why? expansion related?
-  - expansion team needs more than a couple new draft picks to maintain
-    - generate scrub FAs if necessary after expansion draft
+error message when can't load real player data
+
+should never be possible https://app.bugsnag.com/dumbmatter/basketball-gm/errors/5e9d9f2a5c45fc0018c860ab?filters[event.since][0]=30d&filters[error.status][0]=open and other table sanity checks
+
+3p% leaders cutoff still not right, for instance 1991
 
 ---
 

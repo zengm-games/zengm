@@ -91,7 +91,11 @@ const processTeamInfo = async (
 		});
 	} else if (info.imgURL && info.imgURL !== old.imgURL) {
 		logEvent({
-			text: `The ${t.region} ${t.name} got a new logo:<br><img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+			text: `The <a href="${helpers.leagueUrl(["roster", t.abbrev, season])}">${
+				t.region
+			} ${t.name}</a> got a new logo:<br><img src="${
+				t.imgURL
+			}" class="mt-2" style="max-width:120px;max-height:120px;">`,
 			type: "teamLogo",
 			tids: [t.tid],
 			showNotification: false,

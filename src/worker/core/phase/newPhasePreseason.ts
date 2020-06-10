@@ -31,6 +31,7 @@ const newPhasePreseason = async (
 		| RealTeamInfo
 		| undefined;
 
+	let updatedTeams = false;
 	let scoutingRank: number | undefined;
 	for (const t of teams) {
 		// Check if we need to override team info based on a season-specific entry in realTeamInfo
@@ -41,50 +42,61 @@ const newPhasePreseason = async (
 				imgURL: t.imgURL,
 			};
 
-			applyRealTeamInfo(t, realTeamInfo, g.get("season"), {
+			const updated = applyRealTeamInfo(t, realTeamInfo, g.get("season"), {
 				exactSeason: true,
 			});
 
-			if (t.region !== old.region) {
-				const text = `the ${old.region} ${
-					old.name
-				} are now the <a href="${helpers.leagueUrl([
-					"roster",
-					t.abbrev,
-					g.get("season"),
-				])}">${t.region} ${t.name}</a>.`;
+			if (updated) {
+				updatedTeams = true;
+				await idb.cache.teams.put(t);
 
-				logEvent({
-					text: helpers.upperCaseFirstLetter(text),
-					type: "teamRelocation",
-					tids: [t.tid],
-					showNotification: false,
-					score: 20,
-				});
-			} else if (t.name !== old.name) {
-				const text = `the ${old.region} ${
-					old.name
-				} are now the <a href="${helpers.leagueUrl([
-					"roster",
-					t.abbrev,
-					g.get("season"),
-				])}">${t.region} ${t.name}</a>.`;
+				if (t.region !== old.region) {
+					const text = `the ${old.region} ${
+						old.name
+					} are now the <a href="${helpers.leagueUrl([
+						"roster",
+						t.abbrev,
+						g.get("season"),
+					])}">${t.region} ${t.name}</a>.`;
 
-				logEvent({
-					text: helpers.upperCaseFirstLetter(text),
-					type: "teamRename",
-					tids: [t.tid],
-					showNotification: false,
-					score: 20,
-				});
-			} else if (t.imgURL && t.imgURL !== old.imgURL) {
-				logEvent({
-					text: `The ${t.region} ${t.name} got a new logo:<br><img src="${t.imgURL}" class="mt-2" style="max-width:120px;max-height:120px;">`,
-					type: "teamLogo",
-					tids: [t.tid],
-					showNotification: false,
-					score: 20,
-				});
+					logEvent({
+						text: helpers.upperCaseFirstLetter(text),
+						type: "teamRelocation",
+						tids: [t.tid],
+						showNotification: false,
+						score: 20,
+					});
+				} else if (t.name !== old.name) {
+					const text = `the ${old.region} ${
+						old.name
+					} are now the <a href="${helpers.leagueUrl([
+						"roster",
+						t.abbrev,
+						g.get("season"),
+					])}">${t.region} ${t.name}</a>.`;
+
+					logEvent({
+						text: helpers.upperCaseFirstLetter(text),
+						type: "teamRename",
+						tids: [t.tid],
+						showNotification: false,
+						score: 20,
+					});
+				} else if (t.imgURL && t.imgURL !== old.imgURL) {
+					logEvent({
+						text: `The <a href="${helpers.leagueUrl([
+							"roster",
+							t.abbrev,
+							g.get("season"),
+						])}">${t.region} ${t.name}</a> got a new logo:<br><img src="${
+							t.imgURL
+						}" class="mt-2" style="max-width:120px;max-height:120px;">`,
+						type: "teamLogo",
+						tids: [t.tid],
+						showNotification: false,
+						score: 20,
+					});
+				}
 			}
 		}
 
@@ -128,6 +140,18 @@ const newPhasePreseason = async (
 		await idb.cache.teams.put(t);
 		await idb.cache.teamSeasons.add(newSeason);
 		await idb.cache.teamStats.add(team.genStatsRow(tid));
+	}
+
+	if (updatedTeams) {
+		await league.setGameAttributes({
+			teamInfoCache: teams.map(t => ({
+				abbrev: t.abbrev,
+				disabled: t.disabled,
+				imgURL: t.imgURL,
+				name: t.name,
+				region: t.region,
+			})),
+		});
 	}
 
 	if (scoutingRank === undefined) {

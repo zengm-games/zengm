@@ -17,8 +17,9 @@ const applyRealTeamInfo = (
 		exactSeason?: boolean;
 	} = {},
 ) => {
+	let updated = false;
 	if (!realTeamInfo || !t.srID || !realTeamInfo[t.srID]) {
-		return;
+		return updated;
 	}
 
 	const realInfoRoot = realTeamInfo[t.srID];
@@ -26,15 +27,16 @@ const applyRealTeamInfo = (
 	// Apply the base attributes first
 	if (!options.exactSeason) {
 		for (const key of POTENTIAL_OVERRIDES) {
-			if (realInfoRoot[key]) {
+			if (realInfoRoot[key] && realInfoRoot[key] !== (t as any)[key]) {
 				(t as any)[key] = realInfoRoot[key];
+				updated = true;
 			}
 		}
 	}
 
 	// Need to add a season override?
 	if (!realInfoRoot.seasons) {
-		return;
+		return updated;
 	}
 
 	const realInfoSeasons = realInfoRoot.seasons;
@@ -45,22 +47,25 @@ const applyRealTeamInfo = (
 		.filter(x => !Number.isNaN(x))
 		.filter(x => x <= season);
 	if (seasons.length === 0) {
-		return;
+		return updated;
 	}
 
 	// Max available season up to the input season
 	const seasonToUse = Math.max(...seasons);
 	if (options.exactSeason && season !== seasonToUse) {
-		return;
+		return updated;
 	}
 	const realInfoSeason = realInfoSeasons[seasonToUse];
 
 	// Apply, like above
 	for (const key of POTENTIAL_OVERRIDES) {
-		if (realInfoSeason[key]) {
+		if (realInfoSeason[key] && realInfoSeason[key] !== (t as any)[key]) {
 			(t as any)[key] = realInfoSeason[key];
+			updated = true;
 		}
 	}
+
+	return updated;
 };
 
 export default applyRealTeamInfo;

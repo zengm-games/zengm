@@ -262,7 +262,7 @@ const NewsBlock = ({
 							width: 60,
 							marginTop: event.p.imgURL ? 0 : -10,
 						}}
-						className="flex-shrink-0 ml-1"
+						className="flex-shrink-0"
 					>
 						<PlayerPicture face={event.p.face} imgURL={event.p.imgURL} />
 					</div>

@@ -107,7 +107,7 @@ const customizePlayer = (params: Params) => {
 
 const depthFootball = (params: Params) => {
 	// Fix broken links
-	if (params.abbrev === "FA") {
+	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
@@ -115,7 +115,7 @@ const depthFootball = (params: Params) => {
 		return returnValue;
 	}
 
-	if (params.abbrev === "DP") {
+	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
@@ -441,7 +441,7 @@ const resetPassword = (params: Params) => {
 
 const roster = (params: Params) => {
 	// Fix broken links
-	if (params.abbrev === "FA") {
+	if (params.abbrev === "FA" || params.abbrev === "FA_-1") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["free_agents"]),
@@ -449,7 +449,7 @@ const roster = (params: Params) => {
 		return returnValue;
 	}
 
-	if (params.abbrev === "DP") {
+	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
 			redirectUrl: helpers.leagueUrl(["draft_scouting"]),

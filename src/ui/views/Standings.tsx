@@ -64,7 +64,9 @@ const DivStandingsRow = ({
 				>
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>
-				{t.clinchedPlayoffs ? ` ${t.clinchedPlayoffs}` : null}
+				{t.seasonAttrs.clinchedPlayoffs
+					? ` ${t.seasonAttrs.clinchedPlayoffs}`
+					: null}
 			</td>
 			<td>{t.seasonAttrs.won}</td>
 			<td>{t.seasonAttrs.lost}</td>
@@ -172,7 +174,9 @@ const SmallStandingsRow = ({
 				>
 					{t.seasonAttrs.region}
 				</a>
-				{t.clinchedPlayoffs ? ` ${t.clinchedPlayoffs}` : null}
+				{t.seasonAttrs.clinchedPlayoffs
+					? ` ${t.seasonAttrs.clinchedPlayoffs}`
+					: null}
 			</td>
 			<td style={{ textAlign: "right" }}>{t.gb}</td>
 		</tr>
@@ -239,16 +243,6 @@ const Standings = ({
 		},
 	});
 
-	let showClinchedPlayoffsText = false;
-	for (const conf of confs) {
-		for (const t of conf.teams) {
-			if (t.clinchedPlayoffs !== undefined) {
-				showClinchedPlayoffsText = true;
-				break;
-			}
-		}
-	}
-
 	return (
 		<>
 			<div className="row" style={{ maxWidth: 1000 }}>
@@ -301,21 +295,19 @@ const Standings = ({
 					</div>
 				) : null}
 			</div>
-			{showClinchedPlayoffsText ? (
-				<div>
-					z - clinched #1 overall seed and home{" "}
-					{process.env.SPORT === "basketball" ? "court" : "field"} advantage
-					<br />
-					{numPlayoffByes > 0 ? (
-						<>
-							y - clinched first round bye
-							<br />
-						</>
-					) : null}
-					x - clinched playoffs
-					<br />o - eliminated from playoff contention
-				</div>
-			) : null}
+			<div>
+				z - clinched #1 overall seed and home{" "}
+				{process.env.SPORT === "basketball" ? "court" : "field"} advantage
+				<br />
+				{numPlayoffByes > 0 ? (
+					<>
+						y - clinched first round bye
+						<br />
+					</>
+				) : null}
+				x - clinched playoffs
+				<br />o - eliminated from playoff contention
+			</div>
 		</>
 	);
 };

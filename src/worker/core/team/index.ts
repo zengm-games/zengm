@@ -15,6 +15,7 @@ import processStats from "./processStats";
 import rosterAutoSort from "./rosterAutoSort";
 import switchTo from "./switchTo";
 import stats from "./stats";
+import updateClinchedPlayoffs from "./updateClinchedPlayoffs";
 import updateStrategies from "./updateStrategies";
 import valueChange from "./valueChange";
 
@@ -36,6 +37,7 @@ export default {
 	rosterAutoSort,
 	switchTo,
 	stats,
+	updateClinchedPlayoffs,
 	updateStrategies,
 	valueChange,
 };

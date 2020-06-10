@@ -109,6 +109,12 @@ const play = async (
 				return result.gid;
 			}),
 		);
+
+		// Update clinchedPlayoffs
+		if (g.get("phase") === PHASE.REGULAR_SEASON) {
+			await team.updateClinchedPlayoffs(false, conditions);
+		}
+
 		const promises: Promise<any>[] = [];
 
 		// Update playoff series W/L

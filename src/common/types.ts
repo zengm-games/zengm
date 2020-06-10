@@ -1084,6 +1084,12 @@ export type TeamSeasonWithoutKey = {
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;
 
+	// x - clinched playoffs
+	// y - if byes exist - clinched bye
+	// z - clinched home court advantage
+	// o - eliminated
+	clinchedPlayoffs?: "x" | "y" | "z" | "o";
+
 	// Copied over from Team
 	cid: number;
 	did: number;

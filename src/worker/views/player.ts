@@ -8,7 +8,6 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types";
-import { fixSigningEvents } from "./transactions";
 
 const updatePlayer = async (
 	inputs: ViewInput<"player">,
@@ -204,28 +203,26 @@ const updatePlayer = async (
 					text: event.text,
 				};
 			});
-		const events = (
-			await fixSigningEvents(
-				eventsAll.filter(event => {
-					// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
-					return !(
-						event.type === "award" ||
-						event.type === "injured" ||
-						event.type === "healed" ||
-						event.type === "hallOfFame" ||
-						event.type === "playerFeat" ||
-						event.type === "tragedy" ||
-						event.type === undefined
-					);
-				}),
-			)
-		).map(event => {
-			return {
-				eid: event.eid,
-				season: event.season,
-				text: event.text,
-			};
-		});
+		const events = eventsAll
+			.filter(event => {
+				// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
+				return !(
+					event.type === "award" ||
+					event.type === "injured" ||
+					event.type === "healed" ||
+					event.type === "hallOfFame" ||
+					event.type === "playerFeat" ||
+					event.type === "tragedy" ||
+					event.type === undefined
+				);
+			})
+			.map(event => {
+				return {
+					eid: event.eid,
+					season: event.season,
+					text: event.text,
+				};
+			});
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		const willingToSign = !helpers.refuseToNegotiate(

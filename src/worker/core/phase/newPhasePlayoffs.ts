@@ -97,6 +97,9 @@ const newPhasePlayoffs = async (
 		season.newSchedulePlayoffsDay(),
 	]);
 
+	// Update clinchedPlayoffs with final values
+	await team.updateClinchedPlayoffs(true, conditions);
+
 	// Don't redirect if we're viewing a live game now
 	let url;
 	if (!liveGameSim) {

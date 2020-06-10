@@ -1,6 +1,13 @@
 import { idb } from "../../db";
 import { player, league, draft } from "..";
-import { g, updateStatus, updatePlayMenu, random, logEvent } from "../../util";
+import {
+	g,
+	updateStatus,
+	updatePlayMenu,
+	random,
+	logEvent,
+	helpers,
+} from "../../util";
 import { PHASE } from "../../../common";
 import deleteUnreadMessages from "./deleteUnreadMessages";
 
@@ -53,6 +60,24 @@ const disable = async (tid: number) => {
 	for (const p of players) {
 		player.addToFreeAgents(p, g.get("phase"), baseMoods);
 		await idb.cache.players.put(p);
+
+		logEvent({
+			text: `The <a href="${helpers.leagueUrl([
+				"roster",
+				`${t.abbrev}_${t.tid}`,
+				g.get("season"),
+			])}">${t.region} ${
+				t.name
+			}</a> are disbanding, so <a href="${helpers.leagueUrl([
+				"player",
+				p.pid,
+			])}">${p.firstName} ${p.lastName}</a> will become a free agent.`,
+			type: "release",
+			tids: [t.tid],
+			pids: [p.pid],
+			showNotification: false,
+			score: 0,
+		});
 	}
 
 	// In preseason, need to delete teamSeason and teamStats
@@ -90,7 +115,13 @@ const disable = async (tid: number) => {
 	});
 
 	logEvent({
-		text: `The ${t.region} ${t.name} franchise is disbanding. All their players will become free agents.`,
+		text: `The <a href="${helpers.leagueUrl([
+			"roster",
+			`${t.abbrev}_${t.tid}`,
+			g.get("season"),
+		])}">${t.region} ${
+			t.name
+		}</a> are disbanding. All their players will become free agents.`,
 		type: "teamContraction",
 		tids: [t.tid],
 		showNotification: false,

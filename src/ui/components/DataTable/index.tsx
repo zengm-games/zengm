@@ -279,7 +279,10 @@ class DataTable extends React.Component<Props, State> {
 	processRows() {
 		const filterFunctions = this.state.enableFilters
 			? this.state.filters.map((filter, i) =>
-					createFilterFunction(filter, this.props.cols[i].sortType),
+					createFilterFunction(
+						filter,
+						this.props.cols[i] ? this.props.cols[i].sortType : undefined,
+					),
 			  )
 			: [];
 		const skipFiltering =

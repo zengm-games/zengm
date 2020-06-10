@@ -1021,7 +1021,7 @@ const create = async ({
 	}
 
 	if (!leagueFile.events || leagueFile.events.length === 0) {
-		logEvent({
+		await logEvent({
 			text: "Welcome to your new league!",
 			type: "newLeague",
 			tids: [g.get("userTid")],

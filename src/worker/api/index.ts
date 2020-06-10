@@ -1226,6 +1226,48 @@ const removeLastTeam = async (): Promise<void> => {
 	}
 
 	await league.setGameAttributes(updatedGameAttributes);
+
+	// Manually removing a new team can mess with scheduled events, because they are indexed on tid. Let's try to adjust them.
+	// Delete future scheduledEvents for the deleted team, and decrement future tids for new teams
+	const scheduledEvents = await idb.getCopies.scheduledEvents();
+	for (const scheduledEvent of scheduledEvents) {
+		if (scheduledEvent.season < g.get("season")) {
+			await idb.cache.scheduledEvents.delete(scheduledEvent.id);
+		} else if (scheduledEvent.type === "expansionDraft") {
+			let updated;
+			let hasTid;
+			for (const t2 of scheduledEvent.info.teams) {
+				if (typeof t2.tid === "number" && tid < t2.tid) {
+					t2.tid -= 1;
+					updated = true;
+				} else if (typeof t2.tid === "number" && tid === t2.tid) {
+					hasTid = true;
+				}
+			}
+
+			if (hasTid) {
+				scheduledEvent.info.teams = scheduledEvent.info.teams.filter(
+					t2 => t2.tid !== tid,
+				);
+				updated = true;
+			}
+
+			if (updated) {
+				await idb.cache.scheduledEvents.put(scheduledEvent);
+			}
+		} else if (
+			scheduledEvent.type == "contraction" ||
+			scheduledEvent.type === "teamInfo"
+		) {
+			if (tid === scheduledEvent.info.tid) {
+				await idb.cache.scheduledEvents.delete(scheduledEvent.id);
+			} else if (tid < scheduledEvent.info.tid) {
+				scheduledEvent.info.tid -= 1;
+				await idb.cache.scheduledEvents.put(scheduledEvent);
+			}
+		}
+	}
+
 	await idb.cache.flush();
 };
 

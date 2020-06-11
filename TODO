@@ -7,6 +7,28 @@ playoff upsets
 - could apply bigger home court advantage for good teams
 
 end of game playing time situations @gmgameschris
+- could make fatigue matter less, depending on how close/late it is?
+
+legendary seasons
+- best winp season of each team
+- by decade?
+
+custom league generator
+- any historical team, with or without real players
+- any fake team
+- user defined teams
+
+jersey numbers
+- store in player stats
+- viewable in bios
+- draw from some known distribution
+  - by position, for football
+- frivolity like colleges/countries to view
+- frivolity for retired jersey numbers?
+- real players
+- collisions
+  - if one player is much better than the other (probably based on career stats), they keep the number
+  - if edited manually, change other guy
 
 fuzz/scouting revamp
 - prospects and young players only
@@ -84,8 +106,18 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 
 league creation options
+- option to equalize cities when starting new league (equal spending and size)
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
 - starting season
+- repeat season
+- UI
+  - hide by default
+  - randomization here too
+- challenge mode
+  - hide player ratings
+  - no signing free agents (except min contracts)
+  - no draft picks
+  - lose your best player every year
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues
@@ -241,15 +273,6 @@ gm history page
 - like team history, but for the teams you GMed
 - allow switching after season without getting fired
 
-new league options
-- option to equalize cities when starting new league (equal spending and size)
-- set startingSeason
-- challenge mode
-  - hide player ratings
-  - no free agency
-  - no draft picks
-  - lose your best player every year
-
 some kind of global status/finances menu, above titlebar
 - EVENTUALLY
   - more info, not just games
@@ -280,16 +303,6 @@ game highs
 average roster age implemented as team advanced stat?
 
 page showing scores by day
-
-jersey numbers
-- store in player stats
-- viewable in bios
-- draw from some known distribution
-  - by position, for football
-- frivolity like colleges/countries to view
-- frivolity for retired jersey numbers?
-- collisions
-  - if one player is much better than the other (probably based on career stats), they keep the number
 
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 

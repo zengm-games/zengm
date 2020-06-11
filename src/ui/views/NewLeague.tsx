@@ -153,7 +153,7 @@ const LeaguePartPicker = ({
 	);
 };
 
-const quickValuesStyle = { height: 19, color: "var(--dark)" };
+const quickValuesStyle = { height: 19 };
 
 const MIN_SEASON = 1947;
 const MAX_SEASON = 2020;
@@ -510,6 +510,7 @@ const reducer = (state: State, action: Action): State => {
 
 const NewLeague = (props: View<"newLeague">) => {
 	const [name, setName] = useState(props.name);
+	const [expandOptions, setExpandOptions] = useState(false);
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -779,6 +780,45 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
+	const moreOptions: React.ReactNode[] = [];
+
+	if (state.keptKeys.includes("players") || state.customize === "real") {
+		moreOptions.push(
+			<div className="form-group">
+				<label htmlFor="new-league-randomization">Randomization</label>
+				<select
+					id="new-league-randomization"
+					className="form-control"
+					onChange={event => {
+						dispatch({
+							type: "setRandomization",
+							randomization: event.target.value as any,
+						});
+					}}
+					value={state.randomization}
+				>
+					<option value="none">None</option>
+					{state.customize === "real" ? (
+						<option value="debuts">Random debuts</option>
+					) : null}
+					<option value="shuffle">Shuffle rosters</option>
+				</select>
+				{state.randomization === "debuts" ? (
+					<div className="text-muted mt-1">
+						Every player's draft year is randomized. Starting teams are random
+						combinations of current and future players, and future draft classes
+						contain a random selection of real players.
+					</div>
+				) : null}
+				{state.randomization === "shuffle" ? (
+					<div className="text-muted mt-1">
+						All active players are placed on random teams.
+					</div>
+				) : null}
+			</div>,
+		);
+	}
+
 	return (
 		<form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
 			{props.lid !== undefined ? (
@@ -926,39 +966,24 @@ const NewLeague = (props: View<"newLeague">) => {
 						</span>
 					</div>
 
-					{state.keptKeys.includes("players") || state.customize === "real" ? (
-						<div className="form-group">
-							<label htmlFor="new-league-randomization">Randomization</label>
-							<select
-								id="new-league-randomization"
-								className="form-control"
-								onChange={event => {
-									dispatch({
-										type: "setRandomization",
-										randomization: event.target.value as any,
-									});
-								}}
-								value={state.randomization}
+					{moreOptions.length > 0 ? (
+						<>
+							<button
+								className="btn btn-link p-0 mb-3"
+								type="button"
+								onClick={() => setExpandOptions(expand => !expand)}
 							>
-								<option value="none">None</option>
-								{state.customize === "real" ? (
-									<option value="debuts">Random debuts</option>
-								) : null}
-								<option value="shuffle">Shuffle rosters</option>
-							</select>
-							{state.randomization === "debuts" ? (
-								<div className="text-muted mt-1">
-									Every player's draft year is randomized. Starting teams are
-									random combinations of current and future players, and future
-									draft classes contain a random selection of real players.
-								</div>
-							) : null}
-							{state.randomization === "shuffle" ? (
-								<div className="text-muted mt-1">
-									All active players are placed on random teams.
-								</div>
-							) : null}
-						</div>
+								More Options{" "}
+								<span
+									className={`glyphicon ${
+										expandOptions
+											? "glyphicon-menu-down"
+											: "glyphicon-menu-right"
+									}`}
+								/>
+							</button>
+							{expandOptions ? moreOptions : null}
+						</>
 					) : null}
 
 					<div className="text-center">

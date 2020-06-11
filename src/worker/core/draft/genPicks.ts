@@ -1,14 +1,18 @@
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { DraftPick } from "../../../common/types";
+import { PHASE } from "../../../common";
 
-// Add a new set of draft picks
-// existingDraftPicks should not be normally used, but sometimes a partial set of draft picks is saved to the database, in which case we want to merge those in with the newly generated ones.
-const genPicks = async (
-	season: number,
-	existingDraftPicks: DraftPick[] = [],
-) => {
+// Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
+const doSeason = async (season: number) => {
 	const teams = await idb.cache.teams.getAll();
+
+	// If a pick already exists, do nothing. Unless it needs to be deleted because of challenge mode or some other reason.
+	const existingPicks: (DraftPick & {
+		keep?: boolean;
+	})[] = helpers.deepCopy(
+		await idb.cache.draftPicks.indexGetAll("draftPicksBySeason", season),
+	);
 
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 		for (const t of teams) {
@@ -16,14 +20,19 @@ const genPicks = async (
 				continue;
 			}
 
+			if (g.get("challengeNoDraftPicks") && g.get("userTids").includes(t.tid)) {
+				continue;
+			}
+
 			// If a pick already exists in the database, no need to create it
-			const existingDraftPick = existingDraftPicks.find(dp => {
+			const existingPick = existingPicks.find(dp => {
 				return (
 					t.tid === dp.originalTid && round === dp.round && season === dp.season
 				);
 			});
-
-			if (!existingDraftPick) {
+			if (existingPick) {
+				existingPick.keep = true;
+			} else {
 				await idb.cache.draftPicks.add({
 					tid: t.tid,
 					originalTid: t.tid,
@@ -32,6 +41,25 @@ const genPicks = async (
 					season,
 				});
 			}
+		}
+	}
+
+	// Delete any obsolete picks
+	for (const existingPick of existingPicks) {
+		if (!existingPick.keep) {
+			await idb.cache.draftPicks.delete(existingPick.dpid);
+		}
+	}
+};
+
+const genPicks = async (season?: number) => {
+	if (season !== undefined) {
+		await doSeason(season);
+	} else {
+		const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
+		for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
+			const draftYear = g.get("season") + dpOffset + i;
+			await doSeason(draftYear);
 		}
 	}
 };

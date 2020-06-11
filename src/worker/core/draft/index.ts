@@ -1,5 +1,4 @@
 import afterPicks from "./afterPicks";
-import createTeamPicks from "./createTeamPicks";
 import deleteLotteryResultIfNoDraftYet from "./deleteLotteryResultIfNoDraftYet";
 import genOrder from "./genOrder";
 import genOrderNBA from "./genOrderNBA";
@@ -14,7 +13,6 @@ import selectPlayer from "./selectPlayer";
 
 export default {
 	afterPicks,
-	createTeamPicks,
 	deleteLotteryResultIfNoDraftYet,
 	genOrder,
 	genOrderNBA,

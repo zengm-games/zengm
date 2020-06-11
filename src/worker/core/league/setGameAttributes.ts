@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import { g, toUI, helpers, initUILocalGames, local } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
-import { finances } from "..";
+import { finances, draft } from "..";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -149,6 +149,11 @@ const setGameAttributes = async (
 
 	if (toUpdate.includes("userTid")) {
 		await initUILocalGames();
+	} else if (
+		toUpdate.includes("numSeasonsFutureDraftPicks") ||
+		toUpdate.includes("challengeNoDraftPicks")
+	) {
+		await draft.genPicks();
 	}
 };
 

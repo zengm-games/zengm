@@ -241,7 +241,7 @@ export const createWithoutSaving = (
 	const teams = helpers.addPopRank(teamInfos).map(t => team.generate(t));
 
 	// Draft picks for the first g.get("numSeasonsFutureDraftPicks") years, as those are the ones can be traded initially
-	let draftPicks: DraftPickWithoutKey[];
+	let draftPicks: DraftPickWithoutKey[] = [];
 
 	if (leagueFile.draftPicks) {
 		draftPicks = leagueFile.draftPicks;
@@ -249,24 +249,6 @@ export const createWithoutSaving = (
 		for (const dp of leagueFile.draftPicks) {
 			if (typeof dp.pick !== "number") {
 				dp.pick = 0;
-			}
-		}
-	} else {
-		draftPicks = [];
-
-		for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
-			for (const t of teams) {
-				if (!t.disabled) {
-					for (let round = 1; round <= g.get("numDraftRounds"); round++) {
-						draftPicks.push({
-							tid: t.tid,
-							originalTid: t.tid,
-							round,
-							pick: 0,
-							season: startingSeason + i,
-						});
-					}
-				}
 			}
 		}
 	}
@@ -1019,6 +1001,8 @@ const create = async ({
 			}
 		}
 	}
+
+	await draft.genPicks();
 
 	if (!leagueFile.events || leagueFile.events.length === 0) {
 		await logEvent({

@@ -1185,16 +1185,7 @@ const removeLastTeam = async (): Promise<void> => {
 	}
 
 	// Delete draft picks, and return traded ones to original owner
-	const draftPicks = await idb.cache.draftPicks.getAll();
-
-	for (const dp of draftPicks) {
-		if (dp.originalTid === tid) {
-			await idb.cache.draftPicks.delete(dp.dpid);
-		} else if (dp.tid === tid) {
-			dp.tid = dp.originalTid;
-			await idb.cache.draftPicks.put(dp);
-		}
-	}
+	await draft.genPicks();
 
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
@@ -1653,54 +1644,6 @@ const updateConfsDivs = async (
 };
 
 const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
-	if (
-		gameAttributes.numSeasonsFutureDraftPicks <
-		g.get("numSeasonsFutureDraftPicks")
-	) {
-		// This season and the next N-1 seasons
-		let maxSeason =
-			g.get("season") + gameAttributes.numSeasonsFutureDraftPicks - 1;
-
-		if (g.get("phase") >= PHASE.AFTER_DRAFT) {
-			// ...and one more season, since the draft is over
-			maxSeason += 1;
-		}
-
-		// Delete draft picks beyond new numSeasonsFutureDraftPicks
-		const draftPicks = await idb.cache.draftPicks.getAll();
-
-		for (const dp of draftPicks) {
-			if (
-				dp.season !== "fantasy" &&
-				dp.season !== "expansion" &&
-				dp.season > maxSeason
-			) {
-				await idb.cache.draftPicks.delete(dp.dpid);
-			}
-		}
-	} else if (
-		gameAttributes.numSeasonsFutureDraftPicks >
-		g.get("numSeasonsFutureDraftPicks")
-	) {
-		// This season and the next N-1 seasons
-		let oldMaxSeason =
-			g.get("season") + g.get("numSeasonsFutureDraftPicks") - 1;
-
-		if (g.get("phase") >= PHASE.AFTER_DRAFT) {
-			// ...and one more season, since the draft is over
-			oldMaxSeason += 1;
-		}
-
-		const numSeasonsToAdd =
-			gameAttributes.numSeasonsFutureDraftPicks -
-			g.get("numSeasonsFutureDraftPicks");
-
-		for (let i = 1; i <= numSeasonsToAdd; i++) {
-			const season = oldMaxSeason + i;
-			await draft.genPicks(season);
-		}
-	}
-
 	await league.setGameAttributes(gameAttributes);
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
@@ -1940,7 +1883,7 @@ const updateTeamInfo = async (
 		}
 
 		if (enableTeam) {
-			await draft.createTeamPicks(t.tid);
+			await draft.genPicks();
 			await draft.deleteLotteryResultIfNoDraftYet();
 
 			if (t.tid === g.get("userTid")) {

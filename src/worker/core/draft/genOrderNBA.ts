@@ -176,19 +176,13 @@ const genOrder = async (
 		}
 	}
 
+	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
+	await genPicks(g.get("season"));
+
 	let draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",
 		g.get("season"),
 	);
-
-	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	if (draftPicks.length < g.get("numDraftRounds") * teams.length) {
-		await genPicks(g.get("season"), draftPicks);
-		draftPicks = await idb.cache.draftPicks.indexGetAll(
-			"draftPicksBySeason",
-			g.get("season"),
-		);
-	}
 
 	// Because we're editing this later, and sometimes this is called with mock=true
 	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round

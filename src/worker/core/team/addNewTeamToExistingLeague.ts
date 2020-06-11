@@ -87,7 +87,7 @@ const addNewTeamToExistingLeague = async (
 		})),
 	});
 
-	await draft.createTeamPicks(t.tid);
+	await draft.genPicks();
 
 	// Add new draft prospects to draft classes
 	const draftClassTargetSize = Math.round(

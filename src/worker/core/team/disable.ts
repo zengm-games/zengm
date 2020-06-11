@@ -43,11 +43,10 @@ const disable = async (tid: number) => {
 	}
 
 	// Delete draft picks, and return traded ones to original owner
+	await draft.genPicks();
 	const draftPicks = await idb.cache.draftPicks.getAll();
 	for (const dp of draftPicks) {
-		if (dp.originalTid === t.tid) {
-			await idb.cache.draftPicks.delete(dp.dpid);
-		} else if (dp.tid === t.tid) {
+		if (dp.tid === t.tid) {
 			dp.tid = dp.originalTid;
 			await idb.cache.draftPicks.put(dp);
 		}

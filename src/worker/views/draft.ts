@@ -117,6 +117,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showRookies: true,
 			fuzz: true,
 		});
+
 		let draftPicks = await draft.getOrder();
 
 		// DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0

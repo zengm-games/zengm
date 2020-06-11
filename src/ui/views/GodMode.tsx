@@ -62,6 +62,13 @@ type Decoration = "currency" | "percent";
 
 type Values = { [key: string]: string | undefined };
 
+export const helpTexts = {
+	challengeNoDraftPicks:
+		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
+	challengeNoFreeAgents:
+		"You are not allowed to sign free agents, except to minimum contracts.",
+};
+
 const options: {
 	category: Category;
 	key: Key;
@@ -454,16 +461,14 @@ const options: {
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
-		helpText:
-			"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
+		helpText: helpTexts.challengeNoDraftPicks,
 	},
 	{
 		category: "Challenge Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
-		helpText:
-			"You are not allowed to sign free agents, except to minimum contracts.",
+		helpText: helpTexts.challengeNoFreeAgents,
 	},
 ];
 

@@ -13,6 +13,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
 import classNames from "classnames";
+import { helpTexts } from "./GodMode";
 
 type NewLeagueTeam = {
 	tid: number;
@@ -847,10 +848,46 @@ const NewLeague = (props: View<"newLeague">) => {
 			((state.customize === "real" || state.customize === "legends") &&
 				state.pendingInitialLeagueInfo));
 
-	const moreOptions: React.ReactNode[] = [];
+	const moreOptions: React.ReactNode[] = [
+		<div key="challenge" className="mb-3">
+			<label>Challenge Modes</label>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					value=""
+					id="new-league-challengeNoDraftPicks"
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeNoDraftPicks"
+				>
+					No Draft Picks
+					<br />
+					<span className="text-muted">{helpTexts.challengeNoDraftPicks}</span>
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					value=""
+					id="new-league-challengeNoFreeAgents"
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeNoFreeAgents"
+				>
+					No Free Agents
+					<br />
+					<span className="text-muted">{helpTexts.challengeNoFreeAgents}</span>
+				</label>
+			</div>
+		</div>,
+	];
 
 	if (state.keptKeys.includes("players") || state.customize === "real") {
-		moreOptions.push(
+		moreOptions.unshift(
 			<div key="randomization" className="form-group">
 				<label htmlFor="new-league-randomization">Randomization</label>
 				<select

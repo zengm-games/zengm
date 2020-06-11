@@ -115,18 +115,22 @@ league creation options
   - hide player ratings
   - lose your best player every year
 - add option to league creation
-  - share explanation text with God Mode
   - hide player ratings
   - no free agents
   - no draft picks
   - lose your best player every year
 - challenge mode options could already be enabled in league file - check
   - this means state needs to be in reducer
+  - test with league files
 - god mode options for challenge mode?
 - blog
   - starting season
   - challenge modes - either in God Mode or when creating league
     - no free agents
+
+god mode stuff
+- more stuff on player editor
+- awards editor
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues

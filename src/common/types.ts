@@ -289,6 +289,8 @@ export type GameAttributesLeague = {
 	autoDeleteOldBoxScores: boolean;
 	brotherRate: number;
 	budget: boolean;
+	challengeNoDraftPicks: boolean;
+	challengeNoFreeAgents: boolean;
 	confs: { cid: number; name: string }[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;

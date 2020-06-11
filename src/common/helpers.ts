@@ -1,7 +1,8 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type { TeamBasic } from "./types";
+import type { TeamBasic, Phase } from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash/orderBy";
+import { PHASE } from "./constants";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -684,18 +685,34 @@ function roundWinp(winp: number): string {
  * @param {number} mood Player's mood towards the team in question.
  * @return {boolean} Answer to the question.
  */
-const refuseToNegotiate = (
-	amount: number,
-	mood: number,
-	salaryCap: number,
-	playersRefuseToNegotiate: boolean,
-	rookie: boolean = false,
-): boolean => {
-	if (!playersRefuseToNegotiate) {
-		return false;
+const refuseToNegotiate = ({
+	amount,
+	mood,
+	salaryCap,
+	playersRefuseToNegotiate,
+	rookie,
+	challengeNoFreeAgents,
+	minContract,
+	phase,
+}: {
+	amount: number;
+	mood: number;
+	salaryCap: number;
+	playersRefuseToNegotiate: boolean;
+	rookie: boolean;
+	challengeNoFreeAgents: boolean;
+	minContract: number;
+	phase: Phase;
+}): boolean => {
+	if (
+		challengeNoFreeAgents &&
+		phase !== PHASE.RESIGN_PLAYERS &&
+		amount > minContract
+	) {
+		return true;
 	}
 
-	if (rookie) {
+	if (!playersRefuseToNegotiate || rookie) {
 		return false;
 	}
 

@@ -1,15 +1,18 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, logEvent, toWorker } from "../util";
-import type { Player } from "../../common/types"; // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
-// are willing to sign.
+import type { Player, Phase } from "../../common/types";
 
+// season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
+// are willing to sign.
 const NegotiateButtons = ({
 	canGoOverCap,
 	capSpace,
+	challengeNoFreeAgents,
 	disabled,
 	minContract,
 	p,
+	phase,
 	playersRefuseToNegotiate,
 	salaryCap,
 	season,
@@ -17,22 +20,27 @@ const NegotiateButtons = ({
 }: {
 	canGoOverCap?: boolean;
 	capSpace: number;
+	challengeNoFreeAgents: boolean;
 	disabled?: boolean;
 	minContract: number;
 	p: Player;
+	phase: Phase;
 	playersRefuseToNegotiate: boolean;
 	salaryCap: number;
 	season?: number;
 	userTid: number;
 }) => {
 	if (
-		helpers.refuseToNegotiate(
-			p.contract.amount * 1000,
-			p.freeAgentMood[userTid],
+		helpers.refuseToNegotiate({
+			amount: p.contract.amount * 1000,
+			mood: p.freeAgentMood[userTid],
 			salaryCap,
 			playersRefuseToNegotiate,
-			typeof season === "number" && p.draft.year === season,
-		)
+			rookie: typeof season === "number" && p.draft.year === season,
+			challengeNoFreeAgents,
+			minContract,
+			phase,
+		})
 	) {
 		return "Refuses!";
 	}

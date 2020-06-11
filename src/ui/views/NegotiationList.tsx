@@ -13,9 +13,11 @@ import type { View } from "../../common/types";
 
 const NegotiationList = ({
 	capSpace,
+	challengeNoFreeAgents,
 	hardCap,
 	minContract,
 	numRosterSpots,
+	phase,
 	players,
 	playersRefuseToNegotiate,
 	salaryCap,
@@ -80,8 +82,10 @@ const NegotiationList = ({
 				<NegotiateButtons
 					canGoOverCap={!hardCap}
 					capSpace={capSpace}
+					challengeNoFreeAgents={challengeNoFreeAgents}
 					minContract={minContract}
 					p={p}
+					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
 					salaryCap={salaryCap}
 					season={season}

@@ -39,9 +39,16 @@ type Key =
 	| "pace"
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"
-	| "twoPointAccuracyFactor";
+	| "twoPointAccuracyFactor"
+	| "challengeNoDraftPicks"
+	| "challengeNoFreeAgents";
 
-type Category = "League Structure" | "Finance" | "Events" | "Game Simulation";
+type Category =
+	| "League Structure"
+	| "Finance"
+	| "Events"
+	| "Game Simulation"
+	| "Challenge Modes";
 
 type FieldType =
 	| "bool"
@@ -441,6 +448,22 @@ const options: {
 				}
 			}
 		},
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeNoDraftPicks",
+		name: "No Draft Picks",
+		type: "bool",
+		helpText:
+			"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeNoFreeAgents",
+		name: "No Free Agents",
+		type: "bool",
+		helpText:
+			"You are not allowed to sign free agents, except to minimum contracts.",
 	},
 ];
 

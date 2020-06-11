@@ -14,6 +14,7 @@ import type { View } from "../../common/types";
 
 const FreeAgents = ({
 	capSpace,
+	challengeNoFreeAgents,
 	hardCap,
 	minContract,
 	numRosterSpots,
@@ -31,7 +32,7 @@ const FreeAgents = ({
 
 	const showAfforablePlayers = useCallback(() => {
 		const newAddFilters: (string | undefined)[] = new Array(8 + stats.length);
-		if (capSpace * 1000 > minContract) {
+		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
 			newAddFilters[newAddFilters.length - 2] = `<${capSpace}`;
 		} else {
 			newAddFilters[newAddFilters.length - 2] = `<${minContract / 1000}`;
@@ -45,7 +46,7 @@ const FreeAgents = ({
 		setTimeout(() => {
 			setAddFilters(undefined);
 		}, 0);
-	}, [capSpace, minContract, stats]);
+	}, [capSpace, challengeNoFreeAgents, minContract, stats]);
 
 	useTitleBar({ title: "Free Agents" });
 
@@ -121,9 +122,11 @@ const FreeAgents = ({
 				// @ts-ignore
 				<NegotiateButtons
 					capSpace={capSpace}
+					challengeNoFreeAgents={challengeNoFreeAgents}
 					disabled={gameSimInProgress}
 					minContract={minContract}
 					p={p}
+					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
 					salaryCap={salaryCap}
 					userTid={userTid}
@@ -160,6 +163,13 @@ const FreeAgents = ({
 
 			{gameSimInProgress ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
+			) : null}
+
+			{challengeNoFreeAgents ? (
+				<p className="alert alert-danger d-inline-block">
+					<b>Challenge Mode:</b> You are not allowed to sign free agents, except
+					to minimum contracts.
+				</p>
 			) : null}
 
 			<DataTable

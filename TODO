@@ -111,13 +111,31 @@ league creation options
 - starting season
   - probably put this above, where season is for real laeagues
 - repeat season / groundhog day
-- challenge mode
+- add challenge mode
   - hide player ratings
-  - no signing free agents (except min contracts)
+  - no draft picks
+    - do not create draft picks for user teams
+      - check everywhere draft picks are created, probably put into a single function
+      - check leagueFile too
+    - create/delete draft picks when this option is toggled
+      - again, probably have a function that checks for missing/extra picks and fixes everything. kind of already exists.
+    - create/delete draft picks when userTids changes
+      - same as above
+    - test changing setting during draft
+  - lose your best player every year
+- add option to league creation
+  - share explanation text with God Mode
+  - hide player ratings
+  - no free agents
   - no draft picks
   - lose your best player every year
+- challenge mode options could already be enabled in league file - check
+  - this means state needs to be in reducer
+- god mode options for challenge mode?
 - blog
   - starting season
+  - challenge modes - either in God Mode or when creating league
+    - no free agents
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues

@@ -51,13 +51,19 @@ const create = async (
 
 	if (
 		!resigning &&
-		helpers.refuseToNegotiate(
-			freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[tid]),
-			p.freeAgentMood[g.get("userTid")],
-			g.get("salaryCap"),
-			g.get("playersRefuseToNegotiate"),
-			rookie,
-		)
+		helpers.refuseToNegotiate({
+			amount: freeAgents.amountWithMood(
+				p.contract.amount,
+				p.freeAgentMood[tid],
+			),
+			mood: p.freeAgentMood[g.get("userTid")],
+			salaryCap: g.get("salaryCap"),
+			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
+			rookie: rookie,
+			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
+			minContract: g.get("minContract"),
+			phase: g.get("phase"),
+		})
 	) {
 		return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 			p.lastName

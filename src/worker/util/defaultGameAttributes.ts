@@ -117,6 +117,9 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	twoPointAccuracyFactor: 1,
 	expansionDraft: { phase: "setup" },
 
+	challengeNoDraftPicks: false,
+	challengeNoFreeAgents: false,
+
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
 	userTid: 0,

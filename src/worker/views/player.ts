@@ -225,15 +225,20 @@ const updatePlayer = async (
 			});
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
-		const willingToSign = !helpers.refuseToNegotiate(
-			p.contract.amount * 1000,
-			p.freeAgentMood[g.get("userTid")],
-			g.get("salaryCap"),
-			g.get("playersRefuseToNegotiate"),
-			g.get("phase") === PHASE.RESIGN_PLAYERS
-				? p.draft.year === g.get("season")
-				: false,
-		);
+
+		const willingToSign = !helpers.refuseToNegotiate({
+			amount: p.contract.amount * 1000,
+			mood: p.freeAgentMood[g.get("userTid")],
+			salaryCap: g.get("salaryCap"),
+			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
+			rookie:
+				g.get("phase") === PHASE.RESIGN_PLAYERS
+					? p.draft.year === g.get("season")
+					: false,
+			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
+			minContract: g.get("minContract"),
+			phase: g.get("phase"),
+		});
 		return {
 			player: p,
 			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,

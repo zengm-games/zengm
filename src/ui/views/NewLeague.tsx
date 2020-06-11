@@ -365,6 +365,7 @@ type State = {
 	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
 	keptKeys: string[];
+	expandOptions: boolean;
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
 };
@@ -419,6 +420,9 @@ type Action =
 			type: "newLeagueInfo";
 			allKeys: string[];
 			teams: NewLeagueTeam[];
+	  }
+	| {
+			type: "toggleExpandOptions";
 	  }
 	| {
 			type: "toggleChallengeNoDraftPicks";
@@ -531,6 +535,28 @@ const reducer = (state: State, action: Action): State => {
 				oldAllKeys: state.allKeys,
 			});
 
+			const gameAttributeOverrides: {
+				challengeNoDraftPicks: boolean;
+				challengeNoFreeAgents: boolean;
+				expandOptions: boolean;
+			} = {
+				challengeNoDraftPicks: state.challengeNoDraftPicks,
+				challengeNoFreeAgents: state.challengeNoFreeAgents,
+				expandOptions: state.expandOptions,
+			};
+			if (action.leagueFile && action.leagueFile.gameAttributes) {
+				for (const { key, value } of action.leagueFile.gameAttributes) {
+					if (
+						(gameAttributeOverrides as any)[key] !== undefined &&
+						typeof value === "boolean" &&
+						(gameAttributeOverrides as any)[key] !== value
+					) {
+						(gameAttributeOverrides as any)[key] = value;
+						gameAttributeOverrides.expandOptions = true;
+					}
+				}
+			}
+
 			return {
 				...state,
 				loadingLeagueFile: false,
@@ -539,6 +565,7 @@ const reducer = (state: State, action: Action): State => {
 				keptKeys,
 				teams: action.teams.filter(t => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
+				...gameAttributeOverrides,
 			};
 		}
 
@@ -569,6 +596,12 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
+		case "toggleExpandOptions":
+			return {
+				...state,
+				expandOptions: !state.expandOptions,
+			};
+
 		case "toggleChallengeNoDraftPicks":
 			return {
 				...state,
@@ -591,7 +624,6 @@ const NewLeague = (props: View<"newLeague">) => {
 	const [startingSeason, setStartingSeason] = useState(
 		String(new Date().getFullYear()),
 	);
-	const [expandOptions, setExpandOptions] = useState(false);
 
 	const [state, dispatch] = useReducer(
 		reducer,
@@ -641,6 +673,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				pendingInitialLeagueInfo: true,
 				allKeys,
 				keptKeys,
+				expandOptions: false,
 				challengeNoDraftPicks: false,
 				challengeNoFreeAgents: false,
 			};
@@ -879,7 +912,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					type="checkbox"
 					id="new-league-challengeNoDraftPicks"
 					checked={state.challengeNoDraftPicks}
-					onClick={() => {
+					onChange={() => {
 						dispatch({ type: "toggleChallengeNoDraftPicks" });
 					}}
 				/>
@@ -898,7 +931,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					type="checkbox"
 					id="new-league-challengeNoFreeAgents"
 					checked={state.challengeNoFreeAgents}
-					onClick={() => {
+					onChange={() => {
 						dispatch({ type: "toggleChallengeNoFreeAgents" });
 					}}
 				/>
@@ -1118,18 +1151,18 @@ const NewLeague = (props: View<"newLeague">) => {
 							<button
 								className="btn btn-link p-0 mb-3"
 								type="button"
-								onClick={() => setExpandOptions(expand => !expand)}
+								onClick={() => dispatch({ type: "toggleExpandOptions" })}
 							>
 								More Options{" "}
 								<span
 									className={`glyphicon ${
-										expandOptions
+										state.expandOptions
 											? "glyphicon-menu-down"
 											: "glyphicon-menu-right"
 									}`}
 								/>
 							</button>
-							{expandOptions ? moreOptions : null}
+							{state.expandOptions ? moreOptions : null}
 						</>
 					) : null}
 

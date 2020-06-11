@@ -120,8 +120,6 @@ league creation options
   - no draft picks
   - lose your best player every year
   - UI
-    - challenge mode options could already be enabled in league file - check in reducer
-      - test with league files
     - apply option in worker, taking into account existing gameAttributes that may need to be overridden
 - god mode options for challenge mode?
 - blog

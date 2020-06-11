@@ -451,6 +451,12 @@ const generateJSONSchema = (sport /*: string*/) => {
 							minimum: 0,
 						}),
 						gameAttribute("budget", { type: "boolean" }),
+						gameAttribute("challengeNoDraftPicks", {
+							type: "boolean",
+						}),
+						gameAttribute("challengeNoFreeAgents", {
+							type: "boolean",
+						}),
 						gameAttribute("confs", {
 							type: "array",
 							minItems: 1,

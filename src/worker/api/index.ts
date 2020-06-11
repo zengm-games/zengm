@@ -230,6 +230,7 @@ const createLeague = async ({
 	importLid,
 	getLeagueOptions,
 	keptKeys,
+	actualStartingSeason,
 }: {
 	name: string;
 	tid: number;
@@ -239,6 +240,7 @@ const createLeague = async ({
 	importLid: number | undefined | null;
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
+	actualStartingSeason: string | undefined;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -252,7 +254,16 @@ const createLeague = async ({
 	}
 
 	if (leagueFile.startingSeason === undefined) {
-		leagueFile.startingSeason = new Date().getFullYear();
+		if (actualStartingSeason) {
+			leagueFile.startingSeason = parseInt(actualStartingSeason);
+		}
+
+		if (
+			leagueFile.startingSeason === undefined ||
+			Number.isNaN(leagueFile.startingSeason)
+		) {
+			leagueFile.startingSeason = new Date().getFullYear();
+		}
 	}
 
 	if (leagueFile.players) {

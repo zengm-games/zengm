@@ -567,6 +567,9 @@ const reducer = (state: State, action: Action): State => {
 
 const NewLeague = (props: View<"newLeague">) => {
 	const [name, setName] = useState(props.name);
+	const [startingSeason, setStartingSeason] = useState(
+		String(new Date().getFullYear()),
+	);
 	const [expandOptions, setExpandOptions] = useState(false);
 
 	const [state, dispatch] = useReducer(
@@ -665,6 +668,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				? state.difficulty
 				: DIFFICULTY.Normal;
 
+			const actualStartingSeason =
+				state.customize === "default" ? startingSeason : undefined;
+
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -689,6 +695,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					difficulty: actualDifficulty,
 					importLid: props.lid,
 					getLeagueOptions,
+					actualStartingSeason,
 				});
 
 				let type: string = state.customize;
@@ -738,6 +745,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.name,
 			state.randomization,
 			state.season,
+			startingSeason,
 			state.teams,
 			state.tid,
 			title,
@@ -908,6 +916,21 @@ const NewLeague = (props: View<"newLeague">) => {
 							}}
 						/>
 					</div>
+
+					{state.customize === "default" ? (
+						<div className="form-group">
+							<label htmlFor="new-league-starting-season">Season</label>
+							<input
+								id="new-league-starting-season"
+								className="form-control"
+								type="text"
+								value={startingSeason}
+								onChange={event => {
+									setStartingSeason(event.target.value);
+								}}
+							/>
+						</div>
+					) : null}
 
 					{state.customize === "real" ? (
 						<LeagueMenu

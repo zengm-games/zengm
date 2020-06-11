@@ -221,6 +221,32 @@ const countNegotiations = async () => {
 	return negotiations.length;
 };
 
+const upsertGameAttribute = <Key extends keyof GameAttributesLeague>(
+	gameAttributes: {
+		key: keyof GameAttributesLeague;
+		value: unknown;
+	}[],
+	key: Key,
+	value: GameAttributesLeague[Key],
+) => {
+	let found = false;
+	for (const gameAttribute of gameAttributes) {
+		if (gameAttribute.key === key) {
+			gameAttribute.value = value;
+			found = true;
+
+			// No break, in case there are dupe keys for some reason
+		}
+	}
+
+	if (!found) {
+		gameAttributes.push({
+			key,
+			value,
+		});
+	}
+};
+
 const createLeague = async ({
 	name,
 	tid,
@@ -231,6 +257,8 @@ const createLeague = async ({
 	getLeagueOptions,
 	keptKeys,
 	actualStartingSeason,
+	challengeNoDraftPicks,
+	challengeNoFreeAgents,
 }: {
 	name: string;
 	tid: number;
@@ -241,6 +269,8 @@ const createLeague = async ({
 	getLeagueOptions: GetLeagueOptions | undefined;
 	keptKeys: string[];
 	actualStartingSeason: string | undefined;
+	challengeNoDraftPicks: boolean;
+	challengeNoFreeAgents: boolean;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -303,6 +333,26 @@ const createLeague = async ({
 			}
 		}
 	}
+
+	if (!leagueFile.gameAttributes) {
+		leagueFile.gameAttributes = [];
+	}
+
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"challengeNoDraftPicks",
+		challengeNoDraftPicks,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"challengeNoFreeAgents",
+		challengeNoFreeAgents,
+	);
+	console.log(
+		challengeNoDraftPicks,
+		challengeNoFreeAgents,
+		leagueFile.gameAttributes,
+	);
 
 	const lid = league.create({
 		name,

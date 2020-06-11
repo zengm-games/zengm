@@ -111,21 +111,19 @@ league creation options
 - starting season
   - probably put this above, where season is for real laeagues
 - repeat season / groundhog day
+  - draft pick trades
+  - where store seasons, player object will get too big if too many?
 - add challenge mode
   - hide player ratings
   - lose your best player every year
-- add option to league creation
-  - hide player ratings
-  - no free agents
-  - no draft picks
-  - lose your best player every year
-  - UI
-    - apply option in worker, taking into account existing gameAttributes that may need to be overridden
 - god mode options for challenge mode?
 - blog
   - starting season
+    - only random for now
   - challenge modes - either in God Mode or when creating league
     - no free agents
+    - no draft picks
+    - can be changed in god mode settings too, not just when creating new league
 
 god mode stuff
 - more stuff on player editor

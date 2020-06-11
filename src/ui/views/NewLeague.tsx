@@ -752,6 +752,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					importLid: props.lid,
 					getLeagueOptions,
 					actualStartingSeason,
+					challengeNoDraftPicks: state.challengeNoDraftPicks,
+					challengeNoFreeAgents: state.challengeNoFreeAgents,
 				});
 
 				let type: string = state.customize;
@@ -791,6 +793,8 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 		},
 		[
+			state.challengeNoDraftPicks,
+			state.challengeNoFreeAgents,
 			state.customize,
 			state.difficulty,
 			state.keptKeys,

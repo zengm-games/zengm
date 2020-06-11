@@ -365,6 +365,8 @@ type State = {
 	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
 	keptKeys: string[];
+	challengeNoDraftPicks: boolean;
+	challengeNoFreeAgents: boolean;
 };
 
 type Action =
@@ -417,6 +419,12 @@ type Action =
 			type: "newLeagueInfo";
 			allKeys: string[];
 			teams: NewLeagueTeam[];
+	  }
+	| {
+			type: "toggleChallengeNoDraftPicks";
+	  }
+	| {
+			type: "toggleChallengeNoFreeAgents";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -561,6 +569,18 @@ const reducer = (state: State, action: Action): State => {
 			};
 		}
 
+		case "toggleChallengeNoDraftPicks":
+			return {
+				...state,
+				challengeNoDraftPicks: !state.challengeNoDraftPicks,
+			};
+
+		case "toggleChallengeNoFreeAgents":
+			return {
+				...state,
+				challengeNoFreeAgents: !state.challengeNoFreeAgents,
+			};
+
 		default:
 			throw new Error();
 	}
@@ -621,6 +641,8 @@ const NewLeague = (props: View<"newLeague">) => {
 				pendingInitialLeagueInfo: true,
 				allKeys,
 				keptKeys,
+				challengeNoDraftPicks: false,
+				challengeNoFreeAgents: false,
 			};
 		},
 	);
@@ -855,8 +877,11 @@ const NewLeague = (props: View<"newLeague">) => {
 				<input
 					className="form-check-input"
 					type="checkbox"
-					value=""
 					id="new-league-challengeNoDraftPicks"
+					checked={state.challengeNoDraftPicks}
+					onClick={() => {
+						dispatch({ type: "toggleChallengeNoDraftPicks" });
+					}}
 				/>
 				<label
 					className="form-check-label"
@@ -871,8 +896,11 @@ const NewLeague = (props: View<"newLeague">) => {
 				<input
 					className="form-check-input"
 					type="checkbox"
-					value=""
 					id="new-league-challengeNoFreeAgents"
+					checked={state.challengeNoFreeAgents}
+					onClick={() => {
+						dispatch({ type: "toggleChallengeNoFreeAgents" });
+					}}
 				/>
 				<label
 					className="form-check-label"

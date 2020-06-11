@@ -119,9 +119,10 @@ league creation options
   - no free agents
   - no draft picks
   - lose your best player every year
-- challenge mode options could already be enabled in league file - check
-  - this means state needs to be in reducer
-  - test with league files
+  - UI
+    - challenge mode options could already be enabled in league file - check in reducer
+      - test with league files
+    - apply option in worker, taking into account existing gameAttributes that may need to be overridden
 - god mode options for challenge mode?
 - blog
   - starting season

@@ -109,10 +109,8 @@ league creation options
 - option to equalize cities when starting new league (equal spending and size)
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
 - starting season
-- repeat season
-- UI
-  - hide by default
-  - randomization here too
+  - probably put this above, where season is for real laeagues
+- repeat season / groundhog day
 - challenge mode
   - hide player ratings
   - no signing free agents (except min contracts)

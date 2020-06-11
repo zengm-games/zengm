@@ -78,8 +78,52 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	scheduledEvents: "Scheduled events, like expansion and league rule changes",
 };
 
-const initKeptKeys = (leagueFile: any) =>
-	leagueFile ? Object.keys(leagueFile).filter(key => key !== "version") : [];
+const initKeptKeys = ({
+	leagueFile,
+	newAllKeys,
+	oldKeptKeys,
+	oldAllKeys,
+}:
+	| {
+			leagueFile: any;
+			newAllKeys?: undefined;
+			oldKeptKeys?: string[];
+			oldAllKeys?: string[];
+	  }
+	| {
+			leagueFile?: undefined;
+			newAllKeys: string[];
+			oldKeptKeys?: string[];
+			oldAllKeys?: string[];
+	  }) => {
+	let allKeys;
+	if (newAllKeys) {
+		allKeys = newAllKeys;
+	} else {
+		allKeys = leagueFile
+			? Object.keys(leagueFile).filter(key => key !== "version")
+			: [];
+	}
+
+	let keptKeys;
+	if (!oldKeptKeys || !oldAllKeys) {
+		keptKeys = allKeys;
+	} else {
+		// If any were unchecked before, keep them unchecked now
+		keptKeys = allKeys.filter(key => {
+			if (!oldAllKeys.includes(key)) {
+				return true;
+			}
+
+			return oldKeptKeys.includes(key);
+		});
+	}
+
+	return {
+		allKeys,
+		keptKeys,
+	};
+};
 
 const LeaguePartPicker = ({
 	allKeys,
@@ -414,11 +458,14 @@ const reducer = (state: State, action: Action): State => {
 				tid: getNewTid(getTeamRegionName(state.teams, state.tid), teamsDefault),
 			};
 
-		case "setCustomize":
+		case "setCustomize": {
+			const allKeys = action.customize === "default" ? [] : state.allKeys;
 			return {
 				...state,
 				customize: action.customize,
+				allKeys,
 			};
+		}
 
 		case "setDifficulty":
 			return {
@@ -469,14 +516,18 @@ const reducer = (state: State, action: Action): State => {
 		case "newLeagueFile": {
 			const prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
 
-			const allKeys = initKeptKeys(action.leagueFile);
+			const { allKeys, keptKeys } = initKeptKeys({
+				leagueFile: action.leagueFile,
+				oldKeptKeys: state.keptKeys,
+				oldAllKeys: state.allKeys,
+			});
 
 			return {
 				...state,
 				loadingLeagueFile: false,
 				leagueFile: action.leagueFile,
 				allKeys,
-				keptKeys: allKeys,
+				keptKeys,
 				teams: action.teams.filter(t => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
 			};
@@ -491,12 +542,18 @@ const reducer = (state: State, action: Action): State => {
 				}
 			}
 
+			const { allKeys, keptKeys } = initKeptKeys({
+				newAllKeys: action.allKeys,
+				oldKeptKeys: state.keptKeys,
+				oldAllKeys: state.allKeys,
+			});
+
 			return {
 				...state,
 				loadingLeagueFile: false,
 				leagueFile: null,
-				allKeys: action.allKeys,
-				keptKeys: action.allKeys,
+				allKeys,
+				keptKeys,
 				teams: action.teams,
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				pendingInitialLeagueInfo: false,
@@ -541,7 +598,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				season = 2020;
 			}
 
-			const allKeys = initKeptKeys(leagueFile);
+			const { allKeys, keptKeys } = initKeptKeys({
+				leagueFile,
+			});
 
 			return {
 				creating: false,
@@ -557,7 +616,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				tid: getNewTid(prevTeamRegionName, teams),
 				pendingInitialLeagueInfo: true,
 				allKeys,
-				keptKeys: allKeys,
+				keptKeys,
 			};
 		},
 	);
@@ -784,7 +843,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	if (state.keptKeys.includes("players") || state.customize === "real") {
 		moreOptions.push(
-			<div className="form-group">
+			<div key="randomization" className="form-group">
 				<label htmlFor="new-league-randomization">Randomization</label>
 				<select
 					id="new-league-randomization"

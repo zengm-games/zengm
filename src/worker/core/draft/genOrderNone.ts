@@ -34,8 +34,9 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	);
 
 	// Because we're editing this later, and sometimes this is called with mock=true
-	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round
+	draftPicks = helpers.deepCopy(draftPicks);
 
+	// Reorganize this to an array indexed on originalTid and round
 	const draftPicksIndexed: DraftPick[][] = [];
 
 	for (const dp of draftPicks) {
@@ -53,14 +54,14 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 			random.shuffle(teams);
 		}
 
+		let pick = 1;
 		for (let i = 0; i < teams.length; i++) {
-			const dp = draftPicksIndexed[teams[i].tid][round];
+			const dp = draftPicksIndexed[teams[i].tid]?.[round];
 
-			if (dp === undefined) {
-				throw new Error(`No draft pick found for round ${round}`);
+			if (dp !== undefined) {
+				dp.pick = pick;
+				pick += 1;
 			}
-
-			dp.pick = i + 1;
 		}
 	}
 

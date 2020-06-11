@@ -151,7 +151,8 @@ const setGameAttributes = async (
 		await initUILocalGames();
 	} else if (
 		toUpdate.includes("numSeasonsFutureDraftPicks") ||
-		toUpdate.includes("challengeNoDraftPicks")
+		toUpdate.includes("challengeNoDraftPicks") ||
+		(toUpdate.includes("userTids") && g.get("challengeNoDraftPicks"))
 	) {
 		await draft.genPicks();
 	}

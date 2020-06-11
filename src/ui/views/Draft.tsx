@@ -78,6 +78,7 @@ TradeButton.propTypes = {
 };
 
 const Draft = ({
+	challengeNoDraftPicks,
 	draftType,
 	drafted,
 	expansionDraft,
@@ -301,7 +302,17 @@ const Draft = ({
 			</p>
 
 			{remainingPicks.length > 0 ? (
-				<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
+				<>
+					{challengeNoDraftPicks && !fantasyDraft && !expansionDraft ? (
+						<div>
+							<p className="alert alert-danger d-inline-block">
+								<b>Challenge Mode:</b> Your team does not get any draft picks
+								unless you trade, unless you acquire them in a trade.
+							</p>
+						</div>
+					) : null}
+					<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
+				</>
 			) : (
 				<>
 					<p id="draft-buttons">

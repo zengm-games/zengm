@@ -154,6 +154,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
+			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			draftType: g.get("draftType"),
 			drafted,
 			expansionDraft: g.get("phase") === PHASE.EXPANSION_DRAFT,

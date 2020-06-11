@@ -15,7 +15,7 @@ const logLotteryChances = (
 	for (let i = 0; i < chances.length; i++) {
 		if (i < teams.length) {
 			const originalTid = teams[i].tid;
-			const dp = draftPicksIndexed[originalTid][1];
+			const dp = draftPicksIndexed[originalTid]?.[1];
 
 			if (dp) {
 				const tid = dp.tid;

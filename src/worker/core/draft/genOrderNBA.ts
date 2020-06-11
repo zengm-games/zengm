@@ -97,7 +97,7 @@ const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
 ): Promise<ReturnVal> => {
-	const teams = await idb.getCopies.teamsPlus({
+	let teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "disabled"],
 		seasonAttrs: [
 			"winp",
@@ -112,6 +112,27 @@ const genOrder = async (
 		addDummySeason: true,
 		active: true,
 	});
+
+	const draftPicks = helpers.deepCopy(
+		await idb.cache.draftPicks.indexGetAll(
+			"draftPicksBySeason",
+			g.get("season"),
+		),
+	);
+
+	const draftPicksIndexed: DraftPick[][] = [];
+	for (const dp of draftPicks) {
+		const tid = dp.originalTid; // Initialize to an array
+
+		if (draftPicksIndexed[tid] === undefined) {
+			draftPicksIndexed[tid] = [];
+		}
+
+		draftPicksIndexed[tid][dp.round] = dp;
+	}
+
+	// Handle teams without draft picks (for challengeNoDraftPicks)
+	teams = teams.filter(t => !!draftPicksIndexed[t.tid]);
 
 	// Draft lottery
 
@@ -131,7 +152,7 @@ const genOrder = async (
 
 	if (teams.length < minNumLotteryTeams) {
 		throw new Error(
-			`Number of teams ${teams.length} is less than the minimum required for draft type "${draftType}"`,
+			`Number of teams with draft picks (${teams.length}) is less than the minimum required for draft type "${draftType}"`,
 		);
 	}
 
@@ -163,40 +184,30 @@ const genOrder = async (
 
 	const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
 
+	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
+	await genPicks(g.get("season"));
+
 	const firstN: number[] = [];
 
+	let iterations = 0;
 	while (firstN.length < numToPick) {
 		const draw = random.randInt(0, totalChances - 1);
 		const i = chancesCumsum.findIndex(chance => chance > draw);
 
-		if (!firstN.includes(i) && i < teams.length) {
+		if (
+			!firstN.includes(i) &&
+			i < teams.length &&
+			draftPicksIndexed[teams[i].tid]
+		) {
 			// If one lottery winner, select after other tied teams;
 			(teams[i] as any).randVal -= teams.length;
 			firstN.push(i);
 		}
-	}
 
-	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	await genPicks(g.get("season"));
-
-	let draftPicks = await idb.cache.draftPicks.indexGetAll(
-		"draftPicksBySeason",
-		g.get("season"),
-	);
-
-	// Because we're editing this later, and sometimes this is called with mock=true
-	draftPicks = helpers.deepCopy(draftPicks); // Reorganize this to an array indexed on originalTid and round
-
-	const draftPicksIndexed: DraftPick[][] = [];
-
-	for (const dp of draftPicks) {
-		const tid = dp.originalTid; // Initialize to an array
-
-		if (draftPicksIndexed[tid] === undefined) {
-			draftPicksIndexed[tid] = [];
+		iterations += 1;
+		if (iterations > 100000) {
+			break;
 		}
-
-		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
 	if (!mock) {
@@ -204,11 +215,13 @@ const genOrder = async (
 	}
 
 	// First round - lottery winners
+	let pick = 1;
 	for (let i = 0; i < firstN.length; i++) {
 		const dp = draftPicksIndexed[teams[firstN[i]].tid][1];
 
 		if (dp !== undefined) {
-			dp.pick = i + 1;
+			dp.pick = pick;
+			pick += 1;
 
 			if (!mock) {
 				logLotteryWinners(
@@ -223,21 +236,18 @@ const genOrder = async (
 	}
 
 	// First round - everyone else
-	let pick = firstN.length + 1;
-
 	for (let i = 0; i < teams.length; i++) {
 		if (!firstN.includes(i)) {
-			const dp = draftPicksIndexed[teams[i].tid][1];
+			const dp = draftPicksIndexed[teams[i].tid]?.[1];
 
 			if (dp) {
 				dp.pick = pick;
+				pick += 1;
 
 				if (pick <= numLotteryTeams && !mock) {
 					logLotteryWinners(teams, dp.tid, teams[i].tid, pick, conditions);
 				}
 			}
-
-			pick += 1;
 		}
 	}
 
@@ -299,13 +309,15 @@ const genOrder = async (
 		return r === 0 ? (b as any).randVal - (a as any).randVal : r;
 	});
 
-	// Second round
+	// Second+ round
 	for (let round = 2; round <= g.get("numDraftRounds"); round++) {
+		let pick = 1;
 		for (let i = 0; i < teams.length; i++) {
-			const dp = draftPicksIndexed[teams[i].tid][round];
+			const dp = draftPicksIndexed[teams[i].tid]?.[round];
 
 			if (dp !== undefined) {
-				dp.pick = i + 1;
+				dp.pick = pick;
+				pick += 1;
 			}
 		}
 	}

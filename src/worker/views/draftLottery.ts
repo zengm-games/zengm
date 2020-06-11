@@ -106,6 +106,7 @@ const updateDraftLottery = async (
 		for (const pick of draftLotteryResult.result) {
 			pick.pick = undefined;
 		}
+		console.log("draftLotteryResult", draftLotteryResult);
 
 		const type =
 			season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY

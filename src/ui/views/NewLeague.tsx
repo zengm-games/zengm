@@ -1228,13 +1228,20 @@ const NewLeague = (props: View<"newLeague">) => {
 								type="button"
 								onClick={() => dispatch({ type: "toggleExpandOptions" })}
 							>
-								<span
-									className={`glyphicon ${
-										state.expandOptions
-											? "glyphicon-triangle-bottom"
-											: "glyphicon-triangle-right"
-									}`}
-								/>{" "}
+								<AnimatePresence initial={false}>
+									<motion.span
+										animate={state.expandOptions ? "open" : "collapsed"}
+										variants={{
+											open: { rotate: 90 },
+											collapsed: { rotate: 0 },
+										}}
+										transition={{
+											duration: 0.25,
+											type: "tween",
+										}}
+										className="glyphicon glyphicon-triangle-right"
+									/>
+								</AnimatePresence>{" "}
 								More options
 							</button>
 							<AnimatePresence initial={false}>
@@ -1248,8 +1255,8 @@ const NewLeague = (props: View<"newLeague">) => {
 											collapsed: { opacity: 0, height: 0 },
 										}}
 										transition={{
-											duration: 0.5,
-											ease: [0.04, 0.62, 0.23, 0.98],
+											duration: 0.25,
+											type: "tween",
 										}}
 									>
 										{moreOptions}

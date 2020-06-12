@@ -370,6 +370,7 @@ type State = {
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
 	challengeNoTrades: boolean;
+	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 };
@@ -436,6 +437,9 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeNoTrades";
+	  }
+	| {
+			type: "toggleEqualizeRegions";
 	  }
 	| {
 			type: "toggleRepeatSeason";
@@ -550,11 +554,13 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoDraftPicks: boolean;
 				challengeNoFreeAgents: boolean;
 				challengeNoTrades: boolean;
+				equalizeRegions: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
 			} = {
 				challengeNoDraftPicks: state.challengeNoDraftPicks,
 				challengeNoFreeAgents: state.challengeNoFreeAgents,
+				equalizeRegions: state.equalizeRegions,
 				challengeNoTrades: state.challengeNoTrades,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
@@ -637,6 +643,12 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoTrades: !state.challengeNoTrades,
 			};
 
+		case "toggleEqualizeRegions":
+			return {
+				...state,
+				equalizeRegions: !state.equalizeRegions,
+			};
+
 		case "toggleRepeatSeason":
 			return {
 				...state,
@@ -714,6 +726,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				challengeNoTrades: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
+				equalizeRegions: false,
 			};
 		},
 	);
@@ -795,6 +808,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					challengeNoTrades: state.challengeNoTrades,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
+					equalizeRegions: state.equalizeRegions,
 				});
 
 				let type: string = state.customize;
@@ -839,6 +853,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.challengeNoTrades,
 			state.customize,
 			state.difficulty,
+			state.equalizeRegions,
 			state.keptKeys,
 			state.leagueFile,
 			state.legend,
@@ -1012,6 +1027,23 @@ const NewLeague = (props: View<"newLeague">) => {
 		</div>,
 		<div key="other" className="mb-3">
 			<label>Other</label>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-equalizeRegions"
+					checked={state.equalizeRegions}
+					onChange={() => {
+						dispatch({ type: "toggleEqualizeRegions" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-equalizeRegions"
+				>
+					Equalize region populations
+				</label>
+			</div>
 			{state.keptKeys.includes("players") ? (
 				<div className="form-check mb-2">
 					<input
@@ -1215,11 +1247,19 @@ const NewLeague = (props: View<"newLeague">) => {
 								</button>
 							</div>
 						</div>
-						<PopText
-							tid={state.tid}
-							teams={displayedTeams}
-							numActiveTeams={displayedTeams.length}
-						/>
+						{!state.equalizeRegions ? (
+							<PopText
+								tid={state.tid}
+								teams={displayedTeams}
+								numActiveTeams={displayedTeams.length}
+							/>
+						) : (
+							<span className="text-muted">
+								Region population: equal
+								<br />
+								Size: normal
+							</span>
+						)}
 					</div>
 
 					<div className="form-group">

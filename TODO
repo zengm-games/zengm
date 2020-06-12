@@ -106,10 +106,7 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 
 league creation options
-- option to equalize cities when starting new league (equal spending and size)
-  - expansion cities
-  - disable population growth
-  - confirm equal finances and impact
+- in no free agent mode, you can sign players to more than the minimum if you click the negotiate button
 - add challenge mode
   - hide player ratings
   - lose your best player every year
@@ -124,6 +121,7 @@ league creation options
     - can be changed in god mode settings too, not just when creating new league
   - groundhog day
   - no starting injuries
+  - equalize region populations
 
 god mode stuff
 - more stuff on player editor

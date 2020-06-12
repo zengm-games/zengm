@@ -299,6 +299,7 @@ export type GameAttributesLeague = {
 	divs: { cid: number; did: number; name: string }[];
 	draftType: DraftType;
 	easyDifficultyInPast: boolean;
+	equalizeRegions: boolean;
 	foulsNeededToFoulOut: number;
 	foulRateFactor: number;
 	gameOver: boolean;

@@ -497,6 +497,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("easyDifficultyInPast", {
 							type: "boolean",
 						}),
+						gameAttribute("equalizeRegions", {
+							type: "boolean",
+						}),
 						gameAttribute("foulsNeededToFoulOut", {
 							type: "integer",
 							minimum: 0,

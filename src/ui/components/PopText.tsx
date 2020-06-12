@@ -48,7 +48,7 @@ const PopText = ({
 	return (
 		<span className="text-muted">
 			Region population: ?<br />
-			Difficulty: ?
+			Size: ?
 		</span>
 	);
 };

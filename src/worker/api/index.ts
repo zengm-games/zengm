@@ -262,6 +262,7 @@ const createLeague = async ({
 	challengeNoTrades,
 	repeatSeason,
 	noStartingInjuries,
+	equalizeRegions,
 }: {
 	name: string;
 	tid: number;
@@ -277,6 +278,7 @@ const createLeague = async ({
 	challengeNoTrades: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
+	equalizeRegions: boolean;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -358,6 +360,11 @@ const createLeague = async ({
 		leagueFile.gameAttributes,
 		"challengeNoTrades",
 		challengeNoTrades,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"equalizeRegions",
+		equalizeRegions,
 	);
 
 	if (noStartingInjuries && leagueFile.players) {

@@ -137,7 +137,9 @@ const newPhasePreseason = async (
 		}
 
 		// Mean population should stay constant, otherwise the economics change too much
-		t.pop *= random.uniform(0.98, 1.02);
+		if (!g.get("equalizeRegions")) {
+			t.pop *= random.uniform(0.98, 1.02);
+		}
 		newSeason.pop = t.pop;
 
 		await idb.cache.teams.put(t);

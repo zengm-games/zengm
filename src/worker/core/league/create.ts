@@ -230,6 +230,35 @@ export const createWithoutSaving = (
 		throw new Error("numDraftRounds must be a positive number");
 	}
 
+	if (gameAttributes.equalizeRegions) {
+		console.log("equalize cities!");
+		let totalPopulation = 0;
+		for (const t of teamInfos) {
+			totalPopulation += t.pop;
+		}
+
+		// Round to 2 digits
+		const averagePopulation =
+			Math.round((totalPopulation / teamInfos.length) * 100) / 100;
+		console.log(averagePopulation);
+
+		for (const t of teamInfos) {
+			t.pop = averagePopulation;
+		}
+
+		if (leagueFile.scheduledEvents) {
+			for (const event of leagueFile.scheduledEvents) {
+				if (event.type === "expansionDraft") {
+					for (const t of event.info.teams) {
+						t.pop = averagePopulation;
+					}
+				} else if (event.type === "teamInfo" && event.info.pop !== undefined) {
+					event.info.pop = averagePopulation;
+				}
+			}
+		}
+	}
+
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
 

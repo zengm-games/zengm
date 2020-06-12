@@ -11,18 +11,27 @@ const getPopRanks = (
 	}[],
 ): number[] => {
 	const teamsSorted = orderBy(teamSeasons, "pop", "desc");
-	const popRanks: number[] = [];
 
-	for (let i = 0; i < teamSeasons.length; i++) {
-		for (let j = 0; j < teamsSorted.length; j++) {
-			if (teamSeasons[i].tid === teamsSorted[j].tid) {
-				popRanks[i] = j + 1;
-				break;
+	return teamSeasons.map(t => {
+		// Find the starting and ending ranks of all teams tied with the current team (if no tie, then startRank and endRank will be the same)
+		let startRank;
+		let endRank;
+		for (let i = 0; i < teamsSorted.length; i++) {
+			const t2 = teamsSorted[i];
+			if (t2.pop === t.pop || t2.tid === t.tid) {
+				if (startRank === undefined) {
+					startRank = i + 1;
+				}
+				endRank = i + 1;
 			}
 		}
-	}
 
-	return popRanks;
+		if (startRank === undefined || endRank === undefined) {
+			throw new Error("No rank found");
+		}
+
+		return (startRank + endRank) / 2;
+	});
 };
 
 function addPopRank<T extends { pop?: number; tid: number }>(

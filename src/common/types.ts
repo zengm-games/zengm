@@ -328,6 +328,18 @@ export type GameAttributesLeague = {
 	phase: Phase;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
+	repeatSeason:
+		| undefined
+		| {
+				players: Record<
+					number,
+					{
+						tid: number;
+						contract: PlayerContract;
+						injury: PlayerInjury;
+					}
+				>;
+		  };
 	rookieContractLengths: number[];
 	salaryCap: number;
 	season: number;

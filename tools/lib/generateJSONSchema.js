@@ -612,6 +612,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						}),
+						gameAttribute("repeatSeason", {
+							type: ["boolean", "object"],
+						}),
 						gameAttribute("rookieContractLengths", {
 							type: "array",
 							items: {

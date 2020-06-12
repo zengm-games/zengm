@@ -110,13 +110,9 @@ league creation options
 - no injuries https://old.reddit.com/r/BasketballGM/comments/gt0c8d/random_debuts_fantasy_draft_questions/
 - starting season
   - probably put this above, where season is for real laeagues
-- repeat season / groundhog day
-  - draft pick trades
-  - where store seasons, player object will get too big if too many?
 - add challenge mode
   - hide player ratings
   - lose your best player every year
-- god mode options for challenge mode?
 - blog
   - starting season
     - only random for now
@@ -124,6 +120,9 @@ league creation options
     - no free agents
     - no draft picks
     - can be changed in god mode settings too, not just when creating new league
+  - groundhog day
+
+ties show up as losses in news feed
 
 god mode stuff
 - more stuff on player editor

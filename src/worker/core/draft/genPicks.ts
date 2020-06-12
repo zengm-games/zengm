@@ -4,15 +4,13 @@ import type { DraftPick } from "../../../common/types";
 import { PHASE } from "../../../common";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
-const doSeason = async (season: number) => {
-	const teams = await idb.cache.teams.getAll();
-
-	// If a pick already exists, do nothing. Unless it needs to be deleted because of challenge mode or some other reason.
-	const existingPicks: (DraftPick & {
+const doSeason = async (
+	season: number,
+	existingPicks: (DraftPick & {
 		keep?: boolean;
-	})[] = helpers.deepCopy(
-		await idb.cache.draftPicks.indexGetAll("draftPicksBySeason", season),
-	);
+	})[],
+) => {
+	const teams = await idb.cache.teams.getAll();
 
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 		for (const t of teams) {
@@ -43,23 +41,28 @@ const doSeason = async (season: number) => {
 			}
 		}
 	}
+};
+
+const genPicks = async (season?: number) => {
+	// If a pick already exists, do nothing. Unless it needs to be deleted because of challenge mode or some other reason.
+	const existingPicks: (DraftPick & {
+		keep?: boolean;
+	})[] = helpers.deepCopy(await idb.cache.draftPicks.getAll());
+
+	if (season !== undefined) {
+		await doSeason(season, existingPicks);
+	} else {
+		const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
+		for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
+			const draftYear = g.get("season") + dpOffset + i;
+			await doSeason(draftYear, existingPicks);
+		}
+	}
 
 	// Delete any obsolete picks
 	for (const existingPick of existingPicks) {
 		if (!existingPick.keep) {
 			await idb.cache.draftPicks.delete(existingPick.dpid);
-		}
-	}
-};
-
-const genPicks = async (season?: number) => {
-	if (season !== undefined) {
-		await doSeason(season);
-	} else {
-		const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
-		for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
-			const draftYear = g.get("season") + dpOffset + i;
-			await doSeason(draftYear);
 		}
 	}
 };

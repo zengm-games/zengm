@@ -368,6 +368,7 @@ type State = {
 	expandOptions: boolean;
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
+	repeatSeason: boolean;
 };
 
 type Action =
@@ -429,6 +430,9 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeNoFreeAgents";
+	  }
+	| {
+			type: "toggleRepeatSeason";
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
@@ -539,23 +543,27 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoDraftPicks: boolean;
 				challengeNoFreeAgents: boolean;
 				expandOptions: boolean;
+				repeatSeason: boolean;
 			} = {
 				challengeNoDraftPicks: state.challengeNoDraftPicks,
 				challengeNoFreeAgents: state.challengeNoFreeAgents,
 				expandOptions: state.expandOptions,
+				repeatSeason: state.repeatSeason,
 			};
 			if (action.leagueFile && action.leagueFile.gameAttributes) {
 				for (const { key, value } of action.leagueFile.gameAttributes) {
 					if (
 						(gameAttributeOverrides as any)[key] !== undefined &&
-						typeof value === "boolean" &&
 						(gameAttributeOverrides as any)[key] !== value
 					) {
-						(gameAttributeOverrides as any)[key] = value;
+						// For challenge* this persists the boolean. For repeatSeason it converts that to a boolean, and it'll be filled later w ith the actual correct value.
+						(gameAttributeOverrides as any)[key] = !!value;
 						gameAttributeOverrides.expandOptions = true;
 					}
 				}
 			}
+			console.log(gameAttributeOverrides);
+			console.log(action.leagueFile.gameAttributes);
 
 			return {
 				...state,
@@ -612,6 +620,12 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				challengeNoFreeAgents: !state.challengeNoFreeAgents,
+			};
+
+		case "toggleRepeatSeason":
+			return {
+				...state,
+				repeatSeason: !state.repeatSeason,
 			};
 
 		default:
@@ -676,6 +690,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				expandOptions: false,
 				challengeNoDraftPicks: false,
 				challengeNoFreeAgents: false,
+				repeatSeason: false,
 			};
 		},
 	);
@@ -754,6 +769,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					actualStartingSeason,
 					challengeNoDraftPicks: state.challengeNoDraftPicks,
 					challengeNoFreeAgents: state.challengeNoFreeAgents,
+					repeatSeason: state.repeatSeason,
 				});
 
 				let type: string = state.customize;
@@ -804,6 +820,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.lid,
 			props.name,
 			state.randomization,
+			state.repeatSeason,
 			state.season,
 			startingSeason,
 			state.teams,
@@ -909,7 +926,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	const moreOptions: React.ReactNode[] = [
 		<div key="challenge" className="mb-3">
-			<label>Challenge Modes</label>
+			<label>Challenge modes</label>
 			<div className="form-check mb-2">
 				<input
 					className="form-check-input"
@@ -924,7 +941,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					className="form-check-label"
 					htmlFor="new-league-challengeNoDraftPicks"
 				>
-					No Draft Picks
+					No draft picks
 					<br />
 					<span className="text-muted">{helpTexts.challengeNoDraftPicks}</span>
 				</label>
@@ -943,9 +960,32 @@ const NewLeague = (props: View<"newLeague">) => {
 					className="form-check-label"
 					htmlFor="new-league-challengeNoFreeAgents"
 				>
-					No Free Agents
+					No free agents
 					<br />
 					<span className="text-muted">{helpTexts.challengeNoFreeAgents}</span>
+				</label>
+			</div>
+		</div>,
+		<div key="other" className="mb-3">
+			<label>Other</label>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-repeatSeason"
+					checked={state.repeatSeason}
+					onChange={() => {
+						dispatch({ type: "toggleRepeatSeason" });
+					}}
+				/>
+				<label className="form-check-label" htmlFor="new-league-repeatSeason">
+					Groundhog day
+					<br />
+					<span className="text-muted">
+						Next season will start immediately after the playoffs, with the same
+						exact players and rosters as the previous season. No player
+						development, no persistent transactions.
+					</span>
 				</label>
 			</div>
 		</div>,

@@ -205,11 +205,15 @@ const updatePlayMenu = async () => {
 			keys = keys.filter(key => key !== "untilEndOfRound");
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
-		// Offseason - pre draft
-		keys =
-			g.get("draftType") !== "noLottery" && g.get("draftType") !== "random"
-				? ["viewDraftLottery", "untilDraft"]
-				: ["untilDraft"];
+		if (g.get("repeatSeason")) {
+			keys = ["untilPreseason"];
+		} else {
+			// Offseason - pre draft
+			keys =
+				g.get("draftType") !== "noLottery" && g.get("draftType") !== "random"
+					? ["viewDraftLottery", "untilDraft"]
+					: ["untilDraft"];
+		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft
 		keys = ["untilResignPlayers"];

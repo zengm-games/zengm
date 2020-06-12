@@ -302,6 +302,10 @@ const processScheduledEvents = async (
 	phase: number,
 	conditions: Conditions,
 ) => {
+	if (g.get("repeatSeason")) {
+		return;
+	}
+
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
 	const processed: typeof scheduledEvents = [];
 	const eventLogTexts: string[] = [];

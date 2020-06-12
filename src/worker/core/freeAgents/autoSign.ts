@@ -14,6 +14,7 @@ import { g, local, random } from "../../util";
  * @return {Promise}
  */
 const autoSign = async () => {
+	console.log("autoSign", g.get("season"), g.get("phase"));
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		PLAYER.FREE_AGENT,

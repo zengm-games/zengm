@@ -50,113 +50,115 @@ const newPhaseBeforeDraft = async (
 		}
 	}
 
-	// Do annual tasks for each player, like checking for retirement
-	const players = await idb.cache.players.indexGetAll("playersByTid", [
-		PLAYER.FREE_AGENT,
-		Infinity,
-	]);
+	if (!g.get("repeatSeason")) {
+		// Do annual tasks for each player, like checking for retirement
+		const players = await idb.cache.players.indexGetAll("playersByTid", [
+			PLAYER.FREE_AGENT,
+			Infinity,
+		]);
 
-	const retiredPlayersByTeam: Record<
-		number,
-		Player<MinimalPlayerRatings>[]
-	> = {};
+		const retiredPlayersByTeam: Record<
+			number,
+			Player<MinimalPlayerRatings>[]
+		> = {};
 
-	for (const p of players) {
-		let update = false;
+		for (const p of players) {
+			let update = false;
 
-		if (player.shouldRetire(p)) {
-			if (p.tid >= 0) {
-				if (!retiredPlayersByTeam[p.tid]) {
-					retiredPlayersByTeam[p.tid] = [];
+			if (player.shouldRetire(p)) {
+				if (p.tid >= 0) {
+					if (!retiredPlayersByTeam[p.tid]) {
+						retiredPlayersByTeam[p.tid] = [];
+					}
+					retiredPlayersByTeam[p.tid].push(p);
 				}
-				retiredPlayersByTeam[p.tid].push(p);
-			}
-			player.retire(p, conditions);
-			update = true;
-		}
-
-		// Update "free agent years" counter and retire players who have been free agents for more than one years
-		if (p.tid === PLAYER.FREE_AGENT) {
-			if (p.yearsFreeAgent >= 1) {
 				player.retire(p, conditions);
 				update = true;
-			} else {
-				p.yearsFreeAgent += 1;
 			}
 
-			p.contract.exp += 1;
-			update = true;
-		} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
-			p.yearsFreeAgent = 0;
-			update = true;
-		}
+			// Update "free agent years" counter and retire players who have been free agents for more than one years
+			if (p.tid === PLAYER.FREE_AGENT) {
+				if (p.yearsFreeAgent >= 1) {
+					player.retire(p, conditions);
+					update = true;
+				} else {
+					p.yearsFreeAgent += 1;
+				}
 
-		// Heal injures
-		if (p.injury.type !== "Healthy") {
-			// This doesn't use g.get("numGames") because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
-			if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
-				p.injury = {
-					type: "Healthy",
-					gamesRemaining: 0,
-				};
-			} else {
-				p.injury.gamesRemaining -= defaultGameAttributes.numGames;
+				p.contract.exp += 1;
+				update = true;
+			} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
+				p.yearsFreeAgent = 0;
+				update = true;
 			}
 
-			update = true;
+			// Heal injures
+			if (p.injury.type !== "Healthy") {
+				// This doesn't use g.get("numGames") because that would unfairly make injuries last longer if it was lower - if anything injury duration should be modulated based on that, but oh well
+				if (p.injury.gamesRemaining <= defaultGameAttributes.numGames) {
+					p.injury = {
+						type: "Healthy",
+						gamesRemaining: 0,
+					};
+				} else {
+					p.injury.gamesRemaining -= defaultGameAttributes.numGames;
+				}
+
+				update = true;
+			}
+
+			if (update) {
+				await idb.cache.players.put(p);
+			}
 		}
 
-		if (update) {
-			await idb.cache.players.put(p);
+		for (const [tidString, retiredPlayers] of Object.entries(
+			retiredPlayersByTeam,
+		)) {
+			const tid = parseInt(tidString);
+			const text = retiredPlayers
+				.map(
+					p =>
+						`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
+							p.lastName
+						}</a> retired.`,
+				)
+				.join("<br>");
+			logEvent(
+				{
+					type: "retiredList",
+					text,
+					showNotification: tid === g.get("userTid"),
+					pids: retiredPlayers.map(p => p.pid),
+					tids: [tid],
+					saveToDb: false,
+				},
+				conditions,
+			);
 		}
-	}
 
-	for (const [tidString, retiredPlayers] of Object.entries(
-		retiredPlayersByTeam,
-	)) {
-		const tid = parseInt(tidString);
-		const text = retiredPlayers
-			.map(
-				p =>
-					`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
-						p.lastName
-					}</a> retired.`,
-			)
-			.join("<br>");
-		logEvent(
-			{
-				type: "retiredList",
-				text,
-				showNotification: tid === g.get("userTid"),
-				pids: retiredPlayers.map(p => p.pid),
-				tids: [tid],
-				saveToDb: false,
-			},
-			conditions,
-		);
-	}
+		const releasedPlayers = await idb.cache.releasedPlayers.getAll();
 
-	const releasedPlayers = await idb.cache.releasedPlayers.getAll();
-
-	for (const rp of releasedPlayers) {
-		if (rp.contract.exp <= g.get("season") && typeof rp.rid === "number") {
-			await idb.cache.releasedPlayers.delete(rp.rid);
+		for (const rp of releasedPlayers) {
+			if (rp.contract.exp <= g.get("season") && typeof rp.rid === "number") {
+				await idb.cache.releasedPlayers.delete(rp.rid);
+			}
 		}
-	}
 
-	await team.updateStrategies();
-	achievement.check("afterAwards", conditions);
-	const response = await season.updateOwnerMood();
-	if (response) {
-		await genMessage(response.deltas, response.cappedDeltas);
+		await team.updateStrategies();
+		achievement.check("afterAwards", conditions);
+		const response = await season.updateOwnerMood();
+		if (response) {
+			await genMessage(response.deltas, response.cappedDeltas);
+		}
+
+		if (g.get("draftType") === "noLottery" || g.get("draftType") === "random") {
+			await draft.genOrder(false, conditions);
+		}
 	}
 
 	if (g.get("gameOver")) {
 		achievement.check("afterFired", conditions);
-	}
-
-	if (g.get("draftType") === "noLottery" || g.get("draftType") === "random") {
-		await draft.genOrder(false, conditions);
 	}
 
 	// Don't redirect if we're viewing a live game now

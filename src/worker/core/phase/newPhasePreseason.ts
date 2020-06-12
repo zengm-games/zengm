@@ -11,7 +11,10 @@ import type {
 const newPhasePreseason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
-	await freeAgents.autoSign();
+	const repeatSeason = g.get("repeatSeason");
+	if (!repeatSeason) {
+		await freeAgents.autoSign();
+	}
 	await league.setGameAttributes({
 		season: g.get("season") + 1,
 	});
@@ -172,7 +175,7 @@ const newPhasePreseason = async (
 	]);
 
 	// Small chance that a player was lying about his age!
-	if (Math.random() < 0.01) {
+	if (!repeatSeason && Math.random() < 0.01) {
 		const p = player.getPlayerFakeAge(players);
 
 		if (p) {
@@ -212,29 +215,52 @@ const newPhasePreseason = async (
 
 	// Loop through all non-retired players
 	for (const p of players) {
-		// Update ratings
-		player.addRatingsRow(p, scoutingRank);
-		player.develop(p, 1, false, coachingRanks[p.tid]);
+		if (!repeatSeason) {
+			// Update ratings
+			player.addRatingsRow(p, scoutingRank);
+			player.develop(p, 1, false, coachingRanks[p.tid]);
 
-		// Update player values after ratings changes
-		player.updateValues(p);
+			// Update player values after ratings changes
+			player.updateValues(p);
+
+			// If player is a free agent, re-assess contract demands
+			if (p.tid === PLAYER.FREE_AGENT) {
+				const newContract = player.genContract(p);
+
+				if (newContract.amount > p.contract.amount) {
+					// If player is still good, bump up contract demands
+					newContract.amount = (newContract.amount + p.contract.amount) / 2;
+					newContract.amount = 50 * Math.round(newContract.amount / 50); // Make it a multiple of 50k
+				}
+
+				player.setContract(p, newContract, false);
+			}
+		} else {
+			const info = repeatSeason.players[p.pid];
+			if (info) {
+				p.tid = info.tid;
+				p.injury = helpers.deepCopy(info.injury);
+				p.contract = helpers.deepCopy(info.contract);
+				p.contract.exp += 1;
+				p.salaries.push({
+					season: p.contract.exp,
+					amount: p.contract.amount,
+				});
+			} else {
+				p.tid = PLAYER.FREE_AGENT;
+			}
+
+			const newRatings = helpers.deepCopy(p.ratings[p.ratings.length - 1]);
+			if (newRatings) {
+				newRatings.season += 1;
+				p.ratings.push(newRatings);
+			}
+			p.transactions = [];
+		}
 
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
 			player.addStatsRow(p, false);
-		}
-
-		// If player is a free agent, re-assess contract demands
-		if (p.tid === PLAYER.FREE_AGENT) {
-			const newContract = player.genContract(p);
-
-			if (newContract.amount > p.contract.amount) {
-				// If player is still good, bump up contract demands
-				newContract.amount = (newContract.amount + p.contract.amount) / 2;
-				newContract.amount = 50 * Math.round(newContract.amount / 50); // Make it a multiple of 50k
-			}
-
-			player.setContract(p, newContract, false);
 		}
 
 		await idb.cache.players.put(p);

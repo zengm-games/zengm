@@ -259,6 +259,7 @@ const createLeague = async ({
 	actualStartingSeason,
 	challengeNoDraftPicks,
 	challengeNoFreeAgents,
+	repeatSeason,
 }: {
 	name: string;
 	tid: number;
@@ -271,6 +272,7 @@ const createLeague = async ({
 	actualStartingSeason: string | undefined;
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
+	repeatSeason: boolean;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -348,13 +350,8 @@ const createLeague = async ({
 		"challengeNoFreeAgents",
 		challengeNoFreeAgents,
 	);
-	console.log(
-		challengeNoDraftPicks,
-		challengeNoFreeAgents,
-		leagueFile.gameAttributes,
-	);
 
-	const lid = league.create({
+	const lid = await league.create({
 		name,
 		tid,
 		leagueFile,
@@ -362,6 +359,30 @@ const createLeague = async ({
 		difficulty,
 		importLid,
 	});
+
+	// Handle repeatSeason after creating league, so we know what random players were created
+	if (repeatSeason && g.get("repeatSeason") === undefined) {
+		const players: Exclude<
+			GameAttributesLeague["repeatSeason"],
+			undefined
+		>["players"] = {};
+		for (const p of await idb.cache.players.getAll()) {
+			if (p.tid >= PLAYER.FREE_AGENT) {
+				players[p.pid] = {
+					tid: p.tid,
+					contract: helpers.deepCopy(p.contract),
+					injury: helpers.deepCopy(p.injury),
+				};
+			}
+		}
+
+		await league.setGameAttributes({
+			numSeasonsFutureDraftPicks: 0,
+			repeatSeason: {
+				players,
+			},
+		});
+	}
 
 	return lid;
 };

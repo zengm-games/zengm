@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from "framer-motion";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React, {
@@ -1236,7 +1237,25 @@ const NewLeague = (props: View<"newLeague">) => {
 								/>{" "}
 								More options
 							</button>
-							{state.expandOptions ? moreOptions : null}
+							<AnimatePresence initial={false}>
+								{state.expandOptions ? (
+									<motion.div
+										initial="collapsed"
+										animate="open"
+										exit="collapsed"
+										variants={{
+											open: { opacity: 1, height: "auto" },
+											collapsed: { opacity: 0, height: 0 },
+										}}
+										transition={{
+											duration: 0.5,
+											ease: [0.04, 0.62, 0.23, 0.98],
+										}}
+									>
+										{moreOptions}
+									</motion.div>
+								) : null}
+							</AnimatePresence>
 						</>
 					) : null}
 

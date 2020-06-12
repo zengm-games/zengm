@@ -56,11 +56,20 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 			0.05 * Math.round(contractOptions[i].amount / 0.05); // Make it a multiple of 50k
 	}
 
-	return contractOptions.filter(
-		contractOption =>
-			contractOption.smallestAmount ||
-			contractOption.amount * 1000 <= g.get("maxContract"),
-	);
+	return contractOptions.filter(contractOption => {
+		if (contractOption.smallestAmount) {
+			return true;
+		}
+
+		if (
+			g.get("challengeNoFreeAgents") &&
+			contractOption.amount * 1000 > g.get("minContract")
+		) {
+			return false;
+		}
+
+		return contractOption.amount * 1000 <= g.get("maxContract");
+	});
 };
 
 const updateNegotiation = async (

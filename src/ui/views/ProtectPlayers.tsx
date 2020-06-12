@@ -50,8 +50,8 @@ const PlayerList = ({
 					title={p.untradableMsg}
 					checked={protectedPids.includes(p.pid)}
 					disabled={numRemaining <= 0 && !protectedPids.includes(p.pid)}
-					onChange={event => {
-						if (event.target.checked) {
+					onChange={() => {
+						if (!protectedPids.includes(p.pid)) {
 							updateProtectedPids([...protectedPids, p.pid]);
 						} else {
 							updateProtectedPids(protectedPids.filter(pid => pid !== p.pid));

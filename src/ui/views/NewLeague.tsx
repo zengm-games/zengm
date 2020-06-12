@@ -154,8 +154,8 @@ const LeaguePartPicker = ({
 					<label className="form-check-label">
 						<input
 							className="form-check-input"
-							onChange={event => {
-								if (!event.target.checked) {
+							onChange={() => {
+								if (keptKeys.includes(key)) {
 									setKeptKeys(keptKeys.filter(key2 => key2 !== key));
 								} else {
 									setKeptKeys([...keptKeys, key]);

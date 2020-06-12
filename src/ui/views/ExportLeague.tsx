@@ -139,8 +139,8 @@ const ExportLeague = () => {
 									type="checkbox"
 									name="compressed"
 									checked={compressed}
-									onChange={event => {
-										setCompressed(event.target.checked);
+									onChange={() => {
+										setCompressed(compressed => !compressed);
 									}}
 								/>
 								Compressed (no extra whitespace)

@@ -392,6 +392,7 @@ const createLeague = async ({
 		await league.setGameAttributes({
 			numSeasonsFutureDraftPicks: 0,
 			repeatSeason: {
+				startingSeason: g.get("season"),
 				players,
 			},
 		});

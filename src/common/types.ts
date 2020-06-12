@@ -331,6 +331,7 @@ export type GameAttributesLeague = {
 	repeatSeason:
 		| undefined
 		| {
+				startingSeason: number;
 				players: Record<
 					number,
 					{

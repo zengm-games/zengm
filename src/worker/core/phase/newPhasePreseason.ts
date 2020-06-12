@@ -241,7 +241,8 @@ const newPhasePreseason = async (
 				p.tid = info.tid;
 				p.injury = helpers.deepCopy(info.injury);
 				p.contract = helpers.deepCopy(info.contract);
-				p.contract.exp += 1;
+
+				p.contract.exp += g.get("season") - repeatSeason.startingSeason;
 				p.salaries.push({
 					season: p.contract.exp,
 					amount: p.contract.amount,

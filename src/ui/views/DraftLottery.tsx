@@ -353,6 +353,24 @@ const DraftLotteryTable = (props: Props) => {
 
 	let table;
 
+	if (props.notEnoughTeams) {
+		return (
+			<div className="alert alert-danger d-inline-block">
+				<p>
+					<b>Error:</b> Not enough teams for your selected lottery type, so
+					there will be no draft lottery.
+				</p>
+				{props.challengeWarning ? (
+					<p>
+						This is probably because you're using the "no draft picks" challenge
+						mode and controlling many teams in multi team mode, so not enough
+						teams are eligible for the draft lottery.
+					</p>
+				) : null}
+			</div>
+		);
+	}
+
 	if (result && probs) {
 		// Checking both is redundant, but flow wants it
 		table = (

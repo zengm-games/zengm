@@ -14,6 +14,8 @@ const updateDraftLottery = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<{
+	challengeWarning?: boolean;
+	notEnoughTeams?: boolean;
 	draftType?: DraftType;
 	result: DraftLotteryResultArray | undefined;
 	season: number;
@@ -101,12 +103,20 @@ const updateDraftLottery = async (
 		}
 
 		// View projected draft lottery for this season
-		const draftLotteryResult = await draft.genOrderNBA(true);
-
-		for (const pick of draftLotteryResult.result) {
-			pick.pick = undefined;
+		let draftLotteryResult;
+		try {
+			draftLotteryResult = await draft.genOrderNBA(true);
+		} catch (error) {
+			if (!(error as any).notEnoughTeams) {
+				throw error;
+			}
 		}
-		console.log("draftLotteryResult", draftLotteryResult);
+
+		if (draftLotteryResult) {
+			for (const pick of draftLotteryResult.result) {
+				pick.pick = undefined;
+			}
+		}
 
 		const type =
 			season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY
@@ -114,9 +124,16 @@ const updateDraftLottery = async (
 				: "projected";
 
 		return {
-			draftType: draftLotteryResult.draftType,
-			result: draftLotteryResult.result,
-			season: draftLotteryResult.season,
+			challengeWarning:
+				!draftLotteryResult &&
+				g.get("challengeNoDraftPicks") &&
+				g.get("userTids").length > 0,
+			notEnoughTeams: !draftLotteryResult,
+			draftType: draftLotteryResult
+				? draftLotteryResult.draftType
+				: "noLottery",
+			result: draftLotteryResult ? draftLotteryResult.result : undefined,
+			season: draftLotteryResult ? draftLotteryResult.season : season,
 			showExpansionTeamMessage,
 			ties: g.get("ties"),
 			type,

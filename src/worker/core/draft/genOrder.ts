@@ -18,7 +18,15 @@ const genOrder = async (
 	if (g.get("draftType") === "noLottery" || g.get("draftType") === "random") {
 		await genOrderNone(mock);
 	} else {
-		await genOrderNBA(mock, conditions);
+		try {
+			await genOrderNBA(mock, conditions);
+		} catch (error) {
+			if (!(error as any).notEnoughTeams) {
+				throw error;
+			}
+
+			await genOrderNone(mock);
+		}
 	}
 };
 

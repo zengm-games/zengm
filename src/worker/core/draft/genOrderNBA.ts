@@ -151,9 +151,11 @@ const genOrder = async (
 	let chances = info.chances;
 
 	if (teams.length < minNumLotteryTeams) {
-		throw new Error(
+		const error = new Error(
 			`Number of teams with draft picks (${teams.length}) is less than the minimum required for draft type "${draftType}"`,
 		);
+		(error as any).notEnoughTeams = true;
+		throw error;
 	}
 
 	lotterySort(teams);

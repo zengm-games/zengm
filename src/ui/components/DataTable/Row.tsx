@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { MouseEvent } from "react";
 import useClickable from "../../hooks/useClickable";
 // eslint-disable-next-line import/no-unresolved
 import type { ClassValue } from "classnames/types";
@@ -23,15 +23,35 @@ const Row = ({
 		>
 			{row.data.map((value = null, i) => {
 				// Value is either the value, or an object containing the value as a property
-				if (value !== null && value.hasOwnProperty("value")) {
-					return (
-						<td className={classNames(value.classNames)} key={i}>
-							{value.value}
-						</td>
-					);
+				const actualValue =
+					value !== null && value.hasOwnProperty("value") ? value.value : value;
+
+				const props: any = {};
+
+				if (value.classNames) {
+					props.className = classNames(value.classNames);
 				}
 
-				return <td key={i}>{value}</td>;
+				// Expand clickable area of checkboxes to the whole td
+				if (
+					actualValue.type === "input" &&
+					actualValue.props.type === "checkbox" &&
+					actualValue.props.onChange
+				) {
+					props.onClick = (event: MouseEvent) => {
+						if (event.target && (event.target as any).tagName === "TD") {
+							actualValue.props.onChange();
+						}
+					};
+					props["data-no-row-highlight"] = "true";
+				}
+
+				// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+				return (
+					<td key={i} {...props}>
+						{actualValue}
+					</td>
+				);
 			})}
 		</tr>
 	);

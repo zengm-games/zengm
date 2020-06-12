@@ -187,7 +187,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 
 	const beforeOffersRef = useRef<HTMLDivElement>(null);
 
-	const handleChangeAsset = async (type: "pids" | "dpids", id: number) => {
+	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
 		setState(prevState => {
 			const ids = {
 				pids: helpers.deepCopy(prevState.pids),
@@ -304,7 +304,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 			data: [
 				<input
 					type="checkbox"
-					defaultChecked={state.pids.includes(p.pid)}
+					checked={state.pids.includes(p.pid)}
 					disabled={p.untradable}
 					onChange={() => handleChangeAsset("pids", p.pid)}
 					title={p.untradableMsg}
@@ -362,7 +362,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 									<td>
 										<input
 											type="checkbox"
-											defaultChecked={state.dpids.includes(pick.dpid)}
+											checked={state.dpids.includes(pick.dpid)}
 											onChange={() => handleChangeAsset("dpids", pick.dpid)}
 										/>
 									</td>

@@ -111,7 +111,6 @@ league creation options
   - disable population growth
   - confirm equal finances and impact
 - add challenge mode
-  - no trades
   - hide player ratings
   - lose your best player every year
 - blog
@@ -121,6 +120,7 @@ league creation options
   - challenge modes - either in God Mode or when creating league
     - no free agents
     - no draft picks
+    - no trades
     - can be changed in god mode settings too, not just when creating new league
   - groundhog day
   - no starting injuries

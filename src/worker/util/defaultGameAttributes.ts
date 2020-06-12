@@ -119,6 +119,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	challengeNoDraftPicks: false,
 	challengeNoFreeAgents: false,
+	challengeNoTrades: false,
 	repeatSeason: undefined,
 
 	// These will always be overwritten when creating a league, just here for TypeScript

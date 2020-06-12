@@ -369,6 +369,7 @@ type State = {
 	expandOptions: boolean;
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
+	challengeNoTrades: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 };
@@ -432,6 +433,9 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeNoFreeAgents";
+	  }
+	| {
+			type: "toggleChallengeNoTrades";
 	  }
 	| {
 			type: "toggleRepeatSeason";
@@ -545,11 +549,13 @@ const reducer = (state: State, action: Action): State => {
 			const gameAttributeOverrides: {
 				challengeNoDraftPicks: boolean;
 				challengeNoFreeAgents: boolean;
+				challengeNoTrades: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
 			} = {
 				challengeNoDraftPicks: state.challengeNoDraftPicks,
 				challengeNoFreeAgents: state.challengeNoFreeAgents,
+				challengeNoTrades: state.challengeNoTrades,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
 			};
@@ -623,6 +629,12 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				challengeNoFreeAgents: !state.challengeNoFreeAgents,
+			};
+
+		case "toggleChallengeNoTrades":
+			return {
+				...state,
+				challengeNoTrades: !state.challengeNoTrades,
 			};
 
 		case "toggleRepeatSeason":
@@ -699,6 +711,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				expandOptions: false,
 				challengeNoDraftPicks: false,
 				challengeNoFreeAgents: false,
+				challengeNoTrades: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
 			};
@@ -779,6 +792,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					actualStartingSeason,
 					challengeNoDraftPicks: state.challengeNoDraftPicks,
 					challengeNoFreeAgents: state.challengeNoFreeAgents,
+					challengeNoTrades: state.challengeNoTrades,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 				});
@@ -822,6 +836,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		[
 			state.challengeNoDraftPicks,
 			state.challengeNoFreeAgents,
+			state.challengeNoTrades,
 			state.customize,
 			state.difficulty,
 			state.keptKeys,
@@ -975,6 +990,23 @@ const NewLeague = (props: View<"newLeague">) => {
 					No free agents
 					<br />
 					<span className="text-muted">{helpTexts.challengeNoFreeAgents}</span>
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeNoTrades"
+					checked={state.challengeNoTrades}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeNoTrades" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeNoTrades"
+				>
+					No trades
 				</label>
 			</div>
 		</div>,

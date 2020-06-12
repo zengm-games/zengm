@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* **BETA: Several new options for creating new leagues. Challenge mode #1 (no draft picks except those acquired through trades), challenge mode #2 (no free agents except minimum contracts), challenge mode #3 (#1 and #2 combined, which is just absurd), Groundhog Day (replay the same season over and over, with no roster changes or player development), and no starting injuries. And just for random players leagues, you can set the starting season.**
+* **BETA: Several new options for creating new leagues. Three challenge modes (no draft picks, no free agents, no trades), Groundhog Day (replay the same season over and over, with no roster changes or player development), and no starting injuries. And just for random players leagues, you can set the starting season.**
 
 * 2020-06-08: Standings now show when teams clinch the playoffs, a first round bye, or the #1 overall seed. [[1]](https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/) [[2]](https://old.reddit.com/r/Football_GM/comments/gzd8q6/standings_now_show_when_teams_clinch_the_playoffs/)
 

@@ -112,6 +112,7 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
+		challengeNoTrades,
 		gameOver,
 		godMode,
 		lost,
@@ -132,14 +133,17 @@ const Trade = (props: View<"trade">) => {
 		userTeamName,
 		won,
 	} = props;
+
 	useTitleBar({
 		title: "Trade",
 	});
+
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT ||
 		gameOver;
+
 	return (
 		<>
 			{showResigningMsg ? (
@@ -201,7 +205,7 @@ const Trade = (props: View<"trade">) => {
 						salaryCap={salaryCap}
 						summary={summary}
 					/>
-					{!noTradingAllowed ? (
+					{!noTradingAllowed && !challengeNoTrades ? (
 						<div className="text-center">
 							<Buttons
 								asking={state.asking}
@@ -213,6 +217,12 @@ const Trade = (props: View<"trade">) => {
 								handleClickForceTrade={handleClickForceTrade}
 								handleClickPropose={handleClickPropose}
 							/>
+						</div>
+					) : challengeNoTrades ? (
+						<div>
+							<p className="alert alert-danger">
+								<b>Challenge Mode:</b> You're not allowed to make trades.
+							</p>
 						</div>
 					) : (
 						<p className="alert alert-danger">

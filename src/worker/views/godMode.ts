@@ -43,6 +43,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			twoPointAccuracyFactor: g.get("twoPointAccuracyFactor"),
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
+			challengeNoTrades: g.get("challengeNoTrades"),
 		};
 	}
 };

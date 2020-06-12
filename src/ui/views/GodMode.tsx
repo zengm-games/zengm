@@ -41,7 +41,8 @@ type Key =
 	| "threePointAccuracyFactor"
 	| "twoPointAccuracyFactor"
 	| "challengeNoDraftPicks"
-	| "challengeNoFreeAgents";
+	| "challengeNoFreeAgents"
+	| "challengeNoTrades";
 
 type Category =
 	| "League Structure"
@@ -469,6 +470,12 @@ const options: {
 		name: "No Free Agents",
 		type: "bool",
 		helpText: helpTexts.challengeNoFreeAgents,
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeNoTrades",
+		name: "No Trades",
+		type: "bool",
 	},
 ];
 

@@ -251,9 +251,27 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		});
 	};
 
-	const { gameOver, phase, stats, ties, userPicks, userRoster } = props;
+	const {
+		challengeNoTrades,
+		gameOver,
+		phase,
+		stats,
+		ties,
+		userPicks,
+		userRoster,
+	} = props;
 
 	useTitleBar({ title: "Trading Block" });
+
+	if (challengeNoTrades) {
+		return (
+			<div>
+				<p className="alert alert-danger d-inline-block">
+					<b>Challenge Mode:</b> You're not allowed to make trades.
+				</p>
+			</div>
+		);
+	}
 
 	if (
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||

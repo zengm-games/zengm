@@ -190,9 +190,13 @@ export const dpoyScore = (p: PlayerFiltered) =>
 export const smoyFilter = (p: PlayerFiltered) =>
 	p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;
 
+// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
-	// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-	return p.draft.year === p.currentStats.season - 1;
+	const repeatSeason = g.get("repeatSeason");
+	return (
+		p.draft.year === p.currentStats.season - 1 ||
+		(repeatSeason && p.draft.year === repeatSeason.startingSeason - 1)
+	);
 };
 
 const getMipFactor = () =>

@@ -93,7 +93,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 								: "FootballGM_Game"
 						}">Follow ${sport} GM on Twitter</a></p><p><a href="https://www.facebook.com/${
 							process.env.SPORT
-						}.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${sport} GM on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${sport} GM players and devs on Discord</a></p><p>The more people that play ${sport} GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@${
+						}.general.manager">Like ${sport} GM on Facebook</a></p><p><a href="http://www.reddit.com/r/${subreddit}/">Discuss ${sport} GM on Reddit</a></p><p><a href="https://discord.gg/caPFuM9">Chat with ${sport} GM players and devs on Discord</a></p><p>The more people that play ${sport} GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@${
 							process.env.SPORT
 						}-gm.com">email me</a>.</p>`,
 					});

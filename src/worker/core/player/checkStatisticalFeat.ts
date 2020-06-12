@@ -59,6 +59,7 @@ const checkStatisticalFeat = (
 	if (feats) {
 		const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
 		const won = results.team[i].stat.pts > results.team[j].stat.pts;
+		const tied = results.team[i].stat.pts === results.team[j].stat.pts;
 		const featTextArr = Object.keys(feats).map(
 			stat => `${feats[stat]} ${stat}`,
 		);
@@ -84,8 +85,8 @@ const checkStatisticalFeat = (
 		}
 
 		const endPart = allStarGame
-			? `${won ? "win" : "loss"} in the All-Star Game`
-			: `${won ? "win over the" : "loss to the"} ${
+			? `${tied ? "tie" : won ? "win" : "loss"} in the All-Star Game`
+			: `${tied ? "tie with the" : won ? "win over the" : "loss to the"} ${
 					g.get("teamInfoCache")[results.team[j].id]?.name
 			  }`;
 		featText += `</a> in ${

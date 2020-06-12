@@ -438,8 +438,8 @@ const writeGameStats = async (
 			? `${results.team[indTeam].stat.pts}-${results.team[indOther].stat.pts}`
 			: `${results.team[indOther].stat.pts}-${results.team[indTeam].stat.pts}`;
 		const endPart = allStarGame
-			? `${won ? "win" : "loss"} in the All-Star Game`
-			: `${won ? "win over" : "loss to"} the ${
+			? `${tied ? "tie" : won ? "win" : "loss"} in the All-Star Game`
+			: `${tied ? "tie with" : won ? "win over" : "loss to"} the ${
 					g.get("teamInfoCache")[results.team[indOther].id]?.name
 			  }`;
 		clutchPlay.text += ` in ${

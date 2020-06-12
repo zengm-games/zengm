@@ -28,12 +28,13 @@ const Row = ({
 
 				const props: any = {};
 
-				if (value.classNames) {
+				if (value && value.classNames) {
 					props.className = classNames(value.classNames);
 				}
 
 				// Expand clickable area of checkboxes to the whole td
 				if (
+					actualValue &&
 					actualValue.type === "input" &&
 					actualValue.props.type === "checkbox" &&
 					actualValue.props.onChange

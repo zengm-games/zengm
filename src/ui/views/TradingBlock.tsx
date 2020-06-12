@@ -168,9 +168,9 @@ Offer.propTypes = {
 	won: PropTypes.number.isRequired,
 };
 
-const width100 = {
-	width: "100%",
-};
+const pickCols = getCols("", "Draft Picks");
+pickCols[0].sortSequence = [];
+pickCols[1].width = "100%";
 
 const TradingBlock = (props: View<"tradingBlock">) => {
 	const [state, setState] = useState<{
@@ -329,6 +329,20 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		};
 	});
 
+	const pickRows = userPicks.map(pick => {
+		return {
+			key: pick.dpid,
+			data: [
+				<input
+					type="checkbox"
+					checked={state.dpids.includes(pick.dpid)}
+					onChange={() => handleChangeAsset("dpids", pick.dpid)}
+				/>,
+				pick.desc,
+			],
+		};
+	});
+
 	return (
 		<>
 			<p>
@@ -346,31 +360,13 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 					/>
 				</div>
 				<div className="col-md-3">
-					<table
-						className="table table-striped table-bordered table-sm"
-						id="picks-user"
-					>
-						<thead>
-							<tr>
-								<th />
-								<th style={width100}>Draft Picks</th>
-							</tr>
-						</thead>
-						<tbody>
-							{userPicks.map(pick => (
-								<tr key={pick.dpid}>
-									<td>
-										<input
-											type="checkbox"
-											checked={state.dpids.includes(pick.dpid)}
-											onChange={() => handleChangeAsset("dpids", pick.dpid)}
-										/>
-									</td>
-									<td>{pick.desc}</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
+					<DataTable
+						cols={pickCols}
+						defaultSort={[1, "asc"]}
+						hideAllControls
+						name={`TradingBlock:Picks`}
+						rows={pickRows}
+					/>
 				</div>
 			</div>
 

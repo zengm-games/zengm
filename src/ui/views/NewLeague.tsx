@@ -1227,14 +1227,14 @@ const NewLeague = (props: View<"newLeague">) => {
 								type="button"
 								onClick={() => dispatch({ type: "toggleExpandOptions" })}
 							>
-								More options{" "}
 								<span
 									className={`glyphicon ${
 										state.expandOptions
-											? "glyphicon-menu-down"
-											: "glyphicon-menu-right"
+											? "glyphicon-triangle-bottom"
+											: "glyphicon-triangle-right"
 									}`}
-								/>
+								/>{" "}
+								More options
 							</button>
 							{state.expandOptions ? moreOptions : null}
 						</>

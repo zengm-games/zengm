@@ -41,7 +41,8 @@ $text-muted: $gray-400;
 		color: $gray-700;
 	}
 }
-.btn-link {
+.btn-link,
+.btn-link:hover {
 	color: $primary;
 }
 

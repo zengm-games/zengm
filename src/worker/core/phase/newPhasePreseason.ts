@@ -262,6 +262,8 @@ const newPhasePreseason = async (
 			p.transactions = [];
 		}
 
+		p.born.year += 1;
+
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
 			player.addStatsRow(p, false);

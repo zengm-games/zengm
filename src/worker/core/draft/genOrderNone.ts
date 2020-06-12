@@ -26,7 +26,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	}
 
 	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	await genPicks(g.get("season"));
+	await genPicks();
 
 	let draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksBySeason",

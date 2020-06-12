@@ -185,7 +185,7 @@ const genOrder = async (
 	const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
 
 	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	await genPicks(g.get("season"));
+	await genPicks();
 
 	const firstN: number[] = [];
 

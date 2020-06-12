@@ -307,7 +307,7 @@ const Draft = ({
 						<div>
 							<p className="alert alert-danger d-inline-block">
 								<b>Challenge Mode:</b> Your team does not get any draft picks
-								unless you trade, unless you acquire them in a trade.
+								unless you acquire them in a trade.
 							</p>
 						</div>
 					) : null}

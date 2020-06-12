@@ -250,7 +250,10 @@ const newPhasePreseason = async (
 				p.tid = PLAYER.FREE_AGENT;
 			}
 
-			const newRatings = helpers.deepCopy(p.ratings[p.ratings.length - 1]);
+			// First entry for last season, so it skips injuries
+			const newRatings = helpers.deepCopy(
+				p.ratings.find(pr => pr.season === g.get("season") - 1),
+			);
 			if (newRatings) {
 				newRatings.season += 1;
 				p.ratings.push(newRatings);

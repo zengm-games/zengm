@@ -259,10 +259,10 @@ const newPhasePreseason = async (
 				newRatings.season += 1;
 				p.ratings.push(newRatings);
 			}
-			p.transactions = [];
-		}
 
-		p.born.year += 1;
+			p.transactions = [];
+			p.born.year += 1;
+		}
 
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {

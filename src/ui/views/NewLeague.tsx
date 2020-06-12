@@ -369,6 +369,7 @@ type State = {
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
 	repeatSeason: boolean;
+	noStartingInjuries: boolean;
 };
 
 type Action =
@@ -433,7 +434,8 @@ type Action =
 	  }
 	| {
 			type: "toggleRepeatSeason";
-	  };
+	  }
+	| { type: "toggleNoStartingInjuries" };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
 	const t = teams.find(t => t.tid === tid);
@@ -628,6 +630,12 @@ const reducer = (state: State, action: Action): State => {
 				repeatSeason: !state.repeatSeason,
 			};
 
+		case "toggleNoStartingInjuries":
+			return {
+				...state,
+				noStartingInjuries: !state.noStartingInjuries,
+			};
+
 		default:
 			throw new Error();
 	}
@@ -691,6 +699,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				challengeNoDraftPicks: false,
 				challengeNoFreeAgents: false,
 				repeatSeason: false,
+				noStartingInjuries: false,
 			};
 		},
 	);
@@ -770,6 +779,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					challengeNoDraftPicks: state.challengeNoDraftPicks,
 					challengeNoFreeAgents: state.challengeNoFreeAgents,
 					repeatSeason: state.repeatSeason,
+					noStartingInjuries: state.noStartingInjuries,
 				});
 
 				let type: string = state.customize;
@@ -819,6 +829,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			name,
 			props.lid,
 			props.name,
+			state.noStartingInjuries,
 			state.randomization,
 			state.repeatSeason,
 			state.season,
@@ -968,6 +979,25 @@ const NewLeague = (props: View<"newLeague">) => {
 		</div>,
 		<div key="other" className="mb-3">
 			<label>Other</label>
+			{state.keptKeys.includes("players") ? (
+				<div className="form-check mb-2">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						id="new-league-noStartingInjuries"
+						checked={state.noStartingInjuries}
+						onChange={() => {
+							dispatch({ type: "toggleNoStartingInjuries" });
+						}}
+					/>
+					<label
+						className="form-check-label"
+						htmlFor="new-league-noStartingInjuries"
+					>
+						No starting injuries
+					</label>
+				</div>
+			) : null}
 			<div className="form-check mb-2">
 				<input
 					className="form-check-input"
@@ -979,7 +1009,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					}}
 				/>
 				<label className="form-check-label" htmlFor="new-league-repeatSeason">
-					Groundhog day
+					Groundhog Day
 					<br />
 					<span className="text-muted">
 						Next season will start immediately after the playoffs, with the same
@@ -1197,7 +1227,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								type="button"
 								onClick={() => dispatch({ type: "toggleExpandOptions" })}
 							>
-								More Options{" "}
+								More options{" "}
 								<span
 									className={`glyphicon ${
 										state.expandOptions

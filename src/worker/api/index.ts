@@ -260,6 +260,7 @@ const createLeague = async ({
 	challengeNoDraftPicks,
 	challengeNoFreeAgents,
 	repeatSeason,
+	noStartingInjuries,
 }: {
 	name: string;
 	tid: number;
@@ -273,6 +274,7 @@ const createLeague = async ({
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
 	repeatSeason: boolean;
+	noStartingInjuries: boolean;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -350,6 +352,17 @@ const createLeague = async ({
 		"challengeNoFreeAgents",
 		challengeNoFreeAgents,
 	);
+
+	if (noStartingInjuries && leagueFile.players) {
+		for (const p of leagueFile.players) {
+			if (p.injury) {
+				p.injury = {
+					type: "Healthy",
+					gamesRemaining: 0,
+				};
+			}
+		}
+	}
 
 	const lid = await league.create({
 		name,

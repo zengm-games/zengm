@@ -51,6 +51,8 @@ const loadTeamSeasons = async () => {
 
 		await idb.cache.teams.add(t);
 	}
+
+	await draft.genPicks();
 };
 
 export { getDraftTids, loadTeamSeasons };

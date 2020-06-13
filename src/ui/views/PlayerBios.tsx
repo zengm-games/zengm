@@ -8,6 +8,7 @@ import type { View } from "../../common/types";
 const PlayerBios = ({
 	abbrev,
 	currentSeason,
+	challengeNoRatings,
 	players,
 	season,
 	stats,
@@ -85,8 +86,8 @@ const PlayerBios = ({
 				p.college,
 				p.draft.year,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : null,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {

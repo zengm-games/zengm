@@ -32,19 +32,24 @@ const updateDraftTeamHistory = async (
 			currentAbbrev: p.abbrev,
 			currentTid: p.tid,
 			hof: p.hof,
+
 			// Ratings
 			currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
 			currentPot: p.tid !== PLAYER.RETIRED ? currentPr.pot : null,
 			currentSkills: p.tid !== PLAYER.RETIRED ? currentPr.skills : [],
 			pos: currentPr.pos,
+
 			// Stats
 			careerStats: p.careerStats,
 		};
 	});
+
 	const abbrev = inputs.abbrev;
 	const userAbbrev = g.get("teamInfoCache")[g.get("userTid")]?.abbrev;
+
 	return {
 		abbrev,
+		challengeNoRatings: g.get("challengeNoRatings"),
 		draftType: g.get("draftType"),
 		players,
 		stats,

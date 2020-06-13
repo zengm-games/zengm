@@ -13,6 +13,7 @@ import Headlines from "./Headlines";
 const LeagueDashboard = ({
 	att,
 	cash,
+	challengeNoRatings,
 	confTeams,
 	events,
 	leagueLeaders,
@@ -171,7 +172,11 @@ const LeagueDashboard = ({
 							</div>
 						</div>
 					</div>
-					<StartingLineup starters={starters} startersStats={startersStats} />
+					<StartingLineup
+						challengeNoRatings={challengeNoRatings}
+						starters={starters}
+						startersStats={startersStats}
+					/>
 				</div>
 				<div className="col-xl-5 col-lg-4 mb-3">
 					<Headlines events={events} season={season} userTid={userTid} />

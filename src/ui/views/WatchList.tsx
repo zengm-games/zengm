@@ -8,6 +8,7 @@ import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
 import type { View } from "../../common/types";
 
 const WatchList = ({
+	challengeNoRatings,
 	players,
 	playoffs,
 	statType,
@@ -68,8 +69,8 @@ const WatchList = ({
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
 					{p.abbrev}
 				</a>,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				contract,
 				...stats.map(stat =>
 					helpers.roundStat(p.stats[stat], stat, statType === "totals"),

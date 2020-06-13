@@ -23,6 +23,7 @@ const genPlayerRows = (
 	handleToggle: HandleToggle,
 	userOrOther: UserOrOther,
 	stats: Stats,
+	challengeNoRatings: boolean,
 ) => {
 	return players.map(p => {
 		return {
@@ -56,8 +57,8 @@ const genPlayerRows = (
 				</PlayerNameLabels>,
 				p.ratings.pos,
 				p.age,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				<span>
 					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
 				</span>,
@@ -111,12 +112,14 @@ pickCols[0].sortSequence = [];
 pickCols[2].width = "100%";
 
 const AssetList = ({
+	challengeNoRatings,
 	handleToggle,
 	picks,
 	roster,
 	stats,
 	userOrOther,
 }: {
+	challengeNoRatings: boolean;
 	handleToggle: HandleToggle;
 	picks: Picks;
 	roster: Roster;
@@ -137,7 +140,13 @@ const AssetList = ({
 	playerCols[0].sortSequence = [];
 	playerCols[2].width = "100%";
 
-	const playerRows = genPlayerRows(roster, handleToggle, userOrOther, stats);
+	const playerRows = genPlayerRows(
+		roster,
+		handleToggle,
+		userOrOther,
+		stats,
+		challengeNoRatings,
+	);
 	const pickRows = genPickRows(picks, handleToggle, userOrOther);
 
 	const userOrOtherKey = `${userOrOther[0].toUpperCase()}${userOrOther.slice(

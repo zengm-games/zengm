@@ -65,6 +65,7 @@ const handleRelease = async (
 const Roster = ({
 	abbrev,
 	budget,
+	challengeNoRatings,
 	currentSeason,
 	editable,
 	maxRosterSize,
@@ -271,14 +272,18 @@ const Roster = ({
 						<td>{p.ratings.pos}</td>
 						<td>{p.age}</td>
 						<td>
-							<RatingWithChange change={p.ratings.dovr}>
-								{p.ratings.ovr}
-							</RatingWithChange>
+							{!challengeNoRatings ? (
+								<RatingWithChange change={p.ratings.dovr}>
+									{p.ratings.ovr}
+								</RatingWithChange>
+							) : null}
 						</td>
 						<td>
-							<RatingWithChange change={p.ratings.dpot}>
-								{p.ratings.pot}
-							</RatingWithChange>
+							{!challengeNoRatings ? (
+								<RatingWithChange change={p.ratings.dpot}>
+									{p.ratings.pot}
+								</RatingWithChange>
+							) : null}
 						</td>
 						{season === currentSeason ? (
 							<td

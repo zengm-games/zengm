@@ -7,7 +7,11 @@ import type { View } from "../../../common/types";
 
 const PAGE_SIZE = 3;
 
-const DraftScouting = ({ draftType, seasons }: View<"draftScouting">) => {
+const DraftScouting = ({
+	challengeNoRatings,
+	draftType,
+	seasons,
+}: View<"draftScouting">) => {
 	useTitleBar({ title: "Draft Scouting" });
 
 	const [page, setPage] = useState(0);
@@ -79,6 +83,7 @@ const DraftScouting = ({ draftType, seasons }: View<"draftScouting">) => {
 					return (
 						<div key={info.season} className="col-md-4 col-sm-6">
 							<DraftClass
+								challengeNoRatings={challengeNoRatings}
 								offset={offset}
 								players={info.players}
 								season={info.season}

@@ -61,7 +61,9 @@ const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const allStars = await allStar.getOrCreate();
 		const { finalized, teams, teamNames, remaining } = await augment(allStars);
+
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			finalized,
 			remaining,
 			stats,

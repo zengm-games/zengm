@@ -586,6 +586,7 @@ export type Options = {
 };
 
 export type LocalStateUI = {
+	challengeNoRatings: boolean;
 	customMenu?: MenuItemHeader;
 	gameSimInProgress: boolean;
 	games: {

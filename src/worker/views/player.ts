@@ -239,17 +239,21 @@ const updatePlayer = async (
 			minContract: g.get("minContract"),
 			phase: g.get("phase"),
 		});
+
+		const retired = p.tid === PLAYER.RETIRED;
+
 		return {
 			player: p,
 			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
 			freeAgent: p.tid === PLAYER.FREE_AGENT,
-			retired: p.tid === PLAYER.RETIRED,
+			retired,
 			showContract:
 				p.tid !== PLAYER.UNDRAFTED &&
 				p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
 				p.tid !== PLAYER.RETIRED,
 			injured: p.injury.type !== "Healthy",
 			godMode: g.get("godMode"),
+			showRatings: !g.get("challengeNoRatings") || retired,
 			events,
 			feats,
 			ratings,

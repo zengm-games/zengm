@@ -259,6 +259,7 @@ const createLeague = async ({
 	actualStartingSeason,
 	challengeNoDraftPicks,
 	challengeNoFreeAgents,
+	challengeNoRatings,
 	challengeNoTrades,
 	repeatSeason,
 	noStartingInjuries,
@@ -276,6 +277,7 @@ const createLeague = async ({
 	actualStartingSeason: string | undefined;
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
+	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -357,6 +359,11 @@ const createLeague = async ({
 		leagueFile.gameAttributes,
 		"challengeNoFreeAgents",
 		challengeNoFreeAgents,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"challengeNoRatings",
+		challengeNoRatings,
 	);
 	upsertGameAttribute(
 		leagueFile.gameAttributes,

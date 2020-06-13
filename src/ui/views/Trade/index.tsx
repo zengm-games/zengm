@@ -112,6 +112,7 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
+		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
 		godMode,
@@ -182,6 +183,7 @@ const Trade = (props: View<"trade">) => {
 					</div>
 					<div className="clearfix" />
 					<AssetList
+						challengeNoRatings={challengeNoRatings}
 						handleToggle={handleChangeAsset}
 						picks={otherPicks}
 						roster={otherRoster}
@@ -191,6 +193,7 @@ const Trade = (props: View<"trade">) => {
 
 					<h2 className="mt-3">{userTeamName}</h2>
 					<AssetList
+						challengeNoRatings={challengeNoRatings}
 						handleToggle={handleChangeAsset}
 						picks={userPicks}
 						roster={userRoster}

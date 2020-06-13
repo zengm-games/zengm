@@ -6,6 +6,7 @@ import { getCols, helpers, toWorker } from "../util";
 import type { View } from "../../common/types";
 
 const PlayersTable = ({
+	challengeNoRatings,
 	draftType,
 	name,
 	onDraft,
@@ -17,6 +18,7 @@ const PlayersTable = ({
 	userTids,
 	usersTurn,
 }: {
+	challengeNoRatings: boolean;
 	draftType: "auto" | "user";
 	name: string;
 	onDraft?: (pid: number) => Promise<void>;
@@ -80,7 +82,7 @@ const PlayersTable = ({
 				</PlayerNameLabels>,
 				p.abbrev,
 				p.age,
-				p.ratings.ovr,
+				!challengeNoRatings ? p.ratings.ovr : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				p.numAllStar,
 			];
@@ -142,6 +144,7 @@ const wait = (ms: number) => {
 };
 
 const AllStars = ({
+	challengeNoRatings,
 	finalized,
 	remaining,
 	stats,
@@ -262,6 +265,7 @@ const AllStars = ({
 						<div className="col-md-6">
 							<h2>{teamNames[0]}</h2>
 							<PlayersTable
+								challengeNoRatings={challengeNoRatings}
 								draftType={draftType}
 								name="Team0"
 								pidsAdd={revealed0}
@@ -274,6 +278,7 @@ const AllStars = ({
 						<div className="col-md-6">
 							<h2>{teamNames[1]}</h2>
 							<PlayersTable
+								challengeNoRatings={challengeNoRatings}
 								draftType={draftType}
 								name="Team1"
 								pidsAdd={revealed1}
@@ -288,6 +293,7 @@ const AllStars = ({
 				<div className="col-sm-6 col-md-4">
 					<h2>Remaining All Stars</h2>
 					<PlayersTable
+						challengeNoRatings={challengeNoRatings}
 						draftType={draftType}
 						name="Remaining"
 						onDraft={onDraft}

@@ -11,12 +11,13 @@ type Props = {
 		pot: number;
 	} & Record<RatingKey, number>;
 	stats: any;
+	challengeNoRatings: boolean;
 };
 
-const RatingsStats = ({ ratings, stats }: Props) => {
+const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 	let ratingsBlock;
 
-	if (ratings) {
+	if (ratings && !challengeNoRatings) {
 		const extraRatings = posRatings(ratings.pos);
 		const cols = getCols(...extraRatings.map(rating => `rating:${rating}`));
 		ratingsBlock = (

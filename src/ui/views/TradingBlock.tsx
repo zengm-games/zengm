@@ -10,6 +10,7 @@ import type api from "../../worker/api";
 type OfferType = ThenArg<ReturnType<typeof api["getTradingBlockOffers"]>>[0];
 
 type OfferProps = {
+	challengeNoRatings: boolean;
 	handleClickNegotiate: (
 		tid: number,
 		otherPids: number[],
@@ -23,6 +24,7 @@ type OfferProps = {
 const Offer = (props: OfferProps) => {
 	const {
 		abbrev,
+		challengeNoRatings,
 		dpids,
 		handleClickNegotiate,
 		i,
@@ -68,8 +70,8 @@ const Offer = (props: OfferProps) => {
 					</PlayerNameLabels>,
 					p.ratings.pos,
 					p.age,
-					p.ratings.ovr,
-					p.ratings.pot,
+					!challengeNoRatings ? p.ratings.ovr : null,
+					!challengeNoRatings ? p.ratings.pot : null,
 					<>
 						{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
 						{p.contract.exp}
@@ -252,6 +254,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	};
 
 	const {
+		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
 		phase,
@@ -319,8 +322,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				</PlayerNameLabels>,
 				p.ratings.pos,
 				p.age,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				<>
 					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
 				</>,
@@ -386,6 +389,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				return (
 					<Offer
 						key={offer.tid}
+						challengeNoRatings={challengeNoRatings}
 						handleClickNegotiate={handleClickNegotiate}
 						i={i}
 						stats={stats}

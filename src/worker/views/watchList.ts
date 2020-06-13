@@ -75,6 +75,7 @@ const updatePlayers = async (
 		}
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			players,
 			playoffs: inputs.playoffs,
 			statType: inputs.statType,

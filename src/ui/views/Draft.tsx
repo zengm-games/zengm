@@ -79,6 +79,7 @@ TradeButton.propTypes = {
 
 const Draft = ({
 	challengeNoDraftPicks,
+	challengeNoRatings,
 	draftType,
 	drafted,
 	expansionDraft,
@@ -148,8 +149,8 @@ const Draft = ({
 			</PlayerNameLabels>,
 			p.ratings.pos,
 			p.age,
-			p.ratings.ovr,
-			p.ratings.pot,
+			!challengeNoRatings ? p.ratings.ovr : null,
+			!challengeNoRatings ? p.ratings.pot : null,
 			<div
 				className="btn-group"
 				style={{
@@ -207,7 +208,7 @@ const Draft = ({
 	});
 
 	const colsDrafted = getCols("Pick", "Team").concat(
-		colsUndrafted.slice(0, -1),
+		colsUndrafted.slice(1, -1),
 	);
 
 	if (expansionDraft) {
@@ -245,8 +246,8 @@ const Draft = ({
 			),
 			p.pid >= 0 ? p.ratings.pos : null,
 			p.pid >= 0 ? p.age : null,
-			p.pid >= 0 ? p.ratings.ovr : null,
-			p.pid >= 0 ? p.ratings.pot : null,
+			p.pid >= 0 && !challengeNoRatings ? p.ratings.ovr : null,
+			p.pid >= 0 && !challengeNoRatings ? p.ratings.pot : null,
 		];
 
 		if (fantasyDraft || expansionDraft) {

@@ -26,6 +26,7 @@ const [useLocal, local] = create<
 		actions: LocalActions;
 	}
 >(set => ({
+	challengeNoRatings: false,
 	customMenu: undefined,
 	gameSimInProgress: false,
 	games: [],
@@ -85,6 +86,7 @@ const [useLocal, local] = create<
 		// Reset any values specific to a league
 		resetLeague() {
 			set({
+				challengeNoRatings: false,
 				games: [],
 				godMode: false,
 				leagueName: "",
@@ -118,6 +120,7 @@ const [useLocal, local] = create<
 			gameAttributes: Partial<GameAttributesLeagueWithHistory>,
 		) {
 			const keys = [
+				"challengeNoRatings",
 				"godMode",
 				"homeCourtAdvantage",
 				"lid",

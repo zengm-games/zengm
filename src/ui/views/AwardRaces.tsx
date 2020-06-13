@@ -12,6 +12,7 @@ import type { View } from "../../common/types";
 
 const AwardRaces = ({
 	awardCandidates,
+	challengeNoRatings,
 	season,
 	userTid,
 }: View<"awardRaces">) => {
@@ -79,7 +80,7 @@ const AwardRaces = ({
 
 						if (mip) {
 							data.push(
-								pr ? (
+								pr && !challengeNoRatings ? (
 									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
 								) : undefined,
 							);
@@ -109,7 +110,7 @@ const AwardRaces = ({
 								}),
 							);
 						} else {
-							data.push(pr ? pr.ovr : undefined);
+							data.push(pr && !challengeNoRatings ? pr.ovr : undefined);
 							const statsRow = stats.map(stat =>
 								ps ? helpers.roundStat(ps[stat], stat) : undefined,
 							);

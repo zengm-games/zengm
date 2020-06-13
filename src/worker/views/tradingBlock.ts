@@ -48,6 +48,7 @@ const updateUserRoster = async (
 		});
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
 			phase: g.get("phase"),

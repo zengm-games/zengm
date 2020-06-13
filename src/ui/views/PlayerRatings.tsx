@@ -3,11 +3,12 @@ import React from "react";
 import { DataTable, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { POSITIONS } from "../../common";
+import { POSITIONS, PLAYER } from "../../common";
 import type { View } from "../../common/types";
 
 const PlayerRatings = ({
 	abbrev,
+	challengeNoRatings,
 	currentSeason,
 	players,
 	ratings,
@@ -21,6 +22,21 @@ const PlayerRatings = ({
 		dropdownView: "player_ratings",
 		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
 	});
+
+	if (challengeNoRatings) {
+		return (
+			<>
+				<p>
+					Come on, you have the "no visible ratings" challenge mode enabled.
+					What are you doing here? Maybe try the{" "}
+					<a href={helpers.leagueUrl(["player_bios", abbrev, season])}>
+						Player Bios
+					</a>{" "}
+					page instead.
+				</p>
+			</>
+		);
+	}
 
 	const ovrsPotsColNames: string[] = [];
 	if (process.env.SPORT === "football") {

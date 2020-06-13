@@ -9,9 +9,13 @@ import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
 
 const StartingLineup = ({
+	challengeNoRatings,
 	starters,
 	startersStats,
-}: Pick<View<"leagueDashboard">, "starters" | "startersStats">) => {
+}: Pick<
+	View<"leagueDashboard">,
+	"challengeNoRatings" | "starters" | "startersStats"
+>) => {
 	const statCols = getCols(...startersStats.map(stat => `stat:${stat}`));
 
 	return (
@@ -54,14 +58,18 @@ const StartingLineup = ({
 								<td>{p.age}</td>
 								<td>{p.stats.yearsWithTeam}</td>
 								<td>
-									<RatingWithChange change={p.ratings.dovr}>
-										{p.ratings.ovr}
-									</RatingWithChange>
+									{!challengeNoRatings ? (
+										<RatingWithChange change={p.ratings.dovr}>
+											{p.ratings.ovr}
+										</RatingWithChange>
+									) : null}
 								</td>
 								<td>
-									<RatingWithChange change={p.ratings.dpot}>
-										{p.ratings.pot}
-									</RatingWithChange>
+									{!challengeNoRatings ? (
+										<RatingWithChange change={p.ratings.dpot}>
+											{p.ratings.pot}
+										</RatingWithChange>
+									) : null}
 								</td>
 								<td>
 									{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}

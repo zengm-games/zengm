@@ -272,6 +272,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const starters = userPlayers.slice(0, 5);
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders,
 			teamLeaders,
 			starters,

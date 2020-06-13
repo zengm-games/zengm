@@ -14,6 +14,7 @@ import type { View } from "../../common/types";
 const NegotiationList = ({
 	capSpace,
 	challengeNoFreeAgents,
+	challengeNoRatings,
 	hardCap,
 	minContract,
 	numRosterSpots,
@@ -57,8 +58,8 @@ const NegotiationList = ({
 				</PlayerNameLabels>,
 				p.ratings.pos,
 				p.age,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,

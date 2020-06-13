@@ -9,10 +9,12 @@ import { downloadFile, getCols, toWorker } from "../../util";
 import type { View } from "../../../common/types";
 
 const DraftClass = ({
+	challengeNoRatings,
 	offset,
 	players,
 	season,
 }: {
+	challengeNoRatings: boolean;
 	offset: number;
 	players: View<"draftScouting">["seasons"][0]["players"];
 	season: number;
@@ -32,8 +34,8 @@ const DraftClass = ({
 				</PlayerNameLabels>,
 				p.pos,
 				p.age,
-				p.ovr,
-				p.pot,
+				!challengeNoRatings ? p.ovr : null,
+				!challengeNoRatings ? p.pot : null,
 			],
 		};
 	});

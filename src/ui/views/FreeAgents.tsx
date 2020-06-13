@@ -15,6 +15,7 @@ import type { View } from "../../common/types";
 const FreeAgents = ({
 	capSpace,
 	challengeNoFreeAgents,
+	challengeNoRatings,
 	hardCap,
 	minContract,
 	numRosterSpots,
@@ -102,8 +103,8 @@ const FreeAgents = ({
 				</PlayerNameLabels>,
 				p.ratings.pos,
 				p.age,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				<div
 					title={p.mood.text}

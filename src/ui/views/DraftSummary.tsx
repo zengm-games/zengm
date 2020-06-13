@@ -4,8 +4,10 @@ import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { PLAYER } from "../../common";
 
 const DraftSummary = ({
+	challengeNoRatings,
 	draftType,
 	players,
 	season,
@@ -57,6 +59,8 @@ const DraftSummary = ({
 	);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
+
 		return {
 			key: p.pid,
 			data: [
@@ -71,8 +75,8 @@ const DraftSummary = ({
 					{p.draft.tid} {p.draft.originalTid}
 				</DraftAbbrev>,
 				p.draft.age,
-				p.draft.ovr,
-				p.draft.pot,
+				showRatings ? p.draft.ovr : null,
+				showRatings ? p.draft.pot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.draft.skills} />
 				</span>,
@@ -85,8 +89,8 @@ const DraftSummary = ({
 					{p.currentAbbrev}
 				</a>,
 				p.currentAge,
-				p.currentOvr,
-				p.currentPot,
+				showRatings ? p.currentOvr : null,
+				showRatings ? p.currentPot : null,
 				<span className="skills-alone">
 					<SkillsBlock skills={p.currentSkills} />
 				</span>,

@@ -13,6 +13,7 @@ import { PlayerNameLabels, SafeHtml, DataTable } from "../components";
 import { PHASE } from "../../common";
 
 const PlayerList = ({
+	challengeNoRatings,
 	updateProtectedPids,
 	numProtectedPlayers,
 	players,
@@ -20,7 +21,7 @@ const PlayerList = ({
 	stats,
 	tid,
 	upcomingFreeAgentsText,
-}: Pick<View<"protectPlayers">, "players" | "stats"> & {
+}: Pick<View<"protectPlayers">, "challengeNoRatings" | "players" | "stats"> & {
 	updateProtectedPids: (newProtectedPids: number[]) => void;
 	numProtectedPlayers: number;
 	protectedPids: number[];
@@ -68,8 +69,8 @@ const PlayerList = ({
 				</PlayerNameLabels>,
 				p.ratings.pos,
 				p.age,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				<>
 					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
 				</>,
@@ -128,6 +129,7 @@ const PlayerList = ({
 };
 
 const ProtectPlayers = ({
+	challengeNoRatings,
 	expansionDraft,
 	expansionTeam,
 	nextPhase,
@@ -241,6 +243,7 @@ const ProtectPlayers = ({
 					</>
 				) : (
 					<PlayerList
+						challengeNoRatings={challengeNoRatings}
 						updateProtectedPids={updateProtectedPids}
 						numProtectedPlayers={expansionDraft.numProtectedPlayers}
 						players={players}

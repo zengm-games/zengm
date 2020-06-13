@@ -73,6 +73,7 @@ const updateDraftScouting = async (
 		}
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			draftType: g.get("draftType"),
 			seasons,
 		};

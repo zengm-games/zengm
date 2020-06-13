@@ -5,6 +5,7 @@ import { g, helpers } from "../../util";
 import { RATINGS } from "../../../common";
 import loadDataBasketball from "../realRosters/loadData.basketball";
 import type { Ratings } from "../realRosters/loadData.basketball";
+import limitRating from "./limitRating";
 
 // Cache for performance
 let groupedRatings: Record<string, Ratings> | undefined;
@@ -53,9 +54,10 @@ const developSeason = async (
 
 	if (realRatings) {
 		for (const key of RATINGS) {
-			(ratings as any)[key] =
+			(ratings as any)[key] = limitRating(
 				realPlayerDeterminism * (realRatings as any)[key] +
-				(1 - realPlayerDeterminism) * (ratings as any)[key];
+					(1 - realPlayerDeterminism) * (ratings as any)[key],
+			);
 		}
 	}
 };

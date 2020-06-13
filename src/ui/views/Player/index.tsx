@@ -366,69 +366,69 @@ const Player2 = ({
 				</>
 			) : null}
 
-			{showRatings ? (
-				<>
-					<h2>Ratings</h2>
-					<DataTable
-						className="mb-3"
-						cols={getCols(
-							"Year",
-							"Team",
-							"Age",
-							"Pos",
-							"Ovr",
-							"Pot",
-							...ratings.map(rating => `rating:${rating}`),
-							"Skills",
-						)}
-						defaultSort={[0, "asc"]}
-						hideAllControls
-						name="Player:Ratings"
-						rows={player.ratings.map((r, i) => {
-							return {
-								key: i,
-								data: [
-									{
-										sortValue: i,
-										value:
-											r.injuryIndex !== undefined &&
-											player.injuries[r.injuryIndex] ? (
-												<>
-													{r.season}
-													<span
-														className="badge badge-danger badge-injury"
-														title={player.injuries[r.injuryIndex].type}
-													>
-														+
-													</span>
-												</>
-											) : (
-												r.season
-											),
-									},
-									r.abbrev ? (
-										<a
-											href={helpers.leagueUrl([
-												"roster",
-												`${r.abbrev}_${r.tid}`,
-												r.season,
-											])}
-										>
-											{r.abbrev}
-										</a>
-									) : null,
-									r.age,
-									r.pos,
-									r.ovr,
-									r.pot,
-									...ratings.map(rating => (r as any)[rating]),
-									<SkillsBlock className="skills-alone" skills={r.skills} />,
-								],
-							};
-						})}
-					/>
-				</>
-			) : null}
+			<>
+				<h2>Ratings</h2>
+				<DataTable
+					className="mb-3"
+					cols={getCols(
+						"Year",
+						"Team",
+						"Age",
+						"Pos",
+						"Ovr",
+						"Pot",
+						...ratings.map(rating => `rating:${rating}`),
+						"Skills",
+					)}
+					defaultSort={[0, "asc"]}
+					hideAllControls
+					name="Player:Ratings"
+					rows={player.ratings.map((r, i) => {
+						return {
+							key: i,
+							data: [
+								{
+									sortValue: i,
+									value:
+										r.injuryIndex !== undefined &&
+										player.injuries[r.injuryIndex] ? (
+											<>
+												{r.season}
+												<span
+													className="badge badge-danger badge-injury"
+													title={player.injuries[r.injuryIndex].type}
+												>
+													+
+												</span>
+											</>
+										) : (
+											r.season
+										),
+								},
+								r.abbrev ? (
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											`${r.abbrev}_${r.tid}`,
+											r.season,
+										])}
+									>
+										{r.abbrev}
+									</a>
+								) : null,
+								r.age,
+								r.pos,
+								showRatings ? r.ovr : null,
+								showRatings ? r.pot : null,
+								...ratings.map(rating =>
+									showRatings ? (r as any)[rating] : null,
+								),
+								<SkillsBlock className="skills-alone" skills={r.skills} />,
+							],
+						};
+					})}
+				/>
+			</>
 
 			<div className="row">
 				<div className="col-6 col-md-3">

@@ -34,6 +34,7 @@ const numStartersByPos = {
 
 const Depth = ({
 	abbrev,
+	challengeNoRatings,
 	editable,
 	players,
 	pos,
@@ -213,11 +214,11 @@ const Depth = ({
 							{p.ratings.pos}
 						</td>
 						<td>{p.age}</td>
-						<td>{p.ratings.ovrs[pos]}</td>
-						<td>{p.ratings.pots[pos]}</td>
+						<td>{!challengeNoRatings ? p.ratings.ovrs[pos] : null}</td>
+						<td>{!challengeNoRatings ? p.ratings.pots[pos] : null}</td>
 						{ratings.map(rating => (
 							<td key={rating} className="table-accent">
-								{p.ratings[rating]}
+								{!challengeNoRatings ? p.ratings[rating] : null}
 							</td>
 						))}
 						{stats.map(stat => (

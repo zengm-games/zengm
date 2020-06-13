@@ -173,6 +173,7 @@ const updateTeamFinances = async (
 
 		return {
 			abbrev: inputs.abbrev,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			hardCap: g.get("hardCap"),
 			numGames: g.get("numGames"),
 			tid: inputs.tid,

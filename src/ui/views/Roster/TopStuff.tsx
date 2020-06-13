@@ -48,6 +48,7 @@ TeamRating.propTypes = {
 const TopStuff = ({
 	abbrev,
 	budget,
+	challengeNoRatings,
 	currentSeason,
 	editable,
 	numConfs,
@@ -65,6 +66,7 @@ const TopStuff = ({
 	View<"roster">,
 	| "abbrev"
 	| "budget"
+	| "challengeNoRatings"
 	| "currentSeason"
 	| "editable"
 	| "numConfs"
@@ -133,8 +135,13 @@ const TopStuff = ({
 					<div>
 						<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
 						<br />
-						Team rating: <TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
-						<br />
+						{!challengeNoRatings ? (
+							<>
+								Team rating:{" "}
+								<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
+								<br />
+							</>
+						) : null}
 						<span title="Average margin of victory">Average MOV</span>:{" "}
 						{marginOfVictory}
 					</div>

@@ -149,6 +149,7 @@ const Roster = ({
 			<TopStuff
 				abbrev={abbrev}
 				budget={budget}
+				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
 				editable={editable}
 				numConfs={numConfs}

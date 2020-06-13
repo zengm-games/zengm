@@ -114,6 +114,7 @@ async function updateDepth(
 
 		return {
 			abbrev,
+			challengeNoRatings: g.get("challengeNoRatings"),
 			editable,
 			pos,
 			players: players2,

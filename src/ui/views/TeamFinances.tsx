@@ -12,6 +12,7 @@ import type { View, Phase } from "../../common/types";
 import { PHASE } from "../../common";
 
 type FinancesFormProps = {
+	challengeNoRatings: boolean;
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
 	phase: Phase;
@@ -159,7 +160,14 @@ class FinancesForm extends React.Component<
 	}
 
 	render() {
-		const { gameSimInProgress, noSeasonData, t, tid, userTid } = this.props;
+		const {
+			challengeNoRatings,
+			gameSimInProgress,
+			noSeasonData,
+			t,
+			tid,
+			userTid,
+		} = this.props;
 
 		const warningMessage = (
 			<p className="text-danger">
@@ -224,7 +232,7 @@ class FinancesForm extends React.Component<
 						<input
 							type="text"
 							className="form-control"
-							disabled={formDisabled}
+							disabled={formDisabled || challengeNoRatings}
 							onChange={this.handleChanges.scouting}
 							value={this.state.scouting}
 						/>
@@ -464,6 +472,7 @@ const TeamFinances = ({
 	barData,
 	barSeasons,
 	budget,
+	challengeNoRatings,
 	contractTotals,
 	contracts,
 	hardCap,
@@ -737,6 +746,7 @@ const TeamFinances = ({
 				{budget ? (
 					<div className="col-lg-5 col-md-6 col-sm-7">
 						<FinancesForm
+							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}
 							phase={phase}

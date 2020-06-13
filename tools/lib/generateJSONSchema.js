@@ -457,6 +457,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("challengeNoFreeAgents", {
 							type: "boolean",
 						}),
+						gameAttribute("challengeNoRatings", {
+							type: "boolean",
+						}),
 						gameAttribute("challengeNoTrades", {
 							type: "boolean",
 						}),
@@ -618,8 +621,13 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						}),
+						gameAttribute("realPlayerDeterminism", {
+							type: "number",
+							minimum: 0,
+							maximum: 1,
+						}),
 						gameAttribute("repeatSeason", {
-							type: ["boolean", "object"],
+							type: "object",
 						}),
 						gameAttribute("rookieContractLengths", {
 							type: "array",
@@ -1122,7 +1130,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "boolean",
 						},
 						weight: {
-							type: "number",
+							type: ["number", "null"],
 						},
 						yearsFreeAgent: {
 							type: "integer",

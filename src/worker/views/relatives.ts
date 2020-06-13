@@ -52,6 +52,7 @@ const updatePlayers = async (
 		});
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			pid,
 			players: processPlayersHallOfFame(players),
 			stats,

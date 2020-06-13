@@ -8,6 +8,7 @@ cols[1].width = "100%";
 
 const Injuries = ({
 	injuries,
+	showRatings,
 }: {
 	injuries: {
 		games: number;
@@ -16,6 +17,7 @@ const Injuries = ({
 		ovrDrop?: number;
 		potDrop?: number;
 	}[];
+	showRatings: boolean;
 }) => {
 	if (injuries.length === 0) {
 		return <p>None</p>;
@@ -38,8 +40,8 @@ const Injuries = ({
 						},
 						injury.type,
 						injury.games,
-						injury.ovrDrop,
-						injury.potDrop,
+						showRatings ? injury.ovrDrop : null,
+						showRatings ? injury.potDrop : null,
 					],
 				};
 			})}

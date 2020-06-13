@@ -43,6 +43,7 @@ const sign = async (pid: number, amount: number, exp: number) => {
 
 const Negotiation = ({
 	hardCap,
+	challengeNoRatings,
 	contractOptions,
 	payroll,
 	player = {},
@@ -130,8 +131,10 @@ const Negotiation = ({
 			<p>
 				Mood: {mood}
 				<br />
-				{player.age} years old; Overall: {player.ratings.ovr}; Potential:{" "}
-				{player.ratings.pot}
+				{player.age} years old
+				{!challengeNoRatings
+					? `; Overall: ${player.ratings.ovr}; Potential: ${player.ratings.pot}`
+					: null}
 			</p>
 
 			<div className="row">

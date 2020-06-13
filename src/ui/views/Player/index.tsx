@@ -494,7 +494,7 @@ const Player2 = ({
 			<div className="row" style={{ marginBottom: "-1rem" }}>
 				<div className="col-md-6 col-lg-4">
 					<h2>Injuries</h2>
-					<Injuries injuries={player.injuries} />
+					<Injuries injuries={player.injuries} showRatings={showRatings} />
 				</div>
 				<div className="col-md-6 col-lg-8">
 					<h2>Transactions</h2>

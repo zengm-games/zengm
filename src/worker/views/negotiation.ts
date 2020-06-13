@@ -148,6 +148,7 @@ const updateNegotiation = async (
 		const payroll = await team.getPayroll(g.get("userTid"));
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			contractOptions,
 			hardCap: g.get("hardCap"),
 			payroll: payroll / 1000,

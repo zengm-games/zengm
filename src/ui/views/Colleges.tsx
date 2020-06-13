@@ -6,7 +6,13 @@ import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
 export const genView = (type: "college" | "country") => {
-	return ({ infos, stats, userTid, valueStat }: View<"colleges">) => {
+	return ({
+		challengeNoRatings,
+		infos,
+		stats,
+		userTid,
+		valueStat,
+	}: View<"colleges">) => {
 		useTitleBar({
 			title: type === "college" ? "Colleges" : "Countries",
 			customMenu: frivolitiesMenu,
@@ -49,6 +55,8 @@ export const genView = (type: "college" | "country") => {
 
 			const abbrev = teamInfoCache[p.legacyTid]?.abbrev;
 
+			const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
 			return {
 				key: c.name,
 				data: [
@@ -69,7 +77,7 @@ export const genView = (type: "college" | "country") => {
 					p.draft.year,
 					p.retiredYear === Infinity ? null : p.retiredYear,
 					p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
-					p.peakOvr,
+					showRatings ? p.peakOvr : null,
 					{
 						value: (
 							<a

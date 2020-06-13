@@ -8,6 +8,7 @@ import type {
 } from "../../common/types";
 import groupBy from "lodash/groupBy";
 import { player } from "../core";
+import { PLAYER } from "../../common";
 
 type Most = {
 	value: number;
@@ -186,6 +187,10 @@ const updatePlayers = async (
 			title = "Best Progs";
 			description =
 				"These are the players who had the biggest single season increases in ovr rating.";
+			if (g.get("challengeNoRatings")) {
+				description +=
+					' Because you\'re using the "no visible ratings" challenge mode, only retired players are shown here.';
+			}
 			extraCols.push(
 				{
 					key: ["most", "extra", "season"],
@@ -201,7 +206,9 @@ const updatePlayers = async (
 				},
 			);
 
-			filter = p => p.ratings.length > 1;
+			filter = p =>
+				p.ratings.length > 1 &&
+				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
 			getValue = p => {
 				let maxProg = -Infinity;
 				let maxSeason = p.ratings[0].season;
@@ -385,6 +392,10 @@ const updatePlayers = async (
 			title = "Worst Injuries";
 			description =
 				"These are the players who experienced the largest ovr drops after injuries.";
+			if (g.get("challengeNoRatings")) {
+				description +=
+					' Because you\'re using the "no visible ratings" challenge mode, only retired players are shown here.';
+			}
 			extraCols.push({
 				key: ["most", "extra", "type"],
 				colName: "Injury",
@@ -398,6 +409,9 @@ const updatePlayers = async (
 				colName: "Ovr Drop",
 			});
 
+			filter = p =>
+				p.injuries.length > 0 &&
+				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
 			getValue = p => {
 				let maxOvrDrop = 0;
 				let injuryType;
@@ -431,6 +445,7 @@ const updatePlayers = async (
 		});
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			description,
 			extraCols,
 			players,

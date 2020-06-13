@@ -135,6 +135,7 @@ export const genView = (type: "college" | "country") => {
 			);
 
 			return {
+				challengeNoRatings: g.get("challengeNoRatings"),
 				infos,
 				stats,
 				userTid: g.get("userTid"),

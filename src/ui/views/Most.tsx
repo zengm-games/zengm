@@ -7,6 +7,7 @@ import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
 const Most = ({
+	challengeNoRatings,
 	description,
 	extraCols,
 	players,
@@ -48,6 +49,8 @@ const Most = ({
 	);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
 		return {
 			key: p.pid,
 			data: [
@@ -84,7 +87,7 @@ const Most = ({
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
-				p.peakOvr,
+				showRatings ? p.peakOvr : null,
 				p.bestStats.season,
 				<a
 					href={helpers.leagueUrl([

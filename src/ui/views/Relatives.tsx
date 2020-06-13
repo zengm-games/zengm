@@ -6,7 +6,13 @@ import { DataTable } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
-const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
+const Relatives = ({
+	challengeNoRatings,
+	pid,
+	players,
+	stats,
+	userTid,
+}: View<"relatives">) => {
 	const target =
 		pid !== undefined ? players.find(p => p.pid === pid) : undefined;
 
@@ -66,6 +72,8 @@ const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 			}
 		}
 
+		const showRatings = !challengeNoRatings || p.retiredYear !== Infinity;
+
 		return {
 			key: p.pid,
 			data: [
@@ -74,7 +82,7 @@ const Relatives = ({ pid, players, stats, userTid }: View<"relatives">) => {
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
-				p.peakOvr,
+				showRatings ? p.peakOvr : null,
 				...relationArray,
 				p.pid !== pid ? (
 					<a href={helpers.leagueUrl(["frivolities", "relatives", p.pid])}>

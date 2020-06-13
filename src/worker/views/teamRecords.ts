@@ -427,7 +427,7 @@ const updateTeamRecords = async (
 						if (!t2) {
 							return false;
 						}
-						return t2.did === div.cid;
+						return t2.did === div.did;
 					}),
 				),
 			);

@@ -1134,13 +1134,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						{Math.round(state.realPlayerDeterminism * 100)}%
 					</div>
 				</div>
-				<div className="text-muted mt-1">
-					By default, BBGM's player development algorithm does not take into
-					account what we know about a real player's future performance. That
-					corresponds to 0% in this setting. Increase determinism to 100% and
-					real player ratings will be based entirely on their real life
-					development curve. Anything in between is a mix.
-				</div>
+				<div className="text-muted mt-1">{helpTexts.realPlayerDeterminism}</div>
 			</div>,
 		);
 	}

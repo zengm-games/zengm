@@ -42,14 +42,16 @@ type Key =
 	| "twoPointAccuracyFactor"
 	| "challengeNoDraftPicks"
 	| "challengeNoFreeAgents"
-	| "challengeNoTrades";
+	| "challengeNoTrades"
+	| "realPlayerDeterminism";
 
 type Category =
 	| "League Structure"
 	| "Finance"
 	| "Events"
 	| "Game Simulation"
-	| "Challenge Modes";
+	| "Challenge Modes"
+	| "Player Development";
 
 type FieldType =
 	| "bool"
@@ -68,6 +70,8 @@ export const helpTexts = {
 		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	challengeNoFreeAgents:
 		"You are not allowed to sign free agents, except to minimum contracts.",
+	realPlayerDeterminism:
+		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
 };
 
 const options: {
@@ -546,6 +550,30 @@ if (process.env.SPORT === "basketball") {
 			type: "float",
 			helpText:
 				"The baseline rate for two point percentage is multiplied by this number.",
+		},
+		{
+			category: "Player Development",
+			key: "realPlayerDeterminism",
+			name: "Real Player Determinism",
+			type: "float",
+			helpText: (
+				<>
+					<p>{helpTexts.realPlayerDeterminism}</p>
+					<p>
+						This has no impact on "random players"" leagues or randomly
+						generated players in "real players" leagues.
+					</p>
+					<p>
+						Value must be between 0 (normal BBGM player development) and 1 (100%
+						deterministic when historical stats are available).
+					</p>
+				</>
+			),
+			validator: value => {
+				if (value < 0 || value > 1) {
+					throw new Error("Value must be between 0 and 1");
+				}
+			},
 		},
 	);
 }

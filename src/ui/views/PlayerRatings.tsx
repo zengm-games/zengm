@@ -23,21 +23,6 @@ const PlayerRatings = ({
 		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
 	});
 
-	if (challengeNoRatings) {
-		return (
-			<>
-				<p>
-					Come on, you have the "no visible ratings" challenge mode enabled.
-					What are you doing here? Maybe try the{" "}
-					<a href={helpers.leagueUrl(["player_bios", abbrev, season])}>
-						Player Bios
-					</a>{" "}
-					page instead.
-				</p>
-			</>
-		);
-	}
-
 	const ovrsPotsColNames: string[] = [];
 	if (process.env.SPORT === "football") {
 		for (const pos of POSITIONS) {
@@ -60,11 +45,13 @@ const PlayerRatings = ({
 	);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
 		const ovrsPotsRatings: string[] = [];
 		if (process.env.SPORT === "football") {
 			for (const pos of POSITIONS) {
 				for (const type of ["ovrs", "pots"]) {
-					ovrsPotsRatings.push(p.ratings[type][pos]);
+					ovrsPotsRatings.push(showRatings ? p.ratings[type][pos] : null);
 				}
 			}
 		}
@@ -99,9 +86,9 @@ const PlayerRatings = ({
 						? ` thru ${p.contract.exp}`
 						: ""}
 				</>,
-				p.ratings.ovr,
-				p.ratings.pot,
-				...ratings.map(rating => p.ratings[rating]),
+				showRatings ? p.ratings.ovr : null,
+				showRatings ? p.ratings.pot : null,
+				...ratings.map(rating => (showRatings ? p.ratings[rating] : null)),
 				...ovrsPotsRatings,
 			],
 			classNames: {
@@ -119,6 +106,13 @@ const PlayerRatings = ({
 					Rating Distributions
 				</a>
 			</p>
+
+			{challengeNoRatings ? (
+				<p className="alert alert-danger d-inline-block">
+					<b>Challenge Mode:</b> All player ratings are hidden, except for
+					retired players.
+				</p>
+			) : null}
 
 			<p>
 				Players on your team are{" "}

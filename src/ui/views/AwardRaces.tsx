@@ -9,6 +9,7 @@ import {
 	StatWithChange,
 } from "../components";
 import type { View } from "../../common/types";
+import { PLAYER } from "../../common";
 
 const AwardRaces = ({
 	awardCandidates,
@@ -78,9 +79,11 @@ const AwardRaces = ({
 							</a>,
 						];
 
+						const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
 						if (mip) {
 							data.push(
-								pr && !challengeNoRatings ? (
+								pr && showRatings ? (
 									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
 								) : undefined,
 							);
@@ -110,7 +113,7 @@ const AwardRaces = ({
 								}),
 							);
 						} else {
-							data.push(pr && !challengeNoRatings ? pr.ovr : undefined);
+							data.push(pr && showRatings ? pr.ovr : undefined);
 							const statsRow = stats.map(stat =>
 								ps ? helpers.roundStat(ps[stat], stat) : undefined,
 							);

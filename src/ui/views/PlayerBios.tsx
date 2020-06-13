@@ -4,6 +4,7 @@ import { DataTable, Height, PlayerNameLabels, Weight } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { PLAYER } from "../../common";
 
 const PlayerBios = ({
 	abbrev,
@@ -40,6 +41,8 @@ const PlayerBios = ({
 	);
 
 	const rows = players.map(p => {
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
 		return {
 			key: p.pid,
 			data: [
@@ -86,8 +89,8 @@ const PlayerBios = ({
 				p.college,
 				p.draft.year,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : null,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
+				showRatings ? p.ratings.ovr : null,
+				showRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {

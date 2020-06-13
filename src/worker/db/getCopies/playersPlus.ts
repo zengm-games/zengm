@@ -407,6 +407,8 @@ const processRatings = (
 					row.skills = [];
 				} else if (attr === "age") {
 					row.age = season - p.born.year;
+				} else if (attr === "pos") {
+					row.pos = p.ratings[p.ratings.length - 1].pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
 				} else {

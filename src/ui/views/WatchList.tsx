@@ -52,6 +52,8 @@ const WatchList = ({
 			}`;
 		}
 
+		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+
 		return {
 			key: p.pid,
 			data: [
@@ -69,8 +71,8 @@ const WatchList = ({
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
 					{p.abbrev}
 				</a>,
-				!challengeNoRatings ? p.ratings.ovr : null,
-				!challengeNoRatings ? p.ratings.pot : null,
+				showRatings ? p.ratings.ovr : null,
+				showRatings ? p.ratings.pot : null,
 				contract,
 				...stats.map(stat =>
 					helpers.roundStat(p.stats[stat], stat, statType === "totals"),

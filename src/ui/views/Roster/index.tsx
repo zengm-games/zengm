@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import arrayMove from "array-move";
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import {
 	HelpPopover,
 	PlayerNameLabels,
@@ -257,89 +257,92 @@ const Roster = ({
 						<th title="How Player Was Acquired">Acquired</th>
 					</>
 				)}
-				row={({ value: p }) => (
-					<>
-						<td>
-							<PlayerNameLabels
-								pid={p.pid}
-								injury={p.injury}
-								skills={p.ratings.skills}
-								watch={p.watch}
-							>
-								{p.name}
-							</PlayerNameLabels>
-						</td>
-						<td>{p.ratings.pos}</td>
-						<td>{p.age}</td>
-						<td>
-							{!challengeNoRatings ? (
-								<RatingWithChange change={p.ratings.dovr}>
-									{p.ratings.ovr}
-								</RatingWithChange>
-							) : null}
-						</td>
-						<td>
-							{!challengeNoRatings ? (
-								<RatingWithChange change={p.ratings.dpot}>
-									{p.ratings.pot}
-								</RatingWithChange>
-							) : null}
-						</td>
-						{season === currentSeason ? (
-							<td
-								style={{
-									fontStyle: justDrafted(p, phase, currentSeason)
-										? "italic"
-										: "normal",
-								}}
-								title={
-									justDrafted(p, phase, currentSeason)
-										? "Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing."
-										: undefined
-								}
-							>
-								{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-								{p.contract.exp}
-							</td>
-						) : null}
-						<td>{p.stats.yearsWithTeam}</td>
-						{stats.map(stat => (
-							<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
-						))}
-						{editable ? (
+				row={({ value: p }) => {
+					const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+					return (
+						<>
 							<td>
-								<PlayingTime p={p} userTid={userTid} />
-							</td>
-						) : null}
-						{showRelease ? (
-							<td>
-								<button
-									className="btn btn-light-bordered btn-xs"
-									disabled={!p.canRelease}
-									onClick={() => handleRelease(p, phase, currentSeason)}
+								<PlayerNameLabels
+									pid={p.pid}
+									injury={p.injury}
+									skills={p.ratings.skills}
+									watch={p.watch}
 								>
-									Release
-								</button>
+									{p.name}
+								</PlayerNameLabels>
 							</td>
-						) : null}
-						{showTradeFor ? (
-							<td title={p.untradableMsg}>
-								<button
-									className="btn btn-light-bordered btn-xs"
-									disabled={p.untradable}
-									onClick={() =>
-										toWorker("actions", "tradeFor", { pid: p.pid })
+							<td>{p.ratings.pos}</td>
+							<td>{p.age}</td>
+							<td>
+								{showRatings ? (
+									<RatingWithChange change={p.ratings.dovr}>
+										{p.ratings.ovr}
+									</RatingWithChange>
+								) : null}
+							</td>
+							<td>
+								{showRatings ? (
+									<RatingWithChange change={p.ratings.dpot}>
+										{p.ratings.pot}
+									</RatingWithChange>
+								) : null}
+							</td>
+							{season === currentSeason ? (
+								<td
+									style={{
+										fontStyle: justDrafted(p, phase, currentSeason)
+											? "italic"
+											: "normal",
+									}}
+									title={
+										justDrafted(p, phase, currentSeason)
+											? "Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing."
+											: undefined
 									}
 								>
-									Trade For
-								</button>
+									{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
+									{p.contract.exp}
+								</td>
+							) : null}
+							<td>{p.stats.yearsWithTeam}</td>
+							{stats.map(stat => (
+								<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
+							))}
+							{editable ? (
+								<td>
+									<PlayingTime p={p} userTid={userTid} />
+								</td>
+							) : null}
+							{showRelease ? (
+								<td>
+									<button
+										className="btn btn-light-bordered btn-xs"
+										disabled={!p.canRelease}
+										onClick={() => handleRelease(p, phase, currentSeason)}
+									>
+										Release
+									</button>
+								</td>
+							) : null}
+							{showTradeFor ? (
+								<td title={p.untradableMsg}>
+									<button
+										className="btn btn-light-bordered btn-xs"
+										disabled={p.untradable}
+										onClick={() =>
+											toWorker("actions", "tradeFor", { pid: p.pid })
+										}
+									>
+										Trade For
+									</button>
+								</td>
+							) : null}
+							<td>
+								<SafeHtml dirty={p.latestTransaction} />
 							</td>
-						) : null}
-						<td>
-							<SafeHtml dirty={p.latestTransaction} />
-						</td>
-					</>
-				)}
+						</>
+					);
+				}}
 			/>
 		</>
 	);

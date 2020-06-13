@@ -6,6 +6,10 @@ const Weight = ({ pounds }: { pounds: number }) => {
 		units: state2.units,
 	}));
 
+	if (typeof pounds !== "number") {
+		return null;
+	}
+
 	if (state.units === "metric") {
 		return `${Math.round(pounds / 2.205)} kg`;
 	}
@@ -14,7 +18,7 @@ const Weight = ({ pounds }: { pounds: number }) => {
 };
 
 Weight.propTypes = {
-	pounds: PropTypes.number.isRequired,
+	pounds: PropTypes.number,
 };
 
 export default Weight;

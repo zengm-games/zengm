@@ -109,6 +109,8 @@ league creation options
 - add challenge mode
   - hide player ratings
     - do better job of showing ratings for non-retired players. at least Player Ratings page...
+    - !challengeNoRatings ?
+      - draft
   - lose your best player every year
 - blog
   - changelog
@@ -118,6 +120,7 @@ league creation options
     - no free agents
     - no draft picks
     - no trades
+    - no visible player ratings (until retirement)
     - can be changed in god mode settings too, not just when creating new league
   - groundhog day
   - no starting injuries

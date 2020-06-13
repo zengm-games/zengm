@@ -1111,7 +1111,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		moreOptions.unshift(
 			<div key="realPlayerDeterminism" className="form-group">
 				<label htmlFor="new-league-realPlayerDeterminism">
-					Real Player Development Determinism
+					Real player development determinism
 				</label>
 				<div className="d-flex">
 					<input

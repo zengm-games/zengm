@@ -578,12 +578,13 @@ const reducer = (state: State, action: Action): State => {
 			};
 			if (action.leagueFile && action.leagueFile.gameAttributes) {
 				for (const { key, value } of action.leagueFile.gameAttributes) {
+					// For most settings this passes through the boolean value. For repeatSeason it converts that to a boolean, and it'll be filled later with the actual correct value.
+					const booleanValue = !!value;
 					if (
 						(gameAttributeOverrides as any)[key] !== undefined &&
-						(gameAttributeOverrides as any)[key] !== value
+						(gameAttributeOverrides as any)[key] !== booleanValue
 					) {
-						// For challenge* this persists the boolean. For repeatSeason it converts that to a boolean, and it'll be filled later w ith the actual correct value.
-						(gameAttributeOverrides as any)[key] = !!value;
+						(gameAttributeOverrides as any)[key] = booleanValue;
 						gameAttributeOverrides.expandOptions = true;
 					}
 				}

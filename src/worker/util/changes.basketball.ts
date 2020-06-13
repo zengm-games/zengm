@@ -295,6 +295,11 @@ const changes = [
 		msg:
 			'Real rosters back to 1947 and support for contraction at Tools > Manage Teams. <a href="https://basketball-gm.com/blog/2020/06/real-rosters-back-to-1947-contraction/">More details</a>',
 	},
+	{
+		date: "2020-06-13",
+		msg:
+			'A bunch of new options for league creation: challenge modes (no draft picks, no free agents, no trades, no visible ratings), player development realism, and more. <a href="https://basketball-gm.com/blog/2020/06/league-creation-options/">More details</a>',
+	},
 ];
 
 export default changes;

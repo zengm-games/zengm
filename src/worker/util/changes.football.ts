@@ -43,6 +43,11 @@ const changes = [
 		msg:
 			'11 new frivolities, available within a league at at Tools > Frivolities. <a href="https://basketball-gm.com/blog/2020/05/new-frivolities/">More details</a>',
 	},
+	{
+		date: "2020-06-13",
+		msg:
+			'A bunch of new options for league creation: challenge modes (no draft picks, no free agents, no trades, no visible ratings), starting season, and more. <a href="https://basketball-gm.com/blog/2020/06/league-creation-options/">More details</a>',
+	},
 ];
 
 export default changes;

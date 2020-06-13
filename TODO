@@ -142,9 +142,9 @@ FBGM - when it says 'QB's name drops back to pass' the score summary says 'QB pa
 
 eventually
 - way to view scheduled events and add/edit/delete
+  - @El Clon#3483
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
 - show draft prospects separately when creating a new custom league, to allow creating one without them
-- gui to edit scheduled events
 - allow user to cancel relocation if it's their team?
 
 manually specify draft order in god mode

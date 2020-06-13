@@ -42,6 +42,7 @@ type Key =
 	| "twoPointAccuracyFactor"
 	| "challengeNoDraftPicks"
 	| "challengeNoFreeAgents"
+	| "challengeNoRatings"
 	| "challengeNoTrades"
 	| "realPlayerDeterminism";
 
@@ -479,6 +480,12 @@ const options: {
 		category: "Challenge Modes",
 		key: "challengeNoTrades",
 		name: "No Trades",
+		type: "bool",
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeNoRatings",
+		name: "No Visible Player Ratings",
 		type: "bool",
 	},
 ];

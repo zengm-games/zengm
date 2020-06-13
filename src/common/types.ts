@@ -291,6 +291,7 @@ export type GameAttributesLeague = {
 	budget: boolean;
 	challengeNoDraftPicks: boolean;
 	challengeNoFreeAgents: boolean;
+	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
 	confs: { cid: number; name: string }[];
 	daysLeft: number;

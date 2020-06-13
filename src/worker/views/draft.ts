@@ -42,9 +42,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					[g.get("season")],
 					[g.get("season"), Infinity],
 				])
-			).filter(p => p.tid === PLAYER.UNDRAFTED); // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
-			// This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
+			).filter(p => p.tid === PLAYER.UNDRAFTED);
 
+			// DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
+			// This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
 			for (const p of undrafted) {
 				const season = p.ratings[0].season;
 
@@ -68,6 +69,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"watch",
 				"abbrev",
 				"tid",
+				"valueFuzz",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,
@@ -76,6 +78,12 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showRookies: true,
 			fuzz: true,
 		});
+		undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
+		undrafted = undrafted.map((p, i) => ({
+			...p,
+			rank: i + 1,
+		}));
+
 		let drafted: any[];
 
 		if (

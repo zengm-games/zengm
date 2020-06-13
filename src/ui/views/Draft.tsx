@@ -112,23 +112,32 @@ const Draft = ({
 	const userRemaining = remainingPicks.some(p =>
 		userTids.includes(p.draft.tid),
 	);
-	const colsUndrafted = getCols("Name", "Pos", "Age", "Ovr", "Pot", "Draft");
-	colsUndrafted[0].width = "100%";
+	const colsUndrafted = getCols(
+		"#",
+		"Name",
+		"Pos",
+		"Age",
+		"Ovr",
+		"Pot",
+		"Draft",
+	);
+	colsUndrafted[1].width = "100%";
 
 	if (fantasyDraft || expansionDraft) {
 		colsUndrafted.splice(
-			5,
+			6,
 			0,
 			...getCols("Contract", ...stats.map(stat => `stat:${stat}`)),
 		);
 	}
 
 	if (expansionDraft) {
-		colsUndrafted.splice(2, 0, ...getCols("Team"));
+		colsUndrafted.splice(3, 0, ...getCols("Team"));
 	}
 
 	const rowsUndrafted = undrafted.map(p => {
 		const data = [
+			p.rank,
 			<PlayerNameLabels
 				pid={p.pid}
 				injury={p.injury}
@@ -168,7 +177,7 @@ const Draft = ({
 
 		if (fantasyDraft || expansionDraft) {
 			data.splice(
-				5,
+				6,
 				0,
 				`${helpers.formatCurrency(p.contract.amount, "M")} thru ${
 					p.contract.exp
@@ -183,7 +192,7 @@ const Draft = ({
 
 		if (expansionDraft) {
 			data.splice(
-				2,
+				3,
 				0,
 				<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
 					{p.abbrev}
@@ -358,7 +367,7 @@ const Draft = ({
 
 					<DataTable
 						cols={colsUndrafted}
-						defaultSort={[4, "desc"]}
+						defaultSort={[0, "asc"]}
 						name="Draft:Undrafted"
 						pagination={rowsDrafted.length > 100}
 						rows={rowsUndrafted}

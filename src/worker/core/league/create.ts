@@ -77,7 +77,7 @@ type LeagueFile = {
 };
 
 // Creates a league, writing nothing to the database.
-export const createWithoutSaving = (
+export const createWithoutSaving = async (
 	leagueName: string,
 	tid: number,
 	leagueFile: LeagueFile,
@@ -540,8 +540,9 @@ export const createWithoutSaving = (
 			}
 		}
 
-		players = leagueFile.players.map(p0 => {
-			const p: PlayerWithoutKey = player.augmentPartialPlayer(
+		players = [];
+		for (const p0 of leagueFile.players) {
+			const p: PlayerWithoutKey = await player.augmentPartialPlayer(
 				{ ...p0 },
 				scoutingRank,
 				leagueFile.version,
@@ -551,8 +552,8 @@ export const createWithoutSaving = (
 				p.tid = PLAYER.FREE_AGENT;
 			}
 
-			return p;
-		});
+			players.push(p);
+		}
 	} else {
 		players = [];
 
@@ -570,7 +571,7 @@ export const createWithoutSaving = (
 			numYearsAgo > seasonOffset;
 			numYearsAgo--
 		) {
-			let draftClass = draft.genPlayersWithoutSaving(
+			let draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season"),
 				scoutingRank,
 			);
@@ -599,7 +600,7 @@ export const createWithoutSaving = (
 
 				// Develop player and see if he is still non-retired
 
-				player.develop(p, numYearsAgo, true);
+				await player.develop(p, numYearsAgo, true);
 				player.updateValues(p);
 
 				// Run shouldRetire 4 times to simulate past shouldRetire calls
@@ -830,7 +831,7 @@ export const createWithoutSaving = (
 			(g.get("phase") <= PHASE.DRAFT_LOTTERY ||
 				g.get("phase") >= PHASE.RESIGN_PLAYERS)
 		) {
-			const draftClass = draft.genPlayersWithoutSaving(
+			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + seasonOffset,
 				scoutingRank,
 				createUndrafted1,
@@ -839,7 +840,7 @@ export const createWithoutSaving = (
 		}
 
 		if (createUndrafted2 > 0) {
-			const draftClass = draft.genPlayersWithoutSaving(
+			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + 1 + seasonOffset,
 				scoutingRank,
 				createUndrafted2,
@@ -848,7 +849,7 @@ export const createWithoutSaving = (
 		}
 
 		if (createUndrafted3 > 0) {
-			const draftClass = draft.genPlayersWithoutSaving(
+			const draftClass = await draft.genPlayersWithoutSaving(
 				g.get("season") + 2 + seasonOffset,
 				scoutingRank,
 				createUndrafted3,
@@ -908,7 +909,7 @@ const create = async ({
 	difficulty?: number;
 	importLid?: number | undefined | null;
 }): Promise<number> => {
-	const leagueData = createWithoutSaving(
+	const leagueData = await createWithoutSaving(
 		name,
 		tid,
 		leagueFile,

@@ -263,6 +263,7 @@ const createLeague = async ({
 	repeatSeason,
 	noStartingInjuries,
 	equalizeRegions,
+	realPlayerDeterminism,
 }: {
 	name: string;
 	tid: number;
@@ -279,6 +280,7 @@ const createLeague = async ({
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
+	realPlayerDeterminism: number | undefined;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -366,6 +368,14 @@ const createLeague = async ({
 		"equalizeRegions",
 		equalizeRegions,
 	);
+
+	if (realPlayerDeterminism !== undefined) {
+		upsertGameAttribute(
+			leagueFile.gameAttributes,
+			"realPlayerDeterminism",
+			realPlayerDeterminism,
+		);
+	}
 
 	if (noStartingInjuries && leagueFile.players) {
 		for (const p of leagueFile.players) {
@@ -895,7 +905,7 @@ const getLocal = async (name: keyof Local) => {
 	return local[name];
 };
 
-const getRandomRatings = (age: number, pos: string | undefined) => {
+const getRandomRatings = async (age: number, pos: string | undefined) => {
 	// 100 tries to find a matching position
 	let p: any;
 	for (let i = 0; i < 100; i++) {
@@ -911,7 +921,7 @@ const getRandomRatings = (age: number, pos: string | undefined) => {
 		}
 	}
 
-	player.develop(p, age - 19);
+	await player.develop(p, age - 19);
 
 	const ratings: Record<string, unknown> = {};
 	for (const key of RATINGS) {
@@ -1145,7 +1155,7 @@ const handleUploadedDraftClass = async (
 		}
 
 		// Make sure player object is fully defined
-		const p2 = player.augmentPartialPlayer(
+		const p2 = await player.augmentPartialPlayer(
 			p,
 			scoutingRank,
 			uploadedFile.version,
@@ -2092,7 +2102,7 @@ const upsertCustomizedPlayer = async (
 	const selectedPos = p.ratings[r].pos;
 
 	if (updatedRatingsOrAge || !p.hasOwnProperty("pid")) {
-		player.develop(p, 0);
+		await player.develop(p, 0);
 		player.updateValues(p);
 	}
 

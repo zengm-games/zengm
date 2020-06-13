@@ -330,6 +330,7 @@ export type GameAttributesLeague = {
 	phase: Phase;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
+	realPlayerDeterminism: number;
 	repeatSeason:
 		| undefined
 		| {

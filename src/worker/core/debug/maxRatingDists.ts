@@ -2,7 +2,7 @@ import { draft, player } from "..";
 import { g, helpers } from "../../util";
 import { RATINGS } from "../../../common";
 
-const maxRatingDists = (numPlayers: number = 100) => {
+const maxRatingDists = async (numPlayers: number = 100) => {
 	// Each player gets one entry per array: their career max in a rating
 	const ratings: {
 		[key: string]: number[];
@@ -17,7 +17,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 
 	for (let i = 0; i < numPlayers; i++) {
 		if (playersToProcess.length === 0) {
-			const players = draft.genPlayersWithoutSaving(2019, 15.5, 70);
+			const players = await draft.genPlayersWithoutSaving(2019, 15.5, 70);
 			playersToProcess = players;
 		}
 
@@ -35,7 +35,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 		}
 
 		for (let j = 0; j < 20; j++) {
-			player.develop(p, 1, false, 15.5, true);
+			await player.develop(p, 1, false, 15.5, true);
 			p.born.year -= 1; // Aging after develop
 
 			for (const key of Object.keys(ratings)) {

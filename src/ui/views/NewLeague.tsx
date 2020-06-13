@@ -373,6 +373,7 @@ type State = {
 	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
+	realPlayerDeterminism: number;
 };
 
 type Action =
@@ -444,7 +445,11 @@ type Action =
 	| {
 			type: "toggleRepeatSeason";
 	  }
-	| { type: "toggleNoStartingInjuries" };
+	| { type: "toggleNoStartingInjuries" }
+	| {
+			type: "setRealPlayerDeterminism";
+			realPlayerDeterminism: number;
+	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
 	const t = teams.find(t => t.tid === tid);
@@ -577,8 +582,6 @@ const reducer = (state: State, action: Action): State => {
 					}
 				}
 			}
-			console.log(gameAttributeOverrides);
-			console.log(action.leagueFile.gameAttributes);
 
 			return {
 				...state,
@@ -661,6 +664,12 @@ const reducer = (state: State, action: Action): State => {
 				noStartingInjuries: !state.noStartingInjuries,
 			};
 
+		case "setRealPlayerDeterminism":
+			return {
+				...state,
+				realPlayerDeterminism: action.realPlayerDeterminism,
+			};
+
 		default:
 			throw new Error();
 	}
@@ -727,6 +736,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
+				realPlayerDeterminism: 0,
 			};
 		},
 	);
@@ -778,6 +788,12 @@ const NewLeague = (props: View<"newLeague">) => {
 			const actualStartingSeason =
 				state.customize === "default" ? startingSeason : undefined;
 
+			const actualRealPlayerDeterminism =
+				(state.customize === "real" || state.customize === "legends") &&
+				state.keptKeys.includes("players")
+					? state.realPlayerDeterminism
+					: undefined;
+
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -809,6 +825,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
+					realPlayerDeterminism: actualRealPlayerDeterminism,
 				});
 
 				let type: string = state.customize;
@@ -862,6 +879,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			props.name,
 			state.noStartingInjuries,
 			state.randomization,
+			state.realPlayerDeterminism,
 			state.repeatSeason,
 			state.season,
 			startingSeason,
@@ -1085,6 +1103,47 @@ const NewLeague = (props: View<"newLeague">) => {
 			</div>
 		</div>,
 	];
+
+	if (
+		(state.customize === "real" || state.customize === "legends") &&
+		state.keptKeys.includes("players")
+	) {
+		moreOptions.unshift(
+			<div key="realPlayerDeterminism" className="form-group">
+				<label htmlFor="new-league-realPlayerDeterminism">
+					Real Player Development Determinism
+				</label>
+				<div className="d-flex">
+					<input
+						id="new-league-realPlayerDeterminism"
+						type="range"
+						className="form-control-range"
+						min="0"
+						max="1"
+						step="0.05"
+						value={state.realPlayerDeterminism}
+						onChange={event => {
+							dispatch({
+								type: "setRealPlayerDeterminism",
+								realPlayerDeterminism: parseFloat(event.target.value as any),
+							});
+						}}
+						title="Speed"
+					/>
+					<div className="text-right" style={{ minWidth: 40 }}>
+						{Math.round(state.realPlayerDeterminism * 100)}%
+					</div>
+				</div>
+				<div className="text-muted mt-1">
+					By default, BBGM's player development algorithm does not take into
+					account what we know about a real player's future performance. That
+					corresponds to 0% in this setting. Increase determinism to 100% and
+					real player ratings will be based entirely on their real life
+					development curve. Anything in between is a mix.
+				</div>
+			</div>,
+		);
+	}
 
 	if (state.keptKeys.includes("players") || state.customize === "real") {
 		moreOptions.unshift(

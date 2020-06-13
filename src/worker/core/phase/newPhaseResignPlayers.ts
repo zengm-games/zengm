@@ -219,7 +219,7 @@ const newPhaseResignPlayers = async (
 		}
 
 		p.ratings[0].fuzz /= Math.sqrt(2);
-		player.develop(p, 0); // Update skills/pot based on fuzz
+		await player.develop(p, 0); // Update skills/pot based on fuzz
 
 		player.updateValues(p);
 		await idb.cache.players.put(p);
@@ -231,7 +231,7 @@ const newPhaseResignPlayers = async (
 		}
 
 		p.ratings[0].fuzz /= Math.sqrt(2);
-		player.develop(p, 0); // Update skills/pot based on fuzz
+		await player.develop(p, 0); // Update skills/pot based on fuzz
 
 		player.updateValues(p);
 		await idb.cache.players.put(p);

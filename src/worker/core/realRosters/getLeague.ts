@@ -407,12 +407,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					nerfDraftProspect(ratings);
 					p.ratings = [ratings];
 				}
-
-				if (p.draft.year === options.season) {
-					console.log(p);
-				}
 			}
-			console.log(draftYears);
 		}
 
 		const gameAttributes: {

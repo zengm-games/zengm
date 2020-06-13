@@ -1,5 +1,4 @@
 import orderBy from "lodash/orderBy";
-import range from "lodash/range";
 import { PLAYER, POSITIONS } from "../../../common";
 import developSeason from "./developSeason";
 import ovr from "./ovr";
@@ -117,14 +116,15 @@ if (process.env.SPORT === "football") {
 	};
 }
 
-// Repeatedly simulate aging up to 29, and pick the 75th percentile max
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
-export const bootstrapPot = (
+// Repeatedly simulate aging up to 29, and pick the 75th percentile max
+export const bootstrapPot = async (
 	ratings: MinimalPlayerRatings,
 	age: number,
+	srID: string | undefined,
 	pos?: string,
-): number => {
+): Promise<number> => {
 	if (age >= 29) {
 		return pos ? ratings.ovrs[pos] : ratings.ovr;
 	}
@@ -145,12 +145,14 @@ export const bootstrapPot = (
 		return helpers.bound(Math.round(pot), 0, 100);
 	}
 
-	const maxOvrs = range(NUM_SIMULATIONS).map(() => {
+	const maxOvrs = [];
+
+	for (let i = 0; i < NUM_SIMULATIONS; i++) {
 		const copiedRatings = helpers.deepCopy(ratings);
 		let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
 
 		for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
-			developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
+			await developSeason(copiedRatings, ageTemp, srID); // Purposely no coachingRank
 
 			const currentOvr = ovr(copiedRatings, pos);
 
@@ -159,8 +161,9 @@ export const bootstrapPot = (
 			}
 		}
 
-		return maxOvr;
-	});
+		maxOvrs.push(maxOvr);
+	}
+
 	return orderBy(maxOvrs)[Math.floor(0.75 * NUM_SIMULATIONS)];
 };
 
@@ -176,7 +179,7 @@ export const bootstrapPot = (
  * @param {number=} coachingRank From 1 to g.get("numActiveTeams") (default 30), where 1 is best coaching staff and g.get("numActiveTeams") is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-const develop = (
+const develop = async (
 	p: {
 		born: {
 			loc: string;
@@ -191,6 +194,7 @@ const develop = (
 		ratings: MinimalPlayerRatings[];
 		tid: number;
 		weight: number;
+		srID?: string;
 	},
 	years: number = 1,
 	newPlayer: boolean = false,
@@ -207,7 +211,7 @@ const develop = (
 		}
 
 		if (!ratings.locked) {
-			developSeason(ratings, age, coachingRank);
+			await developSeason(ratings, age, p.srID, coachingRank);
 
 			// In the NBA displayed weights seem to never change and seem inaccurate
 			if (process.env.SPORT === "football") {
@@ -232,7 +236,7 @@ const develop = (
 			ratings.ovr = ovr(ratings);
 
 			if (!skipPot) {
-				ratings.pot = bootstrapPot(ratings, age);
+				ratings.pot = await bootstrapPot(ratings, age, p.srID);
 			}
 
 			if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
@@ -258,10 +262,10 @@ const develop = (
 			}, {});
 
 			if (!skipPot) {
-				ratings.pots = POSITIONS.reduce((pots, pos2) => {
-					pots[pos2] = bootstrapPot(ratings, age, pos2);
-					return pots;
-				}, {});
+				ratings.pots = {};
+				for (const pos2 of POSITIONS) {
+					ratings.pots[pos2] = await bootstrapPot(ratings, age, p.srID, pos2);
+				}
 			}
 
 			if (pos === undefined) {

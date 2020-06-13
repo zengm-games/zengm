@@ -20,11 +20,11 @@ import type { MinimalPlayerRatings, Player } from "../../../common/types";
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-const augmentPartialPlayer = (
+const augmentPartialPlayer = async (
 	p: any,
 	scoutingRank: number,
 	version: number | undefined,
-): Player<MinimalPlayerRatings> => {
+): Promise<Player<MinimalPlayerRatings>> => {
 	let age;
 
 	if (p.born === undefined) {
@@ -202,7 +202,7 @@ const augmentPartialPlayer = (
 
 	if (process.env.SPORT === "football" && (!r2.ovrs || !r2.pots || !r2.pos)) {
 		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
-		develop(p, 0);
+		await develop(p, 0);
 	}
 
 	// Rating rescaling
@@ -263,7 +263,7 @@ const augmentPartialPlayer = (
 
 			r.ovr = ovr(r);
 			r.skills = skills(r);
-			r.pot = bootstrapPot(r, r.season - p.born.year);
+			r.pot = await bootstrapPot(r, r.season - p.born.year, p.srID);
 
 			if (p.draft.year === r.season) {
 				p.draft.ovr = r.ovr;
@@ -300,7 +300,7 @@ const augmentPartialPlayer = (
 			(r.pot === undefined || r.pot < r.ovr)
 		) {
 			// Only basketball, in case position is not known at this point
-			r.pot = bootstrapPot(r, r.season - p.born.year);
+			r.pot = await bootstrapPot(r, r.season - p.born.year, p.srID);
 		}
 
 		if (r.pos === undefined && process.env.SPORT !== "football") {

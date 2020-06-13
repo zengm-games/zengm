@@ -106,6 +106,9 @@ new frivolity improvements
   - total games on team for players with the most years on one team
 
 league creation options
+- for real players, slider with % of development determined by real player ratings
+  - @hrmantovani#2284
+  - add to god mode
 - add challenge mode
   - hide player ratings
   - lose your best player every year
@@ -121,6 +124,7 @@ league creation options
   - groundhog day
   - no starting injuries
   - equalize region populations
+  - real player development determinism
 
 god mode stuff
 - more stuff on player editor

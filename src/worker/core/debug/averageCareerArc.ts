@@ -1,7 +1,7 @@
 import { player } from "..";
 import { g } from "../../util";
 
-const averageCareerArc = (ratingToSave: string) => {
+const averageCareerArc = async (ratingToSave: string) => {
 	console.log(
 		'Warning: This does not include "special" draft prospects created in draft.genPlayers',
 	);
@@ -30,7 +30,7 @@ const averageCareerArc = (ratingToSave: string) => {
 				averageRat[k] += p.ratings[0][ratingToSave];
 			}
 
-			player.develop(p, 1, true);
+			await player.develop(p, 1, true);
 		}
 	}
 

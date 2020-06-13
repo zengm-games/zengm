@@ -220,7 +220,7 @@ const newPhasePreseason = async (
 		if (!repeatSeason) {
 			// Update ratings
 			player.addRatingsRow(p, scoutingRank);
-			player.develop(p, 1, false, coachingRanks[p.tid]);
+			await player.develop(p, 1, false, coachingRanks[p.tid]);
 
 			// Update player values after ratings changes
 			player.updateValues(p);

@@ -1,7 +1,7 @@
 import range from "lodash/range";
 import { draft, player } from "..";
 
-const avgRatingDists = (numPlayers: number = 100) => {
+const avgRatingDists = async (numPlayers: number = 100) => {
 	const NUM_SEASONS = 20;
 	const ratings: any[] = range(NUM_SEASONS).map(() => {
 		return {
@@ -26,7 +26,7 @@ const avgRatingDists = (numPlayers: number = 100) => {
 
 	for (let i = 0; i < numPlayers; i++) {
 		if (playersToProcess.length === 0) {
-			const players = draft.genPlayersWithoutSaving(2019, 15.5, 70);
+			const players = await draft.genPlayersWithoutSaving(2019, 15.5, 70);
 			playersToProcess = players;
 		}
 
@@ -37,7 +37,7 @@ const avgRatingDists = (numPlayers: number = 100) => {
 		}
 
 		for (let j = 0; j < NUM_SEASONS; j++) {
-			player.develop(p, 1, false, 15.5, true);
+			await player.develop(p, 1, false, 15.5, true);
 			p.born.year -= 1; // Aging after develop
 
 			for (const key of Object.keys(ratings[j])) {

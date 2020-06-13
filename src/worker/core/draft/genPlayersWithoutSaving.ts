@@ -1,4 +1,3 @@
-import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { g, random } from "../../util";
@@ -7,11 +6,11 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 
-const genPlayersWithoutSaving = (
+const genPlayersWithoutSaving = async (
 	draftYear: number,
 	scoutingRank: number,
 	numPlayers?: number,
-): PlayerWithoutKey<MinimalPlayerRatings>[] => {
+): Promise<PlayerWithoutKey<MinimalPlayerRatings>[]> => {
 	if (numPlayers === null || numPlayers === undefined) {
 		numPlayers = Math.round(
 			(g.get("numDraftRounds") * g.get("numActiveTeams") * 7) / 6,
@@ -23,7 +22,8 @@ const genPlayersWithoutSaving = (
 	}
 
 	const baseAge = 19 - (draftYear - g.get("season"));
-	let remaining = range(numPlayers).map(() => {
+	let remaining = [];
+	for (let i = 0; i < numPlayers; i++) {
 		const p: any = player.generate(
 			PLAYER.UNDRAFTED,
 			baseAge,
@@ -33,14 +33,14 @@ const genPlayersWithoutSaving = (
 		);
 
 		// Just for ovr/pot
-		player.develop(p, 0);
+		await player.develop(p, 0);
 
 		// Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
 		// seem quite large, but empirically it seems to work well.
 		p.fudgeFactor = random.randInt(-50, 50);
 
-		return p;
-	});
+		remaining.push(p);
+	}
 
 	// Do one season at a time, keeping the lowest pot players in college for another season
 	let enteringDraft: typeof remaining = [];
@@ -61,7 +61,7 @@ const genPlayersWithoutSaving = (
 		remaining = remaining.slice(cutoff); // Each player staying in college, develop 1 year more
 
 		for (const p of remaining) {
-			player.develop(p, 1, true);
+			await player.develop(p, 1, true);
 		}
 	}
 
@@ -72,7 +72,7 @@ const genPlayersWithoutSaving = (
 		if (Math.random() < 1 / numSpecialPlayerChances) {
 			const p = enteringDraft[i];
 			player.bonus(p);
-			player.develop(p, 0); // Recalculate ovr/pot
+			await player.develop(p, 0); // Recalculate ovr/pot
 		}
 	}
 

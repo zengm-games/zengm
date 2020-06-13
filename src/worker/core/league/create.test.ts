@@ -2,11 +2,12 @@ import assert from "assert";
 import testHelpers from "../../../test/helpers";
 import { g } from "../../util";
 import { createWithoutSaving } from "./create";
+import type { ThenArg } from "../../../common/types";
 
 describe("worker/core/league/create", () => {
-	let leagueData: ReturnType<typeof createWithoutSaving>;
-	beforeAll(() => {
-		leagueData = createWithoutSaving(
+	let leagueData: ThenArg<ReturnType<typeof createWithoutSaving>>;
+	beforeAll(async () => {
+		leagueData = await createWithoutSaving(
 			"Test",
 			0,
 			{ startingSeason: 2015 },
@@ -49,7 +50,7 @@ describe("worker/core/league/create", () => {
 		assert.equal(leagueData.gameAttributes.userTid, 0);
 		assert.equal(leagueData.gameAttributes.gameOver, false);
 		assert.equal(leagueData.gameAttributes.daysLeft, 0);
-		assert.equal(Object.keys(leagueData.gameAttributes).length, 65);
+		assert.equal(Object.keys(leagueData.gameAttributes).length, 66);
 	});
 
 	test("initialize teams object store", async () => {

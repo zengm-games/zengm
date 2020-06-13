@@ -2,7 +2,6 @@ import { unwrap } from "idb";
 import orderBy from "lodash/orderBy";
 import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE, PLAYER } from "../../common";
 import { player } from "../core";
-import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
 import iterate from "./iterate";
 import { helpers, logEvent } from "../util";
@@ -672,12 +671,8 @@ const migrate = ({
 					r.ovr = player.ovr(r);
 					r.skills = player.skills(r);
 
-					// For performance, only calculate pot for non-retired players
-					if (p.tid === PLAYER.RETIRED) {
-						r.pot = r.ovr;
-					} else {
-						r.pot = bootstrapPot(r, r.season - p.born.year);
-					}
+					// Don't want to deal with bootstrapPot now being async
+					r.pot = r.ovr;
 
 					if (p.draft.year === r.season) {
 						p.draft.ovr = r.ovr;

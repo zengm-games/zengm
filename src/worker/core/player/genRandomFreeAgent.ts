@@ -11,7 +11,7 @@ const genRandomFreeAgent = async (): Promise<Player> => {
 		const draftYear = g.get("season") - (age - 22);
 		const p = generate(PLAYER.FREE_AGENT, age, draftYear, false, 15.5);
 		p.ratings[0].season = g.get("season"); // HACK!!!
-		develop(p, 0);
+		await develop(p, 0);
 		if (p.ratings[0].ovr <= 40) {
 			await idb.cache.players.add(p); // Create pid
 			return p as Player;

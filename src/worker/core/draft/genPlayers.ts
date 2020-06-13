@@ -37,12 +37,16 @@ const genPlayers = async (
 		);
 	}
 
-	const players = genPlayersWithoutSaving(draftYear, scoutingRank, numPlayers);
+	const players = await genPlayersWithoutSaving(
+		draftYear,
+		scoutingRank,
+		numPlayers,
+	);
 
 	for (const p of players) {
 		if (scrubs) {
 			player.bonus(p, -15);
-			player.develop(p, 0); // Recalculate ovr/pot
+			await player.develop(p, 0); // Recalculate ovr/pot
 		}
 
 		await idb.cache.players.add(p);
@@ -86,7 +90,7 @@ const genPlayers = async (
 				pss: 80,
 				reb: 80,
 			});
-			player.develop(p, 0);
+			await player.develop(p, 0);
 			player.updateValues(p);
 			const pid = await idb.cache.players.add(p);
 
@@ -137,7 +141,7 @@ const genPlayers = async (
 				pss: 0,
 				reb: 80,
 			});
-			player.develop(p, 0);
+			await player.develop(p, 0);
 			player.updateValues(p);
 			p.ratings[0].skills = ["Dp"];
 			const pid = await idb.cache.players.add(p);

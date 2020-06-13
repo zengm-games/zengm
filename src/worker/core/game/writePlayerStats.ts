@@ -6,7 +6,7 @@ import type { Conditions, GameResults, Player } from "../../../common/types";
 
 const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
 
-const doInjury = (
+const doInjury = async (
 	p: any,
 	p2: Player,
 	healthRank: number,
@@ -161,7 +161,7 @@ const doInjury = (
 		);
 
 		// Update ovr and pot
-		player.develop(p2, 0);
+		await player.develop(p2, 0);
 
 		const r2 = p2.ratings.length - 2; // Prev ratings row
 
@@ -291,7 +291,7 @@ const writePlayerStats = async (
 						let ratingsLoss = false;
 
 						if (injuredThisGame) {
-							const output = doInjury(
+							const output = await doInjury(
 								p,
 								p2,
 								t.healthRank,

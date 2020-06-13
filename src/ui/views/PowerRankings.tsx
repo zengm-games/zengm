@@ -5,7 +5,12 @@ import { getCols, helpers } from "../util";
 import { DataTable } from "../components";
 import type { View } from "../../common/types";
 
-const PowerRankings = ({ season, teams, userTid }: View<"powerRankings">) => {
+const PowerRankings = ({
+	challengeNoRatings,
+	season,
+	teams,
+	userTid,
+}: View<"powerRankings">) => {
 	useTitleBar({
 		title: "Power Rankings",
 		dropdownView: "power_rankings",
@@ -52,12 +57,14 @@ const PowerRankings = ({ season, teams, userTid }: View<"powerRankings">) => {
 				>
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</a>,
-				t.ovr !== t.ovrCurrent ? (
-					<span className="text-danger">{t.ovrCurrent}</span>
-				) : (
-					t.ovrCurrent
-				),
-				t.ovr,
+				!challengeNoRatings ? (
+					t.ovr !== t.ovrCurrent ? (
+						<span className="text-danger">{t.ovrCurrent}</span>
+					) : (
+						t.ovrCurrent
+					)
+				) : null,
+				!challengeNoRatings ? t.ovr : null,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
 				t.seasonAttrs.lastTen,

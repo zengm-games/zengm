@@ -88,6 +88,7 @@ const updatePowerRankings = async (
 		}
 
 		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
 			season,
 			teams: teamsWithRankings,
 			userTid: g.get("userTid"),

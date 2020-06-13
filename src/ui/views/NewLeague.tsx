@@ -1394,7 +1394,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											collapsed: { rotate: 0 },
 										}}
 										transition={{
-											duration: 0.25,
+											duration: 0.3,
 											type: "tween",
 										}}
 										className="glyphicon glyphicon-triangle-right"
@@ -1413,7 +1413,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											collapsed: { opacity: 0, height: 0 },
 										}}
 										transition={{
-											duration: 0.25,
+											duration: 0.3,
 											type: "tween",
 										}}
 									>

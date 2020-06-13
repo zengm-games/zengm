@@ -7,6 +7,7 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
 const UpcomingFreeAgents = ({
+	challengeNoRatings,
 	phase,
 	players,
 	season,
@@ -47,8 +48,8 @@ const UpcomingFreeAgents = ({
 					{p.abbrev}
 				</a>,
 				p.age,
-				p.ratings.ovr,
-				p.ratings.pot,
+				!challengeNoRatings ? p.ratings.ovr : null,
+				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []

@@ -69,6 +69,7 @@ const updateUpcomingFreeAgents = async (
 	}
 
 	return {
+		challengeNoRatings: g.get("challengeNoRatings"),
 		phase: g.get("phase"),
 		players,
 		season: inputs.season,

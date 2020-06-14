@@ -73,6 +73,7 @@ const roundOverrides: Record<
 				gmsc: "oneDecimalPlace",
 				fgp: "oneDecimalPlace",
 				tpp: "oneDecimalPlace",
+				"2pp": "oneDecimalPlace",
 				ftp: "oneDecimalPlace",
 				ws48: "roundWinp",
 				pm: "plusMinus",

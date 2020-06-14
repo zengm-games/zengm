@@ -68,6 +68,21 @@ const sportSpecificCols: {
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 				},
+				"stat:2pp": {
+					desc: "Two Point Percentage",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:2p": {
+					desc: "Two Pointers Made",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:2pa": {
+					desc: "Two Pointers Attempted",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
 				"stat:pm": {
 					desc: "Plus/Minus",
 					sortSequence: ["desc", "asc"],
@@ -1609,6 +1624,9 @@ const sportSpecificTitleOverrides =
 				"rating:pss": "Pss",
 				"rating:reb": "Reb",
 				"rating:diq": "dIQ",
+				"stat:2pp": "2P%",
+				"stat:2p": "2P",
+				"stat:2pa": "2PA",
 				"stat:pm": "+/-",
 				"stat:tpp": "3P%",
 				"stat:tp": "3P",

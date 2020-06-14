@@ -6,6 +6,14 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+2p/2pa/2p%
+- player page
+- player stats
+- export stats
+
+new bugs
+- in groundhog day mode, roster shows +X for ovr if rating chagned due to injury, and that persists multiple seasons
+
 end of game playing time situations @gmgameschris
 - could make fatigue matter less, depending on how close/late it is?
 
@@ -33,6 +41,8 @@ jersey numbers
 fuzz/scouting revamp
 - prospects and young players only
 - fuzz is deterministic noise
+
+fewer finals MVPs on losing team
 
 wrong team abbrev on player history https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/ftfnuth/?context=3
 
@@ -104,24 +114,6 @@ new frivolity improvements
   - drafted team for the players in busts and steals
   - team and overall for the final year of the Oldest to Play in Game
   - total games on team for players with the most years on one team
-
-league creation options
-- add challenge mode
-  - lose your best player every year
-- blog
-  - changelog
-  - starting season
-    - only random for now
-  - challenge modes - either in God Mode or when creating league
-    - no free agents
-    - no draft picks
-    - no trades
-    - no visible player ratings (until retirement)
-    - can be changed in god mode settings too, not just when creating new league
-  - groundhog day
-  - no starting injuries
-  - equalize region populations
-  - real player development determinism
 
 god mode stuff
 - more stuff on player editor
@@ -206,7 +198,8 @@ player stats popover
   - put this on player page too
   - https://old.reddit.com/r/BasketballGM/comments/g4m90u/suggestion_player_progression_graphs/
 
-fewer finals MVPs on losing team
+challenge modes
+- lose your best player every year
 
 fuzz doesn't really make sense
 - have it decrease as a player plays. so high only for draft prospects or unknowns

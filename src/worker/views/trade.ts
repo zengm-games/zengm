@@ -96,7 +96,7 @@ const updateTrade = async () => {
 	const ratings = ["ovr", "pot", "skills", "pos"];
 	const stats =
 		process.env.SPORT === "basketball"
-			? ["min", "pts", "trb", "ast", "per"]
+			? ["gp", "min", "pts", "trb", "ast", "per"]
 			: ["gp", "keyStats", "av"];
 	const userRoster = await idb.getCopies.playersPlus(userRosterAll, {
 		attrs,

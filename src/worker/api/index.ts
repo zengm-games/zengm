@@ -998,7 +998,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 		});
 		const stats =
 			process.env.SPORT === "basketball"
-				? ["min", "pts", "trb", "ast", "per"]
+				? ["gp", "min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"];
 
 		// Take the pids and dpids in each offer and get the info needed to display the offer

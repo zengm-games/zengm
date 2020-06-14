@@ -13,7 +13,7 @@ const updateUserRoster = async (
 	) {
 		const stats =
 			process.env.SPORT === "basketball"
-				? ["min", "pts", "trb", "ast", "per"]
+				? ["gp", "min", "pts", "trb", "ast", "per"]
 				: ["gp", "keyStats", "av"];
 		const [userRosterAll, userPicks] = await Promise.all([
 			idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),

@@ -410,7 +410,7 @@ const Draft = ({
 };
 
 Draft.propTypes = {
-	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
+	draftType: PropTypes.string,
 	drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
 	fantasyDraft: PropTypes.bool.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,

@@ -716,7 +716,7 @@ const refuseToNegotiate = ({
 	if (
 		challengeNoFreeAgents &&
 		phase !== PHASE.RESIGN_PLAYERS &&
-		amount > minContract
+		amount * 0.99 > minContract
 	) {
 		return true;
 	}

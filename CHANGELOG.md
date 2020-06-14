@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-06-14: In BBGM, 2 point stats (attempted, made, %) are now viewable on the player stats, team stats, and individual player stats pages.
+
 * **2020-06-13: A bunch of new options for league creation: challenge modes (no draft picks, no free agents, no trades, no visible ratings), player development realism, and more. [[1]](https://basketball-gm.com/blog/2020/06/league-creation-options/) [[2]](https://old.reddit.com/r/BasketballGM/comments/h8dq90/a_bunch_of_new_options_for_league_creation/) [[3]](https://old.reddit.com/r/Football_GM/comments/h8dr1y/a_bunch_of_new_options_for_league_creation/)**
 
 * 2020-06-08: Standings now show when teams clinch the playoffs, a first round bye, or the #1 overall seed. [[1]](https://old.reddit.com/r/BasketballGM/comments/gzd6qm/standings_now_show_when_teams_clinch_the_playoffs/) [[2]](https://old.reddit.com/r/Football_GM/comments/gzd8q6/standings_now_show_when_teams_clinch_the_playoffs/)

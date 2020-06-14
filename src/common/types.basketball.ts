@@ -28,7 +28,13 @@ export type TeamStatAttr =
 	| "ftr"
 	| "tsp"
 	| "trb"
-	| "oppTrb";
+	| "oppTrb"
+	| "2p"
+	| "2pa"
+	| "2pp"
+	| "opp2p"
+	| "opp2pa"
+	| "opp2pp";
 
 type AwardTeam = {
 	tid: number;

@@ -42,32 +42,52 @@ const processStats = (
 
 	if (ts.gp > 0) {
 		for (const stat of stats) {
+			let scale = true;
 			if (stat === "gp") {
 				row.gp = ts.gp;
+				scale = false;
 			} else if (stat === "fgp") {
 				row[stat] = percentage(ts.fg, ts.fga);
+				scale = false;
 			} else if (stat === "oppFgp") {
 				row[stat] = percentage(ts.oppFg, ts.oppFga);
+				scale = false;
 			} else if (stat === "fgpAtRim") {
 				row[stat] = percentage(ts.fgAtRim, ts.fgaAtRim);
+				scale = false;
 			} else if (stat === "oppFgpAtRim") {
 				row[stat] = percentage(ts.oppFgAtRim, ts.oppFgaAtRim);
+				scale = false;
 			} else if (stat === "fgpLowPost") {
 				row[stat] = percentage(ts.fgLowPost, ts.fgaLowPost);
+				scale = false;
 			} else if (stat === "oppFgpLowPost") {
 				row[stat] = percentage(ts.oppFgLowPost, ts.oppFgaLowPost);
+				scale = false;
 			} else if (stat === "fgpMidRange") {
 				row[stat] = percentage(ts.fgMidRange, ts.fgaMidRange);
+				scale = false;
 			} else if (stat === "oppFgpMidRange") {
 				row[stat] = percentage(ts.oppFgMidRange, ts.oppFgaMidRange);
+				scale = false;
+			} else if (stat === "2pp") {
+				row[stat] = percentage(ts.fg - ts.tp, ts.fga - ts.tpa);
+				scale = false;
+			} else if (stat === "opp2pp") {
+				row[stat] = percentage(ts.oppFg - ts.oppTp, ts.oppFga - ts.oppTpa);
+				scale = false;
 			} else if (stat === "tpp") {
 				row[stat] = percentage(ts.tp, ts.tpa);
+				scale = false;
 			} else if (stat === "oppTpp") {
 				row[stat] = percentage(ts.oppTp, ts.oppTpa);
+				scale = false;
 			} else if (stat === "ftp") {
 				row[stat] = percentage(ts.ft, ts.fta);
+				scale = false;
 			} else if (stat === "oppFtp") {
 				row[stat] = percentage(ts.oppFt, ts.oppFta);
+				scale = false;
 			} else if (stat === "mov") {
 				if (statType === "totals") {
 					row.mov = ts.pts - ts.oppPts;
@@ -76,6 +96,7 @@ const processStats = (
 				} else {
 					row.mov = 0;
 				}
+				scale = false;
 			} else if (stat === "oppMov") {
 				if (statType === "totals") {
 					row.oppMov = ts.oppPts - ts.pts;
@@ -84,12 +105,14 @@ const processStats = (
 				} else {
 					row.oppMov = 0;
 				}
+				scale = false;
 			} else if (stat === "pw") {
 				if (ts.pts > 0 || ts.oppPts > 0) {
 					row.pw = ts.gp * (ts.pts ** 14 / (ts.pts ** 14 + ts.oppPts ** 14));
 				} else {
 					row.pw = 0;
 				}
+				scale = false;
 			} else if (stat === "pl") {
 				if (ts.pts > 0 || ts.oppPts > 0) {
 					row.pl =
@@ -97,47 +120,64 @@ const processStats = (
 				} else {
 					row.pl = 0;
 				}
+				scale = false;
 			} else if (stat === "ortg") {
 				const possessions = poss(ts);
 				row[stat] = percentage(ts.pts, possessions);
+				scale = false;
 			} else if (stat === "drtg") {
 				const possessions = poss(ts);
 				row[stat] = percentage(ts.oppPts, possessions);
+				scale = false;
 			} else if (stat === "nrtg") {
 				const possessions = poss(ts);
 				row[stat] = percentage(ts.pts - ts.oppPts, possessions);
+				scale = false;
 			} else if (stat === "pace") {
 				if (ts.min > 0) {
 					row.pace = (g.get("quarterLength") * 4 * poss(ts)) / (ts.min / 5);
 				} else {
 					row.pace = 0;
 				}
+				scale = false;
 			} else if (stat === "poss") {
 				row.poss = poss(ts);
+				scale = false;
 			} else if (stat === "tpar") {
 				row[stat] = percentage(ts.tpa, ts.fga);
+				scale = false;
 			} else if (stat === "ftr") {
 				row[stat] = percentage(ts.fta, ts.fga);
+				scale = false;
 			} else if (stat === "tsp") {
 				row[stat] = percentage(ts.pts, 2 * (ts.fga + 0.44 * ts.fta));
+				scale = false;
 			} else if (stat === "season" || stat === "playoffs") {
 				row[stat] = ts[stat];
-			} else if (statType === "totals") {
-				if (stat === "trb") {
-					row.trb = ts.drb + ts.orb;
-				} else if (stat === "oppTrb") {
-					row.oppTrb = ts.oppDrb + ts.oppOrb;
-				} else {
-					row[stat] = ts[stat];
-				}
+				scale = false;
+			} else if (stat === "trb") {
+				row.trb = ts.drb + ts.orb;
+			} else if (stat === "oppTrb") {
+				row.oppTrb = ts.oppDrb + ts.oppOrb;
+			} else if (stat === "2p") {
+				row[stat] = ts.fg - ts.tp;
+			} else if (stat === "opp2p") {
+				row[stat] = ts.oppFg - ts.oppTp;
+			} else if (stat === "2pa") {
+				row[stat] = ts.fga - ts.tpa;
+			} else if (stat === "opp2pa") {
+				row[stat] = ts.oppFga - ts.oppTpa;
 			} else {
-				// eslint-disable-next-line no-lonely-if
-				if (stat === "trb") {
-					row.trb = (ts.drb + ts.orb) / ts.gp;
-				} else if (stat === "oppTrb") {
-					row.oppTrb = (ts.oppDrb + ts.oppOrb) / ts.gp;
+				row[stat] = ts[stat];
+			}
+
+			if (scale) {
+				// Either the raw stat from database, or something added up above (trb, 2p, 2pa)
+				const val = row[stat] !== undefined ? row[stat] : ts[stat];
+				if (statType === "totals") {
+					row[stat] = val;
 				} else {
-					row[stat] = ts[stat] / ts.gp;
+					row[stat] = val / ts.gp;
 				}
 			}
 		}

@@ -124,6 +124,7 @@ const PLAYER_STATS_TABLES = {
 			"gp",
 			"gs",
 			"min",
+			"pts",
 			"fg",
 			"fga",
 			"fgp",
@@ -145,7 +146,6 @@ const PLAYER_STATS_TABLES = {
 			"blk",
 			"ba",
 			"pf",
-			"pts",
 		],
 	},
 	shotLocations: {
@@ -224,6 +224,8 @@ const TEAM_STATS_TABLES = {
 	team: {
 		name: "Team",
 		stats: [
+			"pts",
+			"mov",
 			"fg",
 			"fga",
 			"fgp",
@@ -244,13 +246,13 @@ const TEAM_STATS_TABLES = {
 			"stl",
 			"blk",
 			"pf",
-			"pts",
-			"mov",
 		],
 	},
 	opponent: {
 		name: "Opponent",
 		stats: [
+			"oppPts",
+			"oppMov",
 			"oppFg",
 			"oppFga",
 			"oppFgp",
@@ -271,8 +273,6 @@ const TEAM_STATS_TABLES = {
 			"oppStl",
 			"oppBlk",
 			"oppPf",
-			"oppPts",
-			"oppMov",
 		],
 	},
 	teamShotLocations: {

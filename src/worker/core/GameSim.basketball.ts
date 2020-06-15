@@ -131,22 +131,6 @@ const pickPlayer = (
 	return pick;
 };
 
-/**
- * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
- *
- * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
- * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
- */
-const fatigue = (energy: number): number => {
-	energy += 0.05;
-
-	if (energy > 1) {
-		energy = 1;
-	}
-
-	return energy;
-};
-
 class GameSim {
 	id: number;
 
@@ -536,6 +520,7 @@ class GameSim {
 		this.injuries();
 
 		const gameOver =
+			this.t <= 0 &&
 			this.team[this.o].stat.ptsQtrs.length >= 4 &&
 			this.team[this.d].stat.pts != this.team[this.o].stat.pts;
 
@@ -549,6 +534,32 @@ class GameSim {
 	}
 
 	/**
+	 * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
+	 *
+	 * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
+	 * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
+	 */
+	fatigue(energy: number, skip?: boolean): number {
+		energy += 0.05;
+
+		if (energy > 1) {
+			energy = 1;
+		}
+		if (skip) {
+			return energy;
+		}
+
+		// Late in games, or in OT, fatigue matters less
+		const quarter = this.team[0].stat.ptsQtrs.length;
+		if (quarter >= 4 && this.t < 6) {
+			const factor = 6 - this.t;
+			return (energy + factor) / (1 + factor);
+		}
+
+		return energy;
+	}
+
+	/**
 	 * Perform appropriate substitutions.
 	 *
 	 * Can this be sped up?
@@ -558,6 +569,7 @@ class GameSim {
 	updatePlayersOnCourt(shooter?: PlayerNumOnCourt) {
 		let substitutions = false;
 		let blowout = false;
+		let lateGame = false;
 
 		if (this.o !== undefined && this.d !== undefined) {
 			const diff = Math.abs(
@@ -571,6 +583,7 @@ class GameSim {
 					(diff >= 20 && this.t < 7) ||
 					(diff >= 15 && this.t < 3) ||
 					(diff >= 10 && this.t < 1));
+			lateGame = quarter >= 4 && this.t < 6;
 		}
 
 		for (const t of teamNums) {
@@ -588,8 +601,8 @@ class GameSim {
 				} else {
 					ovrs[p] =
 						this.team[t].player[p].valueNoPot *
-						fatigue(this.team[t].player[p].stat.energy) *
-						random.uniform(0.9, 1.1);
+						this.fatigue(this.team[t].player[p].stat.energy) *
+						(!lateGame ? random.uniform(0.9, 1.1) : 1);
 
 					if (!this.allStarGame) {
 						ovrs[p] *= this.team[t].player[p].ptModifier;
@@ -619,8 +632,8 @@ class GameSim {
 					}
 
 					const benchIsValidAndBetter =
-						this.team[t].player[p].stat.courtTime > 3 &&
-						this.team[t].player[b].stat.benchTime > 3 &&
+						this.team[t].player[p].stat.courtTime > 0 &&
+						this.team[t].player[b].stat.benchTime > 0 &&
 						ovrs[b] > ovrs[p];
 					const benchIsEligible = ovrs[b] !== -Infinity;
 
@@ -665,7 +678,7 @@ class GameSim {
 
 						if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
 							if (
-								fatigue(this.team[t].player[p].stat.energy) > 0.7 &&
+								this.fatigue(this.team[t].player[p].stat.energy) > 0.7 &&
 								!onCourtIsIneligible
 							) {
 								// Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
@@ -864,7 +877,7 @@ class GameSim {
 					const p = this.playersOnCourt[t][i];
 					this.team[t].compositeRating[rating] +=
 						this.team[t].player[p].compositeRating[rating] *
-						fatigue(this.team[t].player[p].stat.energy);
+						this.fatigue(this.team[t].player[p].stat.energy);
 				}
 
 				this.team[t].compositeRating[rating] /= 5;
@@ -904,7 +917,7 @@ class GameSim {
 						p,
 						"energy",
 						-possessionLength *
-							0.05 *
+							0.075 *
 							(1 - this.team[t].player[p].compositeRating.endurance),
 					);
 
@@ -1102,7 +1115,9 @@ class GameSim {
 	 */
 	doShot(shooter: PlayerNumOnCourt, possessionLength: number) {
 		const p = this.playersOnCourt[this.o][shooter];
-		const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
+		const currentFatigue = this.fatigue(
+			this.team[this.o].player[p].stat.energy,
+		);
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer: PlayerNumOnCourt | undefined;
@@ -1761,7 +1776,7 @@ class GameSim {
 			const p = this.playersOnCourt[t][i];
 			array[i] =
 				(this.team[t].player[p].compositeRating[rating] *
-					fatigue(this.team[t].player[p].stat.energy)) **
+					this.fatigue(this.team[t].player[p].stat.energy)) **
 				power;
 			total += array[i];
 		}

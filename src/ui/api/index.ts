@@ -144,7 +144,8 @@ const showModal = () => {
 		return;
 	}
 
-	const date = new Date().toISOString().split("T")[0];
+	// Max once/hour
+	const date = new Date().toISOString().slice(0, 13);
 	const lastDate = localStorage.getItem("lastDateShowModal");
 	if (date === lastDate) {
 		return;

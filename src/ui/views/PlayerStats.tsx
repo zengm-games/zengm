@@ -125,7 +125,12 @@ const PlayerStats = ({
 					href={helpers.leagueUrl(
 						season === undefined
 							? ["player_stats"]
-							: ["player_stats", "all", "career", "totals"],
+							: [
+									"player_stats",
+									"all",
+									"career",
+									process.env.SPORT === "basketball" ? "totals" : statType,
+							  ],
 					)}
 				>
 					{season === undefined ? "Per Game" : "Career Totals"}

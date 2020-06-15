@@ -111,8 +111,6 @@ const updatePlayer = async (
 			};
 			name: string;
 			abbrev: string;
-			teamRegion: string;
-			teamName: string;
 			mood: any;
 			salaries: any[];
 			salariesTotal: any;
@@ -133,8 +131,6 @@ const updatePlayer = async (
 				"name",
 				"tid",
 				"abbrev",
-				"teamRegion",
-				"teamName",
 				"age",
 				"hgt",
 				"weight",
@@ -242,6 +238,22 @@ const updatePlayer = async (
 
 		const retired = p.tid === PLAYER.RETIRED;
 
+		let teamName = "";
+		if (p.tid >= 0) {
+			teamName = `${g.get("teamInfoCache")[p.tid]?.region} ${
+				g.get("teamInfoCache")[p.tid]?.name
+			}`;
+		} else if (p.tid === PLAYER.FREE_AGENT) {
+			teamName = "Free Agent";
+		} else if (
+			p.tid === PLAYER.UNDRAFTED ||
+			p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+		) {
+			teamName = "Draft Prospect";
+		} else if (p.tid === PLAYER.RETIRED) {
+			teamName = "Retired";
+		}
+
 		return {
 			player: p,
 			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
@@ -259,6 +271,7 @@ const updatePlayer = async (
 			ratings,
 			statTables,
 			teamColors,
+			teamName,
 			willingToSign,
 		};
 	}

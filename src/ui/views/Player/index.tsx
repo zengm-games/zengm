@@ -14,6 +14,7 @@ import RatingsOverview from "./RatingsOverview";
 import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../util";
 import type { View, Player } from "../../../common/types";
+import { PLAYER } from "../../../common";
 
 const Relatives = ({
 	pid,
@@ -165,6 +166,7 @@ const Player2 = ({
 	showTradeFor,
 	statTables,
 	teamColors,
+	teamName,
 	willingToSign,
 }: View<"player">) => {
 	useTitleBar({ title: player.name });
@@ -237,6 +239,18 @@ const Player2 = ({
 	// @ts-ignore
 	const weight = <Weight pounds={player.weight} />;
 
+	let teamURL;
+	if (player.tid >= 0) {
+		teamURL = helpers.leagueUrl(["roster", `${player.abbrev}_${player.tid}`]);
+	} else if (player.tid === PLAYER.FREE_AGENT) {
+		teamURL = helpers.leagueUrl(["free_agents"]);
+	} else if (
+		player.tid === PLAYER.UNDRAFTED ||
+		player.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+	) {
+		teamURL = helpers.leagueUrl(["draft_scouting"]);
+	}
+
 	return (
 		<>
 			<div className="row mb-3">
@@ -256,7 +270,7 @@ const Player2 = ({
 					<div className="float-left">
 						<strong>
 							{player.ratings[player.ratings.length - 1].pos},{" "}
-							{player.teamRegion} {player.teamName}
+							{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
 						</strong>
 						<br />
 						Height: {height}

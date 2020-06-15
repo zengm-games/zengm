@@ -120,25 +120,6 @@ const processAttrs = (
 				1000; // [millions of dollars]
 		} else if (attr === "abbrev") {
 			output.abbrev = helpers.getAbbrev(p.tid);
-		} else if (attr === "teamRegion") {
-			if (p.tid >= 0) {
-				output.teamRegion = g.get("teamInfoCache")[p.tid]?.region;
-			} else {
-				output.teamRegion = "";
-			}
-		} else if (attr === "teamName") {
-			if (p.tid >= 0) {
-				output.teamName = g.get("teamInfoCache")[p.tid]?.name;
-			} else if (p.tid === PLAYER.FREE_AGENT) {
-				output.teamName = "Free Agent";
-			} else if (
-				p.tid === PLAYER.UNDRAFTED ||
-				p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
-			) {
-				output.teamName = "Draft Prospect";
-			} else if (p.tid === PLAYER.RETIRED) {
-				output.teamName = "Retired";
-			}
 		} else if (
 			attr === "injury" &&
 			season !== undefined &&

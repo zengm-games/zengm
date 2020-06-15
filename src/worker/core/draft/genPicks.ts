@@ -12,6 +12,10 @@ const doSeason = async (
 ) => {
 	const teams = await idb.cache.teams.getAll();
 
+	// If draft is ongoing, don't create picks because some may have already been used. And in the case that all have been used, there's no way to know for sure, so this is the best we can do.
+	const ongoingDraft =
+		g.get("season") === season && g.get("phase") === PHASE.DRAFT;
+
 	for (let round = 1; round <= g.get("numDraftRounds"); round++) {
 		for (const t of teams) {
 			if (t.disabled) {
@@ -30,7 +34,7 @@ const doSeason = async (
 			});
 			if (existingPick) {
 				existingPick.keep = true;
-			} else {
+			} else if (!ongoingDraft) {
 				await idb.cache.draftPicks.add({
 					tid: t.tid,
 					originalTid: t.tid,

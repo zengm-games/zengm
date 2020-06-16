@@ -6,9 +6,27 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+customizable columns in datatable
+- tell
+  - https://old.reddit.com/r/BasketballGM/comments/ha3ovk/ppg_column_moved/
+  - https://old.reddit.com/r/BasketballGM/comments/h9z86c/ppg_not_showing_up/
+- format
+  - store list of visible column indexes, which would allow sorting and show/hide
+  - supercols
+    - change input format to be associated with these index numbers, then can derive which should be shown and where
+    - or, change cols input to include flag for which supercol a col belongs to
+    - but for MVP, no customization of supercols tables
+- pass additional parameter containing which columns are visible, by index (if none, then assume all)
+- sortBy by name, not index
+  - can always look up name by "original index", so not necessary to change. however do make sure it is resilient to invalid value
+  - also, can have dupe names, so stick with index!
+- always return all stats and ratings?
+
 legendary seasons
 - best winp season of each team
 - by decade?
+
+roy formula, value counting stats more
 
 custom league generator
 - any historical team, with or without real players
@@ -868,25 +886,6 @@ new adv stats in roster page?
 - switch PER to WS/48 - roster.js now pulling both, then eventually switch Roster.js
 - same for HoF
 - OR, wait for BPM?
-
-customizable columns in datatable
-- get rid of supercols where possible, like bbr
-- for supercols, instead of colspan, pass a list of column names (need to get rid of repeats like raw % first)
-  - won't work when there are duplicates. instead needs to be a hierarchy. maybe just pass hierarchy with names, and do getCols in DataTable? but then how to pass extra props like width, is that really needed?
-    - search through, find any weird ones, try to eliminate:
-      - Draft - setting width, and splicing for fantasy draft
-      - PowerRankings - setting width
-      - TeamFinances - dynamically use years
-      - TeamRecords - some overrides
-      - Trade, TradingBlock - override for "" column
-  - crazy idea: pass cols only as keys in data (change array -> object), and for supercols prefix like SuperCol|Col
-  - or in cols array, add prop to denote supercols
-- pass additional parameter containing which columns are visible, by name (if none, then assume all)
-- get rid of search
-- sortBy by name, not index
-- button to reset datatable
-- store all datatable params in one localstorage object
-- always return all stats and ratings?
 
 per 100 possessions and totals toggle on team stats page
 

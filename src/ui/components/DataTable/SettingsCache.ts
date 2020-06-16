@@ -16,6 +16,23 @@ class SettingsCache {
 		localStorage.setItem(`${key}:${this.name}`, JSON.stringify(value));
 	}
 
+	get(key: string) {
+		if (this.disabled) {
+			return;
+		}
+
+		const raw = localStorage.getItem(`${key}:${this.name}`);
+		if (raw === null) {
+			return;
+		}
+
+		try {
+			return JSON.parse(raw);
+		} catch (error) {
+			return;
+		}
+	}
+
 	clear(key: string) {
 		if (this.disabled) {
 			return;

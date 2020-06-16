@@ -1,6 +1,12 @@
 import type { Props, SortBy } from ".";
+import SettingsCache from "./SettingsCache";
 
 const loadStateFromCache = (props: Props) => {
+	const settingsCache = new SettingsCache(
+		props.name,
+		!!props.disableSettingsCache,
+	);
+
 	// @ts-ignore
 	let perPage = parseInt(localStorage.getItem("perPage"), 10);
 
@@ -8,17 +14,13 @@ const loadStateFromCache = (props: Props) => {
 		perPage = 10;
 	}
 
-	const sortBysJSON = localStorage.getItem(`DataTableSort:${props.name}`);
+	const sortBysFromStorage = settingsCache.get("DataTableSort");
 	let sortBys: SortBy[];
 
-	if (sortBysJSON === null || sortBysJSON === undefined) {
+	if (sortBysFromStorage === undefined) {
 		sortBys = [props.defaultSort];
 	} else {
-		try {
-			sortBys = JSON.parse(sortBysJSON);
-		} catch (err) {
-			sortBys = [props.defaultSort];
-		}
+		sortBys = sortBysFromStorage;
 	}
 
 	// Don't let sortBy reference invalid col
@@ -29,17 +31,16 @@ const loadStateFromCache = (props: Props) => {
 	}
 
 	const defaultFilters: string[] = props.cols.map(() => "");
-	const filtersFromStorage = localStorage.getItem(
-		`DataTableFilters:${props.name}`,
-	);
+	const filtersFromStorage = settingsCache.get("DataTableFilters");
 	let filters;
 
-	if (!filtersFromStorage) {
+	if (filtersFromStorage === undefined) {
 		filters = defaultFilters;
 	} else {
 		try {
-			filters = JSON.parse(filtersFromStorage); // Confirm valid filters
+			filters = filtersFromStorage;
 
+			// Confirm valid filters
 			if (!Array.isArray(filters) || filters.length !== props.cols.length) {
 				filters = defaultFilters;
 			} else {

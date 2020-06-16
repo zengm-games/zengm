@@ -362,7 +362,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						rows={rows}
 					/>
 				</div>
-				<div className="col-md-3">
+				<div className="col-md-3 pt-3">
 					<DataTable
 						cols={pickCols}
 						defaultSort={[1, "asc"]}

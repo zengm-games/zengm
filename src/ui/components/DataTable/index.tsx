@@ -424,27 +424,26 @@ class DataTable extends React.Component<Props, State> {
 						"table-nonfluid-wrapper": nonfluid,
 					})}
 				>
-					{!hideAllControls ? (
-						<>
-							{pagination ? (
-								<PerPage
-									onChange={this.handlePerPage}
-									value={this.state.perPage}
-								/>
-							) : null}
-							<Controls
-								enableFilters={this.state.enableFilters}
-								name={this.props.name}
-								onExportCSV={this.handleExportCSV}
-								onResetTable={this.handleResetTable}
-								onSearch={this.handleSearch}
-								onSelectColumns={this.handleSelectColumns}
-								onToggleFilters={this.handleToggleFilters}
-								searchText={this.state.searchText}
+					<>
+						{pagination && !hideAllControls ? (
+							<PerPage
+								onChange={this.handlePerPage}
+								value={this.state.perPage}
 							/>
-							{nonfluid ? <div className="clearFix" /> : null}
-						</>
-					) : null}
+						) : null}
+						<Controls
+							enableFilters={this.state.enableFilters}
+							hideAllControls={hideAllControls}
+							name={this.props.name}
+							onExportCSV={this.handleExportCSV}
+							onResetTable={this.handleResetTable}
+							onSearch={this.handleSearch}
+							onSelectColumns={this.handleSelectColumns}
+							onToggleFilters={this.handleToggleFilters}
+							searchText={this.state.searchText}
+						/>
+						{nonfluid ? <div className="clearFix" /> : null}
+					</>
 					<ResponsiveTableWrapper
 						className={pagination ? "fix-margin-pagination" : null}
 						nonfluid={nonfluid}

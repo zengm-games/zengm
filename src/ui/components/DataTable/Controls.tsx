@@ -4,8 +4,13 @@ import React, { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
 import HelpPopover from "../HelpPopover";
 
+const hideAllControlsStyle = {
+	marginTop: -30,
+};
+
 const Controls = ({
 	enableFilters,
+	hideAllControls,
 	name,
 	onExportCSV,
 	onResetTable,
@@ -15,6 +20,7 @@ const Controls = ({
 	searchText,
 }: {
 	enableFilters: boolean;
+	hideAllControls: boolean;
 	name: string;
 	onExportCSV: () => void;
 	onResetTable: () => void;
@@ -28,51 +34,61 @@ const Controls = ({
 			? '"WR|TE" under a Position column to display wide receivers and tight ends'
 			: '"C|PF" under a Position column to display centers and power forwards';
 	return (
-		<div className="datatable-controls">
-			<HelpPopover
-				style={{
-					marginRight: "6px",
-				}}
-				title="Filtering"
-			>
-				<p>
-					The main search box looks in all columns, but you can filter on the
-					values in specific columns by clicking the "Filter" button{" "}
-					<span className="glyphicon glyphicon-filter" /> and entering text
-					below the column headers.
-				</p>
-				<p>
-					For numeric columns, you can enter "&gt;50" to show values greater
-					than or equal to 50, "&lt;50" for the opposite, and "=50" for values
-					exactly equal to 50.
-				</p>
-				<p>
-					You can also filter on multiple values at once. For example, enter{" "}
-					{positionFilterText}.
-				</p>
-			</HelpPopover>
-			<a
-				className={classNames("btn btn-sm btn-light-bordered cursor-pointer", {
-					active: enableFilters,
-				})}
-				onClick={onToggleFilters}
-				style={{
-					marginBottom: 1,
-					marginRight: 6,
-				}}
-				title="Filter"
-			>
-				<span className="glyphicon glyphicon-filter" />
-			</a>
-			<label>
-				<input
-					className="form-control form-control-sm"
-					onChange={onSearch}
-					placeholder="Search"
-					type="search"
-					value={searchText}
-				/>
-			</label>
+		<div
+			className="datatable-controls"
+			style={hideAllControls ? hideAllControlsStyle : undefined}
+		>
+			{!hideAllControls ? (
+				<>
+					<HelpPopover
+						style={{
+							marginRight: "6px",
+						}}
+						title="Filtering"
+					>
+						<p>
+							The main search box looks in all columns, but you can filter on
+							the values in specific columns by clicking the "Filter" button{" "}
+							<span className="glyphicon glyphicon-filter" /> and entering text
+							below the column headers.
+						</p>
+						<p>
+							For numeric columns, you can enter "&gt;50" to show values greater
+							than or equal to 50, "&lt;50" for the opposite, and "=50" for
+							values exactly equal to 50.
+						</p>
+						<p>
+							You can also filter on multiple values at once. For example, enter{" "}
+							{positionFilterText}.
+						</p>
+					</HelpPopover>
+					<a
+						className={classNames(
+							"btn btn-sm btn-light-bordered cursor-pointer",
+							{
+								active: enableFilters,
+							},
+						)}
+						onClick={onToggleFilters}
+						style={{
+							marginBottom: 1,
+							marginRight: 6,
+						}}
+						title="Filter"
+					>
+						<span className="glyphicon glyphicon-filter" />
+					</a>
+					<label>
+						<input
+							className="form-control form-control-sm"
+							onChange={onSearch}
+							placeholder="Search"
+							type="search"
+							value={searchText}
+						/>
+					</label>
+				</>
+			) : null}
 			<Dropdown className="float-right">
 				<Dropdown.Toggle
 					as="span"

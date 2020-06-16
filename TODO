@@ -10,14 +10,16 @@ customizable columns in datatable
 - tell
   - https://old.reddit.com/r/BasketballGM/comments/ha3ovk/ppg_column_moved/
   - https://old.reddit.com/r/BasketballGM/comments/h9z86c/ppg_not_showing_up/
-- need ... menu to show everywhere, including where no other controls are present (like player page)
 - visibility toggle
   - change colOrder to an object (index, visible)
-- supercols
-  - change input format to be associated with these index numbers, then can derive which should be shown and where
-  - or, change cols input to include flag for which supercol a col belongs to
-  - but for MVP, no customization of supercols tables
-- always return all stats and ratings?
+- on trade screen the blank X column doesn't show up
+- changelog
+- future
+  - supercols
+    - change input format to be associated with these index numbers, then can derive which should be shown and where
+    - or, change cols input to include flag for which supercol a col belongs to
+    - but for MVP, no customization of supercols tables
+  - always return all stats and ratings?
 
 @Sniksir#7396 A button to completely clear either side of the trade window would save a ton of time.
 

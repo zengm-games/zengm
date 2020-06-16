@@ -20,7 +20,7 @@ const Controls = ({
 	searchText,
 }: {
 	enableFilters: boolean;
-	hideAllControls: boolean;
+	hideAllControls?: boolean;
 	name: string;
 	onExportCSV: () => void;
 	onResetTable: () => void;

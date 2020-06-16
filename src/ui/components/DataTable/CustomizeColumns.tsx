@@ -3,12 +3,17 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 
-const Item = SortableElement(({ value }: { value: Col }) => (
-	<li>
-		{value.title}
-		{value.desc ? ` (${value.desc})` : ""}
-	</li>
-));
+const Item = SortableElement(({ value }: { value: Col }) => {
+	let title = value.title;
+	if (value.desc) {
+		title += ` (${value.desc})`;
+	}
+	if (title === "") {
+		title = "No Title";
+	}
+
+	return <li>{title}</li>;
+});
 
 const Container = SortableContainer(({ children }: { children: any[] }) => {
 	return (

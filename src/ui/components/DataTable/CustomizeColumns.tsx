@@ -26,6 +26,7 @@ const Container = SortableContainer(({ children }: { children: any[] }) => {
 const CustomizeColumns = ({
 	colOrder,
 	cols,
+	hasSuperCols,
 	onHide,
 	onReset,
 	onSortEnd,
@@ -33,6 +34,7 @@ const CustomizeColumns = ({
 }: {
 	colOrder: number[];
 	cols: Col[];
+	hasSuperCols: boolean;
 	onHide: () => void;
 	onReset: () => void;
 	onSortEnd: (arg: { oldIndex: number; newIndex: number }) => void;
@@ -42,17 +44,28 @@ const CustomizeColumns = ({
 		<Modal animation={false} centered show={show} onHide={onHide}>
 			<Modal.Header closeButton>Customize Columns</Modal.Header>
 			<Modal.Body>
-				<p>Click and drag to reorder columns.</p>
-				<Container helperClass="sort-inside-modal" onSortEnd={onSortEnd}>
-					{colOrder.map((colIndex, i) => {
-						const col = cols[colIndex];
-						return <Item key={`${col.title}`} index={i} value={col} />;
-					})}
-				</Container>
+				{hasSuperCols ? (
+					<p className="mb-0">
+						This is not yet supported for tables with two header rows.
+					</p>
+				) : (
+					<>
+						<p>Click and drag to reorder columns.</p>
+						<Container helperClass="sort-inside-modal" onSortEnd={onSortEnd}>
+							{colOrder.map((colIndex, i) => {
+								const col = cols[colIndex];
+								return <Item key={colIndex} index={i} value={col} />;
+							})}
+						</Container>
+					</>
+				)}
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-danger" onClick={onReset}>
 					Reset
+				</button>
+				<button className="btn btn-primary" onClick={onHide}>
+					Close
 				</button>
 			</Modal.Footer>
 		</Modal>

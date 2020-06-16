@@ -93,7 +93,7 @@ class DataTable extends React.Component<Props, State> {
 			filters: [],
 			perPage: 10,
 			searchText: "",
-			showSelectColumnsModal: true,
+			showSelectColumnsModal: false,
 			sortBys: [],
 		};
 		this.handleColClick = this.handleColClick.bind(this);
@@ -397,6 +397,7 @@ class DataTable extends React.Component<Props, State> {
 				<CustomizeColumns
 					cols={this.props.cols}
 					colOrder={this.state.colOrder}
+					hasSuperCols={!!this.props.superCols}
 					show={this.state.showSelectColumnsModal}
 					onHide={() => {
 						this.setState({

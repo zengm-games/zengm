@@ -10,6 +10,7 @@ const Controls = ({
 	onExportCSV,
 	onResetTable,
 	onSearch,
+	onSelectColumns,
 	onToggleFilters,
 	searchText,
 }: {
@@ -18,6 +19,7 @@ const Controls = ({
 	onExportCSV: () => void;
 	onResetTable: () => void;
 	onSearch: (a: SyntheticEvent<HTMLInputElement>) => void;
+	onSelectColumns: () => void;
 	onToggleFilters: () => void;
 	searchText: string;
 }) => {
@@ -87,6 +89,9 @@ const Controls = ({
 					<span className="glyphicon glyphicon-option-vertical text-muted" />
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
+					<Dropdown.Item onClick={onSelectColumns}>
+						Customize Columns
+					</Dropdown.Item>
 					<Dropdown.Item onClick={onExportCSV}>
 						Download Spreadsheet
 					</Dropdown.Item>

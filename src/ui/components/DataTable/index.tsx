@@ -20,6 +20,7 @@ import { downloadFile, helpers } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 // eslint-disable-next-line import/no-unresolved
 import type { ClassValue } from "classnames/types";
+import { Modal } from "react-bootstrap";
 
 export type SortBy = [number, SortOrder];
 
@@ -72,6 +73,7 @@ type State = {
 	prevName: string | undefined;
 	perPage: number;
 	searchText: string;
+	showSelectColumnsModal: boolean;
 	sortBys: SortBy[];
 };
 
@@ -88,6 +90,7 @@ class DataTable extends React.Component<Props, State> {
 			prevName: undefined,
 			perPage: 10,
 			searchText: "",
+			showSelectColumnsModal: false,
 			sortBys: [],
 		};
 		this.handleColClick = this.handleColClick.bind(this);
@@ -98,6 +101,7 @@ class DataTable extends React.Component<Props, State> {
 		this.handlePagination = this.handlePagination.bind(this);
 		this.handlePerPage = this.handlePerPage.bind(this);
 		this.handleSearch = this.handleSearch.bind(this);
+		this.handleSelectColumns = this.handleSelectColumns.bind(this);
 		this.settingsCache = new SettingsCache(
 			props.name,
 			!!props.disableSettingsCache,
@@ -181,6 +185,12 @@ class DataTable extends React.Component<Props, State> {
 		this.settingsCache.clear("DataTableSort");
 
 		this.setState(loadStateFromCache(this.props));
+	}
+
+	handleSelectColumns() {
+		this.setState({
+			showSelectColumnsModal: true,
+		});
 	}
 
 	handleToggleFilters() {
@@ -371,80 +381,106 @@ class DataTable extends React.Component<Props, State> {
 		}
 
 		return (
-			<div
-				className={classNames(className, {
-					"table-nonfluid-wrapper": nonfluid,
-				})}
-			>
-				{!hideAllControls ? (
-					<>
-						{pagination ? (
-							<PerPage
-								onChange={this.handlePerPage}
-								value={this.state.perPage}
-							/>
-						) : null}
-						<Controls
-							enableFilters={this.state.enableFilters}
-							name={this.props.name}
-							onExportCSV={this.handleExportCSV}
-							onResetTable={this.handleResetTable}
-							onSearch={this.handleSearch}
-							onToggleFilters={this.handleToggleFilters}
-							searchText={this.state.searchText}
-						/>
-						{nonfluid ? <div className="clearFix" /> : null}
-					</>
-				) : null}
-				<ResponsiveTableWrapper
-					className={pagination ? "fix-margin-pagination" : null}
-					nonfluid={nonfluid}
+			<>
+				<Modal
+					animation={false}
+					centered
+					show={this.state.showSelectColumnsModal}
+					onHide={() => {
+						this.setState({
+							showSelectColumnsModal: false,
+						});
+					}}
 				>
-					<table
-						className={classNames("table table-striped table-hover", {
-							"table-bordered": bordered !== false,
-							"table-sm": small !== false,
-						})}
-					>
-						<Header
-							cols={cols}
-							enableFilters={this.state.enableFilters}
-							filters={this.state.filters}
-							handleColClick={this.handleColClick}
-							handleFilterUpdate={this.handleFilterUpdate}
-							sortBys={this.state.sortBys}
-							superCols={superCols}
-						/>
-						<tbody>
-							{processedRows.map(row => (
-								<Row key={row.key} row={row} />
+					<Modal.Header closeButton>Customize Columns</Modal.Header>
+					<Modal.Body>
+						<p>Click and drag to reorder column.</p>
+						<ul>
+							{this.props.cols.map((col, i) => (
+								<li key={i}>
+									{col.title}
+									{col.desc ? ` (${col.desc})` : ""}
+								</li>
 							))}
-						</tbody>
-						<Footer footer={footer} />
-					</table>
-				</ResponsiveTableWrapper>
-				{!hideAllControls ? (
-					<>
-						{nonfluid && pagination ? <div className="clearFix" /> : null}
-						{pagination ? (
-							<Info
-								end={end}
-								numRows={numRowsFiltered}
-								numRowsUnfiltered={rows.length}
-								start={start}
+						</ul>
+					</Modal.Body>
+				</Modal>
+				<div
+					className={classNames(className, {
+						"table-nonfluid-wrapper": nonfluid,
+					})}
+				>
+					{!hideAllControls ? (
+						<>
+							{pagination ? (
+								<PerPage
+									onChange={this.handlePerPage}
+									value={this.state.perPage}
+								/>
+							) : null}
+							<Controls
+								enableFilters={this.state.enableFilters}
+								name={this.props.name}
+								onExportCSV={this.handleExportCSV}
+								onResetTable={this.handleResetTable}
+								onSearch={this.handleSearch}
+								onSelectColumns={this.handleSelectColumns}
+								onToggleFilters={this.handleToggleFilters}
+								searchText={this.state.searchText}
 							/>
-						) : null}
-						{pagination ? (
-							<Pagination
-								currentPage={this.state.currentPage}
-								numRows={numRowsFiltered}
-								onClick={this.handlePagination}
-								perPage={this.state.perPage}
+							{nonfluid ? <div className="clearFix" /> : null}
+						</>
+					) : null}
+					<ResponsiveTableWrapper
+						className={pagination ? "fix-margin-pagination" : null}
+						nonfluid={nonfluid}
+					>
+						<table
+							className={classNames("table table-striped table-hover", {
+								"table-bordered": bordered !== false,
+								"table-sm": small !== false,
+							})}
+						>
+							<Header
+								cols={cols}
+								enableFilters={this.state.enableFilters}
+								filters={this.state.filters}
+								handleColClick={this.handleColClick}
+								handleFilterUpdate={this.handleFilterUpdate}
+								sortBys={this.state.sortBys}
+								superCols={superCols}
 							/>
-						) : null}
-					</>
-				) : null}
-			</div>
+							<tbody>
+								{processedRows.map(row => (
+									<Row key={row.key} row={row} />
+								))}
+							</tbody>
+							<Footer footer={footer} />
+						</table>
+					</ResponsiveTableWrapper>
+					{!hideAllControls ? (
+						<>
+							{nonfluid && pagination ? <div className="clearFix" /> : null}
+							{pagination ? (
+								<Info
+									end={end}
+									numRows={numRowsFiltered}
+									numRowsUnfiltered={rows.length}
+									start={start}
+								/>
+							) : null}
+							{pagination ? (
+								<Pagination
+									currentPage={this.state.currentPage}
+									numRows={numRowsFiltered}
+									onClick={this.handlePagination}
+									perPage={this.state.perPage}
+								/>
+							) : null}
+						</>
+					) : null}
+				</div>
+			</>
 		);
 	}
 }

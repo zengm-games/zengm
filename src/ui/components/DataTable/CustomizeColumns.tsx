@@ -80,7 +80,10 @@ const CustomizeColumns = ({
 					</p>
 				) : (
 					<>
-						<p>Click and drag to reorder columns.</p>
+						<p>
+							Click and drag to reorder columns, and use the checkboxes to
+							show/hide columns.
+						</p>
 						<Container helperClass="sort-inside-modal" onSortEnd={onSortEnd}>
 							{colOrder.map(({ colIndex, hidden }, i) => {
 								const col = cols[colIndex];

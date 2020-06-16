@@ -489,7 +489,7 @@ class DataTable extends React.Component<Props, State> {
 									<Row key={row.key} row={row} />
 								))}
 							</tbody>
-							<Footer footer={footer} />
+							<Footer colOrder={this.state.colOrder} footer={footer} />
 						</table>
 					</ResponsiveTableWrapper>
 					{!hideAllControls ? (

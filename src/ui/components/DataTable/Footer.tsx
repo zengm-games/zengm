@@ -2,7 +2,16 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 
-const Footer = ({ footer }: { footer?: any[] }) => {
+const Footer = ({
+	colOrder,
+	footer,
+}: {
+	colOrder: {
+		colIndex: number;
+		hidden?: boolean;
+	}[];
+	footer?: any[];
+}) => {
 	if (!footer) {
 		return null;
 	}
@@ -21,17 +30,20 @@ const Footer = ({ footer }: { footer?: any[] }) => {
 		<tfoot>
 			{footers.map((row, i) => (
 				<tr key={i}>
-					{row.map((value, j) => {
-						if (value !== null && value.hasOwnProperty("value")) {
-							return (
-								<th className={classNames(value.classNames)} key={j}>
-									{value.value}
-								</th>
-							);
-						}
+					{colOrder
+						.filter(({ hidden }) => !hidden)
+						.map(({ colIndex }) => {
+							const value = row[colIndex];
+							if (value !== null && value.hasOwnProperty("value")) {
+								return (
+									<th className={classNames(value.classNames)} key={colIndex}>
+										{value.value}
+									</th>
+								);
+							}
 
-						return <th key={j}>{value}</th>;
-					})}
+							return <th key={colIndex}>{value}</th>;
+						})}
 				</tr>
 			))}
 		</tfoot>

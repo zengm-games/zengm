@@ -10,8 +10,6 @@ customizable columns in datatable
 - tell
   - https://old.reddit.com/r/BasketballGM/comments/ha3ovk/ppg_column_moved/
   - https://old.reddit.com/r/BasketballGM/comments/h9z86c/ppg_not_showing_up/
-- visibility toggle
-  - change colOrder to an object (index, visible)
 - changelog
 - future
   - supercols

@@ -102,7 +102,7 @@ const CustomizeColumns = ({
 				<button className="btn btn-danger" onClick={onReset}>
 					Reset
 				</button>
-				<button className="btn btn-primary" onClick={onHide}>
+				<button className="btn btn-secondary" onClick={onHide}>
 					Close
 				</button>
 			</Modal.Footer>

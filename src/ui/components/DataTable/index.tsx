@@ -364,7 +364,9 @@ class DataTable extends React.Component<Props, State> {
 		return rowsOrdered.map(row => {
 			return {
 				...row,
-				data: this.state.colOrder.map(({ colIndex }) => row.data[colIndex]),
+				data: this.state.colOrder
+					.filter(({ hidden }) => !hidden)
+					.map(({ colIndex }) => row.data[colIndex]),
 			};
 		});
 	}

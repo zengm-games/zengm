@@ -163,7 +163,7 @@ const AssetList = ({
 					rows={playerRows}
 				/>
 			</div>
-			<div className="col-xl-3">
+			<div className="col-xl-3 pt-3">
 				<DataTable
 					cols={pickCols}
 					defaultSort={[1, "asc"]}

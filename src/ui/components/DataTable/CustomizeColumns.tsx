@@ -3,17 +3,37 @@ import React from "react";
 import { Modal } from "react-bootstrap";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
 
-const Item = SortableElement(({ value }: { value: Col }) => {
-	let title = value.title;
-	if (value.desc) {
-		title += ` (${value.desc})`;
-	}
-	if (title === "") {
-		title = "No Title";
-	}
+const Item = SortableElement(
+	({
+		col,
+		hidden,
+		onToggleHidden,
+	}: {
+		col: Col;
+		hidden?: boolean;
+		onToggleHidden: () => void;
+	}) => {
+		let title = col.title;
+		if (col.desc) {
+			title += ` (${col.desc})`;
+		}
+		if (title === "") {
+			title = "No Title";
+		}
 
-	return <li>{title}</li>;
-});
+		return (
+			<div className="form-check">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					checked={!hidden}
+					onChange={onToggleHidden}
+				/>
+				<label className="form-check-label">{title}</label>
+			</div>
+		);
+	},
+);
 
 const Container = SortableContainer(({ children }: { children: any[] }) => {
 	return (
@@ -35,14 +55,19 @@ const CustomizeColumns = ({
 	onHide,
 	onReset,
 	onSortEnd,
+	onToggleHidden,
 	show,
 }: {
-	colOrder: number[];
+	colOrder: {
+		colIndex: number;
+		hidden?: boolean;
+	}[];
 	cols: Col[];
 	hasSuperCols: boolean;
 	onHide: () => void;
 	onReset: () => void;
 	onSortEnd: (arg: { oldIndex: number; newIndex: number }) => void;
+	onToggleHidden: (i: number) => () => void;
 	show: boolean;
 }) => {
 	return (
@@ -57,9 +82,17 @@ const CustomizeColumns = ({
 					<>
 						<p>Click and drag to reorder columns.</p>
 						<Container helperClass="sort-inside-modal" onSortEnd={onSortEnd}>
-							{colOrder.map((colIndex, i) => {
+							{colOrder.map(({ colIndex, hidden }, i) => {
 								const col = cols[colIndex];
-								return <Item key={colIndex} index={i} value={col} />;
+								return (
+									<Item
+										key={colIndex}
+										index={i}
+										onToggleHidden={onToggleHidden(i)}
+										hidden={hidden}
+										col={col}
+									/>
+								);
 							})}
 						</Container>
 					</>

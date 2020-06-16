@@ -9,14 +9,17 @@ const FilterHeader = ({
 	filters,
 	handleFilterUpdate,
 }: {
-	colOrder: number[];
+	colOrder: {
+		colIndex: number;
+		hidden?: boolean;
+	}[];
 	cols: Col[];
 	filters: string[];
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 }) => {
 	return (
 		<tr>
-			{colOrder.map(colIndex => {
+			{colOrder.map(({ colIndex }) => {
 				const col = cols[colIndex];
 
 				const filter = filters[colIndex] === undefined ? "" : filters[colIndex];
@@ -57,7 +60,10 @@ const Header = ({
 	sortBys,
 	superCols,
 }: {
-	colOrder: number[];
+	colOrder: {
+		colIndex: number;
+		hidden?: boolean;
+	}[];
 	cols: Col[];
 	enableFilters: boolean;
 	filters: string[];
@@ -87,7 +93,7 @@ const Header = ({
 				</tr>
 			) : null}
 			<tr>
-				{colOrder.map(colIndex => {
+				{colOrder.map(({ colIndex }) => {
 					const {
 						classNames: colClassNames,
 						desc,

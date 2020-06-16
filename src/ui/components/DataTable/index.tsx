@@ -69,7 +69,10 @@ export type Props = {
 };
 
 type State = {
-	colOrder: number[];
+	colOrder: {
+		colIndex: number;
+		hidden?: boolean;
+	}[];
 	currentPage: number;
 	enableFilters: boolean;
 	filters: string[];
@@ -87,7 +90,7 @@ class DataTable extends React.Component<Props, State> {
 		super(props); // https://github.com/facebook/react/issues/12523#issuecomment-378282856
 
 		this.state = {
-			colOrder: props.cols.map((col, i) => i),
+			colOrder: [],
 			currentPage: 0,
 			enableFilters: false,
 			filters: [],
@@ -361,7 +364,7 @@ class DataTable extends React.Component<Props, State> {
 		return rowsOrdered.map(row => {
 			return {
 				...row,
-				data: this.state.colOrder.map(index => row.data[index]),
+				data: this.state.colOrder.map(({ colIndex }) => row.data[colIndex]),
 			};
 		});
 	}
@@ -405,7 +408,9 @@ class DataTable extends React.Component<Props, State> {
 						});
 					}}
 					onReset={() => {
-						const newOrder = this.props.cols.map((col, i) => i);
+						const newOrder = this.props.cols.map((col, i) => ({
+							colIndex: i,
+						}));
 						this.setState({
 							colOrder: newOrder,
 						});
@@ -417,6 +422,19 @@ class DataTable extends React.Component<Props, State> {
 							colOrder: newOrder,
 						});
 						this.settingsCache.set("DataTableColOrder", newOrder);
+					}}
+					onToggleHidden={(i: number) => () => {
+						const newOrder = [...this.state.colOrder];
+						if (newOrder[i]) {
+							newOrder[i] = {
+								...newOrder[i],
+								hidden: !newOrder[i].hidden,
+							};
+							this.setState({
+								colOrder: newOrder,
+							});
+							this.settingsCache.set("DataTableColOrder", newOrder);
+						}
 					}}
 				/>
 				<div

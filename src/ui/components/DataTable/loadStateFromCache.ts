@@ -56,7 +56,13 @@ const loadStateFromCache = (props: Props) => {
 		}
 	}
 
+	const colOrder = props.cols.map((col, i) => i);
+	colOrder[0] = 1;
+	colOrder[1] = 0;
+	console.log("colOrder", colOrder);
+
 	return {
+		colOrder,
 		currentPage: 1,
 		enableFilters: filters !== defaultFilters,
 		filters,

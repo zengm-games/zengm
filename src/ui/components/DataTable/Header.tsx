@@ -4,24 +4,28 @@ import React, { SyntheticEvent, MouseEvent } from "react";
 import type { Col, SortBy, SuperCol } from ".";
 
 const FilterHeader = ({
+	colOrder,
 	cols,
 	filters,
 	handleFilterUpdate,
 }: {
+	colOrder: number[];
 	cols: Col[];
 	filters: string[];
 	handleFilterUpdate: (b: SyntheticEvent<HTMLInputElement>, a: number) => void;
 }) => {
 	return (
 		<tr>
-			{cols.map((col, i) => {
-				const filter = filters[i] === undefined ? "" : filters[i];
+			{colOrder.map(colIndex => {
+				const col = cols[colIndex];
+
+				const filter = filters[colIndex] === undefined ? "" : filters[colIndex];
 				return (
-					<th key={i}>
+					<th key={colIndex}>
 						{col.noSearch ? null : (
 							<input
 								className="datatable-filter-input"
-								onChange={event => handleFilterUpdate(event, i)}
+								onChange={event => handleFilterUpdate(event, colIndex)}
 								type="text"
 								value={filter}
 							/>
@@ -44,6 +48,7 @@ FilterHeader.propTypes = {
 };
 
 const Header = ({
+	colOrder,
 	cols,
 	enableFilters,
 	filters,
@@ -52,6 +57,7 @@ const Header = ({
 	sortBys,
 	superCols,
 }: {
+	colOrder: number[];
 	cols: Col[];
 	enableFilters: boolean;
 	filters: string[];
@@ -81,43 +87,46 @@ const Header = ({
 				</tr>
 			) : null}
 			<tr>
-				{cols.map(
-					(
-						{ classNames: colClassNames, desc, sortSequence, title, width },
-						i,
-					) => {
-						let className;
+				{colOrder.map(colIndex => {
+					const {
+						classNames: colClassNames,
+						desc,
+						sortSequence,
+						title,
+						width,
+					} = cols[colIndex];
+					let className;
 
-						if (sortSequence && sortSequence.length === 0) {
-							className = null;
-						} else {
-							className = "sorting";
+					if (sortSequence && sortSequence.length === 0) {
+						className = null;
+					} else {
+						className = "sorting";
 
-							for (const sortBy of sortBys) {
-								if (sortBy[0] === i) {
-									className =
-										sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
-									break;
-								}
+						for (const sortBy of sortBys) {
+							if (sortBy[0] === colIndex) {
+								className =
+									sortBy[1] === "asc" ? "sorting_asc" : "sorting_desc";
+								break;
 							}
 						}
+					}
 
-						return (
-							<th
-								className={classNames(colClassNames)}
-								key={i}
-								onClick={event => handleColClick(event, i)}
-								title={desc}
-								style={{ width }}
-							>
-								{className ? <div className={className}>{title}</div> : title}
-							</th>
-						);
-					},
-				)}
+					return (
+						<th
+							className={classNames(colClassNames)}
+							key={colIndex}
+							onClick={event => handleColClick(event, colIndex)}
+							title={desc}
+							style={{ width }}
+						>
+							{className ? <div className={className}>{title}</div> : title}
+						</th>
+					);
+				})}
 			</tr>
 			{enableFilters ? (
 				<FilterHeader
+					colOrder={colOrder}
 					cols={cols}
 					filters={filters}
 					handleFilterUpdate={handleFilterUpdate}

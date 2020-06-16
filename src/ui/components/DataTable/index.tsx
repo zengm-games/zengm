@@ -4,6 +4,7 @@ import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import React, { SyntheticEvent, MouseEvent, ReactNode } from "react";
 import Controls from "./Controls";
+import CustomizeColumns from "./CustomizeColumns";
 import Footer from "./Footer";
 import Header from "./Header";
 import Info from "./Info";
@@ -20,7 +21,6 @@ import { downloadFile, helpers } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 // eslint-disable-next-line import/no-unresolved
 import type { ClassValue } from "classnames/types";
-import { Modal } from "react-bootstrap";
 
 export type SortBy = [number, SortOrder];
 
@@ -66,11 +66,13 @@ export type Props = {
 	superCols?: SuperCol[];
 	addFilters?: (string | undefined)[];
 };
+
 type State = {
+	colOrder: number[];
 	currentPage: number;
 	enableFilters: boolean;
 	filters: string[];
-	prevName: string | undefined;
+	prevName?: string;
 	perPage: number;
 	searchText: string;
 	showSelectColumnsModal: boolean;
@@ -84,10 +86,10 @@ class DataTable extends React.Component<Props, State> {
 		super(props); // https://github.com/facebook/react/issues/12523#issuecomment-378282856
 
 		this.state = {
+			colOrder: props.cols.map((col, i) => i),
 			currentPage: 0,
 			enableFilters: false,
 			filters: [],
-			prevName: undefined,
 			perPage: 10,
 			searchText: "",
 			showSelectColumnsModal: false,
@@ -208,6 +210,8 @@ class DataTable extends React.Component<Props, State> {
 
 	handleFilterUpdate(event: SyntheticEvent<HTMLInputElement>, i: number) {
 		const filters = helpers.deepCopy(this.state.filters); // eslint-disable-line react/no-access-state-in-setstate
+
+		console.log("handleFilterUpdate", i);
 
 		filters[i] = event.currentTarget.value;
 		this.setState({
@@ -335,7 +339,8 @@ class DataTable extends React.Component<Props, State> {
 
 					return true;
 			  });
-		return orderBy(
+
+		const rowsOrdered = orderBy(
 			rowsFiltered,
 			this.state.sortBys.map(sortBy => row => {
 				let i = sortBy[0];
@@ -352,6 +357,13 @@ class DataTable extends React.Component<Props, State> {
 			}),
 			this.state.sortBys.map(sortBy => sortBy[1]),
 		);
+
+		return rowsOrdered.map(row => {
+			return {
+				...row,
+				data: this.state.colOrder.map(index => row.data[index]),
+			};
+		});
 	}
 
 	render() {
@@ -382,29 +394,16 @@ class DataTable extends React.Component<Props, State> {
 
 		return (
 			<>
-				<Modal
-					animation={false}
-					centered
+				<CustomizeColumns
+					cols={this.props.cols}
+					colOrder={this.state.colOrder}
 					show={this.state.showSelectColumnsModal}
 					onHide={() => {
 						this.setState({
 							showSelectColumnsModal: false,
 						});
 					}}
-				>
-					<Modal.Header closeButton>Customize Columns</Modal.Header>
-					<Modal.Body>
-						<p>Click and drag to reorder column.</p>
-						<ul>
-							{this.props.cols.map((col, i) => (
-								<li key={i}>
-									{col.title}
-									{col.desc ? ` (${col.desc})` : ""}
-								</li>
-							))}
-						</ul>
-					</Modal.Body>
-				</Modal>
+				/>
 				<div
 					className={classNames(className, {
 						"table-nonfluid-wrapper": nonfluid,
@@ -442,6 +441,7 @@ class DataTable extends React.Component<Props, State> {
 							})}
 						>
 							<Header
+								colOrder={this.state.colOrder}
 								cols={cols}
 								enableFilters={this.state.enableFilters}
 								filters={this.state.filters}

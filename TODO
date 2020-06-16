@@ -17,6 +17,8 @@ customizable columns in datatable
     - or, change cols input to include flag for which supercol a col belongs to
     - but for MVP, no customization of supercols tables
 - pass additional parameter containing which columns are visible, by index (if none, then assume all)
+- reset table needs to reset colOrder
+- in modal, button to reset order
 - sortBy by name, not index
   - can always look up name by "original index", so not necessary to change. however do make sure it is resilient to invalid value
   - also, can have dupe names, so stick with index!

@@ -64,11 +64,13 @@ const ScoreBox = ({
 	small?: boolean;
 }) => {
 	const {
+		challengeNoRatings,
 		homeCourtAdvantage,
 		season,
 		teamInfoCache,
 		userTid,
 	} = useLocalShallow(state => ({
+		challengeNoRatings: state.challengeNoRatings,
 		homeCourtAdvantage: state.homeCourtAdvantage,
 		season: state.season,
 		teamInfoCache: state.teamInfoCache,
@@ -93,6 +95,7 @@ const ScoreBox = ({
 
 	const hasOvrs =
 		!small &&
+		!challengeNoRatings &&
 		game.teams[0].ovr !== undefined &&
 		game.teams[1].ovr !== undefined;
 

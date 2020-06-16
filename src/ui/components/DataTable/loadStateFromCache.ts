@@ -56,10 +56,8 @@ const loadStateFromCache = (props: Props) => {
 		}
 	}
 
-	const colOrder = props.cols.map((col, i) => i);
-	colOrder[0] = 1;
-	colOrder[1] = 0;
-	console.log("colOrder", colOrder);
+	const colOrder =
+		settingsCache.get("DataTableColOrder") || props.cols.map((col, i) => i);
 
 	return {
 		colOrder,

@@ -21,6 +21,7 @@ import { downloadFile, helpers } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 // eslint-disable-next-line import/no-unresolved
 import type { ClassValue } from "classnames/types";
+import arrayMove from "array-move";
 
 export type SortBy = [number, SortOrder];
 
@@ -92,7 +93,7 @@ class DataTable extends React.Component<Props, State> {
 			filters: [],
 			perPage: 10,
 			searchText: "",
-			showSelectColumnsModal: false,
+			showSelectColumnsModal: true,
 			sortBys: [],
 		};
 		this.handleColClick = this.handleColClick.bind(this);
@@ -183,6 +184,7 @@ class DataTable extends React.Component<Props, State> {
 	}
 
 	handleResetTable() {
+		this.settingsCache.clear("DataTableColOrder");
 		this.settingsCache.clear("DataTableFilters");
 		this.settingsCache.clear("DataTableSort");
 
@@ -210,8 +212,6 @@ class DataTable extends React.Component<Props, State> {
 
 	handleFilterUpdate(event: SyntheticEvent<HTMLInputElement>, i: number) {
 		const filters = helpers.deepCopy(this.state.filters); // eslint-disable-line react/no-access-state-in-setstate
-
-		console.log("handleFilterUpdate", i);
 
 		filters[i] = event.currentTarget.value;
 		this.setState({
@@ -402,6 +402,20 @@ class DataTable extends React.Component<Props, State> {
 						this.setState({
 							showSelectColumnsModal: false,
 						});
+					}}
+					onReset={() => {
+						const newOrder = this.props.cols.map((col, i) => i);
+						this.setState({
+							colOrder: newOrder,
+						});
+						this.settingsCache.set("DataTableColOrder", newOrder);
+					}}
+					onSortEnd={({ oldIndex, newIndex }) => {
+						const newOrder = arrayMove(this.state.colOrder, oldIndex, newIndex);
+						this.setState({
+							colOrder: newOrder,
+						});
+						this.settingsCache.set("DataTableColOrder", newOrder);
 					}}
 				/>
 				<div

@@ -899,3 +899,7 @@ tr.table-warning:hover > td {
 	background-color: lighten(#fd7e14, 10);
 	color: #000;
 }
+
+.sort-inside-modal {
+	z-index: 999999999;
+}

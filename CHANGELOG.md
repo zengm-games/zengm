@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-06-15: More intelligent end-of-game substitution patterns for BBGM, both for blowouts and close games.
+* 2020-06-15: More intelligent end-of-game substitution patterns in BBGM, both for blowouts and close games.
 
 * 2020-06-14: In BBGM, 2 point stats (attempted, made, %) are now viewable on the player stats, team stats, and individual player stats pages.
 

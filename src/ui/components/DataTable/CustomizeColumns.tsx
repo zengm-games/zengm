@@ -29,23 +29,14 @@ const Item = SortableElement(
 					checked={!hidden}
 					onChange={onToggleHidden}
 				/>
-				<label className="form-check-label">{title}</label>
+				<label className="form-check-label cursor-grab">{title}</label>
 			</div>
 		);
 	},
 );
 
 const Container = SortableContainer(({ children }: { children: any[] }) => {
-	return (
-		<ul
-			className="list-unstyled mb-0"
-			style={{
-				cursor: "grab",
-			}}
-		>
-			{children}
-		</ul>
-	);
+	return <ul className="list-unstyled mb-0 cursor-grab">{children}</ul>;
 });
 
 const CustomizeColumns = ({
@@ -81,7 +72,7 @@ const CustomizeColumns = ({
 				) : (
 					<>
 						<p>
-							Click and drag to reorder columns, and use the checkboxes to
+							Click and drag to reorder columns, or use the checkboxes to
 							show/hide columns.
 						</p>
 						<Container helperClass="sort-inside-modal" onSortEnd={onSortEnd}>

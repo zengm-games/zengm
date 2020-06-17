@@ -120,8 +120,8 @@ const addNewTeamToExistingLeague = async (
 	await finances.updateRanks(["budget"]);
 
 	logEvent({
-		text: `A new team called the ${t.region} ${t.name} was created${
-			expansionDraft ? " in an expansion draft" : ""
+		text: `A new team called the ${t.region} ${t.name} ${
+			expansionDraft ? "will be created in an expansion draft" : "was created"
 		}.`,
 		type: "newTeam",
 		tids: [t.tid],

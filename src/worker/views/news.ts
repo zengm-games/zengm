@@ -3,7 +3,7 @@ import type { UpdateEvents, ViewInput, EventBBGM } from "../../common/types";
 import { idb } from "../db";
 import type { Face } from "facesjs";
 
-const IGNORE_EVENT_TYPES = ["retiredList"];
+const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];
 
 const getTid = (event: EventBBGM) => {
 	if (!event.tids || event.tids.length === 0 || event.tids[0] < 0) {

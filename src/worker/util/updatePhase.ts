@@ -31,6 +31,9 @@ async function updatePhase(conditions?: Conditions) {
 				}
 				l.phaseText = phaseText;
 				l.season = g.get("season");
+				if (l.startingSeason === undefined) {
+					l.startingSeason = g.get("startingSeason");
+				}
 				await idb.meta.put("leagues", l);
 			}
 		})();

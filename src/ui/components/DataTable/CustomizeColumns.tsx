@@ -1,7 +1,8 @@
 import type { Col } from ".";
-import React from "react";
+import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import { SortableContainer, SortableElement } from "react-sortable-hoc";
+import classNames from "classnames";
 
 const Item = SortableElement(
 	({
@@ -35,9 +36,22 @@ const Item = SortableElement(
 	},
 );
 
-const Container = SortableContainer(({ children }: { children: any[] }) => {
-	return <ul className="list-unstyled mb-0 cursor-grab">{children}</ul>;
-});
+const Container = SortableContainer(
+	({ children, isDragged }: { children: any[]; isDragged: boolean }) => {
+		return (
+			<ul
+				className={classNames(
+					"list-unstyled mb-0 cursor-grab user-select-none",
+					{
+						"cursor-grabbing": isDragged,
+					},
+				)}
+			>
+				{children}
+			</ul>
+		);
+	},
+);
 
 const CustomizeColumns = ({
 	colOrder,
@@ -61,6 +75,8 @@ const CustomizeColumns = ({
 	onToggleHidden: (i: number) => () => void;
 	show: boolean;
 }) => {
+	const [isDragged, setIsDragged] = useState(false);
+
 	return (
 		<Modal animation={false} centered show={show} onHide={onHide}>
 			<Modal.Header closeButton>Customize Columns</Modal.Header>
@@ -75,7 +91,17 @@ const CustomizeColumns = ({
 							Click and drag to reorder columns, or use the checkboxes to
 							show/hide columns.
 						</p>
-						<Container helperClass="sort-inside-modal" onSortEnd={onSortEnd}>
+						<Container
+							helperClass="sort-inside-modal"
+							isDragged={isDragged}
+							onSortStart={() => {
+								setIsDragged(true);
+							}}
+							onSortEnd={args => {
+								setIsDragged(false);
+								onSortEnd(args);
+							}}
+						>
 							{colOrder.map(({ colIndex, hidden }, i) => {
 								const col = cols[colIndex];
 								return (

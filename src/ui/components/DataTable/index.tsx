@@ -432,8 +432,12 @@ class DataTable extends React.Component<Props, State> {
 						if (newOrder[i]) {
 							newOrder[i] = {
 								...newOrder[i],
-								hidden: !newOrder[i].hidden,
 							};
+							if (newOrder[i].hidden) {
+								delete newOrder[i].hidden;
+							} else {
+								newOrder[i].hidden = true;
+							}
 							this.setState({
 								colOrder: newOrder,
 							});

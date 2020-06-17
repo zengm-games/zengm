@@ -447,6 +447,8 @@ export type League = {
 	starred?: boolean;
 	created?: Date;
 	lastPlayed?: Date;
+	startingSeason?: number;
+	season?: number;
 };
 
 export type Locks = {

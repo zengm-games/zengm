@@ -940,6 +940,8 @@ const create = async ({
 		difficulty,
 		created: new Date(),
 		lastPlayed: new Date(),
+		startingSeason: g.get("startingSeason"),
+		season: g.get("season"),
 	};
 
 	if (importLid !== undefined && importLid !== null) {

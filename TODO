@@ -31,7 +31,7 @@ custom league generator
 - user defined teams
 
 jersey numbers
-- store in player stats
+- store in player stats, or in own array?
 - viewable in bios
 - draw from some known distribution
   - by position, for football
@@ -114,6 +114,7 @@ way to save/load leagues on server
       - so would need to read entire league file into memory first
 
 add # seasons column to dashboard
+- season and startingSeason now stored in league object
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/

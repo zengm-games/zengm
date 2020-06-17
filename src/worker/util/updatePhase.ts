@@ -30,6 +30,7 @@ async function updatePhase(conditions?: Conditions) {
 					throw new Error(`No league with lid ${g.get("lid")} found`);
 				}
 				l.phaseText = phaseText;
+				l.season = g.get("season");
 				await idb.meta.put("leagues", l);
 			}
 		})();

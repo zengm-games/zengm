@@ -48,6 +48,11 @@ const changes = [
 		msg:
 			'A bunch of new options for league creation: challenge modes (no draft picks, no free agents, no trades, no visible ratings), starting season, and more. <a href="https://basketball-gm.com/blog/2020/06/league-creation-options/">More details</a>',
 	},
+	{
+		date: "2020-06-16",
+		msg:
+			'You can customize the order and visibility of columns in most tables by pressing the <span class="glyphicon glyphicon-option-vertical"></span> button to the top right of the table and clicking "Customize Columns".',
+	},
 ];
 
 export default changes;

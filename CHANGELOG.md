@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* BETA: Support for reordering and hiding columns on nearly every table.
+* 2020-06-16: You can customize the order and visibility of columns in most tables by pressing the "..." button to the top right of the table and clicking "Customize Columns". [[1]]()
 
 * 2020-06-15: More intelligent end-of-game substitution patterns in BBGM, both for blowouts and close games.
 

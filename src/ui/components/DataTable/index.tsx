@@ -365,7 +365,9 @@ class DataTable extends React.Component<Props, State> {
 			return {
 				...row,
 				data: this.state.colOrder
-					.filter(({ hidden }) => !hidden)
+					.filter(
+						({ hidden, colIndex }) => !hidden || colIndex >= row.data.length,
+					)
 					.map(({ colIndex }) => row.data[colIndex]),
 			};
 		});

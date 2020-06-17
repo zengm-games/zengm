@@ -31,7 +31,7 @@ const Footer = ({
 			{footers.map((row, i) => (
 				<tr key={i}>
 					{colOrder
-						.filter(({ hidden }) => !hidden)
+						.filter(({ hidden, colIndex }) => !hidden || colIndex >= row.length)
 						.map(({ colIndex }) => {
 							const value = row[colIndex];
 							if (value !== null && value.hasOwnProperty("value")) {

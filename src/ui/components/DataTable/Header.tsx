@@ -20,7 +20,7 @@ const FilterHeader = ({
 	return (
 		<tr>
 			{colOrder
-				.filter(({ hidden }) => !hidden)
+				.filter(({ hidden, colIndex }) => !hidden || colIndex >= cols.length)
 				.map(({ colIndex }) => {
 					const col = cols[colIndex];
 
@@ -97,7 +97,7 @@ const Header = ({
 			) : null}
 			<tr>
 				{colOrder
-					.filter(({ hidden }) => !hidden)
+					.filter(({ hidden, colIndex }) => !hidden || colIndex >= cols.length)
 					.map(({ colIndex }) => {
 						const {
 							classNames: colClassNames,

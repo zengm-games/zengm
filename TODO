@@ -12,13 +12,16 @@ customizable columns in datatable
   - https://old.reddit.com/r/BasketballGM/comments/h9z86c/ppg_not_showing_up/
   - https://old.reddit.com/r/BasketballGM/comments/h8owpq/stats_suggestion/fuwxj0p/?context=3
   - https://old.reddit.com/r/BasketballGM/comments/hacnx4/new_stat_lines/fv2br2a/?context=3
-- changelog, blog
+- changelog, notification
 - future
+  - SortableTable
   - supercols
     - change input format to be associated with these index numbers, then can derive which should be shown and where
     - or, change cols input to include flag for which supercol a col belongs to
     - but for MVP, no customization of supercols tables
   - always return all stats and ratings?
+
+some way to add a text "note" to a player on their profile page, maybe watch list too
 
 @Sniksir#7396 A button to completely clear either side of the trade window would save a ton of time.
 

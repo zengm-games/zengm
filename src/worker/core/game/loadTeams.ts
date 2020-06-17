@@ -116,7 +116,9 @@ const processTeam = (
 			gs: 0,
 			min: 0,
 			...playerStats,
-			courtTime: 0,
+
+			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
+			courtTime: -3,
 			benchTime: 0,
 			energy: 1,
 		};

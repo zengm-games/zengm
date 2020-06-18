@@ -57,11 +57,23 @@ const loadStateFromCache = (props: Props) => {
 	}
 
 	let colOrder = settingsCache.get("DataTableColOrder");
-	if (!colOrder || colOrder.length !== props.cols.length) {
+	if (!colOrder) {
 		colOrder = props.cols.map((col, i) => ({
 			colIndex: i,
 		}));
 	}
+	if (colOrder.length < props.cols.length) {
+		// Add cols
+		for (let i = 0; i < props.cols.length; i++) {
+			if (!colOrder.some((x: any) => x && x.colIndex === i)) {
+				colOrder.push({
+					colIndex: i,
+				});
+			}
+		}
+	}
+
+	// If too many cols... who cares, will get filtered out
 
 	return {
 		colOrder,

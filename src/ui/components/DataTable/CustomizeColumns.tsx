@@ -10,16 +10,21 @@ const Item = SortableElement(
 		hidden,
 		onToggleHidden,
 	}: {
-		col: Col;
+		col?: Col;
 		hidden?: boolean;
 		onToggleHidden: () => void;
 	}) => {
-		let title = col.title;
-		if (col.desc) {
-			title += ` (${col.desc})`;
-		}
-		if (title === "") {
-			title = "No Title";
+		let title;
+		if (col) {
+			title = col.title;
+			if (col.desc) {
+				title += ` (${col.desc})`;
+			}
+			if (title === "") {
+				title = "No Title";
+			}
+		} else {
+			title = <span className="text-muted">Not Currently Available</span>;
 		}
 
 		return (

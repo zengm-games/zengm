@@ -362,7 +362,7 @@ class DataTable extends React.Component<Props, State> {
 		);
 
 		const colOrderFiltered = this.state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden || !this.props.cols[colIndex],
+			({ hidden, colIndex }) => !hidden && this.props.cols[colIndex],
 		);
 
 		return rowsOrdered.map(row => {
@@ -400,15 +400,15 @@ class DataTable extends React.Component<Props, State> {
 		}
 
 		const colOrderFiltered = this.state.colOrder.filter(
-			({ hidden, colIndex }) => !hidden || !cols[colIndex],
+			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
 
 		return (
 			<>
 				<CustomizeColumns
-					cols={this.props.cols}
+					cols={cols}
 					colOrder={this.state.colOrder}
-					hasSuperCols={!!this.props.superCols}
+					hasSuperCols={!!superCols}
 					show={this.state.showSelectColumnsModal}
 					onHide={() => {
 						this.setState({
@@ -416,7 +416,7 @@ class DataTable extends React.Component<Props, State> {
 						});
 					}}
 					onReset={() => {
-						const newOrder = this.props.cols.map((col, i) => ({
+						const newOrder = cols.map((col, i) => ({
 							colIndex: i,
 						}));
 						this.setState({

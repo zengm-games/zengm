@@ -30,20 +30,18 @@ const Footer = ({
 		<tfoot>
 			{footers.map((row, i) => (
 				<tr key={i}>
-					{colOrder
-						.filter(({ hidden, colIndex }) => !hidden || colIndex >= row.length)
-						.map(({ colIndex }) => {
-							const value = row[colIndex];
-							if (value !== null && value.hasOwnProperty("value")) {
-								return (
-									<th className={classNames(value.classNames)} key={colIndex}>
-										{value.value}
-									</th>
-								);
-							}
+					{colOrder.map(({ colIndex }) => {
+						const value = row[colIndex];
+						if (value !== null && value.hasOwnProperty("value")) {
+							return (
+								<th className={classNames(value.classNames)} key={colIndex}>
+									{value.value}
+								</th>
+							);
+						}
 
-							return <th key={colIndex}>{value}</th>;
-						})}
+						return <th key={colIndex}>{value}</th>;
+					})}
 				</tr>
 			))}
 		</tfoot>

@@ -361,19 +361,20 @@ class DataTable extends React.Component<Props, State> {
 			this.state.sortBys.map(sortBy => sortBy[1]),
 		);
 
+		const colOrderFiltered = this.state.colOrder.filter(
+			({ hidden, colIndex }) => !hidden || !this.props.cols[colIndex],
+		);
+
 		return rowsOrdered.map(row => {
 			return {
 				...row,
-				data: this.state.colOrder
-					.filter(
-						({ hidden, colIndex }) => !hidden || colIndex >= row.data.length,
-					)
-					.map(({ colIndex }) => row.data[colIndex]),
+				data: colOrderFiltered.map(({ colIndex }) => row.data[colIndex]),
 			};
 		});
 	}
 
 	render() {
+		console.log("render");
 		const {
 			bordered,
 			className,
@@ -398,6 +399,10 @@ class DataTable extends React.Component<Props, State> {
 		if (pagination) {
 			processedRows = processedRows.slice(start - 1, end);
 		}
+
+		const colOrderFiltered = this.state.colOrder.filter(
+			({ hidden, colIndex }) => !hidden || !cols[colIndex],
+		);
 
 		return (
 			<>
@@ -481,7 +486,7 @@ class DataTable extends React.Component<Props, State> {
 							})}
 						>
 							<Header
-								colOrder={this.state.colOrder}
+								colOrder={colOrderFiltered}
 								cols={cols}
 								enableFilters={this.state.enableFilters}
 								filters={this.state.filters}
@@ -495,7 +500,7 @@ class DataTable extends React.Component<Props, State> {
 									<Row key={row.key} row={row} />
 								))}
 							</tbody>
-							<Footer colOrder={this.state.colOrder} footer={footer} />
+							<Footer colOrder={colOrderFiltered} footer={footer} />
 						</table>
 					</ResponsiveTableWrapper>
 					{!hideAllControls ? (

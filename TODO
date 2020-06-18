@@ -115,7 +115,7 @@ way to save/load leagues on server
 
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
-  - drafted team for the players in busts and steals
+  - DONE: drafted team for the players in busts and steals
   - team and overall for the final year of the Oldest to Play in Game
   - total games on team for players with the most years on one team
 
@@ -184,6 +184,7 @@ way to bulk delete leagues
 
 handle abbrevs changing over time without breaking URLs by appending _tid to abbrev in URL
 - any abbrev returned in stats or ratings from playersPlus is wrong
+  -  see tidAndSeasonToAbbrev in most.ts for how to do it right
 - using team*Cache from UI is probably wrong too
 
 in leagues with no 3 pointers, 3 pointers should not be tracked

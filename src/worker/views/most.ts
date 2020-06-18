@@ -18,9 +18,11 @@ type Most = {
 export const getMostXPlayers = async ({
 	filter,
 	getValue,
+	after,
 }: {
 	filter?: (p: Player) => boolean;
 	getValue: (p: Player) => Most | undefined;
+	after?: (most: Most) => Promise<Most> | Most;
 }) => {
 	const LIMIT = 100;
 	const playersAll: (Player<MinimalPlayerRatings> & {
@@ -78,6 +80,10 @@ export const getMostXPlayers = async ({
 	for (let i = 0; i < 100; i++) {
 		if (players[i]) {
 			players[i].rank = i + 1;
+
+			if (after) {
+				players[i].most = await after(players[i].most);
+			}
 		}
 	}
 
@@ -102,6 +108,41 @@ const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	};
 };
 
+const tidAndSeasonToAbbrev = async (most: Most) => {
+	let abbrev;
+
+	const { season, tid } = most.extra as any;
+	const teamSeason = await idb.league
+		.transaction("teamSeasons")
+		.store.index("season, tid")
+		.get([season, tid]);
+	if (teamSeason) {
+		abbrev = teamSeason.abbrev;
+	}
+
+	if (abbrev === undefined) {
+		if (season < g.get("startingSeason")) {
+			const teamSeason = await idb.league
+				.transaction("teamSeasons")
+				.store.index("season, tid")
+				.get([g.get("startingSeason"), tid]);
+			if (teamSeason) {
+				abbrev = teamSeason.abbrev;
+			}
+		}
+
+		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+	}
+
+	return {
+		...most,
+		extra: {
+			tid,
+			abbrev,
+		},
+	};
+};
+
 const updatePlayers = async (
 	{ type }: ViewInput<"most">,
 	updateEvents: UpdateEvents,
@@ -111,6 +152,7 @@ const updatePlayers = async (
 	if (updateEvents.includes("firstRun") || type !== state.type) {
 		let filter: Parameters<typeof getMostXPlayers>[0]["filter"];
 		let getValue: Parameters<typeof getMostXPlayers>[0]["getValue"];
+		let after: Parameters<typeof getMostXPlayers>[0]["after"];
 		let title: string;
 		let description: string;
 		const extraCols: {
@@ -236,6 +278,10 @@ const updatePlayers = async (
 			title = "Biggest Busts";
 			description =
 				"These are the players drafted with a top 5 pick who had the worst careers.";
+			extraCols.push({
+				key: ["most", "extra"],
+				colName: "Team",
+			});
 
 			filter = p =>
 				p.draft.round === 1 &&
@@ -244,21 +290,38 @@ const updatePlayers = async (
 				p.draft.year >= g.get("startingSeason") - 3;
 			getValue = p => {
 				const value = playerValue(p).value;
-				return { value: -value };
+
+				return {
+					value: -value,
+					extra: { tid: p.draft.tid, season: p.draft.year },
+				};
 			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "steals") {
 			title = "Biggest Steals";
 			description =
 				process.env.SPORT === "basketball"
 					? "These are the undrafted players or second round picks who had the best careers."
 					: "These are the undrafted players or 5th+ round picks who had the best careers.";
+			extraCols.push({
+				key: ["most", "extra"],
+				colName: "Team",
+			});
 
 			filter = p =>
 				p.draft.round === 0 ||
 				(process.env.SPORT === "basketball"
 					? p.draft.round >= 2
 					: p.draft.round >= 5);
-			getValue = playerValue;
+			getValue = p => {
+				const value = playerValue(p).value;
+
+				return {
+					value,
+					extra: { tid: p.draft.tid, season: p.draft.year },
+				};
+			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "earnings") {
 			title = "Career Earnings";
 			description =
@@ -442,6 +505,7 @@ const updatePlayers = async (
 		const { players, stats } = await getMostXPlayers({
 			filter,
 			getValue,
+			after,
 		});
 
 		return {

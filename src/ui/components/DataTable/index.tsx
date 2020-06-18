@@ -252,9 +252,14 @@ class DataTable extends React.Component<Props, State> {
 	}
 
 	static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		const updatedState = {}; // If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats)
+		const updatedState = {};
 
-		if (nextProps.name !== prevState.prevName) {
+		// If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats).
+		// If colOrder does not match cols, need to run reconciliation code in loadStateFromCache (example: current vs past seasons in League Finances).
+		if (
+			nextProps.name !== prevState.prevName ||
+			nextProps.cols.length > prevState.colOrder.length
+		) {
 			Object.assign(updatedState, loadStateFromCache(nextProps));
 		}
 

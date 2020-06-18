@@ -72,7 +72,6 @@ const loadStateFromCache = (props: Props) => {
 			}
 		}
 	}
-
 	// If too many cols... who cares, will get filtered out
 
 	return {

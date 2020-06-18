@@ -25,16 +25,15 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 		lotterySort(teams);
 	}
 
-	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
+	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
-	let draftPicks = await idb.cache.draftPicks.indexGetAll(
-		"draftPicksBySeason",
-		g.get("season"),
+	const draftPicks = helpers.deepCopy(
+		await idb.cache.draftPicks.indexGetAll(
+			"draftPicksBySeason",
+			g.get("season"),
+		),
 	);
-
-	// Because we're editing this later, and sometimes this is called with mock=true
-	draftPicks = helpers.deepCopy(draftPicks);
 
 	// Reorganize this to an array indexed on originalTid and round
 	const draftPicksIndexed: DraftPick[][] = [];

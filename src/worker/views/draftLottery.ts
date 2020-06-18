@@ -107,6 +107,7 @@ const updateDraftLottery = async (
 		try {
 			draftLotteryResult = await draft.genOrderNBA(true);
 		} catch (error) {
+			console.log(error);
 			if (!(error as any).notEnoughTeams) {
 				throw error;
 			}

@@ -113,6 +113,9 @@ const genOrder = async (
 		active: true,
 	});
 
+	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
+	await genPicks();
+
 	const draftPicks = helpers.deepCopy(
 		await idb.cache.draftPicks.indexGetAll(
 			"draftPicksBySeason",
@@ -185,9 +188,6 @@ const genOrder = async (
 	}
 
 	const totalChances = chancesCumsum[chancesCumsum.length - 1]; // Pick first 3 or 4 picks based on chancesCumsum
-
-	// Sometimes picks just fail to generate or get lost, for reasons I don't understand
-	await genPicks();
 
 	const firstN: number[] = [];
 

@@ -48,13 +48,23 @@ const doSeason = async (
 };
 
 const genPicks = async () => {
+	console.log("genPicks", g.get("season"), g.get("phase"));
 	// If a pick already exists, do nothing. Unless it needs to be deleted because of challenge mode or some other reason.
 	const existingPicks: (DraftPick & {
 		keep?: boolean;
 	})[] = helpers.deepCopy(await idb.cache.draftPicks.getAll());
 
+	let numSeasons = g.get("numSeasonsFutureDraftPicks");
+	if (
+		numSeasons <= 0 &&
+		(g.get("phase") >= PHASE.DRAFT_LOTTERY || g.get("phase") <= PHASE.DRAFT)
+	) {
+		// We kind of need one season at least, for the actual draft
+		numSeasons = 1;
+	}
+
 	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
-	for (let i = 0; i < g.get("numSeasonsFutureDraftPicks"); i++) {
+	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
 		await doSeason(draftYear, existingPicks);
 	}

@@ -855,6 +855,7 @@ export type PlayersPlusOptions = {
 	oldStats?: boolean;
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
+	mergeStats?: boolean;
 };
 
 export type PlayerNames = Names & {

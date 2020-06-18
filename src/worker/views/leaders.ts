@@ -395,6 +395,7 @@ const updateLeaders = async (
 			season: inputs.season,
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs !== "playoffs",
+			mergeStats: true,
 		});
 		const userAbbrev = helpers.getAbbrev(g.get("userTid"));
 

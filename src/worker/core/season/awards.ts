@@ -80,6 +80,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 						"tid",
 				  ],
 		fuzz: true,
+		mergeStats: true,
 	});
 
 	// Only keep players who actually have a stats entry for the latest season

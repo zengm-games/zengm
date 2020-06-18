@@ -122,12 +122,6 @@ add option to disable salary cap @hrmantovani#2284
 - merge with hard cap setting
 - salary cap value is still inflation
 
-total stats, for traded players
-- player stats table
-- player page
-- what about advanced stats?
-- MVP
-
 FBGM
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - OL weights
@@ -139,6 +133,9 @@ FBGM
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off
 - incomplete passes don't count as downs (qb/wr stats are broken due to this as well)
 - Some automatic first down penalties result in 1st and 1
+- schedule
+  - Could the schedule be fixed to match the NFL's scheduling formula?
+  - It is kind of sad and boring playing the same teams every year except in different order
 
 eventually
 - way to view scheduled events and add/edit/delete

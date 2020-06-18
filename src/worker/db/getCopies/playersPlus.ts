@@ -28,6 +28,7 @@ type PlayersPlusOptionsRequired = {
 	oldStats: boolean;
 	numGamesRemaining: number;
 	statType: PlayerStatType;
+	mergeStats: boolean;
 };
 const awardsOrder = [
 	"Inducted into the Hall of Fame",
@@ -447,8 +448,9 @@ const getPlayerStats = (
 	tid: number | undefined,
 	playoffs: boolean,
 	regularSeason: boolean,
+	mergeStats: boolean,
 ) => {
-	return helpers.deepCopy(
+	const rows = helpers.deepCopy(
 		playerStats.filter(ps => {
 			// Not sure why this is needed, but might fix an error someone reported
 			if (!ps) {
@@ -462,6 +464,50 @@ const getPlayerStats = (
 			return seasonCheck && tidCheck && playoffsCheck;
 		}),
 	);
+
+	const actuallyMergeStats =
+		mergeStats &&
+		regularSeason &&
+		!playoffs &&
+		tid === undefined &&
+		rows.length > 1;
+
+	if (actuallyMergeStats) {
+		const seasons = Array.from(new Set(rows.map(row => row.season)));
+		if (seasons.length !== rows.length) {
+			// Multiple entries when we want one row of output per season... maybe player was traded during season?
+			return seasons.map(season2 => {
+				const rowsTemp = rows.filter(row => row.season === season2);
+
+				// Aggregate annual stats and ignore other things
+				const ignoredKeys = ["season", "tid", "yearsWithTeam", "playoffs"];
+				const statSums: any = {};
+				const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp[0]) : [];
+
+				for (const attr of attrs) {
+					if (!ignoredKeys.includes(attr)) {
+						statSums[attr] = reduceCareerStats(rowsTemp, attr, false);
+					}
+				}
+
+				// Special case for some variables, weight by minutes
+				for (const attr of weightByMinutes) {
+					if (statSums.hasOwnProperty(attr)) {
+						statSums[attr] /= statSums.min;
+					}
+				}
+
+				// Defaults from latest entry
+				for (const attr of ignoredKeys) {
+					statSums[attr] = rowsTemp[rowsTemp.length - 1][attr];
+				}
+
+				return statSums;
+			});
+		}
+	}
+
+	return rows;
 };
 
 const processPlayerStats = (
@@ -496,6 +542,7 @@ const processStats = (
 	output: PlayerFiltered,
 	p: Player,
 	{
+		mergeStats,
 		playoffs,
 		regularSeason,
 		season,
@@ -513,6 +560,7 @@ const processStats = (
 		tid,
 		playoffs,
 		regularSeason,
+		mergeStats,
 	);
 
 	// oldStats crap
@@ -524,6 +572,7 @@ const processStats = (
 			tid,
 			playoffs,
 			regularSeason,
+			mergeStats,
 		);
 	}
 
@@ -544,10 +593,11 @@ const processStats = (
 		season !== undefined &&
 		((playoffs && !regularSeason) || (!playoffs && regularSeason))
 	) {
-		output.stats = output.stats[output.stats.length - 1]; // Take last value, in case player was traded/signed to team twice in a season
+		// Take last value, in case player was traded/signed to team twice in a season
+		output.stats = output.stats[output.stats.length - 1];
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things
-		const ignoredKeys = ["pid", "season", "tid", "yearsWithTeam"];
+		const ignoredKeys = ["season", "tid", "yearsWithTeam"];
 		const statSums: any = {};
 		const statSumsPlayoffs: any = {};
 		const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];
@@ -677,6 +727,7 @@ const getCopies = async (
 		oldStats = false,
 		numGamesRemaining = 0,
 		statType = "perGame",
+		mergeStats = false,
 	}: PlayersPlusOptions,
 ): Promise<PlayerFiltered[]> => {
 	const options: PlayersPlusOptionsRequired = {
@@ -694,6 +745,7 @@ const getCopies = async (
 		oldStats,
 		numGamesRemaining,
 		statType,
+		mergeStats,
 	};
 	return players
 		.map(p => processPlayer(p, options))

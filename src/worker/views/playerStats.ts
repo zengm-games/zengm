@@ -101,6 +101,7 @@ const updatePlayers = async (
 			statType,
 			playoffs: inputs.playoffs === "playoffs",
 			regularSeason: inputs.playoffs !== "playoffs",
+			mergeStats: true,
 		});
 
 		// Only keep players with more than 5 mpg in regular season, of any PT in playoffs

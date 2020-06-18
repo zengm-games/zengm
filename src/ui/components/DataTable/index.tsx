@@ -374,7 +374,6 @@ class DataTable extends React.Component<Props, State> {
 	}
 
 	render() {
-		console.log("render");
 		const {
 			bordered,
 			className,

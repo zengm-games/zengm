@@ -408,11 +408,10 @@ const playerRatings = (params: Params) => {
 const playerStats = (params: Params) => {
 	let abbrev;
 
-	if (
-		params.abbrev !== undefined &&
-		g.get("teamInfoCache").some(t => t.abbrev === params.abbrev)
-	) {
-		abbrev = params.abbrev;
+	const [, validatedAbbrev] = validateAbbrev(params.abbrev, true);
+
+	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
+		abbrev = validatedAbbrev;
 	} else if (params.abbrev && params.abbrev === "watch") {
 		abbrev = "watch";
 	} else {

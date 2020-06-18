@@ -137,6 +137,7 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 	return {
 		...most,
 		extra: {
+			...most.extra,
 			tid,
 			abbrev,
 		},
@@ -443,24 +444,54 @@ const updatePlayers = async (
 				key: ["most", "value"],
 				colName: "Age",
 			});
+			extraCols.push({
+				key: ["most", "extra", "season"],
+				colName: "Season",
+			});
+			extraCols.push({
+				key: ["most", "extra"],
+				colName: "Team",
+			});
+			extraCols.push({
+				key: ["most", "extra", "ovr"],
+				colName: "Ovr",
+			});
 
 			getValue = p => {
 				let maxAge = 0;
+				let season: number | undefined;
+				let tid: number | undefined;
 				for (const ps of p.stats) {
 					if (ps.gp > 0) {
 						const age = ps.season - p.born.year;
 						if (age > maxAge) {
 							maxAge = age;
+							season = ps.season;
+							tid = ps.tid;
 						}
 					}
 				}
 
-				if (maxAge === 0) {
+				if (season === undefined) {
 					return;
 				}
 
-				return { value: maxAge };
+				let ovr: number | undefined;
+				const ratings = p.ratings.find(pr => pr.season === season);
+				if (ratings) {
+					ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+				}
+
+				return {
+					value: maxAge,
+					extra: {
+						season,
+						ovr,
+						tid,
+					},
+				};
 			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "worst_injuries") {
 			title = "Worst Injuries";
 			description =

@@ -69,6 +69,10 @@ const Most = ({
 					if (x.colName === "Prog") {
 						return helpers.plusMinus(value, 0);
 					}
+					if (x.colName.startsWith("stat:")) {
+						const stat = x.colName.replace("stat:", "");
+						return helpers.roundStat(value, stat);
+					}
 					if (x.colName === "Team") {
 						return (
 							<a

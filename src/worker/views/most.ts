@@ -394,6 +394,10 @@ const updatePlayers = async (
 				colName: "# Seasons",
 			});
 			extraCols.push({
+				key: ["most", "extra", "gp"],
+				colName: "stat:gp",
+			});
+			extraCols.push({
 				key: ["most", "extra"],
 				colName: "Team",
 			});
@@ -402,6 +406,7 @@ const updatePlayers = async (
 				let maxNumSeasons = 0;
 				let maxAbbrev;
 				let maxTid;
+				let maxGP;
 				const statsByTid = groupBy(
 					p.stats.filter(ps => !ps.playoffs),
 					ps => ps.tid,
@@ -414,6 +419,11 @@ const updatePlayers = async (
 						// Somehow propagate these through
 						maxTid = parseInt(tid);
 						maxAbbrev = g.get("teamInfoCache")[maxTid]?.abbrev;
+
+						maxGP = 0;
+						for (const ps of statsByTid[tid]) {
+							maxGP += ps.gp;
+						}
 					}
 				}
 
@@ -423,7 +433,7 @@ const updatePlayers = async (
 
 				return {
 					value: maxNumSeasons,
-					extra: { abbrev: maxAbbrev, tid: maxTid },
+					extra: { abbrev: maxAbbrev, gp: maxGP, tid: maxTid },
 				};
 			};
 		} else if (type === "oldest") {

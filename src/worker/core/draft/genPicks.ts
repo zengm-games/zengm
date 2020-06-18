@@ -47,7 +47,7 @@ const doSeason = async (
 	}
 };
 
-const genPicks = async () => {
+const genPicks = async (afterDraft?: true) => {
 	// If a pick already exists, do nothing. Unless it needs to be deleted because of challenge mode or some other reason.
 	const existingPicks: (DraftPick & {
 		keep?: boolean;
@@ -63,7 +63,7 @@ const genPicks = async () => {
 		numSeasons = 1;
 	}
 
-	const dpOffset = g.get("phase") > PHASE.DRAFT ? 1 : 0;
+	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
 		await doSeason(draftYear, existingPicks);

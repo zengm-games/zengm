@@ -191,6 +191,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		"League",
 		"Team",
 		"Phase",
+		"# Seasons",
 		"Difficulty",
 		"Created",
 		"Last Played",
@@ -220,6 +221,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				</LeagueName>,
 				`${league.teamRegion} ${league.teamName}`,
 				league.phaseText,
+				league.startingSeason !== undefined && league.season !== undefined
+					? 1 + league.season - league.startingSeason
+					: undefined,
 				<DifficultyText>{league.difficulty}</DifficultyText>,
 				{
 					sortValue:
@@ -380,7 +384,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 						cols={cols}
 						className="dashboard-table"
 						disableSettingsCache
-						defaultSort={[6, "desc"]}
+						defaultSort={[7, "desc"]}
 						name="Dashboard"
 						pagination={pagination}
 						small={false}

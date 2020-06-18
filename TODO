@@ -113,9 +113,6 @@ way to save/load leagues on server
       - ideally would send data from IndexedDB to WritableStream to some HTTP API, but that doesn't seem supported - https://github.com/whatwg/fetch/issues/378 for the HTTP request, but also it's a problem with IDB auto closing transactions
       - so would need to read entire league file into memory first
 
-add # seasons column to dashboard
-- season and startingSeason now stored in league object
-
 new frivolity improvements
 - https://old.reddit.com/r/BasketballGM/comments/gr57hl/i_just_added_12_new_frivolities_available_within/frxsvqe/
   - drafted team for the players in busts and steals

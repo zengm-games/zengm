@@ -1172,6 +1172,7 @@ const cols: {
 		sortType: "number",
 	},
 	"# Seasons": {
+		desc: "Number of Seasons",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

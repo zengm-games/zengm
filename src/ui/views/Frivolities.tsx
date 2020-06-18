@@ -6,7 +6,7 @@ import type { MenuItemHeader, MenuItemLink } from "../../common/types";
 const style = { maxWidth: 1000 };
 
 const frivolities = {
-	"Player Origins": [
+	"Player Bios": [
 		{
 			urlParts: ["colleges"],
 			name: "Colleges",
@@ -19,8 +19,6 @@ const frivolities = {
 			description:
 				"See which countries have had the most successful pro players.",
 		},
-	],
-	"Biographical Info": [
 		{
 			urlParts: ["relatives"],
 			name: "Relatives",
@@ -41,7 +39,7 @@ const frivolities = {
 				"Color-coded visualization of year-to-year changes in roster.",
 		},
 	],
-	"Players With The Most...": [
+	"Player Rankings": [
 		{
 			urlParts: ["most", "no_ring"],
 			name: "Best Players Without a Ring",
@@ -157,8 +155,8 @@ const Frivolities = () => {
 	});
 
 	const columns: (keyof typeof frivolities)[][] = [
-		["Player Origins", "Biographical Info", "Teams"],
-		["Players With The Most..."],
+		["Player Bios", "Teams"],
+		["Player Rankings"],
 	];
 
 	return (

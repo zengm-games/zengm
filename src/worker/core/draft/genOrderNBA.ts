@@ -8,9 +8,10 @@ import { g, helpers, random } from "../../util";
 import type {
 	Conditions,
 	DraftLotteryResult,
-	DraftPick,
 	DraftType,
+	DraftPickWithoutKey,
 } from "../../../common/types";
+import genOrderGetPicks from "./genOrderGetPicks";
 
 type ReturnVal = DraftLotteryResult & {
 	draftType: Exclude<DraftType, "random" | "noLottery">;
@@ -116,14 +117,9 @@ const genOrder = async (
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
-	const draftPicks = helpers.deepCopy(
-		await idb.cache.draftPicks.indexGetAll(
-			"draftPicksBySeason",
-			g.get("season"),
-		),
-	);
+	const draftPicks = await genOrderGetPicks(mock);
 
-	const draftPicksIndexed: DraftPick[][] = [];
+	const draftPicksIndexed: DraftPickWithoutKey[][] = [];
 	for (const dp of draftPicks) {
 		const tid = dp.originalTid; // Initialize to an array
 

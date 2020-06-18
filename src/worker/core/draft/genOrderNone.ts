@@ -1,8 +1,9 @@
 import genPicks from "./genPicks";
 import lotterySort from "./lotterySort";
 import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { g, random } from "../../util";
 import type { DraftPick } from "../../../common/types";
+import genOrderGetPicks from "./genOrderGetPicks";
 
 const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	const teams = await idb.getCopies.teamsPlus({
@@ -28,12 +29,7 @@ const genOrderNone = async (mock: boolean = false): Promise<void> => {
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
-	const draftPicks = helpers.deepCopy(
-		await idb.cache.draftPicks.indexGetAll(
-			"draftPicksBySeason",
-			g.get("season"),
-		),
-	);
+	const draftPicks = await genOrderGetPicks(mock);
 
 	// Reorganize this to an array indexed on originalTid and round
 	const draftPicksIndexed: DraftPick[][] = [];

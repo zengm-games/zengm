@@ -2,14 +2,14 @@ import logAction from "./logAction";
 import logLotteryTxt from "./logLotteryTxt";
 import type {
 	Conditions,
-	DraftPick,
+	DraftPickWithoutKey,
 	TeamFiltered,
 } from "../../../common/types";
 
 const logLotteryChances = (
 	chances: number[],
 	teams: TeamFiltered<["tid"]>[],
-	draftPicksIndexed: DraftPick[][],
+	draftPicksIndexed: DraftPickWithoutKey[][],
 	conditions?: Conditions,
 ) => {
 	for (let i = 0; i < chances.length; i++) {

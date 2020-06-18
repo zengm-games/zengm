@@ -405,9 +405,9 @@ const updatePlayers = async (
 
 			getValue = p => {
 				let maxNumSeasons = 0;
-				let maxAbbrev;
 				let maxTid;
 				let maxGP;
+				let maxSeason; // Last season, for historical abbrev computation
 				const statsByTid = groupBy(
 					p.stats.filter(ps => !ps.playoffs),
 					ps => ps.tid,
@@ -419,11 +419,11 @@ const updatePlayers = async (
 
 						// Somehow propagate these through
 						maxTid = parseInt(tid);
-						maxAbbrev = g.get("teamInfoCache")[maxTid]?.abbrev;
 
 						maxGP = 0;
 						for (const ps of statsByTid[tid]) {
 							maxGP += ps.gp;
+							maxSeason = ps.season;
 						}
 					}
 				}
@@ -434,9 +434,10 @@ const updatePlayers = async (
 
 				return {
 					value: maxNumSeasons,
-					extra: { abbrev: maxAbbrev, gp: maxGP, tid: maxTid },
+					extra: { gp: maxGP, tid: maxTid, season: maxSeason },
 				};
 			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "oldest") {
 			title = "Oldest to Play in a Game";
 			description = "These are the oldest players who ever played in a game.";

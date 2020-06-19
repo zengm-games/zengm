@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* DEV: For league leaders, All-Star selections, and awards, traded players are evaluated on their total season stats rather than their stats with just their latest team. [[1]]()
+* DEV: Awards, All-Star selections, and league leaders are now determined based on total season stats for traded players, rather than just stats from their latest team. [[1]]()
 
 * 2020-06-16: You can customize the order and visibility of columns in most tables by pressing the "..." button to the top right of the table and clicking "Customize Columns". [[1]](https://old.reddit.com/r/BasketballGM/comments/hahhm5/customizable_columns_on_most_tables_in_version/)
 

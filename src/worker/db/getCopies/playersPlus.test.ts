@@ -3,7 +3,7 @@ import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player } from "../../core";
 import { idb } from "..";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 
 describe("worker/db/getCopies/playersPlus", () => {
 	let p: any;
@@ -438,5 +438,46 @@ describe("worker/db/getCopies/playersPlus", () => {
 		assert.equal(pf.stats.length, 1);
 		assert.equal(pf.careerStats.fg, 20);
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+	});
+
+	test("mergeStats combines stats from multiple teams in the same season", async () => {
+		const p2 = helpers.deepCopy(p);
+		p2.stats[1].playoffs = false;
+		p2.stats[1].tid = 20;
+
+		const pf = await idb.getCopy.playersPlus(p2, {
+			attrs: ["tid"],
+			stats: ["season", "fg", "tid"],
+			season: 2012,
+			mergeStats: true,
+		});
+
+		if (!pf) {
+			throw new Error("Missing player");
+		}
+
+		assert.equal(pf.stats.tid, 20);
+		assert.equal(pf.stats.fg, (30 + 20) / 8);
+	});
+
+	test("mergeStats combines stats from multiple teams in the same season, for multiple seasons", async () => {
+		const p2 = helpers.deepCopy(p);
+		p2.stats[1].playoffs = false;
+		p2.stats[1].tid = 20;
+
+		const pf = await idb.getCopy.playersPlus(p2, {
+			attrs: ["tid"],
+			stats: ["season", "fg", "tid"],
+			mergeStats: true,
+		});
+
+		if (!pf) {
+			throw new Error("Missing player");
+		}
+
+		assert.equal(pf.stats.length, 2);
+		assert.equal(pf.stats[0].tid, 20);
+		assert.equal(pf.stats[0].fg, (30 + 20) / 8);
+		assert.equal(pf.stats[1].fg, 56 / 8);
 	});
 });

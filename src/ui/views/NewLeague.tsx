@@ -296,7 +296,7 @@ const LeagueMenu = <T extends string>({
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
-		<div className="form-group">
+		<>
 			<div className="d-flex">
 				<label htmlFor="new-league-season" className="flex-grow-1">
 					Season
@@ -348,7 +348,7 @@ const LeagueMenu = <T extends string>({
 					</button>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
@@ -1256,39 +1256,47 @@ const NewLeague = (props: View<"newLeague">) => {
 					) : null}
 
 					{state.customize === "real" ? (
-						<LeagueMenu
-							value={String(state.season)}
-							values={seasons}
-							getLeagueInfo={value =>
-								toWorker("main", "getLeagueInfo", {
-									type: "real",
-									season: parseInt(value),
-								})
-							}
-							onLoading={value => {
-								const season = parseInt(value);
-								dispatch({ type: "setSeason", season });
-							}}
-							onDone={handleNewLeagueInfo}
-							quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
-						/>
+						<div className="form-group">
+							<LeagueMenu
+								value={String(state.season)}
+								values={seasons}
+								getLeagueInfo={value =>
+									toWorker("main", "getLeagueInfo", {
+										type: "real",
+										season: parseInt(value),
+									})
+								}
+								onLoading={value => {
+									const season = parseInt(value);
+									dispatch({ type: "setSeason", season });
+								}}
+								onDone={handleNewLeagueInfo}
+								quickValues={["1956", "1968", "1984", "1996", "2003", "2020"]}
+							/>
+							<div className="text-muted mt-1">
+								{state.season} in BBGM is the {state.season - 1}-
+								{String(state.season).slice(2)} season.
+							</div>
+						</div>
 					) : null}
 
 					{state.customize === "legends" ? (
-						<LeagueMenu
-							value={state.legend}
-							values={legends}
-							getLeagueInfo={value =>
-								toWorker("main", "getLeagueInfo", {
-									type: "legends",
-									decade: value,
-								})
-							}
-							onLoading={legend => {
-								dispatch({ type: "setLegend", legend });
-							}}
-							onDone={handleNewLeagueInfo}
-						/>
+						<div className="form-group">
+							<LeagueMenu
+								value={state.legend}
+								values={legends}
+								getLeagueInfo={value =>
+									toWorker("main", "getLeagueInfo", {
+										type: "legends",
+										decade: value,
+									})
+								}
+								onLoading={legend => {
+									dispatch({ type: "setLegend", legend });
+								}}
+								onDone={handleNewLeagueInfo}
+							/>
+						</div>
 					) : null}
 
 					<div className="form-group">

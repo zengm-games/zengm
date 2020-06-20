@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* DEV: Added an "Export draft class" button to the Draft History page so you can export and re-use historical draft classes. [[1]]()
+* 2020-06-19: Added an "Export draft class" button to the Draft History page so you can export and re-use historical draft classes.
 
 * 2020-06-18: Awards, All-Star selections, and league leaders are now determined based on total season stats for traded players, rather than just stats from their latest team. [[1]](https://old.reddit.com/r/BasketballGM/comments/hbqod0/awards_allstar_selections_and_league_leaders_are/)
 

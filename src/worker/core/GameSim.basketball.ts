@@ -1143,7 +1143,7 @@ class GameSim {
 				diff <= 10 &&
 				this.t <= 10 / 60 &&
 				quarter >= 4 &&
-				Math.random() > 0.9) ||
+				Math.random() > this.t) ||
 			(quarter < 4 && this.t === 0 && possessionLength <= 2.5 / 60);
 
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne

@@ -43,12 +43,12 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		"Details",
 	);
 
-	const rows = players.map(p => {
+	const rows = players.map((p, i) => {
 		const lastRatings = p.ratings[p.ratings.length - 1];
 		const lastStats = p.stats[p.stats.length - 1];
 
 		return {
-			key: p.pid,
+			key: i,
 			data: [
 				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
 				lastRatings.pos,

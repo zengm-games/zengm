@@ -880,12 +880,41 @@ const exportDraftClass = async (season: number) => {
 		},
 	});
 	data.startingSeason = season;
+
+	data.players = data.players.map((p: Player) => ({
+		born: p.born,
+		college: p.college,
+		draft: {
+			...p.draft,
+			round: 0,
+			pick: 0,
+			tid: -1,
+			originalTid: -1,
+			year: season,
+		},
+		face: p.face,
+		firstName: p.firstName,
+		hgt: p.hgt,
+		imgURL: p.imgURL,
+		injury: p.injury,
+		lastName: p.lastName,
+		pid: p.pid,
+		pos: p.pos,
+		ratings: p.ratings.slice(0, 1),
+		real: p.real,
+		relatives: p.relatives,
+		srID: p.srID,
+		tid: PLAYER.UNDRAFTED,
+		weight: p.weight,
+	}));
+
 	const filename = `${
 		process.env.SPORT === "basketball" ? "B" : "F"
 	}BGM_draft_class_${g.get("leagueName")}_${season}.json`;
+
 	return {
 		filename,
-		json: JSON.stringify(data),
+		json: JSON.stringify(data, null, 2),
 	};
 };
 

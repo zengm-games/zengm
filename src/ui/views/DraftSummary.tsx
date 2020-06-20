@@ -1,16 +1,41 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
+import { getCols, helpers, downloadFile, toWorker } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
+
+const ExportButton = ({ season }: { season: number }) => {
+	const [exporting, setExporting] = useState(false);
+	return (
+		<button
+			className="btn btn-secondary"
+			disabled={exporting}
+			onClick={async () => {
+				setExporting(true);
+
+				const { filename, json } = await toWorker(
+					"main",
+					"exportDraftClass",
+					season,
+				);
+				downloadFile(filename, json, "application/json");
+
+				setExporting(false);
+			}}
+		>
+			Export draft class
+		</button>
+	);
+};
 
 const DraftSummary = ({
 	challengeNoRatings,
 	draftType,
 	players,
 	season,
+	startingSeason,
 	stats,
 	userTid,
 }: View<"draftSummary">) => {
@@ -129,6 +154,8 @@ const DraftSummary = ({
 				.
 			</p>
 
+			{season >= startingSeason ? <ExportButton season={season} /> : null}
+
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
@@ -144,6 +171,7 @@ DraftSummary.propTypes = {
 	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	season: PropTypes.number.isRequired,
+	startingSeason: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userTid: PropTypes.number.isRequired,
 };

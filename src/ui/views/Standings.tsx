@@ -285,7 +285,7 @@ const Standings = ({
 				{!playoffsByConference ? (
 					<div
 						className="col-md-3 d-none d-md-block"
-						style={{ paddingTop: 39 }}
+						style={{ paddingTop: 32 }}
 					>
 						<SmallStandings
 							numPlayoffTeams={numPlayoffTeams}

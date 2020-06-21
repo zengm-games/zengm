@@ -30,11 +30,53 @@ const gameAttributeName = (key: string) => {
 	return key;
 };
 
+const teamInfoKey = (key: string) => {
+	if (key === "region") {
+		return "Region";
+	}
+
+	if (key === "name") {
+		return "Name";
+	}
+
+	if (key === "pop") {
+		return "Population";
+	}
+
+	if (key === "cid") {
+		return "Conference";
+	}
+
+	if (key === "did") {
+		return "Division";
+	}
+
+	if (key === "abbrev") {
+		return "Abbrev";
+	}
+
+	if (key === "imgURL") {
+		return "Logo URL";
+	}
+
+	if (key === "colors") {
+		return "Colors";
+	}
+
+	return key;
+};
+
 const formatSeason = (scheduledEvent: ScheduledEvent) => {
 	const phaseText = PHASE_TEXT[scheduledEvent.phase]
-		? PHASE_TEXT[scheduledEvent.phase]
+		? helpers.upperCaseFirstLetter(PHASE_TEXT[scheduledEvent.phase])
 		: "???";
-	return `${scheduledEvent.season} ${phaseText}`;
+	return (
+		<>
+			${scheduledEvent.season}
+			<br />
+			{phaseText}
+		</>
+	);
 };
 
 const formatType = (type: ScheduledEvent["type"]) => {
@@ -55,6 +97,66 @@ const formatType = (type: ScheduledEvent["type"]) => {
 	}
 };
 
+const TeamNameBlock = ({
+	all,
+	current,
+	teamInfoCache,
+}: {
+	all: ScheduledEvent[];
+	current: ScheduledEvent;
+	teamInfoCache: LocalStateUI["teamInfoCache"];
+}) => {
+	if (current.type !== "contraction" && current.type !== "teamInfo") {
+		throw new Error("Invalid type");
+	}
+
+	const tid = current.info.tid;
+	if (tid < teamInfoCache.length) {
+		const t = teamInfoCache[tid];
+		return (
+			<div>
+				{t.region} {t.name}
+				<br />
+				Team ID: {tid}
+			</div>
+		);
+	}
+
+	// Must be a team that doesn't exist yet, look in all
+	let t;
+	for (const scheduledEvent of all) {
+		if (scheduledEvent.type === "expansionDraft") {
+			for (const t2 of scheduledEvent.info.teams) {
+				if (t2.tid === tid) {
+					t = t2;
+					break;
+				}
+			}
+		}
+		if (t) {
+			break;
+		}
+	}
+
+	if (t) {
+		return (
+			<div>
+				{t.region} {t.name} (future expansion team)
+				<br />
+				Team ID: {t.tid}
+			</div>
+		);
+	}
+
+	return (
+		<div className="text-danger">
+			Invalid team
+			<br />
+			Team ID: {tid}
+		</div>
+	);
+};
+
 const ViewEvent = ({
 	all,
 	current,
@@ -65,50 +167,12 @@ const ViewEvent = ({
 	teamInfoCache: LocalStateUI["teamInfoCache"];
 }) => {
 	if (current.type === "contraction") {
-		const tid = current.info.tid;
-		if (tid < teamInfoCache.length) {
-			const t = teamInfoCache[tid];
-			return (
-				<>
-					{t.region} {t.name}
-					<br />
-					Team ID: {tid}
-				</>
-			);
-		}
-
-		// Must be a team that doesn't exist yet, look in all
-		let t;
-		for (const scheduledEvent of all) {
-			if (scheduledEvent.type === "expansionDraft") {
-				for (const t2 of scheduledEvent.info.teams) {
-					if (t2.tid === tid) {
-						t = t2;
-						break;
-					}
-				}
-			}
-			if (t) {
-				break;
-			}
-		}
-
-		if (t) {
-			return (
-				<>
-					{t.region} {t.name} (future expansion team)
-					<br />
-					Team ID: {t.tid}
-				</>
-			);
-		}
-
 		return (
-			<div className="text-danger">
-				Invalid team
-				<br />
-				Team ID: {tid}
-			</div>
+			<TeamNameBlock
+				all={all}
+				current={current}
+				teamInfoCache={teamInfoCache}
+			/>
 		);
 	}
 
@@ -131,7 +195,6 @@ const ViewEvent = ({
 	}
 
 	if (current.type === "gameAttributes") {
-		console.log(current.info);
 		return (
 			<table className="table table-nonfluid">
 				<tbody>
@@ -141,8 +204,12 @@ const ViewEvent = ({
 								<td>{gameAttributeName(key)}</td>
 								<td>
 									{key === "confs" || key === "divs"
-										? (value as any[]).map(x => <div>{x.name}</div>)
-										: JSON.stringify(value)}
+										? (value as any[]).map((x, i) => (
+												<div key={i}>{x.name}</div>
+										  ))
+										: Array.isArray(value)
+										? JSON.stringify(value)
+										: value}
 								</td>
 							</tr>
 						);
@@ -152,7 +219,35 @@ const ViewEvent = ({
 		);
 	}
 
-	return <pre className="mb-0">{JSON.stringify(current.info, null, 2)}</pre>;
+	if (current.type === "teamInfo") {
+		return (
+			<>
+				<TeamNameBlock
+					all={all}
+					current={current}
+					teamInfoCache={teamInfoCache}
+				/>
+				<table className="table table-nonfluid mt-3">
+					<tbody>
+						{Object.entries(current.info)
+							.filter(([key]) => key !== "tid" && key !== "srID")
+							.map(([key, value]) => {
+								return (
+									<tr key={key}>
+										<td>{teamInfoKey(key)}</td>
+										<td>
+											{Array.isArray(value) ? JSON.stringify(value) : value}
+										</td>
+									</tr>
+								);
+							})}
+					</tbody>
+				</table>
+			</>
+		);
+	}
+
+	throw new Error("Invalid type");
 };
 
 const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
@@ -165,7 +260,7 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 	console.log(scheduledEvents);
 
 	const cols = getCols("Season", "Type", "", "");
-	cols[3].width = "100%";
+	cols[2].width = "100%";
 
 	const rows = scheduledEvents.map(scheduledEvent => {
 		return {

@@ -18,6 +18,10 @@ way to view scheduled events and add/edit/delete
   - game attributes - share code with god mode settings
   - open modal on click "edit", or inline form
 
+separate column for contract amount and exp @justballin#6865 
+
+add open roster spots to league finances table @TheRealGWood#4891
+
 move stuff out of god mode @El Clon#3483 
 - options?
 - player editor?
@@ -34,12 +38,14 @@ customizable columns in datatable
     - but for MVP, no customization of supercols tables
   - always return all stats and ratings?
 
+add average team age to power rankings @TheRealGWood#4891 
+
 from survey
 - people really like looking back at history
 - people really want better playing time control
 - player comparison should be better
   - https://bbgm6man.eiphi.eu/
-- team comparison should be beter
+- team comparison should be better
 - better international name options
 - player mood revamp (bigger contract, ring-chasing, etc)
 - add option to edit # draft rounds
@@ -193,6 +199,7 @@ redo mood system
 - make rookies always willing to re-sign (like restricted free agency, kind of)
 
 team needs/synergy display on roster
+- and power rankings
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?

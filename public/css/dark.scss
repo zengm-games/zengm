@@ -103,8 +103,16 @@ $text-muted: $gray-400;
 	}
 }
 
+.active.btn-light-bordered,
 .btn-light-bordered:hover {
-	background-color: $gray-100;
+	background-color: $gray-100 !important;
+}
+
+.btn-light-bordered {
+	@extend .btn-light;
+	background-color: $white;
+	border: 1px solid $gray-400 !important;
+	color: $gray-700 !important;
 }
 
 .badge-danger {

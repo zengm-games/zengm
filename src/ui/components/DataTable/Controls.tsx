@@ -35,14 +35,14 @@ const Controls = ({
 			: '"C|PF" under a Position column to display centers and power forwards';
 	return (
 		<div
-			className="datatable-controls"
+			className="datatable-controls d-flex"
 			style={hideAllControls ? hideAllControlsStyle : undefined}
 		>
 			{!hideAllControls ? (
 				<>
 					<HelpPopover
 						style={{
-							marginRight: "6px",
+							padding: 6,
 						}}
 						title="Filtering"
 					>
@@ -71,7 +71,7 @@ const Controls = ({
 						)}
 						onClick={onToggleFilters}
 						style={{
-							marginBottom: 1,
+							height: 27,
 							marginRight: 6,
 						}}
 						title="Filter"

@@ -6,6 +6,13 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+way to view scheduled events and add/edit/delete
+- needs to handle tids, like already happens for adding/removing teams
+- warn about breakage, like a team changing divisions if division expansion doesn't happen
+- quick links for bulk tasks like "Disable expansion teams", "Disable team folding", "DIsable game simulation changes"
+- need way to reorder? nah, sort by year, make order of diff types consistent, and tiebreak by id
+- delete, or just disable?
+
 move stuff out of god mode @El Clon#3483 
 - options?
 - player editor?
@@ -21,6 +28,15 @@ customizable columns in datatable
     - or, change cols input to include flag for which supercol a col belongs to
     - but for MVP, no customization of supercols tables
   - always return all stats and ratings?
+
+from survey
+- people really like looking back at history
+- people really want better playing time control
+- player comparison should be better
+- team comparison should be beter
+- better international name options
+- player mood revamp (bigger contract, ring-chasing, etc)
+- add option to edit # draft rounds
 
 some way to add a text "note" to a player on their profile page, maybe watch list too
 
@@ -38,16 +54,17 @@ custom league generator
 - user defined teams
 
 jersey numbers
-- store in player stats, or in own array?
+- store in player stats
 - viewable in bios
 - draw from some known distribution
   - by position, for football
+- function to call after adding a new player to a team, to deal with collisions
+  - if one player is much better than the other (probably based on career stats), they keep the number
+  - if edited manually, change other guy
+- show top players on team history page
 - frivolity like colleges/countries to view
 - frivolity for retired jersey numbers?
 - real players
-- collisions
-  - if one player is much better than the other (probably based on career stats), they keep the number
-  - if edited manually, change other guy
 
 fuzz/scouting revamp
 - prospects and young players only
@@ -148,8 +165,6 @@ FBGM
 - increase roster size limit to 55
 
 eventually
-- way to view scheduled events and add/edit/delete
-  - @El Clon#3483
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
 - show draft prospects separately when creating a new custom league, to allow creating one without them
 - allow user to cancel relocation if it's their team?

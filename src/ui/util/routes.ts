@@ -174,6 +174,7 @@ const routes = () => {
 		"/l/:lid/news/:abbrev/:season": genPage("news"),
 		"/l/:lid/news/:abbrev/:season/:level": genPage("news"),
 		"/l/:lid/news/:abbrev/:season/:level/:order": genPage("news"),
+		"/l/:lid/scheduled_events": genPage("scheduledEvents"),
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),
 		"/l/:lid/draft_summary/:season": genPage("draftSummary"),

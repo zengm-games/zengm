@@ -59,6 +59,7 @@ import resetPassword from "./resetPassword";
 import roster from "./roster";
 import rosterContinuity from "./rosterContinuity";
 import schedule from "./schedule";
+import scheduledEvents from "./scheduledEvents";
 import standings from "./standings";
 import teamFinances from "./teamFinances";
 import teamHistory from "./teamHistory";
@@ -134,6 +135,7 @@ export default {
 	roster,
 	rosterContinuity,
 	schedule,
+	scheduledEvents,
 	standings,
 	teamFinances,
 	teamHistory,

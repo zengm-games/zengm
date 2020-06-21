@@ -40,7 +40,9 @@ const processGameAttributes = (events: any[], season: number) => {
 	gameAttributeEvents = helpers.deepCopy(
 		gameAttributeEvents.filter(
 			event =>
-				event.season > season || (event.season === season && event.phase > 0),
+				(event.season > season ||
+					(event.season === season && event.phase > 0)) &&
+				Object.keys(event.info).length > 0,
 		),
 	);
 

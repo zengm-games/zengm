@@ -384,6 +384,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "scheduledEvents",
+				league: true,
+				path: ["scheduled_events"],
+				text: "Scheduled Events",
+			},
+			{
+				type: "link",
 				league: true,
 				nonLeague: true,
 

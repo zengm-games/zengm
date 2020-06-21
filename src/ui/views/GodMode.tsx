@@ -75,7 +75,7 @@ export const helpTexts = {
 		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
 };
 
-const options: {
+export const options: {
 	category: Category;
 	key: Key;
 	name: string;

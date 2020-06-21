@@ -2,9 +2,40 @@ import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal } from "../util";
-import classNames from "classnames";
 import { DataTable } from "../components";
 import { PHASE_TEXT } from "../../common";
+import { options } from "./GodMode";
+
+const godModeOptions: Record<
+	typeof options[number]["key"],
+	typeof options[number]
+> = {};
+for (const option of options) {
+	godModeOptions[option.key] = option;
+}
+
+const gameAttributeName = (key: string) => {
+	if ((godModeOptions as any)[key]) {
+		return (godModeOptions as any)[key].name;
+	}
+
+	if (key === "confs") {
+		return "Conferences";
+	}
+
+	if (key === "divs") {
+		return "Divisions";
+	}
+
+	return key;
+};
+
+const formatSeason = (scheduledEvent: ScheduledEvent) => {
+	const phaseText = PHASE_TEXT[scheduledEvent.phase]
+		? PHASE_TEXT[scheduledEvent.phase]
+		: "???";
+	return `${scheduledEvent.season} ${phaseText}`;
+};
 
 const formatType = (type: ScheduledEvent["type"]) => {
 	if (type === "contraction") {
@@ -99,6 +130,28 @@ const ViewEvent = ({
 		);
 	}
 
+	if (current.type === "gameAttributes") {
+		console.log(current.info);
+		return (
+			<table className="table table-nonfluid">
+				<tbody>
+					{Object.entries(current.info).map(([key, value]) => {
+						return (
+							<tr key={key}>
+								<td>{gameAttributeName(key)}</td>
+								<td>
+									{key === "confs" || key === "divs"
+										? (value as any[]).map(x => <div>{x.name}</div>)
+										: JSON.stringify(value)}
+								</td>
+							</tr>
+						);
+					})}
+				</tbody>
+			</table>
+		);
+	}
+
 	return <pre className="mb-0">{JSON.stringify(current.info, null, 2)}</pre>;
 };
 
@@ -111,19 +164,16 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 
 	console.log(scheduledEvents);
 
-	const cols = getCols("Season", "Phase", "Type", "", "");
+	const cols = getCols("Season", "Type", "", "");
 	cols[3].width = "100%";
 
 	const rows = scheduledEvents.map(scheduledEvent => {
 		return {
 			key: scheduledEvent.id,
 			data: [
-				scheduledEvent.season,
 				{
-					value: PHASE_TEXT[scheduledEvent.phase]
-						? helpers.upperCaseFirstLetter(PHASE_TEXT[scheduledEvent.phase])
-						: "???",
-					sortValue: scheduledEvent.phase,
+					value: formatSeason(scheduledEvent),
+					sortValue: `${scheduledEvent.season} ${scheduledEvent.phase} ${scheduledEvent.id}`,
 				},
 				formatType(scheduledEvent.type),
 				<ViewEvent

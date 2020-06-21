@@ -13,6 +13,7 @@ way to view scheduled events and add/edit/delete
 - need way to reorder? nah, sort by year, make order of diff types consistent, and tiebreak by id
 - delete, or just disable?
   - if delete expansion, need to delete future events for that tid and adjust other tids
+  - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
 - add - check for dupe one already existing (by season+type and maybe tid)
 - edit
   - game attributes - share code with god mode settings

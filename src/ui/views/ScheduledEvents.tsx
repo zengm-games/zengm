@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
-import { helpers, getCols, useLocal } from "../util";
+import { helpers, getCols, useLocal, toWorker } from "../util";
 import { DataTable } from "../components";
 import { PHASE_TEXT } from "../../common";
 import { options } from "./GodMode";
+import { Dropdown } from "react-bootstrap";
 
-const godModeOptions: Record<
+const godModeOptions: Partial<Record<
 	typeof options[number]["key"],
 	typeof options[number]
-> = {};
+>> = {};
 for (const option of options) {
 	godModeOptions[option.key] = option;
 }
@@ -72,7 +73,7 @@ const formatSeason = (scheduledEvent: ScheduledEvent) => {
 		: "???";
 	return (
 		<>
-			${scheduledEvent.season}
+			{scheduledEvent.season}
 			<br />
 			{phaseText}
 		</>
@@ -250,6 +251,10 @@ const ViewEvent = ({
 	throw new Error("Invalid type");
 };
 
+const bulkDelete = (type: string) => async () => {
+	await toWorker("main", "deleteScheduledEvents", type);
+};
+
 const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 	useTitleBar({
 		title: "Scheduled Events",
@@ -257,9 +262,22 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
+	if (scheduledEvents.length === 0) {
+		return (
+			<>
+				<p>No scheduled events found!</p>
+				<p>
+					Eventually you will be able to add scheduled events here, but
+					currently they are only available in historical "real players" leagues
+					where they are created by default when making a new league.
+				</p>
+			</>
+		);
+	}
+
 	console.log(scheduledEvents);
 
-	const cols = getCols("Season", "Type", "", "");
+	const cols = getCols("Season", "Type", "");
 	cols[2].width = "100%";
 
 	const rows = scheduledEvents.map(scheduledEvent => {
@@ -276,13 +294,49 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 					current={scheduledEvent}
 					teamInfoCache={teamInfoCache}
 				/>,
-				"Edit | Delete",
 			],
 		};
 	});
 
 	return (
 		<>
+			<p>
+				Eventually this will support creating, updating, and deleting individual
+				scheduled events. But for now, all you can do is view scheduled events
+				and apply some bulk operations, like removing all scheduled team
+				contractions.
+			</p>
+			<Dropdown>
+				<Dropdown.Toggle variant="danger" id="scheduled-events-bulk-delete">
+					Bulk delete
+				</Dropdown.Toggle>
+				<Dropdown.Menu>
+					<Dropdown.Item onClick={bulkDelete("all")}>
+						All scheduled events
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("expansionDraft")}>
+						Expansion teams
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("contraction")}>
+						Team contractions
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("teamInfo")}>
+						Team info changes
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("confs")}>
+						Conference/division changes
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("finance")}>
+						League finance changes
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("rules")}>
+						League rule changes
+					</Dropdown.Item>
+					<Dropdown.Item onClick={bulkDelete("styleOfPlay")}>
+						Style of play changes
+					</Dropdown.Item>
+				</Dropdown.Menu>
+			</Dropdown>
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}

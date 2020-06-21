@@ -26,9 +26,14 @@ const addNewTeamToExistingLeague = async (
 		fromScheduledEvent?: boolean;
 	} = {},
 ): Promise<Team> => {
-	const div = g.get("divs", Infinity).find(d => d.did === teamInfo.did);
+	const divs = g.get("divs", Infinity);
+	if (divs.length === 0) {
+		throw new Error("No divisions");
+	}
+
+	let div = divs.find(d => d.did === teamInfo.did);
 	if (!div) {
-		throw new Error("Invalid division");
+		div = divs[divs.length - 1];
 	}
 	const cid = div.cid;
 

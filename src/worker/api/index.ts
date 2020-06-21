@@ -66,9 +66,12 @@ import type {
 	GetLeagueOptions,
 	TeamSeason,
 	TeamSeasonWithoutKey,
+	ScheduledEventGameAttributes,
+	ScheduledEventTeamInfo,
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
+import teamInfos from "../../common/teamInfos";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -576,6 +579,131 @@ const deleteOldData = async (options: {
 
 	// Without this, cached values will still exist
 	await idb.cache.fill();
+};
+
+const deleteFromGameAttributesScheduledEvent = async (
+	keys: (keyof ScheduledEventGameAttributes["info"])[],
+	event: ScheduledEventGameAttributes & { id: number },
+) => {
+	let updated = false;
+	for (const key of keys) {
+		if (event.info[key] !== undefined) {
+			delete event.info[key];
+			updated = true;
+		}
+	}
+
+	if (Object.keys(event.info).length === 0) {
+		await idb.cache.scheduledEvents.delete(event.id);
+	} else if (updated) {
+		await idb.cache.scheduledEvents.put(event);
+	}
+};
+
+const deleteFromTeamInfoScheduledEvent = async (
+	keys: (keyof ScheduledEventTeamInfo["info"])[],
+	event: ScheduledEventTeamInfo & { id: number },
+) => {
+	let updated = false;
+	for (const key of keys) {
+		if (event.info[key] !== undefined) {
+			delete event.info[key];
+			updated = true;
+		}
+	}
+
+	const keys2 = Object.keys(event.info);
+	if (
+		keys2.length <= 1 ||
+		(keys2.length === 2 && keys2.includes("tid") && keys2.includes("srID"))
+	) {
+		await idb.cache.scheduledEvents.delete(event.id);
+	} else if (updated) {
+		await idb.cache.scheduledEvents.put(event);
+	}
+};
+
+const deleteScheduledEvents = async (type: string) => {
+	const scheduledEvents = await idb.getCopies.scheduledEvents();
+
+	const deletedExpansionTIDs: number[] = [];
+
+	for (const event of scheduledEvents) {
+		if (type === "all") {
+			await idb.cache.scheduledEvents.delete(event.id);
+		} else if (type === "expansionDraft") {
+			if (event.type === "expansionDraft") {
+				deletedExpansionTIDs.push(...event.info.teams.map(t => t.tid));
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
+
+			if (
+				(event.type === "contraction" || event.type === "teamInfo") &&
+				deletedExpansionTIDs.includes(event.info.tid)
+			) {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
+		} else if (type === "contraction") {
+			if (event.type === "contraction") {
+				await idb.cache.scheduledEvents.delete(event.id);
+			}
+		} else if (type === "teamInfo") {
+			if (event.type === "teamInfo") {
+				await deleteFromTeamInfoScheduledEvent(
+					["region", "name", "pop", "abbrev", "imgURL", "colors"],
+					event,
+				);
+			}
+		} else if (type === "confs") {
+			if (event.type === "teamInfo") {
+				await deleteFromTeamInfoScheduledEvent(["cid", "did"], event);
+			}
+
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(["confs", "divs"], event);
+			}
+		} else if (type === "finance") {
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(
+					[
+						"luxuryPayroll",
+						"maxContract",
+						"minContract",
+						"minPayroll",
+						"salaryCap",
+					],
+					event,
+				);
+			}
+		} else if (type === "rules") {
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(
+					[
+						"numGamesPlayoffSeries",
+						"numPlayoffByes",
+						"numGames",
+						"draftType",
+						"threePointers",
+					],
+					event,
+				);
+			}
+		} else if (type === "styleOfPlay") {
+			if (event.type === "gameAttributes") {
+				await deleteFromGameAttributesScheduledEvent(
+					[
+						"pace",
+						"threePointTendencyFactor",
+						"threePointAccuracyFactor",
+						"twoPointAccuracyFactor",
+					],
+					event,
+				);
+			}
+		}
+	}
+
+	await toUI("realtimeUpdate", [["scheduledEvents"]]);
 };
 
 const discardUnsavedProgress = async () => {
@@ -2271,6 +2399,7 @@ export default {
 	createLeague,
 	createTrade,
 	deleteOldData,
+	deleteScheduledEvents,
 	discardUnsavedProgress,
 	draftLottery,
 	draftUser,

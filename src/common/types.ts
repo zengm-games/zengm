@@ -215,30 +215,34 @@ export type GameResults = any;
 
 export type GameAttributesNonLeague = { lid: undefined };
 
+export type ScheduledEventGameAttributes = {
+	type: "gameAttributes";
+	season: number;
+	phase: Phase;
+	info: Partial<GameAttributesLeague>;
+};
+
+export type ScheduledEventTeamInfo = {
+	type: "teamInfo";
+	season: number;
+	phase: Phase;
+	info: {
+		tid: number;
+		region?: string;
+		srID?: string;
+		name?: string;
+		pop?: number;
+		cid?: number;
+		did?: number;
+		abbrev?: string;
+		imgURL?: string;
+		colors?: [string, string, string];
+	};
+};
+
 export type ScheduledEventWithoutKey =
-	| {
-			type: "teamInfo";
-			season: number;
-			phase: Phase;
-			info: {
-				tid: number;
-				region?: string;
-				srID?: string;
-				name?: string;
-				pop?: number;
-				cid?: number;
-				did?: number;
-				abbrev?: string;
-				imgURL?: string;
-				colors?: [string, string, string];
-			};
-	  }
-	| {
-			type: "gameAttributes";
-			season: number;
-			phase: Phase;
-			info: Partial<GameAttributesLeague>;
-	  }
+	| ScheduledEventTeamInfo
+	| ScheduledEventGameAttributes
 	| {
 			type: "expansionDraft";
 			season: number;
@@ -246,7 +250,7 @@ export type ScheduledEventWithoutKey =
 			info: {
 				// Actually stadiumCapacity is optional
 				teams: (ExpansionDraftSetupTeam & {
-					tid?: number;
+					tid: number;
 					srID?: string;
 				})[];
 				numProtectedPlayers?: number;
@@ -1180,6 +1184,7 @@ export type UpdateEvents = (
 	| "newPhase"
 	| "options"
 	| "playerMovement"
+	| "scheduledEvents"
 	| "teamFinances"
 	| "watchList"
 )[];

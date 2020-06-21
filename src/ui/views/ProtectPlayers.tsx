@@ -36,6 +36,7 @@ const PlayerList = ({
 		"Ovr",
 		"Pot",
 		"Contract",
+		"Exp",
 		...stats.map(stat => `stat:${stat}`),
 		"Acquired",
 	);
@@ -71,9 +72,8 @@ const PlayerList = ({
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				<>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</>,
+				helpers.formatCurrency(p.contract.amount, "M"),
+				p.contract.exp,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,

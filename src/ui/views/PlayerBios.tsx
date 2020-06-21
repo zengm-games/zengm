@@ -31,6 +31,7 @@ const PlayerBios = ({
 		"Height",
 		"Weight",
 		"Contract",
+		"Exp",
 		"Country",
 		"College",
 		"Draft Year",
@@ -77,14 +78,12 @@ const PlayerBios = ({
 					value: <Weight pounds={p.weight} />,
 					sortValue: p.weight,
 				},
-				<>
-					{p.contract.amount > 0
-						? helpers.formatCurrency(p.contract.amount, "M")
-						: ""}
-					{p.contract.amount > 0 && season === currentSeason
-						? ` thru ${p.contract.exp}`
-						: ""}
-				</>,
+				p.contract.amount > 0
+					? helpers.formatCurrency(p.contract.amount, "M")
+					: null,
+				p.contract.amount > 0 && season === currentSeason
+					? p.contract.exp
+					: null,
 				p.born.loc,
 				p.college,
 				p.draft.year,

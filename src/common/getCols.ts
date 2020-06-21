@@ -1252,10 +1252,12 @@ const cols: {
 		sortType: "number",
 	},
 	"Current Contract": {
+		desc: "Current Contract",
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
 	"Desired Contract": {
+		desc: "Desired Contract",
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
@@ -1279,6 +1281,11 @@ const cols: {
 	Drafted: {},
 	End: {
 		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Exp: {
+		desc: "Contract Expiration",
+		sortSequence: ["asc", "desc"],
 		sortType: "number",
 	},
 	Finals: {
@@ -1872,6 +1879,8 @@ const titleOverrides = {
 	"award:smoy": "SMOY",
 	"award:oroy": "OROY",
 	"award:droy": "DROY",
+	"Current Contract": "Current",
+	"Desired Contract": "Desired",
 	...sportSpecificTitleOverrides,
 };
 const actualCols: {
@@ -1885,7 +1894,9 @@ for (const key of Object.keys(cols)) {
 		key.startsWith("rating:") ||
 		key.startsWith("stat:") ||
 		key.startsWith("count:") ||
-		key.startsWith("award:")
+		key.startsWith("award:") ||
+		// @ts-ignore
+		titleOverrides[key]
 	) {
 		// @ts-ignore
 		title = titleOverrides[key];

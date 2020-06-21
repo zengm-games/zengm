@@ -10,6 +10,14 @@ const depthChart: MenuItemLink = {
 	text: "Depth Chart",
 };
 
+const scheduledEvents: MenuItemLink = {
+	type: "link",
+	active: pageID => pageID === "scheduledEvents",
+	league: true,
+	path: ["scheduled_events"],
+	text: "Scheduled Events",
+};
+
 const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{
 		type: "link",
@@ -382,13 +390,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["options"],
 				text: "Options",
 			},
-			{
-				type: "link",
-				active: pageID => pageID === "scheduledEvents",
-				league: true,
-				path: ["scheduled_events"],
-				text: "Scheduled Events",
-			},
+			...(process.env.SPORT === "basketball" ? [scheduledEvents] : []),
 			{
 				type: "link",
 				league: true,

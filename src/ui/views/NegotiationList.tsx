@@ -41,6 +41,7 @@ const NegotiationList = ({
 		"Acquired",
 		"Mood",
 		"Asking For",
+		"Exp",
 		"Negotiate",
 	);
 
@@ -75,9 +76,8 @@ const NegotiationList = ({
 				>
 					<span style={{ display: "none" }}>{p.freeAgentMood[userTid]}</span>
 				</div>,
-				<>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</>,
+				helpers.formatCurrency(p.contract.amount, "M"),
+				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 				// @ts-ignore
 				<NegotiateButtons

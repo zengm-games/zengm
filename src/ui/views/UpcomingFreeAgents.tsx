@@ -27,8 +27,9 @@ const UpcomingFreeAgents = ({
 		"Ovr",
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
-		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
+		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract", "Exp"]),
 		"Desired Contract",
+		"Exp",
 	);
 
 	const rows = players.map(p => {
@@ -53,16 +54,9 @@ const UpcomingFreeAgents = ({
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []
-					: [
-							<>
-								{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-								{p.contract.exp}
-							</>,
-					  ]),
-				<>
-					{helpers.formatCurrency(p.contractDesired.amount, "M")} thru{" "}
-					{p.contractDesired.exp}
-				</>,
+					: [helpers.formatCurrency(p.contract.amount, "M"), p.contract.exp]),
+				helpers.formatCurrency(p.contractDesired.amount, "M"),
+				p.contractDesired.exp,
 			],
 		};
 	});

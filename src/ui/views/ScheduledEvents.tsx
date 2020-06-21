@@ -275,8 +275,6 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		);
 	}
 
-	console.log(scheduledEvents);
-
 	const cols = getCols("Season", "Type", "");
 	cols[2].width = "100%";
 

@@ -77,7 +77,8 @@ const leaguePartDescriptions: { [key: string]: string } = {
 	playoffSeries: "Upcoming and historical playoff series",
 	schedule: "Upcoming schedule",
 	draftPicks: "Traded future draft picks",
-	scheduledEvents: "Scheduled events, like expansion and league rule changes",
+	scheduledEvents:
+		"Scheduled events, like expansion and league rule changes. For more control, go to Tools > Scheduled Events after creating your league.",
 };
 
 const initKeptKeys = ({

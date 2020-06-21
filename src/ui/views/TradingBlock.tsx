@@ -53,6 +53,7 @@ const Offer = (props: OfferProps) => {
 			"Ovr",
 			"Pot",
 			"Contract",
+			"Exp",
 			...stats.map(stat => `stat:${stat}`),
 		);
 
@@ -72,10 +73,8 @@ const Offer = (props: OfferProps) => {
 					p.age,
 					!challengeNoRatings ? p.ratings.ovr : null,
 					!challengeNoRatings ? p.ratings.pot : null,
-					<>
-						{helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-						{p.contract.exp}
-					</>,
+					helpers.formatCurrency(p.contract.amount, "M"),
+					p.contract.exp,
 					...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				],
 			};
@@ -297,6 +296,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		"Ovr",
 		"Pot",
 		"Contract",
+		"Exp",
 		...stats.map(stat => `stat:${stat}`),
 	);
 	cols[0].sortSequence = [];
@@ -324,9 +324,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				<>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</>,
+				helpers.formatCurrency(p.contract.amount, "M"),
+				p.contract.exp,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 		};

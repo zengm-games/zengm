@@ -59,9 +59,8 @@ const genPlayerRows = (
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				<span>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</span>,
+				helpers.formatCurrency(p.contract.amount, "M"),
+				p.contract.exp,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {
@@ -135,6 +134,7 @@ const AssetList = ({
 		"Ovr",
 		"Pot",
 		"Contract",
+		"Exp",
 		...stats.map(stat => `stat:${stat}`),
 	);
 	playerCols[0].sortSequence = [];

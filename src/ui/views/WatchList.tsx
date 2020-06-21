@@ -37,19 +37,20 @@ const WatchList = ({
 		"Ovr",
 		"Pot",
 		"Contract",
+		"Exp",
 		...stats.map(stat => `stat:${stat}`),
 	);
 
 	const rows = players.map(p => {
 		let contract;
+		let exp = null;
 		if (p.tid === PLAYER.RETIRED) {
 			contract = "Retired";
 		} else if (p.tid === PLAYER.UNDRAFTED) {
 			contract = `${p.draft.year} Draft Prospect`;
 		} else {
-			contract = `${helpers.formatCurrency(p.contract.amount, "M")} thru ${
-				p.contract.exp
-			}`;
+			contract = helpers.formatCurrency(p.contract.amount, "M");
+			exp = p.contract.exp;
 		}
 
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
@@ -74,6 +75,7 @@ const WatchList = ({
 				showRatings ? p.ratings.ovr : null,
 				showRatings ? p.ratings.pot : null,
 				contract,
+				exp,
 				...stats.map(stat =>
 					helpers.roundStat(p.stats[stat], stat, statType === "totals"),
 				),

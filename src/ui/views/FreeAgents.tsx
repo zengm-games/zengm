@@ -86,6 +86,7 @@ const FreeAgents = ({
 		...stats.map(stat => `stat:${stat}`),
 		"Mood",
 		"Asking For",
+		"Exp",
 		"Negotiate",
 	);
 
@@ -116,9 +117,8 @@ const FreeAgents = ({
 				>
 					<span style={{ display: "none" }}>{p.freeAgentMood[userTid]}</span>
 				</div>,
-				<>
-					{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}
-				</>,
+				helpers.formatCurrency(p.contract.amount, "M"),
+				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 				// @ts-ignore
 				<NegotiateButtons

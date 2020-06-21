@@ -128,7 +128,7 @@ const Draft = ({
 		colsUndrafted.splice(
 			6,
 			0,
-			...getCols("Contract", ...stats.map(stat => `stat:${stat}`)),
+			...getCols("Contract", "Exp", ...stats.map(stat => `stat:${stat}`)),
 		);
 	}
 
@@ -180,9 +180,8 @@ const Draft = ({
 			data.splice(
 				6,
 				0,
-				`${helpers.formatCurrency(p.contract.amount, "M")} thru ${
-					p.contract.exp
-				}`,
+				helpers.formatCurrency(p.contract.amount, "M"),
+				p.contract.exp,
 				...stats.map(stat =>
 					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
 						? helpers.roundStat(p.stats[stat], stat)
@@ -254,11 +253,9 @@ const Draft = ({
 			data.splice(
 				7,
 				0,
-				p.pid >= 0
-					? `${helpers.formatCurrency(p.contract.amount, "M")} thru ${
-							p.contract.exp
-					  }`
-					: null,
+				...(p.pid >= 0
+					? [helpers.formatCurrency(p.contract.amount, "M"), p.contract.exp]
+					: [null, null]),
 				...stats.map(stat =>
 					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
 						? helpers.roundStat(p.stats[stat], stat)

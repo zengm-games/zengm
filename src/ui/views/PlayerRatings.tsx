@@ -38,6 +38,7 @@ const PlayerRatings = ({
 		"Team",
 		"Age",
 		"Contract",
+		"Exp",
 		"Ovr",
 		"Pot",
 		...ratings.map(rating => `rating:${rating}`),
@@ -78,14 +79,12 @@ const PlayerRatings = ({
 					{p.stats.abbrev}
 				</a>,
 				p.age,
-				<>
-					{p.contract.amount > 0
-						? helpers.formatCurrency(p.contract.amount, "M")
-						: ""}
-					{p.contract.amount > 0 && season === currentSeason
-						? ` thru ${p.contract.exp}`
-						: ""}
-				</>,
+				p.contract.amount > 0
+					? helpers.formatCurrency(p.contract.amount, "M")
+					: null,
+				p.contract.amount > 0 && season === currentSeason
+					? p.contract.exp
+					: null,
 				showRatings ? p.ratings.ovr : null,
 				showRatings ? p.ratings.pot : null,
 				...ratings.map(rating => (showRatings ? p.ratings[rating] : null)),
@@ -123,7 +122,7 @@ const PlayerRatings = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[5, "desc"]}
+				defaultSort={[6, "desc"]}
 				name="PlayerRatings"
 				pagination
 				rows={rows}

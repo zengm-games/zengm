@@ -6,20 +6,18 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-way to view scheduled events and add/edit/delete
-- needs to handle tids, like already happens for adding/removing teams
-- warn about breakage, like a team changing divisions if division expansion doesn't happen
-- quick links for bulk tasks like "Disable expansion teams", "Disable team folding", "DIsable game simulation changes"
-- need way to reorder? nah, sort by year, make order of diff types consistent, and tiebreak by id
-- delete, or just disable?
-  - if delete expansion, need to delete future events for that tid and adjust other tids
-  - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
-- add - check for dupe one already existing (by season+type and maybe tid)
-- edit
-  - game attributes - share code with god mode settings
-  - open modal on click "edit", or inline form
-
-separate column for contract amount and exp @justballin#6865 
+scheduled events editor
+- eventually add/edit/delete individual events
+  - needs to handle tids, like already happens for adding/removing teams
+  - warn about breakage, like a team changing divisions if division expansion doesn't happen
+  - delete, or just disable?
+    - if delete expansion, need to delete future events for that tid and adjust other tids
+    - when deleting individual expansion draft, make sure to account for the fact that you could have a team that was created in a prior expansion draft, so its tid might still exist (and not require adjusting of future teams)
+  - add - check for dupe one already existing (by season+type and maybe tid)
+  - edit
+    - game attributes - share code with god mode settings
+    - open modal on click "edit", or inline form
+- start in 1947, auto play, some events not deleted (expansion, maybe only if played without auto play)
 
 add open roster spots to league finances table @TheRealGWood#4891
 

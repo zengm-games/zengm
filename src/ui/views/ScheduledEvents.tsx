@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal, toWorker } from "../util";

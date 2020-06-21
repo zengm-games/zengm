@@ -316,6 +316,12 @@ const processScheduledEvents = async (
 
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
+			if (
+				scheduledEvent.season < season ||
+				(scheduledEvent.season === season && scheduledEvent.phase < phase)
+			) {
+				await idb.cache.scheduledEvents.delete(scheduledEvent.id);
+			}
 			continue;
 		}
 

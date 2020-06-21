@@ -12,22 +12,37 @@ const updateLeagueFinances = async (
 		inputs.season !== state.season ||
 		inputs.season === g.get("season")
 	) {
-		const teams = await idb.getCopies.teamsPlus({
-			attrs: ["tid"],
-			seasonAttrs: [
-				"att",
-				"revenue",
-				"profit",
-				"cash",
-				"payroll",
-				"salaryPaid",
-				"pop",
-				"abbrev",
-				"tid",
-				"region",
-				"name",
-			],
-			season: inputs.season,
+		const players = await idb.cache.players.indexGetAll("playersByTid", [
+			0,
+			Infinity,
+		]);
+
+		const teams = (
+			await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: [
+					"att",
+					"revenue",
+					"profit",
+					"cash",
+					"payroll",
+					"salaryPaid",
+					"pop",
+					"abbrev",
+					"tid",
+					"region",
+					"name",
+				],
+				season: inputs.season,
+			})
+		).map(t => {
+			const rosterSpots =
+				g.get("maxRosterSize") - players.filter(p => p.tid === t.tid).length;
+
+			return {
+				...t,
+				rosterSpots,
+			};
 		});
 		return {
 			budget: g.get("budget"),

@@ -38,9 +38,18 @@ const LeagueFinances = ({
 				"Cash",
 				"Payroll",
 				"Cap Space",
+				"Roster Spots",
 		  )
-		: getCols("Team", "Pop", "Avg Attendance", "Payroll", "Cap Space");
+		: getCols(
+				"Team",
+				"Pop",
+				"Avg Attendance",
+				"Payroll",
+				"Cap Space",
+				"Roster Spots",
+		  );
 	if (!showCapSpace) {
+		cols.pop();
 		cols.pop();
 	}
 
@@ -51,7 +60,7 @@ const LeagueFinances = ({
 				? t.seasonAttrs.payroll
 				: t.seasonAttrs.salaryPaid;
 
-		const data = [
+		const data: React.ReactNode[] = [
 			<a
 				href={helpers.leagueUrl([
 					"team_finances",
@@ -74,6 +83,7 @@ const LeagueFinances = ({
 
 		if (showCapSpace) {
 			data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
+			data.push(t.rosterSpots);
 		}
 
 		return {

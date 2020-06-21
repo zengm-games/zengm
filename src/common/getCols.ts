@@ -1428,6 +1428,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	"Roster Spots": {
+		desc: "Number of Open Roster Spots",
+		sortSequence: ["desc", "asc"],
+	},
 	"Runner Up": {},
 	Season: {
 		sortSequence: ["desc", "asc"],

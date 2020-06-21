@@ -17,9 +17,6 @@ scheduled events editor
   - edit
     - game attributes - share code with god mode settings
     - open modal on click "edit", or inline form
-- start in 1947, auto play, some events not deleted (expansion, maybe only if played without auto play)
-
-add open roster spots to league finances table @TheRealGWood#4891
 
 move stuff out of god mode @El Clon#3483 
 - options?

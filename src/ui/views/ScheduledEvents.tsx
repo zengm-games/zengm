@@ -3,7 +3,6 @@ import useTitleBar from "../hooks/useTitleBar";
 import type { View, ScheduledEvent, LocalStateUI } from "../../common/types";
 import { helpers, getCols, useLocal } from "../util";
 import classNames from "classnames";
-import groupBy from "lodash/groupBy";
 import { DataTable } from "../components";
 import { PHASE_TEXT } from "../../common";
 
@@ -42,7 +41,7 @@ const ViewEvent = ({
 				<>
 					{t.region} {t.name}
 					<br />
-					ID number: {tid}
+					Team ID: {tid}
 				</>
 			);
 		}
@@ -68,7 +67,7 @@ const ViewEvent = ({
 				<>
 					{t.region} {t.name} (future expansion team)
 					<br />
-					ID number: {t.tid}
+					Team ID: {t.tid}
 				</>
 			);
 		}
@@ -77,8 +76,26 @@ const ViewEvent = ({
 			<div className="text-danger">
 				Invalid team
 				<br />
-				ID number: {tid}
+				Team ID: {tid}
 			</div>
+		);
+	}
+
+	if (current.type === "expansionDraft") {
+		return (
+			<ul className="list-unstyled mb-0">
+				{current.info.teams.map((t, i) => (
+					<li className={i > 0 ? "mt-3" : undefined} key={i}>
+						{t.region} {t.name}
+						{t.tid !== undefined ? (
+							<>
+								<br />
+								Team ID: {t.tid}
+							</>
+						) : null}
+					</li>
+				))}
+			</ul>
 		);
 	}
 

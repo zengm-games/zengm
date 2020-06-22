@@ -32,11 +32,11 @@ const FreeAgents = ({
 	>();
 
 	const showAfforablePlayers = useCallback(() => {
-		const newAddFilters: (string | undefined)[] = new Array(8 + stats.length);
+		const newAddFilters: (string | undefined)[] = new Array(9 + stats.length);
 		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
-			newAddFilters[newAddFilters.length - 2] = `<${capSpace}`;
+			newAddFilters[newAddFilters.length - 3] = `<${capSpace}`;
 		} else {
-			newAddFilters[newAddFilters.length - 2] = `<${minContract / 1000}`;
+			newAddFilters[newAddFilters.length - 3] = `<${minContract / 1000}`;
 		}
 
 		setAddFilters(newAddFilters);

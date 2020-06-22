@@ -18,6 +18,8 @@ scheduled events editor
     - game attributes - share code with god mode settings
     - open modal on click "edit", or inline form
 
+sort stats table by season -> should break ties with which team is most/least recent. sortValue i
+
 move stuff out of god mode @El Clon#3483 
 - options?
 - player editor?

@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { draft, player, season, team } from "..";
+import { draft, player, season, team, realRosters } from "..";
 import { idb } from "../../db";
 import {
 	achievement,
@@ -65,7 +65,15 @@ const newPhaseBeforeDraft = async (
 		for (const p of players) {
 			let update = false;
 
-			if (player.shouldRetire(p)) {
+			let shouldRetire: boolean | undefined;
+			if (g.get("realPlayerMovementDeterminism")) {
+				shouldRetire = await realRosters.movementDeterminism.shouldRetire(p);
+			}
+			if (shouldRetire === undefined) {
+				shouldRetire = player.shouldRetire(p);
+			}
+
+			if (shouldRetire) {
 				if (p.tid >= 0) {
 					if (!retiredPlayersByTeam[p.tid]) {
 						retiredPlayersByTeam[p.tid] = [];

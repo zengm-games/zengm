@@ -23,20 +23,19 @@ sort stats table by season -> should break ties with which team is most/least re
 deterministic real player movement
 - disable AI trades
 - after playoffs
-  - disable retire for real players
-    - exception for 2020+
-  - real BBGM players that shouldn't be active this year, retire
-    - okay if it's just partial retirement
   - short circuit from DRAFT_LOTTERY to PRESEASON, like groundhog day
-    - only if season < maxSeason
-      - maybe put maxSeason in local
+    - only if season < maxSeason, so export maxSeason
     - add draft info to prospects
 - in preseason
   - add contract info
   - if not found, create (like if player was out of league for initial season)
+- expansion drafts?
+  - at minimum, display text explaining it. better - add teams automatically
 - explanation text on new league form
   - link to blog
 - new league form default false
+- test
+  - overflow after 2020
 - manual
   - discuss development determinism too
   - movement
@@ -45,6 +44,7 @@ deterministic real player movement
     - retire
     - temp retire
       - happens to injured players too, due to lack of data
+    - players out of league when created
     - god mode
     - skip draft and free agency up to 2020
 - blog

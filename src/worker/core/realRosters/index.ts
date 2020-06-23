@@ -1,9 +1,9 @@
 import getLeague from "./getLeague";
 import getLeagueInfo from "./getLeagueInfo";
-import movementDeterminismPreseason from "./movementDeterminismPreseason";
+import movementDeterminism from "./movementDeterminism";
 
 export default {
 	getLeague,
 	getLeagueInfo,
-	movementDeterminismPreseason,
+	movementDeterminism,
 };

@@ -160,7 +160,7 @@ const newPhasePreseason = async (
 	}
 
 	if (g.get("realPlayerMovementDeterminism") && !repeatSeason) {
-		await realRosters.movementDeterminismPreseason();
+		await realRosters.movementDeterminism.preseason();
 	}
 
 	if (scoutingRank === undefined) {

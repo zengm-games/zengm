@@ -4,53 +4,66 @@ import loadDataBasketball from "./loadData.basketball";
 import type { Basketball } from "./loadData.basketball";
 import { PLAYER } from "../../../common";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
+import type {
+	MinimalPlayerRatings,
+	Player,
+	PlayerWithoutKey,
+} from "../../../common/types";
 
-let maxSeason = -Infinity;
-let statsBySeasonSlug: Record<
-	number,
-	Record<string, Basketball["stats"][number]>
->;
-const movementDeterminismPreseason = async () => {
+let state: {
+	maxSeason: number;
+	statsBySeasonSlug: Record<
+		number,
+		Record<string, Basketball["stats"][number]>
+	>;
+};
+
+const initState = async () => {
+	const basketball = await loadDataBasketball();
+
+	let maxSeason = -Infinity;
+	for (const statsRow of basketball.stats) {
+		if (statsRow.season > maxSeason) {
+			maxSeason = statsRow.season;
+		}
+	}
+
+	const statsBySeasonSlug: typeof state["statsBySeasonSlug"] = {};
+
+	for (const statsRow of basketball.stats) {
+		// Only seasons we care about
+		if (!statsBySeasonSlug[statsRow.season]) {
+			statsBySeasonSlug[statsRow.season] = {};
+		}
+
+		// Only first entry for a player
+		if (!statsBySeasonSlug[statsRow.season][statsRow.slug]) {
+			statsBySeasonSlug[statsRow.season][statsRow.slug] = statsRow;
+		}
+	}
+
+	return {
+		maxSeason,
+		statsBySeasonSlug,
+	};
+};
+
+const preseason = async () => {
 	if (process.env.SPORT !== "basketball") {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
 	}
 
-	const season = g.get("season");
-
-	const basketball = await loadDataBasketball();
-
-	if (maxSeason === -Infinity) {
-		for (const statsRow of basketball.stats) {
-			if (statsRow.season > maxSeason) {
-				maxSeason = statsRow.season;
-			}
-		}
+	if (!state) {
+		state = await initState();
 	}
 
-	if (season > maxSeason) {
+	const season = g.get("season");
+
+	if (season > state.maxSeason) {
 		return;
 	}
 
-	if (!statsBySeasonSlug) {
-		statsBySeasonSlug = {};
-		for (let s = season; s <= maxSeason; s++) {
-			statsBySeasonSlug[s] = {};
-		}
-
-		for (const statsRow of basketball.stats) {
-			// Only seasons we care about
-			if (!statsBySeasonSlug[statsRow.season]) {
-				continue;
-			}
-
-			// Only first entry for a player
-			if (!statsBySeasonSlug[statsRow.season][statsRow.slug]) {
-				statsBySeasonSlug[statsRow.season][statsRow.slug] = statsRow;
-			}
-		}
-	}
-
-	const statsBySlug = statsBySeasonSlug[season];
+	const statsBySlug = state.statsBySeasonSlug[season];
 
 	if (!statsBySlug) {
 		return;
@@ -141,4 +154,31 @@ const movementDeterminismPreseason = async () => {
 	}
 };
 
-export default movementDeterminismPreseason;
+// undefined means not sure, so normal shouldRetire should be used
+const shouldRetire = async (
+	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
+): Promise<boolean | undefined> => {
+	console.log("shouldRetire", p.firstName, p.lastName);
+	if (!state) {
+		state = await initState();
+	}
+
+	if (g.get("season") >= state.maxSeason || !p.srID) {
+		return;
+	}
+
+	// Entry in stats for this player next season? It not, retire
+
+	const statsBySlug = state.statsBySeasonSlug[g.get("season") + 1];
+
+	if (!statsBySlug) {
+		return;
+	}
+
+	return !statsBySlug[p.srID];
+};
+
+export default {
+	preseason,
+	shouldRetire,
+};

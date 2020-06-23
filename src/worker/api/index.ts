@@ -267,6 +267,7 @@ const createLeague = async ({
 	noStartingInjuries,
 	equalizeRegions,
 	realPlayerDeterminism,
+	realPlayerMovementDeterminism,
 }: {
 	name: string;
 	tid: number;
@@ -285,6 +286,7 @@ const createLeague = async ({
 	noStartingInjuries: boolean;
 	equalizeRegions: boolean;
 	realPlayerDeterminism: number | undefined;
+	realPlayerMovementDeterminism: boolean;
 }): Promise<number> => {
 	if (getLeagueOptions) {
 		leagueFileInput = await realRosters.getLeague(getLeagueOptions);
@@ -376,6 +378,11 @@ const createLeague = async ({
 		leagueFile.gameAttributes,
 		"equalizeRegions",
 		equalizeRegions,
+	);
+	upsertGameAttribute(
+		leagueFile.gameAttributes,
+		"realPlayerMovementDeterminism",
+		realPlayerMovementDeterminism,
 	);
 
 	if (realPlayerDeterminism !== undefined) {

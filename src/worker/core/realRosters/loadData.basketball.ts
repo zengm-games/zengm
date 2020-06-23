@@ -22,7 +22,7 @@ export type Ratings = {
 };
 
 // Not sure why this is necessary, TypeScript should figure it out automatically
-type Basketball = {
+export type Basketball = {
 	awards: Record<
 		string,
 		{

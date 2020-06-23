@@ -20,6 +20,36 @@ scheduled events editor
 
 sort stats table by season -> should break ties with which team is most/least recent. sortValue i
 
+deterministic real player movement
+- disable AI trades
+- after playoffs
+  - disable retire for real players
+    - exception for 2020+
+  - real BBGM players that shouldn't be active this year, retire
+    - okay if it's just partial retirement
+  - short circuit from DRAFT_LOTTERY to PRESEASON, like groundhog day
+    - only if season < maxSeason
+      - maybe put maxSeason in local
+    - add draft info to prospects
+- in preseason
+  - add contract info
+  - if not found, create (like if player was out of league for initial season)
+- explanation text on new league form
+  - link to blog
+- new league form default false
+- manual
+  - discuss development determinism too
+  - movement
+    - event log, contract history not perfect
+    - preseason
+    - retire
+    - temp retire
+      - happens to injured players too, due to lack of data
+    - god mode
+    - skip draft and free agency up to 2020
+- blog
+  - link to manual
+
 register as game on youtube
 - gmgameschris
 - https://old.reddit.com/r/gamedev/comments/a7yntv/how_to_get_my_game_title_listed_on_youtube/

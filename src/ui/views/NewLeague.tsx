@@ -376,6 +376,7 @@ type State = {
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
 	realPlayerDeterminism: number;
+	realPlayerMovementDeterminism: boolean;
 };
 
 type Action =
@@ -454,7 +455,8 @@ type Action =
 	| {
 			type: "setRealPlayerDeterminism";
 			realPlayerDeterminism: number;
-	  };
+	  }
+	| { type: "toggleRealPlayerMovementDeterminism" };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
 	const t = teams.find(t => t.tid === tid);
@@ -684,6 +686,12 @@ const reducer = (state: State, action: Action): State => {
 				realPlayerDeterminism: action.realPlayerDeterminism,
 			};
 
+		case "toggleRealPlayerMovementDeterminism":
+			return {
+				...state,
+				realPlayerMovementDeterminism: !state.realPlayerMovementDeterminism,
+			};
+
 		default:
 			throw new Error();
 	}
@@ -752,6 +760,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				noStartingInjuries: false,
 				equalizeRegions: false,
 				realPlayerDeterminism: 0,
+				realPlayerMovementDeterminism: true,
 			};
 		},
 	);
@@ -809,6 +818,11 @@ const NewLeague = (props: View<"newLeague">) => {
 					? state.realPlayerDeterminism
 					: undefined;
 
+			const actualRealPlayerMovementDeterminism =
+				state.customize === "real" && state.keptKeys.includes("players")
+					? state.realPlayerMovementDeterminism
+					: false;
+
 			try {
 				let getLeagueOptions: GetLeagueOptions | undefined;
 				if (state.customize === "real") {
@@ -842,6 +856,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
 					realPlayerDeterminism: actualRealPlayerDeterminism,
+					realPlayerMovementDeterminism: actualRealPlayerMovementDeterminism,
 				});
 
 				let type: string = state.customize;
@@ -897,6 +912,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.noStartingInjuries,
 			state.randomization,
 			state.realPlayerDeterminism,
+			state.realPlayerMovementDeterminism,
 			state.repeatSeason,
 			state.season,
 			startingSeason,
@@ -1143,33 +1159,60 @@ const NewLeague = (props: View<"newLeague">) => {
 		state.keptKeys.includes("players")
 	) {
 		moreOptions.unshift(
-			<div key="realPlayerDeterminism" className="form-group">
-				<label htmlFor="new-league-realPlayerDeterminism">
-					Real player development determinism
-				</label>
-				<div className="d-flex">
-					<input
-						id="new-league-realPlayerDeterminism"
-						type="range"
-						className="form-control-range"
-						min="0"
-						max="1"
-						step="0.05"
-						value={state.realPlayerDeterminism}
-						onChange={event => {
-							dispatch({
-								type: "setRealPlayerDeterminism",
-								realPlayerDeterminism: parseFloat(event.target.value as any),
-							});
-						}}
-						title="Speed"
-					/>
-					<div className="text-right" style={{ minWidth: 40 }}>
-						{Math.round(state.realPlayerDeterminism * 100)}%
+			<React.Fragment key="realPlayerDeterminism">
+				<div className="form-group">
+					<label htmlFor="new-league-realPlayerDeterminism">
+						Real player development determinism
+					</label>
+					<div className="d-flex">
+						<input
+							id="new-league-realPlayerDeterminism"
+							type="range"
+							className="form-control-range"
+							min="0"
+							max="1"
+							step="0.05"
+							value={state.realPlayerDeterminism}
+							onChange={event => {
+								dispatch({
+									type: "setRealPlayerDeterminism",
+									realPlayerDeterminism: parseFloat(event.target.value as any),
+								});
+							}}
+							title="Speed"
+						/>
+						<div className="text-right" style={{ minWidth: 40 }}>
+							{Math.round(state.realPlayerDeterminism * 100)}%
+						</div>
+					</div>
+					<div className="text-muted mt-1">
+						{helpTexts.realPlayerDeterminism}
 					</div>
 				</div>
-				<div className="text-muted mt-1">{helpTexts.realPlayerDeterminism}</div>
-			</div>,
+				{state.customize === "real" ? (
+					<div className="form-check mb-2">
+						<input
+							className="form-check-input"
+							type="checkbox"
+							id="new-league-realPlayerMovementDeterminism"
+							checked={state.realPlayerMovementDeterminism}
+							onChange={() => {
+								dispatch({ type: "toggleRealPlayerMovementDeterminism" });
+							}}
+						/>
+						<label
+							className="form-check-label"
+							htmlFor="new-league-realPlayerMovementDeterminism"
+						>
+							Real player movement determinism
+							<br />
+							<span className="text-muted">
+								{helpTexts.realPlayerMovementDeterminism}
+							</span>
+						</label>
+					</div>
+				) : null}
+			</React.Fragment>,
 		);
 	}
 

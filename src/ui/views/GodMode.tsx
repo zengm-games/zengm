@@ -44,7 +44,8 @@ type Key =
 	| "challengeNoFreeAgents"
 	| "challengeNoRatings"
 	| "challengeNoTrades"
-	| "realPlayerDeterminism";
+	| "realPlayerDeterminism"
+	| "realPlayerMovementDeterminism";
 
 type Category =
 	| "League Structure"
@@ -52,7 +53,7 @@ type Category =
 	| "Events"
 	| "Game Simulation"
 	| "Challenge Modes"
-	| "Player Development";
+	| "Real Player Determinism";
 
 type FieldType =
 	| "bool"
@@ -73,6 +74,8 @@ export const helpTexts = {
 		"You are not allowed to sign free agents, except to minimum contracts.",
 	realPlayerDeterminism:
 		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
+	realPlayerMovementDeterminism:
+		"Every preseason, real players will be assigned to their corresponding real team.",
 };
 
 export const options: {
@@ -559,9 +562,9 @@ if (process.env.SPORT === "basketball") {
 				"The baseline rate for two point percentage is multiplied by this number.",
 		},
 		{
-			category: "Player Development",
+			category: "Real Player Determinism",
 			key: "realPlayerDeterminism",
-			name: "Real Player Determinism",
+			name: "Development",
 			type: "float",
 			helpText: (
 				<>
@@ -581,6 +584,21 @@ if (process.env.SPORT === "basketball") {
 					throw new Error("Value must be between 0 and 1");
 				}
 			},
+		},
+		{
+			category: "Real Player Determinism",
+			key: "realPlayerMovementDeterminism",
+			name: "Movement",
+			type: "bool",
+			helpText: (
+				<>
+					<p>{helpTexts.realPlayerMovementDeterminism}</p>
+					<p>
+						This has no impact on "random players"" leagues or randomly
+						generated players in "real players" leagues.
+					</p>
+				</>
+			),
 		},
 	);
 }

@@ -46,6 +46,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeNoTrades: g.get("challengeNoTrades"),
 			challengeNoRatings: g.get("challengeNoRatings"),
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
+			realPlayerMovementDeterminism: g.get("realPlayerMovementDeterminism"),
 		};
 	}
 };

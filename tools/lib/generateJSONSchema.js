@@ -626,6 +626,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							minimum: 0,
 							maximum: 1,
 						}),
+						gameAttribute("realPlayerMovementDeterminism", {
+							type: "boolean",
+						}),
 						gameAttribute("repeatSeason", {
 							type: "object",
 						}),

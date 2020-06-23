@@ -1,5 +1,5 @@
 import { PLAYER, applyRealTeamInfo } from "../../../common";
-import { finances, freeAgents, league, player, team } from "..";
+import { finances, freeAgents, league, player, team, realRosters } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
 import type {
@@ -159,6 +159,10 @@ const newPhasePreseason = async (
 		});
 	}
 
+	if (g.get("realPlayerMovementDeterminism") && !repeatSeason) {
+		await realRosters.movementDeterminismPreseason();
+	}
+
 	if (scoutingRank === undefined) {
 		throw new Error("scoutingRank should be defined");
 	}
@@ -180,7 +184,7 @@ const newPhasePreseason = async (
 	if (!repeatSeason && Math.random() < 0.01) {
 		const p = player.getPlayerFakeAge(players);
 
-		if (p) {
+		if (p && !(p.real && g.get("realPlayerMovementDeterminism"))) {
 			const years = random.randInt(1, 4);
 			const age0 = g.get("season") - p.born.year;
 			p.born.year -= years;

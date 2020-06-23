@@ -17,7 +17,7 @@ const developSeason = async (
 	coachingRank?: number,
 ) => {
 	if (process.env.SPORT === "football") {
-		developSeasonFootball(ratings as any, age, coachingRank);
+		return developSeasonFootball(ratings as any, age, coachingRank);
 	}
 
 	developSeasonBasketball(ratings as any, age, coachingRank);

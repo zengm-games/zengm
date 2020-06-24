@@ -122,7 +122,10 @@ const StatsTable = ({
 					return {
 						key: i,
 						data: [
-							ps.season,
+							{
+								value: ps.season,
+								sortValue: i,
+							},
 							<a
 								href={helpers.leagueUrl([
 									"roster",

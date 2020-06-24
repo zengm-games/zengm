@@ -19,6 +19,7 @@ import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
 import ExpansionDraft from "./ExpansionDraft";
 import ExportLeague from "./ExportLeague";
+import ExportPlayers from "./ExportPlayers";
 import ExportStats from "./ExportStats";
 import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
@@ -100,6 +101,7 @@ export default {
 	DraftTeamHistory,
 	ExpansionDraft,
 	ExportLeague,
+	ExportPlayers,
 	ExportStats,
 	FantasyDraft,
 	FreeAgents,

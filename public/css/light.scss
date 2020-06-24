@@ -701,6 +701,10 @@ tr.table-warning:hover > td {
 	}
 }
 
+.table tr {
+	min-height: 30px;
+}
+
 .table-responsive {
 	margin-bottom: 1rem;
 

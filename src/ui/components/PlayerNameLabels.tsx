@@ -5,6 +5,10 @@ import SkillsBlock from "./SkillsBlock";
 import { helpers } from "../util";
 import type { PlayerInjury } from "../../common/types";
 
+const baseStyle = {
+	height: 30,
+};
+
 const PlayerNameLabels = ({
 	children,
 	injury,
@@ -48,7 +52,7 @@ const PlayerNameLabels = ({
 	}
 
 	return (
-		<span style={style}>
+		<span style={style ? { ...baseStyle, ...style } : baseStyle}>
 			{typeof pos === "string" ? `${pos} ` : null}
 			<a href={helpers.leagueUrl(["player", pid])}>{children}</a>
 			{injuryIcon}

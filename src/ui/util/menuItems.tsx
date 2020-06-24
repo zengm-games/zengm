@@ -348,6 +348,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: pageID => pageID === "exportPlayers",
+				league: true,
+				path: ["export_players"],
+				text: "Import/Export Players",
+			},
+			{
+				type: "link",
 				active: pageID => pageID === "manageConfs",
 				league: true,
 				path: ["manage_confs"],

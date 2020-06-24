@@ -8,16 +8,27 @@ playoff upsets
 
 import/export players
 - export
-  - past and current players
-  - table with checkboxes. show summary at top of # of players. sortable by checked status
-    - UI could look more like the draft, than checkboxes. if you add a player, he goes into the table on the right. then on the left, there could be a dropdown where you select the season. that would even allow you to export multiple copies of the same player, at different ages
-  - delete stuff that doesn't make sense, like relatives
+  - table alignment
+    - skills and button are a little too big
+    - add field to player object with selected season, use to adjust on import
 - import
-  - show table of players, let quick select team and contract
+  - show table of players
+  - form fields
+    - team (including draft prospect, FA, retired)
+    - draft year (only editable if draft prospect)
+    - contract amount and exp (only if on team)
+    - age (dropdown, options based on ratings array)
+  - button to "clone" player, to allow selecting different age or whatever
+  - delete stuff that doesn't make sense, like relatives
   - checkbox to keep or delete history (stats, ratings, awards, HoF)
-  - field to select season to adjust him to
   - checkbox to include/exclude player
+  - only in god mode
+  - can you give it a league file?
+- link between import/export at top
 - in player transaction, show as imported. both event log and p.transactions
+
+GM summary screen
+- https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
 
 on customize player screen, a + - button next to a players attributes in edit player to change all ratings except height quickly by 1 @dooby moogey#2784
 

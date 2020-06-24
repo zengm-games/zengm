@@ -599,6 +599,7 @@ export default {
 	draftLottery,
 	draftSummary,
 	draftTeamHistory,
+	exportPlayers: validateSeasonOnly,
 	fantasyDraft,
 	freeAgents,
 	gameLog,

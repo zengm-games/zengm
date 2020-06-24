@@ -13,7 +13,12 @@ const ExportPlayers = ({
 }: View<"exportPlayers">) => {
 	const [exporting, setExporting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [selected, setSelected] = useState<typeof players>([]);
+	const [selected, setSelected] = useState<
+		{
+			p: typeof players[number];
+			season: number;
+		}[]
+	>([]);
 
 	useTitleBar({
 		title: "Export Players",
@@ -24,7 +29,17 @@ const ExportPlayers = ({
 	const cols = getCols("Name", "Pos", "Age", "Team", "Ovr", "Pot", "");
 	cols[0].width = "100%";
 
-	const cols2 = cols.slice(0, -1);
+	const cols2 = getCols(
+		"#",
+		"Season",
+		"Name",
+		"Pos",
+		"Age",
+		"Team",
+		"Ovr",
+		"Pot",
+	);
+	cols[2].width = "100%";
 
 	const commonRows = (p: typeof players[number]) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
@@ -54,7 +69,7 @@ const ExportPlayers = ({
 		];
 	};
 
-	const selectedPids = selected.map(p => p.pid);
+	const selectedPids = selected.map(({ p }) => p.pid);
 
 	const rows = players.map(p => {
 		return {
@@ -65,7 +80,7 @@ const ExportPlayers = ({
 					className="btn btn-xs btn-primary"
 					disabled={exporting || selectedPids.includes(p.pid)}
 					onClick={() => {
-						setSelected([...selected, p]);
+						setSelected([...selected, { p, season }]);
 					}}
 					title="Add to list of players to export"
 				>
@@ -75,10 +90,10 @@ const ExportPlayers = ({
 		};
 	});
 
-	const rows2 = selected.map(p => {
+	const rows2 = selected.map(({ p, season }, i) => {
 		return {
 			key: p.pid,
-			data: [...commonRows(p)],
+			data: [i + 1, season, ...commonRows(p)],
 		};
 	});
 
@@ -107,7 +122,10 @@ const ExportPlayers = ({
 						const { filename, json } = await toWorker(
 							"main",
 							"exportPlayers",
-							selectedPids,
+							selected.map(({ p, season }) => ({
+								pid: p.pid,
+								season,
+							})),
 						);
 
 						downloadFile(filename, json, "application/json");

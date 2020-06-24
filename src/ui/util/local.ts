@@ -4,6 +4,7 @@ import type {
 	LocalStateUI,
 	GameAttributesLeagueWithHistory,
 } from "../../common/types";
+import safeLocalStorage from "./safeLocalStorage";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
@@ -32,7 +33,7 @@ const [useLocal, local] = create<
 	games: [],
 	gold: undefined,
 	godMode: false,
-	hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
+	hasViewedALeague: !!safeLocalStorage.getItem("hasViewedALeague"),
 	homeCourtAdvantage: 1,
 	leagueName: "",
 	lid: undefined,

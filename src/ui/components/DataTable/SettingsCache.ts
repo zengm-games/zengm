@@ -1,3 +1,5 @@
+import { safeLocalStorage } from "../../util";
+
 class SettingsCache {
 	disabled: boolean;
 
@@ -13,7 +15,7 @@ class SettingsCache {
 			return;
 		}
 
-		localStorage.setItem(`${key}:${this.name}`, JSON.stringify(value));
+		safeLocalStorage.setItem(`${key}:${this.name}`, JSON.stringify(value));
 	}
 
 	get(key: string) {
@@ -21,7 +23,7 @@ class SettingsCache {
 			return;
 		}
 
-		const raw = localStorage.getItem(`${key}:${this.name}`);
+		const raw = safeLocalStorage.getItem(`${key}:${this.name}`);
 		if (raw === null) {
 			return;
 		}

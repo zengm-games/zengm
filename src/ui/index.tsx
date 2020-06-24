@@ -16,6 +16,7 @@ const {
 	logEvent,
 	promiseWorker,
 	routes,
+	safeLocalStorage,
 	toWorker,
 	unregisterServiceWorkers,
 } = util;
@@ -23,7 +24,7 @@ const {
 const handleVersion = async () => {
 	window.addEventListener("storage", e => {
 		if (e.key === "bbgmVersionConflict") {
-			const bbgmVersionStored = localStorage.getItem("bbgmVersion");
+			const bbgmVersionStored = safeLocalStorage.getItem("bbgmVersion");
 
 			if (
 				bbgmVersionStored &&
@@ -63,7 +64,7 @@ const handleVersion = async () => {
 	});
 
 	// Check if there are other tabs open with a different version
-	const bbgmVersionStored = localStorage.getItem("bbgmVersion");
+	const bbgmVersionStored = safeLocalStorage.getItem("bbgmVersion");
 
 	if (bbgmVersionStored) {
 		const cmpResult = compareVersions(window.bbgmVersion, bbgmVersionStored);
@@ -72,7 +73,7 @@ const handleVersion = async () => {
 			// This version is newer than another tab's - send a signal to the other tabs
 			let conflictNum = parseInt(
 				// @ts-ignore
-				localStorage.getItem("bbgmVersionConflict"),
+				safeLocalStorage.getItem("bbgmVersionConflict"),
 				10,
 			);
 
@@ -82,8 +83,8 @@ const handleVersion = async () => {
 				conflictNum += 1;
 			}
 
-			localStorage.setItem("bbgmVersion", window.bbgmVersion);
-			localStorage.setItem("bbgmVersionConflict", String(conflictNum));
+			safeLocalStorage.setItem("bbgmVersion", window.bbgmVersion);
+			safeLocalStorage.setItem("bbgmVersionConflict", String(conflictNum));
 		} else if (cmpResult === -1) {
 			// This version is older than another tab's
 			console.log(window.bbgmVersion, bbgmVersionStored);
@@ -165,7 +166,7 @@ const handleVersion = async () => {
 		}
 	} else {
 		// Initial load, store version for future comparisons
-		localStorage.setItem("bbgmVersion", window.bbgmVersion);
+		safeLocalStorage.setItem("bbgmVersion", window.bbgmVersion);
 	}
 };
 

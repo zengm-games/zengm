@@ -11,7 +11,14 @@ import React, {
 import { DIFFICULTY, applyRealTeamInfo } from "../../common";
 import { LeagueFileUpload, PopText } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { confirm, helpers, logEvent, realtimeUpdate, toWorker } from "../util";
+import {
+	confirm,
+	helpers,
+	logEvent,
+	realtimeUpdate,
+	toWorker,
+	safeLocalStorage,
+} from "../util";
 import type { View, RealTeamInfo, GetLeagueOptions } from "../../common/types";
 import classNames from "classnames";
 import { helpTexts } from "./GodMode";
@@ -606,7 +613,7 @@ const reducer = (state: State, action: Action): State => {
 		case "newLeagueInfo": {
 			let prevTeamRegionName = getTeamRegionName(state.teams, state.tid);
 			if (state.pendingInitialLeagueInfo) {
-				const fromLocalStorage = localStorage.getItem("prevTeamRegionName");
+				const fromLocalStorage = safeLocalStorage.getItem("prevTeamRegionName");
 				if (fromLocalStorage !== null) {
 					prevTeamRegionName = fromLocalStorage;
 				}
@@ -714,12 +721,12 @@ const NewLeague = (props: View<"newLeague">) => {
 
 			const teams = teamsDefault;
 
-			let prevTeamRegionName = localStorage.getItem("prevTeamRegionName");
+			let prevTeamRegionName = safeLocalStorage.getItem("prevTeamRegionName");
 			if (prevTeamRegionName === null) {
 				prevTeamRegionName = "";
 			}
 
-			let season = parseInt(localStorage.getItem("prevSeason") as any);
+			let season = parseInt(safeLocalStorage.getItem("prevSeason") as any);
 			if (Number.isNaN(season)) {
 				season = 2020;
 			}
@@ -862,10 +869,10 @@ const NewLeague = (props: View<"newLeague">) => {
 
 				realtimeUpdate([], `/l/${lid}`);
 
-				localStorage.setItem("prevTeamRegionName", teamRegionName);
+				safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
 
 				if (state.customize === "real") {
-					localStorage.setItem("prevSeason", String(state.season));
+					safeLocalStorage.setItem("prevSeason", String(state.season));
 				}
 			} catch (err) {
 				dispatch({

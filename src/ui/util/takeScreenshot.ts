@@ -2,9 +2,10 @@ import html2canvas from "html2canvas";
 import { fetchWrapper } from "../../common";
 import helpers from "./helpers";
 import logEvent from "./logEvent";
+import safeLocalStorage from "./safeLocalStorage";
 
 const takeScreenshot = async () => {
-	const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+	const theme = safeLocalStorage.getItem("theme") === "dark" ? "dark" : "light";
 
 	const contentEl = document.getElementById("actual-actual-content");
 	if (!contentEl) {

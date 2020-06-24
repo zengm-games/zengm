@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar";
-import { logEvent, toWorker } from "../../util";
+import { logEvent, safeLocalStorage, toWorker } from "../../util";
 import RealData from "./RealData";
 import Storage from "./Storage";
 import type { View } from "../../../common/types";
@@ -9,7 +9,7 @@ import type { View } from "../../../common/types";
 // Props are not from View<> because they are only ever passed from LeagueOptions
 const Options = (props: View<"options"> & { title?: string }) => {
 	const [state, setState] = useState(() => {
-		const themeLocalStorage = localStorage.getItem("theme");
+		const themeLocalStorage = safeLocalStorage.getItem("theme");
 		let theme: "dark" | "light" | "default";
 		if (themeLocalStorage === "dark") {
 			theme = "dark";
@@ -52,7 +52,7 @@ const Options = (props: View<"options"> & { title?: string }) => {
 		if (state.theme === "default") {
 			localStorage.removeItem("theme");
 		} else {
-			localStorage.setItem("theme", state.theme);
+			safeLocalStorage.setItem("theme", state.theme);
 		}
 		if (window.themeCSSLink) {
 			window.themeCSSLink.href = `/gen/${window.getTheme()}.css`;

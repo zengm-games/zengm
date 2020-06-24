@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useLocalShallow } from "../util";
+import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
@@ -33,7 +33,7 @@ const LeagueTopBar = React.memo(() => {
 	}));
 
 	const [show, setShow] = useState(() => {
-		const showTemp = localStorage.getItem("bbgmShowLeagueTopBar");
+		const showTemp = safeLocalStorage.getItem("bbgmShowLeagueTopBar");
 		if (showTemp === "true") {
 			return true;
 		}
@@ -122,7 +122,7 @@ const LeagueTopBar = React.memo(() => {
 				show={show}
 				toggle={() => {
 					setShow(show2 => !show2);
-					localStorage.setItem("bbgmShowLeagueTopBar", String(!show));
+					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
 				}}
 			/>
 		</div>

@@ -1,4 +1,11 @@
-import { ads, confirm, local, localActions, realtimeUpdate } from "../util";
+import {
+	ads,
+	confirm,
+	local,
+	localActions,
+	realtimeUpdate,
+	safeLocalStorage,
+} from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
 	GameAttributes,
@@ -146,11 +153,11 @@ const showModal = () => {
 
 	// Max once/hour
 	const date = new Date().toISOString().slice(0, 13);
-	const lastDate = localStorage.getItem("lastDateShowModal");
+	const lastDate = safeLocalStorage.getItem("lastDateShowModal");
 	if (date === lastDate) {
 		return;
 	}
-	localStorage.setItem("lastDateShowModal", date);
+	safeLocalStorage.setItem("lastDateShowModal", date);
 
 	const r = Math.random();
 

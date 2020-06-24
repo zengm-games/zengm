@@ -1,3 +1,4 @@
+import { safeLocalStorage } from "../../util";
 import type { Props, SortBy } from ".";
 import SettingsCache from "./SettingsCache";
 
@@ -8,7 +9,7 @@ const loadStateFromCache = (props: Props) => {
 	);
 
 	// @ts-ignore
-	let perPage = parseInt(localStorage.getItem("perPage"), 10);
+	let perPage = parseInt(safeLocalStorage.getItem("perPage"), 10);
 
 	if (Number.isNaN(perPage)) {
 		perPage = 10;

@@ -1,7 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { Nav, Navbar, OverlayTrigger, Popover } from "react-bootstrap";
-import { helpers, localActions, menuItems, useLocalShallow } from "../util";
+import {
+	helpers,
+	localActions,
+	menuItems,
+	safeLocalStorage,
+	useLocalShallow,
+} from "../util";
 import DropdownLinks from "./DropdownLinks";
 import LogoAndText from "./LogoAndText";
 import PlayMenu from "./PlayMenu";
@@ -105,7 +111,7 @@ const NavBar = ({ updating }: Props) => {
 							localActions.update({
 								hasViewedALeague: true,
 							});
-							localStorage.setItem("hasViewedALeague", "true");
+							safeLocalStorage.setItem("hasViewedALeague", "true");
 						}}
 						overlay={
 							<Popover id="popover-welcome">

@@ -1,5 +1,5 @@
 import { createLogger } from "../../common";
-import { local, notify, toWorker } from ".";
+import { local, notify, toWorker, safeLocalStorage } from ".";
 import type { LogEventShowOptions } from "../../common/types";
 
 const saveEvent = () => {
@@ -15,7 +15,7 @@ const showEvent = ({
 	let title;
 
 	if (type === "gameWon" || type === "gameLost" || type === "gameTied") {
-		if (localStorage.getItem("bbgmShowLeagueTopBar") !== "false") {
+		if (safeLocalStorage.getItem("bbgmShowLeagueTopBar") !== "false") {
 			return;
 		}
 	}

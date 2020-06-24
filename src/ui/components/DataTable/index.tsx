@@ -17,7 +17,7 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { downloadFile, helpers } from "../../util";
+import { downloadFile, helpers, safeLocalStorage } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 // eslint-disable-next-line import/no-unresolved
 import type { ClassValue } from "classnames/types";
@@ -236,7 +236,7 @@ class DataTable extends React.Component<Props, State> {
 		const perPage = parseInt(event.currentTarget.value, 10);
 
 		if (!Number.isNaN(perPage) && perPage !== this.state.perPage) {
-			localStorage.setItem("perPage", String(perPage));
+			safeLocalStorage.setItem("perPage", String(perPage));
 			this.setState({
 				currentPage: 1,
 				perPage,

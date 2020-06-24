@@ -29,16 +29,7 @@ const ExportPlayers = ({
 	const cols = getCols("Name", "Pos", "Age", "Team", "Ovr", "Pot", "");
 	cols[0].width = "100%";
 
-	const cols2 = getCols(
-		"#",
-		"Season",
-		"Name",
-		"Pos",
-		"Age",
-		"Team",
-		"Ovr",
-		"Pot",
-	);
+	const cols2 = getCols("#", "Name", "Pos", "Age", "Team", "Ovr", "Pot");
 	cols[2].width = "100%";
 
 	const commonRows = (p: typeof players[number]) => {
@@ -93,7 +84,7 @@ const ExportPlayers = ({
 	const rows2 = selected.map(({ p, season }, i) => {
 		return {
 			key: p.pid,
-			data: [i + 1, season, ...commonRows(p)],
+			data: [i + 1, ...commonRows(p)],
 		};
 	});
 

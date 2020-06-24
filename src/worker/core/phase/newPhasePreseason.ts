@@ -7,12 +7,14 @@ import type {
 	PhaseReturn,
 	RealTeamInfo,
 } from "../../../common/types";
+import skipEndOfSeasonPhases from "./skipEndOfSeasonPhases";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
 	const repeatSeason = g.get("repeatSeason");
-	if (!repeatSeason) {
+	const skip = await skipEndOfSeasonPhases();
+	if (skip) {
 		await freeAgents.autoSign();
 	}
 	await league.setGameAttributes({

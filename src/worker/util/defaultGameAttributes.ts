@@ -121,7 +121,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	challengeNoFreeAgents: false,
 	challengeNoRatings: false,
 	challengeNoTrades: false,
-	repeatSeason: undefined,
+	repeatSeason: undefined, // Groundhog Day
 	equalizeRegions: false,
 	realPlayerDeterminism: 0,
 	realPlayerMovementDeterminism: false,

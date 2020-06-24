@@ -1,6 +1,7 @@
 import newPhase from "./newPhase";
+import skipEndOfSeasonPhases from "./skipEndOfSeasonPhases";
 
 export default {
-	// eslint-disable-next-line import/prefer-default-export
 	newPhase,
+	skipEndOfSeasonPhases,
 };

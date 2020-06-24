@@ -1,5 +1,5 @@
 import { PHASE } from "../../common";
-import { allStar, draft } from "../core";
+import { allStar, draft, realRosters, phase } from "../core";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";
@@ -205,7 +205,8 @@ const updatePlayMenu = async () => {
 			keys = keys.filter(key => key !== "untilEndOfRound");
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
-		if (g.get("repeatSeason")) {
+		const skip = await phase.skipEndOfSeasonPhases();
+		if (skip) {
 			keys = ["untilPreseason"];
 		} else {
 			// Offseason - pre draft

@@ -3,13 +3,18 @@ import { idb } from "../db";
 import g from "./g";
 import local from "./local";
 import toUI from "./toUI";
-import type { Conditions } from "../../common/types"; // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
+import type { Conditions } from "../../common/types";
+import { phase } from "../core";
 
+// Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 async function updatePhase(conditions?: Conditions) {
 	let text = PHASE_TEXT[g.get("phase")];
 
-	if (g.get("phase") === PHASE.DRAFT_LOTTERY && g.get("repeatSeason")) {
-		text = "after playoffs";
+	if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
+		const skip = await phase.skipEndOfSeasonPhases();
+		if (skip) {
+			text = "after playoffs";
+		}
 	}
 
 	const phaseText = `${g.get("season")} ${text}`;

@@ -237,8 +237,11 @@ const playAmount = async (
 		}
 
 		await freeAgents.play(numDays, conditions);
-	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY && g.get("repeatSeason")) {
-		await phase.newPhase(PHASE.PRESEASON, conditions);
+	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
+		const skip = await phase.skipEndOfSeasonPhases();
+		if (skip) {
+			await phase.newPhase(PHASE.PRESEASON, conditions);
+		}
 	}
 };
 

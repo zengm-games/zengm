@@ -202,7 +202,16 @@ const shouldRetire = async (
 	return !statsBySlug[p.srID];
 };
 
+const getState = async () => {
+	if (!state) {
+		state = await initState();
+	}
+
+	return state;
+};
+
 export default {
+	getState,
 	preseason,
 	shouldRetire,
 };

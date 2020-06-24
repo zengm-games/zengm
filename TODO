@@ -26,11 +26,8 @@ show legacy team in HoF @abssamanta
 
 deterministic real player movement
 - disable AI trades
-- after playoffs
-  - short circuit from DRAFT_LOTTERY to PRESEASON, like groundhog day
-    - only if season < maxSeason, so export maxSeason
-    - add draft info to prospects
 - in preseason
+  - add draft info to prospects
   - if not found, create (like if player was out of league for initial season)
 - expansion drafts?
   - at minimum, display text explaining it. better - add teams automatically

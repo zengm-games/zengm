@@ -44,7 +44,8 @@ const autoPlay = async (conditions: Conditions = {}) => {
 	} else if (g.get("phase") === PHASE.PLAYOFFS) {
 		await game.play(100, conditions);
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
-		if (g.get("repeatSeason")) {
+		const skip = await phase.skipEndOfSeasonPhases();
+		if (skip) {
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		} else {
 			await phase.newPhase(PHASE.DRAFT, conditions);

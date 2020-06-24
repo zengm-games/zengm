@@ -27,7 +27,6 @@ show legacy team in HoF @abssamanta
 deterministic real player movement
 - disable AI trades
 - in preseason
-  - add draft info to prospects
   - if not found, create (like if player was out of league for initial season)
 - expansion drafts?
   - at minimum, display text explaining it. better - add teams automatically
@@ -41,12 +40,15 @@ deterministic real player movement
   - movement
     - preseason
       - teams, contracts
+      - draft
     - retire
     - temp retire
       - happens to injured players too, due to lack of data
     - players out of league when created
     - god mode
     - skip draft and free agency up to 2020
+  - uses
+    - "what if" scenarios, like create a player and see how he does compared to how the league actually evolved
 - blog
   - link to manual
 

@@ -111,12 +111,18 @@ const preseason = async () => {
 	}
 	console.log(season);
 
+	const basketball = await loadDataBasketball();
+
 	const cachedPlayers = await idb.cache.players.getAll();
 	const missingPlayers = new Set(Object.keys(statsBySlug));
 
 	for (const p of cachedPlayers) {
 		if (p.srID) {
 			missingPlayers.delete(p.srID);
+		}
+
+		if (p.draft.year >= season) {
+			continue;
 		}
 
 		const stats = p.srID ? statsBySlug[p.srID] : undefined;
@@ -136,6 +142,19 @@ const preseason = async () => {
 		if (tid !== undefined) {
 			p.tid = tid;
 			setSalaries(p);
+
+			// Handle draft prospect
+			if (p.draft.year === season - 1 && p.srID) {
+				const bio = basketball.bios[p.srID];
+				p.draft = {
+					...p.draft,
+					tid: p.tid,
+					originalTid: p.tid,
+					round: bio.draftRound,
+					pick: bio.draftPick,
+					year: bio.draftYear,
+				};
+			}
 		}
 
 		await idb.cache.players.put(p);

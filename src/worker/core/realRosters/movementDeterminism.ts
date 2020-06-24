@@ -2,16 +2,19 @@ import { g } from "../../util";
 import { idb, iterate } from "../../db";
 import loadDataBasketball from "./loadData.basketball";
 import type { Basketball } from "./loadData.basketball";
-import { PLAYER } from "../../../common";
+import { PLAYER, PHASE } from "../../../common";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types";
+import groupBy from "lodash/groupBy";
+import player from "../player";
 
 let state: {
 	maxSeason: number;
+	salariesBySlug: Record<string, Basketball["salaries"][number][]>;
 	statsBySeasonSlug: Record<
 		number,
 		Record<string, Basketball["stats"][number]>
@@ -42,10 +45,40 @@ const initState = async () => {
 		}
 	}
 
+	const salariesBySlug: typeof state["salariesBySlug"] = groupBy(
+		basketball.salaries,
+		"slug",
+	);
+
 	return {
 		maxSeason,
+		salariesBySlug,
 		statsBySeasonSlug,
 	};
+};
+
+const setSalaries = (p: Player) => {
+	if (p.srID) {
+		const season = g.get("season");
+		const salaries = state.salariesBySlug[p.srID];
+		if (salaries) {
+			const salaryRow = salaries.find(
+				row => row.start <= season && row.exp >= season,
+			);
+			if (salaryRow) {
+				p.salaries = p.salaries.filter(salary => salary.season < season);
+				player.setContract(
+					p,
+					{
+						amount: salaryRow.amount / 1000,
+						exp: salaryRow.exp,
+					},
+					true,
+					PHASE.PRESEASON,
+				);
+			}
+		}
+	}
 };
 
 const preseason = async () => {
@@ -102,15 +135,13 @@ const preseason = async () => {
 		const tid = tidsByAbbrev[stats.abbrev];
 		if (tid !== undefined) {
 			p.tid = tid;
-		} else {
-			console.log(
-				`No tid found for ${p.firstName} ${p.lastName} (target abbrev: ${stats.abbrev})`,
-			);
+			setSalaries(p);
 		}
+
 		await idb.cache.players.put(p);
 	}
 
-	console.log("missingPlayers.size A", missingPlayers.size);
+	// console.log("missingPlayers.size A", missingPlayers.size);
 
 	if (missingPlayers.size > 0) {
 		const promises: Promise<any>[] = [];
@@ -126,14 +157,8 @@ const preseason = async () => {
 
 				const tid = tidsByAbbrev[stats.abbrev];
 				if (tid !== undefined) {
-					console.log(
-						`Unretire ${p.firstName} ${p.lastName} (${stats.abbrev})`,
-					);
 					p.tid = tid;
-				} else {
-					console.log(
-						`2 No tid found for ${p.firstName} ${p.lastName} (target abbrev: ${stats.abbrev})`,
-					);
+					setSalaries(p);
 				}
 
 				missingPlayers.delete(p.srID);
@@ -146,11 +171,11 @@ const preseason = async () => {
 		await Promise.all(promises);
 	}
 
-	console.log("missingPlayers.size B", missingPlayers.size);
+	// console.log("missingPlayers.size B", missingPlayers.size);
 
 	// Create missing player that somehow is not in database already, like if you start a league while a player is tempoararily retired
 	for (const srID of missingPlayers) {
-		console.log("MISSING PLAYER NEED TO CREATE", srID);
+		// console.log("MISSING PLAYER NEED TO CREATE", srID);
 	}
 };
 
@@ -158,7 +183,6 @@ const preseason = async () => {
 const shouldRetire = async (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ): Promise<boolean | undefined> => {
-	console.log("shouldRetire", p.firstName, p.lastName);
 	if (!state) {
 		state = await initState();
 	}

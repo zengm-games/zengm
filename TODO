@@ -20,6 +20,10 @@ scheduled events editor
 
 sort stats table by season -> should break ties with which team is most/least recent. sortValue i
 
+show legacy team in HoF @abssamanta
+
+"More Info" links just move to normal links below titlebar
+
 deterministic real player movement
 - disable AI trades
 - after playoffs
@@ -27,7 +31,6 @@ deterministic real player movement
     - only if season < maxSeason, so export maxSeason
     - add draft info to prospects
 - in preseason
-  - add contract info
   - if not found, create (like if player was out of league for initial season)
 - expansion drafts?
   - at minimum, display text explaining it. better - add teams automatically
@@ -39,8 +42,8 @@ deterministic real player movement
 - manual
   - discuss development determinism too
   - movement
-    - event log, contract history not perfect
     - preseason
+      - teams, contracts
     - retire
     - temp retire
       - happens to injured players too, due to lack of data

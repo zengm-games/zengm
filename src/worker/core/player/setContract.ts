@@ -19,6 +19,7 @@ const setContract = (
 	p: Player | PlayerWithoutKey,
 	contract: PlayerContract,
 	signed: boolean,
+	phase: number = g.get("phase"),
 ) => {
 	// Sigh, don't know why this is needed, but people tell me that sometimes the #1 pick has a massively negative contract
 	if (contract.amount < 0) {
@@ -32,7 +33,7 @@ const setContract = (
 		// Is this contract beginning with an in-progress season, or next season?
 		let start = g.get("season");
 
-		if (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE) {
+		if (phase > PHASE.AFTER_TRADE_DEADLINE) {
 			start += 1;
 		}
 

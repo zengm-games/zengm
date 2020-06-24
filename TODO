@@ -10,7 +10,6 @@ import/export players
 - export
   - table alignment
     - skills and button are a little too big
-    - add field to player object with selected season, use to adjust on import
 - import
   - show table of players
   - form fields

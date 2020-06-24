@@ -32,16 +32,25 @@ const Row = ({
 					props.className = classNames(value.classNames);
 				}
 
-				// Expand clickable area of checkboxes to the whole td
-				if (
+				const singleCheckbox =
 					actualValue &&
 					actualValue.type === "input" &&
 					actualValue.props.type === "checkbox" &&
-					actualValue.props.onChange
-				) {
+					actualValue.props.onChange;
+				const singleButton =
+					actualValue &&
+					actualValue.type === "button" &&
+					actualValue.props.onClick;
+
+				// Expand clickable area of checkboxes/buttons to the whole td
+				if (singleCheckbox || singleButton) {
 					props.onClick = (event: MouseEvent) => {
 						if (event.target && (event.target as any).tagName === "TD") {
-							actualValue.props.onChange();
+							if (singleCheckbox) {
+								actualValue.props.onChange();
+							} else {
+								actualValue.props.onClick();
+							}
 						}
 					};
 					props["data-no-row-highlight"] = "true";

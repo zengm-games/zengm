@@ -1045,8 +1045,8 @@ const exportDraftClass = async (season: number) => {
 	};
 };
 
-const exportPlayers = async (info: { pid: number; season: number }[]) => {
-	const pids = info.map(x => x.pid);
+const exportPlayers = async (infos: { pid: number; season: number }[]) => {
+	const pids = infos.map(info => info.pid);
 
 	const data = await league.exportLeague(["players"], {
 		meta: false,
@@ -1054,6 +1054,13 @@ const exportPlayers = async (info: { pid: number; season: number }[]) => {
 			players: p => pids.includes(p.pid),
 		},
 	});
+
+	for (const p of data.players) {
+		const info = infos.find(info => info.pid === p.pid);
+		if (info) {
+			p.exportedSeason = info.season;
+		}
+	}
 
 	const filename = `${
 		process.env.SPORT === "basketball" ? "B" : "F"

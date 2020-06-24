@@ -1045,6 +1045,26 @@ const exportDraftClass = async (season: number) => {
 	};
 };
 
+const exportPlayers = async (info: { pid: number; season: number }[]) => {
+	const pids = info.map(x => x.pid);
+
+	const data = await league.exportLeague(["players"], {
+		meta: false,
+		filter: {
+			players: p => pids.includes(p.pid),
+		},
+	});
+
+	const filename = `${
+		process.env.SPORT === "basketball" ? "B" : "F"
+	}BGM_players_${g.get("leagueName")}_${g.get("season")}.json`;
+
+	return {
+		filename,
+		json: JSON.stringify(data, null, 2),
+	};
+};
+
 const generateFace = () => {
 	return face.generate();
 };
@@ -2406,6 +2426,7 @@ export default {
 	exportLeague,
 	exportPlayerAveragesCsv,
 	exportPlayerGamesCsv,
+	exportPlayers,
 	generateFace,
 	getLeagueInfo,
 	getLeagueName,

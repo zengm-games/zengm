@@ -1,15 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, downloadFile } from "../util";
-import { DataTable, PlayerNameLabels, WatchBlock } from "../components";
+import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
 const ExportPlayers = ({
 	challengeNoRatings,
+	multipleSeasons,
 	players,
 	season,
-	startingSeason,
 }: View<"exportPlayers">) => {
 	const [exporting, setExporting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -103,7 +103,7 @@ const ExportPlayers = ({
 				Here you can export any number of players to a JSON file which can be
 				imported into another league.
 			</p>
-			{season > startingSeason ? (
+			{multipleSeasons ? (
 				<p>Players can be selected from any season using the menu above.</p>
 			) : null}
 			<p>

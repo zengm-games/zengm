@@ -6,6 +6,21 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+import/export players
+- export
+  - past and current players
+  - table with checkboxes. show summary at top of # of players. sortable by checked status
+    - UI could look more like the draft, than checkboxes. if you add a player, he goes into the table on the right. then on the left, there could be a dropdown where you select the season. that would even allow you to export multiple copies of the same player, at different ages
+  - delete stuff that doesn't make sense, like relatives
+- import
+  - show table of players, let quick select team and contract
+  - checkbox to keep or delete history (stats, ratings, awards, HoF)
+  - field to select season to adjust him to
+  - checkbox to include/exclude player
+- in player transaction, show as imported. both event log and p.transactions
+
+on customize player screen, a + - button next to a players attributes in edit player to change all ratings except height quickly by 1 @dooby moogey#2784
+
 scheduled events editor
 - eventually add/edit/delete individual events
   - needs to handle tids, like already happens for adding/removing teams

@@ -1408,7 +1408,6 @@ const importPlayers = async (
 		tid: number;
 	}[],
 ) => {
-	console.log(leagueFile, players);
 	const currentSeason = g.get("season");
 	const currentPhase = g.get("phase");
 
@@ -1457,7 +1456,10 @@ const importPlayers = async (
 			weight: p.weight,
 		};
 
-		let seasonOffset2 = season - p.exportedSeason;
+		let seasonOffset2 =
+			typeof p.exportedSeason === "number"
+				? season - p.exportedSeason
+				: season - p.ratings[p.ratings.length - 1].season;
 		if (tid === PLAYER.UNDRAFTED) {
 			const draftYearInt = parseInt(draftYear);
 			if (

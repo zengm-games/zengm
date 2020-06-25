@@ -11,7 +11,9 @@ const ImportPlayers = ({
 	currentSeason,
 	godMode,
 }: View<"importPlayers">) => {
-	const [status, setStatus] = useState<undefined | "loading" | "importing">();
+	const [status, setStatus] = useState<
+		undefined | "loading" | "importing" | "success"
+	>();
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [leagueFile, setLeagueFile] = useState<{
 		startingSeason: number;
@@ -124,6 +126,8 @@ const ImportPlayers = ({
 		setPlayers(newPlayers);
 	};
 
+	const disableButtons = status !== undefined && status !== "success";
+
 	const rows = players.map((player, i) => {
 		const {
 			p,
@@ -175,7 +179,7 @@ const ImportPlayers = ({
 					type="checkbox"
 					title="Import player"
 					checked={checked}
-					disabled={!!status}
+					disabled={disableButtons}
 					onChange={handleChange("checked", i)}
 				/>,
 				i + 1,
@@ -309,7 +313,7 @@ const ImportPlayers = ({
 			</p>
 
 			<LeagueFileUpload
-				disabled={!!status}
+				disabled={disableButtons}
 				onLoading={() => {
 					setStatus("loading");
 				}}
@@ -453,7 +457,7 @@ const ImportPlayers = ({
 
 					<button
 						className="btn btn-lg btn-primary my-3"
-						disabled={!!status && numChecked > 0}
+						disabled={disableButtons || numChecked === 0}
 						onClick={async () => {
 							setStatus("importing");
 							setErrorMessage(undefined);
@@ -465,20 +469,32 @@ const ImportPlayers = ({
 									leagueFile,
 									players.filter(p => p.checked),
 								);
-								setLeagueFile({
-									startingSeason: currentSeason,
-								});
-								setPlayers([]);
 							} catch (error) {
 								console.error(error);
 								setErrorMessage(error.message);
 							}
 
-							setStatus(undefined);
+							setStatus("success");
 						}}
 					>
 						Import {numChecked} Players
 					</button>
+
+					{status === "success" ? (
+						<div>
+							<div className="alert alert-success d-inline-block mb-0">
+								Successfully imported players!
+							</div>
+						</div>
+					) : null}
+
+					{errorMessage ? (
+						<div>
+							<div className="alert alert-danger d-inline-block mb-0">
+								Error importing players: {errorMessage}
+							</div>
+						</div>
+					) : null}
 
 					{errorMessage ? (
 						<div>

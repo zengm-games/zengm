@@ -87,8 +87,9 @@ const ImportPlayers = ({
 		// const abbrev = helpers.getAbbrev(tid, teamInfoCache);
 
 		let ratings = p.ratings[p.ratings.length - 1];
+
 		for (let i = p.ratings.length - 1; i--; i >= 0) {
-			if (p.ratings[i].season === season) {
+			if (p.ratings[i].season + seasonOffset === season) {
 				ratings = p.ratings[i];
 				break;
 			}
@@ -110,6 +111,9 @@ const ImportPlayers = ({
 
 		const name = `${p.firstName} ${p.lastName}`;
 
+		const ageRow = ages.find(row => row.season === season);
+		const age = ageRow ? ageRow.age : 0;
+
 		return {
 			key: p.pid,
 			data: [
@@ -127,46 +131,64 @@ const ImportPlayers = ({
 				ratings.pos,
 				showRatings ? ratings.ovr : null,
 				showRatings ? ratings.pot : null,
-				<select
-					className="form-control"
-					onChange={handleChange("age", i)}
-					style={{ minWidth: 60 }}
-					value={season}
-				>
-					{ages.map(({ season, age }) => {
-						return (
-							<option key={season} value={season}>
-								{age}
-							</option>
-						);
-					})}
-				</select>,
-				"Team",
-				tid >= PLAYER.FREE_AGENT ? (
-					<div className="input-group input-group" style={{ minWidth: 180 }}>
-						<div className="input-group-prepend">
-							<div className="input-group-text">$</div>
-						</div>
-						<input
-							type="text"
+				{
+					value: (
+						<select
 							className="form-control"
-							onChange={handleChange("contractAmount", i)}
-							value={contractAmount}
-						/>
-						<div className="input-group-append">
-							<div className="input-group-text">M per year</div>
-						</div>
-					</div>
-				) : null,
-				tid >= PLAYER.FREE_AGENT ? (
-					<input
-						type="text"
-						className="form-control"
-						onChange={handleChange("contractExp", i)}
-						style={{ minWidth: 60 }}
-						value={contractExp}
-					/>
-				) : null,
+							onChange={handleChange("age", i)}
+							style={{ minWidth: 60 }}
+							value={season}
+						>
+							{ages.map(({ season, age }) => {
+								return (
+									<option key={season} value={season}>
+										{age}
+									</option>
+								);
+							})}
+						</select>
+					),
+					sortValue: age,
+				},
+				"Team",
+				tid >= PLAYER.FREE_AGENT
+					? {
+							value: (
+								<div
+									className="input-group input-group"
+									style={{ minWidth: 180 }}
+								>
+									<div className="input-group-prepend">
+										<div className="input-group-text">$</div>
+									</div>
+									<input
+										type="text"
+										className="form-control"
+										onChange={handleChange("contractAmount", i)}
+										value={contractAmount}
+									/>
+									<div className="input-group-append">
+										<div className="input-group-text">M per year</div>
+									</div>
+								</div>
+							),
+							sortValue: `$${contractAmount}M`,
+					  }
+					: null,
+				tid >= PLAYER.FREE_AGENT
+					? {
+							value: (
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange("contractExp", i)}
+									style={{ minWidth: 60 }}
+									value={contractExp}
+								/>
+							),
+							sortValue: parseInt(contractExp),
+					  }
+					: null,
 			],
 		};
 	});
@@ -245,7 +267,6 @@ const ImportPlayers = ({
 						const draftYear = p.draft.year;
 
 						const seasonOffset = currentSeason - season;
-						console.log(seasonOffset, currentSeason, season);
 
 						return {
 							p,
@@ -258,8 +279,6 @@ const ImportPlayers = ({
 							tid,
 						};
 					});
-
-					console.log(players);
 
 					setPlayers(players);
 

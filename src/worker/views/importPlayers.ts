@@ -14,6 +14,7 @@ const updateImportPlayers = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
+			godMode: g.get("godMode"),
 		};
 	}
 };

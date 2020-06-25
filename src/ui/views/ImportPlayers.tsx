@@ -8,6 +8,7 @@ import type { View } from "../../common/types";
 const ImportPlayers = ({
 	challengeNoRatings,
 	currentSeason,
+	godMode,
 }: View<"importPlayers">) => {
 	const [status, setStatus] = useState<undefined | "loading" | "importing">();
 	const [leagueFile, setLeagueFile] = useState<{
@@ -52,6 +53,25 @@ const ImportPlayers = ({
 		title: "Import Players",
 		dropdownView: "import_players",
 	});
+
+	const links = (
+		<p>
+			More: <a href={helpers.leagueUrl(["export_players"])}>Export Players</a> |{" "}
+			<a href={helpers.leagueUrl(["export_league"])}>Export League</a>
+		</p>
+	);
+
+	if (!godMode) {
+		return (
+			<>
+				{links}
+				<p>
+					You can only import players in{" "}
+					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+				</p>
+			</>
+		);
+	}
 
 	const cols = getCols(
 		"",
@@ -247,10 +267,7 @@ const ImportPlayers = ({
 
 	return (
 		<>
-			<p>
-				More: <a href={helpers.leagueUrl(["export_players"])}>Export Players</a>{" "}
-				| <a href={helpers.leagueUrl(["export_league"])}>Export League</a>
-			</p>
+			{links}
 
 			<LeagueFileUpload
 				disabled={!!status}

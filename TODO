@@ -21,8 +21,6 @@ import/export players
   - button to "clone" player, to allow selecting different age or whatever
   - delete stuff that doesn't make sense, like relatives
   - checkbox to keep or delete history (stats, ratings, awards, HoF)
-  - checkbox to include/exclude player
-  - only in god mode
   - can you give it a league file?
   - why name column not sorting?
   - make sure draft prospect year changing adjust things properly

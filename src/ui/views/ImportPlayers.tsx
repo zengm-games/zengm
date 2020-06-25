@@ -155,10 +155,8 @@ const ImportPlayers = ({
 		const ageRow = ages.find(row => row.season === season);
 		const age = ageRow ? ageRow.age : 0;
 
-		const key = p.pid;
-
 		return {
-			key,
+			key: i,
 			data: [
 				<input
 					type="checkbox"
@@ -168,9 +166,26 @@ const ImportPlayers = ({
 					onChange={handleChange("checked", i)}
 				/>,
 				i + 1,
-				<PlayerNameLabels injury={p.injury} skills={ratings.skills}>
-					{name}
-				</PlayerNameLabels>,
+				{
+					value: (
+						<div className="d-flex align-items-center justify-content-between">
+							<PlayerNameLabels injury={p.injury} skills={ratings.skills}>
+								{name}
+							</PlayerNameLabels>
+							<button
+								className="btn btn-secondary btn-sm ml-2"
+								onClick={() => {
+									const newPlayers = [...players];
+									newPlayers.splice(i, 0, helpers.deepCopy(player));
+									setPlayers(newPlayers);
+								}}
+							>
+								Clone
+							</button>
+						</div>
+					),
+					sortValue: name,
+				},
 				ratings.pos,
 				showRatings ? ratings.ovr : null,
 				showRatings ? ratings.pot : null,
@@ -213,7 +228,6 @@ const ImportPlayers = ({
 								<input
 									type="text"
 									className="form-control"
-									id={`draft-year-${key}`}
 									onChange={handleChange("draftYear", i)}
 									style={{ width: 60 }}
 									value={draftYear}
@@ -264,6 +278,8 @@ const ImportPlayers = ({
 			],
 		};
 	});
+
+	const numChecked = players.filter(p => p.checked).length;
 
 	return (
 		<>
@@ -400,14 +416,14 @@ const ImportPlayers = ({
 
 					<button
 						className="btn btn-lg btn-primary my-3"
-						disabled={!!status}
+						disabled={!!status && numChecked > 0}
 						onClick={async () => {
 							setStatus("importing");
 
 							setStatus(undefined);
 						}}
 					>
-						Import Players
+						Import {numChecked} Players
 					</button>
 				</>
 			) : null}

@@ -11,11 +11,11 @@ import/export players
   - table alignment
     - skills and button are a little too big
 - import
-  - button to "clone" player, to allow selecting different age or whatever
   - on processing
     - delete stuff that doesn't make sense, like relatives
     - augment
     - make sure draft prospect year changing adjust things properly
+      - draftYear only matters for that tid
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
   - can you give it a league file? yeah, so explain it

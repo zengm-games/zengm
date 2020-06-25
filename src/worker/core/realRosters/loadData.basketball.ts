@@ -25,10 +25,11 @@ export type Ratings = {
 type Basketball = {
 	awards: Record<
 		string,
-		{
-			type: string;
-			season: number;
-		}[]
+		| {
+				type: string;
+				season: number;
+		  }[]
+		| undefined
 	>;
 	stats: {
 		slug: string;
@@ -37,19 +38,20 @@ type Basketball = {
 	}[];
 	bios: Record<
 		string,
-		{
-			name: string;
-			bornYear: number;
-			country: string;
-			weight: number;
-			pos: string;
-			height: number;
-			college: string;
-			draftYear: number;
-			draftRound: number;
-			draftPick: number;
-			draftAbbrev: string;
-		}
+		| {
+				name: string;
+				bornYear: number;
+				country: string;
+				weight: number;
+				pos: string;
+				height: number;
+				college: string;
+				draftYear: number;
+				draftRound: number;
+				draftPick: number;
+				draftAbbrev: string;
+		  }
+		| undefined
 	>;
 	ratings: Ratings[];
 	relatives: {

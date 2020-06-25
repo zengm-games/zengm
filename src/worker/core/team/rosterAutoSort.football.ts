@@ -20,6 +20,9 @@ const rosterAutoSort = async (
 	pos?: Position,
 ) => {
 	const t = await idb.cache.teams.get(tid);
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
 	const depth = t.depth;
 
 	if (depth === undefined) {

@@ -247,6 +247,9 @@ const writePlayerStats = async (
 						const promises: Promise<any>[] = [];
 
 						const p2 = await idb.cache.players.get(p.id);
+						if (!p2) {
+							throw new Error("Invalid pid");
+						}
 
 						if (!allStarGame) {
 							let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)

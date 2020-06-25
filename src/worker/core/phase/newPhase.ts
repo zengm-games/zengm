@@ -11,7 +11,7 @@ import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
 import newPhaseExpansionDraft from "./newPhaseExpansionDraft";
 import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
-import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
+import type { Conditions, Phase } from "../../../common/types";
 
 /**
  * Set a new phase of the game.
@@ -82,18 +82,9 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			await updatePlayMenu();
 
 			if (phaseChangeInfo.hasOwnProperty(phase)) {
-				const result: PhaseReturn = await phaseChangeInfo[phase].func(
-					conditions,
-					extra,
-				);
+				const result = await phaseChangeInfo[phase].func(conditions, extra);
 
-				if (result) {
-					await finalize(phase, conditions, result);
-				} else {
-					throw new Error(
-						`Invalid result from phase change: ${JSON.stringify(result)}`,
-					);
-				}
+				await finalize(phase, conditions, result);
 			} else {
 				throw new Error(`Unknown phase number ${phase}`);
 			}

@@ -133,7 +133,7 @@ const getPlayoffInfos = async (game: Game) => {
 	] as const;
 
 	return {
-		currentRound: playoffSeries.currentRound,
+		currentRound: playoffSeries ? playoffSeries.currentRound : undefined,
 		playoffInfos,
 	};
 };
@@ -225,7 +225,7 @@ const writeGameStats = async (
 		if (
 			tied &&
 			gameStats.teams[0].tied !== undefined &&
-			gameStats.teams[1].tied
+			gameStats.teams[1].tied !== undefined
 		) {
 			gameStats.teams[0].tied += 1;
 			gameStats.teams[1].tied += 1;

@@ -213,11 +213,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}
 			}
 
+			const allAwards = basketball.awards[slug];
+
 			awards =
-				basketball.awards[slug] && !draftProspect
-					? helpers.deepCopy(
-							basketball.awards[slug].filter(award => award.season < season),
-					  )
+				allAwards && !draftProspect
+					? helpers.deepCopy(allAwards.filter(award => award.season < season))
 					: undefined;
 		}
 

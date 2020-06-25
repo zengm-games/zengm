@@ -22,11 +22,11 @@ const countPositions = async () => {
 
 		const ovr = player.ovr(r, position);
 
-		if (!posCounts[position]) {
+		if (posCounts[position] === undefined) {
 			posCounts[position] = 0;
 		}
 
-		if (!posOvrs[position]) {
+		if (posOvrs[position] === undefined) {
 			posOvrs[position] = 0;
 		}
 

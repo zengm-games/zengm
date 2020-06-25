@@ -100,6 +100,7 @@ export const createWithoutSaving = async (
 
 			if (!t.colors) {
 				if (
+					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					teamsDefault[i] &&
 					teamsDefault[i].region === t.region &&
 					teamsDefault[i].name === t.name
@@ -790,6 +791,7 @@ export const createWithoutSaving = async (
 		for (let i = 0; i < maxNumFreeAgents; i++) {
 			const p = keptPlayers[i];
 
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (p) {
 				// So half will be eligible to retire after the first season
 				p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;

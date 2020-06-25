@@ -5,6 +5,7 @@ import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";
 import achievements from "./achievements.basketball";
+import type { TeamSeason } from "../../common/types";
 
 const get = (slug: string): any => {
 	const achievement = achievements.find(
@@ -832,10 +833,10 @@ describe("worker/util/achievements.basketball", () => {
 			let awarded = await get("septuawinarian").check();
 			assert.equal(awarded, false);
 
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
+			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			);
+			)) as TeamSeason;
 			teamSeason.won = 70;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -1103,10 +1104,10 @@ describe("worker/util/achievements.basketball", () => {
 			};
 
 			await idb.cache.playoffSeries.put(ps);
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
+			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			);
+			)) as TeamSeason;
 			teamSeason.won = 82;
 			teamSeason.lost = 0;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -1116,10 +1117,10 @@ describe("worker/util/achievements.basketball", () => {
 		});
 
 		test("don't award achievement without 82-0 regular season", async () => {
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
+			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			);
+			)) as TeamSeason;
 			teamSeason.won = 82;
 			teamSeason.lost = 1;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -1393,10 +1394,10 @@ describe("worker/util/achievements.basketball", () => {
 			};
 
 			await idb.cache.playoffSeries.put(ps);
-			const teamSeason = await idb.cache.teamSeasons.indexGet(
+			const teamSeason = (await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			);
+			)) as TeamSeason;
 			teamSeason.won = 82;
 			teamSeason.lost = 0;
 			await idb.cache.teamSeasons.put(teamSeason);

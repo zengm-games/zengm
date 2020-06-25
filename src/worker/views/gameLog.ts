@@ -179,7 +179,7 @@ const updateGamesList = async (
 	{ abbrev, season }: ViewInput<"gameLog">,
 	updateEvents: UpdateEvents,
 	state: {
-		gamesList: {
+		gamesList?: {
 			games: Game[];
 			abbrev: string;
 			season: number;

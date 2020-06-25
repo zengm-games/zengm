@@ -18,7 +18,7 @@ import type { Player } from "../../../common/types";
  */
 const checkRosterSizes = async (): Promise<string | void> => {
 	const minFreeAgents: Player[] = [];
-	let userTeamSizeError;
+	let userTeamSizeError: string | undefined;
 
 	const checkRosterSize = async (tid: number) => {
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);

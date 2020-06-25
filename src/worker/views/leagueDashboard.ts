@@ -37,8 +37,8 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			]),
 		]);
 		return {
-			region: t.region,
-			name: t.name,
+			region: t ? t.region : "",
+			name: t ? t.name : "",
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,

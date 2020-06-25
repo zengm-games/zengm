@@ -206,15 +206,13 @@ const orderByWinp = <
 	season: number = g.get("season"),
 ): T[] => {
 	const defaultFuncs = [
-		(t: T) => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
-		(t: T) => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+		(t: T) => t.seasonAttrs.winp,
+		(t: T) => t.seasonAttrs.won,
 
 		// We want ties to be randomly decided, but consistently so orderByWinp can be called multiple times with a deterministic result
 		(t: T) =>
 			random.uniformSeed(
-				t.tid +
-					season +
-					(t.seasonAttrs ? t.seasonAttrs.won + t.seasonAttrs.winp : 0),
+				t.tid + season + (t.seasonAttrs.won + t.seasonAttrs.winp),
 			),
 	];
 	const defaultOrders: Array<"asc" | "desc"> = ["desc", "desc", "asc"];

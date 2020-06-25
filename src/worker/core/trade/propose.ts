@@ -1,10 +1,10 @@
 import { PHASE } from "../../../common";
 import { team } from "..";
-import { idb } from "../../db";
 import { g } from "../../util";
 import clear from "./clear";
 import processTrade from "./processTrade";
 import summary from "./summary";
+import get from "./get";
 
 /**
  * Proposes the current trade in the database.
@@ -25,7 +25,7 @@ const propose = async (
 		return [false, "Error! You're not allowed to make trades now."];
 	}
 
-	const { teams } = await idb.cache.trade.get(0);
+	const { teams } = await get();
 	const tids: [number, number] = [teams[0].tid, teams[1].tid];
 	const pids: [number[], number[]] = [teams[0].pids, teams[1].pids];
 	const dpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];

@@ -1,5 +1,6 @@
 import { idb } from "../../db";
 import type { TradeTeams } from "../../../common/types";
+import get from "./get";
 
 /**
  * Start a new trade with a team.
@@ -9,8 +10,9 @@ import type { TradeTeams } from "../../../common/types";
  * @return {Promise}
  */
 const create = async (teams: TradeTeams) => {
-	const tr = await idb.cache.trade.get(0); // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
+	const tr = await get();
 
+	// If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
 	if (
 		teams[0].pids.length === 0 &&
 		teams[1].pids.length === 0 &&

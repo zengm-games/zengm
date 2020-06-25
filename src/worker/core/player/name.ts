@@ -5,11 +5,11 @@ const name = (): {
 	firstName: string;
 	lastName: string;
 } => {
-	let playerNames = local.playerNames;
+	// This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
+	const playerNames =
+		local.playerNames === undefined ? loadNames() : local.playerNames;
 
-	if (playerNames === undefined) {
-		// This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
-		playerNames = loadNames();
+	if (local.playerNames === undefined) {
 		local.playerNames = playerNames;
 	}
 
@@ -26,19 +26,19 @@ const name = (): {
 
 	const country = countryRow[0];
 
-	if (!playerNames.first[country]) {
+	const firstCountry = playerNames.first[country];
+	const lastCountry = playerNames.last[country];
+
+	if (!firstCountry) {
 		throw new Error(`No first names found for ${country}`);
 	}
-	if (!playerNames.last[country]) {
+	if (!lastCountry) {
 		throw new Error(`No last names found for ${country}`);
 	}
 
 	// First name
-	const fnRand = random.uniform(
-		0,
-		playerNames.first[country][playerNames.first[country].length - 1][1],
-	);
-	const firstNameRow = playerNames.first[country].find(row => row[1] >= fnRand);
+	const fnRand = random.uniform(0, firstCountry[firstCountry.length - 1][1]);
+	const firstNameRow = firstCountry.find(row => row[1] >= fnRand);
 
 	if (firstNameRow === undefined) {
 		throw new Error(`Undefined firstNameRow (fnRand=${fnRand}`);
@@ -47,11 +47,8 @@ const name = (): {
 	const firstName = firstNameRow[0];
 
 	// Last name
-	const lnRand = random.uniform(
-		0,
-		playerNames.last[country][playerNames.last[country].length - 1][1],
-	);
-	const lastNameRow = playerNames.last[country].find(row => row[1] >= lnRand);
+	const lnRand = random.uniform(0, lastCountry[lastCountry.length - 1][1]);
+	const lastNameRow = lastCountry.find(row => row[1] >= lnRand);
 
 	if (lastNameRow === undefined) {
 		throw new Error(`Undefined lastNameRow (lnRand=${lnRand}`);

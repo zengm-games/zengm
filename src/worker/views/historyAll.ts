@@ -94,6 +94,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			if (series) {
 				const finals = series.series[series.series.length - 1][0];
 
+				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 				if (!finals || !finals.away) {
 					continue;
 				}

@@ -4,6 +4,7 @@ import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 import { beforeTests, givePlayerMinContract } from "./testHelpers";
+import type { Player } from "../../../common/types";
 
 describe("worker/core/contractNegotiation/create", () => {
 	beforeAll(beforeTests);
@@ -92,7 +93,7 @@ describe("worker/core/contractNegotiation/create", () => {
 		const pid2 = 1;
 		await givePlayerMinContract(pid1);
 		await givePlayerMinContract(pid2);
-		const p = await idb.cache.players.get(pid1);
+		const p = (await idb.cache.players.get(pid1)) as Player;
 		p.tid = g.get("userTid");
 		await idb.cache.players.put(p);
 		let error = await contractNegotiation.create(pid2, false);

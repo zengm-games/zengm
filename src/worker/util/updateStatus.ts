@@ -23,7 +23,7 @@ const updateStatus = async (statusText?: string, conditions?: Conditions) => {
 
 		if (g.get("gameOver")) {
 			const t = await idb.cache.teams.get(g.get("userTid"));
-			if (t.disabled) {
+			if (t && t.disabled) {
 				defaultStatusText = "Your team folded!";
 			} else {
 				defaultStatusText = "You're fired!";

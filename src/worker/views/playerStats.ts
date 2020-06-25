@@ -36,6 +36,7 @@ const updatePlayers = async (
 			statsTable = PLAYER_STATS_TABLES[inputs.statType];
 		}
 
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${inputs.statType}"`);
 		}
@@ -77,7 +78,7 @@ const updatePlayers = async (
 			statType = "totals";
 		}
 
-		if (!tid && inputs.abbrev === "watch") {
+		if (tid === undefined && inputs.abbrev === "watch") {
 			playersAll = playersAll.filter(
 				p => p.watch && typeof p.watch !== "function",
 			);
@@ -116,7 +117,7 @@ const updatePlayers = async (
 			}
 
 			// Special case for career totals - use g.get("numGames") games, unless this is the first season
-			if (!inputs.season) {
+			if (inputs.season === undefined) {
 				if (g.get("season") > g.get("startingSeason")) {
 					gp = g.get("numGames");
 				}
@@ -127,12 +128,12 @@ const updatePlayers = async (
 				let min;
 
 				if (inputs.statType === "totals") {
-					if (inputs.season) {
+					if (inputs.season === undefined) {
 						min = p.stats.min;
 					} else if (inputs.playoffs !== "playoffs") {
 						min = p.careerStats.min;
 					}
-				} else if (inputs.season) {
+				} else if (inputs.season === undefined) {
 					min = p.stats.gp * p.stats.min;
 				} else if (inputs.playoffs !== "playoffs") {
 					min = p.careerStats.gp * p.careerStats.min;
@@ -146,7 +147,7 @@ const updatePlayers = async (
 
 				// Or, keep players who played in playoffs
 				if (inputs.playoffs === "playoffs") {
-					if (inputs.season) {
+					if (inputs.season === undefined) {
 						if (p.stats.gp > 0) {
 							return true;
 						}

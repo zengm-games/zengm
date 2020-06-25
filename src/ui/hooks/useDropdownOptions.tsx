@@ -109,6 +109,7 @@ export const getDropdownValue = (
 		return dropdownValues[key];
 	}
 
+	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (TEAM_STATS_TABLES[key]) {
 		return TEAM_STATS_TABLES[key].name;
 	}

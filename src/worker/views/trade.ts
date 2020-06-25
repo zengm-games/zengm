@@ -31,7 +31,7 @@ const getSummary = async (teams: TradeTeams) => {
 
 // Validate that the stored player IDs correspond with the active team ID
 const validateTeams = async () => {
-	const { teams } = await idb.cache.trade.get(0);
+	const { teams } = await trade.get();
 
 	if (teams[0].tid !== g.get("userTid")) {
 		teams[0] = {

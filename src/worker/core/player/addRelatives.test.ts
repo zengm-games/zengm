@@ -21,6 +21,14 @@ const genBrothers = () => {
 	);
 };
 
+const getPlayer = async (pid: number) => {
+	const p = await idb.cache.players.get(pid);
+	if (p === undefined) {
+		throw new Error("Invalid pid");
+	}
+	return p;
+};
+
 describe("worker/core/player/addRelatives", () => {
 	beforeAll(() => {
 		testHelpers.resetG();
@@ -38,7 +46,7 @@ describe("worker/core/player/addRelatives", () => {
 					...genBrothers(),
 				],
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			p.born.loc = "Fake Country";
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
@@ -62,7 +70,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5)],
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			await makeBrother(p);
 			assert.equal(p.relatives.length, 0);
 		});
@@ -85,7 +93,7 @@ describe("worker/core/player/addRelatives", () => {
 					...initialBrothers,
 				],
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
@@ -126,7 +134,7 @@ describe("worker/core/player/addRelatives", () => {
 					...genBrothers(),
 				],
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
@@ -164,7 +172,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players,
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
@@ -205,7 +213,7 @@ describe("worker/core/player/addRelatives", () => {
 					...initialBrothers,
 				],
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
@@ -247,7 +255,7 @@ describe("worker/core/player/addRelatives", () => {
 					...genBrothers(),
 				],
 			});
-			const p = await idb.cache.players.get(0);
+			const p = await getPlayer(0);
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
@@ -264,7 +272,7 @@ describe("worker/core/player/addRelatives", () => {
 					...genFathers(),
 				],
 			});
-			const son = await idb.cache.players.get(0);
+			const son = await getPlayer(0);
 			son.born.loc = "Fake Country";
 			await makeSon(son);
 			const fathers = await idb.cache.players.indexGetAll(
@@ -290,7 +298,7 @@ describe("worker/core/player/addRelatives", () => {
 			await testHelpers.resetCache({
 				players: [player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5)],
 			});
-			const son = await idb.cache.players.get(0);
+			const son = await getPlayer(0);
 			await makeSon(son);
 			assert.equal(son.relatives.length, 0);
 		});
@@ -308,7 +316,7 @@ describe("worker/core/player/addRelatives", () => {
 				pid: 1,
 				name: "Foo Bar",
 			};
-			const son = await idb.cache.players.get(0);
+			const son = await getPlayer(0);
 			son.relatives = [relFather];
 			await makeSon(son);
 			const fathers = await idb.cache.players.indexGetAll(
@@ -330,7 +338,7 @@ describe("worker/core/player/addRelatives", () => {
 					...genFathers(),
 				],
 			});
-			const son = await idb.cache.players.get(0);
+			const son = await getPlayer(0);
 			son.relatives = [
 				{
 					type: "brother",
@@ -339,7 +347,7 @@ describe("worker/core/player/addRelatives", () => {
 				},
 			];
 			await idb.cache.players.put(son);
-			const brother = await idb.cache.players.get(1);
+			const brother = await getPlayer(1);
 			brother.born.loc = "Fake Country";
 			brother.relatives = [
 				{
@@ -360,8 +368,8 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No father found");
 			}
 
-			const son2 = await idb.cache.players.get(0);
-			const brother2 = await idb.cache.players.get(1);
+			const son2 = await getPlayer(0);
+			const brother2 = await getPlayer(1);
 			assert.equal(son2.relatives.length, 2);
 			assert.equal(son2.relatives[0].type, "father");
 			assert.equal(son2.relatives[0].pid, father.pid);
@@ -419,7 +427,7 @@ describe("worker/core/player/addRelatives", () => {
 				await idb.cache.players.put(otherSon);
 			}
 
-			const son = await idb.cache.players.get(0);
+			const son = await getPlayer(0);
 			await makeSon(son);
 			const fathers2 = await idb.cache.players.indexGetAll(
 				"playersByTid",
@@ -438,7 +446,7 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No other son found");
 			}
 
-			const son2 = await idb.cache.players.get(0);
+			const son2 = await getPlayer(0);
 			assert.equal(son2.relatives.length, 2);
 			assert.equal(son2.relatives[0].type, "father");
 			assert.equal(son2.relatives[0].pid, father.pid);

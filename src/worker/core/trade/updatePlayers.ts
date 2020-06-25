@@ -14,10 +14,11 @@ import isUntradable from "./isUntradable";
 const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
 	// Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
 	for (const t of teams) {
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!t.dpidsExcluded) {
 			t.dpidsExcluded = [];
 		}
-
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!t.pidsExcluded) {
 			t.pidsExcluded = [];
 		}

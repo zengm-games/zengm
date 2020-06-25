@@ -129,7 +129,7 @@ class StoreAPI<Input, Output, ID> {
 		this.store = store;
 	}
 
-	get(id: ID): Promise<Output> {
+	get(id: ID): Promise<Output | undefined> {
 		if (typeof id !== "number" && typeof id !== "string") {
 			throw new Error("Invalid input type");
 		}
@@ -145,7 +145,7 @@ class StoreAPI<Input, Output, ID> {
 	indexGet(
 		index: Index,
 		key: number | string | (number | string | boolean)[],
-	): Promise<Output> {
+	): Promise<Output | undefined> {
 		return this.cache._indexGet(index, key);
 	}
 

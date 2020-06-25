@@ -17,6 +17,7 @@ const updateLeagueStats = async (
 	) {
 		const statsTable = TEAM_STATS_TABLES[inputs.teamOpponent];
 
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!statsTable) {
 			throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
 		}

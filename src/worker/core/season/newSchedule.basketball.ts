@@ -75,9 +75,11 @@ const newScheduleDefault = (
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
 		const cid = t.seasonAttrs.cid;
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!tidsByConf[cid]) {
 			tidsByConf[cid] = [];
 		}
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!dids[cid]) {
 			dids[cid] = [];
 		}

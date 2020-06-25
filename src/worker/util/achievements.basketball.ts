@@ -20,7 +20,6 @@ const checkFoFoFo = async () => {
 		for (const series of round) {
 			if (
 				series.away &&
-				series.home &&
 				series.away.won >= 4 &&
 				series.home.won === 0 &&
 				series.away.tid === g.get("userTid")
@@ -31,7 +30,6 @@ const checkFoFoFo = async () => {
 
 			if (
 				series.away &&
-				series.home &&
 				series.home.won >= 4 &&
 				series.away.won === 0 &&
 				series.home.tid === g.get("userTid")
@@ -263,7 +261,7 @@ const achievements: Achievement[] = [
 				season: g.get("season"),
 				tid: g.get("userTid"),
 			});
-			return !!(t && t.seasonAttrs && t.seasonAttrs.won >= 70);
+			return !!(t && t.seasonAttrs.won >= 70);
 		},
 
 		when: "afterRegularSeason",
@@ -284,12 +282,7 @@ const achievements: Achievement[] = [
 					tid: g.get("userTid"),
 				});
 
-				if (
-					t &&
-					t.seasonAttrs &&
-					t.seasonAttrs.won === 82 &&
-					t.seasonAttrs.lost === 0
-				) {
+				if (t && t.seasonAttrs.won === 82 && t.seasonAttrs.lost === 0) {
 					return true;
 				}
 			}
@@ -340,6 +333,7 @@ const achievements: Achievement[] = [
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
+					p &&
 					p.tid === g.get("userTid") &&
 					p.draft.tid === g.get("userTid") &&
 					p.draft.year === g.get("season") - 1 &&
@@ -367,6 +361,7 @@ const achievements: Achievement[] = [
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
+					p &&
 					p.tid === g.get("userTid") &&
 					p.draft.tid === g.get("userTid") &&
 					p.draft.year === g.get("season") - 1 &&

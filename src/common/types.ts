@@ -566,10 +566,10 @@ export type MenuItemHeader = {
 
 export type Names = {
 	first: {
-		[key: string]: [string, number][];
+		[key: string]: [string, number][] | undefined;
 	};
 	last: {
-		[key: string]: [string, number][];
+		[key: string]: [string, number][] | undefined;
 	};
 };
 
@@ -1145,7 +1145,8 @@ export type TeamStats = TeamStatsWithoutKey & {
 };
 
 export type TradePickValues = {
-	[key: string]: number[];
+	[key: string]: number[] | undefined;
+	default: number[];
 };
 type TradeSummaryTeam = {
 	name: string;

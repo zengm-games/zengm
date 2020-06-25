@@ -8,6 +8,10 @@ const stats =
 
 const getPlayerInfo = async (pid: number) => {
 	const p = await idb.cache.players.get(pid);
+	if (!p) {
+		throw new Error("Invalid pid");
+	}
+
 	return idb.getCopy.playersPlus(p, {
 		attrs: [
 			"pid",

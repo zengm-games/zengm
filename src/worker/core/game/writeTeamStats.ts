@@ -35,6 +35,10 @@ const writeTeamStats = async (results: GameResults) => {
 		const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 		const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;
 
+		if (!t) {
+			throw new Error("Invalid tid");
+		}
+
 		// Attendance - base calculation now, which is used for other revenue estimates
 		if (t1 === 0) {
 			// Base on home team

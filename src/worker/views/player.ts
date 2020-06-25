@@ -77,55 +77,57 @@ const updatePlayer = async (
 			playoffs: boolean;
 		} & Record<string, number>;
 
-		const p: Pick<
-			Player,
-			| "pid"
-			| "tid"
-			| "hgt"
-			| "weight"
-			| "born"
-			| "contract"
-			| "diedYear"
-			| "face"
-			| "imgURL"
-			| "freeAgentMood"
-			| "injury"
-			| "injuries"
-			| "college"
-			| "watch"
-			| "relatives"
-		> & {
-			age: number;
-			draft: {
-				round: number;
-				pick: number;
-				tid: number;
-				originalTid: number;
-				year: number;
-				pot: number;
-				ovr: number;
-				skills: string[];
-				age: number;
-				abbrev: string;
-				originalAbbrev: string;
-			};
-			name: string;
-			abbrev: string;
-			mood: any;
-			salaries: any[];
-			salariesTotal: any;
-			awardsGrouped: any[];
-			untradable: any;
-			untradableMsg: string;
-			ratings: (MinimalPlayerRatings & {
-				abbrev: string;
-				age: number;
-				tid: number;
-			})[];
-			stats: Stats[];
-			careerStats: Stats;
-			careerStatsPlayoffs: Stats;
-		} = await idb.getCopy.playersPlus(pRaw, {
+		const p:
+			| (Pick<
+					Player,
+					| "pid"
+					| "tid"
+					| "hgt"
+					| "weight"
+					| "born"
+					| "contract"
+					| "diedYear"
+					| "face"
+					| "imgURL"
+					| "freeAgentMood"
+					| "injury"
+					| "injuries"
+					| "college"
+					| "watch"
+					| "relatives"
+			  > & {
+					age: number;
+					draft: {
+						round: number;
+						pick: number;
+						tid: number;
+						originalTid: number;
+						year: number;
+						pot: number;
+						ovr: number;
+						skills: string[];
+						age: number;
+						abbrev: string;
+						originalAbbrev: string;
+					};
+					name: string;
+					abbrev: string;
+					mood: any;
+					salaries: any[];
+					salariesTotal: any;
+					awardsGrouped: any[];
+					untradable: any;
+					untradableMsg: string;
+					ratings: (MinimalPlayerRatings & {
+						abbrev: string;
+						age: number;
+						tid: number;
+					})[];
+					stats: Stats[];
+					careerStats: Stats;
+					careerStatsPlayoffs: Stats;
+			  })
+			| undefined = await idb.getCopy.playersPlus(pRaw, {
 			attrs: [
 				"pid",
 				"name",

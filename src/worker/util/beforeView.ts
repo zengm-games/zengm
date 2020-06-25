@@ -136,7 +136,9 @@ const beforeLeague = async (
 		}
 
 		// Reuse existing cache, if it was just created while generating a new league
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!idb.cache || !idb.cache.newLeague || switchingDatabaseLid) {
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (idb.cache) {
 				idb.cache.stopAutoFlush();
 			}
@@ -148,6 +150,7 @@ const beforeLeague = async (
 			if (loadingNewLid !== newLid) {
 				return;
 			}
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		} else if (idb.cache && idb.cache.newLeague) {
 			idb.cache.newLeague = false;
 		}

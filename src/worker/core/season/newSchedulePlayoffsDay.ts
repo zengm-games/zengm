@@ -29,6 +29,9 @@ const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
  */
 const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (!playoffSeries) {
+		throw new Error("No playoff series");
+	}
 	const series = playoffSeries.series;
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
@@ -73,6 +76,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			"teamSeasonsBySeasonTid",
 			[g.get("season"), key],
 		);
+		if (!teamSeason) {
+			throw new Error("No team season");
+		}
 		teamSeason.playoffRoundsWon = g.get("numGamesPlayoffSeries").length;
 		teamSeason.hype += 0.05;
 
@@ -163,6 +169,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 				"teamSeasonsBySeasonTid",
 				[g.get("season"), tid],
 			);
+			if (!teamSeason) {
+				throw new Error("No team season");
+			}
 			teamSeason.playoffRoundsWon = playoffSeries.currentRound;
 			teamSeason.hype += 0.05;
 

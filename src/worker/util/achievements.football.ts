@@ -31,12 +31,7 @@ const achievements: Achievement[] = [
 					tid: g.get("userTid"),
 				});
 
-				if (
-					t &&
-					t.seasonAttrs &&
-					t.seasonAttrs.won === 16 &&
-					t.seasonAttrs.lost === 0
-				) {
+				if (t && t.seasonAttrs.won === 16 && t.seasonAttrs.lost === 0) {
 					return true;
 				}
 			}
@@ -85,6 +80,7 @@ const achievements: Achievement[] = [
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
+					p &&
 					p.tid === g.get("userTid") &&
 					p.draft.tid === g.get("userTid") &&
 					p.draft.year === g.get("season") - 1 &&
@@ -112,6 +108,7 @@ const achievements: Achievement[] = [
 				const p = await idb.cache.players.get(awards.roy.pid);
 
 				if (
+					p &&
 					p.tid === g.get("userTid") &&
 					p.draft.tid === g.get("userTid") &&
 					p.draft.year === g.get("season") - 1 &&

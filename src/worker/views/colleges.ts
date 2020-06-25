@@ -21,7 +21,7 @@ const valueStatNames =
 
 const reducer = (
 	type: "college" | "country",
-	infos: { [key: string]: InfoTemp },
+	infos: { [key: string]: InfoTemp | undefined },
 	p: Player,
 ) => {
 	// Ignore future draft prospects
@@ -62,7 +62,7 @@ const reducer = (
 		};
 	}
 
-	const info = infos[name];
+	const info = infos[name] as InfoTemp;
 	info.numPlayers += 1;
 	if (p.tid >= 0) {
 		info.numActivePlayers += 1;

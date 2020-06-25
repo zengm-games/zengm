@@ -46,7 +46,6 @@ const checkMoneyball = async (maxPayroll: number) => {
 	});
 	return !!(
 		t &&
-		t.seasonAttrs &&
 		t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length &&
 		t.seasonAttrs.expenses.salary.amount <= maxPayroll
 	);
@@ -192,7 +191,6 @@ const achievements: Achievement[] = [
 			});
 			return !!(
 				t &&
-				t.seasonAttrs &&
 				t.seasonAttrs.playoffRoundsWon ===
 					g.get("numGamesPlayoffSeries").length &&
 				t.seasonAttrs.pop <= 2
@@ -440,7 +438,7 @@ const achievements: Achievement[] = [
 					if (tid === g.get("userTid")) {
 						const p = await idb.cache.players.get(pid);
 
-						if (p.retiredYear === g.get("season")) {
+						if (p && p.retiredYear === g.get("season")) {
 							return true;
 						}
 					}
@@ -467,7 +465,7 @@ const achievements: Achievement[] = [
 						if (tid === g.get("userTid")) {
 							const p = await idb.cache.players.get(pid);
 
-							if (p.draft.year === g.get("season") - 1) {
+							if (p && p.draft.year === g.get("season") - 1) {
 								return true;
 							}
 						}
@@ -494,7 +492,7 @@ const achievements: Achievement[] = [
 					if (tid === g.get("userTid")) {
 						const p = await idb.cache.players.get(pid);
 
-						if (p.draft.year === g.get("season") - 1) {
+						if (p && p.draft.year === g.get("season") - 1) {
 							return true;
 						}
 					}

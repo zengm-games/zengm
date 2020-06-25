@@ -54,6 +54,9 @@ const processTrade = async (
 
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
+			if (!p) {
+				throw new Error("Invalid pid");
+			}
 			p.tid = tids[k];
 
 			// p.gamesUntilTradable = 14; // Don't make traded players untradable
@@ -83,6 +86,9 @@ const processTrade = async (
 
 		for (const dpid of dpids[j]) {
 			const dp = await idb.cache.draftPicks.get(dpid);
+			if (!dp) {
+				throw new Error("Invalid dpid");
+			}
 			dp.tid = tids[k];
 			await idb.cache.draftPicks.put(dp);
 		}

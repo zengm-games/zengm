@@ -7,6 +7,9 @@ const draftOne = async (): Promise<{
 	pid?: number;
 }> => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
+	if (!allStars) {
+		throw new Error("allStars not found");
+	}
 
 	if (allStars.finalized) {
 		return {

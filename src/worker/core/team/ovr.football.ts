@@ -9,54 +9,49 @@ const ovr = (
 		};
 	}[],
 ) => {
-	const info: {
-		[key: string]: {
-			ovrs: number[];
-			minLength: number;
-		};
-	} = {
+	const info = {
 		QB: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 1,
 		},
 		RB: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 2,
 		},
 		TE: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 2,
 		},
 		WR: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 5,
 		},
 		OL: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 5,
 		},
 		CB: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 3,
 		},
 		S: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 3,
 		},
 		LB: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 4,
 		},
 		DL: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 4,
 		},
 		K: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 1,
 		},
 		P: {
-			ovrs: [],
+			ovrs: [] as number[],
 			minLength: 1,
 		},
 	};
@@ -68,8 +63,9 @@ const ovr = (
 	);
 
 	for (const { ovr, pos } of ratings) {
-		if (info[pos]) {
-			info[pos].ovrs.push(ovr);
+		const infoPos = (info as any)[pos] as typeof info["P"] | undefined;
+		if (infoPos) {
+			infoPos.ovrs.push(ovr);
 		}
 	}
 

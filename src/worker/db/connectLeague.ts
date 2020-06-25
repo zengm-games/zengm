@@ -770,9 +770,9 @@ const migrate = ({
 	if (oldVersion <= 34) {
 		const teamsDefault = helpers.getTeamsDefault();
 		iterate(transaction.objectStore("teams"), undefined, undefined, t => {
-			if (!t.colors) {
+			if (!(t as any).colors) {
 				if (
-					teamsDefault[t.tid] &&
+					(teamsDefault as any)[t.tid] &&
 					teamsDefault[t.tid].region === t.region &&
 					teamsDefault[t.tid].name === t.name
 				) {
@@ -789,7 +789,7 @@ const migrate = ({
 	if (oldVersion <= 35) {
 		slowUpgrade();
 		iterate(transaction.objectStore("players"), undefined, undefined, p => {
-			if (!p.injuries) {
+			if (!(p as any).injuries) {
 				p.injuries = [];
 				return p;
 			}

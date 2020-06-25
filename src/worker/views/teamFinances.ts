@@ -122,6 +122,7 @@ const updateTeamFinances = async (
 		}
 
 		// Process some values
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (barData.att) {
 			barData.att = barData.att.map((num, i) => {
 				if (teamSeasons[i] !== undefined) {
@@ -141,6 +142,7 @@ const updateTeamFinances = async (
 
 		const keys2 = ["cash"] as const;
 		for (const key of keys2) {
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (barData[key]) {
 				// convert to millions
 				barData[key] = barData[key].map(num =>

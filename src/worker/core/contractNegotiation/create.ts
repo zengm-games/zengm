@@ -44,6 +44,9 @@ const create = async (
 	}
 
 	const p = await idb.cache.players.get(pid);
+	if (!p) {
+		throw new Error("Invalid pid");
+	}
 
 	if (p.tid !== PLAYER.FREE_AGENT) {
 		return `${p.firstName} ${p.lastName} is not a free agent.`;

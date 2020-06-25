@@ -13,7 +13,7 @@ import type { TradePickValues } from "../../../common/types";
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
 const getPickValues = async (): Promise<TradePickValues> => {
-	const estValues: TradePickValues = {};
+	const estValues: TradePickValues = {} as TradePickValues;
 	let maxLength = 0;
 	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
 
@@ -31,11 +31,13 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 		if (players.length > 0) {
 			players.sort((a, b) => b.value - a.value);
-			estValues[players[0].draft.year] = players.map(p => p.value + 4); // +4 is to generally make picks more valued
+			const current = players.map(p => p.value + 4); // +4 is to generally make picks more valued
 
-			if (estValues[players[0].draft.year].length > maxLength) {
-				maxLength = estValues[players[0].draft.year].length;
+			if (current.length > maxLength) {
+				maxLength = current.length;
 			}
+
+			estValues[players[0].draft.year] = current;
 		}
 	}
 
@@ -66,17 +68,18 @@ const getPickValues = async (): Promise<TradePickValues> => {
 				if (
 					g.get("phase") === PHASE.DRAFT &&
 					season === String(g.get("season")) &&
-					estValues[season][i] === 50
+					(estValues[season] as number[])[i] === 50
 				) {
 					return false;
 				}
 
 				return true;
 			})
-			.map(season => estValues[season][i])
+			.map(season => (estValues[season] as number[])[i])
 			.filter(val => typeof val === "number" && !Number.isNaN(val));
 		return vals.reduce((total, val) => total + val, 0) / vals.length;
 	});
+
 	return estValues;
 };
 

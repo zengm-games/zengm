@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import makeItWork from "./makeItWork";
 import summary from "./summary";
+import get from "./get";
 
 /**
  * Make a trade work
@@ -12,7 +13,7 @@ import summary from "./summary";
  * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
  */
 const makeItWorkTrade = async () => {
-	const tr = await idb.cache.trade.get(0);
+	const tr = await get();
 	const teams0 = tr.teams;
 	const teams = await makeItWork(helpers.deepCopy(teams0), false);
 
@@ -44,7 +45,7 @@ const makeItWorkTrade = async () => {
 	}
 
 	if (updated) {
-		const tr2 = await idb.cache.trade.get(0);
+		const tr2 = await get();
 		tr2.teams = teams;
 		await idb.cache.trade.put(tr2);
 	}

@@ -12,7 +12,7 @@ const processPlayerStats = (
 		return processPlayerStatsFootball(ps, stats, statType, bornYear);
 	}
 
-	if (!statType || !bornYear) {
+	if (statType === undefined || bornYear === undefined) {
 		throw new Error("statType and bornYear are required");
 	}
 

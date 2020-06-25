@@ -1,8 +1,8 @@
 import assert from "assert";
 import { trade } from "..";
-import { idb } from "../../db";
 import { g } from "../../util";
 import { beforeTests, reset } from "./testHelpers";
+import get from "./get";
 
 describe("worker/core/trade/updatePlayers", () => {
 	beforeAll(beforeTests);
@@ -137,7 +137,7 @@ describe("worker/core/trade/updatePlayers", () => {
 				dpidsExcluded: [],
 			},
 		]);
-		const tr = await idb.cache.trade.get(0);
+		const tr = await get();
 		teams = tr.teams;
 		assert.deepEqual(teams[0].pids, userPidsTest);
 		assert.deepEqual(teams[1].pids, []);

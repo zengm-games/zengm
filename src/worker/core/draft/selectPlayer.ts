@@ -22,6 +22,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 	}
 
 	const p = await idb.cache.players.get(pid);
+	if (!p) {
+		throw new Error("Invalid pid");
+	}
 	const prevTid = p.tid;
 	p.tid = dp.tid;
 

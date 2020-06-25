@@ -724,6 +724,7 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 	const draftPicks = await draft.getOrder();
 	const dp = draftPicks[0];
 
+	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (dp && g.get("userTids").includes(dp.tid)) {
 		draftPicks.shift();
 		await draft.selectPlayer(dp, pid);
@@ -768,7 +769,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	let stats: string[] = [];
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
-		stats.push(...table.stats);
+		if (table) {
+			stats.push(...table.stats);
+		}
 	}
 
 	// Ugh
@@ -1607,6 +1610,9 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	}
 
 	const p = await idb.cache.players.get(pid);
+	if (!p) {
+		return "Player not found";
+	}
 
 	if (p.tid !== g.get("userTid")) {
 		return "You aren't allowed to do this.";
@@ -1723,6 +1729,9 @@ const removeLeague = async (lid: number) => {
 
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
 	const depth = t.depth;
 
 	if (depth === undefined) {
@@ -1742,6 +1751,9 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
 	await Promise.all(
 		sortedPids.map(async (pid, rosterOrder) => {
 			const p = await idb.cache.players.get(pid);
+			if (!p) {
+				throw new Error("Invalid pid");
+			}
 
 			if (p.rosterOrder !== rosterOrder) {
 				p.rosterOrder = rosterOrder;
@@ -1991,6 +2003,9 @@ const updateBudget = async (
 	adjustForInflation: boolean,
 ) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
 
 	for (const key of helpers.keys(budgetAmounts)) {
 		// Check for NaN before updating
@@ -2254,6 +2269,9 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
 	const p = await idb.cache.players.get(pid);
+	if (!p) {
+		throw new Error("Invalid pid");
+	}
 	p.ptModifier = ptModifier;
 	await idb.cache.players.put(p);
 	await toUI("realtimeUpdate", [["playerMovement"]]);
@@ -2344,7 +2362,8 @@ const updateTeamInfo = async (
 		if (g.get("phase") < PHASE.PLAYOFFS) {
 			let teamSeason:
 				| TeamSeason
-				| TeamSeasonWithoutKey = await idb.cache.teamSeasons.indexGet(
+				| TeamSeasonWithoutKey
+				| undefined = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[t.tid, g.get("season")],
 			);

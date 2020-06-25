@@ -243,6 +243,13 @@ const loadTeams = async (tids: number[]) => {
 					]),
 				]);
 
+				if (!team) {
+					throw new Error("Invalid tid");
+				}
+				if (!teamSeason) {
+					throw new Error("Team season not found");
+				}
+
 				teams[tid] = processTeam(
 					team,
 					teamSeason,

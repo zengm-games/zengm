@@ -18,7 +18,7 @@ async function updateSeasons(
 		updateEvents.includes("playerMovement")
 	) {
 		const seasons: (number | undefined)[][] = [];
-		let prevMinutesAll: Map<number, number>[];
+		let prevMinutesAll: Map<number, number>[] | undefined;
 
 		for (
 			let season = g.get("startingSeason");
@@ -40,7 +40,9 @@ async function updateSeasons(
 				);
 
 				for (const ps of stats) {
+					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					if (minutesAll[ps.tid]) {
+						// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 						const min = minutesAll[ps.tid].get(p.pid) || 0;
 						minutesAll[ps.tid].set(p.pid, min + ps.min);
 					}
@@ -53,6 +55,9 @@ async function updateSeasons(
 				seasons.push(
 					await Promise.all(
 						minutesAll.map(async (minutes, i) => {
+							if (!prevMinutesAll) {
+								throw new Error("undefined prevMinutesAll");
+							}
 							const prevMinutes = prevMinutesAll[i];
 							let sumMinutes = 0;
 							let sumMinutesContinuity = 0;

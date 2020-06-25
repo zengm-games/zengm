@@ -101,6 +101,9 @@ const updateNegotiation = async (
 		}
 
 		const p2 = await idb.cache.players.get(negotiation.pid);
+		if (!p2) {
+			throw new Error("Player not found");
+		}
 		const p = await idb.getCopy.playersPlus(p2, {
 			attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
 			ratings: ["ovr", "pot"],

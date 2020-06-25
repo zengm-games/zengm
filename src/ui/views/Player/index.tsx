@@ -175,7 +175,7 @@ const Player2 = ({
 	useTitleBar({ title: player.name });
 
 	let draftInfo: ReactNode = null;
-	if (player.draft.round) {
+	if (player.draft.round > 0) {
 		draftInfo = (
 			<>
 				Draft:{" "}

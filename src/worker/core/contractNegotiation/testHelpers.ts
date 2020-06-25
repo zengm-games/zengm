@@ -7,6 +7,9 @@ import { g } from "../../util";
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async (pid: number) => {
 	const p = await idb.cache.players.get(pid);
+	if (!p) {
+		throw new Error("Invalid pid");
+	}
 	p.contract.amount = g.get("minContract");
 	await idb.cache.players.put(p);
 };

@@ -11,6 +11,9 @@ const updatePlayoffSeries = async (
 	conditions: Conditions,
 ) => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (!playoffSeries) {
+		throw new Error("playoffSeries not found");
+	}
 	const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 	const numGamesToWinSeries = helpers.numGamesToWinSeries(
 		g.get("numGamesPlayoffSeries")[playoffSeries.currentRound],

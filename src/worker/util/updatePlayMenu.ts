@@ -146,6 +146,7 @@ const updatePlayMenu = async () => {
 		const draftPicks = await draft.getOrder();
 		const nextPick = draftPicks[0];
 
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (nextPick && g.get("userTids").includes(nextPick.tid)) {
 			keys = ["viewDraft"];
 		} else if (draftPicks.some(dp => g.get("userTids").includes(dp.tid))) {

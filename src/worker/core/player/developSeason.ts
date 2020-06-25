@@ -8,7 +8,7 @@ import type { Ratings } from "../realRosters/loadData.basketball";
 import limitRating from "./limitRating";
 
 // Cache for performance
-let groupedRatings: Record<string, Ratings> | undefined;
+let groupedRatings: Record<string, Ratings | undefined> | undefined;
 
 const developSeason = async (
 	ratings: MinimalPlayerRatings,

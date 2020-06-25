@@ -182,8 +182,12 @@ const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 };
 
 const getNumDaysPlayoffs = async () => {
-	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season")); // Max 7 days per round that hasn't started yet
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (!playoffSeries) {
+		throw new Error("playoffSeries not found");
+	}
 
+	// Max 7 days per round that hasn't started yet
 	let numDaysFutureRounds = 0;
 
 	for (
@@ -301,6 +305,9 @@ const playMenu = {
 		if (g.get("phase") === PHASE.PLAYOFFS) {
 			await updateStatus("Playing...");
 			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+			if (!playoffSeries) {
+				throw new Error("playoffSeries not found");
+			}
 			local.playingUntilEndOfRound = true;
 			game.play(getNumDaysThisRound(playoffSeries), conditions);
 		}

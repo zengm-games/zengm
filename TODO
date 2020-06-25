@@ -14,6 +14,8 @@ import/export players
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
     - add import to event log? for individual player, or aggregate?
+  - after importing, show success indicator, and keep players around
+  - test importing from league file, doesn't work?
 
 GM summary screen
 - https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/

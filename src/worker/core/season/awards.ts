@@ -285,10 +285,9 @@ const saveAwardsByPlayer = async (
 	}
 
 	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
-	await Promise.all(
-		pids.map(async pid => {
-			const p = await idb.cache.players.get(pid);
-
+	for (const pid of pids) {
+		const p = await idb.cache.players.get(pid);
+		if (p) {
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {
 					p.awards.push({
@@ -299,8 +298,8 @@ const saveAwardsByPlayer = async (
 			}
 
 			await idb.cache.players.put(p);
-		}),
-	);
+		}
+	}
 };
 
 export {

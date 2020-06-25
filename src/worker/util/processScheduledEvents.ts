@@ -42,7 +42,7 @@ const processTeamInfo = async (
 		"teamSeasonsByTidSeason",
 		[info.tid, season],
 	);
-	if (!t) {
+	if (!teamSeason) {
 		throw new Error(
 			`No team season found in scheduled event: ${info.tid}, ${season}`,
 		);
@@ -239,6 +239,7 @@ const processExpansionDraft = async (
 			return true;
 		}
 
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (!teams[t.tid]) {
 			return true;
 		}

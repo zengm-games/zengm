@@ -6,6 +6,7 @@ const getMostCommonPos = (ratings: PlayerRatings[]) => {
 	const counts = new Map<string, number>();
 
 	for (const { pos } of ratings) {
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		let count = counts.get(pos) || 0;
 		count += 1;
 		counts.set(pos, count);

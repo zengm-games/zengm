@@ -24,6 +24,7 @@ async function updatePhase(conditions?: Conditions) {
 
 		// Update phase in meta database. No need to have this block updating the UI or anything.
 		(async () => {
+			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 			if (idb.meta && local.autoSave) {
 				const l = await idb.meta.get("leagues", g.get("lid"));
 				if (!l) {

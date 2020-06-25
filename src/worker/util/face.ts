@@ -22,6 +22,7 @@ const generate = () => {
 };
 
 const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+	// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!p.face || !p.face.accessories) {
 		// @ts-ignore
 		p.face2 = p.face;

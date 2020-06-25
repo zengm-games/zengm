@@ -26,7 +26,7 @@ const autoPlay = async (conditions: Conditions = {}) => {
 	// If game over and user's team is disabled, need to pick a new team or there will be errors
 	if (g.get("gameOver")) {
 		const t = await idb.cache.teams.get(g.get("userTid"));
-		if (t.disabled) {
+		if (!t || t.disabled) {
 			// If multi team mode was enabled, a new team would have already been picked in team.disable(). So go with a random team here.
 			const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
 			if (teams.length === 0) {

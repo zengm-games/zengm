@@ -3,6 +3,7 @@ import testHelpers from "../../test/helpers";
 import { player } from "../core";
 import { g } from "../util";
 import { idb } from ".";
+import type { Player } from "../../common/types";
 
 describe("worker/db/Cache", () => {
 	beforeAll(async () => {
@@ -19,7 +20,7 @@ describe("worker/db/Cache", () => {
 	describe("get", () => {
 		test("retrieve an object", async () => {
 			const p = (await idb.cache.players.getAll())[0];
-			const p2 = await idb.cache.players.get(p.pid);
+			const p2 = (await idb.cache.players.get(p.pid)) as Player;
 			assert.equal(p.pid, p2.pid);
 		});
 
@@ -38,7 +39,7 @@ describe("worker/db/Cache", () => {
 				idb.cache._setStatus("full");
 			}, 1000);
 
-			const p2 = await idb.cache.players.get(p.pid);
+			const p2 = (await idb.cache.players.get(p.pid)) as Player;
 			assert(setTimeoutCalled);
 			assert.equal(idb.cache._status, "full");
 			assert.equal(p.pid, p2.pid);

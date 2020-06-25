@@ -3,8 +3,11 @@ import { g } from "../../util";
 
 const draftUser = async (pid: number): Promise<boolean> => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));
-	const pick = allStars.remaining.find(p => p.pid === pid);
+	if (!allStars) {
+		throw new Error("allStars not found");
+	}
 
+	const pick = allStars.remaining.find(p => p.pid === pid);
 	if (!pick) {
 		throw new Error("Player not found");
 	}

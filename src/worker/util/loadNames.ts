@@ -7,13 +7,16 @@ import g from "./g";
 import names from "player-names"; // eslint-disable-line
 
 const genCumSums = (names: {
-	[key: string]: [string, number][];
+	[key: string]: [string, number][] | undefined;
 }): [string, number][] => {
 	let cumsum = 0;
 	return Object.keys(names)
 		.sort()
 		.map(country => {
-			cumsum += names[country][names[country].length - 1][1];
+			const namesCountry = names[country];
+			if (namesCountry) {
+				cumsum += namesCountry[namesCountry.length - 1][1];
+			}
 			return [country, cumsum];
 		});
 };
@@ -23,6 +26,7 @@ const loadNames = (): PlayerNames => {
 
 	const gNames = g.get("names");
 	if (gNames) {
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (gNames.first) {
 			if (Array.isArray(gNames.first)) {
 				first = {
@@ -33,6 +37,7 @@ const loadNames = (): PlayerNames => {
 			}
 		}
 
+		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (gNames.last) {
 			if (Array.isArray(gNames.last)) {
 				last = {

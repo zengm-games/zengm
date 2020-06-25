@@ -76,14 +76,16 @@ const getPlayers = async ({
 	// Get players to add
 	for (const pid of pidsAdd) {
 		const p = await idb.cache.players.get(pid);
-		add.push({
-			value: p.valueWithContract,
-			skills: p.ratings[p.ratings.length - 1].skills,
-			contract: p.contract,
-			worth: player.genContract(p, false, false, true),
-			injury: p.injury,
-			age: g.get("season") - p.born.year,
-		});
+		if (p) {
+			add.push({
+				value: p.valueWithContract,
+				skills: p.ratings[p.ratings.length - 1].skills,
+				contract: p.contract,
+				worth: player.genContract(p, false, false, true),
+				injury: p.injury,
+				age: g.get("season") - p.born.year,
+			});
+		}
 	}
 };
 
@@ -123,7 +125,8 @@ const getPicks = async ({
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = cache.estPicks[dp.originalTid] || g.get("numActiveTeams") / 2;
+				const temp = cache.estPicks[dp.originalTid];
+				estPick = temp !== undefined ? temp : g.get("numActiveTeams") / 2;
 
 				// For future draft picks, add some uncertainty. Weighted average of estPicks and numTeams/2
 				const seasons = season - g.get("season");
@@ -136,11 +139,10 @@ const getPicks = async ({
 			// No fudge factor, since this is coming from the user's team (or eventually, another AI)
 			let value;
 
-			if (estValues[String(season)]) {
+			const valuesTemp = estValues[String(season)];
+			if (valuesTemp) {
 				value =
-					estValues[String(season)][
-						estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
-					];
+					valuesTemp[estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)];
 			}
 
 			if (value === undefined) {
@@ -192,7 +194,8 @@ const getPicks = async ({
 			if (dp.pick > 0) {
 				estPick = dp.pick;
 			} else {
-				estPick = cache.estPicks[dp.originalTid] || g.get("numActiveTeams") / 2;
+				const temp = cache.estPicks[dp.originalTid];
+				estPick = temp !== undefined ? temp : g.get("numActiveTeams") / 2;
 
 				// For future draft picks, add some uncertainty
 				estPick = Math.round(
@@ -212,11 +215,10 @@ const getPicks = async ({
 			// Use fudge factor: AI teams like their own picks
 			let value;
 
-			if (estValues[String(season)]) {
+			const valuesTemp = estValues[String(season)];
+			if (valuesTemp) {
 				value =
-					estValues[String(season)][
-						estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)
-					] +
+					valuesTemp[estPick - 1 + g.get("numActiveTeams") * (dp.round - 1)] +
 					(tid !== g.get("userTid") ? 1 : 0) *
 						fudgeFactor *
 						difficultyFudgeFactor;

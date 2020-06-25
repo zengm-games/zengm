@@ -302,6 +302,12 @@ const ImportPlayers = ({
 		<>
 			{links}
 
+			<p>
+				Upload an exported players file or a league file below. You will be able
+				to select the specific players you want from that file before actually
+				importing them.
+			</p>
+
 			<LeagueFileUpload
 				disabled={!!status}
 				onLoading={() => {

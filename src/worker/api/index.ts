@@ -71,7 +71,6 @@ import type {
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
-import augmentPartialPlayer from "../core/player/augmentPartialPlayer";
 
 const acceptContractNegotiation = async (
 	pid: number,

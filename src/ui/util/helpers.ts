@@ -1,4 +1,4 @@
-import { helpers as commonHelpers, PLAYER } from "../../common";
+import { helpers as commonHelpers } from "../../common";
 import { local } from "./local";
 
 const colorRating = (rating: number) => {

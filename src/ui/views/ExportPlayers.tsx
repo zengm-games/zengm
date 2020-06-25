@@ -122,53 +122,57 @@ const ExportPlayers = ({
 					{rows2.length === 0 ? (
 						<p>No players selected</p>
 					) : (
-						<DataTable
-							cols={cols2}
-							defaultSort={[0, "asc"]}
-							name="ExportPlayers2"
-							pagination
-							rows={rows2}
-						/>
+						<>
+							<div className="clearfix">
+								<DataTable
+									cols={cols2}
+									defaultSort={[0, "asc"]}
+									name="ExportPlayers2"
+									pagination
+									rows={rows2}
+								/>
+							</div>
+
+							<button
+								className="btn btn-lg btn-primary my-3"
+								disabled={exporting || selectedPids.length === 0}
+								onClick={async () => {
+									setExporting(true);
+									setErrorMessage(undefined);
+
+									try {
+										const { filename, json } = await toWorker(
+											"main",
+											"exportPlayers",
+											selected.map(({ p, season }) => ({
+												pid: p.pid,
+												season,
+											})),
+										);
+
+										downloadFile(filename, json, "application/json");
+									} catch (error) {
+										console.error(error);
+										setErrorMessage(error.message);
+									}
+
+									setExporting(false);
+								}}
+							>
+								Export Players
+							</button>
+
+							{errorMessage ? (
+								<div>
+									<div className="alert alert-danger d-inline-block mb-0">
+										Error exporting players: {errorMessage}
+									</div>
+								</div>
+							) : null}
+						</>
 					)}
 				</div>
 			</div>
-
-			<button
-				className="btn btn-lg btn-primary my-3"
-				disabled={exporting || selectedPids.length === 0}
-				onClick={async () => {
-					setExporting(true);
-					setErrorMessage(undefined);
-
-					try {
-						const { filename, json } = await toWorker(
-							"main",
-							"exportPlayers",
-							selected.map(({ p, season }) => ({
-								pid: p.pid,
-								season,
-							})),
-						);
-
-						downloadFile(filename, json, "application/json");
-					} catch (error) {
-						console.error(error);
-						setErrorMessage(error.message);
-					}
-
-					setExporting(false);
-				}}
-			>
-				Export Players
-			</button>
-
-			{errorMessage ? (
-				<div>
-					<div className="alert alert-danger d-inline-block mb-0">
-						Error exporting players: {errorMessage}
-					</div>
-				</div>
-			) : null}
 		</>
 	);
 };

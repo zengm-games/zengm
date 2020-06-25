@@ -11,19 +11,15 @@ import/export players
   - table alignment
     - skills and button are a little too big
 - import
-  - show table of players
-  - form fields
-    - team (including draft prospect, FA, retired)
-    - draft year (only editable if draft prospect)
-    - contract amount and exp (only if on team)
-    - age (dropdown, options based on ratings array)
-      - use exportedSeason for default
   - button to "clone" player, to allow selecting different age or whatever
-  - delete stuff that doesn't make sense, like relatives
-  - checkbox to keep or delete history (stats, ratings, awards, HoF)
-  - can you give it a league file?
+  - on processing
+    - delete stuff that doesn't make sense, like relatives
+    - augment
+    - make sure draft prospect year changing adjust things properly
+  - maybe
+    - checkbox to keep or delete history (stats, ratings, awards, HoF)
+  - can you give it a league file? yeah, so explain it
   - why name column not sorting?
-  - make sure draft prospect year changing adjust things properly
 - link between import/export at top
 - in player transaction, show as imported. both event log and p.transactions
 
@@ -205,7 +201,8 @@ FBGM
   - Could the schedule be fixed to match the NFL's scheduling formula?
   - It is kind of sad and boring playing the same teams every year except in different order
 - increase roster size limit to 55
-- traded players have AV added, when i guess it should be averaged
+- traded players have AV added, when i guess it should be averaged. matters for awards, etc
+- in God mode for fbgm it reads "home court advantage" instead of "home field advantage" lol
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

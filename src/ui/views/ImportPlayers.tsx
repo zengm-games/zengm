@@ -359,6 +359,35 @@ const ImportPlayers = ({
 
 			{rows.length > 0 ? (
 				<>
+					<div className="mb-3">
+						<button
+							className="btn btn-link p-0"
+							onClick={() => {
+								setPlayers(
+									players.map(p => ({
+										...p,
+										checked: true,
+									})),
+								);
+							}}
+						>
+							Select All
+						</button>{" "}
+						|{" "}
+						<button
+							className="btn btn-link p-0"
+							onClick={() => {
+								setPlayers(
+									players.map(p => ({
+										...p,
+										checked: false,
+									})),
+								);
+							}}
+						>
+							Select None
+						</button>
+					</div>
 					<div className="clearfix">
 						<DataTable
 							cols={cols}

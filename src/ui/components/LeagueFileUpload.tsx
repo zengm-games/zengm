@@ -44,6 +44,10 @@ const ajv = new Ajv({
 });
 const validate = ajv.compile(schema);
 
+const styleStatus = {
+	maxWidth: 400,
+};
+
 type Props = {
 	// onDone is called in errback style when parsing is done or when an error occurs
 	onDone: (b: Error | null, a?: any) => void;
@@ -93,8 +97,10 @@ const reducer = (state: State, action: any): State => {
 			console.log(action.jsonSchemaErrors);
 			return { ...state, jsonSchemaErrors: action.jsonSchemaErrors };
 
-		case "error":
+		case "error": {
+			console.error(action.error);
 			return { ...state, error: action.error, status: "error" };
+		}
 
 		case "done":
 			return { ...state, error: null, status: "done" };
@@ -335,33 +341,36 @@ const LeagueFileUpload = ({
 					}
 				/>
 			)}
-			{state.status === "error" ? (
-				<p className="alert alert-danger mt-3">
-					Error: <ErrorMessage error={state.error} />
-				</p>
-			) : null}
-			{state.jsonSchemaErrors.length > 0 ? (
-				<p className="alert alert-warning mt-3">
-					Warning: {state.jsonSchemaErrors.length} JSON schema validation
-					errors. More detail is available in the JavaScript console. Also, see{" "}
-					<a
-						href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
-					>
-						the manual
-					</a>{" "}
-					for more information. You can still use this file, but these errors
-					may cause bugs.
-				</p>
-			) : null}
-			{state.status === "loading" ? (
-				<p className="alert alert-info mt-3">Loading league file...</p>
-			) : null}
-			{state.status === "parsing" ? (
-				<p className="alert alert-info mt-3">Parsing league file...</p>
-			) : null}
-			{state.status === "done" && !hideLoadedMessage ? (
-				<p className="alert alert-success mt-3">Loaded!</p>
-			) : null}
+			<div style={styleStatus}>
+				{state.status === "error" ? (
+					<p className="alert alert-danger mt-3">
+						Error: <ErrorMessage error={state.error} />
+					</p>
+				) : null}
+				{state.jsonSchemaErrors.length > 0 ? (
+					<p className="alert alert-warning mt-3">
+						Warning: {state.jsonSchemaErrors.length} JSON schema validation
+						errors. More detail is available in the JavaScript console. Also,
+						see{" "}
+						<a
+							href={`https://${process.env.SPORT}-gm.com/manual/customization/json-schema/`}
+						>
+							the manual
+						</a>{" "}
+						for more information. You can still use this file, but these errors
+						may cause bugs.
+					</p>
+				) : null}
+				{state.status === "loading" ? (
+					<p className="alert alert-info mt-3">Loading league file...</p>
+				) : null}
+				{state.status === "parsing" ? (
+					<p className="alert alert-info mt-3">Parsing league file...</p>
+				) : null}
+				{state.status === "done" && !hideLoadedMessage ? (
+					<p className="alert alert-success mt-3">Loaded!</p>
+				) : null}
+			</div>
 		</>
 	);
 };

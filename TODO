@@ -24,6 +24,7 @@ import/export players
   - checkbox to include/exclude player
   - only in god mode
   - can you give it a league file?
+  - why name column not sorting?
 - link between import/export at top
 - in player transaction, show as imported. both event log and p.transactions
 

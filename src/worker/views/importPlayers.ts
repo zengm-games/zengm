@@ -1,0 +1,21 @@
+import { PHASE, PLAYER } from "../../common";
+import { g } from "../util";
+import type { UpdateEvents, ViewInput } from "../../common/types";
+
+const updateImportPlayers = async (
+	input: unknown,
+	updateEvents: UpdateEvents,
+) => {
+	console.log("updateImportPlayers");
+	if (
+		updateEvents.includes("firstRun") ||
+		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON)
+	) {
+		return {
+			challengeNoRatings: g.get("challengeNoRatings"),
+			currentSeason: g.get("season"),
+		};
+	}
+};
+
+export default updateImportPlayers;

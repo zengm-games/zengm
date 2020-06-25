@@ -21,7 +21,7 @@ const PlayerNameLabels = ({
 	children: ReactNode;
 	injury?: PlayerInjury;
 	pos?: string;
-	pid: number;
+	pid?: number;
 	skills?: string[];
 	style?: {
 		[key: string]: string;
@@ -54,10 +54,16 @@ const PlayerNameLabels = ({
 	return (
 		<span style={style ? { ...baseStyle, ...style } : baseStyle}>
 			{typeof pos === "string" ? `${pos} ` : null}
-			<a href={helpers.leagueUrl(["player", pid])}>{children}</a>
+			{pid !== undefined ? (
+				<a href={helpers.leagueUrl(["player", pid])}>{children}</a>
+			) : (
+				children
+			)}
 			{injuryIcon}
 			<SkillsBlock skills={skills} />
-			<RatingsStatsPopover pid={pid} watch={watch} />
+			{pid !== undefined ? (
+				<RatingsStatsPopover pid={pid} watch={watch} />
+			) : null}
 		</span>
 	);
 };
@@ -69,7 +75,7 @@ PlayerNameLabels.propTypes = {
 		type: PropTypes.string.isRequired,
 	}),
 	pos: PropTypes.string,
-	pid: PropTypes.number.isRequired,
+	pid: PropTypes.number,
 	skills: PropTypes.arrayOf(PropTypes.string),
 	style: PropTypes.object,
 	watch: PropTypes.bool,

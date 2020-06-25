@@ -177,6 +177,7 @@ const routes = () => {
 		"/l/:lid/scheduled_events": genPage("scheduledEvents"),
 		"/l/:lid/export_players": genPage("exportPlayers"),
 		"/l/:lid/export_players/:season": genPage("exportPlayers"),
+		"/l/:lid/import_players": genPage("importPlayers"),
 
 		// Backwards compatibility
 		"/l/:lid/draft_summary": genPage("draftSummary"),

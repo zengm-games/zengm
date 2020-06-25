@@ -1060,6 +1060,19 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 		if (info) {
 			p.exportedSeason = info.season;
 		}
+
+		delete p.freeAgentMood;
+		delete p.gamesUntilTradable;
+		delete p.ptModifier;
+		delete p.rosterOrder;
+		delete p.statsTids;
+		delete p.value;
+		delete p.valueFuzz;
+		delete p.valueNoPot;
+		delete p.valueNoPotFuzz;
+		delete p.valueWithContract;
+		delete p.watch;
+		delete p.yearsFreeAgent;
 	}
 
 	const filename = `${

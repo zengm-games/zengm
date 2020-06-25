@@ -26,6 +26,7 @@ import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
 import history from "./history";
 import historyAll from "./historyAll";
+import importPlayers from "./importPlayers";
 import inbox from "./inbox";
 import leaders from "./leaders";
 import leagueDashboard from "./leagueDashboard";
@@ -103,6 +104,7 @@ export default {
 	hallOfFame,
 	history,
 	historyAll,
+	importPlayers,
 	inbox,
 	leaders,
 	leagueDashboard,

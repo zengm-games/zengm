@@ -30,7 +30,7 @@ const ExportPlayers = ({
 	cols[0].width = "100%";
 
 	const cols2 = getCols("#", "Name", "Pos", "Age", "Team", "Ovr", "Pot");
-	cols[2].width = "100%";
+	cols[1].width = "100%";
 
 	const commonRows = (p: typeof players[number]) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
@@ -81,7 +81,7 @@ const ExportPlayers = ({
 		};
 	});
 
-	const rows2 = selected.map(({ p, season }, i) => {
+	const rows2 = selected.map(({ p }, i) => {
 		return {
 			key: p.pid,
 			data: [i + 1, ...commonRows(p)],
@@ -90,6 +90,11 @@ const ExportPlayers = ({
 
 	return (
 		<>
+			<p>
+				More: <a href={helpers.leagueUrl(["import_players"])}>Import Players</a>{" "}
+				| <a href={helpers.leagueUrl(["export_league"])}>Export League</a>
+			</p>
+
 			<p>
 				Here you can export any number of players to a JSON file which can be
 				imported into another league.
@@ -103,8 +108,33 @@ const ExportPlayers = ({
 				the ability to select multiple seasons from the same player.
 			</p>
 
+			<div className="row">
+				<div className="col-12 col-lg-6">
+					<DataTable
+						cols={cols}
+						defaultSort={[0, "asc"]}
+						name="ExportPlayers"
+						pagination
+						rows={rows}
+					/>
+				</div>
+				<div className="col-12 col-lg-6">
+					{rows2.length === 0 ? (
+						<p>No players selected</p>
+					) : (
+						<DataTable
+							cols={cols2}
+							defaultSort={[0, "asc"]}
+							name="ExportPlayers2"
+							pagination
+							rows={rows2}
+						/>
+					)}
+				</div>
+			</div>
+
 			<button
-				className="btn btn-primary mb-3"
+				className="btn btn-lg btn-primary my-3"
 				disabled={exporting || selectedPids.length === 0}
 				onClick={async () => {
 					setExporting(true);
@@ -138,31 +168,6 @@ const ExportPlayers = ({
 					</div>
 				</div>
 			) : null}
-
-			<div className="row">
-				<div className="col-12 col-lg-6">
-					<DataTable
-						cols={cols}
-						defaultSort={[0, "asc"]}
-						name="ExportPlayers"
-						pagination
-						rows={rows}
-					/>
-				</div>
-				<div className="col-12 col-lg-6">
-					{rows2.length === 0 ? (
-						<p>No players selected</p>
-					) : (
-						<DataTable
-							cols={cols2}
-							defaultSort={[0, "asc"]}
-							name="ExportPlayers2"
-							pagination
-							rows={rows2}
-						/>
-					)}
-				</div>
-			</div>
 		</>
 	);
 };

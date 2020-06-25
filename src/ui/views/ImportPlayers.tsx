@@ -29,6 +29,25 @@ const ImportPlayers = ({
 
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
+	const teams = [
+		{
+			tid: PLAYER.RETIRED,
+			name: "Retired",
+		},
+		{
+			tid: PLAYER.UNDRAFTED,
+			name: "Draft Prospect",
+		},
+		{
+			tid: PLAYER.FREE_AGENT,
+			name: "Free Agent",
+		},
+		...teamInfoCache.map((t, i) => ({
+			tid: i,
+			name: `${t.region} ${t.name}`,
+		})),
+	];
+
 	useTitleBar({
 		title: "Import Players",
 		dropdownView: "import_players",
@@ -49,7 +68,7 @@ const ImportPlayers = ({
 	cols[2].width = "100%";
 
 	const handleChange = (
-		name: "age" | "checked" | "contractAmount" | "contractExp",
+		name: "age" | "checked" | "contractAmount" | "contractExp" | "tid",
 		index: number,
 	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const player = {
@@ -60,6 +79,8 @@ const ImportPlayers = ({
 			player.checked = !player.checked;
 		} else if (name === "age") {
 			player.season = parseInt(event.target.value);
+		} else if (name === "tid") {
+			player.tid = parseInt(event.target.value);
 		} else {
 			player[name] = event.target.value;
 		}
@@ -114,8 +135,10 @@ const ImportPlayers = ({
 		const ageRow = ages.find(row => row.season === season);
 		const age = ageRow ? ageRow.age : 0;
 
+		const key = p.pid;
+
 		return {
-			key: p.pid,
+			key,
 			data: [
 				<input
 					type="checkbox"
@@ -150,7 +173,36 @@ const ImportPlayers = ({
 					),
 					sortValue: age,
 				},
-				"Team",
+				{
+					value: (
+						<div className="d-flex" style={{ minWidth: 200 }}>
+							<select
+								className="form-control"
+								onChange={handleChange("tid", i)}
+								value={tid}
+							>
+								{teams.map(({ tid, name }) => {
+									return (
+										<option key={tid} value={tid}>
+											{name}
+										</option>
+									);
+								})}
+							</select>
+							{tid === PLAYER.UNDRAFTED ? (
+								<input
+									type="text"
+									className="form-control"
+									id={`draft-year-${key}`}
+									onChange={handleChange("draftYear", i)}
+									style={{ width: 60 }}
+									value={draftYear}
+								/>
+							) : null}
+						</div>
+					),
+					sortValue: tid,
+				},
 				tid >= PLAYER.FREE_AGENT
 					? {
 							value: (
@@ -252,10 +304,12 @@ const ImportPlayers = ({
 
 						let contractAmount = 1;
 						let contractExp = season + 1;
-						if (exportedSeason === season) {
+						if (season === p.ratings[p.ratings.length - 1].season) {
+							// Exported the latest season for this player
 							contractAmount = p.contract.amount / 1000;
 							contractExp = p.contract.exp;
 						} else {
+							// Exported some historical season, try to figure out contract
 							const salaryRow = Array.isArray(p.salaries)
 								? p.salaries.find((row: any) => row.season === season)
 								: undefined;

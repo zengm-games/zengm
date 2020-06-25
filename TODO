@@ -25,7 +25,7 @@ import/export players
   - only in god mode
   - can you give it a league file?
   - why name column not sorting?
-  - Akinpetide Sr age change -> no ovr/pot change
+  - make sure draft prospect year changing adjust things properly
 - link between import/export at top
 - in player transaction, show as imported. both event log and p.transactions
 

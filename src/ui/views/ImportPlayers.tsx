@@ -21,7 +21,8 @@ const ImportPlayers = ({
 			contractAmount: string;
 			contractExp: string;
 			draftYear: string;
-			season: string;
+			season: number;
+			seasonOffset: number;
 			tid: number;
 		}[]
 	>([]);
@@ -48,15 +49,17 @@ const ImportPlayers = ({
 	cols[2].width = "100%";
 
 	const handleChange = (
-		name: "checked" | "contractAmount" | "contractExp",
+		name: "age" | "checked" | "contractAmount" | "contractExp",
 		index: number,
-	) => (event: ChangeEvent<HTMLInputElement>) => {
+	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const player = {
 			...players[index],
 		};
 
 		if (name === "checked") {
 			player.checked = !player.checked;
+		} else if (name === "age") {
+			player.season = parseInt(event.target.value);
 		} else {
 			player[name] = event.target.value;
 		}
@@ -75,6 +78,7 @@ const ImportPlayers = ({
 			contractExp,
 			draftYear,
 			season,
+			seasonOffset,
 			tid,
 		} = player;
 
@@ -82,17 +86,27 @@ const ImportPlayers = ({
 
 		// const abbrev = helpers.getAbbrev(tid, teamInfoCache);
 
-		const seasonInt = parseInt(season);
-
 		let ratings = p.ratings[p.ratings.length - 1];
-		if (p.ratings.length > 0) {
-			for (let i = p.ratings.length - 1; i--; i >= 0) {
-				if (p.ratings[i].season === seasonInt) {
-					ratings = p.ratings[i];
-					break;
-				}
+		for (let i = p.ratings.length - 1; i--; i >= 0) {
+			if (p.ratings[i].season === season) {
+				ratings = p.ratings[i];
+				break;
 			}
 		}
+
+		const ratingsSeasons: number[] = Array.from(
+			new Set(p.ratings.map((ratings: any) => ratings.season)),
+		);
+
+		const ages: {
+			season: number;
+			age: number;
+		}[] = ratingsSeasons.map(ratingsSeason => {
+			return {
+				season: ratingsSeason + seasonOffset,
+				age: ratingsSeason - p.born.year,
+			};
+		});
 
 		const name = `${p.firstName} ${p.lastName}`;
 
@@ -113,10 +127,23 @@ const ImportPlayers = ({
 				ratings.pos,
 				showRatings ? ratings.ovr : null,
 				showRatings ? ratings.pot : null,
-				"Age",
+				<select
+					className="form-control"
+					onChange={handleChange("age", i)}
+					style={{ minWidth: 60 }}
+					value={season}
+				>
+					{ages.map(({ season, age }) => {
+						return (
+							<option key={season} value={season}>
+								{age}
+							</option>
+						);
+					})}
+				</select>,
 				"Team",
 				tid >= PLAYER.FREE_AGENT ? (
-					<div className="input-group input-group-sm" style={{ minWidth: 150 }}>
+					<div className="input-group input-group" style={{ minWidth: 180 }}>
 						<div className="input-group-prepend">
 							<div className="input-group-text">$</div>
 						</div>
@@ -134,9 +161,9 @@ const ImportPlayers = ({
 				tid >= PLAYER.FREE_AGENT ? (
 					<input
 						type="text"
-						className="form-control-sm"
+						className="form-control"
 						onChange={handleChange("contractExp", i)}
-						style={{ width: 50 }}
+						style={{ minWidth: 60 }}
 						value={contractExp}
 					/>
 				) : null,
@@ -226,7 +253,8 @@ const ImportPlayers = ({
 							contractAmount: String(contractAmount),
 							contractExp: String(contractExp + seasonOffset),
 							draftYear: String(draftYear + seasonOffset),
-							season: String(season + seasonOffset),
+							season: season + seasonOffset,
+							seasonOffset,
 							tid,
 						};
 					});

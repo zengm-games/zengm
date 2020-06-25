@@ -47,7 +47,7 @@ const updatePlayByPlay = async (
 
 		for (let i = 0; i < boxScore.teams.length; i++) {
 			const t = boxScore.teams[i];
-			setTeamInfo(t, i, allStars, boxScore);
+			await setTeamInfo(t, i, allStars, boxScore);
 			t.ptsQtrs = [0];
 
 			for (const stat of resetStatsTeam) {

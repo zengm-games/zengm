@@ -7,7 +7,7 @@ import type {
 	Game,
 } from "../../common/types";
 
-export const setTeamInfo = (
+export const setTeamInfo = async (
 	t: any,
 	i: number,
 	allStars: AllStars | undefined,
@@ -18,6 +18,7 @@ export const setTeamInfo = (
 		t.region = "Team";
 		t.name = allStars.teamNames[ind].replace("Team ", "");
 		t.abbrev = t.name.slice(0, 3).toUpperCase();
+		t.imgURL = "";
 
 		if (i === 1 && t.abbrev === game.teams[0].abbrev) {
 			t.abbrev = `${t.abbrev.slice(0, 2)}2`;
@@ -29,9 +30,21 @@ export const setTeamInfo = (
 			p.tid = entry ? entry.tid : g.get("userTid");
 		}
 	} else {
-		t.region = g.get("teamInfoCache")[t.tid]?.region;
-		t.name = g.get("teamInfoCache")[t.tid]?.name;
-		t.abbrev = g.get("teamInfoCache")[t.tid]?.abbrev;
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[t.tid, game.season],
+		);
+		if (teamSeason) {
+			t.region = teamSeason.region || g.get("teamInfoCache")[t.tid]?.region;
+			t.name = teamSeason.name || g.get("teamInfoCache")[t.tid]?.name;
+			t.abbrev = teamSeason.abbrev || g.get("teamInfoCache")[t.tid]?.abbrev;
+			t.imgURL = teamSeason.imgURL || g.get("teamInfoCache")[t.tid]?.imgURL;
+		} else {
+			t.region = g.get("teamInfoCache")[t.tid]?.region;
+			t.name = g.get("teamInfoCache")[t.tid]?.name;
+			t.abbrev = g.get("teamInfoCache")[t.tid]?.abbrev;
+			t.imgURL = g.get("teamInfoCache")[t.tid]?.imgURL;
+		}
 	}
 };
 
@@ -72,7 +85,7 @@ const boxScore = async (gid: number) => {
 
 	for (let i = 0; i < game.teams.length; i++) {
 		const t = game.teams[i];
-		setTeamInfo(t, i, allStars, game);
+		await setTeamInfo(t, i, allStars, game);
 
 		// Floating point errors make this off a bit
 		t.min = Math.round(t.min);
@@ -111,12 +124,14 @@ const boxScore = async (gid: number) => {
 			region: game.teams[wonInd].region,
 			name: game.teams[wonInd].name,
 			abbrev: game.teams[wonInd].abbrev,
+			imgURL: game.teams[wonInd].imgURL,
 		},
 		lost: {
 			...game.lost,
 			region: game.teams[lostInd].region,
 			name: game.teams[lostInd].name,
 			abbrev: game.teams[lostInd].abbrev,
+			imgURL: game.teams[lostInd].imgURL,
 		},
 	};
 

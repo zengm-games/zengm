@@ -6,9 +6,11 @@ import { helpers, realtimeUpdate, toWorker, useLocalShallow } from "../util";
 import BoxScore from "./BoxScore";
 
 const TeamNameLink = ({
+	children,
 	season,
 	t,
 }: {
+	children: any;
 	season: number;
 	t: {
 		abbrev: string;
@@ -19,12 +21,10 @@ const TeamNameLink = ({
 }) => {
 	return t.tid >= 0 ? (
 		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}>
-			{t.region} {t.name}
+			{children}
 		</a>
 	) : (
-		<>
-			{t.region} {t.name}
-		</>
+		<>{children}</>
 	);
 };
 TeamNameLink.propTypes = {
@@ -45,8 +45,14 @@ const HeadlineScore = ({ boxScore }: any) => {
 	return (
 		<>
 			<h2>
-				<TeamNameLink season={boxScore.season} t={t0} /> {t0.pts},{" "}
-				<TeamNameLink season={boxScore.season} t={t1} /> {t1.pts}
+				<TeamNameLink season={boxScore.season} t={t0}>
+					{t0.region} {t0.name}
+				</TeamNameLink>{" "}
+				{t0.pts},{" "}
+				<TeamNameLink season={boxScore.season} t={t1}>
+					{t1.region} {t1.name}
+				</TeamNameLink>{" "}
+				{t1.pts}
 				{boxScore.overtime}
 			</h2>
 			{liveGameSim ? (
@@ -389,20 +395,50 @@ const BoxScoreWrapper = ({
 		};
 	}, [handleKeydown]);
 
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
+	const t0 =
+		boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
+	const t1 =
+		boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
+
 	return (
 		<>
-			<div className="text-center">
-				<HeadlineScore boxScore={boxScore} />
-				<DetailedScore
-					abbrev={abbrev}
-					boxScore={boxScore}
-					currentGidInList={currentGidInList}
-					key={boxScore.gid}
-					nextGid={nextGid}
-					prevGid={prevGid}
-					showNextPrev={showNextPrev}
-					tid={tid}
-				/>
+			<div className="d-flex justify-content-between text-center align-items-center">
+				<div className="flex-fill d-none d-lg-block">
+					<TeamNameLink season={boxScore.season} t={t0}>
+						<img
+							src={t0.imgURL}
+							alt=""
+							style={{ maxWidth: 120, maxHeight: 138 }}
+							className="mb-3"
+						/>
+					</TeamNameLink>
+				</div>
+				<div className="mx-auto">
+					<HeadlineScore boxScore={boxScore} />
+					<DetailedScore
+						abbrev={abbrev}
+						boxScore={boxScore}
+						currentGidInList={currentGidInList}
+						key={boxScore.gid}
+						nextGid={nextGid}
+						prevGid={prevGid}
+						showNextPrev={showNextPrev}
+						tid={tid}
+					/>
+				</div>
+				<div className="flex-fill d-none d-lg-block">
+					<TeamNameLink season={boxScore.season} t={t1}>
+						<img
+							src={t1.imgURL}
+							alt=""
+							style={{ maxWidth: 120, maxHeight: 138 }}
+							className="mb-3"
+						/>
+					</TeamNameLink>
+				</div>
 			</div>
 			<BoxScore boxScore={boxScore} Row={Row} />
 			Attendance: {helpers.numberWithCommas(boxScore.att)}

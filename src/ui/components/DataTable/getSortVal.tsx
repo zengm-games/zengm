@@ -63,19 +63,20 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 			}
 
 			const parts = sortVal.split(" (")[0].split(" ");
-			const lastName = parts[parts.length - 1]; // For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
-			// Eventually should probably unify this with the code in tools/names.js
+			let lastName = parts[parts.length - 1];
 
+			// For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
+			// Eventually should probably unify this with the code in tools/names.js
 			const suffixes = ["Jr", "Jr.", "Sr", "Sr."];
 
 			if (
 				parts.length > 2 &&
 				(suffixes.includes(lastName) || lastName === lastName.toUpperCase())
 			) {
-				return parts[parts.length - 2];
+				lastName = parts[parts.length - 2];
 			}
 
-			return lastName;
+			return `${lastName} ${parts[0]}`;
 		}
 
 		if (sortType === "currency") {

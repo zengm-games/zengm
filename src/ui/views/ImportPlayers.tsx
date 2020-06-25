@@ -250,44 +250,48 @@ const ImportPlayers = ({
 					),
 					sortValue: tid,
 				},
-				tid >= PLAYER.FREE_AGENT
-					? {
-							value: (
-								<div
-									className="input-group input-group"
-									style={{ minWidth: 180 }}
-								>
-									<div className="input-group-prepend">
-										<div className="input-group-text">$</div>
-									</div>
-									<input
-										type="text"
-										className="form-control"
-										onChange={handleChange("contractAmount", i)}
-										value={contractAmount}
-									/>
-									<div className="input-group-append">
-										<div className="input-group-text">M per year</div>
-									</div>
+				tid >= PLAYER.FREE_AGENT ? (
+					{
+						value: (
+							<div
+								className="input-group input-group"
+								style={{ minWidth: 180 }}
+							>
+								<div className="input-group-prepend">
+									<div className="input-group-text">$</div>
 								</div>
-							),
-							sortValue: `$${contractAmount}M`,
-					  }
-					: null,
-				tid >= PLAYER.FREE_AGENT
-					? {
-							value: (
 								<input
 									type="text"
 									className="form-control"
-									onChange={handleChange("contractExp", i)}
-									style={{ minWidth: 60 }}
-									value={contractExp}
+									onChange={handleChange("contractAmount", i)}
+									value={contractAmount}
 								/>
-							),
-							sortValue: parseInt(contractExp),
-					  }
-					: null,
+								<div className="input-group-append">
+									<div className="input-group-text">M per year</div>
+								</div>
+							</div>
+						),
+						sortValue: `$${contractAmount}M`,
+					}
+				) : (
+					<div style={{ minWidth: 180 }} />
+				),
+				tid >= PLAYER.FREE_AGENT ? (
+					{
+						value: (
+							<input
+								type="text"
+								className="form-control"
+								onChange={handleChange("contractExp", i)}
+								style={{ minWidth: 60 }}
+								value={contractExp}
+							/>
+						),
+						sortValue: parseInt(contractExp),
+					}
+				) : (
+					<div style={{ minWidth: 60 }} />
+				),
 			],
 		};
 	});
@@ -304,14 +308,23 @@ const ImportPlayers = ({
 					setStatus("loading");
 				}}
 				onDone={async (error, leagueFile) => {
+					setStatus(undefined);
+
 					if (error) {
 						return;
 					}
 
-					console.log(leagueFile);
-
-					if (typeof leagueFile.startingSeason !== "number") {
-						throw new Error("League file must include staringSeason");
+					let startingSeason = leagueFile.startingSeason;
+					if (typeof startingSeason !== "number" && leagueFile.gameAttributes) {
+						const row = leagueFile.gameAttributes.find(
+							(row: any) => row.key === "startingSeason",
+						);
+						if (row) {
+							startingSeason = row.value;
+						}
+					}
+					if (typeof startingSeason !== "number") {
+						throw new Error("League file must include startingSeason");
 					}
 
 					setLeagueFile({
@@ -354,7 +367,10 @@ const ImportPlayers = ({
 
 						let contractAmount = 1;
 						let contractExp = season + 1;
-						if (season === p.ratings[p.ratings.length - 1].season) {
+						if (
+							p.contract &&
+							season === p.ratings[p.ratings.length - 1].season
+						) {
 							// Exported the latest season for this player
 							contractAmount = p.contract.amount / 1000;
 							contractExp = p.contract.exp;
@@ -385,8 +401,6 @@ const ImportPlayers = ({
 					});
 
 					setPlayers(players);
-
-					setStatus(undefined);
 				}}
 			/>
 

@@ -14,7 +14,6 @@ import/export players
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
   - can you give it a league file? yeah, so explain it
-  - why name column not sorting?
 - add import to event log? for individual player, or aggregate?
 
 GM summary screen
@@ -568,6 +567,7 @@ dashboard ui
 
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):
+  - ImportPlayers inputs
   - any place with sortValue probably needs searchValue too
   - Height/Weight in PlayerBios needs searchValue
   - DraftAbbrev

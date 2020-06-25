@@ -10,7 +10,6 @@ import/export players
 - export
   - table alignment
     - skills and button are a little too big
-  - "Add All" button
 - import
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
@@ -20,6 +19,8 @@ GM summary screen
 - https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
 
 logos in box score https://cdn.discordapp.com/attachments/331882115119448065/725629926287343616/unknown.png @buntaga#9761
+
+in live sim, button to sim until end of quarter
 
 on customize player screen, a + - button next to a players attributes in edit player to change all ratings except height quickly by 1 @dooby moogey#2784
 

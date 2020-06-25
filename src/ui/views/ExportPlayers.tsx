@@ -110,13 +110,35 @@ const ExportPlayers = ({
 
 			<div className="row">
 				<div className="col-12 col-lg-6">
-					<DataTable
-						cols={cols}
-						defaultSort={[0, "asc"]}
-						name="ExportPlayers"
-						pagination
-						rows={rows}
-					/>
+					<div className="clearfix">
+						<DataTable
+							cols={cols}
+							defaultSort={[0, "asc"]}
+							name="ExportPlayers"
+							pagination
+							rows={rows}
+						/>
+					</div>
+					<div className="float-right btn-group my-3">
+						<button
+							className="btn btn-secondary"
+							onClick={() => {
+								setSelected([]);
+							}}
+							title="Clear list of players to export"
+						>
+							Remove All
+						</button>
+						<button
+							className="btn btn-secondary"
+							onClick={() => {
+								setSelected(players.map(p => ({ p, season })));
+							}}
+							title="Add all players to export"
+						>
+							Add All
+						</button>
+					</div>
 				</div>
 				<div className="col-12 col-lg-6">
 					{rows2.length === 0 ? (

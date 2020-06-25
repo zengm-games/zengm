@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-06-25: Support for exporting/importing individual players or groups of players, at Tools > Import/Export Players.
+
 * 2020-06-21: Added a new page at Tools > Scheduled Events to let you view and (to some extent) delete scheduled events in historical leagues. [[1]](https://old.reddit.com/r/BasketballGM/comments/hdhdte/new_in_version_202006211434_some_support_for/)
 
 * 2020-06-19: Added an "Export draft class" button to the Draft History page so you can export and re-use historical draft classes.

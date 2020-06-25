@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, downloadFile, useLocal } from "../util";
@@ -17,6 +17,7 @@ const ImportPlayers = ({
 	const [players, setPlayers] = useState<
 		{
 			p: any;
+			checked: boolean;
 			contractAmount: string;
 			contractExp: string;
 			draftYear: string;
@@ -46,8 +47,36 @@ const ImportPlayers = ({
 	);
 	cols[2].width = "100%";
 
+	const handleChange = (
+		name: "checked" | "contractAmount" | "contractExp",
+		index: number,
+	) => (event: ChangeEvent<HTMLInputElement>) => {
+		const player = {
+			...players[index],
+		};
+
+		if (name === "checked") {
+			player.checked = !player.checked;
+		} else {
+			player[name] = event.target.value;
+		}
+
+		const newPlayers = [...players];
+		newPlayers[index] = player;
+
+		setPlayers(newPlayers);
+	};
+
 	const rows = players.map((player, i) => {
-		const { p, contractAmount, contractExp, draftYear, season, tid } = player;
+		const {
+			p,
+			checked,
+			contractAmount,
+			contractExp,
+			draftYear,
+			season,
+			tid,
+		} = player;
 
 		const showRatings = !challengeNoRatings;
 
@@ -73,11 +102,9 @@ const ImportPlayers = ({
 				<input
 					type="checkbox"
 					title="Import player"
-					checked={false}
+					checked={checked}
 					disabled={!!status}
-					onChange={() => {
-						// handleToggle(userOrOther, "player", "include", p.pid);
-					}}
+					onChange={handleChange("checked", i)}
 				/>,
 				i + 1,
 				<PlayerNameLabels injury={p.injury} skills={ratings.skills}>
@@ -88,8 +115,31 @@ const ImportPlayers = ({
 				showRatings ? ratings.pot : null,
 				"Age",
 				"Team",
-				"Contract",
-				"Exp",
+				tid >= PLAYER.FREE_AGENT ? (
+					<div className="input-group input-group-sm" style={{ minWidth: 150 }}>
+						<div className="input-group-prepend">
+							<div className="input-group-text">$</div>
+						</div>
+						<input
+							type="text"
+							className="form-control"
+							onChange={handleChange("contractAmount", i)}
+							value={contractAmount}
+						/>
+						<div className="input-group-append">
+							<div className="input-group-text">M per year</div>
+						</div>
+					</div>
+				) : null,
+				tid >= PLAYER.FREE_AGENT ? (
+					<input
+						type="text"
+						className="form-control-sm"
+						onChange={handleChange("contractExp", i)}
+						style={{ width: 50 }}
+						value={contractExp}
+					/>
+				) : null,
 			],
 		};
 	});
@@ -154,14 +204,14 @@ const ImportPlayers = ({
 						let contractAmount = 1;
 						let contractExp = season + 1;
 						if (exportedSeason === season) {
-							contractAmount = p.contract.amount;
+							contractAmount = p.contract.amount / 1000;
 							contractExp = p.contract.exp;
 						} else {
 							const salaryRow = Array.isArray(p.salaries)
 								? p.salaries.find((row: any) => row.season === season)
 								: undefined;
 							if (salaryRow) {
-								contractAmount = salaryRow.amount;
+								contractAmount = salaryRow.amount / 1000;
 							}
 						}
 
@@ -172,6 +222,7 @@ const ImportPlayers = ({
 
 						return {
 							p,
+							checked: true,
 							contractAmount: String(contractAmount),
 							contractExp: String(contractExp + seasonOffset),
 							draftYear: String(draftYear + seasonOffset),

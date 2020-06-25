@@ -551,7 +551,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							<div className="col-sm-6 form-group">
 								<label>Contract Amount</label>
 								<div className="input-group">
-									<div className="input-group-append">
+									<div className="input-group-prepend">
 										<div className="input-group-text">$</div>
 									</div>
 									<input

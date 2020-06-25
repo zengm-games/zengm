@@ -827,6 +827,12 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 				tid: number;
 				type: "godMode";
 		  }
+		| {
+				season: number;
+				phase: number;
+				tid: number;
+				type: "import";
+		  }
 	)[]; // Only optional cause I'm worried about upgrades
 	value: number;
 	valueNoPot: number;

@@ -1,10 +1,6 @@
 import { PHASE } from "../../../common";
 import { g } from "../../util";
-import type {
-	Player,
-	PlayerContract,
-	PlayerWithoutKey,
-} from "../../../common/types";
+import type { PlayerContract, PlayerWithoutKey } from "../../../common/types";
 
 /**
  * Store a contract in a player object.
@@ -16,7 +12,7 @@ import type {
  * @return {Object} Updated player object.
  */
 const setContract = (
-	p: Player | PlayerWithoutKey,
+	p: Pick<PlayerWithoutKey, "contract" | "salaries">,
 	contract: PlayerContract,
 	signed: boolean,
 ) => {

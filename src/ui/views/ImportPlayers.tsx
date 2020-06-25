@@ -1,9 +1,10 @@
 import React, { useState, ChangeEvent } from "react";
 import { PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, downloadFile, useLocal } from "../util";
+import { getCols, helpers, toWorker, useLocal } from "../util";
 import { DataTable, PlayerNameLabels, LeagueFileUpload } from "../components";
 import type { View } from "../../common/types";
+import orderBy from "lodash/orderBy";
 
 const ImportPlayers = ({
 	challengeNoRatings,
@@ -11,10 +12,13 @@ const ImportPlayers = ({
 	godMode,
 }: View<"importPlayers">) => {
 	const [status, setStatus] = useState<undefined | "loading" | "importing">();
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [leagueFile, setLeagueFile] = useState<{
-		startingSeason?: number;
+		startingSeason: number;
 		version?: number;
-	}>({});
+	}>({
+		startingSeason: currentSeason,
+	});
 	const [players, setPlayers] = useState<
 		{
 			p: any;
@@ -43,10 +47,13 @@ const ImportPlayers = ({
 			tid: PLAYER.FREE_AGENT,
 			name: "Free Agent",
 		},
-		...teamInfoCache.map((t, i) => ({
-			tid: i,
-			name: `${t.region} ${t.name}`,
-		})),
+		...orderBy(
+			teamInfoCache.map((t, i) => ({
+				tid: i,
+				name: `${t.region} ${t.name}`,
+			})),
+			["name", "tid"],
+		),
 	];
 
 	useTitleBar({
@@ -88,7 +95,13 @@ const ImportPlayers = ({
 	cols[2].width = "100%";
 
 	const handleChange = (
-		name: "age" | "checked" | "contractAmount" | "contractExp" | "tid",
+		name:
+			| "age"
+			| "checked"
+			| "contractAmount"
+			| "contractExp"
+			| "draftYear"
+			| "tid",
 		index: number,
 	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 		const player = {
@@ -297,6 +310,10 @@ const ImportPlayers = ({
 
 					console.log(leagueFile);
 
+					if (typeof leagueFile.startingSeason !== "number") {
+						throw new Error("League file must include staringSeason");
+					}
+
 					setLeagueFile({
 						startingSeason: leagueFile.startingSeason,
 						version: leagueFile.version,
@@ -419,12 +436,37 @@ const ImportPlayers = ({
 						disabled={!!status && numChecked > 0}
 						onClick={async () => {
 							setStatus("importing");
+							setErrorMessage(undefined);
+
+							try {
+								await toWorker(
+									"main",
+									"importPlayers",
+									leagueFile,
+									players.filter(p => p.checked),
+								);
+								setLeagueFile({
+									startingSeason: currentSeason,
+								});
+								setPlayers([]);
+							} catch (error) {
+								console.error(error);
+								setErrorMessage(error.message);
+							}
 
 							setStatus(undefined);
 						}}
 					>
 						Import {numChecked} Players
 					</button>
+
+					{errorMessage ? (
+						<div>
+							<div className="alert alert-danger d-inline-block mb-0">
+								Error importing players: {errorMessage}
+							</div>
+						</div>
+					) : null}
 				</>
 			) : null}
 		</>

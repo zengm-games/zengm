@@ -138,6 +138,7 @@ const ExportPlayers = ({
 				disabled={exporting || selectedPids.length === 0}
 				onClick={async () => {
 					setExporting(true);
+					setErrorMessage(undefined);
 
 					try {
 						const { filename, json } = await toWorker(
@@ -163,7 +164,7 @@ const ExportPlayers = ({
 
 			{errorMessage ? (
 				<div>
-					<div className="alert alert-danger d-inline-block">
+					<div className="alert alert-danger d-inline-block mb-0">
 						Error exporting players: {errorMessage}
 					</div>
 				</div>

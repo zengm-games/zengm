@@ -71,6 +71,7 @@ import type {
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
+import augmentPartialPlayer from "../core/player/augmentPartialPlayer";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1390,6 +1391,137 @@ const handleUploadedDraftClass = async (
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const importPlayers = async (
+	leagueFile: {
+		startingSeason: number;
+		version?: number;
+	},
+	players: {
+		p: any;
+		contractAmount: string;
+		contractExp: string;
+		draftYear: string;
+		season: number;
+		seasonOffset: number;
+		tid: number;
+	}[],
+) => {
+	console.log(leagueFile, players);
+	const currentSeason = g.get("season");
+	const currentPhase = g.get("phase");
+
+	for (const {
+		p,
+		contractAmount,
+		contractExp,
+		draftYear,
+		season,
+		seasonOffset,
+		tid,
+	} of players) {
+		const p2 = {
+			born: p.born,
+			college: p.college,
+			contract: {
+				amount: parseFloat(contractAmount) * 1000,
+				exp: parseInt(contractExp),
+			},
+			draft: {
+				...p.draft,
+				round: 0,
+				pick: 0,
+				tid: -1,
+				originalTid: -1,
+			},
+			face: p.face,
+			firstName: p.firstName,
+			hgt: p.hgt,
+			imgURL: p.imgURL,
+			injury: p.injury,
+			injuries: p.injuries,
+			lastName: p.lastName,
+			ratings: p.ratings,
+			retiredYear: Infinity,
+			salaries: p.salaries,
+			tid,
+			transactions: [
+				{
+					season: currentSeason,
+					phase: currentPhase,
+					tid,
+					type: "import",
+				},
+			],
+			weight: p.weight,
+		};
+
+		let seasonOffset2 = season - p.exportedSeason;
+		if (tid === PLAYER.UNDRAFTED) {
+			const draftYearInt = parseInt(draftYear);
+			if (
+				Number.isNaN(draftYearInt) ||
+				draftYearInt < currentSeason ||
+				(currentPhase > PHASE.DRAFT && draftYearInt === currentSeason)
+			) {
+				throw new Error("Invalid draft year");
+			}
+			seasonOffset2 -= draftYearInt - currentSeason;
+		}
+		const seasonOffset3 = seasonOffset - (seasonOffset2 - seasonOffset);
+		p2.born.year += seasonOffset3;
+		p2.draft.year += seasonOffset3;
+		const adjustAndFilter = (key: "injuries" | "ratings" | "salaries") => {
+			for (const row of p2[key]) {
+				row.season += seasonOffset;
+			}
+
+			let offset = 0;
+			if (key === "injuries" && currentPhase < PHASE.REGULAR_SEASON) {
+				// No injuries from current season, if current season has not started yet
+				offset = -1;
+			} else if (key === "salaries") {
+				// Current season salary will be added later
+				offset = -1;
+			}
+
+			p2[key] = p2[key].filter((row: any) => row.season <= season + offset);
+
+			for (const row of p2[key]) {
+				row.season += seasonOffset - seasonOffset2;
+			}
+		};
+		adjustAndFilter("injuries");
+		adjustAndFilter("ratings");
+		adjustAndFilter("salaries");
+
+		player.setContract(p2, p2.contract, tid >= 0);
+
+		if (tid === PLAYER.UNDRAFTED) {
+			p.salaries = [];
+			p.injuries = [];
+		}
+		if (
+			tid === PLAYER.RETIRED &&
+			typeof p.retiredYear === "number" &&
+			p.retiredYear !== Infinity
+		) {
+			p2.retiredYear = p.retiredYear + seasonOffset3;
+		}
+
+		const scoutingRank = (g.get("numActiveTeams") + 1) / 2;
+
+		const p3 = await player.augmentPartialPlayer(
+			p2,
+			scoutingRank,
+			leagueFile.version,
+		);
+
+		await idb.cache.players.put(p3);
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const init = async (inputEnv: Env, conditions: Conditions) => {
 	Object.assign(env, inputEnv);
 
@@ -2455,6 +2587,7 @@ export default {
 	getTradingBlockOffers,
 	getVersionWorker,
 	handleUploadedDraftClass,
+	importPlayers,
 	init,
 	lockSet,
 	proposeTrade,

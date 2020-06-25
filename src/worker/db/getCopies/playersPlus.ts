@@ -246,6 +246,8 @@ const processAttrs = (
 					])}">${abbrev} in ${transaction.season}</a>`;
 				} else if (transaction.type === "godMode") {
 					output.latestTransaction = `God Mode in ${transaction.season}`;
+				} else if (transaction.type === "import") {
+					output.latestTransaction = `Imported in ${transaction.season}`;
 				}
 			} else {
 				output.latestTransaction = "";

@@ -11,20 +11,16 @@ import/export players
   - table alignment
     - skills and button are a little too big
 - import
-  - on processing
-    - delete stuff that doesn't make sense, like relatives
-    - augment
-    - make sure draft prospect year changing adjust things properly
-      - draftYear only matters for that tid
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
   - can you give it a league file? yeah, so explain it
   - why name column not sorting?
-- link between import/export at top
-- in player transaction, show as imported. both event log and p.transactions
+- add import to event log? for individual player, or aggregate?
 
 GM summary screen
 - https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
+
+logos in box score https://cdn.discordapp.com/attachments/331882115119448065/725629926287343616/unknown.png @buntaga#9761
 
 on customize player screen, a + - button next to a players attributes in edit player to change all ratings except height quickly by 1 @dooby moogey#2784
 

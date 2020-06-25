@@ -10,6 +10,7 @@ import/export players
 - export
   - table alignment
     - skills and button are a little too big
+  - "Add All" button
 - import
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
@@ -197,6 +198,7 @@ FBGM
 - increase roster size limit to 55
 - traded players have AV added, when i guess it should be averaged. matters for awards, etc
 - in God mode for fbgm it reads "home court advantage" instead of "home field advantage" lol
+- in the multi team mode tab on FBGM it still has a button to “Reset playing time”
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

@@ -128,12 +128,12 @@ const updatePlayers = async (
 				let min;
 
 				if (inputs.statType === "totals") {
-					if (inputs.season === undefined) {
+					if (inputs.season !== undefined) {
 						min = p.stats.min;
 					} else if (inputs.playoffs !== "playoffs") {
 						min = p.careerStats.min;
 					}
-				} else if (inputs.season === undefined) {
+				} else if (inputs.season !== undefined) {
 					min = p.stats.gp * p.stats.min;
 				} else if (inputs.playoffs !== "playoffs") {
 					min = p.careerStats.gp * p.careerStats.min;
@@ -147,7 +147,7 @@ const updatePlayers = async (
 
 				// Or, keep players who played in playoffs
 				if (inputs.playoffs === "playoffs") {
-					if (inputs.season === undefined) {
+					if (inputs.season !== undefined) {
 						if (p.stats.gp > 0) {
 							return true;
 						}

@@ -14,6 +14,7 @@ import { helpers, realtimeUpdate, toWorker } from "../../util";
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
+import posRatings from "../../../common/posRatings";
 
 // A player can never have KR or PR as his main position
 const bannedPositions = ["KR", "PR"];
@@ -375,7 +376,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					/>
 					<button
 						type="button"
-						className="btn btn-light-bordered mt-1"
+						className="btn btn-secondary mt-1"
 						onClick={randomizeFace}
 					>
 						Randomize
@@ -402,6 +403,41 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			</div>
 		);
 	}
+
+	const adjustRatings = (amount: number) => async (event: MouseEvent) => {
+		event.preventDefault();
+		setState(prevState => {
+			const p = prevState.p;
+			const oldRatings = p.ratings[r];
+			const pos = p.ratings[r].pos;
+
+			const keys = posRatings(pos);
+			if (process.env.SPORT === "football") {
+				keys.push("stre", "spd", "endu");
+			}
+
+			const newRatings: any = {};
+			for (const key of keys) {
+				if (key === "hgt") {
+					continue;
+				}
+				newRatings[key] = helpers.bound(oldRatings[key] + amount, 0, 100);
+			}
+
+			const p2: any = {
+				...p,
+			};
+			p2.ratings[r] = {
+				...oldRatings,
+				...newRatings,
+			};
+
+			return {
+				...prevState,
+				p: p2,
+			};
+		});
+	};
 
 	return (
 		<>
@@ -616,42 +652,61 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					</div>
 
 					<div className="col-md-5">
-						<button
-							type="button"
-							className="btn btn-secondary float-right mt-3"
-							title={`Ratings will be taken from a randomly generated player with the same age${
-								process.env.SPORT === "football" ? " and position" : ""
-							} as this player`}
-							onClick={async event => {
-								event.preventDefault();
-								const { hgt, ratings } = await toWorker(
-									"main",
-									"getRandomRatings",
-									(p as any).age,
-									process.env.SPORT === "football"
-										? p.pos || p.ratings[p.ratings.length - 1].pos
-										: undefined,
-								);
+						<div className="float-right d-flex flex-column">
+							<button
+								type="button"
+								className="btn btn-secondary btn-sm mb-1"
+								title={`Ratings will be taken from a randomly generated player with the same age${
+									process.env.SPORT === "football" ? " and position" : ""
+								} as this player`}
+								onClick={async event => {
+									event.preventDefault();
+									const { hgt, ratings } = await toWorker(
+										"main",
+										"getRandomRatings",
+										(p as any).age,
+										process.env.SPORT === "football"
+											? p.ratings[r].pos
+											: undefined,
+									);
 
-								setState(prevState => {
-									const p: any = {
-										...prevState.p,
-										hgt,
-									};
-									p.ratings[p.ratings.length - 1] = {
-										...p.ratings[p.ratings.length - 1],
-										...ratings,
-									};
+									setState(prevState => {
+										const p: any = {
+											...prevState.p,
+											hgt,
+										};
+										p.ratings[r] = {
+											...p.ratings[r],
+											...ratings,
+										};
 
-									return {
-										...prevState,
-										p,
-									};
-								});
-							}}
-						>
-							Randomize
-						</button>
+										return {
+											...prevState,
+											p,
+										};
+									});
+								}}
+							>
+								Randomize
+							</button>
+
+							<div className="ml-1 btn-group">
+								<button
+									type="button"
+									className="btn btn-secondary btn-sm"
+									onClick={adjustRatings(-1)}
+								>
+									<span className="glyphicon glyphicon-minus" />
+								</button>
+								<button
+									type="button"
+									className="btn btn-secondary btn-sm"
+									onClick={adjustRatings(1)}
+								>
+									<span className="glyphicon glyphicon-plus" />
+								</button>
+							</div>
+						</div>
 
 						<h2>Ratings</h2>
 

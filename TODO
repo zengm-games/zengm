@@ -20,8 +20,6 @@ GM summary screen
 
 in live sim, button to sim until end of quarter
 
-on customize player screen, a + - button next to a players attributes in edit player to change all ratings except height quickly by 1 @dooby moogey#2784
-
 scheduled events editor
 - eventually add/edit/delete individual events
   - needs to handle tids, like already happens for adding/removing teams

@@ -45,7 +45,11 @@ const Row = ({
 				// Expand clickable area of checkboxes/buttons to the whole td
 				if (singleCheckbox || singleButton) {
 					props.onClick = (event: MouseEvent) => {
-						if (event.target && (event.target as any).tagName === "TD") {
+						if (
+							event.target &&
+							(event.target as any).tagName === "TD" &&
+							!actualValue.props.disabled
+						) {
 							if (singleCheckbox) {
 								actualValue.props.onChange();
 							} else {

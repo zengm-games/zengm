@@ -1438,7 +1438,6 @@ const importPlayers = async (
 			firstName: p.firstName,
 			hgt: p.hgt,
 			imgURL: p.imgURL,
-			injury: p.injury,
 			injuries: p.injuries,
 			lastName: p.lastName,
 			ratings: p.ratings,
@@ -1454,6 +1453,17 @@ const importPlayers = async (
 			],
 			weight: p.weight,
 		};
+
+		// Only add injury if the season wasn't chaned by the user. These variables copied from ImportPlayers init
+		const exportedSeason: number | undefined =
+			typeof p.exportedSeason === "number" ? p.exportedSeason : undefined;
+		const season2 =
+			(exportedSeason !== undefined
+				? p.exportedSeason
+				: p.ratings[p.ratings.length - 1].season) + seasonOffset;
+		if (season === season2) {
+			(p2 as any).injury = p.injury;
+		}
 
 		if (tid === PLAYER.UNDRAFTED) {
 			const draftYearInt = parseInt(draftYear);
@@ -1492,7 +1502,6 @@ const importPlayers = async (
 			p2.draft.year += seasonOffset2;
 
 			const adjustAndFilter = (key: "injuries" | "ratings" | "salaries") => {
-				console.log("adjustAndFilter", key, season);
 				for (const row of p2[key]) {
 					row.season += seasonOffset2;
 				}

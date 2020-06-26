@@ -14,7 +14,6 @@ import/export players
   - maybe
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
     - add import to event log? for individual player, or aggregate?
-- check importing to future draft class, seems broken
 
 GM summary screen
 - https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
@@ -32,6 +31,8 @@ scheduled events editor
   - edit
     - game attributes - share code with god mode settings
     - open modal on click "edit", or inline form
+
+remove UAM script
 
 register as game on youtube
 - gmgameschris

@@ -373,6 +373,12 @@ const ImportPlayers = ({
 							tid = p.tid;
 						}
 
+						let checked = true;
+						if (tid < PLAYER.UNDRAFTED) {
+							tid = PLAYER.FREE_AGENT;
+							checked = false;
+						}
+
 						let contractAmount = 1;
 						let contractExp = season + 1;
 						if (
@@ -396,7 +402,7 @@ const ImportPlayers = ({
 
 						return {
 							p,
-							checked: true,
+							checked,
 							contractAmount: String(contractAmount),
 							contractExp: String(contractExp + seasonOffset),
 							draftYear: String(currentSeason + (phase >= PHASE.DRAFT ? 1 : 0)),

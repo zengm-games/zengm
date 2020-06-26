@@ -29,8 +29,8 @@ const ExportPlayers = ({
 	const cols = getCols("Name", "Pos", "Age", "Team", "Ovr", "Pot", "");
 	cols[0].width = "100%";
 
-	const cols2 = getCols("#", "Name", "Pos", "Age", "Team", "Ovr", "Pot");
-	cols[1].width = "100%";
+	const cols2 = getCols("#", "Name", "Pos", "Age", "Team", "Ovr", "Pot", "");
+	cols2[1].width = "100%";
 
 	const commonRows = (p: typeof players[number]) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
@@ -84,7 +84,20 @@ const ExportPlayers = ({
 	const rows2 = selected.map(({ p }, i) => {
 		return {
 			key: p.pid,
-			data: [i + 1, ...commonRows(p)],
+			data: [
+				i + 1,
+				...commonRows(p),
+				<button
+					className="btn btn-xs btn-primary"
+					disabled={exporting}
+					onClick={() => {
+						setSelected(selected.filter(row => row.p.pid !== p.pid));
+					}}
+					title="Remove from list of players to export"
+				>
+					Remove
+				</button>,
+			],
 		};
 	});
 

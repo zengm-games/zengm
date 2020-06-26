@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { PLAYER } from "../../common";
+import { PLAYER, PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocal } from "../util";
 import { DataTable, PlayerNameLabels, LeagueFileUpload } from "../components";
@@ -10,6 +10,7 @@ const ImportPlayers = ({
 	challengeNoRatings,
 	currentSeason,
 	godMode,
+	phase,
 }: View<"importPlayers">) => {
 	const [status, setStatus] = useState<
 		undefined | "loading" | "importing" | "success"
@@ -37,10 +38,6 @@ const ImportPlayers = ({
 	const teamInfoCache = useLocal(state => state.teamInfoCache);
 
 	const teams = [
-		{
-			tid: PLAYER.RETIRED,
-			name: "Retired",
-		},
 		{
 			tid: PLAYER.UNDRAFTED,
 			name: "Draft Prospect",
@@ -191,6 +188,7 @@ const ImportPlayers = ({
 							</PlayerNameLabels>
 							<button
 								className="btn btn-secondary btn-sm ml-2"
+								disabled={disableButtons}
 								onClick={() => {
 									const newPlayers = [...players];
 									newPlayers.splice(i, 0, helpers.deepCopy(player));
@@ -394,8 +392,6 @@ const ImportPlayers = ({
 							}
 						}
 
-						const draftYear = p.draft.year;
-
 						const seasonOffset = currentSeason - season;
 
 						return {
@@ -403,7 +399,7 @@ const ImportPlayers = ({
 							checked: true,
 							contractAmount: String(contractAmount),
 							contractExp: String(contractExp + seasonOffset),
-							draftYear: String(draftYear + seasonOffset),
+							draftYear: String(currentSeason + (phase >= PHASE.DRAFT ? 1 : 0)),
 							season: season + seasonOffset,
 							seasonOffset,
 							tid,
@@ -469,12 +465,12 @@ const ImportPlayers = ({
 									leagueFile,
 									players.filter(p => p.checked),
 								);
+								setStatus("success");
 							} catch (error) {
 								console.error(error);
 								setErrorMessage(error.message);
+								setStatus(undefined);
 							}
-
-							setStatus("success");
 						}}
 					>
 						Import {numChecked} Players
@@ -484,14 +480,6 @@ const ImportPlayers = ({
 						<div>
 							<div className="alert alert-success d-inline-block mb-0">
 								Successfully imported players!
-							</div>
-						</div>
-					) : null}
-
-					{errorMessage ? (
-						<div>
-							<div className="alert alert-danger d-inline-block mb-0">
-								Error importing players: {errorMessage}
 							</div>
 						</div>
 					) : null}

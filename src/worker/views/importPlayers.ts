@@ -6,7 +6,6 @@ const updateImportPlayers = async (
 	input: unknown,
 	updateEvents: UpdateEvents,
 ) => {
-	console.log("updateImportPlayers");
 	if (
 		updateEvents.includes("firstRun") ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON)
@@ -15,6 +14,7 @@ const updateImportPlayers = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
 			godMode: g.get("godMode"),
+			phase: g.get("phase"),
 		};
 	}
 };

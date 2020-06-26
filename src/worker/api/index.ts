@@ -1442,7 +1442,6 @@ const importPlayers = async (
 			injuries: p.injuries,
 			lastName: p.lastName,
 			ratings: p.ratings,
-			retiredYear: Infinity,
 			salaries: p.salaries,
 			tid,
 			transactions: [
@@ -1456,10 +1455,6 @@ const importPlayers = async (
 			weight: p.weight,
 		};
 
-		let seasonOffset2 =
-			typeof p.exportedSeason === "number"
-				? season - p.exportedSeason
-				: season - p.ratings[p.ratings.length - 1].season;
 		if (tid === PLAYER.UNDRAFTED) {
 			const draftYearInt = parseInt(draftYear);
 			if (
@@ -1469,47 +1464,57 @@ const importPlayers = async (
 			) {
 				throw new Error("Invalid draft year");
 			}
-			seasonOffset2 -= draftYearInt - currentSeason;
-		}
-		const seasonOffset3 = seasonOffset - (seasonOffset2 - seasonOffset);
-		p2.born.year += seasonOffset3;
-		p2.draft.year += seasonOffset3;
-		const adjustAndFilter = (key: "injuries" | "ratings" | "salaries") => {
-			for (const row of p2[key]) {
-				row.season += seasonOffset;
+
+			const ratingsSeason = season - seasonOffset;
+			const ageAtDraft = ratingsSeason - p2.born.year;
+
+			p2.draft.year = draftYearInt;
+			p2.born.year = draftYearInt - ageAtDraft;
+
+			const ratings = p2.ratings.find(
+				(row: any) => row.season === ratingsSeason,
+			);
+			if (!ratings) {
+				throw new Error(
+					`Ratings not found for player ${p.pid} in season ${ratingsSeason}`,
+				);
 			}
 
-			let offset = 0;
-			if (key === "injuries" && currentPhase < PHASE.REGULAR_SEASON) {
-				// No injuries from current season, if current season has not started yet
-				offset = -1;
-			} else if (key === "salaries") {
-				// Current season salary will be added later
-				offset = -1;
-			}
+			p2.salaries = [];
+			p2.injuries = [];
+			p2.ratings = [ratings];
+			p2.ratings.season = p2.draft.year;
+		} else {
+			// How many seasons to adjust player to bring him aligned with current season, as an active player at the selected age
+			const seasonOffset2 = currentSeason - (season - seasonOffset);
 
-			p2[key] = p2[key].filter((row: any) => row.season <= season + offset);
+			p2.born.year += seasonOffset2;
+			p2.draft.year += seasonOffset2;
 
-			for (const row of p2[key]) {
-				row.season += seasonOffset - seasonOffset2;
-			}
-		};
-		adjustAndFilter("injuries");
-		adjustAndFilter("ratings");
-		adjustAndFilter("salaries");
+			const adjustAndFilter = (key: "injuries" | "ratings" | "salaries") => {
+				console.log("adjustAndFilter", key, season);
+				for (const row of p2[key]) {
+					row.season += seasonOffset2;
+				}
 
-		player.setContract(p2, p2.contract, tid >= 0);
+				let offset = 0;
+				if (key === "injuries" && currentPhase < PHASE.REGULAR_SEASON) {
+					// No injuries from current season, if current season has not started yet
+					offset = -1;
+				} else if (key === "salaries") {
+					// Current season salary will be added later
+					offset = -1;
+				}
 
-		if (tid === PLAYER.UNDRAFTED) {
-			p.salaries = [];
-			p.injuries = [];
-		}
-		if (
-			tid === PLAYER.RETIRED &&
-			typeof p.retiredYear === "number" &&
-			p.retiredYear !== Infinity
-		) {
-			p2.retiredYear = p.retiredYear + seasonOffset3;
+				p2[key] = p2[key].filter(
+					(row: any) => row.season <= currentSeason + offset,
+				);
+			};
+			adjustAndFilter("injuries");
+			adjustAndFilter("ratings");
+			adjustAndFilter("salaries");
+
+			player.setContract(p2, p2.contract, tid >= 0);
 		}
 
 		const scoutingRank = (g.get("numActiveTeams") + 1) / 2;

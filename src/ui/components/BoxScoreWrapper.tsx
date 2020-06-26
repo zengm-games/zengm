@@ -406,16 +406,18 @@ const BoxScoreWrapper = ({
 	return (
 		<>
 			<div className="d-flex justify-content-between text-center align-items-center">
-				<div className="flex-fill d-none d-lg-block">
-					<TeamNameLink season={boxScore.season} t={t0}>
-						<img
-							src={t0.imgURL}
-							alt=""
-							style={{ maxWidth: 120, maxHeight: 138 }}
-							className="mb-3"
-						/>
-					</TeamNameLink>
-				</div>
+				{t0.imgURL !== undefined && t0.imgURL !== "" ? (
+					<div className="flex-fill d-none d-lg-block">
+						<TeamNameLink season={boxScore.season} t={t0}>
+							<img
+								src={t0.imgURL}
+								alt=""
+								style={{ maxWidth: 120, maxHeight: 138 }}
+								className="mb-3"
+							/>
+						</TeamNameLink>
+					</div>
+				) : null}
 				<div className="mx-auto">
 					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
@@ -429,16 +431,18 @@ const BoxScoreWrapper = ({
 						tid={tid}
 					/>
 				</div>
-				<div className="flex-fill d-none d-lg-block">
-					<TeamNameLink season={boxScore.season} t={t1}>
-						<img
-							src={t1.imgURL}
-							alt=""
-							style={{ maxWidth: 120, maxHeight: 138 }}
-							className="mb-3"
-						/>
-					</TeamNameLink>
-				</div>
+				{t1.imgURL !== undefined && t1.imgURL !== "" ? (
+					<div className="flex-fill d-none d-lg-block">
+						<TeamNameLink season={boxScore.season} t={t1}>
+							<img
+								src={t1.imgURL}
+								alt=""
+								style={{ maxWidth: 120, maxHeight: 138 }}
+								className="mb-3"
+							/>
+						</TeamNameLink>
+					</div>
+				) : null}
 			</div>
 			<BoxScore boxScore={boxScore} Row={Row} />
 			Attendance: {helpers.numberWithCommas(boxScore.att)}

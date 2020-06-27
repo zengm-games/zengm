@@ -32,11 +32,13 @@ const record = (
 
 const GroupStandingsRow = ({
 	season,
+	separator,
 	t,
 	ties,
 	type,
 	userTid,
 }: Pick<View<"standings">, "season" | "ties" | "type" | "userTid"> & {
+	separator: boolean;
 	t: View<"standings">["teams"][number];
 }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -47,6 +49,7 @@ const GroupStandingsRow = ({
 			className={classNames({
 				"table-info": t.tid === userTid,
 				"table-warning": clicked,
+				separator,
 			})}
 			onClick={toggleClicked}
 		>
@@ -87,12 +90,14 @@ const width100 = {
 const GroupStandings = ({
 	name,
 	season,
+	separatorIndex,
 	teams,
 	ties,
 	type,
 	userTid,
 }: Pick<View<"standings">, "season" | "teams" | "ties" | "type" | "userTid"> & {
 	name?: string;
+	separatorIndex?: number;
 }) => {
 	return (
 		<ResponsiveTableWrapper>
@@ -114,11 +119,12 @@ const GroupStandings = ({
 					</tr>
 				</thead>
 				<tbody>
-					{teams.map(t => (
+					{teams.map((t, i) => (
 						<GroupStandingsRow
 							key={t.tid}
 							t={t}
 							season={season}
+							separator={separatorIndex === i}
 							ties={ties}
 							type={type}
 							userTid={userTid}
@@ -237,39 +243,64 @@ const Standings = ({
 		},
 	});
 
+	// Show small playoff standings if we're currently viewing the division standings and if the playoff standings differ from the division standings (like multiple divisions get grouped together to determine playoff ranking)
+	const confHasMultipleDivs = confs.some(
+		conf => divs.filter(div => div.cid === conf.cid).length > 1,
+	);
+	const showSmallPlayoffStandings =
+		type === "div" &&
+		((playoffsByConference && confHasMultipleDivs) ||
+			(!playoffsByConference && divs.length > 1));
+
 	let groups: {
 		name?: string;
 		subgroups: {
 			name?: string;
+			separatorIndex?: number;
 			teams: typeof teams;
 		}[];
 	}[];
 	if (type === "league") {
+		let separatorIndex: number | undefined;
+		if (!playoffsByConference) {
+			separatorIndex = maxPlayoffSeed - 1;
+		}
 		groups = [
 			{
 				subgroups: [
 					{
+						separatorIndex,
 						teams,
 					},
 				],
 			},
 		];
 	} else if (type === "conf") {
+		let separatorIndex: number | undefined;
+		if (playoffsByConference || confs.length === 1) {
+			separatorIndex = maxPlayoffSeed - 1;
+		}
 		groups = confs.map(conf => ({
 			name: conf.name,
 			subgroups: [
 				{
+					separatorIndex,
 					teams: teams.filter(t => t.seasonAttrs.cid === conf.cid),
 				},
 			],
 		}));
 	} else {
+		let separatorIndex: number | undefined;
+		if ((playoffsByConference && !confHasMultipleDivs) || divs.length === 1) {
+			separatorIndex = maxPlayoffSeed - 1;
+		}
 		groups = confs.map(conf => ({
 			name: conf.name,
 			subgroups: divs
 				.filter(div => div.cid === conf.cid)
 				.map(div => ({
 					name: div.name,
+					separatorIndex,
 					teams: teams.filter(t => t.seasonAttrs.did === div.did),
 				})),
 		}));
@@ -291,20 +322,11 @@ const Standings = ({
 		</React.Fragment>
 	));
 
-	// Show small playoff standings if we're currently viewing the division standings and if the playoff standings differ from the division standings (like multiple divisions get grouped together to determine playoff ranking)
-	const confHasMultipleDivs = confs.some(
-		conf => divs.filter(div => div.cid === conf.cid).length > 1,
-	);
-	const showSmallPlayoffStandings =
-		type === "div" &&
-		((playoffsByConference && confHasMultipleDivs) ||
-			(!playoffsByConference && divs.length > 1));
-
 	let allStandings;
 
 	if (!showSmallPlayoffStandings) {
 		// No small standings
-		allStandings = <div style={{ maxWidth: 750 }}>{groupStandings}</div>;
+		allStandings = <div style={{ maxWidth: 720 }}>{groupStandings}</div>;
 	} else if (playoffsByConference) {
 		// Show small standings alongside each conference
 		allStandings = (

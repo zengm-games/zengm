@@ -303,11 +303,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 										<Dropdown alignRight>
 											<Dropdown.Toggle
 												id="live-game-sim-more"
-												className="btn-light-bordered"
-												style={{
-													borderTopLeftRadius: 0,
-													borderBottomLeftRadius: 0,
-												}}
+												className="btn-light-bordered live-game-sim-more"
 												disabled={
 													!this.state.paused || this.state.boxScore.gameOver
 												}

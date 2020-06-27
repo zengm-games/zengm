@@ -913,3 +913,9 @@ tr.table-warning:hover > td {
 .sort-inside-modal {
 	z-index: 999999999;
 }
+
+button.live-game-sim-more {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left-width: 0 !important;
+}

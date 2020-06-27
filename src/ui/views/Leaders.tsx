@@ -4,6 +4,57 @@ import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
 import type { View } from "../../common/types";
+import useClickable from "../hooks/useClickable";
+import classNames from "classnames";
+
+const Row = ({
+	cat,
+	p,
+	rank,
+	season,
+}: {
+	cat: any;
+	p: any;
+	rank: number;
+	season: number;
+}) => {
+	const { clicked, toggleClicked } = useClickable();
+
+	return (
+		<tr
+			className={classNames({
+				"table-info": p.userTeam,
+				"table-warning": clicked,
+			})}
+			onClick={toggleClicked}
+		>
+			<td>
+				{rank}.{" "}
+				<PlayerNameLabels
+					pid={p.pid}
+					injury={p.injury}
+					skills={p.ratings.skills}
+					watch={p.watch}
+				>
+					{p.nameAbbrev}
+				</PlayerNameLabels>
+				<a
+					href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`, season])}
+					style={{
+						marginLeft: "6px",
+					}}
+				>
+					{p.abbrev}
+				</a>
+			</td>
+			<td>
+				{cat.stat === "WS/48"
+					? helpers.roundWinp(p.stat)
+					: helpers.roundStat(p.stat, cat.statProp)}
+			</td>
+		</tr>
+	);
+};
 
 const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 	useTitleBar({
@@ -44,39 +95,13 @@ const Leaders = ({ categories, playoffs, season }: View<"leaders">) => {
 								</thead>
 								<tbody>
 									{cat.data.map((p, j) => (
-										<tr
+										<Row
 											key={p.pid}
-											className={p.userTeam ? "table-info" : undefined}
-										>
-											<td>
-												{j + 1}.{" "}
-												<PlayerNameLabels
-													pid={p.pid}
-													injury={p.injury}
-													skills={p.ratings.skills}
-													watch={p.watch}
-												>
-													{p.nameAbbrev}
-												</PlayerNameLabels>
-												<a
-													href={helpers.leagueUrl([
-														"roster",
-														`${p.abbrev}_${p.tid}`,
-														season,
-													])}
-													style={{
-														marginLeft: "6px",
-													}}
-												>
-													{p.abbrev}
-												</a>
-											</td>
-											<td>
-												{cat.stat === "WS/48"
-													? helpers.roundWinp(p.stat)
-													: helpers.roundStat(p.stat, cat.statProp)}
-											</td>
-										</tr>
+											cat={cat}
+											p={p}
+											rank={j + 1}
+											season={season}
+										/>
 									))}
 								</tbody>
 							</table>

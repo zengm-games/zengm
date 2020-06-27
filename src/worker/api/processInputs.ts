@@ -520,6 +520,18 @@ const leagueStats = (params: Params) => {
 	};
 };
 
+const standings = (params: Params) => {
+	let type: "conf" | "div" | "league" = "div";
+	if (params.type === "conf" || params.type === "league") {
+		type = params.type;
+	}
+
+	return {
+		season: validateSeason(params.season),
+		type,
+	};
+};
+
 const transactions = (params: Params) => {
 	let abbrev: string;
 	let tid: number;
@@ -627,7 +639,7 @@ export default {
 	resetPassword,
 	roster,
 	schedule,
-	standings: validateSeasonOnly,
+	standings,
 	teamFinances,
 	teamHistory,
 	teamRecords,

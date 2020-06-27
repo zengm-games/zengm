@@ -6,6 +6,8 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+dashboard autoplay multpile seasons playoffs block displays at wrong time, maybe not going away when it should at preseason
+
 import/export players
 - maybe
   - export
@@ -1360,7 +1362,6 @@ league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/leagu
 merge game.play and freeAgents.play
 replace random.gauss with random.realGauss
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
-UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 schedule page (and dashboard and maybe gamelog) should show opponent records
 
 LOW PRIORITY
@@ -1374,7 +1375,6 @@ use compound index on season + team for games obectStore in helpers.gameLogList,
 upcoming free agents page should show at least some information about signings (or non-signings) during re-sign phase
 box plots / distributions
   "it'd be great to overlay your roster to see where you stand. Maybe click on a name in a list to add or remove it from the display. Do I have a fast team? Do I have a three point shooting team? Are we big and bruising and slow?"
-UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_compare_players/
 awards
   show awards count in hall of fame

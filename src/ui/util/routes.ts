@@ -47,6 +47,7 @@ const routes = () => {
 		"/l/:lid/message/:mid": genPage("message"),
 		"/l/:lid/standings": genPage("standings"),
 		"/l/:lid/standings/:season": genPage("standings"),
+		"/l/:lid/standings/:season/:type": genPage("standings"),
 		"/l/:lid/playoffs": genPage("playoffs"),
 		"/l/:lid/playoffs/:season": genPage("playoffs"),
 		"/l/:lid/league_finances": genPage("leagueFinances"),

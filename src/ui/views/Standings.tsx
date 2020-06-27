@@ -1,5 +1,4 @@
 import classNames from "classnames";
-import PropTypes from "prop-types";
 import React from "react";
 import { ResponsiveTableWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
@@ -31,16 +30,14 @@ const record = (
 	return val;
 };
 
-type Div = View<"standings">["confs"][number]["divs"][number];
-
-const DivStandingsRow = ({
+const GroupStandingsRow = ({
 	season,
 	t,
 	ties,
-}: {
-	season: number;
-	t: Div["teams"][number];
-	ties: boolean;
+	type,
+	userTid,
+}: Pick<View<"standings">, "season" | "ties" | "type" | "userTid"> & {
+	t: View<"standings">["teams"][number];
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -48,13 +45,13 @@ const DivStandingsRow = ({
 		<tr
 			key={t.tid}
 			className={classNames({
-				"table-info": t.highlight,
+				"table-info": t.tid === userTid,
 				"table-warning": clicked,
 			})}
 			onClick={toggleClicked}
 		>
 			<td>
-				{t.playoffsRank ? `${t.playoffsRank}. ` : null}
+				{t.rank.playoffs > 0 ? `${t.rank.playoffs}. ` : null}
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -72,7 +69,7 @@ const DivStandingsRow = ({
 			<td>{t.seasonAttrs.lost}</td>
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
-			<td>{t.gb}</td>
+			<td>{t.gb[type]}</td>
 			<td>{record(t.seasonAttrs, "Home", ties)}</td>
 			<td>{record(t.seasonAttrs, "Away", ties)}</td>
 			<td>{record(t.seasonAttrs, "Div", ties)}</td>
@@ -83,31 +80,26 @@ const DivStandingsRow = ({
 	);
 };
 
-DivStandingsRow.propTypes = {
-	season: PropTypes.number.isRequired,
-	t: PropTypes.object.isRequired,
-	ties: PropTypes.bool.isRequired,
-};
-
 const width100 = {
 	width: "100%",
 };
 
-const DivStandings = ({
-	div,
+const GroupStandings = ({
+	name,
 	season,
+	teams,
 	ties,
-}: {
-	div: Div;
-	season: number;
-	ties: boolean;
+	type,
+	userTid,
+}: Pick<View<"standings">, "season" | "teams" | "ties" | "type" | "userTid"> & {
+	name?: string;
 }) => {
 	return (
 		<ResponsiveTableWrapper>
 			<table className="table table-striped table-bordered table-sm table-hover">
 				<thead>
 					<tr>
-						<th style={width100}>{div.name}</th>
+						<th style={width100}>{name}</th>
 						<th>W</th>
 						<th>L</th>
 						{ties ? <th>T</th> : null}
@@ -122,8 +114,15 @@ const DivStandings = ({
 					</tr>
 				</thead>
 				<tbody>
-					{div.teams.map(t => (
-						<DivStandingsRow key={t.tid} t={t} season={season} ties={ties} />
+					{teams.map(t => (
+						<GroupStandingsRow
+							key={t.tid}
+							t={t}
+							season={season}
+							ties={ties}
+							type={type}
+							userTid={userTid}
+						/>
 					))}
 				</tbody>
 			</table>
@@ -131,25 +130,20 @@ const DivStandings = ({
 	);
 };
 
-DivStandings.propTypes = {
-	div: PropTypes.shape({
-		name: PropTypes.string.isRequired,
-		teams: PropTypes.arrayOf(PropTypes.object).isRequired,
-	}).isRequired,
-	season: PropTypes.number.isRequired,
-	ties: PropTypes.bool.isRequired,
-};
-
 const SmallStandingsRow = ({
 	i,
-	numPlayoffTeams,
+	maxPlayoffSeed,
+	playoffsByConference,
 	season,
 	t,
+	userTid,
 }: {
 	i: number;
-	numPlayoffTeams: number;
+	maxPlayoffSeed: number;
+	playoffsByConference: boolean;
 	season: number;
 	t: View<"standings">["teams"][number];
+	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -157,14 +151,14 @@ const SmallStandingsRow = ({
 		<tr
 			key={t.tid}
 			className={classNames({
-				"table-info": t.highlight,
+				"table-info": t.tid === userTid,
 				"table-warning": clicked,
-				separator: i === numPlayoffTeams - 1,
+				separator: i === maxPlayoffSeed - 1,
 			})}
 			onClick={toggleClicked}
 		>
 			<td>
-				{t.rank}.{" "}
+				{playoffsByConference ? t.rank.conf : t.rank.league}.{" "}
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -178,23 +172,23 @@ const SmallStandingsRow = ({
 					? ` ${t.seasonAttrs.clinchedPlayoffs}`
 					: null}
 			</td>
-			<td style={{ textAlign: "right" }}>{t.gb}</td>
+			<td className="text-right">
+				{playoffsByConference ? t.gb.conf : t.gb.league}
+			</td>
 		</tr>
 	);
 };
 
-SmallStandingsRow.propTypes = {
-	i: PropTypes.number.isRequired,
-	numPlayoffTeams: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	t: PropTypes.object.isRequired,
-};
-
 const SmallStandings = ({
-	numPlayoffTeams,
+	maxPlayoffSeed,
+	playoffsByConference,
 	season,
 	teams,
-}: Pick<View<"standings">, "numPlayoffTeams" | "season" | "teams">) => {
+	userTid,
+}: Pick<
+	View<"standings">,
+	"maxPlayoffSeed" | "playoffsByConference" | "season" | "teams" | "userTid"
+>) => {
 	return (
 		<table className="table table-striped table-bordered table-sm">
 			<thead>
@@ -208,9 +202,11 @@ const SmallStandings = ({
 					<SmallStandingsRow
 						key={t.tid}
 						i={i}
-						numPlayoffTeams={numPlayoffTeams}
+						maxPlayoffSeed={maxPlayoffSeed}
+						playoffsByConference={playoffsByConference}
 						season={season}
 						t={t}
+						userTid={userTid}
 					/>
 				))}
 			</tbody>
@@ -218,20 +214,17 @@ const SmallStandings = ({
 	);
 };
 
-SmallStandings.propTypes = {
-	numPlayoffTeams: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
 const Standings = ({
-	teams,
 	confs,
+	divs,
+	maxPlayoffSeed,
 	numPlayoffByes,
-	numPlayoffTeams,
 	playoffsByConference,
 	season,
+	teams,
 	ties,
+	type,
+	userTid,
 }: View<"standings">) => {
 	useTitleBar({
 		title: "Standings",
@@ -240,61 +233,123 @@ const Standings = ({
 		dropdownView: "standings",
 		dropdownFields: {
 			seasons: season,
+			standingsType: type,
 		},
 	});
 
+	let groups: {
+		name?: string;
+		subgroups: {
+			name?: string;
+			teams: typeof teams;
+		}[];
+	}[];
+	if (type === "league") {
+		groups = [
+			{
+				subgroups: [
+					{
+						teams,
+					},
+				],
+			},
+		];
+	} else if (type === "conf") {
+		groups = confs.map(conf => ({
+			name: conf.name,
+			subgroups: [
+				{
+					teams: teams.filter(t => t.seasonAttrs.cid === conf.cid),
+				},
+			],
+		}));
+	} else {
+		groups = confs.map(conf => ({
+			name: conf.name,
+			subgroups: divs
+				.filter(div => div.cid === conf.cid)
+				.map(div => ({
+					name: div.name,
+					teams: teams.filter(t => t.seasonAttrs.did === div.did),
+				})),
+		}));
+	}
+
+	const groupStandings = groups.map(({ name, subgroups }, i) => (
+		<React.Fragment key={i}>
+			{name ? <h2>{name}</h2> : null}
+			{subgroups.map((subgroup, j) => (
+				<GroupStandings
+					key={j}
+					{...subgroup}
+					season={season}
+					ties={ties}
+					type={type}
+					userTid={userTid}
+				/>
+			))}
+		</React.Fragment>
+	));
+
+	// Show small playoff standings if we're currently viewing the division standings and if the playoff standings differ from the division standings (like multiple divisions get grouped together to determine playoff ranking)
+	const confHasMultipleDivs = confs.some(
+		conf => divs.filter(div => div.cid === conf.cid).length > 1,
+	);
+	const showSmallPlayoffStandings =
+		type === "div" &&
+		((playoffsByConference && confHasMultipleDivs) ||
+			(!playoffsByConference && divs.length > 1));
+
+	let allStandings;
+
+	if (!showSmallPlayoffStandings) {
+		// No small standings
+		allStandings = <div style={{ maxWidth: 750 }}>{groupStandings}</div>;
+	} else if (playoffsByConference) {
+		// Show small standings alongside each conference
+		allStandings = (
+			<div className="row" style={{ maxWidth: 1000 }}>
+				{groupStandings.map((confStandings, i) => {
+					return (
+						<React.Fragment key={i}>
+							<div className="col-md-9">{confStandings}</div>
+							<div className="col-md-3 d-none d-md-block">
+								<h2>&nbsp;</h2>
+								<SmallStandings
+									maxPlayoffSeed={maxPlayoffSeed}
+									season={season}
+									teams={teams.filter(t => t.seasonAttrs.cid === confs[i].cid)}
+									userTid={userTid}
+									playoffsByConference={playoffsByConference}
+								/>
+							</div>
+						</React.Fragment>
+					);
+				})}
+			</div>
+		);
+	} else {
+		// Show small standings for whole league
+		allStandings = (
+			<div className="row" style={{ maxWidth: 1000 }}>
+				<div className="col-md-9">{groupStandings}</div>
+				<div className="col-md-3 d-none d-md-block">
+					<h2>&nbsp;</h2>
+					<SmallStandings
+						maxPlayoffSeed={maxPlayoffSeed}
+						season={season}
+						teams={teams}
+						userTid={userTid}
+						playoffsByConference={playoffsByConference}
+					/>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<>
-			<div className="row" style={{ maxWidth: 1000 }}>
-				<div className={!playoffsByConference ? "col-md-9" : "col-12"}>
-					{confs.map((conf, i) => (
-						<div
-							key={conf.cid}
-							style={{
-								marginBottom: i < confs.length - 1 ? "1rem" : 0,
-							}}
-						>
-							<h2>{conf.name}</h2>
-							<div className="row">
-								<div className={playoffsByConference ? "col-md-9" : "col-12"}>
-									{conf.divs.map(div => (
-										<DivStandings
-											key={div.did}
-											div={div}
-											season={season}
-											ties={ties}
-										/>
-									))}
-								</div>
-
-								{playoffsByConference ? (
-									<div className="col-md-3 d-none d-md-block">
-										<SmallStandings
-											numPlayoffTeams={Math.floor(
-												numPlayoffTeams / confs.length,
-											)}
-											season={season}
-											teams={conf.teams}
-										/>
-									</div>
-								) : null}
-							</div>
-						</div>
-					))}
-				</div>
-				{!playoffsByConference ? (
-					<div
-						className="col-md-3 d-none d-md-block"
-						style={{ paddingTop: 32 }}
-					>
-						<SmallStandings
-							numPlayoffTeams={numPlayoffTeams}
-							season={season}
-							teams={teams}
-						/>
-					</div>
-				) : null}
-			</div>
+			{allStandings}
 			<div>
 				z - clinched #1 overall seed and home{" "}
 				{process.env.SPORT === "basketball" ? "court" : "field"} advantage
@@ -310,21 +365,6 @@ const Standings = ({
 			</div>
 		</>
 	);
-};
-
-Standings.propTypes = {
-	teams: PropTypes.arrayOf(PropTypes.object).isRequired,
-	confs: PropTypes.arrayOf(
-		PropTypes.shape({
-			cid: PropTypes.number.isRequired,
-			name: PropTypes.string.isRequired,
-			divs: PropTypes.arrayOf(PropTypes.object).isRequired,
-		}),
-	).isRequired,
-	numPlayoffTeams: PropTypes.number.isRequired,
-	playoffsByConference: PropTypes.bool.isRequired,
-	season: PropTypes.number.isRequired,
-	ties: PropTypes.bool.isRequired,
 };
 
 export default Standings;

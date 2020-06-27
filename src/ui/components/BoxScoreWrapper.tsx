@@ -405,9 +405,9 @@ const BoxScoreWrapper = ({
 
 	return (
 		<>
-			<div className="d-flex justify-content-between text-center align-items-center">
+			<div className="d-flex align-items-center text-center">
 				{t0.imgURL !== undefined && t0.imgURL !== "" ? (
-					<div className="flex-fill d-none d-lg-block">
+					<div className="w-100 d-none d-lg-block">
 						<TeamNameLink season={boxScore.season} t={t0}>
 							<img
 								src={t0.imgURL}
@@ -418,7 +418,7 @@ const BoxScoreWrapper = ({
 						</TeamNameLink>
 					</div>
 				) : null}
-				<div className="mx-auto">
+				<div className="mx-auto flex-shrink-0">
 					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
 						abbrev={abbrev}
@@ -432,7 +432,7 @@ const BoxScoreWrapper = ({
 					/>
 				</div>
 				{t1.imgURL !== undefined && t1.imgURL !== "" ? (
-					<div className="flex-fill d-none d-lg-block">
+					<div className="w-100 d-none d-lg-block">
 						<TeamNameLink season={boxScore.season} t={t1}>
 							<img
 								src={t1.imgURL}

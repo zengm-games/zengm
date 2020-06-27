@@ -7,11 +7,11 @@ playoff upsets
 - could apply bigger home court advantage for good teams
 
 import/export players
-- export
-  - table alignment
-    - skills and button are a little too big
-- import
-  - maybe
+- maybe
+  - export
+    - table alignment
+      - skills and button are a little too big
+  - import
     - checkbox to keep or delete history (stats, ratings, awards, HoF)
     - add import to event log? for individual player, or aggregate?
 

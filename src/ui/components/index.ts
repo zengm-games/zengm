@@ -13,6 +13,7 @@ export { default as Header } from "./Header";
 export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
 export { default as LeagueFileUpload } from "./LeagueFileUpload";
+export { default as MarginOfVictory } from "./MarginOfVictory";
 export { default as MultiTeamMenu } from "./MultiTeamMenu";
 export { default as NagModal } from "./NagModal";
 export { default as NavBar } from "./NavBar";

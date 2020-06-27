@@ -54,6 +54,7 @@ const updateStandings = async (
 						"name",
 						"clinchedPlayoffs",
 					],
+					stats: ["pts", "oppPts", "mov"],
 					season: inputs.season,
 				}),
 				inputs.season,

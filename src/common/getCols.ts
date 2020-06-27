@@ -1507,7 +1507,7 @@ const cols: {
 		sortType: "number",
 	},
 	"stat:mov": {
-		desc: "Margin of Victory",
+		desc: "Average Margin of Victory",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

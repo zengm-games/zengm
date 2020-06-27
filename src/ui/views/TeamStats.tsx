@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import { getCols, helpers, prefixStatOpp } from "../util";
 import useTitleBar from "../hooks/useTitleBar";
-import { DataTable } from "../components";
+import { DataTable, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
 
 const legendSquare = (className: string) => {
@@ -94,15 +94,7 @@ const TeamStats = ({
 			for (const plusMinusCol of plusMinusCols) {
 				if (data.hasOwnProperty(plusMinusCol)) {
 					data[plusMinusCol] = (
-						<span
-							className={
-								(t.stats as any)[plusMinusCol] > 0
-									? "text-success"
-									: "text-danger"
-							}
-						>
-							{(t.stats as any)[plusMinusCol].toFixed(1)}
-						</span>
+						<MarginOfVictory>{(t.stats as any)[plusMinusCol]}</MarginOfVictory>
 					);
 				}
 			}

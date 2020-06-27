@@ -1,10 +1,12 @@
 import classNames from "classnames";
 import React from "react";
-import { ResponsiveTableWrapper } from "../components";
+import { ResponsiveTableWrapper, MarginOfVictory } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View } from "../../common/types";
+
+const MAX_WIDTH = 1120;
 
 const record = (
 	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
@@ -77,6 +79,11 @@ const GroupStandingsRow = ({
 			<td>{record(t.seasonAttrs, "Away", ties)}</td>
 			<td>{record(t.seasonAttrs, "Div", ties)}</td>
 			<td>{record(t.seasonAttrs, "Conf", ties)}</td>
+			<td>{helpers.roundStat(t.stats.pts, "pts")}</td>
+			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
+			<td>
+				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>
+			</td>
 			<td>{t.seasonAttrs.streak}</td>
 			<td>{t.seasonAttrs.lastTen}</td>
 		</tr>
@@ -114,6 +121,9 @@ const GroupStandings = ({
 						<th>Road</th>
 						<th>Div</th>
 						<th>Conf</th>
+						<th title="Points Per Game">Pts</th>
+						<th title="Opponent Points Per Game">Opp</th>
+						<th title="Average Margin of Victory">MOV</th>
 						<th>Streak</th>
 						<th>L10</th>
 					</tr>
@@ -326,11 +336,13 @@ const Standings = ({
 
 	if (!showSmallPlayoffStandings) {
 		// No small standings
-		allStandings = <div style={{ maxWidth: 720 }}>{groupStandings}</div>;
+		allStandings = (
+			<div style={{ maxWidth: 0.75 * MAX_WIDTH - 30 }}>{groupStandings}</div>
+		);
 	} else if (playoffsByConference) {
 		// Show small standings alongside each conference
 		allStandings = (
-			<div className="row" style={{ maxWidth: 1000 }}>
+			<div className="row" style={{ maxWidth: MAX_WIDTH }}>
 				{groupStandings.map((confStandings, i) => {
 					return (
 						<React.Fragment key={i}>
@@ -353,7 +365,7 @@ const Standings = ({
 	} else {
 		// Show small standings for whole league
 		allStandings = (
-			<div className="row" style={{ maxWidth: 1000 }}>
+			<div className="row" style={{ maxWidth: MAX_WIDTH }}>
 				<div className="col-md-9">{groupStandings}</div>
 				<div className="col-md-3 d-none d-md-block">
 					<h2>&nbsp;</h2>

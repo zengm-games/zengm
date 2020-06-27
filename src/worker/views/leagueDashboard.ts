@@ -285,7 +285,8 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
 		(g.get("phase") >= PHASE.PLAYOFFS && updateEvents.includes("gameSim")) ||
-		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PLAYOFFS)
+		(updateEvents.includes("newPhase") &&
+			(g.get("phase") === PHASE.PLAYOFFS || g.get("phase") === PHASE.PRESEASON))
 	) {
 		const playoffSeries = await idb.getCopy.playoffSeries({
 			season: g.get("season"),

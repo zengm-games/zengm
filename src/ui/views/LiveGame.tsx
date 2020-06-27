@@ -5,6 +5,7 @@ import { BoxScoreRow, BoxScoreWrapper } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { localActions, processLiveGameEvents } from "../util";
 import type { View } from "../../common/types";
+import { Dropdown } from "react-bootstrap";
 
 type PlayerRowProps = {
 	i: number;
@@ -49,6 +50,11 @@ const updatePhaseAndLeagueTopBar = () => {
 	localActions.update({
 		liveGameInProgress: false,
 	});
+};
+
+const getSeconds = (time: string) => {
+	const [min, sec] = time.split(":").map(x => parseInt(x, 10));
+	return min * 60 + sec;
 };
 
 type LiveGameProps = View<"liveGame">;
@@ -135,13 +141,15 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		this.processToNextPause();
 	}
 
-	processToNextPause(force?: boolean) {
+	processToNextPause(force?: boolean): number {
 		if (!this.componentIsMounted || (this.state.paused && !force)) {
-			return;
+			return 0;
 		}
 
 		// eslint-disable-next-line react/no-access-state-in-setstate
 		const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
+
+		const startSeconds = getSeconds(boxScore.time);
 
 		if (!this.events) {
 			throw new Error("this.events is undefined");
@@ -192,6 +200,26 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		this.setState({
 			boxScore,
 		});
+
+		const endSeconds = getSeconds(boxScore.time);
+
+		// This is negative when rolling over to a new quarter
+		const elapsedSeconds = startSeconds - endSeconds;
+		return elapsedSeconds;
+	}
+
+	// Plays up to `cutoffs` seconds, or until end of quarter
+	playSeconds(cutoff: number) {
+		let seconds = 0;
+		while (seconds < cutoff && !this.state.boxScore.gameOver) {
+			const elapsedSeconds = this.processToNextPause(true);
+			if (elapsedSeconds > 0) {
+				seconds += elapsedSeconds;
+			} else if (elapsedSeconds < 0) {
+				// End of quarter, always stop
+				break;
+			}
+		}
 	}
 
 	handleSpeedChange(event: ChangeEvent<HTMLInputElement>) {
@@ -272,6 +300,53 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 										>
 											<span className="glyphicon glyphicon-step-forward" />
 										</button>
+										<Dropdown alignRight>
+											<Dropdown.Toggle
+												id="live-game-sim-more"
+												className="btn-light-bordered"
+												style={{
+													borderTopLeftRadius: 0,
+													borderBottomLeftRadius: 0,
+												}}
+												disabled={
+													!this.state.paused || this.state.boxScore.gameOver
+												}
+												variant={"no-class" as any}
+												title="Fast Forward"
+											>
+												<span className="glyphicon glyphicon-fast-forward" />
+											</Dropdown.Toggle>
+											<Dropdown.Menu>
+												<Dropdown.Item
+													onClick={() => {
+														this.playSeconds(60);
+													}}
+												>
+													1 minute
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={() => {
+														this.playSeconds(60 * 3);
+													}}
+												>
+													3 minutes
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={() => {
+														this.playSeconds(60 * 6);
+													}}
+												>
+													6 minutes
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={() => {
+														this.playSeconds(Infinity);
+													}}
+												>
+													End of quarter
+												</Dropdown.Item>
+											</Dropdown.Menu>
+										</Dropdown>
 									</div>
 									<div className="form-group flex-grow-1 mb-0">
 										<input

@@ -18,8 +18,6 @@ import/export players
 GM summary screen
 - https://old.reddit.com/r/BasketballGM/comments/hf4a15/my_simple_concept_for_a_gm_page_that_i_whipped_up/
 
-in live sim, button to sim until end of quarter
-
 scheduled events editor
 - eventually add/edit/delete individual events
   - needs to handle tids, like already happens for adding/removing teams
@@ -1364,7 +1362,6 @@ replace random.gauss with random.realGauss
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 schedule page (and dashboard and maybe gamelog) should show opponent records
-add "play until end of quarter" in live gamesim
 
 LOW PRIORITY
 ------------

@@ -2,11 +2,13 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-06-26: Added "Fast Forward" button to live game sim, allowing you to jump ahead by some number of minutes or until the end of the quarter. [[1]](https://old.reddit.com/r/BasketballGM/comments/hglnsz/another_minor_usability_improvement_a_fast/)
+
 * 2020-06-26: +/- buttons for adjusting multiple ratings on the Customize Player page. For BBGM it's all ratings except height. For FBGM it's position-specific and athleticism ratings.
 
 * 2020-06-26: Logos are shown in box scores if the window is big enough.
 
-* 2020-06-26: Support for exporting/importing individual players or groups of players, at Tools > Import/Export Players.
+* 2020-06-26: Support for exporting/importing individual players or groups of players, at Tools > Import/Export Players. [[1]](https://old.reddit.com/r/BasketballGM/comments/hgakyd/import_and_export_individual_players_from_leagues/)
 
 * 2020-06-21: Added a new page at Tools > Scheduled Events to let you view and (to some extent) delete scheduled events in historical leagues. [[1]](https://old.reddit.com/r/BasketballGM/comments/hdhdte/new_in_version_202006211434_some_support_for/)
 

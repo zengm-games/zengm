@@ -305,7 +305,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		const players = basketball.ratings
 			.filter(row => row.season === options.season)
-			.map(ratings => formatPlayer(ratings, options.season, initialTeams));
+			.map(ratings =>
+				formatPlayer(ratings, options.season, initialTeams, {
+					randomDebuts: options.randomDebuts,
+				}),
+			);
 
 		// Free agents were generated in 2020, so offset
 		const numExistingFreeAgents = players.filter(
@@ -341,6 +345,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			.map(ratings =>
 				formatPlayer(ratings, options.season, initialTeams, {
 					draftProspect: true,
+					randomDebuts: options.randomDebuts,
 				}),
 			);
 

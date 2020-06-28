@@ -7,6 +7,7 @@ type Team = TeamFiltered<
 	["tid"],
 	undefined,
 	[
+		"gp",
 		"ptsPerDrive",
 		"oppPtsPerDrive",
 		"pts",
@@ -108,6 +109,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		return score;
 	});
+
 	const av = players.map((p, i) => {
 		let score = 0;
 
@@ -169,6 +171,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		// Returns
 		score += p.stats.prTD + p.stats.krTD;
+
+		// Adjust for GP... docs don't say to do this, but it feels right
+		score *= t.stats.gp / g.get("numGames");
+
 		return score;
 	});
 	return {
@@ -210,6 +216,7 @@ const advStats = async () => {
 		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
 	});
 	const teamStats = [
+		"gp",
 		"ptsPerDrive",
 		"oppPtsPerDrive",
 		"pts",

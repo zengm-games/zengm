@@ -1203,9 +1203,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				</select>
 				{state.randomization === "debuts" ? (
 					<div className="text-muted mt-1">
-						Every player's draft year is randomized. Starting teams are random
-						combinations of current and future players, and future draft classes
-						contain a random selection of real players.
+						Every player's draft year is randomized. Starting teams and future
+						draft classes are all random combinations of past, current, and
+						future real players.
 					</div>
 				) : null}
 				{state.randomization === "shuffle" ? (

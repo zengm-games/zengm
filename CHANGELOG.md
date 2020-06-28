@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-06-27: Random debuts mode now works how you probably wanted it to work in the first place. The pool of players to be randomized is not just current and future players (relative to your starting season), but past players too. So if you start in 2020, you'll get many future draft classes of randomized real players. [[1]](https://old.reddit.com/r/BasketballGM/comments/hh71an/random_debuts_mode_now_works_how_you_probably/?)
+
 * 2020-06-27: Menu on the Standings page to switch between League/Conference/Division standings, which is important on mobile where previously only the division standings were visible. [[1]](https://old.reddit.com/r/BasketballGM/comments/hgxh7p/menu_on_the_standings_page_to_switch_between/)
 
 * 2020-06-26: Added "Fast Forward" button to live game sim, allowing you to jump ahead by some number of minutes or until the end of the quarter. [[1]](https://old.reddit.com/r/BasketballGM/comments/hglnsz/another_minor_usability_improvement_a_fast/)

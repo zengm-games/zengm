@@ -632,8 +632,8 @@ class GameSim {
 					}
 
 					const benchIsValidAndBetter =
-						this.team[t].player[p].stat.courtTime > 0 &&
-						this.team[t].player[b].stat.benchTime > 0 &&
+						this.team[t].player[p].stat.courtTime > 2 &&
+						this.team[t].player[b].stat.benchTime > 2 &&
 						ovrs[b] > ovrs[p];
 					const benchIsEligible = ovrs[b] !== -Infinity;
 

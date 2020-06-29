@@ -21,7 +21,6 @@ export type Ratings = {
 	abbrev_if_new_row?: string;
 };
 
-// Not sure why this is necessary, TypeScript should figure it out automatically
 type Basketball = {
 	awards: Record<
 		string,

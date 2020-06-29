@@ -65,6 +65,8 @@ customizable columns in datatable
   - always return all stats and ratings?
 
 add average team age to power rankings @TheRealGWood#4891 
+- save to teamSeason at end of season, along with ovr and any other things on power rankings page
+- for current season, compute dynamically
 
 from survey
 - people really like looking back at history

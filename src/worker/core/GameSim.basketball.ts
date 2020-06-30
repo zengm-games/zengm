@@ -1880,7 +1880,7 @@ class GameSim {
 			} else if (type === "blkTp") {
 				texts = [`{0} blocked {1}'s ${threePointerText}`];
 			} else if (type === "missAtRim") {
-				texts = ["{0} missed a layup", "{0} missed a dunk"];
+				texts = ["{0} missed a layup"];
 			} else if (type === "missLowPost") {
 				texts = ["{0} missed a low post shot"];
 			} else if (type === "missMidRange") {

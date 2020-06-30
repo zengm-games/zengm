@@ -209,15 +209,24 @@ const setupRoutes = () => {
 	let initialLoad = true;
 	router.addEventListener("routematched", (event: any) => {
 		if (!event.detail.context.state.noTrack) {
-			if (window.enableLogging && window.gtag) {
+			if (window.enableLogging) {
 				if (!initialLoad) {
-					window.gtag("config", window.googleAnalyticsID, {
-						// Normalize league URLs to all look the same
-						page_path: event.detail.context.path.replace(
-							/^\/l\/[0-9]+?\//,
-							"/l/0/",
-						),
-					});
+					if (window.gtag) {
+						window.gtag("config", window.googleAnalyticsID, {
+							// Normalize league URLs to all look the same
+							page_path: event.detail.context.path.replace(
+								/^\/l\/[0-9]+?\//,
+								"/l/0/",
+							),
+						});
+					}
+
+					if (process.env.SPORT === "basketball" && window._qevents) {
+						window._qevents.push({
+							qacct: "p-Ye5RY6xC03ZWz",
+							event: "click",
+						});
+					}
 				}
 			}
 

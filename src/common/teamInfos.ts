@@ -28,13 +28,13 @@ const teamInfos: {
 		region: "Brooklyn",
 		name: "Bagels",
 		pop: 21.5,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#034757", "#67c7e9", "#b78254"],
 	},
 	CHA: {
 		region: "Charlotte",
 		name: "Queens",
 		pop: 1.5,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#009e87", "#541f3e", "#ffffff"],
 	},
 	CHI: {
 		region: "Chicago",
@@ -82,7 +82,7 @@ const teamInfos: {
 		region: "Indianapolis",
 		name: "Crossroads",
 		pop: 1.6,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#e79f02", "#00246d", "#ffffff"],
 	},
 	KC: {
 		region: "Kansas City",
@@ -100,7 +100,7 @@ const teamInfos: {
 		region: "Los Angeles",
 		name: "Lowriders",
 		pop: 15.6,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#00008b", "#ffaf28", "#ff24ee"],
 	},
 	LV: {
 		region: "Las Vegas",
@@ -112,7 +112,7 @@ const teamInfos: {
 		region: "Memphis",
 		name: "Blues",
 		pop: 1.3,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#ff6c49", "#000000", "#00aedc"],
 	},
 	MIA: {
 		region: "Miami",
@@ -124,7 +124,7 @@ const teamInfos: {
 		region: "Milwaukee",
 		name: "Cheesemakers",
 		pop: 1.5,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#003600", "#007800", "#fdc05f"],
 	},
 	MIN: {
 		region: "Minneapolis",
@@ -148,7 +148,7 @@ const teamInfos: {
 		region: "New Orleans",
 		name: "Bayou",
 		pop: 1.1,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#195869", "#0e3e33", "#4edd61"],
 	},
 	NYC: {
 		region: "New York",
@@ -160,13 +160,13 @@ const teamInfos: {
 		region: "Oklahoma City",
 		name: "66ers",
 		pop: 1.4,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#610000", "#bbb29e", "#e4dfcf"],
 	},
 	ORL: {
 		region: "Orlando",
 		name: "Juice",
 		pop: 2.2,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#dc5000", "#000000", "#0b7648"],
 	},
 	PHI: {
 		region: "Philadelphia",
@@ -244,7 +244,7 @@ const teamInfos: {
 		region: "Utah",
 		name: "Missionaries",
 		pop: 2.3,
-		colors: ["#000000", "#cccccc", "#ffffff"],
+		colors: ["#4c4c4c", "#000000", "#aea57a"],
 	},
 	VAN: {
 		region: "Vancouver",

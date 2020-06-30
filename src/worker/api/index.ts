@@ -1027,6 +1027,7 @@ const exportDraftClass = async (season: number) => {
 		hgt: p.hgt,
 		imgURL: p.imgURL,
 		injury: p.injury,
+		injuries: p.injuries,
 		lastName: p.lastName,
 		pid: p.pid,
 		pos: p.pos,
@@ -1438,10 +1439,10 @@ const importPlayers = async (
 			firstName: p.firstName,
 			hgt: p.hgt,
 			imgURL: p.imgURL,
-			injuries: p.injuries,
+			injuries: p.injuries || [],
 			lastName: p.lastName,
 			ratings: p.ratings,
-			salaries: p.salaries,
+			salaries: p.salaries || [],
 			tid,
 			transactions: [
 				{

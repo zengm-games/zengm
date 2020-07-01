@@ -53,6 +53,11 @@ const changes = [
 		msg:
 			'You can customize the order and visibility of columns in most tables by pressing the <span class="glyphicon glyphicon-option-vertical"></span> button to the top right of the table and clicking "Customize Columns".',
 	},
+	{
+		date: "2020-07-01",
+		msg:
+			"The Power Rankings page now shows team rankings broken down by position.",
+	},
 ];
 
 export default changes;

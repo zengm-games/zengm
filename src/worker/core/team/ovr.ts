@@ -8,12 +8,16 @@ const ovr = (
 			pos: string;
 		};
 	}[],
+	options: {
+		pos?: string;
+		rating?: string;
+	} = {},
 ) => {
 	if (process.env.SPORT === "football") {
-		return ovrFootball(players);
+		return ovrFootball(players, options.pos);
 	}
 
-	return ovrBasketball(players);
+	return ovrBasketball(players, options.rating);
 };
 
 export default ovr;

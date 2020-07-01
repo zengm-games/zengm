@@ -7,10 +7,8 @@ playoff upsets
 - could apply bigger home court advantage for good teams
 
 team ratings page
-- weight all ratings similar to the team ovr formula
-- color highlight like team stats
-- why not just put on power rankings?
 - for FBGM might make sense to go by position, rather than by rating
+- changes
 
 higher res logos
 
@@ -189,6 +187,7 @@ add option to disable salary cap @hrmantovani#2284
 - salary cap value is still inflation
 
 FBGM
+- retirement age
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - OL weights
 - position jumpiness

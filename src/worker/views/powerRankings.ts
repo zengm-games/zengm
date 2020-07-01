@@ -2,6 +2,25 @@ import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { team } from "../core";
+import { POSITIONS, RATINGS } from "../../common";
+
+const otherToRanks = (
+	teams: {
+		other: Record<string, number>;
+		otherCurrent: Record<string, number>;
+	}[],
+) => {
+	for (const field of ["other", "otherCurrent"] as const) {
+		for (const key of Object.keys(teams[0][field])) {
+			const values = teams.map(t => t[field][key]);
+			const sorted = values.slice().sort((a, b) => b - a);
+			const ranks = values.map(value => sorted.indexOf(value) + 1);
+			for (let i = 0; i < teams.length; i++) {
+				teams[i][field][key] = ranks[i];
+			}
+		}
+	}
+};
 
 const updatePowerRankings = async (
 	{ season }: ViewInput<"powerRankings">,
@@ -35,9 +54,14 @@ const updatePowerRankings = async (
 					});
 				}
 
+				const ratings = ["ovr", "pos"];
+				if (process.env.SPORT === "basketball") {
+					ratings.push(...RATINGS);
+				}
+
 				teamPlayers = await idb.getCopies.playersPlus(teamPlayers, {
 					attrs: ["tid", "injury"],
-					ratings: ["ovr", "pos"],
+					ratings,
 					stats: ["season", "tid"],
 					season,
 					showNoStats: g.get("season") === season,
@@ -69,17 +93,46 @@ const updatePowerRankings = async (
 				// Modulate point differential by recent record: +10 for 10-0 in last 10 and -10 for 0-10
 				score += -10 + 2 * winsLastTen;
 
+				const other: Record<string, number> = {};
+				const otherCurrent: Record<string, number> = {};
+				if (process.env.SPORT === "basketball") {
+					for (const rating of RATINGS) {
+						other[rating] = team.ovr(teamPlayers, {
+							rating,
+						});
+						otherCurrent[rating] = team.ovr(teamPlayersCurrent, {
+							rating,
+						});
+					}
+				} else {
+					for (const pos of POSITIONS) {
+						if (pos === "KR" || pos === "PR") {
+							continue;
+						}
+						other[pos] = team.ovr(teamPlayers, {
+							pos,
+						});
+						otherCurrent[pos] = team.ovr(teamPlayersCurrent, {
+							pos,
+						});
+					}
+				}
+
 				return {
 					...t,
 					score,
 					ovr,
 					ovrCurrent,
+					other,
+					otherCurrent,
 
 					// Placeholder
 					rank: -1,
 				};
 			}),
 		);
+
+		otherToRanks(teamsWithRankings);
 
 		teamsWithRankings.sort((a, b) => b.score - a.score);
 
@@ -89,6 +142,7 @@ const updatePowerRankings = async (
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
+			currentSeason: g.get("season"),
 			season,
 			teams: teamsWithRankings,
 			userTid: g.get("userTid"),

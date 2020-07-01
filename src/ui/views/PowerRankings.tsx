@@ -1,12 +1,36 @@
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
+import { RATINGS } from "../../common";
+
+const Other = ({
+	actualShowHealthy,
+	current,
+	healthy,
+}: {
+	actualShowHealthy: boolean;
+	current: number;
+	healthy: number;
+}) => {
+	if (actualShowHealthy || current === healthy) {
+		return <>{healthy}</>;
+	}
+
+	return (
+		<>
+			<span className={healthy > current ? "text-success" : "text-danger"}>
+				{current}
+			</span>
+		</>
+	);
+};
 
 const PowerRankings = ({
 	challengeNoRatings,
+	currentSeason,
 	season,
 	teams,
 	userTid,
@@ -16,6 +40,9 @@ const PowerRankings = ({
 		dropdownView: "power_rankings",
 		dropdownFields: { seasons: season },
 	});
+
+	const [showHealthy, setShowHealthy] = useState(true);
+	const actualShowHealthy = showHealthy || currentSeason !== season;
 
 	const superCols = [
 		{
@@ -30,9 +57,31 @@ const PowerRankings = ({
 			title: "",
 			colspan: 4,
 		},
+		{
+			title: (
+				<>
+					{process.env.SPORT === "basketball"
+						? "Rating Ranks"
+						: "Position Ranks"}
+					{currentSeason === season ? (
+						<a
+							className="ml-2"
+							href=""
+							onClick={event => {
+								event.preventDefault();
+								setShowHealthy(val => !val);
+							}}
+						>
+							{showHealthy ? "(Show with injuries)" : "(Show without injuries)"}
+						</a>
+					) : null}
+				</>
+			),
+			colspan: RATINGS.length,
+		},
 	];
 
-	const cols = getCols(
+	const colNames = [
 		"#",
 		"Team",
 		"Current",
@@ -41,7 +90,20 @@ const PowerRankings = ({
 		"L",
 		"L10",
 		"stat:mov",
-	);
+		...(process.env.SPORT === "basketball"
+			? RATINGS.map(rating => `rating:${rating}`)
+			: []),
+	];
+
+	const cols = getCols(...colNames);
+
+	if (process.env.SPORT === "basketball") {
+		for (let i = 0; i < colNames.length; i++) {
+			if (colNames[i].startsWith("rating:")) {
+				cols[i].sortSequence = ["asc", "desc"];
+			}
+		}
+	}
 
 	const rows = teams.map(t => {
 		return {
@@ -69,6 +131,18 @@ const PowerRankings = ({
 				t.seasonAttrs.lost,
 				t.seasonAttrs.lastTen,
 				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>,
+				...(process.env.SPORT === "basketball"
+					? RATINGS.map(rating => ({
+							value: (
+								<Other
+									actualShowHealthy={actualShowHealthy}
+									current={t.otherCurrent[rating]}
+									healthy={t.other[rating]}
+								/>
+							),
+							sortValue: t.otherCurrent[rating],
+					  }))
+					: []),
 			],
 			classNames: {
 				"table-info": t.tid === userTid,

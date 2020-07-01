@@ -164,7 +164,7 @@ Header.propTypes = {
 		PropTypes.shape({
 			colspan: PropTypes.number.isRequired,
 			desc: PropTypes.string,
-			title: PropTypes.string.isRequired,
+			title: PropTypes.any.isRequired,
 		}),
 	),
 };

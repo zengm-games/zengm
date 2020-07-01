@@ -38,7 +38,7 @@ export type Col = {
 export type SuperCol = {
 	colspan: number;
 	desc?: string;
-	title: string;
+	title: string | ReactNode;
 };
 
 export type Props = {

@@ -50,6 +50,64 @@ FilterHeader.propTypes = {
 	handleFilterUpdate: PropTypes.func.isRequired,
 };
 
+const SuperCols = ({
+	colOrder,
+	superCols,
+}: {
+	colOrder: {
+		colIndex: number;
+	}[];
+	superCols: SuperCol[];
+}) => {
+	const colIndexes = colOrder.map(x => x.colIndex);
+	const maxColIndex1 = Math.max(...colIndexes);
+	let maxColIndex2 = -1;
+	for (const superCol of superCols) {
+		maxColIndex2 += superCol.colspan;
+	}
+	const maxColIndex = Math.max(maxColIndex1, maxColIndex2);
+
+	// Adjust colspan based on hidden columns from colOrder
+	const colspanAdjustments = superCols.map(() => 0);
+	let superColIndex = 0;
+	let currentSuperColCount = 0;
+	for (let i = 0; i <= maxColIndex; i++) {
+		const superCol = superCols[superColIndex];
+		if (superCol) {
+			if (!colIndexes.includes(i)) {
+				colspanAdjustments[superColIndex] -= 1;
+			}
+
+			currentSuperColCount += 1;
+			if (currentSuperColCount >= superCol.colspan) {
+				superColIndex += 1;
+				currentSuperColCount = 0;
+			}
+		}
+	}
+
+	return (
+		<tr>
+			{superCols
+				.filter(({ colspan }, i) => colspan + colspanAdjustments[i] > 0)
+				.map(({ colspan, desc, title }, i) => {
+					return (
+						<th
+							key={i}
+							colSpan={colspan + colspanAdjustments[i]}
+							style={{
+								textAlign: "center",
+							}}
+							title={desc}
+						>
+							{title}
+						</th>
+					);
+				})}
+		</tr>
+	);
+};
+
 const Header = ({
 	colOrder,
 	cols,
@@ -62,7 +120,6 @@ const Header = ({
 }: {
 	colOrder: {
 		colIndex: number;
-		hidden?: boolean;
 	}[];
 	cols: Col[];
 	enableFilters: boolean;
@@ -75,22 +132,7 @@ const Header = ({
 	return (
 		<thead>
 			{superCols ? (
-				<tr>
-					{superCols.map(({ colspan, desc, title }, i) => {
-						return (
-							<th
-								key={i}
-								colSpan={colspan}
-								style={{
-									textAlign: "center",
-								}}
-								title={desc}
-							>
-								{title}
-							</th>
-						);
-					})}
-				</tr>
+				<SuperCols colOrder={colOrder} superCols={superCols} />
 			) : null}
 			<tr>
 				{colOrder.map(({ colIndex }) => {

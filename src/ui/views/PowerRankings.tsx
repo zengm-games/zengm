@@ -33,6 +33,7 @@ const PowerRankings = ({
 	currentSeason,
 	season,
 	teams,
+	ties,
 	userTid,
 }: View<"powerRankings">) => {
 	useTitleBar({
@@ -43,6 +44,11 @@ const PowerRankings = ({
 
 	const [showHealthy, setShowHealthy] = useState(true);
 	const actualShowHealthy = showHealthy || currentSeason !== season;
+
+	const otherKeys =
+		process.env.SPORT === "basketball"
+			? RATINGS
+			: POSITIONS.filter(pos => pos !== "KR" && pos !== "PR");
 
 	const superCols = [
 		{
@@ -55,7 +61,7 @@ const PowerRankings = ({
 		},
 		{
 			title: "",
-			colspan: 4,
+			colspan: ties ? 5 : 4,
 		},
 		{
 			title: (
@@ -77,7 +83,7 @@ const PowerRankings = ({
 					) : null}
 				</>
 			),
-			colspan: RATINGS.length,
+			colspan: otherKeys.length,
 		},
 	];
 
@@ -88,13 +94,12 @@ const PowerRankings = ({
 		"Healthy",
 		"W",
 		"L",
+		...(ties ? ["T"] : []),
 		"L10",
 		"stat:mov",
 		...(process.env.SPORT === "basketball"
-			? RATINGS.map(rating => `rating:${rating}`)
-			: POSITIONS.filter(pos => pos !== "KR" && pos !== "PR").map(
-					pos => `pos:${pos}`,
-			  )),
+			? otherKeys.map(rating => `rating:${rating}`)
+			: otherKeys.map(pos => `pos:${pos}`)),
 	];
 
 	const cols = getCols(...colNames);
@@ -131,12 +136,10 @@ const PowerRankings = ({
 				!challengeNoRatings ? t.ovr : null,
 				t.seasonAttrs.won,
 				t.seasonAttrs.lost,
+				...(ties ? [t.seasonAttrs.tied] : []),
 				t.seasonAttrs.lastTen,
 				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>,
-				...(process.env.SPORT === "basketball"
-					? RATINGS
-					: POSITIONS.filter(pos => pos !== "KR" && pos !== "PR")
-				).map(key => ({
+				...otherKeys.map(key => ({
 					value: (
 						<Other
 							actualShowHealthy={actualShowHealthy}

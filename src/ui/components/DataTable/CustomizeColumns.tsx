@@ -86,42 +86,42 @@ const CustomizeColumns = ({
 		<Modal animation={false} centered show={show} onHide={onHide}>
 			<Modal.Header closeButton>Customize Columns</Modal.Header>
 			<Modal.Body>
+				<p>
+					Click and drag to reorder columns, or use the checkboxes to show/hide
+					columns.
+				</p>
 				{hasSuperCols ? (
-					<p className="mb-0">
-						This is not yet supported for tables with two header rows.
+					<p className="text-danger">
+						This table has two header rows. That means you can enable/disable
+						columns, but not reorder them.
 					</p>
-				) : (
-					<>
-						<p>
-							Click and drag to reorder columns, or use the checkboxes to
-							show/hide columns.
-						</p>
-						<Container
-							helperClass="sort-inside-modal"
-							isDragged={isDragged}
-							onSortStart={() => {
-								setIsDragged(true);
-							}}
-							onSortEnd={args => {
-								setIsDragged(false);
-								onSortEnd(args);
-							}}
-						>
-							{colOrder.map(({ colIndex, hidden }, i) => {
-								const col = cols[colIndex];
-								return (
-									<Item
-										key={colIndex}
-										index={i}
-										onToggleHidden={onToggleHidden(i)}
-										hidden={hidden}
-										col={col}
-									/>
-								);
-							})}
-						</Container>
-					</>
-				)}
+				) : null}
+				<Container
+					helperClass="sort-inside-modal"
+					isDragged={isDragged}
+					onSortStart={() => {
+						setIsDragged(true);
+					}}
+					onSortEnd={args => {
+						setIsDragged(false);
+						if (!hasSuperCols) {
+							onSortEnd(args);
+						}
+					}}
+				>
+					{colOrder.map(({ colIndex, hidden }, i) => {
+						const col = cols[colIndex];
+						return (
+							<Item
+								key={colIndex}
+								index={i}
+								onToggleHidden={onToggleHidden(i)}
+								hidden={hidden}
+								col={col}
+							/>
+						);
+					})}
+				</Container>
 			</Modal.Body>
 			<Modal.Footer>
 				<button className="btn btn-danger" onClick={onReset}>

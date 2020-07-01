@@ -33,7 +33,15 @@ const updatePowerRankings = async (
 	) {
 		const teams = await idb.getCopies.teamsPlus({
 			attrs: ["tid", "depth"],
-			seasonAttrs: ["won", "lost", "lastTen", "abbrev", "region", "name"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"lastTen",
+				"abbrev",
+				"region",
+				"name",
+			],
 			stats: ["gp", "mov"],
 			season,
 		});
@@ -145,6 +153,7 @@ const updatePowerRankings = async (
 			currentSeason: g.get("season"),
 			season,
 			teams: teamsWithRankings,
+			ties: g.get("ties"),
 			userTid: g.get("userTid"),
 		};
 	}

@@ -6,8 +6,6 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-higher res logos
-
 import/export players
 - maybe
   - export
@@ -31,8 +29,6 @@ scheduled events editor
   - edit
     - game attributes - share code with god mode settings
     - open modal on click "edit", or inline form
-
-remove UAM script
 
 register as game on youtube
 - gmgameschris
@@ -184,6 +180,8 @@ add option to disable salary cap @hrmantovani#2284
 
 FBGM
 - retirement age
+  - get rid of draft round
+  - increase roster size limit to 55
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - OL weights
 - position jumpiness
@@ -197,7 +195,6 @@ FBGM
 - schedule
   - Could the schedule be fixed to match the NFL's scheduling formula?
   - It is kind of sad and boring playing the same teams every year except in different order
-- increase roster size limit to 55
 - in God mode for fbgm it reads "home court advantage" instead of "home field advantage" lol
 - in the multi team mode tab on FBGM it still has a button to “Reset playing time”
 - sack leaders too low

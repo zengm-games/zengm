@@ -10,6 +10,9 @@ const ovr = (
 	rating?: string,
 ) => {
 	const ratings = players
+		.slice()
+		// Sort first, so non-ovr ratings are based on the top ovr players
+		.sort((a, b) => b.ratings.ovr - a.ratings.ovr)
 		.map(p => {
 			if (rating === undefined) {
 				return p.ratings.ovr;
@@ -21,8 +24,7 @@ const ovr = (
 			}
 
 			throw new Error(`Rating not found for "${rating}"`);
-		})
-		.sort((a, b) => b - a);
+		});
 
 	while (ratings.length < 10) {
 		ratings.push(0);

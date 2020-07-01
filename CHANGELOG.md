@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* DEV: The Power Rankings page now shows more granular ratings broken down by position (in FBGM) or rating (in BBGM). [[1]]()
+
 * 2020-06-29: Logos for all the new teams! [[1]](https://basketball-gm.com/blog/2020/06/logos-for-the-new-teams/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hid1tg/logos_for_all_the_new_teams/)
 
 * 2020-06-27: Random debuts mode now works how you probably wanted it to work in the first place. The pool of players to be randomized is not just current and future players (relative to your starting season), but past players too. So if you start in 2020, you'll get many future draft classes of randomized real players. [[1]](https://old.reddit.com/r/BasketballGM/comments/hh71an/random_debuts_mode_now_works_how_you_probably/?)

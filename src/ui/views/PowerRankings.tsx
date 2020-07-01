@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import { DataTable, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
-import { RATINGS } from "../../common";
+import { POSITIONS, RATINGS } from "../../common";
 
 const Other = ({
 	actualShowHealthy,
@@ -92,7 +92,9 @@ const PowerRankings = ({
 		"stat:mov",
 		...(process.env.SPORT === "basketball"
 			? RATINGS.map(rating => `rating:${rating}`)
-			: []),
+			: POSITIONS.filter(pos => pos !== "KR" && pos !== "PR").map(
+					pos => `pos:${pos}`,
+			  )),
 	];
 
 	const cols = getCols(...colNames);
@@ -132,17 +134,18 @@ const PowerRankings = ({
 				t.seasonAttrs.lastTen,
 				<MarginOfVictory>{t.stats.mov}</MarginOfVictory>,
 				...(process.env.SPORT === "basketball"
-					? RATINGS.map(rating => ({
-							value: (
-								<Other
-									actualShowHealthy={actualShowHealthy}
-									current={t.otherCurrent[rating]}
-									healthy={t.other[rating]}
-								/>
-							),
-							sortValue: t.otherCurrent[rating],
-					  }))
-					: []),
+					? RATINGS
+					: POSITIONS.filter(pos => pos !== "KR" && pos !== "PR")
+				).map(key => ({
+					value: (
+						<Other
+							actualShowHealthy={actualShowHealthy}
+							current={t.otherCurrent[key]}
+							healthy={t.other[key]}
+						/>
+					),
+					sortValue: t.otherCurrent[key],
+				})),
 			],
 			classNames: {
 				"table-info": t.tid === userTid,

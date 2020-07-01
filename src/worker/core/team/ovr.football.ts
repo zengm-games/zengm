@@ -8,6 +8,7 @@ const ovr = (
 			pos: string;
 		};
 	}[],
+	onlyPos?: string,
 ) => {
 	const info = {
 		QB: {
@@ -64,7 +65,7 @@ const ovr = (
 
 	for (const { ovr, pos } of ratings) {
 		const infoPos = (info as any)[pos] as typeof info["P"] | undefined;
-		if (infoPos) {
+		if (infoPos && (onlyPos === undefined || onlyPos === pos)) {
 			infoPos.ovrs.push(ovr);
 		}
 	}
@@ -110,6 +111,11 @@ const ovr = (
 		0.09932564 * info.DL.ovrs[3] +
 		0.08030877 * info.K.ovrs[0] +
 		0.05119918 * info.P.ovrs[0];
+
+	if (onlyPos) {
+		// In this case, we're ultimately using the value to compute a rank, so we don't care about the scale. And bounding the scale to be positive below makes it always 0.
+		return predictedMOV;
+	}
 
 	// Translate from -15/15 to 0/100 scale
 	const rawOVR = (predictedMOV * 100) / 30 + 50;

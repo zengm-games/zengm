@@ -353,6 +353,50 @@ const sportSpecificCols: {
 				},
 		  }
 		: {
+				"pos:QB": {
+					desc: "Quarterback",
+					sortType: "number",
+				},
+				"pos:RB": {
+					desc: "Running Back",
+					sortType: "number",
+				},
+				"pos:WR": {
+					desc: "Wide Receiver",
+					sortType: "number",
+				},
+				"pos:TE": {
+					desc: "Tight End",
+					sortType: "number",
+				},
+				"pos:OL": {
+					desc: "Offensive Lineman",
+					sortType: "number",
+				},
+				"pos:DL": {
+					desc: "Defensive Lineman",
+					sortType: "number",
+				},
+				"pos:LB": {
+					desc: "Linebacker",
+					sortType: "number",
+				},
+				"pos:CB": {
+					desc: "Cornerback",
+					sortType: "number",
+				},
+				"pos:S": {
+					desc: "Safety",
+					sortType: "number",
+				},
+				"pos:K": {
+					desc: "Kicker",
+					sortType: "number",
+				},
+				"pos:P": {
+					desc: "Punter",
+					sortType: "number",
+				},
 				"rating:thv": {
 					desc: "Throwing Vision",
 					sortSequence: ["desc", "asc"],
@@ -1694,6 +1738,17 @@ const sportSpecificTitleOverrides =
 				"stat:fgpMidRange": "%",
 		  }
 		: {
+				"pos:QB": "QB",
+				"pos:RB": "RB",
+				"pos:WR": "WR",
+				"pos:TE": "TE",
+				"pos:OL": "OL",
+				"pos:DL": "DL",
+				"pos:LB": "LB",
+				"pos:CB": "CB",
+				"pos:S": "S",
+				"pos:K": "K",
+				"pos:P": "P",
 				"rating:thv": "ThV",
 				"rating:thp": "ThP",
 				"rating:tha": "ThA",

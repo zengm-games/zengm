@@ -52,6 +52,11 @@ const ovr = (
 		0.4417 * Math.exp(-0.1905 * 8) * ratings[8] +
 		0.4417 * Math.exp(-0.1905 * 9) * ratings[9];
 
+	if (rating) {
+		// In this case, we're ultimately using the value to compute a rank, so we don't care about the scale. And bounding the scale to be positive below makes it often 0.
+		return predictedMOV;
+	}
+
 	// Translate from -20/20 to 0/100 scale
 	const rawOVR = (predictedMOV * 50) / 20 + 50;
 	return helpers.bound(Math.round(rawOVR), 0, Infinity);

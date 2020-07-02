@@ -147,7 +147,7 @@ const PowerRankings = ({
 							healthy={t.other[key]}
 						/>
 					),
-					sortValue: t.otherCurrent[key],
+					sortValue: actualShowHealthy ? t.other[key] : t.otherCurrent[key],
 				})),
 			],
 			classNames: {

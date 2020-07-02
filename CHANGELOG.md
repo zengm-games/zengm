@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-02: Added buttons to trade screen to allow you to bulk select players/picks as excluded from trade negotiations. [[1]](https://old.reddit.com/r/BasketballGM/comments/hjqvlr/added_buttons_to_trade_screen_to_allow_you_to/)
+
 * 2020-07-01: The Power Rankings page now shows team rankings broken down by position (in FBGM) or rating (in BBGM). [[1]](https://old.reddit.com/r/BasketballGM/comments/hjj3d5/the_power_rankings_page_now_shows_team_rankings/) [[2]](https://old.reddit.com/r/Football_GM/comments/hjj8en/the_power_rankings_page_now_shows_team_rankings/)
 
 * 2020-06-29: Logos for all the new teams! [[1]](https://basketball-gm.com/blog/2020/06/logos-for-the-new-teams/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hid1tg/logos_for_all_the_new_teams/)

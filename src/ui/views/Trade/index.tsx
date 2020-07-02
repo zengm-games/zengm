@@ -62,6 +62,59 @@ const Trade = (props: View<"trade">) => {
 		await toWorker("main", "updateTrade", teams);
 	};
 
+	const handleBulk = async (
+		type: "check" | "clear",
+		userOrOther: "other" | "user",
+		playerOrPick: "pick" | "player",
+		draftRoundOnly?: number,
+	) => {
+		const ids = {
+			"user-pids": props.userPids,
+			"user-pids-excluded": props.userPidsExcluded,
+			"user-dpids": props.userDpids,
+			"user-dpids-excluded": props.userDpidsExcluded,
+			"other-pids": props.otherPids,
+			"other-pids-excluded": props.otherPidsExcluded,
+			"other-dpids": props.otherDpids,
+			"other-dpids-excluded": props.otherDpidsExcluded,
+		};
+		const idType = playerOrPick === "player" ? "pids" : "dpids";
+		const key = `${userOrOther}-${idType}-excluded` as keyof typeof ids;
+
+		if (type === "clear") {
+			ids[key] = [];
+		} else if (playerOrPick === "player") {
+			const players = userOrOther === "other" ? otherRoster : userRoster;
+			ids[key] = players.map(p => p.pid);
+		} else {
+			let picks = userOrOther === "other" ? otherPicks : userPicks;
+			if (draftRoundOnly !== undefined) {
+				picks = picks.filter(dp => dp.round === draftRoundOnly);
+			}
+			ids[key] = Array.from(
+				new Set([...ids[key], ...picks.map(dp => dp.dpid)]),
+			);
+		}
+
+		const teams = [
+			{
+				tid: props.userTid,
+				pids: ids["user-pids"],
+				pidsExcluded: ids["user-pids-excluded"],
+				dpids: ids["user-dpids"],
+				dpidsExcluded: ids["user-dpids-excluded"],
+			},
+			{
+				tid: props.otherTid,
+				pids: ids["other-pids"],
+				pidsExcluded: ids["other-pids-excluded"],
+				dpids: ids["other-dpids"],
+				dpidsExcluded: ids["other-dpids-excluded"],
+			},
+		];
+		await toWorker("main", "updateTrade", teams);
+	};
+
 	const handleChangeTeam = async (event: ChangeEvent<HTMLSelectElement>) => {
 		setState(prevState => ({ ...prevState, message: null }));
 		const otherTid = parseInt(event.currentTarget.value, 10);
@@ -117,6 +170,7 @@ const Trade = (props: View<"trade">) => {
 		gameOver,
 		godMode,
 		lost,
+		numDraftRounds,
 		otherPicks,
 		otherRoster,
 		otherTid,
@@ -184,7 +238,9 @@ const Trade = (props: View<"trade">) => {
 					<div className="clearfix" />
 					<AssetList
 						challengeNoRatings={challengeNoRatings}
+						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
+						numDraftRounds={numDraftRounds}
 						picks={otherPicks}
 						roster={otherRoster}
 						stats={stats}
@@ -194,7 +250,9 @@ const Trade = (props: View<"trade">) => {
 					<h2 className="mt-3">{userTeamName}</h2>
 					<AssetList
 						challengeNoRatings={challengeNoRatings}
+						handleBulk={handleBulk}
 						handleToggle={handleChangeAsset}
+						numDraftRounds={numDraftRounds}
 						picks={userPicks}
 						roster={userRoster}
 						stats={stats}

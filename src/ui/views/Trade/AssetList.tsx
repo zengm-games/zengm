@@ -1,14 +1,23 @@
+import range from "lodash/range";
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
 import type { View } from "../../../common/types";
+import { Dropdown } from "react-bootstrap";
 
 type HandleToggle = (
 	userOrOther: "other" | "user",
 	playerOrPick: "pick" | "player",
 	includeOrExclude: "include" | "exclude",
 	id: number,
+) => Promise<void>;
+
+type HandleBulk = (
+	type: "check" | "clear",
+	userOrOther: "other" | "user",
+	playerOrPick: "pick" | "player",
+	draftRoundOnly?: number,
 ) => Promise<void>;
 
 type UserOrOther = "user" | "other";
@@ -112,14 +121,18 @@ pickCols[2].width = "100%";
 
 const AssetList = ({
 	challengeNoRatings,
+	handleBulk,
 	handleToggle,
+	numDraftRounds,
 	picks,
 	roster,
 	stats,
 	userOrOther,
 }: {
 	challengeNoRatings: boolean;
+	handleBulk: HandleBulk;
 	handleToggle: HandleToggle;
+	numDraftRounds: number;
 	picks: Picks;
 	roster: Roster;
 	stats: Stats;
@@ -156,14 +169,75 @@ const AssetList = ({
 	return (
 		<div className="row">
 			<div className="col-xl-9">
+				<Dropdown>
+					<Dropdown.Toggle
+						variant="secondary"
+						id={`trade-players-bulk-${userOrOtherKey}`}
+						className="btn-sm"
+					>
+						Bulk exclude
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								handleBulk("check", userOrOther, "player");
+							}}
+						>
+							Make all untradeable
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								handleBulk("clear", userOrOther, "player");
+							}}
+						>
+							Clear all untradeable
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 				<DataTable
+					className="datatable-negative-margin-top"
 					cols={playerCols}
 					defaultSort={[5, "desc"]}
 					name={`Trade:${userOrOtherKey}`}
 					rows={playerRows}
 				/>
 			</div>
-			<div className="col-xl-3 pt-3">
+			<div className="col-xl-3">
+				<Dropdown>
+					<Dropdown.Toggle
+						variant="secondary"
+						id={`trade-picks-bulk-${userOrOtherKey}`}
+						className="btn-sm mb-2"
+					>
+						Bulk exclude
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item
+							onClick={() => {
+								handleBulk("check", userOrOther, "pick");
+							}}
+						>
+							Make all untradeable
+						</Dropdown.Item>
+						{range(numDraftRounds).map(i => (
+							<Dropdown.Item
+								key={i}
+								onClick={() => {
+									handleBulk("check", userOrOther, "pick", i + 1);
+								}}
+							>
+								Make all {helpers.ordinal(i + 1)} round picks untradeable
+							</Dropdown.Item>
+						))}
+						<Dropdown.Item
+							onClick={() => {
+								handleBulk("clear", userOrOther, "pick");
+							}}
+						>
+							Clear all untradeable
+						</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
 				<DataTable
 					cols={pickCols}
 					defaultSort={[1, "asc"]}

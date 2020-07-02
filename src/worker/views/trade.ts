@@ -226,6 +226,7 @@ const updateTrade = async () => {
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
 		forceTrade: false,
+		numDraftRounds: g.get("numDraftRounds"),
 		phase: g.get("phase"),
 		userTid: g.get("userTid"),
 	};

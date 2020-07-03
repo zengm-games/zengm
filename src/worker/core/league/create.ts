@@ -827,7 +827,7 @@ export const createWithoutSaving = async (
 	}
 
 	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
-	if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
+	if (g.get("phase") >= 0) {
 		if (
 			createUndrafted1 > 0 &&
 			(g.get("phase") <= PHASE.DRAFT_LOTTERY ||

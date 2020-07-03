@@ -58,7 +58,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 		dropdownFields: { teamRecordType: byType },
 	});
 
-	let displayName;
+	let displayName: string;
 	if (byType === "by_conf") {
 		displayName = "Conference";
 	} else if (byType === "by_div") {
@@ -68,6 +68,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 	}
 
 	let cols = getCols(
+		...(displayName === "Division" ? ["Conference"] : []),
 		displayName,
 		"Start",
 		"End",
@@ -98,6 +99,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 			return {
 				key: i,
 				data: [
+					...(displayName === "Division" ? [t.confName] : []),
 					byType === "by_team" ? teamLink(t) : t.name,
 					t.start,
 					t.end,

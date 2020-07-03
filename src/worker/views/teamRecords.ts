@@ -254,6 +254,7 @@ type Team = {
 	abbrev: string;
 	region: string;
 	name: string;
+	confName?: string;
 	start: number | undefined;
 	numSeasons: number;
 	end: number | undefined;
@@ -419,18 +420,27 @@ const updateTeamRecords = async (
 				),
 			);
 		} else if (byType === "by_div") {
-			teams = g.get("divs").map(div =>
-				sumRecordsFor(
-					div.name,
-					teams.filter(t => {
-						const t2 = teamsAll.find(t2 => t2.tid === t.tid);
-						if (!t2) {
-							return false;
-						}
-						return t2.did === div.did;
-					}),
-				),
-			);
+			teams = g.get("divs").map(div => {
+				let confName;
+				const conf = g.get("confs").find(conf => conf.cid === div.cid);
+				if (conf) {
+					confName = conf.name;
+				}
+
+				return {
+					...sumRecordsFor(
+						div.name,
+						teams.filter(t => {
+							const t2 = teamsAll.find(t2 => t2.tid === t.tid);
+							if (!t2) {
+								return false;
+							}
+							return t2.did === div.did;
+						}),
+					),
+					confName,
+				};
+			});
 		}
 
 		return {

@@ -1003,10 +1003,23 @@ const exportLeague = async (stores: string[], compressed: boolean) => {
 };
 
 const exportDraftClass = async (season: number) => {
+	const onlyUndrafted =
+		season > g.get("season") ||
+		(season === g.get("season") &&
+			g.get("phase") >= 0 &&
+			g.get("phase") <= PHASE.DRAFT_LOTTERY);
+
 	const data = await league.exportLeague(["players"], {
 		meta: false,
 		filter: {
-			players: p => p.draft.year === season,
+			players: p => {
+				// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
+				if (onlyUndrafted && p.tid !== PLAYER.UNDRAFTED) {
+					return false;
+				}
+
+				return p.draft.year === season;
+			},
 		},
 	});
 	data.startingSeason = season;

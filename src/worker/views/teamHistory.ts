@@ -1,5 +1,5 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateTeamHistory = async (
@@ -14,8 +14,10 @@ const updateTeamHistory = async (
 	) {
 		let bestRecord;
 		let worstRecord;
-		let mostWon = -Infinity;
-		let mostLost = -Infinity;
+		let bestWinp = -Infinity;
+		let worstWinp = Infinity;
+		let mostWon = 0;
+		let mostLost = 0;
 
 		const teamSeasons = await idb.getCopies.teamSeasons({
 			tid: inputs.tid,
@@ -41,6 +43,7 @@ const updateTeamHistory = async (
 		for (const teamSeason of teamSeasons) {
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", teamSeason.season)
 				.length;
+
 			history.push({
 				season: teamSeason.season,
 				won: teamSeason.won,
@@ -66,21 +69,24 @@ const updateTeamHistory = async (
 				championships += 1;
 			}
 
-			const won = g.get("ties")
-				? teamSeason.won + 0.5 * teamSeason.tied
-				: teamSeason.won;
-			const lost = g.get("ties")
-				? teamSeason.lost + 0.5 * teamSeason.tied
-				: teamSeason.lost;
+			const winp = helpers.calcWinp(teamSeason);
 
-			if (won > mostWon) {
+			if (
+				winp > bestWinp &&
+				(teamSeason.season < g.get("season") || teamSeason.won >= mostWon)
+			) {
 				bestRecord = history[history.length - 1];
-				mostWon = won;
+				bestWinp = winp;
+				mostWon = teamSeason.won;
 			}
 
-			if (lost > mostLost) {
+			if (
+				winp < worstWinp &&
+				(teamSeason.season < g.get("season") || teamSeason.won >= mostLost)
+			) {
 				worstRecord = history[history.length - 1];
-				mostLost = lost;
+				worstWinp = winp;
+				mostLost = teamSeason.lost;
 			}
 		}
 

@@ -421,7 +421,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				if (key === "hgt") {
 					continue;
 				}
-				newRatings[key] = helpers.bound(oldRatings[key] + amount, 0, 100);
+				newRatings[key] = helpers.bound(
+					parseInt(oldRatings[key]) + amount,
+					0,
+					100,
+				);
 			}
 
 			const p2: any = {
@@ -694,16 +698,16 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<button
 									type="button"
 									className="btn btn-secondary btn-sm"
-									onClick={adjustRatings(1)}
+									onClick={adjustRatings(-1)}
 								>
-									<span className="glyphicon glyphicon-plus" />
+									<span className="glyphicon glyphicon-minus" />
 								</button>
 								<button
 									type="button"
 									className="btn btn-secondary btn-sm"
-									onClick={adjustRatings(-1)}
+									onClick={adjustRatings(1)}
 								>
-									<span className="glyphicon glyphicon-minus" />
+									<span className="glyphicon glyphicon-plus" />
 								</button>
 							</div>
 						</div>

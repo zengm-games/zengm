@@ -10,6 +10,10 @@ in GM DL/LB/S are kinda the same. In real life, they're usually humans of differ
 - 40 times tell the defensive positions apart: 4.5 for CB, 4.7 for LB, 4.8 for DE
 - shuttle times tell DE/DT from LB
 - S should be closer to CB than LB, and there should be less jumping around from genRatings.football
+- player generator should be more rigid, based on input position. especially for offense/defense, like CBs who are decent RBs
+  - could throw out ones who slide over to other position
+  - or add less randomness
+  - or change ovr formula
 
 clear explanation on finances page that rank over last 3 seasons is what matters
 
@@ -187,6 +191,7 @@ FBGM
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - DONE - OL weights
 - DONE - players are less likely to play multiple positions by default
+- update AV formula to include kickers and punters
 - position jumpiness
 - kneeling at end of games
 - some OL stat

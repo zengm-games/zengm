@@ -33,7 +33,7 @@ const TCK_CONSTANT = {
 };
 const DEFENSIVE_POSITIONS = ["DL", "LB", "CB", "S"] as const;
 
-// Approximate Value: https://www.pro-football-reference.com/blog/indexd961.html?page_id=8061
+// Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map(t => {
 		const offPts =
@@ -45,8 +45,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		const ptsRus =
 			t.stats.rusYds + t.stats.recYds === 0
 				? 0
-				: (ptsSkill * 0.22 * t.stats.rusYds) /
-				  (t.stats.rusYds + t.stats.recYds);
+				: (ptsSkill *
+						0.22 *
+						(t.stats.rusYds / (t.stats.rusYds + t.stats.recYds))) /
+				  0.37;
 		const ptsPss = (ptsSkill - ptsRus) * 0.26;
 		const ptsRec = (ptsSkill - ptsRus) * 0.74;
 

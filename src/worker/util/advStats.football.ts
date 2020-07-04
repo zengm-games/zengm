@@ -21,6 +21,12 @@ type Team = TeamFiltered<
 		"rusYds",
 		"rec",
 		"recYds",
+		"fga0",
+		"fga20",
+		"fga30",
+		"fga40",
+		"fga50",
+		"xpa",
 	],
 	number
 >;
@@ -60,6 +66,15 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		const ptsFront7 = (2 / 3) * defPts;
 		const ptsSecondary = (1 / 3) * defPts;
 
+		const kPlayingTime =
+			t.stats.xpa +
+			3 *
+				(t.stats.fga0 +
+					t.stats.fga20 +
+					t.stats.fga30 +
+					t.stats.fga40 +
+					t.stats.fga50);
+
 		return {
 			...t,
 			stats: {
@@ -73,6 +88,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				individualPtsOL: 0,
 				individualPtsFront7: 0,
 				individualPtsSecondary: 0,
+				kPlayingTime,
 			},
 		};
 	});
@@ -174,6 +190,33 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		// Returns
 		score += p.stats.prTD + p.stats.krTD;
 
+		// Kicking
+		{
+			let paaTotal = p.stats.xp - p.stats.xpa * league.xpp;
+			paaTotal += 3 * (p.stats.fg0 - p.stats.fga0 * league.fgp0);
+			paaTotal += 3 * (p.stats.fg20 - p.stats.fga20 * league.fgp20);
+			paaTotal += 3 * (p.stats.fg30 - p.stats.fga30 * league.fgp30);
+			paaTotal += 3 * (p.stats.fg40 - p.stats.fga40 * league.fgp40);
+			paaTotal += 3 * (p.stats.fg50 - p.stats.fga50 * league.fgp50);
+
+			// Ignore schedule length normalization
+			const kPlayingTime =
+				p.stats.xpa +
+				3 *
+					(p.stats.fga0 +
+						p.stats.fga20 +
+						p.stats.fga30 +
+						p.stats.fga40 +
+						p.stats.fga50);
+			const pctTeamPlayingTime = kPlayingTime / t.stats.kPlayingTime;
+			const avgAV = 3.125 * pctTeamPlayingTime;
+			const rawAV = avgAV + paaTotal / 5;
+			score += rawAV;
+			if (p.ratings.pos === "K") {
+				console.log(p, paaTotal, rawAV);
+			}
+		}
+
 		// Adjust for GP... docs don't say to do this, but it feels right
 		score *= t.stats.gp / g.get("numGames");
 
@@ -211,6 +254,18 @@ const advStats = async () => {
 			"defTck",
 			"prTD",
 			"krTD",
+			"fg0",
+			"fg20",
+			"fg30",
+			"fg40",
+			"fg50",
+			"fga0",
+			"fga20",
+			"fga30",
+			"fga40",
+			"fga50",
+			"xp",
+			"xpa",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -232,6 +287,18 @@ const advStats = async () => {
 		"rusYds",
 		"rec",
 		"recYds",
+		"fg0",
+		"fg20",
+		"fg30",
+		"fg40",
+		"fg50",
+		"fga0",
+		"fga20",
+		"fga30",
+		"fga40",
+		"fga50",
+		"xp",
+		"xpa",
 	] as const;
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
@@ -258,6 +325,12 @@ const advStats = async () => {
 		(league.pssYds + 20 * league.pssTD - 45 * league.pssInt) / league.pss;
 	league.rusYdsPerAtt = league.rusYds / league.rus;
 	league.recYdsPerAtt = league.recYds / league.rec;
+	league.fgp0 = league.fg0 / league.fga0;
+	league.fgp20 = league.fg20 / league.fga20;
+	league.fgp30 = league.fg30 / league.fga30;
+	league.fgp40 = league.fg40 / league.fga40;
+	league.fgp50 = league.fg50 / league.fga50;
+	league.xpp = league.xp / league.xpa;
 	const updatedStats = { ...calculateAV(players, teams, league) };
 
 	// Save to database

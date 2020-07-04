@@ -191,7 +191,8 @@ FBGM
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
 - DONE - OL weights
 - DONE - players are less likely to play multiple positions by default
-- update AV formula to include kickers and punters
+- DONE - fixed bug in AV calculation that was elevating values for passing stats and decreasing values for rushing stats
+- DONE - update AV formula to include kickers
 - position jumpiness
 - kneeling at end of games
 - some OL stat

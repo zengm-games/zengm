@@ -231,6 +231,7 @@ const PLAYER_STATS_TABLES = {
 			"pntLng",
 			"pntBlk",
 			"pntYdsPerAtt",
+			"av",
 		],
 	},
 	returns: {

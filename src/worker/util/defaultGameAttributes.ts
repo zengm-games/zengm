@@ -211,8 +211,8 @@ export const footballOverrides =
 				maxContract: 30000,
 				minRosterSize: 40,
 				maxRosterSize: 53,
-				// Arbitrary - 2 injuries per game. Divide over 1000 plays. Bump this up arbitrarily for some reason, wasn't getting 2 per game.
-				injuryRate: (2 / 1000 / 22) * 30,
+				// Arbitrary - 2 injuries per game. Divide over 1000 plays
+				injuryRate: 2 / 1000,
 				// The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season. With roughly 20 days in a season, the default is about one death every 50 years.
 				tragicDeathRate: 1 / (20 * 50),
 				sonRate: 0.005,

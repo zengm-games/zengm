@@ -27,6 +27,9 @@ type Team = TeamFiltered<
 		"fga40",
 		"fga50",
 		"xpa",
+		"pnt",
+		"pntYds",
+		"pntBlk",
 	],
 	number
 >;
@@ -192,14 +195,8 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		// Kicking
 		{
-			let paaTotal = p.stats.xp - p.stats.xpa * league.xpp;
-			paaTotal += 3 * (p.stats.fg0 - p.stats.fga0 * league.fgp0);
-			paaTotal += 3 * (p.stats.fg20 - p.stats.fga20 * league.fgp20);
-			paaTotal += 3 * (p.stats.fg30 - p.stats.fga30 * league.fgp30);
-			paaTotal += 3 * (p.stats.fg40 - p.stats.fga40 * league.fgp40);
-			paaTotal += 3 * (p.stats.fg50 - p.stats.fga50 * league.fgp50);
-
 			// Ignore schedule length normalization
+
 			const kPlayingTime =
 				p.stats.xpa +
 				3 *
@@ -208,12 +205,38 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 						p.stats.fga30 +
 						p.stats.fga40 +
 						p.stats.fga50);
-			const pctTeamPlayingTime = kPlayingTime / t.stats.kPlayingTime;
-			const avgAV = 3.125 * pctTeamPlayingTime;
-			const rawAV = avgAV + paaTotal / 5;
-			score += rawAV;
-			if (p.ratings.pos === "K") {
-				console.log(p, paaTotal, rawAV);
+			if (kPlayingTime > 0) {
+				let paaTotal = p.stats.xp - p.stats.xpa * league.xpp;
+				paaTotal += 3 * (p.stats.fg0 - p.stats.fga0 * league.fgp0);
+				paaTotal += 3 * (p.stats.fg20 - p.stats.fga20 * league.fgp20);
+				paaTotal += 3 * (p.stats.fg30 - p.stats.fga30 * league.fgp30);
+				paaTotal += 3 * (p.stats.fg40 - p.stats.fga40 * league.fgp40);
+				paaTotal += 3 * (p.stats.fg50 - p.stats.fga50 * league.fgp50);
+
+				const pctTeamPlayingTime = kPlayingTime / t.stats.kPlayingTime;
+				const avgAV = 3.125 * pctTeamPlayingTime;
+				const rawAV = avgAV + paaTotal / 5;
+				score += rawAV;
+			}
+		}
+
+		// Punting
+		{
+			// Ignore schedule length normalization
+			if (
+				p.stats.pnt + p.stats.pntBlk > 0 &&
+				t.stats.pnt + t.stats.pntBlk > 0
+			) {
+				const adjPntYPA =
+					(p.stats.pntYds - 13 * p.stats.pntBlk) /
+					(p.stats.pnt + p.stats.pntBlk);
+				const adjPuntYdsAboveAvg =
+					(p.stats.pnt + p.stats.pntBlk) * (adjPntYPA - league.adjPntYPA);
+				const pctTeamPlayingTime =
+					(p.stats.pnt + p.stats.pntBlk) / (t.stats.pnt + t.stats.pntBlk);
+				const avgAV = 2.1875 * pctTeamPlayingTime;
+				const rawAV = avgAV + adjPuntYdsAboveAvg / 200;
+				score += rawAV;
 			}
 		}
 
@@ -266,6 +289,9 @@ const advStats = async () => {
 			"fga50",
 			"xp",
 			"xpa",
+			"pnt",
+			"pntYds",
+			"pntBlk",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -299,6 +325,9 @@ const advStats = async () => {
 		"fga50",
 		"xp",
 		"xpa",
+		"pnt",
+		"pntYds",
+		"pntBlk",
 	] as const;
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
@@ -331,6 +360,8 @@ const advStats = async () => {
 	league.fgp40 = league.fg40 / league.fga40;
 	league.fgp50 = league.fg50 / league.fga50;
 	league.xpp = league.xp / league.xpa;
+	league.adjPntYPA =
+		(league.pntYds - 13 * league.pntBlk) / (league.pnt + league.pntBlk);
 	const updatedStats = { ...calculateAV(players, teams, league) };
 
 	// Save to database

@@ -192,8 +192,7 @@ FBGM
 - DONE - OL weights
 - DONE - players are less likely to play multiple positions by default
 - DONE - fixed bug in AV calculation that was elevating values for passing stats and decreasing values for rushing stats
-- DONE - update AV formula to include kickers
-- position jumpiness
+- DONE - update AV formula to include kickers and punters
 - kneeling at end of games
 - some OL stat
 - too many injuries

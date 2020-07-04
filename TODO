@@ -7,6 +7,9 @@ playoff upsets
 - could apply bigger home court advantage for good teams
 
 in GM DL/LB/S are kinda the same. In real life, they're usually humans of different sizes
+- 40 times tell the defensive positions apart: 4.5 for CB, 4.7 for LB, 4.8 for DE
+- shuttle times tell DE/DT from LB
+- S should be closer to CB than LB, and there should be less jumping around from genRatings.football
 
 clear explanation on finances page that rank over last 3 seasons is what matters
 
@@ -182,7 +185,8 @@ FBGM
   - get rid of draft round
   - increase roster size limit to 55
 - when it says 'QB's name drops back to pass' the score summary says 'QB passed to WR for an x yard touchdown!'
-- OL weights
+- DONE - OL weights
+- DONE - players are less likely to play multiple positions by default
 - position jumpiness
 - kneeling at end of games
 - some OL stat

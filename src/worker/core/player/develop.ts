@@ -212,20 +212,6 @@ const develop = async (
 
 		if (!ratings.locked) {
 			await developSeason(ratings, age, p.srID, coachingRank);
-
-			// In the NBA displayed weights seem to never change and seem inaccurate
-			if (process.env.SPORT === "football") {
-				const newWeight = genWeight(ratings.hgt, ratings.stre);
-				const oldWeight = p.weight;
-
-				if (newWeight - oldWeight > 10) {
-					p.weight = oldWeight + 10;
-				} else if (newWeight - oldWeight < -10) {
-					p.weight = oldWeight - 10;
-				} else {
-					p.weight = newWeight;
-				}
-			}
 		}
 	}
 
@@ -279,6 +265,26 @@ const develop = async (
 			ratings.ovr = ratings.ovrs[pos];
 			ratings.pot = ratings.pots[pos];
 			ratings.pos = pos;
+		}
+	}
+
+	if (!ratings.locked && years > 0) {
+		// In the NBA displayed weights seem to never change and seem inaccurate
+		if (process.env.SPORT === "football") {
+			const newWeight = genWeight(ratings.hgt, ratings.stre, ratings.pos);
+			if (p.ratings.length <= 1) {
+				p.weight = newWeight;
+			} else {
+				// Not a new player? Don't adjust too much.
+				const oldWeight = p.weight;
+				if (newWeight - oldWeight > 10) {
+					p.weight = oldWeight + 10;
+				} else if (newWeight - oldWeight < -10) {
+					p.weight = oldWeight - 10;
+				} else {
+					p.weight = newWeight;
+				}
+			}
 		}
 	}
 

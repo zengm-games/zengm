@@ -1528,7 +1528,7 @@ class GameSim {
 	}
 
 	doSack(qb: PlayerGameSim) {
-		const p = this.pickPlayer(this.d, "passRushing", undefined, 2.5);
+		const p = this.pickPlayer(this.d, "passRushing", undefined, 5);
 		const ydsRaw = random.randInt(-1, -15);
 		const yds = this.boundedYds(ydsRaw);
 		const { safetyOrTouchback } = this.advanceYds(yds, {

@@ -201,9 +201,9 @@ FBGM
 - Some automatic first down penalties result in 1st and 1
 - in God mode for fbgm it reads "home court advantage" instead of "home field advantage" lol
 - in the multi team mode tab on FBGM it still has a button to “Reset playing time”
-- sack leaders too low
-- rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
+- DONE - sack leaders too low
 - DONE - nerf passing stats?
+- rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

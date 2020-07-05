@@ -1592,7 +1592,7 @@ class GameSim {
 				this.team[this.o].compositeRating.passBlocking /
 					this.team[this.d].compositeRating.passRushing,
 			);
-		const p = 0.02 + 0.54 * factor ** 1.25;
+		const p = 0.13 + 0.4 * factor ** 1.25;
 		return helpers.bound(p, 0, 0.95);
 	}
 

@@ -203,7 +203,7 @@ FBGM
 - DONE - nerf passing stats?
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
-- too many runs, not enough passes?
+- DONE - too many runs, not enough passes?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

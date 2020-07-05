@@ -306,8 +306,10 @@ class GameSim {
 		// Arbitrary rescale - .4-.6 -> .25-.75
 		defRushing = helpers.bound((defRushing - 0.4) * (0.5 / 0.2) + 0.25, 0, 1);
 
-		const passingTendency = helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
-		const rushingTendency = helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
+		const passingTendency =
+			1.1 * helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
+		const rushingTendency =
+			0.9 * helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
 
 		let passOdds = 0.57;
 		if (passingTendency > 0 || rushingTendency > 0) {
@@ -637,14 +639,14 @@ class GameSim {
 
 		if (this.isClockRunning) {
 			if (this.hurryUp()) {
-				dtClockRunning = random.randInt(5, 12) / 60;
+				dtClockRunning = random.randInt(5, 13) / 60;
 
 				// Leave some time for a FG attempt!
 				if (this.clock - dt - dtClockRunning < 0) {
 					dtClockRunning = random.randInt(0, 4) / 60;
 				}
 			} else {
-				dtClockRunning = random.randInt(35, 60) / 60;
+				dtClockRunning = random.randInt(37, 62) / 60;
 			}
 		}
 

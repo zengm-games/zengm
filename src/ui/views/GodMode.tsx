@@ -424,7 +424,10 @@ export const options: {
 	{
 		category: "Game Simulation",
 		key: "homeCourtAdvantage",
-		name: "Home Court Advantage",
+		name:
+			process.env.SPORT === "football"
+				? "Home Field Advantage"
+				: "Home Court Advantage",
 		type: "float",
 		decoration: "percent",
 		helpText:

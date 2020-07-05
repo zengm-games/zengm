@@ -46,21 +46,7 @@ const normal: Formation[] = [
 			S: 2,
 		},
 	},
-	{
-		off: {
-			QB: 1,
-			RB: 0,
-			WR: 5,
-			TE: 0,
-			OL: 5,
-		},
-		def: {
-			DL: 4,
-			LB: 1,
-			CB: 4,
-			S: 2,
-		},
-	},
+	// No 5 wide, cause it led to too many QB runs. Not a great solution, but it works!
 ];
 
 const fieldGoal: Formation[] = [

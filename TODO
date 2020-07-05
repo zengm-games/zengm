@@ -196,13 +196,14 @@ FBGM
 - kneeling at end of games
 - some OL stat
 - DONE - too many injuries
-- too many QB runs, and too successful
+- DONE - too many QB runs, and too successful
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off
 - Some automatic first down penalties result in 1st and 1
 - DONE - sack leaders too low
 - DONE - nerf passing stats?
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
+- too many runs, not enough passes?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

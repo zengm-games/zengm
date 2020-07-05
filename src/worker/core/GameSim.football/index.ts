@@ -1766,9 +1766,9 @@ class GameSim {
 
 		const rbs = this.playersOnField[this.o].RB || [];
 
-		if (rand < 0.025 || rbs.length === 0) {
+		if (rand < 0.5 || rbs.length === 0) {
 			positions.push("QB");
-		} else if (rand < 0.1 || rbs.length === 0) {
+		} else if (rand < 0.6 || rbs.length === 0) {
 			positions.push("WR");
 		}
 

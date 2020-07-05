@@ -185,14 +185,17 @@ const MultiTeamMode = ({
 					className="btn btn-light-bordered"
 					onClick={() => handleAutoSort(userTids)}
 				>
-					Auto sort roster
+					Auto sort{" "}
+					{process.env.SPORT === "basketball" ? "roster" : "depth chart"}
 				</button>
-				<button
-					className="btn btn-light-bordered"
-					onClick={() => handleResetPT(userTids)}
-				>
-					Reset playing time
-				</button>
+				{process.env.SPORT === "basketball" ? (
+					<button
+						className="btn btn-light-bordered"
+						onClick={() => handleResetPT(userTids)}
+					>
+						Reset playing time
+					</button>
+				) : null}
 			</div>
 		</>
 	);

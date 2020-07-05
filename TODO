@@ -199,9 +199,9 @@ FBGM
 - too many QB runs, and too successful
 - when the ball is turned over, instead of a new set of downs, you start where the other team left off
 - Some automatic first down penalties result in 1st and 1
-- in the multi team mode tab on FBGM it still has a button to “Reset playing time”
 - DONE - sack leaders too low
 - DONE - nerf passing stats?
+- in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 
 eventually

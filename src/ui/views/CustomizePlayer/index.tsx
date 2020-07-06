@@ -42,6 +42,22 @@ const copyValidValues = (
 	target.lastName = source.lastName;
 	target.imgURL = source.imgURL;
 
+	// HoF toggle? Need to update awards list too.
+	if (target.hof !== source.hof) {
+		// Always remove old entries, so there are never duplicates
+		target.awards = target.awards.filter(
+			award => !award.type.includes("Hall of Fame"),
+		);
+		if (!target.hof && source.hof) {
+			// Add to HoF
+			target.awards.push({
+				season,
+				type: "Inducted into the Hall of Fame",
+			});
+		}
+	}
+	target.hof = source.hof;
+
 	let updatedRatingsOrAge = false;
 	{
 		// @ts-ignore
@@ -239,7 +255,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			p.imgURL = "";
 		}
 
-		console.log("aaa", p);
 		const pid = await toWorker(
 			"main",
 			"upsertCustomizedPlayer",
@@ -271,7 +286,11 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			const p: any = prevState.p;
 
 			if (type === "root") {
-				p[field] = val;
+				if (field === "hof") {
+					p[field] = val === "true";
+				} else {
+					p[field] = val;
+				}
 			} else if (["born", "contract", "draft", "injury"].includes(type)) {
 				p[type][field] = val;
 			} else if (type === "rating") {
@@ -561,8 +580,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.born.loc}
 								/>
 							</div>
-							<div className="col-sm-6 form-group">
-								<label>Year of Death (blank for alive)</label>
+							<div className="col-sm-3 form-group">
+								<label>Year of Death</label>
 								<input
 									type="text"
 									className="form-control"
@@ -587,6 +606,17 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									onChange={handleChange.bind(null, "draft", "year")}
 									value={p.draft.year}
 								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Hall of Fame</label>
+								<select
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "hof")}
+									value={String(p.hof)}
+								>
+									<option value="true">Yes</option>
+									<option value="false">No</option>
+								</select>
 							</div>
 							<div className="col-sm-6 form-group">
 								<label>Contract Amount</label>

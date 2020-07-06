@@ -14,7 +14,6 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				? ["gp", "min", "pts", "trb", "ast", "per", "ewa", "ws", "ws48"]
 				: ["keyStats", "av"];
 		const playersAll = await idb.getCopies.players({
-			retired: true,
 			filter: p => p.hof,
 		});
 		const players = await idb.getCopies.playersPlus(playersAll, {

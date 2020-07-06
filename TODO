@@ -14,6 +14,8 @@ in GM DL/LB/S are kinda the same. In real life, they're usually humans of differ
   - could throw out ones who slide over to other position
   - or add less randomness
   - or change ovr formula
+- "a decent chunk of DBs in real life produce stats that FBGM never generates"
+  - needs more positive outliers
 
 clear explanation on finances page that rank over last 3 seasons is what matters
 
@@ -176,8 +178,6 @@ way to save/load leagues on server
 god mode stuff
 - more stuff on player editor
 - awards editor
-- HoF
-  - https://old.reddit.com/r/BasketballGM/comments/hbqod0/awards_allstar_selections_and_league_leaders_are/fvapjui/
 
 add option to disable salary cap @hrmantovani#2284 
 - historical leagues
@@ -205,6 +205,8 @@ FBGM
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - DONE - too many runs, not enough passes?
 - DONE - made defensive players a little worse at offensive ratings
+- increase value of K/P so they won't be traded for nothing
+- smarter cutting when over roster limit (like don't cut only K/P)
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

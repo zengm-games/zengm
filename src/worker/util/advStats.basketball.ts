@@ -278,16 +278,18 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 						0.4);
 			drtg[i] =
 				t.stats.drtg +
-				0.2 * (100 * dPtsPerscPoss * (1 - stopPct) - t.stats.drtg); // Defensive win shares
+				0.2 * (100 * dPtsPerscPoss * (1 - stopPct) - t.stats.drtg);
 
+			// Defensive win shares
 			const marginalDefense =
 				(p.stats.min / t.stats.min) *
 				t.stats.poss *
 				(1.08 * (league.pts / league.poss) - drtg[i] / 100);
 			const marginalPtsPerWin =
 				0.32 * (league.pts / league.gp) * (t.stats.pace / league.pace);
-			dws[i] = marginalDefense / marginalPtsPerWin; // Offensive rating
+			dws[i] = marginalDefense / marginalPtsPerWin;
 
+			// Offensive rating
 			const ftRatio = p.stats.fta > 0 ? p.stats.ft / p.stats.fta : 0;
 			const qAst =
 				(p.stats.min / (t.stats.min / 5)) *
@@ -344,8 +346,9 @@ const calculateRatings = (players: any[], teams: Team[], league: any) => {
 				(pProdFgPart + pProdAstPart + p.stats.ft) *
 					(1 - (t.stats.orb / teamScoringPoss) * teamOrbWeight * teamPlayPct) +
 				pProdOrbPart;
-			ortg[i] = 100 * (pProd / totPoss); // Offensive win shares
+			ortg[i] = 100 * (pProd / totPoss);
 
+			// Offensive win shares
 			const marginalOffense =
 				pProd - 0.92 * (league.pts / league.poss) * totPoss;
 			ows[i] = marginalOffense / marginalPtsPerWin;

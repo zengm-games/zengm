@@ -408,27 +408,7 @@ const createLeague = async ({
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {
-		const players: Exclude<
-			GameAttributesLeague["repeatSeason"],
-			undefined
-		>["players"] = {};
-		for (const p of await idb.cache.players.getAll()) {
-			if (p.tid >= PLAYER.FREE_AGENT) {
-				players[p.pid] = {
-					tid: p.tid,
-					contract: helpers.deepCopy(p.contract),
-					injury: helpers.deepCopy(p.injury),
-				};
-			}
-		}
-
-		await league.setGameAttributes({
-			numSeasonsFutureDraftPicks: 0,
-			repeatSeason: {
-				startingSeason: g.get("season"),
-				players,
-			},
-		});
+		await league.initRepeatSeason();
 	}
 
 	return lid;
@@ -2136,6 +2116,42 @@ const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const updateGameAttributesGodMode = async (
+	gameAttributes: Exclude<GameAttributesLeague, "repeatSeason"> & {
+		repeatSeason?: GameAttributesLeague["repeatSeason"] | boolean;
+	},
+) => {
+	const repeatSeason = gameAttributes.repeatSeason;
+	let initRepeatSeason = false;
+	if (typeof repeatSeason === "boolean") {
+		const prevRepeatSeason = g.get("repeatSeason");
+		if (prevRepeatSeason && !repeatSeason) {
+			// Disable Groundhog Day
+			gameAttributes.repeatSeason = undefined;
+		} else if (!prevRepeatSeason && repeatSeason) {
+			// Enable Groundhog Day
+			if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {
+				throw new Error("Groundhog Day can only be enabled before the draft");
+			}
+			initRepeatSeason = true;
+
+			// Will be enabled later, don't pass through a boolean
+			delete gameAttributes.repeatSeason;
+		} else {
+			// No change, don't pass through a boolean
+			delete gameAttributes.repeatSeason;
+		}
+	}
+
+	console.log("gameAttributes", gameAttributes);
+
+	await league.setGameAttributes(gameAttributes);
+	if (initRepeatSeason) {
+		await league.initRepeatSeason();
+	}
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
 const updateLeague = async (lid: number, obj: any) => {
 	const l = await idb.meta.get("leagues", lid);
 	if (!l) {
@@ -2661,6 +2677,7 @@ export default {
 	updateBudget,
 	updateConfsDivs,
 	updateGameAttributes,
+	updateGameAttributesGodMode,
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,

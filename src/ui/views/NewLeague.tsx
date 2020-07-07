@@ -1135,11 +1135,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				<label className="form-check-label" htmlFor="new-league-repeatSeason">
 					Groundhog Day
 					<br />
-					<span className="text-muted">
-						Next season will start immediately after the playoffs, with the same
-						exact players and rosters as the previous season. No player
-						development, no persistent transactions.
-					</span>
+					<span className="text-muted">{helpTexts.repeatSeason}</span>
 				</label>
 			</div>
 		</div>,

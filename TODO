@@ -6,6 +6,16 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+When in no FA mode, you can't negotiate years with your re-signings
+- @ClevelandFan#0216
+
+in playoffs box, link score (or w/l) to box score of last game in the series
+- @dooby moogey#2784 
+
+popover positioning
+- https://old.reddit.com/r/BasketballGM/comments/hmgodu/bug_first_click_on_a_players_ratings_places_popup/fx5zhtl/?context=3
+- https://github.com/react-bootstrap/react-bootstrap/issues/5270
+
 in GM DL/LB/S are kinda the same. In real life, they're usually humans of different sizes
 - 40 times tell the defensive positions apart: 4.5 for CB, 4.7 for LB, 4.8 for DE
 - shuttle times tell DE/DT from LB

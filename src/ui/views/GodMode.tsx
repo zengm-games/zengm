@@ -44,7 +44,8 @@ type Key =
 	| "challengeNoFreeAgents"
 	| "challengeNoRatings"
 	| "challengeNoTrades"
-	| "realPlayerDeterminism";
+	| "realPlayerDeterminism"
+	| "repeatSeason";
 
 type Category =
 	| "League Structure"
@@ -73,6 +74,8 @@ export const helpTexts = {
 		"You are not allowed to sign free agents, except to minimum contracts.",
 	realPlayerDeterminism:
 		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
+	repeatSeason:
+		"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions.",
 };
 
 export const options: {
@@ -584,6 +587,21 @@ if (process.env.SPORT === "basketball") {
 					throw new Error("Value must be between 0 and 1");
 				}
 			},
+		},
+		{
+			category: "Player Development",
+			key: "repeatSeason",
+			name: "Groundhog Day",
+			type: "bool",
+			helpText: (
+				<>
+					<p>{helpTexts.repeatSeason}</p>
+					<p>
+						Groundhog Day can be enabled at any point in the season prior to the
+						draft.
+					</p>
+				</>
+			),
 		},
 	);
 }
@@ -1316,7 +1334,19 @@ const GodModeOptions = (props: View<"godMode">) => {
 			}
 		}
 
-		await toWorker("main", "updateGameAttributes", output);
+		try {
+			await toWorker("main", "updateGameAttributesGodMode", output);
+		} catch (error) {
+			console.error(error);
+			setSubmitting(false);
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
+			return;
+		}
 
 		setSubmitting(false);
 		logEvent({

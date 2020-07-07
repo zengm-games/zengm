@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-07: Groundhog Day can be enabled and disabled in the God Mode settings. So you can turn it on and off for different seasons within the same league.
+
 * 2020-07-06: The Customize Player form includes the ability to change a player's Hall of Fame induction status. [[1]](https://old.reddit.com/r/BasketballGM/comments/hmiq0p/another_minor_new_feature_that_has_been_requested/)
 
 * 2020-07-02: Added buttons to trade screen to allow you to bulk select players/picks as excluded from trade negotiations. [[1]](https://old.reddit.com/r/BasketballGM/comments/hjqvlr/added_buttons_to_trade_screen_to_allow_you_to/)

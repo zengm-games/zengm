@@ -63,6 +63,7 @@ const generateContractOptions = (contract: PlayerContract, ovr: number) => {
 
 		if (
 			g.get("challengeNoFreeAgents") &&
+			g.get("phase") !== PHASE.RESIGN_PLAYERS &&
 			contractOption.amount * 1000 > g.get("minContract")
 		) {
 			return false;

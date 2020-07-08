@@ -2,7 +2,7 @@ import type { Local } from "../../common/types";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.
 const defaultLocal: Local = {
-	autoPlaySeasons: 0,
+	autoPlayUntil: undefined,
 	autoSave: true,
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
@@ -17,7 +17,7 @@ const defaultLocal: Local = {
 const local: Local & {
 	reset: () => void;
 } = {
-	autoPlaySeasons: defaultLocal.autoPlaySeasons,
+	autoPlayUntil: defaultLocal.autoPlayUntil,
 	autoSave: defaultLocal.autoSave,
 	fantasyDraftResults: defaultLocal.fantasyDraftResults,
 	goldUntil: defaultLocal.goldUntil,
@@ -30,7 +30,7 @@ const local: Local & {
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
 	reset: () => {
 		// These variables will be reset if the user switches leagues
-		local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
+		local.autoPlayUntil = defaultLocal.autoPlayUntil;
 		local.autoSave = defaultLocal.autoSave;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;

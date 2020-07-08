@@ -12,6 +12,10 @@ const updatePlayMenu = async () => {
 		return;
 	}
 
+	const autoPlaySeasonsLeft = local.autoPlayUntil
+		? 1 + local.autoPlayUntil.season - g.get("season")
+		: 0;
+
 	const allOptions: {
 		[key: string]: {
 			id?: string;
@@ -128,7 +132,9 @@ const updatePlayMenu = async () => {
 			label: "View season summary",
 		},
 		stopAuto: {
-			label: `Stop auto play (${local.autoPlaySeasons} seasons left)`,
+			label: `Stop auto play (${autoPlaySeasonsLeft} season${
+				autoPlaySeasonsLeft === 1 ? "" : "s"
+			} left)`,
 		},
 		expansionDraft: {
 			url: helpers.leagueUrl(["expansion_draft"]),
@@ -258,7 +264,7 @@ const updatePlayMenu = async () => {
 		keys = ["newTeam", "newLeague"];
 	}
 
-	if (local.autoPlaySeasons > 0) {
+	if (local.autoPlayUntil) {
 		keys = ["stopAuto"];
 	}
 

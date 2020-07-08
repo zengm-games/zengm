@@ -33,7 +33,7 @@ const newPhaseRegularSeason = async (): Promise<PhaseReturn> => {
 	const subreddit =
 		process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM";
 
-	if (local.autoPlaySeasons === 0) {
+	if (!local.autoPlayUntil) {
 		let naggedMailingList = await idb.meta.get(
 			"attributes",
 			"naggedMailingList",

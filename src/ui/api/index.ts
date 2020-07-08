@@ -1,5 +1,6 @@
 import {
 	ads,
+	autoPlayDialog,
 	confirm,
 	local,
 	localActions,
@@ -200,6 +201,7 @@ const updateTeamOvrs = (ovrs: number[]) => {
 };
 
 export default {
+	autoPlayDialog,
 	bbgmPing,
 	confirm,
 	initAds,

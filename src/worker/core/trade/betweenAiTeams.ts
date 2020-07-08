@@ -15,7 +15,7 @@ const getAITids = async () => {
 				return false;
 			}
 
-			if (local.autoPlaySeasons > 0) {
+			if (local.autoPlayUntil) {
 				return true;
 			}
 			return !g.get("userTids").includes(t.tid);

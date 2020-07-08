@@ -274,12 +274,8 @@ const newPhasePreseason = async (
 		await idb.cache.players.put(p);
 	}
 
-	if (local.autoPlaySeasons > 0) {
-		local.autoPlaySeasons -= 1;
-	}
-
 	// No ads during multi season auto sim
-	if (env.enableLogging && local.autoPlaySeasons === 0) {
+	if (env.enableLogging && !local.autoPlayUntil) {
 		toUI("showModal", [], conditions);
 	}
 

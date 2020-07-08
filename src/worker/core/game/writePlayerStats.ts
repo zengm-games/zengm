@@ -42,7 +42,7 @@ const doInjury = async (
 		stopPlay =
 			g.get("stopOnInjury") &&
 			p2.injury.gamesRemaining > g.get("stopOnInjuryGames") &&
-			local.autoPlaySeasons === 0;
+			!local.autoPlayUntil;
 	}
 
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;

@@ -32,7 +32,7 @@ const autoSign = async () => {
 
 	for (const t of teams) {
 		// Skip the user's team
-		if (g.get("userTids").includes(t.tid) && local.autoPlaySeasons === 0) {
+		if (g.get("userTids").includes(t.tid) && !local.autoPlayUntil) {
 			continue;
 		}
 

@@ -776,9 +776,7 @@ class Cache {
 		// Only flush if cache is dirty and nothing is going on
 		if (this._dirty) {
 			const skipFlush =
-				lock.get("gameSim") ||
-				lock.get("newPhase") ||
-				local.autoPlaySeasons > 0;
+				lock.get("gameSim") || lock.get("newPhase") || !!local.autoPlayUntil;
 
 			if (!skipFlush) {
 				await this.flush();

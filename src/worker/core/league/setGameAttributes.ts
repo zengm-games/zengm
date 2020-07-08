@@ -82,7 +82,7 @@ const setGameAttributes = async (
 					let updated = false;
 
 					if (g.get("userTids").includes(t.tid)) {
-						if (t.adjustForInflation !== false || local.autoPlaySeasons > 0) {
+						if (t.adjustForInflation !== false || local.autoPlayUntil) {
 							for (const key of keys) {
 								const factor =
 									helpers.defaultBudgetAmount(t.budget[key].rank, value) /

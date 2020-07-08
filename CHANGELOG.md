@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-08: Tools > Auto Play now lets you specify a phase (playoffs, draft, etc) to sim to, rather than only allowing auto sim to the preseason. [[1]]()
+
 * 2020-07-07: On the Playoffs page, the series score links to the most recent box score from that series.
 
 * 2020-07-07: Groundhog Day can be enabled and disabled in the God Mode settings. So you can turn it on and off for different seasons within the same league.

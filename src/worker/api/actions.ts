@@ -380,7 +380,7 @@ const playMenu = {
 		}
 	},
 	stopAuto: async () => {
-		local.autoPlaySeasons = 0;
+		local.autoPlayUntil = undefined;
 		updatePlayMenu();
 		await playStop();
 	},

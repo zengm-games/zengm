@@ -70,7 +70,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 			} else {
 				const dp = draftPicks[0];
 
-				if (g.get("userTids").includes(dp.tid) && local.autoPlaySeasons === 0) {
+				if (g.get("userTids").includes(dp.tid) && !local.autoPlayUntil) {
 					return afterDoneAuto();
 				}
 

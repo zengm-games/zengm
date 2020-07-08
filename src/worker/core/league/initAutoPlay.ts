@@ -1,23 +1,25 @@
 import autoPlay from "./autoPlay";
-import { local, toUI } from "../../util";
+import { local, toUI, g } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const initAutoPlay = async (conditions: Conditions) => {
 	const result = await toUI(
-		"confirm",
-		[
-			"This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?",
-			{
-				defaultValue: "5",
-				okText: "Simulate!",
-			},
-		],
+		"autoPlayDialog",
+		[g.get("season"), !!g.get("repeatSeason")],
 		conditions,
 	);
-	const numSeasons = parseInt(result, 10);
 
-	if (Number.isInteger(numSeasons)) {
-		local.autoPlaySeasons = numSeasons;
+	const season = parseInt(result.season, 10);
+	const phase = parseInt(result.phase, 10);
+
+	if (
+		season > g.get("season") ||
+		(season === g.get("season") && phase > g.get("phase"))
+	) {
+		local.autoPlayUntil = {
+			season,
+			phase,
+		};
 		autoPlay(conditions);
 	} else {
 		return false;

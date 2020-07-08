@@ -54,8 +54,18 @@ const finalize = async (
 		await processScheduledEvents(g.get("season"), phase, conditions);
 	}
 
+	if (local.autoPlayUntil) {
+		if (
+			local.autoPlayUntil.season < g.get("season") ||
+			(local.autoPlayUntil.season === g.get("season") &&
+				local.autoPlayUntil.phase <= g.get("phase"))
+		) {
+			local.autoPlayUntil = undefined;
+		}
+	}
+
 	// If auto-simulating, initiate next action but don't redirect to a new URL
-	if (local.autoPlaySeasons > 0) {
+	if (local.autoPlayUntil) {
 		toUI("realtimeUpdate", [updateEvents]);
 
 		await league.autoPlay(conditions);

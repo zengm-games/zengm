@@ -1049,6 +1049,7 @@ const create = async ({
 	}
 
 	await idb.cache.flush();
+	await idb.cache.fill(); // Otherwise it keeps everything in memory!
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;
 	return lid;

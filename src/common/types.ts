@@ -914,6 +914,7 @@ export type PlayoffSeries = {
 	series: {
 		home: PlayoffSeriesTeam;
 		away?: PlayoffSeriesTeam;
+		gids?: number[];
 	}[][];
 };
 

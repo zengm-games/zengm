@@ -40,6 +40,8 @@ const updatePlayoffSeries = async (
 				away.pts = 0;
 			}
 
+			let found = false;
+
 			if (home.tid === result.team[0].id) {
 				home.pts += result.team[0].stat.pts;
 				away.pts += result.team[1].stat.pts;
@@ -50,7 +52,7 @@ const updatePlayoffSeries = async (
 					away.won += 1;
 				}
 
-				break;
+				found = true;
 			} else if (away.tid === result.team[0].id) {
 				away.pts += result.team[0].stat.pts;
 				home.pts += result.team[1].stat.pts;
@@ -60,6 +62,15 @@ const updatePlayoffSeries = async (
 				} else {
 					home.won += 1;
 				}
+
+				found = true;
+			}
+
+			if (found) {
+				if (series.gids === undefined) {
+					series.gids = [];
+				}
+				series.gids.push(result.gid);
 
 				break;
 			}

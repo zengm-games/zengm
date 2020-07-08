@@ -1164,7 +1164,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 										away: {
 											ref: "#/definitions/playoffSeriesTeam",
 										},
+										gids: {
+											type: "array",
+											items: {
+												type: "integer",
+											},
+										},
 									},
+									required: ["home"],
 								},
 							},
 						},

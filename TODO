@@ -6,12 +6,13 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-The spending page needs to fixed. Either change the "finances" so you select "spending rank" (1st thru 30th) or make the finance system actually use cardinal values.
-right now it's confusing for new players and kinda annoying to set yourself as first the in the league (guess + check)
+ties in PlayerFeats show up as W/L
+
+The spending page needs to fixed. Either change the "finances" so you select "spending rank" (1st thru 30th) or make the finance system actually use cardinal values. right now it's confusing for new players and kinda annoying to set yourself as first the in the league (guess + check)
+
 also on the resigning page, it should say "max contract" and "min contract" so you have some sense for how much players are asking for
 
-in playoffs box, link score (or w/l) to box score of last game in the series
-- @dooby moogey#2784 
+show roster composition box (from roster) on re-signing and free agents pages
 
 in fbgm players recover from injury during the FA period if they are in FA, but not if they are on a team
 
@@ -218,6 +219,7 @@ FBGM
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
 - DONE - too many runs, not enough passes?
 - DONE - made defensive players a little worse at offensive ratings
+- DONE - link to box score from playoffs
 - increase value of K/P so they won't be traded for nothing
 - smarter cutting when over roster limit (like don't cut only K/P)
 

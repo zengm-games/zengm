@@ -58,15 +58,7 @@ const finalize = async (
 	if (local.autoPlayUntil) {
 		toUI("realtimeUpdate", [updateEvents]);
 
-		if (
-			local.autoPlayUntil.season < g.get("season") ||
-			(local.autoPlayUntil.season === g.get("season") &&
-				local.autoPlayUntil.phase <= g.get("phase"))
-		) {
-			local.autoPlayUntil = undefined;
-		} else {
-			await league.autoPlay(conditions);
-		}
+		await league.autoPlay(conditions);
 	} else {
 		toUI("realtimeUpdate", [updateEvents, url], conditions).then(() => {
 			// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"

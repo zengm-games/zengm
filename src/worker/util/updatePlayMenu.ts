@@ -13,7 +13,7 @@ const updatePlayMenu = async () => {
 	}
 
 	const autoPlaySeasonsLeft = local.autoPlayUntil
-		? 1 + local.autoPlayUntil.season - g.get("season")
+		? local.autoPlayUntil.season - g.get("season")
 		: 0;
 
 	const allOptions: {

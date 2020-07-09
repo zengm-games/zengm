@@ -10,7 +10,14 @@ import newPhaseResignPlayers from "./newPhaseResignPlayers";
 import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
 import newPhaseExpansionDraft from "./newPhaseExpansionDraft";
-import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
+import {
+	g,
+	lock,
+	logEvent,
+	updatePlayMenu,
+	updateStatus,
+	local,
+} from "../../util";
 import type { Conditions, Phase } from "../../../common/types";
 
 /**
@@ -78,6 +85,16 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 	} else {
 		try {
 			await lock.set("newPhase", true);
+
+			if (
+				local.autoPlayUntil &&
+				(local.autoPlayUntil.season < g.get("season") ||
+					(local.autoPlayUntil.season === g.get("season") &&
+						local.autoPlayUntil.phase <= phase))
+			) {
+				local.autoPlayUntil = undefined;
+			}
+
 			await updateStatus("Processing...");
 			await updatePlayMenu();
 

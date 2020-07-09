@@ -144,8 +144,8 @@ const getRealFinalsMvp = async (
 					ast: 0,
 				};
 
-				// 50% bonus for the winning team
-				const factor = t.tid === champTid ? 1.5 : 1;
+				// 75% bonus for the winning team
+				const factor = t.tid === champTid ? 1.75 : 1;
 				info.score += factor * helpers.gameScore(p);
 				info.pts += p.pts;
 				info.trb += p.drb + p.orb;

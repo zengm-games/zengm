@@ -210,12 +210,27 @@ export const createWithoutSaving = async (
 
 	// Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
 	const oldNumGames = unwrap(gameAttributes, "numGamesPlayoffSeries");
-	const newNumGames = league.getValidNumGamesPlayoffSeries(
-		oldNumGames,
-		(gameAttributes as any).numPlayoffRounds,
-		gameAttributes.numActiveTeams,
-	);
-	delete (gameAttributes as any).numPlayoffRounds;
+	let newNumGames = oldNumGames;
+	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
+	try {
+		helpers.validateRoundsByes(
+			oldNumGames.length,
+			unwrap(gameAttributes, "numPlayoffByes"),
+			gameAttributes.numActiveTeams,
+		);
+	} catch (error) {
+		// Would be better to hard error here, but backwards compatibility
+		legacyPlayoffs = true;
+	}
+	if (legacyPlayoffs) {
+		// Handle legacy case where numPlayoffRounds is set
+		newNumGames = league.getValidNumGamesPlayoffSeries(
+			oldNumGames,
+			(gameAttributes as any).numPlayoffRounds,
+			gameAttributes.numActiveTeams,
+		);
+		delete (gameAttributes as any).numPlayoffRounds;
+	}
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
 	if (JSON.stringify(oldNumGames) !== JSON.stringify(newNumGames)) {
@@ -232,7 +247,6 @@ export const createWithoutSaving = async (
 	}
 
 	if (gameAttributes.equalizeRegions) {
-		console.log("equalize cities!");
 		let totalPopulation = 0;
 		for (const t of teamInfos) {
 			totalPopulation += t.pop;
@@ -241,7 +255,6 @@ export const createWithoutSaving = async (
 		// Round to 2 digits
 		const averagePopulation =
 			Math.round((totalPopulation / teamInfos.length) * 100) / 100;
-		console.log(averagePopulation);
 
 		for (const t of teamInfos) {
 			t.pop = averagePopulation;

@@ -9,6 +9,10 @@ const initAutoPlay = async (conditions: Conditions) => {
 		conditions,
 	);
 
+	if (!result) {
+		return false;
+	}
+
 	const season = parseInt(result.season, 10);
 	const phase = parseInt(result.phase, 10);
 

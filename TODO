@@ -6,8 +6,6 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-auto play to certain phase @Gobadgers#7140 
-
 ties in PlayerFeats show up as W/L
 
 The spending page needs to fixed. Either change the "finances" so you select "spending rank" (1st thru 30th) or make the finance system actually use cardinal values. right now it's confusing for new players and kinda annoying to set yourself as first the in the league (guess + check)
@@ -32,8 +30,6 @@ in GM DL/LB/S are kinda the same. In real life, they're usually humans of differ
   - or change ovr formula
 - "a decent chunk of DBs in real life produce stats that FBGM never generates"
   - needs more positive outliers
-
-clear explanation on finances page that rank over last 3 seasons is what matters
 
 import/export players
 - maybe

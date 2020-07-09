@@ -177,8 +177,10 @@ const processAttrs = (
 				output.nameAbbrev = p.firstName;
 			} else {
 				output.nameAbbrev = `${p.firstName
+					.replace(/"/g, "")
 					.split(" ")
 					.map(s => s[0])
+					.filter(s => s !== undefined)
 					.join(".")}. ${p.lastName}`;
 			}
 		} else if (attr === "untradable") {

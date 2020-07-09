@@ -169,13 +169,10 @@ class FinancesForm extends React.Component<
 			userTid,
 		} = this.props;
 
-		const warningMessage = (
-			<p className="text-danger">
-				{gameSimInProgress && tid === userTid
-					? "Stop game simulation to edit."
-					: null}
-			</p>
-		);
+		const warningMessage =
+			gameSimInProgress && tid === userTid ? (
+				<p className="text-danger">Stop game simulation to edit.</p>
+			) : null;
 
 		const formDisabled = gameSimInProgress || tid !== userTid;
 
@@ -222,6 +219,10 @@ class FinancesForm extends React.Component<
 						</p>
 					</HelpPopover>
 				</h3>
+				<p>
+					Click the ? above to see what exactly each category does. Effects are
+					based on your spending rank over the past three seasons.
+				</p>
 				{warningMessage}
 				<div className="row">
 					<div className="float-left finances-settings-label">Scouting</div>

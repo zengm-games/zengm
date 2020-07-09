@@ -55,6 +55,7 @@ const updateFreeAgents = async () => {
 		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 		challengeNoRatings: g.get("challengeNoRatings"),
 		hardCap: g.get("hardCap"),
+		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
 		phase: g.get("phase"),

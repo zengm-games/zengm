@@ -16,6 +16,7 @@ const NegotiationList = ({
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	hardCap,
+	maxContract,
 	minContract,
 	numRosterSpots,
 	phase,
@@ -117,6 +118,7 @@ const NegotiationList = ({
 			<RosterSalarySummary
 				capSpace={capSpace}
 				hardCap={hardCap}
+				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
 			/>

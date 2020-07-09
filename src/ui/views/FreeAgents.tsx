@@ -17,6 +17,7 @@ const FreeAgents = ({
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	hardCap,
+	maxContract,
 	minContract,
 	numRosterSpots,
 	phase,
@@ -152,6 +153,7 @@ const FreeAgents = ({
 			<RosterSalarySummary
 				capSpace={capSpace}
 				hardCap={hardCap}
+				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
 			/>

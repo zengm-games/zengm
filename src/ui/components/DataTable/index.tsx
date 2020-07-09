@@ -178,7 +178,12 @@ class DataTable extends React.Component<Props, State> {
 	}
 
 	handleExportCSV() {
-		const columns = this.props.cols.map(col => col.title);
+		const colOrderFiltered = this.state.colOrder.filter(
+			({ hidden, colIndex }) => !hidden && this.props.cols[colIndex],
+		);
+		const columns = colOrderFiltered.map(
+			({ colIndex }) => this.props.cols[colIndex].title,
+		);
 		const rows = this.processRows().map(row =>
 			row.data.map(val => getSearchVal(val, false)),
 		);

@@ -221,7 +221,7 @@ const setupRoutes = () => {
 						});
 					}
 
-					if (process.env.SPORT === "basketball" && window._qevents) {
+					if (window._qevents) {
 						window._qevents.push({
 							qacct: "p-Ye5RY6xC03ZWz",
 							event: "click",

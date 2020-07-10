@@ -611,7 +611,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 						}),
 						gameAttribute("phase", {
 							type: "integer",
-							minimum: -1,
+							minimum: -2,
 							maximum: 8,
 						}),
 						gameAttribute("playersRefuseToNegotiate", {

@@ -13,7 +13,7 @@ const updateAwardRaces = async (
 				updateEvents.includes("playerMovement"))) ||
 		inputs.season !== state.season
 	) {
-		const awardCandidates = await season.getAwardCandidates!(inputs.season);
+		const awardCandidates = await season.getAwardCandidates(inputs.season);
 
 		return {
 			awardCandidates,

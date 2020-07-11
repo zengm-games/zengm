@@ -1,7 +1,8 @@
-import { PHASE, helpers } from "../../common";
+import { PHASE } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
+import advStatsSave from "./advStatsSave";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -527,28 +528,7 @@ const advStats = async () => {
 		...calculatePercentages(players, teams),
 		...calculateRatings(players, teams, league),
 	};
-
-	// Save to database
-	const keys = helpers.keys(updatedStats);
-	await Promise.all(
-		players.map(async ({ pid }, i) => {
-			const p = playersRaw.find(p2 => p2.pid === pid);
-
-			if (p) {
-				const ps = p.stats[p.stats.length - 1];
-
-				if (ps) {
-					for (const key of keys) {
-						if (!Number.isNaN(updatedStats[key][i])) {
-							ps[key] = updatedStats[key][i];
-						}
-					}
-
-					await idb.cache.players.put(p);
-				}
-			}
-		}),
-	);
+	await advStatsSave(players, playersRaw, updatedStats);
 };
 
 export default advStats;

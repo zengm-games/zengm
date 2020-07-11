@@ -46,7 +46,10 @@ const getTopByPos = (
 	}
 };
 
-const makeTeams = (players: PlayerFiltered[], rookie: boolean = false): any => {
+export const makeTeams = (
+	players: PlayerFiltered[],
+	rookie: boolean = false,
+): any => {
 	const usedPids = new Set<number>();
 	const teamPositions = [
 		["QB"],
@@ -223,6 +226,21 @@ const getRealFinalsMvp = async (
 
 export const avScore = (p: PlayerFiltered) => p.currentStats.av;
 
+const SKILL_POSITIONS = ["QB", "RB", "WR", "TE"];
+export const mvpScore = (p: PlayerFiltered) => {
+	const posMultiplier = SKILL_POSITIONS.includes(p.pos) ? 1.2 : 1;
+	return posMultiplier * p.currentStats.av;
+};
+export const dpoyScore = (p: PlayerFiltered) => {
+	let posBonus = 0;
+	if (p.pos === "S" || p.pos === "CB") {
+		posBonus = 3.9;
+	} else if (p.pos === "LB") {
+		posBonus = 1.9;
+	}
+	return posBonus + p.currentStats.av;
+};
+
 const doAwards = async (conditions: Conditions) => {
 	// Careful - this array is mutated in various functions called below
 	const awardsByPlayer: AwardsByPlayer = [];
@@ -254,8 +272,22 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
-	const mvp = getTopByPos(avPlayers);
-	const dpoy = getTopByPos(avPlayers, ["DL", "LB", "S", "CB"]);
+	const mvpPlayers = getTopPlayers(
+		{
+			amount: Infinity,
+			score: mvpScore,
+		},
+		players,
+	);
+	const dpoyPlayers = getTopPlayers(
+		{
+			amount: Infinity,
+			score: dpoyScore,
+		},
+		players,
+	);
+	const mvp = getTopByPos(mvpPlayers);
+	const dpoy = getTopByPos(dpoyPlayers, ["DL", "LB", "S", "CB"]);
 	const allLeague = makeTeams(avPlayers);
 	const royPlayers = getTopPlayers(
 		{

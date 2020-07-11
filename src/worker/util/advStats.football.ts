@@ -1,7 +1,10 @@
-import { PHASE, helpers } from "../../common";
+import { PHASE } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
+import { getPlayers, getTopPlayers } from "../core/season/awards";
+import { avScore, makeTeams } from "../core/season/doAwards.football";
+import advStatsSave from "./advStatsSave";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -107,9 +110,27 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
 			const posMultiplier = p.ratings.pos === "OL" ? 1.1 : 0.2;
-			score = p.stats.gp + 5 * p.stats.gs * posMultiplier;
+
+			let allProMultiplier = 1;
+			if (p.ratings.pos === "OL") {
+				if (p.allLeagueTeam === 0) {
+					allProMultiplier = 1.5;
+				} else if (p.allLeagueTeam === 1) {
+					allProMultiplier = 1;
+				}
+			}
+
+			score = p.stats.gp + 5 * p.stats.gs * posMultiplier * allProMultiplier;
+
 			t.stats.individualPtsOL += score;
 		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
+			let allProLevel = 0;
+			if (p.allLeagueTeam === 0) {
+				allProLevel = 1.9;
+			} else if (p.allLeagueTeam === 1) {
+				allProLevel = 1.6;
+			}
+
 			score =
 				p.stats.gp +
 				5 * p.stats.gs +
@@ -119,7 +140,8 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-ignore
-				TCK_CONSTANT[p.ratings.pos] * p.stats.defTck;
+				TCK_CONSTANT[p.ratings.pos] * p.stats.defTck +
+				(allProLevel * 80 * t.stats.gp) / g.get("numGames");
 
 			if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
 				t.stats.individualPtsFront7 += score;
@@ -362,29 +384,34 @@ const advStats = async () => {
 	league.xpp = league.xp / league.xpa;
 	league.adjPntYPA =
 		(league.pntYds - 13 * league.pntBlk) / (league.pnt + league.pntBlk);
+
 	const updatedStats = { ...calculateAV(players, teams, league) };
+	await advStatsSave(players, playersRaw, updatedStats);
 
-	// Save to database
-	const keys = helpers.keys(updatedStats);
-	await Promise.all(
-		players.map(async ({ pid }, i) => {
-			const p = playersRaw.find(p2 => p2.pid === pid);
+	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
+	if (PHASE.PLAYOFFS !== g.get("phase")) {
+		const players2 = await getPlayers(g.get("season"));
+		const avPlayers = getTopPlayers(
+			{
+				amount: Infinity,
+				score: avScore,
+			},
+			players2,
+		);
+		const allLeague = makeTeams(avPlayers);
 
-			if (p) {
-				const ps = p.stats[p.stats.length - 1];
-
-				if (ps) {
-					for (const key of keys) {
-						if (!Number.isNaN(updatedStats[key][i])) {
-							ps[key] = updatedStats[key][i];
-						}
-					}
-
-					await idb.cache.players.put(p);
+		for (let i = 0; i < allLeague.length; i++) {
+			for (const p2 of allLeague[i].players) {
+				if (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos)) {
+					const p = players.find(p3 => p3.pid === p2.pid);
+					p.allLeagueTeam = i;
 				}
 			}
-		}),
-	);
+		}
+
+		const updatedStats = { ...calculateAV(players, teams, league) };
+		await advStatsSave(players, playersRaw, updatedStats);
+	}
 };
 
 export default advStats;

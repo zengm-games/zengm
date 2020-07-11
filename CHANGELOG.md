@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-10: For FBGM, improved AV formula for OL and defensive players, resulting in higher AV for top players at those positions. I also updated the MVP and DPOY formulas to account for this, hopefully retaining good position balance.
+
 * 2020-07-09: A bunch of small FBGM improvements. [[1]](https://football-gm.com/blog/2020/07/recent-development-av-kickers-punters-future/) [[2]](https://old.reddit.com/r/Football_GM/comments/hogban/recent_development_some_small_improvements/)
 
 * 2020-07-08: Tools > Auto Play now lets you specify a phase (playoffs, draft, etc) to sim to, rather than only allowing auto sim to the preseason. [[1]](https://old.reddit.com/r/BasketballGM/comments/hnsxf0/tools_auto_play_now_lets_you_specify_a_phase/)

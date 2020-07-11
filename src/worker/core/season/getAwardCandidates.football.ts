@@ -1,5 +1,5 @@
 import { getPlayers, getTopPlayers } from "./awards";
-import { avScore } from "./doAwards.football";
+import { avScore, mvpScore, dpoyScore } from "./doAwards.football";
 import type { PlayerFiltered } from "../../../common/types";
 
 const filterPosition = (season: number, positions: string[]) => (
@@ -16,8 +16,6 @@ const filterPosition = (season: number, positions: string[]) => (
 	if (!pr) {
 		return false;
 	}
-
-	console.log(positions, pr.pos, positions.includes(pr.pos));
 
 	return positions.includes(pr.pos);
 };
@@ -42,7 +40,7 @@ const getAwardCandidates = async (season: number) => {
 				{
 					allowNone: true,
 					amount: 10,
-					score: avScore,
+					score: mvpScore,
 				},
 				players,
 			),
@@ -55,7 +53,7 @@ const getAwardCandidates = async (season: number) => {
 					allowNone: true,
 					amount: 10,
 					filter: filterPosition(season, ["DL", "LB", "S", "CB"]),
-					score: avScore,
+					score: dpoyScore,
 				},
 				players,
 			),

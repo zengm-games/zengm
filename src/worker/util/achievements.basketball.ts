@@ -390,6 +390,10 @@ const achievements: Achievement[] = [
 			}
 
 			const games = await idb.cache.games.getAll();
+			if (games.length === 0) {
+				return false;
+			}
+
 			const game = games[games.length - 1]; // Last game of finals
 
 			return game.overtimes >= 1 && game.won.tid === g.get("userTid");

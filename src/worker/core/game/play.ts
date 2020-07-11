@@ -49,6 +49,7 @@ const play = async (
 	start: boolean = true,
 	gidPlayByPlay?: number,
 ) => {
+	console.log("play", numDays, conditions, start, gidPlayByPlay);
 	// This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
 	const cbNoGames = async (playoffsOver: boolean = false) => {
 		await updateStatus("Saving...");
@@ -335,6 +336,7 @@ const play = async (
 	// This simulates a day, including game simulation and any other bookkeeping that needs to be done
 	const cbRunDay = async () => {
 		const userTeamSizeError = await team.checkRosterSizes();
+		console.log("cbRunDay", userTeamSizeError);
 
 		if (!userTeamSizeError) {
 			await updatePlayMenu();
@@ -362,6 +364,12 @@ const play = async (
 					// Update UI if stopped
 					await cbNoGames();
 				}
+			} else {
+				// Not sure why we get here sometimes, but we do
+				const playoffsOver =
+					g.get("phase") === PHASE.PLAYOFFS &&
+					(await season.newSchedulePlayoffsDay());
+				await cbNoGames(playoffsOver);
 			}
 		} else {
 			await lock.set("gameSim", false); // Counteract auto-start in lock.canStartGames
@@ -383,6 +391,7 @@ const play = async (
 	if (start) {
 		const canStartGames = await lock.canStartGames();
 
+		console.log("canStartGames");
 		if (canStartGames) {
 			await cbRunDay();
 		}

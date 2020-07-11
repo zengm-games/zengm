@@ -104,10 +104,15 @@ const getRealFinalsMvp = async (
 	players: PlayerFiltered[],
 	champTid: number,
 ): Promise<AwardPlayer | void> => {
-	const games = await idb.cache.games.getAll(); // Last game of the season will have the two finals teams
+	const games = await idb.cache.games.getAll();
+	if (games.length === 0) {
+		return;
+	}
 
-	const finalsTids = games[games.length - 1].teams.map(t => t.tid); // Get all playoff games between those two teams - that will be all finals games
+	// Last game of the season will have the two finals teams
+	const finalsTids = games[games.length - 1].teams.map(t => t.tid);
 
+	// Get all playoff games between those two teams - that will be all finals games
 	const finalsGames = games.filter(
 		game =>
 			game.playoffs &&
@@ -407,8 +412,9 @@ const doAwards = async (conditions: Conditions) => {
 			p.currentStats = p.stats;
 		}
 
-		finalsMvp = await getRealFinalsMvp(players, champTid); // If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
+		finalsMvp = await getRealFinalsMvp(players, champTid);
 
+		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
 		if (finalsMvp === undefined) {
 			[finalsMvp] = getTopPlayersOffense(
 				{

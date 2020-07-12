@@ -2474,13 +2474,13 @@ const upsertCustomizedPlayer = async (
 		}
 
 		p.ratings[r].season = p.draft.year;
-	} else {
+	} else if (p.tid !== PLAYER.RETIRED) {
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
 		p.ratings[r].season = g.get("season");
 	}
 
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
-	if (originalTid === PLAYER.RETIRED) {
+	if (originalTid === PLAYER.RETIRED && p.tid !== PLAYER.RETIRED) {
 		if (g.get("season") - p.ratings[r].season > 0) {
 			player.addRatingsRow(p, 15);
 		}

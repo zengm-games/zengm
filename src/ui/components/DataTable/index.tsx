@@ -252,7 +252,7 @@ class DataTable extends React.Component<Props, State> {
 	handleSearch(event: SyntheticEvent<HTMLInputElement>) {
 		this.setState({
 			currentPage: 1,
-			searchText: event.currentTarget.value.toLowerCase(),
+			searchText: event.currentTarget.value,
 		});
 	}
 
@@ -314,6 +314,7 @@ class DataTable extends React.Component<Props, State> {
 			: [];
 		const skipFiltering =
 			this.state.searchText === "" && !this.state.enableFilters;
+		const searchText = this.state.searchText.toLowerCase();
 		const rowsFiltered = skipFiltering
 			? this.props.rows
 			: this.props.rows.filter(row => {
@@ -326,7 +327,7 @@ class DataTable extends React.Component<Props, State> {
 								continue;
 							}
 
-							if (getSearchVal(row.data[i]).includes(this.state.searchText)) {
+							if (getSearchVal(row.data[i]).includes(searchText)) {
 								found = true;
 								break;
 							}

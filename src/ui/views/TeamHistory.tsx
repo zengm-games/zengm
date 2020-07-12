@@ -16,7 +16,6 @@ const TeamHistory = ({
 	stats,
 	team,
 	tid,
-	ties,
 	totalLost,
 	totalTied,
 	totalWon,
@@ -95,7 +94,7 @@ const TeamHistory = ({
 	});
 
 	let record = `${totalWon}-${totalLost}`;
-	if (ties) {
+	if (totalTied > 0) {
 		record += `-${totalTied}`;
 	}
 
@@ -216,7 +215,6 @@ TeamHistory.propTypes = {
 		tid: PropTypes.number.isRequired,
 	}).isRequired,
 	tid: PropTypes.number.isRequired,
-	ties: PropTypes.bool.isRequired,
 	totalLost: PropTypes.number.isRequired,
 	totalTied: PropTypes.number,
 	totalWon: PropTypes.number.isRequired,

@@ -60,9 +60,9 @@ const updateLeagueStats = async (
 
 			if (!ties) {
 				for (const t of teams) {
-					console.log("t.seasonAttrs.tied", t.seasonAttrs.tied);
 					if (t.seasonAttrs.tied > 0) {
 						ties = true;
+						break;
 					}
 				}
 			}
@@ -129,7 +129,7 @@ const updateLeagueStats = async (
 			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
-			ties: g.get("ties") || ties,
+			ties: g.get("ties", Infinity) || ties,
 		};
 	}
 };

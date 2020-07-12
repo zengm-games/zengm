@@ -29,7 +29,7 @@ const getRecord = (t: Team) => {
 	if (t.won === undefined || t.lost === undefined) {
 		return "";
 	}
-	if (t.tied === undefined) {
+	if (t.tied === undefined || t.tied === 0) {
 		return ` ${t.won}-${t.lost}`;
 	}
 	return ` ${t.won}-${t.lost}-${t.tied}`;

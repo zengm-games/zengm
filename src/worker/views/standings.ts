@@ -114,6 +114,14 @@ const updateStandings = async (
 			}
 		}
 
+		let ties = false;
+		for (const t of teams) {
+			if (t.seasonAttrs.tied > 0) {
+				ties = true;
+				break;
+			}
+		}
+
 		return {
 			confs,
 			divs,
@@ -122,7 +130,7 @@ const updateStandings = async (
 			playoffsByConference,
 			season: inputs.season,
 			teams,
-			ties: g.get("ties"),
+			ties: g.get("ties", inputs.season) || ties,
 			type: inputs.type,
 			userTid: g.get("userTid"),
 		};

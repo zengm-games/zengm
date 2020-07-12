@@ -148,12 +148,20 @@ const updatePowerRankings = async (
 			teamsWithRankings[i].rank = i + 1;
 		}
 
+		let ties = false;
+		for (const t of teams) {
+			if (t.seasonAttrs.tied > 0) {
+				ties = true;
+				break;
+			}
+		}
+
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
 			season,
 			teams: teamsWithRankings,
-			ties: g.get("ties"),
+			ties: g.get("ties", season) || ties,
 			userTid: g.get("userTid"),
 		};
 	}

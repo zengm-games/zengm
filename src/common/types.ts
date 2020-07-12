@@ -396,7 +396,7 @@ export type GameAttributesLeague = {
 
 export type GameAttributesLeagueWithHistory = Omit<
 	GameAttributesLeague,
-	"confs" | "divs" | "numGamesPlayoffSeries" | "numPlayoffByes"
+	"confs" | "divs" | "numGamesPlayoffSeries" | "numPlayoffByes" | "ties"
 > & {
 	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
 	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
@@ -406,6 +406,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	numPlayoffByes: GameAttributeWithHistory<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
+	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
 };
 
 export type GameAttributes =

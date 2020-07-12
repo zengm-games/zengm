@@ -53,7 +53,6 @@ const updateUserRoster = async (
 			gameOver: g.get("gameOver"),
 			phase: g.get("phase"),
 			stats,
-			ties: g.get("ties"),
 			userPicks: userPicks2,
 			userRoster,
 		};

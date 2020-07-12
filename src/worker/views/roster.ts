@@ -49,14 +49,12 @@ const updateRoster = async (
 			"profit",
 			"won",
 			"lost",
+			"tied",
 			"playoffRoundsWon",
 			"imgURL",
 			"region",
 			"name",
 		];
-		if (g.get("ties")) {
-			seasonAttrs.push("tied");
-		}
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,

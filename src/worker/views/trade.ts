@@ -221,7 +221,6 @@ const updateTrade = async () => {
 		showResigningMsg,
 		teams: teams2,
 		tied: t.seasonAttrs.tied,
-		ties: g.get("ties"),
 		userTeamName,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),

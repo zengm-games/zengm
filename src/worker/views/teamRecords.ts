@@ -443,10 +443,18 @@ const updateTeamRecords = async (
 			});
 		}
 
+		let ties = false;
+		for (const t of teams) {
+			if (t.tied > 0) {
+				ties = true;
+				break;
+			}
+		}
+
 		return {
 			byType,
 			teams,
-			ties: g.get("ties"),
+			ties: g.get("ties", Infinity) || ties,
 			userTid: g.get("userTid"),
 		};
 	}

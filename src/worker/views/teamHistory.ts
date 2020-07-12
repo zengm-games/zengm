@@ -48,7 +48,7 @@ const updateTeamHistory = async (
 				season: teamSeason.season,
 				won: teamSeason.won,
 				lost: teamSeason.lost,
-				tied: g.get("ties") ? teamSeason.tied : undefined,
+				tied: teamSeason.tied,
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
 				numPlayoffRounds,
 				numConfs: g.get("confs", teamSeason.season).length,
@@ -143,7 +143,6 @@ const updateTeamHistory = async (
 			bestRecord,
 			worstRecord,
 			tid: inputs.tid,
-			ties: g.get("ties"),
 		};
 	}
 };

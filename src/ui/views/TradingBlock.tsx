@@ -18,7 +18,6 @@ type OfferProps = {
 	) => Promise<void>;
 	i: number;
 	stats: string[];
-	ties: boolean;
 } & OfferType;
 
 const Offer = (props: OfferProps) => {
@@ -39,7 +38,6 @@ const Offer = (props: OfferProps) => {
 		strategy,
 		tid,
 		tied,
-		ties,
 		warning,
 		won,
 	} = props;
@@ -125,7 +123,7 @@ const Offer = (props: OfferProps) => {
 			</h2>
 			<p>
 				{won}-{lost}
-				{ties ? <>-{tied}</> : null}, {strategy},{" "}
+				{tied > 0 ? <>-{tied}</> : null}, {strategy},{" "}
 				{helpers.formatCurrency(payroll / 1000, "M")} payroll
 			</p>
 			<p className="text-danger">{warning}</p>
@@ -164,7 +162,6 @@ Offer.propTypes = {
 	strategy: PropTypes.string.isRequired,
 	tid: PropTypes.number.isRequired,
 	tied: PropTypes.number,
-	ties: PropTypes.bool.isRequired,
 	warning: PropTypes.string,
 	won: PropTypes.number.isRequired,
 };
@@ -258,7 +255,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		gameOver,
 		phase,
 		stats,
-		ties,
 		userPicks,
 		userRoster,
 	} = props;
@@ -392,7 +388,6 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 						handleClickNegotiate={handleClickNegotiate}
 						i={i}
 						stats={stats}
-						ties={ties}
 						{...offer}
 					/>
 				);
@@ -418,7 +413,6 @@ TradingBlock.propTypes = {
 	gameOver: PropTypes.bool.isRequired,
 	phase: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	ties: PropTypes.bool.isRequired,
 	userPicks: PropTypes.arrayOf(PropTypes.object).isRequired,
 	userRoster: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

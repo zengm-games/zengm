@@ -2143,8 +2143,6 @@ const updateGameAttributesGodMode = async (
 		}
 	}
 
-	console.log("gameAttributes", gameAttributes);
-
 	await league.setGameAttributes(gameAttributes);
 	if (initRepeatSeason) {
 		await league.initRepeatSeason();

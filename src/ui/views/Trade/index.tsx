@@ -182,7 +182,6 @@ const Trade = (props: View<"trade">) => {
 		strategy,
 		teams,
 		tied,
-		ties,
 		userPicks,
 		userRoster,
 		userTeamName,
@@ -233,7 +232,7 @@ const Trade = (props: View<"trade">) => {
 						}}
 					>
 						{won}-{lost}
-						{ties ? <>-{tied}</> : null}, {strategy}
+						{tied > 0 ? <>-{tied}</> : null}, {strategy}
 					</div>
 					<div className="clearfix" />
 					<AssetList
@@ -321,7 +320,6 @@ Trade.propTypes = {
 		}),
 	).isRequired,
 	tied: PropTypes.number,
-	ties: PropTypes.bool.isRequired,
 	userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
 	userDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
 	userPicks: PropTypes.array.isRequired,

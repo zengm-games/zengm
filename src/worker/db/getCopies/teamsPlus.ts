@@ -151,7 +151,7 @@ const processSeasonAttrs = async <
 					const lastTenLost = ts.lastTen.filter(x => x === 0).length;
 					row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
-					if (g.get("ties")) {
+					if (g.get("ties", season)) {
 						const lastTenTied = ts.lastTen.filter(x => x === -1).length;
 						row.lastTen += `-${lastTenTied}`;
 					}

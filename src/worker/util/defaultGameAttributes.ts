@@ -98,7 +98,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	easyDifficultyInPast: false,
 	hardCap: false,
 	// This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
-	ties: false,
+	ties: [
+		{
+			start: -Infinity,
+			value: false,
+		},
+	],
 	draftType: "nba2019",
 	numDraftRounds: 2,
 	defaultStadiumCapacity: 25000,
@@ -201,7 +206,12 @@ export const footballOverrides =
 				numPlayoffByes: 4,
 				stopOnInjuryGames: 1,
 				hardCap: true,
-				ties: true,
+				ties: [
+					{
+						start: -Infinity,
+						value: true,
+					},
+				],
 				draftType: "noLottery",
 				numDraftRounds: 8,
 				defaultStadiumCapacity: 70000,

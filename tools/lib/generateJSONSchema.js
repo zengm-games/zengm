@@ -657,7 +657,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "integer",
 						}),
 						gameAttribute("ties", {
-							type: "boolean",
+							type: ["boolean", "array"],
 						}),
 						gameAttribute("tragicDeathRate", {
 							type: "number",

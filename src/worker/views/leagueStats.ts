@@ -24,6 +24,8 @@ const updateLeagueStats = async (
 
 		const ignoreStats = ["mov", "pw", "pl"];
 
+		let ties = false;
+
 		let stats: string[] = [];
 
 		let maxSeason = g.get("season");
@@ -55,6 +57,15 @@ const updateLeagueStats = async (
 			stats = output.stats;
 			const seasonAttrs = output.seasonAttrs;
 			const teams = output.teams;
+
+			if (!ties) {
+				for (const t of teams) {
+					console.log("t.seasonAttrs.tied", t.seasonAttrs.tied);
+					if (t.seasonAttrs.tied > 0) {
+						ties = true;
+					}
+				}
+			}
 
 			const row: {
 				season: number;
@@ -118,7 +129,7 @@ const updateLeagueStats = async (
 			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
-			ties: g.get("ties"),
+			ties: g.get("ties") || ties,
 		};
 	}
 };

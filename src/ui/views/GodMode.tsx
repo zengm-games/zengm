@@ -45,7 +45,8 @@ type Key =
 	| "challengeNoRatings"
 	| "challengeNoTrades"
 	| "realPlayerDeterminism"
-	| "repeatSeason";
+	| "repeatSeason"
+	| "ties";
 
 type Category =
 	| "League Structure"
@@ -492,6 +493,12 @@ export const options: {
 		category: "Challenge Modes",
 		key: "challengeNoRatings",
 		name: "No Visible Player Ratings",
+		type: "bool",
+	},
+	{
+		category: "Game Simulation",
+		key: "ties",
+		name: "Ties (Regular Season Only)",
 		type: "bool",
 	},
 ];

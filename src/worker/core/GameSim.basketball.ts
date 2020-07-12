@@ -1,4 +1,5 @@
 import { g, helpers, random } from "../util";
+import { PHASE } from "../../common";
 
 type PlayType =
 	| "ast"
@@ -304,6 +305,11 @@ class GameSim {
 		while (this.team[0].stat.pts === this.team[1].stat.pts) {
 			this.checkGameTyingShot();
 			this.simOvertime();
+
+			// More than one overtime only if no ties are allowed or if it's the playoffs
+			if (!g.get("ties") || g.get("phase") !== PHASE.PLAYOFFS) {
+				break;
+			}
 		}
 
 		this.recordPlay("gameOver");

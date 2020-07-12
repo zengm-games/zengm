@@ -23,7 +23,7 @@ const augmentSeries = async (
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
-			tied: g.get("ties") ? 0 : undefined,
+			tied: g.get("ties", season) ? 0 : undefined,
 		};
 
 		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
@@ -36,7 +36,7 @@ const augmentSeries = async (
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
 
-			if (g.get("ties")) {
+			if (g.get("ties", season)) {
 				obj.regularSeason.tied = teamSeason.tied;
 			}
 		}
@@ -62,7 +62,7 @@ const calcWinp = ({
 	tied: any;
 	won: number;
 }) => {
-	if (!g.get("ties") || typeof tied !== "number") {
+	if (typeof tied !== "number") {
 		if (won + lost > 0) {
 			return won / (won + lost);
 		}

@@ -70,7 +70,7 @@ const updateDraftLottery = async (
 					result,
 					season,
 					showExpansionTeamMessage,
-					ties: g.get("ties"),
+					ties: g.get("ties", season),
 					type: "completed",
 					userTid: g.get("userTid"),
 				};
@@ -83,7 +83,7 @@ const updateDraftLottery = async (
 					result: undefined,
 					season,
 					showExpansionTeamMessage,
-					ties: g.get("ties"),
+					ties: g.get("ties", season),
 					type: "completed",
 					userTid: g.get("userTid"),
 				};
@@ -96,7 +96,7 @@ const updateDraftLottery = async (
 				result: undefined,
 				season,
 				showExpansionTeamMessage,
-				ties: g.get("ties"),
+				ties: g.get("ties", season),
 				type: "projected",
 				userTid: g.get("userTid"),
 			};
@@ -136,7 +136,7 @@ const updateDraftLottery = async (
 			result: draftLotteryResult ? draftLotteryResult.result : undefined,
 			season: draftLotteryResult ? draftLotteryResult.season : season,
 			showExpansionTeamMessage,
-			ties: g.get("ties"),
+			ties: g.get("ties", season),
 			type,
 			userTid: g.get("userTid"),
 		};

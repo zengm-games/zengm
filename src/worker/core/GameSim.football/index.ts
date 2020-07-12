@@ -161,8 +161,8 @@ class GameSim {
 			// this.checkGameTyingShot();
 			this.simOvertime();
 
-			// Only one overtime period in regular season, but as many as needed in the playoffs
-			if (g.get("phase") !== PHASE.PLAYOFFS) {
+			// More than one overtime only if no ties are allowed or if it's the playoffs
+			if (!g.get("ties") || g.get("phase") !== PHASE.PLAYOFFS) {
 				break;
 			}
 		}

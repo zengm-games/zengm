@@ -9,6 +9,9 @@ playoff upsets
 HoF - show year inducted https://old.reddit.com/r/BasketballGM/comments/honosb/suggestion_year_inducted_on_hof_page/
 
 add option for ties in BBGM
+- FBGM needs to support no ties
+  - test
+- g.get("ties") usage needs to be checked for season parameter. or ideally get rid of it, make dynamic check for ties
 
 contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_readability_issue_inconsistent_decimals_on/
 - always show 2 decimal places?

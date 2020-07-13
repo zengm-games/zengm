@@ -546,7 +546,7 @@ class GameSim {
 	 * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
 	 */
 	fatigue(energy: number, skip?: boolean): number {
-		energy += 0.05;
+		energy += 0.1;
 
 		if (energy > 1) {
 			energy = 1;
@@ -684,7 +684,7 @@ class GameSim {
 
 						if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
 							if (
-								this.fatigue(this.team[t].player[p].stat.energy) > 0.7 &&
+								this.fatigue(this.team[t].player[p].stat.energy) > 0.63 &&
 								!onCourtIsIneligible
 							) {
 								// Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
@@ -923,8 +923,8 @@ class GameSim {
 						p,
 						"energy",
 						-possessionLength *
-							0.075 *
-							(1 - this.team[t].player[p].compositeRating.endurance),
+							0.055 *
+							(1 - this.team[t].player[p].compositeRating.endurance) ** 1.0,
 					);
 
 					if (this.team[t].player[p].stat.energy < 0) {
@@ -932,7 +932,7 @@ class GameSim {
 					}
 				} else {
 					this.recordStat(t, p, "benchTime", possessionLength);
-					this.recordStat(t, p, "energy", possessionLength * 0.1);
+					this.recordStat(t, p, "energy", possessionLength * 0.075);
 
 					if (this.team[t].player[p].stat.energy > 1) {
 						this.team[t].player[p].stat.energy = 1;

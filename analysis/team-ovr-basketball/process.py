@@ -1,6 +1,9 @@
 import json
 import matplotlib.pyplot as plt  
 import pandas as pd
+import numpy as np
+import scipy.optimize as opt
+
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
@@ -89,5 +92,19 @@ plt.xlabel('Actual MOV')
 plt.ylabel('Predicted MOV')  
 
 plt.plot([-20, 20], [-20, 20])
+
+# find exp fit
+def best_fit_func_exp(x):
+    return np.linalg.norm(( dataset[fit_cols] @ np.exp(x[0]*np.arange(10))*x[1]-x[2] - dataset['mov']))
+a,b = np.polyfit(np.arange(10),np.log(np.array(reg.coef_)),1)
+res2 = opt.minimize(best_fit_func_exp,[a,np.exp(b),-125],method='Nelder-Mead')
+result_str = '{:.4f} e^{{ {:.4f} x }}  + {:.2f}'.format(res2.x[1],res2.x[0],res2.x[2])
+print('exp fit:\t',result_str)
+plt.figure()
+plt.plot(np.array(reg.coef_),label='regressed')
+plt.plot(np.exp(res2.x[0]*np.arange(10))*res2.x[1],label='best-fit exp model',alpha=0.6)
+plt.rc('text', usetex=True)
+plt.title(result_str)
+plt.legend()
 
 plt.show()

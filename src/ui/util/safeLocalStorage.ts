@@ -22,6 +22,14 @@ const safeLocalStorage = {
 			}
 		}
 	},
+
+	removeItem(key: string) {
+		if (!window.localStorage) {
+			return null;
+		}
+
+		return window.localStorage.removeItem(key);
+	},
 };
 
 export default safeLocalStorage;

@@ -233,8 +233,13 @@ redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes
 - make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
 - make rookies always willing to re-sign (like restricted free agency, kind of)
+- make everything transparent. way to see what the average player thinks of you, and specific players
+- also make players on rookie contracts less likely to refuse
+
+redo trade system
+- make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time
 
 team needs/synergy display on roster
 - and power rankings

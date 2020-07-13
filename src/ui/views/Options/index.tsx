@@ -50,7 +50,7 @@ const Options = (props: View<"options"> & { title?: string }) => {
 		event.preventDefault();
 
 		if (state.theme === "default") {
-			localStorage.removeItem("theme");
+			safeLocalStorage.removeItem("theme");
 		} else {
 			safeLocalStorage.setItem("theme", state.theme);
 		}

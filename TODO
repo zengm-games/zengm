@@ -6,7 +6,9 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-HoF - show year inducted https://old.reddit.com/r/BasketballGM/comments/honosb/suggestion_year_inducted_on_hof_page/
+if you try to live sim and a team has either too many or not enough players then the live sim won't actually work
+- in ui/util/logEvent.ts events are hidden in live sim, but that includes errors that lead to no live sim ever starting, since it redirects before the game data comes
+  - maybe redirect after game data comes
 
 contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_readability_issue_inconsistent_decimals_on/
 - always show 2 decimal places?

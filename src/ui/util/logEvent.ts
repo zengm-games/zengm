@@ -34,8 +34,8 @@ const showEvent = ({
 		extraClass = "notification-danger";
 	}
 
-	// Don't show non-critical notification if we're viewing a live game now
-	if (!window.location.pathname.includes("/live") || persistent) {
+	// Don't show non-critical notification if we're viewing a live game now. This used to be for "/live" but that would disable all notifications when viewing the live game index. I had only made it that broad to be careful, in case the event triggered before game sim finished, but that doesn't seem to happen.
+	if (!window.location.pathname.includes("/live_game") || persistent) {
 		notify(text, title, {
 			extraClass,
 			persistent,

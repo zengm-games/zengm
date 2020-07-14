@@ -47,10 +47,12 @@ const ImportPlayers = ({
 			name: "Free Agent",
 		},
 		...orderBy(
-			teamInfoCache.map((t, i) => ({
-				tid: i,
-				name: `${t.region} ${t.name}`,
-			})),
+			teamInfoCache
+				.filter(t => !t.disabled)
+				.map((t, i) => ({
+					tid: i,
+					name: `${t.region} ${t.name}`,
+				})),
 			["name", "tid"],
 		),
 	];
@@ -362,7 +364,10 @@ const ImportPlayers = ({
 							for (let i = p.stats.length - 1; i--; i >= 0) {
 								const ps = p.stats[i];
 								if (ps.season === p.exportedSeason) {
-									if (ps.tid < teamInfoCache.length) {
+									if (
+										ps.tid < teamInfoCache.length &&
+										!teamInfoCache[ps.tid].disabled
+									) {
 										tid = ps.tid;
 									}
 									break;

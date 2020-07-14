@@ -174,13 +174,18 @@ const ImportPlayers = ({
 		return {
 			key: i,
 			data: [
-				<input
-					type="checkbox"
-					title="Import player"
-					checked={checked}
-					disabled={disableButtons}
-					onChange={handleChange("checked", i)}
-				/>,
+				{
+					value: (
+						<input
+							type="checkbox"
+							title="Import player"
+							checked={checked}
+							disabled={disableButtons}
+							onChange={handleChange("checked", i)}
+						/>
+					),
+					sortValue: checked ? 1 : 0,
+				},
 				i + 1,
 				{
 					value: (

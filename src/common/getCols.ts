@@ -1180,8 +1180,7 @@ const cols: {
 	[key: string]: ColTemp;
 } = {
 	"": {
-		noSearch: true,
-		sortSequence: [],
+		sortSequence: ["desc", "asc"],
 	},
 	"#": {},
 	"#AS": {

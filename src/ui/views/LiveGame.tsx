@@ -59,13 +59,14 @@ const getSeconds = (time: string) => {
 
 type LiveGameProps = View<"liveGame">;
 type State = {
-	boxScore: any;
+	playIndex: number;
 	paused: boolean;
 	speed: number;
 	started: boolean;
 };
 
 class LiveGame extends React.Component<LiveGameProps, State> {
+	boxScore: any;
 	componentIsMounted: boolean | undefined;
 	events: any[] | undefined;
 	overtimes: number;
@@ -75,11 +76,12 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 	constructor(props: LiveGameProps) {
 		super(props);
 		this.state = {
-			boxScore: props.initialBoxScore ? props.initialBoxScore : {},
+			playIndex: -1,
 			paused: false,
 			speed: 7,
 			started: !!props.events,
 		};
+		this.boxScore = props.initialBoxScore ? props.initialBoxScore : {};
 		if (props.events) {
 			this.startLiveGame(props.events.slice());
 		}
@@ -105,9 +107,9 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 
 	componentDidUpdate() {
 		if (this.props.events && !this.state.started) {
+			this.boxScore = this.props.initialBoxScore;
 			this.setState(
 				{
-					boxScore: this.props.initialBoxScore,
 					started: true,
 				},
 				() => {
@@ -146,17 +148,14 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 			return 0;
 		}
 
-		// eslint-disable-next-line react/no-access-state-in-setstate
-		const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
-
-		const startSeconds = getSeconds(boxScore.time);
+		const startSeconds = getSeconds(this.boxScore.time);
 
 		if (!this.events) {
 			throw new Error("this.events is undefined");
 		}
 
 		const output = processLiveGameEvents({
-			boxScore,
+			boxScore: this.boxScore,
 			events: this.events,
 			overtimes: this.overtimes,
 			quarters: this.quarters,
@@ -186,10 +185,10 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 				setTimeout(this.processToNextPause, 4000 / 1.2 ** this.state.speed);
 			}
 		} else {
-			boxScore.time = "0:00";
-			boxScore.gameOver = true;
-			if (boxScore.scoringSummary) {
-				for (const event of boxScore.scoringSummary) {
+			this.boxScore.time = "0:00";
+			this.boxScore.gameOver = true;
+			if (this.boxScore.scoringSummary) {
+				for (const event of this.boxScore.scoringSummary) {
 					event.hide = false;
 				}
 			}
@@ -197,11 +196,11 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 			updatePhaseAndLeagueTopBar();
 		}
 
-		this.setState({
-			boxScore,
-		});
+		this.setState(state => ({
+			playIndex: state.playIndex + 1,
+		}));
 
-		const endSeconds = getSeconds(boxScore.time);
+		const endSeconds = getSeconds(this.boxScore.time);
 
 		// This is negative when rolling over to a new quarter
 		const elapsedSeconds = startSeconds - endSeconds;
@@ -211,7 +210,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 	// Plays up to `cutoffs` seconds, or until end of quarter
 	playSeconds(cutoff: number) {
 		let seconds = 0;
-		while (seconds < cutoff && !this.state.boxScore.gameOver) {
+		while (seconds < cutoff && !this.boxScore.gameOver) {
 			const elapsedSeconds = this.processToNextPause(true);
 			if (elapsedSeconds > 0) {
 				seconds += elapsedSeconds;
@@ -258,21 +257,21 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 
 				<div className="row">
 					<div className="col-md-9">
-						{this.state.boxScore.gid >= 0 ? (
-							<BoxScoreWrapper boxScore={this.state.boxScore} Row={PlayerRow} />
+						{this.boxScore.gid >= 0 ? (
+							<BoxScoreWrapper boxScore={this.boxScore} Row={PlayerRow} />
 						) : (
 							<h2>Loading...</h2>
 						)}
 					</div>
 					<div className="col-md-3">
 						<div className="live-game-affix">
-							{this.state.boxScore.gid >= 0 ? (
+							{this.boxScore.gid >= 0 ? (
 								<div className="d-flex align-items-center mb-3">
 									<div className="btn-group mr-2">
 										{this.state.paused ? (
 											<button
 												className="btn btn-light-bordered"
-												disabled={this.state.boxScore.gameOver}
+												disabled={this.boxScore.gameOver}
 												onClick={this.handlePlay}
 												title="Resume Simulation"
 											>
@@ -281,7 +280,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 										) : (
 											<button
 												className="btn btn-light-bordered"
-												disabled={this.state.boxScore.gameOver}
+												disabled={this.boxScore.gameOver}
 												onClick={this.handlePause}
 												title="Pause Simulation"
 											>
@@ -290,9 +289,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 										)}
 										<button
 											className="btn btn-light-bordered"
-											disabled={
-												!this.state.paused || this.state.boxScore.gameOver
-											}
+											disabled={!this.state.paused || this.boxScore.gameOver}
 											onClick={() => {
 												this.processToNextPause(true);
 											}}
@@ -304,9 +301,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 											<Dropdown.Toggle
 												id="live-game-sim-more"
 												className="btn-light-bordered live-game-sim-more"
-												disabled={
-													!this.state.paused || this.state.boxScore.gameOver
-												}
+												disabled={!this.state.paused || this.boxScore.gameOver}
 												variant={"no-class" as any}
 												title="Fast Forward"
 											>
@@ -348,7 +343,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 										<input
 											type="range"
 											className="form-control-range"
-											disabled={this.state.boxScore.gameOver}
+											disabled={this.boxScore.gameOver}
 											min="1"
 											max="33"
 											step="1"

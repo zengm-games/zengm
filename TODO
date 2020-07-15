@@ -6,6 +6,8 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+@dooby moogey#2784 reverse order of seasons in dropdowns in titlebar
+
 if you try to live sim and a team has either too many or not enough players then the live sim won't actually work
 - in ui/util/logEvent.ts events are hidden in live sim, but that includes errors that lead to no live sim ever starting, since it redirects before the game data comes
   - maybe redirect after game data comes
@@ -238,6 +240,7 @@ redo mood system
 - make rookies always willing to re-sign (like restricted free agency, kind of)
 - make everything transparent. way to see what the average player thinks of you, and specific players
 - also make players on rookie contracts less likely to refuse
+- show +/- for different factors like civ4
 
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time

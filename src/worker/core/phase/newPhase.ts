@@ -91,8 +91,9 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 				(local.autoPlayUntil.season < g.get("season") ||
 					(local.autoPlayUntil.season === g.get("season") &&
 						local.autoPlayUntil.phase <= phase) ||
-					(local.autoPlayUntil.season === g.get("season") - 1 &&
-						local.autoPlayUntil.phase === PHASE.PRESEASON))
+					(local.autoPlayUntil.season === g.get("season") + 1 &&
+						local.autoPlayUntil.phase === PHASE.PRESEASON &&
+						phase === PHASE.PRESEASON))
 			) {
 				local.autoPlayUntil = undefined;
 			}

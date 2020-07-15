@@ -874,7 +874,13 @@ class GameSim {
 			"blocking",
 		];
 
-		for (const t of teamNums) {
+		for (let k = 0; k < teamNums.length; k++) {
+			const t = teamNums[k];
+			const oppT = teamNums[1 - k];
+			const diff = this.team[t].stat.pts - this.team[oppT].stat.pts;
+
+			const perfFactor = 1 - 0.2 * Math.tanh(diff / 60);
+
 			for (let j = 0; j < toUpdate.length; j++) {
 				const rating = toUpdate[j];
 				this.team[t].compositeRating[rating] = 0;
@@ -883,7 +889,8 @@ class GameSim {
 					const p = this.playersOnCourt[t][i];
 					this.team[t].compositeRating[rating] +=
 						this.team[t].player[p].compositeRating[rating] *
-						this.fatigue(this.team[t].player[p].stat.energy);
+						this.fatigue(this.team[t].player[p].stat.energy) *
+						perfFactor;
 				}
 
 				this.team[t].compositeRating[rating] /= 5;

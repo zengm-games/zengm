@@ -8,6 +8,7 @@ import type { View } from "../../common/types";
 import { Dropdown } from "react-bootstrap";
 
 type PlayerRowProps = {
+	forceUpdate?: boolean;
 	i: number;
 	p: any;
 };
@@ -18,7 +19,7 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 	// Can't just switch to useMemo because p is mutated. Might be better to fix that, then switch to useMemo!
 	shouldComponentUpdate(nextProps: PlayerRowProps) {
 		return process.env.SPORT === "basketball"
-			? this.prevInGame || nextProps.p.inGame
+			? this.prevInGame || nextProps.p.inGame || nextProps.forceUpdate
 			: true;
 	}
 
@@ -258,7 +259,11 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 				<div className="row">
 					<div className="col-md-9">
 						{this.boxScore.gid >= 0 ? (
-							<BoxScoreWrapper boxScore={this.boxScore} Row={PlayerRow} />
+							<BoxScoreWrapper
+								boxScore={this.boxScore}
+								Row={PlayerRow}
+								playIndex={this.state.playIndex}
+							/>
 						) : (
 							<h2>Loading...</h2>
 						)}

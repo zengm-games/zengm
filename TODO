@@ -6,11 +6,17 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+USA historical expansion league
+
+allow user to cancel relocation if it's their team?
+- what about contraction, what would that imply for future events?
+
 @dooby moogey#2784 reverse order of seasons in dropdowns in titlebar
 
 if you try to live sim and a team has either too many or not enough players then the live sim won't actually work
 - in ui/util/logEvent.ts events are hidden in live sim, but that includes errors that lead to no live sim ever starting, since it redirects before the game data comes
   - maybe redirect after game data comes
+- test end of season awards and top scores too
 
 contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_readability_issue_inconsistent_decimals_on/
 - always show 2 decimal places?
@@ -216,11 +222,13 @@ FBGM
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
 - smarter cutting when over roster limit (like don't cut only K/P)
+- easier position changes, maybe from roster or player pages
+  - auto sort roster after? or maybe have option to set if user controls roster sort or not
+    - default should be "not"
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
 - show draft prospects separately when creating a new custom league, to allow creating one without them
-- allow user to cancel relocation if it's their team?
 
 manually specify draft order in god mode
 - make draft page drag-and-drop, with purple handles
@@ -423,6 +431,7 @@ teams play better/worse when down/up
   - implementing exactly this would require letting player composite ratings change every possession... maybe too complicated
 - @nicidob
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
+- https://github.com/dumbmatter/gm-games/pull/276
 
 make countries easier to customize
 - allow specifying country frequencies without tying it to the number of names
@@ -493,6 +502,7 @@ probGoForIt should account for being down by a FG or less late in the game
 FBGM football sim bugs
 - pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
 - negative yard line https://i.imgur.com/fSHX6md.png
+- penalty on punt gives first down plus punt yardage https://cdn.discordapp.com/attachments/726675205669388293/733114315397136505/image0.jpg
 
 add kneeling to run out the clock
 

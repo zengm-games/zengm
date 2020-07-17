@@ -4,7 +4,15 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
 import { helpers } from "../util";
 
-const BoxScore = ({ boxScore, Row }: { boxScore: any; Row: any }) => {
+const BoxScore = ({
+	boxScore,
+	Row,
+	forceRowUpdate,
+}: {
+	boxScore: any;
+	Row: any;
+	forceRowUpdate: boolean;
+}) => {
 	return (
 		<>
 			{boxScore.teams.map((t: any) => (
@@ -54,7 +62,9 @@ const BoxScore = ({ boxScore, Row }: { boxScore: any; Row: any }) => {
 							</thead>
 							<tbody>
 								{t.players.map((p: any, i: number) => {
-									return <Row key={p.pid} i={i} p={p} />;
+									return (
+										<Row key={p.pid} i={i} p={p} forceUpdate={forceRowUpdate} />
+									);
 								})}
 							</tbody>
 							<tfoot>
@@ -125,6 +135,7 @@ const BoxScore = ({ boxScore, Row }: { boxScore: any; Row: any }) => {
 BoxScore.propTypes = {
 	boxScore: PropTypes.object.isRequired,
 	Row: PropTypes.any,
+	forceRowUpdate: PropTypes.bool.isRequired,
 };
 
 export default BoxScore;

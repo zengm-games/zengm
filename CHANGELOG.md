@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-16: In FBGM, added the Roster Composition table to the re-signing players screen.
+
 * 2020-07-11: God Mode option to enable/disable ties. So for BBGM ties are now possible, and for FBGM you can turn off ties. Ties only can happen in regular season games, and occur after one overtime period. [[1]](https://old.reddit.com/r/BasketballGM/comments/hpn011/god_mode_option_to_enable_ties_version/) [[2]](https://old.reddit.com/r/Football_GM/comments/hpmzz9/god_mode_option_to_disable_ties_version/)
 
 * 2020-07-10: For FBGM, improved AV formula for OL and defensive players, resulting in higher AV for top players at those positions. I also updated the MVP and DPOY formulas to account for this, hopefully retaining good position balance.

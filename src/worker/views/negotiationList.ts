@@ -14,7 +14,7 @@ const updateNegotiationList = async () => {
 		negotiation => negotiation.tid === g.get("userTid"),
 	);
 	const negotiationPids = negotiations.map(negotiation => negotiation.pid);
-	const userPlayers = await idb.cache.players.indexGetAll(
+	const userPlayersAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
 		g.get("userTid"),
 	);
@@ -70,6 +70,15 @@ const updateNegotiationList = async () => {
 		}
 	}
 
+	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
+		attrs: [],
+		ratings: ["pos"],
+		stats: [],
+		season: g.get("season"),
+		showNoStats: true,
+		showRookies: true,
+	});
+
 	return {
 		capSpace,
 		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
@@ -77,7 +86,7 @@ const updateNegotiationList = async () => {
 		hardCap: g.get("hardCap"),
 		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),
-		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
+		numRosterSpots: g.get("maxRosterSize") - userPlayersAll.length,
 		phase: g.get("phase"),
 		players,
 		playersRefuseToNegotiate,
@@ -85,6 +94,7 @@ const updateNegotiationList = async () => {
 		season: g.get("season"),
 		stats,
 		sumContracts,
+		userPlayers,
 		userTid: g.get("userTid"),
 	};
 };

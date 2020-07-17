@@ -4,6 +4,7 @@ import {
 	DataTable,
 	NegotiateButtons,
 	PlayerNameLabels,
+	RosterComposition,
 	RosterSalarySummary,
 	SafeHtml,
 } from "../components";
@@ -26,6 +27,7 @@ const NegotiationList = ({
 	season,
 	stats,
 	sumContracts,
+	userPlayers,
 	userTid,
 }: View<"negotiationList">) => {
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
@@ -99,6 +101,10 @@ const NegotiationList = ({
 
 	return (
 		<>
+			{process.env.SPORT === "football" ? (
+				<RosterComposition className="float-right mb-3" players={userPlayers} />
+			) : null}
+
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["upcoming_free_agents"])}>

@@ -33,6 +33,7 @@ const updateFreeAgents = async () => {
 		fuzz: true,
 		oldStats: true,
 	});
+
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],
 		ratings: ["pos"],

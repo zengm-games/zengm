@@ -1,6 +1,6 @@
 import type { Face } from "facesjs";
 import type { MouseEvent } from "react";
-import type { Context } from "bbgm-router";
+import type { Context } from "../ui/router";
 import type processInputs from "../worker/api/processInputs";
 import type views from "../worker/views";
 import type { Bugsnag } from "@bugsnag/browser";

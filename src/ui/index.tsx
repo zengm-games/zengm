@@ -1,10 +1,10 @@
 /* eslint-disable import/first */
 import "bbgm-polyfills"; // eslint-disable-line
-import router from "bbgm-router";
 import React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller, ErrorBoundary } from "./components";
+import router from "./router";
 import * as util from "./util";
 import type { Env } from "../common/types";
 window.bbgm = { ...util };

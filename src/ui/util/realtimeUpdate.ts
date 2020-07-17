@@ -1,4 +1,4 @@
-import router from "bbgm-router";
+import router from "../router";
 import type { UpdateEvents } from "../../common/types";
 
 /**

@@ -19,7 +19,7 @@ import Notifications from "./Notifications";
 import SideBar from "./SideBar";
 import TitleBar from "./TitleBar";
 import type { LocalStateUI } from "../../common/types";
-import type { Context } from "bbgm-router";
+import type { Context } from "../router";
 
 type LeagueContentProps = {
 	children: any;

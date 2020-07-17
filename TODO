@@ -6,6 +6,10 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
+modal to warn about navigation away from live sim
+- routematched needs to be able to cancel navigation, and be async
+- add to router/README
+
 allow user to cancel relocation if it's their team?
 - what about contraction, what would that imply for future events?
 

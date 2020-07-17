@@ -24,44 +24,11 @@ type NonStandardEvent = (MouseEvent | TouchEvent) & {
 	path: HTMLAnchorElement[];
 };
 
-export type Listener = (event: CustomEvent) => void;
+type RouteMatched = (arg: {
+	context: Context;
+}) => void | Promise<void> | Promise<void | false>;
 
-// Smaller (and less good) alternative to https://www.npmjs.com/package/event-target-shim
-class TinyEventTargetShim {
-	private listeners: {
-		navigationend: Set<Listener>;
-		routematched: Set<Listener>;
-	};
-
-	constructor() {
-		this.listeners = {
-			navigationend: new Set(),
-			routematched: new Set(),
-		};
-	}
-
-	public addEventListener(
-		type: "navigationend" | "routematched",
-		listener: Listener,
-	) {
-		this.listeners[type].add(listener);
-	}
-
-	public removeEventListener(
-		type: "navigationend" | "routematched",
-		listener: Listener,
-	) {
-		this.listeners[type].delete(listener);
-	}
-
-	public dispatchEvent(event: CustomEvent) {
-		if (event.type === "navigationend" || event.type === "routematched") {
-			for (const listener of this.listeners[event.type]) {
-				listener(event);
-			}
-		}
-	}
-}
+type NavigationEnd = (arg: { context: Context; error: Error | null }) => void;
 
 const decodeURLEncodedURIComponent = (val: string) => {
 	if (typeof val !== "string") {
@@ -169,12 +136,12 @@ const samePath = (url: HTMLAnchorElement) => {
 
 const clickEvent = window.document.ontouchstart ? "touchstart" : "click";
 
-class Router extends TinyEventTargetShim {
+class Router {
+	private routeMatched: RouteMatched | undefined;
+	private navigationEnd: NavigationEnd | undefined;
 	private routes: Route[];
 
 	constructor() {
-		super();
-
 		this.routes = [];
 	}
 
@@ -185,24 +152,6 @@ class Router extends TinyEventTargetShim {
 			state = {},
 		}: { replace?: boolean; state?: { [key: string]: any } } = {},
 	) {
-		if (replace) {
-			window.history.replaceState(
-				{
-					path,
-				},
-				window.document.title,
-				path,
-			);
-		} else {
-			window.history.pushState(
-				{
-					path,
-				},
-				window.document.title,
-				path,
-			);
-		}
-
 		const context: Context = {
 			params: {},
 			path,
@@ -210,26 +159,41 @@ class Router extends TinyEventTargetShim {
 		};
 		let error: Error | null = null;
 
-		const dispatchEvent = (type: string) => {
-			this.dispatchEvent(
-				new CustomEvent(type, {
-					detail: {
-						context,
-						error,
-					},
-				}),
-			);
-		};
-
 		let handled = false;
 		for (const route of this.routes) {
 			const { matches, params } = match(route, path);
 			if (matches) {
 				context.params = params;
-				try {
-					dispatchEvent("routematched");
 
-					await route.cb(context);
+				try {
+					if (this.routeMatched) {
+						const output = await this.routeMatched({
+							context,
+						});
+						if (output === false) {
+							return;
+						}
+
+						if (replace) {
+							window.history.replaceState(
+								{
+									path,
+								},
+								window.document.title,
+								path,
+							);
+						} else {
+							window.history.pushState(
+								{
+									path,
+								},
+								window.document.title,
+								path,
+							);
+						}
+
+						await route.cb(context);
+					}
 				} catch (errorLocal) {
 					error = errorLocal;
 				}
@@ -243,10 +207,26 @@ class Router extends TinyEventTargetShim {
 			error = new Error("Matching route not found");
 		}
 
-		dispatchEvent("navigationend");
+		if (this.navigationEnd) {
+			this.navigationEnd({
+				context,
+				error,
+			});
+		}
 	}
 
-	public start(routes: { [key: string]: RouteCallback }) {
+	public start({
+		routeMatched,
+		navigationEnd,
+		routes,
+	}: {
+		routeMatched: RouteMatched;
+		navigationEnd: NavigationEnd;
+		routes: { [key: string]: RouteCallback };
+	}) {
+		this.routeMatched = routeMatched;
+		this.navigationEnd = navigationEnd;
+
 		for (const [path, cb] of Object.entries(routes)) {
 			const { keys, regex } = makeRegex(path);
 			this.routes.push({

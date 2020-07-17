@@ -10,6 +10,7 @@ import type { Env } from "../common/types";
 window.bbgm = { ...util };
 const {
 	compareVersions,
+	confirm,
 	genStaticPage,
 	helpers,
 	leagueNotFoundMessage,
@@ -207,94 +208,111 @@ const render = () => {
 
 const setupRoutes = () => {
 	let initialLoad = true;
-	router.addEventListener("routematched", (event: any) => {
-		if (!event.detail.context.state.noTrack) {
-			if (window.enableLogging) {
-				if (!initialLoad) {
-					if (window.gtag) {
-						window.gtag("config", window.googleAnalyticsID, {
-							// Normalize league URLs to all look the same
-							page_path: event.detail.context.path.replace(
-								/^\/l\/[0-9]+?\//,
-								"/l/0/",
-							),
-						});
-					}
-
-					if (window._qevents) {
-						window._qevents.push({
-							qacct: "p-Ye5RY6xC03ZWz",
-							event: "click",
-						});
-					}
-				}
-			}
-
-			if (!initialLoad) {
-				window.bbgmAds.cmd.push(() => {
-					window.bbgmAds.refresh();
-				});
-			} else {
-				initialLoad = false;
-			}
-		}
-	});
-	router.addEventListener("navigationend", (event: any) => {
-		if (event.detail.error) {
-			let errMsg = event.detail.error.message;
-
-			if (errMsg === "Matching route not found") {
-				errMsg = "Page not found.";
-			} else if (errMsg === "League not found.") {
-				errMsg = leagueNotFoundMessage;
-			} else if (
-				typeof errMsg !== "string" ||
-				!errMsg.includes("A league can only be open in one tab at a time")
+	router.start({
+		routeMatched: async ({ context }) => {
+			if (
+				!context.state.backendRedirect &&
+				window.location.pathname.includes("/live_game") &&
+				!context.path.includes("/live_game")
 			) {
-				if (window.bugsnagClient) {
-					window.bugsnagClient.notify(event.detail.error);
-				}
-
-				console.error("Error from view:");
-				console.error(event.detail.error);
-
-				// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
-				if (
-					errMsg.includes("requested version") ||
-					errMsg.includes("existing version") ||
-					errMsg.includes("higher version") ||
-					errMsg.includes("version requested") ||
-					errMsg.includes("lower version")
-				) {
-					errMsg = (
-						<>
-							<p>{errMsg}</p>
-							<p>
-								Please{" "}
-								<a
-									href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
-									rel="noopener noreferrer"
-									target="_blank"
-								>
-									make sure you have the latest version of the game loaded
-								</a>
-								.
-							</p>
-						</>
-					);
-
-					unregisterServiceWorkers();
+				const proceed = await confirm(
+					"If you navigate away from this page, you won't be able to see these play-by-play results again.",
+					{
+						okText: "Navigate Away",
+						cancelText: "Stay Here",
+					},
+				);
+				if (!proceed) {
+					return false;
 				}
 			}
 
-			const ErrorPage = (
-				<>{typeof errMsg === "string" ? <p>{errMsg}</p> : errMsg}</>
-			);
-			const errorPage = genStaticPage("error", "Error", ErrorPage, false);
-			errorPage(event.detail.context);
-		}
+			if (!context.state.noTrack) {
+				if (window.enableLogging) {
+					if (!initialLoad) {
+						if (window.gtag) {
+							window.gtag("config", window.googleAnalyticsID, {
+								// Normalize league URLs to all look the same
+								page_path: context.path.replace(/^\/l\/[0-9]+?\//, "/l/0/"),
+							});
+						}
+
+						if (window._qevents) {
+							window._qevents.push({
+								qacct: "p-Ye5RY6xC03ZWz",
+								event: "click",
+							});
+						}
+					}
+				}
+
+				if (!initialLoad) {
+					window.bbgmAds.cmd.push(() => {
+						window.bbgmAds.refresh();
+					});
+				} else {
+					initialLoad = false;
+				}
+			}
+		},
+		navigationEnd: ({ context, error }) => {
+			if (error) {
+				let errMsg: React.ReactNode = error.message;
+
+				if (errMsg === "Matching route not found") {
+					errMsg = "Page not found.";
+				} else if (errMsg === "League not found.") {
+					errMsg = leagueNotFoundMessage;
+				} else if (
+					typeof errMsg !== "string" ||
+					!errMsg.includes("A league can only be open in one tab at a time")
+				) {
+					if (window.bugsnagClient) {
+						window.bugsnagClient.notify(error);
+					}
+
+					console.error("Error from view:");
+					console.error(error);
+
+					// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
+					if (
+						typeof errMsg === "string" &&
+						(errMsg.includes("requested version") ||
+							errMsg.includes("existing version") ||
+							errMsg.includes("higher version") ||
+							errMsg.includes("version requested") ||
+							errMsg.includes("lower version"))
+					) {
+						errMsg = (
+							<>
+								<p>{errMsg}</p>
+								<p>
+									Please{" "}
+									<a
+										href={`https://${process.env.SPORT}-gm.com/manual/faq/#latest-version`}
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										make sure you have the latest version of the game loaded
+									</a>
+									.
+								</p>
+							</>
+						);
+
+						unregisterServiceWorkers();
+					}
+				}
+
+				const ErrorPage = (
+					<>{typeof errMsg === "string" ? <p>{errMsg}</p> : errMsg}</>
+				);
+				const errorPage = genStaticPage("error", "Error", ErrorPage, false);
+				errorPage(context);
+			}
+		},
+		routes: routes(),
 	});
-	router.start(routes());
 };
 
 (async () => {

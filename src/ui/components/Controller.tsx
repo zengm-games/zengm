@@ -202,7 +202,14 @@ const Controller = () => {
 					type: "doneLoading",
 				});
 				idLoading.current = undefined;
-				await realtimeUpdate([], vars.data.redirectUrl, {}, true);
+				await realtimeUpdate(
+					[],
+					vars.data.redirectUrl,
+					{
+						backendRedirect: true,
+					},
+					true,
+				);
 				return;
 			}
 

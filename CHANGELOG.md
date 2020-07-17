@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-17: If you navigate away from a live game sim, it will pop up a warning dialog explaining that the play-by-play results will be lost if you proceed. [[1]]()
+
 * 2020-07-16: In FBGM, added the Roster Composition table to the re-signing players screen.
 
 * 2020-07-11: God Mode option to enable/disable ties. So for BBGM ties are now possible, and for FBGM you can turn off ties. Ties only can happen in regular season games, and occur after one overtime period. [[1]](https://old.reddit.com/r/BasketballGM/comments/hpn011/god_mode_option_to_enable_ties_version/) [[2]](https://old.reddit.com/r/Football_GM/comments/hpmzz9/god_mode_option_to_disable_ties_version/)

@@ -173,27 +173,27 @@ class Router {
 						if (output === false) {
 							return;
 						}
-
-						if (replace) {
-							window.history.replaceState(
-								{
-									path,
-								},
-								window.document.title,
-								path,
-							);
-						} else {
-							window.history.pushState(
-								{
-									path,
-								},
-								window.document.title,
-								path,
-							);
-						}
-
-						await route.cb(context);
 					}
+
+					if (replace) {
+						window.history.replaceState(
+							{
+								path,
+							},
+							window.document.title,
+							path,
+						);
+					} else {
+						window.history.pushState(
+							{
+								path,
+							},
+							window.document.title,
+							path,
+						);
+					}
+
+					await route.cb(context);
 				} catch (errorLocal) {
 					error = errorLocal;
 				}
@@ -220,8 +220,8 @@ class Router {
 		navigationEnd,
 		routes,
 	}: {
-		routeMatched: RouteMatched;
-		navigationEnd: NavigationEnd;
+		routeMatched?: RouteMatched;
+		navigationEnd?: NavigationEnd;
 		routes: { [key: string]: RouteCallback };
 	}) {
 		this.routeMatched = routeMatched;

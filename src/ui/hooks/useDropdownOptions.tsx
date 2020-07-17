@@ -151,12 +151,12 @@ const useDropdownOptions = (field: string) => {
 	) {
 		keys = [];
 
-		for (let season = state.startingSeason; season <= state.season; season++) {
+		for (let season = state.season; season >= state.startingSeason; season--) {
 			keys.push(season);
 		}
 
 		if (field === "seasonsAndCareer") {
-			keys.push("career");
+			keys.unshift("career");
 		}
 
 		if (field === "seasonsAndAll") {
@@ -171,19 +171,19 @@ const useDropdownOptions = (field: string) => {
 				season >= state.startingSeason - NUM_PAST_SEASONS;
 				season--
 			) {
-				keys.unshift(season);
+				keys.push(season);
 			}
 
 			// Remove current season, if draft hasn't happened yet
 			if (state.phase < PHASE.DRAFT) {
-				keys.pop();
+				keys.shift();
 			}
 		}
 
 		if (field === "seasonsHistory") {
 			// Remove current season until playoffs end
 			if (state.phase <= PHASE.PLAYOFFS) {
-				keys.pop();
+				keys.shift();
 			}
 		}
 	} else if (field === "seasonsUpcoming") {

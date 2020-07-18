@@ -35,6 +35,7 @@ import type {
 } from "../../common/types";
 import type { IDBPTransaction } from "idb";
 import type { LeagueDB } from "./connectLeague";
+import getAll from "./getAll";
 
 type Status = "empty" | "error" | "filling" | "full";
 
@@ -338,7 +339,7 @@ class Cache {
 				autoIncrement: false,
 				// Current season
 				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("games").index("season").getAll(this._season),
+					getAll(tx.objectStore("games").index("season"), this._season),
 			},
 			messages: {
 				pk: "mid",
@@ -706,11 +707,9 @@ class Cache {
 			throw new Error("Undefined season");
 		}
 
-		await Promise.all(
-			STORES.map(store => {
-				return this._loadStore(store, idb.league.transaction([store]));
-			}),
-		);
+		for (const store of STORES) {
+			await this._loadStore(store, idb.league.transaction([store]));
+		}
 		this._dirty = false;
 
 		this._setStatus("full");

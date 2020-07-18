@@ -10,8 +10,12 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
 import type { View } from "../../common/types";
 
-const difficultyText = (difficulty: number) => {
+const difficultyText = (difficulty: number | undefined) => {
 	let prevText: string | undefined;
+
+	if (difficulty === undefined) {
+		return "???";
+	}
 
 	for (const [text, numeric] of Object.entries(DIFFICULTY)) {
 		if (typeof numeric !== "number") {

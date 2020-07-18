@@ -161,9 +161,9 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 				{
 					searchValue: rowResultText,
 					sortValue: rowResultText,
-					// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-					// @ts-ignore
 					value: (
+						// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+						// @ts-ignore
 						<ResultText
 							gid={row.gid}
 							overtimes={row.overtimes}

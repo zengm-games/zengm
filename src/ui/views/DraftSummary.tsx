@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, downloadFile, toWorker } from "../util";
+import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
 
@@ -83,6 +83,8 @@ const DraftSummary = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 
+	const teamInfoCache = useLocal(state => state.teamInfoCache);
+
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
@@ -92,13 +94,19 @@ const DraftSummary = ({
 				p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
 				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
 				p.pos,
-				<DraftAbbrev
-					originalTid={p.draft.originalTid}
-					season={season}
-					tid={p.draft.tid}
-				>
-					{p.draft.tid} {p.draft.originalTid}
-				</DraftAbbrev>,
+				{
+					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
+						teamInfoCache[p.draft.originalTid]?.abbrev
+					}`,
+					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
+					value: (
+						<DraftAbbrev
+							originalTid={p.draft.originalTid}
+							tid={p.draft.tid}
+							season={season}
+						/>
+					),
+				},
 				p.draft.age,
 				showRatings ? p.draft.ovr : null,
 				showRatings ? p.draft.pot : null,

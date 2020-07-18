@@ -964,7 +964,8 @@ export type SortType =
 	| "lastTen"
 	| "name"
 	| "number"
-	| "record";
+	| "record"
+	| "string";
 
 export type BudgetItem = {
 	amount: number;

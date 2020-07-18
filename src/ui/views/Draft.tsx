@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
+import { getCols, helpers, toWorker, useLocal } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
@@ -215,10 +215,15 @@ const Draft = ({
 		colsDrafted.splice(2, 0, getCols("From")[0]);
 	}
 
+	const teamInfoCache = useLocal(state => state.teamInfoCache);
+
 	const rowsDrafted = drafted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
 			{
+				searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
+					teamInfoCache[p.draft.originalTid]?.abbrev
+				}`,
 				sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
 				value: (
 					<DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />

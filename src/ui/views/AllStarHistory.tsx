@@ -56,6 +56,36 @@ PlayerTeam.propTypes = {
 	season: PropTypes.number.isRequired,
 };
 
+const resultText = ({
+	gid,
+	overtimes,
+	score,
+	teamNames,
+}: {
+	gid?: number;
+	overtimes?: number;
+	score?: [number, number];
+	season: number;
+	teamNames: [string, string];
+}) => {
+	if (gid === undefined || overtimes === undefined || score === undefined) {
+		return "???";
+	}
+
+	const tw = score[0] >= score[1] ? 0 : 1;
+	const tl = tw === 0 ? 1 : 0;
+
+	let overtimeText = "";
+	if (overtimes === 1) {
+		overtimeText = " (OT)";
+	} else if (overtimes > 1) {
+		overtimeText = ` (${overtimes}OT)`;
+	}
+
+	return `${teamNames[tw]} ${score[tw]}, ${teamNames[tl]} ${score[tl]}${{
+		overtimeText,
+	}}`;
+};
 const ResultText = ({
 	gid,
 	overtimes,
@@ -122,19 +152,27 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		const classNamesMVP =
 			row.mvp && row.mvp.tid === userTid ? "table-info" : "";
 
+		const rowResultText = resultText(row);
+
 		return {
 			key: row.season,
 			data: [
 				row.season,
-				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
-				// @ts-ignore
-				<ResultText
-					gid={row.gid}
-					overtimes={row.overtimes}
-					score={row.score}
-					season={row.season}
-					teamNames={row.teamNames}
-				/>,
+				{
+					searchValue: rowResultText,
+					sortValue: rowResultText,
+					// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
+					// @ts-ignore
+					value: (
+						<ResultText
+							gid={row.gid}
+							overtimes={row.overtimes}
+							score={row.score}
+							season={row.season}
+							teamNames={row.teamNames}
+						/>
+					),
+				},
 				{
 					classNames: classNamesCaptain1,
 					value: (

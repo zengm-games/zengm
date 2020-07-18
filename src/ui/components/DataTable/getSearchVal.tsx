@@ -5,25 +5,27 @@ import textContent from "react-addons-text-content";
 const getSearchVal = (value: any, toLowerCase: boolean = true) => {
 	try {
 		let val;
-		let sortVal;
+		let searchVal;
 
 		// Get the right 'value'.
-		if (value !== null && value.hasOwnProperty("value")) {
+		if (value !== null && value.hasOwnProperty("searchValue")) {
+			val = value.searchValue;
+		} else if (value !== null && value.hasOwnProperty("value")) {
 			val = value.value;
 		} else {
 			val = value;
 		}
 
 		if (React.isValidElement(val)) {
-			sortVal = textContent(val);
+			searchVal = textContent(val);
 		} else {
-			sortVal = val;
+			searchVal = val;
 		}
 
-		if (sortVal !== undefined && sortVal !== null && sortVal.toString) {
+		if (searchVal !== undefined && searchVal !== null && searchVal.toString) {
 			return toLowerCase
-				? sortVal.toString().toLowerCase()
-				: sortVal.toString();
+				? searchVal.toString().toLowerCase()
+				: searchVal.toString();
 		}
 
 		return "";

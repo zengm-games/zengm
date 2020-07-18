@@ -31,6 +31,7 @@ export type Col = {
 	noSearch?: boolean;
 	sortSequence?: SortOrder[];
 	sortType?: SortType;
+	searchType?: SortType;
 	title: string;
 	width?: string;
 };
@@ -59,6 +60,8 @@ export type Props = {
 			| {
 					classNames?: ClassValue;
 					value: ReactNode;
+					searchValue?: string;
+					sortValue?: string | number;
 			  }
 		)[];
 		classNames?: ClassValue;
@@ -309,6 +312,7 @@ class DataTable extends React.Component<Props, State> {
 					createFilterFunction(
 						filter,
 						this.props.cols[i] ? this.props.cols[i].sortType : undefined,
+						this.props.cols[i] ? this.props.cols[i].searchType : undefined,
 					),
 			  )
 			: [];

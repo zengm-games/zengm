@@ -6,6 +6,7 @@ type ColTemp = {
 	desc?: string;
 	noSearch?: boolean;
 	sortSequence?: SortOrder[];
+	searchType?: SortType; // If undefined, will be set equal to sortType
 	sortType?: SortType;
 };
 const sportSpecificCols: {
@@ -1285,7 +1286,7 @@ const cols: {
 	Country: {},
 	Created: {
 		desc: "Created Date",
-		noSearch: true,
+		searchType: "string",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1371,8 +1372,8 @@ const cols: {
 	},
 	"Last Played": {
 		desc: "Last Played Date",
-		noSearch: true,
 		sortSequence: ["desc", "asc"],
+		searchType: "string",
 		sortType: "number",
 	},
 	"Last Season": {

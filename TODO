@@ -6,7 +6,15 @@ playoff upsets
   - 5% slower pace
 - could apply bigger home court advantage for good teams
 
-Indicate whether to send a cookie in a cross-site request by specifying its SameSite attribute
+DataTable
+- places to use sortValue (implemented) and searchValue (not implemented yet):
+  - ImportPlayers inputs
+  - Height/Weight in PlayerBios needs searchValue
+  - NegotiateButtons (search for negotiate/refuses)
+  - sorting by skills on draft history
+  - would allow sorting by checked/unchecked for trade and trading block
+  - get rid of awkward children stuff - PlayerNameLabels, mood, ...
+    - then get rid of react-addons-text-content
 
 allow user to cancel relocation if it's their team?
 - what about contraction, what would that imply for future events?
@@ -385,7 +393,7 @@ more animations
 
 frivolities
 - playoff seeding, like number of times an 8 seed won @Tuxie93
-- draft class aggregate stats alexnoob
+- draft class aggregate stats alexnoob https://old.reddit.com/r/BasketballGM/comments/hsscql/a_new_section_in_frivolities_to_see_the_best_and/
 - future playoffs ones
   - most consecutive championships/finals/playoffs
   - longest playoffs drought
@@ -594,20 +602,6 @@ zipped files @Jofish#5051
 dashboard ui
 - make "new league" button integrated on table - fixed top row maybe, with "new league" replacing "play"?
 - team logos
-
-DataTable
-- places to use sortValue (implemented) and searchValue (not implemented yet):
-  - ImportPlayers inputs
-  - any place with sortValue probably needs searchValue too
-  - Height/Weight in PlayerBios needs searchValue
-  - DraftAbbrev
-  - NegotiateButtons (search for negotiate/refuses)
-  - sorting by skills on draft history
-  - Dashboard -> Ago (needs different search and sort values!)
-  - would allow sorting by checked/unchecked for trade and trading block
-  - get rid of awkward children stuff - PlayerNameLabels, mood, ...
-  - then get rid of react-addons-text-content
-  - PlayerName and PlayerTeam in AllStarHistory
 
 https://react-hook-form.com/ for forms
 

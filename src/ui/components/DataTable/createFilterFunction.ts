@@ -2,10 +2,14 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import type { SortType } from "../../../common/types";
 
+// searchType is assumed to be equal to sortType, unless it's specified
 const createFilterFunction = (
 	originalFilterText: string,
 	sortType?: SortType,
+	searchType?: SortType,
 ) => {
+	searchType = searchType === undefined ? sortType : searchType;
+
 	const filters = originalFilterText
 		.split("|")
 		.map(text => text.trim().toLowerCase())
@@ -14,7 +18,7 @@ const createFilterFunction = (
 			let direction;
 			let number;
 
-			if (sortType === "number" || sortType === "currency") {
+			if (searchType === "number" || searchType === "currency") {
 				number = text.replace(/[^0-9.<>]/g, "");
 
 				if (number[0] === ">" || number[0] === "<" || number[0] === "=") {

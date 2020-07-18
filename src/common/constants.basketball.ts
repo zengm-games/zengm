@@ -30,20 +30,20 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [0.5, 1, 1, -1],
 	},
 	shootingAtRim: {
-		ratings: ["hgt", "spd", "jmp", "dnk", "oiq"],
-		weights: [0.75, 0.2, 0.6, 0.4, 0.2],
+		ratings: ["hgt", "stre", "dnk", "oiq"],
+		weights: [2, 0.3, 0.3, 0.2],
 	},
 	shootingLowPost: {
 		ratings: ["hgt", "stre", "spd", "ins", "oiq"],
-		weights: [2, 0.6, 0.2, 1, 0.2],
+		weights: [1, 0.6, 0.2, 1, 0.4],
 		skill: {
 			label: "Po",
 			cutoff: 0.61,
 		},
 	},
 	shootingMidRange: {
-		ratings: ["oiq", "fg"],
-		weights: [-0.5, 1],
+		ratings: ["oiq", "fg", "stre"],
+		weights: [-0.5, 1, 0.2],
 	},
 	shootingThreePointer: {
 		ratings: ["oiq", "tp"],

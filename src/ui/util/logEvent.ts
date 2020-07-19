@@ -34,8 +34,17 @@ const showEvent = ({
 		extraClass = "notification-danger";
 	}
 
-	// Don't show non-critical notification if we're viewing a live game now. This used to be for "/live" but that would disable all notifications when viewing the live game index. I had only made it that broad to be careful, in case the event triggered before game sim finished, but that doesn't seem to happen.
-	if (!window.location.pathname.includes("/live_game") || persistent) {
+	let showNotification = true;
+
+	// Don't show non-critical notification if we're viewing a live game now. The additional liveGameInProgress check handles the case when an error occurs before the live game starts (such as roster size) and that should still be displayed
+	if (!persistent && window.location.pathname.includes("/live_game")) {
+		const liveGameInProgress = local.getState().liveGameInProgress;
+		if (liveGameInProgress) {
+			showNotification = false;
+		}
+	}
+
+	if (showNotification) {
 		notify(text, title, {
 			extraClass,
 			persistent,

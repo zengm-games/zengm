@@ -1,26 +1,50 @@
 import PropTypes from "prop-types";
 import React from "react";
 import type { PlayerRatings } from "../../../common/types.football";
+import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 	const r = ratings.length - 1;
+	let dovr, dpot;
+	if (ratings[r].season > 1) {
+		const lastSeason: PlayerRatings[] = ratings.filter(
+			s => s.season == ratings[r].season - 1,
+		);
+		dovr = ratings[r].ovr - Math.max(...lastSeason.map(a => a.ovr));
+		dpot = ratings[r].pot - Math.max(...lastSeason.map(a => a.pot));
+	} else {
+		dovr = 0;
+		dpot = 0;
+	}
 
 	return (
 		<>
 			<div className="d-none d-lg-flex row">
 				<div className="col-lg-8">
-					<h2>Overall: {ratings[r].ovr}</h2>
+					<h2>
+						Overall:&nbsp;
+						<RatingWithChange change={dovr}>{ratings[r].ovr}</RatingWithChange>
+					</h2>
 				</div>
 				<div className="col-lg-4">
-					<h2>Potential: {ratings[r].pot}</h2>
+					<h2>
+						Potention:&nbsp;
+						<RatingWithChange change={dpot}>{ratings[r].pot}</RatingWithChange>
+					</h2>
 				</div>
 			</div>
 			<div className="d-lg-none row">
 				<div className="col-6">
-					<h2>Overall: {ratings[r].ovr}</h2>
+					<h2>
+						Overall:&nbsp;
+						<RatingWithChange change={dovr}>{ratings[r].ovr}</RatingWithChange>
+					</h2>
 				</div>
 				<div className="col-6">
-					<h2 className="float-right">Potential: {ratings[r].pot}</h2>
+					<h2 className="float-right">
+						Potention:&nbsp;
+						<RatingWithChange change={dpot}>{ratings[r].pot}</RatingWithChange>
+					</h2>
 				</div>
 			</div>
 			<div className="row">

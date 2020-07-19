@@ -5,6 +5,26 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+add fast forward button to skip to last 2 minutes
+
+allow renaming export before download
+- other files too?
+
+built-in UI to load custom user files
+- UI in BBGM to create league
+  - api to list league files
+  - page in BBGM to list the league files, with links that go to the new league form pre-populated with that URL for a league file
+- limit users who can upload
+  - gwood
+- database table to store metadata
+  - id
+  - user_id
+  - sport
+  - name
+  - description
+  - num_leagues_created
+- CRUD UI for people to upload/edit/delete league files
+
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes

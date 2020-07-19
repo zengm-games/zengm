@@ -90,17 +90,17 @@ const play = async (
 
 	// Saves a vector of results objects for a day, as is output from cbSimGames
 	const cbSaveResults = async (results: any[]) => {
+		// Before writeGameStats, so LeagueTopBar can not update with game result
+		if (gidPlayByPlay !== undefined) {
+			await toUI("updateLocal", [{ liveGameInProgress: true }]);
+		}
+
 		// Before writeGameStats, so injury is set correctly
 		const {
 			injuryTexts,
 			pidsInjuredOneGameOrLess,
 			stopPlay,
 		} = await writePlayerStats(results, conditions);
-
-		// Before writeGameStats, so LeagueTopBar can not update with game result
-		if (gidPlayByPlay !== undefined) {
-			await toUI("updateLocal", [{ liveGameInProgress: true }]);
-		}
 
 		const gidsFinished = await Promise.all(
 			results.map(async result => {

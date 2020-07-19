@@ -222,6 +222,21 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		}
 	}
 
+	playUntilLastTwoMinutes() {
+		const quartersToPlay =
+			this.quarters.length >= 4 ? 0 : 4 - this.quarters.length;
+		for (let i = 0; i < quartersToPlay; i++) {
+			this.playSeconds(Infinity);
+		}
+
+		const currentSeconds = getSeconds(this.boxScore.time);
+		const targetSeconds = 125; // 2 minutes plus 5 seconds, cause can't always be exact
+		const secoundsToPlay = currentSeconds - targetSeconds;
+		if (secoundsToPlay > 0) {
+			this.playSeconds(secoundsToPlay);
+		}
+	}
+
 	handleSpeedChange(event: ChangeEvent<HTMLInputElement>) {
 		const speed = parseInt(event.target.value, 10);
 		if (!Number.isNaN(speed)) {
@@ -340,6 +355,13 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 													}}
 												>
 													End of quarter
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={() => {
+														this.playUntilLastTwoMinutes();
+													}}
+												>
+													Until last 2 minutes
 												</Dropdown.Item>
 											</Dropdown.Menu>
 										</Dropdown>

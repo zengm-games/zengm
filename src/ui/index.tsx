@@ -14,6 +14,7 @@ const {
 	genStaticPage,
 	helpers,
 	leagueNotFoundMessage,
+	local,
 	logEvent,
 	promiseWorker,
 	routes,
@@ -215,15 +216,18 @@ const setupRoutes = () => {
 				window.location.pathname.includes("/live_game") &&
 				!context.path.includes("/live_game")
 			) {
-				const proceed = await confirm(
-					"If you navigate away from this page, you won't be able to see these play-by-play results again.",
-					{
-						okText: "Navigate Away",
-						cancelText: "Stay Here",
-					},
-				);
-				if (!proceed) {
-					return false;
+				const liveGameInProgress = local.getState().liveGameInProgress;
+				if (liveGameInProgress) {
+					const proceed = await confirm(
+						"If you navigate away from this page, you won't be able to see these play-by-play results again.",
+						{
+							okText: "Navigate Away",
+							cancelText: "Stay Here",
+						},
+					);
+					if (!proceed) {
+						return false;
+					}
 				}
 			}
 

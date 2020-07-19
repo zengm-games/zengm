@@ -5,6 +5,16 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
+- make everything transparent. way to see what the average player thinks of you, and specific players
+- also make players on rookie contracts less likely to refuse
+- show +/- for different factors like civ4
+
 playoff upsets
 - upset odds currently? upset odds ideally?
 - different between real and random players?
@@ -23,18 +33,8 @@ DataTable
   - get rid of awkward children stuff - PlayerNameLabels, mood, ...
     - then get rid of react-addons-text-content
 
-live sim click away warning - hide after sim finishes?
-- https://old.reddit.com/r/BasketballGM/comments/hsqaky/have_you_ever_accidentally_clicked_on_a_link/fygptcm/?context=3
-- ClevelandFan
-- could put something in zustand to check alongside url
-
 allow user to cancel relocation if it's their team?
 - what about contraction, what would that imply for future events?
-
-if you try to live sim and a team has either too many or not enough players then the live sim won't actually work
-- in ui/util/logEvent.ts events are hidden in live sim, but that includes errors that lead to no live sim ever starting, since it redirects before the game data comes
-  - maybe redirect after game data comes
-- test end of season awards and top scores too
 
 contract formatting https://old.reddit.com/r/BasketballGM/comments/hotbbw/small_readability_issue_inconsistent_decimals_on/
 - always show 2 decimal places?
@@ -256,16 +256,6 @@ add logos to league history table?
 option to have numeric game attributes (salary cap, shooting tendencies) increase by a constant amount of a multiple
 - check if upcoming scheduled event and noop if there is one
 
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
-- make everything transparent. way to see what the average player thinks of you, and specific players
-- also make players on rookie contracts less likely to refuse
-- show +/- for different factors like civ4
-
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time
 
@@ -463,9 +453,6 @@ make countries easier to customize
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1
 
-double check that re-signing player doesn't change acquired column
-- both for new league and existign league (pre-existing acquired col or not)
-
 redesign splash page
 - https://twitter.com/i/events/879086180909764608?lang=en
 - https://twitter.com/steveschoger/status/935541212626464770/photo/1
@@ -660,13 +647,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
 add another season option to team stats, player stats, and leaders: All Seasons
 
 refuseToNegotiate should be scaled for hard cap and max/min contracts
-
-make localStorage fail gracefully on quota error
-- https://github.com/SonarSource/SonarJS/issues/623 describes issue - need to check all of those
-- if no library exists, write one
-  - https://github.com/localForage/localForage/blob/master/src/drivers/localstorage.js handles everything i think, but forces it to be async and bring in other stuff
-- safe-localstorage - weird fallback API
-- local-storage-fallback - only tests errors at initial usage, not subsequent
 
 in basketball gamesim
 - if all ratings are 0, why does one player dominate?

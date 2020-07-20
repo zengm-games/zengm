@@ -402,19 +402,11 @@ const toolsMenu = {
 		await phase.newPhase(PHASE.PRESEASON, conditions);
 	},
 	resetDb: async (conditions: Conditions) => {
-		const response = await toUI(
-			"confirm",
-			[
-				"Are you sure you want to delete ALL data in ALL of your leagues?",
-				{
-					okText: "Delete All Leagues",
-				},
-			],
-			conditions,
-		);
+		const response = await toUI("confirmDeleteAllLeagues", [], conditions);
+		console.log("response", response);
 
 		if (response) {
-			await reset();
+			await reset(response);
 		}
 
 		return response;

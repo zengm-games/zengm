@@ -3,6 +3,7 @@ import genBaseMoods from "./genBaseMoods";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import type { Player } from "../../../common/types";
+import { PHASE } from "../../../common";
 
 /**
  * Release player.
@@ -15,15 +16,22 @@ import type { Player } from "../../../common/types";
  * @return {Promise}
  */
 const release = async (p: Player, justDrafted: boolean) => {
-	// Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
-	// Was the player just drafted?
+	// Keep track of player salary even when he's off the team, but make an exception for players who were just drafted.
 	if (!justDrafted) {
-		await idb.cache.releasedPlayers.add({
-			pid: p.pid,
-			tid: p.tid,
-			contract: helpers.deepCopy(p.contract),
-		});
-	} else {
+		// ...and of course for players whose contracts have already expired.
+		if (
+			p.contract.exp > g.get("season") ||
+			(p.contract.exp === g.get("season") && g.get("phase") < PHASE.PLAYOFFS)
+		) {
+			await idb.cache.releasedPlayers.add({
+				pid: p.pid,
+				tid: p.tid,
+				contract: helpers.deepCopy(p.contract),
+			});
+		}
+	}
+
+	if (justDrafted) {
 		// Clear player salary log if just drafted, because this won't be paid.
 		p.salaries = [];
 	}

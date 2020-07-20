@@ -5,6 +5,18 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+nicidob horrible team wins too much
+- ~/Downloads/FBGM_League_71_2020_regular_season_0-0.json
+
+release drafted player during draft - still have to pay his salary?
+
+add to trading block button on player page and roster, where "Trade For" is currently for other teams
+- what to call it? "Offer Trade"? "Trading Block"?
+- nicidob
+
+make the trade controls scroll automatically and always stay on screen
+- @Ruban#9536
+
 built-in UI to load custom user files
 - UI in BBGM to create league
   - api to list league files

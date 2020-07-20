@@ -1,9 +1,9 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 
 const updateUserRoster = async (
-	inputs: unknown,
+	inputs: ViewInput<"tradingBlock">,
 	updateEvents: UpdateEvents,
 ) => {
 	if (
@@ -51,6 +51,7 @@ const updateUserRoster = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
+			initialPid: inputs.pid,
 			phase: g.get("phase"),
 			stats,
 			userPicks: userPicks2,

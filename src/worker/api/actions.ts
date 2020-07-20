@@ -163,6 +163,14 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	}
 };
 
+const addToTradingBlock = async (pid: number, conditions: Conditions) => {
+	toUI(
+		"realtimeUpdate",
+		[[], helpers.leagueUrl(["trading_block"]), { pid }],
+		conditions,
+	);
+};
+
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;
 
@@ -420,6 +428,7 @@ const simToGame = async (gid: number, conditions: Conditions) => {
 };
 
 export default {
+	addToTradingBlock,
 	liveGame,
 	negotiate,
 	playMenu,

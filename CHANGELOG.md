@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-20: On the roster page and individual player pages, players on your team have a button to quickly add them to the trading block, in the same place as the "Trade For" button for players who are on other teams.
+
 * 2020-07-20: In Tools > Delete All Leagues, added an option to delete only unstarred leagues.
 
 * 2020-07-19: Added another "fast forward" option during live game sim - "Until last 2 minutes".

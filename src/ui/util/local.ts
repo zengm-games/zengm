@@ -22,6 +22,14 @@ type LocalActions = {
 const defaultUnits: "metric" | "us" =
 	window.navigator.language === "en-US" ? "us" : "metric";
 
+// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
+const blockCloseTab = (e: BeforeUnloadEvent) => {
+	// Cancel the event
+	e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+	// Chrome requires returnValue to be set
+	e.returnValue = "";
+};
+
 const [useLocal, local] = create<
 	LocalStateUI & {
 		actions: LocalActions;
@@ -103,6 +111,7 @@ const [useLocal, local] = create<
 				userTid: 0,
 				userTids: [],
 			});
+			window.removeEventListener("beforeunload", blockCloseTab);
 		},
 
 		toggleSidebar() {
@@ -112,6 +121,14 @@ const [useLocal, local] = create<
 		update(obj: Partial<LocalStateUI>) {
 			if (obj.hasOwnProperty("units") && obj.units === undefined) {
 				obj.units = defaultUnits;
+			}
+
+			if (obj.hasOwnProperty("liveGameInProgress")) {
+				if (obj.liveGameInProgress) {
+					window.addEventListener("beforeunload", blockCloseTab);
+				} else {
+					window.removeEventListener("beforeunload", blockCloseTab);
+				}
 			}
 
 			set(obj);

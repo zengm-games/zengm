@@ -35,6 +35,7 @@ const processLiveGameEvents = ({
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
 			} else {
 				boxScore.quarter = `${helpers.ordinal(quarter)} quarter`;
+				quarters.push(`Q${quarter}`);
 			}
 		}
 

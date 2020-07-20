@@ -595,23 +595,24 @@ if (process.env.SPORT === "basketball") {
 				}
 			},
 		},
-		{
-			category: "Player Development",
-			key: "repeatSeason",
-			name: "Groundhog Day",
-			type: "bool",
-			helpText: (
-				<>
-					<p>{helpTexts.repeatSeason}</p>
-					<p>
-						Groundhog Day can be enabled at any point in the season prior to the
-						draft.
-					</p>
-				</>
-			),
-		},
 	);
 }
+
+options.push({
+	category: "Player Development",
+	key: "repeatSeason",
+	name: "Groundhog Day",
+	type: "bool",
+	helpText: (
+		<>
+			<p>{helpTexts.repeatSeason}</p>
+			<p>
+				Groundhog Day can be enabled at any point in the season prior to the
+				draft.
+			</p>
+		</>
+	),
+});
 
 // See play-style-adjustments in bbgm-rosters
 const gameSimPresets =

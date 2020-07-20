@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-19: Added another "fast forward" option during live game sim - "Until last 2 minutes".
+
 * 2020-07-17: If you navigate away from a live game sim, it will pop up a warning dialog explaining that the play-by-play results will be lost if you proceed. [[1]](https://old.reddit.com/r/BasketballGM/comments/hsqaky/have_you_ever_accidentally_clicked_on_a_link/)
 
 * 2020-07-16: In FBGM, added the Roster Composition table to the re-signing players screen.

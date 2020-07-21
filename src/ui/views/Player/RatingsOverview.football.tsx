@@ -1,90 +1,183 @@
 import PropTypes from "prop-types";
 import React from "react";
 import type { PlayerRatings } from "../../../common/types.football";
+import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 	const r = ratings.length - 1;
+
+	let lastSeason: PlayerRatings = ratings[r];
+	// Search backwards to find the last entry from last season, in the case where there are multiple rows due to injuries
+	for (let i = r; i >= 0; i--) {
+		if (ratings[i].season === ratings[r].season - 1) {
+			lastSeason = ratings[i];
+			break;
+		}
+	}
 
 	return (
 		<>
 			<div className="d-none d-lg-flex row">
 				<div className="col-lg-8">
-					<h2>Overall: {ratings[r].ovr}</h2>
+					<h2>
+						Overall:{" "}
+						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
+							{ratings[r].ovr}
+						</RatingWithChange>
+					</h2>
 				</div>
 				<div className="col-lg-4">
-					<h2>Potential: {ratings[r].pot}</h2>
+					<h2>
+						Potential:{" "}
+						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
+							{ratings[r].pot}
+						</RatingWithChange>
+					</h2>
 				</div>
 			</div>
 			<div className="d-lg-none row">
 				<div className="col-6">
-					<h2>Overall: {ratings[r].ovr}</h2>
+					<h2>
+						Overall:{" "}
+						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
+							{ratings[r].ovr}
+						</RatingWithChange>
+					</h2>
 				</div>
 				<div className="col-6">
-					<h2 className="float-right">Potential: {ratings[r].pot}</h2>
+					<h2 className="float-right">
+						Potential:{" "}
+						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
+							{ratings[r].pot}
+						</RatingWithChange>
+					</h2>
 				</div>
 			</div>
 			<div className="row">
 				<div className="col-4">
 					<b>Physical</b>
 					<br />
-					Height: {ratings[r].hgt}
+					Height:{" "}
+					<RatingWithChange change={ratings[r].hgt - lastSeason.hgt}>
+						{ratings[r].hgt}
+					</RatingWithChange>
 					<br />
-					Strength: {ratings[r].stre}
+					Strength:{" "}
+					<RatingWithChange change={ratings[r].stre - lastSeason.stre}>
+						{ratings[r].stre}
+					</RatingWithChange>
 					<br />
-					Speed: {ratings[r].spd}
+					Speed:{" "}
+					<RatingWithChange change={ratings[r].spd - lastSeason.spd}>
+						{ratings[r].spd}
+					</RatingWithChange>
 					<br />
-					Endurance: {ratings[r].endu}
+					Endurance:{" "}
+					<RatingWithChange change={ratings[r].endu - lastSeason.endu}>
+						{ratings[r].endu}
+					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Passing</b>
 					<br />
-					Vision: {ratings[r].thv}
+					Vision:{" "}
+					<RatingWithChange change={ratings[r].thv - lastSeason.thv}>
+						{ratings[r].thv}
+					</RatingWithChange>
 					<br />
-					Power: {ratings[r].thp}
+					Power:{" "}
+					<RatingWithChange change={ratings[r].thp - lastSeason.thp}>
+						{ratings[r].thp}
+					</RatingWithChange>
 					<br />
-					Accuracy: {ratings[r].tha}
+					Accuracy:{" "}
+					<RatingWithChange change={ratings[r].tha - lastSeason.tha}>
+						{ratings[r].tha}
+					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Rushing/Receiving</b>
 					<br />
-					Elusiveness: {ratings[r].elu}
+					Elusiveness:{" "}
+					<RatingWithChange change={ratings[r].elu - lastSeason.elu}>
+						{ratings[r].elu}
+					</RatingWithChange>
 					<br />
-					Route Running: {ratings[r].rtr}
+					Route Running:{" "}
+					<RatingWithChange change={ratings[r].rtr - lastSeason.rtr}>
+						{ratings[r].rtr}
+					</RatingWithChange>
 					<br />
-					Hands: {ratings[r].hnd}
+					Hands:{" "}
+					<RatingWithChange change={ratings[r].hnd - lastSeason.hnd}>
+						{ratings[r].hnd}
+					</RatingWithChange>
 					<br />
-					Ball Security: {ratings[r].bsc}
+					Ball Security:{" "}
+					<RatingWithChange change={ratings[r].bsc - lastSeason.bsc}>
+						{ratings[r].bsc}
+					</RatingWithChange>
 				</div>
 			</div>
 			<div className="row mt-2">
 				<div className="col-4">
 					<b>Blocking</b>
 					<br />
-					Run Blocking: {ratings[r].rbk}
+					Run Blocking:{" "}
+					<RatingWithChange change={ratings[r].rbk - lastSeason.rbk}>
+						{ratings[r].rbk}
+					</RatingWithChange>
 					<br />
-					Pass Blocking: {ratings[r].pbk}
+					Pass Blocking:{" "}
+					<RatingWithChange change={ratings[r].pbk - lastSeason.pbk}>
+						{ratings[r].pbk}
+					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Defense</b>
 					<br />
-					Pass Coverage: {ratings[r].pcv}
+					Pass Coverage:{" "}
+					<RatingWithChange change={ratings[r].pcv - lastSeason.pcv}>
+						{ratings[r].pcv}
+					</RatingWithChange>
 					<br />
-					Tackling: {ratings[r].tck}
+					Tackling:{" "}
+					<RatingWithChange change={ratings[r].tck - lastSeason.tck}>
+						{ratings[r].tck}
+					</RatingWithChange>
 					<br />
-					Pass Rushing: {ratings[r].prs}
+					Pass Rushing:{" "}
+					<RatingWithChange change={ratings[r].prs - lastSeason.prs}>
+						{ratings[r].prs}
+					</RatingWithChange>
 					<br />
-					Run Stopping: {ratings[r].rns}
+					Run Stopping:{" "}
+					<RatingWithChange change={ratings[r].rns - lastSeason.rns}>
+						{ratings[r].rns}
+					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Kicking</b>
 					<br />
-					Kick Power: {ratings[r].kpw}
+					Kick Power:{" "}
+					<RatingWithChange change={ratings[r].kpw - lastSeason.kpw}>
+						{ratings[r].kpw}
+					</RatingWithChange>
 					<br />
-					Kick Accuracy: {ratings[r].kac}
+					Kick Accuracy:{" "}
+					<RatingWithChange change={ratings[r].kac - lastSeason.kac}>
+						{ratings[r].kac}
+					</RatingWithChange>
 					<br />
-					Punt Power: {ratings[r].ppw}
+					Punt Power:{" "}
+					<RatingWithChange change={ratings[r].ppw - lastSeason.ppw}>
+						{ratings[r].ppw}
+					</RatingWithChange>
 					<br />
-					Punt Accuracy: {ratings[r].pac}
+					Punt Accura:{" "}
+					<RatingWithChange change={ratings[r].pac - lastSeason.pac}>
+						{ratings[r].pac}
+					</RatingWithChange>
 				</div>
 			</div>
 		</>

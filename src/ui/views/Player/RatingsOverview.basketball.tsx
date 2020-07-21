@@ -1,67 +1,142 @@
 import PropTypes from "prop-types";
 import React from "react";
 import type { PlayerRatings } from "../../../common/types.basketball";
+import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 	const r = ratings.length - 1;
+
+	let lastSeason: PlayerRatings = ratings[r];
+	// Search backwards to find the last entry from last season, in the case where there are multiple rows due to injuries
+	for (let i = r; i >= 0; i--) {
+		if (ratings[i].season === ratings[r].season - 1) {
+			lastSeason = ratings[i];
+			break;
+		}
+	}
 
 	return (
 		<>
 			<div className="d-none d-lg-flex row">
 				<div className="col-lg-8">
-					<h2>Overall: {ratings[r].ovr}</h2>
+					<h2>
+						Overall:{" "}
+						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
+							{ratings[r].ovr}
+						</RatingWithChange>
+					</h2>
 				</div>
 				<div className="col-lg-4">
-					<h2>Potential: {ratings[r].pot}</h2>
+					<h2>
+						Potential:{" "}
+						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
+							{ratings[r].pot}
+						</RatingWithChange>
+					</h2>
 				</div>
 			</div>
 			<div className="d-lg-none row">
 				<div className="col-6">
-					<h2>Overall: {ratings[r].ovr}</h2>
+					<h2>
+						Overall:{" "}
+						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
+							{ratings[r].ovr}
+						</RatingWithChange>
+					</h2>
 				</div>
 				<div className="col-6">
-					<h2 className="float-right">Potential: {ratings[r].pot}</h2>
+					<h2>
+						Potential:{" "}
+						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
+							{ratings[r].pot}
+						</RatingWithChange>
+					</h2>
 				</div>
 			</div>
 			<div className="row">
 				<div className="col-4">
 					<b>Physical</b>
 					<br />
-					Height: {ratings[r].hgt}
+					Height:{" "}
+					<RatingWithChange change={ratings[r].hgt - lastSeason.hgt}>
+						{ratings[r].hgt}
+					</RatingWithChange>
 					<br />
-					Strength: {ratings[r].stre}
+					Strength:{" "}
+					<RatingWithChange change={ratings[r].stre - lastSeason.stre}>
+						{ratings[r].stre}
+					</RatingWithChange>
 					<br />
-					Speed: {ratings[r].spd}
+					Speed:{" "}
+					<RatingWithChange change={ratings[r].spd - lastSeason.spd}>
+						{ratings[r].spd}
+					</RatingWithChange>
 					<br />
-					Jumping: {ratings[r].jmp}
+					Jumping:{" "}
+					<RatingWithChange change={ratings[r].jmp - lastSeason.jmp}>
+						{ratings[r].jmp}
+					</RatingWithChange>
 					<br />
-					Endurance: {ratings[r].endu}
+					Endurance:{" "}
+					<RatingWithChange change={ratings[r].endu - lastSeason.endu}>
+						{ratings[r].endu}
+					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Shooting</b>
 					<br />
-					Inside Scoring: {ratings[r].ins}
+					Inside Scoring:{" "}
+					<RatingWithChange change={ratings[r].ins - lastSeason.ins}>
+						{ratings[r].ins}
+					</RatingWithChange>
 					<br />
-					Dunks/Layups: {ratings[r].dnk}
+					Dunks/Layups:{" "}
+					<RatingWithChange change={ratings[r].dnk - lastSeason.dnk}>
+						{ratings[r].dnk}
+					</RatingWithChange>
 					<br />
-					Free Throws: {ratings[r].ft}
+					Free Throws:{" "}
+					<RatingWithChange change={ratings[r].ft - lastSeason.ft}>
+						{ratings[r].ft}
+					</RatingWithChange>
 					<br />
-					Two Pointers: {ratings[r].fg}
+					Two Pointers:{" "}
+					<RatingWithChange change={ratings[r].fg - lastSeason.fg}>
+						{ratings[r].fg}
+					</RatingWithChange>
 					<br />
-					Three Pointers: {ratings[r].tp}
+					Three Pointers:{" "}
+					<RatingWithChange change={ratings[r].tp - lastSeason.tp}>
+						{ratings[r].tp}
+					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Skill</b>
 					<br />
-					Offensive IQ: {ratings[r].oiq}
+					Offensive IQ:{" "}
+					<RatingWithChange change={ratings[r].oiq - lastSeason.oiq}>
+						{ratings[r].oiq}
+					</RatingWithChange>
 					<br />
-					Defensive IQ: {ratings[r].diq}
+					Defensive IQ:{" "}
+					<RatingWithChange change={ratings[r].diq - lastSeason.diq}>
+						{ratings[r].diq}
+					</RatingWithChange>
 					<br />
-					Dribbling: {ratings[r].drb}
+					Dribbling:{" "}
+					<RatingWithChange change={ratings[r].drb - lastSeason.drb}>
+						{ratings[r].drb}
+					</RatingWithChange>
 					<br />
-					Passing: {ratings[r].pss}
+					Passing:{" "}
+					<RatingWithChange change={ratings[r].pss - lastSeason.pss}>
+						{ratings[r].pss}
+					</RatingWithChange>
 					<br />
-					Rebounding: {ratings[r].reb}
+					Rebounding:{" "}
+					<RatingWithChange change={ratings[r].reb - lastSeason.reb}>
+						{ratings[r].reb}
+					</RatingWithChange>
 				</div>
 			</div>
 		</>

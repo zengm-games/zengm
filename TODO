@@ -5,12 +5,20 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
-nicidob horrible team wins too much
-- ~/Downloads/FBGM_League_71_2020_regular_season_0-0.json
-
-add to trading block button on player page and roster, where "Trade For" is currently for other teams
-- what to call it? "Offer Trade"? "Trading Block"?
-- nicidob
+nicidob new ovr formula
+- basketball: https://github.com/dumbmatter/gm-games/pull/275/files
+- football: https://paste.ubuntu.com/p/H5pPmb3r6J/
+  - nicodob says:
+    - as I said I rewrote this code (b/c I'm doing the testing on a different computer) and the PR uses .csv exports but this version uses .json leagues. https://github.com/nicidob/fbgm/blob/master/ratings.ipynb
+    - that does the ratings and vomits out the over_under roster
+    - as-is it basically eats FBGM or BBGM leagues up. It does the position-specific code. So to replicate the PR I just replace the pos = r['pos'] with pos='ALL' and the code is happy to do it
+    - yeah I mean there's a handful of differences here. this uses JSON leagues (not a split 'avg.csv'/'game.csv'), and does position-specific breakdowns. But yes it's the same thing, it takes leagues with box scores and does minute-weighted rating differences to MOV for individual games
+    - it also doesn't do the scaling to ensure the mean and variance are unchanged (i just check R^2 and move on)
+    - And here I'm using L1 Regularization + Cross-Validation to drop a bunch of coefficients to zero for ratings that don't matter
+    - the problem is i got really wonky distributions when I tried to output the FBGM stuff
+    - like I don't understand how mean/variance are set by the code right now
+    - the notebook spits out a copy+paste table for ovr.football.ts and I have a local copy with it but the numbers are big and positions are set - wrong because I deleted bonuses and.....
+    - it was non-obvious to me how to get these in-game in a good way so I don't have a good PR
 
 make the trade controls scroll automatically and always stay on screen
 - @Ruban#9536

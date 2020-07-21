@@ -259,6 +259,7 @@ const updatePlayer = async (
 		return {
 			player: p,
 			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
+			showTradingBlock: p.tid === g.get("userTid"),
 			freeAgent: p.tid === PLAYER.FREE_AGENT,
 			retired,
 			showContract:

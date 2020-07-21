@@ -78,6 +78,7 @@ const Roster = ({
 	season,
 	showRelease,
 	showTradeFor,
+	showTradingBlock,
 	stats,
 	t,
 	tid,
@@ -254,7 +255,7 @@ const Roster = ({
 								</HelpPopover>
 							</th>
 						) : null}
-						{showTradeFor ? <th>Trade For</th> : null}
+						{showTradeFor || showTradingBlock ? <th>Trade</th> : null}
 						<th title="How Player Was Acquired">Acquired</th>
 					</>
 				)}
@@ -325,16 +326,20 @@ const Roster = ({
 									</button>
 								</td>
 							) : null}
-							{showTradeFor ? (
+							{showTradeFor || showTradingBlock ? (
 								<td title={p.untradableMsg}>
 									<button
 										className="btn btn-light-bordered btn-xs"
 										disabled={p.untradable}
-										onClick={() =>
-											toWorker("actions", "tradeFor", { pid: p.pid })
-										}
+										onClick={() => {
+											if (showTradeFor) {
+												toWorker("actions", "tradeFor", { pid: p.pid });
+											} else {
+												toWorker("actions", "addToTradingBlock", p.pid);
+											}
+										}}
 									>
-										Trade For
+										{showTradeFor ? "Trade For" : "Trade Away"}
 									</button>
 								</td>
 							) : null}

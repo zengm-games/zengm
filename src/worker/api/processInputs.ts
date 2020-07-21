@@ -532,6 +532,13 @@ const standings = (params: Params) => {
 	};
 };
 
+const tradingBlock = (params: Params, ctxBBGM: any) => {
+	const pid = ctxBBGM.pid;
+	return {
+		pid: typeof pid === "number" ? pid : undefined,
+	};
+};
+
 const transactions = (params: Params) => {
 	let abbrev: string;
 	let tid: number;
@@ -645,6 +652,7 @@ export default {
 	teamRecords,
 	teamStatDists: validateSeasonOnly,
 	teamStats,
+	tradingBlock,
 	transactions,
 	upcomingFreeAgents,
 	watchList,

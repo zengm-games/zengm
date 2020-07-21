@@ -167,6 +167,7 @@ const Player2 = ({
 	showContract,
 	showRatings,
 	showTradeFor,
+	showTradingBlock,
 	statTables,
 	teamColors,
 	teamName,
@@ -321,14 +322,20 @@ const Player2 = ({
 				</div>
 			</div>
 
-			{showTradeFor ? (
+			{showTradeFor || showTradingBlock ? (
 				<span title={player.untradableMsg}>
 					<button
 						className="btn btn-light-bordered mb-3"
 						disabled={player.untradable}
-						onClick={() => toWorker("actions", "tradeFor", { pid: player.pid })}
+						onClick={() => {
+							if (showTradeFor) {
+								toWorker("actions", "tradeFor", { pid: player.pid });
+							} else {
+								toWorker("actions", "addToTradingBlock", player.pid);
+							}
+						}}
 					>
-						Trade For
+						{showTradeFor ? "Trade For" : "Add To Trading Block"}
 					</button>
 				</span>
 			) : null}

@@ -163,6 +163,14 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	}
 };
 
+const addToTradingBlock = async (pid: number, conditions: Conditions) => {
+	toUI(
+		"realtimeUpdate",
+		[[], helpers.leagueUrl(["trading_block"]), { pid }],
+		conditions,
+	);
+};
+
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;
 
@@ -402,19 +410,11 @@ const toolsMenu = {
 		await phase.newPhase(PHASE.PRESEASON, conditions);
 	},
 	resetDb: async (conditions: Conditions) => {
-		const response = await toUI(
-			"confirm",
-			[
-				"Are you sure you want to delete ALL data in ALL of your leagues?",
-				{
-					okText: "Delete All Leagues",
-				},
-			],
-			conditions,
-		);
+		const response = await toUI("confirmDeleteAllLeagues", [], conditions);
+		console.log("response", response);
 
 		if (response) {
-			await reset();
+			await reset(response);
 		}
 
 		return response;
@@ -428,6 +428,7 @@ const simToGame = async (gid: number, conditions: Conditions) => {
 };
 
 export default {
+	addToTradingBlock,
 	liveGame,
 	negotiate,
 	playMenu,

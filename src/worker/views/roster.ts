@@ -205,6 +205,8 @@ const updateRoster = async (
 			showRelease,
 			showTradeFor:
 				inputs.season === g.get("season") && inputs.tid !== g.get("userTid"),
+			showTradingBlock:
+				inputs.season === g.get("season") && inputs.tid === g.get("userTid"),
 			stats,
 			t: t2,
 			tid: inputs.tid,

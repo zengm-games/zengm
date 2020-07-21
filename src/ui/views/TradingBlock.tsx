@@ -179,7 +179,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	}>({
 		asking: false,
 		offers: [],
-		pids: [],
+		pids: props.initialPid !== undefined ? [props.initialPid] : [],
 		dpids: [],
 	});
 

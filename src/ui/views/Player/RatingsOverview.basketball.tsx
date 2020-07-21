@@ -106,7 +106,9 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 					<RatingWithChange change={ratings[r].fg - lastSeason.fg}>
 						{ratings[r].fg}
 					</RatingWithChange>
-					<br />3 Pointers:{" "}
+					<br />
+					<span className="d-md-none">3</span>
+					<span className="d-none d-md-inline">Three</span>: Pointers:{" "}
 					<RatingWithChange change={ratings[r].tp - lastSeason.tp}>
 						{ratings[r].tp}
 					</RatingWithChange>

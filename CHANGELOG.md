@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-07-20: The ratings summary at the top of individual player pages now shows the difference between last year's ratings and this year's ratings.
+* 2020-07-20: The ratings summary at the top of individual player pages now shows the difference between last year's ratings and this year's ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/hv8arf/some_recent_minor_ui_updates/)
 
 * 2020-07-20: On the roster page and individual player pages, players on your team have a button to quickly add them to the trading block, in the same place as the "Trade For" button for players who are on other teams.
 

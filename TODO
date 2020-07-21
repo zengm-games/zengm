@@ -5,6 +5,11 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+RatingsOverview alignment
+- maybe have it aligned on the : so all numbers are aligned and all categories are right aligned before them
+
+option to lock ratings for all players, including future players
+
 FBGM make ratings improvements less correlated
 
 nicidob new ovr formula
@@ -59,6 +64,9 @@ playoff upsets
   - less fatigue
   - 5% slower pace
 - could apply bigger home court advantage for good teams
+
+finances revamp
+- get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
 
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):
@@ -295,6 +303,7 @@ option to have numeric game attributes (salary cap, shooting tendencies) increas
 
 redo trade system
 - make it so that teams are less likely to trade for players when there is a better/ slightly worse player in FA for around the same price. people exploit that all the time
+- some factor based on # of recent trades (similar to player mood revamp?)
 
 team needs/synergy display on roster
 - and power rankings

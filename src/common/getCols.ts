@@ -15,7 +15,7 @@ const sportSpecificCols: {
 	process.env.SPORT === "basketball"
 		? {
 				"rating:fg": {
-					desc: "Two Pointers",
+					desc: "Mid Range",
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 				},

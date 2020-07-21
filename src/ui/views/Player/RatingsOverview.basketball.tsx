@@ -85,27 +85,28 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Shooting</b>
 					<br />
-					Inside Scoring:{" "}
+					Inside:{" "}
 					<RatingWithChange change={ratings[r].ins - lastSeason.ins}>
 						{ratings[r].ins}
 					</RatingWithChange>
 					<br />
-					Dunks/Layups:{" "}
+					<span className="d-md-none">Layups</span>
+					<span className="d-none d-md-inline">Dunks/Layups</span>:{" "}
 					<RatingWithChange change={ratings[r].dnk - lastSeason.dnk}>
 						{ratings[r].dnk}
 					</RatingWithChange>
 					<br />
-					Free Throws:{" "}
+					<span className="d-md-none">FT</span>
+					<span className="d-none d-md-inline">Free Throws</span>:{" "}
 					<RatingWithChange change={ratings[r].ft - lastSeason.ft}>
 						{ratings[r].ft}
 					</RatingWithChange>
 					<br />
-					Two Pointers:{" "}
+					Mid Range:{" "}
 					<RatingWithChange change={ratings[r].fg - lastSeason.fg}>
 						{ratings[r].fg}
 					</RatingWithChange>
-					<br />
-					Three Pointers:{" "}
+					<br />3 Pointers:{" "}
 					<RatingWithChange change={ratings[r].tp - lastSeason.tp}>
 						{ratings[r].tp}
 					</RatingWithChange>
@@ -113,12 +114,14 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Skill</b>
 					<br />
-					Offensive IQ:{" "}
+					<span className="d-md-none">Off</span>
+					<span className="d-none d-md-inline">Offensive</span> IQ:{" "}
 					<RatingWithChange change={ratings[r].oiq - lastSeason.oiq}>
 						{ratings[r].oiq}
 					</RatingWithChange>
 					<br />
-					Defensive IQ:{" "}
+					<span className="d-md-none">Def</span>
+					<span className="d-none d-md-inline">Defensive</span> IQ:{" "}
 					<RatingWithChange change={ratings[r].diq - lastSeason.diq}>
 						{ratings[r].diq}
 					</RatingWithChange>
@@ -133,7 +136,8 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 						{ratings[r].pss}
 					</RatingWithChange>
 					<br />
-					Rebounding:{" "}
+					<span className="d-md-none">Reb</span>
+					<span className="d-none d-md-inline">Rebounding</span>:{" "}
 					<RatingWithChange change={ratings[r].reb - lastSeason.reb}>
 						{ratings[r].reb}
 					</RatingWithChange>

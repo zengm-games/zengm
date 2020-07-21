@@ -98,12 +98,14 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Rushing/Receiving</b>
 					<br />
-					Elusiveness:{" "}
+					<span className="d-md-none">Elusive</span>
+					<span className="d-none d-md-inline">Elusiveness</span>:{" "}
 					<RatingWithChange change={ratings[r].elu - lastSeason.elu}>
 						{ratings[r].elu}
 					</RatingWithChange>
 					<br />
-					Route Running:{" "}
+					<span className="d-md-none">Routes</span>
+					<span className="d-none d-md-inline">Route Running</span>:{" "}
 					<RatingWithChange change={ratings[r].rtr - lastSeason.rtr}>
 						{ratings[r].rtr}
 					</RatingWithChange>
@@ -113,7 +115,8 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 						{ratings[r].hnd}
 					</RatingWithChange>
 					<br />
-					Ball Security:{" "}
+					Ball <span className="d-md-none">Sec</span>
+					<span className="d-none d-md-inline">Security</span>:{" "}
 					<RatingWithChange change={ratings[r].bsc - lastSeason.bsc}>
 						{ratings[r].bsc}
 					</RatingWithChange>
@@ -123,12 +126,14 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Blocking</b>
 					<br />
-					Run Blocking:{" "}
+					Run <span className="d-md-none">Block</span>
+					<span className="d-none d-md-inline">Blocking</span>:{" "}
 					<RatingWithChange change={ratings[r].rbk - lastSeason.rbk}>
 						{ratings[r].rbk}
 					</RatingWithChange>
 					<br />
-					Pass Blocking:{" "}
+					Pass <span className="d-md-none">Block</span>
+					<span className="d-none d-md-inline">Blocking</span>:{" "}
 					<RatingWithChange change={ratings[r].pbk - lastSeason.pbk}>
 						{ratings[r].pbk}
 					</RatingWithChange>
@@ -136,7 +141,8 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Defense</b>
 					<br />
-					Pass Coverage:{" "}
+					Pass <span className="d-md-none">Cover</span>
+					<span className="d-none d-md-inline">Coverage</span>:{" "}
 					<RatingWithChange change={ratings[r].pcv - lastSeason.pcv}>
 						{ratings[r].pcv}
 					</RatingWithChange>
@@ -146,12 +152,14 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 						{ratings[r].tck}
 					</RatingWithChange>
 					<br />
-					Pass Rushing:{" "}
+					Pass <span className="d-md-none">Rush</span>
+					<span className="d-none d-md-inline">Rushing</span>:{" "}
 					<RatingWithChange change={ratings[r].prs - lastSeason.prs}>
 						{ratings[r].prs}
 					</RatingWithChange>
 					<br />
-					Run Stopping:{" "}
+					Run <span className="d-md-none">Stop</span>
+					<span className="d-none d-md-inline">Stopping</span>:{" "}
 					<RatingWithChange change={ratings[r].rns - lastSeason.rns}>
 						{ratings[r].rns}
 					</RatingWithChange>
@@ -159,22 +167,26 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Kicking</b>
 					<br />
-					Kick Power:{" "}
+					Kick <span className="d-md-none">Pow</span>
+					<span className="d-none d-md-inline">Power</span>:{" "}
 					<RatingWithChange change={ratings[r].kpw - lastSeason.kpw}>
 						{ratings[r].kpw}
 					</RatingWithChange>
 					<br />
-					Kick Accuracy:{" "}
+					Kick <span className="d-md-none">Acc</span>
+					<span className="d-none d-md-inline">Accuracy</span>:{" "}
 					<RatingWithChange change={ratings[r].kac - lastSeason.kac}>
 						{ratings[r].kac}
 					</RatingWithChange>
 					<br />
-					Punt Power:{" "}
+					Punt <span className="d-md-none">Pow</span>
+					<span className="d-none d-md-inline">Power</span>:{" "}
 					<RatingWithChange change={ratings[r].ppw - lastSeason.ppw}>
 						{ratings[r].ppw}
 					</RatingWithChange>
 					<br />
-					Punt Accura:{" "}
+					Punt <span className="d-md-none">Acc</span>
+					<span className="d-none d-md-inline">Accuracy</span>:{" "}
 					<RatingWithChange change={ratings[r].pac - lastSeason.pac}>
 						{ratings[r].pac}
 					</RatingWithChange>

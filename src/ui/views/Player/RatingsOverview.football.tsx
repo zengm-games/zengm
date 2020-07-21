@@ -5,30 +5,31 @@ import RatingWithChange from "../../components/RatingWithChange";
 
 const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 	const r = ratings.length - 1;
-	const lastSeason: PlayerRatings[] =
-		ratings.length > 1
-			? ratings.filter(s => s.season == ratings[r].season - 1)
-			: new Array(ratings[r]);
+
+	let lastSeason: PlayerRatings = ratings[r];
+	// Search backwards to find the last entry from last season, in the case where there are multiple rows due to injuries
+	for (let i = r; i >= 0; i--) {
+		if (ratings[i].season === ratings[r].season - 1) {
+			lastSeason = ratings[i];
+			break;
+		}
+	}
 
 	return (
 		<>
 			<div className="d-none d-lg-flex row">
 				<div className="col-lg-8">
 					<h2>
-						Overall:&nbsp;
-						<RatingWithChange
-							change={ratings[r].ovr - Math.max(...lastSeason.map(a => a.ovr))}
-						>
+						Overall:{" "}
+						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
 							{ratings[r].ovr}
 						</RatingWithChange>
 					</h2>
 				</div>
 				<div className="col-lg-4">
 					<h2>
-						Potential:&nbsp;
-						<RatingWithChange
-							change={ratings[r].pot - Math.max(...lastSeason.map(a => a.pot))}
-						>
+						Potential:{" "}
+						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
 							{ratings[r].pot}
 						</RatingWithChange>
 					</h2>
@@ -37,20 +38,16 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 			<div className="d-lg-none row">
 				<div className="col-6">
 					<h2>
-						Overall:&nbsp;
-						<RatingWithChange
-							change={ratings[r].ovr - Math.max(...lastSeason.map(a => a.ovr))}
-						>
+						Overall:{" "}
+						<RatingWithChange change={ratings[r].ovr - lastSeason.ovr}>
 							{ratings[r].ovr}
 						</RatingWithChange>
 					</h2>
 				</div>
 				<div className="col-6">
 					<h2 className="float-right">
-						Potential:&nbsp;
-						<RatingWithChange
-							change={ratings[r].pot - Math.max(...lastSeason.map(a => a.pot))}
-						>
+						Potential:{" "}
+						<RatingWithChange change={ratings[r].pot - lastSeason.pot}>
 							{ratings[r].pot}
 						</RatingWithChange>
 					</h2>
@@ -60,86 +57,64 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Physical</b>
 					<br />
-					Height:&nbsp;
-					<RatingWithChange
-						change={ratings[r].hgt - Math.max(...lastSeason.map(a => a.hgt))}
-					>
+					Height:{" "}
+					<RatingWithChange change={ratings[r].hgt - lastSeason.hgt}>
 						{ratings[r].hgt}
 					</RatingWithChange>
 					<br />
-					Strength:&nbsp;
-					<RatingWithChange
-						change={ratings[r].stre - Math.max(...lastSeason.map(a => a.stre))}
-					>
+					Strength:{" "}
+					<RatingWithChange change={ratings[r].stre - lastSeason.stre}>
 						{ratings[r].stre}
 					</RatingWithChange>
 					<br />
-					Speed:&nbsp;
-					<RatingWithChange
-						change={ratings[r].spd - Math.max(...lastSeason.map(a => a.spd))}
-					>
+					Speed:{" "}
+					<RatingWithChange change={ratings[r].spd - lastSeason.spd}>
 						{ratings[r].spd}
 					</RatingWithChange>
 					<br />
-					Endurance:&nbsp;
-					<RatingWithChange
-						change={ratings[r].endu - Math.max(...lastSeason.map(a => a.endu))}
-					>
+					Endurance:{" "}
+					<RatingWithChange change={ratings[r].endu - lastSeason.endu}>
 						{ratings[r].endu}
 					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Passing</b>
 					<br />
-					Vision:&nbsp;
-					<RatingWithChange
-						change={ratings[r].thv - Math.max(...lastSeason.map(a => a.thv))}
-					>
+					Vision:{" "}
+					<RatingWithChange change={ratings[r].thv - lastSeason.thv}>
 						{ratings[r].thv}
 					</RatingWithChange>
 					<br />
-					Power:&nbsp;
-					<RatingWithChange
-						change={ratings[r].thp - Math.max(...lastSeason.map(a => a.thp))}
-					>
+					Power:{" "}
+					<RatingWithChange change={ratings[r].thp - lastSeason.thp}>
 						{ratings[r].thp}
 					</RatingWithChange>
 					<br />
-					Accuracy:&nbsp;
-					<RatingWithChange
-						change={ratings[r].tha - Math.max(...lastSeason.map(a => a.tha))}
-					>
+					Accuracy:{" "}
+					<RatingWithChange change={ratings[r].tha - lastSeason.tha}>
 						{ratings[r].tha}
 					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Rushing/Receiving</b>
 					<br />
-					Elusiveness:&nbsp;
-					<RatingWithChange
-						change={ratings[r].elu - Math.max(...lastSeason.map(a => a.elu))}
-					>
+					Elusiveness:{" "}
+					<RatingWithChange change={ratings[r].elu - lastSeason.elu}>
 						{ratings[r].elu}
 					</RatingWithChange>
 					<br />
-					Route Running:&nbsp;
-					<RatingWithChange
-						change={ratings[r].rtr - Math.max(...lastSeason.map(a => a.rtr))}
-					>
+					Route Running:{" "}
+					<RatingWithChange change={ratings[r].rtr - lastSeason.rtr}>
 						{ratings[r].rtr}
 					</RatingWithChange>
 					<br />
-					Hands:&nbsp;
-					<RatingWithChange
-						change={ratings[r].hnd - Math.max(...lastSeason.map(a => a.hnd))}
-					>
+					Hands:{" "}
+					<RatingWithChange change={ratings[r].hnd - lastSeason.hnd}>
 						{ratings[r].hnd}
 					</RatingWithChange>
 					<br />
-					Ball Security:&nbsp;
-					<RatingWithChange
-						change={ratings[r].bsc - Math.max(...lastSeason.map(a => a.bsc))}
-					>
+					Ball Security:{" "}
+					<RatingWithChange change={ratings[r].bsc - lastSeason.bsc}>
 						{ratings[r].bsc}
 					</RatingWithChange>
 				</div>
@@ -148,79 +123,59 @@ const RatingsOverview = ({ ratings }: { ratings: PlayerRatings[] }) => {
 				<div className="col-4">
 					<b>Blocking</b>
 					<br />
-					Run Blocking:&nbsp;
-					<RatingWithChange
-						change={ratings[r].rbk - Math.max(...lastSeason.map(a => a.rbk))}
-					>
+					Run Blocking:{" "}
+					<RatingWithChange change={ratings[r].rbk - lastSeason.rbk}>
 						{ratings[r].rbk}
 					</RatingWithChange>
 					<br />
-					Pass Blocking:&nbsp;
-					<RatingWithChange
-						change={ratings[r].pbk - Math.max(...lastSeason.map(a => a.pbk))}
-					>
+					Pass Blocking:{" "}
+					<RatingWithChange change={ratings[r].pbk - lastSeason.pbk}>
 						{ratings[r].pbk}
 					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Defense</b>
 					<br />
-					Pass Coverage:&nbsp;
-					<RatingWithChange
-						change={ratings[r].pcv - Math.max(...lastSeason.map(a => a.pcv))}
-					>
+					Pass Coverage:{" "}
+					<RatingWithChange change={ratings[r].pcv - lastSeason.pcv}>
 						{ratings[r].pcv}
 					</RatingWithChange>
 					<br />
-					Tackling:&nbsp;
-					<RatingWithChange
-						change={ratings[r].tck - Math.max(...lastSeason.map(a => a.tck))}
-					>
+					Tackling:{" "}
+					<RatingWithChange change={ratings[r].tck - lastSeason.tck}>
 						{ratings[r].tck}
 					</RatingWithChange>
 					<br />
-					Pass Rushing:&nbsp;
-					<RatingWithChange
-						change={ratings[r].prs - Math.max(...lastSeason.map(a => a.prs))}
-					>
+					Pass Rushing:{" "}
+					<RatingWithChange change={ratings[r].prs - lastSeason.prs}>
 						{ratings[r].prs}
 					</RatingWithChange>
 					<br />
-					Run Stopping:&nbsp;
-					<RatingWithChange
-						change={ratings[r].rns - Math.max(...lastSeason.map(a => a.rns))}
-					>
+					Run Stopping:{" "}
+					<RatingWithChange change={ratings[r].rns - lastSeason.rns}>
 						{ratings[r].rns}
 					</RatingWithChange>
 				</div>
 				<div className="col-4">
 					<b>Kicking</b>
 					<br />
-					Kick Power:&nbsp;
-					<RatingWithChange
-						change={ratings[r].kpw - Math.max(...lastSeason.map(a => a.kpw))}
-					>
+					Kick Power:{" "}
+					<RatingWithChange change={ratings[r].kpw - lastSeason.kpw}>
 						{ratings[r].kpw}
 					</RatingWithChange>
 					<br />
-					Kick Accuracy:&nbsp;
-					<RatingWithChange
-						change={ratings[r].kac - Math.max(...lastSeason.map(a => a.kac))}
-					>
+					Kick Accuracy:{" "}
+					<RatingWithChange change={ratings[r].kac - lastSeason.kac}>
 						{ratings[r].kac}
 					</RatingWithChange>
 					<br />
-					Punt Power:&nbsp;
-					<RatingWithChange
-						change={ratings[r].ppw - Math.max(...lastSeason.map(a => a.ppw))}
-					>
+					Punt Power:{" "}
+					<RatingWithChange change={ratings[r].ppw - lastSeason.ppw}>
 						{ratings[r].ppw}
 					</RatingWithChange>
 					<br />
-					Punt Accura:&nbsp;
-					<RatingWithChange
-						change={ratings[r].pac - Math.max(...lastSeason.map(a => a.pac))}
-					>
+					Punt Accura:{" "}
+					<RatingWithChange change={ratings[r].pac - lastSeason.pac}>
 						{ratings[r].pac}
 					</RatingWithChange>
 				</div>

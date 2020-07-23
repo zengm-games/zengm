@@ -546,7 +546,7 @@ class GameSim {
 	 * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
 	 */
 	fatigue(energy: number, skip?: boolean): number {
-		energy += 0.05;
+		energy += 0.016;
 
 		if (energy > 1) {
 			energy = 1;
@@ -684,7 +684,7 @@ class GameSim {
 
 						if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
 							if (
-								this.fatigue(this.team[t].player[p].stat.energy) > 0.7 &&
+								this.fatigue(this.team[t].player[p].stat.energy) > 0.728 &&
 								!onCourtIsIneligible
 							) {
 								// Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
@@ -874,7 +874,13 @@ class GameSim {
 			"blocking",
 		];
 
-		for (const t of teamNums) {
+		for (let k = 0; k < teamNums.length; k++) {
+			const t = teamNums[k];
+			const oppT = teamNums[1 - k];
+			const diff = this.team[t].stat.pts - this.team[oppT].stat.pts;
+
+			const perfFactor = 1 - 0.2 * Math.tanh(diff / 60);
+
 			for (let j = 0; j < toUpdate.length; j++) {
 				const rating = toUpdate[j];
 				this.team[t].compositeRating[rating] = 0;
@@ -883,7 +889,8 @@ class GameSim {
 					const p = this.playersOnCourt[t][i];
 					this.team[t].compositeRating[rating] +=
 						this.team[t].player[p].compositeRating[rating] *
-						this.fatigue(this.team[t].player[p].stat.energy);
+						this.fatigue(this.team[t].player[p].stat.energy) *
+						perfFactor;
 				}
 
 				this.team[t].compositeRating[rating] /= 5;
@@ -923,7 +930,7 @@ class GameSim {
 						p,
 						"energy",
 						-possessionLength *
-							0.075 *
+							0.051 *
 							(1 - this.team[t].player[p].compositeRating.endurance),
 					);
 
@@ -932,7 +939,7 @@ class GameSim {
 					}
 				} else {
 					this.recordStat(t, p, "benchTime", possessionLength);
-					this.recordStat(t, p, "energy", possessionLength * 0.1);
+					this.recordStat(t, p, "energy", possessionLength * 0.094);
 
 					if (this.team[t].player[p].stat.energy > 1) {
 						this.team[t].player[p].stat.energy = 1;
@@ -1199,15 +1206,15 @@ class GameSim {
 				probMissAndFoul = 0.07;
 				probMake =
 					this.team[this.o].player[p].compositeRating.shootingMidRange * 0.32 +
-					0.35;
+					0.42;
 				probAndOne = 0.05;
 			} else if (r2 > r3) {
 				// Dunk, fast break or half court
 				type = "atRim";
 				probMissAndFoul = 0.37;
 				probMake =
-					this.team[this.o].player[p].compositeRating.shootingAtRim * 0.32 +
-					0.55;
+					this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 +
+					0.54;
 				probAndOne = 0.25;
 			} else {
 				// Post up
@@ -1215,7 +1222,7 @@ class GameSim {
 				probMissAndFoul = 0.33;
 				probMake =
 					this.team[this.o].player[p].compositeRating.shootingLowPost * 0.32 +
-					0.42;
+					0.34;
 				probAndOne = 0.15;
 			}
 

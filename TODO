@@ -5,6 +5,20 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
+- make everything transparent. way to see what the average player thinks of you, and specific players
+- also make players on rookie contracts less likely to refuse
+- show +/- for different factors like civ4
+- https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
+  - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
+
+“Attempt to use history.replaceState() more than 100 times per 30 seconds” on safari sometimes, when auto playing
+
 RatingsOverview alignment
 - maybe have it aligned on the : so all numbers are aligned and all categories are right aligned before them
 
@@ -46,16 +60,6 @@ built-in UI to load custom user files
   - last_updated
   - version (increment every update, keep in URL)
 - CRUD UI for people to upload/edit/delete league files
-
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
-- make everything transparent. way to see what the average player thinks of you, and specific players
-- also make players on rookie contracts less likely to refuse
-- show +/- for different factors like civ4
 
 playoff upsets
 - upset odds currently? upset odds ideally?

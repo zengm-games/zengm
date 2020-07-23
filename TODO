@@ -5,6 +5,48 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+name/colleges revamp
+- decouple frequency and count
+  - g.bioInfo = {
+    // This either overwrites a built-in country, or adds a new country
+    data?: {
+      "Country Name": {
+        // If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
+        first?: Record<string, number>,
+        last?: Record<string, number>,
+        colleges?: Record<string, number>,
+        percentSkipCollege?: number,
+        races?: Record<Race, number>,
+      },
+    },
+
+    // This specifies which countries (from the built-in database, and supplemented by "data" above)
+    countries?: Record<string, number>,
+  }
+- tools scripts
+  - colleges - generate some defaultColleges object
+  - names - generate JSON, to be manually assembled in names.js or whatever, with comment indicating where it came from
+- names-football
+  - unify with basketball, just have different countries?
+- names-test
+- upgrade path
+  - g.names -> g.bioInfo
+  - test
+    - upgraded league
+    - league file
+- documentation
+  - explain edge case (partial overrides, no college)
+- new names
+  - ra98 help with names
+- blog
+  - can easily change the frequency of players from different countries
+  - can specify colleges, including different ones for different countries
+  - (?) more names from small/rare countries
+- LATER
+  - UI to edit
+    - would have to be before a league starts, otherwise not that useful
+      - unless there was some "regenerate players" button
+
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes

@@ -59,9 +59,6 @@ redo mood system
 
 “Attempt to use history.replaceState() more than 100 times per 30 seconds” on safari sometimes, when auto playing
 
-RatingsOverview alignment
-- maybe have it aligned on the : so all numbers are aligned and all categories are right aligned before them
-
 option to lock ratings for all players, including future players
 
 FBGM make ratings improvements less correlated

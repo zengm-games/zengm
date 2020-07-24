@@ -62,7 +62,8 @@ const calcWinp = ({
 	tied: any;
 	won: number;
 }) => {
-	if (typeof tied !== "number") {
+	// Some old leagues had NaN for tied...
+	if (typeof tied !== "number" || Number.isNaN(tied)) {
 		if (won + lost > 0) {
 			return won / (won + lost);
 		}

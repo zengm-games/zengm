@@ -24,10 +24,6 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 			first: fns,
 			last: lns,
 		};
-
-		if (country === "USA" || country === "Canada") {
-			countries[country].percentSkipCollege = 0.02;
-		}
 	}
 
 	console.log(`const countries = ${JSON.stringify(countries, null, 2)};\n`);

@@ -12,7 +12,6 @@ const defaultNames = (names as unknown) as Record<
 	{
 		first: Record<string, number>;
 		last: Record<string, number>;
-		percentSkipCollege?: number;
 	}
 >;
 

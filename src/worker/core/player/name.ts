@@ -55,10 +55,16 @@ const name = (): {
 			playerBioInfo.names[country].percentSkipCollege;
 
 		// By default, 98% skip college (in default data, USA and Canada are specified and no other countries are)
-		const percentSkipCollege =
-			countryPercentSkipCollege === undefined
-				? 0.98
-				: countryPercentSkipCollege;
+		let percentSkipCollege;
+		if (countryPercentSkipCollege === undefined) {
+			if (country === "USA" || country === "Canada") {
+				percentSkipCollege = 0.02;
+			} else {
+				percentSkipCollege = 0.98;
+			}
+		} else {
+			percentSkipCollege = countryPercentSkipCollege;
+		}
 
 		if (Math.random() > percentSkipCollege) {
 			college = getFromCumSumArray(colleges);

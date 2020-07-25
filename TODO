@@ -9,13 +9,24 @@ name/colleges revamp
   - names - generate JSON, to be manually assembled in names.js or whatever, with comment indicating where it came from
     - percentSkipCollege (US only, others default) and races
 - g.playerBioInfo: PlayerBioInfo
+  - how to handle if names are supplied but countries is not? only use the supplied countries, and base frequency off cumsums
+    - but do include the built-in countries in the loaded names, in case manually-specified countries references them
 - upgrade path
   - g.names -> g.playerBioInfo
+    - would be better to have loadNames read g.names, non destructively
+    - needs to set countries too, based on total
   - test
     - upgraded league
     - league file
 - documentation
-  - explain edge case (partial overrides, no college)
+  - specify custom names, countries automatically determined
+  - college settings - colleges, percentSkipCollege, defaultColleges
+    - list default defaultColleges
+  - specify custom countries
+    - list default countries settings (sport specific)
+    - can specify based on the built-in names. list names of all the built-in countries (BBGM+FBGM)
+    - can specify based on countries in custom names
+    - can be a combination of countries from custom names and built-in names
 - bundle size, with the football names now?
 - new names
   - ra98 help with names

@@ -288,7 +288,7 @@ export type ExpansionDraftSetupTeam = {
 	tid?: number;
 };
 
-type Names = {
+type NamesLegacy = {
 	first: {
 		[key: string]: [string, number][] | undefined;
 	};
@@ -333,7 +333,7 @@ export type GameAttributesLeague = {
 	minContract: number;
 	minPayroll: number;
 	minRosterSize: number;
-	names?: Names;
+	names?: NamesLegacy;
 	nextPhase?: Phase;
 	numActiveTeams: number;
 	numDraftRounds: number;
@@ -876,8 +876,8 @@ export type PlayerBioInfo = {
 		string,
 		{
 			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
-			first: Record<string, number>;
-			last: Record<string, number>;
+			first?: Record<string, number>;
+			last?: Record<string, number>;
 			colleges?: Record<string, number>;
 			percentSkipCollege?: number;
 		}

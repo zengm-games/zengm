@@ -23,34 +23,48 @@ const toCumSumArray = (obj: Record<string, number>): [string, number][] => {
 	});
 };
 
-const loadNames = (): PlayerBioInfoProcessed => {
-	const gPlayerBioInfo = g.get("playerBioInfo");
-	if (gPlayerBioInfo) {
-	} else {
-		/*const gNames = g.get("names");
-		if (gNames) {
-			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-			if (gNames.first) {
-				if (Array.isArray(gNames.first)) {
-					first = {
-						USA: gNames.first,
-					};
-				} else {
-					first = gNames.first;
-				}
-			}
+const legacyConvert = (array: [string, number][]) => {
+	const obj: Record<string, number> = {};
+	let prev = 0;
+	for (const row of array) {
+		obj[row[0]] = row[1] - prev;
+		prev = row[1];
+	}
+	return obj;
+};
 
-			// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-			if (gNames.last) {
-				if (Array.isArray(gNames.last)) {
-					last = {
-						USA: gNames.last,
-					};
-				} else {
-					last = gNames.last;
-				}
+const loadNames = (): PlayerBioInfoProcessed => {
+	let gPlayerBioInfo = g.get("playerBioInfo");
+	const gNames = g.get("names");
+	if (!gPlayerBioInfo && gNames) {
+		const countryNames = Object.keys(gNames.first);
+
+		const names: Record<
+			string,
+			{
+				first: Record<string, number>;
+				last: Record<string, number>;
 			}
-		}*/
+		> = {};
+
+		if (Array.isArray(gNames.first) && Array.isArray(gNames.last)) {
+			// Double legacy!
+			names.USA = {
+				first: legacyConvert(gNames.first),
+				last: legacyConvert(gNames.last),
+			};
+		} else {
+			for (const countryName of countryNames) {
+				names[countryName] = {
+					first: legacyConvert(gNames.first[countryName]),
+					last: legacyConvert(gNames.last[countryName]),
+				};
+			}
+		}
+
+		gPlayerBioInfo = {
+			names,
+		};
 	}
 
 	const names: PlayerBioInfoProcessed["names"] = {};

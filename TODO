@@ -11,6 +11,13 @@ name/colleges revamp
 - g.playerBioInfo: PlayerBioInfo
   - how to handle if names are supplied but countries is not? only use the supplied countries, and base frequency off cumsums of first names
     - but do include the built-in countries in the loaded names, in case manually-specified countries references them
+- overriding colleges/percentSkipCollege without overriding names
+  - should they be part of "names" or something else? something else makes more sense
+  - colleges: {
+    USA: <>,
+    _default: <>,
+  },
+  - same for percentSkipCollege
 - upgrade path
   - g.names -> g.playerBioInfo
     - would be better to have loadNames read g.names, non destructively
@@ -19,6 +26,7 @@ name/colleges revamp
     - upgraded league
     - league file
 - documentation
+  - update for newer changes!!!
   - test all files from docs
   - football too!
 - bundle size, with the football names now?

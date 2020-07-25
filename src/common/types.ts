@@ -290,10 +290,10 @@ export type ExpansionDraftSetupTeam = {
 
 type NamesLegacy = {
 	first: {
-		[key: string]: [string, number][] | undefined;
+		[key: string]: [string, number][];
 	};
 	last: {
-		[key: string]: [string, number][] | undefined;
+		[key: string]: [string, number][];
 	};
 };
 

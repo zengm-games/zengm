@@ -288,6 +288,15 @@ export type ExpansionDraftSetupTeam = {
 	tid?: number;
 };
 
+type Names = {
+	first: {
+		[key: string]: [string, number][] | undefined;
+	};
+	last: {
+		[key: string]: [string, number][] | undefined;
+	};
+};
+
 export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: boolean;
@@ -564,15 +573,6 @@ export type MenuItemHeader = {
 	league?: true;
 	nonLeague?: true;
 	children: MenuItemLink[];
-};
-
-export type Names = {
-	first: {
-		[key: string]: [string, number][] | undefined;
-	};
-	last: {
-		[key: string]: [string, number][] | undefined;
-	};
 };
 
 export type Negotiation = {
@@ -870,8 +870,21 @@ export type PlayersPlusOptions = {
 	mergeStats?: boolean;
 };
 
-export type PlayerNames = Names & {
-	countries: [string, number][];
+export type PlayerBioInfo = {
+	// This either overwrites a built-in country, or adds a new country
+	data: Record<
+		string,
+		{
+			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
+			first: Record<string, number>;
+			last: Record<string, number>;
+			colleges?: Record<string, number>;
+			percentSkipCollege?: number;
+		}
+	>;
+
+	// This specifies which countries (from the built-in database, and supplemented by "data" above)
+	countries: Record<string, number>;
 };
 
 export type Local = {
@@ -888,7 +901,7 @@ export type Local = {
 	leagueLoaded: boolean;
 	mailingList: boolean;
 	phaseText: string;
-	playerNames?: PlayerNames;
+	playerBioInfo?: PlayerBioInfo;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

@@ -1,6 +1,4 @@
-const colleges: {
-	[key: string]: number;
-} =
+const defaultColleges: Record<string, number> =
 	process.env.SPORT === "basketball"
 		? {
 				"Abilene Christian": 0.1,
@@ -492,4 +490,4 @@ const colleges: {
 				"South Central Louisiana State University": 1,
 		  };
 
-export default colleges;
+export default defaultColleges;

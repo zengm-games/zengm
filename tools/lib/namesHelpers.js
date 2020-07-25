@@ -1,45 +1,38 @@
 const filterAndOutput = (fnsByCountry, lnsByCountry) => {
-	// Minimum of (unique fns, unique lns) by country
-	const countsByCountry = {};
-	for (const country of Object.keys(fnsByCountry).sort()) {
-		countsByCountry[country] = Math.min(
-			Object.keys(fnsByCountry[country]).length,
-			Object.keys(lnsByCountry[country]).length,
-		);
-	}
+	const dropped = [];
 
-	// Restructure fns and lns so they are arrays of [name, cumsum] by country
-	const namesByCountryCumsum = namesByCountry => {
-		const obj = {};
+	const countryNames = Object.keys(fnsByCountry).sort();
 
-		for (const country of Object.keys(namesByCountry).sort()) {
-			let cumsum = 0;
-			obj[country] = Object.keys(namesByCountry[country])
-				.sort()
-				.map(name => {
-					cumsum += namesByCountry[country][name];
-					return [name, cumsum];
-				});
+	const countries = {};
 
-			if (cumsum < 5) {
-				console.log(`Dropping ${country} (${cumsum} players)`);
-				delete obj[country];
-			}
+	for (const country of countryNames) {
+		const fns = fnsByCountry[country];
+		const lns = lnsByCountry[country];
+
+		let sum = 0;
+		for (const count of Object.values(fns)) {
+			sum += count;
 		}
 
-		return obj;
-	};
-	const fnsByCountryCumsum = namesByCountryCumsum(fnsByCountry);
-	const lnsByCountryCumsum = namesByCountryCumsum(lnsByCountry);
+		if (sum < 5) {
+			console.log(`Dropping ${country} (${sum} players)`);
+			dropped.push(country);
+			continue;
+		}
 
-	console.log(JSON.stringify(Object.keys(fnsByCountry).sort(), null, 4));
-	console.log(
-		JSON.stringify(
-			{ first: fnsByCountryCumsum, last: lnsByCountryCumsum },
-			null,
-			4,
-		),
-	);
+		countries[country] = {
+			first: fns,
+			last: lns,
+		};
+
+		if (country === "USA" || country === "Canada") {
+			countries[country].percentSkipCollege = 0.02;
+		}
+	}
+
+	console.log(`const countries = ${JSON.stringify(countries, null, 2)};\n`);
+
+	return dropped;
 };
 
 const juniors = [

@@ -18,6 +18,10 @@ name/colleges revamp
     _default: <>,
   },
   - same for percentSkipCollege
+    - where/how specify default for USA/Canada
+  - would be better to move all to root, and have _frequencies and _default properties along with country names?
+- support for multiple countries with same names database?
+  - use string of country name, rather than object?
 - upgrade path
   - g.names -> g.playerBioInfo
     - would be better to have loadNames read g.names, non destructively
@@ -27,6 +31,7 @@ name/colleges revamp
     - league file
 - documentation
   - update for newer changes!!!
+    - colleges and percentSkipCollege in root. _default of both
   - test all files from docs
   - football too!
 - bundle size, with the football names now?

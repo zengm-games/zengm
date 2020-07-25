@@ -48,23 +48,17 @@ const name = (): {
 	const lastName = getFromCumSumArray(lastCountry);
 
 	let college = "";
+	const countryColleges = playerBioInfo.colleges[country];
 	const colleges =
-		playerBioInfo.names[country].colleges || playerBioInfo.defaultColleges;
+		countryColleges !== undefined
+			? countryColleges
+			: playerBioInfo.colleges._default;
 	if (colleges && colleges.length > 0) {
-		const countryPercentSkipCollege =
-			playerBioInfo.names[country].percentSkipCollege;
-
-		// By default, 98% skip college (in default data, USA and Canada are specified and no other countries are)
-		let percentSkipCollege;
-		if (countryPercentSkipCollege === undefined) {
-			if (country === "USA" || country === "Canada") {
-				percentSkipCollege = 0.02;
-			} else {
-				percentSkipCollege = 0.98;
-			}
-		} else {
-			percentSkipCollege = countryPercentSkipCollege;
-		}
+		const countryPercentSkipCollege = playerBioInfo.percentSkipCollege[country];
+		const percentSkipCollege =
+			countryPercentSkipCollege !== undefined
+				? countryPercentSkipCollege
+				: playerBioInfo.percentSkipCollege._default;
 
 		if (Math.random() > percentSkipCollege) {
 			college = getFromCumSumArray(colleges);

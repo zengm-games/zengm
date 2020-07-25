@@ -67,27 +67,54 @@ const loadNames = (): PlayerBioInfoProcessed => {
 		};
 	}
 
-	const names: PlayerBioInfoProcessed["names"] = {};
+	// If a country is specified in g.playerBioInfo.names, it overrides the built-in ones. But built-in ones still exists and could be used, depending on the value of "countries"
+	const mergedNames =
+		gPlayerBioInfo && gPlayerBioInfo.names
+			? {
+					...defaultNames,
+					...gPlayerBioInfo.names,
+			  }
+			: {
+					...defaultNames,
+			  };
 
-	for (const [country, info] of Object.entries(defaultNames)) {
+	const names: PlayerBioInfoProcessed["names"] = {};
+	for (const [country, info] of Object.entries(mergedNames)) {
 		names[country] = {
 			first: toCumSumArray(info.first),
 			last: toCumSumArray(info.last),
 		};
+	}
 
-		if (info.colleges) {
-			names[country].colleges = toCumSumArray(info.colleges);
+	const colleges: PlayerBioInfoProcessed["colleges"] = {};
+	if (gPlayerBioInfo && gPlayerBioInfo.colleges) {
+		for (const [country, object] of Object.entries(gPlayerBioInfo.colleges)) {
+			colleges[country] = toCumSumArray(object);
 		}
+	}
+	if (!colleges._default) {
+		colleges.default = toCumSumArray(defaultDefaultColleges);
+	}
 
-		if (info.percentSkipCollege !== undefined) {
-			names[country].percentSkipCollege = info.percentSkipCollege;
+	const percentSkipCollege: PlayerBioInfoProcessed["percentSkipCollege"] = {
+		// By default, 98% skip college (in default data, USA and Canada are specified and no other countries are)
+		Canada: 0.02,
+		USA: 0.02,
+		_default: 0.98,
+	};
+	if (gPlayerBioInfo && gPlayerBioInfo.percentSkipCollege) {
+		for (const [country, num] of Object.entries(
+			gPlayerBioInfo.percentSkipCollege,
+		)) {
+			percentSkipCollege[country] = num;
 		}
 	}
 
 	return {
+		colleges,
 		countries: toCumSumArray(defaultCountries),
-		defaultColleges: toCumSumArray(defaultDefaultColleges),
 		names,
+		percentSkipCollege,
 	};
 };
 

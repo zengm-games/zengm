@@ -876,16 +876,14 @@ export type PlayerBioInfo = {
 	names?: Record<
 		string,
 		{
-			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
-			first?: Record<string, number>;
-			last?: Record<string, number>;
-			colleges?: Record<string, number>;
-			percentSkipCollege?: number;
+			first: Record<string, number>;
+			last: Record<string, number>;
 		}
 	>;
 
-	// Will be used if "colleges" is not specified for a country
-	defaultColleges?: Record<string, number>;
+	// Each of these has a _default key that will be used for any countries that are not explicitly specified
+	colleges?: Record<string, Record<string, number>>;
+	percentSkipCollege?: Record<string, number>;
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)
 	countries?: Record<string, number>;
@@ -899,12 +897,11 @@ export type PlayerBioInfoProcessed = {
 			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
 			first: [string, number][];
 			last: [string, number][];
-			colleges?: [string, number][];
-			percentSkipCollege?: number;
 		}
 	>;
 
-	defaultColleges: [string, number][];
+	colleges: Record<string, [string, number][]>;
+	percentSkipCollege: Record<string, number>;
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)
 	countries: [string, number][];

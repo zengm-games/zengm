@@ -872,7 +872,7 @@ export type PlayersPlusOptions = {
 
 export type PlayerBioInfo = {
 	// This either overwrites a built-in country, or adds a new country
-	data: Record<
+	data?: Record<
 		string,
 		{
 			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
@@ -883,8 +883,30 @@ export type PlayerBioInfo = {
 		}
 	>;
 
+	// Will be used if "colleges" is not specified for a country
+	defaultColleges?: Record<string, number>;
+
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)
-	countries: Record<string, number>;
+	countries?: Record<string, number>;
+};
+
+export type PlayerBioInfoProcessed = {
+	// This either overwrites a built-in country, or adds a new country
+	data: Record<
+		string,
+		{
+			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
+			first: [string, number][];
+			last: [string, number][];
+			colleges?: [string, number][];
+			percentSkipCollege?: number;
+		}
+	>;
+
+	defaultColleges: [string, number][];
+
+	// This specifies which countries (from the built-in database, and supplemented by "data" above)
+	countries: [string, number][];
 };
 
 export type Local = {
@@ -901,7 +923,7 @@ export type Local = {
 	leagueLoaded: boolean;
 	mailingList: boolean;
 	phaseText: string;
-	playerBioInfo?: PlayerBioInfo;
+	playerBioInfo?: PlayerBioInfoProcessed;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

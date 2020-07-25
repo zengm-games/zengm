@@ -8,16 +8,15 @@ name/colleges revamp
   - colleges - generate some defaultColleges object
   - names - generate JSON, to be manually assembled in names.js or whatever, with comment indicating where it came from
     - percentSkipCollege (US only, others default) and races
-- names-football
-  - unify with basketball, just have different countries?
-- names-test
+- g.playerBioInfo: PlayerBioInfo
 - upgrade path
-  - g.names -> g.bioInfo
+  - g.names -> g.playerBioInfo
   - test
     - upgraded league
     - league file
 - documentation
   - explain edge case (partial overrides, no college)
+- bundle size, with the football names now?
 - new names
   - ra98 help with names
 - races

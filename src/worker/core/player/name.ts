@@ -1,23 +1,14 @@
 import { loadNames, local, random } from "../../util";
-import defaultColleges from "../../data/defaultColleges";
 
-const defaultCollegeNames = Object.keys(defaultColleges);
-const defaultCollegeWeights = (key: string) => defaultColleges[key];
+const getFromCumSumArray = (array: [string, number][]) => {
+	const rand = random.uniform(0, array[array.length - 1][1]);
+	const foundRow = array.find(row => row[1] >= rand);
 
-// 98% skip by default (all countries except USA and Canada)
-const getCollege = (
-	percentSkipCollege: number = 0.98,
-	colleges?: Record<string, number>,
-) => {
-	if (Math.random() < percentSkipCollege) {
-		return "";
+	if (foundRow === undefined) {
+		throw new Error(`Undefined foundRow (rand=${rand}`);
 	}
 
-	if (colleges) {
-		return random.choice(Object.keys(colleges), (key: string) => colleges[key]);
-	}
-
-	return random.choice(defaultCollegeNames, defaultCollegeWeights);
+	return foundRow[0];
 };
 
 const name = (): {
@@ -34,36 +25,45 @@ const name = (): {
 		local.playerBioInfo = playerBioInfo;
 	}
 
-	const country = random.choice(
-		Object.keys(playerBioInfo.countries),
-		(key: string) => playerBioInfo.countries[key],
-	);
+	const countries = playerBioInfo.countries;
+	if (!countries || countries.length === 0) {
+		throw new Error("No countries in playerBioInfo");
+	}
+	const country = getFromCumSumArray(countries);
 
 	if (!playerBioInfo.data[country]) {
 		throw new Error(`Country "${country}" missing in playerBioInfo data`);
 	}
 
 	const firstCountry = playerBioInfo.data[country].first;
-	const firstCountryKeys = firstCountry ? Object.keys(firstCountry) : [];
-	if (!firstCountry) {
+	if (!firstCountry || firstCountry.length === 0) {
 		throw new Error(`No first names found for ${country}`);
 	}
-	const firstName = random.choice(
-		firstCountryKeys,
-		(key: string) => firstCountry[key],
-	);
+	const firstName = getFromCumSumArray(firstCountry);
 
-	const lastCountry = playerBioInfo.data[country].last;
-	const lastCountryKeys = lastCountry ? Object.keys(lastCountry) : [];
-	if (!lastCountry) {
-		throw new Error(`No last names found for ${country}`);
+	const lastCountry = playerBioInfo.data[country].first;
+	if (!lastCountry || lastCountry.length === 0) {
+		throw new Error(`No first names found for ${country}`);
 	}
-	const lastName = random.choice(
-		lastCountryKeys,
-		(key: string) => lastCountry[key],
-	);
+	const lastName = getFromCumSumArray(lastCountry);
 
-	const college = getCollege();
+	let college = "";
+	const colleges =
+		playerBioInfo.data[country].colleges || playerBioInfo.defaultColleges;
+	if (colleges && colleges.length > 0) {
+		const countryPercentSkipCollege =
+			playerBioInfo.data[country].percentSkipCollege;
+
+		// By default, 98% skip college (in default data, USA and Canada are specified and no other countries are)
+		const percentSkipCollege =
+			countryPercentSkipCollege === undefined
+				? 0.98
+				: countryPercentSkipCollege;
+
+		if (Math.random() > percentSkipCollege) {
+			college = getFromCumSumArray(colleges);
+		}
+	}
 
 	return {
 		college,

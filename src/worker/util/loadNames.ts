@@ -1,4 +1,5 @@
-import type { PlayerBioInfo } from "../../common/types";
+import type { PlayerBioInfo, PlayerBioInfoProcessed } from "../../common/types";
+import defaultDefaultColleges from "../data/defaultColleges";
 import defaultCountries from "../data/defaultCountries";
 // import g from "./g";
 
@@ -6,9 +7,20 @@ import defaultCountries from "../data/defaultCountries";
 // If the list of countries changes, update the fake age code in getPlayerFakeAge.js!
 // This is dynamically resolved with rollup-plugin-alias
 import names from "player-names"; // eslint-disable-line
-const defaultNames = (names as unknown) as PlayerBioInfo["data"];
+const defaultNames = (names as unknown) as Exclude<
+	PlayerBioInfo["data"],
+	undefined
+>;
 
-const loadNames = (): PlayerBioInfo => {
+const toCumSumArray = (obj: Record<string, number>): [string, number][] => {
+	let cumsum = 0;
+	return Object.entries(obj).map(([key, value]) => {
+		cumsum += value;
+		return [key, cumsum];
+	});
+};
+
+const loadNames = (): PlayerBioInfoProcessed => {
 	/*const gNames = g.get("names");
 	if (gNames) {
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -34,9 +46,27 @@ const loadNames = (): PlayerBioInfo => {
 		}
 	}*/
 
+	const data: PlayerBioInfoProcessed["data"] = {};
+
+	for (const [country, info] of Object.entries(defaultNames)) {
+		data[country] = {
+			first: toCumSumArray(info.first),
+			last: toCumSumArray(info.last),
+		};
+
+		if (info.colleges) {
+			data[country].colleges = toCumSumArray(info.colleges);
+		}
+
+		if (info.percentSkipCollege !== undefined) {
+			data[country].percentSkipCollege = info.percentSkipCollege;
+		}
+	}
+
 	return {
-		countries: defaultCountries,
-		data: defaultNames,
+		countries: toCumSumArray(defaultCountries),
+		defaultColleges: toCumSumArray(defaultDefaultColleges),
+		data,
 	};
 };
 

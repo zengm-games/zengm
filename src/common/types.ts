@@ -343,6 +343,7 @@ export type GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
 	phase: Phase;
+	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
 	realPlayerDeterminism: number;
@@ -872,7 +873,7 @@ export type PlayersPlusOptions = {
 
 export type PlayerBioInfo = {
 	// This either overwrites a built-in country, or adds a new country
-	data?: Record<
+	names?: Record<
 		string,
 		{
 			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
@@ -892,7 +893,7 @@ export type PlayerBioInfo = {
 
 export type PlayerBioInfoProcessed = {
 	// This either overwrites a built-in country, or adds a new country
-	data: Record<
+	names: Record<
 		string,
 		{
 			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.

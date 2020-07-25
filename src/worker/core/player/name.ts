@@ -31,17 +31,17 @@ const name = (): {
 	}
 	const country = getFromCumSumArray(countries);
 
-	if (!playerBioInfo.data[country]) {
-		throw new Error(`Country "${country}" missing in playerBioInfo data`);
+	if (!playerBioInfo.names[country]) {
+		throw new Error(`Country "${country}" missing in playerBioInfo names`);
 	}
 
-	const firstCountry = playerBioInfo.data[country].first;
+	const firstCountry = playerBioInfo.names[country].first;
 	if (!firstCountry || firstCountry.length === 0) {
 		throw new Error(`No first names found for ${country}`);
 	}
 	const firstName = getFromCumSumArray(firstCountry);
 
-	const lastCountry = playerBioInfo.data[country].first;
+	const lastCountry = playerBioInfo.names[country].first;
 	if (!lastCountry || lastCountry.length === 0) {
 		throw new Error(`No first names found for ${country}`);
 	}
@@ -49,10 +49,10 @@ const name = (): {
 
 	let college = "";
 	const colleges =
-		playerBioInfo.data[country].colleges || playerBioInfo.defaultColleges;
+		playerBioInfo.names[country].colleges || playerBioInfo.defaultColleges;
 	if (colleges && colleges.length > 0) {
 		const countryPercentSkipCollege =
-			playerBioInfo.data[country].percentSkipCollege;
+			playerBioInfo.names[country].percentSkipCollege;
 
 		// By default, 98% skip college (in default data, USA and Canada are specified and no other countries are)
 		const percentSkipCollege =

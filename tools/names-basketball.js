@@ -410,7 +410,7 @@ const namesBasketball = () => {
 			console.log(err.message);
 			continue;
 		}
-		console.log(fn, "|", ln, "|", country);
+		// console.log(fn, "|", ln, "|", country);
 
 		if (!fnsByCountry.hasOwnProperty(country)) {
 			fnsByCountry[country] = {};

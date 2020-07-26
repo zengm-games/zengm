@@ -20,6 +20,17 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 			continue;
 		}
 
+		// USA has too many names, so ignore any that appear only once
+		if (country === "USA") {
+			for (const names of [fns, lns]) {
+				for (const [name, count] of Object.entries(names)) {
+					if (count <= 1) {
+						delete names[name];
+					}
+				}
+			}
+		}
+
 		countries[country] = {
 			first: fns,
 			last: lns,

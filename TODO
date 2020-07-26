@@ -327,6 +327,8 @@ FBGM
 - easier position changes, maybe from roster or player pages
   - auto sort roster after? or maybe have option to set if user controls roster sort or not
     - default should be "not"
+- Add the release and trade away buttons to the depth chart screen. I find myself flipping back and forth from the depth chart and roster.
+- Add the roster composition to any roster type screen like draft, depth chart, and trade screens.
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

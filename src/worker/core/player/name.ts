@@ -25,40 +25,41 @@ const name = (): {
 		local.playerBioInfo = playerBioInfo;
 	}
 
-	const countries = playerBioInfo.countries;
-	if (!countries || countries.length === 0) {
+	const frequencies = playerBioInfo.frequencies;
+	if (!frequencies || frequencies.length === 0) {
 		throw new Error("No countries in playerBioInfo");
 	}
-	const country = getFromCumSumArray(countries);
+	const country = getFromCumSumArray(frequencies);
 
-	if (!playerBioInfo.names[country]) {
-		throw new Error(`Country "${country}" missing in playerBioInfo names`);
+	if (!playerBioInfo.countries[country]) {
+		throw new Error(`Country "${country}" missing in playerBioInfo countries`);
 	}
 
-	const firstCountry = playerBioInfo.names[country].first;
+	const firstCountry = playerBioInfo.countries[country].first;
 	if (!firstCountry || firstCountry.length === 0) {
 		throw new Error(`No first names found for ${country}`);
 	}
 	const firstName = getFromCumSumArray(firstCountry);
 
-	const lastCountry = playerBioInfo.names[country].first;
+	const lastCountry = playerBioInfo.countries[country].last;
 	if (!lastCountry || lastCountry.length === 0) {
-		throw new Error(`No first names found for ${country}`);
+		throw new Error(`No last names found for ${country}`);
 	}
 	const lastName = getFromCumSumArray(lastCountry);
 
 	let college = "";
-	const countryColleges = playerBioInfo.colleges[country];
+	const countryColleges = playerBioInfo.countries[country].colleges;
 	const colleges =
 		countryColleges !== undefined
 			? countryColleges
-			: playerBioInfo.colleges._default;
+			: playerBioInfo.default.colleges;
 	if (colleges && colleges.length > 0) {
-		const countryPercentSkipCollege = playerBioInfo.percentSkipCollege[country];
+		const countryPercentSkipCollege =
+			playerBioInfo.countries[country].percentSkipCollege;
 		const percentSkipCollege =
 			countryPercentSkipCollege !== undefined
 				? countryPercentSkipCollege
-				: playerBioInfo.percentSkipCollege._default;
+				: playerBioInfo.default.percentSkipCollege;
 
 		if (Math.random() > percentSkipCollege) {
 			college = getFromCumSumArray(colleges);

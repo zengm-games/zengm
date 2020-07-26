@@ -1,5 +1,9 @@
-import type { PlayerBioInfoProcessed } from "../../common/types";
-import defaultDefaultColleges from "../data/defaultColleges";
+import type {
+	PlayerBioInfoProcessed,
+	PlayerBioInfo,
+	NamesLegacy,
+} from "../../common/types";
+import defaultColleges from "../data/defaultColleges";
 import defaultCountries from "../data/defaultCountries";
 import g from "./g";
 
@@ -35,11 +39,11 @@ const legacyConvert = (array: [string, number][]) => {
 
 const loadNames = (): PlayerBioInfoProcessed => {
 	let gPlayerBioInfo = g.get("playerBioInfo");
-	const gNames = g.get("names");
+	const gNames: NamesLegacy | undefined = (g as any).names;
 	if (!gPlayerBioInfo && gNames) {
 		const countryNames = Object.keys(gNames.first);
 
-		const names: Record<
+		const countries: Record<
 			string,
 			{
 				first: Record<string, number>;
@@ -49,13 +53,13 @@ const loadNames = (): PlayerBioInfoProcessed => {
 
 		if (Array.isArray(gNames.first) && Array.isArray(gNames.last)) {
 			// Double legacy!
-			names.USA = {
+			countries.USA = {
 				first: legacyConvert(gNames.first),
 				last: legacyConvert(gNames.last),
 			};
 		} else {
 			for (const countryName of countryNames) {
-				names[countryName] = {
+				countries[countryName] = {
 					first: legacyConvert(gNames.first[countryName]),
 					last: legacyConvert(gNames.last[countryName]),
 				};
@@ -63,58 +67,102 @@ const loadNames = (): PlayerBioInfoProcessed => {
 		}
 
 		gPlayerBioInfo = {
-			names,
+			countries,
 		};
 	}
 
-	// If a country is specified in g.playerBioInfo.names, it overrides the built-in ones. But built-in ones still exists and could be used, depending on the value of "countries"
-	const mergedNames =
-		gPlayerBioInfo && gPlayerBioInfo.names
-			? {
-					...defaultNames,
-					...gPlayerBioInfo.names,
-			  }
-			: {
-					...defaultNames,
-			  };
-
-	const names: PlayerBioInfoProcessed["names"] = {};
-	for (const [country, info] of Object.entries(mergedNames)) {
-		names[country] = {
-			first: toCumSumArray(info.first),
-			last: toCumSumArray(info.last),
-		};
-	}
-
-	const colleges: PlayerBioInfoProcessed["colleges"] = {};
-	if (gPlayerBioInfo && gPlayerBioInfo.colleges) {
-		for (const [country, object] of Object.entries(gPlayerBioInfo.colleges)) {
-			colleges[country] = toCumSumArray(object);
-		}
-	}
-	if (!colleges._default) {
-		colleges.default = toCumSumArray(defaultDefaultColleges);
-	}
-
-	const percentSkipCollege: PlayerBioInfoProcessed["percentSkipCollege"] = {
-		// By default, 98% skip college (in default data, USA and Canada are specified and no other countries are)
-		Canada: 0.02,
-		USA: 0.02,
-		_default: 0.98,
+	// If a country is specified in g.playerBioInfo.names, it overrides the built-in ones. But built-in ones still exists and could be used, depending on the value of "frequencies"
+	const mergedCountries: PlayerBioInfo["countries"] = {
+		...defaultNames,
 	};
-	if (gPlayerBioInfo && gPlayerBioInfo.percentSkipCollege) {
-		for (const [country, num] of Object.entries(
-			gPlayerBioInfo.percentSkipCollege,
-		)) {
-			percentSkipCollege[country] = num;
+	if (gPlayerBioInfo && gPlayerBioInfo.countries) {
+		for (const [country, info] of Object.entries(gPlayerBioInfo.countries)) {
+			if (!mergedCountries[country]) {
+				mergedCountries[country] = info;
+			} else {
+				mergedCountries[country] = {
+					...mergedCountries[country],
+					...info,
+				};
+			}
 		}
 	}
+
+	const countries: PlayerBioInfoProcessed["countries"] = {};
+	for (const [
+		country,
+		{ first, last, colleges, percentSkipCollege },
+	] of Object.entries(mergedCountries)) {
+		if (first && last) {
+			countries[country] = {
+				first: toCumSumArray(first),
+				last: toCumSumArray(last),
+			};
+			if (colleges) {
+				countries[country].colleges = toCumSumArray(colleges);
+			}
+			if (percentSkipCollege === undefined) {
+				if (country === "USA" || country === "Canada") {
+					countries[country].percentSkipCollege = 0.02;
+				}
+			} else {
+				countries[country].percentSkipCollege = percentSkipCollege;
+			}
+		}
+	}
+
+	let percentSkipCollege = 0.98;
+	if (
+		gPlayerBioInfo &&
+		gPlayerBioInfo.default &&
+		gPlayerBioInfo.default.percentSkipCollege !== undefined
+	) {
+		percentSkipCollege = gPlayerBioInfo.default.percentSkipCollege;
+	}
+
+	let colleges;
+	if (
+		gPlayerBioInfo &&
+		gPlayerBioInfo.default &&
+		gPlayerBioInfo.default.colleges
+	) {
+		colleges = toCumSumArray(gPlayerBioInfo.default.colleges);
+	} else {
+		colleges = toCumSumArray(defaultColleges);
+	}
+
+	let frequenciesObject: Record<string, number> | undefined;
+	if (gPlayerBioInfo && gPlayerBioInfo.frequencies) {
+		// Manually specified frequencies
+		frequenciesObject = gPlayerBioInfo.frequencies;
+	} else if (gPlayerBioInfo && gPlayerBioInfo.countries) {
+		// Frequencies inferred from manually specified countries
+		frequenciesObject = {};
+		for (const [country, { first }] of Object.entries(
+			gPlayerBioInfo.countries,
+		)) {
+			if (first) {
+				frequenciesObject[country] = 0;
+				for (const count of Object.values(first)) {
+					frequenciesObject[country] += count;
+				}
+			}
+		}
+	}
+	if (!frequenciesObject || Object.keys(frequenciesObject).length === 0) {
+		// Default frequencies
+		frequenciesObject = defaultCountries;
+	}
+
+	const frequencies = toCumSumArray(frequenciesObject);
 
 	return {
-		colleges,
-		countries: toCumSumArray(defaultCountries),
-		names,
-		percentSkipCollege,
+		countries,
+		default: {
+			colleges,
+			percentSkipCollege,
+		},
+		frequencies,
 	};
 };
 

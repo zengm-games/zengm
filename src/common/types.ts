@@ -288,7 +288,7 @@ export type ExpansionDraftSetupTeam = {
 	tid?: number;
 };
 
-type NamesLegacy = {
+export type NamesLegacy = {
 	first: {
 		[key: string]: [string, number][];
 	};
@@ -873,38 +873,44 @@ export type PlayersPlusOptions = {
 
 export type PlayerBioInfo = {
 	// This either overwrites a built-in country, or adds a new country
-	names?: Record<
-		string,
-		{
-			first: Record<string, number>;
-			last: Record<string, number>;
-		}
-	>;
-
-	// Each of these has a _default key that will be used for any countries that are not explicitly specified
-	colleges?: Record<string, Record<string, number>>;
-	percentSkipCollege?: Record<string, number>;
-
-	// This specifies which countries (from the built-in database, and supplemented by "data" above)
-	countries?: Record<string, number>;
-};
-
-export type PlayerBioInfoProcessed = {
-	// This either overwrites a built-in country, or adds a new country
-	names: Record<
+	countries?: Record<
 		string,
 		{
 			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
-			first: [string, number][];
-			last: [string, number][];
+			first?: Record<string, number>;
+			last?: Record<string, number>;
+			colleges?: Record<string, number>;
+			percentSkipCollege?: number;
 		}
 	>;
 
-	colleges: Record<string, [string, number][]>;
-	percentSkipCollege: Record<string, number>;
+	default?: {
+		colleges?: Record<string, number>;
+		percentSkipCollege?: number;
+	};
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)
-	countries: [string, number][];
+	frequencies?: Record<string, number>;
+};
+
+export type PlayerBioInfoProcessed = {
+	countries: Record<
+		string,
+		{
+			first: [string, number][];
+			last: [string, number][];
+			colleges?: [string, number][];
+			percentSkipCollege?: number;
+		}
+	>;
+
+	default: {
+		colleges: [string, number][];
+		percentSkipCollege: number;
+	};
+
+	// This specifies which countries (from the built-in database, and supplemented by "data" above)
+	frequencies: [string, number][];
 };
 
 export type Local = {

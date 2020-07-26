@@ -880,13 +880,13 @@ export type PlayerBioInfo = {
 			first?: Record<string, number>;
 			last?: Record<string, number>;
 			colleges?: Record<string, number>;
-			percentSkipCollege?: number;
+			fractionSkipCollege?: number;
 		}
 	>;
 
 	default?: {
 		colleges?: Record<string, number>;
-		percentSkipCollege?: number;
+		fractionSkipCollege?: number;
 	};
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)
@@ -900,13 +900,13 @@ export type PlayerBioInfoProcessed = {
 			first: [string, number][];
 			last: [string, number][];
 			colleges?: [string, number][];
-			percentSkipCollege?: number;
+			fractionSkipCollege?: number;
 		}
 	>;
 
 	default: {
 		colleges: [string, number][];
-		percentSkipCollege: number;
+		fractionSkipCollege: number;
 	};
 
 	// This specifies which countries (from the built-in database, and supplemented by "data" above)

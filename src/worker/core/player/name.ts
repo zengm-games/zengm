@@ -54,14 +54,14 @@ const name = (): {
 			? countryColleges
 			: playerBioInfo.default.colleges;
 	if (colleges && colleges.length > 0) {
-		const countryPercentSkipCollege =
-			playerBioInfo.countries[country].percentSkipCollege;
-		const percentSkipCollege =
-			countryPercentSkipCollege !== undefined
-				? countryPercentSkipCollege
-				: playerBioInfo.default.percentSkipCollege;
+		const countryfractionSkipCollege =
+			playerBioInfo.countries[country].fractionSkipCollege;
+		const fractionSkipCollege =
+			countryfractionSkipCollege !== undefined
+				? countryfractionSkipCollege
+				: playerBioInfo.default.fractionSkipCollege;
 
-		if (Math.random() > percentSkipCollege) {
+		if (Math.random() > fractionSkipCollege) {
 			college = getFromCumSumArray(colleges);
 		}
 	}

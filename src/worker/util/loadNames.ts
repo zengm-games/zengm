@@ -91,7 +91,7 @@ const loadNames = (): PlayerBioInfoProcessed => {
 	const countries: PlayerBioInfoProcessed["countries"] = {};
 	for (const [
 		country,
-		{ first, last, colleges, percentSkipCollege },
+		{ first, last, colleges, fractionSkipCollege },
 	] of Object.entries(mergedCountries)) {
 		if (first && last) {
 			countries[country] = {
@@ -101,23 +101,23 @@ const loadNames = (): PlayerBioInfoProcessed => {
 			if (colleges) {
 				countries[country].colleges = toCumSumArray(colleges);
 			}
-			if (percentSkipCollege === undefined) {
+			if (fractionSkipCollege === undefined) {
 				if (country === "USA" || country === "Canada") {
-					countries[country].percentSkipCollege = 0.02;
+					countries[country].fractionSkipCollege = 0.02;
 				}
 			} else {
-				countries[country].percentSkipCollege = percentSkipCollege;
+				countries[country].fractionSkipCollege = fractionSkipCollege;
 			}
 		}
 	}
 
-	let percentSkipCollege = 0.98;
+	let fractionSkipCollege = 0.98;
 	if (
 		gPlayerBioInfo &&
 		gPlayerBioInfo.default &&
-		gPlayerBioInfo.default.percentSkipCollege !== undefined
+		gPlayerBioInfo.default.fractionSkipCollege !== undefined
 	) {
-		percentSkipCollege = gPlayerBioInfo.default.percentSkipCollege;
+		fractionSkipCollege = gPlayerBioInfo.default.fractionSkipCollege;
 	}
 
 	let colleges;
@@ -160,7 +160,7 @@ const loadNames = (): PlayerBioInfoProcessed => {
 		countries,
 		default: {
 			colleges,
-			percentSkipCollege,
+			fractionSkipCollege,
 		},
 		frequencies,
 	};

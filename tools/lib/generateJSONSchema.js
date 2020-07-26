@@ -579,6 +579,32 @@ const generateJSONSchema = (sport /*: string*/) => {
 							true,
 						),
 						gameAttribute(
+							"playerBioInfo",
+							{
+								type: "object",
+								properties: {
+									countries: {
+										type: "object",
+									},
+									default: {
+										type: "object",
+										properties: {
+											colleges: {
+												type: "object",
+											},
+											fractionSkipCollege: {
+												type: "number",
+											},
+										},
+									},
+									frequencies: {
+										type: "object",
+									},
+								},
+							},
+							true,
+						),
+						gameAttribute(
 							"nextPhase",
 							{
 								// Shouldn't actually be null, but legacy

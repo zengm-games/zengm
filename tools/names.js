@@ -1,6 +1,6 @@
 const namesBasketball = require("./names-basketball");
 const namesFootball = require("./names-football");
-const { filterAndOutput } = require("./lib/namesHelpers");
+const { JSONstringifyOrder, filterAndOutput } = require("./lib/namesHelpers");
 
 const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(
@@ -61,12 +61,11 @@ for (const freq of [countriesBasketball, countriesFootball]) {
 }
 
 console.log(
-	`const countriesBasketball = ${JSON.stringify(
+	`const countriesBasketball = ${JSONstringifyOrder(
 		countriesBasketball,
-		null,
 		2,
 	)};\n`,
 );
 console.log(
-	`const countriesFootball = ${JSON.stringify(countriesFootball, null, 2)};\n`,
+	`const countriesFootball = ${JSONstringifyOrder(countriesFootball, 2)};\n`,
 );

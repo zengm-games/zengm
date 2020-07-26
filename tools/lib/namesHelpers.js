@@ -1,3 +1,14 @@
+// https://stackoverflow.com/a/53593328
+const JSONstringifyOrder = (obj, space) => {
+	var allKeys = [];
+	JSON.stringify(obj, (key, value) => {
+		allKeys.push(key);
+		return value;
+	});
+	allKeys.sort();
+	return JSON.stringify(obj, allKeys, space);
+};
+
 const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 	const dropped = [];
 
@@ -37,7 +48,7 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 		};
 	}
 
-	console.log(`const countries = ${JSON.stringify(countries, null, 2)};\n`);
+	console.log(`const countries = ${JSONstringifyOrder(countries, 2)};\n`);
 
 	return dropped;
 };
@@ -120,6 +131,7 @@ const states = [
 ];
 
 module.exports = {
+	JSONstringifyOrder,
 	filterAndOutput,
 	juniors,
 	provinces,

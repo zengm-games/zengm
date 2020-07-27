@@ -6,6 +6,8 @@ nicidob PRs
 name/colleges revamp
 - documentation
   - football too!
+- korea -> south and north
+- what about countries in names.json but not in defaultCountries? add in small amount, like for groups
 - blog
   - names from new countries!
 - races

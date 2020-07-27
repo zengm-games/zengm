@@ -189,6 +189,9 @@ const loadNames = (): PlayerBioInfoProcessed => {
 		frequenciesObject = defaultCountries;
 	}
 
+	// For documentation, getting the default list of country frequencies
+	// console.log(JSON.stringify(frequenciesObject, Object.keys(frequenciesObject).sort(), "\t"));
+
 	const frequencies = toCumSumArray(frequenciesObject);
 
 	return {

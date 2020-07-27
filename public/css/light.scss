@@ -137,6 +137,10 @@ a.god-mode.active {
 	padding: 0 3px;
 }
 
+.btn-god-mode {
+	@include button-variant($purple, $purple);
+}
+
 .play-button {
 	font-size: 1.01562rem;
 	padding: 14px !important;

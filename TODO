@@ -4,11 +4,6 @@ nicidob PRs
 - team overall ratings
 
 name/colleges revamp
-- documentation
-  - regenerate default list of frequencies
-  - football too!
-- blog
-  - names from new countries! north korea, etc
 - races
   - playerBioInfo.data[].races?: Record<Race, number>,
 - flag icon on roster page

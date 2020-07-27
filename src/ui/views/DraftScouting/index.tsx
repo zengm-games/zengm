@@ -10,6 +10,7 @@ const PAGE_SIZE = 3;
 const DraftScouting = ({
 	challengeNoRatings,
 	draftType,
+	godMode,
 	seasons,
 }: View<"draftScouting">) => {
 	useTitleBar({ title: "Draft Scouting" });
@@ -84,6 +85,7 @@ const DraftScouting = ({
 						<div key={info.season} className="col-md-4 col-sm-6">
 							<DraftClass
 								challengeNoRatings={challengeNoRatings}
+								godMode={godMode}
 								offset={offset}
 								players={info.players}
 								season={info.season}

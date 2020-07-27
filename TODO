@@ -9,8 +9,6 @@ name/colleges revamp
 - flag icon on roster page
   - https://github.com/lipis/flag-icon-css
 
-button to re-generate draft class @42theanswer#1538
-
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes

@@ -6,7 +6,7 @@ import type { CompositeWeights, Phase } from "./types";
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
-		: "https://account.basketball-gm.com";
+		: `https://account.${process.env.SPORT}-gm.com`;
 
 const DIFFICULTY = {
 	Easy: -0.25,

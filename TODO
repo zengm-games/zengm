@@ -4,27 +4,13 @@ nicidob PRs
 - team overall ratings
 
 name/colleges revamp
-- support for multiple countries with same names database?
-  - use string of country name, rather than object?
 - documentation
   - football too!
 - new names
-  - ra98 help with names
-  - ~/Documents/BBGM/user submitted name data
-  - should be included during tools/name.js
+  - "special" ones need to be a single json file, and then dynamically included in loadNames
 - races
   - playerBioInfo.data[].races?: Record<Race, number>,
-- beta
-  - @dooby moogey#2784 
 - blog
-  - can easily change the frequency of players from different countries
-  - can specify colleges, including different ones for different countries
-  - merged basketball/football names databases
-  - (?) more names from small/rare countries
-- LATER
-  - UI to edit
-    - would have to be before a league starts, otherwise not that useful
-      - unless there was some "regenerate players" button
 
 redo mood system
 - make available throughout the year

@@ -48,7 +48,7 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 		};
 	}
 
-	console.log(`const countries = ${JSONstringifyOrder(countries, 2)};\n`);
+	console.log(`# names.json:\n\n${JSONstringifyOrder(countries, 2)}\n\n`);
 
 	return dropped;
 };

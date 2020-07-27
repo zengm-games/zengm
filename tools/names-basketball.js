@@ -432,6 +432,10 @@ const namesBasketball = () => {
 			}
 			lnsByCountry[country][ln] += 1;
 		}
+
+		/*if (Math.random() < 0.01) {
+			break;
+		}*/
 	}
 
 	return { fnsByCountry, lnsByCountry };

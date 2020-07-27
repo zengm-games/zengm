@@ -6,8 +6,8 @@ nicidob PRs
 name/colleges revamp
 - documentation
   - football too!
-- new names
-  - "special" ones need to be a single json file, and then dynamically included in loadNames
+- blog
+  - names from new countries!
 - races
   - playerBioInfo.data[].races?: Record<Race, number>,
 - blog

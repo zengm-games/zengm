@@ -52,6 +52,8 @@ const getOverrides = () => {
 		last: {},
 	};
 
+	const groups = {};
+
 	const filenames = fs.readdirSync(path.join(__dirname, "names-manual"));
 
 	const getNames = filename => {
@@ -67,42 +69,6 @@ const getOverrides = () => {
 		return object;
 	};
 
-	const special = {
-		Hispanic: [
-			"Argentina",
-			"Chile",
-			"Colombia",
-			"Costa Rica",
-			"Cuba",
-			"El Salvador",
-			"Equador",
-			"Guatemala",
-			"Honduras",
-			"Mexico",
-			"Nicaragua",
-			"Panama",
-			"Dominican Republic",
-			"Uruguay",
-			"Venezuela",
-			"Spain",
-			"Bolivia",
-			"Paraguay",
-			"Peru",
-			"Puerto Rico",
-		],
-		Portuguese: [
-			"Angola",
-			"Brazil",
-			"Cape Verde",
-			"Portugal",
-			"Mozambique",
-			"Equatorial Guinea",
-			"East Timor",
-			"Guinea-Bissau",
-			"Macau",
-		],
-	};
-
 	for (const filename of filenames) {
 		if (!filename.endsWith(".csv")) {
 			continue;
@@ -111,23 +77,19 @@ const getOverrides = () => {
 		if (filename.startsWith("country-")) {
 			const [, country, firstOrLast] = filename.replace(".csv", "").split("-");
 			names[firstOrLast][country] = getNames(filename);
-		} else if (filename.startsWith("special-")) {
-			const [, type, firstOrLast] = filename.replace(".csv", "").split("-");
-			const specialNames = getNames(filename);
-
-			const countries = special[type];
-			if (!countries) {
-				throw new Error(
-					`Not sure what to do with ${filename} - needs an entry in special?`,
-				);
+		} else if (filename.startsWith("group-")) {
+			const [, group, firstOrLast] = filename.replace(".csv", "").split("-");
+			const groupNames = getNames(filename);
+			if (!groups[group]) {
+				groups[group] = {};
 			}
-			for (const country of countries) {
-				names[firstOrLast][country] = specialNames;
-			}
+			groups[group][firstOrLast] = groupNames;
 		} else {
 			throw new Error(`Unexpected filename "${filename}"`);
 		}
 	}
+
+	console.log(`# names-groups.json:\n\n${JSONstringifyOrder(groups, 2)}\n\n`);
 
 	return names;
 };

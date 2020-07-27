@@ -65,6 +65,10 @@ const getOverrides = () => {
 		const object = {};
 		for (const row of rows) {
 			object[row.Name] = parseInt(row.Frequency);
+			if (Number.isNaN(object[row.Name])) {
+				console.log(row);
+				throw new Error("NaN found in row");
+			}
 		}
 		return object;
 	};

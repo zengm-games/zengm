@@ -6,13 +6,10 @@ nicidob PRs
 name/colleges revamp
 - documentation
   - football too!
-- korea -> south and north
-- what about countries in names.json but not in defaultCountries? add in small amount, like for groups
 - blog
-  - names from new countries!
+  - names from new countries! north korea, etc
 - races
   - playerBioInfo.data[].races?: Record<Race, number>,
-- blog
 
 redo mood system
 - make available throughout the year

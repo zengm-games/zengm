@@ -1,3 +1,6 @@
+// This is dynamically resolved with rollup-plugin-alias
+import names from "player-names"; // eslint-disable-line
+
 const groups = {
 	hispanic: [
 		"Argentina",
@@ -21,6 +24,7 @@ const groups = {
 		"Peru",
 		"Puerto Rico",
 	],
+	korean: ["South Korea", "North Korea"],
 	portuguese: [
 		"Angola",
 		"Brazil",
@@ -191,11 +195,13 @@ if (process.env.NODE_ENV !== "production") {
 			  };
 }
 
+const possiblyMissingCountries = Object.keys(names);
 for (const countries of Object.values(groups)) {
-	for (const country of countries) {
-		if (defaultCountries[country] === undefined) {
-			defaultCountries[country] = 0.5;
-		}
+	possiblyMissingCountries.push(...countries);
+}
+for (const country of possiblyMissingCountries) {
+	if (defaultCountries[country] === undefined) {
+		defaultCountries[country] = 0.2;
 	}
 }
 

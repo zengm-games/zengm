@@ -3,7 +3,7 @@ import type { GameAttributesLeagueWithHistory } from "../../common/types";
 const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft
-	names: undefined,
+	playerBioInfo: undefined,
 	daysLeft: 0, // Used only for free agency
 	gameOver: false,
 	godMode: false,

@@ -1,4 +1,3 @@
-import college from "./college";
 import genContract from "./genContract";
 import genRatings from "./genRatings";
 import name from "./name";
@@ -21,7 +20,7 @@ const generate = (
 		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingRank,
 	);
-	const { country, firstName, lastName } = name();
+	const { college, country, firstName, lastName } = name();
 
 	const weight = genWeight(ratings.hgt, ratings.stre);
 	const p = {
@@ -30,7 +29,7 @@ const generate = (
 			year: g.get("season") - age,
 			loc: country,
 		},
-		college: college(country),
+		college,
 		contract: {
 			// Will be set by setContract below
 			amount: 0,

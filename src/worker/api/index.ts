@@ -1609,6 +1609,24 @@ const realtimeUpdate = async (updateEvents: UpdateEvents) => {
 	await toUI("realtimeUpdate", [updateEvents]);
 };
 
+const regenerateDraftClass = async (season: number) => {
+	// Delete old players from draft class
+	const oldPlayers = await idb.cache.players.indexGetAll(
+		"playersByDraftYearRetiredYear",
+		[[season], [season, Infinity]],
+	);
+
+	for (const p of oldPlayers) {
+		if (p.tid === PLAYER.UNDRAFTED) {
+			await idb.cache.players.delete(p.pid);
+		}
+	}
+
+	// Generate new players
+	await draft.genPlayers(season);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	const players = await idb.cache.players.indexGetAll(
 		"playersByTid",
@@ -2655,6 +2673,7 @@ export default {
 	proposeTrade,
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,
+	regenerateDraftClass,
 	releasePlayer,
 	removeLeague,
 	reorderDepthDrag,

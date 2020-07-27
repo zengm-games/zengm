@@ -9,7 +9,7 @@ const defaultLocal: Local = {
 	mailingList: false, // Default, until told otherwise by server
 	leagueLoaded: false,
 	phaseText: "",
-	playerNames: undefined,
+	playerBioInfo: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
@@ -24,7 +24,7 @@ const local: Local & {
 	leagueLoaded: defaultLocal.leagueLoaded,
 	mailingList: defaultLocal.mailingList,
 	phaseText: defaultLocal.phaseText,
-	playerNames: defaultLocal.playerNames,
+	playerBioInfo: defaultLocal.playerBioInfo,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
 	statusText: defaultLocal.statusText,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
@@ -35,7 +35,7 @@ const local: Local & {
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;
 		local.phaseText = defaultLocal.phaseText;
-		local.playerNames = defaultLocal.playerNames;
+		local.playerBioInfo = defaultLocal.playerBioInfo;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;

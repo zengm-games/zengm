@@ -1,0 +1,1 @@
+Most of the names in the game come from real athletes. However for some countries that results in a very small list of names, which is not satisfying. So in this folder there are some additional names for those countries. They may not be perfectly representative. If you think you can do better, feel free to try!

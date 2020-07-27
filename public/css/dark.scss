@@ -157,6 +157,14 @@ a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: $primary;
 }
+.btn-god-mode {
+	&,
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		color: $white;
+	}
+}
 
 .watch-active,
 .watch-active:hover {

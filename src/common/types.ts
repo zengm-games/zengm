@@ -288,6 +288,15 @@ export type ExpansionDraftSetupTeam = {
 	tid?: number;
 };
 
+export type NamesLegacy = {
+	first: {
+		[key: string]: [string, number][];
+	};
+	last: {
+		[key: string]: [string, number][];
+	};
+};
+
 export type GameAttributesLeague = {
 	aiTradesFactor: number;
 	allStarGame: boolean;
@@ -324,7 +333,7 @@ export type GameAttributesLeague = {
 	minContract: number;
 	minPayroll: number;
 	minRosterSize: number;
-	names?: Names;
+	names?: NamesLegacy;
 	nextPhase?: Phase;
 	numActiveTeams: number;
 	numDraftRounds: number;
@@ -334,6 +343,7 @@ export type GameAttributesLeague = {
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
 	phase: Phase;
+	playerBioInfo?: PlayerBioInfo;
 	playersRefuseToNegotiate: boolean;
 	quarterLength: number;
 	realPlayerDeterminism: number;
@@ -564,15 +574,6 @@ export type MenuItemHeader = {
 	league?: true;
 	nonLeague?: true;
 	children: MenuItemLink[];
-};
-
-export type Names = {
-	first: {
-		[key: string]: [string, number][] | undefined;
-	};
-	last: {
-		[key: string]: [string, number][] | undefined;
-	};
 };
 
 export type Negotiation = {
@@ -870,8 +871,46 @@ export type PlayersPlusOptions = {
 	mergeStats?: boolean;
 };
 
-export type PlayerNames = Names & {
-	countries: [string, number][];
+export type PlayerBioInfo = {
+	// This either overwrites a built-in country, or adds a new country
+	countries?: Record<
+		string,
+		{
+			// If any of these properties is undefined, fall back to default. For first and last, if there is no default, error.
+			first?: Record<string, number>;
+			last?: Record<string, number>;
+			colleges?: Record<string, number>;
+			fractionSkipCollege?: number;
+		}
+	>;
+
+	default?: {
+		colleges?: Record<string, number>;
+		fractionSkipCollege?: number;
+	};
+
+	// This specifies which countries (from the built-in database, and supplemented by "data" above)
+	frequencies?: Record<string, number>;
+};
+
+export type PlayerBioInfoProcessed = {
+	countries: Record<
+		string,
+		{
+			first: [string, number][];
+			last: [string, number][];
+			colleges?: [string, number][];
+			fractionSkipCollege?: number;
+		}
+	>;
+
+	default: {
+		colleges: [string, number][];
+		fractionSkipCollege: number;
+	};
+
+	// This specifies which countries (from the built-in database, and supplemented by "data" above)
+	frequencies: [string, number][];
 };
 
 export type Local = {
@@ -888,7 +927,7 @@ export type Local = {
 	leagueLoaded: boolean;
 	mailingList: boolean;
 	phaseText: string;
-	playerNames?: PlayerNames;
+	playerBioInfo?: PlayerBioInfoProcessed;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

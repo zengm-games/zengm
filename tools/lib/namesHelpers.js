@@ -1,45 +1,61 @@
+const fs = require("fs");
+const path = require("path");
+
+// https://stackoverflow.com/a/53593328
+const JSONstringifyOrder = (obj, space) => {
+	var allKeys = [];
+	JSON.stringify(obj, (key, value) => {
+		allKeys.push(key);
+		return value;
+	});
+	allKeys.sort();
+	return JSON.stringify(obj, allKeys, space);
+};
+
 const filterAndOutput = (fnsByCountry, lnsByCountry) => {
-	// Minimum of (unique fns, unique lns) by country
-	const countsByCountry = {};
-	for (const country of Object.keys(fnsByCountry).sort()) {
-		countsByCountry[country] = Math.min(
-			Object.keys(fnsByCountry[country]).length,
-			Object.keys(lnsByCountry[country]).length,
-		);
-	}
+	const dropped = [];
 
-	// Restructure fns and lns so they are arrays of [name, cumsum] by country
-	const namesByCountryCumsum = namesByCountry => {
-		const obj = {};
+	const countryNames = Object.keys(fnsByCountry).sort();
 
-		for (const country of Object.keys(namesByCountry).sort()) {
-			let cumsum = 0;
-			obj[country] = Object.keys(namesByCountry[country])
-				.sort()
-				.map(name => {
-					cumsum += namesByCountry[country][name];
-					return [name, cumsum];
-				});
+	const countries = {};
 
-			if (cumsum < 5) {
-				console.log(`Dropping ${country} (${cumsum} players)`);
-				delete obj[country];
+	for (const country of countryNames) {
+		const fns = fnsByCountry[country];
+		const lns = lnsByCountry[country];
+
+		let sum = 0;
+		for (const count of Object.values(fns)) {
+			sum += count;
+		}
+
+		if (sum < 5) {
+			console.log(`Dropping ${country} (${sum} players)`);
+			dropped.push(country);
+			continue;
+		}
+
+		// USA has too many names, so ignore any that appear only once
+		if (country === "USA") {
+			for (const names of [fns, lns]) {
+				for (const [name, count] of Object.entries(names)) {
+					if (count <= 1) {
+						delete names[name];
+					}
+				}
 			}
 		}
 
-		return obj;
-	};
-	const fnsByCountryCumsum = namesByCountryCumsum(fnsByCountry);
-	const lnsByCountryCumsum = namesByCountryCumsum(lnsByCountry);
+		countries[country] = {
+			first: fns,
+			last: lns,
+		};
+	}
 
-	console.log(JSON.stringify(Object.keys(fnsByCountry).sort(), null, 4));
-	console.log(
-		JSON.stringify(
-			{ first: fnsByCountryCumsum, last: lnsByCountryCumsum },
-			null,
-			4,
-		),
-	);
+	const filename = path.join(__dirname, "../../src/worker/data/names.json");
+	fs.writeFileSync(filename, JSONstringifyOrder(countries, "\t"));
+	console.log(`Wrote data to ${filename}`);
+
+	return dropped;
 };
 
 const juniors = [
@@ -120,6 +136,7 @@ const states = [
 ];
 
 module.exports = {
+	JSONstringifyOrder,
 	filterAndOutput,
 	juniors,
 	provinces,

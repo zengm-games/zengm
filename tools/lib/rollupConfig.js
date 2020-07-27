@@ -25,7 +25,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 				"player-names":
 					nodeEnv !== "production"
 						? "./../data/names-test.json"
-						: `./../data/names.${sport}.json`,
+						: `./../data/names.json`,
 
 				"bbgm-polyfills": process.env.LEGACY
 					? "./../common/polyfills.ts"

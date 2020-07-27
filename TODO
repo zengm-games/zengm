@@ -5,11 +5,16 @@ nicidob PRs
 
 name/colleges revamp
 - documentation
+  - regenerate default list of frequencies
   - football too!
 - blog
   - names from new countries! north korea, etc
 - races
   - playerBioInfo.data[].races?: Record<Race, number>,
+- flag icon on roster page
+  - https://github.com/lipis/flag-icon-css
+
+button to re-generate draft class @42theanswer#1538
 
 redo mood system
 - make available throughout the year
@@ -22,6 +27,11 @@ redo mood system
 - show +/- for different factors like civ4
 - https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
   - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
+
+option to include historical players/stats when creating a real players league
+- should it include 1 season of stats by default, for MIP?
+
+rebuilding/contending in the old days https://old.reddit.com/r/BasketballGM/comments/hytv2e/whats_the_best_way_to_trade_for_good_draft_picks/fzf4iap/?context=3
 
 “Attempt to use history.replaceState() more than 100 times per 30 seconds” on safari sometimes, when auto playing
 
@@ -314,9 +324,6 @@ redo trade system
 
 team needs/synergy display on roster
 - and power rankings
-
-option to include historical players/stats when creating a real players league
-- should it include 1 season of stats by default, for MIP?
 
 ---
 
@@ -1563,6 +1570,54 @@ update formulas
     same for each team, change contract year by year and display in team finances
   localTvRevenue
     eventually, t.seasons[0].tvContract
+
+@TheRealGWood#4891 Team traits
+  Have you ever played CK2?
+  I ask because the more comments I see like that reddit post the more simple I think replacing Mood with traits would work. 
+  CK2 uses them. You can created TRID trait ID store as 1-10 or something fir starters-
+  Injury prone - 10% higher injury frequency 
+  Chronic injury- 20% higher injury chance, 10% higher - result from injury 
+  Erratic- -5 Mood, -5 for every other erratic or Ego
+  Ego- +5 mood, -10 minutes under 30 or usuage under 28%
+  Demands a Trade- Won’t resign. -10 team mood 
+  Team leader- +5 team mood, +1DIQ team, +1 OIQ team
+  Savy Vet- better team progs, +1 team mood , unhappy if losing 
+  Team player- +1 team mood
+  Ball hog- -1 team mood +1 mood if usuage over 25%
+  Farewell season- +3 in all traits final game and forced retire at end of season, +1 team mood
+  Franchise player - (only over 70’s) max 1 per team or mood= -10, 
+  Star- team mood + 0.5, savy vets more likley to sign 
+  Bookworm- +3 OIQ/DIQ 
+  Idiot- -3 OIQ/ DIQ , team mood -1
+
+  Team traits-
+  Deep playoff run= (CF) team mood+ 2
+  Chip- team mood +1
+  Got a star- team mood +2
+  Has franchise player- Team mood +1
+  FAiled to make playoffs ect....
+
+  This would allow for DM to later add:
+  Lazy
+  Hardworking
+  Workaholic
+
+  Out of Shape 
+  Prime Shape 
+
+  Streaky 
+  Consistent 
+
+  Clutch
+  Choke artist 
+
+  And settable traits-
+  Minutes restriction 
+  Load management 
+  Sixth man (won’t start)
+  Primary ball handler 
+  Primary scorer 
+  Go to Shooter
 
 FUTURE
 ------

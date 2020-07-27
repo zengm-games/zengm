@@ -66,7 +66,7 @@ const getOverrides = () => {
 		for (const row of rows) {
 			object[row.Name] = parseInt(row.Frequency);
 			if (Number.isNaN(object[row.Name])) {
-				console.log(row);
+				console.log(filename, row);
 				throw new Error("NaN found in row");
 			}
 		}
@@ -93,7 +93,9 @@ const getOverrides = () => {
 		}
 	}
 
-	console.log(`# names-groups.json:\n\n${JSONstringifyOrder(groups, 2)}\n\n`);
+	const filename = path.join(__dirname, "../src/worker/data/names-groups.json");
+	fs.writeFileSync(filename, JSONstringifyOrder(groups, "\t"));
+	console.log(`Wrote data to ${filename}`);
 
 	return names;
 };
@@ -120,11 +122,11 @@ for (const freq of [countriesBasketball, countriesFootball]) {
 }
 
 console.log(
-	`const countriesBasketball = ${JSONstringifyOrder(
+	`\nconst countriesBasketball = ${JSONstringifyOrder(
 		countriesBasketball,
-		2,
-	)};\n`,
+		"\t",
+	)};\n\n`,
 );
 console.log(
-	`const countriesFootball = ${JSONstringifyOrder(countriesFootball, 2)};\n`,
+	`const countriesFootball = ${JSONstringifyOrder(countriesFootball, "\t")};\n`,
 );

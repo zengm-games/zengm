@@ -1,3 +1,6 @@
+const fs = require("fs");
+const path = require("path");
+
 // https://stackoverflow.com/a/53593328
 const JSONstringifyOrder = (obj, space) => {
 	var allKeys = [];
@@ -48,7 +51,9 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 		};
 	}
 
-	console.log(`# names.json:\n\n${JSONstringifyOrder(countries, 2)}\n\n`);
+	const filename = path.join(__dirname, "../../src/worker/data/names.json");
+	fs.writeFileSync(filename, JSONstringifyOrder(countries, "\t"));
+	console.log(`Wrote data to ${filename}`);
 
 	return dropped;
 };

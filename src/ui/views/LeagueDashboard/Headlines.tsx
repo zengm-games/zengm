@@ -68,7 +68,7 @@ const Headlines = ({
 							<motion.div
 								key={event.eid}
 								className="col-xl-6 col-lg-12 col-md-4 col-sm-6 mt-3"
-								positionTransition={transition}
+								layout
 								initial={{ opacity: 0, scale: 0.5 }}
 								animate={{ opacity: 1, scale: 1 }}
 								transition={transition}

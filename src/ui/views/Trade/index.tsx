@@ -199,24 +199,21 @@ const Trade = (props: View<"trade">) => {
 		title: "Trade",
 	});
 
-	const [summaryHeight, setSummaryHeight] = useState<number | undefined>();
-	const summaryControls = useRef(null);
+	const summaryText = useRef<HTMLDivElement>(null);
+	const summaryControls = useRef<HTMLDivElement>(null);
 
 	const updateSummaryHeight = useCallback(() => {
-		if (summaryControls.current) {
+		if (summaryControls.current && summaryText.current) {
 			// Keep in sync with .trade-affix
-			let newHeight;
 			if (window.matchMedia("(min-width:768px)").matches) {
-				newHeight =
-					window.innerHeight -
-					60 -
-					(summaryControls.current as any).clientHeight;
-			}
-			if (newHeight !== summaryHeight) {
-				setSummaryHeight(newHeight);
+				const newHeight =
+					window.innerHeight - 60 - summaryControls.current.clientHeight;
+				summaryText.current.style.height = `${newHeight}px`;
+			} else if (summaryText.current.style.height !== "") {
+				summaryText.current.style.removeProperty("height");
 			}
 		}
-	}, [summaryHeight]);
+	}, []);
 
 	// Run every render, in case it changes
 	useEffect(() => {
@@ -298,11 +295,9 @@ const Trade = (props: View<"trade">) => {
 				</div>
 				<div className="col-md-3">
 					<div className="trade-affix">
-						<Summary
-							height={summaryHeight}
-							salaryCap={salaryCap}
-							summary={summary}
-						/>
+						<div ref={summaryText}>
+							<Summary salaryCap={salaryCap} summary={summary} />
+						</div>
 
 						<div className="py-1" ref={summaryControls}>
 							{summary.warning ? (

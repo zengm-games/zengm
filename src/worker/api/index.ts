@@ -1609,22 +1609,35 @@ const realtimeUpdate = async (updateEvents: UpdateEvents) => {
 	await toUI("realtimeUpdate", [updateEvents]);
 };
 
-const regenerateDraftClass = async (season: number) => {
-	// Delete old players from draft class
-	const oldPlayers = await idb.cache.players.indexGetAll(
-		"playersByDraftYearRetiredYear",
-		[[season], [season, Infinity]],
+const regenerateDraftClass = async (season: number, conditions: Conditions) => {
+	const proceed = await toUI(
+		"confirm",
+		[
+			"This will delete the existing draft class and replace it with a new one filled with randomly generated players. Are you sure you want to do that?",
+			{
+				okText: "Regenerate Draft Class",
+			},
+		],
+		conditions,
 	);
 
-	for (const p of oldPlayers) {
-		if (p.tid === PLAYER.UNDRAFTED) {
-			await idb.cache.players.delete(p.pid);
-		}
-	}
+	if (proceed) {
+		// Delete old players from draft class
+		const oldPlayers = await idb.cache.players.indexGetAll(
+			"playersByDraftYearRetiredYear",
+			[[season], [season, Infinity]],
+		);
 
-	// Generate new players
-	await draft.genPlayers(season);
-	await toUI("realtimeUpdate", [["playerMovement"]]);
+		for (const p of oldPlayers) {
+			if (p.tid === PLAYER.UNDRAFTED) {
+				await idb.cache.players.delete(p.pid);
+			}
+		}
+
+		// Generate new players
+		await draft.genPlayers(season);
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+	}
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {

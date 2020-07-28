@@ -5,9 +5,6 @@ nicidob PRs
 
 show injury icon in live sim for newly injured players
 
-If a player retires their contract becomes void, but if you release the player and then they sign with another team before retiring then the contract with the original team stays
-- @Random | Screw Fred#1709
-
 name/colleges revamp
 - races
   - playerBioInfo.countries[].races?: Record<Race, number>,

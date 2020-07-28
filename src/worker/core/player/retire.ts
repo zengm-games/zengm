@@ -2,6 +2,7 @@ import { PLAYER } from "../../../common";
 import { g, helpers, logEvent } from "../../util";
 import madeHof from "./madeHof";
 import type { Conditions, Player } from "../../../common/types";
+import { idb } from "../../db";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.
@@ -13,7 +14,7 @@ import type { Conditions, Player } from "../../../common/types";
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-const retire = (
+const retire = async (
 	p: Player,
 	conditions?: Conditions,
 	{
@@ -64,6 +65,16 @@ const retire = (
 			},
 			conditions,
 		);
+	}
+
+	if (p.tid !== PLAYER.FREE_AGENT) {
+		// Remove any old contracts from releasedPlayers
+		const releasedPlayers = await idb.cache.releasedPlayers.getAll();
+		for (const rp of releasedPlayers) {
+			if (rp.pid === p.pid) {
+				await idb.cache.releasedPlayers.delete(rp.rid);
+			}
+		}
 	}
 
 	p.tid = PLAYER.RETIRED;

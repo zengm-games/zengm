@@ -2521,7 +2521,7 @@ const upsertCustomizedPlayer = async (
 		p.tid === PLAYER.RETIRED &&
 		originalTid !== PLAYER.RETIRED
 	) {
-		player.retire(p as Player, conditions, {
+		await player.retire(p as Player, conditions, {
 			forceHofNotification: true,
 		});
 	}

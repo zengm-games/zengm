@@ -1,5 +1,11 @@
 import PropTypes from "prop-types";
-import React, { useState, useRef, ChangeEvent } from "react";
+import React, {
+	useState,
+	useRef,
+	ChangeEvent,
+	useEffect,
+	useCallback,
+} from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { toWorker } from "../../util";
@@ -194,25 +200,35 @@ const Trade = (props: View<"trade">) => {
 	});
 
 	const [summaryHeight, setSummaryHeight] = useState<number | undefined>();
-	const summaryControls = useRef<HTMLDivElement | undefined>();
+	const summaryControls = useRef(null);
 
-	const updateSummaryHeight = () => {
+	const updateSummaryHeight = useCallback(() => {
 		if (summaryControls.current) {
 			// Keep in sync with .trade-affix
 			let newHeight;
 			if (window.matchMedia("(min-width:768px)").matches) {
 				newHeight =
-					window.innerHeight - 60 - summaryControls.current.clientHeight;
+					window.innerHeight -
+					60 -
+					(summaryControls.current as any).clientHeight;
 			}
 			if (newHeight !== summaryHeight) {
 				setSummaryHeight(newHeight);
 			}
 		}
-	};
+	}, [summaryHeight]);
 
 	// Run every render, in case it changes
-	updateSummaryHeight();
-	console.log("summaryHeight", summaryHeight);
+	useEffect(() => {
+		updateSummaryHeight();
+	});
+
+	useEffect(() => {
+		window.addEventListener("optimizedResize", updateSummaryHeight);
+		return () => {
+			window.removeEventListener("optimizedResize", updateSummaryHeight);
+		};
+	}, [updateSummaryHeight]);
 
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
@@ -222,21 +238,21 @@ const Trade = (props: View<"trade">) => {
 
 	return (
 		<>
-			{showResigningMsg ? (
-				<p>
-					You can't trade players whose contracts expired this season, but their
-					old contracts still count against team salary caps until they are
-					either re-signed or become free agents.
-				</p>
-			) : null}
-
-			<p>
-				If a player has been signed within the past 14 days, he is not allowed
-				to be traded.
-			</p>
-
 			<div className="row">
 				<div className="col-md-9">
+					{showResigningMsg ? (
+						<p>
+							You can't trade players whose contracts expired this season, but
+							their old contracts still count against team salary caps until
+							they are either re-signed or become free agents.
+						</p>
+					) : null}
+
+					<p>
+						If a player has been signed within the past 14 days, he is not
+						allowed to be traded.
+					</p>
+
 					<select
 						className="float-left form-control select-team mb-2 mr-2"
 						value={otherTid}
@@ -288,27 +304,24 @@ const Trade = (props: View<"trade">) => {
 							summary={summary}
 						/>
 
-						<div
-							className="py-1"
-							ref={element => {
-								summaryControls.current = element;
-								updateSummaryHeight();
-							}}
-						>
+						<div className="py-1" ref={summaryControls}>
 							{summary.warning ? (
-								<p className="alert alert-danger">
+								<div className="alert alert-danger mb-0">
 									<strong>Warning!</strong> {summary.warning}
-								</p>
+								</div>
 							) : null}
 							{state.message ? (
-								<p
+								<div
 									className={classNames(
-										"alert",
+										"alert mb-0",
 										state.accepted ? "alert-success" : "alert-info",
+										{
+											"mt-2": summary.warning,
+										},
 									)}
 								>
 									{state.message}
-								</p>
+								</div>
 							) : null}
 
 							{!noTradingAllowed && !challengeNoTrades ? (

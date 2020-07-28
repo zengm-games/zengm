@@ -103,7 +103,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 
 		// Keep height of plays list equal to window
 		this.setPlayByPlayDivHeight();
-		window.addEventListener("resize", this.setPlayByPlayDivHeight);
+		window.addEventListener("optimizedResize", this.setPlayByPlayDivHeight);
 	}
 
 	componentDidUpdate() {
@@ -123,7 +123,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 	componentWillUnmount() {
 		this.componentIsMounted = false;
 
-		window.removeEventListener("resize", this.setPlayByPlayDivHeight);
+		window.removeEventListener("optimizedResize", this.setPlayByPlayDivHeight);
 
 		updatePhaseAndLeagueTopBar();
 	}

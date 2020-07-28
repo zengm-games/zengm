@@ -50,10 +50,6 @@ nicidob new ovr formula
     - the notebook spits out a copy+paste table for ovr.football.ts and I have a local copy with it but the numbers are big and positions are set - wrong because I deleted bonuses and.....
     - it was non-obvious to me how to get these in-game in a good way so I don't have a good PR
 
-make the trade controls scroll automatically and always stay on screen
-- @Ruban#9536
-- listen to resize event
-
 built-in UI to load custom user files
 - UI in BBGM to create league
   - api to list league files

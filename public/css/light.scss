@@ -584,10 +584,7 @@ tr.table-warning:hover > td {
 	}
 }
 
-// Keep in sync with setPlayByPlayDivHeight
-.trade-affix {
-	background-color: $white;
-}
+// Keep in sync with trade/index.tsx
 @include media-breakpoint-up(md) {
 	.trade-affix {
 		position: -webkit-sticky;

@@ -9,11 +9,11 @@ const Summary = ({
 	salaryCap,
 	summary,
 }: Pick<View<"trade">, "salaryCap" | "summary"> & {
-	height: number;
+	height?: number;
 }) => {
 	return (
 		<>
-			<div className="row trade-items" style={{ height }}>
+			<div className="row trade-items" style={{ maxHeight: height }}>
 				{summary.teams.map((t, i) => (
 					<div key={i} className="col-md-12 col-6">
 						<h3>{t.name}</h3>

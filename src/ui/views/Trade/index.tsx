@@ -295,9 +295,11 @@ const Trade = (props: View<"trade">) => {
 				</div>
 				<div className="col-md-3">
 					<div className="trade-affix">
-						<div ref={summaryText}>
-							<Summary salaryCap={salaryCap} summary={summary} />
-						</div>
+						<Summary
+							ref={summaryText}
+							salaryCap={salaryCap}
+							summary={summary}
+						/>
 
 						<div className="py-1" ref={summaryControls}>
 							{summary.warning ? (

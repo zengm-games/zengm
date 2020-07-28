@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-07-27: On the trade page, the trade summary and controls are "sticky" as you scroll so they're always on the screen. This is especially important for FBGM where rosters are huge and much scrolling is required. [[1]]()
+* 2020-07-27: On the trade page, the trade summary and controls are "sticky" as you scroll so they're always on the screen. This is especially important for FBGM where rosters are huge and much scrolling is required. [[1]](https://old.reddit.com/r/BasketballGM/comments/hz68ru/this_is_more_important_for_fbgm_than_bbgm_but_on/) [[2]](https://old.reddit.com/r/Football_GM/comments/hz69o2/on_the_trade_page_the_trade_summary_and_controls/)
 
 * 2020-07-27: Better support for customization of player names, countries, and colleges. And improvements to the built-in names database. [[1]](https://basketball-gm.com/blog/2020/07/better-customization-player-names-countries-colleges/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hyz51u/new_in_version_202007271168_better_support_for/)
 

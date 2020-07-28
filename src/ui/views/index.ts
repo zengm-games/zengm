@@ -4,7 +4,6 @@ import AllStarHistory from "./AllStarHistory";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardRaces from "./AwardRaces";
 import AwardsRecords from "./AwardsRecords";
-import Changes from "./Changes";
 import Colleges from "./Colleges";
 import Countries from "./Countries";
 import CustomizePlayer from "./CustomizePlayer";
@@ -87,7 +86,6 @@ export default {
 	AllStarHistory,
 	AwardRaces,
 	AwardsRecords,
-	Changes,
 	Colleges,
 	Countries,
 	CustomizePlayer,

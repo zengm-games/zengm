@@ -32,7 +32,6 @@ const routes = () => {
 		"/": genPage("dashboard", false),
 		"/new_league": genPage("newLeague", false),
 		"/new_league/:x": genPage("newLeague", false),
-		"/changes": genPage("changes", false),
 		"/account": genPage("account", false),
 		"/account/login_or_register": genPage("loginOrRegister", false),
 		"/account/lost_password": genPage("lostPassword", false),

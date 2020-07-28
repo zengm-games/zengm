@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
@@ -53,9 +52,5 @@ const Summary = React.forwardRef(
 		);
 	},
 );
-Summary.propTypes = {
-	salaryCap: PropTypes.number.isRequired,
-	summary: PropTypes.object.isRequired,
-};
 
 export default Summary;

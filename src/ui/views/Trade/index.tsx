@@ -208,8 +208,8 @@ const Trade = (props: View<"trade">) => {
 			if (window.matchMedia("(min-width:768px)").matches) {
 				const newHeight =
 					window.innerHeight - 60 - summaryControls.current.clientHeight;
-				summaryText.current.style.height = `${newHeight}px`;
-			} else if (summaryText.current.style.height !== "") {
+				summaryText.current.style.maxHeight = `${newHeight}px`;
+			} else if (summaryText.current.style.maxHeight !== "") {
 				summaryText.current.style.removeProperty("height");
 			}
 		}

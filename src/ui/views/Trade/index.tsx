@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, useRef, ChangeEvent } from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { toWorker } from "../../util";
@@ -7,6 +7,7 @@ import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
 import type { View } from "../../../common/types";
+import classNames from "classnames";
 
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({
@@ -192,6 +193,27 @@ const Trade = (props: View<"trade">) => {
 		title: "Trade",
 	});
 
+	const [summaryHeight, setSummaryHeight] = useState<number | undefined>();
+	const summaryControls = useRef<HTMLDivElement | undefined>();
+
+	const updateSummaryHeight = () => {
+		if (summaryControls.current) {
+			// Keep in sync with .trade-affix
+			let newHeight;
+			if (window.matchMedia("(min-width:768px)").matches) {
+				newHeight =
+					window.innerHeight - 60 - summaryControls.current.clientHeight;
+			}
+			if (newHeight !== summaryHeight) {
+				setSummaryHeight(newHeight);
+			}
+		}
+	};
+
+	// Run every render, in case it changes
+	updateSummaryHeight();
+	console.log("summaryHeight", summaryHeight);
+
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
@@ -258,37 +280,63 @@ const Trade = (props: View<"trade">) => {
 						userOrOther="user"
 					/>
 				</div>
-				<div className="col-md-3 trade-summary">
-					<Summary
-						accepted={state.accepted}
-						message={state.message}
-						salaryCap={salaryCap}
-						summary={summary}
-					/>
-					{!noTradingAllowed && !challengeNoTrades ? (
-						<div className="text-center">
-							<Buttons
-								asking={state.asking}
-								enablePropose={summary.enablePropose}
-								forceTrade={state.forceTrade}
-								godMode={godMode}
-								handleClickAsk={handleClickAsk}
-								handleClickClear={handleClickClear}
-								handleClickForceTrade={handleClickForceTrade}
-								handleClickPropose={handleClickPropose}
-							/>
+				<div className="col-md-3">
+					<div className="trade-affix">
+						<Summary
+							height={summaryHeight}
+							salaryCap={salaryCap}
+							summary={summary}
+						/>
+
+						<div
+							className="py-1"
+							ref={element => {
+								summaryControls.current = element;
+								updateSummaryHeight();
+							}}
+						>
+							{summary.warning ? (
+								<p className="alert alert-danger">
+									<strong>Warning!</strong> {summary.warning}
+								</p>
+							) : null}
+							{state.message ? (
+								<p
+									className={classNames(
+										"alert",
+										state.accepted ? "alert-success" : "alert-info",
+									)}
+								>
+									{state.message}
+								</p>
+							) : null}
+
+							{!noTradingAllowed && !challengeNoTrades ? (
+								<div className="text-center">
+									<Buttons
+										asking={state.asking}
+										enablePropose={summary.enablePropose}
+										forceTrade={state.forceTrade}
+										godMode={godMode}
+										handleClickAsk={handleClickAsk}
+										handleClickClear={handleClickClear}
+										handleClickForceTrade={handleClickForceTrade}
+										handleClickPropose={handleClickPropose}
+									/>
+								</div>
+							) : challengeNoTrades ? (
+								<div>
+									<p className="alert alert-danger">
+										<b>Challenge Mode:</b> You're not allowed to make trades.
+									</p>
+								</div>
+							) : (
+								<p className="alert alert-danger">
+									You're not allowed to make trades now.
+								</p>
+							)}
 						</div>
-					) : challengeNoTrades ? (
-						<div>
-							<p className="alert alert-danger">
-								<b>Challenge Mode:</b> You're not allowed to make trades.
-							</p>
-						</div>
-					) : (
-						<p className="alert alert-danger">
-							You're not allowed to make trades now.
-						</p>
-					)}
+					</div>
 				</div>
 			</div>
 		</>

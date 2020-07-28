@@ -5,7 +5,10 @@ nicidob PRs
 
 name/colleges revamp
 - races
-  - playerBioInfo.data[].races?: Record<Race, number>,
+  - playerBioInfo.countries[].races?: Record<Race, number>,
+  - default values for individual countries
+  - global default... should it override individual countries?
+    - distinction between "default if unset in built-in defaults" and "override built-in defaults too"
 - flag icon on roster page
   - https://github.com/lipis/flag-icon-css
 
@@ -49,6 +52,7 @@ nicidob new ovr formula
 
 make the trade controls scroll automatically and always stay on screen
 - @Ruban#9536
+- listen to resize event
 
 built-in UI to load custom user files
 - UI in BBGM to create league

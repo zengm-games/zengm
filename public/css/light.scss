@@ -310,10 +310,6 @@ table {
 	}
 }
 
-.trade-summary {
-	background-color: $white;
-}
-
 .select-team {
 	width: 203px;
 }
@@ -584,6 +580,21 @@ tr.table-warning:hover > td {
 		top: 60px;
 	}
 	.live-game-playbyplay {
+		overflow: auto;
+	}
+}
+
+// Keep in sync with setPlayByPlayDivHeight
+.trade-affix {
+	background-color: $white;
+}
+@include media-breakpoint-up(md) {
+	.trade-affix {
+		position: -webkit-sticky;
+		position: sticky;
+		top: 60px;
+	}
+	.trade-items {
 		overflow: auto;
 	}
 }

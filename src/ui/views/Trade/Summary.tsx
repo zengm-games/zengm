@@ -5,19 +5,17 @@ import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 
 const Summary = ({
-	accepted,
-	message,
+	height,
 	salaryCap,
 	summary,
 }: Pick<View<"trade">, "salaryCap" | "summary"> & {
-	accepted: boolean;
-	message: null | string;
+	height: number;
 }) => {
 	return (
 		<>
-			<div className="row">
+			<div className="row trade-items" style={{ height }}>
 				{summary.teams.map((t, i) => (
-					<div key={i} className="col-md-12 col-6 mb-3">
+					<div key={i} className="col-md-12 col-6">
 						<h3>{t.name}</h3>
 						<h4>Trade Away:</h4>
 						<ul className="list-unstyled">
@@ -56,28 +54,10 @@ const Summary = ({
 					</div>
 				))}
 			</div>
-
-			{summary.warning ? (
-				<p className="alert alert-danger">
-					<strong>Warning!</strong> {summary.warning}
-				</p>
-			) : null}
-			{message ? (
-				<p
-					className={classNames(
-						"alert",
-						accepted ? "alert-success" : "alert-info",
-					)}
-				>
-					{message}
-				</p>
-			) : null}
 		</>
 	);
 };
 Summary.propTypes = {
-	accepted: PropTypes.bool.isRequired,
-	message: PropTypes.string,
 	salaryCap: PropTypes.number.isRequired,
 	summary: PropTypes.object.isRequired,
 };

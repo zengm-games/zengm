@@ -978,7 +978,9 @@ class GameSim {
 					if (Math.random() < injuryRate) {
 						this.team[t].player[p].injured = true;
 						newInjury = true;
-						this.recordPlay("injury", t, [this.team[t].player[p].name]);
+						this.recordPlay("injury", t, [this.team[t].player[p].name], {
+							injuredPID: this.team[t].player[p].id,
+						});
 					}
 				}
 			}
@@ -1849,7 +1851,7 @@ class GameSim {
 		}
 	}
 
-	recordPlay(type: PlayType, t?: TeamNum, names?: string[]) {
+	recordPlay(type: PlayType, t?: TeamNum, names?: string[], extra?: any) {
 		let texts;
 		if (this.playByPlay !== undefined) {
 			const threePointerText = g.get("threePointers")
@@ -1960,6 +1962,7 @@ class GameSim {
 						text,
 						t,
 						time: `${Math.floor(this.t)}:${secString}`,
+						...extra,
 					});
 				}
 			} else {

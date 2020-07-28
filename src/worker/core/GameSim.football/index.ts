@@ -2178,6 +2178,7 @@ class GameSim {
 						clock: this.clock,
 						t,
 						names: [p.name],
+						injuredPID: p.id,
 					});
 				}
 			}

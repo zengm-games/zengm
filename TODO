@@ -3,8 +3,6 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
-show injury icon in live sim for newly injured players
-
 name/colleges revamp
 - races
   - playerBioInfo.countries[].races?: Record<Race, number>,

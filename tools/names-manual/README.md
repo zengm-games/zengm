@@ -13,4 +13,6 @@ If you don't know what values you should use for frequency, that's fine. Make th
 
 For names that are used in multiple countries (like Hispanic names) do the same thing, except replace "country" in the filename with "group".
 
+Except possibly for very large countries, anything more than 500 names is excessive. This is just to keep file size down, since this is a web-based game.
+
 See the CSV files in this directory for examples.

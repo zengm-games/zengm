@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-07-28: Injuries that occur during live games show up in the box score.
+
 * 2020-07-28: When a player retires while (1) still an active player (not a free agent) and (2) still being paid by a team who had previously released him, the remaining amount of his previous contract will no longer be paid.
 
 * 2020-07-27: On the trade page, the trade summary and controls are "sticky" as you scroll so they're always on the screen. This is especially important for FBGM where rosters are huge and much scrolling is required. [[1]](https://old.reddit.com/r/BasketballGM/comments/hz68ru/this_is_more_important_for_fbgm_than_bbgm_but_on/) [[2]](https://old.reddit.com/r/Football_GM/comments/hz69o2/on_the_trade_page_the_trade_summary_and_controls/)

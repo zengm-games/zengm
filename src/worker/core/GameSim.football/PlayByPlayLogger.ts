@@ -64,6 +64,7 @@ class PlayByPlayLogger {
 		{
 			automaticFirstDown,
 			clock,
+			injuredPID,
 			lost,
 			made,
 			names,
@@ -80,6 +81,7 @@ class PlayByPlayLogger {
 		}: {
 			automaticFirstDown?: boolean;
 			clock: number;
+			injuredPID?: number;
 			lost?: boolean;
 			made?: boolean;
 			names?: string[];
@@ -409,13 +411,18 @@ class PlayByPlayLogger {
 			}
 
 			if (text) {
-				const event = {
+				const event: any = {
 					type: "text",
 					text,
 					t,
 					time: formatClock(clock),
 					quarter: this.quarter,
 				};
+
+				if (injuredPID !== undefined) {
+					event.injuredPID = injuredPID;
+				}
+
 				this.playByPlay.push(event);
 
 				if (

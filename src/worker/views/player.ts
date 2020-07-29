@@ -279,7 +279,28 @@ const updatePlayer = async (
 			}
 
 			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
+
+			let newRow = false;
+			let ts;
 			if (prev === undefined || jerseyNumber !== prev.number) {
+				newRow = true;
+			} else {
+				ts = await idb.league
+					.transaction("teamSeasons")
+					.store.index("season, tid")
+					.get([ps.season, ps.tid]);
+				if (ts) {
+					if (
+						!prev.t ||
+						prev.t.name !== ts.name ||
+						prev.t.region !== ts.region
+					) {
+						newRow = true;
+					}
+				}
+			}
+
+			if (newRow) {
 				const ts = await idb.league
 					.transaction("teamSeasons")
 					.store.index("season, tid")
@@ -301,7 +322,7 @@ const updatePlayer = async (
 					end: ps.season,
 					t,
 				});
-			} else if (prev && jerseyNumber === prev.number) {
+			} else if (prev) {
 				prev.end = ps.season;
 			}
 		}

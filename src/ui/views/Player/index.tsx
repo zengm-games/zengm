@@ -16,6 +16,7 @@ import useTitleBar from "../../hooks/useTitleBar";
 import { getCols, helpers, toWorker } from "../../util";
 import type { View, Player } from "../../../common/types";
 import { PLAYER } from "../../../common";
+import classNames from "classnames";
 
 const Relatives = ({
 	pid,
@@ -323,7 +324,9 @@ const Player2 = ({
 						<RatingsOverview ratings={player.ratings} />
 					) : null}
 					<div
-						className="d-flex flex-wrap mt-2"
+						className={classNames("d-flex flex-wrap", {
+							"mt-2": !retired && showRatings,
+						})}
 						style={{
 							gap: "0.5em",
 						}}

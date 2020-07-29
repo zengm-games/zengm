@@ -11,16 +11,15 @@ jersey numbers
 - show top players on team history page, like bbref
 - some way to retire jersey numbers, i guess on team history page?
 - add to augmentPartialPlayer, for last row in stats
-- editable in god mode
-  - current and preferred? or like pos
-  - if edited manually and there's a conflict, change the other guy's number
+- if edited manually (god mode) and there's a conflict, change the other guy's number
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
   - https://old.reddit.com/r/nba/comments/4sxoi0/the_mostleast_worn_jersey_numbers/
   - viewable on: player page, player bios
   - real players
-  - conflicts
+  - conflicts - pick new number
+  - edit in god mode, and conflicts
 
 name/colleges revamp
 - races

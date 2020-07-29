@@ -58,6 +58,15 @@ const copyValidValues = (
 	}
 	target.hof = source.hof;
 
+	// jerseyNumber? could be in root or stats
+	if (target.jerseyNumber !== source.jerseyNumber) {
+		target.jerseyNumber = source.jerseyNumber;
+	}
+	if (target.stats.length > 0 && source.stats.length > 0) {
+		target.stats[target.stats.length - 1].jerseyNumber =
+			source.stats[source.stats.length - 1].jerseyNumber;
+	}
+
 	let updatedRatingsOrAge = false;
 	{
 		// @ts-ignore
@@ -288,6 +297,12 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			if (type === "root") {
 				if (field === "hof") {
 					p[field] = val === "true";
+				} else if (field === "jerseyNumber") {
+					if (p.stats.length > 0) {
+						p.stats[p.stats.length - 1].jerseyNumber = val;
+					} else {
+						p.jerseyNumber = val;
+					}
 				} else {
 					p[field] = val;
 				}
@@ -462,6 +477,18 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
+	let jerseyNumber;
+	if (p.stats.length > 0) {
+		jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+	}
+	if (!jerseyNumber && p.jerseyNumber) {
+		// For uploaded league files
+		jerseyNumber = p.jerseyNumber;
+	}
+	if (!jerseyNumber) {
+		jerseyNumber = "";
+	}
+
 	return (
 		<>
 			<p>
@@ -572,21 +599,21 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-sm-3 form-group">
+								<label>Jersey Number</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "jerseyNumber")}
+									value={jerseyNumber}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
 								<label>Hometown</label>
 								<input
 									type="text"
 									className="form-control"
 									onChange={handleChange.bind(null, "born", "loc")}
 									value={p.born.loc}
-								/>
-							</div>
-							<div className="col-sm-3 form-group">
-								<label>Year of Death</label>
-								<input
-									type="text"
-									className="form-control"
-									onChange={handleChange.bind(null, "root", "diedYear")}
-									value={p.diedYear}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -608,6 +635,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
+								<label>Year of Death</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "diedYear")}
+									value={p.diedYear}
+								/>
+							</div>
+							<div className="col-sm-3 form-group">
 								<label>Hall of Fame</label>
 								<select
 									className="form-control"
@@ -618,6 +654,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<option value="false">No</option>
 								</select>
 							</div>
+						</div>
+						<div className="row">
 							<div className="col-sm-6 form-group">
 								<label>Contract Amount</label>
 								<div className="input-group">

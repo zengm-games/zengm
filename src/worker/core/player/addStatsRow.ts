@@ -17,6 +17,7 @@ import genJerseyNumber from "./genJerseyNumber";
 const addStatsRow = async (
 	p: Player | PlayerWithoutKey,
 	playoffs: boolean = false,
+	teamJerseyNumbersInput?: string[],
 ) => {
 	const statsRow: any = {
 		playoffs,
@@ -52,7 +53,7 @@ const addStatsRow = async (
 	p.stats.push(statsRow);
 
 	// After push because otherwise rookies will be seen as having no stats
-	statsRow.jerseyNumber = await genJerseyNumber(p);
+	statsRow.jerseyNumber = await genJerseyNumber(p, teamJerseyNumbersInput);
 };
 
 export default addStatsRow;

@@ -682,10 +682,25 @@ export const createWithoutSaving = async (
 			numPlayersByTid[tid2] = 0;
 		}
 
+		const teamJerseyNumbers: Record<number, string[]> = {};
+
 		const addPlayerToTeam = async (p: PlayerWithoutKey, tid2: number) => {
+			if (!teamJerseyNumbers[tid2]) {
+				teamJerseyNumbers[tid2] = [];
+			}
+
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
-			await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+			await player.addStatsRow(
+				p,
+				g.get("phase") === PHASE.PLAYOFFS,
+				teamJerseyNumbers[tid2],
+			);
+
+			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+			if (jerseyNumber) {
+				teamJerseyNumbers[tid2].push(jerseyNumber);
+			}
 
 			// Keep rookie contract, or no?
 			if (p.contract.exp >= g.get("season")) {

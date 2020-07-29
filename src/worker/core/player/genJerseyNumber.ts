@@ -128,6 +128,9 @@ const weightFunction =
 
 const genJerseyNumber = async (
 	p: Player | PlayerWithoutKey,
+
+	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
+	teamJerseyNumbersInput?: string[],
 ): Promise<string | undefined> => {
 	if (p.stats.length === 0) {
 		// Draft prospect or player who has never played - no number yet
@@ -141,14 +144,21 @@ const genJerseyNumber = async (
 		return prevJerseyNumber;
 	}
 
-	const teammates = await idb.cache.players.indexGetAll("playersByTid", p.tid);
-	const teamJerseyNumbers: string[] = [];
-	for (const teammate of teammates) {
-		if (teammate.stats.length > 0) {
-			const teamJerseyNumber =
-				teammate.stats[teammate.stats.length - 1].jerseyNumber;
-			if (teamJerseyNumber) {
-				teamJerseyNumbers.push(teamJerseyNumber);
+	const teamJerseyNumbers: string[] = teamJerseyNumbersInput
+		? teamJerseyNumbersInput
+		: [];
+	if (!teamJerseyNumbersInput) {
+		const teammates = await idb.cache.players.indexGetAll(
+			"playersByTid",
+			p.tid,
+		);
+		for (const teammate of teammates) {
+			if (teammate.stats.length > 0) {
+				const teamJerseyNumber =
+					teammate.stats[teammate.stats.length - 1].jerseyNumber;
+				if (teamJerseyNumber) {
+					teamJerseyNumbers.push(teamJerseyNumber);
+				}
 			}
 		}
 	}

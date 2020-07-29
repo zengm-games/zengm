@@ -275,6 +275,7 @@ const Player2 = ({
 						<strong>
 							{player.ratings[player.ratings.length - 1].pos},{" "}
 							{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
+							{player.jerseyNumber ? `, #${player.jerseyNumber}` : ""}
 						</strong>
 						<br />
 						Height: {height}

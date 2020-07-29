@@ -2552,7 +2552,7 @@ const upsertCustomizedPlayer = async (
 	// Add regular season or playoffs stat row, if necessary
 	if (p.tid >= 0 && p.tid !== originalTid && g.get("phase") <= PHASE.PLAYOFFS) {
 		// If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-		player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+		await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 	}
 
 	if (p.tid >= 0 && p.tid !== originalTid) {

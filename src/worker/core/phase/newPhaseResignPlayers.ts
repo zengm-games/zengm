@@ -189,7 +189,7 @@ const newPhaseResignPlayers = async (
 				if (Math.random() < probReSign) {
 					contract.exp += 1; // Otherwise contracts could expire this season
 
-					player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
+					await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
 
 					if (counts !== undefined && counts[pos] !== undefined) {
 						counts[pos] -= 1;

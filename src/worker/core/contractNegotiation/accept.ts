@@ -54,7 +54,7 @@ const accept = async (
 	if (!p) {
 		throw new Error("Invalid pid");
 	}
-	player.sign(
+	await player.sign(
 		p,
 		g.get("userTid"),
 		{

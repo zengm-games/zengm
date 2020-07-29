@@ -17,9 +17,9 @@ describe("worker/db/getCopies/playersPlus", () => {
 			players: [p],
 		});
 		p.contract.exp = g.get("season") + 1;
-		player.addStatsRow(p);
-		player.addStatsRow(p, true);
-		player.addStatsRow(p);
+		await player.addStatsRow(p);
+		await player.addStatsRow(p, true);
+		await player.addStatsRow(p);
 		const stats = p.stats;
 		stats[0].gp = 5;
 		stats[0].fg = 20;

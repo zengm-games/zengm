@@ -1,6 +1,7 @@
 import stats from "./stats";
 import { g } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
+import genJerseyNumber from "./genJerseyNumber";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -49,6 +50,9 @@ const addStatsRow = async (
 	}
 
 	p.stats.push(statsRow);
+
+	// After push because otherwise rookies will be seen as having no stats
+	statsRow.jerseyNumber = await genJerseyNumber(p);
 };
 
 export default addStatsRow;

@@ -268,7 +268,7 @@ const newPhasePreseason = async (
 
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
-			player.addStatsRow(p, false);
+			await player.addStatsRow(p, false);
 		}
 
 		await idb.cache.players.put(p);

@@ -3,6 +3,27 @@ nicidob PRs
   - maybe use new formula from other PR
 - team overall ratings
 
+jersey numbers
+- store in player stats
+  - need p.jerseyNumber too, otherwise can't set it in a new leagues
+- viewable in
+  - Player Bios
+  - player page - somehow show history, maybe like bbref
+- option to have it prefixed on PlayerNameLabels
+- draw from some known distribution
+  - by position, for football
+- function to call after adding a new player to a team, to deal with collisions
+  - if one player is much better than the other (probably based on career stats), they keep the number
+  - if edited manually, change other guy
+- show top players on team history page
+- frivolity like colleges/countries to view
+- frivolity for retired jersey numbers?
+- editable in god mode
+  - current and preferred
+- real players
+- blog
+  - https://old.reddit.com/r/nba/comments/4sxoi0/the_mostleast_worn_jersey_numbers/
+
 name/colleges revamp
 - races
   - playerBioInfo.countries[].races?: Record<Race, number>,
@@ -187,19 +208,6 @@ custom league generator
 - any historical team, with or without real players
 - any fake team
 - user defined teams
-
-jersey numbers
-- store in player stats
-- viewable in bios
-- draw from some known distribution
-  - by position, for football
-- function to call after adding a new player to a team, to deal with collisions
-  - if one player is much better than the other (probably based on career stats), they keep the number
-  - if edited manually, change other guy
-- show top players on team history page
-- frivolity like colleges/countries to view
-- frivolity for retired jersey numbers?
-- real players
 
 fuzz/scouting revamp
 - prospects and young players only

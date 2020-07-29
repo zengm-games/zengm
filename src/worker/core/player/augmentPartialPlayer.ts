@@ -341,7 +341,7 @@ const augmentPartialPlayer = async (
 
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 		}
 	} else {
 		const statKeys = [...stats.derived, ...stats.raw];
@@ -374,7 +374,7 @@ const augmentPartialPlayer = async (
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
 			if (p.tid >= 0 && lastSeason < g.get("season")) {
-				addStatsRow(p, false);
+				await addStatsRow(p, false);
 			}
 		}
 	}

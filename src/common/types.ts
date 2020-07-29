@@ -724,7 +724,7 @@ type PlayerSalary = {
 	season: number;
 };
 
-// ***p stats can be undefined
+// jerseyNumber: string | undefined;
 export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";

@@ -80,7 +80,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 						p = await player.genRandomFreeAgent();
 					}
 
-					player.sign(p, tid, p.contract, g.get("phase"));
+					await player.sign(p, tid, p.contract, g.get("phase"));
 					await idb.cache.players.put(p);
 					numPlayersOnRoster += 1;
 				}

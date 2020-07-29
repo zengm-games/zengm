@@ -682,10 +682,10 @@ export const createWithoutSaving = async (
 			numPlayersByTid[tid2] = 0;
 		}
 
-		const addPlayerToTeam = (p: PlayerWithoutKey, tid2: number) => {
+		const addPlayerToTeam = async (p: PlayerWithoutKey, tid2: number) => {
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
-			player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+			await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 
 			// Keep rookie contract, or no?
 			if (p.contract.exp >= g.get("season")) {
@@ -738,7 +738,7 @@ export const createWithoutSaving = async (
 				Math.random() < probStillOnDraftTeam(p) &&
 				numPlayersByTid[p.draft.tid] < numPlayerPerTeam
 			) {
-				addPlayerToTeam(p, p.draft.tid);
+				await addPlayerToTeam(p, p.draft.tid);
 				keptPlayers.splice(i, 1);
 			}
 		}
@@ -762,7 +762,7 @@ export const createWithoutSaving = async (
 				);
 
 				if (p) {
-					addPlayerToTeam(p, currentTid);
+					await addPlayerToTeam(p, currentTid);
 				} else {
 					console.log(currentTid, "can't find player");
 					numTeamsDone += 1;

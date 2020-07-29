@@ -255,7 +255,7 @@ const writePlayerStats = async (
 							let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
 
 							if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
-								player.addStatsRow(p2, playoffs);
+								await player.addStatsRow(p2, playoffs);
 								ps = p2.stats[p2.stats.length - 1];
 							}
 

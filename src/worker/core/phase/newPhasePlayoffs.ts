@@ -87,7 +87,7 @@ const newPhasePlayoffs = async (
 			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 			for (const p of players) {
-				player.addStatsRow(p, true);
+				await player.addStatsRow(p, true);
 				await idb.cache.players.put(p);
 			}
 		}),

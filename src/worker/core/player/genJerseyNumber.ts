@@ -145,7 +145,8 @@ const genJerseyNumber = async (
 	const teamJerseyNumbers: string[] = [];
 	for (const teammate of teammates) {
 		if (teammate.stats.length > 0) {
-			const teamJerseyNumber = teammate.stats[p.stats.length - 1].jerseyNumber;
+			const teamJerseyNumber =
+				teammate.stats[teammate.stats.length - 1].jerseyNumber;
 			if (teamJerseyNumber) {
 				teamJerseyNumbers.push(teamJerseyNumber);
 			}
@@ -158,6 +159,11 @@ const genJerseyNumber = async (
 	if (candidates.length === 0) {
 		// No valid jersey number left!
 		return;
+	}
+
+	if (prevJerseyNumber && candidates.includes(prevJerseyNumber)) {
+		// Keep old jersey number, if possible
+		return prevJerseyNumber;
 	}
 
 	return random.choice(candidates, weightFunction);

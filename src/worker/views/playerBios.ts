@@ -24,7 +24,7 @@ const updatePlayers = async (
 			inputs.abbrev,
 			["born", "college", "hgt", "weight", "draft"],
 			["ovr", "pot"],
-			stats,
+			[...stats, "jerseyNumber"],
 			inputs.tid,
 		);
 

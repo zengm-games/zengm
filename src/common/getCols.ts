@@ -1545,6 +1545,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"stat:jerseyNumber": {
+		desc: "Jersey Number",
+		sortSequence: ["asc", "desc"],
+		sortType: "number",
+	},
 	"stat:min": {
 		desc: "Minutes Per Game",
 		sortSequence: ["desc", "asc"],
@@ -1913,6 +1918,7 @@ const titleOverrides = {
 	"rating:stre": "Str",
 	"stat:gp": "G",
 	"stat:gs": "GS",
+	"stat:jerseyNumber": "#",
 	"stat:min": "MP",
 	"stat:mov": "MOV",
 	"stat:yearsWithTeam": "YWT",

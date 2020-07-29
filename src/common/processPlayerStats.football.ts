@@ -179,7 +179,10 @@ const processStats = (
 		}
 
 		// For keepWithNoStats
-		if (row[stat] === undefined || Number.isNaN(row[stat])) {
+		if (
+			(row[stat] === undefined || Number.isNaN(row[stat])) &&
+			stat !== "jerseyNumber"
+		) {
 			row[stat] = 0;
 		}
 	}

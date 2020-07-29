@@ -636,7 +636,7 @@ const processStats = (
 		output.stats = output.stats[output.stats.length - 1];
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things
-		const ignoredKeys = ["season", "tid", "yearsWithTeam"];
+		const ignoredKeys = ["season", "tid", "yearsWithTeam", "jerseyNumber"];
 		const statSums: any = {};
 		const statSumsPlayoffs: any = {};
 		const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];

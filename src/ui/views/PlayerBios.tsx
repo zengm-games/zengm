@@ -26,6 +26,7 @@ const PlayerBios = ({
 	const cols = getCols(
 		"Name",
 		"Pos",
+		"stat:jerseyNumber",
 		"Team",
 		"Age",
 		"Height",
@@ -56,6 +57,7 @@ const PlayerBios = ({
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.pos,
+				p.stats.jerseyNumber,
 				<a
 					href={helpers.leagueUrl([
 						"roster",

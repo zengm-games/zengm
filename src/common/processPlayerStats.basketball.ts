@@ -91,6 +91,9 @@ const processStats = (
 			row[stat] = ps.fg - ps.tp;
 		} else if (stat === "2pa") {
 			row[stat] = ps.fga - ps.tpa;
+		} else if (stat === "jerseyNumber") {
+			row[stat] = ps.jerseyNumber;
+			scale = false;
 		} else {
 			row[stat] = ps[stat];
 		}
@@ -108,7 +111,10 @@ const processStats = (
 		}
 
 		// For keepWithNoStats
-		if (row[stat] === undefined || Number.isNaN(row[stat])) {
+		if (
+			(row[stat] === undefined || Number.isNaN(row[stat])) &&
+			stat !== "jerseyNumber"
+		) {
 			row[stat] = 0;
 		}
 	}

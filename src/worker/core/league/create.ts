@@ -560,6 +560,7 @@ export const createWithoutSaving = async (
 				{ ...p0 },
 				scoutingRank,
 				leagueFile.version,
+				true,
 			);
 
 			if (p.tid >= 0 && !activeTids.includes(p.tid)) {
@@ -691,11 +692,9 @@ export const createWithoutSaving = async (
 
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
-			await player.addStatsRow(
-				p,
-				g.get("phase") === PHASE.PLAYOFFS,
-				teamJerseyNumbers[tid2],
-			);
+			await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+				team: teamJerseyNumbers[tid2],
+			});
 
 			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
 			if (jerseyNumber) {
@@ -1028,12 +1027,21 @@ const create = async ({
 		}
 	}
 
-	// If no players were uploaded in custom league file, add some relatives!
-	if (leagueFile.players === undefined) {
-		const players = await idb.cache.players.getAll();
+	const players = await idb.cache.players.getAll();
 
+	if (leagueFile.players === undefined) {
+		// If no players were uploaded in custom league file, add some relatives!
 		for (const p of players) {
 			await player.addRelatives(p);
+		}
+	} else {
+		// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
+		for (const p of players) {
+			if (p.tid >= 0 && p.stats.length > 0) {
+				p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
+					p,
+				);
+			}
 		}
 	}
 

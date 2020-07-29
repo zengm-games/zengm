@@ -24,6 +24,7 @@ const augmentPartialPlayer = async (
 	p: any,
 	scoutingRank: number,
 	version: number | undefined,
+	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
 	let age;
 
@@ -341,7 +342,9 @@ const augmentPartialPlayer = async (
 
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+				skip: ignoreJerseyNumberConflicts,
+			});
 		}
 	} else {
 		const statKeys = [...stats.derived, ...stats.raw];
@@ -374,7 +377,9 @@ const augmentPartialPlayer = async (
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
 			if (p.tid >= 0 && lastSeason < g.get("season")) {
-				await addStatsRow(p, false);
+				await addStatsRow(p, false, {
+					skip: ignoreJerseyNumberConflicts,
+				});
 			}
 		}
 	}

@@ -13,6 +13,7 @@ import genBaseMood from "./genBaseMood";
 import genBaseMoods from "./genBaseMoods";
 import genContract from "./genContract";
 import genFuzz from "./genFuzz";
+import genJerseyNumber from "./genJerseyNumber";
 import genRandomFreeAgent from "./genRandomFreeAgent";
 import genWeight from "./genWeight";
 import generate from "./generate";
@@ -50,6 +51,7 @@ export default {
 	genBaseMoods,
 	genContract,
 	genFuzz,
+	genJerseyNumber,
 	genRandomFreeAgent,
 	genWeight,
 	generate,

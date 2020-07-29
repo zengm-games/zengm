@@ -50,7 +50,7 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 						})}
 					</ul>
 				</div>
-				<div className="col-sm-6 d-none d-sm-block">
+				<div className="col-sm-6">
 					<h2>Completed Games</h2>
 					{completed.map((game, i) => (
 						<ScoreBox key={game.gid} game={game} header={i === 0} />

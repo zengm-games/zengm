@@ -132,13 +132,8 @@ const genJerseyNumber = async (
 	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
 	teamJerseyNumbersInput?: string[],
 ): Promise<string | undefined> => {
-	if (p.stats.length === 0) {
-		// Draft prospect or player who has never played - no number yet
-		return;
-	}
-
 	const prevJerseyNumber: string | undefined =
-		p.stats[p.stats.length - 1].jerseyNumber;
+		p.stats.length > 0 ? p.stats[p.stats.length - 1].jerseyNumber : undefined;
 
 	if (p.tid < 0) {
 		return prevJerseyNumber;
@@ -148,10 +143,9 @@ const genJerseyNumber = async (
 		? teamJerseyNumbersInput
 		: [];
 	if (!teamJerseyNumbersInput) {
-		const teammates = await idb.cache.players.indexGetAll(
-			"playersByTid",
-			p.tid,
-		);
+		const teammates = (
+			await idb.cache.players.indexGetAll("playersByTid", p.tid)
+		).filter(p2 => p2.pid !== p.pid);
 		for (const teammate of teammates) {
 			if (teammate.stats.length > 0) {
 				const teamJerseyNumber =

@@ -50,10 +50,10 @@ const addStatsRow = async (
 		}
 	}
 
-	p.stats.push(statsRow);
-
 	// After push because otherwise rookies will be seen as having no stats
 	statsRow.jerseyNumber = await genJerseyNumber(p, teamJerseyNumbersInput);
+
+	p.stats.push(statsRow);
 };
 
 export default addStatsRow;

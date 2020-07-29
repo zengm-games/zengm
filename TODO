@@ -7,7 +7,6 @@ jersey numbers
 - everywhere addStatsRow is called, also call genJerseyNumber. But needs to be couplepd with getJerseyNumbers (when db exists) or something eles (when db doesn't exist)
   - add extra arg to addStatsRow containing team jersey numbers, which removes the need to hit db
   - do something about augmentPartialPlayer
-- new numbers being generated every season
 - store in player stats
   - need p.jerseyNumber too, otherwise can't set it in a new leagues
 - viewable in

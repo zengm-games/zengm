@@ -2590,9 +2590,26 @@ const upsertCustomizedPlayer = async (
 	// Save to database, adding pid if it doesn't already exist
 	await idb.cache.players.put(p);
 
-	// @ts-ignore
-	if (typeof p.pid !== "number") {
-		throw new Error("Unknown pid");
+	// If jersey number is the same as a teammate, edit the teammate's
+	const jerseyNumber = helpers.getJerseyNumber(p);
+	if (jerseyNumber) {
+		const teammates = (
+			await idb.cache.players.indexGetAll("playersByTid", p.tid)
+		).filter(p2 => p2.pid !== p.pid);
+		for (const teammate of teammates) {
+			const jerseyNumber2 = helpers.getJerseyNumber(teammate);
+			if (jerseyNumber === jerseyNumber2) {
+				const newJerseyNumber = await player.genJerseyNumber(teammate);
+
+				if (teammate.stats.length > 0) {
+					teammate.stats[
+						teammate.stats.length - 1
+					].jerseyNumber = newJerseyNumber;
+				} else {
+					teammate.jerseyNumber = newJerseyNumber;
+				}
+			}
+		}
 	}
 
 	// @ts-ignore

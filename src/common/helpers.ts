@@ -1,5 +1,5 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type { TeamBasic, Phase } from "./types";
+import type { TeamBasic, Phase, Player, PlayerWithoutKey } from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash/orderBy";
 import { PHASE } from "./constants";
@@ -794,10 +794,23 @@ const validateRoundsByes = (
 	}
 };
 
+const getJerseyNumber = (p: PlayerWithoutKey): string | undefined => {
+	let jerseyNumber;
+	if (p.stats.length > 0) {
+		jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+	}
+	if (!jerseyNumber && p.jerseyNumber) {
+		// For uploaded league files
+		jerseyNumber = p.jerseyNumber;
+	}
+	return jerseyNumber;
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
 	gameScore,
+	getJerseyNumber,
 	getTeamsDefault,
 	deepCopy,
 	formatCurrency,

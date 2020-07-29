@@ -1,7 +1,7 @@
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 import { idb } from "../../db";
 import range from "lodash/range";
-import { random } from "../../util";
+import { random, helpers } from "../../util";
 
 // Football gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(i => String(i));
@@ -132,14 +132,7 @@ const genJerseyNumber = async (
 	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
 	teamJerseyNumbersInput?: string[],
 ): Promise<string | undefined> => {
-	let prevJerseyNumber: string | undefined;
-	if (p.stats.length > 0) {
-		prevJerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
-	}
-	if (!prevJerseyNumber && p.jerseyNumber) {
-		// For uploaded league files
-		prevJerseyNumber = p.jerseyNumber;
-	}
+	const prevJerseyNumber = helpers.getJerseyNumber(p);
 
 	if (p.tid < 0) {
 		return prevJerseyNumber;

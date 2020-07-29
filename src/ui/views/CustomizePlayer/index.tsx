@@ -477,14 +477,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
-	let jerseyNumber;
-	if (p.stats.length > 0) {
-		jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
-	}
-	if (!jerseyNumber && p.jerseyNumber) {
-		// For uploaded league files
-		jerseyNumber = p.jerseyNumber;
-	}
+	let jerseyNumber = helpers.getJerseyNumber(p);
 	if (!jerseyNumber) {
 		jerseyNumber = "";
 	}

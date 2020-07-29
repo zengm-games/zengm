@@ -10,8 +10,8 @@ jersey numbers
   - by position, for football
 - show top players on team history page, like bbref
 - some way to retire jersey numbers, i guess on team history page?
+  - handle existing player with retired number
 - add to augmentPartialPlayer, for last row in stats
-- if edited manually (god mode) and there's a conflict, change the other guy's number
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
@@ -20,6 +20,10 @@ jersey numbers
   - real players
   - conflicts - pick new number
   - edit in god mode, and conflicts
+
+french names ~/Downloads/FBGM_FrenchNames.xls
+
+draft history page ratings stats popover
 
 name/colleges revamp
 - races

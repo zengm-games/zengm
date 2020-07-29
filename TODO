@@ -6,8 +6,6 @@ nicidob PRs
 jersey numbers
 - store in player stats
   - need p.jerseyNumber too, otherwise can't set it in a new leagues
-- viewable in
-  - player page - somehow show history, maybe like bbref
 - option to have it prefixed on PlayerNameLabels
   - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
 - draw from some known distribution

@@ -264,15 +264,12 @@ const updatePlayer = async (
 			start: number;
 			end: number;
 			t?: {
-				abbrev: string;
 				colors: [string, string, string];
 				name: string;
 				region: string;
-				tid: number;
 			};
 		}[] = [];
 		for (const ps of p.stats) {
-			console.log(ps);
 			const jerseyNumber = ps.jerseyNumber;
 			if (jerseyNumber === undefined) {
 				continue;
@@ -308,11 +305,9 @@ const updatePlayer = async (
 				let t;
 				if (ts && ts.abbrev && ts.colors && ts.name && ts.region) {
 					t = {
-						abbrev: ts.abbrev,
 						colors: ts.colors,
 						name: ts.name,
 						region: ts.region,
-						tid: ts.tid,
 					};
 				}
 

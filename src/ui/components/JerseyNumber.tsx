@@ -32,7 +32,10 @@ const JerseyNumber = ({
 	}
 
 	return (
-		<OverlayTrigger overlay={<Tooltip id={id}>{text}</Tooltip>}>
+		<OverlayTrigger
+			overlay={<Tooltip id={id}>{text}</Tooltip>}
+			placement="bottom"
+		>
 			<div
 				style={{
 					width: 55,

@@ -262,64 +262,105 @@ const Player2 = ({
 		<>
 			<div className="row mb-3">
 				<div className="col-sm-6">
-					<div
-						className="player-picture"
-						style={{
-							marginTop: player.imgURL ? 0 : -20,
-						}}
-					>
-						<PlayerPicture
-							face={player.face}
-							imgURL={player.imgURL}
-							teamColors={teamColors}
-						/>
+					<div className="d-flex">
+						<div
+							className="player-picture"
+							style={{
+								marginTop: player.imgURL ? 0 : -20,
+							}}
+						>
+							<PlayerPicture
+								face={player.face}
+								imgURL={player.imgURL}
+								teamColors={teamColors}
+							/>
+						</div>
+						<div>
+							<strong>
+								{player.ratings[player.ratings.length - 1].pos},{" "}
+								{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
+								{player.jerseyNumber ? `, #${player.jerseyNumber}` : ""}
+							</strong>
+							<br />
+							Height: {height}
+							<br />
+							Weight: {weight}
+							<br />
+							Born: {player.born.year} - {player.born.loc}
+							<br />
+							{typeof player.diedYear !== "number" ? (
+								<>
+									Age: {player.age}
+									<br />
+								</>
+							) : (
+								<>
+									Died: {player.diedYear}
+									<br />
+								</>
+							)}
+							<Relatives pid={player.pid} relatives={player.relatives} />
+							{draftInfo}
+							College:{" "}
+							{player.college && player.college !== ""
+								? player.college
+								: "None"}
+							<br />
+							{contractInfo}
+							{godMode ? (
+								<>
+									<a
+										href={helpers.leagueUrl(["customize_player", player.pid])}
+										className="god-mode god-mode-text"
+									>
+										Edit Player
+									</a>
+									<br />
+								</>
+							) : null}
+							{statusInfo}
+						</div>
 					</div>
-					<div className="float-left">
-						<strong>
-							{player.ratings[player.ratings.length - 1].pos},{" "}
-							{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
-							{player.jerseyNumber ? `, #${player.jerseyNumber}` : ""}
-						</strong>
-						<br />
-						Height: {height}
-						<br />
-						Weight: {weight}
-						<br />
-						Born: {player.born.year} - {player.born.loc}
-						<br />
-						{typeof player.diedYear !== "number" ? (
-							<>
-								Age: {player.age}
-								<br />
-							</>
-						) : (
-							<>
-								Died: {player.diedYear}
-								<br />
-							</>
-						)}
-						<Relatives pid={player.pid} relatives={player.relatives} />
-						{draftInfo}
-						College:{" "}
-						{player.college && player.college !== "" ? player.college : "None"}
-						<br />
-						{contractInfo}
-						{godMode ? (
-							<>
-								<a
-									href={helpers.leagueUrl(["customize_player", player.pid])}
-									className="god-mode god-mode-text"
+
+					<div>
+						{showTradeFor || showTradingBlock ? (
+							<span title={player.untradableMsg}>
+								<button
+									className="btn btn-light-bordered"
+									disabled={player.untradable}
+									onClick={() => {
+										if (showTradeFor) {
+											toWorker("actions", "tradeFor", { pid: player.pid });
+										} else {
+											toWorker("actions", "addToTradingBlock", player.pid);
+										}
+									}}
 								>
-									Edit Player
-								</a>
-								<br />
-							</>
+									{showTradeFor ? "Trade For" : "Add To Trading Block"}
+								</button>
+							</span>
 						) : null}
-						{statusInfo}
+						{freeAgent ? (
+							<span
+								title={
+									willingToSign
+										? undefined
+										: `${player.name} refuses to negotiate with you`
+								}
+							>
+								<button
+									className="btn btn-light-bordered"
+									disabled={!willingToSign}
+									onClick={() => toWorker("actions", "negotiate", player.pid)}
+								>
+									Negotiate Contract
+								</button>
+							</span>
+						) : null}
 					</div>
 				</div>
 
-				<div className="col-sm-6 text-nowrap">
+				<div className="col-sm-6 mt-3 mt-sm-none text-nowrap">
 					{!retired && showRatings ? (
 						<RatingsOverview ratings={player.ratings} />
 					) : null}
@@ -337,41 +378,6 @@ const Player2 = ({
 					</div>
 				</div>
 			</div>
-
-			{showTradeFor || showTradingBlock ? (
-				<span title={player.untradableMsg}>
-					<button
-						className="btn btn-light-bordered mb-3"
-						disabled={player.untradable}
-						onClick={() => {
-							if (showTradeFor) {
-								toWorker("actions", "tradeFor", { pid: player.pid });
-							} else {
-								toWorker("actions", "addToTradingBlock", player.pid);
-							}
-						}}
-					>
-						{showTradeFor ? "Trade For" : "Add To Trading Block"}
-					</button>
-				</span>
-			) : null}
-			{freeAgent ? (
-				<span
-					title={
-						willingToSign
-							? undefined
-							: `${player.name} refuses to negotiate with you`
-					}
-				>
-					<button
-						className="btn btn-light-bordered mb-3"
-						disabled={!willingToSign}
-						onClick={() => toWorker("actions", "negotiate", player.pid)}
-					>
-						Negotiate Contract
-					</button>
-				</span>
-			) : null}
 
 			{player.careerStats.gp > 0 ? (
 				<>

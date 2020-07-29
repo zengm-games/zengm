@@ -10,14 +10,12 @@ jersey numbers
   - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
 - draw from some known distribution
   - by position, for football
-- function to call after adding a new player to a team, to deal with collisions
-  - if one player is much better than the other (probably based on career stats), they keep the number
-  - if edited manually, change other guy
 - show top players on team history page, like bbref
 - some way to retire jersey numbers, i guess on team history page?
 - frivolity like colleges/countries to view
 - editable in god mode
   - current and preferred
+  - if edited manually and there's a conflict, change the other guy's number
 - real players
 - blog
   - https://old.reddit.com/r/nba/comments/4sxoi0/the_mostleast_worn_jersey_numbers/

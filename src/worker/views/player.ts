@@ -75,6 +75,7 @@ const updatePlayer = async (
 			abbrev: string;
 			age: number;
 			playoffs: boolean;
+			jerseyNumber: string;
 		} & Record<string, number>;
 
 		const p:
@@ -168,7 +169,7 @@ const updatePlayer = async (
 				"pos",
 				"injuryIndex",
 			],
-			stats: ["season", "tid", "abbrev", "age", ...stats],
+			stats: ["season", "tid", "abbrev", "age", "jerseyNumber", ...stats],
 			playoffs: true,
 			showRookies: true,
 			fuzz: true,
@@ -258,6 +259,53 @@ const updatePlayer = async (
 			teamName = "Retired";
 		}
 
+		const jerseyNumberInfos: {
+			number: string;
+			start: number;
+			end: number;
+			t?: {
+				abbrev: string;
+				colors: [string, string, string];
+				name: string;
+				region: string;
+				tid: number;
+			};
+		}[] = [];
+		for (const ps of p.stats) {
+			console.log(ps);
+			const jerseyNumber = ps.jerseyNumber;
+			if (jerseyNumber === undefined) {
+				continue;
+			}
+
+			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
+			if (prev === undefined || jerseyNumber !== prev.number) {
+				const ts = await idb.league
+					.transaction("teamSeasons")
+					.store.index("season, tid")
+					.get([ps.season, ps.tid]);
+				let t;
+				if (ts && ts.abbrev && ts.colors && ts.name && ts.region) {
+					t = {
+						abbrev: ts.abbrev,
+						colors: ts.colors,
+						name: ts.name,
+						region: ts.region,
+						tid: ts.tid,
+					};
+				}
+
+				jerseyNumberInfos.push({
+					number: jerseyNumber,
+					start: ps.season,
+					end: ps.season,
+					t,
+				});
+			} else if (prev && jerseyNumber === prev.number) {
+				prev.end = ps.season;
+			}
+		}
+
 		return {
 			player: p,
 			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
@@ -273,6 +321,7 @@ const updatePlayer = async (
 			showRatings: !g.get("challengeNoRatings") || retired,
 			events,
 			feats,
+			jerseyNumberInfos,
 			ratings,
 			statTables,
 			teamColors,

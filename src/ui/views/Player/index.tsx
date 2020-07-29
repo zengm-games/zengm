@@ -8,6 +8,7 @@ import {
 	SkillsBlock,
 	WatchBlock,
 	Weight,
+	JerseyNumber,
 } from "../../components";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
@@ -161,6 +162,7 @@ const Player2 = ({
 	freeAgent,
 	godMode,
 	injured,
+	jerseyNumberInfos,
 	player,
 	ratings,
 	retired,
@@ -320,6 +322,16 @@ const Player2 = ({
 					{!retired && showRatings ? (
 						<RatingsOverview ratings={player.ratings} />
 					) : null}
+					<div
+						className="d-flex flex-wrap mt-2"
+						style={{
+							gap: "0.5em",
+						}}
+					>
+						{jerseyNumberInfos.map((info, i) => (
+							<JerseyNumber key={i} {...info} />
+						))}
+					</div>
 				</div>
 			</div>
 

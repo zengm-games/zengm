@@ -12,6 +12,7 @@ export { default as Footer } from "./Footer";
 export { default as Header } from "./Header";
 export { default as Height } from "./Height";
 export { default as HelpPopover } from "./HelpPopover";
+export { default as JerseyNumber } from "./JerseyNumber";
 export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as MarginOfVictory } from "./MarginOfVictory";
 export { default as MultiTeamMenu } from "./MultiTeamMenu";

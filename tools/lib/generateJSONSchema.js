@@ -1059,6 +1059,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						injury: {
 							ref: "#/definitions/playerInjury",
 						},
+						jerseyNumber: {
+							type: "string",
+						},
 						lastName: {
 							type: "string",
 						},

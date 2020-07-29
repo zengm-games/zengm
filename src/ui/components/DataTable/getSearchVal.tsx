@@ -8,9 +8,9 @@ const getSearchVal = (value: any, toLowerCase: boolean = true) => {
 		let searchVal;
 
 		// Get the right 'value'.
-		if (value !== null && value.hasOwnProperty("searchValue")) {
+		if (value != null && value.hasOwnProperty("searchValue")) {
 			val = value.searchValue;
-		} else if (value !== null && value.hasOwnProperty("value")) {
+		} else if (value != null && value.hasOwnProperty("value")) {
 			val = value.value;
 		} else {
 			val = value;
@@ -22,7 +22,7 @@ const getSearchVal = (value: any, toLowerCase: boolean = true) => {
 			searchVal = val;
 		}
 
-		if (searchVal !== undefined && searchVal !== null && searchVal.toString) {
+		if (searchVal != null && searchVal.toString) {
 			return toLowerCase
 				? searchVal.toString().toLowerCase()
 				: searchVal.toString();

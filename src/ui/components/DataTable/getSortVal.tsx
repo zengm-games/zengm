@@ -9,9 +9,9 @@ const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 		let sortVal: string;
 
 		// Get the right 'value'.
-		if (value !== null && value.hasOwnProperty("sortValue")) {
+		if (value != null && value.hasOwnProperty("sortValue")) {
 			val = value.sortValue;
-		} else if (value !== null && value.hasOwnProperty("value")) {
+		} else if (value != null && value.hasOwnProperty("value")) {
 			val = value.value;
 		} else {
 			val = value;

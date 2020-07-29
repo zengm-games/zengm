@@ -34,6 +34,7 @@ type Basketball = {
 		slug: string;
 		season: number;
 		abbrev: string;
+		jerseyNumber?: string;
 	}[];
 	bios: Record<
 		string,

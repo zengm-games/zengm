@@ -789,6 +789,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		ovrDrop?: number;
 		potDrop?: number;
 	}[];
+	jerseyNumber?: string;
 	lastName: string;
 	pid?: number;
 	pos?: string; // Only in players from custom league files

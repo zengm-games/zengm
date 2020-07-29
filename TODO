@@ -4,22 +4,22 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
-- store in player stats
-  - need p.jerseyNumber too, otherwise can't set it in a new leagues
 - option to have it prefixed on PlayerNameLabels
   - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
 - draw from some known distribution
   - by position, for football
 - show top players on team history page, like bbref
 - some way to retire jersey numbers, i guess on team history page?
-- frivolity like colleges/countries to view
+- add to augmentPartialPlayer, for last row in stats
 - editable in god mode
-  - current and preferred
+  - current and preferred? or like pos
   - if edited manually and there's a conflict, change the other guy's number
-- real players
+- docs
+  - how to specify jerseyNumber in root of player object or in stats row
 - blog
   - https://old.reddit.com/r/nba/comments/4sxoi0/the_mostleast_worn_jersey_numbers/
   - viewable on: player page, player bios
+  - real players
   - conflicts
 
 name/colleges revamp

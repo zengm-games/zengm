@@ -132,8 +132,14 @@ const genJerseyNumber = async (
 	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
 	teamJerseyNumbersInput?: string[],
 ): Promise<string | undefined> => {
-	const prevJerseyNumber: string | undefined =
-		p.stats.length > 0 ? p.stats[p.stats.length - 1].jerseyNumber : undefined;
+	let prevJerseyNumber: string | undefined;
+	if (p.stats.length > 0) {
+		prevJerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+	}
+	if (!prevJerseyNumber && p.jerseyNumber) {
+		// For uploaded league files
+		prevJerseyNumber = p.jerseyNumber;
+	}
 
 	if (p.tid < 0) {
 		return prevJerseyNumber;

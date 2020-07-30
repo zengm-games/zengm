@@ -70,7 +70,9 @@ const generate = (tm: any): Team => {
 				? tm.stadiumCapacity
 				: g.get("defaultStadiumCapacity"),
 		disabled: tm.disabled,
-		retiredJerseyNumbers: [],
+		retiredJerseyNumbers: tm.retiredJerseyNumbers
+			? tm.retiredJerseyNumbers
+			: [],
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

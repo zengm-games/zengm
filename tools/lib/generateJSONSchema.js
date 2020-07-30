@@ -1312,6 +1312,33 @@ const generateJSONSchema = (sport /*: string*/) => {
 							maxItems: 3,
 							minItems: 3,
 						},
+						retiredJerseyNumbers: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									number: {
+										type: "string",
+									},
+									seasonRetired: {
+										type: "number",
+									},
+									seasonTeamInfo: {
+										type: "number",
+									},
+									pid: {
+										type: "number",
+									},
+									name: {
+										type: "string",
+									},
+									text: {
+										type: "string",
+									},
+								},
+								required: ["number", "seasonRetired", "seasonTeamInfo", "text"],
+							},
+						},
 						srID: {
 							type: "string",
 						},

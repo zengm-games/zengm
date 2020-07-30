@@ -10,7 +10,6 @@ jersey numbers
 - add jersey retirement to awards list
 - bugs
   - It's possible to give two people the same jersey #
-  - Exports do not save jersey numbers, or at the very least don't load them properly. If I retire a jersey in a league, then export it, then create a new league with the export, no jerseys will be retired.
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog

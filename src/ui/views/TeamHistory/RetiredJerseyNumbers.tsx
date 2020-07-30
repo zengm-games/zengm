@@ -257,7 +257,7 @@ const RetiredJerseyNumbers = ({
 			seasonRetired: String(season),
 			seasonTeamInfo: String(season),
 			linkToPlayer: "yes",
-			pid: sortedPlayers.length > 0 ? sortedPlayers[0].pid : "other",
+			pid: sortedPlayers.length > 0 ? sortedPlayers[0].pid : "",
 			text: "",
 		});
 	};

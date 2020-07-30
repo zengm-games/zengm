@@ -131,6 +131,7 @@ const genJerseyNumber = async (
 
 	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
 	teamJerseyNumbersInput?: string[],
+	retiredJerseyNumbersInput?: string[],
 ): Promise<string | undefined> => {
 	const prevJerseyNumber = helpers.getJerseyNumber(p);
 
@@ -156,8 +157,22 @@ const genJerseyNumber = async (
 		}
 	}
 
+	const retiredJerseyNumbers: string[] = retiredJerseyNumbersInput
+		? retiredJerseyNumbersInput
+		: [];
+	if (!retiredJerseyNumbersInput) {
+		const t = await idb.cache.teams.get(p.tid);
+		if (t && t.retiredJerseyNumbers) {
+			retiredJerseyNumbers.push(
+				...t.retiredJerseyNumbers.map(row => row.number),
+			);
+		}
+	}
+
 	const candidates = VALID_JERSEY_NUMBERS.filter(
-		jerseyNumber => !teamJerseyNumbers.includes(jerseyNumber),
+		jerseyNumber =>
+			!teamJerseyNumbers.includes(jerseyNumber) &&
+			!retiredJerseyNumbers.includes(jerseyNumber),
 	);
 	if (candidates.length === 0) {
 		// No valid jersey number left!

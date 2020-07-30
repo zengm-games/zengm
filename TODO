@@ -6,14 +6,11 @@ nicidob PRs
 jersey numbers
 - option to have it prefixed on PlayerNameLabels
   - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
-- draw from some known distribution
-  - by position, for football
-- show top players on team history page, like bbref
-- when adding new number, handle existing player with retired number
+- football
+  - position-based distribution
 - AI teams retire jerseys
   - max 6
   - when a retired player makes the HoF, put him in. if already full, make it probabilistic
-- add to augmentPartialPlayer, for last row in stats
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
@@ -24,6 +21,9 @@ jersey numbers
   - edit in god mode, and conflicts
 
 french names ~/Downloads/FBGM_FrenchNames.xls
+
+live sim should just do one game, not whole day
+- injuries?
 
 draft history page ratings stats popover
 

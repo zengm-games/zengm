@@ -1898,7 +1898,26 @@ const retiredJerseyNumberUpsert = async (
 	}
 
 	await idb.cache.teams.put(t);
-	await toUI("realtimeUpdate", [["retiredJerseys"]]);
+
+	// Handle players who have the retired jersey number
+	const players = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		g.get("userTid"),
+	);
+	for (const p of players) {
+		if (p.stats.length === 0) {
+			continue;
+		}
+
+		const jerseyNumber = helpers.getJerseyNumber(p);
+		if (jerseyNumber === info.number) {
+			p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
+				p,
+			);
+		}
+	}
+
+	await toUI("realtimeUpdate", [["retiredJerseys", "playerMovement"]]);
 };
 
 const runBefore = async (

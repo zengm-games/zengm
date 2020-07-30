@@ -20,6 +20,7 @@ const addStatsRow = async (
 	jerseyNumbers: {
 		skip?: boolean;
 		team?: string[];
+		retired?: string[];
 	} = {},
 ) => {
 	const statsRow: any = {
@@ -54,7 +55,11 @@ const addStatsRow = async (
 	}
 
 	if (!jerseyNumbers.skip) {
-		statsRow.jerseyNumber = await genJerseyNumber(p, jerseyNumbers.team);
+		statsRow.jerseyNumber = await genJerseyNumber(
+			p,
+			jerseyNumbers.team,
+			jerseyNumbers.retired,
+		);
 	}
 
 	p.stats.push(statsRow);

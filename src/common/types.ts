@@ -1053,6 +1053,16 @@ export type Team = {
 
 	// Optional because no upgrade. Otherwise, would make this false by default
 	disabled?: boolean;
+
+	// Optional because no upgrade. Otherwise, would make this empty array by default
+	retiredJerseyNumbers?: {
+		number: string;
+		seasonRetired: number;
+		seasonTeamInfo: number;
+		pid?: number;
+		name?: string;
+		text: string;
+	}[];
 };
 
 export type TeamAttr = keyof Team;

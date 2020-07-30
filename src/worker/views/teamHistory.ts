@@ -19,8 +19,44 @@ const updateTeamHistory = async (
 		let mostWon = 0;
 		let mostLost = 0;
 
+		const t = await idb.cache.teams.get(inputs.tid);
+		if (!t) {
+			throw new Error("Invalid team ID number");
+		}
+
 		const teamSeasons = await idb.getCopies.teamSeasons({
 			tid: inputs.tid,
+		});
+
+		const retiredJerseyNumbers = (
+			t.retiredJerseyNumbers || [
+				{
+					number: "15",
+					seasonRetired: 1996,
+					seasonTeamInfo: 1996,
+					pid: 23,
+					name: "Joe Smith",
+					text: "For being awesome",
+				},
+				{
+					number: "16",
+					seasonRetired: 1996,
+					seasonTeamInfo: 1996,
+					text: "No player for this one",
+				},
+			]
+		).map(row => {
+			const ts = teamSeasons.find(ts => ts.season === row.seasonTeamInfo);
+			const teamInfo = {
+				colors: ts ? ts.colors : t.colors,
+				name: ts ? ts.name : t.name,
+				region: ts ? ts.region : t.region,
+			};
+
+			return {
+				...row,
+				teamInfo,
+			};
 		});
 
 		const history: {
@@ -143,6 +179,7 @@ const updateTeamHistory = async (
 			bestRecord,
 			worstRecord,
 			tid: inputs.tid,
+			retiredJerseyNumbers,
 		};
 	}
 };

@@ -11,6 +11,9 @@ jersey numbers
 - show top players on team history page, like bbref
 - some way to retire jersey numbers, i guess on team history page?
   - handle existing player with retired number
+- AI teams retire jerseys
+  - max 6
+  - when a retired player makes the HoF, put him in. if already full, make it probabilistic
 - add to augmentPartialPlayer, for last row in stats
 - docs
   - how to specify jerseyNumber in root of player object or in stats row

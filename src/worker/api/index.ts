@@ -2586,6 +2586,25 @@ const upsertCustomizedPlayer = async (
 	updatedRatingsOrAge: boolean,
 	conditions: Conditions,
 ): Promise<number> => {
+	if (p.tid >= 0) {
+		const t = await idb.cache.teams.get(p.tid);
+		if (!t) {
+			throw new Error("Invalid tid");
+		}
+
+		if (t.retiredJerseyNumbers) {
+			const retiredJerseyNumbers = t.retiredJerseyNumbers.map(
+				row => row.number,
+			);
+			const jerseyNumber = helpers.getJerseyNumber(p);
+			if (jerseyNumber && retiredJerseyNumbers.includes(jerseyNumber)) {
+				throw new Error(
+					`Jersey number "${jerseyNumber}" is retired by the ${t.region} ${t.name}. Either un-retire it at Team > History or pick a new number.`,
+				);
+			}
+		}
+	}
+
 	const r = p.ratings.length - 1;
 
 	// Fix draft and ratings season

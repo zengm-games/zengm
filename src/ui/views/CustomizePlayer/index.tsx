@@ -10,7 +10,7 @@ import React, {
 import { PHASE, PLAYER, RATINGS, POSITIONS } from "../../../common";
 import { PlayerPicture } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, realtimeUpdate, toWorker } from "../../util";
+import { helpers, realtimeUpdate, toWorker, logEvent } from "../../util";
 import RatingsForm from "./RatingsForm";
 import RelativesForm from "./RelativesForm";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
@@ -264,16 +264,29 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			p.imgURL = "";
 		}
 
-		const pid = await toWorker(
-			"main",
-			"upsertCustomizedPlayer",
-			p,
-			props.originalTid,
-			props.season,
-			updatedRatingsOrAge,
-		);
+		try {
+			const pid = await toWorker(
+				"main",
+				"upsertCustomizedPlayer",
+				p,
+				props.originalTid,
+				props.season,
+				updatedRatingsOrAge,
+			);
 
-		realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+			realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
+			setState(prevState => ({
+				...prevState,
+				saving: false,
+			}));
+		}
 	};
 
 	const handleChange = (

@@ -70,7 +70,7 @@ const genPlayers = async (
 			p.college = "Washington State University";
 			p.firstName = "LaVar";
 			p.hgt = 78;
-			p.imgURL = "/img/lavar.jpg";
+			p.imgURL = "/img/easter-eggs/lavar.jpg";
 			p.lastName = "Ball";
 			p.weight = 250;
 			Object.assign(p.ratings[0], {
@@ -121,7 +121,7 @@ const genPlayers = async (
 			p.college = "Wharton";
 			p.firstName = "Donald";
 			p.hgt = 75;
-			p.imgURL = "/img/trump.jpg";
+			p.imgURL = "/img/easter-eggs/trump.jpg";
 			p.lastName = "Trump";
 			p.weight = 240;
 			Object.assign(p.ratings[0], {
@@ -157,7 +157,44 @@ const genPlayers = async (
 					tids: [g.get("userTid")],
 				});
 			}
-		}
+		}	else if (Math.random() < 1/2) {
+			if (draftYear = 1370) {
+			const p = player.generate(
+				PLAYER.UNDRAFTED,
+				19,
+				draftYear,
+				false,
+				scoutingRank,
+			);
+			p.born.year = 1328;
+			p.born.loc = "China";
+			p.college = "None";
+			p.firstName = "Emperor";
+			p.hgt = 64;
+			p.imgURL = "/img/easter-eggs/yuanzhang.jpg";
+			p.lastName = "Zhu Yuanzhang";
+			p.weight = 300;
+			Object.assign(p.ratings[0], {
+				hgt: 0,
+				stre: 80,
+				spd: 80,
+				jmp: 80,
+				endu: 80,
+				ins: 80,
+				dnk: 80,
+				ft: 80,
+				fg: 80,
+				tp: 80,
+				oiq: 80,
+				diq: 80,
+				drb: 100,
+				pss: 100,
+				reb: 80,
+			});
+			await player.develop(p, 0);
+			player.updateValues(p);
+			const pid = await idb.cache.players.add(p);
+		} }
 	}
 };
 

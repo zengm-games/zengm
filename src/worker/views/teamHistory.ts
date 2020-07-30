@@ -179,6 +179,7 @@ const updateTeamHistory = async (
 			bestRecord,
 			worstRecord,
 			tid: inputs.tid,
+			userTid: g.get("userTid"),
 			retiredJerseyNumbers,
 		};
 	}

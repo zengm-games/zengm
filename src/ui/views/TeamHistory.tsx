@@ -25,6 +25,7 @@ const TeamHistory = ({
 	totalLost,
 	totalTied,
 	totalWon,
+	userTid,
 	worstRecord,
 }: View<"teamHistory">) => {
 	useTitleBar({
@@ -188,15 +189,28 @@ const TeamHistory = ({
 										t={row.teamInfo}
 									/>
 									<div className="ml-3">
-										{row.pid !== undefined ? (
+										<div>
+											{row.pid !== undefined ? (
+												<>
+													<a href={helpers.leagueUrl(["player", row.pid])}>
+														{row.name}
+													</a>
+													{row.text ? " - " : null}
+												</>
+											) : null}
+											{row.text}
+										</div>
+										{tid === userTid ? (
 											<>
-												<a href={helpers.leagueUrl(["player", row.pid])}>
-													{row.name}
-												</a>
-												{row.text ? " - " : null}
+												<button className="btn btn-sm btn-link p-0 border-0">
+													Edit
+												</button>{" "}
+												|{" "}
+												<button className="btn btn-sm btn-link p-0 border-0">
+													Delete
+												</button>
 											</>
 										) : null}
-										{row.text}
 									</div>
 								</div>
 							))}

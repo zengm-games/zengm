@@ -1823,8 +1823,8 @@ const resetPlayingTime = async (tids: number[] | undefined) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const retiredJerseyNumberDelete = async (i: number) => {
-	const t = await idb.cache.teams.get(g.get("userTid"));
+const retiredJerseyNumberDelete = async (tid: number, i: number) => {
+	const t = await idb.cache.teams.get(tid);
 	if (!t) {
 		throw new Error("Invalid tid");
 	}
@@ -1837,6 +1837,7 @@ const retiredJerseyNumberDelete = async (i: number) => {
 };
 
 const retiredJerseyNumberUpsert = async (
+	tid: number,
 	i: number | undefined,
 	info: {
 		number: string;
@@ -1846,13 +1847,13 @@ const retiredJerseyNumberUpsert = async (
 		text: string;
 	},
 ) => {
-	const t = await idb.cache.teams.get(g.get("userTid"));
+	const t = await idb.cache.teams.get(tid);
 	if (!t) {
 		throw new Error("Invalid tid");
 	}
 
 	const p =
-		info.pid !== undefined
+		info.pid !== undefined && !Number.isNaN(info.pid)
 			? await idb.getCopy.players({
 					pid: info.pid,
 			  })
@@ -1869,7 +1870,7 @@ const retiredJerseyNumberUpsert = async (
 		throw new Error("Invalid value for seasonTeamInfo");
 	}
 	if (Number.isNaN(info.pid)) {
-		throw new Error("Invalid value for pid");
+		throw new Error("Invalid value for player ID number");
 	}
 
 	// Insert or update?
@@ -1900,10 +1901,7 @@ const retiredJerseyNumberUpsert = async (
 	await idb.cache.teams.put(t);
 
 	// Handle players who have the retired jersey number
-	const players = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		g.get("userTid"),
-	);
+	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	for (const p of players) {
 		if (p.stats.length === 0) {
 			continue;

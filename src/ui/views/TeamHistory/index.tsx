@@ -15,6 +15,7 @@ const TeamHistory = ({
 	abbrev,
 	bestRecord,
 	championships,
+	godMode,
 	history,
 	players,
 	playoffAppearances,
@@ -175,6 +176,7 @@ const TeamHistory = ({
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
 					<h2>Retired Jersey Numbers</h2>
 					<RetiredJerseyNumbers
+						godMode={godMode}
 						players={players}
 						retiredJerseyNumbers={retiredJerseyNumbers}
 						season={season}

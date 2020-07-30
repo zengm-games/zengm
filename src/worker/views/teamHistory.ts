@@ -11,6 +11,7 @@ const updateTeamHistory = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("retiredJerseys") ||
+		updateEvents.includes("gameAttributes") ||
 		inputs.abbrev !== state.abbrev
 	) {
 		let bestRecord;
@@ -166,6 +167,7 @@ const updateTeamHistory = async (
 			userTid: g.get("userTid"),
 			retiredJerseyNumbers,
 			season: g.get("season"),
+			godMode: g.get("godMode"),
 		};
 	}
 };

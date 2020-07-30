@@ -6,6 +6,7 @@ import orderBy from "lodash/orderBy";
 import { PLAYER } from "../../../common";
 
 const RetiredJerseyNumbers = ({
+	godMode,
 	players,
 	retiredJerseyNumbers,
 	season,
@@ -13,7 +14,7 @@ const RetiredJerseyNumbers = ({
 	userTid,
 }: Pick<
 	View<"teamHistory">,
-	"players" | "retiredJerseyNumbers" | "season" | "tid" | "userTid"
+	"godMode" | "players" | "retiredJerseyNumbers" | "season" | "tid" | "userTid"
 >) => {
 	const [editing, setEditing] = useState<
 		| {
@@ -68,6 +69,7 @@ const RetiredJerseyNumbers = ({
 						await toWorker(
 							"main",
 							"retiredJerseyNumberUpsert",
+							tid,
 							editing.type === "edit" ? editing.index : undefined,
 							{
 								number: editing.number,
@@ -233,7 +235,7 @@ const RetiredJerseyNumbers = ({
 		);
 
 		if (proceed) {
-			await toWorker("main", "retiredJerseyNumberDelete", i);
+			await toWorker("main", "retiredJerseyNumberDelete", tid, i);
 		}
 	};
 
@@ -294,7 +296,7 @@ const RetiredJerseyNumbers = ({
 									) : null}
 									{row.text}
 								</div>
-								{tid === userTid ? (
+								{godMode || tid === userTid ? (
 									<>
 										<button
 											className="btn btn-sm btn-link p-0 border-0"
@@ -320,7 +322,7 @@ const RetiredJerseyNumbers = ({
 					))}
 				</div>
 			)}
-			{tid === userTid ? (
+			{godMode || tid === userTid ? (
 				<button className="btn btn-secondary mb-3" onClick={addRetiredJersey}>
 					Add Retired Jersey Number
 				</button>

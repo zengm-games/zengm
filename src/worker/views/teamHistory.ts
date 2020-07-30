@@ -10,6 +10,7 @@ const updateTeamHistory = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
+		updateEvents.includes("retiredJerseys") ||
 		inputs.abbrev !== state.abbrev
 	) {
 		let bestRecord;
@@ -28,24 +29,7 @@ const updateTeamHistory = async (
 			tid: inputs.tid,
 		});
 
-		const retiredJerseyNumbers = (
-			t.retiredJerseyNumbers || [
-				{
-					number: "15",
-					seasonRetired: 1996,
-					seasonTeamInfo: 1996,
-					pid: 23,
-					name: "Joe Smith",
-					text: "For being awesome",
-				},
-				{
-					number: "16",
-					seasonRetired: 1996,
-					seasonTeamInfo: 1996,
-					text: "No player for this one",
-				},
-			]
-		).map(row => {
+		const retiredJerseyNumbers = (t.retiredJerseyNumbers || []).map(row => {
 			const ts = teamSeasons.find(ts => ts.season === row.seasonTeamInfo);
 			const teamInfo = {
 				colors: ts ? ts.colors : t.colors,

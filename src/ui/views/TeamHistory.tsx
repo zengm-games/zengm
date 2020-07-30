@@ -8,7 +8,7 @@ import {
 	JerseyNumber,
 } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers, getCols } from "../util";
+import { helpers, getCols, confirm, toWorker } from "../util";
 import type { View } from "../../common/types";
 
 const TeamHistory = ({
@@ -104,6 +104,23 @@ const TeamHistory = ({
 	if (totalTied > 0) {
 		record += `-${totalTied}`;
 	}
+
+	const deleteRetiredJersey = async (i: number) => {
+		const row = retiredJerseyNumbers[i];
+		if (!row) {
+			return;
+		}
+		const proceed = await confirm(
+			`Are you sure you want to un-retire jersey number ${row.number}?`,
+			{
+				okText: "Un-retire",
+			},
+		);
+
+		if (proceed) {
+			await toWorker("main", "unretireJerseyNumber", i);
+		}
+	};
 
 	return (
 		<>
@@ -206,7 +223,12 @@ const TeamHistory = ({
 													Edit
 												</button>{" "}
 												|{" "}
-												<button className="btn btn-sm btn-link p-0 border-0">
+												<button
+													className="btn btn-sm btn-link p-0 border-0"
+													onClick={() => {
+														deleteRetiredJersey(i);
+													}}
+												>
 													Delete
 												</button>
 											</>

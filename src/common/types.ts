@@ -1249,6 +1249,7 @@ export type UpdateEvents = (
 	| "options"
 	| "playerMovement"
 	| "scheduledEvents"
+	| "retiredJerseys"
 	| "teamFinances"
 	| "watchList"
 )[];

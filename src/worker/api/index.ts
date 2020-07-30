@@ -2033,6 +2033,19 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 	}
 };
 
+const unretireJerseyNumber = async (i: number) => {
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	if (t.retiredJerseyNumbers) {
+		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter((row, j) => i !== j);
+		await idb.cache.teams.put(t);
+		await toUI("realtimeUpdate", [["retiredJerseys"]]);
+	}
+};
+
 const updateBudget = async (
 	budgetAmounts: {
 		coaching: number;
@@ -2721,6 +2734,7 @@ export default {
 	startFantasyDraft,
 	switchTeam,
 	tradeCounterOffer,
+	unretireJerseyNumber,
 	updateBudget,
 	updateConfsDivs,
 	updateGameAttributes,

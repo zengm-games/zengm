@@ -35,6 +35,7 @@ type Props = {
 const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
+		jerseyNumber?: string;
 		name?: string;
 		ratings?: {
 			pos: string;
@@ -64,6 +65,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	const loadData = useCallback(async () => {
 		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid);
 		setPlayer({
+			jerseyNumber: p.jerseyNumber,
 			name: p.name,
 			ratings: p.ratings,
 			stats: p.stats,
@@ -79,7 +81,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 		}
 	}, [loadData, loadingData]);
 
-	const { name, ratings, stats } = player;
+	const { jerseyNumber, name, ratings, stats } = player;
 
 	let nameBlock = null;
 	if (name) {
@@ -90,6 +92,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 					<b>{name}</b>
 				</a>
 				{ratings !== undefined ? `, ${ratings.pos}` : null}
+				{jerseyNumber ? `, #${jerseyNumber}` : null}
 				{typeof watch === "boolean" ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}

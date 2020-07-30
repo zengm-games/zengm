@@ -6,14 +6,17 @@ nicidob PRs
 jersey numbers
 - AI teams retire jerseys
   - max 6
-  - when a retired player makes the HoF, put him in. if already full, make it probabilistic
+  - factors
+    - HoF
+    - longievity
+    - tragic death
 - add jersey retirement to awards list
   - No. 77 retired by the AAAA
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
   - https://old.reddit.com/r/nba/comments/4sxoi0/the_mostleast_worn_jersey_numbers/
-  - viewable on: player page, player bios
+  - viewable on: player page, player bios, ratingsstatspopover
   - real players
   - conflicts - pick new number
   - edit in god mode, and conflicts

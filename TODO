@@ -9,10 +9,7 @@ jersey numbers
 - draw from some known distribution
   - by position, for football
 - show top players on team history page, like bbref
-- some way to retire jersey numbers, i guess on team history page?
-  - handle existing player with retired number
-  - on click edit/add, scroll to top
-  - still show retired ones under form?
+- when adding new number, handle existing player with retired number
 - AI teams retire jerseys
   - max 6
   - when a retired player makes the HoF, put him in. if already full, make it probabilistic

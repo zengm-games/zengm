@@ -19,6 +19,7 @@ const TeamHistory = ({
 	players,
 	playoffAppearances,
 	retiredJerseyNumbers,
+	season,
 	stats,
 	team,
 	tid,
@@ -176,6 +177,7 @@ const TeamHistory = ({
 					<RetiredJerseyNumbers
 						players={players}
 						retiredJerseyNumbers={retiredJerseyNumbers}
+						season={season}
 						tid={tid}
 						userTid={userTid}
 					/>

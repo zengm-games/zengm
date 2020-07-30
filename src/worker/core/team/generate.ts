@@ -70,22 +70,7 @@ const generate = (tm: any): Team => {
 				? tm.stadiumCapacity
 				: g.get("defaultStadiumCapacity"),
 		disabled: tm.disabled,
-		retiredJerseyNumbers: [
-			{
-				number: "15",
-				seasonRetired: 1996,
-				seasonTeamInfo: 1996,
-				pid: 23,
-				name: "Joe Smith",
-				text: "For being awesome",
-			},
-			{
-				number: "16",
-				seasonRetired: 1996,
-				seasonTeamInfo: 1996,
-				text: "No player for this one",
-			},
-		],
+		retiredJerseyNumbers: [],
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

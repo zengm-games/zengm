@@ -165,6 +165,7 @@ const updateTeamHistory = async (
 			tid: inputs.tid,
 			userTid: g.get("userTid"),
 			retiredJerseyNumbers,
+			season: g.get("season"),
 		};
 	}
 };

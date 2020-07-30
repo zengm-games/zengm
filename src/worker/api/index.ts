@@ -1836,8 +1836,8 @@ const retiredJerseyNumberDelete = async (i: number) => {
 	}
 };
 
-const retiredJerseyNumberEdit = async (
-	i: number,
+const retiredJerseyNumberUpsert = async (
+	i: number | undefined,
 	info: {
 		number: string;
 		seasonRetired: number;
@@ -1849,10 +1849,6 @@ const retiredJerseyNumberEdit = async (
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	if (!t) {
 		throw new Error("Invalid tid");
-	}
-
-	if (!t.retiredJerseyNumbers) {
-		throw new Error("Cannot edit when retiredJerseyNumbers is undefined");
 	}
 
 	const p =
@@ -1876,14 +1872,30 @@ const retiredJerseyNumberEdit = async (
 		throw new Error("Invalid value for pid");
 	}
 
-	if (i >= t.retiredJerseyNumbers.length) {
-		throw new Error("Invalid index");
-	}
+	// Insert or update?
+	if (i === undefined) {
+		if (!t.retiredJerseyNumbers) {
+			t.retiredJerseyNumbers = [];
+		}
 
-	t.retiredJerseyNumbers[i] = {
-		...info,
-		name,
-	};
+		t.retiredJerseyNumbers.push({
+			...info,
+			name,
+		});
+	} else {
+		if (!t.retiredJerseyNumbers) {
+			throw new Error("Cannot edit when retiredJerseyNumbers is undefined");
+		}
+
+		if (i >= t.retiredJerseyNumbers.length) {
+			throw new Error("Invalid index");
+		}
+
+		t.retiredJerseyNumbers[i] = {
+			...info,
+			name,
+		};
+	}
 
 	await idb.cache.teams.put(t);
 	await toUI("realtimeUpdate", [["retiredJerseys"]]);
@@ -2776,7 +2788,7 @@ export default {
 	reorderRosterDrag,
 	resetPlayingTime,
 	retiredJerseyNumberDelete,
-	retiredJerseyNumberEdit,
+	retiredJerseyNumberUpsert,
 	runBefore,
 	setLocal,
 	sign,

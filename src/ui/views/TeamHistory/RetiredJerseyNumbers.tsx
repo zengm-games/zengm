@@ -8,11 +8,12 @@ import { PLAYER } from "../../../common";
 const RetiredJerseyNumbers = ({
 	players,
 	retiredJerseyNumbers,
+	season,
 	tid,
 	userTid,
 }: Pick<
 	View<"teamHistory">,
-	"players" | "retiredJerseyNumbers" | "tid" | "userTid"
+	"players" | "retiredJerseyNumbers" | "season" | "tid" | "userTid"
 >) => {
 	const [editing, setEditing] = useState<
 		| {
@@ -48,7 +49,9 @@ const RetiredJerseyNumbers = ({
 			? editing.pid
 			: "other";
 
-		const handleChange = (field: string) => (event: ChangeEvent) => {
+		const handleChange = (field: string) => (
+			event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+		) => {
 			setEditing({
 				...editing,
 				[field]: event.target.value,
@@ -61,28 +64,26 @@ const RetiredJerseyNumbers = ({
 				onSubmit={async event => {
 					event.preventDefault();
 
-					if (editing.type === "edit") {
-						try {
-							await toWorker("main", "retiredJerseyNumberEdit", editing.index, {
-								number: editing.number,
-								seasonRetired: parseInt(editing.seasonRetired),
-								seasonTeamInfo: parseInt(editing.seasonTeamInfo),
-								pid:
-									editing.linkToPlayer === "yes"
-										? parseInt(editing.pid)
-										: undefined,
-								text: editing.text,
-							});
+					try {
+						await toWorker("main", "retiredJerseyNumberUpsert", undefined, {
+							number: editing.number,
+							seasonRetired: parseInt(editing.seasonRetired),
+							seasonTeamInfo: parseInt(editing.seasonTeamInfo),
+							pid:
+								editing.linkToPlayer === "yes"
+									? parseInt(editing.pid)
+									: undefined,
+							text: editing.text,
+						});
 
-							setEditing(undefined);
-						} catch (error) {
-							logEvent({
-								type: "error",
-								text: error.message,
-								saveToDb: false,
-								persistent: true,
-							});
-						}
+						setEditing(undefined);
+					} catch (error) {
+						logEvent({
+							type: "error",
+							text: error.message,
+							saveToDb: false,
+							persistent: true,
+						});
 					}
 				}}
 			>
@@ -249,55 +250,74 @@ const RetiredJerseyNumbers = ({
 		});
 	};
 
-	return retiredJerseyNumbers.length === 0 ? (
-		<p>None yet!</p>
-	) : (
-		<div className="row">
-			{retiredJerseyNumbers.map((row, i) => (
-				<div key={i} className="col-lg-6 d-flex align-items-center mb-3">
-					<JerseyNumber
-						number={row.number}
-						start={row.seasonRetired}
-						end={row.seasonRetired}
-						t={row.teamInfo}
-					/>
-					<div className="ml-3">
-						<div>
-							{row.pid !== undefined ? (
-								<>
-									<a href={helpers.leagueUrl(["player", row.pid])}>
-										{row.name}
-									</a>
-									{row.text ? " - " : null}
-								</>
-							) : null}
-							{row.text}
+	const addRetiredJersey = () => {
+		setEditing({
+			type: "add",
+			number: "",
+			seasonRetired: String(season),
+			seasonTeamInfo: String(season),
+			linkToPlayer: "yes",
+			pid: sortedPlayers.length > 0 ? sortedPlayers[0].pid : "other",
+			text: "",
+		});
+	};
+
+	return (
+		<>
+			{retiredJerseyNumbers.length === 0 ? (
+				<p>None yet!</p>
+			) : (
+				<div className="row">
+					{retiredJerseyNumbers.map((row, i) => (
+						<div key={i} className="col-lg-6 d-flex align-items-center mb-3">
+							<JerseyNumber
+								number={row.number}
+								start={row.seasonRetired}
+								end={row.seasonRetired}
+								t={row.teamInfo}
+							/>
+							<div className="ml-3">
+								<div>
+									{row.pid !== undefined ? (
+										<>
+											<a href={helpers.leagueUrl(["player", row.pid])}>
+												{row.name}
+											</a>
+											{row.text ? " - " : null}
+										</>
+									) : null}
+									{row.text}
+								</div>
+								{tid === userTid ? (
+									<>
+										<button
+											className="btn btn-sm btn-link p-0 border-0"
+											onClick={() => {
+												editRetiredJersey(i);
+											}}
+										>
+											Edit
+										</button>{" "}
+										|{" "}
+										<button
+											className="btn btn-sm btn-link p-0 border-0"
+											onClick={() => {
+												deleteRetiredJersey(i);
+											}}
+										>
+											Delete
+										</button>
+									</>
+								) : null}
+							</div>
 						</div>
-						{tid === userTid ? (
-							<>
-								<button
-									className="btn btn-sm btn-link p-0 border-0"
-									onClick={() => {
-										editRetiredJersey(i);
-									}}
-								>
-									Edit
-								</button>{" "}
-								|{" "}
-								<button
-									className="btn btn-sm btn-link p-0 border-0"
-									onClick={() => {
-										deleteRetiredJersey(i);
-									}}
-								>
-									Delete
-								</button>
-							</>
-						) : null}
-					</div>
+					))}
 				</div>
-			))}
-		</div>
+			)}
+			<button className="btn btn-secondary mb-3" onClick={addRetiredJersey}>
+				Add Retired Jersey Number
+			</button>
+		</>
 	);
 };
 

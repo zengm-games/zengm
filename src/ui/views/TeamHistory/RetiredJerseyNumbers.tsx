@@ -320,9 +320,11 @@ const RetiredJerseyNumbers = ({
 					))}
 				</div>
 			)}
-			<button className="btn btn-secondary mb-3" onClick={addRetiredJersey}>
-				Add Retired Jersey Number
-			</button>
+			{tid === userTid ? (
+				<button className="btn btn-secondary mb-3" onClick={addRetiredJersey}>
+					Add Retired Jersey Number
+				</button>
+			) : null}
 		</>
 	);
 };

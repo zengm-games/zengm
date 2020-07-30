@@ -4,10 +4,6 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
-- option to have it prefixed on PlayerNameLabels
-  - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
-- football
-  - position-based distribution
 - AI teams retire jerseys
   - max 6
   - when a retired player makes the HoF, put him in. if already full, make it probabilistic

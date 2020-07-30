@@ -126,6 +126,30 @@ const weightFunction =
 		  }
 		: () => 1;
 
+const genFootballWeightFunction = (boost: number[]) => {
+	const boostString = boost.map(String);
+	return (jerseyNumber: string) => {
+		return boostString.includes(jerseyNumber) ? 10000 : 1;
+	};
+};
+
+const weightFunctionsByPosition =
+	process.env.SPORT === "football"
+		? {
+				QB: genFootballWeightFunction(range(1, 20)),
+				RB: genFootballWeightFunction(range(20, 50)),
+				WR: genFootballWeightFunction([...range(10, 20), ...range(80, 90)]),
+				TE: genFootballWeightFunction([...range(40, 50), ...range(80, 90)]),
+				OL: genFootballWeightFunction(range(50, 80)),
+				DL: genFootballWeightFunction([...range(40, 80), ...range(90, 100)]),
+				LB: genFootballWeightFunction([...range(40, 60), ...range(90, 100)]),
+				CB: genFootballWeightFunction(range(20, 50)),
+				S: genFootballWeightFunction(range(20, 50)),
+				K: genFootballWeightFunction(range(1, 20)),
+				P: genFootballWeightFunction(range(1, 20)),
+		  }
+		: {};
+
 const genJerseyNumber = async (
 	p: Player | PlayerWithoutKey,
 
@@ -184,7 +208,15 @@ const genJerseyNumber = async (
 		return prevJerseyNumber;
 	}
 
-	return random.choice(candidates, weightFunction);
+	if (process.env.SPORT === "basketball") {
+		return random.choice(candidates, weightFunction);
+	}
+
+	const pos = p.ratings[p.ratings.length - 1].pos;
+	if ((weightFunctionsByPosition as any)[pos]) {
+		return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
+	}
+	return random.choice(candidates);
 };
 
 export default genJerseyNumber;

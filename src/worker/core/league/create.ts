@@ -690,9 +690,16 @@ export const createWithoutSaving = async (
 				teamJerseyNumbers[tid2] = [];
 			}
 
+			const t = teams.find(t => t.tid === tid2);
+			const retiredJerseyNumbers =
+				t && t.retiredJerseyNumbers
+					? t.retiredJerseyNumbers.map(row => row.number)
+					: [];
+
 			numPlayersByTid[tid2] += 1;
 			p.tid = tid2;
 			await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+				retired: retiredJerseyNumbers,
 				team: teamJerseyNumbers[tid2],
 			});
 

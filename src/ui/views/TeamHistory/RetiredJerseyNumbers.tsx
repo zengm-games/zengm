@@ -65,16 +65,21 @@ const RetiredJerseyNumbers = ({
 					event.preventDefault();
 
 					try {
-						await toWorker("main", "retiredJerseyNumberUpsert", undefined, {
-							number: editing.number,
-							seasonRetired: parseInt(editing.seasonRetired),
-							seasonTeamInfo: parseInt(editing.seasonTeamInfo),
-							pid:
-								editing.linkToPlayer === "yes"
-									? parseInt(editing.pid)
-									: undefined,
-							text: editing.text,
-						});
+						await toWorker(
+							"main",
+							"retiredJerseyNumberUpsert",
+							editing.type === "edit" ? editing.index : undefined,
+							{
+								number: editing.number,
+								seasonRetired: parseInt(editing.seasonRetired),
+								seasonTeamInfo: parseInt(editing.seasonTeamInfo),
+								pid:
+									editing.linkToPlayer === "yes"
+										? parseInt(editing.pid)
+										: undefined,
+								text: editing.text,
+							},
+						);
 
 						setEditing(undefined);
 					} catch (error) {
@@ -271,6 +276,7 @@ const RetiredJerseyNumbers = ({
 					{retiredJerseyNumbers.map((row, i) => (
 						<div key={i} className="col-lg-6 d-flex align-items-center mb-3">
 							<JerseyNumber
+								className="flex-shrink-0"
 								number={row.number}
 								start={row.seasonRetired}
 								end={row.seasonRetired}

@@ -2,11 +2,13 @@ import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const JerseyNumber = ({
+	className,
 	number,
 	start,
 	end,
 	t,
 }: {
+	className?: string;
 	number: string;
 	start: number;
 	end: number;
@@ -37,6 +39,7 @@ const JerseyNumber = ({
 			placement="bottom"
 		>
 			<div
+				className={className}
 				style={{
 					width: 55,
 					height: 50,

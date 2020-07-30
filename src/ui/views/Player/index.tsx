@@ -360,7 +360,7 @@ const Player2 = ({
 					</div>
 				</div>
 
-				<div className="col-sm-6 mt-3 mt-sm-none text-nowrap">
+				<div className="col-sm-6 mt-3 mt-sm-0 text-nowrap">
 					{!retired && showRatings ? (
 						<RatingsOverview ratings={player.ratings} />
 					) : null}

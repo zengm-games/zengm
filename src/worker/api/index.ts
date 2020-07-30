@@ -1823,6 +1823,72 @@ const resetPlayingTime = async (tids: number[] | undefined) => {
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const retiredJerseyNumberDelete = async (i: number) => {
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	if (t.retiredJerseyNumbers) {
+		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter((row, j) => i !== j);
+		await idb.cache.teams.put(t);
+		await toUI("realtimeUpdate", [["retiredJerseys"]]);
+	}
+};
+
+const retiredJerseyNumberEdit = async (
+	i: number,
+	info: {
+		number: string;
+		seasonRetired: number;
+		seasonTeamInfo: number;
+		pid: number | undefined;
+		text: string;
+	},
+) => {
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	if (!t.retiredJerseyNumbers) {
+		throw new Error("Cannot edit when retiredJerseyNumbers is undefined");
+	}
+
+	const p =
+		info.pid !== undefined
+			? await idb.getCopy.players({
+					pid: info.pid,
+			  })
+			: undefined;
+	let name;
+	if (p) {
+		name = `${p.firstName} ${p.lastName}`;
+	}
+
+	if (Number.isNaN(info.seasonRetired)) {
+		throw new Error("Invalid value for seasonRetired");
+	}
+	if (Number.isNaN(info.seasonTeamInfo)) {
+		throw new Error("Invalid value for seasonTeamInfo");
+	}
+	if (Number.isNaN(info.pid)) {
+		throw new Error("Invalid value for pid");
+	}
+
+	if (i >= t.retiredJerseyNumbers.length) {
+		throw new Error("Invalid index");
+	}
+
+	t.retiredJerseyNumbers[i] = {
+		...info,
+		name,
+	};
+
+	await idb.cache.teams.put(t);
+	await toUI("realtimeUpdate", [["retiredJerseys"]]);
+};
+
 const runBefore = async (
 	viewId: string,
 	params: any,
@@ -2030,19 +2096,6 @@ const switchTeam = async (tid: number, conditions: Conditions) => {
 				conditions,
 			);
 		}
-	}
-};
-
-const unretireJerseyNumber = async (i: number) => {
-	const t = await idb.cache.teams.get(g.get("userTid"));
-	if (!t) {
-		throw new Error("Invalid tid");
-	}
-
-	if (t.retiredJerseyNumbers) {
-		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter((row, j) => i !== j);
-		await idb.cache.teams.put(t);
-		await toUI("realtimeUpdate", [["retiredJerseys"]]);
 	}
 };
 
@@ -2722,6 +2775,8 @@ export default {
 	reorderDepthDrag,
 	reorderRosterDrag,
 	resetPlayingTime,
+	retiredJerseyNumberDelete,
+	retiredJerseyNumberEdit,
 	runBefore,
 	setLocal,
 	sign,
@@ -2734,7 +2789,6 @@ export default {
 	startFantasyDraft,
 	switchTeam,
 	tradeCounterOffer,
-	unretireJerseyNumber,
 	updateBudget,
 	updateConfsDivs,
 	updateGameAttributes,

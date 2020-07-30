@@ -1,15 +1,15 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PLAYER } from "../../common";
+import { PLAYER } from "../../../common";
 import {
 	DataTable,
 	PlayerNameLabels,
 	RecordAndPlayoffs,
-	JerseyNumber,
-} from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, getCols, confirm, toWorker } from "../util";
-import type { View } from "../../common/types";
+} from "../../components";
+import useTitleBar from "../../hooks/useTitleBar";
+import { helpers, getCols } from "../../util";
+import type { View } from "../../../common/types";
+import RetiredJerseyNumbers from "./RetiredJerseyNumbers";
 
 const TeamHistory = ({
 	abbrev,
@@ -105,23 +105,6 @@ const TeamHistory = ({
 		record += `-${totalTied}`;
 	}
 
-	const deleteRetiredJersey = async (i: number) => {
-		const row = retiredJerseyNumbers[i];
-		if (!row) {
-			return;
-		}
-		const proceed = await confirm(
-			`Are you sure you want to un-retire jersey number ${row.number}?`,
-			{
-				okText: "Un-retire",
-			},
-		);
-
-		if (proceed) {
-			await toWorker("main", "unretireJerseyNumber", i);
-		}
-	};
-
 	return (
 		<>
 			<p>
@@ -190,54 +173,12 @@ const TeamHistory = ({
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
 					<h2>Retired Jersey Numbers</h2>
-					{retiredJerseyNumbers.length === 0 ? (
-						<p>None yet!</p>
-					) : (
-						<div className="row">
-							{retiredJerseyNumbers.map((row, i) => (
-								<div
-									key={i}
-									className="col-lg-6 d-flex align-items-center mb-3"
-								>
-									<JerseyNumber
-										number={row.number}
-										start={row.seasonRetired}
-										end={row.seasonRetired}
-										t={row.teamInfo}
-									/>
-									<div className="ml-3">
-										<div>
-											{row.pid !== undefined ? (
-												<>
-													<a href={helpers.leagueUrl(["player", row.pid])}>
-														{row.name}
-													</a>
-													{row.text ? " - " : null}
-												</>
-											) : null}
-											{row.text}
-										</div>
-										{tid === userTid ? (
-											<>
-												<button className="btn btn-sm btn-link p-0 border-0">
-													Edit
-												</button>{" "}
-												|{" "}
-												<button
-													className="btn btn-sm btn-link p-0 border-0"
-													onClick={() => {
-														deleteRetiredJersey(i);
-													}}
-												>
-													Delete
-												</button>
-											</>
-										) : null}
-									</div>
-								</div>
-							))}
-						</div>
-					)}
+					<RetiredJerseyNumbers
+						players={players}
+						retiredJerseyNumbers={retiredJerseyNumbers}
+						tid={tid}
+						userTid={userTid}
+					/>
 					<h2>Players</h2>
 					<p>
 						Players currently on this team are{" "}

@@ -61,10 +61,17 @@ const copyValidValues = (
 	// jerseyNumber? could be in root or stats
 	if (target.jerseyNumber !== source.jerseyNumber) {
 		target.jerseyNumber = source.jerseyNumber;
+		if (target.jerseyNumber === "") {
+			target.jerseyNumber = undefined;
+		}
 	}
 	if (target.stats.length > 0 && source.stats.length > 0) {
 		target.stats[target.stats.length - 1].jerseyNumber =
 			source.stats[source.stats.length - 1].jerseyNumber;
+		if (target.stats[target.stats.length - 1].jerseyNumber === "") {
+			target.jerseyNumber = undefined;
+			target.stats[target.stats.length - 1].jerseyNumber = undefined;
+		}
 	}
 
 	let updatedRatingsOrAge = false;

@@ -798,8 +798,7 @@ const getJerseyNumber = (p: PlayerWithoutKey): string | undefined => {
 	let jerseyNumber;
 	if (p.stats.length > 0) {
 		jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
-	}
-	if (!jerseyNumber && p.jerseyNumber) {
+	} else {
 		// For uploaded league files
 		jerseyNumber = p.jerseyNumber;
 	}

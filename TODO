@@ -5,6 +5,8 @@ nicidob PRs
 
 jersey numbers
 - Normalize. Just store pid. Already pulling all players in team history
+  - in teamHistory.ts, augment. similar to code in checkJerseyNumberRetirement.ts
+  - delete existing code from api/index.ts and checkJerseyNumberRetirement.ts
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog

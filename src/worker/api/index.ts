@@ -71,6 +71,7 @@ import type {
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
+import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 
 const acceptContractNegotiation = async (
 	pid: number,
@@ -1858,10 +1859,6 @@ const retiredJerseyNumberUpsert = async (
 					pid: info.pid,
 			  })
 			: undefined;
-	let name;
-	if (p) {
-		name = `${p.firstName} ${p.lastName}`;
-	}
 
 	if (Number.isNaN(info.seasonRetired)) {
 		throw new Error("Invalid value for seasonRetired");
@@ -1873,6 +1870,13 @@ const retiredJerseyNumberUpsert = async (
 		throw new Error("Invalid value for player ID number");
 	}
 
+	let name;
+	let pos;
+	if (p) {
+		name = `${p.firstName} ${p.lastName}`;
+		pos = getMostCommonPosition(p, tid);
+	}
+
 	// Insert or update?
 	if (i === undefined) {
 		if (!t.retiredJerseyNumbers) {
@@ -1882,6 +1886,7 @@ const retiredJerseyNumberUpsert = async (
 		t.retiredJerseyNumbers.push({
 			...info,
 			name,
+			pos,
 		});
 	} else {
 		if (!t.retiredJerseyNumbers) {
@@ -1895,6 +1900,7 @@ const retiredJerseyNumberUpsert = async (
 		t.retiredJerseyNumbers[i] = {
 			...info,
 			name,
+			pos,
 		};
 	}
 

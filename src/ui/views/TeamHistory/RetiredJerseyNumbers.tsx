@@ -288,6 +288,7 @@ const RetiredJerseyNumbers = ({
 								<div>
 									{row.pid !== undefined ? (
 										<>
+											{row.pos ? `${row.pos} ` : null}
 											<a href={helpers.leagueUrl(["player", row.pid])}>
 												{row.name}
 											</a>

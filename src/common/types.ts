@@ -1061,6 +1061,7 @@ export type Team = {
 		seasonTeamInfo: number;
 		pid?: number;
 		name?: string;
+		pos?: string;
 		text: string;
 	}[];
 };

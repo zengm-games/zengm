@@ -29,6 +29,28 @@ const getValueStatsRow = (ps: any) => {
 	return value;
 };
 
+export const getMostCommonPosition = (p: Player, tid: number) => {
+	const positionCounts = new Map<string, number>();
+	for (const pr of p.ratings) {
+		const ps = p.stats.find(ps => ps.season === pr.season && ps.tid === tid);
+		if (ps) {
+			const prevValue = positionCounts.get(pr.pos) || 0;
+			positionCounts.set(pr.pos, prevValue + 1);
+		}
+	}
+
+	let maxValue = -Infinity;
+	let mostCommonPosition: string | undefined;
+	for (const [pos, value] of positionCounts) {
+		if (value > maxValue) {
+			maxValue = value;
+			mostCommonPosition = pos;
+		}
+	}
+
+	return mostCommonPosition;
+};
+
 const checkJerseyNumberRetirement = async (p: Player) => {
 	let tid: number | undefined;
 	let number: string | undefined;
@@ -59,30 +81,12 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		return;
 	}
 
+	const mostCommonPosition = getMostCommonPosition(p, maxTid);
+
 	let threshold;
 	if (process.env.SPORT === "basketball") {
 		threshold = 80;
 	} else {
-		const positionCounts = new Map<string, number>();
-		for (const pr of p.ratings) {
-			const ps = p.stats.find(
-				ps => ps.season === pr.season && ps.tid === maxTid,
-			);
-			if (ps) {
-				const prevValue = positionCounts.get(pr.pos) || 0;
-				positionCounts.set(pr.pos, prevValue + 1);
-			}
-		}
-
-		let maxValue = -Infinity;
-		let mostCommonPosition: string | undefined;
-		for (const [pos, value] of positionCounts) {
-			if (value > maxValue) {
-				maxValue = value;
-				mostCommonPosition = pos;
-			}
-		}
-
 		threshold = getThreshold(mostCommonPosition);
 		if (threshold > 80) {
 			threshold = 80;
@@ -155,6 +159,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		seasonTeamInfo: g.get("season"),
 		pid: p.pid,
 		name: `${p.firstName} ${p.lastName}`,
+		pos: mostCommonPosition,
 		text: "",
 	});
 

@@ -364,18 +364,20 @@ const Player2 = ({
 					{!retired && showRatings ? (
 						<RatingsOverview ratings={player.ratings} />
 					) : null}
-					<div
-						className={classNames("d-flex flex-wrap", {
-							"mt-2": !retired && showRatings,
-						})}
-						style={{
-							gap: "0.5em",
-						}}
-					>
-						{jerseyNumberInfos.map((info, i) => (
-							<JerseyNumber key={i} {...info} />
-						))}
-					</div>
+					{jerseyNumberInfos.length > 0 ? (
+						<div
+							className={classNames("d-flex flex-wrap", {
+								"mt-2": !retired && showRatings,
+							})}
+							style={{
+								gap: "0.5em",
+							}}
+						>
+							{jerseyNumberInfos.map((info, i) => (
+								<JerseyNumber key={i} {...info} />
+							))}
+						</div>
+					) : null}
 				</div>
 			</div>
 

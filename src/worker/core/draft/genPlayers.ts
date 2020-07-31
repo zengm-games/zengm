@@ -169,7 +169,7 @@ const genPlayers = async (
 			);
 			p.born.year = draftYear - 75;
 			p.born.loc = "Roman Empire";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Augustus";
 			p.hgt = 69;
 			p.imgURL = "/img/easter-eggs/augustus.jpg";
@@ -208,7 +208,7 @@ const genPlayers = async (
 			);
 			p.born.year = 169;
 			p.born.loc = "China";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Dong";
 			p.hgt = 60;
 			p.imgURL = "/img/easter-eggs/zhuo.jpg";
@@ -247,7 +247,7 @@ const genPlayers = async (
 			);
 			p.born.year = 204;
 			p.born.loc = "Roman Empire";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Philip";
 			p.hgt = 69;
 			p.imgURL = "/img/easter-eggs/philip.jpg";
@@ -286,7 +286,7 @@ const genPlayers = async (
 			);
 			p.born.year = 331;
 			p.born.loc = "Roman Empire";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Julian";
 			p.hgt = 64;
 			p.imgURL = "/img/easter-eggs/julian.jpg";
@@ -325,7 +325,7 @@ const genPlayers = async (
 			);
 			p.born.year = 406;
 			p.born.loc = "Central Asia";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Attila";
 			p.hgt = 59;
 			p.imgURL = "/img/easter-eggs/atilla.jpg";
@@ -364,7 +364,7 @@ const genPlayers = async (
 			);
 			p.born.year = draftYear - 19;
 			p.born.loc = "Great Britian";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "King";
 			p.hgt = 75;
 			p.imgURL = "/img/easter-eggs/arthur.jpg";
@@ -403,7 +403,7 @@ const genPlayers = async (
 			);
 			p.born.year = 852;
 			p.born.loc = "China";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Zhu";
 			p.hgt = 66;
 			p.imgURL = "/img/easter-eggs/wen.jpg";
@@ -442,7 +442,7 @@ const genPlayers = async (
 			);
 			p.born.year = 970;
 			p.born.loc = "Iceland";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Leif";
 			p.hgt = 68;
 			p.imgURL = "/img/easter-eggs/erikson.jpg";
@@ -481,7 +481,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1162;
 			p.born.loc = "Mongolia";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Genghis";
 			p.hgt = 74;
 			p.imgURL = "/img/easter-eggs/khan.jpg";
@@ -520,7 +520,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1564;
 			p.born.loc = "England";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "William";
 			p.hgt = 70;
 			p.imgURL = "/img/easter-eggs/shakespeare.jpg";
@@ -559,7 +559,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1638;
 			p.born.loc = "France";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "King";
 			p.hgt = 75;
 			p.imgURL = "/img/easter-eggs/louis.jpg";
@@ -598,7 +598,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1328;
 			p.born.loc = "China";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Emperor";
 			p.hgt = 64;
 			p.imgURL = "/img/easter-eggs/yuanzhang.jpg";
@@ -637,7 +637,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1412;
 			p.born.loc = "France";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Joan of";
 			p.hgt = 65;
 			p.imgURL = "/img/easter-eggs/joan.jpg";
@@ -676,7 +676,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1732;
 			p.born.loc = "USA";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "George";
 			p.hgt = 74;
 			p.imgURL = "/img/easter-eggs/washington.jpg";
@@ -715,7 +715,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1809;
 			p.born.loc = "USA";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Abraham";
 			p.hgt = 76;
 			p.imgURL = "/img/easter-eggs/lincoln.jpg";
@@ -754,7 +754,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1917;
 			p.born.loc = "USA";
-			p.college = "None";
+			p.college = "Harvard";
 			p.firstName = "John";
 			p.hgt = 72;
 			p.imgURL = "/img/easter-eggs/kennedy.jpg";
@@ -793,7 +793,7 @@ const genPlayers = async (
 			);
 			p.born.year = 1451;
 			p.born.loc = "Genoa";
-			p.college = "None";
+			p.college = "";
 			p.firstName = "Christopher";
 			p.hgt = 68;
 			p.imgURL = "/img/easter-eggs/columbus.jpg";

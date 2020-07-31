@@ -4,6 +4,7 @@ import addStatsRow from "./addStatsRow";
 import addToFreeAgents from "./addToFreeAgents";
 import augmentPartialPlayer from "./augmentPartialPlayer";
 import bonus from "./bonus";
+import checkJerseyNumberRetirement from "./checkJerseyNumberRetirement";
 import checkStatisticalFeat from "./checkStatisticalFeat";
 import compositeRating from "./compositeRating";
 import contractSeasonsRemaining from "./contractSeasonsRemaining";
@@ -42,6 +43,7 @@ export default {
 	addToFreeAgents,
 	augmentPartialPlayer,
 	bonus,
+	checkJerseyNumberRetirement,
 	checkStatisticalFeat,
 	compositeRating,
 	contractSeasonsRemaining,

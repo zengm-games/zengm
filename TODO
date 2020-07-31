@@ -10,8 +10,7 @@ jersey numbers
     - HoF
     - longievity
     - tragic death
-- add jersey retirement to awards list
-  - No. 77 retired by the AAAA
+  - check cutoff in FBGM
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
@@ -20,11 +19,18 @@ jersey numbers
   - real players
   - conflicts - pick new number
   - edit in god mode, and conflicts
+  - what happens when all jersey numbers retired
 - later
+  - better system to resolve conflicts (better player gets the number)
   - option to have it prefixed on PlayerNameLabels
     - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
   - frivolity showing all players with jersey number
   - prompt to pick number of newly acquired players
+  - add jersey retirement to awards list
+    - No. 77 retired by the AAAA
+    - tricky when user edits
+  - notifications in news feed
+    - redundant with HoF?
 
 french names ~/Downloads/FBGM_FrenchNames.xls
 

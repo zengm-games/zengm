@@ -3,6 +3,7 @@ import { g, helpers, logEvent } from "../../util";
 import madeHof from "./madeHof";
 import type { Conditions, Player } from "../../../common/types";
 import { idb } from "../../db";
+import { player } from "..";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.
@@ -79,6 +80,8 @@ const retire = async (
 
 	p.tid = PLAYER.RETIRED;
 	p.retiredYear = g.get("season");
+
+	await player.checkJerseyNumberRetirement(p);
 };
 
 export default retire;

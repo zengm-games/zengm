@@ -4,6 +4,7 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
+- Normalize. Just store pid. Already pulling all players in team history
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
@@ -13,11 +14,11 @@ jersey numbers
   - conflicts - pick new number
   - edit in god mode, and conflicts
   - what happens when all jersey numbers retired
+  - https://old.reddit.com/r/BasketballGM/comments/i0nqgc/players_now_have_jersey_numbers_and_you_can_now/fzvlssl/
 - later
   - better system to resolve conflicts (better player gets the number)
   - option to have it prefixed on PlayerNameLabels
     - https://www.espn.com/nba/team/roster/_/name/bos/boston-celtics
-  - frivolity showing all players with jersey number
   - prompt to pick number of newly acquired players
   - add jersey retirement to awards list
     - No. 77 retired by the AAAA
@@ -465,7 +466,10 @@ more animations
 - schedule
 
 frivolities
-- all deaths, tragic and non-tragic
+- players
+  - all deaths, tragic and non-tragic
+  - best player with jersey number
+- frivolity showing all players with jersey number (link from 'best player with jersey number')
 - playoff seeding, like number of times an 8 seed won @Tuxie93
 - draft class aggregate stats alexnoob https://old.reddit.com/r/BasketballGM/comments/hsscql/a_new_section_in_frivolities_to_see_the_best_and/
 - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJWrbbMfZcQVKwtqzgqLmbJgKm

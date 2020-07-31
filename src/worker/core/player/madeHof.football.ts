@@ -43,17 +43,17 @@ export const getThreshold = (pos?: string) => {
 	if (pos === "QB") {
 		threshold = 160;
 	} else if (pos === "RB") {
-		threshold = 75;
+		threshold = 80;
 	} else if (pos === "WR") {
-		threshold = 115;
+		threshold = 110;
 	} else if (pos === "TE") {
-		threshold = 115;
+		threshold = 110;
 	} else if (pos === "OL") {
 		threshold = 70;
 	} else if (pos === "DL") {
 		threshold = 90;
 	} else if (pos === "LB") {
-		threshold = 65;
+		threshold = 70;
 	} else if (pos === "S") {
 		threshold = 44;
 	} else if (pos === "CB") {

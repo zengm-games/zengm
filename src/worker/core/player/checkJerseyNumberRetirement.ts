@@ -51,6 +51,8 @@ export const getMostCommonPosition = (p: Player, tid: number) => {
 	return mostCommonPosition;
 };
 
+// const posCounts = {};
+
 const checkJerseyNumberRetirement = async (p: Player) => {
 	let tid: number | undefined;
 	let number: string | undefined;
@@ -90,6 +92,13 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		threshold = getThreshold(mostCommonPosition);
 		if (threshold > 80) {
 			threshold = 80;
+		}
+		if (mostCommonPosition === "WR" || mostCommonPosition === "TE") {
+			threshold -= 12;
+		} else if (mostCommonPosition === "LB") {
+			threshold -= 5;
+		} else if (mostCommonPosition === "CB") {
+			threshold += 4;
 		}
 	}
 
@@ -162,6 +171,12 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		pos: mostCommonPosition,
 		text: "",
 	});
+
+	/*if (!posCounts[mostCommonPosition]) {
+		posCounts[mostCommonPosition] = 0;
+	}
+	posCounts[mostCommonPosition]++;
+	console.log(posCounts);*/
 
 	await idb.cache.teams.put(t);
 };

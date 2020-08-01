@@ -1,5 +1,5 @@
 import stats from "./stats";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
 import genJerseyNumber from "./genJerseyNumber";
 
@@ -55,7 +55,8 @@ const addStatsRow = async (
 	}
 
 	if (jerseyNumbers.ignoreJerseyNumberConflicts) {
-		statsRow.jerseyNumber = await genJerseyNumber(p, [], []);
+		// Just carry over the previous jersey number. There is another pass of genJerseyNumber in league/create.ts that will clean up any conflicts. Don't want to call genJerseyNumber here because it'll generate random numbers for players with no jersey number, which could conflict with manually specified jersey numbers for other players, and the wrong one could be keypt in league/create.ts.
+		statsRow.jerseyNumber = helpers.getJerseyNumber(p);
 	} else {
 		statsRow.jerseyNumber = await genJerseyNumber(
 			p,

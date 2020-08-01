@@ -93,6 +93,12 @@ const getOverrides = () => {
 		}
 	}
 
+	for (const key of Object.keys(groups)) {
+		if (!groups[key].first || !groups[key].last) {
+			throw new Error(`Missing first or last names file for "${key}"`);
+		}
+	}
+
 	const filename = path.join(__dirname, "../src/worker/data/names-groups.json");
 	fs.writeFileSync(filename, JSONstringifyOrder(groups, "\t"));
 	console.log(`Wrote data to ${filename}`);

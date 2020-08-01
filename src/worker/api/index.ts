@@ -71,7 +71,6 @@ import type {
 } from "../../common/types";
 import setGameAttributes from "../core/league/setGameAttributes";
 import orderBy from "lodash/orderBy";
-import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 
 const acceptContractNegotiation = async (
 	pid: number,

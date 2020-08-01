@@ -4,10 +4,6 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
-- number of columns for retirement
-- docs
-  - how to specify jerseyNumber in root of player object or in stats row
-- blog
 - later
   - better system to resolve conflicts (better player gets the number)
   - option to have it prefixed on PlayerNameLabels

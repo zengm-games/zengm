@@ -277,15 +277,24 @@ const updatePlayer = async (
 
 			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
 
+			let ts:
+				| {
+						colors: [string, string, string];
+						name: string;
+						region: string;
+				  }
+				| undefined = await idb.league
+				.transaction("teamSeasons")
+				.store.index("season, tid")
+				.get([ps.season, ps.tid]);
+			if (!ts) {
+				ts = await idb.cache.teams.get(ps.tid);
+			}
+
 			let newRow = false;
-			let ts;
 			if (prev === undefined || jerseyNumber !== prev.number) {
 				newRow = true;
 			} else {
-				ts = await idb.league
-					.transaction("teamSeasons")
-					.store.index("season, tid")
-					.get([ps.season, ps.tid]);
 				if (ts) {
 					if (
 						!prev.t ||
@@ -298,12 +307,8 @@ const updatePlayer = async (
 			}
 
 			if (newRow) {
-				const ts = await idb.league
-					.transaction("teamSeasons")
-					.store.index("season, tid")
-					.get([ps.season, ps.tid]);
 				let t;
-				if (ts && ts.abbrev && ts.colors && ts.name && ts.region) {
+				if (ts && ts.colors && ts.name && ts.region) {
 					t = {
 						colors: ts.colors,
 						name: ts.name,

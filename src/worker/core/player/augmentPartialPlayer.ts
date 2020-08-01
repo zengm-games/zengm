@@ -343,7 +343,7 @@ const augmentPartialPlayer = async (
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
 			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
-				skip: ignoreJerseyNumberConflicts,
+				ignoreJerseyNumberConflicts,
 			});
 		}
 	} else {
@@ -378,7 +378,7 @@ const augmentPartialPlayer = async (
 
 			if (p.tid >= 0 && lastSeason < g.get("season")) {
 				await addStatsRow(p, false, {
-					skip: ignoreJerseyNumberConflicts,
+					ignoreJerseyNumberConflicts,
 				});
 			}
 		}

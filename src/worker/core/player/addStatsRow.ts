@@ -18,7 +18,7 @@ const addStatsRow = async (
 	p: Player | PlayerWithoutKey,
 	playoffs: boolean = false,
 	jerseyNumbers: {
-		skip?: boolean;
+		ignoreJerseyNumberConflicts?: boolean;
 		team?: string[];
 		retired?: string[];
 	} = {},
@@ -54,7 +54,9 @@ const addStatsRow = async (
 		}
 	}
 
-	if (!jerseyNumbers.skip) {
+	if (jerseyNumbers.ignoreJerseyNumberConflicts) {
+		statsRow.jerseyNumber = await genJerseyNumber(p, [], []);
+	} else {
 		statsRow.jerseyNumber = await genJerseyNumber(
 			p,
 			jerseyNumbers.team,

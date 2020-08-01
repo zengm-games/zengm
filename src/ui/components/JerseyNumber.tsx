@@ -1,6 +1,18 @@
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
+const getValidTeamColors = (t?: { colors: any }) => {
+	const colors = ["#000000", "#cccccc", "#ffffff"];
+	if (t && t.colors && Array.isArray(t.colors)) {
+		for (let i = 0; i < 3; i++) {
+			if (typeof t.colors[i] === "string") {
+				colors[i] = t.colors[i];
+			}
+		}
+	}
+	return colors as [string, string, string];
+};
+
 const JerseyNumber = ({
 	className,
 	number,
@@ -18,7 +30,7 @@ const JerseyNumber = ({
 		region: string;
 	};
 }) => {
-	const colors = t ? t.colors : ["#000000", "#cccccc", "#ffffff"];
+	const colors = getValidTeamColors(t);
 
 	let id = `${number}-${start}-${end}`;
 	let text = "";

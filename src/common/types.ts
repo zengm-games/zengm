@@ -1060,8 +1060,6 @@ export type Team = {
 		seasonRetired: number;
 		seasonTeamInfo: number;
 		pid?: number;
-		name?: string;
-		pos?: string;
 		text: string;
 	}[];
 };

@@ -83,12 +83,12 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		return;
 	}
 
-	const mostCommonPosition = getMostCommonPosition(p, maxTid);
-
 	let threshold;
 	if (process.env.SPORT === "basketball") {
 		threshold = 80;
 	} else {
+		const mostCommonPosition = getMostCommonPosition(p, maxTid);
+
 		threshold = getThreshold(mostCommonPosition);
 		if (threshold > 80) {
 			threshold = 80;
@@ -167,8 +167,6 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		seasonRetired: g.get("season"),
 		seasonTeamInfo: g.get("season"),
 		pid: p.pid,
-		name: `${p.firstName} ${p.lastName}`,
-		pos: mostCommonPosition,
 		text: "",
 	});
 

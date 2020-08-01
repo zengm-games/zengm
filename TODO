@@ -4,19 +4,10 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
-- Normalize. Just store pid. Already pulling all players in team history
-  - in teamHistory.ts, augment. similar to code in checkJerseyNumberRetirement.ts
-  - delete existing code from api/index.ts and checkJerseyNumberRetirement.ts
+- number of columns for retirement
 - docs
   - how to specify jerseyNumber in root of player object or in stats row
 - blog
-  - https://old.reddit.com/r/nba/comments/4sxoi0/the_mostleast_worn_jersey_numbers/
-  - viewable on: player page, player bios, ratingsstatspopover
-  - real players
-  - conflicts - pick new number
-  - edit in god mode, and conflicts
-  - what happens when all jersey numbers retired
-  - https://old.reddit.com/r/BasketballGM/comments/i0nqgc/players_now_have_jersey_numbers_and_you_can_now/fzvlssl/
 - later
   - better system to resolve conflicts (better player gets the number)
   - option to have it prefixed on PlayerNameLabels
@@ -29,6 +20,23 @@ jersey numbers
     - redundant with HoF?
 
 french names ~/Downloads/FBGM_FrenchNames.xls
+
+@GradyMcTracy#2264
+Found a bug in finances
+Whenever I was sick of a franchise in a real player league, I put all finances at 999 and tickets at 0 so I could get fired and start over fresh
+Problem is they don't reset their finances
+So I can never get #1 in anything again
+The way I started the league was:
+- Custom league
+- Real players and teams
+- Deselect Players, including ratings and stats
+Start league
+
+regenerating draft class results in relatives being lost, need to update references
+- https://old.reddit.com/r/BasketballGM/comments/i1ejde/bug_with_regenerating_draft_classes/
+
+nicidob contract stuff
+- in simple note
 
 live sim should just do one game, not whole day
 - injuries?

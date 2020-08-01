@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 
 const updateTeamHistory = async (
 	inputs: ViewInput<"teamHistory">,
@@ -30,19 +31,33 @@ const updateTeamHistory = async (
 			tid: inputs.tid,
 		});
 
-		const retiredJerseyNumbers = (t.retiredJerseyNumbers || []).map(row => {
-			const ts = teamSeasons.find(ts => ts.season === row.seasonTeamInfo);
-			const teamInfo = {
-				colors: ts ? ts.colors : t.colors,
-				name: ts ? ts.name : t.name,
-				region: ts ? ts.region : t.region,
-			};
+		const retiredJerseyNumbers = await Promise.all(
+			(t.retiredJerseyNumbers || []).map(async row => {
+				const ts = teamSeasons.find(ts => ts.season === row.seasonTeamInfo);
+				const teamInfo = {
+					colors: ts ? ts.colors : t.colors,
+					name: ts ? ts.name : t.name,
+					region: ts ? ts.region : t.region,
+				};
 
-			return {
-				...row,
-				teamInfo,
-			};
-		});
+				let name;
+				let pos;
+				if (row.pid !== undefined) {
+					const p = await idb.getCopy.players({ pid: row.pid });
+					if (p) {
+						name = `${p.firstName} ${p.lastName}`;
+						pos = getMostCommonPosition(p, inputs.tid);
+					}
+				}
+
+				return {
+					...row,
+					teamInfo,
+					name,
+					pos,
+				};
+			}),
+		);
 
 		const history: {
 			season: number;

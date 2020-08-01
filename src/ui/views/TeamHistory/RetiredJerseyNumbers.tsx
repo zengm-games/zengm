@@ -276,7 +276,10 @@ const RetiredJerseyNumbers = ({
 			) : (
 				<div className="row">
 					{retiredJerseyNumbers.map((row, i) => (
-						<div key={i} className="col-lg-6 d-flex align-items-center mb-3">
+						<div
+							key={i}
+							className="col-md-6 col-lg-4 d-flex align-items-center mb-3"
+						>
 							<JerseyNumber
 								className="flex-shrink-0"
 								number={row.number}

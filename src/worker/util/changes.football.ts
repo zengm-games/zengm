@@ -58,6 +58,11 @@ const changes = [
 		msg:
 			"The Power Rankings page now shows team rankings broken down by position.",
 	},
+	{
+		date: "2020-08-01",
+		msg:
+			'Players now have jersey numbers, and teams can retire jersey numbers of former players. <a href="https://basketball-gm.com/blog/2020/08/jersey-numbers/">More details</a>',
+	},
 ];
 
 export default changes;

@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* **2020-08-01: Players now have jersey numbers, and teams can retire jersey numbers of former players. [[1]](https://basketball-gm.com/blog/2020/08/jersey-numbers/) [[2]]() [[3]]()**
+
 * 2020-07-28: Injuries that occur during live games show up in the box score.
 
 * 2020-07-28: When a player retires while (1) still an active player (not a free agent) and (2) still being paid by a team who had previously released him, the remaining amount of his previous contract will no longer be paid.

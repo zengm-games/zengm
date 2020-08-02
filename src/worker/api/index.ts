@@ -1326,11 +1326,13 @@ const handleUploadedDraftClass = async (
 		[[draftYear], [draftYear, Infinity]],
 	);
 
+	const toRemove = [];
 	for (const p of oldPlayers) {
 		if (p.tid === PLAYER.UNDRAFTED) {
-			await idb.cache.players.delete(p.pid);
+			toRemove.push(p.pid);
 		}
 	}
+	await player.remove(toRemove);
 
 	// Add new players to database
 	for (const p of players) {
@@ -1628,11 +1630,13 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 			[[season], [season, Infinity]],
 		);
 
+		const toRemove = [];
 		for (const p of oldPlayers) {
 			if (p.tid === PLAYER.UNDRAFTED) {
-				await idb.cache.players.delete(p.pid);
+				toRemove.push(p.pid);
 			}
 		}
+		await player.remove(toRemove);
 
 		// Generate new players
 		await draft.genPlayers(season);
@@ -1766,6 +1770,11 @@ const removeLastTeam = async (): Promise<void> => {
 const removeLeague = async (lid: number) => {
 	await league.remove(lid);
 	await toUI("realtimeUpdate", [["leagues"]]);
+};
+
+const removePlayer = async (pid: number) => {
+	await player.remove([pid]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
@@ -2807,6 +2816,7 @@ export default {
 	regenerateDraftClass,
 	releasePlayer,
 	removeLeague,
+	removePlayer,
 	reorderDepthDrag,
 	reorderRosterDrag,
 	resetPlayingTime,

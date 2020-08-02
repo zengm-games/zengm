@@ -28,6 +28,7 @@ import moodColorText from "./moodColorText";
 import ovr from "./ovr";
 import pos from "./pos";
 import release from "./release";
+import remove from "./remove";
 import retire from "./retire";
 import setContract from "./setContract";
 import sign from "./sign";
@@ -67,6 +68,7 @@ export default {
 	ovr,
 	pos,
 	release,
+	remove,
 	retire,
 	sign,
 	setContract,

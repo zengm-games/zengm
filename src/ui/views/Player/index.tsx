@@ -13,7 +13,13 @@ import {
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
 import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../../util";
+import {
+	confirm,
+	getCols,
+	helpers,
+	toWorker,
+	realtimeUpdate,
+} from "../../util";
 import type { View, Player } from "../../../common/types";
 import { PLAYER } from "../../../common";
 import classNames from "classnames";
@@ -311,10 +317,29 @@ const Player2 = ({
 								<>
 									<a
 										href={helpers.leagueUrl(["customize_player", player.pid])}
-										className="god-mode god-mode-text"
+										className="btn btn-god-mode btn-xs mr-1 mb-1"
 									>
 										Edit Player
 									</a>
+									<button
+										className="btn btn-god-mode btn-xs mb-1"
+										disabled={status === "exporting" || status === "loading"}
+										onClick={async () => {
+											const proceed = await confirm(
+												`Are you sure you want to delete ${player.name}?`,
+												{
+													okText: "Delete Player",
+												},
+											);
+											if (proceed) {
+												await toWorker("main", "removePlayer", player.pid);
+
+												realtimeUpdate([], helpers.leagueUrl([]));
+											}
+										}}
+									>
+										Delete Player
+									</button>
 									<br />
 								</>
 							) : null}

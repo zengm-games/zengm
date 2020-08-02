@@ -259,11 +259,13 @@ const newPhaseResignPlayers = async (
 	}
 
 	// Delete any old undrafted players that still somehow exist
+	const toRemove = [];
 	for (const p of draftProspects) {
 		if (p.draft.year <= g.get("season")) {
-			await idb.cache.players.delete(p.pid);
+			toRemove.push(p.pid);
 		}
 	}
+	await player.remove(toRemove);
 
 	// Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
 	await league.setGameAttributes({

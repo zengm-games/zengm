@@ -26,11 +26,6 @@ The way I started the league was:
 - Deselect Players, including ratings and stats
 Start league
 
-regenerating draft class results in relatives being lost, need to update references
-- https://old.reddit.com/r/BasketballGM/comments/i1ejde/bug_with_regenerating_draft_classes/
-- write a "delete player" function that handles this
-- "delete player" and "delete all players" buttons @Buck#4498
-
 nicidob contract stuff
 - in simple note
 

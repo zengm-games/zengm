@@ -89,7 +89,7 @@ const updateRoster = async (
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
-		const stats2 = [...stats, "yearsWithTeam"];
+		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber"];
 
 		let players: any[];
 		let payroll: number | undefined;

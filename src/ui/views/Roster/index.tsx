@@ -260,6 +260,7 @@ const Roster = ({
 					</>
 				)}
 				row={({ value: p }) => {
+					console.log(p);
 					const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 					return (
 						<>
@@ -267,6 +268,7 @@ const Roster = ({
 								<PlayerNameLabels
 									pid={p.pid}
 									injury={p.injury}
+									jerseyNumber={p.stats.jerseyNumber}
 									skills={p.ratings.skills}
 									watch={p.watch}
 								>

@@ -12,6 +12,7 @@ const baseStyle = {
 const PlayerNameLabels = ({
 	children,
 	injury,
+	jerseyNumber,
 	pid,
 	pos,
 	skills,
@@ -19,6 +20,7 @@ const PlayerNameLabels = ({
 	watch,
 }: {
 	children: ReactNode;
+	jerseyNumber?: string;
 	injury?: PlayerInjury;
 	pos?: string;
 	pid?: number;
@@ -53,6 +55,9 @@ const PlayerNameLabels = ({
 
 	return (
 		<span style={style ? { ...baseStyle, ...style } : baseStyle}>
+			{typeof jerseyNumber === "string" ? (
+				<span className="text-muted jersey-number-name">{jerseyNumber}</span>
+			) : null}
 			{typeof pos === "string" ? `${pos} ` : null}
 			{pid !== undefined ? (
 				<a href={helpers.leagueUrl(["player", pid])}>{children}</a>
@@ -74,6 +79,7 @@ PlayerNameLabels.propTypes = {
 		gamesRemaining: PropTypes.number.isRequired,
 		type: PropTypes.string.isRequired,
 	}),
+	jerseyNumber: PropTypes.string,
 	pos: PropTypes.string,
 	pid: PropTypes.number,
 	skills: PropTypes.arrayOf(PropTypes.string),

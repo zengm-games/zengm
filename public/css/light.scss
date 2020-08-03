@@ -357,6 +357,14 @@ table {
 	vertical-align: 2%;
 }
 
+.jersey-number-name {
+	font-size: 10px;
+	line-height: 18px;
+	vertical-align: 2%;
+	display: inline-block;
+	min-width: 15px;
+}
+
 .watch,
 .watch:hover {
 	color: $gray-500;

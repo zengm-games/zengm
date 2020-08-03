@@ -1,6 +1,13 @@
 import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
-import { contractNegotiation, draft, league, player, team } from "..";
+import {
+	contractNegotiation,
+	draft,
+	league,
+	player,
+	team,
+	freeAgents,
+} from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
@@ -206,6 +213,8 @@ const newPhaseResignPlayers = async (
 			}
 		}
 	}
+
+	await freeAgents.normalizeContractDemands("freeAgentsOnly");
 
 	// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
 	const draftProspects = await idb.cache.players.indexGetAll(

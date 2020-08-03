@@ -274,6 +274,10 @@ const newPhasePreseason = async (
 		await idb.cache.players.put(p);
 	}
 
+	if (!repeatSeason) {
+		await freeAgents.normalizeContractDemands("dummyExpiringContracts");
+	}
+
 	// No ads during multi season auto sim
 	if (env.enableLogging && !local.autoPlayUntil) {
 		toUI("showModal", [], conditions);

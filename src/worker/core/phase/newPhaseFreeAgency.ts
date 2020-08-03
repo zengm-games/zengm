@@ -8,6 +8,8 @@ const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 
 	await freeAgents.ensureEnoughPlayers();
 
+	await freeAgents.normalizeContractDemands("freeAgentsOnly");
+
 	return {
 		url: helpers.leagueUrl(["free_agents"]),
 		updateEvents: ["playerMovement"],

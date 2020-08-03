@@ -27,7 +27,16 @@ The way I started the league was:
 Start league
 
 nicidob contract stuff
-- in simple note
+- implement, use at start of free agency
+- use at start of re-signing too?
+  - draftPicks condition to lower contracts for them
+- league creation?
+  - run on whole league?
+  - or sim past free agencies?
+- use during free agency, start of regular season, other times?
+- ultimately, need to eliminate genContract. otherwise it won't be adaptable to changing talent poorly
+  - need a version that can be called after addToFreeAgents with specific pids
+- test with different talent pools
 
 live sim should just do one game, not whole day
 - injuries?

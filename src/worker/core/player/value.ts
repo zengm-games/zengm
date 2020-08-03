@@ -91,7 +91,7 @@ const value = (
 			}
 		}
 
-		current = 0.5 * pr.ovr + 0.5 * current; // Include some part of the ratings
+		current = 0.8 * pr.ovr + 0.2 * current; // Include some part of the ratings
 	}
 
 	// 2. Potential

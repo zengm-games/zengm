@@ -126,12 +126,18 @@ const uniformSeed = (seed: number): number => {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-const choice = <T>(x: T[], weightFunc?: (a: T) => number): T => {
-	if (weightFunc === undefined) {
+const choice = <T>(x: T[], weightInput?: ((a: T) => number) | number[]): T => {
+	if (weightInput === undefined) {
 		return x[Math.floor(Math.random() * x.length)];
 	}
 
-	const weights = x.map(weightFunc);
+	let weights;
+	if (Array.isArray(weightInput)) {
+		weights = weightInput;
+	} else {
+		weights = x.map(weightInput);
+	}
+
 	const cumsums = weights.reduce<number[]>((array, weight, i) => {
 		if (i === 0) {
 			array[0] = weight;

@@ -45,6 +45,12 @@ nicidob contract stuff
 - better exp setting
 - main problem
   - re-signing and free agency are too different?
+- test in different scenarios
+  - compare leaguewide salaries vs master
+    - currently new method is a little low
+  - historical rosters
+  - inflated/deflated ratings
+    - somehow in both, salaries wind up being too high, guys left unsigned
 
 live sim should just do one game, not whole day
 - injuries?

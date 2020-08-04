@@ -114,9 +114,10 @@ const genRatings = (
 		drb: 37,
 		pss: 37,
 		reb: 37,
-	}; // For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
-	// ensure there are some who are elite in one but not the other
+	};
 
+	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
+	// ensure there are some who are elite in one but not the other
 	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
 	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);

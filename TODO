@@ -43,6 +43,8 @@ nicidob contract stuff
 - # iterations
   - try low temp at first, then increase gradually
 - better exp setting
+- main problem
+  - re-signing and free agency are too different. need to tone down re-signing. need a knob
 
 live sim should just do one game, not whole day
 - injuries?

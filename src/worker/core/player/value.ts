@@ -180,14 +180,14 @@ const value = (
 	}
 
 	if (age <= 34) {
-		return 0.9 * current;
+		return 0.925 * current;
 	}
 
 	if (age <= 35) {
-		return 0.85 * current;
+		return 0.9 * current;
 	}
 
-	return 0.8 * current;
+	return 0.875 * current;
 };
 
 export default value;

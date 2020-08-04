@@ -3,10 +3,9 @@ import { PLAYER } from "../../../common";
 import { team } from "..";
 import { g, helpers, random } from "../../util";
 
-const TEMP = 1;
-const SCALE_UP = 1.05;
-const SCALE_DOWN = 0.95;
-const ROUNDS = 1000;
+const TEMP = 0.35;
+const LEARNING_RATE = 0.5;
+const ROUNDS = 60;
 
 const stableSoftmax = (x: number[]) => {
 	const maxX = Math.max(...x);
@@ -35,14 +34,7 @@ const normalizeContractDemands = async ({
 	const season = g.get("season");
 
 	// Lower number results in higher bids (more players being selected, and therefore having increases) but seems to be too much in hypothetical FAs (everything except freeAgentsOnly) because we don't know that all these players are actually going to be available
-	let NUM_BIDS_BEFORE_REMOVED: number;
-	if (type === "freeAgentsOnly") {
-		NUM_BIDS_BEFORE_REMOVED = 2;
-	} else if (type === "includeExpiringContracts") {
-		NUM_BIDS_BEFORE_REMOVED = 3;
-	} else {
-		NUM_BIDS_BEFORE_REMOVED = 5;
-	}
+	const NUM_BIDS_BEFORE_REMOVED = 2;
 
 	const playersAll = await idb.cache.players.getAll();
 	let players;
@@ -50,9 +42,7 @@ const normalizeContractDemands = async ({
 		players = playersAll.filter(p => p.tid === PLAYER.FREE_AGENT);
 	} else {
 		players = playersAll.filter(
-			p =>
-				p.tid === PLAYER.FREE_AGENT ||
-				(p.contract.exp === season && Math.random() < 0.5),
+			p => p.tid === PLAYER.FREE_AGENT || p.contract.exp === season,
 		);
 	}
 
@@ -70,7 +60,8 @@ const normalizeContractDemands = async ({
 		return {
 			pid: p.pid,
 			dummy,
-			value: p.value,
+			// basically ws/48 prediction from OVR
+			value: (1 / 209.33) * (Math.max(p.value, 29.14) - 29.14) ** 2,
 			contractAmount: p.contract.amount,
 			p,
 		};
@@ -96,6 +87,10 @@ const normalizeContractDemands = async ({
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
 	for (let i = 0; i < ROUNDS; i++) {
+		const OFFSET = LEARNING_RATE * (1 / (1 + i / ROUNDS) ** 4);
+		const SCALE_UP = 1.0 + OFFSET;
+		const SCALE_DOWN = 1.0 - OFFSET;
+
 		const bids = new Map<number, number>();
 		random.shuffle(randTeams);
 		for (const t of randTeams) {

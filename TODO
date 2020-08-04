@@ -44,7 +44,7 @@ nicidob contract stuff
   - try low temp at first, then increase gradually
 - better exp setting
 - main problem
-  - re-signing and free agency are too different. need to tone down re-signing. need a knob
+  - re-signing and free agency are too different?
 
 live sim should just do one game, not whole day
 - injuries?
@@ -334,6 +334,7 @@ FBGM
 - Add the release and trade away buttons to the depth chart screen. I find myself flipping back and forth from the depth chart and roster.
 - Add the roster composition to any roster type screen like draft, depth chart, and trade screens.
 - trade possible after playoffs phase begins, but only before first playoff game is played?
+- automatic 1st not given https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -1289,6 +1290,8 @@ player.updateValues.getStats doesn't really make sense. Should get all from past
 new achievements
 - gold
 - 100 year championship drought before winning another (cubs)
+- win title without any 1st round picks
+- "On the edge" – Play 28 games in playoffs and win finals (4-3 in each series)
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------

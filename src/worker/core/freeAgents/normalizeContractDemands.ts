@@ -79,7 +79,7 @@ const normalizeContractDemands = async ({
 				return true;
 			}
 
-			return contract.exp < season;
+			return contract.exp > season;
 		});
 		t.payroll = await team.getPayroll(contracts);
 	}

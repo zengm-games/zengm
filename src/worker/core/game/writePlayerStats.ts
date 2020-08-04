@@ -119,7 +119,8 @@ const doInjury = async (
 		conditions,
 	);
 
-	// Some chance of a loss of athleticism from serious injuries	// 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+	// Some chance of a loss of athleticism from serious injuries
+	// 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
 	// 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
 
 	let ratingsLoss = false;
@@ -134,15 +135,17 @@ const doInjury = async (
 		!p2.ratings[p2.ratings.length - 1].locked
 	) {
 		ratingsLoss = true;
-		let biggestRatingsLoss = 20; // Small chance of horrible things
+		let biggestRatingsLoss = 20;
 
+		// Small chance of horrible things
 		if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
 			biggestRatingsLoss = 50;
 		}
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
-		const r = p2.ratings.length - 1; // New ratings row
+		const r = p2.ratings.length - 1;
 
+		// New ratings row
 		p2.ratings[r].spd = helpers.bound(
 			p2.ratings[r].spd - random.randInt(1, biggestRatingsLoss),
 			1,

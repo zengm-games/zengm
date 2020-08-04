@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../../common";
-import { league, phase, player } from "..";
+import { league, phase, player, team, freeAgents } from "..";
 import { idb } from "../../db";
 import {
 	g,
@@ -27,6 +27,10 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 				player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
 				await idb.cache.players.put(p);
 			}
+			await freeAgents.normalizeContractDemands({
+				type: "freeAgentsOnly",
+				pids: playersUndrafted.map(p => p.pid),
+			});
 
 			// Swap back in normal draft class
 			const players = await idb.cache.players.indexGetAll(

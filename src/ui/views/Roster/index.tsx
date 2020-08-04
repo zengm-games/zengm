@@ -260,7 +260,6 @@ const Roster = ({
 					</>
 				)}
 				row={({ value: p }) => {
-					console.log(p);
 					const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 					return (
 						<>

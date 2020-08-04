@@ -33,10 +33,16 @@ nicidob contract stuff
 - league creation?
   - run on whole league?
   - or sim past free agencies?
+  - how to set contracts of FAs - don't overwrite from league file, but otherwise yes! need to track generated FAs
 - use during free agency, start of regular season, other times?
 - ultimately, need to eliminate genContract. otherwise it won't be adaptable to changing talent poorly
   - need a version that can be called after addToFreeAgents with specific pids
+- normalizeContractDemands should set exp too
 - test with different talent pools
+- look for manual edits to p.contract (like "contract.exp +=")
+- # iterations
+  - try low temp at first, then increase gradually
+- better exp setting
 
 live sim should just do one game, not whole day
 - injuries?
@@ -325,6 +331,7 @@ FBGM
     - default should be "not"
 - Add the release and trade away buttons to the depth chart screen. I find myself flipping back and forth from the depth chart and roster.
 - Add the roster composition to any roster type screen like draft, depth chart, and trade screens.
+- trade possible after playoffs phase begins, but only before first playoff game is played?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

@@ -1,6 +1,4 @@
 import { PHASE, PLAYER } from "../../../common";
-import genContract from "./genContract";
-import setContract from "./setContract";
 import { g, helpers, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
@@ -27,7 +25,6 @@ const addToFreeAgents = (
 ) => {
 	phase = phase !== null ? phase : g.get("phase");
 	const pr = p.ratings[p.ratings.length - 1];
-	setContract(p, genContract(p), false); // Set initial player mood towards each team
 
 	p.freeAgentMood = baseMoods.map(mood => {
 		if (pr.ovr + pr.pot < 80) {
@@ -44,7 +41,6 @@ const addToFreeAgents = (
 	});
 
 	// During regular season, or before season starts, allow contracts for	// just this year.
-
 	if (phase > PHASE.AFTER_TRADE_DEADLINE) {
 		p.contract.exp += 1;
 	}

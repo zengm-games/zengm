@@ -224,19 +224,6 @@ const newPhasePreseason = async (
 
 			// Update player values after ratings changes
 			player.updateValues(p);
-
-			// If player is a free agent, re-assess contract demands
-			if (p.tid === PLAYER.FREE_AGENT) {
-				const newContract = player.genContract(p);
-
-				if (newContract.amount > p.contract.amount) {
-					// If player is still good, bump up contract demands
-					newContract.amount = (newContract.amount + p.contract.amount) / 2;
-					newContract.amount = 50 * Math.round(newContract.amount / 50); // Make it a multiple of 50k
-				}
-
-				player.setContract(p, newContract, false);
-			}
 		} else {
 			const info = repeatSeason.players[p.pid];
 			if (info) {
@@ -275,7 +262,9 @@ const newPhasePreseason = async (
 	}
 
 	if (!repeatSeason) {
-		await freeAgents.normalizeContractDemands("dummyExpiringContracts");
+		await freeAgents.normalizeContractDemands({
+			type: "dummyExpiringContracts",
+		});
 	}
 
 	// No ads during multi season auto sim

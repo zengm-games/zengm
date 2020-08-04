@@ -2,8 +2,6 @@ import { idb } from "../../db";
 import { PLAYER } from "../../../common";
 import { team } from "..";
 import { g, helpers, random } from "../../util";
-import type { Player } from "../../../common/types";
-import { max } from "lodash";
 
 const TEMP = 1;
 const SCALE_UP = 1.05;
@@ -21,18 +19,22 @@ const stableSoftmax = (x: number[]) => {
 // "includeExpiringContracts" - use this at the start of re-signing phase
 // "freeAgentsOnly" - use this at the start of free agency phase
 // "dummyExpiringContracts" - use this at beginning of regular season
-const normalizeContractDemands = async (
+const normalizeContractDemands = async ({
+	type,
+	pids,
+}: {
 	type:
 		| "freeAgentsOnly"
 		| "includeExpiringContracts"
-		| "dummyExpiringContracts",
-) => {
+		| "dummyExpiringContracts";
+	pids?: number[];
+}) => {
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");
 	const salaryCap = g.get("salaryCap");
 	const season = g.get("season");
 
-	// Lower number results in higher bids (more players being selected, and therefore having increases) but seems to be too much in hypothetical FAs (everything except freeAgentsOnly)
+	// Lower number results in higher bids (more players being selected, and therefore having increases) but seems to be too much in hypothetical FAs (everything except freeAgentsOnly) because we don't know that all these players are actually going to be available
 	let NUM_BIDS_BEFORE_REMOVED: number;
 	if (type === "freeAgentsOnly") {
 		NUM_BIDS_BEFORE_REMOVED = 2;
@@ -55,13 +57,24 @@ const normalizeContractDemands = async (
 	}
 
 	// Store contracts here, so they can be edited without editing player object (for including dummy players in pool)
-	const playerInfos = players.map(p => ({
-		pid: p.pid,
-		dummy: type === "dummyExpiringContracts" && p.tid !== PLAYER.FREE_AGENT,
-		value: p.value,
-		contractAmount: p.contract.amount,
-		p,
-	}));
+	const playerInfos = players.map(p => {
+		let dummy = false;
+		if (pids) {
+			dummy = !pids.includes(p.pid);
+		} else if (
+			type === "dummyExpiringContracts" &&
+			p.tid !== PLAYER.FREE_AGENT
+		) {
+			dummy = true;
+		}
+		return {
+			pid: p.pid,
+			dummy,
+			value: p.value,
+			contractAmount: p.contract.amount,
+			p,
+		};
+	});
 
 	const teams = (await idb.cache.teams.getAll())
 		.filter(t => !t.disabled)
@@ -135,10 +148,12 @@ const normalizeContractDemands = async (
 		}
 	}
 
-	console.table(playerInfos);
+	const changes: any[] = [];
 	for (const info of playerInfos) {
 		if (updatedPIDs.has(info.pid) && !info.dummy) {
 			const p = info.p;
+
+			p.contract.exp = season + random.randInt(0, 3);
 
 			// During regular season, should only look for short contracts that teams will actually sign
 			if (type === "dummyExpiringContracts") {
@@ -148,11 +163,22 @@ const normalizeContractDemands = async (
 				}
 			}
 
+			const change: any = {
+				pid: p.pid,
+				tid: p.tid,
+				before: p.contract.amount,
+			};
+
 			p.contract.amount = 50 * Math.round(info.contractAmount / 50); // Make it a multiple of 50k
+
+			change.after = p.contract.amount;
+			change.diff = change.after - change.before;
+			changes.push(change);
 
 			await idb.cache.players.put(p);
 		}
 	}
+	console.table(changes);
 };
 
 export default normalizeContractDemands;

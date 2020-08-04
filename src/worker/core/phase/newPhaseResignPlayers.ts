@@ -81,8 +81,8 @@ const newPhaseResignPlayers = async (
 		}
 	}
 
-	const playersSorted = orderBy(
-		players,
+	const expiringPlayers = orderBy(
+		players.filter(p => p.contract.exp <= g.get("season")),
 		[
 			"tid",
 			p => {
@@ -93,128 +93,130 @@ const newPhaseResignPlayers = async (
 		["asc", "desc", "desc"],
 	);
 
-	for (const p of playersSorted) {
-		if (p.contract.exp <= g.get("season")) {
-			const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
+	await freeAgents.normalizeContractDemands({
+		type: "includeExpiringContracts",
+	});
 
-			if (g.get("userTids").includes(p.tid) && !local.autoPlayUntil) {
-				const tid = p.tid;
+	for (const p of expiringPlayers) {
+		const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
 
-				// Add to free agents first, to generate a contract demand, then open negotiations with player
-				player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsReSigning);
+		if (g.get("userTids").includes(p.tid) && !local.autoPlayUntil) {
+			const tid = p.tid;
 
-				if (draftPick) {
-					p.contract.amount /= 2;
+			// Add to free agents first, to generate a contract demand, then open negotiations with player
+			player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsReSigning);
 
-					if (p.contract.amount < g.get("minContract")) {
-						p.contract.amount = g.get("minContract");
-					} else {
-						p.contract.amount = 50 * Math.round(p.contract.amount / 50); // Make it a multiple of 50k
-					}
+			if (draftPick) {
+				p.contract.amount /= 2;
+
+				if (p.contract.amount < g.get("minContract")) {
+					p.contract.amount = g.get("minContract");
+				} else {
+					p.contract.amount = 50 * Math.round(p.contract.amount / 50); // Make it a multiple of 50k
+				}
+			}
+
+			await idb.cache.players.put(p);
+			const error = await contractNegotiation.create(
+				p.pid,
+				true,
+				tid,
+				p.draft.year === g.get("season"),
+			);
+
+			if (error !== undefined && error) {
+				logEvent(
+					{
+						type: "refuseToSign",
+						text: error,
+						pids: [p.pid],
+						tids: [tid],
+					},
+					conditions,
+				);
+			}
+		} else {
+			// AI teams
+			const counts = neededPositionsByTid.get(p.tid);
+			const pos = p.ratings[p.ratings.length - 1].pos;
+			const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
+			let probReSign = p.value / 100 - factor; // Make it less likely to re-sign players based on roster needs
+
+			if (
+				counts !== undefined &&
+				counts[pos] !== undefined &&
+				counts[pos] <= 0
+			) {
+				probReSign -= 0.25;
+			}
+
+			const payroll = payrollsByTid.get(p.tid);
+			const contract = {
+				...p.contract,
+			};
+
+			// Always sign rookies, and give them smaller contracts
+			if (draftPick) {
+				contract.amount /= 2;
+
+				if (contract.amount < g.get("minContract")) {
+					contract.amount = g.get("minContract");
+				} else {
+					contract.amount = 50 * Math.round(contract.amount / 50); // Make it a multiple of 50k
 				}
 
-				await idb.cache.players.put(p);
-				const error = await contractNegotiation.create(
-					p.pid,
-					true,
-					tid,
-					p.draft.year === g.get("season"),
-				);
+				if (p.draft.round <= 3) {
+					probReSign = 1;
+				} else if (p.draft.round <= 5) {
+					probReSign += 0.35;
+				} else if (p.draft.round <= 7) {
+					probReSign += 0.25;
+				} else if (p.draft.round <= 8) {
+					probReSign += 0.15;
+				}
+			}
 
-				if (error !== undefined && error) {
-					logEvent(
-						{
-							type: "refuseToSign",
-							text: error,
-							pids: [p.pid],
-							tids: [tid],
-						},
-						conditions,
+			const t = teams.find(t => t.tid == p.tid);
+			if (
+				t &&
+				t.firstSeasonAfterExpansion !== undefined &&
+				t.firstSeasonAfterExpansion - 1 === g.get("season")
+			) {
+				probReSign = 1;
+			}
+
+			if (g.get("hardCap")) {
+				if (payroll === undefined) {
+					throw new Error(
+						"Payroll should always be defined if there is a hard cap",
 					);
 				}
-			} else {
-				// AI teams
-				const counts = neededPositionsByTid.get(p.tid);
-				const pos = p.ratings[p.ratings.length - 1].pos;
-				const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
-				let probReSign = p.value / 100 - factor; // Make it less likely to re-sign players based on roster needs
 
-				if (
-					counts !== undefined &&
-					counts[pos] !== undefined &&
-					counts[pos] <= 0
-				) {
-					probReSign -= 0.25;
+				if (contract.amount + payroll > g.get("salaryCap")) {
+					probReSign = 0;
 				}
-
-				const payroll = payrollsByTid.get(p.tid);
-				const contract = player.genContract(p);
-
-				// Always sign rookies, and give them smaller contracts
-				if (draftPick) {
-					contract.amount /= 2;
-
-					if (contract.amount < g.get("minContract")) {
-						contract.amount = g.get("minContract");
-					} else {
-						contract.amount = 50 * Math.round(contract.amount / 50); // Make it a multiple of 50k
-					}
-
-					if (p.draft.round <= 3) {
-						probReSign = 1;
-					} else if (p.draft.round <= 5) {
-						probReSign += 0.35;
-					} else if (p.draft.round <= 7) {
-						probReSign += 0.25;
-					} else if (p.draft.round <= 8) {
-						probReSign += 0.15;
-					}
-				}
-
-				const t = teams.find(t => t.tid == p.tid);
-				if (
-					t &&
-					t.firstSeasonAfterExpansion !== undefined &&
-					t.firstSeasonAfterExpansion - 1 === g.get("season")
-				) {
-					probReSign = 1;
-				}
-
-				if (g.get("hardCap")) {
-					if (payroll === undefined) {
-						throw new Error(
-							"Payroll should always be defined if there is a hard cap",
-						);
-					}
-
-					if (contract.amount + payroll > g.get("salaryCap")) {
-						probReSign = 0;
-					}
-				}
-
-				// Should eventually be smarter than a coin flip
-				if (Math.random() < probReSign) {
-					contract.exp += 1; // Otherwise contracts could expire this season
-
-					await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
-
-					if (counts !== undefined && counts[pos] !== undefined) {
-						counts[pos] -= 1;
-					}
-
-					if (payroll !== undefined) {
-						payrollsByTid.set(p.tid, contract.amount + payroll);
-					}
-				} else {
-					player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsFreeAgents);
-				}
-
-				await idb.cache.players.put(p);
 			}
+
+			// Should eventually be smarter than a coin flip
+			if (Math.random() < probReSign) {
+				contract.exp += 1; // Otherwise contracts could expire this season
+
+				await player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
+
+				if (counts !== undefined && counts[pos] !== undefined) {
+					counts[pos] -= 1;
+				}
+
+				if (payroll !== undefined) {
+					payrollsByTid.set(p.tid, contract.amount + payroll);
+				}
+			} else {
+				player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsFreeAgents);
+			}
+
+			await idb.cache.players.put(p);
 		}
 	}
-
-	await freeAgents.normalizeContractDemands("freeAgentsOnly");
 
 	// Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
 	const draftProspects = await idb.cache.players.indexGetAll(

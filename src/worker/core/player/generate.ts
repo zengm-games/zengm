@@ -31,9 +31,8 @@ const generate = (
 		},
 		college,
 		contract: {
-			// Will be set by setContract below
-			amount: 0,
-			exp: 0,
+			amount: g.get("minContract"),
+			exp: g.get("season") + 1,
 		},
 		draft: {
 			round: 0,
@@ -81,7 +80,6 @@ const generate = (
 		valueWithContract: 0,
 	};
 
-	setContract(p, genContract(p), false);
 	return p;
 };
 

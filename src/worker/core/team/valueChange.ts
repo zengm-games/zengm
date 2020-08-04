@@ -78,7 +78,7 @@ const getPlayers = async ({
 		const p = await idb.cache.players.get(pid);
 		if (p) {
 			add.push({
-				value: p.valueWithContract,
+				value: p.value,
 				skills: p.ratings[p.ratings.length - 1].skills,
 				contract: p.contract,
 				worth: player.genContract(p, false, false, true),

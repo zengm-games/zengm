@@ -2641,7 +2641,7 @@ const upsertCustomizedPlayer = async (
 
 	if (updatedRatingsOrAge || !p.hasOwnProperty("pid")) {
 		await player.develop(p, 0);
-		player.updateValues(p);
+		await player.updateValues(p);
 	}
 
 	// In case that develop call reset position, re-apply it here

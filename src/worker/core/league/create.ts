@@ -616,7 +616,6 @@ export const createWithoutSaving = async (
 				// Develop player and see if he is still non-retired
 
 				await player.develop(p, numYearsAgo, true);
-				player.updateValues(p);
 
 				// Run shouldRetire 4 times to simulate past shouldRetire calls
 				if (
@@ -1036,20 +1035,23 @@ const create = async ({
 
 	const players = await idb.cache.players.getAll();
 
-	if (leagueFile.players === undefined) {
-		// If no players were uploaded in custom league file, add some relatives!
-		for (const p of players) {
+	// If no players were uploaded in custom league file, add some relatives!
+	for (const p of players) {
+		if (leagueFile.players === undefined) {
 			await player.addRelatives(p);
-		}
-	} else {
-		// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
-		for (const p of players) {
-			if (p.tid >= 0 && p.stats.length > 0) {
-				p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
-					p,
-				);
+		} else {
+			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
+			for (const p of players) {
+				if (p.tid >= 0 && p.stats.length > 0) {
+					p.stats[
+						p.stats.length - 1
+					].jerseyNumber = await player.genJerseyNumber(p);
+				}
 			}
 		}
+
+		await player.updateValues(p);
+		await idb.cache.players.put(p);
 	}
 
 	const skipNewPhase = leagueFile.gameAttributes

@@ -842,7 +842,6 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	valueNoPot: number;
 	valueFuzz: number;
 	valueNoPotFuzz: number;
-	valueWithContract: number;
 	watch: boolean;
 	weight: number;
 	yearsFreeAgent: number;

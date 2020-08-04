@@ -223,7 +223,7 @@ const newPhasePreseason = async (
 			await player.develop(p, 1, false, coachingRanks[p.tid]);
 
 			// Update player values after ratings changes
-			player.updateValues(p);
+			await player.updateValues(p);
 		} else {
 			const info = repeatSeason.players[p.pid];
 			if (info) {

@@ -9,7 +9,6 @@ import pos from "./pos";
 import setContract from "./setContract";
 import skills from "./skills";
 import stats from "./stats";
-import updateValues from "./updateValues";
 import { g, random } from "../../util";
 import type { MinimalPlayerRatings, Player } from "../../../common/types";
 
@@ -315,7 +314,6 @@ const augmentPartialPlayer = async (
 	}
 
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
-	updateValues(p);
 
 	if (p.salaries === undefined) {
 		p.salaries = [];

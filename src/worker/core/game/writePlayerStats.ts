@@ -315,7 +315,7 @@ const writePlayerStats = async (
 
 						// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
 						if (g.get("phase") !== PHASE.PLAYOFFS || ratingsLoss) {
-							player.updateValues(p2);
+							await player.updateValues(p2);
 						}
 
 						promises.push(idb.cache.players.put(p2));

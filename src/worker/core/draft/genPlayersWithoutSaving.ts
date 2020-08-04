@@ -78,8 +78,6 @@ const genPlayersWithoutSaving = async (
 
 	for (const p of enteringDraft) {
 		delete p.fudgeFactor; // Update player values after ratings changes
-
-		player.updateValues(p);
 	}
 
 	return enteringDraft;

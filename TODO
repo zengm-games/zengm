@@ -51,6 +51,9 @@ nicidob contract stuff
   - historical rosters
   - inflated/deflated ratings
     - somehow in both, salaries wind up being too high, guys left unsigned
+- updateValues revamp
+  - call on everyone after league creation
+  - call after genPlayersWithoutSaving
 
 live sim should just do one game, not whole day
 - injuries?
@@ -1010,8 +1013,6 @@ NEED TO FIX TRADE AI
 - example: should never offer a strictly worse pick for a better pick. or at least not commonly
 
 no POT mode, to make it harder
-
-p.valueWithContract is exactly equal to p.value currently!
 
 persist fantasy draft results
 - make an array of draft results

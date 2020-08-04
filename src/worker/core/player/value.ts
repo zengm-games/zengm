@@ -31,13 +31,14 @@ const value = (
 	options: {
 		fuzz?: boolean;
 		noPot?: boolean;
-		withContract?: boolean;
-	} = {},
+		ovrMean: number;
+		ovrStd: number;
+	},
 ): number => {
 	options.noPot = !!options.noPot;
 	options.fuzz = !!options.fuzz;
-	options.withContract = !!options.withContract; // Current ratings
 
+	// Current ratings
 	const pr: any = {}; // Start blank, add what we need (efficiency, wow!)
 
 	const s = p.ratings.length - 1;
@@ -53,6 +54,16 @@ const value = (
 		pr.ovr = p.ratings[s].ovr;
 		pr.pot = p.ratings[s].pot;
 	}
+
+	// Normalize ovr/pot
+	const defaultOvrMean = 37;
+	const defaultOvrStd = 14;
+	pr.ovr =
+		((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrMean +
+		defaultOvrStd;
+	pr.pot =
+		((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrMean +
+		defaultOvrStd;
 
 	// From linear regression OVR ~ PER
 	const slope = 1.531;

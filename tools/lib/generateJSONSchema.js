@@ -1152,9 +1152,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 						valueNoPotFuzz: {
 							type: "number",
 						},
-						valueWithContract: {
-							type: "number",
-						},
 						watch: {
 							type: "boolean",
 						},

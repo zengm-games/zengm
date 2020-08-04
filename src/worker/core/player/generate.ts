@@ -77,7 +77,6 @@ const generate = (
 		valueNoPot: 0,
 		valueFuzz: 0,
 		valueNoPotFuzz: 0,
-		valueWithContract: 0,
 	};
 
 	return p;

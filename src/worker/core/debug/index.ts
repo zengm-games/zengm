@@ -8,7 +8,6 @@ import maxRatingDists from "./maxRatingDists";
 import percentageDraftPicksSigned from "./percentageDraftPicksSigned";
 import recomputeHallOfFame from "./recomputeHallOfFame";
 import recomputeOvr from "./recomputeOvr";
-import valueDiff from "./valueDiff";
 
 export default {
 	averageCareerArc,
@@ -20,5 +19,4 @@ export default {
 	percentageDraftPicksSigned,
 	recomputeHallOfFame,
 	recomputeOvr,
-	valueDiff,
 };

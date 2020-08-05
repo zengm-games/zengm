@@ -672,8 +672,12 @@ export const createWithoutSaving = async (
 		);
 
 		// 150 for basketball
-		// Add players to teams or free agency
-		keptPlayers.sort((a, b) => b.value - a.value);
+		// Would use value, but it doesn't exist yet
+		keptPlayers.sort(
+			(a, b) =>
+				b.ratings[b.ratings.length - 1].pot -
+				a.ratings[a.ratings.length - 1].pot,
+		);
 
 		// Keep track of number of players on each team
 		const numPlayersByTid: Record<number, number> = {};

@@ -56,14 +56,14 @@ const value = (
 	}
 
 	// Normalize ovr/pot
-	const defaultOvrMean = 37;
-	const defaultOvrStd = 14;
+	const defaultOvrMean = 47;
+	const defaultOvrStd = 10;
 	pr.ovr =
-		((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrMean +
-		defaultOvrStd;
+		((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+		defaultOvrMean;
 	pr.pot =
-		((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrMean +
-		defaultOvrStd;
+		((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+		defaultOvrMean;
 
 	// From linear regression OVR ~ PER
 	const slope = 1.531;

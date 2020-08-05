@@ -52,8 +52,7 @@ nicidob contract stuff
   - inflated/deflated ratings
     - somehow in both, salaries wind up being too high, guys left unsigned
 - updateValues revamp
-  - call on everyone after league creation
-  - call after genPlayersWithoutSaving
+  - would be more efficient to look at how this is being done... compute mean/std once, not every time
 
 live sim should just do one game, not whole day
 - injuries?

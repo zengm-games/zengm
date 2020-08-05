@@ -61,7 +61,7 @@ const normalizeContractDemands = async ({
 			pid: p.pid,
 			dummy,
 			// basically ws/48 prediction from OVR
-			value: p.value ** 2,
+			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
 			contractAmount: p.contract.amount,
 			p,
 		};

@@ -48,11 +48,12 @@ const ImportPlayers = ({
 		},
 		...orderBy(
 			teamInfoCache
-				.filter(t => !t.disabled)
 				.map((t, i) => ({
 					tid: i,
 					name: `${t.region} ${t.name}`,
-				})),
+					disabled: t.disabled,
+				}))
+				.filter(t => !t.disabled),
 			["name", "tid"],
 		),
 	];

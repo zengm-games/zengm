@@ -827,7 +827,14 @@ export const createWithoutSaving = async (
 				// So half will be eligible to retire after the first season
 				p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0;
 
-				player.setContract(p, player.genContract(p, false), false);
+				player.setContract(
+					p,
+					{
+						amount: g.get("minContract"),
+						exp: g.get("season"),
+					},
+					false,
+				);
 				player.addToFreeAgents(p, g.get("phase"), baseMoods);
 				players.push(p);
 			}
@@ -1055,6 +1062,12 @@ const create = async ({
 	await freeAgents.normalizeContractDemands({
 		type: "newLeague",
 	});
+
+	for (const p of players) {
+		if (p.tid >= 0 && p.salaries.length === 0) {
+			player.setContract(p, p.contract, true);
+		}
+	}
 
 	const skipNewPhase = leagueFile.gameAttributes
 		? leagueFile.gameAttributes.some(ga => ga.key === "phase")

@@ -31,17 +31,13 @@ nicidob contract stuff
 - use at start of re-signing too?
   - draftPicks condition to lower contracts for them
 - league creation?
-  - run on whole league?
-  - or sim past free agencies?
-  - how to set contracts of FAs - don't overwrite from league file, but otherwise yes! need to track generated FAs
+  - players from league file should not be adjusted. set a flag for them, maybe? or keep track of created pids?
 - use during free agency, start of regular season, other times?
 - ultimately, need to eliminate genContract. otherwise it won't be adaptable to changing talent poorly
   - need a version that can be called after addToFreeAgents with specific pids
 - normalizeContractDemands should set exp too
 - test with different talent pools
 - look for manual edits to p.contract (like "contract.exp +=")
-- # iterations
-  - try low temp at first, then increase gradually
 - better exp setting
 - main problem
   - re-signing and free agency are too different?
@@ -51,6 +47,9 @@ nicidob contract stuff
   - historical rosters
   - inflated/deflated ratings
     - somehow in both, salaries wind up being too high, guys left unsigned
+- retirement still uses pot, should switch to using value
+- hard cap (FBGM)
+
 - updateValues revamp
   - would be more efficient to look at how this is being done... compute mean/std once, not every time
 

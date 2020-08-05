@@ -711,13 +711,6 @@ export const createWithoutSaving = async (
 				teamJerseyNumbers[tid2].push(jerseyNumber);
 			}
 
-			// Keep rookie contract, or no?
-			if (p.contract.exp >= g.get("season")) {
-				player.setContract(p, p.contract, true);
-			} else {
-				player.setContract(p, player.genContract(p, true), true);
-			}
-
 			players.push(p);
 		};
 
@@ -1057,6 +1050,10 @@ const create = async ({
 		await player.updateValues(p);
 		await idb.cache.players.put(p);
 	}
+
+	await freeAgents.normalizeContractDemands({
+		type: "newLeague",
+	});
 
 	const skipNewPhase = leagueFile.gameAttributes
 		? leagueFile.gameAttributes.some(ga => ga.key === "phase")

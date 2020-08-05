@@ -23,6 +23,7 @@ const normalizeContractDemands = async ({
 	pids,
 }: {
 	type:
+		| "newLeague"
 		| "freeAgentsOnly"
 		| "includeExpiringContracts"
 		| "dummyExpiringContracts";
@@ -38,7 +39,9 @@ const normalizeContractDemands = async ({
 
 	const playersAll = await idb.cache.players.getAll();
 	let players;
-	if (type === "freeAgentsOnly") {
+	if (type === "newLeague") {
+		players = playersAll;
+	} else if (type === "freeAgentsOnly") {
 		players = playersAll.filter(p => p.tid === PLAYER.FREE_AGENT);
 	} else {
 		players = playersAll.filter(
@@ -95,6 +98,11 @@ const normalizeContractDemands = async ({
 		random.shuffle(randTeams);
 		for (const t of randTeams) {
 			let capSpace = salaryCap - t.payroll;
+			if (type === "newLeague") {
+				// Simulating that teams could have gone over the cap to sign players with bird rights
+				capSpace += salaryCap;
+			}
+
 			const selectedPlayers = new Set();
 			while (capSpace > 0) {
 				const validPlayers = playerInfos.filter(

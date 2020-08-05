@@ -562,6 +562,7 @@ export const createWithoutSaving = async (
 				leagueFile.version,
 				true,
 			);
+			p.contract.fromLeagueFile = !!p0.contract;
 
 			if (p.tid >= 0 && !activeTids.includes(p.tid)) {
 				p.tid = PLAYER.FREE_AGENT;

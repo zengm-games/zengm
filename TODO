@@ -27,15 +27,10 @@ The way I started the league was:
 Start league
 
 nicidob contract stuff
-- implement, use at start of free agency
 - use at start of re-signing too?
   - draftPicks condition to lower contracts for them
-- league creation?
-  - players from league file should not be adjusted. set a flag for them, maybe? or keep track of created pids?
-- use during free agency, start of regular season, other times?
 - ultimately, need to eliminate genContract. otherwise it won't be adaptable to changing talent poorly
   - need a version that can be called after addToFreeAgents with specific pids
-- normalizeContractDemands should set exp too
 - test with different talent pools
 - look for manual edits to p.contract (like "contract.exp +=")
 - better exp setting
@@ -49,6 +44,9 @@ nicidob contract stuff
     - somehow in both, salaries wind up being too high, guys left unsigned
 - retirement still uses pot, should switch to using value
 - hard cap (FBGM)
+- update salaries (setContract) when appropriate
+- performance?
+- in newLeague, too many max contracts, not enough intermediate contracts
 
 - updateValues revamp
   - would be more efficient to look at how this is being done... compute mean/std once, not every time

@@ -320,7 +320,14 @@ const augmentPartialPlayer = async (
 	}
 
 	if (p.contract === undefined) {
-		setContract(p, genContract(p, true), p.tid >= 0);
+		setContract(
+			p,
+			{
+				amount: g.get("minContract"),
+				exp: g.get("season"),
+			},
+			p.tid >= 0,
+		);
 	} else {
 		p.contract.amount = 10 * Math.round(p.contract.amount / 10);
 

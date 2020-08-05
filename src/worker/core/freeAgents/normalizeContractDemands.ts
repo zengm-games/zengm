@@ -59,7 +59,10 @@ const normalizeContractDemands = async ({
 			p.tid !== PLAYER.FREE_AGENT
 		) {
 			dummy = true;
+		} else if (type === "newLeague" && p.contract.fromLeagueFile) {
+			dummy = true;
 		}
+
 		return {
 			pid: p.pid,
 			dummy,

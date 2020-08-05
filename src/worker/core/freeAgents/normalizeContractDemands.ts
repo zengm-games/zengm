@@ -154,7 +154,7 @@ const normalizeContractDemands = async ({
 		}
 	}
 
-	const changes: any[] = [];
+	//const changes: any[] = [];
 	for (const info of playerInfos) {
 		if (updatedPIDs.has(info.pid) && !info.dummy) {
 			const p = info.p;
@@ -169,22 +169,22 @@ const normalizeContractDemands = async ({
 				}
 			}
 
-			const change: any = {
+			/*const change: any = {
 				pid: p.pid,
 				tid: p.tid,
 				before: p.contract.amount,
-			};
+			};*/
 
 			p.contract.amount = 50 * Math.round(info.contractAmount / 50); // Make it a multiple of 50k
 
-			change.after = p.contract.amount;
+			/*change.after = p.contract.amount;
 			change.diff = change.after - change.before;
-			changes.push(change);
+			changes.push(change);*/
 
 			await idb.cache.players.put(p);
 		}
 	}
-	console.table(changes);
+	// console.table(changes);
 };
 
 export default normalizeContractDemands;

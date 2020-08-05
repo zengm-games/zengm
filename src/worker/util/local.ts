@@ -10,6 +10,8 @@ const defaultLocal: Local = {
 	leagueLoaded: false,
 	phaseText: "",
 	playerBioInfo: undefined,
+	playerOvrMean: undefined,
+	playerOvrStd: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
@@ -25,6 +27,8 @@ const local: Local & {
 	mailingList: defaultLocal.mailingList,
 	phaseText: defaultLocal.phaseText,
 	playerBioInfo: defaultLocal.playerBioInfo,
+	playerOvrMean: defaultLocal.playerOvrMean,
+	playerOvrStd: defaultLocal.playerOvrStd,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
 	statusText: defaultLocal.statusText,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
@@ -36,6 +40,8 @@ const local: Local & {
 		local.leagueLoaded = defaultLocal.leagueLoaded;
 		local.phaseText = defaultLocal.phaseText;
 		local.playerBioInfo = defaultLocal.playerBioInfo;
+		local.playerOvrMean = defaultLocal.playerOvrMean;
+		local.playerOvrStd = defaultLocal.playerOvrStd;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;

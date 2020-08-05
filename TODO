@@ -29,8 +29,6 @@ Start league
 nicidob contract stuff
 - use at start of re-signing too?
   - draftPicks condition to lower contracts for them
-- ultimately, need to eliminate genContract. otherwise it won't be adaptable to changing talent poorly
-  - need a version that can be called after addToFreeAgents with specific pids
 - test with different talent pools
 - look for manual edits to p.contract (like "contract.exp +=")
 - better exp setting
@@ -45,8 +43,10 @@ nicidob contract stuff
 - retirement still uses pot, should switch to using value
 - hard cap (FBGM)
 - update salaries (setContract) when appropriate
-- performance?
+- performance
 - in newLeague, too many max contracts, not enough intermediate contracts
+- eventually
+  - eliminate all getContract
 
 - updateValues revamp
   - would be more efficient to look at how this is being done... compute mean/std once, not every time

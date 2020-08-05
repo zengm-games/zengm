@@ -930,6 +930,8 @@ export type Local = {
 	mailingList: boolean;
 	phaseText: string;
 	playerBioInfo?: PlayerBioInfoProcessed;
+	playerOvrMean?: number;
+	playerOvrStd?: number;
 	playingUntilEndOfRound: boolean;
 	statusText: string;
 	unviewedSeasonSummary: boolean;

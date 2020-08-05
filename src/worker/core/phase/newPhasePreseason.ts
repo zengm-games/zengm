@@ -221,9 +221,6 @@ const newPhasePreseason = async (
 			// Update ratings
 			player.addRatingsRow(p, scoutingRank);
 			await player.develop(p, 1, false, coachingRanks[p.tid]);
-
-			// Update player values after ratings changes
-			await player.updateValues(p);
 		} else {
 			const info = repeatSeason.players[p.pid];
 			if (info) {
@@ -256,6 +253,16 @@ const newPhasePreseason = async (
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
 			await player.addStatsRow(p, false);
+		}
+	}
+
+	// Again, so updateValues can happen after new mean/std is calculated
+	local.playerOvrMean = undefined;
+	local.playerOvrStd = undefined;
+	for (const p of players) {
+		if (!repeatSeason) {
+			// Update player values after ratings changes
+			await player.updateValues(p);
 		}
 
 		await idb.cache.players.put(p);

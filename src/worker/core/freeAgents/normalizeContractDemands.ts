@@ -41,6 +41,9 @@ const stableSoftmax = (x: number[], param: number) => {
 	const z = x.map(xx => (param * (xx - maxX)) / maxX);
 	const numerators = z.map(zz => Math.exp(zz));
 	const denominator = numerators.reduce((sum, value) => sum + value, 0);
+	if (maxX === 0 || denominator === 0) {
+		return numerators.map(() => 1);
+	}
 	return numerators.map(numerator => numerator / denominator);
 };
 
@@ -199,13 +202,8 @@ const normalizeContractDemands = async ({
 		}
 	}
 
-	//const changes: any[] = [];
 	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {
-		console.log(
-			info.pid,
-			(type === "freeAgentsOnly" || updatedPIDs.has(info.pid)) && !info.dummy,
-		);
 		if (
 			(type === "freeAgentsOnly" || updatedPIDs.has(info.pid)) &&
 			!info.dummy
@@ -216,7 +214,6 @@ const normalizeContractDemands = async ({
 			if (afterSeasonOver) {
 				p.contract.exp += 1;
 			}
-			console.log(info.pid, p.contract.exp);
 
 			// During regular season, should only look for short contracts that teams will actually sign
 			if (type === "dummyExpiringContracts") {
@@ -225,12 +222,6 @@ const normalizeContractDemands = async ({
 					info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
 				}
 			}
-
-			/*const change: any = {
-				pid: p.pid,
-				tid: p.tid,
-				before: p.contract.amount,
-			};*/
 
 			if (type === "newLeague") {
 				info.contractAmount *= random.uniform(0.4, 1.1);
@@ -242,14 +233,9 @@ const normalizeContractDemands = async ({
 				maxContract,
 			);
 
-			/*change.after = p.contract.amount;
-			change.diff = change.after - change.before;
-			changes.push(change);*/
-
 			await idb.cache.players.put(p);
 		}
 	}
-	// console.table(changes);
 };
 
 export default normalizeContractDemands;

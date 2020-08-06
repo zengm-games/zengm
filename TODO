@@ -34,9 +34,7 @@ nicidob contract stuff
   - inflated/deflated ratings
     - somehow in both, salaries wind up being too high, guys left unsigned
 - league creation performance
-  - random
-  - real
-  - fbgm
+  - benchmark just calling normalizeContractDemands
 - eventually
   - eliminate all genContract
 - updateValues revamp

@@ -1020,12 +1020,14 @@ const create = async ({
 			await player.addRelatives(p);
 		} else {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
-			for (const p of players) {
-				if (p.tid >= 0 && p.stats.length > 0) {
-					p.stats[
-						p.stats.length - 1
-					].jerseyNumber = await player.genJerseyNumber(p);
-				}
+			if (
+				p.tid >= 0 &&
+				p.stats.length > 0 &&
+				!p.stats[p.stats.length - 1].jerseyNumber
+			) {
+				p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
+					p,
+				);
 			}
 		}
 

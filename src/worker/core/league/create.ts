@@ -1068,9 +1068,40 @@ const create = async ({
 		await idb.cache.players.put(p);
 	}
 
-	await freeAgents.normalizeContractDemands({
-		type: "newLeague",
-	});
+	// Crazy contract stuff!
+	// Init players to default contracts, assuming the whole cap is used up
+	const targetLeagueSalary = g.get("numActiveTeams") * g.get("salaryCap");
+	let fixedLeagueSalary = 0;
+	let numPlayersToSet = 0;
+	for (const p of players) {
+		if (!p.contract.temp) {
+			fixedLeagueSalary += p.contract.amount;
+		} else {
+			numPlayersToSet += 1;
+		}
+	}
+	console.log("targetLeagueSalary", targetLeagueSalary);
+	console.log("fixedLeagueSalary", fixedLeagueSalary);
+	console.log("numPlayersToSet", numPlayersToSet);
+	if (numPlayersToSet > 0) {
+		const amountPerPlayer =
+			(targetLeagueSalary - fixedLeagueSalary) / numPlayersToSet;
+
+		console.log("amountPerPlayer", amountPerPlayer);
+
+		const pidsToNormalize = [];
+		for (const p of players) {
+			if (p.contract.temp) {
+				p.contract.amount = amountPerPlayer;
+				pidsToNormalize.push(p.pid);
+			}
+		}
+
+		await freeAgents.normalizeContractDemands({
+			type: "newLeague",
+			pids: pidsToNormalize,
+		});
+	}
 
 	for (const p of players) {
 		if (p.tid >= 0 && p.salaries.length === 0) {

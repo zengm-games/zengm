@@ -29,7 +29,6 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 			}
 			await freeAgents.normalizeContractDemands({
 				type: "freeAgentsOnly",
-				pids: playersUndrafted.map(p => p.pid),
 			});
 
 			// Swap back in normal draft class

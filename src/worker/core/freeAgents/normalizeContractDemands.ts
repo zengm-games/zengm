@@ -7,14 +7,6 @@ const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
 const ROUNDS = 60;
 
-const stableSoftmax = (x: number[]) => {
-	const maxX = Math.max(...x);
-	const z = x.map(xx => xx - maxX);
-	const numerators = z.map(zz => Math.exp(zz));
-	const denominator = numerators.reduce((sum, value) => sum + value, 0);
-	return numerators.map(numerator => numerator / denominator);
-};
-
 // "includeExpiringContracts" - use this at the start of re-signing phase
 // "freeAgentsOnly" - use this at the start of free agency phase
 // "dummyExpiringContracts" - use this at beginning of regular season
@@ -29,6 +21,17 @@ const normalizeContractDemands = async ({
 		| "dummyExpiringContracts";
 	pids?: number[];
 }) => {
+	// Higher means more unequal salaries
+	const PARAM = type === "newLeague" ? 5 : 15;
+
+	const stableSoftmax = (x: number[]) => {
+		const maxX = Math.max(...x);
+		const z = x.map(xx => (PARAM * (xx - maxX)) / maxX);
+		const numerators = z.map(zz => Math.exp(zz));
+		const denominator = numerators.reduce((sum, value) => sum + value, 0);
+		return numerators.map(numerator => numerator / denominator);
+	};
+
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");
 	const salaryCap = g.get("salaryCap");
@@ -59,8 +62,6 @@ const normalizeContractDemands = async ({
 			p.tid !== PLAYER.FREE_AGENT
 		) {
 			dummy = true;
-		} else if (type === "newLeague" && !p.contract.temp) {
-			dummy = true;
 		}
 
 		return {
@@ -81,7 +82,11 @@ const normalizeContractDemands = async ({
 		}));
 	for (const t of teams) {
 		const contracts = (await team.getContracts(t.tid)).filter(contract => {
-			if (type === "freeAgentsOnly") {
+			if (pids && pids.includes(contract.pid)) {
+				return false;
+			}
+
+			if (type === "newLeague" || type === "freeAgentsOnly") {
 				return true;
 			}
 

@@ -620,46 +620,37 @@ export const createWithoutSaving = async (
 
 				await player.develop(p, numYearsAgo, true);
 
-				// Run shouldRetire 4 times to simulate past shouldRetire calls
-				if (
-					(!player.shouldRetire(p) &&
-						!player.shouldRetire(p) &&
-						!player.shouldRetire(p) &&
-						!player.shouldRetire(p)) ||
-					numYearsAgo <= 3
-				) {
-					// Do this before developing, to save ratings
-					p.draft = {
-						round,
-						pick,
-						tid: round === 0 ? -1 : tids[pick - 1],
-						year: g.get("season") - numYearsAgo,
-						originalTid: round === 0 ? -1 : tids[pick - 1],
-						pot,
-						ovr,
-						skills,
-					};
+				// Do this before developing, to save ratings
+				p.draft = {
+					round,
+					pick,
+					tid: round === 0 ? -1 : tids[pick - 1],
+					year: g.get("season") - numYearsAgo,
+					originalTid: round === 0 ? -1 : tids[pick - 1],
+					pot,
+					ovr,
+					skills,
+				};
 
-					if (round === 0) {
-						// Guarantee contracts for undrafted players are overwritten below
-						p.contract.exp = -Infinity;
-					} else {
-						const years = 4 - round;
+				if (round === 0) {
+					// Guarantee contracts for undrafted players are overwritten below
+					p.contract.exp = -Infinity;
+				} else {
+					const years = 4 - round;
 
-						// 2 years for 2nd round, 3 years for 1st round;
-						player.setContract(
-							p,
-							{
-								amount: rookieSalaries[i],
-								exp: g.get("season") - numYearsAgo + years,
-							},
-							false,
-						);
-					}
-					p.contract.temp = true;
-
-					keptPlayers.push(p);
+					// 2 years for 2nd round, 3 years for 1st round;
+					player.setContract(
+						p,
+						{
+							amount: rookieSalaries[i],
+							exp: g.get("season") - numYearsAgo + years,
+						},
+						false,
+					);
 				}
+				p.contract.temp = true;
+
+				keptPlayers.push(p);
 			}
 		}
 
@@ -1068,40 +1059,11 @@ const create = async ({
 		await idb.cache.players.put(p);
 	}
 
-	// Crazy contract stuff!
-	// Init players to default contracts, assuming the whole cap is used up
-	const targetLeagueSalary = g.get("numActiveTeams") * g.get("salaryCap");
-	let fixedLeagueSalary = 0;
-	let numPlayersToSet = 0;
-	for (const p of players) {
-		if (!p.contract.temp) {
-			fixedLeagueSalary += p.contract.amount;
-		} else {
-			numPlayersToSet += 1;
-		}
-	}
-	console.log("targetLeagueSalary", targetLeagueSalary);
-	console.log("fixedLeagueSalary", fixedLeagueSalary);
-	console.log("numPlayersToSet", numPlayersToSet);
-	if (numPlayersToSet > 0) {
-		const amountPerPlayer =
-			(targetLeagueSalary - fixedLeagueSalary) / numPlayersToSet;
-
-		console.log("amountPerPlayer", amountPerPlayer);
-
-		const pidsToNormalize = [];
-		for (const p of players) {
-			if (p.contract.temp) {
-				p.contract.amount = amountPerPlayer;
-				pidsToNormalize.push(p.pid);
-			}
-		}
-
-		await freeAgents.normalizeContractDemands({
-			type: "newLeague",
-			pids: pidsToNormalize,
-		});
-	}
+	const pidsToNormalize = players.filter(p => p.contract.temp).map(p => p.pid);
+	await freeAgents.normalizeContractDemands({
+		type: "newLeague",
+		pids: pidsToNormalize,
+	});
 
 	for (const p of players) {
 		if (p.tid >= 0 && p.salaries.length === 0) {

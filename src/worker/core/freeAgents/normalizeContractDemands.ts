@@ -40,7 +40,10 @@ const normalizeContractDemands = async ({
 	// Lower number results in higher bids (more players being selected, and therefore having increases) but seems to be too much in hypothetical FAs (everything except freeAgentsOnly) because we don't know that all these players are actually going to be available
 	const NUM_BIDS_BEFORE_REMOVED = 2;
 
-	const playersAll = await idb.cache.players.getAll();
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+		PLAYER.FREE_AGENT,
+		Infinity,
+	]);
 	let players;
 	if (type === "newLeague") {
 		players = playersAll;
@@ -180,7 +183,15 @@ const normalizeContractDemands = async ({
 				before: p.contract.amount,
 			};*/
 
-			p.contract.amount = 50 * Math.round(info.contractAmount / 50); // Make it a multiple of 50k
+			if (type === "newLeague") {
+				info.contractAmount *= random.uniform(0.4, 1.1);
+			}
+
+			p.contract.amount = helpers.bound(
+				50 * Math.round(info.contractAmount / 50), // Make it a multiple of 50k
+				minContract,
+				maxContract,
+			);
 
 			/*change.after = p.contract.amount;
 			change.diff = change.after - change.before;

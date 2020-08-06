@@ -41,13 +41,10 @@ nicidob contract stuff
   - inflated/deflated ratings
     - somehow in both, salaries wind up being too high, guys left unsigned
 - hard cap (FBGM)
-- performance
-- in newLeague, too many max contracts, not enough intermediate contracts
-  - deterministic noise? does that even make sense?
-  - limit number of max slots available, then start gradually decreasing the max
-  - better: see sn
-    - goal: exponential so that, after applying max/min salary limits, avg team has payroll equal to salary cap
-  - or... fix rookie contracts, set others to average, divide into 4 groups, run each group independently
+- league creation performance
+  - random
+  - real
+  - fbgm
 - eventually
   - eliminate all getContract
 - updateValues revamp

@@ -616,7 +616,14 @@ const processStats = (
 	}
 
 	if (playerStats.length === 0 && showNoStats) {
-		playerStats.push({});
+		if (g.get("season") === season) {
+			// Player is on a team but has not played with them yet (like this is the offseason before their first season with team) - override blank jersey number
+			playerStats.push({
+				jerseyNumber: helpers.getJerseyNumber(p),
+			});
+		} else {
+			playerStats.push({});
+		}
 	}
 
 	const careerStats: any[] = [];

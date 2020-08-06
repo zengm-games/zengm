@@ -33,7 +33,7 @@ const updateUpcomingFreeAgents = async (
 				exp: p.contract.exp,
 			};
 		} else {
-			p.contractDesired = player.genContract(p, false, false); // No randomization
+			p.contractDesired = player.genContract(p, false); // No randomization
 			p.contractDesired.amount /= 1000;
 			p.contractDesired.exp += inputs.season - g.get("season");
 		}

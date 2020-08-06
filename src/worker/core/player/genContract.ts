@@ -16,7 +16,6 @@ import type {
  */
 const genContract = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
-	randomizeExp: boolean = false,
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
 ): PlayerContract => {

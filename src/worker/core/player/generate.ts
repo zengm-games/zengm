@@ -1,7 +1,5 @@
-import genContract from "./genContract";
 import genRatings from "./genRatings";
 import name from "./name";
-import setContract from "./setContract";
 import { face, g } from "../../util";
 import type {
 	MinimalPlayerRatings,

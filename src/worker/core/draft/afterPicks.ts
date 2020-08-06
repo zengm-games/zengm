@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../../common";
-import { league, phase, player, team, freeAgents } from "..";
+import { league, phase, player, freeAgents } from "..";
 import { idb } from "../../db";
 import {
 	g,

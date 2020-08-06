@@ -1,7 +1,6 @@
 import { PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
-import genContract from "./genContract";
 import generate from "./generate";
 import heightToRating from "./heightToRating";
 import ovr from "./ovr";

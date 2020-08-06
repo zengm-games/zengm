@@ -791,32 +791,6 @@ export const createWithoutSaving = async (
 			}
 		}
 
-		// Adjustment for hard cap - lower contracts for teams above cap
-		if (g.get("hardCap")) {
-			for (const tid2 of activeTids) {
-				const roster = players.filter(p => p.tid === tid2);
-				let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
-
-				while (payroll > g.get("salaryCap")) {
-					let foundAny = false;
-
-					for (const p of roster) {
-						if (p.contract.amount >= g.get("minContract") + 50) {
-							p.contract.amount -= 50;
-							payroll -= 50;
-							foundAny = true;
-						}
-					}
-
-					if (!foundAny) {
-						throw new Error(
-							"Invalid combination of hardCap, salaryCap, and minContract",
-						);
-					}
-				}
-			}
-		}
-
 		// Finally, free agents
 		for (let i = 0; i < maxNumFreeAgents; i++) {
 			const p = keptPlayers[i];
@@ -1064,6 +1038,36 @@ const create = async ({
 		type: "newLeague",
 		pids: pidsToNormalize,
 	});
+
+	// Adjustment for hard cap - lower contracts for teams above cap
+	if (g.get("hardCap")) {
+		const teams = await idb.cache.teams.getAll();
+		for (const t of teams) {
+			if (t.disabled) {
+				continue;
+			}
+			const roster = players.filter(p => p.tid === t.tid);
+			let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
+
+			while (payroll > g.get("salaryCap")) {
+				let foundAny = false;
+
+				for (const p of roster) {
+					if (p.contract.amount >= g.get("minContract") + 50) {
+						p.contract.amount -= 50;
+						payroll -= 50;
+						foundAny = true;
+					}
+				}
+
+				if (!foundAny) {
+					throw new Error(
+						"Invalid combination of hardCap, salaryCap, and minContract",
+					);
+				}
+			}
+		}
+	}
 
 	for (const p of players) {
 		if (p.tid >= 0 && p.salaries.length === 0) {

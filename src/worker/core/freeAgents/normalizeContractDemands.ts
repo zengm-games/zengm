@@ -110,8 +110,13 @@ const normalizeContractDemands = async ({
 		for (const t of randTeams) {
 			let capSpace = salaryCap - t.payroll;
 			if (type === "newLeague") {
-				// Simulating that teams could have gone over the cap to sign players with bird rights
-				capSpace += salaryCap;
+				if (!g.get("hardCap")) {
+					// Simulating that teams could have gone over the cap to sign players with bird rights
+					capSpace += salaryCap;
+				} else {
+					// Not sure why lol
+					capSpace += 0.5 * salaryCap;
+				}
 			}
 
 			const selectedPlayers = new Set();

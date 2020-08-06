@@ -151,26 +151,30 @@ const normalizeContractDemands = async ({
 				}
 			}
 
-			const selectedPlayers = new Set();
-			while (capSpace > 0) {
-				const validPlayers = playerInfos.filter(
+			const availablePlayers = new Set(
+				playerInfos.filter(
 					p =>
 						p.contractAmount <= capSpace &&
-						!selectedPlayers.has(p) &&
 						(bids.get(p.pid) || 0) < NUM_BIDS_BEFORE_REMOVED,
+				),
+			);
+			while (capSpace > minContract && availablePlayers.size > 0) {
+				const availablePlayersArray = Array.from(availablePlayers);
+				const probs = stableSoftmax(
+					availablePlayersArray.map(p => p.value * TEMP),
+					PARAM,
 				);
-				if (validPlayers.length > 0) {
-					const probs = stableSoftmax(
-						validPlayers.map(p => p.value * TEMP),
-						PARAM,
-					);
-					const p = random.choice(validPlayers, probs);
-					selectedPlayers.add(p);
+				const p = random.choice(availablePlayersArray, probs);
+				availablePlayers.delete(p);
 
-					bids.set(p.pid, (bids.get(p.pid) || 0) + 1);
-					capSpace -= p.contractAmount;
-				} else {
-					break;
+				bids.set(p.pid, (bids.get(p.pid) || 0) + 1);
+				capSpace -= p.contractAmount;
+				if (capSpace > minContract) {
+					for (const p of availablePlayers) {
+						if (p.contractAmount > capSpace) {
+							availablePlayers.delete(p);
+						}
+					}
 				}
 			}
 		}

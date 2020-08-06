@@ -41,8 +41,9 @@ const getRookieSalaries = (): number[] => {
 		1000,
 		1000,
 		1000,
-	]; //default for all subsequent rounds
+	];
 
+	// Default for all subsequent rounds
 	const otherRoundRookieSalaries = [
 		500,
 		500,

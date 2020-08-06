@@ -47,6 +47,8 @@ nicidob contract stuff
   - deterministic noise? does that even make sense?
   - limit number of max slots available, then start gradually decreasing the max
   - better: see sn
+    - goal: exponential so that, after applying max/min salary limits, avg team has payroll equal to salary cap
+  - or... fix rookie contracts, set others to average, divide into 4 groups, run each group independently
 - eventually
   - eliminate all getContract
 

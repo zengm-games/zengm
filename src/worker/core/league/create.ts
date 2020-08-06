@@ -562,7 +562,9 @@ export const createWithoutSaving = async (
 				leagueFile.version,
 				true,
 			);
-			p.contract.fromLeagueFile = !!p0.contract;
+			if (!p0.contract) {
+				p.contract.temp = true;
+			}
 
 			if (p.tid >= 0 && !activeTids.includes(p.tid)) {
 				p.tid = PLAYER.FREE_AGENT;
@@ -654,6 +656,7 @@ export const createWithoutSaving = async (
 							false,
 						);
 					}
+					p.contract.temp = true;
 
 					keptPlayers.push(p);
 				}
@@ -710,6 +713,11 @@ export const createWithoutSaving = async (
 			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
 			if (jerseyNumber) {
 				teamJerseyNumbers[tid2].push(jerseyNumber);
+			}
+
+			// Keep rookie contract, or no?
+			if (p.contract.exp >= g.get("season")) {
+				delete p.contract.temp;
 			}
 
 			players.push(p);
@@ -835,6 +843,7 @@ export const createWithoutSaving = async (
 					},
 					false,
 				);
+				p.contract.temp = true;
 				player.addToFreeAgents(p, g.get("phase"), baseMoods);
 				players.push(p);
 			}

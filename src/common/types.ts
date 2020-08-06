@@ -763,7 +763,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	};
 	college: string;
 	contract: PlayerContract & {
-		fromLeagueFile?: boolean; // Used only on import
+		temp?: true; // Used only on import
 	};
 	diedYear?: number;
 	draft: {

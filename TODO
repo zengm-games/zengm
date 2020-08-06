@@ -51,9 +51,10 @@ nicidob contract stuff
   - or... fix rookie contracts, set others to average, divide into 4 groups, run each group independently
 - eventually
   - eliminate all getContract
-
 - updateValues revamp
-  - would be more efficient to look at how this is being done... compute mean/std once, not every time
+
+gm history page
+- store team you were with at end of playoffs
 
 live sim should just do one game, not whole day
 - injuries?

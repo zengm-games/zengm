@@ -56,14 +56,16 @@ const value = (
 	}
 
 	// Normalize ovr/pot
-	const defaultOvrMean = 47;
-	const defaultOvrStd = 10;
-	pr.ovr =
-		((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
-		defaultOvrMean;
-	pr.pot =
-		((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
-		defaultOvrMean;
+	if (process.env.SPORT === "basketball") {
+		const defaultOvrMean = 47;
+		const defaultOvrStd = 10;
+		pr.ovr =
+			((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+			defaultOvrMean;
+		pr.pot =
+			((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+			defaultOvrMean;
+	}
 
 	// From linear regression OVR ~ PER
 	const slope = 1.531;

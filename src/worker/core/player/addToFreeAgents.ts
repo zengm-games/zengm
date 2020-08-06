@@ -40,11 +40,6 @@ const addToFreeAgents = (
 		return helpers.bound(mood + random.uniform(-1, 1.5), 0, 1000);
 	});
 
-	// During regular season, or before season starts, allow contracts for	// just this year.
-	if (phase > PHASE.AFTER_TRADE_DEADLINE) {
-		p.contract.exp += 1;
-	}
-
 	p.tid = PLAYER.FREE_AGENT;
 	p.ptModifier = 1; // Reset
 };

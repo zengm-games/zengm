@@ -85,7 +85,6 @@ const newPhaseBeforeDraft = async (
 					p.yearsFreeAgent += 1;
 				}
 
-				p.contract.exp += 1;
 				update = true;
 			} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
 				p.yearsFreeAgent = 0;

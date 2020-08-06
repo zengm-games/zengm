@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER } from "../../../common";
+import { PLAYER, PHASE } from "../../../common";
 import { team } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -200,11 +200,23 @@ const normalizeContractDemands = async ({
 	}
 
 	//const changes: any[] = [];
+	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {
-		if (updatedPIDs.has(info.pid) && !info.dummy) {
+		console.log(
+			info.pid,
+			(type === "freeAgentsOnly" || updatedPIDs.has(info.pid)) && !info.dummy,
+		);
+		if (
+			(type === "freeAgentsOnly" || updatedPIDs.has(info.pid)) &&
+			!info.dummy
+		) {
 			const p = info.p;
 
 			p.contract.exp = getExpiration(p, type === "newLeague");
+			if (afterSeasonOver) {
+				p.contract.exp += 1;
+			}
+			console.log(info.pid, p.contract.exp);
 
 			// During regular season, should only look for short contracts that teams will actually sign
 			if (type === "dummyExpiringContracts") {

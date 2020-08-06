@@ -23,6 +23,7 @@ import {
 	trade,
 	expansionDraft,
 	realRosters,
+	freeAgents,
 } from "../core";
 import { connectMeta, idb, iterate } from "../db";
 import {
@@ -1664,6 +1665,10 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	}
 
 	await player.release(p, justDrafted);
+	await freeAgents.normalizeContractDemands({
+		type: "dummyExpiringContracts",
+		pids: [p.pid],
+	});
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();
 };

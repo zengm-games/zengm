@@ -27,11 +27,9 @@ The way I started the league was:
 Start league
 
 nicidob contract stuff
-- use at start of re-signing too?
-  - draftPicks condition to lower contracts for them
-- test with different talent pools
 - look for manual edits to p.contract (like "contract.exp +=")
 - better exp setting
+  - looks like in FA some FAs have exp of current season, maybe never gets updated?
 - test in different scenarios
   - compare leaguewide salaries vs master
     - currently new method is a little low

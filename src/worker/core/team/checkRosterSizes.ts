@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { player } from "..";
+import { player, freeAgents } from "..";
 import rosterAutoSort from "./rosterAutoSort";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
@@ -19,6 +19,8 @@ import type { Player } from "../../../common/types";
 const checkRosterSizes = async (): Promise<string | void> => {
 	const minFreeAgents: Player[] = [];
 	let userTeamSizeError: string | undefined;
+
+	const releasedPIDs: number[] = [];
 
 	const checkRosterSize = async (tid: number) => {
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -47,6 +49,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 
 				for (let i = 0; i < numPlayersOnRoster - g.get("maxRosterSize"); i++) {
 					await player.release(players[i], false);
+					releasedPIDs.push(players[i].pid);
 				}
 			}
 		} else if (numPlayersOnRoster < g.get("minRosterSize")) {
@@ -119,6 +122,13 @@ const checkRosterSizes = async (): Promise<string | void> => {
 		if (userTeamSizeError) {
 			break;
 		}
+	}
+
+	if (releasedPIDs.length > 0) {
+		await freeAgents.normalizeContractDemands({
+			type: "dummyExpiringContracts",
+			pids: releasedPIDs,
+		});
 	}
 
 	return userTeamSizeError;

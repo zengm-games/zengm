@@ -2,14 +2,51 @@ import { idb } from "../../db";
 import { PLAYER } from "../../../common";
 import { team } from "..";
 import { g, helpers, random } from "../../util";
+import type { Player } from "../../../common/types";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
 const ROUNDS = 60;
 
+const getExpiration = (p: Player, randomizeExp: boolean) => {
+	const { ovr, pot } = p.ratings[p.ratings.length - 1];
+
+	// Players with high potentials want short contracts
+	const potentialDifference = Math.round((pot - ovr) / 4.0);
+	let years = 5 - potentialDifference;
+
+	if (years < 2) {
+		years = 2;
+	}
+
+	// Bad players can only ask for short deals
+	if (p.value < 36) {
+		years = 1;
+	} else if (p.value < 45) {
+		years = 2;
+	} else if (p.value < 55) {
+		years = 3;
+	}
+
+	// Randomize expiration for contracts generated at beginning of new game
+	if (randomizeExp) {
+		years = random.randInt(1, years);
+	}
+
+	return g.get("season") + years - 1;
+};
+
+const stableSoftmax = (x: number[], param: number) => {
+	const maxX = Math.max(...x);
+	const z = x.map(xx => (param * (xx - maxX)) / maxX);
+	const numerators = z.map(zz => Math.exp(zz));
+	const denominator = numerators.reduce((sum, value) => sum + value, 0);
+	return numerators.map(numerator => numerator / denominator);
+};
+
 // "includeExpiringContracts" - use this at the start of re-signing phase
 // "freeAgentsOnly" - use this at the start of free agency phase
-// "dummyExpiringContracts" - use this at beginning of regular season
+// "dummyExpiringContracts" - use this at beginning of regular season, or during season (like when releasing a player)
 const normalizeContractDemands = async ({
 	type,
 	pids,
@@ -23,14 +60,6 @@ const normalizeContractDemands = async ({
 }) => {
 	// Higher means more unequal salaries
 	const PARAM = type === "newLeague" ? 5 : 15;
-
-	const stableSoftmax = (x: number[]) => {
-		const maxX = Math.max(...x);
-		const z = x.map(xx => (PARAM * (xx - maxX)) / maxX);
-		const numerators = z.map(zz => Math.exp(zz));
-		const denominator = numerators.reduce((sum, value) => sum + value, 0);
-		return numerators.map(numerator => numerator / denominator);
-	};
 
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");
@@ -128,7 +157,10 @@ const normalizeContractDemands = async ({
 						(bids.get(p.pid) || 0) < NUM_BIDS_BEFORE_REMOVED,
 				);
 				if (validPlayers.length > 0) {
-					const probs = stableSoftmax(validPlayers.map(p => p.value * TEMP));
+					const probs = stableSoftmax(
+						validPlayers.map(p => p.value * TEMP),
+						PARAM,
+					);
 					const p = random.choice(validPlayers, probs);
 					selectedPlayers.add(p);
 
@@ -172,7 +204,7 @@ const normalizeContractDemands = async ({
 		if (updatedPIDs.has(info.pid) && !info.dummy) {
 			const p = info.p;
 
-			p.contract.exp = season + random.randInt(0, 3);
+			p.contract.exp = getExpiration(p, type === "newLeague");
 
 			// During regular season, should only look for short contracts that teams will actually sign
 			if (type === "dummyExpiringContracts") {

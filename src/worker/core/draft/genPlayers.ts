@@ -53,6 +53,8 @@ const genPlayers = async (
 		// idb.cache.players.add will create the "pid" property, transforming PlayerWithoutKey to Player
 		// @ts-ignore
 		await player.addRelatives(p);
+
+		await player.updateValues(p);
 	}
 
 	// Easter eggs!

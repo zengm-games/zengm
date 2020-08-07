@@ -48,7 +48,8 @@ const stableSoftmax = (x: number[], param: number) => {
 	const numerators = Array(x.length);
 	let denominator = 0;
 	for (let i = 0; i < x.length; i++) {
-		numerators[i] = Math.exp((param * (x[i] - maxX)) / maxX);
+		// Divide rather than subtract, because sometimes maxX was so large that this was getting rounded to 0
+		numerators[i] = Math.exp((param * x[i]) / maxX);
 		denominator += numerators[i];
 	}
 
@@ -113,7 +114,6 @@ const normalizeContractDemands = async ({
 		return {
 			pid: p.pid,
 			dummy,
-			// basically ws/48 prediction from OVR
 			value: (p.value < 0 ? -1 : 1) * p.value ** 2,
 			contractAmount: p.contract.amount,
 			p,

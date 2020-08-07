@@ -31,8 +31,8 @@ const value = (
 	options: {
 		fuzz?: boolean;
 		noPot?: boolean;
-		ovrMean: number;
-		ovrStd: number;
+		ovrMean?: number;
+		ovrStd?: number;
 	},
 ): number => {
 	options.noPot = !!options.noPot;
@@ -56,7 +56,11 @@ const value = (
 	}
 
 	// Normalize ovr/pot
-	if (process.env.SPORT === "basketball") {
+	if (
+		process.env.SPORT === "basketball" &&
+		options.ovrMean !== undefined &&
+		options.ovrStd !== undefined
+	) {
 		const defaultOvrMean = 47;
 		const defaultOvrStd = 10;
 		pr.ovr =

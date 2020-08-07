@@ -33,6 +33,9 @@ nicidob contract stuff
   - eliminate all genContract
 - updateValues revamp
 
+DP in player ratings only works before the draft. after draft should look for season+1
+- https://old.reddit.com/message/messages/qmo24d
+
 gm history page
 - store team you were with at end of playoffs
 

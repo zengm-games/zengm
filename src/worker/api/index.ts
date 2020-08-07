@@ -1371,6 +1371,8 @@ const handleUploadedDraftClass = async (
 			delete p2.pid;
 		}
 
+		await player.updateValues(p);
+
 		await idb.cache.players.add(p2);
 	}
 
@@ -1530,6 +1532,7 @@ const importPlayers = async (
 			scoutingRank,
 			leagueFile.version,
 		);
+		await player.updateValues(p);
 
 		await idb.cache.players.put(p3);
 	}

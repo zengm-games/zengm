@@ -10,24 +10,29 @@ import { local } from "../../util";
 const updateValues = async (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
 ) => {
-	if (local.playerOvrMean === undefined || local.playerOvrStd === undefined) {
+	if (
+		(process.env.SPORT === "basketball" && local.playerOvrMean === undefined) ||
+		local.playerOvrStd === undefined
+	) {
 		const players = await idb.cache.players.indexGetAll("playersByTid", [
 			-1,
 			Infinity,
 		]);
 
-		let sum = 0;
-		for (const p of players) {
-			sum += p.ratings[p.ratings.length - 1].ovr;
-		}
-		local.playerOvrMean = sum / players.length;
+		if (players.length > 0) {
+			let sum = 0;
+			for (const p of players) {
+				sum += p.ratings[p.ratings.length - 1].ovr;
+			}
+			local.playerOvrMean = sum / players.length;
 
-		let sumSquareDeviations = 0;
-		for (const p of players) {
-			sumSquareDeviations +=
-				(p.ratings[p.ratings.length - 1].ovr - local.playerOvrMean) ** 2;
+			let sumSquareDeviations = 0;
+			for (const p of players) {
+				sumSquareDeviations +=
+					(p.ratings[p.ratings.length - 1].ovr - local.playerOvrMean) ** 2;
+			}
+			local.playerOvrStd = Math.sqrt(sumSquareDeviations / players.length);
 		}
-		local.playerOvrStd = Math.sqrt(sumSquareDeviations / players.length);
 	}
 
 	p.value = value(p, {

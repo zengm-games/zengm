@@ -4,6 +4,7 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
+- players sometimes change while on the same team. some bug in the annual update logic? can someone's number be taken by the random jersey generator before it gets to him?
 - later
   - better system to resolve conflicts (better player gets the number)
   - option to have it prefixed on PlayerNameLabels
@@ -27,14 +28,9 @@ The way I started the league was:
 Start league
 
 nicidob contract stuff
-- test in different scenarios
-  - compare leaguewide salaries vs master
-    - currently new method is a little low
-  - historical rosters
-  - inflated/deflated ratings
-    - somehow in both, salaries wind up being too high, guys left unsigned
-- league creation performance
-  - benchmark just calling normalizeContractDemands
+- fbgm is slow
+  - built-in shortcut for default league, get contract as function of player value
+    - bbgm too?
 - eventually
   - eliminate all genContract
 - updateValues revamp

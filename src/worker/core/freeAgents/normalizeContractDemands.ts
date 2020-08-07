@@ -37,10 +37,20 @@ const getExpiration = (p: Player, randomizeExp: boolean) => {
 };
 
 const stableSoftmax = (x: number[], param: number) => {
-	const maxX = Math.max(...x);
-	const z = x.map(xx => (param * (xx - maxX)) / maxX);
-	const numerators = z.map(zz => Math.exp(zz));
-	const denominator = numerators.reduce((sum, value) => sum + value, 0);
+	let maxX = -Infinity;
+	for (let i = 0; i < x.length; i++) {
+		if (x[i] > maxX) {
+			maxX = x[i];
+		}
+	}
+
+	const numerators = Array(x.length);
+	let denominator = 0;
+	for (let i = 0; i < x.length; i++) {
+		numerators[i] = Math.exp((param * (x[i] - maxX)) / maxX);
+		denominator += numerators[i];
+	}
+
 	if (maxX === 0 || denominator === 0) {
 		return numerators.map(() => 1);
 	}
@@ -130,6 +140,7 @@ const normalizeContractDemands = async ({
 		t.payroll = await team.getPayroll(contracts);
 	}
 
+	// console.time("foo");
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
 	for (let i = 0; i < ROUNDS; i++) {
@@ -205,6 +216,7 @@ const normalizeContractDemands = async ({
 			}
 		}
 	}
+	// console.timeEnd("foo");
 
 	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {

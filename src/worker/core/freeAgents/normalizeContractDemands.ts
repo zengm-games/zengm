@@ -3,6 +3,7 @@ import { PLAYER, PHASE } from "../../../common";
 import { team } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
+import orderBy from "lodash/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -119,6 +120,16 @@ const normalizeContractDemands = async ({
 		};
 	});
 
+	let playerInfosCurrent: typeof playerInfos;
+	if (process.env.SPORT === "football" && type === "newLeague") {
+		// For performance, especially for FBGM, just assume the bottom 60% of the league will be min contracts
+		const cutoff = Math.round(0.4 * playerInfos.length);
+		const ordered = orderBy(playerInfos, "value", "desc");
+		playerInfosCurrent = ordered.slice(0, cutoff);
+	} else {
+		playerInfosCurrent = playerInfos;
+	}
+
 	const teams = (await idb.cache.teams.getAll())
 		.filter(t => !t.disabled)
 		.map(t => ({
@@ -163,7 +174,7 @@ const normalizeContractDemands = async ({
 			}
 
 			const availablePlayers = new Set(
-				playerInfos.filter(
+				playerInfosCurrent.filter(
 					p =>
 						p.contractAmount <= capSpace &&
 						(bids.get(p.pid) || 0) < NUM_BIDS_BEFORE_REMOVED,
@@ -191,7 +202,7 @@ const normalizeContractDemands = async ({
 		}
 
 		// Players adjust expectations
-		for (const p of playerInfos) {
+		for (const p of playerInfosCurrent) {
 			const playerBids = bids.get(p.pid);
 			if (playerBids === undefined) {
 				// Got 0 bids - decrease demands
@@ -221,7 +232,9 @@ const normalizeContractDemands = async ({
 	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {
 		if (
-			(type === "freeAgentsOnly" || updatedPIDs.has(info.pid)) &&
+			(type === "freeAgentsOnly" ||
+				type === "newLeague" ||
+				updatedPIDs.has(info.pid)) &&
 			!info.dummy
 		) {
 			const p = info.p;

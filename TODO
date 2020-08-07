@@ -5,10 +5,11 @@ nicidob PRs
 
 jersey numbers
 - players sometimes change while on the same team. some bug in the annual update logic? can someone's number be taken by the random jersey generator before it gets to him?
+  - https://old.reddit.com/r/BasketballGM/comments/i4v6am/why_do_players_keep_changing_jersey_numbers/g0me5ve/?context=3
+- option to have it prefixed on PlayerNameLabels
+  - see roster page, it's there now
 - later
   - better system to resolve conflicts (better player gets the number)
-  - option to have it prefixed on PlayerNameLabels
-    - see roster page, it's there now
   - prompt to pick number of newly acquired players
   - add jersey retirement to awards list
     - No. 77 retired by the AAAA
@@ -28,9 +29,6 @@ The way I started the league was:
 Start league
 
 nicidob contract stuff
-- fbgm is slow
-  - built-in shortcut for default league, get contract as function of player value
-    - bbgm too?
 - eventually
   - eliminate all genContract
 - updateValues revamp

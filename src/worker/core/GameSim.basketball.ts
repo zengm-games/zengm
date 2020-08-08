@@ -8,6 +8,10 @@ type PlayType =
 	| "blkMidRange"
 	| "blkTp"
 	| "drb"
+	| "fgaAtRim"
+	| "fgaLowPost"
+	| "fgaMidRange"
+	| "fgaTp"
 	| "fgAtRim"
 	| "fgAtRimAndOne"
 	| "fgLowPost"
@@ -1193,6 +1197,8 @@ class GameSim {
 				probMake += 0.02;
 			}
 			probMake *= g.get("threePointAccuracyFactor");
+
+			this.recordPlay("fgaTp", this.o, [this.team[this.o].player[p].name]);
 		} else {
 			const r1 =
 				0.8 *
@@ -1218,6 +1224,9 @@ class GameSim {
 					this.team[this.o].player[p].compositeRating.shootingMidRange * 0.32 +
 					0.42;
 				probAndOne = 0.05;
+				this.recordPlay("fgaMidRange", this.o, [
+					this.team[this.o].player[p].name,
+				]);
 			} else if (r2 > r3) {
 				// Dunk, fast break or half court
 				type = "atRim";
@@ -1226,6 +1235,7 @@ class GameSim {
 					this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 +
 					0.54;
 				probAndOne = 0.25;
+				this.recordPlay("fgaAtRim", this.o, [this.team[this.o].player[p].name]);
 			} else {
 				// Post up
 				type = "lowPost";
@@ -1234,6 +1244,9 @@ class GameSim {
 					this.team[this.o].player[p].compositeRating.shootingLowPost * 0.32 +
 					0.34;
 				probAndOne = 0.15;
+				this.recordPlay("fgaLowPost", this.o, [
+					this.team[this.o].player[p].name,
+				]);
 			}
 
 			// Better shooting in the ASG, why not?
@@ -1361,25 +1374,17 @@ class GameSim {
 		this.recordStat(this.d, p2, "blk");
 
 		if (type === "atRim") {
-			this.recordPlay("blkAtRim", this.d, [
-				this.team[this.d].player[p2].name,
-				this.team[this.o].player[p].name,
-			]);
+			this.recordPlay("blkAtRim", this.d, [this.team[this.d].player[p2].name]);
 		} else if (type === "lowPost") {
 			this.recordPlay("blkLowPost", this.d, [
 				this.team[this.d].player[p2].name,
-				this.team[this.o].player[p].name,
 			]);
 		} else if (type === "midRange") {
 			this.recordPlay("blkMidRange", this.d, [
 				this.team[this.d].player[p2].name,
-				this.team[this.o].player[p].name,
 			]);
 		} else if (type === "threePointer") {
-			this.recordPlay("blkTp", this.d, [
-				this.team[this.d].player[p2].name,
-				this.team[this.o].player[p].name,
-			]);
+			this.recordPlay("blkTp", this.d, [this.team[this.d].player[p2].name]);
 		}
 
 		return this.doReb(); // orb or drb
@@ -1879,50 +1884,74 @@ class GameSim {
 				? "three pointer"
 				: "deep shot";
 
+			let showScore = false;
 			if (type === "injury") {
 				texts = ["{0} was injured!"];
 			} else if (type === "tov") {
 				texts = ["{0} turned the ball over"];
 			} else if (type === "stl") {
 				texts = ["{0} stole the ball from {1}"];
+			} else if (type === "fgaAtRim") {
+				texts = ["{0} elevates for a shot at the rim"];
+			} else if (type === "fgaLowPost") {
+				texts = ["{0} attempts a low post shot"];
+			} else if (type === "fgaMidRange") {
+				texts = ["{0} attempts a mid-range shot"];
+			} else if (type === "fgaTp") {
+				texts = [`{0} attempts a ${threePointerText}`];
 			} else if (type === "fgAtRim") {
-				texts = ["{0} made a layup", "{0} made a dunk"];
+				texts = ["He slams it home", "The layup is good"];
+				showScore = true;
 			} else if (type === "fgAtRimAndOne") {
 				texts = [
-					"{0} made a layup and got fouled!",
-					"{0} made a dunk and got fouled!",
+					"He slams it home, and a foul!",
+					"The layup is good, and a foul!",
 				];
-			} else if (type === "fgLowPost") {
-				texts = ["{0} made a low post shot"];
+				showScore = true;
+			} else if (
+				type === "fgLowPost" ||
+				type === "fgMidRange" ||
+				type === "fgMidRangeAndOne" ||
+				type === "tp" ||
+				type === "tpAndOne"
+			) {
+				texts = ["It's good!"];
+				showScore = true;
 			} else if (type === "fgLowPostAndOne") {
-				texts = ["{0} made a low post shot and got fouled!"];
-			} else if (type === "fgMidRange") {
-				texts = ["{0} made a mid-range shot"];
-			} else if (type === "fgMidRangeAndOne") {
-				texts = ["{0} made a mid-range shot and got fouled!"];
-			} else if (type === "tp") {
-				texts = [`{0} made a ${threePointerText}`];
-			} else if (type === "tpAndOne") {
-				texts = [`{0} made a ${threePointerText} and got fouled!`];
+				texts = ["It's good, and a foul!"];
+				showScore = true;
 			} else if (type === "blkAtRim") {
 				texts = [
-					"{0} blocked {1}'s layup attempt",
-					"{0} blocked {1}'s dunk attempt",
+					"{0} blocked the layup attempt",
+					"{0} blocked the dunk attempt",
 				];
-			} else if (type === "blkLowPost") {
-				texts = ["{0} blocked {1}'s low post shot"];
-			} else if (type === "blkMidRange") {
-				texts = ["{0} blocked {1}'s mid-range shot"];
-			} else if (type === "blkTp") {
-				texts = [`{0} blocked {1}'s ${threePointerText}`];
+			} else if (
+				type === "blkLowPost" ||
+				type === "blkMidRange" ||
+				type === "blkTp"
+			) {
+				texts = ["Blocked by {0}!"];
 			} else if (type === "missAtRim") {
-				texts = ["{0} missed a layup"];
-			} else if (type === "missLowPost") {
-				texts = ["{0} missed a low post shot"];
-			} else if (type === "missMidRange") {
-				texts = ["{0} missed a mid-range shot"];
-			} else if (type === "missTp") {
-				texts = [`{0} missed a ${threePointerText}`];
+				texts = [
+					"He missed the layup",
+					"The layup attempt rolls out",
+					"No good",
+					"No good",
+					"No good",
+				];
+			} else if (
+				type === "missLowPost" ||
+				type === "missMidRange" ||
+				type === "missTp"
+			) {
+				texts = [
+					"The shot rims out",
+					"No good",
+					"No good",
+					"No good",
+					"No good",
+					"He bricks it",
+				];
 			} else if (type === "orb") {
 				texts = ["{0} grabbed the offensive rebound"];
 			} else if (type === "drb") {
@@ -1945,6 +1974,7 @@ class GameSim {
 				texts = ["End of game"];
 			} else if (type === "ft") {
 				texts = ["{0} made a free throw"];
+				showScore = true;
 			} else if (type === "missFt") {
 				texts = ["{0} missed a free throw"];
 			} else if (type === "pfNonShooting") {
@@ -1988,6 +2018,11 @@ class GameSim {
 				} else {
 					const sec = Math.floor((this.t % 1) * 60);
 					const secString = sec < 10 ? `0${sec}` : `${sec}`;
+
+					// Show score after scoring plays
+					if (showScore) {
+						text += ` (${this.team[1].stat.pts}-${this.team[0].stat.pts})`;
+					}
 
 					this.playByPlay.push({
 						type: "text",

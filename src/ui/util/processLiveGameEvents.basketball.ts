@@ -48,11 +48,6 @@ const processLiveGameEvents = ({
 				text = e.text;
 			}
 
-			// Show score after scoring plays
-			if (text.includes("made")) {
-				text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1].pts})`;
-			}
-
 			if (e.injuredPID !== undefined) {
 				const p = boxScore.teams[actualT].players.find(
 					(p2: any) => p2.pid === e.injuredPID,

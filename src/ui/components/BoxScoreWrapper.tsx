@@ -43,18 +43,21 @@ const TeamLogo = ({
 		name: string;
 		region: string;
 		tid: number;
+		won: number;
+		lost: number;
+		tied?: number;
 	};
 }) => {
+	let record = `${t.won}-${t.lost}`;
+	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
+		record += `-${t.tied}`;
+	}
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
-		<div className="w-100 d-none d-lg-block">
+		<div className="w-100 d-none d-lg-block text-center">
 			<TeamNameLink season={season} t={t}>
-				<img
-					src={t.imgURL}
-					alt=""
-					style={{ maxWidth: 120, maxHeight: 138 }}
-					className="mb-3"
-				/>
+				<img src={t.imgURL} alt="" style={{ maxWidth: 120, maxHeight: 100 }} />
 			</TeamNameLink>
+			<div className="mt-1 mb-3 font-weight-bold">{record}</div>
 		</div>
 	) : null;
 };

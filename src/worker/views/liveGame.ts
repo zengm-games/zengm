@@ -47,6 +47,21 @@ const updatePlayByPlay = async (
 
 		for (let i = 0; i < boxScore.teams.length; i++) {
 			const t = boxScore.teams[i];
+
+			// Fix records, taking out result of this game
+			if (!boxScore.playoffs) {
+				if (boxScore.won.pts === boxScore.lost.pts) {
+					// Tied!
+					if (t.tied !== undefined) {
+						t.tied -= 1;
+					}
+				} else if (boxScore.won.tid === t.tid) {
+					t.won -= 1;
+				} else if (boxScore.lost.tid === t.tid) {
+					t.lost -= 1;
+				}
+			}
+
 			await setTeamInfo(t, i, allStars, boxScore);
 			t.ptsQtrs = [0];
 

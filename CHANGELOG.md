@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* DEV: Team records are shown below logos in box scores.
+
 * DEV: In BBGM, in the live game play-by-play, fouls show how many free throws will be upcoming. Like "Shooting foul on Dane Wishnowsky, two FTs for Stephen Lees".
 
 * 2020-08-02: Added a "Delete Player" button to player profile pages.

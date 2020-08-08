@@ -36,8 +36,8 @@ const RecordAndPlayoffs = ({
 				:{" "}
 			</span>
 		) : null;
-	let record = `${won}-${lost}`;
 
+	let record = `${won}-${lost}`;
 	if (typeof tied === "number" && !Number.isNaN(tied) && tied > 0) {
 		record += `-${tied}`;
 	}

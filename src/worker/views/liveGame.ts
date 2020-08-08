@@ -50,6 +50,7 @@ const updatePlayByPlay = async (
 
 			// Fix records, taking out result of this game
 			if (!boxScore.playoffs) {
+				// Keep in sync with LiveGame.tsx
 				if (boxScore.won.pts === boxScore.lost.pts) {
 					// Tied!
 					if (t.tied !== undefined) {

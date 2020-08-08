@@ -7,6 +7,7 @@ import type {
 	PhaseReturn,
 	RealTeamInfo,
 } from "../../../common/types";
+import groupBy from "lodash/groupBy";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -252,7 +253,9 @@ const newPhasePreseason = async (
 
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
-			await player.addStatsRow(p, false);
+			await player.addStatsRow(p, false, {
+				ignoreJerseyNumberConflicts: true,
+			});
 		}
 	}
 
@@ -272,6 +275,51 @@ const newPhasePreseason = async (
 		await freeAgents.normalizeContractDemands({
 			type: "dummyExpiringContracts",
 		});
+	}
+
+	// Handle jersey number conflicts, which should only exist for players added in free agency, because otherwise it would have been handled at the time of signing
+	const playersByTeam = groupBy(
+		players.filter(p => p.tid >= 0 && p.stats.length > 0),
+		"tid",
+	);
+	for (const [tidString, roster] of Object.entries(playersByTeam)) {
+		const tid = parseInt(tidString);
+		for (const p of roster) {
+			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+			if (!jerseyNumber) {
+				continue;
+			}
+			const conflicts = roster.filter(
+				p2 => p2.stats[p2.stats.length - 1].jerseyNumber === jerseyNumber,
+			);
+			if (conflicts.length > 1) {
+				// Conflict! Who gets to keep the number?
+
+				// Player who was on team last year (should only be one at most)
+				let playerWhoKeepsIt = conflicts.find(
+					p => p.stats.length > 1 && p.stats[p.stats.length - 2].tid === tid,
+				);
+				if (!playerWhoKeepsIt) {
+					// Randomly pick one
+					playerWhoKeepsIt = random.choice(conflicts);
+				}
+
+				for (const p of conflicts) {
+					if (p !== playerWhoKeepsIt) {
+						p.stats[
+							p.stats.length - 1
+						].jerseyNumber = await player.genJerseyNumber(p);
+					}
+				}
+			}
+		}
+
+		// One more pass, for players without jersey numbers at all (draft picks)
+		for (const p of roster) {
+			p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
+				p,
+			);
+		}
 	}
 
 	// No ads during multi season auto sim

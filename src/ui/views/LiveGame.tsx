@@ -194,6 +194,23 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 				}
 			}
 
+			// Update team records with result of game
+			if (!this.boxScore.playoffs) {
+				for (const t of this.boxScore.teams) {
+					// Keep in sync with liveGame.ts
+					if (this.boxScore.won.pts === this.boxScore.lost.pts) {
+						// Tied!
+						if (t.tied !== undefined) {
+							t.tied += 1;
+						}
+					} else if (this.boxScore.won.tid === t.tid) {
+						t.won += 1;
+					} else if (this.boxScore.lost.tid === t.tid) {
+						t.lost += 1;
+					}
+				}
+			}
+
 			updatePhaseAndLeagueTopBar();
 		}
 

@@ -32,6 +32,36 @@ TeamNameLink.propTypes = {
 	t: PropTypes.object.isRequired,
 };
 
+const TeamLogo = ({
+	season,
+	t,
+}: {
+	season: number;
+	t: {
+		abbrev: string;
+		imgURL?: string;
+		name: string;
+		region: string;
+		tid: number;
+		won: number;
+		lost: number;
+		tied?: number;
+	};
+}) => {
+	let record = `${t.won}-${t.lost}`;
+	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
+		record += `-${t.tied}`;
+	}
+	return t.imgURL !== undefined && t.imgURL !== "" ? (
+		<div className="w-100 d-none d-lg-block text-center">
+			<TeamNameLink season={season} t={t}>
+				<img src={t.imgURL} alt="" style={{ maxWidth: 120, maxHeight: 100 }} />
+			</TeamNameLink>
+			<div className="mt-1 mb-3 font-weight-bold">{record}</div>
+		</div>
+	) : null;
+};
+
 const HeadlineScore = ({ boxScore }: any) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
@@ -418,18 +448,7 @@ const BoxScoreWrapper = ({
 	return (
 		<>
 			<div className="d-flex align-items-center text-center">
-				{t0.imgURL !== undefined && t0.imgURL !== "" ? (
-					<div className="w-100 d-none d-lg-block">
-						<TeamNameLink season={boxScore.season} t={t0}>
-							<img
-								src={t0.imgURL}
-								alt=""
-								style={{ maxWidth: 120, maxHeight: 138 }}
-								className="mb-3"
-							/>
-						</TeamNameLink>
-					</div>
-				) : null}
+				<TeamLogo season={boxScore.season} t={t0} />
 				<div className="mx-auto flex-shrink-0">
 					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
@@ -443,18 +462,7 @@ const BoxScoreWrapper = ({
 						tid={tid}
 					/>
 				</div>
-				{t1.imgURL !== undefined && t1.imgURL !== "" ? (
-					<div className="w-100 d-none d-lg-block">
-						<TeamNameLink season={boxScore.season} t={t1}>
-							<img
-								src={t1.imgURL}
-								alt=""
-								style={{ maxWidth: 120, maxHeight: 138 }}
-								className="mb-3"
-							/>
-						</TeamNameLink>
-					</div>
-				) : null}
+				<TeamLogo season={boxScore.season} t={t1} />
 			</div>
 			<BoxScore boxScore={boxScore} Row={Row} forceRowUpdate={forceRowUpdate} />
 			Attendance: {helpers.numberWithCommas(boxScore.att)}

@@ -232,13 +232,13 @@ const teamInfos: {
 		region: "Toronto",
 		name: "Beavers",
 		pop: 6.6,
-		colors: ["#832525", "#5e372c", "#331b16"],
+		colors: ["#832525", "#331b16", "#5e372c"],
 	},
 	TPA: {
 		region: "Tampa",
 		name: "Turtles",
 		pop: 2.7,
-		colors: ["#eb851e", "#17cc21", "#023a02"],
+		colors: ["#17cc21", "#023a02", "#eb851e"],
 	},
 	UTA: {
 		region: "Utah",

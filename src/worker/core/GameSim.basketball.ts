@@ -26,7 +26,11 @@ type PlayType =
 	| "missTp"
 	| "orb"
 	| "overtime"
-	| "pf"
+	| "pfNonShooting"
+	| "pfBonus"
+	| "pfFG"
+	| "pfTP"
+	| "pfAndOne"
 	| "quarter"
 	| "stl"
 	| "sub"
@@ -1041,13 +1045,17 @@ class GameSim {
 
 		// Non-shooting foul?
 		if (Math.random() < 0.08 * g.get("foulRateFactor") || intentionalFoul) {
-			this.doPf(this.d);
-
 			// In the bonus?
 			const inBonus =
 				(this.t <= 2 && this.foulsLastTwoMinutes[this.d] >= 2) ||
 				(this.overtimes >= 1 && this.foulsThisQuarter[this.d] >= 4) ||
 				this.foulsThisQuarter[this.d] >= 5;
+
+			if (inBonus) {
+				this.doPf(this.d, "pfBonus", shooter);
+			} else {
+				this.doPf(this.d, "pfNonShooting");
+			}
 
 			if (inBonus) {
 				return this.doFt(shooter, 2); // fg, orb, or drb
@@ -1281,7 +1289,7 @@ class GameSim {
 
 		// Miss, but fouled
 		if (probMissAndFoul > Math.random()) {
-			this.doPf(this.d, shooter);
+			this.doPf(this.d, type === "threePointer" ? "pfTP" : "pfFG", shooter);
 
 			if (type === "threePointer" && g.get("threePointers")) {
 				return this.doFt(shooter, 3); // fg, orb, or drb
@@ -1437,7 +1445,7 @@ class GameSim {
 		}
 
 		if (andOne) {
-			this.doPf(this.d, shooter);
+			this.doPf(this.d, "pfAndOne", shooter);
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
 
@@ -1717,18 +1725,31 @@ class GameSim {
 	 *
 	 * @param {number} t Team (0 or 1, this.o or this.d).
 	 */
-	doPf(t: TeamNum, shooter?: PlayerNumOnCourt) {
+	doPf(
+		t: TeamNum,
+		type: "pfNonShooting" | "pfBonus" | "pfFG" | "pfTP" | "pfAndOne",
+		shooter?: PlayerNumOnCourt,
+	) {
 		const ratios = this.ratingArray("fouling", t);
 		const p = this.playersOnCourt[t][pickPlayer(ratios)];
 		this.recordStat(this.d, p, "pf");
-		this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]); // Foul out
 
+		const names = [this.team[this.d].player[p].name];
+		if (shooter !== undefined) {
+			names.push(
+				this.team[this.o].player[this.playersOnCourt[this.o][shooter]].name,
+			);
+		}
+		this.recordPlay(type, this.d, names);
+
+		// Foul out
 		if (
 			g.get("foulsNeededToFoulOut") > 0 &&
 			this.team[this.d].player[p].stat.pf >= g.get("foulsNeededToFoulOut")
 		) {
-			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]); // Force substitutions now
+			this.recordPlay("foulOut", this.d, [this.team[this.d].player[p].name]);
 
+			// Force substitutions now
 			this.updatePlayersOnCourt(shooter);
 			this.updateSynergy();
 		}
@@ -1926,7 +1947,18 @@ class GameSim {
 				texts = ["{0} made a free throw"];
 			} else if (type === "missFt") {
 				texts = ["{0} missed a free throw"];
-			} else if (type === "pf") {
+			} else if (type === "pfNonShooting") {
+				texts = ["Non-shooting foul on {0}"];
+			} else if (type === "pfBonus") {
+				texts = [
+					"Non-shooting foul on {0}. They are in the penalty, so two FTs for {1}",
+				];
+			} else if (type === "pfFG") {
+				texts = ["Shooting foul on {0}, two FTs for {1}"];
+			} else if (type === "pfTP") {
+				texts = ["Shooting foul on {0}, three FTs for {1}"];
+			} else if (type === "pfAndOne") {
+				// More description is already in the shot text
 				texts = ["Foul on {0}"];
 			} else if (type === "foulOut") {
 				texts = ["{0} fouled out"];

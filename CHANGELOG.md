@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* DEV: In BBGM, in the live game play-by-play, fouls show how many free throws will be upcoming. Like "Shooting foul on Dane Wishnowsky, two FTs for Stephen Lees".
+
 * 2020-08-02: Added a "Delete Player" button to player profile pages.
 
 * **2020-08-01: Players now have jersey numbers, and teams can retire jersey numbers of former players. [[1]](https://basketball-gm.com/blog/2020/08/jersey-numbers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i1trop/new_feature_official_release_players_now_have/) [[3]](https://old.reddit.com/r/Football_GM/comments/i1trys/players_now_have_jersey_numbers_and_teams_can/)**

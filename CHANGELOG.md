@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-08-08: Copying the trend in most other basketball sites, the default standings for BBGM are now conference standings, not division standings. FBGM is not changed.
+
 * 2020-08-08: Team records are shown below logos in box scores. And yeah, when you're watching a live game, the records update when the game finishes :) [[1]](https://old.reddit.com/r/BasketballGM/comments/i6792d/in_the_live_game_playbyplay_fouls_show_how_many/)
 
 * 2020-08-08: In BBGM, in the live game play-by-play, fouls show how many free throws will be upcoming. Like "Shooting foul on Dane Wishnowsky, two FTs for Stephen Lees". Additionally, shot attempts appear on their own line before saying if they are made or missed. [[1]](https://old.reddit.com/r/BasketballGM/comments/i6792d/in_the_live_game_playbyplay_fouls_show_how_many/)

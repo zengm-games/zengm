@@ -521,8 +521,13 @@ const leagueStats = (params: Params) => {
 };
 
 const standings = (params: Params) => {
-	let type: "conf" | "div" | "league" = "div";
-	if (params.type === "conf" || params.type === "league") {
+	let type: "conf" | "div" | "league" =
+		process.env.SPORT === "football" ? "div" : "conf";
+	if (
+		params.type === "conf" ||
+		params.type === "div" ||
+		params.type === "league"
+	) {
 		type = params.type;
 	}
 

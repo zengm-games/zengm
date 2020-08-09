@@ -1911,13 +1911,15 @@ class GameSim {
 			} else if (
 				type === "fgLowPost" ||
 				type === "fgMidRange" ||
-				type === "fgMidRangeAndOne" ||
-				type === "tp" ||
-				type === "tpAndOne"
+				type === "tp"
 			) {
 				texts = ["It's good!"];
 				showScore = true;
-			} else if (type === "fgLowPostAndOne") {
+			} else if (
+				type === "fgLowPostAndOne" ||
+				type === "fgMidRangeAndOne" ||
+				type === "tpAndOne"
+			) {
 				texts = ["It's good, and a foul!"];
 				showScore = true;
 			} else if (type === "blkAtRim") {

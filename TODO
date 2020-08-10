@@ -4,8 +4,6 @@ nicidob PRs
 - team overall ratings
 
 jersey numbers
-- players sometimes change while on the same team. some bug in the annual update logic? can someone's number be taken by the random jersey generator before it gets to him?
-  - https://old.reddit.com/r/BasketballGM/comments/i4v6am/why_do_players_keep_changing_jersey_numbers/g0me5ve/?context=3
 - option to have it prefixed on PlayerNameLabels
   - see roster page, it's there now
 - higher limit for AI teams, and make panel collapsable
@@ -33,7 +31,6 @@ Start league
 nicidob contract stuff
 - eventually
   - eliminate all genContract
-- updateValues revamp
 
 team Offensive Rating and Defensive Rating on Roster screen? (not just MOV?)
 - nicidob
@@ -49,6 +46,8 @@ live sim should just do one game, not whole day
 
 player stuff editable outside of god mode
 - jersey number, etc
+
+jeresy style in teamseason
 
 cap evolving over time
 
@@ -493,7 +492,9 @@ frivolities
   - all deaths, tragic and non-tragic
   - best player with jersey number
 - frivolity showing all players with jersey number (link from 'best player with jersey number')
-- playoff seeding, like number of times an 8 seed won @Tuxie93
+- playoffs
+  - playoff seeding, like number of times an 8 seed won @Tuxie93
+  - playoff droughts
 - draft class aggregate stats alexnoob https://old.reddit.com/r/BasketballGM/comments/hsscql/a_new_section_in_frivolities_to_see_the_best_and/
 - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJWrbbMfZcQVKwtqzgqLmbJgKm
   - Worst Contract - maybe find a way to compare the total contract value to the PER of the player or similar? I know I had a couple breakout players I gave big long term contracts to and they ended up never living up to it.

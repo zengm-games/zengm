@@ -494,7 +494,6 @@ frivolities
 - frivolity showing all players with jersey number (link from 'best player with jersey number')
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
-  - playoff droughts
 - draft class aggregate stats alexnoob https://old.reddit.com/r/BasketballGM/comments/hsscql/a_new_section_in_frivolities_to_see_the_best_and/
 - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJWrbbMfZcQVKwtqzgqLmbJgKm
   - Worst Contract - maybe find a way to compare the total contract value to the PER of the player or similar? I know I had a couple breakout players I gave big long term contracts to and they ended up never living up to it.
@@ -502,10 +501,12 @@ frivolities
   - Best Teams - would love to see a list of the all time greatest teams in my simulation using the power ranking team ratings. Maybe expand it to best offensive and best defensive teams as well.
 - teams
   - most wins
+  - most losses
   - best MoV
-  - most consecutive championships/finals/playoffs
-  - longest playoffs drought
-  - best playoffs
+  - worst MoV
+  - most consecutive championships/finals/playoffs seasons
+  - longest playoff-making drought
+  - best playoffs (record in individual playoffs)
 
 
 game highs

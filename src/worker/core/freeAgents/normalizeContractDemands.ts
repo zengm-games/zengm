@@ -74,7 +74,12 @@ const normalizeContractDemands = async ({
 	pids?: number[];
 }) => {
 	// Higher means more unequal salaries
-	const PARAM = type === "newLeague" ? 5 : 15;
+	let PARAM;
+	if (process.env.SPORT === "basketball") {
+		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
+	} else {
+		PARAM = 1;
+	}
 
 	const maxContract = g.get("maxContract");
 	const minContract = g.get("minContract");

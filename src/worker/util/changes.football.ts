@@ -63,6 +63,11 @@ const changes = [
 		msg:
 			'Players now have jersey numbers, and teams can retire jersey numbers of former players. <a href="https://basketball-gm.com/blog/2020/08/jersey-numbers/">More details</a>',
 	},
+	{
+		date: "2020-08-10",
+		msg:
+			'The contract generation algorithm has been rewritten. You should no longer see players ask for too much money and go unsigned. <a href="https://basketball-gm.com/blog/2020/08/smarter-contract-generation/">More details</a>',
+	},
 ];
 
 export default changes;

@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-08-10: The contract generation algorithm has been rewritten. It should be both more realistic and harder to take advantage of. Most noticeably, you should no longer see players ask for too much money and go unsigned. [[1]](https://basketball-gm.com/blog/2020/08/smarter-contract-generation/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i5qoj3/new_beta_feature_smarter_contracts_no_more_good/) [[3]](https://old.reddit.com/r/BasketballGM/comments/i77k9w/smarter_contract_generation_is_live_in_version/)
+
 * 2020-08-10: In BBGM, box scores show players who didn't play as DNP (either "Injury" or "Coach's decision") rather than showing a row of all 0s.
 
 * 2020-08-08: Copying the trend in most other basketball sites, the default standings in BBGM are now conference standings, not division standings. FBGM is not changed.

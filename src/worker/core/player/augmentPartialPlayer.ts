@@ -337,6 +337,9 @@ const augmentPartialPlayer = async (
 		if (p.tid >= 0 && p.salaries.length === 0) {
 			setContract(p, p.contract, true);
 		}
+
+		// Just in case... we never want this except for internal purposes, cause it means normalizeContractDemands will always overwrite this contract on load
+		delete p.contract.temp;
 	}
 
 	// If no stats in League File, create blank stats rows for active players if necessary

@@ -244,9 +244,9 @@ const normalizeContractDemands = async ({
 		) {
 			const p = info.p;
 
-			p.contract.exp = getExpiration(p, type === "newLeague");
+			let exp = getExpiration(p, type === "newLeague");
 			if (afterSeasonOver) {
-				p.contract.exp += 1;
+				exp += 1;
 			}
 
 			// During regular season, should only look for short contracts that teams will actually sign
@@ -261,11 +261,17 @@ const normalizeContractDemands = async ({
 				info.contractAmount *= random.uniform(0.4, 1.1);
 			}
 
-			p.contract.amount = helpers.bound(
+			const amount = helpers.bound(
 				50 * Math.round(info.contractAmount / 50), // Make it a multiple of 50k
 				minContract,
 				maxContract,
 			);
+
+			// Make sure to remove "temp" flag!
+			p.contract = {
+				amount,
+				exp,
+			};
 
 			await idb.cache.players.put(p);
 		}

@@ -29,6 +29,9 @@ The way I started the league was:
 Start league
 
 nicidob contract stuff
+- FBGM - introduce team value into auction, for better position-specific contracts, based on team needs
+  - https://github.com/nicidob/bbgm/commit/e795aea66917997b1ddbede8adc33b6ca20086f4
+  - see new note in sn
 - eventually
   - eliminate all genContract
 

@@ -7,25 +7,18 @@ import { helpers, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 
-const StatsRow = ({ i, p, ...props }: { i: number; p: any }) => {
+const StatsRow = ({ p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const classes = classNames({
 		"table-warning": clicked,
 	});
 	return (
-		<BoxScoreRow
-			className={classes}
-			i={i}
-			onClick={toggleClicked}
-			p={p}
-			{...props}
-		/>
+		<BoxScoreRow className={classes} onClick={toggleClicked} p={p} {...props} />
 	);
 };
 
 StatsRow.propTypes = {
-	i: PropTypes.number.isRequired,
 	p: PropTypes.object.isRequired,
 };
 

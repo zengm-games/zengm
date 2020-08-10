@@ -3,6 +3,7 @@ import BoxScoreFootball from "./BoxScore.football";
 
 const BoxScore = (props: {
 	boxScore: any;
+	injuredToBottom?: boolean;
 	Row: any;
 	forceRowUpdate: boolean;
 }) => {

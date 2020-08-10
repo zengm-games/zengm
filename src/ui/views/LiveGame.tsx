@@ -25,7 +25,7 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 	}
 
 	render() {
-		const { i, p, ...props } = this.props;
+		const { p, ...props } = this.props;
 
 		// Needed for shouldComponentUpdate because state is mutated so we need to explicitly store the last value
 		this.prevInGame = p.inGame;
@@ -33,18 +33,16 @@ class PlayerRow extends React.Component<PlayerRowProps> {
 		const classes =
 			process.env.SPORT === "basketball"
 				? classNames({
-						separator: i === 4,
 						"table-warning": p.inGame,
 				  })
 				: undefined;
 
-		return <BoxScoreRow className={classes} i={i} p={p} {...props} />;
+		return <BoxScoreRow className={classes} p={p} {...props} />;
 	}
 }
 
 // @ts-ignore
 PlayerRow.propTypes = {
-	i: PropTypes.number.isRequired,
 	p: PropTypes.object.isRequired,
 };
 
@@ -294,6 +292,7 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 						{this.boxScore.gid >= 0 ? (
 							<BoxScoreWrapper
 								boxScore={this.boxScore}
+								injuredToBottom
 								Row={PlayerRow}
 								playIndex={this.state.playIndex}
 							/>

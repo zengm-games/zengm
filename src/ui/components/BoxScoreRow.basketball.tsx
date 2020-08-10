@@ -6,13 +6,13 @@ import { helpers } from "../util";
 
 const BoxScoreRow = ({
 	className,
-	i,
+	lastStarter,
 	liveGameInProgress,
 	onClick,
 	p,
 }: {
 	className?: string;
-	i: number;
+	lastStarter?: boolean;
 	liveGameInProgress?: boolean;
 	onClick?: (event: MouseEvent) => void;
 	p: any;
@@ -53,7 +53,7 @@ const BoxScoreRow = ({
 	return (
 		<tr
 			className={classNames(className, {
-				separator: i === 4,
+				separator: lastStarter,
 			})}
 			onClick={onClick}
 		>

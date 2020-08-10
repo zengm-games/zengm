@@ -10,6 +10,7 @@ import { Dropdown } from "react-bootstrap";
 type PlayerRowProps = {
 	forceUpdate?: boolean;
 	i: number;
+	liveGameInProgress?: boolean;
 	p: any;
 };
 

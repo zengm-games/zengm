@@ -13,6 +13,12 @@ const BoxScore = ({
 	Row: any;
 	forceRowUpdate: boolean;
 }) => {
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
+	const liveGameSim = !boxScore.won || !boxScore.won.name;
+	const liveGameInProgress = liveGameSim && !boxScore.gameOver;
+
 	return (
 		<>
 			{boxScore.teams.map((t: any) => (
@@ -63,7 +69,13 @@ const BoxScore = ({
 							<tbody>
 								{t.players.map((p: any, i: number) => {
 									return (
-										<Row key={p.pid} i={i} p={p} forceUpdate={forceRowUpdate} />
+										<Row
+											key={p.pid}
+											i={i}
+											liveGameInProgress={liveGameInProgress}
+											p={p}
+											forceUpdate={forceRowUpdate}
+										/>
 									);
 								})}
 							</tbody>

@@ -7,34 +7,25 @@ import { helpers } from "../util";
 const BoxScoreRow = ({
 	className,
 	i,
+	liveGameInProgress,
 	onClick,
 	p,
 }: {
 	className?: string;
 	i: number;
+	liveGameInProgress?: boolean;
 	onClick?: (event: MouseEvent) => void;
 	p: any;
 }) => {
-	return (
-		<tr
-			className={classNames(className, {
-				separator: i === 4,
-			})}
-			onClick={onClick}
-		>
-			<td>
-				<PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.skills}>
-					{p.name}
-				</PlayerNameLabels>
-			</td>
-			{typeof p.abbrev === "string" ? (
-				<td>
-					<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
-						{p.abbrev}
-					</a>
-				</td>
-			) : null}
-			<td>{p.pos}</td>
+	const showDNP =
+		p.min === 0 && (!liveGameInProgress || p.injury.gamesRemaining > 0);
+
+	const statCols = showDNP ? (
+		<td colSpan={15} className="text-center">
+			DNP - {p.injury.gamesRemaining === 0 ? "Coach's decision" : "Injury"}
+		</td>
+	) : (
+		<>
 			<td>{p.min.toFixed(1)}</td>
 			<td>
 				{p.fg}-{p.fga}
@@ -56,6 +47,30 @@ const BoxScoreRow = ({
 			<td>{p.pts}</td>
 			<td>{helpers.plusMinus(p.pm, 0)}</td>
 			<td>{helpers.gameScore(p).toFixed(1)}</td>
+		</>
+	);
+
+	return (
+		<tr
+			className={classNames(className, {
+				separator: i === 4,
+			})}
+			onClick={onClick}
+		>
+			<td>
+				<PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.skills}>
+					{p.name}
+				</PlayerNameLabels>
+			</td>
+			{typeof p.abbrev === "string" ? (
+				<td>
+					<a href={helpers.leagueUrl(["roster", `${p.abbrev}_${p.tid}`])}>
+						{p.abbrev}
+					</a>
+				</td>
+			) : null}
+			<td>{p.pos}</td>
+			{statCols}
 		</tr>
 	);
 };

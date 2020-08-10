@@ -22,7 +22,7 @@ const BoxScoreRow = ({
 
 	const statCols = showDNP ? (
 		<td colSpan={15} className="text-center">
-			DNP - {p.injury.gamesRemaining === 0 ? "Coach's decision" : "Injury"}
+			DNP - {p.injury.gamesRemaining === 0 ? "Coach's decision" : p.injury.type}
 		</td>
 	) : (
 		<>

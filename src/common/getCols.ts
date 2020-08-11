@@ -1195,15 +1195,11 @@ const cols: {
 		sortType: "number",
 	},
 	"# Active": {
+		desc: "Number of Players Still Active",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	"# Fathers": {
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-	},
-	"# Active": {
-		desc: "Number of Players Still Active",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

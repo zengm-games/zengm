@@ -33,6 +33,7 @@ const updateFrivolitiesDraftClasses = async (
 			season: number;
 			value: number;
 			numHOF: number;
+			numActive: number;
 			bestPlayer: {
 				p: Player<MinimalPlayerRatings>;
 				value: number;
@@ -54,8 +55,9 @@ const updateFrivolitiesDraftClasses = async (
 				if (draftClass === undefined || p.draft.year !== draftClass.season) {
 					draftClass = {
 						season: p.draft.year,
-						value,
-						numHOF: p.hof ? 1 : 0,
+						value: 0,
+						numHOF: 0,
+						numActive: 0,
 						bestPlayer: {
 							p,
 							value,
@@ -63,16 +65,20 @@ const updateFrivolitiesDraftClasses = async (
 					};
 					draftClasses.push(draftClass);
 				} else {
-					draftClass.value += value;
-					if (p.hof) {
-						draftClass.numHOF += 1;
-					}
 					if (value > draftClass.bestPlayer.value) {
 						draftClass.bestPlayer = {
 							p,
 							value,
 						};
 					}
+				}
+
+				draftClass.value += value;
+				if (p.hof) {
+					draftClass.numHOF += 1;
+				}
+				if (p.retiredYear === Infinity) {
+					draftClass.numActive += 1;
 				}
 			},
 		);

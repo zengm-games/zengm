@@ -44,7 +44,9 @@ const FrivolitiesDraftClasses = ({
 			key: p.pid,
 			data: [
 				i + 1,
-				draftClass.season,
+				<a href={helpers.leagueUrl(["draft_history", draftClass.season])}>
+					{draftClass.season}
+				</a>,
 				helpers.roundStat(
 					draftClass.value,
 					process.env.SPORT === "basketball" ? "ws" : "av",
@@ -66,6 +68,8 @@ const FrivolitiesDraftClasses = ({
 		};
 	});
 
+	const pagination = rows.length > 100;
+
 	return (
 		<>
 			<p>
@@ -78,6 +82,7 @@ const FrivolitiesDraftClasses = ({
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="FrivolitiesDraftClasses"
+				pagination={pagination}
 				rows={rows}
 				superCols={superCols}
 			/>

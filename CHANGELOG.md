@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* DEV: New frivolity: Draft Class Rankings.
+* 2020-08-11: New frivolity: Draft Class Rankings. [[1]](https://old.reddit.com/r/BasketballGM/comments/i7kyx2/tools_frivolities_draft_class_rankings_new_in/)
 
 * 2020-08-10: The contract generation algorithm has been rewritten. It should be both more realistic and harder to take advantage of. Most noticeably, you should no longer see players ask for too much money and go unsigned. [[1]](https://basketball-gm.com/blog/2020/08/smarter-contract-generation/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i5qoj3/new_beta_feature_smarter_contracts_no_more_good/) [[3]](https://old.reddit.com/r/BasketballGM/comments/i77k9w/smarter_contract_generation_is_live_in_version/)
 

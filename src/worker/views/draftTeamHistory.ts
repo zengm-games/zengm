@@ -14,7 +14,7 @@ const updateDraftTeamHistory = async (
 		filter: p => p.draft.tid === inputs.tid,
 	});
 	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
-		attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
+		attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof", "watch"],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
 		showNoStats: true,
@@ -32,6 +32,7 @@ const updateDraftTeamHistory = async (
 			currentAbbrev: p.abbrev,
 			currentTid: p.tid,
 			hof: p.hof,
+			watch: p.watch,
 
 			// Ratings
 			currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,

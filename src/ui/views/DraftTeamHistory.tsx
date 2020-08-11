@@ -1,6 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
+import {
+	DataTable,
+	DraftAbbrev,
+	SkillsBlock,
+	PlayerNameLabels,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, useLocal } from "../util";
 import type { View } from "../../common/types";
@@ -69,7 +74,9 @@ const DraftTeamHistory = ({
 					{p.draft.year}
 				</a>,
 				`${p.draft.round}-${p.draft.pick}`,
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
+				<PlayerNameLabels pid={p.pid} skills={p.currentSkills} watch={p.watch}>
+					{p.name}
+				</PlayerNameLabels>,
 				p.pos,
 				{
 					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${

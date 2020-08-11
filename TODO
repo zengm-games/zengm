@@ -54,6 +54,8 @@ Start league
 
 nicidob contract stuff
 - https://raw.githubusercontent.com/nicidob/bbgm/master/cbb_roster_2020.json << if u set max salary to 30M, lots of players go unsigned
+  - seems to be related to number of teams... https://raw.githubusercontent.com/nicidob/bbgm/master/history_final.json has a milder version of the problem
+  - also, it's really slow to do the bidding with so many teams/players
 - FBGM - introduce team value into auction, for better position-specific contracts, based on team needs
   - https://github.com/nicidob/bbgm/commit/e795aea66917997b1ddbede8adc33b6ca20086f4
   - see new note in sn
@@ -73,6 +75,7 @@ gm history page
 
 live sim should just do one game, not whole day
 - injuries?
+- https://old.reddit.com/r/BasketballGM/comments/i7l9t6/idea_regarding_playbyplay/
 
 player stuff editable outside of god mode
 - jersey number, etc

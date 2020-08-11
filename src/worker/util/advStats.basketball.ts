@@ -69,6 +69,7 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	for (let i = 0; i < players.length; i++) {
 		const t = teams.find(t => t.tid === players[i].tid);
 		if (!t) {
+			console.log(players[i].tid);
 			throw new Error("No team found");
 		}
 

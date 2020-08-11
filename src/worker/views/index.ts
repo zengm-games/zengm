@@ -20,6 +20,7 @@ import exportPlayers from "./exportPlayers";
 import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
 import freeAgents from "./freeAgents";
+import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
 import gameLog from "./gameLog";
 import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
@@ -97,6 +98,7 @@ export default {
 	exportStats,
 	fantasyDraft,
 	freeAgents,
+	frivolitiesDraftClasses,
 	gameLog,
 	godMode,
 	hallOfFame,

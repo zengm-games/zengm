@@ -39,6 +39,13 @@ const frivolities = {
 				"Color-coded visualization of year-to-year changes in roster.",
 		},
 	],
+	Draft: [
+		{
+			urlParts: ["draft_classes"],
+			name: "Draft Class Rankings",
+			description: "All draft classes, ranked from best to worst.",
+		},
+	],
 	"Player Rankings": [
 		{
 			urlParts: ["most", "no_ring"],
@@ -155,7 +162,7 @@ const Frivolities = () => {
 	});
 
 	const columns: (keyof typeof frivolities)[][] = [
-		["Player Bios", "Teams"],
+		["Player Bios", "Teams", "Draft"],
 		["Player Rankings"],
 	];
 

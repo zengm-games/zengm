@@ -1,23 +1,28 @@
 frivolities
+- frivoloties menu should have categories
+- add WS/player for colleges/countries
 - players
-  - all deaths, tragic and non-tragic
   - best players with jersey number (one player per number)
     - link here to sub-pages showing all players with jersey number, and also link there from player pages and retired jerseys
-  - Worst Contract - maybe find a way to compare the total contract value to the PER of the player or similar? I know I had a couple breakout players I gave big long term contracts to and they ended up never living up to it.
-  - Best Contract - same thing, maybe a comparison of PER to the total contract value for the best "steal"
-- draft
-  - best draft classes
-  - worst draft classes
-- teams
-  - most wins (show MoV)
-  - most losses (show MoV)
-  - most consecutive season w/ championships/finals/playoffs/no-playoffs
+  - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
+  - worst contract
+- team seasons
+  - most wins (also show MoV)
+  - most losses (also show MoV)
+  - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs)
   - https://mail.google.com/mail/u/0/#inbox/FMfcgxwJWrbbMfZcQVKwtqzgqLmbJgKm
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
+- done
+  - Draft Class Rankings
 
-  nicidob PRs
+create new random players league, go to draft history, draft order seems weird
+- is it ordering by value, before value is set?
+
+add "All Seasons" and birth/death years to player bios
+
+nicidob PRs
 - player overall ratings
   - maybe use new formula from other PR
 - team overall ratings

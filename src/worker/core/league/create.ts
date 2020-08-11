@@ -595,7 +595,15 @@ export const createWithoutSaving = async (
 			);
 
 			// Very rough simulation of a draft
-			draftClass = orderBy(draftClass, ["value"], ["desc"]);
+			for (const p of draftClass) {
+				// Temp, just for draft ordering
+				p.value = player.value(p, {});
+			}
+			draftClass = orderBy(draftClass, "value", "desc");
+			for (const p of draftClass) {
+				// Reset
+				p.value = 0;
+			}
 			const tids = [...activeTids];
 			random.shuffle(tids);
 

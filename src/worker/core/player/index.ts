@@ -36,6 +36,7 @@ import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import stats from "./stats";
 import updateValues from "./updateValues";
+import value from "./value";
 
 export default {
 	addRatingsRow,
@@ -76,4 +77,5 @@ export default {
 	skills,
 	stats,
 	updateValues,
+	value,
 };

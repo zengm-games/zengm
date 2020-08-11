@@ -265,7 +265,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		// Adjust for GP... docs don't say to do this, but it feels right
 		score *= t.stats.gp / g.get("numGames");
 
-		return score;
+		return score === Infinity ? 0 : score;
 	});
 	return {
 		av,

@@ -104,8 +104,6 @@ const normalizeContractDemands = async ({
 		);
 	}
 
-	console.log("players", players.length);
-
 	// Store contracts here, so they can be edited without editing player object (for including dummy players in pool)
 	const playerInfos = players.map(p => {
 		let dummy = false;
@@ -157,13 +155,11 @@ const normalizeContractDemands = async ({
 		});
 		t.payroll = await team.getPayroll(contracts);
 	}
-	console.log("teams", teams.length);
 
 	// console.time("foo");
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
 	for (let i = 0; i < ROUNDS; i++) {
-		console.log("round", i);
 		const OFFSET = LEARNING_RATE * (1 / (1 + i / ROUNDS) ** 4);
 		const SCALE_UP = 1.0 + OFFSET;
 		const SCALE_DOWN = 1.0 - OFFSET;

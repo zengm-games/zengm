@@ -1,7 +1,7 @@
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels, MarginOfVictory } from "../components";
+import { DataTable, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 import { getValue } from "./Most";

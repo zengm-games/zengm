@@ -1,17 +1,9 @@
 import { idb, iterate } from "../db";
-import { g, helpers, processPlayersHallOfFame } from "../util";
-import type {
-	UpdateEvents,
-	Player,
-	ViewInput,
-	MinimalPlayerRatings,
-	TeamSeason,
-} from "../../common/types";
-import groupBy from "lodash/groupBy";
-import { player, team } from "../core";
-import { PLAYER, PHASE } from "../../common";
+import { g, helpers } from "../util";
+import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
+import { PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
-import type { teamSeasons } from "../db/getCopies";
+import { team } from "../core";
 
 type Most = {
 	value: number;

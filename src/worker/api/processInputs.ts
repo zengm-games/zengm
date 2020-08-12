@@ -626,6 +626,7 @@ export default {
 	exportPlayers: validateSeasonOnly,
 	fantasyDraft,
 	freeAgents,
+	frivolitiesTeamSeasons: most,
 	gameLog,
 	history,
 	leaders,

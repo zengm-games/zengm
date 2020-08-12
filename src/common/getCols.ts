@@ -1386,6 +1386,10 @@ const cols: {
 	League: {
 		desc: "League Name",
 	},
+	Links: {
+		noSearch: true,
+		sortSequence: [],
+	},
 	M: {
 		desc: "Made",
 		sortSequence: ["desc", "asc"],
@@ -1476,6 +1480,11 @@ const cols: {
 	"Roster Spots": {
 		desc: "Number of Open Roster Spots",
 		sortSequence: ["desc", "asc"],
+	},
+	"Rounds Won": {
+		desc: "Playoff Rounds Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	"Runner Up": {},
 	Season: {

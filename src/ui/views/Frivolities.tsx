@@ -38,6 +38,11 @@ const frivolities = {
 			description:
 				"Color-coded visualization of year-to-year changes in roster.",
 		},
+		{
+			urlParts: ["teams", "best_non_playoff"],
+			name: "Best Non-Playoff Teams",
+			description: "The best seasons from teams that missed the playoffs.",
+		},
 	],
 	Draft: [
 		{

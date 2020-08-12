@@ -21,6 +21,7 @@ import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
 import freeAgents from "./freeAgents";
 import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
+import frivolitiesTeamSeasons from "./frivolitiesTeamSeasons";
 import gameLog from "./gameLog";
 import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
@@ -99,6 +100,7 @@ export default {
 	fantasyDraft,
 	freeAgents,
 	frivolitiesDraftClasses,
+	frivolitiesTeamSeasons,
 	gameLog,
 	godMode,
 	hallOfFame,

@@ -1491,6 +1491,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Seed: {
+		desc: "Playoff Seed",
+		sortType: "number",
+	},
 	Skills: {},
 	Start: {
 		sortSequence: ["desc", "asc"],

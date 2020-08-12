@@ -67,6 +67,7 @@ export const getMostXTeamSeasons = async ({
 				tied: ts.tied,
 				winp: ts.winp,
 				playoffRoundsWon: ts.playoffRoundsWon,
+				seed: null as null | number,
 				rank: 0,
 				mov: 0,
 				most: after ? await after(ts.most) : ts.most,
@@ -74,15 +75,34 @@ export const getMostXTeamSeasons = async ({
 		}),
 	);
 
-	// Add margin of victory
-	const teamStatsStore = idb.league.transaction("teamStats").store;
+	// Add margin of victory, playoff seed
+	const tx = idb.league.transaction(["teamStats", "playoffSeries"]);
 	for (const ts of teamSeasons) {
-		const teamStats = await teamStatsStore
+		const teamStats = await tx
+			.objectStore("teamStats")
 			.index("season, tid")
 			.getAll([ts.season, ts.tid]);
 		const row = teamStats.find(row => !row.playoffs);
 		if (row) {
 			ts.mov = team.processStats(row, ["mov"], false, "perGame").mov;
+		}
+
+		if (ts.playoffRoundsWon >= 0) {
+			const playoffSeries = await tx
+				.objectStore("playoffSeries")
+				.get(ts.season);
+			if (playoffSeries) {
+				const matchups = playoffSeries.series[0];
+				for (const matchup of matchups) {
+					if (matchup.home.tid === ts.tid) {
+						ts.seed = matchup.home.seed;
+						break;
+					} else if (matchup.away && matchup.away.tid === ts.tid) {
+						ts.seed = matchup.away.seed;
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -149,11 +169,17 @@ const updateFrivolitiesTeamSeasons = async (
 			title = "Worst Playoff Teams";
 			description =
 				"These are the worst seasons from teams that somehow made the playoffs.";
-			extraCols.push({
-				key: ["most", "roundsWonText"],
-				keySort: "playoffRoundsWon",
-				colName: "Rounds Won",
-			});
+			extraCols.push(
+				{
+					key: "seed",
+					colName: "Seed",
+				},
+				{
+					key: ["most", "roundsWonText"],
+					keySort: "playoffRoundsWon",
+					colName: "Rounds Won",
+				},
+			);
 
 			filter = ts =>
 				ts.playoffRoundsWon >= 0 &&
@@ -167,11 +193,17 @@ const updateFrivolitiesTeamSeasons = async (
 			title = "Worst Finals Teams";
 			description =
 				"These are the worst seasons from teams that somehow made the finals.";
-			extraCols.push({
-				key: ["most", "roundsWonText"],
-				keySort: "playoffRoundsWon",
-				colName: "Rounds Won",
-			});
+			extraCols.push(
+				{
+					key: "seed",
+					colName: "Seed",
+				},
+				{
+					key: ["most", "roundsWonText"],
+					keySort: "playoffRoundsWon",
+					colName: "Rounds Won",
+				},
+			);
 
 			filter = ts =>
 				ts.playoffRoundsWon >= 0 &&
@@ -198,11 +230,17 @@ const updateFrivolitiesTeamSeasons = async (
 			title = "Worst Champion Teams";
 			description =
 				"These are the worst seasons from teams that somehow won the title.";
-			extraCols.push({
-				key: ["most", "roundsWonText"],
-				keySort: "playoffRoundsWon",
-				colName: "Rounds Won",
-			});
+			extraCols.push(
+				{
+					key: "seed",
+					colName: "Seed",
+				},
+				{
+					key: ["most", "roundsWonText"],
+					keySort: "playoffRoundsWon",
+					colName: "Rounds Won",
+				},
+			);
 
 			filter = ts =>
 				ts.playoffRoundsWon >= 0 &&
@@ -231,8 +269,6 @@ const updateFrivolitiesTeamSeasons = async (
 			after,
 			sortParams,
 		});
-
-		console.log(teamSeasons);
 
 		return {
 			description,

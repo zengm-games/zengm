@@ -52,6 +52,14 @@ const FrivolitiesTeamSeasons = ({
 				<MarginOfVictory>{ts.mov}</MarginOfVictory>,
 				...extraCols.map(x => {
 					const value = getValue(ts, x.key);
+					if (x.keySort) {
+						const sortValue = getValue(ts, x.keySort);
+
+						return {
+							value,
+							sortValue,
+						};
+					}
 					return value;
 				}),
 				<>

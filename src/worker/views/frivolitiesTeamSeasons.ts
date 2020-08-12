@@ -63,6 +63,9 @@ export const getMostXTeamSeasons = async ({
 
 	const teamSeasons = await Promise.all(
 		teamSeasonsAll.map(async ts => {
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
+			const numConfs = g.get("confs", ts.season).length;
+
 			return {
 				tid: ts.tid,
 				season: ts.season,
@@ -74,6 +77,11 @@ export const getMostXTeamSeasons = async ({
 				tied: ts.tied,
 				winp: ts.winp,
 				playoffRoundsWon: ts.playoffRoundsWon,
+				roundsWonText: helpers.roundsWonText(
+					ts.playoffRoundsWon,
+					numPlayoffRounds,
+					numConfs,
+				),
 				rank: 0,
 				mov: 0,
 				most: after ? await after(ts.most) : ts.most,
@@ -116,6 +124,7 @@ const updateFrivolitiesTeamSeasons = async (
 		let description: string;
 		const extraCols: {
 			key: string | [string, string] | [string, string, string];
+			keySort?: string | [string, string] | [string, string, string];
 			colName: string;
 		}[] = [];
 
@@ -142,7 +151,8 @@ const updateFrivolitiesTeamSeasons = async (
 			description =
 				"These are the worst seasons from teams that somehow made the playoffs.";
 			extraCols.push({
-				key: "playoffRoundsWon",
+				key: "roundsWonText",
+				keySort: "playoffRoundsWon",
 				colName: "Rounds Won",
 			});
 

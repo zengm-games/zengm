@@ -805,6 +805,36 @@ const getJerseyNumber = (p: PlayerWithoutKey): string | undefined => {
 	return jerseyNumber;
 };
 
+const roundsWonText = (
+	playoffRoundsWon: number,
+	numPlayoffRounds: number,
+	numConfs: number,
+): string => {
+	const playoffsByConference = numConfs === 2;
+
+	if (playoffRoundsWon === numPlayoffRounds) {
+		return "League champs";
+	}
+
+	if (playoffRoundsWon === numPlayoffRounds - 1) {
+		return playoffsByConference ? "Conference champs" : "Made finals";
+	}
+
+	if (playoffRoundsWon === numPlayoffRounds - 2) {
+		return playoffsByConference ? "Made conference finals" : "Made semifinals";
+	}
+
+	if (playoffRoundsWon >= 1) {
+		return `Made ${ordinal(playoffRoundsWon + 1)} round`;
+	}
+
+	if (playoffRoundsWon === 0) {
+		return "Made playoffs";
+	}
+
+	return "";
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
@@ -823,4 +853,5 @@ export default {
 	upperCaseFirstLetter,
 	keys,
 	validateRoundsByes,
+	roundsWonText,
 };

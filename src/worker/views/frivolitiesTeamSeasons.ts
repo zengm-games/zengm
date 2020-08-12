@@ -11,6 +11,7 @@ import groupBy from "lodash/groupBy";
 import { player, team } from "../core";
 import { PLAYER, PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
+import type { teamSeasons } from "../db/getCopies";
 
 type Most = {
 	value: number;
@@ -63,9 +64,6 @@ export const getMostXTeamSeasons = async ({
 
 	const teamSeasons = await Promise.all(
 		teamSeasonsAll.map(async ts => {
-			const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
-			const numConfs = g.get("confs", ts.season).length;
-
 			return {
 				tid: ts.tid,
 				season: ts.season,
@@ -77,11 +75,6 @@ export const getMostXTeamSeasons = async ({
 				tied: ts.tied,
 				winp: ts.winp,
 				playoffRoundsWon: ts.playoffRoundsWon,
-				roundsWonText: helpers.roundsWonText(
-					ts.playoffRoundsWon,
-					numPlayoffRounds,
-					numConfs,
-				),
 				rank: 0,
 				mov: 0,
 				most: after ? await after(ts.most) : ts.most,
@@ -107,6 +100,20 @@ export const getMostXTeamSeasons = async ({
 	}
 
 	return ordered;
+};
+
+const getValueWithText = (ts: TeamSeason) => {
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
+	const numConfs = g.get("confs", ts.season).length;
+
+	return {
+		value: -helpers.calcWinp(ts),
+		roundsWonText: helpers.roundsWonText(
+			ts.playoffRoundsWon,
+			numPlayoffRounds,
+			numConfs,
+		),
+	};
 };
 
 const updateFrivolitiesTeamSeasons = async (
@@ -151,7 +158,7 @@ const updateFrivolitiesTeamSeasons = async (
 			description =
 				"These are the worst seasons from teams that somehow made the playoffs.";
 			extraCols.push({
-				key: "roundsWonText",
+				key: ["most", "roundsWonText"],
 				keySort: "playoffRoundsWon",
 				colName: "Rounds Won",
 			});
@@ -159,9 +166,7 @@ const updateFrivolitiesTeamSeasons = async (
 			filter = ts =>
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = ts => {
-				return { value: -helpers.calcWinp(ts) };
-			};
+			getValue = getValueWithText;
 			sortParams = [
 				["most.value", "mov"],
 				["desc", "asc"],

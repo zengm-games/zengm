@@ -48,6 +48,11 @@ const frivolities = {
 			name: "Worst Playoff Teams",
 			description: "The worst seasons from teams that made the playoffs.",
 		},
+		{
+			urlParts: ["teams", "worst_finals"],
+			name: "Worst Finals Teams",
+			description: "The worst seasons from teams that made the finals.",
+		},
 	],
 	Draft: [
 		{

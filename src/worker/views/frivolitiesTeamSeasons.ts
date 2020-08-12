@@ -202,6 +202,33 @@ const updateFrivolitiesTeamSeasons = async (
 				["most.value", "mov"],
 				["desc", "asc"],
 			];
+		} else if (type === "worst_champ") {
+			title = "Worst Champion Teams";
+			description =
+				"These are the worst seasons from teams that somehow won the title.";
+			extraCols.push({
+				key: ["most", "roundsWonText"],
+				keySort: "playoffRoundsWon",
+				colName: "Rounds Won",
+			});
+
+			filter = ts =>
+				ts.playoffRoundsWon >= 0 &&
+				(season > ts.season || phase > PHASE.PLAYOFFS);
+			getValue = ts => {
+				const value = getValueWithText(ts);
+
+				// Keep in sync with helpers.roundsWonText
+				const validTexts = ["League champs"];
+				if (!validTexts.includes(value.roundsWonText)) {
+					return;
+				}
+				return value;
+			};
+			sortParams = [
+				["most.value", "mov"],
+				["desc", "asc"],
+			];
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

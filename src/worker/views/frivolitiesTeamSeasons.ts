@@ -21,11 +21,12 @@ export const getMostXTeamSeasons = async ({
 	filter,
 	getValue,
 	after,
+	sortParams,
 }: {
 	filter?: (ts: TeamSeason) => boolean;
 	getValue: (ts: TeamSeason) => Most | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
-	otherSortCols?: string[];
+	sortParams?: any;
 }) => {
 	const LIMIT = 100;
 	const teamSeasonsAll: (TeamSeason & {
@@ -92,7 +93,7 @@ export const getMostXTeamSeasons = async ({
 		}
 	}
 
-	const ordered = orderBy(teamSeasons, ["most.value", "mov"], ["desc", "desc"]);
+	const ordered = orderBy(teamSeasons, ...sortParams);
 	for (let i = 0; i < ordered.length; i++) {
 		ordered[i].rank = i + 1;
 	}
@@ -110,7 +111,7 @@ const updateFrivolitiesTeamSeasons = async (
 		let filter: Parameters<typeof getMostXTeamSeasons>[0]["filter"];
 		let getValue: Parameters<typeof getMostXTeamSeasons>[0]["getValue"];
 		let after: Parameters<typeof getMostXTeamSeasons>[0]["after"];
-		let otherSortCols: string[] | undefined;
+		let sortParams: any;
 		let title: string;
 		let description: string;
 		const extraCols: {
@@ -132,7 +133,29 @@ const updateFrivolitiesTeamSeasons = async (
 			getValue = ts => {
 				return { value: helpers.calcWinp(ts) };
 			};
-			otherSortCols = ["mov"];
+			sortParams = [
+				["most.value", "mov"],
+				["desc", "desc"],
+			];
+		} else if (type === "worst_playoff") {
+			title = "Worst Playoff Teams";
+			description =
+				"These are the worst seasons from teams that somehow made the playoffs.";
+			extraCols.push({
+				key: "playoffRoundsWon",
+				colName: "Rounds Won",
+			});
+
+			filter = ts =>
+				ts.playoffRoundsWon >= 0 &&
+				(season > ts.season || phase > PHASE.PLAYOFFS);
+			getValue = ts => {
+				return { value: -helpers.calcWinp(ts) };
+			};
+			sortParams = [
+				["most.value", "mov"],
+				["desc", "asc"],
+			];
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}
@@ -141,7 +164,7 @@ const updateFrivolitiesTeamSeasons = async (
 			filter,
 			getValue,
 			after,
-			otherSortCols,
+			sortParams,
 		});
 
 		console.log(teamSeasons);

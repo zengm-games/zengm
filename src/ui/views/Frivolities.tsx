@@ -43,6 +43,11 @@ const frivolities = {
 			name: "Best Non-Playoff Teams",
 			description: "The best seasons from teams that missed the playoffs.",
 		},
+		{
+			urlParts: ["teams", "worst_playoff"],
+			name: "Worst Playoff Teams",
+			description: "The worst seasons from teams that made the playoffs.",
+		},
 	],
 	Draft: [
 		{

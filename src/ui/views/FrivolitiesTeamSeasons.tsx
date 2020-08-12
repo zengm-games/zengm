@@ -4,9 +4,11 @@ import { getCols, helpers } from "../util";
 import { DataTable, PlayerNameLabels, MarginOfVictory } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+import { getValue } from "./Most";
 
 const FrivolitiesTeamSeasons = ({
 	description,
+	extraCols,
 	teamSeasons,
 	ties,
 	title,
@@ -24,7 +26,7 @@ const FrivolitiesTeamSeasons = ({
 		...(ties ? ["T"] : []),
 		"%",
 		"stat:mov",
-		...(type !== "best_non_playoff" ? ["Rounds Won"] : []),
+		...extraCols.map(x => x.colName),
 		"Links",
 	);
 
@@ -48,7 +50,10 @@ const FrivolitiesTeamSeasons = ({
 				...(ties ? [ts.tied] : []),
 				helpers.roundWinp(ts.winp),
 				<MarginOfVictory>{ts.mov}</MarginOfVictory>,
-				...(type !== "best_non_playoff" ? [ts.playoffRoundsWon] : []),
+				...extraCols.map(x => {
+					const value = getValue(ts, x.key);
+					return value;
+				}),
 				<>
 					<a href={helpers.leagueUrl(["standings", ts.season])}>Standings</a> |{" "}
 					<a href={helpers.leagueUrl(["playoffs", ts.season])}>Playoffs</a>

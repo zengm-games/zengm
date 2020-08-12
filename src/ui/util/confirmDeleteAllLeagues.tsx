@@ -3,7 +3,7 @@ import { confirmable, createConfirmation } from "react-confirm";
 import { Modal } from "react-bootstrap";
 
 const Confirm = confirmable(({ show, proceed }: any) => {
-	const [unstarredOnly, setUnstarredOnly] = useState(false);
+	const [unstarredOnly, setUnstarredOnly] = useState(true);
 
 	const inputRef = useRef<HTMLInputElement>(null);
 

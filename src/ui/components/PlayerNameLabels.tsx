@@ -11,6 +11,7 @@ const baseStyle = {
 
 const PlayerNameLabels = ({
 	children,
+	disableWatchToggle,
 	injury,
 	jerseyNumber,
 	pid,
@@ -20,6 +21,7 @@ const PlayerNameLabels = ({
 	watch,
 }: {
 	children: ReactNode;
+	disableWatchToggle?: boolean;
 	jerseyNumber?: string;
 	injury?: PlayerInjury;
 	pos?: string;
@@ -67,7 +69,11 @@ const PlayerNameLabels = ({
 			{injuryIcon}
 			<SkillsBlock skills={skills} />
 			{pid !== undefined ? (
-				<RatingsStatsPopover pid={pid} watch={watch} />
+				<RatingsStatsPopover
+					disableWatchToggle={disableWatchToggle}
+					pid={pid}
+					watch={watch}
+				/>
 			) : null}
 		</span>
 	);

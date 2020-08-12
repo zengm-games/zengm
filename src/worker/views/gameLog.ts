@@ -46,6 +46,13 @@ export const setTeamInfo = async (
 			t.imgURL = g.get("teamInfoCache")[t.tid]?.imgURL;
 		}
 	}
+
+	for (const p of t.players) {
+		const p2 = await idb.cache.players.get(p.pid);
+		if (p2) {
+			p.watch = p2.watch;
+		}
+	}
 };
 
 /**

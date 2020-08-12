@@ -28,11 +28,13 @@ const Icon = ({
 const isMobile = () => window.screen && window.screen.width < 768;
 
 type Props = {
+	// For cases when we want to display the watch status, but not make it toggleable because the data will not reload, like for live box scores
+	disableWatchToggle?: boolean;
 	pid: number;
 	watch?: boolean;
 };
 
-const RatingsStatsPopover = ({ pid, watch }: Props) => {
+const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
 		jerseyNumber?: string;
@@ -93,7 +95,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 				</a>
 				{ratings !== undefined ? `, ${ratings.pos}` : null}
 				{jerseyNumber ? `, #${jerseyNumber}` : null}
-				{typeof watch === "boolean" ? (
+				{!disableWatchToggle && typeof watch === "boolean" ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}
 			</>

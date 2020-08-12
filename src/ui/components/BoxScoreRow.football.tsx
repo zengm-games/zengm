@@ -22,7 +22,13 @@ const BoxScoreRow = ({
 		<tr className={className} onClick={onClick}>
 			<td>{p.pos}</td>
 			<td style={width100}>
-				<PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.skills}>
+				<PlayerNameLabels
+					injury={p.injury}
+					pid={p.pid}
+					skills={p.skills}
+					watch={p.watch}
+					disableWatchToggle
+				>
 					{p.name}
 				</PlayerNameLabels>
 			</td>

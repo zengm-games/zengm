@@ -72,27 +72,6 @@ DP in player ratings only works before the draft. after draft should look for se
 gm history page
 - store team you were with at end of playoffs
 
-live sim should just do one game, not whole day
-- plan
-  - upgrade?
-    - idb version migration
-    - on league import, check if any game is missing a day, and add
-    - just need to call setSchedule on tids array, basically
-  - test
-    - upgrade
-    - import
-    - play to game
-    - play to ASG
-    - playoffs
-    - live sim
-    - live sim all day, rollover
-    - live sim ASG
-    - live sim playoffs
-- or...
-  - leave behind dummy entry in schedule after a live game sim happens, so it can still keep track of days
-- https://old.reddit.com/r/BasketballGM/comments/i7l9t6/idea_regarding_playbyplay/
-- https://old.reddit.com/r/BasketballGM/comments/i8q3rt/ideaquestion/
-
 player stuff editable outside of god mode
 - jersey number, etc
 

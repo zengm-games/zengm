@@ -75,7 +75,7 @@ const FrivolitiesTeamSeasons = ({
 
 	return (
 		<>
-			<p>{description}</p>
+			{description ? <p>{description}</p> : null}
 
 			<DataTable
 				cols={cols}

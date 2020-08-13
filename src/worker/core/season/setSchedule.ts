@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import { getUpcoming } from "../../views/schedule";
 import { g, toUI } from "../../util";
 import type { LocalStateUI } from "../../../common/types";
+import addDaysToSchedule from "./addDaysToSchedule";
 
 /**
  * Save the schedule to the database, overwriting what's currently there.
@@ -10,38 +11,17 @@ import type { LocalStateUI } from "../../../common/types";
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
  */
-const setSchedule = async (
-	tids: [number, number][],
-	startingDay: number = 1,
-) => {
+const setSchedule = async (tids: [number, number][]) => {
 	await idb.cache.schedule.clear();
 
-	// Write to DB, while computing the "day" number
-	const dayTids = new Set();
-	let day = startingDay;
-	let prevDayAllStarGame = false;
-	for (const [homeTid, awayTid] of tids) {
-		const allStarGame = awayTid === -2 && homeTid === -1;
-		if (
-			dayTids.has(homeTid) ||
-			dayTids.has(awayTid) ||
-			allStarGame ||
-			prevDayAllStarGame
-		) {
-			day += 1;
-			dayTids.clear();
-		}
-
-		dayTids.add(homeTid);
-		dayTids.add(awayTid);
-
-		idb.cache.schedule.add({
-			day,
+	const schedule = addDaysToSchedule(
+		tids.map(([homeTid, awayTid]) => ({
 			homeTid,
 			awayTid,
-		});
-
-		prevDayAllStarGame = allStarGame;
+		})),
+	);
+	for (const game of schedule) {
+		idb.cache.schedule.add(game);
 	}
 
 	// Add upcoming games

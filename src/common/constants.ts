@@ -15,7 +15,7 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 
-const MAX_SUPPORTED_LEAGUE_VERSION = 37;
+const MAX_SUPPORTED_LEAGUE_VERSION = 38;
 
 const PHASE: {
 	EXPANSION_DRAFT: Phase;

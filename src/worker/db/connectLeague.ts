@@ -1,7 +1,7 @@
 import { unwrap } from "idb";
 import orderBy from "lodash/orderBy";
 import { MAX_SUPPORTED_LEAGUE_VERSION, PHASE, PLAYER } from "../../common";
-import { player } from "../core";
+import { player, season } from "../core";
 import { idb } from ".";
 import iterate from "./iterate";
 import { helpers, logEvent } from "../util";
@@ -298,6 +298,22 @@ const upgrade33 = (transaction: IDBPTransaction<LeagueDB>) => {
 					return p;
 				}
 			});
+		};
+	};
+};
+
+const upgrade38 = (transaction: IDBPTransaction<LeagueDB>) => {
+	const tx = unwrap(transaction);
+	const scheduleStore = tx.objectStore("schedule");
+	scheduleStore.getAll().onsuccess = (event: any) => {
+		const schedule = event.target.result;
+
+		const updated = season.addDaysToSchedule(schedule);
+
+		scheduleStore.clear().onsuccess = () => {
+			for (const game of updated) {
+				scheduleStore.put(game);
+			}
 		};
 	};
 };
@@ -804,6 +820,10 @@ const migrate = ({
 		scheduledEventsStore.createIndex("season", "season", {
 			unique: false,
 		});
+	}
+
+	if (oldVersion <= 37) {
+		upgrade38(transaction);
 	}
 
 	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import

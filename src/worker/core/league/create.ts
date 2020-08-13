@@ -1,7 +1,7 @@
 import orderBy from "lodash/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
-import { draft, finances, freeAgents, league, player, team } from "..";
+import { draft, finances, freeAgents, league, player, team, season } from "..";
 import remove from "./remove";
 import {
 	defaultGameAttributes,
@@ -485,10 +485,19 @@ export const createWithoutSaving = async (
 		}
 	}
 
-	// Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
 	if (leagueFile.schedule) {
+		let missingDay = false;
 		for (const matchup of leagueFile.schedule) {
+			// Delete gid from schedule in case it is somehow conflicting with games, because schedule gids are not referenced anywhere else but game gids are
 			delete matchup.gid;
+
+			if (typeof matchup.day !== "number") {
+				missingDay = true;
+			}
+		}
+
+		if (missingDay) {
+			leagueFile.schedule = season.addDaysToSchedule(leagueFile.schedule);
 		}
 	}
 

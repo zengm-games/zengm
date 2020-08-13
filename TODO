@@ -74,7 +74,6 @@ gm history page
 
 live sim should just do one game, not whole day
 - plan
-  - make liveGame action play only one specific game, not a whole day
   - at end of playing game(s), check if the next upcoming game is from a new day. if so, do injury stuff
   - upgrade?
     - idb version migration

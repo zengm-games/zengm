@@ -305,7 +305,12 @@ const play = async (
 			await updateStatus(`Playing (${numDays} ${TIME_BETWEEN_GAMES}s left)`);
 		}
 
-		let schedule = await season.getSchedule(true); // Stop if no games
+		let schedule = await season.getSchedule(true);
+
+		// If live game sim, only do that one game, not the whole day
+		if (gidPlayByPlay !== undefined) {
+			schedule = schedule.filter(game => game.gid === gidPlayByPlay);
+		}
 
 		// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
 		if (schedule.length === 0 && g.get("phase") !== PHASE.PLAYOFFS) {

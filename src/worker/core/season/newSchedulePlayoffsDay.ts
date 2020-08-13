@@ -1,6 +1,7 @@
 import setSchedule from "./setSchedule";
 import { idb } from "../../db";
 import { g, helpers, local, lock } from "../../util";
+import type { PlayoffSeriesTeam } from "../../../common/types";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -21,6 +22,13 @@ const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
 	return num % 2 === 0;
 };
 
+const seriesIsNotOver = (
+	home: PlayoffSeriesTeam,
+	away: PlayoffSeriesTeam | undefined,
+	numGamesToWin: number,
+): away is PlayoffSeriesTeam =>
+	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
+
 /**
  * Create a single day's schedule for an in-progress playoffs.
  *
@@ -39,15 +47,28 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		g.get("numGamesPlayoffSeries")[rnd],
 	);
 
+	let minGamesPlayedThisRound = Infinity;
+	for (const { away, home } of series[rnd]) {
+		if (seriesIsNotOver(home, away, numGamesToWin)) {
+			const numGames = home.won + away.won;
+			if (numGames < minGamesPlayedThisRound) {
+				minGamesPlayedThisRound = numGames;
+			}
+		}
+	}
+
 	// Try to schedule games if there are active series
-	for (let i = 0; i < series[rnd].length; i++) {
-		const { away, home } = series[rnd][i];
+	for (const { away, home } of series[rnd]) {
+		if (seriesIsNotOver(home, away, numGamesToWin)) {
+			const numGames = home.won + away.won;
 
-		if (away && home.won < numGamesToWin && away.won < numGamesToWin) {
+			// Because live game sim is an individual game now, not a whole day, need to check if some series are ahead of others and therefore should not get a game today.
+			if (numGames > minGamesPlayedThisRound) {
+				continue;
+			}
+
 			// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-			const gameNum = home.won + away.won;
-
-			if (betterSeedHome(g.get("numGamesPlayoffSeries")[rnd], gameNum)) {
+			if (betterSeedHome(g.get("numGamesPlayoffSeries")[rnd], numGames)) {
 				tids.push([home.tid, away.tid]);
 			} else {
 				tids.push([away.tid, home.tid]);
@@ -86,8 +107,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			teamSeason.hype = 1;
 		}
 
-		await idb.cache.teamSeasons.put(teamSeason); // Playoffs are over! Return true!
+		await idb.cache.teamSeasons.put(teamSeason);
 
+		// Playoffs are over! Return true!
 		return true;
 	}
 
@@ -161,8 +183,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	playoffSeries.currentRound += 1;
-	await idb.cache.playoffSeries.put(playoffSeries); // Update hype for winning a series
+	await idb.cache.playoffSeries.put(playoffSeries);
 
+	// Update hype for winning a series
 	await Promise.all(
 		tidsWon.map(async tid => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(

@@ -92,10 +92,9 @@ const newPhasePlayoffs = async (
 			}
 		}),
 	);
-	await Promise.all([
-		finances.assessPayrollMinLuxury(),
-		season.newSchedulePlayoffsDay(),
-	]);
+
+	await finances.assessPayrollMinLuxury();
+	await season.newSchedulePlayoffsDay();
 
 	// Update clinchedPlayoffs with final values
 	await team.updateClinchedPlayoffs(true, conditions);

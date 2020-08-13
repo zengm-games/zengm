@@ -991,6 +991,7 @@ export type ReleasedPlayer = ReleasedPlayerWithoutKey & {
 
 export type ScheduleGameWithoutKey = {
 	gid?: number;
+	day: number;
 	awayTid: number;
 	homeTid: number;
 };

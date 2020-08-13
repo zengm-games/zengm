@@ -73,7 +73,24 @@ gm history page
 - store team you were with at end of playoffs
 
 live sim should just do one game, not whole day
-- injuries?
+- plan
+  - make liveGame action play only one specific game, not a whole day
+  - at end of playing game(s), check if the next upcoming game is from a new day. if so, do injury stuff
+  - upgrade?
+    - idb version migration
+    - on league import, check if any game is missing a day, and add
+  - test
+    - upgrade
+    - import
+    - play to game
+    - play to ASG
+    - playoffs
+    - live sim
+    - live sim all day, rollover
+    - live sim ASG
+    - live sim playoffs
+- or...
+  - leave behind dummy entry in schedule after a live game sim happens, so it can still keep track of days
 - https://old.reddit.com/r/BasketballGM/comments/i7l9t6/idea_regarding_playbyplay/
 - https://old.reddit.com/r/BasketballGM/comments/i8q3rt/ideaquestion/
 

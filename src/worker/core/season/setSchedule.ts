@@ -12,14 +12,34 @@ import type { LocalStateUI } from "../../../common/types";
  */
 const setSchedule = async (tids: [number, number][]) => {
 	await idb.cache.schedule.clear();
-	await Promise.all(
-		tids.map(([homeTid, awayTid]) =>
-			idb.cache.schedule.add({
-				homeTid,
-				awayTid,
-			}),
-		),
-	);
+
+	// Write to DB, while computing the "day" number
+	const dayTids = new Set();
+	let day = 1;
+	let prevDayAllStarGame = false;
+	for (const [homeTid, awayTid] of tids) {
+		const allStarGame = awayTid === -2 && homeTid === -1;
+		if (
+			dayTids.has(homeTid) ||
+			dayTids.has(awayTid) ||
+			allStarGame ||
+			prevDayAllStarGame
+		) {
+			day += 1;
+			dayTids.clear();
+		}
+
+		dayTids.add(homeTid);
+		dayTids.add(awayTid);
+
+		idb.cache.schedule.add({
+			day,
+			homeTid,
+			awayTid,
+		});
+
+		prevDayAllStarGame = allStarGame;
+	}
 
 	// Add upcoming games
 	const games: LocalStateUI["games"] = [];

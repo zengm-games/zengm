@@ -8,57 +8,33 @@ import getSchedule from "./getSchedule";
  */
 const getDaysLeftSchedule = async (target?: number | "allStarGame") => {
 	const schedule = await getSchedule();
-	let numDays = 0;
-	let iPrev = 0;
 
-	while (iPrev < schedule.length) {
-		// Only take the games up until right before a team plays for the second time that day
-		const tids: number[] = [];
-		let i;
+	if (target !== undefined) {
+		if (schedule.length > 0) {
+			const today = schedule[0].day;
 
-		for (i = iPrev; i < schedule.length; i++) {
-			const { awayTid, homeTid, gid } = schedule[i]; // All-Star Game
-
-			const allStarGame = awayTid === -2 && homeTid === -1;
-			if (allStarGame) {
-				// Add one to represent that the "current day" of games before the ASG ended. Then the normal +1 at the end of the while loop will account for the ASG itself
-				if (i > 0) {
-					numDays += 1;
-				}
-
-				if (target === "allStarGame" || target === gid) {
-					return numDays;
-				}
-
-				i += 1;
-				break;
+			let game;
+			if (typeof target === "number") {
+				game = schedule.find(game => game.gid === target);
+			} else if (target === "allStarGame") {
+				game = schedule.find(
+					game => game.awayTid === -2 && game.homeTid === -1,
+				);
 			}
 
-			if (target === gid) {
-				// How many days are there before the day including this game? Need to add 1 if this game would be the first entry in a new day
-				if (tids.includes(homeTid) || tids.includes(awayTid)) {
-					numDays += 1;
-				}
-				return numDays;
-			}
-
-			if (!tids.includes(homeTid) && !tids.includes(awayTid)) {
-				tids.push(homeTid);
-				tids.push(awayTid);
-			} else {
-				break;
+			if (game) {
+				return game.day - today;
 			}
 		}
 
-		iPrev = i;
-		numDays += 1;
-	}
-
-	if (target !== undefined) {
 		throw new Error(`getDaysLeftSchedule did not find target "${target}"`);
 	}
 
-	return numDays;
+	if (schedule.length === 0) {
+		return 0;
+	}
+
+	return schedule[schedule.length - 1].day - schedule[0].day + 1;
 };
 
 export default getDaysLeftSchedule;

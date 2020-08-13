@@ -217,7 +217,7 @@ const updateFrivolitiesTeamSeasons = async (
 					return;
 				}
 				return {
-					value: helpers.calcWinp(ts),
+					value: -helpers.calcWinp(ts),
 					roundsWonText,
 				};
 			};
@@ -253,7 +253,7 @@ const updateFrivolitiesTeamSeasons = async (
 					return;
 				}
 				return {
-					value: helpers.calcWinp(ts),
+					value: -helpers.calcWinp(ts),
 					roundsWonText,
 				};
 			};

@@ -74,10 +74,10 @@ gm history page
 
 live sim should just do one game, not whole day
 - plan
-  - at end of playing game(s), check if the next upcoming game is from a new day. if so, do injury stuff
   - upgrade?
     - idb version migration
     - on league import, check if any game is missing a day, and add
+    - just need to call setSchedule on tids array, basically
   - test
     - upgrade
     - import

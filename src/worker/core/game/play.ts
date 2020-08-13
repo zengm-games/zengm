@@ -89,7 +89,7 @@ const play = async (
 	};
 
 	// Saves a vector of results objects for a day, as is output from cbSimGames
-	const cbSaveResults = async (results: any[]) => {
+	const cbSaveResults = async (results: any[], dayOver: boolean) => {
 		// Before writeGameStats, so LeagueTopBar can not update with game result
 		if (gidPlayByPlay !== undefined) {
 			await toUI("updateLocal", [{ liveGameInProgress: true }]);
@@ -115,22 +115,17 @@ const play = async (
 			await team.updateClinchedPlayoffs(false, conditions);
 		}
 
-		const promises: Promise<any>[] = [];
-
 		// Update playoff series W/L
 		if (g.get("phase") === PHASE.PLAYOFFS) {
-			promises.push(updatePlayoffSeries(results, conditions));
+			await updatePlayoffSeries(results, conditions);
 		}
 
 		// Delete finished games from schedule
 		for (const gid of gidsFinished) {
 			if (typeof gid === "number") {
-				promises.push(idb.cache.schedule.delete(gid));
+				await idb.cache.schedule.delete(gid);
 			}
 		}
-
-		// Update ranks
-		promises.push(finances.updateRanks(["expenses", "revenues"]));
 
 		if (injuryTexts.length > 0) {
 			logEvent(
@@ -145,103 +140,108 @@ const play = async (
 			);
 		}
 
-		const healedTexts: string[] = [];
+		const updateEvents: UpdateEvents = ["gameSim"];
 
-		// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-		const players = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
+		if (dayOver) {
+			// Update ranks
+			await finances.updateRanks(["expenses", "revenues"]);
 
-		for (const p of players) {
-			let changed = false;
+			const healedTexts: string[] = [];
 
-			if (p.injury.gamesRemaining > 0) {
-				p.injury.gamesRemaining -= 1;
-				changed = true;
-			}
+			// Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+			const players = await idb.cache.players.indexGetAll("playersByTid", [
+				PLAYER.FREE_AGENT,
+				Infinity,
+			]);
 
-			// Is it already over?
-			if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-				const score = p.injury.score;
-				p.injury = {
-					type: "Healthy",
-					gamesRemaining: 0,
-				};
-				changed = true;
-				const healedText = `${
-					p.ratings[p.ratings.length - 1].pos
-				} <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
-					p.lastName
-				}</a>`;
+			for (const p of players) {
+				let changed = false;
 
-				if (
-					p.tid === g.get("userTid") &&
-					!pidsInjuredOneGameOrLess.has(p.pid)
-				) {
-					healedTexts.push(healedText);
+				if (p.injury.gamesRemaining > 0) {
+					p.injury.gamesRemaining -= 1;
+					changed = true;
 				}
 
+				// Is it already over?
+				if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+					const score = p.injury.score;
+					p.injury = {
+						type: "Healthy",
+						gamesRemaining: 0,
+					};
+					changed = true;
+					const healedText = `${
+						p.ratings[p.ratings.length - 1].pos
+					} <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
+						p.lastName
+					}</a>`;
+
+					if (
+						p.tid === g.get("userTid") &&
+						!pidsInjuredOneGameOrLess.has(p.pid)
+					) {
+						healedTexts.push(healedText);
+					}
+
+					logEvent(
+						{
+							type: "healed",
+							text: `${healedText} has recovered from his injury.`,
+							showNotification: false,
+							pids: [p.pid],
+							tids: [p.tid],
+							score,
+						},
+						conditions,
+					);
+				}
+
+				// Also check for gamesUntilTradable
+				if (!p.hasOwnProperty("gamesUntilTradable")) {
+					p.gamesUntilTradable = 0; // Initialize for old leagues
+
+					changed = true;
+				} else if (p.gamesUntilTradable > 0) {
+					p.gamesUntilTradable -= 1;
+					changed = true;
+				}
+
+				if (changed) {
+					await idb.cache.players.put(p);
+				}
+			}
+
+			if (healedTexts.length > 0) {
 				logEvent(
 					{
-						type: "healed",
-						text: `${healedText} has recovered from his injury.`,
-						showNotification: false,
-						pids: [p.pid],
-						tids: [p.tid],
-						score,
+						type: "healedList",
+						text: healedTexts.join("<br>"),
+						showNotification: true,
+						saveToDb: false,
 					},
 					conditions,
 				);
 			}
 
-			// Also check for gamesUntilTradable
-			if (!p.hasOwnProperty("gamesUntilTradable")) {
-				p.gamesUntilTradable = 0; // Initialize for old leagues
+			// Tragic deaths only happen during the regular season!
+			if (
+				g.get("phase") !== PHASE.PLAYOFFS &&
+				Math.random() < g.get("tragicDeathRate")
+			) {
+				await player.killOne(conditions);
 
-				changed = true;
-			} else if (p.gamesUntilTradable > 0) {
-				p.gamesUntilTradable -= 1;
-				changed = true;
-			}
+				if (g.get("stopOnInjury")) {
+					await lock.set("stopGameSim", true);
+				}
 
-			if (changed) {
-				await idb.cache.players.put(p);
+				updateEvents.push("playerMovement");
 			}
 		}
 
 		// More stuff for LeagueTopBar - update ovrs based on injuries
 		await recomputeLocalUITeamOvrs();
 
-		if (healedTexts.length > 0) {
-			logEvent(
-				{
-					type: "healedList",
-					text: healedTexts.join("<br>"),
-					showNotification: true,
-					saveToDb: false,
-				},
-				conditions,
-			);
-		}
-
-		await Promise.all(promises);
 		await advStats();
-		const updateEvents: UpdateEvents = ["gameSim"];
-
-		// Tragic deaths only happen during the regular season!
-		if (
-			g.get("phase") !== PHASE.PLAYOFFS &&
-			Math.random() < g.get("tragicDeathRate")
-		) {
-			await player.killOne(conditions);
-
-			if (g.get("stopOnInjury")) {
-				await lock.set("stopGameSim", true);
-			}
-
-			updateEvents.push("playerMovement");
-		}
 
 		const playoffsOver =
 			g.get("phase") === PHASE.PLAYOFFS &&
@@ -262,6 +262,7 @@ const play = async (
 				}
 			}
 
+			// This is not ideal... it means no event will be sent to other open tabs. But I don't have a way of saying "send this update to all tabs except X" currently
 			await toUI("realtimeUpdate", [updateEvents, url, raw], conditions);
 		} else {
 			url = undefined;
@@ -279,6 +280,7 @@ const play = async (
 	const cbSimGames = async (
 		schedule: (ScheduleGame & { gid: number })[],
 		teams: Record<number, any>,
+		dayOver: boolean,
 	) => {
 		const results: any[] = [];
 
@@ -293,7 +295,7 @@ const play = async (
 			results.push(gs.run());
 		}
 
-		await cbSaveResults(results);
+		await cbSaveResults(results, dayOver);
 	};
 
 	// Simulates a day of games. If there are no games left, it calls cbNoGames.
@@ -308,8 +310,15 @@ const play = async (
 		let schedule = await season.getSchedule(true);
 
 		// If live game sim, only do that one game, not the whole day
+		let dayOver = true;
 		if (gidPlayByPlay !== undefined) {
+			const lengthBefore = schedule.length;
 			schedule = schedule.filter(game => game.gid === gidPlayByPlay);
+			const lengthAfter = schedule.length;
+
+			if (lengthBefore - lengthAfter > 0) {
+				dayOver = false;
+			}
 		}
 
 		// This should also call cbNoGames after the playoffs end, because g.get("phase") will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
@@ -334,7 +343,7 @@ const play = async (
 			schedule = await season.getSchedule(true);
 		}
 
-		await cbSimGames(schedule, teams);
+		await cbSimGames(schedule, teams, dayOver);
 	};
 
 	// This simulates a day, including game simulation and any other bookkeeping that needs to be done

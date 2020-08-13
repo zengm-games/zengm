@@ -59,9 +59,9 @@ export const getMostXTeamSeasons = async ({
 			return {
 				tid: ts.tid,
 				season: ts.season,
-				abbrev: ts.abbrev,
-				region: ts.region,
-				name: ts.name,
+				abbrev: ts.abbrev || g.get("teamInfoCache")[ts.tid]?.abbrev,
+				region: ts.region || g.get("teamInfoCache")[ts.tid]?.region,
+				name: ts.name || g.get("teamInfoCache")[ts.tid]?.name,
 				won: ts.won,
 				lost: ts.lost,
 				tied: ts.tied,

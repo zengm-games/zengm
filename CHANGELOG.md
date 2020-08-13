@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-13: You can watch multiple live games in a single day! Now when you watch a live game, only that one game is simulated. When it's over, the other games from that day will still be waiting to be played. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9a6gm/new_in_version_202008131365_you_can_watch/?)
+* 2020-08-13: You can watch multiple live games in a single day! Now when you watch a live game, only that one game is simulated. When it's over, the other games from that day will still be waiting to be played. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9a6gm/new_in_version_202008131365_you_can_watch/)
 
 * 2020-08-12: New frivolities: Best Teams, Worst Teams, Best Non-Playoff Teams, Worst Playoff Teams, Worst Finals Teams, and Worst Championship Teams. [[1]](https://old.reddit.com/r/BasketballGM/comments/i884cb/4_new_frivolities_in_version_202008120334_best/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i8r0zo/a_couple_more_building_on_yesterdays_frivolities/)
 

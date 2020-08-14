@@ -1532,7 +1532,7 @@ const importPlayers = async (
 			scoutingRank,
 			leagueFile.version,
 		);
-		await player.updateValues(p);
+		await player.updateValues(p3);
 
 		await idb.cache.players.put(p3);
 	}

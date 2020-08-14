@@ -299,7 +299,8 @@ const updatePlayer = async (
 					if (
 						!prev.t ||
 						prev.t.name !== ts.name ||
-						prev.t.region !== ts.region
+						prev.t.region !== ts.region ||
+						JSON.stringify(prev.t.colors) !== JSON.stringify(ts.colors)
 					) {
 						newRow = true;
 					}

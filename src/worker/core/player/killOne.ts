@@ -88,7 +88,7 @@ const killOne = async (conditions: Conditions) => {
 		return;
 	}
 
-	retire(p, conditions, {
+	await retire(p, conditions, {
 		logRetiredEvent: false,
 	});
 

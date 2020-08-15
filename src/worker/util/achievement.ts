@@ -131,9 +131,12 @@ async function getAll(): Promise<
 
 const check = async (when: AchievementWhen, conditions: Conditions) => {
 	try {
+		/* took out this early return to explicitly let users know when achievements arent awarded.
 		if (g.get("easyDifficultyInPast") || g.get("godModeInPast")) {
 			return;
-		}
+		}*/
+
+		const tooEz = g.get("easyDifficultyInPast") || g.get("godModeInPast");
 
 		const awarded: string[] = [];
 
@@ -141,7 +144,16 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 			if (achievement.when === when && achievement.check !== undefined) {
 				const result = await achievement.check();
 
-				if (result) {
+				if (result && tooEz) {
+					logEvent(
+						{
+							type: "achievement",
+							text: `"${achievement.name}" achievement not awarded due to Easy/God mode. <a href="/account">View all achievements.</a>`,
+							saveToDb: false,
+						},
+						conditions,
+					);
+				} else if (result && !tooEz) {
 					awarded.push(achievement.slug);
 				}
 			}

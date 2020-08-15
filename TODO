@@ -1,3 +1,5 @@
+make rookie contracts fully guaranteed if no draft
+
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile
 - user reports it happens when auto play to playoffs, every time, at some point. doesn't matter what screen they are on
@@ -559,12 +561,7 @@ teams play better/worse when down/up
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
 - https://github.com/dumbmatter/gm-games/pull/276
 
-make countries easier to customize
-- allow specifying country frequencies without tying it to the number of names
-- GUI to add countries and names
-- same for colleges
-  - also support different distribution per country
-  - https://mail.google.com/mail/u/0/#inbox/FMfcgxwHNWCgnhQnrXNBlvVxJJmfhsNr
+GUI to add countries, colleges, and names
 
 football rookie contract scale
 - https://old.reddit.com/message/messages/mfpqf1
@@ -657,8 +654,6 @@ switch Dropdown to DropdownLinks rather than Select?
 - https://stackoverflow.com/questions/40692950/how-to-make-long-bootstrap-dropdown-menus-vertically-scrollable
 
 I should add easter eggs so that real historical figures sometimes appear in the game if you're simulating at that time. How dope would it be if you're simulating the 12th century and Genghis Khan shows up in the draft
-
-allow specification of country frequencies independent of name frequencies
 
 Salary cap trade stuff
 

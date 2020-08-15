@@ -50,7 +50,11 @@ const autoPlay = async (conditions: Conditions = {}) => {
 			await phase.newPhase(PHASE.DRAFT, conditions);
 		}
 	} else if (g.get("phase") === PHASE.DRAFT) {
-		await draft.runPicks(false, conditions);
+		if (g.get("draftType") === "freeAgents") {
+			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
+		} else {
+			await draft.runPicks(false, conditions);
+		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 	} else if (g.get("phase") === PHASE.RESIGN_PLAYERS) {

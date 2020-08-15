@@ -3,7 +3,7 @@ import React from "react";
 const Footer = React.memo(() => {
 	// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 	return (
-		<div className="footer-wrapper mt-auto">
+		<footer className="footer-wrapper mt-auto" id="main-footer">
 			<p className="clearfix" />
 
 			<div
@@ -60,66 +60,62 @@ const Footer = React.memo(() => {
 			<div className="clearfix" />
 			<hr />
 
-			<footer>
-				<p className="float-sm-left">
-					<a
-						href={`https://${process.env.SPORT}-gm.com/about/`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						About
-					</a>{" "}
-					·{" "}
-					<a
-						href={`https://${process.env.SPORT}-gm.com/blog/`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Blog
-					</a>{" "}
-					·{" "}
-					<a
-						href={`https://${process.env.SPORT}-gm.com/contact/`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Contact
-					</a>{" "}
-					·{" "}
-					<a
-						href={`https://${process.env.SPORT}-gm.com/privacy-policy/`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Privacy
-					</a>{" "}
-					·{" "}
-					<a
-						href={`https://www.reddit.com/r/${
-							process.env.SPORT === "basketball"
-								? "BasketballGM"
-								: "Football_GM"
-						}/`}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Reddit
-					</a>{" "}
-					·{" "}
-					<a
-						href="https://discord.gg/caPFuM9"
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Discord
-					</a>
-					<br />
-				</p>
-				<p className="float-sm-right text-muted">
-					{process.env.SPORT.charAt(0).toUpperCase()}BGM v{window.bbgmVersion}
-				</p>
-			</footer>
-		</div>
+			<p className="float-sm-left">
+				<a
+					href={`https://${process.env.SPORT}-gm.com/about/`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					About
+				</a>{" "}
+				·{" "}
+				<a
+					href={`https://${process.env.SPORT}-gm.com/blog/`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					Blog
+				</a>{" "}
+				·{" "}
+				<a
+					href={`https://${process.env.SPORT}-gm.com/contact/`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					Contact
+				</a>{" "}
+				·{" "}
+				<a
+					href={`https://${process.env.SPORT}-gm.com/privacy-policy/`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					Privacy
+				</a>{" "}
+				·{" "}
+				<a
+					href={`https://www.reddit.com/r/${
+						process.env.SPORT === "basketball" ? "BasketballGM" : "Football_GM"
+					}/`}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					Reddit
+				</a>{" "}
+				·{" "}
+				<a
+					href="https://discord.gg/caPFuM9"
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					Discord
+				</a>
+				<br />
+			</p>
+			<p className="float-sm-right text-muted">
+				{process.env.SPORT.charAt(0).toUpperCase()}BGM v{window.bbgmVersion}
+			</p>
+		</footer>
 	);
 });
 

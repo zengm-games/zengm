@@ -297,16 +297,15 @@ const Controller = () => {
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 d-flex flex-column">
 				<Header />
 				<SideBar pageID={pageID} />
-				<div
+				<main
 					className="p402_premium flex-grow-1 d-flex flex-column"
 					id="actual-content"
-					role="main"
 				>
 					<div id="actual-actual-content" className="clearfix flex-shrink-0">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
 					</div>
-					<Footer />
-				</div>
+				</main>
+				<Footer />
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />

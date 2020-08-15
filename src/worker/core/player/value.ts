@@ -63,12 +63,17 @@ const value = (
 	) {
 		const defaultOvrMean = 47;
 		const defaultOvrStd = 10;
-		pr.ovr =
-			((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
-			defaultOvrMean;
-		pr.pot =
-			((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
-			defaultOvrMean;
+		if (options.ovrStd > 0) {
+			pr.ovr =
+				((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+				defaultOvrMean;
+			pr.pot =
+				((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+				defaultOvrMean;
+		} else {
+			pr.ovr = pr.ovr - options.ovrMean + defaultOvrMean;
+			pr.pot = pr.pot - options.ovrMean + defaultOvrMean;
+		}
 	}
 
 	// From linear regression OVR ~ PER

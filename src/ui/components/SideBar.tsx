@@ -274,7 +274,7 @@ const SideBar = React.memo(({ pageID }: Props) => {
 				className="bg-light sidebar"
 				id="sidebar"
 				ref={getNode}
-				aria-label="sidebar"
+				aria-label="side navigation"
 			>
 				<div className="sidebar-sticky">
 					{menuItems.map((menuItem, i) => (

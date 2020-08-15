@@ -15,7 +15,14 @@ const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
 ): Promise<void> => {
-	if (g.get("draftType") === "noLottery" || g.get("draftType") === "random") {
+	if (g.get("draftType") !== "freeAgents") {
+		throw new Error(
+			"genOrder should not be called for draftType of freeAgents",
+		);
+	} else if (
+		g.get("draftType") === "noLottery" ||
+		g.get("draftType") === "random"
+	) {
 		await genOrderNone(mock);
 	} else {
 		try {

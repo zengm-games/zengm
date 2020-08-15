@@ -90,7 +90,11 @@ const updateDraftLottery = async (
 			}
 		}
 
-		if (g.get("draftType") === "random" || g.get("draftType") === "noLottery") {
+		if (
+			g.get("draftType") === "random" ||
+			g.get("draftType") === "noLottery" ||
+			g.get("draftType") === "freeAgents"
+		) {
 			return {
 				draftType: g.get("draftType"),
 				result: undefined,

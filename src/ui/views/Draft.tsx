@@ -305,7 +305,9 @@ const Draft = ({
 					Future Draft Scouting
 				</a>{" "}
 				| <a href={helpers.leagueUrl(["draft_history"])}>Draft History</a> |{" "}
-				{draftType !== "noLottery" && draftType !== "random" ? (
+				{draftType !== "noLottery" &&
+				draftType !== "random" &&
+				draftType !== "freeAgents" ? (
 					<>
 						<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a> |{" "}
 					</>

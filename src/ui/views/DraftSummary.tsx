@@ -151,7 +151,9 @@ const DraftSummary = ({
 					Future Draft Scouting
 				</a>{" "}
 				|{" "}
-				{draftType !== "noLottery" && draftType !== "random" ? (
+				{draftType !== "noLottery" &&
+				draftType !== "random" &&
+				draftType !== "freeAgents" ? (
 					<>
 						<a href={helpers.leagueUrl(["draft_lottery", season])}>
 							Draft Lottery

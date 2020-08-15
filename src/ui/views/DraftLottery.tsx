@@ -28,7 +28,7 @@ const draftTypeDescriptions: Record<DraftType, string> = {
 
 const getProbs = (
 	result: DraftLotteryResultArray,
-	draftType: Exclude<DraftType, "random" | "noLottery">,
+	draftType: Exclude<DraftType, "random" | "noLottery" | "freeAgents">,
 ): (number | undefined)[][] => {
 	const probs: number[][] = [];
 	const topNCombos = new Map();

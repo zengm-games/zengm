@@ -127,7 +127,7 @@ export type DraftLotteryResultArray = {
 
 export type DraftLotteryResult = {
 	season: number;
-	draftType?: Exclude<DraftType, "random" | "noLottery">;
+	draftType?: Exclude<DraftType, "random" | "noLottery" | "freeAgents">;
 	result: DraftLotteryResultArray;
 };
 
@@ -153,7 +153,8 @@ export type DraftType =
 	| "coinFlip"
 	| "randomLottery"
 	| "randomLotteryFirst3"
-	| "nba1990";
+	| "nba1990"
+	| "freeAgents";
 
 export type EventBBGMWithoutKey = {
 	type: LogEventType;
@@ -991,9 +992,11 @@ export type ReleasedPlayer = ReleasedPlayerWithoutKey & {
 
 export type ScheduleGameWithoutKey = {
 	gid?: number;
-	day: number;
 	awayTid: number;
 	homeTid: number;
+
+	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
+	day: number;
 };
 
 export type ScheduleGame = ScheduleGameWithoutKey & {

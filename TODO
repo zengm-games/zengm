@@ -1,3 +1,12 @@
+"Attempt to use history.pushState() more than 100 times per 30 seconds"
+- safari mobile
+- user reports it happens when auto play to playoffs, every time, at some point. doesn't matter what screen they are on
+- how often history.pushState called normally, in other browsers?
+
+keyboard shortcuts for live sim fast forward @dooby moogey#2784 
+
+show "finals appearances" on team history
+
 frivolities
 - frivoloties menu should have categories
 - add WS/player for colleges/countries

@@ -14,7 +14,7 @@ import type {
 import genOrderGetPicks from "./genOrderGetPicks";
 
 type ReturnVal = DraftLotteryResult & {
-	draftType: Exclude<DraftType, "random" | "noLottery">;
+	draftType: Exclude<DraftType, "random" | "noLottery" | "freeAgents">;
 };
 
 // chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.

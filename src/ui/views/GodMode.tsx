@@ -195,14 +195,18 @@ export const options: {
 					from 1966-1984
 				</p>
 				<p>
-					<b>No Lottery:</b> No lottery, teams draft in order of their record,
-					with non-playoff teams coming first
-				</p>
-				<p>
 					<b>Random:</b> order the draft completely randomly, with no regard for
 					team performance. Each round is randomized independently, so a team
 					could get the first pick in one round and the last pick in the next
 					round.
+				</p>
+				<p>
+					<b>No Lottery, draft in order:</b> No lottery, teams draft in order of
+					their record, with non-playoff teams coming first
+				</p>
+				<p>
+					<b>No draft, rookies are free agents</b> There is no draft and all
+					rookies simply become free agents who can be signed by any team.
 				</p>
 			</>
 		),
@@ -214,8 +218,9 @@ export const options: {
 			randomLotteryFirst3: "Random, first 3",
 			randomLottery: "Random, lottery only",
 			coinFlip: "Coin flip",
-			noLottery: "No Lottery",
 			random: "Random",
+			noLottery: "No lottery, draft in order",
+			freeAgents: "No draft, rookies are free agents",
 		},
 	},
 	{

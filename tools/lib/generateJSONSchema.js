@@ -495,6 +495,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 								"randomLottery",
 								"coinFlip",
 								"nba",
+								"freeAgents",
 							],
 						}),
 						gameAttribute("easyDifficultyInPast", {

@@ -34,27 +34,32 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 
 	await Promise.all(promises);
 
-	// Run lottery only if it hasn't been done yet
-	const draftLotteryResult = await idb.getCopy.draftLotteryResults({
-		season: g.get("season"),
-	});
+	if (g.get("draftType") !== "freeAgents") {
+		// Run lottery only if it hasn't been done yet
+		const draftLotteryResult = await idb.getCopy.draftLotteryResults({
+			season: g.get("season"),
+		});
 
-	if (!draftLotteryResult) {
-		await draft.genOrder(false, conditions);
-	}
+		if (!draftLotteryResult) {
+			await draft.genOrder(false, conditions);
+		}
 
-	// This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
-	const players = await idb.cache.players.getAll();
+		// This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
+		const players = await idb.cache.players.getAll();
 
-	for (const p of players) {
-		if (p.draft.year === g.get("season") && p.tid >= 0) {
-			p.draft.year -= 1;
-			await idb.cache.players.put(p);
+		for (const p of players) {
+			if (p.draft.year === g.get("season") && p.tid >= 0) {
+				p.draft.year -= 1;
+				await idb.cache.players.put(p);
+			}
 		}
 	}
 
 	return {
-		url: helpers.leagueUrl(["draft"]),
+		url:
+			g.get("draftType") !== "freeAgents"
+				? helpers.leagueUrl(["draft"])
+				: undefined,
 	};
 };
 

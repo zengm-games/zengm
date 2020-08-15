@@ -300,10 +300,7 @@ const Draft = ({
 	return (
 		<>
 			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["draft_scouting"])}>
-					Future Draft Scouting
-				</a>{" "}
+				More: <a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a>{" "}
 				| <a href={helpers.leagueUrl(["draft_history"])}>Draft History</a> |{" "}
 				{draftType !== "noLottery" &&
 				draftType !== "random" &&

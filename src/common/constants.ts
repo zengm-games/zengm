@@ -1,7 +1,7 @@
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 
-import type { CompositeWeights, Phase } from "./types";
+import type { CompositeWeights, Phase, DraftType } from "./types";
 
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
@@ -16,6 +16,12 @@ const DIFFICULTY = {
 };
 
 const MAX_SUPPORTED_LEAGUE_VERSION = 38;
+
+const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
+	"freeAgents",
+	"noLottery",
+	"random",
+];
 
 const PHASE: {
 	EXPANSION_DRAFT: Phase;
@@ -127,6 +133,7 @@ export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	MAX_SUPPORTED_LEAGUE_VERSION,
+	NO_LOTTERY_DRAFT_TYPES,
 	PHASE,
 	PLAYER,
 	PHASE_TEXT,

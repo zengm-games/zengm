@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -90,11 +90,7 @@ const updateDraftLottery = async (
 			}
 		}
 
-		if (
-			g.get("draftType") === "random" ||
-			g.get("draftType") === "noLottery" ||
-			g.get("draftType") === "freeAgents"
-		) {
+		if (NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))) {
 			return {
 				draftType: g.get("draftType"),
 				result: undefined,

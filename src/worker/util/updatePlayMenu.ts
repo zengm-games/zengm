@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import { allStar, draft } from "../core";
 import g from "./g";
 import helpers from "./helpers";
@@ -214,12 +214,15 @@ const updatePlayMenu = async () => {
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		if (g.get("repeatSeason")) {
 			keys = ["untilPreseason"];
+		}
+		if (g.get("draftType") === "freeAgents") {
+			// Special case in actions.ts will call the draft phases before this automatically
+			keys = ["untilResignPlayers"];
 		} else {
 			// Offseason - pre draft
-			keys =
-				g.get("draftType") !== "noLottery" && g.get("draftType") !== "random"
-					? ["viewDraftLottery", "untilDraft"]
-					: ["untilDraft"];
+			keys = !NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))
+				? ["viewDraftLottery", "untilDraft"]
+				: ["untilDraft"];
 		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft

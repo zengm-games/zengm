@@ -4,6 +4,7 @@ import DraftClass from "./DraftClass";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
+import { NO_LOTTERY_DRAFT_TYPES } from "../../../common";
 
 const PAGE_SIZE = 3;
 
@@ -13,7 +14,9 @@ const DraftScouting = ({
 	godMode,
 	seasons,
 }: View<"draftScouting">) => {
-	useTitleBar({ title: "Draft Scouting" });
+	const noDraft = draftType === "freeAgents";
+
+	useTitleBar({ title: !noDraft ? "Draft Scouting" : "Upcoming Prospects" });
 
 	const [page, setPage] = useState(0);
 
@@ -39,21 +42,21 @@ const DraftScouting = ({
 		<>
 			<p>
 				More:{" "}
-				{draftType !== "noLottery" &&
-				draftType !== "random" &&
-				draftType !== "freeAgents" ? (
+				{!NO_LOTTERY_DRAFT_TYPES.includes(draftType) ? (
 					<>
 						<a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a> |{" "}
 					</>
 				) : null}
-				<a href={helpers.leagueUrl(["draft_history"])}>Draft History</a> |{" "}
-				<a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
+				<a href={helpers.leagueUrl(["draft_history"])}>
+					{!noDraft ? "Draft" : "Prospects"} History
+				</a>{" "}
+				| <a href={helpers.leagueUrl(["draft_team_history"])}>Team History</a>
 			</p>
 
 			<p>
 				The ratings shown are your scouts' projections for what the players'
-				ratings will be when they enter the draft. The further in the future,
-				the more uncertainty there is in their estimates.
+				ratings will be when they enter the {!noDraft ? "draft" : "league"}. The
+				further in the future, the more uncertainty there is in their estimates.
 			</p>
 
 			{pagination ? (

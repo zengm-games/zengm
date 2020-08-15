@@ -343,6 +343,13 @@ const playMenu = {
 		await runDraft(false, conditions);
 	},
 	untilResignPlayers: async (conditions: Conditions) => {
+		if (
+			g.get("draftType") === "freeAgents" &&
+			g.get("phase") === PHASE.DRAFT_LOTTERY
+		) {
+			await phase.newPhase(PHASE.DRAFT, conditions);
+			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
+		}
 		if (g.get("phase") === PHASE.AFTER_DRAFT) {
 			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 		}

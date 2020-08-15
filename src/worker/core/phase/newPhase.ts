@@ -29,6 +29,7 @@ import type { Conditions, Phase } from "../../../common/types";
  * @return {Promise}
  */
 const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
+	console.log("newPhase", phase);
 	// Prevent at least some cases of code running twice
 	if (phase === g.get("phase")) {
 		return;

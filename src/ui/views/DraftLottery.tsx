@@ -24,6 +24,8 @@ const draftTypeDescriptions: Record<DraftType, string> = {
 	noLottery:
 		"No lottery, teams draft in order of their record, with non-playoff teams coming first",
 	random: "Teams draft in random order, including playoff teams",
+	freeAgents:
+		"There is no draft and all, rookies simply become free agents who can be signed by any team",
 };
 
 const getProbs = (
@@ -346,7 +348,8 @@ const DraftLotteryTable = (props: Props) => {
 		result !== undefined &&
 		draftType !== undefined &&
 		draftType !== "random" &&
-		draftType !== "noLottery"
+		draftType !== "noLottery" &&
+		draftType !== "freeAgents"
 			? getProbs(result, draftType)
 			: undefined;
 	const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
@@ -548,10 +551,7 @@ const DraftLottery = (props: Props) => {
 	return (
 		<>
 			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["draft_scouting"])}>
-					Future Draft Scouting
-				</a>{" "}
+				More: <a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a>{" "}
 				|{" "}
 				<a href={helpers.leagueUrl(["draft_history", props.season])}>
 					Draft History

@@ -9,7 +9,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
-import { PLAYER } from "../../common";
+import { PLAYER, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
@@ -44,8 +44,10 @@ const DraftSummary = ({
 	stats,
 	userTid,
 }: View<"draftSummary">) => {
+	const noDraft = draftType === "freeAgents";
+
 	useTitleBar({
-		title: "Draft History",
+		title: noDraft ? "Prospects History" : "Draft History",
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "draft_history",
@@ -58,7 +60,7 @@ const DraftSummary = ({
 			colspan: 3,
 		},
 		{
-			title: "At Draft",
+			title: noDraft ? "As Prospect" : "At Draft",
 			colspan: 5,
 		},
 		{
@@ -148,12 +150,10 @@ const DraftSummary = ({
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["draft_scouting"])}>
-					Future Draft Scouting
+					{!noDraft ? "Draft Scouting" : "Upcoming Prospects"}
 				</a>{" "}
 				|{" "}
-				{draftType !== "noLottery" &&
-				draftType !== "random" &&
-				draftType !== "freeAgents" ? (
+				{!NO_LOTTERY_DRAFT_TYPES.includes(draftType) ? (
 					<>
 						<a href={helpers.leagueUrl(["draft_lottery", season])}>
 							Draft Lottery
@@ -185,7 +185,7 @@ const DraftSummary = ({
 };
 
 DraftSummary.propTypes = {
-	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
+	draftType: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	season: PropTypes.number.isRequired,
 	startingSeason: PropTypes.number.isRequired,

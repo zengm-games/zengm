@@ -169,7 +169,10 @@ const TitleBar = () => {
 	}
 
 	return (
-		<nav className="navbar navbar-border navbar-light title-bar">
+		<nav
+			className="navbar navbar-border navbar-light title-bar"
+			aria-label="in page navigation"
+		>
 			<h1 className="mb-0">
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}

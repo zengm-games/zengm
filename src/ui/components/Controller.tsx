@@ -300,6 +300,7 @@ const Controller = () => {
 				<div
 					className="p402_premium flex-grow-1 d-flex flex-column"
 					id="actual-content"
+					role="main"
 				>
 					<div id="actual-actual-content" className="clearfix flex-shrink-0">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>

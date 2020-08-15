@@ -43,7 +43,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			top: (
 				<>
 					<span className="glyphicon glyphicon-home" />
-					<span className="d-inline d-sm-none ml-2">League Dashboard</span>
+					<span className="sr-only">League Dashboard</span>
 				</>
 			),
 		},

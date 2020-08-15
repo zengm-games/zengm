@@ -23,8 +23,11 @@ const justDrafted = (
 	season: number,
 ) => {
 	return (
-		(p.draft.year === season && phase >= PHASE.DRAFT) ||
-		(p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON && phase >= 0)
+		p.draft.round > 0 &&
+		((p.draft.year === season && phase >= PHASE.DRAFT) ||
+			(p.draft.year === season - 1 &&
+				phase < PHASE.REGULAR_SEASON &&
+				phase >= 0))
 	);
 };
 

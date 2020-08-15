@@ -132,7 +132,7 @@ const updateRoster = async (
 				players.sort((a, b) => footballScore(b) - footballScore(a));
 			}
 
-			for (let i = 0; i < players.length; i++) {
+			for (const p of players) {
 				// Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
 				if (
 					inputs.tid === g.get("userTid") &&
@@ -143,13 +143,13 @@ const updateRoster = async (
 					g.get("phase") !== PHASE.FANTASY_DRAFT &&
 					g.get("phase") !== PHASE.EXPANSION_DRAFT
 				) {
-					players[i].canRelease = true;
+					p.canRelease = true;
 				} else {
-					players[i].canRelease = false;
+					p.canRelease = false;
 				}
 
 				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
-				players[i].ptModifier = String(players[i].ptModifier);
+				p.ptModifier = String(p.ptModifier);
 			}
 		} else {
 			// Show all players with stats for the given team and year

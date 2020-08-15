@@ -1,5 +1,3 @@
-make rookie contracts fully guaranteed if no draft
-
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile
 - user reports it happens when auto play to playoffs, every time, at some point. doesn't matter what screen they are on

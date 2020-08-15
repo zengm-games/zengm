@@ -149,7 +149,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		// DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
 		// Not sure why this is needed! Maybe related to lottery running before the phase change?
-		if (draftPicks.some(dp => dp.pick === 0)) {
+		if (
+			draftPicks.some(dp => dp.pick === 0) &&
+			g.get("draftType") !== "freeAgents"
+		) {
 			await draft.genOrder();
 			draftPicks = await draft.getOrder();
 		}

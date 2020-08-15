@@ -1,5 +1,3 @@
-const fs = require("fs");
-
 if (process.argv.length < 4) {
 	console.error(
 		"Error: requires a season and a league file as input, like:\n$ node tools/change-starting-season.js 2005 file.json",
@@ -16,7 +14,7 @@ if (Number.isNaN(targetSeason)) {
 	process.exit(1);
 }
 
-const league = JSON.parse(fs.readFileSync(process.argv[3], "utf8"));
+const league = require(process.argv[3]);
 
 let currentSeason;
 if (league.hasOwnProperty("startingSeason")) {

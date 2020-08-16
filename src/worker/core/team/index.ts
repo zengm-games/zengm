@@ -17,7 +17,7 @@ import switchTo from "./switchTo";
 import stats from "./stats";
 import updateClinchedPlayoffs from "./updateClinchedPlayoffs";
 import updateStrategies from "./updateStrategies";
-import valueChange from "./valueChange";
+import valueChange from "./valueChange2";
 
 export default {
 	addNewTeamToExistingLeague,

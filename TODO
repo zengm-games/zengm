@@ -33,6 +33,20 @@ nicidob PRs
 allow editing of cosmetic player info outside of god mode
 
 nicidob trade
+- why not use built-in player value, rather than ovr+age? is it using timing information from predicted career arcs?
+- draft picks beyond 5 years need to be worth something
+- reliance on parameters fit from default BBGM league, compared to MOV from actual team stats... will this make it unreliable if league settings change?
+- why use team MOV rather than estimated mov from team ovr formula? missing info for trades, signings, injuries, especially in offseason
+  - even if i use team ovr formula, that will be weird in offseason since many teams won't have full rosters
+- teamStats should use last year too?
+- injury penalty too harsh in getTeamMOVs?
+- does getAgeShift make sense to always be max if no hit?
+- 4 quarters for a dollar trades
+- draft picks undervalued?
+
+trade, regardless
+- fudge factor applied to picks should decay so it's quite small after the 1st round
+- for projecting team performance, blend team ovr with current season MOV
 
 jersey numbers
 - option to have it prefixed on PlayerNameLabels
@@ -686,6 +700,7 @@ team rating
   - stored value will also make power rankings simpler and faster
 - show on other pages, like team history
 - team potential rating?
+  - https://old.reddit.com/r/BasketballGM/comments/iacppa/recommendation_in_power_rankings_or_the_roster/
 - somehow show everywhere, like how RatingsStatsPopover is for players
 - change scale, make it harder to get 100?
   - but also don't make there be no variation in default leagues. maybe make it nonlinear 90+

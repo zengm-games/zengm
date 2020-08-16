@@ -298,10 +298,10 @@ const Controller = () => {
 				<Header />
 				<SideBar pageID={pageID} />
 				<main
-					className="p402_premium flex-grow-1 d-flex flex-column"
+					className="p402_premium"
 					id="actual-content"
 				>
-					<div id="actual-actual-content" className="clearfix flex-shrink-0">
+					<div id="actual-actual-content" className="clearfix">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
 					</div>
 				</main>

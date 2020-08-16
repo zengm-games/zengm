@@ -1340,7 +1340,8 @@ const handleUploadedDraftClass = async (
 		// Adjust age and seasons
 		p.ratings[0].season = draftYear;
 
-		if (!p.draft) {
+		const noDraftProperty = !p.draft;
+		if (noDraftProperty) {
 			// For college basketball imports
 			p.draft = {
 				round: 0,
@@ -1352,9 +1353,13 @@ const handleUploadedDraftClass = async (
 				ovr: 0,
 				skills: [],
 			};
-			p.born.year = draftYear - 19;
-		} else if (uploadedSeason !== undefined) {
+		}
+
+		if (uploadedSeason !== undefined) {
 			p.born.year = draftYear - (uploadedSeason - p.born.year);
+		} else if (noDraftProperty) {
+			// Hopefully never happens
+			p.born.year = draftYear - 19;
 		}
 
 		// Make sure player object is fully defined

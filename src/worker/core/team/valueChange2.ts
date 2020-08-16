@@ -28,13 +28,18 @@ const ageShift: Record<number, number> = {
 };
 
 const max_shift = Math.max(...Object.values(ageShift));
+const min_shift = Math.max(...Object.values(ageShift));
 
 const getAgeShift = (age: number) => {
 	if (ageShift.hasOwnProperty(age)) {
 		return ageShift[age];
 	}
 
-	return max_shift;
+	if (age < 19) {
+		return max_shift;
+	}
+
+	return min_shift;
 };
 
 const iv = [74.7, 7.92, 20.8];
@@ -62,7 +67,7 @@ const REPLACEMENT_LEVEL = -1.306;
 // draft model's baseline.
 // probably should always be above replacement
 // not because they are, but because otherwise they're a pain
-const DRAFT_LEVEL = o2m[0];
+const DRAFT_LEVEL = REPLACEMENT_LEVEL;
 
 // salaries to mov
 const sA = 3.15;
@@ -146,16 +151,18 @@ const getTeamValue = async (
 	const draftPicks = picks
 		.filter(dp => {
 			if (typeof dp.season !== "number") {
-				return false;
+				return true;
 			}
 
 			return dp.season - g.get("season") < 5;
 		})
 		.map(dp => {
-			const year = (dp as any).season - g.get("season");
+			const year =
+				typeof dp.season !== "number" ? 0 : dp.season - g.get("season");
 			return [
 				year,
-				m2pos(m2next(year, teamMOVs[dp.originalTid])) + 30 * (dp.round - 1),
+				m2pos(m2next(year, teamMOVs[dp.originalTid])) +
+					g.get("numActiveTeams") * (dp.round - 1),
 			];
 		}) as [number, number][];
 

@@ -43,6 +43,8 @@ nicidob trade
 - does getAgeShift make sense to always be max if no hit?
 - 4 quarters for a dollar trades
 - draft picks undervalued?
+  - track separately from player value, and use different discount formula (maybe no discount)
+- replace ageShift with player.develop?
 
 trade, regardless
 - fudge factor applied to picks should decay so it's quite small after the 1st round

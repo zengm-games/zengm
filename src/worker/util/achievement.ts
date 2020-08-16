@@ -1,4 +1,4 @@
-import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
+import { ACCOUNT_API_URL, fetchWrapper, DIFFICULTY } from "../../common";
 import { idb } from "../db";
 import achievements from "./achievements";
 import g from "./g";
@@ -131,11 +131,6 @@ async function getAll(): Promise<
 
 const check = async (when: AchievementWhen, conditions: Conditions) => {
 	try {
-		/* took out this early return to explicitly let users know when achievements arent awarded.
-		if (g.get("easyDifficultyInPast") || g.get("godModeInPast")) {
-			return;
-		}*/
-
 		const tooEz = g.get("easyDifficultyInPast") || g.get("godModeInPast");
 
 		const awarded: string[] = [];
@@ -143,12 +138,24 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 		for (const achievement of achievements) {
 			if (achievement.when === when && achievement.check !== undefined) {
 				const result = await achievement.check();
+				// reason why not awarded
+				let message;
 
 				if (result && tooEz) {
+					if (g.get("godMode")) {
+						message = "God Mode is enabled.";
+					} else if (g.get("godModeInPast")) {
+						message = "God Mode was enabled in the past.";
+					} else if (g.get("difficulty") === DIFFICULTY.Easy) {
+						message = "the difficulty level is Easy.";
+					} else {
+						message = "the difficulty level was previously Easy.";
+					}
+
 					logEvent(
 						{
 							type: "achievement",
-							text: `"${achievement.name}" achievement not awarded due to Easy/God mode. <a href="/account">View all achievements.</a>`,
+							text: `"${achievement.name}" achievement not awarded because ${message} <a href="/account">View all achievements.</a>`,
 							saveToDb: false,
 						},
 						conditions,

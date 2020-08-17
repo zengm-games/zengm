@@ -45,10 +45,14 @@ nicidob trade
 - draft picks undervalued?
   - track separately from player value, and use different discount formula (maybe no discount)
 - replace ageShift with player.develop?
+- difficultyFudgeFactor
+- disable "what would make this trade work" with no assets
 
 trade, regardless
 - fudge factor applied to picks should decay so it's quite small after the 1st round
 - for projecting team performance, blend team ovr with current season MOV
+
+trade buttons need to adjust for multi team menu
 
 jersey numbers
 - option to have it prefixed on PlayerNameLabels

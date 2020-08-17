@@ -141,27 +141,29 @@ const check = async (when: AchievementWhen, conditions: Conditions) => {
 				// reason why not awarded
 				let message;
 
-				if (result && tooEz) {
-					if (g.get("godMode")) {
-						message = "God Mode is enabled.";
-					} else if (g.get("godModeInPast")) {
-						message = "God Mode was enabled in the past.";
-					} else if (g.get("difficulty") === DIFFICULTY.Easy) {
-						message = "the difficulty level is Easy.";
-					} else {
-						message = "the difficulty level was previously Easy.";
-					}
+				if (result) {
+					if (tooEz) {
+						if (g.get("godMode")) {
+							message = "God Mode is enabled.";
+						} else if (g.get("godModeInPast")) {
+							message = "God Mode was enabled in the past.";
+						} else if (g.get("difficulty") <= DIFFICULTY.Easy) {
+							message = "the difficulty level is Easy.";
+						} else {
+							message = "the difficulty level was previously Easy.";
+						}
 
-					logEvent(
-						{
-							type: "achievement",
-							text: `"${achievement.name}" achievement not awarded because ${message} <a href="/account">View all achievements.</a>`,
-							saveToDb: false,
-						},
-						conditions,
-					);
-				} else if (result && !tooEz) {
-					awarded.push(achievement.slug);
+						logEvent(
+							{
+								type: "achievement",
+								text: `"${achievement.name}" achievement not awarded because ${message} <a href="/account">View all achievements.</a>`,
+								saveToDb: false,
+							},
+							conditions,
+						);
+					} else {
+						awarded.push(achievement.slug);
+					}
 				}
 			}
 		}

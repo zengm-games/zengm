@@ -7,7 +7,6 @@ import orderBy from "lodash/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
-const ROUNDS = 60;
 
 const getExpiration = (p: Player, randomizeExp: boolean) => {
 	const { ovr, pot } = p.ratings[p.ratings.length - 1];
@@ -79,6 +78,15 @@ const normalizeContractDemands = async ({
 		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
 	} else {
 		PARAM = 1;
+	}
+
+	let ROUNDS = 60;
+	if (
+		process.env.SPORT === "football" &&
+		(type === "freeAgentsOnly" || type === "includeExpiringContracts")
+	) {
+		// Needs more time to converge. Probably should do this based on number of players
+		ROUNDS = 120;
 	}
 
 	const maxContract = g.get("maxContract");
@@ -156,7 +164,7 @@ const normalizeContractDemands = async ({
 		t.payroll = await team.getPayroll(contracts);
 	}
 
-	// console.time("foo");
+	console.time("foo");
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
 	for (let i = 0; i < ROUNDS; i++) {
@@ -232,7 +240,7 @@ const normalizeContractDemands = async ({
 			}
 		}
 	}
-	// console.timeEnd("foo");
+	console.timeEnd("foo");
 
 	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {

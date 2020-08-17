@@ -15,6 +15,7 @@ const TeamHistory = ({
 	abbrev,
 	bestRecord,
 	championships,
+	finalsAppearances,
 	godMode,
 	history,
 	players,
@@ -26,6 +27,7 @@ const TeamHistory = ({
 	tid,
 	totalLost,
 	totalTied,
+	totalWinp,
 	totalWon,
 	userTid,
 	worstRecord,
@@ -135,9 +137,11 @@ const TeamHistory = ({
 				<div className="col-sm-5 col-md-3">
 					<h2>Overall</h2>
 					<p>
-						Record: {record}
+						Record: {record} ({helpers.roundWinp(totalWinp)})
 						<br />
 						Playoff Appearances: {playoffAppearances}
+						<br />
+						Finals Appearances: {finalsAppearances}
 						<br />
 						Championships: {championships}
 						<br />

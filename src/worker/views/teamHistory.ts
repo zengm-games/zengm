@@ -74,6 +74,7 @@ const updateTeamHistory = async (
 		let totalLost = 0;
 		let totalTied = 0;
 		let playoffAppearances = 0;
+		let finalsAppearances = 0;
 		let championships = 0;
 
 		for (const teamSeason of teamSeasons) {
@@ -99,6 +100,10 @@ const updateTeamHistory = async (
 
 			if (teamSeason.playoffRoundsWon >= 0) {
 				playoffAppearances += 1;
+			}
+
+			if (teamSeason.playoffRoundsWon >= numPlayoffRounds - 1) {
+				finalsAppearances += 1;
 			}
 
 			if (teamSeason.playoffRoundsWon === numPlayoffRounds) {
@@ -161,6 +166,12 @@ const updateTeamHistory = async (
 			delete p.stats;
 		}
 
+		const totalWinp = helpers.calcWinp({
+			won: totalWon,
+			lost: totalLost,
+			tied: totalTied,
+		});
+
 		return {
 			abbrev: inputs.abbrev,
 			history,
@@ -174,7 +185,9 @@ const updateTeamHistory = async (
 			totalWon,
 			totalLost,
 			totalTied,
+			totalWinp,
 			playoffAppearances,
+			finalsAppearances,
 			championships,
 			bestRecord,
 			worstRecord,

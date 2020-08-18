@@ -31,19 +31,17 @@ nicidob PRs
 allow editing of cosmetic player info outside of god mode
 
 nicidob trade
-- why not use built-in player value, rather than ovr+age? is it using timing information from predicted career arcs?
-- draft picks beyond 5 years need to be worth something
+- draft picks beyond X years need to be worth something
 - reliance on parameters fit from default BBGM league, compared to MOV from actual team stats... will this make it unreliable if league settings change?
 - why use team MOV rather than estimated mov from team ovr formula? missing info for trades, signings, injuries, especially in offseason
   - even if i use team ovr formula, that will be weird in offseason since many teams won't have full rosters
 - teamStats should use last year too?
 - injury penalty too harsh in getTeamMOVs?
-- does getAgeShift make sense to always be max if no hit?
 - 4 quarters for a dollar trades
-- draft picks undervalued?
-  - track separately from player value, and use different discount formula (maybe no discount)
 - replace ageShift with player.develop?
+- draft pick value - get from actual draft classes
 - difficultyFudgeFactor
+  - maybe add/subtract from valueChange output, or whatever compares to that
 - disable "what would make this trade work" with no assets
 
 trade, regardless

@@ -42,10 +42,10 @@ const getAgeShift = (age: number) => {
 	return min_shift;
 };
 
-const iv = [74.7, 7.92, 20.8];
+const iv = [71.3, 6.65, 17.4];
 const getMOV = (x: number) => {
 	const offset = Math.floor(iv.length / 3);
-	let tot = -2.2492;
+	let tot = -1.977479789;
 	for (let i = 0; i < offset; i++) {
 		tot += iv[offset + i] * (Math.tanh((x - iv[i]) / iv[2 * offset + i]) + 1.0);
 	}
@@ -62,33 +62,36 @@ const FAKE_RESIGN = false;
 
 const RESIGN_CHANCE = 0.5;
 
-const REPLACEMENT_LEVEL = -1.306;
-
-// draft model's baseline.
-// probably should always be above replacement
-// not because they are, but because otherwise they're a pain
-const DRAFT_LEVEL = REPLACEMENT_LEVEL;
+const REPLACEMENT_LEVEL = -1.425;
 
 // salaries to mov
-const sA = 3.15;
-const sB = 0;
+const sA = 3.974;
 
 const DRAFT_PICK_MOVS = [
-	[0.18897327219231208, 2.0010846899420685, 0.3732236160572243],
-	[0.14727349526599293, 2.3890953884900448, 0.37877293453467575],
-	[0.20993957998560997, 2.972927445404096, 0.29807102822209075],
-	[0.2211666767279284, 3.449578532596238, 0.29588454235265493],
-	[0.2204425469188902, 3.8786269293613316, 0.30687612009524046],
+	[0.12913374296107455, 7.702395173297482, 0.9448709119534404],
+	[0.1634435362737825, 10.800466295630304, 0.5741272805281132],
+	[0.15376070715940388, 13.16485546649397, 0.5015513687766904],
+	[0.15744008797681056, 15.168386405668784, 0.44871539479734146],
+	[0.14365668890459066, 16.382087641663986, 0.43341028973043805],
+	[0.10913478735324955, 16.8271402110163, 0.4739572020965056],
+	[0.08762872471828462, 16.67385454430513, 0.4872821645039682],
+	[0.07718259382269112, 16.225812656172742, 0.5046645539792276],
+	[0.08311482788019467, 15.764561758069739, 0.4537378662822118],
+	[0.0687348697126223, 14.96697451957791, 0.48694857028396676],
+	[0.06931446375815979, 14.43742528331465, 0.4869362245014235],
+	[0.07271012404187446, 13.562653960594034, 0.45759214709213336],
 ];
 
-// expected mov, weight for players, weight for salary cap space
-const PLAYER_VS_CAP: Record<number, [number, number, number]> = {
-	0: [0, 1.0, 0],
-	1: [0, 1.0, 0.9],
-	2: [0, 1.0, 0.8],
-	3: [0, 1.0, 0.6],
-	4: [0, 1.0, 0.5],
+const PLAYER_VS_CAP: Record<number, [number, number, number, number]> = {
+	0: [-0.164, 0.983, 0.0, 0.0],
+	1: [0.622, 0.57, 0.363, 0.091],
+	2: [0.76, 0.623, 0.176, 0.026],
+	3: [0.897, 0.738, 0.049, 0.056],
+	4: [0.788, 0.731, 0.047, 0.054],
+	5: [0.248, 0.485, 0.04, 0.076],
 };
+
+const YEARS = 7;
 
 const getTeamMOVs = async () => {
 	const teamMOVs: Record<number, number> = {};
@@ -135,10 +138,15 @@ const getTeamMOVs = async () => {
 // turn mov into draft pick and future mov
 const m2pos = (x: number) =>
 	Math.round(helpers.bound(29 / (1 + Math.exp(0.0036 - 0.368 * x)), 0, 29));
-const m2next = (year: number, mov: number) =>
-	[1, 0.5, 0.25, 0.08, 0.03][year] * mov;
+const m2next = (year: number, mov: number) => {
+	if (year > 4) {
+		return 0.01;
+	}
+	return [1, 0.5, 0.25, 0.08, 0.03][year] * mov;
+};
 
 const getTeamValue = async (
+	tid: number,
 	players: Player<MinimalPlayerRatings>[],
 	picks: DraftPick[],
 ) => {
@@ -154,7 +162,7 @@ const getTeamValue = async (
 				return true;
 			}
 
-			return dp.season - g.get("season") < 5;
+			return dp.season - g.get("season") < YEARS;
 		})
 		.map(dp => {
 			const year =
@@ -169,16 +177,16 @@ const getTeamValue = async (
 	const rookieSalaries = draft.getRookieSalaries();
 
 	// for this and the next 4 years
-	const pars: [number[], number[], number[], number[], number[]] = [
-		[],
-		[],
-		[],
-		[],
-		[],
-	]; // player MOVs
-	const tss = [0, 0, 0, 0, 0]; // payrolls
+	const pars: number[][] = Array(YEARS)
+		.fill(0)
+		.map(() => []); // player MOVs
+	const tss = Array(YEARS).fill(0); // player contract totals
+	const dpars: number[][] = Array(YEARS)
+		.fill(0)
+		.map(() => []); // player MOVs
+	const dtss = Array(YEARS).fill(0); // player contract totals
 
-	for (let i = 0; i < 5; i++) {
+	for (let i = 0; i < YEARS; i++) {
 		for (const p of players) {
 			const age = g.get("season") - p.born.year;
 			const ovr = p.ratings[p.ratings.length - 1].ovr;
@@ -213,20 +221,18 @@ const getTeamValue = async (
 			if (yr + 1 <= i) {
 				// if drafted
 				const dsal = sCapS * rookieSalaries[draftPosition];
-				tss[i] += dsal;
+				dtss[i] += dsal;
 				const yearsSinceDraft = i - (yr + 1);
 				const x = DRAFT_PICK_MOVS[yearsSinceDraft];
-				pars[i].push(
-					DRAFT_LEVEL + x[1] * Math.exp(-x[0] * draftPosition ** x[2]),
-				);
+				dpars[i].push(x[1] * Math.exp(-x[0] * draftPosition ** x[2]));
 			}
 		}
 	}
 
 	// add salaries and player values
 	const pred_movs = [];
-	for (let i = 0; i < 5; i++) {
-		let play = pars[i].filter(p => p >= REPLACEMENT_LEVEL);
+	for (let i = 0; i < YEARS; i++) {
+		let play = pars[i].slice();
 		const lp = play.length;
 		while (play.length < 10) {
 			play.push(REPLACEMENT_LEVEL);
@@ -238,12 +244,27 @@ const getTeamValue = async (
 		for (const value of play) {
 			play_s += value;
 		}
-		const salary_s = tss[i] + (10 - lp) * g.get("minContract");
-		const cap_space = ((1.0 / 3.0) * Math.max(sCap - salary_s, 0)) / sCap;
-		const mov_from_cap = cap_space * sA;
 
-		const x = PLAYER_VS_CAP[i];
-		const playerMOV = x[0] + x[1] * play_s + x[2] * mov_from_cap;
+		const cap_hit = tss[i] + (10 - lp) * 750; //+ dtss[i]
+
+		const diff = (sCap - cap_hit) / (sCap / 3);
+		const cap_space = Math.max(diff, 0.1 * diff);
+		//mov_from_cap = cap_space*sA
+
+		let play_d = 0;
+		for (const value of dpars[i]) {
+			play_d += value;
+		}
+
+		const x = PLAYER_VS_CAP[i] ? PLAYER_VS_CAP[i] : PLAYER_VS_CAP[5];
+		// p_mov = x[0] +  x[1]*play_s + x[2]*mov_from_cap
+		// teamMOVs is needed because otherwise it winds up using "lots of good draft picks on team" as a proxy for "bad team"
+		const playerMOV =
+			x[0] * (sA * cap_space) +
+			x[1] * play_s +
+			x[2] * teamMOVs[tid] +
+			x[3] * play_d;
+
 		pred_movs.push(playerMOV);
 	}
 
@@ -259,7 +280,7 @@ const getTeamValue = async (
 	let value = 0;
 	for (let i = 0; i < win_p.length; i++) {
 		// discount factor for the future, more uncertainty, less sure reward
-		value += win_p[i] * 0.8 ** i;
+		value += win_p[i] * 0.9 ** i;
 	}
 	return value;
 };
@@ -300,7 +321,7 @@ const getTeamValueWrapper = async ({
 		picks.push(dp);
 	}
 
-	return getTeamValue(players, picks);
+	return getTeamValue(tid, players, picks);
 };
 
 const valueChange2 = async (

@@ -10,7 +10,6 @@ import {
 	Weight,
 	JerseyNumber,
 } from "../../components";
-import EditableJerseyNumber from "./EditableJerseyNumber";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
 import useTitleBar from "../../hooks/useTitleBar";

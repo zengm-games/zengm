@@ -130,8 +130,6 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 
 		m += `<p>This year: ${thisYear}</p><p>Overall: ${overall}</p>`;
 
-		console.log("currentTotal", currentTotal);
-
 		if (text) {
 			m += `<p>${text}</p>`;
 		}

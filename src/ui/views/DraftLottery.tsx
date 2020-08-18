@@ -342,7 +342,7 @@ const DraftLotteryTable = (props: Props) => {
 		dispatch({ type: "revealOne" });
 	};
 
-	const { season, ties, type, userTid } = props;
+	const { season, type, userTid } = props;
 	const { draftType, result } = state;
 	const probs =
 		result !== undefined &&
@@ -447,7 +447,7 @@ const DraftLotteryTable = (props: Props) => {
 											<td>
 												<a href={helpers.leagueUrl(["standings", season])}>
 													{won}-{lost}
-													{ties ? <>-{tied}</> : null}
+													{tied > 0 ? <>-{tied}</> : null}
 												</a>
 											</td>
 											<td>{chances}</td>
@@ -532,7 +532,6 @@ DraftLotteryTable.propTypes = {
 		}),
 	),
 	season: PropTypes.number.isRequired,
-	ties: PropTypes.bool.isRequired,
 	type: PropTypes.string.isRequired,
 	userTid: PropTypes.number.isRequired,
 };

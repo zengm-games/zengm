@@ -114,7 +114,8 @@ const Team = ({
 				<br />
 				<span className="text-muted">
 					{team.regularSeason.won}-{team.regularSeason.lost}
-					{team.regularSeason.tied !== undefined ? (
+					{team.regularSeason.tied !== undefined &&
+					team.regularSeason.tied > 0 ? (
 						<>-{team.regularSeason.tied}</>
 					) : null}
 				</span>

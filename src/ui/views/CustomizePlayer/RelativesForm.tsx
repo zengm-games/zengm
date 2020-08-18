@@ -3,9 +3,11 @@ import React from "react";
 import { HelpPopover, RatingsStatsPopover } from "../../components";
 
 const RelativesForm = ({
+	godMode,
 	handleChange,
 	relatives,
 }: {
+	godMode: boolean;
 	handleChange: (
 		type: string,
 		field: string,
@@ -58,6 +60,7 @@ const RelativesForm = ({
 									handleRelativesChange(i, "type", event);
 								}}
 								value={type}
+								disabled={!godMode}
 							>
 								<option value="brother">Brother</option>
 								<option value="father">Father</option>
@@ -93,19 +96,22 @@ const RelativesForm = ({
 									handleRelativesChange(i, "pid", event);
 								}}
 								value={pid}
+								disabled={!godMode}
 							/>
 						</div>
 						<div className="flex-shrink-0" style={{ fontSize: 20 }}>
 							<RatingsStatsPopover pid={parseInt(pid as any, 10)} />
-							<a
-								className="ml-3 new_window text-danger"
+							<button
+								className="ml-3 new_window text-danger btn btn-link p-0 border-0"
 								onClick={() => {
 									handleRelativesChange(i, "delete");
 								}}
 								title="Delete"
+								style={{ fontSize: 20 }}
+								disabled={!godMode}
 							>
 								<span className="glyphicon glyphicon-remove" />
-							</a>
+							</button>
 						</div>
 					</div>
 				);
@@ -116,6 +122,7 @@ const RelativesForm = ({
 				onClick={() => {
 					handleRelativesChange(-1, "add");
 				}}
+				disabled={!godMode}
 			>
 				Add
 			</button>

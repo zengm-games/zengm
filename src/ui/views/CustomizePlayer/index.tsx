@@ -382,7 +382,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
-	const { originalTid, teams } = props;
+	const { godMode, originalTid, teams } = props;
 	const { appearanceOption, p, saving } = state;
 
 	const title = originalTid === undefined ? "Create Player" : "Edit Player";
@@ -450,9 +450,12 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				/>
 				<span className="text-muted">
 					Your image must be hosted externally. If you need to upload an image,
-					try using <a href="http://imgur.com/">imgur</a>. For ideal display,
-					crop your image so it has a 2:3 aspect ratio (such as 100px wide and
-					150px tall).
+					try using{" "}
+					<a href="http://imgur.com/" rel="noopener noreferrer" target="_blank">
+						imgur
+					</a>
+					. For ideal display, crop your image so it has a 2:3 aspect ratio
+					(such as 100px wide and 150px tall).
 				</span>
 			</div>
 		);
@@ -504,6 +507,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	return (
 		<>
+			{!godMode ? (
+				<p className="alert alert-warning d-inline-block">
+					Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to edit
+					all of these fields.
+				</p>
+			) : null}
+
 			<p>
 				Here, you can{" "}
 				{originalTid === undefined
@@ -548,6 +558,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "age")}
 									value={(p as any).age}
+									disabled={!godMode}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -556,6 +567,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "tid")}
 									value={p.tid}
+									disabled={!godMode}
 								>
 									<option value={PLAYER.RETIRED}>Retired</option>
 									<option value={PLAYER.UNDRAFTED}>Draft Prospect</option>
@@ -593,6 +605,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "rating", "pos")}
 									value={p.ratings[r].pos}
+									disabled={!godMode}
 								>
 									{POSITIONS.filter(pos => {
 										if (
@@ -627,6 +640,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "born", "loc")}
 									value={p.born.loc}
+									disabled={!godMode}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -645,6 +659,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "draft", "year")}
 									value={p.draft.year}
+									disabled={!godMode}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -654,6 +669,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "diedYear")}
 									value={p.diedYear}
+									disabled={!godMode}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -662,6 +678,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "root", "hof")}
 									value={String(p.hof)}
+									disabled={!godMode}
 								>
 									<option value="true">Yes</option>
 									<option value="false">No</option>
@@ -680,6 +697,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										className="form-control"
 										onChange={handleChange.bind(null, "contract", "amount")}
 										value={p.contract.amount}
+										disabled={!godMode}
 									/>
 									<div className="input-group-append">
 										<div className="input-group-text">M per year</div>
@@ -693,6 +711,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "contract", "exp")}
 									value={p.contract.exp}
+									disabled={!godMode}
 								/>
 							</div>
 							<div className="col-sm-6 form-group">
@@ -702,6 +721,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "injury", "type")}
 									value={p.injury.type}
+									disabled={!godMode}
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
@@ -711,6 +731,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									className="form-control"
 									onChange={handleChange.bind(null, "injury", "gamesRemaining")}
 									value={p.injury.gamesRemaining}
+									disabled={!godMode}
 								/>
 							</div>
 						</div>
@@ -771,6 +792,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										};
 									});
 								}}
+								disabled={!godMode}
 							>
 								Randomize
 							</button>
@@ -780,6 +802,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									type="button"
 									className="btn btn-secondary btn-sm"
 									onClick={adjustRatings(-1)}
+									disabled={!godMode}
 								>
 									<span className="glyphicon glyphicon-minus" />
 								</button>
@@ -787,6 +810,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									type="button"
 									className="btn btn-secondary btn-sm"
 									onClick={adjustRatings(1)}
+									disabled={!godMode}
 								>
 									<span className="glyphicon glyphicon-plus" />
 								</button>
@@ -798,6 +822,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<p>All ratings are on a scale of 0 to 100.</p>
 
 						<RatingsForm
+							godMode={godMode}
 							handleChange={handleChange}
 							ratingsRow={p.ratings[r]}
 						/>
@@ -805,6 +830,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Relatives</h2>
 
 						<RelativesForm
+							godMode={godMode}
 							handleChange={handleChange}
 							relatives={p.relatives}
 						/>

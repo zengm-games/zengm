@@ -138,7 +138,7 @@ a.god-mode.active {
 }
 
 .btn-god-mode {
-	@include button-variant($purple, $purple);
+	@include button-variant($purple, $gray-400);
 }
 
 .play-button {

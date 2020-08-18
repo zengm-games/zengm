@@ -10,6 +10,7 @@ import {
 	Weight,
 	JerseyNumber,
 } from "../../components";
+import EditableJerseyNumber from "./EditableJerseyNumber";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
 import useTitleBar from "../../hooks/useTitleBar";
@@ -313,74 +314,69 @@ const Player2 = ({
 								: "None"}
 							<br />
 							{contractInfo}
-							{godMode ? (
-								<>
-									<a
-										href={helpers.leagueUrl(["customize_player", player.pid])}
-										className="btn btn-god-mode btn-xs mr-1 mb-1"
-									>
-										Edit Player
-									</a>
-									<button
-										className="btn btn-god-mode btn-xs mb-1"
-										disabled={status === "exporting" || status === "loading"}
-										onClick={async () => {
-											const proceed = await confirm(
-												`Are you sure you want to delete ${player.name}?`,
-												{
-													okText: "Delete Player",
-												},
-											);
-											if (proceed) {
-												await toWorker("main", "removePlayer", player.pid);
-
-												realtimeUpdate([], helpers.leagueUrl([]));
-											}
-										}}
-									>
-										Delete Player
-									</button>
-									<br />
-								</>
-							) : null}
 							{statusInfo}
 						</div>
 					</div>
 
-					<div>
+					<div className="btn-group">
+						<a
+							href={helpers.leagueUrl(["customize_player", player.pid])}
+							className={classNames(
+								"btn",
+								godMode ? "btn-god-mode" : "btn-light-bordered",
+							)}
+						>
+							Edit Player
+						</a>
+						{godMode ? (
+							<button
+								className="btn btn-god-mode"
+								onClick={async () => {
+									const proceed = await confirm(
+										`Are you sure you want to delete ${player.name}?`,
+										{
+											okText: "Delete Player",
+										},
+									);
+									if (proceed) {
+										await toWorker("main", "removePlayer", player.pid);
+
+										realtimeUpdate([], helpers.leagueUrl([]));
+									}
+								}}
+							>
+								Delete Player
+							</button>
+						) : null}
 						{showTradeFor || showTradingBlock ? (
-							<span title={player.untradableMsg}>
-								<button
-									className="btn btn-light-bordered"
-									disabled={player.untradable}
-									onClick={() => {
-										if (showTradeFor) {
-											toWorker("actions", "tradeFor", { pid: player.pid });
-										} else {
-											toWorker("actions", "addToTradingBlock", player.pid);
-										}
-									}}
-								>
-									{showTradeFor ? "Trade For" : "Add To Trading Block"}
-								</button>
-							</span>
+							<button
+								className="btn btn-light-bordered"
+								disabled={player.untradable}
+								onClick={() => {
+									if (showTradeFor) {
+										toWorker("actions", "tradeFor", { pid: player.pid });
+									} else {
+										toWorker("actions", "addToTradingBlock", player.pid);
+									}
+								}}
+								title={player.untradableMsg}
+							>
+								{showTradeFor ? "Trade For" : "Add To Trading Block"}
+							</button>
 						) : null}
 						{freeAgent ? (
-							<span
+							<button
+								className="btn btn-light-bordered"
+								disabled={!willingToSign}
+								onClick={() => toWorker("actions", "negotiate", player.pid)}
 								title={
 									willingToSign
 										? undefined
 										: `${player.name} refuses to negotiate with you`
 								}
 							>
-								<button
-									className="btn btn-light-bordered"
-									disabled={!willingToSign}
-									onClick={() => toWorker("actions", "negotiate", player.pid)}
-								>
-									Negotiate Contract
-								</button>
-							</span>
+								Negotiate Contract
+							</button>
 						) : null}
 					</div>
 				</div>

@@ -1601,7 +1601,20 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		p.draft.year > g.get("season") ? p.draft.year : g.get("season");
 	const stats =
 		process.env.SPORT === "basketball"
-			? ["pts", "trb", "ast", "blk", "stl", "tov", "min", "per", "ewa"]
+			? [
+					"pts",
+					"trb",
+					"ast",
+					"blk",
+					"stl",
+					"tov",
+					"min",
+					"per",
+					"ewa",
+					"tsp",
+					"tpar",
+					"ftr",
+			  ]
 			: ["keyStats"];
 	return idb.getCopy.playersPlus(p, {
 		attrs: ["name", "jerseyNumber"],

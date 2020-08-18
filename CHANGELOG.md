@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-08-17: Added TS%, 3PAr, and FTr to the player info popup. [[1]](https://old.reddit.com/r/BasketballGM/comments/ibqgvt/there_have_been_some_requests_for_fg3pft_on_the/)
+
 * 2020-08-17: If you do enough to win an achievement but miss out on it because you used God Mode or easy difficulty, it gives you a notification saying this rather than nothing. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
 
 * 2020-08-17: Added "Finals Appearances" and total winning percentage to the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)

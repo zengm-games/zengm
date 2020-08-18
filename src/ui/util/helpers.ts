@@ -48,6 +48,8 @@ const roundOverrides: Record<
 				ws48: "roundWinp",
 				pm: "plusMinus",
 				ftpfga: "roundWinp",
+				tpar: "roundWinp",
+				ftr: "roundWinp",
 		  }
 		: {
 				gp: "noDecimalPlace",

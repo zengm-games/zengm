@@ -65,10 +65,10 @@ const processStats = (
 			row[stat] = percentage(ps.pts, 2 * (ps.fga + 0.44 * ps.fta));
 			scale = false;
 		} else if (stat === "tpar") {
-			row[stat] = percentage(ps.tpa, ps.fga);
+			row[stat] = percentage(ps.tpa, ps.fga) / 100;
 			scale = false;
 		} else if (stat === "ftr") {
-			row[stat] = percentage(ps.fta, ps.fga);
+			row[stat] = percentage(ps.fta, ps.fga) / 100;
 			scale = false;
 		} else if (stat === "tovp") {
 			row[stat] = percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);

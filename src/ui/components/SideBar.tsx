@@ -270,7 +270,12 @@ const SideBar = React.memo(({ pageID }: Props) => {
 	return (
 		<>
 			<div ref={getNodeFade} className="sidebar-fade" />
-			<div className="bg-light sidebar" id="sidebar" ref={getNode}>
+			<nav
+				className="bg-light sidebar"
+				id="sidebar"
+				ref={getNode}
+				aria-label="side navigation"
+			>
 				<div className="sidebar-sticky">
 					{menuItems.map((menuItem, i) => (
 						<MenuItem
@@ -284,7 +289,7 @@ const SideBar = React.memo(({ pageID }: Props) => {
 						/>
 					))}
 				</div>
-			</div>
+			</nav>
 		</>
 	);
 });

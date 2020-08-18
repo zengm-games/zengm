@@ -2,7 +2,13 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-14: New draft type option in God Mode to eliminate the draft and instead have rookies become free agents. [[1]]()
+* 2020-08-17: Added TS%, 3PAr, and FTr to the player info popup. [[1]](https://old.reddit.com/r/BasketballGM/comments/ibqgvt/there_have_been_some_requests_for_fg3pft_on_the/)
+
+* 2020-08-17: If you do enough to win an achievement but miss out on it because you used God Mode or easy difficulty, it gives you a notification saying this rather than nothing. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
+
+* 2020-08-17: Added "Finals Appearances" and total winning percentage to the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
+
+* 2020-08-14: New draft type option in God Mode to eliminate the draft and instead have rookies become free agents. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9zhto/version_202008150142_new_draft_type_option_in_god/)
 
 * 2020-08-13: You can watch multiple live games in a single day! Now when you watch a live game, only that one game is simulated. When it's over, the other games from that day will still be waiting to be played. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9a6gm/new_in_version_202008131365_you_can_watch/)
 

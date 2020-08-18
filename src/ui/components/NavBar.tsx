@@ -89,7 +89,13 @@ const NavBar = ({ updating }: Props) => {
 	);
 
 	return (
-		<Navbar bg="light" expand="sm" fixed="top" className="navbar-border">
+		<Navbar
+			bg="light"
+			expand="sm"
+			fixed="top"
+			className="navbar-border"
+			role="banner"
+		>
 			<button
 				className="navbar-toggler mr-3"
 				onClick={() => {

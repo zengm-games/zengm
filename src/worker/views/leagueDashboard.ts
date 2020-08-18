@@ -42,7 +42,6 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
-			ties: g.get("ties") || !!(latestSeason && latestSeason.tied > 0),
 			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
 			// [millions of dollars]
 			salaryCap: g.get("salaryCap") / 1000,

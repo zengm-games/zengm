@@ -11,7 +11,6 @@ const MAX_WIDTH = 1120;
 const record = (
 	seasonAttrs: View<"standings">["teams"][number]["seasonAttrs"],
 	type: "Home" | "Away" | "Div" | "Conf",
-	ties: boolean,
 ) => {
 	const won = `won${type}` as "wonHome" | "wonAway" | "wonDiv" | "wonConf";
 	const lost = `lost${type}` as
@@ -26,7 +25,7 @@ const record = (
 		| "tiedConf";
 
 	const val = `${seasonAttrs[won]}-${seasonAttrs[lost]}`;
-	if (ties) {
+	if (seasonAttrs[tied] > 0) {
 		return `${val}-${seasonAttrs[tied]}`;
 	}
 	return val;
@@ -75,10 +74,10 @@ const GroupStandingsRow = ({
 			{ties ? <td>{t.seasonAttrs.tied}</td> : null}
 			<td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
 			<td>{t.gb[type]}</td>
-			<td>{record(t.seasonAttrs, "Home", ties)}</td>
-			<td>{record(t.seasonAttrs, "Away", ties)}</td>
-			<td>{record(t.seasonAttrs, "Div", ties)}</td>
-			<td>{record(t.seasonAttrs, "Conf", ties)}</td>
+			<td>{record(t.seasonAttrs, "Home")}</td>
+			<td>{record(t.seasonAttrs, "Away")}</td>
+			<td>{record(t.seasonAttrs, "Div")}</td>
+			<td>{record(t.seasonAttrs, "Conf")}</td>
 			<td>{helpers.roundStat(t.stats.pts, "pts")}</td>
 			<td>{helpers.roundStat(t.stats.oppPts, "oppPts")}</td>
 			<td>

@@ -82,14 +82,14 @@ const DRAFT_PICK_MOVS = [
 	[0.07271012404187446, 13.562653960594034, 0.45759214709213336],
 ];
 
-const PLAYER_VS_CAP: Record<number, [number, number, number, number]> = {
-	0: [-0.164, 0.983, 0.0, 0.0],
-	1: [0.622, 0.57, 0.363, 0.091],
-	2: [0.76, 0.623, 0.176, 0.026],
-	3: [0.897, 0.738, 0.049, 0.056],
-	4: [0.788, 0.731, 0.047, 0.054],
-	5: [0.248, 0.485, 0.04, 0.076],
-};
+const PLAYER_VS_CAP: [number, number, number, number][] = [
+	[-0.164, 0.983, 0.0, 0.0],
+	[0.622, 0.57, 0.363, 0.091],
+	[0.76, 0.623, 0.176, 0.026],
+	[0.897, 0.738, 0.049, 0.056],
+	[0.788, 0.731, 0.047, 0.054],
+	[0.248, 0.485, 0.04, 0.076],
+];
 
 const YEARS = 7;
 
@@ -152,27 +152,35 @@ const getTeamValue = async (
 ) => {
 	const teamMOVs = await getTeamMOVs();
 
-	const sCap = g.get("salaryCap");
-	const sCapS = sCap / defaultGameAttributes.salaryCap;
+	const maxContract = g.get("maxContract");
+	const minContract = g.get("minContract");
+	const minRosterSize = g.get("minRosterSize");
+	const numActiveTeams = g.get("numActiveTeams");
+	const salaryCap = g.get("salaryCap");
+	const season = g.get("season");
+
+	const sCapS = salaryCap / defaultGameAttributes.salaryCap;
 
 	// turn draft picks into specific predictions
-	const draftPicks = picks
+	const draftPickInfos = picks
 		.filter(dp => {
 			if (typeof dp.season !== "number") {
 				return true;
 			}
 
-			return dp.season - g.get("season") < YEARS;
+			return dp.season - season < YEARS;
 		})
 		.map(dp => {
-			const year =
-				typeof dp.season !== "number" ? 0 : dp.season - g.get("season");
-			return [
-				year,
-				m2pos(m2next(year, teamMOVs[dp.originalTid])) +
-					g.get("numActiveTeams") * (dp.round - 1),
-			];
-		}) as [number, number][];
+			const numYearsFromNow =
+				typeof dp.season !== "number" ? 0 : dp.season - season;
+			const position =
+				m2pos(m2next(numYearsFromNow, teamMOVs[dp.originalTid])) +
+				numActiveTeams * (dp.round - 1);
+			return {
+				numYearsFromNow,
+				position,
+			};
+		});
 
 	const rookieSalaries = draft.getRookieSalaries();
 
@@ -188,13 +196,12 @@ const getTeamValue = async (
 
 	for (let i = 0; i < YEARS; i++) {
 		for (const p of players) {
-			const age = g.get("season") - p.born.year;
+			const age = season - p.born.year;
 			const ovr = p.ratings[p.ratings.length - 1].ovr;
-			const con = p.contract.amount;
-			const yrl = p.contract.exp - g.get("season");
-			if (yrl >= i) {
-				// are we on the team still?
-				tss[i] += con;
+			const yearsLeftOnContract = p.contract.exp - season;
+			if (yearsLeftOnContract >= i) {
+				// Player is still under contract, assume they are still on team
+				tss[i] += p.contract.amount;
 				let ovr2 = ovr;
 				for (let j = 0; j < i; j++) {
 					ovr2 += getAgeShift(age + j);
@@ -209,22 +216,23 @@ const getTeamValue = async (
 				if (playerMOV > 0) {
 					// resign positive MOV contributors
 					const est_con =
-						Math.min(1, (playerMOV - REPLACEMENT_LEVEL) / sA) *
-						g.get("maxContract");
+						Math.min(1, (playerMOV - REPLACEMENT_LEVEL) / sA) * maxContract;
 					tss[i] += est_con * RESIGN_CHANCE;
 					pars[i].push(RESIGN_CHANCE * playerMOV);
 				}
 			}
 		}
 
-		for (const [yr, draftPosition] of draftPicks) {
-			if (yr + 1 <= i) {
+		for (const { numYearsFromNow, position } of draftPickInfos) {
+			const yearsSinceRookieSeason = i - (numYearsFromNow + 1);
+			if (yearsSinceRookieSeason >= 0) {
 				// if drafted
-				const dsal = sCapS * rookieSalaries[draftPosition];
+				const dsal = sCapS * rookieSalaries[position];
 				dtss[i] += dsal;
-				const yearsSinceDraft = i - (yr + 1);
-				const x = DRAFT_PICK_MOVS[yearsSinceDraft];
-				dpars[i].push(x[1] * Math.exp(-x[0] * draftPosition ** x[2]));
+				const x = DRAFT_PICK_MOVS[yearsSinceRookieSeason]
+					? DRAFT_PICK_MOVS[yearsSinceRookieSeason]
+					: DRAFT_PICK_MOVS[DRAFT_PICK_MOVS.length - 1];
+				dpars[i].push(x[1] * Math.exp(-x[0] * position ** x[2]));
 			}
 		}
 	}
@@ -245,9 +253,10 @@ const getTeamValue = async (
 			play_s += value;
 		}
 
-		const cap_hit = tss[i] + (10 - lp) * 750; //+ dtss[i]
+		// Purposely ignore draft pick salaries, seems to work better
+		const cap_hit = tss[i] + (minRosterSize - lp) * minContract; //+ dtss[i]
 
-		const diff = (sCap - cap_hit) / (sCap / 3);
+		const diff = (salaryCap - cap_hit) / (salaryCap / 3);
 		const cap_space = Math.max(diff, 0.1 * diff);
 		//mov_from_cap = cap_space*sA
 
@@ -256,7 +265,9 @@ const getTeamValue = async (
 			play_d += value;
 		}
 
-		const x = PLAYER_VS_CAP[i] ? PLAYER_VS_CAP[i] : PLAYER_VS_CAP[5];
+		const x = PLAYER_VS_CAP[i]
+			? PLAYER_VS_CAP[i]
+			: PLAYER_VS_CAP[PLAYER_VS_CAP.length - 1];
 		// p_mov = x[0] +  x[1]*play_s + x[2]*mov_from_cap
 		// teamMOVs is needed because otherwise it winds up using "lots of good draft picks on team" as a proxy for "bad team"
 		const playerMOV =

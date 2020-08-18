@@ -33,6 +33,7 @@ allow editing of cosmetic player info outside of god mode
 nicidob trade
 - draft picks beyond X years need to be worth something
 - reliance on parameters fit from default BBGM league, compared to MOV from actual team stats... will this make it unreliable if league settings change?
+  - can normalize to mean/std
 - why use team MOV rather than estimated mov from team ovr formula? missing info for trades, signings, injuries, especially in offseason
   - even if i use team ovr formula, that will be weird in offseason since many teams won't have full rosters
 - teamStats should use last year too?
@@ -42,7 +43,10 @@ nicidob trade
 - draft pick value - get from actual draft classes
 - difficultyFudgeFactor
   - maybe add/subtract from valueChange output, or whatever compares to that
+- FAKE_RESIGN or not?
 - disable "what would make this trade work" with no assets
+- rewrite, make clearer
+- real players roster, seasons prior to 2020, seems way too eager to trade for basically anybody
 
 trade, regardless
 - fudge factor applied to picks should decay so it's quite small after the 1st round

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { ChangeEvent } from "react";
-import { getCols } from "../../util";
+import { getCols, helpers } from "../../util";
 
 const rows: {
 	[key: string]: string[];
@@ -63,7 +63,17 @@ const RatingsForm = ({
 																onChange={event => {
 																	handleChange("rating", rating, event);
 																}}
-																value={ratingsRow[rating]}
+																value={
+																	godMode
+																		? ratingsRow[rating]
+																		: Math.round(
+																				helpers.bound(
+																					ratingsRow[rating] + ratingsRow.fuzz,
+																					0,
+																					100,
+																				),
+																		  )
+																}
 																disabled={!godMode}
 															/>
 														</div>

@@ -9,6 +9,7 @@ const switchTo = async (tid: number, tids?: number[]) => {
 		userTid: tid,
 		userTids: tids ? tids : [tid],
 		gracePeriodEnd: g.get("season") + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
+		otherTeamsWantToHire: false,
 	});
 
 	league.updateMetaNameRegion(

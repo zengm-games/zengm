@@ -1,8 +1,7 @@
-allow switching team if enough success
-
 gm history page
 - store team you were with at end of playoffs in g.gmHistoryTid, wrapped like others
 - abstract common code from teamHistory.ts
+- explain when you can switch teams (success or failure or god mode)
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile
@@ -367,6 +366,7 @@ FBGM
 - trade possible after playoffs phase begins, but only before first playoff game is played?
 - automatic 1st not given https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/
 - weird offensive holding application https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/g1073zl/?context=3
+- DL in FBGM get way too many interceptions, CB should get more
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

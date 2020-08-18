@@ -130,9 +130,18 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 
 		m += `<p>This year: ${thisYear}</p><p>Overall: ${overall}</p>`;
 
+		console.log("currentTotal", currentTotal);
+
 		if (text) {
 			m += `<p>${text}</p>`;
 		}
+
+		const prob = (helpers.bound(currentTotal, 1, 3) - 1) * 0.25;
+		const otherTeamsWantToHire = Math.random() < prob;
+
+		await league.setGameAttributes({
+			otherTeamsWantToHire,
+		});
 	} else {
 		// Fired!
 		if (

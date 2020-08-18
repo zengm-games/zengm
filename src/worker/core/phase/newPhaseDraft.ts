@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { draft } from "..";
+import { draft, league } from "..";
 import { idb, iterate } from "../../db";
 import { g, helpers } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
@@ -54,6 +54,10 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 			}
 		}
 	}
+
+	await league.setGameAttributes({
+		otherTeamsWantToHire: false,
+	});
 
 	return {
 		url:

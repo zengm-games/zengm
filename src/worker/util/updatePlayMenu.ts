@@ -127,6 +127,10 @@ const updatePlayMenu = async () => {
 			url: helpers.leagueUrl(["new_team"]),
 			label: "Try again with a new team",
 		},
+		newTeamGood: {
+			url: helpers.leagueUrl(["new_team"]),
+			label: "Other teams want to hire you!",
+		},
 		seasonSummary: {
 			url: helpers.leagueUrl(["history"]),
 			label: "View season summary",
@@ -223,6 +227,10 @@ const updatePlayMenu = async () => {
 			keys = !NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))
 				? ["viewDraftLottery", "untilDraft"]
 				: ["untilDraft"];
+		}
+
+		if (g.get("otherTeamsWantToHire")) {
+			keys.push("newTeamGood");
 		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft

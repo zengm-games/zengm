@@ -164,7 +164,7 @@ const normalizeContractDemands = async ({
 		t.payroll = await team.getPayroll(contracts);
 	}
 
-	console.time("foo");
+	//console.time("foo");
 	const updatedPIDs = new Set<number>();
 	const randTeams = [...teams];
 	for (let i = 0; i < ROUNDS; i++) {
@@ -240,7 +240,7 @@ const normalizeContractDemands = async ({
 			}
 		}
 	}
-	console.timeEnd("foo");
+	//console.timeEnd("foo");
 
 	const afterSeasonOver = g.get("phase") > PHASE.REGULAR_SEASON;
 	for (const info of playerInfos) {

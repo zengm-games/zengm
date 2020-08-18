@@ -14,6 +14,7 @@ const NewTeam = ({
 	godMode,
 	numActiveTeams,
 	numPlayoffRounds,
+	otherTeamsWantToHire,
 	phase,
 	teams,
 	userTid,
@@ -47,13 +48,15 @@ const NewTeam = ({
 		title = "Pick an Expansion Team";
 	} else if (expansion) {
 		title = "Switch To Expansion Team?";
+	} else if (otherTeamsWantToHire) {
+		title = "Job Offers From Other Teams";
 	} else {
 		title = "Pick a New Team";
 	}
 
 	useTitleBar({ title, hideNewWindow: true });
 
-	if (!expansion && !gameOver && !godMode) {
+	if (!expansion && !gameOver && !godMode && !otherTeamsWantToHire) {
 		return (
 			<div>
 				<h2>Error</h2>
@@ -106,6 +109,14 @@ const NewTeam = ({
 			<p>
 				Your team no longer exists! Don't worry, it wasn't your fault. Probably.
 				Look, at least some other teams are willing to hire you.
+			</p>
+		);
+	} else if (otherTeamsWantToHire) {
+		message = (
+			<p>
+				You've had so much success that some other teams are interested in
+				hiring you to be their GM. Accept an offer below, or ignore this to
+				continue with your current team.
 			</p>
 		);
 	} else {

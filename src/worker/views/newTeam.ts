@@ -2,11 +2,25 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
+import { team } from "../core";
+
+const getTeamOvr = async (tid: number) => {
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		ratings: ["ovr", "pot"],
+		season: g.get("season"),
+		tid,
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+	});
+	return team.ovr(players);
+};
 
 const updateTeamSelect = async () => {
 	const rawTeams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "region", "name", "pop"],
-		seasonAttrs: ["winp"],
+		attrs: ["tid", "region", "name", "pop", "imgURL", "cid", "abbrev"],
+		seasonAttrs: ["winp", "won", "lost", "tied", "season", "playoffRoundsWon"],
 		season: g.get("season"),
 		active: true,
 		addDummySeason: true,
@@ -56,14 +70,24 @@ const updateTeamSelect = async () => {
 		}
 	}
 
+	const finalTeams = orderedTeams.map(t => ({
+		...t,
+		ovr: 0,
+	}));
+	for (const t of finalTeams) {
+		t.ovr = await getTeamOvr(t.tid);
+	}
+
 	return {
+		confs: g.get("confs"),
 		disabled,
 		expansion,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
 		numActiveTeams,
+		numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
 		phase: g.get("phase"),
-		teams: orderedTeams,
+		teams: finalTeams,
 		userTid: g.get("userTid"),
 	};
 };

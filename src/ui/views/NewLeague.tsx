@@ -1347,6 +1347,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						</div>
 						{!state.equalizeRegions ? (
 							<PopText
+								className="text-muted"
 								tid={state.tid}
 								teams={displayedTeams}
 								numActiveTeams={displayedTeams.length}

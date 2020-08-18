@@ -2,10 +2,12 @@ import PropTypes from "prop-types";
 import React from "react";
 
 const PopText = ({
+	className,
 	numActiveTeams,
 	teams,
 	tid,
 }: {
+	className?: string;
 	numActiveTeams: number;
 	teams: {
 		tid: number;
@@ -35,22 +37,16 @@ const PopText = ({
 			}
 
 			return (
-				<span className="text-muted">
-					Region population:{" "}
+				<span className={className}>
+					Population:{" "}
 					{t.pop !== undefined ? `${t.pop.toFixed(1)} million ` : ""}(#
-					{t.popRank})<br />
-					Size: {size}
+					{t.popRank}, {size})<br />
 				</span>
 			);
 		}
 	}
 
-	return (
-		<span className="text-muted">
-			Region population: ?<br />
-			Size: ?
-		</span>
-	);
+	return <span className={className}>Population: ?</span>;
 };
 
 PopText.propTypes = {

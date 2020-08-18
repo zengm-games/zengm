@@ -1,3 +1,9 @@
+allow switching team if enough success
+
+gm history page
+- store team you were with at end of playoffs in g.gmHistoryTid, wrapped like others
+- abstract common code from teamHistory.ts
+
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile
 - user reports it happens when auto play to playoffs, every time, at some point. doesn't matter what screen they are on
@@ -20,8 +26,6 @@ frivolities
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
 - blog
-
-add "All Seasons" and birth/death years to player bios
 
 nicidob PRs
 - player overall ratings
@@ -73,9 +77,6 @@ jersey styles by team
 
 DP in player ratings only works before the draft. after draft should look for season+1
 - https://old.reddit.com/message/messages/qmo24d
-
-gm history page
-- store team you were with at end of playoffs
 
 player stuff editable outside of god mode
 - jersey number, etc

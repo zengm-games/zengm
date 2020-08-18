@@ -1,17 +1,19 @@
 import PropTypes from "prop-types";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { PHASE } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
-import { PopText } from "../components";
+import { PopText, RecordAndPlayoffs } from "../components";
 
 const NewTeam = ({
+	confs,
 	disabled,
 	expansion,
 	gameOver,
 	godMode,
 	numActiveTeams,
+	numPlayoffRounds,
 	phase,
 	teams,
 	userTid,
@@ -28,7 +30,9 @@ const NewTeam = ({
 		setTid(parseInt(event.currentTarget.value, 10));
 	};
 
-	const handleNewTeam = async () => {
+	const handleNewTeam = async (event: FormEvent) => {
+		event.preventDefault();
+
 		await toWorker("main", "switchTeam", tid);
 		realtimeUpdate(
 			[],
@@ -124,13 +128,15 @@ const NewTeam = ({
 		submitText = "Accept New Job";
 	}
 
+	const t = teams.find(t => t.tid === tid);
+
 	return (
 		<>
 			{message}
 
-			<div className="form-group">
+			<form className="form-inline" onSubmit={handleNewTeam}>
 				<select
-					className="form-control mb-1"
+					className="form-control mr-2"
 					style={{
 						width: "inherit",
 					}}
@@ -147,16 +153,54 @@ const NewTeam = ({
 						);
 					})}
 				</select>
-				<PopText tid={tid} teams={teams} numActiveTeams={numActiveTeams} />
-			</div>
 
-			<button
-				className="btn btn-primary"
-				disabled={tid === undefined}
-				onClick={handleNewTeam}
-			>
-				{submitText}
-			</button>
+				<button className="btn btn-primary" disabled={tid === undefined}>
+					{submitText}
+				</button>
+			</form>
+
+			{t ? (
+				<div className="d-flex mt-3">
+					{t.imgURL ? (
+						<div
+							style={{ width: 90 }}
+							className="mr-3 d-flex align-items-center justify-content-center"
+						>
+							<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`])}>
+								<img className="mw-100 mh-100" src={t.imgURL} alt="Team logo" />
+							</a>
+						</div>
+					) : null}
+					<div>
+						{expansion ? (
+							<>
+								New expansion team!
+								<br />
+							</>
+						) : (
+							<>
+								<RecordAndPlayoffs
+									abbrev={t.abbrev}
+									tid={t.tid}
+									lost={t.seasonAttrs.lost}
+									season={t.seasonAttrs.season}
+									tied={t.seasonAttrs.tied}
+									won={t.seasonAttrs.won}
+									numConfs={confs.length}
+									numPlayoffRounds={numPlayoffRounds}
+									playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
+								/>
+								<br />
+								Team rating: {t.ovr}/100
+							</>
+						)}
+						<br />
+						{confs[t.cid].name}
+						<br />
+						<PopText tid={tid} teams={teams} numActiveTeams={numActiveTeams} />
+					</div>
+				</div>
+			) : null}
 		</>
 	);
 };

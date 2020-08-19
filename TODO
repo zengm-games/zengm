@@ -3,6 +3,8 @@ gm history page
   - wrap userTid!!!
     - change the 2nd arg of g.get to default to Infinity and have a special "current" property for the current season
     - then can leave all g.get("userTid") alone, and it's probably safer in other cases to default to "current"
+    - 1. Change all the current default wrapped ones to , "current"
+    - 2. Change all the Infinity ones to default
   - wrap cutoff at end of playoffs
   - if undefined, init with userTid in infinity slot
   - update after playoffs
@@ -10,6 +12,7 @@ gm history page
     - in groundhog day
     - when selecting new team to override value in league file
     - changing team before/during/after playoffs (all 3 cases in league/create.ts)
+      - test on actual files, but also UNIT TESTS
   - schema
 - abstract common code from teamHistory.ts
 - explain when you can switch teams (success or failure or god mode)

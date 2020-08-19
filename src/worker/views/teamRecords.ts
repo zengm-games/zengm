@@ -407,7 +407,7 @@ const updateTeamRecords = async (
 		}
 
 		if (byType === "by_conf") {
-			teams = g.get("confs").map(conf =>
+			teams = g.get("confs", "current").map(conf =>
 				sumRecordsFor(
 					conf.name,
 					teams.filter(t => {
@@ -420,9 +420,11 @@ const updateTeamRecords = async (
 				),
 			);
 		} else if (byType === "by_div") {
-			teams = g.get("divs").map(div => {
+			teams = g.get("divs", "current").map(div => {
 				let confName;
-				const conf = g.get("confs").find(conf => conf.cid === div.cid);
+				const conf = g
+					.get("confs", "current")
+					.find(conf => conf.cid === div.cid);
 				if (conf) {
 					confName = conf.name;
 				}
@@ -454,7 +456,7 @@ const updateTeamRecords = async (
 		return {
 			byType,
 			teams,
-			ties: g.get("ties", Infinity) || ties,
+			ties: g.get("ties") || ties,
 			userTid: g.get("userTid"),
 		};
 	}

@@ -307,7 +307,8 @@ const doAwards = async (conditions: Conditions) => {
 	let finalsMvp;
 	const champTeam = teams.find(
 		t =>
-			t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length,
+			t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length,
 	);
 
 	if (champTeam) {

@@ -10,7 +10,8 @@ const userWonTitle = async () => {
 	});
 	return (
 		!!t &&
-		t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length
 	);
 };
 

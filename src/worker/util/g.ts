@@ -18,7 +18,7 @@ export const gameAttributeHasHistory = (gameAttribute: any) => {
 const g: GameAttributes & {
 	get: <T extends keyof GameAttributesLeague>(
 		key: T,
-		season?: number,
+		season?: number | "current",
 	) => GameAttributesLeague[T];
 	setWithoutSavingToDB: <T extends keyof GameAttributesLeague>(
 		key: T,
@@ -27,23 +27,22 @@ const g: GameAttributes & {
 } = {
 	lid: undefined,
 
-	get: (key, season) => {
+	get: (key, season = Infinity) => {
 		if (g.hasOwnProperty(key)) {
 			// @ts-ignore
 			const gameAttribute = g[key];
 
 			if (gameAttributeHasHistory(gameAttribute)) {
 				// Return value from row with highest starting season that is still <= the current season
-				let toReturn = gameAttribute[0].value;
-				// @ts-ignore
-				const season2 = season === undefined ? g.season : season;
-				for (const row of gameAttribute) {
-					if (row.start > season2) {
-						break;
+				const season2 = season === "current" ? (g as any).season : season;
+				for (let i = gameAttribute.length - 1; i >= 0; i--) {
+					if (season2 >= gameAttribute[i].start) {
+						return gameAttribute[i].value;
 					}
-					toReturn = row.value;
 				}
-				return toReturn;
+
+				// Should never reach here
+				return gameAttribute[0].value;
 			}
 
 			// @ts-ignore

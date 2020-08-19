@@ -91,7 +91,7 @@ const addTeam = async (): Promise<{
 	stadiumCapacity: number;
 	colors: [string, string, string];
 }> => {
-	const did = g.get("divs")[0].did;
+	const did = g.get("divs", "current")[0].did;
 
 	const t = await team.addNewTeamToExistingLeague({
 		did,
@@ -2495,7 +2495,9 @@ const updateTeamInfo = async (
 		}
 
 		if (newTeam.did !== undefined) {
-			const newDiv = g.get("divs").find(div => div.did === newTeam.did);
+			const newDiv = g
+				.get("divs", "current")
+				.find(div => div.did === newTeam.did);
 			if (newDiv) {
 				t.did = newDiv.did;
 				t.cid = newDiv.cid;

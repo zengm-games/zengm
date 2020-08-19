@@ -47,7 +47,9 @@ describe("worker/core/league/create", () => {
 			leagueData.gameAttributes.season,
 			leagueData.gameAttributes.startingSeason,
 		);
-		assert.equal(leagueData.gameAttributes.userTid, 0);
+		assert.deepEqual(leagueData.gameAttributes.userTid, [
+			{ start: -Infinity, value: 0 },
+		]);
 		assert.equal(leagueData.gameAttributes.gameOver, false);
 		assert.equal(leagueData.gameAttributes.daysLeft, 0);
 		assert.equal(Object.keys(leagueData.gameAttributes).length, 68);

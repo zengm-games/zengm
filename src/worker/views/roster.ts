@@ -195,7 +195,7 @@ const updateRoster = async (
 			currentSeason: g.get("season"),
 			editable,
 			maxRosterSize: g.get("maxRosterSize"),
-			numConfs: g.get("confs").length,
+			numConfs: g.get("confs", "current").length,
 			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 			payroll,
 			phase: g.get("phase"),

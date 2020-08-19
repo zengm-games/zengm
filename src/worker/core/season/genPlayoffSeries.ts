@@ -77,17 +77,17 @@ const genTeam = (t: MyTeam, seed: number): PlayoffSeriesTeam => {
 
 const genPlayoffSeries = (teams: MyTeam[]) => {
 	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	let playoffsByConference = g.get("confs").length === 2;
+	let playoffsByConference = g.get("confs", "current").length === 2;
 
 	// Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
 	const numPlayoffByes = helpers.bound(
-		playoffsByConference && g.get("numPlayoffByes") % 2 === 1
-			? g.get("numPlayoffByes") - 1
-			: g.get("numPlayoffByes"),
+		playoffsByConference && g.get("numPlayoffByes", "current") % 2 === 1
+			? g.get("numPlayoffByes", "current") - 1
+			: g.get("numPlayoffByes", "current"),
 		0,
 		Infinity,
 	);
-	const numRounds = g.get("numGamesPlayoffSeries").length;
+	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
 	helpers.validateRoundsByes(
 		numRounds,
 		numPlayoffByes,
@@ -102,7 +102,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 		if (numRounds > 1) {
 			const seeds = genSeeds(numPlayoffTeams / 2, numPlayoffByes / 2); // Default: top 50% of teams in each of the two conferences
 
-			for (const conf of g.get("confs")) {
+			for (const conf of g.get("confs", "current")) {
 				const cid = conf.cid;
 				const teamsConf: MyTeam[] = [];
 
@@ -140,7 +140,7 @@ const genPlayoffSeries = (teams: MyTeam[]) => {
 			// Special case - if there is only one round, pick the best team in each conference to play
 			const teamsConf: MyTeam[] = [];
 
-			for (const conf of g.get("confs")) {
+			for (const conf of g.get("confs", "current")) {
 				for (let i = 0; i < teams.length; i++) {
 					if (teams[i].seasonAttrs.cid === conf.cid) {
 						teamsConf.push(teams[i]);

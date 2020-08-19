@@ -315,7 +315,7 @@ class GameSim {
 			this.simOvertime();
 
 			// More than one overtime only if no ties are allowed or if it's the playoffs
-			if (g.get("phase") !== PHASE.PLAYOFFS && g.get("ties")) {
+			if (g.get("phase") !== PHASE.PLAYOFFS && g.get("ties", "current")) {
 				break;
 			}
 		}

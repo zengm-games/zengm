@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { draft, player, season, team, league } from "..";
+import { draft, player, season, team } from "..";
 import { idb } from "../../db";
 import {
 	achievement,
@@ -35,7 +35,8 @@ const newPhaseBeforeDraft = async (
 	// Give award to all players on the championship team
 	const t = teams.find(
 		t2 =>
-			t2.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length,
+			t2.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length,
 	);
 
 	if (t !== undefined) {

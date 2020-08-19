@@ -61,12 +61,10 @@ const TeamHistory = ({
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
 					<Overall
-						abbrev={abbrev}
 						bestRecord={bestRecord}
 						championships={championships}
 						finalsAppearances={finalsAppearances}
 						playoffAppearances={playoffAppearances}
-						tid={tid}
 						totalLost={totalLost}
 						totalTied={totalTied}
 						totalWinp={totalWinp}
@@ -74,7 +72,7 @@ const TeamHistory = ({
 						worstRecord={worstRecord}
 					/>
 
-					<Seasons abbrev={abbrev} history={history} tid={tid} />
+					<Seasons history={history} />
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
 					<h2>Retired Jersey Numbers</h2>

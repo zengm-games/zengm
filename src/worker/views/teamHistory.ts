@@ -30,6 +30,8 @@ const getHistory = async (
 		numPlayoffRounds: number;
 		numConfs: number;
 		name?: string;
+		tid: number;
+		abbrev: string;
 	}[] = [];
 
 	let totalWon = 0;
@@ -55,6 +57,9 @@ const getHistory = async (
 				teamSeason.region && teamSeason.name
 					? `${teamSeason.region} ${teamSeason.name}`
 					: undefined,
+			tid: teamSeason.tid,
+			abbrev:
+				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]?.abbrev,
 		});
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;

@@ -2,15 +2,11 @@ import React from "react";
 import { RecordAndPlayoffs } from "../../components";
 import type { View } from "../../../common/types";
 
-const Seasons = ({
-	abbrev,
-	history,
-	tid,
-}: Pick<View<"teamHistory">, "abbrev" | "history" | "tid">) => {
+const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 	const historySeasons = history.map((h, i) => {
 		const recordAndPlayoffs = (
 			<RecordAndPlayoffs
-				abbrev={abbrev}
+				abbrev={h.abbrev}
 				lost={h.lost}
 				numConfs={h.numConfs}
 				numPlayoffRounds={h.numPlayoffRounds}
@@ -22,7 +18,7 @@ const Seasons = ({
 						? { fontWeight: "bold" }
 						: undefined
 				}
-				tid={tid}
+				tid={h.tid}
 				tied={h.tied}
 				won={h.won}
 			/>

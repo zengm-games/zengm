@@ -4,12 +4,10 @@ import type { View } from "../../../common/types";
 import { helpers } from "../../util";
 
 const Overall = ({
-	abbrev,
 	bestRecord,
 	championships,
 	finalsAppearances,
 	playoffAppearances,
-	tid,
 	totalLost,
 	totalTied,
 	totalWinp,
@@ -17,12 +15,10 @@ const Overall = ({
 	worstRecord,
 }: Pick<
 	View<"teamHistory">,
-	| "abbrev"
 	| "bestRecord"
 	| "championships"
 	| "finalsAppearances"
 	| "playoffAppearances"
-	| "tid"
 	| "totalLost"
 	| "totalTied"
 	| "totalWinp"
@@ -49,8 +45,8 @@ const Overall = ({
 				Best Record:{" "}
 				{bestRecord ? (
 					<RecordAndPlayoffs
-						abbrev={abbrev}
-						tid={tid}
+						abbrev={bestRecord.abbrev}
+						tid={bestRecord.tid}
 						lost={bestRecord.lost}
 						season={bestRecord.season}
 						tied={bestRecord.tied}
@@ -63,8 +59,8 @@ const Overall = ({
 				Worst Record:{" "}
 				{worstRecord ? (
 					<RecordAndPlayoffs
-						abbrev={abbrev}
-						tid={tid}
+						abbrev={worstRecord.abbrev}
+						tid={worstRecord.tid}
 						lost={worstRecord.lost}
 						season={worstRecord.season}
 						tied={worstRecord.tied}

@@ -277,6 +277,7 @@ class GameSim {
 						} else {
 							// Apply bonus or penalty
 							this.team[t].player[p].compositeRating[r] *= factor;
+						}
 					}
 				}
 			}

@@ -160,10 +160,6 @@ const newPhaseBeforeDraft = async (
 		achievement.check("afterFired", conditions);
 	}
 
-	await league.setGameAttributes({
-		gmHistoryTid: g.get("userTid"),
-	});
-
 	// Don't redirect if we're viewing a live game now
 	let url;
 	if (!liveGameInProgress) {

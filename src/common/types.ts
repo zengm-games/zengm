@@ -319,7 +319,6 @@ export type GameAttributesLeague = {
 	foulsNeededToFoulOut: number;
 	foulRateFactor: number;
 	gameOver: boolean;
-	gmHistoryTid: number;
 	godMode: boolean;
 	godModeInPast: boolean;
 	gracePeriodEnd: number;
@@ -411,14 +410,13 @@ export type GameAttributesLeagueWithHistory = Omit<
 	GameAttributesLeague,
 	| "confs"
 	| "divs"
-	| "gmHistoryTid"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "ties"
+	| "userTid"
 > & {
 	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
 	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
-	gmHistoryTid: GameAttributeWithHistory<GameAttributesLeague["gmHistoryTid"]>;
 	numGamesPlayoffSeries: GameAttributeWithHistory<
 		GameAttributesLeague["numGamesPlayoffSeries"]
 	>;
@@ -426,6 +424,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	ties: GameAttributeWithHistory<GameAttributesLeague["ties"]>;
+	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
 };
 
 export type GameAttributes =

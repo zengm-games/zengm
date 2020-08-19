@@ -83,8 +83,8 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	const phase =
 		gameAttributes.phase !== undefined ? gameAttributes.phase : g.get("phase");
 
-	if (key === "gmHistoryTid") {
-		// For gmHistoryTid, final update for current season happens in newPhaseBeforeDraft, where it's still PHASE.PLAYOFFS
+	if (key === "userTid") {
+		// For userTid, final update for current season happens in newPhaseBeforeDraft, where it's still PHASE.PLAYOFFS
 		if (phase > PHASE.PLAYOFFS) {
 			currentSeason += 1;
 		}

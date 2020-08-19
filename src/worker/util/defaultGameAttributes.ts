@@ -133,14 +133,13 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,
-	userTid: 0,
-	userTids: [0],
-	gmHistoryTid: [
+	userTid: [
 		{
 			start: -Infinity,
 			value: 0,
 		},
 	],
+	userTids: [0],
 	season: 0,
 	startingSeason: 0,
 	leagueName: "",

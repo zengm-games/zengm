@@ -15,10 +15,10 @@ const loadGameAttributes = async () => {
 	const alwaysWrap = [
 		"confs",
 		"divs",
-		"gmHistoryTid",
 		"numGamesPlayoffSeries",
 		"numPlayoffByes",
 		"ties",
+		"userTid",
 	];
 
 	for (const { key, value } of gameAttributes) {
@@ -74,15 +74,6 @@ const loadGameAttributes = async () => {
 					),
 				});
 				delete (g as any).numPlayoffRounds;
-			} else if (key === "gmHistoryTid") {
-				await league.setGameAttributes({
-					gmHistoryTid: [
-						{
-							start: -Infinity,
-							value: g.get("userTid"),
-						},
-					] as any,
-				});
 			} else {
 				g.setWithoutSavingToDB(key, defaultGameAttributes[key]);
 			}

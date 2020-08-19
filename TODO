@@ -1,6 +1,7 @@
 gm history page
 - store team you were with at end of playoffs in g.gmHistoryTid, wrapped like others
 - abstract common code from teamHistory.ts
+  - abbrev/tid needs to be per season
 - explain when you can switch teams (success or failure or god mode)
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"

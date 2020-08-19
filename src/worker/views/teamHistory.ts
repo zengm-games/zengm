@@ -135,11 +135,6 @@ const getHistory = async (
 		history,
 		players,
 		stats,
-		team: {
-			name: g.get("teamInfoCache")[t.tid]?.name,
-			region: g.get("teamInfoCache")[t.tid]?.region,
-			tid: t.tid,
-		},
 		totalWon,
 		totalLost,
 		totalTied,

@@ -1,5 +1,5 @@
 import { PLAYER } from "../../../common";
-import { draft, player, season, team } from "..";
+import { draft, player, season, team, league } from "..";
 import { idb } from "../../db";
 import {
 	achievement,
@@ -159,6 +159,10 @@ const newPhaseBeforeDraft = async (
 	if (g.get("gameOver")) {
 		achievement.check("afterFired", conditions);
 	}
+
+	await league.setGameAttributes({
+		gmHistoryTid: g.get("userTid"),
+	});
 
 	// Don't redirect if we're viewing a live game now
 	let url;

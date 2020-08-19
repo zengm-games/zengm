@@ -135,6 +135,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	lid: 0,
 	userTid: 0,
 	userTids: [0],
+	gmHistoryTid: [
+		{
+			start: -Infinity,
+			value: 0,
+		},
+	],
 	season: 0,
 	startingSeason: 0,
 	leagueName: "",

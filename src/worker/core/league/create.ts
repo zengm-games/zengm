@@ -273,6 +273,32 @@ export const createWithoutSaving = async (
 		}
 	}
 
+	// Handle case where user switched team on load
+	if (gameAttributes.gmHistoryTid) {
+		const last =
+			gameAttributes.gmHistoryTid[gameAttributes.gmHistoryTid.length - 1];
+		if (last.value !== userTid) {
+			if (gameAttributes.season === gameAttributes.startingSeason) {
+				// If this is first year in the file, put at -Infinity
+				gameAttributes.gmHistoryTid = [
+					{
+						start: -Infinity,
+						value: userTid,
+					},
+				];
+			} else if (last.start === gameAttributes.season) {
+				// Overwrite entry for this season
+				last.value = userTid;
+			} else {
+				// Add new entry
+				gameAttributes.gmHistoryTid.push({
+					start: gameAttributes.season,
+					value: userTid,
+				});
+			}
+		}
+	}
+
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
 

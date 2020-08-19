@@ -83,9 +83,16 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	const phase =
 		gameAttributes.phase !== undefined ? gameAttributes.phase : g.get("phase");
 
-	// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For ties it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
-	if (phase >= PHASE.PLAYOFFS) {
-		currentSeason += 1;
+	if (key === "gmHistoryTid") {
+		// For gmHistoryTid, final update for current season happens in newPhaseBeforeDraft, where it's still PHASE.PLAYOFFS
+		if (phase > PHASE.PLAYOFFS) {
+			currentSeason += 1;
+		}
+	} else {
+		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For ties it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
+		if (phase >= PHASE.PLAYOFFS) {
+			currentSeason += 1;
+		}
 	}
 
 	// This mutates, but the result supposed to be updated immediately anyway, so whatever

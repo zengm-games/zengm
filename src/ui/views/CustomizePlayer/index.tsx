@@ -8,7 +8,7 @@ import React, {
 	ReactNode,
 } from "react";
 import { PHASE, PLAYER, RATINGS, POSITIONS } from "../../../common";
-import { PlayerPicture } from "../../components";
+import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker, logEvent } from "../../util";
 import RatingsForm from "./RatingsForm";
@@ -582,7 +582,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								</select>
 							</div>
 							<div className="col-sm-3 form-group">
-								<label>Height (inches)</label>
+								<label>
+									Height (inches){" "}
+									<HelpPopover title="Height (inches)">
+										Height (inches) is just for show. The height rating is what
+										actually gets used in game simulations.
+									</HelpPopover>
+								</label>
 								<input
 									type="text"
 									className="form-control"
@@ -591,7 +597,13 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								/>
 							</div>
 							<div className="col-sm-3 form-group">
-								<label>Weight (lbs)</label>
+								<label>
+									Weight (lbs){" "}
+									<HelpPopover title="Weight (lbs)">
+										Weight (lbs) is just for show. The height and strength
+										ratings are what actually gets used in game simulations.
+									</HelpPopover>
+								</label>
 								<input
 									type="text"
 									className="form-control"

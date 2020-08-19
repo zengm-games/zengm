@@ -2,9 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-18: If you are successful (high score in the owner's annual performance review) then sometimes other teams will try to hire you. This happens between the playoffs and draft. Previously, the only way to change teams was to get fired or use God Mode. [[1]]()
+* 2020-08-18: If you are successful (high score in the owner's annual performance review) then sometimes other teams will try to hire you. This happens between the playoffs and draft. Previously, the only way to change teams was to get fired or use God Mode. [[1]](https://old.reddit.com/r/BasketballGM/comments/iccozz/if_you_are_successful_high_score_in_the_owners/)
 
-* 2020-08-18: Purely cosmetic player attributes that don't affect gameplay or achievements (name, height (inches), weight (lbs), jersey number, college) are editable outside of God Mode by going to a player's page and clicking Edit Player. [[1]]()
+* 2020-08-18: Purely cosmetic player attributes that don't affect gameplay or achievements (name, height (inches), weight (lbs), jersey number, college) are editable outside of God Mode by going to a player's page and clicking Edit Player. [[1]](https://old.reddit.com/r/BasketballGM/comments/iccp0h/purely_cosmetic_player_attributes_that_dont/)
 
 * 2020-08-17: Added TS%, 3PAr, and FTr to the player info popup. [[1]](https://old.reddit.com/r/BasketballGM/comments/ibqgvt/there_have_been_some_requests_for_fg3pft_on_the/)
 

@@ -19,7 +19,15 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			season <= g.get("season");
 			season++
 		) {
-			const ts = await teamSeasonsIndex.get([season, g.get("userTid", season)]);
+			let ts;
+			if (season === g.get("season")) {
+				ts = await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+					g.get("userTid", season),
+					g.get("season"),
+				]);
+			} else {
+				ts = await teamSeasonsIndex.get([season, g.get("userTid", season)]);
+			}
 			if (ts) {
 				teamSeasons.push(ts);
 

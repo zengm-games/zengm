@@ -691,7 +691,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							minimum: 0,
 						}),
 						gameAttribute("userTid", {
-							type: "integer",
+							type: ["integer", "array"],
 						}),
 						gameAttribute("userTids", {
 							type: "array",

@@ -4,7 +4,6 @@ import { helpers } from "../util";
 import type { View } from "../../common/types";
 import Overall from "./TeamHistory/Overall";
 import Players from "./TeamHistory/Players";
-import RetiredJerseyNumbers from "./TeamHistory/RetiredJerseyNumbers";
 import Seasons from "./TeamHistory/Seasons";
 
 const GmHistory = ({

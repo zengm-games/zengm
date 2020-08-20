@@ -3,7 +3,7 @@ import g from "./g";
 import type { Achievement } from "../../common/types";
 
 const checkFoFoFo = async () => {
-	if (g.get("numGamesPlayoffSeries").length < 3) {
+	if (g.get("numGamesPlayoffSeries", "current").length < 3) {
 		return false;
 	}
 
@@ -74,7 +74,8 @@ const userWonTitle = async () => {
 		tid: g.get("userTid"),
 	});
 	return t
-		? t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
+		? t.seasonAttrs.playoffRoundsWon ===
+				g.get("numGamesPlayoffSeries", "current").length
 		: false;
 };
 
@@ -538,7 +539,7 @@ const achievements: Achievement[] = [
 			if (
 				!t ||
 				t.seasonAttrs.playoffRoundsWon !==
-					g.get("numGamesPlayoffSeries").length - 1
+					g.get("numGamesPlayoffSeries", "current").length - 1
 			) {
 				return false;
 			}

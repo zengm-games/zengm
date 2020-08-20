@@ -579,6 +579,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							true,
 						),
+						gameAttribute("otherTeamsWantToHire", {
+							type: "boolean",
+						}),
 						gameAttribute(
 							"playerBioInfo",
 							{
@@ -691,7 +694,7 @@ const generateJSONSchema = (sport /*: string*/) => {
 							minimum: 0,
 						}),
 						gameAttribute("userTid", {
-							type: "integer",
+							type: ["integer", "array"],
 						}),
 						gameAttribute("userTids", {
 							type: "array",

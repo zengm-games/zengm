@@ -79,13 +79,13 @@ const updateTeamSelect = async () => {
 	}
 
 	return {
-		confs: g.get("confs"),
+		confs: g.get("confs", "current"),
 		disabled,
 		expansion,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
 		numActiveTeams,
-		numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
+		numPlayoffRounds: g.get("numGamesPlayoffSeries", "current").length,
 		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
 		phase: g.get("phase"),
 		teams: finalTeams,

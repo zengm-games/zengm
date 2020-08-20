@@ -16,7 +16,7 @@ const updatePlayoffSeries = async (
 	}
 	const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 	const numGamesToWinSeries = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries")[playoffSeries.currentRound],
+		g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
 	);
 
 	for (const result of results) {
@@ -113,12 +113,12 @@ const updatePlayoffSeries = async (
 				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
 			} else if (
 				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries").length - 3
+				g.get("numGamesPlayoffSeries", "current").length - 3
 			) {
 				currentRoundText = "quarterfinals";
 			} else if (
 				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries").length - 2
+				g.get("numGamesPlayoffSeries", "current").length - 2
 			) {
 				currentRoundText = "semifinals";
 
@@ -126,7 +126,7 @@ const updatePlayoffSeries = async (
 				saveToDb = false;
 			} else if (
 				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries").length - 1
+				g.get("numGamesPlayoffSeries", "current").length - 1
 			) {
 				currentRoundText = "finals";
 
@@ -149,7 +149,7 @@ const updatePlayoffSeries = async (
 				series.away.tid === g.get("userTid") ||
 				series.home.tid === g.get("userTid") ||
 				playoffSeries.currentRound ===
-					g.get("numGamesPlayoffSeries").length - 1;
+					g.get("numGamesPlayoffSeries", "current").length - 1;
 			logEvent(
 				{
 					type: "playoffs",

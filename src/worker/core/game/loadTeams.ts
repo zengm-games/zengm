@@ -58,7 +58,7 @@ const processTeam = (
 		pace: 0,
 		won: teamSeason.won,
 		lost: teamSeason.lost,
-		tied: g.get("ties") ? teamSeason.tied : undefined,
+		tied: g.get("ties", "current") ? teamSeason.tied : undefined,
 		cid: teamSeason.cid,
 		did: teamSeason.did,
 		ovr,

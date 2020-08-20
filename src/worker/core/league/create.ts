@@ -26,7 +26,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	DraftPickWithoutKey,
 } from "../../../common/types";
-import { unwrap, wrap } from "../../util/g";
+import { unwrap, wrap, gameAttributeHasHistory } from "../../util/g";
 
 const confirmSequential = (objs: any, key: string, objectName: string) => {
 	const values = new Set();
@@ -157,7 +157,12 @@ export const createWithoutSaving = async (
 
 	const gameAttributes: GameAttributesLeagueWithHistory = {
 		...defaultGameAttributes,
-		userTid,
+		userTid: [
+			{
+				start: -Infinity,
+				value: userTid,
+			},
+		],
 		userTids: [userTid],
 		season: startingSeason,
 		startingSeason,
@@ -177,13 +182,15 @@ export const createWithoutSaving = async (
 
 	if (leagueFile.gameAttributes) {
 		for (const gameAttribute of leagueFile.gameAttributes) {
-			// Set default for anything except team ID and name, since they can be overwritten by form input.
+			// Set default for anything except these, since they can be overwritten by form input.
 			if (
-				gameAttribute.key !== "userTid" &&
 				gameAttribute.key !== "leagueName" &&
 				gameAttribute.key !== "difficulty"
 			) {
-				(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
+				// userTid is handled special below
+				if (gameAttribute.key !== "userTid") {
+					(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
+				}
 
 				// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
 				if (
@@ -196,9 +203,53 @@ export const createWithoutSaving = async (
 			}
 		}
 
+		// 2nd pass, so we know phase/season from league file were applied already
+		for (const gameAttribute of leagueFile.gameAttributes) {
+			if (gameAttribute.key === "userTid") {
+				// Handle league file with userTid history, but user selected a new team maybe
+				if (gameAttributeHasHistory(gameAttribute.value)) {
+					const last = gameAttribute.value[gameAttribute.value.length - 1];
+					if (last.value === userTid) {
+						// Bring over history
+						gameAttributes.userTid = gameAttribute.value;
+					} else {
+						if (gameAttributes.season === gameAttributes.startingSeason) {
+							// If this is first year in the file, put at -Infinity
+							gameAttributes.userTid = [
+								{
+									start: -Infinity,
+									value: userTid,
+								},
+							];
+						} else {
+							// Bring over history
+							gameAttributes.userTid = gameAttribute.value;
+
+							// Keep in sync with g.wrap
+							let currentSeason = gameAttributes.season;
+							if (gameAttributes.phase > PHASE.PLAYOFFS) {
+								currentSeason += 1;
+							}
+
+							if (last.start === currentSeason) {
+								// Overwrite entry for this season
+								last.value = userTid;
+							} else {
+								// Add new entry
+								gameAttributes.userTid.push({
+									start: currentSeason,
+									value: userTid,
+								});
+							}
+						}
+					}
+				}
+			}
+		}
+
 		// Special case for userTids - don't use saved value if userTid is not in it
-		if (!gameAttributes.userTids.includes(gameAttributes.userTid)) {
-			gameAttributes.userTids = [gameAttributes.userTid];
+		if (!gameAttributes.userTids.includes(userTid)) {
+			gameAttributes.userTids = [userTid];
 		}
 	}
 
@@ -959,7 +1010,10 @@ const create = async ({
 		phaseText = "";
 	}
 
-	const userTid = leagueData.gameAttributes.userTid;
+	const userTid =
+		leagueData.gameAttributes.userTid[
+			leagueData.gameAttributes.userTid.length - 1
+		].value;
 	const l: League = {
 		name,
 		tid: userTid,

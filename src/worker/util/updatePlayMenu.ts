@@ -211,7 +211,7 @@ const updatePlayMenu = async () => {
 		}
 
 		// If playoff contains no rounds with more than one game, then untilEndOfRound is not needed
-		const maxGames = Math.max(...g.get("numGamesPlayoffSeries"));
+		const maxGames = Math.max(...g.get("numGamesPlayoffSeries", "current"));
 		if (maxGames <= 1) {
 			keys = keys.filter(key => key !== "untilEndOfRound");
 		}

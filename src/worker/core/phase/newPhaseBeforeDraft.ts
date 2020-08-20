@@ -35,7 +35,8 @@ const newPhaseBeforeDraft = async (
 	// Give award to all players on the championship team
 	const t = teams.find(
 		t2 =>
-			t2.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length,
+			t2.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length,
 	);
 
 	if (t !== undefined) {

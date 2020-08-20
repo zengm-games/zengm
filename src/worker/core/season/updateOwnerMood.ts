@@ -38,7 +38,7 @@ const updateOwnerMood = async (): Promise<
 
 	const expectedProfit = (15 * g.get("salaryCap")) / 90000;
 
-	const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 	const deltas = {
 		wins:
 			(0.25 * (t.seasonAttrs.won - g.get("numGames") / 2)) /

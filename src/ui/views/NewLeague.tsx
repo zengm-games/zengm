@@ -957,12 +957,14 @@ const NewLeague = (props: View<"newLeague">) => {
 			// Need to update team and difficulty dropdowns?
 			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
 				for (const ga of newLeagueFile.gameAttributes) {
-					if (
-						ga.key === "userTid" &&
-						typeof ga.value === "number" &&
-						!Number.isNaN(ga.value)
-					) {
-						dispatch({ type: "setTid", tid: ga.value });
+					if (ga.key === "userTid") {
+						let tid = ga.value;
+						if (Array.isArray(tid) && tid.length > 0) {
+							tid = tid[tid.length - 1].value;
+						}
+						if (typeof tid === "number" && !Number.isNaN(tid)) {
+							dispatch({ type: "setTid", tid });
+						}
 					} else if (
 						ga.key === "difficulty" &&
 						typeof ga.value === "number" &&

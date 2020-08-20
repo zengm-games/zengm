@@ -1,7 +1,9 @@
 gm history page
-- store team you were with at end of playoffs in g.gmHistoryTid, wrapped like others
-- abstract common code from teamHistory.ts
-- explain when you can switch teams (success or failure or god mode)
+- snippet on worker console page showing how to edit history
+- career history or gm history?
+- blog
+  - history of switching teams
+  - top text
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile
@@ -24,7 +26,6 @@ frivolities
   - best playoffs (record in individual playoffs)
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
-- blog
 
 nicidob PRs
 - player overall ratings
@@ -76,9 +77,6 @@ jersey styles by team
 
 DP in player ratings only works before the draft. after draft should look for season+1
 - https://old.reddit.com/message/messages/qmo24d
-
-player stuff editable outside of god mode
-- jersey number, etc
 
 jeresy style in teamseason
 
@@ -220,10 +218,6 @@ scheduled events editor
   - edit
     - game attributes - share code with god mode settings
     - open modal on click "edit", or inline form
-
-move stuff out of god mode @El Clon#3483 
-- options?
-- player editor?
 
 more realistic free agents when generating league
 - look at retired young players from previous season
@@ -577,8 +571,6 @@ more dynamic contracts, based on available cap space
   - sliders to control talent levels
   - @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
-if earned achievement but blocked due to god mode in past or easy difficulty, still send notification explaining that
-
 less fatigue in playoffs
 - benchmark playoff performance (seed upsets)
 
@@ -595,7 +587,7 @@ in watchlist, if you have a player play the prior  year's playoffs and then they
 
 Game list redesign
 - later
-  - show record and ovr in box score too
+  - show ovr in box score too
   - show player with highest game score under completed game
 
 teamRegion in playersPlus needed?

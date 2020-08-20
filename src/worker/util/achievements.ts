@@ -29,7 +29,7 @@ const checkDynasty = async (titles: number, years: number) => {
 		// Won title?
 		if (
 			teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon ===
-			g.get("numGamesPlayoffSeries").length
+			g.get("numGamesPlayoffSeries", "current").length
 		) {
 			titlesFound += 1;
 		}
@@ -46,7 +46,8 @@ const checkMoneyball = async (maxPayroll: number) => {
 	});
 	return !!(
 		t &&
-		t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length &&
+		t.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
 		t.seasonAttrs.expenses.salary.amount <= maxPayroll
 	);
 };
@@ -58,7 +59,8 @@ const userWonTitle = async () => {
 		tid: g.get("userTid"),
 	});
 	return t
-		? t.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length
+		? t.seasonAttrs.playoffRoundsWon ===
+				g.get("numGamesPlayoffSeries", "current").length
 		: false;
 };
 
@@ -192,7 +194,7 @@ const achievements: Achievement[] = [
 			return !!(
 				t &&
 				t.seasonAttrs.playoffRoundsWon ===
-					g.get("numGamesPlayoffSeries").length &&
+					g.get("numGamesPlayoffSeries", "current").length &&
 				t.seasonAttrs.pop <= 2
 			);
 		},
@@ -258,7 +260,7 @@ const achievements: Achievement[] = [
 			for (const teamSeason of teamSeasons) {
 				if (
 					teamSeason.playoffRoundsWon ===
-					g.get("numGamesPlayoffSeries").length - 1
+					g.get("numGamesPlayoffSeries", "current").length - 1
 				) {
 					count += 1;
 				}

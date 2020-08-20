@@ -129,7 +129,7 @@ const updateLeagueStats = async (
 			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
-			ties: g.get("ties", Infinity) || ties,
+			ties: g.get("ties") || ties,
 		};
 	}
 };

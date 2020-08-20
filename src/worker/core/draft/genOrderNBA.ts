@@ -142,7 +142,8 @@ const genOrder = async (
 	const draftType = draftTypeTemp as typeof VALID_DRAFT_TYPES[number];
 
 	const numPlayoffTeams =
-		2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
+		2 ** g.get("numGamesPlayoffSeries", "current").length -
+		g.get("numPlayoffByes", "current");
 
 	const info = getLotteryInfo(draftType, teams.length - numPlayoffTeams);
 	const minNumLotteryTeams = info.minNumTeams;

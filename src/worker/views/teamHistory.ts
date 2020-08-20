@@ -3,16 +3,15 @@ import { g, helpers } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
-	Team,
 	TeamSeason,
 	Player,
 } from "../../common/types";
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 
-const getHistory = async (
-	t: Team,
+export const getHistory = async (
 	teamSeasons: TeamSeason[],
 	playersAll: Player[],
+	gmHistory?: boolean,
 ) => {
 	let bestRecord;
 	let worstRecord;
@@ -30,6 +29,8 @@ const getHistory = async (
 		numPlayoffRounds: number;
 		numConfs: number;
 		name?: string;
+		tid: number;
+		abbrev: string;
 	}[] = [];
 
 	let totalWon = 0;
@@ -55,6 +56,9 @@ const getHistory = async (
 				teamSeason.region && teamSeason.name
 					? `${teamSeason.region} ${teamSeason.name}`
 					: undefined,
+			tid: teamSeason.tid,
+			abbrev:
+				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]?.abbrev,
 		});
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;
@@ -110,12 +114,11 @@ const getHistory = async (
 	players = players.filter(p => p.careerStats.gp > 0);
 
 	for (const p of players) {
-		p.stats.reverse();
-
-		for (let j = 0; j < p.stats.length; j++) {
-			if (p.stats[j].abbrev === g.get("teamInfoCache")[t.tid]?.abbrev) {
-				p.lastYr = p.stats[j].season.toString();
-				break;
+		p.lastYr = "";
+		if (p.stats.length > 0) {
+			p.lastYr = p.stats[p.stats.length - 1].season.toString();
+			if (gmHistory) {
+				p.lastYr += ` ${p.stats[p.stats.length - 1].abbrev}`;
 			}
 		}
 
@@ -135,11 +138,6 @@ const getHistory = async (
 		history,
 		players,
 		stats,
-		team: {
-			name: g.get("teamInfoCache")[t.tid]?.name,
-			region: g.get("teamInfoCache")[t.tid]?.region,
-			tid: t.tid,
-		},
 		totalWon,
 		totalLost,
 		totalTied,
@@ -149,6 +147,7 @@ const getHistory = async (
 		championships,
 		bestRecord,
 		worstRecord,
+		userTid: g.get("userTid"),
 	};
 };
 
@@ -180,7 +179,7 @@ const updateTeamHistory = async (
 			p.stats = p.stats.filter(row => row.tid === inputs.tid);
 		}
 
-		const history = await getHistory(t, teamSeasons, players);
+		const history = await getHistory(teamSeasons, players);
 
 		const retiredJerseyNumbers = await Promise.all(
 			(t.retiredJerseyNumbers || []).map(async row => {
@@ -215,7 +214,6 @@ const updateTeamHistory = async (
 			abbrev: inputs.abbrev,
 			tid: inputs.tid,
 			godMode: g.get("godMode"),
-			userTid: g.get("userTid"),
 			season: g.get("season"),
 			retiredJerseyNumbers,
 		};

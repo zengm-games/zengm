@@ -149,7 +149,7 @@ const processGameAttributes = async (
 		);
 	}
 
-	const prevNumPlayoffByes = g.get("numPlayoffByes");
+	const prevNumPlayoffByes = g.get("numPlayoffByes", "current");
 	if (
 		info.numPlayoffByes !== undefined &&
 		info.numPlayoffByes !== prevNumPlayoffByes
@@ -161,7 +161,7 @@ const processGameAttributes = async (
 		);
 	}
 
-	const prevNumGamesPlayoffSeries = g.get("numGamesPlayoffSeries");
+	const prevNumGamesPlayoffSeries = g.get("numGamesPlayoffSeries", "current");
 	if (
 		info.numGamesPlayoffSeries !== undefined &&
 		JSON.stringify(info.numGamesPlayoffSeries) !==

@@ -18,7 +18,7 @@ export const gameAttributeHasHistory = (gameAttribute: any) => {
 const g: GameAttributes & {
 	get: <T extends keyof GameAttributesLeague>(
 		key: T,
-		season?: number,
+		season?: number | "current",
 	) => GameAttributesLeague[T];
 	setWithoutSavingToDB: <T extends keyof GameAttributesLeague>(
 		key: T,
@@ -27,23 +27,22 @@ const g: GameAttributes & {
 } = {
 	lid: undefined,
 
-	get: (key, season) => {
+	get: (key, season = Infinity) => {
 		if (g.hasOwnProperty(key)) {
 			// @ts-ignore
 			const gameAttribute = g[key];
 
 			if (gameAttributeHasHistory(gameAttribute)) {
 				// Return value from row with highest starting season that is still <= the current season
-				let toReturn = gameAttribute[0].value;
-				// @ts-ignore
-				const season2 = season === undefined ? g.season : season;
-				for (const row of gameAttribute) {
-					if (row.start > season2) {
-						break;
+				const season2 = season === "current" ? (g as any).season : season;
+				for (let i = gameAttribute.length - 1; i >= 0; i--) {
+					if (season2 >= gameAttribute[i].start) {
+						return gameAttribute[i].value;
 					}
-					toReturn = row.value;
 				}
-				return toReturn;
+
+				// Should never reach here
+				return gameAttribute[0].value;
 			}
 
 			// @ts-ignore
@@ -83,9 +82,16 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	const phase =
 		gameAttributes.phase !== undefined ? gameAttributes.phase : g.get("phase");
 
-	// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For ties it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
-	if (phase >= PHASE.PLAYOFFS) {
-		currentSeason += 1;
+	if (key === "userTid") {
+		// For userTid, final update for current season happens in newPhaseBeforeDraft, where it's still PHASE.PLAYOFFS
+		if (phase > PHASE.PLAYOFFS) {
+			currentSeason += 1;
+		}
+	} else {
+		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For ties it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
+		if (phase >= PHASE.PLAYOFFS) {
+			currentSeason += 1;
+		}
 	}
 
 	// This mutates, but the result supposed to be updated immediately anyway, so whatever

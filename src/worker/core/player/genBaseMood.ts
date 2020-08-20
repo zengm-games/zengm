@@ -8,7 +8,8 @@ const genBaseMood = (
 ): number => {
 	// Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
 	if (
-		teamSeason.playoffRoundsWon === g.get("numGamesPlayoffSeries").length &&
+		teamSeason.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length &&
 		Math.random() < 0.99
 	) {
 		return -0.25; // Should guarantee no refusing to re-sign

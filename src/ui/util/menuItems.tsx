@@ -140,6 +140,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["team_history"],
 				text: "History",
 			},
+			{
+				type: "link",
+				active: pageID => pageID === "gmHistory",
+				league: true,
+				path: ["gm_history"],
+				text: "GM History",
+			},
 		],
 	},
 	{

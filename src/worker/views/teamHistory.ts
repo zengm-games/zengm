@@ -9,7 +9,7 @@ import type {
 } from "../../common/types";
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 
-const getHistory = async (
+export const getHistory = async (
 	t: Team,
 	teamSeasons: TeamSeason[],
 	playersAll: Player[],
@@ -149,6 +149,7 @@ const getHistory = async (
 		championships,
 		bestRecord,
 		worstRecord,
+		userTid: g.get("userTid"),
 	};
 };
 
@@ -215,7 +216,6 @@ const updateTeamHistory = async (
 			abbrev: inputs.abbrev,
 			tid: inputs.tid,
 			godMode: g.get("godMode"),
-			userTid: g.get("userTid"),
 			season: g.get("season"),
 			retiredJerseyNumbers,
 		};

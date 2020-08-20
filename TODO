@@ -9,6 +9,7 @@ gm history page
 - abstract common code from teamHistory.ts
 - explain when you can switch teams (success or failure or god mode)
 - snippet on worker console page showing how to edit history
+- career history or gm history?
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile

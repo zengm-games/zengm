@@ -25,6 +25,7 @@ import FreeAgents from "./FreeAgents";
 import Frivolities from "./Frivolities";
 import FrivolitiesDraftClasses from "./FrivolitiesDraftClasses";
 import FrivolitiesTeamSeasons from "./FrivolitiesTeamSeasons";
+import GmHistory from "./GmHistory";
 import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
@@ -109,6 +110,7 @@ export default {
 	Frivolities,
 	FrivolitiesDraftClasses,
 	FrivolitiesTeamSeasons,
+	GmHistory,
 	GameLog,
 	GodMode,
 	HallOfFame,

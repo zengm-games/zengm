@@ -68,6 +68,11 @@ const changes = [
 		msg:
 			'The contract generation algorithm has been rewritten. You should no longer see players ask for too much money and go unsigned. <a href="https://basketball-gm.com/blog/2020/08/smarter-contract-generation/">More details</a>',
 	},
+	{
+		date: "2020-08-20",
+		msg:
+			'Added a new "GM History" page in the Team menu, where you can see your performance across all the different franchises you managed in the past. <a href="https://basketball-gm.com/blog/2020/08/gm-history/">More details</a>',
+	},
 ];
 
 export default changes;

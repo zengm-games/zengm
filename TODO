@@ -1,11 +1,4 @@
 gm history page
-- wrap userTid!!!
-  - parsing league file in NewLeague to update form
-  - make sure works
-    - in groundhog day
-    - when selecting new team to override value in league file
-    - changing team before/during/after playoffs (all 3 cases in league/create.ts)
-      - test on actual files, but also UNIT TESTS
 - snippet on worker console page showing how to edit history
 - career history or gm history?
 

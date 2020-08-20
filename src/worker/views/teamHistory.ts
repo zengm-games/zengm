@@ -3,14 +3,12 @@ import { g, helpers } from "../util";
 import type {
 	UpdateEvents,
 	ViewInput,
-	Team,
 	TeamSeason,
 	Player,
 } from "../../common/types";
 import { getMostCommonPosition } from "../core/player/checkJerseyNumberRetirement";
 
 export const getHistory = async (
-	t: Team,
 	teamSeasons: TeamSeason[],
 	playersAll: Player[],
 	gmHistory?: boolean,
@@ -181,7 +179,7 @@ const updateTeamHistory = async (
 			p.stats = p.stats.filter(row => row.tid === inputs.tid);
 		}
 
-		const history = await getHistory(t, teamSeasons, players);
+		const history = await getHistory(teamSeasons, players);
 
 		const retiredJerseyNumbers = await Promise.all(
 			(t.retiredJerseyNumbers || []).map(async row => {

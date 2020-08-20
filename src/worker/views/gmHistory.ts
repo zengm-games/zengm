@@ -9,12 +9,6 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("gameAttributes")
 	) {
-		const tid = g.get("userTid");
-		const t = await idb.cache.teams.get(tid);
-		if (!t) {
-			throw new Error("Invalid team ID number");
-		}
-
 		const seasonsByTid: Record<number, Set<number>> = {};
 		const teamSeasons: TeamSeason[] = [];
 		const teamSeasonsIndex = idb.league
@@ -63,7 +57,7 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 		);
 
-		return getHistory(t, teamSeasons, players, true);
+		return getHistory(teamSeasons, players, true);
 	}
 };
 

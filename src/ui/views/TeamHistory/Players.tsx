@@ -5,10 +5,13 @@ import { helpers, getCols } from "../../util";
 import type { View } from "../../../common/types";
 
 const Players = ({
+	gmHistory,
 	players,
 	stats,
 	tid,
-}: Pick<View<"teamHistory">, "players" | "stats" | "tid">) => {
+}: Pick<View<"teamHistory">, "players" | "stats" | "tid"> & {
+	gmHistory?: boolean;
+}) => {
 	const cols = getCols(
 		"Name",
 		"Pos",
@@ -40,7 +43,7 @@ const Players = ({
 		<>
 			<h2>Players</h2>
 			<p>
-				Players currently on this team are{" "}
+				Players currently on {gmHistory ? "your" : "this"} team are{" "}
 				<span className="text-success">highlighted in green</span>. Other active
 				players are <span className="text-info">highlighted in blue</span>.
 				Players in the Hall of Fame are{" "}

@@ -1,8 +1,9 @@
 import { idb } from "../../db";
-import { g, toUI, helpers, initUILocalGames, local } from "../../util";
+import { g, helpers, initUILocalGames, local } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
 import { finances, draft } from "..";
+import gameAttributesToUI from "./gameAttributesToUI";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	if (local.autoSave) {
@@ -145,7 +146,7 @@ const setGameAttributes = async (
 		}
 	}
 
-	await toUI("setGameAttributes", [updated]);
+	await gameAttributesToUI(updated);
 
 	if (toUpdate.includes("userTid")) {
 		await initUILocalGames();

@@ -1,9 +1,6 @@
 import create from "zustand";
 import shallow from "zustand/shallow";
-import type {
-	LocalStateUI,
-	GameAttributesLeagueWithHistory,
-} from "../../common/types";
+import type { LocalStateUI, GameAttributesLeague } from "../../common/types";
 import safeLocalStorage from "./safeLocalStorage";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
@@ -14,9 +11,7 @@ type LocalActions = {
 	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
-	updateGameAttributes: (
-		gameAttributes: Partial<GameAttributesLeagueWithHistory>,
-	) => void;
+	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
 };
 
 const defaultUnits: "metric" | "us" =
@@ -134,9 +129,8 @@ const [useLocal, local] = create<
 			set(obj);
 		},
 
-		updateGameAttributes(
-			gameAttributes: Partial<GameAttributesLeagueWithHistory>,
-		) {
+		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
+			// Keep in sync with gameAttributesToUI - this is just for TypeScript
 			const keys = [
 				"challengeNoRatings",
 				"godMode",
@@ -153,7 +147,7 @@ const [useLocal, local] = create<
 
 			let update = false;
 
-			const updates: Partial<GameAttributesLeagueWithHistory> = {};
+			const updates: Partial<GameAttributesLeague> = {};
 
 			for (const key of keys) {
 				if (

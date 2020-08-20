@@ -1,8 +1,9 @@
 import { league } from "..";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, toUI } from "../../util";
+import { defaultGameAttributes, g } from "../../util";
 import { helpers } from "../../../common";
 import { unwrap, gameAttributeHasHistory } from "../../util/g";
+import gameAttributesToUI from "./gameAttributesToUI";
 
 /**
  * Load game attributes from the database and update the global variable g.
@@ -88,10 +89,7 @@ const loadGameAttributes = async () => {
 		g.setWithoutSavingToDB("draftType", "nba2019");
 	}
 
-	const gToUI = { ...g };
-	delete gToUI.get;
-	delete gToUI.setWithoutSavingToDB;
-	await toUI("setGameAttributes", [gToUI]);
+	await gameAttributesToUI(g as any);
 };
 
 export default loadGameAttributes;

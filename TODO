@@ -969,8 +969,6 @@ re-evaluate contracts
 make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
 
-ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
-
 somewhere, show average age of team
 
 increase PG cutoff

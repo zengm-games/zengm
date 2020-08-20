@@ -10,10 +10,10 @@ import {
 } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
-	GameAttributes,
 	LocalStateUI,
 	LogEventShowOptions,
 	UpdateEvents,
+	GameAttributesLeague,
 } from "../../common/types";
 
 /**
@@ -135,7 +135,7 @@ const resetLeague = () => {
 	localActions.resetLeague();
 };
 
-const setGameAttributes = (gameAttributes: Partial<GameAttributes>) => {
+const setGameAttributes = (gameAttributes: Partial<GameAttributesLeague>) => {
 	localActions.updateGameAttributes(gameAttributes);
 };
 

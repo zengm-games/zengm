@@ -4,7 +4,9 @@ import { g } from "../../util";
 import type { Player, MinimalPlayerRatings } from "../../../common/types";
 import { COMPOSITE_WEIGHTS } from "../../../common";
 
+// This adjusts player ratings based on their current ovr rating in the playoffs. Star players perform better as they try harder (with freshly managed loads). The function itself is a logistic curve in terms of how players are boosted.
 const playoffTryhardModifer = (x: number): number => {
+	// x represents the player ovr, y represents the % boost to stats. To simulate a logistic function, I first chose the % increase at different overalls (such as 1% for 45 and 23% at 75) and fitted the associated equation here
 	var y = 0.0;
 	if (x < 45) {
 		y = 0.01;
@@ -16,12 +18,12 @@ const playoffTryhardModifer = (x: number): number => {
 			12.83;
 	} else if (x >= 60 && x <= 75) {
 		y =
-			0.0000266667 * Math.pow(x, 3) -
-			0.0056 * Math.pow(x, 2) +
-			0.3933333333 * x -
-			9.05;
+			-0.0000133333 * Math.pow(x, 3) +
+			0.0024000000 * Math.pow(x, 2) -
+			0.1356666667 * x +
+			2.5300000000;
 	} else if (x > 75) {
-		y = 0.2;
+		y = 0.23;
 	}
 	return (y += 1);
 };

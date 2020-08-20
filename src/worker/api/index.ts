@@ -45,6 +45,7 @@ import {
 	recomputeLocalUITeamOvrs,
 	updatePhase,
 	logEvent,
+	getNewLeagueLid,
 } from "../util";
 import views from "../views";
 import type {
@@ -396,6 +397,11 @@ const createLeague = async ({
 				};
 			}
 		}
+	}
+
+	if (importLid === undefined) {
+		// Figure out what lid should be rather than using auto increment primary key, because when deleting leagues the primary key does not reset which can look weird
+		importLid = await getNewLeagueLid();
 	}
 
 	const lid = await league.create({

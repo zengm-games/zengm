@@ -150,7 +150,6 @@ const processTeam = (
 					// Apply bonus or penalty
 					p2.compositeRating[r] *= playoffTryhardModifer(rating.ovr);
 				}
-				//console.log(p2.name, p2.compositeRating[r], r, playoffTryhardModifer(rating.ovr));
 			}
 		}
 

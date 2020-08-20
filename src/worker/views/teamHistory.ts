@@ -13,6 +13,7 @@ export const getHistory = async (
 	t: Team,
 	teamSeasons: TeamSeason[],
 	playersAll: Player[],
+	gmHistory?: boolean,
 ) => {
 	let bestRecord;
 	let worstRecord;
@@ -115,12 +116,11 @@ export const getHistory = async (
 	players = players.filter(p => p.careerStats.gp > 0);
 
 	for (const p of players) {
-		p.stats.reverse();
-
-		for (let j = 0; j < p.stats.length; j++) {
-			if (p.stats[j].abbrev === g.get("teamInfoCache")[t.tid]?.abbrev) {
-				p.lastYr = p.stats[j].season.toString();
-				break;
+		p.lastYr = "";
+		if (p.stats.length > 0) {
+			p.lastYr = p.stats[p.stats.length - 1].season.toString();
+			if (gmHistory) {
+				p.lastYr += ` ${p.stats[p.stats.length - 1].abbrev}`;
 			}
 		}
 

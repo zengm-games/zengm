@@ -1,5 +1,5 @@
 import { idb, iterate } from "../db";
-import { g, helpers } from "../util";
+import { g } from "../util";
 import type { UpdateEvents, TeamSeason, Player } from "../../common/types";
 import { getHistory } from "./teamHistory";
 
@@ -63,7 +63,7 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 		);
 
-		return getHistory(t, teamSeasons, players);
+		return getHistory(t, teamSeasons, players, true);
 	}
 };
 

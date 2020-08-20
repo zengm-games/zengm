@@ -52,9 +52,10 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 
 	// Called after either the draft is over or it's the user's pick
 	const afterDoneAuto = async () => {
+		await lock.set("drafting", false);
+
 		// Is draft over?
 		await afterPicks(draftPicks.length === 0, conditions);
-		await lock.set("drafting", false);
 		return pids;
 	};
 

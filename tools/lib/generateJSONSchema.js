@@ -92,6 +92,19 @@ const genRatings = (sport /*: string*/) => {
 	};
 };
 
+const gameAttribute = (key, value, valueNotRequired) => {
+	return {
+		type: "object",
+		properties: {
+			key: {
+				const: key,
+			},
+			value,
+		},
+		required: valueNotRequired ? ["key"] : ["key", "value"],
+	};
+};
+
 const generateJSONSchema = (sport /*: string*/) => {
 	if (sport === "test") {
 		return {
@@ -305,6 +318,33 @@ const generateJSONSchema = (sport /*: string*/) => {
 				},
 				required: ["dpids", "pids", "tid"],
 			},
+			div: {
+				type: "object",
+				properties: {
+					did: {
+						type: "integer",
+					},
+					cid: {
+						type: "integer",
+					},
+					name: {
+						type: "string",
+					},
+				},
+				required: ["did", "cid", "name"],
+			},
+			conf: {
+				type: "object",
+				properties: {
+					cid: {
+						type: "integer",
+					},
+					name: {
+						type: "string",
+					},
+				},
+				required: ["cid", "name"],
+			},
 		},
 
 		type: "object",
@@ -402,224 +442,316 @@ const generateJSONSchema = (sport /*: string*/) => {
 			gameAttributes: {
 				type: "array",
 				items: {
-					type: "object",
-					properties: {
-						aiTrades: {
-							type: "boolean",
-						},
-						autoDeleteOldBoxScores: {
-							type: "boolean",
-						},
-						brotherRate: {
+					oneOf: [
+						gameAttribute("aiTradesFactor", { type: "number" }),
+						gameAttribute("allStarGame", { type: "boolean" }),
+						gameAttribute("autoDeleteOldBoxScores", { type: "boolean" }),
+						gameAttribute("brotherRate", {
 							type: "number",
 							minimum: 0,
-						},
-						budget: {
+						}),
+						gameAttribute("budget", { type: "boolean" }),
+						gameAttribute("challengeNoDraftPicks", {
 							type: "boolean",
-						},
-						confs: {
+						}),
+						gameAttribute("challengeNoFreeAgents", {
+							type: "boolean",
+						}),
+						gameAttribute("challengeNoRatings", {
+							type: "boolean",
+						}),
+						gameAttribute("challengeNoTrades", {
+							type: "boolean",
+						}),
+						gameAttribute("confs", {
 							type: "array",
-							items: {
+							minItems: 1,
+						}),
+						gameAttribute("daysLeft", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("defaultStadiumCapacity", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("difficulty", {
+							type: "number",
+						}),
+						gameAttribute("divs", {
+							type: "array",
+							minItems: 1,
+						}),
+						gameAttribute("draftType", {
+							type: "string",
+							// nba is legacy
+							enum: [
+								"nba1994",
+								"nba2019",
+								"noLottery",
+								"random",
+								"nba1990",
+								"randomLotteryFirst3",
+								"randomLottery",
+								"coinFlip",
+								"nba",
+								"freeAgents",
+							],
+						}),
+						gameAttribute("easyDifficultyInPast", {
+							type: "boolean",
+						}),
+						gameAttribute("equalizeRegions", {
+							type: "boolean",
+						}),
+						gameAttribute("foulsNeededToFoulOut", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("foulRateFactor", {
+							type: "number",
+						}),
+						gameAttribute("gameOver", {
+							type: "boolean",
+						}),
+						gameAttribute("godMode", {
+							type: "boolean",
+						}),
+						gameAttribute("godModeInPast", {
+							type: "boolean",
+						}),
+						gameAttribute("gracePeriodEnd", {
+							type: "integer",
+						}),
+						gameAttribute("hardCap", {
+							type: "boolean",
+						}),
+						gameAttribute("homeCourtAdvantage", {
+							type: "number",
+						}),
+						gameAttribute("injuryRate", {
+							type: "number",
+							minimum: 0,
+						}),
+						gameAttribute("leagueName", {
+							type: "string",
+						}),
+						gameAttribute("lid", {
+							type: "integer",
+						}),
+						gameAttribute("luxuryPayroll", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("luxuryTax", {
+							type: "number",
+							minimum: 0,
+						}),
+						gameAttribute("maxContract", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("maxRosterSize", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("minContract", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("minPayroll", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("minRosterSize", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute(
+							"names",
+							{
 								type: "object",
 								properties: {
-									cid: {
-										type: "integer",
-									},
-									name: {
-										type: "string",
-									},
+									first: {},
+									last: {},
 								},
-								required: ["cid", "name"],
+								required: ["first", "last"],
 							},
-						},
-						daysLeft: {
-							type: "integer",
-							minimum: 0,
-						},
-						disableInjuries: {
+							true,
+						),
+						gameAttribute("otherTeamsWantToHire", {
 							type: "boolean",
-						},
-						divs: {
-							type: "array",
-							items: {
+						}),
+						gameAttribute(
+							"playerBioInfo",
+							{
 								type: "object",
 								properties: {
-									did: {
-										type: "integer",
+									countries: {
+										type: "object",
 									},
-									cid: {
-										type: "integer",
+									default: {
+										type: "object",
+										properties: {
+											colleges: {
+												type: "object",
+											},
+											fractionSkipCollege: {
+												type: "number",
+											},
+										},
 									},
-									name: {
-										type: "string",
+									frequencies: {
+										type: "object",
 									},
 								},
-								required: ["did", "cid", "name"],
 							},
-						},
-						draftType: {
-							type: "string",
-							enum: ["nba1994", "nba2019", "noLottery", "random"],
-						},
-						easyDifficultyInPast: {
-							type: "boolean",
-						},
-						foulsNeededToFoulOut: {
+							true,
+						),
+						gameAttribute(
+							"nextPhase",
+							{
+								// Shouldn't actually be null, but legacy
+								type: ["integer", "null"],
+							},
+							true,
+						),
+						gameAttribute("numDraftRounds", {
 							type: "integer",
 							minimum: 0,
-						},
-						foulRateFactor: {
-							type: "number",
-						},
-						gameOver: {
-							type: "boolean",
-						},
-						godMode: {
-							type: "boolean",
-						},
-						godModeInPast: {
-							type: "boolean",
-						},
-						gracePeriodEnd: {
-							type: "boolean",
-						},
-						hardCap: {
-							type: "boolean",
-						},
-						homeCourtAdvantage: {
-							type: "number",
-						},
-						injuryRate: {
+						}),
+						gameAttribute("numGames", {
 							type: "integer",
 							minimum: 0,
-						},
-						leagueName: {
-							type: "string",
-						},
-						lid: {
-							type: "integer",
-						},
-						luxuryPayroll: {
+						}),
+						gameAttribute("numGamesPlayoffSeries", {
+							type: "array",
+							minItems: 1,
+						}),
+						gameAttribute("numPlayoffByes", {
+							type: ["integer", "array"],
+						}),
+						gameAttribute("numSeasonsFutureDraftPicks", {
 							type: "integer",
 							minimum: 0,
-						},
-						luxuryTax: {
+						}),
+						gameAttribute("numTeams", {
+							type: "integer",
+							minimum: 0,
+						}),
+						gameAttribute("phase", {
+							type: "integer",
+							minimum: -2,
+							maximum: 8,
+						}),
+						gameAttribute("playersRefuseToNegotiate", {
+							type: "boolean",
+						}),
+						gameAttribute("quarterLength", {
 							type: "number",
 							minimum: 0,
-						},
-						maxContract: {
+						}),
+						gameAttribute("realPlayerDeterminism", {
+							type: "number",
+							minimum: 0,
+							maximum: 1,
+						}),
+						gameAttribute("repeatSeason", {
+							type: "object",
+						}),
+						gameAttribute("rookieContractLengths", {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+							minItems: 1,
+						}),
+						gameAttribute("salaryCap", {
 							type: "integer",
 							minimum: 0,
-						},
-						maxRosterSize: {
+						}),
+						gameAttribute("season", {
 							type: "integer",
+						}),
+						gameAttribute("sonRate", {
+							type: "number",
 							minimum: 0,
-						},
-						minContract: {
+						}),
+						gameAttribute("startingSeason", {
 							type: "integer",
-							minimum: 0,
-						},
-						minPayroll: {
+						}),
+						gameAttribute("stopOnInjury", {
+							type: "boolean",
+						}),
+						gameAttribute("stopOnInjuryGames", {
 							type: "integer",
+						}),
+						gameAttribute("ties", {
+							type: ["boolean", "array"],
+						}),
+						gameAttribute("tragicDeathRate", {
+							type: "number",
 							minimum: 0,
-						},
-						minRosterSize: {
-							type: "integer",
-							minimum: 0,
-						},
-						names: {
+						}),
+						gameAttribute("userTid", {
+							type: ["integer", "array"],
+						}),
+						gameAttribute("userTids", {
+							type: "array",
+							items: {
+								type: "integer",
+							},
+							minItems: 1,
+						}),
+						gameAttribute("threePointers", {
+							type: "boolean",
+						}),
+						gameAttribute("threePointTendencyFactor", {
+							type: "number",
+						}),
+						gameAttribute("threePointAccuracyFactor", {
+							type: "number",
+						}),
+						gameAttribute("twoPointAccuracyFactor", {
+							type: "number",
+						}),
+						gameAttribute("pace", {
+							type: "number",
+						}),
+						gameAttribute("expansionDraft", {
+							type: "object",
+						}),
+
+						// These are obsolete, just here for backwards compatbility
+						...[
+							"numPlayoffRounds",
+							"ownerMood",
+							"aiTrades",
+							"disableInjuries",
+							"gamesInProgress",
+							"autoPlaySeasons",
+							"teamAbbrevsCache",
+							"teamNamesCache",
+							"teamRegionsCache",
+							"teamImgURLsCache",
+							"stopGames",
+							"lastDbChange",
+							"statusText",
+							"phaseText",
+							"phaseChangeInProgress",
+							"showFirstOwnerMessage",
+							"draftLottery",
+							"offensiveReboundingFactor",
+						].map(key => ({
 							type: "object",
 							properties: {
-								first: {},
-								last: {},
+								key: {
+									const: key,
+								},
 							},
-							required: ["first", "last"],
-						},
-						nextPhase: {
-							type: "integer",
-							minimum: 0,
-							maximum: 8,
-						},
-						numGames: {
-							type: "integer",
-							minimum: 0,
-						},
-						numGamesPlayoffSeries: {
-							type: "array",
-							items: {
-								type: "integer",
-							},
-							minItems: 1,
-						},
-						numPlayoffByes: {
-							type: "integer",
-							minimum: 0,
-						},
-						numSeasonsFutureDraftPicks: {
-							type: "integer",
-							minimum: 0,
-						},
-						numTeams: {
-							type: "integer",
-							minimum: 0,
-						},
-						phase: {
-							type: "integer",
-							minimum: -1,
-							maximum: 8,
-						},
-						playersRefuseToNegotiate: {
-							type: "boolean",
-						},
-						quarterLength: {
-							type: "number",
-							minimum: 0,
-						},
-						rookieContractLengths: {
-							type: "array",
-							items: {
-								type: "integer",
-							},
-							minItems: 1,
-						},
-						salaryCap: {
-							type: "integer",
-							minimum: 0,
-						},
-						season: {
-							type: "integer",
-						},
-						sonRate: {
-							type: "number",
-							minimum: 0,
-						},
-						startingSeason: {
-							type: "integer",
-						},
-						stopOnInjury: {
-							type: "boolean",
-						},
-						stopOnInjuryGames: {
-							type: "integer",
-						},
-						ties: {
-							type: "boolean",
-						},
-						tragicDeathRate: {
-							type: "number",
-							minimum: 0,
-						},
-						userTid: {
-							type: "integer",
-						},
-						userTids: {
-							type: "array",
-							items: {
-								type: "integer",
-							},
-							minItems: 1,
-						},
-					},
+							required: ["key"],
+						})),
+					],
 				},
 			},
 			games: {
@@ -931,6 +1063,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						injury: {
 							ref: "#/definitions/playerInjury",
 						},
+						jerseyNumber: {
+							type: "string",
+						},
 						lastName: {
 							type: "string",
 						},
@@ -990,6 +1125,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 								required: ["amount", "season"],
 							},
 						},
+						srID: {
+							type: "string",
+						},
 						stats: {
 							type: "array",
 							items: {
@@ -1018,14 +1156,11 @@ const generateJSONSchema = (sport /*: string*/) => {
 						valueNoPotFuzz: {
 							type: "number",
 						},
-						valueWithContract: {
-							type: "number",
-						},
 						watch: {
 							type: "boolean",
 						},
 						weight: {
-							type: "number",
+							type: ["number", "null"],
 						},
 						yearsFreeAgent: {
 							type: "integer",
@@ -1059,7 +1194,14 @@ const generateJSONSchema = (sport /*: string*/) => {
 										away: {
 											ref: "#/definitions/playoffSeriesTeam",
 										},
+										gids: {
+											type: "array",
+											items: {
+												type: "integer",
+											},
+										},
 									},
+									required: ["home"],
 								},
 							},
 						},
@@ -1101,6 +1243,30 @@ const generateJSONSchema = (sport /*: string*/) => {
 						},
 					},
 					required: ["awayTid", "homeTid"],
+				},
+			},
+			scheduledEvents: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						id: {
+							type: "integer",
+						},
+						type: {
+							type: "string",
+						},
+						season: {
+							type: "integer",
+						},
+						phase: {
+							type: "integer",
+						},
+						info: {
+							type: "object",
+						},
+					},
+					required: ["type", "season", "phase", "info"],
 				},
 			},
 			teams: {
@@ -1147,6 +1313,36 @@ const generateJSONSchema = (sport /*: string*/) => {
 							maxItems: 3,
 							minItems: 3,
 						},
+						retiredJerseyNumbers: {
+							type: "array",
+							items: {
+								type: "object",
+								properties: {
+									number: {
+										type: "string",
+									},
+									seasonRetired: {
+										type: "number",
+									},
+									seasonTeamInfo: {
+										type: "number",
+									},
+									pid: {
+										type: "number",
+									},
+									name: {
+										type: "string",
+									},
+									text: {
+										type: "string",
+									},
+								},
+								required: ["number", "seasonRetired", "seasonTeamInfo", "text"],
+							},
+						},
+						srID: {
+							type: "string",
+						},
 						seasons: {
 							type: "array",
 							items: {
@@ -1154,6 +1350,24 @@ const generateJSONSchema = (sport /*: string*/) => {
 								properties: {
 									tid: {
 										type: "integer",
+									},
+									cid: {
+										type: "integer",
+									},
+									did: {
+										type: "integer",
+									},
+									region: {
+										type: "string",
+									},
+									name: {
+										type: "string",
+									},
+									abbrev: {
+										type: "string",
+									},
+									imgURL: {
+										type: "string",
 									},
 									season: {
 										type: "integer",

@@ -61,28 +61,19 @@ h5 {
 	padding: 0 15px;
 	width: 100%;
 }
-#actual-actual-content {
-	min-height: 300px;
-}
 .skyscraper-wrapper {
 	display: none;
 }
 
-@include media-breakpoint-up(xl) {
-	.bbgm-container {
-		max-width: map-get($grid-breakpoints, xl);
-	}
-}
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-	.bbgm-container {
-		max-width: unset;
+	.padding-for-skyscraper {
 		padding-right: 190px;
 	}
 	.skyscraper-wrapper {
 		display: block;
-		position: fixed;
-		top: 105px;
-		right: 0px;
+		position: absolute;
+		top: 0;
+		right: 0;
 		height: 600px;
 		width: 190px;
 	}
@@ -133,6 +124,10 @@ a.god-mode,
 		text-decoration: none;
 	}
 }
+a.god-mode.active {
+	background-color: darken($purple, 10);
+	color: $white;
+}
 .sidebar a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: lighten($primary, 30);
@@ -142,11 +137,14 @@ a.god-mode,
 	padding: 0 3px;
 }
 
+.btn-god-mode {
+	@include button-variant($purple, $gray-400);
+}
+
 .play-button {
 	font-size: 1.01562rem;
-	margin: -8px 0;
-	height: 51px;
 	padding: 14px !important;
+	height: 51px;
 
 	@extend .bg-success;
 	@extend .text-white;
@@ -168,24 +166,48 @@ a.god-mode,
 
 .dashboard-top-link {
 	line-height: 1.35;
-	margin-top: 0.5em;
 	padding: 5px 8px 6px;
 	text-align: left;
-	width: 151px;
-	height: 94px;
+	width: 155px;
+	height: 77px;
 }
 
 .dashboard-top-link-new {
-	font-size: 24px;
-	padding-top: 14px;
+	font-size: 20px;
+	padding-top: 11px;
+}
+
+.dashboard-top-link-small {
+	font-size: 16px;
 }
 
 .dashboard-top-link-other {
 	color: $gray-800;
-	font-size: 13px;
+	font-size: 15px;
+	background-repeat: no-repeat;
 
 	&:hover {
 		color: $black;
+	}
+}
+
+.dashboard-top-link-other-football {
+	background-image: url("https://play.basketball-gm.com/ico/icon70.png");
+	background-position: 100px 41px;
+}
+.dashboard-top-link-other-basketball {
+	background-image: url("https://play.football-gm.com/ico/icon70.png");
+	background-position: 81px 34px;
+}
+
+@include media-breakpoint-down(xs) {
+	.dashboard-top-wrapper {
+		text-align: center;
+	}
+	a.dashboard-top-link-other-basketball {
+		width: 326px;
+		height: inherit;
+		background-position: 236px 0px;
 	}
 }
 
@@ -223,40 +245,6 @@ a.god-mode,
 
 .negotiation-team-amount {
 	width: 180px;
-}
-
-// From the Bootstrap offcanvas example
-// http://getbootstrap.com/examples/offcanvas/
-@media screen and (max-width: 768px) {
-	.row-offcanvas {
-		position: relative;
-	}
-
-	.row-offcanvas-right .sidebar-offcanvas {
-		right: -100%;
-	}
-
-	.sidebar-offcanvas {
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
-}
-
-@media screen and (min-width: 769px) {
-	.row-offcanvas-force {
-		position: relative;
-	}
-
-	.row-offcanvas-right-force .sidebar-offcanvas-force {
-		right: -100%;
-	}
-
-	.sidebar-offcanvas-force {
-		position: absolute;
-		top: 0;
-		width: 100%;
-	}
 }
 
 .help-icon {
@@ -307,17 +295,19 @@ table {
 }
 
 // Make table not stretch to 100% width automatically
-.table-nonfluid {
-	display: inline-block;
-	max-width: 100%;
-	width: unset;
-	.table {
-		width: 1px;
+@include media-breakpoint-up(sm) {
+	.table-nonfluid {
+		display: inline-block;
+		max-width: 100%;
+		width: unset;
+		.table {
+			width: 1px;
+		}
 	}
-}
 
-.trade-summary {
-	background-color: $white;
+	.table-nonfluid-wrapper {
+		display: inline-block;
+	}
 }
 
 .select-team {
@@ -328,7 +318,6 @@ table {
 	height: 180px;
 	float: left;
 	margin-right: 10px;
-	margin-top: -20px;
 	width: 120px;
 }
 
@@ -341,7 +330,6 @@ table {
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: contain;
-	margin: 0.25rem 1rem 0 0;
 	width: 120px;
 	height: 120px;
 }
@@ -366,6 +354,14 @@ table {
 .skills-alone {
 	margin-left: -5px;
 	vertical-align: 2%;
+}
+
+.jersey-number-name {
+	font-size: 10px;
+	line-height: 18px;
+	vertical-align: 2%;
+	display: inline-block;
+	min-width: 15px;
 }
 
 .watch,
@@ -475,7 +471,7 @@ table {
 }
 
 .finances-settings-text {
-	line-height: 32px;
+	line-height: 30px;
 	padding-left: 1em;
 }
 
@@ -595,11 +591,26 @@ tr.table-warning:hover > td {
 	}
 }
 
+// Keep in sync with trade/index.tsx
+@include media-breakpoint-up(md) {
+	.trade-affix {
+		position: -webkit-sticky;
+		position: sticky;
+		top: 60px;
+	}
+	.trade-items {
+		overflow: auto;
+	}
+}
+
 .multi-team-menu {
 	background-color: $white;
+	opacity: 0.9;
 	position: fixed;
 	right: 6px;
-	bottom: 6px;
+	bottom: 0;
+	padding-bottom: 6px;
+	border-radius: 0.25em 0.25em 0 0;
 }
 
 .dropdown-toggle {
@@ -634,7 +645,8 @@ tr.table-warning:hover > td {
 }
 
 .dropdown-links .nav-item,
-#top-user-block .nav-item {
+#top-user-block .nav-item,
+.play-button-wrapper {
 	margin: -8px 0;
 	height: 51px;
 }
@@ -708,8 +720,15 @@ tr.table-warning:hover > td {
 	}
 }
 
+.table tr {
+	min-height: 30px;
+}
+
 .table-responsive {
 	margin-bottom: 1rem;
+
+	// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
+	-webkit-overflow-scrolling: auto;
 
 	.table {
 		margin-bottom: 0;
@@ -730,6 +749,7 @@ tr.table-warning:hover > td {
 	margin: 0;
 	padding: 0;
 	text-indent: 0;
+	max-width: 200px;
 
 	li {
 		height: 40px;
@@ -795,8 +815,18 @@ tr.table-warning:hover > td {
 .cursor-pointer {
 	cursor: pointer;
 }
+.cursor-grab {
+	cursor: grab;
+}
+.cursor-grabbing {
+	cursor: grabbing;
+}
 
 .title-bar {
+	margin-left: -17px;
+	h1 {
+		margin-left: 17px;
+	}
 	min-height: 52px;
 	select {
 		font-size: 14px;
@@ -830,12 +860,21 @@ tr.table-warning:hover > td {
 	}
 }
 
+.league-top-bar-toggle {
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	width: 15px;
+	height: 56px;
+	z-index: 1000;
+}
+
 .score-box {
 	max-width: 400px;
 }
 
 .score-box-header {
-	margin-top: -25px;
+	height: 27px;
+	margin-top: -27px;
 }
 
 .score-box-logo {
@@ -857,6 +896,45 @@ tr.table-warning:hover > td {
 	}
 }
 
+.score-box-action {
+	border-bottom-left-radius: 0px;
+	border-top-left-radius: 0px;
+	height: 56px;
+}
+
 .border-light {
-	border: 1px solid $gray-300 !important;
+	border: 1px solid;
+	border-color: $gray-300 !important;
+}
+
+.form-check-input {
+	// Default does not do well with altered font-size-base
+	margin-top: 3px;
+}
+
+.text-warning {
+	color: darken($yellow, 10%) !important;
+}
+
+.badge-news {
+	font-size: inherit;
+	font-weight: inherit;
+}
+.badge-darkblue {
+	background-color: #007bff;
+	color: #fff;
+}
+.badge-orange {
+	background-color: lighten(#fd7e14, 10);
+	color: #000;
+}
+
+.sort-inside-modal {
+	z-index: 999999999;
+}
+
+button.live-game-sim-more {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left-width: 0 !important;
 }

@@ -55,14 +55,19 @@
 	.sidebar {
 		display: block;
 	}
-	#actual-content {
+	#actual-content,
+	#main-footer {
 		margin-left: 161px;
 	}
 	#bbgm-ads-top {
 		margin-left: 161px;
 	}
-	.title-bar {
+	.league-top-bar {
 		margin-left: 161px;
+	}
+	.title-bar {
+		// -17 for left margin in .title-bar
+		margin-left: 144px !important;
 	}
 }
 

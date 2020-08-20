@@ -7,16 +7,12 @@ const path = require("path");
 const replace = require("replace");
 const getSport = require("./getSport");
 
-const buildCSS = (watch /*: boolean*/ = false) => {
-	const fileHash = contents => {
-		// https://github.com/sindresorhus/rev-hash
-		return crypto
-			.createHash("md5")
-			.update(contents)
-			.digest("hex")
-			.slice(0, 10);
-	};
+const fileHash = contents => {
+	// https://github.com/sindresorhus/rev-hash
+	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
+};
 
+const buildCSS = (watch /*: boolean*/ = false) => {
 	const filenames = ["light", "dark"];
 	for (const filename of filenames) {
 		const start = process.hrtime();
@@ -130,11 +126,21 @@ const copyFiles = () => {
 		sport = "basketball";
 	}
 
-	fse.copySync(path.join("public", sport), "build");
+	fse.copySync(path.join("public", sport), "build", {
+		filter: filename => !filename.includes(".gitignore"),
+	});
 
 	// Remove the empty folders created by the "filter" function.
 	for (const folder of foldersToIgnore) {
 		fse.removeSync(`build/${folder}`);
+	}
+
+	const realPlayerDataFilename = path.join(
+		"data",
+		`real-player-data-${sport}.json`,
+	);
+	if (fs.existsSync(realPlayerDataFilename)) {
+		fse.copySync(realPlayerDataFilename, "build/gen/real-player-data.json");
 	}
 
 	setSport();
@@ -142,10 +148,7 @@ const copyFiles = () => {
 
 const genRev = () => {
 	const d = new Date();
-	const date = d
-		.toISOString()
-		.split("T")[0]
-		.replace(/-/g, ".");
+	const date = d.toISOString().split("T")[0].replace(/-/g, ".");
 	const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
 		4,
 		"0",
@@ -171,10 +174,21 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 			: [
 					"build/index.html",
 					`build/gen/ui-${rev}.js`,
+					`build/gen/ui-legacy-${rev}.js`,
 					`build/gen/worker-${rev}.js`,
+					`build/gen/worker-legacy-${rev}.js`,
 			  ],
 		silent: true,
 	});
+
+	if (!watch) {
+		replace({
+			regex: "/gen/worker-",
+			replacement: "/gen/worker-legacy-",
+			paths: [`build/gen/ui-legacy-${rev}.js`],
+			silent: true,
+		});
+	}
 
 	replace({
 		regex: "GOOGLE_ANALYTICS_ID",
@@ -200,6 +214,35 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 		silent: true,
 	});
 
+	let quantcastCode = "";
+	if (!watch && sport === "basketball") {
+		quantcastCode = `<script type="text/javascript">
+if (window.enableLogging) {
+var _qevents = _qevents || [];(function() {
+var elem = document.createElement('script');
+elem.src = (document.location.protocol == "https:" ? "https://secure" : "http://edge") + ".quantserve.com/quant.js";
+elem.async = true;
+elem.type = "text/javascript";
+var scpt = document.getElementsByTagName('script')[0];
+scpt.parentNode.insertBefore(elem, scpt);
+})();_qevents.push({
+qacct:"p-Ye5RY6xC03ZWz"
+});
+}
+</script><noscript>
+<div style="display:none;">
+<img src="//pixel.quantserve.com/pixel/p-Ye5RY6xC03ZWz.gif" border="0" height="1" width="1" alt="Quantcast"/>
+</div>
+</noscript>`;
+	}
+
+	replace({
+		regex: "QUANTCAST_CODE",
+		replacement: quantcastCode,
+		paths: ["build/index.html"],
+		silent: true,
+	});
+
 	if (watch) {
 		replace({
 			regex: '-" \\+ bbgmVersion \\+ "',
@@ -215,6 +258,7 @@ const setTimestamps = (rev /*: string*/, watch /*: boolean*/ = false) => {
 module.exports = {
 	buildCSS,
 	copyFiles,
+	fileHash,
 	genRev,
 	reset,
 	setTimestamps,

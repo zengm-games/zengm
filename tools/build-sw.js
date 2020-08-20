@@ -1,8 +1,8 @@
 const fs = require("fs");
 const replace2 = require("replace");
-const babel = require("rollup-plugin-babel");
+const babel = require("@rollup/plugin-babel").default;
 const replace = require("@rollup/plugin-replace");
-const resolve = require("@rollup/plugin-node-resolve");
+const resolve = require("@rollup/plugin-node-resolve").default;
 const terser = require("rollup-plugin-terser").terser;
 const rollup = require("rollup");
 const workboxBuild = require("workbox-build");
@@ -29,6 +29,7 @@ const injectManifest = async () => {
 		globDirectory: "build",
 		globPatterns: ["**/*.{js,css,html}", "fonts/*.woff2", "img/logos/*.png"],
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
+		globIgnores: ["gen/*-legacy-*.js", "gen/real-player-data*.json"],
 
 		// Changing default is only needed for unminified versions from watch-js
 		maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
@@ -45,7 +46,9 @@ const bundle = async () => {
 			replace({
 				"process.env.NODE_ENV": JSON.stringify("production"),
 			}),
-			babel(),
+			babel({
+				babelHelpers: "bundled",
+			}),
 			resolve(),
 			terser({
 				output: {

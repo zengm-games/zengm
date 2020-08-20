@@ -1,11 +1,9 @@
-const React = require("react");
-const ReactDOM = require("react-dom");
 const alias = require("@rollup/plugin-alias");
-const babel = require("rollup-plugin-babel");
+const babel = require("@rollup/plugin-babel").default;
 const blacklist = require("rollup-plugin-blacklist");
 const commonjs = require("@rollup/plugin-commonjs");
 const json = require("@rollup/plugin-json");
-const resolve = require("@rollup/plugin-node-resolve");
+const resolve = require("@rollup/plugin-node-resolve").default;
 const replace = require("@rollup/plugin-replace");
 const terser = require("rollup-plugin-terser").terser;
 const visualizer = require("rollup-plugin-visualizer");
@@ -21,13 +19,17 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			resolve: [".json"],
 			entries: {
 				// This is assumed to be generated prior to rollup being started
-				"league-schema": `./../../../../build/files/league-schema.json`,
+				"league-schema": `./../../../build/files/league-schema.json`,
 
 				// This is so Karma doesn't crash when using the big names file.
 				"player-names":
-					nodeEnv !== "production"
-						? "./../../deion/worker/data/names-test.json"
-						: `./../../${sport}/worker/data/names.json`,
+					nodeEnv === "test"
+						? "./../data/names-test.json"
+						: `./../data/names.json`,
+
+				"bbgm-polyfills": process.env.LEGACY
+					? "./../common/polyfills.ts"
+					: "./../common/polyfills-noop.ts",
 			},
 		}),
 		replace({
@@ -35,6 +37,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			"process.env.SPORT": JSON.stringify(sport),
 		}),
 		babel({
+			babelHelpers: "bundled",
 			exclude: "node_modules/!(d3|idb)**",
 			extensions: extensions.filter(extension => extension !== ".json"),
 		}),
@@ -42,12 +45,7 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 			compact: true,
 			namedExports: false,
 		}),
-		commonjs({
-			namedExports: {
-				react: Object.keys(React),
-				"react-dom": Object.keys(ReactDOM),
-			},
-		}),
+		commonjs(),
 		resolve({
 			extensions,
 			preferBuiltins: true,

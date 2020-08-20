@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js b/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js
+index ac57135..c938381 100644
+--- a/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js
++++ b/node_modules/react-sortable-hoc/dist/react-sortable-hoc.esm.js
+@@ -943,6 +943,10 @@ function sortableContainer(WrappedComponent) {
+           }
+         }
+ 
++        if (!_this.helper || !_this.helper.parentNode) {
++          return;
++        }
++
+         _this.helper.parentNode.removeChild(_this.helper);
+ 
+         if (hideSortableGhost && _this.sortableGhost) {

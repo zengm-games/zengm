@@ -41,6 +41,10 @@ $text-muted: $gray-400;
 		color: $gray-700;
 	}
 }
+.btn-link,
+.btn-link:hover {
+	color: $primary;
+}
 
 .text-danger {
 	color: lighten($red, 10) !important;
@@ -50,9 +54,12 @@ $text-muted: $gray-400;
 	border-color: darken($red, 20);
 	background-color: darken($red, 20);
 
+	&:active,
+	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($red, 25);
-		background-color: darken($red, 25);
+		border-color: darken($red, 25) !important;
+		background-color: darken($red, 25) !important;
+		color: $black !important;
 	}
 }
 
@@ -61,9 +68,11 @@ $text-muted: $gray-400;
 	background-color: darken($orange, 25);
 	color: #fff !important;
 
+	&:active,
+	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($orange, 30);
-		background-color: darken($orange, 30);
+		border-color: darken($orange, 30) !important;
+		background-color: darken($orange, 30) !important;
 	}
 }
 
@@ -71,18 +80,22 @@ $text-muted: $gray-400;
 	border-color: darken($green, 20);
 	background-color: darken($green, 20);
 
+	&:active,
+	&:focus,
 	&:hover {
-		border-color: darken($green, 25);
-		background-color: darken($green, 25);
+		border-color: darken($green, 25) !important;
+		background-color: darken($green, 25) !important;
+		color: $black !important;
 	}
 }
 
-.btn-primary,
 .btn-secondary {
 	color: $white;
 
+	&:active,
+	&:focus,
 	&:not(:disabled):hover {
-		color: $white;
+		color: $white !important;
 	}
 
 	&:disabled {
@@ -90,8 +103,16 @@ $text-muted: $gray-400;
 	}
 }
 
+.active.btn-light-bordered,
 .btn-light-bordered:hover {
-	background-color: $gray-100;
+	background-color: $gray-100 !important;
+}
+
+.btn-light-bordered {
+	@extend .btn-light;
+	background-color: $white;
+	border: 1px solid $gray-400 !important;
+	color: $gray-700 !important;
 }
 
 .badge-danger {
@@ -110,7 +131,8 @@ a.play-button {
 	}
 }
 
-.notification {
+.notification,
+.notification-close-all {
 	box-shadow: #444 0 0 12px;
 }
 
@@ -127,9 +149,21 @@ a.god-mode,
 		text-decoration: none;
 	}
 }
+a.god-mode.active {
+	background-color: darken($purple, 10);
+	color: $black;
+}
 .sidebar a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: $primary;
+}
+.btn-god-mode {
+	&,
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		color: $white;
+	}
 }
 
 .watch-active,
@@ -195,4 +229,18 @@ table.table thead .sorting::after {
 input[type="checkbox"][disabled] {
 	cursor: not-allowed;
 	opacity: 0.65;
+}
+
+.badge-primary,
+.badge-secondary,
+.badge-success,
+.badge-info,
+.badge-warning,
+.badge-dark {
+	color: $white;
+}
+
+.badge-danger,
+.badge-light {
+	color: $black;
 }

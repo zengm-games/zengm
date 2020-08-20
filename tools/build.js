@@ -10,6 +10,7 @@ build.copyFiles();
 build.buildCSS();
 
 const jsonSchema = generateJSONSchema(getSport());
+fs.mkdirSync("build/files", { recursive: true });
 fs.writeFileSync(
 	"build/files/league-schema.json",
 	JSON.stringify(jsonSchema, null, 2),

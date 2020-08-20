@@ -38,15 +38,29 @@ const mySpawn = (command, args) => {
 	console.log(`Deploying to ${domain}...`);
 
 	// Copy gen first, so index.html never links to partial file
-	console.log("Copying gen...");
-	await mySpawn("rsync", [
-		"-vhrl",
-		"./build/gen/",
-		`jersch50@garibaldi.dreamhost.com:/home/jersch50/${domain}/gen/`,
-	]);
+	// files is here because real-player-data was briefly there in May 2020, so we don't want to delete it
+	const copyAndKeep = ["gen", "files"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
+	for (const folder of copyAndKeep) {
+		console.log(`Copying ${folder}...`);
+		await mySpawn("rsync", [
+			"-vhrl",
+			`./build/${folder}/`,
+			`jersch50@garibaldi.dreamhost.com:/home/jersch50/${domain}/${folder}/`,
+		]);
+	}
 
 	console.log("Copying other files...");
-	const excludes = ["--exclude", "/gen"];
+	// files and leagues are here because real-player-data was briefly there in May 2020, so we don't want to delete them
+	const excludes = [
+		"--exclude",
+		"/gen",
+		"--exclude",
+		"/leagues",
+		"--exclude",
+		"/files",
+		"--exclude",
+		"/.well-known",
+	];
 	if (subdomain === "beta") {
 		excludes.push("--exclude", "/sw.js*");
 	}
@@ -69,7 +83,6 @@ const mySpawn = (command, args) => {
 		});
 
 		const response = await cf.zones.purgeCache(zone, {
-			// eslint-disable-next-line @typescript-eslint/camelcase
 			purge_everything: true,
 		});
 		if (!response.success) {

@@ -1,12 +1,52 @@
 .notification-container {
-	position: fixed;
-	bottom: 0;
-	right: 6px;
-	z-index: 1000;
+	ul,
+	li {
+		padding: 0;
+		margin: 0;
+	}
+
+	ul {
+		position: fixed;
+		bottom: 0;
+		right: 6px;
+		top: 0;
+		display: flex;
+		flex-direction: column;
+		list-style: none;
+		justify-content: flex-end;
+		pointer-events: none;
+	}
 }
 
 .notification-container-extra-margin-bottom {
-	bottom: 65px;
+	ul {
+		bottom: 40px;
+	}
+}
+
+.notification-close-all {
+	background-color: #000;
+	border-radius: 3px;
+	box-shadow: #999 0 0 12px;
+	color: #c0c0c0; // Try to match normal close button
+	opacity: 0.8;
+
+	&:hover {
+		box-shadow: #000 0 0 12px;
+		color: #fff;
+		opacity: 1;
+	}
+
+	font-size: 20px;
+
+	border-width: 0px;
+
+	position: fixed;
+	right: 312px;
+	bottom: 6px;
+
+	width: 31px;
+	height: 31px;
 }
 
 .notification {
@@ -17,8 +57,10 @@
 	margin: 0 0 6px;
 	opacity: 0.8;
 	padding: 6px 12px;
+	pointer-events: auto;
 	position: relative;
 	width: 300px;
+	z-index: 1000;
 
 	&:hover {
 		box-shadow: #000 0 0 12px;
@@ -36,14 +78,6 @@
 	}
 }
 
-.notification-fadein {
-	// This transition is for the hover, not original fade in
-	transition: opacity 0.25s ease-in-out;
-
-	// Fade in on notification show
-	animation: fadeIn 0.75s;
-}
-
 .notification .notification-close {
 	font-size: 20px;
 	background: transparent;
@@ -59,31 +93,6 @@
 	&:hover,
 	&:focus {
 		opacity: 1;
-	}
-}
-
-.notification-delete {
-	/* Keep in sync with notify.js setTimeout */
-	animation: fadeOut 0.75s;
-}
-
-@keyframes fadeIn {
-	from {
-		opacity: 0;
-	}
-
-	to {
-		opacity: 0.8;
-	}
-}
-
-@keyframes fadeOut {
-	from {
-		opacity: 0.8;
-	}
-
-	to {
-		opacity: 0;
 	}
 }
 

@@ -10,10 +10,12 @@
 		"moduleResolution": "node",
 		"baseUrl": ".",
 		"paths": {
-			"player-names": ["src/deion/worker/data/names-test.json"],
-			"league-schema": ["build/files/league-schema.json"]
+			"player-names": ["src/worker/data/names-test.json"],
+			"league-schema": ["build/files/league-schema.json"],
+			"bbgm-polyfills": ["src/worker/common/polyfills-noop.ts"]
 		},
 		"esModuleInterop": true,
-		"strict": true
+		"strict": true,
+		"importsNotUsedAsValues": "error"
 	}
 }

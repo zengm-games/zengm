@@ -1,10 +1,25 @@
 import * as googleAnalytics from "workbox-google-analytics";
+import { ExpirationPlugin } from "workbox-expiration";
 import {
 	cleanupOutdatedCaches,
 	createHandlerBoundToURL,
 	precacheAndRoute,
 } from "workbox-precaching";
+import { CacheFirst } from "workbox-strategies";
 import { NavigationRoute, registerRoute } from "workbox-routing";
+
+registerRoute(
+	new RegExp("/gen/real-player-data.*"),
+	new CacheFirst({
+		cacheName: "real-player-data",
+		plugins: [
+			new ExpirationPlugin({
+				maxEntries: 1,
+				purgeOnQuotaError: true,
+			}),
+		],
+	}),
+);
 
 // Will be filled in by tools/build-sw.js
 precacheAndRoute(self.__WB_MANIFEST);

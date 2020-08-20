@@ -1,6 +1,9 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
   "env": {
     "browser": true,
     "es2020": true
@@ -11,7 +14,6 @@
   ],
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
@@ -38,12 +40,23 @@
     }
   },
   "rules": {
-    "@typescript-eslint/ban-ts-ignore": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    // Nice for catching if(0){} but too many false positives for object checks that can't be disabled
+    /*"@typescript-eslint/strict-boolean-expressions": ["error", {
+      "allowString": true,
+      "allowNumber": false,
+      "allowNullableObject": true,
+      "allowNullableBoolean": true,
+      "allowNullableString": true,
+      "allowNullableNumber": false,
+      "allowAny": true
+    }],*/
+    "jsx-a11y/anchor-has-content": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/label-has-associated-control": "off",
@@ -58,6 +71,7 @@
     "react/display-name": "off",
     "react/jsx-key": "off",
     "react/no-unescaped-entities": "off",
+    "react/prop-types": "off",
     "react-hooks/exhaustive-deps": "warn",
     "react-hooks/rules-of-hooks": "error"
   },
@@ -75,7 +89,7 @@
       "@typescript-eslint/no-var-requires": "off"
     }
   }, {
-    "files": "src/deion/test/*.{js,ts}",
+    "files": "src/test/*.{js,ts}",
     "env": {
       "jest": true,
       "mocha": true

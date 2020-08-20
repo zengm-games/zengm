@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 const karmaConfig = require("./tools/lib/karmaConfig");
 const browserStack = require("../../.browserstack.json"); // eslint-disable-line import/no-unresolved
 
@@ -30,7 +28,7 @@ const customLaunchers = [
 	return acc;
 }, {});
 
-module.exports = function(config) {
+module.exports = function (config) {
 	config.set({
 		...karmaConfig,
 		browserStack,

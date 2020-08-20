@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
     <title>Basketball GM</title>
@@ -7,10 +7,8 @@
     <meta name="theme-color" content="#FF7F2A"/>
 
     <link rel="manifest" href="/manifest.json">
-    <link rel="shortcut icon" href="/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/ico/icon64.png">
+    <link rel="apple-touch-icon" href="/ico/icon192.png">
 
     <meta name="Description" content="A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
 
@@ -29,7 +27,7 @@
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57-64 has buggy shared workers
       function isBuggyFirefox() {
         var ua = navigator.userAgent;
-        if (!ua || !ua.includes("Firefox") || !ua.includes("Gecko")) {
+        if (!ua || ua.indexOf("Firefox") < 0 || ua.indexOf("Gecko") < 0) {
           return false;
         }
 
@@ -51,6 +49,8 @@
       window.bbgmVersionWorker = "???";
       window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
 
+      window.leagueFileHashes = {};
+
       function loadCSS(filename){
         var el = document.createElement("link");
         el.setAttribute("rel", "stylesheet");
@@ -59,10 +59,10 @@
         return el;
       }
       function getTheme() {
-        const dark = "dark-CSS_HASH_DARK";
-        const light = "light-CSS_HASH_LIGHT";
+        var dark = "dark-CSS_HASH_DARK";
+        var light = "light-CSS_HASH_LIGHT";
         try {
-          const local = localStorage.getItem("theme");
+          var local = localStorage.getItem("theme");
           if (local !== null) {
             return local === "dark" ? dark : light;
           }
@@ -73,7 +73,7 @@
       }
       window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
 
-      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
+      window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0;
 
       if (window.enableLogging) {
         window.googleAnalyticsID = "GOOGLE_ANALYTICS_ID";
@@ -128,7 +128,7 @@
             }
 
             if (report && typeof report.errorMessage === "string") {
-              var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop", "contentDocument", "Celtra", "AdBlock"];
+              var skip = ["ResizeObserver loop limit exceeded"];
               for (var i = 0; i < skip.length; i++) {
                 if (report.errorMessage.includes(skip[i])) {
                   report.ignore();
@@ -141,11 +141,13 @@
         });
       }
     </script>
+
+    QUANTCAST_CODE
   </head>
 
-  <body>
+  <body class="h-100">
 
-    <div id="content">
+    <div id="content" class="h-100 d-flex flex-column">
       <div style="margin: 0 15px">
         <div style="max-width: 360px; margin: 0 auto">
           <h1 style="text-align: center">Loading...</h1>
@@ -229,7 +231,7 @@
         return array;
       }
 
-      var abbrevs = shuffle(['ATL', 'BAL', 'BOS', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'HOU', 'KC', 'LV', 'LA', 'MXC', 'MIA', 'MIN', 'MON', 'NYC', 'PHI', 'PHO', 'PIT', 'POR', 'SA', 'SAC', 'SD', 'SF', 'SEA', 'STL', 'TPA', 'TOR', 'VAN', 'WAS']);
+      var abbrevs = shuffle(["ATL", "BAL", "BKN", "BOS", "CHA", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "HOU", "IND", "KC", "LA", "LAL", "LV", "MEM", "MIA", "MIL", "MIN", "MON", "MXC", "NOL", "NYC", "OKC", "ORL", "PHI", "PHO", "PIT", "POR", "SA", "SAC", "SD", "SEA", "SF", "STL", "TOR", "TPA", "UTA", "VAN", "WAS"]);
       for (var i = 0; i < 12; i++) {
         document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
       }
@@ -263,7 +265,7 @@
         openRequest.onerror = function (evt) {
           console.error("Error openining test database:");
           console.error(evt.target.error);
-          if (evt.target.error.message.includes("aborted") || evt.target.error.message.includes("full")) {
+          if (evt.target.error.message.indexOf("aborted") >= 0 || evt.target.error.message.indexOf("full") >= 0) {
             // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
             cb("good");
           } else {
@@ -331,6 +333,15 @@
         }
       };
 
+      var supportsAsync = function () {
+        try {
+          eval("async function foo() {}");
+          return true;
+        } catch (err) {
+          return false;
+        }
+      };
+
       goodIDB(function (idbResult) {
         if (idbResult !== "good" || !supportsArrowFunctions() || !supportsSymbol()) {
           var errorMsg;
@@ -351,10 +362,16 @@
         } else {
           withGoodBrowser();
 
+          var safari10NeedsLegacy = navigator.userAgent.indexOf("Safari/602") >= 0 || navigator.userAgent.indexOf("Safari/603") >= 0;
+
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          script.src = "/gen/ui-" + bbgmVersion + ".js";
+          if (supportsAsync() && !safari10NeedsLegacy) {
+            script.src = "/gen/ui-" + bbgmVersion + ".js";
+          } else  {
+            script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";
+          }
           body.appendChild(script);
 
           if ('serviceWorker' in navigator) {
@@ -363,7 +380,5 @@
         }
       });
     </script>
-
-    <script async="async" src="/files/ads/ads.js"></script>
   </body>
 </html>

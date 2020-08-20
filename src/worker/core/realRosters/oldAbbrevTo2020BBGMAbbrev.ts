@@ -1,0 +1,110 @@
+// Convert abbrevs of current or old NBA/BBGM teams to their equivalent team in modern BBGM. This is used to track a franchise over time, if all you have is the abbrev
+const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
+	const abbrevs = {
+		// These teams are defunct by 2020, but we're giving their history to a modern franchise
+		INO: "IND",
+		INJ: "IND",
+		BLB: "WAS",
+		CHS: "CHI",
+		SHE: "MIL",
+		TRH: "TOR",
+		CLR: "CLE",
+		DTF: "DET",
+
+		// These teams go defunct and remain defunct by 2020, indicated by the _ prefix
+		WSC: "_WSC",
+		STB: "_STL",
+		AND: "_AND",
+		DNN: "_DEN",
+		WAT: "_WAT",
+		PRO: "_PRO",
+		PIT: "_PIT",
+
+		// Map to BBGM 2020 abbrevs
+		ATL: "ATL",
+		BAL: "WAS",
+		BOS: "BOS",
+		BRK: "BKN",
+		BUF: "LAC",
+		CAP: "WAS",
+		CHA: "CHA",
+		CHH: "NOL",
+		CHI: "CHI",
+		CHO: "CHA",
+		CHP: "WAS",
+		CHZ: "WAS",
+		CIN: "SAC",
+		CLE: "CLE",
+		DAL: "DAL",
+		DEN: "DEN",
+		DET: "DET",
+		FTW: "DET",
+		GSW: "GS",
+		HOU: "HOU",
+		IND: "IND",
+		KCK: "SAC",
+		KCO: "SAC",
+		LAC: "LAC",
+		LAL: "LAL",
+		LAS: "LAL",
+		MEM: "MEM",
+		MIA: "MIA",
+		MIL: "MIL",
+		MIN: "MIN",
+		MLH: "ATL",
+		MNL: "LAL",
+		NJN: "BKN",
+		NOH: "NOL",
+		NOJ: "UTA",
+		NOK: "NOL",
+		NOP: "NOL",
+		NYK: "NYC",
+		NYN: "BKN",
+		OKC: "OKC",
+		ORL: "ORL",
+		PHI: "PHI",
+		PHO: "PHO",
+		PHW: "GS",
+		POR: "POR",
+		ROC: "SAC",
+		SAC: "SAC",
+		SAS: "SA",
+		SDC: "LAC",
+		SDR: "HOU",
+		SEA: "OKC",
+		SFW: "GS",
+		STL: "ATL",
+		SYR: "PHI",
+		TOR: "TOR",
+		TRI: "ATL",
+		UTA: "UTA",
+		VAN: "MEM",
+		WAS: "WAS",
+		WSB: "WAS",
+
+		// These are BBGM-only ones, which is used for when old seasons of BBGM are compared against new ones
+		BKN: "BKN",
+		GS: "GS",
+		NOL: "NOL",
+		NYC: "NYC",
+		SA: "SA",
+		SD: "SD",
+		CHQ: "NOL",
+		KC: "SAC",
+		MLG: "ATL",
+		NJ: "BKN",
+		NOM: "UTA",
+		NYB: "BKN",
+		PHV: "GS",
+		SDA: "HOU",
+	};
+
+	if (abbrevs.hasOwnProperty(abbrev)) {
+		// @ts-ignore
+		return abbrevs[abbrev];
+	}
+
+	throw new Error(`Unknown abbrev "${abbrev}"`);
+};
+
+export default oldAbbrevTo2020BBGMAbbrev;

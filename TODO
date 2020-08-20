@@ -7,6 +7,7 @@ gm history page
     - changing team before/during/after playoffs (all 3 cases in league/create.ts)
       - test on actual files, but also UNIT TESTS
 - abstract common code from teamHistory.ts
+  - lastYr calculation needs to depend on season, maybe look at teamSeasons, but only for gm history
 - explain when you can switch teams (success or failure or god mode)
 - snippet on worker console page showing how to edit history
 - career history or gm history?

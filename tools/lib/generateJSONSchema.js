@@ -579,6 +579,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							true,
 						),
+						gameAttribute("otherTeamsWantToHire", {
+							type: "boolean",
+						}),
 						gameAttribute(
 							"playerBioInfo",
 							{

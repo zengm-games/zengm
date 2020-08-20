@@ -182,13 +182,15 @@ export const createWithoutSaving = async (
 
 	if (leagueFile.gameAttributes) {
 		for (const gameAttribute of leagueFile.gameAttributes) {
-			// Set default for anything except team ID and name, since they can be overwritten by form input.
+			// Set default for anything except these, since they can be overwritten by form input.
 			if (
-				gameAttribute.key !== "userTid" &&
 				gameAttribute.key !== "leagueName" &&
 				gameAttribute.key !== "difficulty"
 			) {
-				(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
+				// userTid is handled special below
+				if (gameAttribute.key !== "userTid") {
+					(gameAttributes as any)[gameAttribute.key] = gameAttribute.value;
+				}
 
 				// Hack to replace null with -Infinity, cause Infinity is not in JSON spec
 				if (
@@ -206,12 +208,11 @@ export const createWithoutSaving = async (
 			if (gameAttribute.key === "userTid") {
 				// Handle league file with userTid history, but user selected a new team maybe
 				if (gameAttributeHasHistory(gameAttribute.value)) {
-					if (gameAttribute.value[0].start === null) {
-						gameAttribute.value[0].start = -Infinity;
-					}
-
 					const last = gameAttribute.value[gameAttribute.value.length - 1];
-					if (last.value !== userTid) {
+					if (last.value === userTid) {
+						// Bring over history
+						gameAttributes.userTid = gameAttribute.value;
+					} else {
 						if (gameAttributes.season === gameAttributes.startingSeason) {
 							// If this is first year in the file, put at -Infinity
 							gameAttributes.userTid = [
@@ -1009,7 +1010,10 @@ const create = async ({
 		phaseText = "";
 	}
 
-	const userTid = leagueData.gameAttributes.userTid;
+	const userTid =
+		leagueData.gameAttributes.userTid[
+			leagueData.gameAttributes.userTid.length - 1
+		].value;
 	const l: League = {
 		name,
 		tid: userTid,

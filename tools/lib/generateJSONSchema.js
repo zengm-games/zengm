@@ -677,6 +677,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							type: "number",
 							minimum: 0,
 						}),
+						gameAttribute("spectator", {
+							type: "boolean",
+						}),
 						gameAttribute("startingSeason", {
 							type: "integer",
 						}),

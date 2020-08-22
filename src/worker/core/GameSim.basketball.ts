@@ -188,6 +188,8 @@ class GameSim {
 
 	allStarGame: boolean;
 
+	fatigueFactor: number;
+
 	/**
 	 * Initialize the two teams that are playing this game.
 	 *
@@ -232,11 +234,18 @@ class GameSim {
 		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
-		this.synergyFactor = 0.1; // How important is synergy?
+		this.synergyFactor = 0.15; // How important is synergy?
 
 		this.lastScoringPlay = [];
 		this.clutchPlays = [];
 		this.allStarGame = this.team[0].id === -1 && this.team[1].id === -2;
+
+		this.fatigueFactor = 0.051;
+
+		if (g.get("phase") === PHASE.PLAYOFFS) {
+			this.fatigueFactor /= 1.85;
+			this.synergyFactor *= 2.5;
+		}
 
 		if (!this.allStarGame) {
 			this.homeCourtAdvantage();
@@ -271,7 +280,13 @@ class GameSim {
 			for (let p = 0; p < this.team[t].player.length; p++) {
 				for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
 					if (r !== "endurance") {
-						this.team[t].player[p].compositeRating[r] *= factor;
+						if (r === "turnovers" || r === "fouling") {
+							// These are negative ratings, so the bonus or penalty should be inversed
+							this.team[t].player[p].compositeRating[r] /= factor;
+						} else {
+							// Apply bonus or penalty
+							this.team[t].player[p].compositeRating[r] *= factor;
+						}
 					}
 				}
 			}
@@ -938,7 +953,7 @@ class GameSim {
 						p,
 						"energy",
 						-possessionLength *
-							0.051 *
+							this.fatigueFactor *
 							(1 - this.team[t].player[p].compositeRating.endurance),
 					);
 

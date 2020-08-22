@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocal } from "../util";
+import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
@@ -40,6 +40,19 @@ const DraftButtons = ({
 			<button
 				className="btn btn-light-bordered"
 				onClick={async () => {
+					if (userRemaining && !observer) {
+						const result = await confirm(
+							"If you proceed, the AI will make your remaining picks for you. Are you sure?",
+							{
+								okText: "Let AI finish the draft",
+								cancelText: "Cancel",
+							},
+						);
+
+						if (!result) {
+							return;
+						}
+					}
 					await toWorker("playMenu", "untilEnd");
 				}}
 			>

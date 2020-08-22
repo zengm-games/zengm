@@ -23,7 +23,7 @@ const start = async () => {
 		expansionDraft.protectedPids,
 	)) {
 		const tid = parseInt(tidString);
-		if (userTids.includes(tid) && !local.autoPlayUntil) {
+		if (userTids.includes(tid) && !local.autoPlayUntil && !g.get("observer")) {
 			protectedPids.push(...pids);
 		} else {
 			const autoPids = await autoProtect(tid);

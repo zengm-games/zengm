@@ -183,7 +183,7 @@ const NewTeam = ({
 						</div>
 					) : null}
 					<div>
-						{expansion ? (
+						{expansion && t.tid !== userTid ? (
 							<>
 								New expansion team!
 								<br />

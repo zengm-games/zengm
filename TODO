@@ -1,12 +1,10 @@
 observer mode
-- how handle
-  - expansionDraft/start
-  - contraction
 - some UI indicator?
   - change color of play button, and pop up a message when loading a league with observer mode active
   - problem with color: should probably do it during all auto play, but no good way to sync from local to UI... well i guess it could happen all places autoPlay is set
   - maybe not needed, if there are warnings on all of the edit pages
     - nah, it's still cool i think
+- changes, blog
 
 trade buttons blocked in multi team mode trade page
 
@@ -616,6 +614,7 @@ probGoForIt should account for being down by a FG or less late in the game
 FBGM football sim bugs
 - pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
 - negative yard line https://i.imgur.com/fSHX6md.png
+  - https://i.redd.it/r06r5jxc6ei51.png
 - penalty on punt gives first down plus punt yardage https://cdn.discordapp.com/attachments/726675205669388293/733114315397136505/image0.jpg
   - https://media.discordapp.net/attachments/569726303926878219/738325008895705158/EvilQBFromChicagoZachTodd01.JPG?width=1141&height=581
 

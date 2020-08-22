@@ -205,6 +205,10 @@ const updateRoster = async (
 			players,
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
+			showObserverWarning:
+				inputs.season === g.get("season") &&
+				inputs.tid === g.get("userTid") &&
+				g.get("observer"),
 			showRelease,
 			showTradeFor:
 				inputs.season === g.get("season") &&

@@ -10,6 +10,7 @@ observer mode
 - some UI indicator?
   - change color of play button, and pop up a message when loading a league with observer mode active
   - problem with color: should probably do it during all auto play, but no good way to sync from local to UI... well i guess it could happen all places autoPlay is set
+  - maybe not needed, if there are warnings on all of the edit pages
 
 trade buttons blocked in multi team mode trade page
 

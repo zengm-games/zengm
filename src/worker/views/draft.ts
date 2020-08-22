@@ -171,6 +171,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			drafted,
 			expansionDraft: g.get("phase") === PHASE.EXPANSION_DRAFT,
 			fantasyDraft,
+			observer: g.get("observer"),
 			stats,
 			undrafted,
 			userTids: g.get("userTids"),

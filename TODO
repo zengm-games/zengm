@@ -4,9 +4,9 @@ observer mode
     - phase/finalize?
   - runPicks
   - expansionDraft/start
-- function to combine auto play and observer check, for many things
-- god mode setting
-- disable transactions, finances, draft, etc
+- draft
+  - add another "sim all picks" button
+    - or repurpose existing "until end of draft one" and make it available always
 - some UI indicator?
   - change color of play button, and pop up a message when loading a league with observer mode active
   - problem with color: should probably do it during all auto play, but no good way to sync from local to UI... well i guess it could happen all places autoPlay is set

@@ -71,7 +71,12 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 			} else {
 				const dp = draftPicks[0];
 
-				if (g.get("userTids").includes(dp.tid) && !local.autoPlayUntil) {
+				const singleUserPickInObserverMode = g.get("observer") && onlyOne;
+				const pauseForUserPick =
+					g.get("userTids").includes(dp.tid) &&
+					!local.autoPlayUntil &&
+					!singleUserPickInObserverMode;
+				if (pauseForUserPick) {
 					return afterDoneAuto();
 				}
 

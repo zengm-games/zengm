@@ -33,7 +33,7 @@ const NegotiateButtons = ({
 	userTid: number;
 }) => {
 	if (observer) {
-		return "Observer Mode";
+		return null;
 	}
 
 	if (

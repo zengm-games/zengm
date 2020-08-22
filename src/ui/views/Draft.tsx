@@ -84,6 +84,7 @@ const Draft = ({
 	drafted,
 	expansionDraft,
 	fantasyDraft,
+	observer,
 	stats,
 	undrafted,
 	userTids,
@@ -109,7 +110,8 @@ const Draft = ({
 	});
 	const remainingPicks = drafted.filter(p => p.pid < 0);
 	const nextPick = remainingPicks[0];
-	const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
+	const usersTurn =
+		!!(nextPick && userTids.includes(nextPick.draft.tid)) && !observer;
 	const userRemaining = remainingPicks.some(p =>
 		userTids.includes(p.draft.tid),
 	);
@@ -151,29 +153,31 @@ const Draft = ({
 			p.age,
 			!challengeNoRatings ? p.ratings.ovr : null,
 			!challengeNoRatings ? p.ratings.pot : null,
-			<div
-				className="btn-group"
-				style={{
-					display: "flex",
-				}}
-			>
-				<button
-					className="btn btn-xs btn-primary"
-					disabled={!usersTurn || drafting}
-					onClick={() => draftUser(p.pid)}
-					title="Draft player"
+			observer ? null : (
+				<div
+					className="btn-group"
+					style={{
+						display: "flex",
+					}}
 				>
-					Draft
-				</button>
-				<button
-					className="btn btn-xs btn-light-bordered"
-					disabled={!usersTurn || drafting}
-					onClick={() => draftUser(p.pid, true)}
-					title="Draft player and sim to your next pick or end of draft"
-				>
-					And Sim
-				</button>
-			</div>,
+					<button
+						className="btn btn-xs btn-primary"
+						disabled={!usersTurn || drafting}
+						onClick={() => draftUser(p.pid)}
+						title="Draft player"
+					>
+						Draft
+					</button>
+					<button
+						className="btn btn-xs btn-light-bordered"
+						disabled={!usersTurn || drafting}
+						onClick={() => draftUser(p.pid, true)}
+						title="Draft player and sim to your next pick or end of draft"
+					>
+						And Sim
+					</button>
+				</div>
+			),
 		];
 
 		if (fantasyDraft || expansionDraft) {
@@ -244,7 +248,10 @@ const Draft = ({
 					disabled={drafting}
 					tid={p.draft.tid}
 					visible={
-						!fantasyDraft && !expansionDraft && !userTids.includes(p.draft.tid)
+						!fantasyDraft &&
+						!expansionDraft &&
+						!userTids.includes(p.draft.tid) &&
+						!observer
 					}
 				/>
 			),
@@ -319,6 +326,14 @@ const Draft = ({
 							<p className="alert alert-danger d-inline-block">
 								<b>Challenge Mode:</b> Your team does not get any draft picks
 								unless you acquire them in a trade.
+							</p>
+						</div>
+					) : null}
+					{observer ? (
+						<div>
+							<p className="alert alert-danger d-inline-block">
+								In observer mode you can't make draft picks, you can only watch
+								the draft.
 							</p>
 						</div>
 					) : null}

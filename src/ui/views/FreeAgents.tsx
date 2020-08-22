@@ -170,7 +170,11 @@ const FreeAgents = ({
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 
-			{challengeNoFreeAgents ? (
+			{observer ? (
+				<p className="alert alert-danger d-inline-block">
+					The AI will handle signing free agents in observer mode.
+				</p>
+			) : challengeNoFreeAgents ? (
 				<p className="alert alert-danger d-inline-block">
 					<b>Challenge Mode:</b> You are not allowed to sign free agents, except
 					to minimum contracts.

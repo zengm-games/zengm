@@ -35,6 +35,10 @@ const NegotiationList = ({
 
 	useTitleBar({ title });
 
+	if (observer) {
+		return <p>The AI will handle re-signing players in observer mode.</p>;
+	}
+
 	const cols = getCols(
 		"Name",
 		"Pos",

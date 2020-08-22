@@ -241,6 +241,7 @@ const normalizeContractDemands = async ({
 		if (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
+				process.env.SPORT === "football" ||
 				updatedPIDs.has(info.pid)) &&
 			!info.dummy
 		) {

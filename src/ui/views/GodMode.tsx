@@ -507,7 +507,7 @@ export const options: {
 		name: "Observer Mode",
 		type: "bool",
 		helpText:
-			"In observer mode, the AI controls all teams and you get to watch the league evolve.",
+			"In observer mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
 	},
 	{
 		category: "Game Simulation",

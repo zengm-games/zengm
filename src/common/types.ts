@@ -639,6 +639,7 @@ export type LocalStateUI = {
 	leagueName: string;
 	lid?: number;
 	liveGameInProgress: boolean;
+	observer: boolean;
 	phase: number;
 	phaseText: string;
 	playMenuOptions: Option[];

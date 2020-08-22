@@ -15,6 +15,7 @@ const gameAttributesToUI = async (
 		"homeCourtAdvantage",
 		"lid",
 		"leagueName",
+		"observer",
 		"phase",
 		"season",
 		"startingSeason",
@@ -26,7 +27,7 @@ const gameAttributesToUI = async (
 	const update: Partial<GameAttributesLeague> = {};
 	let updated = false;
 	for (const key of keys) {
-		if (gameAttributes[key]) {
+		if (gameAttributes.hasOwnProperty(key)) {
 			(update as any)[key] = unwrap(gameAttributes, key);
 			updated = true;
 		}

@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* BETA: New God Mode option - Observer Mode, where the AI controls all teams and you just watch. It's like auto play, but you can proceed at your own pace. [[1]]() [[2]]()
+
 * 2020-08-20: Added a new "GM History" page in the Team menu, where you can see your performance across all the different franchises you managed in the past. [[1]](https://basketball-gm.com/blog/2020/08/gm-history/) [[2]](https://old.reddit.com/r/BasketballGM/comments/idfn77/added_a_new_gm_history_page_in_the_team_menu/)
 
 * 2020-08-18: If you are successful (high score in the owner's annual performance review) then sometimes other teams will try to hire you. This happens between the playoffs and draft. Previously, the only way to change teams was to get fired or use God Mode. [[1]](https://old.reddit.com/r/BasketballGM/comments/iccozz/if_you_are_successful_high_score_in_the_owners/)

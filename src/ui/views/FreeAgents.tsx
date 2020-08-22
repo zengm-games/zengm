@@ -166,7 +166,7 @@ const FreeAgents = ({
 				</button>
 			</p>
 
-			{gameSimInProgress ? (
+			{gameSimInProgress && !observer ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 

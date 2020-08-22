@@ -320,11 +320,15 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 };
 
 const updateTeamRecords = async (
-	{ byType }: ViewInput<"teamRecords">,
+	{ byType, filter }: ViewInput<"teamRecords">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (updateEvents.includes("firstRun") || byType !== state.byType) {
+	if (
+		updateEvents.includes("firstRun") ||
+		byType !== state.byType ||
+		filter !== state.filter
+	) {
 		const awards = await idb.getCopies.awards();
 		const allStars = await idb.getCopies.allStars();
 
@@ -348,6 +352,11 @@ const updateTeamRecords = async (
 		let teams: Team[] = [];
 
 		for (const t of teamsAll) {
+			const seasonAttrsFiltered =
+				filter === "your_teams"
+					? t.seasonAttrs.filter(ts => t.tid === g.get("userTid", ts.season))
+					: t.seasonAttrs;
+
 			// Root object
 			const row = {
 				root: true,
@@ -356,9 +365,14 @@ const updateTeamRecords = async (
 				abbrev: t.abbrev,
 				region: t.region,
 				name: t.name,
-				...getRowInfo(t.tid, t.seasonAttrs, awards, allStars),
+				...getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars),
 				sortValue: teams.length,
 			};
+
+			if (row.start === undefined && row.end === undefined) {
+				continue;
+			}
+
 			teams.push(row);
 
 			if (byType === "by_team") {
@@ -380,8 +394,8 @@ const updateTeamRecords = async (
 				let seasonAttrs: typeof t.seasonAttrs = [];
 
 				// Start with newest season
-				t.seasonAttrs.reverse();
-				for (const ts of t.seasonAttrs) {
+				seasonAttrsFiltered.reverse();
+				for (const ts of seasonAttrsFiltered) {
 					const name = `${ts.region} ${ts.name}`;
 					if (prevName !== name || prevSeason !== ts.season + 1) {
 						// Either this is the first iteration of the loop, or the team name/region changed, or there is a gap in seasons
@@ -455,6 +469,7 @@ const updateTeamRecords = async (
 
 		return {
 			byType,
+			filter,
 			teams,
 			ties: g.get("ties") || ties,
 			userTid: g.get("userTid"),

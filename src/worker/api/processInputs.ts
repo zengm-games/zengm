@@ -479,8 +479,11 @@ const teamHistory = (params: Params) => {
 };
 
 const teamRecords = (params: Params) => {
+	const filter: "all" | "your_teams" =
+		params.filter === "your_teams" ? "your_teams" : "all";
 	return {
 		byType: params.byType || "by_team",
+		filter,
 	};
 };
 

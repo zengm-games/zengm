@@ -1,5 +1,15 @@
-Team Records filter to show only teams you managed (like GM History)
-- https://old.reddit.com/chat/channel/1032418_a3b3bf1a80e6f0df1f913dceab59a1ca38226164
+disable budget, sim for some time, export league, look for players with stats but no salaries and they exist! why??
+- y.players.filter(p => p.stats.length > 0 && p.salaries.length === 0)
+- actually happens on league creation
+- Object.values(bbgm.idb.cache._data.players).filter(p => p.stats.length > 0 && p.salaries.length === 0)
+- -Infinity in amount
+
+dynasty 2 achievement bug?
+- https://old.reddit.com/r/BasketballGM/comments/ievyoy/dynasty_2_achievement_not_unlocked/
+
+add "Your Teams" to the team dropdown on Draft Team History
+- link from GM History
+- gwood
 
 elam ending
 

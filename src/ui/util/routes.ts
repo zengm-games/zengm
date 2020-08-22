@@ -144,6 +144,7 @@ const routes = () => {
 		"/l/:lid/multi_team_mode": genPage("multiTeamMode"),
 		"/l/:lid/team_records": genPage("teamRecords"),
 		"/l/:lid/team_records/:byType": genPage("teamRecords"),
+		"/l/:lid/team_records/:byType/:filter": genPage("teamRecords"),
 		"/l/:lid/awards_records": genPage("awardsRecords"),
 		"/l/:lid/awards_records/:awardType": genPage("awardsRecords"),
 		"/l/:lid/transactions": genPage("transactions"),

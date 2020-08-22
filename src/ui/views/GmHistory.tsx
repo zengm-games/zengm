@@ -27,6 +27,13 @@ const GmHistory = ({
 
 	return (
 		<>
+			<p>
+				More:{" "}
+				<a href={helpers.leagueUrl(["team_records", "by_team", "your_teams"])}>
+					Your Team Records
+				</a>
+			</p>
+
 			<div className="row">
 				<div className="col-sm-5 col-md-3">
 					<Overall

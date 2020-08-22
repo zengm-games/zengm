@@ -92,6 +92,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	league: "League",
 	conf: "Conference",
 	div: "Division",
+	your_teams: "Your Teams",
 };
 
 export const getDropdownValue = (
@@ -266,6 +267,8 @@ const useDropdownOptions = (field: string) => {
 		);
 	} else if (field === "teamRecordType") {
 		keys = ["by_team", "by_conf", "by_div"];
+	} else if (field === "teamRecordsFilter") {
+		keys = ["all|||teams", "your_teams"];
 	} else if (field === "positions") {
 		keys = POSITIONS;
 	} else if (field === "newsLevels") {

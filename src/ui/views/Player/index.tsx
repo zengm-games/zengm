@@ -360,7 +360,14 @@ const Player2 = ({
 								}}
 								title={player.untradableMsg}
 							>
-								{showTradeFor ? "Trade For" : "Add To Trading Block"}
+								{showTradeFor ? (
+									"Trade For"
+								) : (
+									<>
+										<span className="d-none d-md-inline">Add To </span>Trading
+										Block
+									</>
+								)}
 							</button>
 						) : null}
 						{freeAgent ? (

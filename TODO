@@ -5,8 +5,6 @@ spectator mode
   - until end of draft button in all leagues
   - red play button
 
-trade buttons blocked in multi team mode trade page
-
 elam ending
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
@@ -63,6 +61,8 @@ The way I started the league was:
 - Real players and teams
 - Deselect Players, including ratings and stats
 Start league
+
+in box score, show graphs of score and win probability
 
 nicidob contract stuff
 - https://raw.githubusercontent.com/nicidob/bbgm/master/cbb_roster_2020.json << if u set max salary to 30M, lots of players go unsigned

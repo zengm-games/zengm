@@ -229,6 +229,7 @@ const updateTrade = async () => {
 		phase: g.get("phase"),
 		userTid: g.get("userTid"),
 		spectator: g.get("spectator"),
+		multiTeamMode: g.get("userTids").length > 1,
 	};
 };
 

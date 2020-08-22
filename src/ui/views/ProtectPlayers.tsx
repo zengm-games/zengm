@@ -133,7 +133,7 @@ const ProtectPlayers = ({
 	expansionDraft,
 	expansionTeam,
 	nextPhase,
-	observer,
+	spectator,
 	players,
 	stats,
 	userTid,
@@ -160,7 +160,7 @@ const ProtectPlayers = ({
 		if (
 			numRemaining > 0 &&
 			protectedPids.length < players.length &&
-			!observer
+			!spectator
 		) {
 			const result = await confirm(
 				"Are you sure you want start the expansion draft without using all your protections?",
@@ -246,8 +246,8 @@ const ProtectPlayers = ({
 						<p>There are no protected players in this expansion draft.</p>
 						{upcomingFreeAgentsText}
 					</>
-				) : observer ? (
-					<p>The AI will handle protecting players in observer mode.</p>
+				) : spectator ? (
+					<p>The AI will handle protecting players in spectator mode.</p>
 				) : (
 					<PlayerList
 						challengeNoRatings={challengeNoRatings}

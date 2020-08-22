@@ -47,7 +47,7 @@ type Key =
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
-	| "observer";
+	| "spectator";
 
 type Category =
 	| "League Structure"
@@ -503,11 +503,11 @@ export const options: {
 	},
 	{
 		category: "Game Modes",
-		key: "observer",
-		name: "Observer Mode",
+		key: "spectator",
+		name: "Spectator Mode",
 		type: "bool",
 		helpText:
-			"In observer mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
+			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
 	},
 	{
 		category: "Game Simulation",

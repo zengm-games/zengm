@@ -48,7 +48,7 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
 			repeatSeason: !!g.get("repeatSeason"),
 			ties: g.get("ties"),
-			observer: g.get("observer"),
+			spectator: g.get("spectator"),
 		};
 	}
 };

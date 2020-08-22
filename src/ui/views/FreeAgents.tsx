@@ -20,7 +20,7 @@ const FreeAgents = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
-	observer,
+	spectator,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -128,7 +128,7 @@ const FreeAgents = ({
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					disabled={gameSimInProgress}
 					minContract={minContract}
-					observer={observer}
+					spectator={spectator}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
@@ -166,13 +166,13 @@ const FreeAgents = ({
 				</button>
 			</p>
 
-			{gameSimInProgress && !observer ? (
+			{gameSimInProgress && !spectator ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 
-			{observer ? (
+			{spectator ? (
 				<p className="alert alert-danger d-inline-block">
-					The AI will handle signing free agents in observer mode.
+					The AI will handle signing free agents in spectator mode.
 				</p>
 			) : challengeNoFreeAgents ? (
 				<p className="alert alert-danger d-inline-block">

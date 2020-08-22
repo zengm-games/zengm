@@ -20,7 +20,7 @@ const NegotiationList = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
-	observer,
+	spectator,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -35,8 +35,8 @@ const NegotiationList = ({
 
 	useTitleBar({ title });
 
-	if (observer) {
-		return <p>The AI will handle re-signing players in observer mode.</p>;
+	if (spectator) {
+		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
 
 	const cols = getCols(
@@ -93,7 +93,7 @@ const NegotiationList = ({
 					capSpace={capSpace}
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					minContract={minContract}
-					observer={observer}
+					spectator={spectator}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}

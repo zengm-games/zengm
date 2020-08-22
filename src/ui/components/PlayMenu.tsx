@@ -7,7 +7,7 @@ import classNames from "classnames";
 
 type Props = {
 	lid: number | undefined;
-	observer: boolean;
+	spectator: boolean;
 	options: Option[];
 };
 
@@ -18,7 +18,7 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 	}
 };
 
-const PlayMenu = ({ lid, observer, options }: Props) => {
+const PlayMenu = ({ lid, spectator, options }: Props) => {
 	useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
 			// alt + letter
@@ -58,7 +58,7 @@ const PlayMenu = ({ lid, observer, options }: Props) => {
 			<Dropdown.Toggle
 				className={classNames(
 					"play-button text-white",
-					observer ? "bg-danger" : "bg-success",
+					spectator ? "bg-danger" : "bg-success",
 				)}
 				id="play-button"
 				as={Nav.Link}

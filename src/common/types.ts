@@ -343,7 +343,7 @@ export type GameAttributesLeague = {
 	numPlayoffByes: number;
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
-	observer: boolean;
+	spectator: boolean;
 	otherTeamsWantToHire: boolean;
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;
@@ -639,7 +639,7 @@ export type LocalStateUI = {
 	leagueName: string;
 	lid?: number;
 	liveGameInProgress: boolean;
-	observer: boolean;
+	spectator: boolean;
 	phase: number;
 	phaseText: string;
 	playMenuOptions: Option[];

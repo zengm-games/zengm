@@ -87,7 +87,7 @@ const updateNegotiationList = async () => {
 		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayersAll.length,
-		observer: g.get("observer"),
+		spectator: g.get("spectator"),
 		phase: g.get("phase"),
 		players,
 		playersRefuseToNegotiate,

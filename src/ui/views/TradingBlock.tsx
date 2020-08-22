@@ -253,7 +253,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
-		observer,
+		spectator,
 		phase,
 		stats,
 		userPicks,
@@ -262,8 +262,8 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 
 	useTitleBar({ title: "Trading Block" });
 
-	if (observer) {
-		return <p>You're not allowed to make trades in observer mode.</p>;
+	if (spectator) {
+		return <p>You're not allowed to make trades in spectator mode.</p>;
 	}
 
 	if (challengeNoTrades) {

@@ -103,7 +103,7 @@ const newPhaseResignPlayers = async (
 		if (
 			g.get("userTids").includes(p.tid) &&
 			!local.autoPlayUntil &&
-			!g.get("observer")
+			!g.get("spectator")
 		) {
 			const tid = p.tid;
 

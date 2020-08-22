@@ -67,7 +67,7 @@ const updateProtectPlayers = async () => {
 		expansionDraft,
 		expansionTeam,
 		nextPhase: g.get("nextPhase"),
-		observer: g.get("observer"),
+		spectator: g.get("spectator"),
 		players,
 		stats,
 		userTid: g.get("userTid"),

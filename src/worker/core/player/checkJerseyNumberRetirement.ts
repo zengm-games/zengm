@@ -139,7 +139,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 	if (
 		g.get("userTids").includes(tid) &&
 		!local.autoPlayUntil &&
-		!g.get("observer")
+		!g.get("spectator")
 	) {
 		return;
 	}

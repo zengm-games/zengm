@@ -11,7 +11,7 @@ const NegotiateButtons = ({
 	challengeNoFreeAgents,
 	disabled,
 	minContract,
-	observer,
+	spectator,
 	p,
 	phase,
 	playersRefuseToNegotiate,
@@ -24,7 +24,7 @@ const NegotiateButtons = ({
 	challengeNoFreeAgents: boolean;
 	disabled?: boolean;
 	minContract: number;
-	observer: boolean;
+	spectator: boolean;
 	p: Player;
 	phase: Phase;
 	playersRefuseToNegotiate: boolean;
@@ -32,7 +32,7 @@ const NegotiateButtons = ({
 	season?: number;
 	userTid: number;
 }) => {
-	if (observer) {
+	if (spectator) {
 		return null;
 	}
 

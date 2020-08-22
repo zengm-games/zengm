@@ -79,7 +79,7 @@ const Roster = ({
 	players,
 	salaryCap,
 	season,
-	showObserverWarning,
+	showSpectatorWarning,
 	showRelease,
 	showTradeFor,
 	showTradingBlock,
@@ -170,9 +170,9 @@ const Roster = ({
 				tid={tid}
 			/>
 
-			{showObserverWarning ? (
+			{showSpectatorWarning ? (
 				<p className="alert alert-danger d-inline-block">
-					The AI will handle roster management in observer mode.
+					The AI will handle roster management in spectator mode.
 				</p>
 			) : null}
 

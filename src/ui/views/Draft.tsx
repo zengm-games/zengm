@@ -7,11 +7,11 @@ import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
 const DraftButtons = ({
-	observer,
+	spectator,
 	userRemaining,
 	usersTurn,
 }: {
-	observer: boolean;
+	spectator: boolean;
 	userRemaining: boolean;
 	usersTurn: boolean;
 }) => {
@@ -19,7 +19,7 @@ const DraftButtons = ({
 		<div className="btn-group mb-3" id="draft-buttons">
 			<button
 				className="btn btn-light-bordered"
-				disabled={usersTurn && !observer}
+				disabled={usersTurn && !spectator}
 				onClick={async () => {
 					await toWorker("playMenu", "onePick");
 				}}
@@ -29,7 +29,7 @@ const DraftButtons = ({
 			{userRemaining ? (
 				<button
 					className="btn btn-light-bordered"
-					disabled={usersTurn && !observer}
+					disabled={usersTurn && !spectator}
 					onClick={async () => {
 						await toWorker("playMenu", "untilYourNextPick");
 					}}
@@ -40,7 +40,7 @@ const DraftButtons = ({
 			<button
 				className="btn btn-light-bordered"
 				onClick={async () => {
-					if (userRemaining && !observer) {
+					if (userRemaining && !spectator) {
 						const result = await confirm(
 							"If you proceed, the AI will make your remaining picks for you. Are you sure?",
 							{
@@ -108,7 +108,7 @@ const Draft = ({
 	drafted,
 	expansionDraft,
 	fantasyDraft,
-	observer,
+	spectator,
 	stats,
 	undrafted,
 	userTids,
@@ -176,7 +176,7 @@ const Draft = ({
 			p.age,
 			!challengeNoRatings ? p.ratings.ovr : null,
 			!challengeNoRatings ? p.ratings.pot : null,
-			observer ? null : (
+			spectator ? null : (
 				<div
 					className="btn-group"
 					style={{
@@ -274,7 +274,7 @@ const Draft = ({
 						!fantasyDraft &&
 						!expansionDraft &&
 						!userTids.includes(p.draft.tid) &&
-						!observer
+						!spectator
 					}
 				/>
 			),
@@ -352,16 +352,16 @@ const Draft = ({
 							</p>
 						</div>
 					) : null}
-					{observer ? (
+					{spectator ? (
 						<div>
 							<p className="alert alert-danger d-inline-block">
-								In observer mode you can't make draft picks, you can only watch
+								In spectator mode you can't make draft picks, you can only watch
 								the draft.
 							</p>
 						</div>
 					) : null}
 					<DraftButtons
-						observer={observer}
+						spectator={spectator}
 						userRemaining={userRemaining}
 						usersTurn={usersTurn}
 					/>

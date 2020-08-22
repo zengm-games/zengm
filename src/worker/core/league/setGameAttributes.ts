@@ -85,7 +85,7 @@ const setGameAttributes = async (
 					if (
 						g.get("userTids").includes(t.tid) &&
 						!local.autoPlayUntil &&
-						!g.get("observer")
+						!g.get("spectator")
 					) {
 						if (t.adjustForInflation !== false) {
 							for (const key of keys) {

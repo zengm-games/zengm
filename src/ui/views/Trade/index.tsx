@@ -178,7 +178,7 @@ const Trade = (props: View<"trade">) => {
 		godMode,
 		lost,
 		numDraftRounds,
-		observer,
+		spectator,
 		otherPicks,
 		otherRoster,
 		otherTid,
@@ -233,7 +233,7 @@ const Trade = (props: View<"trade">) => {
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT ||
 		gameOver ||
-		observer ||
+		spectator ||
 		challengeNoTrades;
 
 	return (
@@ -341,9 +341,9 @@ const Trade = (props: View<"trade">) => {
 								<p className="alert alert-danger">
 									<b>Challenge Mode:</b> You're not allowed to make trades.
 								</p>
-							) : observer ? (
+							) : spectator ? (
 								<p className="alert alert-danger">
-									You're not allowed to make trades in observer mode.
+									You're not allowed to make trades in spectator mode.
 								</p>
 							) : (
 								<p className="alert alert-danger">

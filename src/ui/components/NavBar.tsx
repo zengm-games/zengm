@@ -25,7 +25,7 @@ const NavBar = ({ updating }: Props) => {
 		godMode,
 		gold,
 		hasViewedALeague,
-		observer,
+		spectator,
 		phaseText,
 		playMenuOptions,
 		popup,
@@ -37,7 +37,7 @@ const NavBar = ({ updating }: Props) => {
 		godMode: state.godMode,
 		gold: state.gold,
 		hasViewedALeague: state.hasViewedALeague,
-		observer: state.observer,
+		spectator: state.spectator,
 		phaseText: state.phaseText,
 		playMenuOptions: state.playMenuOptions,
 		popup: state.popup,
@@ -134,7 +134,11 @@ const NavBar = ({ updating }: Props) => {
 							</Popover>
 						}
 					>
-						<PlayMenu lid={lid} observer={observer} options={playMenuOptions} />
+						<PlayMenu
+							lid={lid}
+							spectator={spectator}
+							options={playMenuOptions}
+						/>
 					</OverlayTrigger>
 				</Nav>
 			) : null}

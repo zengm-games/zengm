@@ -35,7 +35,7 @@ const autoSign = async () => {
 		if (
 			g.get("userTids").includes(t.tid) &&
 			!local.autoPlayUntil &&
-			!g.get("observer")
+			!g.get("spectator")
 		) {
 			continue;
 		}

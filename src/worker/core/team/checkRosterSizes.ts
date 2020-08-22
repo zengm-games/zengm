@@ -30,7 +30,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 			if (
 				g.get("userTids").includes(tid) &&
 				!local.autoPlayUntil &&
-				!g.get("observer")
+				!g.get("spectator")
 			) {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
@@ -60,7 +60,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 			if (
 				g.get("userTids").includes(tid) &&
 				!local.autoPlayUntil &&
-				!g.get("observer")
+				!g.get("spectator")
 			) {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
@@ -103,7 +103,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 		if (
 			!g.get("userTids").includes(tid) ||
 			local.autoPlayUntil ||
-			g.get("observer")
+			g.get("spectator")
 		) {
 			await rosterAutoSort(tid);
 		}

@@ -15,7 +15,7 @@ const getAITids = async () => {
 				return false;
 			}
 
-			if (local.autoPlayUntil || g.get("observer")) {
+			if (local.autoPlayUntil || g.get("spectator")) {
 				return true;
 			}
 			return !g.get("userTids").includes(t.tid);

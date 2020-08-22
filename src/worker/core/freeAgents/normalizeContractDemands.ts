@@ -1,12 +1,15 @@
 import { idb } from "../../db";
 import { PLAYER, PHASE } from "../../../common";
-import { team } from "..";
+import { team, player } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
 import orderBy from "lodash/orderBy";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
+
+// 0 for FBGM because we don't actually do bidding there, it had too much variance. Instead, use the old genContract formula
+const ROUNDS = process.env.SPORT === "football" ? 0 : 60;
 
 const getExpiration = (p: Player, randomizeExp: boolean) => {
 	const { ovr, pot } = p.ratings[p.ratings.length - 1];
@@ -78,15 +81,6 @@ const normalizeContractDemands = async ({
 		PARAM = 0.5 * (type === "newLeague" ? 5 : 15);
 	} else {
 		PARAM = 1;
-	}
-
-	let ROUNDS = 60;
-	if (
-		process.env.SPORT === "football" &&
-		(type === "freeAgentsOnly" || type === "includeExpiringContracts")
-	) {
-		// Needs more time to converge. Probably should do this based on number of players
-		ROUNDS = 120;
 	}
 
 	const maxContract = g.get("maxContract");
@@ -257,23 +251,29 @@ const normalizeContractDemands = async ({
 				exp += 1;
 			}
 
-			// During regular season, should only look for short contracts that teams will actually sign
-			if (type === "dummyExpiringContracts") {
-				if (info.contractAmount >= maxContract / 4) {
-					p.contract.exp = season;
-					info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
+			let amount;
+
+			if (process.env.SPORT === "basketball") {
+				// During regular season, should only look for short contracts that teams will actually sign
+				if (type === "dummyExpiringContracts") {
+					if (info.contractAmount >= maxContract / 4) {
+						p.contract.exp = season;
+						info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
+					}
 				}
-			}
 
-			if (type === "newLeague") {
-				info.contractAmount *= random.uniform(0.4, 1.1);
-			}
+				if (type === "newLeague") {
+					info.contractAmount *= random.uniform(0.4, 1.1);
+				}
 
-			const amount = helpers.bound(
-				50 * Math.round(info.contractAmount / 50), // Make it a multiple of 50k
-				minContract,
-				maxContract,
-			);
+				amount = helpers.bound(
+					50 * Math.round(info.contractAmount / 50), // Make it a multiple of 50k
+					minContract,
+					maxContract,
+				);
+			} else {
+				amount = player.genContract(p, type === "newLeague").amount;
+			}
 
 			// Make sure to remove "temp" flag!
 			p.contract = {

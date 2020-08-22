@@ -1,8 +1,3 @@
-FBGM contract variance
-- go back to the old way?
-- https://github.com/dumbmatter/gm-games/blob/7299eb3b35351c8cf0f11213345ff61046e28b57/src/worker/core/player/genContract.ts
-- Jackets#6913 @Random, the Deranged Bird#1709 
-
 elam ending
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"

@@ -53,6 +53,8 @@ const PlayMenu = ({ lid, spectator, options }: Props) => {
 		return null;
 	}
 
+	console.log("spectator", spectator);
+
 	return (
 		<Dropdown className="play-button-wrapper" as={Nav.Item}>
 			<Dropdown.Toggle

@@ -19,7 +19,7 @@ const autoPlay = async (conditions: Conditions = {}) => {
 			await expansionDraft.start();
 		}
 		if (g.get("expansionDraft").phase === "draft") {
-			await draft.runPicks(false, conditions);
+			await draft.runPicks("untilEnd", conditions);
 		}
 	}
 
@@ -53,7 +53,7 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		if (g.get("draftType") === "freeAgents") {
 			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
 		} else {
-			await draft.runPicks(false, conditions);
+			await draft.runPicks("untilEnd", conditions);
 		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);

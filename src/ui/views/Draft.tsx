@@ -7,32 +7,43 @@ import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
 const DraftButtons = ({
+	observer,
 	userRemaining,
 	usersTurn,
 }: {
+	observer: boolean;
 	userRemaining: boolean;
 	usersTurn: boolean;
 }) => {
-	const untilText = userRemaining ? "your next pick" : "end of draft";
 	return (
 		<div className="btn-group mb-3" id="draft-buttons">
 			<button
 				className="btn btn-light-bordered"
-				disabled={usersTurn}
+				disabled={usersTurn && !observer}
 				onClick={async () => {
 					await toWorker("playMenu", "onePick");
 				}}
 			>
 				Sim one pick
 			</button>
+			{userRemaining ? (
+				<button
+					className="btn btn-light-bordered"
+					disabled={usersTurn && !observer}
+					onClick={async () => {
+						await toWorker("playMenu", "untilYourNextPick");
+					}}
+				>
+					To your next pick
+				</button>
+			) : null}
 			<button
 				className="btn btn-light-bordered"
-				disabled={usersTurn}
 				onClick={async () => {
-					await toWorker("playMenu", "untilYourNextPick");
+					await toWorker("playMenu", "untilEnd");
 				}}
 			>
-				Sim until {untilText}
+				To end of draft
 			</button>
 		</div>
 	);
@@ -110,8 +121,7 @@ const Draft = ({
 	});
 	const remainingPicks = drafted.filter(p => p.pid < 0);
 	const nextPick = remainingPicks[0];
-	const usersTurn =
-		!!(nextPick && userTids.includes(nextPick.draft.tid)) && !observer;
+	const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
 	const userRemaining = remainingPicks.some(p =>
 		userTids.includes(p.draft.tid),
 	);
@@ -337,7 +347,11 @@ const Draft = ({
 							</p>
 						</div>
 					) : null}
-					<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
+					<DraftButtons
+						observer={observer}
+						userRemaining={userRemaining}
+						usersTurn={usersTurn}
+					/>
 				</>
 			) : (
 				<>

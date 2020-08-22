@@ -29,7 +29,11 @@ const getMoodScore = (total: number, deltas: boolean = false) => {
 
 const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	// If auto play seasons or multi team mode, no messages
-	if (local.autoPlayUntil || g.get("userTids").length > 1) {
+	if (
+		local.autoPlayUntil ||
+		g.get("observer") ||
+		g.get("userTids").length > 1
+	) {
 		return;
 	}
 

@@ -136,7 +136,11 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 	}
 
 	// Only for AI teams!
-	if (g.get("userTids").includes(tid) && !local.autoPlayUntil) {
+	if (
+		g.get("userTids").includes(tid) &&
+		!local.autoPlayUntil &&
+		!g.get("observer")
+	) {
 		return;
 	}
 

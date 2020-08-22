@@ -40,10 +40,13 @@ const updateRoster = async (
 		const editable =
 			inputs.season === g.get("season") &&
 			inputs.tid === g.get("userTid") &&
+			!g.get("observer") &&
 			process.env.SPORT === "basketball";
 
 		const showRelease =
-			inputs.season === g.get("season") && inputs.tid === g.get("userTid");
+			inputs.season === g.get("season") &&
+			inputs.tid === g.get("userTid") &&
+			!g.get("observer");
 
 		const seasonAttrs: TeamSeasonAttr[] = [
 			"profit",
@@ -204,9 +207,13 @@ const updateRoster = async (
 			season: inputs.season,
 			showRelease,
 			showTradeFor:
-				inputs.season === g.get("season") && inputs.tid !== g.get("userTid"),
+				inputs.season === g.get("season") &&
+				inputs.tid !== g.get("userTid") &&
+				!g.get("observer"),
 			showTradingBlock:
-				inputs.season === g.get("season") && inputs.tid === g.get("userTid"),
+				inputs.season === g.get("season") &&
+				inputs.tid === g.get("userTid") &&
+				!g.get("observer"),
 			stats,
 			t: t2,
 			tid: inputs.tid,

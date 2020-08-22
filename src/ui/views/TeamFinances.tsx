@@ -15,6 +15,7 @@ type FinancesFormProps = {
 	challengeNoRatings: boolean;
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
+	observer: boolean;
 	phase: Phase;
 	t: any;
 	tid: number;
@@ -164,17 +165,18 @@ class FinancesForm extends React.Component<
 			challengeNoRatings,
 			gameSimInProgress,
 			noSeasonData,
+			observer,
 			t,
 			tid,
 			userTid,
 		} = this.props;
 
 		const warningMessage =
-			gameSimInProgress && tid === userTid ? (
+			gameSimInProgress && tid === userTid && !observer ? (
 				<p className="text-danger">Stop game simulation to edit.</p>
 			) : null;
 
-		const formDisabled = gameSimInProgress || tid !== userTid;
+		const formDisabled = gameSimInProgress || tid !== userTid || observer;
 
 		return (
 			<form onSubmit={this.handleSubmit} className="mb-3">
@@ -352,7 +354,7 @@ class FinancesForm extends React.Component<
 						</HelpPopover>
 					</div>
 				</div>
-				{tid === userTid ? (
+				{tid === userTid && !observer ? (
 					<div className="row mt-3" style={{ paddingLeft: 100 }}>
 						<button
 							className="btn btn-large btn-primary"
@@ -483,6 +485,7 @@ const TeamFinances = ({
 	minContract,
 	minPayroll,
 	numGames,
+	observer,
 	payroll,
 	phase,
 	salariesSeasons,
@@ -750,6 +753,7 @@ const TeamFinances = ({
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}
+							observer={observer}
 							phase={phase}
 							t={t}
 							tid={tid}
@@ -793,6 +797,7 @@ TeamFinances.propTypes = {
 	minContract: PropTypes.number.isRequired,
 	minPayroll: PropTypes.number.isRequired,
 	numGames: PropTypes.number.isRequired,
+	observer: PropTypes.bool.isRequired,
 	payroll: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,
 	salariesSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,

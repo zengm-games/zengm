@@ -100,7 +100,11 @@ const newPhaseResignPlayers = async (
 	for (const p of expiringPlayers) {
 		const draftPick = g.get("hardCap") && p.draft.year === g.get("season");
 
-		if (g.get("userTids").includes(p.tid) && !local.autoPlayUntil) {
+		if (
+			g.get("userTids").includes(p.tid) &&
+			!local.autoPlayUntil &&
+			!g.get("observer")
+		) {
 			const tid = p.tid;
 
 			// Add to free agents first, to generate a contract demand, then open negotiations with player

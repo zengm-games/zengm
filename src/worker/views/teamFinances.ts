@@ -187,6 +187,7 @@ const updateTeamFinances = async (
 			luxuryTax: g.get("luxuryTax"),
 			userTid: g.get("userTid"),
 			budget: g.get("budget"),
+			observer: g.get("observer"),
 			maxStadiumCapacity,
 			t,
 			barData,

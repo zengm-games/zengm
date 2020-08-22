@@ -46,14 +46,15 @@ type Key =
 	| "challengeNoTrades"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
-	| "ties";
+	| "ties"
+	| "observer";
 
 type Category =
 	| "League Structure"
 	| "Finance"
 	| "Events"
 	| "Game Simulation"
-	| "Challenge Modes"
+	| "Game Modes"
 	| "Player Development";
 
 type FieldType =
@@ -475,30 +476,38 @@ export const options: {
 		},
 	},
 	{
-		category: "Challenge Modes",
+		category: "Game Modes",
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
 		helpText: helpTexts.challengeNoDraftPicks,
 	},
 	{
-		category: "Challenge Modes",
+		category: "Game Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
 		helpText: helpTexts.challengeNoFreeAgents,
 	},
 	{
-		category: "Challenge Modes",
+		category: "Game Modes",
 		key: "challengeNoTrades",
 		name: "No Trades",
 		type: "bool",
 	},
 	{
-		category: "Challenge Modes",
+		category: "Game Modes",
 		key: "challengeNoRatings",
 		name: "No Visible Player Ratings",
 		type: "bool",
+	},
+	{
+		category: "Game Modes",
+		key: "observer",
+		name: "Observer Mode",
+		type: "bool",
+		helpText:
+			"In observer mode, the AI controls all teams and you get to watch the league evolve.",
 	},
 	{
 		category: "Game Simulation",

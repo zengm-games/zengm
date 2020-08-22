@@ -343,6 +343,7 @@ export type GameAttributesLeague = {
 	numPlayoffByes: number;
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
+	observer: boolean;
 	otherTeamsWantToHire: boolean;
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;

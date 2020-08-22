@@ -27,7 +27,11 @@ const checkRosterSizes = async (): Promise<string | void> => {
 		let numPlayersOnRoster = players.length;
 
 		if (numPlayersOnRoster > g.get("maxRosterSize")) {
-			if (g.get("userTids").includes(tid) && !local.autoPlayUntil) {
+			if (
+				g.get("userTids").includes(tid) &&
+				!local.autoPlayUntil &&
+				!g.get("observer")
+			) {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
 				} else {
@@ -53,7 +57,11 @@ const checkRosterSizes = async (): Promise<string | void> => {
 				}
 			}
 		} else if (numPlayersOnRoster < g.get("minRosterSize")) {
-			if (g.get("userTids").includes(tid) && !local.autoPlayUntil) {
+			if (
+				g.get("userTids").includes(tid) &&
+				!local.autoPlayUntil &&
+				!g.get("observer")
+			) {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
 				} else {
@@ -92,7 +100,11 @@ const checkRosterSizes = async (): Promise<string | void> => {
 
 		// Auto sort rosters (except player's team)
 		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-		if (!g.get("userTids").includes(tid) || local.autoPlayUntil) {
+		if (
+			!g.get("userTids").includes(tid) ||
+			local.autoPlayUntil ||
+			g.get("observer")
+		) {
 			await rosterAutoSort(tid);
 		}
 	};

@@ -20,6 +20,7 @@ const FreeAgents = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
+	observer,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -127,6 +128,7 @@ const FreeAgents = ({
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					disabled={gameSimInProgress}
 					minContract={minContract}
+					observer={observer}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}

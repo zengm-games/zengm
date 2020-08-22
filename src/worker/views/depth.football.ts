@@ -78,7 +78,7 @@ async function updateDepth(
 		pos !== state.pos ||
 		abbrev !== state.abbrev
 	) {
-		const editable = tid === g.get("userTid");
+		const editable = tid === g.get("userTid") && !g.get("observer");
 		// @ts-ignore
 		const ratings = ["hgt", "stre", "spd", "endu", ...posRatings(pos)];
 		const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);

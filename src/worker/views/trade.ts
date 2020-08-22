@@ -228,6 +228,7 @@ const updateTrade = async () => {
 		numDraftRounds: g.get("numDraftRounds"),
 		phase: g.get("phase"),
 		userTid: g.get("userTid"),
+		observer: g.get("observer"),
 	};
 };
 

@@ -59,6 +59,7 @@ const updateFreeAgents = async () => {
 		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
+		observer: g.get("observer"),
 		phase: g.get("phase"),
 		players,
 		playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),

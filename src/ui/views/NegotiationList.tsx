@@ -20,6 +20,7 @@ const NegotiationList = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
+	observer,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -88,6 +89,7 @@ const NegotiationList = ({
 					capSpace={capSpace}
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					minContract={minContract}
+					observer={observer}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}

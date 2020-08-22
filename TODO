@@ -11,6 +11,8 @@ observer mode
   - change color of play button, and pop up a message when loading a league with observer mode active
   - problem with color: should probably do it during all auto play, but no good way to sync from local to UI... well i guess it could happen all places autoPlay is set
 
+trade buttons blocked in multi team mode trade page
+
 elam ending
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"

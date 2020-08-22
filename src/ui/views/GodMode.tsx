@@ -54,6 +54,7 @@ type Category =
 	| "Finance"
 	| "Events"
 	| "Game Simulation"
+	| "Challenge Modes"
 	| "Game Modes"
 	| "Player Development";
 
@@ -476,27 +477,27 @@ export const options: {
 		},
 	},
 	{
-		category: "Game Modes",
+		category: "Challenge Modes",
 		key: "challengeNoDraftPicks",
 		name: "No Draft Picks",
 		type: "bool",
 		helpText: helpTexts.challengeNoDraftPicks,
 	},
 	{
-		category: "Game Modes",
+		category: "Challenge Modes",
 		key: "challengeNoFreeAgents",
 		name: "No Free Agents",
 		type: "bool",
 		helpText: helpTexts.challengeNoFreeAgents,
 	},
 	{
-		category: "Game Modes",
+		category: "Challenge Modes",
 		key: "challengeNoTrades",
 		name: "No Trades",
 		type: "bool",
 	},
 	{
-		category: "Game Modes",
+		category: "Challenge Modes",
 		key: "challengeNoRatings",
 		name: "No Visible Player Ratings",
 		type: "bool",

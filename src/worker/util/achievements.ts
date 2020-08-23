@@ -21,15 +21,16 @@ const checkDynasty = async (titles: number, years: number) => {
 	let titlesFound = 0; // Look over past years
 
 	for (let i = 0; i < years; i++) {
+		const ts = teamSeasons[teamSeasons.length - 1 - i];
+
 		// Don't overshoot
-		if (teamSeasons.length - 1 - i < 0) {
+		if (!ts) {
 			break;
 		}
 
 		// Won title?
 		if (
-			teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon ===
-			g.get("numGamesPlayoffSeries", "current").length
+			ts.playoffRoundsWon === g.get("numGamesPlayoffSeries", ts.season).length
 		) {
 			titlesFound += 1;
 		}

@@ -1,12 +1,3 @@
-disable budget, sim for some time, export league, look for players with stats but no salaries and they exist! why??
-- y.players.filter(p => p.stats.length > 0 && p.salaries.length === 0)
-- actually happens on league creation
-- Object.values(bbgm.idb.cache._data.players).filter(p => p.stats.length > 0 && p.salaries.length === 0)
-- -Infinity in amount
-
-dynasty 2 achievement bug?
-- https://old.reddit.com/r/BasketballGM/comments/ievyoy/dynasty_2_achievement_not_unlocked/
-
 add "Your Teams" to the team dropdown on Draft Team History
 - link from GM History
 - gwood

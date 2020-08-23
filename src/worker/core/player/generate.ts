@@ -6,6 +6,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types";
 import genWeight from "./genWeight";
+import genCollegeStats from "./genCollegeStats";
 
 const generate = (
 	tid: number,
@@ -41,6 +42,7 @@ const generate = (
 			pot: 0,
 			ovr: 0,
 			skills: [],
+			stats: genCollegeStats(ratings),
 		},
 		face: face.generate(),
 		firstName,

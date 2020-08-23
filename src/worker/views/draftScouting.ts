@@ -6,7 +6,7 @@ import type { UpdateEvents, Player, ThenArg } from "../../common/types";
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter(p => p.draft.year === season);
 	const players = await idb.getCopies.playersPlus(playersAllFiltered, {
-		attrs: ["pid", "nameAbbrev", "age", "valueFuzz", "watch"],
+		attrs: ["pid", "nameAbbrev", "age", "valueFuzz", "watch", "draft"],
 		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
 		showNoStats: true,
 		showRookies: true,
@@ -25,6 +25,11 @@ const getSeason = async (playersAll: Player[], season: number) => {
 		pot: pa.ratings[0].pot,
 		skills: pa.ratings[0].skills,
 		pos: pa.ratings[0].pos,
+		draft: {
+			pts: pa.draft.stats.pts,
+			reb: pa.draft.stats.reb,
+			ast: pa.draft.stats.ast,
+		},
 		rank: i + 1,
 	}));
 

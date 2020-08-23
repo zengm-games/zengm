@@ -120,6 +120,9 @@ const Draft = ({
 		"Age",
 		"Ovr",
 		"Pot",
+		"stat:pts",
+		"stat:trb",
+		"stat:ast",
 		"Draft",
 	);
 	colsUndrafted[1].width = "100%";
@@ -151,6 +154,9 @@ const Draft = ({
 			p.age,
 			!challengeNoRatings ? p.ratings.ovr : null,
 			!challengeNoRatings ? p.ratings.pot : null,
+			p.draft.stats.pts,
+			p.draft.stats.reb,
+			p.draft.stats.ast,
 			<div
 				className="btn-group"
 				style={{
@@ -252,6 +258,9 @@ const Draft = ({
 			p.pid >= 0 ? p.age : null,
 			p.pid >= 0 && !challengeNoRatings ? p.ratings.ovr : null,
 			p.pid >= 0 && !challengeNoRatings ? p.ratings.pot : null,
+			null, // beyond me
+			null,
+			null,
 		];
 
 		if (fantasyDraft || expansionDraft) {

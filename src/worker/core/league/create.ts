@@ -1083,11 +1083,10 @@ const create = async ({
 		}
 	}
 
-	const players = await idb.cache.players.getAll();
-
-	// If no players were uploaded in custom league file, add some relatives!
-	for (const p of players) {
+	const players0 = await idb.cache.players.getAll();
+	for (const p of players0) {
 		if (leagueFile.players === undefined) {
+			// If no players were uploaded in custom league file, add some relatives!
 			await player.addRelatives(p);
 		} else {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
@@ -1106,11 +1105,14 @@ const create = async ({
 		await idb.cache.players.put(p);
 	}
 
-	const pidsToNormalize = players.filter(p => p.contract.temp).map(p => p.pid);
+	const pidsToNormalize = players0.filter(p => p.contract.temp).map(p => p.pid);
 	await freeAgents.normalizeContractDemands({
 		type: "newLeague",
 		pids: pidsToNormalize,
 	});
+
+	// WHY IS THIS NEEDED? Can't use players0 because the addRelatives call above might make a copy of a player object and write it to the cache, in which case the prior objects for those players in players0 will be stale.
+	const players = await idb.cache.players.getAll();
 
 	// Adjustment for hard cap - lower contracts for teams above cap
 	if (g.get("hardCap")) {
@@ -1146,6 +1148,9 @@ const create = async ({
 		if (p.tid >= 0 && p.salaries.length === 0) {
 			player.setContract(p, p.contract, true);
 		}
+
+		// Maybe not needed, but let's be sure
+		await idb.cache.players.put(p);
 	}
 
 	const skipNewPhase = leagueFile.gameAttributes

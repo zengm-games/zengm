@@ -30,10 +30,16 @@ async function simSeason() {
 	);
 }
 
-const N = 500;
+const N = 100;
 
-const seedWinsByRound = [{}, {}, {}, {}];
-for (let i = 0; i < N; i++) {
+//const seedWinsByRound = [{}, {}, {}, {}];
+const seedWinsByRound = [
+	{ 1: 93, 2: 84, 3: 72, 4: 60, 5: 52, 6: 40, 7: 28, 8: 19 },
+	{ 1: 74, 2: 57, 3: 30, 4: 15, 5: 18, 6: 13, 7: 12, 8: 5 },
+	{ 1: 39, 2: 35, 3: 14, 4: 5, 5: 5, 6: 7, 7: 6, 8: 1 },
+	{ 1: 25, 2: 9, 3: 11, 4: 3, 5: 1, 6: 3, 7: 4 },
+];
+for (let i = 56; i < N; i++) {
 	const result = await simSeason();
 	console.log(result);
 	for (let i = 0; i < result.length; i++) {

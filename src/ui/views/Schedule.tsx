@@ -3,9 +3,9 @@ import React from "react";
 import { ScoreBox } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import type { View } from "../../common/types";
-import { toWorker, useLocalShallow } from "../util";
+import { toWorker, useLocalShallow, helpers } from "../util";
 
-const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
+const Schedule = ({ abbrev, completed, tid, upcoming }: View<"schedule">) => {
 	useTitleBar({
 		title: "Schedule",
 		dropdownView: "schedule",
@@ -18,6 +18,31 @@ const Schedule = ({ abbrev, completed, upcoming }: View<"schedule">) => {
 
 	return (
 		<>
+			<p>
+				More:{" "}
+				{process.env.SPORT === "football" ? (
+					<>
+						<a href={helpers.leagueUrl(["depth", `${abbrev}_${tid}`])}>
+							Depth Chart
+						</a>{" "}
+						|{" "}
+					</>
+				) : null}
+				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>Roster</a> |{" "}
+				<a href={helpers.leagueUrl(["team_finances", `${abbrev}_${tid}`])}>
+					Finances
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["game_log", `${abbrev}_${tid}`])}>
+					Game Log
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
+					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
+			</p>
 			<div className="row">
 				<div className="col-sm-6">
 					<h2>Upcoming Games</h2>

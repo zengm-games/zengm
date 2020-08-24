@@ -1,3 +1,5 @@
+jersey retirements in news feed
+
 add "Your Teams" to the team dropdown on Draft Team History
 - link from GM History
 - gwood
@@ -366,6 +368,7 @@ FBGM
 - automatic 1st not given https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/
 - weird offensive holding application https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/g1073zl/?context=3
 - DL in FBGM get way too many interceptions, CB should get more
+- in FBGM, during the FA period with 30 days: injured players on rosters will not recover a single week if you sim to 1 day left in FA; injured players in fa will recover a week in every day of FA (30 weeks total)
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

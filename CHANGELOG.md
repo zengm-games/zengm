@@ -2,7 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-22: The Team Records page can now use the "GM history" data to show at able of only your teams. Find it at Team > GM History > Your Team Records. [[1]](https://old.reddit.com/r/BasketballGM/comments/iepzdt/the_team_records_page_can_now_use_the_gm_history/)
+* 2020-08-24: The Draft Team History page can now use the "GM history" data to show all the draft picks you made, across all teams you managed. Find it at Team > GM History > Your Draft History. [[1]]()
+
+* 2020-08-22: The Team Records page can now use the "GM history" data to show a table of only your teams. Find it at Team > GM History > Your Team Records. [[1]](https://old.reddit.com/r/BasketballGM/comments/iepzdt/the_team_records_page_can_now_use_the_gm_history/)
 
 * 2020-08-22: New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It's like auto play, but you can proceed at your own pace. [[1]](https://basketball-gm.com/blog/2020/08/spectator-mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ieln8n/new_god_mode_option_spectator_mode_where_the_ai/)
 

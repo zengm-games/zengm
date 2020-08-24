@@ -180,7 +180,13 @@ const draftSummary = (params: Params) => {
 };
 
 const draftTeamHistory = (params: Params) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	let [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	if (params.abbrev === "your_teams") {
+		tid = -1;
+		abbrev = "your_teams";
+	}
+
 	return {
 		tid,
 		abbrev,

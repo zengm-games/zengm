@@ -143,6 +143,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAllWatch") {
 		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
+	} else if (field === "teamsAndYours") {
+		keys = ["your_teams", ...Object.keys(sortedTeams)];
 	} else if (
 		field === "seasons" ||
 		field === "seasonsAndCareer" ||

@@ -31,6 +31,10 @@ const GmHistory = ({
 				More:{" "}
 				<a href={helpers.leagueUrl(["team_records", "by_team", "your_teams"])}>
 					Your Team Records
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["draft_team_history", "your_teams"])}>
+					Your Draft Picks
 				</a>
 			</p>
 

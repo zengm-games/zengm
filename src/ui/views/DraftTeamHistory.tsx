@@ -24,7 +24,7 @@ const DraftTeamHistory = ({
 	useTitleBar({
 		title: noDraft ? "Prospects History" : "Draft History",
 		dropdownView: "draft_team_history",
-		dropdownFields: { teams: abbrev },
+		dropdownFields: { teamsAndYours: abbrev },
 	});
 
 	const superCols = [

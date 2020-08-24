@@ -1,6 +1,6 @@
 import type { Player } from "../../../common/types";
 import { idb } from "../../db";
-import { random, g, local } from "../../util";
+import { random, g, local, logEvent, helpers } from "../../util";
 import { getThreshold } from "./madeHof.football";
 
 const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = 6;
@@ -181,6 +181,18 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 	console.log(posCounts);*/
 
 	await idb.cache.teams.put(t);
+
+	logEvent({
+		type: "retiredJersey",
+		text: `The ${t.region} ${t.name} retired <a href="${helpers.leagueUrl([
+			"player",
+			p.pid,
+		])}">${p.firstName} ${p.lastName}</a>'s #${number}.`,
+		showNotification: false,
+		pids: [p.pid],
+		tids: [t.tid],
+		score: 20,
+	});
 };
 
 export default checkJerseyNumberRetirement;

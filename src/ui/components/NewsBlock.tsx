@@ -99,6 +99,10 @@ export const types: Partial<Record<
 		text: "Hall of Fame",
 		category: "award",
 	},
+	retiredJersey: {
+		text: "Jersey Retirement",
+		category: "award",
+	},
 	ageFraud: {
 		text: "Fraud",
 		category: "rare",

@@ -514,6 +514,7 @@ export type LogEventType =
 	| "release"
 	| "retired"
 	| "retiredList"
+	| "retiredJersey"
 	| "screenshot"
 	| "success"
 	| "teamContraction"

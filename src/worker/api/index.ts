@@ -1926,6 +1926,25 @@ const retiredJerseyNumberUpsert = async (
 		};
 	}
 
+	let playerText = "";
+	if (info.pid !== undefined) {
+		const p = await idb.getCopy.players({ pid: info.pid });
+		if (p) {
+			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a>'s `;
+		}
+	}
+
+	logEvent({
+		type: "retiredJersey",
+		text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
+		showNotification: false,
+		pids: info.pid ? [info.pid] : [],
+		tids: [t.tid],
+		score: 20,
+	});
+
 	await idb.cache.teams.put(t);
 
 	// Handle players who have the retired jersey number

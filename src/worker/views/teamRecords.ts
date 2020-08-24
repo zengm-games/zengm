@@ -72,11 +72,11 @@ const tallyAwards = (
 			continue;
 		}
 
-		if (a.mvp.tid === tid) {
+		if (a.mvp && a.mvp.tid === tid) {
 			teamAwards.mvp++;
 		}
 
-		if (a.dpoy.tid === tid) {
+		if (a.dpoy && a.dpoy.tid === tid) {
 			teamAwards.dpoy++;
 		}
 

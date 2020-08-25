@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* DEV: Tweaks to game simulation in the playoffs, most notably resulting in fewer upsets. [[1]](https://github.com/dumbmatter/gm-games/pull/293)
+
 * 2020-08-24: The Draft Team History page can now use the "GM history" data to show all the draft picks you made, across all teams you managed. Find it at Team > GM History > Your Draft History. [[1]](https://old.reddit.com/r/BasketballGM/comments/ifipp8/the_draft_team_history_page_can_now_use_the_gm/)
 
 * 2020-08-22: The Team Records page can now use the "GM history" data to show a table of only your teams. Find it at Team > GM History > Your Team Records. [[1]](https://old.reddit.com/r/BasketballGM/comments/iepzdt/the_team_records_page_can_now_use_the_gm_history/)

@@ -147,14 +147,6 @@ built-in UI to load custom user files
   - version (increment every update, keep in URL)
 - CRUD UI for people to upload/edit/delete league files
 
-playoff upsets
-- upset odds currently? upset odds ideally?
-- different between real and random players?
-- try
-  - less fatigue
-  - 5% slower pace
-- could apply bigger home court advantage for good teams
-
 finances revamp
 - get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
 
@@ -572,9 +564,6 @@ more dynamic contracts, based on available cap space
 - things this would enable
   - sliders to control talent levels
   - @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
-
-less fatigue in playoffs
-- benchmark playoff performance (seed upsets)
 
 error if cid/did mismatch on imported team
 - tell nicidob when i do this

@@ -66,16 +66,16 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 				<div className="row">
 					<div className="col-sm-3 col-6 form-group">
 						<label htmlFor="options-auto-delete-box-scores">
-							Auto Delete Old Box Scores{" "}
-							<HelpPopover title="Auto Delete Old Box Scores">
-								This will automatically delete box scores older than the past
-								three seasons because box scores use a lot of disk space. See{" "}
-								<a href={helpers.leagueUrl(["delete_old_data"])}>
-									Delete Old Data
-								</a>{" "}
-								for more.
-							</HelpPopover>
+							Auto Delete Old Box Scores
 						</label>
+						<HelpPopover title="Auto Delete Old Box Scores" className="ml-1">
+							This will automatically delete box scores older than the past
+							three seasons because box scores use a lot of disk space. See{" "}
+							<a href={helpers.leagueUrl(["delete_old_data"])}>
+								Delete Old Data
+							</a>{" "}
+							for more.
+						</HelpPopover>
 						<select
 							id="options-auto-delete-box-scores"
 							className="form-control"
@@ -88,13 +88,13 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 					</div>
 					<div className="col-sm-3 col-6 form-group">
 						<label htmlFor="options-stop-on-injury">
-							Stop On Injury Longer Than{" "}
-							<HelpPopover title="Stop On Injury Longer Than">
-								This will stop game simulation if one of your players is injured
-								for more than N games. In auto play mode (Tools &gt; Auto Play
-								Seasons), this has no effect.
-							</HelpPopover>
+							Stop On Injury Longer Than
 						</label>
+						<HelpPopover title="Stop On Injury Longer Than" className="ml-1">
+							This will stop game simulation if one of your players is injured
+							for more than N games. In auto play mode (Tools &gt; Auto Play
+							Seasons), this has no effect.
+						</HelpPopover>
 						<select
 							id="options-stop-on-injury"
 							className="form-control"
@@ -118,21 +118,19 @@ const LeagueOptions = (props: View<"leagueOptions">) => {
 						</div>
 					</div>
 					<div className="col-sm-3 col-6 form-group">
-						<label htmlFor="options-difficulty">
-							Difficulty{" "}
-							<HelpPopover title="Difficulty">
-								<p>
-									Increasing difficulty makes AI teams more reluctant to trade
-									with you, makes players less likely to sign with you, and
-									makes it harder to turn a profit.
-								</p>
-								<p>
-									If you set the difficulty to Easy, you will not get credit for
-									any <a href="/account">Achievements</a>. This persists even if
-									you switch to a harder difficulty.
-								</p>
-							</HelpPopover>
-						</label>
+						<label htmlFor="options-difficulty">Difficulty</label>
+						<HelpPopover title="Difficulty" className="ml-1">
+							<p>
+								Increasing difficulty makes AI teams more reluctant to trade
+								with you, makes players less likely to sign with you, and makes
+								it harder to turn a profit.
+							</p>
+							<p>
+								If you set the difficulty to Easy, you will not get credit for
+								any <a href="/account">Achievements</a>. This persists even if
+								you switch to a harder difficulty.
+							</p>
+						</HelpPopover>
 						<select
 							id="options-difficulty"
 							className="form-control"

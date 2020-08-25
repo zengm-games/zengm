@@ -1430,14 +1430,12 @@ const GodModeOptions = (props: View<"godMode">) => {
 							{catOptions.map(
 								({ decoration, helpText, key, name, type, values }) => (
 									<div key={key} className="col-sm-3 col-6 form-group">
-										<label>
-											{name}
-											{helpText ? (
-												<HelpPopover title={name} className="ml-1">
-													{helpText}
-												</HelpPopover>
-											) : null}
-										</label>
+										<label>{name}</label>
+										{helpText ? (
+											<HelpPopover title={name} className="ml-1">
+												{helpText}
+											</HelpPopover>
+										) : null}
 										<Input
 											type={type}
 											disabled={!props.godMode}

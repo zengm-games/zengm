@@ -66,7 +66,9 @@ const Most = ({
 			key: p.pid,
 			data: [
 				p.rank,
-				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+				<PlayerNameLabels disableWatchToggle pid={p.pid} watch={p.watch}>
+					{p.name}
+				</PlayerNameLabels>,
 				...extraCols.map(x => {
 					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {

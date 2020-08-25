@@ -71,6 +71,7 @@ export const getMostXPlayers = async ({
 			"born",
 			"diedYear",
 			"most",
+			"watch",
 		],
 		ratings: ["ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],

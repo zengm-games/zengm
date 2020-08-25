@@ -183,6 +183,9 @@ const updatePlayer = async (
 			return returnValue;
 		}
 
+		// Filter out rows with no games played
+		p.stats = p.stats.filter(row => row.gp > 0);
+
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
 			p.contract.amount = freeAgents.amountWithMood(

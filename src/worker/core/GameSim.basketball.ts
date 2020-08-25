@@ -234,7 +234,7 @@ class GameSim {
 		this.averagePossessionLength = 48 / (2 * numPossessions); // [min]
 
 		// Parameters
-		this.synergyFactor = 0.15; // How important is synergy?
+		this.synergyFactor = 0.1; // How important is synergy?
 
 		this.lastScoringPlay = [];
 		this.clutchPlays = [];

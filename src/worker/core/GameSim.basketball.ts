@@ -656,43 +656,74 @@ class GameSim {
 				this.team[this.d].stat.pts - this.team[this.o].stat.pts,
 			);
 			const quarter = this.team[this.o].stat.ptsQtrs.length;
-			blowout =
-				quarter === 4 &&
-				((diff >= 30 && this.t < 12) ||
-					(diff >= 25 && this.t < 9) ||
-					(diff >= 20 && this.t < 7) ||
-					(diff >= 15 && this.t < 3) ||
-					(diff >= 10 && this.t < 1));
-			lateGame = quarter >= 4 && this.t < 6;
+			if (this.elamActive) {
+				const ptsToTarget =
+					this.elamTarget -
+					Math.max(this.team[this.d].stat.pts, this.team[this.o].stat.pts);
+				blowout = diff >= 10 && ptsToTarget < diff;
+				lateGame = ptsToTarget <= 15;
+			} else {
+				blowout =
+					quarter === 4 &&
+					((diff >= 30 && this.t < 12) ||
+						(diff >= 25 && this.t < 9) ||
+						(diff >= 20 && this.t < 7) ||
+						(diff >= 15 && this.t < 3) ||
+						(diff >= 10 && this.t < 1));
+				lateGame = quarter >= 4 && this.t < 6;
+			}
 		}
 
 		for (const t of teamNums) {
-			// Overall values scaled by fatigue, etc
-			const ovrs: number[] = [];
+			const getOvrs = (includeFouledOut: boolean) => {
+				// Overall values scaled by fatigue, etc
+				const ovrs: number[] = [];
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
-				// Injured or fouled out players can't play
-				if (
-					this.team[t].player[p].injured ||
-					(g.get("foulsNeededToFoulOut") > 0 &&
-						this.team[t].player[p].stat.pf >= g.get("foulsNeededToFoulOut"))
-				) {
-					ovrs[p] = -Infinity;
-				} else {
-					ovrs[p] =
-						this.team[t].player[p].valueNoPot *
-						this.fatigue(this.team[t].player[p].stat.energy) *
-						(!lateGame ? random.uniform(0.9, 1.1) : 1);
+				for (let p = 0; p < this.team[t].player.length; p++) {
+					// Injured or fouled out players can't play
+					if (
+						this.team[t].player[p].injured ||
+						(!includeFouledOut &&
+							g.get("foulsNeededToFoulOut") > 0 &&
+							this.team[t].player[p].stat.pf >= g.get("foulsNeededToFoulOut"))
+					) {
+						ovrs[p] = -Infinity;
+					} else {
+						ovrs[p] =
+							this.team[t].player[p].valueNoPot *
+							this.fatigue(this.team[t].player[p].stat.energy) *
+							(!lateGame ? random.uniform(0.9, 1.1) : 1);
 
-					if (!this.allStarGame) {
-						ovrs[p] *= this.team[t].player[p].ptModifier;
-					}
+						if (!this.allStarGame) {
+							ovrs[p] *= this.team[t].player[p].ptModifier;
+						}
 
-					// Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
-					if (blowout) {
-						ovrs[p] *= (p + 1) / 10;
+						// Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
+						if (blowout) {
+							ovrs[p] *= (p + 1) / 10;
+						}
 					}
 				}
+
+				return ovrs;
+			};
+
+			const numEligiblePlayers = (ovrs: number[]) => {
+				let count = 0;
+				for (const ovr of ovrs) {
+					if (ovr > -Infinity) {
+						count += 1;
+					}
+				}
+
+				return count;
+			};
+
+			let ovrs = getOvrs(false);
+
+			// What if too many players fouled out? Play them. Ideally would force non fouled out players to play first, but whatever. Without this, it would only play bottom of the roster guys (tied at -Infinity)
+			if (numEligiblePlayers(ovrs) < 5) {
+				ovrs = getOvrs(true);
 			}
 
 			// Loop through players on court (in inverse order of current roster position)

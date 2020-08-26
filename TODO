@@ -13,7 +13,7 @@ elam ending
 - make sure football god mode not broken
 - game sim
   - test with elam disabled, make sure didn't break anything
-  - test with large target - minutes played seems unreasonably small
+  - check scrubs logic for large target, may be too early, instead base on how close other team is to winning
 - blog
   - @ElamEnding
 

@@ -544,6 +544,8 @@ class GameSim {
 			upperBound = 1 / 60;
 		}
 
+		upperBound = this.elamActive ? Infinity : upperBound;
+
 		const bounded1 = helpers.bound(possessionLength, lowerBound, upperBound);
 
 		const finalUpperBound = this.elamActive ? Infinity : this.t;

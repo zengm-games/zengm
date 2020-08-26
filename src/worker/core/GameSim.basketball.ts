@@ -1937,7 +1937,7 @@ class GameSim {
 				if (
 					this.elamActive &&
 					(this.team[this.d].stat.pts >= this.elamTarget ||
-						this.team[this.o].stat.pts > this.elamTarget)
+						this.team[this.o].stat.pts >= this.elamTarget)
 				) {
 					this.elamDone = true;
 				}

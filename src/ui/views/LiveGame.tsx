@@ -167,7 +167,11 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		if (text !== undefined) {
 			const p = document.createElement("p");
 			const node = document.createTextNode(text);
-			if (text === "End of game" || text.startsWith("Start of")) {
+			if (
+				text === "End of game" ||
+				text.startsWith("Start of") ||
+				text.startsWith("Elam Ending activated! First team to")
+			) {
 				const b = document.createElement("b");
 				b.appendChild(node);
 				p.appendChild(b);

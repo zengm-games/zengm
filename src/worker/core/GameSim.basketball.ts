@@ -188,6 +188,14 @@ class GameSim {
 
 	allStarGame: boolean;
 
+	elam: boolean;
+
+	elamActive: boolean;
+
+	elamDone: boolean;
+
+	elamTarget: number;
+
 	fatigueFactor: number;
 
 	/**
@@ -239,6 +247,10 @@ class GameSim {
 		this.lastScoringPlay = [];
 		this.clutchPlays = [];
 		this.allStarGame = this.team[0].id === -1 && this.team[1].id === -2;
+		this.elam = this.allStarGame ? g.get("elamASG") : g.get("elam");
+		this.elamActive = false;
+		this.elamDone = false;
+		this.elamTarget = 0;
 
 		this.fatigueFactor = 0.051;
 
@@ -405,14 +417,14 @@ class GameSim {
 		let quarter = 1;
 		const wonJump = this.jumpBall();
 
-		while (true) {
+		while (!this.elamDone) {
 			if (quarter === 3) {
 				// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
 				this.o = wonJump === 0 ? 0 : 1;
 				this.d = this.o === 0 ? 1 : 0;
 			}
 
-			while (this.t > 0.5 / 60) {
+			while (this.t > 0.5 / 60 && !this.elamDone) {
 				this.simPossession();
 			}
 
@@ -535,7 +547,28 @@ class GameSim {
 
 		// Clock
 		const possessionLength = this.getPossessionLength();
-		this.t -= possessionLength;
+		if (!this.elamActive) {
+			this.t -= possessionLength;
+
+			if (
+				this.elam &&
+				this.team[0].stat.ptsQtrs.length >= 4 &&
+				this.t < g.get("elamMinutes")
+			) {
+				const maxPts = Math.max(
+					this.team[this.d].stat.pts,
+					this.team[this.o].stat.pts,
+				);
+				this.elamTarget = maxPts + g.get("elamPoints");
+				this.elamActive = true;
+				if (this.playByPlay) {
+					this.playByPlay.push({
+						type: "elamActive",
+						target: this.elamTarget,
+					});
+				}
+			}
+		}
 
 		const outcome = this.getPossessionOutcome(possessionLength);
 
@@ -548,10 +581,24 @@ class GameSim {
 		this.updatePlayingTime(possessionLength);
 		this.injuries();
 
-		const gameOver =
-			this.t <= 0 &&
-			this.team[this.o].stat.ptsQtrs.length >= 4 &&
-			this.team[this.d].stat.pts != this.team[this.o].stat.pts;
+		let gameOver = false;
+
+		if (this.elam) {
+			if (this.elamActive) {
+				if (
+					this.team[this.d].stat.pts >= this.elamTarget ||
+					this.team[this.o].stat.pts > this.elamTarget
+				) {
+					gameOver = true;
+					this.elamDone = true;
+				}
+			}
+		} else {
+			gameOver =
+				this.t <= 0 &&
+				this.team[this.o].stat.ptsQtrs.length >= 4 &&
+				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
+		}
 
 		if (!gameOver && random.randInt(1, this.subsEveryN) === 1) {
 			const substitutions = this.updatePlayersOnCourt();
@@ -1027,7 +1074,8 @@ class GameSim {
 		const intentionalFoul =
 			offenseWinningByABit &&
 			this.team[0].stat.ptsQtrs.length >= 4 &&
-			timeBeforePossession < 25 / 60;
+			timeBeforePossession < 25 / 60 &&
+			!this.elam;
 
 		if (intentionalFoul) {
 			// HACK! Add some time back on the clock. Would be better if this was like football and time ticked off during the play, not predefined. BE CAREFUL ABOUT CHANGING STUFF BELOW THIS IN THIS FUNCTION, IT MAY DEPEND ON THIS. Like anything reading this.t or intentionalFoul.
@@ -1042,7 +1090,8 @@ class GameSim {
 		if (
 			this.t <= 0 &&
 			this.team[this.o].stat.ptsQtrs.length >= 4 &&
-			this.team[this.o].stat.pts > this.team[this.d].stat.pts
+			this.team[this.o].stat.pts > this.team[this.d].stat.pts &&
+			!this.elam
 		) {
 			return "endOfQuarter";
 		}
@@ -1485,7 +1534,7 @@ class GameSim {
 	}
 
 	checkGameTyingShot() {
-		if (this.lastScoringPlay.length === 0) {
+		if (this.lastScoringPlay.length === 0 || this.elamActive) {
 			return;
 		}
 

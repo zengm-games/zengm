@@ -631,7 +631,7 @@ if (process.env.SPORT === "basketball") {
 			category: "Elam Ending",
 			key: "elamMinutes",
 			name: "Minutes Left Trigger",
-			type: "int",
+			type: "float",
 			validator: (value, output) => {
 				if (value > output.quarterLength) {
 					throw new Error("Value must be less than the quarter length");
@@ -641,7 +641,7 @@ if (process.env.SPORT === "basketball") {
 		{
 			category: "Elam Ending",
 			key: "elamPoints",
-			name: "Target Points Added",
+			name: "Target Points to Add",
 			type: "int",
 			validator: value => {
 				if (value < 0) {
@@ -1457,7 +1457,7 @@ const GodModeOptions = (props: View<"godMode">) => {
 									("Minutes Left Trigger"), the clock is turned off. The winner
 									of the game will be the team that first hits a target score.
 									That target is determined by adding some number of points
-									("Target Points Added") to the leader's current score.
+									("Target Points to Add") to the leader's current score.
 								</p>
 								<p>
 									The Elam Ending generally makes the end of the game more

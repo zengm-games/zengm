@@ -2,6 +2,8 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* DEV: Added the Elam Ending as an option for game simulation in BBGM. [[1]]() [[2]]()
+
 * DEV: Tweaks to game simulation in the playoffs, most notably resulting in fewer upsets. Also injuries in the playoffs are shorter, to work around the fact that currently there is no way to have players play through minor injuries. [[1]](https://github.com/dumbmatter/gm-games/pull/293)
 
 * 2020-08-24: The Draft Team History page can now use the "GM history" data to show all the draft picks you made, across all teams you managed. Find it at Team > GM History > Your Draft History. [[1]](https://old.reddit.com/r/BasketballGM/comments/ifipp8/the_draft_team_history_page_can_now_use_the_gm/)

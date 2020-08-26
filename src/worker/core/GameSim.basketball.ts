@@ -1689,13 +1689,15 @@ class GameSim {
 					player.id,
 				])}">${player.name}</a> made a game-winning ${shotType}`;
 
-				if (play.time > 0) {
-					eventText += ` with ${play.time} seconds remaining`;
-				} else {
-					eventText +=
-						play.type === "ft"
-							? " with no time on the clock"
-							: " at the buzzer";
+				if (!this.elamActive) {
+					if (play.time > 0) {
+						eventText += ` with ${play.time} seconds remaining`;
+					} else {
+						eventText +=
+							play.type === "ft"
+								? " with no time on the clock"
+								: " at the buzzer";
+					}
 				}
 
 				this.clutchPlays.push({

@@ -11,9 +11,9 @@ elam ending
   - remaining time in last period
   - amount to add to target score
 - game sim
-  - clutchPlays
-    - test, confirm this works reasonably
   - test with elam disabled, make sure didn't break anything
+- blog
+  - @ElamEnding
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile

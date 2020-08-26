@@ -540,7 +540,6 @@ class GameSim {
 	}
 
 	simPossession() {
-		console.log("simPossession");
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
@@ -572,7 +571,6 @@ class GameSim {
 		}
 
 		const outcome = this.getPossessionOutcome(possessionLength);
-		console.log("outcome", outcome);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
@@ -1926,7 +1924,6 @@ class GameSim {
 						this.team[this.o].stat.pts > this.elamTarget)
 				) {
 					this.elamDone = true;
-					console.log("ELAMDONE");
 				}
 			}
 

@@ -257,6 +257,12 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		}
 	}
 
+	playUntilElamEnding() {
+		while (this.boxScore.elamTarget === undefined && !this.boxScore.gameOver) {
+			this.processToNextPause(true);
+		}
+	}
+
 	handleSpeedChange(event: ChangeEvent<HTMLInputElement>) {
 		const speed = parseInt(event.target.value, 10);
 		if (!Number.isNaN(speed)) {
@@ -375,15 +381,30 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 														this.playSeconds(Infinity);
 													}}
 												>
-													End of quarter
+													End of{" "}
+													{this.boxScore.elamTarget === undefined
+														? "quarter"
+														: "game"}
 												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														this.playUntilLastTwoMinutes();
-													}}
-												>
-													Until last 2 minutes
-												</Dropdown.Item>
+												{!this.boxScore.elam ? (
+													<Dropdown.Item
+														onClick={() => {
+															this.playUntilLastTwoMinutes();
+														}}
+													>
+														Until last 2 minutes
+													</Dropdown.Item>
+												) : null}
+												{this.boxScore.elam &&
+												this.boxScore.elamTarget === undefined ? (
+													<Dropdown.Item
+														onClick={() => {
+															this.playUntilElamEnding();
+														}}
+													>
+														Until Elam Ending
+													</Dropdown.Item>
+												) : null}
 											</Dropdown.Menu>
 										</Dropdown>
 									</div>

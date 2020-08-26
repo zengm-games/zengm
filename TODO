@@ -15,8 +15,7 @@ elam ending
     - test, confirm this works reasonably
   - plays can still happen after ended, how?
   - fast forward
-    - replace "until last 2 minutes" with "until Elam Ending".
-    - the time ones shoudl still work in Elam Ending if we keep the clock running, including into negative time. just don't display it anywhere
+    - the time ones should still work in Elam Ending if we keep the clock running, including into negative time. just don't display it anywhere
 
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile

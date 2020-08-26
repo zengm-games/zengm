@@ -40,6 +40,8 @@ const updatePlayByPlay = async (
 			}
 		}
 
+		boxScore.elam = allStarGame ? g.get("elamASG") : g.get("elam");
+
 		boxScore.overtime = "";
 		boxScore.quarter = "1st quarter";
 		boxScore.time = `${g.get("quarterLength")}:00`;

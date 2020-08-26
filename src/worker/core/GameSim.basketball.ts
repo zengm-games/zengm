@@ -540,6 +540,7 @@ class GameSim {
 	}
 
 	simPossession() {
+		console.log("simPossession");
 		// Possession change
 		this.o = this.o === 1 ? 0 : 1;
 		this.d = this.o === 1 ? 0 : 1;
@@ -571,6 +572,7 @@ class GameSim {
 		}
 
 		const outcome = this.getPossessionOutcome(possessionLength);
+		console.log("outcome", outcome);
 
 		// Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
 		if (outcome === "orb" || outcome === "nonShootingFoul") {
@@ -581,24 +583,11 @@ class GameSim {
 		this.updatePlayingTime(possessionLength);
 		this.injuries();
 
-		let gameOver = false;
-
-		if (this.elam) {
-			if (this.elamActive) {
-				if (
-					this.team[this.d].stat.pts >= this.elamTarget ||
-					this.team[this.o].stat.pts > this.elamTarget
-				) {
-					gameOver = true;
-					this.elamDone = true;
-				}
-			}
-		} else {
-			gameOver =
-				this.t <= 0 &&
+		const gameOver =
+			this.elamDone ||
+			(this.t <= 0 &&
 				this.team[this.o].stat.ptsQtrs.length >= 4 &&
-				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
-		}
+				this.team[this.d].stat.pts != this.team[this.o].stat.pts);
 
 		if (!gameOver && random.randInt(1, this.subsEveryN) === 1) {
 			const substitutions = this.updatePlayersOnCourt();
@@ -1513,7 +1502,7 @@ class GameSim {
 			this.recordPlay("ast", this.o, [this.team[this.o].player[p2].name]);
 		}
 
-		if (andOne) {
+		if (andOne && !this.elamDone) {
 			this.doPf(this.d, "pfAndOne", shooter);
 			return this.doFt(shooter, 1); // fg, orb, or drb
 		}
@@ -1776,6 +1765,10 @@ class GameSim {
 				this.recordPlay("ft", this.o, [this.team[this.o].player[p].name]);
 				outcome = "fg";
 				this.recordLastScore(this.o, p, "ft", this.t);
+
+				if (this.elamDone) {
+					break;
+				}
 			} else {
 				this.recordPlay("missFt", this.o, [this.team[this.o].player[p].name]);
 				outcome = null;
@@ -1925,6 +1918,15 @@ class GameSim {
 						const k = this.playersOnCourt[i][j];
 						this.team[i].player[k].stat.pm += i === t ? amt : -amt;
 					}
+				}
+
+				if (
+					this.elamActive &&
+					(this.team[this.d].stat.pts >= this.elamTarget ||
+						this.team[this.o].stat.pts > this.elamTarget)
+				) {
+					this.elamDone = true;
+					console.log("ELAMDONE");
 				}
 			}
 

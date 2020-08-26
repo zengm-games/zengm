@@ -424,7 +424,7 @@ class GameSim {
 				this.d = this.o === 0 ? 1 : 0;
 			}
 
-			while (this.t > 0.5 / 60 && !this.elamDone) {
+			while ((this.t > 0.5 / 60 || this.elamActive) && !this.elamDone) {
 				this.simPossession();
 			}
 
@@ -465,24 +465,34 @@ class GameSim {
 			this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
 		// Run out the clock if winning
-		if (quarter >= 4 && this.t <= 24 / 60 && pointDifferential > 0) {
+		if (
+			quarter >= 4 &&
+			!this.elamActive &&
+			this.t <= 24 / 60 &&
+			pointDifferential > 0
+		) {
 			return this.t;
 		}
 
 		// Booleans that can influence possession length strategy
 		const holdForLastShot =
-			this.t <= 26 / 60 && (quarter <= 3 || pointDifferential >= 0);
+			!this.elamActive &&
+			this.t <= 26 / 60 &&
+			(quarter <= 3 || pointDifferential >= 0);
 		const catchUp =
+			!this.elamActive &&
 			quarter >= 4 &&
 			((this.t <= 3 && pointDifferential <= 10) ||
 				(this.t <= 2 && pointDifferential <= 5) ||
 				(this.t <= 1 && pointDifferential < 0));
 		const maintainLead =
+			!this.elamActive &&
 			quarter >= 4 &&
 			((this.t <= 3 && pointDifferential > 10) ||
 				(this.t <= 2 && pointDifferential > 5) ||
 				(this.t <= 1 && pointDifferential > 0));
-		const twoForOne = this.t >= 32 / 60 && this.t <= 52 / 60;
+		const twoForOne =
+			!this.elamActive && this.t >= 32 / 60 && this.t <= 52 / 60;
 		let lowerBound = 4 / 60;
 		let upperBound = 24 / 60;
 
@@ -536,7 +546,9 @@ class GameSim {
 
 		const bounded1 = helpers.bound(possessionLength, lowerBound, upperBound);
 
-		return helpers.bound(bounded1, 0, this.t);
+		const finalUpperBound = this.elamActive ? Infinity : this.t;
+
+		return helpers.bound(bounded1, 0, finalUpperBound);
 	}
 
 	simPossession() {
@@ -547,26 +559,25 @@ class GameSim {
 
 		// Clock
 		const possessionLength = this.getPossessionLength();
-		if (!this.elamActive) {
-			this.t -= possessionLength;
+		this.t -= possessionLength;
 
-			if (
-				this.elam &&
-				this.team[0].stat.ptsQtrs.length >= 4 &&
-				this.t < g.get("elamMinutes")
-			) {
-				const maxPts = Math.max(
-					this.team[this.d].stat.pts,
-					this.team[this.o].stat.pts,
-				);
-				this.elamTarget = maxPts + g.get("elamPoints");
-				this.elamActive = true;
-				if (this.playByPlay) {
-					this.playByPlay.push({
-						type: "elamActive",
-						target: this.elamTarget,
-					});
-				}
+		if (
+			this.elam &&
+			!this.elamActive &&
+			this.team[0].stat.ptsQtrs.length >= 4 &&
+			this.t < g.get("elamMinutes")
+		) {
+			const maxPts = Math.max(
+				this.team[this.d].stat.pts,
+				this.team[this.o].stat.pts,
+			);
+			this.elamTarget = maxPts + g.get("elamPoints");
+			this.elamActive = true;
+			if (this.playByPlay) {
+				this.playByPlay.push({
+					type: "elamActive",
+					target: this.elamTarget,
+				});
 			}
 		}
 
@@ -581,11 +592,15 @@ class GameSim {
 		this.updatePlayingTime(possessionLength);
 		this.injuries();
 
-		const gameOver =
-			this.elamDone ||
-			(this.t <= 0 &&
+		let gameOver = false;
+		if (this.elam) {
+			gameOver = this.elamDone;
+		} else {
+			gameOver =
+				this.t <= 0 &&
 				this.team[this.o].stat.ptsQtrs.length >= 4 &&
-				this.team[this.d].stat.pts != this.team[this.o].stat.pts);
+				this.team[this.d].stat.pts != this.team[this.o].stat.pts;
+		}
 
 		if (!gameOver && random.randInt(1, this.subsEveryN) === 1) {
 			const substitutions = this.updatePlayersOnCourt();
@@ -1062,7 +1077,7 @@ class GameSim {
 			offenseWinningByABit &&
 			this.team[0].stat.ptsQtrs.length >= 4 &&
 			timeBeforePossession < 25 / 60 &&
-			!this.elam;
+			!this.elamActive;
 
 		if (intentionalFoul) {
 			// HACK! Add some time back on the clock. Would be better if this was like football and time ticked off during the play, not predefined. BE CAREFUL ABOUT CHANGING STUFF BELOW THIS IN THIS FUNCTION, IT MAY DEPEND ON THIS. Like anything reading this.t or intentionalFoul.
@@ -1078,13 +1093,13 @@ class GameSim {
 			this.t <= 0 &&
 			this.team[this.o].stat.ptsQtrs.length >= 4 &&
 			this.team[this.o].stat.pts > this.team[this.d].stat.pts &&
-			!this.elam
+			!this.elamActive
 		) {
 			return "endOfQuarter";
 		}
 
 		// With not much time on the clock at the end of a quarter, possession might end with the clock running out
-		if (this.t <= 0 && possessionLength < 6 / 60) {
+		if (this.t <= 0 && possessionLength < 6 / 60 && !this.elamActive) {
 			if (Math.random() > (possessionLength / (8 / 60)) ** (1 / 4)) {
 				return "endOfQuarter";
 			}
@@ -1217,7 +1232,8 @@ class GameSim {
 		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
 		const forceThreePointer =
-			(diff >= 3 &&
+			(!this.elamActive &&
+				diff >= 3 &&
 				diff <= 10 &&
 				this.t <= 10 / 60 &&
 				quarter >= 4 &&
@@ -1383,7 +1399,7 @@ class GameSim {
 			this.recordPlay("missTp", this.o, [this.team[this.o].player[p].name]);
 		}
 
-		if (this.t > 0.5 / 60) {
+		if (this.t > 0.5 / 60 || this.elamActive) {
 			return this.doReb(); // orb or drb
 		}
 

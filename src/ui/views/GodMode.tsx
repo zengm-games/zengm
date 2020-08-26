@@ -47,13 +47,18 @@ type Key =
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
-	| "spectator";
+	| "spectator"
+	| "elam"
+	| "elamASG"
+	| "elamMinutes"
+	| "elamPoints";
 
 type Category =
 	| "League Structure"
 	| "Finance"
 	| "Events"
 	| "Game Simulation"
+	| "Elam Ending"
 	| "Challenge Modes"
 	| "Game Modes"
 	| "Player Development";
@@ -607,6 +612,40 @@ if (process.env.SPORT === "basketball") {
 			validator: value => {
 				if (value < 0 || value > 1) {
 					throw new Error("Value must be between 0 and 1");
+				}
+			},
+		},
+		{
+			category: "Elam Ending",
+			key: "elam",
+			name: "Regular Season and Playoffs",
+			type: "bool",
+		},
+		{
+			category: "Elam Ending",
+			key: "elamASG",
+			name: "All-Star Game",
+			type: "bool",
+		},
+		{
+			category: "Elam Ending",
+			key: "elamMinutes",
+			name: "Minutes Left Trigger",
+			type: "int",
+			validator: (value, output) => {
+				if (value > output.quarterLength) {
+					throw new Error("Value must be less than the quarter length");
+				}
+			},
+		},
+		{
+			category: "Elam Ending",
+			key: "elamPoints",
+			name: "Target Points Added",
+			type: "int",
+			validator: value => {
+				if (value < 0) {
+					throw new Error("Value must be greater than 0");
 				}
 			},
 		},
@@ -1198,6 +1237,18 @@ const encodeDecodeFunctions = {
 
 const groupedOptions = groupBy(options, "category");
 
+// Specified order
+const categories = [
+	"League Structure",
+	"Finance",
+	"Events",
+	"Game Simulation",
+	"Elam Ending",
+	"Challenge Modes",
+	"Game Modes",
+	"Player Development",
+] as const;
+
 const Input = ({
 	decoration,
 	disabled,
@@ -1381,10 +1432,42 @@ const GodModeOptions = (props: View<"godMode">) => {
 
 	return (
 		<form onSubmit={handleFormSubmit}>
-			{Object.entries(groupedOptions).map(([category, catOptions], i) => {
+			{categories.map((category, i) => {
+				const catOptions = groupedOptions[category];
+				if (!catOptions) {
+					return null;
+				}
+
 				return (
 					<React.Fragment key={category}>
 						<h2 className={i === 0 ? "mt-3" : "mt-2"}>{category}</h2>
+						{category === "Elam Ending" ? (
+							<>
+								<p>
+									The{" "}
+									<a
+										href="https://thetournament.com/elam-ending"
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										Elam Ending
+									</a>{" "}
+									is a new way to play the end of basketball games. In the final
+									period of the game, when the clock goes below a certain point
+									("Minutes Left Trigger"), the clock is turned off. The winner
+									of the game will be the team that first hits a target score.
+									That target is determined by adding some number of points
+									("Target Points Added") to the leader's current score.
+								</p>
+								<p>
+									The Elam Ending generally makes the end of the game more
+									exciting. Nobody is trying to run out the clock. Nobody is
+									trying to foul or call strategic timeouts or rush shots. It's
+									just high quality basketball, every play until the end of the
+									game.
+								</p>
+							</>
+						) : null}
 						{category === "Game Simulation" &&
 						process.env.SPORT === "basketball" &&
 						gameSimPresets ? (

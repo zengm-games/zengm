@@ -49,6 +49,10 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			repeatSeason: !!g.get("repeatSeason"),
 			ties: g.get("ties"),
 			spectator: g.get("spectator"),
+			elam: g.get("elam"),
+			elamASG: g.get("elamASG"),
+			elamMinutes: g.get("elamMinutes"),
+			elamPoints: g.get("elamPoints"),
 		};
 	}
 };

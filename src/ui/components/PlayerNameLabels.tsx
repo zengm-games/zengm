@@ -9,17 +9,7 @@ const baseStyle = {
 	height: 30,
 };
 
-const PlayerNameLabels = ({
-	children,
-	disableWatchToggle,
-	injury,
-	jerseyNumber,
-	pid,
-	pos,
-	skills,
-	style,
-	watch,
-}: {
+const PlayerNameLabels = (props: {
 	children: ReactNode;
 	disableWatchToggle?: boolean;
 	jerseyNumber?: string;
@@ -32,6 +22,18 @@ const PlayerNameLabels = ({
 	};
 	watch?: boolean;
 }) => {
+	const {
+		children,
+		disableWatchToggle,
+		injury,
+		jerseyNumber,
+		pid,
+		pos,
+		skills,
+		style,
+		watch,
+	} = props;
+
 	let injuryIcon: React.ReactNode = null;
 
 	if (injury !== undefined) {
@@ -57,7 +59,7 @@ const PlayerNameLabels = ({
 
 	return (
 		<span style={style ? { ...baseStyle, ...style } : baseStyle}>
-			{typeof jerseyNumber === "string" ? (
+			{props.hasOwnProperty("jerseyNumber") ? (
 				<span className="text-muted jersey-number-name">{jerseyNumber}</span>
 			) : null}
 			{typeof pos === "string" ? `${pos} ` : null}

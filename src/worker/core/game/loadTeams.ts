@@ -89,7 +89,10 @@ const processTeam = (
 			skills: rating.skills,
 			injury: p.injury,
 			injured: p.injury.type !== "Healthy",
-			jerseyNumber: p.stats[p.stats.length - 1].jerseyNumber,
+			jerseyNumber:
+				p.stats.length > 0
+					? p.stats[p.stats.length - 1].jerseyNumber
+					: undefined,
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
 		};

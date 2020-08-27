@@ -1,3 +1,7 @@
+releasing player from roster is too slow
+- particularly noticeable on firefox mobile, but also on desktop browsers
+- @dslayer#3528 says it started happening around the time of the jersey numbers update
+
 Add game log to player page
 
 option to disable unimportant notifications
@@ -105,8 +109,6 @@ option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
 
 rebuilding/contending in the old days https://old.reddit.com/r/BasketballGM/comments/hytv2e/whats_the_best_way_to_trade_for_good_draft_picks/fzf4iap/?context=3
-
-“Attempt to use history.replaceState() more than 100 times per 30 seconds” on safari sometimes, when auto playing
 
 option to lock ratings for all players, including future players
 

@@ -1701,12 +1701,14 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	}
 
 	await player.release(p, justDrafted);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
+
+	// Purposely after realtimeUpdate, so the UI update happens without waiting for this to complete
 	await freeAgents.normalizeContractDemands({
 		type: "dummyExpiringContracts",
 		pids: [p.pid],
 	});
-	await toUI("realtimeUpdate", [["playerMovement"]]);
-	await recomputeLocalUITeamOvrs();
 };
 
 const removeLastTeam = async (): Promise<void> => {

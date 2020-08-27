@@ -9,7 +9,11 @@ import React, {
 	MouseEvent,
 } from "react";
 import { helpers, localActions, menuItems, useLocalShallow } from "../util";
-import type { MenuItemLink, MenuItemHeader } from "../../common/types";
+import type {
+	MenuItemLink,
+	MenuItemHeader,
+	MenuItemText,
+} from "../../common/types";
 
 const getText = (text: MenuItemLink["text"]) => {
 	if (text.hasOwnProperty("side")) {
@@ -78,11 +82,15 @@ const MenuItem = ({
 }: {
 	godMode: boolean;
 	lid?: number;
-	menuItem: MenuItemHeader | MenuItemLink;
+	menuItem: MenuItemHeader | MenuItemLink | MenuItemText;
 	onMenuItemClick: () => void;
 	pageID?: string;
 	root: boolean;
 }) => {
+	if (menuItem.type === "text") {
+		return null;
+	}
+
 	if (!menuItem.league && lid !== undefined) {
 		return null;
 	}

@@ -1,7 +1,11 @@
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
-import type { MenuItemHeader, MenuItemLink } from "../../common/types";
+import type {
+	MenuItemHeader,
+	MenuItemLink,
+	MenuItemText,
+} from "../../common/types";
 
 const style = { maxWidth: 1000 };
 
@@ -165,8 +169,13 @@ const frivolities = {
 	],
 };
 
-const children: MenuItemLink[] = [];
-for (const array of Object.values(frivolities)) {
+const children: (MenuItemLink | MenuItemText)[] = [];
+for (const [name, array] of Object.entries(frivolities)) {
+	children.push({
+		type: "text",
+		text: name,
+	});
+
 	for (const frivolitiy of array) {
 		children.push({
 			type: "link",

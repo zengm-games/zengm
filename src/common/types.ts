@@ -587,7 +587,12 @@ export type MenuItemHeader = {
 	short: string;
 	league?: true;
 	nonLeague?: true;
-	children: MenuItemLink[];
+	children: (MenuItemLink | MenuItemText)[];
+};
+
+export type MenuItemText = {
+	type: "text";
+	text: string;
 };
 
 export type Negotiation = {

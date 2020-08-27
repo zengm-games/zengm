@@ -517,7 +517,13 @@ const getPlayerStats = (
 				const rowsTemp = rows.filter(row => row.season === season2);
 
 				// Aggregate annual stats and ignore other things
-				const ignoredKeys = ["season", "tid", "yearsWithTeam", "playoffs"];
+				const ignoredKeys = [
+					"season",
+					"tid",
+					"yearsWithTeam",
+					"playoffs",
+					"jerseyNumber",
+				];
 				const statSums: any = {};
 				const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp[0]) : [];
 

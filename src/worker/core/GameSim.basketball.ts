@@ -355,14 +355,18 @@ class GameSim {
 		for (const t of teamNums) {
 			delete this.team[t].compositeRating;
 
+			// @ts-ignore
 			delete this.team[t].pace;
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
+				// @ts-ignore
 				delete this.team[t].player[p].age;
 
+				// @ts-ignore
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
 
+				// @ts-ignore
 				delete this.team[t].player[p].ptModifier;
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;

@@ -438,6 +438,7 @@ const updateLeaders = async (
 					leader.stat = leader.stats[cat.statProp];
 					leader.abbrev = leader.stats.abbrev;
 					leader.tid = leader.stats.tid;
+					// @ts-ignore
 					delete leader.stats;
 					leader.userTeam = userAbbrev === leader.abbrev;
 					cat.data.push(leader);
@@ -449,8 +450,10 @@ const updateLeaders = async (
 				}
 			}
 
+			// @ts-ignore
 			delete cat.minStats;
 
+			// @ts-ignore
 			delete cat.minValue;
 		}
 

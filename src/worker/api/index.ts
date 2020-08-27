@@ -1379,6 +1379,7 @@ const handleUploadedDraftClass = async (
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
+			// @ts-ignore
 			delete p2.pid;
 		}
 

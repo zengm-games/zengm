@@ -20,6 +20,7 @@ const loadTeamSeasons = async () => {
 
 	for (const st of sampleTiebreakers) {
 		const copied = helpers.deepCopy(st);
+		// @ts-ignore
 		delete copied.stats;
 		const { seasons, ...partialT } = copied;
 

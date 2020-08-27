@@ -209,6 +209,8 @@ const writeGameStats = async (
 			gameStats.teams[t].players[p].injury = helpers.deepCopy(
 				results.team[t].player[p].injury,
 			);
+			gameStats.teams[t].players[p].jerseyNumber =
+				results.team[t].player[p].jerseyNumber;
 		}
 	}
 

@@ -65,6 +65,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 						"season",
 						"abbrev",
 						"tid",
+						"jerseyNumber",
 				  ]
 				: [
 						"keyStats",
@@ -78,6 +79,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 						"season",
 						"abbrev",
 						"tid",
+						"jerseyNumber",
 				  ],
 		fuzz: true,
 		mergeStats: true,

@@ -61,6 +61,7 @@ const Offer = (props: OfferProps) => {
 				data: [
 					<PlayerNameLabels
 						injury={p.injury}
+						jerseyNumber={p.jerseyNumber}
 						pid={p.pid}
 						skills={p.ratings.skills}
 						watch={p.watch}
@@ -315,6 +316,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				/>,
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}

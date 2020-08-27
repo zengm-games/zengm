@@ -64,6 +64,7 @@ const PlayerRatings = ({
 					pid={p.pid}
 					injury={p.injury}
 					skills={p.ratings.skills}
+					jerseyNumber={p.stats.jerseyNumber}
 					watch={p.watch}
 				>
 					{p.name}

@@ -262,7 +262,7 @@ const processAttrs = (
 				output.latestTransactionSeason = undefined;
 			}
 		} else if (attr === "jerseyNumber") {
-			if (p.stats.length === 0 || p.tid === PLAYER.FREE_AGENT) {
+			if (p.stats.length === 0) {
 				output.jerseyNumber = undefined;
 			} else if (p.tid === PLAYER.RETIRED) {
 				// Find most common from career

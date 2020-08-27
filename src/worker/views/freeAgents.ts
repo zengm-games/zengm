@@ -24,6 +24,7 @@ const updateFreeAgents = async () => {
 			"freeAgentMood",
 			"injury",
 			"watch",
+			"jerseyNumber",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,

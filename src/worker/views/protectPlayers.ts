@@ -52,6 +52,7 @@ const updateProtectPlayers = async () => {
 				"draft",
 				"latestTransaction",
 				"latestTransactionSeason",
+				"jerseyNumber",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,

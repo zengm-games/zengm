@@ -74,6 +74,7 @@ const PlayersTable = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					jerseyNumber={p.stats.jerseyNumber}
 					pos={p.ratings.pos}
 					skills={p.skills}
 					watch={p.watch}

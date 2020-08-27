@@ -992,6 +992,7 @@ export type ContractInfo = {
 	skills: string[];
 	pos: string;
 	injury: PlayerInjury;
+	jerseyNumber: string | undefined;
 	amount: number;
 	exp: number;
 	released: boolean;

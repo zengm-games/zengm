@@ -55,6 +55,7 @@ const updateTeamFinances = async (
 				skills: contract.skills,
 				pos: contract.pos,
 				injury: contract.injury,
+				jerseyNumber: contract.jerseyNumber,
 				watch: contract.watch,
 				released: contract.released,
 				amounts,

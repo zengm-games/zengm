@@ -33,6 +33,7 @@ const Row = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>

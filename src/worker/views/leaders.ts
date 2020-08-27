@@ -389,7 +389,7 @@ const updateLeaders = async (
 		}
 
 		players = await idb.getCopies.playersPlus(players, {
-			attrs: ["pid", "nameAbbrev", "injury", "watch"],
+			attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
 			ratings: ["skills"],
 			stats: ["abbrev", "tid", ...stats],
 			season: inputs.season,

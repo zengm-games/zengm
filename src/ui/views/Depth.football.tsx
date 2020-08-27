@@ -203,6 +203,7 @@ const Depth = ({
 							<PlayerNameLabels
 								pid={p.pid}
 								injury={p.injury}
+								jerseyNumber={p.stats.jerseyNumber}
 								skills={p.ratings.skills}
 								watch={p.watch}
 							>

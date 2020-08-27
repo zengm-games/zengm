@@ -116,7 +116,16 @@ export const genView = (type: "college" | "country") => {
 			const infos = await Promise.all(
 				Object.entries(infosTemp).map(async ([name, info]) => {
 					const p = await idb.getCopy.playersPlus(info.best.p, {
-						attrs: ["pid", "name", "draft", "retiredYear", "statsTids", "hof"],
+						attrs: [
+							"pid",
+							"name",
+							"draft",
+							"retiredYear",
+							"statsTids",
+							"hof",
+							"jerseyNumber",
+							"watch",
+						],
 						ratings: ["ovr", "pos"],
 						stats: ["season", "abbrev", "tid", ...stats],
 						fuzz: true,

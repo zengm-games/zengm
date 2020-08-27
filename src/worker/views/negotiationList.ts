@@ -28,6 +28,7 @@ const updateNegotiationList = async () => {
 			"age",
 			"freeAgentMood",
 			"injury",
+			"jerseyNumber",
 			"watch",
 			"contract",
 			"draft",

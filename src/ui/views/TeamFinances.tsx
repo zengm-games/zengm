@@ -519,6 +519,7 @@ const TeamFinances = ({
 		const data: ReactNode[] = [
 			<PlayerNameLabels
 				injury={p.injury}
+				jerseyNumber={p.jerseyNumber}
 				pid={p.pid}
 				pos={p.pos}
 				skills={p.skills}

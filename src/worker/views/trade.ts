@@ -92,6 +92,7 @@ const updateTrade = async () => {
 		"injury",
 		"watch",
 		"untradable",
+		"jerseyNumber",
 	];
 	const ratings = ["ovr", "pot", "skills", "pos"];
 	const stats =

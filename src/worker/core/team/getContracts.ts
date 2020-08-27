@@ -21,6 +21,10 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 			skills: p.ratings[p.ratings.length - 1].skills,
 			pos: p.ratings[p.ratings.length - 1].pos,
 			injury: p.injury,
+			jerseyNumber:
+				p.stats.length > 0
+					? p.stats[p.stats.length - 1].jerseyNumber
+					: undefined,
 			watch: p.watch,
 			amount: p.contract.amount,
 			exp: p.contract.exp,
@@ -48,6 +52,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 				skills: p.ratings[p.ratings.length - 1].skills,
 				pos: p.ratings[p.ratings.length - 1].pos,
 				injury: p.injury,
+				jerseyNumber: undefined,
 				watch: p.watch !== undefined ? p.watch : false,
 				// undefined check is for old leagues, can delete eventually
 				amount: releasedPlayer.contract.amount,
@@ -65,6 +70,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 					type: "Healthy",
 					gamesRemaining: 0,
 				},
+				jerseyNumber: undefined,
 				watch: false,
 				amount: releasedPlayer.contract.amount,
 				exp: releasedPlayer.contract.exp,

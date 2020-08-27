@@ -86,7 +86,7 @@ async function updateDepth(
 			attrs: ["pid", "name", "age", "injury", "watch"],
 			ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots", ...ratings],
 			// @ts-ignore
-			stats: stats[pos],
+			stats: [...stats[pos], "jerseyNumber"],
 			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,

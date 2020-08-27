@@ -105,7 +105,7 @@ export const getHistory = async (
 			: ["gp", "keyStats", "av"];
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
+		attrs: ["pid", "name", "injury", "tid", "hof", "watch", "jerseyNumber"],
 		ratings: ["pos"],
 		stats: ["season", "abbrev", ...stats],
 	});

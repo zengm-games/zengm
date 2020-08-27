@@ -66,7 +66,12 @@ const Most = ({
 			key: p.pid,
 			data: [
 				p.rank,
-				<PlayerNameLabels disableWatchToggle pid={p.pid} watch={p.watch}>
+				<PlayerNameLabels
+					disableWatchToggle
+					jerseyNumber={p.jerseyNumber}
+					pid={p.pid}
+					watch={p.watch}
+				>
 					{p.name}
 				</PlayerNameLabels>,
 				...extraCols.map(x => {

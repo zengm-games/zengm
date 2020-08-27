@@ -51,6 +51,7 @@ const updateUpcomingFreeAgents = async (
 			"injury",
 			"contractDesired",
 			"watch",
+			"jerseyNumber",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,

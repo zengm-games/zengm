@@ -91,6 +91,7 @@ const PlayerStats = ({
 			data: [
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.stats.jerseyNumber}
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}

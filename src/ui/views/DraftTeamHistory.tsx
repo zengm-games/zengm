@@ -76,7 +76,12 @@ const DraftTeamHistory = ({
 					{p.draft.year}
 				</a>,
 				`${p.draft.round}-${p.draft.pick}`,
-				<PlayerNameLabels pid={p.pid} skills={p.currentSkills} watch={p.watch}>
+				<PlayerNameLabels
+					jerseyNumber={p.jerseyNumber}
+					pid={p.pid}
+					skills={p.currentSkills}
+					watch={p.watch}
+				>
 					{p.name}
 				</PlayerNameLabels>,
 				p.pos,

@@ -95,7 +95,7 @@ const updatePlayers = async (
 				"watch",
 			],
 			ratings: ["skills", "pos"],
-			stats: ["abbrev", "tid", ...stats],
+			stats: ["abbrev", "tid", "jerseyNumber", ...stats],
 			season: inputs.season, // If null, then show career stats!
 			tid,
 			statType,

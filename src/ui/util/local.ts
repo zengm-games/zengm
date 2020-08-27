@@ -25,7 +25,7 @@ const blockCloseTab = (e: BeforeUnloadEvent) => {
 	e.returnValue = "";
 };
 
-const [useLocal, local] = create<
+const useLocal = create<
 	LocalStateUI & {
 		actions: LocalActions;
 	}
@@ -175,6 +175,7 @@ const useLocalShallow = <T>(selector: (a: LocalStateUI) => T) =>
 // This assumes the actions object never changes!
 const useLocalActions = () => useLocal(state => state.actions);
 
+const local = useLocal;
 const localActions = local.getState().actions;
 
 export { local, localActions, useLocal, useLocalActions, useLocalShallow };

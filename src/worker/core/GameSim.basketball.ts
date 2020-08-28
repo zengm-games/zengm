@@ -418,7 +418,6 @@ class GameSim {
 	}
 
 	checkElamEnding() {
-		console.log("checkElamEnding");
 		if (
 			this.elam &&
 			!this.elamActive &&
@@ -626,6 +625,21 @@ class GameSim {
 		}
 	}
 
+	isLateGame() {
+		const quarter = this.team[0].stat.ptsQtrs.length;
+		let lateGame;
+		if (this.elamActive) {
+			const ptsToTarget =
+				this.elamTarget -
+				Math.max(this.team[this.d].stat.pts, this.team[this.o].stat.pts);
+			lateGame = ptsToTarget <= 15;
+		} else {
+			lateGame = quarter >= 4 && this.t < 6;
+		}
+
+		return lateGame;
+	}
+
 	/**
 	 * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
 	 *
@@ -643,8 +657,7 @@ class GameSim {
 		}
 
 		// Late in games, or in OT, fatigue matters less
-		const quarter = this.team[0].stat.ptsQtrs.length;
-		if (quarter >= 4 && this.t < 6) {
+		if (this.isLateGame()) {
 			const factor = 6 - this.t;
 			return (energy + factor) / (1 + factor);
 		}
@@ -662,7 +675,7 @@ class GameSim {
 	updatePlayersOnCourt(shooter?: PlayerNumOnCourt) {
 		let substitutions = false;
 		let blowout = false;
-		let lateGame = false;
+		const lateGame = this.isLateGame();
 
 		if (this.o !== undefined && this.d !== undefined) {
 			const diff = Math.abs(
@@ -674,7 +687,6 @@ class GameSim {
 					this.elamTarget -
 					Math.max(this.team[this.d].stat.pts, this.team[this.o].stat.pts);
 				blowout = diff >= 10 && ptsToTarget < diff;
-				lateGame = ptsToTarget <= 15;
 			} else {
 				blowout =
 					quarter === 4 &&
@@ -683,7 +695,6 @@ class GameSim {
 						(diff >= 20 && this.t < 7) ||
 						(diff >= 15 && this.t < 3) ||
 						(diff >= 10 && this.t < 1));
-				lateGame = quarter >= 4 && this.t < 6;
 			}
 		}
 

@@ -92,7 +92,10 @@ const processStats = (
 		} else if (stat === "2pa") {
 			row[stat] = ps.fga - ps.tpa;
 		} else if (stat === "jerseyNumber") {
-			row[stat] = ps.jerseyNumber;
+			row[stat] = ps[stat];
+			scale = false;
+		} else if (stat.endsWith("Max")) {
+			row[stat] = ps[stat];
 			scale = false;
 		} else {
 			row[stat] = ps[stat];

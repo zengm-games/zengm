@@ -219,6 +219,33 @@ const PLAYER_STATS_TABLES = {
 			"pm",
 		],
 	},
+	gameHighs: {
+		name: "Game Highs",
+		stats: [
+			"gp",
+			"minMax",
+			"fgMax",
+			"fgaMax",
+			"tpMax",
+			"tpaMax",
+			"2pMax",
+			"2paMax",
+			"ftMax",
+			"ftaMax",
+			"orbMax",
+			"drbMax",
+			"trbMax",
+			"astMax",
+			"tovMax",
+			"stlMax",
+			"blkMax",
+			"baMax",
+			"pfMax",
+			"ptsMax",
+			"pmMax",
+			"gmscMax",
+		],
+	},
 };
 const TEAM_STATS_TABLES = {
 	team: {

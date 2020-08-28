@@ -59,6 +59,29 @@ Relatives.propTypes = {
 	relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
+const formatStat = (ps: any, stat: string) => {
+	if (stat.endsWith("Max")) {
+		if (!Array.isArray(ps[stat])) {
+			return null;
+		}
+
+		return (
+			<a
+				href={helpers.leagueUrl([
+					"game_log",
+					`${ps.abbrev}_${ps.tid}`,
+					ps.season,
+					(ps[stat] as any)[1],
+				])}
+			>
+				{helpers.roundStat((ps[stat] as any)[0], stat)}
+			</a>
+		);
+	}
+
+	return helpers.roundStat(ps[stat], stat);
+};
+
 const StatsTable = ({
 	name,
 	onlyShowIf,
@@ -95,7 +118,9 @@ const StatsTable = ({
 		"Year",
 		"Team",
 		"Age",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map(
+			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		),
 	);
 
 	if (superCols) {
@@ -111,6 +136,8 @@ const StatsTable = ({
 		cols[cols.length - 1].title = "%";
 	}
 
+	console.log(name, playerStats);
+
 	return (
 		<>
 			<h3>{name}</h3>
@@ -122,7 +149,7 @@ const StatsTable = ({
 					"Career",
 					null,
 					null,
-					...stats.map(stat => helpers.roundStat(careerStats[stat], stat)),
+					...stats.map(stat => formatStat(careerStats, stat)),
 				]}
 				hideAllControls
 				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
@@ -144,7 +171,7 @@ const StatsTable = ({
 								{ps.abbrev}
 							</a>,
 							ps.age,
-							...stats.map(stat => helpers.roundStat(ps[stat], stat)),
+							...stats.map(stat => formatStat(ps, stat)),
 						],
 					};
 				})}

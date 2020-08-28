@@ -8,6 +8,9 @@ game highs
 - add as table in constants.basketball.ts but will need some special care for rendering the gid links
 - player profile pages
 - player stats page
+- check that it doesn't crash for upgraded leagues missing those cols
+
+add elam ending to schema
 
 hide notifications if tab hidden, for performance reasons
 

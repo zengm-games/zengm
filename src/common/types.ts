@@ -745,6 +745,7 @@ type PlayerSalary = {
 };
 
 // jerseyNumber: string | undefined;
+// *Max: [number, number] | undefined;
 export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";

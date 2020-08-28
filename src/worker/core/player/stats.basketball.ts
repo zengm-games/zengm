@@ -46,4 +46,30 @@ const stats = {
 	] as const,
 };
 
+/**
+ * These ones are dynamically created, not listed in this file:
+ *
+ * "minMax",
+ * "fgMax",
+ * "fgaMax",
+ * "tpMax",
+ * "tpaMax",
+ * "ftMax",
+ * "ftaMax",
+ * "pmMax",
+ * "orbMax",
+ * "drbMax",
+ * "astMax",
+ * "tovMax",
+ * "stlMax",
+ * "blkMax",
+ * "baMax",
+ * "pfMax",
+ * "ptsMax",
+ * "2pMax",
+ * "2paMax",
+ * "trbMax",
+ * "gmscMax",
+ */
+
 export default stats;

@@ -1,3 +1,14 @@
+game highs
+- bbgm only
+- fields with suffix in stats row
+  - fgaMax, fgaMaxGID
+- Game Highs table like b-r
+  - including game score
+  - pm, BA
+- add as table in constants.basketball.ts but will need some special care for rendering the gid links
+- player profile pages
+- player stats page
+
 hide notifications if tab hidden, for performance reasons
 
 Add game log to player page

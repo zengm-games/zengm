@@ -236,94 +236,137 @@ const writePlayerStats = async (
 			}
 		}
 
-		await Promise.all(
-			result.team.map((t: any) =>
-				Promise.all(
-					t.player.map(async (p: any) => {
-						// Only need to write stats if player got minutes
-						if (p.stat.min === 0) {
-							return;
+		for (const t of result.team) {
+			for (const p of t.player) {
+				// Only need to write stats if player got minutes
+				if (p.stat.min === 0) {
+					continue;
+				}
+
+				player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
+
+				const p2 = await idb.cache.players.get(p.id);
+				if (!p2) {
+					throw new Error("Invalid pid");
+				}
+
+				if (!allStarGame) {
+					let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+
+					if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
+						await player.addStatsRow(p2, playoffs);
+						ps = p2.stats[p2.stats.length - 1];
+					}
+
+					// Since index is not on playoffs, manually check
+					if (ps.playoffs !== playoffs) {
+						throw new Error(`Missing playoff stats for player ${p.id}`);
+					}
+
+					// Update stats
+					for (const key of Object.keys(p.stat)) {
+						if (!ps.hasOwnProperty(key)) {
+							throw new Error(`Missing key "${key}" on ps`);
 						}
 
-						player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
-
-						const promises: Promise<any>[] = [];
-
-						const p2 = await idb.cache.players.get(p.id);
-						if (!p2) {
-							throw new Error("Invalid pid");
+						if (process.env.SPORT === "football" && key.endsWith("Lng")) {
+							if (p.stat[key] > ps[key]) {
+								ps[key] = p.stat[key];
+							}
+						} else {
+							ps[key] += p.stat[key];
 						}
+					}
 
-						if (!allStarGame) {
-							let ps = p2.stats[p2.stats.length - 1]; // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+					ps.gp += 1; // Already checked for non-zero minutes played above
 
-							if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
-								await player.addStatsRow(p2, playoffs);
-								ps = p2.stats[p2.stats.length - 1];
+					if (process.env.SPORT === "football") {
+						const stat = qbResults.get(p.id);
+						if (stat) {
+							ps[stat] += 1;
+						}
+					}
+
+					if (process.env.SPORT === "basketball") {
+						const maxStats = [
+							"min",
+							"fg",
+							"fga",
+							"tp",
+							"tpa",
+							"ft",
+							"fta",
+							"pm",
+							"orb",
+							"drb",
+							"ast",
+							"tov",
+							"stl",
+							"blk",
+							"ba",
+							"pf",
+							"pts",
+							"2p",
+							"2pa",
+							"trb",
+							"gmsc",
+						];
+
+						for (const stat of maxStats) {
+							let value;
+							if (stat === "2p") {
+								value = p.stat.fg - p.stat.tp;
+							} else if (stat === "2pa") {
+								value = p.stat.fga - p.stat.tpa;
+							} else if (stat === "trb") {
+								value = p.stat.drb - p.stat.orb;
+							} else if (stat === "gmsc") {
+								value = helpers.gameScore(p.stat);
+							} else {
+								value = p.stat[stat];
 							}
 
-							// Since index is not on playoffs, manually check
-							if (ps.playoffs !== playoffs) {
-								throw new Error(`Missing playoff stats for player ${p.id}`);
+							if (value === undefined) {
+								console.log(stat, p.stat);
 							}
 
-							// Update stats
-							for (const key of Object.keys(p.stat)) {
-								if (!ps.hasOwnProperty(key)) {
-									throw new Error(`Missing key "${key}" on ps`);
-								}
-
-								if (process.env.SPORT === "football" && key.endsWith("Lng")) {
-									if (p.stat[key] > ps[key]) {
-										ps[key] = p.stat[key];
-									}
-								} else {
-									ps[key] += p.stat[key];
-								}
-							}
-
-							ps.gp += 1; // Already checked for non-zero minutes played above
-
-							if (process.env.SPORT === "football") {
-								const stat = qbResults.get(p.id);
-								if (stat) {
-									ps[stat] += 1;
-								}
+							const key = `${stat}Max`;
+							if (!ps[key] || value > ps[key][0]) {
+								ps[key] = [value, result.gid];
 							}
 						}
+					}
+				}
 
-						const injuredThisGame = p.injured && p.injury.type === "Healthy"; // Injury crap - assign injury type if player does not already have an injury in the database
+				const injuredThisGame = p.injured && p.injury.type === "Healthy"; // Injury crap - assign injury type if player does not already have an injury in the database
 
-						let ratingsLoss = false;
+				let ratingsLoss = false;
 
-						if (injuredThisGame) {
-							const output = await doInjury(
-								p,
-								p2,
-								t.healthRank,
-								pidsInjuredOneGameOrLess,
-								injuryTexts,
-								conditions,
-							);
-							ratingsLoss = output.ratingsLoss;
+				if (injuredThisGame) {
+					const output = await doInjury(
+						p,
+						p2,
+						t.healthRank,
+						pidsInjuredOneGameOrLess,
+						injuryTexts,
+						conditions,
+					);
+					ratingsLoss = output.ratingsLoss;
 
-							if (output.stopPlay && !stopPlay) {
-								await lock.set("stopGameSim", true);
-								stopPlay = true;
-							}
-						}
+					if (output.stopPlay && !stopPlay) {
+						await lock.set("stopGameSim", true);
+						stopPlay = true;
+					}
+				}
 
-						// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-						if (g.get("phase") !== PHASE.PLAYOFFS || ratingsLoss) {
-							await player.updateValues(p2);
-						}
+				// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
+				if (g.get("phase") !== PHASE.PLAYOFFS || ratingsLoss) {
+					await player.updateValues(p2);
+				}
 
-						promises.push(idb.cache.players.put(p2));
-						return Promise.all(promises);
-					}),
-				),
-			),
-		);
+				await idb.cache.players.put(p2);
+			}
+		}
 	}
 
 	return {

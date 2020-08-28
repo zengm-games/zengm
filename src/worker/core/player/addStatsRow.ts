@@ -31,7 +31,9 @@ const addStatsRow = async (
 	};
 
 	for (const key of stats.derived) {
-		statsRow[key] = 0;
+		if (!key.endsWith("Max")) {
+			statsRow[key] = 0;
+		}
 	}
 
 	for (const key of stats.raw) {

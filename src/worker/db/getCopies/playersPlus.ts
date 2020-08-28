@@ -338,6 +338,20 @@ const processRatings = (
 		playerRatings = rowIndex === undefined ? [] : [playerRatings[rowIndex]];
 	}
 
+	// Show next draft class's prospects, after the current draft has ended
+	if (
+		season === g.get("season") &&
+		p.draft.year === g.get("season") + 1 &&
+		g.get("phase") > PHASE.DRAFT &&
+		playerRatings.length === 0
+	) {
+		playerRatings = [
+			{
+				...p.ratings[p.ratings.length - 1],
+			},
+		];
+	}
+
 	output.ratings = playerRatings.map(pr => {
 		const row: any = {};
 
@@ -688,44 +702,55 @@ const processStats = (
 };
 
 const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
+	const {
+		attrs,
+		ratings,
+		season,
+		showNoStats,
+		showRetired,
+		showRookies,
+	} = options;
+
 	const output: any = {};
 
-	// Do this check before stats for a faster short circuit (no DB access)
-	if (options.ratings.length > 0 && options.season !== undefined) {
-		const hasRatingsSeason = p.ratings.some(r => r.season === options.season);
+	if (ratings.length > 0 && season !== undefined) {
+		const hasRatingsSeason = p.ratings.some(
+			r =>
+				r.season === season ||
+				(r.season === season + 1 && g.get("phase") > PHASE.DRAFT),
+		);
 
-		if (!hasRatingsSeason && !options.showRetired) {
-			return undefined;
+		if (!hasRatingsSeason && !showRetired) {
+			return;
 		}
 	}
 
 	const keepWithNoStats =
-		(options.showRookies &&
+		(showRookies &&
 			p.draft.year >= g.get("season") &&
-			(options.season === g.get("season") || options.season === undefined)) ||
-		(options.showNoStats &&
-			(options.season === undefined || options.season > p.draft.year));
+			(season === g.get("season") || season === undefined)) ||
+		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
 		processStats(output, p, options);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {
-			return undefined;
+			return;
 		}
 	}
 
 	// processRatings must be after processStats for abbrev hack
-	if (options.ratings.length > 0) {
+	if (ratings.length > 0) {
 		processRatings(output, p, options);
 
 		// This should be mostly redundant with hasRatingsSeason above
 		if (output.ratings === undefined) {
-			return undefined;
+			return;
 		}
 	}
 
-	if (options.attrs.length > 0) {
+	if (attrs.length > 0) {
 		processAttrs(output, p, options);
 	}
 
@@ -799,6 +824,7 @@ const getCopies = async (
 		statType,
 		mergeStats,
 	};
+
 	return players
 		.map(p => processPlayer(p, options))
 		.filter(p => p !== undefined);

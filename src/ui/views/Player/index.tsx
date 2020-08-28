@@ -154,6 +154,90 @@ StatsTable.propTypes = {
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	superCols: PropTypes.array,
 };
+let summDisplayed = false;
+const StatsSummary = ({
+	name,
+	onlyShowIf,
+	p,
+	playoffs = false,
+	stats,
+	superCols,
+}: {
+	name: string;
+	onlyShowIf?: string[];
+	p: View<"player">["player"];
+	playoffs?: boolean;
+	stats: string[];
+	superCols?: any[];
+}) => {
+	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
+	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
+
+	if (onlyShowIf !== undefined) {
+		let display = false;
+		for (const stat of onlyShowIf) {
+			if (careerStats[stat] > 0 && summDisplayed == false) {
+				display = true;
+				summDisplayed = true;
+				break;
+			}
+		}
+
+		if (!display) {
+			return null;
+		}
+	}
+
+	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
+
+	if (superCols) {
+		superCols = helpers.deepCopy(superCols);
+
+		// No name
+		superCols[0].colspan -= 1;
+	}
+
+	if (name === "Shot Locations") {
+		cols[cols.length - 3].title = "M";
+		cols[cols.length - 2].title = "A";
+		cols[cols.length - 1].title = "%";
+	}
+
+	return (
+		<>
+			<DataTable
+				className="mb-3"
+				cols={cols}
+				defaultSort={[0, "asc"]}
+				footer={[
+					"Career",
+					...stats.map(stat => helpers.roundStat(careerStats[stat], stat)),
+				]}
+				hideAllControls
+				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
+				rows={playerStats.slice(-1).map((ps, i) => {
+					return {
+						key: i,
+						data: [
+							"Current",
+							...stats.map(stat => helpers.roundStat(ps[stat], stat)),
+						],
+					};
+				})}
+				superCols={superCols}
+			/>
+		</>
+	);
+};
+
+StatsTable.propTypes = {
+	name: PropTypes.string.isRequired,
+	onlyShowIf: PropTypes.arrayOf(PropTypes.string),
+	p: PropTypes.object.isRequired,
+	playoffs: PropTypes.bool,
+	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+	superCols: PropTypes.array,
+};
 
 const Player2 = ({
 	events,
@@ -168,6 +252,7 @@ const Player2 = ({
 	showRatings,
 	showTradeFor,
 	statTables,
+	statSummary,
 	teamColors,
 	teamName,
 	willingToSign,
@@ -253,7 +338,6 @@ const Player2 = ({
 	) {
 		teamURL = helpers.leagueUrl(["draft_scouting"]);
 	}
-
 	return (
 		<>
 			<div className="row mb-3">
@@ -349,7 +433,20 @@ const Player2 = ({
 					</button>
 				</span>
 			) : null}
-
+			{player.careerStats.gp > 0 ? (
+				<>
+					{statSummary.map(({ name, onlyShowIf, stats, superCols }) => (
+						<StatsSummary
+							key={name}
+							name={name}
+							onlyShowIf={onlyShowIf}
+							stats={stats}
+							superCols={superCols}
+							p={player}
+						/>
+					))}
+				</>
+			) : null}
 			{player.careerStats.gp > 0 ? (
 				<>
 					<h2>Regular Season</h2>

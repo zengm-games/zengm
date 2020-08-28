@@ -115,6 +115,49 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1],
 	},
 };
+
+const PLAYER_SUMMARY = {
+	summaryPss: {
+		name: "Summary",
+		onlyShowIf: ["pss"],
+		stats: [
+			"gp",
+			"av",
+			"qbRec",
+			"cmpPct",
+			"pssYds",
+			"pssYdsPerAtt",
+			"pssTD",
+			"pssInt",
+		],
+	},
+	summaryRusRec: {
+		name: "Summary",
+		onlyShowIf: ["rus", "rec"],
+		stats: ["gp", "av", "rus", "rusYds", "rusYdsPerAtt", "rusTD"],
+	},
+
+	summaryKic: {
+		name: "Summary",
+		onlyShowIf: ["fga", "xpa", "pnt"],
+		stats: ["gp", "av", "fg", "fga", "xp", "xpa"],
+	},
+	summaryPunRet: {
+		name: "Summary",
+		onlyShowIf: ["pr"],
+		stats: ["gp", "av", "pr", "prYds", "prTD"],
+	},
+	summaryKicRet: {
+		name: "Summary",
+		onlyShowIf: ["kr"],
+		stats: ["gp", "av", "kr", "krYds", "krTD"],
+	},
+	summaryDef: {
+		name: "Summary",
+		onlyShowIf: ["gp"],
+		stats: ["gp", "av", "defSk", "defTckSolo", "defFmbFrc"],
+	},
+};
 const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",
@@ -374,6 +417,7 @@ const TIME_BETWEEN_GAMES = "week";
 export {
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,
+	PLAYER_SUMMARY,
 	POSITION_COUNTS,
 	POSITIONS,
 	RATINGS,

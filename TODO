@@ -1,9 +1,10 @@
 game highs
-- bbgm only
-- player profile pages
-- player stats page
-- check that it doesn't crash for upgraded leagues missing those cols
 - blog
+  - player profile
+  - player stats
+  - links to box scores
+  - only going forward
+  - bbgm only for now (fbgm has other mechanism Lng)
 - changes
 
 elam ending late game subs https://old.reddit.com/r/BasketballGM/comments/ii2n22/potential_change_we_could_have_for_the_minute/g3432dw/?context=3
@@ -11,6 +12,8 @@ elam ending late game subs https://old.reddit.com/r/BasketballGM/comments/ii2n22
 test-e2e broke
 
 hide notifications if tab hidden, for performance reasons
+
+add text to statistical feats in player profiles about playoffs
 
 Add game log to player page
 

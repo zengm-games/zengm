@@ -488,6 +488,10 @@ const reduceCareerStats = (
 				}
 
 				if (attr.endsWith("Max")) {
+					if (num === undefined) {
+						return memo;
+					}
+
 					return num[0] > memo[0]
 						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
 						: memo;

@@ -44,6 +44,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	totals: "Totals",
 	shotLocations: "Shot Locations",
 	advanced: "Advanced",
+	gameHighs: "Game Highs",
 	passing: "Passing",
 	rushing: "Rushing/Receiving",
 	defense: "Defense",
@@ -208,6 +209,7 @@ const useDropdownOptions = (field: string) => {
 			if (field === "statTypesAdv") {
 				keys.push("shotLocations");
 				keys.push("advanced");
+				keys.push("gameHighs");
 			}
 		} else {
 			keys = ["passing", "rushing", "defense", "kicking", "returns"];

@@ -23,6 +23,7 @@ import {
 import type { View, Player } from "../../../common/types";
 import { PLAYER } from "../../../common";
 import classNames from "classnames";
+import { formatStatGameHigh } from "../PlayerStats";
 
 const Relatives = ({
 	pid,
@@ -57,38 +58,6 @@ const Relatives = ({
 Relatives.propTypes = {
 	pid: PropTypes.number.isRequired,
 	relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
-const formatStat = (ps: any, stat: string) => {
-	if (stat.endsWith("Max")) {
-		if (!Array.isArray(ps[stat])) {
-			return null;
-		}
-
-		// Can be [max, gid] or (for career stats) [max, gid, abbrev, tid, season]
-		const row = (ps[stat] as unknown) as
-			| [number, number]
-			| [number, number, string, number, number];
-
-		const abbrev = row.length > 3 ? row[2] : ps.abbrev;
-		const tid = row.length > 3 ? row[3] : ps.tid;
-		const season = row.length > 3 ? row[4] : ps.season;
-
-		return (
-			<a
-				href={helpers.leagueUrl([
-					"game_log",
-					`${abbrev}_${tid}`,
-					season,
-					row[1],
-				])}
-			>
-				{helpers.roundStat(row[0], stat)}
-			</a>
-		);
-	}
-
-	return helpers.roundStat(ps[stat], stat);
 };
 
 const StatsTable = ({
@@ -156,7 +125,7 @@ const StatsTable = ({
 					"Career",
 					null,
 					null,
-					...stats.map(stat => formatStat(careerStats, stat)),
+					...stats.map(stat => formatStatGameHigh(careerStats, stat)),
 				]}
 				hideAllControls
 				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
@@ -178,7 +147,7 @@ const StatsTable = ({
 								{ps.abbrev}
 							</a>,
 							ps.age,
-							...stats.map(stat => formatStat(ps, stat)),
+							...stats.map(stat => formatStatGameHigh(ps, stat)),
 						],
 					};
 				})}

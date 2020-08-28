@@ -5,6 +5,42 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
+export const formatStatGameHigh = (
+	ps: any,
+	stat: string,
+	statType?: string,
+) => {
+	if (stat.endsWith("Max")) {
+		if (!Array.isArray(ps[stat])) {
+			return null;
+		}
+
+		// Can be [max, gid] or (for career stats) [max, gid, abbrev, tid, season]
+		const row = (ps[stat] as unknown) as
+			| [number, number]
+			| [number, number, string, number, number];
+
+		const abbrev = row.length > 3 ? row[2] : ps.abbrev;
+		const tid = row.length > 3 ? row[3] : ps.tid;
+		const season = row.length > 3 ? row[4] : ps.season;
+
+		return (
+			<a
+				href={helpers.leagueUrl([
+					"game_log",
+					`${abbrev}_${tid}`,
+					season,
+					row[1],
+				])}
+			>
+				{helpers.roundStat(row[0], stat, statType === "totals")}
+			</a>
+		);
+	}
+
+	return helpers.roundStat(ps[stat], stat, statType === "totals");
+};
+
 const PlayerStats = ({
 	abbrev,
 	players,
@@ -33,7 +69,9 @@ const PlayerStats = ({
 		"Pos",
 		"Age",
 		"Team",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map(
+			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		),
 	);
 
 	if (statType === "shotLocations") {
@@ -83,7 +121,7 @@ const PlayerStats = ({
 		}
 
 		const statsRow = stats.map(stat =>
-			helpers.roundStat(p.stats[stat], stat, statType === "totals"),
+			formatStatGameHigh(p.stats, stat, statType),
 		);
 
 		return {
@@ -174,6 +212,7 @@ PlayerStats.propTypes = {
 	season: PropTypes.number, // Undefined for career totals
 	statType: PropTypes.oneOf([
 		"advanced",
+		"gameHighs",
 		"per36",
 		"perGame",
 		"shotLocations",

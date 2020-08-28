@@ -9,7 +9,7 @@ import {
 	teamAwards,
 } from "./awards";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type {
 	AwardPlayer,

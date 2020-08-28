@@ -477,20 +477,26 @@ const reduceCareerStats = (
 ) => {
 	return careerStats
 		.filter(cs => cs.playoffs === playoffs)
-		.map(cs => {
-			if (weightByMinutes.includes(attr)) {
-				return cs[attr] * cs.min;
-			}
+		.reduce(
+			(memo, cs) => {
+				const num = weightByMinutes.includes(attr)
+					? cs[attr] * cs.min
+					: cs[attr];
 
-			return cs[attr];
-		})
-		.reduce((memo, num) => {
-			if (attr.endsWith("Lng")) {
-				return num > memo ? num : memo;
-			}
+				if (attr.endsWith("Lng")) {
+					return num > memo ? num : memo;
+				}
 
-			return memo + num;
-		}, 0);
+				if (attr.endsWith("Max")) {
+					return num[0] > memo[0]
+						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
+						: memo;
+				}
+
+				return memo + num;
+			},
+			attr.endsWith("Max") ? [-Infinity, 0, "FA", -1, 0] : 0,
+		);
 };
 
 const getPlayerStats = (

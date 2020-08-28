@@ -1,16 +1,14 @@
 game highs
 - bbgm only
-- fields with suffix in stats row
-  - fgaMax, fgaMaxGID
-- Game Highs table like b-r
-  - including game score
-  - pm, BA
-- add as table in constants.basketball.ts but will need some special care for rendering the gid links
 - player profile pages
 - player stats page
 - check that it doesn't crash for upgraded leagues missing those cols
+- blog
+- changes
 
 add elam ending to schema
+
+elam ending late game subs https://old.reddit.com/r/BasketballGM/comments/ii2n22/potential_change_we_could_have_for_the_minute/g3432dw/?context=3
 
 hide notifications if tab hidden, for performance reasons
 
@@ -40,6 +38,7 @@ frivolities
   - best playoffs (record in individual playoffs)
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
+- best trades
 
 nicidob PRs
 - player overall ratings
@@ -515,13 +514,6 @@ more animations
 - RatingsStatsPopover modal opening
 - games log
 - schedule
-
-game highs
-- per season and career, like in basketball reference
-- link to box score
-- summary per team at bottom
-- somehow show in stats page
-- store in normal player stats object (like Lng in football)
 
 average roster age implemented as team advanced stat?
 

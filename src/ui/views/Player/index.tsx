@@ -65,16 +65,25 @@ const formatStat = (ps: any, stat: string) => {
 			return null;
 		}
 
+		// Can be [max, gid] or (for career stats) [max, gid, abbrev, tid, season]
+		const row = (ps[stat] as unknown) as
+			| [number, number]
+			| [number, number, string, number, number];
+
+		const abbrev = row.length > 3 ? row[2] : ps.abbrev;
+		const tid = row.length > 3 ? row[3] : ps.tid;
+		const season = row.length > 3 ? row[4] : ps.season;
+
 		return (
 			<a
 				href={helpers.leagueUrl([
 					"game_log",
-					`${ps.abbrev}_${ps.tid}`,
-					ps.season,
-					(ps[stat] as any)[1],
+					`${abbrev}_${tid}`,
+					season,
+					row[1],
 				])}
 			>
-				{helpers.roundStat((ps[stat] as any)[0], stat)}
+				{helpers.roundStat(row[0], stat)}
 			</a>
 		);
 	}
@@ -135,8 +144,6 @@ const StatsTable = ({
 		cols[cols.length - 2].title = "A";
 		cols[cols.length - 1].title = "%";
 	}
-
-	console.log(name, playerStats);
 
 	return (
 		<>

@@ -166,7 +166,7 @@ const leagueLeaders = (
 ) => {
 	const factor =
 		(g.get("numGames") / defaultGameAttributes.numGames) *
-		Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
+		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
 		const p = players

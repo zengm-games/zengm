@@ -238,6 +238,10 @@ class GameSim {
 	simOvertime() {
 		this.clock = Math.ceil((g.get("quarterLength") * 2) / 3); // 10 minutes by default, but scales
 
+		if (this.clock === 0) {
+			this.clock = 10;
+		}
+
 		this.overtime = true;
 		this.overtimes += 1;
 		this.overtimeState = "initialKickoff";

@@ -402,7 +402,7 @@ const updateLeaders = async (
 		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
 		const factor =
 			(g.get("numGames") / defaultGameAttributes.numGames) *
-			Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
+			helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 		for (const cat of categories) {
 			players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);

@@ -417,6 +417,29 @@ class GameSim {
 		return this.d;
 	}
 
+	checkElamEnding() {
+		console.log("checkElamEnding");
+		if (
+			this.elam &&
+			!this.elamActive &&
+			this.team[0].stat.ptsQtrs.length >= 4 &&
+			this.t <= g.get("elamMinutes")
+		) {
+			const maxPts = Math.max(
+				this.team[this.d].stat.pts,
+				this.team[this.o].stat.pts,
+			);
+			this.elamTarget = maxPts + g.get("elamPoints");
+			this.elamActive = true;
+			if (this.playByPlay) {
+				this.playByPlay.push({
+					type: "elamActive",
+					target: this.elamTarget,
+				});
+			}
+		}
+	}
+
 	simRegulation() {
 		let quarter = 1;
 		const wonJump = this.jumpBall();
@@ -428,8 +451,10 @@ class GameSim {
 				this.d = this.o === 0 ? 1 : 0;
 			}
 
+			this.checkElamEnding(); // Before loop, in case it's at 0
 			while ((this.t > 0.5 / 60 || this.elamActive) && !this.elamDone) {
 				this.simPossession();
+				this.checkElamEnding();
 			}
 
 			quarter += 1;
@@ -450,6 +475,10 @@ class GameSim {
 
 	simOvertime() {
 		this.t = Math.ceil(0.4 * g.get("quarterLength")); // 5 minutes by default, but scales
+
+		if (this.t === 0) {
+			this.t = 10;
+		}
 
 		this.lastScoringPlay = [];
 		this.overtimes += 1;
@@ -566,26 +595,6 @@ class GameSim {
 		// Clock
 		const possessionLength = this.getPossessionLength();
 		this.t -= possessionLength;
-
-		if (
-			this.elam &&
-			!this.elamActive &&
-			this.team[0].stat.ptsQtrs.length >= 4 &&
-			this.t < g.get("elamMinutes")
-		) {
-			const maxPts = Math.max(
-				this.team[this.d].stat.pts,
-				this.team[this.o].stat.pts,
-			);
-			this.elamTarget = maxPts + g.get("elamPoints");
-			this.elamActive = true;
-			if (this.playByPlay) {
-				this.playByPlay.push({
-					type: "elamActive",
-					target: this.elamTarget,
-				});
-			}
-		}
 
 		const outcome = this.getPossessionOutcome(possessionLength);
 

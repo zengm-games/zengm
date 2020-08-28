@@ -1,4 +1,4 @@
-import { defaultGameAttributes, g } from "../../util";
+import { defaultGameAttributes, g, helpers } from "../../util";
 import type {
 	Player,
 	PlayerWithoutKey,
@@ -58,8 +58,7 @@ const madeHof = (
 	}
 
 	const scaleFactor =
-		(Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength) *
-			g.get("numGames")) /
+		(helpers.quarterLengthFactor() * g.get("numGames")) /
 		defaultGameAttributes.numGames;
 
 	// Final formula

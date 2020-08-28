@@ -11,7 +11,10 @@ const getClinchedPlayoffs = (
 ): ClinchedPlayoffs[] => {
 	return teamSeasons.map(t => {
 		const worstCases = teamSeasons.map(t2 => {
-			const gp = t2.won + t2.lost + t2.tied;
+			// Handle tied undefined
+			const tied = t2.tied === undefined ? 0 : t2.tied;
+
+			const gp = t2.won + t2.lost + tied;
 
 			// finalStandings means the season is over, which matters because in some league structures not all teams will play the same number of games
 			const gamesLeft = finalStandings ? 0 : g.get("numGames") - gp;
@@ -21,7 +24,7 @@ const getClinchedPlayoffs = (
 				seasonAttrs: {
 					won: t2.won,
 					lost: t2.lost,
-					tied: t2.tied,
+					tied,
 					winp: 0,
 					cid: t2.cid,
 					did: t2.did,
@@ -70,7 +73,10 @@ const getClinchedPlayoffs = (
 
 		if (!clinchedPlayoffs) {
 			const bestCases = teamSeasons.map(t2 => {
-				const gp = t2.won + t2.lost + t2.tied;
+				// Handle tied undefined
+				const tied = t2.tied === undefined ? 0 : t2.tied;
+
+				const gp = t2.won + t2.lost + tied;
 
 				// finalStandings means the season is over, which matters because in some league structures not all teams will play the same number of games
 				const gamesLeft = finalStandings ? 0 : g.get("numGames") - gp;
@@ -80,7 +86,7 @@ const getClinchedPlayoffs = (
 					seasonAttrs: {
 						won: t2.won,
 						lost: t2.lost,
-						tied: t2.tied,
+						tied,
 						winp: 0,
 						cid: t2.cid,
 						did: t2.did,

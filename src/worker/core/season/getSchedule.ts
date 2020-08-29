@@ -18,7 +18,22 @@ const getSchedule = async (
 	}
 
 	if (oneDay) {
-		return schedule.filter(game => game.day === schedule[0].day);
+		const partialSchedule = [];
+		const tids = new Set();
+		for (const game of schedule) {
+			if (game.day !== schedule[0].day) {
+				// Only keep games from same day
+				break;
+			}
+			if (tids.has(game.homeTid) || tids.has(game.awayTid)) {
+				// Only keep games from unique teams, no 2 games in 1 day
+				break;
+			}
+			partialSchedule.push(game);
+			tids.add(game.homeTid);
+			tids.add(game.awayTid);
+		}
+		return partialSchedule;
 	}
 
 	return schedule;

@@ -288,31 +288,29 @@ const writePlayerStats = async (
 						}
 					}
 
-					if (stats.max.length > 0) {
-						for (const key of stats.max) {
-							const stat = key.replace("Max", "");
+					for (const key of stats.max) {
+						const stat = key.replace("Max", "");
 
-							let value;
-							if (stat === "2p") {
-								value = p.stat.fg - p.stat.tp;
-							} else if (stat === "2pa") {
-								value = p.stat.fga - p.stat.tpa;
-							} else if (stat === "trb") {
-								value = p.stat.drb + p.stat.orb;
-							} else if (stat === "gmsc") {
-								value = helpers.gameScore(p.stat);
-							} else {
-								value = p.stat[stat];
-							}
+						let value;
+						if (stat === "2p") {
+							value = p.stat.fg - p.stat.tp;
+						} else if (stat === "2pa") {
+							value = p.stat.fga - p.stat.tpa;
+						} else if (stat === "trb") {
+							value = p.stat.drb + p.stat.orb;
+						} else if (stat === "gmsc") {
+							value = helpers.gameScore(p.stat);
+						} else {
+							value = p.stat[stat];
+						}
 
-							if (value === undefined) {
-								console.log(stat, p.stat);
-							}
+						if (value === undefined) {
+							console.log(stat, p.stat);
+						}
 
-							// !ps[key] is for upgraded leagues
-							if (!ps[key] || value > ps[key][0]) {
-								ps[key] = [value, result.gid];
-							}
+						// !ps[key] is for upgraded leagues
+						if (!ps[key] || value > ps[key][0]) {
+							ps[key] = [value, result.gid];
 						}
 					}
 				}

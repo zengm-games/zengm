@@ -298,7 +298,7 @@ const writePlayerStats = async (
 							} else if (stat === "2pa") {
 								value = p.stat.fga - p.stat.tpa;
 							} else if (stat === "trb") {
-								value = p.stat.drb - p.stat.orb;
+								value = p.stat.drb + p.stat.orb;
 							} else if (stat === "gmsc") {
 								value = helpers.gameScore(p.stat);
 							} else {

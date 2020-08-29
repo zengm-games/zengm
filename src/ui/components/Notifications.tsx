@@ -85,6 +85,11 @@ const Notifications = () => {
 	useEffect(
 		() =>
 			emitter.on("notification", notification => {
+				// Non-persistent notifications, only show if page is visible, for performance
+				if (!notification.persistent && document.hidden) {
+					return;
+				}
+
 				setNotifications(currentNotifications => {
 					let newNotifications = [...currentNotifications, notification];
 

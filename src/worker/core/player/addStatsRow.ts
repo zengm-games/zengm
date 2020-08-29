@@ -39,7 +39,7 @@ const addStatsRow = async (
 	}
 
 	for (const key of stats.max) {
-		// Will be set to [max, gid] later
+		// Will be set to [max, gid] later. Needs to be null rather than undefined so it persists in JSON, otherwise playersPlus career totals will not know about these fields.
 		statsRow[key] = null;
 	}
 

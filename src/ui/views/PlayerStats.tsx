@@ -23,7 +23,12 @@ export const formatStatGameHigh = (
 
 		const abbrev = row.length > 3 ? row[2] : ps.abbrev;
 		const tid = row.length > 3 ? row[3] : ps.tid;
-		const season = row.length > 3 ? row[4] : defaultSeason;
+		const season =
+			row.length > 3
+				? row[4]
+				: ps.season !== undefined
+				? ps.season
+				: defaultSeason;
 
 		return (
 			<a

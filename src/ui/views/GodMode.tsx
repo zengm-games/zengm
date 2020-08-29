@@ -633,7 +633,7 @@ if (process.env.SPORT === "basketball") {
 			name: "Minutes Left Trigger",
 			type: "float",
 			validator: (value, output) => {
-				if (value > output.quarterLength) {
+				if ((output.elam || output.elamASG) && value > output.quarterLength) {
 					throw new Error("Value must be less than the quarter length");
 				}
 			},
@@ -643,8 +643,8 @@ if (process.env.SPORT === "basketball") {
 			key: "elamPoints",
 			name: "Target Points to Add",
 			type: "int",
-			validator: value => {
-				if (value < 0) {
+			validator: (value, output) => {
+				if ((output.elam || output.elamASG) && value < 0) {
 					throw new Error("Value must be greater than 0");
 				}
 			},

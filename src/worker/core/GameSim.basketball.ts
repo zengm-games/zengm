@@ -686,7 +686,7 @@ class GameSim {
 				const ptsToTarget =
 					this.elamTarget -
 					Math.max(this.team[this.d].stat.pts, this.team[this.o].stat.pts);
-				blowout = diff >= 10 && ptsToTarget < diff;
+				blowout = diff >= 20 && ptsToTarget < diff;
 			} else {
 				blowout =
 					quarter === 4 &&

@@ -32,6 +32,7 @@ const roundOverrides: Record<
 	| "oneDecimalPlace"
 	| "roundWinp"
 	| "plusMinus"
+	| "plusMinusNoDecimalPlace"
 	| "noDecimalPlace"
 	| undefined
 > =
@@ -68,7 +69,7 @@ const roundOverrides: Record<
 				baMax: "noDecimalPlace",
 				pfMax: "noDecimalPlace",
 				ptsMax: "noDecimalPlace",
-				pmMax: "noDecimalPlace",
+				pmMax: "plusMinusNoDecimalPlace",
 		  }
 		: {
 				gp: "noDecimalPlace",
@@ -204,6 +205,10 @@ const roundStat = (
 
 		if (roundOverrides[stat] === "plusMinus") {
 			return plusMinus(value, d);
+		}
+
+		if (roundOverrides[stat] === "plusMinusNoDecimalPlace") {
+			return plusMinus(value, 0);
 		}
 
 		if (roundOverrides[stat] === "noDecimalPlace") {

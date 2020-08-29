@@ -304,13 +304,11 @@ const writePlayerStats = async (
 							value = p.stat[stat];
 						}
 
-						if (value === undefined) {
-							console.log(stat, p.stat);
-						}
-
-						// !ps[key] is for upgraded leagues
-						if (!ps[key] || value > ps[key][0]) {
-							ps[key] = [value, result.gid];
+						if (value !== undefined) {
+							// !ps[key] is for upgraded leagues
+							if (!ps[key] || value > ps[key][0]) {
+								ps[key] = [value, result.gid];
+							}
 						}
 					}
 				}

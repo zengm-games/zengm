@@ -3,6 +3,7 @@ import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults, Player } from "../../../common/types";
+import stats from "../player/stats";
 
 const gameOrWeek = process.env.SPORT === "basketball" ? "game" : "week";
 
@@ -287,32 +288,10 @@ const writePlayerStats = async (
 						}
 					}
 
-					if (process.env.SPORT === "basketball") {
-						const maxStats = [
-							"min",
-							"fg",
-							"fga",
-							"tp",
-							"tpa",
-							"ft",
-							"fta",
-							"pm",
-							"orb",
-							"drb",
-							"ast",
-							"tov",
-							"stl",
-							"blk",
-							"ba",
-							"pf",
-							"pts",
-							"2p",
-							"2pa",
-							"trb",
-							"gmsc",
-						];
+					if (stats.max.length > 0) {
+						for (const key of stats.max) {
+							const stat = key.replace("Max", "");
 
-						for (const stat of maxStats) {
 							let value;
 							if (stat === "2p") {
 								value = p.stat.fg - p.stat.tp;
@@ -330,7 +309,7 @@ const writePlayerStats = async (
 								console.log(stat, p.stat);
 							}
 
-							const key = `${stat}Max`;
+							// !ps[key] is for upgraded leagues
 							if (!ps[key] || value > ps[key][0]) {
 								ps[key] = [value, result.gid];
 							}

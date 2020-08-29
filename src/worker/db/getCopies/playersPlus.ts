@@ -488,18 +488,18 @@ const reduceCareerStats = (
 				}
 
 				if (attr.endsWith("Max")) {
-					if (num === undefined) {
+					if (num === undefined || num === null) {
 						return memo;
 					}
 
-					return num[0] > memo[0]
+					return memo === null || num[0] > memo[0]
 						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
 						: memo;
 				}
 
 				return memo + num;
 			},
-			attr.endsWith("Max") ? [-Infinity, 0, "FA", -1, 0] : 0,
+			attr.endsWith("Max") ? null : 0,
 		);
 };
 
@@ -549,7 +549,8 @@ const getPlayerStats = (
 					"jerseyNumber",
 				];
 				const statSums: any = {};
-				const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp[0]) : [];
+				const attrs =
+					rowsTemp.length > 0 ? Object.keys(rowsTemp[rowsTemp.length - 1]) : [];
 
 				for (const attr of attrs) {
 					if (!ignoredKeys.includes(attr)) {
@@ -676,7 +677,10 @@ const processStats = (
 		const ignoredKeys = ["season", "tid", "yearsWithTeam", "jerseyNumber"];
 		const statSums: any = {};
 		const statSumsPlayoffs: any = {};
-		const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];
+		const attrs =
+			careerStats.length > 0
+				? Object.keys(careerStats[careerStats.length - 1])
+				: [];
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.includes(attr)) {

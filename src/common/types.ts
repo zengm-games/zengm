@@ -745,7 +745,7 @@ type PlayerSalary = {
 };
 
 // jerseyNumber: string | undefined;
-// *Max: [number, number] | undefined;
+// *Max: [number, number] | null | undefined; - null is for new value, not yet initialized
 export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";

@@ -31,13 +31,16 @@ const addStatsRow = async (
 	};
 
 	for (const key of stats.derived) {
-		if (!key.endsWith("Max")) {
-			statsRow[key] = 0;
-		}
+		statsRow[key] = 0;
 	}
 
 	for (const key of stats.raw) {
 		statsRow[key] = 0;
+	}
+
+	for (const key of stats.max) {
+		// Will be set to [max, gid] later
+		statsRow[key] = null;
 	}
 
 	p.statsTids.push(p.tid);

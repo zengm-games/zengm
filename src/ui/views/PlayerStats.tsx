@@ -9,6 +9,7 @@ export const formatStatGameHigh = (
 	ps: any,
 	stat: string,
 	statType?: string,
+	defaultSeason?: number,
 ) => {
 	if (stat.endsWith("Max")) {
 		if (!Array.isArray(ps[stat])) {
@@ -22,14 +23,14 @@ export const formatStatGameHigh = (
 
 		const abbrev = row.length > 3 ? row[2] : ps.abbrev;
 		const tid = row.length > 3 ? row[3] : ps.tid;
-		const season = row.length > 3 ? row[4] : ps.season;
+		const season = row.length > 3 ? row[4] : defaultSeason;
 
 		return (
 			<a
 				href={helpers.leagueUrl([
 					"game_log",
 					`${abbrev}_${tid}`,
-					season,
+					season as any,
 					row[1],
 				])}
 			>
@@ -121,7 +122,7 @@ const PlayerStats = ({
 		}
 
 		const statsRow = stats.map(stat =>
-			formatStatGameHigh(p.stats, stat, statType),
+			formatStatGameHigh(p.stats, stat, statType, season),
 		);
 
 		return {

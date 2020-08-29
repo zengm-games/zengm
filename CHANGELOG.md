@@ -2,7 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-26: Added the Elam Ending as an option for game simulation in BBGM. [[1]](https://basketball-gm.com/blog/2020/08/elam-ending/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ih19y1/new_in_version_202008260936_the_elam_ending_comes/)
+* **2020-08-29: Single game highs for players are now tracked for all stats in BBGM - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". [[1]](https://basketball-gm.com/blog/2020/08/game-highs/) [[2]](https://old.reddit.com/r/BasketballGM/comments/iiluf2/single_game_highs_for_players_are_now_tracked_for/)**
+
+* **2020-08-26: Added the Elam Ending as an option for game simulation in BBGM. [[1]](https://basketball-gm.com/blog/2020/08/elam-ending/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ih19y1/new_in_version_202008260936_the_elam_ending_comes/)**
 
 * 2020-08-26: Tweaks to game simulation in the playoffs, most notably resulting in fewer upsets. Also injuries in the playoffs are shorter, to work around the fact that currently there is no way to have players play through minor injuries. [[1]](https://github.com/dumbmatter/gm-games/pull/293)
 

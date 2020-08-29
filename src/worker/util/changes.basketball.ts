@@ -330,6 +330,11 @@ const changes = [
 		msg:
 			'New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It\'s like auto play, but you can proceed at your own pace. <a href="https://basketball-gm.com/blog/2020/08/spectator-mode/">More details</a>',
 	},
+	{
+		date: "2020-08-29",
+		msg:
+			'Single game highs for players are now tracked for all stats - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". <a href="https://basketball-gm.com/blog/2020/08/game-highs/">More details</a>',
+	},
 ];
 
 export default changes;

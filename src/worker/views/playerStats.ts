@@ -131,8 +131,10 @@ const updatePlayers = async (
 				if (inputs.statType === "gameHighs") {
 					if (inputs.season !== undefined) {
 						return p.stats.gp > 0;
+					} else if (inputs.playoffs !== "playoffs") {
+						return p.careerStats.gp > 0;
 					}
-					return p.careerStats.gp > 0;
+					return p.careerStatsPlayoffs.gp > 0;
 				}
 
 				if (inputs.statType === "totals") {

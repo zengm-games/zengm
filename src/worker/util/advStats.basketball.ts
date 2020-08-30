@@ -3,6 +3,8 @@ import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
+import { player } from "../core";
+import pos from "../core/player/pos.basketball";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -32,6 +34,7 @@ type Team = TeamFiltered<
 		"oppTov",
 		"oppTrb",
 		"blk",
+		"ortg",
 		"drtg",
 		"oppFg",
 		"oppFt",
@@ -144,6 +147,321 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 	return {
 		per: PER,
 		ewa: EWA,
+	};
+};
+
+// https://www.basketball-reference.com/about/bpm2.html
+const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
+	const teams = teamsInput.map(t => {
+		const paceAdj = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;
+
+		return {
+			...t,
+			stats: {
+				...t.stats,
+				paceAdj,
+			},
+		};
+	});
+
+	const posNum = {
+		PG: 1,
+		G: 1.5,
+		SG: 2,
+		GF: 2.5,
+		SF: 3,
+		F: 3.5,
+		PF: 4,
+		FC: 4.5,
+		C: 5,
+	};
+	// BPM does a lot of team-based averages
+	// we initialize them here
+	const tmRate: number[] = [];
+	const ofRate: number[] = [];
+	const ptsTSA: number[] = [];
+	let teamThresh: number[] = [];
+	let trim1t: number[] = [];
+	let trim1c: number[] = [];
+	let trim2t: number[] = [];
+	let trim2c: number[] = [];
+	let teamBPM: number[] = [];
+	let teamOBPM: number[] = [];
+	for (let i = 0; i < teams.length; i++) {
+		const t = teams[i];
+		const off_rate = t.stats.ortg - league.ortg / teams.length;
+		const def_rate = t.stats.drtg - league.drtg / teams.length;
+		const team_rate = off_rate + def_rate;
+		const pace = t.stats.pace;
+		const avg_lead = (team_rate * pace) / 200;
+		//console.log('rtg',t.stats.ortg,t.stats.drtg)
+		//console.log('team off',team_rate,off_rate,def_rate);
+		//console.log(avg_lead);
+		const lead_bonus = (0.35 / 2) * avg_lead;
+		const adj_team_rate = team_rate + lead_bonus;
+		const adj_off_rate = off_rate + lead_bonus;
+		//console.log('adj',adj_team_rate,adj_off_rate);
+
+		tmRate[i] = adj_team_rate;
+		ofRate[i] = adj_off_rate;
+		ptsTSA[i] = t.stats.pts / (t.stats.fga + 0.44 * t.stats.fta);
+		teamThresh[i] = 0;
+		trim1t[i] = 0;
+		trim1c[i] = 0;
+		trim2t[i] = 0;
+		trim2c[i] = 0;
+		teamBPM[i] = 0;
+		teamOBPM[i] = 0;
+	}
+
+	const playerPoss: number[] = [];
+	const playerMin: number[] = [];
+
+	let playerPos: number[] = [];
+	let playerRole: number[] = [];
+
+	const adjPts: number[] = [];
+	const threshPts: number[] = [];
+
+	// compute team stats
+	for (let i = 0; i < players.length; i++) {
+		const t = teams.find(t => t.tid === players[i].tid);
+		if (!t) {
+			console.log(players[i].tid);
+			throw new Error("No team found");
+		}
+		const team_pts_tsa = ptsTSA[players[i].tid];
+
+		const p = players[i].stats;
+		const tsa = p.fga + p.fta * 0.44;
+		const pts_tsa = p.pts / (tsa + 1e-6);
+		const adj_pts = (pts_tsa - team_pts_tsa + 1) * tsa;
+		const poss = 1e-6 + (p.min * t.stats.pace) / 48;
+		const thresh_pts = tsa * (pts_tsa - (team_pts_tsa - 0.33));
+		teamThresh[players[i].tid] += thresh_pts;
+		playerPoss[i] = poss;
+		adjPts[i] = adj_pts;
+		threshPts[i] = thresh_pts;
+	}
+
+	// compute average offensive roles and positions
+	for (let i = 0; i < players.length; i++) {
+		const t = teams.find(t => t.tid === players[i].tid);
+		if (!t) {
+			console.log(players[i].tid);
+			throw new Error("No team found");
+		}
+		const p = players[i].stats;
+
+		let prl;
+
+		if (posNum.hasOwnProperty(players[i].ratings.pos)) {
+			// https://github.com/microsoft/TypeScript/issues/21732
+			// @ts-ignore
+			prl = posNum[players[i].ratings.pos];
+		} else {
+			// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
+			prl = 3;
+		}
+		const minp = (p.min + 1e-9) / (t.stats.min / 5);
+		const trbp = p.trb / t.stats.trb / minp;
+		const stlp = p.stl / t.stats.stl / minp;
+		const pfp = p.pf / t.stats.pf / minp;
+		const astp = p.ast / t.stats.ast / minp;
+		const blkp = p.blk / t.stats.blk / minp;
+		const thsp = threshPts[i] / teamThresh[players[i].tid] / minp;
+
+		const est_pos1 =
+			2.13 +
+			8.668 * trbp -
+			2.486 * stlp +
+			0.992 * pfp -
+			3.536 * astp +
+			1.667 * blkp;
+		const min_adj1 = (est_pos1 * p.min + prl * 50) / (50 + p.min);
+		const trim1 = Math.max(1, Math.min(min_adj1, 5));
+		trim1t[players[i].tid] += trim1;
+		trim1c[players[i].tid] += 1;
+		playerPos[i] = min_adj1;
+		playerMin[i] = minp;
+
+		const orole = 6 - 6.642 * astp - 8.544 * thsp;
+		const orole_min1 = (orole * p.min + 4 * 50) / (50 + p.min);
+		const otrim1 = Math.max(1, Math.min(orole_min1, 5));
+		trim2t[players[i].tid] += otrim1;
+		trim2c[players[i].tid] += 1;
+		playerRole[i] = orole_min1;
+	}
+
+	// Do a converging iteration, BPM usually does 2 but this is just 1
+	for (let i = 0; i < players.length; i++) {
+		const trim2 =
+			playerPos[i] - (trim1t[players[i].tid] / trim1c[players[i].tid] - 3);
+		playerPos[i] = Math.max(1, Math.min(trim2, 5));
+
+		const orole2 =
+			playerRole[i] - (trim2t[players[i].tid] / trim2c[players[i].tid] - 3);
+		playerRole[i] = Math.max(1, Math.min(orole2, 5));
+	}
+
+	const coeffsBPM1 = [
+		0.86,
+		-0.56,
+		-0.246,
+		0.389,
+		0.58,
+		-0.964,
+		0.613,
+		0.116,
+		0.0,
+		1.369,
+		1.327,
+		-0.367,
+	];
+	const coeffsBPM5 = [
+		0.86,
+		-0.78,
+		-0.343,
+		0.389,
+		1.034,
+		-0.964,
+		0.181,
+		0.181,
+		0.0,
+		1.008,
+		0.703,
+		-0.367,
+	];
+	const coeffsORBPM1 = [
+		0.605,
+		-0.33,
+		-0.145,
+		0.477,
+		0.476,
+		-0.579,
+		0.606,
+		-0.112,
+		0.0,
+		0.177,
+		0.725,
+		-0.439,
+	];
+	const coeffsORBPM5 = [
+		0.605,
+		-0.472,
+		-0.208,
+		0.477,
+		0.476,
+		-0.882,
+		0.422,
+		0.103,
+		0.0,
+		0.294,
+		0.097,
+		-0.439,
+	];
+
+	let BPM: number[] = [];
+	let OBPM: number[] = [];
+
+	for (let i = 0; i < players.length; i++) {
+		const p = players[i].stats;
+		const role = playerRole[i];
+		const pos = playerPos[i];
+
+		const poss = playerPoss[i];
+		const pts100 = (adjPts[i] / poss) * 100;
+		const fga100 = (p.fga / poss) * 100;
+		const fta100 = (p.fta / poss) * 100;
+		const tp100 = (p.tp / poss) * 100;
+		const ast100 = (p.ast / poss) * 100;
+		const stl100 = (p.stl / poss) * 100;
+		const blk100 = (p.blk / poss) * 100;
+		const pf100 = (p.pf / poss) * 100;
+
+		const to100 = (p.tov / poss) * 100;
+		const orb100 = (p.orb / poss) * 100;
+		const drb100 = (p.drb / poss) * 100;
+		const trb100 = (p.trb / poss) * 100;
+		const minp = playerMin[i];
+
+		const coeffsBPM: number[] = [];
+		const coeffsORBPM: number[] = [];
+
+		const interBPM =
+			pos < 3
+				? ((3 - pos) / 2) * -0.818
+				: ((pos - 3) / 2) * 0 + ((5 - pos) / 2) * 0 + 1.387 * (role - 3);
+		const interORBPM =
+			pos < 3
+				? ((3 - pos) / 2) * -1.698
+				: ((pos - 3) / 2) * 0 + ((5 - pos) / 2) * 0 + 0.43 * (role - 3);
+
+		for (let j = 0; j < coeffsBPM1.length; j++) {
+			coeffsBPM[j] =
+				((5 - pos) / 4) * coeffsBPM1[j] + ((pos - 1) / 4) * coeffsBPM5[j];
+			coeffsORBPM[j] =
+				((5 - role) / 4) * coeffsORBPM1[j] + ((role - 1) / 4) * coeffsORBPM5[j];
+		}
+
+		const scoring =
+			pts100 * coeffsBPM[0] +
+			fga100 * coeffsBPM[1] +
+			fta100 * coeffsBPM[2] +
+			tp100 * coeffsBPM[3];
+		const scoring2 =
+			pts100 * coeffsORBPM[0] +
+			fga100 * coeffsORBPM[1] +
+			fta100 * coeffsORBPM[2] +
+			tp100 * coeffsORBPM[3];
+
+		const ballhandle = ast100 * coeffsBPM[4] + to100 * coeffsBPM[5];
+		const ballhandle2 = ast100 * coeffsORBPM[4] + to100 * coeffsORBPM[5];
+
+		const defense =
+			orb100 * coeffsBPM[6] +
+			drb100 * coeffsBPM[7] +
+			trb100 * coeffsBPM[8] +
+			stl100 * coeffsBPM[9] +
+			blk100 * coeffsBPM[10] +
+			pf100 * coeffsBPM[11];
+		const defense2 =
+			orb100 * coeffsORBPM[6] +
+			drb100 * coeffsORBPM[7] +
+			trb100 * coeffsORBPM[8] +
+			stl100 * coeffsORBPM[9] +
+			blk100 * coeffsORBPM[10] +
+			pf100 * coeffsORBPM[11];
+		const rawBPM = scoring + ballhandle + defense + interBPM;
+		const rawOBPM = scoring2 + ballhandle2 + defense2 + interORBPM;
+
+		BPM[i] = rawBPM;
+		OBPM[i] = rawOBPM;
+
+		teamBPM[players[i].tid] += rawBPM * minp;
+		teamOBPM[players[i].tid] += rawOBPM * minp;
+	}
+	const teamAdjBPM: number[] = [];
+	const teamAdjOBPM: number[] = [];
+
+	for (let i = 0; i < teams.length; i++) {
+		teamAdjBPM[i] = (tmRate[i] - teamBPM[i]) / 5;
+		teamAdjOBPM[i] = (ofRate[i] - teamOBPM[i]) / 5;
+	}
+	const DBPM: number[] = [];
+	const VORP: number[] = [];
+	for (let i = 0; i < players.length; i++) {
+		BPM[i] += teamAdjBPM[players[i].tid];
+		OBPM[i] += teamAdjOBPM[players[i].tid];
+		DBPM[i] = BPM[i] - OBPM[i];
+		VORP[i] = playerMin[i] * BPM[i];
+	}
+
+	return {
+		bpm: BPM,
+		obpm: OBPM,
+		dbpm: DBPM,
+		vorp: VORP,
 	};
 };
 
@@ -416,6 +734,7 @@ const advStats = async () => {
 			"tov",
 			"fga",
 			"fta",
+			"tp",
 			"trb",
 			"orb",
 			"stl",
@@ -470,6 +789,7 @@ const advStats = async () => {
 			"oppTrb",
 			"blk",
 			"drtg",
+			"ortg",
 			"oppFg",
 			"oppFt",
 			"stl",
@@ -500,6 +820,8 @@ const advStats = async () => {
 		"trb",
 		"pace",
 		"poss",
+		"drtg",
+		"ortg",
 	];
 	const league: any = teams.reduce((memo: any, t: any) => {
 		for (const key of leagueStats) {
@@ -528,6 +850,7 @@ const advStats = async () => {
 		...calculatePER(players, teams, league),
 		...calculatePercentages(players, teams),
 		...calculateRatings(players, teams, league),
+		...calculateBPM(players, teams, league),
 	};
 	await advStatsSave(players, playersRaw, updatedStats);
 };

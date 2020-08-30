@@ -50,6 +50,10 @@ const roundOverrides: Record<
 				ftpfga: "roundWinp",
 				tpar: "roundWinp",
 				ftr: "roundWinp",
+				bpm: "oneDecimalPlace",
+				obpm: "oneDecimalPlace",
+				dbpm: "oneDecimalPlace",
+				vorp: "oneDecimalPlace",
 		  }
 		: {
 				gp: "noDecimalPlace",

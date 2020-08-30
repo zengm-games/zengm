@@ -150,6 +150,42 @@ const getCategoriesAndStats = () => {
 						minStats: ["min"],
 						minValue: [2000],
 					},
+					{
+						name: "Offensive Box Plus-Minus",
+						stat: "OBPM",
+						statProp: "obpm",
+						title: "Offensive Box Plus-Minus",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
+					{
+						name: "Defensive Box Plus-Minus",
+						stat: "DBPM",
+						statProp: "dbpm",
+						title: "Defensive Box Plus-Minus",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
+					{
+						name: "Box Plus-Minus",
+						stat: "BPM",
+						statProp: "bpm",
+						title: "Box Plus-Minus",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
+					{
+						name: "Value Over Replacement Player",
+						stat: "VORP",
+						statProp: "vorp",
+						title: "Value Over Replacement Player",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
 			  ]
 			: [
 					{

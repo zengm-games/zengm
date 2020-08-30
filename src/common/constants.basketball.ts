@@ -217,6 +217,10 @@ const PLAYER_STATS_TABLES = {
 			"tovp",
 			"usgp",
 			"pm",
+			"obpm",
+			"dbpm",
+			"bpm",
+			"vorp",
 		],
 	},
 	gameHighs: {

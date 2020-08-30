@@ -120,7 +120,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 const PLAYER_SUMMARY = {
 	summary: {
 		name: "Summary",
-		stats: ["gp", "pts", "trb", "ast", "fg", "tp", "ft", "tsp"],
+		stats: ["gp", "pts", "trb", "ast", "fgp", "tpp", "ftp", "tsp", "per", "ws"],
 	},
 };
 const PLAYER_STATS_TABLES = {

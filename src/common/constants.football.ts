@@ -118,8 +118,8 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 
 const PLAYER_SUMMARY = {
 	summaryPss: {
-		name: "Summary",
-		onlyShowIf: ["pss"],
+		name: "SummaryQB",
+		onlyShowIf: ["QB"],
 		stats: [
 			"gp",
 			"av",
@@ -132,29 +132,34 @@ const PLAYER_SUMMARY = {
 		],
 	},
 	summaryRusRec: {
-		name: "Summary",
-		onlyShowIf: ["rus", "rec"],
+		name: "SummaryRusRec",
+		onlyShowIf: ["RB", "WR", "TE"],
 		stats: ["gp", "av", "rus", "rusYds", "rusYdsPerAtt", "rusTD"],
 	},
 
 	summaryKic: {
-		name: "Summary",
-		onlyShowIf: ["fga", "xpa", "pnt"],
+		name: "SummaryKic",
+		onlyShowIf: ["K"],
 		stats: ["gp", "av", "fg", "fga", "xp", "xpa"],
 	},
+	summaryPunt: {
+		name: "SummaryPunt",
+		onlyShowIf: ["P"],
+		stats: ["gp", "av", "pnt", "pntYds", "pntYdsPerAtt"],
+	},
 	summaryPunRet: {
-		name: "Summary",
-		onlyShowIf: ["pr"],
+		name: "SummaryPuntRet",
+		onlyShowIf: ["PR"],
 		stats: ["gp", "av", "pr", "prYds", "prTD"],
 	},
 	summaryKicRet: {
-		name: "Summary",
-		onlyShowIf: ["kr"],
+		name: "SummaryKicRet",
+		onlyShowIf: ["KR"],
 		stats: ["gp", "av", "kr", "krYds", "krTD"],
 	},
 	summaryDef: {
-		name: "Summary",
-		onlyShowIf: ["gp"],
+		name: "SummaryDef",
+		onlyShowIf: ["DL", "LB", "CB", "OL", "S"],
 		stats: ["gp", "av", "defSk", "defTckSolo", "defFmbFrc"],
 	},
 };

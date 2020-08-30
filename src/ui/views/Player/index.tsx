@@ -154,11 +154,13 @@ StatsTable.propTypes = {
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	superCols: PropTypes.array,
 };
-let summDisplayed = false;
+
 const StatsSummary = ({
 	name,
 	onlyShowIf,
 	p,
+	retired,
+	position,
 	playoffs = false,
 	stats,
 	superCols,
@@ -166,26 +168,26 @@ const StatsSummary = ({
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
+	retired: boolean;
+	position: string;
 	playoffs?: boolean;
 	stats: string[];
 	superCols?: any[];
 }) => {
 	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
 	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
-
 	if (onlyShowIf !== undefined) {
 		let display = false;
-		for (const stat of onlyShowIf) {
-			if (careerStats[stat] > 0 && summDisplayed == false) {
-				display = true;
-				summDisplayed = true;
-				break;
-			}
+		if (onlyShowIf.includes(position)) {
+			display = true;
 		}
-
 		if (!display) {
 			return null;
 		}
+	}
+	var pStats: any;
+	if (retired == false) {
+		pStats = playerStats.pop();
 	}
 
 	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
@@ -205,34 +207,54 @@ const StatsSummary = ({
 
 	return (
 		<>
-			<DataTable
-				className="mb-3"
-				cols={cols}
-				defaultSort={[0, "asc"]}
-				footer={[
-					"Career",
-					...stats.map(stat => helpers.roundStat(careerStats[stat], stat)),
-				]}
-				hideAllControls
-				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
-				rows={playerStats.slice(-1).map((ps, i) => {
-					return {
-						key: i,
-						data: [
-							"Current",
-							...stats.map(stat => helpers.roundStat(ps[stat], stat)),
-						],
-					};
-				})}
-				superCols={superCols}
-			/>
+			<div>
+				<table className="table table-bordered table-sm table-condensed table-nonfluid">
+					<thead>
+						<tr>
+							{cols.map((col: any, i: number) => {
+								return (
+									<th key={i} title={col.desc}>
+										{col.title}
+									</th>
+								);
+							})}
+						</tr>
+					</thead>
+					{retired ? (
+						""
+					) : (
+						<tbody>
+							<tr>
+								<th>Current</th>
+								{stats.map((stat: any, i: number) => {
+									return (
+										<td key={i}>{helpers.roundStat(pStats[stat], stat)}</td>
+									);
+								})}
+							</tr>
+						</tbody>
+					)}
+
+					<tfoot>
+						<tr className="table-secondary">
+							<th className="firstElement">Career</th>
+							{stats.map((stat: any, i: number) => {
+								return (
+									<td key={i}>{helpers.roundStat(careerStats[stat], stat)}</td>
+								);
+							})}
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 		</>
 	);
 };
 
-StatsTable.propTypes = {
+StatsSummary.propTypes = {
 	name: PropTypes.string.isRequired,
 	onlyShowIf: PropTypes.arrayOf(PropTypes.string),
+	retired: PropTypes.bool,
 	p: PropTypes.object.isRequired,
 	playoffs: PropTypes.bool,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -440,6 +462,8 @@ const Player2 = ({
 							key={name}
 							name={name}
 							onlyShowIf={onlyShowIf}
+							retired={retired}
+							position={player.ratings[player.ratings.length - 1].pos}
 							stats={stats}
 							superCols={superCols}
 							p={player}

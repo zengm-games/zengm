@@ -558,7 +558,7 @@ const updatePlayers = async (
 				throw new Error("Jersey number must be specified in the URL");
 			}
 
-			title = `Jersey Number ${arg}`;
+			title = `Best Players With Jersey Number ${arg}`;
 			description = `These are the best players who spent the majority of their career wearing #${arg}. <a href="${helpers.leagueUrl(
 				["frivolities", "jersey_numbers"],
 			)}">Other jersey numbers.</a>`;
@@ -570,12 +570,27 @@ const updatePlayers = async (
 				throw new Error("Country must be specified in the URL");
 			}
 
-			title = arg;
+			title = `Best Players From ${arg}`;
 			description = `These are the best players from ${arg}. <a href="${helpers.leagueUrl(
 				["frivolities", "countries"],
 			)}">Other countries.</a>`;
 
 			filter = p => getCountry(p) === arg;
+			getValue = playerValue;
+		} else if (type === "college") {
+			if (arg === undefined) {
+				throw new Error("College must be specified in the URL");
+			}
+
+			title = `Best Players From ${arg}`;
+			description = `These are the best players from ${arg}. <a href="${helpers.leagueUrl(
+				["frivolities", "colleges"],
+			)}">Other colleges.</a>`;
+
+			filter = p => {
+				const college = p.college && p.college !== "" ? p.college : "None";
+				return college === arg;
+			};
 			getValue = playerValue;
 		} else {
 			throw new Error(`Unknown type "${type}"`);

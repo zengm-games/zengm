@@ -51,8 +51,6 @@ const reducer = (
 		name = getCountry(p);
 	}
 
-	console.log(p, name);
-
 	if (!infos[name]) {
 		infos[name] = {
 			numPlayers: 0,

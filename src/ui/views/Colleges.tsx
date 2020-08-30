@@ -78,7 +78,7 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 								: type === "country"
 								? "country"
 								: "jersey_number",
-							c.name,
+							window.encodeURIComponent(c.name),
 						])}
 					>
 						{c.name}

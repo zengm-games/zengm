@@ -25,7 +25,7 @@ const blockCloseTab = (e: BeforeUnloadEvent) => {
 	e.returnValue = "";
 };
 
-const [useLocal, local] = create<
+const useLocal = create<
 	LocalStateUI & {
 		actions: LocalActions;
 	}
@@ -41,6 +41,7 @@ const [useLocal, local] = create<
 	leagueName: "",
 	lid: undefined,
 	liveGameInProgress: false,
+	spectator: false,
 	phase: 0,
 	phaseText: "",
 	playMenuOptions: [],
@@ -137,6 +138,7 @@ const [useLocal, local] = create<
 				"homeCourtAdvantage",
 				"lid",
 				"leagueName",
+				"spectator",
 				"phase",
 				"season",
 				"startingSeason",
@@ -173,6 +175,7 @@ const useLocalShallow = <T>(selector: (a: LocalStateUI) => T) =>
 // This assumes the actions object never changes!
 const useLocalActions = () => useLocal(state => state.actions);
 
+const local = useLocal;
 const localActions = local.getState().actions;
 
 export { local, localActions, useLocal, useLocalActions, useLocalShallow };

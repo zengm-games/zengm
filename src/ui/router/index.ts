@@ -148,9 +148,14 @@ class Router {
 	public async navigate(
 		path: string,
 		{
+			refresh = false,
 			replace = false,
 			state = {},
-		}: { replace?: boolean; state?: { [key: string]: any } } = {},
+		}: {
+			refresh?: boolean;
+			replace?: boolean;
+			state?: { [key: string]: any };
+		} = {},
 	) {
 		const context: Context = {
 			params: {},
@@ -176,6 +181,7 @@ class Router {
 					}
 
 					if (replace) {
+						// Only do this on replace, not refresh, or Safari can complain about too many calls
 						window.history.replaceState(
 							{
 								path,
@@ -183,7 +189,7 @@ class Router {
 							window.document.title,
 							path,
 						);
-					} else {
+					} else if (!refresh) {
 						window.history.pushState(
 							{
 								path,

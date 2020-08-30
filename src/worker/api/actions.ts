@@ -266,14 +266,17 @@ const playStop = async () => {
 	await updatePlayMenu();
 };
 
-const runDraft = async (onlyOne: boolean, conditions: Conditions) => {
+const runDraft = async (
+	type: "onePick" | "untilYourNextPick" | "untilEnd",
+	conditions: Conditions,
+) => {
 	if (
 		g.get("phase") === PHASE.DRAFT ||
 		g.get("phase") === PHASE.FANTASY_DRAFT ||
 		g.get("phase") === PHASE.EXPANSION_DRAFT
 	) {
 		await updateStatus("Draft in progress...");
-		await draft.runPicks(onlyOne, conditions);
+		await draft.runPicks(type, conditions);
 		const draftPicks = await draft.getOrder();
 
 		if (draftPicks.length === 0) {
@@ -334,13 +337,13 @@ const playMenu = {
 		}
 	},
 	onePick: async (conditions: Conditions) => {
-		await runDraft(true, conditions);
+		await runDraft("onePick", conditions);
 	},
 	untilYourNextPick: async (conditions: Conditions) => {
-		await runDraft(false, conditions);
+		await runDraft("untilYourNextPick", conditions);
 	},
 	untilEnd: async (conditions: Conditions) => {
-		await runDraft(false, conditions);
+		await runDraft("untilEnd", conditions);
 	},
 	untilResignPlayers: async (conditions: Conditions) => {
 		if (

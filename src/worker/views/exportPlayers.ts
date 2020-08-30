@@ -24,7 +24,16 @@ const updateExportPlayers = async (
 		}
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["pid", "name", "age", "injury", "watch", "tid", "abbrev"],
+			attrs: [
+				"pid",
+				"name",
+				"age",
+				"injury",
+				"watch",
+				"tid",
+				"abbrev",
+				"jerseyNumber",
+			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats: ["abbrev", "tid"],
 			season: season,

@@ -262,7 +262,7 @@ const processAttrs = (
 				output.latestTransactionSeason = undefined;
 			}
 		} else if (attr === "jerseyNumber") {
-			if (p.stats.length === 0 || p.tid === PLAYER.FREE_AGENT) {
+			if (p.stats.length === 0) {
 				output.jerseyNumber = undefined;
 			} else if (p.tid === PLAYER.RETIRED) {
 				// Find most common from career
@@ -336,6 +336,20 @@ const processRatings = (
 			return foundIndex;
 		}, undefined);
 		playerRatings = rowIndex === undefined ? [] : [playerRatings[rowIndex]];
+	}
+
+	// Show next draft class's prospects, after the current draft has ended
+	if (
+		season === g.get("season") &&
+		p.draft.year === g.get("season") + 1 &&
+		g.get("phase") > PHASE.DRAFT &&
+		playerRatings.length === 0
+	) {
+		playerRatings = [
+			{
+				...p.ratings[p.ratings.length - 1],
+			},
+		];
 	}
 
 	output.ratings = playerRatings.map(pr => {
@@ -463,20 +477,30 @@ const reduceCareerStats = (
 ) => {
 	return careerStats
 		.filter(cs => cs.playoffs === playoffs)
-		.map(cs => {
-			if (weightByMinutes.includes(attr)) {
-				return cs[attr] * cs.min;
-			}
+		.reduce(
+			(memo, cs) => {
+				const num = weightByMinutes.includes(attr)
+					? cs[attr] * cs.min
+					: cs[attr];
 
-			return cs[attr];
-		})
-		.reduce((memo, num) => {
-			if (attr.endsWith("Lng")) {
-				return num > memo ? num : memo;
-			}
+				if (attr.endsWith("Lng")) {
+					return num > memo ? num : memo;
+				}
 
-			return memo + num;
-		}, 0);
+				if (attr.endsWith("Max")) {
+					if (num === undefined || num === null) {
+						return memo;
+					}
+
+					return memo === null || num[0] > memo[0]
+						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
+						: memo;
+				}
+
+				return memo + num;
+			},
+			attr.endsWith("Max") ? null : 0,
+		);
 };
 
 const getPlayerStats = (
@@ -517,9 +541,16 @@ const getPlayerStats = (
 				const rowsTemp = rows.filter(row => row.season === season2);
 
 				// Aggregate annual stats and ignore other things
-				const ignoredKeys = ["season", "tid", "yearsWithTeam", "playoffs"];
+				const ignoredKeys = [
+					"season",
+					"tid",
+					"yearsWithTeam",
+					"playoffs",
+					"jerseyNumber",
+				];
 				const statSums: any = {};
-				const attrs = rowsTemp.length > 0 ? Object.keys(rowsTemp[0]) : [];
+				const attrs =
+					rowsTemp.length > 0 ? Object.keys(rowsTemp[rowsTemp.length - 1]) : [];
 
 				for (const attr of attrs) {
 					if (!ignoredKeys.includes(attr)) {
@@ -646,7 +677,10 @@ const processStats = (
 		const ignoredKeys = ["season", "tid", "yearsWithTeam", "jerseyNumber"];
 		const statSums: any = {};
 		const statSumsPlayoffs: any = {};
-		const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];
+		const attrs =
+			careerStats.length > 0
+				? Object.keys(careerStats[careerStats.length - 1])
+				: [];
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.includes(attr)) {
@@ -682,44 +716,55 @@ const processStats = (
 };
 
 const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
+	const {
+		attrs,
+		ratings,
+		season,
+		showNoStats,
+		showRetired,
+		showRookies,
+	} = options;
+
 	const output: any = {};
 
-	// Do this check before stats for a faster short circuit (no DB access)
-	if (options.ratings.length > 0 && options.season !== undefined) {
-		const hasRatingsSeason = p.ratings.some(r => r.season === options.season);
+	if (ratings.length > 0 && season !== undefined) {
+		const hasRatingsSeason = p.ratings.some(
+			r =>
+				r.season === season ||
+				(r.season === season + 1 && g.get("phase") > PHASE.DRAFT),
+		);
 
-		if (!hasRatingsSeason && !options.showRetired) {
-			return undefined;
+		if (!hasRatingsSeason && !showRetired) {
+			return;
 		}
 	}
 
 	const keepWithNoStats =
-		(options.showRookies &&
+		(showRookies &&
 			p.draft.year >= g.get("season") &&
-			(options.season === g.get("season") || options.season === undefined)) ||
-		(options.showNoStats &&
-			(options.season === undefined || options.season > p.draft.year));
+			(season === g.get("season") || season === undefined)) ||
+		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
 		processStats(output, p, options);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {
-			return undefined;
+			return;
 		}
 	}
 
 	// processRatings must be after processStats for abbrev hack
-	if (options.ratings.length > 0) {
+	if (ratings.length > 0) {
 		processRatings(output, p, options);
 
 		// This should be mostly redundant with hasRatingsSeason above
 		if (output.ratings === undefined) {
-			return undefined;
+			return;
 		}
 	}
 
-	if (options.attrs.length > 0) {
+	if (attrs.length > 0) {
 		processAttrs(output, p, options);
 	}
 
@@ -793,6 +838,7 @@ const getCopies = async (
 		statType,
 		mergeStats,
 	};
+
 	return players
 		.map(p => processPlayer(p, options))
 		.filter(p => p !== undefined);

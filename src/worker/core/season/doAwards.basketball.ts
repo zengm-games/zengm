@@ -9,7 +9,7 @@ import {
 	teamAwards,
 } from "./awards";
 import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type { Conditions, PlayerFiltered } from "../../../common/types";
 import type {
 	AwardPlayer,
@@ -205,9 +205,7 @@ export const royFilter = (p: PlayerFiltered) => {
 	);
 };
 
-const getMipFactor = () =>
-	g.get("numGames") *
-	Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength);
+const getMipFactor = () => g.get("numGames") * helpers.quarterLengthFactor();
 
 export const mipScore = (p: PlayerFiltered) => {
 	const seasonScore = (ps: any) => {

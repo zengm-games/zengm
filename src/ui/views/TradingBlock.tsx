@@ -61,6 +61,7 @@ const Offer = (props: OfferProps) => {
 				data: [
 					<PlayerNameLabels
 						injury={p.injury}
+						jerseyNumber={p.jerseyNumber}
 						pid={p.pid}
 						skills={p.ratings.skills}
 						watch={p.watch}
@@ -253,6 +254,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		spectator,
 		phase,
 		stats,
 		userPicks,
@@ -260,6 +262,10 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 	} = props;
 
 	useTitleBar({ title: "Trading Block" });
+
+	if (spectator) {
+		return <p>You're not allowed to make trades in spectator mode.</p>;
+	}
 
 	if (challengeNoTrades) {
 		return (
@@ -310,6 +316,7 @@ const TradingBlock = (props: View<"tradingBlock">) => {
 				/>,
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}

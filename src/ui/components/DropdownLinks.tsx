@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import React, { MouseEvent, useCallback, useState } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { helpers } from "../util";
-import type { MenuItemLink, MenuItemHeader } from "../../common/types";
+import type {
+	MenuItemLink,
+	MenuItemHeader,
+	MenuItemText,
+} from "../../common/types";
 
 type TopMenuToggleProps = {
 	long: string;
@@ -134,11 +138,15 @@ const MenuItem = ({
 	godMode?: boolean;
 	hideTitle?: boolean;
 	lid?: number;
-	menuItem: MenuItemLink | MenuItemHeader;
+	menuItem: MenuItemLink | MenuItemHeader | MenuItemText;
 	onToggle: (a: string, b: MouseEvent<HTMLAnchorElement>) => void;
 	openID?: string;
 	root: boolean;
 }) => {
+	if (menuItem.type === "text") {
+		return <Dropdown.Header>{menuItem.text}</Dropdown.Header>;
+	}
+
 	if (!menuItem.league && lid !== undefined) {
 		return null;
 	}

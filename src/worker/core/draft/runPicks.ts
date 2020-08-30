@@ -19,7 +19,10 @@ import type {
  * @param {boolean} onlyOne If true, only do one pick. If false, do all picks until the user's next pick. Default false.
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to an array of player IDs who were drafted during this function call, in order.
  */
-const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
+const runPicks = async (
+	type: "onePick" | "untilYourNextPick" | "untilEnd",
+	conditions?: Conditions,
+) => {
 	if (lock.get("drafting")) {
 		return [];
 	}
@@ -71,7 +74,14 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 			} else {
 				const dp = draftPicks[0];
 
-				if (g.get("userTids").includes(dp.tid) && !local.autoPlayUntil) {
+				const singleUserPickInSpectatorMode =
+					g.get("spectator") && type === "onePick";
+				const pauseForUserPick =
+					g.get("userTids").includes(dp.tid) &&
+					!local.autoPlayUntil &&
+					!singleUserPickInSpectatorMode &&
+					type !== "untilEnd";
+				if (pauseForUserPick) {
 					return afterDoneAuto();
 				}
 
@@ -84,7 +94,7 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
 				pids.push(pid);
 				playersAll = playersAll.filter(p => p !== selection); // Delete from the list of undrafted players
 
-				if (!onlyOne) {
+				if (type !== "onePick") {
 					return autoSelectPlayer();
 				}
 			}

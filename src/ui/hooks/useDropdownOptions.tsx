@@ -44,6 +44,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	totals: "Totals",
 	shotLocations: "Shot Locations",
 	advanced: "Advanced",
+	gameHighs: "Game Highs",
 	passing: "Passing",
 	rushing: "Rushing/Receiving",
 	defense: "Defense",
@@ -92,6 +93,7 @@ const dropdownValues: { [key: string]: string | undefined } = {
 	league: "League",
 	conf: "Conference",
 	div: "Division",
+	your_teams: "Your Teams",
 };
 
 export const getDropdownValue = (
@@ -142,6 +144,8 @@ const useDropdownOptions = (field: string) => {
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAllWatch") {
 		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
+	} else if (field === "teamsAndYours") {
+		keys = ["your_teams", ...Object.keys(sortedTeams)];
 	} else if (
 		field === "seasons" ||
 		field === "seasonsAndCareer" ||
@@ -205,6 +209,7 @@ const useDropdownOptions = (field: string) => {
 			if (field === "statTypesAdv") {
 				keys.push("shotLocations");
 				keys.push("advanced");
+				keys.push("gameHighs");
 			}
 		} else {
 			keys = ["passing", "rushing", "defense", "kicking", "returns"];
@@ -266,6 +271,8 @@ const useDropdownOptions = (field: string) => {
 		);
 	} else if (field === "teamRecordType") {
 		keys = ["by_team", "by_conf", "by_div"];
+	} else if (field === "teamRecordsFilter") {
+		keys = ["all|||teams", "your_teams"];
 	} else if (field === "positions") {
 		keys = POSITIONS;
 	} else if (field === "newsLevels") {

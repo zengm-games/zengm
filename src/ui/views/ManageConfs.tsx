@@ -154,6 +154,7 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 											<button
 												className="btn btn-danger ml-3"
 												onClick={deleteConf(conf.cid)}
+												type="button"
 											>
 												Delete
 											</button>
@@ -179,6 +180,7 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 													<button
 														className="btn btn-danger ml-3"
 														onClick={deleteDiv(div.did)}
+														type="button"
 													>
 														Delete
 													</button>
@@ -187,6 +189,7 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 										<button
 											className="btn btn-secondary ml-4"
 											onClick={addDiv(conf.cid)}
+											type="button"
 										>
 											Add Division
 										</button>
@@ -198,7 +201,11 @@ const ManageTeams = ({ confs, divs, phase }: View<"manageConfs">) => {
 					<div className="col-xl-3 col-lg-4 col-md-6 mb-3">
 						<div className="card">
 							<div className="card-body">
-								<button className="btn btn-secondary" onClick={addConf}>
+								<button
+									className="btn btn-secondary"
+									onClick={addConf}
+									type="button"
+								>
 									Add Conference
 								</button>
 							</div>

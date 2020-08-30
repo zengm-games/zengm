@@ -38,6 +38,11 @@ const addStatsRow = async (
 		statsRow[key] = 0;
 	}
 
+	for (const key of stats.max) {
+		// Will be set to [max, gid] later. Needs to be null rather than undefined so it persists in JSON, otherwise playersPlus career totals will not know about these fields.
+		statsRow[key] = null;
+	}
+
 	p.statsTids.push(p.tid);
 	p.statsTids = Array.from(new Set(p.statsTids)); // Calculate yearsWithTeam
 

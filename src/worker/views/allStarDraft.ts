@@ -25,7 +25,7 @@ const getPlayerInfo = async (pid: number) => {
 		],
 		ratings: ["ovr", "skills", "pos"],
 		season: g.get("season"),
-		stats,
+		stats: [...stats, "jerseyNumber"],
 		fuzz: true,
 	});
 };

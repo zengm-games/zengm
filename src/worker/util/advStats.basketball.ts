@@ -5,6 +5,7 @@ import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
 import { player } from "../core";
 import pos from "../core/player/pos.basketball";
+import defaultGameAttributes from "./defaultGameAttributes";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -110,7 +111,13 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 		mins[i] = players[i].stats.min; // Save for EWA calculation
 	}
 
-	league.aPER /= league.gp * 5 * 4 * g.get("quarterLength");
+	league.aPER /=
+		league.gp *
+		5 *
+		4 *
+		(g.get("quarterLength") > 0
+			? g.get("quarterLength")
+			: defaultGameAttributes.quarterLength);
 	const PER = aPER.map(num => num * (15 / league.aPER));
 
 	// Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics

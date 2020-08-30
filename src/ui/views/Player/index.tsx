@@ -23,6 +23,7 @@ import {
 import type { View, Player } from "../../../common/types";
 import { PLAYER } from "../../../common";
 import classNames from "classnames";
+import { formatStatGameHigh } from "../PlayerStats";
 
 const Relatives = ({
 	pid,
@@ -95,7 +96,9 @@ const StatsTable = ({
 		"Year",
 		"Team",
 		"Age",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map(
+			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		),
 	);
 
 	if (superCols) {
@@ -122,7 +125,7 @@ const StatsTable = ({
 					"Career",
 					null,
 					null,
-					...stats.map(stat => helpers.roundStat(careerStats[stat], stat)),
+					...stats.map(stat => formatStatGameHigh(careerStats, stat)),
 				]}
 				hideAllControls
 				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
@@ -144,7 +147,7 @@ const StatsTable = ({
 								{ps.abbrev}
 							</a>,
 							ps.age,
-							...stats.map(stat => helpers.roundStat(ps[stat], stat)),
+							...stats.map(stat => formatStatGameHigh(ps, stat)),
 						],
 					};
 				})}
@@ -360,7 +363,14 @@ const Player2 = ({
 								}}
 								title={player.untradableMsg}
 							>
-								{showTradeFor ? "Trade For" : "Add To Trading Block"}
+								{showTradeFor ? (
+									"Trade For"
+								) : (
+									<>
+										<span className="d-none d-md-inline">Add To </span>Trading
+										Block
+									</>
+								)}
 							</button>
 						) : null}
 						{freeAgent ? (

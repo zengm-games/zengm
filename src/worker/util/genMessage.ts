@@ -29,7 +29,11 @@ const getMoodScore = (total: number, deltas: boolean = false) => {
 
 const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 	// If auto play seasons or multi team mode, no messages
-	if (local.autoPlayUntil || g.get("userTids").length > 1) {
+	if (
+		local.autoPlayUntil ||
+		g.get("spectator") ||
+		g.get("userTids").length > 1
+	) {
 		return;
 	}
 
@@ -134,7 +138,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 			m += `<p>${text}</p>`;
 		}
 
-		const prob = (helpers.bound(currentTotal, 1, 3) - 1) * 0.25;
+		const prob = helpers.bound(currentTotal, 0, 3) / 5;
 		const otherTeamsWantToHire = Math.random() < prob;
 
 		await league.setGameAttributes({

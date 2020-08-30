@@ -28,6 +28,8 @@ const updatePlayers = async (
 				statsTable = PLAYER_STATS_TABLES.advanced;
 			} else if (inputs.statType === "shotLocations") {
 				statsTable = PLAYER_STATS_TABLES.shotLocations;
+			} else if (inputs.statType === "gameHighs") {
+				statsTable = PLAYER_STATS_TABLES.gameHighs;
 			} else {
 				statsTable = PLAYER_STATS_TABLES.regular;
 			}
@@ -95,7 +97,7 @@ const updatePlayers = async (
 				"watch",
 			],
 			ratings: ["skills", "pos"],
-			stats: ["abbrev", "tid", ...stats],
+			stats: ["abbrev", "tid", "jerseyNumber", ...stats],
 			season: inputs.season, // If null, then show career stats!
 			tid,
 			statType,
@@ -125,6 +127,13 @@ const updatePlayers = async (
 			players = players.filter(p => {
 				// Minutes played
 				let min;
+
+				if (inputs.statType === "gameHighs") {
+					if (inputs.season !== undefined) {
+						return p.stats.gp > 0;
+					}
+					return p.careerStats.gp > 0;
+				}
 
 				if (inputs.statType === "totals") {
 					if (inputs.season !== undefined) {

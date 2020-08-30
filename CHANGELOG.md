@@ -2,6 +2,18 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* **2020-08-29: Single game highs for players are now tracked for all stats in BBGM - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". [[1]](https://basketball-gm.com/blog/2020/08/game-highs/) [[2]](https://old.reddit.com/r/BasketballGM/comments/iiluf2/single_game_highs_for_players_are_now_tracked_for/)**
+
+* **2020-08-26: Added the Elam Ending as an option for game simulation in BBGM. [[1]](https://basketball-gm.com/blog/2020/08/elam-ending/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ih19y1/new_in_version_202008260936_the_elam_ending_comes/)**
+
+* 2020-08-26: Tweaks to game simulation in the playoffs, most notably resulting in fewer upsets. Also injuries in the playoffs are shorter, to work around the fact that currently there is no way to have players play through minor injuries. [[1]](https://github.com/dumbmatter/gm-games/pull/293)
+
+* 2020-08-24: The Draft Team History page can now use the "GM history" data to show all the draft picks you made, across all teams you managed. Find it at Team > GM History > Your Draft History. [[1]](https://old.reddit.com/r/BasketballGM/comments/ifipp8/the_draft_team_history_page_can_now_use_the_gm/)
+
+* 2020-08-22: The Team Records page can now use the "GM history" data to show a table of only your teams. Find it at Team > GM History > Your Team Records. [[1]](https://old.reddit.com/r/BasketballGM/comments/iepzdt/the_team_records_page_can_now_use_the_gm_history/)
+
+* 2020-08-22: New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It's like auto play, but you can proceed at your own pace. [[1]](https://basketball-gm.com/blog/2020/08/spectator-mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ieln8n/new_god_mode_option_spectator_mode_where_the_ai/)
+
 * 2020-08-20: Added a new "GM History" page in the Team menu, where you can see your performance across all the different franchises you managed in the past. [[1]](https://basketball-gm.com/blog/2020/08/gm-history/) [[2]](https://old.reddit.com/r/BasketballGM/comments/idfn77/added_a_new_gm_history_page_in_the_team_menu/)
 
 * 2020-08-18: If you are successful (high score in the owner's annual performance review) then sometimes other teams will try to hire you. This happens between the playoffs and draft. Previously, the only way to change teams was to get fired or use God Mode. [[1]](https://old.reddit.com/r/BasketballGM/comments/iccozz/if_you_are_successful_high_score_in_the_owners/)

@@ -180,7 +180,13 @@ const draftSummary = (params: Params) => {
 };
 
 const draftTeamHistory = (params: Params) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	let [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	if (params.abbrev === "your_teams") {
+		tid = -1;
+		abbrev = "your_teams";
+	}
+
 	return {
 		tid,
 		abbrev,
@@ -479,8 +485,11 @@ const teamHistory = (params: Params) => {
 };
 
 const teamRecords = (params: Params) => {
+	const filter: "all" | "your_teams" =
+		params.filter === "your_teams" ? "your_teams" : "all";
 	return {
 		byType: params.byType || "by_team",
+		filter,
 	};
 };
 

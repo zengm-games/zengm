@@ -191,6 +191,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"rosterOrder",
 				"injury",
 				"watch",
+				"jerseyNumber",
 			],
 			ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
 			stats: [...startersStats, ...leaderStats, "yearsWithTeam"],

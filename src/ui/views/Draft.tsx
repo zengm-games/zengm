@@ -2,37 +2,61 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocal } from "../util";
+import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
 import { DataTable, DraftAbbrev, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 
 const DraftButtons = ({
+	spectator,
 	userRemaining,
 	usersTurn,
 }: {
+	spectator: boolean;
 	userRemaining: boolean;
 	usersTurn: boolean;
 }) => {
-	const untilText = userRemaining ? "your next pick" : "end of draft";
 	return (
 		<div className="btn-group mb-3" id="draft-buttons">
 			<button
 				className="btn btn-light-bordered"
-				disabled={usersTurn}
+				disabled={usersTurn && !spectator}
 				onClick={async () => {
 					await toWorker("playMenu", "onePick");
 				}}
 			>
 				Sim one pick
 			</button>
+			{userRemaining ? (
+				<button
+					className="btn btn-light-bordered"
+					disabled={usersTurn && !spectator}
+					onClick={async () => {
+						await toWorker("playMenu", "untilYourNextPick");
+					}}
+				>
+					To your next pick
+				</button>
+			) : null}
 			<button
 				className="btn btn-light-bordered"
-				disabled={usersTurn}
 				onClick={async () => {
-					await toWorker("playMenu", "untilYourNextPick");
+					if (userRemaining && !spectator) {
+						const result = await confirm(
+							"If you proceed, the AI will make your remaining picks for you. Are you sure?",
+							{
+								okText: "Let AI finish the draft",
+								cancelText: "Cancel",
+							},
+						);
+
+						if (!result) {
+							return;
+						}
+					}
+					await toWorker("playMenu", "untilEnd");
 				}}
 			>
-				Sim until {untilText}
+				To end of draft
 			</button>
 		</div>
 	);
@@ -84,6 +108,7 @@ const Draft = ({
 	drafted,
 	expansionDraft,
 	fantasyDraft,
+	spectator,
 	stats,
 	undrafted,
 	userTids,
@@ -151,29 +176,31 @@ const Draft = ({
 			p.age,
 			!challengeNoRatings ? p.ratings.ovr : null,
 			!challengeNoRatings ? p.ratings.pot : null,
-			<div
-				className="btn-group"
-				style={{
-					display: "flex",
-				}}
-			>
-				<button
-					className="btn btn-xs btn-primary"
-					disabled={!usersTurn || drafting}
-					onClick={() => draftUser(p.pid)}
-					title="Draft player"
+			spectator ? null : (
+				<div
+					className="btn-group"
+					style={{
+						display: "flex",
+					}}
 				>
-					Draft
-				</button>
-				<button
-					className="btn btn-xs btn-light-bordered"
-					disabled={!usersTurn || drafting}
-					onClick={() => draftUser(p.pid, true)}
-					title="Draft player and sim to your next pick or end of draft"
-				>
-					And Sim
-				</button>
-			</div>,
+					<button
+						className="btn btn-xs btn-primary"
+						disabled={!usersTurn || drafting}
+						onClick={() => draftUser(p.pid)}
+						title="Draft player"
+					>
+						Draft
+					</button>
+					<button
+						className="btn btn-xs btn-light-bordered"
+						disabled={!usersTurn || drafting}
+						onClick={() => draftUser(p.pid, true)}
+						title="Draft player and sim to your next pick or end of draft"
+					>
+						And Sim
+					</button>
+				</div>
+			),
 		];
 
 		if (fantasyDraft || expansionDraft) {
@@ -244,7 +271,10 @@ const Draft = ({
 					disabled={drafting}
 					tid={p.draft.tid}
 					visible={
-						!fantasyDraft && !expansionDraft && !userTids.includes(p.draft.tid)
+						!fantasyDraft &&
+						!expansionDraft &&
+						!userTids.includes(p.draft.tid) &&
+						!spectator
 					}
 				/>
 			),
@@ -322,7 +352,19 @@ const Draft = ({
 							</p>
 						</div>
 					) : null}
-					<DraftButtons userRemaining={userRemaining} usersTurn={usersTurn} />
+					{spectator ? (
+						<div>
+							<p className="alert alert-danger d-inline-block">
+								In spectator mode you can't make draft picks, you can only watch
+								the draft.
+							</p>
+						</div>
+					) : null}
+					<DraftButtons
+						spectator={spectator}
+						userRemaining={userRemaining}
+						usersTurn={usersTurn}
+					/>
 				</>
 			) : (
 				<>

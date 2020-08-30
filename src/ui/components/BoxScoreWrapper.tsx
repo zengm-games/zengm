@@ -89,6 +89,8 @@ const HeadlineScore = ({ boxScore }: any) => {
 				<div className="mb-2">
 					{boxScore.gameOver
 						? "Final score"
+						: boxScore.elamTarget !== undefined
+						? `Elam Ending target: ${boxScore.elamTarget} points`
 						: `${boxScore.quarter}, ${boxScore.time} remaining`}
 				</div>
 			) : null}

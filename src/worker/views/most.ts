@@ -1,5 +1,5 @@
 import { idb, iterate } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import { defaultGameAttributes, g, processPlayersHallOfFame } from "../util";
 import type {
 	UpdateEvents,
 	Player,
@@ -71,6 +71,8 @@ export const getMostXPlayers = async ({
 			"born",
 			"diedYear",
 			"most",
+			"watch",
+			"jerseyNumber",
 		],
 		ratings: ["ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],
@@ -360,7 +362,12 @@ const updatePlayers = async (
 				}
 
 				if (
-					min > g.get("numGames") * g.get("quarterLength") * 4 &&
+					min >
+						g.get("numGames") *
+							(g.get("quarterLength") > 0
+								? g.get("quarterLength")
+								: defaultGameAttributes.quarterLength) *
+							4 &&
 					(p.retiredYear === Infinity || p.ratings.length > 3)
 				) {
 					return { value: -valueTimesMin / min };

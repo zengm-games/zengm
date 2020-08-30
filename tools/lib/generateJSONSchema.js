@@ -501,6 +501,20 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("easyDifficultyInPast", {
 							type: "boolean",
 						}),
+						gameAttribute("elam", {
+							type: "boolean",
+						}),
+						gameAttribute("elamASG", {
+							type: "boolean",
+						}),
+						gameAttribute("elamMinutes", {
+							type: "number",
+							minimum: 0,
+						}),
+						gameAttribute("elamPoints", {
+							type: "integer",
+							minimum: 0,
+						}),
 						gameAttribute("equalizeRegions", {
 							type: "boolean",
 						}),
@@ -676,6 +690,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("sonRate", {
 							type: "number",
 							minimum: 0,
+						}),
+						gameAttribute("spectator", {
+							type: "boolean",
 						}),
 						gameAttribute("startingSeason", {
 							type: "integer",

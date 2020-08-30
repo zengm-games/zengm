@@ -61,6 +61,7 @@ const WatchList = ({
 				<WatchBlock pid={p.pid} watch={p.watch} />,
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}

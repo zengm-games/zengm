@@ -167,7 +167,11 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		if (text !== undefined) {
 			const p = document.createElement("p");
 			const node = document.createTextNode(text);
-			if (text === "End of game" || text.startsWith("Start of")) {
+			if (
+				text === "End of game" ||
+				text.startsWith("Start of") ||
+				text.startsWith("Elam Ending activated! First team to")
+			) {
 				const b = document.createElement("b");
 				b.appendChild(node);
 				p.appendChild(b);
@@ -250,6 +254,12 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 		const secoundsToPlay = currentSeconds - targetSeconds;
 		if (secoundsToPlay > 0) {
 			this.playSeconds(secoundsToPlay);
+		}
+	}
+
+	playUntilElamEnding() {
+		while (this.boxScore.elamTarget === undefined && !this.boxScore.gameOver) {
+			this.processToNextPause(true);
 		}
 	}
 
@@ -371,15 +381,30 @@ class LiveGame extends React.Component<LiveGameProps, State> {
 														this.playSeconds(Infinity);
 													}}
 												>
-													End of quarter
+													End of{" "}
+													{this.boxScore.elamTarget === undefined
+														? "quarter"
+														: "game"}
 												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														this.playUntilLastTwoMinutes();
-													}}
-												>
-													Until last 2 minutes
-												</Dropdown.Item>
+												{!this.boxScore.elam ? (
+													<Dropdown.Item
+														onClick={() => {
+															this.playUntilLastTwoMinutes();
+														}}
+													>
+														Until last 2 minutes
+													</Dropdown.Item>
+												) : null}
+												{this.boxScore.elam &&
+												this.boxScore.elamTarget === undefined ? (
+													<Dropdown.Item
+														onClick={() => {
+															this.playUntilElamEnding();
+														}}
+													>
+														Until Elam Ending
+													</Dropdown.Item>
+												) : null}
 											</Dropdown.Menu>
 										</Dropdown>
 									</div>

@@ -4,6 +4,7 @@ import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
+import defaultGameAttributes from "./defaultGameAttributes";
 
 const augmentSeries = async (
 	series: {
@@ -320,6 +321,16 @@ const sigmoid = (x: number, a: number, b: number): number => {
 	return 1 / (1 + Math.exp(-(a * (x - b))));
 };
 
+const quarterLengthFactor = () => {
+	if (g.get("quarterLength") <= 0) {
+		return 1;
+	}
+
+	return Math.sqrt(
+		g.get("quarterLength") / defaultGameAttributes.quarterLength,
+	);
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -335,6 +346,7 @@ const helpers = {
 	orderByWinp,
 	overtimeCounter,
 	pickDesc,
+	quarterLengthFactor,
 	resetG,
 	sigmoid,
 };

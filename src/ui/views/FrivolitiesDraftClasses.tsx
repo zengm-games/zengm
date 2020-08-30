@@ -56,7 +56,16 @@ const FrivolitiesDraftClasses = ({
 				draftClass.numHOF,
 				draftClass.numActive,
 				{
-					value: <PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+					value: (
+						<PlayerNameLabels
+							jerseyNumber={p.jerseyNumber}
+							pid={p.pid}
+							watch={p.watch}
+							disableWatchToggle
+						>
+							{p.name}
+						</PlayerNameLabels>
+					),
 					classNames: {
 						"table-success": p.retiredYear === Infinity,
 						"table-info": p.statsTids.includes(userTid),

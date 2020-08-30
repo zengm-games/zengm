@@ -79,6 +79,7 @@ const Roster = ({
 	players,
 	salaryCap,
 	season,
+	showSpectatorWarning,
 	showRelease,
 	showTradeFor,
 	showTradingBlock,
@@ -145,8 +146,12 @@ const Roster = ({
 					History
 				</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
-					Transactions
+				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
+					Schedule
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
+					News Feed
 				</a>
 			</p>
 
@@ -168,6 +173,12 @@ const Roster = ({
 				t={t}
 				tid={tid}
 			/>
+
+			{showSpectatorWarning ? (
+				<p className="alert alert-danger d-inline-block">
+					The AI will handle roster management in spectator mode.
+				</p>
+			) : null}
 
 			<div className="clearfix" />
 

@@ -140,6 +140,7 @@ const updateUpcoming = async (
 
 		return {
 			abbrev: inputs.abbrev,
+			tid: inputs.tid,
 			upcoming,
 		};
 	}

@@ -183,7 +183,7 @@ const NewTeam = ({
 						</div>
 					) : null}
 					<div>
-						{expansion ? (
+						{expansion && t.tid !== userTid ? (
 							<>
 								New expansion team!
 								<br />
@@ -206,7 +206,7 @@ const NewTeam = ({
 							</>
 						)}
 						<br />
-						{confs[t.cid].name}
+						{confs[t.cid] ? confs[t.cid].name : null}
 						<br />
 						<PopText tid={tid} teams={teams} numActiveTeams={numActiveTeams} />
 					</div>

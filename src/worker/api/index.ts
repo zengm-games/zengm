@@ -92,7 +92,7 @@ const addTeam = async (): Promise<{
 	stadiumCapacity: number;
 	colors: [string, string, string];
 }> => {
-	const did = g.get("divs", "current")[0].did;
+	const did = g.get("divs")[0].did;
 
 	const t = await team.addNewTeamToExistingLeague({
 		did,
@@ -1216,7 +1216,15 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 				);
 				playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
 				const players = await idb.getCopies.playersPlus(playersAll, {
-					attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+					attrs: [
+						"pid",
+						"name",
+						"age",
+						"contract",
+						"injury",
+						"watch",
+						"jerseyNumber",
+					],
 					ratings: ["ovr", "pot", "skills", "pos"],
 					stats,
 					season: g.get("season"),
@@ -1379,6 +1387,7 @@ const handleUploadedDraftClass = async (
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
+			// @ts-ignore
 			delete p2.pid;
 		}
 
@@ -1692,12 +1701,14 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	}
 
 	await player.release(p, justDrafted);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+	await recomputeLocalUITeamOvrs();
+
+	// Purposely after realtimeUpdate, so the UI update happens without waiting for this to complete
 	await freeAgents.normalizeContractDemands({
 		type: "dummyExpiringContracts",
 		pids: [p.pid],
 	});
-	await toUI("realtimeUpdate", [["playerMovement"]]);
-	await recomputeLocalUITeamOvrs();
 };
 
 const removeLastTeam = async (): Promise<void> => {
@@ -1925,6 +1936,25 @@ const retiredJerseyNumberUpsert = async (
 			...info,
 		};
 	}
+
+	let playerText = "";
+	if (info.pid !== undefined) {
+		const p = await idb.getCopy.players({ pid: info.pid });
+		if (p) {
+			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a>'s `;
+		}
+	}
+
+	logEvent({
+		type: "retiredJersey",
+		text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
+		showNotification: false,
+		pids: info.pid ? [info.pid] : [],
+		tids: [t.tid],
+		score: 20,
+	});
 
 	await idb.cache.teams.put(t);
 
@@ -2501,9 +2531,7 @@ const updateTeamInfo = async (
 		}
 
 		if (newTeam.did !== undefined) {
-			const newDiv = g
-				.get("divs", "current")
-				.find(div => div.did === newTeam.did);
+			const newDiv = g.get("divs").find(div => div.did === newTeam.did);
 			if (newDiv) {
 				t.did = newDiv.did;
 				t.cid = newDiv.cid;

@@ -43,7 +43,9 @@ const processLiveGameEvents = ({
 			if (e.text === "End of game" || e.text.startsWith("Start of")) {
 				text = e.text;
 			} else if (actualT === 0 || actualT === 1) {
-				text = `${e.time} - ${boxScore.teams[actualT].abbrev} - ${e.text}`;
+				text = `${boxScore.elamTarget === undefined ? `${e.time} - ` : ""}${
+					boxScore.teams[actualT].abbrev
+				} - ${e.text}`;
 			} else {
 				text = e.text;
 			}
@@ -113,6 +115,11 @@ const processLiveGameEvents = ({
 					}
 				}
 			}
+		} else if (e.type === "elamActive") {
+			text = `Elam Ending activated! First team to ${e.target} wins.`;
+			boxScore.elamTarget = e.target;
+
+			stop = true;
 		}
 	}
 

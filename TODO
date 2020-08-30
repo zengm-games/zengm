@@ -25,6 +25,7 @@ frivolities
     - link there from player pages and retired jerseys
     - link to and from jersey_number and jersey_numbers
       - similar sub-pages for countries and colleges
+      - urlencode c.name
   - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
   - worst contract
   - most games missed to injury in career

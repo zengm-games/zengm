@@ -14,6 +14,7 @@ import type {
 import groupBy from "lodash/groupBy";
 import { player } from "../core";
 import { PLAYER } from "../../common";
+import { getCountry } from "./colleges";
 
 type Most = {
 	value: number;
@@ -553,12 +554,28 @@ const updatePlayers = async (
 				};
 			};
 		} else if (type === "jersey_number") {
+			if (arg === undefined) {
+				throw new Error("Jersey number must be specified in the URL");
+			}
+
 			title = `Jersey Number ${arg}`;
 			description = `These are the best players who spent the majority of their career wearing #${arg}. <a href="${helpers.leagueUrl(
 				["frivolities", "jersey_numbers"],
 			)}">Other jersey numbers.</a>`;
 
 			filter = p => helpers.getJerseyNumber(p, "mostCommon") === arg;
+			getValue = playerValue;
+		} else if (type === "country") {
+			if (arg === undefined) {
+				throw new Error("Country must be specified in the URL");
+			}
+
+			title = arg;
+			description = `These are the best players from ${arg}. <a href="${helpers.leagueUrl(
+				["frivolities", "countries"],
+			)}">Other countries.</a>`;
+
+			filter = p => getCountry(p) === arg;
 			getValue = playerValue;
 		} else {
 			throw new Error(`Unknown type "${type}"`);

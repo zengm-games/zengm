@@ -69,20 +69,20 @@ export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 			return {
 				key: c.name,
 				data: [
-					type === "jerseyNumbers" ? (
-						<a
-							href={helpers.leagueUrl([
-								"frivolities",
-								"most",
-								"jersey_number",
-								c.name,
-							])}
-						>
-							{c.name}
-						</a>
-					) : (
-						c.name
-					),
+					<a
+						href={helpers.leagueUrl([
+							"frivolities",
+							"most",
+							type === "college"
+								? "college"
+								: type === "country"
+								? "country"
+								: "jersey_number",
+							c.name,
+						])}
+					>
+						{c.name}
+					</a>,
 					c.numPlayers,
 					c.numActivePlayers,
 					c.numHof,

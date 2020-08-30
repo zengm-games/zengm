@@ -19,19 +19,26 @@ type InfoTemp = {
 const valueStatNames =
 	process.env.SPORT === "basketball" ? ["ows", "dws"] : ["av"];
 
+export const getCountry = (p: Player) => {
+	let name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
+
+	if (isAmerican(name)) {
+		name = "USA";
+	} else {
+		const parts = name.split(", ");
+		if (parts.length > 1) {
+			name = parts[parts.length - 1];
+		}
+	}
+
+	return name;
+};
+
 const reducer = (
 	type: "college" | "country" | "jerseyNumbers",
 	infos: { [key: string]: InfoTemp | undefined },
 	p: Player,
 ) => {
-	// Ignore future draft prospects
-	if (
-		(p.tid === PLAYER.UNDRAFTED && g.get("phase") !== PHASE.FANTASY_DRAFT) ||
-		p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
-	) {
-		return;
-	}
-
 	let name;
 	if (type === "college") {
 		name = p.college && p.college !== "" ? p.college : "None";
@@ -41,16 +48,7 @@ const reducer = (
 			return;
 		}
 	} else {
-		name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
-
-		if (isAmerican(name)) {
-			name = "USA";
-		} else {
-			const parts = name.split(", ");
-			if (parts.length > 1) {
-				name = parts[parts.length - 1];
-			}
-		}
+		name = getCountry(p);
 	}
 
 	console.log(p, name);

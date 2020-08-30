@@ -24,6 +24,12 @@ const frivolities = {
 				"See which countries have had the most successful pro players.",
 		},
 		{
+			urlParts: ["jersey_numbers"],
+			name: "Jersey Numbers",
+			description:
+				"See which jersey numbers have been used by the most successful pro players.",
+		},
+		{
 			urlParts: ["relatives"],
 			name: "Relatives",
 			description: "See the family relationships between players.",

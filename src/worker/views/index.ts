@@ -21,6 +21,7 @@ import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
 import freeAgents from "./freeAgents";
 import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
+import frivolitiesJerseyNumbers from "./frivolitiesJerseyNumbers";
 import frivolitiesTeamSeasons from "./frivolitiesTeamSeasons";
 import gameLog from "./gameLog";
 import gmHistory from "./gmHistory";
@@ -101,6 +102,7 @@ export default {
 	fantasyDraft,
 	freeAgents,
 	frivolitiesDraftClasses,
+	frivolitiesJerseyNumbers,
 	frivolitiesTeamSeasons,
 	gameLog,
 	gmHistory,

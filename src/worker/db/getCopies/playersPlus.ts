@@ -265,31 +265,7 @@ const processAttrs = (
 			if (p.stats.length === 0) {
 				output.jerseyNumber = undefined;
 			} else if (p.tid === PLAYER.RETIRED) {
-				// Find most common from career
-				const numSeasonsByJerseyNumber: Record<string, number> = {};
-				let max = 0;
-				for (const { jerseyNumber } of p.stats) {
-					if (jerseyNumber === undefined) {
-						continue;
-					}
-					if (numSeasonsByJerseyNumber[jerseyNumber] === undefined) {
-						numSeasonsByJerseyNumber[jerseyNumber] = 1;
-					} else {
-						numSeasonsByJerseyNumber[jerseyNumber] += 1;
-					}
-
-					if (numSeasonsByJerseyNumber[jerseyNumber] > max) {
-						max = numSeasonsByJerseyNumber[jerseyNumber];
-					}
-				}
-
-				const entries = Object.entries(numSeasonsByJerseyNumber).reverse();
-				const entry = entries.find(entry => entry[1] === max);
-				if (entry) {
-					output.jerseyNumber = entry[0];
-				} else {
-					output.jerseyNumber = undefined;
-				}
+				output.jerseyNumber = helpers.getJerseyNumber(p, "mostCommon");
 			} else {
 				// Latest
 				output.jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;

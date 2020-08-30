@@ -1,5 +1,5 @@
 import { idb, iterate } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
 import { isAmerican } from "../util/achievements.basketball";
 import { PHASE, PLAYER } from "../../common";
@@ -20,7 +20,7 @@ const valueStatNames =
 	process.env.SPORT === "basketball" ? ["ows", "dws"] : ["av"];
 
 const reducer = (
-	type: "college" | "country",
+	type: "college" | "country" | "jerseyNumbers",
 	infos: { [key: string]: InfoTemp | undefined },
 	p: Player,
 ) => {
@@ -35,6 +35,11 @@ const reducer = (
 	let name;
 	if (type === "college") {
 		name = p.college && p.college !== "" ? p.college : "None";
+	} else if (type === "jerseyNumbers") {
+		name = helpers.getJerseyNumber(p);
+		if (name === undefined) {
+			return;
+		}
 	} else {
 		name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
 
@@ -47,6 +52,8 @@ const reducer = (
 			}
 		}
 	}
+
+	console.log(p, name);
 
 	if (!infos[name]) {
 		infos[name] = {
@@ -93,7 +100,7 @@ const reducer = (
 	}
 };
 
-export const genView = (type: "college" | "country") => {
+export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 	return async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {

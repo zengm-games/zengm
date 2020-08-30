@@ -794,15 +794,44 @@ const validateRoundsByes = (
 	}
 };
 
-const getJerseyNumber = (p: PlayerWithoutKey): string | undefined => {
-	let jerseyNumber;
-	if (p.stats.length > 0) {
-		jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
-	} else {
+const getJerseyNumber = (
+	p: PlayerWithoutKey,
+	type: "mostCommon" | "current" = "current",
+): string | undefined => {
+	if (type === "current") {
+		if (p.stats.length > 0) {
+			return p.stats[p.stats.length - 1].jerseyNumber;
+		}
+
 		// For uploaded league files
-		jerseyNumber = p.jerseyNumber;
+		return p.jerseyNumber;
 	}
-	return jerseyNumber;
+
+	// Find most common from career
+	const numSeasonsByJerseyNumber: Record<string, number> = {};
+	let max = 0;
+	for (const { jerseyNumber } of p.stats) {
+		if (jerseyNumber === undefined) {
+			continue;
+		}
+		if (numSeasonsByJerseyNumber[jerseyNumber] === undefined) {
+			numSeasonsByJerseyNumber[jerseyNumber] = 1;
+		} else {
+			numSeasonsByJerseyNumber[jerseyNumber] += 1;
+		}
+
+		if (numSeasonsByJerseyNumber[jerseyNumber] > max) {
+			max = numSeasonsByJerseyNumber[jerseyNumber];
+		}
+	}
+
+	const entries = Object.entries(numSeasonsByJerseyNumber).reverse();
+	const entry = entries.find(entry => entry[1] === max);
+	if (entry) {
+		return entry[0];
+	}
+
+	return undefined;
 };
 
 const roundsWonText = (

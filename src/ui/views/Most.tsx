@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
@@ -128,7 +128,9 @@ const Most = ({
 
 	return (
 		<>
-			<p>{description}</p>
+			<p>
+				<SafeHtml dirty={description} />
+			</p>
 
 			<p>
 				Players who have played for your team are{" "}

@@ -22,7 +22,9 @@ frivolities
 - add WS/player for colleges/countries
 - players
   - best players with jersey number (one player per number)
-    - link here to sub-pages showing all players with jersey number, and also link there from player pages and retired jerseys
+    - link there from player pages and retired jerseys
+    - link to and from jersey_number and jersey_numbers
+      - similar sub-pages for countries and colleges
   - best contract (maybe WS:contract ratio? or WS minus "expected WS for that contract"?)
   - worst contract
   - most games missed to injury in career

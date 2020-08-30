@@ -36,7 +36,7 @@ const reducer = (
 	if (type === "college") {
 		name = p.college && p.college !== "" ? p.college : "None";
 	} else if (type === "jerseyNumbers") {
-		name = helpers.getJerseyNumber(p);
+		name = helpers.getJerseyNumber(p, "mostCommon");
 		if (name === undefined) {
 			return;
 		}

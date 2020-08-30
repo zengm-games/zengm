@@ -270,6 +270,7 @@ const message = (params: Params) => {
 
 const most = (params: Params) => {
 	return {
+		arg: params.arg,
 		type: params.type,
 	};
 };

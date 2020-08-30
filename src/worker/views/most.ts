@@ -1,5 +1,10 @@
 import { idb, iterate } from "../db";
-import { defaultGameAttributes, g, processPlayersHallOfFame } from "../util";
+import {
+	defaultGameAttributes,
+	g,
+	helpers,
+	processPlayersHallOfFame,
+} from "../util";
 import type {
 	UpdateEvents,
 	Player,
@@ -147,7 +152,7 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 };
 
 const updatePlayers = async (
-	{ type }: ViewInput<"most">,
+	{ arg, type }: ViewInput<"most">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
@@ -547,6 +552,14 @@ const updatePlayers = async (
 					extra: { type: injuryType, season: injurySeason },
 				};
 			};
+		} else if (type === "jersey_number") {
+			title = `Jersey Number ${arg}`;
+			description = `These are the best players who spent the majority of their career wearing #${arg}. <a href="${helpers.leagueUrl(
+				["frivolities", "jersey_numbers"],
+			)}">Other jersey numbers.</a>`;
+
+			filter = p => helpers.getJerseyNumber(p, "mostCommon") === arg;
+			getValue = playerValue;
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

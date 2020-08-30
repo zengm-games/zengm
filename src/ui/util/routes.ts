@@ -163,6 +163,7 @@ const routes = () => {
 		"/l/:lid/frivolities/jersey_numbers": genPage("frivolitiesJerseyNumbers"),
 		"/l/:lid/frivolities/teams/:type": genPage("frivolitiesTeamSeasons"),
 		"/l/:lid/frivolities/most/:type": genPage("most"),
+		"/l/:lid/frivolities/most/:type/:arg": genPage("most"),
 		"/l/:lid/frivolities/relatives": genPage("relatives"),
 		"/l/:lid/frivolities/relatives/:pid": genPage("relatives"),
 		"/l/:lid/frivolities/roster_continuity": genPage("rosterContinuity"),

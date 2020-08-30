@@ -1,3 +1,21 @@
+game highs
+- +/- formatting in table
+- blog
+  - player profile
+  - player stats
+  - links to box scores
+  - only going forward
+  - bbgm only for now (fbgm has other mechanism Lng)
+- changes
+
+add text to statistical feats in player profiles about playoffs
+
+Add game log to player page
+
+option to disable unimportant notifications
+- https://old.reddit.com/r/BasketballGM/comments/ier26k/pop_ups_disable/
+- sirlamegame
+
 "Attempt to use history.pushState() more than 100 times per 30 seconds"
 - safari mobile
 - user reports it happens when auto play to playoffs, every time, at some point. doesn't matter what screen they are on
@@ -6,7 +24,6 @@
 keyboard shortcuts for live sim fast forward @dooby moogey#2784 
 
 frivolities
-- frivoloties menu should have categories
 - add WS/player for colleges/countries
 - players
   - best players with jersey number (one player per number)
@@ -19,6 +36,7 @@ frivolities
   - best playoffs (record in individual playoffs)
 - playoffs
   - playoff seeding, like number of times an 8 seed won @Tuxie93
+- best trades
 
 nicidob PRs
 - player overall ratings
@@ -28,8 +46,6 @@ nicidob PRs
 nicidob trade
 
 jersey numbers
-- option to have it prefixed on PlayerNameLabels
-  - see roster page, it's there now
 - higher limit for AI teams, and make panel collapsable
   - https://old.reddit.com/r/BasketballGM/comments/i55hvu/ai_jersey_retirement/g0onh40/?context=3
 - AI unretiring jerseys should be based on WS
@@ -38,7 +54,7 @@ jersey numbers
   - prompt to pick number of newly acquired players
   - add jersey retirement to awards list
     - No. 77 retired by the AAAA
-    - tricky when user edits
+    - tricky when user edits, would need to update player
   - notifications in news feed
     - redundant with HoF?
 
@@ -52,6 +68,8 @@ The way I started the league was:
 - Real players and teams
 - Deselect Players, including ratings and stats
 Start league
+
+in box score, show graphs of score and win probability
 
 nicidob contract stuff
 - https://raw.githubusercontent.com/nicidob/bbgm/master/cbb_roster_2020.json << if u set max salary to 30M, lots of players go unsigned
@@ -101,8 +119,6 @@ option to include historical players/stats when creating a real players league
 
 rebuilding/contending in the old days https://old.reddit.com/r/BasketballGM/comments/hytv2e/whats_the_best_way_to_trade_for_good_draft_picks/fzf4iap/?context=3
 
-“Attempt to use history.replaceState() more than 100 times per 30 seconds” on safari sometimes, when auto playing
-
 option to lock ratings for all players, including future players
 
 FBGM make ratings improvements less correlated
@@ -138,14 +154,6 @@ built-in UI to load custom user files
   - last_updated
   - version (increment every update, keep in URL)
 - CRUD UI for people to upload/edit/delete league files
-
-playoff upsets
-- upset odds currently? upset odds ideally?
-- different between real and random players?
-- try
-  - less fatigue
-  - 5% slower pace
-- could apply bigger home court advantage for good teams
 
 finances revamp
 - get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
@@ -354,6 +362,7 @@ FBGM
 - automatic 1st not given https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/
 - weird offensive holding application https://old.reddit.com/r/Football_GM/comments/i33wix/penalties_wonky/g1073zl/?context=3
 - DL in FBGM get way too many interceptions, CB should get more
+- in FBGM, during the FA period with 30 days: injured players on rosters will not recover a single week if you sim to 1 day left in FA; injured players in fa will recover a week in every day of FA (30 weeks total)
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -504,13 +513,6 @@ more animations
 - games log
 - schedule
 
-game highs
-- per season and career, like in basketball reference
-- link to box score
-- summary per team at bottom
-- somehow show in stats page
-- store in normal player stats object (like Lng in football)
-
 average roster age implemented as team advanced stat?
 
 page showing scores by day
@@ -564,9 +566,6 @@ more dynamic contracts, based on available cap space
   - sliders to control talent levels
   - @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
-less fatigue in playoffs
-- benchmark playoff performance (seed upsets)
-
 error if cid/did mismatch on imported team
 - tell nicidob when i do this
 - better - set cid on import, and log warning to console
@@ -602,6 +601,7 @@ probGoForIt should account for being down by a FG or less late in the game
 FBGM football sim bugs
 - pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
 - negative yard line https://i.imgur.com/fSHX6md.png
+  - https://i.redd.it/r06r5jxc6ei51.png
 - penalty on punt gives first down plus punt yardage https://cdn.discordapp.com/attachments/726675205669388293/733114315397136505/image0.jpg
   - https://media.discordapp.net/attachments/569726303926878219/738325008895705158/EvilQBFromChicagoZachTodd01.JPG?width=1141&height=581
 

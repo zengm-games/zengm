@@ -177,7 +177,9 @@ const Trade = (props: View<"trade">) => {
 		gameOver,
 		godMode,
 		lost,
+		multiTeamMode,
 		numDraftRounds,
+		spectator,
 		otherPicks,
 		otherRoster,
 		otherTid,
@@ -231,7 +233,9 @@ const Trade = (props: View<"trade">) => {
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT ||
-		gameOver;
+		gameOver ||
+		spectator ||
+		challengeNoTrades;
 
 	return (
 		<>
@@ -321,30 +325,38 @@ const Trade = (props: View<"trade">) => {
 								</div>
 							) : null}
 
-							{!noTradingAllowed && !challengeNoTrades ? (
-								<div className="text-center">
-									<Buttons
-										asking={state.asking}
-										enablePropose={summary.enablePropose}
-										forceTrade={state.forceTrade}
-										godMode={godMode}
-										handleClickAsk={handleClickAsk}
-										handleClickClear={handleClickClear}
-										handleClickForceTrade={handleClickForceTrade}
-										handleClickPropose={handleClickPropose}
-									/>
-								</div>
-							) : challengeNoTrades ? (
-								<div>
+							<div
+								className={classNames({
+									"trade-extra-margin-bottom": multiTeamMode,
+								})}
+							>
+								{!noTradingAllowed ? (
+									<div className="text-center">
+										<Buttons
+											asking={state.asking}
+											enablePropose={summary.enablePropose}
+											forceTrade={state.forceTrade}
+											godMode={godMode}
+											handleClickAsk={handleClickAsk}
+											handleClickClear={handleClickClear}
+											handleClickForceTrade={handleClickForceTrade}
+											handleClickPropose={handleClickPropose}
+										/>
+									</div>
+								) : challengeNoTrades ? (
 									<p className="alert alert-danger">
 										<b>Challenge Mode:</b> You're not allowed to make trades.
 									</p>
-								</div>
-							) : (
-								<p className="alert alert-danger">
-									You're not allowed to make trades now.
-								</p>
-							)}
+								) : spectator ? (
+									<p className="alert alert-danger">
+										You're not allowed to make trades in spectator mode.
+									</p>
+								) : (
+									<p className="alert alert-danger">
+										You're not allowed to make trades now.
+									</p>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>

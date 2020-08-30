@@ -5,6 +5,7 @@ const stats = ((process.env.SPORT === "football"
 	? statsFootball
 	: statsBasketball) as unknown) as {
 	derived: string[];
+	max: string[];
 	raw: string[];
 };
 export default stats;

@@ -67,7 +67,16 @@ export const genView = (type: "college" | "country") => {
 					helpers.roundStat(c.gp, "gp"),
 					helpers.roundStat(c.valueStat, valueStat),
 					{
-						value: <PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+						value: (
+							<PlayerNameLabels
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								watch={p.watch}
+								disableWatchToggle
+							>
+								{p.name}
+							</PlayerNameLabels>
+						),
 						classNames: {
 							"table-danger": p.hof,
 							"table-success": p.retiredYear === Infinity,

@@ -23,7 +23,12 @@ const Players = ({
 		return {
 			key: p.pid,
 			data: [
-				<PlayerNameLabels injury={p.injury} pid={p.pid} watch={p.watch}>
+				<PlayerNameLabels
+					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
+					pid={p.pid}
+					watch={p.watch}
+				>
 					{p.name}
 				</PlayerNameLabels>,
 				p.pos,

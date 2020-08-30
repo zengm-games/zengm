@@ -109,6 +109,7 @@ const RelativesForm = ({
 								title="Delete"
 								style={{ fontSize: 20 }}
 								disabled={!godMode}
+								type="button"
 							>
 								<span className="glyphicon glyphicon-remove" />
 							</button>

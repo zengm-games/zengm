@@ -7,7 +7,7 @@ import { g } from "../../util";
 import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 
 const testRunPicks = async (numNow: number, numTotal: number) => {
-	const pids = await draft.runPicks(false);
+	const pids = await draft.runPicks("untilYourNextPick");
 	assert.equal(pids.length, numNow);
 	const players = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [

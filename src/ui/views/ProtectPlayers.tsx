@@ -63,6 +63,7 @@ const PlayerList = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>
@@ -133,6 +134,7 @@ const ProtectPlayers = ({
 	expansionDraft,
 	expansionTeam,
 	nextPhase,
+	spectator,
 	players,
 	stats,
 	userTid,
@@ -156,7 +158,11 @@ const ProtectPlayers = ({
 
 		setSaving(true);
 
-		if (numRemaining > 0 && protectedPids.length < players.length) {
+		if (
+			numRemaining > 0 &&
+			protectedPids.length < players.length &&
+			!spectator
+		) {
 			const result = await confirm(
 				"Are you sure you want start the expansion draft without using all your protections?",
 				{
@@ -241,6 +247,8 @@ const ProtectPlayers = ({
 						<p>There are no protected players in this expansion draft.</p>
 						{upcomingFreeAgentsText}
 					</>
+				) : spectator ? (
+					<p>The AI will handle protecting players in spectator mode.</p>
 				) : (
 					<PlayerList
 						challengeNoRatings={challengeNoRatings}

@@ -3,9 +3,11 @@ import React, { useEffect, MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { realtimeUpdate, toWorker } from "../util";
 import type { Option } from "../../common/types";
+import classNames from "classnames";
 
 type Props = {
 	lid: number | undefined;
+	spectator: boolean;
 	options: Option[];
 };
 
@@ -16,7 +18,7 @@ const handleOptionClick = (option: Option, event: MouseEvent) => {
 	}
 };
 
-const PlayMenu = ({ lid, options }: Props) => {
+const PlayMenu = ({ lid, spectator, options }: Props) => {
 	useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
 			// alt + letter
@@ -53,7 +55,14 @@ const PlayMenu = ({ lid, options }: Props) => {
 
 	return (
 		<Dropdown className="play-button-wrapper" as={Nav.Item}>
-			<Dropdown.Toggle className="play-button" id="play-button" as={Nav.Link}>
+			<Dropdown.Toggle
+				className={classNames(
+					"play-button text-white",
+					spectator ? "bg-danger" : "bg-success",
+				)}
+				id="play-button"
+				as={Nav.Link}
+			>
 				Play
 			</Dropdown.Toggle>
 			<Dropdown.Menu>

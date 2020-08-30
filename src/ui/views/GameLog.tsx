@@ -226,6 +226,10 @@ const GameLog = ({
 					History
 				</a>{" "}
 				|{" "}
+				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
+					Schedule
+				</a>{" "}
+				|{" "}
 				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
 					News Feed
 				</a>

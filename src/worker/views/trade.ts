@@ -92,6 +92,7 @@ const updateTrade = async () => {
 		"injury",
 		"watch",
 		"untradable",
+		"jerseyNumber",
 	];
 	const ratings = ["ovr", "pot", "skills", "pos"];
 	const stats =
@@ -228,6 +229,8 @@ const updateTrade = async () => {
 		numDraftRounds: g.get("numDraftRounds"),
 		phase: g.get("phase"),
 		userTid: g.get("userTid"),
+		spectator: g.get("spectator"),
+		multiTeamMode: g.get("userTids").length > 1,
 	};
 };
 

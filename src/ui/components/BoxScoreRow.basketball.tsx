@@ -60,6 +60,7 @@ const BoxScoreRow = ({
 			<td>
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.skills}
 					watch={p.watch}

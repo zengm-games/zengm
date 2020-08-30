@@ -44,13 +44,13 @@ const setGameAttributes = async (
 	}
 
 	// Will contain the wrapped values too
-	const updated: any = {
+	const updatedGameAttributes: any = {
 		...gameAttributes,
 	};
 
 	for (const key of toUpdate) {
 		const value = wrap(g, key, gameAttributes[key]);
-		updated[key] = value;
+		updatedGameAttributes[key] = value;
 
 		if (key === "salaryCap") {
 			// Adjust budget items for inflation
@@ -82,8 +82,12 @@ const setGameAttributes = async (
 
 					let updated = false;
 
-					if (g.get("userTids").includes(t.tid)) {
-						if (t.adjustForInflation !== false || local.autoPlayUntil) {
+					if (
+						g.get("userTids").includes(t.tid) &&
+						!local.autoPlayUntil &&
+						!g.get("spectator")
+					) {
+						if (t.adjustForInflation !== false) {
 							for (const key of keys) {
 								const factor =
 									helpers.defaultBudgetAmount(t.budget[key].rank, value) /
@@ -146,7 +150,7 @@ const setGameAttributes = async (
 		}
 	}
 
-	await gameAttributesToUI(updated);
+	await gameAttributesToUI(updatedGameAttributes);
 
 	if (toUpdate.includes("userTid")) {
 		await initUILocalGames();

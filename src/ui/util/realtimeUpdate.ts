@@ -26,9 +26,11 @@ async function realtimeUpdate(
 		updateEvents,
 		...raw,
 	};
+
 	await router.navigate(url, {
 		state,
-		replace: refresh || replace,
+		refresh,
+		replace,
 	});
 }
 

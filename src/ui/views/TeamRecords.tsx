@@ -49,13 +49,19 @@ const categories =
 const isHistorical = (t: { root: boolean; disabled?: boolean }) =>
 	!t.root || t.disabled;
 
-const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
+const TeamRecords = ({
+	byType,
+	filter,
+	teams,
+	ties,
+	userTid,
+}: View<"teamRecords">) => {
 	const [showHistorical, setShowHistorical] = useState(true);
 
 	useTitleBar({
 		title: "Team Records",
 		dropdownView: "team_records",
-		dropdownFields: { teamRecordType: byType },
+		dropdownFields: { teamRecordType: byType, teamRecordsFilter: filter },
 	});
 
 	let displayName: string;

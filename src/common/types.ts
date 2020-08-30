@@ -315,6 +315,10 @@ export type GameAttributesLeague = {
 	divs: { cid: number; did: number; name: string }[];
 	draftType: DraftType;
 	easyDifficultyInPast: boolean;
+	elam: boolean;
+	elamASG: boolean;
+	elamMinutes: number;
+	elamPoints: number;
 	equalizeRegions: boolean;
 	foulsNeededToFoulOut: number;
 	foulRateFactor: number;
@@ -343,6 +347,7 @@ export type GameAttributesLeague = {
 	numPlayoffByes: number;
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;
+	spectator: boolean;
 	otherTeamsWantToHire: boolean;
 	phase: Phase;
 	playerBioInfo?: PlayerBioInfo;
@@ -513,6 +518,7 @@ export type LogEventType =
 	| "release"
 	| "retired"
 	| "retiredList"
+	| "retiredJersey"
 	| "screenshot"
 	| "success"
 	| "teamContraction"
@@ -581,7 +587,12 @@ export type MenuItemHeader = {
 	short: string;
 	league?: true;
 	nonLeague?: true;
-	children: MenuItemLink[];
+	children: (MenuItemLink | MenuItemText)[];
+};
+
+export type MenuItemText = {
+	type: "text";
+	text: string;
 };
 
 export type Negotiation = {
@@ -638,6 +649,7 @@ export type LocalStateUI = {
 	leagueName: string;
 	lid?: number;
 	liveGameInProgress: boolean;
+	spectator: boolean;
 	phase: number;
 	phaseText: string;
 	playMenuOptions: Option[];
@@ -733,6 +745,7 @@ type PlayerSalary = {
 };
 
 // jerseyNumber: string | undefined;
+// *Max: [number, number] | null | undefined; - null is for new value, not yet initialized. undefined is for upgraded rows from before this existed
 export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";
@@ -980,6 +993,7 @@ export type ContractInfo = {
 	skills: string[];
 	pos: string;
 	injury: PlayerInjury;
+	jerseyNumber: string | undefined;
 	amount: number;
 	exp: number;
 	released: boolean;

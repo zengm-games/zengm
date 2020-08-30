@@ -20,6 +20,7 @@ const NegotiationList = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
+	spectator,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -33,6 +34,10 @@ const NegotiationList = ({
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
 
 	useTitleBar({ title });
+
+	if (spectator) {
+		return <p>The AI will handle re-signing players in spectator mode.</p>;
+	}
 
 	const cols = getCols(
 		"Name",
@@ -55,6 +60,7 @@ const NegotiationList = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>
@@ -88,6 +94,7 @@ const NegotiationList = ({
 					capSpace={capSpace}
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					minContract={minContract}
+					spectator={spectator}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}

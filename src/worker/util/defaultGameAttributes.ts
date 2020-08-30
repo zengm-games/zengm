@@ -130,6 +130,11 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	repeatSeason: undefined,
 	equalizeRegions: false,
 	realPlayerDeterminism: 0,
+	spectator: false,
+	elam: false,
+	elamASG: true,
+	elamMinutes: 4,
+	elamPoints: 8,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

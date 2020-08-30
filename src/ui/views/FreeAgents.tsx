@@ -20,6 +20,7 @@ const FreeAgents = ({
 	maxContract,
 	minContract,
 	numRosterSpots,
+	spectator,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -98,6 +99,7 @@ const FreeAgents = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>
@@ -127,6 +129,7 @@ const FreeAgents = ({
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					disabled={gameSimInProgress}
 					minContract={minContract}
+					spectator={spectator}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
@@ -164,11 +167,15 @@ const FreeAgents = ({
 				</button>
 			</p>
 
-			{gameSimInProgress ? (
+			{gameSimInProgress && !spectator ? (
 				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 
-			{challengeNoFreeAgents ? (
+			{spectator ? (
+				<p className="alert alert-danger d-inline-block">
+					The AI will handle signing free agents in spectator mode.
+				</p>
+			) : challengeNoFreeAgents ? (
 				<p className="alert alert-danger d-inline-block">
 					<b>Challenge Mode:</b> You are not allowed to sign free agents, except
 					to minimum contracts.

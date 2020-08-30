@@ -267,6 +267,9 @@ const Player2 = ({
 		teamURL = helpers.leagueUrl(["draft_scouting"]);
 	}
 
+	const college =
+		player.college && player.college !== "" ? player.college : "None";
+
 	return (
 		<>
 			<div className="row mb-3">
@@ -288,14 +291,38 @@ const Player2 = ({
 							<strong>
 								{player.ratings[player.ratings.length - 1].pos},{" "}
 								{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
-								{player.jerseyNumber ? `, #${player.jerseyNumber}` : null}
+								{player.jerseyNumber ? (
+									<>
+										,{" "}
+										<a
+											href={helpers.leagueUrl([
+												"frivolities",
+												"most",
+												"jersey_number",
+												player.jerseyNumber,
+											])}
+										>
+											#{player.jerseyNumber}
+										</a>
+									</>
+								) : null}
 							</strong>
 							<br />
 							Height: {height}
 							<br />
 							Weight: {weight}
 							<br />
-							Born: {player.born.year} - {player.born.loc}
+							Born: {player.born.year} -{" "}
+							<a
+								href={helpers.leagueUrl([
+									"frivolities",
+									"most",
+									"country",
+									window.encodeURIComponent(helpers.getCountry(player)),
+								])}
+							>
+								{player.born.loc}
+							</a>
 							<br />
 							{typeof player.diedYear !== "number" ? (
 								<>
@@ -311,9 +338,16 @@ const Player2 = ({
 							<Relatives pid={player.pid} relatives={player.relatives} />
 							{draftInfo}
 							College:{" "}
-							{player.college && player.college !== ""
-								? player.college
-								: "None"}
+							<a
+								href={helpers.leagueUrl([
+									"frivolities",
+									"most",
+									"college",
+									window.encodeURIComponent(college),
+								])}
+							>
+								{college}
+							</a>
 							<br />
 							{contractInfo}
 							{statusInfo}

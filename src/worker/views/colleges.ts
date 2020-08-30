@@ -1,8 +1,6 @@
 import { idb, iterate } from "../db";
 import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
-import { isAmerican } from "../util/achievements.basketball";
-import { PHASE, PLAYER } from "../../common";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -19,21 +17,6 @@ type InfoTemp = {
 const valueStatNames =
 	process.env.SPORT === "basketball" ? ["ows", "dws"] : ["av"];
 
-export const getCountry = (p: Player) => {
-	let name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
-
-	if (isAmerican(name)) {
-		name = "USA";
-	} else {
-		const parts = name.split(", ");
-		if (parts.length > 1) {
-			name = parts[parts.length - 1];
-		}
-	}
-
-	return name;
-};
-
 const reducer = (
 	type: "college" | "country" | "jerseyNumbers",
 	infos: { [key: string]: InfoTemp | undefined },
@@ -48,7 +31,7 @@ const reducer = (
 			return;
 		}
 	} else {
-		name = getCountry(p);
+		name = helpers.getCountry(p);
 	}
 
 	if (!infos[name]) {

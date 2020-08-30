@@ -44,6 +44,7 @@ const PlayerBios = ({
 
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
+		const college = p.college && p.college !== "" ? p.college : "None";
 
 		return {
 			key: p.pid,
@@ -57,7 +58,16 @@ const PlayerBios = ({
 					{p.name}
 				</PlayerNameLabels>,
 				p.ratings.pos,
-				p.stats.jerseyNumber,
+				<a
+					href={helpers.leagueUrl([
+						"frivolities",
+						"most",
+						"jersey_number",
+						p.stats.jerseyNumber,
+					])}
+				>
+					{p.stats.jerseyNumber}
+				</a>,
 				<a
 					href={helpers.leagueUrl([
 						"roster",
@@ -86,8 +96,26 @@ const PlayerBios = ({
 				p.contract.amount > 0 && season === currentSeason
 					? p.contract.exp
 					: null,
-				p.born.loc,
-				p.college,
+				<a
+					href={helpers.leagueUrl([
+						"frivolities",
+						"most",
+						"country",
+						window.encodeURIComponent(helpers.getCountry(p)),
+					])}
+				>
+					{p.born.loc}
+				</a>,
+				<a
+					href={helpers.leagueUrl([
+						"frivolities",
+						"most",
+						"college",
+						window.encodeURIComponent(college),
+					])}
+				>
+					{college}
+				</a>,
 				p.draft.year,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : null,
 				showRatings ? p.ratings.ovr : null,

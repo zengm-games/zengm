@@ -14,7 +14,6 @@ import type {
 import groupBy from "lodash/groupBy";
 import { player } from "../core";
 import { PLAYER } from "../../common";
-import { getCountry } from "./colleges";
 
 type Most = {
 	value: number;
@@ -571,11 +570,11 @@ const updatePlayers = async (
 			}
 
 			title = `Best Players From ${arg}`;
-			description = `These are the best players from ${arg}. <a href="${helpers.leagueUrl(
+			description = `These are the best players from the country ${arg}. <a href="${helpers.leagueUrl(
 				["frivolities", "countries"],
 			)}">Other countries.</a>`;
 
-			filter = p => getCountry(p) === arg;
+			filter = p => helpers.getCountry(p) === arg;
 			getValue = playerValue;
 		} else if (type === "college") {
 			if (arg === undefined) {
@@ -583,7 +582,7 @@ const updatePlayers = async (
 			}
 
 			title = `Best Players From ${arg}`;
-			description = `These are the best players from ${arg}. <a href="${helpers.leagueUrl(
+			description = `These are the best players from the college ${arg}. <a href="${helpers.leagueUrl(
 				["frivolities", "colleges"],
 			)}">Other colleges.</a>`;
 

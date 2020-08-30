@@ -794,6 +794,136 @@ const validateRoundsByes = (
 	}
 };
 
+const states = [
+	"AL",
+	"AK",
+	"AZ",
+	"AR",
+	"CA",
+	"CO",
+	"CT",
+	"DC",
+	"DE",
+	"FL",
+	"GA",
+	"HI",
+	"ID",
+	"IL",
+	"IN",
+	"IA",
+	"KS",
+	"KY",
+	"LA",
+	"ME",
+	"MD",
+	"MA",
+	"MI",
+	"MN",
+	"MS",
+	"MO",
+	"MT",
+	"NE",
+	"NV",
+	"NH",
+	"NJ",
+	"NM",
+	"NY",
+	"NC",
+	"ND",
+	"OH",
+	"OK",
+	"OR",
+	"PA",
+	"RI",
+	"SC",
+	"SD",
+	"TN",
+	"TX",
+	"UT",
+	"VT",
+	"VA",
+	"WA",
+	"WV",
+	"WI",
+	"WY",
+	"Alabama",
+	"Alaska",
+	"Arizona",
+	"Arkansas",
+	"California",
+	"Colorado",
+	"Connecticut",
+	"Delaware",
+	"Florida",
+	"Georgia",
+	"Hawaii",
+	"Idaho",
+	"Illinois",
+	"Indiana",
+	"Iowa",
+	"Kansas",
+	"Kentucky",
+	"Louisiana",
+	"Maine",
+	"Maryland",
+	"Massachusetts",
+	"Michigan",
+	"Minnesota",
+	"Mississippi",
+	"Missouri",
+	"Montana",
+	"Nebraska",
+	"Nevada",
+	"New Hampshire",
+	"New Jersey",
+	"New Mexico",
+	"New York",
+	"North Carolina",
+	"North Dakota",
+	"Ohio",
+	"Oklahoma",
+	"Oregon",
+	"Pennsylvania",
+	"Rhode Island",
+	"South Carolina",
+	"South Dakota",
+	"Tennessee",
+	"Texas",
+	"Utah",
+	"Vermont",
+	"Virginia",
+	"Washington",
+	"West Virginia",
+	"Wisconsin",
+	"Wyoming",
+	"District of Columbia",
+];
+
+const isAmerican = (loc: string) => {
+	if (loc.endsWith("USA")) {
+		return true;
+	}
+
+	const parts = loc.split(", ");
+	const state = parts[parts.length - 1];
+	return states.includes(state);
+};
+
+const getCountry = (p: { born: { loc: string } }) => {
+	let name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
+
+	if (isAmerican(name)) {
+		name = "USA";
+	} else {
+		const parts = name.split(", ");
+		if (parts.length > 1) {
+			name = parts[parts.length - 1];
+		}
+	}
+
+	return name;
+};
+
 const getJerseyNumber = (
 	p: PlayerWithoutKey,
 	type: "mostCommon" | "current" = "current",
@@ -868,10 +998,12 @@ export default {
 	addPopRank,
 	getPopRanks,
 	gameScore,
+	getCountry,
 	getJerseyNumber,
 	getTeamsDefault,
 	deepCopy,
 	formatCurrency,
+	isAmerican,
 	bound,
 	leagueUrlFactory,
 	numberWithCommas,

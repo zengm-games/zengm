@@ -1,6 +1,7 @@
 import { idb } from "../db";
 import g from "./g";
 import type { Achievement } from "../../common/types";
+import helpers from "./helpers";
 
 const checkFoFoFo = async () => {
 	if (g.get("numGamesPlayoffSeries", "current").length < 3) {
@@ -77,121 +78,6 @@ const userWonTitle = async () => {
 		? t.seasonAttrs.playoffRoundsWon ===
 				g.get("numGamesPlayoffSeries", "current").length
 		: false;
-};
-
-const states = [
-	"AL",
-	"AK",
-	"AZ",
-	"AR",
-	"CA",
-	"CO",
-	"CT",
-	"DC",
-	"DE",
-	"FL",
-	"GA",
-	"HI",
-	"ID",
-	"IL",
-	"IN",
-	"IA",
-	"KS",
-	"KY",
-	"LA",
-	"ME",
-	"MD",
-	"MA",
-	"MI",
-	"MN",
-	"MS",
-	"MO",
-	"MT",
-	"NE",
-	"NV",
-	"NH",
-	"NJ",
-	"NM",
-	"NY",
-	"NC",
-	"ND",
-	"OH",
-	"OK",
-	"OR",
-	"PA",
-	"RI",
-	"SC",
-	"SD",
-	"TN",
-	"TX",
-	"UT",
-	"VT",
-	"VA",
-	"WA",
-	"WV",
-	"WI",
-	"WY",
-	"Alabama",
-	"Alaska",
-	"Arizona",
-	"Arkansas",
-	"California",
-	"Colorado",
-	"Connecticut",
-	"Delaware",
-	"Florida",
-	"Georgia",
-	"Hawaii",
-	"Idaho",
-	"Illinois",
-	"Indiana",
-	"Iowa",
-	"Kansas",
-	"Kentucky",
-	"Louisiana",
-	"Maine",
-	"Maryland",
-	"Massachusetts",
-	"Michigan",
-	"Minnesota",
-	"Mississippi",
-	"Missouri",
-	"Montana",
-	"Nebraska",
-	"Nevada",
-	"New Hampshire",
-	"New Jersey",
-	"New Mexico",
-	"New York",
-	"North Carolina",
-	"North Dakota",
-	"Ohio",
-	"Oklahoma",
-	"Oregon",
-	"Pennsylvania",
-	"Rhode Island",
-	"South Carolina",
-	"South Dakota",
-	"Tennessee",
-	"Texas",
-	"Utah",
-	"Vermont",
-	"Virginia",
-	"Washington",
-	"West Virginia",
-	"Wisconsin",
-	"Wyoming",
-	"District of Columbia",
-];
-
-export const isAmerican = (loc: string) => {
-	if (loc.endsWith("USA")) {
-		return true;
-	}
-
-	const parts = loc.split(", ");
-	const state = parts[parts.length - 1];
-	return states.includes(state);
 };
 
 const checkSevenGameFinals = async () => {
@@ -456,7 +342,8 @@ const achievements: Achievement[] = [
 			}
 
 			const playersAll = await idb.cache.players.getAll();
-			const countUSA = playersAll.filter(p => isAmerican(p.born.loc)).length;
+			const countUSA = playersAll.filter(p => helpers.isAmerican(p.born.loc))
+				.length;
 
 			if (countUSA < playersAll.length / 2) {
 				// Handle custom rosters where nobody is from the USA by enforcing that the league must be at least half USA for this achievement to apply
@@ -469,7 +356,7 @@ const achievements: Achievement[] = [
 			);
 
 			for (const p of players) {
-				if (isAmerican(p.born.loc)) {
+				if (helpers.isAmerican(p.born.loc)) {
 					return false;
 				}
 			}

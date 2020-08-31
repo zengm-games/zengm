@@ -757,7 +757,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
-			stats.push(...table.stats);
+			stats.push(...table.stats.filter(stat => !stat.endsWith("Max")));
 		}
 	}
 

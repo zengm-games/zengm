@@ -2,7 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-30: Frivolity to show which jersey numbers had the most/best players, and the top players who wore each jersey number. Also added similar lists of top players from each country and college, which you can access from those frivolities. They are all also linked from player profiles and the Player Bios table.
+* 2020-08-31: Added BPM, DBPM, OBPM, and VORP to the advanced stats in BBGM. Thanks @nicidob! [[1]](https://old.reddit.com/r/BasketballGM/comments/ijszx5/added_bpm_dbpm_obpm_and_vorp_to_the_advanced/)
+
+* 2020-08-30: Frivolity to show which jersey numbers had the most/best players, and the top players who wore each jersey number. Also added similar lists of top players from each country and college, which you can access from those frivolities. They are all also linked from player profiles and the Player Bios table. [[1]](https://old.reddit.com/r/BasketballGM/comments/ij7fq5/frivolity_to_show_which_jersey_numbers_had_the/)
 
 * **2020-08-29: Single game highs for players are now tracked for all stats in BBGM - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". [[1]](https://basketball-gm.com/blog/2020/08/game-highs/) [[2]](https://old.reddit.com/r/BasketballGM/comments/iiluf2/single_game_highs_for_players_are_now_tracked_for/)**
 

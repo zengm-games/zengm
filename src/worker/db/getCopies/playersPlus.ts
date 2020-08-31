@@ -443,6 +443,9 @@ const weightByMinutes =
 				"usgp",
 				"drtg",
 				"ortg",
+				"obpm",
+				"dbpm",
+				"bpm",
 		  ]
 		: [];
 
@@ -455,6 +458,10 @@ const reduceCareerStats = (
 		.filter(cs => cs.playoffs === playoffs)
 		.reduce(
 			(memo, cs) => {
+				if (cs[attr] === undefined) {
+					return memo;
+				}
+
 				const num = weightByMinutes.includes(attr)
 					? cs[attr] * cs.min
 					: cs[attr];

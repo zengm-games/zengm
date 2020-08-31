@@ -443,6 +443,9 @@ const weightByMinutes =
 				"usgp",
 				"drtg",
 				"ortg",
+				"obpm",
+				"dbpm",
+				"bpm",
 		  ]
 		: [];
 

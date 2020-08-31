@@ -461,7 +461,14 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 		BPM[i] += teamAdjBPM[players[i].tid];
 		OBPM[i] += teamAdjOBPM[players[i].tid];
 		DBPM[i] = BPM[i] - OBPM[i];
-		VORP[i] = playerMin[i] * BPM[i];
+
+		const t = teams.find(t => t.tid === players[i].tid);
+		if (!t) {
+			console.log(players[i].tid);
+			throw new Error("No team found");
+		}
+
+		VORP[i] = ((BPM[i] + 2) * playerMin[i] * t.stats.gp) / g.get("numGames");
 	}
 
 	return {

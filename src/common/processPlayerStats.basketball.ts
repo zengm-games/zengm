@@ -5,7 +5,6 @@ const straightThrough = [
 	"gs",
 	"per",
 	"ewa",
-	"vorp",
 	"bpm",
 	"obpm",
 	"dbpm",

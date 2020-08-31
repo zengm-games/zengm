@@ -307,6 +307,26 @@ const sportSpecificCols: {
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 				},
+				"stat:obpm": {
+					desc: "Offensive Box Plus-Minus",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:dbpm": {
+					desc: "Defensive Box Plus-Minus",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:bpm": {
+					desc: "Box Plus-Minus",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:vorp": {
+					desc: "Value Over Replacement Player",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
 				"stat:fgAtRim": {
 					desc: "At Rim Made",
 					sortSequence: ["desc", "asc"],
@@ -1746,6 +1766,10 @@ const sportSpecificTitleOverrides =
 				"stat:usgp": "USG%",
 				"stat:ws": "WS",
 				"stat:ws48": "WS/48",
+				"stat:obpm": "OBPM",
+				"stat:dbpm": "DBPM",
+				"stat:bpm": "BPM",
+				"stat:vorp": "VORP",
 				"stat:fgAtRim": "M",
 				"stat:fgaAtRim": "A",
 				"stat:fgpAtRim": "%",

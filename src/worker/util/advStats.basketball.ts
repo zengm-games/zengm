@@ -3,8 +3,6 @@ import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
 import advStatsSave from "./advStatsSave";
-import { player } from "../core";
-import pos from "../core/player/pos.basketball";
 import defaultGameAttributes from "./defaultGameAttributes";
 
 type Team = TeamFiltered<
@@ -187,13 +185,13 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	const tmRate: number[] = [];
 	const ofRate: number[] = [];
 	const ptsTSA: number[] = [];
-	let teamThresh: number[] = [];
-	let trim1t: number[] = [];
-	let trim1c: number[] = [];
-	let trim2t: number[] = [];
-	let trim2c: number[] = [];
-	let teamBPM: number[] = [];
-	let teamOBPM: number[] = [];
+	const teamThresh: number[] = [];
+	const trim1t: number[] = [];
+	const trim1c: number[] = [];
+	const trim2t: number[] = [];
+	const trim2c: number[] = [];
+	const teamBPM: number[] = [];
+	const teamOBPM: number[] = [];
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
 		const off_rate = t.stats.ortg - league.ortg / teams.length;
@@ -224,8 +222,8 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	const playerPoss: number[] = [];
 	const playerMin: number[] = [];
 
-	let playerPos: number[] = [];
-	let playerRole: number[] = [];
+	const playerPos: number[] = [];
+	const playerRole: number[] = [];
 
 	const adjPts: number[] = [];
 	const threshPts: number[] = [];
@@ -368,8 +366,8 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 		-0.439,
 	];
 
-	let BPM: number[] = [];
-	let OBPM: number[] = [];
+	const BPM: number[] = [];
+	const OBPM: number[] = [];
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i].stats;
@@ -743,7 +741,6 @@ const advStats = async () => {
 			"tov",
 			"fga",
 			"fta",
-			"tp",
 			"trb",
 			"orb",
 			"stl",

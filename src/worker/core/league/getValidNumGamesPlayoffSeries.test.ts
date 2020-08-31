@@ -8,17 +8,17 @@ describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
 			undefined,
 			30,
 		);
-		assert.deepEqual(numGamesPlayoffSeries, [5, 7, 7, 7]);
+		assert.deepStrictEqual(numGamesPlayoffSeries, [5, 7, 7, 7]);
 	});
 
 	test("handles lengthening playoffs when numPlayoffRounds is set", async () => {
 		const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries([3, 5], 3, 30);
-		assert.deepEqual(numGamesPlayoffSeries, [3, 5, 5]);
+		assert.deepStrictEqual(numGamesPlayoffSeries, [3, 5, 5]);
 	});
 
 	test("handles truncating playoffs when numPlayoffRounds is set", async () => {
 		const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries([5, 7], 1, 30);
-		assert.deepEqual(numGamesPlayoffSeries, [5]);
+		assert.deepStrictEqual(numGamesPlayoffSeries, [5]);
 	});
 
 	test("handles truncating playoffs if not enough teams", async () => {
@@ -27,6 +27,6 @@ describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
 			undefined,
 			7,
 		);
-		assert.deepEqual(numGamesPlayoffSeries, [5, 7]);
+		assert.deepStrictEqual(numGamesPlayoffSeries, [5, 7]);
 	});
 });

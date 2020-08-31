@@ -234,8 +234,6 @@ from survey
 - player mood revamp (bigger contract, ring-chasing, etc)
 - add option to edit # draft rounds
 
-some way to add a text "note" to a player on their profile page, maybe watch list too
-
 @Sniksir#7396 A button to completely clear either side of the trade window would save a ton of time.
 
 legendary seasons
@@ -411,9 +409,6 @@ player stats popover
   - put this on player page too
   - https://old.reddit.com/r/BasketballGM/comments/g4m90u/suggestion_player_progression_graphs/
 
-challenge modes
-- lose your best player every year
-
 fuzz doesn't really make sense
 - have it decrease as a player plays. so high only for draft prospects or unknowns
 
@@ -475,9 +470,6 @@ support changing team logos at any season, from predefined real team logos
     - neiether of those is perfect
   - make player photo overrides dynamic too?
 
-home court advantage bonus gives "bonus" to negative things like fouling and turnovers?
-- football too?
-
 game sim improvements
 - big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/
   - https://discordapp.com/channels/@me/604773209837010944/700376777473654784
@@ -507,8 +499,6 @@ page showing scores by day
 
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
-OL weight
-
 login issues
 - DefinitelyNotDonaldTrump on discord can help debug
   - from his debugging so far, the response from login.php is correct and the redirect to the account page happens, but local.username is still ""
@@ -517,8 +507,6 @@ login issues
   - also says it happens on both BBGM and FBGM, and that it happens regardless of how many windows are open
   - console.log(document.cookie) - he says this returns an empty string, so i guess the cookie isn't being set somehow
     - would explain things, if cookie was not being set somehow. but should also be checked on account.basketball-gm.com directly
-
-show winning percentage next to record in team history page
 
 add toggle to table, to turn it into a heatmap showing which values are high or low. like think on a player stats table
 
@@ -692,8 +680,6 @@ more customize player options
 - fixed position
 - hof
 - awards
-
-some indication of if a clutch play occurred in the playoffs or finals. Could add in writeGameStats
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
 

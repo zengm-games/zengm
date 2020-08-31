@@ -6,7 +6,7 @@ describe("worker/core/draft/genOrder", () => {
 
 	test("schedule 60 draft picks", async () => {
 		const draftTids = await getDraftTids();
-		assert.equal(draftTids.length, 60);
+		assert.strictEqual(draftTids.length, 60);
 	});
 
 	test("give the 3 teams with the lowest win percentage picks not lower than 6", async () => {
@@ -16,7 +16,7 @@ describe("worker/core/draft/genOrder", () => {
 		for (let i = 0; i < tids.length; i++) {
 			assert(draftTids.indexOf(tids[i]) >= 0);
 			assert(draftTids.indexOf(tids[i]) <= i + 3);
-			assert.equal(draftTids.lastIndexOf(tids[i]), 30 + i);
+			assert.strictEqual(draftTids.lastIndexOf(tids[i]), 30 + i);
 		}
 	});
 
@@ -26,7 +26,7 @@ describe("worker/core/draft/genOrder", () => {
 
 		assert(draftTids.indexOf(17) >= 0);
 		assert(draftTids.indexOf(17) <= 13);
-		assert.equal(draftTids.lastIndexOf(17), 48); // bad record playoff team
+		assert.strictEqual(draftTids.lastIndexOf(17), 48); // bad record playoff team
 
 		for (let i = 0; i < pofteams.length; i++) {
 			assert(draftTids.indexOf(pofteams[i]) > draftTids.indexOf(17));
@@ -59,7 +59,7 @@ describe("worker/core/draft/genOrder", () => {
 			const r2picks = draftTids.filter(
 				(tid, i) => tids.includes(tid) && i >= 30,
 			);
-			assert.deepEqual(r1picks, r2picks.reverse());
+			assert.deepStrictEqual(r1picks, r2picks.reverse());
 		}
 	});
 });

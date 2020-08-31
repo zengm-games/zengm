@@ -40,10 +40,13 @@ describe("worker/core/player/getDepthPlayers.football", () => {
 			KR: [1, 2, 3],
 			PR: [3, 2, 1],
 		};
-		assert.deepEqual(Object.keys(output).sort(), Object.keys(target).sort());
+		assert.deepStrictEqual(
+			Object.keys(output).sort(),
+			Object.keys(target).sort(),
+		);
 
 		for (const pos of helpers.keys(output)) {
-			assert.deepEqual(
+			assert.deepStrictEqual(
 				output[pos].map(p => p.pid),
 				target[pos],
 			);

@@ -22,27 +22,36 @@ describe("worker/util/helpers", () => {
 	// Relies on g.*Cache being populated
 	describe("getAbbrev", () => {
 		test("return abbrev when given valid team ID", () => {
-			assert.equal(helpers.getAbbrev(6), "DAL");
-			assert.equal(helpers.getAbbrev("6"), "DAL");
+			assert.strictEqual(helpers.getAbbrev(6), "DAL");
+			assert.strictEqual(helpers.getAbbrev("6"), "DAL");
 		});
 		test('return "FA" for free agents', () => {
-			assert.equal(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
+			assert.strictEqual(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
 		});
 	});
 	describe("zeroPad", () => {
 		const array = [1, 2, 3, 4, 5];
 
 		test("do nothing if already long enough", () => {
-			assert.deepEqual(helpers.zeroPad(array, 5), array);
+			assert.deepStrictEqual(helpers.zeroPad(array, 5), array);
 		});
 
 		test("slice if too long", () => {
-			assert.deepEqual(helpers.zeroPad(array, 3), [1, 2, 3]);
+			assert.deepStrictEqual(helpers.zeroPad(array, 3), [1, 2, 3]);
 		});
 
 		test("pad with nulls up to requested length if too short", () => {
-			assert.deepEqual(helpers.zeroPad(array, 6), [1, 2, 3, 4, 5, 0]);
-			assert.deepEqual(helpers.zeroPad(array, 8), [1, 2, 3, 4, 5, 0, 0, 0]);
+			assert.deepStrictEqual(helpers.zeroPad(array, 6), [1, 2, 3, 4, 5, 0]);
+			assert.deepStrictEqual(helpers.zeroPad(array, 8), [
+				1,
+				2,
+				3,
+				4,
+				5,
+				0,
+				0,
+				0,
+			]);
 		});
 	});
 });

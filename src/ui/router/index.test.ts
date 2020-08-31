@@ -23,7 +23,7 @@ const routes = {
 	},
 	"/state": async (context: Context) => {
 		countCallback(context);
-		assert.equal(context.state, 123);
+		assert.strictEqual(context.state, 123);
 	},
 };
 for (const key of Object.keys(routes)) {
@@ -37,38 +37,38 @@ it("sets routes", () => {
 		routes,
 	});
 
-	assert.equal((router as any).routes.length, 7);
-	assert.equal(counts["/"], countBefore + 1);
+	assert.strictEqual((router as any).routes.length, 7);
+	assert.strictEqual(counts["/"], countBefore + 1);
 });
 
 it("navigates", async () => {
 	const countBefore = counts["/0"];
-	assert.equal(window.location.pathname, "/");
+	assert.strictEqual(window.location.pathname, "/");
 
 	await router.navigate("/0");
 
-	assert.equal(window.location.pathname, "/0");
-	assert.equal(counts["/0"], countBefore + 1);
+	assert.strictEqual(window.location.pathname, "/0");
+	assert.strictEqual(counts["/0"], countBefore + 1);
 });
 
 // https://github.com/jsdom/jsdom/issues/1565
 it.skip("handles back/forward navigation", () => {
-	assert.equal(window.location.pathname, "/0");
+	assert.strictEqual(window.location.pathname, "/0");
 	window.history.back();
-	assert.equal(window.location.pathname, "/");
+	assert.strictEqual(window.location.pathname, "/");
 	window.history.forward();
-	assert.equal(window.location.pathname, "/0");
+	assert.strictEqual(window.location.pathname, "/0");
 });
 
 // Same issue as previous test prevents this test from being good
 it("navigates without creating a history entry", async () => {
 	const countBefore = counts["/1"];
-	assert.equal(window.location.pathname, "/0");
+	assert.strictEqual(window.location.pathname, "/0");
 
 	await router.navigate("/1", { replace: true });
 
-	assert.equal(window.location.pathname, "/1");
-	assert.equal(counts["/1"], countBefore + 1);
+	assert.strictEqual(window.location.pathname, "/1");
+	assert.strictEqual(counts["/1"], countBefore + 1);
 });
 
 it("fires routematched event", () => {
@@ -76,8 +76,8 @@ it("fires routematched event", () => {
 		const countBefore = counts["/2"];
 		const callback = (arg: any) => {
 			try {
-				assert.equal(counts["/2"], countBefore); // Hasn't navigated yet
-				assert.deepEqual(arg, {
+				assert.strictEqual(counts["/2"], countBefore); // Hasn't navigated yet
+				assert.deepStrictEqual(arg, {
 					context: {
 						params: {},
 						path: "/2",
@@ -102,8 +102,8 @@ it("fires navigationend event", () => {
 		const countBefore = counts["/3/:foo"];
 		const callback = (arg: any) => {
 			try {
-				assert.equal(counts["/3/:foo"], countBefore + 1);
-				assert.deepEqual(arg, {
+				assert.strictEqual(counts["/3/:foo"], countBefore + 1);
+				assert.deepStrictEqual(arg, {
 					context: {
 						params: {
 							foo: "bar",
@@ -129,7 +129,7 @@ it("fires navigationend event with 404 error", () => {
 	return new Promise(async (resolve, reject) => {
 		const callback = (arg: any) => {
 			try {
-				assert.equal(arg.error.message, "Matching route not found");
+				assert.strictEqual(arg.error.message, "Matching route not found");
 				resolve();
 			} catch (error) {
 				reject(error);
@@ -147,8 +147,8 @@ it("fires navigationend event with runtime error", () => {
 		const countBefore = counts["/error"];
 		const callback = (arg: any) => {
 			try {
-				assert.equal(arg.error.message, "runtime error");
-				assert.equal(counts["/error"], countBefore + 1);
+				assert.strictEqual(arg.error.message, "runtime error");
+				assert.strictEqual(counts["/error"], countBefore + 1);
 				resolve();
 			} catch (error) {
 				reject(error);
@@ -167,6 +167,6 @@ it("passes state to callback", async () => {
 	const arg: any = { state: 123 };
 	await router.navigate("/state", arg);
 
-	assert.equal(window.location.pathname, "/state");
-	assert.equal(counts["/state"], countBefore + 1);
+	assert.strictEqual(window.location.pathname, "/state");
+	assert.strictEqual(counts["/state"], countBefore + 1);
 });

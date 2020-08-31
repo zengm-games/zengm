@@ -4,7 +4,7 @@ import { helpers } from ".";
 describe("common/helpers", () => {
 	describe("getTeamsDefault", () => {
 		test("return correct length array", () => {
-			assert.equal(helpers.getTeamsDefault().length, 30);
+			assert.strictEqual(helpers.getTeamsDefault().length, 30);
 		});
 	});
 
@@ -16,7 +16,7 @@ describe("common/helpers", () => {
 		};
 
 		test("return same object as input", () => {
-			assert.deepEqual(helpers.deepCopy(obj), obj);
+			assert.deepStrictEqual(helpers.deepCopy(obj), obj);
 		});
 
 		test("don't let changes in output propagate to input", () => {
@@ -34,28 +34,37 @@ describe("common/helpers", () => {
 
 	describe("formatCurrency", () => {
 		test("work with no extra options", () => {
-			assert.equal(helpers.formatCurrency(52.766), "$52.77");
+			assert.strictEqual(helpers.formatCurrency(52.766), "$52.77");
 		});
 
 		test("append a string, if supplied", () => {
-			assert.equal(helpers.formatCurrency(64363.764376, "Q"), "$64363.76Q");
-			assert.equal(helpers.formatCurrency(0.794, "whatever"), "$0.79whatever");
+			assert.strictEqual(
+				helpers.formatCurrency(64363.764376, "Q"),
+				"$64363.76Q",
+			);
+			assert.strictEqual(
+				helpers.formatCurrency(0.794, "whatever"),
+				"$0.79whatever",
+			);
 		});
 
 		test("round to any precision", () => {
-			assert.equal(
+			assert.strictEqual(
 				helpers.formatCurrency(64363.764376, "Q", 5),
 				"$64363.76438Q",
 			);
-			assert.equal(helpers.formatCurrency(0.794, "whatever", 0), "$1whatever");
+			assert.strictEqual(
+				helpers.formatCurrency(0.794, "whatever", 0),
+				"$1whatever",
+			);
 		});
 
 		test("truncate trailing 0s", () => {
-			assert.equal(helpers.formatCurrency(64363.99, "Q", 2), "$64363.99");
-			assert.equal(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9");
-			assert.equal(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9");
-			assert.equal(helpers.formatCurrency(64363.0, "Q", 2), "$64363");
-			assert.equal(helpers.formatCurrency(64363, "Q", 2), "$64363");
+			assert.strictEqual(helpers.formatCurrency(64363.99, "Q", 2), "$64363.99");
+			assert.strictEqual(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9");
+			assert.strictEqual(helpers.formatCurrency(64363.9, "Q", 2), "$64363.9");
+			assert.strictEqual(helpers.formatCurrency(64363.0, "Q", 2), "$64363");
+			assert.strictEqual(helpers.formatCurrency(64363, "Q", 2), "$64363");
 		});
 	});
 
@@ -67,25 +76,17 @@ describe("common/helpers", () => {
 			}));
 
 		test("works when there are no ties", () => {
-			assert.deepEqual(helpers.getPopRanks(makeObj([1.5, 10, 0.2, 15, -2])), [
-				3,
-				2,
-				4,
-				1,
-				5,
-			]);
+			assert.deepStrictEqual(
+				helpers.getPopRanks(makeObj([1.5, 10, 0.2, 15, -2])),
+				[3, 2, 4, 1, 5],
+			);
 		});
 
 		test("averages together tied populations", () => {
-			assert.deepEqual(helpers.getPopRanks(makeObj([5, 5, 10, 10, 10, 1, 7])), [
-				5.5,
-				5.5,
-				2,
-				2,
-				2,
-				7,
-				4,
-			]);
+			assert.deepStrictEqual(
+				helpers.getPopRanks(makeObj([5, 5, 10, 10, 10, 1, 7])),
+				[5.5, 5.5, 2, 2, 2, 7, 4],
+			);
 		});
 	});
 });

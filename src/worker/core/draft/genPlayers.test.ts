@@ -15,10 +15,10 @@ describe("worker/core/draft/genPlayers", () => {
 			"playersByDraftYearRetiredYear",
 			[[g.get("season")], [g.get("season"), Infinity]],
 		);
-		assert.equal(players.length, 70); // 70 players in a draft class
+		assert.strictEqual(players.length, 70); // 70 players in a draft class
 
 		for (const p of players) {
-			assert.equal(p.tid, PLAYER.UNDRAFTED);
+			assert.strictEqual(p.tid, PLAYER.UNDRAFTED);
 		}
 
 		// @ts-ignore

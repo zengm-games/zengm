@@ -3,7 +3,7 @@ import getLeagueInfo from "./getLeagueInfo";
 
 describe("worker/core/realRosters/getLeagueInfo", () => {
 	test.skip("returns correct number of teams", async () => {
-		assert.equal(
+		assert.strictEqual(
 			(
 				await getLeagueInfo({
 					type: "real",
@@ -13,7 +13,7 @@ describe("worker/core/realRosters/getLeagueInfo", () => {
 			8,
 		);
 
-		assert.equal(
+		assert.strictEqual(
 			(
 				await getLeagueInfo({
 					type: "real",

@@ -335,6 +335,11 @@ const changes = [
 		msg:
 			'Single game highs for players are now tracked for all stats - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". <a href="https://basketball-gm.com/blog/2020/08/game-highs/">More details</a>',
 	},
+	{
+		date: "2020-08-31",
+		msg:
+			"BPM, DBPM, OBPM, and VORP are now viewable in the Advanced Stats table.",
+	},
 ];
 
 export default changes;

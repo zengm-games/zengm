@@ -156,6 +156,19 @@ const calculatePER = (players: any[], teamsInput: Team[], league: any) => {
 };
 
 // https://www.basketball-reference.com/about/bpm2.html
+/**
+ * Comments from nicidob:
+ *
+ * i left out 2 things: I'm not using the strength-of-schedule adjusted ORtg/DRtg
+ * but honestly it was often less than 0.5 pts.
+ * https://www.basketball-reference.com/leagues/NBA_2017_ratings.html
+ * and I'm only doing 1 "estimate, average, subtract correction" step for the Position/Role estimates (Spreadsheet does 2...  * but like... in his example it went 3.14 -> 3.01 -> 3.00 for the 3 steps so I figured it was fine with just the 3.01... [1=PG, 5=C])
+ * and yeah it definitely needs a code review
+ * I don't really understand some of the logic in the algorithm, but I think I did it okay.
+ * 1) What the hell is this threshold points? And why is it using adjusted points instead of real points? Shooting luck?! It  * seems to ALWAYS adjust down
+ * 2) The position constants. I don't get why it uses this weird slope thing but whatever.
+ * 3) It does (NetRating/100 - TOTAL BPM)/5 for the team adjustment. This is just really weird to me. Order of magnitudes seems off. It's like ~5, ~35 for the 2 terms, so it feels like only the latter should be /5? But I just copied the spreadsheet math
+ */
 const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map(t => {
 		const paceAdj = t.stats.pace === 0 ? 1 : league.pace / t.stats.pace;

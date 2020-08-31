@@ -1,12 +1,7 @@
-game highs
-- +/- formatting in table
-- blog
-  - player profile
-  - player stats
-  - links to box scores
-  - only going forward
-  - bbgm only for now (fbgm has other mechanism Lng)
-- changes
+add playoff series w/l to box score
+
+When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
+- need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
 
 add text to statistical feats in player profiles about playoffs
 

@@ -197,7 +197,7 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 	for (let i = 0; i < teams.length; i++) {
 		const t = teams[i];
 		const off_rate = t.stats.ortg - league.ortg / teams.length;
-		const def_rate = t.stats.drtg - league.drtg / teams.length;
+		const def_rate = league.drtg / teams.length - t.stats.drtg;
 		const team_rate = off_rate + def_rate;
 		const pace = t.stats.pace;
 		const avg_lead = (team_rate * pace) / 200;
@@ -405,10 +405,12 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 				: ((pos - 3) / 2) * 0 + ((5 - pos) / 2) * 0 + 0.43 * (role - 3);
 
 		for (let j = 0; j < coeffsBPM1.length; j++) {
+			const posB = j === 1 || j === 2 ? role : pos;
+
 			coeffsBPM[j] =
-				((5 - pos) / 4) * coeffsBPM1[j] + ((pos - 1) / 4) * coeffsBPM5[j];
+				((5 - posB) / 4) * coeffsBPM1[j] + ((posB - 1) / 4) * coeffsBPM5[j];
 			coeffsORBPM[j] =
-				((5 - role) / 4) * coeffsORBPM1[j] + ((role - 1) / 4) * coeffsORBPM5[j];
+				((5 - posB) / 4) * coeffsORBPM1[j] + ((posB - 1) / 4) * coeffsORBPM5[j];
 		}
 
 		const scoring =

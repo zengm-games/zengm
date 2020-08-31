@@ -93,11 +93,11 @@ IF THE DISCLAIMER AND DAMAGE WAIVER MENTIONED IN SECTION 5 AND SECTION 6 CANNOT 
 
 ## You
 
-Date: **DateHere**  
-Name: **YourNameHere**  
-GitHub Username: **GitHubUsernameHere**  
-Email: **YourEmailAddressHere**  
-Address: **YourAddressHere**
+Date: **8/30/20**  
+Name: **Kevin Bauer**  
+GitHub Username: **kevbauer**  
+Email: **kbauer1@uci.edu**  
+Address: **1003 Rogers Street, West Sacramento, CA, 95605**
 
 ## Us 
 

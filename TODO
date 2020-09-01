@@ -4,6 +4,8 @@ individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0
 
 add playoff series w/l to box score
 
+salaries wrong after expansion draft? https://cdn.discordapp.com/attachments/290015591216054273/750472674953920572/unknown.png
+
 When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
 - need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
 

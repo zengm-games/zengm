@@ -172,43 +172,28 @@ const StatsSummary = ({
 	p,
 	retired,
 	position,
-	playoffs = false,
 	stats,
-	superCols,
 }: {
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
 	retired: boolean;
 	position: string;
-	playoffs?: boolean;
 	stats: string[];
-	superCols?: any[];
 }) => {
-	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
-	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
 	if (onlyShowIf !== undefined) {
-		let display = false;
-		if (onlyShowIf.includes(position)) {
-			display = true;
-		}
-		if (!display) {
+		if (!onlyShowIf.includes(position)) {
 			return null;
 		}
 	}
-	var pStats: any;
-	if (retired == false) {
-		pStats = playerStats.pop();
+
+	let ps: typeof p.stats[number] | undefined;
+	if (!retired) {
+		const playerStats = p.stats.filter(ps => !ps.playoffs);
+		ps = playerStats[playerStats.length - 1];
 	}
 
 	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
-
-	if (superCols) {
-		superCols = helpers.deepCopy(superCols);
-
-		// No name
-		superCols[0].colspan -= 1;
-	}
 
 	if (name === "Shot Locations") {
 		cols[cols.length - 3].title = "M";
@@ -231,27 +216,29 @@ const StatsSummary = ({
 							})}
 						</tr>
 					</thead>
-					{retired ? (
-						""
-					) : (
+					{ps ? (
 						<tbody>
 							<tr>
 								<th>Current</th>
-								{stats.map((stat: any, i: number) => {
+								{stats.map(stat => {
 									return (
-										<td key={i}>{helpers.roundStat(pStats[stat], stat)}</td>
+										<td key={stat}>
+											{helpers.roundStat((ps as any)[stat], stat)}
+										</td>
 									);
 								})}
 							</tr>
 						</tbody>
-					)}
+					) : null}
 
 					<tfoot>
-						<tr className="table-secondary">
-							<th className="firstElement">Career</th>
-							{stats.map((stat: any, i: number) => {
+						<tr>
+							<th className="border-top-0">Career</th>
+							{stats.map(stat => {
 								return (
-									<td key={i}>{helpers.roundStat(careerStats[stat], stat)}</td>
+									<td key={stat}>
+										{helpers.roundStat(p.careerStats[stat], stat)}
+									</td>
 								);
 							})}
 						</tr>
@@ -269,7 +256,6 @@ StatsSummary.propTypes = {
 	p: PropTypes.object.isRequired,
 	playoffs: PropTypes.bool,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	superCols: PropTypes.array,
 };
 
 const Player2 = ({
@@ -562,7 +548,6 @@ const Player2 = ({
 							retired={retired}
 							position={player.ratings[player.ratings.length - 1].pos}
 							stats={stats}
-							superCols={superCols}
 							p={player}
 						/>
 					))}

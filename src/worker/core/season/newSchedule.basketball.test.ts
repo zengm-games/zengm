@@ -30,7 +30,7 @@ describe("worker/core/season/newSchedule.basketball", () => {
 		});
 
 		test("schedule 1230 games (82 each for 30 teams)", () => {
-			assert.equal(newSchedule(defaultTeams).length, 1230);
+			assert.strictEqual(newSchedule(defaultTeams).length, 1230);
 		});
 
 		test("schedule 41 home games and 41 away games for each team", () => {
@@ -49,10 +49,10 @@ describe("worker/core/season/newSchedule.basketball", () => {
 				away[tids[i][1]] += 1;
 			}
 
-			assert.equal(Object.keys(home).length, defaultTeams.length);
+			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const numGames of [...Object.values(home), ...Object.values(away)]) {
-				assert.equal(numGames, 41);
+				assert.strictEqual(numGames, 41);
 			}
 		});
 
@@ -80,11 +80,11 @@ describe("worker/core/season/newSchedule.basketball", () => {
 				}
 			}
 
-			assert.equal(Object.keys(home).length, defaultTeams.length);
+			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const { tid } of defaultTeams) {
-				assert.equal(Object.values(home[tid]).length, 15);
-				assert.equal(
+				assert.strictEqual(Object.values(home[tid]).length, 15);
+				assert.strictEqual(
 					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
 					15,
 				);
@@ -115,11 +115,11 @@ describe("worker/core/season/newSchedule.basketball", () => {
 				}
 			}
 
-			assert.equal(Object.keys(home).length, defaultTeams.length);
+			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const { tid } of defaultTeams) {
-				assert.equal(Object.values(home[tid]).length, 4);
-				assert.equal(
+				assert.strictEqual(Object.values(home[tid]).length, 4);
+				assert.strictEqual(
 					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 2),
 					4,
 				);
@@ -153,15 +153,15 @@ describe("worker/core/season/newSchedule.basketball", () => {
 				}
 			}
 
-			assert.equal(Object.keys(home).length, defaultTeams.length);
+			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const { tid } of defaultTeams) {
-				assert.equal(Object.values(home[tid]).length, 10);
-				assert.equal(
+				assert.strictEqual(Object.values(home[tid]).length, 10);
+				assert.strictEqual(
 					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
 					2,
 				);
-				assert.equal(
+				assert.strictEqual(
 					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 2),
 					8,
 				);

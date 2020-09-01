@@ -21,12 +21,12 @@ describe("worker/db/Cache", () => {
 		test("retrieve an object", async () => {
 			const p = (await idb.cache.players.getAll())[0];
 			const p2 = (await idb.cache.players.get(p.pid)) as Player;
-			assert.equal(p.pid, p2.pid);
+			assert.strictEqual(p.pid, p2.pid);
 		});
 
 		test("return undefined for invalid ID", async () => {
 			const p = await idb.cache.players.get(-1);
-			assert.equal(typeof p, "undefined");
+			assert.strictEqual(typeof p, "undefined");
 		});
 
 		test(`wait until filling complete before resolving query`, async () => {
@@ -41,8 +41,8 @@ describe("worker/db/Cache", () => {
 
 			const p2 = (await idb.cache.players.get(p.pid)) as Player;
 			assert(setTimeoutCalled);
-			assert.equal(idb.cache._status, "full");
-			assert.equal(p.pid, p2.pid);
+			assert.strictEqual(idb.cache._status, "full");
+			assert.strictEqual(p.pid, p2.pid);
 		});
 	});
 });

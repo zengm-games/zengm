@@ -51,7 +51,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		}
 
 		assert(t.seasonAttrs.payroll > 0);
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			tid: 4,
 			abbrev: "CIN",
 			seasonAttrs: {
@@ -75,9 +75,9 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			stats: ["gp", "fg", "fgp"],
 			season: g.get("season"),
 		});
-		assert.equal(teams.length, g.get("numTeams"));
+		assert.strictEqual(teams.length, g.get("numTeams"));
 		const t = teams[4];
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			tid: 4,
 			abbrev: "CIN",
 			seasonAttrs: {
@@ -100,7 +100,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			tid: 4,
 			season: g.get("season"),
 		});
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			seasonAttrs: {
 				season: g.get("season"),
 				won: 0,
@@ -121,7 +121,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			tid: 4,
 			season: g.get("season"),
 		});
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			tid: 4,
 			abbrev: "CIN",
 			stats: {
@@ -140,7 +140,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			tid: 4,
 			season: g.get("season"),
 		});
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			tid: 4,
 			abbrev: "CIN",
 			seasonAttrs: {
@@ -157,7 +157,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			season: g.get("season"),
 			statType: "totals",
 		});
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			stats: {
 				gp: 10,
 				fg: 50,
@@ -176,7 +176,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 			playoffs: true,
 			regularSeason: false,
 		});
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			stats: {
 				gp: 4,
 				fg: 3,
@@ -197,7 +197,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 		// @ts-ignore
 		idb.league = undefined;
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			stats: [
 				{
 					gp: 4,
@@ -219,7 +219,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
 		});
 		// @ts-ignore
 		idb.league = undefined;
-		assert.deepEqual(t, {
+		assert.deepStrictEqual(t, {
 			stats: [
 				{
 					gp: 10,

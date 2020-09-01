@@ -38,33 +38,33 @@ describe("worker/core/finances/assessPayrollMinLuxury", () => {
 
 		await finances.assessPayrollMinLuxury();
 		const teamSeasons = await idb.cache.teamSeasons.getAll();
-		assert.equal(teamSeasons.length, g.get("numActiveTeams"));
+		assert.strictEqual(teamSeasons.length, g.get("numActiveTeams"));
 
 		for (let i = 0; i < g.get("numActiveTeams"); i++) {
 			assert(teamSeasons[i].payrollEndOfSeason > 0);
 
 			if (teamSeasons[i].payrollEndOfSeason > g.get("luxuryPayroll")) {
-				assert.equal(
+				assert.strictEqual(
 					teamSeasons[i].expenses.luxuryTax.amount,
 					g.get("luxuryTax") *
 						(teamSeasons[i].payrollEndOfSeason - g.get("luxuryPayroll")),
 				);
-				assert.equal(
+				assert.strictEqual(
 					teamSeasons[i].expenses.luxuryTax.amount,
 					g.get("luxuryTax") * 1,
 				);
 			} else {
-				assert.equal(teamSeasons[i].expenses.luxuryTax.amount, 0);
+				assert.strictEqual(teamSeasons[i].expenses.luxuryTax.amount, 0);
 			}
 
 			if (teamSeasons[i].payrollEndOfSeason < g.get("minPayroll")) {
-				assert.equal(
+				assert.strictEqual(
 					teamSeasons[i].expenses.minTax.amount,
 					g.get("minPayroll") - teamSeasons[i].payrollEndOfSeason,
 				);
-				assert.equal(teamSeasons[i].expenses.minTax.amount, 1);
+				assert.strictEqual(teamSeasons[i].expenses.minTax.amount, 1);
 			} else {
-				assert.equal(teamSeasons[i].expenses.minTax.amount, 0);
+				assert.strictEqual(teamSeasons[i].expenses.minTax.amount, 0);
 			}
 		}
 	});

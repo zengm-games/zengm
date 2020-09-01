@@ -56,14 +56,14 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No brother found");
 			}
 
-			assert.equal(p.relatives.length, 1);
-			assert.equal(p.relatives[0].type, "brother");
-			assert.equal(p.relatives[0].pid, brother.pid);
-			assert.equal(brother.relatives.length, 1);
-			assert.equal(brother.relatives[0].type, "brother");
-			assert.equal(brother.relatives[0].pid, p.pid);
-			assert.equal(p.lastName, brother.lastName);
-			assert.equal(p.born.loc, brother.born.loc);
+			assert.strictEqual(p.relatives.length, 1);
+			assert.strictEqual(p.relatives[0].type, "brother");
+			assert.strictEqual(p.relatives[0].pid, brother.pid);
+			assert.strictEqual(brother.relatives.length, 1);
+			assert.strictEqual(brother.relatives[0].type, "brother");
+			assert.strictEqual(brother.relatives[0].pid, p.pid);
+			assert.strictEqual(p.lastName, brother.lastName);
+			assert.strictEqual(p.born.loc, brother.born.loc);
 		});
 
 		test("skip player if no possible brother exists", async () => {
@@ -72,7 +72,7 @@ describe("worker/core/player/addRelatives", () => {
 			});
 			const p = await getPlayer(0);
 			await makeBrother(p);
-			assert.equal(p.relatives.length, 0);
+			assert.strictEqual(p.relatives.length, 0);
 		});
 
 		test("handle case where target has a father", async () => {
@@ -102,16 +102,16 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No brother found");
 			}
 
-			assert.equal(p.relatives.length, 2);
-			assert.equal(p.relatives[0].type, "father");
-			assert.equal(p.relatives[0].pid, 1);
-			assert.equal(p.relatives[1].type, "brother");
-			assert.equal(p.relatives[1].pid, brother.pid);
-			assert.equal(brother.relatives.length, 2);
-			assert.equal(brother.relatives[0].type, "father");
-			assert.equal(brother.relatives[0].pid, 1);
-			assert.equal(brother.relatives[1].type, "brother");
-			assert.equal(brother.relatives[1].pid, p.pid);
+			assert.strictEqual(p.relatives.length, 2);
+			assert.strictEqual(p.relatives[0].type, "father");
+			assert.strictEqual(p.relatives[0].pid, 1);
+			assert.strictEqual(p.relatives[1].type, "brother");
+			assert.strictEqual(p.relatives[1].pid, brother.pid);
+			assert.strictEqual(brother.relatives.length, 2);
+			assert.strictEqual(brother.relatives[0].type, "father");
+			assert.strictEqual(brother.relatives[0].pid, 1);
+			assert.strictEqual(brother.relatives[1].type, "brother");
+			assert.strictEqual(brother.relatives[1].pid, p.pid);
 		});
 
 		test("handle case where source has a father", async () => {
@@ -143,16 +143,16 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No brother found");
 			}
 
-			assert.equal(p.relatives.length, 2);
-			assert.equal(p.relatives[0].type, "father");
-			assert.equal(p.relatives[0].pid, 1);
-			assert.equal(p.relatives[1].type, "brother");
-			assert.equal(p.relatives[1].pid, brother.pid);
-			assert.equal(brother.relatives.length, 2);
-			assert.equal(brother.relatives[0].type, "father");
-			assert.equal(brother.relatives[0].pid, 1);
-			assert.equal(brother.relatives[1].type, "brother");
-			assert.equal(brother.relatives[1].pid, p.pid);
+			assert.strictEqual(p.relatives.length, 2);
+			assert.strictEqual(p.relatives[0].type, "father");
+			assert.strictEqual(p.relatives[0].pid, 1);
+			assert.strictEqual(p.relatives[1].type, "brother");
+			assert.strictEqual(p.relatives[1].pid, brother.pid);
+			assert.strictEqual(brother.relatives.length, 2);
+			assert.strictEqual(brother.relatives[0].type, "father");
+			assert.strictEqual(brother.relatives[0].pid, 1);
+			assert.strictEqual(brother.relatives[1].type, "brother");
+			assert.strictEqual(brother.relatives[1].pid, p.pid);
 		});
 
 		test("handle case where both have fathers", async () => {
@@ -176,7 +176,7 @@ describe("worker/core/player/addRelatives", () => {
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
-			assert.equal(brother, undefined);
+			assert.strictEqual(brother, undefined);
 		});
 
 		test("handle case where target has a brother", async () => {
@@ -223,16 +223,16 @@ describe("worker/core/player/addRelatives", () => {
 			}
 
 			// The 0th entry of both p.relatives and brother.relatives is the father, extraBrother. See comment above.
-			assert.equal(p.relatives.length, 3);
-			assert.equal(p.relatives[1].type, "brother");
-			assert.equal(p.relatives[1].pid, 1);
-			assert.equal(p.relatives[2].type, "brother");
-			assert.equal(p.relatives[2].pid, brother.pid);
-			assert.equal(brother.relatives.length, 3);
-			assert.equal(brother.relatives[1].type, "brother");
-			assert.equal(brother.relatives[1].pid, 1);
-			assert.equal(brother.relatives[2].type, "brother");
-			assert.equal(brother.relatives[2].pid, p.pid);
+			assert.strictEqual(p.relatives.length, 3);
+			assert.strictEqual(p.relatives[1].type, "brother");
+			assert.strictEqual(p.relatives[1].pid, 1);
+			assert.strictEqual(p.relatives[2].type, "brother");
+			assert.strictEqual(p.relatives[2].pid, brother.pid);
+			assert.strictEqual(brother.relatives.length, 3);
+			assert.strictEqual(brother.relatives[1].type, "brother");
+			assert.strictEqual(brother.relatives[1].pid, 1);
+			assert.strictEqual(brother.relatives[2].type, "brother");
+			assert.strictEqual(brother.relatives[2].pid, p.pid);
 		});
 
 		test("handle case where source has a brother", async () => {
@@ -259,8 +259,8 @@ describe("worker/core/player/addRelatives", () => {
 			await makeBrother(p);
 			const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
 			const brother = brothers.find(b => b.relatives.length > 1);
-			assert.equal(brother, undefined);
-			assert.equal(p.relatives.length, 1);
+			assert.strictEqual(brother, undefined);
+			assert.strictEqual(p.relatives.length, 1);
 		});
 	});
 	describe("makeSon", () => {
@@ -285,13 +285,13 @@ describe("worker/core/player/addRelatives", () => {
 				throw new Error("No father found");
 			}
 
-			assert.equal(son.relatives.length, 1);
-			assert.equal(son.relatives[0].type, "father");
-			assert.equal(son.relatives[0].pid, father.pid);
-			assert.equal(father.relatives.length, 1);
-			assert.equal(father.relatives[0].type, "son");
-			assert.equal(father.relatives[0].pid, son.pid);
-			assert.equal(son.born.loc, father.born.loc);
+			assert.strictEqual(son.relatives.length, 1);
+			assert.strictEqual(son.relatives[0].type, "father");
+			assert.strictEqual(son.relatives[0].pid, father.pid);
+			assert.strictEqual(father.relatives.length, 1);
+			assert.strictEqual(father.relatives[0].type, "son");
+			assert.strictEqual(father.relatives[0].pid, son.pid);
+			assert.strictEqual(son.born.loc, father.born.loc);
 		});
 
 		test("skip player if no possible father exists", async () => {
@@ -300,7 +300,7 @@ describe("worker/core/player/addRelatives", () => {
 			});
 			const son = await getPlayer(0);
 			await makeSon(son);
-			assert.equal(son.relatives.length, 0);
+			assert.strictEqual(son.relatives.length, 0);
 		});
 
 		test("skip player if he already has a father", async () => {
@@ -325,8 +325,8 @@ describe("worker/core/player/addRelatives", () => {
 			);
 			const father = fathers.find(p => p.relatives.length > 0);
 			assert(!father);
-			assert.equal(son.relatives.length, 1);
-			assert.deepEqual(son.relatives[0], relFather);
+			assert.strictEqual(son.relatives.length, 1);
+			assert.deepStrictEqual(son.relatives[0], relFather);
 		});
 
 		test("handle case where player already has a brother", async () => {
@@ -370,24 +370,24 @@ describe("worker/core/player/addRelatives", () => {
 
 			const son2 = await getPlayer(0);
 			const brother2 = await getPlayer(1);
-			assert.equal(son2.relatives.length, 2);
-			assert.equal(son2.relatives[0].type, "father");
-			assert.equal(son2.relatives[0].pid, father.pid);
-			assert.equal(son2.relatives[1].type, "brother");
-			assert.equal(son2.relatives[1].pid, brother2.pid);
-			assert.equal(brother2.relatives.length, 2);
-			assert.equal(brother2.relatives[0].type, "father");
-			assert.equal(brother2.relatives[0].pid, father.pid);
-			assert.equal(brother2.relatives[1].type, "brother");
-			assert.equal(brother2.relatives[1].pid, son2.pid);
-			assert.equal(father.relatives.length, 2);
-			assert.equal(father.relatives[0].type, "son");
-			assert.equal(father.relatives[1].type, "son");
-			assert.deepEqual(father.relatives.map(relative => relative.pid).sort(), [
-				0,
-				1,
-			]);
-			assert.equal(brother2.born.loc, father.born.loc);
+			assert.strictEqual(son2.relatives.length, 2);
+			assert.strictEqual(son2.relatives[0].type, "father");
+			assert.strictEqual(son2.relatives[0].pid, father.pid);
+			assert.strictEqual(son2.relatives[1].type, "brother");
+			assert.strictEqual(son2.relatives[1].pid, brother2.pid);
+			assert.strictEqual(brother2.relatives.length, 2);
+			assert.strictEqual(brother2.relatives[0].type, "father");
+			assert.strictEqual(brother2.relatives[0].pid, father.pid);
+			assert.strictEqual(brother2.relatives[1].type, "brother");
+			assert.strictEqual(brother2.relatives[1].pid, son2.pid);
+			assert.strictEqual(father.relatives.length, 2);
+			assert.strictEqual(father.relatives[0].type, "son");
+			assert.strictEqual(father.relatives[1].type, "son");
+			assert.deepStrictEqual(
+				father.relatives.map(relative => relative.pid).sort(),
+				[0, 1],
+			);
+			assert.strictEqual(brother2.born.loc, father.born.loc);
 		});
 
 		test("handle case where father already has a son", async () => {
@@ -408,7 +408,7 @@ describe("worker/core/player/addRelatives", () => {
 				PLAYER.RETIRED,
 			);
 			const otherSons = await idb.cache.players.indexGetAll("playersByTid", 0);
-			assert.equal(fathers.length, otherSons.length);
+			assert.strictEqual(fathers.length, otherSons.length);
 
 			for (let i = 0; i < fathers.length; i++) {
 				const father = fathers[i];
@@ -447,23 +447,23 @@ describe("worker/core/player/addRelatives", () => {
 			}
 
 			const son2 = await getPlayer(0);
-			assert.equal(son2.relatives.length, 2);
-			assert.equal(son2.relatives[0].type, "father");
-			assert.equal(son2.relatives[0].pid, father.pid);
-			assert.equal(son2.relatives[1].type, "brother");
-			assert.equal(son2.relatives[1].pid, otherSon.pid);
-			assert.equal(otherSon.relatives.length, 2);
-			assert.equal(otherSon.relatives[0].type, "father");
-			assert.equal(otherSon.relatives[0].pid, father.pid);
-			assert.equal(otherSon.relatives[1].type, "brother");
-			assert.equal(otherSon.relatives[1].pid, son2.pid);
-			assert.equal(father.relatives.length, 2);
-			assert.equal(father.relatives[0].type, "son");
-			assert.equal(father.relatives[1].type, "son");
-			assert.deepEqual(father.relatives.map(relative => relative.pid).sort(), [
-				son2.pid,
-				otherSon.pid,
-			]);
+			assert.strictEqual(son2.relatives.length, 2);
+			assert.strictEqual(son2.relatives[0].type, "father");
+			assert.strictEqual(son2.relatives[0].pid, father.pid);
+			assert.strictEqual(son2.relatives[1].type, "brother");
+			assert.strictEqual(son2.relatives[1].pid, otherSon.pid);
+			assert.strictEqual(otherSon.relatives.length, 2);
+			assert.strictEqual(otherSon.relatives[0].type, "father");
+			assert.strictEqual(otherSon.relatives[0].pid, father.pid);
+			assert.strictEqual(otherSon.relatives[1].type, "brother");
+			assert.strictEqual(otherSon.relatives[1].pid, son2.pid);
+			assert.strictEqual(father.relatives.length, 2);
+			assert.strictEqual(father.relatives[0].type, "son");
+			assert.strictEqual(father.relatives[1].type, "son");
+			assert.deepStrictEqual(
+				father.relatives.map(relative => relative.pid).sort(),
+				[son2.pid, otherSon.pid],
+			);
 		});
 	});
 });

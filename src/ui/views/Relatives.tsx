@@ -27,7 +27,7 @@ const Relatives = ({
 		},
 		{
 			title: "Relatives",
-			colspan: 4,
+			colspan: target ? 5 : 4,
 		},
 		{
 			title: "Best Season",

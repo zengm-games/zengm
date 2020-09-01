@@ -41,7 +41,7 @@ describe("worker/core/draft/updateChances", () => {
 				if (value === 0) {
 					value = chances[tids[j]];
 				} else {
-					assert.equal(value, chances[tids[j]]);
+					assert.strictEqual(value, chances[tids[j]]);
 				}
 			}
 		}
@@ -61,7 +61,7 @@ describe("worker/core/draft/updateChances", () => {
 				}
 			}
 
-			assert.equal(maxIdx, 0);
+			assert.strictEqual(maxIdx, 0);
 		}
 	});
 });

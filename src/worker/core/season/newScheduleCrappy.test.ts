@@ -29,7 +29,7 @@ describe("worker/core/season/newScheduleCrappy", () => {
 				const matchups = newScheduleCrappy(teams);
 
 				// Total number of games
-				assert.equal(
+				assert.strictEqual(
 					matchups.length * 2,
 					numGames * numTeams,
 					"Total number of games is wrong",
@@ -40,7 +40,7 @@ describe("worker/core/season/newScheduleCrappy", () => {
 
 				for (const t of teams) {
 					const count = tids.filter(tid => t.tid === tid).length;
-					assert.equal(count, numGames);
+					assert.strictEqual(count, numGames);
 				}
 			}
 		}
@@ -57,7 +57,7 @@ describe("worker/core/season/newScheduleCrappy", () => {
 				const teams = makeTeams(numTeams);
 				const matchups = newScheduleCrappy(teams); // Total number of games
 
-				assert.equal(
+				assert.strictEqual(
 					matchups.length * 2 + 1,
 					numGames * numTeams,
 					"Total number of games is wrong",
@@ -77,7 +77,7 @@ describe("worker/core/season/newScheduleCrappy", () => {
 
 						oneShort = true;
 					} else {
-						assert.equal(count, numGames);
+						assert.strictEqual(count, numGames);
 					}
 				}
 
@@ -96,7 +96,7 @@ describe("worker/core/season/newScheduleCrappy", () => {
 				const teams = makeTeams(numTeams);
 				const matchups = newScheduleCrappy(teams); // Total number of games
 
-				assert.equal(
+				assert.strictEqual(
 					matchups.length * 2,
 					numGames * numTeams,
 					"Total number of games is wrong",
@@ -117,8 +117,8 @@ describe("worker/core/season/newScheduleCrappy", () => {
 				}
 
 				for (const t of teams) {
-					assert.equal(home[t.tid], numGames / 2);
-					assert.equal(away[t.tid], numGames / 2);
+					assert.strictEqual(home[t.tid], numGames / 2);
+					assert.strictEqual(away[t.tid], numGames / 2);
 				}
 			}
 		}

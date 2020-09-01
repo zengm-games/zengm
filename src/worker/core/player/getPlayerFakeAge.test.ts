@@ -47,7 +47,7 @@ describe("worker/core/player/getPlayerFakeAge", () => {
 		);
 
 		// 1/81
-		assert.equal(pidCounts[1], 0); // 0/81
+		assert.strictEqual(pidCounts[1], 0); // 0/81
 
 		assert(
 			pidCounts[2] > 0 && pidCounts[2] < 100,

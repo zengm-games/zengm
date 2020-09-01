@@ -72,8 +72,8 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
-		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
-		assert.equal(series[0].length, 2);
+		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
+		assert.strictEqual(series[0].length, 2);
 	});
 
 	test("pick teams regardless of conference if there are not two conferences", () => {
@@ -124,8 +124,8 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 0);
 		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
-		assert.deepEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
-		assert.equal(series[0].length, 2);
+		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
+		assert.strictEqual(series[0].length, 2);
 	});
 
 	test("split teams by conference if there are two conferences, including byes", () => {
@@ -176,23 +176,23 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 2);
 		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
-		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 4, 5]);
+		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 4, 5]);
 		const tids = [
 			[0, undefined],
 			[2, 3],
 			[5, undefined],
 			[1, 4],
 		];
-		assert.equal(series[0].length, tids.length);
+		assert.strictEqual(series[0].length, tids.length);
 
 		for (let i = 0; i < series[0].length; i++) {
 			const { away, home } = series[0][i];
-			assert.equal(tids[i][0], home.tid);
+			assert.strictEqual(tids[i][0], home.tid);
 
 			if (away === undefined) {
-				assert.equal(tids[i][1], undefined);
+				assert.strictEqual(tids[i][1], undefined);
 			} else {
-				assert.equal(tids[i][1], away.tid);
+				assert.strictEqual(tids[i][1], away.tid);
 			}
 		}
 	});
@@ -249,23 +249,23 @@ describe("worker/core/season/genPlayoffSeries", () => {
 		g.setWithoutSavingToDB("numGamesPlayoffSeries", [7, 7, 7]);
 		g.setWithoutSavingToDB("numPlayoffByes", 2);
 		const { series, tidPlayoffs } = genPlayoffSeriesWrapper(teams);
-		assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 5, 6]);
+		assert.deepStrictEqual(tidPlayoffs.sort(), [0, 1, 2, 3, 5, 6]);
 		const tids = [
 			[0, undefined],
 			[6, 5],
 			[3, 1],
 			[2, undefined],
 		];
-		assert.equal(series[0].length, tids.length);
+		assert.strictEqual(series[0].length, tids.length);
 
 		for (let i = 0; i < series[0].length; i++) {
 			const { away, home } = series[0][i];
-			assert.equal(tids[i][0], home.tid);
+			assert.strictEqual(tids[i][0], home.tid);
 
 			if (away === undefined) {
-				assert.equal(tids[i][1], undefined);
+				assert.strictEqual(tids[i][1], undefined);
 			} else {
-				assert.equal(tids[i][1], away.tid);
+				assert.strictEqual(tids[i][1], away.tid);
 			}
 		}
 	});
@@ -358,16 +358,16 @@ describe("worker/core/season/genPlayoffSeries", () => {
 			[6, 9],
 			[1, 14],
 		];
-		assert.equal(series[0].length, tids.length);
+		assert.strictEqual(series[0].length, tids.length);
 
 		for (let i = 0; i < series[0].length; i++) {
 			const { away, home } = series[0][i];
-			assert.equal(tids[i][0], home.tid);
+			assert.strictEqual(tids[i][0], home.tid);
 
 			if (away === undefined) {
-				assert.equal(tids[i][1], undefined);
+				assert.strictEqual(tids[i][1], undefined);
 			} else {
-				assert.equal(tids[i][1], away.tid);
+				assert.strictEqual(tids[i][1], away.tid);
 			}
 		}
 	});

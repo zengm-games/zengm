@@ -43,8 +43,8 @@ describe("worker/core/trade/updatePlayers", () => {
 				dpidsExcluded: [],
 			},
 		]);
-		assert.deepEqual(teams[0].pids, userPidsTest);
-		assert.deepEqual(teams[1].pids, otherPidsTest);
+		assert.deepStrictEqual(teams[0].pids, userPidsTest);
+		assert.deepStrictEqual(teams[1].pids, otherPidsTest);
 	});
 
 	test("filter out invalid players", async () => {
@@ -80,8 +80,8 @@ describe("worker/core/trade/updatePlayers", () => {
 				dpidsExcluded: [],
 			},
 		]);
-		assert.deepEqual(teams[0].pids, [1]);
-		assert.deepEqual(teams[1].pids, [3]);
+		assert.deepStrictEqual(teams[0].pids, [1]);
+		assert.deepStrictEqual(teams[1].pids, [3]);
 	});
 
 	test("delete the other team's players, but not the user's players, from the trade when a new team is selected", async () => {
@@ -119,8 +119,8 @@ describe("worker/core/trade/updatePlayers", () => {
 				dpidsExcluded: [],
 			},
 		]);
-		assert.deepEqual(teams[0].pids, userPidsTest);
-		assert.deepEqual(teams[1].pids, otherPidsTest);
+		assert.deepStrictEqual(teams[0].pids, userPidsTest);
+		assert.deepStrictEqual(teams[1].pids, otherPidsTest);
 		await trade.create([
 			{
 				tid: g.get("userTid"),
@@ -139,7 +139,7 @@ describe("worker/core/trade/updatePlayers", () => {
 		]);
 		const tr = await get();
 		teams = tr.teams;
-		assert.deepEqual(teams[0].pids, userPidsTest);
-		assert.deepEqual(teams[1].pids, []);
+		assert.deepStrictEqual(teams[0].pids, userPidsTest);
+		assert.deepStrictEqual(teams[1].pids, []);
 	});
 });

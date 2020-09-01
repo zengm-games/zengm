@@ -1,6 +1,8 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import { TEAM_STATS_DIST_TABLE } from "../../common";
+import type { AnySoaRecord } from "dns";
 
 const updateTeams = async (
 	inputs: ViewInput<"teamStatDists">,
@@ -13,29 +15,33 @@ const updateTeams = async (
 				updateEvents.includes("playerMovement"))) ||
 		inputs.season !== state.season
 	) {
+		const stats: any[] =
+			process.env.SPORT == "basketball"
+				? [
+						"fg",
+						"fga",
+						"fgp",
+						"tp",
+						"tpa",
+						"tpp",
+						"ft",
+						"fta",
+						"ftp",
+						"orb",
+						"drb",
+						"trb",
+						"ast",
+						"tov",
+						"stl",
+						"blk",
+						"pf",
+						"pts",
+						"oppPts",
+				  ]
+				: TEAM_STATS_DIST_TABLE;
 		const teams = await idb.getCopies.teamsPlus({
 			seasonAttrs: ["won", "lost"],
-			stats: [
-				"fg",
-				"fga",
-				"fgp",
-				"tp",
-				"tpa",
-				"tpp",
-				"ft",
-				"fta",
-				"ftp",
-				"orb",
-				"drb",
-				"trb",
-				"ast",
-				"tov",
-				"stl",
-				"blk",
-				"pf",
-				"pts",
-				"oppPts",
-			],
+			stats: stats,
 			season: inputs.season,
 		});
 

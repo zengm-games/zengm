@@ -123,6 +123,10 @@ const TIME_BETWEEN_GAMES: string =
 		? constantsFootball.TIME_BETWEEN_GAMES
 		: constantsBasketball.TIME_BETWEEN_GAMES;
 
+const TEAM_STATS_DIST_TABLE: string[] =
+	process.env.SPORT === "football"
+		? constantsFootball.TEAM_STATS_DIST_TABLE
+		: [];
 export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,
@@ -137,5 +141,6 @@ export {
 	POSITION_COUNTS,
 	POSITIONS,
 	TEAM_STATS_TABLES,
+	TEAM_STATS_DIST_TABLE,
 	TIME_BETWEEN_GAMES,
 };

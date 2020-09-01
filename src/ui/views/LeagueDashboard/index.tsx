@@ -41,7 +41,6 @@ const LeagueDashboard = ({
 	teamLeaders,
 	teamStats,
 	tied,
-	ties,
 	userTid,
 	won,
 }: View<"leagueDashboard">) => {
@@ -84,7 +83,7 @@ const LeagueDashboard = ({
 							<div className="text-center mb-3">
 								<span style={{ fontSize: "3rem" }}>
 									{won}-{lost}
-									{ties ? <>-{tied}</> : null}
+									{tied > 0 ? <>-{tied}</> : null}
 								</span>
 								<br />
 								<span style={{ fontSize: "1.5rem" }}>
@@ -223,7 +222,6 @@ LeagueDashboard.propTypes = {
 		}),
 	).isRequired,
 	tied: PropTypes.number,
-	ties: PropTypes.bool.isRequired,
 	userTid: PropTypes.number.isRequired,
 	won: PropTypes.number.isRequired,
 };

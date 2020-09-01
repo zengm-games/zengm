@@ -10,8 +10,12 @@ import useTitleBar from "../hooks/useTitleBar";
 import { confirm, getCols, toWorker } from "../util";
 import type { View } from "../../common/types";
 
-const difficultyText = (difficulty: number) => {
+const difficultyText = (difficulty: number | undefined) => {
 	let prevText: string | undefined;
+
+	if (difficulty === undefined) {
+		return "???";
+	}
 
 	for (const [text, numeric] of Object.entries(DIFFICULTY)) {
 		if (typeof numeric !== "number") {
@@ -224,8 +228,13 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				league.startingSeason !== undefined && league.season !== undefined
 					? 1 + league.season - league.startingSeason
 					: undefined,
-				<DifficultyText>{league.difficulty}</DifficultyText>,
 				{
+					searchValue: difficultyText(league.difficulty),
+					sortValue: league.difficulty,
+					value: <DifficultyText>{league.difficulty}</DifficultyText>,
+				},
+				{
+					searchValue: league.created ? ago(league.created) : "",
 					sortValue:
 						league.created && league.created.getTime
 							? league.created.getTime()
@@ -233,6 +242,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					value: <Ago date={league.created} />,
 				},
 				{
+					searchValue: league.lastPlayed ? ago(league.lastPlayed) : "",
 					sortValue:
 						league.lastPlayed && league.lastPlayed.getTime
 							? league.lastPlayed.getTime()

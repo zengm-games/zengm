@@ -55,7 +55,7 @@ const finalize = async (
 	}
 
 	// If auto-simulating, initiate next action but don't redirect to a new URL
-	if (local.autoPlaySeasons > 0) {
+	if (local.autoPlayUntil) {
 		toUI("realtimeUpdate", [updateEvents]);
 
 		await league.autoPlay(conditions);

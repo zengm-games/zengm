@@ -15,6 +15,7 @@ type FinancesFormProps = {
 	challengeNoRatings: boolean;
 	gameSimInProgress: boolean;
 	noSeasonData: boolean;
+	spectator: boolean;
 	phase: Phase;
 	t: any;
 	tid: number;
@@ -164,20 +165,18 @@ class FinancesForm extends React.Component<
 			challengeNoRatings,
 			gameSimInProgress,
 			noSeasonData,
+			spectator,
 			t,
 			tid,
 			userTid,
 		} = this.props;
 
-		const warningMessage = (
-			<p className="text-danger">
-				{gameSimInProgress && tid === userTid
-					? "Stop game simulation to edit."
-					: null}
-			</p>
-		);
+		const warningMessage =
+			gameSimInProgress && tid === userTid && !spectator ? (
+				<p className="text-danger">Stop game simulation to edit.</p>
+			) : null;
 
-		const formDisabled = gameSimInProgress || tid !== userTid;
+		const formDisabled = gameSimInProgress || tid !== userTid || spectator;
 
 		return (
 			<form onSubmit={this.handleSubmit} className="mb-3">
@@ -222,6 +221,10 @@ class FinancesForm extends React.Component<
 						</p>
 					</HelpPopover>
 				</h3>
+				<p>
+					Click the ? above to see what exactly each category does. Effects are
+					based on your spending rank over the past three seasons.
+				</p>
 				{warningMessage}
 				<div className="row">
 					<div className="float-left finances-settings-label">Scouting</div>
@@ -351,7 +354,7 @@ class FinancesForm extends React.Component<
 						</HelpPopover>
 					</div>
 				</div>
-				{tid === userTid ? (
+				{tid === userTid && !spectator ? (
 					<div className="row mt-3" style={{ paddingLeft: 100 }}>
 						<button
 							className="btn btn-large btn-primary"
@@ -482,6 +485,7 @@ const TeamFinances = ({
 	minContract,
 	minPayroll,
 	numGames,
+	spectator,
 	payroll,
 	phase,
 	salariesSeasons,
@@ -515,6 +519,7 @@ const TeamFinances = ({
 		const data: ReactNode[] = [
 			<PlayerNameLabels
 				injury={p.injury}
+				jerseyNumber={p.jerseyNumber}
 				pid={p.pid}
 				pos={p.pos}
 				skills={p.skills}
@@ -579,6 +584,10 @@ const TeamFinances = ({
 				|{" "}
 				<a href={helpers.leagueUrl(["team_history", `${abbrev}_${tid}`])}>
 					History
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
+					Schedule
 				</a>{" "}
 				|{" "}
 				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>
@@ -749,6 +758,7 @@ const TeamFinances = ({
 							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
 							noSeasonData={noSeasonData}
+							spectator={spectator}
 							phase={phase}
 							t={t}
 							tid={tid}
@@ -792,6 +802,7 @@ TeamFinances.propTypes = {
 	minContract: PropTypes.number.isRequired,
 	minPayroll: PropTypes.number.isRequired,
 	numGames: PropTypes.number.isRequired,
+	spectator: PropTypes.bool.isRequired,
 	payroll: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,
 	salariesSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,

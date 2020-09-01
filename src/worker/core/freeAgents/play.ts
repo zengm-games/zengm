@@ -50,7 +50,7 @@ async function play(
 				await recomputeLocalUITeamOvrs();
 				await updateStatus(`${g.get("daysLeft")} days left`);
 				await trade.betweenAiTeams();
-				play(numDays - 1, conditions, false);
+				await play(numDays - 1, conditions, false);
 			} else {
 				await cbNoDays();
 			}

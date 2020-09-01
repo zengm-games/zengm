@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { render, Box, Color } = require("ink");
+const { render, Box, Text } = require("ink");
 const Spinner = require("ink-spinner").default;
 const logSymbols = require("log-symbols");
 const React = require("react");
@@ -67,7 +67,9 @@ const reducer = (files, { type, filename, error }) => {
 /* eslint-disable react/prop-types */
 const File = ({ filename, info }) => {
 	if (info.error) {
-		return `${logSymbols.error} ${filename}: ${info.error.stack}`;
+		return (
+			<Text>{`${logSymbols.error} ${filename}: ${info.error.stack}`}</Text>
+		);
 	}
 
 	const time = (info.building
@@ -80,24 +82,27 @@ const File = ({ filename, info }) => {
 
 	if (numMillisecondsSinceTime < TIME_CUTOFF_GREEN) {
 		if (!info.building) {
-			colorParams.green = true;
+			colorParams.color = "green";
 		}
 	} else if (numMillisecondsSinceTime < TIME_CUTOFF_YELLOW) {
-		colorParams.yellow = true;
+		colorParams.color = "yellow";
 	} else {
 		// eslint-disable-next-line no-lonely-if
 		if (info.building) {
-			colorParams.red = true;
+			colorParams.color = "red";
 		}
 	}
 
 	if (info.building) {
 		return (
 			<Box>
-				<Color yellow>
+				<Text color="yellow">
 					<Spinner type="dots" />
-				</Color>{" "}
-				{filename}: build started at <Color {...colorParams}>{time}</Color>
+				</Text>
+				<Text>
+					{" "}
+					{filename}: build started at <Text {...colorParams}>{time}</Text>
+				</Text>
 			</Box>
 		);
 	}
@@ -107,8 +112,10 @@ const File = ({ filename, info }) => {
 
 	return (
 		<Box>
-			{logSymbols.success} {filename}: {megabytes} MB in {duration} seconds at{" "}
-			<Color {...colorParams}>{time}</Color>
+			<Text>
+				{logSymbols.success} {filename}: {megabytes} MB in {duration} seconds at{" "}
+				<Text {...colorParams}>{time}</Text>
+			</Text>
 		</Box>
 	);
 };

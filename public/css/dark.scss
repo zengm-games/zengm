@@ -88,6 +88,15 @@ $text-muted: $gray-400;
 		color: $black !important;
 	}
 }
+.bg-success {
+	background-color: darken($green, 20) !important;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: darken($green, 25) !important;
+	}
+}
 
 .btn-secondary {
 	color: $white;
@@ -122,13 +131,6 @@ $text-muted: $gray-400;
 
 a.play-button {
 	color: $black !important;
-	background-color: darken($green, 20) !important;
-
-	&:hover,
-	&:active,
-	&:focus {
-		background-color: darken($green, 25) !important;
-	}
 }
 
 .notification,
@@ -156,6 +158,14 @@ a.god-mode.active {
 .sidebar a.god-mode.active {
 	background-color: darken($purple, 10);
 	color: $primary;
+}
+.btn-god-mode {
+	&,
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		color: $white;
+	}
 }
 
 .watch-active,

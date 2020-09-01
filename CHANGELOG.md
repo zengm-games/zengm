@@ -2,6 +2,94 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
+* 2020-08-31: Added BPM, DBPM, OBPM, and VORP to the advanced stats in BBGM. Thanks @nicidob! [[1]](https://old.reddit.com/r/BasketballGM/comments/ijszx5/added_bpm_dbpm_obpm_and_vorp_to_the_advanced/)
+
+* 2020-08-30: Frivolity to show which jersey numbers had the most/best players, and the top players who wore each jersey number. Also added similar lists of top players from each country and college, which you can access from those frivolities. They are all also linked from player profiles and the Player Bios table. [[1]](https://old.reddit.com/r/BasketballGM/comments/ij7fq5/frivolity_to_show_which_jersey_numbers_had_the/)
+
+* **2020-08-29: Single game highs for players are now tracked for all stats in BBGM - points, rebounds, assists, etc. View them on player profile pages or in the main Player Stats table by switching the stat type to "Game Highs". [[1]](https://basketball-gm.com/blog/2020/08/game-highs/) [[2]](https://old.reddit.com/r/BasketballGM/comments/iiluf2/single_game_highs_for_players_are_now_tracked_for/)**
+
+* **2020-08-26: Added the Elam Ending as an option for game simulation in BBGM. [[1]](https://basketball-gm.com/blog/2020/08/elam-ending/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ih19y1/new_in_version_202008260936_the_elam_ending_comes/)**
+
+* 2020-08-26: Tweaks to game simulation in the playoffs, most notably resulting in fewer upsets. Also injuries in the playoffs are shorter, to work around the fact that currently there is no way to have players play through minor injuries. [[1]](https://github.com/dumbmatter/gm-games/pull/293)
+
+* 2020-08-24: The Draft Team History page can now use the "GM history" data to show all the draft picks you made, across all teams you managed. Find it at Team > GM History > Your Draft History. [[1]](https://old.reddit.com/r/BasketballGM/comments/ifipp8/the_draft_team_history_page_can_now_use_the_gm/)
+
+* 2020-08-22: The Team Records page can now use the "GM history" data to show a table of only your teams. Find it at Team > GM History > Your Team Records. [[1]](https://old.reddit.com/r/BasketballGM/comments/iepzdt/the_team_records_page_can_now_use_the_gm_history/)
+
+* 2020-08-22: New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It's like auto play, but you can proceed at your own pace. [[1]](https://basketball-gm.com/blog/2020/08/spectator-mode/) [[2]](https://old.reddit.com/r/BasketballGM/comments/ieln8n/new_god_mode_option_spectator_mode_where_the_ai/)
+
+* **2020-08-20: Added a new "GM History" page in the Team menu, where you can see your performance across all the different franchises you managed in the past. [[1]](https://basketball-gm.com/blog/2020/08/gm-history/) [[2]](https://old.reddit.com/r/BasketballGM/comments/idfn77/added_a_new_gm_history_page_in_the_team_menu/)**
+
+* 2020-08-18: If you are successful (high score in the owner's annual performance review) then sometimes other teams will try to hire you. This happens between the playoffs and draft. Previously, the only way to change teams was to get fired or use God Mode. [[1]](https://old.reddit.com/r/BasketballGM/comments/iccozz/if_you_are_successful_high_score_in_the_owners/)
+
+* 2020-08-18: Purely cosmetic player attributes that don't affect gameplay or achievements (name, height (inches), weight (lbs), jersey number, college) are editable outside of God Mode by going to a player's page and clicking Edit Player. [[1]](https://old.reddit.com/r/BasketballGM/comments/iccp0h/purely_cosmetic_player_attributes_that_dont/)
+
+* 2020-08-17: Added TS%, 3PAr, and FTr to the player info popup. [[1]](https://old.reddit.com/r/BasketballGM/comments/ibqgvt/there_have_been_some_requests_for_fg3pft_on_the/)
+
+* 2020-08-17: If you do enough to win an achievement but miss out on it because you used God Mode or easy difficulty, it gives you a notification saying this rather than nothing. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
+
+* 2020-08-17: Added "Finals Appearances" and total winning percentage to the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
+
+* 2020-08-14: New draft type option in God Mode to eliminate the draft and instead have rookies become free agents. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9zhto/version_202008150142_new_draft_type_option_in_god/)
+
+* 2020-08-13: You can watch multiple live games in a single day! Now when you watch a live game, only that one game is simulated. When it's over, the other games from that day will still be waiting to be played. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9a6gm/new_in_version_202008131365_you_can_watch/)
+
+* 2020-08-12: New frivolities: Best Teams, Worst Teams, Best Non-Playoff Teams, Worst Playoff Teams, Worst Finals Teams, and Worst Championship Teams. [[1]](https://old.reddit.com/r/BasketballGM/comments/i884cb/4_new_frivolities_in_version_202008120334_best/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i8r0zo/a_couple_more_building_on_yesterdays_frivolities/)
+
+* 2020-08-11: New frivolity: Draft Class Rankings. [[1]](https://old.reddit.com/r/BasketballGM/comments/i7kyx2/tools_frivolities_draft_class_rankings_new_in/)
+
+* 2020-08-10: The contract generation algorithm has been rewritten. It should be both more realistic and harder to take advantage of. Most noticeably, you should no longer see players ask for too much money and go unsigned. [[1]](https://basketball-gm.com/blog/2020/08/smarter-contract-generation/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i5qoj3/new_beta_feature_smarter_contracts_no_more_good/) [[3]](https://old.reddit.com/r/BasketballGM/comments/i77k9w/smarter_contract_generation_is_live_in_version/)
+
+* 2020-08-10: In BBGM, box scores show players who didn't play as DNP (either "Injury" or "Coach's decision") rather than showing a row of all 0s.
+
+* 2020-08-08: Copying the trend in most other basketball sites, the default standings in BBGM are now conference standings, not division standings. FBGM is not changed.
+
+* 2020-08-08: Team records are shown below logos in box scores. And yeah, when you're watching a live game, the records update when the game finishes :) [[1]](https://old.reddit.com/r/BasketballGM/comments/i6792d/in_the_live_game_playbyplay_fouls_show_how_many/)
+
+* 2020-08-08: In BBGM, in the live game play-by-play, fouls show how many free throws will be upcoming. Like "Shooting foul on Dane Wishnowsky, two FTs for Stephen Lees". Additionally, shot attempts appear on their own line before saying if they are made or missed. [[1]](https://old.reddit.com/r/BasketballGM/comments/i6792d/in_the_live_game_playbyplay_fouls_show_how_many/)
+
+* 2020-08-02: Added a "Delete Player" button to player profile pages.
+
+* **2020-08-01: Players now have jersey numbers, and teams can retire jersey numbers of former players. [[1]](https://basketball-gm.com/blog/2020/08/jersey-numbers/) [[2]](https://old.reddit.com/r/BasketballGM/comments/i1trop/new_feature_official_release_players_now_have/) [[3]](https://old.reddit.com/r/Football_GM/comments/i1trys/players_now_have_jersey_numbers_and_teams_can/)**
+
+* 2020-07-28: Injuries that occur during live games show up in the box score.
+
+* 2020-07-28: When a player retires while (1) still an active player (not a free agent) and (2) still being paid by a team who had previously released him, the remaining amount of his previous contract will no longer be paid.
+
+* 2020-07-27: On the trade page, the trade summary and controls are "sticky" as you scroll so they're always on the screen. This is especially important for FBGM where rosters are huge and much scrolling is required. [[1]](https://old.reddit.com/r/BasketballGM/comments/hz68ru/this_is_more_important_for_fbgm_than_bbgm_but_on/) [[2]](https://old.reddit.com/r/Football_GM/comments/hz69o2/on_the_trade_page_the_trade_summary_and_controls/)
+
+* 2020-07-27: Better support for customization of player names, countries, and colleges. And improvements to the built-in names database. [[1]](https://basketball-gm.com/blog/2020/07/better-customization-player-names-countries-colleges/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hyz51u/new_in_version_202007271168_better_support_for/)
+
+* 2020-07-27: On the Draft Scouting page, added a button to regenerate a draft class if you're in God Mode. [[1]](https://old.reddit.com/r/BasketballGM/comments/hyz5ex/also_on_the_draft_scouting_page_i_added_a_button/)
+
+* 2020-07-23: Improvements to game simulation realism: more realistic shooting percentages based on player positions and shot locations; teams change how they play if they are winning or losing; and the distribution of playing time is now more realistic. [[1]](https://basketball-gm.com/blog/2020/07/game-sim-realism/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hwr0eu/three_improvements_to_game_simulation_realism/)
+
+* 2020-07-20: The ratings summary at the top of individual player pages now shows the difference between last year's ratings and this year's ratings. [[1]](https://old.reddit.com/r/BasketballGM/comments/hv8arf/some_recent_minor_ui_updates/)
+
+* 2020-07-20: On the roster page and individual player pages, players on your team have a button to quickly add them to the trading block, in the same place as the "Trade For" button for players who are on other teams.
+
+* 2020-07-20: In Tools > Delete All Leagues, added an option to delete only unstarred leagues.
+
+* 2020-07-19: Added another "fast forward" option during live game sim - "Until last 2 minutes".
+
+* 2020-07-17: If you navigate away from a live game sim, it will pop up a warning dialog explaining that the play-by-play results will be lost if you proceed. [[1]](https://old.reddit.com/r/BasketballGM/comments/hsqaky/have_you_ever_accidentally_clicked_on_a_link/)
+
+* 2020-07-16: In FBGM, added the Roster Composition table to the re-signing players screen.
+
+* 2020-07-11: God Mode option to enable/disable ties. So for BBGM ties are now possible, and for FBGM you can turn off ties. Ties only can happen in regular season games, and occur after one overtime period. [[1]](https://old.reddit.com/r/BasketballGM/comments/hpn011/god_mode_option_to_enable_ties_version/) [[2]](https://old.reddit.com/r/Football_GM/comments/hpmzz9/god_mode_option_to_disable_ties_version/)
+
+* 2020-07-10: For FBGM, improved AV formula for OL and defensive players, resulting in higher AV for top players at those positions. I also updated the MVP and DPOY formulas to account for this, hopefully retaining good position balance.
+
+* 2020-07-09: A bunch of small FBGM improvements. [[1]](https://football-gm.com/blog/2020/07/recent-development-av-kickers-punters-future/) [[2]](https://old.reddit.com/r/Football_GM/comments/hogban/recent_development_some_small_improvements/)
+
+* 2020-07-08: Tools > Auto Play now lets you specify a phase (playoffs, draft, etc) to sim to, rather than only allowing auto sim to the preseason. [[1]](https://old.reddit.com/r/BasketballGM/comments/hnsxf0/tools_auto_play_now_lets_you_specify_a_phase/)
+
+* 2020-07-07: On the Playoffs page, the series score links to the most recent box score from that series.
+
+* 2020-07-07: Groundhog Day can be enabled and disabled in the God Mode settings. So you can turn it on and off for different seasons within the same league.
+
+* 2020-07-06: The Customize Player form includes the ability to change a player's Hall of Fame induction status. [[1]](https://old.reddit.com/r/BasketballGM/comments/hmiq0p/another_minor_new_feature_that_has_been_requested/)
+
 * 2020-07-02: Added buttons to trade screen to allow you to bulk select players/picks as excluded from trade negotiations. [[1]](https://old.reddit.com/r/BasketballGM/comments/hjqvlr/added_buttons_to_trade_screen_to_allow_you_to/)
 
 * 2020-07-01: The Power Rankings page now shows team rankings broken down by position (in FBGM) or rating (in BBGM). [[1]](https://old.reddit.com/r/BasketballGM/comments/hjj3d5/the_power_rankings_page_now_shows_team_rankings/) [[2]](https://old.reddit.com/r/Football_GM/comments/hjj8en/the_power_rankings_page_now_shows_team_rankings/)

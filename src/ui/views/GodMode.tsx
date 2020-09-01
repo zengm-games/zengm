@@ -44,14 +44,23 @@ type Key =
 	| "challengeNoFreeAgents"
 	| "challengeNoRatings"
 	| "challengeNoTrades"
-	| "realPlayerDeterminism";
+	| "realPlayerDeterminism"
+	| "repeatSeason"
+	| "ties"
+	| "spectator"
+	| "elam"
+	| "elamASG"
+	| "elamMinutes"
+	| "elamPoints";
 
 type Category =
 	| "League Structure"
 	| "Finance"
 	| "Events"
 	| "Game Simulation"
+	| "Elam Ending"
 	| "Challenge Modes"
+	| "Game Modes"
 	| "Player Development";
 
 type FieldType =
@@ -73,6 +82,8 @@ export const helpTexts = {
 		"You are not allowed to sign free agents, except to minimum contracts.",
 	realPlayerDeterminism:
 		"By default, BBGM's player development algorithm does not take into account what we know about a real player's future performance. That corresponds to 0% in this setting. Increase determinism to 100% and real player ratings will be based entirely on their real life development curve. Anything in between is a mix.",
+	repeatSeason:
+		"Next season will start immediately after the playoffs, with the same exact players and rosters as the previous season. No player development, no persistent transactions.",
 };
 
 export const options: {
@@ -191,14 +202,18 @@ export const options: {
 					from 1966-1984
 				</p>
 				<p>
-					<b>No Lottery:</b> No lottery, teams draft in order of their record,
-					with non-playoff teams coming first
-				</p>
-				<p>
 					<b>Random:</b> order the draft completely randomly, with no regard for
 					team performance. Each round is randomized independently, so a team
 					could get the first pick in one round and the last pick in the next
 					round.
+				</p>
+				<p>
+					<b>No Lottery, draft in order:</b> No lottery, teams draft in order of
+					their record, with non-playoff teams coming first
+				</p>
+				<p>
+					<b>No draft, rookies are free agents</b> There is no draft and all
+					rookies simply become free agents who can be signed by any team.
 				</p>
 			</>
 		),
@@ -210,8 +225,9 @@ export const options: {
 			randomLotteryFirst3: "Random, first 3",
 			randomLottery: "Random, lottery only",
 			coinFlip: "Coin flip",
-			noLottery: "No Lottery",
 			random: "Random",
+			noLottery: "No lottery, draft in order",
+			freeAgents: "No draft, rookies are free agents",
 		},
 	},
 	{
@@ -424,7 +440,10 @@ export const options: {
 	{
 		category: "Game Simulation",
 		key: "homeCourtAdvantage",
-		name: "Home Court Advantage",
+		name:
+			process.env.SPORT === "football"
+				? "Home Field Advantage"
+				: "Home Court Advantage",
 		type: "float",
 		decoration: "percent",
 		helpText:
@@ -486,6 +505,20 @@ export const options: {
 		category: "Challenge Modes",
 		key: "challengeNoRatings",
 		name: "No Visible Player Ratings",
+		type: "bool",
+	},
+	{
+		category: "Game Modes",
+		key: "spectator",
+		name: "Spectator Mode",
+		type: "bool",
+		helpText:
+			"In spectator mode, the AI controls all teams and you get to watch the league evolve. This is similar to Tools > Auto Play, but it lets you play through the season at your own pace.",
+	},
+	{
+		category: "Game Simulation",
+		key: "ties",
+		name: "Ties (Regular Season Only)",
 		type: "bool",
 	},
 ];
@@ -582,8 +615,58 @@ if (process.env.SPORT === "basketball") {
 				}
 			},
 		},
+		{
+			category: "Elam Ending",
+			key: "elam",
+			name: "Regular Season and Playoffs",
+			type: "bool",
+		},
+		{
+			category: "Elam Ending",
+			key: "elamASG",
+			name: "All-Star Game",
+			type: "bool",
+		},
+		{
+			category: "Elam Ending",
+			key: "elamMinutes",
+			name: "Minutes Left Trigger",
+			type: "float",
+			validator: (value, output) => {
+				if ((output.elam || output.elamASG) && value > output.quarterLength) {
+					throw new Error("Value must be less than the quarter length");
+				}
+			},
+		},
+		{
+			category: "Elam Ending",
+			key: "elamPoints",
+			name: "Target Points to Add",
+			type: "int",
+			validator: (value, output) => {
+				if ((output.elam || output.elamASG) && value < 0) {
+					throw new Error("Value must be greater than 0");
+				}
+			},
+		},
 	);
 }
+
+options.push({
+	category: "Player Development",
+	key: "repeatSeason",
+	name: "Groundhog Day",
+	type: "bool",
+	helpText: (
+		<>
+			<p>{helpTexts.repeatSeason}</p>
+			<p>
+				Groundhog Day can be enabled at any point in the season prior to the
+				draft.
+			</p>
+		</>
+	),
+});
 
 // See play-style-adjustments in bbgm-rosters
 const gameSimPresets =
@@ -1154,6 +1237,18 @@ const encodeDecodeFunctions = {
 
 const groupedOptions = groupBy(options, "category");
 
+// Specified order
+const categories = [
+	"League Structure",
+	"Finance",
+	"Events",
+	"Game Simulation",
+	"Elam Ending",
+	"Challenge Modes",
+	"Game Modes",
+	"Player Development",
+] as const;
+
 const Input = ({
 	decoration,
 	disabled,
@@ -1313,7 +1408,19 @@ const GodModeOptions = (props: View<"godMode">) => {
 			}
 		}
 
-		await toWorker("main", "updateGameAttributes", output);
+		try {
+			await toWorker("main", "updateGameAttributesGodMode", output);
+		} catch (error) {
+			console.error(error);
+			setSubmitting(false);
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
+			return;
+		}
 
 		setSubmitting(false);
 		logEvent({
@@ -1325,10 +1432,42 @@ const GodModeOptions = (props: View<"godMode">) => {
 
 	return (
 		<form onSubmit={handleFormSubmit}>
-			{Object.entries(groupedOptions).map(([category, catOptions], i) => {
+			{categories.map((category, i) => {
+				const catOptions = groupedOptions[category];
+				if (!catOptions) {
+					return null;
+				}
+
 				return (
 					<React.Fragment key={category}>
 						<h2 className={i === 0 ? "mt-3" : "mt-2"}>{category}</h2>
+						{category === "Elam Ending" ? (
+							<>
+								<p>
+									The{" "}
+									<a
+										href="https://thetournament.com/elam-ending"
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										Elam Ending
+									</a>{" "}
+									is a new way to play the end of basketball games. In the final
+									period of the game, when the clock goes below a certain point
+									("Minutes Left Trigger"), the clock is turned off. The winner
+									of the game will be the team that first hits a target score.
+									That target is determined by adding some number of points
+									("Target Points to Add") to the leader's current score.
+								</p>
+								<p>
+									The Elam Ending generally makes the end of the game more
+									exciting. Nobody is trying to run out the clock. Nobody is
+									trying to foul or call strategic timeouts or rush shots. It's
+									just high quality basketball, every play until the end of the
+									game.
+								</p>
+							</>
+						) : null}
 						{category === "Game Simulation" &&
 						process.env.SPORT === "basketball" &&
 						gameSimPresets ? (
@@ -1374,14 +1513,12 @@ const GodModeOptions = (props: View<"godMode">) => {
 							{catOptions.map(
 								({ decoration, helpText, key, name, type, values }) => (
 									<div key={key} className="col-sm-3 col-6 form-group">
-										<label>
-											{name}
-											{helpText ? (
-												<HelpPopover title={name} className="ml-1">
-													{helpText}
-												</HelpPopover>
-											) : null}
-										</label>
+										<label>{name}</label>
+										{helpText ? (
+											<HelpPopover title={name} className="ml-1">
+												{helpText}
+											</HelpPopover>
+										) : null}
 										<Input
 											type={type}
 											disabled={!props.godMode}

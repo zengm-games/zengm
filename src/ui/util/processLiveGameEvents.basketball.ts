@@ -35,6 +35,7 @@ const processLiveGameEvents = ({
 				boxScore.quarter = `${helpers.ordinal(overtimes)} overtime`;
 			} else {
 				boxScore.quarter = `${helpers.ordinal(quarter)} quarter`;
+				quarters.push(`Q${quarter}`);
 			}
 		}
 
@@ -42,14 +43,24 @@ const processLiveGameEvents = ({
 			if (e.text === "End of game" || e.text.startsWith("Start of")) {
 				text = e.text;
 			} else if (actualT === 0 || actualT === 1) {
-				text = `${e.time} - ${boxScore.teams[actualT].abbrev} - ${e.text}`;
+				text = `${boxScore.elamTarget === undefined ? `${e.time} - ` : ""}${
+					boxScore.teams[actualT].abbrev
+				} - ${e.text}`;
 			} else {
 				text = e.text;
 			}
 
-			// Show score after scoring plays
-			if (text.includes("made")) {
-				text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1].pts})`;
+			if (e.injuredPID !== undefined) {
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.injuredPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find injured player", e);
+				}
+				p.injury = {
+					type: "Injured",
+					gamesRemaining: -1,
+				};
 			}
 
 			boxScore.time = e.time;
@@ -104,6 +115,11 @@ const processLiveGameEvents = ({
 					}
 				}
 			}
+		} else if (e.type === "elamActive") {
+			text = `Elam Ending activated! First team to ${e.target} wins.`;
+			boxScore.elamTarget = e.target;
+
+			stop = true;
 		}
 	}
 

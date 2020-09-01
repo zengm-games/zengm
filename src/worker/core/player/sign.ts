@@ -4,7 +4,7 @@ import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";
 import type { Phase, Player, PlayerContract } from "../../../common/types";
 
-const sign = (
+const sign = async (
 	p: Player,
 	tid: number,
 	contract: PlayerContract,
@@ -16,7 +16,7 @@ const sign = (
 
 	if (phase <= PHASE.PLAYOFFS) {
 		// Otherwise, not needed until next season
-		addStatsRow(p, phase === PHASE.PLAYOFFS);
+		await addStatsRow(p, phase === PHASE.PLAYOFFS);
 	}
 
 	let score = p.valueFuzz - 45;

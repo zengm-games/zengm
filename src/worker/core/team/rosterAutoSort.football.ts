@@ -8,7 +8,7 @@ const score = (p: PlayerFiltered, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];
 
 	if (p.ratings.pos === pos) {
-		tempScore += 5;
+		tempScore += 15;
 	}
 
 	return tempScore;

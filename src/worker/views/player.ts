@@ -89,6 +89,7 @@ const updatePlayer = async (
 			abbrev: string;
 			age: number;
 			playoffs: boolean;
+			jerseyNumber: string;
 		} & Record<string, number>;
 
 		const p:
@@ -140,6 +141,7 @@ const updatePlayer = async (
 					stats: Stats[];
 					careerStats: Stats;
 					careerStatsPlayoffs: Stats;
+					jerseyNumber?: string;
 			  })
 			| undefined = await idb.getCopy.playersPlus(pRaw, {
 			attrs: [
@@ -167,6 +169,7 @@ const updatePlayer = async (
 				"college",
 				"relatives",
 				"untradable",
+				"jerseyNumber",
 			],
 			ratings: [
 				"season",
@@ -180,7 +183,7 @@ const updatePlayer = async (
 				"pos",
 				"injuryIndex",
 			],
-			stats: ["season", "tid", "abbrev", "age", ...stats],
+			stats: ["season", "tid", "abbrev", "age", "jerseyNumber", ...stats],
 			playoffs: true,
 			showRookies: true,
 			fuzz: true,
@@ -193,6 +196,9 @@ const updatePlayer = async (
 			};
 			return returnValue;
 		}
+
+		// Filter out rows with no games played
+		p.stats = p.stats.filter(row => row.gp > 0);
 
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
@@ -270,9 +276,79 @@ const updatePlayer = async (
 			teamName = "Retired";
 		}
 
+		const jerseyNumberInfos: {
+			number: string;
+			start: number;
+			end: number;
+			t?: {
+				colors: [string, string, string];
+				name: string;
+				region: string;
+			};
+		}[] = [];
+		for (const ps of p.stats) {
+			const jerseyNumber = ps.jerseyNumber;
+			if (jerseyNumber === undefined) {
+				continue;
+			}
+
+			const prev = jerseyNumberInfos[jerseyNumberInfos.length - 1];
+
+			let ts:
+				| {
+						colors: [string, string, string];
+						name: string;
+						region: string;
+				  }
+				| undefined = await idb.league
+				.transaction("teamSeasons")
+				.store.index("season, tid")
+				.get([ps.season, ps.tid]);
+			if (!ts) {
+				ts = await idb.cache.teams.get(ps.tid);
+			}
+
+			let newRow = false;
+			if (prev === undefined || jerseyNumber !== prev.number) {
+				newRow = true;
+			} else {
+				if (ts) {
+					if (
+						!prev.t ||
+						prev.t.name !== ts.name ||
+						prev.t.region !== ts.region ||
+						JSON.stringify(prev.t.colors) !== JSON.stringify(ts.colors)
+					) {
+						newRow = true;
+					}
+				}
+			}
+
+			if (newRow) {
+				let t;
+				if (ts && ts.colors && ts.name && ts.region) {
+					t = {
+						colors: ts.colors,
+						name: ts.name,
+						region: ts.region,
+					};
+				}
+
+				jerseyNumberInfos.push({
+					number: jerseyNumber,
+					start: ps.season,
+					end: ps.season,
+					t,
+				});
+			} else if (prev) {
+				prev.end = ps.season;
+			}
+		}
+
 		return {
 			player: p,
 			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
+			showTradingBlock: p.tid === g.get("userTid"),
 			freeAgent: p.tid === PLAYER.FREE_AGENT,
 			retired,
 			showContract:
@@ -284,6 +360,7 @@ const updatePlayer = async (
 			showRatings: !g.get("challengeNoRatings") || retired,
 			events,
 			feats,
+			jerseyNumberInfos,
 			ratings,
 			statTables,
 			statSummary,

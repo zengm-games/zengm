@@ -150,6 +150,42 @@ const getCategoriesAndStats = () => {
 						minStats: ["min"],
 						minValue: [2000],
 					},
+					{
+						name: "Offensive Box Plus-Minus",
+						stat: "OBPM",
+						statProp: "obpm",
+						title: "Offensive Box Plus-Minus",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
+					{
+						name: "Defensive Box Plus-Minus",
+						stat: "DBPM",
+						statProp: "dbpm",
+						title: "Defensive Box Plus-Minus",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
+					{
+						name: "Box Plus-Minus",
+						stat: "BPM",
+						statProp: "bpm",
+						title: "Box Plus-Minus",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
+					{
+						name: "Value Over Replacement Player",
+						stat: "VORP",
+						statProp: "vorp",
+						title: "Value Over Replacement Player",
+						data: [],
+						minStats: ["min"],
+						minValue: [2000],
+					},
 			  ]
 			: [
 					{
@@ -389,7 +425,7 @@ const updateLeaders = async (
 		}
 
 		players = await idb.getCopies.playersPlus(players, {
-			attrs: ["pid", "nameAbbrev", "injury", "watch"],
+			attrs: ["pid", "nameAbbrev", "injury", "watch", "jerseyNumber"],
 			ratings: ["skills"],
 			stats: ["abbrev", "tid", ...stats],
 			season: inputs.season,
@@ -402,7 +438,7 @@ const updateLeaders = async (
 		// minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
 		const factor =
 			(g.get("numGames") / defaultGameAttributes.numGames) *
-			Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
+			helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 		for (const cat of categories) {
 			players.sort((a, b) => b.stats[cat.statProp] - a.stats[cat.statProp]);
@@ -438,6 +474,7 @@ const updateLeaders = async (
 					leader.stat = leader.stats[cat.statProp];
 					leader.abbrev = leader.stats.abbrev;
 					leader.tid = leader.stats.tid;
+					// @ts-ignore
 					delete leader.stats;
 					leader.userTeam = userAbbrev === leader.abbrev;
 					cat.data.push(leader);
@@ -449,8 +486,10 @@ const updateLeaders = async (
 				}
 			}
 
+			// @ts-ignore
 			delete cat.minStats;
 
+			// @ts-ignore
 			delete cat.minValue;
 		}
 

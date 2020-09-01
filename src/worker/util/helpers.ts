@@ -4,6 +4,7 @@ import { idb } from "../db";
 import g from "./g";
 import random from "./random";
 import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
+import defaultGameAttributes from "./defaultGameAttributes";
 
 const augmentSeries = async (
 	series: {
@@ -23,7 +24,7 @@ const augmentSeries = async (
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
-			tied: g.get("ties") ? 0 : undefined,
+			tied: g.get("ties", season) ? 0 : undefined,
 		};
 
 		const teamSeason = teamSeasons.find(ts => ts.tid === obj.tid);
@@ -36,7 +37,7 @@ const augmentSeries = async (
 			obj.regularSeason.won = teamSeason.won;
 			obj.regularSeason.lost = teamSeason.lost;
 
-			if (g.get("ties")) {
+			if (g.get("ties", season)) {
 				obj.regularSeason.tied = teamSeason.tied;
 			}
 		}
@@ -62,7 +63,8 @@ const calcWinp = ({
 	tied: any;
 	won: number;
 }) => {
-	if (!g.get("ties") || typeof tied !== "number") {
+	// Some old leagues had NaN for tied...
+	if (typeof tied !== "number" || Number.isNaN(tied)) {
 		if (won + lost > 0) {
 			return won / (won + lost);
 		}
@@ -319,6 +321,16 @@ const sigmoid = (x: number, a: number, b: number): number => {
 	return 1 / (1 + Math.exp(-(a * (x - b))));
 };
 
+const quarterLengthFactor = () => {
+	if (g.get("quarterLength") <= 0) {
+		return 1;
+	}
+
+	return Math.sqrt(
+		g.get("quarterLength") / defaultGameAttributes.quarterLength,
+	);
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -334,6 +346,7 @@ const helpers = {
 	orderByWinp,
 	overtimeCounter,
 	pickDesc,
+	quarterLengthFactor,
 	resetG,
 	sigmoid,
 };

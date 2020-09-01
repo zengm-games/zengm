@@ -23,6 +23,7 @@ import {
 	trade,
 	expansionDraft,
 	realRosters,
+	freeAgents,
 } from "../core";
 import { connectMeta, idb, iterate } from "../db";
 import {
@@ -44,6 +45,7 @@ import {
 	recomputeLocalUITeamOvrs,
 	updatePhase,
 	logEvent,
+	getNewLeagueLid,
 } from "../util";
 import views from "../views";
 import type {
@@ -397,6 +399,11 @@ const createLeague = async ({
 		}
 	}
 
+	if (importLid === undefined) {
+		// Figure out what lid should be rather than using auto increment primary key, because when deleting leagues the primary key does not reset which can look weird
+		importLid = await getNewLeagueLid();
+	}
+
 	const lid = await league.create({
 		name,
 		tid,
@@ -408,27 +415,7 @@ const createLeague = async ({
 
 	// Handle repeatSeason after creating league, so we know what random players were created
 	if (repeatSeason && g.get("repeatSeason") === undefined) {
-		const players: Exclude<
-			GameAttributesLeague["repeatSeason"],
-			undefined
-		>["players"] = {};
-		for (const p of await idb.cache.players.getAll()) {
-			if (p.tid >= PLAYER.FREE_AGENT) {
-				players[p.pid] = {
-					tid: p.tid,
-					contract: helpers.deepCopy(p.contract),
-					injury: helpers.deepCopy(p.injury),
-				};
-			}
-		}
-
-		await league.setGameAttributes({
-			numSeasonsFutureDraftPicks: 0,
-			repeatSeason: {
-				startingSeason: g.get("season"),
-				players,
-			},
-		});
+		await league.initRepeatSeason();
 	}
 
 	return lid;
@@ -770,7 +757,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
-			stats.push(...table.stats);
+			stats.push(...table.stats.filter(stat => !stat.endsWith("Max")));
 		}
 	}
 
@@ -1003,10 +990,23 @@ const exportLeague = async (stores: string[], compressed: boolean) => {
 };
 
 const exportDraftClass = async (season: number) => {
+	const onlyUndrafted =
+		season > g.get("season") ||
+		(season === g.get("season") &&
+			g.get("phase") >= 0 &&
+			g.get("phase") <= PHASE.DRAFT_LOTTERY);
+
 	const data = await league.exportLeague(["players"], {
 		meta: false,
 		filter: {
-			players: p => p.draft.year === season,
+			players: p => {
+				// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
+				if (onlyUndrafted && p.tid !== PLAYER.UNDRAFTED) {
+					return false;
+				}
+
+				return p.draft.year === season;
+			},
 		},
 	});
 	data.startingSeason = season;
@@ -1216,7 +1216,15 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
 				);
 				playersAll = playersAll.filter(p => offer.pids.includes(p.pid));
 				const players = await idb.getCopies.playersPlus(playersAll, {
-					attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+					attrs: [
+						"pid",
+						"name",
+						"age",
+						"contract",
+						"injury",
+						"watch",
+						"jerseyNumber",
+					],
 					ratings: ["ovr", "pot", "skills", "pos"],
 					stats,
 					season: g.get("season"),
@@ -1333,18 +1341,21 @@ const handleUploadedDraftClass = async (
 		[[draftYear], [draftYear, Infinity]],
 	);
 
+	const toRemove = [];
 	for (const p of oldPlayers) {
 		if (p.tid === PLAYER.UNDRAFTED) {
-			await idb.cache.players.delete(p.pid);
+			toRemove.push(p.pid);
 		}
 	}
+	await player.remove(toRemove);
 
 	// Add new players to database
 	for (const p of players) {
 		// Adjust age and seasons
 		p.ratings[0].season = draftYear;
 
-		if (!p.draft) {
+		const noDraftProperty = !p.draft;
+		if (noDraftProperty) {
 			// For college basketball imports
 			p.draft = {
 				round: 0,
@@ -1356,9 +1367,13 @@ const handleUploadedDraftClass = async (
 				ovr: 0,
 				skills: [],
 			};
-			p.born.year = draftYear - 19;
-		} else if (uploadedSeason !== undefined) {
+		}
+
+		if (uploadedSeason !== undefined) {
 			p.born.year = draftYear - (uploadedSeason - p.born.year);
+		} else if (noDraftProperty) {
+			// Hopefully never happens
+			p.born.year = draftYear - 19;
 		}
 
 		// Make sure player object is fully defined
@@ -1372,8 +1387,11 @@ const handleUploadedDraftClass = async (
 		p2.tid = PLAYER.UNDRAFTED;
 
 		if (p2.hasOwnProperty("pid")) {
+			// @ts-ignore
 			delete p2.pid;
 		}
+
+		await player.updateValues(p);
 
 		await idb.cache.players.add(p2);
 	}
@@ -1534,6 +1552,7 @@ const importPlayers = async (
 			scoutingRank,
 			leagueFile.version,
 		);
+		await player.updateValues(p3);
 
 		await idb.cache.players.put(p3);
 	}
@@ -1597,10 +1616,23 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 		p.draft.year > g.get("season") ? p.draft.year : g.get("season");
 	const stats =
 		process.env.SPORT === "basketball"
-			? ["pts", "trb", "ast", "blk", "stl", "tov", "min", "per", "ewa"]
+			? [
+					"pts",
+					"trb",
+					"ast",
+					"blk",
+					"stl",
+					"tov",
+					"min",
+					"per",
+					"ewa",
+					"tsp",
+					"tpar",
+					"ftr",
+			  ]
 			: ["keyStats"];
 	return idb.getCopy.playersPlus(p, {
-		attrs: ["name"],
+		attrs: ["name", "jerseyNumber"],
 		ratings: ["pos", "ovr", "pot", ...RATINGS],
 		stats,
 		season,
@@ -1614,6 +1646,39 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
 // Why does this exist, just to send it back to the UI? So an action in one tab will trigger and update in all tabs!
 const realtimeUpdate = async (updateEvents: UpdateEvents) => {
 	await toUI("realtimeUpdate", [updateEvents]);
+};
+
+const regenerateDraftClass = async (season: number, conditions: Conditions) => {
+	const proceed = await toUI(
+		"confirm",
+		[
+			"This will delete the existing draft class and replace it with a new one filled with randomly generated players. Are you sure you want to do that?",
+			{
+				okText: "Regenerate Draft Class",
+			},
+		],
+		conditions,
+	);
+
+	if (proceed) {
+		// Delete old players from draft class
+		const oldPlayers = await idb.cache.players.indexGetAll(
+			"playersByDraftYearRetiredYear",
+			[[season], [season, Infinity]],
+		);
+
+		const toRemove = [];
+		for (const p of oldPlayers) {
+			if (p.tid === PLAYER.UNDRAFTED) {
+				toRemove.push(p.pid);
+			}
+		}
+		await player.remove(toRemove);
+
+		// Generate new players
+		await draft.genPlayers(season);
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+	}
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
@@ -1638,6 +1703,12 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 	await player.release(p, justDrafted);
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 	await recomputeLocalUITeamOvrs();
+
+	// Purposely after realtimeUpdate, so the UI update happens without waiting for this to complete
+	await freeAgents.normalizeContractDemands({
+		type: "dummyExpiringContracts",
+		pids: [p.pid],
+	});
 };
 
 const removeLastTeam = async (): Promise<void> => {
@@ -1744,6 +1815,11 @@ const removeLeague = async (lid: number) => {
 	await toUI("realtimeUpdate", [["leagues"]]);
 };
 
+const removePlayer = async (pid: number) => {
+	await player.remove([pid]);
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
 const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	if (!t) {
@@ -1797,6 +1873,107 @@ const resetPlayingTime = async (tids: number[] | undefined) => {
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
+const retiredJerseyNumberDelete = async (tid: number, i: number) => {
+	const t = await idb.cache.teams.get(tid);
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	if (t.retiredJerseyNumbers) {
+		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter((row, j) => i !== j);
+		await idb.cache.teams.put(t);
+		await toUI("realtimeUpdate", [["retiredJerseys"]]);
+	}
+};
+
+const retiredJerseyNumberUpsert = async (
+	tid: number,
+	i: number | undefined,
+	info: {
+		number: string;
+		seasonRetired: number;
+		seasonTeamInfo: number;
+		pid: number | undefined;
+		text: string;
+	},
+) => {
+	const t = await idb.cache.teams.get(tid);
+	if (!t) {
+		throw new Error("Invalid tid");
+	}
+
+	if (Number.isNaN(info.seasonRetired)) {
+		throw new Error("Invalid value for seasonRetired");
+	}
+	if (Number.isNaN(info.seasonTeamInfo)) {
+		throw new Error("Invalid value for seasonTeamInfo");
+	}
+	if (Number.isNaN(info.pid)) {
+		throw new Error("Invalid value for player ID number");
+	}
+
+	// Insert or update?
+	if (i === undefined) {
+		if (!t.retiredJerseyNumbers) {
+			t.retiredJerseyNumbers = [];
+		}
+
+		t.retiredJerseyNumbers.push({
+			...info,
+		});
+	} else {
+		if (!t.retiredJerseyNumbers) {
+			throw new Error("Cannot edit when retiredJerseyNumbers is undefined");
+		}
+
+		if (i >= t.retiredJerseyNumbers.length) {
+			throw new Error("Invalid index");
+		}
+
+		t.retiredJerseyNumbers[i] = {
+			...info,
+		};
+	}
+
+	let playerText = "";
+	if (info.pid !== undefined) {
+		const p = await idb.getCopy.players({ pid: info.pid });
+		if (p) {
+			playerText = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a>'s `;
+		}
+	}
+
+	logEvent({
+		type: "retiredJersey",
+		text: `The ${t.region} ${t.name} retired ${playerText}#${info.number}.`,
+		showNotification: false,
+		pids: info.pid ? [info.pid] : [],
+		tids: [t.tid],
+		score: 20,
+	});
+
+	await idb.cache.teams.put(t);
+
+	// Handle players who have the retired jersey number
+	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+	for (const p of players) {
+		if (p.stats.length === 0) {
+			continue;
+		}
+
+		const jerseyNumber = helpers.getJerseyNumber(p);
+		if (jerseyNumber === info.number) {
+			p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
+				p,
+			);
+		}
+	}
+
+	await toUI("realtimeUpdate", [["retiredJerseys", "playerMovement"]]);
 };
 
 const runBefore = async (
@@ -2123,6 +2300,40 @@ const updateGameAttributes = async (gameAttributes: GameAttributesLeague) => {
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };
 
+const updateGameAttributesGodMode = async (
+	gameAttributes: Exclude<GameAttributesLeague, "repeatSeason"> & {
+		repeatSeason?: GameAttributesLeague["repeatSeason"] | boolean;
+	},
+) => {
+	const repeatSeason = gameAttributes.repeatSeason;
+	let initRepeatSeason = false;
+	if (typeof repeatSeason === "boolean") {
+		const prevRepeatSeason = g.get("repeatSeason");
+		if (prevRepeatSeason && !repeatSeason) {
+			// Disable Groundhog Day
+			gameAttributes.repeatSeason = undefined;
+		} else if (!prevRepeatSeason && repeatSeason) {
+			// Enable Groundhog Day
+			if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {
+				throw new Error("Groundhog Day can only be enabled before the draft");
+			}
+			initRepeatSeason = true;
+
+			// Will be enabled later, don't pass through a boolean
+			delete gameAttributes.repeatSeason;
+		} else {
+			// No change, don't pass through a boolean
+			delete gameAttributes.repeatSeason;
+		}
+	}
+
+	await league.setGameAttributes(gameAttributes);
+	if (initRepeatSeason) {
+		await league.initRepeatSeason();
+	}
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
 const updateLeague = async (lid: number, obj: any) => {
 	const l = await idb.meta.get("leagues", lid);
 	if (!l) {
@@ -2431,6 +2642,25 @@ const upsertCustomizedPlayer = async (
 	updatedRatingsOrAge: boolean,
 	conditions: Conditions,
 ): Promise<number> => {
+	if (p.tid >= 0) {
+		const t = await idb.cache.teams.get(p.tid);
+		if (!t) {
+			throw new Error("Invalid tid");
+		}
+
+		if (t.retiredJerseyNumbers) {
+			const retiredJerseyNumbers = t.retiredJerseyNumbers.map(
+				row => row.number,
+			);
+			const jerseyNumber = helpers.getJerseyNumber(p);
+			if (jerseyNumber && retiredJerseyNumbers.includes(jerseyNumber)) {
+				throw new Error(
+					`Jersey number "${jerseyNumber}" is retired by the ${t.region} ${t.name}. Either un-retire it at Team > History or pick a new number.`,
+				);
+			}
+		}
+	}
+
 	const r = p.ratings.length - 1;
 
 	// Fix draft and ratings season
@@ -2445,13 +2675,13 @@ const upsertCustomizedPlayer = async (
 		}
 
 		p.ratings[r].season = p.draft.year;
-	} else {
+	} else if (p.tid !== PLAYER.RETIRED) {
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
 		p.ratings[r].season = g.get("season");
 	}
 
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
-	if (originalTid === PLAYER.RETIRED) {
+	if (originalTid === PLAYER.RETIRED && p.tid !== PLAYER.RETIRED) {
 		if (g.get("season") - p.ratings[r].season > 0) {
 			player.addRatingsRow(p, 15);
 		}
@@ -2463,7 +2693,7 @@ const upsertCustomizedPlayer = async (
 		p.tid === PLAYER.RETIRED &&
 		originalTid !== PLAYER.RETIRED
 	) {
-		player.retire(p as Player, conditions, {
+		await player.retire(p as Player, conditions, {
 			forceHofNotification: true,
 		});
 	}
@@ -2473,7 +2703,7 @@ const upsertCustomizedPlayer = async (
 
 	if (updatedRatingsOrAge || !p.hasOwnProperty("pid")) {
 		await player.develop(p, 0);
-		player.updateValues(p);
+		await player.updateValues(p);
 	}
 
 	// In case that develop call reset position, re-apply it here
@@ -2494,7 +2724,7 @@ const upsertCustomizedPlayer = async (
 	// Add regular season or playoffs stat row, if necessary
 	if (p.tid >= 0 && p.tid !== originalTid && g.get("phase") <= PHASE.PLAYOFFS) {
 		// If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-		player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+		await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 	}
 
 	if (p.tid >= 0 && p.tid !== originalTid) {
@@ -2532,9 +2762,26 @@ const upsertCustomizedPlayer = async (
 	// Save to database, adding pid if it doesn't already exist
 	await idb.cache.players.put(p);
 
-	// @ts-ignore
-	if (typeof p.pid !== "number") {
-		throw new Error("Unknown pid");
+	// If jersey number is the same as a teammate, edit the teammate's
+	const jerseyNumber = helpers.getJerseyNumber(p);
+	if (jerseyNumber) {
+		const teammates = (
+			await idb.cache.players.indexGetAll("playersByTid", p.tid)
+		).filter(p2 => p2.pid !== p.pid);
+		for (const teammate of teammates) {
+			const jerseyNumber2 = helpers.getJerseyNumber(teammate);
+			if (jerseyNumber === jerseyNumber2) {
+				const newJerseyNumber = await player.genJerseyNumber(teammate);
+
+				if (teammate.stats.length > 0) {
+					teammate.stats[
+						teammate.stats.length - 1
+					].jerseyNumber = newJerseyNumber;
+				} else {
+					teammate.jerseyNumber = newJerseyNumber;
+				}
+			}
+		}
 	}
 
 	// @ts-ignore
@@ -2628,11 +2875,15 @@ export default {
 	proposeTrade,
 	ratingsStatsPopoverInfo,
 	realtimeUpdate,
+	regenerateDraftClass,
 	releasePlayer,
 	removeLeague,
+	removePlayer,
 	reorderDepthDrag,
 	reorderRosterDrag,
 	resetPlayingTime,
+	retiredJerseyNumberDelete,
+	retiredJerseyNumberUpsert,
 	runBefore,
 	setLocal,
 	sign,
@@ -2648,6 +2899,7 @@ export default {
 	updateBudget,
 	updateConfsDivs,
 	updateGameAttributes,
+	updateGameAttributesGodMode,
 	updateLeague,
 	updateMultiTeamMode,
 	updateOptions,

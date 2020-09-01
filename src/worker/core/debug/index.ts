@@ -4,13 +4,10 @@ import avgRatingDists from "./avgRatingDists";
 import compositeRatingDists from "./compositeRatingDists";
 import countPositions from "./countPositions";
 import countSkills from "./countSkills";
-import leagueAverageContract from "./leagueAverageContract";
 import maxRatingDists from "./maxRatingDists";
 import percentageDraftPicksSigned from "./percentageDraftPicksSigned";
-import recomputeFreeAgentContracts from "./recomputeFreeAgentContracts";
 import recomputeHallOfFame from "./recomputeHallOfFame";
 import recomputeOvr from "./recomputeOvr";
-import valueDiff from "./valueDiff";
 
 export default {
 	averageCareerArc,
@@ -18,11 +15,8 @@ export default {
 	compositeRatingDists,
 	countPositions,
 	countSkills,
-	leagueAverageContract,
 	maxRatingDists,
 	percentageDraftPicksSigned,
-	recomputeFreeAgentContracts,
 	recomputeHallOfFame,
 	recomputeOvr,
-	valueDiff,
 };

@@ -1,3 +1,4 @@
+import addDaysToSchedule from "./addDaysToSchedule";
 import doAwards from "./doAwards";
 import genPlayoffSeries from "./genPlayoffSeries";
 import getAwardCandidates from "./getAwardCandidates";
@@ -9,6 +10,7 @@ import setSchedule from "./setSchedule";
 import updateOwnerMood from "./updateOwnerMood";
 
 export default {
+	addDaysToSchedule,
 	doAwards,
 	genPlayoffSeries,
 	getAwardCandidates,

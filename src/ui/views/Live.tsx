@@ -15,9 +15,19 @@ const Live = ({ games, userTid }: View<"live">) => {
 	return (
 		<>
 			<p>
-				To view a live play-by-play summary of a game, select one of tomorrow's
+				To view a live play-by-play summary of a game, select one of today's
 				games below.
 			</p>
+
+			<div
+				className="alert alert-info d-inline-block"
+				style={{ maxWidth: 770 }}
+			>
+				<b>August 13, 2020 - new feature!</b> Now when you watch a live game,
+				only that one game is simulated. When it's over, today's other games
+				will still be waiting here. That means you can view the play-by-play of
+				multiple games in the same day.
+			</div>
 
 			{gameSimInProgress ? (
 				<p className="text-danger">

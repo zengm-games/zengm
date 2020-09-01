@@ -9,16 +9,10 @@ const baseStyle = {
 	height: 30,
 };
 
-const PlayerNameLabels = ({
-	children,
-	injury,
-	pid,
-	pos,
-	skills,
-	style,
-	watch,
-}: {
+const PlayerNameLabels = (props: {
 	children: ReactNode;
+	disableWatchToggle?: boolean;
+	jerseyNumber?: string;
 	injury?: PlayerInjury;
 	pos?: string;
 	pid?: number;
@@ -28,6 +22,18 @@ const PlayerNameLabels = ({
 	};
 	watch?: boolean;
 }) => {
+	const {
+		children,
+		disableWatchToggle,
+		injury,
+		jerseyNumber,
+		pid,
+		pos,
+		skills,
+		style,
+		watch,
+	} = props;
+
 	let injuryIcon: React.ReactNode = null;
 
 	if (injury !== undefined) {
@@ -53,6 +59,9 @@ const PlayerNameLabels = ({
 
 	return (
 		<span style={style ? { ...baseStyle, ...style } : baseStyle}>
+			{props.hasOwnProperty("jerseyNumber") ? (
+				<span className="text-muted jersey-number-name">{jerseyNumber}</span>
+			) : null}
 			{typeof pos === "string" ? `${pos} ` : null}
 			{pid !== undefined ? (
 				<a href={helpers.leagueUrl(["player", pid])}>{children}</a>
@@ -62,7 +71,11 @@ const PlayerNameLabels = ({
 			{injuryIcon}
 			<SkillsBlock skills={skills} />
 			{pid !== undefined ? (
-				<RatingsStatsPopover pid={pid} watch={watch} />
+				<RatingsStatsPopover
+					disableWatchToggle={disableWatchToggle}
+					pid={pid}
+					watch={watch}
+				/>
 			) : null}
 		</span>
 	);
@@ -74,6 +87,7 @@ PlayerNameLabels.propTypes = {
 		gamesRemaining: PropTypes.number.isRequired,
 		type: PropTypes.string.isRequired,
 	}),
+	jerseyNumber: PropTypes.string,
 	pos: PropTypes.string,
 	pid: PropTypes.number,
 	skills: PropTypes.arrayOf(PropTypes.string),

@@ -1,6 +1,7 @@
 import stats from "./stats";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { Player, PlayerWithoutKey } from "../../../common/types";
+import genJerseyNumber from "./genJerseyNumber";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -16,6 +17,11 @@ import type { Player, PlayerWithoutKey } from "../../../common/types";
 const addStatsRow = async (
 	p: Player | PlayerWithoutKey,
 	playoffs: boolean = false,
+	jerseyNumbers: {
+		ignoreJerseyNumberConflicts?: boolean;
+		team?: string[];
+		retired?: string[];
+	} = {},
 ) => {
 	const statsRow: any = {
 		playoffs,
@@ -32,6 +38,11 @@ const addStatsRow = async (
 		statsRow[key] = 0;
 	}
 
+	for (const key of stats.max) {
+		// Will be set to [max, gid] later. Needs to be null rather than undefined so it persists in JSON, otherwise playersPlus career totals will not know about these fields.
+		statsRow[key] = null;
+	}
+
 	p.statsTids.push(p.tid);
 	p.statsTids = Array.from(new Set(p.statsTids)); // Calculate yearsWithTeam
 
@@ -46,6 +57,17 @@ const addStatsRow = async (
 		) {
 			statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;
 		}
+	}
+
+	if (jerseyNumbers.ignoreJerseyNumberConflicts) {
+		// Just carry over the previous jersey number. There is another pass of genJerseyNumber in league/create.ts that will clean up any conflicts. Don't want to call genJerseyNumber here because it'll generate random numbers for players with no jersey number, which could conflict with manually specified jersey numbers for other players, and the wrong one could be keypt in league/create.ts.
+		statsRow.jerseyNumber = helpers.getJerseyNumber(p);
+	} else {
+		statsRow.jerseyNumber = await genJerseyNumber(
+			p,
+			jerseyNumbers.team,
+			jerseyNumbers.retired,
+		);
 	}
 
 	p.stats.push(statsRow);

@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
@@ -20,7 +20,6 @@ const updateDraftLottery = async (
 	result: DraftLotteryResultArray | undefined;
 	season: number;
 	showExpansionTeamMessage: boolean;
-	ties: boolean;
 	type: "completed" | "projected" | "readyToRun";
 	userTid: number;
 } | void> => {
@@ -70,7 +69,6 @@ const updateDraftLottery = async (
 					result,
 					season,
 					showExpansionTeamMessage,
-					ties: g.get("ties"),
 					type: "completed",
 					userTid: g.get("userTid"),
 				};
@@ -83,20 +81,18 @@ const updateDraftLottery = async (
 					result: undefined,
 					season,
 					showExpansionTeamMessage,
-					ties: g.get("ties"),
 					type: "completed",
 					userTid: g.get("userTid"),
 				};
 			}
 		}
 
-		if (g.get("draftType") === "random" || g.get("draftType") === "noLottery") {
+		if (NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))) {
 			return {
 				draftType: g.get("draftType"),
 				result: undefined,
 				season,
 				showExpansionTeamMessage,
-				ties: g.get("ties"),
 				type: "projected",
 				userTid: g.get("userTid"),
 			};
@@ -136,7 +132,6 @@ const updateDraftLottery = async (
 			result: draftLotteryResult ? draftLotteryResult.result : undefined,
 			season: draftLotteryResult ? draftLotteryResult.season : season,
 			showExpansionTeamMessage,
-			ties: g.get("ties"),
 			type,
 			userTid: g.get("userTid"),
 		};

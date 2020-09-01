@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 import { allStar, draft } from "../core";
 import g from "./g";
 import helpers from "./helpers";
@@ -11,6 +11,10 @@ const updatePlayMenu = async () => {
 	if (typeof it === "function") {
 		return;
 	}
+
+	const autoPlaySeasonsLeft = local.autoPlayUntil
+		? local.autoPlayUntil.season - g.get("season")
+		: 0;
 
 	const allOptions: {
 		[key: string]: {
@@ -123,12 +127,18 @@ const updatePlayMenu = async () => {
 			url: helpers.leagueUrl(["new_team"]),
 			label: "Try again with a new team",
 		},
+		newTeamGood: {
+			url: helpers.leagueUrl(["new_team"]),
+			label: "Other teams want to hire you!",
+		},
 		seasonSummary: {
 			url: helpers.leagueUrl(["history"]),
 			label: "View season summary",
 		},
 		stopAuto: {
-			label: `Stop auto play (${local.autoPlaySeasons} seasons left)`,
+			label: `Stop auto play (${autoPlaySeasonsLeft} season${
+				autoPlaySeasonsLeft === 1 ? "" : "s"
+			} left)`,
 		},
 		expansionDraft: {
 			url: helpers.leagueUrl(["expansion_draft"]),
@@ -201,19 +211,26 @@ const updatePlayMenu = async () => {
 		}
 
 		// If playoff contains no rounds with more than one game, then untilEndOfRound is not needed
-		const maxGames = Math.max(...g.get("numGamesPlayoffSeries"));
+		const maxGames = Math.max(...g.get("numGamesPlayoffSeries", "current"));
 		if (maxGames <= 1) {
 			keys = keys.filter(key => key !== "untilEndOfRound");
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		if (g.get("repeatSeason")) {
 			keys = ["untilPreseason"];
+		}
+		if (g.get("draftType") === "freeAgents") {
+			// Special case in actions.ts will call the draft phases before this automatically
+			keys = ["untilResignPlayers"];
 		} else {
 			// Offseason - pre draft
-			keys =
-				g.get("draftType") !== "noLottery" && g.get("draftType") !== "random"
-					? ["viewDraftLottery", "untilDraft"]
-					: ["untilDraft"];
+			keys = !NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))
+				? ["viewDraftLottery", "untilDraft"]
+				: ["untilDraft"];
+		}
+
+		if (g.get("otherTeamsWantToHire")) {
+			keys.push("newTeamGood");
 		}
 	} else if (g.get("phase") === PHASE.AFTER_DRAFT) {
 		// Offseason - post draft
@@ -258,7 +275,7 @@ const updatePlayMenu = async () => {
 		keys = ["newTeam", "newLeague"];
 	}
 
-	if (local.autoPlaySeasons > 0) {
+	if (local.autoPlayUntil) {
 		keys = ["stopAuto"];
 	}
 

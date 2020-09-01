@@ -957,12 +957,14 @@ const NewLeague = (props: View<"newLeague">) => {
 			// Need to update team and difficulty dropdowns?
 			if (newLeagueFile.hasOwnProperty("gameAttributes")) {
 				for (const ga of newLeagueFile.gameAttributes) {
-					if (
-						ga.key === "userTid" &&
-						typeof ga.value === "number" &&
-						!Number.isNaN(ga.value)
-					) {
-						dispatch({ type: "setTid", tid: ga.value });
+					if (ga.key === "userTid") {
+						let tid = ga.value;
+						if (Array.isArray(tid) && tid.length > 0) {
+							tid = tid[tid.length - 1].value;
+						}
+						if (typeof tid === "number" && !Number.isNaN(tid)) {
+							dispatch({ type: "setTid", tid });
+						}
 					} else if (
 						ga.key === "difficulty" &&
 						typeof ga.value === "number" &&
@@ -1135,11 +1137,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				<label className="form-check-label" htmlFor="new-league-repeatSeason">
 					Groundhog Day
 					<br />
-					<span className="text-muted">
-						Next season will start immediately after the playoffs, with the same
-						exact players and rosters as the previous season. No player
-						development, no persistent transactions.
-					</span>
+					<span className="text-muted">{helpTexts.repeatSeason}</span>
 				</label>
 			</div>
 		</div>,
@@ -1351,6 +1349,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						</div>
 						{!state.equalizeRegions ? (
 							<PopText
+								className="text-muted"
 								tid={state.tid}
 								teams={displayedTeams}
 								numActiveTeams={displayedTeams.length}

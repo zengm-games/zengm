@@ -1,5 +1,5 @@
 import { localActions } from "./local";
-import type { Context } from "bbgm-router";
+import type { Context } from "../router";
 
 type InitArgs = {
 	Component: any;

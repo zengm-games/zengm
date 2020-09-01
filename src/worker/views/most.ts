@@ -1,5 +1,10 @@
 import { idb, iterate } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import {
+	defaultGameAttributes,
+	g,
+	helpers,
+	processPlayersHallOfFame,
+} from "../util";
 import type {
 	UpdateEvents,
 	Player,
@@ -71,6 +76,8 @@ export const getMostXPlayers = async ({
 			"born",
 			"diedYear",
 			"most",
+			"watch",
+			"jerseyNumber",
 		],
 		ratings: ["ovr", "pos"],
 		stats: ["season", "abbrev", "tid", ...stats],
@@ -145,7 +152,7 @@ const tidAndSeasonToAbbrev = async (most: Most) => {
 };
 
 const updatePlayers = async (
-	{ type }: ViewInput<"most">,
+	{ arg, type }: ViewInput<"most">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
@@ -360,7 +367,12 @@ const updatePlayers = async (
 				}
 
 				if (
-					min > g.get("numGames") * g.get("quarterLength") * 4 &&
+					min >
+						g.get("numGames") *
+							(g.get("quarterLength") > 0
+								? g.get("quarterLength")
+								: defaultGameAttributes.quarterLength) *
+							4 &&
 					(p.retiredYear === Infinity || p.ratings.length > 3)
 				) {
 					return { value: -valueTimesMin / min };
@@ -540,6 +552,45 @@ const updatePlayers = async (
 					extra: { type: injuryType, season: injurySeason },
 				};
 			};
+		} else if (type === "jersey_number") {
+			if (arg === undefined) {
+				throw new Error("Jersey number must be specified in the URL");
+			}
+
+			title = `Best Players With Jersey Number ${arg}`;
+			description = `These are the best players who spent the majority of their career wearing #${arg}. <a href="${helpers.leagueUrl(
+				["frivolities", "jersey_numbers"],
+			)}">Other jersey numbers.</a>`;
+
+			filter = p => helpers.getJerseyNumber(p, "mostCommon") === arg;
+			getValue = playerValue;
+		} else if (type === "country") {
+			if (arg === undefined) {
+				throw new Error("Country must be specified in the URL");
+			}
+
+			title = `Best Players From ${arg}`;
+			description = `These are the best players from the country ${arg}. <a href="${helpers.leagueUrl(
+				["frivolities", "countries"],
+			)}">Other countries.</a>`;
+
+			filter = p => helpers.getCountry(p) === arg;
+			getValue = playerValue;
+		} else if (type === "college") {
+			if (arg === undefined) {
+				throw new Error("College must be specified in the URL");
+			}
+
+			title = `Best Players From ${arg}`;
+			description = `These are the best players from the college ${arg}. <a href="${helpers.leagueUrl(
+				["frivolities", "colleges"],
+			)}">Other colleges.</a>`;
+
+			filter = p => {
+				const college = p.college && p.college !== "" ? p.college : "None";
+				return college === arg;
+			};
+			getValue = playerValue;
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

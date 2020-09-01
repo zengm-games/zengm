@@ -8,12 +8,10 @@ const viewedSeasonSummary = async () => {
 };
 
 const updateHistory = async (
-	inputs: ViewInput<"history">,
+	{ season }: ViewInput<"history">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	const { season } = inputs;
-
 	if (season === g.get("season") && local.unviewedSeasonSummary) {
 		viewedSeasonSummary();
 	}

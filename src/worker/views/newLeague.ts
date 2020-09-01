@@ -1,5 +1,6 @@
 import { idb } from "../db";
 import type { ViewInput, RealTeamInfo } from "../../common/types";
+import { getNewLeagueLid } from "../util";
 
 const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 	if (lid !== undefined) {
@@ -16,19 +17,8 @@ const updateNewLeague = async ({ lid, type }: ViewInput<"newLeague">) => {
 		}
 	}
 
-	let newLid: number | undefined;
-
 	// Find most recent league and add one to the LID
-	const cursor = await idb.meta
-		.transaction("leagues")
-		.store.openCursor(undefined, "prev");
-	if (cursor) {
-		newLid = cursor.value.lid + 1;
-	}
-
-	if (newLid === undefined) {
-		newLid = 1;
-	}
+	const newLid = await getNewLeagueLid();
 
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
 		| RealTeamInfo

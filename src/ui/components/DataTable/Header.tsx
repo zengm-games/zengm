@@ -143,8 +143,8 @@ const Header = ({
 						title,
 						width,
 					} = cols[colIndex];
-					let className;
 
+					let className;
 					if (sortSequence && sortSequence.length === 0) {
 						className = null;
 					} else {
@@ -161,13 +161,13 @@ const Header = ({
 
 					return (
 						<th
-							className={classNames(colClassNames)}
+							className={classNames(colClassNames, className)}
 							key={colIndex}
 							onClick={event => handleColClick(event, colIndex)}
 							title={desc}
 							style={{ width }}
 						>
-							{className ? <div className={className}>{title}</div> : title}
+							{title}
 						</th>
 					);
 				})}

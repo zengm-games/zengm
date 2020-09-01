@@ -163,12 +163,20 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
 	}
 };
 
+const addToTradingBlock = async (pid: number, conditions: Conditions) => {
+	toUI(
+		"realtimeUpdate",
+		[[], helpers.leagueUrl(["trading_block"]), { pid }],
+		conditions,
+	);
+};
+
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;
 
 	for (const series of playoffSeries.series[playoffSeries.currentRound]) {
 		const num = series.away
-			? g.get("numGamesPlayoffSeries")[playoffSeries.currentRound] -
+			? g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound] -
 			  series.home.won -
 			  series.away.won
 			: 0;
@@ -192,10 +200,10 @@ const getNumDaysPlayoffs = async () => {
 
 	for (
 		let i = playoffSeries.currentRound + 1;
-		i < g.get("numGamesPlayoffSeries").length;
+		i < g.get("numGamesPlayoffSeries", "current").length;
 		i++
 	) {
-		numDaysFutureRounds += g.get("numGamesPlayoffSeries")[i];
+		numDaysFutureRounds += g.get("numGamesPlayoffSeries", "current")[i];
 	}
 
 	return numDaysFutureRounds + getNumDaysThisRound(playoffSeries);
@@ -258,14 +266,17 @@ const playStop = async () => {
 	await updatePlayMenu();
 };
 
-const runDraft = async (onlyOne: boolean, conditions: Conditions) => {
+const runDraft = async (
+	type: "onePick" | "untilYourNextPick" | "untilEnd",
+	conditions: Conditions,
+) => {
 	if (
 		g.get("phase") === PHASE.DRAFT ||
 		g.get("phase") === PHASE.FANTASY_DRAFT ||
 		g.get("phase") === PHASE.EXPANSION_DRAFT
 	) {
 		await updateStatus("Draft in progress...");
-		await draft.runPicks(onlyOne, conditions);
+		await draft.runPicks(type, conditions);
 		const draftPicks = await draft.getOrder();
 
 		if (draftPicks.length === 0) {
@@ -326,15 +337,22 @@ const playMenu = {
 		}
 	},
 	onePick: async (conditions: Conditions) => {
-		await runDraft(true, conditions);
+		await runDraft("onePick", conditions);
 	},
 	untilYourNextPick: async (conditions: Conditions) => {
-		await runDraft(false, conditions);
+		await runDraft("untilYourNextPick", conditions);
 	},
 	untilEnd: async (conditions: Conditions) => {
-		await runDraft(false, conditions);
+		await runDraft("untilEnd", conditions);
 	},
 	untilResignPlayers: async (conditions: Conditions) => {
+		if (
+			g.get("draftType") === "freeAgents" &&
+			g.get("phase") === PHASE.DRAFT_LOTTERY
+		) {
+			await phase.newPhase(PHASE.DRAFT, conditions);
+			await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
+		}
 		if (g.get("phase") === PHASE.AFTER_DRAFT) {
 			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
 		}
@@ -380,7 +398,7 @@ const playMenu = {
 		}
 	},
 	stopAuto: async () => {
-		local.autoPlaySeasons = 0;
+		local.autoPlayUntil = undefined;
 		updatePlayMenu();
 		await playStop();
 	},
@@ -402,19 +420,11 @@ const toolsMenu = {
 		await phase.newPhase(PHASE.PRESEASON, conditions);
 	},
 	resetDb: async (conditions: Conditions) => {
-		const response = await toUI(
-			"confirm",
-			[
-				"Are you sure you want to delete ALL data in ALL of your leagues?",
-				{
-					okText: "Delete All Leagues",
-				},
-			],
-			conditions,
-		);
+		const response = await toUI("confirmDeleteAllLeagues", [], conditions);
+		console.log("response", response);
 
 		if (response) {
-			await reset();
+			await reset(response);
 		}
 
 		return response;
@@ -428,6 +438,7 @@ const simToGame = async (gid: number, conditions: Conditions) => {
 };
 
 export default {
+	addToTradingBlock,
 	liveGame,
 	negotiate,
 	playMenu,

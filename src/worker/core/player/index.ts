@@ -4,6 +4,7 @@ import addStatsRow from "./addStatsRow";
 import addToFreeAgents from "./addToFreeAgents";
 import augmentPartialPlayer from "./augmentPartialPlayer";
 import bonus from "./bonus";
+import checkJerseyNumberRetirement from "./checkJerseyNumberRetirement";
 import checkStatisticalFeat from "./checkStatisticalFeat";
 import compositeRating from "./compositeRating";
 import contractSeasonsRemaining from "./contractSeasonsRemaining";
@@ -13,6 +14,7 @@ import genBaseMood from "./genBaseMood";
 import genBaseMoods from "./genBaseMoods";
 import genContract from "./genContract";
 import genFuzz from "./genFuzz";
+import genJerseyNumber from "./genJerseyNumber";
 import genRandomFreeAgent from "./genRandomFreeAgent";
 import genWeight from "./genWeight";
 import generate from "./generate";
@@ -26,6 +28,7 @@ import moodColorText from "./moodColorText";
 import ovr from "./ovr";
 import pos from "./pos";
 import release from "./release";
+import remove from "./remove";
 import retire from "./retire";
 import setContract from "./setContract";
 import sign from "./sign";
@@ -33,6 +36,7 @@ import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import stats from "./stats";
 import updateValues from "./updateValues";
+import value from "./value";
 
 export default {
 	addRatingsRow,
@@ -41,6 +45,7 @@ export default {
 	addToFreeAgents,
 	augmentPartialPlayer,
 	bonus,
+	checkJerseyNumberRetirement,
 	checkStatisticalFeat,
 	compositeRating,
 	contractSeasonsRemaining,
@@ -50,6 +55,7 @@ export default {
 	genBaseMoods,
 	genContract,
 	genFuzz,
+	genJerseyNumber,
 	genRandomFreeAgent,
 	genWeight,
 	generate,
@@ -63,6 +69,7 @@ export default {
 	ovr,
 	pos,
 	release,
+	remove,
 	retire,
 	sign,
 	setContract,
@@ -70,4 +77,5 @@ export default {
 	skills,
 	stats,
 	updateValues,
+	value,
 };

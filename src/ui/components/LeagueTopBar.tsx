@@ -106,7 +106,7 @@ const LeagueTopBar = React.memo(() => {
 					{games2.map(game => (
 						<motion.div
 							key={game.gid}
-							positionTransition={transition}
+							layout
 							initial={{ x: 105 }}
 							animate={{ x: 0 }}
 							// Need to specify exit, otherwise AnimatePresence makes divs stay around forever

@@ -8,13 +8,22 @@ import {
 	SkillsBlock,
 	WatchBlock,
 	Weight,
+	JerseyNumber,
 } from "../../components";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
 import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../../util";
+import {
+	confirm,
+	getCols,
+	helpers,
+	toWorker,
+	realtimeUpdate,
+} from "../../util";
 import type { View, Player } from "../../../common/types";
 import { PLAYER } from "../../../common";
+import classNames from "classnames";
+import { formatStatGameHigh } from "../PlayerStats";
 
 const Relatives = ({
 	pid,
@@ -87,7 +96,9 @@ const StatsTable = ({
 		"Year",
 		"Team",
 		"Age",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map(
+			stat => `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
+		),
 	);
 
 	if (superCols) {
@@ -114,7 +125,7 @@ const StatsTable = ({
 					"Career",
 					null,
 					null,
-					...stats.map(stat => helpers.roundStat(careerStats[stat], stat)),
+					...stats.map(stat => formatStatGameHigh(careerStats, stat)),
 				]}
 				hideAllControls
 				name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
@@ -136,7 +147,7 @@ const StatsTable = ({
 								{ps.abbrev}
 							</a>,
 							ps.age,
-							...stats.map(stat => helpers.roundStat(ps[stat], stat)),
+							...stats.map(stat => formatStatGameHigh(ps, stat)),
 						],
 					};
 				})}
@@ -267,12 +278,14 @@ const Player2 = ({
 	freeAgent,
 	godMode,
 	injured,
+	jerseyNumberInfos,
 	player,
 	ratings,
 	retired,
 	showContract,
 	showRatings,
 	showTradeFor,
+	showTradingBlock,
 	statTables,
 	statSummary,
 	teamColors,
@@ -360,101 +373,185 @@ const Player2 = ({
 	) {
 		teamURL = helpers.leagueUrl(["draft_scouting"]);
 	}
+
+	const college =
+		player.college && player.college !== "" ? player.college : "None";
+
 	return (
 		<>
 			<div className="row mb-3">
 				<div className="col-sm-6">
-					<div
-						className="player-picture"
-						style={{
-							marginTop: player.imgURL ? 0 : -20,
-						}}
-					>
-						<PlayerPicture
-							face={player.face}
-							imgURL={player.imgURL}
-							teamColors={teamColors}
-						/>
+					<div className="d-flex">
+						<div
+							className="player-picture"
+							style={{
+								marginTop: player.imgURL ? 0 : -20,
+							}}
+						>
+							<PlayerPicture
+								face={player.face}
+								imgURL={player.imgURL}
+								teamColors={teamColors}
+							/>
+						</div>
+						<div>
+							<strong>
+								{player.ratings[player.ratings.length - 1].pos},{" "}
+								{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
+								{player.jerseyNumber ? (
+									<>
+										,{" "}
+										<a
+											href={helpers.leagueUrl([
+												"frivolities",
+												"most",
+												"jersey_number",
+												player.jerseyNumber,
+											])}
+										>
+											#{player.jerseyNumber}
+										</a>
+									</>
+								) : null}
+							</strong>
+							<br />
+							Height: {height}
+							<br />
+							Weight: {weight}
+							<br />
+							Born: {player.born.year} -{" "}
+							<a
+								href={helpers.leagueUrl([
+									"frivolities",
+									"most",
+									"country",
+									window.encodeURIComponent(helpers.getCountry(player)),
+								])}
+							>
+								{player.born.loc}
+							</a>
+							<br />
+							{typeof player.diedYear !== "number" ? (
+								<>
+									Age: {player.age}
+									<br />
+								</>
+							) : (
+								<>
+									Died: {player.diedYear}
+									<br />
+								</>
+							)}
+							<Relatives pid={player.pid} relatives={player.relatives} />
+							{draftInfo}
+							College:{" "}
+							<a
+								href={helpers.leagueUrl([
+									"frivolities",
+									"most",
+									"college",
+									window.encodeURIComponent(college),
+								])}
+							>
+								{college}
+							</a>
+							<br />
+							{contractInfo}
+							{statusInfo}
+						</div>
 					</div>
-					<div className="float-left">
-						<strong>
-							{player.ratings[player.ratings.length - 1].pos},{" "}
-							{teamURL ? <a href={teamURL}>{teamName}</a> : teamName}
-						</strong>
-						<br />
-						Height: {height}
-						<br />
-						Weight: {weight}
-						<br />
-						Born: {player.born.year} - {player.born.loc}
-						<br />
-						{typeof player.diedYear !== "number" ? (
-							<>
-								Age: {player.age}
-								<br />
-							</>
-						) : (
-							<>
-								Died: {player.diedYear}
-								<br />
-							</>
-						)}
-						<Relatives pid={player.pid} relatives={player.relatives} />
-						{draftInfo}
-						College:{" "}
-						{player.college && player.college !== "" ? player.college : "None"}
-						<br />
-						{contractInfo}
+
+					<div className="btn-group">
+						<a
+							href={helpers.leagueUrl(["customize_player", player.pid])}
+							className={classNames(
+								"btn",
+								godMode ? "btn-god-mode" : "btn-light-bordered",
+							)}
+						>
+							Edit Player
+						</a>
 						{godMode ? (
-							<>
-								<a
-									href={helpers.leagueUrl(["customize_player", player.pid])}
-									className="god-mode god-mode-text"
-								>
-									Edit Player
-								</a>
-								<br />
-							</>
+							<button
+								className="btn btn-god-mode"
+								onClick={async () => {
+									const proceed = await confirm(
+										`Are you sure you want to delete ${player.name}?`,
+										{
+											okText: "Delete Player",
+										},
+									);
+									if (proceed) {
+										await toWorker("main", "removePlayer", player.pid);
+
+										realtimeUpdate([], helpers.leagueUrl([]));
+									}
+								}}
+							>
+								Delete Player
+							</button>
 						) : null}
-						{statusInfo}
+						{showTradeFor || showTradingBlock ? (
+							<button
+								className="btn btn-light-bordered"
+								disabled={player.untradable}
+								onClick={() => {
+									if (showTradeFor) {
+										toWorker("actions", "tradeFor", { pid: player.pid });
+									} else {
+										toWorker("actions", "addToTradingBlock", player.pid);
+									}
+								}}
+								title={player.untradableMsg}
+							>
+								{showTradeFor ? (
+									"Trade For"
+								) : (
+									<>
+										<span className="d-none d-md-inline">Add To </span>Trading
+										Block
+									</>
+								)}
+							</button>
+						) : null}
+						{freeAgent ? (
+							<button
+								className="btn btn-light-bordered"
+								disabled={!willingToSign}
+								onClick={() => toWorker("actions", "negotiate", player.pid)}
+								title={
+									willingToSign
+										? undefined
+										: `${player.name} refuses to negotiate with you`
+								}
+							>
+								Negotiate Contract
+							</button>
+						) : null}
 					</div>
 				</div>
 
-				<div className="col-sm-6 text-nowrap">
+				<div className="col-sm-6 mt-3 mt-sm-0 text-nowrap">
 					{!retired && showRatings ? (
 						<RatingsOverview ratings={player.ratings} />
+					) : null}
+					{jerseyNumberInfos.length > 0 ? (
+						<div
+							className={classNames("d-flex flex-wrap", {
+								"mt-2": !retired && showRatings,
+							})}
+							style={{
+								gap: "0.5em",
+							}}
+						>
+							{jerseyNumberInfos.map((info, i) => (
+								<JerseyNumber key={i} {...info} />
+							))}
+						</div>
 					) : null}
 				</div>
 			</div>
 
-			{showTradeFor ? (
-				<span title={player.untradableMsg}>
-					<button
-						className="btn btn-light-bordered mb-3"
-						disabled={player.untradable}
-						onClick={() => toWorker("actions", "tradeFor", { pid: player.pid })}
-					>
-						Trade For
-					</button>
-				</span>
-			) : null}
-			{freeAgent ? (
-				<span
-					title={
-						willingToSign
-							? undefined
-							: `${player.name} refuses to negotiate with you`
-					}
-				>
-					<button
-						className="btn btn-light-bordered mb-3"
-						disabled={!willingToSign}
-						onClick={() => toWorker("actions", "negotiate", player.pid)}
-					>
-						Negotiate Contract
-					</button>
-				</span>
-			) : null}
 			{player.careerStats.gp > 0 ? (
 				<>
 					{statSummary.map(({ name, onlyShowIf, stats, superCols }) => (

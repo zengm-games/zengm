@@ -10,11 +10,13 @@ import type { View } from "../../../common/types";
 
 const DraftClass = ({
 	challengeNoRatings,
+	godMode,
 	offset,
 	players,
 	season,
 }: {
 	challengeNoRatings: boolean;
+	godMode: boolean;
 	offset: number;
 	players: View<"draftScouting">["seasons"][0]["players"];
 	season: number;
@@ -69,6 +71,21 @@ const DraftClass = ({
 				>
 					Export
 				</button>
+				{godMode ? (
+					<button
+						className="btn btn-god-mode btn-xs"
+						disabled={status === "exporting" || status === "loading"}
+						onClick={async () => {
+							setStatus("loading");
+
+							await toWorker("main", "regenerateDraftClass", season);
+
+							setStatus(undefined);
+						}}
+					>
+						Regenerate
+					</button>
+				) : null}
 			</div>
 
 			{showImportForm ? (

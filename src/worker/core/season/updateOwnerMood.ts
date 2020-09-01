@@ -36,15 +36,20 @@ const updateOwnerMood = async (): Promise<
 		return;
 	}
 
-	const expectedProfit = (15 * g.get("salaryCap")) / 90000;
+	const salaryCapFactor = g.get("salaryCap") / 90000;
 
-	const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
+	const expectedProfit = 15 * salaryCapFactor;
+
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 	const deltas = {
 		wins:
 			(0.25 * (t.seasonAttrs.won - g.get("numGames") / 2)) /
 			(g.get("numGames") / 2),
 		playoffs: 0,
-		money: g.get("budget") ? (t.seasonAttrs.profit - expectedProfit) / 100 : 0,
+		money: g.get("budget")
+			? (t.seasonAttrs.profit - expectedProfit) /
+			  (100 * Math.sqrt(salaryCapFactor))
+			: 0,
 	};
 
 	if (t.seasonAttrs.playoffRoundsWon < 0) {

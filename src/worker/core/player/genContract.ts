@@ -16,7 +16,6 @@ import type {
  */
 const genContract = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
-	randomizeExp: boolean = false,
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
 ): PlayerContract => {
@@ -41,31 +40,6 @@ const genContract = (
 		amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
 	}
 
-	// Expiration
-	// Players with high potentials want short contracts
-	const potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
-	let years = 5 - potentialDifference;
-
-	if (years < 2) {
-		years = 2;
-	}
-
-	// Bad players can only ask for short deals
-	if (ratings.pot < 40) {
-		years = 1;
-	} else if (ratings.pot < 50) {
-		years = 2;
-	} else if (ratings.pot < 60) {
-		years = 3;
-	}
-
-	// Randomize expiration for contracts generated at beginning of new game
-	if (randomizeExp) {
-		years = random.randInt(1, years);
-	}
-
-	const expiration = g.get("season") + years - 1;
-
 	if (!noLimit) {
 		if (amount < g.get("minContract") * 1.1) {
 			amount = g.get("minContract");
@@ -81,7 +55,7 @@ const genContract = (
 
 	return {
 		amount,
-		exp: expiration,
+		exp: g.get("season"),
 	};
 };
 

@@ -40,7 +40,7 @@ class SettingsCache {
 			return;
 		}
 
-		localStorage.removeItem(`${key}:${this.name}`);
+		safeLocalStorage.removeItem(`${key}:${this.name}`);
 	}
 }
 

@@ -35,7 +35,8 @@ const newPhaseBeforeDraft = async (
 	// Give award to all players on the championship team
 	const t = teams.find(
 		t2 =>
-			t2.seasonAttrs.playoffRoundsWon === g.get("numGamesPlayoffSeries").length,
+			t2.seasonAttrs.playoffRoundsWon ===
+			g.get("numGamesPlayoffSeries", "current").length,
 	);
 
 	if (t !== undefined) {
@@ -72,20 +73,19 @@ const newPhaseBeforeDraft = async (
 					}
 					retiredPlayersByTeam[p.tid].push(p);
 				}
-				player.retire(p, conditions);
+				await player.retire(p, conditions);
 				update = true;
 			}
 
 			// Update "free agent years" counter and retire players who have been free agents for more than one years
 			if (p.tid === PLAYER.FREE_AGENT) {
 				if (p.yearsFreeAgent >= 1) {
-					player.retire(p, conditions);
+					await player.retire(p, conditions);
 					update = true;
 				} else {
 					p.yearsFreeAgent += 1;
 				}
 
-				p.contract.exp += 1;
 				update = true;
 			} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
 				p.yearsFreeAgent = 0;

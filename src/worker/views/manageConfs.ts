@@ -1,8 +1,8 @@
 import { g } from "../util";
 
 const updateConfs = async () => {
-	const confs = g.get("confs", Infinity);
-	const divs = g.get("divs", Infinity);
+	const confs = g.get("confs");
+	const divs = g.get("divs");
 
 	return {
 		confs,

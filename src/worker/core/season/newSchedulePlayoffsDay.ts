@@ -1,6 +1,7 @@
 import setSchedule from "./setSchedule";
 import { idb } from "../../db";
 import { g, helpers, local, lock } from "../../util";
+import type { PlayoffSeriesTeam } from "../../../common/types";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -21,6 +22,13 @@ const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
 	return num % 2 === 0;
 };
 
+const seriesIsNotOver = (
+	home: PlayoffSeriesTeam,
+	away: PlayoffSeriesTeam | undefined,
+	numGamesToWin: number,
+): away is PlayoffSeriesTeam =>
+	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
+
 /**
  * Create a single day's schedule for an in-progress playoffs.
  *
@@ -36,18 +44,33 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
 	const numGamesToWin = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries")[rnd],
+		g.get("numGamesPlayoffSeries", "current")[rnd],
 	);
 
+	let minGamesPlayedThisRound = Infinity;
+	for (const { away, home } of series[rnd]) {
+		if (seriesIsNotOver(home, away, numGamesToWin)) {
+			const numGames = home.won + away.won;
+			if (numGames < minGamesPlayedThisRound) {
+				minGamesPlayedThisRound = numGames;
+			}
+		}
+	}
+
 	// Try to schedule games if there are active series
-	for (let i = 0; i < series[rnd].length; i++) {
-		const { away, home } = series[rnd][i];
+	for (const { away, home } of series[rnd]) {
+		if (seriesIsNotOver(home, away, numGamesToWin)) {
+			const numGames = home.won + away.won;
 
-		if (away && home.won < numGamesToWin && away.won < numGamesToWin) {
+			// Because live game sim is an individual game now, not a whole day, need to check if some series are ahead of others and therefore should not get a game today.
+			if (numGames > minGamesPlayedThisRound) {
+				continue;
+			}
+
 			// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-			const gameNum = home.won + away.won;
-
-			if (betterSeedHome(g.get("numGamesPlayoffSeries")[rnd], gameNum)) {
+			if (
+				betterSeedHome(g.get("numGamesPlayoffSeries", "current")[rnd], numGames)
+			) {
 				tids.push([home.tid, away.tid]);
 			} else {
 				tids.push([away.tid, home.tid]);
@@ -62,7 +85,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	// If playoffs are over, update winner and go to next phase
-	if (rnd === g.get("numGamesPlayoffSeries").length - 1) {
+	if (rnd === g.get("numGamesPlayoffSeries", "current").length - 1) {
 		const { away, home } = series[rnd][0];
 		let key;
 
@@ -79,15 +102,19 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		if (!teamSeason) {
 			throw new Error("No team season");
 		}
-		teamSeason.playoffRoundsWon = g.get("numGamesPlayoffSeries").length;
+		teamSeason.playoffRoundsWon = g.get(
+			"numGamesPlayoffSeries",
+			"current",
+		).length;
 		teamSeason.hype += 0.05;
 
 		if (teamSeason.hype > 1) {
 			teamSeason.hype = 1;
 		}
 
-		await idb.cache.teamSeasons.put(teamSeason); // Playoffs are over! Return true!
+		await idb.cache.teamSeasons.put(teamSeason);
 
+		// Playoffs are over! Return true!
 		return true;
 	}
 
@@ -129,10 +156,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			team1.seed < team2.seed ||
 			(team1.seed === team2.seed && team1.winp >= team2.winp); // Special case for the finals, do it by winp not seed
 
-		const playoffsByConference = g.get("confs").length === 2;
+		const playoffsByConference = g.get("confs", "current").length === 2;
 
 		if (playoffsByConference) {
-			const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 			// Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
 			if (numPlayoffRounds === playoffSeries.currentRound + 2) {
@@ -161,8 +188,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	playoffSeries.currentRound += 1;
-	await idb.cache.playoffSeries.put(playoffSeries); // Update hype for winning a series
+	await idb.cache.playoffSeries.put(playoffSeries);
 
+	// Update hype for winning a series
 	await Promise.all(
 		tidsWon.map(async tid => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(

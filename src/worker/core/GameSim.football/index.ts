@@ -161,8 +161,8 @@ class GameSim {
 			// this.checkGameTyingShot();
 			this.simOvertime();
 
-			// Only one overtime period in regular season, but as many as needed in the playoffs
-			if (g.get("phase") !== PHASE.PLAYOFFS) {
+			// More than one overtime only if no ties are allowed or if it's the playoffs
+			if (g.get("phase") !== PHASE.PLAYOFFS && g.get("ties", "current")) {
 				break;
 			}
 		}
@@ -175,12 +175,16 @@ class GameSim {
 		// Delete stuff that isn't needed before returning
 		for (let t = 0; t < 2; t++) {
 			delete this.team[t].compositeRating;
+			// @ts-ignore
 			delete this.team[t].pace;
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
+				// @ts-ignore
 				delete this.team[t].player[p].age;
+				// @ts-ignore
 				delete this.team[t].player[p].valueNoPot;
 				delete this.team[t].player[p].compositeRating;
+				// @ts-ignore
 				delete this.team[t].player[p].ptModifier;
 				delete this.team[t].player[p].stat.benchTime;
 				delete this.team[t].player[p].stat.courtTime;
@@ -233,6 +237,10 @@ class GameSim {
 
 	simOvertime() {
 		this.clock = Math.ceil((g.get("quarterLength") * 2) / 3); // 10 minutes by default, but scales
+
+		if (this.clock === 0) {
+			this.clock = 10;
+		}
 
 		this.overtime = true;
 		this.overtimes += 1;
@@ -306,8 +314,10 @@ class GameSim {
 		// Arbitrary rescale - .4-.6 -> .25-.75
 		defRushing = helpers.bound((defRushing - 0.4) * (0.5 / 0.2) + 0.25, 0, 1);
 
-		const passingTendency = helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
-		const rushingTendency = helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
+		const passingTendency =
+			1.1 * helpers.bound(offPassing - 0.25 * defPassing, 0, 1);
+		const rushingTendency =
+			0.9 * helpers.bound(offRushing - 0.25 * defRushing, 0, 1);
 
 		let passOdds = 0.57;
 		if (passingTendency > 0 || rushingTendency > 0) {
@@ -637,14 +647,14 @@ class GameSim {
 
 		if (this.isClockRunning) {
 			if (this.hurryUp()) {
-				dtClockRunning = random.randInt(5, 12) / 60;
+				dtClockRunning = random.randInt(5, 13) / 60;
 
 				// Leave some time for a FG attempt!
 				if (this.clock - dt - dtClockRunning < 0) {
 					dtClockRunning = random.randInt(0, 4) / 60;
 				}
 			} else {
-				dtClockRunning = random.randInt(35, 60) / 60;
+				dtClockRunning = random.randInt(37, 62) / 60;
 			}
 		}
 
@@ -1528,7 +1538,7 @@ class GameSim {
 	}
 
 	doSack(qb: PlayerGameSim) {
-		const p = this.pickPlayer(this.d, "passRushing", undefined, 2.5);
+		const p = this.pickPlayer(this.d, "passRushing", undefined, 5);
 		const ydsRaw = random.randInt(-1, -15);
 		const yds = this.boundedYds(ydsRaw);
 		const { safetyOrTouchback } = this.advanceYds(yds, {
@@ -1592,7 +1602,7 @@ class GameSim {
 				this.team[this.o].compositeRating.passBlocking /
 					this.team[this.d].compositeRating.passRushing,
 			);
-		const p = 0.02 + 0.54 * factor ** 1.25;
+		const p = 0.13 + 0.4 * factor ** 1.25;
 		return helpers.bound(p, 0, 0.95);
 	}
 
@@ -1766,9 +1776,9 @@ class GameSim {
 
 		const rbs = this.playersOnField[this.o].RB || [];
 
-		if (rand < 0.025 || rbs.length === 0) {
+		if (rand < 0.5 || rbs.length === 0) {
 			positions.push("QB");
-		} else if (rand < 0.1 || rbs.length === 0) {
+		} else if (rand < 0.6 || rbs.length === 0) {
 			positions.push("WR");
 		}
 
@@ -2176,6 +2186,7 @@ class GameSim {
 						clock: this.clock,
 						t,
 						names: [p.name],
+						injuredPID: p.id,
 					});
 				}
 			}

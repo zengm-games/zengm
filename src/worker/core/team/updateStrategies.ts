@@ -30,8 +30,9 @@ const updateStrategies = async () => {
 			[g.get("season") - 1, t.tid],
 		);
 		const won = teamSeason.won;
-		const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0; // Young stars
+		const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0;
 
+		// Young stars
 		const playersAll = await idb.cache.players.indexGetAll(
 			"playersByTid",
 			t.tid,

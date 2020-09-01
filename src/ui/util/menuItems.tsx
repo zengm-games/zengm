@@ -43,7 +43,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			top: (
 				<>
 					<span className="glyphicon glyphicon-home" />
-					<span className="d-inline d-sm-none ml-2">League Dashboard</span>
+					<span className="sr-only">League Dashboard</span>
 				</>
 			),
 		},
@@ -139,6 +139,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 				path: ["team_history"],
 				text: "History",
+			},
+			{
+				type: "link",
+				active: pageID => pageID === "gmHistory",
+				league: true,
+				path: ["gm_history"],
+				text: "GM History",
 			},
 		],
 	},
@@ -450,15 +457,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				league: true,
 				nonLeague: true,
 				path: `https://${process.env.SPORT}-gm.com/manual/`,
-				text: "Overview",
-			},
-			{
-				type: "link",
-				active: pageID => pageID === "changes",
-				league: true,
-				nonLeague: true,
-				path: "/changes",
-				text: "Changes",
+				text: "Manual",
 			},
 			{
 				type: "link",
@@ -473,6 +472,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				nonLeague: true,
 				path: `https://${process.env.SPORT}-gm.com/manual/debugging/`,
 				text: "Debugging",
+			},
+			{
+				type: "link",
+				league: true,
+				nonLeague: true,
+				path: "http://basketball-gm.com/changelog/",
+				text: "Changelog",
 			},
 		],
 	},

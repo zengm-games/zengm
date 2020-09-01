@@ -23,8 +23,11 @@ const justDrafted = (
 	season: number,
 ) => {
 	return (
-		(p.draft.year === season && phase >= PHASE.DRAFT) ||
-		(p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON && phase >= 0)
+		p.draft.round > 0 &&
+		((p.draft.year === season && phase >= PHASE.DRAFT) ||
+			(p.draft.year === season - 1 &&
+				phase < PHASE.REGULAR_SEASON &&
+				phase >= 0))
 	);
 };
 
@@ -76,8 +79,10 @@ const Roster = ({
 	players,
 	salaryCap,
 	season,
+	showSpectatorWarning,
 	showRelease,
 	showTradeFor,
+	showTradingBlock,
 	stats,
 	t,
 	tid,
@@ -141,8 +146,12 @@ const Roster = ({
 					History
 				</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(["transactions", `${abbrev}_${tid}`])}>
-					Transactions
+				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
+					Schedule
+				</a>{" "}
+				|{" "}
+				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
+					News Feed
 				</a>
 			</p>
 
@@ -164,6 +173,12 @@ const Roster = ({
 				t={t}
 				tid={tid}
 			/>
+
+			{showSpectatorWarning ? (
+				<p className="alert alert-danger d-inline-block">
+					The AI will handle roster management in spectator mode.
+				</p>
+			) : null}
 
 			<div className="clearfix" />
 
@@ -254,7 +269,7 @@ const Roster = ({
 								</HelpPopover>
 							</th>
 						) : null}
-						{showTradeFor ? <th>Trade For</th> : null}
+						{showTradeFor || showTradingBlock ? <th>Trade</th> : null}
 						<th title="How Player Was Acquired">Acquired</th>
 					</>
 				)}
@@ -266,6 +281,7 @@ const Roster = ({
 								<PlayerNameLabels
 									pid={p.pid}
 									injury={p.injury}
+									jerseyNumber={p.stats.jerseyNumber}
 									skills={p.ratings.skills}
 									watch={p.watch}
 								>
@@ -325,16 +341,20 @@ const Roster = ({
 									</button>
 								</td>
 							) : null}
-							{showTradeFor ? (
+							{showTradeFor || showTradingBlock ? (
 								<td title={p.untradableMsg}>
 									<button
 										className="btn btn-light-bordered btn-xs"
 										disabled={p.untradable}
-										onClick={() =>
-											toWorker("actions", "tradeFor", { pid: p.pid })
-										}
+										onClick={() => {
+											if (showTradeFor) {
+												toWorker("actions", "tradeFor", { pid: p.pid });
+											} else {
+												toWorker("actions", "addToTradingBlock", p.pid);
+											}
+										}}
 									>
-										Trade For
+										{showTradeFor ? "Trade For" : "Trade Away"}
 									</button>
 								</td>
 							) : null}

@@ -15,7 +15,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 4]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 4]);
 		starters = findStarters([
 			"PG",
 			"SG",
@@ -28,7 +28,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 4]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 4]);
 		starters = findStarters([
 			"F",
 			"SG",
@@ -41,7 +41,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 4]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 4]);
 		starters = findStarters([
 			"F",
 			"SG",
@@ -54,7 +54,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 4]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 4]);
 	});
 
 	test("put two Gs in starting lineup", () => {
@@ -70,7 +70,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 5]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 5]);
 		starters = findStarters([
 			"F",
 			"PF",
@@ -83,7 +83,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 5]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 5]);
 		starters = findStarters([
 			"F",
 			"PF",
@@ -95,7 +95,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 8]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 8]);
 		starters = findStarters([
 			"F",
 			"PF",
@@ -108,7 +108,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PG",
 			"G",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 8, 9]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 8, 9]);
 	});
 
 	test("put two Fs (or one F and one C) in starting lineup", () => {
@@ -124,7 +124,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 6]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 6]);
 		starters = findStarters([
 			"PG",
 			"SG",
@@ -137,7 +137,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 6, 7]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 6, 7]);
 		starters = findStarters([
 			"PG",
 			"SG",
@@ -150,7 +150,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 4, 6]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 4, 6]);
 	});
 
 	test("never put two pure Cs in starting lineup", () => {
@@ -166,7 +166,7 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 6]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 6]);
 		starters = findStarters([
 			"PG",
 			"SG",
@@ -179,6 +179,6 @@ describe("worker/core/team/rosterAutoSort.basketball/findStarters", () => {
 			"PF",
 			"PG",
 		]);
-		assert.deepEqual(starters, [0, 1, 2, 3, 4]);
+		assert.deepStrictEqual(starters, [0, 1, 2, 3, 4]);
 	});
 });

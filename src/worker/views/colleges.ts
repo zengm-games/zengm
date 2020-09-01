@@ -1,8 +1,6 @@
 import { idb, iterate } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import { g, helpers, processPlayersHallOfFame } from "../util";
 import type { UpdateEvents, Player } from "../../common/types";
-import { isAmerican } from "../util/achievements.basketball";
-import { PHASE, PLAYER } from "../../common";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -20,32 +18,20 @@ const valueStatNames =
 	process.env.SPORT === "basketball" ? ["ows", "dws"] : ["av"];
 
 const reducer = (
-	type: "college" | "country",
+	type: "college" | "country" | "jerseyNumbers",
 	infos: { [key: string]: InfoTemp | undefined },
 	p: Player,
 ) => {
-	// Ignore future draft prospects
-	if (
-		(p.tid === PLAYER.UNDRAFTED && g.get("phase") !== PHASE.FANTASY_DRAFT) ||
-		p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
-	) {
-		return;
-	}
-
 	let name;
 	if (type === "college") {
 		name = p.college && p.college !== "" ? p.college : "None";
-	} else {
-		name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
-
-		if (isAmerican(name)) {
-			name = "USA";
-		} else {
-			const parts = name.split(", ");
-			if (parts.length > 1) {
-				name = parts[parts.length - 1];
-			}
+	} else if (type === "jerseyNumbers") {
+		name = helpers.getJerseyNumber(p, "mostCommon");
+		if (name === undefined) {
+			return;
 		}
+	} else {
+		name = helpers.getCountry(p);
 	}
 
 	if (!infos[name]) {
@@ -93,7 +79,7 @@ const reducer = (
 	}
 };
 
-export const genView = (type: "college" | "country") => {
+export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 	return async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
 		if (updateEvents.includes("firstRun")) {
@@ -116,7 +102,16 @@ export const genView = (type: "college" | "country") => {
 			const infos = await Promise.all(
 				Object.entries(infosTemp).map(async ([name, info]) => {
 					const p = await idb.getCopy.playersPlus(info.best.p, {
-						attrs: ["pid", "name", "draft", "retiredYear", "statsTids", "hof"],
+						attrs: [
+							"pid",
+							"name",
+							"draft",
+							"retiredYear",
+							"statsTids",
+							"hof",
+							"jerseyNumber",
+							"watch",
+						],
 						ratings: ["ovr", "pos"],
 						stats: ["season", "abbrev", "tid", ...stats],
 						fuzz: true,

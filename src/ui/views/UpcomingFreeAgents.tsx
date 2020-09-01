@@ -38,6 +38,7 @@ const UpcomingFreeAgents = ({
 			data: [
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}

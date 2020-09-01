@@ -23,9 +23,9 @@ module.exports = (nodeEnv, blacklistOptions, statsFilename) => {
 
 				// This is so Karma doesn't crash when using the big names file.
 				"player-names":
-					nodeEnv !== "production"
+					nodeEnv === "test"
 						? "./../data/names-test.json"
-						: `./../data/names.${sport}.json`,
+						: `./../data/names.json`,
 
 				"bbgm-polyfills": process.env.LEGACY
 					? "./../common/polyfills.ts"

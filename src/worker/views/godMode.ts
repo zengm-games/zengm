@@ -27,8 +27,8 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			brotherRate: g.get("brotherRate"),
 			sonRate: g.get("sonRate"),
 			hardCap: g.get("hardCap"),
-			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", Infinity), // Always get latest value
-			numPlayoffByes: g.get("numPlayoffByes", Infinity), // Always get latest value
+			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"), // Always get latest value
+			numPlayoffByes: g.get("numPlayoffByes"), // Always get latest value
 			draftType: g.get("draftType"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 			allStarGame: g.get("allStarGame"),
@@ -46,6 +46,13 @@ const updateGodMode = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeNoTrades: g.get("challengeNoTrades"),
 			challengeNoRatings: g.get("challengeNoRatings"),
 			realPlayerDeterminism: g.get("realPlayerDeterminism"),
+			repeatSeason: !!g.get("repeatSeason"),
+			ties: g.get("ties"),
+			spectator: g.get("spectator"),
+			elam: g.get("elam"),
+			elamASG: g.get("elamASG"),
+			elamMinutes: g.get("elamMinutes"),
+			elamPoints: g.get("elamPoints"),
 		};
 	}
 };

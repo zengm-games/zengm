@@ -47,10 +47,13 @@ const ImportPlayers = ({
 			name: "Free Agent",
 		},
 		...orderBy(
-			teamInfoCache.map((t, i) => ({
-				tid: i,
-				name: `${t.region} ${t.name}`,
-			})),
+			teamInfoCache
+				.map((t, i) => ({
+					tid: i,
+					name: `${t.region} ${t.name}`,
+					disabled: t.disabled,
+				}))
+				.filter(t => !t.disabled),
 			["name", "tid"],
 		),
 	];
@@ -172,13 +175,18 @@ const ImportPlayers = ({
 		return {
 			key: i,
 			data: [
-				<input
-					type="checkbox"
-					title="Import player"
-					checked={checked}
-					disabled={disableButtons}
-					onChange={handleChange("checked", i)}
-				/>,
+				{
+					value: (
+						<input
+							type="checkbox"
+							title="Import player"
+							checked={checked}
+							disabled={disableButtons}
+							onChange={handleChange("checked", i)}
+						/>
+					),
+					sortValue: checked ? 1 : 0,
+				},
 				i + 1,
 				{
 					value: (
@@ -362,7 +370,10 @@ const ImportPlayers = ({
 							for (let i = p.stats.length - 1; i--; i >= 0) {
 								const ps = p.stats[i];
 								if (ps.season === p.exportedSeason) {
-									if (ps.tid < teamInfoCache.length) {
+									if (
+										ps.tid < teamInfoCache.length &&
+										!teamInfoCache[ps.tid].disabled
+									) {
 										tid = ps.tid;
 									}
 									break;

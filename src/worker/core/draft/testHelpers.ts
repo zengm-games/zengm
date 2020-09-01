@@ -9,7 +9,7 @@ import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
 const getDraftTids = async () => {
 	await draft.genOrderNBA();
 	const draftPicks = await draft.getOrder();
-	assert.equal(draftPicks.length, 60);
+	assert.strictEqual(draftPicks.length, 60);
 	return draftPicks.map(d => d.originalTid);
 };
 
@@ -20,6 +20,7 @@ const loadTeamSeasons = async () => {
 
 	for (const st of sampleTiebreakers) {
 		const copied = helpers.deepCopy(st);
+		// @ts-ignore
 		delete copied.stats;
 		const { seasons, ...partialT } = copied;
 

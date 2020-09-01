@@ -5,6 +5,10 @@ const straightThrough = [
 	"gs",
 	"per",
 	"ewa",
+	"bpm",
+	"obpm",
+	"dbpm",
+	"vorp",
 	"yearsWithTeam",
 	"astp",
 	"blkp",
@@ -65,10 +69,10 @@ const processStats = (
 			row[stat] = percentage(ps.pts, 2 * (ps.fga + 0.44 * ps.fta));
 			scale = false;
 		} else if (stat === "tpar") {
-			row[stat] = percentage(ps.tpa, ps.fga);
+			row[stat] = percentage(ps.tpa, ps.fga) / 100;
 			scale = false;
 		} else if (stat === "ftr") {
-			row[stat] = percentage(ps.fta, ps.fga);
+			row[stat] = percentage(ps.fta, ps.fga) / 100;
 			scale = false;
 		} else if (stat === "tovp") {
 			row[stat] = percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);
@@ -91,6 +95,12 @@ const processStats = (
 			row[stat] = ps.fg - ps.tp;
 		} else if (stat === "2pa") {
 			row[stat] = ps.fga - ps.tpa;
+		} else if (stat === "jerseyNumber") {
+			row[stat] = ps[stat];
+			scale = false;
+		} else if (stat.endsWith("Max")) {
+			row[stat] = ps[stat];
+			scale = false;
 		} else {
 			row[stat] = ps[stat];
 		}
@@ -108,7 +118,10 @@ const processStats = (
 		}
 
 		// For keepWithNoStats
-		if (row[stat] === undefined || Number.isNaN(row[stat])) {
+		if (
+			(row[stat] === undefined || Number.isNaN(row[stat])) &&
+			stat !== "jerseyNumber"
+		) {
 			row[stat] = 0;
 		}
 	}

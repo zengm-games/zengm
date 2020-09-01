@@ -129,6 +129,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		}
 
 		let tid: number;
+		let jerseyNumber: string | undefined;
 		if (draftProspect) {
 			tid = PLAYER.UNDRAFTED;
 		} else {
@@ -137,6 +138,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 				row => row.slug === slug && row.season === ratings.season,
 			);
 			const abbrev = statsRow ? statsRow.abbrev : ratings.abbrev_if_new_row;
+
+			if (statsRow) {
+				jerseyNumber = statsRow.jerseyNumber;
+			}
+
 			if (legends) {
 				const team = teams.find(t => {
 					if (hasQueens && abbrev === "NOL" && ratings.season < 2003) {
@@ -155,6 +161,14 @@ const getLeague = async (options: GetLeagueOptions) => {
 						tid = t.tid;
 					}
 				}
+			}
+		}
+
+		if (!jerseyNumber) {
+			// Fallback (mostly for draft prospects) - pick first number in database
+			const statsRow2 = basketball.stats.find(row => row.slug === slug);
+			if (statsRow2) {
+				jerseyNumber = statsRow2.jerseyNumber;
 			}
 		}
 
@@ -258,6 +272,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			injury,
 			contract,
 			awards,
+			jerseyNumber,
 			srID: ratings.slug,
 		};
 	};

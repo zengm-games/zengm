@@ -1,7 +1,10 @@
-import { PHASE, helpers } from "../../common";
+import { PHASE } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import type { TeamFiltered } from "../../common/types";
+import { getPlayers, getTopPlayers } from "../core/season/awards";
+import { avScore, makeTeams } from "../core/season/doAwards.football";
+import advStatsSave from "./advStatsSave";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -21,6 +24,15 @@ type Team = TeamFiltered<
 		"rusYds",
 		"rec",
 		"recYds",
+		"fga0",
+		"fga20",
+		"fga30",
+		"fga40",
+		"fga50",
+		"xpa",
+		"pnt",
+		"pntYds",
+		"pntBlk",
 	],
 	number
 >;
@@ -33,7 +45,7 @@ const TCK_CONSTANT = {
 };
 const DEFENSIVE_POSITIONS = ["DL", "LB", "CB", "S"] as const;
 
-// Approximate Value: https://www.pro-football-reference.com/blog/indexd961.html?page_id=8061
+// Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map(t => {
 		const offPts =
@@ -45,8 +57,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		const ptsRus =
 			t.stats.rusYds + t.stats.recYds === 0
 				? 0
-				: (ptsSkill * 0.22 * t.stats.rusYds) /
-				  (t.stats.rusYds + t.stats.recYds);
+				: (ptsSkill *
+						0.22 *
+						(t.stats.rusYds / (t.stats.rusYds + t.stats.recYds))) /
+				  0.37;
 		const ptsPss = (ptsSkill - ptsRus) * 0.26;
 		const ptsRec = (ptsSkill - ptsRus) * 0.74;
 
@@ -57,6 +71,15 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		}
 		const ptsFront7 = (2 / 3) * defPts;
 		const ptsSecondary = (1 / 3) * defPts;
+
+		const kPlayingTime =
+			t.stats.xpa +
+			3 *
+				(t.stats.fga0 +
+					t.stats.fga20 +
+					t.stats.fga30 +
+					t.stats.fga40 +
+					t.stats.fga50);
 
 		return {
 			...t,
@@ -71,6 +94,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				individualPtsOL: 0,
 				individualPtsFront7: 0,
 				individualPtsSecondary: 0,
+				kPlayingTime,
 			},
 		};
 	});
@@ -86,9 +110,27 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
 			const posMultiplier = p.ratings.pos === "OL" ? 1.1 : 0.2;
-			score = p.stats.gp + 5 * p.stats.gs * posMultiplier;
+
+			let allProMultiplier = 1;
+			if (p.ratings.pos === "OL") {
+				if (p.allLeagueTeam === 0) {
+					allProMultiplier = 1.5;
+				} else if (p.allLeagueTeam === 1) {
+					allProMultiplier = 1;
+				}
+			}
+
+			score = p.stats.gp + 5 * p.stats.gs * posMultiplier * allProMultiplier;
+
 			t.stats.individualPtsOL += score;
 		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
+			let allProLevel = 0;
+			if (p.allLeagueTeam === 0) {
+				allProLevel = 1.9;
+			} else if (p.allLeagueTeam === 1) {
+				allProLevel = 1.6;
+			}
+
 			score =
 				p.stats.gp +
 				5 * p.stats.gs +
@@ -98,7 +140,8 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-ignore
-				TCK_CONSTANT[p.ratings.pos] * p.stats.defTck;
+				TCK_CONSTANT[p.ratings.pos] * p.stats.defTck +
+				(allProLevel * 80 * t.stats.gp) / g.get("numGames");
 
 			if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
 				t.stats.individualPtsFront7 += score;
@@ -172,10 +215,57 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		// Returns
 		score += p.stats.prTD + p.stats.krTD;
 
+		// Kicking
+		{
+			// Ignore schedule length normalization
+
+			const kPlayingTime =
+				p.stats.xpa +
+				3 *
+					(p.stats.fga0 +
+						p.stats.fga20 +
+						p.stats.fga30 +
+						p.stats.fga40 +
+						p.stats.fga50);
+			if (kPlayingTime > 0) {
+				let paaTotal = p.stats.xp - p.stats.xpa * league.xpp;
+				paaTotal += 3 * (p.stats.fg0 - p.stats.fga0 * league.fgp0);
+				paaTotal += 3 * (p.stats.fg20 - p.stats.fga20 * league.fgp20);
+				paaTotal += 3 * (p.stats.fg30 - p.stats.fga30 * league.fgp30);
+				paaTotal += 3 * (p.stats.fg40 - p.stats.fga40 * league.fgp40);
+				paaTotal += 3 * (p.stats.fg50 - p.stats.fga50 * league.fgp50);
+
+				const pctTeamPlayingTime = kPlayingTime / t.stats.kPlayingTime;
+				const avgAV = 3.125 * pctTeamPlayingTime;
+				const rawAV = avgAV + paaTotal / 5;
+				score += rawAV;
+			}
+		}
+
+		// Punting
+		{
+			// Ignore schedule length normalization
+			if (
+				p.stats.pnt + p.stats.pntBlk > 0 &&
+				t.stats.pnt + t.stats.pntBlk > 0
+			) {
+				const adjPntYPA =
+					(p.stats.pntYds - 13 * p.stats.pntBlk) /
+					(p.stats.pnt + p.stats.pntBlk);
+				const adjPuntYdsAboveAvg =
+					(p.stats.pnt + p.stats.pntBlk) * (adjPntYPA - league.adjPntYPA);
+				const pctTeamPlayingTime =
+					(p.stats.pnt + p.stats.pntBlk) / (t.stats.pnt + t.stats.pntBlk);
+				const avgAV = 2.1875 * pctTeamPlayingTime;
+				const rawAV = avgAV + adjPuntYdsAboveAvg / 200;
+				score += rawAV;
+			}
+		}
+
 		// Adjust for GP... docs don't say to do this, but it feels right
 		score *= t.stats.gp / g.get("numGames");
 
-		return score;
+		return score === Infinity ? 0 : score;
 	});
 	return {
 		av,
@@ -209,6 +299,21 @@ const advStats = async () => {
 			"defTck",
 			"prTD",
 			"krTD",
+			"fg0",
+			"fg20",
+			"fg30",
+			"fg40",
+			"fg50",
+			"fga0",
+			"fga20",
+			"fga30",
+			"fga40",
+			"fga50",
+			"xp",
+			"xpa",
+			"pnt",
+			"pntYds",
+			"pntBlk",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -230,6 +335,21 @@ const advStats = async () => {
 		"rusYds",
 		"rec",
 		"recYds",
+		"fg0",
+		"fg20",
+		"fg30",
+		"fg40",
+		"fg50",
+		"fga0",
+		"fga20",
+		"fga30",
+		"fga40",
+		"fga50",
+		"xp",
+		"xpa",
+		"pnt",
+		"pntYds",
+		"pntBlk",
 	] as const;
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
@@ -256,29 +376,42 @@ const advStats = async () => {
 		(league.pssYds + 20 * league.pssTD - 45 * league.pssInt) / league.pss;
 	league.rusYdsPerAtt = league.rusYds / league.rus;
 	league.recYdsPerAtt = league.recYds / league.rec;
+	league.fgp0 = league.fg0 / league.fga0;
+	league.fgp20 = league.fg20 / league.fga20;
+	league.fgp30 = league.fg30 / league.fga30;
+	league.fgp40 = league.fg40 / league.fga40;
+	league.fgp50 = league.fg50 / league.fga50;
+	league.xpp = league.xp / league.xpa;
+	league.adjPntYPA =
+		(league.pntYds - 13 * league.pntBlk) / (league.pnt + league.pntBlk);
+
 	const updatedStats = { ...calculateAV(players, teams, league) };
+	await advStatsSave(players, playersRaw, updatedStats);
 
-	// Save to database
-	const keys = helpers.keys(updatedStats);
-	await Promise.all(
-		players.map(async ({ pid }, i) => {
-			const p = playersRaw.find(p2 => p2.pid === pid);
+	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
+	if (PHASE.PLAYOFFS !== g.get("phase")) {
+		const players2 = await getPlayers(g.get("season"));
+		const avPlayers = getTopPlayers(
+			{
+				amount: Infinity,
+				score: avScore,
+			},
+			players2,
+		);
+		const allLeague = makeTeams(avPlayers);
 
-			if (p) {
-				const ps = p.stats[p.stats.length - 1];
-
-				if (ps) {
-					for (const key of keys) {
-						if (!Number.isNaN(updatedStats[key][i])) {
-							ps[key] = updatedStats[key][i];
-						}
-					}
-
-					await idb.cache.players.put(p);
+		for (let i = 0; i < allLeague.length; i++) {
+			for (const p2 of allLeague[i].players) {
+				if (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos)) {
+					const p = players.find(p3 => p3.pid === p2.pid);
+					p.allLeagueTeam = i;
 				}
 			}
-		}),
-	);
+		}
+
+		const updatedStats = { ...calculateAV(players, teams, league) };
+		await advStatsSave(players, playersRaw, updatedStats);
+	}
 };
 
 export default advStats;

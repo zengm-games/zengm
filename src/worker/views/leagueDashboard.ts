@@ -42,7 +42,6 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			won: latestSeason !== undefined ? latestSeason.won : 0,
 			lost: latestSeason !== undefined ? latestSeason.lost : 0,
 			tied: latestSeason !== undefined ? latestSeason.tied : 0,
-			ties: g.get("ties"),
 			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
 			// [millions of dollars]
 			salaryCap: g.get("salaryCap") / 1000,
@@ -192,6 +191,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"rosterOrder",
 				"injury",
 				"watch",
+				"jerseyNumber",
 			],
 			ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
 			stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
@@ -324,7 +324,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						}
 
 						numGamesToWinSeries = helpers.numGamesToWinSeries(
-							g.get("numGamesPlayoffSeries")[rnd],
+							g.get("numGamesPlayoffSeries", "current")[rnd],
 						);
 						break;
 					}
@@ -337,9 +337,9 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			numConfs: g.get("confs").length,
+			numConfs: g.get("confs", "current").length,
 			numGamesToWinSeries,
-			numPlayoffRounds: g.get("numGamesPlayoffSeries").length,
+			numPlayoffRounds: g.get("numGamesPlayoffSeries", "current").length,
 			series: foundSeries,
 			seriesTitle,
 			showPlayoffSeries,
@@ -399,9 +399,10 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		const numPlayoffTeams =
-			(2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes")) /
+			(2 ** g.get("numGamesPlayoffSeries", "current").length -
+				g.get("numPlayoffByes", "current")) /
 			2;
-		const playoffsByConference = g.get("confs").length === 2;
+		const playoffsByConference = g.get("confs", "current").length === 2;
 		return {
 			confTeams,
 			numPlayoffTeams,

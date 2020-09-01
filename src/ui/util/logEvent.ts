@@ -34,8 +34,17 @@ const showEvent = ({
 		extraClass = "notification-danger";
 	}
 
-	// Don't show non-critical notification if we're viewing a live game now
-	if (!window.location.pathname.includes("/live") || persistent) {
+	let showNotification = true;
+
+	// Don't show non-critical notification if we're viewing a live game now. The additional liveGameInProgress check handles the case when an error occurs before the live game starts (such as roster size) and that should still be displayed
+	if (!persistent && window.location.pathname.includes("/live_game")) {
+		const liveGameInProgress = local.getState().liveGameInProgress;
+		if (liveGameInProgress) {
+			showNotification = false;
+		}
+	}
+
+	if (showNotification) {
 		notify(text, title, {
 			extraClass,
 			persistent,
@@ -43,8 +52,8 @@ const showEvent = ({
 
 		// Persistent notifications are very rare and should stop game sim when displayed. Run async for performance
 		if (persistent) {
-			toWorker("main", "getLocal", "autoPlaySeasons").then(autoPlaySeasons => {
-				if (autoPlaySeasons <= 0) {
+			toWorker("main", "getLocal", "autoPlayUntil").then(autoPlayUntil => {
+				if (!autoPlayUntil) {
 					toWorker("main", "lockSet", "stopGameSim", true);
 				}
 			});

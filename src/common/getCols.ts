@@ -6,6 +6,7 @@ type ColTemp = {
 	desc?: string;
 	noSearch?: boolean;
 	sortSequence?: SortOrder[];
+	searchType?: SortType; // If undefined, will be set equal to sortType
 	sortType?: SortType;
 };
 const sportSpecificCols: {
@@ -14,7 +15,7 @@ const sportSpecificCols: {
 	process.env.SPORT === "basketball"
 		? {
 				"rating:fg": {
-					desc: "Two Pointers",
+					desc: "Mid Range",
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 				},
@@ -303,6 +304,26 @@ const sportSpecificCols: {
 				},
 				"stat:ws48": {
 					desc: "Win Shares Per 48 Minutes",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:obpm": {
+					desc: "Offensive Box Plus-Minus",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:dbpm": {
+					desc: "Defensive Box Plus-Minus",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:bpm": {
+					desc: "Box Plus-Minus",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
+				"stat:vorp": {
+					desc: "Value Over Replacement Player",
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 				},
@@ -1180,8 +1201,7 @@ const cols: {
 	[key: string]: ColTemp;
 } = {
 	"": {
-		noSearch: true,
-		sortSequence: [],
+		sortSequence: ["desc", "asc"],
 	},
 	"#": {},
 	"#AS": {
@@ -1195,6 +1215,7 @@ const cols: {
 		sortType: "number",
 	},
 	"# Active": {
+		desc: "Number of Players Still Active",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1286,7 +1307,7 @@ const cols: {
 	Country: {},
 	Created: {
 		desc: "Created Date",
-		noSearch: true,
+		searchType: "string",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -1372,8 +1393,8 @@ const cols: {
 	},
 	"Last Played": {
 		desc: "Last Played Date",
-		noSearch: true,
 		sortSequence: ["desc", "asc"],
+		searchType: "string",
 		sortType: "number",
 	},
 	"Last Season": {
@@ -1384,6 +1405,10 @@ const cols: {
 	"League Champion": {},
 	League: {
 		desc: "League Name",
+	},
+	Links: {
+		noSearch: true,
+		sortSequence: [],
 	},
 	M: {
 		desc: "Made",
@@ -1476,9 +1501,18 @@ const cols: {
 		desc: "Number of Open Roster Spots",
 		sortSequence: ["desc", "asc"],
 	},
+	"Rounds Won": {
+		desc: "Playoff Rounds Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"Runner Up": {},
 	Season: {
 		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Seed: {
+		desc: "Playoff Seed",
 		sortType: "number",
 	},
 	Skills: {},
@@ -1544,6 +1578,11 @@ const cols: {
 	"stat:gs": {
 		desc: "Games Started",
 		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"stat:jerseyNumber": {
+		desc: "Jersey Number",
+		sortSequence: ["asc", "desc"],
 		sortType: "number",
 	},
 	"stat:min": {
@@ -1728,6 +1767,10 @@ const sportSpecificTitleOverrides =
 				"stat:usgp": "USG%",
 				"stat:ws": "WS",
 				"stat:ws48": "WS/48",
+				"stat:obpm": "OBPM",
+				"stat:dbpm": "DBPM",
+				"stat:bpm": "BPM",
+				"stat:vorp": "VORP",
 				"stat:fgAtRim": "M",
 				"stat:fgaAtRim": "A",
 				"stat:fgpAtRim": "%",
@@ -1914,6 +1957,7 @@ const titleOverrides = {
 	"rating:stre": "Str",
 	"stat:gp": "G",
 	"stat:gs": "GS",
+	"stat:jerseyNumber": "#",
 	"stat:min": "MP",
 	"stat:mov": "MOV",
 	"stat:yearsWithTeam": "YWT",

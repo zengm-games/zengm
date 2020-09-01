@@ -71,6 +71,7 @@ const stats = {
 		"pen",
 		"penYds",
 	] as const,
+	max: [] as const,
 };
 
 export default stats;

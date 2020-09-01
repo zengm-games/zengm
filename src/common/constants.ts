@@ -1,12 +1,12 @@
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 
-import type { CompositeWeights, Phase } from "./types";
+import type { CompositeWeights, Phase, DraftType } from "./types";
 
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
-		: "https://account.basketball-gm.com";
+		: `https://account.${process.env.SPORT}-gm.com`;
 
 const DIFFICULTY = {
 	Easy: -0.25,
@@ -15,7 +15,13 @@ const DIFFICULTY = {
 	Insane: 1,
 };
 
-const MAX_SUPPORTED_LEAGUE_VERSION = 37;
+const MAX_SUPPORTED_LEAGUE_VERSION = 38;
+
+const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
+	"freeAgents",
+	"noLottery",
+	"random",
+];
 
 const PHASE: {
 	EXPANSION_DRAFT: Phase;
@@ -137,6 +143,7 @@ export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	MAX_SUPPORTED_LEAGUE_VERSION,
+	NO_LOTTERY_DRAFT_TYPES,
 	PHASE,
 	PLAYER,
 	PHASE_TEXT,

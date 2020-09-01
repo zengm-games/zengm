@@ -111,16 +111,18 @@ const newSchedule = (
 	let tids: [number, number][];
 	let fourDivsPerConf = true;
 
-	for (const conf of g.get("confs")) {
-		if (g.get("divs").filter(div => div.cid === conf.cid).length !== 4) {
+	for (const conf of g.get("confs", "current")) {
+		if (
+			g.get("divs", "current").filter(div => div.cid === conf.cid).length !== 4
+		) {
 			fourDivsPerConf = false;
 			break;
 		}
 	}
 
-	let twoConfsEvenTeams = g.get("confs").length === 2;
+	let twoConfsEvenTeams = g.get("confs", "current").length === 2;
 
-	for (const conf of g.get("confs")) {
+	for (const conf of g.get("confs", "current")) {
 		if (
 			teams.filter(t => t.seasonAttrs.cid === conf.cid).length !==
 			teams.length / 2
@@ -133,7 +135,7 @@ const newSchedule = (
 	if (
 		teams.length === 32 &&
 		g.get("numGames") === 16 &&
-		g.get("confs").length === 2 &&
+		g.get("confs", "current").length === 2 &&
 		fourDivsPerConf &&
 		twoConfsEvenTeams
 	) {

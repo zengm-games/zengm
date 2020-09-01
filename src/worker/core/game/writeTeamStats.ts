@@ -292,7 +292,7 @@ const writeTeamStats = async (results: GameResults) => {
 			} else {
 				teamSeason.streak = -1;
 			}
-		} else if (g.get("ties") && g.get("phase") !== PHASE.PLAYOFFS) {
+		} else if (g.get("ties", "current") && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.tied += 1;
 
 			if (results.team[0].did === results.team[1].did) {

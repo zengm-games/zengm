@@ -87,15 +87,14 @@ const newPhasePlayoffs = async (
 			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 			for (const p of players) {
-				player.addStatsRow(p, true);
+				await player.addStatsRow(p, true);
 				await idb.cache.players.put(p);
 			}
 		}),
 	);
-	await Promise.all([
-		finances.assessPayrollMinLuxury(),
-		season.newSchedulePlayoffsDay(),
-	]);
+
+	await finances.assessPayrollMinLuxury();
+	await season.newSchedulePlayoffsDay();
 
 	// Update clinchedPlayoffs with final values
 	await team.updateClinchedPlayoffs(true, conditions);

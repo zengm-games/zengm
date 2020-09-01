@@ -1,20 +1,42 @@
 import { PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { ViewInput } from "../../common/types";
+import type {
+	ViewInput,
+	MinimalPlayerRatings,
+	Player,
+} from "../../common/types";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
 ) => {
+	let filter;
+	if (inputs.tid >= 0) {
+		filter = (p: Player<MinimalPlayerRatings>) => p.draft.tid === inputs.tid;
+	} else {
+		filter = (p: Player<MinimalPlayerRatings>) =>
+			p.draft.tid === g.get("userTid", p.draft.year + 1);
+	}
+
 	const stats =
 		process.env.SPORT === "basketball"
 			? ["gp", "min", "pts", "trb", "ast", "per", "ewa"]
 			: ["gp", "keyStats", "av"];
 	const playersAll2 = await idb.getCopies.players({
-		filter: p => p.draft.tid === inputs.tid,
+		filter,
 	});
 	const playersAll = await idb.getCopies.playersPlus(playersAll2, {
-		attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
+		attrs: [
+			"tid",
+			"abbrev",
+			"draft",
+			"pid",
+			"name",
+			"age",
+			"hof",
+			"watch",
+			"jerseyNumber",
+		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
 		showNoStats: true,
@@ -32,6 +54,8 @@ const updateDraftTeamHistory = async (
 			currentAbbrev: p.abbrev,
 			currentTid: p.tid,
 			hof: p.hof,
+			watch: p.watch,
+			jerseyNumber: p.jerseyNumber,
 
 			// Ratings
 			currentOvr: p.tid !== PLAYER.RETIRED ? currentPr.ovr : null,

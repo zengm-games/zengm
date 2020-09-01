@@ -24,11 +24,13 @@ const draftTypeDescriptions: Record<DraftType, string> = {
 	noLottery:
 		"No lottery, teams draft in order of their record, with non-playoff teams coming first",
 	random: "Teams draft in random order, including playoff teams",
+	freeAgents:
+		"There is no draft and all, rookies simply become free agents who can be signed by any team",
 };
 
 const getProbs = (
 	result: DraftLotteryResultArray,
-	draftType: Exclude<DraftType, "random" | "noLottery">,
+	draftType: Exclude<DraftType, "random" | "noLottery" | "freeAgents">,
 ): (number | undefined)[][] => {
 	const probs: number[][] = [];
 	const topNCombos = new Map();
@@ -340,13 +342,14 @@ const DraftLotteryTable = (props: Props) => {
 		dispatch({ type: "revealOne" });
 	};
 
-	const { season, ties, type, userTid } = props;
+	const { season, type, userTid } = props;
 	const { draftType, result } = state;
 	const probs =
 		result !== undefined &&
 		draftType !== undefined &&
 		draftType !== "random" &&
-		draftType !== "noLottery"
+		draftType !== "noLottery" &&
+		draftType !== "freeAgents"
 			? getProbs(result, draftType)
 			: undefined;
 	const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
@@ -444,7 +447,7 @@ const DraftLotteryTable = (props: Props) => {
 											<td>
 												<a href={helpers.leagueUrl(["standings", season])}>
 													{won}-{lost}
-													{ties ? <>-{tied}</> : null}
+													{tied > 0 ? <>-{tied}</> : null}
 												</a>
 											</td>
 											<td>{chances}</td>
@@ -529,7 +532,6 @@ DraftLotteryTable.propTypes = {
 		}),
 	),
 	season: PropTypes.number.isRequired,
-	ties: PropTypes.bool.isRequired,
 	type: PropTypes.string.isRequired,
 	userTid: PropTypes.number.isRequired,
 };
@@ -548,10 +550,7 @@ const DraftLottery = (props: Props) => {
 	return (
 		<>
 			<p>
-				More:{" "}
-				<a href={helpers.leagueUrl(["draft_scouting"])}>
-					Future Draft Scouting
-				</a>{" "}
+				More: <a href={helpers.leagueUrl(["draft_scouting"])}>Draft Scouting</a>{" "}
 				|{" "}
 				<a href={helpers.leagueUrl(["draft_history", props.season])}>
 					Draft History

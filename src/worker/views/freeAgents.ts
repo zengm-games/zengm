@@ -24,6 +24,7 @@ const updateFreeAgents = async () => {
 			"freeAgentMood",
 			"injury",
 			"watch",
+			"jerseyNumber",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
@@ -33,6 +34,7 @@ const updateFreeAgents = async () => {
 		fuzz: true,
 		oldStats: true,
 	});
+
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],
 		ratings: ["pos"],
@@ -55,8 +57,10 @@ const updateFreeAgents = async () => {
 		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 		challengeNoRatings: g.get("challengeNoRatings"),
 		hardCap: g.get("hardCap"),
+		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayers.length,
+		spectator: g.get("spectator"),
 		phase: g.get("phase"),
 		players,
 		playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),

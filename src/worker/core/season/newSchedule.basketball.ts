@@ -87,7 +87,7 @@ const newScheduleDefault = (
 		dids[cid].push(t.seasonAttrs.did);
 	}
 
-	for (const conf of g.get("confs")) {
+	for (const conf of g.get("confs", "current")) {
 		const cid = conf.cid;
 
 		const matchups = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]];
@@ -184,16 +184,18 @@ const newSchedule = (
 	let tids: [number, number][];
 	let threeDivsPerConf = true;
 
-	for (const conf of g.get("confs")) {
-		if (g.get("divs").filter(div => div.cid === conf.cid).length !== 3) {
+	for (const conf of g.get("confs", "current")) {
+		if (
+			g.get("divs", "current").filter(div => div.cid === conf.cid).length !== 3
+		) {
 			threeDivsPerConf = false;
 			break;
 		}
 	}
 
-	let twoConfsEvenTeams = g.get("confs").length === 2;
+	let twoConfsEvenTeams = g.get("confs", "current").length === 2;
 
-	for (const conf of g.get("confs")) {
+	for (const conf of g.get("confs", "current")) {
 		if (
 			teams.filter(t => t.seasonAttrs.cid === conf.cid).length !==
 			teams.length / 2
@@ -206,7 +208,7 @@ const newSchedule = (
 	if (
 		teams.length === 30 &&
 		g.get("numGames") === 82 &&
-		g.get("confs").length === 2 &&
+		g.get("confs", "current").length === 2 &&
 		threeDivsPerConf &&
 		twoConfsEvenTeams
 	) {

@@ -7,25 +7,18 @@ import { helpers, useLocalShallow } from "../util";
 import useClickable from "../hooks/useClickable";
 import type { View, Game } from "../../common/types";
 
-const StatsRow = ({ i, p, ...props }: { i: number; p: any }) => {
+const StatsRow = ({ p, ...props }: { i: number; p: any }) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const classes = classNames({
 		"table-warning": clicked,
 	});
 	return (
-		<BoxScoreRow
-			className={classes}
-			i={i}
-			onClick={toggleClicked}
-			p={p}
-			{...props}
-		/>
+		<BoxScoreRow className={classes} onClick={toggleClicked} p={p} {...props} />
 	);
 };
 
 StatsRow.propTypes = {
-	i: PropTypes.number.isRequired,
 	p: PropTypes.object.isRequired,
 };
 
@@ -50,6 +43,16 @@ const findPrevNextGids = (games: Game[], currentGid: number) => {
 	return { currentGidInList, prevGid, nextGid };
 };
 
+const noGamesMessage = (
+	<p className="alert alert-info" style={{ maxWidth: 550 }}>
+		No games found for this season. By default, box scores from old seasons are
+		automatically deleted after 3 years.{" "}
+		<a href={helpers.leagueUrl(["options"])}>
+			You can change this behavior on the Options page.
+		</a>
+	</p>
+);
+
 const GamesList = ({
 	abbrev,
 	currentSeason,
@@ -70,15 +73,7 @@ const GamesList = ({
 	}));
 
 	if (season < currentSeason && gamesList.games.length === 0) {
-		return (
-			<p className="alert alert-info">
-				No games found for this season. By default, box scores from old seasons
-				are automatically deleted after 3 years.{" "}
-				<a href={helpers.leagueUrl(["options"])}>
-					You can change this behavior on the Options page.
-				</a>
-			</p>
-		);
+		return noGamesMessage;
 	}
 
 	return (
@@ -209,6 +204,10 @@ const GameLog = ({
 		boxScore.gid,
 	);
 
+	const noGamesAndNoBoxScore =
+		season < currentSeason && gamesList.games.length === 0 && boxScore.gid < 0;
+	console.log("noGamesAndNoBoxScore", noGamesAndNoBoxScore);
+
 	return (
 		<>
 			<p>
@@ -233,41 +232,51 @@ const GameLog = ({
 					History
 				</a>{" "}
 				|{" "}
+				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
+					Schedule
+				</a>{" "}
+				|{" "}
 				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`, season])}>
 					News Feed
 				</a>
 			</p>
 
-			<p />
-			<div className="row">
-				<div className="col-md-10">
-					{boxScore.gid >= 0 ? (
-						<BoxScoreWrapper
-							abbrev={abbrev}
-							boxScore={boxScore}
-							currentGidInList={currentGidInList}
-							nextGid={nextGid}
-							prevGid={prevGid}
-							showNextPrev
-							tid={tid}
-							Row={StatsRow}
-						/>
-					) : (
-						<p>Select a game from the menu to view a box score.</p>
-					)}
-				</div>
+			{noGamesAndNoBoxScore ? (
+				noGamesMessage
+			) : (
+				<>
+					<p />
+					<div className="row">
+						<div className="col-md-10">
+							{boxScore.gid >= 0 ? (
+								<BoxScoreWrapper
+									abbrev={abbrev}
+									boxScore={boxScore}
+									currentGidInList={currentGidInList}
+									nextGid={nextGid}
+									prevGid={prevGid}
+									showNextPrev
+									tid={tid}
+									Row={StatsRow}
+								/>
+							) : (
+								<p>Select a game from the menu to view a box score.</p>
+							)}
+						</div>
 
-				<div className="col-md-2">
-					<GamesList
-						abbrev={abbrev}
-						currentSeason={currentSeason}
-						gamesList={gamesList}
-						gid={boxScore.gid}
-						season={season}
-						tid={tid}
-					/>
-				</div>
-			</div>
+						<div className="col-md-2">
+							<GamesList
+								abbrev={abbrev}
+								currentSeason={currentSeason}
+								gamesList={gamesList}
+								gid={boxScore.gid}
+								season={season}
+								tid={tid}
+							/>
+						</div>
+					</div>
+				</>
+			)}
 		</>
 	);
 };

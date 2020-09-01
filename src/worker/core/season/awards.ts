@@ -65,6 +65,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 						"season",
 						"abbrev",
 						"tid",
+						"jerseyNumber",
 				  ]
 				: [
 						"keyStats",
@@ -78,6 +79,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 						"season",
 						"abbrev",
 						"tid",
+						"jerseyNumber",
 				  ],
 		fuzz: true,
 		mergeStats: true,
@@ -128,9 +130,9 @@ const teamAwards = (
 		name: teams[0].seasonAttrs.name,
 		won: teams[0].seasonAttrs.won,
 		lost: teams[0].seasonAttrs.lost,
-		tied: g.get("ties") ? teams[0].seasonAttrs.tied : undefined,
+		tied: g.get("ties", "current") ? teams[0].seasonAttrs.tied : undefined,
 	};
-	const bestRecordConfs = g.get("confs").map(c => {
+	const bestRecordConfs = g.get("confs", "current").map(c => {
 		const t = teams.find(t2 => t2.seasonAttrs.cid === c.cid);
 
 		if (!t) {
@@ -144,7 +146,7 @@ const teamAwards = (
 			name: t.seasonAttrs.name,
 			won: t.seasonAttrs.won,
 			lost: t.seasonAttrs.lost,
-			tied: g.get("ties") ? t.seasonAttrs.tied : undefined,
+			tied: g.get("ties", "current") ? t.seasonAttrs.tied : undefined,
 		};
 	});
 	return {
@@ -164,7 +166,7 @@ const leagueLeaders = (
 ) => {
 	const factor =
 		(g.get("numGames") / defaultGameAttributes.numGames) *
-		Math.sqrt(g.get("quarterLength") / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
+		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
 		const p = players

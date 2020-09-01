@@ -58,7 +58,7 @@ const processTeam = (
 		pace: 0,
 		won: teamSeason.won,
 		lost: teamSeason.lost,
-		tied: g.get("ties") ? teamSeason.tied : undefined,
+		tied: g.get("ties", "current") ? teamSeason.tied : undefined,
 		cid: teamSeason.cid,
 		did: teamSeason.did,
 		ovr,
@@ -89,6 +89,10 @@ const processTeam = (
 			skills: rating.skills,
 			injury: p.injury,
 			injured: p.injury.type !== "Healthy",
+			jerseyNumber:
+				p.stats.length > 0
+					? p.stats[p.stats.length - 1].jerseyNumber
+					: undefined,
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
 		};

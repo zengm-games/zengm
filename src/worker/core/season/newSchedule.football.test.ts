@@ -29,7 +29,7 @@ describe("worker/core/season/newSchedule.football", () => {
 		});
 
 		test("schedule 256 games (16 each for 32 teams)", () => {
-			assert.equal(newSchedule(defaultTeams).length, 256);
+			assert.strictEqual(newSchedule(defaultTeams).length, 256);
 		});
 
 		test("schedule 8 home games and 8 away games for each team", () => {
@@ -48,10 +48,10 @@ describe("worker/core/season/newSchedule.football", () => {
 				away[tids[i][1]] += 1;
 			}
 
-			assert.equal(Object.keys(home).length, defaultTeams.length);
+			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const numGames of [...Object.values(home), ...Object.values(away)]) {
-				assert.equal(numGames, 8);
+				assert.strictEqual(numGames, 8);
 			}
 		});
 
@@ -79,11 +79,11 @@ describe("worker/core/season/newSchedule.football", () => {
 				}
 			}
 
-			assert.equal(Object.keys(home).length, defaultTeams.length);
+			assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 			for (const { tid } of defaultTeams) {
-				assert.equal(Object.values(home[tid]).length, 3);
-				assert.equal(
+				assert.strictEqual(Object.values(home[tid]).length, 3);
+				assert.strictEqual(
 					testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
 					3,
 				);

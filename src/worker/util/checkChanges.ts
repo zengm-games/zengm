@@ -29,15 +29,15 @@ const checkChanges = async (conditions: Conditions) => {
 
 			if (i >= 2 && unread.length - i - 1 > 0) {
 				linked = true;
-				text += `<br><a href="/changes">...and ${
-					unread.length - i - 1
-				} more changes.</a>`;
+				text +=
+					'<br><a href="http://basketball-gm.com/changelog/" rel="noopener noreferrer" target="_blank">...and more changes.</a>';
 				break;
 			}
 		}
 
 		if (!linked) {
-			text += '<br><a href="/changes">View all changes</a>';
+			text +=
+				'<br><a href="http://basketball-gm.com/changelog/" rel="noopener noreferrer" target="_blank">View all changes</a>';
 		}
 
 		logEvent(

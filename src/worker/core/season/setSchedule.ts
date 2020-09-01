@@ -2,6 +2,7 @@ import { idb } from "../../db";
 import { getUpcoming } from "../../views/schedule";
 import { g, toUI } from "../../util";
 import type { LocalStateUI } from "../../../common/types";
+import addDaysToSchedule from "./addDaysToSchedule";
 
 /**
  * Save the schedule to the database, overwriting what's currently there.
@@ -12,14 +13,16 @@ import type { LocalStateUI } from "../../../common/types";
  */
 const setSchedule = async (tids: [number, number][]) => {
 	await idb.cache.schedule.clear();
-	await Promise.all(
-		tids.map(([homeTid, awayTid]) =>
-			idb.cache.schedule.add({
-				homeTid,
-				awayTid,
-			}),
-		),
+
+	const schedule = addDaysToSchedule(
+		tids.map(([homeTid, awayTid]) => ({
+			homeTid,
+			awayTid,
+		})),
 	);
+	for (const game of schedule) {
+		idb.cache.schedule.add(game);
+	}
 
 	// Add upcoming games
 	const games: LocalStateUI["games"] = [];

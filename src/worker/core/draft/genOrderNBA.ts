@@ -14,7 +14,7 @@ import type {
 import genOrderGetPicks from "./genOrderGetPicks";
 
 type ReturnVal = DraftLotteryResult & {
-	draftType: Exclude<DraftType, "random" | "noLottery">;
+	draftType: Exclude<DraftType, "random" | "noLottery" | "freeAgents">;
 };
 
 // chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
@@ -142,7 +142,8 @@ const genOrder = async (
 	const draftType = draftTypeTemp as typeof VALID_DRAFT_TYPES[number];
 
 	const numPlayoffTeams =
-		2 ** g.get("numGamesPlayoffSeries").length - g.get("numPlayoffByes");
+		2 ** g.get("numGamesPlayoffSeries", "current").length -
+		g.get("numPlayoffByes", "current");
 
 	const info = getLotteryInfo(draftType, teams.length - numPlayoffTeams);
 	const minNumLotteryTeams = info.minNumTeams;

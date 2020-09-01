@@ -26,42 +26,13 @@ const plusMinus = (arg: number, d: number): string => {
 	return (arg > 0 ? "+" : "") + arg.toFixed(d);
 };
 
-const roundsWonText = (
-	playoffRoundsWon: number,
-	numPlayoffRounds: number,
-	numConfs: number,
-): string => {
-	const playoffsByConference = numConfs === 2;
-
-	if (playoffRoundsWon === numPlayoffRounds) {
-		return "League champs";
-	}
-
-	if (playoffRoundsWon === numPlayoffRounds - 1) {
-		return playoffsByConference ? "Conference champs" : "Made finals";
-	}
-
-	if (playoffRoundsWon === numPlayoffRounds - 2) {
-		return playoffsByConference ? "Made conference finals" : "Made semifinals";
-	}
-
-	if (playoffRoundsWon >= 1) {
-		return `Made ${commonHelpers.ordinal(playoffRoundsWon + 1)} round`;
-	}
-
-	if (playoffRoundsWon === 0) {
-		return "Made playoffs";
-	}
-
-	return "";
-};
-
 const roundOverrides: Record<
 	string,
 	| "none"
 	| "oneDecimalPlace"
 	| "roundWinp"
 	| "plusMinus"
+	| "plusMinusNoDecimalPlace"
 	| "noDecimalPlace"
 	| undefined
 > =
@@ -78,6 +49,31 @@ const roundOverrides: Record<
 				ws48: "roundWinp",
 				pm: "plusMinus",
 				ftpfga: "roundWinp",
+				tpar: "roundWinp",
+				ftr: "roundWinp",
+				bpm: "oneDecimalPlace",
+				obpm: "oneDecimalPlace",
+				dbpm: "oneDecimalPlace",
+				vorp: "oneDecimalPlace",
+				fgMax: "noDecimalPlace",
+				fgaMax: "noDecimalPlace",
+				tpMax: "noDecimalPlace",
+				tpaMax: "noDecimalPlace",
+				"2pMax": "noDecimalPlace",
+				"2paMax": "noDecimalPlace",
+				ftMax: "noDecimalPlace",
+				ftaMax: "noDecimalPlace",
+				orbMax: "noDecimalPlace",
+				drbMax: "noDecimalPlace",
+				trbMax: "noDecimalPlace",
+				astMax: "noDecimalPlace",
+				tovMax: "noDecimalPlace",
+				stlMax: "noDecimalPlace",
+				blkMax: "noDecimalPlace",
+				baMax: "noDecimalPlace",
+				pfMax: "noDecimalPlace",
+				ptsMax: "noDecimalPlace",
+				pmMax: "plusMinusNoDecimalPlace",
 		  }
 		: {
 				gp: "noDecimalPlace",
@@ -215,6 +211,10 @@ const roundStat = (
 			return plusMinus(value, d);
 		}
 
+		if (roundOverrides[stat] === "plusMinusNoDecimalPlace") {
+			return plusMinus(value, 0);
+		}
+
 		if (roundOverrides[stat] === "noDecimalPlace") {
 			return value.toLocaleString("en-US", { maximumFractionDigits: 0 });
 		}
@@ -234,7 +234,6 @@ const helpers = {
 	leagueUrl,
 	plusMinus,
 	roundStat,
-	roundsWonText,
 };
 
 export default helpers;

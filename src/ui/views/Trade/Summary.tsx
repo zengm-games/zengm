@@ -1,23 +1,16 @@
-import classNames from "classnames";
-import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../util";
 import type { View } from "../../../common/types";
 
-const Summary = ({
-	accepted,
-	message,
-	salaryCap,
-	summary,
-}: Pick<View<"trade">, "salaryCap" | "summary"> & {
-	accepted: boolean;
-	message: null | string;
-}) => {
-	return (
-		<>
-			<div className="row">
+const Summary = React.forwardRef(
+	(
+		{ salaryCap, summary }: Pick<View<"trade">, "salaryCap" | "summary">,
+		ref: any,
+	) => {
+		return (
+			<div className="row trade-items" ref={ref}>
 				{summary.teams.map((t, i) => (
-					<div key={i} className="col-md-12 col-6 mb-3">
+					<div key={i} className="col-md-12 col-6">
 						<h3>{t.name}</h3>
 						<h4>Trade Away:</h4>
 						<ul className="list-unstyled">
@@ -56,30 +49,8 @@ const Summary = ({
 					</div>
 				))}
 			</div>
-
-			{summary.warning ? (
-				<p className="alert alert-danger">
-					<strong>Warning!</strong> {summary.warning}
-				</p>
-			) : null}
-			{message ? (
-				<p
-					className={classNames(
-						"alert",
-						accepted ? "alert-success" : "alert-info",
-					)}
-				>
-					{message}
-				</p>
-			) : null}
-		</>
-	);
-};
-Summary.propTypes = {
-	accepted: PropTypes.bool.isRequired,
-	message: PropTypes.string,
-	salaryCap: PropTypes.number.isRequired,
-	summary: PropTypes.object.isRequired,
-};
+		);
+	},
+);
 
 export default Summary;

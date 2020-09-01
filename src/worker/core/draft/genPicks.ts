@@ -69,6 +69,20 @@ const genPicks = async (afterDraft?: true) => {
 		await doSeason(draftYear, existingPicks);
 	}
 
+	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
+		for (const existingPick of existingPicks) {
+			if (existingPick.season === "fantasy") {
+				existingPick.keep = true;
+			}
+		}
+	} else if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
+		for (const existingPick of existingPicks) {
+			if (existingPick.season === "expansion") {
+				existingPick.keep = true;
+			}
+		}
+	}
+
 	// Delete any obsolete picks
 	for (const existingPick of existingPicks) {
 		if (!existingPick.keep) {

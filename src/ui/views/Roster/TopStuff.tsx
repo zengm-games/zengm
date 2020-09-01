@@ -82,7 +82,9 @@ const TopStuff = ({
 	openRosterSpots: number;
 	profit: number;
 }) => {
-	const logoStyle: CSSProperties = {};
+	const logoStyle: CSSProperties = {
+		margin: "0.25rem 1rem 0 0",
+	};
 	if (t.seasonAttrs.imgURL) {
 		logoStyle.display = "inline";
 		logoStyle.backgroundImage = `url('${t.seasonAttrs.imgURL}')`;

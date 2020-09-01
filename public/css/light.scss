@@ -137,13 +137,14 @@ a.god-mode.active {
 	padding: 0 3px;
 }
 
+.btn-god-mode {
+	@include button-variant($purple, $gray-400);
+}
+
 .play-button {
 	font-size: 1.01562rem;
 	padding: 14px !important;
 	height: 51px;
-
-	@extend .bg-success;
-	@extend .text-white;
 }
 
 .dropdown-item {
@@ -310,10 +311,6 @@ table {
 	}
 }
 
-.trade-summary {
-	background-color: $white;
-}
-
 .select-team {
 	width: 203px;
 }
@@ -334,7 +331,6 @@ table {
 	background-position: center center;
 	background-repeat: no-repeat;
 	background-size: contain;
-	margin: 0.25rem 1rem 0 0;
 	width: 120px;
 	height: 120px;
 }
@@ -359,6 +355,14 @@ table {
 .skills-alone {
 	margin-left: -5px;
 	vertical-align: 2%;
+}
+
+.jersey-number-name {
+	font-size: 10px;
+	line-height: 18px;
+	vertical-align: 2%;
+	display: inline-block;
+	min-width: 15px;
 }
 
 .watch,
@@ -584,6 +588,18 @@ tr.table-warning:hover > td {
 		top: 60px;
 	}
 	.live-game-playbyplay {
+		overflow: auto;
+	}
+}
+
+// Keep in sync with trade/index.tsx
+@include media-breakpoint-up(md) {
+	.trade-affix {
+		position: -webkit-sticky;
+		position: sticky;
+		top: 60px;
+	}
+	.trade-items {
 		overflow: auto;
 	}
 }

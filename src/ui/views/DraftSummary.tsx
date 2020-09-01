@@ -1,10 +1,15 @@
 import PropTypes from "prop-types";
 import React, { useState } from "react";
-import { DataTable, DraftAbbrev, SkillsBlock } from "../components";
+import {
+	DataTable,
+	DraftAbbrev,
+	SkillsBlock,
+	PlayerNameLabels,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, downloadFile, toWorker } from "../util";
+import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
 import type { View } from "../../common/types";
-import { PLAYER } from "../../common";
+import { PLAYER, NO_LOTTERY_DRAFT_TYPES } from "../../common";
 
 const ExportButton = ({ season }: { season: number }) => {
 	const [exporting, setExporting] = useState(false);
@@ -39,8 +44,10 @@ const DraftSummary = ({
 	stats,
 	userTid,
 }: View<"draftSummary">) => {
+	const noDraft = draftType === "freeAgents";
+
 	useTitleBar({
-		title: "Draft History",
+		title: noDraft ? "Prospects History" : "Draft History",
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "draft_history",
@@ -53,7 +60,7 @@ const DraftSummary = ({
 			colspan: 3,
 		},
 		{
-			title: "At Draft",
+			title: noDraft ? "As Prospect" : "At Draft",
 			colspan: 5,
 		},
 		{
@@ -83,6 +90,8 @@ const DraftSummary = ({
 		...stats.map(stat => `stat:${stat}`),
 	);
 
+	const teamInfoCache = useLocal(state => state.teamInfoCache);
+
 	const rows = players.map(p => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
@@ -90,15 +99,23 @@ const DraftSummary = ({
 			key: p.pid,
 			data: [
 				p.draft.round >= 1 ? `${p.draft.round}-${p.draft.pick}` : null,
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
+				<PlayerNameLabels pid={p.pid} skills={p.currentSkills} watch={p.watch}>
+					{p.name}
+				</PlayerNameLabels>,
 				p.pos,
-				<DraftAbbrev
-					originalTid={p.draft.originalTid}
-					season={season}
-					tid={p.draft.tid}
-				>
-					{p.draft.tid} {p.draft.originalTid}
-				</DraftAbbrev>,
+				{
+					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
+						teamInfoCache[p.draft.originalTid]?.abbrev
+					}`,
+					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
+					value: (
+						<DraftAbbrev
+							originalTid={p.draft.originalTid}
+							tid={p.draft.tid}
+							season={season}
+						/>
+					),
+				},
 				p.draft.age,
 				showRatings ? p.draft.ovr : null,
 				showRatings ? p.draft.pot : null,
@@ -133,10 +150,10 @@ const DraftSummary = ({
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["draft_scouting"])}>
-					Future Draft Scouting
+					{!noDraft ? "Draft Scouting" : "Upcoming Prospects"}
 				</a>{" "}
 				|{" "}
-				{draftType !== "noLottery" && draftType !== "random" ? (
+				{!NO_LOTTERY_DRAFT_TYPES.includes(draftType) ? (
 					<>
 						<a href={helpers.leagueUrl(["draft_lottery", season])}>
 							Draft Lottery
@@ -168,7 +185,7 @@ const DraftSummary = ({
 };
 
 DraftSummary.propTypes = {
-	draftType: PropTypes.oneOf(["nba1994", "nba2019", "noLottery", "random"]),
+	draftType: PropTypes.string.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
 	season: PropTypes.number.isRequired,
 	startingSeason: PropTypes.number.isRequired,

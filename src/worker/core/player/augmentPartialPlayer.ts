@@ -1,7 +1,6 @@
 import { PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import develop, { bootstrapPot } from "./develop";
-import genContract from "./genContract";
 import generate from "./generate";
 import heightToRating from "./heightToRating";
 import ovr from "./ovr";
@@ -9,7 +8,6 @@ import pos from "./pos";
 import setContract from "./setContract";
 import skills from "./skills";
 import stats from "./stats";
-import updateValues from "./updateValues";
 import { g, random } from "../../util";
 import type { MinimalPlayerRatings, Player } from "../../../common/types";
 
@@ -24,6 +22,7 @@ const augmentPartialPlayer = async (
 	p: any,
 	scoutingRank: number,
 	version: number | undefined,
+	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
 	let age;
 
@@ -314,14 +313,20 @@ const augmentPartialPlayer = async (
 	}
 
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
-	updateValues(p);
 
 	if (p.salaries === undefined) {
 		p.salaries = [];
 	}
 
 	if (p.contract === undefined) {
-		setContract(p, genContract(p, true), p.tid >= 0);
+		setContract(
+			p,
+			{
+				amount: g.get("minContract"),
+				exp: g.get("season"),
+			},
+			p.tid >= 0,
+		);
 	} else {
 		p.contract.amount = 10 * Math.round(p.contract.amount / 10);
 
@@ -332,6 +337,9 @@ const augmentPartialPlayer = async (
 		if (p.tid >= 0 && p.salaries.length === 0) {
 			setContract(p, p.contract, true);
 		}
+
+		// Just in case... we never want this except for internal purposes, cause it means normalizeContractDemands will always overwrite this contract on load
+		delete p.contract.temp;
 	}
 
 	// If no stats in League File, create blank stats rows for active players if necessary
@@ -341,7 +349,9 @@ const augmentPartialPlayer = async (
 
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+			await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+				ignoreJerseyNumberConflicts,
+			});
 		}
 	} else {
 		const statKeys = [...stats.derived, ...stats.raw];
@@ -374,7 +384,9 @@ const augmentPartialPlayer = async (
 			const lastSeason = p.stats[p.stats.length - 1].season;
 
 			if (p.tid >= 0 && lastSeason < g.get("season")) {
-				addStatsRow(p, false);
+				await addStatsRow(p, false, {
+					ignoreJerseyNumberConflicts,
+				});
 			}
 		}
 	}

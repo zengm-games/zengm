@@ -2,11 +2,33 @@ import { idb } from "../db";
 import { g, helpers } from "../util";
 import { PHASE } from "../../common";
 import orderBy from "lodash/orderBy";
+import { team } from "../core";
+
+const getTeamOvr = async (tid: number) => {
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		ratings: ["ovr", "pot"],
+		season: g.get("season"),
+		tid,
+		showNoStats: true,
+		showRookies: true,
+		fuzz: true,
+	});
+	return team.ovr(players);
+};
 
 const updateTeamSelect = async () => {
 	const rawTeams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "region", "name", "pop"],
-		seasonAttrs: ["winp"],
+		attrs: ["tid", "region", "name", "pop", "imgURL", "cid", "abbrev"],
+		seasonAttrs: [
+			"winp",
+			"won",
+			"lost",
+			"tied",
+			"season",
+			"playoffRoundsWon",
+			"revenue",
+		],
 		season: g.get("season"),
 		active: true,
 		addDummySeason: true,
@@ -23,6 +45,7 @@ const updateTeamSelect = async () => {
 		expansionDraft.allowSwitchTeam;
 	const expansionTids =
 		expansionDraft.phase === "protection" ? expansionDraft.expansionTids : []; // TypeScript bullshit
+	const otherTeamsWantToHire = g.get("otherTeamsWantToHire");
 
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	const disabled = t ? t.disabled : false;
@@ -37,14 +60,14 @@ const updateTeamSelect = async () => {
 		teams = teams.filter(
 			t => t.tid === g.get("userTid") || expansionTids.includes(t.tid),
 		);
+	} else if (otherTeamsWantToHire) {
+		// Deterministic random selection of teams
+		teams = orderBy(teams, t => t.seasonAttrs.revenue % 10, "asc").slice(0, 5);
 	} else if (!g.get("godMode")) {
 		// If not in god mode, user must have been fired or team folded
 
-		// Order by worst record
-		teams.sort((a, b) => a.seasonAttrs.winp - b.seasonAttrs.winp);
-
 		// Only get option of 5 worst
-		teams = teams.slice(0, 5);
+		teams = orderBy(teams, "seasonAttrs.winp", "asc").slice(0, 5);
 	}
 
 	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
@@ -56,14 +79,25 @@ const updateTeamSelect = async () => {
 		}
 	}
 
+	const finalTeams = orderedTeams.map(t => ({
+		...t,
+		ovr: 0,
+	}));
+	for (const t of finalTeams) {
+		t.ovr = await getTeamOvr(t.tid);
+	}
+
 	return {
+		confs: g.get("confs", "current"),
 		disabled,
 		expansion,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
 		numActiveTeams,
+		numPlayoffRounds: g.get("numGamesPlayoffSeries", "current").length,
+		otherTeamsWantToHire,
 		phase: g.get("phase"),
-		teams: orderedTeams,
+		teams: finalTeams,
 		userTid: g.get("userTid"),
 	};
 };

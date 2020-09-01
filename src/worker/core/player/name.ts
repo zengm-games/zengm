@@ -1,61 +1,73 @@
 import { loadNames, local, random } from "../../util";
 
+const getFromCumSumArray = (array: [string, number][]) => {
+	const rand = random.uniform(0, array[array.length - 1][1]);
+	const foundRow = array.find(row => row[1] >= rand);
+
+	if (foundRow === undefined) {
+		throw new Error(`Undefined foundRow (rand=${rand}`);
+	}
+
+	return foundRow[0];
+};
+
 const name = (): {
+	college: string;
 	country: string;
 	firstName: string;
 	lastName: string;
 } => {
-	// This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
-	const playerNames =
-		local.playerNames === undefined ? loadNames() : local.playerNames;
+	// This makes it wait until g is loaded before calling loadNames, so user-defined playerBioInfo will be used if provided
+	const playerBioInfo =
+		local.playerBioInfo === undefined ? loadNames() : local.playerBioInfo;
 
-	if (local.playerNames === undefined) {
-		local.playerNames = playerNames;
+	if (local.playerBioInfo === undefined) {
+		local.playerBioInfo = playerBioInfo;
 	}
 
-	// Country
-	const cRand = random.uniform(
-		0,
-		playerNames.countries[playerNames.countries.length - 1][1],
-	);
-	const countryRow = playerNames.countries.find(row => row[1] >= cRand);
+	const frequencies = playerBioInfo.frequencies;
+	if (!frequencies || frequencies.length === 0) {
+		throw new Error("No countries in playerBioInfo");
+	}
+	const country = getFromCumSumArray(frequencies);
 
-	if (countryRow === undefined) {
-		throw new Error(`Undefined countryRow (cRand=${cRand}`);
+	if (!playerBioInfo.countries[country]) {
+		throw new Error(`Country "${country}" missing in playerBioInfo countries`);
 	}
 
-	const country = countryRow[0];
-
-	const firstCountry = playerNames.first[country];
-	const lastCountry = playerNames.last[country];
-
-	if (!firstCountry) {
+	const firstCountry = playerBioInfo.countries[country].first;
+	if (!firstCountry || firstCountry.length === 0) {
 		throw new Error(`No first names found for ${country}`);
 	}
-	if (!lastCountry) {
+	const firstName = getFromCumSumArray(firstCountry);
+
+	const lastCountry = playerBioInfo.countries[country].last;
+	if (!lastCountry || lastCountry.length === 0) {
 		throw new Error(`No last names found for ${country}`);
 	}
+	const lastName = getFromCumSumArray(lastCountry);
 
-	// First name
-	const fnRand = random.uniform(0, firstCountry[firstCountry.length - 1][1]);
-	const firstNameRow = firstCountry.find(row => row[1] >= fnRand);
+	let college = "";
+	const countryColleges = playerBioInfo.countries[country].colleges;
+	const colleges =
+		countryColleges !== undefined
+			? countryColleges
+			: playerBioInfo.default.colleges;
+	if (colleges && colleges.length > 0) {
+		const countryfractionSkipCollege =
+			playerBioInfo.countries[country].fractionSkipCollege;
+		const fractionSkipCollege =
+			countryfractionSkipCollege !== undefined
+				? countryfractionSkipCollege
+				: playerBioInfo.default.fractionSkipCollege;
 
-	if (firstNameRow === undefined) {
-		throw new Error(`Undefined firstNameRow (fnRand=${fnRand}`);
+		if (Math.random() > fractionSkipCollege) {
+			college = getFromCumSumArray(colleges);
+		}
 	}
 
-	const firstName = firstNameRow[0];
-
-	// Last name
-	const lnRand = random.uniform(0, lastCountry[lastCountry.length - 1][1]);
-	const lastNameRow = lastCountry.find(row => row[1] >= lnRand);
-
-	if (lastNameRow === undefined) {
-		throw new Error(`Undefined lastNameRow (lnRand=${lnRand}`);
-	}
-
-	const lastName = lastNameRow[0];
 	return {
+		college,
 		country,
 		firstName,
 		lastName,

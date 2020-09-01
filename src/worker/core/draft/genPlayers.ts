@@ -53,6 +53,8 @@ const genPlayers = async (
 		// idb.cache.players.add will create the "pid" property, transforming PlayerWithoutKey to Player
 		// @ts-ignore
 		await player.addRelatives(p);
+
+		await player.updateValues(p);
 	}
 
 	// Easter eggs!
@@ -91,7 +93,7 @@ const genPlayers = async (
 				reb: 80,
 			});
 			await player.develop(p, 0);
-			player.updateValues(p);
+			await player.updateValues(p);
 			const pid = await idb.cache.players.add(p);
 
 			if (typeof pid === "number") {
@@ -142,7 +144,7 @@ const genPlayers = async (
 				reb: 80,
 			});
 			await player.develop(p, 0);
-			player.updateValues(p);
+			await player.updateValues(p);
 			p.ratings[0].skills = ["Dp"];
 			const pid = await idb.cache.players.add(p);
 

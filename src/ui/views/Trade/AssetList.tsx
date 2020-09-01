@@ -58,6 +58,7 @@ const genPlayerRows = (
 				/>,
 				<PlayerNameLabels
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					pid={p.pid}
 					skills={p.ratings.skills}
 					watch={p.watch}
@@ -169,7 +170,7 @@ const AssetList = ({
 	return (
 		<div className="row">
 			<div className="col-xl-9">
-				<Dropdown>
+				<Dropdown className="d-inline-block">
 					<Dropdown.Toggle
 						variant="secondary"
 						id={`trade-players-bulk-${userOrOtherKey}`}
@@ -203,7 +204,7 @@ const AssetList = ({
 				/>
 			</div>
 			<div className="col-xl-3">
-				<Dropdown>
+				<Dropdown className="d-inline-block">
 					<Dropdown.Toggle
 						variant="secondary"
 						id={`trade-picks-bulk-${userOrOtherKey}`}

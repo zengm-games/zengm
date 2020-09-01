@@ -11,6 +11,7 @@ const NegotiateButtons = ({
 	challengeNoFreeAgents,
 	disabled,
 	minContract,
+	spectator,
 	p,
 	phase,
 	playersRefuseToNegotiate,
@@ -23,6 +24,7 @@ const NegotiateButtons = ({
 	challengeNoFreeAgents: boolean;
 	disabled?: boolean;
 	minContract: number;
+	spectator: boolean;
 	p: Player;
 	phase: Phase;
 	playersRefuseToNegotiate: boolean;
@@ -30,6 +32,10 @@ const NegotiateButtons = ({
 	season?: number;
 	userTid: number;
 }) => {
+	if (spectator) {
+		return null;
+	}
+
 	if (
 		helpers.refuseToNegotiate({
 			amount: p.contract.amount * 1000,

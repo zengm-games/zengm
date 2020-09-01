@@ -19,7 +19,7 @@ import Notifications from "./Notifications";
 import SideBar from "./SideBar";
 import TitleBar from "./TitleBar";
 import type { LocalStateUI } from "../../common/types";
-import type { Context } from "bbgm-router";
+import type { Context } from "../router";
 
 type LeagueContentProps = {
 	children: any;
@@ -202,7 +202,14 @@ const Controller = () => {
 					type: "doneLoading",
 				});
 				idLoading.current = undefined;
-				await realtimeUpdate([], vars.data.redirectUrl, {}, true);
+				await realtimeUpdate(
+					[],
+					vars.data.redirectUrl,
+					{
+						backendRedirect: true,
+					},
+					true,
+				);
 				return;
 			}
 
@@ -290,15 +297,12 @@ const Controller = () => {
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 d-flex flex-column">
 				<Header />
 				<SideBar pageID={pageID} />
-				<div
-					className="p402_premium flex-grow-1 d-flex flex-column"
-					id="actual-content"
-				>
-					<div id="actual-actual-content" className="clearfix flex-shrink-0">
+				<main className="p402_premium" id="actual-content">
+					<div id="actual-actual-content" className="clearfix">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
 					</div>
-					<Footer />
-				</div>
+				</main>
+				<Footer />
 				<NagModal close={closeNagModal} show={showNagModal} />
 			</div>
 			<Notifications />

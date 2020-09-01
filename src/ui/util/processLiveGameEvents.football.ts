@@ -63,6 +63,19 @@ const processLiveGameEvents = ({
 		}
 
 		if (e.type === "text") {
+			if (e.injuredPID !== undefined) {
+				const p = boxScore.teams[actualT].players.find(
+					(p2: any) => p2.pid === e.injuredPID,
+				);
+				if (p === undefined) {
+					console.log("Can't find injured player", e);
+				}
+				p.injury = {
+					type: "Injured",
+					gamesRemaining: -1,
+				};
+			}
+
 			text = e.text;
 			stop = true;
 		} else if (e.type === "clock") {

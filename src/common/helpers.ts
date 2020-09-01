@@ -1,5 +1,5 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type { TeamBasic, Phase } from "./types";
+import type { TeamBasic, Phase, PlayerWithoutKey } from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash/orderBy";
 import { PHASE } from "./constants";
@@ -587,7 +587,19 @@ function formatCurrency(
 		precision = 0;
 	}
 
-	return `${sign}$${abs.toFixed(precision)}${append}`;
+	let numberString = abs.toFixed(precision);
+
+	// Remove last digits if 0
+	for (let i = 0; i < precision; i++) {
+		if (numberString[numberString.length - 1] === "0") {
+			numberString = numberString.slice(0, -1);
+		}
+	}
+	if (numberString[numberString.length - 1] === ".") {
+		numberString = numberString.slice(0, -1);
+	}
+
+	return `${sign}$${numberString}${append}`;
 }
 
 /**
@@ -782,13 +794,216 @@ const validateRoundsByes = (
 	}
 };
 
+const states = [
+	"AL",
+	"AK",
+	"AZ",
+	"AR",
+	"CA",
+	"CO",
+	"CT",
+	"DC",
+	"DE",
+	"FL",
+	"GA",
+	"HI",
+	"ID",
+	"IL",
+	"IN",
+	"IA",
+	"KS",
+	"KY",
+	"LA",
+	"ME",
+	"MD",
+	"MA",
+	"MI",
+	"MN",
+	"MS",
+	"MO",
+	"MT",
+	"NE",
+	"NV",
+	"NH",
+	"NJ",
+	"NM",
+	"NY",
+	"NC",
+	"ND",
+	"OH",
+	"OK",
+	"OR",
+	"PA",
+	"RI",
+	"SC",
+	"SD",
+	"TN",
+	"TX",
+	"UT",
+	"VT",
+	"VA",
+	"WA",
+	"WV",
+	"WI",
+	"WY",
+	"Alabama",
+	"Alaska",
+	"Arizona",
+	"Arkansas",
+	"California",
+	"Colorado",
+	"Connecticut",
+	"Delaware",
+	"Florida",
+	"Georgia",
+	"Hawaii",
+	"Idaho",
+	"Illinois",
+	"Indiana",
+	"Iowa",
+	"Kansas",
+	"Kentucky",
+	"Louisiana",
+	"Maine",
+	"Maryland",
+	"Massachusetts",
+	"Michigan",
+	"Minnesota",
+	"Mississippi",
+	"Missouri",
+	"Montana",
+	"Nebraska",
+	"Nevada",
+	"New Hampshire",
+	"New Jersey",
+	"New Mexico",
+	"New York",
+	"North Carolina",
+	"North Dakota",
+	"Ohio",
+	"Oklahoma",
+	"Oregon",
+	"Pennsylvania",
+	"Rhode Island",
+	"South Carolina",
+	"South Dakota",
+	"Tennessee",
+	"Texas",
+	"Utah",
+	"Vermont",
+	"Virginia",
+	"Washington",
+	"West Virginia",
+	"Wisconsin",
+	"Wyoming",
+	"District of Columbia",
+];
+
+const isAmerican = (loc: string) => {
+	if (loc.endsWith("USA")) {
+		return true;
+	}
+
+	const parts = loc.split(", ");
+	const state = parts[parts.length - 1];
+	return states.includes(state);
+};
+
+const getCountry = (p: { born: { loc: string } }) => {
+	let name = p.born.loc && p.born.loc !== "" ? p.born.loc : "None";
+
+	if (isAmerican(name)) {
+		name = "USA";
+	} else {
+		const parts = name.split(", ");
+		if (parts.length > 1) {
+			name = parts[parts.length - 1];
+		}
+	}
+
+	return name;
+};
+
+const getJerseyNumber = (
+	p: PlayerWithoutKey,
+	type: "mostCommon" | "current" = "current",
+): string | undefined => {
+	if (type === "current") {
+		if (p.stats.length > 0) {
+			return p.stats[p.stats.length - 1].jerseyNumber;
+		}
+
+		// For uploaded league files
+		return p.jerseyNumber;
+	}
+
+	// Find most common from career
+	const numSeasonsByJerseyNumber: Record<string, number> = {};
+	let max = 0;
+	for (const { jerseyNumber } of p.stats) {
+		if (jerseyNumber === undefined) {
+			continue;
+		}
+		if (numSeasonsByJerseyNumber[jerseyNumber] === undefined) {
+			numSeasonsByJerseyNumber[jerseyNumber] = 1;
+		} else {
+			numSeasonsByJerseyNumber[jerseyNumber] += 1;
+		}
+
+		if (numSeasonsByJerseyNumber[jerseyNumber] > max) {
+			max = numSeasonsByJerseyNumber[jerseyNumber];
+		}
+	}
+
+	const entries = Object.entries(numSeasonsByJerseyNumber).reverse();
+	const entry = entries.find(entry => entry[1] === max);
+	if (entry) {
+		return entry[0];
+	}
+
+	return undefined;
+};
+
+const roundsWonText = (
+	playoffRoundsWon: number,
+	numPlayoffRounds: number,
+	numConfs: number,
+): string => {
+	const playoffsByConference = numConfs === 2;
+
+	if (playoffRoundsWon === numPlayoffRounds) {
+		return "League champs";
+	}
+
+	if (playoffRoundsWon === numPlayoffRounds - 1) {
+		return playoffsByConference ? "Conference champs" : "Made finals";
+	}
+
+	if (playoffRoundsWon === numPlayoffRounds - 2) {
+		return playoffsByConference ? "Made conference finals" : "Made semifinals";
+	}
+
+	if (playoffRoundsWon >= 1) {
+		return `Made ${ordinal(playoffRoundsWon + 1)} round`;
+	}
+
+	if (playoffRoundsWon === 0) {
+		return "Made playoffs";
+	}
+
+	return "";
+};
+
 export default {
 	addPopRank,
 	getPopRanks,
 	gameScore,
+	getCountry,
+	getJerseyNumber,
 	getTeamsDefault,
 	deepCopy,
 	formatCurrency,
+	isAmerican,
 	bound,
 	leagueUrlFactory,
 	numberWithCommas,
@@ -799,4 +1014,5 @@ export default {
 	upperCaseFirstLetter,
 	keys,
 	validateRoundsByes,
+	roundsWonText,
 };

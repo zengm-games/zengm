@@ -31,6 +31,7 @@ export type Col = {
 	noSearch?: boolean;
 	sortSequence?: SortOrder[];
 	sortType?: SortType;
+	searchType?: SortType;
 	title: string;
 	width?: string;
 };
@@ -59,6 +60,8 @@ export type Props = {
 			| {
 					classNames?: ClassValue;
 					value: ReactNode;
+					searchValue?: string;
+					sortValue?: string | number;
 			  }
 		)[];
 		classNames?: ClassValue;
@@ -178,7 +181,12 @@ class DataTable extends React.Component<Props, State> {
 	}
 
 	handleExportCSV() {
-		const columns = this.props.cols.map(col => col.title);
+		const colOrderFiltered = this.state.colOrder.filter(
+			({ hidden, colIndex }) => !hidden && this.props.cols[colIndex],
+		);
+		const columns = colOrderFiltered.map(
+			({ colIndex }) => this.props.cols[colIndex].title,
+		);
 		const rows = this.processRows().map(row =>
 			row.data.map(val => getSearchVal(val, false)),
 		);
@@ -247,7 +255,7 @@ class DataTable extends React.Component<Props, State> {
 	handleSearch(event: SyntheticEvent<HTMLInputElement>) {
 		this.setState({
 			currentPage: 1,
-			searchText: event.currentTarget.value.toLowerCase(),
+			searchText: event.currentTarget.value,
 		});
 	}
 
@@ -304,11 +312,13 @@ class DataTable extends React.Component<Props, State> {
 					createFilterFunction(
 						filter,
 						this.props.cols[i] ? this.props.cols[i].sortType : undefined,
+						this.props.cols[i] ? this.props.cols[i].searchType : undefined,
 					),
 			  )
 			: [];
 		const skipFiltering =
 			this.state.searchText === "" && !this.state.enableFilters;
+		const searchText = this.state.searchText.toLowerCase();
 		const rowsFiltered = skipFiltering
 			? this.props.rows
 			: this.props.rows.filter(row => {
@@ -321,7 +331,7 @@ class DataTable extends React.Component<Props, State> {
 								continue;
 							}
 
-							if (getSearchVal(row.data[i]).includes(this.state.searchText)) {
+							if (getSearchVal(row.data[i]).includes(searchText)) {
 								found = true;
 								break;
 							}

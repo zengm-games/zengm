@@ -19,6 +19,13 @@
 		width: 200px;
 	}
 }
+@include media-breakpoint-down(xs) {
+	.datatable-controls {
+		input {
+			width: 158px;
+		}
+	}
+}
 
 .datatable-info {
 	float: left;
@@ -113,5 +120,5 @@ table.table thead .sorting_desc_disabled {
 }*/
 
 .datatable-negative-margin-top {
-	margin-top: -2em;
+	margin-top: -27px;
 }

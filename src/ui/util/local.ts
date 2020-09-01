@@ -1,9 +1,6 @@
 import create from "zustand";
 import shallow from "zustand/shallow";
-import type {
-	LocalStateUI,
-	GameAttributesLeagueWithHistory,
-} from "../../common/types";
+import type { LocalStateUI, GameAttributesLeague } from "../../common/types";
 import safeLocalStorage from "./safeLocalStorage";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
@@ -14,15 +11,21 @@ type LocalActions = {
 	resetLeague: () => void;
 	toggleSidebar: () => void;
 	update: (obj: Partial<LocalStateUI>) => void;
-	updateGameAttributes: (
-		gameAttributes: Partial<GameAttributesLeagueWithHistory>,
-	) => void;
+	updateGameAttributes: (gameAttributes: Partial<GameAttributesLeague>) => void;
 };
 
 const defaultUnits: "metric" | "us" =
 	window.navigator.language === "en-US" ? "us" : "metric";
 
-const [useLocal, local] = create<
+// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
+const blockCloseTab = (e: BeforeUnloadEvent) => {
+	// Cancel the event
+	e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+	// Chrome requires returnValue to be set
+	e.returnValue = "";
+};
+
+const useLocal = create<
 	LocalStateUI & {
 		actions: LocalActions;
 	}
@@ -38,6 +41,7 @@ const [useLocal, local] = create<
 	leagueName: "",
 	lid: undefined,
 	liveGameInProgress: false,
+	spectator: false,
 	phase: 0,
 	phaseText: "",
 	playMenuOptions: [],
@@ -103,6 +107,7 @@ const [useLocal, local] = create<
 				userTid: 0,
 				userTids: [],
 			});
+			window.removeEventListener("beforeunload", blockCloseTab);
 		},
 
 		toggleSidebar() {
@@ -114,18 +119,26 @@ const [useLocal, local] = create<
 				obj.units = defaultUnits;
 			}
 
+			if (obj.hasOwnProperty("liveGameInProgress")) {
+				if (obj.liveGameInProgress) {
+					window.addEventListener("beforeunload", blockCloseTab);
+				} else {
+					window.removeEventListener("beforeunload", blockCloseTab);
+				}
+			}
+
 			set(obj);
 		},
 
-		updateGameAttributes(
-			gameAttributes: Partial<GameAttributesLeagueWithHistory>,
-		) {
+		updateGameAttributes(gameAttributes: Partial<GameAttributesLeague>) {
+			// Keep in sync with gameAttributesToUI - this is just for TypeScript
 			const keys = [
 				"challengeNoRatings",
 				"godMode",
 				"homeCourtAdvantage",
 				"lid",
 				"leagueName",
+				"spectator",
 				"phase",
 				"season",
 				"startingSeason",
@@ -136,7 +149,7 @@ const [useLocal, local] = create<
 
 			let update = false;
 
-			const updates: Partial<GameAttributesLeagueWithHistory> = {};
+			const updates: Partial<GameAttributesLeague> = {};
 
 			for (const key of keys) {
 				if (
@@ -162,6 +175,7 @@ const useLocalShallow = <T>(selector: (a: LocalStateUI) => T) =>
 // This assumes the actions object never changes!
 const useLocalActions = () => useLocal(state => state.actions);
 
+const local = useLocal;
 const localActions = local.getState().actions;
 
 export { local, localActions, useLocal, useLocalActions, useLocalShallow };

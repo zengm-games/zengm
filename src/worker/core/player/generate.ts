@@ -1,8 +1,5 @@
-import college from "./college";
-import genContract from "./genContract";
 import genRatings from "./genRatings";
 import name from "./name";
-import setContract from "./setContract";
 import { face, g } from "../../util";
 import type {
 	MinimalPlayerRatings,
@@ -21,7 +18,7 @@ const generate = (
 		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingRank,
 	);
-	const { country, firstName, lastName } = name();
+	const { college, country, firstName, lastName } = name();
 
 	const weight = genWeight(ratings.hgt, ratings.stre);
 	const p = {
@@ -30,11 +27,10 @@ const generate = (
 			year: g.get("season") - age,
 			loc: country,
 		},
-		college: college(country),
+		college,
 		contract: {
-			// Will be set by setContract below
-			amount: 0,
-			exp: 0,
+			amount: g.get("minContract"),
+			exp: g.get("season") + 1,
 		},
 		draft: {
 			round: 0,
@@ -79,10 +75,8 @@ const generate = (
 		valueNoPot: 0,
 		valueFuzz: 0,
 		valueNoPotFuzz: 0,
-		valueWithContract: 0,
 	};
 
-	setContract(p, genContract(p), false);
 	return p;
 };
 

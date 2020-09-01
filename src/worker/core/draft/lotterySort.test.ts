@@ -59,7 +59,7 @@ describe("worker/core/draft/lotterySort", () => {
 			},
 		];
 		lotterySort(teams);
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			teams.map(t => t.tid),
 			[2, 1, 3, 0],
 		);

@@ -93,7 +93,7 @@ export const getUpcoming = async ({
 			tid,
 			won: t.seasonAttrs.won,
 			lost: t.seasonAttrs.lost,
-			tied: g.get("ties") ? t.seasonAttrs.tied : undefined,
+			tied: t.seasonAttrs.tied,
 			playoffs,
 		};
 	};
@@ -140,6 +140,7 @@ const updateUpcoming = async (
 
 		return {
 			abbrev: inputs.abbrev,
+			tid: inputs.tid,
 			upcoming,
 		};
 	}

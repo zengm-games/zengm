@@ -7,15 +7,15 @@ import { g } from "../../util";
 import { getDraftTids, loadTeamSeasons } from "./testHelpers";
 
 const testRunPicks = async (numNow: number, numTotal: number) => {
-	const pids = await draft.runPicks(false);
-	assert.equal(pids.length, numNow);
+	const pids = await draft.runPicks("untilYourNextPick");
+	assert.strictEqual(pids.length, numNow);
 	const players = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 			[g.get("season")],
 			[g.get("season"), Infinity],
 		])
 	).filter(p => p.tid === PLAYER.UNDRAFTED);
-	assert.equal(players.length, 70 - numTotal);
+	assert.strictEqual(players.length, 70 - numTotal);
 };
 
 let userPick1: number;
@@ -28,15 +28,15 @@ const testDraftUser = async (round: number) => {
 		throw new Error("No draft pick");
 	}
 
-	assert.equal(dp.round, round);
+	assert.strictEqual(dp.round, round);
 
 	if (round === 1) {
-		assert.equal(dp.pick, userPick1);
+		assert.strictEqual(dp.pick, userPick1);
 	} else {
-		assert.equal(dp.pick, userPick2 - 30);
+		assert.strictEqual(dp.pick, userPick2 - 30);
 	}
 
-	assert.equal(dp.tid, g.get("userTid"));
+	assert.strictEqual(dp.tid, g.get("userTid"));
 	const players = (
 		await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 			[g.get("season")],
@@ -45,7 +45,7 @@ const testDraftUser = async (round: number) => {
 	).filter(p => p.tid === PLAYER.UNDRAFTED);
 	const p = players[0];
 	await draft.selectPlayer(dp, p.pid);
-	assert.equal(p.tid, g.get("userTid"));
+	assert.strictEqual(p.tid, g.get("userTid"));
 };
 
 describe("worker/core/draft/runPicks", () => {

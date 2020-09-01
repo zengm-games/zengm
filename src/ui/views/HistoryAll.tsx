@@ -55,7 +55,6 @@ const awardName = (
 const teamName = (
 	t: View<"historyAll">["seasons"][number]["champ"],
 	season: number,
-	ties: boolean,
 ) => {
 	if (t) {
 		return (
@@ -64,7 +63,7 @@ const teamName = (
 					{t.region}
 				</a>{" "}
 				({t.won}-{t.lost}
-				{ties ? <>-{t.tied}</> : null})
+				{t.tied > 0 ? <>-{t.tied}</> : null})
 			</>
 		);
 	}
@@ -73,7 +72,7 @@ const teamName = (
 	return "N/A";
 };
 
-const HistoryAll = ({ awards, seasons, ties, userTid }: View<"historyAll">) => {
+const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
 
 	const cols = getCols(
@@ -102,7 +101,7 @@ const HistoryAll = ({ awards, seasons, ties, userTid }: View<"historyAll">) => {
 					classNames: s.champ.tid === userTid ? "table-info" : undefined,
 					value: (
 						<>
-							{s.champ.seed}. {teamName(s.champ, s.season, ties)}
+							{s.champ.seed}. {teamName(s.champ, s.season)}
 							{countText}
 						</>
 					),
@@ -115,7 +114,7 @@ const HistoryAll = ({ awards, seasons, ties, userTid }: View<"historyAll">) => {
 					classNames: s.runnerUp.tid === userTid ? "table-info" : undefined,
 					value: (
 						<>
-							{s.runnerUp.seed}. {teamName(s.runnerUp, s.season, ties)}
+							{s.runnerUp.seed}. {teamName(s.runnerUp, s.season)}
 						</>
 					),
 					sortValue: `${s.runnerUp.region} ${s.runnerUp.name} ${s.season}`,
@@ -164,7 +163,6 @@ const HistoryAll = ({ awards, seasons, ties, userTid }: View<"historyAll">) => {
 HistoryAll.propTypes = {
 	awards: PropTypes.arrayOf(PropTypes.string).isRequired,
 	seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
-	ties: PropTypes.bool.isRequired,
 	userTid: PropTypes.number.isRequired,
 };
 

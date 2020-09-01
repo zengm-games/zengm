@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { ChangeEvent } from "react";
-import { getCols } from "../../util";
+import { getCols, helpers } from "../../util";
 
 const rows: {
 	[key: string]: string[];
@@ -27,9 +27,11 @@ const rows: {
 		  ];
 
 const RatingsForm = ({
+	godMode,
 	handleChange,
 	ratingsRow,
 }: {
+	godMode: boolean;
 	handleChange: (
 		type: string,
 		field: string,
@@ -61,7 +63,18 @@ const RatingsForm = ({
 																onChange={event => {
 																	handleChange("rating", rating, event);
 																}}
-																value={ratingsRow[rating]}
+																value={
+																	godMode
+																		? ratingsRow[rating]
+																		: Math.round(
+																				helpers.bound(
+																					ratingsRow[rating] + ratingsRow.fuzz,
+																					0,
+																					100,
+																				),
+																		  )
+																}
+																disabled={!godMode}
 															/>
 														</div>
 													);
@@ -76,17 +89,20 @@ const RatingsForm = ({
 				);
 			})}
 
-			<label className="form-check-label ml-3 mb-3">
-				<input
-					className="form-check-input"
-					onChange={event => {
-						handleChange("rating", "locked", event);
-					}}
-					type="checkbox"
-					checked={!!ratingsRow.locked}
-				/>
-				Lock ratings (ratings will not change as player ages)
-			</label>
+			<div className="ml-1">
+				<label className="form-check-label ml-3 mb-3">
+					<input
+						className="form-check-input"
+						onChange={event => {
+							handleChange("rating", "locked", event);
+						}}
+						type="checkbox"
+						checked={!!ratingsRow.locked}
+						disabled={!godMode}
+					/>
+					Lock ratings (ratings will not change as player ages)
+				</label>
+			</div>
 		</>
 	);
 };

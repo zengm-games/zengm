@@ -12,9 +12,7 @@ export const getStats = async (
 	tid?: number,
 ) => {
 	const stats = statsTable.stats;
-	const seasonAttrs: ("abbrev" | "won" | "lost" | "tied")[] = g.get("ties")
-		? ["abbrev", "won", "lost", "tied"]
-		: ["abbrev", "won", "lost"];
+	const seasonAttrs = ["abbrev", "won", "lost", "tied"] as const;
 	const teams = (
 		await idb.getCopies.teamsPlus({
 			attrs: ["tid"],
@@ -98,6 +96,14 @@ const updateTeams = async (
 			inputs.playoffs === "playoffs",
 			statsTable,
 		);
+
+		let ties = false;
+		for (const t of teams) {
+			if (t.seasonAttrs.tied > 0) {
+				ties = true;
+				break;
+			}
+		}
 
 		// Sort stats so we can determine what percentile our team is in.
 		const allStats: Record<string, number[]> = {};
@@ -232,7 +238,7 @@ const updateTeams = async (
 			superCols: statsTable.superCols,
 			teamOpponent: inputs.teamOpponent,
 			teams,
-			ties: g.get("ties"),
+			ties: g.get("ties", inputs.season) || ties,
 			userTid: g.get("userTid"),
 		};
 	}

@@ -4,7 +4,6 @@ import allStarDraft from "./allStarDraft";
 import allStarHistory from "./allStarHistory";
 import awardRaces from "./awardRaces";
 import awardsRecords from "./awardsRecords";
-import changes from "./changes";
 import colleges from "./colleges";
 import countries from "./countries";
 import customizePlayer from "./customizePlayer";
@@ -21,7 +20,11 @@ import exportPlayers from "./exportPlayers";
 import exportStats from "./exportStats";
 import fantasyDraft from "./fantasyDraft";
 import freeAgents from "./freeAgents";
+import frivolitiesDraftClasses from "./frivolitiesDraftClasses";
+import frivolitiesJerseyNumbers from "./frivolitiesJerseyNumbers";
+import frivolitiesTeamSeasons from "./frivolitiesTeamSeasons";
 import gameLog from "./gameLog";
+import gmHistory from "./gmHistory";
 import godMode from "./godMode";
 import hallOfFame from "./hallOfFame";
 import history from "./history";
@@ -82,7 +85,6 @@ export default {
 	allStarHistory,
 	awardRaces,
 	awardsRecords,
-	changes,
 	colleges,
 	countries,
 	customizePlayer,
@@ -99,7 +101,11 @@ export default {
 	exportStats,
 	fantasyDraft,
 	freeAgents,
+	frivolitiesDraftClasses,
+	frivolitiesJerseyNumbers,
+	frivolitiesTeamSeasons,
 	gameLog,
+	gmHistory,
 	godMode,
 	hallOfFame,
 	history,

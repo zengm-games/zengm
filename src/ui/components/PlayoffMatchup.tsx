@@ -33,6 +33,7 @@ const Team = ({
 	userTid,
 	won,
 	lost,
+	gid,
 }: {
 	expandTeamName: boolean;
 	team?: SeriesTeam;
@@ -42,10 +43,31 @@ const Team = ({
 	userTid: number;
 	won: boolean;
 	lost: boolean;
+	gid?: number;
 }) => {
 	if (!team) {
 		return null;
 	}
+
+	const wonPtsLink = (value: number) => {
+		if (gid === undefined) {
+			return <div className="ml-auto pr-2">{value}</div>;
+		}
+
+		return (
+			<a
+				className="ml-auto pr-2 h-100 d-flex align-items-center"
+				href={helpers.leagueUrl([
+					"game_log",
+					`${team.abbrev}_${team.tid}`,
+					season,
+					gid,
+				])}
+			>
+				{value}
+			</a>
+		);
+	};
 
 	return (
 		<li
@@ -92,17 +114,16 @@ const Team = ({
 				<br />
 				<span className="text-muted">
 					{team.regularSeason.won}-{team.regularSeason.lost}
-					{team.regularSeason.tied !== undefined ? (
+					{team.regularSeason.tied !== undefined &&
+					team.regularSeason.tied > 0 ? (
 						<>-{team.regularSeason.tied}</>
 					) : null}
 				</span>
 			</div>
-			{showWon && team.hasOwnProperty("won") ? (
-				<div className="ml-auto mr-2">{team.won}</div>
-			) : null}
-			{!showWon && showPts && team.hasOwnProperty("pts") ? (
-				<div className="ml-auto mr-2">{team.pts}</div>
-			) : null}
+			{showWon && typeof team.won === "number" ? wonPtsLink(team.won) : null}
+			{!showWon && showPts && typeof team.pts === "number"
+				? wonPtsLink(team.pts)
+				: null}
 		</li>
 	);
 };
@@ -120,6 +141,7 @@ const PlayoffMatchup = ({
 	series?: {
 		away?: SeriesTeam;
 		home: SeriesTeam;
+		gids?: number[];
 	};
 	userTid: number;
 }) => {
@@ -145,6 +167,12 @@ const PlayoffMatchup = ({
 		series.home.pts !== undefined &&
 		numGamesToWinSeries === 1;
 	const showWon = !!series.away && numGamesToWinSeries > 1;
+
+	const gid =
+		series.gids && series.gids.length > 0
+			? series.gids[series.gids.length - 1]
+			: undefined;
+
 	return (
 		<ul className="playoff-matchup border-bottom">
 			<Team
@@ -156,6 +184,7 @@ const PlayoffMatchup = ({
 				userTid={userTid}
 				won={homeWon}
 				lost={awayWon}
+				gid={gid}
 			/>
 			<Team
 				expandTeamName={expandTeamNames}
@@ -166,6 +195,7 @@ const PlayoffMatchup = ({
 				userTid={userTid}
 				won={awayWon}
 				lost={homeWon}
+				gid={gid}
 			/>
 		</ul>
 	);

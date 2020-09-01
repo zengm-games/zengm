@@ -22,8 +22,8 @@ const Buttons = ({
 	return (
 		<>
 			{godMode ? (
-				<div>
-					<label className="god-mode god-mode-text">
+				<div className="mt-2">
+					<label className="god-mode god-mode-text mb-0">
 						<input
 							type="checkbox"
 							onChange={handleClickForceTrade}
@@ -36,37 +36,26 @@ const Buttons = ({
 			<div>
 				<button
 					type="submit"
-					className="btn btn-primary mt-2"
-					disabled={!enablePropose && !forceTrade}
-					onClick={handleClickPropose}
-					style={{
-						margin: "5px 5px 5px 0",
-					}}
-				>
-					Propose Trade
-				</button>
-			</div>
-			<div>
-				<button
-					type="submit"
-					className="btn btn-secondary mt-1"
+					className="btn btn-secondary mt-2"
 					disabled={asking}
 					onClick={handleClickAsk}
-					style={{
-						margin: "5px 5px 5px 0",
-					}}
 				>
 					{asking ? "Waiting for answer..." : "What would make this deal work?"}
 				</button>
 			</div>
-			<div>
+			<div className="btn-group mt-2">
 				<button
 					type="submit"
-					className="btn btn-secondary mt-1"
+					className="btn btn-primary"
+					disabled={!enablePropose && !forceTrade}
+					onClick={handleClickPropose}
+				>
+					Propose Trade
+				</button>
+				<button
+					type="submit"
+					className="btn btn-secondary"
 					onClick={handleClickClear}
-					style={{
-						margin: "5px 5px 5px 0",
-					}}
 				>
 					Clear Trade
 				</button>

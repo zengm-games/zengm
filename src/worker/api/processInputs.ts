@@ -1,7 +1,7 @@
 import { PHASE, POSITIONS } from "../../common";
 import { g, helpers } from "../util";
-import type { Params } from "bbgm-router";
 import type { PlayerStatType } from "../../common/types";
+import type { Params } from "../../ui/router";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -180,7 +180,13 @@ const draftSummary = (params: Params) => {
 };
 
 const draftTeamHistory = (params: Params) => {
-	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	let [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	if (params.abbrev === "your_teams") {
+		tid = -1;
+		abbrev = "your_teams";
+	}
+
 	return {
 		tid,
 		abbrev,
@@ -264,6 +270,7 @@ const message = (params: Params) => {
 
 const most = (params: Params) => {
 	return {
+		arg: params.arg,
 		type: params.type,
 	};
 };
@@ -479,8 +486,11 @@ const teamHistory = (params: Params) => {
 };
 
 const teamRecords = (params: Params) => {
+	const filter: "all" | "your_teams" =
+		params.filter === "your_teams" ? "your_teams" : "all";
 	return {
 		byType: params.byType || "by_team",
+		filter,
 	};
 };
 
@@ -521,14 +531,26 @@ const leagueStats = (params: Params) => {
 };
 
 const standings = (params: Params) => {
-	let type: "conf" | "div" | "league" = "div";
-	if (params.type === "conf" || params.type === "league") {
+	let type: "conf" | "div" | "league" =
+		process.env.SPORT === "football" ? "div" : "conf";
+	if (
+		params.type === "conf" ||
+		params.type === "div" ||
+		params.type === "league"
+	) {
 		type = params.type;
 	}
 
 	return {
 		season: validateSeason(params.season),
 		type,
+	};
+};
+
+const tradingBlock = (params: Params, ctxBBGM: any) => {
+	const pid = ctxBBGM.pid;
+	return {
+		pid: typeof pid === "number" ? pid : undefined,
 	};
 };
 
@@ -614,6 +636,7 @@ export default {
 	exportPlayers: validateSeasonOnly,
 	fantasyDraft,
 	freeAgents,
+	frivolitiesTeamSeasons: most,
 	gameLog,
 	history,
 	leaders,
@@ -645,6 +668,7 @@ export default {
 	teamRecords,
 	teamStatDists: validateSeasonOnly,
 	teamStats,
+	tradingBlock,
 	transactions,
 	upcomingFreeAgents,
 	watchList,

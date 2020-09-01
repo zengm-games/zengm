@@ -16,7 +16,7 @@ const updatePlayoffSeries = async (
 	}
 	const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 	const numGamesToWinSeries = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries")[playoffSeries.currentRound],
+		g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
 	);
 
 	for (const result of results) {
@@ -40,6 +40,8 @@ const updatePlayoffSeries = async (
 				away.pts = 0;
 			}
 
+			let found = false;
+
 			if (home.tid === result.team[0].id) {
 				home.pts += result.team[0].stat.pts;
 				away.pts += result.team[1].stat.pts;
@@ -50,7 +52,7 @@ const updatePlayoffSeries = async (
 					away.won += 1;
 				}
 
-				break;
+				found = true;
 			} else if (away.tid === result.team[0].id) {
 				away.pts += result.team[0].stat.pts;
 				home.pts += result.team[1].stat.pts;
@@ -60,6 +62,15 @@ const updatePlayoffSeries = async (
 				} else {
 					home.won += 1;
 				}
+
+				found = true;
+			}
+
+			if (found) {
+				if (series.gids === undefined) {
+					series.gids = [];
+				}
+				series.gids.push(result.gid);
 
 				break;
 			}
@@ -102,12 +113,12 @@ const updatePlayoffSeries = async (
 				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
 			} else if (
 				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries").length - 3
+				g.get("numGamesPlayoffSeries", "current").length - 3
 			) {
 				currentRoundText = "quarterfinals";
 			} else if (
 				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries").length - 2
+				g.get("numGamesPlayoffSeries", "current").length - 2
 			) {
 				currentRoundText = "semifinals";
 
@@ -115,7 +126,7 @@ const updatePlayoffSeries = async (
 				saveToDb = false;
 			} else if (
 				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries").length - 1
+				g.get("numGamesPlayoffSeries", "current").length - 1
 			) {
 				currentRoundText = "finals";
 
@@ -138,7 +149,7 @@ const updatePlayoffSeries = async (
 				series.away.tid === g.get("userTid") ||
 				series.home.tid === g.get("userTid") ||
 				playoffSeries.currentRound ===
-					g.get("numGamesPlayoffSeries").length - 1;
+					g.get("numGamesPlayoffSeries", "current").length - 1;
 			logEvent(
 				{
 					type: "playoffs",

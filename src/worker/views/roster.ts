@@ -40,23 +40,24 @@ const updateRoster = async (
 		const editable =
 			inputs.season === g.get("season") &&
 			inputs.tid === g.get("userTid") &&
+			!g.get("spectator") &&
 			process.env.SPORT === "basketball";
 
 		const showRelease =
-			inputs.season === g.get("season") && inputs.tid === g.get("userTid");
+			inputs.season === g.get("season") &&
+			inputs.tid === g.get("userTid") &&
+			!g.get("spectator");
 
 		const seasonAttrs: TeamSeasonAttr[] = [
 			"profit",
 			"won",
 			"lost",
+			"tied",
 			"playoffRoundsWon",
 			"imgURL",
 			"region",
 			"name",
 		];
-		if (g.get("ties")) {
-			seasonAttrs.push("tied");
-		}
 		const t = await idb.getCopy.teamsPlus({
 			season: inputs.season,
 			tid: inputs.tid,
@@ -91,7 +92,7 @@ const updateRoster = async (
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
-		const stats2 = [...stats, "yearsWithTeam"];
+		const stats2 = [...stats, "yearsWithTeam", "jerseyNumber"];
 
 		let players: any[];
 		let payroll: number | undefined;
@@ -134,7 +135,7 @@ const updateRoster = async (
 				players.sort((a, b) => footballScore(b) - footballScore(a));
 			}
 
-			for (let i = 0; i < players.length; i++) {
+			for (const p of players) {
 				// Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
 				if (
 					inputs.tid === g.get("userTid") &&
@@ -145,13 +146,13 @@ const updateRoster = async (
 					g.get("phase") !== PHASE.FANTASY_DRAFT &&
 					g.get("phase") !== PHASE.EXPANSION_DRAFT
 				) {
-					players[i].canRelease = true;
+					p.canRelease = true;
 				} else {
-					players[i].canRelease = false;
+					p.canRelease = false;
 				}
 
 				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
-				players[i].ptModifier = String(players[i].ptModifier);
+				p.ptModifier = String(p.ptModifier);
 			}
 		} else {
 			// Show all players with stats for the given team and year
@@ -197,16 +198,26 @@ const updateRoster = async (
 			currentSeason: g.get("season"),
 			editable,
 			maxRosterSize: g.get("maxRosterSize"),
-			numConfs: g.get("confs").length,
+			numConfs: g.get("confs", "current").length,
 			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 			payroll,
 			phase: g.get("phase"),
 			players,
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
+			showSpectatorWarning:
+				inputs.season === g.get("season") &&
+				inputs.tid === g.get("userTid") &&
+				g.get("spectator"),
 			showRelease,
 			showTradeFor:
-				inputs.season === g.get("season") && inputs.tid !== g.get("userTid"),
+				inputs.season === g.get("season") &&
+				inputs.tid !== g.get("userTid") &&
+				!g.get("spectator"),
+			showTradingBlock:
+				inputs.season === g.get("season") &&
+				inputs.tid === g.get("userTid") &&
+				!g.get("spectator"),
 			stats,
 			t: t2,
 			tid: inputs.tid,

@@ -2,14 +2,16 @@ import type { Local } from "../../common/types";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.
 const defaultLocal: Local = {
-	autoPlaySeasons: 0,
+	autoPlayUntil: undefined,
 	autoSave: true,
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
 	mailingList: false, // Default, until told otherwise by server
 	leagueLoaded: false,
 	phaseText: "",
-	playerNames: undefined,
+	playerBioInfo: undefined,
+	playerOvrMean: undefined,
+	playerOvrStd: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
@@ -17,25 +19,29 @@ const defaultLocal: Local = {
 const local: Local & {
 	reset: () => void;
 } = {
-	autoPlaySeasons: defaultLocal.autoPlaySeasons,
+	autoPlayUntil: defaultLocal.autoPlayUntil,
 	autoSave: defaultLocal.autoSave,
 	fantasyDraftResults: defaultLocal.fantasyDraftResults,
 	goldUntil: defaultLocal.goldUntil,
 	leagueLoaded: defaultLocal.leagueLoaded,
 	mailingList: defaultLocal.mailingList,
 	phaseText: defaultLocal.phaseText,
-	playerNames: defaultLocal.playerNames,
+	playerBioInfo: defaultLocal.playerBioInfo,
+	playerOvrMean: defaultLocal.playerOvrMean,
+	playerOvrStd: defaultLocal.playerOvrStd,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
 	statusText: defaultLocal.statusText,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
 	reset: () => {
 		// These variables will be reset if the user switches leagues
-		local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
+		local.autoPlayUntil = defaultLocal.autoPlayUntil;
 		local.autoSave = defaultLocal.autoSave;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;
 		local.phaseText = defaultLocal.phaseText;
-		local.playerNames = defaultLocal.playerNames;
+		local.playerBioInfo = defaultLocal.playerBioInfo;
+		local.playerOvrMean = defaultLocal.playerOvrMean;
+		local.playerOvrStd = defaultLocal.playerOvrStd;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;

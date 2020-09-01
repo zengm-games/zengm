@@ -64,7 +64,7 @@ const updateExpansionDraft = async () => {
 		allAbbrevs.push(abbrev);
 	}
 
-	const divs = g.get("divs");
+	const divs = g.get("divs", "current");
 	const div = divs[divs.length - 1];
 	const param = allAbbrevs.map(abbrev => ({
 		tid: -1,
@@ -111,8 +111,8 @@ const updateExpansionDraft = async () => {
 
 	return {
 		builtInTeams: orderBy(builtInTeams, ["region", "name", "tid"]),
-		confs: g.get("confs", Infinity),
-		divs: g.get("divs", Infinity),
+		confs: g.get("confs"),
+		divs: g.get("divs"),
 		godMode: g.get("godMode"),
 		initialTeams: expansionDraft.teams || [],
 		initialNumProtectedPlayers:

@@ -32,7 +32,11 @@ const autoSign = async () => {
 
 	for (const t of teams) {
 		// Skip the user's team
-		if (g.get("userTids").includes(t.tid) && local.autoPlaySeasons === 0) {
+		if (
+			g.get("userTids").includes(t.tid) &&
+			!local.autoPlayUntil &&
+			!g.get("spectator")
+		) {
 			continue;
 		}
 
@@ -68,7 +72,7 @@ const autoSign = async () => {
 			const p = getBest(playersOnRoster, playersSorted, payroll);
 
 			if (p) {
-				player.sign(p, t.tid, p.contract, g.get("phase"));
+				await player.sign(p, t.tid, p.contract, g.get("phase"));
 				await idb.cache.players.put(p);
 				await team.rosterAutoSort(t.tid);
 			}

@@ -21,11 +21,14 @@ describe("Smoke Tests", () => {
 				startingSeason: 2016,
 			},
 		});
-		local.autoPlaySeasons = 1;
+		local.autoPlayUntil = {
+			season: 2017,
+			phase: 0,
+		};
 		league.autoPlay();
 		return new Promise(resolve => {
 			intervalID = window.setInterval(() => {
-				if (local.autoPlaySeasons === 0) {
+				if (g.get("season") === 2017) {
 					clearInterval(intervalID); // Wait to let it finish whatever DB activity might still be ongoing (like flushing cache)
 
 					setTimeout(resolve, 5000);

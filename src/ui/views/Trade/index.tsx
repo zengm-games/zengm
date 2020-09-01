@@ -1,5 +1,11 @@
 import PropTypes from "prop-types";
-import React, { useState, ChangeEvent } from "react";
+import React, {
+	useState,
+	useRef,
+	ChangeEvent,
+	useEffect,
+	useCallback,
+} from "react";
 import { PHASE } from "../../../common";
 import useTitleBar from "../../hooks/useTitleBar";
 import { toWorker } from "../../util";
@@ -7,6 +13,7 @@ import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
 import type { View } from "../../../common/types";
+import classNames from "classnames";
 
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({
@@ -170,7 +177,9 @@ const Trade = (props: View<"trade">) => {
 		gameOver,
 		godMode,
 		lost,
+		multiTeamMode,
 		numDraftRounds,
+		spectator,
 		otherPicks,
 		otherRoster,
 		otherTid,
@@ -182,7 +191,6 @@ const Trade = (props: View<"trade">) => {
 		strategy,
 		teams,
 		tied,
-		ties,
 		userPicks,
 		userRoster,
 		userTeamName,
@@ -193,29 +201,59 @@ const Trade = (props: View<"trade">) => {
 		title: "Trade",
 	});
 
+	const summaryText = useRef<HTMLDivElement>(null);
+	const summaryControls = useRef<HTMLDivElement>(null);
+
+	const updateSummaryHeight = useCallback(() => {
+		if (summaryControls.current && summaryText.current) {
+			// Keep in sync with .trade-affix
+			if (window.matchMedia("(min-width:768px)").matches) {
+				const newHeight =
+					window.innerHeight - 60 - summaryControls.current.clientHeight;
+				summaryText.current.style.maxHeight = `${newHeight}px`;
+			} else if (summaryText.current.style.maxHeight !== "") {
+				summaryText.current.style.removeProperty("height");
+			}
+		}
+	}, []);
+
+	// Run every render, in case it changes
+	useEffect(() => {
+		updateSummaryHeight();
+	});
+
+	useEffect(() => {
+		window.addEventListener("optimizedResize", updateSummaryHeight);
+		return () => {
+			window.removeEventListener("optimizedResize", updateSummaryHeight);
+		};
+	}, [updateSummaryHeight]);
+
 	const noTradingAllowed =
 		(phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
 		phase === PHASE.FANTASY_DRAFT ||
 		phase === PHASE.EXPANSION_DRAFT ||
-		gameOver;
+		gameOver ||
+		spectator ||
+		challengeNoTrades;
 
 	return (
 		<>
-			{showResigningMsg ? (
-				<p>
-					You can't trade players whose contracts expired this season, but their
-					old contracts still count against team salary caps until they are
-					either re-signed or become free agents.
-				</p>
-			) : null}
-
-			<p>
-				If a player has been signed within the past 14 days, he is not allowed
-				to be traded.
-			</p>
-
 			<div className="row">
 				<div className="col-md-9">
+					{showResigningMsg ? (
+						<p>
+							You can't trade players whose contracts expired this season, but
+							their old contracts still count against team salary caps until
+							they are either re-signed or become free agents.
+						</p>
+					) : null}
+
+					<p>
+						If a player has been signed within the past 14 days, he is not
+						allowed to be traded.
+					</p>
+
 					<select
 						className="float-left form-control select-team mb-2 mr-2"
 						value={otherTid}
@@ -233,7 +271,7 @@ const Trade = (props: View<"trade">) => {
 						}}
 					>
 						{won}-{lost}
-						{ties ? <>-{tied}</> : null}, {strategy}
+						{tied > 0 ? <>-{tied}</> : null}, {strategy}
 					</div>
 					<div className="clearfix" />
 					<AssetList
@@ -259,37 +297,68 @@ const Trade = (props: View<"trade">) => {
 						userOrOther="user"
 					/>
 				</div>
-				<div className="col-md-3 trade-summary">
-					<Summary
-						accepted={state.accepted}
-						message={state.message}
-						salaryCap={salaryCap}
-						summary={summary}
-					/>
-					{!noTradingAllowed && !challengeNoTrades ? (
-						<div className="text-center">
-							<Buttons
-								asking={state.asking}
-								enablePropose={summary.enablePropose}
-								forceTrade={state.forceTrade}
-								godMode={godMode}
-								handleClickAsk={handleClickAsk}
-								handleClickClear={handleClickClear}
-								handleClickForceTrade={handleClickForceTrade}
-								handleClickPropose={handleClickPropose}
-							/>
+				<div className="col-md-3">
+					<div className="trade-affix">
+						<Summary
+							ref={summaryText}
+							salaryCap={salaryCap}
+							summary={summary}
+						/>
+
+						<div className="py-1" ref={summaryControls}>
+							{summary.warning ? (
+								<div className="alert alert-danger mb-0">
+									<strong>Warning!</strong> {summary.warning}
+								</div>
+							) : null}
+							{state.message ? (
+								<div
+									className={classNames(
+										"alert mb-0",
+										state.accepted ? "alert-success" : "alert-info",
+										{
+											"mt-2": summary.warning,
+										},
+									)}
+								>
+									{state.message}
+								</div>
+							) : null}
+
+							<div
+								className={classNames({
+									"trade-extra-margin-bottom": multiTeamMode,
+								})}
+							>
+								{!noTradingAllowed ? (
+									<div className="text-center">
+										<Buttons
+											asking={state.asking}
+											enablePropose={summary.enablePropose}
+											forceTrade={state.forceTrade}
+											godMode={godMode}
+											handleClickAsk={handleClickAsk}
+											handleClickClear={handleClickClear}
+											handleClickForceTrade={handleClickForceTrade}
+											handleClickPropose={handleClickPropose}
+										/>
+									</div>
+								) : challengeNoTrades ? (
+									<p className="alert alert-danger">
+										<b>Challenge Mode:</b> You're not allowed to make trades.
+									</p>
+								) : spectator ? (
+									<p className="alert alert-danger">
+										You're not allowed to make trades in spectator mode.
+									</p>
+								) : (
+									<p className="alert alert-danger">
+										You're not allowed to make trades now.
+									</p>
+								)}
+							</div>
 						</div>
-					) : challengeNoTrades ? (
-						<div>
-							<p className="alert alert-danger">
-								<b>Challenge Mode:</b> You're not allowed to make trades.
-							</p>
-						</div>
-					) : (
-						<p className="alert alert-danger">
-							You're not allowed to make trades now.
-						</p>
-					)}
+					</div>
 				</div>
 			</div>
 		</>
@@ -321,7 +390,6 @@ Trade.propTypes = {
 		}),
 	).isRequired,
 	tied: PropTypes.number,
-	ties: PropTypes.bool.isRequired,
 	userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
 	userDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
 	userPicks: PropTypes.array.isRequired,

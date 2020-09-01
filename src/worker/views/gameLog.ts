@@ -46,6 +46,13 @@ export const setTeamInfo = async (
 			t.imgURL = g.get("teamInfoCache")[t.tid]?.imgURL;
 		}
 	}
+
+	for (const p of t.players) {
+		const p2 = await idb.cache.players.get(p.pid);
+		if (p2) {
+			p.watch = p2.watch;
+		}
+	}
 };
 
 /**
@@ -125,6 +132,9 @@ const boxScore = async (gid: number) => {
 			name: game.teams[wonInd].name,
 			abbrev: game.teams[wonInd].abbrev,
 			imgURL: game.teams[wonInd].imgURL,
+			won: game.teams[wonInd].won,
+			lost: game.teams[wonInd].lost,
+			tied: game.teams[wonInd].tied,
 		},
 		lost: {
 			...game.lost,
@@ -132,6 +142,9 @@ const boxScore = async (gid: number) => {
 			name: game.teams[lostInd].name,
 			abbrev: game.teams[lostInd].abbrev,
 			imgURL: game.teams[lostInd].imgURL,
+			won: game.teams[lostInd].won,
+			lost: game.teams[lostInd].lost,
+			tied: game.teams[lostInd].tied,
 		},
 	};
 

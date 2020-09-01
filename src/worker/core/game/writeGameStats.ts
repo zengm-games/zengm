@@ -209,6 +209,8 @@ const writeGameStats = async (
 			gameStats.teams[t].players[p].injury = helpers.deepCopy(
 				results.team[t].player[p].injury,
 			);
+			gameStats.teams[t].players[p].jerseyNumber =
+				results.team[t].player[p].jerseyNumber;
 		}
 	}
 
@@ -329,7 +331,7 @@ const writeGameStats = async (
 	}
 
 	// Save finals and semifinals, for news feed
-	const numPlayoffRounds = g.get("numGamesPlayoffSeries").length;
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 	if (
 		currentRound !== undefined &&
 		currentRound >= numPlayoffRounds - 2 &&
@@ -339,12 +341,14 @@ const writeGameStats = async (
 			currentRound >= numPlayoffRounds - 1 ? "finals" : "semifinals";
 		let score = round === "finals" ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
-		const numGamesThisRound = g.get("numGamesPlayoffSeries")[currentRound];
+		const numGamesThisRound = g.get("numGamesPlayoffSeries", "current")[
+			currentRound
+		];
 		const gameNumText = numGamesThisRound > 1 ? ` game ${gameNum} of` : "";
 		let leadText = "";
 		if (numGamesThisRound > 1) {
 			const numGamesToWinSeries = helpers.numGamesToWinSeries(
-				g.get("numGamesPlayoffSeries")[currentRound],
+				g.get("numGamesPlayoffSeries", "current")[currentRound],
 			);
 
 			if (playoffInfos[tw].won === playoffInfos[tw].lost) {

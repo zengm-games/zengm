@@ -12,10 +12,10 @@ const updateCustomizePlayer = async (
 	inputs: ViewInput<"customizePlayer">,
 	updateEvents: UpdateEvents,
 ) => {
-	if (!g.get("godMode")) {
+	if (!g.get("godMode") && inputs.pid === null) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
-			errorMessage: "You can't customize players unless you enable God Mode.",
+			errorMessage: "You can't create new players unless you enable God Mode.",
 		};
 		return returnValue;
 	}
@@ -87,6 +87,7 @@ const updateCustomizePlayer = async (
 
 		return {
 			appearanceOption,
+			godMode: g.get("godMode"),
 			minContract: g.get("minContract"),
 			originalTid,
 			p,

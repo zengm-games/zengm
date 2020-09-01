@@ -105,6 +105,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 					<br />
 					<br />
 					<br />
+					<br />
 				</div>
 			</div>
 		);
@@ -118,27 +119,33 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats }: Props) => {
 				<div className="col-4">
 					<b>Stats</b>
 					<br />
-					PTS: {stats.pts.toFixed(1)}
+					PTS: {helpers.roundStat(stats.pts, "pts")}
 					<br />
-					TRB: {stats.trb.toFixed(1)}
+					TRB: {helpers.roundStat(stats.trb, "trb")}
 					<br />
-					AST: {stats.ast.toFixed(1)}
+					AST: {helpers.roundStat(stats.ast, "ast")}
+					<br />
+					TS%: {helpers.roundStat(stats.tsp, "tsp")}%
 				</div>
 				<div className="col-4">
 					<br />
-					BLK: {stats.blk.toFixed(1)}
+					BLK: {helpers.roundStat(stats.blk, "blk")}
 					<br />
-					STL: {stats.stl.toFixed(1)}
+					STL: {helpers.roundStat(stats.stl, "stl")}
 					<br />
-					TO: {stats.tov.toFixed(1)}
+					TO: {helpers.roundStat(stats.tov, "tov")}
+					<br />
+					3PAr: {helpers.roundStat(stats.tpar, "tpar")}
 				</div>
 				<div className="col-4">
 					<br />
-					MP: {stats.min.toFixed(1)}
+					MP: {helpers.roundStat(stats.min, "min")}
 					<br />
-					PER: {stats.per.toFixed(1)}
+					PER: {helpers.roundStat(stats.per, "per")}
 					<br />
-					EWA: {stats.ewa.toFixed(1)}
+					EWA: {helpers.roundStat(stats.ewa, "ewa")}
+					<br />
+					FTr: {helpers.roundStat(stats.ftr, "ftr")}
 				</div>
 			</div>
 		);

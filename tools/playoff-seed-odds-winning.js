@@ -30,7 +30,7 @@ async function simSeason() {
 	);
 }
 
-const N = 500;
+const N = 100;
 
 const seedWinsByRound = [{}, {}, {}, {}];
 for (let i = 0; i < N; i++) {

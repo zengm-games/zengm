@@ -31,13 +31,14 @@ const value = (
 	options: {
 		fuzz?: boolean;
 		noPot?: boolean;
-		withContract?: boolean;
-	} = {},
+		ovrMean?: number;
+		ovrStd?: number;
+	},
 ): number => {
 	options.noPot = !!options.noPot;
 	options.fuzz = !!options.fuzz;
-	options.withContract = !!options.withContract; // Current ratings
 
+	// Current ratings
 	const pr: any = {}; // Start blank, add what we need (efficiency, wow!)
 
 	const s = p.ratings.length - 1;
@@ -52,6 +53,27 @@ const value = (
 	} else {
 		pr.ovr = p.ratings[s].ovr;
 		pr.pot = p.ratings[s].pot;
+	}
+
+	// Normalize ovr/pot
+	if (
+		process.env.SPORT === "basketball" &&
+		options.ovrMean !== undefined &&
+		options.ovrStd !== undefined
+	) {
+		const defaultOvrMean = 47;
+		const defaultOvrStd = 10;
+		if (options.ovrStd > 0) {
+			pr.ovr =
+				((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+				defaultOvrMean;
+			pr.pot =
+				((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+				defaultOvrMean;
+		} else {
+			pr.ovr = pr.ovr - options.ovrMean + defaultOvrMean;
+			pr.pot = pr.pot - options.ovrMean + defaultOvrMean;
+		}
 	}
 
 	// From linear regression OVR ~ PER
@@ -91,7 +113,7 @@ const value = (
 			}
 		}
 
-		current = 0.5 * pr.ovr + 0.5 * current; // Include some part of the ratings
+		current = 0.8 * pr.ovr + 0.2 * current; // Include some part of the ratings
 	}
 
 	// 2. Potential
@@ -127,67 +149,65 @@ const value = (
 	}
 
 	// Otherwise, combine based on age
+	// Coefficients influenced by analysis from nicidob:
+	// "I built my little statistical OVR measure. Then grouped by age. And got the average sOVR for the following 4 player years. Then just did a regression tree from [pot, ovr] (if both exist) to see how to get that sOVR"
 	if (age <= 19) {
-		return 0.8 * potential + 0.2 * current;
-	}
-
-	if (age === 20) {
 		return 0.7 * potential + 0.3 * current;
 	}
 
-	if (age === 21) {
+	if (age <= 20) {
+		return 0.65 * potential + 0.35 * current;
+	}
+
+	if (age <= 21) {
 		return 0.6 * potential + 0.4 * current;
 	}
 
-	if (age === 22) {
-		return 0.5 * potential + 0.5 * current;
+	if (age <= 22) {
+		return 0.6 * potential + 0.4 * current;
 	}
 
-	if (age === 23) {
-		return 0.4 * potential + 0.6 * current;
+	if (age <= 23) {
+		return 0.55 * potential + 0.45 * current;
 	}
 
-	if (age === 24) {
+	if (age <= 24) {
+		return 0.45 * potential + 0.55 * current;
+	}
+
+	if (age <= 25) {
 		return 0.3 * potential + 0.7 * current;
 	}
 
-	if (age === 25) {
-		return 0.2 * potential + 0.8 * current;
+	if (age <= 26) {
+		return 0.15 * potential + 0.85 * current;
 	}
 
-	if (age === 26) {
-		return 0.1 * potential + 0.9 * current;
+	if (age <= 27) {
+		return 0.025 * potential + 0.95 * current;
 	}
 
-	if (age === 27) {
-		return current;
-	}
-
-	if (age === 28) {
-		return current;
-	}
-
-	if (age === 29) {
-		return current;
-	}
-
-	if (age === 30) {
-		return 0.975 * current;
-	}
-
-	if (age === 32) {
+	if (age <= 28) {
 		return 0.95 * current;
 	}
 
-	if (age === 34) {
-		return 0.9 * current;
+	if (age <= 29) {
+		return 0.94 * current;
 	}
 
-	if (age === 35) {
-		return 0.85 * current;
+	if (age <= 30) {
+		return 0.93 * current;
 	}
 
-	return 0.8 * current;
+	if (age <= 33) {
+		return 0.92 * current;
+	}
+
+	if (age <= 38) {
+		return 0.91 * current;
+	}
+
+	return 0.9 * current;
 };
 
 export default value;

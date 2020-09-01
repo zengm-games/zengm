@@ -17,9 +17,9 @@ describe("worker/db/getCopies/playersPlus", () => {
 			players: [p],
 		});
 		p.contract.exp = g.get("season") + 1;
-		player.addStatsRow(p);
-		player.addStatsRow(p, true);
-		player.addStatsRow(p);
+		await player.addStatsRow(p);
+		await player.addStatsRow(p, true);
+		await player.addStatsRow(p);
 		const stats = p.stats;
 		stats[0].gp = 5;
 		stats[0].fg = 20;
@@ -53,17 +53,17 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.tid, 4);
-		assert.equal(pf.awards.length, 0);
-		assert.equal(pf.ratings.season, 2012);
-		assert.equal(typeof pf.ratings.ovr, "number");
-		assert.equal(Object.keys(pf.ratings).length, 2);
-		assert.equal(pf.stats.season, 2012);
-		assert.equal(pf.stats.abbrev, "CIN");
-		assert.equal(typeof pf.stats.fg, "number");
-		assert.equal(typeof pf.stats.fgp, "number");
-		assert.equal(typeof pf.stats.per, "number");
-		assert.equal(Object.keys(pf.stats).length, 6);
+		assert.strictEqual(pf.tid, 4);
+		assert.strictEqual(pf.awards.length, 0);
+		assert.strictEqual(pf.ratings.season, 2012);
+		assert.strictEqual(typeof pf.ratings.ovr, "number");
+		assert.strictEqual(Object.keys(pf.ratings).length, 2);
+		assert.strictEqual(pf.stats.season, 2012);
+		assert.strictEqual(pf.stats.abbrev, "CIN");
+		assert.strictEqual(typeof pf.stats.fg, "number");
+		assert.strictEqual(typeof pf.stats.fgp, "number");
+		assert.strictEqual(typeof pf.stats.per, "number");
+		assert.strictEqual(Object.keys(pf.stats).length, 6);
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
@@ -78,17 +78,17 @@ describe("worker/db/getCopies/playersPlus", () => {
 		});
 
 		for (let i = 0; i < 2; i++) {
-			assert.equal(pf[i].tid, 4);
-			assert.equal(pf[i].awards.length, 0);
-			assert.equal(pf[i].ratings.season, 2012);
-			assert.equal(typeof pf[i].ratings.ovr, "number");
-			assert.equal(Object.keys(pf[i].ratings).length, 2);
-			assert.equal(pf[i].stats.season, 2012);
-			assert.equal(pf[i].stats.abbrev, "CIN");
-			assert.equal(typeof pf[i].stats.fg, "number");
-			assert.equal(typeof pf[i].stats.fgp, "number");
-			assert.equal(typeof pf[i].stats.per, "number");
-			assert.equal(Object.keys(pf[i].stats).length, 6);
+			assert.strictEqual(pf[i].tid, 4);
+			assert.strictEqual(pf[i].awards.length, 0);
+			assert.strictEqual(pf[i].ratings.season, 2012);
+			assert.strictEqual(typeof pf[i].ratings.ovr, "number");
+			assert.strictEqual(Object.keys(pf[i].ratings).length, 2);
+			assert.strictEqual(pf[i].stats.season, 2012);
+			assert.strictEqual(pf[i].stats.abbrev, "CIN");
+			assert.strictEqual(typeof pf[i].stats.fg, "number");
+			assert.strictEqual(typeof pf[i].stats.fgp, "number");
+			assert.strictEqual(typeof pf[i].stats.per, "number");
+			assert.strictEqual(Object.keys(pf[i].stats).length, 6);
 			assert(!pf[i].hasOwnProperty("careerStats"));
 			assert(!pf[i].hasOwnProperty("careerStatsPlayoffs"));
 		}
@@ -106,15 +106,15 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.ratings.season, 2012);
-		assert.equal(typeof pf.ratings.ovr, "number");
-		assert.equal(Object.keys(pf.ratings).length, 2);
-		assert.equal(pf.stats.season, 2012);
-		assert.equal(pf.stats.abbrev, "CIN");
-		assert.equal(typeof pf.stats.fg, "number");
-		assert.equal(typeof pf.stats.fgp, "number");
-		assert.equal(typeof pf.stats.per, "number");
-		assert.equal(Object.keys(pf.stats).length, 6);
+		assert.strictEqual(pf.ratings.season, 2012);
+		assert.strictEqual(typeof pf.ratings.ovr, "number");
+		assert.strictEqual(Object.keys(pf.ratings).length, 2);
+		assert.strictEqual(pf.stats.season, 2012);
+		assert.strictEqual(pf.stats.abbrev, "CIN");
+		assert.strictEqual(typeof pf.stats.fg, "number");
+		assert.strictEqual(typeof pf.stats.fgp, "number");
+		assert.strictEqual(typeof pf.stats.per, "number");
+		assert.strictEqual(Object.keys(pf.stats).length, 6);
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
@@ -131,15 +131,15 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.tid, 4);
-		assert.equal(pf.awards.length, 0);
+		assert.strictEqual(pf.tid, 4);
+		assert.strictEqual(pf.awards.length, 0);
 		assert(!pf.hasOwnProperty("ratings"));
-		assert.equal(pf.stats.season, 2012);
-		assert.equal(pf.stats.abbrev, "CIN");
-		assert.equal(typeof pf.stats.fg, "number");
-		assert.equal(typeof pf.stats.fgp, "number");
-		assert.equal(typeof pf.stats.per, "number");
-		assert.equal(Object.keys(pf.stats).length, 6);
+		assert.strictEqual(pf.stats.season, 2012);
+		assert.strictEqual(pf.stats.abbrev, "CIN");
+		assert.strictEqual(typeof pf.stats.fg, "number");
+		assert.strictEqual(typeof pf.stats.fgp, "number");
+		assert.strictEqual(typeof pf.stats.per, "number");
+		assert.strictEqual(Object.keys(pf.stats).length, 6);
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
@@ -156,11 +156,11 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.tid, 4);
-		assert.equal(pf.awards.length, 0);
-		assert.equal(pf.ratings.season, 2012);
-		assert.equal(typeof pf.ratings.ovr, "number");
-		assert.equal(Object.keys(pf.ratings).length, 2);
+		assert.strictEqual(pf.tid, 4);
+		assert.strictEqual(pf.awards.length, 0);
+		assert.strictEqual(pf.ratings.season, 2012);
+		assert.strictEqual(typeof pf.ratings.ovr, "number");
+		assert.strictEqual(Object.keys(pf.ratings).length, 2);
 		assert(!pf.hasOwnProperty("stats"));
 		assert(!pf.hasOwnProperty("careerStats"));
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
@@ -174,7 +174,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			tid: 5,
 			season: 2012,
 		});
-		assert.equal(typeof pf, "undefined");
+		assert.strictEqual(typeof pf, "undefined");
 	});
 
 	test("return undefined if season does not match any on record", async () => {
@@ -185,7 +185,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			tid: 4,
 			season: 2014,
 		});
-		assert.equal(typeof pf, "undefined");
+		assert.strictEqual(typeof pf, "undefined");
 	});
 	test('return season totals is options.statType is "totals", and per-game averages otherwise', async () => {
 		let pf = await idb.getCopy.playersPlus(p, {
@@ -199,8 +199,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats.gp, 5);
-		assert.equal(pf.stats.fg, 20);
+		assert.strictEqual(pf.stats.gp, 5);
+		assert.strictEqual(pf.stats.fg, 20);
 		pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
 			tid: 4,
@@ -211,8 +211,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats.gp, 5);
-		assert.equal(pf.stats.fg, 4);
+		assert.strictEqual(pf.stats.gp, 5);
+		assert.strictEqual(pf.stats.fg, 4);
 	});
 
 	test("return playoff stats if options.playoffs is true", async () => {
@@ -227,12 +227,12 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats[0].playoffs, false);
-		assert.equal(pf.stats[0].gp, 5);
-		assert.equal(pf.stats[0].fg, 4);
-		assert.equal(pf.stats[1].playoffs, true);
-		assert.equal(pf.stats[1].gp, 3);
-		assert.equal(pf.stats[1].fg, 10);
+		assert.strictEqual(pf.stats[0].playoffs, false);
+		assert.strictEqual(pf.stats[0].gp, 5);
+		assert.strictEqual(pf.stats[0].fg, 4);
+		assert.strictEqual(pf.stats[1].playoffs, true);
+		assert.strictEqual(pf.stats[1].gp, 3);
+		assert.strictEqual(pf.stats[1].fg, 10);
 	});
 
 	test("not return undefined with options.showNoStats even if tid does not match any on record", async () => {
@@ -242,7 +242,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			season: 2012,
 			showNoStats: true,
 		});
-		assert.equal(typeof pf, "object");
+		assert.strictEqual(typeof pf, "object");
 	});
 
 	test("not return undefined with options.showNoStats if season does not match any on record", async () => {
@@ -252,7 +252,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			season: 2015,
 			showNoStats: true,
 		});
-		assert.equal(typeof pf, "object");
+		assert.strictEqual(typeof pf, "object");
 	});
 
 	test("not return undefined with options.showRookies if the player was drafted this season", async () => {
@@ -263,7 +263,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			season: 2011,
 			showRookies: true,
 		});
-		assert.equal(typeof pf, "object");
+		assert.strictEqual(typeof pf, "object");
 		g.setWithoutSavingToDB("season", 2012);
 		pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
@@ -271,7 +271,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			season: 2011,
 			showRookies: true,
 		});
-		assert.equal(typeof pf, "undefined");
+		assert.strictEqual(typeof pf, "undefined");
 	});
 
 	test("fuzz ratings if options.fuzz is true", async () => {
@@ -286,7 +286,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.ratings.ovr, p.ratings[1].ovr);
+		assert.strictEqual(pf.ratings.ovr, p.ratings[1].ovr);
 		pf = await idb.getCopy.playersPlus(p, {
 			ratings: ["ovr"],
 			tid: 4,
@@ -299,7 +299,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 		}
 
 		// This will break if ovr + fuzz is over 100 (should check bounds), but that never happens in practice
-		assert.equal(
+		assert.strictEqual(
 			pf.ratings.ovr,
 			Math.round(p.ratings[1].ovr + p.ratings[1].fuzz),
 		);
@@ -318,15 +318,15 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats.gp, 8);
-		assert.equal(pf.stats.fg, 7);
+		assert.strictEqual(pf.stats.gp, 8);
+		assert.strictEqual(pf.stats.fg, 7);
 		pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
 			tid: 0,
 			season: 2014,
 			oldStats: false,
 		});
-		assert.equal(typeof pf, "undefined");
+		assert.strictEqual(typeof pf, "undefined");
 		g.setWithoutSavingToDB("season", 2014);
 		pf = await idb.getCopy.playersPlus(p, {
 			stats: ["gp", "fg"],
@@ -339,8 +339,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats.gp, 8);
-		assert.equal(pf.stats.fg, 7);
+		assert.strictEqual(pf.stats.gp, 8);
+		assert.strictEqual(pf.stats.fg, 7);
 		g.setWithoutSavingToDB("season", 2012);
 	});
 
@@ -357,7 +357,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.cashOwed, (p.contract.amount * 2) / 1000);
+		assert.strictEqual(pf.cashOwed, (p.contract.amount * 2) / 1000);
 		pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["cashOwed"],
 			tid: 4,
@@ -369,7 +369,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.cashOwed, (p.contract.amount * 1.5) / 1000);
+		assert.strictEqual(pf.cashOwed, (p.contract.amount * 1.5) / 1000);
 		pf = await idb.getCopy.playersPlus(p, {
 			attrs: ["cashOwed"],
 			tid: 4,
@@ -381,7 +381,7 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.cashOwed, p.contract.amount / 1000);
+		assert.strictEqual(pf.cashOwed, p.contract.amount / 1000);
 	});
 
 	test("return stats and ratings from all seasons and teams if no season or team is specified", async () => {
@@ -396,21 +396,21 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.tid, 4);
-		assert.equal(pf.awards.length, 0);
-		assert.equal(pf.ratings[0].season, 2011);
-		assert.equal(typeof pf.ratings[0].ovr, "number");
-		assert.equal(pf.ratings[1].season, 2012);
-		assert.equal(typeof pf.ratings[1].ovr, "number");
-		assert.equal(pf.ratings[2].season, 2013);
-		assert.equal(typeof pf.ratings[2].ovr, "number");
-		assert.equal(pf.stats[0].season, 2012);
-		assert.equal(pf.stats[0].abbrev, "CIN");
-		assert.equal(pf.stats[0].fg, 20);
-		assert.equal(pf.stats[1].season, 2013);
-		assert.equal(pf.stats[1].abbrev, "ATL");
-		assert.equal(pf.stats[1].fg, 56);
-		assert.equal(pf.careerStats.fg, 76);
+		assert.strictEqual(pf.tid, 4);
+		assert.strictEqual(pf.awards.length, 0);
+		assert.strictEqual(pf.ratings[0].season, 2011);
+		assert.strictEqual(typeof pf.ratings[0].ovr, "number");
+		assert.strictEqual(pf.ratings[1].season, 2012);
+		assert.strictEqual(typeof pf.ratings[1].ovr, "number");
+		assert.strictEqual(pf.ratings[2].season, 2013);
+		assert.strictEqual(typeof pf.ratings[2].ovr, "number");
+		assert.strictEqual(pf.stats[0].season, 2012);
+		assert.strictEqual(pf.stats[0].abbrev, "CIN");
+		assert.strictEqual(pf.stats[0].fg, 20);
+		assert.strictEqual(pf.stats[1].season, 2013);
+		assert.strictEqual(pf.stats[1].abbrev, "ATL");
+		assert.strictEqual(pf.stats[1].fg, 56);
+		assert.strictEqual(pf.careerStats.fg, 76);
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
 
@@ -427,16 +427,16 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.tid, 4);
-		assert.equal(pf.awards.length, 0);
-		assert.equal(pf.ratings[0].season, 2012);
-		assert.equal(typeof pf.ratings[0].ovr, "number");
-		assert.equal(pf.ratings.length, 1);
-		assert.equal(pf.stats[0].season, 2012);
-		assert.equal(pf.stats[0].abbrev, "CIN");
-		assert.equal(pf.stats[0].fg, 20);
-		assert.equal(pf.stats.length, 1);
-		assert.equal(pf.careerStats.fg, 20);
+		assert.strictEqual(pf.tid, 4);
+		assert.strictEqual(pf.awards.length, 0);
+		assert.strictEqual(pf.ratings[0].season, 2012);
+		assert.strictEqual(typeof pf.ratings[0].ovr, "number");
+		assert.strictEqual(pf.ratings.length, 1);
+		assert.strictEqual(pf.stats[0].season, 2012);
+		assert.strictEqual(pf.stats[0].abbrev, "CIN");
+		assert.strictEqual(pf.stats[0].fg, 20);
+		assert.strictEqual(pf.stats.length, 1);
+		assert.strictEqual(pf.careerStats.fg, 20);
 		assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
 	});
 
@@ -456,8 +456,8 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats.tid, 20);
-		assert.equal(pf.stats.fg, (30 + 20) / 8);
+		assert.strictEqual(pf.stats.tid, 20);
+		assert.strictEqual(pf.stats.fg, (30 + 20) / 8);
 	});
 
 	test("mergeStats combines stats from multiple teams in the same season, for multiple seasons", async () => {
@@ -475,9 +475,9 @@ describe("worker/db/getCopies/playersPlus", () => {
 			throw new Error("Missing player");
 		}
 
-		assert.equal(pf.stats.length, 2);
-		assert.equal(pf.stats[0].tid, 20);
-		assert.equal(pf.stats[0].fg, (30 + 20) / 8);
-		assert.equal(pf.stats[1].fg, 56 / 8);
+		assert.strictEqual(pf.stats.length, 2);
+		assert.strictEqual(pf.stats[0].tid, 20);
+		assert.strictEqual(pf.stats[0].fg, (30 + 20) / 8);
+		assert.strictEqual(pf.stats[1].fg, 56 / 8);
 	});
 });

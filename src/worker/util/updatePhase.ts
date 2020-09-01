@@ -1,14 +1,19 @@
-import { PHASE_TEXT, PHASE } from "../../common";
+import { NO_LOTTERY_DRAFT_TYPES, PHASE_TEXT, PHASE } from "../../common";
 import { idb } from "../db";
 import g from "./g";
 import local from "./local";
 import toUI from "./toUI";
-import type { Conditions } from "../../common/types"; // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
+import type { Conditions } from "../../common/types";
 
+// Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 async function updatePhase(conditions?: Conditions) {
 	let text = PHASE_TEXT[g.get("phase")];
 
-	if (g.get("phase") === PHASE.DRAFT_LOTTERY && g.get("repeatSeason")) {
+	if (
+		g.get("phase") === PHASE.DRAFT_LOTTERY &&
+		(g.get("repeatSeason") ||
+			NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType")))
+	) {
 		text = "after playoffs";
 	}
 

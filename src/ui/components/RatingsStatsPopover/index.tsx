@@ -28,13 +28,16 @@ const Icon = ({
 const isMobile = () => window.screen && window.screen.width < 768;
 
 type Props = {
+	// For cases when we want to display the watch status, but not make it toggleable because the data will not reload, like for live box scores
+	disableWatchToggle?: boolean;
 	pid: number;
 	watch?: boolean;
 };
 
-const RatingsStatsPopover = ({ pid, watch }: Props) => {
+const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
+		jerseyNumber?: string;
 		name?: string;
 		ratings?: {
 			pos: string;
@@ -64,6 +67,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 	const loadData = useCallback(async () => {
 		const p = await toWorker("main", "ratingsStatsPopoverInfo", pid);
 		setPlayer({
+			jerseyNumber: p.jerseyNumber,
 			name: p.name,
 			ratings: p.ratings,
 			stats: p.stats,
@@ -79,7 +83,7 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 		}
 	}, [loadData, loadingData]);
 
-	const { name, ratings, stats } = player;
+	const { jerseyNumber, name, ratings, stats } = player;
 
 	let nameBlock = null;
 	if (name) {
@@ -90,7 +94,8 @@ const RatingsStatsPopover = ({ pid, watch }: Props) => {
 					<b>{name}</b>
 				</a>
 				{ratings !== undefined ? `, ${ratings.pos}` : null}
-				{typeof watch === "boolean" ? (
+				{jerseyNumber ? `, #${jerseyNumber}` : null}
+				{!disableWatchToggle && typeof watch === "boolean" ? (
 					<WatchBlock pid={pid} watch={watch} />
 				) : null}
 			</>

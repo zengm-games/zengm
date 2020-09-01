@@ -140,7 +140,7 @@ const getRatingsToBoost = (pos: string) => {
 			tck: 1.5,
 			prs: 0.75,
 			rns: 0.75,
-			elu: -0.5,
+			elu: -1,
 			bsc: -1,
 			hnd: -1,
 			rtr: -0.75,
@@ -153,8 +153,8 @@ const getRatingsToBoost = (pos: string) => {
 			spd: 1.25,
 			pcv: 1.25,
 			hnd: -0.5,
-			elu: -0.5,
-			bsc: -0.5,
+			elu: -1,
+			bsc: -1,
 			rtr: -0.25,
 		};
 	}
@@ -167,10 +167,10 @@ const getRatingsToBoost = (pos: string) => {
 			pcv: 1,
 			tck: 0.75,
 			rns: 0.5,
-			hnd: -0.5,
-			elu: -0.5,
-			bsc: -0.5,
-			rtr: -0.5,
+			hnd: -1,
+			elu: -1,
+			bsc: -1,
+			rtr: -1,
 		};
 	}
 
@@ -216,9 +216,8 @@ const heightToInches = (hgt: number) => {
 
 /*const info = {};
 const infoIn = {};
-const infoOut = {};*/
-
-// let timeoutID;
+const infoOut = {};
+let timeoutID;*/
 
 const initialRating = () => limitRating(random.truncGauss(10, 10, 0, 40));
 
@@ -374,6 +373,7 @@ const genRatings = (
 	}
 
 	ratings.pos = posFootball(ratings);
+
 	/*info[`${pos}->${ratings.pos}`] =
 		info[`${pos}->${ratings.pos}`] === undefined
 			? 1
@@ -389,7 +389,7 @@ const genRatings = (
                  console.log(pos2, infoIn[pos2], infoOut[pos2]);
              }
          }
-     }, 1000);*/
+	 }, 1000);*/
 
 	/*    if (pos === "DL" && ratings.pos === "LB") {
          console.log(ratings);

@@ -1,7 +1,11 @@
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers } from "../util";
-import type { MenuItemHeader, MenuItemLink } from "../../common/types";
+import type {
+	MenuItemHeader,
+	MenuItemLink,
+	MenuItemText,
+} from "../../common/types";
 
 const style = { maxWidth: 1000 };
 
@@ -18,6 +22,12 @@ const frivolities = {
 			name: "Countries",
 			description:
 				"See which countries have had the most successful pro players.",
+		},
+		{
+			urlParts: ["jersey_numbers"],
+			name: "Jersey Numbers",
+			description:
+				"See which jersey numbers have been used by the most successful pro players.",
 		},
 		{
 			urlParts: ["relatives"],
@@ -37,6 +47,43 @@ const frivolities = {
 			name: "Roster Continuity",
 			description:
 				"Color-coded visualization of year-to-year changes in roster.",
+		},
+		{
+			urlParts: ["teams", "best"],
+			name: "Best Teams",
+			description: "The greatest seasons of all time.",
+		},
+		{
+			urlParts: ["teams", "worst"],
+			name: "Worst Teams",
+			description: "The worst seasons of all time.",
+		},
+		{
+			urlParts: ["teams", "best_non_playoff"],
+			name: "Best Non-Playoff Teams",
+			description: "The best seasons from teams that missed the playoffs.",
+		},
+		{
+			urlParts: ["teams", "worst_playoff"],
+			name: "Worst Playoff Teams",
+			description: "The worst seasons from teams that made the playoffs.",
+		},
+		{
+			urlParts: ["teams", "worst_finals"],
+			name: "Worst Finals Teams",
+			description: "The worst seasons from teams that made the finals.",
+		},
+		{
+			urlParts: ["teams", "worst_champ"],
+			name: "Worst Championship Teams",
+			description: "The worst seasons from teams that won the title.",
+		},
+	],
+	Draft: [
+		{
+			urlParts: ["draft_classes"],
+			name: "Draft Class Rankings",
+			description: "All draft classes, ranked from best to worst.",
 		},
 	],
 	"Player Rankings": [
@@ -128,8 +175,13 @@ const frivolities = {
 	],
 };
 
-const children: MenuItemLink[] = [];
-for (const array of Object.values(frivolities)) {
+const children: (MenuItemLink | MenuItemText)[] = [];
+for (const [name, array] of Object.entries(frivolities)) {
+	children.push({
+		type: "text",
+		text: name,
+	});
+
 	for (const frivolitiy of array) {
 		children.push({
 			type: "link",
@@ -155,7 +207,7 @@ const Frivolities = () => {
 	});
 
 	const columns: (keyof typeof frivolities)[][] = [
-		["Player Bios", "Teams"],
+		["Player Bios", "Teams", "Draft"],
 		["Player Rankings"],
 	];
 

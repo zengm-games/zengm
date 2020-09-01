@@ -37,7 +37,7 @@ describe("worker/core/GameSim.football", () => {
 		game.team[1].stat.ptsQtrs = [0, 0, 0, 2];
 		game.scrimmage = 80;
 		game.clock = 0.01;
-		assert.equal(game.getPlayType(), "fieldGoal");
+		assert.strictEqual(game.getPlayType(), "fieldGoal");
 	});
 
 	test("kick a field goal at the end of the 2nd quarter rather than running out the clock", async () => {
@@ -51,6 +51,6 @@ describe("worker/core/GameSim.football", () => {
 		game.team[1].stat.ptsQtrs = [0, Math.round(Math.random() * 100)];
 		game.scrimmage = 80;
 		game.clock = 0.01;
-		assert.equal(game.getPlayType(), "fieldGoal");
+		assert.strictEqual(game.getPlayType(), "fieldGoal");
 	});
 });

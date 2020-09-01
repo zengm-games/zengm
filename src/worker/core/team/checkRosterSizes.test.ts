@@ -56,13 +56,13 @@ describe("worker/core/team/checkRosterSizes", () => {
 
 		// Confirm roster size under limit
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
-		assert.equal(players.length, 9);
+		assert.strictEqual(players.length, 9);
 		const userTeamSizeError = await team.checkRosterSizes();
-		assert.equal(userTeamSizeError, undefined);
+		assert.strictEqual(userTeamSizeError, undefined);
 
 		// Confirm players added up to limit
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
-		assert.equal(players.length, g.get("minRosterSize"));
+		assert.strictEqual(players.length, g.get("minRosterSize"));
 	});
 
 	test("automatically create a scrub when AI team needs to add a player but there is none", async () => {
@@ -73,10 +73,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 
 		// Confirm roster size under limit
 		const userTeamSizeError = await team.checkRosterSizes();
-		assert.equal(userTeamSizeError, undefined);
+		assert.strictEqual(userTeamSizeError, undefined);
 
 		const players = await idb.cache.players.indexGetAll("playersByTid", 1);
-		assert.equal(players.length, g.get("minRosterSize"));
+		assert.strictEqual(players.length, g.get("minRosterSize"));
 	});
 
 	test("remove players to AI team over roster limit without returning error message", async () => {
@@ -87,12 +87,12 @@ describe("worker/core/team/checkRosterSizes", () => {
 
 		// Confirm roster size over limit
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
-		assert.equal(players.length, 24); // Confirm no error message and roster size pruned to limit
+		assert.strictEqual(players.length, 24); // Confirm no error message and roster size pruned to limit
 
 		const userTeamSizeError = await team.checkRosterSizes();
-		assert.equal(userTeamSizeError, undefined);
+		assert.strictEqual(userTeamSizeError, undefined);
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
-		assert.equal(players.length, 15);
+		assert.strictEqual(players.length, 15);
 	});
 
 	test("return error message when user team is under roster limit", async () => {
@@ -107,10 +107,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"playersByTid",
 			g.get("userTid"),
 		);
-		assert.equal(players.length, 9); // Confirm roster size error and no auto-signing of players
+		assert.strictEqual(players.length, 9); // Confirm roster size error and no auto-signing of players
 
 		const userTeamSizeError = await team.checkRosterSizes();
-		assert.equal(typeof userTeamSizeError, "string");
+		assert.strictEqual(typeof userTeamSizeError, "string");
 		if (userTeamSizeError) {
 			assert(userTeamSizeError.includes("less"));
 			assert(userTeamSizeError.includes("minimum"));
@@ -119,7 +119,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"playersByTid",
 			g.get("userTid"),
 		);
-		assert.equal(players.length, 9);
+		assert.strictEqual(players.length, 9);
 	});
 
 	test("return error message when user team is over roster limit", async () => {
@@ -133,10 +133,10 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"playersByTid",
 			g.get("userTid"),
 		);
-		assert.equal(players.length, 24); // Confirm roster size error and no auto-release of players
+		assert.strictEqual(players.length, 24); // Confirm roster size error and no auto-release of players
 
 		const userTeamSizeError = await team.checkRosterSizes();
-		assert.equal(typeof userTeamSizeError, "string");
+		assert.strictEqual(typeof userTeamSizeError, "string");
 		if (userTeamSizeError) {
 			assert(userTeamSizeError.includes("more"));
 			assert(userTeamSizeError.includes("maximum"));
@@ -145,6 +145,6 @@ describe("worker/core/team/checkRosterSizes", () => {
 			"playersByTid",
 			g.get("userTid"),
 		);
-		assert.equal(players.length, 24);
+		assert.strictEqual(players.length, 24);
 	});
 });

@@ -10,9 +10,9 @@ const testCreateTrade = async (
 	otherPidsTest: number[],
 ) => {
 	const { teams } = await get();
-	assert.deepEqual(teams[1].tid, otherTidTest);
-	assert.deepEqual(teams[0].pids, userPidsTest);
-	assert.deepEqual(teams[1].pids, otherPidsTest);
+	assert.deepStrictEqual(teams[1].tid, otherTidTest);
+	assert.deepStrictEqual(teams[0].pids, userPidsTest);
+	assert.deepStrictEqual(teams[1].pids, otherPidsTest);
 };
 
 describe("worker/core/trade/create", () => {

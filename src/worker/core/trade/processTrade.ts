@@ -63,7 +63,7 @@ const processTrade = async (
 			p.ptModifier = 1; // Reset
 
 			if (g.get("phase") <= PHASE.PLAYOFFS) {
-				player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+				await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
 			}
 
 			if (!p.transactions) {

@@ -49,16 +49,22 @@ const categories =
 const isHistorical = (t: { root: boolean; disabled?: boolean }) =>
 	!t.root || t.disabled;
 
-const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
+const TeamRecords = ({
+	byType,
+	filter,
+	teams,
+	ties,
+	userTid,
+}: View<"teamRecords">) => {
 	const [showHistorical, setShowHistorical] = useState(true);
 
 	useTitleBar({
 		title: "Team Records",
 		dropdownView: "team_records",
-		dropdownFields: { teamRecordType: byType },
+		dropdownFields: { teamRecordType: byType, teamRecordsFilter: filter },
 	});
 
-	let displayName;
+	let displayName: string;
 	if (byType === "by_conf") {
 		displayName = "Conference";
 	} else if (byType === "by_div") {
@@ -68,6 +74,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 	}
 
 	let cols = getCols(
+		...(displayName === "Division" ? ["Conference"] : []),
 		displayName,
 		"Start",
 		"End",
@@ -98,6 +105,7 @@ const TeamRecords = ({ byType, teams, ties, userTid }: View<"teamRecords">) => {
 			return {
 				key: i,
 				data: [
+					...(displayName === "Division" ? [t.confName] : []),
 					byType === "by_team" ? teamLink(t) : t.name,
 					t.start,
 					t.end,

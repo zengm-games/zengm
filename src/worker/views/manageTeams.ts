@@ -45,8 +45,8 @@ const updateTeamInfo = async () => {
 
 	return {
 		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
-		confs: g.get("confs", Infinity),
-		divs: g.get("divs", Infinity),
+		confs: g.get("confs"),
+		divs: g.get("divs"),
 		godMode: g.get("godMode"),
 		phase: g.get("phase"),
 		teams: orderBy(teams, ["region", "name", "tid"]),

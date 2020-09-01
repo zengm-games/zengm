@@ -92,6 +92,7 @@ const updateTrade = async () => {
 		"injury",
 		"watch",
 		"untradable",
+		"jerseyNumber",
 	];
 	const ratings = ["ovr", "pot", "skills", "pos"];
 	const stats =
@@ -221,7 +222,6 @@ const updateTrade = async () => {
 		showResigningMsg,
 		teams: teams2,
 		tied: t.seasonAttrs.tied,
-		ties: g.get("ties"),
 		userTeamName,
 		gameOver: g.get("gameOver"),
 		godMode: g.get("godMode"),
@@ -229,6 +229,8 @@ const updateTrade = async () => {
 		numDraftRounds: g.get("numDraftRounds"),
 		phase: g.get("phase"),
 		userTid: g.get("userTid"),
+		spectator: g.get("spectator"),
+		multiTeamMode: g.get("userTids").length > 1,
 	};
 };
 

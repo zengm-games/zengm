@@ -7,6 +7,7 @@ import type {
 	PhaseReturn,
 	RealTeamInfo,
 } from "../../../common/types";
+import groupBy from "lodash/groupBy";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -221,22 +222,6 @@ const newPhasePreseason = async (
 			// Update ratings
 			player.addRatingsRow(p, scoutingRank);
 			await player.develop(p, 1, false, coachingRanks[p.tid]);
-
-			// Update player values after ratings changes
-			player.updateValues(p);
-
-			// If player is a free agent, re-assess contract demands
-			if (p.tid === PLAYER.FREE_AGENT) {
-				const newContract = player.genContract(p);
-
-				if (newContract.amount > p.contract.amount) {
-					// If player is still good, bump up contract demands
-					newContract.amount = (newContract.amount + p.contract.amount) / 2;
-					newContract.amount = 50 * Math.round(newContract.amount / 50); // Make it a multiple of 50k
-				}
-
-				player.setContract(p, newContract, false);
-			}
 		} else {
 			const info = repeatSeason.players[p.pid];
 			if (info) {
@@ -268,18 +253,77 @@ const newPhasePreseason = async (
 
 		// Add row to player stats if they are on a team
 		if (p.tid >= 0) {
-			player.addStatsRow(p, false);
+			await player.addStatsRow(p, false, {
+				ignoreJerseyNumberConflicts: true,
+			});
+		}
+	}
+
+	// Again, so updateValues can happen after new mean/std is calculated
+	local.playerOvrMean = undefined;
+	local.playerOvrStd = undefined;
+	for (const p of players) {
+		if (!repeatSeason) {
+			// Update player values after ratings changes
+			await player.updateValues(p);
 		}
 
 		await idb.cache.players.put(p);
 	}
 
-	if (local.autoPlaySeasons > 0) {
-		local.autoPlaySeasons -= 1;
+	if (!repeatSeason) {
+		await freeAgents.normalizeContractDemands({
+			type: "dummyExpiringContracts",
+		});
+	}
+
+	// Handle jersey number conflicts, which should only exist for players added in free agency, because otherwise it would have been handled at the time of signing
+	const playersByTeam = groupBy(
+		players.filter(p => p.tid >= 0 && p.stats.length > 0),
+		"tid",
+	);
+	for (const [tidString, roster] of Object.entries(playersByTeam)) {
+		const tid = parseInt(tidString);
+		for (const p of roster) {
+			const jerseyNumber = p.stats[p.stats.length - 1].jerseyNumber;
+			if (!jerseyNumber) {
+				continue;
+			}
+			const conflicts = roster.filter(
+				p2 => p2.stats[p2.stats.length - 1].jerseyNumber === jerseyNumber,
+			);
+			if (conflicts.length > 1) {
+				// Conflict! Who gets to keep the number?
+
+				// Player who was on team last year (should only be one at most)
+				let playerWhoKeepsIt = conflicts.find(
+					p => p.stats.length > 1 && p.stats[p.stats.length - 2].tid === tid,
+				);
+				if (!playerWhoKeepsIt) {
+					// Randomly pick one
+					playerWhoKeepsIt = random.choice(conflicts);
+				}
+
+				for (const p of conflicts) {
+					if (p !== playerWhoKeepsIt) {
+						p.stats[
+							p.stats.length - 1
+						].jerseyNumber = await player.genJerseyNumber(p);
+					}
+				}
+			}
+		}
+
+		// One more pass, for players without jersey numbers at all (draft picks)
+		for (const p of roster) {
+			p.stats[p.stats.length - 1].jerseyNumber = await player.genJerseyNumber(
+				p,
+			);
+		}
 	}
 
 	// No ads during multi season auto sim
-	if (env.enableLogging && local.autoPlaySeasons === 0) {
+	if (env.enableLogging && !local.autoPlayUntil) {
 		toUI("showModal", [], conditions);
 	}
 

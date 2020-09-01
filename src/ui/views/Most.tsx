@@ -2,9 +2,20 @@ import PropTypes from "prop-types";
 import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, PlayerNameLabels, SafeHtml } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
+
+export const getValue = (
+	obj: any,
+	key: View<"most">["extraCols"][number]["key"],
+) => {
+	return typeof key === "string"
+		? obj[key]
+		: key.length === 2
+		? obj[key[0]][key[1]]
+		: obj[key[0]][key[1]][key[2]];
+};
 
 const Most = ({
 	challengeNoRatings,
@@ -55,14 +66,16 @@ const Most = ({
 			key: p.pid,
 			data: [
 				p.rank,
-				<PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+				<PlayerNameLabels
+					disableWatchToggle
+					jerseyNumber={p.jerseyNumber}
+					pid={p.pid}
+					watch={p.watch}
+				>
+					{p.name}
+				</PlayerNameLabels>,
 				...extraCols.map(x => {
-					const value =
-						typeof x.key === "string"
-							? p[x.key]
-							: x.key.length === 2
-							? p[x.key[0]][x.key[1]]
-							: p[x.key[0]][x.key[1]][x.key[2]];
+					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {
 						return helpers.formatCurrency(value / 1000, "M");
 					}
@@ -115,7 +128,9 @@ const Most = ({
 
 	return (
 		<>
-			<p>{description}</p>
+			<p>
+				<SafeHtml dirty={description} />
+			</p>
 
 			<p>
 				Players who have played for your team are{" "}

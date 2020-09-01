@@ -5,7 +5,7 @@ import { DataTable, PlayerNameLabels } from "../components";
 import type { View } from "../../common/types";
 import { frivolitiesMenu } from "./Frivolities";
 
-export const genView = (type: "college" | "country") => {
+export const genView = (type: "college" | "country" | "jerseyNumbers") => {
 	return ({
 		challengeNoRatings,
 		infos,
@@ -14,7 +14,12 @@ export const genView = (type: "college" | "country") => {
 		valueStat,
 	}: View<"colleges">) => {
 		useTitleBar({
-			title: type === "college" ? "Colleges" : "Countries",
+			title:
+				type === "college"
+					? "Colleges"
+					: type === "country"
+					? "Countries"
+					: "Jersey Numbers",
 			customMenu: frivolitiesMenu,
 		});
 
@@ -34,7 +39,11 @@ export const genView = (type: "college" | "country") => {
 		];
 
 		const cols = getCols(
-			type === "college" ? "College" : "Country",
+			type === "college"
+				? "College"
+				: type === "country"
+				? "Country"
+				: "stat:jerseyNumber",
 			"# Players",
 			"# Active",
 			"# HoF",
@@ -60,17 +69,40 @@ export const genView = (type: "college" | "country") => {
 			return {
 				key: c.name,
 				data: [
-					c.name,
+					<a
+						href={helpers.leagueUrl([
+							"frivolities",
+							"most",
+							type === "college"
+								? "college"
+								: type === "country"
+								? "country"
+								: "jersey_number",
+							window.encodeURIComponent(c.name),
+						])}
+					>
+						{c.name}
+					</a>,
 					c.numPlayers,
 					c.numActivePlayers,
 					c.numHof,
 					helpers.roundStat(c.gp, "gp"),
 					helpers.roundStat(c.valueStat, valueStat),
 					{
-						value: <PlayerNameLabels pid={p.pid}>{p.name}</PlayerNameLabels>,
+						value: (
+							<PlayerNameLabels
+								jerseyNumber={p.jerseyNumber}
+								pid={p.pid}
+								watch={p.watch}
+								disableWatchToggle
+							>
+								{p.name}
+							</PlayerNameLabels>
+						),
 						classNames: {
 							"table-danger": p.hof,
 							"table-success": p.retiredYear === Infinity,
+							"table-info": p.statsTids.includes(userTid),
 						},
 					},
 					p.ratings[p.ratings.length - 1].pos,
@@ -101,9 +133,10 @@ export const genView = (type: "college" | "country") => {
 		return (
 			<>
 				<p>
-					Active players are{" "}
-					<span className="text-success">highlighted in green</span>. Hall of
-					Famers are <span className="text-danger">highlighted in red</span>.
+					Players who have played for your team are{" "}
+					<span className="text-info">highlighted in blue</span>. Active players
+					are <span className="text-success">highlighted in green</span>. Hall
+					of Famers are <span className="text-danger">highlighted in red</span>.
 				</p>
 				<DataTable
 					cols={cols}

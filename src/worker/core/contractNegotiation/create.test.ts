@@ -14,14 +14,14 @@ describe("worker/core/contractNegotiation/create", () => {
 		const pid = 0;
 		await givePlayerMinContract(pid);
 		const error = await contractNegotiation.create(pid, false);
-		assert.equal(
+		assert.strictEqual(
 			typeof error,
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
 		const negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 1);
-		assert.equal(negotiations[0].pid, pid);
+		assert.strictEqual(negotiations.length, 1);
+		assert.strictEqual(negotiations[0].pid, pid);
 	});
 
 	test("fail to start a negotiation with anyone but a free agent", async () => {
@@ -33,7 +33,7 @@ describe("worker/core/contractNegotiation/create", () => {
 			assert(error.includes("is not a free agent."));
 		}
 		const negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 0);
+		assert.strictEqual(negotiations.length, 0);
 	});
 
 	test("only allow one concurrent negotiation if resigning is false", async () => {
@@ -42,23 +42,23 @@ describe("worker/core/contractNegotiation/create", () => {
 		await givePlayerMinContract(pid1);
 		await givePlayerMinContract(pid2);
 		let error = await contractNegotiation.create(pid1, false);
-		assert.equal(
+		assert.strictEqual(
 			typeof error,
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
 		let negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 1);
-		assert.equal(negotiations[0].pid, pid1);
+		assert.strictEqual(negotiations.length, 1);
+		assert.strictEqual(negotiations[0].pid, pid1);
 		error = await contractNegotiation.create(pid2, false);
-		assert.equal(
+		assert.strictEqual(
 			typeof error,
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
 		negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 1);
-		assert.equal(negotiations[0].pid, pid2);
+		assert.strictEqual(negotiations.length, 1);
+		assert.strictEqual(negotiations[0].pid, pid2);
 	});
 
 	test("allow multiple concurrent negotiations if resigning is true", async () => {
@@ -67,24 +67,24 @@ describe("worker/core/contractNegotiation/create", () => {
 		await givePlayerMinContract(pid1);
 		await givePlayerMinContract(pid2);
 		let error = await contractNegotiation.create(pid1, true);
-		assert.equal(
+		assert.strictEqual(
 			typeof error,
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
 		let negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 1);
-		assert.equal(negotiations[0].pid, pid1);
+		assert.strictEqual(negotiations.length, 1);
+		assert.strictEqual(negotiations[0].pid, pid1);
 		error = await contractNegotiation.create(pid2, true);
-		assert.equal(
+		assert.strictEqual(
 			typeof error,
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
 		negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 2);
-		assert.equal(negotiations[0].pid, pid1);
-		assert.equal(negotiations[1].pid, pid2);
+		assert.strictEqual(negotiations.length, 2);
+		assert.strictEqual(negotiations[0].pid, pid1);
+		assert.strictEqual(negotiations[1].pid, pid2);
 	});
 
 	// The use of txs here might cause race conditions
@@ -97,21 +97,21 @@ describe("worker/core/contractNegotiation/create", () => {
 		p.tid = g.get("userTid");
 		await idb.cache.players.put(p);
 		let error = await contractNegotiation.create(pid2, false);
-		assert.equal(
+		assert.strictEqual(
 			error,
 			"Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.",
 		);
 		let negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 0);
+		assert.strictEqual(negotiations.length, 0);
 		error = await contractNegotiation.create(pid2, true);
-		assert.equal(
+		assert.strictEqual(
 			typeof error,
 			"undefined",
 			`Unexpected error message from contractNegotiation.create: "${error}"`,
 		);
 		negotiations = await idb.cache.negotiations.getAll();
-		assert.equal(negotiations.length, 1);
-		assert.equal(negotiations[0].pid, pid2);
+		assert.strictEqual(negotiations.length, 1);
+		assert.strictEqual(negotiations[0].pid, pid2);
 		p.tid = PLAYER.FREE_AGENT;
 		await idb.cache.players.put(p);
 	});

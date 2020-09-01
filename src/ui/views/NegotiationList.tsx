@@ -4,6 +4,7 @@ import {
 	DataTable,
 	NegotiateButtons,
 	PlayerNameLabels,
+	RosterComposition,
 	RosterSalarySummary,
 	SafeHtml,
 } from "../components";
@@ -16,8 +17,10 @@ const NegotiationList = ({
 	challengeNoFreeAgents,
 	challengeNoRatings,
 	hardCap,
+	maxContract,
 	minContract,
 	numRosterSpots,
+	spectator,
 	phase,
 	players,
 	playersRefuseToNegotiate,
@@ -25,11 +28,16 @@ const NegotiationList = ({
 	season,
 	stats,
 	sumContracts,
+	userPlayers,
 	userTid,
 }: View<"negotiationList">) => {
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
 
 	useTitleBar({ title });
+
+	if (spectator) {
+		return <p>The AI will handle re-signing players in spectator mode.</p>;
+	}
 
 	const cols = getCols(
 		"Name",
@@ -52,6 +60,7 @@ const NegotiationList = ({
 				<PlayerNameLabels
 					pid={p.pid}
 					injury={p.injury}
+					jerseyNumber={p.jerseyNumber}
 					skills={p.ratings.skills}
 					watch={p.watch}
 				>
@@ -85,6 +94,7 @@ const NegotiationList = ({
 					capSpace={capSpace}
 					challengeNoFreeAgents={challengeNoFreeAgents}
 					minContract={minContract}
+					spectator={spectator}
 					p={p}
 					phase={phase}
 					playersRefuseToNegotiate={playersRefuseToNegotiate}
@@ -98,6 +108,10 @@ const NegotiationList = ({
 
 	return (
 		<>
+			{process.env.SPORT === "football" ? (
+				<RosterComposition className="float-right mb-3" players={userPlayers} />
+			) : null}
+
 			<p>
 				More:{" "}
 				<a href={helpers.leagueUrl(["upcoming_free_agents"])}>
@@ -117,6 +131,7 @@ const NegotiationList = ({
 			<RosterSalarySummary
 				capSpace={capSpace}
 				hardCap={hardCap}
+				maxContract={maxContract}
 				minContract={minContract}
 				numRosterSpots={numRosterSpots}
 			/>

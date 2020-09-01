@@ -91,7 +91,7 @@ const LeagueStats = ({
 		data.lost = formatMaybeInteger(s.stats.lost);
 
 		if (ties) {
-			data.tied = s.stats.tied;
+			data.tied = formatMaybeInteger(s.stats.tied);
 		}
 
 		for (const stat of stats) {

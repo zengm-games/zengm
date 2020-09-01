@@ -13,34 +13,27 @@ const getSchedule = async (
 ): Promise<ScheduleGame[]> => {
 	const schedule = await idb.cache.schedule.getAll();
 
+	if (schedule.length === 0) {
+		return schedule;
+	}
+
 	if (oneDay) {
-		// Only take the games up until right before a team plays for the second time that day
-		const tids: number[] = [];
-		let i;
-
-		for (i = 0; i < schedule.length; i++) {
-			const { awayTid, homeTid } = schedule[i]; // All-Star Game
-
-			if (awayTid === -2 && homeTid === -1) {
-				if (tids.length > 0) {
-					// Play all games up to the All-Star Game
-					break;
-				} else {
-					// Return just the All-Star Game
-					// @ts-ignore
-					return schedule.slice(0, 1);
-				}
-			}
-
-			if (!tids.includes(homeTid) && !tids.includes(awayTid)) {
-				tids.push(homeTid);
-				tids.push(awayTid);
-			} else {
+		const partialSchedule = [];
+		const tids = new Set();
+		for (const game of schedule) {
+			if (game.day !== schedule[0].day) {
+				// Only keep games from same day
 				break;
 			}
+			if (tids.has(game.homeTid) || tids.has(game.awayTid)) {
+				// Only keep games from unique teams, no 2 games in 1 day
+				break;
+			}
+			partialSchedule.push(game);
+			tids.add(game.homeTid);
+			tids.add(game.awayTid);
 		}
-
-		return schedule.slice(0, i);
+		return partialSchedule;
 	}
 
 	return schedule;

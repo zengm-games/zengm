@@ -108,6 +108,10 @@ const Depth = ({
 					History
 				</a>{" "}
 				|{" "}
+				<a href={helpers.leagueUrl(["schedule", `${abbrev}_${tid}`])}>
+					Schedule
+				</a>{" "}
+				|{" "}
 				<a href={helpers.leagueUrl(["news_feed", `${abbrev}_${tid}`])}>
 					News Feed
 				</a>
@@ -199,6 +203,7 @@ const Depth = ({
 							<PlayerNameLabels
 								pid={p.pid}
 								injury={p.injury}
+								jerseyNumber={p.stats.jerseyNumber}
 								skills={p.ratings.skills}
 								watch={p.watch}
 							>

@@ -2,7 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-08-31: Added BPM, DBPM, OBPM, and VORP to the advanced stats in BBGM. Thanks @nicidob! [[1]](https://old.reddit.com/r/BasketballGM/comments/ijszx5/added_bpm_dbpm_obpm_and_vorp_to_the_advanced/)
+* DEV: Clutch plays in the playoffs now contain some info about the series in the text. Thanks @kevbauer! [[1]](https://github.com/dumbmatter/gm-games/pull/308)
+
+* 2020-08-31: Added BPM, DBPM, OBPM, and VORP to the advanced stats in BBGM. Thanks @nicidob! [[1]](https://github.com/dumbmatter/gm-games/pull/297) [[2]](https://old.reddit.com/r/BasketballGM/comments/ijszx5/added_bpm_dbpm_obpm_and_vorp_to_the_advanced/)
 
 * 2020-08-30: Frivolity to show which jersey numbers had the most/best players, and the top players who wore each jersey number. Also added similar lists of top players from each country and college, which you can access from those frivolities. They are all also linked from player profiles and the Player Bios table. [[1]](https://old.reddit.com/r/BasketballGM/comments/ij7fq5/frivolity_to_show_which_jersey_numbers_had_the/)
 

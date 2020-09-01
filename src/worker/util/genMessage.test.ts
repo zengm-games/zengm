@@ -21,7 +21,7 @@ describe("worker/util/genMessage", () => {
 
 	test("even when already at the max, recognizes excellent performance", async () => {
 		const teamSeasons = await idb.cache.teamSeasons.getAll();
-		assert.equal(teamSeasons.length, 1);
+		assert.strictEqual(teamSeasons.length, 1);
 		teamSeasons[0].ownerMood = {
 			money: 1,
 			playoffs: 1,
@@ -42,7 +42,7 @@ describe("worker/util/genMessage", () => {
 		);
 
 		const messages = await idb.cache.messages.getAll();
-		assert.equal(messages.length, 1);
+		assert.strictEqual(messages.length, 1);
 		const message = messages[0];
 
 		assert(message.text.includes("This year: Excellent!"));
@@ -51,7 +51,7 @@ describe("worker/util/genMessage", () => {
 
 	test("when at max for one component, message falls in between what you'd expect when using the uncapped or capped deltas alone", async () => {
 		const teamSeasons = await idb.cache.teamSeasons.getAll();
-		assert.equal(teamSeasons.length, 1);
+		assert.strictEqual(teamSeasons.length, 1);
 		teamSeasons[0].ownerMood = {
 			money: 1,
 			playoffs: -0.6,
@@ -72,7 +72,7 @@ describe("worker/util/genMessage", () => {
 		);
 
 		const messages = await idb.cache.messages.getAll();
-		assert.equal(messages.length, 1);
+		assert.strictEqual(messages.length, 1);
 		const message = messages[0];
 
 		assert(message.text.includes("This year: Good."));

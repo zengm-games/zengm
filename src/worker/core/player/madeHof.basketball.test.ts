@@ -49,7 +49,7 @@ describe("worker/core/player/madeHof.basketball", () => {
 				ewa: 14,
 			},
 		];
-		assert.equal(madeHofBasketball(p), true);
+		assert.strictEqual(madeHofBasketball(p), true);
 	});
 
 	test("narrowly miss HoF based on dominance factor", () => {
@@ -121,6 +121,6 @@ describe("worker/core/player/madeHof.basketball", () => {
 				ewa: 8,
 			},
 		];
-		assert.equal(madeHofBasketball(p), false);
+		assert.strictEqual(madeHofBasketball(p), false);
 	});
 });

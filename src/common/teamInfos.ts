@@ -64,13 +64,13 @@ const teamInfos: {
 		region: "Denver",
 		name: "High",
 		pop: 2.7,
-		colors: ["#216935", "#163a1c", "#a1d297"],
+		colors: ["#2b8643", "#163a1c", "#a1d297"],
 	},
 	DET: {
 		region: "Detroit",
 		name: "Muscle",
 		pop: 4.0,
-		colors: ["#3a5eab", "#708fc7", "#0a1130"],
+		colors: ["#3a61b6", "#9eb7e6", "#0a1130"],
 	},
 	HOU: {
 		region: "Houston",
@@ -94,7 +94,7 @@ const teamInfos: {
 		region: "Los Angeles",
 		name: "Earthquakes",
 		pop: 15.6,
-		colors: ["#6b6b6b", "#f15d24", "#dedddd"],
+		colors: ["#aeaeae", "#ea4b0f", "#dedddd"],
 	},
 	LAL: {
 		region: "Los Angeles",
@@ -124,7 +124,7 @@ const teamInfos: {
 		region: "Milwaukee",
 		name: "Cheesemakers",
 		pop: 1.5,
-		colors: ["#003600", "#007800", "#fdc05f"],
+		colors: ["#003600", "#fdc05f", "#007800"],
 	},
 	MIN: {
 		region: "Minneapolis",
@@ -148,7 +148,7 @@ const teamInfos: {
 		region: "New Orleans",
 		name: "Bayou",
 		pop: 1.1,
-		colors: ["#195869", "#0e3e33", "#4edd61"],
+		colors: ["#195869", "#4edd61", "#0e3e33"],
 	},
 	NYC: {
 		region: "New York",
@@ -172,7 +172,7 @@ const teamInfos: {
 		region: "Philadelphia",
 		name: "Cheesesteaks",
 		pop: 5.5,
-		colors: ["#bee6f6", "#ffe67b", "#3a3a3a"],
+		colors: ["#46bae6", "#ffdb33", "#3a3a3a"],
 	},
 	PHO: {
 		region: "Phoenix",
@@ -244,7 +244,7 @@ const teamInfos: {
 		region: "Utah",
 		name: "Missionaries",
 		pop: 2.3,
-		colors: ["#4c4c4c", "#000000", "#aea57a"],
+		colors: ["#7c7c7c", "#000000", "#aea57a"],
 	},
 	VAN: {
 		region: "Vancouver",

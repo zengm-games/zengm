@@ -74,13 +74,13 @@ describe("worker/util/account/checkAchievement", () => {
 
 		test("gracefully handle case where not enough seasons are present", async () => {
 			let awarded = await get("dynasty").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("dynasty_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("dynasty_3").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", async () => {
@@ -97,13 +97,13 @@ describe("worker/util/account/checkAchievement", () => {
 			await addExtraSeasons(g.get("userTid"), g.get("season"), extraSeasons);
 
 			let awarded = await get("dynasty").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("dynasty_3").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			// Add 1 to the existing 7 seasons, making 8 seasons total
 			await addExtraSeasons(g.get("userTid"), g.get("season") + 6, [
@@ -111,13 +111,13 @@ describe("worker/util/account/checkAchievement", () => {
 			]);
 
 			awarded = await get("dynasty").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("dynasty_3").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", async () => {
@@ -137,13 +137,13 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("dynasty").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_2").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_3").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", async () => {
@@ -177,13 +177,13 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("dynasty").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_2").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_3").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 		});
 
 		test("award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", async () => {
@@ -203,13 +203,13 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("dynasty").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("dynasty_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("dynasty_3").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 		});
 	});
 
@@ -224,10 +224,10 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("moneyball_2").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 		});
 
 		test("don't award either if didn't win title", async () => {
@@ -239,10 +239,10 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("moneyball_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("award moneyball but not moneyball_2 for title with payroll > $45M and <= $60M", async () => {
@@ -255,10 +255,10 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			awarded = await get("moneyball_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("don't award either if payroll > $40M", async () => {
@@ -271,10 +271,10 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			let awarded = await get("moneyball").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 
 			awarded = await get("moneyball_2").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 	});
 
@@ -289,7 +289,7 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			const awarded = await get("small_market").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 		});
 
 		test("don't award achievement if user's team is not in a small market", async () => {
@@ -302,7 +302,7 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			const awarded = await get("small_market").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("don't award achievement if user's team does not win the title", async () => {
@@ -315,7 +315,7 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			const awarded = await get("small_market").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 	});
 
@@ -335,7 +335,7 @@ describe("worker/util/account/checkAchievement", () => {
 			}
 
 			const awarded = await get("homegrown").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 		});
 
 		test("don't award achievement if user's team it has another team's drafted player", async () => {
@@ -352,7 +352,7 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.players.put(p);
 
 			const awarded = await get("homegrown").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 	});
 
@@ -372,13 +372,13 @@ describe("worker/util/account/checkAchievement", () => {
 			}
 
 			const awarded = await get("golden_oldies").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 
 			const awarded2 = await get("golden_oldies_2").check();
-			assert.equal(awarded2, false);
+			assert.strictEqual(awarded2, false);
 
 			const awarded3 = await get("golden_oldies_3").check();
-			assert.equal(awarded3, false);
+			assert.strictEqual(awarded3, false);
 		});
 
 		test("don't award achievement if user's team didn't win title", async () => {
@@ -390,7 +390,7 @@ describe("worker/util/account/checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			const awarded = await get("golden_oldies").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 	});
 
@@ -457,7 +457,7 @@ describe("worker/util/account/checkAchievement", () => {
 
 			await idb.cache.awards.put(awards);
 			const awarded = await get("triple_crown").check();
-			assert.equal(awarded, true);
+			assert.strictEqual(awarded, true);
 		});
 
 		test("don't award if different players on the same team win the three awards", async () => {
@@ -522,7 +522,7 @@ describe("worker/util/account/checkAchievement", () => {
 
 			await idb.cache.awards.put(awards);
 			const awarded = await get("triple_crown").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("dont award if different players win from different teams", async () => {
@@ -587,7 +587,7 @@ describe("worker/util/account/checkAchievement", () => {
 
 			await idb.cache.awards.put(awards);
 			const awarded = await get("triple_crown").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("don't award if same player wins all 3, same team, but not the user's team", async () => {
@@ -652,7 +652,7 @@ describe("worker/util/account/checkAchievement", () => {
 
 			await idb.cache.awards.put(awards);
 			const awarded = await get("triple_crown").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 
 		test("don't award if same player wins but is on different teams (a nonsense scenario)", async () => {
@@ -717,7 +717,7 @@ describe("worker/util/account/checkAchievement", () => {
 
 			await idb.cache.awards.put(awards);
 			const awarded = await get("triple_crown").check();
-			assert.equal(awarded, false);
+			assert.strictEqual(awarded, false);
 		});
 	});
 });

@@ -1,4 +1,10 @@
-import { PHASE, PLAYER, PLAYER_STATS_TABLES, RATINGS } from "../../common";
+import {
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+	RATINGS,
+	PLAYER_SUMMARY,
+} from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { face, g, getTeamColors, helpers } from "../util";
@@ -26,6 +32,14 @@ const updatePlayer = async (
 			};
 			return returnValue;
 		}
+		const statSummary = Object.values(PLAYER_SUMMARY);
+		const statsSumm = Array.from(
+			new Set(
+				statSummary.reduce<string[]>((allStats, currentStats) => {
+					return allStats.concat(currentStats.stats);
+				}, []),
+			),
+		);
 
 		const ratings = RATINGS;
 		const statTables = Object.values(PLAYER_STATS_TABLES);
@@ -349,6 +363,7 @@ const updatePlayer = async (
 			jerseyNumberInfos,
 			ratings,
 			statTables,
+			statSummary,
 			teamColors,
 			teamName,
 			willingToSign,

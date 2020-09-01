@@ -253,6 +253,10 @@ table {
 	white-space: nowrap;
 }
 
+.firstElement {
+	border-top-width: 0px !important;
+}
+
 .table-bordered {
 	tbody tr.separator td {
 		border-bottom: 1px solid $gray-700;

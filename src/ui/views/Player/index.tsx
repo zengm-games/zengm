@@ -166,6 +166,112 @@ StatsTable.propTypes = {
 	superCols: PropTypes.array,
 };
 
+const StatsSummary = ({
+	name,
+	onlyShowIf,
+	p,
+	retired,
+	position,
+	playoffs = false,
+	stats,
+	superCols,
+}: {
+	name: string;
+	onlyShowIf?: string[];
+	p: View<"player">["player"];
+	retired: boolean;
+	position: string;
+	playoffs?: boolean;
+	stats: string[];
+	superCols?: any[];
+}) => {
+	const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
+	const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
+	if (onlyShowIf !== undefined) {
+		let display = false;
+		if (onlyShowIf.includes(position)) {
+			display = true;
+		}
+		if (!display) {
+			return null;
+		}
+	}
+	var pStats: any;
+	if (retired == false) {
+		pStats = playerStats.pop();
+	}
+
+	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
+
+	if (superCols) {
+		superCols = helpers.deepCopy(superCols);
+
+		// No name
+		superCols[0].colspan -= 1;
+	}
+
+	if (name === "Shot Locations") {
+		cols[cols.length - 3].title = "M";
+		cols[cols.length - 2].title = "A";
+		cols[cols.length - 1].title = "%";
+	}
+
+	return (
+		<>
+			<div>
+				<table className="table table-bordered table-sm table-condensed table-nonfluid">
+					<thead>
+						<tr>
+							{cols.map((col: any, i: number) => {
+								return (
+									<th key={i} title={col.desc}>
+										{col.title}
+									</th>
+								);
+							})}
+						</tr>
+					</thead>
+					{retired ? (
+						""
+					) : (
+						<tbody>
+							<tr>
+								<th>Current</th>
+								{stats.map((stat: any, i: number) => {
+									return (
+										<td key={i}>{helpers.roundStat(pStats[stat], stat)}</td>
+									);
+								})}
+							</tr>
+						</tbody>
+					)}
+
+					<tfoot>
+						<tr className="table-secondary">
+							<th className="firstElement">Career</th>
+							{stats.map((stat: any, i: number) => {
+								return (
+									<td key={i}>{helpers.roundStat(careerStats[stat], stat)}</td>
+								);
+							})}
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</>
+	);
+};
+
+StatsSummary.propTypes = {
+	name: PropTypes.string.isRequired,
+	onlyShowIf: PropTypes.arrayOf(PropTypes.string),
+	retired: PropTypes.bool,
+	p: PropTypes.object.isRequired,
+	playoffs: PropTypes.bool,
+	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+	superCols: PropTypes.array,
+};
+
 const Player2 = ({
 	events,
 	feats,
@@ -181,6 +287,7 @@ const Player2 = ({
 	showTradeFor,
 	showTradingBlock,
 	statTables,
+	statSummary,
 	teamColors,
 	teamName,
 	willingToSign,
@@ -445,6 +552,22 @@ const Player2 = ({
 				</div>
 			</div>
 
+			{player.careerStats.gp > 0 ? (
+				<>
+					{statSummary.map(({ name, onlyShowIf, stats, superCols }) => (
+						<StatsSummary
+							key={name}
+							name={name}
+							onlyShowIf={onlyShowIf}
+							retired={retired}
+							position={player.ratings[player.ratings.length - 1].pos}
+							stats={stats}
+							superCols={superCols}
+							p={player}
+						/>
+					))}
+				</>
+			) : null}
 			{player.careerStats.gp > 0 ? (
 				<>
 					<h2>Regular Season</h2>

@@ -83,7 +83,17 @@ const COMPOSITE_WEIGHTS: CompositeWeights =
 	process.env.SPORT === "football"
 		? constantsFootball.COMPOSITE_WEIGHTS
 		: constantsBasketball.COMPOSITE_WEIGHTS;
-
+const PLAYER_SUMMARY: {
+	[key: string]: {
+		name: string;
+		onlyShowIf?: string[];
+		stats: string[];
+		superCols?: any[];
+	};
+} =
+	process.env.SPORT === "football"
+		? constantsFootball.PLAYER_SUMMARY
+		: constantsBasketball.PLAYER_SUMMARY;
 const PLAYER_STATS_TABLES: {
 	[key: string]: {
 		name: string;
@@ -139,6 +149,7 @@ export {
 	PHASE_TEXT,
 	STRIPE_PUBLISHABLE_KEY,
 	COMPOSITE_WEIGHTS,
+	PLAYER_SUMMARY,
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	POSITION_COUNTS,

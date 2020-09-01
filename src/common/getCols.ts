@@ -1549,6 +1549,7 @@ const cols: {
 		sortSequence: [],
 	},
 	Year: {},
+	Summary: {},
 	"rating:endu": {
 		desc: "Endurance",
 		sortSequence: ["desc", "asc"],

@@ -509,8 +509,6 @@ const writeGameStats = async (
 
 		const eventScore = won ? (playoffs ? 20 : 10) : 0;
 
-		console.log("clutchPlay.text", clutchPlay.text);
-
 		logEvent(
 			{
 				type: "playerFeat",

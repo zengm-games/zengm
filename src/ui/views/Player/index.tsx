@@ -9,7 +9,6 @@ import {
 	WatchBlock,
 	Weight,
 	JerseyNumber,
-	ResponsiveTableWrapper,
 } from "../../components";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";

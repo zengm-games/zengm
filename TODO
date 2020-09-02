@@ -1,3 +1,5 @@
+Quick bug report. Getting fired and switching teams does not reset the finances of the team you were fired from anymore - it keeps your values. It used to switch I remember.
+
 wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/one_idea_for_use_of_the_secondary_wordmarks_for/
 
 individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0bi7/would_it_be_possible_to_make_player_determinism/
@@ -107,6 +109,7 @@ redo mood system
 - show +/- for different factors like civ4
 - https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
   - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
+- Math.random() < (0.99 * g.get("daysLeft")) / 30
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?

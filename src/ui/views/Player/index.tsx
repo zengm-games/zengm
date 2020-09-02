@@ -9,6 +9,7 @@ import {
 	WatchBlock,
 	Weight,
 	JerseyNumber,
+	ResponsiveTableWrapper,
 } from "../../components";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
@@ -204,52 +205,31 @@ const StatsSummary = ({
 		process.env.SPORT === "basketball" ? [0, 4, 8] : [0, 2];
 
 	return (
-		<>
-			<div>
-				<table className="table table-sm table-condensed table-nonfluid player-stats-summary text-center mt-3 mb-0">
-					<thead>
+		<div className="player-stats-summary">
+			<table className="table table-sm table-condensed table-nonfluid text-center mt-3 mb-0">
+				<thead>
+					<tr>
+						{cols.map((col, i) => {
+							return (
+								<th
+									key={i}
+									title={col.desc}
+									className={classNames({
+										"table-separator-right": separatorAfter.includes(i),
+										"table-separator-left": separatorAfter.includes(i - 1),
+										"text-left": i === 0,
+									})}
+								>
+									{col.title}
+								</th>
+							);
+						})}
+					</tr>
+				</thead>
+				{ps ? (
+					<tbody>
 						<tr>
-							{cols.map((col, i) => {
-								return (
-									<th
-										key={i}
-										title={col.desc}
-										className={classNames({
-											"table-separator-right": separatorAfter.includes(i),
-											"table-separator-left": separatorAfter.includes(i - 1),
-											"text-left": i === 0,
-										})}
-									>
-										{col.title}
-									</th>
-								);
-							})}
-						</tr>
-					</thead>
-					{ps ? (
-						<tbody>
-							<tr>
-								<th className="table-separator-right text-left">{ps.season}</th>
-								{stats.map((stat, i) => {
-									return (
-										<td
-											key={stat}
-											className={classNames({
-												"table-separator-right": separatorAfter.includes(i + 1),
-												"table-separator-left": separatorAfter.includes(i),
-											})}
-										>
-											{helpers.roundStat((ps as any)[stat], stat)}
-										</td>
-									);
-								})}
-							</tr>
-						</tbody>
-					) : null}
-
-					<tfoot>
-						<tr>
-							<th className="table-separator-right text-left">Career</th>
+							<th className="table-separator-right text-left">{ps.season}</th>
 							{stats.map((stat, i) => {
 								return (
 									<td
@@ -259,15 +239,34 @@ const StatsSummary = ({
 											"table-separator-left": separatorAfter.includes(i),
 										})}
 									>
-										{helpers.roundStat(p.careerStats[stat], stat)}
+										{helpers.roundStat((ps as any)[stat], stat)}
 									</td>
 								);
 							})}
 						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</>
+					</tbody>
+				) : null}
+
+				<tfoot>
+					<tr>
+						<th className="table-separator-right text-left">Career</th>
+						{stats.map((stat, i) => {
+							return (
+								<td
+									key={stat}
+									className={classNames({
+										"table-separator-right": separatorAfter.includes(i + 1),
+										"table-separator-left": separatorAfter.includes(i),
+									})}
+								>
+									{helpers.roundStat(p.careerStats[stat], stat)}
+								</td>
+							);
+						})}
+					</tr>
+				</tfoot>
+			</table>
+		</div>
 	);
 };
 

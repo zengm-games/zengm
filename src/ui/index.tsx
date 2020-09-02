@@ -237,7 +237,7 @@ const setupRoutes = () => {
 						if (window.gtag) {
 							window.gtag("config", window.googleAnalyticsID, {
 								// Normalize league URLs to all look the same
-								page_path: context.path.replace(/^\/l\/[0-9]+?\//, "/l/0/"),
+								page_path: context.path.replace(/^\/l\/[0-9]+/, "/l/0"),
 							});
 						}
 

@@ -131,12 +131,21 @@ const PLAYER_SUMMARY = {
 			"pssInt",
 		],
 	},
-	summaryRusRec: {
-		name: "SummaryRusRec",
-		onlyShowIf: ["RB", "WR", "TE"],
+	summaryRus: {
+		name: "SummaryRus",
+		onlyShowIf: ["RB"],
 		stats: ["gp", "av", "rus", "rusYds", "rusYdsPerAtt", "rusTD"],
 	},
-
+	summaryRec: {
+		name: "SummaryRec",
+		onlyShowIf: ["WR", "TE"],
+		stats: ["gp", "av", "rec", "recYds", "recYdsPerRec", "recTD"],
+	},
+	summaryOL: {
+		name: "SummaryOL",
+		onlyShowIf: ["OL"],
+		stats: ["gp", "av"],
+	},
 	summaryKic: {
 		name: "SummaryKic",
 		onlyShowIf: ["K"],
@@ -147,20 +156,10 @@ const PLAYER_SUMMARY = {
 		onlyShowIf: ["P"],
 		stats: ["gp", "av", "pnt", "pntYds", "pntYdsPerAtt"],
 	},
-	summaryPunRet: {
-		name: "SummaryPuntRet",
-		onlyShowIf: ["PR"],
-		stats: ["gp", "av", "pr", "prYds", "prTD"],
-	},
-	summaryKicRet: {
-		name: "SummaryKicRet",
-		onlyShowIf: ["KR"],
-		stats: ["gp", "av", "kr", "krYds", "krTD"],
-	},
 	summaryDef: {
 		name: "SummaryDef",
 		onlyShowIf: ["DL", "LB", "CB", "OL", "S"],
-		stats: ["gp", "av", "defSk", "defTckSolo", "defFmbFrc"],
+		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
 	},
 };
 const PLAYER_STATS_TABLES = {

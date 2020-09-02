@@ -200,7 +200,8 @@ const StatsSummary = ({
 		cols[cols.length - 1].title = "%";
 	}
 
-	const separatorAfter = [0, 4, 8];
+	const separatorAfter =
+		process.env.SPORT === "basketball" ? [0, 4, 8] : [0, 2];
 
 	return (
 		<>

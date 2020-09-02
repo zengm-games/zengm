@@ -1,8 +1,11 @@
-import { PlayerStatType } from "./../../common/types";
 import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type {
+	UpdateEvents,
+	ViewInput,
+	PlayerStatType,
+} from "../../common/types";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStatDists">,
@@ -28,43 +31,33 @@ const updatePlayers = async (
 				activeSeason: inputs.season,
 			});
 		}
-		console.log(inputs);
-		const stats =
-			process.env.SPORT === "basketball"
-				? [
-						"gp",
-						"gs",
-						"min",
-						"fg",
-						"fga",
-						"fgp",
-						"tp",
-						"tpa",
-						"tpp",
-						"ft",
-						"fta",
-						"ftp",
-						"orb",
-						"drb",
-						"trb",
-						"ast",
-						"tov",
-						"stl",
-						"blk",
-						"pf",
-						"pts",
-						"per",
-				  ]
-				: PLAYER_STATS_TABLES[inputs.statType].stats.filter(
-						stat => stat != "qbRec",
-				  );
+
+		let stats = undefined;
+		let statType: PlayerStatType = "perGame";
+		if (process.env.SPORT == "football") {
+			stats = PLAYER_STATS_TABLES[inputs.statType].stats;
+		} else {
+			if (inputs.statType === "advanced") {
+				stats = PLAYER_STATS_TABLES.advanced.stats;
+			} else if (inputs.statType === "shotLocations") {
+				stats = PLAYER_STATS_TABLES.shotLocations.stats;
+			} else {
+				stats = PLAYER_STATS_TABLES.regular.stats;
+				if (inputs.statType === "totals") {
+					statType = "totals";
+				} else if (inputs.statType === "per36") {
+					statType = "per36";
+				}
+			}
+		}
 
 		players = await idb.getCopies.playersPlus(players, {
 			ratings: ["skills"],
 			stats,
 			season: inputs.season,
+			statType: statType,
 		});
-		if (process.env.SPORT == "football") {
+		if (process.env.SPORT === "football") {
 			const statTable = PLAYER_STATS_TABLES[inputs.statType];
 			const onlyShowIf = statTable.onlyShowIf as string[];
 			players = players.filter(p => {

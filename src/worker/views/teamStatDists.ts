@@ -1,7 +1,6 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import { TEAM_STATS_DIST_TABLE } from "../../common";
 import type { AnySoaRecord } from "dns";
 
 const updateTeams = async (
@@ -38,7 +37,60 @@ const updateTeams = async (
 						"pts",
 						"oppPts",
 				  ]
-				: TEAM_STATS_DIST_TABLE;
+				: [
+						"pts",
+						"yds",
+						"ply",
+						"ydsPerPlay",
+						"tov",
+						"fmbLost",
+						"pssCmp",
+						"pss",
+						"pssYds",
+						"pssTD",
+						"pssInt",
+						"pssNetYdsPerAtt",
+						"rus",
+						"rusYds",
+						"rusTD",
+						"rusYdsPerAtt",
+						"pen",
+						"penYds",
+						"drives",
+						"drivesScoringPct",
+						"drivesTurnoverPct",
+						"avgFieldPosition",
+						"timePerDrive",
+						"playsPerDrive",
+						"ydsPerDrive",
+						"ptsPerDrive",
+						"oppPts",
+						"oppYds",
+						"oppPly",
+						"oppYdsPerPlay",
+						"oppTov",
+						"oppFmbLost",
+						"oppPssCmp",
+						"oppPss",
+						"oppPssYds",
+						"oppPssTD",
+						"oppPssInt",
+						"oppPssNetYdsPerAtt",
+						"oppRus",
+						"oppRusYds",
+						"oppRusTD",
+						"oppRusYdsPerAtt",
+						"oppPen",
+						"oppPenYds",
+						"oppDrives",
+						"oppDrivesScoringPct",
+						"oppDrivesTurnoverPct",
+						"oppAvgFieldPosition",
+						"oppTimePerDrive",
+						"oppPlaysPerDrive",
+						"oppYdsPerDrive",
+						"oppPtsPerDrive",
+				  ];
 		const teams = await idb.getCopies.teamsPlus({
 			seasonAttrs: ["won", "lost"],
 			stats: stats,

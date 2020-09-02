@@ -437,7 +437,7 @@ const playerStatDists = (params: Params) => {
 		process.env.SPORT === "basketball" ? "perGame" : "defense";
 	return {
 		season: validateSeason(params.season),
-		statType: params.statType !== undefined ? params.statType : defaultStatType,
+		statType: params.statType != undefined ? params.statType : defaultStatType,
 	};
 };
 

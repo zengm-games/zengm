@@ -170,15 +170,15 @@ const StatsSummary = ({
 	name,
 	onlyShowIf,
 	p,
-	retired,
 	position,
+	season,
 	stats,
 }: {
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
-	retired: boolean;
 	position: string;
+	season: number;
 	stats: string[];
 }) => {
 	if (onlyShowIf !== undefined) {
@@ -187,11 +187,10 @@ const StatsSummary = ({
 		}
 	}
 
-	let ps: typeof p.stats[number] | undefined;
-	if (!retired) {
-		const playerStats = p.stats.filter(ps => !ps.playoffs);
-		ps = playerStats[playerStats.length - 1];
-	}
+	const playerStats = p.stats.filter(
+		ps => !ps.playoffs && ps.season === season,
+	);
+	const ps = playerStats[playerStats.length - 1];
 
 	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
 
@@ -201,15 +200,25 @@ const StatsSummary = ({
 		cols[cols.length - 1].title = "%";
 	}
 
+	const separatorAfter = [0, 4, 8];
+
 	return (
 		<>
 			<div>
-				<table className="table table-bordered table-sm table-condensed table-nonfluid">
+				<table className="table table-sm table-condensed table-nonfluid player-stats-summary text-center">
 					<thead>
 						<tr>
-							{cols.map((col: any, i: number) => {
+							{cols.map((col, i) => {
 								return (
-									<th key={i} title={col.desc}>
+									<th
+										key={i}
+										title={col.desc}
+										className={classNames({
+											"table-separator-right": separatorAfter.includes(i),
+											"table-separator-left": separatorAfter.includes(i - 1),
+											"text-left": i === 0,
+										})}
+									>
 										{col.title}
 									</th>
 								);
@@ -219,10 +228,16 @@ const StatsSummary = ({
 					{ps ? (
 						<tbody>
 							<tr>
-								<th>Current</th>
-								{stats.map(stat => {
+								<th className="table-separator-right text-left">{ps.season}</th>
+								{stats.map((stat, i) => {
 									return (
-										<td key={stat}>
+										<td
+											key={stat}
+											className={classNames({
+												"table-separator-right": separatorAfter.includes(i + 1),
+												"table-separator-left": separatorAfter.includes(i),
+											})}
+										>
 											{helpers.roundStat((ps as any)[stat], stat)}
 										</td>
 									);
@@ -233,10 +248,16 @@ const StatsSummary = ({
 
 					<tfoot>
 						<tr>
-							<th className="border-top-0">Career</th>
-							{stats.map(stat => {
+							<th className="table-separator-right text-left">Career</th>
+							{stats.map((stat, i) => {
 								return (
-									<td key={stat}>
+									<td
+										key={stat}
+										className={classNames({
+											"table-separator-right": separatorAfter.includes(i + 1),
+											"table-separator-left": separatorAfter.includes(i),
+										})}
+									>
 										{helpers.roundStat(p.careerStats[stat], stat)}
 									</td>
 								);
@@ -268,6 +289,7 @@ const Player2 = ({
 	player,
 	ratings,
 	retired,
+	season,
 	showContract,
 	showRatings,
 	showTradeFor,
@@ -369,7 +391,7 @@ const Player2 = ({
 				<div className="col-sm-6">
 					<div className="d-flex">
 						<div
-							className="player-picture"
+							className="player-picture mb-2"
 							style={{
 								marginTop: player.imgURL ? 0 : -20,
 							}}
@@ -540,13 +562,13 @@ const Player2 = ({
 
 			{player.careerStats.gp > 0 ? (
 				<>
-					{statSummary.map(({ name, onlyShowIf, stats, superCols }) => (
+					{statSummary.map(({ name, onlyShowIf, stats }) => (
 						<StatsSummary
 							key={name}
 							name={name}
 							onlyShowIf={onlyShowIf}
-							retired={retired}
 							position={player.ratings[player.ratings.length - 1].pos}
+							season={season}
 							stats={stats}
 							p={player}
 						/>

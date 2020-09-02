@@ -206,7 +206,7 @@ const StatsSummary = ({
 	return (
 		<>
 			<div>
-				<table className="table table-sm table-condensed table-nonfluid player-stats-summary text-center">
+				<table className="table table-sm table-condensed table-nonfluid player-stats-summary text-center mt-3 mb-0">
 					<thead>
 						<tr>
 							{cols.map((col, i) => {
@@ -538,6 +538,21 @@ const Player2 = ({
 							</button>
 						) : null}
 					</div>
+					{player.careerStats.gp > 0 ? (
+						<>
+							{statSummary.map(({ name, onlyShowIf, stats }) => (
+								<StatsSummary
+									key={name}
+									name={name}
+									onlyShowIf={onlyShowIf}
+									position={player.ratings[player.ratings.length - 1].pos}
+									season={season}
+									stats={stats}
+									p={player}
+								/>
+							))}
+						</>
+					) : null}
 				</div>
 
 				<div className="col-sm-6 mt-3 mt-sm-0 text-nowrap">
@@ -561,21 +576,6 @@ const Player2 = ({
 				</div>
 			</div>
 
-			{player.careerStats.gp > 0 ? (
-				<>
-					{statSummary.map(({ name, onlyShowIf, stats }) => (
-						<StatsSummary
-							key={name}
-							name={name}
-							onlyShowIf={onlyShowIf}
-							position={player.ratings[player.ratings.length - 1].pos}
-							season={season}
-							stats={stats}
-							p={player}
-						/>
-					))}
-				</>
-			) : null}
 			{player.careerStats.gp > 0 ? (
 				<>
 					<h2>Regular Season</h2>

@@ -441,7 +441,7 @@ const playerStats = (params: Params) => {
 
 const playerStatDists = (params: Params) => {
 	const defaultStatType =
-		process.env.SPORT === "basketball" ? "perGame" : "defense";
+		process.env.SPORT === "basketball" ? "perGame" : "passing";
 	return {
 		season: validateSeason(params.season),
 		statType: params.statType != undefined ? params.statType : defaultStatType,

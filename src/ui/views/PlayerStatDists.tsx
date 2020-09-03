@@ -108,43 +108,45 @@ const PlayerStatDists = ({
 
 			<table>
 				<tbody>
-					{Object.keys(statsAll).map(stat => {
-						const bbgmPlot = (
-							<tr key={`${stat}-bbgm`}>
-								<td className="pr-3 text-right">{stat}</td>
-								<td style={width100}>
-									<BoxPlot
-										color="var(--blue)"
-										data={statsAll[stat]}
-										scale={(scale as any)[stat]}
-									/>
-								</td>
-							</tr>
-						);
-						let proPlot: ReactNode = null;
-						if (proQuartiles.hasOwnProperty(stat) && statType == "perGame") {
-							proPlot = (
-								<tr key={`${stat}-pro`}>
-									<td />
+					{Object.keys(statsAll)
+						.filter(stat => typeof statsAll[stat][0] === "number")
+						.map(stat => {
+							const bbgmPlot = (
+								<tr key={`${stat}-bbgm`}>
+									<td className="pr-3 text-right">{stat}</td>
 									<td style={width100}>
-										<div style={{ marginTop: "-26px" }}>
-											<BoxPlot
-												color="var(--green)"
-												labels={false}
-												scale={
-													process.env.SPORT === "basketball"
-														? (scale as any)[stat]
-														: [undefined, undefined]
-												}
-												quartiles={(proQuartiles as any)[stat]}
-											/>
-										</div>
+										<BoxPlot
+											color="var(--blue)"
+											data={statsAll[stat]}
+											scale={(scale as any)[stat]}
+										/>
 									</td>
 								</tr>
 							);
-						}
-						return [bbgmPlot, proPlot];
-					})}
+							let proPlot: ReactNode = null;
+							if (proQuartiles.hasOwnProperty(stat) && statType == "perGame") {
+								proPlot = (
+									<tr key={`${stat}-pro`}>
+										<td />
+										<td style={width100}>
+											<div style={{ marginTop: "-26px" }}>
+												<BoxPlot
+													color="var(--green)"
+													labels={false}
+													scale={
+														process.env.SPORT === "basketball"
+															? (scale as any)[stat]
+															: [undefined, undefined]
+													}
+													quartiles={(proQuartiles as any)[stat]}
+												/>
+											</div>
+										</td>
+									</tr>
+								);
+							}
+							return [bbgmPlot, proPlot];
+						})}
 				</tbody>
 			</table>
 		</>

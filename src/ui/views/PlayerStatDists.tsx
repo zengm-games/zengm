@@ -40,17 +40,18 @@ const proQuartiles =
 const PlayerStatDists = ({
 	numGames,
 	season,
+	statType,
 	statsAll,
 }: View<"playerStatDists">) => {
 	useTitleBar({
 		title: "Player Stat Distributions",
 		dropdownView: "player_stat_dists",
-		dropdownFields: { seasons: season },
+		dropdownFields: { seasons: season, statTypesAdv: statType },
 	});
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
 	const scale =
-		process.env.SPORT === "basketball"
+		process.env.SPORT === "basketball" && statType == "perGame"
 			? {
 					gp: [0, numGames],
 					gs: [0, numGames],
@@ -121,7 +122,7 @@ const PlayerStatDists = ({
 							</tr>
 						);
 						let proPlot: ReactNode = null;
-						if (proQuartiles.hasOwnProperty(stat)) {
+						if (proQuartiles.hasOwnProperty(stat) && statType == "perGame") {
 							proPlot = (
 								<tr key={`${stat}-pro`}>
 									<td />
@@ -130,7 +131,11 @@ const PlayerStatDists = ({
 											<BoxPlot
 												color="var(--green)"
 												labels={false}
-												scale={(scale as any)[stat]}
+												scale={
+													process.env.SPORT === "basketball"
+														? (scale as any)[stat]
+														: [undefined, undefined]
+												}
 												quartiles={(proQuartiles as any)[stat]}
 											/>
 										</div>
@@ -149,6 +154,18 @@ const PlayerStatDists = ({
 PlayerStatDists.propTypes = {
 	numGames: PropTypes.number.isRequired,
 	season: PropTypes.number.isRequired,
+	statType: PropTypes.oneOf([
+		"advanced",
+		"per36",
+		"perGame",
+		"shotLocations",
+		"totals",
+		"passing",
+		"rushing",
+		"defense",
+		"kicking",
+		"returns",
+	]),
 	statsAll: PropTypes.object.isRequired,
 };
 

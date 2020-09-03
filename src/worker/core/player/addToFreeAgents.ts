@@ -33,14 +33,18 @@ const addToFreeAgents = (
 		}
 
 		if (phase === PHASE.RESIGN_PLAYERS) {
-			// rookies always resign
+			// Rookies always resign
+			const rookieContractLength = g.get("rookieContractLengths")[
+				p.draft.round - 1
+			];
 			if (
+				rookieContractLength !== undefined &&
 				p.draft.round > 0 &&
-				p.draft.year ===
-					g.get("season") - g.get("rookieContractLengths")[p.draft.round - 1]
+				p.draft.year === g.get("season") - rookieContractLength
 			) {
 				return 0;
 			}
+
 			// More likely to re-sign your own players.
 			return helpers.bound(mood + random.uniform(-1, 0.5), 0, 1000);
 		}

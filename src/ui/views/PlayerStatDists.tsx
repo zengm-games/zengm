@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
+import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
 const width100 = {
@@ -111,9 +111,12 @@ const PlayerStatDists = ({
 					{Object.keys(statsAll)
 						.filter(stat => typeof statsAll[stat][0] === "number")
 						.map(stat => {
+							const col = getCols(`stat:${stat}`)[0];
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
-									<td className="pr-3 text-right">{stat}</td>
+									<td className="pr-3 text-right" title={col.desc}>
+										{col.title}
+									</td>
 									<td style={width100}>
 										<BoxPlot
 											color="var(--blue)"

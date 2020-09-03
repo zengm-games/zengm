@@ -439,6 +439,15 @@ const playerStats = (params: Params) => {
 	};
 };
 
+const playerStatDists = (params: Params) => {
+	const defaultStatType =
+		process.env.SPORT === "basketball" ? "perGame" : "passing";
+	return {
+		season: validateSeason(params.season),
+		statType: params.statType != undefined ? params.statType : defaultStatType,
+	};
+};
+
 const resetPassword = (params: Params) => {
 	return {
 		token: params.token,
@@ -654,7 +663,7 @@ export default {
 	playerFeats,
 	playerRatingDists: validateSeasonOnly,
 	playerRatings,
-	playerStatDists: validateSeasonOnly,
+	playerStatDists,
 	playerStats,
 	playoffs: validateSeasonOnly,
 	powerRankings: validateSeasonOnly,

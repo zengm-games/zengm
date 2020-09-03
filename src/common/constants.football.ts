@@ -366,6 +366,7 @@ const TEAM_STATS_TABLES = {
 		],
 	},
 };
+
 const POSITIONS: Position[] = [
 	"QB",
 	"RB",

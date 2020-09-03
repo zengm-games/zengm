@@ -354,6 +354,7 @@ const updatePlayer = async (
 			events,
 			feats,
 			jerseyNumberInfos,
+			phase: g.get("phase"),
 			ratings,
 			season: g.get("season"),
 			statTables,

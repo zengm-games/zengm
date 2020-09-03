@@ -20,8 +20,8 @@ import {
 	toWorker,
 	realtimeUpdate,
 } from "../../util";
-import type { View, Player } from "../../../common/types";
-import { PLAYER } from "../../../common";
+import type { View, Player, Phase } from "../../../common/types";
+import { PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 
@@ -170,6 +170,7 @@ const StatsSummary = ({
 	name,
 	onlyShowIf,
 	p,
+	phase,
 	position,
 	season,
 	stats,
@@ -177,6 +178,7 @@ const StatsSummary = ({
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
+	phase: Phase;
 	position: string;
 	season: number;
 	stats: string[];
@@ -188,7 +190,10 @@ const StatsSummary = ({
 	}
 
 	const playerStats = p.stats.filter(
-		ps => !ps.playoffs && ps.season === season,
+		ps =>
+			!ps.playoffs &&
+			(ps.season === season ||
+				(ps.season === season - 1 && phase === PHASE.PRESEASON)),
 	);
 	const ps = playerStats[playerStats.length - 1];
 
@@ -285,6 +290,7 @@ const Player2 = ({
 	godMode,
 	injured,
 	jerseyNumberInfos,
+	phase,
 	player,
 	ratings,
 	retired,
@@ -544,6 +550,7 @@ const Player2 = ({
 									name={name}
 									onlyShowIf={onlyShowIf}
 									position={player.ratings[player.ratings.length - 1].pos}
+									phase={phase}
 									season={season}
 									stats={stats}
 									p={player}

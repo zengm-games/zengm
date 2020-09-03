@@ -1,3 +1,5 @@
+play menu race condition @whitecow ~/Downloads/BBGM_Sim_Bug.mp4
+
 Quick bug report. Getting fired and switching teams does not reset the finances of the team you were fired from anymore - it keeps your values. It used to switch I remember.
 
 wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/one_idea_for_use_of_the_secondary_wordmarks_for/
@@ -151,6 +153,11 @@ built-in UI to load custom user files
   - last_updated
   - version (increment every update, keep in URL)
 - CRUD UI for people to upload/edit/delete league files
+
+gradually reveal progs mode
+- displayed ratings are f(t, current ratings, last year's ratings)
+  - after like half the season, always just current ratings. prior to that, depends on phase and games played
+  - reveal with some polynomial, like x^n, so it's not predictable if a small increase will lead to a big increase later
 
 finances revamp
 - get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
@@ -347,6 +354,7 @@ FBGM
 - kneeling at end of games
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
+  - user report of K/P being released by AI teams during season
 - smarter cutting when over roster limit (like don't cut only K/P)
 - easier position changes, maybe from roster or player pages
   - auto sort roster after? or maybe have option to set if user controls roster sort or not

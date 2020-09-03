@@ -2,7 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-09-01: Added a stats summary to the top of each player page, similar to Basketball Reference. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/307) [[1]](https://old.reddit.com/r/BasketballGM/comments/ikx5nk/version_202009020058_stats_summary_at_the_top_of/)
+* DEV: Fixed team/player stat distributions pages for FBGM, and added additional stats in BBGM. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/306)
+
+* 2020-09-01: Added a stats summary to the top of each player page, similar to Basketball Reference. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/307) [[2]](https://old.reddit.com/r/BasketballGM/comments/ikx5nk/version_202009020058_stats_summary_at_the_top_of/)
 
 * 2020-09-01: Clutch plays in the playoffs now contain some info about the series in the text. Thanks @kevbauer! [[1]](https://github.com/dumbmatter/gm-games/pull/308)
 

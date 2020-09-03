@@ -1,7 +1,6 @@
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
-import type { AnySoaRecord } from "dns";
 
 const updateTeams = async (
 	inputs: ViewInput<"teamStatDists">,
@@ -101,13 +100,13 @@ const updateTeams = async (
 			| keyof typeof teams[number]["seasonAttrs"]
 			| keyof typeof teams[number]["stats"];
 		type StatsAll = Record<Keys, number[]>;
-		const statsAll = (teams.reduce((memo: any, t) => {
+		const statsAll = (teams.reduce((memo: StatsAll, t) => {
 			for (const cat of ["seasonAttrs", "stats"] as const) {
 				for (const stat of helpers.keys(t[cat])) {
 					if (memo.hasOwnProperty(stat)) {
-						memo[stat].push(t[cat][stat]);
+						memo[stat].push((t[cat] as any)[stat]);
 					} else {
-						memo[stat] = [t[cat][stat]];
+						memo[stat] = [(t[cat] as any)[stat]];
 					}
 				}
 			}

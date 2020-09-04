@@ -75,16 +75,7 @@ const NegotiationList = ({
 					value: <SafeHtml dirty={p.latestTransaction} />,
 					sortValue: p.latestTransactionSeason,
 				},
-				<div
-					title={p.mood.text}
-					style={{
-						width: "100%",
-						height: "21px",
-						backgroundColor: p.mood.color,
-					}}
-				>
-					<span style={{ display: "none" }}>{p.freeAgentMood[userTid]}</span>
-				</div>,
+				"MOOD_BLOCK",
 				helpers.formatCurrency(p.contract.amount, "M"),
 				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

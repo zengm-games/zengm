@@ -55,11 +55,7 @@ const create = async (
 	if (
 		!resigning &&
 		helpers.refuseToNegotiate({
-			amount: freeAgents.amountWithMood(
-				p.contract.amount,
-				p.freeAgentMood[tid],
-			),
-			mood: p.freeAgentMood[g.get("userTid")],
+			amount: freeAgents.amountWithMood(p, tid),
 			salaryCap: g.get("salaryCap"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 			rookie: rookie,

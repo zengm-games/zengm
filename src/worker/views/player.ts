@@ -97,7 +97,6 @@ const updatePlayer = async (
 					| "diedYear"
 					| "face"
 					| "imgURL"
-					| "freeAgentMood"
 					| "injury"
 					| "injuries"
 					| "college"
@@ -156,7 +155,6 @@ const updatePlayer = async (
 				"salaries",
 				"salariesTotal",
 				"awardsGrouped",
-				"freeAgentMood",
 				"imgURL",
 				"watch",
 				"college",
@@ -195,10 +193,7 @@ const updatePlayer = async (
 
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
-			p.contract.amount = freeAgents.amountWithMood(
-				p.contract.amount,
-				p.freeAgentMood[g.get("userTid")],
-			);
+			p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
 		}
 
 		const teamColors = await getTeamColors(p.tid);
@@ -239,7 +234,6 @@ const updatePlayer = async (
 
 		const willingToSign = !helpers.refuseToNegotiate({
 			amount: p.contract.amount * 1000,
-			mood: p.freeAgentMood[g.get("userTid")],
 			salaryCap: g.get("salaryCap"),
 			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
 			rookie:

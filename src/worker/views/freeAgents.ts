@@ -21,7 +21,6 @@ const updateFreeAgents = async () => {
 			"name",
 			"age",
 			"contract",
-			"freeAgentMood",
 			"injury",
 			"watch",
 			"jerseyNumber",
@@ -45,11 +44,7 @@ const updateFreeAgents = async () => {
 	});
 
 	for (const p of players) {
-		p.contract.amount = freeAgents.amountWithMood(
-			p.contract.amount,
-			p.freeAgentMood[g.get("userTid")],
-		);
-		p.mood = player.moodColorText(p);
+		p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
 	}
 
 	return {

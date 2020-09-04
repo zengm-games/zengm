@@ -39,7 +39,6 @@ const NegotiateButtons = ({
 	if (
 		helpers.refuseToNegotiate({
 			amount: p.contract.amount * 1000,
-			mood: p.freeAgentMood[userTid],
 			salaryCap,
 			playersRefuseToNegotiate,
 			rookie: typeof season === "number" && p.draft.year === season,

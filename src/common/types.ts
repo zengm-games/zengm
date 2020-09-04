@@ -773,6 +773,8 @@ export type MinimalPlayerRatings = {
 	locked?: boolean;
 };
 
+export type MoodTrait = "fame" | "loyalty" | "money" | "winning";
+
 export type PlayerWithoutKey<PlayerRatings = any> = {
 	awards: {
 		season: number;
@@ -799,7 +801,6 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	};
 	face: Face;
 	firstName: string;
-	freeAgentMood: number[];
 	gamesUntilTradable: number;
 	hgt: number;
 	hof: boolean;
@@ -814,6 +815,8 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	}[];
 	jerseyNumber?: string;
 	lastName: string;
+	moodTraits: MoodTrait[];
+	numDaysFreeAgent: number;
 	pid?: number;
 	pos?: string; // Only in players from custom league files
 	ptModifier: number;

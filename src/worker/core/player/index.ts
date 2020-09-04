@@ -24,7 +24,6 @@ import injury from "./injury";
 import killOne from "./killOne";
 import limitRating from "./limitRating";
 import madeHof from "./madeHof";
-import moodColorText from "./moodColorText";
 import ovr from "./ovr";
 import pos from "./pos";
 import release from "./release";
@@ -65,7 +64,6 @@ export default {
 	killOne,
 	limitRating,
 	madeHof,
-	moodColorText,
 	ovr,
 	pos,
 	release,

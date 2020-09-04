@@ -26,7 +26,6 @@ const updateNegotiationList = async () => {
 			"pid",
 			"name",
 			"age",
-			"freeAgentMood",
 			"injury",
 			"jerseyNumber",
 			"watch",
@@ -46,11 +45,7 @@ const updateNegotiationList = async () => {
 
 	for (const p of players) {
 		// Can use g.get("userTid") instead of neogtiation.tid because only user can view this page
-		p.contract.amount = freeAgents.amountWithMood(
-			p.contract.amount,
-			p.freeAgentMood[g.get("userTid")],
-		);
-		p.mood = player.moodColorText(p);
+		p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
 		sumContracts += p.contract.amount;
 	}
 

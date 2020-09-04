@@ -1,3 +1,44 @@
+redo mood system
+- make available throughout the year
+  - have deterministic noise, so it can be recomputed constantly as the situation changes
+- make it impossible to refuse to re-sign to title winner (really)
+- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
+- make rookies always willing to re-sign (like restricted free agency, kind of)
+- make everything transparent. way to see what the average player thinks of you, and specific players
+- also make players on rookie contracts less likely to refuse (add to "loyal to franchise", or maybe more clear to make it "eager to sign first non-rookie contract")
+- show +/- for different factors like civ4
+- https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
+  - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
+- Math.random() < (0.99 * g.get("daysLeft")) / 30
+- MOOD_BLOCK
+- amountWithMood
+- refuseToNegotiate
+- genBaseMood
+- display of mood in Negotiation.tsx
+- moodComponents
+  - implement all
+    - loyalty
+    - trades
+    - playingTime
+  - add moodTraits modulation
+  - use in amountWithMood, refuseToNegotiate, and UI
+- test difficulty settings, is effect large enough?
+- old mood categories, maybe keep around...
+  - Eager to reach an agreement.
+  - Willing to sign for the right price.
+  - Annoyed at you.
+  - Insulted by your presence.
+- UI
+  - needs to somehow show mood towards current team, and mood towards your team? maybe not, could just say look at upcoming free agents page
+- options?
+  - disable mood traits
+  - alter how likely a player is to re-sign after rookie contract
+- schema
+- upgrade stuff
+  - delte freeAgentMood, add moodTraits and numDaysFreeAgent
+  - test league upgrade
+  - test league file import
+
 play menu race condition @whitecow ~/Downloads/BBGM_Sim_Bug.mp4
 
 Quick bug report. Getting fired and switching teams does not reset the finances of the team you were fired from anymore - it keeps your values. It used to switch I remember.
@@ -99,19 +140,6 @@ name/colleges revamp
     - distinction between "default if unset in built-in defaults" and "override built-in defaults too"
 - flag icon on roster page
   - https://github.com/lipis/flag-icon-css
-
-redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
-- make everything transparent. way to see what the average player thinks of you, and specific players
-- also make players on rookie contracts less likely to refuse
-- show +/- for different factors like civ4
-- https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
-  - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
-- Math.random() < (0.99 * g.get("daysLeft")) / 30
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?

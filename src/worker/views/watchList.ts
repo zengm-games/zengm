@@ -48,7 +48,6 @@ const updatePlayers = async (
 				"abbrev",
 				"watch",
 				"contract",
-				"freeAgentMood",
 				"draft",
 				"jerseyNumber",
 			],
@@ -69,8 +68,8 @@ const updatePlayers = async (
 		for (let i = 0; i < players.length; i++) {
 			if (players[i].tid === PLAYER.FREE_AGENT) {
 				players[i].contract.amount = freeAgents.amountWithMood(
-					players[i].contract.amount,
-					players[i].freeAgentMood[g.get("userTid")],
+					players[i],
+					g.get("userTid"),
 				);
 			}
 		}

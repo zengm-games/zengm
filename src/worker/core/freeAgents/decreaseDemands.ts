@@ -42,13 +42,7 @@ const decreaseDemands = async () => {
 		}
 
 		// Free agents' resistance to signing decays after every regular season game
-		for (let i = 0; i < p.freeAgentMood.length; i++) {
-			p.freeAgentMood[i] -= 0.075;
-
-			if (p.freeAgentMood[i] < 0) {
-				p.freeAgentMood[i] = 0;
-			}
-		}
+		p.numDaysFreeAgent += 1;
 
 		// Also, heal.
 		if (p.injury.gamesRemaining > 0) {

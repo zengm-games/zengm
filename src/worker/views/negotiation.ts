@@ -106,7 +106,7 @@ const updateNegotiation = async (
 			throw new Error("Player not found");
 		}
 		const p = await idb.getCopy.playersPlus(p2, {
-			attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
+			attrs: ["pid", "name", "age", "contract"],
 			ratings: ["ovr", "pot"],
 			season: g.get("season"),
 			showNoStats: true,
@@ -124,10 +124,7 @@ const updateNegotiation = async (
 			return returnValue;
 		}
 
-		p.contract.amount = freeAgents.amountWithMood(
-			p.contract.amount,
-			p.freeAgentMood[g.get("userTid")],
-		);
+		p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
 
 		const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 		if (

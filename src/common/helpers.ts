@@ -708,7 +708,6 @@ function roundWinp(winp: number): string {
  */
 const refuseToNegotiate = ({
 	amount,
-	mood,
 	salaryCap,
 	playersRefuseToNegotiate,
 	rookie,
@@ -717,7 +716,6 @@ const refuseToNegotiate = ({
 	phase,
 }: {
 	amount: number;
-	mood: number;
 	salaryCap: number;
 	playersRefuseToNegotiate: boolean;
 	rookie: boolean;
@@ -738,10 +736,10 @@ const refuseToNegotiate = ({
 	}
 
 	if (process.env.SPORT === "football") {
-		return amount * mood > 11000 * (salaryCap / 90000);
+		return amount > 11000 * (salaryCap / 90000);
 	}
 
-	return amount * mood > 9500 * (salaryCap / 90000);
+	return amount > 9500 * (salaryCap / 90000);
 };
 
 const upperCaseFirstLetter = (string: string): string => {

@@ -45,7 +45,6 @@ const updateProtectPlayers = async () => {
 				"pid",
 				"name",
 				"age",
-				"freeAgentMood",
 				"injury",
 				"watch",
 				"contract",

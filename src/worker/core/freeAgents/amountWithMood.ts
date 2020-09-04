@@ -1,3 +1,4 @@
+import type { Player } from "../../../common/types";
 import { g } from "../../util";
 
 /**
@@ -8,8 +9,17 @@ import { g } from "../../util";
  * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
  * @return {number} Contract amount adjusted for mood.
  */
-const amountWithMood = (amount: number, mood: number = 0.5): number => {
-	amount *= 1 + 0.2 * mood;
+const amountWithMood = (
+	p: {
+		contract: {
+			amount: number;
+		};
+	},
+	tid: number,
+): number => {
+	let amount = p.contract.amount;
+
+	amount *= 1 + 0.2 * tid;
 
 	if (amount >= g.get("minContract")) {
 		// Must be in thousands of dollars

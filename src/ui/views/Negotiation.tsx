@@ -53,30 +53,6 @@ const Negotiation = ({
 }: View<"negotiation">) => {
 	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
 
-	// See views.freeAgents for moods as well
-	let mood;
-	if (player.freeAgentMood[userTid] < 0.25) {
-		mood = (
-			<span className="text-success">
-				<b>Eager to reach an agreement.</b>
-			</span>
-		);
-	} else if (player.freeAgentMood[userTid] < 0.5) {
-		mood = <b>Willing to sign for the right price.</b>;
-	} else if (player.freeAgentMood[userTid] < 0.75) {
-		mood = (
-			<span className="text-warning">
-				<b>Annoyed at you.</b>
-			</span>
-		);
-	} else {
-		mood = (
-			<span className="text-danger">
-				<b>Insulted by your presence.</b>
-			</span>
-		);
-	}
-
 	let message;
 	if (resigning && !hardCap) {
 		message = (
@@ -129,7 +105,7 @@ const Negotiation = ({
 				</a>{" "}
 			</h2>
 			<p>
-				Mood: {mood}
+				Mood: MOOD_BLOCK
 				<br />
 				{player.age} years old
 				{!challengeNoRatings

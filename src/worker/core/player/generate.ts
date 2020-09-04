@@ -1,11 +1,14 @@
 import genRatings from "./genRatings";
 import name from "./name";
-import { face, g } from "../../util";
+import { face, g, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
+	MoodTrait,
 	PlayerWithoutKey,
 } from "../../../common/types";
 import genWeight from "./genWeight";
+
+const MOOD_TRAITS: MoodTrait[] = ["fame", "loyalty", "money", "winning"];
 
 const generate = (
 	tid: number,
@@ -21,6 +24,14 @@ const generate = (
 	const { college, country, firstName, lastName } = name();
 
 	const weight = genWeight(ratings.hgt, ratings.stre);
+
+	const moodTraits: MoodTrait[] = [random.choice(MOOD_TRAITS)];
+	if (Math.random() < 0.5) {
+		moodTraits.push(
+			random.choice(MOOD_TRAITS.filter(trait => trait !== moodTraits[0])),
+		);
+	}
+
 	const p = {
 		awards: [],
 		born: {
@@ -44,7 +55,6 @@ const generate = (
 		},
 		face: face.generate(),
 		firstName,
-		freeAgentMood: Array(g.get("numTeams")).fill(0),
 		gamesUntilTradable: 0,
 		hgt: heightInInches,
 		hof: false,
@@ -56,6 +66,7 @@ const generate = (
 		},
 		injuries: [],
 		lastName,
+		moodTraits,
 		ptModifier: 1,
 		relatives: [],
 		ratings: [ratings],

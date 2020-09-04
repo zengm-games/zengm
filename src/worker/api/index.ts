@@ -1065,8 +1065,8 @@ const exportPlayers = async (infos: { pid: number; season: number }[]) => {
 			p.exportedSeason = info.season;
 		}
 
-		delete p.freeAgentMood;
 		delete p.gamesUntilTradable;
+		delete p.numDaysFreeAgent;
 		delete p.ptModifier;
 		delete p.rosterOrder;
 		delete p.statsTids;

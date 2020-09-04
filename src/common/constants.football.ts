@@ -158,7 +158,7 @@ const PLAYER_SUMMARY = {
 	},
 	summaryDef: {
 		name: "SummaryDef",
-		onlyShowIf: ["DL", "LB", "CB", "OL", "S"],
+		onlyShowIf: ["DL", "LB", "CB", "S"],
 		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
 	},
 };

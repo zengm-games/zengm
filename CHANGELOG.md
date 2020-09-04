@@ -2,9 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* DEV: Since BBGM does not have restricted free agency, it was too common to see players refusing to re-sign after their rookie contracts. Now players are guaranteed to at least be willing to sign.
-
-* DEV: Fixed team/player stat distributions pages for FBGM, and added additional stats in BBGM. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/306)
+* 2020-09-03: Fixed team/player stat distributions pages for FBGM, and added additional stats in BBGM. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/306)
 
 * 2020-09-01: Added a stats summary to the top of each player page, similar to Basketball Reference. Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/307) [[2]](https://old.reddit.com/r/BasketballGM/comments/ikx5nk/version_202009020058_stats_summary_at_the_top_of/)
 

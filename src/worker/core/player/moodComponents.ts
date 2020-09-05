@@ -138,6 +138,8 @@ const moodComponents = async (
 
 	{
 		// LOYALTY
+		const numSeasonsWithTeam = p.stats.filter(row => row.tid === tid).length;
+		components.loyalty = numSeasonsWithTeam / 8;
 	}
 
 	{

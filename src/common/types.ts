@@ -605,6 +605,8 @@ export type MoodComponents = {
 	playingTime: number;
 };
 
+export type MoodTrait = "fame" | "loyalty" | "money" | "winning";
+
 export type Negotiation = {
 	pid: number;
 	tid: number;
@@ -782,8 +784,6 @@ export type MinimalPlayerRatings = {
 	endu: number;
 	locked?: boolean;
 };
-
-export type MoodTrait = "fame" | "loyalty" | "money" | "winning";
 
 export type PlayerWithoutKey<PlayerRatings = any> = {
 	awards: {

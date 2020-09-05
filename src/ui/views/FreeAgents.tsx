@@ -113,11 +113,7 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				<Mood
-					components={p.mood.components}
-					pid={p.pid}
-					traits={p.mood.traits}
-				/>,
+				<Mood p={p} />,
 				helpers.formatCurrency(p.contract.amount, "M"),
 				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

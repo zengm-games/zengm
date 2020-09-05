@@ -13,7 +13,7 @@ redo mood system
 - MOOD_BLOCK
 - amountWithMood
 - refuseToNegotiate
-  - deterministic random number, plus probWilling
+  - base just on mood.willing
 - use numDaysFreeAgent to eventually make everyone willing to sign. have this influence both amountWithMood and refuseToNegotiate
 - display of mood in Negotiation.tsx
 - genBaseMood
@@ -44,6 +44,7 @@ redo mood system
   - from continuous weights of the mood traits, not binary. Display label if > .5. see reddit comment from nicidob
   - how to decide probWilling?
     - deterministic random to set the cutoff in sum(moodComponents) needed
+    - more randomness in seed
 - UI
   - needs to somehow show mood towards current team, and mood towards your team? maybe not, could just say look at upcoming free agents page
 - options?

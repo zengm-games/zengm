@@ -16,10 +16,7 @@ redo mood system
 - genBaseMood
 - NegotiateButtons should be simplified so that they read willing from p.mood
 - moodComponents
-  - implement all
-    - loyalty
-    - trades
-    - playingTime
+  - implement playingTime
   - add moodTraits modulation to components
 - moodInfo
   - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
@@ -46,7 +43,8 @@ redo mood system
 - searching in Mood in table
 - schema
 - upgrade stuff
-  - delte freeAgentMood, add moodTraits and numDaysFreeAgent
+  - Player: delete freeAgentMood, add moodTraits and numDaysFreeAgent
+  - TeamSeason: add numPlayersTradedAway
   - test league upgrade
   - test league file import
 

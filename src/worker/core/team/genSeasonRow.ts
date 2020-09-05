@@ -107,6 +107,7 @@ const genSeasonRow = (
 			playoffs: 0,
 			money: 0,
 		},
+		numPlayersTradedAway: 0,
 	};
 
 	if (typeof t.pop === "number") {

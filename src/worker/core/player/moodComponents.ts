@@ -144,6 +144,24 @@ const moodComponents = async (
 
 	{
 		// TRADES
+		let numPlayersTradedAwayNormalized = 0;
+		for (const teamSeason of teamSeasons) {
+			if (teamSeason.season === season - 2) {
+				numPlayersTradedAwayNormalized +=
+					teamSeason.numPlayersTradedAway * 0.25;
+			} else if (teamSeason.season === season - 1) {
+				numPlayersTradedAwayNormalized += teamSeason.numPlayersTradedAway * 0.5;
+			} else if (teamSeason.season === season) {
+				numPlayersTradedAwayNormalized +=
+					teamSeason.numPlayersTradedAway * 0.75;
+			}
+		}
+
+		components.trades = helpers.bound(
+			-(numPlayersTradedAwayNormalized - 7) / 2,
+			-Infinity,
+			0,
+		);
 	}
 
 	{

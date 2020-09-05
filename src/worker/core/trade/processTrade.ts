@@ -52,6 +52,17 @@ const processTrade = async (
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
 
+		if (pids[j].length > 0) {
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsBySeasonTid",
+				[g.get("season"), tids[j]],
+			);
+			if (teamSeason) {
+				teamSeason.numPlayersTradedAway += pids.length;
+				await idb.cache.teamSeasons.put(teamSeason);
+			}
+		}
+
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
 			if (!p) {

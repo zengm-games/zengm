@@ -1213,6 +1213,7 @@ export type TeamSeasonWithoutKey = {
 	};
 	payrollEndOfSeason: number;
 	ownerMood?: OwnerMood;
+	numPlayersTradedAway: number;
 
 	// x - clinched playoffs
 	// y - if byes exist - clinched bye

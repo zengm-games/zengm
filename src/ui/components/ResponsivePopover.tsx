@@ -16,7 +16,7 @@ const ResponsivePopover = ({
 	modalBody: ReactNode;
 	popoverContent: ReactNode;
 	renderTarget: (props: { onClick?: () => void }) => ReactNode;
-	toggle: () => void;
+	toggle?: () => void;
 }) => {
 	const [mobile, setMobile] = useState(isMobile);
 	useEffect(() => {
@@ -37,7 +37,9 @@ const ResponsivePopover = ({
 				{renderTarget({
 					onClick: () => {
 						setShowModal(true);
-						toggle();
+						if (toggle) {
+							toggle();
+						}
 					},
 				})}
 				<Modal

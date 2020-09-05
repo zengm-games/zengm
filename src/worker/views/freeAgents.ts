@@ -4,9 +4,11 @@ import { idb } from "../db";
 import { g } from "../util";
 
 const updateFreeAgents = async () => {
-	const payroll = await team.getPayroll(g.get("userTid"));
+	const userTid = g.get("userTid");
+
+	const payroll = await team.getPayroll(userTid);
 	const [userPlayersAll, playersAll] = await Promise.all([
-		idb.cache.players.indexGetAll("playersByTid", g.get("userTid")),
+		idb.cache.players.indexGetAll("playersByTid", userTid),
 		idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
 	]);
 	const capSpace =
@@ -44,7 +46,8 @@ const updateFreeAgents = async () => {
 	});
 
 	for (const p of players) {
-		p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
+		p.mood = await player.moodInfo(p.pid, userTid);
+		p.contract.amount = freeAgents.amountWithMood(p, userTid);
 	}
 
 	return {
@@ -62,7 +65,7 @@ const updateFreeAgents = async () => {
 		salaryCap: g.get("salaryCap"),
 		stats,
 		userPlayers,
-		userTid: g.get("userTid"),
+		userTid,
 	};
 };
 

@@ -1,10 +1,11 @@
 import { finances } from "..";
 import { PHASE } from "../../../common";
+import type { Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 
 // Make components -2 to 2, then scale with traits to -5 to 5
-const moodComponents = async (tid: number) => {
+const moodComponents = async (p: Player, tid: number) => {
 	const season = g.get("season");
 
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(

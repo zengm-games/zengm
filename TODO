@@ -13,21 +13,36 @@ redo mood system
 - MOOD_BLOCK
 - amountWithMood
 - refuseToNegotiate
-- genBaseMood
+  - deterministic random number, plus probWilling
+- use numDaysFreeAgent to eventually make everyone willing to sign. have this influence both amountWithMood and refuseToNegotiate
 - display of mood in Negotiation.tsx
+- genBaseMood
 - moodComponents
   - implement all
     - loyalty
     - trades
     - playingTime
-  - add moodTraits modulation
+  - add moodTraits modulation to components
   - use in amountWithMood, refuseToNegotiate, and UI
+- function to apply all mood stuff to player object
+  - can't be in playersPlus because it's team-specific
+  - mood: {
+    components: output of moodComponents,
+    traits: MoodTrait[],
+    probWilling: 0 or 1 if FA, otherwise continuous,
+    willing: boolean, - is this needed?
+    - needs to factor in numDaysFreeAgent, like in refuseToNegotiate
+  }
 - test difficulty settings, is effect large enough?
 - old mood categories, maybe keep around...
   - Eager to reach an agreement.
   - Willing to sign for the right price.
   - Annoyed at you.
   - Insulted by your presence.
+- how introduce randomness?
+  - from continuous weights of the mood traits, not binary. Display label if > .5. see reddit comment from nicidob
+  - how to decide probWilling?
+    - deterministic random to set the cutoff in sum(moodComponents) needed
 - UI
   - needs to somehow show mood towards current team, and mood towards your team? maybe not, could just say look at upcoming free agents page
 - options?

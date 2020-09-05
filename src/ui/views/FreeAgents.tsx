@@ -93,6 +93,8 @@ const FreeAgents = ({
 	);
 
 	const rows = players.map(p => {
+		console.log(p.mood);
+
 		return {
 			key: p.pid,
 			data: [

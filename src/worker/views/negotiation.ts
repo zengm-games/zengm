@@ -1,5 +1,5 @@
 import { PHASE } from "../../common";
-import { contractNegotiation, freeAgents, team } from "../core";
+import { contractNegotiation, freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -84,6 +84,8 @@ const updateNegotiation = async (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {
+		const userTid = g.get("userTid");
+
 		const negotiations = await idb.cache.negotiations.getAll();
 		let negotiation;
 
@@ -124,14 +126,20 @@ const updateNegotiation = async (
 			return returnValue;
 		}
 
-		p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
+		const mood = await player.moodInfo(p.pid, userTid);
 
-		const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
+		const contractOptions = generateContractOptions(
+			{
+				amount: mood.contractAmount,
+				exp: p.contract.exp,
+			},
+			p.ratings.ovr,
+		);
 		if (
 			contractOptions.length === 0 &&
 			g.get("phase") === PHASE.RESIGN_PLAYERS
 		) {
-			const t = await idb.cache.teams.get(g.get("userTid"));
+			const t = await idb.cache.teams.get(userTid);
 			if (
 				t &&
 				t.firstSeasonAfterExpansion !== undefined &&
@@ -140,13 +148,13 @@ const updateNegotiation = async (
 				contractOptions.push({
 					exp: g.get("season") + 1,
 					years: 1,
-					amount: p.contract.amount,
+					amount: mood.contractAmount,
 					smallestAmount: true,
 				});
 			}
 		}
 
-		const payroll = await team.getPayroll(g.get("userTid"));
+		const payroll = await team.getPayroll(userTid);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -156,7 +164,7 @@ const updateNegotiation = async (
 			player: p,
 			resigning: negotiation.resigning,
 			salaryCap: g.get("salaryCap") / 1000,
-			userTid: g.get("userTid"),
+			userTid,
 		};
 	}
 };

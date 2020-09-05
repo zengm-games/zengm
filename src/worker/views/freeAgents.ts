@@ -47,7 +47,6 @@ const updateFreeAgents = async () => {
 
 	for (const p of players) {
 		p.mood = await player.moodInfo(p.pid, userTid);
-		p.contract.amount = freeAgents.amountWithMood(p, userTid);
 	}
 
 	return {

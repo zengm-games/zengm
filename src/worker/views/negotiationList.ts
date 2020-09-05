@@ -8,15 +8,18 @@ const updateNegotiationList = async () => {
 		process.env.SPORT === "basketball"
 			? ["yearsWithTeam", "gp", "min", "pts", "trb", "ast", "per"]
 			: ["yearsWithTeam", "gp", "keyStats", "av"];
+
+	const userTid = g.get("userTid");
+
 	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
 
 	negotiations = negotiations.filter(
-		negotiation => negotiation.tid === g.get("userTid"),
+		negotiation => negotiation.tid === userTid,
 	);
 	const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 	const userPlayersAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
-		g.get("userTid"),
+		userTid,
 	);
 	const playersAll = (
 		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
@@ -37,26 +40,25 @@ const updateNegotiationList = async () => {
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
 		season: g.get("season"),
-		tid: g.get("userTid"),
+		tid: userTid,
 		showNoStats: true,
 		fuzz: true,
 	});
 	let sumContracts = 0;
 
 	for (const p of players) {
-		// Can use g.get("userTid") instead of neogtiation.tid because only user can view this page
-		p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
-		sumContracts += p.contract.amount;
+		p.mood = await player.moodInfo(p.pid, userTid);
+		sumContracts += p.mood.contractAmount;
 	}
 
-	const payroll = await team.getPayroll(g.get("userTid"));
+	const payroll = await team.getPayroll(userTid);
 	const capSpace =
 		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
 
 	let playersRefuseToNegotiate = g.get("playersRefuseToNegotiate");
 
 	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
-		const t = await idb.cache.teams.get(g.get("userTid"));
+		const t = await idb.cache.teams.get(userTid);
 		if (
 			t &&
 			t.firstSeasonAfterExpansion !== undefined &&
@@ -92,7 +94,7 @@ const updateNegotiationList = async () => {
 		stats,
 		sumContracts,
 		userPlayers,
-		userTid: g.get("userTid"),
+		userTid,
 	};
 };
 

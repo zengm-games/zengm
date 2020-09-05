@@ -76,7 +76,7 @@ const NegotiationList = ({
 					sortValue: p.latestTransactionSeason,
 				},
 				"MOOD_BLOCK",
-				helpers.formatCurrency(p.contract.amount, "M"),
+				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
 				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544
 				// @ts-ignore

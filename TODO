@@ -11,10 +11,7 @@ redo mood system
   - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
 - Math.random() < (0.99 * g.get("daysLeft")) / 30
 - MOOD_BLOCK
-- amountWithMood
-  - should just be part of moodInfo, get amount from there
-    - see NegotiateButtons to make sure it's used correctly, elsewhere too
-- use numDaysFreeAgent to eventually make everyone willing to sign. have this influence both amountWithMood
+- use numDaysFreeAgent to eventually make everyone willing to sign
 - display of mood in Negotiation.tsx
 - genBaseMood
 - NegotiateButtons should be simplified so that they read willing from p.mood
@@ -24,7 +21,10 @@ redo mood system
     - trades
     - playingTime
   - add moodTraits modulation to components
-  - use in amountWithMood, and UI
+- moodInfo
+  - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
+    - contractAmount too, see comment
+  - add some modifier based on mood in contractAmount
 - function to apply all mood stuff to player object
   - can't be in playersPlus because it's team-specific
 - test difficulty settings, is effect large enough?

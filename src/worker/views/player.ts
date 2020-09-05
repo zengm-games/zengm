@@ -5,7 +5,7 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 } from "../../common";
-import { freeAgents } from "../core";
+import { freeAgents, player } from "../core";
 import { idb } from "../db";
 import { face, g, getTeamColors, helpers } from "../util";
 import type {
@@ -191,9 +191,11 @@ const updatePlayer = async (
 		// Filter out rows with no games played
 		p.stats = p.stats.filter(row => row.gp > 0);
 
+		p.mood = await player.moodInfo(p.pid, p.tid);
+
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
-			p.contract.amount = freeAgents.amountWithMood(p, g.get("userTid"));
+			p.contract.amount = p.mood.contractAmount;
 		}
 
 		const teamColors = await getTeamColors(p.tid);

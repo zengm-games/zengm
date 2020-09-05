@@ -127,7 +127,9 @@ const Mood = ({
 
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
 		<button className="btn btn-light-bordered btn-xs" onClick={onClick}>
-			<span className={highlightColor(sum)}>{plusMinus(sum)} </span>
+			<span className={highlightColor(sum)} data-no-row-highlight="true">
+				{plusMinus(sum)}{" "}
+			</span>
 			{p.mood.traits.map(formatTrait).join(" ")}
 		</button>
 	);

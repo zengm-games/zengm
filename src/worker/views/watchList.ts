@@ -1,5 +1,5 @@
 import { PLAYER } from "../../common";
-import { freeAgents } from "../core";
+import { freeAgents, player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
@@ -65,12 +65,10 @@ const updatePlayers = async (
 		});
 
 		// Add mood to free agent contracts
-		for (let i = 0; i < players.length; i++) {
-			if (players[i].tid === PLAYER.FREE_AGENT) {
-				players[i].contract.amount = freeAgents.amountWithMood(
-					players[i],
-					g.get("userTid"),
-				);
+		for (const p of players) {
+			if (p.tid === PLAYER.FREE_AGENT) {
+				const mood = await player.moodInfo(p.pid, g.get("userTid"));
+				p.contract.amount = mood.contractAmount / 1000;
 			}
 		}
 

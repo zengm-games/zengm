@@ -1,16 +1,16 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
-import React, { MouseEvent, useCallback, useEffect, useState } from "react";
-import { Modal, OverlayTrigger, Popover } from "react-bootstrap";
+import React, { useCallback, useState } from "react";
 import RatingsStats from "./RatingsStats";
 import WatchBlock from "../WatchBlock";
 import { helpers, toWorker } from "../../util";
+import ResponsivePopover from "../ResponsivePopover";
 
 const Icon = ({
 	onClick,
 	watch,
 }: {
-	onClick?: (e: MouseEvent) => void;
+	onClick?: () => void;
 	watch?: boolean;
 }) => {
 	return (
@@ -24,8 +24,6 @@ const Icon = ({
 		/>
 	);
 };
-
-const isMobile = () => window.screen && window.screen.width < 768;
 
 type Props = {
 	// For cases when we want to display the watch status, but not make it toggleable because the data will not reload, like for live box scores
@@ -102,73 +100,37 @@ const RatingsStatsPopover = ({ disableWatchToggle, pid, watch }: Props) => {
 		);
 	}
 
-	const [mobile, setMobile] = useState(isMobile);
-	useEffect(() => {
-		const update = () => {
-			setMobile(isMobile());
-		};
-		window.addEventListener("optimizedResize", update);
-		return () => {
-			window.removeEventListener("optimizedResize", update);
-		};
-	}, []);
+	const id = `ratings-stats-popover-${player.pid}`;
 
-	const [showModal, setShowModal] = useState(false);
+	const modalHeader = nameBlock;
+	const modalBody = <RatingsStats ratings={ratings} stats={stats} />;
 
-	if (mobile) {
-		return (
-			<>
-				<Icon
-					watch={watch}
-					onClick={() => {
-						setShowModal(true);
-						toggle();
-					}}
-				/>
-				<Modal
-					animation={false}
-					centered
-					show={showModal}
-					onHide={() => {
-						setShowModal(false);
-					}}
-				>
-					<Modal.Header closeButton>{nameBlock}</Modal.Header>
-					<Modal.Body>
-						<RatingsStats ratings={ratings} stats={stats} />
-					</Modal.Body>
-				</Modal>
-			</>
-		);
-	}
+	const popoverContent = (
+		<div
+			className="text-nowrap"
+			style={{
+				minWidth: 250,
+				minHeight: 225,
+			}}
+		>
+			<p className="mb-2">{nameBlock}</p>
+			<RatingsStats ratings={ratings} stats={stats} />
+		</div>
+	);
 
-	const popover = (
-		<Popover id={`ratings-stats-popover-${player.pid}`}>
-			<Popover.Content>
-				<div
-					className="text-nowrap"
-					style={{
-						minWidth: 250,
-						minHeight: 225,
-					}}
-				>
-					<p className="mb-2">{nameBlock}</p>
-					<RatingsStats ratings={ratings} stats={stats} />
-				</div>
-			</Popover.Content>
-		</Popover>
+	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
+		<Icon onClick={onClick} watch={watch} />
 	);
 
 	return (
-		<OverlayTrigger
-			trigger="click"
-			placement="auto"
-			overlay={popover}
-			rootClose
-			onEnter={toggle}
-		>
-			<Icon watch={watch} />
-		</OverlayTrigger>
+		<ResponsivePopover
+			id={id}
+			modalHeader={modalHeader}
+			modalBody={modalBody}
+			popoverContent={popoverContent}
+			renderTarget={renderTarget}
+			toggle={toggle}
+		/>
 	);
 };
 

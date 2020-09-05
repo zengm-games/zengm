@@ -699,49 +699,6 @@ function roundWinp(winp: number): string {
 	return output;
 }
 
-/**
- * Will a player negotiate with a team, or not?
- *
- * @param {number} amount Player's desired contract amount, already adjusted for mood as in amountWithMood, in thousands of dollars
- * @param {number} mood Player's mood towards the team in question.
- * @return {boolean} Answer to the question.
- */
-const refuseToNegotiate = ({
-	amount,
-	salaryCap,
-	playersRefuseToNegotiate,
-	rookie,
-	challengeNoFreeAgents,
-	minContract,
-	phase,
-}: {
-	amount: number;
-	salaryCap: number;
-	playersRefuseToNegotiate: boolean;
-	rookie: boolean;
-	challengeNoFreeAgents: boolean;
-	minContract: number;
-	phase: Phase;
-}): boolean => {
-	if (
-		challengeNoFreeAgents &&
-		phase !== PHASE.RESIGN_PLAYERS &&
-		amount * 0.99 > minContract
-	) {
-		return true;
-	}
-
-	if (!playersRefuseToNegotiate || rookie) {
-		return false;
-	}
-
-	if (process.env.SPORT === "football") {
-		return amount > 11000 * (salaryCap / 90000);
-	}
-
-	return amount > 9500 * (salaryCap / 90000);
-};
-
 const upperCaseFirstLetter = (string: string): string => {
 	return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 };
@@ -1008,7 +965,6 @@ export default {
 	ordinal,
 	yearRanges,
 	roundWinp,
-	refuseToNegotiate,
 	upperCaseFirstLetter,
 	keys,
 	validateRoundsByes,

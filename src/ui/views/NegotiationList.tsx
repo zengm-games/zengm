@@ -83,15 +83,10 @@ const NegotiationList = ({
 				<NegotiateButtons
 					canGoOverCap={!hardCap}
 					capSpace={capSpace}
-					challengeNoFreeAgents={challengeNoFreeAgents}
 					minContract={minContract}
 					spectator={spectator}
 					p={p}
-					phase={phase}
-					playersRefuseToNegotiate={playersRefuseToNegotiate}
-					salaryCap={salaryCap}
-					season={season}
-					userTid={userTid}
+					willingToNegotiate={p.mood.willing}
 				/>,
 			],
 		};

@@ -120,15 +120,11 @@ const FreeAgents = ({
 				// @ts-ignore
 				<NegotiateButtons
 					capSpace={capSpace}
-					challengeNoFreeAgents={challengeNoFreeAgents}
 					disabled={gameSimInProgress}
 					minContract={minContract}
 					spectator={spectator}
 					p={p}
-					phase={phase}
-					playersRefuseToNegotiate={playersRefuseToNegotiate}
-					salaryCap={salaryCap}
-					userTid={userTid}
+					willingToNegotiate={p.mood.willing}
 				/>,
 			],
 		};

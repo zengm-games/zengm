@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../../common";
-import { freeAgents } from "..";
+import { freeAgents, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
 
@@ -52,21 +52,13 @@ const create = async (
 		return `${p.firstName} ${p.lastName} is not a free agent.`;
 	}
 
-	if (
-		!resigning &&
-		helpers.refuseToNegotiate({
-			amount: freeAgents.amountWithMood(p, tid),
-			salaryCap: g.get("salaryCap"),
-			playersRefuseToNegotiate: g.get("playersRefuseToNegotiate"),
-			rookie: rookie,
-			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
-			minContract: g.get("minContract"),
-			phase: g.get("phase"),
-		})
-	) {
-		return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
-			p.lastName
-		}</a> refuses to sign with you, no matter what you offer.`;
+	if (!resigning) {
+		const moodInfo = await player.moodInfo(pid, tid);
+		if (!moodInfo.willing) {
+			return `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+				p.firstName
+			} ${p.lastName}</a> refuses to sign with you, no matter what you offer.`;
+		}
 	}
 
 	const negotiation = {

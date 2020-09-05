@@ -12,9 +12,9 @@ redo mood system
 - Math.random() < (0.99 * g.get("daysLeft")) / 30
 - MOOD_BLOCK
 - amountWithMood
-- refuseToNegotiate
-  - base just on mood.willing
-- use numDaysFreeAgent to eventually make everyone willing to sign. have this influence both amountWithMood and refuseToNegotiate
+  - should just be part of moodInfo, get amount from there
+    - see NegotiateButtons to make sure it's used correctly, elsewhere too
+- use numDaysFreeAgent to eventually make everyone willing to sign. have this influence both amountWithMood
 - display of mood in Negotiation.tsx
 - genBaseMood
 - NegotiateButtons should be simplified so that they read willing from p.mood
@@ -24,16 +24,9 @@ redo mood system
     - trades
     - playingTime
   - add moodTraits modulation to components
-  - use in amountWithMood, refuseToNegotiate, and UI
+  - use in amountWithMood, and UI
 - function to apply all mood stuff to player object
   - can't be in playersPlus because it's team-specific
-  - mood: {
-    components: output of moodComponents,
-    traits: MoodTrait[],
-    probWilling: 0 or 1 if FA, otherwise continuous,
-    willing: boolean, - is this needed?
-    - needs to factor in numDaysFreeAgent, like in refuseToNegotiate
-  }
 - test difficulty settings, is effect large enough?
 - old mood categories, maybe keep around...
   - Eager to reach an agreement.
@@ -774,8 +767,6 @@ load file from url https://old.reddit.com/r/BasketballGM/comments/c54rov/automat
   - requires server side integration
 
 add another season option to team stats, player stats, and leaders: All Seasons
-
-refuseToNegotiate should be scaled for hard cap and max/min contracts
 
 in basketball gamesim
 - if all ratings are 0, why does one player dominate?

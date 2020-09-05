@@ -19,8 +19,6 @@ const amountWithMood = (
 ): number => {
 	let amount = p.contract.amount;
 
-	amount *= 1 + 0.2 * tid;
-
 	if (amount >= g.get("minContract")) {
 		// Must be in thousands of dollars
 

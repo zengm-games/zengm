@@ -121,6 +121,7 @@ const Mood = ({
 					})}
 				</tbody>
 			</table>
+			{p.mood.probWilling} {p.mood.willing}
 		</div>
 	);
 

@@ -17,6 +17,7 @@ redo mood system
 - use numDaysFreeAgent to eventually make everyone willing to sign. have this influence both amountWithMood and refuseToNegotiate
 - display of mood in Negotiation.tsx
 - genBaseMood
+- NegotiateButtons should be simplified so that they read willing from p.mood
 - moodComponents
   - implement all
     - loyalty
@@ -48,6 +49,7 @@ redo mood system
 - options?
   - disable mood traits
   - alter how likely a player is to re-sign after rookie contract
+- searching in Mood in table
 - schema
 - upgrade stuff
   - delte freeAgentMood, add moodTraits and numDaysFreeAgent

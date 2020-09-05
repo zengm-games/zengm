@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { PHASE } from "../../common";
 import {
 	DataTable,
+	Mood,
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
@@ -112,7 +113,7 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
-				"MOOD_BLOCK",
+				<Mood components={p.mood.components} traits={p.mood.traits} />,
 				helpers.formatCurrency(p.contract.amount, "M"),
 				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

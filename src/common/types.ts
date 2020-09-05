@@ -595,6 +595,16 @@ export type MenuItemText = {
 	text: string;
 };
 
+export type MoodComponents = {
+	marketSize: number;
+	facilities: number;
+	teamPerformance: number;
+	hype: number;
+	loyalty: number;
+	trades: number;
+	playingTime: number;
+};
+
 export type Negotiation = {
 	pid: number;
 	tid: number;

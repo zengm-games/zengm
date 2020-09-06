@@ -67,6 +67,7 @@ const generate = (
 		injuries: [],
 		lastName,
 		moodTraits,
+		numDaysFreeAgent: 0,
 		ptModifier: 1,
 		relatives: [],
 		ratings: [ratings],

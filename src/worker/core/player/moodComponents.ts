@@ -91,8 +91,10 @@ const moodComponents = async (
 				);
 
 				for (const key of ["won", "lost", "tied"] as const) {
-					const currentFraction = projectedRecord[key] / currentGames;
-					const previousFraction = previousRecord[key] / previousGames;
+					const currentFraction =
+						currentGames > 0 ? projectedRecord[key] / currentGames : 0;
+					const previousFraction =
+						previousGames > 0 ? previousRecord[key] / previousGames : 0;
 
 					projectedRecord[key] +=
 						(currentFraction * fractionComplete +

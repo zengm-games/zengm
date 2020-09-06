@@ -17,6 +17,18 @@ const moodInfo = async (pid: number, tid: number) => {
 	const resigning = g.get("phase") === PHASE.RESIGN_PLAYERS;
 	const rookie = resigning && p.draft.year === g.get("season");
 
+	let firstSeasonAfterExpansion = false;
+	if (resigning) {
+		const t = await idb.cache.teams.get(tid);
+		if (
+			t &&
+			t.firstSeasonAfterExpansion !== undefined &&
+			t.firstSeasonAfterExpansion - 1 === g.get("season")
+		) {
+			firstSeasonAfterExpansion = false;
+		}
+	}
+
 	let sumAndStuff = 0;
 	for (const value of Object.values(components)) {
 		sumAndStuff += value;
@@ -32,7 +44,11 @@ const moodInfo = async (pid: number, tid: number) => {
 	let contractAmount = p.contract.amount;
 
 	let willing = false;
-	if (!g.get("playersRefuseToNegotiate") || rookie) {
+	if (
+		!g.get("playersRefuseToNegotiate") ||
+		rookie ||
+		firstSeasonAfterExpansion
+	) {
 		probWilling = 1;
 		willing = true;
 	} else if (

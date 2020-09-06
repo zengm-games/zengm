@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import {
 	DataTable,
+	Mood,
 	NegotiateButtons,
 	PlayerNameLabels,
 	RosterComposition,
@@ -14,22 +15,16 @@ import type { View } from "../../common/types";
 
 const NegotiationList = ({
 	capSpace,
-	challengeNoFreeAgents,
 	challengeNoRatings,
 	hardCap,
 	maxContract,
 	minContract,
 	numRosterSpots,
 	spectator,
-	phase,
 	players,
-	playersRefuseToNegotiate,
-	salaryCap,
-	season,
 	stats,
 	sumContracts,
 	userPlayers,
-	userTid,
 }: View<"negotiationList">) => {
 	const title = hardCap ? "Rookies and Expiring Contracts" : "Re-sign Players";
 
@@ -75,7 +70,7 @@ const NegotiationList = ({
 					value: <SafeHtml dirty={p.latestTransaction} />,
 					sortValue: p.latestTransactionSeason,
 				},
-				"MOOD_BLOCK",
+				<Mood maxWidth p={p} />,
 				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
 				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

@@ -11,7 +11,6 @@ redo mood system
   - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
 - Math.random() < (0.99 * g.get("daysLeft")) / 30
 - MOOD_BLOCK
-- use numDaysFreeAgent to eventually make everyone willing to sign
 - help button for Mood column in roster, explaining that it only affects contracts currently, and link to manual
 - moodComponents
   - implement playingTime
@@ -22,6 +21,7 @@ redo mood system
   - add some modifier based on mood in contractAmount
 - test difficulty settings, is effect large enough?
   - might need an upper bound of the effect too, like old genBaseMood
+- upper bound on the effect of ovr on refusing to sign? otherwise could wind up with stars too eager to leave
 - old mood categories, maybe keep around...
   - Eager to reach an agreement.
   - Willing to sign for the right price.

@@ -179,8 +179,8 @@ const updateRoster = async (
 				players.sort((a, b) => footballScore(b) - footballScore(a));
 			}
 
-			for (let i = 0; i < players.length; i++) {
-				players[i].canRelease = false;
+			for (const p of players) {
+				p.canRelease = false;
 			}
 		}
 
@@ -192,8 +192,6 @@ const updateRoster = async (
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
 		};
-
-		console.log(players);
 
 		return {
 			abbrev: inputs.abbrev,

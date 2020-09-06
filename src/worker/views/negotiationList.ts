@@ -57,17 +57,6 @@ const updateNegotiationList = async () => {
 
 	let playersRefuseToNegotiate = g.get("playersRefuseToNegotiate");
 
-	if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
-		const t = await idb.cache.teams.get(userTid);
-		if (
-			t &&
-			t.firstSeasonAfterExpansion !== undefined &&
-			t.firstSeasonAfterExpansion - 1 === g.get("season")
-		) {
-			playersRefuseToNegotiate = false;
-		}
-	}
-
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],
 		ratings: ["pos"],
@@ -79,22 +68,16 @@ const updateNegotiationList = async () => {
 
 	return {
 		capSpace,
-		challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 		challengeNoRatings: g.get("challengeNoRatings"),
 		hardCap: g.get("hardCap"),
 		maxContract: g.get("maxContract"),
 		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayersAll.length,
 		spectator: g.get("spectator"),
-		phase: g.get("phase"),
 		players,
-		playersRefuseToNegotiate,
-		salaryCap: g.get("salaryCap"),
-		season: g.get("season"),
 		stats,
 		sumContracts,
 		userPlayers,
-		userTid,
 	};
 };
 

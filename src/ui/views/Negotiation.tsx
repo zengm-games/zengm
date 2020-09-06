@@ -4,6 +4,7 @@ import React from "react";
 import useTitleBar from "../hooks/useTitleBar";
 import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import type { View } from "../../common/types";
+import { Mood, RatingsStatsPopover } from "../components";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {
@@ -104,9 +105,11 @@ const Negotiation = ({
 					{player.name}
 				</a>{" "}
 			</h2>
-			<p>
-				Mood: MOOD_BLOCK
-				<br />
+			<div className="d-flex align-items-center">
+				<Mood p={player} />
+				<RatingsStatsPopover pid={player.pid} />
+			</div>
+			<p className="mt-2">
 				{player.age} years old
 				{!challengeNoRatings
 					? `; Overall: ${player.ratings.ovr}; Potential: ${player.ratings.pot}`

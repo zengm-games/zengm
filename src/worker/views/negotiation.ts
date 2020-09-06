@@ -126,11 +126,11 @@ const updateNegotiation = async (
 			return returnValue;
 		}
 
-		const mood = await player.moodInfo(p.pid, userTid);
+		p.mood = await player.moodInfo(p.pid, userTid);
 
 		const contractOptions = generateContractOptions(
 			{
-				amount: mood.contractAmount,
+				amount: p.mood.contractAmount / 1000,
 				exp: p.contract.exp,
 			},
 			p.ratings.ovr,
@@ -148,7 +148,7 @@ const updateNegotiation = async (
 				contractOptions.push({
 					exp: g.get("season") + 1,
 					years: 1,
-					amount: mood.contractAmount,
+					amount: p.mood.contractAmount / 1000,
 					smallestAmount: true,
 				});
 			}

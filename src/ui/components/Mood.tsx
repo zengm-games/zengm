@@ -56,6 +56,10 @@ const highlightColor = (sum: number) =>
 
 const plusMinus = (sum: number) => `${sum > 0 ? "+" : ""}${sum}`;
 
+const plusMinusStyle = {
+	minWidth: 14,
+};
+
 const roundProbWilling = (probWilling: number) => {
 	if (probWilling > 0.99) {
 		return ">99";
@@ -68,8 +72,10 @@ const roundProbWilling = (probWilling: number) => {
 };
 
 const Mood = ({
+	maxWidth,
 	p,
 }: {
+	maxWidth?: boolean;
 	p: {
 		pid: number;
 		name: string;
@@ -106,9 +112,14 @@ const Mood = ({
 				minWidth: 250,
 			}}
 		>
-			<p className="mb-2">{p.name}</p>
 			<p className="mb-2">
-				Priorities: {p.mood.traits.map(trait => MOOD_TRAITS[trait]).join(", ")}
+				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
+			</p>
+			<p className="mb-2">
+				Priorities:{" "}
+				{p.mood.traits
+					.map(trait => MOOD_TRAITS[trait].toLowerCase())
+					.join(", ")}
 			</p>
 			<table>
 				<tbody>
@@ -140,10 +151,16 @@ const Mood = ({
 
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
 		<button
-			className="btn btn-light-bordered btn-xs w-100 d-flex"
+			className={classNames("btn btn-light-bordered btn-xs d-flex", {
+				"w-100": maxWidth,
+			})}
 			onClick={onClick}
 		>
-			<span className={highlightColor(sum)} data-no-row-highlight="true">
+			<span
+				className={`text-right ${highlightColor(sum)}`}
+				data-no-row-highlight="true"
+				style={plusMinusStyle}
+			>
 				{plusMinus(sum)}
 			</span>
 			<div className="ml-1 mr-auto" data-no-row-highlight="true">

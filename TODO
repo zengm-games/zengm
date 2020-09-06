@@ -12,7 +12,7 @@ redo mood system
 - Math.random() < (0.99 * g.get("daysLeft")) / 30
 - MOOD_BLOCK
 - use numDaysFreeAgent to eventually make everyone willing to sign
-- display of mood in Negotiation.tsx
+- help button for Mood column in roster, explaining that it only affects contracts currently, and link to manual
 - moodComponents
   - implement playingTime
   - add moodTraits modulation to components
@@ -20,8 +20,6 @@ redo mood system
   - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
     - contractAmount too, see comment
   - add some modifier based on mood in contractAmount
-- function to apply all mood stuff to player object
-  - can't be in playersPlus because it's team-specific
 - test difficulty settings, is effect large enough?
   - might need an upper bound of the effect too, like old genBaseMood
 - old mood categories, maybe keep around...

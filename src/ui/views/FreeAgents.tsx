@@ -24,11 +24,8 @@ const FreeAgents = ({
 	spectator,
 	phase,
 	players,
-	playersRefuseToNegotiate,
-	salaryCap,
 	stats,
 	userPlayers,
-	userTid,
 }: View<"freeAgents">) => {
 	const [addFilters, setAddFilters] = useState<
 		(string | undefined)[] | undefined
@@ -189,8 +186,6 @@ FreeAgents.propTypes = {
 	numRosterSpots: PropTypes.number.isRequired,
 	phase: PropTypes.number.isRequired,
 	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	playersRefuseToNegotiate: PropTypes.bool.isRequired,
-	salaryCap: PropTypes.number.isRequired,
 	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 	userPlayers: PropTypes.arrayOf(
 		PropTypes.shape({
@@ -199,7 +194,6 @@ FreeAgents.propTypes = {
 			}),
 		}),
 	).isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default FreeAgents;

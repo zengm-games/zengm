@@ -61,10 +61,10 @@ const plusMinusStyle = {
 };
 
 const roundProbWilling = (probWilling: number) => {
-	if (probWilling > 0.99) {
+	if (probWilling < 1 && probWilling > 0.99) {
 		return ">99";
 	}
-	if (probWilling < 0.01) {
+	if (probWilling > 0 && probWilling < 0.01) {
 		return "<1";
 	}
 

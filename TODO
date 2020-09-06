@@ -10,7 +10,6 @@ redo mood system
 - https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
   - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
 - Math.random() < (0.99 * g.get("daysLeft")) / 30
-- MOOD_BLOCK
 - help button for Mood column in roster, explaining that it only affects contracts currently, and link to manual
 - moodComponents
   - implement playingTime
@@ -32,8 +31,6 @@ redo mood system
   - how to decide probWilling?
     - deterministic random to set the cutoff in sum(moodComponents) needed
     - more randomness in seed
-- UI
-  - needs to somehow show mood towards current team, and mood towards your team? maybe not, could just say look at upcoming free agents page
 - options?
   - disable mood traits
   - alter how likely a player is to re-sign after rookie contract
@@ -44,11 +41,17 @@ redo mood system
   - TeamSeason: add numPlayersTradedAway
   - test league upgrade
   - test league file import
-- blog
+- manual
   - description of traits
-  - editable in god mode
-  - civ
+  - traits do not change over time
+  - traits editable in god mode
+  - mood does change over time
   - explanation of formula for % re-sign
+    - "if decision was made now", not projection of decision
+  - mood influences contract demands and willing to negotiate only, not performance or team chemistry
+- blog
+  - civ
+  - stuff from manual
 
 FBGM leaders
 - completion %

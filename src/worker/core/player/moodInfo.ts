@@ -1,9 +1,7 @@
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
-import { freeAgents } from "..";
-import genContract from "./genContract";
 
 const moodInfo = async (pid: number, tid: number) => {
 	const p = await idb.cache.players.get(pid);
@@ -14,18 +12,28 @@ const moodInfo = async (pid: number, tid: number) => {
 	const components = await moodComponents(p, tid);
 	let probWilling = 0;
 
-	const resigning = g.get("phase") === PHASE.RESIGN_PLAYERS;
-	const rookie = resigning && p.draft.year === g.get("season");
+	const phase = g.get("phase");
+	const season = g.get("season");
 
-	let firstSeasonAfterExpansion = false;
-	if (resigning) {
+	const resigning = phase === PHASE.RESIGN_PLAYERS;
+	const rookie =
+		phase >= PHASE.DRAFT &&
+		phase <= PHASE.RESIGN_PLAYERS &&
+		p.draft.year === season;
+
+	let firstSeasonAfterExpansionOverride = false;
+	if (
+		p.contract.exp === season &&
+		phase > PHASE.REGULAR_SEASON &&
+		phase <= PHASE.RESIGN_PLAYERS
+	) {
 		const t = await idb.cache.teams.get(tid);
 		if (
 			t &&
 			t.firstSeasonAfterExpansion !== undefined &&
-			t.firstSeasonAfterExpansion - 1 === g.get("season")
+			t.firstSeasonAfterExpansion - 1 === season
 		) {
-			firstSeasonAfterExpansion = false;
+			firstSeasonAfterExpansionOverride = true;
 		}
 	}
 
@@ -47,17 +55,10 @@ const moodInfo = async (pid: number, tid: number) => {
 	if (
 		!g.get("playersRefuseToNegotiate") ||
 		rookie ||
-		firstSeasonAfterExpansion
+		firstSeasonAfterExpansionOverride
 	) {
 		probWilling = 1;
 		willing = true;
-	} else if (
-		g.get("challengeNoFreeAgents") &&
-		!resigning &&
-		contractAmount * 0.99 > g.get("minContract")
-	) {
-		probWilling = 0;
-		willing = false;
 	} else {
 		probWilling = 1 / (1 + Math.exp(-sumAndStuff));
 
@@ -65,6 +66,15 @@ const moodInfo = async (pid: number, tid: number) => {
 			p.pid + p.stats.length + p.ratings[p.ratings.length - 1].ovr,
 		);
 		willing = rand < probWilling;
+	}
+
+	// Outside the above if/else so it plays nice with either branch
+	if (
+		g.get("challengeNoFreeAgents") &&
+		!resigning &&
+		contractAmount * 0.99 > g.get("minContract")
+	) {
+		willing = false;
 	}
 
 	return {

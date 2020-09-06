@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React from "react";
 import {
 	DataTable,
@@ -132,20 +131,6 @@ const NegotiationList = ({
 			/>
 		</>
 	);
-};
-
-NegotiationList.propTypes = {
-	capSpace: PropTypes.number.isRequired,
-	hardCap: PropTypes.bool.isRequired,
-	minContract: PropTypes.number.isRequired,
-	numRosterSpots: PropTypes.number.isRequired,
-	players: PropTypes.arrayOf(PropTypes.object).isRequired,
-	playersRefuseToNegotiate: PropTypes.bool.isRequired,
-	salaryCap: PropTypes.number.isRequired,
-	season: PropTypes.number.isRequired,
-	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
-	sumContracts: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default NegotiationList;

@@ -48,6 +48,12 @@ redo mood system
   - test league upgrade
   - test league file import
 
+FBGM leaders
+- completion %
+- others?
+
+injury notification in news feed should show ovr/pot drop
+
 play menu race condition @whitecow ~/Downloads/BBGM_Sim_Bug.mp4
 
 Quick bug report. Getting fired and switching teams does not reset the finances of the team you were fired from anymore - it keeps your values. It used to switch I remember.

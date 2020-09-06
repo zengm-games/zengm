@@ -25,7 +25,7 @@ const moodComponents = async (
 	);
 	const t = teams.find(t => t.tid === tid);
 	if (!t) {
-		throw new Error("Team not found");
+		throw new Error(`tid ${tid} not found`);
 	}
 
 	const components = {
@@ -195,8 +195,30 @@ const moodComponents = async (
 	components.teamPerformance = helpers.bound(components.teamPerformance, -2, 2);
 	components.hype = helpers.bound(components.hype, -2, 2);
 	components.loyalty = helpers.bound(components.loyalty, 0, 2);
-	components.trades = helpers.bound(components.trades, -2, 0);
+	components.trades = helpers.bound(components.trades, -Infinity, 0);
 	components.playingTime = helpers.bound(components.playingTime, -2, 2);
+
+	// Apply traits modulation
+	if (p.moodTraits.includes("fame")) {
+		components.marketSize *= 2.5;
+		components.hype *= 2.5;
+		components.playingTime *= 2.5;
+	}
+	if (p.moodTraits.includes("loyalty")) {
+		components.marketSize *= 0.5;
+		components.loyalty *= 2.5;
+		components.trades *= 2.5;
+	}
+	if (p.moodTraits.includes("money")) {
+		components.facilities *= 1.5;
+		components.marketSize *= 0.5;
+		components.teamPerformance *= 0.5;
+	}
+	if (p.moodTraits.includes("winning")) {
+		components.marketSize *= 0.5;
+		components.playingTime *= 0.5;
+		components.teamPerformance *= 2.5;
+	}
 
 	return components;
 };

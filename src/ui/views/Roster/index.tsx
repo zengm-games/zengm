@@ -5,6 +5,7 @@ import arrayMove from "array-move";
 import { PHASE, PLAYER } from "../../../common";
 import {
 	HelpPopover,
+	Mood,
 	PlayerNameLabels,
 	RatingWithChange,
 	SortableTable,
@@ -121,6 +122,8 @@ const Roster = ({
 	const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
 
 	const statCols = getCols(...stats.map(stat => `stat:${stat}`));
+
+	const showMood = season === currentSeason && tid === userTid;
 
 	return (
 		<>
@@ -247,6 +250,7 @@ const Roster = ({
 								</HelpPopover>
 							</th>
 						) : null}
+						{showMood ? <th>Mood</th> : null}
 						{showRelease ? (
 							<th>
 								Release{" "}
@@ -328,6 +332,11 @@ const Roster = ({
 							{editable ? (
 								<td>
 									<PlayingTime p={p} userTid={userTid} />
+								</td>
+							) : null}
+							{showMood ? (
+								<td>
+									<Mood p={p} />
 								</td>
 							) : null}
 							{showRelease ? (

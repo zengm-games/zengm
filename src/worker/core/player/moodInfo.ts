@@ -42,7 +42,7 @@ const moodInfo = async (pid: number, tid: number) => {
 	) {
 		probWilling = 0;
 		willing = false;
-	} else if (p.tid === PLAYER.FREE_AGENT) {
+	} else {
 		probWilling = 1 / (1 + Math.exp(-sumAndStuff));
 
 		const rand = random.uniformSeed(

@@ -1,5 +1,5 @@
 import { PHASE, POSITIONS } from "../../common";
-import { season, team } from "../core";
+import { player, season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type {
@@ -153,6 +153,8 @@ const updateRoster = async (
 
 				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
 				p.ptModifier = String(p.ptModifier);
+
+				p.mood = await player.moodInfo(p.pid, p.tid);
 			}
 		} else {
 			// Show all players with stats for the given team and year
@@ -190,6 +192,8 @@ const updateRoster = async (
 			ovr: team.ovr(players),
 			ovrCurrent: team.ovr(playersCurrent),
 		};
+
+		console.log(players);
 
 		return {
 			abbrev: inputs.abbrev,

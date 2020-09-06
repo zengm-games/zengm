@@ -191,7 +191,10 @@ const updatePlayer = async (
 		// Filter out rows with no games played
 		p.stats = p.stats.filter(row => row.gp > 0);
 
-		p.mood = await player.moodInfo(p.pid, p.tid);
+		p.mood = await player.moodInfo(
+			inputs.pid,
+			p.tid >= 0 ? p.tid : g.get("userTid"),
+		);
 
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
@@ -234,8 +237,7 @@ const updatePlayer = async (
 		events.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 		feats.forEach(helpers.correctLinkLid.bind(null, g.get("lid")));
 
-		const moodInfo = await player.moodInfo(pid, tid);
-		const willingToSign = moodInfo.willing;
+		const willingToSign = p.mood.willing;
 
 		const retired = p.tid === PLAYER.RETIRED;
 

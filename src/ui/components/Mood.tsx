@@ -63,9 +63,21 @@ const highlightColor = (sum: number) =>
 	classNames({
 		"text-danger": sum < 0,
 		"text-success": sum > 0,
+		"text-muted": sum === 0,
 	});
 
 const plusMinus = (sum: number) => `${sum > 0 ? "+" : ""}${sum}`;
+
+const roundProbWilling = (probWilling: number) => {
+	if (probWilling > 0.99) {
+		return ">99";
+	}
+	if (probWilling < 0.01) {
+		return "<1";
+	}
+
+	return Math.round(probWilling * 100);
+};
 
 const Mood = ({
 	p,
@@ -75,10 +87,14 @@ const Mood = ({
 		name: string;
 		mood: {
 			components: MoodComponents;
+			probWilling: number;
 			traits: MoodTrait[];
 		};
+		tid: number;
 	};
 }) => {
+	const userTid = useLocal(state => state.userTid);
+
 	const componentsRounded = {
 		...p.mood.components,
 	};
@@ -88,6 +104,9 @@ const Mood = ({
 		sum += componentsRounded[key];
 	}
 
+	const showProbWilling = p.tid >= 0;
+	const roundedProbWilling = roundProbWilling(p.mood.probWilling);
+
 	const id = `mood-popover-${p.pid}`;
 
 	const modalHeader = "TODO";
@@ -95,7 +114,6 @@ const Mood = ({
 
 	const popoverContent = (
 		<div
-			className="text-nowrap"
 			style={{
 				minWidth: 250,
 			}}
@@ -112,25 +130,40 @@ const Mood = ({
 
 						return (
 							<tr key={key} className={highlightColor(componentsRounded[key])}>
-								<td className="text-right">
+								<td className="text-right p-0">
 									{plusMinus(componentsRounded[key])}
 								</td>
-								<td className="pl-1">{text}</td>
+								<td className="p-0 pl-1">{text}</td>
 							</tr>
 						);
 					})}
 				</tbody>
 			</table>
-			{p.mood.probWilling} {p.mood.willing}
+			{showProbWilling ? (
+				<p className="mt-2">
+					Odds player will {p.tid === userTid ? "re-sign" : "sign"} with you:{" "}
+					{roundedProbWilling}%
+				</p>
+			) : null}
 		</div>
 	);
 
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
-		<button className="btn btn-light-bordered btn-xs" onClick={onClick}>
+		<button
+			className="btn btn-light-bordered btn-xs w-100 d-flex"
+			onClick={onClick}
+		>
 			<span className={highlightColor(sum)} data-no-row-highlight="true">
-				{plusMinus(sum)}{" "}
+				{plusMinus(sum)}
 			</span>
-			{p.mood.traits.map(formatTrait).join(" ")}
+			<div className="ml-1 mr-auto" data-no-row-highlight="true">
+				{p.mood.traits.map(formatTrait).join(" ")}
+			</div>
+			{showProbWilling ? (
+				<span className="text-muted ml-1" data-no-row-highlight="true">
+					{roundedProbWilling}%
+				</span>
+			) : null}
 		</button>
 	);
 

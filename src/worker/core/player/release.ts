@@ -1,5 +1,4 @@
 import addToFreeAgents from "./addToFreeAgents";
-import genBaseMoods from "./genBaseMoods";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import type { Player } from "../../../common/types";
@@ -51,8 +50,7 @@ const release = async (p: Player, justDrafted: boolean) => {
 		pids: [p.pid],
 		tids: [p.tid],
 	});
-	const baseMoods = await genBaseMoods();
-	addToFreeAgents(p, g.get("phase"), baseMoods);
+	addToFreeAgents(p);
 	await idb.cache.players.put(p);
 };
 

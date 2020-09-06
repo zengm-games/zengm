@@ -1714,10 +1714,9 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
 const removeLastTeam = async (): Promise<void> => {
 	const tid = g.get("numTeams") - 1;
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const baseMoods = await player.genBaseMoods();
 
 	for (const p of players) {
-		player.addToFreeAgents(p, g.get("phase"), baseMoods);
+		player.addToFreeAgents(p);
 		await idb.cache.players.put(p);
 	}
 

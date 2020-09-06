@@ -13,8 +13,6 @@ redo mood system
 - MOOD_BLOCK
 - use numDaysFreeAgent to eventually make everyone willing to sign
 - display of mood in Negotiation.tsx
-- genBaseMood
-- NegotiateButtons should be simplified so that they read willing from p.mood
 - moodComponents
   - implement playingTime
   - add moodTraits modulation to components
@@ -25,6 +23,7 @@ redo mood system
 - function to apply all mood stuff to player object
   - can't be in playersPlus because it's team-specific
 - test difficulty settings, is effect large enough?
+  - might need an upper bound of the effect too, like old genBaseMood
 - old mood categories, maybe keep around...
   - Eager to reach an agreement.
   - Willing to sign for the right price.
@@ -1614,14 +1613,13 @@ AI modules that contain functions which are called to determine actions
     trades
     budget items (like from team finances view)
     releasing/buying out players when over limit
-AI teams should periodically reorder rosters throughout the season
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
   more general: have "media" reporting things like 10 worst contracts, etc
 like on team finances page, anywhere else to add help popups?
   should this be abstracted rather than just inline in views?
   inline anything from the manual?
-freeAgentMoods should affect AI team signings - or should it?
+player mood should affect AI team signings - or should it?
   for resigning players
   for signing free agents
 AI updating of *Budgets and ticket prices

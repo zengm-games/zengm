@@ -17,14 +17,13 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 		// Fantasy draft special case!
 		if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 			// Undrafted players become free agents
-			const baseMoods = await player.genBaseMoods();
 			const playersUndrafted = await idb.cache.players.indexGetAll(
 				"playersByTid",
 				PLAYER.UNDRAFTED,
 			);
 
 			for (const p of playersUndrafted) {
-				player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+				player.addToFreeAgents(p);
 				await idb.cache.players.put(p);
 			}
 			await freeAgents.normalizeContractDemands({

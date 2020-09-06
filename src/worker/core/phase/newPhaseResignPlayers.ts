@@ -16,8 +16,6 @@ const newPhaseResignPlayers = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
 	await idb.cache.negotiations.clear();
-	const baseMoodsReSigning = await player.genBaseMoods(true);
-	const baseMoodsFreeAgents = await player.genBaseMoods(false);
 
 	// Reset contract demands of current free agents and undrafted players
 	// KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
@@ -33,7 +31,7 @@ const newPhaseResignPlayers = async (
 	).filter(p => p.tid === PLAYER.UNDRAFTED);
 
 	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
-		player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoodsFreeAgents);
+		player.addToFreeAgents(p);
 		await idb.cache.players.put(p);
 	}
 
@@ -108,7 +106,7 @@ const newPhaseResignPlayers = async (
 			const tid = p.tid;
 
 			// Add to free agents first, to generate a contract demand, then open negotiations with player
-			player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsReSigning);
+			player.addToFreeAgents(p);
 
 			if (draftPick) {
 				p.contract.amount /= 2;
@@ -213,7 +211,7 @@ const newPhaseResignPlayers = async (
 					payrollsByTid.set(p.tid, contract.amount + payroll);
 				}
 			} else {
-				player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoodsFreeAgents);
+				player.addToFreeAgents(p);
 			}
 
 			await idb.cache.players.put(p);

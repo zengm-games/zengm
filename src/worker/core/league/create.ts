@@ -409,14 +409,6 @@ export const createWithoutSaving = async (
 		leagueData[store] = leagueFile[store] ? leagueFile[store] : [];
 	}
 
-	// Do this weird shit rather than genBaseMoods to avoid database access
-	const teamSeasonsForBaseMoods = orderBy(
-		teamSeasons.filter(ts => ts.season === gameAttributes.season),
-		["tid"],
-	);
-	const baseMoods = teamSeasonsForBaseMoods.map(ts =>
-		player.genBaseMood(ts, false),
-	);
 	let players: PlayerWithoutKey[];
 
 	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
@@ -715,7 +707,7 @@ export const createWithoutSaving = async (
 					false,
 				);
 				p.contract.temp = true;
-				player.addToFreeAgents(p, g.get("phase"), baseMoods);
+				player.addToFreeAgents(p);
 				players.push(p);
 			}
 		}

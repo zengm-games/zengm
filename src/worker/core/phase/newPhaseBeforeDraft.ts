@@ -1,6 +1,7 @@
 import { PLAYER } from "../../../common";
 import { draft, player, season, team } from "..";
 import { idb } from "../../db";
+import release from "../player";
 import {
 	achievement,
 	defaultGameAttributes,
@@ -23,7 +24,6 @@ const newPhaseBeforeDraft = async (
 	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
 	achievement.check("afterPlayoffs", conditions);
-
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
@@ -48,6 +48,46 @@ const newPhaseBeforeDraft = async (
 				type: "Won Championship",
 			});
 			await idb.cache.players.put(p);
+		}
+	}
+	const challengeLoseBestPlayer = g.get("challengeLoseBestPlayer");
+	if (challengeLoseBestPlayer) {
+		const tids = g.get("userTids");
+		for (let i = 0; i < tids.length; i++) {
+			const tid = tids[i];
+			const [playersAll] = await Promise.all([
+				idb.cache.players.indexGetAll("playersByTid", tid),
+			]);
+			let pid = 0;
+			let bestOv = 0;
+			let bestPlayer: any = undefined;
+			//Find best player
+			playersAll.forEach((p: Player) => {
+				if (p.ratings.slice(-1)[0]["ovr"] > bestOv) {
+					bestOv = p.ratings.slice(-1)[0]["ovr"];
+					pid = p.pid;
+					bestPlayer = p;
+				}
+			});
+			const p: Player = bestPlayer as Player;
+			if (p.real) {
+				//If he´s real make it a free agent
+				p.contract.exp = g.get("season");
+				p.tid = PLAYER.FREE_AGENT;
+				let index = 0;
+				for (index = 0; index < p.salaries.length; index++) {
+					const sal = p.salaries[index];
+					if (sal["season"] == p.contract.exp) {
+						break;
+					}
+				}
+				p.salaries = p.salaries.slice(0, index + 1);
+			} else {
+				//if he´s not real kill him
+				p.diedYear = g.get("season");
+				await player.retire(p, conditions);
+			}
+			await idb.cache.players.put(bestPlayer);
 		}
 	}
 

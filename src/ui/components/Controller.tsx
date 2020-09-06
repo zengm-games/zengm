@@ -297,10 +297,7 @@ const Controller = () => {
 			<div className="bbgm-container position-relative mt-2 flex-grow-1 d-flex flex-column">
 				<Header />
 				<SideBar pageID={pageID} />
-				<main
-					className="p402_premium"
-					id="actual-content"
-				>
+				<main className="p402_premium" id="actual-content">
 					<div id="actual-actual-content" className="clearfix">
 						<ErrorBoundary key={pageID}>{contents}</ErrorBoundary>
 					</div>

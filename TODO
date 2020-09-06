@@ -1,8 +1,14 @@
+play menu race condition @whitecow ~/Downloads/BBGM_Sim_Bug.mp4
+
+Quick bug report. Getting fired and switching teams does not reset the finances of the team you were fired from anymore - it keeps your values. It used to switch I remember.
+
 wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/one_idea_for_use_of_the_secondary_wordmarks_for/
 
 individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0bi7/would_it_be_possible_to_make_player_determinism/
 
 add playoff series w/l to box score
+
+salaries wrong after expansion draft? https://cdn.discordapp.com/attachments/290015591216054273/750472674953920572/unknown.png
 
 When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
 - need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
@@ -105,6 +111,7 @@ redo mood system
 - show +/- for different factors like civ4
 - https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
   - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
+- Math.random() < (0.99 * g.get("daysLeft")) / 30
 
 option to include historical players/stats when creating a real players league
 - should it include 1 season of stats by default, for MIP?
@@ -146,6 +153,11 @@ built-in UI to load custom user files
   - last_updated
   - version (increment every update, keep in URL)
 - CRUD UI for people to upload/edit/delete league files
+
+gradually reveal progs mode
+- displayed ratings are f(t, current ratings, last year's ratings)
+  - after like half the season, always just current ratings. prior to that, depends on phase and games played
+  - reveal with some polynomial, like x^n, so it's not predictable if a small increase will lead to a big increase later
 
 finances revamp
 - get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
@@ -342,6 +354,7 @@ FBGM
 - kneeling at end of games
 - some OL stat
 - increase value of K/P so they won't be traded for nothing
+  - user report of K/P being released by AI teams during season
 - smarter cutting when over roster limit (like don't cut only K/P)
 - easier position changes, maybe from roster or player pages
   - auto sort roster after? or maybe have option to set if user controls roster sort or not

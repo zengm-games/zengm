@@ -115,6 +115,53 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 1],
 	},
 };
+
+const PLAYER_SUMMARY = {
+	summaryPss: {
+		name: "SummaryQB",
+		onlyShowIf: ["QB"],
+		stats: [
+			"gp",
+			"av",
+			"qbRec",
+			"cmpPct",
+			"pssYds",
+			"pssYdsPerAtt",
+			"pssTD",
+			"pssInt",
+		],
+	},
+	summaryRus: {
+		name: "SummaryRus",
+		onlyShowIf: ["RB"],
+		stats: ["gp", "av", "rus", "rusYds", "rusYdsPerAtt", "rusTD"],
+	},
+	summaryRec: {
+		name: "SummaryRec",
+		onlyShowIf: ["WR", "TE"],
+		stats: ["gp", "av", "rec", "recYds", "recYdsPerRec", "recTD"],
+	},
+	summaryOL: {
+		name: "SummaryOL",
+		onlyShowIf: ["OL"],
+		stats: ["gp", "av"],
+	},
+	summaryKic: {
+		name: "SummaryKic",
+		onlyShowIf: ["K"],
+		stats: ["gp", "av", "fg", "fga", "xp", "xpa"],
+	},
+	summaryPunt: {
+		name: "SummaryPunt",
+		onlyShowIf: ["P"],
+		stats: ["gp", "av", "pnt", "pntYds", "pntYdsPerAtt"],
+	},
+	summaryDef: {
+		name: "SummaryDef",
+		onlyShowIf: ["DL", "LB", "CB", "OL", "S"],
+		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
+	},
+};
 const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",
@@ -319,6 +366,7 @@ const TEAM_STATS_TABLES = {
 		],
 	},
 };
+
 const POSITIONS: Position[] = [
 	"QB",
 	"RB",
@@ -375,6 +423,7 @@ const TIME_BETWEEN_GAMES = "week";
 export {
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,
+	PLAYER_SUMMARY,
 	POSITION_COUNTS,
 	POSITIONS,
 	RATINGS,

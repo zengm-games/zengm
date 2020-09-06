@@ -935,3 +935,36 @@ button.live-game-sim-more {
 	border-bottom-left-radius: 0;
 	border-left-width: 0 !important;
 }
+
+.player-stats-summary {
+	td,
+	th {
+		border-bottom-width: 0 !important;
+		border-top-width: 0 !important;
+	}
+}
+
+@include media-breakpoint-down(xs) {
+	// Same as .table-responsive
+	.player-stats-summary {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+		// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
+		-webkit-overflow-scrolling: auto;
+
+		.table {
+			margin-bottom: 0;
+		}
+	}
+}
+
+@include media-breakpoint-up(sm) {
+	.table-separator-right {
+		border-right: 2px solid $gray-300;
+		padding-right: 1em !important;
+	}
+	.table-separator-left {
+		padding-left: 1em !important;
+	}
+}

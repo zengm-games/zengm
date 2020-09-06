@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React, { ReactNode } from "react";
 import { BoxPlot } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
+import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 
 const width100 = {
@@ -40,17 +40,18 @@ const proQuartiles =
 const PlayerStatDists = ({
 	numGames,
 	season,
+	statType,
 	statsAll,
 }: View<"playerStatDists">) => {
 	useTitleBar({
 		title: "Player Stat Distributions",
 		dropdownView: "player_stat_dists",
-		dropdownFields: { seasons: season },
+		dropdownFields: { seasons: season, statTypesAdv: statType },
 	});
 
 	// Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
 	const scale =
-		process.env.SPORT === "basketball"
+		process.env.SPORT === "basketball" && statType == "perGame"
 			? {
 					gp: [0, numGames],
 					gs: [0, numGames],
@@ -107,39 +108,48 @@ const PlayerStatDists = ({
 
 			<table>
 				<tbody>
-					{Object.keys(statsAll).map(stat => {
-						const bbgmPlot = (
-							<tr key={`${stat}-bbgm`}>
-								<td className="pr-3 text-right">{stat}</td>
-								<td style={width100}>
-									<BoxPlot
-										color="var(--blue)"
-										data={statsAll[stat]}
-										scale={(scale as any)[stat]}
-									/>
-								</td>
-							</tr>
-						);
-						let proPlot: ReactNode = null;
-						if (proQuartiles.hasOwnProperty(stat)) {
-							proPlot = (
-								<tr key={`${stat}-pro`}>
-									<td />
+					{Object.keys(statsAll)
+						.filter(stat => typeof statsAll[stat][0] === "number")
+						.map(stat => {
+							const col = getCols(`stat:${stat}`)[0];
+							const bbgmPlot = (
+								<tr key={`${stat}-bbgm`}>
+									<td className="pr-3 text-right" title={col.desc}>
+										{col.title}
+									</td>
 									<td style={width100}>
-										<div style={{ marginTop: "-26px" }}>
-											<BoxPlot
-												color="var(--green)"
-												labels={false}
-												scale={(scale as any)[stat]}
-												quartiles={(proQuartiles as any)[stat]}
-											/>
-										</div>
+										<BoxPlot
+											color="var(--blue)"
+											data={statsAll[stat]}
+											scale={(scale as any)[stat]}
+										/>
 									</td>
 								</tr>
 							);
-						}
-						return [bbgmPlot, proPlot];
-					})}
+							let proPlot: ReactNode = null;
+							if (proQuartiles.hasOwnProperty(stat) && statType == "perGame") {
+								proPlot = (
+									<tr key={`${stat}-pro`}>
+										<td />
+										<td style={width100}>
+											<div style={{ marginTop: "-26px" }}>
+												<BoxPlot
+													color="var(--green)"
+													labels={false}
+													scale={
+														process.env.SPORT === "basketball"
+															? (scale as any)[stat]
+															: [undefined, undefined]
+													}
+													quartiles={(proQuartiles as any)[stat]}
+												/>
+											</div>
+										</td>
+									</tr>
+								);
+							}
+							return [bbgmPlot, proPlot];
+						})}
 				</tbody>
 			</table>
 		</>
@@ -149,6 +159,18 @@ const PlayerStatDists = ({
 PlayerStatDists.propTypes = {
 	numGames: PropTypes.number.isRequired,
 	season: PropTypes.number.isRequired,
+	statType: PropTypes.oneOf([
+		"advanced",
+		"per36",
+		"perGame",
+		"shotLocations",
+		"totals",
+		"passing",
+		"rushing",
+		"defense",
+		"kicking",
+		"returns",
+	]),
 	statsAll: PropTypes.object.isRequired,
 };
 

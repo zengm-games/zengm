@@ -117,6 +117,12 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		weights: [1, 0.25],
 	},
 };
+const PLAYER_SUMMARY = {
+	summary: {
+		name: "Summary",
+		stats: ["gp", "pts", "trb", "ast", "fgp", "tpp", "ftp", "tsp", "per", "ws"],
+	},
+};
 const PLAYER_STATS_TABLES = {
 	regular: {
 		name: "Stats",
@@ -415,6 +421,7 @@ const TIME_BETWEEN_GAMES = "day";
 export {
 	COMPOSITE_WEIGHTS,
 	PLAYER_STATS_TABLES,
+	PLAYER_SUMMARY,
 	POSITION_COUNTS,
 	POSITIONS,
 	RATINGS,

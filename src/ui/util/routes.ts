@@ -112,6 +112,7 @@ const routes = () => {
 		"/l/:lid/player_rating_dists/:season": genPage("playerRatingDists"),
 		"/l/:lid/player_stat_dists": genPage("playerStatDists"),
 		"/l/:lid/player_stat_dists/:season": genPage("playerStatDists"),
+		"/l/:lid/player_stat_dists/:season/:statType": genPage("playerStatDists"),
 		"/l/:lid/team_stat_dists": genPage("teamStatDists"),
 		"/l/:lid/team_stat_dists/:season": genPage("teamStatDists"),
 		"/l/:lid/export_league": genPage("exportLeague"),

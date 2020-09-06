@@ -20,8 +20,8 @@ import {
 	toWorker,
 	realtimeUpdate,
 } from "../../util";
-import type { View, Player } from "../../../common/types";
-import { PLAYER } from "../../../common";
+import type { View, Player, Phase } from "../../../common/types";
+import { PHASE, PLAYER } from "../../../common";
 import classNames from "classnames";
 import { formatStatGameHigh } from "../PlayerStats";
 
@@ -166,6 +166,123 @@ StatsTable.propTypes = {
 	superCols: PropTypes.array,
 };
 
+const StatsSummary = ({
+	name,
+	onlyShowIf,
+	p,
+	phase,
+	position,
+	season,
+	stats,
+}: {
+	name: string;
+	onlyShowIf?: string[];
+	p: View<"player">["player"];
+	phase: Phase;
+	position: string;
+	season: number;
+	stats: string[];
+}) => {
+	if (onlyShowIf !== undefined) {
+		if (!onlyShowIf.includes(position)) {
+			return null;
+		}
+	}
+
+	const playerStats = p.stats.filter(
+		ps =>
+			!ps.playoffs &&
+			(ps.season === season ||
+				(ps.season === season - 1 && phase === PHASE.PRESEASON)),
+	);
+	const ps = playerStats[playerStats.length - 1];
+
+	const cols = getCols("Summary", ...stats.map(stat => `stat:${stat}`));
+
+	if (name === "Shot Locations") {
+		cols[cols.length - 3].title = "M";
+		cols[cols.length - 2].title = "A";
+		cols[cols.length - 1].title = "%";
+	}
+
+	const separatorAfter =
+		process.env.SPORT === "basketball" ? [0, 4, 8] : [0, 2];
+
+	return (
+		<div className="player-stats-summary">
+			<table className="table table-sm table-condensed table-nonfluid text-center mt-3 mb-0">
+				<thead>
+					<tr>
+						{cols.map((col, i) => {
+							return (
+								<th
+									key={i}
+									title={col.desc}
+									className={classNames({
+										"table-separator-right": separatorAfter.includes(i),
+										"table-separator-left": separatorAfter.includes(i - 1),
+										"text-left": i === 0,
+									})}
+								>
+									{col.title}
+								</th>
+							);
+						})}
+					</tr>
+				</thead>
+				{ps ? (
+					<tbody>
+						<tr>
+							<th className="table-separator-right text-left">{ps.season}</th>
+							{stats.map((stat, i) => {
+								return (
+									<td
+										key={stat}
+										className={classNames({
+											"table-separator-right": separatorAfter.includes(i + 1),
+											"table-separator-left": separatorAfter.includes(i),
+										})}
+									>
+										{helpers.roundStat((ps as any)[stat], stat)}
+									</td>
+								);
+							})}
+						</tr>
+					</tbody>
+				) : null}
+
+				<tfoot>
+					<tr>
+						<th className="table-separator-right text-left">Career</th>
+						{stats.map((stat, i) => {
+							return (
+								<td
+									key={stat}
+									className={classNames({
+										"table-separator-right": separatorAfter.includes(i + 1),
+										"table-separator-left": separatorAfter.includes(i),
+									})}
+								>
+									{helpers.roundStat(p.careerStats[stat], stat)}
+								</td>
+							);
+						})}
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	);
+};
+
+StatsSummary.propTypes = {
+	name: PropTypes.string.isRequired,
+	onlyShowIf: PropTypes.arrayOf(PropTypes.string),
+	retired: PropTypes.bool,
+	p: PropTypes.object.isRequired,
+	playoffs: PropTypes.bool,
+	stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
 const Player2 = ({
 	events,
 	feats,
@@ -173,14 +290,17 @@ const Player2 = ({
 	godMode,
 	injured,
 	jerseyNumberInfos,
+	phase,
 	player,
 	ratings,
 	retired,
+	season,
 	showContract,
 	showRatings,
 	showTradeFor,
 	showTradingBlock,
 	statTables,
+	statSummary,
 	teamColors,
 	teamName,
 	willingToSign,
@@ -276,7 +396,7 @@ const Player2 = ({
 				<div className="col-sm-6">
 					<div className="d-flex">
 						<div
-							className="player-picture"
+							className="player-picture mb-2"
 							style={{
 								marginTop: player.imgURL ? 0 : -20,
 							}}
@@ -422,6 +542,22 @@ const Player2 = ({
 							</button>
 						) : null}
 					</div>
+					{player.careerStats.gp > 0 ? (
+						<>
+							{statSummary.map(({ name, onlyShowIf, stats }) => (
+								<StatsSummary
+									key={name}
+									name={name}
+									onlyShowIf={onlyShowIf}
+									position={player.ratings[player.ratings.length - 1].pos}
+									phase={phase}
+									season={season}
+									stats={stats}
+									p={player}
+								/>
+							))}
+						</>
+					) : null}
 				</div>
 
 				<div className="col-sm-6 mt-3 mt-sm-0 text-nowrap">

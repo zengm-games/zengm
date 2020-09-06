@@ -33,7 +33,7 @@ const addToFreeAgents = (
 		}
 
 		if (phase === PHASE.RESIGN_PLAYERS) {
-			// More likely to re-sign your own players
+			// More likely to re-sign your own players.
 			return helpers.bound(mood + random.uniform(-1, 0.5), 0, 1000);
 		}
 

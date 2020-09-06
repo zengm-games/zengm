@@ -50,6 +50,9 @@ const processStats = (
 		} else if (stat === "fgp") {
 			row[stat] = percentage(ps.fg, ps.fga);
 			scale = false;
+		} else if (stat === "efg") {
+			row[stat] = percentage((ps.fg + 0.5 * ps.tp), ps.fga);
+			scale = false;
 		} else if (stat === "fgpAtRim") {
 			row[stat] = percentage(ps.fgAtRim, ps.fgaAtRim);
 			scale = false;

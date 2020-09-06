@@ -201,22 +201,22 @@ const moodComponents = async (
 	components.playingTime = helpers.bound(components.playingTime, -2, 2);
 
 	// Apply traits modulation
-	if (p.moodTraits.includes("fame")) {
+	if (p.moodTraits.includes("F")) {
 		components.marketSize *= 2.5;
 		components.hype *= 2.5;
 		components.playingTime *= 2.5;
 	}
-	if (p.moodTraits.includes("loyalty")) {
+	if (p.moodTraits.includes("L")) {
 		components.marketSize *= 0.5;
 		components.loyalty *= 2.5;
 		components.trades *= 2.5;
 	}
-	if (p.moodTraits.includes("money")) {
+	if (p.moodTraits.includes("$")) {
 		components.facilities *= 1.5;
 		components.marketSize *= 0.5;
 		components.teamPerformance *= 0.5;
 	}
-	if (p.moodTraits.includes("winning")) {
+	if (p.moodTraits.includes("W")) {
 		components.marketSize *= 0.5;
 		components.playingTime *= 0.5;
 		components.teamPerformance *= 2.5;

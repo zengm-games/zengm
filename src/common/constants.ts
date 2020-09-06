@@ -1,7 +1,7 @@
 import * as constantsBasketball from "./constants.basketball";
 import * as constantsFootball from "./constants.football";
 
-import type { CompositeWeights, Phase, DraftType } from "./types";
+import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types";
 
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
@@ -139,10 +139,18 @@ const TIME_BETWEEN_GAMES: string =
 		? constantsFootball.TIME_BETWEEN_GAMES
 		: constantsBasketball.TIME_BETWEEN_GAMES;
 
+const MOOD_TRAITS: Record<MoodTrait, string> = {
+	F: "Fame",
+	L: "Loyalty",
+	$: "Money",
+	W: "Winning",
+};
+
 export {
 	ACCOUNT_API_URL,
 	DIFFICULTY,
 	MAX_SUPPORTED_LEAGUE_VERSION,
+	MOOD_TRAITS,
 	NO_LOTTERY_DRAFT_TYPES,
 	PHASE,
 	PLAYER,

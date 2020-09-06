@@ -605,7 +605,7 @@ export type MoodComponents = {
 	playingTime: number;
 };
 
-export type MoodTrait = "fame" | "loyalty" | "money" | "winning";
+export type MoodTrait = "F" | "L" | "$" | "W";
 
 export type Negotiation = {
 	pid: number;

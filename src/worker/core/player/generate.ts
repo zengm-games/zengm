@@ -1,14 +1,15 @@
 import genRatings from "./genRatings";
 import name from "./name";
-import { face, g, random } from "../../util";
+import { face, g, helpers, random } from "../../util";
 import type {
 	MinimalPlayerRatings,
 	MoodTrait,
 	PlayerWithoutKey,
 } from "../../../common/types";
 import genWeight from "./genWeight";
+import { MOOD_TRAITS } from "../../../common";
 
-const MOOD_TRAITS: MoodTrait[] = ["fame", "loyalty", "money", "winning"];
+const MOOD_TRAIT_KEYS = helpers.keys(MOOD_TRAITS);
 
 const generate = (
 	tid: number,
@@ -25,10 +26,10 @@ const generate = (
 
 	const weight = genWeight(ratings.hgt, ratings.stre);
 
-	const moodTraits: MoodTrait[] = [random.choice(MOOD_TRAITS)];
+	const moodTraits: MoodTrait[] = [random.choice(MOOD_TRAIT_KEYS)];
 	if (Math.random() < 0.5) {
 		moodTraits.push(
-			random.choice(MOOD_TRAITS.filter(trait => trait !== moodTraits[0])),
+			random.choice(MOOD_TRAIT_KEYS.filter(trait => trait !== moodTraits[0])),
 		);
 	}
 

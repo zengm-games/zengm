@@ -1,21 +1,9 @@
 import classNames from "classnames";
 import React from "react";
+import { MOOD_TRAITS } from "../../common";
 import type { MoodComponents, MoodTrait } from "../../common/types";
 import { helpers, useLocal } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 import ResponsivePopover from "./ResponsivePopover";
-
-const formatTrait = (trait: MoodTrait) => {
-	switch (trait) {
-		case "fame":
-			return "F";
-		case "loyalty":
-			return "L";
-		case "money":
-			return "$";
-		case "winning":
-			return "W";
-	}
-};
 
 const componentText = (component: keyof MoodComponents, value: number) => {
 	if (value === 0) {
@@ -119,7 +107,9 @@ const Mood = ({
 			}}
 		>
 			<p className="mb-2">{p.name}</p>
-			<p className="mb-2">Priorities: {p.mood.traits.join(", ")}</p>
+			<p className="mb-2">
+				Priorities: {p.mood.traits.map(trait => MOOD_TRAITS[trait]).join(", ")}
+			</p>
 			<table>
 				<tbody>
 					{helpers.keys(componentsRounded).map(key => {
@@ -157,7 +147,7 @@ const Mood = ({
 				{plusMinus(sum)}
 			</span>
 			<div className="ml-1 mr-auto" data-no-row-highlight="true">
-				{p.mood.traits.map(formatTrait).join(" ")}
+				{p.mood.traits.join(" ")}
 			</div>
 			{showProbWilling ? (
 				<span className="text-muted ml-1" data-no-row-highlight="true">

@@ -7,7 +7,13 @@ import React, {
 	MouseEvent,
 	ReactNode,
 } from "react";
-import { PHASE, PLAYER, RATINGS, POSITIONS } from "../../../common";
+import {
+	PHASE,
+	PLAYER,
+	RATINGS,
+	POSITIONS,
+	MOOD_TRAITS,
+} from "../../../common";
 import { PlayerPicture, HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker, logEvent } from "../../util";
@@ -41,6 +47,8 @@ const copyValidValues = (
 	target.firstName = source.firstName;
 	target.lastName = source.lastName;
 	target.imgURL = source.imgURL;
+	target.moodTraits = source.moodTraits;
+	target.moodTraits.sort();
 
 	// HoF toggle? Need to update awards list too.
 	if (target.hof !== source.hof) {
@@ -325,6 +333,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					}
 				} else {
 					p[field] = val;
+				}
+			} else if (type === "moodTraits") {
+				if (p.moodTraits.includes(field)) {
+					p.moodTraits = p.moodTraits.filter(
+						(trait: string) => trait !== field,
+					);
+				} else {
+					p.moodTraits.push(field);
 				}
 			} else if (["born", "contract", "draft", "injury"].includes(type)) {
 				p[type][field] = val;
@@ -745,6 +761,23 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									value={p.injury.gamesRemaining}
 									disabled={!godMode}
 								/>
+							</div>
+							<div className="col-sm-3 form-group">
+								<label>Mood Traits</label>
+								{helpers.keys(MOOD_TRAITS).map(trait => (
+									<div className="form-check">
+										<label className="form-check-label">
+											<input
+												className="form-check-input"
+												type="checkbox"
+												checked={p.moodTraits.includes(trait)}
+												disabled={!godMode}
+												onChange={handleChange.bind(null, "moodTraits", trait)}
+											/>
+											{MOOD_TRAITS[trait]}
+										</label>
+									</div>
+								))}
 							</div>
 						</div>
 

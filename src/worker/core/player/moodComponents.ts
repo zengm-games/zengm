@@ -36,6 +36,7 @@ const moodComponents = async (
 		loyalty: 0,
 		trades: 0,
 		playingTime: 0,
+		rookieContract: 0,
 	};
 
 	{
@@ -170,6 +171,22 @@ const moodComponents = async (
 		// PLAYING TIME
 	}
 
+	{
+		// ROOKIE CONTRACT
+		if (!g.get("hardCap")) {
+			const rookieContractLength = g.get("rookieContractLengths")[
+				p.draft.round - 1
+			];
+			if (
+				rookieContractLength !== undefined &&
+				p.draft.round > 0 &&
+				p.draft.year + rookieContractLength >= season
+			) {
+				components.rookieContract = 10;
+			}
+		}
+	}
+
 	// Apply difficulty modulation
 	const difficulty = g.get("difficulty");
 	if (difficulty !== 0) {
@@ -196,9 +213,14 @@ const moodComponents = async (
 	components.facilities = helpers.bound(components.facilities, -2, 2);
 	components.teamPerformance = helpers.bound(components.teamPerformance, -2, 2);
 	components.hype = helpers.bound(components.hype, -2, 2);
-	components.loyalty = helpers.bound(components.loyalty, 0, 2);
+	components.loyalty = helpers.bound(components.loyalty, 0, Infinity);
 	components.trades = helpers.bound(components.trades, -Infinity, 0);
 	components.playingTime = helpers.bound(components.playingTime, -2, 2);
+	components.rookieContract = helpers.bound(
+		components.rookieContract,
+		0,
+		Infinity,
+	);
 
 	// Apply traits modulation
 	if (p.moodTraits.includes("F")) {

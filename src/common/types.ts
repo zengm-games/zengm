@@ -603,6 +603,7 @@ export type MoodComponents = {
 	loyalty: number;
 	trades: number;
 	playingTime: number;
+	rookieContract: number;
 };
 
 export type MoodTrait = "F" | "L" | "$" | "W";

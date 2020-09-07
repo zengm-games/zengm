@@ -26,6 +26,8 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 				throw new Error("Should never happen");
 			case "playingTime":
 				return "Likes the amount of playing time he's receiving";
+			case "rookieContract":
+				return "Eager to sign first non-rookie contract";
 		}
 	}
 
@@ -44,6 +46,8 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 			return "Thinks you're too quick to trade away players";
 		case "playingTime":
 			return "Wants more playing time";
+		case "rookieContract":
+			throw new Error("Should never happen");
 	}
 };
 

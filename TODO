@@ -2,22 +2,16 @@ redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes
 - make it impossible to refuse to re-sign to title winner (really)
-- loyalty (both towards this player, and towards other players... like re-signing your guys makes other players think you're loyal, trading away tons of guys does the opposite)
-- make rookies always willing to re-sign (like restricted free agency, kind of)
-- make everything transparent. way to see what the average player thinks of you, and specific players
-- also make players on rookie contracts less likely to refuse (add to "loyal to franchise", or maybe more clear to make it "eager to sign first non-rookie contract")
-- show +/- for different factors like civ4
-- https://old.reddit.com/r/BasketballGM/comments/hvj04p/some_ideas_for_a_player_mood_revamp_nows_the_time/fyvscvz/?context=3
-  - Hm that is a good point... when you're viewing a player, does it show his mood towards his current team, or his mood towards you? I guess it would need to show both? But that is a lot of "stuff" to display...
 - Math.random() < (0.99 * g.get("daysLeft")) / 30
 - help button for Mood column in roster, explaining that it only affects contracts currently, and link to manual
 - moodComponents
   - implement playingTime
-  - add moodTraits modulation to components
+    - maybe track lost time due to ptModifier
 - moodInfo
   - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
     - contractAmount too, see comment
   - add some modifier based on mood in contractAmount
+- show button on player page, next to flag, only for your players and FAs
 - test difficulty settings, is effect large enough?
   - might need an upper bound of the effect too, like old genBaseMood
 - upper bound on the effect of ovr on refusing to sign? otherwise could wind up with stars too eager to leave
@@ -34,7 +28,7 @@ redo mood system
 - options?
   - disable mood traits
   - alter how likely a player is to re-sign after rookie contract
-- searching in Mood in table
+- searching/sorting in Mood in table
 - schema
 - upgrade stuff
   - Player: delete freeAgentMood, add moodTraits and numDaysFreeAgent
@@ -52,6 +46,7 @@ redo mood system
 - blog
   - civ
   - stuff from manual
+  - rookie likeliness to refuse
 
 FBGM leaders
 - completion %

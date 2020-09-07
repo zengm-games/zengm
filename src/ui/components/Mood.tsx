@@ -39,11 +39,11 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 		case "teamPerformance":
 			return "Unhappy with the team's performance";
 		case "hype":
-			return "Wishes the fan base was more engaged";
+			return "Wishes fans were more excited";
 		case "loyalty":
 			throw new Error("Should never happen");
 		case "trades":
-			return "Thinks you're too quick to trade away players";
+			return "Worried he'll be traded away";
 		case "playingTime":
 			return "Wants more playing time";
 		case "rookieContract":

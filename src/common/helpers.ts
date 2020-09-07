@@ -979,16 +979,22 @@ const roundsWonText = (
 		return playoffsByConference ? "Conference champs" : "Made finals";
 	}
 
+	if (playoffRoundsWon === 0) {
+		return "Made playoffs";
+	}
+
 	if (playoffRoundsWon === numPlayoffRounds - 2) {
 		return playoffsByConference ? "Made conference finals" : "Made semifinals";
 	}
 
-	if (playoffRoundsWon >= 1) {
-		return `Made ${ordinal(playoffRoundsWon + 1)} round`;
+	if (playoffRoundsWon === numPlayoffRounds - 3) {
+		return playoffsByConference
+			? "Made conference semifinals"
+			: "Made quarterfinals";
 	}
 
-	if (playoffRoundsWon === 0) {
-		return "Made playoffs";
+	if (playoffRoundsWon >= 1) {
+		return `Made ${ordinal(playoffRoundsWon + 1)} round`;
 	}
 
 	return "";

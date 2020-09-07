@@ -127,6 +127,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	challengeNoFreeAgents: false,
 	challengeNoRatings: false,
 	challengeNoTrades: false,
+	challengeLoseBestPlayer: false,
 	repeatSeason: undefined,
 	equalizeRegions: false,
 	realPlayerDeterminism: 0,

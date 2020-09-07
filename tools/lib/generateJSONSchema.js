@@ -463,6 +463,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 						gameAttribute("challengeNoTrades", {
 							type: "boolean",
 						}),
+						gameAttribute("challengeLoseBestPlayer", {
+							type: "boolean",
+						}),
 						gameAttribute("confs", {
 							type: "array",
 							minItems: 1,

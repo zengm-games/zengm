@@ -1,9 +1,9 @@
 import retire from "./retire";
 import { idb } from "../../db";
 import { g, helpers, logEvent, random } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions, Player } from "../../../common/types";
 
-const killOne = async (conditions: Conditions) => {
+const killOne = async (conditions: Conditions, player?: Player) => {
 	const reason = random.choice([
 		"died from a drug overdose",
 		"was killed by a gunshot during an altercation at a night club",
@@ -76,16 +76,23 @@ const killOne = async (conditions: Conditions) => {
 		"uploaded himself to the cloud and can no longer participate in corporeal pursuits",
 	]);
 
-	// Pick random team
-	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
-	const tid = random.choice(teams).tid;
-	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+	let p: Player;
+	let tid;
+	if (!player) {
+		// Pick random team
+		const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+		tid = random.choice(teams).tid;
+		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
-	// Pick a random player on that team
-	const p = random.choice(players.filter(p => !p.real));
-	if (!p) {
-		// Could happen, with real rosters
-		return;
+		// Pick a random player on that team
+		p = random.choice(players.filter(p => !p.real));
+		if (!p) {
+			// Could happen, with real rosters
+			return;
+		}
+	} else {
+		p = player;
+		tid = player.tid;
 	}
 
 	await retire(p, conditions, {

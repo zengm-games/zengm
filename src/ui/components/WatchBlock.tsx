@@ -1,13 +1,15 @@
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React, { SyntheticEvent, useCallback } from "react";
 import { toWorker } from "../util";
 
 type Props = {
+	className?: string;
 	pid: number;
 	watch: boolean;
 };
 
-const WatchBlock = React.memo(({ pid, watch }: Props) => {
+const WatchBlock = React.memo(({ className, pid, watch }: Props) => {
 	const handleClick = useCallback(
 		async (e: SyntheticEvent) => {
 			e.preventDefault();
@@ -19,7 +21,10 @@ const WatchBlock = React.memo(({ pid, watch }: Props) => {
 	if (watch) {
 		return (
 			<span
-				className="glyphicon glyphicon-flag watch watch-active"
+				className={classNames(
+					"glyphicon glyphicon-flag watch watch-active",
+					className,
+				)}
 				onClick={handleClick}
 				title="Remove from Watch List"
 			/>
@@ -28,7 +33,7 @@ const WatchBlock = React.memo(({ pid, watch }: Props) => {
 
 	return (
 		<span
-			className="glyphicon glyphicon-flag watch"
+			className={classNames("glyphicon glyphicon-flag watch", className)}
 			onClick={handleClick}
 			title="Add to Watch List"
 		/>

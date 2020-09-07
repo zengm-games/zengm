@@ -191,10 +191,9 @@ const updatePlayer = async (
 		// Filter out rows with no games played
 		p.stats = p.stats.filter(row => row.gp > 0);
 
-		p.mood = await player.moodInfo(
-			inputs.pid,
-			p.tid >= 0 ? p.tid : g.get("userTid"),
-		);
+		const userTid = g.get("userTid");
+
+		p.mood = await player.moodInfo(inputs.pid, p.tid >= 0 ? p.tid : userTid);
 
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
@@ -328,8 +327,8 @@ const updatePlayer = async (
 
 		return {
 			player: p,
-			showTradeFor: p.tid !== g.get("userTid") && p.tid >= 0,
-			showTradingBlock: p.tid === g.get("userTid"),
+			showTradeFor: p.tid !== userTid && p.tid >= 0,
+			showTradingBlock: p.tid === userTid,
 			freeAgent: p.tid === PLAYER.FREE_AGENT,
 			retired,
 			showContract:
@@ -349,6 +348,7 @@ const updatePlayer = async (
 			statSummary,
 			teamColors,
 			teamName,
+			userTid,
 			willingToSign,
 		};
 	}

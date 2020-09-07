@@ -9,6 +9,7 @@ import {
 	WatchBlock,
 	Weight,
 	JerseyNumber,
+	Mood,
 } from "../../components";
 import Injuries from "./Injuries";
 import RatingsOverview from "./RatingsOverview";
@@ -303,6 +304,7 @@ const Player2 = ({
 	statSummary,
 	teamColors,
 	teamName,
+	userTid,
 	willingToSign,
 }: View<"player">) => {
 	useTitleBar({ title: player.name });
@@ -347,7 +349,7 @@ const Player2 = ({
 	let statusInfo: ReactNode = null;
 	if (!retired) {
 		statusInfo = (
-			<>
+			<div className="d-flex">
 				{injured ? (
 					<span
 						className="badge badge-danger badge-injury"
@@ -361,9 +363,11 @@ const Player2 = ({
 					className={injured ? undefined : "skills-alone"}
 					skills={player.ratings[player.ratings.length - 1].skills}
 				/>
-				<WatchBlock pid={player.pid} watch={player.watch} />
-				<br />
-			</>
+				<WatchBlock className="ml-2" pid={player.pid} watch={player.watch} />
+				{player.tid === PLAYER.FREE_AGENT || player.tid === userTid ? (
+					<Mood className="ml-2" p={player} />
+				) : null}
+			</div>
 		);
 	}
 
@@ -428,9 +432,7 @@ const Player2 = ({
 								) : null}
 							</strong>
 							<br />
-							Height: {height}
-							<br />
-							Weight: {weight}
+							{height}, {weight}
 							<br />
 							Born: {player.born.year} -{" "}
 							<a

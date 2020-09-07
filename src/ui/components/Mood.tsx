@@ -92,9 +92,11 @@ export const processComponents = (components: MoodComponents) => {
 };
 
 const Mood = ({
+	className,
 	maxWidth,
 	p,
 }: {
+	className?: string;
 	maxWidth?: boolean;
 	p: {
 		pid: number;
@@ -128,12 +130,14 @@ const Mood = ({
 			<p className="mb-2">
 				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
 			</p>
-			<p className="mb-2">
-				Priorities:{" "}
-				{p.mood.traits
-					.map(trait => MOOD_TRAITS[trait].toLowerCase())
-					.join(", ")}
-			</p>
+			{p.mood.traits.length > 0 ? (
+				<p className="mb-2">
+					Priorities:{" "}
+					{p.mood.traits
+						.map(trait => MOOD_TRAITS[trait].toLowerCase())
+						.join(", ")}
+				</p>
+			) : null}
 			<table>
 				<tbody>
 					{helpers.keys(componentsRounded).map(key => {
@@ -164,7 +168,7 @@ const Mood = ({
 
 	const renderTarget = ({ onClick }: { onClick?: () => void }) => (
 		<button
-			className={classNames("btn btn-light-bordered btn-xs d-flex", {
+			className={classNames("btn btn-light-bordered btn-xs d-flex", className, {
 				"w-100": maxWidth,
 			})}
 			onClick={onClick}

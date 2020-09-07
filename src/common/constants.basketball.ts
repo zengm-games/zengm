@@ -139,6 +139,7 @@ const PLAYER_STATS_TABLES = {
 			"2p",
 			"2pa",
 			"2pp",
+			"efg",
 			"ft",
 			"fta",
 			"ftp",

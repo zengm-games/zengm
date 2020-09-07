@@ -160,6 +160,11 @@ const sportSpecificCols: {
 					sortSequence: ["desc", "asc"],
 					sortType: "number",
 				},
+				"stat:efg": {
+					desc: "Effective Field Goal Percentage",
+					sortSequence: ["desc", "asc"],
+					sortType: "number",
+				},
 				"stat:fgp": {
 					desc: "Field Goal Percentage",
 					sortSequence: ["desc", "asc"],
@@ -1741,6 +1746,7 @@ const sportSpecificTitleOverrides =
 				"stat:fgp": "FG%",
 				"stat:fg": "FG",
 				"stat:fga": "FGA",
+				"stat:efg": "eFG%",
 				"stat:ftp": "FT%",
 				"stat:ft": "FT",
 				"stat:fta": "FTA",

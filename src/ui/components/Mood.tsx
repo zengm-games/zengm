@@ -75,6 +75,22 @@ const roundProbWilling = (probWilling: number) => {
 	return Math.round(probWilling * 100);
 };
 
+export const processComponents = (components: MoodComponents) => {
+	const componentsRounded = {
+		...components,
+	};
+	let sum = 0;
+	for (const key of helpers.keys(componentsRounded)) {
+		componentsRounded[key] = Math.round(componentsRounded[key]);
+		sum += componentsRounded[key];
+	}
+
+	return {
+		componentsRounded,
+		sum,
+	};
+};
+
 const Mood = ({
 	maxWidth,
 	p,
@@ -93,14 +109,7 @@ const Mood = ({
 }) => {
 	const userTid = useLocal(state => state.userTid);
 
-	const componentsRounded = {
-		...p.mood.components,
-	};
-	let sum = 0;
-	for (const key of helpers.keys(componentsRounded)) {
-		componentsRounded[key] = Math.round(componentsRounded[key]);
-		sum += componentsRounded[key];
-	}
+	const { componentsRounded, sum } = processComponents(p.mood.components);
 
 	const showProbWilling = p.tid >= 0;
 	const roundedProbWilling = roundProbWilling(p.mood.probWilling);

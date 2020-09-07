@@ -11,6 +11,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { processComponents } from "../components/Mood";
 
 const NegotiationList = ({
 	capSpace,
@@ -69,7 +70,11 @@ const NegotiationList = ({
 					value: <SafeHtml dirty={p.latestTransaction} />,
 					sortValue: p.latestTransactionSeason,
 				},
-				<Mood maxWidth p={p} />,
+				{
+					value: <Mood maxWidth p={p} />,
+					sortValue: processComponents(p.mood.components).sum,
+					searchValue: p.mood.traits.join(""),
+				},
 				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),
 				p.contract.exp,
 				// https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20544

@@ -28,7 +28,6 @@ redo mood system
 - options?
   - disable mood traits
   - alter how likely a player is to re-sign after rookie contract
-- searching/sorting in Mood in table
 - schema
 - upgrade stuff
   - Player: delete freeAgentMood, add moodTraits and numDaysFreeAgent

@@ -23,7 +23,6 @@ const newPhaseBeforeDraft = async (
 	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
 	achievement.check("afterPlayoffs", conditions);
-
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
@@ -48,6 +47,52 @@ const newPhaseBeforeDraft = async (
 				type: "Won Championship",
 			});
 			await idb.cache.players.put(p);
+		}
+	}
+
+	if (g.get("challengeLoseBestPlayer")) {
+		const tids = g.get("userTids");
+		for (const tid of tids) {
+			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+
+			let bestOvr = 0;
+			let bestPlayer: Player | undefined;
+			for (const p of players) {
+				const ovr = p.ratings[p.ratings.length - 1].ovr;
+				if (ovr > bestOvr) {
+					bestOvr = ovr;
+					bestPlayer = p;
+				}
+			}
+
+			if (bestPlayer) {
+				// Kill/retire player, depending on if he's a real player or not
+				if (bestPlayer.real) {
+					await player.retire(bestPlayer, conditions);
+					await idb.cache.players.put(bestPlayer);
+
+					// Similar to the tragic death notification
+					logEvent(
+						{
+							type: "tragedy",
+							text: `<a href="${helpers.leagueUrl([
+								"player",
+								bestPlayer.pid,
+							])}">${bestPlayer.firstName} ${
+								bestPlayer.lastName
+							}</a> decided to retire in the prime of his career.`,
+							showNotification: true,
+							pids: [bestPlayer.pid],
+							tids: [tid],
+							persistent: true,
+							score: 20,
+						},
+						conditions,
+					);
+				} else {
+					await player.killOne(conditions, bestPlayer);
+				}
+			}
 		}
 	}
 

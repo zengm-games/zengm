@@ -6,7 +6,7 @@ import { PHASE, PHASE_TEXT, helpers } from "../../common";
 const Confirm = confirmable(
 	({ show, proceed, currentSeason, repeatSeason }: any) => {
 		const [phase, setPhase] = useState(String(PHASE.PRESEASON));
-		const [season, setSeason] = useState(String(currentSeason + 5));
+		const [season, setSeason] = useState(String(currentSeason + 1));
 
 		const inputRef = useRef<HTMLInputElement>(null);
 

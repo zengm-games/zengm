@@ -302,6 +302,9 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			let found = false;
 
+			const playoffsByConference = g.get("confs", "current").length === 2;
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+
 			for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
 				for (let i = 0; i < series[rnd].length; i++) {
 					const { away, home } = series[rnd][i];
@@ -313,14 +316,18 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						found = true;
 						showPlayoffSeries = true;
 
-						if (rnd === 0) {
-							seriesTitle = "First Round";
-						} else if (rnd === 1) {
-							seriesTitle = "Second Round";
-						} else if (rnd === 2) {
-							seriesTitle = "Conference Finals";
-						} else if (rnd === 3) {
-							seriesTitle = "League Finals";
+						if (rnd >= numPlayoffRounds - 1) {
+							seriesTitle = "League finals";
+						} else if (rnd === numPlayoffRounds - 2) {
+							seriesTitle = playoffsByConference
+								? "Conference finals"
+								: "Semifinals";
+						} else if (rnd === numPlayoffRounds - 3) {
+							seriesTitle = playoffsByConference
+								? "Conference semifinals"
+								: "Quarterfinals";
+						} else {
+							seriesTitle = `${helpers.ordinal(rnd + 1)} round`;
 						}
 
 						numGamesToWinSeries = helpers.numGamesToWinSeries(

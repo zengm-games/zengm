@@ -51,7 +51,8 @@ type Key =
 	| "elam"
 	| "elamASG"
 	| "elamMinutes"
-	| "elamPoints";
+	| "elamPoints"
+	| "playerMoodTraits";
 
 type Category =
 	| "League Structure"
@@ -519,6 +520,12 @@ export const options: {
 		category: "Game Simulation",
 		key: "ties",
 		name: "Ties (Regular Season Only)",
+		type: "bool",
+	},
+	{
+		category: "League Structure",
+		key: "playerMoodTraits",
+		name: "Player Mood Traits",
 		type: "bool",
 	},
 ];

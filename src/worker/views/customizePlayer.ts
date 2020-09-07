@@ -91,6 +91,7 @@ const updateCustomizePlayer = async (
 			minContract: g.get("minContract"),
 			originalTid,
 			p,
+			playerMoodTraits: g.get("playerMoodTraits"),
 			phase: g.get("phase"),
 			season: g.get("season"),
 			teams,

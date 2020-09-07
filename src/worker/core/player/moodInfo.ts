@@ -88,7 +88,7 @@ const moodInfo = async (pid: number, tid: number) => {
 
 	return {
 		components,
-		traits: p.moodTraits,
+		traits: g.get("playerMoodTraits") ? p.moodTraits : [],
 		probWilling,
 		willing,
 		contractAmount,

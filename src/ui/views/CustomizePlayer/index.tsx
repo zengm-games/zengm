@@ -398,7 +398,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		});
 	};
 
-	const { godMode, originalTid, teams } = props;
+	const { godMode, originalTid, playerMoodTraits, teams } = props;
 	const { appearanceOption, p, saving } = state;
 
 	const title = originalTid === undefined ? "Create Player" : "Edit Player";
@@ -762,23 +762,29 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								/>
 							</div>
-							<div className="col-sm-3 form-group">
-								<label>Mood Traits</label>
-								{helpers.keys(MOOD_TRAITS).map(trait => (
-									<div className="form-check">
-										<label className="form-check-label">
-											<input
-												className="form-check-input"
-												type="checkbox"
-												checked={p.moodTraits.includes(trait)}
-												disabled={!godMode}
-												onChange={handleChange.bind(null, "moodTraits", trait)}
-											/>
-											{MOOD_TRAITS[trait]}
-										</label>
-									</div>
-								))}
-							</div>
+							{playerMoodTraits ? (
+								<div className="col-sm-3 form-group">
+									<label>Mood Traits</label>
+									{helpers.keys(MOOD_TRAITS).map(trait => (
+										<div className="form-check">
+											<label className="form-check-label">
+												<input
+													className="form-check-input"
+													type="checkbox"
+													checked={p.moodTraits.includes(trait)}
+													disabled={!godMode}
+													onChange={handleChange.bind(
+														null,
+														"moodTraits",
+														trait,
+													)}
+												/>
+												{MOOD_TRAITS[trait]}
+											</label>
+										</div>
+									))}
+								</div>
+							) : null}
 						</div>
 
 						<h2>Appearance</h2>

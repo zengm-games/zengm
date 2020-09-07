@@ -1,5 +1,5 @@
 import { finances } from "..";
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
@@ -180,7 +180,9 @@ const moodComponents = async (
 			if (
 				rookieContractLength !== undefined &&
 				p.draft.round > 0 &&
-				p.draft.year + rookieContractLength >= season
+				((p.draft.year + rookieContractLength > season && p.tid >= 0) ||
+					(p.draft.year + rookieContractLength === season &&
+						g.get("phase") <= PHASE.RESIGN_PLAYERS))
 			) {
 				components.rookieContract = 10;
 			}

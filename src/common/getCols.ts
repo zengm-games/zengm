@@ -1746,7 +1746,7 @@ const sportSpecificTitleOverrides =
 				"stat:fgp": "FG%",
 				"stat:fg": "FG",
 				"stat:fga": "FGA",
-				"stat:efg": "EFG%",
+				"stat:efg": "eFG%",
 				"stat:ftp": "FT%",
 				"stat:ft": "FT",
 				"stat:fta": "FTA",

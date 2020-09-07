@@ -1087,23 +1087,6 @@ const NewLeague = (props: View<"newLeague">) => {
 				<input
 					className="form-check-input"
 					type="checkbox"
-					id="new-league-challengeLoseBestPlayer"
-					checked={state.challengeLoseBestPlayer}
-					onChange={() => {
-						dispatch({ type: "toggleChallengeLoseBestPlayer" });
-					}}
-				/>
-				<label
-					className="form-check-label"
-					htmlFor="new-league-challengeLoseBestPlayer"
-				>
-					Lose best player at end of each season
-				</label>
-			</div>
-			<div className="form-check mb-2">
-				<input
-					className="form-check-input"
-					type="checkbox"
 					id="new-league-challengeNoRatings"
 					checked={state.challengeNoRatings}
 					onChange={() => {
@@ -1115,6 +1098,27 @@ const NewLeague = (props: View<"newLeague">) => {
 					htmlFor="new-league-challengeNoRatings"
 				>
 					No visible player ratings
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeLoseBestPlayer"
+					checked={state.challengeLoseBestPlayer}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeLoseBestPlayer" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeLoseBestPlayer"
+				>
+					Lose best player every season
+					<br />
+					<span className="text-muted">
+						{helpTexts.challengeLoseBestPlayer}
+					</span>
 				</label>
 			</div>
 		</div>,

@@ -75,6 +75,7 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 		"drowned while crossing the Saleph River",
 		"uploaded himself to the cloud and can no longer participate in corporeal pursuits",
 	]);
+
 	let p: Player;
 	let tid;
 	if (!player) {

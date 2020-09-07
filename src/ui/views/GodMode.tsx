@@ -77,6 +77,8 @@ type Decoration = "currency" | "percent";
 type Values = { [key: string]: string | undefined };
 
 export const helpTexts = {
+	challengeLoseBestPlayer:
+		"At the end of the playoffs every season, the best player on your team will either retire (if he's a real player) or die a tragic death (if he's a random player).",
 	challengeNoDraftPicks:
 		"Your team will not be given any draft picks. You can still trade with other teams to acquire their picks.",
 	challengeNoFreeAgents:
@@ -504,14 +506,14 @@ export const options: {
 	},
 	{
 		category: "Challenge Modes",
-		key: "challengeLoseBestPlayer",
-		name: "Lose Best Player",
+		key: "challengeNoRatings",
+		name: "No Visible Player Ratings",
 		type: "bool",
 	},
 	{
 		category: "Challenge Modes",
-		key: "challengeNoRatings",
-		name: "No Visible Player Ratings",
+		key: "challengeLoseBestPlayer",
+		name: "Lose Best Player",
 		type: "bool",
 	},
 	{

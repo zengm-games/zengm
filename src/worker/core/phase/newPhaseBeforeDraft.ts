@@ -1,7 +1,6 @@
 import { PLAYER } from "../../../common";
 import { draft, player, season, team } from "..";
 import { idb } from "../../db";
-import release from "../player";
 import {
 	achievement,
 	defaultGameAttributes,
@@ -18,7 +17,6 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../../common/types";
-import killOne from "../player/killOne";
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
@@ -51,33 +49,48 @@ const newPhaseBeforeDraft = async (
 			await idb.cache.players.put(p);
 		}
 	}
-	const challengeLoseBestPlayer = g.get("challengeLoseBestPlayer");
-	if (challengeLoseBestPlayer) {
+
+	if (g.get("challengeLoseBestPlayer")) {
 		const tids = g.get("userTids");
 		for (const tid of tids) {
-			const playersAll = await idb.cache.players.indexGetAll(
-				"playersByTid",
-				tid,
-			);
-			let pid = 0;
+			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+
 			let bestOvr = 0;
 			let bestPlayer: Player | undefined;
-			//Find best player
-			playersAll.forEach((p: Player) => {
-				if (p.ratings.slice(-1)[0]["ovr"] > bestOvr) {
-					bestOvr = p.ratings.slice(-1)[0]["ovr"];
-					pid = p.pid;
+			for (const p of players) {
+				const ovr = p.ratings[p.ratings.length - 1].ovr;
+				if (ovr > bestOvr) {
+					bestOvr = ovr;
 					bestPlayer = p;
 				}
-			});
+			}
+
 			if (bestPlayer) {
+				// Kill/retire player, depending on if he's a real player or not
 				if (bestPlayer.real) {
-					//If he´s real make it a free agent
 					await player.retire(bestPlayer, conditions);
 					await idb.cache.players.put(bestPlayer);
+
+					// Similar to the tragic death notification
+					logEvent(
+						{
+							type: "tragedy",
+							text: `<a href="${helpers.leagueUrl([
+								"player",
+								bestPlayer.pid,
+							])}">${bestPlayer.firstName} ${
+								bestPlayer.lastName
+							}</a> decided to retire in the prime of his career.`,
+							showNotification: true,
+							pids: [bestPlayer.pid],
+							tids: [tid],
+							persistent: true,
+							score: 20,
+						},
+						conditions,
+					);
 				} else {
-					//if he´s not real kill him
-					killOne({}, bestPlayer);
+					await player.killOne(conditions, bestPlayer);
 				}
 			}
 		}

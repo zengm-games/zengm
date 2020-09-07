@@ -1,8 +1,7 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import type { TeamBasic, Phase, PlayerWithoutKey } from "./types";
+import type { TeamBasic, PlayerWithoutKey } from "./types";
 import getTeamInfos from "./getTeamInfos";
 import orderBy from "lodash/orderBy";
-import { PHASE } from "./constants";
 
 const getPopRanks = (
 	teamSeasons: {

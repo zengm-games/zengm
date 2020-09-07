@@ -1,5 +1,5 @@
 import { finances } from "..";
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE } from "../../../common";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";

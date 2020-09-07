@@ -1,5 +1,5 @@
 import { PLAYER } from "../../common";
-import { freeAgents, player, team } from "../core";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 

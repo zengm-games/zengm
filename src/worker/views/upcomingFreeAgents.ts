@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../common";
-import { player, freeAgents } from "../core";
+import { player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { ViewInput } from "../../common/types";

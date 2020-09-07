@@ -1,5 +1,5 @@
 import { PHASE, PLAYER } from "../../../common";
-import { freeAgents, player } from "..";
+import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
 
@@ -16,7 +16,6 @@ const create = async (
 	pid: number,
 	resigning: boolean,
 	tid: number = g.get("userTid"),
-	rookie: boolean = false,
 ): Promise<string | void> => {
 	if (
 		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&

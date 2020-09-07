@@ -1,5 +1,5 @@
-import { PLAYER, PHASE } from "../../common";
-import { freeAgents, player, team } from "../core";
+import { PLAYER } from "../../common";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
@@ -54,8 +54,6 @@ const updateNegotiationList = async () => {
 	const payroll = await team.getPayroll(userTid);
 	const capSpace =
 		g.get("salaryCap") > payroll ? (g.get("salaryCap") - payroll) / 1000 : 0;
-
-	let playersRefuseToNegotiate = g.get("playersRefuseToNegotiate");
 
 	const userPlayers = await idb.getCopies.playersPlus(userPlayersAll, {
 		attrs: [],

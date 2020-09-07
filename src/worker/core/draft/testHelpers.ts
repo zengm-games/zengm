@@ -44,6 +44,7 @@ const loadTeamSeasons = async () => {
 			cid: t.cid,
 			did: t.did,
 			colors: t.colors,
+			numPlayersTradedAway: 0,
 		})) as TeamSeasonWithoutKey[];
 
 		for (const teamSeason of teamSeasons) {

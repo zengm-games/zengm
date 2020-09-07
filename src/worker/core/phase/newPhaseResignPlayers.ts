@@ -119,12 +119,7 @@ const newPhaseResignPlayers = async (
 			}
 
 			await idb.cache.players.put(p);
-			const error = await contractNegotiation.create(
-				p.pid,
-				true,
-				tid,
-				p.draft.year === g.get("season"),
-			);
+			const error = await contractNegotiation.create(p.pid, true, tid);
 
 			if (error !== undefined && error) {
 				logEvent(

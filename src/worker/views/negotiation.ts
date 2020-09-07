@@ -1,5 +1,5 @@
 import { PHASE } from "../../common";
-import { contractNegotiation, freeAgents, player, team } from "../core";
+import { contractNegotiation, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type {

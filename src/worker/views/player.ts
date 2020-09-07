@@ -1,11 +1,10 @@
 import {
-	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	PLAYER_SUMMARY,
 } from "../../common";
-import { freeAgents, player } from "../core";
+import { player } from "../core";
 import { idb } from "../db";
 import { face, g, getTeamColors, helpers } from "../util";
 import type {

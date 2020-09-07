@@ -308,6 +308,7 @@ export type GameAttributesLeague = {
 	challengeNoFreeAgents: boolean;
 	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
+	challengeLoseBestPlayer: boolean;
 	confs: { cid: number; name: string }[];
 	daysLeft: number;
 	defaultStadiumCapacity: number;

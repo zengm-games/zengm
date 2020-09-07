@@ -379,6 +379,7 @@ type State = {
 	challengeNoFreeAgents: boolean;
 	challengeNoRatings: boolean;
 	challengeNoTrades: boolean;
+	challengeLoseBestPlayer: boolean;
 	equalizeRegions: boolean;
 	repeatSeason: boolean;
 	noStartingInjuries: boolean;
@@ -450,6 +451,9 @@ type Action =
 	  }
 	| {
 			type: "toggleChallengeNoTrades";
+	  }
+	| {
+			type: "toggleChallengeLoseBestPlayer";
 	  }
 	| {
 			type: "toggleEqualizeRegions";
@@ -572,6 +576,7 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoFreeAgents: boolean;
 				challengeNoRatings: boolean;
 				challengeNoTrades: boolean;
+				challengeLoseBestPlayer: boolean;
 				equalizeRegions: boolean;
 				expandOptions: boolean;
 				repeatSeason: boolean;
@@ -580,6 +585,7 @@ const reducer = (state: State, action: Action): State => {
 				challengeNoFreeAgents: state.challengeNoFreeAgents,
 				challengeNoRatings: state.challengeNoRatings,
 				challengeNoTrades: state.challengeNoTrades,
+				challengeLoseBestPlayer: state.challengeLoseBestPlayer,
 				equalizeRegions: state.equalizeRegions,
 				expandOptions: state.expandOptions,
 				repeatSeason: state.repeatSeason,
@@ -665,6 +671,12 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				challengeNoTrades: !state.challengeNoTrades,
+			};
+
+		case "toggleChallengeLoseBestPlayer":
+			return {
+				...state,
+				challengeLoseBestPlayer: !state.challengeLoseBestPlayer,
 			};
 
 		case "toggleEqualizeRegions":
@@ -755,6 +767,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				challengeNoFreeAgents: false,
 				challengeNoRatings: false,
 				challengeNoTrades: false,
+				challengeLoseBestPlayer: false,
 				repeatSeason: false,
 				noStartingInjuries: false,
 				equalizeRegions: false,
@@ -845,6 +858,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					challengeNoFreeAgents: state.challengeNoFreeAgents,
 					challengeNoRatings: state.challengeNoRatings,
 					challengeNoTrades: state.challengeNoTrades,
+					challengeLoseBestPlayer: state.challengeLoseBestPlayer,
 					repeatSeason: state.repeatSeason,
 					noStartingInjuries: state.noStartingInjuries,
 					equalizeRegions: state.equalizeRegions,
@@ -892,6 +906,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			state.challengeNoFreeAgents,
 			state.challengeNoRatings,
 			state.challengeNoTrades,
+			state.challengeLoseBestPlayer,
 			state.customize,
 			state.difficulty,
 			state.equalizeRegions,
@@ -1066,6 +1081,23 @@ const NewLeague = (props: View<"newLeague">) => {
 					htmlFor="new-league-challengeNoTrades"
 				>
 					No trades
+				</label>
+			</div>
+			<div className="form-check mb-2">
+				<input
+					className="form-check-input"
+					type="checkbox"
+					id="new-league-challengeLoseBestPlayer"
+					checked={state.challengeLoseBestPlayer}
+					onChange={() => {
+						dispatch({ type: "toggleChallengeLoseBestPlayer" });
+					}}
+				/>
+				<label
+					className="form-check-label"
+					htmlFor="new-league-challengeLoseBestPlayer"
+				>
+					Lose best player at end of each season
 				</label>
 			</div>
 			<div className="form-check mb-2">

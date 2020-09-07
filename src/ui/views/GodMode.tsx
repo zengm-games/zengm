@@ -44,6 +44,7 @@ type Key =
 	| "challengeNoFreeAgents"
 	| "challengeNoRatings"
 	| "challengeNoTrades"
+	| "challengeLoseBestPlayer"
 	| "realPlayerDeterminism"
 	| "repeatSeason"
 	| "ties"
@@ -499,6 +500,12 @@ export const options: {
 		category: "Challenge Modes",
 		key: "challengeNoTrades",
 		name: "No Trades",
+		type: "bool",
+	},
+	{
+		category: "Challenge Modes",
+		key: "challengeLoseBestPlayer",
+		name: "Lose Best Player",
 		type: "bool",
 	},
 	{

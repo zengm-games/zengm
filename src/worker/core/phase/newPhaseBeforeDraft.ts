@@ -1,6 +1,7 @@
 import { PLAYER } from "../../../common";
 import { draft, player, season, team } from "..";
 import { idb } from "../../db";
+import release from "../player";
 import {
 	achievement,
 	defaultGameAttributes,
@@ -17,13 +18,13 @@ import type {
 	MinimalPlayerRatings,
 	Player,
 } from "../../../common/types";
+import killOne from "../player/killOne";
 
 const newPhaseBeforeDraft = async (
 	conditions: Conditions,
 	liveGameInProgress: boolean = false,
 ): Promise<PhaseReturn> => {
 	achievement.check("afterPlayoffs", conditions);
-
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus({
 		attrs: ["tid"],
@@ -48,6 +49,37 @@ const newPhaseBeforeDraft = async (
 				type: "Won Championship",
 			});
 			await idb.cache.players.put(p);
+		}
+	}
+	const challengeLoseBestPlayer = g.get("challengeLoseBestPlayer");
+	if (challengeLoseBestPlayer) {
+		const tids = g.get("userTids");
+		for (const tid of tids) {
+			const playersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				tid,
+			);
+			let pid = 0;
+			let bestOvr = 0;
+			let bestPlayer: Player | undefined;
+			//Find best player
+			playersAll.forEach((p: Player) => {
+				if (p.ratings.slice(-1)[0]["ovr"] > bestOvr) {
+					bestOvr = p.ratings.slice(-1)[0]["ovr"];
+					pid = p.pid;
+					bestPlayer = p;
+				}
+			});
+			if (bestPlayer) {
+				if (bestPlayer.real) {
+					//If he´s real make it a free agent
+					await player.retire(bestPlayer, conditions);
+					await idb.cache.players.put(bestPlayer);
+				} else {
+					//if he´s not real kill him
+					killOne({}, bestPlayer);
+				}
+			}
 		}
 	}
 

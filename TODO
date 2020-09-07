@@ -9,17 +9,12 @@ redo mood system
     - maybe track lost time due to ptModifier
 - moodInfo
   - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
-    - contractAmount too, see comment
+    - contractAmount too - doesn't make sense for upcoming free agents
   - add some modifier based on mood in contractAmount
 - show button on player page, next to flag, only for your players and FAs
 - test difficulty settings, is effect large enough?
   - might need an upper bound of the effect too, like old genBaseMood
 - upper bound on the effect of ovr on refusing to sign? otherwise could wind up with stars too eager to leave
-- old mood categories, maybe keep around...
-  - Eager to reach an agreement.
-  - Willing to sign for the right price.
-  - Annoyed at you.
-  - Insulted by your presence.
 - how introduce randomness?
   - from continuous weights of the mood traits, not binary. Display label if > .5. see reddit comment from nicidob
   - how to decide probWilling?

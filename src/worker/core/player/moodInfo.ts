@@ -37,19 +37,28 @@ const moodInfo = async (pid: number, tid: number) => {
 		}
 	}
 
-	let sumAndStuff = 0;
+	let sumComponents = 0;
 	for (const value of Object.values(components)) {
-		sumAndStuff += value;
+		sumComponents += value;
 	}
 
 	// Add some based on how long free agency has lasted and how good/bad the player is
+	let sumAndStuff = sumComponents;
 	sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
 	sumAndStuff -= p.value - 60;
 
-	// For free agents, contract demand is stored in p.contract.amount
-	// For upcoming free agents, need some way to specify that contract should be determined dynamically
-	// Otherwise, contractAmount is not meaningful
 	let contractAmount = p.contract.amount;
+
+	// Up to 50% penalty for bad mood
+	if (contractAmount > g.get("minContract")) {
+		contractAmount *= helpers.bound(1 + (0.5 * -sumComponents) / 10, 1, 1.5);
+	}
+
+	contractAmount = helpers.bound(
+		50 * Math.round(contractAmount / 50), // Make it a multiple of 50k
+		g.get("minContract"),
+		g.get("maxContract"),
+	);
 
 	let willing = false;
 	if (

@@ -1,5 +1,5 @@
 import { finances } from "..";
-import { PHASE } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
@@ -10,6 +10,7 @@ const moodComponents = async (
 	tid: number,
 ): Promise<MoodComponents> => {
 	const season = g.get("season");
+	const phase = g.get("phase");
 
 	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsByTidSeason",
@@ -68,7 +69,7 @@ const moodComponents = async (
 			let wonTitle = false;
 
 			// If season ongoing, project record and playoff success based on last year
-			if (g.get("phase") <= PHASE.REGULAR_SEASON) {
+			if (phase <= PHASE.REGULAR_SEASON) {
 				const previousSeason = teamSeasons.find(ts => ts.season === season - 1);
 				const previousRecord = {
 					won: previousSeason ? previousSeason.won : 0,
@@ -143,6 +144,14 @@ const moodComponents = async (
 		// LOYALTY
 		const numSeasonsWithTeam = p.stats.filter(row => row.tid === tid).length;
 		components.loyalty = numSeasonsWithTeam / 8;
+
+		if (
+			p.tid === tid ||
+			(p.tid === PLAYER.FREE_AGENT && phase === PHASE.RESIGN_PLAYERS)
+		) {
+			// Wants to re-sign
+			components.loyalty += 2;
+		}
 	}
 
 	{
@@ -182,9 +191,9 @@ const moodComponents = async (
 				p.draft.round > 0 &&
 				((p.draft.year + rookieContractLength > season && p.tid >= 0) ||
 					(p.draft.year + rookieContractLength === season &&
-						g.get("phase") <= PHASE.RESIGN_PLAYERS))
+						phase <= PHASE.RESIGN_PLAYERS))
 			) {
-				components.rookieContract = 10;
+				components.rookieContract = 8;
 			}
 		}
 	}

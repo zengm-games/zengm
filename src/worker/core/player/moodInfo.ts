@@ -45,7 +45,8 @@ const moodInfo = async (pid: number, tid: number) => {
 	// Add some based on how long free agency has lasted and how good/bad the player is
 	let sumAndStuff = sumComponents;
 	sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
-	sumAndStuff -= p.value - 60;
+	const valueDiff = (p.value - 65) / 2;
+	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
 	let contractAmount = p.contract.amount;
 

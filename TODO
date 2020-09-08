@@ -10,7 +10,6 @@ redo mood system
 - moodInfo
   - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
     - contractAmount too - doesn't make sense for upcoming free agents
-  - add some modifier based on mood in contractAmount
 - test difficulty settings, is effect large enough?
   - might need an upper bound of the effect too, like old genBaseMood
 - upper bound on the effect of ovr on refusing to sign? otherwise could wind up with stars too eager to leave
@@ -28,6 +27,7 @@ redo mood system
   - GameAttributes: add playerMoodTraits
   - test league upgrade
   - test league file import
+- test FBGM
 - manual
   - description of traits
   - micromanagement? can ignore and be okay most of the time

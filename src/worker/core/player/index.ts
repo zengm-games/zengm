@@ -13,6 +13,7 @@ import fuzzRating from "./fuzzRating";
 import genContract from "./genContract";
 import genFuzz from "./genFuzz";
 import genJerseyNumber from "./genJerseyNumber";
+import genMoodTraits from "./genMoodTraits";
 import genRandomFreeAgent from "./genRandomFreeAgent";
 import genWeight from "./genWeight";
 import generate from "./generate";
@@ -53,6 +54,7 @@ export default {
 	genFuzz,
 	genJerseyNumber,
 	genRandomFreeAgent,
+	genMoodTraits,
 	genWeight,
 	generate,
 	getPlayerFakeAge,

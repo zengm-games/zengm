@@ -1,9 +1,6 @@
 redo mood system
 - more randomness in seed?
 - upgrade stuff
-  - Player: delete freeAgentMood, add moodTraits and numDaysFreeAgent
-  - TeamSeason: add numPlayersTradedAway
-  - GameAttributes: add playerMoodTraits
   - test league upgrade
   - test league file import
 - test FBGM

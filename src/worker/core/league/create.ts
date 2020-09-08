@@ -243,6 +243,7 @@ export const createWithoutSaving = async (
 					"abbrev",
 					"imgURL",
 					"colors",
+					"numPlayersTradedAway",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
 					if (teamSeason[key] === undefined) {

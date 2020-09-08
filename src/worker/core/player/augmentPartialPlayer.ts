@@ -396,6 +396,8 @@ const augmentPartialPlayer = async (
 		p.relatives = [];
 	}
 
+	delete p.freeAgentMood;
+
 	return p;
 };
 

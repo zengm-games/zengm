@@ -826,6 +826,25 @@ const migrate = ({
 		upgrade38(transaction);
 	}
 
+	if (oldVersion <= 38) {
+		slowUpgrade();
+		iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			delete (p as any).freeAgentMood;
+			p.moodTraits = player.genMoodTraits();
+			p.numDaysFreeAgent = 0;
+			return p;
+		});
+		iterate(
+			transaction.objectStore("teamSeasons"),
+			undefined,
+			undefined,
+			teamSeason => {
+				teamSeason.numPlayersTradedAway = 0;
+				return teamSeason;
+			},
+		);
+	}
+
 	// Next time I need to do an upgrade, would be nice to finalize obsolete gameAttributes (see types.js) - would require coordination with league import
 };
 

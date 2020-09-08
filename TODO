@@ -1,25 +1,9 @@
 redo mood system
-- make available throughout the year
-  - have deterministic noise, so it can be recomputed constantly as the situation changes
-- make it impossible to refuse to re-sign to title winner (really)
-- Math.random() < (0.99 * g.get("daysLeft")) / 30
-- help button for Mood column in roster, explaining that it only affects contracts currently, and link to manual
 - moodComponents
   - implement playingTime
     - maybe track lost time due to ptModifier
-- moodInfo
-  - if/else branch doesn't make sense, need better way to determine context of the call (free agent, resigning, upcoming FA, regular player)
-    - contractAmount too - doesn't make sense for upcoming free agents
-- test difficulty settings, is effect large enough?
-  - might need an upper bound of the effect too, like old genBaseMood
-- upper bound on the effect of ovr on refusing to sign? otherwise could wind up with stars too eager to leave
-- how introduce randomness?
-  - from continuous weights of the mood traits, not binary. Display label if > .5. see reddit comment from nicidob
-  - how to decide probWilling?
-    - deterministic random to set the cutoff in sum(moodComponents) needed
-    - more randomness in seed
-- god mode options
-  - alter how likely a player is to re-sign after rookie contract
+    - or build model of ovr -> playing time, and find players who didn't get enough
+- more randomness in seed?
 - schema
 - upgrade stuff
   - Player: delete freeAgentMood, add moodTraits and numDaysFreeAgent
@@ -42,6 +26,9 @@ redo mood system
   - civ
   - stuff from manual
   - rookie likeliness to refuse
+- later
+  - show mood on upcoming free agents table
+    - need way of overriding p.contract.amount in moodInfo
 
 there's a bug that you can sign players in spectator mode through their pages https://cdn.discordapp.com/attachments/290015591216054273/752434377316892672/S00907-16452835.jpg
 

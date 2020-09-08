@@ -25,6 +25,7 @@ const stats = {
 		"gp",
 		"gs",
 		"min",
+		"minAvailable", // Total minutes available in all games when player was not injured
 		"fg",
 		"fga",
 		"fgAtRim",
@@ -49,7 +50,7 @@ const stats = {
 		"pts",
 	] as const,
 	max: [
-		"minMax",
+		"minAvailable",
 		"fgMax",
 		"fgaMax",
 		"tpMax",

@@ -1,18 +1,8 @@
 redo mood system
 - moodComponents
   - implement playingTime
-    - basketball
-      - could track time lost to ptModifier, but that won't handle cases where there are too many or too few good players on one team
-      - could build model of ovr -> playing time and find players above/below expected
-        - needs to handle injuries (either from p.injuries or new tracker) and switching teams (don't count against new team if PT was low on previous team)
-        - playing time should be "minutes played / (minutes a player was on team and uninjured)" - so it needs to distinguish between DNP-injured and DNP-CD
-          - store dnpCd and dnpInjured in p.stats[], similar to gp
-        - model
-          - logistic regression would be nice, but no good library
-          - bin with similar ovrs, find average
-            - constant size? be careful about sparseness
-            - percentile?
-        - store model result in local, refresh after each day of games
+    - performance
+      - store model result in local, refresh after each day of games
 - more randomness in seed?
 - schema
 - upgrade stuff
@@ -36,6 +26,7 @@ redo mood system
   - civ
   - stuff from manual
   - rookie likeliness to refuse
+  - exploits (tanking by not playing guys, trading tons of players)
 - later
   - moodComponents.playingTime
     - football - based on depth chart

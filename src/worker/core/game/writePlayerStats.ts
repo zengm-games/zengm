@@ -239,8 +239,8 @@ const writePlayerStats = async (
 
 		for (const t of result.team) {
 			for (const p of t.player) {
-				// Only need to write stats if player got minutes
-				if (p.stat.min === 0) {
+				// Only need to write stats if player got minutes, except for minAvailable in BBGM
+				if (process.env.SPORT !== "basketball" && p.stat.min === 0) {
 					continue;
 				}
 
@@ -277,6 +277,14 @@ const writePlayerStats = async (
 						} else {
 							ps[key] += p.stat[key];
 						}
+					}
+
+					if (
+						ps.minAvailable !== undefined &&
+						!p.injured &&
+						p.injury.gamesRemaining === 0
+					) {
+						ps.minAvailable += t.stat.min / 5;
 					}
 
 					ps.gp += 1; // Already checked for non-zero minutes played above

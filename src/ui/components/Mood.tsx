@@ -25,7 +25,7 @@ const componentText = (component: keyof MoodComponents, value: number) => {
 			case "trades":
 				throw new Error("Should never happen");
 			case "playingTime":
-				return "Likes the amount of playing time he's receiving";
+				return "Happy with his playing time";
 			case "rookieContract":
 				return "Eager to sign first non-rookie contract";
 		}

@@ -1,6 +1,5 @@
 redo mood system
 - more randomness in seed?
-- schema
 - upgrade stuff
   - Player: delete freeAgentMood, add moodTraits and numDaysFreeAgent
   - TeamSeason: add numPlayersTradedAway
@@ -24,8 +23,7 @@ redo mood system
   - rookie likeliness to refuse
   - exploits (tanking by not playing guys, trading tons of players)
 - later
-  - moodComponents.playingTime
-    - football - based on depth chart
+  - moodComponents.playingTime for football - based on depth chart
   - show mood on upcoming free agents table
     - need way of overriding p.contract.amount in moodInfo
 

@@ -625,6 +625,9 @@ const generateJSONSchema = (sport /*: string*/) => {
 							},
 							true,
 						),
+						gameAttribute("playerMoodTraits", {
+							type: "boolean",
+						}),
 						gameAttribute(
 							"nextPhase",
 							{
@@ -1038,12 +1041,6 @@ const generateJSONSchema = (sport /*: string*/) => {
 						firstName: {
 							type: "string",
 						},
-						freeAgentMood: {
-							type: "array",
-							items: {
-								type: "number",
-							},
-						},
 						gamesUntilTradable: {
 							type: "integer",
 						},
@@ -1089,8 +1086,18 @@ const generateJSONSchema = (sport /*: string*/) => {
 						lastName: {
 							type: "string",
 						},
+						moodTraits: {
+							type: "array",
+							items: {
+								type: "string",
+							},
+						},
 						name: {
 							type: "string",
+						},
+						numDaysFreeAgent: {
+							type: "integer",
+							minimum: 0,
 						},
 						pid: {
 							type: "integer",
@@ -1578,6 +1585,10 @@ const generateJSONSchema = (sport /*: string*/) => {
 											},
 										},
 										required: ["wins", "playoffs", "money"],
+									},
+									numPlayersTradedAway: {
+										type: "integer",
+										minimum: 0,
 									},
 								},
 								required: [

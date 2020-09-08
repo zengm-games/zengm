@@ -1,8 +1,8 @@
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
-import { player } from "..";
+import { player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async (pid: number) => {
@@ -16,6 +16,9 @@ const givePlayerMinContract = async (pid: number) => {
 
 const beforeTests = async () => {
 	testHelpers.resetG();
+
+	const teamsDefault = helpers.getTeamsDefault().slice(0, 3);
+	const teams = teamsDefault.map(team.generate);
 
 	await testHelpers.resetCache({
 		players: [
@@ -42,6 +45,7 @@ const beforeTests = async () => {
 			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
 			player.generate(g.get("userTid"), 30, 2017, true, 15.5),
 		],
+		teams,
 	});
 };
 

@@ -1,4 +1,3 @@
-import { number } from "prop-types";
 import type { Local } from "../../common/types";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.

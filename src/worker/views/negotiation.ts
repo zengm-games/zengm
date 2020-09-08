@@ -164,7 +164,6 @@ const updateNegotiation = async (
 			player: p,
 			resigning: negotiation.resigning,
 			salaryCap: g.get("salaryCap") / 1000,
-			userTid,
 		};
 	}
 };

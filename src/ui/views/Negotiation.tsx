@@ -50,7 +50,6 @@ const Negotiation = ({
 	player = {},
 	resigning,
 	salaryCap,
-	userTid,
 }: View<"negotiation">) => {
 	useTitleBar({ title: `Contract Negotiation - ${player.name}` });
 
@@ -179,7 +178,6 @@ Negotiation.propTypes = {
 	player: PropTypes.object.isRequired,
 	resigning: PropTypes.bool.isRequired,
 	salaryCap: PropTypes.number.isRequired,
-	userTid: PropTypes.number.isRequired,
 };
 
 export default Negotiation;

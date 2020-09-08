@@ -3,7 +3,13 @@ import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
 
-const moodInfo = async (pid: number, tid: number) => {
+const moodInfo = async (
+	pid: number,
+	tid: number,
+	overrides: {
+		contractAmount?: number;
+	} = {},
+) => {
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
 		throw new Error("No player found");
@@ -48,7 +54,10 @@ const moodInfo = async (pid: number, tid: number) => {
 	const valueDiff = (p.value - 65) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
-	let contractAmount = p.contract.amount;
+	let contractAmount =
+		overrides.contractAmount !== undefined
+			? overrides.contractAmount
+			: p.contract.amount;
 
 	// Up to 50% penalty for bad mood
 	if (contractAmount > g.get("minContract")) {

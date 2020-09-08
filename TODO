@@ -24,8 +24,6 @@ redo mood system
   - exploits (tanking by not playing guys, trading tons of players)
 - later
   - moodComponents.playingTime for football - based on depth chart
-  - show mood on upcoming free agents table
-    - need way of overriding p.contract.amount in moodInfo
 
 there's a bug that you can sign players in spectator mode through their pages https://cdn.discordapp.com/attachments/290015591216054273/752434377316892672/S00907-16452835.jpg
 

@@ -34,7 +34,6 @@ const updateUpcomingFreeAgents = async (
 			};
 		} else {
 			p.contractDesired = player.genContract(p, false); // No randomization
-			p.contractDesired.amount /= 1000;
 			p.contractDesired.exp += inputs.season - g.get("season");
 		}
 	}
@@ -62,8 +61,10 @@ const updateUpcomingFreeAgents = async (
 
 	// Apply mood
 	for (const p of players) {
-		const mood = await player.moodInfo(p.pid, g.get("userTid"));
-		p.contractDesired.amount = mood.contractAmount / 1000;
+		p.mood = await player.moodInfo(p.pid, g.get("userTid"), {
+			contractAmount: p.contractDesired.amount,
+		});
+		p.contractDesired.amount = p.mood.contractAmount / 1000;
 	}
 
 	return {

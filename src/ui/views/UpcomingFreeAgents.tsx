@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { DataTable, PlayerNameLabels } from "../components";
+import { DataTable, Mood, PlayerNameLabels } from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
+import { processComponents } from "../components/Mood";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,
@@ -27,6 +28,7 @@ const UpcomingFreeAgents = ({
 		"Ovr",
 		"Pot",
 		...stats.map(stat => `stat:${stat}`),
+		"Mood",
 		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract", "Exp"]),
 		"Desired Contract",
 		"Exp",
@@ -53,6 +55,11 @@ const UpcomingFreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				{
+					value: <Mood maxWidth p={p} />,
+					sortValue: processComponents(p.mood.components).sum,
+					searchValue: p.mood.traits.join(""),
+				},
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []
 					: [helpers.formatCurrency(p.contract.amount, "M"), p.contract.exp]),

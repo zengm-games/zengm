@@ -66,11 +66,11 @@ const TeamHistory = ({
 									"player_stats",
 									`${abbrev}_${tid}`,
 									"career",
-									process.env.SPORT === "basketball" ? "totals" : statType,
+									process.env.SPORT === "football" ? "passing" : "totals"
 							  ],
 					)}
 				>
-					{season === undefined ? "Per Game" : "Franchise Leaders"}
+					{"Franchise Leaders"}
 				</a>
 			</p>
 

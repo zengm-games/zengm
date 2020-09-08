@@ -1,8 +1,4 @@
 redo mood system
-- moodComponents
-  - implement playingTime
-    - performance
-      - store model result in local, refresh after each day of games
 - more randomness in seed?
 - schema
 - upgrade stuff

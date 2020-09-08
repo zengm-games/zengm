@@ -277,6 +277,8 @@ const newPhasePreseason = async (
 		});
 	}
 
+	local.minFractionDiffs = undefined;
+
 	// Handle jersey number conflicts, which should only exist for players added in free agency, because otherwise it would have been handled at the time of signing
 	const playersByTeam = groupBy(
 		players.filter(p => p.tid >= 0 && p.stats.length > 0),

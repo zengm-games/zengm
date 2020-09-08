@@ -2,73 +2,75 @@ import { finances } from "..";
 import { PHASE, PLAYER } from "../../../common";
 import type { MoodComponents, Player } from "../../../common/types";
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers, local } from "../../util";
 
-const getExpectedMinFractionDiff = async (pid: number, tid: number) => {
+const getMinFractionDiff = async (pid: number, tid: number) => {
 	if (process.env.SPORT !== "basketball") {
 		return 0;
 	}
 
-	const season = g.get("season");
-	const playersAll = await idb.cache.players.getAll();
+	if (!local.minFractionDiffs) {
+		const season = g.get("season");
+		const playersAll = await idb.cache.players.getAll();
 
-	const players = [];
-	for (const p of playersAll) {
-		let stats;
-		for (let i = p.stats.length - 1; i >= 0; i--) {
-			if (p.stats[i].season === season && !p.stats[i].playoffs) {
-				stats = p.stats[i];
-			} else if (p.stats[i] < season) {
-				break;
+		const players = [];
+		for (const p of playersAll) {
+			let stats;
+			for (let i = p.stats.length - 1; i >= 0; i--) {
+				if (p.stats[i].season === season && !p.stats[i].playoffs) {
+					stats = p.stats[i];
+				} else if (p.stats[i] < season) {
+					break;
+				}
+			}
+
+			if (stats) {
+				if (stats.minAvailable && stats.minAvailable > 500) {
+					players.push({
+						pid: p.pid,
+						tid: stats.tid,
+						ovr: p.ratings[p.ratings.length - 1].ovr,
+
+						// Fraction of available minutes that this player played
+						fraction: stats.min / stats.minAvailable,
+					});
+				}
 			}
 		}
 
-		if (stats) {
-			if (stats.minAvailable && stats.minAvailable > 500) {
-				players.push({
-					pid: p.pid,
-					tid: stats.tid,
-					ovr: p.ratings[p.ratings.length - 1].ovr,
+		players.sort((a, b) => b.ovr - a.ovr);
 
-					// Fraction of available minutes that this player played
-					fraction: stats.min / stats.minAvailable,
+		local.minFractionDiffs = {};
 
-					// Difference between actual fraction and expected fraction
-					diff: 0,
-				});
+		if (players.length < 100) {
+			return 0;
+		}
+
+		// Logistic regression would be better than binning to find expected value, but no good library
+		const BIN_SIZE = 20;
+		const numBins = Math.ceil(players.length / BIN_SIZE);
+		for (let i = 0; i < numBins; i++) {
+			const binPlayers = players.slice(i * BIN_SIZE, (i + 1) * BIN_SIZE);
+			let average = 0;
+			for (const p of binPlayers) {
+				average += p.fraction;
+			}
+			average /= binPlayers.length;
+			for (const p of binPlayers) {
+				local.minFractionDiffs[p.pid] = {
+					tid: p.tid,
+					diff: p.fraction - average,
+				};
 			}
 		}
 	}
 
-	if (players.length < 100) {
+	const p = local.minFractionDiffs[pid];
+	if (!p || p.tid !== tid) {
 		return 0;
 	}
 
-	players.sort((a, b) => b.ovr - a.ovr);
-
-	const BIN_SIZE = 20;
-	const numBins = Math.ceil(players.length / BIN_SIZE);
-
-	for (let i = 0; i < numBins; i++) {
-		const binPlayers = players.slice(i * BIN_SIZE, (i + 1) * BIN_SIZE);
-		let average = 0;
-		for (const p of binPlayers) {
-			average += p.fraction;
-		}
-		average /= binPlayers.length;
-		for (const p of binPlayers) {
-			p.diff = p.fraction - average;
-		}
-	}
-	console.log(players);
-	players.sort((a, b) => a.diff - b.diff);
-
-	const p = players.find(p => p.pid === pid && p.tid === tid);
-	if (p) {
-		return p.diff;
-	}
-
-	return 0;
+	return p.diff;
 };
 
 // Make components -2 to 2, then scale with traits to -5 to 5
@@ -245,9 +247,8 @@ const moodComponents = async (
 
 	{
 		// PLAYING TIME
-		const diff = await getExpectedMinFractionDiff(p.pid, tid);
+		const diff = await getMinFractionDiff(p.pid, tid);
 		components.playingTime = diff * 10;
-		console.log(p.pid, diff, components.playingTime);
 	}
 
 	{

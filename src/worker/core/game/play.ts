@@ -26,6 +26,7 @@ import {
 	updatePlayMenu,
 	updateStatus,
 	recomputeLocalUITeamOvrs,
+	local,
 } from "../../util";
 import type {
 	Conditions,
@@ -143,8 +144,9 @@ const play = async (
 		const updateEvents: UpdateEvents = ["gameSim"];
 
 		if (dayOver) {
-			// Update ranks
 			await finances.updateRanks(["expenses", "revenues"]);
+
+			local.minFractionDiffs = undefined;
 
 			const healedTexts: string[] = [];
 

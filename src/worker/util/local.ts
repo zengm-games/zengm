@@ -1,3 +1,4 @@
+import { number } from "prop-types";
 import type { Local } from "../../common/types";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.
@@ -7,6 +8,7 @@ const defaultLocal: Local = {
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
 	mailingList: false, // Default, until told otherwise by server
+	minFractionDiffs: undefined,
 	leagueLoaded: false,
 	phaseText: "",
 	playerBioInfo: undefined,
@@ -25,6 +27,7 @@ const local: Local & {
 	goldUntil: defaultLocal.goldUntil,
 	leagueLoaded: defaultLocal.leagueLoaded,
 	mailingList: defaultLocal.mailingList,
+	minFractionDiffs: defaultLocal.minFractionDiffs,
 	phaseText: defaultLocal.phaseText,
 	playerBioInfo: defaultLocal.playerBioInfo,
 	playerOvrMean: defaultLocal.playerOvrMean,
@@ -38,6 +41,7 @@ const local: Local & {
 		local.autoSave = defaultLocal.autoSave;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;
+		local.minFractionDiffs = defaultLocal.minFractionDiffs;
 		local.phaseText = defaultLocal.phaseText;
 		local.playerBioInfo = defaultLocal.playerBioInfo;
 		local.playerOvrMean = defaultLocal.playerOvrMean;

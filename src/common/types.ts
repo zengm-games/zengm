@@ -965,6 +965,16 @@ export type Local = {
 	goldUntil: number;
 	leagueLoaded: boolean;
 	mailingList: boolean;
+	minFractionDiffs:
+		| Record<
+				number,
+				| {
+						tid: number;
+						diff: number;
+				  }
+				| undefined
+		  >
+		| undefined;
 	phaseText: string;
 	playerBioInfo?: PlayerBioInfoProcessed;
 	playerOvrMean?: number;

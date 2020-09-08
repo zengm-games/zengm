@@ -61,16 +61,15 @@ const TeamHistory = ({
 				|{" "}
 				<a href={helpers.leagueUrl(["news", `${abbrev}_${tid}`])}>News Feed</a>{" "}
 				|{" "}
-				<a href={helpers.leagueUrl(
-						season === undefined ? ["player_stats"] : [
-									"player_stats",
-									`${abbrev}_${tid}`,
-									"career",
-									process.env.SPORT === "football" ? "passing" : "totals"
-							  ],
-					)}
+				<a
+					href={helpers.leagueUrl([
+						"player_stats",
+						`${abbrev}_${tid}`,
+						"career",
+						process.env.SPORT === "football" ? "passing" : "totals",
+					])}
 				>
-					{"Franchise Leaders"}
+					Franchise Leaders
 				</a>
 			</p>
 

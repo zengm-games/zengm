@@ -50,7 +50,7 @@ const stats = {
 		"pts",
 	] as const,
 	max: [
-		"minAvailable",
+		"minMax",
 		"fgMax",
 		"fgaMax",
 		"tpMax",

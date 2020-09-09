@@ -82,7 +82,10 @@ const moodInfo = async (
 		probWilling = 1 / (1 + Math.exp(-sumAndStuff));
 
 		const rand = random.uniformSeed(
-			p.pid + p.stats.length + p.ratings[p.ratings.length - 1].ovr,
+			p.pid +
+				p.stats.length +
+				p.ratings[p.ratings.length - 1].ovr +
+				(p.stats.length > 0 ? p.stats[0].min : 0),
 		);
 		willing = rand < probWilling;
 	}

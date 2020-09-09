@@ -118,18 +118,11 @@ const Mood = ({
 
 	const id = `mood-popover-${p.pid}`;
 
-	const modalHeader = "TODO";
-	const modalBody = "TODO2";
-
-	const popoverContent = (
-		<div
-			style={{
-				minWidth: 250,
-			}}
-		>
-			<p className="mb-2">
-				<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
-			</p>
+	const modalHeader = (
+		<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
+	);
+	const modalBody = (
+		<>
 			{p.mood.traits.length > 0 ? (
 				<p className="mb-2">
 					Priorities:{" "}
@@ -158,11 +151,22 @@ const Mood = ({
 				</tbody>
 			</table>
 			{showProbWilling ? (
-				<p className="mt-2">
+				<p className="mt-2 mb-0">
 					Odds player will {p.tid === userTid ? "re-sign" : "sign"} with you:{" "}
 					{roundedProbWilling}%
 				</p>
 			) : null}
+		</>
+	);
+
+	const popoverContent = (
+		<div
+			style={{
+				minWidth: 250,
+			}}
+		>
+			<p className="mb-2">{modalHeader}</p>
+			{modalBody}
 		</div>
 	);
 

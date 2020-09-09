@@ -3,6 +3,7 @@ redo mood system
 - changes
 - manual
   - description of traits
+    - boolean
   - micromanagement? can ignore and be okay most of the time
   - traits do not change over time
   - traits editable in god mode, and can be disabled leaguewide in god mode

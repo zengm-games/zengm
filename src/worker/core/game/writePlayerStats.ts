@@ -265,17 +265,52 @@ const writePlayerStats = async (
 					}
 
 					// Update stats
-					for (const key of Object.keys(p.stat)) {
-						if (!ps.hasOwnProperty(key)) {
-							throw new Error(`Missing key "${key}" on ps`);
+					if (p.stat.min > 0) {
+						for (const key of Object.keys(p.stat)) {
+							if (!ps.hasOwnProperty(key)) {
+								throw new Error(`Missing key "${key}" on ps`);
+							}
+
+							if (process.env.SPORT === "football" && key.endsWith("Lng")) {
+								if (p.stat[key] > ps[key]) {
+									ps[key] = p.stat[key];
+								}
+							} else {
+								ps[key] += p.stat[key];
+							}
 						}
 
-						if (process.env.SPORT === "football" && key.endsWith("Lng")) {
-							if (p.stat[key] > ps[key]) {
-								ps[key] = p.stat[key];
+						ps.gp += 1;
+
+						if (process.env.SPORT === "football") {
+							const stat = qbResults.get(p.id);
+							if (stat) {
+								ps[stat] += 1;
 							}
-						} else {
-							ps[key] += p.stat[key];
+						}
+
+						for (const key of stats.max) {
+							const stat = key.replace("Max", "");
+
+							let value;
+							if (stat === "2p") {
+								value = p.stat.fg - p.stat.tp;
+							} else if (stat === "2pa") {
+								value = p.stat.fga - p.stat.tpa;
+							} else if (stat === "trb") {
+								value = p.stat.drb + p.stat.orb;
+							} else if (stat === "gmsc") {
+								value = helpers.gameScore(p.stat);
+							} else {
+								value = p.stat[stat];
+							}
+
+							if (value !== undefined) {
+								// !ps[key] is for upgraded leagues
+								if (!ps[key] || value > ps[key][0]) {
+									ps[key] = [value, result.gid];
+								}
+							}
 						}
 					}
 
@@ -285,39 +320,6 @@ const writePlayerStats = async (
 						p.injury.gamesRemaining === 0
 					) {
 						ps.minAvailable += t.stat.min / 5;
-					}
-
-					ps.gp += 1; // Already checked for non-zero minutes played above
-
-					if (process.env.SPORT === "football") {
-						const stat = qbResults.get(p.id);
-						if (stat) {
-							ps[stat] += 1;
-						}
-					}
-
-					for (const key of stats.max) {
-						const stat = key.replace("Max", "");
-
-						let value;
-						if (stat === "2p") {
-							value = p.stat.fg - p.stat.tp;
-						} else if (stat === "2pa") {
-							value = p.stat.fga - p.stat.tpa;
-						} else if (stat === "trb") {
-							value = p.stat.drb + p.stat.orb;
-						} else if (stat === "gmsc") {
-							value = helpers.gameScore(p.stat);
-						} else {
-							value = p.stat[stat];
-						}
-
-						if (value !== undefined) {
-							// !ps[key] is for upgraded leagues
-							if (!ps[key] || value > ps[key][0]) {
-								ps[key] = [value, result.gid];
-							}
-						}
 					}
 				}
 
@@ -343,7 +345,10 @@ const writePlayerStats = async (
 				}
 
 				// Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-				if (g.get("phase") !== PHASE.PLAYOFFS || ratingsLoss) {
+				if (
+					p.stat.min > 0 &&
+					(g.get("phase") !== PHASE.PLAYOFFS || ratingsLoss)
+				) {
 					await player.updateValues(p2);
 				}
 

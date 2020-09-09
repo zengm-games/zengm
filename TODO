@@ -1,4 +1,9 @@
 redo mood system
+- table showing all of the mood components as columns
+- Maybe a way to see traits of players on other teams, but not how happy they are with the situation? I think that that would be the most realistic, to have a view of the personalities but not know everything that's happening inside the organization.
+  - see how it works for display of draft prospects on player profile pages, and upcoming free agents
+- A way to sort/filter players by moods in bios, so that we can look for guys with a specific trait, or exclude certain traits from the list (for example, get the "fame" out of there if it's a small market)
+- I think market should be even more prioritized, right now, if you're a big market but had a garbage season, it still seems that no one will sign (maybe one guy in the top 15). In real life though, players go to big markets even if they were bad (LeBron to Lakers lol), so maybe it should be more than a +1 for liking the big market.
 - test FBGM
 - changes
 - manual
@@ -21,6 +26,8 @@ redo mood system
   - moodComponents.playingTime for football - based on depth chart
 
 there's a bug that you can sign players in spectator mode through their pages https://cdn.discordapp.com/attachments/290015591216054273/752434377316892672/S00907-16452835.jpg
+
+option in team history to have AI auto retire jerseys
 
 FBGM leaders
 - completion %

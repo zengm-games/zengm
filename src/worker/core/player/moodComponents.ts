@@ -29,7 +29,7 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 					players.push({
 						pid: p.pid,
 						tid: stats.tid,
-						ovr: p.ratings[p.ratings.length - 1].ovr,
+						value: p.valueNoPot,
 
 						// Fraction of available minutes that this player played
 						fraction: stats.min / stats.minAvailable,
@@ -38,7 +38,7 @@ const getMinFractionDiff = async (pid: number, tid: number) => {
 			}
 		}
 
-		players.sort((a, b) => b.ovr - a.ovr);
+		players.sort((a, b) => b.value - a.value);
 
 		local.minFractionDiffs = {};
 

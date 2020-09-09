@@ -8,6 +8,7 @@ type ColTemp = {
 	sortSequence?: SortOrder[];
 	searchType?: SortType; // If undefined, will be set equal to sortType
 	sortType?: SortType;
+	width?: string;
 };
 const sportSpecificCols: {
 	[key: string]: ColTemp;
@@ -1420,7 +1421,9 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	Mood: {},
+	Mood: {
+		width: "1px",
+	},
 	MVP: {
 		desc: "Most Valuable Player",
 		sortType: "name",

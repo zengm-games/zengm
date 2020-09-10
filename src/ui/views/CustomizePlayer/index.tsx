@@ -341,6 +341,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 					);
 				} else {
 					p.moodTraits.push(field);
+					p.moodTraits.sort();
 				}
 			} else if (["born", "contract", "draft", "injury"].includes(type)) {
 				p[type][field] = val;

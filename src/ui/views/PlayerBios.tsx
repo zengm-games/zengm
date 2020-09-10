@@ -1,10 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, Height, PlayerNameLabels, Weight } from "../components";
+import {
+	DataTable,
+	Height,
+	Mood,
+	PlayerNameLabels,
+	Weight,
+} from "../components";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import { PLAYER } from "../../common";
+import { processComponents } from "../components/Mood";
 
 const PlayerBios = ({
 	abbrev,
@@ -31,6 +38,7 @@ const PlayerBios = ({
 		"Age",
 		"Height",
 		"Weight",
+		"Mood",
 		"Contract",
 		"Exp",
 		"Country",
@@ -89,6 +97,11 @@ const PlayerBios = ({
 					// @ts-ignore
 					value: <Weight pounds={p.weight} />,
 					sortValue: p.weight,
+				},
+				{
+					value: <Mood maxWidth p={p} />,
+					sortValue: processComponents(p.mood.components).sum,
+					searchValue: p.mood.traits.join(""),
 				},
 				p.contract.amount > 0
 					? helpers.formatCurrency(p.contract.amount, "M")

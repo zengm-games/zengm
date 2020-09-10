@@ -1,7 +1,8 @@
-import { PHASE } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
+import { player } from "../core";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerBios">,
@@ -28,6 +29,14 @@ const updatePlayers = async (
 			inputs.tid,
 		);
 
+		const userTid = g.get("userTid");
+
+		for (const p of players) {
+			if (p.tid !== PLAYER.RETIRED) {
+				p.mood = await player.moodInfo(p.pid, userTid);
+			}
+		}
+
 		return {
 			abbrev: inputs.abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -35,7 +44,7 @@ const updatePlayers = async (
 			season: inputs.season,
 			players,
 			stats,
-			userTid: g.get("userTid"),
+			userTid,
 		};
 	}
 };

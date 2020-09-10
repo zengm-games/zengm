@@ -1,17 +1,10 @@
 redo mood system
-- Maybe a way to see traits of players on other teams, but not how happy they are with the situation? I think that that would be the most realistic, to have a view of the personalities but not know everything that's happening inside the organization.
-  - see how it works for display of draft prospects on player profile pages, and upcoming free agents
-  - need two buttons, one for "current team" and one for "your team"? or have a toggle in the popup?
-- A way to sort/filter players by moods in bios, so that we can look for guys with a specific trait, or exclude certain traits from the list (for example, get the "fame" out of there if it's a small market)
-- simplify UI, maybe? just show re-signing %, and don't show at all the places that is hidden
+- maybe
+  - simplify UI, maybe? just show re-signing %, and don't show at all the places that is hidden
+  - show % only for expiring contract?
 - test FBGM
 - changes
 - manual
-  - description of traits
-    - boolean
-  - micromanagement? can ignore and be okay most of the time
-  - traits do not change over time
-  - traits editable in god mode, and can be disabled leaguewide in god mode
   - mood does change over time
   - explanation of formula for % re-sign
     - "if decision was made now", not projection of decision

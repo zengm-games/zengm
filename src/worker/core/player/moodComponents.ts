@@ -257,13 +257,13 @@ const moodComponents = async (
 			const rookieContractLength = g.get("rookieContractLengths")[
 				p.draft.round - 1
 			];
-			if (
+			const onRookieContract =
 				rookieContractLength !== undefined &&
 				p.draft.round > 0 &&
 				((p.draft.year + rookieContractLength > season && p.tid >= 0) ||
 					(p.draft.year + rookieContractLength === season &&
-						phase <= PHASE.RESIGN_PLAYERS))
-			) {
+						phase <= PHASE.RESIGN_PLAYERS));
+			if (onRookieContract || p.tid === PLAYER.UNDRAFTED) {
 				components.rookieContract = 8;
 			}
 		}

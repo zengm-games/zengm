@@ -11,6 +11,7 @@ const genMoodTraits = () => {
 			random.choice(MOOD_TRAIT_KEYS.filter(trait => trait !== moodTraits[0])),
 		);
 	}
+	moodTraits.sort();
 
 	return moodTraits;
 };

@@ -198,7 +198,7 @@ const updatePlayer = async (
 
 		// Account for extra free agent demands
 		if (p.tid === PLAYER.FREE_AGENT) {
-			p.contract.amount = p.mood.contractAmount;
+			p.contract.amount = p.mood.contractAmount / 1000;
 		}
 
 		const teamColors = await getTeamColors(p.tid);

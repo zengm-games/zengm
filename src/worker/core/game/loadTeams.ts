@@ -174,7 +174,7 @@ const processTeam = (
 const loadTeams = async (tids: number[]) => {
 	const playerStats = player.stats.raw.reduce<Record<string, number>>(
 		(stats, stat) => {
-			if (stat === "gp") {
+			if (stat === "gp" || stat === "minAvailable") {
 				return stats;
 			}
 

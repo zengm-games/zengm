@@ -37,6 +37,9 @@ const LeagueStats = ({
 
 	if (superCols) {
 		superCols[0].colspan += 1;
+		if (ties) {
+			superCols[0].colspan += 1;
+		}
 	}
 
 	const cols = getCols(

@@ -156,6 +156,12 @@ const Mood = ({
 					{roundedProbWilling}%
 				</p>
 			) : null}
+			{p.tid !== userTid ? (
+				<p className="mt-2 mb-0 text-muted">
+					This is his mood towards your team if you acquired him, not towards
+					his current team
+				</p>
+			) : null}
 		</>
 	);
 

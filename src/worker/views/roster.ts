@@ -154,7 +154,7 @@ const updateRoster = async (
 				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
 				p.ptModifier = String(p.ptModifier);
 
-				p.mood = await player.moodInfo(p.pid, p.tid);
+				p.mood = await player.moodInfo(p.pid, g.get("userTid"));
 			}
 		} else {
 			// Show all players with stats for the given team and year

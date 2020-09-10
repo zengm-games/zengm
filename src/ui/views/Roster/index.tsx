@@ -123,7 +123,7 @@ const Roster = ({
 
 	const statCols = getCols(...stats.map(stat => `stat:${stat}`));
 
-	const showMood = season === currentSeason && tid === userTid;
+	const showMood = season === currentSeason;
 
 	return (
 		<>

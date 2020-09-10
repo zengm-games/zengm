@@ -767,7 +767,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								<div className="col-sm-3 form-group">
 									<label>Mood Traits</label>
 									{helpers.keys(MOOD_TRAITS).map(trait => (
-										<div className="form-check">
+										<div className="form-check" key={trait}>
 											<label className="form-check-label">
 												<input
 													className="form-check-input"

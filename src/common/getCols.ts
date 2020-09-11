@@ -1348,8 +1348,12 @@ const cols: {
 	"Draft Picks": {
 		sortSequence: [],
 	},
-	"Draft Year": {},
-	Drafted: {},
+	"Draft Year": {
+		sortType: "number",
+	},
+	Drafted: {
+		sortType: "number",
+	},
 	End: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -1500,6 +1504,7 @@ const cols: {
 	Result: {},
 	Retired: {
 		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	"Revenue (YTD)": {
 		sortSequence: ["desc", "asc"],
@@ -1556,7 +1561,9 @@ const cols: {
 		noSearch: true,
 		sortSequence: [],
 	},
-	Year: {},
+	Year: {
+		sortType: "number",
+	},
 	Summary: {},
 	"rating:endu": {
 		desc: "Endurance",

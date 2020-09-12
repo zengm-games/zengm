@@ -47,7 +47,8 @@ const moodInfo = async (
 	// Add some based on how long free agency has lasted and how good/bad the player is
 	let sumAndStuff = sumComponents;
 	sumAndStuff += helpers.bound(p.numDaysFreeAgent, 0, 30) / 3;
-	const valueDiff = (p.value - 65) / 2;
+	const valueDiff =
+		(p.value - (process.env.SPORT === "football" ? 85 : 65)) / 2;
 	sumAndStuff -= valueDiff > 0 ? Math.sqrt(valueDiff) : valueDiff;
 
 	let contractAmount =

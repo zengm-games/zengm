@@ -50,11 +50,12 @@ const updateNegotiationList = async () => {
 		showNoStats: true,
 		fuzz: true,
 	});
-	let sumContracts = 0;
 
+	let sumContracts = 0;
 	for (const p of players) {
 		sumContracts += p.mood.contractAmount;
 	}
+	sumContracts /= 1000;
 
 	const payroll = await team.getPayroll(userTid);
 	const capSpace =

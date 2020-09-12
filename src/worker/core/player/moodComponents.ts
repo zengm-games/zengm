@@ -194,7 +194,10 @@ const moodComponents = async (
 			components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
 
 			// Negative matters more
-			if (components.teamPerformance < 0) {
+			if (
+				process.env.SPORT === "basketball" &&
+				components.teamPerformance < 0
+			) {
 				components.teamPerformance *= 2;
 			}
 
@@ -204,7 +207,6 @@ const moodComponents = async (
 				-Infinity,
 				2,
 			);
-			console.log(components.teamPerformance);
 		}
 	}
 
@@ -225,7 +227,7 @@ const moodComponents = async (
 			(p.tid === PLAYER.FREE_AGENT && phase === PHASE.RESIGN_PLAYERS)
 		) {
 			// Wants to re-sign
-			components.loyalty += 2;
+			components.loyalty += process.env.SPORT === "football" ? 5 : 2;
 		}
 	}
 

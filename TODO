@@ -4,7 +4,6 @@ redo mood system
 - maybe
   - simplify UI, maybe? just show re-signing %, and don't show at all the places that is hidden
   - show % only for expiring contract?
-- test FBGM
 - changes
 - manual
   - mood does change over time

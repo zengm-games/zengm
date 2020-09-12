@@ -78,6 +78,7 @@ const PlayerList = ({
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,
+					searchValue: p.latestTransaction,
 					sortValue: p.latestTransactionSeason,
 				},
 			],

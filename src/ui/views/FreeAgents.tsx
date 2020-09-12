@@ -111,7 +111,7 @@ const FreeAgents = ({
 				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <Mood maxWidth p={p} />,
-					sortValue: processComponents(p.mood.components).sum,
+					sortValue: p.mood ? processComponents(p.mood.components).sum : null,
 					searchValue: p.mood.traits.join(""),
 				},
 				helpers.formatCurrency(p.mood.contractAmount / 1000, "M"),

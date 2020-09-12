@@ -100,7 +100,7 @@ const PlayerBios = ({
 				},
 				{
 					value: <Mood maxWidth p={p} />,
-					sortValue: processComponents(p.mood.components).sum,
+					sortValue: p.mood ? processComponents(p.mood.components).sum : null,
 					searchValue: p.mood.traits.join(""),
 				},
 				p.contract.amount > 0

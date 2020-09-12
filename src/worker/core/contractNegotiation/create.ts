@@ -52,7 +52,7 @@ const create = async (
 	}
 
 	if (!resigning) {
-		const moodInfo = await player.moodInfo(pid, tid);
+		const moodInfo = await player.moodInfo(p, tid);
 		if (!moodInfo.willing) {
 			return `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName

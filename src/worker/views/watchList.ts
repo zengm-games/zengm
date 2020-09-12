@@ -38,6 +38,7 @@ const updatePlayers = async (
 			// In Firefox, objects have a "watch" function
 			filter: p => p.watch && typeof p.watch !== "function",
 		});
+
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
 				"pid",
@@ -67,8 +68,11 @@ const updatePlayers = async (
 		// Add mood to free agent contracts
 		for (const p of players) {
 			if (p.tid === PLAYER.FREE_AGENT) {
-				const mood = await player.moodInfo(p.pid, g.get("userTid"));
-				p.contract.amount = mood.contractAmount / 1000;
+				const p2 = await idb.cache.players.get(p.pid);
+				if (p2) {
+					const mood = await player.moodInfo(p2, g.get("userTid"));
+					p.contract.amount = mood.contractAmount / 1000;
+				}
 			}
 		}
 

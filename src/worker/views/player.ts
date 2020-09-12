@@ -193,7 +193,7 @@ const updatePlayer = async (
 		const userTid = g.get("userTid");
 
 		if (p.tid !== PLAYER.RETIRED) {
-			p.mood = await player.moodInfo(inputs.pid, userTid);
+			p.mood = await player.moodInfo(pRaw, userTid);
 		}
 
 		// Account for extra free agent demands

@@ -2,19 +2,15 @@ import { PHASE } from "../../../common";
 import { g, helpers, random } from "../../util";
 import { idb } from "../../db";
 import moodComponents from "./moodComponents";
+import type { Player } from "../../../common/types";
 
 const moodInfo = async (
-	pid: number,
+	p: Player,
 	tid: number,
 	overrides: {
 		contractAmount?: number;
 	} = {},
 ) => {
-	const p = await idb.cache.players.get(pid);
-	if (!p) {
-		throw new Error("No player found");
-	}
-
 	const components = await moodComponents(p, tid);
 	let probWilling = 0;
 

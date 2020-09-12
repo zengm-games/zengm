@@ -111,6 +111,10 @@ const Mood = ({
 }) => {
 	const userTid = useLocal(state => state.userTid);
 
+	if (!p.mood) {
+		return null;
+	}
+
 	const { componentsRounded, sum } = processComponents(p.mood.components);
 
 	const showProbWilling = p.tid >= 0;

@@ -89,6 +89,7 @@ const updateRoster = async (
 			"untradable",
 			"hof",
 			"latestTransaction",
+			"mood",
 		]; // tid and draft are used for checking if a player can be released without paying his salary
 
 		const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
@@ -98,12 +99,18 @@ const updateRoster = async (
 		let payroll: number | undefined;
 
 		if (inputs.season === g.get("season")) {
+			const schedule = await season.getSchedule();
+
 			// Show players currently on the roster
-			const [schedule, playersAll] = await Promise.all([
-				season.getSchedule(),
-				idb.cache.players.indexGetAll("playersByTid", inputs.tid),
-			]);
+			const playersAll = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				inputs.tid,
+			);
 			payroll = (await team.getPayroll(inputs.tid)) / 1000;
+
+			for (const p of playersAll) {
+				(p as any).mood = await player.moodInfo(p, g.get("userTid"));
+			}
 
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;
@@ -153,8 +160,6 @@ const updateRoster = async (
 
 				// Convert ptModifier to string so it doesn't cause unneeded knockout re-rendering
 				p.ptModifier = String(p.ptModifier);
-
-				p.mood = await player.moodInfo(p.pid, g.get("userTid"));
 			}
 		} else {
 			// Show all players with stats for the given team and year

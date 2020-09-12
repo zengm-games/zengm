@@ -1,4 +1,9 @@
+message on the beta site explaining that it's not necessarily newer
+
 redo mood system
+- W not powerful enough? https://cdn.discordapp.com/attachments/290015591216054273/753876562159599666/unknown.png
+  - http://localhost/l/19/roster
+- desired contracts all min in re-signing https://beta.basketball-gm.com/l/35/upcoming_free_agents
 - maybe
   - simplify UI, maybe? just show re-signing %, and don't show at all the places that is hidden
   - show % only for expiring contract?
@@ -8,7 +13,7 @@ redo mood system
   - mood does change over time
   - explanation of formula for % re-sign
     - "if decision was made now", not projection of decision
-  - mood influences contract demands and willing to negotiate only, not performance or team chemistry
+  - mood influences contract demands
   - link here from roster column, god mode option
 - blog
   - civ
@@ -18,8 +23,11 @@ redo mood system
 - later
   - moodComponents.playingTime for football - based on depth chart
   - table showing all of the mood components as columns
+  - should affect trades
 
 there's a bug that you can sign players in spectator mode through their pages https://cdn.discordapp.com/attachments/290015591216054273/752434377316892672/S00907-16452835.jpg
+
+taller players should get injured more
 
 option in team history to have AI auto retire jerseys
 

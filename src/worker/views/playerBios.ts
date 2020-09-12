@@ -3,6 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { getPlayers } from "./playerRatings";
 import { player } from "../core";
+import { idb } from "../db";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerBios">,
@@ -33,7 +34,10 @@ const updatePlayers = async (
 
 		for (const p of players) {
 			if (p.tid !== PLAYER.RETIRED) {
-				p.mood = await player.moodInfo(p.pid, userTid);
+				const p2 = await idb.cache.players.get(p.pid);
+				if (p2) {
+					p.mood = await player.moodInfo(p2, userTid);
+				}
 			}
 		}
 

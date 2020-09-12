@@ -24,6 +24,11 @@ const updateNegotiationList = async () => {
 	const playersAll = (
 		await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
 	).filter(p => negotiationPids.includes(p.pid));
+
+	for (const p of playersAll) {
+		(p as any).mood = await player.moodInfo(p, userTid);
+	}
+
 	const players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
@@ -36,6 +41,7 @@ const updateNegotiationList = async () => {
 			"draft",
 			"latestTransaction",
 			"latestTransactionSeason",
+			"mood",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
@@ -47,7 +53,6 @@ const updateNegotiationList = async () => {
 	let sumContracts = 0;
 
 	for (const p of players) {
-		p.mood = await player.moodInfo(p.pid, userTid);
 		sumContracts += p.mood.contractAmount;
 	}
 

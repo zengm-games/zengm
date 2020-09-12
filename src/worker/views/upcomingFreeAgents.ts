@@ -36,6 +36,10 @@ const updateUpcomingFreeAgents = async (
 			p.contractDesired = player.genContract(p, false); // No randomization
 			p.contractDesired.exp += inputs.season - g.get("season");
 		}
+
+		p.mood = await player.moodInfo(p, g.get("userTid"), {
+			contractAmount: p.contractDesired.amount,
+		});
 	}
 
 	players = await idb.getCopies.playersPlus(players, {
@@ -50,6 +54,7 @@ const updateUpcomingFreeAgents = async (
 			"contractDesired",
 			"watch",
 			"jerseyNumber",
+			"mood",
 		],
 		ratings: ["ovr", "pot", "skills", "pos"],
 		stats,
@@ -61,9 +66,6 @@ const updateUpcomingFreeAgents = async (
 
 	// Apply mood
 	for (const p of players) {
-		p.mood = await player.moodInfo(p.pid, g.get("userTid"), {
-			contractAmount: p.contractDesired.amount,
-		});
 		p.contractDesired.amount = p.mood.contractAmount / 1000;
 	}
 

@@ -126,7 +126,7 @@ const updateNegotiation = async (
 			return returnValue;
 		}
 
-		p.mood = await player.moodInfo(p.pid, userTid);
+		p.mood = await player.moodInfo(p2, userTid);
 
 		const contractOptions = generateContractOptions(
 			{

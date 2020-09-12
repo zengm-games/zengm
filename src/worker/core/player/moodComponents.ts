@@ -193,12 +193,18 @@ const moodComponents = async (
 			// 25% to 75% -> -2 to 2
 			components.teamPerformance = -2 + ((winp - 0.25) * 4) / 0.5;
 
+			// Negative matters more
+			if (components.teamPerformance < 0) {
+				components.teamPerformance *= 2;
+			}
+
 			// Set upper bound, in case went over due to playoff bonus
 			components.teamPerformance = helpers.bound(
 				components.teamPerformance,
 				-Infinity,
 				2,
 			);
+			console.log(components.teamPerformance);
 		}
 	}
 
@@ -293,7 +299,11 @@ const moodComponents = async (
 	// Bound all components - they don't all have the same bounds!
 	components.marketSize = helpers.bound(components.marketSize, -2, 2);
 	components.facilities = helpers.bound(components.facilities, -2, 2);
-	components.teamPerformance = helpers.bound(components.teamPerformance, -2, 2);
+	components.teamPerformance = helpers.bound(
+		components.teamPerformance,
+		-Infinity,
+		2,
+	);
 	components.hype = helpers.bound(components.hype, -2, 2);
 	components.loyalty = helpers.bound(components.loyalty, 0, Infinity);
 	components.trades = helpers.bound(components.trades, -Infinity, 0);

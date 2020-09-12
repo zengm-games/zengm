@@ -27,15 +27,8 @@ const updateUpcomingFreeAgents = async (
 
 	// Done before filter so full player object can be passed to player.genContract.
 	for (const p of players) {
-		if (showActualFreeAgents) {
-			p.contractDesired = {
-				amount: p.contract.amount / 1000,
-				exp: p.contract.exp,
-			};
-		} else {
-			p.contractDesired = player.genContract(p, false); // No randomization
-			p.contractDesired.exp += inputs.season - g.get("season");
-		}
+		p.contractDesired = player.genContract(p, false); // No randomization
+		p.contractDesired.exp += inputs.season - g.get("season");
 
 		p.mood = await player.moodInfo(p, g.get("userTid"), {
 			contractAmount: p.contractDesired.amount,

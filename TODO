@@ -21,7 +21,12 @@ redo mood system
   - table showing all of the mood components as columns
   - should affect trades
 
-there's a bug that you can sign players in spectator mode through their pages https://cdn.discordapp.com/attachments/290015591216054273/752434377316892672/S00907-16452835.jpg
+gm score
+- @nicidob
+- almost like this https://fivethirtyeight.com/features/billion-dollar-billy-beane/ f(profit,win%,playoffRoundsWon)
+- show on GM History
+- fully dynamic, or store in TeamSeason?
+- same as the owner mood score?
 
 taller players should get injured more
 

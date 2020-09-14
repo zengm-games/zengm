@@ -300,11 +300,11 @@ const Player2 = ({
 	showRatings,
 	showTradeFor,
 	showTradingBlock,
+	spectator,
 	statTables,
 	statSummary,
 	teamColors,
 	teamName,
-	userTid,
 	willingToSign,
 }: View<"player">) => {
 	useTitleBar({ title: player.name });
@@ -531,7 +531,7 @@ const Player2 = ({
 								)}
 							</button>
 						) : null}
-						{freeAgent ? (
+						{!spectator && freeAgent ? (
 							<button
 								className="btn btn-light-bordered"
 								disabled={!willingToSign}

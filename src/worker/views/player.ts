@@ -345,11 +345,11 @@ const updatePlayer = async (
 			phase: g.get("phase"),
 			ratings,
 			season: g.get("season"),
+			spectator: g.get("spectator"),
 			statTables,
 			statSummary,
 			teamColors,
 			teamName,
-			userTid,
 			willingToSign,
 		};
 	}

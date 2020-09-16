@@ -1,6 +1,7 @@
 message on the beta site explaining that it's not necessarily newer
 
 redo mood system
+- message about upgrade progress
 - maybe
   - simplify UI, maybe? just show re-signing %, and don't show at all the places that is hidden
   - show % only for expiring contract?

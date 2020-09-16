@@ -828,7 +828,23 @@ const migrate = ({
 
 	if (oldVersion <= 38) {
 		slowUpgrade();
+
+		let lastCentury = 0; // Iterate over players
+
 		iterate(transaction.objectStore("players"), undefined, undefined, p => {
+			// This can be really slow, so need some UI for progress
+			const century = Math.floor(p.draft.year / 100);
+			if (century > lastCentury) {
+				const text = `Upgrading players drafted in the ${century}00s...`;
+				logEvent({
+					type: "upgrade",
+					text,
+					saveToDb: false,
+				});
+				console.log(text);
+				lastCentury = century;
+			}
+
 			delete (p as any).freeAgentMood;
 			p.moodTraits = player.genMoodTraits();
 			p.numDaysFreeAgent = 0;

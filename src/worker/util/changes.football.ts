@@ -78,6 +78,11 @@ const changes = [
 		msg:
 			'New God Mode option: Spectator Mode, where the AI controls all teams and you just watch. It\'s like auto play, but you can proceed at your own pace. <a href="https://basketball-gm.com/blog/2020/08/spectator-mode/">More details</a>',
 	},
+	{
+		date: "2020-09-17",
+		msg:
+			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-moods/">More details</a>',
+	},
 ];
 
 export default changes;

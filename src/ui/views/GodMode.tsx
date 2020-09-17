@@ -536,6 +536,19 @@ export const options: {
 		key: "playerMoodTraits",
 		name: "Player Mood Traits",
 		type: "bool",
+		helpText: (
+			<>
+				See{" "}
+				<a
+					href="https://basketball-gm.com/manual/player-mood/"
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					the manual
+				</a>{" "}
+				for more info about player mood.
+			</>
+		),
 	},
 ];
 

@@ -250,7 +250,22 @@ const Roster = ({
 								</HelpPopover>
 							</th>
 						) : null}
-						{showMood ? <th>Mood</th> : null}
+						{showMood ? (
+							<th>
+								Mood{" "}
+								<HelpPopover title="Player Mood">
+									See{" "}
+									<a
+										href="https://basketball-gm.com/manual/player-mood/"
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										the manual
+									</a>{" "}
+									for more info about player mood.
+								</HelpPopover>
+							</th>
+						) : null}
 						{showRelease ? (
 							<th>
 								Release{" "}

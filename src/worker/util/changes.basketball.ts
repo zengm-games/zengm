@@ -340,6 +340,11 @@ const changes = [
 		msg:
 			"BPM, DBPM, OBPM, and VORP are now viewable in the Advanced Stats table.",
 	},
+	{
+		date: "2020-09-17",
+		msg:
+			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-moods/">More details</a>',
+	},
 ];
 
 export default changes;

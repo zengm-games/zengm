@@ -1,26 +1,12 @@
 message on the beta site explaining that it's not necessarily newer
 
 redo mood system
-- message about upgrade progress
-- maybe
-  - simplify UI, maybe? just show re-signing %, and don't show at all the places that is hidden
-  - show % only for expiring contract?
-- changes
-- manual
-  - mood does change over time
-  - explanation of formula for % re-sign
-    - "if decision was made now", not projection of decision
-  - mood influences contract demands
-  - link here from roster column, god mode option
-- blog
-  - civ
-  - stuff from manual
-  - rookie likeliness to refuse
-  - exploits (tanking by not playing guys, trading tons of players)
 - later
   - moodComponents.playingTime for football - based on depth chart
   - table showing all of the mood components as columns
   - should affect trades
+
+all star draft should be disabled in spectator mode
 
 gm score
 - @nicidob

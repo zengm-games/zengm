@@ -60,7 +60,8 @@ const autoPlay = async (conditions: Conditions = {}) => {
 	} else if (g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		await phase.newPhase(PHASE.FREE_AGENCY, conditions);
 	} else if (g.get("phase") === PHASE.FREE_AGENCY) {
-		await freeAgents.play(g.get("daysLeft"), conditions);
+		// Purposely call without await, to break up the promise chain. Otherwise (at least in Chrome 85) causes a memory leak after playing like 50 seasons.
+		freeAgents.play(g.get("daysLeft"), conditions);
 	} else {
 		throw new Error(`Unknown phase: ${g.get("phase")}`);
 	}

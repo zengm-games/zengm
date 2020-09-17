@@ -58,8 +58,7 @@ const finalize = async (
 	if (local.autoPlayUntil) {
 		toUI("realtimeUpdate", [updateEvents]);
 
-		// Purposely call without await, to break up the promise chain. Otherwise (at least in Chrome 85) causes a memory leak after playing like 50 seasons.
-		league.autoPlay(conditions);
+		await league.autoPlay(conditions);
 	} else {
 		toUI("realtimeUpdate", [updateEvents, url], conditions).then(() => {
 			// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"

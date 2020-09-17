@@ -81,7 +81,7 @@ const changes = [
 	{
 		date: "2020-09-17",
 		msg:
-			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-moods/">More details</a>',
+			'New player mood system! <a href="https://basketball-gm.com/blog/2020/09/player-mood/">More details</a>',
 	},
 ];
 

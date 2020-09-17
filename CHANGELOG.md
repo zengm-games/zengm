@@ -2,9 +2,9 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* **2020-09-17: New player mood system! Most notable improvements are that it's viewable at any time (not just during free agency) and it's much more transparent about what players think about your team. If your star is not happy and doesn't want to re-sign, you'll know ahead of time. [[1]](https://basketball-gm.com/blog/2020/09/player-moods/) [[2]]()**
+* **2020-09-17: New player mood system! Most notable improvements are that it's viewable at any time (not just during free agency) and it's much more transparent about what players think about your team. If your star is not happy and doesn't want to re-sign, you'll know ahead of time. [[1]](https://basketball-gm.com/blog/2020/09/player-mood/) [[2]](https://old.reddit.com/r/BasketballGM/comments/iuluuj/the_new_player_mood_system_is_now_live_in_version/)**
 
-* 2020-09-07: New challenge mode "Lose best player every season", where at the end of the playoffs every season, the best player on your team will either retire (if he's a real player) or die a tragic death (if he's a random player). Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/311/files) [[2]](https://old.reddit.com/r/BasketballGM/comments/iod22d/new_challenge_mode_lose_best_player_every_season/?)
+* 2020-09-07: New challenge mode "Lose best player every season", where at the end of the playoffs every season, the best player on your team will either retire (if he's a real player) or die a tragic death (if he's a random player). Thanks @luso97! [[1]](https://github.com/dumbmatter/gm-games/pull/311/files) [[2]](https://old.reddit.com/r/BasketballGM/comments/iod22d/new_challenge_mode_lose_best_player_every_season/)
 
 * 2020-09-07: Added eFG% to stat tables in BBGM. Thanks @domini7! [[1]](https://github.com/dumbmatter/gm-games/pull/310)
 
@@ -38,9 +38,9 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-08-17: Added TS%, 3PAr, and FTr to the player info popup. [[1]](https://old.reddit.com/r/BasketballGM/comments/ibqgvt/there_have_been_some_requests_for_fg3pft_on_the/)
 
-* 2020-08-17: If you do enough to win an achievement but miss out on it because you used God Mode or easy difficulty, it gives you a notification saying this rather than nothing. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
+* 2020-08-17: If you do enough to win an achievement but miss out on it because you used God Mode or easy difficulty, it gives you a notification saying this rather than nothing. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/)
 
-* 2020-08-17: Added "Finals Appearances" and total winning percentage to the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/?)
+* 2020-08-17: Added "Finals Appearances" and total winning percentage to the Team History page. [[1]](https://old.reddit.com/r/BasketballGM/comments/ib84ki/a_minor_improvement_from_me_and_more_important/)
 
 * 2020-08-14: New draft type option in God Mode to eliminate the draft and instead have rookies become free agents. [[1]](https://old.reddit.com/r/BasketballGM/comments/i9zhto/version_202008150142_new_draft_type_option_in_god/)
 
@@ -108,7 +108,7 @@ Entries in bold are ones important enough that I would have put them in [the old
 
 * 2020-06-29: Logos for all the new teams! [[1]](https://basketball-gm.com/blog/2020/06/logos-for-the-new-teams/) [[2]](https://old.reddit.com/r/BasketballGM/comments/hid1tg/logos_for_all_the_new_teams/)
 
-* 2020-06-27: Random debuts mode now works how you probably wanted it to work in the first place. The pool of players to be randomized is not just current and future players (relative to your starting season), but past players too. So if you start in 2020, you'll get many future draft classes of randomized real players. [[1]](https://old.reddit.com/r/BasketballGM/comments/hh71an/random_debuts_mode_now_works_how_you_probably/?)
+* 2020-06-27: Random debuts mode now works how you probably wanted it to work in the first place. The pool of players to be randomized is not just current and future players (relative to your starting season), but past players too. So if you start in 2020, you'll get many future draft classes of randomized real players. [[1]](https://old.reddit.com/r/BasketballGM/comments/hh71an/random_debuts_mode_now_works_how_you_probably/)
 
 * 2020-06-27: Menu on the Standings page to switch between League/Conference/Division standings, which is important on mobile where previously only the division standings were visible. [[1]](https://old.reddit.com/r/BasketballGM/comments/hgxh7p/menu_on_the_standings_page_to_switch_between/)
 

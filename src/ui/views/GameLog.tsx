@@ -206,7 +206,6 @@ const GameLog = ({
 
 	const noGamesAndNoBoxScore =
 		season < currentSeason && gamesList.games.length === 0 && boxScore.gid < 0;
-	console.log("noGamesAndNoBoxScore", noGamesAndNoBoxScore);
 
 	return (
 		<>

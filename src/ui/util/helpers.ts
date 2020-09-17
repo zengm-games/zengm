@@ -45,6 +45,7 @@ const roundOverrides: Record<
 				fgp: "oneDecimalPlace",
 				tpp: "oneDecimalPlace",
 				"2pp": "oneDecimalPlace",
+				efg: "oneDecimalPlace",
 				ftp: "oneDecimalPlace",
 				ws48: "roundWinp",
 				pm: "plusMinus",

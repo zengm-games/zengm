@@ -85,9 +85,11 @@ const updateHistory = async (
 			awards,
 			champ,
 			confs: g.get("confs", season),
+			currentSeason: g.get("season"),
 			invalidSeason: false as const,
 			retiredPlayers,
 			season,
+			startingSeason: g.get("startingSeason"),
 			userTid: g.get("userTid"),
 		};
 	}

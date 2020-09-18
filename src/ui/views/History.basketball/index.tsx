@@ -5,6 +5,7 @@ import useTitleBar from "../../../ui/hooks/useTitleBar";
 import AwardsAndChamp from "./AwardsAndChamp";
 import Team from "./Team";
 import type { View } from "../../../common/types";
+import { helpers } from "../../util";
 
 export type ActualProps = Exclude<
 	View<"history">,
@@ -12,7 +13,7 @@ export type ActualProps = Exclude<
 >;
 
 const History = (props: View<"history">) => {
-	const { invalidSeason, season } = props;
+	const { currentSeason, invalidSeason, season, startingSeason } = props;
 
 	useTitleBar({
 		title: "Season Summary",
@@ -43,6 +44,30 @@ const History = (props: View<"history">) => {
 
 	return (
 		<>
+			<div>
+				<a
+					className="btn-group mb-3"
+					href={helpers.leagueUrl(["history", season - 1])}
+				>
+					<button
+						className="btn btn-light-bordered btn-xs"
+						disabled={season === startingSeason}
+					>
+						Previous Season
+					</button>
+				</a>
+				<a
+					className="btn-group mb-3"
+					href={helpers.leagueUrl(["history", season + 1])}
+				>
+					<button
+						className="btn btn-light-bordered btn-xs"
+						disabled={season === currentSeason}
+					>
+						Next Season
+					</button>
+				</a>
+			</div>
 			<div className="row">
 				<div className="col-md-3 col-sm-4 col-12">
 					<AwardsAndChamp

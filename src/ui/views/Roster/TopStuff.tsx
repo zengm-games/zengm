@@ -63,8 +63,6 @@ const TopStuff = ({
 	showTradeFor,
 	t,
 	tid,
-	totalLost,
-	totalWon,
 }: Pick<
 	View<"roster">,
 	| "abbrev"

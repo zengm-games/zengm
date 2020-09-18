@@ -1,6 +1,11 @@
 message on the beta site explaining that it's not necessarily newer
 
 redo mood system
+- some way to see how it changes during FA - show probability? show # days until willing?
+- show probability in popup?
+- customizable columns on roster page
+- fbgm link to manual url
+- god mode is 100%, and show explanation in popover
 - later
   - moodComponents.playingTime for football - based on depth chart
   - table showing all of the mood components as columns

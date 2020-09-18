@@ -256,7 +256,7 @@ const Roster = ({
 								<HelpPopover title="Player Mood">
 									See{" "}
 									<a
-										href="https://basketball-gm.com/manual/player-mood/"
+										href={`https://${process.env.SPORT}-gm.com/manual/player-mood/`}
 										rel="noopener noreferrer"
 										target="_blank"
 									>

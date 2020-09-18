@@ -219,6 +219,7 @@ const updateRoster = async (
 				inputs.tid === g.get("userTid") &&
 				!g.get("spectator"),
 			stats,
+			startingSeason: g.get("startingSeason"),
 			t: t2,
 			tid: inputs.tid,
 			userTid: g.get("userTid"),

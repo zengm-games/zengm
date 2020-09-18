@@ -84,6 +84,7 @@ const Roster = ({
 	showTradeFor,
 	showTradingBlock,
 	stats,
+	startingSeason,
 	t,
 	tid,
 	userTid,
@@ -166,6 +167,7 @@ const Roster = ({
 				openRosterSpots={maxRosterSize - players.length}
 				players={players}
 				season={season}
+				startingSeason={startingSeason}
 				payroll={payroll}
 				profit={profit}
 				salaryCap={salaryCap}

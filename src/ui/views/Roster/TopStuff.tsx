@@ -59,9 +59,12 @@ const TopStuff = ({
 	profit,
 	salaryCap,
 	season,
+	startingSeason,
 	showTradeFor,
 	t,
 	tid,
+	totalLost,
+	totalWon,
 }: Pick<
 	View<"roster">,
 	| "abbrev"
@@ -134,6 +137,24 @@ const TopStuff = ({
 			<div className="d-flex mb-3">
 				<div className="team-picture" style={logoStyle} />
 				<div>
+					<div className="btn-group mb-3">
+						<a href={helpers.leagueUrl(["roster", `${abbrev}`, season - 1])}>
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={season === startingSeason}
+							>
+								Previous Season
+							</button>
+						</a>
+						<a href={helpers.leagueUrl(["roster", `${abbrev}`, season + 1])}>
+							<button
+								className="btn btn-light-bordered btn-xs"
+								disabled={season === currentSeason}
+							>
+								Next Season
+							</button>
+						</a>
+					</div>
 					<div>
 						<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
 						<br />

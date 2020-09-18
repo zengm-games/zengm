@@ -135,8 +135,8 @@ const TopStuff = ({
 			<div className="d-flex mb-3">
 				<div className="team-picture" style={logoStyle} />
 				<div>
-					<div className="btn-group mb-3">
-						<a href={helpers.leagueUrl(["roster", `${abbrev}`, season - 1])}>
+					<div>
+						<a className="btn-group mb-3"href={helpers.leagueUrl(["roster", `${abbrev}`, season - 1])}>
 							<button
 								className="btn btn-light-bordered btn-xs"
 								disabled={season === startingSeason}
@@ -144,7 +144,7 @@ const TopStuff = ({
 								Previous Season
 							</button>
 						</a>
-						<a href={helpers.leagueUrl(["roster", `${abbrev}`, season + 1])}>
+						<a className="btn-group mb-3"href={helpers.leagueUrl(["roster", `${abbrev}`, season + 1])}>
 							<button
 								className="btn btn-light-bordered btn-xs"
 								disabled={season === currentSeason}

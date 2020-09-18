@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
+import { ResponsiveTableWrapper } from "../components";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	return (
@@ -19,10 +20,6 @@ const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 			/>
 		</button>
 	);
-};
-
-const hiddenStyle = {
-	marginBottom: -64,
 };
 
 const LeagueTopBar = React.memo(() => {
@@ -46,11 +43,10 @@ const LeagueTopBar = React.memo(() => {
 	const prevGames = useRef<typeof games>([]);
 
 	const updateNumberOfScoreBoxes = useCallback(() => {
-		// Limit number of ScoreBoxes to render
 		const documentElement = document.documentElement;
 		if (documentElement) {
 			const width = documentElement.clientWidth;
-			setNumberOfScoreBoxes(Math.ceil(width / 115));
+			setNumberOfScoreBoxes();
 		}
 	}, []);
 
@@ -95,36 +91,49 @@ const LeagueTopBar = React.memo(() => {
 
 	const transition = { duration: 0.2, type: "tween" };
 
+	// aligns boxes to start on right side
+	const alignRight = {
+		direction: "ltr",
+	};
+
+	// scroll moves as more games are simmed
+	const scrollWithSim = {
+		direction: "rtl",
+	};
+
 	return (
-		<div
-			className="league-top-bar flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2"
-			style={show ? undefined : hiddenStyle}
-		>
-			{show ? (
-				// This makes it not animate the initial render
-				<AnimatePresence initial={false}>
-					{games2.map(game => (
-						<motion.div
-							key={game.gid}
-							layout
-							initial={{ x: 105 }}
-							animate={{ x: 0 }}
-							// Need to specify exit, otherwise AnimatePresence makes divs stay around forever
-							exit={{}}
-							transition={transition}
-						>
-							<ScoreBox game={game} small />
-						</motion.div>
-					))}
-				</AnimatePresence>
-			) : null}
-			<Toggle
-				show={show}
-				toggle={() => {
-					setShow(show2 => !show2);
-					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
-				}}
-			/>
+		<div style={scrollWithSim}>
+			<ResponsiveTableWrapper>
+				<table style={alignRight}>
+					<div className="league-top-bar flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2">
+						{show ? (
+							// This makes it not animate the initial render
+							<AnimatePresence initial={false}>
+								{games2.map(game => (
+									<motion.div
+										key={game.gid}
+										layout
+										initial={{ x: 105 }}
+										animate={{ x: 0 }}
+										// Need to specify exit, otherwise AnimatePresence makes divs stay around forever
+										exit={{}}
+										transition={transition}
+									>
+										<ScoreBox game={game} small />
+									</motion.div>
+								))}
+							</AnimatePresence>
+						) : null}
+						<Toggle
+							show={show}
+							toggle={() => {
+								setShow(show2 => !show2);
+								safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
+							}}
+						/>
+					</div>
+				</table>
+			</ResponsiveTableWrapper>
 		</div>
 	);
 });

@@ -48,7 +48,10 @@ const processTrade = async (
 	pids: [number[], number[]],
 	dpids: [number[], number[]],
 ) => {
+	let pidsEvent = [...pids[0], ...pids[1]];
+
 	let maxPlayerValue = -Infinity;
+	let maxPid: number | undefined;
 	for (const j of [0, 1]) {
 		const k = j === 0 ? 1 : 0;
 
@@ -90,6 +93,7 @@ const processTrade = async (
 
 			if (p.valueFuzz > maxPlayerValue) {
 				maxPlayerValue = p.valueFuzz;
+				maxPid = p.pid;
 			}
 
 			await idb.cache.players.put(p);
@@ -113,6 +117,11 @@ const processTrade = async (
 		await updatePlayMenu();
 	}
 
+	// Make sure to show best player first, so his picture is shown in news feed
+	if (maxPid !== undefined) {
+		pidsEvent = [maxPid, ...pidsEvent.filter(pid => pid !== maxPid)];
+	}
+
 	logEvent({
 		type: "trade",
 		text: `The <a href="${helpers.leagueUrl([
@@ -131,7 +140,7 @@ const processTrade = async (
 			g.get("teamInfoCache")[tids[1]]?.name
 		}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
 		showNotification: false,
-		pids: pids[0].concat(pids[1]),
+		pids: pidsEvent,
 		tids: Array.from(tids), // Array.from is for Flow
 		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
 	});

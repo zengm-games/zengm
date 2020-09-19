@@ -19,7 +19,6 @@ import type { Player } from "../../../common/types";
 const checkRosterSizes = async (
 	userOrOther: "user" | "other",
 ): Promise<string | void> => {
-	console.log("checkRosterSizes");
 	const minFreeAgents: Player[] = [];
 	let userTeamSizeError: string | undefined;
 

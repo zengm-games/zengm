@@ -70,7 +70,7 @@ type Stat =
 	| "tov"
 	| "tp"
 	| "tpa";
-type PlayerNumOnCourt = 0 | 1 | 2 | 3 | 4;
+type PlayerNumOnCourt = number;
 type TeamNum = 0 | 1;
 type CompositeRating =
 	| "blocking"
@@ -115,30 +115,30 @@ const teamNums: [TeamNum, TeamNum] = [0, 1];
  * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
  */
 const pickPlayer = (
-	ratios: [number, number, number, number, number],
+	ratios: number[],
 	exempt?: PlayerNumOnCourt,
-) => {
+): PlayerNumOnCourt => {
 	if (exempt !== undefined) {
 		ratios[exempt] = 0;
 	}
 
-	const rand =
-		Math.random() * (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4]);
-	let pick: PlayerNumOnCourt;
-
-	if (rand < ratios[0]) {
-		pick = 0;
-	} else if (rand < ratios[0] + ratios[1]) {
-		pick = 1;
-	} else if (rand < ratios[0] + ratios[1] + ratios[2]) {
-		pick = 2;
-	} else if (rand < ratios[0] + ratios[1] + ratios[2] + ratios[3]) {
-		pick = 3;
-	} else {
-		pick = 4;
+	let sum = 0;
+	for (const ratio of ratios) {
+		sum += ratio;
 	}
 
-	return pick;
+	const rand = Math.random() * sum;
+
+	let runningSum = 0;
+
+	for (let i = 0; i < ratios.length; i++) {
+		runningSum += ratios[i];
+		if (rand < runningSum) {
+			return i;
+		}
+	}
+
+	return 0;
 };
 
 class GameSim {

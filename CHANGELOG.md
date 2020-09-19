@@ -2,7 +2,7 @@ This is a user-focused changelog. The entries here are things that affect gamepl
 
 Entries in bold are ones important enough that I would have put them in [the old changelog](./CHANGELOG-old.md).
 
-* 2020-09-19: In BBGM, new God Mode option to set the number of players on the court. By default it's 5-on-5, but now it can be anything. Extreme values may do weird things. [[1]]()
+* 2020-09-19: In BBGM, new God Mode option to set the number of players on the court. By default it's 5-on-5, but now it can be anything. Extreme values may do weird things. [[1]](https://old.reddit.com/r/BasketballGM/comments/ivlhui/new_god_mode_option_to_set_the_number_of_players/)
 
 * **2020-09-17: New player mood system! Most notable improvements are that it's viewable at any time (not just during free agency) and it's much more transparent about what players think about your team. If your star is not happy and doesn't want to re-sign, you'll know ahead of time. [[1]](https://basketball-gm.com/blog/2020/09/player-mood/) [[2]](https://old.reddit.com/r/BasketballGM/comments/iuluuj/the_new_player_mood_system_is_now_live_in_version/)**
 

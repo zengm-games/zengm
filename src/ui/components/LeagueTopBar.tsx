@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 import { ResponsiveTableWrapper } from "../components";
-import { localActions, processLiveGameEvents } from "../util";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	return (

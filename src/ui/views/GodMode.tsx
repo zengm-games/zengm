@@ -568,7 +568,7 @@ if (process.env.SPORT === "basketball") {
 			key: "numPlayersOnCourt",
 			name: "# Players On Court",
 			type: "int",
-			helpText: "By default BBGM is 5 on 5, but you can change that here",
+			helpText: "By default BBGM is 5-on-5, but you can change that here",
 			validator: (value, output) => {
 				if (value > output.minRosterSize) {
 					throw new Error("Value cannot be greater than the min roster size");

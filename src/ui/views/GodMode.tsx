@@ -119,9 +119,12 @@ export const options: {
 		key: "minRosterSize",
 		name: "Min Roster Size",
 		type: "int",
-		validator: value => {
-			if (value < 5) {
-				throw new Error("Value cannot be less than 5");
+		validator: (value, output) => {
+			if (
+				process.env.SPORT === "basketball" &&
+				value < output.numPlayersOnCourt
+			) {
+				throw new Error("Value cannot be less than # Players On Court");
 			}
 		},
 	},

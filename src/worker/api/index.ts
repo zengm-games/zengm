@@ -1689,15 +1689,6 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
-	const players = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		g.get("userTid"),
-	);
-
-	if (players.length <= 5) {
-		return "You must keep at least 5 players on your roster.";
-	}
-
 	const p = await idb.cache.players.get(pid);
 	if (!p) {
 		return "Player not found";

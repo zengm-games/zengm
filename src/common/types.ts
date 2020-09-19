@@ -345,6 +345,7 @@ export type GameAttributesLeague = {
 	numDraftRounds: number;
 	numGames: number;
 	numGamesPlayoffSeries: number[];
+	numPlayersOnCourt: number;
 	numPlayoffByes: number;
 	numSeasonsFutureDraftPicks: number;
 	numTeams: number;

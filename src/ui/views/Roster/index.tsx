@@ -74,6 +74,7 @@ const Roster = ({
 	editable,
 	maxRosterSize,
 	numConfs,
+	numPlayersOnCourt,
 	numPlayoffRounds,
 	payroll,
 	phase,
@@ -188,11 +189,13 @@ const Roster = ({
 			<SortableTable
 				disabled={!editable}
 				values={playersSorted}
-				highlightHandle={({ index }) => index <= 4}
+				highlightHandle={({ index }) => index < numPlayersOnCourt}
 				rowClassName={({ index, isDragged, value: p }) =>
 					classNames({
 						separator:
-							process.env.SPORT === "basketball" && index === 4 && !isDragged,
+							process.env.SPORT === "basketball" &&
+							index === numPlayersOnCourt - 1 &&
+							!isDragged,
 						"table-danger": p.hof,
 					})
 				}

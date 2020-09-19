@@ -1,5 +1,6 @@
 import { g, helpers, random } from "../util";
 import { PHASE } from "../../common";
+import range from "lodash/range";
 
 type PlayType =
 	| "ast"
@@ -145,10 +146,7 @@ class GameSim {
 
 	team: [TeamGameSim, TeamGameSim];
 
-	playersOnCourt: [
-		[number, number, number, number, number],
-		[number, number, number, number, number],
-	];
+	playersOnCourt: [number[], number[]];
 
 	startersRecorded: boolean;
 
@@ -198,6 +196,8 @@ class GameSim {
 
 	fatigueFactor: number;
 
+	numPlayersOnCourt: number;
+
 	/**
 	 * Initialize the two teams that are playing this game.
 	 *
@@ -217,9 +217,10 @@ class GameSim {
 		this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
 
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
+		this.numPlayersOnCourt = g.get("numPlayersOnCourt");
 		this.playersOnCourt = [
-			[0, 1, 2, 3, 4],
-			[0, 1, 2, 3, 4],
+			range(this.numPlayersOnCourt),
+			range(this.numPlayersOnCourt),
 		];
 		this.startersRecorded = false; // Used to track whether the *real* starters have been recorded or not.
 
@@ -746,7 +747,7 @@ class GameSim {
 			let ovrs = getOvrs(false);
 
 			// What if too many players fouled out? Play them. Ideally would force non fouled out players to play first, but whatever. Without this, it would only play bottom of the roster guys (tied at -Infinity)
-			if (numEligiblePlayers(ovrs) < 5) {
+			if (numEligiblePlayers(ovrs) < this.numPlayersOnCourt) {
 				ovrs = getOvrs(true);
 			}
 
@@ -811,7 +812,16 @@ class GameSim {
 							}
 						}
 
-						if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
+						const cutoff =
+							this.numPlayersOnCourt >= 5
+								? 2
+								: this.numPlayersOnCourt >= 3
+								? 1
+								: 0;
+						if (
+							(numG < cutoff && numPG === 0) ||
+							(numF < cutoff && numC === 0)
+						) {
 							if (
 								this.fatigue(this.team[t].player[p].stat.energy) > 0.728 &&
 								!onCourtIsIneligible
@@ -889,7 +899,7 @@ class GameSim {
 				R: 0,
 			};
 
-			for (let i = 0; i < 5; i++) {
+			for (let i = 0; i < this.numPlayersOnCourt; i++) {
 				const p = this.playersOnCourt[t][i];
 
 				// 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
@@ -1014,7 +1024,7 @@ class GameSim {
 				const rating = toUpdate[j];
 				this.team[t].compositeRating[rating] = 0;
 
-				for (let i = 0; i < 5; i++) {
+				for (let i = 0; i < this.numPlayersOnCourt; i++) {
 					const p = this.playersOnCourt[t][i];
 					this.team[t].compositeRating[rating] +=
 						this.team[t].player[p].compositeRating[rating] *
@@ -1943,7 +1953,7 @@ class GameSim {
 		let total = 0;
 
 		// Scale composite ratings
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < this.numPlayersOnCourt; i++) {
 			const p = this.playersOnCourt[t][i];
 			array[i] =
 				(this.team[t].player[p].compositeRating[rating] *
@@ -1955,7 +1965,7 @@ class GameSim {
 		// Set floor (5% of total)
 		const floor = 0.05 * total;
 
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < this.numPlayersOnCourt; i++) {
 			if (array[i] < floor) {
 				array[i] = floor;
 			}
@@ -1987,7 +1997,7 @@ class GameSim {
 				this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] += amt;
 
 				for (let i = 0; i < 2; i++) {
-					for (let j = 0; j < 5; j++) {
+					for (let j = 0; j < this.numPlayersOnCourt; j++) {
 						const k = this.playersOnCourt[i][j];
 						this.team[i].player[k].stat.pm += i === t ? amt : -amt;
 					}

@@ -53,7 +53,8 @@ type Key =
 	| "elamASG"
 	| "elamMinutes"
 	| "elamPoints"
-	| "playerMoodTraits";
+	| "playerMoodTraits"
+	| "numPlayersOnCourt";
 
 type Category =
 	| "League Structure"
@@ -561,6 +562,21 @@ if (process.env.SPORT === "basketball") {
 			type: "bool",
 			helpText:
 				"Changing this will not affect an in-progress season, only future seasons.",
+		},
+		{
+			category: "League Structure",
+			key: "numPlayersOnCourt",
+			name: "# Players On Court",
+			type: "int",
+			helpText: "By default BBGM is 5 on 5, but you can change that here",
+			validator: (value, output) => {
+				if (value > output.minRosterSize) {
+					throw new Error("Value cannot be greater than the min roster size");
+				}
+				if (value <= 0) {
+					throw new Error("Value must be greater than 0");
+				}
+			},
 		},
 		{
 			category: "Game Simulation",

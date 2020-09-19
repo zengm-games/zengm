@@ -137,6 +137,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	elamMinutes: 4,
 	elamPoints: 8,
 	playerMoodTraits: true,
+	numPlayersOnCourt: 5,
 
 	// These will always be overwritten when creating a league, just here for TypeScript
 	lid: 0,

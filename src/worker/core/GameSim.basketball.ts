@@ -381,6 +381,7 @@ class GameSim {
 			team: this.team,
 			clutchPlays: this.clutchPlays,
 			playByPlay: this.playByPlay,
+			numPlayersOnCourt: this.numPlayersOnCourt,
 		};
 
 		if (out.playByPlay !== undefined) {

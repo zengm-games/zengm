@@ -3,6 +3,7 @@ import React from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import SafeHtml from "../components/SafeHtml";
 import { helpers } from "../util";
+import { g } from "../../worker/util";
 
 const BoxScore = ({
 	boxScore,
@@ -35,7 +36,10 @@ const BoxScore = ({
 					const row = (
 						<Row
 							key={p.pid}
-							lastStarter={addToHealthy && rowsHealthy.length === 4}
+							lastStarter={
+								addToHealthy &&
+								rowsHealthy.length + 1 === (boxScore.numPlayersOnCourt || 5)
+							}
 							liveGameInProgress={liveGameInProgress}
 							p={p}
 							forceUpdate={forceRowUpdate}

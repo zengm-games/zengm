@@ -91,7 +91,7 @@ const updatePlayByPlay = async (
 				}
 
 				if (process.env.SPORT === "basketball") {
-					p.inGame = j < 5;
+					p.inGame = j < (boxScore.numPlayersOnCourt || 5);
 				}
 			}
 		}

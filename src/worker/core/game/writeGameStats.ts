@@ -149,6 +149,7 @@ const writeGameStats = async (
 		gid: results.gid,
 		att,
 		clutchPlays: [],
+		numPlayersOnCourt: results.numPlayersOnCourt,
 		season: g.get("season"),
 		playoffs,
 		overtimes: results.overtimes,

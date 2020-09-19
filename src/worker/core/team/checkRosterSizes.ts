@@ -16,22 +16,21 @@ import type { Player } from "../../../common/types";
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-const checkRosterSizes = async (): Promise<string | void> => {
+const checkRosterSizes = async (
+	userOrOther: "user" | "other",
+): Promise<string | void> => {
+	console.log("checkRosterSizes");
 	const minFreeAgents: Player[] = [];
 	let userTeamSizeError: string | undefined;
 
 	const releasedPIDs: number[] = [];
 
-	const checkRosterSize = async (tid: number) => {
+	const checkRosterSize = async (tid: number, userTeamAndActive: boolean) => {
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 		let numPlayersOnRoster = players.length;
 
 		if (numPlayersOnRoster > g.get("maxRosterSize")) {
-			if (
-				g.get("userTids").includes(tid) &&
-				!local.autoPlayUntil &&
-				!g.get("spectator")
-			) {
+			if (userTeamAndActive) {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
 				} else {
@@ -57,11 +56,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 				}
 			}
 		} else if (numPlayersOnRoster < g.get("minRosterSize")) {
-			if (
-				g.get("userTids").includes(tid) &&
-				!local.autoPlayUntil &&
-				!g.get("spectator")
-			) {
+			if (userTeamAndActive) {
 				if (g.get("userTids").length <= 1) {
 					userTeamSizeError = "Your team has ";
 				} else {
@@ -100,11 +95,7 @@ const checkRosterSizes = async (): Promise<string | void> => {
 
 		// Auto sort rosters (except player's team)
 		// This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-		if (
-			!g.get("userTids").includes(tid) ||
-			local.autoPlayUntil ||
-			g.get("spectator")
-		) {
+		if (!userTeamAndActive) {
 			await rosterAutoSort(tid);
 		}
 	};
@@ -129,7 +120,17 @@ const checkRosterSizes = async (): Promise<string | void> => {
 			continue;
 		}
 
-		await checkRosterSize(t.tid);
+		const userTeamAndActive =
+			g.get("userTids").includes(t.tid) &&
+			!local.autoPlayUntil &&
+			!g.get("spectator");
+
+		if (
+			(userTeamAndActive && userOrOther === "user") ||
+			(!userTeamAndActive && userOrOther === "other")
+		) {
+			await checkRosterSize(t.tid, userTeamAndActive);
+		}
 
 		if (userTeamSizeError) {
 			break;

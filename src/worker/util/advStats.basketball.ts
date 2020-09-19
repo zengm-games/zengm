@@ -281,12 +281,12 @@ const calculateBPM = (players: any[], teamsInput: Team[], league: any) => {
 			// This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
 			prl = 3;
 		}
-		const minp = (p.min + 1e-9) / (t.stats.min / 5);
-		const trbp = p.trb / t.stats.trb / minp;
-		const stlp = p.stl / t.stats.stl / minp;
-		const pfp = p.pf / t.stats.pf / minp;
-		const astp = p.ast / t.stats.ast / minp;
-		const blkp = p.blk / t.stats.blk / minp;
+		const minp = t.stats.min > 0 ? (p.min + 1e-9) / (t.stats.min / 5) : 0;
+		const trbp = t.stats.trb > 0 ? p.trb / t.stats.trb / minp : 0;
+		const stlp = t.stats.stl > 0 ? p.stl / t.stats.stl / minp : 0;
+		const pfp = t.stats.pf > 0 ? p.pf / t.stats.pf / minp : 0;
+		const astp = t.stats.ast > 0 ? p.ast / t.stats.ast / minp : 0;
+		const blkp = t.stats.blk > 0 ? p.blk / t.stats.blk / minp : 0;
 		const thsp = threshPts[i] / teamThresh[players[i].tid] / minp;
 
 		const est_pos1 =

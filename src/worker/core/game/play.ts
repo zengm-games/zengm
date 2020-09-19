@@ -350,7 +350,7 @@ const play = async (
 
 	// This simulates a day, including game simulation and any other bookkeeping that needs to be done
 	const cbRunDay = async () => {
-		const userTeamSizeError = await team.checkRosterSizes();
+		const userTeamSizeError = await team.checkRosterSizes("user");
 
 		if (!userTeamSizeError) {
 			await updatePlayMenu();
@@ -369,8 +369,8 @@ const play = async (
 					if (g.get("phase") !== PHASE.PLAYOFFS) {
 						await freeAgents.decreaseDemands();
 						await freeAgents.autoSign();
-
 						await trade.betweenAiTeams();
+						await team.checkRosterSizes("other");
 					}
 
 					await cbPlayGames();

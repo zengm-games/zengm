@@ -57,7 +57,8 @@ describe("worker/core/team/checkRosterSizes", () => {
 		// Confirm roster size under limit
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.strictEqual(players.length, 9);
-		const userTeamSizeError = await team.checkRosterSizes();
+		const userTeamSizeError = await team.checkRosterSizes("user");
+		await team.checkRosterSizes("other");
 		assert.strictEqual(userTeamSizeError, undefined);
 
 		// Confirm players added up to limit
@@ -72,7 +73,8 @@ describe("worker/core/team/checkRosterSizes", () => {
 		});
 
 		// Confirm roster size under limit
-		const userTeamSizeError = await team.checkRosterSizes();
+		const userTeamSizeError = await team.checkRosterSizes("user");
+		await team.checkRosterSizes("other");
 		assert.strictEqual(userTeamSizeError, undefined);
 
 		const players = await idb.cache.players.indexGetAll("playersByTid", 1);
@@ -89,7 +91,8 @@ describe("worker/core/team/checkRosterSizes", () => {
 		let players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.strictEqual(players.length, 24); // Confirm no error message and roster size pruned to limit
 
-		const userTeamSizeError = await team.checkRosterSizes();
+		const userTeamSizeError = await team.checkRosterSizes("user");
+		await team.checkRosterSizes("other");
 		assert.strictEqual(userTeamSizeError, undefined);
 		players = await idb.cache.players.indexGetAll("playersByTid", 1);
 		assert.strictEqual(players.length, 15);
@@ -109,7 +112,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		);
 		assert.strictEqual(players.length, 9); // Confirm roster size error and no auto-signing of players
 
-		const userTeamSizeError = await team.checkRosterSizes();
+		const userTeamSizeError = await team.checkRosterSizes("user");
 		assert.strictEqual(typeof userTeamSizeError, "string");
 		if (userTeamSizeError) {
 			assert(userTeamSizeError.includes("less"));
@@ -135,7 +138,7 @@ describe("worker/core/team/checkRosterSizes", () => {
 		);
 		assert.strictEqual(players.length, 24); // Confirm roster size error and no auto-release of players
 
-		const userTeamSizeError = await team.checkRosterSizes();
+		const userTeamSizeError = await team.checkRosterSizes("user");
 		assert.strictEqual(typeof userTeamSizeError, "string");
 		if (userTeamSizeError) {
 			assert(userTeamSizeError.includes("more"));

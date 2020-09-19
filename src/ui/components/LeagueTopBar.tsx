@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useLocalShallow, safeLocalStorage } from "../util";
 import ScoreBox from "./ScoreBox";
 import { ResponsiveTableWrapper } from "../components";
+import { localActions, processLiveGameEvents } from "../util";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	return (
@@ -102,10 +103,10 @@ const LeagueTopBar = React.memo(() => {
 	};
 
 	return (
-		<div style={scrollWithSim}>
+		<div className="league-top-bar" style={scrollWithSim}>
 			<ResponsiveTableWrapper>
 				<table style={alignRight}>
-					<div className="league-top-bar flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2">
+					<div className="flex-shrink-0 d-flex justify-content-end overflow-hidden mt-2">
 						{show ? (
 							// This makes it not animate the initial render
 							<AnimatePresence initial={false}>

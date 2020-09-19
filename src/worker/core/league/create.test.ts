@@ -52,7 +52,6 @@ describe("worker/core/league/create", () => {
 		]);
 		assert.strictEqual(leagueData.gameAttributes.gameOver, false);
 		assert.strictEqual(leagueData.gameAttributes.daysLeft, 0);
-		assert.strictEqual(Object.keys(leagueData.gameAttributes).length, 75);
 	});
 
 	test("initialize teams object store", async () => {

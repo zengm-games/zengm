@@ -318,6 +318,24 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 
 	return (
 		<>
+			{location.host.indexOf("beta") === 0 ? (
+				<p
+					className="alert alert-warning d-inline-block"
+					style={{ maxWidth: 840 }}
+				>
+					You are on the beta site. Sometimes new features are tested on the
+					beta site, but most of the time it gets updated less frequently than{" "}
+					<a href={`https://play.${process.env.SPORT}-gm.com/`}>
+						the main site
+					</a>
+					. So unless you're testing some specific thing, you probably should be
+					playing on{" "}
+					<a href={`https://play.${process.env.SPORT}-gm.com/`}>
+						the main site
+					</a>
+					.
+				</p>
+			) : null}
 			<div
 				className={
 					process.env.SPORT === "basketball"

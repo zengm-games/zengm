@@ -1282,7 +1282,7 @@ class GameSim {
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
 		let passer: PlayerNumOnCourt | undefined;
-		if (this.probAst() > Math.random()) {
+		if (this.probAst() > Math.random() && this.numPlayersOnCourt > 1) {
 			const ratios = this.ratingArray("passing", this.o, 10);
 			passer = pickPlayer(ratios, shooter);
 		}

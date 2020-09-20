@@ -8,8 +8,6 @@ redo mood system
 
 customizable contract length limits https://old.reddit.com/r/BasketballGM/comments/io53hq/weekly_suggestions_thread/g5pxv48/?context=3
 
-all star draft should be disabled in spectator mode
-
 gm score
 - @nicidob
 - almost like this https://fivethirtyeight.com/features/billion-dollar-billy-beane/ f(profit,win%,playoffRoundsWon)
@@ -86,17 +84,6 @@ jersey numbers
     - tricky when user edits, would need to update player
   - notifications in news feed
     - redundant with HoF?
-
-@GradyMcTracy#2264
-Found a bug in finances
-Whenever I was sick of a franchise in a real player league, I put all finances at 999 and tickets at 0 so I could get fired and start over fresh
-Problem is they don't reset their finances
-So I can never get #1 in anything again
-The way I started the league was:
-- Custom league
-- Real players and teams
-- Deselect Players, including ratings and stats
-Start league
 
 in box score, show graphs of score and win probability
 

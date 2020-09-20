@@ -70,6 +70,7 @@ const updateAllStars = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			finalized,
 			remaining,
+			spectator: g.get("spectator"),
 			stats,
 			teams,
 			teamNames,

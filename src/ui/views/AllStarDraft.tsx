@@ -148,14 +148,16 @@ const AllStars = ({
 	challengeNoRatings,
 	finalized,
 	remaining,
+	spectator,
 	stats,
 	teams,
 	teamNames,
 	userTids,
 }: View<"allStarDraft">) => {
-	const draftType = teams.some(t => userTids.includes(t[0].tid))
-		? "user"
-		: "auto";
+	const draftType =
+		!spectator && teams.some(t => userTids.includes(t[0].tid))
+			? "user"
+			: "auto";
 
 	const [actuallyFinalized, setActuallyFinalized] = useState(finalized);
 	const [started, setStarted] = useState(teams[0].length > 1);

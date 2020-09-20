@@ -207,6 +207,15 @@ const getCategoriesAndStats = () => {
 						minValue: [14 * 16],
 					},
 					{
+						name: "Completion Percentage",
+						stat: "%",
+						statProp: "cmpPct",
+						title: "Completion Percentage",
+						data: [],
+						minStats: ["pss"],
+						minValue: [14 * 16],
+					},
+					{
 						name: "Passing TDs",
 						stat: "TD",
 						statProp: "pssTD",

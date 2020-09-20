@@ -1,3 +1,6 @@
+finances revamp
+- get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
+
 redo mood system
 - some way to see how it changes during FA - show probability? show # days until willing?
 - customizable columns on roster page
@@ -21,10 +24,6 @@ option in team history to have AI auto retire jerseys
 
 AI re-signing logic
 
-FBGM leaders
-- completion %
-- others?
-
 ratings stats popover should be based on year and allow switching https://media.discordapp.net/attachments/713482931447791648/755051634890899516/unknown.png?width=1439&height=71 @ninjasean56
 
 offseason recap page https://old.reddit.com/r/BasketballGM/comments/im6pfb/suggestion_offseason_recap_menu/
@@ -38,6 +37,7 @@ wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/
 individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0bi7/would_it_be_possible_to_make_player_determinism/
 
 add playoff series w/l to box score
+- what if the series length is 1? then show reg season
 
 salaries wrong after expansion draft? https://cdn.discordapp.com/attachments/290015591216054273/750472674953920572/unknown.png
 
@@ -102,9 +102,6 @@ team Offensive Rating and Defensive Rating on Roster screen? (not just MOV?)
 
 jersey styles by team
 
-DP in player ratings only works before the draft. after draft should look for season+1
-- https://old.reddit.com/message/messages/qmo24d
-
 jeresy style in teamseason
 
 cap evolving over time
@@ -163,9 +160,6 @@ gradually reveal progs mode
 - displayed ratings are f(t, current ratings, last year's ratings)
   - after like half the season, always just current ratings. prior to that, depends on phase and games played
   - reveal with some polynomial, like x^n, so it's not predictable if a small increase will lead to a big increase later
-
-finances revamp
-- get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
 
 DataTable
 - places to use sortValue (implemented) and searchValue (not implemented yet):

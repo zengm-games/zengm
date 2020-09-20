@@ -1,3 +1,9 @@
+add playoff series w/l to box score
+- what if the series length is 1? then show reg season
+- live game
+  - update after over
+- vertical alignment under logo (see detroit, very short logo)
+
 finances revamp
 - get rid of raw $ amounts https://old.reddit.com/r/BasketballGM/comments/hvkmsp/icymi_2706_is_nowthe_lowest_you_can_spend_on/fyubmr8/?context=3
 
@@ -35,9 +41,6 @@ play menu race condition @whitecow ~/Downloads/BBGM_Sim_Bug.mp4
 wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/one_idea_for_use_of_the_secondary_wordmarks_for/
 
 individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0bi7/would_it_be_possible_to_make_player_determinism/
-
-add playoff series w/l to box score
-- what if the series length is 1? then show reg season
 
 salaries wrong after expansion draft? https://cdn.discordapp.com/attachments/290015591216054273/750472674953920572/unknown.png
 

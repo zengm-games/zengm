@@ -12,6 +12,31 @@ const getCopies = async ({
 	season?: number;
 	seasons?: [number, number];
 } = {}): Promise<TeamSeason[]> => {
+	if (tid !== undefined && season !== undefined) {
+		// Return array of length 1
+		let teamSeason;
+		if (season >= g.get("season") - 2) {
+			teamSeason = helpers.deepCopy(
+				await idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
+					season,
+					tid,
+				]),
+			);
+		}
+
+		if (!teamSeason) {
+			teamSeason = await idb.league
+				.transaction("teamSeasons")
+				.store.index("season, tid")
+				.get([season, tid]);
+		}
+
+		if (teamSeason) {
+			return [teamSeason];
+		}
+		return [];
+	}
+
 	if (tid === undefined) {
 		if (season !== undefined) {
 			if (season >= g.get("season") - 2) {

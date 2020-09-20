@@ -33,14 +33,17 @@ TeamNameLink.propTypes = {
 };
 
 const TeamLogo = ({
+	numGamesToWinSeries,
 	season,
 	t,
 }: {
+	numGamesToWinSeries: number | undefined;
 	season: number;
 	t: {
 		abbrev: string;
 		imgURL?: string;
 		name: string;
+		playoffs?: { won: number; lost: number; seed: number };
 		region: string;
 		tid: number;
 		won: number;
@@ -48,9 +51,28 @@ const TeamLogo = ({
 		tied?: number;
 	};
 }) => {
-	let record = `${t.won}-${t.lost}`;
-	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
-		record += `-${t.tied}`;
+	console.log(t);
+	let record;
+	if (
+		numGamesToWinSeries !== undefined &&
+		numGamesToWinSeries > 1 &&
+		t.playoffs
+	) {
+		record = (
+			<span
+				className={classNames({
+					"text-success": t.playoffs.won === numGamesToWinSeries,
+					"text-danger": t.playoffs.lost === numGamesToWinSeries,
+				})}
+			>
+				{t.playoffs.won}
+			</span>
+		);
+	} else {
+		record = `${t.won}-${t.lost}`;
+		if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
+			record += `-${t.tied}`;
+		}
 	}
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
 		<div className="w-100 d-none d-lg-block text-center">
@@ -75,10 +97,16 @@ const HeadlineScore = ({ boxScore }: any) => {
 	return (
 		<>
 			<h2>
+				{t0.playoffs ? (
+					<span className="text-muted">{t0.playoffs.seed}. </span>
+				) : null}
 				<TeamNameLink season={boxScore.season} t={t0}>
 					{t0.region} {t0.name}
 				</TeamNameLink>{" "}
 				{t0.pts},{" "}
+				{t1.playoffs ? (
+					<span className="text-muted">{t1.playoffs.seed}. </span>
+				) : null}
 				<TeamNameLink season={boxScore.season} t={t1}>
 					{t1.region} {t1.name}
 				</TeamNameLink>{" "}
@@ -452,7 +480,11 @@ const BoxScoreWrapper = ({
 	return (
 		<>
 			<div className="d-flex align-items-center text-center">
-				<TeamLogo season={boxScore.season} t={t0} />
+				<TeamLogo
+					numGamesToWinSeries={boxScore.numGamesToWinSeries}
+					season={boxScore.season}
+					t={t0}
+				/>
 				<div className="mx-auto flex-shrink-0">
 					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
@@ -466,7 +498,11 @@ const BoxScoreWrapper = ({
 						tid={tid}
 					/>
 				</div>
-				<TeamLogo season={boxScore.season} t={t1} />
+				<TeamLogo
+					numGamesToWinSeries={boxScore.numGamesToWinSeries}
+					season={boxScore.season}
+					t={t1}
+				/>
 			</div>
 			<BoxScore
 				boxScore={boxScore}

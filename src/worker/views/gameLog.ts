@@ -13,6 +13,7 @@ export const setTeamInfo = async (
 	allStars: AllStars | undefined,
 	game: any,
 ) => {
+	console.log(game);
 	if (allStars) {
 		const ind = t.tid === -1 ? 0 : 1;
 		t.region = "Team";
@@ -135,6 +136,7 @@ const boxScore = async (gid: number) => {
 			won: game.teams[wonInd].won,
 			lost: game.teams[wonInd].lost,
 			tied: game.teams[wonInd].tied,
+			playoffs: game.teams[wonInd].playoffs,
 		},
 		lost: {
 			...game.lost,
@@ -145,6 +147,7 @@ const boxScore = async (gid: number) => {
 			won: game.teams[lostInd].won,
 			lost: game.teams[lostInd].lost,
 			tied: game.teams[lostInd].tied,
+			playoffs: game.teams[lostInd].playoffs,
 		},
 	};
 

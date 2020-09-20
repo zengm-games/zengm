@@ -132,8 +132,15 @@ const getPlayoffInfos = async (game: Game) => {
 		},
 	] as const;
 
+	const numGamesToWinSeries = playoffSeries
+		? helpers.numGamesToWinSeries(
+				g.get("numGamesPlayoffSeries", "current")[playoffSeries.currentRound],
+		  )
+		: undefined;
+
 	return {
 		currentRound: playoffSeries ? playoffSeries.currentRound : undefined,
+		numGamesToWinSeries,
 		playoffInfos,
 	};
 };
@@ -238,10 +245,15 @@ const writeGameStats = async (
 		}
 	}
 
-	const { playoffInfos, currentRound } = await getPlayoffInfos(gameStats);
+	const {
+		currentRound,
+		numGamesToWinSeries,
+		playoffInfos,
+	} = await getPlayoffInfos(gameStats);
 	if (playoffInfos) {
 		gameStats.teams[0].playoffs = playoffInfos[0];
 		gameStats.teams[1].playoffs = playoffInfos[1];
+		gameStats.numGamesToWinSeries = numGamesToWinSeries;
 	}
 
 	if (
@@ -335,6 +347,7 @@ const writeGameStats = async (
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 	const playoffsByConference = g.get("confs", "current").length === 2;
 	if (
+		numGamesToWinSeries !== undefined &&
 		currentRound !== undefined &&
 		currentRound >= numPlayoffRounds - 2 &&
 		playoffInfos
@@ -347,16 +360,9 @@ const writeGameStats = async (
 				: "semifinals";
 		let score = round === "finals" ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
-		const numGamesThisRound = g.get("numGamesPlayoffSeries", "current")[
-			currentRound
-		];
-		const gameNumText = numGamesThisRound > 1 ? ` game ${gameNum} of` : "";
+		const gameNumText = numGamesToWinSeries > 1 ? ` game ${gameNum} of` : "";
 		let leadText = "";
-		if (numGamesThisRound > 1) {
-			const numGamesToWinSeries = helpers.numGamesToWinSeries(
-				g.get("numGamesPlayoffSeries", "current")[currentRound],
-			);
-
+		if (numGamesToWinSeries > 1) {
 			if (playoffInfos[tw].won === playoffInfos[tw].lost) {
 				leadText = `, evening the series at ${playoffInfos[tw].won}-${playoffInfos[tw].lost}`;
 			} else if (playoffInfos[tw].won === numGamesToWinSeries) {

@@ -200,6 +200,7 @@ export type Game = {
 		tid: number;
 		pts: number;
 	};
+	numGamesToWinSeries?: number;
 	numPlayersOnCourt?: number;
 	playoffs: boolean;
 	overtimes: number;

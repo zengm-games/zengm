@@ -13,7 +13,6 @@ export const setTeamInfo = async (
 	allStars: AllStars | undefined,
 	game: any,
 ) => {
-	console.log(game);
 	if (allStars) {
 		const ind = t.tid === -1 ? 0 : 1;
 		t.region = "Team";

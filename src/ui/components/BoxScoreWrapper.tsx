@@ -51,7 +51,6 @@ const TeamLogo = ({
 		tied?: number;
 	};
 }) => {
-	console.log(t);
 	let record;
 	if (
 		numGamesToWinSeries !== undefined &&
@@ -65,7 +64,7 @@ const TeamLogo = ({
 					"text-danger": t.playoffs.lost === numGamesToWinSeries,
 				})}
 			>
-				{t.playoffs.won}
+				{t.playoffs.won} {t.playoffs.won === 1 ? "win" : "wins"}
 			</span>
 		);
 	} else {
@@ -75,11 +74,19 @@ const TeamLogo = ({
 		}
 	}
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
-		<div className="w-100 d-none d-lg-block text-center">
-			<TeamNameLink season={season} t={t}>
-				<img src={t.imgURL} alt="" style={{ maxWidth: 120, maxHeight: 100 }} />
-			</TeamNameLink>
-			<div className="mt-1 mb-3 font-weight-bold">{record}</div>
+		<div className="w-100 d-none d-lg-flex justify-content-center">
+			<div>
+				<div style={{ height: 100 }} className="d-flex align-items-center">
+					<TeamNameLink season={season} t={t}>
+						<img
+							src={t.imgURL}
+							alt=""
+							style={{ maxWidth: 120, maxHeight: 100 }}
+						/>
+					</TeamNameLink>
+				</div>
+				<div className="mt-1 mb-3 font-weight-bold">{record}</div>
+			</div>
 		</div>
 	) : null;
 };
@@ -479,7 +486,7 @@ const BoxScoreWrapper = ({
 
 	return (
 		<>
-			<div className="d-flex align-items-center text-center">
+			<div className="d-flex text-center">
 				<TeamLogo
 					numGamesToWinSeries={boxScore.numGamesToWinSeries}
 					season={boxScore.season}

@@ -51,8 +51,16 @@ const updatePlayByPlay = async (
 			const t = boxScore.teams[i];
 
 			// Fix records, taking out result of this game
-			if (!boxScore.playoffs) {
-				// Keep in sync with LiveGame.tsx
+			// Keep in sync with LiveGame.tsx
+			if (boxScore.playoffs) {
+				if (t.playoffs) {
+					if (boxScore.won.tid === t.tid) {
+						t.playoffs.won -= 1;
+					} else if (boxScore.lost.tid === t.tid) {
+						t.playoffs.lost -= 1;
+					}
+				}
+			} else {
 				if (boxScore.won.pts === boxScore.lost.pts) {
 					// Tied!
 					if (t.tied !== undefined) {

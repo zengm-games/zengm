@@ -33,17 +33,14 @@ TeamNameLink.propTypes = {
 };
 
 const TeamLogo = ({
-	numGamesToWinSeries,
 	season,
 	t,
 }: {
-	numGamesToWinSeries: number | undefined;
 	season: number;
 	t: {
 		abbrev: string;
 		imgURL?: string;
 		name: string;
-		playoffs?: { won: number; lost: number; seed: number };
 		region: string;
 		tid: number;
 		won: number;
@@ -51,28 +48,11 @@ const TeamLogo = ({
 		tied?: number;
 	};
 }) => {
-	let record;
-	if (
-		numGamesToWinSeries !== undefined &&
-		numGamesToWinSeries > 1 &&
-		t.playoffs
-	) {
-		record = (
-			<span
-				className={classNames({
-					"text-success": t.playoffs.won === numGamesToWinSeries,
-					"text-danger": t.playoffs.lost === numGamesToWinSeries,
-				})}
-			>
-				{t.playoffs.won} {t.playoffs.won === 1 ? "win" : "wins"}
-			</span>
-		);
-	} else {
-		record = `${t.won}-${t.lost}`;
-		if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
-			record += `-${t.tied}`;
-		}
+	let record = `${t.won}-${t.lost}`;
+	if (typeof t.tied === "number" && !Number.isNaN(t.tied) && t.tied > 0) {
+		record += `-${t.tied}`;
 	}
+
 	return t.imgURL !== undefined && t.imgURL !== "" ? (
 		<div className="w-100 d-none d-lg-flex justify-content-center">
 			<div>
@@ -138,7 +118,7 @@ HeadlineScore.propTypes = {
 
 const FourFactors = ({ teams }: { teams: any[] }) => {
 	return (
-		<table className="table table-bordered table-sm">
+		<table className="table table-bordered table-sm mb-2 mb-sm-0">
 			<thead>
 				<tr />
 				<tr>
@@ -336,7 +316,7 @@ const DetailedScore = ({
 			) : null}
 			<div>
 				<div className="mr-4 mx-xs-auto table-nonfluid text-center">
-					<table className="table table-bordered table-sm">
+					<table className="table table-bordered table-sm mb-2 mb-sm-0">
 						<thead>
 							<tr>
 								<th />
@@ -399,6 +379,74 @@ DetailedScore.propTypes = {
 	prevGid: PropTypes.number,
 	showNextPrev: PropTypes.bool,
 	tid: PropTypes.number,
+};
+
+const PlayoffRecord = ({
+	numGamesToWinSeries,
+	season,
+	t0,
+	t1,
+}: {
+	numGamesToWinSeries: number;
+	season: number;
+	t0: {
+		abbrev: string;
+		playoffs?: { won: number; lost: number };
+	};
+	t1: {
+		abbrev: string;
+		playoffs?: { won: number; lost: number };
+	};
+}) => {
+	if (
+		numGamesToWinSeries === undefined ||
+		numGamesToWinSeries <= 1 ||
+		!t0.playoffs ||
+		!t1.playoffs
+	) {
+		return null;
+	}
+
+	type RequiredPlayoffsTeam = Required<typeof t0>;
+	let winning: RequiredPlayoffsTeam;
+	let losing: RequiredPlayoffsTeam;
+	if (t0.playoffs.won > t1.playoffs.won) {
+		winning = t0 as RequiredPlayoffsTeam;
+		losing = t1 as RequiredPlayoffsTeam;
+	} else {
+		winning = t1 as RequiredPlayoffsTeam;
+		losing = t0 as RequiredPlayoffsTeam;
+	}
+
+	const record = (
+		<a href={helpers.leagueUrl(["playoffs", season])}>
+			{winning.playoffs.won}-{losing.playoffs.won}
+		</a>
+	);
+
+	if (winning.playoffs.won === losing.playoffs.won) {
+		return <>Series tied {record}</>;
+	}
+
+	const winningAbbrevLink = (
+		<a href={helpers.leagueUrl(["roster", winning.abbrev, season])}>
+			{winning.abbrev}
+		</a>
+	);
+
+	if (winning.playoffs.won === numGamesToWinSeries) {
+		return (
+			<>
+				{winningAbbrevLink} won series {record}
+			</>
+		);
+	}
+
+	return (
+		<>
+			{winningAbbrevLink} leads series {record}
+		</>
+	);
 };
 
 const BoxScoreWrapper = ({
@@ -487,12 +535,8 @@ const BoxScoreWrapper = ({
 	return (
 		<>
 			<div className="d-flex text-center">
-				<TeamLogo
-					numGamesToWinSeries={boxScore.numGamesToWinSeries}
-					season={boxScore.season}
-					t={t0}
-				/>
-				<div className="mx-auto flex-shrink-0">
+				<TeamLogo season={boxScore.season} t={t0} />
+				<div className="mx-auto flex-shrink-0 mb-2">
 					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
 						abbrev={abbrev}
@@ -504,12 +548,16 @@ const BoxScoreWrapper = ({
 						showNextPrev={showNextPrev}
 						tid={tid}
 					/>
+					<div className="mt-sm-1">
+						<PlayoffRecord
+							numGamesToWinSeries={boxScore.numGamesToWinSeries}
+							season={boxScore.season}
+							t0={t0}
+							t1={t1}
+						/>
+					</div>
 				</div>
-				<TeamLogo
-					numGamesToWinSeries={boxScore.numGamesToWinSeries}
-					season={boxScore.season}
-					t={t1}
-				/>
+				<TeamLogo season={boxScore.season} t={t1} />
 			</div>
 			<BoxScore
 				boxScore={boxScore}

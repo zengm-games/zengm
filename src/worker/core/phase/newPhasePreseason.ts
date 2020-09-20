@@ -143,9 +143,27 @@ const newPhasePreseason = async (
 		}
 		newSeason.pop = t.pop;
 
-		await idb.cache.teams.put(t);
 		await idb.cache.teamSeasons.add(newSeason);
 		await idb.cache.teamStats.add(team.genStatsRow(tid));
+
+		if (t.disabled) {
+			// Active teams are persisted below
+			await idb.cache.teams.put(t);
+		}
+	}
+
+	const activeTeams = teams.filter(t => !t.disabled);
+	const popRanks = helpers.getPopRanks(activeTeams);
+	for (let i = 0; i < activeTeams.length; i++) {
+		const t = activeTeams[i];
+		if (
+			!g.get("userTids").includes(t.tid) ||
+			local.autoPlayUntil ||
+			g.get("spectator")
+		) {
+			team.autoBudgetSettings(t, popRanks[i]);
+			await idb.cache.teams.put(t);
+		}
 	}
 
 	if (updatedTeams) {

@@ -35,8 +35,6 @@ injury notification in news feed should show ovr/pot drop
 
 play menu race condition @whitecow ~/Downloads/BBGM_Sim_Bug.mp4
 
-Quick bug report. Getting fired and switching teams does not reset the finances of the team you were fired from anymore - it keeps your values. It used to switch I remember.
-
 wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/one_idea_for_use_of_the_secondary_wordmarks_for/
 
 individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0bi7/would_it_be_possible_to_make_player_determinism/

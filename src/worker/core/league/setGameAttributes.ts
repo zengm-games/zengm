@@ -2,7 +2,7 @@ import { idb } from "../../db";
 import { g, helpers, initUILocalGames, local } from "../../util";
 import { unwrap, wrap } from "../../util/g";
 import type { GameAttributesLeague } from "../../../common/types";
-import { finances, draft } from "..";
+import { finances, draft, team } from "..";
 import gameAttributesToUI from "./gameAttributesToUI";
 
 const updateMetaDifficulty = async (difficulty: number) => {
@@ -108,26 +108,7 @@ const setGameAttributes = async (
 							updated = true;
 						}
 					} else {
-						const defaultTicketPrice = helpers.defaultTicketPrice(
-							popRank,
-							value,
-						);
-						const defaultBudgetAmount = helpers.defaultBudgetAmount(
-							popRank,
-							value,
-						);
-
-						if (t.budget.ticketPrice.amount !== defaultTicketPrice) {
-							t.budget.ticketPrice.amount = defaultTicketPrice;
-							updated = true;
-						}
-
-						for (const key of keys) {
-							if (t.budget[key].amount !== defaultBudgetAmount) {
-								t.budget[key].amount = defaultBudgetAmount;
-								updated = true;
-							}
-						}
+						team.autoBudgetSettings(t, popRank, value);
 					}
 
 					if (updated) {
